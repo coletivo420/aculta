@@ -1,3 +1,5 @@
+> **Decisão tipográfica vigente:** ACULTA usa Inter no corpo e Oswald nos títulos. As referências a Montserrat abaixo documentam a auditoria upstream e a implementação histórica; os arquivos locais e o uso no tema foram removidos. Não reutilizar Montserrat como requisito visual.
+
 # Inventário visual OpenCulturas Next 3.1.5
 
 **OCS-F0 — fonte upstream verificada em 2026-10-29; ACULTA route notes históricas.** Auditoria estática e baseline inicial. Este documento documenta a fonte visual e capturas históricas; não certifica paridade das telas autenticadas. Para rotas, owners e estado de captura atuais, consulte a [matriz de paridade reconciliada com ADR-038](visual-parity-matrix.md). Todas as referências `/studio*` abaixo são anteriores à migração e não são instruções de roteamento vigentes.

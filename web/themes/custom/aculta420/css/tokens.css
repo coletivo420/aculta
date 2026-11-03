@@ -276,7 +276,7 @@ body.path-culturas .aculta-main,
   --aculta-studio-fidelity-button-danger-border: #d41317;
   --aculta-studio-fidelity-button-danger-text: color-mix(in oklab, #d41317 60%, #303236);
 
-  --aculta-studio-fidelity-font-family: "Montserrat", "Segoe UI", "Roboto", sans-serif;
+  --aculta-studio-font-family: var(--aculta-font-body);
   --aculta-studio-fidelity-font-size-xxl: 3rem;
   --aculta-studio-fidelity-font-size-xl: 2rem;
   --aculta-studio-fidelity-font-size-l: 1.75rem;

@@ -1,3 +1,7 @@
+## 0.7.0-dev.40 — fontes institucionais no Studio (2026-11-03; validação pendente)
+
+- Studio e editor de perfil passam a herdar Inter do token institucional; removidos os WOFF2 e a declaração local de Montserrat. Oswald permanece reservado aos títulos conforme o sistema tipográfico do tema. Relatórios anteriores que registraram Montserrat são históricos e não representam a tipografia aprovada.
+
 ## 0.7.0-dev.39 — usar diretamente Bootstrap 8.x (2026-11-03; não validado visualmente)
 
 - ACULTA420 deixa de carregar a cópia local do Bootstrap 5 e usa diretamente Bootstrap 3.4.10 entregue por Drupal Bootstrap 8.x-3.45. Gavetas usam o plugin modal do Bootstrap 3 com estilos próprios do tema; toggles e eventos usam as APIs jQuery nativas. Revisão visual completa e validação após rebuild do cache continuam pendentes.

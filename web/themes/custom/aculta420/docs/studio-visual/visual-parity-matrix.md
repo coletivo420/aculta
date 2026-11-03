@@ -1,3 +1,5 @@
+> **Tipografia vigente:** Inter no corpo e Oswald nos títulos. As ocorrências de Montserrat abaixo são registros históricos de uma implementação descartada; não são requisito nem evidência da fonte atual.
+
 # Matriz de paridade visual do OpenCulturas Next → ACULTA Studio
 
 **OCS-F0 — estado corrente reconciliado com ADR-038 (2026-10-30).** A fidelidade visual OpenCulturas permanece restrita às experiências ACULTA Studio. As Suites usam o purpose/domain de seus owners; o framework `aculta_studio` e o registry continuam compartilhados, sem Hub público em `/studio`.

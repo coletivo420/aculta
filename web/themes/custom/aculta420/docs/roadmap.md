@@ -1,3 +1,7 @@
+## 0.7.0-dev.40 — tipografia institucional no Studio (2026-11-03; validação pendente)
+
+A tipografia do tema é Inter no corpo e Oswald nos títulos. Studio e editor de perfil herdam Inter pelos tokens globais; arquivos locais de Montserrat foram removidos. Evidências anteriores que citam Montserrat descrevem a implementação antiga e não são requisito visual vigente.
+
 # Roadmap — ACULTA420
 
 ## 0.7.0-dev.39 — usar diretamente Drupal Bootstrap 8.x (2026-11-03; visual DEFERRED)

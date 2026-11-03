@@ -54,7 +54,7 @@ html.studio-identity :is(
   --aculta-studio-fidelity-box-shadow: var(--aculta-shadow-raised);
 
   /* A2 — tipografia institucional: Inter no corpo, Oswald nos títulos. */
-  --aculta-studio-fidelity-font-family: var(--aculta-font-body);
+  --aculta-studio-font-family: var(--aculta-font-body);
 }
 
 /* A2 — acabamento próprio sobre os mesmos seletores e consumers. */

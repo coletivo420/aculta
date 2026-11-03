@@ -44,22 +44,11 @@ nem promove SDCs. Componentes experimentais (`stat-counter`,
 `accessibility-badges`, `sponsor-logos`) só entram em uma tela após validar
 schema, story, consumer real e status no catálogo.
 
-### OCS-F1 — tokens herdados no Studio (2026-10-30)
+### OCS-F1 — tokens herdados no Studio (registro histórico; tipografia corrigida em 2026-11-03)
 
-Os SDCs do Studio herdam tipografia Montserrat e tokens de cor, contraste,
-espaçamento, largura e superfície por meio dos wrappers `.studio` e
-`.aculta-profile-editor`; os Form API de bio e redes do Perfil usam o root
-`form.studio-profile-form` traduzido dos tokens semânticos já emitidos por
-`aculta_user`. Props, slots, render arrays e schemas de componentes não mudaram;
-tokens não são definidos no `:root`, evitando efeito nos demais purposes. A
-licença da fonte está junto dos WOFF2 em
-`assets/fonts/montserrat/OFL.txt`. Em Firefox ESR visível, o consumer Marley
-recebeu a folha candidata injetada: 63/63 checks executáveis passaram, a fonte
-carregou, o gutter global ficou idêntico antes/depois e a tipografia computada do
-Studio foi Montserrat. As capturas privadas ficam em
-`/home/piradopirata/aculta-suite-out/ocs-f1-candidate-20261030-after-500-fix/`.
-Isto não homologa cada consumer, não substitui o stylesheet publicado e não
-aprova OCS-F1 integral/F7.
+Os SDCs do Studio herdam Inter no corpo, Oswald nos títulos e tokens de cor, contraste, espaçamento, largura e superfície por meio dos wrappers `.studio` e `.aculta-profile-editor`; os Form API de bio e redes do Perfil usam o root `form.studio-profile-form` traduzido dos tokens semânticos já emitidos por `aculta_user`. Props, slots, render arrays e schemas de componentes não mudaram; tokens não são definidos no `:root`, evitando efeito nos demais purposes.
+
+O relatório de 2026-10-30 abaixo registrou uma implementação temporária com Montserrat, agora removida. Os 63/63 checks daquela rodada não validam a tipografia atual. As capturas privadas ficam em `/home/piradopirata/aculta-suite-out/ocs-f1-candidate-20261030-after-500-fix/`. Isto não homologa cada consumer nem aprova OCS-F1 integral/F7.
 
 A conferência dos nomes usados na matriz de paridade encontrou estes SDCs em
 `components/`; a existência do arquivo não confirma consumer da rota nem
@@ -185,7 +174,7 @@ somente os links de Marley, Ganjalab, ACULTA STUDIO WE SATIVA, ACULTA STUDIO
 GREEN STASH e Culturas. Os rótulos da Conta privada coincidem agora com os
 providers das duas Suites. O CSS dá a cada link um alvo de 44×44px, sem alterar
 o SDC ou seus slots. Firefox ESR passou 250/250 medições em 27 larguras
-(320–1920px), incluindo container, grade, Montserrat, escala tipográfica, os
+(320–1920px), incluindo container, grade, tipografia institucional, escala tipográfica, os
 cinco destinos, foco visível e ausência de overflow; zoom real a 200%/400%
 também passou, com viewports CSS de 640px/320px.
 Capturas em
@@ -796,7 +785,7 @@ escopo reutiliza as raízes de fidelidade já existentes (`.studio`,
 `.aculta-profile-editor`, `.we-sativa__workspace`, `body.path-ganjalab` e
 `body.path-culturas`) e não alcança outros purposes.
 
-Decisão do responsável (2026-11-01): a fonte da mensagem **não** será Montserrat.
+Decisão tipográfica vigente: usar Inter no corpo e Oswald nos títulos; Montserrat não faz parte da identidade ACULTA.
 A região `aculta-highlighted` fica fora da raiz que define os tokens
 `--aculta-studio-fidelity-*`; a caixa usa `--aculta-shadow-raised` e herda a
 fonte do documento, e essa exclusão da fidelidade tipográfica está aceita e

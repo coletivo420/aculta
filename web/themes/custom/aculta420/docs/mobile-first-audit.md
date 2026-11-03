@@ -1,3 +1,5 @@
+> **Correção tipográfica vigente:** use Inter no corpo e Oswald nos títulos. Menções a Montserrat neste histórico registram medições da implementação antiga e não definem a identidade aprovada.
+
 # Auditoria mobile-first ACULTA420 — THEME-MF0
 
 ### THEME-MF2 — top-bar administrativa integrada no Runtime (2026-10-31)

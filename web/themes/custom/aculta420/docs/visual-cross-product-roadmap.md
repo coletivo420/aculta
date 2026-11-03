@@ -1,3 +1,5 @@
+> **Tipografia vigente:** Inter no corpo e Oswald nos títulos. Menções a Montserrat neste histórico descrevem uma implementação anterior, já removida, e não definem a identidade atual.
+
 ## DECISÃO GLOBAL - ACULTA420 inteiramente mobile-first (2026-10-29; atualizada em 2026-10-30)
 
 **Regra obrigatória para todo o tema, sem exceção por purpose:** definir a apresentação base a partir do viewport móvel (mínimo 320 px), com aprimoramento progressivo desktop, preservando ordem DOM, foco, acessibilidade, semântica, shell institucional e Domain Header. Converter progressivamente os estilos, layouts, componentes SDC, formulários, navegação, mídia, tabelas, overlays, modal e UI Patterns do ACULTA420, não apenas CSS de Studio.

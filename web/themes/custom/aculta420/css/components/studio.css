@@ -1,28 +1,9 @@
 /* ACULTA Studio (aculta_studio): apresentação das abas, do painel e das ações.
    Marcação neutra vinda do módulo, traduzida em PortalUiHooks::TOKENS. */
-/* Montserrat files are unchanged upstream font software, covered by the bundled OFL.txt. */
-@font-face {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url("../../assets/fonts/montserrat/Montserrat-latin.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url("../../assets/fonts/montserrat/Montserrat-latin-ext.woff2") format("woff2");
-  unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-
 .studio,
 .aculta-profile-editor,
 form.studio-profile-form {
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   font-size: var(--aculta-studio-fidelity-font-size-default);
   line-height: var(--aculta-studio-fidelity-line-height-default);
 }
@@ -86,7 +67,7 @@ body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
 
 .studio :is(h1, h2, h3, h4, h5, h6),
 .aculta-profile-editor :is(h1, h2, h3, h4, h5, h6) {
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-headings);
 }
 
@@ -138,13 +119,13 @@ body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
 
 body.path-marley .aculta-main:has(form.node-revista-form) {
   color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-default);
 }
 
 body.path-marley .aculta-main:has(form.node-revista-form) :is(h1, h2, h3, h4, h5, h6) {
   color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-headings);
 }
 
@@ -155,27 +136,27 @@ body.path-marley .aculta-main:has(form.node-revista-form) h1 {
 
 .aculta-main:has(form.studio-profile-form) {
   color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-default);
 }
 
 body.path-perfil .aculta-main:has(form#aculta-user-studio-nickname-form),
 body.path-perfil .aculta-main:has(form#aculta-user-profile-visibility-form) {
   color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-default);
 }
 
 .aculta-main:has(form.studio-profile-form) :is(h1, h2, h3, h4, h5, h6) {
   color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-headings);
 }
 
 body.path-perfil .aculta-main:has(form#aculta-user-studio-nickname-form) :is(h1, h2, h3, h4, h5, h6),
 body.path-perfil .aculta-main:has(form#aculta-user-profile-visibility-form) :is(h1, h2, h3, h4, h5, h6) {
   color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-headings);
 }
 
@@ -216,13 +197,13 @@ body.path-perfil form#aculta-user-profile-visibility-form .form-type-checkbox la
    global, while the private account shell must not wrap this route. */
 body.path-ganjalab .aculta-main {
   color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-default);
 }
 
 body.path-ganjalab .aculta-main :is(h1, h2, h3, h4, h5, h6) {
   color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-headings);
 }
 
@@ -249,7 +230,7 @@ body.path-ganjalab .aculta-main .aculta-empty-state {
   border-radius: var(--aculta-studio-fidelity-border-radius-tiny);
   color: var(--aculta-studio-fidelity-text);
   background-color: var(--aculta-studio-fidelity-form-surface);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-default);
 }
 
@@ -257,13 +238,13 @@ body.path-ganjalab .aculta-main .aculta-empty-state {
    `.studio` wrapper. Scope its fidelity root to that canonical route only. */
 body.path-culturas .aculta-main {
   color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-default);
 }
 
 body.path-culturas .aculta-main :is(h1, h2, h3, h4, h5, h6) {
   color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-headings);
 }
 
@@ -507,13 +488,13 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
 /* WE SATIVA uses the real Wiki-owned workspace wrapper as its visual root. */
 .aculta-main .we-sativa__workspace {
   color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-default);
 }
 
 .aculta-main .we-sativa__workspace :is(h1, h2, h3, h4, h5, h6) {
   color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-headings);
 }
 
@@ -537,7 +518,7 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
   border-block-end: 1px solid var(--aculta-studio-fidelity-divider);
   color: var(--aculta-studio-fidelity-text);
   background: transparent;
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   font-size: var(--aculta-studio-fidelity-font-size-xl);
   line-height: var(--aculta-studio-fidelity-line-height-headings);
   text-align: start;
@@ -566,7 +547,7 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
   border-radius: var(--aculta-studio-fidelity-border-radius-tiny);
   color: var(--aculta-studio-fidelity-text);
   background-color: var(--aculta-studio-fidelity-form-surface);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-default);
 }
 
@@ -630,7 +611,7 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
   margin-block: var(--aculta-studio-fidelity-row-gap);
   border-collapse: collapse;
   color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
 }
 
 .studio__listing :is(td, th) {
@@ -674,7 +655,7 @@ body.path-culturas main#main-content form.aculta-event-location-form,
   padding: var(--aculta-studio-fidelity-row-gap) var(--aculta-studio-fidelity-gutter);
   color: var(--aculta-studio-fidelity-text);
   background: var(--aculta-studio-fidelity-form-surface);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   font-size: var(--aculta-studio-fidelity-font-size-default);
   line-height: var(--aculta-studio-fidelity-line-height-default);
 }
@@ -748,7 +729,7 @@ body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-eve
 body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(input, select, textarea, .form-control, select.form-control)::placeholder,
 :is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(input, select, textarea, .form-control, select.form-control)::placeholder {
   color: var(--aculta-studio-fidelity-input-placeholder);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
 }
 
 .studio__main form :is(input, select, textarea, .form-control, select.form-control):is(:focus, :focus-visible),
@@ -779,7 +760,7 @@ body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-eve
   border-radius: 0.25rem;
   background: var(--aculta-studio-fidelity-button-background);
   box-shadow: none;
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   font-size: 1rem;
   font-weight: var(--aculta-studio-fidelity-font-weight-bold);
   line-height: 1.5;
@@ -831,7 +812,7 @@ body.path-marley form.node-revista-form {
   color: var(--aculta-studio-fidelity-text);
   border-block-start: 2px solid var(--aculta-studio-fidelity-divider);
   background: var(--aculta-studio-fidelity-form-surface);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
 }
 
 body.path-marley form.node-revista-form :is(.form-item, .form-actions) {
@@ -875,7 +856,7 @@ body.path-marley form.node-revista-form :is(input:not([type="checkbox"]):not([ty
 
 body.path-marley form.node-revista-form :is(input, select, textarea, .form-control, select.form-control)::placeholder {
   color: var(--aculta-studio-fidelity-input-placeholder);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
 }
 
 body.path-marley form.node-revista-form :is(input, select, textarea, .form-control, select.form-control):is(:focus, :focus-visible) {
@@ -897,7 +878,7 @@ body.path-marley form.node-revista-form .form-actions :is(button, input[type="su
   border-radius: 0.25rem;
   background: var(--aculta-studio-fidelity-button-background);
   box-shadow: none;
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   font-size: 1rem;
   font-weight: var(--aculta-studio-fidelity-font-weight-bold);
   line-height: 1.5;
@@ -1041,7 +1022,7 @@ body.path-marley form.node-revista-form .form-actions :is(.form-submit, .button-
 
 .studio-saved-page > .page-title {
   margin: 0;
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-headings);
   overflow-wrap: anywhere;
 }
@@ -1731,7 +1712,7 @@ body.path-marley .aculta-main > .aculta-container:has([data-aculta-studio="root"
    presentation and never hide data that should remain visible. */
 [data-aculta-learning-home] {
   color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-default);
 }
 
@@ -1809,7 +1790,7 @@ body.path-marley .aculta-main > .aculta-container:has([data-aculta-studio="root"
 [data-portal-ui="aculta-learning-room"] {
   min-width: 0;
   color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
+  font-family: var(--aculta-studio-font-family);
   font-size: var(--aculta-studio-fidelity-font-size-default);
   line-height: var(--aculta-studio-fidelity-line-height-default);
   overflow-wrap: anywhere;
@@ -2045,4 +2026,15 @@ body.path-marley .aculta-main > .aculta-container:has([data-aculta-studio="root"
     justify-self: start;
     inline-size: 100%;
   }
+}
+
+.studio :is(h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6),
+.aculta-profile-editor :is(h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6),
+form.studio-profile-form :is(h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6),
+body.path-marley .aculta-main:has(form.node-revista-form) :is(h1, h2, h3, h4, h5, h6),
+.aculta-main:has(form.studio-profile-form) :is(h1, h2, h3, h4, h5, h6),
+body.path-perfil .aculta-main:has(form#aculta-user-studio-nickname-form) :is(h1, h2, h3, h4, h5, h6),
+body.path-perfil .aculta-main:has(form#aculta-user-profile-visibility-form) :is(h1, h2, h3, h4, h5, h6),
+body.path-ganjalab .aculta-main :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--aculta-font-display);
 }
