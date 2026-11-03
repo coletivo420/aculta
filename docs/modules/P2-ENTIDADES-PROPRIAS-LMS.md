@@ -1,6 +1,6 @@
 # P2 — Entidades próprias do aculta_lms (ADR-042)
 
-- **Status:** desenho, para revisão antes do código. Nenhuma entidade criada.
+- **Status:** implementado em `aculta_lms` 0.1.0-dev.129 e vigente em 0.1.0-dev.158; as quatro entidades e a atualização idempotente estão no módulo. Esta atualização registra o estado do desenho sem alterar o modelo aprovado.
 - **Data:** 2026-11-02
 - **Decisões do responsável:** os quatro modelos (aula, atividade, resposta e progresso) entram juntos no P2; os campos são do ACULTA, sem espelhar o contrib e sem migração de conteúdo legado (ADR-042, decisões 5 e escolha de 2026-11-02).
 - **Relaciona-se com:** ADR-042 (P2), ADR-041 (xAPI: referência opaca `lesson_status_id`).
@@ -79,6 +79,11 @@
 - Unit de cada restrição de domínio (já cobertas no valor objeto; a entidade reusa a mesma regra).
 - Atualização `hook_update` idempotente: rodar duas vezes sem erro.
 - Gate do Portal sem expansão de dívida.
+
+## Limites registrados para P5
+
+- `aculta_lms_answer` implementa o contrato `CourseAnswer`: atividade, estudante, estado, nota e datas. O desenho P2 não define persistência de payload de resposta, tentativas, comentários ou anexos. Esses dados não foram adicionados nem migrados.
+- A ADR-042 determina que comentários e envio de arquivo passem a ser responsabilidade ACULTA, mas o contrato e o esquema próprios desses recursos ainda precisam ser definidos antes de substituir seus fluxos contrib.
 
 ## Riscos
 
