@@ -1,5 +1,11 @@
 > Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
 
+## 0.1.0-dev.41 — evitar listener duplicado na navegação AJAX da Conta
+
+- A Conta instancia `Drupal.Ajax` sem alvo/evento Core e executa a requisição pelo handler delegado; isso evita registrar um segundo clique Core nos links após trocas e falhas.
+- Firefox ESR visível no Runtime: 92/92 verificações aplicáveis PASS, 22 SKIP; nove rotas Conta diretas HTTP 200, navegação AJAX/histórico/mobile, retry 403/404, timeout/resposta tardia, sessão expirada, Form API inválido/válido, Dashboard, Perfil, Marley, layout 320–1440px e zoom 200/400% aprovados. No-JS 4/4 PASS.
+- Senha/upload/anexos e escritas pessoais não foram submetidos; leitor de tela e comparação pareada com a prancha (imagem não disponível localmente) permanecem DEFERRED.
+
 ## Implementação pendente de validação — Conta Studio (2026-11-03)
 
 - Shell privado com navegação AJAX própria, histórico, metadados do renderer Account, estados de espera/falha e preservação do menu aberto/fechado. Form API continua sob os owners atuais.
