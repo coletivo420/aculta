@@ -1,5 +1,9 @@
 # Roadmap — ACULTA420
 
+## Conta Studio em painéis próprios — 0.7.0-dev.31 (2026-11-03; validação Runtime pendente)
+
+`studio-account-contextual-nav` não reutiliza mais `nav-tabs`/`studio__subtabs` do Marley: o tema o apresenta como lista vertical, com indicador ativo, dentro de painel semântico; o painel do owner Form API também recebe superfície própria. Reutiliza a estrutura nativa `details`, lista Drupal e Form API, pois nenhum SDC existente é adequado para controlar menu contextual e agrupar formulários de proprietários distintos. Tokens de superfície, borda, raio e sombra ACULTA420 respeitam claro/escuro; sem mudança no cabeçalho. Firefox e regressão pós-sync pendentes.
+
 ## Studio Dashboard, Meu Perfil e cabeçalho de Marley — 0.7.0-dev.30 (2026-11-03; Runtime pendente)
 
 `account-entry-links` usa o SDC existente `aculta420:card`/`studio_fidelity`; `profile-editor` distribui identidade à esquerda e bio/redes à direita em desktop. Dentro da coluna lateral, `profile-identity` empilha as ações abaixo da identidade. A listagem editorial do Marley agrupa título e ação em cabeçalho semântico e mantém a tabela rolável em viewport estreito. Mobile continua em uma coluna. Tokens e cores ACULTA420 existentes; barra e cores do cabeçalho não alteradas. Theme Unit 49/355, Design Foundations 2441 checks, PHP lint e PHPCS PASS. Firefox confirmou 97/97 verificações aplicáveis (21 SKIP), incluindo Perfil legível e alinhamento/uso em 320/390px no Marley. Referência principal em `docs/portal/studio-visual/referencias/`.

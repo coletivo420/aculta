@@ -620,7 +620,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `studio-saved-tabs` | `nav nav-tabs studio-saved-tabs` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
 | `studio-account-section` | `studio studio-account-section` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php` |
 | `studio-account-nav-link` | `nav-link studio__link` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php` |
-| `studio-account-contextual-nav` | `nav nav-tabs studio__subtabs` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php` |
+| `studio-account-contextual-nav` | `studio-account-nav-list` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php`; lista vertical em painel próprio, sem herdar o estilo de abas do Marley |
 | `studio-hub` | `studio` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioHubController.php` |
 | `studio-experiences` | `studio__actions list-unstyled d-grid gap-2` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioHubController.php` |
 | `studio-tabs` | `nav nav-tabs studio__tabs` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |

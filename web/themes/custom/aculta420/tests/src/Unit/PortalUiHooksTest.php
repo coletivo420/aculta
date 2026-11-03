@@ -578,6 +578,24 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
+   * Studio Account navigation remains a vertical navigation list, not tabs.
+   */
+  public function testMapsStudioAccountNavigationToItsOwnListStyle(): void {
+    $variables = [
+      'attributes' => new Attribute([
+        'data-portal-ui' => 'studio-account-contextual-nav',
+      ]),
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    $attributes = $variables['attributes'];
+    $this->assertTrue($attributes->hasClass('studio-account-nav-list'));
+    $this->assertFalse($attributes->hasClass('nav-tabs'));
+    $this->assertFalse($attributes->hasClass('studio__subtabs'));
+  }
+
+  /**
    * Download formatter and saved-content tokens keep presentation in the theme.
    */
   public function testMapsDocumentDownloadAndStudioSavedContentTokens(): void {

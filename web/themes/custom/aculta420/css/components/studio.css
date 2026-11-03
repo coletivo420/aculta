@@ -936,9 +936,48 @@ body.path-marley form.node-revista-form .form-actions :is(.form-submit, .button-
 }
 
 .studio-account-section__navigation,
-.studio-account-section [data-aculta-account-main] { min-width: 0; width: 100%; }
-.studio-account-section__navigation ul { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--aculta-studio-fidelity-row-gap); margin: 0; padding: 0; list-style: none; }
-.studio-account-section__navigation a { display: flex; min-height: 2.75rem; align-items: center; }
+.studio-account-section [data-aculta-account-main] {
+  min-width: 0;
+  width: 100%;
+  border: 1px solid var(--aculta-border-default);
+  border-radius: var(--aculta-studio-fidelity-border-radius-tiny);
+  background: var(--aculta-surface-raised);
+  box-shadow: var(--aculta-shadow-raised);
+}
+
+.studio-account-section__navigation { padding: var(--aculta-studio-fidelity-row-gap); }
+.studio-account-section__navigation > summary { color: var(--aculta-text-primary); font-weight: 700; }
+.studio-account-nav-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--aculta-studio-fidelity-row-gap);
+  margin: var(--aculta-studio-fidelity-row-gap) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.studio-account-nav-list > li { min-width: 0; margin: 0; }
+.studio-account-nav-list a {
+  display: flex;
+  min-height: 2.75rem;
+  align-items: center;
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: var(--aculta-studio-fidelity-border-radius-tiny);
+  color: var(--aculta-text-primary);
+  text-decoration: none;
+}
+.studio-account-nav-list a:hover,
+.studio-account-nav-list a:focus-visible { border-color: var(--aculta-border-default); background: var(--aculta-surface-muted); }
+.studio-account-nav-list a[aria-current="page"] {
+  border-color: var(--aculta-interactive-border);
+  background: var(--aculta-interactive-bg);
+  color: var(--aculta-interactive-text);
+  font-weight: 700;
+}
+.studio-account-section [data-aculta-account-main] {
+  padding: clamp(1rem, 2.4vw, 2rem);
+}
 .studio-account-section [data-aculta-account-live]:empty { display: none; }
 .studio-account-identity { display: grid; gap: var(--aculta-studio-fidelity-row-gap); }
 .studio-account-identity__avatar { min-inline-size: 0; }

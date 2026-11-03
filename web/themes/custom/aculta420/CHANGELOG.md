@@ -1,3 +1,8 @@
+## 0.7.0-dev.31 — apresentar Conta Studio em painéis próprios (2026-11-03)
+
+- `studio-account-contextual-nav` deixa de herdar as abas editoriais do Marley; o tema apresenta a navegação contextual como lista vertical independente. Menu e conteúdo da Conta recebem superfícies elevadas, bordas e raios pelos tokens semânticos, preservando `<details>`, Form API e os owners.
+- Harness Firefox acrescenta checks de lista vertical, estado ativo e caixas. Unit tema, gates e Runtime serão registrados após sincronização; cabeçalho global sem mudança.
+
 ## 0.7.0-dev.30 — compor cabeçalho editorial com ações (2026-11-03)
 
 - A seção editorial do Marley reutiliza o token semântico `studio-section-header` para posicionar o título e a ação do owner em uma caixa alinhada; a lista Drupal mantém seu conteúdo acessível e o tema limpa apenas a moldura visual herdada nesse cabeçalho.

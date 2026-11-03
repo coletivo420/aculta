@@ -597,7 +597,7 @@ final class PortalUiHooks {
     'studio-account-navigation' => ['studio-account-section__navigation'],
     'studio-account-identity' => ['studio-account-identity'],
     'studio-account-nav-link' => ['nav-link', 'studio__link'],
-    'studio-account-contextual-nav' => ['nav', 'nav-tabs', 'studio__subtabs'],
+    'studio-account-contextual-nav' => ['studio-account-nav-list'],
     'studio-hub' => ['studio', 'studio-hub'],
     'studio-experiences' => ['studio__actions', 'list-unstyled', 'd-grid', 'gap-2'],
     'studio-tabs' => ['nav', 'nav-tabs', 'studio__tabs'],
