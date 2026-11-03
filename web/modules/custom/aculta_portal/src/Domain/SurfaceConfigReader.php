@@ -56,6 +56,41 @@ final class SurfaceConfigReader {
   }
 
   /**
+   * Caminho de diretório configurado (/slug), sem olhar o interruptor.
+   *
+   * Usado pelo formulário e pela conferência. Retorna NULL se a superfície
+   * não estiver em modo diretório, estiver desativada ou tiver slug inválido.
+   */
+  public function caminhoDiretorioConfigurado(string $purpose): ?string {
+    $linha = $this->superficies()[$purpose] ?? NULL;
+    if ($linha === NULL || $purpose === DomainSurfaceMap::MAIN || !$linha['ativa'] || $linha['modo'] !== 'diretorio') {
+      return NULL;
+    }
+    if (!in_array($purpose, self::DIRETORIO_PERMITIDO, TRUE)) {
+      return NULL;
+    }
+    $slug = $linha['slug'];
+    if (!preg_match(self::PADRAO_SLUG, $slug) || in_array($slug, self::RESERVADOS, TRUE)) {
+      return NULL;
+    }
+    return '/' . $slug;
+  }
+
+  /**
+   * Caminho de diretório em vigor (Fase 3.5).
+   *
+   * Só devolve o caminho com leitura_ativa ligada. Com o padrão (desligada),
+   * retorna NULL e nenhum comportamento muda. Hoje a resolução de /slug no
+   * MAIN ainda não existe: ver docs do submódulo aculta_superficies (DEFERRED).
+   */
+  public function caminhoDiretorioAtivo(string $purpose): ?string {
+    if (!$this->leituraAtiva()) {
+      return NULL;
+    }
+    return $this->caminhoDiretorioConfigurado($purpose);
+  }
+
+  /**
    * Superfícies por purpose, com padrões onde a configuração não define.
    *
    * @return array<string, array{modo: string, ativa: bool, slug: string, titulo: string}>

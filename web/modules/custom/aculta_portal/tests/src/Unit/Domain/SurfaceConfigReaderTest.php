@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Unit\Domain;
 
+use Drupal\aculta_portal\Domain\DomainSurfaceMap;
 use Drupal\aculta_portal\Domain\SurfaceConfigReader;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
@@ -103,6 +104,27 @@ final class SurfaceConfigReaderTest extends UnitTestCase {
       $s[$purpose] = ['modo' => 'diretorio', 'ativa' => TRUE, 'slug' => 'ok-' . $purpose, 'titulo' => 'X'];
       $this->assertSame([], SurfaceConfigReader::validar($s), $purpose);
     }
+  }
+
+  /**
+   * Caminho de diretório só entra em vigor com leitura_ativa ligada (Fase 3.5).
+   */
+  public function testCaminhoDiretorioSoComInterruptor(): void {
+    $superficies = self::padrao();
+    $superficies['eventos'] = ['modo' => 'diretorio', 'ativa' => TRUE, 'slug' => 'eventos', 'titulo' => 'Eventos'];
+
+    $desligada = new SurfaceConfigReader($this->getConfigFactoryStub([
+      SurfaceConfigReader::CONFIG_NAME => ['leitura_ativa' => FALSE, 'superficies' => $superficies],
+    ]));
+    $this->assertSame('/eventos', $desligada->caminhoDiretorioConfigurado('eventos'));
+    $this->assertNull($desligada->caminhoDiretorioAtivo('eventos'));
+
+    $ligada = new SurfaceConfigReader($this->getConfigFactoryStub([
+      SurfaceConfigReader::CONFIG_NAME => ['leitura_ativa' => TRUE, 'superficies' => $superficies],
+    ]));
+    $this->assertSame('/eventos', $ligada->caminhoDiretorioAtivo('eventos'));
+    $this->assertNull($ligada->caminhoDiretorioAtivo(DomainSurfaceMap::MAIN));
+    $this->assertNull($ligada->caminhoDiretorioAtivo('wiki'));
   }
 
 }

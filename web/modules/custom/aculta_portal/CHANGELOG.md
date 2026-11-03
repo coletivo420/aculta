@@ -1,3 +1,9 @@
+## 0.4.1-dev.66 — caminho de diretório atrás do interruptor (Fase 3.5)
+
+- `SurfaceConfigReader::caminhoDiretorioConfigurado()` e `caminhoDiretorioAtivo()`: o caminho `/slug` de superfície em modo diretório só entra em vigor com `leitura_ativa` ligado. Com o padrão (desligado), retorna NULL e nenhum comportamento muda.
+- A resolução de `/slug` no MAIN não foi implementada (DEFERRED: exige teste de rota no Runtime).
+- Testes: `SurfaceConfigReaderTest::testCaminhoDiretorioSoComInterruptor` escrito, DEFERRED (sem vendor/ nem Runtime). Conferência standalone da lógica com stub de configuração: 9/9 PASS.
+
 ## 0.4.1-dev.65 — subscriber de superfícies desligado (Fase 3.4)
 
 - `SurfaceRequestSubscriber`: responde 404 para superfície desativada, só com `leitura_ativa` ligado. Desligado por padrão; nenhum comportamento muda. Ativação depende do teste de rota da 3.0 no Runtime.
