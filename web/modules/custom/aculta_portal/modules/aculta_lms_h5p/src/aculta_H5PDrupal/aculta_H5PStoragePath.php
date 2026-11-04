@@ -27,7 +27,10 @@ final class aculta_H5PStoragePath implements aculta_H5PStoragePathInterface {
       throw new \RuntimeException('The private H5P storage path is invalid.');
     }
     $uri = 'private://' . $relativePath;
-    if (!$this->fileSystem->prepareDirectory($uri, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
+    // Keep permissions of an existing directory intact. The private H5P
+    // directory may be group-writable by the web user without being owned by
+    // it, so requesting MODIFY_PERMISSIONS would make chmod fail.
+    if (!$this->fileSystem->prepareDirectory($uri, FileSystemInterface::CREATE_DIRECTORY)) {
       throw new \RuntimeException('The private H5P storage directory is unavailable.');
     }
     $path = $this->fileSystem->realpath($uri);

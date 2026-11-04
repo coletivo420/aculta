@@ -605,3 +605,13 @@ RUNTIME STATUS: PARTIAL.
 - Acesso de estudante e educador, painel, formatter, editor e integrações agora tipam cursos por `GroupInterface`; permissão de estudante usa `take course` no Group.
 - Unit H5P 34/139 PASS; Kernel de acesso/integração 3/134 PASS, com 44 depreciações upstream.
 
+## 0.4.0-dev.175 — respeita permissões do storage H5P
+
+- A preparação do diretório privado deixa de solicitar `MODIFY_PERMISSIONS`.
+  O usuário do PHP-FPM pode escrever pela associação ao grupo `aculta`, mas não
+  é o proprietário da pasta para executar `chmod`; o fluxo agora preserva as
+  permissões existentes e ainda cria o caminho quando ele não existe.
+- Unit focal: 1 teste/8 asserções PASS. PHPCS Drupal/DrupalPractice, lint PHP,
+  atualização do Runtime e validação HTTP autenticada serão registrados após
+  concluir a verificação da entrega.
+
