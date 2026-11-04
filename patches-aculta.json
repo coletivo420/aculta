@@ -58,6 +58,12 @@
                 "url": "patches/commerce-views-default-table-class.patch",
                 "sha256": "d54ec831deacf4baa5ff191a5d234e644042622a2e199906b5a736cd27cb9a9a",
                 "depth": 1
+            },
+            {
+                "description": "Replace removed Drupal 12 Entity::$original access with getOriginal()/setOriginal()",
+                "url": "patches/commerce-original-entity-api.patch",
+                "sha256": "4ba523200183f7a43897fd06f17b07cbf9e2ff6aca051462745480e4f91ad1fb",
+                "depth": 1
             }
         ],
         "drupal/group": [

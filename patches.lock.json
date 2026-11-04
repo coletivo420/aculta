@@ -1,5 +1,5 @@
 {
-    "_hash": "6cbcfeaecb235ee2537525783d916b621fbe7534d5458e526da8fa08f5690c74",
+    "_hash": "24d599e576e93562fb8cdc24d46218960ddffe35e9ac7d383c28822754039eb0",
     "patches": {
         "drupal/address": [
             {
@@ -87,6 +87,16 @@
                 "description": "Declare default table CSS class in Commerce provided Views (Drupal 12 change record 3499943)",
                 "url": "patches/commerce-views-default-table-class.patch",
                 "sha256": "d54ec831deacf4baa5ff191a5d234e644042622a2e199906b5a736cd27cb9a9a",
+                "depth": 1,
+                "extra": {
+                    "provenance": "patches-file:patches-aculta.json"
+                }
+            },
+            {
+                "package": "drupal/commerce",
+                "description": "Replace removed Drupal 12 Entity::$original access with getOriginal()/setOriginal()",
+                "url": "patches/commerce-original-entity-api.patch",
+                "sha256": "4ba523200183f7a43897fd06f17b07cbf9e2ff6aca051462745480e4f91ad1fb",
                 "depth": 1,
                 "extra": {
                     "provenance": "patches-file:patches-aculta.json"
