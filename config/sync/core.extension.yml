@@ -184,7 +184,6 @@ module:
   schema_web_page: 0
   schema_web_site: 0
   sdc_devel: 0
-  search: 0
   search_api: 0
   search_api_db: 0
   security_review: 0
