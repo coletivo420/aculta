@@ -1,5 +1,13 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.29 — clarifica os campos do formulário contextual
+
+- Renomeia a lista interna para `CONTEXTUAL_FIELDS`, pois ela inclui o widget
+  `field_h5p_activities` registrado pelo módulo proprietário, além dos campos
+  de recursos gerenciados por este módulo.
+- Nenhuma relação, autorização, widget ou dado persistido foi alterado.
+- Unit focal `CourseMaterialsFormTest`: 1 teste / 22 assertions PASS.
+
 ## 0.1.0-dev.28 — reutiliza o editor H5P no workspace do educador
 
 - O formulário contextual de materiais inclui `field_h5p_activities` somente

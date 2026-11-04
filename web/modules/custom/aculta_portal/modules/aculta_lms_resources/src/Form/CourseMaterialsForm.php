@@ -28,11 +28,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final class CourseMaterialsForm extends FormBase implements ContainerInjectionInterface {
 
   /**
-   * Material fields owned by this module on the Group course entity.
+   * Owner fields copied into this contextual Group course form.
    *
    * @var list<string>
    */
-  private const MATERIAL_FIELDS = [
+  private const CONTEXTUAL_FIELDS = [
     'field_lms_readings',
     'field_lms_galleries',
     'field_lms_videos',
@@ -85,7 +85,7 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
 
     $display = $this->materialsFormDisplay();
     $available = FALSE;
-    foreach (self::MATERIAL_FIELDS as $field_name) {
+    foreach (self::CONTEXTUAL_FIELDS as $field_name) {
       if (!$course->hasField($field_name) || !$display->getComponent($field_name)) {
         continue;
       }
@@ -151,7 +151,7 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
       'status' => TRUE,
     ]);
     if ($source instanceof EntityFormDisplay) {
-      foreach (self::MATERIAL_FIELDS as $field_name) {
+      foreach (self::CONTEXTUAL_FIELDS as $field_name) {
         $component = $source->getComponent($field_name);
         if ($component !== NULL) {
           $display->setComponent($field_name, $component);
