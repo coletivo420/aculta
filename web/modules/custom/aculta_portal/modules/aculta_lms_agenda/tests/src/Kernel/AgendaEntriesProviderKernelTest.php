@@ -14,6 +14,8 @@ use Drupal\aculta_lms\Entity\ActivityEntity;
 use Drupal\aculta_lms\Entity\LessonEntity;
 use Drupal\aculta_lms_agenda\Hook\EventAccessHooks;
 use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupRole;
+use Drupal\group\PermissionScopeInterface;
 use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
 use Drupal\Tests\aculta_lms\Kernel\AcultaLmsDependencyHarnessTrait;
 use Drupal\Tests\user\Traits\UserCreationTrait;
@@ -102,6 +104,7 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $this->installEntitySchema('action');
     $this->installEntitySchema('user');
     $this->installSchema('user', ['users_data']);
+    $this->installSchema('entity_usage', ['entity_usage']);
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
@@ -142,6 +145,56 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     ]);
     $activity->save();
     return $activity;
+  }
+
+  /**
+   * Course publication changes invalidate a cached agenda-event denial.
+   */
+  public function testCoursePublicationInvalidatesClassEventAccess(): void {
+    $owner = $this->createUser();
+    $course = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Curso que será publicado',
+      'uid' => $owner->id(),
+      'status' => FALSE,
+    ]);
+    $course->save();
+    $class = Group::create([
+      'type' => 'lms_class',
+      'label' => 'Turma com curso em rascunho',
+      'uid' => $owner->id(),
+      'status' => TRUE,
+    ]);
+    $class->save();
+    $course->addRelationship($class, 'lms_classes');
+    $student = $this->createUser();
+    GroupRole::create([
+      'id' => 'lms_course-agenda_student',
+      'label' => 'Estudante de teste da agenda',
+      'group_type' => 'lms_course',
+      'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
+      'permissions' => ['take course'],
+    ])->save();
+    $course->addMember($student, ['group_roles' => ['lms_course-agenda_student']]);
+
+    $access = $this->container->get('aculta_lms.class_activity_deadline_access');
+    $denial = $access->courseAccessForClass($class, $student);
+    $this->assertFalse($denial->isAllowed());
+    $this->assertContains('group:' . $course->id(), $denial->getCacheTags());
+    $this->assertContains(
+      'group_relationship_list:plugin:lms_classes:entity:' . $class->id(),
+      $denial->getCacheTags(),
+    );
+
+    $course->set('status', TRUE)->save();
+    $this->container->get('entity_type.manager')->getStorage('group')->resetCache();
+    $this->container->get('entity_type.manager')->getStorage('group_relationship')->resetCache();
+    $course = Group::load($course->id());
+    $this->assertNotNull($course);
+    $this->assertTrue($course->isPublished());
+    $this->assertSame((string) $course->id(), (string) $access->courseForClass($class)?->id());
+    $this->assertTrue($course->hasPermission('take course', $student));
+    $this->assertTrue($access->courseAccessForClass($class, $student)->isAllowed());
   }
 
   /**

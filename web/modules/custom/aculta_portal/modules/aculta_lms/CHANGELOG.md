@@ -1469,3 +1469,9 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
 - Olivero validado no Firefox ESR visível em 1440 px e 320 px: 10/10 verificações PASS para formulário, upload, recusa de extensão, envio e JavaScript. O tema foi habilitado somente durante a validação e restaurado para `aculta420` ao final.
 
 
+# 0.1.0-dev.207 — invalida acesso à agenda ao publicar o curso
+
+- A negativa de acesso a eventos da turma agora inclui o curso pai como dependência cacheável quando ele está em rascunho. A publicação do curso invalida a negativa anterior e permite a reavaliação de matrícula/permissão.
+- Kernel da Agenda LMS cobre as tags de cache e a transição de rascunho para publicado; Agenda Kernel 5/195 e Unit 8/18 PASS. LMS Unit 270/1.024 e Kernel 41/1.330 PASS.
+- Teste responsivo funcional já documentado: formulários de autoria de aula e atividade excedem a largura da viewport entre 320 e 600 px por campos de 635 px. Sem ajuste visual nesta entrega.
+

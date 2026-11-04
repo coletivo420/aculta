@@ -1,5 +1,9 @@
 # Roadmap — ACULTA Agenda LMS (`aculta_lms_agenda`)
 
+## Invalidação de acesso após publicação do curso — 2026-11-04
+
+Quando o curso pai existe, mas está em rascunho, a resposta proibida para evento de turma agora carrega o curso como dependência de cache. Assim, publicar o curso invalida a negativa previamente armazenada. O Kernel verifica tags do curso e da relação `lms_classes` e permite acesso após a publicação para estudante matriculado com `take course`. Agenda Kernel 5/195, Agenda Unit 8/18, LMS Unit 270/1.024 e LMS Kernel 41/1.330 passaram. As depreciações restantes reportadas nas suítes Kernel são de Core/contrib.
+
 ## D-15 — agenda por matrícula
 
 - [x] Provedor inclui prazos e eventos somente para membros da turma publicada, se o curso pai estiver publicado e

@@ -781,7 +781,7 @@ permissão à espera de snapshot/import. Shell editor contextual, materiais,
 
 ### Microfase — acesso da agenda de turma pelo adapter LMS
 
-`aculta_lms_agenda` não importa mais `Drupal\\lms\\Entity\\Bundle\\CourseInterface` para autorizar eventos de turma. A verificação de curso publicado e `take course` foi centralizada em `ClassActivityDeadlineAccessCheck::courseAccessForClass()`, que retorna `AccessResult` com dependências e tags de cache; a agenda mantém a validação de membership ativa da turma. A mudança remove um import contrib fora do provider. **Estado:** implementada em `dev`; testes automatizados e Runtime desta microfase pendentes. Não altera conteúdo, memberships nem configuração.
+`aculta_lms_agenda` não importa mais `Drupal\\lms\\Entity\\Bundle\\CourseInterface` para autorizar eventos de turma. A verificação de curso publicado e `take course` foi centralizada em `ClassActivityDeadlineAccessCheck::courseAccessForClass()`, que retorna `AccessResult` com dependências e tags de cache; a agenda mantém a validação de membership ativa da turma. A negativa também depende do curso pai em rascunho, invalidando-se quando ele é publicado. **Estado:** implementada em `dev`; Agenda Kernel 5/195 e Unit 8/18, LMS Kernel 41/1.330 e Unit 270/1.024 PASS. Smoke autenticado de evento no Runtime fica pendente porque não há evento ligado a turma no banco atual e a validação não criou conteúdo. Não altera conteúdo, memberships nem configuração.
 
 ### Próximos gates
 
