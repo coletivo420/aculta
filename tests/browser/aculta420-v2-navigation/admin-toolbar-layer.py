@@ -101,13 +101,13 @@ try:
           const toolbarBar=fixture.dataset.adminSidebarFixture==='core'?fixture.querySelector('.toolbar-bar'):null;
           const barRect=bar.getBoundingClientRect(), sideRect=sidebar.getBoundingClientRect();
           const barStyle=getComputedStyle(bar), sideStyle=getComputedStyle(sidebar);
-          const barPoint={x:Math.max(0,Math.min(innerWidth-1,Math.round(barRect.left+4))),
-            y:Math.max(0,Math.min(innerHeight-1,Math.round((barRect.top+barRect.bottom)/2)))};
+          const barY=Math.max(0,Math.min(innerHeight-1,Math.round((barRect.top+barRect.bottom)/2)));
+          const barPoint={x:Math.max(0,Math.min(innerWidth-1,Math.round(barRect.left+4))),y:barY};
           const sidePoint={x:Math.max(0,Math.min(innerWidth-1,Math.round(sideRect.left+4))),
             y:Math.max(0,Math.min(innerHeight-1,Math.round(sideRect.top+4)))};
           const barHit=document.elementFromPoint(barPoint.x,barPoint.y);
           const sideHit=document.elementFromPoint(sidePoint.x,sidePoint.y);
-          return {variant:fixture.dataset.adminSidebarFixture,viewport:innerWidth,barTop:Math.round(barRect.top),barBottom:Math.round(barRect.bottom),
+          return {variant:fixture.dataset.adminSidebarFixture,viewport:innerWidth,barLeft:Math.round(barRect.left),barRight:Math.round(barRect.right),barTop:Math.round(barRect.top),barBottom:Math.round(barRect.bottom),
             barZIndex:barStyle.zIndex,sidebarTop:Math.round(sideRect.top),sidebarBottom:Math.round(sideRect.bottom),
             sidebarZIndex:sideStyle.zIndex,barPointHit:Boolean(barHit?.closest('.aculta-institution-bar')),
             sidebarPointHit:Boolean(sideHit?.closest('[data-admin-sidebar-fixture]')),
@@ -124,7 +124,7 @@ try:
             )
             result["passed"] = (
                 result["viewport"] == width
-                and result["barZIndex"] == "1300"
+                and result["barZIndex"] == "2000"
                 and correct_layer_order
                 and abs(result["sidebarTop"] - (
                     result["toolbarBarBottom"] if variant == "core" else result["barBottom"]
