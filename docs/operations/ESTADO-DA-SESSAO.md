@@ -903,3 +903,45 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Dev.210 — invalidação de matrícula:** cache tags do curso e das memberships das turmas vinculadas foram centralizadas em `LearningEligibilityInterface`. Acesso a aula, submissão e download de anexos propagam as tags em resultados permitidos/negados. LMS Unit 272/1.039 PASS; `LearningDashboardKernelTest` 1/47 PASS; PHPCS, PHP lint e `git diff --check` PASS. O Kernel apresentou quatro depreciações de Entity Print/Core na inicialização, sem falhas. Commit `efdcc5f949af10a3f3462589c4a3adf4e761e5f7` enviado a `origin/dev`; Runtime no mesmo HEAD, `drush cr` PASS, sem updates ou config drift.
 - **Dev.209 — cobertura de URLs:** `LmsFriendlyRouteProcessorTest` (1 teste/7 assertions) comprova tags de lista de aulas e atividades nos links de resposta; Unit LMS 271/1.034, PHPCS, PHP lint e diff check PASS. Nenhuma escrita Runtime.
 - **Auditoria funcional LMS — 2026-11-04:** suíte Kernel completa de `aculta_lms` passou: 41 testes / 1.342 assertions; 115 depreciações de Core/contrib, sem falhas. Runtime `cursos` (read-only) confirmou `aculta_lms_resources` habilitado, `field.storage.group.field_lms_{readings,galleries,videos}` e as três instâncias do bundle `lms_course`; `updatedb:status` sem updates e `config:status` sem diferenças. Corrigidos os registros obsoletos de instalação pendente no roadmap e README de recursos. Não houve update, import, conteúdo ou login autenticado. Próximo gate funcional F15: smoke autenticado dos recursos efetivamente vinculados a um curso autorizado; fixtures reais apropriadas ainda não estão disponíveis. F11 também tem bloqueador Drupal 12 em Entity Print; F9 tem Webform/Webform Score sem compatibilidade Drupal 12 declarada pelas versões/branches hoje usadas. Manter pagamentos depois das lacunas funcionais do LMS.
+## Handoff — tokens/fundações V2 e correção da raiz Links — 2026-11-04
+
+- **Estado:** tokens/fundações (`1.2.0-dev.1`) publicados; Fase 1 do ADR-046
+  permanece aberta para shell, chave de purpose e UI Styles. Sem fase completa
+  anunciada antes de cobrir os gates restantes.
+- **Fix imediato:** `aculta_linkweed` registrava templates Twig com nomes que
+  não correspondiam aos arquivos existentes. Commit publicado `b726811a24`
+  (`corrige templates Twig do purpose links`), versão `0.4.0-dev.36`. Root
+  Links HTTP 200 e alias interno HTTP 404 após `drush cr`; Unit focal 1/4,
+  PHPCS e PHP lint PASS. Runtime `updatedb:status` sem atualizações e
+  `config:status` sem diferenças.
+- **Fundação visual:** commit publicado `05b23f88b3`
+  (`feat(aculta420_v2): consolida fundações mobile-first`). Inclui tokens,
+  tipografia, foco, reduced-motion, dimensionamento responsivo de controles,
+  gate de contraste e runner Firefox ESR.
+- **Evidência:** baseline visual/código `676ff17449`; dez purposes anônimos,
+  URLs e capturas em `$SUITE_OUT/aculta420-v2-foundations-full/` (fora do Git).
+  180/180 estados de viewport/modo sem overflow; 10/10 Tab e 10/10 Shift+Tab;
+  zoom real 200% e 400% em 320 CSS px: 10/10 por nível; sem JS 90/90;
+  reduced motion 180/180, transição 0,01 ms. Domínios/URLs vêm de
+  `docs/architecture/multidomain.md`. Estados autenticados e leitor de tela
+  permanecem DEFERRED.
+- **Contraste escuro:** 33 pares de texto passam 4,5:1 (mínimos: muted/raised
+  6,78:1; link editorial/raised 6,07:1). Foco: mínimo 7,16:1; bordas: mínimo
+  3,21:1.
+- **Gates:** V2 foundations PASS; SDC schema 55 componentes/764 checks PASS;
+  Design Foundations 2468 PASS; browser validators 21 PASS; shell contract 13
+  PASS; SDC discovery 15/15 PASS. `validate-aculta420-foundation.php` falha
+  com `ACULTA420 is the default public theme.` porque valida a V1/Bootstrap5;
+  o tema ativo no Runtime é `aculta420_v2`. Não alterado o gate legado.
+- **Runtime:** `toca`, Drupal 11.5.0-beta1, banco `aculta_runtime`, V2 ativa.
+  Após cada push: cache rebuild PASS, nenhuma atualização de banco e nenhuma
+  divergência de config. Runtime no commit `05b23f88b3`.
+- **Preservado fora dos commits:** alterações paralelas em `composer.json`,
+  `composer.lock`, `web/themes/custom/aculta420/js/utility-drawers.js` e
+  `web/themes/custom/aculta_theme/`.
+- **Próximo:** revisar e comparar Institution Bar, Domain Header, navegação,
+  rodapé e regiões Twig contra a V1 somente leitura; não redesenhar os contratos
+  do shell. Releia guardrails mobile-first e ADR-046 §3 antes de CSS/SDC/Twig.
+  Depois, avaliar a chave neutra do Portal, compatibilidade do UI Styles e
+  auditoria dos componentes conforme ADR-046 e gates por purpose.
+
