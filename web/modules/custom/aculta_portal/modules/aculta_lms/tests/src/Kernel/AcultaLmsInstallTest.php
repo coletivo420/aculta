@@ -137,6 +137,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->assertSame('/painel-administrativo/lms/curso/{course}/turma/{group}/painel', $dashboardRoute->getPath());
     $rosterRoute = $container->get('router.route_provider')->getRouteByName('aculta_lms.class_roster_settings');
     $this->assertSame('/painel-administrativo/lms/curso/{course}/turma/{group}/participantes', $rosterRoute->getPath());
+    $this->assertTrue($rosterRoute->getOption('no_cache'));
     $menuLinks = [
       'system.admin_lms.lessons' => [],
       'system.admin_lms.activities' => [],

@@ -78,6 +78,7 @@ aculta_lms.class_roster_settings:
     _custom_access: 'aculta_lms.class_dashboard_access:access'
   options:
     _admin_route: true
+    no_cache: true
     parameters:
       course:
         type: entity:group

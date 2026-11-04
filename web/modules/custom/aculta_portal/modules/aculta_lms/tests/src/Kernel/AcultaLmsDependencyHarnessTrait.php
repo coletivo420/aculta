@@ -53,6 +53,11 @@ trait AcultaLmsDependencyHarnessTrait {
    * Group relationship field and Drupal 12 requires its entity schema first.
    */
   protected function prepareAcultaLmsGroupTypes(): void {
+    // The LMS ships admin Views whose menu displays depend on system.menu.admin.
+    // Some partial Kernels install the module before their test method installs
+    // module configuration, so prepare the dependency before enabling aculta_lms.
+    $this->installConfig(['system']);
+
     // The LMS installs its answer-feedback Comment type. Keep this shared
     // harness complete even in focused tests that do not exercise comments.
     if (!$this->container->get('module_handler')->moduleExists('comment')) {
