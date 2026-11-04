@@ -1,6 +1,6 @@
 # ADR-044 — Ampliação do uso de CTools: AJAX responder, exportables e form wizard
 
-- **Status:** proposto. Escopo definido pelo responsável em 2026-11-04 (seção 2). A implementação do AJAX responder depende de decisão sobre jQuery (seção 3.1). Os demais itens dependem de verificação no código instalado (seções 3.2 e 3.3).
+- **Status:** **revisado em 2026-11-04**, a pedido do responsável, que pediu para recomeçar a análise de CTools, jQuery e AJAX. As decisões vigentes estão na seção 2 (revisão). As decisões anteriores ficam registradas como histórico. Nenhum código foi implementado a partir delas.
 - **Data:** 2026-11-04.
 - **Relaciona-se com:** `web/modules/custom/aculta_portal/docs/CTOOLS.md` (uso atual e limites), `web/modules/custom/aculta_portal/docs/AGENT-POLICIES.md` (seção "CTools como implementação do Portal"), `web/themes/custom/aculta420_v2/docs/roadmap.md` (Fase 2 e pendências de RC), AGENTS §3–§5 (dependências e storage paralelo), AGENTS §13 (segredos), ADR-042 (remoção de dependências contrib do LMS).
 
@@ -11,7 +11,18 @@
 - O tema `aculta420_v2` é independente do Bootstrap e não carrega jQuery por padrão. A correção de 2026-11-04 mantém `core/drupal.dialog.ajax` nas páginas que o Portal pede (seção 5).
 - O tema deve ser **compatível com Drupal 12** (`12.0 ready`), mas o desenvolvimento segue no **Drupal 11.5 instalado no servidor de desenvolvimento**. A migração para 12 fica para depois.
 
-## 2. Decisões do responsável (2026-11-04)
+## 2. Decisões vigentes (revisão de 2026-11-04)
+
+1. **CTools: ampliar com novos usos**, com decisão caso a caso. Cada novo uso precisa de justificativa escrita: qual necessidade, por que o Core ou a Entity API não resolvem e qual o impacto em jQuery e em cache.
+2. **jQuery: aceito caso a caso.** Pode ser usado no tema V2 e no LMS quando a alternativa sem jQuery for mais complexa. Cada caso é registrado neste ADR, com a página afetada e o motivo.
+3. **Exportables: adiados.** Nenhum objeto de conteúdo de aplicação foi definido. Só serão implementados quando houver caso concreto que a Entity API não atenda.
+4. **Form wizard: sem formulário definido.** O primeiro uso no Aculta LMS depende de o responsável indicar o formulário. Não há implementação.
+5. **AJAX responder: possível, com jQuery registrado caso a caso** (ver seção 3.1). Não é mais proibido pela decisão anterior.
+6. O uso funcional continua no **`aculta_portal`**; o tema apenas apresenta.
+7. O tema deve ser "12.0 ready" enquanto o desenvolvimento roda no Drupal 11.5.
+8. Commit e push dependem de autorização explícita. Para este ADR, o responsável autorizou commit e push em `dev`.
+
+## 2.1 Decisões anteriores (histórico, 2026-11-04, substituídas)
 
 1. Ampliar o uso do CTools para: **AJAX responder**, **exportables** e **form wizard**. Modal dialog não é uso próprio do CTools.
 2. **Evitar jQuery.** O responsável pediu pesquisa sobre SDC, CTools e AJAX antes de decidir o AJAX responder (ver seção 3.1).
@@ -24,7 +35,7 @@
 
 ## 3. Consequências, evidências e pendências
 
-### 3.1 AJAX responder — bloqueado pela restrição "evitar jQuery"
+### 3.1 AJAX responder — evidências (revisão: possível caso a caso, com jQuery registrado)
 
 Evidências encontradas na pesquisa:
 
