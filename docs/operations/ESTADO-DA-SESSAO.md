@@ -3,9 +3,10 @@
 - **Objetivo persistente:** concluir lacunas funcionais do LMS; só então avançar pagamentos e, por último, resolver updates pendentes um a um. A prioridade é código/funcionalidade; não fazer revisão estética do tema. Testes de comportamento e responsividade são permitidos.
 - **Implementação dev.202:** compra de curso agora exige que o curso também esteja publicado. O formulário não oferece controles para curso despublicado; validação e submit repetem a regra para rejeitar requisições forjadas sem criar carrinho. Versão e CHANGELOG de `aculta_lms` atualizados.
 - **Testes:** Unit focal 3 testes / 24 assertions PASS; Kernel MariaDB dedicado 2 testes / 87 assertions PASS (65 depreciações de Core/contrib). PHPCS focal e PHP lint PASS. O Kernel usa apenas `aculta_simpletest`; nenhuma entidade foi criada no Runtime.
-- **Runtime:** `toca`, Drupal 11.5.0-beta1, PHP 8.5.12, DB `aculta_runtime`, tema `aculta420_v2`. Antes do próximo head change, executar `updatedb:status` e `config:status`; esta mudança não inclui update hook nem configuração.
-- **Estado Git:** base remota inclui a integração Maps `3e8cfedfd1` e registro `a2fe77e3c5`. Preservar mudanças locais de `composer.json`, `composer.lock`, `web/themes/custom/aculta420/js/utility-drawers.js` e `web/themes/custom/aculta_theme/`.
-- **Próximos passos:** conferir diff e estados Drush, commitar e sincronizar o hardening F7; continuar as lacunas funcionais do LMS (sem revisão visual), depois pagamentos e só então updates do banco.
+- **Runtime:** `toca`, Drupal 11.5.0-beta1, PHP 8.5.12, DB `aculta_runtime`, tema `aculta420_v2`. `updatedb:status` sem updates e `config:status` limpo antes/depois da sincronização. `drush cr` passou; nenhum update ou import foi executado.
+- **Publicação:** commit `5eb3938af0` (“Bloqueia matrícula em curso despublicado”) enviado por fast-forward a `origin/dev`; Runtime compartilha o mesmo checkout/commit.
+- **Estado Git:** worktree contém alterações alheias em `composer.json`, `composer.lock`, `web/themes/custom/aculta420/js/utility-drawers.js` e `web/themes/custom/aculta_theme/`; preservá-las.
+- **Próximos passos:** continuar as lacunas funcionais do LMS (sem revisão estética do tema). Checkout F7 HTTP permanece sem cenário de curso/produto no Runtime; não criar conteúdo para fabricá-lo. Só após fechar LMS avançar pagamentos e então updates do banco um a um.
 - **Retomar lendo:** `CourseEnrollmentPurchaseForm.php`, Unit e Kernel `CourseEnrollmentPurchase*Test.php`, changelog/README do `aculta_lms`, roadmap `docs/modules/ACULTA-LMS-ROADMAP.md`, `AGENT-OPERATIONS.md` e `BANCO-DE-TESTE.md`.
 
 
