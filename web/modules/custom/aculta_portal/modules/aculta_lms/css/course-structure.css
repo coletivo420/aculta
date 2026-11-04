@@ -55,6 +55,11 @@
   list-style: none;
 }
 
+.aculta-lms-course-builder__lessons > li,
+.aculta-lms-course-builder__activities > li {
+  min-inline-size: 0;
+}
+
 .aculta-lms-course-builder__lesson {
   min-width: 0;
   padding: 1rem;

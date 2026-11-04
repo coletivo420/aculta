@@ -51,25 +51,21 @@ final class CourseStructureOrderForm extends FormBase implements ContainerInject
   }
 
   /**
-   * Builds the order form for lessons or activities.
+   * {@inheritdoc}
    *
-   * @param \Drupal\group\Entity\GroupInterface $course
-   *   Owning course.
-   * @param string $collection
-   *   Either lessons or activities.
-   * @param int $parent_id
-   *   Course ID for lessons or lesson ID for activities.
-   * @param list<int> $ordered_ids
-   *   Current complete order from the server-rendered list.
+   * Extra build arguments are read from the form state's build info because
+   * Form API's buildForm() contract accepts only the form and form state.
    */
   public function buildForm(
     array $form,
     FormStateInterface $form_state,
-    GroupInterface $course,
-    string $collection,
-    int $parent_id,
-    array $ordered_ids,
   ): array {
+    $arguments = array_pad($form_state->getBuildInfo()['args'] ?? [], 4, NULL);
+    [$course, $collection, $parent_id, $ordered_ids] = $arguments;
+    if (!$course instanceof GroupInterface || !is_string($collection)
+      || !is_int($parent_id) || !is_array($ordered_ids)) {
+      throw new AccessDeniedHttpException();
+    }
     $this->assertAccess($course, $collection, $parent_id);
     $form_state->set('course_id', (int) $course->id());
     $form_state->set('collection', $collection);

@@ -1,3 +1,8 @@
+# 0.1.0-dev.203 — corrige renderização do formulário de reordenação
+
+- `CourseStructureOrderForm::buildForm()` agora segue a assinatura de `FormInterface` e lê os argumentos extras pelo `FormState`, como prevê o Form API. Isso remove o fatal que impedia renderizar a estrutura do curso.
+- Unit valida o carregamento do formulário, o estado inicial da ordem e a autorização contextual de educador.
+
 ## 0.1.0-dev.202 — bloqueia inscrição em curso não publicado
 
 - O formulário de compra não oferece turmas nem ação de checkout quando o curso
@@ -1437,4 +1442,5 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
 - Olivero: validação dispensada pelo responsável em 2026-11-03.
 - Adicionada revisão docente ACULTA em `/painel-administrativo/lms/curso/{course}/turma/{group}/respostas`: educadores listam tentativas, gravam nota de 0 a 100 e feedback, e a própria resposta do estudante exibe a avaliação. A permissão contextual `grade students` protege a lista e o detalhe.
 - Olivero validado no Firefox ESR visível em 1440 px e 320 px: 10/10 verificações PASS para formulário, upload, recusa de extensão, envio e JavaScript. O tema foi habilitado somente durante a validação e restaurado para `aculta420` ao final.
+
 
