@@ -17,6 +17,16 @@ html body.gin--navigation:has(.aculta-institution-bar) .admin-toolbar {
   block-size: calc(100dvh - var(--aculta-institution-bar-height, 2.25rem));
 }
 
+/* Gin Core Navigation's sidebar has an ID and an ID-specificity top: 0 rule. */
+body.gin--core-navigation #admin-toolbar.admin-toolbar[data-drupal-admin-styles] {
+  inset-block-start: var(--aculta-institution-bar-height, 2.25rem);
+  top: var(--aculta-institution-bar-height, 2.25rem);
+  block-size: calc(100vh - var(--aculta-institution-bar-height, 2.25rem));
+  block-size: calc(100dvh - var(--aculta-institution-bar-height, 2.25rem));
+  height: calc(100vh - var(--aculta-institution-bar-height, 2.25rem));
+  height: calc(100dvh - var(--aculta-institution-bar-height, 2.25rem));
+}
+
 /* Keep Core's fixed administrative controls below the shell bar as well. */
 html body:has(.aculta-institution-bar) .admin-toolbar {
   inset-block-start: var(--aculta-institution-bar-height, 2.25rem);

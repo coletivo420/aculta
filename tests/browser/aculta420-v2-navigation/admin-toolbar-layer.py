@@ -32,6 +32,7 @@ main = next(entry for entry in deploy["domain_transition"]["entries"] if entry["
 origin = f"https://{main[f'{environment}_host']}"
 admin_css = "\n".join((
     (ROOT / "web/themes/contrib/gin/dist/css/layout/navigation.css").read_text(),
+    (ROOT / "web/themes/contrib/gin/dist/css/layout/core_navigation.css").read_text(),
     (ROOT / "web/core/modules/toolbar/css/toolbar.module.css").read_text(),
 ))
 
@@ -78,12 +79,15 @@ try:
 
     for width in (320, 390, 768, 1024, 1280):
         set_width(width)
-        for variant in ("gin", "core"):
+        for variant in ("gin", "gin-core", "core"):
             driver.js("""document.querySelectorAll('[data-admin-sidebar-fixture]').forEach(el=>el.remove());
               document.body.classList.toggle('gin--navigation', arguments[0]==='gin');
-              const sidebar=document.createElement(arguments[0]==='gin'?'aside':'div');
+              document.body.classList.toggle('gin--core-navigation', arguments[0]==='gin-core');
+              const sidebar=document.createElement(arguments[0]==='core'?'div':'aside');
               sidebar.dataset.adminSidebarFixture=arguments[0];
               if(arguments[0]==='gin'){sidebar.className='admin-toolbar';sidebar.style.position='fixed';sidebar.style.zIndex='501';sidebar.textContent='Administração';
+                sidebar.setAttribute('aria-label','Administração');}
+              else if(arguments[0]==='gin-core'){sidebar.id='admin-toolbar';sidebar.className='admin-toolbar';sidebar.setAttribute('data-drupal-admin-styles','');sidebar.style.position='fixed';sidebar.style.zIndex='501';sidebar.textContent='Administração';
                 sidebar.setAttribute('aria-label','Administração');}
               else {sidebar.id='toolbar-administration';
                 sidebar.className='toolbar toolbar-oriented toolbar-vertical toolbar-tray-open toolbar-fixed';
@@ -93,7 +97,7 @@ try:
             result = driver.js("""return (() => {
           const bar=document.querySelector('.aculta-institution-bar');
           const fixture=document.querySelector('[data-admin-sidebar-fixture]');
-          const sidebar=fixture.dataset.adminSidebarFixture==='gin'?fixture:fixture.querySelector('.toolbar-tray-vertical');
+          const sidebar=fixture.dataset.adminSidebarFixture==='core'?fixture.querySelector('.toolbar-tray-vertical'):fixture;
           const toolbarBar=fixture.dataset.adminSidebarFixture==='core'?fixture.querySelector('.toolbar-bar'):null;
           const barRect=bar.getBoundingClientRect(), sideRect=sidebar.getBoundingClientRect();
           const barStyle=getComputedStyle(bar), sideStyle=getComputedStyle(sidebar);
@@ -134,12 +138,12 @@ try:
             )
             results.append(result)
             print(("PASS" if result["passed"] else "FAIL") + " " + json.dumps(result, ensure_ascii=False), flush=True)
-            if variant == "core" and width in (320, 1280):
+            if variant in ("gin-core", "core") and width in (320, 1280):
                 screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
-                (OUT / f"admin-sidebar-layer-{width}.png").write_bytes(base64.b64decode(screenshot))
+                (OUT / f"admin-sidebar-layer-{variant}-{width}.png").write_bytes(base64.b64decode(screenshot))
     (OUT / "results.json").write_text(json.dumps({
         "environment": environment,
-        "authState": "anonymous with Gin and Core toolbar CSS fixtures",
+        "authState": "anonymous with Gin, Gin Core Navigation and Core toolbar CSS fixtures",
         "scope": "layer geometry and pointer access; no authenticated toolbar runtime",
         "checks": results,
     }, ensure_ascii=False, indent=2) + "\n")
