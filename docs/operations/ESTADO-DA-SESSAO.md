@@ -1,14 +1,14 @@
-## Retomada — funcionalidade de matrícula no LMS, 2026-11-04
+## Retomada — objetivo persistente LMS → pagamentos → updatedb, 2026-11-04
 
-- **Objetivo persistente:** concluir lacunas funcionais do LMS; só então avançar pagamentos e, por último, resolver updates pendentes um a um. A prioridade é código/funcionalidade; não fazer revisão estética do tema. Testes de comportamento e responsividade são permitidos.
-- **Implementação dev.202:** compra de curso agora exige que o curso também esteja publicado. O formulário não oferece controles para curso despublicado; validação e submit repetem a regra para rejeitar requisições forjadas sem criar carrinho. Versão e CHANGELOG de `aculta_lms` atualizados.
-- **Testes:** Unit focal 3 testes / 24 assertions PASS; Kernel MariaDB dedicado 2 testes / 87 assertions PASS (65 depreciações de Core/contrib). PHPCS focal e PHP lint PASS. O Kernel usa apenas `aculta_simpletest`; nenhuma entidade foi criada no Runtime.
-- **Runtime:** `toca`, Drupal 11.5.0-beta1, PHP 8.5.12, DB `aculta_runtime`, tema `aculta420_v2`. `updatedb:status` sem updates e `config:status` limpo antes/depois da sincronização. `drush cr` passou; nenhum update ou import foi executado.
-- **Publicação:** commit `5eb3938af0` (“Bloqueia matrícula em curso despublicado”) enviado por fast-forward a `origin/dev`; Runtime compartilha o mesmo checkout/commit.
-- **Estado Git:** worktree contém alterações alheias em `composer.json`, `composer.lock`, `web/themes/custom/aculta420/js/utility-drawers.js` e `web/themes/custom/aculta_theme/`; preservá-las.
-- **Próximos passos:** continuar as lacunas funcionais do LMS (sem revisão estética do tema). Checkout F7 HTTP permanece sem cenário de curso/produto no Runtime; não criar conteúdo para fabricá-lo. Só após fechar LMS avançar pagamentos e então updates do banco um a um.
-- **Retomar lendo:** `CourseEnrollmentPurchaseForm.php`, Unit e Kernel `CourseEnrollmentPurchase*Test.php`, changelog/README do `aculta_lms`, roadmap `docs/modules/ACULTA-LMS-ROADMAP.md`, `AGENT-OPERATIONS.md` e `BANCO-DE-TESTE.md`.
-
+- **Objetivo:** concluir lacunas funcionais do LMS; somente depois trabalhar pagamentos e, por último, resolver pendências `updatedb` individualmente. Escopo da sessão é código/funcionalidade, sem revisão estética do tema.
+- **Implementação LMS anterior:** `aculta_lms` dev.202 bloqueia compra de curso não publicado, inclusive POST forjado. Unit focal 3/24 e Kernel MariaDB dedicado 2/87 PASS; commit `5eb3938af0`.
+- **Implementação LMS atual:** `aculta_lms_resources` dev.30 encaminha Media `course_document` desanexada ao limpador compartilhado do Portal após remoção de relação Group. Media publicada, compartilhada, fora do bundle ou não verificável é preservada; File só é submetido após remoção confirmada da Media e nova validação pelo owner Portal/File Uploader. Dependências diretas registradas. Changelog/README atualizados.
+- **Testes desta entrega:** Unit completo do `aculta_lms_resources`: 28 testes / 185 assertions PASS (9 depreciações PHPUnit). PHPCS Drupal/DrupalPractice, PHP lint, parse de `services.yml` e `git diff --check` PASS.
+- **Runtime:** `toca`, Drupal 11.5.0-beta1, PHP 8.5.12, DB `aculta_runtime`, tema `aculta420_v2`. `drush cr` PASS e confirmou `aculta_lms_resources` habilitado em dev.30. `updatedb:status` sem updates e `config:status` limpo. Nenhum conteúdo, Media, File ou configuração de site alterados.
+- **Publicação:** pendente neste handoff; antes do push conferir/stagear somente arquivos da entrega. Depois do push, Runtime já compartilha o checkout e requer confirmação no HEAD e rebuild de cache se necessário.
+- **Responsividade:** avaliação anterior sem alteração de código; harness somente leitura exige URL/UID LMS de teste provisionados, ausentes nesta sessão. Ver seção “avaliação funcional de responsividade LMS” abaixo.
+- **Próximos passos:** publicar a entrega de limpeza; seguir auditoria de lacunas funcionais LMS e completar testes/homologações possíveis. Não fabricar conteúdo Runtime para validar checkout/pagamentos.
+- **Retomar lendo:** `aculta_lms_resources/src/Cleanup/CourseDocumentCleanup.php`, seus Unit tests, changelog/README do módulo, `docs/portal/CONTENT-CLEANUP-POLICY.md`, roadmap `docs/modules/ACULTA-LMS-ROADMAP.md`, `AGENT-OPERATIONS.md` e `BANCO-DE-TESTE.md`.
 
 # Estado da sessão
 
@@ -768,3 +768,12 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Arquivos:** `web/themes/custom/aculta420_v2/` (catálogo, tokens, hook, templates, versão/changelog/roadmap); `scripts/validate-aculta420-v2-sdc.php`; `docs/architecture/ARQUITETURA-ACULTA420-V2.md`; este handoff.
 - **Entrega:** commit `ba2d92eabb` publicado por fast-forward em `origin/dev`; Runtime está no mesmo checkout/HEAD. Após o push, `drush cr` passou, `updatedb:status` não exige updates, `config:status` está limpo e MAIN/Eventos/Revista retornaram HTTP 200.
 - **Pendências:** visual Firefox com tamanhos móveis/amplos nos dois modos de cor, revisão assistiva das páginas consumidoras e integração do SDC `map-popup` no JS Leaflet do owner `aculta_maps`. Não promover RC antes desses gates.
+
+## Continuação — avaliação funcional de responsividade LMS, 2026-11-04
+
+- **Escopo confirmado:** avaliar formulários e outros fluxos quanto à operação em telas estreitas, sem revisão estética. Nenhum código foi alterado nesta passagem.
+- **Inspeção:** Form API do LMS (resposta, upload, autoria de aula/atividade, prazo e certificado) usa controles Drupal nativos; `course-structure.css` limita largura, permite shrink e mantém comandos de teclado. A CSS `answer-form.css` contém `overflow-x: clip/hidden` e seletores legados `#header-nav`/`.primary-nav__menu` com comentário Olivero. A biblioteca está anexada ao formulário de resposta, por isso não removi sem teste servido que prove que o CSS é inócuo para o menu compartilhado.
+- **Evidência prévia:** changelog do LMS registra upload sob ACULTA420 em 390 px com validação de extensão, JavaScript e overflow (9/9 PASS), mas isto não cobre 320 px, zoom, teclado e leitores de tela. O harness somente leitura `tests/browser/aculta-lms/learning-readonly.mjs` requer URLs/UID provisionados, não disponíveis como variáveis nesta sessão. O outro harness submete arquivo e exige fixture persistente, portanto não foi executado.
+- **Runtime:** confirmado em `toca`, Drupal 11.5.0-beta1, PHP 8.5.12, DB `aculta_runtime`; `updatedb:status` sem pendências e `config:status` limpo. Nenhuma escrita, login temporário ou conteúdo de teste foi criado.
+- **Validação:** inspeção estática concluída; PHPCS abrangente do diretório Form reporta violações preexistentes em classes diversas, sem modificação neste escopo. Sem teste navegador nesta sessão. Worktree manteve intactas alterações externas em Composer e temas.
+- **Pendência concreta:** executar o harness somente leitura com conta/URLs LMS de teste já provisionadas, cobrindo formulário de resposta em 320/360/390 px, zoom e teclado, sem submit; então verificar se a folha `answer-form.css` ainda é necessária para o menu antes de qualquer remoção. Nenhum commit ou sincronização Runtime necessário nesta avaliação sem alteração de código.

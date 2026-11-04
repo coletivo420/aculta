@@ -76,15 +76,23 @@ Core/contrib). O harness pertence ao `aculta_index` no Portal; o LMS não
 hospeda nem possui o Index. A policy LMS segue coberta nos testes focais; o
 Runtime permanece pendente.
 
-### Limpeza coordenada de recursos — dívida de integração em 2026-10-22
+### Limpeza coordenada de documentos PDF do curso — dev.30
 
-O Portal já oferece parcialmente `aculta_portal.unused_file_cleaner` para
-verificação/remoção de File. Quando curso, turma ou referência for removida, o
-módulo deve fornecer suas relações e submeter candidatos ao Portal antes da
-limpeza. O Portal revalida referências e remove Media/File órfãos. A verificação
-deve preservar documentos ligados a outras turmas ou conteúdos e respeitar a
-relação Group atual. Não excluir arquivos diretamente; ver
-[política compartilhada](../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
+Quando uma relação `aculta_document_viewer:course_document` é removida, o hook
+do Group entrega o ID da Media ao `CourseDocumentCleanup`. Media inexistente,
+publicada, de outro bundle ou sem campo de arquivo é ignorada. A Media não
+publicada é removida apenas por `aculta_portal.unused_media_cleaner`, que
+revalida referências globais; somente após resultado `Deleted` seu File é
+submetido a `aculta_file_uploader.unused_file_cleaner`, que faz nova verificação
+e delega a remoção física ao owner. Referências compartilhadas e falhas de
+verificação retêm os assets. O caminho é idempotente e cobre a remoção da relação
+individual e o `preDelete` do Group. Arquivos nunca são apagados diretamente
+pelo LMS. A política compartilhada continua limitando a decisão final e a
+remoção às APIs do Portal:
+[política de limpeza](../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
+
+Unit do módulo: 28 testes / 185 assertions PASS. O teste Kernel de lifecycle Group→Media→File
+e a homologação no Runtime permanecem pendentes.
 
 Dev 0.1.0-dev.10. O provider tem cobertura Unit e Kernel com Group real:
 estudante por `takeAccess()`, educador por `grade students`, terceiro negado.

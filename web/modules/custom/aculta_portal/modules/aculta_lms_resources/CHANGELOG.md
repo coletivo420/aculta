@@ -1,5 +1,17 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.30 — encaminha documentos órfãos à limpeza compartilhada
+
+- Ao remover uma relação Group de documento de curso, o LMS Resources submete
+  a Media ao limpador do Portal. Media publicada, ainda referenciada ou não
+  verificável é preservada; o File só é submetido depois que o Portal confirma
+  a remoção da Media e revalida suas próprias referências.
+- Funciona também ao excluir o Group do curso, pois o hook de remoção da
+  relação executa enquanto a Media ainda pode ser carregada. Relações de outros
+  plugins e Media já removida não causam ação.
+- Unit do módulo: 28 testes / 185 assertions PASS. Runtime sem
+  mutações; teste de instalação/relacionamento no Kernel ainda pendente.
+
 ## 0.1.0-dev.29 — clarifica os campos do formulário contextual
 
 - Renomeia a lista interna para `CONTEXTUAL_FIELDS`, pois ela inclui o widget

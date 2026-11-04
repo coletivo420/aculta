@@ -2,12 +2,14 @@ name: ACULTA LMS Resources
 type: module
 description: 'Vincula publicações, verbetes, galerias, vídeos e documentos existentes aos cursos ACULTA.'
 package: ACULTA Portal
-version: '0.1.0-dev.29'
+version: '0.1.0-dev.30'
 core_version_requirement: ^11 || ^12
 dependencies:
+  - aculta_portal:aculta_file_uploader
   - aculta_portal:aculta_gallery
   - aculta_portal:aculta_lms
   - aculta_portal:aculta_magazine
+  - aculta_portal:aculta_portal
   - drupal:media
   - drupal:node
   - media_gallery:media_gallery
