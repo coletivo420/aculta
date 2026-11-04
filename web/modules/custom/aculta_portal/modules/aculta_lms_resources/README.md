@@ -76,6 +76,19 @@ Core/contrib). O harness pertence ao `aculta_index` no Portal; o LMS não
 hospeda nem possui o Index. A policy LMS segue coberta nos testes focais; o
 Runtime permanece pendente.
 
+### Regressão de acesso sem Drupal LMS contrib — 2026-11-04
+
+`LmsCourseContentIndexAccessKernelTest` agora monta os tipos e relacionamentos
+Group usados pelo LMS ACULTA sem habilitar `lms` ou `lms_classes`. O teste cobre
+acesso de estudante/educador, leituras, galerias, vídeos e documentos: 5 testes
+/ 239 assertions PASS no MariaDB `aculta_simpletest` (14 depreciações
+Core/contrib). O fixture de Domain usa contexto isolado e não acessa o container
+Drupal antes do boot. Em conjunto, `ContentIndexOwnerIntegrationKernelTest`
+passou 2 testes / 65 assertions, comprovando a descoberta dos providers pela
+closure de módulos real. O Runtime continua sem alteração; o teste específico
+de relações e acesso do provider no Runtime ainda requer preflight e fixtures
+somente de leitura.
+
 ### Limpeza coordenada de documentos PDF do curso — dev.31
 
 Quando uma relação `aculta_document_viewer:course_document` é removida, o hook

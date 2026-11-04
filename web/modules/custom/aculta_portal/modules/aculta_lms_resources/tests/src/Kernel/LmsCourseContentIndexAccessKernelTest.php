@@ -18,6 +18,7 @@ use Drupal\domain\DomainNegotiationContext;
 use Drupal\domain\Entity\Domain;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
+use Drupal\group\Entity\GroupRelationshipType;
 use Drupal\group\Entity\GroupType;
 use Drupal\group\PermissionScopeInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
@@ -56,6 +57,11 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
   private array $domainSwitches = [];
 
   /**
+   * Domain context used by the isolated Domain Purpose Manager fixture.
+   */
+  private DomainNegotiationContext $domainContext;
+
+  /**
    * {@inheritdoc}
    */
   protected static $modules = [
@@ -80,8 +86,6 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     'options',
     'text',
     'node',
-    'lms',
-    'lms_classes',
     'aculta_index',
     'aculta_lms_resources_gallery_access_test',
   ];
@@ -96,12 +100,10 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->with('domain')->willReturn($domainStorage);
     $domainNegotiator = $this->createMock(DomainNegotiatorInterface::class);
+    $realDomainContext = new DomainNegotiationContext();
     $domainNegotiator->method('getActiveDomain')->willReturnCallback(
-      static function (bool $reset = FALSE): ?DomainInterface {
-        return \Drupal::service('domain.negotiator')->getActiveDomain($reset);
-      },
+      static fn (bool $reset = FALSE): ?DomainInterface => $realDomainContext->getDomain(),
     );
-    $realDomainContext = \Drupal::service('domain.negotiator')->getContext();
     $domainContext = $this->createMock(DomainNegotiationContext::class);
     $domainContext->method('getDomain')->willReturnCallback(static fn (): ?DomainInterface => $realDomainContext->getDomain());
     $domainContext->method('setDomain')->willReturnCallback(function (DomainInterface $domain) use ($realDomainContext): void {
@@ -110,6 +112,7 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     });
     $domainContext->method('setNegotiated')->willReturnCallback(static fn (bool $negotiated): mixed => $realDomainContext->setNegotiated($negotiated));
     $domainNegotiator->method('getContext')->willReturn($domainContext);
+    $this->domainContext = $domainContext;
     $container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
       $entityTypeManager,
       $domainNegotiator,
@@ -194,7 +197,7 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installConfig(['group', 'lms', 'lms_classes', 'user']);
+    $this->installConfig(['group', 'user']);
     $this->installEntitySchema('domain');
     foreach ([
       'aculta_org' => 'main',
@@ -210,9 +213,8 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
         'status' => TRUE,
       ])->save();
     }
-    $domainNegotiator = $this->container->get(DomainNegotiatorInterface::class);
-    $domainNegotiator->getActiveDomain();
-    $domainNegotiator->getContext()->setDomain(Domain::load('aculta_org'));
+    $this->domainContext->setDomain(Domain::load('aculta_org'));
+    $this->domainContext->setNegotiated(TRUE);
     $this->domainSwitches = [];
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
@@ -226,6 +228,7 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
+    $this->prepareCourseGroupTypes();
     $this->installSchema('aculta_index', [
       'aculta_index_generation',
       'aculta_index_state',
@@ -252,10 +255,62 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
   }
 
   /**
+   * Installs the ACULTA Group course contract without Drupal LMS contrib.
+   */
+  private function prepareCourseGroupTypes(): void {
+    foreach (['lms_course' => 'Curso', 'lms_class' => 'Turma'] as $id => $label) {
+      if (!GroupType::load($id)) {
+        GroupType::create([
+          'id' => $id,
+          'label' => $label,
+          'creator_membership' => FALSE,
+          'creator_roles' => [],
+        ])->save();
+      }
+    }
+
+    foreach (['lms_course', 'lms_class'] as $groupType) {
+      $id = $groupType . '-group_membership';
+      if (!GroupRelationshipType::load($id)) {
+        GroupRelationshipType::create([
+          'id' => $id,
+          'group_type' => $groupType,
+          'relation_type' => 'group_membership',
+          'plugin_config' => ['group_cardinality' => 0, 'entity_cardinality' => 1],
+        ])->save();
+      }
+    }
+
+    if (!FieldStorageConfig::load('group_relationship.group_roles')) {
+      FieldStorageConfig::create([
+        'field_name' => 'group_roles',
+        'entity_type' => 'group_relationship',
+        'type' => 'entity_reference',
+        'settings' => ['target_type' => 'group_role'],
+        'cardinality' => -1,
+      ])->save();
+    }
+    foreach (['lms_course-group_membership', 'lms_class-group_membership'] as $bundle) {
+      if (!FieldConfig::load('group_relationship.' . $bundle . '.group_roles')) {
+        FieldConfig::create([
+          'field_name' => 'group_roles',
+          'entity_type' => 'group_relationship',
+          'bundle' => $bundle,
+          'label' => 'Group roles',
+          'settings' => ['handler' => 'default', 'handler_settings' => []],
+        ])->save();
+      }
+    }
+
+    $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
+    $this->container->get('group_relation_type.manager')->clearCachedPluginMaps();
+  }
+
+  /**
    * Combines Entity Access, canonical Domain and LMS policy.
    */
   public function testStudentAndEducatorPolicyUsesTheirCourseMembership(): void {
-    $owner = $this->createUser(['administer lms']);
+    $owner = $this->createUser();
     $student = $this->createUser();
     $educator = $this->createUser();
     $outsider = $this->createUser();
@@ -318,7 +373,7 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
   public function testCourseReadingRelationQueryRevalidatesCourseAndTargetAccess(): void {
     $authenticated = $this->container->get('entity_type.manager')->getStorage('user_role')->load('authenticated');
     $authenticated->grantPermission('access content')->save();
-    $owner = $this->createUser(['administer lms']);
+    $owner = $this->createUser();
     $student = $this->createUser();
     $educator = $this->createUser();
     $outsider = $this->createUser();
@@ -419,7 +474,7 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
    * Queries a Gallery relation through the production course membership hook.
    */
   public function testCourseGalleryRelationUsesMembershipAccessInMagazinePurpose(): void {
-    $owner = $this->createUser(['administer lms']);
+    $owner = $this->createUser();
     $student = $this->createUser();
     $educator = $this->createUser();
     $outsider = $this->createUser();
@@ -515,7 +570,7 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
   public function testCourseVideoRelationUsesMembershipAccess(): void {
     $authenticated = $this->container->get('entity_type.manager')->getStorage('user_role')->load('authenticated');
     $authenticated->grantPermission('access content')->grantPermission('view media')->save();
-    $owner = $this->createUser(['administer lms']);
+    $owner = $this->createUser();
     $student = $this->createUser();
     $educator = $this->createUser();
     $outsider = $this->createUser();
@@ -592,7 +647,7 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
   public function testCourseDocumentRelationUsesCourseMembershipAccess(): void {
     $authenticated = $this->container->get('entity_type.manager')->getStorage('user_role')->load('authenticated');
     $authenticated->grantPermission('view media')->save();
-    $owner = $this->createUser(['administer lms']);
+    $owner = $this->createUser();
     $student = $this->createUser();
     $outsider = $this->createUser();
     $course = Group::create([
