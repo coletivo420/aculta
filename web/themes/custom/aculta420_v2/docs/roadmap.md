@@ -1,6 +1,6 @@
 # ACULTA420 V2 roadmap
 
-- `1.2.0-dev.8`: menu da barra institucional integrado somente com o avatar
+- `1.2.0-dev.9`: menu da barra institucional integrado somente com o avatar
   fornecido por `aculta_user`; não há apelido na barra. Evidência visual e
   runtime autenticado ainda pendentes.
 

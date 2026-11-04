@@ -8,6 +8,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -35,6 +36,11 @@ final class PagePresentationHooks {
     // their neutral contract into the institutional bar.
     $variables['aculta_account_avatar'] = $variables['aculta_account_avatar'] ?? NULL;
     $this->moveAccountMenuToUtilityBar($variables);
+    $variables['aculta_account_menu'] = $this->buildAccountMenuComponent(
+      $variables['aculta_account_menu'],
+      $variables['aculta_account_authenticated'],
+      $variables['aculta_account_avatar'],
+    );
     $this->wrapPrimaryMenuWithNavigationComponent($variables);
     $this->removeSearchDialogDependency($variables);
 
@@ -96,6 +102,46 @@ final class PagePresentationHooks {
         unset($variables['page']['header'][$key]);
       }
     }
+  }
+
+  /**
+   * Builds the account SDC as a render element with explicit, cacheable slots.
+   *
+   * @param array<string, mixed> $menuItems
+   *   Access-aware account menu render array, if available.
+   * @param bool $authenticated
+   *   Whether the current visitor is authenticated.
+   * @param array<string, mixed>|null $avatar
+   *   Portal-owned avatar render array.
+   *
+   * @return array<string, mixed>
+   *   Account-menu SDC render array.
+   */
+  private function buildAccountMenuComponent(array $menuItems, bool $authenticated, ?array $avatar): array {
+    $slots = [];
+    if ($authenticated) {
+      if ($menuItems !== []) {
+        $slots['menu_items'] = $menuItems;
+      }
+      if ($avatar !== NULL) {
+        $slots['avatar'] = $avatar;
+      }
+    }
+    else {
+      $slots['menu_items'] = [
+        '#type' => 'link',
+        '#title' => 'Entrar',
+        '#url' => Url::fromUserInput('/entrar/janela'),
+      ];
+    }
+
+    return [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:account-menu',
+      '#props' => ['authenticated' => $authenticated],
+      '#slots' => $slots,
+      '#cache' => ['contexts' => ['user']],
+    ];
   }
 
   /**

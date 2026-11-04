@@ -1,5 +1,11 @@
 # Changelog — ACULTA420 V2
 
+## 1.2.0-dev.9 — compõe o menu de conta como render array SDC
+
+- `PagePresentationHooks` entrega o menu como instância SDC e os slots como
+  render arrays, preservando access/cache do Drupal. Visitantes recebem link
+  de entrada nesse slot; a barra apenas o renderiza.
+
 ## 1.2.0-dev.8 — fallback de entrada sem duplicar links
 
 - O bloco de conta Core vazio/inacessível para visitante deixa de ocupar o slot.

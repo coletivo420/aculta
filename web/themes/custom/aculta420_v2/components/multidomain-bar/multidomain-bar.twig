@@ -38,27 +38,7 @@
           count_kind: alerts_count_kind
         }, with_context = false) }}
       {% endif %}
-      {% if account_menu or not account_authenticated|default(false) %}
-        {% embed 'aculta420_v2:account-menu' with {
-          authenticated: account_authenticated|default(false),
-          account_avatar: account_avatar|default(null)
-        } only %}
-          {% block avatar %}
-            {% if account_avatar is not empty %}
-              {{ account_avatar }}
-            {% else %}
-              {{ parent() }}
-            {% endif %}
-          {% endblock %}
-          {% block menu_items %}
-            {% if account_menu is not empty %}
-              {{ account_menu }}
-            {% else %}
-              <a href="/entrar/janela">{{ 'Entrar'|t }}</a>
-            {% endif %}
-          {% endblock %}
-        {% endembed %}
-      {% endif %}
+      {{ account_menu }}
     </div>
     {% endif %}
   </div>
