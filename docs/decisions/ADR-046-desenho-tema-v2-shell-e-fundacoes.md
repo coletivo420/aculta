@@ -29,6 +29,11 @@ Aplica-se a todo CSS, componente SDC, template e shell da V2. Fonte normativa: `
 - **Shell preservado.** Institution Bar e Domain Header são contratos do shell: não são redesenhados sem decisão explícita, e a largura mínima é verificada em todos os purposes.
 - **Evidência registrada.** Cada mudança visual registra baseline, estado antes e depois, purpose, URL, viewport, estado de autenticação, modo claro/escuro, zoom e teste de teclado, no `web/themes/custom/aculta420/docs/mobile-first-audit.md` ou no roadmap do tema V2.
 - **Não declarar conclusão parcial.** Nenhuma fase é marcada como concluída com inventário parcial ou sem evidência para todos os purposes afetados.
+- **Auditoria inicial.** Antes da Fase 1, listar os `max-width` do tema V2 para revisão. Cada ocorrência é classificada como mantida (ex.: limite de leitura ou de mídia) ou a converter, com justificativa:
+
+  ```bash
+  cd /home/claude/coletivo420/aculta-site && grep -rn "max-width" web/themes/custom/aculta420_v2 --include=*.css
+  ```
 
 ## 4. Fases
 
