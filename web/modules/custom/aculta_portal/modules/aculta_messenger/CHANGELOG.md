@@ -48,7 +48,7 @@
 
 ## 0.1.1-dev.404 — avatar padrão no remetente da mensagem (Fase 4)
 
-- O avatar do remetente segue a regra única: foto, depois acervo ilustrativo, depois inicial.
+- O avatar do remetente segue a regra única: foto, depois acervo ilustrativo. *(Correção 2026-11-04: a inicial do nome nunca é usada; o acervo é o último fallback obrigatório. Ver `docs/architecture/avatar.md`.)*
   Antes, sem foto não havia nada na mensagem.
 - Validação: PHP lint PASS. PHPUnit e Runtime não executados (sem `vendor/`). RUNTIME STATUS: DEFERRED.
 
