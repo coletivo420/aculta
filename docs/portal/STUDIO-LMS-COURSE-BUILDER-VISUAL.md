@@ -1,6 +1,6 @@
 # ACULTA Studio — LMS Course Builder: contrato visual e execução
 
-**Versão de design:** CB-UX 0.3.0-dev.5 · **Data:** 2026-11-04 · **Estado:** estrutura em cartões responsivos, edição rica CKEditor 5 com formato filtrado e comandos acessíveis de ordenação implementados; preview estudante, materiais, editor contextual e drag-and-drop pendentes.
+**Versão de design:** CB-UX 0.3.0-dev.6 · **Data:** 2026-11-04 · **Estado:** estrutura em cartões responsivos, CKEditor 5 filtrado, comandos acessíveis de ordenação e prévia privada por aula implementados; materiais no construtor, editor contextual e drag-and-drop pendentes.
 
 **Referências:** [Studio Visual](STUDIO-VISUAL-CONCEPT.md) · [Fluxos de edição](STUDIO-EDITOR-FLOWS.md) · [Roadmap Studio](STUDIO-MAGAZINE-ROADMAP.md) · [Roadmap funcional LMS](../modules/ACULTA-LMS-ROADMAP.md) · [LMS/Group](../modules/LMS-GROUP.md) · [Contratos LMS](LMS-INTEGRATION-CONTRACTS.md).
 
@@ -103,7 +103,7 @@ Desktop: drag-and-drop opcional, indicador claro do destino, confirmação de po
 | **0.3.4** | edição contextual com CKEditor 5/Form API, erros e salvamento real | formulário da aula usa CKEditor 5/Form API e `aculta_lms_lesson` com allowlist (parágrafos, títulos, listas, links, ênfase, citação e código); somente `lms_teacher` recebe o formato; valores `plain_text` legados são escapados antes da edição. Render é `processed_text`; edição do gabarito segue bloqueada após respostas. Shell editor contextual, mensagens visuais e homologação ainda pendentes |
 | **0.3.5** | mover/reordenar, teclado e aviso de impacto em turmas | comandos acima/abaixo e efeito nas turmas implementados com entidades ACULTA; serialização por coleção, transação e Kernel; drag-and-drop e homologação visual ainda pendentes |
 | **0.3.6** | mídias, Gallery, PDF Viewer e H5P quando disponíveis | privacidade/arquivos/Group |
-| **0.3.7** | prévia estudante, regras e publicação | controle de acesso e não vazamento |
+| **0.3.7** | prévia estudante e publicação | prévia privada de aula implementada sem respostas/dados de estudantes ou submit; prévia interativa, regras e publicação pendentes |
 | **0.3.8** | acessibilidade, testes, responsividade, documentação e homologação | gates Drupal 11+/LMS, evidências |
 
 **Sequência:** especificação primeiro; novas operações só depois da conclusão de seus contratos funcionais. A integração visual do Studio prevista em `0.10.0` (roadmap Studio) e etapas LMS F6/F7/F10/F12/F15 (roadmap LMS) referenciam esta linha CB-UX, **sem renumerar nem declarar entregues marcos preexistentes**. Nenhum commit deste planejamento executa migrações, modifica permissões/configuração ou instala dependências.

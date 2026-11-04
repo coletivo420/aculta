@@ -154,6 +154,10 @@ final class CourseStructureController {
             (string) $lesson->get('title')->value,
             Url::fromRoute('aculta_lms.lesson_edit', ['course' => $course->id(), 'lesson' => $lesson->id()]),
           )->toRenderable(),
+          'preview' => Link::fromTextAndUrl(
+            $this->t('Prévia de estudante'),
+            Url::fromRoute('aculta_lms.lesson_preview', ['course' => $course->id(), 'lesson' => $lesson->id()]),
+          )->toRenderable(),
           'state' => [
             '#type' => 'html_tag',
             '#tag' => 'span',

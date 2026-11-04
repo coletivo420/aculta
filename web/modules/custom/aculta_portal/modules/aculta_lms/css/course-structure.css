@@ -5,7 +5,16 @@
   min-width: 0;
 }
 
+[data-aculta-lms="course-preview"] {
+  max-width: 100%;
+  min-width: 0;
+}
+
 [data-aculta-lms="course-structure"] > * + * {
+  margin-block-start: 1rem;
+}
+
+[data-aculta-lms="course-preview"] > * + * {
   margin-block-start: 1rem;
 }
 
@@ -82,6 +91,14 @@
 
 .aculta-lms-course-builder__activity > * + * {
   margin-block-start: 0.5rem;
+}
+
+.aculta-lms-lesson-preview__activity {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 1px solid var(--aculta-lms-builder-border);
+  border-radius: 0.5rem;
 }
 
 .aculta-lms-course-builder__activity > :nth-child(2),

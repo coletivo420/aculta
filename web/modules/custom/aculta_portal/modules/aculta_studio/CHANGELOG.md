@@ -1,3 +1,10 @@
+## 0.1.0-dev.50 — adiciona prévia privada de aula ao Educador
+
+- Nova rota da Suite Ganjalab usa a autorização contextual e o controller do
+  owner `aculta_lms` para apresentar o conteúdo e perguntas de uma aula.
+- A prévia não mostra gabaritos, respostas, notas ou dados de estudantes e não
+  permite submissões. A rota revalida curso/aula e permissionamento de educador.
+
 ## 0.1.0-dev.49 — caminhos de ordenação localizados
 
 - Os comandos do Educador usam segmentos `acima` e `abaixo`; o mapa de rotas

@@ -107,6 +107,7 @@ final class CourseStructureControllerTest extends UnitTestCase {
     $secondLesson = $build['lessons']['#items'][1];
     self::assertSame('Primeira aula', (string) $firstLesson['heading']['title']['#title']);
     self::assertSame('aculta_lms.lesson_edit', $firstLesson['heading']['title']['#url']->getRouteName());
+    self::assertSame('aculta_lms.lesson_preview', $firstLesson['heading']['preview']['#url']->getRouteName());
     self::assertSame('Publicada', (string) $firstLesson['heading']['state']['#value']);
     self::assertCount(2, $firstLesson['activities']['#items']);
     self::assertSame('Explique a ideia.', (string) $firstLesson['activities']['#items'][0]['question']['#plain_text']);

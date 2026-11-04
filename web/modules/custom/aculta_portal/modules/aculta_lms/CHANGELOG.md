@@ -1,3 +1,12 @@
+## 0.1.0-dev.194 — adiciona prévia privada de aula
+
+- O Educador pode abrir a prévia de uma aula, inclusive rascunhos, usando a
+  autorização contextual existente e revalidada no acesso e no controller.
+- A saída mostra conteúdo filtrado e enunciados, sem gabaritos, respostas,
+  notas, perfis de estudantes ou formulário de submissão.
+- A rota canônica permanece no workspace Ganjalab Educador; o LMS fornece
+  access check e controller por ser o owner dos dados e da política.
+
 ## 0.1.0-dev.193 — ordena DLL e traduções do CKEditor
 
 - Expande o ajuste de ordem dos assets para manter jQuery, traduções e DLL do

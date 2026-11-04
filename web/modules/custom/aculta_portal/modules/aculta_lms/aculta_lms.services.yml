@@ -145,6 +145,12 @@ services:
   aculta_lms.course_lesson_controller:
     class: Drupal\aculta_lms\Controller\CourseLessonController
     arguments: ['@entity_type.manager', '@aculta_portal.lms_friendly_slugs', '@aculta_lms.notice_eligibility', '@string_translation']
+  aculta_lms.course_lesson_preview_access:
+    class: Drupal\aculta_lms\Access\CourseLessonPreviewAccessCheck
+    arguments: ['@aculta_lms.course_authoring_access']
+  aculta_lms.course_lesson_preview_controller:
+    class: Drupal\aculta_lms\Controller\CourseLessonPreviewController
+    arguments: ['@entity_type.manager', '@aculta_lms.course_lesson_preview_access', '@string_translation']
   Drupal\aculta_lms\Hook\ActivityDeadlineFormHooks:
     class: Drupal\aculta_lms\Hook\ActivityDeadlineFormHooks
     arguments: ['@aculta_lms.class_activity_deadline_manager', '@date.formatter', '@entity_type.manager', '@current_user', '@string_translation']

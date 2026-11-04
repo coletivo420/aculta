@@ -348,6 +348,22 @@ aculta_lms.lesson_edit:
       lesson:
         type: entity:aculta_lms_lesson
 
+aculta_lms.lesson_preview:
+  path: '/ganjalab/educador/cursos/{course}/aulas/{lesson}/previa'
+  defaults:
+    _controller: 'aculta_lms.course_lesson_preview_controller:preview'
+    _title: 'Prévia da aula'
+  requirements:
+    _custom_access: 'aculta_lms.course_lesson_preview_access:access'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: courses
+    parameters:
+      course:
+        type: entity:group
+      lesson:
+        type: entity:aculta_lms_lesson
+
 aculta_lms.lesson_delete:
   path: '/ganjalab/educador/cursos/{course}/aulas/{lesson}/excluir'
   defaults:
