@@ -8,7 +8,7 @@
   resposta, preservando o contexto histórico sem sobrescrever dados.
 - Suíte Unit completa do LMS: 247 testes / 880 assertions PASS; Studio: 67 testes /
   679 assertions PASS. PHPCS Drupal/DrupalPractice focal, PHP lint e
-  `git diff --check` PASS. Verificação Runtime após publicação pendente.
+  `git diff --check` PASS. Runtime em `49cc9757a4`: `drush cr` e rotas de estrutura, aula e atividade presentes; `updatedb:status` sem updates e `config:status` limpo após importação de `aculta_patcher.patch.import_510ccfe2e06a59191779bc83`. O Drush ainda emite aviso de post-updates ausentes do Group 2.0 antes de reportar que não há updates pendentes; seguir na auditoria Drupal 12.
 
 ## 0.1.0-dev.182 — cobre submissão de arquivos privados
 
