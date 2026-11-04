@@ -13,6 +13,8 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
+use Drupal\media\MediaInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -21,6 +23,9 @@ use PHPUnit\Framework\Attributes\Group;
 
 #[CoversClass(\Drupal\aculta_lms_resources\CourseResourceBuilder::class)]
 #[Group('aculta_lms_resources')]
+/**
+ * Tests access-safe rendering of course resources.
+ */
 final class CourseResourceBuilderTest extends UnitTestCase {
 
   /**
@@ -81,6 +86,19 @@ final class CourseResourceBuilderTest extends UnitTestCase {
   }
 
   /**
+   * Remote course videos resolve through the courses Domain.
+   */
+  public function testRemoteVideoUsesCoursesPurpose(): void {
+    $builder = $this->builder($this->createMock(AccountProxyInterface::class));
+    $method = new \ReflectionMethod(CourseResourceBuilder::class, 'purposeFor');
+    $video = $this->createMock(MediaInterface::class);
+    $video->method('getEntityTypeId')->willReturn('media');
+    $video->method('bundle')->willReturn('remote_video');
+
+    self::assertSame('courses', $method->invoke($builder, $video));
+  }
+
+  /**
    * Creates the builder with isolated Domain dependencies. */
   private function builder(AccountProxyInterface $account): CourseResourceBuilder {
     $purposeManager = new DomainPurposeManager(
@@ -93,6 +111,7 @@ final class CourseResourceBuilderTest extends UnitTestCase {
       $purposeManager,
       $account,
       $this->createMock(TranslationInterface::class),
+      $this->createMock(GroupRelationTypeManagerInterface::class),
     );
   }
 

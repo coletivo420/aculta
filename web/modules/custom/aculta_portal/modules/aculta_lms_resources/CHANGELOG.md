@@ -1,5 +1,18 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.21 — materiais no Course Builder
+
+- A estrutura do curso no workspace Educador lista leituras, galerias, vídeos
+  `remote_video` e documentos PDF já vinculados às entidades Group existentes.
+- Vídeos e documentos passam pelo Entity Access no purpose `courses`; documentos
+  privados usam a relação Group do `aculta_document_viewer` e não exigem
+  publicação. Links usam as rotas canônicas dos owners.
+- O botão de edição abre o formulário Group somente quando `access('update')`
+  permite. Nenhum schema ou armazenamento paralelo foi criado.
+- Unit Resources: 14 testes / 67 assertions; Kernel
+  `CourseResourceBuilderKernelTest`: 4 testes / 67 assertions PASS. O smoke
+  visual autenticado do bloco de materiais ainda está pendente.
+
 ## 0.1.0-dev.20 — cursos usam Group
 
 - A autorização e a projeção de materiais do curso usam `GroupInterface` e `take course`, sem imports Drupal LMS em `src/` ou testes.

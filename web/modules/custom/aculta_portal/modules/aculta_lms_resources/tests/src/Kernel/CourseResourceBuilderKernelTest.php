@@ -14,6 +14,8 @@ use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
+use Drupal\media\MediaInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Drupal\node\NodeInterface;
 use PHPUnit\Framework\Attributes\Group;
@@ -66,6 +68,7 @@ final class CourseResourceBuilderKernelTest extends KernelTestBase {
     $course->method('get')->willReturnMap([
       ['field_lms_readings', $this->referenceList([$article, $wiki, $draft])],
       ['field_lms_galleries', $this->referenceList([$gallery])],
+      ['field_lms_videos', $this->referenceList([])],
     ]);
     $course->method('hasField')->willReturn(TRUE);
 
@@ -73,6 +76,7 @@ final class CourseResourceBuilderKernelTest extends KernelTestBase {
       $this->purposeManager,
       $account,
       $this->container->get('string_translation'),
+      $this->createMock(GroupRelationTypeManagerInterface::class),
     );
     $build = $builder->build($course);
 
@@ -114,6 +118,7 @@ final class CourseResourceBuilderKernelTest extends KernelTestBase {
     $course->method('get')->willReturnMap([
       ['field_lms_readings', $this->referenceList([$restricted])],
       ['field_lms_galleries', $this->referenceList([])],
+      ['field_lms_videos', $this->referenceList([])],
     ]);
     $course->method('hasField')->willReturn(TRUE);
 
@@ -121,6 +126,7 @@ final class CourseResourceBuilderKernelTest extends KernelTestBase {
       $this->purposeManager,
       $account,
       $this->container->get('string_translation'),
+      $this->createMock(GroupRelationTypeManagerInterface::class),
     );
     $build = $builder->build($course);
 
@@ -128,6 +134,91 @@ final class CourseResourceBuilderKernelTest extends KernelTestBase {
     self::assertArrayNotHasKey('galleries', $build);
     self::assertContains('user.permissions', $build['#cache']['contexts']);
     self::assertContains('node:21', $build['#cache']['tags']);
+  }
+
+  /**
+   * Remote videos are rendered under the courses purpose.
+   */
+  public function testRemoteVideoUsesCoursesDomainAndEntityAccess(): void {
+    $account = $this->createMock(AccountProxyInterface::class);
+    $course = $this->course($account);
+    $video = $this->createMock(MediaInterface::class);
+    $video->method('getEntityTypeId')->willReturn('media');
+    $video->method('bundle')->willReturn('remote_video');
+    $video->method('id')->willReturn('22');
+    $video->method('label')->willReturn('Vídeo da aula');
+    $video->method('isPublished')->willReturn(TRUE);
+    $video->method('access')->with('view', $account, TRUE)->willReturn(AccessResult::allowed());
+    $video->method('toUrl')->with('canonical')->willReturn(Url::fromRoute('entity.media.canonical', ['media' => 22]));
+    $video->method('getCacheTags')->willReturn(['media:22']);
+    $video->method('getCacheContexts')->willReturn([]);
+    $video->method('getCacheMaxAge')->willReturn(-1);
+    $course->method('get')->willReturnMap([
+      ['field_lms_readings', $this->referenceList([])],
+      ['field_lms_galleries', $this->referenceList([])],
+      ['field_lms_videos', $this->referenceList([$video])],
+    ]);
+    $course->method('hasField')->willReturn(TRUE);
+
+    $builder = new CourseResourceBuilder(
+      $this->purposeManager,
+      $account,
+      $this->container->get('string_translation'),
+      $this->createMock(GroupRelationTypeManagerInterface::class),
+    );
+    $build = $builder->build($course);
+
+    self::assertCount(1, $build['videos']['#items']);
+    self::assertSame('entity.media.canonical', $build['videos']['#items'][0]['#url']->getRouteName());
+    self::assertSame(['media' => 22], $build['videos']['#items'][0]['#url']->getRouteParameters());
+    self::assertContains('media:22', $build['#cache']['tags']);
+  }
+
+  /**
+   * Private course documents are linked only through their Group access.
+   */
+  public function testPrivateDocumentUsesCoursesDomainAndGroupEntityAccess(): void {
+    $account = $this->createMock(AccountProxyInterface::class);
+    $course = $this->course($account);
+    $document = $this->createMock(MediaInterface::class);
+    $document->method('bundle')->willReturn('course_document');
+    $document->method('getEntityTypeId')->willReturn('media');
+    $document->method('id')->willReturn('31');
+    $document->method('label')->willReturn('Guia privado');
+    $document->method('access')->willReturnCallback(function (string $operation, $accessAccount, bool $returnAsObject) use ($account): AccessResult {
+      self::assertSame('view', $operation);
+      self::assertSame($account, $accessAccount);
+      self::assertTrue($returnAsObject);
+      self::assertSame('cursos_aculta_org', $this->container->get(DomainNegotiatorInterface::class)->getActiveDomain()?->id());
+      return AccessResult::allowed()->addCacheContexts(['user.group_permissions']);
+    });
+    $document->method('toUrl')->with('canonical')->willReturn(Url::fromRoute('entity.media.canonical', ['media' => 31]));
+    $document->method('getCacheTags')->willReturn(['media:31']);
+    $document->method('getCacheContexts')->willReturn([]);
+    $document->method('getCacheMaxAge')->willReturn(-1);
+    $course->method('getRelatedEntities')->with('aculta_document_viewer:course_document')->willReturn([$document]);
+    $course->method('get')->willReturnMap([
+      ['field_lms_readings', $this->referenceList([])],
+      ['field_lms_galleries', $this->referenceList([])],
+      ['field_lms_videos', $this->referenceList([])],
+    ]);
+    $course->method('hasField')->willReturn(TRUE);
+    $relations = $this->createMock(GroupRelationTypeManagerInterface::class);
+    $relations->method('hasDefinition')->willReturnCallback(
+      static fn (string $id): bool => $id === 'aculta_document_viewer:course_document',
+    );
+
+    $builder = new CourseResourceBuilder(
+      $this->purposeManager,
+      $account,
+      $this->container->get('string_translation'),
+      $relations,
+    );
+    $build = $builder->build($course);
+
+    self::assertCount(1, $build['documents']['#items']);
+    self::assertSame('entity.media.canonical', $build['documents']['#items'][0]['#url']->getRouteName());
+    self::assertContains('media:31', $build['#cache']['tags']);
   }
 
   /**

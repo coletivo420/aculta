@@ -3,7 +3,8 @@
 - O callback de acesso exige `ContentEntityInterface` para receber a aula já
   convertida pelo resolvedor de argumentos do Router e delegar a política.
 - Unit cobre autorização do educador e negação de pessoa sem grant.
-- Firefox havia recebido 403 no primeiro smoke da rota; repetir após rebuild.
+- Firefox autenticado após rebuild confirmou a rota 200, prévia renderizada,
+  nenhum formulário de submissão e nenhuma resposta/gabarito expostos.
 
 ## 0.1.0-dev.194 — adiciona prévia privada de aula
 

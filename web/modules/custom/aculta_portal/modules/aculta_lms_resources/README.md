@@ -35,6 +35,14 @@ progresso ou dados de estudante para o catálogo. O contrato completo das
 relações editoriais de vídeo está em
 [ACULTA-CONTENT-INDEX-VIDEO-RELATIONS](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-VIDEO-RELATIONS.md).
 
+No workspace Ganjalab Educador, os links canônicos de leituras, galerias,
+vídeos e documentos também aparecem na estrutura do curso. Vídeos e documentos
+são revalidados no Domain `courses`; documentos privados exigem a relação Group
+de curso e o Entity Access da mídia. O bloco só entra na página do curso que o educador já pode editar.
+O botão **Gerenciar materiais do curso** abre o formulário canônico de Group
+quando o usuário tem acesso de atualização. A edição continua usando os campos
+existentes; não há armazenamento paralelo nem cópia de conteúdo.
+
 ## Estado
 
 ### Content Index: boot/DI do owner — validação dev.161

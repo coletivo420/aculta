@@ -8,6 +8,10 @@ use Drupal\aculta_lms_resources\CourseResourceBuilder;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Link;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -18,6 +22,8 @@ final class CourseResourcesHooks {
   public function __construct(
     #[Autowire(service: 'aculta_lms_resources.course_resource_builder')]
     private readonly CourseResourceBuilder $builder,
+    #[Autowire(service: 'current_route_match')]
+    private readonly RouteMatchInterface $routeMatch,
   ) {}
 
   /**
@@ -54,6 +60,38 @@ final class CourseResourcesHooks {
       return;
     }
     $build['aculta_lms_course_resources'] = $this->builder->build($entity);
+  }
+
+  /**
+   * Adds existing course resources to the educator's structure workspace.
+   *
+   * The Group edit form remains the canonical editor for the existing
+   * reference fields; this hook only composes its current safe resource list
+   * into the LMS-owned structure page.
+   */
+  #[Hook('preprocess_page')]
+  public function addResourcesToCourseBuilder(array &$variables): void {
+    if ($this->routeMatch->getRouteName() !== 'aculta_lms.course_structure'
+      || !isset($variables['page']['content'])
+      || !is_array($variables['page']['content'])) {
+      return;
+    }
+
+    $course = $this->routeMatch->getParameter('course');
+    if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course') {
+      return;
+    }
+
+    $resources = $this->builder->build($course);
+    if ($course->access('update')) {
+      $resources['edit'] = Link::fromTextAndUrl(
+        new TranslatableMarkup('Gerenciar materiais do curso'),
+        Url::fromRoute('entity.group.edit_form', ['group' => $course->id()]),
+      )->toRenderable();
+    }
+    $resources['#weight'] = 30;
+    $resources['#attributes']['class'][] = 'aculta-lms-course-builder__resources';
+    $variables['page']['content']['aculta_lms_course_builder_resources'] = $resources;
   }
 
 }

@@ -14,6 +14,8 @@ use Drupal\Core\Link;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
+use Drupal\media\MediaInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 
 /**
@@ -35,6 +37,7 @@ final class CourseResourceBuilder {
     private readonly DomainPurposeManager $domainPurposeManager,
     private readonly AccountProxyInterface $currentUser,
     private readonly TranslationInterface $translation,
+    private readonly GroupRelationTypeManagerInterface $relationTypeManager,
   ) {}
 
   /**
@@ -62,7 +65,9 @@ final class CourseResourceBuilder {
 
     $readings = $this->linksFromField($course, 'field_lms_readings', 'node', $cache);
     $galleries = $this->linksFromField($course, 'field_lms_galleries', 'media_gallery', $cache);
-    if ($readings === [] && $galleries === []) {
+    $videos = $this->linksFromField($course, 'field_lms_videos', 'media', $cache);
+    $documents = $this->documentLinks($course, $cache);
+    if ($readings === [] && $galleries === [] && $videos === [] && $documents === []) {
       $cache->applyTo($build);
       return $build;
     }
@@ -84,6 +89,20 @@ final class CourseResourceBuilder {
         '#theme' => 'item_list',
         '#title' => $this->translation->translate('Galerias de imagens'),
         '#items' => $galleries,
+      ];
+    }
+    if ($videos !== []) {
+      $build['videos'] = [
+        '#theme' => 'item_list',
+        '#title' => $this->translation->translate('Vídeos do curso'),
+        '#items' => $videos,
+      ];
+    }
+    if ($documents !== []) {
+      $build['documents'] = [
+        '#theme' => 'item_list',
+        '#title' => $this->translation->translate('Documentos do curso'),
+        '#items' => $documents,
       ];
     }
     $cache->applyTo($build);
@@ -167,7 +186,67 @@ final class CourseResourceBuilder {
     if ($entity->getEntityTypeId() === 'node') {
       return self::NODE_PURPOSES[$entity->bundle()] ?? NULL;
     }
-    return $entity->getEntityTypeId() === 'media_gallery' ? 'magazine' : NULL;
+    if ($entity->getEntityTypeId() === 'media_gallery') {
+      return 'magazine';
+    }
+    return $entity->getEntityTypeId() === 'media' && $entity->bundle() === 'remote_video'
+      ? 'courses'
+      : NULL;
+  }
+
+  /**
+   * Builds links to documents attached through the private Group relation.
+   *
+   * Course-document Media is intentionally unpublished. Group relation access
+   * controls visibility, so this path checks entity access directly instead of
+   * requiring publication as the public editorial references do.
+   *
+   * @return list<array<string, mixed>>
+   *   Links to accessible course documents.
+   */
+  private function documentLinks(GroupInterface $course, CacheableMetadata $cache): array {
+    $pluginId = $this->relationTypeManager->hasDefinition('aculta_document_viewer:course_document')
+      ? 'aculta_document_viewer:course_document'
+      : ($this->relationTypeManager->hasDefinition('aculta_document_viewer_group:course_document')
+        ? 'aculta_document_viewer_group:course_document'
+        : NULL);
+    if ($pluginId === NULL) {
+      return [];
+    }
+
+    $items = [];
+    foreach ($course->getRelatedEntities($pluginId) as $entity) {
+      if (!$entity instanceof MediaInterface || $entity->bundle() !== 'course_document') {
+        continue;
+      }
+      $domain = $this->domainPurposeManager->getDomain('courses');
+      if ($domain === NULL) {
+        $cache->addCacheableDependency($entity);
+        continue;
+      }
+      $access = $this->domainPurposeManager->runInPurpose(
+        'courses',
+        fn (): AccessResultInterface => $entity->access('view', $this->currentUser, TRUE),
+      );
+      $cache->addCacheableDependency($domain)->addCacheableDependency($entity);
+      if (!$access instanceof AccessResultInterface) {
+        continue;
+      }
+      $cache->addCacheableDependency($access);
+      if (!$access->isAllowed()) {
+        continue;
+      }
+      $canonical = $entity->toUrl('canonical');
+      $url = $this->domainPurposeManager->routeUrl(
+        'courses',
+        $canonical->getRouteName(),
+        $canonical->getRouteParameters(),
+      );
+      if ($url !== NULL) {
+        $items[] = Link::fromTextAndUrl((string) $entity->label(), $url)->toRenderable();
+      }
+    }
+    return $items;
   }
 
   /**
