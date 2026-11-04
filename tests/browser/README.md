@@ -64,6 +64,15 @@ revisão X11. Consulte `docs/operations/NAVEGADOR-TESTES.md` e `AGENTS.md`.
 
 ## Scripts salvos hoje
 
+### `aculta420-v2-foundations/`
+
+`visual.py` mede tokens e reflow before/after nos purposes informados em
+`PURPOSES_JSON`, de 320 a 1440 CSS px, em claro/escuro. Testa Tab, Shift+Tab,
+zoom nativo 200%/400%, sem JavaScript e movimento reduzido no Firefox ESR
+visível. Usa `BASELINE_REF` e `SUITE_OUT`; cobre somente as raízes públicas e
+não substitui testes de rotas, SDCs, leitores de tela ou usuários autenticados.
+Consulte o [README local](aculta420-v2-foundations/README.md).
+
 ### Harness genérico para qualquer módulo/produto/purpose: `aculta-smoke/`
 
 `smoke-page.py` executa smoke GET reutilizável de uma ou mais URLs de qualquer

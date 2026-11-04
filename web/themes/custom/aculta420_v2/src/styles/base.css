@@ -8,16 +8,18 @@
 }
 
 html {
-  font-size: 1rem;
+  font-size: 100%;
   line-height: 1.5;
 }
 
 body {
   margin: 0;
   padding: 0;
+  min-inline-size: 0;
   font-family: var(--font-family-base);
-  color: var(--color-dark);
-  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  background-color: var(--color-canvas);
+  overflow-wrap: anywhere;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -26,9 +28,22 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-family-heading);
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 1.2;
   margin-top: 0;
   margin-bottom: 0.5rem;
+  overflow-wrap: anywhere;
+}
+
+h1 {
+  font-size: clamp(var(--font-size-xxl), 6vw, var(--font-size-5xl));
+}
+
+h2 {
+  font-size: clamp(var(--font-size-xl), 4vw, var(--font-size-4xl));
+}
+
+h3 {
+  font-size: clamp(var(--font-size-lg), 3vw, var(--font-size-3xl));
 }
 
 p {
@@ -66,20 +81,28 @@ input, textarea, select {
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+}
+
+fieldset {
+  min-inline-size: 0;
+  max-inline-size: 100%;
 }
 
 /* Accessibility */
 :focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
 }
 
 /* Layout */
 .container {
-  width: 100%;
-  max-width: 1200px;
+  inline-size: 100%;
+  max-inline-size: var(--page-content-max);
   margin-inline: auto;
-  padding-inline: var(--spacing-base);
+  padding-inline: var(--page-gutter);
 }
 
 /* Grid system */
@@ -103,5 +126,16 @@ input, textarea, select {
 
 .align-center {
   align-items: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 

@@ -1,5 +1,33 @@
 # Changelog — ACULTA420 V2
 
+## 1.2.0-dev.1 — tokens e fundações com identidade da V1 (2026-11-04)
+
+- Consolidados tipografia Inter/Oswald, escala de espaçamento herdada, foco
+  visível tokenizado, movimento reduzido e regras de reflow mobile-first.
+- A biblioteca Drupal carrega as mesmas famílias tipográficas externas usadas
+  pela V1; nenhum Node, Vite ou Bootstrap foi adicionado ao tema.
+- O novo gate `validate-aculta420-v2-foundations.php` verifica tokens e pares
+  de contraste do modo escuro. Os 33 pares de texto passam 4,5:1; os 4 pares
+  de foco e 4 pares de borda passam 3:1. Piores resultados: texto muted em
+  superfície elevada 6,78:1; link editorial em superfície elevada 6,07:1;
+  borda em superfície elevada 3,21:1.
+- Firefox ESR visível: baseline `676ff17449` comparado ao estado `1.2.0-dev.1`
+  nos dez purposes documentados, nas raízes públicas (Conta redireciona à tela
+  de entrada). Em 320/360/390/599/600/768/1024/1280/1440 CSS px, os modos
+  claro/escuro passaram 180/180 estados sem overflow; todos responderam HTTP
+  200. Tab e Shift+Tab: 10/10 focos visíveis. Zoom nativo a 200% e 400%, com
+  viewport efetiva de 320 px: 10/10 em cada nível sem overflow. Sem JavaScript:
+  90/90 larguras/purposes sem overflow. Movimento reduzido: 180/180
+  combinações de largura/modo, transição calculada em 0,01 ms. Sessões anônimas;
+  logins autenticados e leitores de tela não foram cobertos. Evidências e URLs
+  ficam em `$SUITE_OUT/aculta420-v2-foundations-full/`; purposes e hosts vêm da
+  matriz em `docs/architecture/multidomain.md`.
+- O gate legado `scripts/validate-aculta420-foundation.php` continua exigindo a
+  V1 como tema público e Bootstrap5 como base. No Runtime ativo em V2 ele falha
+  com `ACULTA420 is the default public theme.`; o gate específico V2 passou.
+- A declaração Drupal `^11.5 || ^12` permanece sem alegação de suporte
+  validado no Core 12, conforme ADR-045.
+
 ## 1.1.0-dev.5 — menu de conta e login modal da barra (2026-11-04)
 
 - O menu Drupal de conta voltou à barra institucional fixa. Os links nativos

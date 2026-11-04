@@ -1,42 +1,57 @@
 # ACULTA420 V2 roadmap
 
-## Fase 1 — Scaffold, tokens e shell
+## Fase 1 — Tokens e fundações
 
-**Status: concluída em `1ea7970ace` e ativada no Runtime em `65ce844bce`.**
+**Status: subfase de tokens/fundações entregue em `1.2.0-dev.1`; a Fase 1 do ADR-046 permanece aberta para shell, purpose e UI Styles.**
 
-- Drupal 11.5/12 compatibility metadata with Drupal 12 API focus.
-- CSS-only Drupal libraries; Vite and Bootstrap are not dependencies.
-- Asset paths are Drupal-relative; Phosphor SVGs are inlined by the icon SDC
-  (no cross-origin sprite). Cache tags bubble through Twig render arrays; CDN
-  TTL and purge headers are configured at the environment/reverse-proxy layer.
-- No Bootstrap base theme, classes, data attributes, JavaScript or jQuery UI
-  runtime is loaded by V2; interactions use native browser APIs and Drupal
-  behaviors.
-- Mobile-first shell, base styles, semantic tokens, and `card-cultural` SDC.
+- Tokens semânticos mantêm a identidade visual V1 e os modos explícitos do
+  Portal. Não há detecção `prefers-color-scheme`.
+- Inter e Oswald, escala de espaçamento, foco visível, movimento reduzido,
+  dimensões fluidas e prevenção de overflow em conteúdo longo são fundações da
+  V2. O tema continua sem Bootstrap, Vite ou dependência de Node.
+- O gate `php scripts/validate-aculta420-v2-foundations.php` valida 33 pares
+  texto/superfície de tema escuro acima de 4,5:1 e indicadores/bordas acima de
+  3:1. O menor contraste de texto é 6,07:1.
+- Auditoria antes/depois: baseline visual/código `676ff17449`; depois
+  `1.2.0-dev.1`. Dez purposes públicos; URL raiz `/` conforme a matriz de
+  `docs/architecture/multidomain.md` (Conta termina em `/entrar`). Viewports
+  320/360/390/599/600/768/1024/1280/1440 CSS px; claro e escuro; sessão
+  anônima. Reflow: 180/180 combinações sem overflow e HTTP 200 nos dez
+  purposes. Firefox ESR visível: Tab e Shift+Tab 10/10, foco de 3 px; zoom
+  nativo 200% e 400% 10/10, viewport efetiva 320 px; sem JavaScript 90/90
+  combinações largura/purpose; `prefers-reduced-motion: reduce` 180/180
+  combinações largura/modo, transição 0,01 ms. Capturas e resultados por URL
+  requisitada/final em `$SUITE_OUT/aculta420-v2-foundations-full/`, fora do
+  repositório.
+- Limitadores: a auditoria foi anônima; estados autenticados e leitor de tela
+  permanecem DEFERRED. O comando legado `validate-aculta420-foundation.php`
+  falha porque exige V1 como tema público e Bootstrap5 como base; o gate
+  específico `validate-aculta420-v2-foundations.php` e os gates SDC V2 passam.
 
-## Fase 2 — Catálogo SDC e integração Twig
+## Fase 2 — Shell
 
-**Status: integrada em `1.1.0-dev.5`; schemas e renderização SDC PASS; login modal e revisão visual em validação.**
+**Status: pendente; revisão da Institution Bar, cabeçalho, navegação, rodapé e regiões de página contra V1.**
 
-- Fourteen components with strict schemas, local assets, responsive CSS, and
-  progressive enhancement for mobile navigation.
-- Core template adapters for pager, status messages, and node teaser.
-- ACULTA Portal light/dark preference is applied through `data-theme`; no
-  system color-scheme detection is enabled.
-- Drush gate validates component discovery, schemas, assets, and isolated
-  rendering.
-- ACULTA Maps supplies neutral popup render arrays; the active theme chooses
-  the component and Leaflet/Google reuse cloned, inert rendered templates.
-- Leaflet marker icons use theme-rendered Phosphor SVG in inert templates and
-  `L.divIcon`; map JS uses `core/once` and keeps markup outside `drupalSettings`.
-- Phosphor Icons Core 2.1.1 (MIT) is vendored locally; all 1,512 regular and
-  1,512 duotone SVGs are available to inline SDC rendering.
-- The account menu render array is moved from Drupal's header region into the
-  fixed bar; login and search use native dialogs and Fetch, with no Core jQuery
-  dialog library in the V2 shell. Portal's search preview behavior is retained.
-- The institutional bar is fixed at the V1 top position and contains the ACULTA
-  logo and icon-only search, cart, messages, and alerts. Optional network links
-  sit in a separate row; URLs/counts come from Portal data.
+## Fase 3 — Purpose neutro no Portal
+
+**Status: pendente; contrato de apresentação será alterado em commit separado no `aculta_portal`.**
+
+## Fase 4 — UI Styles
+
+**Status: pendente; verificar compatibilidade da versão com Drupal 11.5 e 12 antes da instalação.**
+
+## Fase 5 — Componentes e templates
+
+**Status: catálogo atual pendente de auditoria integral; componentes faltantes e templates de páginas seguem após shell e fundações.**
+
+- Há quinze componentes SDC com schema estrito e um gate Drush de descoberta,
+  assets e renderização isolada.
+- ACULTA Maps fornece render arrays neutros; Leaflet e Google reutilizam
+  templates SDC inertes. O JavaScript de mapa usa `core/once`.
+- Phosphor Icons Core 2.1.1 (MIT) está vendorizado; seus SVGs são injetados
+  inline pelo SDC `icon`.
+- A barra institucional usa dados neutros do Portal; conta, login, busca,
+  carrinho, mensagens e alertas permanecem no shell.
 
 ### Pendências antes de promover a RC
 
