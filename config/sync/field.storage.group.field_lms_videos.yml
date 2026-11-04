@@ -1,0 +1,20 @@
+uuid: a3107674-852f-48e7-9462-662d15b44f69
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - group
+    - media
+id: group.field_lms_videos
+field_name: field_lms_videos
+entity_type: group
+type: entity_reference
+settings:
+  target_type: media
+module: core
+locked: false
+cardinality: -1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,5 +1,13 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.25 — sincroniza o vídeo do curso
+
+- Config Sync agora mantém `field_lms_videos` storage/config e widget do Group
+  Form Display. Sem essas cópias, `config:import` removia o campo após o update
+  idempotente 8002.
+- Nenhum valor de vídeo ou curso foi escrito; a importação anterior removeu
+  somente o field recém-criado e ainda vazio. O snapshot pré-update permanece.
+
 ## 0.1.0-dev.24 — repara instalação parcial de field_lms_videos
 
 - Runtime tinha o schema update 8001 marcado, mas o field storage e o field
