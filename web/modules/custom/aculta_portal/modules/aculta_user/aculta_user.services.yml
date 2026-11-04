@@ -121,3 +121,7 @@ services:
   aculta_user.organization_access_service:
     class: Drupal\aculta_user\Organization\OrganizationAccessService
     arguments: ['@aculta_user.organization_membership_manager']
+
+  aculta_user.account_menu_presentation:
+    class: Drupal\aculta_user\Identity\AccountMenuPresentationBuilder
+    arguments: ['@entity_type.manager', '@aculta_user.public_profile_policy', '@aculta_user.avatar_resolver']

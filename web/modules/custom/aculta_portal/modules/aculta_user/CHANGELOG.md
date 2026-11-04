@@ -306,3 +306,13 @@ PHP lint PASS. Runtime não executado.
 - Regra e gate: `docs/portal/ACEITE-UNICO.md`, `php scripts/validate-single-acceptance.php`.
 
 
+## 0.4.0-dev.95 — avatar no menu da barra institucional
+
+- `AccountMenuPresentationBuilder` entrega somente o avatar produzido por
+  `AvatarResolver`; o render array do avatar inclui contexto `user` e tags da
+  conta/perfil/arquivo. O apelido não é exposto ao tema.
+- `AccountMenuPresentationHooks` expõe somente `aculta_account_avatar`, sem
+  mudar o contrato de purpose.
+- Validação de código realizada; testes autenticados e Runtime pendentes.
+  RUNTIME STATUS: DEFERRED.
+
