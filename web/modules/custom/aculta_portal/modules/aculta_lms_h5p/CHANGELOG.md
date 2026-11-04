@@ -5,7 +5,9 @@
   A anotação foi movida para fora das consultas sem retirar o filtro de semântica.
 - Kernel exercita ambos os caminhos de `getLibraries()` com uma biblioteca real
   de teste e semântica cadastrada.
-- Runtime: reteste autenticado do editor após publicação pendente.
+- Runtime autenticado após publicação: a API de bibliotecas respondeu HTTP 200,
+  listou `H5P.HelloWorld` e montou o seletor no iframe sem erro JavaScript.
+  `drush cr` passou; `updatedb:status` e `config:status` ficaram limpos.
 
 ## 0.4.0-dev.172 — serve o editor H5P no domínio de cursos
 
