@@ -1,5 +1,5 @@
 {
-    "_hash": "24d599e576e93562fb8cdc24d46218960ddffe35e9ac7d383c28822754039eb0",
+    "_hash": "b23fcf8c5d1f318241d672604b82f4cf08c46834a11dbfed89f4c980401c9a79",
     "patches": {
         "drupal/address": [
             {
@@ -109,6 +109,28 @@
                 "description": "Declare default table CSS class in Group provided Views (Drupal 12 change record 3499943)",
                 "url": "patches/group-views-default-table-class.patch",
                 "sha256": "35f668759192b92bfa144a3bae774564f36d87642956053be679175b82ef3ac4",
+                "depth": 1,
+                "extra": {
+                    "provenance": "patches-file:patches-aculta.json"
+                }
+            },
+            {
+                "package": "drupal/group",
+                "description": "Replace removed Drupal 12 Entity::$original access in Group with getOriginal()",
+                "url": "patches/group-original-entity-api.patch",
+                "sha256": "d4b50835183f483a73ef1daf41c7a4592c01dd65efe61c627673bc306eea01bf",
+                "depth": 1,
+                "extra": {
+                    "provenance": "patches-file:patches-aculta.json"
+                }
+            }
+        ],
+        "drupal/profile": [
+            {
+                "package": "drupal/profile",
+                "description": "Replace removed Drupal 12 Entity::$original access in Profile with getOriginal()",
+                "url": "patches/profile-original-entity-api.patch",
+                "sha256": "e624a42a342fc6935cd8af27aeff7de456284785c29e51e6cd3551a79c0c2d2a",
                 "depth": 1,
                 "extra": {
                     "provenance": "patches-file:patches-aculta.json"
