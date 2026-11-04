@@ -52,12 +52,13 @@
   mantido apenas com a linha do tema ACULTA420; linhas de outros componentes
   foram excluídas desta entrega. A validação do índice ainda reporta divergências
   preexistentes fora do tema.
-- **Publicação:** commit e push ainda pendentes. Runtime é o mesmo checkout; a
-  confirmação final deve ocorrer após o rebuild e o push.
+- **Publicação:** commit `3a7341656da7fb248f37b1387c4a6352b5c7c7cb` enviado por
+  fast-forward para `origin/dev`. O Runtime é o mesmo checkout; pós-push,
+  `drush cr` passou e `updatedb:status`/`config:status` permaneceram limpos.
 - **Retomar lendo:** assets README, `components/multidomain-bar/`,
-  `DomainPresentationBuilder.php`, `PagePresentationHooks.php`, roadmap/changelogs
-  Portal/V2 e este handoff. Arquivos Composer e demais alterações LMS/tema não
-  relacionados devem permanecer fora desta entrega.
+  `PagePresentationHooks.php`, roadmap/changelog V2 e este handoff. Arquivos
+  Composer, alterações paralelas do módulo Messenger, JS solto da V1 e o tema
+  `aculta_theme` foram preservados fora desta entrega.
 
 ## Handoff — integração SDC `map-popup` / `aculta_maps` — 2026-11-04
 
