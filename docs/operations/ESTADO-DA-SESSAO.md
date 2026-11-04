@@ -36,8 +36,13 @@
   bibliotecas/changelog/roadmap do tema e `scripts/validate-aculta420-v2-sdc.php`.
   Foram preservadas alterações paralelas em Composer, LMS, `aculta420` e
   `aculta_theme`.
-- **Publicação e Runtime:** preencher com hash, resultado do push e confirmação
-  pós-push ao concluir a entrega.
+- **Publicação:** commit `bebdc2cde5e8d25082b17f476f5c2a9eaea82115` enviado por
+  fast-forward a `origin/dev`.
+- **Runtime:** `toca`, Drupal 11.5.0-beta1, banco `aculta_runtime`, tema
+  `aculta420_v2`. Pós-push, `drush cr` passou, `updatedb:status` não requer
+  updates e `config:status` não encontrou diferenças. Runtime é o checkout
+  compartilhado e está no mesmo HEAD. Nenhum import de configuração ou update
+  de banco foi executado.
 - **Retomar lendo:** seção acima, `components/multidomain-bar/`,
   `PagePresentationHooks.php` e `LoginPopupForm.php`.
 
