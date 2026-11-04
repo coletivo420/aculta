@@ -1,5 +1,12 @@
 # Estado da sessão
 
+## Handoff — remoção do módulo Search — 2026-11-03
+
+- Desinstalado `search` do Runtime `aculta_runtime`; removido de `core.extension.yml` e excluídos `search.page.user_search` e `search.settings` do Config Sync. `search_api` e `search_api_db` continuam habilitados.
+- `composer.json` não tinha requisito direto `drupal/search`; `composer.lock` registra o pacote como substituído por `drupal/core`. Nenhuma remoção Composer era aplicável.
+- Validações: `updatedb:status` sem pendências, `config:status` sem diferenças, Search ausente da lista de módulos ativos, `composer validate --no-check-publish` válido com avisos preexistentes de constraints exatas.
+- Commit `20d5a2041a175a0cdc1bf88780b8ab918b5d0fbb` enviado por fast-forward a `origin/dev`; Runtime no mesmo checkout/HEAD. Próximo passo: nenhuma ação pendente para Search.
+
 ## Handoff — revisão docente e estabilidade da suíte LMS — 2026-11-03
 
 - Fluxo de revisão de respostas concluído no código: listagem paginada e
