@@ -4,7 +4,7 @@
 
 - Corrigida a propriedade injetada `entityTypeManager` em `McpAccessSettingsForm`: `private readonly` passou a `protected readonly`, para ficar visível ao `DependencySerializationTrait` herdado de `FormBase`.
 - `php -l` e `git diff --check` passaram. `upgrade_status:analyze aculta_mcp` reexecutado após `drush cr`: “No known issues found.” `updatedb:status` sem pendências e `config:status` sem diferenças.
-- Próximo passo: commit/push desta correção em `origin/dev`; Runtime é o checkout compartilhado e já executou a reanálise.
+- Publicação: commit `97524b75466ad8d0ada75315eb4be086d1c87652` enviado por fast-forward a `origin/dev`; Runtime é o checkout compartilhado, no mesmo HEAD, e já executou a reanálise.
 
 ## Handoff — Text With Summary 2.0.x-dev — 2026-11-03
 
