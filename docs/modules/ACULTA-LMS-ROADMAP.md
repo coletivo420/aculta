@@ -785,7 +785,7 @@ permissão à espera de snapshot/import. Shell editor contextual, materiais,
 
 ### Microfase — invalidação de cache ao alterar o currículo
 
-Página de aula, acesso da aula e submissão de respostas resolvem posições dinâmicas de aulas/atividades; os links amigáveis também são derivados dessas listas. Foram adicionados os tags de lista do Core para as entidades próprias do ACULTA em cada consumidor, incluindo resultados de acesso permitidos e links gerados. O Kernel confirma que salvar uma atividade invalida uma entrada com os tags da página e que a página reconstruída inclui a nova atividade. LMS Unit 270/1.027, Kernel `LearningDashboardKernelTest` 1/45 e PHPCS PASS. Runtime não teve escrita.
+Página de aula, acesso da aula e submissão de respostas resolvem posições dinâmicas de aulas/atividades; os links amigáveis também são derivados dessas listas. Foram adicionados os tags de lista do Core para as entidades próprias do ACULTA em cada consumidor, incluindo resultados de acesso permitidos e links gerados. O Kernel confirma que salvar uma atividade invalida uma entrada com os tags da página e que a página reconstruída inclui a nova atividade; Unit confirma os tags no link gerado. LMS Unit 271/1.034, Kernel `LearningDashboardKernelTest` 1/45 e PHPCS PASS. Runtime não teve escrita.
 
 ### Próximos gates
 

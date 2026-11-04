@@ -1480,3 +1480,8 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
 - A página de aula, o access check e os links amigáveis agora variam pelos tags de lista de aulas e atividades. Criar, alterar, excluir ou reordenar esses itens invalida posições e páginas dependentes.
 - Kernel `LearningDashboardKernelTest` confirma os tags no render e nos resultados de acesso permitidos, a invalidação após salvar atividade e sua presença na página refeita. LMS Unit 270/1.027 PASS; Kernel focal 1/45 PASS.
 
+# 0.1.0-dev.209 — testa cache das URLs amigáveis do currículo
+
+- Unit do `LmsFriendlyRouteProcessor` confirma que links de resposta gerados carregam tags de listas de aulas e atividades, invalidando URLs quando o currículo muda.
+- LMS Unit: 271 testes / 1.034 assertions PASS; PHPCS e PHP lint da nova cobertura PASS.
+
