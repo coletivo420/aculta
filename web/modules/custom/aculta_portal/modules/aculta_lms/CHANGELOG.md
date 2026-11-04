@@ -1,3 +1,15 @@
+## 0.1.0-dev.197 — testa reordenação do Course Builder
+
+- Unit cobre atributos e handles das listas; Kernel comprova reordenação de
+  aulas/atividades, pesos contíguos, no-op, rejeição de lista incompleta e
+  preservação do vínculo de respostas.
+- Handles de arraste são decorativos e ficam fora da árvore acessível; links
+  funcionais de mover acima/abaixo continuam sendo os comandos de teclado.
+- Unit CourseStructureController: 1 teste / 29 assertions PASS. Kernel focal:
+  1 teste / 46 assertions PASS, com 13 depreciações upstream.
+- Atualiza o contrato visual para marcar arraste implementado e documentar o
+  limite de não mover entre módulos, que não existem como entidade LMS.
+
 ## 0.1.0-dev.196 — reordena o currículo por arraste acessível
 
 - Aulas e atividades podem ser reordenadas por arraste dentro da sua própria

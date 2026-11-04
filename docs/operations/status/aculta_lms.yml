@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.196
+version: 0.1.0-dev.197
 state: Dev
-progress_note: "Dev.196: Course Builder reordena aulas/atividades por arraste com fallback por teclado/sem JS; o servidor valida permissão, ancestralidade, permutação integral e grava sob lock/transação. PHP/JS lint, YAML e diff check PASS; browser/tests pendentes. Dev.195: Firefox autenticado confirmou prévia sem submissão ou exposição de respostas/gabaritos. Dev.193: CKEditor inicializa e ainda registra TypeError em drupal_powered_by. Materiais e edição contextual estão integrados no módulo resources; revisão visual PDF/H5P ainda depende dos owners."
-next_phase: 'Validar drag-and-drop no navegador autenticado; investigar o TypeError do CKEditor; fechar a revisão visual de materiais e seguir para pagamentos e auditoria das atualizações de banco.'
+progress_note: "Dev.197: Unit do render array de reordenação 1/29 PASS; Kernel real de persistência 1/46 PASS, incluindo lista incompleta rejeitada e resposta preservada (13 depreciações upstream). Handles são decorativos/fora da árvore acessível; controles de mover são a alternativa funcional de teclado. Dev.196 adicionou arraste por lista com fallback sem JS e validação server-side sob lock/transação. PDF usa canonical Media e formatter do owner; documentos/H5P ainda aguardam verificação contextual e smoke visual. Dev.195: prévia privada sem submit ou exposição de respostas/gabaritos. Dev.193: CKEditor inicializa e ainda há TypeError no plugin pack; Plugin Pack 2 beta requer Core 12, Runtime segue em Core 11.5."
+next_phase: 'Continuar auditoria funcional/visual das lacunas LMS e validar o Course Builder autenticado; só então retomar pagamentos. Depois examinar cada update de banco pendente se houver, ou registrar evidência de que não há updates.'
 
 # 2026-10-22: Dependência externa de UI G420-C2-T permanece pendente.
 # O Studio compõe cards SDC, mas a homologação depende de fixtures LMS

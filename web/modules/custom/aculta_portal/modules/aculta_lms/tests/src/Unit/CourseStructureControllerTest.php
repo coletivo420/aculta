@@ -8,6 +8,7 @@ use Drupal\aculta_lms\Controller\CourseStructureController;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -96,20 +97,29 @@ final class CourseStructureControllerTest extends UnitTestCase {
       ['aculta_lms_answer', $answerStorage],
     ]);
 
-    $build = (new CourseStructureController($manager, $this->getStringTranslationStub()))->structure($course);
+    $formBuilder = $this->createMock(FormBuilderInterface::class);
+    $formBuilder->method('getForm')->willReturn(['#type' => 'form']);
+    $build = (new CourseStructureController($manager, $this->getStringTranslationStub(), $formBuilder))->structure($course);
 
     self::assertSame('course-structure', $build['#attributes']['data-aculta-lms']);
     self::assertSame(['aculta_lms/course_structure'], $build['#attached']['library']);
     self::assertSame('Curso de exemplo', $build['header']['title']['#value']);
     self::assertSame('Estrutura do curso', (string) $build['lessons_heading']['#value']);
     self::assertCount(2, $build['lessons']['#items']);
+    self::assertSame('lessons', $build['lessons']['#attributes']['data-aculta-sort-list']);
     $firstLesson = $build['lessons']['#items'][0];
     $secondLesson = $build['lessons']['#items'][1];
+    self::assertSame('11', $firstLesson['#attributes']['data-aculta-sort-item']);
+    self::assertTrue($firstLesson['heading']['sort_handle']['#attributes']['data-aculta-sort-handle']);
+    self::assertSame('true', $firstLesson['heading']['sort_handle']['#attributes']['aria-hidden']);
     self::assertSame('Primeira aula', (string) $firstLesson['heading']['title']['#title']);
     self::assertSame('aculta_lms.lesson_edit', $firstLesson['heading']['title']['#url']->getRouteName());
     self::assertSame('aculta_lms.lesson_preview', $firstLesson['heading']['preview']['#url']->getRouteName());
     self::assertSame('Publicada', (string) $firstLesson['heading']['state']['#value']);
     self::assertCount(2, $firstLesson['activities']['#items']);
+    self::assertSame('activities', $firstLesson['activities']['#attributes']['data-aculta-sort-list']);
+    self::assertSame('21', $firstLesson['activities']['#items'][0]['#attributes']['data-aculta-sort-item']);
+    self::assertTrue($firstLesson['activities']['#items'][0]['sort_handle']['#attributes']['data-aculta-sort-handle']);
     self::assertSame('Explique a ideia.', (string) $firstLesson['activities']['#items'][0]['question']['#plain_text']);
     self::assertSame('aculta_lms.activity_edit', $firstLesson['activities']['#items'][0]['title']['#url']->getRouteName());
     self::assertSame('aculta_lms.activity_delete', $firstLesson['activities']['#items'][0]['actions']['delete']['#url']->getRouteName());

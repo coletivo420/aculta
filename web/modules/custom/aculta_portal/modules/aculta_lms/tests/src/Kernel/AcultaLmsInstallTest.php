@@ -233,7 +233,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
   /**
    * Ensures moves reorder siblings without changing answer references.
    */
-  public function testCourseStructureMovesLessonsAndActivitiesWithoutChangingAnswers(): void {
+  public function testCourseStructureMovesAndReordersLessonsAndActivitiesWithoutChangingAnswers(): void {
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
     $this->prepareAcultaLmsClassRelationship();
     $course = GroupEntity::create(['type' => 'lms_course', 'label' => 'Curso de ordenação']);
@@ -287,13 +287,37 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->assertTrue($manager->move('aculta_lms_lesson', (int) $course->id(), (int) $lessonB->id(), 'up'));
     $this->assertSame(1, (int) $lessonStorage->load($lessonA->id())->get('weight')->value);
     $this->assertSame(0, (int) $lessonStorage->load($lessonB->id())->get('weight')->value);
+    $this->assertTrue($manager->reorder('aculta_lms_lesson', (int) $course->id(), [
+      (int) $lessonA->id(),
+      (int) $lessonB->id(),
+    ]));
+    $this->assertSame(0, (int) $lessonStorage->load($lessonA->id())->get('weight')->value);
+    $this->assertSame(1, (int) $lessonStorage->load($lessonB->id())->get('weight')->value);
+    $this->assertFalse($manager->reorder('aculta_lms_lesson', (int) $course->id(), [
+      (int) $lessonA->id(),
+      (int) $lessonB->id(),
+    ]));
 
     $this->assertTrue($manager->move('aculta_lms_activity', (int) $lessonA->id(), (int) $activityA->id(), 'down'));
     $this->assertSame(0, (int) $activityStorage->load($activityB->id())->get('weight')->value);
     $this->assertSame(1, (int) $activityStorage->load($activityA->id())->get('weight')->value);
+    $this->assertTrue($manager->reorder('aculta_lms_activity', (int) $lessonA->id(), [
+      (int) $activityA->id(),
+      (int) $activityB->id(),
+    ]));
+    $this->assertSame(0, (int) $activityStorage->load($activityA->id())->get('weight')->value);
+    $this->assertSame(1, (int) $activityStorage->load($activityB->id())->get('weight')->value);
     $answerStorage = $this->container->get('entity_type.manager')->getStorage('aculta_lms_answer');
     $this->assertSame((int) $activityA->id(), (int) $answerStorage->load($answer->id())->get('activity_id')->value);
+    $this->assertTrue($manager->move('aculta_lms_activity', (int) $lessonA->id(), (int) $activityA->id(), 'down'));
     $this->assertFalse($manager->move('aculta_lms_activity', (int) $lessonA->id(), (int) $activityA->id(), 'down'));
+    try {
+      $manager->reorder('aculta_lms_lesson', (int) $course->id(), [(int) $lessonA->id()]);
+      $this->fail('An incomplete lesson permutation must be rejected.');
+    }
+    catch (\InvalidArgumentException) {
+      $this->addToAssertionCount(1);
+    }
   }
 
   /**

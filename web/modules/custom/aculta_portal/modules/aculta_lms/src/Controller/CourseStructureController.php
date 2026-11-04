@@ -99,14 +99,13 @@ final class CourseStructureController {
           ],
           'sort_handle' => [
             '#type' => 'html_tag',
-            '#tag' => 'button',
+            '#tag' => 'span',
             '#value' => $this->t('Arrastar para reordenar'),
             '#attributes' => [
-              'type' => 'button',
               'class' => ['aculta-lms-course-builder__sort-handle'],
               'data-aculta-sort-handle' => TRUE,
               'draggable' => 'true',
-              'aria-label' => $this->t('Arrastar atividade para reordenar'),
+              'aria-hidden' => 'true',
             ],
           ],
           'title' => $answerCount === 0
@@ -169,7 +168,6 @@ final class CourseStructureController {
       if (count($activityCards) > 1 && $this->formBuilder !== NULL) {
         $activityList['#attributes']['data-aculta-sort-list'] = 'activities';
         $activityList['#attributes']['data-aculta-sort-form'] = 'aculta-course-order-activities-' . $lesson->id();
-        $activityList['#attached']['library'][] = 'aculta_lms/course_structure_sort';
         $activityOrderForm = $this->formBuilder->getForm(
           \Drupal\aculta_lms\Form\CourseStructureOrderForm::class,
           $course,
@@ -197,14 +195,13 @@ final class CourseStructureController {
           )->toRenderable(),
           'sort_handle' => [
             '#type' => 'html_tag',
-            '#tag' => 'button',
+            '#tag' => 'span',
             '#value' => $this->t('Arrastar para reordenar'),
             '#attributes' => [
-              'type' => 'button',
               'class' => ['aculta-lms-course-builder__sort-handle'],
               'data-aculta-sort-handle' => TRUE,
               'draggable' => 'true',
-              'aria-label' => $this->t('Arrastar aula para reordenar'),
+              'aria-hidden' => 'true',
             ],
           ],
           'preview' => Link::fromTextAndUrl(
@@ -249,7 +246,6 @@ final class CourseStructureController {
     if (count($lessonCards) > 1 && $this->formBuilder !== NULL) {
       $lessonList['#attributes']['data-aculta-sort-list'] = 'lessons';
       $lessonList['#attributes']['data-aculta-sort-form'] = 'aculta-course-order-lessons-' . $course->id();
-      $lessonList['#attached']['library'][] = 'aculta_lms/course_structure_sort';
       $lessonOrderForm = $this->formBuilder->getForm(
         \Drupal\aculta_lms\Form\CourseStructureOrderForm::class,
         $course,

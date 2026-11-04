@@ -1,6 +1,6 @@
 # ACULTA Studio — LMS Course Builder: contrato visual e execução
 
-**Versão de design:** CB-UX 0.3.0-dev.8 · **Data:** 2026-11-04 · **Estado:** estrutura em cartões responsivos, CKEditor 5 filtrado, comandos acessíveis de ordenação, prévia privada por aula, lista de materiais existentes e edição contextual de leituras/galerias/vídeos implementados; edição de documentos e drag-and-drop pendentes.
+**Versão de design:** CB-UX 0.3.0-dev.9 · **Data:** 2026-11-04 · **Estado:** estrutura em cartões responsivos, CKEditor 5 filtrado, reordenação por arraste com controles acessíveis de fallback, prévia privada por aula, lista de materiais existentes e edição contextual de leituras/galerias/vídeos implementados; edição contextual de documentos e homologação visual seguem pendentes.
 
 **Referências:** [Studio Visual](STUDIO-VISUAL-CONCEPT.md) · [Fluxos de edição](STUDIO-EDITOR-FLOWS.md) · [Roadmap Studio](STUDIO-MAGAZINE-ROADMAP.md) · [Roadmap funcional LMS](../modules/ACULTA-LMS-ROADMAP.md) · [LMS/Group](../modules/LMS-GROUP.md) · [Contratos LMS](LMS-INTEGRATION-CONTRACTS.md).
 
@@ -26,7 +26,7 @@ Construir a autoria de cursos do educador sem usar as telas administrativas do D
 | Construtor — Estrutura | central | árvore, expandir módulos, selecionar item, adicionar conforme catálogo autorizado |
 | Editor de aula/atividade | central | formulário nativo, CKEditor 5 onde cabível, materiais, salvar, erros, estado |
 | Criar item | contexto de módulo | só tipos suportados: aula, atividade, recurso; vídeo/PDF/H5P/discussão quando realmente disponíveis |
-| Reorganizar | contexto da árvore | comandos confirmados mover acima/abaixo em teclado e sem JS; drag-and-drop desktop e mover entre módulos no mobile ainda pendentes |
+| Reorganizar | contexto da árvore | arraste dentro de cada lista no desktop; controles mover acima/abaixo para teclado/sem JS; mover entre módulos não se aplica enquanto o LMS não tiver um conceito persistido de módulo |
 | Informações | secundária | nome, descrição, capa e campos reais do curso |
 | Materiais | secundária | mídia/referências e PDF autorizado, via kernel |
 | Regras | secundária | disponibilidade, conclusão, pré-requisitos reais |
@@ -78,7 +78,7 @@ O botão “+ Adicionar” informa o local de inserção e consulta tipos e aç�
 
 ## Ordenação e segurança editorial
 
-Desktop: drag-and-drop opcional, indicador claro do destino, confirmação de posição. Mobile, leitor de tela e teclado: comandos **Mover acima**, **Mover abaixo** e **Mover para módulo**; anuncia deslocamento e tem alternativa sem JS. Persistir ordem **somente** pelo mecanismo oficial confirmado do LMS/Group; validar concorrência e evitar perda de posição. Em curso com turma ativa, apresentar impactos potenciais antes de alterar estrutura/ordem/atividade, não remover notas, progresso, entregas, referências nem avaliações automaticamente. Cada item deve ser salvo em transação/ação própria quando supported, sem alegar commit em lote inexistente.
+Desktop: arraste opcional restrito à lista de aulas ou à lista de atividades da mesma aula. Mobile, leitor de tela e teclado: comandos **Mover acima** e **Mover abaixo**; a lista anuncia alteração e mantém alternativa sem JS. O endpoint confere acesso, ancestralidade e permutação exata, então serializa e grava pesos por lock/transação. Mover entre módulos não é oferecido porque módulo não é entidade/escopo persistido neste LMS. Em curso com turma ativa, a ordem compartilhada afeta as turmas; não remover notas, progresso, entregas, referências nem avaliações. Cada operação grava sua própria lista.
 
 ## Componentes candidatos ACULTA420
 
@@ -100,9 +100,9 @@ Desktop: drag-and-drop opcional, indicador claro do destino, confirmação de po
 | **0.3.1** | shell mobile-first, cartões de aula/atividade e estrutura reflow no mobile | cartões/resumo/estados vazios implementados; navegação contextual e validação visual pendentes |
 | **0.3.2** | navegação hierárquica, seleção, expansão, histórico, estados vazios | isolamento por curso/Group |
 | **0.3.3** | criação contextual de aulas e tipos de atividade suportados em entidades ACULTA | formulário, acesso e payload estão implementados; validação visual/Runtime pendente |
-| **0.3.4** | edição contextual com CKEditor 5/Form API, erros e salvamento real | formulário da aula usa CKEditor 5/Form API e `aculta_lms_lesson` com allowlist (parágrafos, títulos, listas, links, ênfase, citação e código); somente `lms_teacher` recebe o formato; valores `plain_text` legados são escapados antes da edição. Render é `processed_text`; edição do gabarito segue bloqueada após respostas. Shell editor contextual, mensagens visuais e homologação ainda pendentes |
-| **0.3.5** | mover/reordenar, teclado e aviso de impacto em turmas | comandos acima/abaixo e efeito nas turmas implementados com entidades ACULTA; serialização por coleção, transação e Kernel; drag-and-drop e homologação visual ainda pendentes |
-| **0.3.6** | mídias, Gallery, PDF Viewer e H5P quando disponíveis | leituras, galerias, vídeos e documentos existentes listados via owners/Entity Access; edição reusa Group; incorporar viewers PDF/H5P diretamente na estrutura ainda pendente |
+| **0.3.4** | edição contextual com CKEditor 5/Form API, erros e salvamento real | formulário da aula usa CKEditor 5/Form API e `aculta_lms_lesson` com allowlist (parágrafos, títulos, listas, links, ênfase, citação e código); somente `lms_teacher` recebe o formato; valores `plain_text` legados são escapados antes da edição. Render é `processed_text`; edição do gabarito segue bloqueada após respostas. Integração funcional implementada; homologação visual e o erro JS residual do plugin pack ainda pendentes |
+| **0.3.5** | mover/reordenar, teclado e aviso de impacto em turmas | controles acima/abaixo e drag-and-drop por lista implementados; serialização por coleção, transação e Kernel. Homologação visual/acessível em browser pendente |
+| **0.3.6** | mídias, Gallery, PDF Viewer e H5P quando disponíveis | leituras, galerias, vídeos e documentos existentes listados via owners/Entity Access; PDF abre pelo canonical Media e formatter/viewer do owner; H5P e editor documental permanecem a confirmar por contrato e homologação, sem embed paralelo |
 | **0.3.7** | prévia estudante e publicação | prévia privada de aula implementada sem respostas/dados de estudantes ou submit; prévia interativa, regras e publicação pendentes |
 | **0.3.8** | acessibilidade, testes, responsividade, documentação e homologação | gates Drupal 11+/LMS, evidências |
 
