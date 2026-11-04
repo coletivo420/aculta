@@ -1,5 +1,24 @@
 # Changelog — ACULTA420 V2
 
+## 1.1.0-dev.5 — menu de conta e login modal da barra (2026-11-04)
+
+- O menu Drupal de conta voltou à barra institucional fixa. Os links nativos
+  “Minha conta” e “Sair” permanecem sob controle de acesso do sistema de menu;
+  o Portal fornece a URL de logout com token de sessão.
+- Para visitantes, “Entrar” continua apontando ao popup do Portal. V2 carrega
+  o formulário e envia o login por Fetch ao endpoint `drupal_ajax`, aplicando
+  respostas Drupal de substituição/redirect dentro de `<dialog>` nativo. A
+  busca usa modal nativo e preserva a prévia do Portal. Os dois gatilhos da
+  barra não dependem de `core/drupal.dialog.ajax` nem de jQuery. Uma View
+  existente ainda anexa `core/drupal.ajax` (e sua dependência jQuery) à home;
+  essa biblioteca não é introduzida pela barra.
+- A barra lê o layout de purpose do Portal, realça a conta no purpose account
+  e respeita a supressão da faixa utilitária no purpose links.
+- Validação SDC 15/15, PHP lint/PHPCS, sintaxe JavaScript e `drush cr` passaram.
+  Smoke HTTP confirmou home, endpoint de login e endpoint de busca em 200.
+  O envio de credenciais não foi testado. `updatedb:status` e `config:status`
+  estão limpos.
+
 ## 1.1.0-dev.4 — ícones vetoriais e integração CDN/cache (2026-11-04)
 
 - Adicionada a biblioteca Phosphor Icons Core 2.1.1 (regular e duotone, MIT)

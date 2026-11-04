@@ -1,10 +1,12 @@
-name: Faixa institucional multidomínio
-description: Faixa ACULTA fixa com ícones legados e vitrine de portais apenas na home principal.
+name: Barra institucional e menu de conta
+description: Barra ACULTA fixa com menu Drupal de conta autenticada e vitrine de portais na home principal.
 component: aculta420_v2:multidomain-bar
 props:
   brand_home_url: https://main.example.invalid/
   logo_base_url: /themes/custom/aculta420_v2/assets/logos
   logo_alt: 'ACULTA - Associação Cultural Antiproibicionista'
+  is_account_domain: true
+  show_utility_bar: true
   cart_url: https://main.example.invalid/carrinho
   cart_count: 0
   cart_empty: true
@@ -25,3 +27,4 @@ props:
       url: https://revista.example.invalid/
 slots:
   search: '<a href="/busca/popup" class="aculta-utility-trigger">Buscar</a>'
+  account_menu: '<ul class="menu"><li><a href="/conta" data-portal-ui="account-home">Minha conta</a></li><li><a href="/sair">Sair</a></li></ul>'

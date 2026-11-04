@@ -16,7 +16,7 @@
 
 ## Fase 2 — Catálogo SDC e integração Twig
 
-**Status: integrada em `1.1.0-dev.4`; schemas e renderização SDC PASS; revisão visual pendente.**
+**Status: integrada em `1.1.0-dev.5`; schemas e renderização SDC PASS; login modal e revisão visual em validação.**
 
 - Fourteen components with strict schemas, local assets, responsive CSS, and
   progressive enhancement for mobile navigation.
@@ -31,6 +31,9 @@
   `L.divIcon`; map JS uses `core/once` and keeps markup outside `drupalSettings`.
 - Phosphor Icons Core 2.1.1 (MIT) is vendored locally; all 1,512 regular and
   1,512 duotone SVGs are available to inline SDC rendering.
+- The account menu render array is moved from Drupal's header region into the
+  fixed bar; login and search use native dialogs and Fetch, with no Core jQuery
+  dialog library in the V2 shell. Portal's search preview behavior is retained.
 - The institutional bar is fixed at the V1 top position and contains the ACULTA
   logo and icon-only search, cart, messages, and alerts. Optional network links
   sit in a separate row; URLs/counts come from Portal data.

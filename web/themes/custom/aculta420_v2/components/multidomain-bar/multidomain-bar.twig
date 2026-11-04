@@ -1,5 +1,5 @@
 <div class="aculta-institution-bar-placeholder" aria-hidden="true"></div>
-<div{{ attributes.addClass('aculta-institution-bar') }} role="region" aria-label="{{ 'Barra institucional'|t }}">
+<div{{ attributes.addClass('aculta-institution-bar', is_account_domain ? 'aculta-institution-bar--account') }} role="region" aria-label="{{ 'Barra institucional'|t }}">
   <div class="aculta-institution-bar__inner">
     <p class="aculta-institution-bar__brand">
       <a class="aculta-institution-bar__home" href="{{ brand_home_url }}" rel="home">
@@ -9,6 +9,7 @@
           width="78" height="26" alt="{{ logo_alt }}" decoding="async">
       </a>
     </p>
+    {% if show_utility_bar %}
     <div class="aculta-utility">
       {{ search }}
       {% if cart_url %}
@@ -37,9 +38,41 @@
           count_kind: alerts_count_kind
         }, with_context = false) }}
       {% endif %}
+      {% if account_menu %}
+        <nav class="aculta-account-menu" aria-label="{{ 'Menu da conta'|t }}">{{ account_menu }}</nav>
+      {% endif %}
     </div>
+    {% endif %}
   </div>
 </div>
+
+<template data-aculta-login-dialog-template>
+  <dialog class="aculta-login-dialog" aria-labelledby="aculta-login-dialog-title" data-aculta-login-dialog>
+    <div class="aculta-login-dialog__surface">
+      <header class="aculta-login-dialog__header">
+        <h2 id="aculta-login-dialog-title">{{ 'Entrar'|t }}</h2>
+        <button type="button" class="aculta-login-dialog__close" data-aculta-login-close aria-label="{{ 'Fechar janela de acesso'|t }}">
+          {{ include('aculta420_v2:icon', { name: 'x', variant: 'duotone', size: 'md' }, with_context = false) }}
+        </button>
+      </header>
+      <div class="aculta-login-dialog__content" data-aculta-login-content aria-live="polite" aria-busy="false"></div>
+    </div>
+  </dialog>
+</template>
+
+<template data-aculta-search-dialog-template>
+  <dialog class="aculta-search-dialog" aria-labelledby="aculta-search-dialog-title" data-aculta-search-dialog>
+    <div class="aculta-search-dialog__surface">
+      <header class="aculta-login-dialog__header">
+        <h2 id="aculta-search-dialog-title">{{ 'Buscar no site'|t }}</h2>
+        <button type="button" class="aculta-login-dialog__close" data-aculta-search-close aria-label="{{ 'Fechar busca'|t }}">
+          {{ include('aculta420_v2:icon', { name: 'x', variant: 'duotone', size: 'md' }, with_context = false) }}
+        </button>
+      </header>
+      <div class="aculta-login-dialog__content" data-aculta-search-content aria-live="polite" aria-busy="false"></div>
+    </div>
+  </dialog>
+</template>
 
 {% if links is not empty %}
   <nav class="aculta-purpose-showcase" aria-labelledby="aculta-purpose-showcase-title">

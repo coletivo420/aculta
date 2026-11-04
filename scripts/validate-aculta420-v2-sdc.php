@@ -116,9 +116,14 @@ $samples = [
       'messages_count' => 0,
       'alerts_url' => '/avisos/resumo',
       'alerts_count' => 0,
+      'is_account_domain' => TRUE,
+      'show_utility_bar' => TRUE,
       'links' => [['title' => 'ACULTA', 'url' => '/']],
     ],
-    '#slots' => ['search' => ''],
+    '#slots' => [
+      'search' => '',
+      'account_menu' => '<ul class="menu"><li><a href="/conta">Minha conta</a></li><li><a href="/sair">Sair</a></li></ul>',
+    ],
   ],
   'navigation-bar' => [
     '#props' => ['site_name' => 'ACULTA', 'menu_id' => 'v2-sdc-validation-menu'],
@@ -165,6 +170,35 @@ foreach ($component_ids as $component_id) {
   }
   if ($component_id === 'navigation-bar' && !in_array('core/once', $definition['library']['dependencies'] ?? [], TRUE)) {
     throw new RuntimeException('Navigation behavior must depend on core/once.');
+  }
+  if ($component_id === 'multidomain-bar') {
+    if (!is_file($theme_root . '/components/multidomain-bar/multidomain-bar.js')) {
+      throw new RuntimeException('Institution bar behavior file is missing.');
+    }
+    if (!in_array('core/once', $definition['library']['dependencies'] ?? [], TRUE)
+      || in_array('core/jquery', $definition['library']['dependencies'] ?? [], TRUE)
+      || in_array('core/drupal.dialog.ajax', $definition['library']['dependencies'] ?? [], TRUE)) {
+      throw new RuntimeException('Institution bar must use Drupal once without a jQuery dialog dependency.');
+    }
+    $template = file_get_contents($theme_root . '/components/multidomain-bar/multidomain-bar.twig');
+    $javascript = file_get_contents($theme_root . '/components/multidomain-bar/multidomain-bar.js');
+    foreach (['account_menu', 'data-aculta-login-dialog-template', 'data-aculta-login-dialog'] as $required_markup) {
+      if (!str_contains($template, $required_markup)) {
+        throw new RuntimeException(sprintf('Institution bar template is missing: %s', $required_markup));
+      }
+    }
+    $required_login_code = [
+      'fetch(',
+      "'_wrapper_format'",
+      "'ajax_form'",
+      "command.command === 'redirect'",
+      "command.command === 'insert'",
+    ];
+    foreach ($required_login_code as $required_code) {
+      if (!str_contains($javascript, $required_code)) {
+        throw new RuntimeException(sprintf('Institution bar AJAX login behavior is missing: %s', $required_code));
+      }
+    }
   }
   if ($component_id === 'navigation-bar') {
     $javascript = file_get_contents($theme_root . '/components/navigation-bar/navigation-bar.js');

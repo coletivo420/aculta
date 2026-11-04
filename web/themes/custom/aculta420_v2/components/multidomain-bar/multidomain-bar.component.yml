@@ -5,9 +5,10 @@ group: ACULTA
 libraryOverrides:
   dependencies:
     - core/drupal
+    - core/drupalSettings
     - core/once
-    - core/drupal.displace
     - aculta420_v2/utility-drawers
+    - aculta_portal/search-preview
 props:
   type: object
   additionalProperties: false
@@ -25,6 +26,12 @@ props:
       type: string
       minLength: 1
       default: ACULTA
+    is_account_domain:
+      type: boolean
+      default: false
+    show_utility_bar:
+      type: boolean
+      default: true
     cart_url:
       type: [string, 'null']
       format: uri-reference
@@ -104,3 +111,6 @@ slots:
   search:
     title: Pesquisa
     description: Gatilho AJAX do ACULTA Portal, como render array.
+  account_menu:
+    title: Ações de conta
+    description: Menu de conta Drupal com links de login, Minha conta e logout.

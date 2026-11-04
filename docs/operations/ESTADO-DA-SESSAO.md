@@ -11,6 +11,36 @@
 - **Preservar:** alterações paralelas em `composer.json`, `composer.lock`, `docs/operations/status/aculta_lms.yml`, módulo `aculta_lms`, `web/themes/custom/aculta420/` e `web/themes/custom/aculta_theme/`; não incluir nesta entrega.
 - **Retomar lendo:** este handoff; `web/themes/custom/aculta420_v2/assets/README.md`; `web/themes/custom/aculta420_v2/docs/roadmap.md`; `web/modules/custom/aculta_portal/modules/aculta_maps/README.md`.
 
+## Continuação — conta fixa e popup AJAX nativo V2 — 2026-11-04
+
+- A barra fixa volta a renderizar o menu Drupal `account` dentro de sua região
+  utilitária. O render array original é movido do header preservando acesso,
+  lazy builder e cacheabilidade; o menu entrega “Minha conta” e “Sair” após
+  autenticação e “Entrar” para visitantes.
+- “Entrar” abre `<dialog>` nativo; V2 busca o formulário do Portal com Fetch e
+  envia o POST no formato `drupal_ajax`. O cliente aplica somente os comandos
+  Portal/Core previstos: atualizar build ID, substituir o formulário em erro
+  ou redirecionar no sucesso, validando destino same-origin. Busca também usa
+  Fetch e mantém o behavior Vanilla de prévia do Portal.
+- A V2 remove o carregamento global de `core/drupal.dialog.ajax` para esta
+  apresentação. A home ainda carrega jQuery porque uma View VVJB existente
+  anexa `core/drupal.ajax`; não é dependência dos componentes da barra e foi
+  preservada para não remover AJAX da View.
+- Validação: 15/15 SDCs; PHPCS e PHP lint; Node syntax; `drush cr`; HTTP 200 na
+  home, popup de login e popup de busca; os dois formulários e a prévia foram
+  encontrados no HTML dos endpoints. `updatedb:status` e `config:status` sem
+  pendências/diferenças. Nenhuma credencial foi enviada; autenticação de ponta
+  a ponta permanece para validação manual.
+- Arquivos desta entrega: `web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php`,
+  `templates/layout/page.html.twig`, `components/multidomain-bar/`, manifesto/
+  bibliotecas/changelog/roadmap do tema e `scripts/validate-aculta420-v2-sdc.php`.
+  Foram preservadas alterações paralelas em Composer, LMS, `aculta420` e
+  `aculta_theme`.
+- **Publicação e Runtime:** preencher com hash, resultado do push e confirmação
+  pós-push ao concluir a entrega.
+- **Retomar lendo:** seção acima, `components/multidomain-bar/`,
+  `PagePresentationHooks.php` e `LoginPopupForm.php`.
+
 ## Retomada — objetivo persistente LMS → pagamentos → updatedb, 2026-11-04
 
 - **Objetivo:** concluir lacunas funcionais do LMS; somente depois trabalhar pagamentos e, por último, resolver pendências `updatedb` individualmente. Escopo da sessão é código/funcionalidade, sem revisão estética do tema.
