@@ -34,7 +34,6 @@ final class PagePresentationHooks {
     // Identity and avatar are Portal-owned render data; the theme only maps
     // their neutral contract into the institutional bar.
     $variables['aculta_account_avatar'] = $variables['aculta_account_avatar'] ?? NULL;
-    $variables['aculta_account_display_name'] = $variables['aculta_account_display_name'] ?? NULL;
     $this->moveAccountMenuToUtilityBar($variables);
     $this->wrapPrimaryMenuWithNavigationComponent($variables);
     $this->removeSearchDialogDependency($variables);

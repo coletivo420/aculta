@@ -35,11 +35,6 @@ props:
     account_authenticated:
       type: boolean
       default: false
-    account_display_name:
-      type: [string, 'null']
-      title: Apelido público
-      minLength: 1
-      default: null
     cart_url:
       type: [string, 'null']
       format: uri-reference

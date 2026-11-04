@@ -1,13 +1,19 @@
 # Changelog — ACULTA420 V2
 
+## 1.2.0-dev.4 — botão de conta somente com avatar (2026-11-04)
+
+- A Institution Bar não recebe nem mostra apelido. O botão autenticado contém
+  somente o avatar e “Minha conta” visualmente oculto como nome acessível.
+- O resumo mantém o alvo de toque de 44 px. O Portal fornece apenas o avatar;
+  o painel continua contendo os links Minha conta e Sair.
+- A entrada `1.2.0-dev.3` foi substituída após a correção final do escopo.
+
 ## 1.2.0-dev.3 — identidade no menu da barra institucional (2026-11-04)
 
-- O SDC `account-menu` recebe o apelido público aprovado pelo Portal e exibe-o
-  somente quando tem até dez caracteres Unicode; sem apelido ou com texto mais
-  longo, mantém apenas o avatar/ícone. Em telas menores que 40rem o rótulo fica
-  oculto.
-- O avatar e o apelido chegam por render array/valor escalar do módulo
-  `aculta_user`; o tema não consulta entidades, Profile ou `user_picture`.
+- O SDC `account-menu` exibe somente o avatar/ícone. O nome acessível fica
+  visualmente oculto, e a barra não recebe apelido do módulo `aculta_user`.
+- O avatar chega como render array do módulo `aculta_user`; o tema não consulta
+  entidades, Profile ou `user_picture`.
 - O painel mantém os links do menu Drupal, o login continua usando o diálogo
   AJAX existente e o disclosure fecha por Escape ou clique fora.
 - O painel de conta usa largura fluida para caber na viewport estreita.

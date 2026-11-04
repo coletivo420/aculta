@@ -1,8 +1,8 @@
 # ACULTA420 V2 roadmap
 
-- `1.2.0-dev.3`: menu da barra institucional integrado com apelido público e
-  avatar fornecidos por `aculta_user`; revisão responsiva e evidências visuais
-  ficam registradas na entrega correspondente.
+- `1.2.0-dev.4`: menu da barra institucional integrado somente com o avatar
+  fornecido por `aculta_user`; não há apelido na barra. Evidência visual e
+  runtime autenticado ainda pendentes.
 
 ## Fase 1 — Tokens e fundações
 

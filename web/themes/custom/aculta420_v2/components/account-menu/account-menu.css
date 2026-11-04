@@ -46,20 +46,6 @@
   object-fit: cover;
 }
 
-/* O nome sai antes dos ícones em telas estreitas; aparece a partir de 40rem. */
-.aculta-account-menu__label {
-  display: none;
-  overflow-wrap: anywhere;
-  min-inline-size: 0;
-  flex: 0 1 auto;
-}
-
-@media (min-width: 40rem) {
-  .aculta-account-menu__label {
-    display: inline;
-  }
-}
-
 .aculta-account-menu__panel {
   box-sizing: border-box;
   background: var(--color-surface-raised);

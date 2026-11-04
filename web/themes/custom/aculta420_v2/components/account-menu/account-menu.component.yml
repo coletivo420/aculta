@@ -16,11 +16,11 @@ props:
       type: boolean
       title: Usuário autenticado
       default: false
-    display_name:
+    summary_label:
       type: string
-      title: Apelido público
-      description: Apelido público fornecido pelo Portal. Omitido quando indisponível.
-      minLength: 1
+      title: Rótulo acessível
+      description: Nome acessível do botão; fica visualmente oculto.
+      default: Minha conta
 slots:
   avatar:
     title: Avatar
