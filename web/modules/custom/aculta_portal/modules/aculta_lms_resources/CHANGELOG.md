@@ -1,5 +1,14 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.24 — repara instalação parcial de field_lms_videos
+
+- Runtime tinha o schema update 8001 marcado, mas o field storage e o field
+  config de `field_lms_videos` estavam ausentes. O update 8002 agora os cria
+  somente quando faltarem e garante o widget no Form Display Group.
+- `update_8001` e `update_8002` compartilham a rotina idempotente; valores e
+  relações existentes são preservados.
+- O Runtime requer snapshot e execução do update antes do smoke final do widget.
+
 ## 0.1.0-dev.23 — corrige classe EntityFormDisplay no editor
 
 - Corrige o namespace da implementação Core de `EntityFormDisplay` usado para

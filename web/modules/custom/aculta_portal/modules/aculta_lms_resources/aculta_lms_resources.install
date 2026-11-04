@@ -92,6 +92,20 @@ function aculta_lms_resources_ensure_video_displays(): void {
  * Installs the course video reference for existing sites.
  */
 function aculta_lms_resources_update_8001(): void {
+  aculta_lms_resources_ensure_video_field();
+}
+
+/**
+ * Restores the video field and form widget when an earlier update was partial.
+ */
+function aculta_lms_resources_update_8002(): void {
+  aculta_lms_resources_ensure_video_field();
+}
+
+/**
+ * Ensures the Group course video field exists and is editable in Group Form API.
+ */
+function aculta_lms_resources_ensure_video_field(): void {
   if (!FieldStorageConfig::loadByName('group', 'field_lms_videos')) {
     FieldStorageConfig::create([
       'field_name' => 'field_lms_videos',
