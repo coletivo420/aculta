@@ -3,9 +3,10 @@
 - Corrige o nome do hook Form API para corresponder ao ID real
   `aculta_lms_answer_submission`, permitindo anexar links de discussão às
   respostas de atividades.
-- Unit verifica que o atributo do hook corresponde ao ID declarado pelo
-  formulário; smoke autenticado no Runtime em curso/turma e avaliação
-  responsiva pendentes.
+- Unit focal: 1 teste / 2 assertions PASS; PHPCS Drupal/DrupalPractice e PHP
+  lint dos arquivos alterados PASS. Smoke autenticado no Runtime confirmou o
+  formulário, link e tópico autorizado, sem overflow em viewports de 320, 390,
+  768 e 1280 px. Fixtures removidas; nenhuma resposta enviada.
 
 ## `0.1.0-dev.35` — discussões no formulário ACULTA
 
