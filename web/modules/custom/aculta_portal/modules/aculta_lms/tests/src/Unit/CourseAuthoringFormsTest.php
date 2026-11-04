@@ -151,7 +151,7 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::assertBodyFormat
+   * Tests rejecting unsupported lesson text formats.
    */
   public function testLessonRejectsUnapprovedBodyFormat(): void {
     $this->expectException(\InvalidArgumentException::class);
@@ -159,7 +159,7 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::assertBodyFormat
+   * Tests accepting supported lesson text formats.
    */
   public function testLessonAcceptsSupportedBodyFormats(): void {
     LessonEntity::assertBodyFormat('plain_text');

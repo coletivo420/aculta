@@ -17,7 +17,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 final class CoreEditorAssetOrderingHooksTest extends UnitTestCase {
 
   /**
-   * @covers ::placeCoreJQueryBeforeDependents
+   * @covers ::placeCoreEditorPrerequisites
    */
   public function testCorePrerequisitesAreOrderedBeforeDependentAggregates(): void {
     $libraries = [
@@ -40,7 +40,7 @@ final class CoreEditorAssetOrderingHooksTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::placeCoreJQueryBeforeDependents
+   * @covers ::placeCoreEditorPrerequisites
    */
   public function testOtherExtensionsAreNotAltered(): void {
     $libraries = ['jquery' => ['js' => ['jquery.min.js' => ['preprocess' => FALSE]]]];

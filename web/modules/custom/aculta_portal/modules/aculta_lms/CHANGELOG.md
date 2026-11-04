@@ -1,3 +1,8 @@
+# 0.1.0-dev.206 — corrige serialização dos formulários do Course Builder
+
+- Serviços injetados nos formulários de mover, ordenar e excluir agora são `protected`, conforme o contrato de `DependencySerializationTrait`; após Form API cache serialization, as dependências são restauradas do container.
+- Upgrade Status/PHPStan analisou 225 arquivos: 19 alertas sobre visibilidade e `@covers` foram corrigidos, resultado final sem erros. `AcultaLmsInstallTest` Kernel 9/409 verifica a restauração dos serviços nos quatro formulários do Course Builder.
+
 # 0.1.0-dev.205 — alerta para alterações não salvas na autoria
 
 - Formulários de aula, atividade e ordenação agora detectam alterações e usam o aviso nativo do navegador antes de abandonar a página; submissão limpa o estado de alteração.

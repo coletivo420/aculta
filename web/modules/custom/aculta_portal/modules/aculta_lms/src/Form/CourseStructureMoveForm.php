@@ -21,9 +21,9 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class CourseStructureMoveForm extends ConfirmFormBase {
 
   public function __construct(
-    private readonly CurrentRouteMatch $currentRouteMatch,
-    private readonly CourseAuthoringAccessCheck $accessCheck,
-    private readonly CourseStructureOrderManager $orderManager,
+    protected readonly CurrentRouteMatch $currentRouteMatch,
+    protected readonly CourseAuthoringAccessCheck $accessCheck,
+    protected readonly CourseStructureOrderManager $orderManager,
   ) {}
 
   /**

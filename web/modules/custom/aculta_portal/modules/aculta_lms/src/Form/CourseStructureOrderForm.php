@@ -22,10 +22,10 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class CourseStructureOrderForm extends FormBase implements ContainerInjectionInterface {
 
   public function __construct(
-    private readonly CurrentRouteMatch $routeMatcher,
-    private readonly CourseAuthoringAccessCheck $accessCheck,
-    private readonly CourseStructureOrderManager $orderManager,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly CurrentRouteMatch $routeMatcher,
+    protected readonly CourseAuthoringAccessCheck $accessCheck,
+    protected readonly CourseStructureOrderManager $orderManager,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   /**

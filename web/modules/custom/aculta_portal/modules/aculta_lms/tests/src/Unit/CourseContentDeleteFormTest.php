@@ -203,7 +203,7 @@ final class CourseContentDeleteFormTest extends UnitTestCase {
   private function field(string $value): FieldItemListInterface {
     return new class($value) extends FieldItemList {
 
-      public function __construct(private readonly string $fieldValue) {}
+      public function __construct(protected readonly string $fieldValue) {}
 
       /**
        * Returns the fixture field value.

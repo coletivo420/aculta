@@ -18,6 +18,12 @@ use Drupal\Core\Entity\EntityStorageException;
 use Drupal\aculta_lms\Event\CourseCompletionPublisherInterface;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\aculta_lms\Form\AnswerSubmissionForm;
+use Drupal\aculta_lms\Form\ActivityDeleteForm;
+use Drupal\aculta_lms\Form\CourseStructureMoveForm;
+use Drupal\aculta_lms\Form\CourseStructureOrderForm;
+use Drupal\aculta_lms\Form\LessonDeleteForm;
+use Drupal\aculta_lms\Access\CourseAuthoringAccessCheck;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\aculta_lms\Learning\CourseActivityReaderInterface;
 use Drupal\aculta_lms\Learning\CourseActivity;
 use Drupal\aculta_lms\Plugin\ActivityAnswer\ObjectiveAnswerPluginResolver;
@@ -240,6 +246,46 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $currentRoute = new \ReflectionProperty(AnswerSubmissionForm::class, 'currentRoute');
     $this->assertTrue($currentRoute->isInitialized($restored));
     $this->assertInstanceOf(CurrentRouteMatch::class, $currentRoute->getValue($restored));
+  }
+
+  /**
+   * Ensures course-builder Form API services survive cache serialization.
+   */
+  public function testCourseBuilderFormsRestoreInjectedServicesAfterSerialization(): void {
+    $this->assertTrue($this->container->get('module_installer')->install(['aculta_lms'], FALSE));
+    $forms = [
+      ActivityDeleteForm::class => [
+        'entityTypeManager' => EntityTypeManagerInterface::class,
+        'currentRouteMatch' => CurrentRouteMatch::class,
+        'accessCheck' => CourseAuthoringAccessCheck::class,
+      ],
+      LessonDeleteForm::class => [
+        'entityTypeManager' => EntityTypeManagerInterface::class,
+        'currentRouteMatch' => CurrentRouteMatch::class,
+        'accessCheck' => CourseAuthoringAccessCheck::class,
+      ],
+      CourseStructureMoveForm::class => [
+        'currentRouteMatch' => CurrentRouteMatch::class,
+        'accessCheck' => CourseAuthoringAccessCheck::class,
+        'orderManager' => CourseStructureOrderManager::class,
+      ],
+      CourseStructureOrderForm::class => [
+        'routeMatcher' => CurrentRouteMatch::class,
+        'accessCheck' => CourseAuthoringAccessCheck::class,
+        'orderManager' => CourseStructureOrderManager::class,
+        'entityTypeManager' => EntityTypeManagerInterface::class,
+      ],
+    ];
+
+    foreach ($forms as $class => $properties) {
+      $form = $class::create($this->container);
+      $restored = unserialize(serialize($form), ['allowed_classes' => [$class]]);
+      foreach ($properties as $propertyName => $propertyClass) {
+        $property = new \ReflectionProperty($class, $propertyName);
+        $this->assertTrue($property->isInitialized($restored), $class . '::$' . $propertyName . ' is initialized.');
+        $this->assertInstanceOf($propertyClass, $property->getValue($restored), $class . '::$' . $propertyName . ' is restored.');
+      }
+    }
   }
 
   /**

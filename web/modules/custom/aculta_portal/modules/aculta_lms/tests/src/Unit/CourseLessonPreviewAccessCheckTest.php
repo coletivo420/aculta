@@ -82,7 +82,7 @@ final class CourseLessonPreviewAccessCheckTest extends UnitTestCase {
   private static function field(int $value): FieldItemListInterface {
     return new class($value) extends FieldItemList {
 
-      public function __construct(private readonly int $fieldValue) {}
+      public function __construct(protected readonly int $fieldValue) {}
 
       /**
        * Returns the fixture field value.
