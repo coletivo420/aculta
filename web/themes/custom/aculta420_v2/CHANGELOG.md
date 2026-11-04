@@ -1,5 +1,14 @@
 # Changelog — ACULTA420 V2
 
+## 1.2.0-dev.14 — aproxima o diálogo de acesso da V1
+
+- A superfície recupera o verde exato da V1 (`#6b9a2c`), com texto escuro
+  para manter contraste de 5,45:1. O botão Google recupera a sombra discreta e
+  o fundo creme em hover e foco por teclado; usa o mesmo SVG de marca da V1.
+- A composição, o formulário AJAX, os links e o item Minha conta no painel
+  autenticado permanecem no contrato atual. Validação visual após sincronizar
+  o código no Runtime: pendente.
+
 ## 1.2.0-dev.13 — porta o breadcrumb editorial da V1
 
 - A trilha de navegação agora é um SDC e substitui o template nativo com

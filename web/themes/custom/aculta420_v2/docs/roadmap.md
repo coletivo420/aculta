@@ -1,5 +1,13 @@
 # ACULTA420 V2 roadmap
 
+- `1.2.0-dev.14`: refinamento de fidelidade do diálogo de entrada com a V1.
+  A superfície usa `#6b9a2c`; texto escuro mantém 5,45:1. Google mantém o SVG
+  oficial da V1 e recupera sombra e realce creme no hover/foco. Formulário,
+  fallback e links permanecem sem alteração; Minha conta continua item do menu.
+  `validate-aculta420-v2-foundations.php` passou (51 pares). SDC schema não
+  pôde executar na worktree sem `vendor/autoload.php`. Firefox no Runtime após
+  sincronização: pendente.
+
 - `1.2.0-dev.13`: breadcrumb migrado da V1 para SDC e integrado ao template
   Drupal `navigation/breadcrumb`. Contrato visual preserva links editoriais,
   separador `/`, título atual e foco. Baseline: V2 não possuía override nem

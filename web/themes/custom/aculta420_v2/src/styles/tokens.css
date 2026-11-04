@@ -18,7 +18,8 @@
   --color-auth-control-surface: #e9f1fc;
   --color-auth-control-text: #111;
   --color-auth-control-focus: #0c3c29;
-  --color-auth-dialog-surface: var(--color-brand-secondary);
+  /* Keep the V1 login dialog's green surface while dark dialog text preserves AA contrast. */
+  --color-auth-dialog-surface: #6b9a2c;
   --color-auth-dialog-text: #171513;
   --color-auth-dialog-divider: #171513;
   --color-auth-provider-surface: #fff;
