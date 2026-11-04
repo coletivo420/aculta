@@ -103,7 +103,27 @@ function aculta_lms_resources_update_8002(): void {
 }
 
 /**
- * Ensures the Group course video field exists and is editable in Group Form API.
+ * Keeps Group's relationship type lookup compatible with the preserved ID.
+ */
+function aculta_lms_resources_update_8003(): void {
+  $plugin_id = 'aculta_document_viewer:course_document';
+  $storage = \Drupal::entityTypeManager()->getStorage('group_relationship_type');
+  $relationship_types = $storage->loadByProperties(['relation_type' => $plugin_id]);
+  foreach ($relationship_types as $relationship_type) {
+    $canonical_id = $storage->getRelationshipTypeId($relationship_type->getGroupTypeId(), $plugin_id);
+    if ($relationship_type->id() !== $canonical_id) {
+      // Group needs this marker to find a configured non-canonical ID. This
+      // preserves the relationship and its content without renaming or
+      // duplicating it.
+      \Drupal::state()->set('group_update_10300_detected_legacy_version', TRUE);
+      $storage->resetCache();
+      return;
+    }
+  }
+}
+
+/**
+ * Ensures the Group course video field exists and has a form widget.
  */
 function aculta_lms_resources_ensure_video_field(): void {
   if (!FieldStorageConfig::loadByName('group', 'field_lms_videos')) {

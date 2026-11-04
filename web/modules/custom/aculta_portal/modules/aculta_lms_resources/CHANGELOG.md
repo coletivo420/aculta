@@ -1,5 +1,16 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.27 — compatibilidade com ID legado da relação PDF no Group
+
+- O Group agora detecta o ID de configuração legado preservado para a relação
+  `aculta_document_viewer:course_document`; sem esse marcador, o formulário de
+  criação de Media tentava abrir um tipo novo inexistente.
+- O update `8003` ativa apenas o marcador de compatibilidade já suportado pelo
+  Group quando encontra um ID não canônico. Mantém o UUID/ID existente, não
+  duplica relações e não altera conteúdo.
+- Validação Runtime com o formulário Media/Group e os estados de cursos após
+  aplicar `8003` permanece necessária.
+
 ## 0.1.0-dev.26 — edição contextual de documentos PDF do curso
 
 - A página de materiais lista documentos privados relacionados ao curso e
