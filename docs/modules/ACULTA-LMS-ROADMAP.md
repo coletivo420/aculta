@@ -171,6 +171,10 @@ Runtime `cursos`: sem updates, rebuild e resolução do manager/hook passaram;
 houve warning preexistente de cópia dos assets H5P.
 RUNTIME STATUS: parcial; checkout HTTP, pedido pago, reembolso, confirmação da
 interface de remoção e isolamento A/B continuam DEFERRED.
+Unit `CourseEnrollmentPurchaseFormTest` em 2026-11-04 acrescenta 2 cenários / 20
+assertions para estados sem turma publicada e sem produto, verificando que não
+há ação de checkout. O Runtime contém apenas um curso sintético sem produto ou
+turma; a compra paga ainda depende de uma fixture de integração e de sandbox.
 Backup privado em
 `/home/aculta/private/aculta/config-reconcile-20261018/aculta_runtime-before-f7.sql.gz`.
 Detalhes em

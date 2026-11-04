@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.199
+version: 0.1.0-dev.200
 state: Dev
-progress_note: "Dev.199: smoke da sala revelou HTTP 500 ao renderizar tabela de atividades: células tratavam render arrays como atributos. Células agora declaram data, Kernel renderiza a atividade e o link. Runtime voltou a habilitar bootstrap5 após config:import; smoke autenticado pendente. Dev.198: painel do educador lê a série diária agregada lms.students.by_status por turma, com links GET 7/14/30d, somente dimensões da turma e sem IDs de estudante; Unit do history/controller e Kernel do armazenamento. Dev.197/196: reordenação por arraste e fallback acessível por teclado, lock/transação e validação de permutação. H5P reusa field/widget do owner quando disponível; smoke visual ainda pendente. CKEditor inicializa, com TypeError residual reportado no plugin pack a investigar no browser."
-next_phase: 'Continuar auditoria funcional/visual das lacunas LMS e validar o Course Builder autenticado; só então retomar pagamentos. Depois examinar cada update de banco pendente se houver, ou registrar evidência de que não há updates.'
+progress_note: "Dev.200: Unit CourseEnrollmentPurchaseForm 2/20 cobre ausência de turmas publicadas e ausência de produto, sem expor botão de compra. Runtime LMS: membro matriculado UID262 abre aula/atividade/link; outsider UID265 e visitante recebem 403 sem título. Dev.199: células da tabela de atividades usam a chave data do Render API; Kernel renderiza conteúdo e link, corrigindo HTTP 500. Dev.198: painel do educador lê a série diária agregada lms.students.by_status por turma, com links GET 7/14/30d, somente dimensões da turma e sem IDs de estudante. Dev.197/196: reordenação por arraste e fallback acessível por teclado, lock/transação e validação de permutação."
+next_phase: 'Completar F7 com teste integrado do formulário e item de carrinho; não enviar cobrança externa. Depois continuar pagamentos e examinar cada update de banco pendente, ou registrar evidência de que não há updates.'
 
 # 2026-10-22: Dependência externa de UI G420-C2-T permanece pendente.
 # O Studio compõe cards SDC, mas a homologação depende de fixtures LMS

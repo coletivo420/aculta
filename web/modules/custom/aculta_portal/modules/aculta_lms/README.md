@@ -287,6 +287,11 @@ Na dev.71, Unit LMS/Messenger: 86 testes / 460 assertions; o Kernel confirma
 DI do novo verificador de compras (4/40) e a regressão LMS/Messenger passa com
 23 testes / 730 assertions, com 95 depreciações upstream.
 
+Na dev.200, Unit `CourseEnrollmentPurchaseFormTest` cobre a turma sem publicação
+e o curso sem produto válido (2 testes / 20 assertions); nenhum desses estados
+renderiza ação de checkout. A integração de carrinho e o pagamento sandbox
+continuam sem smoke porque o Runtime só contém o curso sintético de validação.
+
 Uma pessoa administradora cria o produto e a variação Commerce do curso e associa
 esse produto ao Group do curso. A variação possui preço zero ou pago; a página
 canônica do produto não tem formulário de compra para evitar matrícula sem turma.

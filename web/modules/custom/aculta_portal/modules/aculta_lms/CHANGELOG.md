@@ -1,3 +1,10 @@
+## 0.1.0-dev.200 — cobre estados indisponíveis da compra de curso
+
+- Unit do `CourseEnrollmentPurchaseForm` protege os estados sem turma publicada
+  e sem produto de curso válido: o formulário não oferece ação de checkout.
+- A homologação de compra paga permanece pendente de produto/turma de teste e
+  autorização de gateway sandbox.
+
 ## 0.1.0-dev.199 — corrige renderização da sala de aula
 
 - As linhas da tabela de atividades entregam conteúdo e link como dados de
