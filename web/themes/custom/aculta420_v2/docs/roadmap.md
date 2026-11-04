@@ -4,6 +4,15 @@
   Fetch, mantendo o botão Google quando a integração Portal estiver configurada.
   fornecido por `aculta_user`; não há apelido na barra. Evidência visual e
   runtime autenticado ainda pendentes.
+- `1.2.0-dev.12`: superfície do modal alinhada ao verde institucional da V1;
+  Google, campos, ação amarela e hierarquia de links visualmente conferidos.
+  Firefox ESR visível no purpose `main`, rota `/`, estado anônimo: 320 px
+  claro, 390 px escuro e 1440 px em ambos os modos; modal 288/358/440 px,
+  sem overflow e com foco inicial no campo. Zoom real de 200% com viewport de
+  320 CSS px não alargou o documento; Tab avança para senha e Escape fecha o
+  modal. Capturas e métricas em `$SUITE_OUT/login-modal-v2-20261104/`.
+  Autenticação completa e demais purposes ficaram DEFERRED nesta verificação
+  focal.
 
 ## Fase 1 — Tokens e fundações
 

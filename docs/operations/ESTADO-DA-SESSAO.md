@@ -31,6 +31,16 @@
   encontrados no HTML dos endpoints. `updatedb:status` e `config:status` sem
   pendências/diferenças. Nenhuma credencial foi enviada; autenticação de ponta
   a ponta permanece para validação manual.
+- **Retomada visual do login (2026-11-04):** o modal foi conferido em Firefox
+  ESR visível, purpose `main`, rota `/`, visitante. Em 320 px claro, 390 px
+  escuro e 1440 px nos dois modos, “Continuar com Google” aparece no topo e o
+  formulário carrega com foco inicial; larguras medidas: 288, 358 e 440 px,
+  sem overflow. Capturas em `$SUITE_OUT/login-modal-v2-20261104/`. O painel usa
+  o verde institucional da V1 via token V2; contraste texto/superfície é
+  5.08:1 claro e 8.80:1 escuro. Zoom real de 200% com viewport de 320 CSS px
+  não alargou a página; Tab avançou do usuário para senha e Escape fechou o
+  modal. A navegação Google não foi concluída; autenticação ponta a ponta e
+  demais purposes continuam DEFERRED.
 - Arquivos desta entrega: `web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php`,
   `templates/layout/page.html.twig`, `components/multidomain-bar/`, manifesto/
   bibliotecas/changelog/roadmap do tema e `scripts/validate-aculta420-v2-sdc.php`.

@@ -18,12 +18,15 @@
   --color-auth-control-surface: #e9f1fc;
   --color-auth-control-text: #111;
   --color-auth-control-focus: #0c3c29;
+  --color-auth-dialog-surface: var(--color-brand-secondary);
+  --color-auth-dialog-text: #171513;
+  --color-auth-dialog-divider: #171513;
   --color-auth-provider-surface: #fff;
   --color-auth-provider-text: #163d2a;
   --color-auth-secondary-surface: #fdf8ea;
   --color-auth-secondary-text: #163d2a;
   --color-auth-action-text: #1a1a1a;
-  --color-auth-dialog-link: var(--color-brand-highlight);
+  --color-auth-dialog-link: #171513;
   --color-status: #176b3a;
   --color-warning: #ffc107;
   --color-warning-text: #7a4b00;
@@ -114,7 +117,7 @@
   --color-border: #687783;
   --color-on-brand: #171513;
   --color-on-highlight: #171513;
-  --color-auth-dialog-link: var(--color-on-brand);
+  --color-auth-dialog-link: #171513;
   --color-status: #8fe0a8;
   --color-warning: #ffc107;
   --color-warning-text: #ffd27a;

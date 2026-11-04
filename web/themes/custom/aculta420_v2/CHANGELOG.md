@@ -1,5 +1,15 @@
 # Changelog — ACULTA420 V2
 
+## 1.2.0-dev.12 — reconcilia painel de login com a identidade V1
+
+- O diálogo usa o verde institucional legado pela paleta semântica V2 e texto
+  escuro para manter contraste AA em claro e escuro.
+- A caixa Google, campos claros, ação amarela e links creme preservam a
+  composição da V1. O gate de fundações mede esses pares em ambos os modos.
+- Firefox ESR visível confirmou o modal e Google em 320, 390 e 1440 CSS px,
+  além de zoom real de 200% com viewport de 320 CSS px. Tab avança do usuário
+  para senha e Escape fecha o diálogo.
+
 ## 1.2.0-dev.11 — aplica o estilo ao controle HTML do Drupal
 
 - O botão de envio do formulário Core é um input com `data-drupal-selector`,

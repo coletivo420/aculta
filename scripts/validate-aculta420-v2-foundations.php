@@ -100,10 +100,18 @@ foreach ($statusPairs as [$foreground, $background]) {
 foreach ([
   ['--color-on-brand', '--color-brand-primary'],
   ['--color-on-highlight', '--color-brand-highlight'],
+  ['--color-auth-dialog-text', '--color-auth-dialog-surface'],
+  ['--color-auth-dialog-link', '--color-auth-dialog-surface'],
+  ['--color-auth-provider-text', '--color-auth-provider-surface'],
+  ['--color-auth-control-text', '--color-auth-control-surface'],
+  ['--color-auth-action-text', '--color-brand-highlight'],
+  ['--color-auth-secondary-text', '--color-auth-secondary-surface'],
 ] as [$foreground, $background]) {
+  $lightRatio = check_contrast($foreground, $background, $rootTokens, []);
+  $assert($lightRatio >= 4.5, sprintf('light %s on %s is %.2f:1 (minimum 4.5:1)', $foreground, $background, $lightRatio));
   $ratio = check_contrast($foreground, $background, $rootTokens, $darkTokens);
   $assert($ratio >= 4.5, sprintf('dark %s on %s is %.2f:1 (minimum 4.5:1)', $foreground, $background, $ratio));
-  $contrastPairs++;
+  $contrastPairs += 2;
 }
 
 foreach ($surfaces as $background) {
