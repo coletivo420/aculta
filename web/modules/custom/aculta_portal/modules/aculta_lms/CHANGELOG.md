@@ -1,3 +1,14 @@
+## 0.1.0-dev.182 — cobre submissão de arquivos privados
+
+- Kernels exercitam o formulário ACULTA de atividade `file_upload`: arquivo
+  privado do próprio estudante aceito, resposta criada com referência no payload,
+  arquivo tornado permanente e uso registrado; conteúdo que falsifica extensão
+  PNG é recusado sem criar resposta.
+- A cobertura usa a File API e a política real `aculta_file_uploader` no banco
+  dedicado `aculta_simpletest`; não grava no Runtime.
+- Atualizada a documentação que ainda dizia que a interface não conectava a
+  referência ao payload.
+
 ## 0.1.0-dev.181 — inclui Views administrativas do LMS na instalação
 
 - As Views administrativas `courses_admin` e `classes_admin` passaram a ser

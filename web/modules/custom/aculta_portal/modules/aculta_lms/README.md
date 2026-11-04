@@ -114,8 +114,10 @@ bloqueado e revalida após bloqueio e revogação da membership.
 A rota atual de anexos recebe apenas `AnswerEntity` ACULTA, valida arquivo
 permanente em `private://` e revalida matrícula/permissão a cada requisição.
 O plugin de upload e a rota de download vinculados a `lms_answer` foram
-removidos no P5. A interface de submissão para criar referências de arquivo
-ACULTA ainda precisa ser conectada ao payload.
+removidos no P5. A interface ACULTA de submissão para `file_upload` grava a
+referência do arquivo no payload JSON da resposta, torna o arquivo permanente
+e registra seu uso. Kernel cobre submissão privada pelo dono e recusa de
+conteúdo que não corresponde à extensão.
 O resolvedor tipa entidades de referência com `FieldableEntityInterface`; o
 PHPCS Drupal/DrupalPractice passou nos arquivos novos de resolução e no
 `AttemptArchiveManager`.
@@ -125,13 +127,12 @@ removido na limpeza assíncrona, o manager responde 422 e o formulário omite a
 conclusão, sem erro 500. Os prazos por turma seguem resolvidos pelo manager
 ACULTA e cobertos por `ClassActivityDeadlineTest`; o hook contrib que alterava
 o formulário de resposta e o componente LMS de início de curso foram removidos.
-A interface ACULTA de submissão ainda está pendente. Runtime `cursos`: sem updates pendentes, rebuild do
-cache concluiu e o container resolveu o hook; houve warning preexistente de
-cópia dos assets H5P. Não foi importada configuração e ainda falta um smoke
-HTTP/visual com resposta real. Unit LMS/Messenger: 84 testes / 445 assertions PASS, com
-8 depreciações PHPUnit. F11 executa emissão/revogação com educador contextual e
-confirma a opção elegível no formulário: Kernel focal 5/159. Smoke Runtime
-autenticado e revisão visual permanecem pendentes.
+A interface ACULTA de submissão está implementada. O Kernel do formulário
+confirma armazenamento do payload e do uso de arquivo; smoke HTTP/visual com
+resposta real permanece pendente. Unit LMS/Messenger: 84 testes / 445
+assertions PASS, com 8 depreciações PHPUnit. F11 executa emissão/revogação com
+educador contextual e confirma a opção elegível no formulário: Kernel focal
+5/159. Smoke Runtime autenticado e revisão visual permanecem pendentes.
 No Runtime de teste, Drush confirmou o módulo habilitado e sem updates; após
 rebuild do cache, o loader resolveu os dois usuários de teste por `UserSession`.
 O rebuild teve warning de assets H5P e terminou com sucesso. Nenhuma fixture foi

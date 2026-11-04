@@ -7,11 +7,14 @@ namespace Drupal\Tests\aculta_lms\Kernel;
 use Drupal\aculta_lms\Learning\AnswerPayload;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Routing\RouteObjectInterface;
 use Drupal\aculta_lms\Entity\ActivityEntity;
 use Drupal\aculta_lms\Entity\AnswerEntity;
 use Drupal\aculta_lms\Entity\LessonEntity;
 use Drupal\aculta_lms\Form\AnswerReviewForm;
+use Drupal\aculta_lms\Form\AnswerSubmissionForm;
 use Drupal\comment\CommentInterface;
+use Drupal\file\Entity\File;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRelationshipType;
 use Drupal\group\Entity\GroupRole;
@@ -21,6 +24,8 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\User;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Route;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -53,17 +58,30 @@ final class AnswerReviewWorkflowKernelTest extends KernelTestBase {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  protected function setUpFilesystem(): void {
+    mkdir($this->siteDirectory, 0775);
+    mkdir($this->siteDirectory . '/files', 0775);
+    mkdir($this->siteDirectory . '/private/lms/answers', 0775, TRUE);
+    mkdir($this->siteDirectory . '/files/config/sync', 0775, TRUE);
+    $this->setSetting('file_public_path', $this->siteDirectory . '/files');
+    $this->setSetting('file_private_path', $this->siteDirectory . '/private');
+    $this->setSetting('config_sync_directory', $this->siteDirectory . '/files/config/sync');
+  }
+
+  /**
    * Prepares entity schemas and configuration for the workflow test.
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installConfig(['system', 'group', 'comment']);
+    $this->installConfig(['system', 'group', 'comment', 'file', 'aculta_file_uploader']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installSchema('user', ['users_data']);
     $entityTypes = [
-      'user', 'comment', 'group', 'group_relationship', 'group_config_wrapper',
+      'user', 'file', 'comment', 'group', 'group_relationship', 'group_config_wrapper',
       'aculta_lms_lesson', 'aculta_lms_activity', 'aculta_lms_answer',
       'aculta_lms_attempt_archive',
     ];
@@ -183,6 +201,146 @@ final class AnswerReviewWorkflowKernelTest extends KernelTestBase {
     self::assertSame('Boa análise; desenvolva mais a conclusão.', $comment->get('comment_body')->value);
     self::assertSame((int) $educator->id(), (int) $comment->getOwnerId());
     self::assertStringNotContainsString('Resposta de outra turma', (string) Json::encode($listing));
+  }
+
+  /**
+   * Ensures file upload answers reference a private permanent owned file.
+   */
+  public function testStudentCanSubmitOwnedPrivateFileAndRegistersFileUsage(): void {
+    $student = User::create(['name' => 'answer-upload-student', 'status' => 1]);
+    $student->save();
+    $course = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Curso com anexo',
+      'uid' => $student->id(),
+      'status' => TRUE,
+    ]);
+    $course->save();
+    $lesson = LessonEntity::create([
+      'course_id' => $course->id(),
+      'title' => 'Aula com anexo',
+      'published' => TRUE,
+      'weight' => 0,
+    ]);
+    $lesson->save();
+    $activity = ActivityEntity::create([
+      'lesson_id' => $lesson->id(),
+      'type' => 'file_upload',
+      'graded' => TRUE,
+      'weight' => 0,
+      'answer_config' => '{}',
+    ]);
+    $activity->save();
+
+    $fixture = DRUPAL_ROOT . '/core/tests/fixtures/files/image-test.png';
+    $uri = 'private://lms/answers/answer-upload.png';
+    self::assertNotFalse(copy($fixture, $this->siteDirectory . '/private/lms/answers/answer-upload.png'));
+    $file = File::create([
+      'uri' => $uri,
+      'filename' => 'answer-upload.png',
+      'filemime' => 'image/png',
+      'uid' => $student->id(),
+      'status' => 0,
+    ]);
+    $file->save();
+
+    $request = Request::create('/curso/curso-com-anexo/aula-com-anexo/file-upload');
+    $request->attributes->set(RouteObjectInterface::ROUTE_NAME, 'aculta_lms.answer_submission');
+    $request->attributes->set(RouteObjectInterface::ROUTE_OBJECT, new Route('/curso/{group}/{lesson_delta}/{activity_delta}'));
+    $request->attributes->set('group', $course);
+    $request->attributes->set('lesson_delta', 0);
+    $request->attributes->set('activity_delta', 0);
+    $request_stack = $this->container->get('request_stack');
+    $request_stack->push($request);
+    $this->container->get('current_user')->setAccount($student);
+    $this->container->get('config.factory')->getEditable('aculta_file_uploader.settings')
+      ->set('consumers.lms', ['allowed_extensions' => 'png pdf', 'max_size_mb' => 10])
+      ->save();
+
+    $form = AnswerSubmissionForm::create($this->container);
+    $form_state = new FormState();
+    $form_array = $form->buildForm([], $form_state);
+    $form_state->setValue('file_upload', [(int) $file->id()]);
+    $form->validateForm($form_array, $form_state);
+    self::assertFalse($form_state->hasAnyErrors());
+    $form->submitForm($form_array, $form_state);
+    $request_stack->pop();
+
+    $answers = $this->container->get('entity_type.manager')->getStorage('aculta_lms_answer')->loadByProperties([
+      'activity_id' => $activity->id(),
+      'uid' => $student->id(),
+    ]);
+    self::assertCount(1, $answers);
+    $answer = reset($answers);
+    self::assertSame('submitted', $answer->get('state')->value);
+    self::assertSame((int) $file->id(), $answer->getAnswerPayload()->fileId());
+    $saved_file = $this->container->get('entity_type.manager')->getStorage('file')->load($file->id());
+    self::assertTrue($saved_file->isPermanent());
+    self::assertNotEmpty($this->container->get('file.usage')->listUsage($saved_file));
+  }
+
+  /**
+   * Rejects an uploaded file whose bytes do not match the filename extension.
+   */
+  public function testStudentCannotSubmitSpoofedPrivateFile(): void {
+    $student = User::create(['name' => 'answer-upload-spoofed-student', 'status' => 1]);
+    $student->save();
+    $course = Group::create([
+      'type' => 'lms_course',
+      'label' => 'Curso com anexo inválido',
+      'uid' => $student->id(),
+      'status' => TRUE,
+    ]);
+    $course->save();
+    $lesson = LessonEntity::create([
+      'course_id' => $course->id(),
+      'title' => 'Aula com anexo inválido',
+      'published' => TRUE,
+      'weight' => 0,
+    ]);
+    $lesson->save();
+    $activity = ActivityEntity::create([
+      'lesson_id' => $lesson->id(),
+      'type' => 'file_upload',
+      'graded' => TRUE,
+      'weight' => 0,
+      'answer_config' => '{}',
+    ]);
+    $activity->save();
+
+    $uri = 'private://lms/answers/spoofed.png';
+    self::assertNotFalse(file_put_contents($this->siteDirectory . '/private/lms/answers/spoofed.png', 'not a PNG image'));
+    $file = File::create([
+      'uri' => $uri,
+      'filename' => 'spoofed.png',
+      'filemime' => 'image/png',
+      'uid' => $student->id(),
+      'status' => 0,
+    ]);
+    $file->save();
+
+    $request = Request::create('/curso/curso-com-anexo-invalido/aula-com-anexo-invalido/file-upload');
+    $request->attributes->set(RouteObjectInterface::ROUTE_NAME, 'aculta_lms.answer_submission');
+    $request->attributes->set(RouteObjectInterface::ROUTE_OBJECT, new Route('/curso/{group}/{lesson_delta}/{activity_delta}'));
+    $request->attributes->set('group', $course);
+    $request->attributes->set('lesson_delta', 0);
+    $request->attributes->set('activity_delta', 0);
+    $request_stack = $this->container->get('request_stack');
+    $request_stack->push($request);
+    $this->container->get('current_user')->setAccount($student);
+
+    $form = AnswerSubmissionForm::create($this->container);
+    $form_state = new FormState();
+    $form_array = $form->buildForm([], $form_state);
+    $form_state->setValue('file_upload', [(int) $file->id()]);
+    $form->validateForm($form_array, $form_state);
+    $request_stack->pop();
+
+    self::assertTrue($form_state->hasAnyErrors());
+    self::assertSame([], $this->container->get('entity_type.manager')->getStorage('aculta_lms_answer')->loadByProperties([
+      'activity_id' => $activity->id(),
+      'uid' => $student->id(),
+    ]));
   }
 
   /**

@@ -574,3 +574,10 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Validações:** Unit `CourseViewsConfigTest` 1/24 PASS; Kernel `AcultaLmsInstallTest` 7/302 PASS em `aculta_simpletest` (17 depreciações upstream); `git diff --check` PASS. PHPCS nos dois arquivos de teste encontrou 1 erro preexistente de `unserialize()` na linha 168 de `AcultaLmsInstallTest`; a checagem não foi limpa.
 - **Runtime:** snapshot anterior à importação parcial em `$SUITE_OUT/runtime-snapshots/aculta_runtime-before-lms-views-config-20261103.sql`, 65.270.522 bytes, modo 0600, SHA-256 `982c9691ef79f10459bc9fc3d246ebd10872e30a70788b45c8999891ffa2615a`. Importadas somente as duas Views; `drush cr` passou, `updatedb:status` sem atualizações e `config:status` sem diferenças. `core:requirements` não indicou falha relacionada a estas Views.
 - **Arquivos:** configurações Sync e `config/install` de cursos/turmas, `aculta_lms.info.yml`, CHANGELOG, testes Unit/Kernel e este handoff. Publicação e sincronização de código ainda pendentes.
+
+## Continuação — regressão de upload privado de resposta LMS — 2026-11-03
+
+- O código já conectava `managed_file` ao payload ACULTA; README continha texto obsoleto afirmando que o fluxo estava pendente. Atualizei a documentação e acrescentei cobertura real de Kernel para o formulário: arquivo privado do próprio aluno gera resposta com referência no payload, torna-se permanente e registra uso; PNG com conteúdo falsificado é recusado sem resposta.
+- **Validações:** `AnswerReviewWorkflowKernelTest` 3 testes/83 assertions PASS em `aculta_simpletest`, 14 depreciações upstream; PHPCS Drupal/DrupalPractice, PHP lint do teste e `git diff --check` PASS.
+- **Runtime:** sem alteração de configuração ou dados; conferir `updatedb:status`/`config:status` antes do push, rebuild após publicação. Runtime não recebeu fixture nem arquivo.
+- **Arquivos:** `AnswerReviewWorkflowKernelTest.php`, `aculta_lms/README.md`, `CHANGELOG.md`, `aculta_lms.info.yml`, status YAML do LMS, linha correspondente do README raiz e este handoff.
