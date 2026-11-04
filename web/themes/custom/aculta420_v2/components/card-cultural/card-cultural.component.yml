@@ -29,6 +29,11 @@ props:
     summary:
       type: [string, 'null']
       title: Resumo
+    variant:
+      type: string
+      title: Apresentação
+      enum: [default, compact]
+      default: default
 slots:
   image:
     title: Imagem

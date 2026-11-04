@@ -1,0 +1,17 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Status messages
+description: Mensagem de estado anunciada corretamente por tecnologias assistivas.
+group: ACULTA
+props:
+  type: object
+  additionalProperties: false
+  required: [type, messages]
+  properties:
+    type:
+      type: string
+      enum: [status, warning, error]
+    messages:
+      type: array
+      minItems: 1
+      items:
+        type: [string, object]

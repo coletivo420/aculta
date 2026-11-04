@@ -1,0 +1,9 @@
+.filter-chips{max-inline-size:100%;overflow-x:auto;overscroll-behavior-inline:contain;scrollbar-width:none;scroll-snap-type:inline proximity}
+.filter-chips::-webkit-scrollbar{display:none}
+.filter-chips:focus-visible{outline:3px solid var(--color-brand-highlight);outline-offset:2px}
+.filter-chips__list{display:flex;gap:var(--spacing-sm);list-style:none;margin:0;padding:var(--spacing-xs) 2px;inline-size:max-content;min-inline-size:100%}
+.filter-chips__list>li{scroll-snap-align:start}
+.filter-chips__link{align-items:center;background:var(--color-surface-raised);border:1px solid var(--color-border);border-radius:var(--radius-full);color:var(--color-text-primary);display:inline-flex;gap:var(--spacing-xs);min-block-size:var(--tap-target-min);padding-inline:var(--spacing-base);text-decoration:none;white-space:nowrap}
+.filter-chips__link:focus-visible{outline:3px solid var(--color-brand-highlight);outline-offset:2px}
+.filter-chips__link.is-active{background:var(--color-brand-primary);border-color:var(--color-brand-primary);color:var(--color-on-brand);font-weight:700}
+.filter-chips__count{font-size:var(--font-size-xs);font-variant-numeric:tabular-nums}

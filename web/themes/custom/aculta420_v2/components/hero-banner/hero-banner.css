@@ -1,0 +1,9 @@
+.hero-banner{background:var(--color-brand-primary);border-radius:var(--radius-lg);color:var(--color-on-brand);isolation:isolate;min-block-size:18rem;overflow:hidden;padding:var(--spacing-lg);position:relative}
+.hero-banner__media{inset:0;position:absolute;z-index:-2}
+.hero-banner__media::after{background:linear-gradient(90deg,var(--color-scrim),transparent);content:"";inset:0;position:absolute;z-index:1}
+.hero-banner__media img,.hero-banner__media video{block-size:100%;inline-size:100%;object-fit:cover}
+.hero-banner__content{background:var(--color-brand-primary);border-radius:var(--radius-base);display:grid;gap:var(--spacing-base);margin-inline:auto;max-inline-size:64rem;min-block-size:16rem;padding:var(--spacing-base);place-content:center;position:relative}
+.hero-banner__title{color:var(--color-on-brand);font-family:var(--font-family-heading);font-size:clamp(2rem,8vw,4rem);line-height:1.1;margin:0;overflow-wrap:anywhere}
+.hero-banner__tagline{color:var(--color-on-brand);font-size:var(--font-size-lg);line-height:1.5;margin:0;max-inline-size:60ch}
+.hero-banner .button{justify-self:start}
+@media (min-width:48rem){.hero-banner{padding:var(--spacing-xxl)}.hero-banner__content{justify-items:start}}

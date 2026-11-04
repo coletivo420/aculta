@@ -1,0 +1,17 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Audio player
+description: Player leve com controles nativos de áudio acessíveis.
+group: ACULTA
+props:
+  type: object
+  additionalProperties: false
+  required: [src, title]
+  properties:
+    src:
+      type: string
+      format: uri-reference
+    title:
+      type: string
+      minLength: 1
+    artist:
+      type: [string, 'null']

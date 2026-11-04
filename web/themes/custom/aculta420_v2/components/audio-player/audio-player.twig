@@ -1,0 +1,10 @@
+<figure{{ attributes.addClass('audio-player') }}>
+  <figcaption class="audio-player__caption">
+    <span class="audio-player__title">{{ title }}</span>
+    {% if artist %}<span class="audio-player__artist">{{ artist }}</span>{% endif %}
+  </figcaption>
+  <audio class="audio-player__audio" controls preload="none">
+    <source src="{{ src }}">
+    {{ 'Your browser does not support audio playback.'|t }}
+  </audio>
+</figure>

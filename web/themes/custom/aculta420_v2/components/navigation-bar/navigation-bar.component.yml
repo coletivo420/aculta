@@ -1,0 +1,30 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Navigation bar
+description: Cabeçalho de navegação responsivo e acessível por teclado.
+group: ACULTA
+libraryOverrides:
+  dependencies:
+    - core/drupal
+    - core/once
+props:
+  type: object
+  additionalProperties: false
+  required: [site_name]
+  properties:
+    site_name:
+      type: string
+      minLength: 1
+    site_logo_url:
+      type: [string, 'null']
+      format: uri-reference
+    menu_id:
+      type: string
+      pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
+      default: aculta-primary-navigation
+slots:
+  menu_items:
+    title: Itens de navegação
+    description: Links do menu principal, renderizados por Menu API.
+  utility_items:
+    title: Ações utilitárias
+    description: Links ou ações auxiliares do site.

@@ -1,7 +1,7 @@
-<article{{ attributes.addClass('card-cultural') }}>
+<article{{ attributes.addClass('card-cultural', 'card-cultural--' ~ (variant|default('default'))) }}>
   {% if image %}<div class="card-cultural__image">{{ image }}</div>{% endif %}
   <div class="card-cultural__body">
-    {% if category %}<p class="card-cultural__category">{{ category }}</p>{% endif %}
+    {% if category %}<div class="card-cultural__category">{{ include('aculta420_v2:badge', { label: category, variant: 'primary' }, with_context = false) }}</div>{% endif %}
     <h2 class="card-cultural__title">{% if url %}<a href="{{ url }}">{{ title }}</a>{% else %}{{ title }}{% endif %}</h2>
     {% if date %}<p class="card-cultural__date">{{ date }}</p>{% endif %}
     {% if location %}<p class="card-cultural__location">{{ location }}</p>{% endif %}

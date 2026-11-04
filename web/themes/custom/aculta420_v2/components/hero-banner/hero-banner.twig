@@ -1,0 +1,10 @@
+<section{{ attributes.addClass('hero-banner') }}>
+  {% if background_media %}<div class="hero-banner__media" aria-hidden="true">{{ background_media }}</div>{% endif %}
+  <div class="hero-banner__content">
+    <h1 class="hero-banner__title">{{ title }}</h1>
+    {% if tagline %}<p class="hero-banner__tagline">{{ tagline }}</p>{% endif %}
+    {% if cta_text and cta_url %}
+      {{ include('aculta420_v2:button', { text: cta_text, url: cta_url, variant: 'secondary' }, with_context = false) }}
+    {% endif %}
+  </div>
+</section>

@@ -1,0 +1,17 @@
+<div{{ attributes.addClass('navigation-bar') }} data-aculta-navigation>
+  <div class="navigation-bar__inner">
+    <a class="navigation-bar__brand" href="{{ path('<front>') }}">
+      {% if site_logo_url %}<img class="navigation-bar__logo" src="{{ site_logo_url }}" alt="">{% endif %}
+      <span>{{ site_name }}</span>
+    </a>
+    <button class="navigation-bar__toggle" type="button" aria-expanded="false" aria-controls="{{ menu_id|default('aculta-primary-navigation') }}" data-aculta-navigation-toggle>
+      <span class="navigation-bar__toggle-label">{{ 'Menu'|t }}</span>
+      <span class="navigation-bar__icon" aria-hidden="true"><span></span><span></span><span></span></span>
+    </button>
+    <nav class="navigation-bar__panel" id="{{ menu_id|default('aculta-primary-navigation') }}" role="navigation" aria-label="{{ 'Primary navigation'|t }}" data-aculta-navigation-panel>
+      <button class="navigation-bar__close" type="button" data-aculta-navigation-close>{{ 'Close menu'|t }}</button>
+      <div class="navigation-bar__menu">{{ menu_items }}</div>
+      {% if utility_items %}<div class="navigation-bar__utility">{{ utility_items }}</div>{% endif %}
+    </nav>
+  </div>
+</div>

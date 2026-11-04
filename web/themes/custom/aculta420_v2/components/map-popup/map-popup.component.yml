@@ -1,0 +1,23 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Map popup
+description: Cartão compacto para informação associada a um marcador de mapa.
+group: ACULTA
+props:
+  type: object
+  additionalProperties: false
+  required: [title]
+  properties:
+    title:
+      type: string
+      minLength: 1
+    url:
+      type: [string, 'null']
+      format: uri-reference
+    category:
+      type: [string, 'null']
+    address:
+      type: [string, 'null']
+slots:
+  thumbnail:
+    title: Miniatura
+    description: Imagem opcional do local ou evento.

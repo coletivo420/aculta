@@ -1,0 +1,12 @@
+{% set heading = type == 'error' ? 'Error'|t : (type == 'warning' ? 'Warning'|t : 'Status message'|t) %}
+<div{{ attributes.addClass('status-message', 'status-message--' ~ type) }} role="{{ type == 'status' ? 'status' : 'alert' }}" aria-label="{{ heading }}">
+  <span class="status-message__icon" aria-hidden="true">{{ type == 'status' ? '✓' : (type == 'warning' ? '!' : '×') }}</span>
+  <div class="status-message__content">
+    <h2 class="visually-hidden">{{ heading }}</h2>
+    {% if messages|length > 1 %}
+      <ul>{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
+    {% else %}
+      {{ messages|first }}
+    {% endif %}
+  </div>
+</div>

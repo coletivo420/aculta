@@ -1,0 +1,8 @@
+{% set classes = ['button', 'button--' ~ (variant|default('primary')), disabled ? 'is-disabled'] %}
+{% if url and not disabled %}
+  <a{{ attributes.addClass(classes) }} href="{{ url }}">{{ text }}</a>
+{% elseif url and disabled %}
+  <span{{ attributes.addClass(classes) }} aria-disabled="true">{{ text }}</span>
+{% else %}
+  <button{{ attributes.addClass(classes) }} type="{{ is_submit ? 'submit' : 'button' }}"{{ disabled ? ' disabled' }}>{{ text }}</button>
+{% endif %}

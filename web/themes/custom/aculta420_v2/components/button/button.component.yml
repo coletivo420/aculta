@@ -1,0 +1,25 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Button
+description: Controle de ação ou link com estados acessíveis.
+group: ACULTA
+props:
+  type: object
+  additionalProperties: false
+  required: [text]
+  properties:
+    text:
+      type: string
+      minLength: 1
+    url:
+      type: [string, 'null']
+      format: uri-reference
+    variant:
+      type: string
+      enum: [primary, secondary, outline, ghost]
+      default: primary
+    is_submit:
+      type: boolean
+      default: false
+    disabled:
+      type: boolean
+      default: false
