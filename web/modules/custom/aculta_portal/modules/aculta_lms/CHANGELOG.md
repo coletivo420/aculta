@@ -2,9 +2,11 @@
 
 - Expande o ajuste de ordem dos assets para manter jQuery, traduções e DLL do
   CKEditor antes dos bundles que dependem deles, mesmo com agregação JavaScript.
-- O smoke confirmou que o ajuste anterior resolveu a ordem do jQuery, mas o
-  CKEditor ainda não aparecia porque um bundle HTML Engine executava antes do
-  DLL global. Revalidar a inicialização após rebuild do cache.
+- Firefox autenticado confirma jQuery, CKEditor editável, toolbar e formato
+  filtrado ativos no formulário da aula; o formulário não foi submetido.
+- O geckodriver ainda registra um `TypeError` no agregado de
+  `ckeditor5_plugin_pack/drupal_powered_by`; o editor inicia, mas investigar se
+  o plugin afetado perdeu comportamento.
 
 ## 0.1.0-dev.192 — ordena jQuery antes dos agregados JQuery UI
 
