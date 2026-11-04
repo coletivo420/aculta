@@ -7,7 +7,7 @@
   enunciado/gabarito in-place.
 - Suíte Unit completa LMS: 247 testes / 880 assertions PASS; Studio: 67 testes /
   679 assertions PASS. PHP lint, PHPCS Drupal/DrupalPractice focal e
-  `git diff --check` PASS. Runtime sincronizado em `49cc9757a4`, com cache rebuild, rotas novas registradas e `config:status` limpo. O import de configuração foi precedido por snapshot; Drush registra aviso de post-updates ausentes do Group, a investigar na trilha Drupal 12.
+  `git diff --check` PASS. Runtime sincronizado em `49cc9757a4`, com cache rebuild, rotas novas registradas e `config:status` limpo. O import de configuração foi precedido por snapshot. Os post-updates removidos do Group foram reconciliados após auditoria de dependências, permissões, cache metadata e schema revisionável.
 
 ## 0.4.1-dev.73 — completa revisão docente de respostas LMS
 
