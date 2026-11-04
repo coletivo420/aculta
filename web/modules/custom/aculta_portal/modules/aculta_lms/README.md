@@ -257,7 +257,11 @@ Render arrays incluem cacheability do curso, lições e resultados de acesso,
 variando por usuário e permissões do Group. Em 2026-11-04, smoke somente leitura
 no Runtime confirmou que membro matriculado abre aula, atividade e link; não
 membro e visitante recebem acesso negado sem revelar o título. O Kernel cobre a
-renderização de atividade e link. A revisão visual segue pendente.
+renderização de atividade e link. Firefox ESR visível confirmou home, jornada,
+aula e atividade em larguras internas de 500 e 1270 px (sem rolagem horizontal);
+o formulário de atividade contém o ID esperado e controles `answer` habilitados.
+Nenhuma resposta foi enviada e nenhum aceite de termos foi realizado. Isso não
+valida a interface de compra F7.
 
 ## F7 — Matrícula em turmas
 
