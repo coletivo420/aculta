@@ -1,0 +1,11 @@
+<article{{ attributes.addClass('card-cultural') }}>
+  {% if image %}<div class="card-cultural__image">{{ image }}</div>{% endif %}
+  <div class="card-cultural__body">
+    {% if category %}<p class="card-cultural__category">{{ category }}</p>{% endif %}
+    <h2 class="card-cultural__title">{% if url %}<a href="{{ url }}">{{ title }}</a>{% else %}{{ title }}{% endif %}</h2>
+    {% if date %}<p class="card-cultural__date">{{ date }}</p>{% endif %}
+    {% if location %}<p class="card-cultural__location">{{ location }}</p>{% endif %}
+    {% if summary %}<div class="card-cultural__summary">{{ summary }}</div>{% endif %}
+    {% if actions %}<div class="card-cultural__actions">{{ actions }}</div>{% endif %}
+  </div>
+</article>

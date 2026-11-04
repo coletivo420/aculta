@@ -10,7 +10,6 @@
 html {
   font-size: 1rem;
   line-height: 1.5;
-  scroll-behavior: smooth;
 }
 
 body {
@@ -18,7 +17,7 @@ body {
   padding: 0;
   font-family: var(--font-family-base);
   color: var(--color-dark);
-  background-color: var(--color-white);
+  background-color: var(--color-surface);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -46,6 +45,22 @@ a:hover {
   text-decoration: underline;
 }
 
+img,
+video,
+iframe {
+  max-inline-size: 100%;
+}
+
+img,
+video {
+  block-size: auto;
+}
+
+pre,
+code {
+  overflow-wrap: anywhere;
+}
+
 /* Forms */
 input, textarea, select {
   font-family: inherit;
@@ -55,7 +70,7 @@ input, textarea, select {
 
 /* Accessibility */
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
@@ -63,10 +78,8 @@ input, textarea, select {
 .container {
   width: 100%;
   max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: var(--spacing-base);
-  padding-right: var(--spacing-base);
+  margin-inline: auto;
+  padding-inline: var(--spacing-base);
 }
 
 /* Grid system */
@@ -92,10 +105,3 @@ input, textarea, select {
   align-items: center;
 }
 
-/* Responsive utilities */
-@media (max-width: 768px) {
-  .container {
-    padding-left: var(--spacing-sm);
-    padding-right: var(--spacing-sm);
-  }
-}

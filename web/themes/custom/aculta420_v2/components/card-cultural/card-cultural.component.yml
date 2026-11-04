@@ -1,0 +1,38 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Card cultural
+description: Cartão informativo para eventos e pontos culturais.
+status: experimental
+group: ACULTA
+props:
+  type: object
+  additionalProperties: false
+  required:
+    - title
+  properties:
+    title:
+      type: string
+      title: Título
+      minLength: 1
+    url:
+      type: [string, 'null']
+      title: URL de destino
+      format: uri-reference
+    category:
+      type: [string, 'null']
+      title: Categoria
+    date:
+      type: [string, 'null']
+      title: Data
+    location:
+      type: [string, 'null']
+      title: Localização
+    summary:
+      type: [string, 'null']
+      title: Resumo
+slots:
+  image:
+    title: Imagem
+    description: Imagem de capa do cartão.
+  actions:
+    title: Ações
+    description: Ações complementares do cartão.

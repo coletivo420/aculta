@@ -714,3 +714,41 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Pendências ativas:** validar reordenação no navegador autenticado; investigar `ckeditor5_plugin_pack/drupal_powered_by` quando a árvore Core/Plugin Pack Drupal 12 estiver ativa (1.5.6 usa DLL e declara Drupal 10/11; 2.0.0-beta1 é Drupal 12); revisão visual de PDF/H5P pelos owners. Depois de fechar LMS, continuar pagamentos e revisar `updatedb` um item de cada vez.
 - **Retomar lendo:** este handoff, `docs/portal/STUDIO-LMS-COURSE-BUILDER-VISUAL.md`, `web/modules/custom/aculta_portal/modules/aculta_lms_resources/README.md` e `docs/modules/ACULTA-LMS-ROADMAP.md`.
 
+
+## Handoff — revisão da fundação do tema aculta420_v2 — 2026-11-04
+
+- **Objetivo:** revisar e fortalecer a Fase 1 de `web/themes/custom/aculta420_v2` para a arquitetura SDC do Drupal instalado, sem habilitar nem sincronizar o tema no Runtime.
+- **Implementado:** removida a configuração e dependências do Vite e seus artefatos aninhados; CSS único em `src/styles/` com bibliotecas Drupal estáticas. O tema agora exige schemas SDC (`enforce_prop_schemas: true`), e `card-cultural.component.yml` usa JSON Schema nativo com props requeridas/opcionais e slots. Metadados declaram `core_version_requirement: ^11.5 || ^12`, conforme orientação do responsável: desenvolvimento no Core 11.5 com foco de compatibilidade no Drupal 12. Shell Twig foi alinhado aos placeholders e classes do Core; page layout mantém navegação fora do `<main>` e regiões help/breadcrumb/sidebar/footer. Adicionados tokens `surface` e texto de contraste.
+- **Validação:** Symfony YAML dos metadados/bibliotecas/schema PASS; validator `Drupal\\Core\\Theme\\Component\\ComponentValidator` PASS com schema obrigatório; descoberta isolada do Core encontrou `aculta420_v2:card-cultural`; bibliotecas Drupal resolvem e seus arquivos CSS existem; `validate-aculta420-shell-contract.php` PASS (13 checks); `updatedb:status` sem atualizações; `config:status` sem diferenças; `git diff --check` PASS. `validate-aculta420-foundation.php` não conclui porque `web/themes/contrib/bootstrap5/bootstrap5.info.yml` está ausente neste checkout. O tema não foi habilitado e o Runtime não foi modificado.
+- **Limitações/pendências:** não foi validada renderização HTTP nem descoberta com tema habilitado; não declarar fundação visual/runtime concluída. O diretório `node_modules/` existente foi apenas ignorado por `.gitignore`, preservando seus arquivos locais. Alterações Composer e `web/themes/custom/aculta420/`, `web/themes/custom/aculta_theme/` são de outra frente e foram preservadas.
+- **Arquivos desta frente:** `web/themes/custom/aculta420_v2/.gitignore`, `aculta420_v2.info.yml`, `aculta420_v2.libraries.yml`, remoção de scaffold Vite/aninhado, `src/styles/tokens.css`, `templates/layout/html.html.twig`, `templates/layout/page.html.twig`, `components/card-cultural/card-cultural.component.yml`; este handoff.
+- **Git/Runtime:** nenhum commit/push nesta revisão; nenhum cache rebuild, enable, updatedb ou config import foi executado.
+
+### Complemento da revisão aculta420_v2 — layout e APIs Drupal — 2026-11-04
+
+- A revisão adicional removeu `aculta420_v2.theme`, que continha apenas hooks preprocess vazios e dependia de APIs legadas de preprocess removidas no Drupal 12. `html.html.twig` passou a preservar `body_classes` do preprocess do Core em vez de reconstruí-las, mantendo classes adicionadas por integrações.
+- A página preserva regiões `help` e `breadcrumb`; o grid tem área própria para essas regiões, e `.page__main` contém conteúdo e sidebar. Sidebar aparece como coluna somente a partir de 992 px e apenas quando presente, por classe condicional Twig sem dependência de `:has()`.
+- Contraste computado dos pares usados: primary claro/branco 11.57:1; primary dark/escuro 5.24:1; texto escuro/amarelo warning 7.06:1; primary escuro/amarelo 7.10:1. Não houve alteração de tokens nesta rodada.
+- Validações repetidas: YAML PASS; validator SDC estrito do Core PASS; shell contract 13 checks PASS; `git diff --check` PASS. Sem ativação, cache rebuild, render HTTP ou alteração de Runtime.
+
+### Complemento da revisão aculta420_v2 — regiões e assets — 2026-11-04
+
+- `.info.yml` agora declara as regiões `help` e `breadcrumb` que já eram renderizadas pelo `page.html.twig`; uma checagem contra a lista ativa do Core confirma que as seis regiões declaradas aparecem no template.
+- Verificação read-only pelo `library.discovery`: todas as bibliotecas do tema foram resolvidas e todos os arquivos CSS referenciados existem. A discovery isolada do componente e o validator SDC estrito continuam PASS; o contrato shell continua PASS (13 checks); `git diff --check` PASS.
+- Nenhuma ativação do tema, rebuild de cache, render HTTP ou alteração persistente do Runtime.
+
+### Compatibilidade declarada aculta420_v2 — 2026-11-04
+
+- A pedido do responsável, `web/themes/custom/aculta420_v2/aculta420_v2.info.yml` declara `core_version_requirement: ^11.5 || ^12`: o ambiente de desenvolvimento segue em Drupal 11.5.0-beta1, enquanto a implementação mira APIs compatíveis com Drupal 12. Parse YAML, busca por preprocesses legados/service locator/jQuery/Vite e shell contract (13 checks) passaram. Isto confirma o manifesto e a auditoria estática local; ainda não comprova execução do tema em Core 12.
+
+### Complemento da revisão aculta420_v2 — compilação Twig — 2026-11-04
+
+- Sidebar do shell agora entra em coluna a partir de 960 CSS px (largura mínima total necessária para conteúdo + 14rem de sidebar), com uma única regra progressiva e classe condicional do Twig; removida a repetição do grid em 1200px. Base continua uma coluna e sem overflow horizontal conhecido por configuração de colunas rígidas.
+- Drupal Twig Environment compilou `html.html.twig`, `page.html.twig` e `card-cultural.twig` sem erro. Core SDC metadata validator PASS; shell contract 13 checks PASS; `git diff --check` PASS. Sem render HTTP/visual, ativação ou escrita Runtime.
+
+### Consolidação mobile-first da fundação V2 — 2026-11-04
+
+- **Mudanças:** `base.css` agora parte de padding fluido constante (sem media query max-width), usa propriedades lógicas, respeita preferência de movimento removendo smooth scroll global, limita imagens/vídeos/iframes e permite quebra de código longo; body usa `--color-surface`, foco usa `--color-primary`. Removidos tokens breakpoint que não podiam ser interpolados em media queries. O layout V2 mantém uma coluna como base e só cria sidebar em viewport amplo (960px), com min-width zero e classe condicional; não esconde conteúdo/operação.
+- **Escopo visual escolhido:** fundação V2 e SDC card-cultural; nenhum consumer real ou theme ativo na worktree, portanto não foi declarada cobertura de browser/viewport nem aceite visual.
+- **Validação:** Stylelint direto nos 4 CSS V2 PASS; gate SDC global PASS (55 componentes, 27 includes, 764 checks); Twig compile/strict SDC previamente PASS; shell contract PASS (13 checks); YAML e `git diff --check` PASS. `validate-aculta420-design-foundations.php` FAIL em 2 regras preexistentes de fidelidade Studio; `validate-module-theme-boundary.php` FAIL (6 classes LMS em módulos, fora do V2). O `npm run lint:css` do tema principal não cobre `src/styles/` do V2, portanto não foi usado como prova do V2.
+- **Pendente:** captura Firefox ESR visível nas larguras da matriz e render real de consumer após instalação/ativação em ambiente autorizado; Drupal 12 não está instalado neste checkout. Nenhuma alteração Runtime.

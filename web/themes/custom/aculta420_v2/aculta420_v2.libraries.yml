@@ -1,16 +1,9 @@
 global-styling:
   css:
     theme:
-      'dist/styles/global.css': {}
-  js:
-    js/navigation.js: {}
+      src/styles/tokens.css: {}
+      src/styles/base.css: {}
+      src/styles/layout.css: {}
   dependencies:
-    - core/drupal
-    - core/once
+    - system/base
 
-global-scripts:
-  js:
-    'dist/js/global.js': {}
-  dependencies:
-    - core/drupal
-    - core/once

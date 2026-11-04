@@ -1,28 +1,11 @@
 {#
 /**
  * @file
- * Default theme implementation for the HTML structure.
+ * Theme override for the basic structure of a Drupal page.
  *
- * Variables:
- * - attributes: HTML attributes for the main element.
- * - head_title: A formatted title for the page (including the site name).
- * - head_links: Links to include in the head.
- * - head_links_inline: Inline links to include in the head.
- * - styles: Style tags to include in the head.
- * - scripts: Script tags to include in the head.
- * - content: The main content of the page.
- * - page_top: Markup for the beginning of the page.
- * - page_bottom: Markup for the end of the page.
- *
- * @see template_preprocess_html()
+ * @see \\Drupal\\Core\\Theme\\ThemePreprocess::preprocessHtml()
  */
 #}
-{%
-  set body_classes = [
-    'page',
-    'theme-' ~ theme,
-  ]
-%}
 <!DOCTYPE html>
 <html{{ html_attributes }}>
   <head>
@@ -32,9 +15,7 @@
     <js-placeholder token="{{ placeholder_token }}">
   </head>
   <body{{ attributes.addClass(body_classes) }}>
-    <a href="#main-content" class="visually-hidden focusable">
-      {{ 'Skip to main content'|t }}
-    </a>
+    <a href="#main-content" class="visually-hidden focusable skip-link">{{ 'Skip to main content'|t }}</a>
     {{ page_top }}
     {{ page }}
     {{ page_bottom }}

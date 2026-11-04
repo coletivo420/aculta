@@ -1,18 +1,19 @@
 name: ACULTA420 V2
 type: theme
-description: 'Tema ACULTA totalmente autônomo, baseado no starterkit do Drupal 12.'
+description: 'Tema ACULTA com componentes Single Directory Components.'
 package: Custom
 version: '1.0.0'
-core_version_requirement: ^11 || ^12
+core_version_requirement: ^11.5 || ^12
 base theme: false
 enforce_prop_schemas: true
 regions:
   header: Cabeçalho
   navigation: Navegação
   highlighted: Destaques
+  help: Ajuda
+  breadcrumb: Breadcrumb
   content: Conteúdo
   sidebar_first: Barra lateral esquerda
   footer: Rodapé
 libraries:
   - aculta420_v2/global-styling
-  - aculta420_v2/global-scripts
