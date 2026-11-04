@@ -983,3 +983,63 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Preservar fora da entrega:** `composer.json`, `composer.lock`,
   `web/themes/custom/aculta420/js/utility-drawers.js` e
   `web/themes/custom/aculta_theme/`.
+
+## Continuação — composição V1 do shell em SDC — 2026-11-04
+
+- **Objetivo:** retomar a Fase 2 do shell ACULTA420 V2 e corrigir diferenças
+  comprovadas nas capturas V1/V2. Fase não concluída.
+- **Baseline:** commit `18a113f4e8`; V1 consultada somente para leitura. Capturas
+  anteriores mostram o Domain Header com logo horizontal e navegação juntos,
+  a vitrine de portais depois do header e o bloco de eventos na coluna lateral.
+  A V2 tinha marca ausente no Domain Header, links de portais acoplados ao SDC
+  da Institution Bar e três blocos laterais posicionados no header.
+- **Alterações locais ainda não commitadas:** `PagePresentationHooks.php` agora
+  recolhe título, breadcrumb e help do header; agrupa marca e menu principal no
+  SDC de navegação; e mapeia a marca neutra `wiki420` para assets da V2. O tema
+  declara logo horizontal ACULTA como asset padrão. Criado o SDC
+  `purpose-showcase` com story e consumer no page layout; links foram retirados
+  de `multidomain-bar`. A navegação usa o breakpoint histórico de 1100 px. O
+  layout aplica containers/tokens semânticos e mantém a sidebar em Grid. Assets
+  Wiki420 horizontais, empilhados e globe foram copiados da V1. Três arquivos
+  `block.block.aculta420_v2_*` tiveram `region` alterado para `sidebar_first`.
+  Teste browser de navegação ampliado com logo carregado e fronteira 1100 px.
+- **Validação de código:** PHP lint e PHPCS PASS; schema estático SDC 55
+  componentes/764 checks PASS; Design Foundations 2468 checks PASS (menor
+  contraste reportado no modo escuro 7,59:1); browser validators 21 PASS;
+  descoberta/render SDC passou 16/16. `drush cr` PASS.
+- **Runtime:** snapshot integral de `aculta_runtime` feito fora do repositório
+  antes da importação (SHA-256
+  `a11dd840651452b1fd5e530282f84907797df9fa58d35e10d713ae1e10834163`). A
+  primeira importação encontrou uma entrada obsoleta `bootstrap5: 0` em
+  `core.extension`; ela foi removida do sync após confirmar que o código do
+  tema não existe nem está habilitado. A importação completa foi então aplicada
+  com sucesso: os três blocos foram movidos para `sidebar_first`, nenhum tema
+  Bootstrap foi instalado. Confirmação final: `updatedb:status` sem updates,
+  `config:status` sem diferenças e `drush cr` PASS.
+- **Correções visuais posteriores:** Gin Core Navigation fixa a sidebar com
+  `top: 0` usando seletor de especificidade ID; o CSS desloca sidebar e limita
+  sua altura abaixo da Institution Bar. A Institution Bar recebeu camada 2000
+  para permanecer sobre trilhos e bandejas do Gin/Core. Firefox ESR visível
+  passou 15/15 checks com Gin, Gin Core Navigation e Toolbar Core em
+  320/390/768/1024/1280 px, verificando geometria, prioridade de camada e
+  acesso por hit-testing. Evidência atual em
+  `$SUITE_OUT/admin-sidebar-overlap-final-20261104/`; commit enviado
+  `aac5fa2418` (`corrige sobreposicao da barra institucional pelo menu`).
+  A única falha da navegação em 320 px era o Turnstile (300 px) excedendo seu
+  wrapper do formulário; o wrapper agora mantém essa rolagem local. Firefox
+  visível passou 18/18 estados de Conta em claro/escuro, mais teclado,
+  Shift+Tab, zoom 200/400, sem JavaScript, movimento reduzido e HTTP 200.
+- **Matriz após correções:** navegação 100/100 checks nos dez purposes em
+  320/767/768/1024/1099/1100/1440 px, incluindo Enter/Escape, foco e fallback
+  sem JavaScript. Resultado anterior de 99/100 foi substituído pela execução
+  posterior 100/100. Capturas e métricas estão fora do repositório em
+  `$SUITE_OUT/aculta420-v2-shell-dev3-navigation-post-turnstile/` e
+  `$SUITE_OUT/aculta420-v2-account-turnstile-visual/`.
+- **Preservar:** modificações paralelas em `composer.json`, `composer.lock`,
+  `web/themes/custom/aculta420/js/utility-drawers.js` e
+  `web/themes/custom/aculta_theme/` não pertencem a esta tarefa.
+- **Próximo passo:** comparar as capturas atuais do shell com as referências V1
+  já salvas e revisar rodapé/regions restantes. O header agora traz marca e
+  menu juntos; a vitrine está abaixo dele; eventos, fórum e agenda estão na
+  sidebar. Fase 2 ainda não está concluída. Revisar roadmap/CHANGELOG e executar
+  os gates finais antes do commit do shell.
