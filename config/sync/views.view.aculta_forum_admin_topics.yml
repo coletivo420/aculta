@@ -268,18 +268,6 @@ display:
                 title: 'Não publicado'
                 operator: '='
                 value: '0'
-        status_extra:
-          id: status_extra
-          table: node_field_data
-          field: status_extra
-          entity_type: node
-          plugin_id: node_status
-          operator: '='
-          value: false
-          group: 1
-          expose:
-            operator_limit_selection: false
-            operator_list: {  }
         field_domain_source_target_id:
           id: field_domain_source_target_id
           table: node__field_domain_source

@@ -538,3 +538,17 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - O tema Bootstrap instalado é `drupal/bootstrap` 3.45.0 (`8.x-3.45` no Drupal); os metadados Composer dessa release não aceitam Drupal 12. A release 5.0.2 também ainda declara apenas Drupal 10/11; a branch 5.0.x-dev declara `>11.2`, mas representa outra linha de framework e não foi instalada, para preservar a decisão explícita do responsável sobre a base Bootstrap 8.x. Necessário validar compatibilidade real e adaptar conforme essa decisão antes de resolver Core.
 - A documentação Drupal consultada lista `12.0.0-beta2` e recomenda PHP 8.5+ e Composer 2.9.3. Como o alvo ainda é beta, atualizar primeiro o conjunto Composer em ambiente isolado/dry-run e validar os módulos; sincronizar Core no Runtime somente após solver limpo, verificações e snapshot.
 - Próximo passo: levantar versões `*-dev`/alpha/beta com metadados Drupal 12 para cada bloqueio direto, atualizar em lotes pequenos e executar `composer update --dry-run` até resolver o conjunto. Não desinstalar módulos ativos só para satisfazer o solver; avaliar substituição compatível e preservar funcionalidade.
+
+## Correção do aviso de filtros de status em Views — 2026-11-03
+
+- Removido o filtro redundante `status_extra` (`node_status`) das Views Conteúdo,
+  Fórum — tópicos públicos e Revista — conteúdo editorial. O Core 11 reportava
+  que os grants do `aculta_forum` já controlam acesso e tornam esses filtros
+  inefetivos.
+- Validação YAML focal das três Views passou; a importação de Config Sync
+  atualizou somente essas três Views. `updatedb:status` e `config:status` ficaram
+  limpos, e `core:requirements` deixou de listar `node_status_filter`.
+- Snapshot de recuperação pós-import: `$SUITE_OUT/runtime-snapshots/aculta_runtime-after-node-status-filter-fix-20261103.sql`,
+  54.082.293 bytes, SHA-256 `246cebc28f16da9496f951120047eb9cc40c67b7b377f7784c90ffbb77bdb8f5`,
+  modo 0600. O snapshot foi criado após a importação, pois `config:import --diff`
+  efetua a importação neste Drush.
