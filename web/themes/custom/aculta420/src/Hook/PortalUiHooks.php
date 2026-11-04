@@ -525,7 +525,6 @@ final class PortalUiHooks {
     'button' => ['button'],
     'user-admin-filters' => ['aculta-admin-filters', 'action-links'],
     'event-date-order' => ['aculta-event-date-order'],
-    'event-date-actions' => ['aculta-event-date-actions'],
     'ugc-admin-status-filters' => ['aculta-admin-status-filters', 'action-links'],
     'ugc-admin-purpose-filters' => ['aculta-admin-purpose-filters', 'action-links'],
     'event-organizer-guide' => ['culturas-guide'],
