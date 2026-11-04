@@ -1,0 +1,106 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Multidomain institutional bar
+description: Faixa institucional ACULTA fixa com logotipo e utilidades legadas; links de portais aparecem apenas na home principal.
+group: ACULTA
+libraryOverrides:
+  dependencies:
+    - core/drupal
+    - core/once
+    - core/drupal.displace
+    - aculta420_v2/utility-drawers
+props:
+  type: object
+  additionalProperties: false
+  required: [brand_home_url, logo_base_url]
+  properties:
+    brand_home_url:
+      type: string
+      minLength: 1
+      format: uri-reference
+    logo_base_url:
+      type: string
+      minLength: 1
+      format: uri-reference
+    logo_alt:
+      type: string
+      minLength: 1
+      default: ACULTA
+    cart_url:
+      type: [string, 'null']
+      format: uri-reference
+      default: null
+    cart_count:
+      type: integer
+      minimum: 0
+      default: 0
+    cart_empty:
+      type: boolean
+      default: true
+    cart_total:
+      type: string
+      default: ''
+    cart_sites:
+      type: array
+      default: []
+      items:
+        type: object
+        additionalProperties: false
+        required: [key, label, total, items]
+        properties:
+          key: { type: string }
+          label: { type: string }
+          total: { type: string }
+          checkout_url: { type: string, default: '' }
+          items:
+            type: array
+            items:
+              type: object
+              additionalProperties: false
+              required: [title, quantity, total]
+              properties:
+                title: { type: string }
+                quantity: { type: string }
+                total: { type: string }
+    cart_checkout_url:
+      type: string
+      default: ''
+    messages_url:
+      type: [string, 'null']
+      format: uri-reference
+      default: null
+    messages_count:
+      type: integer
+      minimum: 0
+      default: 0
+    messages_all_url:
+      type: string
+      default: ''
+    alerts_url:
+      type: [string, 'null']
+      format: uri-reference
+      default: null
+    alerts_count:
+      type: integer
+      minimum: 0
+      default: 0
+    alerts_count_kind:
+      type: string
+      enum: [active, attention]
+      default: active
+    alerts_all_url:
+      type: string
+      default: ''
+    links:
+      type: array
+      default: []
+      items:
+        type: object
+        additionalProperties: false
+        required: [title, url]
+        properties:
+          title: { type: string, minLength: 1 }
+          url: { type: string, format: uri-reference }
+slots:
+  search:
+    title: Pesquisa
+    description: Gatilho AJAX do ACULTA Portal, como render array.

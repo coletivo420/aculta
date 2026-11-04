@@ -1,0 +1,54 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Carrinho ACULTA
+description: Gatilho de carrinho e painel lateral nativo do shell institucional.
+group: ACULTA
+libraryOverrides:
+  dependencies:
+    - aculta420_v2/utility-drawers
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    count:
+      type: integer
+      minimum: 0
+      default: 0
+    empty:
+      type: boolean
+      default: true
+    url:
+      type: string
+      default: ''
+    total:
+      type: string
+      default: ''
+    sites:
+      type: array
+      default: []
+      items:
+        type: object
+        additionalProperties: false
+        required: [key, label, total, items]
+        properties:
+          key: { type: string }
+          label: { type: string }
+          count: { type: integer, minimum: 0, default: 0 }
+          empty: { type: boolean, default: true }
+          total: { type: string }
+          checkout_url: { type: string, default: '' }
+          items:
+            type: array
+            items:
+              type: object
+              additionalProperties: false
+              required: [title, quantity, total]
+              properties:
+                title: { type: string }
+                quantity: { type: string }
+                total: { type: string }
+    checkout_url:
+      type: string
+      default: ''
+    banner:
+      type: string
+      default: 'Compre na loja e apoie a luta antiproibicionista!'

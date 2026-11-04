@@ -1,3 +1,9 @@
+## 0.7.0-dev.41 — namespace de token de tipografia Studio (2026-11-04; Design Foundations PASS)
+
+`--aculta-studio-font-family` foi renomeado para o token de escopo
+`--aculta-studio-fidelity-font-family`, sem mudança do valor tipográfico ou
+de sua apresentação. Design Foundations: 2468 checks PASS.
+
 ## 0.7.0-dev.40 — tipografia institucional no Studio (2026-11-03; validação pendente)
 
 A tipografia do tema é Inter no corpo e Oswald nos títulos. Studio e editor de perfil herdam Inter pelos tokens globais; arquivos locais de Montserrat foram removidos. Evidências anteriores que citam Montserrat descrevem a implementação antiga e não são requisito visual vigente.

@@ -1,5 +1,26 @@
 {# Main page layout. Keep every configured region available to blocks. #}
 <div class="page">
+  {{ include('aculta420_v2:multidomain-bar', {
+    brand_home_url: aculta_brand_home|default('/'),
+    logo_base_url: base_path ~ directory ~ '/assets/logos',
+    logo_alt: 'ACULTA - Associação Cultural Antiproibicionista'|t,
+    cart_url: aculta_cart.url|default(null),
+    cart_count: aculta_cart.count|default(0),
+    cart_empty: aculta_cart.empty|default(true),
+    cart_total: aculta_cart.total|default(''),
+    cart_sites: aculta_cart.sites|default([]),
+    cart_checkout_url: aculta_cart.checkout_url|default(''),
+    messages_url: aculta_messenger.url|default(null),
+    messages_count: aculta_messenger.unread_count|default(0),
+    messages_all_url: aculta_messenger.all_url|default(''),
+    alerts_url: aculta_alerts.url|default(null),
+    alerts_count: aculta_alerts.count|default(0),
+    alerts_count_kind: aculta_alerts.count_kind|default('active'),
+    alerts_all_url: aculta_alerts.all_url|default(''),
+    links: multidomain_network_links|default([]),
+    search: aculta_search_utility|default(null)
+  }, with_context = false) }}
+
   {% if page.header %}
     <header class="page__header" role="banner">{{ page.header }}</header>
   {% endif %}

@@ -1,5 +1,21 @@
 # Changelog — ACULTA420 V2
 
+## 1.1.0-dev.3 — 2026-11-04
+
+- Added the global institutional bar SDC fixed at the legacy top position: the
+  ACULTA logo links to the main domain, followed by icon-only search, cart,
+  messages, and alerts. Optional portal links render in a separate secondary
+  row; the four utilities have no visible text labels.
+  Domain resolution, utility URLs/counts, and cache dependencies remain owned
+  by ACULTA Portal.
+- Migrated the ACULTA420 logo variants and favicon from V1. Added an
+  `apple-touch-icon.png` derived from the V1 favicon and a web app manifest
+  using square brand icons. Color mode remains controlled by the existing
+  explicit selector.
+- Foundation schema: 55 SDCs / 764 checks PASS; Design Foundations: 2468
+  checks PASS; V2 SDC discovery/schema/render 14/14 PASS. Runtime cache rebuild
+  and HTTP 200 confirmed. Visual review remains pending.
+
 ## 1.1.0-dev.2 — 2026-11-04
 
 - Integrated the `map-popup` SDC with ACULTA Maps theme hooks. The map module

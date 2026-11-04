@@ -12,6 +12,53 @@
 
 # Estado da sessão
 
+## Handoff — assets ACULTA, multidomain-bar e fundamentos V2 — 2026-11-04
+
+- `aculta420_v2` recebe assets copiados seletivamente da V1: logos preto/branco
+  horizontais e quadrados, variante horizontal 900×300 e favicon ICO. Não há na
+  V1 logo separado do Coletivo 4e20, banners/texturas adequados ou manifest/touch
+  icon. `site.webmanifest` foi criado e `apple-touch-icon.png` (180×180) foi
+  gerado do bitmap 32×32 do favicon com fundo da superfície clara. Inventário:
+  `web/themes/custom/aculta420_v2/assets/README.md`.
+- `multidomain-bar` agora representa a faixa institucional V1: fixa no topo,
+  logo com link ao domínio principal, somente ícones de busca/carrinho/mensagens/
+  avisos e espaço reservado para não cobrir o conteúdo. Links de portais são
+  separados em uma linha secundária opcional. `aculta_portal` fornece os dados
+  neutros e cacheáveis; modo de cor continua no seletor explícito.
+- O V2 permanece `base theme: false` e sem cadeia Bootstrap/jQuery: os ícones
+  da barra são SVG inline, os painéis e confirmações usam `<dialog>` nativo, e
+  nenhuma biblioteca do tema declara Bootstrap, Popper ou jQuery. O validador
+  SDC reprova regressões de tema base, dependências, atributos ou classes do
+  framework. Os behaviors usam Vanilla JS, `Drupal.behaviors` e `core/once`.
+- A reconciliação V2 dos tokens segue a identidade da V1. A pendência do gate
+  Design Foundations foi resolvida renomeando o token de tipografia Studio para
+  seu namespace de fidelity, sem mudar seu valor nem sua apresentação.
+- Validações atuais: SDC schemas 55/764 PASS; V2 SDC 14 componentes com
+  descoberta, schema e render isolado PASS; Design Foundations 2468 PASS;
+  JavaScript syntax, PHP lint, PHPCS focal e `git diff --check` PASS. Os scripts
+  npm `lint:css/js` não se aplicam: o projeto e o tema V2 não têm `package.json` nem
+  pipeline Vite. A validação de fronteira tema/módulo falha em seis classes
+  antigas de formulários LMS, todas fora do escopo. O Runtime `toca`/
+  `aculta_runtime` estava limpo antes do rebuild desta retomada.
+- A captura visual não foi executada: `DISPLAY` e `SUITE_OUT` não estão
+  configurados e `DISPLAY=:0` não tem servidor X disponível. A referência
+  legada 390×844 permanece como artefato externo `aculta-institution-bar-scroll-baseline-581c9f571-final`;
+  manter aceite visual como pendência, sem usar Firefox headless.
+- O gate amplo `validate-aculta420-foundation.php` não pode validar esta sessão
+  porque exige V1 como tema público padrão e Runtime está com V2. O SDC strict
+  e Design Foundations foram executados separadamente e passaram. O validador
+  de índice de status ainda reporta dez divergências preexistentes entre
+  manifests e status de componentes fora do escopo; o README gerado foi
+  mantido apenas com a linha do tema ACULTA420; linhas de outros componentes
+  foram excluídas desta entrega. A validação do índice ainda reporta divergências
+  preexistentes fora do tema.
+- **Publicação:** commit e push ainda pendentes. Runtime é o mesmo checkout; a
+  confirmação final deve ocorrer após o rebuild e o push.
+- **Retomar lendo:** assets README, `components/multidomain-bar/`,
+  `DomainPresentationBuilder.php`, `PagePresentationHooks.php`, roadmap/changelogs
+  Portal/V2 e este handoff. Arquivos Composer e demais alterações LMS/tema não
+  relacionados devem permanecer fora desta entrega.
+
 ## Handoff — integração SDC `map-popup` / `aculta_maps` — 2026-11-04
 
 - `aculta_maps` entrega dados de popup por render arrays neutros e hooks de tema; ACULTA420 V2 seleciona o componente SDC e o JavaScript de Leaflet e Google clona o template inerte. O fallback DOM seguro continua disponível para consumidores que não renderizam os templates.

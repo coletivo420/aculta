@@ -1,0 +1,53 @@
+<div class="aculta-institution-bar-placeholder" aria-hidden="true"></div>
+<div{{ attributes.addClass('aculta-institution-bar') }} role="region" aria-label="{{ 'Barra institucional'|t }}">
+  <div class="aculta-institution-bar__inner">
+    <p class="aculta-institution-bar__brand">
+      <a class="aculta-institution-bar__home" href="{{ brand_home_url }}" rel="home">
+        <img class="aculta-institution-bar__logo"
+          src="{{ logo_base_url }}/aculta420-horizontal-white-78x26.webp"
+          srcset="{{ logo_base_url }}/aculta420-horizontal-white-78x26.webp 1x, {{ logo_base_url }}/aculta420-horizontal-white-156x52.webp 2x"
+          width="78" height="26" alt="{{ logo_alt }}" decoding="async">
+      </a>
+    </p>
+    <div class="aculta-utility">
+      {{ search }}
+      {% if cart_url %}
+        {{ include('aculta420_v2:cart-offcanvas', {
+          count: cart_count,
+          empty: cart_empty,
+          url: cart_url,
+          total: cart_total,
+          sites: cart_sites,
+          checkout_url: cart_checkout_url,
+          banner: 'Compre na loja e apoie a luta antiproibicionista!'|t
+        }, with_context = false) }}
+      {% endif %}
+      {% if messages_url %}
+        {{ include('aculta420_v2:messenger-trigger', {
+          href: messages_url,
+          all_href: messages_all_url,
+          count: messages_count
+        }, with_context = false) }}
+      {% endif %}
+      {% if alerts_url %}
+        {{ include('aculta420_v2:alerts-trigger', {
+          href: alerts_url,
+          all_href: alerts_all_url,
+          count: alerts_count,
+          count_kind: alerts_count_kind
+        }, with_context = false) }}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% if links is not empty %}
+  <nav class="aculta-purpose-showcase" aria-labelledby="aculta-purpose-showcase-title">
+    <h2 id="aculta-purpose-showcase-title" class="visually-hidden">{{ 'Ecossistema ACULTA'|t }}</h2>
+    <ul class="aculta-purpose-showcase__list">
+      {% for link in links %}
+        <li><a class="aculta-purpose-showcase__link" href="{{ link.url }}">{{ link.title }}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+{% endif %}

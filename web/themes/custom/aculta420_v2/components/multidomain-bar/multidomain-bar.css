@@ -1,0 +1,343 @@
+/* Ported from ACULTA420's Institution Bar, with V2 semantic tokens. */
+.aculta-institution-bar {
+  background: var(--color-surface-institution);
+  border-block-end: 1px solid color-mix(in srgb, var(--color-text-primary) 16%, transparent);
+  color: var(--color-text-primary);
+  font: 500 var(--font-size-sm)/1.4 var(--font-family-base);
+  inset-block-start: var(--aculta-institution-bar-offset, 0px);
+  inset-inline: 0;
+  position: fixed;
+  z-index: 1030;
+}
+
+.aculta-institution-bar__inner {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs) var(--spacing-sm);
+  justify-content: space-between;
+  min-block-size: 2.25rem;
+  padding-inline: var(--spacing-sm);
+}
+
+.aculta-institution-bar__brand {
+  align-items: baseline;
+  display: flex;
+  flex: 0 0 auto;
+  gap: var(--spacing-xs) var(--spacing-sm);
+  margin: 0;
+  padding-block: var(--spacing-xs);
+}
+
+.aculta-institution-bar__logo {
+  block-size: 19px;
+  display: block;
+  filter: brightness(0);
+  inline-size: 56px;
+  max-inline-size: none;
+}
+
+:root[data-theme="dark"] .aculta-institution-bar__logo {
+  filter: none;
+}
+
+.aculta-institution-bar__home {
+  display: inline-flex;
+  line-height: 0;
+}
+
+.aculta-institution-bar__home:focus-visible {
+  outline: 3px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}
+
+.aculta-utility {
+  align-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  gap: var(--spacing-xs);
+  justify-content: flex-end;
+  margin-inline-start: auto;
+  min-inline-size: 0;
+}
+
+.aculta-utility-trigger {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 2.75rem;
+  font: inherit;
+  height: 2.75rem;
+  justify-content: center;
+  line-height: 1;
+  min-inline-size: var(--tap-target-min);
+  padding: 0;
+  position: relative;
+  text-decoration: none;
+  width: 2.75rem;
+}
+
+.aculta-utility-trigger:hover,
+.aculta-utility-trigger:focus-visible {
+  color: inherit;
+}
+
+.aculta-utility-trigger:focus-visible {
+  outline: 3px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}
+
+.aculta-utility-trigger__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  line-height: 1;
+  position: relative;
+}
+
+.aculta-utility-trigger__icon svg,
+.aculta-utility-dialog__close svg {
+  block-size: 1.25rem;
+  fill: none;
+  inline-size: 1.25rem;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.aculta-unread-count {
+  align-items: center;
+  background: var(--color-error);
+  border-radius: var(--radius-full);
+  color: var(--color-on-brand);
+  display: inline-flex;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  justify-content: center;
+  line-height: 1;
+  min-block-size: 1.25rem;
+  min-inline-size: 1.25rem;
+  padding: .15rem .35rem;
+  position: absolute;
+  transform: translate(45%, -45%);
+}
+
+.aculta-unread-count[data-count="0"] {
+  display: none;
+}
+
+.aculta-institution-bar-placeholder {
+  block-size: 2.75rem;
+  flex: 0 0 auto;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.aculta-purpose-showcase {
+  margin: 0 auto var(--spacing-base);
+  padding-inline: var(--spacing-base);
+}
+
+.aculta-purpose-showcase__list {
+  align-items: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.aculta-purpose-showcase__link {
+  align-items: center;
+  background: var(--color-brand-highlight);
+  border: 1px solid var(--color-brand-highlight);
+  border-radius: var(--radius-sm);
+  color: var(--color-on-highlight);
+  display: inline-flex;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  justify-content: center;
+  line-height: 1.4;
+  min-block-size: var(--tap-target-min);
+  padding: .625rem 1.25rem;
+  text-decoration: none;
+}
+
+.aculta-purpose-showcase__link:focus-visible {
+  outline: 3px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}
+
+.aculta-utility-dialog {
+  background: var(--color-surface-raised);
+  border: 0;
+  box-shadow: var(--shadow-lg);
+  color: var(--color-text-primary);
+  height: 100vh;
+  height: 100dvh;
+  inset-block: 0;
+  inset-inline: auto 0;
+  margin: 0;
+  max-block-size: none;
+  max-inline-size: none;
+  overflow: hidden;
+  padding: 0;
+  position: fixed;
+  width: min(26.25rem, 100vw);
+}
+
+.aculta-utility-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.aculta-utility-dialog::backdrop {
+  background: var(--color-scrim);
+}
+
+.aculta-utility-dialog__header {
+  align-items: center;
+  border-block-end: 1px solid var(--color-border);
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-base);
+}
+
+.aculta-utility-dialog__title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+  margin: 0;
+}
+
+.aculta-utility-dialog__close {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: var(--font-size-lg);
+  justify-content: center;
+  min-block-size: var(--tap-target-min);
+  min-inline-size: var(--tap-target-min);
+}
+
+.aculta-utility-dialog :is(a, button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}
+
+.aculta-confirm-dialog {
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  box-shadow: var(--shadow-lg);
+  color: var(--color-text-primary);
+  inline-size: min(30rem, calc(100vw - var(--spacing-base) * 2));
+  margin: auto;
+  max-block-size: min(90dvh, 40rem);
+  overflow: auto;
+  padding: var(--spacing-base);
+}
+
+.aculta-confirm-dialog::backdrop {
+  background: var(--color-scrim);
+}
+
+.aculta-confirm-dialog [data-aculta-dialog] p {
+  font-weight: 600;
+}
+
+.aculta-confirm-dialog [data-aculta-dialog] .form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  justify-content: flex-end;
+}
+
+.aculta-confirm-dialog [data-aculta-dialog] .form-actions :is(button, input[type="submit"]) {
+  min-block-size: var(--tap-target-min);
+  padding: var(--spacing-sm) var(--spacing-base);
+}
+
+.aculta-utility-dialog__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--spacing-base);
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--spacing-base);
+}
+
+.aculta-utility-dialog__body > :first-child { margin-block-start: 0; }
+.aculta-utility-dialog__body > :last-child { margin-block-end: 0; }
+.aculta-utility-dialog__body[aria-busy="true"] { opacity: .7; }
+
+.aculta-utility-dialog__action {
+  align-items: center;
+  background: var(--color-brand-highlight);
+  border: 1px solid var(--color-brand-highlight);
+  border-radius: var(--radius-sm);
+  color: var(--color-on-highlight);
+  display: flex;
+  font-family: var(--font-family-heading);
+  font-weight: 600;
+  justify-content: center;
+  min-block-size: var(--tap-target-min);
+  padding: var(--spacing-sm) var(--spacing-base);
+  text-align: center;
+  text-decoration: none;
+}
+
+.aculta-utility-dialog__action:hover {
+  background: var(--color-brand-primary);
+  border-color: var(--color-brand-primary);
+  color: var(--color-on-brand);
+}
+
+.aculta-cart-offcanvas__body { display: flex; flex-direction: column; gap: var(--spacing-base); }
+.aculta-cart-offcanvas__lista { display: flex; flex-direction: column; gap: var(--spacing-sm); }
+.aculta-cart-offcanvas__separador { align-items: baseline; border-block-end: 2px solid var(--color-brand-highlight); color: var(--color-text-primary); display: flex; font-family: var(--font-family-heading); justify-content: space-between; margin-block-start: var(--spacing-sm); padding-block-end: var(--spacing-xs); }
+.aculta-cart-offcanvas__caixa { display: flex; flex-direction: column; gap: var(--spacing-xs); padding: var(--spacing-sm); position: relative; }
+.aculta-cart-offcanvas__meta { color: var(--color-text-secondary); font-size: var(--font-size-sm); }
+.aculta-cart-offcanvas__total { margin: 0; }
+.aculta-cart-offcanvas__action { margin-block: var(--spacing-sm); }
+.aculta-cart-offcanvas__action--outline { background: transparent; color: var(--color-brand-primary); }
+.aculta-cart-offcanvas__cart-link { align-self: flex-start; color: var(--color-text-primary); padding-block: var(--spacing-sm); }
+.aculta-cart-offcanvas__banner { background: var(--color-surface-institution); border-block-start: 2px solid var(--color-brand-highlight); color: var(--color-text-primary); flex: 0 0 auto; font-family: var(--font-family-heading); font-weight: 600; padding: var(--spacing-base); text-align: center; }
+.aculta-messenger-dialog__footer,
+.aculta-alerts-dialog__footer { border-block-start: 1px solid var(--color-border); flex: 0 0 auto; padding: var(--spacing-sm) var(--spacing-base); }
+.aculta-alerts-filters { display: flex; flex-wrap: wrap; gap: var(--spacing-sm); }
+.aculta-alerts-filters__group { flex: 1 1 9rem; min-inline-size: 0; }
+.aculta-alerts-filters__group > summary { border: 1px solid var(--color-border); border-radius: var(--radius-sm); cursor: pointer; min-block-size: var(--tap-target-min); padding: var(--spacing-sm); }
+.aculta-alerts-filters__group .item-list { display: flex; flex-wrap: wrap; gap: var(--spacing-xs) var(--spacing-base); padding-block: var(--spacing-sm); }
+
+@media (min-width: 768px) {
+  .aculta-institution-bar__inner {
+    gap: var(--spacing-xs) var(--spacing-base);
+    padding-inline: var(--spacing-base);
+  }
+
+  .aculta-institution-bar__logo {
+    block-size: 26px;
+    inline-size: 78px;
+  }
+
+  .aculta-utility {
+    flex: 0 0 auto;
+    gap: var(--spacing-sm);
+  }
+}

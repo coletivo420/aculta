@@ -1,0 +1,60 @@
+{% set count = count|default(0) %}
+<button type="button" class="aculta-utility-trigger aculta-cart-trigger"
+  aria-controls="aculta-cart-dialog" aria-expanded="false" aria-haspopup="dialog"
+  aria-label="{{ 'Abrir carrinho (@count itens)'|t({'@count': count}) }}"
+  data-aculta-cart-trigger data-aculta-dialog-trigger>
+  <span class="aculta-utility-trigger__icon">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 4h2l2.1 10.2a2 2 0 0 0 2 1.6h8.8a2 2 0 0 0 1.9-1.4L22 8H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+    <span class="aculta-unread-count aculta-utility-trigger__count" data-aculta-cart-count data-count="{{ count }}" aria-hidden="true">{{ count > 99 ? '99+' : count }}</span>
+  </span>
+</button>
+
+<dialog class="aculta-utility-dialog aculta-cart-dialog" id="aculta-cart-dialog" aria-labelledby="aculta-cart-dialog-title" data-aculta-utility-drawer>
+  <header class="aculta-utility-dialog__header">
+    <h2 class="aculta-utility-dialog__title" id="aculta-cart-dialog-title">{{ 'Carrinho'|t }}</h2>
+    <button type="button" class="aculta-utility-dialog__close" data-aculta-dialog-close aria-label="{{ 'Fechar carrinho'|t }}"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+  </header>
+  <div class="aculta-utility-dialog__body aculta-cart-offcanvas__body">
+    {% if empty %}
+      <p class="aculta-cart-offcanvas__empty">{{ 'Sem produto(s) no carrinho.'|t }}</p>
+    {% else %}
+      <div class="aculta-cart-offcanvas__lista" role="list">
+        {% for site in sites %}
+          {% if site.key != 'assinatura' %}
+          <div class="aculta-cart-offcanvas__separador" role="separator">
+            <span class="aculta-cart-offcanvas__separador-nome">{{ site.label }}</span>
+            <span class="aculta-cart-offcanvas__separador-total">{{ site.total }}</span>
+          </div>
+          {% for item in site.items %}
+            <div class="aculta-cart-offcanvas__caixa" role="listitem">
+              <span class="aculta-cart-offcanvas__title">{{ item.title }}</span>
+              <span class="aculta-cart-offcanvas__meta">{{ item.quantity }} × {{ item.total }}</span>
+            </div>
+          {% endfor %}
+          {% endif %}
+        {% endfor %}
+      </div>
+      {% if checkout_url %}<a class="aculta-cart-offcanvas__action" href="{{ checkout_url }}">{{ 'Finalizar carrinho'|t }}</a>{% endif %}
+      {% for site in sites %}
+        {% if site.key == 'assinatura' %}
+        <section class="aculta-cart-offcanvas__assinatura">
+          <div class="aculta-cart-offcanvas__separador" role="separator">
+            <span class="aculta-cart-offcanvas__separador-nome">{{ site.label }}</span>
+            <span class="aculta-cart-offcanvas__separador-total">{{ site.total }}</span>
+          </div>
+          {% for item in site.items %}
+            <div class="aculta-cart-offcanvas__caixa" role="listitem">
+              <span class="aculta-cart-offcanvas__title">{{ item.title }}</span>
+              <span class="aculta-cart-offcanvas__meta">{{ item.quantity }} × {{ item.total }}</span>
+            </div>
+          {% endfor %}
+          {% if site.checkout_url %}<a class="aculta-cart-offcanvas__action aculta-cart-offcanvas__action--outline" href="{{ site.checkout_url }}">{{ 'Finalizar assinatura'|t }}</a>{% endif %}
+        </section>
+        {% endif %}
+      {% endfor %}
+      <p class="aculta-cart-offcanvas__total"><strong>{{ 'Total geral:'|t }}</strong> {{ total }}</p>
+      {% if url %}<a class="aculta-cart-offcanvas__cart-link" href="{{ url }}">{{ 'Ver carrinho completo'|t }}</a>{% endif %}
+    {% endif %}
+  </div>
+  <footer class="aculta-cart-offcanvas__banner">{{ banner }}</footer>
+</dialog>

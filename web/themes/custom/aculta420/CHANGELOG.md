@@ -1,3 +1,11 @@
+## 0.7.0-dev.41 — namespace de token de tipografia Studio — 2026-11-04
+
+- Renomeado `--aculta-studio-font-family` para
+  `--aculta-studio-fidelity-font-family` nos tokens e consumidores do Studio.
+  O valor e a apresentação permanecem iguais; a mudança coloca o token no
+  namespace exigido pelo gate de Design Foundations.
+- Design Foundations: 2468 checks PASS.
+
 ## 0.7.0-dev.40 — fontes institucionais no Studio (2026-11-03; validação pendente)
 
 - Studio e editor de perfil passam a herdar Inter do token institucional; removidos os WOFF2 e a declaração local de Montserrat. Oswald permanece reservado aos títulos conforme o sistema tipográfico do tema. Relatórios anteriores que registraram Montserrat são históricos e não representam a tipografia aprovada.

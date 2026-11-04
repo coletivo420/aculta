@@ -1,0 +1,27 @@
+name: Faixa institucional multidomínio
+description: Faixa ACULTA fixa com ícones legados e vitrine de portais apenas na home principal.
+component: aculta420_v2:multidomain-bar
+props:
+  brand_home_url: https://main.example.invalid/
+  logo_base_url: /themes/custom/aculta420_v2/assets/logos
+  logo_alt: 'ACULTA - Associação Cultural Antiproibicionista'
+  cart_url: https://main.example.invalid/carrinho
+  cart_count: 0
+  cart_empty: true
+  cart_total: ''
+  cart_sites: []
+  cart_checkout_url: ''
+  messages_url: null
+  messages_count: 0
+  messages_all_url: ''
+  alerts_url: null
+  alerts_count: 0
+  alerts_count_kind: active
+  alerts_all_url: ''
+  links:
+    - title: ACULTA
+      url: https://main.example.invalid/
+    - title: Revista 420
+      url: https://revista.example.invalid/
+slots:
+  search: '<a href="/busca/popup" class="aculta-utility-trigger">Buscar</a>'

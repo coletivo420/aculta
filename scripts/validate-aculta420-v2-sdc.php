@@ -10,14 +10,47 @@
 declare(strict_types=1);
 
 $theme_root = DRUPAL_ROOT . '/themes/custom/aculta420_v2';
+$theme_info = file_get_contents($theme_root . '/aculta420_v2.info.yml');
+$theme_libraries = file_get_contents($theme_root . '/aculta420_v2.libraries.yml');
+if (!str_contains($theme_info, "base theme: false") || preg_match('/base theme:\s*[\"\']?(?:bootstrap5|barrio)/i', $theme_info)) {
+  throw new RuntimeException('V2 must remain a standalone theme without a Bootstrap or Barrio base theme.');
+}
+if (preg_match('/bootstrap5|bootstrap\.bundle|popper|data-bs-|core\/jquery/i', $theme_libraries)) {
+  throw new RuntimeException('V2 libraries must not declare Bootstrap, Popper, data-bs, or jQuery dependencies.');
+}
+$source_files = new AppendIterator();
+foreach (['components', 'templates', 'js', 'src'] as $source_directory) {
+  $path = $theme_root . '/' . $source_directory;
+  if (is_dir($path)) {
+    $source_files->append(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path)));
+  }
+}
+foreach ($source_files as $source_file) {
+  if (!$source_file->isFile() || !preg_match('/\.(?:twig|css|js)$/', $source_file->getFilename())) {
+    continue;
+  }
+  $source = file_get_contents($source_file->getPathname());
+  $framework_class = '(?:row|col-(?:xs|sm|md|lg|xl|xxl)-\d+|d-flex|container-fluid|mb-\d+|form-control|form-select)';
+  $has_framework_class = preg_match('/class\s*=\s*[\"\'][^\"\']*\b' . $framework_class . '\b/i', $source)
+    || preg_match('/(?:^|[\s,{])\.' . $framework_class . '(?=[\s:{,#]|$)/im', $source);
+  if (preg_match('/bootstrap5|bootstrap\.bundle|popper|data-bs-|core\/jquery|core\/drupal\.dialog|\bjQuery\b/i', $source)
+    || preg_match('/(?:class\s*=\s*[\"\'][^\"\']*|(?:^|[\s,{])\.)\bbtn\b/i', $source)
+    || $has_framework_class) {
+    throw new RuntimeException(sprintf('Framework-owned classes or attributes are forbidden in %s.', $source_file->getPathname()));
+  }
+}
 $component_ids = [
   'audio-player',
+  'alerts-trigger',
   'badge',
   'button',
+  'cart-offcanvas',
   'card-cultural',
   'filter-chips',
   'hero-banner',
   'map-popup',
+  'messenger-trigger',
+  'multidomain-bar',
   'navigation-bar',
   'pagination',
   'status-messages',
@@ -28,8 +61,10 @@ $renderer = \Drupal::service('renderer');
 $definitions = $manager->getDefinitions();
 $samples = [
   'audio-player' => ['#props' => ['src' => '/files/sample.mp3', 'title' => 'Sessão cultural']],
+  'alerts-trigger' => ['#props' => ['href' => '/avisos/resumo', 'count' => 0]],
   'badge' => ['#props' => ['label' => 'Cultura', 'variant' => 'primary']],
   'button' => ['#props' => ['text' => 'Abrir', 'url' => '/destino', 'variant' => 'primary']],
+  'cart-offcanvas' => ['#props' => ['count' => 0, 'empty' => TRUE, 'url' => '/carrinho']],
   'card-cultural' => [
     '#props' => ['title' => 'Evento cultural', 'category' => 'Cultura', 'variant' => 'compact'],
     '#slots' => ['image' => '', 'actions' => ''],
@@ -48,6 +83,22 @@ $samples = [
   'map-popup' => [
     '#props' => ['title' => 'Centro cultural', 'category' => 'Cultura', 'address' => 'Centro'],
     '#slots' => ['thumbnail' => ''],
+  ],
+  'messenger-trigger' => ['#props' => ['href' => '/mensagens/resumo', 'count' => 0]],
+  'multidomain-bar' => [
+    '#props' => [
+      'brand_home_url' => '/',
+      'logo_base_url' => '/themes/custom/aculta420_v2/assets/logos',
+      'logo_alt' => 'ACULTA',
+      'cart_url' => '/carrinho',
+      'cart_count' => 0,
+      'messages_url' => '/mensagens/resumo',
+      'messages_count' => 0,
+      'alerts_url' => '/avisos/resumo',
+      'alerts_count' => 0,
+      'links' => [['title' => 'ACULTA', 'url' => '/']],
+    ],
+    '#slots' => ['search' => ''],
   ],
   'navigation-bar' => [
     '#props' => ['site_name' => 'ACULTA', 'menu_id' => 'v2-sdc-validation-menu'],

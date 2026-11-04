@@ -2,17 +2,18 @@
 :root {
   color-scheme: light;
 
-  --color-canvas: #f4f6f8;
+  --color-canvas: #f2f7f0;
   --color-surface: #fff;
   --color-surface-raised: #fff;
-  --color-text-primary: #202b35;
+  --color-surface-institution: #fbf4e8;
+  --color-text-primary: #0c3c29;
   --color-text-secondary: #465563;
   --color-text-muted: #596875;
-  --color-brand-primary: #1a3a5f;
-  --color-brand-highlight: #ff6b35;
+  --color-brand-primary: #0c3c29;
+  --color-brand-highlight: #f2ca36;
   --color-border: #687783;
   --color-on-brand: #fff;
-  --color-on-highlight: #202b35;
+  --color-on-highlight: #0c3c29;
   --color-status: #176b3a;
   --color-warning: #ffc107;
   --color-warning-text: #7a4b00;
@@ -66,17 +67,18 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --color-canvas: #151c23;
-  --color-surface: #202a34;
-  --color-surface-raised: #293642;
-  --color-text-primary: #f4f7fa;
-  --color-text-secondary: #d1dbe3;
-  --color-text-muted: #bdc9d2;
-  --color-brand-primary: #a8c9e8;
-  --color-brand-highlight: #ff966f;
-  --color-border: #8594a0;
-  --color-on-brand: #102338;
-  --color-on-highlight: #24140e;
+  --color-canvas: #171513;
+  --color-surface: #211e1b;
+  --color-surface-raised: #2b2723;
+  --color-surface-institution: #2b2723;
+  --color-text-primary: #f4efe8;
+  --color-text-secondary: #d8d0c8;
+  --color-text-muted: #b7aea5;
+  --color-brand-primary: #9ac15a;
+  --color-brand-highlight: #f2ca36;
+  --color-border: #687783;
+  --color-on-brand: #171513;
+  --color-on-highlight: #171513;
   --color-status: #8fe0a8;
   --color-warning: #ffc107;
   --color-warning-text: #ffd27a;
