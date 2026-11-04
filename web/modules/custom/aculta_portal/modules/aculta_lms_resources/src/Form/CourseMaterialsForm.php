@@ -35,7 +35,7 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
   ];
 
   public function __construct(
-    private readonly CurrentRouteMatch $routeMatch,
+    private readonly CurrentRouteMatch $routeMatcher,
     private readonly CourseAuthoringAccessCheck $authoringAccess,
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
@@ -143,7 +143,7 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
    * Returns the route's course Group or throws when it is malformed.
    */
   private function course(): GroupInterface {
-    $course = $this->routeMatch->getParameter('course');
+    $course = $this->routeMatcher->getParameter('course');
     if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course') {
       throw new NotFoundHttpException();
     }
