@@ -25,9 +25,14 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Adds a course and the learner's chosen class to a Commerce cart. */
+/**
+ * Adds a course and the learner's chosen class to a Commerce cart.
+ */
 final class CourseEnrollmentPurchaseForm extends FormBase {
 
+  /**
+   * Constructs a course enrollment purchase form.
+   */
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
     protected readonly EntityTypeManagerInterface $entityTypeManager,
@@ -53,12 +58,22 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
     $this->stringTranslation = $translation;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId(): string {
     return 'aculta_lms_course_enrollment_purchase';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state, ?GroupInterface $course = NULL): array {
     if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course') {
+      return $form;
+    }
+    if (!$course->isPublished()) {
+      $form['message'] = ['#plain_text' => $this->t('A inscrição online não está disponível para este curso.')];
       return $form;
     }
     $form_state->set('aculta_lms_course_id', (string) $course->id());
@@ -113,22 +128,28 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $course = $this->loadCourse($form_state);
     $class_id = (string) $form_state->getValue('course_class');
-    if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course' || !$this->classIsAvailable($course, $class_id)) {
+    if (!$this->isPurchasableCourse($course) || !$this->classIsAvailable($course, $class_id)) {
       $form_state->setErrorByName('course_class', $this->t('Selecione uma turma disponível deste curso.'));
     }
-    if (!$course instanceof GroupInterface || !$this->courseVariation($course) instanceof ProductVariationInterface) {
+    if (!$this->isPurchasableCourse($course) || !$this->courseVariation($course) instanceof ProductVariationInterface) {
       $form_state->setErrorByName('course_class', $this->t('A inscrição online não está disponível para este curso.'));
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $course = $this->loadCourse($form_state);
     $variation = $course instanceof GroupInterface ? $this->courseVariation($course) : NULL;
     $class = $this->entityTypeManager->getStorage('group')->load((string) $form_state->getValue('course_class'));
-    if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course'
+    if (!$this->isPurchasableCourse($course)
       || !$variation instanceof ProductVariationInterface
       || !$class instanceof GroupInterface
       || !$this->classIsAvailable($course, (string) $class->id())) {
@@ -154,11 +175,26 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
     $form_state->setResponse(new TrustedRedirectResponse($checkoutUrl->toString()));
   }
 
+  /**
+   * Loads the course recorded in trusted form state.
+   */
   private function loadCourse(FormStateInterface $form_state): ?GroupInterface {
     $course = $this->entityTypeManager->getStorage('group')->load($form_state->get('aculta_lms_course_id'));
     return $course instanceof GroupInterface && $course->bundle() === 'lms_course' ? $course : NULL;
   }
 
+  /**
+   * Checks that the course itself is eligible for online enrollment.
+   */
+  private function isPurchasableCourse(?GroupInterface $course): bool {
+    return $course instanceof GroupInterface
+      && $course->bundle() === 'lms_course'
+      && $course->isPublished();
+  }
+
+  /**
+   * Checks that the selected class is published and belongs to the course.
+   */
   private function classIsAvailable(GroupInterface $course, string $class_id): bool {
     $class = $this->entityTypeManager->getStorage('group')->load($class_id);
     if (!$class instanceof GroupInterface || $class->bundle() !== 'lms_class' || !$class->isPublished()) {
@@ -173,6 +209,9 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
     return FALSE;
   }
 
+  /**
+   * Gets the published course variation available for enrollment.
+   */
   private function courseVariation(GroupInterface $course, ?CacheableMetadata $cacheability = NULL): ?ProductVariationInterface {
     if (!$course->hasField('field_course_product') || $course->get('field_course_product')->isEmpty()) {
       return NULL;

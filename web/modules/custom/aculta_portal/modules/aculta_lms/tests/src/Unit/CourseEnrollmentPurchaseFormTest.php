@@ -81,6 +81,26 @@ final class CourseEnrollmentPurchaseFormTest extends UnitTestCase {
   }
 
   /**
+   * An unpublished course cannot expose its enrollment purchase action.
+   */
+  public function testUnpublishedCourseHasNoCheckoutAction(): void {
+    $course = $this->course([
+      $this->classRelationship($this->class('lms_class', '89', TRUE)),
+    ], FALSE);
+    $formState = $this->createMock(FormStateInterface::class);
+    $formState->expects(self::never())->method('set');
+
+    $form = $this->form()->buildForm([], $formState, $course);
+
+    self::assertArrayNotHasKey('course_class', $form);
+    self::assertSame(
+      'A inscrição online não está disponível para este curso.',
+      (string) $form['message']['#plain_text'],
+    );
+    self::assertArrayNotHasKey('actions', $form);
+  }
+
+  /**
    * Creates the form with collaborators unused by buildForm.
    */
   private function form(): CourseEnrollmentPurchaseForm {
@@ -109,10 +129,11 @@ final class CourseEnrollmentPurchaseFormTest extends UnitTestCase {
   /**
    * Builds a cacheable course double with the supplied class relationships.
    */
-  private function course(array $relationships): GroupInterface {
+  private function course(array $relationships, bool $published = TRUE): GroupInterface {
     $course = $this->createMock(GroupInterface::class);
     $course->method('id')->willReturn('88');
     $course->method('bundle')->willReturn('lms_course');
+    $course->method('isPublished')->willReturn($published);
     $course->method('getRelationships')->with('lms_classes')->willReturn($relationships);
     $course->method('hasField')->willReturn(FALSE);
     $course->method('getCacheTags')->willReturn(['group:88']);

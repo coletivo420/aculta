@@ -297,8 +297,12 @@ renderiza ação de checkout. Na dev.201, `CourseEnrollmentPurchaseKernelTest`
 usa entidades Group e Commerce reais: só oferece turma publicada, apresenta o
 preço/ação e submete a compra para confirmar variação e turma no item do
 carrinho. MariaDB `aculta_simpletest`: 1 teste / 45 assertions PASS, com 65
-depreciações upstream de Core/contrib. O Runtime continua sem produto/turma de
-negócio para smoke HTTP; checkout real e sandbox permanecem pendentes.
+depreciações upstream de Core/contrib. Na dev.202, curso despublicado não
+oferece formulário de compra; validação e submit repetem a regra e recusam uma
+submissão forjada sem criar carrinho. Unit: 3 testes / 24 assertions PASS;
+Kernel: 2 testes / 87 assertions PASS, com 65 depreciações upstream de
+Core/contrib. O Runtime continua sem produto/turma de negócio para smoke HTTP;
+checkout real e sandbox permanecem pendentes.
 
 Uma pessoa administradora cria o produto e a variação Commerce do curso e associa
 esse produto ao Group do curso. A variação possui preço zero ou pago; a página

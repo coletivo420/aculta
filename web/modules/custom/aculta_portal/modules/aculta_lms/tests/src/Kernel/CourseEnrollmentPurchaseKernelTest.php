@@ -101,33 +101,7 @@ final class CourseEnrollmentPurchaseKernelTest extends CartKernelTestBase {
    * Verifies that the selected class persists on the cart order item.
    */
   public function testSelectedClassIsAddedToCourseCart(): void {
-    $learner = User::create(['name' => 'lms-kernel-learner', 'status' => 1]);
-    $learner->save();
-    $class = Group::create([
-      'type' => 'lms_class', 'label' => 'Turma disponível', 'uid' => $learner->id(), 'status' => 1,
-    ]);
-    $class->save();
-    $closedClass = Group::create([
-      'type' => 'lms_class', 'label' => 'Turma encerrada', 'uid' => $learner->id(), 'status' => 0,
-    ]);
-    $closedClass->save();
-    $course = Group::create([
-      'type' => 'lms_course', 'label' => 'Curso comprado', 'uid' => $learner->id(), 'status' => 1,
-    ]);
-    $course->save();
-    $course->addRelationship($class, 'lms_classes')->save();
-    $course->addRelationship($closedClass, 'lms_classes')->save();
-
-    $variation = ProductVariation::create([
-      'type' => 'curso', 'sku' => 'lms-course-kernel', 'price' => new Price('125.00', 'BRL'), 'status' => 1,
-    ]);
-    $variation->save();
-    $product = Product::create([
-      'type' => 'produto_curso', 'title' => 'Curso comprado', 'stores' => [$this->container->get('commerce_store.current_store')->getStore()],
-      'variations' => [$variation], 'status' => 1,
-    ]);
-    $product->save();
-    $course->set('field_course_product', $product)->save();
+    [$course, $class, $variation] = $this->createPurchaseFixture();
 
     $form = $this->createPurchaseForm();
     $formState = new FormState();
@@ -150,6 +124,37 @@ final class CourseEnrollmentPurchaseKernelTest extends CartKernelTestBase {
   }
 
   /**
+   * Rejects forged submissions when the course has been unpublished.
+   */
+  public function testUnpublishedCourseCannotBeAddedToCart(): void {
+    [$course, $class] = $this->createPurchaseFixture(FALSE);
+    $form = $this->createPurchaseForm();
+    $formState = new FormState();
+    $build = $form->buildForm([], $formState, $course);
+
+    self::assertArrayNotHasKey('course_class', $build);
+    self::assertArrayNotHasKey('actions', $build);
+    self::assertSame(
+      'A inscrição online não está disponível para este curso.',
+      (string) $build['message']['#plain_text'],
+    );
+
+    // Simulate a crafted request that bypasses the absent form controls.
+    $formState->set('aculta_lms_course_id', (string) $course->id());
+    $formState->setValue('course_class', (string) $class->id());
+    $form->validateForm($build, $formState);
+    self::assertNotEmpty($formState->getErrors());
+    $formArray = [];
+    $form->submitForm($formArray, $formState);
+
+    $cart = $this->container->get('commerce_cart.cart_provider')->getCart(
+      'curso',
+      $this->container->get('commerce_store.current_store')->getStore(),
+    );
+    self::assertNull($cart);
+  }
+
+  /**
    * Creates the purchase form using the real Commerce and Portal services.
    */
   private function createPurchaseForm(): CourseEnrollmentPurchaseForm {
@@ -164,6 +169,44 @@ final class CourseEnrollmentPurchaseKernelTest extends CartKernelTestBase {
       $this->container->get('string_translation'),
       $this->container->get('aculta_portal.domain_purpose'),
     );
+  }
+
+  /**
+   * Creates an actual course, class, product, and variation for purchase tests.
+   *
+   * @return array{0: \Drupal\group\Entity\Group, 1: \Drupal\group\Entity\Group, 2: \Drupal\commerce_product\Entity\ProductVariation}
+   *   Course, published class, and published variation.
+   */
+  private function createPurchaseFixture(bool $coursePublished = TRUE): array {
+    $learner = User::create(['name' => 'lms-kernel-learner', 'status' => 1]);
+    $learner->save();
+    $class = Group::create([
+      'type' => 'lms_class', 'label' => 'Turma disponível', 'uid' => $learner->id(), 'status' => 1,
+    ]);
+    $class->save();
+    $closedClass = Group::create([
+      'type' => 'lms_class', 'label' => 'Turma encerrada', 'uid' => $learner->id(), 'status' => 0,
+    ]);
+    $closedClass->save();
+    $course = Group::create([
+      'type' => 'lms_course', 'label' => 'Curso comprado', 'uid' => $learner->id(), 'status' => (int) $coursePublished,
+    ]);
+    $course->save();
+    $course->addRelationship($class, 'lms_classes')->save();
+    $course->addRelationship($closedClass, 'lms_classes')->save();
+
+    $variation = ProductVariation::create([
+      'type' => 'curso', 'sku' => 'lms-course-kernel', 'price' => new Price('125.00', 'BRL'), 'status' => 1,
+    ]);
+    $variation->save();
+    $product = Product::create([
+      'type' => 'produto_curso', 'title' => 'Curso comprado', 'stores' => [$this->container->get('commerce_store.current_store')->getStore()],
+      'variations' => [$variation], 'status' => 1,
+    ]);
+    $product->save();
+    $course->set('field_course_product', $product)->save();
+
+    return [$course, $class, $variation];
   }
 
   /**

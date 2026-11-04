@@ -1,3 +1,12 @@
+## 0.1.0-dev.202 — bloqueia inscrição em curso não publicado
+
+- O formulário de compra não oferece turmas nem ação de checkout quando o curso
+  está despublicado.
+- Validação e submit revalidam a publicação do próprio curso; uma submissão
+  forjada não cria carrinho nem item Commerce.
+- Unit: 3 testes / 24 assertions PASS. Kernel MariaDB `aculta_simpletest`: 2
+  testes / 87 assertions PASS; as 65 depreciações são de Core/contrib.
+
 ## 0.1.0-dev.201 — cobre formulário e carrinho de compra de curso
 
 - Kernel Commerce exercita a montagem do formulário com curso, produto e
