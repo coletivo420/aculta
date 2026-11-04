@@ -1,3 +1,12 @@
+## 0.1.0-dev.192 — ordena jQuery antes dos agregados JQuery UI
+
+- O asset `core/jquery` recebe peso anterior aos componentes JQuery UI que
+  chegam com peso negativo, evitando sua execução antes da dependência.
+- Corrige uma causa observada no formulário do educador: CKEditor 5 não
+  inicializava quando o agregado UI executava com `jQuery` indefinido.
+- Unit cobre a alteração de peso e garante que outros extensions não sejam
+  alterados. Repetir smoke visual autenticado após rebuild do cache.
+
 ## 0.1.0-dev.191 — inicia shell visual responsivo do Course Builder
 
 - A estrutura do curso agora apresenta resumo de aulas/atividades, cartões

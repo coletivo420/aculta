@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.191
+version: 0.1.0-dev.192
 state: Dev
-progress_note: "Dev.191: estrutura do curso em cartões responsivos com resumo, estados editoriais, ações de aula/atividade e orientação para curso vazio; sem mudar entidades, ownership ou armazenamento. Unit LMS 257/937 PASS; PHPCS, PHP lint, YAML e diff check PASS. Runtime está no dev.190, configs dev.190 importadas, sem alterações de banco/config esperadas nesta etapa. CKEditor 5 possui configuração e formato filtrado instalados, mas a inicialização visual não foi comprovada: Firefox diagnosticou `jQuery is not defined` no agregado JQuery UI; sessão automatizada posterior não iniciou, então editor no navegador continua DEFERRED. Preview estudante, materiais, editor contextual e drag-and-drop seguem pendentes antes de pagamentos e auditoria updatedb."
-next_phase: 'Validar shell e CKEditor no navegador do Runtime; corrigir ordem/dependências de JavaScript que impede o CKEditor, depois implementar preview seguro e integrações de materiais antes de pagamentos e auditoria updatedb.'
+progress_note: "Dev.192: hook LMS reposiciona o asset não agregado `core/jquery` antes de dependências jQuery UI com peso -11; Unit LMS 259/940 PASS (26 depreciações PHPUnit), PHPCS Drupal, PHP lint, YAML e diff check PASS. Fix e CKEditor ainda aguardam rebuild de cache e smoke autenticado, pois a regressão foi reproduzida no Firefox (`jQuery is not defined` antes do editor). Dev.191: estrutura em cartões responsivos, resumo, estados editoriais, ações contextualizadas e empty state; sem mudar entidades, ownership ou armazenamento. Runtime está no dev.191, sem updates de DB ou config esperados. Preview estudante, materiais, editor contextual e drag-and-drop seguem pendentes antes de pagamentos e auditoria updatedb."
+next_phase: 'Publicar/reconstruir cache e validar a ordem de scripts e CKEditor no Firefox autenticado; se inicializar, avançar preview seguro e integração de materiais antes de pagamentos e auditoria updatedb.'
 
 # 2026-10-22: Dependência externa de UI G420-C2-T permanece pendente.
 # O Studio compõe cards SDC, mas a homologação depende de fixtures LMS
