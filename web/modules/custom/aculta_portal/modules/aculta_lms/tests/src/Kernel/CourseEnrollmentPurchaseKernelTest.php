@@ -107,11 +107,16 @@ final class CourseEnrollmentPurchaseKernelTest extends CartKernelTestBase {
       'type' => 'lms_class', 'label' => 'Turma disponível', 'uid' => $learner->id(), 'status' => 1,
     ]);
     $class->save();
+    $closedClass = Group::create([
+      'type' => 'lms_class', 'label' => 'Turma encerrada', 'uid' => $learner->id(), 'status' => 0,
+    ]);
+    $closedClass->save();
     $course = Group::create([
       'type' => 'lms_course', 'label' => 'Curso comprado', 'uid' => $learner->id(), 'status' => 1,
     ]);
     $course->save();
     $course->addRelationship($class, 'lms_classes')->save();
+    $course->addRelationship($closedClass, 'lms_classes')->save();
 
     $variation = ProductVariation::create([
       'type' => 'curso', 'sku' => 'lms-course-kernel', 'price' => new Price('125.00', 'BRL'), 'status' => 1,
@@ -124,20 +129,14 @@ final class CourseEnrollmentPurchaseKernelTest extends CartKernelTestBase {
     $product->save();
     $course->set('field_course_product', $product)->save();
 
+    $form = $this->createPurchaseForm();
     $formState = new FormState();
+    $build = $form->buildForm([], $formState, $course);
+    self::assertSame([(string) $class->id() => 'Turma disponível'], $build['course_class']['#options']);
+    self::assertNotEmpty($build['price']['#plain_text']);
+    self::assertNotEmpty($build['actions']['submit']['#value']);
     $formState->set('aculta_lms_course_id', (string) $course->id());
     $formState->setValue('course_class', (string) $class->id());
-    $form = new CourseEnrollmentPurchaseForm(
-      $this->container->get('entity_type.manager'),
-      $this->container->get('commerce_cart.cart_provider'),
-      $this->container->get('commerce_cart.cart_manager'),
-      $this->container->get('commerce_store.current_store'),
-      $this->container->get('commerce_price.currency_formatter'),
-      $this->container->get('current_user'),
-      $this->container->get('messenger'),
-      $this->container->get('string_translation'),
-      $this->container->get('aculta_portal.domain_purpose'),
-    );
     $formArray = [];
     $form->submitForm($formArray, $formState);
 
@@ -148,6 +147,23 @@ final class CourseEnrollmentPurchaseKernelTest extends CartKernelTestBase {
     self::assertSame((string) $variation->id(), (string) $item->getPurchasedEntityId());
     self::assertSame((string) $class->id(), (string) $item->get('field_course_class')->target_id);
     self::assertNotEmpty($this->container->get('messenger')->messagesByType('error'));
+  }
+
+  /**
+   * Creates the purchase form using the real Commerce and Portal services.
+   */
+  private function createPurchaseForm(): CourseEnrollmentPurchaseForm {
+    return new CourseEnrollmentPurchaseForm(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('commerce_cart.cart_provider'),
+      $this->container->get('commerce_cart.cart_manager'),
+      $this->container->get('commerce_store.current_store'),
+      $this->container->get('commerce_price.currency_formatter'),
+      $this->container->get('current_user'),
+      $this->container->get('messenger'),
+      $this->container->get('string_translation'),
+      $this->container->get('aculta_portal.domain_purpose'),
+    );
   }
 
   /**

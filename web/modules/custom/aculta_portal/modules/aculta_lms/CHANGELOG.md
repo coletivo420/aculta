@@ -1,3 +1,13 @@
+## 0.1.0-dev.201 — cobre formulário e carrinho de compra de curso
+
+- Kernel Commerce exercita a montagem do formulário com curso, produto e
+  variação reais; confirma que somente turma publicada aparece e que preço e
+  ação de checkout são apresentados.
+- A submissão cria o carrinho `curso` e persiste a variação e a turma selecionada
+  no item (`field_course_class`), sem gateway externo.
+- MariaDB `aculta_simpletest`: 1 teste / 45 assertions PASS; 65 depreciações
+  upstream Core/contrib. Checkout HTTP e pagamento sandbox permanecem pendentes.
+
 ## 0.1.0-dev.200 — cobre estados indisponíveis da compra de curso
 
 - Unit do `CourseEnrollmentPurchaseForm` protege os estados sem turma publicada

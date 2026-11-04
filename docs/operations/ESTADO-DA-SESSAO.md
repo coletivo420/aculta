@@ -1,12 +1,14 @@
 ## Retomada — cobertura do carrinho LMS, 2026-11-04
 
 - **Objetivo persistente:** concluir lacunas do LMS; depois avançar em pagamentos e revisar atualizações de banco uma a uma.
-- **Entrega desta fase:** `CourseEnrollmentPurchaseKernelTest` exerce fluxo de compra sem gateway: cria produto/variação BRL, curso e turma Group relacionados, submete `CourseEnrollmentPurchaseForm`, e confirma que o carrinho contém a variação e o campo `field_course_class`.
-- **Verificação:** Kernel MariaDB `aculta_simpletest`: 1 teste / 42 assertions PASS. Há 65 deprecações oriundas de Core/contrib; sem falha. Primeiro run apontou schemas auxiliares ausentes no harness (`text_with_summary`, `entity_usage`, campos do pedido); ajustados no fixture. PHPCS e lint devem ser conferidos após a edição final.
-- **Ambiente:** hostname `toca`, Drupal 11.5.0-beta1, PHP 8.5.12, DB Runtime `aculta_runtime`. Antes de atualizar o Runtime, conferir `updatedb:status` e `config:status`; no último estado conhecido ambos limpos.
-- **Worktree alheio preservado:** `composer.json` modificado e os arquivos não rastreados `web/themes/custom/aculta420/js/utility-drawers.js` e `web/themes/custom/aculta_theme/`; não incluir na entrega.
-- **Próximos passos:** executar validações finais, commitar somente o teste e este handoff, push fast-forward em `origin/dev`, confirmar o Runtime no mesmo HEAD; retomar fluxo F7/UX, depois pagamentos e itens de `updatedb`.
-- **Retomar lendo:** teste Kernel acima, `CourseEnrollmentPurchaseForm.php`, `docs/operations/AGENT-OPERATIONS.md`, `docs/operations/BANCO-DE-TESTE.md`.
+- **Entrega LMS dev.201:** `CourseEnrollmentPurchaseKernelTest` usa Commerce/Group reais e prova formulário com turma publicada, exclusão de turma encerrada, preço/ação visíveis e submit adicionando a variação e a turma ao carrinho. Nenhum gateway externo.
+- **Verificação:** Kernel MariaDB `aculta_simpletest`: 1 teste / 45 assertions PASS; 65 depreciações upstream Core/contrib. PHPCS, lint e `git diff --check` finais a conferir.
+- **Ambiente:** hostname `toca`, Drupal 11.5.0-beta1, PHP 8.5.12, DB Runtime `aculta_runtime`. `updatedb:status` e `config:status` foram lidos antes da última sincronização e estavam limpos.
+- **Worktree alheio preservado:** `composer.json`, `composer.lock` e os arquivos não rastreados `web/themes/custom/aculta420/js/utility-drawers.js` e `web/themes/custom/aculta_theme/`; não incluir na entrega.
+- **Pendências LMS:** checkout HTTP/pagamento real não tem produto/turma de negócio no Runtime; revisão visual do F6/F7 segue pendente. Não criar conteúdo Runtime para fabricar esse cenário. Após fechar a cobertura atual, seguir as lacunas LMS antes de pagamentos; `updatedb` só depois.
+- **Próximos passos:** validação final, commit atômico de código/changelog/handoff, push fast-forward em `origin/dev`, confirmar Runtime no mesmo checkout/HEAD.
+- **Retomar lendo:** `CourseEnrollmentPurchaseKernelTest.php`, `CourseEnrollmentPurchaseForm.php`, `README.md` seção F7, `CHANGELOG.md`, `docs/operations/AGENT-OPERATIONS.md` e `docs/operations/BANCO-DE-TESTE.md`.
+
 
 # Estado da sessão
 

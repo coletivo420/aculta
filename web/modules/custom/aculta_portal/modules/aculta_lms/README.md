@@ -289,8 +289,12 @@ DI do novo verificador de compras (4/40) e a regressão LMS/Messenger passa com
 
 Na dev.200, Unit `CourseEnrollmentPurchaseFormTest` cobre a turma sem publicação
 e o curso sem produto válido (2 testes / 20 assertions); nenhum desses estados
-renderiza ação de checkout. A integração de carrinho e o pagamento sandbox
-continuam sem smoke porque o Runtime só contém o curso sintético de validação.
+renderiza ação de checkout. Na dev.201, `CourseEnrollmentPurchaseKernelTest`
+usa entidades Group e Commerce reais: só oferece turma publicada, apresenta o
+preço/ação e submete a compra para confirmar variação e turma no item do
+carrinho. MariaDB `aculta_simpletest`: 1 teste / 45 assertions PASS, com 65
+depreciações upstream de Core/contrib. O Runtime continua sem produto/turma de
+negócio para smoke HTTP; checkout real e sandbox permanecem pendentes.
 
 Uma pessoa administradora cria o produto e a variação Commerce do curso e associa
 esse produto ao Group do curso. A variação possui preço zero ou pago; a página
