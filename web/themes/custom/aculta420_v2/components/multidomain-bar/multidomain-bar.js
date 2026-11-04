@@ -77,7 +77,8 @@
   }
 
   function createLoginDialog(bar) {
-    const template = bar.querySelector('[data-aculta-login-dialog-template]');
+    const template = bar.querySelector('[data-aculta-login-dialog-template]')
+      || document.querySelector('[data-aculta-login-dialog-template]');
     const fragment = template?.content.cloneNode(true);
     const dialog = fragment?.querySelector('[data-aculta-login-dialog]');
     if (!dialog) {
@@ -122,7 +123,8 @@
   }
 
   function createSearchDialog(bar) {
-    const template = bar.querySelector('[data-aculta-search-dialog-template]');
+    const template = bar.querySelector('[data-aculta-search-dialog-template]')
+      || document.querySelector('[data-aculta-search-dialog-template]');
     const fragment = template?.content.cloneNode(true);
     const dialog = fragment?.querySelector('[data-aculta-search-dialog]');
     if (!dialog) {

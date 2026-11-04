@@ -1,5 +1,14 @@
 # Changelog — ACULTA420 V2
 
+## 1.2.0-dev.10 — modal de entrada portado da V1
+
+- O diálogo nativo mantém a composição legada: painel verde, botão Google no
+  topo quando configurado, campos claros, ação amarela e links de acesso/cadastro.
+- Corrigida a localização dos templates do diálogo: como ficam fora da faixa
+  visual, o behavior agora procura no documento após tentar a própria barra.
+- O formulário segue sendo buscado e enviado pelo Fetch existente; nenhuma
+  dependência Bootstrap, jQuery ou CTools foi acrescentada.
+
 ## 1.2.0-dev.9 — compõe o menu de conta como render array SDC
 
 - `PagePresentationHooks` entrega o menu como instância SDC e os slots como

@@ -1,6 +1,7 @@
 # ACULTA420 V2 roadmap
 
-- `1.2.0-dev.9`: menu da barra institucional integrado somente com o avatar
+- `1.2.0-dev.10`: modal de entrada portado da identidade V1 para `<dialog>` e
+  Fetch, mantendo o botão Google quando a integração Portal estiver configurada.
   fornecido por `aculta_user`; não há apelido na barra. Evidência visual e
   runtime autenticado ainda pendentes.
 
