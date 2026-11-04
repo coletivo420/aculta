@@ -1485,3 +1485,8 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
 - Unit do `LmsFriendlyRouteProcessor` confirma que links de resposta gerados carregam tags de listas de aulas e atividades, invalidando URLs quando o currículo muda.
 - LMS Unit: 271 testes / 1.034 assertions PASS; PHPCS e PHP lint da nova cobertura PASS.
 
+
+# 0.1.0-dev.210 — invalida autorização quando muda a matrícula da turma
+
+- Centraliza as cache tags usadas para decidir matrícula no curso e nas turmas vinculadas. Acesso a aula, submissão de resposta e download de anexo inclui as tags de membership mesmo em resultados negados, para que concessões e revogações sejam reavaliadas.
+- Testes verificam as tags derivadas, propagação nos três access checks e no Kernel do currículo. LMS Unit 272/1.039 PASS; `LearningDashboardKernelTest` 1/47 PASS.

@@ -254,6 +254,10 @@ final class LearningDashboardKernelTest extends KernelTestBase {
     $current_user = $this->createMock(AccountProxyInterface::class);
     $current_user->method('isAuthenticated')->willReturn(TRUE);
     $eligibility = $this->createMock(LearningEligibilityInterface::class);
+    $eligibility->method('courseEnrollmentCacheTags')->willReturn([
+      'group_relationship_list:plugin:lms_classes:group:' . $course->id(),
+      'group_relationship_list:plugin:group_membership:group:89',
+    ]);
     $eligibility->method('isContentAvailable')->willReturn(TRUE);
     $eligibility->method('hasCurrentEnrollment')->willReturn(TRUE);
     $eligibility->method('activityBelongsToCourse')->willReturn(TRUE);
@@ -262,11 +266,13 @@ final class LearningDashboardKernelTest extends KernelTestBase {
       ->access($course, $journey->lessons[0]->delta);
     self::assertTrue($lesson_access->isAllowed());
     self::assertContains('aculta_lms_lesson_list', $lesson_access->getCacheTags());
+    self::assertContains('group_relationship_list:plugin:group_membership:group:89', $lesson_access->getCacheTags());
     $answer_access = (new AnswerSubmissionAccessCheck($slugs, $eligibility, $current_user))
       ->access($course, $journey->lessons[0]->delta, 0);
     self::assertTrue($answer_access->isAllowed());
     self::assertContains('aculta_lms_lesson_list', $answer_access->getCacheTags());
     self::assertContains('aculta_lms_activity_list', $answer_access->getCacheTags());
+    self::assertContains('group_relationship_list:plugin:group_membership:group:89', $answer_access->getCacheTags());
   }
 
 }

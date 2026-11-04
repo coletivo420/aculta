@@ -42,6 +42,10 @@ final class LessonViewAccessCheckTest extends UnitTestCase {
       new PhpTransliteration(NULL, $this->createMock(ModuleHandlerInterface::class)),
     );
     $eligibility = $this->createMock(LearningEligibilityInterface::class);
+    $eligibility->method('courseEnrollmentCacheTags')->willReturn([
+      'group_relationship_list:plugin:lms_classes:group:course-1',
+      'group_relationship_list:plugin:group_membership:group:class-1',
+    ]);
     $eligibility->expects(self::never())->method('isContentAvailable');
     $user = $this->createMock(AccountProxyInterface::class);
     $user->method('isAuthenticated')->willReturn(FALSE);
@@ -51,6 +55,7 @@ final class LessonViewAccessCheckTest extends UnitTestCase {
 
     self::assertTrue($access->isForbidden());
     self::assertContains(LmsFriendlySlugs::LESSON_LIST_CACHE_TAG, $access->getCacheTags());
+    self::assertContains('group_relationship_list:plugin:group_membership:group:class-1', $access->getCacheTags());
   }
 
 }

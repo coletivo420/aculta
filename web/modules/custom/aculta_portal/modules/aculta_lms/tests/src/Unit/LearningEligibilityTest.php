@@ -18,10 +18,52 @@ use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-/** @coversDefaultClass \Drupal\aculta_lms\Notice\LearningEligibility */
+/**
+ * @coversDefaultClass \Drupal\aculta_lms\Notice\LearningEligibility
+ */
 final class LearningEligibilityTest extends UnitTestCase {
 
-  /** @covers ::hasCurrentEnrollment */
+  /**
+   * @covers ::courseEnrollmentCacheTags
+   */
+  public function testCourseEnrollmentCacheTagsIncludeLinkedClassMemberships(): void {
+    $class = $this->createMock(GroupInterface::class);
+    $class->method('id')->willReturn('22');
+    $class->method('bundle')->willReturn('lms_class');
+    $other_group = $this->createMock(GroupInterface::class);
+    $other_group->method('id')->willReturn('23');
+    $other_group->method('bundle')->willReturn('other');
+    $class_relationship = $this->createMock(GroupRelationshipInterface::class);
+    $class_relationship->method('getEntity')->willReturn($class);
+    $other_relationship = $this->createMock(GroupRelationshipInterface::class);
+    $other_relationship->method('getEntity')->willReturn($other_group);
+    $course = $this->createMock(GroupInterface::class);
+    $course->method('id')->willReturn('12');
+    $course->method('getRelationships')->with('lms_classes')->willReturn([
+      $class_relationship,
+      $class_relationship,
+      $other_relationship,
+    ]);
+    $eligibility = new LearningEligibility(
+      $this->createMock(EntityTypeManagerInterface::class),
+      new ClassActivityDeadlineManager(
+        $this->createMock(EntityTypeManagerInterface::class),
+        new ClassActivityDeadlineAccessCheck(
+          $this->createMock(EntityTypeManagerInterface::class),
+          $this->createMock(AccountProxyInterface::class),
+        ),
+      ),
+    );
+
+    self::assertSame([
+      'group_relationship_list:plugin:lms_classes:group:12',
+      'group_relationship_list:plugin:group_membership:group:22',
+    ], $eligibility->courseEnrollmentCacheTags($course));
+  }
+
+  /**
+   * @covers ::hasCurrentEnrollment
+   */
   public function testEnrollmentFollowsCourseClassRelationships(): void {
     $previousContainer = \Drupal::hasContainer() ? \Drupal::getContainer() : NULL;
 

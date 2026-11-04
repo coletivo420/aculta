@@ -50,7 +50,9 @@ final class AnswerAttachmentAccessCheckTest extends UnitTestCase {
     [$check, $eligibility] = $this->checker($answer, $user, $activity, $file, $course);
     $eligibility->expects(self::once())->method('hasCurrentEnrollment')->with($course, $user)->willReturn(FALSE);
 
-    self::assertFalse($check->access($answer, $account)->isAllowed());
+    $result = $check->access($answer, $account);
+    self::assertFalse($result->isAllowed());
+    self::assertContains('group_relationship_list:plugin:group_membership:group:89', $result->getCacheTags());
   }
 
   /**
@@ -100,6 +102,10 @@ final class AnswerAttachmentAccessCheckTest extends UnitTestCase {
     $entityTypeManager->method('getStorage')->willReturn($storage);
     $eligibility = $this->createMock(LearningEligibilityInterface::class);
     $eligibility->method('courseForAnswer')->with($answer)->willReturn($course);
+    $eligibility->method('courseEnrollmentCacheTags')->willReturn([
+      'group_relationship_list:plugin:lms_classes:group:12',
+      'group_relationship_list:plugin:group_membership:group:89',
+    ]);
     return [new AnswerAttachmentAccessCheck($entityTypeManager, $eligibility), $eligibility];
   }
 

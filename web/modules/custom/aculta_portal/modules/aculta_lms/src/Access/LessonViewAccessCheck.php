@@ -10,7 +10,6 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\aculta_lms\Notice\LearningEligibilityInterface;
 use Drupal\aculta_lms\Routing\LmsFriendlySlugs;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\group\Entity\GroupRelationshipInterface;
 
 /**
  * Grants published lesson access only to currently enrolled learners.
@@ -27,13 +26,7 @@ final class LessonViewAccessCheck {
    * Checks that the requested lesson is published and belongs to enrollment.
    */
   public function access(GroupInterface $group, mixed $lesson_delta): AccessResult {
-    $membership_tags = ['group_relationship_list:plugin:lms_classes:group:' . $group->id()];
-    foreach ($group->getRelationships('lms_classes') ?? [] as $relationship) {
-      $class = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
-      if ($class instanceof GroupInterface) {
-        $membership_tags[] = 'group_relationship_list:plugin:group_membership:group:' . $class->id();
-      }
-    }
+    $membership_tags = $this->eligibility->courseEnrollmentCacheTags($group);
     $result = AccessResult::forbidden()
       ->cachePerUser()
       ->addCacheContexts(['user.permissions', 'user.group_permissions'])

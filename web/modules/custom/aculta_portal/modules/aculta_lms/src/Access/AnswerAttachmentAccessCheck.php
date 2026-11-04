@@ -81,6 +81,9 @@ final class AnswerAttachmentAccessCheck {
         ->addCacheableDependency($file);
     }
 
+    $enrollmentCacheTags = $this->eligibility->courseEnrollmentCacheTags($course);
+    $denied->addCacheTags($enrollmentCacheTags);
+
     $owner = (string) $account->id() === (string) $uid;
     $allowed = $owner
       ? $this->eligibility->hasCurrentEnrollment($course, $student)
@@ -93,7 +96,7 @@ final class AnswerAttachmentAccessCheck {
       ->addCacheableDependency($activity)
       ->addCacheableDependency($file)
       ->addCacheableDependency($course)
-      ->addCacheTags(['group_relationship_list:plugin:lms_classes:group:' . $course->id()]);
+      ->addCacheTags($enrollmentCacheTags);
   }
 
 }

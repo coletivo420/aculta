@@ -41,6 +41,14 @@ interface LearningEligibilityInterface {
   public function hasCurrentEnrollment(GroupInterface $course, AccountInterface $account): bool;
 
   /**
+   * Cache tags invalidated when current course/class enrollment changes.
+   *
+   * @return string[]
+   *   Group relationship list tags used by the enrollment decision.
+   */
+  public function courseEnrollmentCacheTags(GroupInterface $course): array;
+
+  /**
    * Checks an active take-course membership in the specific class.
    */
   public function memberCanTakeCourseInClass(GroupInterface $class, AccountInterface $account): bool;

@@ -64,7 +64,8 @@ final class LearningEligibility implements LearningEligibilityInterface {
     return $course instanceof GroupInterface && $course->bundle() === 'lms_course' ? [$course] : [];
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function isContentAvailable(EntityInterface $content): bool {
     if ($content instanceof GroupInterface && $content->bundle() === 'lms_course') {
       return $content->isPublished();
@@ -101,6 +102,20 @@ final class LearningEligibility implements LearningEligibilityInterface {
       }
     }
     return FALSE;
+  }
+
+  /**
+   * {@inheritdoc} */
+  public function courseEnrollmentCacheTags(GroupInterface $course): array {
+    $tags = ['group_relationship_list:plugin:lms_classes:group:' . $course->id()];
+    foreach ($course->getRelationships('lms_classes') ?? [] as $relationship) {
+      $class = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
+      if ($class instanceof GroupInterface && $class->bundle() === 'lms_class') {
+        $tags[] = 'group_relationship_list:plugin:group_membership:group:' . $class->id();
+      }
+    }
+
+    return array_values(array_unique($tags));
   }
 
   /**

@@ -26,12 +26,13 @@ final class AnswerSubmissionAccessCheck {
    * Checks membership and resolves the current lesson and activity positions.
    */
   public function access(GroupInterface $group, mixed $lesson_delta, mixed $activity_delta): AccessResult {
+    $enrollmentCacheTags = $this->eligibility->courseEnrollmentCacheTags($group);
     $result = AccessResult::forbidden()
       ->cachePerUser()
       ->addCacheContexts(['user.permissions', 'user.group_permissions'])
       ->addCacheableDependency($group)
       ->addCacheTags([
-        'group_relationship_list:plugin:lms_classes:group:' . $group->id(),
+        ...$enrollmentCacheTags,
         LmsFriendlySlugs::LESSON_LIST_CACHE_TAG,
         LmsFriendlySlugs::ACTIVITY_LIST_CACHE_TAG,
       ]);
@@ -70,7 +71,7 @@ final class AnswerSubmissionAccessCheck {
       ->addCacheableDependency($group)
       ->addCacheableDependency($activity)
       ->addCacheTags([
-        'group_relationship_list:plugin:lms_classes:group:' . $group->id(),
+        ...$enrollmentCacheTags,
         LmsFriendlySlugs::LESSON_LIST_CACHE_TAG,
         LmsFriendlySlugs::ACTIVITY_LIST_CACHE_TAG,
       ]);

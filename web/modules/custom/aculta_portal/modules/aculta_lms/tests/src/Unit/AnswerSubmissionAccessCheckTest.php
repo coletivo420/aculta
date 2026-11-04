@@ -42,15 +42,21 @@ final class AnswerSubmissionAccessCheckTest extends UnitTestCase {
     $currentUser = $this->createMock(AccountProxyInterface::class);
     $currentUser->method('isAuthenticated')->willReturn(FALSE);
 
+    $eligibility = $this->createMock(LearningEligibilityInterface::class);
+    $eligibility->method('courseEnrollmentCacheTags')->willReturn([
+      'group_relationship_list:plugin:lms_classes:group:88',
+      'group_relationship_list:plugin:group_membership:group:89',
+    ]);
     $result = (new AnswerSubmissionAccessCheck(
       $slugs,
-      $this->createMock(LearningEligibilityInterface::class),
+      $eligibility,
       $currentUser,
     ))->access($group, 'aula-1', 'true-false');
 
     self::assertTrue($result->isForbidden());
     self::assertContains(LmsFriendlySlugs::LESSON_LIST_CACHE_TAG, $result->getCacheTags());
     self::assertContains(LmsFriendlySlugs::ACTIVITY_LIST_CACHE_TAG, $result->getCacheTags());
+    self::assertContains('group_relationship_list:plugin:group_membership:group:89', $result->getCacheTags());
   }
 
 }
