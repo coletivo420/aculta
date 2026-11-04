@@ -4,9 +4,16 @@
   A superfície usa `#6b9a2c`; texto escuro mantém 5,45:1. Google mantém o SVG
   oficial da V1 e recupera sombra e realce creme no hover/foco. Formulário,
   fallback e links permanecem sem alteração; Minha conta continua item do menu.
-  `validate-aculta420-v2-foundations.php` passou (51 pares). SDC schema não
-  pôde executar na worktree sem `vendor/autoload.php`. Firefox no Runtime após
-  sincronização: pendente.
+  Firefox ESR visível no Runtime, purpose `main`, rota `/`, visitante: formulário
+  e Google presentes, foco inicial no campo de usuário e Escape fecha; superfície
+  `rgb(107, 154, 44)`, texto `rgb(23, 21, 19)`, sombra Google presente e sem
+  overflow. Viewports efetivos 500 e 1430 CSS px, claro/escuro. Tentativas de
+  320/390 ficaram limitadas a 500 px pelo Firefox/X11; zoom 200%, foco do botão
+  Google e outros purposes DEFERRED. Capturas/métricas em `$SUITE_OUT`.
+  `validate-aculta420-v2-foundations.php` passou (55 pares), schemas passaram
+  (55 componentes/764 checks) e renderização Drupal passou (19/19). A tentativa
+  de schema na worktree isolada não tinha `vendor/autoload.php`; repetida com
+  sucesso no checkout Runtime.
 
 - `1.2.0-dev.13`: breadcrumb migrado da V1 para SDC e integrado ao template
   Drupal `navigation/breadcrumb`. Contrato visual preserva links editoriais,

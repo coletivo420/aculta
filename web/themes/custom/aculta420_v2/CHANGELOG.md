@@ -6,8 +6,10 @@
   para manter contraste de 5,45:1. O botão Google recupera a sombra discreta e
   o fundo creme em hover e foco por teclado; usa o mesmo SVG de marca da V1.
 - A composição, o formulário AJAX, os links e o item Minha conta no painel
-  autenticado permanecem no contrato atual. Validação visual após sincronizar
-  o código no Runtime: pendente.
+  autenticado permanecem no contrato atual. No Runtime, Firefox ESR visível
+  confirmou o formulário e Google em claro/escuro, Escape e ausência de overflow
+  nos viewports efetivos de 500 e 1430 CSS px. 320/390 px e zoom ficaram
+  DEFERRED porque o Firefox/X11 não reduziu a janela abaixo de 500 CSS px.
 
 ## 1.2.0-dev.13 — porta o breadcrumb editorial da V1
 

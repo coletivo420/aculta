@@ -41,6 +41,17 @@
   não alargou a página; Tab avançou do usuário para senha e Escape fechou o
   modal. A navegação Google não foi concluída; autenticação ponta a ponta e
   demais purposes continuam DEFERRED.
+- **Ajuste da identidade do modal (dev.14, 2026-11-04):** a superfície foi
+  ajustada para o verde V1 exato `#6b9a2c`; texto escuro mede 5,45:1. O botão
+  Google usa o SVG V1, sombra sutil e fundo creme em hover/foco. No Runtime,
+  Firefox ESR visível confirmou formulário, Google, foco inicial e Escape, sem
+  overflow nos viewports efetivos 500 e 1430 CSS px em claro/escuro. A tentativa
+  de viewport 320/390 ficou limitada a 500 px pelo Firefox/X11; zoom 200%, foco
+  real do Google e outros purposes DEFERRED. Capturas e `results.json` estão em
+  `$SUITE_OUT`. `drush cr`, fundações (55 pares), SDC schemas (55/764) e SDC
+  Runtime (19/19) passaram; `updatedb:status` e `config:status` estavam limpos.
+  Commit `e546eba028` publicado em `origin/dev`; arquivos do tema sincronizados
+  no checkout Runtime sem trocar seu HEAD nem afetar as alterações locais.
 - Arquivos desta entrega: `web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php`,
   `templates/layout/page.html.twig`, `components/multidomain-bar/`, manifesto/
   bibliotecas/changelog/roadmap do tema e `scripts/validate-aculta420-v2-sdc.php`.
