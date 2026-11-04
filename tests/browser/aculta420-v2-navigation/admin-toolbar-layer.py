@@ -80,6 +80,7 @@ try:
         set_width(width)
         for variant in ("gin", "core"):
             driver.js("""document.querySelectorAll('[data-admin-sidebar-fixture]').forEach(el=>el.remove());
+              document.body.classList.toggle('gin--navigation', arguments[0]==='gin');
               const sidebar=document.createElement(arguments[0]==='gin'?'aside':'div');
               sidebar.dataset.adminSidebarFixture=arguments[0];
               if(arguments[0]==='gin'){sidebar.className='admin-toolbar';sidebar.style.position='fixed';sidebar.style.zIndex='501';sidebar.textContent='Administração';

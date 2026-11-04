@@ -10,7 +10,14 @@
   z-index: 1300;
 }
 
-/* Keep both Gin and Core's fixed administrative sidebars below the shell bar. */
+/* Gin sets its fixed rail at block-start: 0. Keep it below the fixed shell bar. */
+html body.gin--navigation:has(.aculta-institution-bar) .admin-toolbar {
+  inset-block-start: var(--aculta-institution-bar-height, 2.25rem);
+  block-size: calc(100vh - var(--aculta-institution-bar-height, 2.25rem));
+  block-size: calc(100dvh - var(--aculta-institution-bar-height, 2.25rem));
+}
+
+/* Keep Core's fixed administrative controls below the shell bar as well. */
 html body:has(.aculta-institution-bar) .admin-toolbar {
   inset-block-start: var(--aculta-institution-bar-height, 2.25rem);
   block-size: calc(100vh - var(--aculta-institution-bar-height, 2.25rem));
