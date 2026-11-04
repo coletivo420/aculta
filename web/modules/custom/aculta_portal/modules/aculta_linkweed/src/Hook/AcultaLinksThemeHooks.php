@@ -24,7 +24,7 @@ final class AcultaLinksThemeHooks {
           'links' => [],
           'has_links' => FALSE,
         ],
-        'template' => 'aculta-linkweed-page',
+        'template' => 'aculta-links-page',
       ],
       'aculta_linkweed_landing' => [
         'variables' => [
@@ -34,7 +34,7 @@ final class AcultaLinksThemeHooks {
           'has_links' => FALSE,
           'theme_preset' => 'classic',
         ],
-        'template' => 'aculta-linkweed-landing',
+        'template' => 'aculta-links-landing',
       ],
     ];
   }

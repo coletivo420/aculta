@@ -1,3 +1,15 @@
+## 0.4.0-dev.36 — alinha templates Twig registrados aos arquivos do módulo
+
+- Os hooks de tema agora apontam para `aculta-links-landing.html.twig` e
+  `aculta-links-page.html.twig`, nomes já existentes no módulo. Antes, a página
+  raiz do purpose `links` falhava com `Twig\\Error\\LoaderError` ao procurar
+  `aculta-linkweed-landing.html.twig`.
+- Adicionado teste Unit que confere a correspondência entre os nomes dos
+  templates registrados e os arquivos existentes.
+- `LinksThemeHooksTest`: 1 teste/4 assertions PASS; PHPCS e PHP lint PASS.
+  Após `drush cr` no purpose `links`, a raiz responde HTTP 200 e o caminho
+  interno `/redes-sociais` permanece HTTP 404, conforme o contrato vigente.
+
 ## 0.4.0-dev.35 — reconcilia schemas de campos de micropágina
 
 - Update `10013` alinha o schema instalado dos campos revisionáveis `revision_uid`, `available_from` e `available_until` aos campos ativos, preservando os valores.
