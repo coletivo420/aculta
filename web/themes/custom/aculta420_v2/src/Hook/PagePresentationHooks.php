@@ -62,23 +62,6 @@ final class PagePresentationHooks {
   }
 
   /**
-   * Removes Portal's dialog bootstrap; V2 supplies native dialogs.
-   *
-   * @param array<string, mixed> $attachments
-   *   Page attachments.
-   */
-  #[Hook('page_attachments_alter')]
-  public function pageAttachmentsAlter(array &$attachments): void {
-    if (!isset($attachments['#attached']['library']) || !is_array($attachments['#attached']['library'])) {
-      return;
-    }
-    $attachments['#attached']['library'] = array_values(array_filter(
-      $attachments['#attached']['library'],
-      static fn (string $library): bool => $library !== 'core/drupal.dialog.ajax',
-    ));
-  }
-
-  /**
    * Moves the access-aware account menu render array into the fixed bar.
    *
    * This preserves the Portal-owned links, access results and cache metadata.

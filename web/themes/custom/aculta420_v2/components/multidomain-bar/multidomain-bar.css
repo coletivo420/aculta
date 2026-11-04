@@ -32,13 +32,9 @@
 .aculta-institution-bar__logo {
   block-size: 19px;
   display: block;
-  filter: brightness(0);
+  filter: var(--logo-filter);
   inline-size: 56px;
   max-inline-size: none;
-}
-
-:root[data-theme="dark"] .aculta-institution-bar__logo {
-  filter: none;
 }
 
 .aculta-institution-bar__home {
