@@ -38,7 +38,9 @@ final class CourseStructureController {
     $loadedLessons = $lessonStorage->loadMultiple($lessonIds);
     $lessons = array_map(static fn($id) => $loadedLessons[$id], $lessonIds);
     $activityStorage = $this->entityTypeManager->getStorage('aculta_lms_activity');
-    $rows = [];
+    $lessonCards = [];
+    $activityCount = 0;
+    $publishedCount = 0;
     foreach ($lessons as $lessonIndex => $lesson) {
       $activityIds = $activityStorage->getQuery()
         ->accessCheck(FALSE)
@@ -48,117 +50,131 @@ final class CourseStructureController {
         ->execute();
       $loadedActivities = $activityStorage->loadMultiple($activityIds);
       $activities = array_map(static fn($id) => $loadedActivities[$id], $activityIds);
-      $activityRows = [];
+      $activityCards = [];
       foreach ($activities as $activityIndex => $activity) {
+        $activityCount++;
         $question = $this->activityQuestion((string) $activity->get('answer_config')->value);
         $answerCount = $this->entityTypeManager->getStorage('aculta_lms_answer')->getQuery()
           ->accessCheck(FALSE)
           ->condition('activity_id', (int) $activity->id())
           ->count()
           ->execute();
-        $activityRows[] = [
-          'data' => [
-            [
-              'data' => $answerCount === 0
-                ? Link::fromTextAndUrl(
-                  $this->activityLabel((string) $activity->get('type')->value),
-                  Url::fromRoute('aculta_lms.activity_edit', [
-                    'course' => $course->id(),
-                    'lesson' => $lesson->id(),
-                    'activity' => $activity->id(),
-                  ]),
-                )->toRenderable()
-                : ['#plain_text' => $this->activityLabel((string) $activity->get('type')->value)],
-            ],
-            ['data' => ['#plain_text' => $question !== '' ? $question : $this->t('Sem enunciado')]],
-            ['data' => ['#plain_text' => (string) $activity->get('weight')->value]],
-            ['data' => ['#plain_text' => $answerCount > 0 ? $this->t('@count resposta(s); edição bloqueada para preservar o histórico.', ['@count' => $answerCount]) : '']],
-            [
-              'data' => [
-                '#type' => 'container',
-                'move_up' => $activityIndex > 0 ? Link::fromTextAndUrl(
-                  $this->t('Mover atividade acima'),
-                  Url::fromRoute('aculta_lms.activity_move', [
-                    'course' => $course->id(),
-                    'lesson' => $lesson->id(),
-                    'activity' => $activity->id(),
-                    'direcao' => 'acima',
-                  ]),
-                )->toRenderable() : [],
-                'move_down' => $activityIndex < count($activities) - 1 ? Link::fromTextAndUrl(
-                  $this->t('Mover atividade abaixo'),
-                  Url::fromRoute('aculta_lms.activity_move', [
-                    'course' => $course->id(),
-                    'lesson' => $lesson->id(),
-                    'activity' => $activity->id(),
-                    'direcao' => 'abaixo',
-                  ]),
-                )->toRenderable() : [],
-                'delete' => Link::fromTextAndUrl(
-                  $this->t('Excluir'),
-                  Url::fromRoute('aculta_lms.activity_delete', [
-                    'course' => $course->id(),
-                    'lesson' => $lesson->id(),
-                    'activity' => $activity->id(),
-                  ]),
-                )->toRenderable(),
-              ],
-            ],
-          ],
+        $activityActions = [
+          '#type' => 'container',
+          '#attributes' => ['class' => ['aculta-lms-course-builder__actions']],
+          'move_up' => $activityIndex > 0 ? Link::fromTextAndUrl(
+            $this->t('Mover acima'),
+            Url::fromRoute('aculta_lms.activity_move', [
+              'course' => $course->id(),
+              'lesson' => $lesson->id(),
+              'activity' => $activity->id(),
+              'direcao' => 'acima',
+            ]),
+          )->toRenderable() : [],
+          'move_down' => $activityIndex < count($activities) - 1 ? Link::fromTextAndUrl(
+            $this->t('Mover abaixo'),
+            Url::fromRoute('aculta_lms.activity_move', [
+              'course' => $course->id(),
+              'lesson' => $lesson->id(),
+              'activity' => $activity->id(),
+              'direcao' => 'abaixo',
+            ]),
+          )->toRenderable() : [],
+          'delete' => Link::fromTextAndUrl(
+            $this->t('Excluir'),
+            Url::fromRoute('aculta_lms.activity_delete', [
+              'course' => $course->id(),
+              'lesson' => $lesson->id(),
+              'activity' => $activity->id(),
+            ]),
+          )->toRenderable(),
+        ];
+        $activityCards[] = [
+          '#type' => 'container',
+          '#attributes' => ['class' => ['aculta-lms-course-builder__activity']],
+          'title' => $answerCount === 0
+            ? Link::fromTextAndUrl(
+              $this->activityLabel((string) $activity->get('type')->value),
+              Url::fromRoute('aculta_lms.activity_edit', [
+                'course' => $course->id(),
+                'lesson' => $lesson->id(),
+                'activity' => $activity->id(),
+              ]),
+            )->toRenderable()
+            : ['#plain_text' => $this->activityLabel((string) $activity->get('type')->value)],
+          'question' => ['#plain_text' => $question !== '' ? $question : $this->t('Sem enunciado')],
+          'answers' => $answerCount > 0
+            ? ['#plain_text' => $this->t('@count resposta(s); edição bloqueada para preservar o histórico.', ['@count' => $answerCount])]
+            : [],
+          'actions' => $activityActions,
         ];
       }
-      $rows[] = [
-        'data' => [
-          ['data' => Link::fromTextAndUrl(
+      $published = (bool) $lesson->get('published')->value;
+      if ($published) {
+        $publishedCount++;
+      }
+      $lessonActions = [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['aculta-lms-course-builder__actions']],
+        'add_activity' => Link::fromTextAndUrl(
+          $this->t('Adicionar atividade'),
+          Url::fromRoute('aculta_lms.activity_add', ['course' => $course->id(), 'lesson' => $lesson->id()]),
+        )->toRenderable(),
+        'move_up' => $lessonIndex > 0 ? Link::fromTextAndUrl(
+          $this->t('Mover aula acima'),
+          Url::fromRoute('aculta_lms.lesson_move', [
+            'course' => $course->id(),
+            'lesson' => $lesson->id(),
+            'direcao' => 'acima',
+          ]),
+        )->toRenderable() : [],
+        'move_down' => $lessonIndex < count($lessons) - 1 ? Link::fromTextAndUrl(
+          $this->t('Mover aula abaixo'),
+          Url::fromRoute('aculta_lms.lesson_move', [
+            'course' => $course->id(),
+            'lesson' => $lesson->id(),
+            'direcao' => 'abaixo',
+          ]),
+        )->toRenderable() : [],
+        'delete' => Link::fromTextAndUrl(
+          $this->t('Excluir aula'),
+          Url::fromRoute('aculta_lms.lesson_delete', ['course' => $course->id(), 'lesson' => $lesson->id()]),
+        )->toRenderable(),
+      ];
+      $lessonCards[] = [
+        '#type' => 'container',
+        '#attributes' => [
+          'class' => ['aculta-lms-course-builder__lesson'],
+          'data-aculta-lms-lesson' => (string) $lesson->id(),
+        ],
+        'heading' => [
+          '#type' => 'container',
+          '#attributes' => ['class' => ['aculta-lms-course-builder__lesson-heading']],
+          'title' => Link::fromTextAndUrl(
             (string) $lesson->get('title')->value,
             Url::fromRoute('aculta_lms.lesson_edit', ['course' => $course->id(), 'lesson' => $lesson->id()]),
-          )->toRenderable()],
-          ['data' => ['#plain_text' => $lesson->get('published')->value ? $this->t('Publicada') : $this->t('Rascunho')]],
-          ['data' => ['#plain_text' => (string) $lesson->get('weight')->value]],
-          [
-            'data' => [
-              '#type' => 'table',
-              '#header' => [
-                $this->t('Atividade'),
-                $this->t('Enunciado'),
-                $this->t('Ordem'),
-                $this->t('Respostas'),
-                $this->t('Ações'),
-              ],
-              '#rows' => $activityRows,
-              '#empty' => $this->t('Nenhuma atividade nesta aula.'),
-            ],
-          ],
-          [
-            'data' => [
-              '#type' => 'container',
-              'add_activity' => Link::fromTextAndUrl(
-                $this->t('Adicionar atividade'),
-                Url::fromRoute('aculta_lms.activity_add', ['course' => $course->id(), 'lesson' => $lesson->id()]),
-              )->toRenderable(),
-              'move_up' => $lessonIndex > 0 ? Link::fromTextAndUrl(
-                $this->t('Mover aula acima'),
-                Url::fromRoute('aculta_lms.lesson_move', [
-                  'course' => $course->id(),
-                  'lesson' => $lesson->id(),
-                  'direcao' => 'acima',
-                ]),
-              )->toRenderable() : [],
-              'move_down' => $lessonIndex < count($lessons) - 1 ? Link::fromTextAndUrl(
-                $this->t('Mover aula abaixo'),
-                Url::fromRoute('aculta_lms.lesson_move', [
-                  'course' => $course->id(),
-                  'lesson' => $lesson->id(),
-                  'direcao' => 'abaixo',
-                ]),
-              )->toRenderable() : [],
-              'delete' => Link::fromTextAndUrl(
-                $this->t('Excluir aula'),
-                Url::fromRoute('aculta_lms.lesson_delete', ['course' => $course->id(), 'lesson' => $lesson->id()]),
-              )->toRenderable(),
-            ],
+          )->toRenderable(),
+          'state' => [
+            '#type' => 'html_tag',
+            '#tag' => 'span',
+            '#value' => $published ? $this->t('Publicada') : $this->t('Rascunho'),
+            '#attributes' => ['class' => ['aculta-lms-course-builder__state', $published ? 'is-published' : 'is-draft']],
           ],
         ],
+        'activities_heading' => [
+          '#type' => 'html_tag',
+          '#tag' => 'h3',
+          '#value' => $this->t('Atividades (@count)', ['@count' => count($activities)]),
+        ],
+        'activities' => $activityCards === []
+          ? ['#plain_text' => $this->t('Nenhuma atividade nesta aula.')]
+          : [
+            '#theme' => 'item_list',
+            '#list_type' => 'ul',
+            '#items' => $activityCards,
+            '#attributes' => ['class' => ['aculta-lms-course-builder__activities']],
+          ],
+        'actions' => $lessonActions,
       ];
     }
 
@@ -167,31 +183,51 @@ final class CourseStructureController {
       '#attributes' => ['data-aculta-lms' => 'course-structure'],
       '#attached' => ['library' => ['aculta_lms/course_structure']],
       '#cache' => ['contexts' => ['user', 'user.permissions', 'user.group_permissions'], 'max-age' => 0],
-      'course' => ['#type' => 'html_tag', '#tag' => 'h1', '#value' => $course->label()],
-      'intro' => ['#plain_text' => $this->t('Estrutura do curso. Aulas e atividades são organizadas aqui; matrículas e prazos continuam nas turmas.')],
+      'header' => [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['aculta-lms-course-builder__header']],
+        'back' => Link::fromTextAndUrl(
+          $this->t('Meus cursos'),
+          Url::fromRoute('aculta_lms.educator_dashboard'),
+        )->toRenderable(),
+        'title' => ['#type' => 'html_tag', '#tag' => 'h1', '#value' => $course->label()],
+        'intro' => ['#plain_text' => $this->t('Organize as aulas e atividades do curso. Matrículas e prazos ficam nas turmas.')],
+      ],
+      'summary' => [
+        '#type' => 'container',
+        '#attributes' => [
+          'class' => ['aculta-lms-course-builder__summary'],
+          'aria-label' => $this->t('Resumo da estrutura'),
+        ],
+        'lessons' => ['#plain_text' => $this->formatPlural(count($lessons), '1 aula', '@count aulas')],
+        'activities' => ['#plain_text' => $this->formatPlural($activityCount, '1 atividade', '@count atividades')],
+        'published' => ['#plain_text' => $this->formatPlural($publishedCount, '1 aula publicada', '@count aulas publicadas')],
+      ],
       'actions' => [
         '#type' => 'container',
+        '#attributes' => ['class' => ['aculta-lms-course-builder__actions']],
         'add_lesson' => Link::fromTextAndUrl(
           $this->t('Adicionar aula'),
           Url::fromRoute('aculta_lms.lesson_add', ['course' => $course->id()]),
         )->toRenderable(),
-        'back' => Link::fromTextAndUrl(
-          $this->t('Voltar ao Ganjalab Educador'),
-          Url::fromRoute('aculta_lms.educator_dashboard'),
-        )->toRenderable(),
       ],
-      'lessons' => [
-        '#type' => 'table',
-        '#header' => [
-          $this->t('Aula'),
-          $this->t('Estado'),
-          $this->t('Ordem'),
-          $this->t('Atividades'),
-          $this->t('Ações'),
+      'lessons_heading' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Estrutura do curso')],
+      'lessons' => $lessonCards === []
+        ? [
+          '#type' => 'container',
+          '#attributes' => ['class' => ['aculta-lms-course-builder__empty']],
+          'message' => ['#plain_text' => $this->t('Este curso ainda não tem aulas.')],
+          'add_lesson' => Link::fromTextAndUrl(
+            $this->t('Criar a primeira aula'),
+            Url::fromRoute('aculta_lms.lesson_add', ['course' => $course->id()]),
+          )->toRenderable(),
+        ]
+        : [
+          '#theme' => 'item_list',
+          '#list_type' => 'ol',
+          '#items' => $lessonCards,
+          '#attributes' => ['class' => ['aculta-lms-course-builder__lessons']],
         ],
-        '#rows' => $rows,
-        '#empty' => $this->t('Este curso ainda não tem aulas.'),
-      ],
     ];
   }
 

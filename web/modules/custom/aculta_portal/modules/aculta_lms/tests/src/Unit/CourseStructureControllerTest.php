@@ -100,32 +100,27 @@ final class CourseStructureControllerTest extends UnitTestCase {
 
     self::assertSame('course-structure', $build['#attributes']['data-aculta-lms']);
     self::assertSame(['aculta_lms/course_structure'], $build['#attached']['library']);
-    self::assertSame('Curso de exemplo', $build['course']['#value']);
-    self::assertCount(2, $build['lessons']['#rows']);
-    self::assertSame('aculta_lms.lesson_edit', $build['lessons']['#rows'][0]['data'][0]['data']['#url']->getRouteName());
-    self::assertSame('Publicada', (string) $build['lessons']['#rows'][0]['data'][1]['data']['#plain_text']);
-    self::assertCount(2, $build['lessons']['#rows'][0]['data'][3]['data']['#rows']);
-    self::assertSame('Explique a ideia.', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][1]['data']['#plain_text']);
-    self::assertSame('aculta_lms.activity_edit', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][0]['data']['#url']->getRouteName());
-    self::assertSame('aculta_lms.activity_delete', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][4]['data']['delete']['#url']->getRouteName());
-    self::assertSame('aculta_lms.lesson_delete', $build['lessons']['#rows'][0]['data'][4]['data']['delete']['#url']->getRouteName());
-    self::assertSame('aculta_lms.lesson_move', $build['lessons']['#rows'][0]['data'][4]['data']['move_down']['#url']->getRouteName());
-    self::assertSame('abaixo', $build['lessons']['#rows'][0]['data'][4]['data']['move_down']['#url']->getRouteParameters()['direcao']);
-    self::assertSame('aculta_lms.lesson_move', $build['lessons']['#rows'][1]['data'][4]['data']['move_up']['#url']->getRouteName());
-    self::assertSame('acima', $build['lessons']['#rows'][1]['data'][4]['data']['move_up']['#url']->getRouteParameters()['direcao']);
-    self::assertSame('aculta_lms.activity_move', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][4]['data']['move_down']['#url']->getRouteName());
-    self::assertSame('abaixo', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][4]['data']['move_down']['#url']->getRouteParameters()['direcao']);
-    self::assertSame('aculta_lms.activity_move', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][1]['data'][4]['data']['move_up']['#url']->getRouteName());
-    foreach ($build['lessons']['#rows'] as $lesson_row) {
-      foreach ($lesson_row['data'] as $cell) {
-        self::assertArrayHasKey('data', $cell, 'Render arrays in Drupal table cells must use the cell data wrapper.');
-      }
-      foreach ($lesson_row['data'][3]['data']['#rows'] as $activity_row) {
-        foreach ($activity_row['data'] as $cell) {
-          self::assertArrayHasKey('data', $cell, 'Render arrays in nested table cells must use the cell data wrapper.');
-        }
-      }
-    }
+    self::assertSame('Curso de exemplo', $build['header']['title']['#value']);
+    self::assertSame('Estrutura do curso', (string) $build['lessons_heading']['#value']);
+    self::assertCount(2, $build['lessons']['#items']);
+    $firstLesson = $build['lessons']['#items'][0];
+    $secondLesson = $build['lessons']['#items'][1];
+    self::assertSame('Primeira aula', (string) $firstLesson['heading']['title']['#title']);
+    self::assertSame('aculta_lms.lesson_edit', $firstLesson['heading']['title']['#url']->getRouteName());
+    self::assertSame('Publicada', (string) $firstLesson['heading']['state']['#value']);
+    self::assertCount(2, $firstLesson['activities']['#items']);
+    self::assertSame('Explique a ideia.', (string) $firstLesson['activities']['#items'][0]['question']['#plain_text']);
+    self::assertSame('aculta_lms.activity_edit', $firstLesson['activities']['#items'][0]['title']['#url']->getRouteName());
+    self::assertSame('aculta_lms.activity_delete', $firstLesson['activities']['#items'][0]['actions']['delete']['#url']->getRouteName());
+    self::assertSame('aculta_lms.lesson_delete', $firstLesson['actions']['delete']['#url']->getRouteName());
+    self::assertSame('aculta_lms.lesson_move', $firstLesson['actions']['move_down']['#url']->getRouteName());
+    self::assertSame('abaixo', $firstLesson['actions']['move_down']['#url']->getRouteParameters()['direcao']);
+    self::assertSame('aculta_lms.lesson_move', $secondLesson['actions']['move_up']['#url']->getRouteName());
+    self::assertSame('acima', $secondLesson['actions']['move_up']['#url']->getRouteParameters()['direcao']);
+    self::assertSame('aculta_lms.activity_move', $firstLesson['activities']['#items'][0]['actions']['move_down']['#url']->getRouteName());
+    self::assertSame('abaixo', $firstLesson['activities']['#items'][0]['actions']['move_down']['#url']->getRouteParameters()['direcao']);
+    self::assertSame('aculta_lms.activity_move', $firstLesson['activities']['#items'][1]['actions']['move_up']['#url']->getRouteName());
+    self::assertSame('2 aulas', (string) $build['summary']['lessons']['#plain_text']);
   }
 
   /**

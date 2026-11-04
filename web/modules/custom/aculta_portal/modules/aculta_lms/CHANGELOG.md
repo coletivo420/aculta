@@ -1,3 +1,14 @@
+## 0.1.0-dev.191 — inicia shell visual responsivo do Course Builder
+
+- A estrutura do curso agora apresenta resumo de aulas/atividades, cartões
+  responsivos de aula e atividade, estados editoriais e ações contextualizadas.
+- Estados vazios orientam a criação da primeira aula ou de atividades; controles
+  de ordenação por link permanecem acessíveis por teclado e sem JavaScript.
+- A tela continua usando as entidades existentes do LMS e não cria níveis
+  conceituais ou armazenamento paralelo. Preview, materiais e drag-and-drop
+  permanecem pendentes.
+- Unit cobre a estrutura do novo render array e os destinos de edição/ordenação.
+
 ## 0.1.0-dev.190 — habilita edição rica e filtrada do conteúdo de aulas
 
 - O formulário de aula usa CKEditor 5 com formato dedicado e allowlist de
