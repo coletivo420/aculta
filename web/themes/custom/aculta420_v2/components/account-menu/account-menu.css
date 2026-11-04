@@ -1,0 +1,90 @@
+/* Menu de conta na barra institucional (ADR-047). Mobile-first: base em 320 CSS px. */
+
+.aculta-account-menu--signed-in {
+  position: relative;
+}
+
+.aculta-account-menu__details {
+  position: static;
+}
+
+.aculta-account-menu__summary {
+  align-items: center;
+  border-radius: var(--radius-sm);
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  gap: var(--spacing-xs);
+  list-style: none;
+  min-block-size: var(--tap-target-min);
+  min-inline-size: var(--tap-target-min);
+  padding-inline: var(--spacing-xs);
+}
+
+.aculta-account-menu__summary::-webkit-details-marker {
+  display: none;
+}
+
+.aculta-account-menu__summary:focus-visible {
+  outline: 3px solid var(--color-brand-highlight);
+  outline-offset: 2px;
+}
+
+.aculta-account-menu__avatar {
+  align-items: center;
+  display: inline-flex;
+  inline-size: 2rem;
+  block-size: 2rem;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  flex: none;
+}
+
+.aculta-account-menu__avatar img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+/* O nome sai antes dos ícones em telas estreitas; aparece a partir de 40rem. */
+.aculta-account-menu__label {
+  display: none;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 40rem) {
+  .aculta-account-menu__label {
+    display: inline;
+  }
+}
+
+.aculta-account-menu__panel {
+  background: var(--color-surface-raised);
+  border-radius: var(--radius-base);
+  box-shadow: var(--shadow-raised);
+  color: var(--color-text-primary);
+  display: grid;
+  gap: var(--spacing-xs);
+  inset-block-start: 100%;
+  inset-inline-end: 0;
+  min-inline-size: 12rem;
+  inline-size: max-content;
+  padding: var(--spacing-sm);
+  position: absolute;
+  z-index: 20;
+}
+
+.aculta-account-menu__panel .menu {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+
+.aculta-account-menu__panel a {
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.aculta-account-menu__panel a:hover {
+  text-decoration: underline;
+}

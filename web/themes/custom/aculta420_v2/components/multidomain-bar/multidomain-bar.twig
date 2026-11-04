@@ -39,7 +39,11 @@
         }, with_context = false) }}
       {% endif %}
       {% if account_menu %}
-        <nav class="aculta-account-menu" aria-label="{{ 'Menu da conta'|t }}">{{ account_menu }}</nav>
+        {% embed 'aculta420_v2:account-menu' with {
+          authenticated: account_authenticated|default(false)
+        } only %}
+          {% block menu_items %}{{ account_menu }}{% endblock %}
+        {% endembed %}
       {% endif %}
     </div>
     {% endif %}

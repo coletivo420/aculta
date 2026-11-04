@@ -1,0 +1,27 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Menu de conta na barra institucional
+description: Menu de conta fixo na barra institucional. Visitante vê os links de acesso; usuário autenticado vê um disclosure com avatar e as ações de conta (ADR-047).
+group: ACULTA
+status: experimental
+props:
+  type: object
+  additionalProperties: false
+  required: [authenticated]
+  properties:
+    authenticated:
+      type: boolean
+      title: Usuário autenticado
+      default: false
+    summary_label:
+      type: string
+      title: Rótulo do disclosure
+      description: Texto exibido ao lado do avatar em telas largas. Não é o nome do usuário até o contrato do Portal existir.
+      minLength: 1
+      default: Minha conta
+slots:
+  avatar:
+    title: Avatar
+    description: Avatar fornecido pelo Portal (AvatarResolver). Sem slot, o componente usa o ícone neutro. Nunca gera inicial do nome.
+  menu_items:
+    title: Itens do menu
+    description: Render array do menu Drupal de conta (system_menu_block:account), com access e cache preservados pelo Portal.

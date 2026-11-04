@@ -1,0 +1,7 @@
+name: Menu de conta visitante
+description: Visitante vê apenas o link de entrada, que abre o diálogo de login da barra.
+component: aculta420_v2:account-menu
+props:
+  authenticated: false
+slots:
+  menu_items: '<ul class="menu"><li><a href="/entrar/janela" class="use-ajax" data-dialog-type="modal">Entrar</a></li></ul>'

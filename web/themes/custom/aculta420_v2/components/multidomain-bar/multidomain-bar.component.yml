@@ -32,6 +32,9 @@ props:
     show_utility_bar:
       type: boolean
       default: true
+    account_authenticated:
+      type: boolean
+      default: false
     cart_url:
       type: [string, 'null']
       format: uri-reference

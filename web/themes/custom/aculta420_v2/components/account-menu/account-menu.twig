@@ -1,0 +1,21 @@
+{% if authenticated %}
+  <nav class="aculta-account-menu aculta-account-menu--signed-in" aria-label="{{ 'Menu da conta'|t }}">
+    <details class="aculta-account-menu__details">
+      <summary class="aculta-account-menu__summary">
+        <span class="aculta-account-menu__avatar">
+          {% block avatar %}
+            {{ include('aculta420_v2:icon', { name: 'user', variant: 'duotone', size: 'md' }, with_context = false) }}
+          {% endblock %}
+        </span>
+        <span class="aculta-account-menu__label">{{ summary_label }}</span>
+      </summary>
+      <div class="aculta-account-menu__panel">
+        {% block menu_items %}{% endblock %}
+      </div>
+    </details>
+  </nav>
+{% else %}
+  <nav class="aculta-account-menu" aria-label="{{ 'Menu da conta'|t }}">
+    {% block menu_items %}{% endblock %}
+  </nav>
+{% endif %}

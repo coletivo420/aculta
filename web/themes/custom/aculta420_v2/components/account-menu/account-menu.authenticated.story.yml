@@ -1,0 +1,8 @@
+name: Menu de conta autenticado
+description: Disclosure com ícone neutro e as ações de conta, dentro da barra institucional.
+component: aculta420_v2:account-menu
+props:
+  authenticated: true
+  summary_label: Minha conta
+slots:
+  menu_items: '<ul class="menu"><li><a href="/conta">Minha conta</a></li><li><a href="/sair">Sair</a></li></ul>'

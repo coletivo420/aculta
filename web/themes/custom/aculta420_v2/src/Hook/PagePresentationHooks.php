@@ -7,6 +7,7 @@ namespace Drupal\aculta420_v2\Hook;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -17,6 +18,8 @@ final class PagePresentationHooks {
   public function __construct(
     #[Autowire(service: 'config.factory')]
     private readonly ConfigFactoryInterface $configFactory,
+    #[Autowire(service: 'current_user')]
+    private readonly AccountProxyInterface $currentUser,
   ) {}
 
   /**
@@ -25,6 +28,9 @@ final class PagePresentationHooks {
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
     $variables['aculta_account_menu'] = [];
+    // The account menu block carries user.roles cacheability; this flag only
+    // chooses the presentation (dropdown for signed-in users, links otherwise).
+    $variables['aculta_account_authenticated'] = $this->currentUser->isAuthenticated();
     $this->moveAccountMenuToUtilityBar($variables);
     $this->wrapPrimaryMenuWithNavigationComponent($variables);
     $this->removeSearchDialogDependency($variables);
