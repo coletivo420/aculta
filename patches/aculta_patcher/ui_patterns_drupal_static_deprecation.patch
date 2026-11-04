@@ -1,6 +1,8 @@
+diff --git a/src/PropTypePluginManager.php b/src/PropTypePluginManager.php
+index d7869f0e..f9750902 100644
 --- a/src/PropTypePluginManager.php
 +++ b/src/PropTypePluginManager.php
-@@ -108,9 +108,10 @@
+@@ -108,9 +108,10 @@ class PropTypePluginManager extends DefaultPluginManager implements FallbackPlug
     */
    public function getAllPropTypeByTypedData(string $data_type): array {
      $cache_id = 'ui_patterns_typed_data_prop_types_' . $data_type;
@@ -14,7 +16,7 @@
      }
      $prop_types = [];
      $compatibility_map = $this->getTypedDataCompatibilityMap();
-@@ -128,6 +129,7 @@
+@@ -128,6 +129,7 @@ class PropTypePluginManager extends DefaultPluginManager implements FallbackPlug
          }
        }
      }
@@ -22,7 +24,7 @@
      return $prop_types;
    }
  
-@@ -140,9 +142,10 @@
+@@ -140,9 +142,10 @@ class PropTypePluginManager extends DefaultPluginManager implements FallbackPlug
     * @SuppressWarnings("PHPMD.UnusedFormalParameter")
     */
    private function getTypedDataCompatibilityMap(): array {
@@ -36,7 +38,7 @@
      }
      $compatibility_map = [];
      $typed_data_definitions = $this->typedDataManager->getDefinitions();
-@@ -166,6 +169,7 @@
+@@ -166,6 +169,7 @@ class PropTypePluginManager extends DefaultPluginManager implements FallbackPlug
          }
        }
      }
@@ -44,9 +46,11 @@
      return $compatibility_map;
    }
  
+diff --git a/src/Template/ModuleNodeVisitorAfterSdc.php b/src/Template/ModuleNodeVisitorAfterSdc.php
+index eaddf1d8..201887d7 100755
 --- a/src/Template/ModuleNodeVisitorAfterSdc.php
 +++ b/src/Template/ModuleNodeVisitorAfterSdc.php
-@@ -39,14 +39,17 @@
+@@ -39,14 +39,17 @@ class ModuleNodeVisitorAfterSdc extends ModuleNodeVisitorBase {
     * {@inheritdoc}
     */
    public function getPriority(): int {
@@ -71,9 +75,11 @@
    }
  
    /**
+diff --git a/src/Template/ModuleNodeVisitorBeforeSdc.php b/src/Template/ModuleNodeVisitorBeforeSdc.php
+index 82228771..f8229e1e 100755
 --- a/src/Template/ModuleNodeVisitorBeforeSdc.php
 +++ b/src/Template/ModuleNodeVisitorBeforeSdc.php
-@@ -39,14 +39,17 @@
+@@ -39,14 +39,17 @@ class ModuleNodeVisitorBeforeSdc extends ModuleNodeVisitorBase {
     * {@inheritdoc}
     */
    public function getPriority(): int {

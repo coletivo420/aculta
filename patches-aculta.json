@@ -1,10 +1,34 @@
 {
     "patches": {
+        "drupal/address": [
+            {
+                "description": "Address 2.0.4 compatibility with Diff 2.x (Drupal.org issue 3589015)",
+                "url": "patches/address-diff-2-compatibility.patch",
+                "sha256": "d2a9358dab74343c5d8c747c6c8fcb96233f9e0cfdf0af55c2a69f78d0b09970",
+                "depth": 1
+            }
+        ],
+        "drupal/social_api": [
+            {
+                "description": "PHP 8.4 explicit nullable request type (Drupal.org issue 3593752, MR !17)",
+                "url": "patches/social-api-php84-nullable-request.patch",
+                "sha256": "347b1c893339c2a896f452056b801295a9058d83d0c11bfe77c55aee343ad29f",
+                "depth": 1
+            }
+        ],
+        "drupal/turnstile": [
+            {
+                "description": "Fail closed when Turnstile credentials are missing; do not fall back to Math CAPTCHA",
+                "url": "patches/turnstile-no-math-fallback.patch",
+                "sha256": "462367924c81034c807f6e38042606fa1f660de79d2510198542d966b36f6045",
+                "depth": 1
+            }
+        ],
         "drupal/ui_patterns": [
             {
                 "description": "UI Patterns: substituir drupal_static() depreciado pelo cache de memória do Drupal",
                 "url": "patches/aculta_patcher/ui_patterns_drupal_static_deprecation.patch",
-                "sha256": "5a00f6cd249fcc3f522ce37313770414e49f056872c9dab000144101ca68f981",
+                "sha256": "b5445a47f3c729631110384e6e908c775a175af1d8a0b4ab9755fe8efbe8d54d",
                 "depth": 1
             }
         ],

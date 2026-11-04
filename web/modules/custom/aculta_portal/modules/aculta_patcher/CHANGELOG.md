@@ -1,5 +1,20 @@
 # Changelog — aculta_patcher
 
+## 0.1.0-rc.2 — descoberta automática dos patches Composer — 2026-11-03
+
+- A coleção administrativa importa de forma idempotente os patches locais ainda
+  não registrados em `patches-aculta.json`, preservando edições feitas no
+  Patcher. Novas entradas passam a aparecer automaticamente ao abrir a coleção.
+- Centralizados no `patches-aculta.json` os cinco patches Composer atuais; a UI
+  passa a controlar todos eles pelo mesmo cadastro e exportador.
+- O hash de origem evita sobrescrever diffs editados na UI; hashes inválidos,
+  caminhos externos e pacotes ausentes no lock são ignorados e registrados.
+- Runtime `aculta_runtime`: coleção montada por Drush mostrou 5 registros; nova
+  importação criou 0 duplicatas; `aculta:patcher-export --check` validou 5/5.
+  `updatedb:status` sem pendências e `config:status` limpo. PHP lint e
+  `composer patches-repatch` PASS; testes automatizados e navegador não foram
+  executados nesta entrega.
+
 ## 0.1.0-rc.1 — candidato a RC: validação responsiva no checkout servido — 2026-10-29
 
 - Promovido a `0.1.0-rc.1` em `aculta_patcher.info.yml`, `README.md` e status.

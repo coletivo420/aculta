@@ -34,7 +34,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
     'edit-form' => '/painel-administrativo/configuracoes/desenvolvimento/patches-aculta/{aculta_patch}',
     'delete-form' => '/painel-administrativo/configuracoes/desenvolvimento/patches-aculta/{aculta_patch}/excluir',
   ],
-  config_export: ['id', 'label', 'status', 'package', 'version', 'issue_url', 'patch'],
+  config_export: ['id', 'label', 'status', 'package', 'version', 'issue_url', 'patch', 'source_url', 'source_hash'],
 )]
 final class AcultaPatch extends ConfigEntityBase {
 
@@ -62,6 +62,16 @@ final class AcultaPatch extends ConfigEntityBase {
    * The unified diff content.
    */
   protected string $patch = '';
+
+  /**
+   * The patch file URL from which this record was discovered.
+   */
+  protected string $source_url = '';
+
+  /**
+   * SHA-256 of the last patch contents imported from its source file.
+   */
+  protected string $source_hash = '';
 
   /**
    * Gets the package name.

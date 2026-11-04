@@ -1,3 +1,4 @@
+diff --git a/src/AuthManager/OAuth2Manager.php b/src/AuthManager/OAuth2Manager.php
 --- a/src/AuthManager/OAuth2Manager.php
 +++ b/src/AuthManager/OAuth2Manager.php
 @@ -73,7 +73,7 @@

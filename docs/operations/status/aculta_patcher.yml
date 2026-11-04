@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-rc.1
+version: 0.1.0-rc.2
 state: RC
-progress_note: '0.1.0-rc.1: Unit 41/73 PASS; lint 12/12 e PHPCS Drupal PASS. Regressões cobrem symlink no caminho-fonte do pacote e preflight dos arquivos de saída; a tabela usa data-portal-ui neutro. Runtime: export --check validou 1 registro sem gravar; route access comum negado/admin permitido. Ciclo Composer isolado repetível; Firefox ESR no checkout servido 13/13 PASS em 1280/390/320px sem overflow. Reversão documentada.'
+progress_note: '0.1.0-rc.2: coleção descobre e importa de forma idempotente os patches locais do manifesto Composer; source hash preserva edições da UI. Os cinco patches ACULTA foram centralizados em patches-aculta.json, removendo a fonte paralela em composer.json. Validação e estado Runtime desta entrega registrados em ESTADO-DA-SESSAO.md.'
 next_phase: 'Deploy do candidato no servidor de desenvolvimento e validação no ambiente *.aculta.org (Alpha), com posterior migração para Hostinger (Beta) conforme RELEASE-LIFECYCLE.md ([README](web/modules/custom/aculta_portal/modules/aculta_patcher/README.md))'

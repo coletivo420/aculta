@@ -1,4 +1,7 @@
 services:
+  aculta_patcher.importer:
+    class: Drupal\aculta_patcher\PatchManifestImporter
+    arguments: ['@entity_type.manager', '@lock', '@logger.factory', '%app.root%']
   aculta_patcher.exporter:
     class: Drupal\aculta_patcher\PatchManifestExporter
     arguments: ['@entity_type.manager', '%app.root%', '@file_system']

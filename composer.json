@@ -467,29 +467,6 @@
                 "  * Remove the plugin that prints this message:",
                 "      composer remove drupal/core-project-message"
             ]
-        },
-        "patches": {
-            "drupal/address": [
-                {
-                    "description": "Address 2.0.4 compatibility with Diff 2.x (Drupal.org issue 3589015)",
-                    "url": "patches/address-diff-2-compatibility.patch",
-                    "sha256": "f362f4ba21676290011bcb588d1a9239f2fd9603113499891a6841d47b1fadd6"
-                }
-            ],
-            "drupal/social_api": [
-                {
-                    "description": "PHP 8.4 explicit nullable request type (Drupal.org issue 3593752, MR !17)",
-                    "url": "patches/social-api-php84-nullable-request.patch",
-                    "sha256": "4478ee62ceddaf3434da8758800453a49ad1322d623aa8c0831b1a30cbad90fd"
-                }
-            ],
-            "drupal/turnstile": [
-                {
-                    "description": "Fail closed when Turnstile credentials are missing; do not fall back to Math CAPTCHA",
-                    "url": "patches/turnstile-no-math-fallback.patch",
-                    "sha256": "9d3fe24474db08e380d3e048ae9bf794d99531411d765e708be4e5e85caf6feb"
-                }
-            ]
         }
     },
     "require-dev": {

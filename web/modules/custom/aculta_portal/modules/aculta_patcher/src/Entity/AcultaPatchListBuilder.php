@@ -29,6 +29,16 @@ final class AcultaPatchListBuilder extends ConfigEntityListBuilder {
   /**
    * {@inheritdoc}
    */
+  public function load() {
+    // Discover new Composer manifest entries before building the collection.
+    // Existing records are never overwritten when they have been edited here.
+    \Drupal::service('aculta_patcher.importer')->importMissing();
+    return parent::load();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildHeader(): array {
     $header = parent::buildHeader();
     $operations = $header['operations'];

@@ -1,3 +1,4 @@
+diff --git a/turnstile.module b/turnstile.module
 --- a/turnstile.module
 +++ b/turnstile.module
 @@ -23,7 +23,7 @@

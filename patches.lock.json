@@ -1,15 +1,15 @@
 {
-    "_hash": "ad83e385aeffd79136bb9dcc655f185c241bf600cc4fa2d09ab58c80387d8d67",
+    "_hash": "2ba013f34878d9b655f07d310c34476f8be8fceb64eb26ddaa94d7cd75831677",
     "patches": {
         "drupal/address": [
             {
                 "package": "drupal/address",
                 "description": "Address 2.0.4 compatibility with Diff 2.x (Drupal.org issue 3589015)",
                 "url": "patches/address-diff-2-compatibility.patch",
-                "sha256": "f362f4ba21676290011bcb588d1a9239f2fd9603113499891a6841d47b1fadd6",
+                "sha256": "d2a9358dab74343c5d8c747c6c8fcb96233f9e0cfdf0af55c2a69f78d0b09970",
                 "depth": 1,
                 "extra": {
-                    "provenance": "root"
+                    "provenance": "patches-file:patches-aculta.json"
                 }
             }
         ],
@@ -18,10 +18,10 @@
                 "package": "drupal/social_api",
                 "description": "PHP 8.4 explicit nullable request type (Drupal.org issue 3593752, MR !17)",
                 "url": "patches/social-api-php84-nullable-request.patch",
-                "sha256": "4478ee62ceddaf3434da8758800453a49ad1322d623aa8c0831b1a30cbad90fd",
+                "sha256": "347b1c893339c2a896f452056b801295a9058d83d0c11bfe77c55aee343ad29f",
                 "depth": 1,
                 "extra": {
-                    "provenance": "root"
+                    "provenance": "patches-file:patches-aculta.json"
                 }
             }
         ],
@@ -30,10 +30,10 @@
                 "package": "drupal/turnstile",
                 "description": "Fail closed when Turnstile credentials are missing; do not fall back to Math CAPTCHA",
                 "url": "patches/turnstile-no-math-fallback.patch",
-                "sha256": "9d3fe24474db08e380d3e048ae9bf794d99531411d765e708be4e5e85caf6feb",
+                "sha256": "462367924c81034c807f6e38042606fa1f660de79d2510198542d966b36f6045",
                 "depth": 1,
                 "extra": {
-                    "provenance": "root"
+                    "provenance": "patches-file:patches-aculta.json"
                 }
             }
         ],
@@ -42,7 +42,7 @@
                 "package": "drupal/ui_patterns",
                 "description": "UI Patterns: substituir drupal_static() depreciado pelo cache de memória do Drupal",
                 "url": "patches/aculta_patcher/ui_patterns_drupal_static_deprecation.patch",
-                "sha256": "5a00f6cd249fcc3f522ce37313770414e49f056872c9dab000144101ca68f981",
+                "sha256": "b5445a47f3c729631110384e6e908c775a175af1d8a0b4ab9755fe8efbe8d54d",
                 "depth": 1,
                 "extra": {
                     "provenance": "patches-file:patches-aculta.json"
