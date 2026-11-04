@@ -48,12 +48,28 @@ final class CourseAuthoringController {
       if (!$access->isAllowed()) {
         continue;
       }
-      $items[] = [
-        '#type' => 'link',
-        '#title' => $course->label(),
-        '#url' => $course->toUrl(),
-        '#cache' => ['contexts' => ['user', 'user.permissions']],
+      $item = [
+        '#type' => 'container',
+        '#attributes' => ['data-aculta-studio' => 'educator-course'],
+        'course' => [
+          '#type' => 'link',
+          '#title' => $course->label(),
+          '#url' => $course->toUrl(),
+        ],
+        '#cache' => ['contexts' => ['user', 'user.permissions', 'user.group_permissions']],
       ];
+      $structureUrl = Url::fromRoute('aculta_lms.course_structure', ['course' => $course->id()]);
+      if ($structureUrl->access($this->account)) {
+        $item['structure'] = PortalLinkElement::build(
+          $this->t('Editar estrutura'),
+          $structureUrl,
+          [
+            'data-aculta-studio' => 'course-structure',
+            'data-portal-ui' => 'studio-action',
+          ],
+        );
+      }
+      $items[] = $item;
     }
     $build = [
       '#type' => 'container',

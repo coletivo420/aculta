@@ -10,6 +10,7 @@
 | Ganjalab Estudante | `courses` | `/ganjalab` |
 | Ganjalab Educador | `courses` | `/ganjalab/educador` |
 | Criação de curso | `courses` | `/ganjalab/educador/cursos/novo` |
+| Estrutura de curso | `courses` | `/ganjalab/educador/cursos/{course}/estrutura` |
 | ACULTA STUDIO WE SATIVA | `wiki` | `/we-sativa` |
 | ACULTA STUDIO GREEN STASH | `shop` | `/green-stash` |
 | Culturas | `eventos` | `/culturas` |
@@ -323,3 +324,10 @@ A composição da jornada e da sala de aprendizagem pertence ao Studio. CourseJo
 O LMS não deve importar classes do Studio nem registrar seus composers. CourseRoomBuilder permanece no aculta_lms somente para elementos próprios de matrícula e roster. A composição do dashboard pessoal ainda é um ponto transitório: LearnerDashboardComposer permanece implementado no LMS e será separado quando houver um contrato de dados de resumo do estudante; não duplicar dados nem mover autorização para a interface.
 
 A rota de atividade lms.group.answer_form continua como integração temporária com o Drupal LMS contrib. A extração não removeu essa rota nem alterou submissões. A validação Runtime está sendo conduzida em frente separada e não é declarada concluída aqui.
+
+## Ganjalab Educador — entrada da estrutura do curso (2026-11-03)
+
+O Dashboard Educador oferece “Editar estrutura” quando o acesso à rota do LMS
+autoriza o curso. A página, os formulários e a validação de curso/aula/atividade
+pertencem ao `aculta_lms`; Studio só compõe o link no workspace. Matrículas,
+respostas, gabaritos e dados pedagógicos não são armazenados pelo Studio.

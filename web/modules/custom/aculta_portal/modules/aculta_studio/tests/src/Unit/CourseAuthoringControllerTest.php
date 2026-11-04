@@ -40,6 +40,7 @@ final class CourseAuthoringControllerTest extends UnitTestCase {
         $path = match ($name) {
           'aculta_lms.educator_dashboard' => '/ganjalab/educador',
           'aculta_lms.course_create' => '/ganjalab/educador/cursos/novo',
+          'aculta_lms.course_structure' => '/ganjalab/educador/cursos/3/estrutura',
           default => '/ganjalab',
         };
         return $collect ? (new GeneratedUrl())->setGeneratedUrl($path) : $path;
@@ -88,6 +89,41 @@ final class CourseAuthoringControllerTest extends UnitTestCase {
       (string) $build['create']['#element_attributes']['data-aculta-studio'],
     );
     self::assertSame(-80, $build['create']['#weight']);
+  }
+
+  /**
+   * A managed course exposes the contextual structure editor in Ganjalab.
+   */
+  public function testDashboardLinksManagedCourseToItsStructureEditor(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('hasPermission')->with('create lms_course group')->willReturn(TRUE);
+    $query = $this->createMock(QueryInterface::class);
+    $query->method('accessCheck')->willReturnSelf();
+    $query->method('condition')->willReturnSelf();
+    $query->method('sort')->willReturnSelf();
+    $query->method('execute')->willReturn([3]);
+    $access = $this->createMock(AccessResultInterface::class);
+    $access->method('isAllowed')->willReturn(TRUE);
+    $course = $this->createMock(EntityInterface::class);
+    $course->method('id')->willReturn('3');
+    $course->method('label')->willReturn('Curso de teste');
+    $course->method('access')->willReturn($access);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('getQuery')->willReturn($query);
+    $storage->method('loadMultiple')->with([3])->willReturn([$course]);
+    $entity_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_manager->method('getStorage')->with('group')->willReturn($storage);
+
+    $build = (new CourseAuthoringController(
+      $entity_manager,
+      $this->createMock(EntityFormBuilderInterface::class),
+      $account,
+      $this->getStringTranslationStub(),
+    ))->dashboard();
+
+    self::assertSame('Curso de teste', $build['courses'][0]['course']['#title']);
+    self::assertSame('/ganjalab/educador/cursos/3/estrutura', (string) $build['courses'][0]['structure']['#element_attributes']['href']);
+    self::assertSame('course-structure', (string) $build['courses'][0]['structure']['#element_attributes']['data-aculta-studio']);
   }
 
   /**

@@ -1,3 +1,14 @@
+## 0.4.1-dev.74 — autoria ACULTA da estrutura de cursos
+
+- `aculta_lms` fornece páginas e Form API para estruturar aulas e atividades
+  com as entidades próprias existentes; `aculta_studio` liga os cursos geridos
+  à estrutura no Ganjalab Educador. O acesso é revalidado no curso e nos
+  relacionamentos de aula/atividade; respostas existentes impedem edição do
+  enunciado/gabarito in-place.
+- Suíte Unit completa LMS: 247 testes / 880 assertions PASS; Studio: 67 testes /
+  679 assertions PASS. PHP lint, PHPCS Drupal/DrupalPractice focal e
+  `git diff --check` PASS. Sincronização Runtime após publicação pendente.
+
 ## 0.4.1-dev.73 — completa revisão docente de respostas LMS
 
 - `aculta_lms` conecta as respostas enviadas ao painel de cada turma, limita a

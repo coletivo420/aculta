@@ -117,6 +117,12 @@ services:
   aculta_lms.class_dashboard_access:
     class: Drupal\aculta_lms\Access\ClassDashboardAccessCheck
     arguments: ['@aculta_lms.learning_dashboard', '@current_user']
+  aculta_lms.course_authoring_access:
+    class: Drupal\aculta_lms\Access\CourseAuthoringAccessCheck
+    arguments: ['@current_user', '@entity_type.manager']
+  aculta_lms.course_structure_controller:
+    class: Drupal\aculta_lms\Controller\CourseStructureController
+    arguments: ['@entity_type.manager', '@string_translation']
   aculta_lms.learning_dashboard_controller:
     class: Drupal\aculta_lms\Controller\LearningDashboardController
     arguments: ['@aculta_lms.learning_dashboard', '@aculta_lms.class_activity_deadline_manager', '@entity_type.manager', '@current_user', '@date.formatter', '@string_translation']

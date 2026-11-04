@@ -303,6 +303,85 @@ aculta_lms.educator_dashboard:
     no_cache: true
     _aculta_domain_purpose: courses
 
+# The LMS owns curriculum data and Form API; Studio owns the educator routes.
+aculta_lms.course_structure:
+  path: '/ganjalab/educador/cursos/{course}/estrutura'
+  defaults:
+    _controller: 'aculta_lms.course_structure_controller:structure'
+    _title: 'Estrutura do curso'
+  requirements:
+    _custom_access: 'aculta_lms.course_authoring_access:access'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: courses
+    parameters:
+      course:
+        type: entity:group
+
+aculta_lms.lesson_add:
+  path: '/ganjalab/educador/cursos/{course}/aulas/nova'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\LessonAuthoringForm'
+    _title: 'Nova aula'
+  requirements:
+    _custom_access: 'aculta_lms.course_authoring_access:access'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: courses
+    parameters:
+      course:
+        type: entity:group
+
+aculta_lms.lesson_edit:
+  path: '/ganjalab/educador/cursos/{course}/aulas/{lesson}/editar'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\LessonAuthoringForm'
+    _title: 'Editar aula'
+  requirements:
+    _custom_access: 'aculta_lms.course_authoring_access:access'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: courses
+    parameters:
+      course:
+        type: entity:group
+      lesson:
+        type: entity:aculta_lms_lesson
+
+aculta_lms.activity_add:
+  path: '/ganjalab/educador/cursos/{course}/aulas/{lesson}/atividades/nova'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\ActivityAuthoringForm'
+    _title: 'Nova atividade'
+  requirements:
+    _custom_access: 'aculta_lms.course_authoring_access:access'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: courses
+    parameters:
+      course:
+        type: entity:group
+      lesson:
+        type: entity:aculta_lms_lesson
+
+aculta_lms.activity_edit:
+  path: '/ganjalab/educador/cursos/{course}/aulas/{lesson}/atividades/{activity}/editar'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\ActivityAuthoringForm'
+    _title: 'Editar atividade'
+  requirements:
+    _custom_access: 'aculta_lms.course_authoring_access:access'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: courses
+    parameters:
+      course:
+        type: entity:group
+      lesson:
+        type: entity:aculta_lms_lesson
+      activity:
+        type: entity:aculta_lms_activity
+
 
 # Drop zone embutida: uma página por integração, na casca do Studio. A regra de
 # cada integração vale no salvar; esta rota só exige usuário logado.

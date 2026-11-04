@@ -1,6 +1,6 @@
 # ACULTA Studio — LMS Course Builder: contrato visual e execução
 
-**Versão de design:** CB-UX 0.3.0-dev.1 · **Data:** 2026-10-22 · **Estado:** planejamento, não implementado.
+**Versão de design:** CB-UX 0.3.0-dev.2 · **Data:** 2026-11-03 · **Estado:** estrutura inicial implementada; editor visual e ordenação avançada pendentes.
 
 **Referências:** [Studio Visual](STUDIO-VISUAL-CONCEPT.md) · [Fluxos de edição](STUDIO-EDITOR-FLOWS.md) · [Roadmap Studio](STUDIO-MAGAZINE-ROADMAP.md) · [Roadmap funcional LMS](../modules/ACULTA-LMS-ROADMAP.md) · [LMS/Group](../modules/LMS-GROUP.md) · [Contratos LMS](LMS-INTEGRATION-CONTRACTS.md).
 
@@ -8,9 +8,9 @@
 
 ## Objetivo e público
 
-Construir visualmente cursos por educadores sem usar as telas administrativas do Drupal no fluxo cotidiano. Padrão **Meus cursos**: apenas cursos que a pessoa criou ou efetivamente gerencia, conforme relações/permissões do Group, sem confundir “posso ver”, matrícula de estudante e responsabilidade de gestão. **Equipe/Cursos autorizados** é outro contexto explicitamente selecionado. Autoria de aula/curso e pessoa que edita devem aparecer corretamente.
+Construir a autoria de cursos do educador sem usar as telas administrativas do Drupal no fluxo cotidiano. O workspace Ganjalab Educador já oferece criação de curso pelo Form API de Group e, desde 2026-11-03, estrutura inicial em `/ganjalab/educador/cursos/{course}/estrutura`, com criação/edição de aulas e atividades pelo `aculta_lms`. Padrão **Meus cursos**: apenas cursos que a pessoa criou ou efetivamente gerencia, conforme permissões Group, sem confundir “posso ver”, matrícula de estudante e responsabilidade de gestão.
 
-**Course Builder é um workspace e NÃO um novo LMS.** Drupal LMS mantém lições, atividades, respostas, notas e estados; Group mantém cursos, turmas, memberships e relações; aculta_lms integra; aculta_studio organiza rotas, ações e presenters; ACULTA420 detém shell, tokens e SDC. Reutilizar Image, Gallery, PDF Viewer, H5P, Fórum contextual, Messenger e User conforme disponibilidade real. Nunca duplicar curso, turma, módulo, mídia, gradebook, workflow ou tabela de ordenação por mera conveniência visual.
+**Course Builder é um workspace e NÃO um segundo LMS.** Group mantém cursos, turmas, memberships e relações; `aculta_lms` é dono das entidades ACULTA de aula, atividade, resposta, nota e estado; `aculta_studio` organiza rotas, ações e presenters; ACULTA420 detém shell, tokens e SDC. Reutilizar Image, Gallery, PDF Viewer, H5P, Fórum contextual, Messenger e User conforme disponibilidade real. Nunca duplicar curso, turma, mídia, gradebook, workflow ou tabela de ordenação por mera conveniência visual.
 
 ## Estrutura pedagógica apresentada
 
@@ -99,8 +99,8 @@ Desktop: drag-and-drop opcional, indicador claro do destino, confirmação de po
 | **0.3.0** | inventário de Graph LMS/Group, relações/ordem, Form API, papéis, providers, layout e contratos | provar fonte canônica e escopo “Meus” |
 | **0.3.1** | shell mobile-first, árvore no desktop e estrutura em tela inteira no mobile | contraste, foco, rotas reais, fallback |
 | **0.3.2** | navegação hierárquica, seleção, expansão, histórico, estados vazios | isolamento por curso/Group |
-| **0.3.3** | criação contextual de módulos/itens pelo provider | nenhuma persistência paralela |
-| **0.3.4** | edição contextual com CKEditor 5/Form API, erros e salvamento real | sem perda de alterações |
+| **0.3.3** | criação contextual de aulas e tipos de atividade suportados em entidades ACULTA | formulário, acesso e payload estão implementados; validação visual/Runtime pendente |
+| **0.3.4** | edição contextual com CKEditor 5/Form API, erros e salvamento real | Form API de aula/atividade inicial implementado sem CKEditor; edição do gabarito é bloqueada após respostas; editor rico ainda pendente |
 | **0.3.5** | mover/reordenar, teclado e aviso de impacto em turmas | APIs oficiais e concorrência validadas |
 | **0.3.6** | mídias, Gallery, PDF Viewer e H5P quando disponíveis | privacidade/arquivos/Group |
 | **0.3.7** | prévia estudante, regras e publicação | controle de acesso e não vazamento |

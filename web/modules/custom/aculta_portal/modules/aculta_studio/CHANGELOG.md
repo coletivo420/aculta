@@ -450,6 +450,13 @@ RUNTIME STATUS: DEFERRED. Testes não executados (sem vendor/ nem Runtime).
 - A experiência `mercado_pago_plans` oferece a administração no ACULTA Studio, delegando rota, operações remotas e autorização ao módulo Mercado Pago e à permissão proprietária `administrar doacoes`.
 - Provider: 2 Unit / 19 assertions PASS. Suíte Studio: 62 testes / 502 assertions PASS. Fronteira módulo/tema e gate Portal Drupal 11 PASS (1.155 verificações) após alinhar contrato e testes à política de salvar config sem credenciais e negar edição direta. Firefox ESR/X11 verificou entrada, tela, labels acessíveis, caption da tabela e reflow em 390/1280px. O fluxo sandbox pelo formulário criou e atualizou um plano de teste; nenhum pagamento foi iniciado.
 
+## 0.1.0-dev.46 — acesso do Educador à estrutura do curso (2026-11-03)
+
+- O dashboard do Educador passa a oferecer a ação “Editar estrutura” por curso
+  com base na autorização da rota do LMS. Currículo e Form API permanecem sob
+  ownership do `aculta_lms`; Studio só compõe a entrada no workspace.
+- Testes Unit cobrem o link e as rotas no purpose `courses`.
+
 ## 0.1.0-dev.45 — integra a sala à rota ACULTA de respostas (2026-11-03)
 
 - `CourseJourneyPresentationHooks` agora envolve `aculta_lms.answer_submission`

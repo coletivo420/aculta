@@ -1,3 +1,15 @@
+## 0.1.0-dev.183 — autoria de aulas e atividades ACULTA
+
+- Adicionada a página de estrutura do curso no workspace Ganjalab Educador,
+  com criação/edição de aulas e atividades usando as entidades ACULTA já
+  existentes e o formato `answer_config` consumido pelo formulário do aluno.
+- Acesso verifica `grade students` no curso e a cadeia curso→aula→atividade;
+  configuração e gabarito de atividade ficam bloqueados após a primeira
+  resposta, preservando o contexto histórico sem sobrescrever dados.
+- Suíte Unit completa do LMS: 247 testes / 880 assertions PASS; Studio: 67 testes /
+  679 assertions PASS. PHPCS Drupal/DrupalPractice focal, PHP lint e
+  `git diff --check` PASS. Verificação Runtime após publicação pendente.
+
 ## 0.1.0-dev.182 — cobre submissão de arquivos privados
 
 - Kernels exercitam o formulário ACULTA de atividade `file_upload`: arquivo

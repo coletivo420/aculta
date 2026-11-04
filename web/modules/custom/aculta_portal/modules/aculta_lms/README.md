@@ -26,9 +26,29 @@ substitui um teste de instalação limpa da closure completa. Uma depreciação
 reportada pertence ao contrib `webform_score`. Nenhum serviço fictício foi
 adicionado ao produto e Runtime não foi alterado.
 
-Submódulo opcional de integração educacional do Portal. Drupal LMS e Group são
-as fontes de verdade; `aculta_lms` não cria matrícula, resposta, nota,
-progresso, certificado, mensagem ou amizade paralelos.
+Submódulo opcional de aprendizagem do Portal. Group mantém cursos, turmas,
+relações e memberships. O `aculta_lms` é dono das entidades ACULTA de aula,
+atividade, resposta, progresso, tentativa e certificado; não depende dos
+módulos Drupal LMS contrib. Mensagens, pagamento e identidade continuam nos
+módulos owners correspondentes, sem storage duplicado.
+
+## Ganjalab Educador — estrutura de curso
+
+O workspace `/ganjalab/educador` oferece a estrutura de cada curso em
+`/ganjalab/educador/cursos/{course}/estrutura`. A página lista aulas e
+atividades das entidades ACULTA; Form API permite criar/editar aula e criar ou
+editar atividade com os tipos atendidos pela submissão do aluno (`true_false`,
+`select`, `fill_blanks`, `free_text`, `file_upload`). Enunciado, gabarito,
+opções, respostas aceitas e mínimo de caracteres são gravados no `answer_config`
+já consumido pela sala e pelo formulário de resposta. O tipo fica imutável
+depois da criação; enunciado/gabarito não podem ser alterados após haver
+respostas, para não reescrever o contexto histórico das notas.
+
+A autorização exige `grade students` contextual ao Group de curso ou
+`administer lms`. A rota verifica que aula pertence ao curso e atividade à aula;
+os formulários repetem essa checagem no servidor ao carregar e salvar. Turmas,
+matrículas e prazos permanecem separados da estrutura curricular. Reordenação
+por arrastar, exclusão e módulos pedagógicos não fazem parte desta fatia.
 
 ## Integração de avisos — contrato vigente
 
@@ -47,13 +67,13 @@ legado ativo. Consulte [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## Administração organizada por curso
 
-O curso é o primeiro nível da administração. A sequência de aulas pertence ao
-curso e suas atividades pertencem às aulas, usando as referências nativas do
-Drupal LMS. A navegação não oferece atalhos globais de aulas, atividades ou
-turmas. Painel e prazo de turma usam `/painel-administrativo/lms/curso/{course}/`
-e conferem o vínculo entre curso, turma e atividade. Fóruns e filas de
-moderação também ficam sob o curso; o adapter valida o Group da discussão em
-cada request.
+O curso é o primeiro nível da administração. A sequência de aulas e atividades
+usa as entidades próprias do `aculta_lms`; seus IDs são referências internas
+opacas e não vêm de entidades Drupal LMS contrib. A navegação não oferece
+atalhos globais de aulas, atividades ou turmas. Painel e prazo de turma usam
+`/painel-administrativo/lms/curso/{course}/` e conferem o vínculo entre curso,
+turma e atividade. Fóruns e filas de moderação também ficam sob o curso; o
+adapter valida o Group da discussão em cada request.
 
 ## F7/F16 — preservação de matrículas por compra
 
@@ -511,7 +531,13 @@ Estado ADR-038: `/ganjalab` em purpose `courses` está implementada; a antiga `/
 
 O `LearningDashboardManager` continua lendo entidades Group/Drupal LMS e certificados, mas publica `StudentLearningSummaryReaderInterface` com DTOs neutros. O `AccountCoursesReader` implementa `AccountCoursesReaderInterface` e fornece cursos autorizados para a Conta; o Portal recebe esse provider como opcional. `LmsFriendlySlugs`, o conversor, o route processor e o subscriber da rota foram movidos para este módulo, preservando os IDs de serviço `aculta_portal.lms_friendly_*` e os tipos de parâmetro existentes. O `aculta_portal` não declara mais `lms:lms`.
 
-A composição de render arrays do estudante pertence a `aculta_studio\Learning\\LearnerDashboardComposer`; as rotas Ganjalab são declaradas no Studio e mantêm IDs históricos `aculta_lms.*`. A rota nativa de atividade ainda é uma integração temporária. A separação remove a dependência Portal → Drupal LMS no metadata; o próprio `aculta_lms` continua dependente do contrib. Lint, testes e rebuild de rotas/container ainda precisam ser confirmados no checkout local; Runtime permanece sob a validação já delegada.
+A composição de render arrays do estudante e a autoria do curso ficam em módulos
+owners diferentes: `aculta_studio` apresenta o workspace e suas rotas; o
+`aculta_lms` lê e grava as entidades ACULTA e revalida permissões. Rotas do
+Ganjalab ficam em `aculta_studio.routing.yml` com IDs `aculta_lms.*` por
+compatibilidade. A rota nativa de atividade ainda é integração temporária. A
+dependência dos módulos Drupal LMS contrib foi removida do Composer, metadata e
+código customizado; Group continua como infraestrutura deliberada.
 
 A conclusão neutra remove o import direto do evento LMS nos consumidores Game e
 Messenger. O provider ainda lê `CourseStatusInterface` e permanece dependente

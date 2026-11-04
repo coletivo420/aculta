@@ -45,6 +45,11 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       '/we-sativa/inicio' => 'aculta_studio.we_sativa_start',
       '/ganjalab' => 'aculta_lms.student_dashboard',
       '/ganjalab/educador/cursos/novo' => 'aculta_lms.course_create',
+      '/ganjalab/educador/cursos/{course}/estrutura' => 'aculta_lms.course_structure',
+      '/ganjalab/educador/cursos/{course}/aulas/nova' => 'aculta_lms.lesson_add',
+      '/ganjalab/educador/cursos/{course}/aulas/{lesson}/editar' => 'aculta_lms.lesson_edit',
+      '/ganjalab/educador/cursos/{course}/aulas/{lesson}/atividades/nova' => 'aculta_lms.activity_add',
+      '/ganjalab/educador/cursos/{course}/aulas/{lesson}/atividades/{activity}/editar' => 'aculta_lms.activity_edit',
       '/salvos' => 'aculta_studio.salvos',
       '/green-stash' => 'aculta_commerce.green_stash',
       '/green-stash/{secao}' => 'aculta_commerce.green_stash_area',
@@ -106,6 +111,20 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     self::assertSame('create lms_course group', $routes['aculta_lms.course_create']['requirements']['_permission']);
     self::assertTrue($routes['aculta_lms.course_create']['options']['no_cache']);
     self::assertSame('aculta_studio.course_authoring_controller:create', $routes['aculta_lms.course_create']['defaults']['_controller']);
+    foreach ([
+      'aculta_lms.course_structure',
+      'aculta_lms.lesson_add',
+      'aculta_lms.lesson_edit',
+      'aculta_lms.activity_add',
+      'aculta_lms.activity_edit',
+    ] as $id) {
+      self::assertSame('courses', $routes[$id]['options']['_aculta_domain_purpose']);
+      self::assertSame('aculta_lms.course_authoring_access:access', $routes[$id]['requirements']['_custom_access']);
+      self::assertTrue($routes[$id]['options']['no_cache']);
+    }
+    self::assertSame('aculta_lms.course_structure_controller:structure', $routes['aculta_lms.course_structure']['defaults']['_controller']);
+    self::assertSame('\\Drupal\\aculta_lms\\Form\\LessonAuthoringForm', $routes['aculta_lms.lesson_add']['defaults']['_form']);
+    self::assertSame('\\Drupal\\aculta_lms\\Form\\ActivityAuthoringForm', $routes['aculta_lms.activity_add']['defaults']['_form']);
     self::assertSame('wiki', $routes['aculta_wiki.proposal_decide']['options']['_aculta_domain_purpose']);
     foreach ([
       'aculta_commerce.green_stash',
