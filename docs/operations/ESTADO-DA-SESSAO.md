@@ -618,4 +618,4 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Causa confirmada no watchdog:** `AcultaPatchStatusForm::getQuestion()` chamava `getParameter()` em `routeMatch` nulo durante a renderização do `ConfirmFormBase`.
 - **Correção:** `buildForm()` agora prepara rótulo e ação com os argumentos de rota já recebidos; a pergunta e o botão de confirmação usam esse estado escalar. Não houve alteração no patch ativo durante a reprodução.
 - **Validações:** formulários de desabilitar e habilitar renderizados por Form API com pergunta/botão corretos; patch H5P continuou ativo no banco; PHP lint e PHPCS Drupal/DrupalPractice PASS; `drush cr` PASS; `updatedb:status` sem updates; `config:status` sem diferenças. Nenhum teste automatizado foi executado.
-- **Arquivos:** `AcultaPatchStatusForm.php`, versão/CHANGELOG/status do `aculta_patcher`, índice README e este handoff. Commit/push pendentes.
+- **Arquivos:** `AcultaPatchStatusForm.php`, versão/CHANGELOG/status do `aculta_patcher`, índice README e este handoff. Commit `d0afac02f4` enviado a `origin/dev`; Runtime no mesmo HEAD.
