@@ -1,3 +1,11 @@
+## 0.1.0-dev.193 — ordena DLL e traduções do CKEditor
+
+- Expande o ajuste de ordem dos assets para manter jQuery, traduções e DLL do
+  CKEditor antes dos bundles que dependem deles, mesmo com agregação JavaScript.
+- O smoke confirmou que o ajuste anterior resolveu a ordem do jQuery, mas o
+  CKEditor ainda não aparecia porque um bundle HTML Engine executava antes do
+  DLL global. Revalidar a inicialização após rebuild do cache.
+
 ## 0.1.0-dev.192 — ordena jQuery antes dos agregados JQuery UI
 
 - O asset `core/jquery` recebe peso anterior aos componentes JQuery UI que

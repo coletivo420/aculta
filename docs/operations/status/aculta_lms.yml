@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.192
+version: 0.1.0-dev.193
 state: Dev
-progress_note: "Dev.192: hook LMS reposiciona o asset não agregado `core/jquery` antes de dependências jQuery UI com peso -11; Unit LMS 259/940 PASS (26 depreciações PHPUnit), PHPCS Drupal, PHP lint, YAML e diff check PASS. Fix e CKEditor ainda aguardam rebuild de cache e smoke autenticado, pois a regressão foi reproduzida no Firefox (`jQuery is not defined` antes do editor). Dev.191: estrutura em cartões responsivos, resumo, estados editoriais, ações contextualizadas e empty state; sem mudar entidades, ownership ou armazenamento. Runtime está no dev.191, sem updates de DB ou config esperados. Preview estudante, materiais, editor contextual e drag-and-drop seguem pendentes antes de pagamentos e auditoria updatedb."
+progress_note: "Dev.193: ajusta pesos do jQuery, traduções e DLL CKEditor para assegurar que dependências não agregadas executem antes dos bundles JQuery UI/CKEditor. Unit LMS 259/942 PASS (26 depreciações PHPUnit); PHPCS Drupal, PHP lint, YAML e diff check PASS. Smoke autenticado confirmou jQuery presente, mas revelou que o bundle HTML Engine do CKEditor ainda executava antes do DLL; esta correção aguarda publicação, rebuild do cache e reteste. Dev.191: estrutura em cartões responsivos, resumo, estados editoriais, ações contextualizadas e empty state; sem mudar entidades, ownership ou armazenamento. Runtime está no dev.192, sem updates de DB/config. Preview estudante, materiais, editor contextual e drag-and-drop seguem pendentes antes de pagamentos e auditoria updatedb."
 next_phase: 'Publicar/reconstruir cache e validar a ordem de scripts e CKEditor no Firefox autenticado; se inicializar, avançar preview seguro e integração de materiais antes de pagamentos e auditoria updatedb.'
 
 # 2026-10-22: Dependência externa de UI G420-C2-T permanece pendente.
