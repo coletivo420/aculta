@@ -18,8 +18,8 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class AchievementDisplayForm extends FormBase {
 
   public function __construct(
-    private readonly AchievementPresentation $presentation,
-    private readonly AccountProxyInterface $account,
+    protected readonly AchievementPresentation $presentation,
+    protected readonly AccountProxyInterface $account,
   ) {}
 
   /**

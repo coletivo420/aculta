@@ -25,12 +25,12 @@ final class SubscriptionActionForm extends ConfirmFormBase {
 
   /**
    * Ação validada no buildForm (pausar, reativar ou cancelar). */
-  private string $acaoAtual = '';
+  protected string $acaoAtual = '';
 
   public function __construct(
-    private readonly ?SubscriptionOperationsInterface $operacoesAssinatura,
-    private readonly EntityTypeManagerInterface $entidades,
-    private readonly AccountInterface $usuario,
+    protected readonly ?SubscriptionOperationsInterface $operacoesAssinatura,
+    protected readonly EntityTypeManagerInterface $entidades,
+    protected readonly AccountInterface $usuario,
   ) {}
 
   /**

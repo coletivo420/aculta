@@ -30,19 +30,19 @@ final class AcultaCheckoutLogin extends Login {
 
   /**
    * Domain-purpose URL resolver. */
-  private ?DomainPurposeManager $domainPurpose = NULL;
+  protected ?DomainPurposeManager $domainPurpose = NULL;
 
   /**
    * Configured Social Auth integrations. */
-  private ?AuthIntegrationManager $authIntegration = NULL;
+  protected ?AuthIntegrationManager $authIntegration = NULL;
 
   /**
    * Module availability checker. */
-  private ?ModuleHandlerInterface $portalModuleHandler = NULL;
+  protected ?ModuleHandlerInterface $portalModuleHandler = NULL;
 
   /**
    * Per-IP rate limiter for anonymous account lookup. */
-  private ?FloodInterface $flood = NULL;
+  protected ?FloodInterface $flood = NULL;
 
   /**
    * {@inheritdoc}

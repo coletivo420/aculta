@@ -22,15 +22,15 @@ final class OwnershipClaimDecisionForm extends FormBase {
   /**
    * Reivindicação sob avaliação.
    */
-  private ?OwnershipClaim $claim = NULL;
+  protected ?OwnershipClaim $claim = NULL;
 
   /**
    * Construtor do formulário.
    */
   public function __construct(
-    private readonly OwnershipClaimService $claimService,
-    private readonly EntityTypeManagerInterface $entityTypeMgr,
-    private readonly DateFormatterInterface $dateFormatter,
+    protected readonly OwnershipClaimService $claimService,
+    protected readonly EntityTypeManagerInterface $entityTypeMgr,
+    protected readonly DateFormatterInterface $dateFormatter,
   ) {}
 
   /**

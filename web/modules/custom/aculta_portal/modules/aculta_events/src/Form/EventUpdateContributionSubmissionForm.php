@@ -28,13 +28,13 @@ final class EventUpdateContributionSubmissionForm extends FormBase {
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
-    private readonly EntityTypeManagerInterface $entities,
+    protected readonly EntityTypeManagerInterface $entities,
     #[Autowire(service: 'aculta_contributions.lifecycle')]
-    private readonly ContributionLifecycle $lifecycle,
+    protected readonly ContributionLifecycle $lifecycle,
     #[Autowire(service: 'aculta_contributions.adapter_registry')]
-    private readonly ContributionAdapterRegistry $adapters,
+    protected readonly ContributionAdapterRegistry $adapters,
     #[Autowire(service: 'aculta_events.organization_contribution_event_queue')]
-    private readonly OrganizationContributionEventQueue $eventQueue,
+    protected readonly OrganizationContributionEventQueue $eventQueue,
   ) {}
 
   /**

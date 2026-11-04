@@ -19,7 +19,7 @@ final class MapSettingsForm extends ConfigFormBase {
   public function __construct(
     ConfigFactoryInterface $configFactory,
     TypedConfigManagerInterface $typedConfigManager,
-    private readonly ?SecretsManager $secrets,
+    protected readonly ?SecretsManager $secrets,
   ) {
     parent::__construct($configFactory, $typedConfigManager);
   }

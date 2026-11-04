@@ -32,12 +32,12 @@ final class AchievementEmailWorker extends QueueWorkerBase implements ContainerF
     array $configuration,
     string $plugin_id,
     mixed $plugin_definition,
-    private readonly EntityTypeManagerInterface $entities,
-    private readonly UserDataInterface $userData,
-    private readonly AcultaMailerInterface $mailer,
-    private readonly DomainPurposeManager $domainPurpose,
-    private readonly LockBackendInterface $lock,
-    private readonly BadgeService $badges,
+    protected readonly EntityTypeManagerInterface $entities,
+    protected readonly UserDataInterface $userData,
+    protected readonly AcultaMailerInterface $mailer,
+    protected readonly DomainPurposeManager $domainPurpose,
+    protected readonly LockBackendInterface $lock,
+    protected readonly BadgeService $badges,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

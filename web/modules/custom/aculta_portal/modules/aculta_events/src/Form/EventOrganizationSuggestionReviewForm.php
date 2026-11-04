@@ -19,9 +19,9 @@ final class EventOrganizationSuggestionReviewForm extends FormBase {
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'aculta_events.organization_suggestion')]
-    private readonly OrganizationSuggestionService $suggestionService,
+    protected readonly OrganizationSuggestionService $suggestionService,
   ) {}
 
   /**

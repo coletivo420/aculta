@@ -19,8 +19,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class ForumPostRevisionSelectionForm extends FormBase {
 
   public function __construct(
-    private readonly RouteMatchInterface $forumRouteMatch,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly RouteMatchInterface $forumRouteMatch,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   /**

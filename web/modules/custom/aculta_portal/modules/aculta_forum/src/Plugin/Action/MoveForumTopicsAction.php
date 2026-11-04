@@ -40,9 +40,9 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly ForumTopicMover $mover,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountInterface $currentUser,
+    protected readonly ForumTopicMover $mover,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly AccountInterface $currentUser,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

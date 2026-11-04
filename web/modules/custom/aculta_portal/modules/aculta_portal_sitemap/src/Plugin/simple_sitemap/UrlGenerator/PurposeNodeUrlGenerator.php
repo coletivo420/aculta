@@ -82,12 +82,12 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
     $plugin_definition,
     Logger $logger,
     Settings $settings,
-    private readonly DomainPurposeManager $purposes,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountSwitcherInterface $accountSwitcher,
-    private readonly StorageInterface $configStorage,
-    private readonly AliasManagerInterface $aliasManager,
-    private readonly SurfaceConfigReader $surfaces,
+    protected readonly DomainPurposeManager $purposes,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly AccountSwitcherInterface $accountSwitcher,
+    protected readonly StorageInterface $configStorage,
+    protected readonly AliasManagerInterface $aliasManager,
+    protected readonly SurfaceConfigReader $surfaces,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $logger, $settings);
   }

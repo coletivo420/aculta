@@ -24,13 +24,13 @@ final class MailTemplateTestForm extends FormBase {
   /**
    * Modelo do teste, definido pela rota ou pelo chamador.
    */
-  private ?MailTemplate $template = NULL;
+  protected ?MailTemplate $template = NULL;
 
   public function __construct(
-    private readonly AcultaMailerInterface $mailer,
-    private readonly MailTypeRegistry $types,
-    private readonly UuidInterface $uuid,
-    private readonly RouteMatchInterface $currentRoute,
+    protected readonly AcultaMailerInterface $mailer,
+    protected readonly MailTypeRegistry $types,
+    protected readonly UuidInterface $uuid,
+    protected readonly RouteMatchInterface $currentRoute,
   ) {}
 
   /**

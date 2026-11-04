@@ -1,3 +1,13 @@
+## 0.4.1-dev.75 — compatibilidade Drupal 12 no Portal
+
+- Atualizadas as propriedades de serviços nas classes Drupal serializáveis para
+  visibilidade `protected`, corrigindo os avisos do `DependencySerializationTrait`.
+- Corrigidos usos de APIs e tipos do Core: finalização de login, cache em memória,
+  operações de entidade, filas, formulários, datas, acesso e geração de URLs.
+- Corrigidos erros de tipos/imports em H5P, Magazine, imagem, calendário e outros
+  módulos; mantidos os contratos de domínio e as regras de acesso existentes.
+- Validação registrada no handoff da sessão. Não foram executados testes.
+
 ## 0.4.1-dev.74 — autoria ACULTA da estrutura de cursos
 
 - `aculta_lms` fornece páginas e Form API para estruturar aulas e atividades

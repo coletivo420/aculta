@@ -20,8 +20,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class AcultaUserAgreementAcceptForm extends FormBase {
 
   public function __construct(
-    private readonly AcultaUserAgreementPolicy $policy,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly AcultaUserAgreementPolicy $policy,
+    protected readonly DomainPurposeManager $domainPurposeManager,
   ) {}
 
   public static function create(ContainerInterface $container): static {

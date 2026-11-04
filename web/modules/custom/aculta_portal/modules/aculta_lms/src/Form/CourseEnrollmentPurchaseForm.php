@@ -30,25 +30,25 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'commerce_cart.cart_provider')]
-    private readonly CartProviderInterface $cartProvider,
+    protected readonly CartProviderInterface $cartProvider,
     #[Autowire(service: 'commerce_cart.cart_manager')]
-    private readonly CartManagerInterface $cartManager,
+    protected readonly CartManagerInterface $cartManager,
     #[Autowire(service: 'commerce_store.current_store')]
-    private readonly CurrentStoreInterface $currentStore,
+    protected readonly CurrentStoreInterface $currentStore,
     #[Autowire(service: 'commerce_price.currency_formatter')]
-    private readonly CurrencyFormatterInterface $currencyFormatter,
+    protected readonly CurrencyFormatterInterface $currencyFormatter,
     #[Autowire(service: 'current_user')]
-    private readonly AccountProxyInterface $account,
+    protected readonly AccountProxyInterface $account,
     #[Autowire(service: 'messenger')]
-    private readonly MessengerInterface $messengerService,
+    protected readonly MessengerInterface $messengerService,
     #[Autowire(service: 'string_translation')]
     TranslationInterface $translation,
     #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $purposeManager,
+    protected readonly DomainPurposeManager $purposeManager,
     #[Autowire(service: 'aculta_portal.checkout_settings')]
-    private readonly ?CheckoutSettings $checkoutSettings = NULL,
+    protected readonly ?CheckoutSettings $checkoutSettings = NULL,
   ) {
     $this->stringTranslation = $translation;
   }

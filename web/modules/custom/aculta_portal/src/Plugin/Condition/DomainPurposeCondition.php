@@ -24,7 +24,7 @@ final class DomainPurposeCondition extends ConditionPluginBase implements Contai
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly DomainPurposeManager $domainPurposeManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

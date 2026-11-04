@@ -23,10 +23,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class AdminEmailConfirmForm extends ConfirmFormBase {
 
   public function __construct(
-    private readonly EmailConfirmationPolicy $policy,
-    private readonly AccountInterface $currentUser,
-    private readonly LoggerChannelInterface $logger,
-    private readonly EntityTypeManagerInterface $entityTypeManagerService,
+    protected readonly EmailConfirmationPolicy $policy,
+    protected readonly AccountInterface $currentUser,
+    protected readonly LoggerChannelInterface $logger,
+    protected readonly EntityTypeManagerInterface $entityTypeManagerService,
   ) {}
 
   /**

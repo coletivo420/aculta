@@ -290,7 +290,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     self::assertInstanceOf(Domain::class, $mainDomain);
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain($mainDomain);
+    $negotiator->getContext()->setDomain($mainDomain);
     $result = $this->container->get('aculta_index.access_filter')->filter([[
       'entity_type' => 'node',
       'entity_id' => (string) $entry->id(),
@@ -368,7 +368,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     self::assertInstanceOf(Domain::class, $mainDomain);
     $domainNegotiator = $this->container->get(DomainNegotiatorInterface::class);
     $domainNegotiator->getActiveDomain();
-    $domainNegotiator->setActiveDomain($mainDomain);
+    $domainNegotiator->getContext()->setDomain($mainDomain);
     self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
     self::assertTrue(
       $this->container->get(EntityHooks::class)
@@ -451,7 +451,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     self::assertInstanceOf(Domain::class, $mainDomain);
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain($mainDomain);
+    $negotiator->getContext()->setDomain($mainDomain);
     self::assertFalse($source->access('view', $reader), 'Wiki source is not visible from main purpose.');
 
     $result = $this->container->get('aculta_index.relation_query')->queryOutgoing(
@@ -564,7 +564,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     self::assertInstanceOf(Domain::class, $mainDomain);
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain($mainDomain);
+    $negotiator->getContext()->setDomain($mainDomain);
     $relationQuery = $this->container->get('aculta_index.relation_query');
     $categories = $relationQuery->queryOutgoing(
       'node',

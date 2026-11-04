@@ -314,8 +314,10 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
       ['tipo' => 'wiki', 'titulo' => 'Revisão publicada', 'quantidade' => 1, 'delivery_id' => 502],
     ]);
     if ($supportsSelectiveDiscard) {
-      $provider->expects(self::once())->method('discardDigestItems')->with(27, [501]);
-      $provider->expects(self::once())->method('markDigestSent')->with(27, [502]);
+      /** @var AvisoDigestProviderInterface&AvisoDigestSelectiveDiscardInterface $selectiveProvider */
+      $selectiveProvider = $provider;
+      $selectiveProvider->expects(self::once())->method('discardDigestItems')->with(27, [501]);
+      $selectiveProvider->expects(self::once())->method('markDigestSent')->with(27, [502]);
     }
     else {
       $provider->expects(self::never())->method('discardDigest');

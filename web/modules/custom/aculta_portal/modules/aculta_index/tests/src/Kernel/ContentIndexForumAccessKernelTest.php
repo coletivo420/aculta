@@ -60,7 +60,7 @@ final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase 
     self::assertInstanceOf(Domain::class, $mainDomain);
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain($mainDomain);
+    $negotiator->getContext()->setDomain($mainDomain);
 
     $candidate = [[
       'entity_type' => 'media',
@@ -152,7 +152,7 @@ final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase 
     self::assertInstanceOf(Domain::class, $mainDomain);
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain($mainDomain);
+    $negotiator->getContext()->setDomain($mainDomain);
 
     self::assertTrue($topic->access('view', new AnonymousUserSession(), TRUE)->isAllowed());
     self::assertTrue($comment->access('view', new AnonymousUserSession(), TRUE)->isAllowed());
@@ -186,7 +186,7 @@ final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase 
     self::assertInstanceOf(Domain::class, $mainDomain);
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain($mainDomain);
+    $negotiator->getContext()->setDomain($mainDomain);
     $filter = new ContentIndexAccessFilter(
       $this->container->get('entity_type.manager'),
       $this->container->get('aculta_index.provider_registry'),
@@ -293,7 +293,7 @@ final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase 
     self::assertInstanceOf(Domain::class, $mainDomain);
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain($mainDomain);
+    $negotiator->getContext()->setDomain($mainDomain);
     $filter = new ContentIndexAccessFilter(
       $this->container->get('entity_type.manager'),
       $this->container->get('aculta_index.provider_registry'),

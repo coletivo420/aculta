@@ -49,7 +49,7 @@ function aculta_image_update_10001(): void {
  */
 function aculta_image_update_10002(): void {
   // A definição da tabela passou ao aculta_file_uploader (0.1.0-dev.7).
-  module_load_include('install', 'aculta_file_uploader');
+  \Drupal::moduleHandler()->loadInclude('aculta_file_uploader', 'install');
   $schema = aculta_file_uploader_schema();
   $database = \Drupal::database();
   if (!$database->schema()->tableExists('aculta_image_quarantine')) {

@@ -33,8 +33,8 @@ final class ForumCommentFlagging extends SourcePluginBase implements ContainerFa
     string $plugin_id,
     array $plugin_definition,
     MigrationInterface $migration,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly DomainPurposeManager $domainPurposeManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $migration);
   }

@@ -43,7 +43,7 @@ final class FiscalIdentityPane extends CheckoutPaneBase implements CheckoutPaneI
    *
    * @var \Drupal\aculta_portal\Checkout\FiscalIdentityPolicy
    */
-  private FiscalIdentityPolicy $policy;
+  protected FiscalIdentityPolicy $policy;
 
   /**
    * Cria o pane com a política de identidade fiscal.

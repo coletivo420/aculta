@@ -21,11 +21,11 @@ final class EventOrganizationMembersForm extends FormBase {
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'aculta_user.organization_membership_manager')]
-    private readonly ?OrganizationMembershipManager $memberManager = NULL,
+    protected readonly ?OrganizationMembershipManager $memberManager = NULL,
     #[Autowire(service: 'aculta_user.ownership_claim_service')]
-    private readonly ?OwnershipClaimService $claimService = NULL,
+    protected readonly ?OwnershipClaimService $claimService = NULL,
   ) {}
 
   /**

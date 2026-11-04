@@ -20,7 +20,7 @@ final class ContributionAccessControlHandler extends EntityAccessControlHandler 
 
   public function __construct(
     EntityTypeInterface $entity_type,
-    private readonly ContributionAdapterRegistry $adapters,
+    protected readonly ContributionAdapterRegistry $adapters,
   ) {
     parent::__construct($entity_type);
   }

@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\domain\DomainNegotiationContext;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
@@ -88,7 +89,7 @@ final class ForumNoticeAccessPolicyTest extends UnitTestCase {
 
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn($domain);
-    $negotiator->method('setActiveDomain')->willReturn(NULL);
+    $negotiator->method('getContext')->willReturn($this->createMock(DomainNegotiationContext::class));
     $purposeManager = new DomainPurposeManager(
       $entityTypeManager,
       $negotiator,

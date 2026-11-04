@@ -732,6 +732,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
       $this->container->get('lock'),
       $this->container->get('database'),
       $this->container->get('config.factory'),
+      $this->container->get('logger.factory')->get('aculta_contributions'),
     );
     return new EventOrganizationModalForm(
       $this->container->get('entity_type.manager'),

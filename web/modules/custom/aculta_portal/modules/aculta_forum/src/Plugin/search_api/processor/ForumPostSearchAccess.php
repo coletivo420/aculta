@@ -51,11 +51,11 @@ final class ForumPostSearchAccess extends ProcessorPluginBase implements Contain
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly AccountProxyInterface $currentUser,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly ?object $nodeGrantsHelper,
-    private readonly Connection $database,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly ?object $nodeGrantsHelper,
+    protected readonly Connection $database,
+    protected readonly DomainPurposeManager $domainPurposeManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

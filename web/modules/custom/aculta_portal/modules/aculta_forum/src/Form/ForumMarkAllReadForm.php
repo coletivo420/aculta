@@ -18,9 +18,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class ForumMarkAllReadForm extends ConfirmFormBase {
 
   public function __construct(
-    private readonly ForumReadMarker $readMarker,
-    private readonly AccountProxyInterface $currentUser,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly ForumReadMarker $readMarker,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly DomainPurposeManager $domainPurposeManager,
   ) {}
 
   /**

@@ -11,6 +11,7 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface;
 use Drupal\user\UserInterface;
+use Drupal\user\LoginFinalizer;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -27,6 +28,8 @@ final class EmailConfirmerHooks {
     private readonly EmailConfirmationPolicy $policy,
     #[Autowire(service: 'user.data')]
     private readonly \Drupal\user\UserDataInterface $userData,
+    #[Autowire(service: LoginFinalizer::class)]
+    private readonly LoginFinalizer $loginFinalizer,
   ) {}
 
   /**
@@ -56,7 +59,7 @@ final class EmailConfirmerHooks {
       if ($simplificada && $this->currentUser->isAnonymous()) {
         $account = $uid > 0 ? $this->entityTypeManager->getStorage('user')->load($uid) : NULL;
         if ($account instanceof UserInterface && $account->isActive()) {
-          user_login_finalize($account);
+          $this->loginFinalizer->finalizeLogin($account);
         }
       }
       return;
@@ -74,7 +77,7 @@ final class EmailConfirmerHooks {
     if (!$account instanceof UserInterface || !$account->isActive()) {
       return;
     }
-    user_login_finalize($account);
+    $this->loginFinalizer->finalizeLogin($account);
   }
 
 }

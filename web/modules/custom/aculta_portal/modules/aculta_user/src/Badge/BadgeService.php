@@ -10,6 +10,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\user\UserInterface;
+use Drupal\aculta_user\Entity\BadgeAward;
 
 /**
  * Concede e revoga conquistas. Idempotente: não duplica concessão ativa.

@@ -23,9 +23,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final class LinkPageEditorForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountProxyInterface $currentUser,
-    private readonly DomainPurposeManager $domainPurpose,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly DomainPurposeManager $domainPurpose,
   ) {}
 
   /**

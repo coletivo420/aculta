@@ -9,7 +9,7 @@ use Drupal\aculta_events\Event\OrganizationContributionOutcomeRecordedEvent;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\Core\Datetime\TimeInterface;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\user\UserInterface;
 use Psr\Log\LoggerInterface;

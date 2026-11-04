@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Form;
 
-use Drupal\Core\Datetime\DateTimeItemInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -15,6 +14,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -22,9 +22,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class ClassActivityDeadlineForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly CurrentRouteMatch $deadlineRouteMatch,
-    private readonly AccountProxyInterface $account,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly CurrentRouteMatch $deadlineRouteMatch,
+    protected readonly AccountProxyInterface $account,
   ) {}
 
   /**

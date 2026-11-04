@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class SearchPageForm extends FormBase implements ContainerInjectionInterface {
 
   public function __construct(
-    private readonly RequestStack $searchRequestStack,
+    protected readonly RequestStack $searchRequestStack,
   ) {}
 
   public static function create(ContainerInterface $container): static {

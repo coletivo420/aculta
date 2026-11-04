@@ -188,7 +188,7 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     }
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain(Domain::load('cursos_aculta_org'));
+    $negotiator->getContext()->setDomain(Domain::load('cursos_aculta_org'));
   }
 
   /**

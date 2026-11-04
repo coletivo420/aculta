@@ -20,7 +20,7 @@ final class PublicForumReplyCount extends NumericField implements ContainerFacto
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly ForumPublicPostStatistics $postStatistics,
+    protected readonly ForumPublicPostStatistics $postStatistics,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

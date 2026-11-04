@@ -21,11 +21,11 @@ use Drupal\aculta_portal\Profile\PerfilDoPapel;
 final class SocialLinkForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManagerService,
-    private readonly AccountProxyInterface $currentUserService,
-    private readonly SocialNetworks $networks,
-    private readonly CsrfTokenGenerator $csrfToken,
-    private readonly ?RouteMatchInterface $currentRouteMatch = NULL,
+    protected readonly EntityTypeManagerInterface $entityTypeManagerService,
+    protected readonly AccountProxyInterface $currentUserService,
+    protected readonly SocialNetworks $networks,
+    protected readonly CsrfTokenGenerator $csrfToken,
+    protected readonly ?RouteMatchInterface $currentRouteMatch = NULL,
   ) {}
 
   /**

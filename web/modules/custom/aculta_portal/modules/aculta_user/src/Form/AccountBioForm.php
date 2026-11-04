@@ -30,10 +30,10 @@ final class AccountBioForm extends FormBase {
   public const MAX_LENGTH = 500;
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManagerService,
-    private readonly AccountProxyInterface $currentUserService,
-    private readonly CsrfTokenGenerator $csrfToken,
-    private readonly ?RouteMatchInterface $currentRouteMatch = NULL,
+    protected readonly EntityTypeManagerInterface $entityTypeManagerService,
+    protected readonly AccountProxyInterface $currentUserService,
+    protected readonly CsrfTokenGenerator $csrfToken,
+    protected readonly ?RouteMatchInterface $currentRouteMatch = NULL,
   ) {}
 
   /**

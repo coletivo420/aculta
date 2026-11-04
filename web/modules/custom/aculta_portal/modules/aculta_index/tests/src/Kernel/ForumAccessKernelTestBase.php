@@ -80,10 +80,8 @@ abstract class ForumAccessKernelTestBase extends KernelTestBase {
     $negotiator->method('getActiveDomain')->willReturnCallback(
       static fn (bool $reset = FALSE): ?DomainInterface => \Drupal::service('domain.negotiator')->getActiveDomain($reset),
     );
-    $negotiator->method('setActiveDomain')->willReturnCallback(
-      static function (DomainInterface $domain): void {
-        \Drupal::service('domain.negotiator')->setActiveDomain($domain);
-      },
+    $negotiator->method('getContext')->willReturnCallback(
+      static fn () => \Drupal::service('domain.negotiator')->getContext(),
     );
     $container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
       $entityTypeManager,

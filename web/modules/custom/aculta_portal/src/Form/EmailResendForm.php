@@ -19,11 +19,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class EmailResendForm extends FormBase {
 
   public function __construct(
-    private readonly EmailConfirmationRequester $requester,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountProxyInterface $currentUser,
-    private readonly MessengerInterface $portalMessenger,
-    private readonly TranslationInterface $translation,
+    protected readonly EmailConfirmationRequester $requester,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly MessengerInterface $portalMessenger,
+    protected readonly TranslationInterface $translation,
   ) {}
 
   public static function create(ContainerInterface $container): static {

@@ -94,11 +94,11 @@ class aculta_H5PEditorUtilities {
 
     $css = array_merge(
       $this->getAssets(\H5PCore::$styles, $corePath),
-      $this->getAssets(\H5PEditor::$styles, $editorPath)
+      $this->getAssets(\H5peditor::$styles, $editorPath)
     );
     $js = array_merge(
       $this->getAssets(\H5PCore::$scripts, $corePath),
-      $this->getAssets(\H5PEditor::$scripts, $editorPath, ['scripts/h5peditor-editor.js'])
+      $this->getAssets(\H5peditor::$scripts, $editorPath, ['scripts/h5peditor-editor.js'])
     );
     $js[] = $this->getTranslationFilePath();
 

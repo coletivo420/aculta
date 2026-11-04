@@ -37,7 +37,7 @@ final class EventLocationForm extends ContentEntityForm {
     EntityRepositoryInterface $entity_repository,
     EntityTypeBundleInfoInterface $entity_type_bundle_info,
     TimeInterface $time,
-    private readonly EventPermissionPolicy $permissionPolicy,
+    protected readonly EventPermissionPolicy $permissionPolicy,
   ) {
     parent::__construct($entity_repository, $entity_type_bundle_info, $time);
   }

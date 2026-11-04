@@ -15,8 +15,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class TurnstileSettingsForm extends FormBase implements ContainerInjectionInterface {
 
   public function __construct(
-    private readonly TurnstileToggle $toggle,
-    private readonly AccountProxyInterface $currentUser,
+    protected readonly TurnstileToggle $toggle,
+    protected readonly AccountProxyInterface $currentUser,
   ) {}
 
   public static function create(ContainerInterface $container): static {

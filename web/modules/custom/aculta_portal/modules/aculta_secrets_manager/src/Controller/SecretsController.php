@@ -256,11 +256,10 @@ final class SecretsController {
     return [
       '#type' => 'container',
       '#attributes' => [
-        'data-portal-ui' => 'secrets-section',
+        'data-portal-ui' => 'secrets-section secrets-tabs-panel',
         'id' => 'credenciais-' . $environment,
         'role' => 'tabpanel',
         'aria-labelledby' => $tab_id,
-        'data-portal-ui' => 'secrets-tabs-panel',
       ],
       'title' => [
         '#theme' => 'aculta_portal_element',

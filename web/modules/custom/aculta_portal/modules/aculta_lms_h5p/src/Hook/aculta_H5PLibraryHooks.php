@@ -208,7 +208,7 @@ final class aculta_H5PLibraryHooks {
       'js' => [],
       'css' => ['base' => []],
     ];
-    foreach (\H5PEditor::$scripts as $script) {
+    foreach (\H5peditor::$scripts as $script) {
       $url = $this->fileUrlGenerator->generate("assets://h5p/h5p-editor/{$script}", [
         'absolute' => TRUE,
         'language' => FALSE,
@@ -219,7 +219,7 @@ final class aculta_H5PLibraryHooks {
     // path here makes Drupal prepend it twice and prevents editor startup.
     $application_script = 'js/h5peditor-application.js';
     $libraries['h5p.editor']['js'][$application_script] = ['preprocess' => FALSE];
-    foreach (\H5PEditor::$styles as $style) {
+    foreach (\H5peditor::$styles as $style) {
       $url = $this->fileUrlGenerator->generate("assets://h5p/h5p-editor/{$style}", [
         'absolute' => TRUE,
         'language' => FALSE,

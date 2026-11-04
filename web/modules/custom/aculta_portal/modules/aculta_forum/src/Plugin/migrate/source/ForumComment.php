@@ -38,15 +38,15 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
   /**
    * Maximum number of source Comments loaded into one batch.
    */
-  private int $batchSize;
+  protected int $batchSize;
 
   public function __construct(
     array $configuration,
     string $plugin_id,
     array $plugin_definition,
     MigrationInterface $migration,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly DomainPurposeManager $domainPurposeManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $migration);
     $this->batchSize = (int) ($configuration['comment_batch_size'] ?? self::DEFAULT_BATCH_SIZE);

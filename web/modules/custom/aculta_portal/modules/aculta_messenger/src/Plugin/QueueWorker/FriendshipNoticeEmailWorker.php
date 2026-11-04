@@ -49,13 +49,13 @@ final class FriendshipNoticeEmailWorker extends QueueWorkerBase implements Conta
     array $configuration,
     string $plugin_id,
     mixed $plugin_definition,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly MessageNotifyInterface $messageNotify,
-    private readonly AcultaMailerInterface $mailer,
-    private readonly DomainPurposeManager $domainPurposeManager,
-    private readonly LockBackendInterface $lock,
-    private readonly AvisoPreferenciasInterface $preferences,
-    private readonly EmailConfirmationPolicy $emailPolicy,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly MessageNotifyInterface $messageNotify,
+    protected readonly AcultaMailerInterface $mailer,
+    protected readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly LockBackendInterface $lock,
+    protected readonly AvisoPreferenciasInterface $preferences,
+    protected readonly EmailConfirmationPolicy $emailPolicy,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

@@ -25,7 +25,7 @@ final class WikiEmailCronQueueWorker extends QueueWorkerBase implements Containe
     array $configuration,
     string $plugin_id,
     mixed $plugin_definition,
-    private readonly WikiNoticeEmailWorker $worker,
+    protected readonly WikiNoticeEmailWorker $worker,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

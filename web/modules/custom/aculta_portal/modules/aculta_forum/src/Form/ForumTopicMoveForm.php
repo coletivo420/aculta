@@ -20,9 +20,9 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class ForumTopicMoveForm extends FormBase {
 
   public function __construct(
-    private readonly ForumTopicMover $mover,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountInterface $account,
+    protected readonly ForumTopicMover $mover,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly AccountInterface $account,
   ) {}
 
   /**

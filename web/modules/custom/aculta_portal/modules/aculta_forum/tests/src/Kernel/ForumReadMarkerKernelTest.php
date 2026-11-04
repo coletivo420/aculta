@@ -8,6 +8,7 @@ use Drupal\aculta_forum\Service\ForumReadMarker;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\domain\DomainNegotiationContext;
 use Drupal\domain\Entity\Domain;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -109,9 +110,11 @@ final class ForumReadMarkerKernelTest extends KernelTestBase {
     $negotiator->method('getActiveDomain')->willReturnCallback(static function () use (&$activeDomain): Domain {
       return $activeDomain;
     });
-    $negotiator->method('setActiveDomain')->willReturnCallback(static function (Domain $domain) use (&$activeDomain): void {
+    $context = $this->createMock(DomainNegotiationContext::class);
+    $context->method('setDomain')->willReturnCallback(static function (Domain $domain) use (&$activeDomain): void {
       $activeDomain = $domain;
     });
+    $negotiator->method('getContext')->willReturn($context);
     $purposeManager = new DomainPurposeManager(
       $this->container->get('entity_type.manager'),
       $negotiator,

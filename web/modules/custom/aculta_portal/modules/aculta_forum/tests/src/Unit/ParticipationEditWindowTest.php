@@ -80,7 +80,7 @@ final class ParticipationEditWindowTest extends TestCase {
   private function window(?int $minutes, int $now, iterable $exemptions = []): ParticipationEditWindow {
     $config = new class($minutes) extends Config {
 
-      public function __construct(private readonly ?int $minutes) {}
+      public function __construct(protected readonly ?int $minutes) {}
 
       /**
        * {@inheritdoc}
@@ -178,7 +178,7 @@ final class ParticipationEditWindowTest extends TestCase {
  */
 final class ParticipationEditWindowFieldList extends FieldItemList {
 
-  public function __construct(private readonly int $timestamp, private readonly bool $empty = FALSE) {}
+  public function __construct(protected readonly int $timestamp, protected readonly bool $empty = FALSE) {}
 
   /**
    * {@inheritdoc}

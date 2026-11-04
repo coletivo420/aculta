@@ -21,10 +21,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class AssociadoRequestForm extends FormBase {
 
   public function __construct(
-    private readonly AssociadoMarker $marker,
-    private readonly AccountInterface $currentUserService,
-    private readonly DateFormatterInterface $dateFormatter,
-    private readonly EmailConfirmationPolicy $emailConfirmation,
+    protected readonly AssociadoMarker $marker,
+    protected readonly AccountInterface $currentUserService,
+    protected readonly DateFormatterInterface $dateFormatter,
+    protected readonly EmailConfirmationPolicy $emailConfirmation,
   ) {}
 
   public static function create(ContainerInterface $container): static {

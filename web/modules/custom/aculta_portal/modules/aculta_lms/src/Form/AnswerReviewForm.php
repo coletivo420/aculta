@@ -24,9 +24,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class AnswerReviewForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountProxyInterface $currentUser,
-    private readonly Connection $database,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly Connection $database,
   ) {}
 
   /**

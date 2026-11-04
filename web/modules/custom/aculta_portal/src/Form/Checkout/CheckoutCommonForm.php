@@ -22,15 +22,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class CheckoutCommonForm extends ConfigFormBase {
 
-  private CheckoutContextRegistry $registry;
+  protected CheckoutContextRegistry $registry;
 
-  private CheckoutPolicyManager $policy;
+  protected CheckoutPolicyManager $policy;
 
-  private EntityTypeManagerInterface $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
-  private RouteBuilderInterface $routeBuilder;
+  protected RouteBuilderInterface $routeBuilder;
 
-  private LoggerInterface $logger;
+  protected LoggerInterface $logger;
 
   public static function create(ContainerInterface $container): static {
     $instance = parent::create($container);

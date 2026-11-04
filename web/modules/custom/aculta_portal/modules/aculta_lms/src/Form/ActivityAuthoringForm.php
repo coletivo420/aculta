@@ -24,9 +24,9 @@ final class ActivityAuthoringForm extends FormBase {
   private const ACTIVITY_TYPES = ['true_false', 'select', 'fill_blanks', 'free_text', 'file_upload'];
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly CurrentRouteMatch $currentRouteMatch,
-    private readonly CourseAuthoringAccessCheck $accessCheck,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly CurrentRouteMatch $currentRouteMatch,
+    protected readonly CourseAuthoringAccessCheck $accessCheck,
   ) {}
 
   /**

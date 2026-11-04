@@ -6,6 +6,7 @@ namespace Drupal\aculta_patcher\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 
 /**
  * Administration table for Composer patch records. */
@@ -70,7 +71,7 @@ final class AcultaPatchListBuilder extends ConfigEntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultOperations(EntityInterface $entity/* , ?CacheableMetadata $cacheability = NULL */) {
+  public function getDefaultOperations(EntityInterface $entity, ?CacheableMetadata $cacheability = NULL) {
     $args = func_get_args();
     $operations = parent::getDefaultOperations(...$args);
     assert($entity instanceof AcultaPatch);

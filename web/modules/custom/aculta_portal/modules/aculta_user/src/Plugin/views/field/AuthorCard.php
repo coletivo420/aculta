@@ -30,8 +30,8 @@ final class AuthorCard extends FieldPluginBase implements ContainerFactoryPlugin
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly AuthorCardBuilder $cardBuilder,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly AuthorCardBuilder $cardBuilder,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

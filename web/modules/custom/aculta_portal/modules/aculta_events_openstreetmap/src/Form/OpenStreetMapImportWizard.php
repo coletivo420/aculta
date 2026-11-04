@@ -48,8 +48,8 @@ final class OpenStreetMapImportWizard extends FormBase {
   /**
    * Creates a wizard using the active OSM API and local location storage. */
   public function __construct(
-    private readonly OpenStreetMapApiClient $osm,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly OpenStreetMapApiClient $osm,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   /**

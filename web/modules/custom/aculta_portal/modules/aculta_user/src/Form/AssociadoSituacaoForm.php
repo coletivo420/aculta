@@ -22,11 +22,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class AssociadoSituacaoForm extends FormBase {
 
   public function __construct(
-    private readonly AssociadoMarker $marker,
-    private readonly AccountInterface $currentUserService,
-    private readonly LoggerChannelInterface $logger,
-    private readonly EntityTypeManagerInterface $entityTypeManagerService,
-    private readonly DateFormatterInterface $dateFormatter,
+    protected readonly AssociadoMarker $marker,
+    protected readonly AccountInterface $currentUserService,
+    protected readonly LoggerChannelInterface $logger,
+    protected readonly EntityTypeManagerInterface $entityTypeManagerService,
+    protected readonly DateFormatterInterface $dateFormatter,
   ) {}
 
   public static function create(ContainerInterface $container): static {

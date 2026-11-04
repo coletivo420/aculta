@@ -27,7 +27,7 @@ final class EmailConfirmationResponseAccessHandler extends AcultaMailConfirmatio
   /**
    * Creates the handler with the confirmation service.
    */
-  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, RequestStack $request_stack, private readonly AcultaMailConfirmerManagerInterface $confirmationManager) {
+  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, RequestStack $request_stack, protected readonly AcultaMailConfirmerManagerInterface $confirmationManager) {
     parent::__construct($entity_type, $config_factory, $request_stack);
   }
 

@@ -36,14 +36,14 @@ final class MailSendWorker extends QueueWorkerBase implements ContainerFactoryPl
     array $configuration,
     string $plugin_id,
     mixed $plugin_definition,
-    private readonly AcultaMailerInterface $mailer,
-    private readonly MailTypeRegistry $types,
-    private readonly DeliveryPlanner $planner,
-    private readonly QueueFactory $queues,
-    private readonly TimeInterface $time,
-    private readonly LoggerChannelInterface $logger,
-    private readonly MailLogRecorder $log,
-    private readonly MailPolicyResolver $policies,
+    protected readonly AcultaMailerInterface $mailer,
+    protected readonly MailTypeRegistry $types,
+    protected readonly DeliveryPlanner $planner,
+    protected readonly QueueFactory $queues,
+    protected readonly TimeInterface $time,
+    protected readonly LoggerChannelInterface $logger,
+    protected readonly MailLogRecorder $log,
+    protected readonly MailPolicyResolver $policies,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

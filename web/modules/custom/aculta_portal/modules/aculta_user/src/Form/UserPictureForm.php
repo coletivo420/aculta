@@ -37,14 +37,14 @@ final class UserPictureForm extends FormBase {
   public const UPLOAD_LOCATION = 'public://pictures/uploads';
 
   public function __construct(
-    private EntityTypeManagerInterface $entityTypeManagerService,
-    private AccountInterface $currentUserService,
-    private UserDataInterface $userData,
-    private CsrfTokenGenerator $csrfToken,
-    private AvatarPool $avatarPool,
-    private readonly ImageRenderer $imageRenderer,
-    private readonly ConsumerUploadPolicy $uploadPolicy,
-    private readonly RendererInterface $renderer,
+    protected EntityTypeManagerInterface $entityTypeManagerService,
+    protected AccountInterface $currentUserService,
+    protected UserDataInterface $userData,
+    protected CsrfTokenGenerator $csrfToken,
+    protected AvatarPool $avatarPool,
+    protected readonly ImageRenderer $imageRenderer,
+    protected readonly ConsumerUploadPolicy $uploadPolicy,
+    protected readonly RendererInterface $renderer,
   ) {}
 
   public static function create(ContainerInterface $container): static {

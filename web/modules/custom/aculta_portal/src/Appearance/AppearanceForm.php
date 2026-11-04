@@ -15,9 +15,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class AppearanceForm extends FormBase implements ContainerInjectionInterface {
 
   public function __construct(
-    private readonly ColorModePreference $preference,
-    private readonly AccountProxyInterface $currentUser,
-    private readonly SettingsTabs $settingsTabs,
+    protected readonly ColorModePreference $preference,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly SettingsTabs $settingsTabs,
   ) {}
 
   public static function create(ContainerInterface $container): static {

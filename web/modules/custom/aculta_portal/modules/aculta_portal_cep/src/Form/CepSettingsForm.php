@@ -22,7 +22,7 @@ final class CepSettingsForm extends ConfigFormBase {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typed_config,
-    private readonly CepSources $sources,
+    protected readonly CepSources $sources,
   ) {
     parent::__construct($config_factory, $typed_config);
   }

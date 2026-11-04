@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Controller;
 
 use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_forum\Form\ForumPostRevisionSelectionForm;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;

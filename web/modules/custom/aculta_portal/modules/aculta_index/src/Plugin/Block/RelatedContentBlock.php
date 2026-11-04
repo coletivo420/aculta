@@ -58,9 +58,9 @@ final class RelatedContentBlock extends BlockBase implements ContainerFactoryPlu
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly ContentIndexRelationQuery $relationQuery,
-    private readonly AccountInterface $currentUser,
-    private readonly RouteMatchInterface $routeMatch,
+    protected readonly ContentIndexRelationQuery $relationQuery,
+    protected readonly AccountInterface $currentUser,
+    protected readonly RouteMatchInterface $routeMatch,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

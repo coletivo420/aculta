@@ -35,7 +35,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 )]
 final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneInterface {
 
-  private InlineFormManager $inlineFormManager;
+  protected InlineFormManager $inlineFormManager;
 
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?CheckoutFlowInterface $checkout_flow = NULL) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition, $checkout_flow);

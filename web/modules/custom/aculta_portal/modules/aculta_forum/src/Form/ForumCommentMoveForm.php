@@ -18,8 +18,8 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class ForumCommentMoveForm extends FormBase {
 
   public function __construct(
-    private readonly ForumCommentMover $mover,
-    private readonly AccountInterface $account,
+    protected readonly ForumCommentMover $mover,
+    protected readonly AccountInterface $account,
   ) {}
 
   /**

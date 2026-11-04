@@ -27,13 +27,13 @@ final class ForumCategoryTopicCount extends FieldPluginBase implements Container
    *
    * @var array<int, int>
    */
-  private array $counts = [];
+  protected array $counts = [];
 
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly Connection $database,
+    protected readonly Connection $database,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

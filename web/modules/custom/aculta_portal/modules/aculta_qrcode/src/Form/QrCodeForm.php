@@ -23,12 +23,12 @@ final class QrCodeForm extends ContentEntityForm {
   /**
    * Serviço de criação e validação.
    */
-  private QrCodeManager $manager;
+  protected QrCodeManager $manager;
 
   /**
    * Presets, usados para validar as cores personalizadas.
    */
-  private QrCodePresetRegistry $presets;
+  protected QrCodePresetRegistry $presets;
 
   /**
    * {@inheritdoc}

@@ -66,7 +66,7 @@ final class UserEmailChangeHooks {
     // email change confirmation is disabled.
     $original = $entity->getOriginal();
     if (!$original
-      || drupal_static('aculta_mail_confirmer_user_' . $entity->id())
+      || $this->isConfirmationGuardActive((int) $entity->id())
       || ($new_email = $entity->getEmail()) == ($old_email = $original->getEmail())
       || !($config = $this->configFactory->get('aculta_mail_confirmer_user.settings')->get('user_email_change'))
       || !$config['enabled']) {
@@ -145,11 +145,9 @@ final class UserEmailChangeHooks {
           }
 
           $user->setEmail($new_email);
-          // Prevents from cycling email change confirmation. The static must be
-          // set by reference: drupal_static() with a default does not overwrite
-          // a key that presave already initialized to NULL in this request.
-          $confirmation_guard =& drupal_static('aculta_mail_confirmer_user_' . $user_id);
-          $confirmation_guard = TRUE;
+          // Prevents the user presave hook from starting another confirmation
+          // while this request persists the confirmed address.
+          \Drupal::cache('memory')->set('aculta_mail_confirmer_user_' . $user_id, TRUE);
           $user->save();
           $this->messenger->addStatus($this->currentUser->id() == $user_id
             ? t('Your email address has been updated to %mail', ['%mail' => $new_email])
@@ -161,6 +159,12 @@ final class UserEmailChangeHooks {
           break;
       }
     }
+  }
+
+  /** Checks the request-local guard set while saving a confirmed address. */
+  private function isConfirmationGuardActive(int $userId): bool {
+    $entry = \Drupal::cache('memory')->get('aculta_mail_confirmer_user_' . $userId);
+    return $entry !== FALSE && $entry->data === TRUE;
   }
 
 }

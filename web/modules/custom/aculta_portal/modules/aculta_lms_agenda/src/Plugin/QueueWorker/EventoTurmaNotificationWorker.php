@@ -38,11 +38,11 @@ final class EventoTurmaNotificationWorker extends QueueWorkerBase implements Con
     array $configuration,
     string $plugin_id,
     mixed $plugin_definition,
-    private readonly EntityTypeManagerInterface $entidades,
-    private readonly UserDataInterface $dadosUsuario,
-    private readonly AcultaMailerInterface $mailer,
-    private readonly UuidInterface $uuid,
-    private readonly DomainPurposeManager $purpose,
+    protected readonly EntityTypeManagerInterface $entidades,
+    protected readonly UserDataInterface $dadosUsuario,
+    protected readonly AcultaMailerInterface $mailer,
+    protected readonly UuidInterface $uuid,
+    protected readonly DomainPurposeManager $purpose,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

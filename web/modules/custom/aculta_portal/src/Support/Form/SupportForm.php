@@ -20,11 +20,11 @@ use Drupal\Component\Utility\Html;
 final class SupportForm extends FormBase {
 
   public function __construct(
-    private readonly ConfigFactoryInterface $configs,
-    private readonly EntityTypeManagerInterface $entities,
-    private readonly BlockManagerInterface $blockManager,
-    private readonly DomainPurposeManager $purposes,
-    private readonly ?SupportAmountsProviderInterface $campanhas = NULL,
+    protected readonly ConfigFactoryInterface $configs,
+    protected readonly EntityTypeManagerInterface $entities,
+    protected readonly BlockManagerInterface $blockManager,
+    protected readonly DomainPurposeManager $purposes,
+    protected readonly ?SupportAmountsProviderInterface $campanhas = NULL,
   ) {}
 
   public static function create(ContainerInterface $container): static {

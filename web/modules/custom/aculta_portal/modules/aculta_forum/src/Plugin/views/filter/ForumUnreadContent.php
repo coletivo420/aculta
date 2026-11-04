@@ -20,7 +20,7 @@ final class ForumUnreadContent extends FilterPluginBase implements ContainerFact
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly AccountInterface $currentUser,
+    protected readonly AccountInterface $currentUser,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

@@ -188,7 +188,7 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
   private function valueField(mixed $value): FieldItemListInterface {
     return new class($value) extends FieldItemList {
 
-      public function __construct(private readonly mixed $fieldValue) {}
+      public function __construct(protected readonly mixed $fieldValue) {}
 
       public function isEmpty(): bool {
         return $this->fieldValue === NULL;

@@ -24,11 +24,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class CourseCertificateIssueForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly CourseCertificateManagerInterface $certificates,
-    private readonly CurrentRouteMatch $certificateRouteMatch,
-    private readonly AccountProxyInterface $account,
-    private readonly DateFormatterInterface $dateFormatter,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly CourseCertificateManagerInterface $certificates,
+    protected readonly CurrentRouteMatch $certificateRouteMatch,
+    protected readonly AccountProxyInterface $account,
+    protected readonly DateFormatterInterface $dateFormatter,
   ) {}
 
   /**

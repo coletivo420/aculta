@@ -51,10 +51,10 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
     $plugin_definition,
     CheckoutFlowInterface $checkout_flow,
     EntityTypeManagerInterface $entity_type_manager,
-    private readonly MercadoPagoSubscriptionRecorder $assinaturas,
-    private readonly DomainPurposeManager $purposes,
-    private readonly LoggerChannelInterface $logger,
-    private readonly MessengerInterface $avisos,
+    protected readonly MercadoPagoSubscriptionRecorder $assinaturas,
+    protected readonly DomainPurposeManager $purposes,
+    protected readonly LoggerChannelInterface $logger,
+    protected readonly MessengerInterface $avisos,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $checkout_flow, $entity_type_manager);
   }

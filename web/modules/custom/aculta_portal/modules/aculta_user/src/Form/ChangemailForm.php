@@ -38,9 +38,9 @@ final class ChangemailForm extends FormBase {
   private const CONFIRMER_SETTING = 'aculta_mail_confirmer_user.settings';
 
   public function __construct(
-    private readonly ConfigFactoryInterface $confirmerConfig,
-    private readonly PasswordInterface $password,
-    private readonly FloodInterface $flood,
+    protected readonly ConfigFactoryInterface $confirmerConfig,
+    protected readonly PasswordInterface $password,
+    protected readonly FloodInterface $flood,
   ) {
   }
 

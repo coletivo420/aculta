@@ -45,9 +45,9 @@ final class UpcomingEventsBlock extends BlockBase implements ContainerFactoryPlu
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly EventCatalogue $catalogue,
-    private readonly DomainPurposeManager $purposes,
-    private readonly TimeInterface $time,
+    protected readonly EventCatalogue $catalogue,
+    protected readonly DomainPurposeManager $purposes,
+    protected readonly TimeInterface $time,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

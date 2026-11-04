@@ -29,9 +29,9 @@ final class EventDateOccurrenceForm extends FormBase {
    * Construtor.
    */
   public function __construct(
-    private readonly EntityTypeManagerInterface $entities,
-    private readonly EventDateOccurrences $ocorrencias,
-    private readonly TimeInterface $tempo,
+    protected readonly EntityTypeManagerInterface $entities,
+    protected readonly EventDateOccurrences $ocorrencias,
+    protected readonly TimeInterface $tempo,
   ) {}
 
   /**

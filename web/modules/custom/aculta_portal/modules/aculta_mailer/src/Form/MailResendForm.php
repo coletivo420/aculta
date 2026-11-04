@@ -28,8 +28,8 @@ final class MailResendForm extends ConfirmFormBase {
   ];
 
   public function __construct(
-    private readonly MailResend $resend,
-    private readonly EntityTypeManagerInterface $entityTypes,
+    protected readonly MailResend $resend,
+    protected readonly EntityTypeManagerInterface $entityTypes,
   ) {}
 
   /**

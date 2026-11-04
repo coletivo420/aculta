@@ -23,6 +23,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\domain\DomainInterface;
+use Drupal\domain\DomainNegotiationContext;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -159,9 +160,11 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $negotiator->method('getActiveDomain')->willReturnCallback(static function () use (&$activeDomain): DomainInterface {
       return $activeDomain;
     });
-    $negotiator->method('setActiveDomain')->willReturnCallback(static function (DomainInterface $domain) use (&$activeDomain): void {
+    $context = $this->createMock(DomainNegotiationContext::class);
+    $context->method('setDomain')->willReturnCallback(static function (DomainInterface $domain) use (&$activeDomain): void {
       $activeDomain = $domain;
     });
+    $negotiator->method('getContext')->willReturn($context);
 
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('loadMultiple')->with(['1', '2'])->willReturn([
@@ -221,9 +224,11 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $negotiator->method('getActiveDomain')->willReturnCallback(static function () use (&$activeDomain): DomainInterface {
       return $activeDomain;
     });
-    $negotiator->method('setActiveDomain')->willReturnCallback(static function (DomainInterface $domain) use (&$activeDomain): void {
+    $context = $this->createMock(DomainNegotiationContext::class);
+    $context->method('setDomain')->willReturnCallback(static function (DomainInterface $domain) use (&$activeDomain): void {
       $activeDomain = $domain;
     });
+    $negotiator->method('getContext')->willReturn($context);
 
     $wikiOne = $this->purposeTranslation('wiki_entry', $negotiator, $wikiDomain, 'wiki-entry:1');
     $forum = $this->purposeTranslation('aculta_forum_topic', $negotiator, $forumDomain, 'forum-topic:2');
@@ -285,9 +290,11 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $negotiator->method('getActiveDomain')->willReturnCallback(static function () use (&$activeDomain): DomainInterface {
       return $activeDomain;
     });
-    $negotiator->method('setActiveDomain')->willReturnCallback(static function (DomainInterface $domain) use (&$activeDomain): void {
+    $context = $this->createMock(DomainNegotiationContext::class);
+    $context->method('setDomain')->willReturnCallback(static function (DomainInterface $domain) use (&$activeDomain): void {
       $activeDomain = $domain;
     });
+    $negotiator->method('getContext')->willReturn($context);
 
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('loadMultiple')->with(['1'])->willReturn([

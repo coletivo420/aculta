@@ -35,19 +35,19 @@ final class EventOrganizationModalForm extends FormBase {
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'aculta_events.permission_policy')]
-    private readonly EventPermissionPolicy $permissionPolicy,
+    protected readonly EventPermissionPolicy $permissionPolicy,
     #[Autowire(service: 'aculta_user.organization_access_service')]
-    private readonly OrganizationAccessService $orgAccessService,
+    protected readonly OrganizationAccessService $orgAccessService,
     #[Autowire(service: 'aculta_user.organization_membership_manager')]
-    private readonly OrganizationMembershipManager $membershipManager,
+    protected readonly OrganizationMembershipManager $membershipManager,
     #[Autowire(service: 'aculta_user.ownership_claim_service')]
-    private readonly ?OwnershipClaimService $claimService = NULL,
+    protected readonly ?OwnershipClaimService $claimService = NULL,
     #[Autowire(service: 'aculta_contributions.lifecycle')]
-    private readonly ?ContributionLifecycle $contributions = NULL,
+    protected readonly ?ContributionLifecycle $contributions = NULL,
     #[Autowire(service: 'aculta_events.organization_contribution_adapter')]
-    private readonly ?OrganizationContributionAdapter $organizationAdapter = NULL,
+    protected readonly ?OrganizationContributionAdapter $organizationAdapter = NULL,
   ) {}
 
   /**

@@ -85,7 +85,7 @@ final class LearningNoticeStaleAnswerTest extends UnitTestCase {
   private function field(mixed $value): FieldItemListInterface {
     return new class($value) extends FieldItemList {
 
-      public function __construct(private readonly mixed $scalar) {
+      public function __construct(protected readonly mixed $scalar) {
         parent::__construct(DataDefinition::create('field_item_list'));
       }
 

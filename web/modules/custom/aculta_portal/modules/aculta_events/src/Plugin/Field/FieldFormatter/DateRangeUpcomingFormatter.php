@@ -48,7 +48,7 @@ final class DateRangeUpcomingFormatter extends FormatterBase {
     $label,
     $view_mode,
     array $third_party_settings,
-    private readonly TimeInterface $tempo,
+    protected readonly TimeInterface $tempo,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
   }

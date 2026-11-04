@@ -29,7 +29,7 @@ final class MailPolicyForm extends ConfigFormBase {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typedConfigManager,
-    private readonly MailTypeRegistry $types,
+    protected readonly MailTypeRegistry $types,
   ) {
     parent::__construct($config_factory, $typedConfigManager);
   }

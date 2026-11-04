@@ -37,7 +37,7 @@ final class AcultaPdfMediaFormatter extends FormatterBase implements ContainerFa
     $label,
     $view_mode,
     array $third_party_settings,
-    private readonly PdfViewerBuilderInterface $viewerBuilder,
+    protected readonly PdfViewerBuilderInterface $viewerBuilder,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
   }

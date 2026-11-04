@@ -23,9 +23,9 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 final class WikiProposalWithdrawalForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly WikiProposalWithdrawal $withdrawal,
-    private readonly ContributionLifecycle $contributions,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly WikiProposalWithdrawal $withdrawal,
+    protected readonly ContributionLifecycle $contributions,
     MessengerInterface $messenger,
   ) {
     $this->messenger = $messenger;

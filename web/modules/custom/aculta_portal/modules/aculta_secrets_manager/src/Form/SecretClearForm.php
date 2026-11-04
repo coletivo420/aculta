@@ -24,7 +24,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final class SecretClearForm extends FormBase implements ContainerInjectionInterface {
 
   public function __construct(
-    private readonly SecretsManager $secrets,
+    protected readonly SecretsManager $secrets,
   ) {}
 
   /**

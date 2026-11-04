@@ -44,9 +44,9 @@ final class ProximosEventosBlock extends BlockBase implements ContainerFactoryPl
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly AgendaEntriesProvider $agenda,
-    private readonly AccountInterface $usuario,
-    private readonly TimeInterface $tempo,
+    protected readonly AgendaEntriesProvider $agenda,
+    protected readonly AccountInterface $usuario,
+    protected readonly TimeInterface $tempo,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

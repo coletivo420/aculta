@@ -26,8 +26,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final class EventDateDeleteForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entities,
-    private readonly EventDateListBuilder $dateListBuilder,
+    protected readonly EntityTypeManagerInterface $entities,
+    protected readonly EventDateListBuilder $dateListBuilder,
   ) {}
 
   /**

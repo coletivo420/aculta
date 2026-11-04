@@ -28,15 +28,15 @@ final class EventContributionRevisionForm extends FormBase {
   /**
    * The contribution being revised in the current form build.
    */
-  private ?Contribution $proposal = NULL;
+  protected ?Contribution $proposal = NULL;
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
-    private readonly EntityTypeManagerInterface $entities,
+    protected readonly EntityTypeManagerInterface $entities,
     #[Autowire(service: 'aculta_contributions.lifecycle')]
-    private readonly ContributionLifecycle $lifecycle,
+    protected readonly ContributionLifecycle $lifecycle,
     #[Autowire(service: 'aculta_contributions.adapter_registry')]
-    private readonly ContributionAdapterRegistry $adapters,
+    protected readonly ContributionAdapterRegistry $adapters,
   ) {}
 
   /**

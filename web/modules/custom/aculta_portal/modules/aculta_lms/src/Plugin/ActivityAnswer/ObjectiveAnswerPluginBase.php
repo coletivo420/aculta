@@ -10,6 +10,9 @@ use Drupal\aculta_lms\Learning\CourseActivity;
 /** Shared scorer dependency and stable-type check for objective plugins. */
 abstract class ObjectiveAnswerPluginBase implements ObjectiveAnswerPluginInterface {
 
+  /** Stable type identifier overridden by each concrete answer plugin. */
+  protected const ACTIVITY_TYPE = '';
+
   public function __construct(
     protected readonly ObjectiveAnswerScorer $scorer,
   ) {}

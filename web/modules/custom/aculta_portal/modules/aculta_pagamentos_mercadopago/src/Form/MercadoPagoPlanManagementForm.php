@@ -19,9 +19,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class MercadoPagoPlanManagementForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly MercadoPagoRecurrenceService $recurrence,
-    private readonly DomainPurposeManager $domainPurposes,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly MercadoPagoRecurrenceService $recurrence,
+    protected readonly DomainPurposeManager $domainPurposes,
   ) {}
 
   /**

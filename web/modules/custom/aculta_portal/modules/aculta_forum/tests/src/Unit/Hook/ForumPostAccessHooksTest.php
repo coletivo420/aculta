@@ -179,7 +179,7 @@ final class ForumPostAccessHooksTest extends TestCase {
  */
 final class ForumPostAccessFieldList extends FieldItemList {
 
-  public function __construct(private readonly mixed $target) {}
+  public function __construct(protected readonly mixed $target) {}
 
   /**
    * {@inheritdoc}

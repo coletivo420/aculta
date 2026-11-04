@@ -30,13 +30,13 @@ final class EventLocationModalForm extends FormBase {
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'aculta_events.permission_policy')]
-    private readonly EventPermissionPolicy $permissionPolicy,
+    protected readonly EventPermissionPolicy $permissionPolicy,
     #[Autowire(service: 'aculta_contributions.lifecycle')]
-    private readonly ?ContributionLifecycle $contributions = NULL,
+    protected readonly ?ContributionLifecycle $contributions = NULL,
     #[Autowire(service: 'aculta_events.location_contribution_adapter')]
-    private readonly ?LocationContributionAdapter $locationAdapter = NULL,
+    protected readonly ?LocationContributionAdapter $locationAdapter = NULL,
   ) {}
 
   /**

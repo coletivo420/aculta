@@ -25,10 +25,10 @@ use Drupal\aculta_portal\Profile\PerfilDoPapel;
 final class ProfileVisibilityForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManagerService,
-    private readonly AccountProxyInterface $currentUserService,
-    private readonly SettingsTabs $settingsTabs,
-    private readonly ?RouteMatchInterface $currentRouteMatch = NULL,
+    protected readonly EntityTypeManagerInterface $entityTypeManagerService,
+    protected readonly AccountProxyInterface $currentUserService,
+    protected readonly SettingsTabs $settingsTabs,
+    protected readonly ?RouteMatchInterface $currentRouteMatch = NULL,
   ) {}
 
   /**

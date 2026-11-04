@@ -26,8 +26,8 @@ final class EventDateRuleForm extends FormBase {
    * Construtor.
    */
   public function __construct(
-    private readonly EntityTypeManagerInterface $entities,
-    private readonly RecurrenceRuleParser $parser,
+    protected readonly EntityTypeManagerInterface $entities,
+    protected readonly RecurrenceRuleParser $parser,
   ) {}
 
   /**

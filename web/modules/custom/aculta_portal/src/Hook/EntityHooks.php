@@ -9,6 +9,7 @@ use Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Routing\CurrentRouteMatch;
@@ -40,7 +41,7 @@ final class EntityHooks {
    * na mesma linha.
    */
   #[Hook('entity_operation_alter')]
-  public function entityOperationAlter(array &$operations, EntityInterface $entity): void {
+  public function entityOperationAlter(array &$operations, EntityInterface $entity, CacheableMetadata $cacheability): void {
     if ($entity->getEntityTypeId() === 'user') {
       unset($operations['view']);
     }

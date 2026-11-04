@@ -267,7 +267,7 @@ final class ParticipationEditWindowHooksTest extends TestCase {
  */
 final class ParticipationEditWindowHooksFieldList extends FieldItemList {
 
-  public function __construct(private readonly int $timestamp) {}
+  public function __construct(protected readonly int $timestamp) {}
 
   /**
    * {@inheritdoc}

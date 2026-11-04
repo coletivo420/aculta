@@ -21,9 +21,9 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class LmsCommentModerationForm extends FormBase {
 
   public function __construct(
-    private readonly LmsForumModerationManager $moderationManager,
-    private readonly AccountInterface $account,
-    private readonly EntityTypeManagerInterface $storageManager,
+    protected readonly LmsForumModerationManager $moderationManager,
+    protected readonly AccountInterface $account,
+    protected readonly EntityTypeManagerInterface $storageManager,
   ) {}
 
   /**

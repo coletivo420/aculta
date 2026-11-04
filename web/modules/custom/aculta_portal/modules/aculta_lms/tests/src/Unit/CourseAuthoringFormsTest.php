@@ -154,7 +154,7 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
   private function field(mixed $value): FieldItemListInterface {
     return new class($value) extends FieldItemList {
 
-      public function __construct(private readonly mixed $fieldValue) {}
+      public function __construct(protected readonly mixed $fieldValue) {}
 
       /**
        * Returns the fixture field value.

@@ -37,10 +37,10 @@ final class ForumAttachmentFormatter extends FormatterBase implements ContainerF
     $label,
     $view_mode,
     array $third_party_settings,
-    private readonly ImageRenderer $imageRenderer,
-    private readonly DocxViewerBuilder $docxViewerBuilder,
-    private readonly SpreadsheetViewerBuilder $spreadsheetViewerBuilder,
-    private readonly PdfViewerBuilderInterface $pdfViewerBuilder,
+    protected readonly ImageRenderer $imageRenderer,
+    protected readonly DocxViewerBuilder $docxViewerBuilder,
+    protected readonly SpreadsheetViewerBuilder $spreadsheetViewerBuilder,
+    protected readonly PdfViewerBuilderInterface $pdfViewerBuilder,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
   }

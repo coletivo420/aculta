@@ -17,9 +17,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class CourseCertificateRevokeForm extends FormBase {
 
   public function __construct(
-    private readonly CurrentRouteMatch $certificateRouteMatch,
-    private readonly CourseCertificateManagerInterface $certificates,
-    private readonly AccountProxyInterface $account,
+    protected readonly CurrentRouteMatch $certificateRouteMatch,
+    protected readonly CourseCertificateManagerInterface $certificates,
+    protected readonly AccountProxyInterface $account,
   ) {}
 
   public static function create(ContainerInterface $container): static {

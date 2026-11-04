@@ -313,7 +313,7 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Steps are dynamic based on the submission, so clear to recalculate.
-    unset($this->visibleSteps);
+    $this->visibleSteps = [];
     parent::submitForm($form, $form_state);
     // Override the parent redirect data.
     $nextStepId = $this->getNextStepId($form['#step_id']);

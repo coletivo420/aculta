@@ -15,6 +15,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Render\BareHtmlPageRendererInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\user\Form\UserLoginForm;
+use Drupal\user\LoginFinalizer;
 use Drupal\user\UserAuthenticationInterface;
 use Drupal\user\UserAuthInterface;
 use Drupal\user\UserFloodControlInterface;
@@ -44,11 +45,12 @@ final class LoginPopupForm extends UserLoginForm {
     UserAuthInterface|UserAuthenticationInterface $user_auth,
     RendererInterface $renderer,
     BareHtmlPageRendererInterface $bare_html_renderer,
-    private readonly DomainPurposeManager $domainPurpose,
-    private readonly AuthIntegrationManager $authIntegration,
-    private readonly ModuleHandlerInterface $moduleHandler,
+    LoginFinalizer $login_finalizer,
+    protected readonly DomainPurposeManager $domainPurpose,
+    protected readonly AuthIntegrationManager $authIntegration,
+    protected readonly ModuleHandlerInterface $moduleHandler,
   ) {
-    parent::__construct($user_flood_control, $user_storage, $user_auth, $renderer, $bare_html_renderer);
+    parent::__construct($user_flood_control, $user_storage, $user_auth, $renderer, $bare_html_renderer, $login_finalizer);
   }
 
   /**
@@ -61,6 +63,7 @@ final class LoginPopupForm extends UserLoginForm {
       $container->get('user.auth'),
       $container->get('renderer'),
       $container->get('bare_html_page_renderer'),
+      $container->get(LoginFinalizer::class),
       $container->get('aculta_portal.domain_purpose'),
       $container->get('aculta_portal.auth_integration'),
       $container->get('module_handler'),
@@ -239,7 +242,10 @@ final class LoginPopupForm extends UserLoginForm {
     if (empty($uid)) {
       return;
     }
-    user_login_finalize($this->userStorage->load($uid));
+    $account = $this->userStorage->load($uid);
+    if ($account instanceof \Drupal\user\UserInterface) {
+      $this->loginFinalizer->finalizeLogin($account);
+    }
   }
 
   /**

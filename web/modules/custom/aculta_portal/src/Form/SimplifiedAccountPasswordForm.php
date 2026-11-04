@@ -20,8 +20,8 @@ final class SimplifiedAccountPasswordForm extends FormBase {
    * Cria o formulário.
    */
   public function __construct(
-    private readonly UserDataInterface $userData,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly UserDataInterface $userData,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   /**

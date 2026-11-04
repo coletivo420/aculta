@@ -56,8 +56,8 @@ final class StudioUploadEmbedForm extends FormBase {
     protected readonly AccountProxyInterface $currentUser,
     protected readonly DateFormatterInterface $dateFormatter,
     protected readonly UnusedFileCleaner $unusedFileCleaner,
-    private readonly ImageCleanup $imageCleanup,
-    private readonly TimeInterface $time,
+    protected readonly ImageCleanup $imageCleanup,
+    protected readonly TimeInterface $time,
   ) {}
 
   /**

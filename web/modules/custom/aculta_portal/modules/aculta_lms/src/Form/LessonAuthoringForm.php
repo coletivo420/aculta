@@ -21,9 +21,9 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class LessonAuthoringForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly CurrentRouteMatch $currentRouteMatch,
-    private readonly CourseAuthoringAccessCheck $accessCheck,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly CurrentRouteMatch $currentRouteMatch,
+    protected readonly CourseAuthoringAccessCheck $accessCheck,
   ) {}
 
   /**

@@ -31,12 +31,12 @@ final class ContentIndexUpdateWorker extends QueueWorkerBase implements Containe
     array $configuration,
     string $plugin_id,
     mixed $plugin_definition,
-    private readonly ContentIndexWorkManager $work,
-    private readonly ContentIndexGenerationManager $generations,
-    private readonly ContentIndexProviderRegistry $providers,
-    private readonly ContentIndexWriter $writer,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly LoggerInterface $logger,
+    protected readonly ContentIndexWorkManager $work,
+    protected readonly ContentIndexGenerationManager $generations,
+    protected readonly ContentIndexProviderRegistry $providers,
+    protected readonly ContentIndexWriter $writer,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly LoggerInterface $logger,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

@@ -149,7 +149,7 @@ final class ContentIndexMagazineAccessKernelTest extends KernelTestBase {
     self::assertInstanceOf(Domain::class, $mainDomain);
     $negotiator = $this->container->get('domain.negotiator');
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain($mainDomain);
+    $negotiator->getContext()->setDomain($mainDomain);
 
     $candidates = [
       [
@@ -220,7 +220,7 @@ final class ContentIndexMagazineAccessKernelTest extends KernelTestBase {
     self::assertSame('activity', $providers->findProviderIdForBundle('node', 'activity'));
     $negotiator = $this->container->get('domain.negotiator');
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain(Domain::load('aculta_org'));
+    $negotiator->getContext()->setDomain(Domain::load('aculta_org'));
     $result = $this->container->get('aculta_index.relation_query')->queryOutgoing(
       'node',
       (string) $publication->id(),

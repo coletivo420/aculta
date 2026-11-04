@@ -26,11 +26,11 @@ final class RetentionSettingsForm extends ConfigFormBase {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typed_config_manager,
-    private readonly MetricCatalog $catalog,
-    private readonly RetentionPolicy $retention,
-    private readonly AggregateStorageInterface $storage,
-    private readonly LoggerChannelFactoryInterface $auditLoggerFactory,
-    private readonly AccountProxyInterface $operator,
+    protected readonly MetricCatalog $catalog,
+    protected readonly RetentionPolicy $retention,
+    protected readonly AggregateStorageInterface $storage,
+    protected readonly LoggerChannelFactoryInterface $auditLoggerFactory,
+    protected readonly AccountProxyInterface $operator,
   ) {
     parent::__construct($config_factory, $typed_config_manager);
   }

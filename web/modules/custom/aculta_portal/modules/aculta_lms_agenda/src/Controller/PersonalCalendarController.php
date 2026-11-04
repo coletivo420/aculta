@@ -13,6 +13,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -73,7 +74,7 @@ final class PersonalCalendarController extends ControllerBase {
    */
   public function gerar(): Response {
     $token = $this->tokens->gerar((int) $this->usuario->id());
-    $url = $this->url('aculta_lms_agenda.exportar', ['token' => $token], ['absolute' => TRUE]);
+    $url = Url::fromRoute('aculta_lms_agenda.exportar', ['token' => $token], ['absolute' => TRUE])->toString();
     $html = '<p>' . $this->t('Link gerado. Copie agora: ele não será mostrado de novo.') . '</p>'
       . '<p><a href="' . Html::escape($url) . '">' . Html::escape($url) . '</a></p>';
     return $this->privado($html);
@@ -112,9 +113,9 @@ final class PersonalCalendarController extends ControllerBase {
    * URL com token CSRF para uma rota que exige _csrf_token.
    */
   private function urlComCsrf(string $rota): string {
-    $caminho = ltrim((string) $this->url($rota), '/');
+    $caminho = ltrim(Url::fromRoute($rota)->toString(), '/');
     $token = \Drupal::csrfToken()->get($caminho);
-    return (string) $this->url($rota, [], ['query' => ['token' => $token]]);
+    return Url::fromRoute($rota, [], ['query' => ['token' => $token]])->toString();
   }
 
   /**

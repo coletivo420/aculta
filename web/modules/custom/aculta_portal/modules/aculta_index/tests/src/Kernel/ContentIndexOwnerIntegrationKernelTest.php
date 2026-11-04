@@ -304,7 +304,7 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
     self::assertInstanceOf(Domain::class, $mainDomain);
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain($mainDomain);
+    $negotiator->getContext()->setDomain($mainDomain);
     self::assertFalse($source->access('view', $reader), 'The real Portal hook denies Wiki source access in main.');
 
     $candidates = [];

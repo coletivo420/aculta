@@ -501,7 +501,7 @@ final class ParticipationEditWindowTest extends TestCase {
  */
 final class ParticipationEditWindowFieldList extends FieldItemList {
 
-  public function __construct(private readonly int $timestamp, private readonly bool $empty = FALSE) {}
+  public function __construct(protected readonly int $timestamp, protected readonly bool $empty = FALSE) {}
 
   /**
    * {@inheritdoc}

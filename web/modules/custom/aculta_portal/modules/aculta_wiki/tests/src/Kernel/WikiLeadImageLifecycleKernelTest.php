@@ -828,7 +828,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
 
     // The public Wiki host serves its root through the internal /wiki route;
     // direct requests to that internal path remain hidden by the shared policy.
-    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain(Domain::load('wiki420_aculta_org'));
+    $this->container->get(DomainNegotiatorInterface::class)->getContext()->setDomain(Domain::load('wiki420_aculta_org'));
     $frontProcessor = $this->container->get('aculta_portal.purpose_front_path_processor');
     $rootRequest = Request::create('/');
     self::assertSame('/wiki', $frontProcessor->processInbound('/', $rootRequest));
@@ -857,7 +857,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertNull($wikiHomeEvent->getResponse(), 'The Wiki home is accepted when the Wiki root serves it.');
 
     $domainNegotiator = $this->container->get(DomainNegotiatorInterface::class);
-    $domainNegotiator->setActiveDomain(Domain::load('aculta_org'));
+    $domainNegotiator->getContext()->setDomain(Domain::load('aculta_org'));
     $mainHomeRequest = Request::create('https://main.example.invalid/wiki');
     $mainHomeRequest->attributes->set('_route', 'aculta_portal.wiki_home');
     $mainHomeRequest->attributes->set('_route_object', $routeProvider->getRouteByName('aculta_portal.wiki_home'));
@@ -869,10 +869,10 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $purposeSubscriber->onRequest($mainHomeEvent);
     self::assertNotNull($mainHomeEvent->getResponse());
     self::assertSame(404, $mainHomeEvent->getResponse()->getStatusCode());
-    $domainNegotiator->setActiveDomain(Domain::load('wiki420_aculta_org'));
+    $domainNegotiator->getContext()->setDomain(Domain::load('wiki420_aculta_org'));
 
     // Public Wiki routes must not be served from the main Portal domain.
-    $domainNegotiator->setActiveDomain(Domain::load('aculta_org'));
+    $domainNegotiator->getContext()->setDomain(Domain::load('aculta_org'));
     $searchRoute = $routeProvider->getRouteByName('aculta_portal.wiki_search');
     $wrongPurposeRequest = Request::create('https://main.example.invalid/busca-wiki');
     $wrongPurposeRequest->attributes->set('_route', 'aculta_portal.wiki_search');
@@ -885,7 +885,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->container->get('aculta_portal.domain_purpose_subscriber')->onRequest($wrongPurposeEvent);
     self::assertNotNull($wrongPurposeEvent->getResponse());
     self::assertSame(404, $wrongPurposeEvent->getResponse()->getStatusCode());
-    $domainNegotiator->setActiveDomain(Domain::load('wiki420_aculta_org'));
+    $domainNegotiator->getContext()->setDomain(Domain::load('wiki420_aculta_org'));
 
     $proposalRoute = $routeProvider->getRouteByName('aculta_wiki.proposal_submit');
     self::assertSame('/verbetes/{node}/contribuir', $proposalRoute->getPath());
@@ -906,7 +906,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     ]);
     $proposalTarget->save();
     self::assertFalse($accessManager->checkNamedRoute('aculta_wiki.proposal_submit', ['node' => $proposalTarget->id()], new AnonymousUserSession()));
-    $domainNegotiator->setActiveDomain(Domain::load('aculta_org'));
+    $domainNegotiator->getContext()->setDomain(Domain::load('aculta_org'));
     $wrongProposalRequest = Request::create('https://main.example.invalid/verbetes/' . $proposalTarget->id() . '/contribuir');
     $wrongProposalRequest->attributes->set('_route', 'aculta_wiki.proposal_submit');
     $wrongProposalRequest->attributes->set('_route_object', $proposalRoute);
@@ -918,7 +918,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->container->get('aculta_portal.domain_purpose_subscriber')->onRequestBeforeRouter($wrongProposalEvent);
     self::assertNotNull($wrongProposalEvent->getResponse());
     self::assertSame(404, $wrongProposalEvent->getResponse()->getStatusCode());
-    $domainNegotiator->setActiveDomain(Domain::load('wiki420_aculta_org'));
+    $domainNegotiator->getContext()->setDomain(Domain::load('wiki420_aculta_org'));
     $intentRoute = $routeProvider->getRouteByName('aculta_wiki.contribution_intent');
     self::assertSame('/verbetes/{node}/contribuir/como', $intentRoute->getPath());
     self::assertSame('wiki', $intentRoute->getOption('_aculta_domain_purpose'));
@@ -1009,7 +1009,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       ->save();
     $this->container->get('current_user')->setAccount(new AnonymousUserSession());
     $this->container->get(DomainNegotiatorInterface::class)
-      ->setActiveDomain(Domain::load('wiki420_aculta_org'));
+      ->getContext()->setDomain(Domain::load('wiki420_aculta_org'));
     $this->container->get('theme.manager')->resetActiveTheme();
     $homeHtml = $this->container->get('renderer')->renderRoot($homeBuild);
     self::assertStringContainsString('aculta-context-tabs', (string) $homeHtml);
@@ -1046,7 +1046,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $creator = new UserSession(['uid' => 14, 'roles' => ['authenticated', 'wiki_home_creator_test']]);
     $reader = new UserSession(['uid' => 15, 'roles' => ['authenticated']]);
     $wikiDomain = Domain::load('wiki420_aculta_org');
-    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain($wikiDomain);
+    $this->container->get(DomainNegotiatorInterface::class)->getContext()->setDomain($wikiDomain);
     $currentUser = $this->container->get('current_user');
     $controller = WikiController::create($this->container);
 
@@ -1122,7 +1122,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
    */
   public function testPublishedWikiParticipationUsesOnlyPublishedWikiEntries(): void {
     $domainNegotiator = $this->container->get(DomainNegotiatorInterface::class);
-    $domainNegotiator->setActiveDomain(Domain::load('aculta_org'));
+    $domainNegotiator->getContext()->setDomain(Domain::load('aculta_org'));
     $lookup = $this->container->get('aculta_user.published_participation_lookup');
     self::assertNotNull($this->container->get('aculta_portal.domain_purpose')->getDomain('wiki'));
 
@@ -1327,7 +1327,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       self::assertTrue(TRUE);
     }
     $mainDomain = Domain::load('aculta_org');
-    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain($mainDomain);
+    $this->container->get(DomainNegotiatorInterface::class)->getContext()->setDomain($mainDomain);
     $build = $workspace->build($author);
     self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
     self::assertContains('user', $build['#cache']['contexts']);
@@ -1525,7 +1525,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'is_default' => FALSE,
       'weight' => 1,
     ])->save();
-    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain(Domain::load('aculta_org'));
+    $this->container->get(DomainNegotiatorInterface::class)->getContext()->setDomain(Domain::load('aculta_org'));
     $workspace = $this->container->get('aculta_wiki.contributor_workspace');
     self::assertSame(17, (int) $author->id());
     self::assertSame(21, (int) $this->container->get('entity_type.manager')->getStorage('node')->getQuery()->accessCheck(FALSE)->condition('type', 'wiki_entry')->condition('uid', 17)->count()->execute());
@@ -1873,7 +1873,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'weight' => 0,
       'status' => TRUE,
     ])->save();
-    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain(Domain::load('wiki420_aculta_org'));
+    $this->container->get(DomainNegotiatorInterface::class)->getContext()->setDomain(Domain::load('wiki420_aculta_org'));
 
     self::assertTrue($this->container->get('aculta_portal.email_confirmation_policy')->isConfirmed($author));
     $participation = $this->container->get('aculta_user.published_participation_lookup')
@@ -2191,7 +2191,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $author->save();
     $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $author->id());
     $this->container->get('current_user')->setAccount($author);
-    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain(Domain::load('wiki420_aculta_org'));
+    $this->container->get(DomainNegotiatorInterface::class)->getContext()->setDomain(Domain::load('wiki420_aculta_org'));
 
     $file = $this->createTemporaryPrivateImage((int) $author->id());
     $node = Node::create(['type' => 'wiki_entry', 'uid' => $author->id()]);
@@ -2260,7 +2260,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $author->save();
     $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $author->id());
     $this->container->get('current_user')->setAccount($author);
-    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain(Domain::load('wiki420_aculta_org'));
+    $this->container->get(DomainNegotiatorInterface::class)->getContext()->setDomain(Domain::load('wiki420_aculta_org'));
 
     $nodeType = NodeType::load('wiki_entry');
     self::assertInstanceOf(NodeType::class, $nodeType);
@@ -2413,7 +2413,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
 
     $wikiDomain = Domain::load('wiki420_aculta_org');
-    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain($wikiDomain);
+    $this->container->get(DomainNegotiatorInterface::class)->getContext()->setDomain($wikiDomain);
     $currentUser = $this->container->get('current_user');
     $controller = WikiController::create($this->container);
 
@@ -2485,7 +2485,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->container->get(NodeAccessRebuild::class)->rebuild();
     $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
     $this->container->get('current_user')->setAccount($reader);
-    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain(Domain::load('wiki420_aculta_org'));
+    $this->container->get(DomainNegotiatorInterface::class)->getContext()->setDomain(Domain::load('wiki420_aculta_org'));
 
     $newNode = Node::create(['type' => 'wiki_entry', 'uid' => $reader->id()]);
     $formObject = $this->entityForm($newNode, static function (): void {
@@ -2756,7 +2756,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $author->id());
 
     $wikiDomain = Domain::load('wiki420_aculta_org');
-    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain($wikiDomain);
+    $this->container->get(DomainNegotiatorInterface::class)->getContext()->setDomain($wikiDomain);
     $target = Node::create([
       'type' => 'wiki_entry',
       'title' => 'Verbete do corte genérico',
@@ -3004,7 +3004,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->container->get(NodeAccessRebuild::class)->rebuild();
     $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
     $wikiDomain = Domain::load('wiki420_aculta_org');
-    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain($wikiDomain);
+    $this->container->get(DomainNegotiatorInterface::class)->getContext()->setDomain($wikiDomain);
     $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $submitter->id());
     $this->container->get('current_user')->setAccount($submitter);
 
@@ -3012,9 +3012,9 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertTrue($wikiAdapter->submitAccess($submitter, 'update', $target));
     self::assertFalse($wikiAdapter->submitAccess($unconfirmed, 'update', $target));
     $domainNegotiator = $this->container->get(DomainNegotiatorInterface::class);
-    $domainNegotiator->setActiveDomain(Domain::load('aculta_org'));
+    $domainNegotiator->getContext()->setDomain(Domain::load('aculta_org'));
     self::assertFalse($wikiAdapter->submitAccess($submitter, 'update', $target));
-    $domainNegotiator->setActiveDomain($wikiDomain);
+    $domainNegotiator->getContext()->setDomain($wikiDomain);
 
     $staleTarget = Node::create([
       'type' => 'wiki_entry',
@@ -3122,7 +3122,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $target->save();
     $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
 
-    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain(Domain::load('aculta_org'));
+    $this->container->get(DomainNegotiatorInterface::class)->getContext()->setDomain(Domain::load('aculta_org'));
     try {
       $submission->submit($staleTarget, 'reference', 'Texto', 'Justificativa');
       self::fail('Submission outside the Wiki purpose must be denied.');
@@ -3130,7 +3130,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     catch (AccessDeniedHttpException) {
       self::assertTrue(TRUE);
     }
-    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain($wikiDomain);
+    $this->container->get(DomainNegotiatorInterface::class)->getContext()->setDomain($wikiDomain);
 
     try {
       $submission->submit($staleTarget, 'reference', 'Texto', 'Justificativa', ['javascript:alert(1)']);
@@ -4058,7 +4058,7 @@ PHP;
     $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
 
     $mainDomain = Domain::load('aculta_org');
-    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain($mainDomain);
+    $this->container->get(DomainNegotiatorInterface::class)->getContext()->setDomain($mainDomain);
     $this->container->get('current_user')->setAccount($reviewer);
     $reviewEntity = $this->container->get('entity_type.manager')->getStorage('node')->loadRevision($reviewRevisionId);
     self::assertNotEmpty($this->container->get('content_moderation.state_transition_validation')

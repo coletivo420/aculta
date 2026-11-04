@@ -27,7 +27,7 @@ final class ActivityDeadlineReminderWorker extends QueueWorkerBase implements Co
     array $configuration,
     string $plugin_id,
     mixed $plugin_definition,
-    private readonly LearningNoticeRecipientsInterface $recipients,
+    protected readonly LearningNoticeRecipientsInterface $recipients,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

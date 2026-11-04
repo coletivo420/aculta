@@ -158,7 +158,7 @@ final class ContentIndexCourseDocumentAccessKernelTest extends KernelTestBase {
     self::assertInstanceOf(Domain::class, $mainDomain);
     $negotiator = $this->container->get('domain.negotiator');
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain($mainDomain);
+    $negotiator->getContext()->setDomain($mainDomain);
     $candidate = [
       [
         'entity_type' => 'media',

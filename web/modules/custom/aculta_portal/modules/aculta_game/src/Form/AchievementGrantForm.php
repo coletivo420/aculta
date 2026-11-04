@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class AchievementGrantForm extends FormBase {
 
-  public function __construct(private readonly BadgeService $badges) {}
+  public function __construct(protected readonly BadgeService $badges) {}
 
   /**
    * Create the grant form from Drupal services.

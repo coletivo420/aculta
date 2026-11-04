@@ -19,8 +19,8 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class ClassRosterVisibilityForm extends FormBase {
 
   public function __construct(
-    private readonly CurrentRouteMatch $currentRouteMatch,
-    private readonly ClassDashboardAccessCheck $classAccess,
+    protected readonly CurrentRouteMatch $currentRouteMatch,
+    protected readonly ClassDashboardAccessCheck $classAccess,
   ) {}
 
   /**

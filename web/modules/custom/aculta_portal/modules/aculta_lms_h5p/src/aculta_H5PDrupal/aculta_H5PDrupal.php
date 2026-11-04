@@ -417,7 +417,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
 
     return [
       'name' => 'drupal',
-      'version' => \DRUPAL::VERSION,
+      'version' => \Drupal::VERSION,
       'h5pVersion' => $h5p_info['version'] ?? NULL,
     ];
   }
@@ -679,7 +679,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
    *   Whether H5P development mode is enabled.
    */
   public function isInDevMode() {
-    $$h5p_dev_mode = $this->getOption('development_mode', FALSE);
+    $h5p_dev_mode = $this->getOption('development_mode', FALSE);
     return (bool) $h5p_dev_mode;
   }
 

@@ -26,8 +26,8 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
     EntityRepositoryInterface $entity_repository,
     EntityTypeBundleInfoInterface $entity_type_bundle_info,
     TimeInterface $time,
-    private readonly MessengerInterface $submissionMessenger,
-    private readonly ForumPostThreadBuilder $threadBuilder,
+    protected readonly MessengerInterface $submissionMessenger,
+    protected readonly ForumPostThreadBuilder $threadBuilder,
   ) {
     parent::__construct($entity_repository, $entity_type_bundle_info, $time);
   }

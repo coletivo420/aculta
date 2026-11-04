@@ -20,9 +20,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class MailTemplateForm extends EntityForm {
 
   public function __construct(
-    private readonly MailTypeRegistry $types,
-    private readonly MailTemplateRenderer $renderer,
-    private readonly EntityTypeManagerInterface $entityTypes,
+    protected readonly MailTypeRegistry $types,
+    protected readonly MailTemplateRenderer $renderer,
+    protected readonly EntityTypeManagerInterface $entityTypes,
   ) {}
 
   /**

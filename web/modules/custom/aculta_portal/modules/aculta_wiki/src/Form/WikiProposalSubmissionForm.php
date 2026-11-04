@@ -22,9 +22,9 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 final class WikiProposalSubmissionForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly WikiProposalSubmission $submission,
-    private readonly ContributionLifecycle $contributions,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly WikiProposalSubmission $submission,
+    protected readonly ContributionLifecycle $contributions,
   ) {}
 
   /**

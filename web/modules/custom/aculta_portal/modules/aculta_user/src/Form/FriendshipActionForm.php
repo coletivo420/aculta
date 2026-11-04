@@ -18,9 +18,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class FriendshipActionForm extends FormBase {
 
   public function __construct(
-    private readonly FriendshipManagerInterface $friendshipManager,
-    private readonly AccountProxyInterface $currentAccount,
-    private readonly EntityTypeManagerInterface $entityManager,
+    protected readonly FriendshipManagerInterface $friendshipManager,
+    protected readonly AccountProxyInterface $currentAccount,
+    protected readonly EntityTypeManagerInterface $entityManager,
   ) {}
 
   public static function create(ContainerInterface $container): static {

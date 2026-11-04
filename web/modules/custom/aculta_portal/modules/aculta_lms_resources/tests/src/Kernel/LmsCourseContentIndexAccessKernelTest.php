@@ -14,6 +14,7 @@ use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_index\Query\ContentIndexAccessFilter;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\domain\DomainNegotiationContext;
 use Drupal\domain\Entity\Domain;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
@@ -100,12 +101,15 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
         return \Drupal::service('domain.negotiator')->getActiveDomain($reset);
       },
     );
-    $domainNegotiator->method('setActiveDomain')->willReturnCallback(
-      function (DomainInterface $domain): void {
-        \Drupal::service('domain.negotiator')->setActiveDomain($domain);
-        $this->domainSwitches[] = $domain->id();
-      },
-    );
+    $realDomainContext = \Drupal::service('domain.negotiator')->getContext();
+    $domainContext = $this->createMock(DomainNegotiationContext::class);
+    $domainContext->method('getDomain')->willReturnCallback(static fn (): ?DomainInterface => $realDomainContext->getDomain());
+    $domainContext->method('setDomain')->willReturnCallback(function (DomainInterface $domain) use ($realDomainContext): void {
+      $realDomainContext->setDomain($domain);
+      $this->domainSwitches[] = $domain->id();
+    });
+    $domainContext->method('setNegotiated')->willReturnCallback(static fn (bool $negotiated): mixed => $realDomainContext->setNegotiated($negotiated));
+    $domainNegotiator->method('getContext')->willReturn($domainContext);
     $container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
       $entityTypeManager,
       $domainNegotiator,
@@ -208,7 +212,7 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     }
     $domainNegotiator = $this->container->get(DomainNegotiatorInterface::class);
     $domainNegotiator->getActiveDomain();
-    $domainNegotiator->setActiveDomain(Domain::load('aculta_org'));
+    $domainNegotiator->getContext()->setDomain(Domain::load('aculta_org'));
     $this->domainSwitches = [];
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');

@@ -26,15 +26,15 @@ final class UgcReportDecisionForm extends FormBase {
   /**
    * Denúncia sob julgamento.
    */
-  private ?UgcReport $report = NULL;
+  protected ?UgcReport $report = NULL;
 
   /**
    * Construtor do formulário.
    */
   public function __construct(
-    private readonly ReportService $reportService,
-    private readonly EntityTypeManagerInterface $entityTypeMgr,
-    private readonly DateFormatterInterface $dateFormatter,
+    protected readonly ReportService $reportService,
+    protected readonly EntityTypeManagerInterface $entityTypeMgr,
+    protected readonly DateFormatterInterface $dateFormatter,
   ) {}
 
   /**

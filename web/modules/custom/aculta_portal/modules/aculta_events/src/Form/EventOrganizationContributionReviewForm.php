@@ -21,9 +21,9 @@ final class EventOrganizationContributionReviewForm extends FormBase {
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
-    private readonly EntityTypeManagerInterface $entities,
+    protected readonly EntityTypeManagerInterface $entities,
     #[Autowire(service: 'aculta_contributions.lifecycle')]
-    private readonly ContributionLifecycle $lifecycle,
+    protected readonly ContributionLifecycle $lifecycle,
   ) {}
 
   /**

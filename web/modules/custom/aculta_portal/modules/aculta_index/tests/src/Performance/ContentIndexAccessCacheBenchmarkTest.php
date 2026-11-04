@@ -117,7 +117,7 @@ final class ContentIndexAccessCacheBenchmarkTest extends KernelTestBase {
     self::assertInstanceOf(Domain::class, $mainDomain);
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain($mainDomain);
+    $negotiator->getContext()->setDomain($mainDomain);
     $this->container->get('state')->set('aculta_index.access_benchmark_account', (int) $account->id());
   }
 

@@ -19,10 +19,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class CalendarImportReviewForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly MessengerInterface $importMessenger,
-    private readonly CalendarImportRepository $repository,
-    private readonly DateFormatterInterface $dateFormatter,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly MessengerInterface $importMessenger,
+    protected readonly CalendarImportRepository $repository,
+    protected readonly DateFormatterInterface $dateFormatter,
   ) {}
 
   /**

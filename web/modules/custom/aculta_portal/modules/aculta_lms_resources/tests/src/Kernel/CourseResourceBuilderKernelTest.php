@@ -44,7 +44,7 @@ final class CourseResourceBuilderKernelTest extends KernelTestBase {
     $this->createDomains();
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain(Domain::load('cursos_aculta_org'));
+    $negotiator->getContext()->setDomain(Domain::load('cursos_aculta_org'));
     $this->purposeManager = new DomainPurposeManager(
       $this->container->get('entity_type.manager'),
       $negotiator,

@@ -31,13 +31,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class NewConversationForm extends FormBase {
 
   public function __construct(
-    private readonly AccountProxyInterface $currentUser,
-    private readonly PrivateMessageServiceInterface $privateMessageService,
-    private readonly PrivateMessageMapperInterface $privateMessageMapper,
-    private readonly PrivateMessageFormValidator $validator,
-    private readonly EntityTypeManagerInterface $entityTypes,
-    private readonly PublicMemberIdentityInterface $memberIdentity,
-    private readonly ConversationPolicy $policy,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly PrivateMessageServiceInterface $privateMessageService,
+    protected readonly PrivateMessageMapperInterface $privateMessageMapper,
+    protected readonly PrivateMessageFormValidator $validator,
+    protected readonly EntityTypeManagerInterface $entityTypes,
+    protected readonly PublicMemberIdentityInterface $memberIdentity,
+    protected readonly ConversationPolicy $policy,
   ) {}
 
   /**

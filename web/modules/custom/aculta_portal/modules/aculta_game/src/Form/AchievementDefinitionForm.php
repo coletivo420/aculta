@@ -22,10 +22,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final class AchievementDefinitionForm extends FormBase {
 
   public function __construct(
-    private readonly AchievementDefinitions $definitions,
-    private readonly EntityTypeManagerInterface $entities,
-    private readonly ModuleExtensionList $modules,
-    private readonly LoggerInterface $audit,
+    protected readonly AchievementDefinitions $definitions,
+    protected readonly EntityTypeManagerInterface $entities,
+    protected readonly ModuleExtensionList $modules,
+    protected readonly LoggerInterface $audit,
   ) {}
 
   /**

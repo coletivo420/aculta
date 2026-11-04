@@ -69,7 +69,7 @@ final class ContentIndexForumAccessBenchmarkTest extends ForumAccessKernelTestBa
     self::assertInstanceOf(Domain::class, $mainDomain);
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain($mainDomain);
+    $negotiator->getContext()->setDomain($mainDomain);
     $filter = new ContentIndexAccessFilter(
       $this->container->get('entity_type.manager'),
       $this->container->get('aculta_index.provider_registry'),

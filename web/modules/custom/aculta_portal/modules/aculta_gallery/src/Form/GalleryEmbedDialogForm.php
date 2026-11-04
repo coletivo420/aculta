@@ -58,8 +58,8 @@ final class GalleryEmbedDialogForm extends FormBase {
     EntityTypeManagerInterface $entity_type_manager,
     WidgetPluginManager $widget_manager,
     AccountProxyInterface $current_user,
-    private readonly ConsumerUploadPolicy $uploadPolicy,
-    private readonly RecentUploads $recentUploads,
+    protected readonly ConsumerUploadPolicy $uploadPolicy,
+    protected readonly RecentUploads $recentUploads,
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->widgetManager = $widget_manager;

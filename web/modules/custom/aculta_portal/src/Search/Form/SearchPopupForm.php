@@ -21,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class SearchPopupForm extends FormBase implements ContainerInjectionInterface {
 
   public function __construct(
-    private readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly DomainPurposeManager $domainPurposeManager,
   ) {}
 
   public static function create(ContainerInterface $container): static {

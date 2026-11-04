@@ -26,11 +26,11 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 final class WikiProposalDecisionForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly WikiProposalDecision $decision,
-    private readonly ContributionLifecycle $contributions,
-    private readonly ModuleHandlerInterface $moduleHandler,
-    private readonly DomainPurposeManager $domainPurposes,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly WikiProposalDecision $decision,
+    protected readonly ContributionLifecycle $contributions,
+    protected readonly ModuleHandlerInterface $moduleHandler,
+    protected readonly DomainPurposeManager $domainPurposes,
   ) {}
 
   /**

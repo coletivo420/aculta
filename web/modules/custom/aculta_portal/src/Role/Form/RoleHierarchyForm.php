@@ -32,7 +32,7 @@ final class RoleHierarchyForm extends ConfigFormBase {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typedConfigManager,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
   ) {
     parent::__construct($config_factory, $typedConfigManager);
   }

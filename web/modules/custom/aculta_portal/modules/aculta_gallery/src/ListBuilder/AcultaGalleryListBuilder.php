@@ -23,7 +23,7 @@ final class AcultaGalleryListBuilder extends MediaGalleryListBuilder {
     EntityTypeInterface $entity_type,
     EntityTypeManagerInterface $entity_type_manager,
     DateFormatterInterface $date_formatter,
-    private readonly AliasManagerInterface $aliasManager,
+    protected readonly AliasManagerInterface $aliasManager,
   ) {
     parent::__construct($entity_type, $entity_type_manager, $date_formatter);
   }

@@ -26,11 +26,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class AccountOtherDataForm extends FormBase {
 
   public function __construct(
-    private readonly ?AccountDocumentInterface $document,
-    private readonly AccountInterface $currentUser,
-    private readonly EntityTypeManagerInterface $entities,
-    private readonly MessengerInterface $messages,
-    private readonly RequestStack $requests,
+    protected readonly ?AccountDocumentInterface $document,
+    protected readonly AccountInterface $currentUser,
+    protected readonly EntityTypeManagerInterface $entities,
+    protected readonly MessengerInterface $messages,
+    protected readonly RequestStack $requests,
   ) {}
 
   /**

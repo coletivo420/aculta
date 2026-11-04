@@ -36,9 +36,9 @@ final class ForumPostSearchTopicLinkFormatter extends FormatterBase implements C
     $label,
     $view_mode,
     array $third_party_settings,
-    private readonly AccountProxyInterface $currentUser,
-    private readonly DomainPurposeManager $domainPurposeManager,
-    private readonly ForumPostThreadBuilder $threadBuilder,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly ForumPostThreadBuilder $threadBuilder,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
   }

@@ -24,9 +24,9 @@ final class AccountPasswordCreateForm extends FormBase {
   private const MIN_LENGTH = 8;
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entities,
-    private readonly UserDataInterface $userData,
-    private readonly MessengerInterface $messages,
+    protected readonly EntityTypeManagerInterface $entities,
+    protected readonly UserDataInterface $userData,
+    protected readonly MessengerInterface $messages,
   ) {}
 
   public static function create(ContainerInterface $container): static {

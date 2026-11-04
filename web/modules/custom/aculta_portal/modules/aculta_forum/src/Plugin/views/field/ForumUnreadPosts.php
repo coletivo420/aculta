@@ -25,14 +25,14 @@ final class ForumUnreadPosts extends FieldPluginBase implements ContainerFactory
    *
    * @var array<int, array{count: int, post_id: int, page: int}>
    */
-  private array $unreadByTopic = [];
+  protected array $unreadByTopic = [];
 
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly ForumPostUnreadManager $unreadManager,
-    private readonly ForumPostThreadBuilder $threadBuilder,
+    protected readonly ForumPostUnreadManager $unreadManager,
+    protected readonly ForumPostThreadBuilder $threadBuilder,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

@@ -11,6 +11,8 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PEvent;
+use Drupal\aculta_lms_h5p\aculta_H5PContentStorageSchema;
+use Drupal\aculta_lms_h5p\aculta_H5PContentViewsData;
 
 /**
  * Legacy H5P class identifier retained for Drupal discovery.

@@ -151,7 +151,7 @@ final class ActivityControllerKernelTest extends KernelTestBase {
     ])->save();
 
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
-    $negotiator->setActiveDomain($accountDomain);
+    $negotiator->getContext()->setDomain($accountDomain);
     $entityTypeManager = $this->container->get('entity_type.manager');
     $purposeManager = new DomainPurposeManager(
       $entityTypeManager,

@@ -40,7 +40,7 @@ final class PublishedGallerySelection extends DefaultSelection {
     EntityFieldManagerInterface $entity_field_manager,
     EntityTypeBundleInfoInterface $entity_type_bundle_info,
     EntityRepositoryInterface $entity_repository,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly DomainPurposeManager $domainPurposeManager,
   ) {
     parent::__construct(
       $configuration,

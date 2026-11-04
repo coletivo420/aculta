@@ -45,12 +45,12 @@ final class AvatarCropForm extends FormBase {
 
 
   public function __construct(
-    private ImageWidgetCropInterface $cropManager,
-    private EntityTypeManagerInterface $entityTypeManagerService,
-    private AccountInterface $currentUserService,
-    private UserDataInterface $userData,
-    private RequestStack $cropRequestStack,
-    private readonly ImageRenderer $imageRenderer,
+    protected ImageWidgetCropInterface $cropManager,
+    protected EntityTypeManagerInterface $entityTypeManagerService,
+    protected AccountInterface $currentUserService,
+    protected UserDataInterface $userData,
+    protected RequestStack $cropRequestStack,
+    protected readonly ImageRenderer $imageRenderer,
   ) {}
 
   public static function create(ContainerInterface $container): static {

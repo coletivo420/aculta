@@ -6,7 +6,7 @@ namespace Drupal\aculta_portal\Captcha;
 
 use Drupal\aculta_portal\Environment\DeployerEnvironment;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
-use Drupal\Core\Config\StorableConfigBase;
+use Drupal\Core\Config\StorageInterface;
 
 /**
  * Escolhe a chave do Turnstile pelo ambiente do deployer, sem gravar nada na configuração.
@@ -33,7 +33,7 @@ final class TurnstileKeyOverride implements ConfigFactoryOverrideInterface {
     return 'aculta_portal_turnstile_key_' . DeployerEnvironment::current(dirname($this->appRoot), 'production');
   }
 
-  public function createConfigObject($name, $collection = StorableConfigBase::DEFAULT_COLLECTION) {
+  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
     return NULL;
   }
 
