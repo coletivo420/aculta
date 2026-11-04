@@ -1,0 +1,16 @@
+includes:
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+
+parameters:
+    level: 5
+    paths:
+        - web/modules/custom
+        - web/themes/custom
+        - scripts
+    ignoreErrors:
+        # Ignore general PHPDoc issues for now
+        - '#.*#'
+    excludePaths:
+        - vendor/
+        - web/core/
+        - web/libraries/
