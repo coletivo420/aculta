@@ -1,14 +1,14 @@
 # Estado da sessão
 
-## Handoff — compatibilidade Drupal 12 no Portal — 2026-11-04
+## Handoff — LMS, pagamentos e atualização Drupal 12 — 2026-11-04
 
-- **Objetivo:** verificar e corrigir os avisos de migração informados no Upgrade Status para o Portal ACULTA.
-- **Correções:** visibilidade `protected` nas 480 propriedades de produção e 11 propriedades de doubles/classes de teste atingidas pelo `DependencySerializationTrait`; migração de `user_login_finalize()` e `drupal_static()`; correções de imports, atributos e assinaturas do Core; ajuste de links, datas, acesso, serialização do checkout, H5P, Magazine, instalação de imagem e fixtures de Domain.
-- **Arquivos de referência:** `web/modules/custom/aculta_portal/src/Form/LoginPopupForm.php`, `src/Hook/EmailConfirmerHooks.php`, `src/Hook/EntityHooks.php`, `modules/aculta_lms_h5p/src/Entity/aculta_H5PContent.php`, `modules/aculta_patcher/src/Entity/AcultaPatchListBuilder.php` e os formulários com dependências injetadas nos submódulos do Portal.
-- **Validação:** Upgrade Status `aculta_portal` caiu de 607 para 42 avisos. Os restantes são 36 recomendações de estilo de assertions, quatro avisos do teste que documenta o alias legado `UploadedAnswerAccessCheck` e duas referências a extensões que o scanner não encontra instaladas (uma delas em código de `aculta_links`). Nenhum aviso de API depreciada permaneceu em produção. PHP lint de 217 arquivos passou; `git diff --check` no Portal passou. Não executei testes. PHPCS amplo reportou 318 erros e 181 avisos em 59 arquivos; não foi feita reformatação geral.
-- **Runtime:** `toca`, Drupal 11.5.0-beta1, banco `aculta_runtime`; `updatedb:status` sem updates e `config:status` sem diferenças. Runtime e repositório compartilham o checkout.
-- **Publicação:** commit `d262095d37` enviado por fast-forward a `origin/dev`. Runtime (`toca`, checkout compartilhado) recebeu rebuild de cache; `updatedb:status` sem updates e `config:status` sem diferenças.
-- **Retomar lendo:** este handoff, `web/modules/custom/aculta_portal/CHANGELOG.md`, `web/modules/custom/aculta_portal/aculta_portal.info.yml` e os diffs PHP sob `web/modules/custom/aculta_portal/`.
+- **Objetivo persistente:** concluir as lacunas funcionais do LMS, depois avançar em pagamentos e revisar atualizações de banco uma a uma; criar o que faltar e executar testes para as alterações.
+- **Trabalho anterior mantido:** a passagem de compatibilidade Drupal 12 do Portal reduziu os avisos de Upgrade Status de 607 para 42; o detalhe e os limites da validação continuam registrados no commit `d262095d37` e no changelog do Portal.
+- **F6:** a rota de aula retornava HTTP 500 porque a tabela recebia render arrays como atributos. Corrigido o uso de `data` nas células e acrescentado teste Kernel que renderiza enunciado e link. Runtime read-only: UID 262 matriculado vê aula/atividade/link; UID 265 e visitante recebem acesso negado sem título. Nenhuma resposta, membership ou conteúdo foi alterado. Revisão visual segue pendente.
+- **Runtime/configuração:** `toca`, Drupal 11.5.0-beta1, PHP 8.5.12, banco `aculta_runtime`. Antes do import, `updatedb:status` sem pendências e 15 configurações diferentes do Sync; snapshot `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-config-sync-20261104/runtime.sql`, SHA-256 `c517b4e3612a8ad80174ee6c84edd068608a3a9687d0575e31edf3d460a52dc0`. `updatedb` sem alterações e `config:import` concluiu, habilitando `bootstrap5`; agora oito blocos Gin diferem somente por `langcode` (`pt-br` ativo, `en` no Sync). Cache rebuild passou e não há database updates.
+- **Publicação pendente:** a correção LMS ainda não foi commitada nem publicada. `origin/dev` está no commit Bootstrap5 `11ff452a47`; o checkout compartilhado tem alterações não relacionadas em `composer.json`, `.github/`, `phpstan.neon` e `web/themes/custom/aculta420/js/utility-drawers.js`; preservá-las.
+- **Próximos passos:** repetir PHPCS e Kernel focal após reaplicar a correção, corrigir/registrar as divergências remanescentes sem misturar entregas, publicar a correção LMS e sincronizar Runtime; continuar a auditoria de pagamentos e depois dos updates pendentes.
+- **Retomar lendo:** `docs/modules/ACULTA-LMS-ROADMAP.md`, `web/modules/custom/aculta_portal/modules/aculta_lms/README.md`, este handoff, `docs/operations/AGENT-POLICY-INDEX.md` e `docs/operations/RUNTIME-UPDATE-WINDOW.md`.
 
 
 ## Handoff — instalar Gin como tema administrativo — 2026-11-03

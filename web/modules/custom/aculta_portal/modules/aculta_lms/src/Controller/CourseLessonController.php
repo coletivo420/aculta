@@ -79,20 +79,20 @@ final class CourseLessonController {
       $type = (string) $activity->get('type')->value;
       $label = $this->activityLabel($type);
       $rows[] = [
-        'activity' => [
+        ['data' => [
           'title' => ['#plain_text' => $label],
           'question' => isset($configuration['question']) && is_string($configuration['question'])
             ? ['#plain_text' => $configuration['question']]
             : [],
-        ],
-        'action' => Link::fromTextAndUrl(
+        ]],
+        ['data' => Link::fromTextAndUrl(
           $this->t('Abrir atividade'),
           Url::fromRoute('aculta_lms.answer_submission', [
             'group' => $group->id(),
             'lesson_delta' => $lesson_delta,
             'activity_delta' => $source_delta,
           ]),
-        )->toRenderable(),
+        )->toRenderable()],
       ];
     }
 

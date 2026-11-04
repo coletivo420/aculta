@@ -104,7 +104,7 @@ FunctionalJavascript upstream não foi executada porque este ambiente não forne
 update adicionou `activity_page_title`; schema config validado sem erros e `updatedb:status` está NONE. O
 provider Core `mysql` também foi ativado após o requisito de status apontar que estava ausente e foi registrado
 no Config Sync. Não houve importação global de Config Sync por causa das divergências pré-existentes do site.
-O Runtime Drush usa PHP 8.4.26; PHP 8.5 continua aberto como DT-P04 e não foi inferido. F6 — Página de
+O Runtime Drush usa PHP 8.5.12. F6 — Página de
 curso e sala — é a próxima fase e exige decisão/autorização próprias. PV6, CSP, matriz ampliada de
 navegadores, produção Hostinger e o fluxo editorial mantêm gates separados.
 
@@ -119,14 +119,19 @@ Tab, o rail manteve nome acessível e foco nativo, e não houve JavaScript neces
 Somente um curso publicado existe no Runtime; não há curso não publicado no acervo para um caso
 negativo da listagem. PHP no Runtime continua em 8.4.26.
 
-**F6 — Página de curso e sala — implementação inicial nesta branch.** O campo
+**F6 — Página de curso e sala — smoke integrado no Runtime em 2026-11-04.** O campo
 extra configurável `aculta_lms_course_room` integra um índice na visualização
 canônica do curso. A seção consulta `take course` no curso pai e lista somente
 lições referenciadas publicadas, com links para a rota nativa LMS (com slugs
 portugueses do Portal); não cria progresso, matrícula ou status. `view`
 genérico da entidade Lesson não é a autorização contextual da rota. RUNTIME
-STATUS: DEFERRED até smoke test de membro, não membro e visitante; a fase não
-está homologada.
+smoke somente leitura: membro matriculado UID 262 recebeu a página da aula com
+título e atividade; outsider UID 265 e visitante receberam acesso negado sem
+título da aula. O primeiro smoke encontrou HTTP 500 porque células da tabela
+entregavam render arrays como atributos; corrigido com a chave `data` do Render
+API. Kernel confirma a renderização do enunciado e do link. Nenhum conteúdo,
+resposta ou membership foi alterado. Resultado funcional F6 validado no Runtime
+de desenvolvimento; a revisão visual permanece pendente.
 
 **F7 — integração de pedido concluído validada parcialmente no Runtime de teste.** Config Sync habilita `lms_classes`
 1.2.4, inclui configuração opcional, exige criação explícita de turmas e concede

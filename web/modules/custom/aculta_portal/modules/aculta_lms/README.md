@@ -254,8 +254,10 @@ não cria progresso, matrícula, resposta ou armazenamento.
 
 O campo extra pode ser posicionado no Manage Display do bundle `lms_course`.
 Render arrays incluem cacheability do curso, lições e resultados de acesso,
-variando por usuário e permissões do Group. F6 ainda precisa de smoke test
-integrado com usuário matriculado, visitante e não membro no Runtime.
+variando por usuário e permissões do Group. Em 2026-11-04, smoke somente leitura
+no Runtime confirmou que membro matriculado abre aula, atividade e link; não
+membro e visitante recebem acesso negado sem revelar o título. O Kernel cobre a
+renderização de atividade e link. A revisão visual segue pendente.
 
 ## F7 — Matrícula em turmas
 

@@ -149,6 +149,18 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->assertStringContainsString('<strong>formatado</strong>', $renderedRichBody);
     $this->assertStringNotContainsString('<script>', $renderedRichBody);
     $this->assertStringContainsString('window.pwned', $renderedRichBody);
+    $activity = $container->get('entity_type.manager')->getStorage('aculta_lms_activity')->create([
+      'lesson_id' => (int) $richLesson->id(),
+      'type' => 'free_text',
+      'graded' => TRUE,
+      'weight' => 0,
+      'answer_config' => '{"question":"Explique o conceito."}',
+    ]);
+    $activity->save();
+    $activityPage = $container->get('aculta_lms.course_lesson_controller')->view($course, 1);
+    $renderedActivities = (string) $container->get('renderer')->renderRoot($activityPage['activities']);
+    $this->assertStringContainsString('Explique o conceito.', $renderedActivities);
+    $this->assertStringContainsString('Abrir atividade', $renderedActivities);
     foreach (['lms', 'lms_classes', 'lms_answer_plugins', 'lms_answer_comments'] as $contrib_module) {
       $this->assertFalse($container->get('module_handler')->moduleExists($contrib_module));
     }
@@ -223,7 +235,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->assertTrue($this->container->get('module_installer')->install(['aculta_lms'], FALSE));
     $this->prepareAcultaLmsClassRelationship();
     $form = AnswerSubmissionForm::create($this->container);
-    $restored = unserialize(serialize($form));
+    $restored = unserialize(serialize($form), ['allowed_classes' => [AnswerSubmissionForm::class]]);
 
     $currentRoute = new \ReflectionProperty(AnswerSubmissionForm::class, 'currentRoute');
     $this->assertTrue($currentRoute->isInitialized($restored));

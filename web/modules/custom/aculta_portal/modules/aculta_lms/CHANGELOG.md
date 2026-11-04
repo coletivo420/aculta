@@ -1,3 +1,10 @@
+## 0.1.0-dev.199 — corrige renderização da sala de aula
+
+- As linhas da tabela de atividades entregam conteúdo e link como dados de
+  célula do Render API, em vez de serem interpretadas como atributos HTML.
+- Kernel renderiza atividade e link de abertura para proteger a página da aula
+  contra erro 500.
+
 ## 0.1.0-dev.198 — mostra histórico agregado por turma
 
 - O painel de educador lê a série diária `lms.students.by_status` do Statistics
