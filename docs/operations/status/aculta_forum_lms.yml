@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.35
+version: 0.1.0-dev.36
 state: Dev
-progress_note: "Dev.35: discussões anexadas ao formulário ACULTA de resposta por ActivityEntity, Group e User; sem tipos LMS contrib. Unit e Kernel focal PASS; validação visual e Runtime DEFERRED."
+progress_note: "Dev.36: corrigido o identificador do hook Form API para anexar discussões de atividade ao formulário real de resposta; teste de regressão para o ID do formulário."
 next_phase: 'P5 concluído; revisar integração para RC ([CHANGELOG](web/modules/custom/aculta_portal/modules/aculta_forum_lms/CHANGELOG.md))'

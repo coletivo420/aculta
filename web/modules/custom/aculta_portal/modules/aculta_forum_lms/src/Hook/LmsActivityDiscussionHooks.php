@@ -13,7 +13,9 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\user\UserInterface;
 
-/** Adds course discussion links to ACULTA activity answer submissions. */
+/**
+ * Adds course discussion links to ACULTA activity answer submissions.
+ */
 final class LmsActivityDiscussionHooks {
 
   public function __construct(
@@ -22,7 +24,10 @@ final class LmsActivityDiscussionHooks {
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
-  #[Hook('form_aculta_lms_answer_submission_form_alter')]
+  /**
+   * Adds discussion links to the active learner's answer form.
+   */
+  #[Hook('form_aculta_lms_answer_submission_alter')]
   public function answerFormAlter(array &$form, FormStateInterface $formState): void {
     $activity = $formState->get('aculta_lms_activity');
     $course = $formState->get('aculta_lms_course');

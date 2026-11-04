@@ -1,3 +1,12 @@
+## `0.1.0-dev.36` — dispara o hook do formulário de resposta ACULTA
+
+- Corrige o nome do hook Form API para corresponder ao ID real
+  `aculta_lms_answer_submission`, permitindo anexar links de discussão às
+  respostas de atividades.
+- Unit verifica que o atributo do hook corresponde ao ID declarado pelo
+  formulário; smoke autenticado no Runtime em curso/turma e avaliação
+  responsiva pendentes.
+
 ## `0.1.0-dev.35` — discussões no formulário ACULTA
 
 - O hook de discussões usa o contexto de ActivityEntity, Group e User
