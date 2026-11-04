@@ -1,5 +1,26 @@
 # Changelog — ACULTA420 V2
 
+## 1.1.0-dev.4 — ícones vetoriais e integração CDN/cache (2026-11-04)
+
+- Adicionada a biblioteca Phosphor Icons Core 2.1.1 (regular e duotone, MIT)
+  e o SDC `icon`, com nomes validados e SVG inline via Twig `source()` para
+  herdar `currentColor` sem dependência de CORS ou sprite externo.
+- Badge, button e card-cultural aceitam ícones SDC; os metadados de data e
+  local usam ícones Phosphor.
+- Busca, carrinho, mensagens, avisos, fechar diálogos, navegação e mensagens de
+  status também usam o SDC `icon`; removidos os SVGs de interface desenhados
+  diretamente nos templates.
+- Documentada a estratégia de assets Drupal/CDN: URLs relativas ao Drupal,
+  bibliotecas agregáveis e cache-tag invalidation pelo ambiente. Vite continua
+  fora da fundação conforme a decisão anterior de usar Drupal libraries.
+- Leaflet próprio recebe ícones inline renderizados pelo tema em templates
+  inertes e os monta em `L.divIcon`; IDs e classes de categoria são validados.
+- Validação: 15/15 SDCs discover, validate and render; icon output includes
+  inline SVG, and a template audit found no inline interface SVGs outside the
+  icon SDC. Runtime cache rebuild and Eventos `/mapa` HTTP smoke succeeded.
+  Unit Maps: 4 tests / 26 assertions PASS. Visual/assistive review and
+  environment CDN deployment remain follow-up.
+
 ## 1.1.0-dev.3 — 2026-11-04
 
 - Added the global institutional bar SDC fixed at the legacy top position: the

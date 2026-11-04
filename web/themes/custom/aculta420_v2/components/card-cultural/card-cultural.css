@@ -5,6 +5,7 @@
 .card-cultural__title{margin:0;font-family:var(--font-family-heading);font-size:var(--font-size-xl);overflow-wrap:anywhere}
 .card-cultural__title a{color:var(--color-brand-primary);text-decoration:underline;text-underline-offset:.15em}
 .card-cultural__date,.card-cultural__location,.card-cultural__summary{margin:0;font-family:var(--font-family-base);font-size:var(--font-size-sm)}
+.card-cultural__metadata{align-items:flex-start;display:flex;gap:var(--spacing-xs);min-inline-size:0}
 .card-cultural__actions{display:flex;flex-wrap:wrap;gap:var(--spacing-sm)}
 .card-cultural--compact .card-cultural__body{gap:var(--spacing-xs);padding:var(--spacing-sm)}
 .card-cultural--compact .card-cultural__title{font-size:var(--font-size-base)}

@@ -38,6 +38,7 @@ final class MapRenderer {
     $mapId = Html::getId((string) ($options['id'] ?? 'aculta-map'));
     $markers = [];
     $popupTemplates = [];
+    $iconTemplates = [];
     foreach ($options['markers'] ?? [] as $marker) {
       if (!is_array($marker) || !is_numeric($marker['lat'] ?? NULL) || !is_numeric($marker['lng'] ?? NULL)) {
         continue;
@@ -53,6 +54,13 @@ final class MapRenderer {
       }
       $label = trim((string) ($marker['label'] ?? '')) ?: 'Local';
       $popupId = Html::getId($mapId . '-popup-' . count($markers));
+      $iconTemplateId = Html::getId($mapId . '-icon-' . count($markers));
+      $iconName = preg_match('/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/', (string) ($marker['iconName'] ?? ''))
+        ? (string) $marker['iconName']
+        : 'map-pin';
+      $colorVariant = in_array($marker['categoryColorClass'] ?? NULL, ['primary', 'highlight', 'neutral'], TRUE)
+        ? $marker['categoryColorClass']
+        : 'primary';
       $markerData = [
         'lat' => $latitude,
         'lng' => $longitude,
@@ -61,6 +69,8 @@ final class MapRenderer {
         'url' => $this->safePopupUrl($marker['url'] ?? NULL),
         'routeUrl' => $this->safePopupUrl($marker['routeUrl'] ?? NULL),
         'popupId' => $popupId,
+        'iconTemplateId' => $iconTemplateId,
+        'categoryColorClass' => $colorVariant,
       ];
       $markers[] = $markerData;
       $popupTemplates[$popupId] = [
@@ -74,6 +84,11 @@ final class MapRenderer {
           '#address' => $markerData['description'],
           '#route_url' => $markerData['routeUrl'],
         ],
+      ];
+      $iconTemplates[$iconTemplateId] = [
+        '#theme' => 'aculta_maps_marker_icon_template',
+        '#template_id' => $iconTemplateId,
+        '#icon_name' => $iconName,
       ];
     }
 
@@ -108,6 +123,7 @@ final class MapRenderer {
     ];
     if ($popupTemplates !== []) {
       $build['popup_templates'] = $popupTemplates;
+      $build['icon_templates'] = $iconTemplates;
     }
     if ($googleKey) {
       $build['#attached']['drupalSettings']['acultaMaps'][$mapId]['googleApiKey'] = $googleKey;

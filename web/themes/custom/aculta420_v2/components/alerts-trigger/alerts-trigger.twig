@@ -9,7 +9,7 @@
   aria-controls="aculta-alerts-dialog" aria-expanded="false" aria-haspopup="dialog"
   aria-label="{{ label }}" data-aculta-count-kind="{{ count_kind|default('active') }}" data-aculta-dialog-trigger>
   <span class="aculta-utility-trigger__icon">
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+    {{ include('aculta420_v2:icon', { name: 'bell-simple', variant: 'duotone', size: 'md' }, with_context = false) }}
     <span class="aculta-unread-count aculta-utility-trigger__count" data-aculta-alerts-count data-count="{{ count }}" aria-hidden="true">{{ count > 99 ? '99+' : count }}</span>
   </span>
 </button>
@@ -19,7 +19,7 @@
   data-aculta-drawer-label="{{ 'Não foi possível carregar os avisos. Tente novamente.'|t }}">
   <header class="aculta-utility-dialog__header">
     <h2 class="aculta-utility-dialog__title" id="aculta-alerts-dialog-title">{{ 'Avisos'|t }}</h2>
-    <button type="button" class="aculta-utility-dialog__close" data-aculta-dialog-close aria-label="{{ 'Fechar avisos'|t }}"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+    <button type="button" class="aculta-utility-dialog__close" data-aculta-dialog-close aria-label="{{ 'Fechar avisos'|t }}">{{ include('aculta420_v2:icon', { name: 'x', variant: 'duotone', size: 'md' }, with_context = false) }}</button>
   </header>
   <div class="aculta-utility-dialog__body" data-aculta-drawer-content aria-live="polite" aria-busy="false">
     <p>{{ 'Abra para atualizar os avisos.'|t }}</p>

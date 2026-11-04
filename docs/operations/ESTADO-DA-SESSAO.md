@@ -1,3 +1,16 @@
+# Continuação — Phosphor Icons, Leaflet e cache/CDN da V2 — 2026-11-04
+
+- **Objetivo:** completar a integração Phosphor Icons (Duotone) no `aculta420_v2` e usar os SVGs do SDC nos marcadores Leaflet locais do `aculta_maps`, com compatibilidade de cache/CDN sem reintroduzir Vite, Bootstrap ou jQuery.
+- **Feito:** vendorizados Phosphor Icons Core 2.1.1 (MIT), 1.512 SVGs regular e 1.512 duotone; criado SDC `icon` com `source()` inline e schema estrito. `badge`, `button`, `card-cultural`, barra superior, busca, carrinho, mensagens, avisos, navegação e status usam agora o sistema Phosphor; auditoria confirmou zero SVG de interface inline fora do SDC.
+- **Maps:** hook neutro fornece template inerte de ícone; o tema escolhe Phosphor. `aculta-map.js` monta `L.divIcon` a partir do template, sem transferir SVG em `drupalSettings`; usa `core/once` e mantém o agrupador Leaflet próprio.
+- **Cache/CDN:** bibliotecas Drupal versionadas/agregáveis, URLs relativas e sem hostname CDN fixado. SVG é parte do HTML cacheado; metadados de cache continuam em render arrays. TTL, surrogate headers e purge são configuração do ambiente. Vite permanece removido por decisão anterior.
+- **Arquivos principais:** `web/themes/custom/aculta420_v2/assets/icons/phosphor/`, `components/icon/`, `components/{badge,button,card-cultural}/`, `templates/aculta-maps-marker-icon-template.html.twig`, `src/styles/tokens.css`; `web/modules/custom/aculta_portal/modules/aculta_maps/{src/MapRenderer.php,src/Hook/MapsThemeHooks.php,js/aculta-map.js,css/aculta-map.css,templates/}`; `scripts/validate-aculta420-v2-sdc.php`.
+- **Validações:** 15/15 SDCs (schema/asset/render) PASS; MapRenderer Unit 4 testes/26 assertions PASS; PHP lint, PHPCS, Node syntax, YAML e `git diff --check` PASS. Drush render confirmou SVG inline; `drush cr` PASS; Runtime `updatedb:status` sem pendências e `config:status` limpo. HTTP home e Eventos `/mapa` retornaram 200. PHPUnit exibiu aviso de `browser_output` não gravável, mas os testes Unit passaram.
+- **Runtime:** `toca`, Drupal 11.5.0-beta1, banco `aculta_runtime`, tema V2 ativo. Nenhum import de configuração, update de banco ou alteração de conteúdo. Após o push, repetir `drush cr` e os dois status read-only para confirmar HEAD.
+- **Pendências:** revisão visual/assistiva e validação de headers/purge quando uma CDN/reverse proxy for habilitada.
+- **Preservar:** alterações paralelas em `composer.json`, `composer.lock`, `docs/operations/status/aculta_lms.yml`, módulo `aculta_lms`, `web/themes/custom/aculta420/` e `web/themes/custom/aculta_theme/`; não incluir nesta entrega.
+- **Retomar lendo:** este handoff; `web/themes/custom/aculta420_v2/assets/README.md`; `web/themes/custom/aculta420_v2/docs/roadmap.md`; `web/modules/custom/aculta_portal/modules/aculta_maps/README.md`.
+
 ## Retomada — objetivo persistente LMS → pagamentos → updatedb, 2026-11-04
 
 - **Objetivo:** concluir lacunas funcionais do LMS; somente depois trabalhar pagamentos e, por último, resolver pendências `updatedb` individualmente. Escopo da sessão é código/funcionalidade, sem revisão estética do tema.

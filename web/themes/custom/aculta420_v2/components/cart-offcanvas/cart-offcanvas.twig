@@ -4,7 +4,7 @@
   aria-label="{{ 'Abrir carrinho (@count itens)'|t({'@count': count}) }}"
   data-aculta-cart-trigger data-aculta-dialog-trigger>
   <span class="aculta-utility-trigger__icon">
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 4h2l2.1 10.2a2 2 0 0 0 2 1.6h8.8a2 2 0 0 0 1.9-1.4L22 8H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+    {{ include('aculta420_v2:icon', { name: 'shopping-cart', variant: 'duotone', size: 'md' }, with_context = false) }}
     <span class="aculta-unread-count aculta-utility-trigger__count" data-aculta-cart-count data-count="{{ count }}" aria-hidden="true">{{ count > 99 ? '99+' : count }}</span>
   </span>
 </button>
@@ -12,7 +12,7 @@
 <dialog class="aculta-utility-dialog aculta-cart-dialog" id="aculta-cart-dialog" aria-labelledby="aculta-cart-dialog-title" data-aculta-utility-drawer>
   <header class="aculta-utility-dialog__header">
     <h2 class="aculta-utility-dialog__title" id="aculta-cart-dialog-title">{{ 'Carrinho'|t }}</h2>
-    <button type="button" class="aculta-utility-dialog__close" data-aculta-dialog-close aria-label="{{ 'Fechar carrinho'|t }}"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+    <button type="button" class="aculta-utility-dialog__close" data-aculta-dialog-close aria-label="{{ 'Fechar carrinho'|t }}">{{ include('aculta420_v2:icon', { name: 'x', variant: 'duotone', size: 'md' }, with_context = false) }}</button>
   </header>
   <div class="aculta-utility-dialog__body aculta-cart-offcanvas__body">
     {% if empty %}

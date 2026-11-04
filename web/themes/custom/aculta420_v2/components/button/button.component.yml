@@ -23,3 +23,13 @@ props:
     disabled:
       type: boolean
       default: false
+    icon_before:
+      type: [string, 'null']
+      title: Ícone anterior ao texto
+      pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+      default: null
+    icon_after:
+      type: [string, 'null']
+      title: Ícone posterior ao texto
+      pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+      default: null

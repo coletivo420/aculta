@@ -64,8 +64,11 @@ final class MapRendererTest extends UnitTestCase {
     $this->assertSame('https://www.google.com/maps/dir/?destination=Goi%C3%A2nia', $build['#attached']['drupalSettings']['acultaMaps']['event-map']['markers'][0]['routeUrl']);
     $marker = $build['#attached']['drupalSettings']['acultaMaps']['event-map']['markers'][0];
     $this->assertSame('event-map-popup-0', $marker['popupId']);
+    $this->assertSame('event-map-icon-0', $marker['iconTemplateId']);
+    $this->assertSame('primary', $marker['categoryColorClass']);
     $this->assertSame('aculta_maps_popup_template', $build['popup_templates'][$marker['popupId']]['#theme']);
     $this->assertSame('Local aproximado', $build['popup_templates'][$marker['popupId']]['#popup']['#title']);
+    $this->assertSame('aculta_maps_marker_icon_template', $build['icon_templates'][$marker['iconTemplateId']]['#theme']);
   }
 
   /**

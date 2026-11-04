@@ -6,10 +6,13 @@
     </a>
     <button class="navigation-bar__toggle" type="button" aria-expanded="false" aria-controls="{{ menu_id|default('aculta-primary-navigation') }}" data-aculta-navigation-toggle>
       <span class="navigation-bar__toggle-label">{{ 'Menu'|t }}</span>
-      <span class="navigation-bar__icon" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span class="navigation-bar__icon" aria-hidden="true">
+        <span data-navigation-icon="menu">{{ include('aculta420_v2:icon', { name: 'list', variant: 'duotone', size: 'md' }, with_context = false) }}</span>
+        <span data-navigation-icon="close">{{ include('aculta420_v2:icon', { name: 'x', variant: 'duotone', size: 'md' }, with_context = false) }}</span>
+      </span>
     </button>
     <nav class="navigation-bar__panel" id="{{ menu_id|default('aculta-primary-navigation') }}" role="navigation" aria-label="{{ 'Primary navigation'|t }}" data-aculta-navigation-panel>
-      <button class="navigation-bar__close" type="button" data-aculta-navigation-close>{{ 'Close menu'|t }}</button>
+      <button class="navigation-bar__close" type="button" data-aculta-navigation-close>{{ include('aculta420_v2:icon', { name: 'x', variant: 'duotone', size: 'md' }, with_context = false) }}<span>{{ 'Close menu'|t }}</span></button>
       <div class="navigation-bar__menu">{{ menu_items }}</div>
       {% if utility_items %}<div class="navigation-bar__utility">{{ utility_items }}</div>{% endif %}
     </nav>

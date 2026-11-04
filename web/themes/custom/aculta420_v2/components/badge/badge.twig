@@ -1,1 +1,4 @@
-<span{{ attributes.addClass('badge', 'badge--' ~ (variant|default('neutral'))) }}>{{ label }}</span>
+<span{{ attributes.addClass('badge', 'badge--' ~ (variant|default('neutral'))) }}>
+  {% if icon_name %}{{ include('aculta420_v2:icon', { name: icon_name, variant: 'duotone', size: 'sm' }, with_context = false) }}{% endif %}
+  <span class="badge__label">{{ label }}</span>
+</span>

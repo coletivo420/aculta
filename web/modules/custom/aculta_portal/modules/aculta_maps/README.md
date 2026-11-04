@@ -23,6 +23,9 @@ OpenStreetMap ou Nominatim diretamente.
   dos hooks `aculta_maps_popup_template` e `aculta_maps_popup_content`. O tema
   ativo escolhe a apresentação; Leaflet/Google clonam o template quando o
   marcador é aberto. O módulo não conhece IDs nem classes de SDC.
+  Para Leaflet, um hook separado fornece template inerte de ícone; o tema pode
+  renderizar Phosphor inline e o cliente o clona para `L.divIcon`. Isso mantém
+  SVG fora de `drupalSettings` e não requer sprites externos nem CORS.
 - `aculta_maps.geocoding` (`GeocodingService::geocode()`): retorna `lat`/`lng`
   ou `NULL`. Nominatim é usado em todos os engines e respeita limite global de
   uma chamada por segundo. Google Geocoding não é chamado pela aplicação.
@@ -71,6 +74,17 @@ minuta 0.6 da Política de Privacidade descreve tiles OSM/Google e geocodificaç
 Nominatim, mas ainda não foi publicada no Runtime. Confirme o provedor e os
 cabeçalhos HTTP ativos por ambiente antes da homologação. Plano e fases estão
 em `docs/`.
+
+## Cache compartilhado e CDN
+
+O renderer continua entregando render arrays para popups e ícones e preserva
+tags/contextos no render tree. A página de mapa acrescenta a tag do catálogo
+de locais e seu max-age; consumidores que agreguem conteúdo de entidades devem
+adicionar essas dependências/cache tags ao próprio render array. Dados de
+marcadores ficam no `drupalSettings` da página cacheável e não incluem sessão
+ou perfil pessoal. Configuração de CDN, TTL, headers de surrogate keys e purge
+é responsabilidade da integração de cada ambiente; o módulo não fixa host,
+headers de cache ou serviço de tiles.
 
 
 ## Revalidação técnica 2026-11-02

@@ -99,16 +99,8 @@
   position: relative;
 }
 
-.aculta-utility-trigger__icon svg,
-.aculta-utility-dialog__close svg {
-  block-size: 1.25rem;
-  fill: none;
-  inline-size: 1.25rem;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.8;
-}
+.aculta-utility-trigger__icon .aculta-icon,
+.aculta-utility-dialog__close .aculta-icon { color: currentColor; }
 
 .aculta-unread-count {
   align-items: center;

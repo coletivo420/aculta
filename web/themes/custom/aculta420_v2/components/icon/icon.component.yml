@@ -1,0 +1,28 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Ícone Phosphor
+description: Ícone vetorial de interface, com variantes regular e duotone.
+status: stable
+group: ACULTA
+props:
+  type: object
+  additionalProperties: false
+  required: [name]
+  properties:
+    name:
+      type: string
+      title: Nome do ícone
+      pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+    variant:
+      type: string
+      title: Peso visual
+      enum: [duotone, regular]
+      default: duotone
+    size:
+      type: string
+      title: Tamanho
+      enum: [sm, md, lg, xl]
+      default: md
+    color:
+      type: string
+      title: Token CSS ou cor hexadecimal
+      pattern: '^(var\(--[a-z][a-z0-9-]*\)|#[0-9A-Fa-f]{3,8}|currentColor)$'

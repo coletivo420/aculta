@@ -11,7 +11,7 @@ props:
   properties:
     title:
       type: string
-      title: Título
+      title: Título do evento
       minLength: 1
     url:
       type: [string, 'null']
@@ -19,16 +19,16 @@ props:
       format: uri-reference
     category:
       type: [string, 'null']
-      title: Categoria
+      title: Categoria cultural
     date:
       type: [string, 'null']
-      title: Data
+      title: Data do evento
     location:
       type: [string, 'null']
-      title: Localização
+      title: Local ou bairro
     summary:
       type: [string, 'null']
-      title: Resumo
+      title: Resumo do evento
     variant:
       type: string
       title: Apresentação

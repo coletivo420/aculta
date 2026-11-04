@@ -30,6 +30,11 @@ foreach ($source_files as $source_file) {
     continue;
   }
   $source = file_get_contents($source_file->getPathname());
+  if ($source_file->getExtension() === 'twig'
+    && !str_ends_with($source_file->getPathname(), '/components/icon/icon.twig')
+    && preg_match('/<svg\b/i', $source)) {
+    throw new RuntimeException(sprintf('Interface SVGs must use the icon SDC: %s', $source_file->getPathname()));
+  }
   $framework_class = '(?:row|col-(?:xs|sm|md|lg|xl|xxl)-\d+|d-flex|container-fluid|mb-\d+|form-control|form-select)';
   $has_framework_class = preg_match('/class\s*=\s*[\"\'][^\"\']*\b' . $framework_class . '\b/i', $source)
     || preg_match('/(?:^|[\s,{])\.' . $framework_class . '(?=[\s:{,#]|$)/im', $source);
@@ -48,6 +53,7 @@ $component_ids = [
   'card-cultural',
   'filter-chips',
   'hero-banner',
+  'icon',
   'map-popup',
   'messenger-trigger',
   'multidomain-bar',
@@ -62,11 +68,24 @@ $definitions = $manager->getDefinitions();
 $samples = [
   'audio-player' => ['#props' => ['src' => '/files/sample.mp3', 'title' => 'Sessão cultural']],
   'alerts-trigger' => ['#props' => ['href' => '/avisos/resumo', 'count' => 0]],
-  'badge' => ['#props' => ['label' => 'Cultura', 'variant' => 'primary']],
-  'button' => ['#props' => ['text' => 'Abrir', 'url' => '/destino', 'variant' => 'primary']],
+  'badge' => ['#props' => ['label' => 'Cultura', 'variant' => 'primary', 'icon_name' => 'tag']],
+  'button' => [
+    '#props' => [
+      'text' => 'Abrir',
+      'url' => '/destino',
+      'variant' => 'primary',
+      'icon_before' => 'arrow-right',
+    ],
+  ],
   'cart-offcanvas' => ['#props' => ['count' => 0, 'empty' => TRUE, 'url' => '/carrinho']],
   'card-cultural' => [
-    '#props' => ['title' => 'Evento cultural', 'category' => 'Cultura', 'variant' => 'compact'],
+    '#props' => [
+      'title' => 'Evento cultural',
+      'category' => 'Cultura',
+      'date' => '2026-11-04',
+      'location' => 'Centro',
+      'variant' => 'compact',
+    ],
     '#slots' => ['image' => '', 'actions' => ''],
   ],
   'filter-chips' => [
@@ -80,6 +99,7 @@ $samples = [
     '#props' => ['title' => 'Agenda cultural', 'cta_text' => 'Ver eventos', 'cta_url' => '/eventos'],
     '#slots' => ['background_media' => ''],
   ],
+  'icon' => ['#props' => ['name' => 'map-pin', 'variant' => 'duotone', 'size' => 'md']],
   'map-popup' => [
     '#props' => ['title' => 'Centro cultural', 'category' => 'Cultura', 'address' => 'Centro'],
     '#slots' => ['thumbnail' => ''],
@@ -131,6 +151,17 @@ foreach ($component_ids as $component_id) {
   }
   if ($component_id === 'navigation-bar' && !is_file($theme_root . '/components/navigation-bar/navigation-bar.js')) {
     throw new RuntimeException('Navigation behavior file is missing.');
+  }
+  if ($component_id === 'icon') {
+    $icon_build = [
+      '#type' => 'component',
+      '#component' => $plugin_id,
+      '#props' => ['name' => 'map-pin', 'variant' => 'duotone', 'size' => 'md'],
+    ];
+    $icon = $renderer->renderInIsolation($icon_build);
+    if (!str_contains((string) $icon, '<svg') || !str_contains((string) $icon, 'viewBox="0 0 256 256"')) {
+      throw new RuntimeException('Phosphor SVG must be rendered inline by the icon SDC.');
+    }
   }
   if ($component_id === 'navigation-bar' && !in_array('core/once', $definition['library']['dependencies'] ?? [], TRUE)) {
     throw new RuntimeException('Navigation behavior must depend on core/once.');

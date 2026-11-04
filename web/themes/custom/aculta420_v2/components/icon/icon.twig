@@ -1,0 +1,7 @@
+{% set variant = variant|default('duotone') %}
+{% set size = size|default('md') %}
+{% set icon_filename = variant == 'duotone' ? name ~ '-duotone.svg' : name ~ '.svg' %}
+{% set icon_file = '@aculta420_v2/assets/icons/phosphor/' ~ variant ~ '/' ~ icon_filename %}
+<span class="aculta-icon aculta-icon--{{ variant }} aculta-icon--{{ size }}"{% if color %} style="--icon-primary: {{ color }};"{% endif %} aria-hidden="true">
+  {{ source(icon_file, ignore_missing = true) }}
+</span>

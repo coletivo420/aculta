@@ -12,5 +12,11 @@ props:
       minLength: 1
     variant:
       type: string
+      title: Variante visual
       enum: [primary, highlight, neutral]
       default: neutral
+    icon_name:
+      type: [string, 'null']
+      title: Ícone Phosphor opcional
+      pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+      default: null

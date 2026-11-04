@@ -5,7 +5,7 @@
 .navigation-bar__toggle,.navigation-bar__close{align-items:center;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-base);color:var(--color-text-primary);display:none;gap:var(--spacing-sm);justify-content:center;min-block-size:var(--tap-target-min);min-inline-size:var(--tap-target-min);padding:var(--spacing-xs) var(--spacing-sm)}
 .navigation-bar.has-js .navigation-bar__toggle{display:inline-flex}
 .navigation-bar__toggle:focus-visible,.navigation-bar__close:focus-visible,.navigation-bar a:focus-visible{outline:3px solid var(--color-brand-highlight);outline-offset:3px}
-.navigation-bar__icon{display:grid;gap:4px}.navigation-bar__icon span{background:currentColor;block-size:2px;inline-size:1.25rem}
+.navigation-bar__icon{display:inline-flex;align-items:center;justify-content:center}.navigation-bar__icon [data-navigation-icon="close"]{display:none}.navigation-bar__toggle[aria-expanded="true"] .navigation-bar__icon [data-navigation-icon="menu"]{display:none}.navigation-bar__toggle[aria-expanded="true"] .navigation-bar__icon [data-navigation-icon="close"]{display:inline-flex}
 .navigation-bar__panel{display:grid;gap:var(--spacing-base);padding-block:var(--spacing-sm)}
 .navigation-bar.has-js .navigation-bar__panel{background:var(--color-surface);block-size:100dvh;box-shadow:var(--shadow-lg);display:block;inline-size:min(22rem,calc(100vw - var(--spacing-xl)));inset-block:0;inset-inline-end:0;overflow-y:auto;padding:var(--spacing-base);position:fixed;transform:translateX(100%);transition:transform .2s ease,visibility .2s ease;visibility:hidden;z-index:30}
 .navigation-bar.has-js .navigation-bar__panel.is-open{transform:translateX(0);visibility:visible}
