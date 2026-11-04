@@ -1,5 +1,12 @@
 # Estado da sessão
 
+## Handoff — Text With Summary 2.0.x-dev — 2026-11-03
+
+- Adicionado `drupal/text_with_summary:2.0.x-dev@dev` ao Composer; lockado no commit upstream `89c4282cf25259564ce7fa41b9dd70f7fe7f496d` em `web/modules/contrib/text_with_summary`.
+- Após `drush cr`, `extension.list.module` resolveu `text_with_summary` para `modules/contrib/text_with_summary`; módulo já habilitado. Nenhuma atualização de banco/configuração pendente.
+- `composer validate --no-check-publish` válido, com avisos preexistentes de constraints exatas; `git diff --check` passou.
+- Commit `4b176c0e72` enviado a `origin/dev`; Runtime compartilha o checkout e está no mesmo código.
+
 ## Handoff — remoção do módulo Search — 2026-11-03
 
 - Desinstalado `search` do Runtime `aculta_runtime`; removido de `core.extension.yml` e excluídos `search.page.user_search` e `search.settings` do Config Sync. `search_api` e `search_api_db` continuam habilitados.
@@ -21,19 +28,20 @@
   upstream de Core/contrib; alerta de diretório `browser_output` não gravável.
 - Não houve chamada de pagamento real nem mensagem externa. A homologação com
   comprador sandbox continua pendente do desafio de segurança do provedor.
-- Runtime `aculta_runtime`: checkout compartilhado em `71a86fa9fa`, Drupal
-  11.5.0-beta1, PHP 8.5.12. Após a sincronização concorrente do commit, `drush
-  cr` PASS; `updatedb:status` sem pendências e `config:status` sem diferenças.
+- Runtime `aculta_runtime`: checkout compartilhado em `92e1e43a5b`, Drupal
+  11.5.0-beta1, PHP 8.5.12. Após a sincronização dos commits, `drush cr` PASS;
+  `updatedb:status` sem pendências e `config:status` sem diferenças.
   A migração para D12 ainda não foi feita.
 - O dry-run Composer para D12 continua bloqueado por vários contrib. A release
   Bootstrap 8.x-3.45 declara Drupal 12 no `bootstrap.info.yml`, mas o requisito
   no `composer.json` do pacote continua `drupal/core ^10.5 || ^11.2`; Commerce
   3.3.x declara apenas `^10.3 || ^11`. Não trocar a linha de Bootstrap.
-- `core:requirements` não reporta erro, mas mantém avisos de 7 mídias
-  duplicadas, filtros de status redundantes nas Views Forum/Revista/Conteúdo,
-  módulos Search e Text With Summary Field depreciados, Claro depreciado,
-  cache de desenvolvimento desabilitado e verificações de Security Review.
-  Nenhum conteúdo ou configuração do Runtime foi alterado por esses avisos.
+- Após a remoção de Search no commit `71a86fa9fa`, `core:requirements` não
+  reporta erros nem o aviso de módulos depreciados. Restam avisos de Claro,
+  traduções disponíveis, 7 mídias duplicadas, filtros de status redundantes
+  nas Views Forum/Revista/Conteúdo, cache de desenvolvimento desabilitado,
+  Security Review e metadados de atualização do Core ausentes. Conteúdo e
+  configuração do Runtime ficaram intactos nesta auditoria.
 - Arquivos desta entrega: módulo `web/modules/custom/aculta_portal/modules/aculta_lms/`
   (controllers, formulário, acesso, membership reader, services/routing,
   testes e changelog), metadados/changelog do `aculta_portal` e este handoff.
