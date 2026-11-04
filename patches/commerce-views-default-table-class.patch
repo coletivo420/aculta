@@ -1,0 +1,140 @@
+--- a/modules/store/config/install/views.view.commerce_stores.yml
++++ b/modules/store/config/install/views.view.commerce_stores.yml
+@@ -504,6 +504,7 @@
+       style:
+         type: table
+         options:
++          class: ''
+           grouping: {  }
+           row_class: ''
+           default_row_class: true
+--- a/modules/order/config/install/views.view.commerce_user_orders.yml
++++ b/modules/order/config/install/views.view.commerce_user_orders.yml
+@@ -70,6 +70,7 @@
+       style:
+         type: table
+         options:
++          class: ''
+           grouping: {  }
+           row_class: ''
+           default_row_class: true
+--- a/modules/order/config/install/views.view.commerce_order_item_table.yml
++++ b/modules/order/config/install/views.view.commerce_order_item_table.yml
+@@ -49,6 +49,7 @@
+       style:
+         type: table
+         options:
++          class: ''
+           grouping: {  }
+           row_class: ''
+           default_row_class: true
+--- a/modules/order/config/install/views.view.commerce_order_item_table_admin.yml
++++ b/modules/order/config/install/views.view.commerce_order_item_table_admin.yml
+@@ -408,6 +408,7 @@
+       style:
+         type: table
+         options:
++          class: ''
+           grouping: {  }
+           row_class: ''
+           default_row_class: true
+--- a/modules/order/config/install/views.view.commerce_orders.yml
++++ b/modules/order/config/install/views.view.commerce_orders.yml
+@@ -72,6 +72,7 @@
+       style:
+         type: table
+         options:
++          class: ''
+           grouping: {  }
+           row_class: ''
+           default_row_class: true
+--- a/modules/product/config/install/views.view.commerce_products.yml
++++ b/modules/product/config/install/views.view.commerce_products.yml
+@@ -68,6 +68,7 @@
+       style:
+         type: table
+         options:
++          class: ''
+           grouping: {  }
+           row_class: ''
+           default_row_class: true
+--- a/modules/cart/config/install/views.view.commerce_cart_block.yml
++++ b/modules/cart/config/install/views.view.commerce_cart_block.yml
+@@ -52,6 +52,7 @@
+       style:
+         type: table
+         options:
++          class: ''
+           grouping: {  }
+           row_class: ''
+           default_row_class: true
+--- a/modules/cart/config/install/views.view.commerce_cart_form.yml
++++ b/modules/cart/config/install/views.view.commerce_cart_form.yml
+@@ -53,6 +53,7 @@
+       style:
+         type: table
+         options:
++          class: ''
+           grouping: {  }
+           row_class: ''
+           default_row_class: true
+--- a/modules/cart/config/install/views.view.commerce_carts.yml
++++ b/modules/cart/config/install/views.view.commerce_carts.yml
+@@ -73,6 +73,7 @@
+       style:
+         type: table
+         options:
++          class: ''
+           grouping: {  }
+           row_class: ''
+           default_row_class: true
+--- a/modules/checkout/config/install/views.view.commerce_checkout_order_summary.yml
++++ b/modules/checkout/config/install/views.view.commerce_checkout_order_summary.yml
+@@ -53,6 +53,7 @@
+       style:
+         type: table
+         options:
++          class: ''
+           grouping: {  }
+           row_class: ''
+           default_row_class: true
+--- a/modules/promotion/config/install/views.view.commerce_promotions.yml
++++ b/modules/promotion/config/install/views.view.commerce_promotions.yml
+@@ -70,6 +70,7 @@
+       style:
+         type: table
+         options:
++          class: ''
+           grouping: {  }
+           row_class: ''
+           default_row_class: true
+--- a/modules/promotion/config/install/views.view.commerce_promotion_coupons.yml
++++ b/modules/promotion/config/install/views.view.commerce_promotion_coupons.yml
+@@ -65,6 +65,7 @@
+       style:
+         type: table
+         options:
++          class: ''
+           grouping: {  }
+           row_class: ''
+           default_row_class: true
+--- a/modules/payment/config/install/views.view.commerce_order_payments.yml
++++ b/modules/payment/config/install/views.view.commerce_order_payments.yml
+@@ -752,6 +752,7 @@
+       style:
+         type: table
+         options:
++          class: ''
+           grouping: {  }
+           row_class: ''
+           default_row_class: true
+--- a/modules/log/config/install/views.view.commerce_activity.yml
++++ b/modules/log/config/install/views.view.commerce_activity.yml
+@@ -340,6 +340,7 @@
+       style:
+         type: table
+         options:
++          class: ''
+           grouping: {  }
+           row_class: ''
+           default_row_class: true

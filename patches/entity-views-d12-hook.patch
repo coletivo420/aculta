@@ -1,0 +1,115 @@
+diff --git a/entity.module b/entity.module
+index df315195f8e0551c6e82b575fbbd08dc4db7b284..ef9af459f03c389e17fe520d29d7e2da9406101e 100644
+--- a/entity.module
++++ b/entity.module
+@@ -10,6 +10,7 @@ use Drupal\Core\Cache\CacheableMetadata;
+ use Drupal\Core\Config\Entity\ConfigEntityInterface;
+ use Drupal\Core\Database\Query\AlterableInterface;
+ use Drupal\Core\Database\Query\SelectInterface;
++use Drupal\Core\Entity\ContentEntityInterface;
+ use Drupal\Core\Entity\EntityInterface;
+ use Drupal\Core\Entity\EntityTypeInterface;
+ use Drupal\Core\Entity\Sql\SqlEntityStorageInterface;
+@@ -224,3 +225,45 @@ function entity_jsonapi_entity_filter_access(EntityTypeInterface $entity_type, A
+ 
+   return $result;
+ }
++
++/**
++ * Implements hook_views_data().
++ */
++function entity_views_data() {
++  $entity_types = \Drupal::entityTypeManager()->getDefinitions();
++  $entity_types = array_filter($entity_types, function (EntityTypeInterface $entity_type) {
++    return $entity_type->entityClassImplements(ContentEntityInterface::class);
++  });
++
++  $data = [];
++  foreach ($entity_types as $entity_type) {
++    /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
++    if ($entity_type->isRevisionable()) {
++      $entity_type_id = $entity_type->id();
++      $revision_table = $entity_type->getRevisionDataTable() ?: $entity_type->getRevisionTable();
++
++      if ($entity_type->hasLinkTemplate('revision')) {
++        $data[$revision_table]['view_revision_' . $entity_type_id] = [
++          'field' => [
++            'title' => t('Link to revision'),
++            'help' => t('Provide a simple link to the revision.'),
++            'id' => 'entity_link_revision',
++            'click sortable' => FALSE,
++          ],
++        ];
++      }
++      if ($entity_type->hasLinkTemplate('revision-revert-form')) {
++        $data[$revision_table]['revert_revision_' . $entity_type_id] = [
++          'field' => [
++            'title' => t('Link to revert revision'),
++            'help' => t('Provide a simple link to revert to the revision.'),
++            'id' => 'entity_link_revision_revert',
++            'click sortable' => FALSE,
++          ],
++        ];
++      }
++    }
++  }
++
++  return $data;
++}
+diff --git a/entity.views.inc b/entity.views.inc
+deleted file mode 100644
+index d8940de36dbf88ce6b1cd38f7aeeb6dad7df5898..0000000000000000000000000000000000000000
+--- a/entity.views.inc
++++ /dev/null
+@@ -1,51 +0,0 @@
+-<?php
+-
+-/**
+- * @file
+- * Views hooks.
+- */
+-
+-use Drupal\Core\Entity\ContentEntityInterface;
+-use Drupal\Core\Entity\EntityTypeInterface;
+-
+-/**
+- * Implements hook_views_data().
+- */
+-function entity_views_data() {
+-  $entity_types = \Drupal::entityTypeManager()->getDefinitions();
+-  $entity_types = array_filter($entity_types, function (EntityTypeInterface $entity_type) {
+-    return $entity_type->entityClassImplements(ContentEntityInterface::class);
+-  });
+-
+-  $data = [];
+-  foreach ($entity_types as $entity_type) {
+-    /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
+-    if ($entity_type->isRevisionable()) {
+-      $entity_type_id = $entity_type->id();
+-      $revision_table = $entity_type->getRevisionDataTable() ?: $entity_type->getRevisionTable();
+-
+-      if ($entity_type->hasLinkTemplate('revision')) {
+-        $data[$revision_table]['view_revision_' . $entity_type_id] = [
+-          'field' => [
+-            'title' => t('Link to revision'),
+-            'help' => t('Provide a simple link to the revision.'),
+-            'id' => 'entity_link_revision',
+-            'click sortable' => FALSE,
+-          ],
+-        ];
+-      }
+-      if ($entity_type->hasLinkTemplate('revision-revert-form')) {
+-        $data[$revision_table]['revert_revision_' . $entity_type_id] = [
+-          'field' => [
+-            'title' => t('Link to revert revision'),
+-            'help' => t('Provide a simple link to revert to the revision.'),
+-            'id' => 'entity_link_revision_revert',
+-            'click sortable' => FALSE,
+-          ],
+-        ];
+-      }
+-    }
+-  }
+-
+-  return $data;
+-}
