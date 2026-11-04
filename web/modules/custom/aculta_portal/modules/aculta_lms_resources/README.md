@@ -76,7 +76,7 @@ Core/contrib). O harness pertence ao `aculta_index` no Portal; o LMS não
 hospeda nem possui o Index. A policy LMS segue coberta nos testes focais; o
 Runtime permanece pendente.
 
-### Limpeza coordenada de documentos PDF do curso — dev.30
+### Limpeza coordenada de documentos PDF do curso — dev.31
 
 Quando uma relação `aculta_document_viewer:course_document` é removida, o hook
 do Group entrega o ID da Media ao `CourseDocumentCleanup`. Media inexistente,
@@ -91,8 +91,11 @@ pelo LMS. A política compartilhada continua limitando a decisão final e a
 remoção às APIs do Portal:
 [política de limpeza](../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
 
-Unit do módulo: 28 testes / 185 assertions PASS. O teste Kernel de lifecycle Group→Media→File
-e a homologação no Runtime permanecem pendentes.
+Unit do módulo: 28 testes / 185 assertions PASS. O Kernel de lifecycle
+Group→Media→File passa em 1 teste / 27 assertions; ele exercita a associação
+compartilhada, a retenção após o primeiro detach e a remoção após o último.
+O inspector compartilhado agora inclui referências Group por bundle. Runtime
+permanece pendente.
 
 Dev 0.1.0-dev.10. O provider tem cobertura Unit e Kernel com Group real:
 estudante por `takeAccess()`, educador por `grade students`, terceiro negado.

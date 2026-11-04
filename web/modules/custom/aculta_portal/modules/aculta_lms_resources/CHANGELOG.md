@@ -1,5 +1,14 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.31 — ciclo de limpeza de documento testado no Kernel
+
+- Kernel instala Group, Media e File reais e valida retenção de documento
+  compartilhado até a exclusão da última relação.
+- A cobertura expôs que o inspector compartilhado não contava o campo
+  `group_relationship_target`, configurado por bundle; a correção está no
+  `aculta_file_uploader` dev.34.
+- Kernel lifecycle: 1 teste / 27 assertions PASS. Runtime pendente.
+
 ## 0.1.0-dev.30 — encaminha documentos órfãos à limpeza compartilhada
 
 - Ao remover uma relação Group de documento de curso, o LMS Resources submete
