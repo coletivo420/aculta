@@ -666,7 +666,7 @@ display:
           admin_label: ''
           entity_type: group_relationship
           entity_field: gid
-          plugin_id: numeric
+          plugin_id: group_id
           default_action: 'access denied'
           exception:
             value: all
@@ -933,6 +933,7 @@ display:
         menu_name: main
         parent: ''
         context: '0'
+      use_admin_theme: true
     cache_metadata:
       max-age: -1
       contexts:

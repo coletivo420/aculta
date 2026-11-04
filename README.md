@@ -162,7 +162,7 @@ Versões instaladas no `composer.lock` e no `web/themes/custom/aculta420/package
 | `drupal/commerce` | 3.3.14 | Composer | Base de pedidos e produtos da Loja (`aculta_commerce`) |
 | `drupal/commerce_cart` | 3.3.14 | Composer | Carrinhos de compra (ADR-032) |
 | `drupal/commerce_checkout` | 3.3.14 | Composer | Checkouts por contexto (D-43) |
-| `drupal/group` | 4.0.0-alpha2 | Composer | Turmas e grupos do LMS |
+| `drupal/group` | `4.0.x-dev@dev` (commit `49159f20`) | Composer; branch dev do Drupal.org | Turmas e grupos do LMS |
 | `drupal/flexible_permissions` | 2.0.1 | Composer | Cálculo de permissões do Group e do LMS |
 | `drupal/mcp_server` | 2.0.0-beta7 | Composer; Drupal.org (GPL-2.0-or-later) | Infraestrutura MCP HTTP e stdio para Drupal |
 | `drupal/mcp_server_oauth` | 1.0.0-alpha2 | Composer; Drupal.org (GPL-2.0-or-later) | OAuth Bearer e metadados protegidos para o endpoint MCP |

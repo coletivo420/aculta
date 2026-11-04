@@ -287,7 +287,7 @@
         "drupal/freelinking": "^4.0",
         "drupal/geofield": "^10.3",
         "drupal/google_tag": "^2.0.9",
-        "drupal/group": "^4.0@alpha",
+        "drupal/group": "4.0.x-dev@dev",
         "drupal/history": "^1.0",
         "drupal/image_widget_crop": "^3.0",
         "drupal/imageapi_optimize_binaries": "^1.2.0-beta1",
