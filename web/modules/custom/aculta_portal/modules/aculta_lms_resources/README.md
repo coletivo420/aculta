@@ -85,9 +85,12 @@ acesso de estudante/educador, leituras, galerias, vídeos e documentos: 5 testes
 Core/contrib). O fixture de Domain usa contexto isolado e não acessa o container
 Drupal antes do boot. Em conjunto, `ContentIndexOwnerIntegrationKernelTest`
 passou 2 testes / 65 assertions, comprovando a descoberta dos providers pela
-closure de módulos real. O Runtime continua sem alteração; o teste específico
-de relações e acesso do provider no Runtime ainda requer preflight e fixtures
-somente de leitura.
+closure de módulos real. Em 2026-11-04, leitura no Runtime `cursos` confirmou
+`aculta_lms_resources` habilitado, três field storages e três instâncias de
+campo em `lms_course`; `updatedb:status` e `config:status` estão limpos. Nenhum
+update, import ou conteúdo foi aplicado. O smoke funcional autenticado com
+recursos reais vinculados ao curso continua pendente por falta de fixture
+autorizada; revisão visual está fora do escopo funcional atual.
 
 ### Limpeza coordenada de documentos PDF do curso — dev.31
 

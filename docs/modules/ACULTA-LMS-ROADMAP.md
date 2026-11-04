@@ -464,9 +464,11 @@ no purpose Revista para educadores com permissão contextual; membros ativos e
 educadores só recebem acesso à galeria enquanto ela estiver vinculada ao curso.
 As permissões gerais da Gallery permanecem inalteradas. Unit passou 8/39; Kernel
 no MariaDB dedicado 2/46 passou na versão anterior e não foi alterado nesta
-subfase. PHP 8.4.26; PHP 8.5 não validado. Ainda é necessário instalar os campos
-no Runtime, confirmar a seleção no formulário sob o purpose `courses`, fazer
-smoke autenticado e revisão visual; esses itens bloqueiam RC.
+subfase. Em 2026-11-04, leitura no Runtime `cursos` confirmou os três field
+storages e instâncias em `lms_course`, `aculta_lms_resources` habilitado e
+`updatedb:status`/`config:status` limpos. Nenhuma configuração foi aplicada.
+Falta smoke funcional autenticado da seleção e dos recursos efetivamente
+vinculados; revisão visual está fora do escopo da continuidade funcional atual.
 
 Em `aculta_lms_resources` 0.1.0-dev.16, a classe Kernel LMS/Index passou novamente em MariaDB (4 testes / 208 assertions; 53 depreciações Core/contrib). Cobre policy de estudante e educador, terceiro negado e relações de leitura, galeria e `course_document`; providers vêm dos YAMLs owner, mas a relação PDF usa plugin Group fixture. Boot/DI completo dos módulos owner, instalação e Runtime permanecem pendentes.
 
