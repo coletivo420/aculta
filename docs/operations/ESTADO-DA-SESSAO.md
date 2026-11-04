@@ -945,3 +945,41 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   Depois, avaliar a chave neutra do Portal, compatibilidade do UI Styles e
   auditoria dos componentes conforme ADR-046 e gates por purpose.
 
+
+## Continuação — navegação do shell e sobreposição administrativa V2 — 2026-11-04
+
+- **Estado:** correção visual confirmada no Runtime; a Institution Bar não é
+  coberta pelo menu administrativo. A Fase 2 do ADR-046 continua em andamento;
+  Domain Header, rodapé e demais regiões ainda precisam de revisão contra a V1.
+- **Comportamento:** CSS da V2 desloca Gin para baixo pela altura medida da
+  Institution Bar. No toolbar Core, desloca primeiro a faixa de controles e
+  depois a bandeja vertical, que começa após ambas. A barra institucional tem
+  prioridade de camada e segue interativa.
+- **Evidência:** Firefox ESR visível, fixture anônima carregando as folhas de
+  estilo locais Gin/Core, 10/10 checks em 320/390/768/1024/1280 px. Geometria
+  medida: Institution Bar 0–73 px; Gin inicia em 73 px; controles Core em 73 px;
+  bandeja Core em 112 px. Sessão autenticada de toolbar permanece DEFERRED.
+  Artefatos fora do repositório em
+  `$SUITE_OUT/aculta420-v2-admin-toolbar-layer-accept/`.
+- **Navegação SDC:** o menu principal é envolvido pelo SDC `navigation-bar` na
+  posição e peso originais do bloco Drupal em `page.header`, preservando o
+  render array, acesso e cacheabilidade. Firefox ESR passou 70/70 verificações
+  funcionais nos dez purposes. A matriz visual atual passou 670 registros: dez
+  purposes, claro/escuro, larguras 320–1440, zoom 200/400, foco, sem JS e
+  movimento reduzido, sem respostas HTTP diferentes de 200 ou overflow.
+  Observação: o runner injeta CSS baseline no DOM atual e não representa Twig
+  histórico.
+- **Gates:** SDC schema 55 componentes/764 checks PASS; Design Foundations 2468
+  PASS (contraste escuro mínimo dos pares reportados 7,59:1); browser validators
+  21 PASS; PHP lint, PHPCS focal, Python compile e `git diff --check` PASS;
+  shell contract 13 PASS; runtime SDC 15/15 PASS. `updatedb:status` sem updates,
+  `config:status` limpo e `drush cr` PASS. A matriz visual cobre usuários
+  anônimos; leitor de tela e toolbar autenticado continuam DEFERRED.
+- **Próximo:** verificar os arquivos e templates de identidade do Domain Header
+  contra a referência V1 em modo somente leitura, corrigindo o logo ausente da
+  V2 sem alterar o contrato Institution Bar/Domain Header. Antes de qualquer
+  edição visual, reler `docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md`
+  e ADR-046 §3.
+- **Preservar fora da entrega:** `composer.json`, `composer.lock`,
+  `web/themes/custom/aculta420/js/utility-drawers.js` e
+  `web/themes/custom/aculta_theme/`.

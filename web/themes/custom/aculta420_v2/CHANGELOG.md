@@ -1,5 +1,29 @@
 # Changelog — ACULTA420 V2
 
+## 1.2.0-dev.2 — navegação SDC no shell (2026-11-04)
+
+- O bloco Drupal `system_menu_block:main` permanece na mesma posição da região
+  `header`; o preprocess o envolve no render element nativo do SDC
+  `navigation-bar`, preservando o render array original como slot e mantendo
+  acesso, peso e cacheabilidade.
+- O menu continua visível sem JavaScript; JavaScript aprimora o drawer mobile,
+  com foco ao abrir, fechamento por Escape e retorno de foco. A marca permanece
+  opcional no componente para evitar duplicação do Domain Header.
+- Os landmarks do SDC e do menu Core têm nomes distintos (`Primary navigation`
+  e `Main navigation`); links e título continuam sob o sistema de menus Drupal.
+- A Institution Bar permanece no topo acima das camadas administrativas. A
+  sidebar Gin começa após a altura medida da barra; a bandeja vertical Core
+  começa após a barra e os controles do toolbar.
+- Firefox ESR visível: baseline `33e4dddbf5`; a matriz funcional cobre dez
+  purposes, 320/767/768/1440 px, Enter/Escape/foco e fallback sem JS. A matriz
+  visual passou nas dez raízes de purpose em claro/escuro e 320–1440 px, sem
+  overflow; zoom 200/400, foco de teclado, sem JS e movimento reduzido passaram.
+  O runner injeta o CSS baseline no DOM atual, portanto não representa o
+  histórico Twig anterior. O teste de camadas usa as folhas Gin/Core e fixtures
+  DOM anônimas (10/10 checks em 320/390/768/1024/1280 px): a barra ocupa
+  0–73 px, Gin começa em 73 px, controles Core em 73 px e bandeja Core em
+  112 px. Sessão administrativa real e leitor de tela ficam DEFERRED.
+
 ## 1.2.0-dev.1 — tokens e fundações com identidade da V1 (2026-11-04)
 
 - Consolidados tipografia Inter/Oswald, escala de espaçamento herdada, foco

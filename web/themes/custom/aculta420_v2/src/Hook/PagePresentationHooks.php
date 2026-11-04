@@ -26,6 +26,7 @@ final class PagePresentationHooks {
   public function preprocessPage(array &$variables): void {
     $variables['aculta_account_menu'] = [];
     $this->moveAccountMenuToUtilityBar($variables);
+    $this->wrapPrimaryMenuWithNavigationComponent($variables);
     $this->removeSearchDialogDependency($variables);
 
     $links = $variables['domain_presentation']['regions']['showcase'] ?? [];
@@ -79,20 +80,70 @@ final class PagePresentationHooks {
       if (!is_array($block)) {
         continue;
       }
-      $pluginId = $block['#plugin_id'] ?? '';
-      $lazyBuilder = $block['#lazy_builder'] ?? [];
-      if ($pluginId === '' && ($lazyBuilder[0] ?? '') === 'Drupal\\block\\BlockViewBuilder::lazyBuilder') {
-        $blockId = $lazyBuilder[1][0] ?? '';
-        if (is_string($blockId) && $blockId !== '') {
-          $pluginId = (string) ($this->configFactory->get('block.block.' . $blockId)->get('plugin') ?? '');
-        }
-      }
-
-      if ($pluginId === 'system_menu_block:account') {
+      if ($this->getPluginId($block) === 'system_menu_block:account') {
         $variables['aculta_account_menu'][$key] = $block;
         unset($variables['page']['header'][$key]);
       }
     }
+  }
+
+  /**
+   * Wraps the primary menu with its SDC in the same header region position.
+   *
+   * The menu block stays at its configured weight among the domain header
+   * blocks, preserving the shell's order while the SDC adds progressive
+   * enhancement. The original block remains the slot render array so Drupal
+   * retains its access checks and cacheability metadata.
+   *
+   * @param array<string, mixed> $variables
+   *   Page theme variables.
+   */
+  private function wrapPrimaryMenuWithNavigationComponent(array &$variables): void {
+    if (!isset($variables['page']['header']) || !is_array($variables['page']['header'])) {
+      return;
+    }
+
+    foreach (Element::children($variables['page']['header']) as $key) {
+      $block = $variables['page']['header'][$key];
+      if (!is_array($block) || $this->getPluginId($block) !== 'system_menu_block:main') {
+        continue;
+      }
+
+      $component = [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:navigation-bar',
+        '#props' => [],
+        '#slots' => ['menu_items' => $block],
+      ];
+      foreach (['#access', '#attached', '#cache', '#weight'] as $property) {
+        if (array_key_exists($property, $block)) {
+          $component[$property] = $block[$property];
+        }
+      }
+      $variables['page']['header'][$key] = $component;
+    }
+  }
+
+  /**
+   * Resolves a block plugin ID from a render array or its lazy builder.
+   *
+   * @param array<string, mixed> $block
+   *   The block render array.
+   *
+   * @return string
+   *   The configured block plugin ID, or an empty string.
+   */
+  private function getPluginId(array $block): string {
+    $pluginId = $block['#plugin_id'] ?? '';
+    $lazyBuilder = $block['#lazy_builder'] ?? [];
+    if ($pluginId === '' && ($lazyBuilder[0] ?? '') === 'Drupal\\block\\BlockViewBuilder::lazyBuilder') {
+      $blockId = $lazyBuilder[1][0] ?? '';
+      if (is_string($blockId) && $blockId !== '') {
+        $pluginId = (string) ($this->configFactory->get('block.block.' . $blockId)->get('plugin') ?? '');
+      }
+    }
+
+    return is_string($pluginId) ? $pluginId : '';
   }
 
 }

@@ -15,11 +15,18 @@
           toggle.setAttribute('aria-expanded', String(open));
           panel.classList.toggle('is-open', open && !desktop.matches);
         };
+        const focusClose = (attempts = 3) => {
+          if (toggle.getAttribute('aria-expanded') !== 'true') return;
+          close.focus({ preventScroll: true });
+          if (document.activeElement !== close && attempts > 0) {
+            window.setTimeout(() => focusClose(attempts - 1), 32);
+          }
+        };
 
         toggle.addEventListener('click', () => {
           const open = toggle.getAttribute('aria-expanded') !== 'true';
           setOpen(open);
-          if (open) close.focus();
+          if (open) window.setTimeout(() => focusClose(), 0);
         });
         close.addEventListener('click', () => {
           setOpen(false);

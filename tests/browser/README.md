@@ -73,6 +73,14 @@ visível. Usa `BASELINE_REF` e `SUITE_OUT`; cobre somente as raízes públicas e
 não substitui testes de rotas, SDCs, leitores de tela ou usuários autenticados.
 Consulte o [README local](aculta420-v2-foundations/README.md).
 
+### `aculta420-v2-navigation/`
+
+`navigation.py` valida o SDC `navigation-bar` na posição original do menu
+principal dentro de `page.header`: larguras 320/767/768/1440 CSS px, foco de teclado, Escape,
+alvos de toque e fallback sem JavaScript nos dez purposes. Usa Firefox ESR
+visível e resolve hosts de teste do `deploy.json`; ver o
+[README local](aculta420-v2-navigation/README.md).
+
 ### Harness genérico para qualquer módulo/produto/purpose: `aculta-smoke/`
 
 `smoke-page.py` executa smoke GET reutilizável de uma ou mais URLs de qualquer

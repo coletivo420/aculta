@@ -7,7 +7,25 @@
   inset-block-start: var(--aculta-institution-bar-offset, 0px);
   inset-inline: 0;
   position: fixed;
-  z-index: 1030;
+  z-index: 1300;
+}
+
+/* Keep both Gin and Core's fixed administrative sidebars below the shell bar. */
+html body:has(.aculta-institution-bar) .admin-toolbar {
+  inset-block-start: var(--aculta-institution-bar-height, 2.25rem);
+  block-size: calc(100vh - var(--aculta-institution-bar-height, 2.25rem));
+  block-size: calc(100dvh - var(--aculta-institution-bar-height, 2.25rem));
+}
+
+/* The core toolbar's vertical admin rail also has a fixed top control bar. */
+html body:has(.aculta-institution-bar) .toolbar-oriented .toolbar-bar {
+  inset-block-start: var(--aculta-institution-bar-height, 2.25rem);
+}
+
+html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
+  inset-block-start: calc(var(--aculta-institution-bar-height, 2.25rem) + var(--aculta-admin-toolbar-bar-height, 2.4375rem));
+  block-size: calc(100vh - var(--aculta-institution-bar-height, 2.25rem) - var(--aculta-admin-toolbar-bar-height, 2.4375rem));
+  block-size: calc(100dvh - var(--aculta-institution-bar-height, 2.25rem) - var(--aculta-admin-toolbar-bar-height, 2.4375rem));
 }
 
 .aculta-institution-bar__inner {

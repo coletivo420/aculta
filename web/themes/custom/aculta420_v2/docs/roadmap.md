@@ -30,7 +30,39 @@
 
 ## Fase 2 — Shell
 
-**Status: pendente; revisão da Institution Bar, cabeçalho, navegação, rodapé e regiões de página contra V1.**
+**Status: em andamento; navegação SDC integrada. Revisões de Institution Bar, Domain Header, rodapé e demais regiões seguem pendentes.**
+
+- Referência visual: V1 `templates/page.html.twig` e `docs/shell.md`, somente
+  leitura. Institution Bar e Domain Header foram preservados como contratos.
+- Baseline antes da navegação: commit `33e4dddbf5`; Firefox ESR visível,
+  anônimo, nas raízes dos dez purposes em claro/escuro e 320–1440 CSS px,
+  180/180 sem overflow. Tab/Shift+Tab, zoom 200/400, sem JS e movimento
+  reduzido passaram. Capturas: `$SUITE_OUT/aculta420-v2-shell-baseline/`.
+- Antes: o bloco de menu principal estava dentro de `page.header`, sem o
+  comportamento do SDC `navigation-bar`.
+- Depois: o preprocess substitui o bloco pela instância do SDC no mesmo peso e
+  posição do cabeçalho; o render array original continua como slot de menu, com
+  acesso e metadados de cache preservados. O SDC não repete a marca do Domain
+  Header. Menu é visível sem JavaScript; com JS, Enter abre, Escape fecha e o
+  foco acompanha a interação.
+- Firefox ESR visível, anônimo: 70/70 checks nos dez purposes, em 320/767/768/
+  1440 CSS px; Enter, Escape, foco, landmarks e fallback sem JS em 320 px.
+  Evidência: `$SUITE_OUT/aculta420-v2-navigation-final3/`.
+- A faixa institucional fica acima da sidebar administrativa Gin e do toolbar
+  Core; Gin inicia após a altura medida da faixa, e a bandeja Core após a faixa
+  e sua própria barra de controles. Firefox ESR visível passou 10/10 checks em
+  320/390/768/1024/1280 px, sem overflow: barra 0–73 px, Gin inicia em 73 px,
+  controles Core iniciam em 73 px e bandeja Core em 112 px. A fixture usa as
+  folhas locais de Gin e Core, mas não uma sessão administrativa real: isso
+  permanece DEFERRED.
+  Evidência: `$SUITE_OUT/aculta420-v2-admin-toolbar-layer-accept/`.
+- Baseline: commit `33e4dddbf5`; screenshots atuais comparam as raízes de Main,
+  Conta, Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links e Eventos, URLs
+  requisitadas e finais vindas do `deploy.json`, estado anônimo, claro/escuro,
+  320–1440 CSS px, zoom 200/400, teclado e movimento reduzido. Resultados em
+  `$SUITE_OUT/aculta420-v2-shell-after-verified/`; leitores de tela e estados
+  autenticados permanecem DEFERRED. O runner aplica o CSS baseline ao DOM atual;
+  essa comparação não recupera a marcação Twig histórica da baseline.
 
 ## Fase 3 — Purpose neutro no Portal
 

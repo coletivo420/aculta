@@ -14,10 +14,21 @@
   function syncInstitutionBarSpace() {
     const bar = document.querySelector(institutionSelector);
     const spacer = bar?.previousElementSibling;
-    if (!bar || !spacer?.matches('.aculta-institution-bar-placeholder')) {
+    if (!bar) {
       return;
     }
-    spacer.style.blockSize = `${bar.getBoundingClientRect().height}px`;
+    const barHeight = bar.getBoundingClientRect().height;
+    document.documentElement.style.setProperty('--aculta-institution-bar-height', `${barHeight}px`);
+    const adminToolbarBar = document.querySelector('.toolbar-oriented .toolbar-bar');
+    if (adminToolbarBar) {
+      const adminToolbarBarHeight = adminToolbarBar.getBoundingClientRect().height;
+      if (adminToolbarBarHeight > 0) {
+        document.documentElement.style.setProperty('--aculta-admin-toolbar-bar-height', `${adminToolbarBarHeight}px`);
+      }
+    }
+    if (spacer?.matches('.aculta-institution-bar-placeholder')) {
+      spacer.style.blockSize = `${barHeight}px`;
+    }
 
     const adminBar = document.querySelector('.top-bar[data-drupal-admin-styles]');
     let offset = 0;
