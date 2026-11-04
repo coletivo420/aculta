@@ -1,3 +1,12 @@
+## 0.4.0-dev.172 — serve o editor H5P no domínio de cursos
+
+- O endpoint AJAX que lista bibliotecas e retorna semânticas do editor agora
+  pertence ao purpose `courses`, igual ao formulário contextual que o consome.
+  Antes, ele era classificado como `main` e respondia 404 no domínio de cursos,
+  deixando o iframe mostrar “Error, unable to load libraries.”
+- O Kernel de descoberta fixa esse contrato de rota para evitar regressão.
+- Runtime: validar a correção após sincronização e rebuild de cache.
+
 ## 0.4.0-dev.171 — remove dependência do Drupal LMS contrib
 
 - `aculta_lms_h5p` mantém os acessos por Group e não precisa habilitar o módulo `lms`; o Kernel focal remove essa dependência do harness.

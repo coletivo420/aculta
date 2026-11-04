@@ -232,4 +232,4 @@ aculta_lms_h5p.editor_ajax:
     argument_10: '[A-Za-z0-9._~-]+'
   methods: [GET, POST]
   options:
-    _aculta_domain_purpose: main
+    _aculta_domain_purpose: courses

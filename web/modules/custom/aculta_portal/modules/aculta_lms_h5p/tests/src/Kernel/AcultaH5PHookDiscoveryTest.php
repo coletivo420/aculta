@@ -24,7 +24,10 @@ final class AcultaH5PHookDiscoveryTest extends KernelTestBase {
 
   /**
    * {@inheritdoc} */
-  protected static $modules = ['system', 'user', 'file', 'views', 'aculta_image', 'aculta_lms_h5p', 'token', 'aculta_file_uploader'];
+  protected static $modules = [
+    'system', 'user', 'file', 'views', 'aculta_image', 'aculta_lms_h5p',
+    'token', 'aculta_file_uploader',
+  ];
 
   /**
    * {@inheritdoc}
@@ -85,6 +88,14 @@ final class AcultaH5PHookDiscoveryTest extends KernelTestBase {
       $routes = $this->container->get('router.route_provider')->getRouteCollectionForRequest(Request::create($path));
       self::assertNotNull($routes->get($expectedRoute), $path);
     }
+
+    self::assertSame(
+      'courses',
+      $this->container->get('router.route_provider')
+        ->getRouteByName('aculta_lms_h5p.editor_ajax')
+        ->getOption('_aculta_domain_purpose'),
+      'The contextual H5P editor AJAX endpoint must resolve on the course purpose.',
+    );
   }
 
 }
