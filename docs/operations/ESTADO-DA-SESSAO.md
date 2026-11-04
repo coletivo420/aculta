@@ -7,7 +7,7 @@
 - **Arquivos de referência:** `web/modules/custom/aculta_portal/src/Form/LoginPopupForm.php`, `src/Hook/EmailConfirmerHooks.php`, `src/Hook/EntityHooks.php`, `modules/aculta_lms_h5p/src/Entity/aculta_H5PContent.php`, `modules/aculta_patcher/src/Entity/AcultaPatchListBuilder.php` e os formulários com dependências injetadas nos submódulos do Portal.
 - **Validação:** Upgrade Status `aculta_portal` caiu de 607 para 42 avisos. Os restantes são 36 recomendações de estilo de assertions, quatro avisos do teste que documenta o alias legado `UploadedAnswerAccessCheck` e duas referências a extensões que o scanner não encontra instaladas (uma delas em código de `aculta_links`). Nenhum aviso de API depreciada permaneceu em produção. PHP lint de 217 arquivos passou; `git diff --check` no Portal passou. Não executei testes. PHPCS amplo reportou 318 erros e 181 avisos em 59 arquivos; não foi feita reformatação geral.
 - **Runtime:** `toca`, Drupal 11.5.0-beta1, banco `aculta_runtime`; `updatedb:status` sem updates e `config:status` sem diferenças. Runtime e repositório compartilham o checkout.
-- **Publicação:** pendente; após commit e push, atualizar somente código/cache no Runtime e registrar o hash confirmado.
+- **Publicação:** commit `d262095d37` enviado por fast-forward a `origin/dev`. Runtime (`toca`, checkout compartilhado) recebeu rebuild de cache; `updatedb:status` sem updates e `config:status` sem diferenças.
 - **Retomar lendo:** este handoff, `web/modules/custom/aculta_portal/CHANGELOG.md`, `web/modules/custom/aculta_portal/aculta_portal.info.yml` e os diffs PHP sob `web/modules/custom/aculta_portal/`.
 
 
