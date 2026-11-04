@@ -38,10 +38,12 @@ relações editoriais de vídeo está em
 No workspace Ganjalab Educador, os links canônicos de leituras, galerias,
 vídeos e documentos também aparecem na estrutura do curso. Vídeos e documentos
 são revalidados no Domain `courses`; documentos privados exigem a relação Group
-de curso e o Entity Access da mídia. O bloco só entra na página do curso que o educador já pode editar.
-O botão **Gerenciar materiais do curso** abre o formulário canônico de Group
-quando o usuário tem acesso de atualização. A edição continua usando os campos
-existentes; não há armazenamento paralelo nem cópia de conteúdo.
+de curso e o Entity Access da mídia. O bloco só entra na página do curso que o
+educador já pode editar. O botão **Gerenciar materiais do curso** abre um
+formulário contextual que reusa os widgets do Form Display Group para os campos
+de referência existentes. O LMS revalida a autorização ao exibir e salvar, e o
+formulário grava somente essas referências. Não há armazenamento paralelo nem
+cópia de conteúdo.
 
 ## Estado
 

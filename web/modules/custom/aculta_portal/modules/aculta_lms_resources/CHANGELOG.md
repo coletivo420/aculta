@@ -1,5 +1,16 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.22 — editor contextual de materiais
+
+- Novo formulário do Educador edita somente os campos de referência já
+  configurados para leituras, galerias e vídeos. Os widgets vêm do Form Display
+  Group existente; extração e salvamento usam o próprio Group.
+- Studio possui a rota, e o owner `aculta_lms` revalida a autorização contextual
+  antes de exibir e salvar. Isso atende educadores autorizados pelo LMS cuja
+  permissão contextual não equivale ao acesso genérico de atualização Group.
+- Documentos PDF continuam gerenciados pela relação Group do Document Viewer;
+  não há schema ou armazenamento paralelo.
+
 ## 0.1.0-dev.21 — materiais no Course Builder
 
 - A estrutura do curso no workspace Educador lista leituras, galerias, vídeos

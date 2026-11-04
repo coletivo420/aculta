@@ -1,3 +1,10 @@
+## 0.1.0-dev.51 — edição contextual de materiais de curso
+
+- Rota Ganjalab Educador para editar os materiais já referenciados no curso;
+  formulário no owner `aculta_lms_resources`, acesso revalidado pelo LMS.
+- Reutiliza os campos e widgets existentes do Group, sem alterar currículo,
+  matrículas, documentos de estudantes ou storage.
+
 ## 0.1.0-dev.50 — adiciona prévia privada de aula ao Educador
 
 - Nova rota da Suite Ganjalab usa a autorização contextual e o controller do

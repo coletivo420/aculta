@@ -1,6 +1,6 @@
 # ACULTA Studio — LMS Course Builder: contrato visual e execução
 
-**Versão de design:** CB-UX 0.3.0-dev.7 · **Data:** 2026-11-04 · **Estado:** estrutura em cartões responsivos, CKEditor 5 filtrado, comandos acessíveis de ordenação, prévia privada por aula e lista de materiais existentes (leituras, galerias, vídeos e documentos relacionados) implementados; editor contextual e drag-and-drop pendentes.
+**Versão de design:** CB-UX 0.3.0-dev.8 · **Data:** 2026-11-04 · **Estado:** estrutura em cartões responsivos, CKEditor 5 filtrado, comandos acessíveis de ordenação, prévia privada por aula, lista de materiais existentes e edição contextual de leituras/galerias/vídeos implementados; edição de documentos e drag-and-drop pendentes.
 
 **Referências:** [Studio Visual](STUDIO-VISUAL-CONCEPT.md) · [Fluxos de edição](STUDIO-EDITOR-FLOWS.md) · [Roadmap Studio](STUDIO-MAGAZINE-ROADMAP.md) · [Roadmap funcional LMS](../modules/ACULTA-LMS-ROADMAP.md) · [LMS/Group](../modules/LMS-GROUP.md) · [Contratos LMS](LMS-INTEGRATION-CONTRACTS.md).
 

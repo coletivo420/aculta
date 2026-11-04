@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.21
+version: 0.1.0-dev.22
 state: Dev
-next_phase: 'Validar visualmente a lista de materiais no Runtime com uma referência existente; concluir boot/DI dos owners e incorporar viewer PDF/H5P apenas quando as políticas e os renderers permitirem, sem alterar conteúdo do Runtime ([roadmap](docs/modules/ACULTA-LMS-ROADMAP.md))'
-progress_note: "Dev.21: materiais de curso (leituras, galerias, vídeos e documentos relacionados) aparecem na estrutura do Course Builder por meio dos owners e Entity Access existentes. Vídeos e documentos são revalidados no purpose courses; documentos privados usam relação Group e permanecem sem publicação. Edição pelo formulário Group somente após access(update). Nenhum schema novo. Unit Resources 14/67 e Kernel CourseResourceBuilder 4/67 PASS; smoke visual dos materiais pendente."
+next_phase: 'Validar o formulário contextual no Runtime sem salvar alterações e conferir materiais ligados ao curso com fixture permitida; então integrar viewers PDF/H5P conforme política e renderer existentes ([roadmap](docs/modules/ACULTA-LMS-ROADMAP.md))'
+progress_note: "Dev.22: lista de leituras, galerias, vídeos e documentos existentes na estrutura do curso; editor contextual para leituras/galerias/vídeos usa widgets do Form Display Group, grava somente esses campos e revalida CourseAuthoringAccessCheck no GET/POST. Documento usa relação Group do Viewer. Unit Resources 14/67; Kernel CourseResourceBuilder 4/67 PASS. Smoke autenticado do construtor passou; formulário sem salvar e validação visual dos materiais pendentes. Sem schema novo."

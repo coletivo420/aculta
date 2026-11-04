@@ -46,6 +46,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       '/ganjalab' => 'aculta_lms.student_dashboard',
       '/ganjalab/educador/cursos/novo' => 'aculta_lms.course_create',
       '/ganjalab/educador/cursos/{course}/estrutura' => 'aculta_lms.course_structure',
+      '/ganjalab/educador/cursos/{course}/materiais' => 'aculta_lms.course_materials_edit',
       '/ganjalab/educador/cursos/{course}/aulas/nova' => 'aculta_lms.lesson_add',
       '/ganjalab/educador/cursos/{course}/aulas/{lesson}/editar' => 'aculta_lms.lesson_edit',
       '/ganjalab/educador/cursos/{course}/aulas/{lesson}/atividades/nova' => 'aculta_lms.activity_add',
@@ -113,6 +114,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     self::assertSame('aculta_studio.course_authoring_controller:create', $routes['aculta_lms.course_create']['defaults']['_controller']);
     foreach ([
       'aculta_lms.course_structure',
+      'aculta_lms.course_materials_edit',
       'aculta_lms.lesson_add',
       'aculta_lms.lesson_edit',
       'aculta_lms.activity_add',
@@ -123,6 +125,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       self::assertTrue($routes[$id]['options']['no_cache']);
     }
     self::assertSame('aculta_lms.course_structure_controller:structure', $routes['aculta_lms.course_structure']['defaults']['_controller']);
+    self::assertSame('\\Drupal\\aculta_lms_resources\\Form\\CourseMaterialsForm', $routes['aculta_lms.course_materials_edit']['defaults']['_form']);
     self::assertSame('\\Drupal\\aculta_lms\\Form\\LessonAuthoringForm', $routes['aculta_lms.lesson_add']['defaults']['_form']);
     self::assertSame('\\Drupal\\aculta_lms\\Form\\ActivityAuthoringForm', $routes['aculta_lms.activity_add']['defaults']['_form']);
     self::assertSame('wiki', $routes['aculta_wiki.proposal_decide']['options']['_aculta_domain_purpose']);

@@ -83,12 +83,10 @@ final class CourseResourcesHooks {
     }
 
     $resources = $this->builder->build($course);
-    if ($course->access('update')) {
-      $resources['edit'] = Link::fromTextAndUrl(
-        new TranslatableMarkup('Gerenciar materiais do curso'),
-        Url::fromRoute('entity.group.edit_form', ['group' => $course->id()]),
-      )->toRenderable();
-    }
+    $resources['edit'] = Link::fromTextAndUrl(
+      new TranslatableMarkup('Gerenciar materiais do curso'),
+      Url::fromRoute('aculta_lms.course_materials_edit', ['course' => $course->id()]),
+    )->toRenderable();
     $resources['#weight'] = 30;
     $resources['#attributes']['class'][] = 'aculta-lms-course-builder__resources';
     $variables['page']['content']['aculta_lms_course_builder_resources'] = $resources;
