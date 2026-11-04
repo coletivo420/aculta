@@ -1,6 +1,21 @@
+## Retomada — cobertura do carrinho LMS, 2026-11-04
+
+- **Objetivo persistente:** concluir lacunas do LMS; depois avançar em pagamentos e revisar atualizações de banco uma a uma.
+- **Entrega desta fase:** `CourseEnrollmentPurchaseKernelTest` exerce fluxo de compra sem gateway: cria produto/variação BRL, curso e turma Group relacionados, submete `CourseEnrollmentPurchaseForm`, e confirma que o carrinho contém a variação e o campo `field_course_class`.
+- **Verificação:** Kernel MariaDB `aculta_simpletest`: 1 teste / 42 assertions PASS. Há 65 deprecações oriundas de Core/contrib; sem falha. Primeiro run apontou schemas auxiliares ausentes no harness (`text_with_summary`, `entity_usage`, campos do pedido); ajustados no fixture. PHPCS e lint devem ser conferidos após a edição final.
+- **Ambiente:** hostname `toca`, Drupal 11.5.0-beta1, PHP 8.5.12, DB Runtime `aculta_runtime`. Antes de atualizar o Runtime, conferir `updatedb:status` e `config:status`; no último estado conhecido ambos limpos.
+- **Worktree alheio preservado:** `composer.json` modificado e os arquivos não rastreados `web/themes/custom/aculta420/js/utility-drawers.js` e `web/themes/custom/aculta_theme/`; não incluir na entrega.
+- **Próximos passos:** executar validações finais, commitar somente o teste e este handoff, push fast-forward em `origin/dev`, confirmar o Runtime no mesmo HEAD; retomar fluxo F7/UX, depois pagamentos e itens de `updatedb`.
+- **Retomar lendo:** teste Kernel acima, `CourseEnrollmentPurchaseForm.php`, `docs/operations/AGENT-OPERATIONS.md`, `docs/operations/BANCO-DE-TESTE.md`.
+
 # Estado da sessão
 
 ## Handoff — LMS, pagamentos e atualização Drupal 12 — 2026-11-04
+
+- **Atualização de dependências Drush/Core (tentativa):** o responsável pediu a última versão do Drush para Drupal 12, inclusive dev, e autorizou ampliar PHPStan/PHPUnit compatíveis. O checkout está em Drupal 11.5.0-beta1; Composer mostra Drush 13.8.0 estável e `14.x-dev`. Tentativa de resolver Core 12 + Drush 14 + `core-dev` 12 exigiu PHPStan ^2.3 e PHPUnit ^12.5, mas o solver bloqueou em dezenas de contribs que só declaram Drupal 10/11 (incluindo Commerce, MCP OAuth e Gin) e `drush/drush 14.x-dev` requer `grasmash/yaml-cli 4.x-dev`, incompatível com a estabilidade mínima atual. Reverta-se o escopo Core/Drush para os valores originais; não houve migração de Core.
+- **Ajuste de ferramentas aplicado no worktree:** `composer.json` agora permite PHPStan `^2.3` e PHPUnit `^11.5.50`, faixas compatíveis com Drupal 11.5. O lock atualizou PHPStan de 2.2.14 para 2.3.5; PHPUnit ficou em 11.5.57. Composer validou o manifesto (avisos existentes de constraints exatas), `composer update` terminou e `git diff --check` passou. Durante a instalação o Composer removeu `drupal/bootstrap5` porque não existe como requisito no manifesto/lock original e não é requerido por outro pacote; preservar essa remoção do vendor como efeito local da operação.
+- **Drush/Runtime:** Drush permanece 13.8.0; Drupal Runtime permanece 11.5.0-beta1 / PHP 8.5.12 em `aculta_runtime`. `updatedb:status` e `config:status` estavam limpos antes da tentativa; não executei `updatedb`, `config:import`, cache rebuild nem sincronização do Runtime. A entrega Drush 14 está bloqueada até a migração completa do Core e dos contribs compatíveis.
+- **Estado Git desta tarefa:** alterações próprias restritas a `composer.json` e `composer.lock`. Preservar arquivos não rastreados de outras frentes: `web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/CourseEnrollmentPurchaseKernelTest.php`, `web/themes/custom/aculta420/js/utility-drawers.js` e `web/themes/custom/aculta_theme/`. Nenhum commit ou push foi feito nesta passagem.
 
 - **Objetivo persistente:** concluir as lacunas funcionais do LMS, depois avançar em pagamentos e revisar atualizações de banco uma a uma; criar o que faltar e executar testes para as alterações.
 - **Trabalho anterior mantido:** a passagem de compatibilidade Drupal 12 do Portal reduziu os avisos de Upgrade Status de 607 para 42; o detalhe e os limites da validação continuam registrados no commit `d262095d37` e no changelog do Portal.
