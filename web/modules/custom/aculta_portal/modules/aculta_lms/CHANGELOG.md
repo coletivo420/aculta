@@ -1,3 +1,8 @@
+# 0.1.0-dev.204 — remove CSS de navegação legado do formulário de resposta
+
+- Removida `answer-form.css`, que limitava overflow em IDs/classes exclusivos do Olivero e não correspondia ao tema ACULTA ativo. O formulário LMS não carrega mais uma folha sem efeito; Kernel protege esse contrato.
+- Corrigidos os estados do roadmap: editor de aula/atividade em Form API com CKEditor e ordenação por arrasto com fallback de teclado estão implementados; permanecem pendentes somente gates de homologação e integrações listadas em cada fase.
+
 # 0.1.0-dev.203 — corrige renderização do formulário de reordenação
 
 - `CourseStructureOrderForm::buildForm()` agora segue a assinatura de `FormInterface` e lê os argumentos extras pelo `FormState`, como prevê o Form API. Isso remove o fatal que impedia renderizar a estrutura do curso.

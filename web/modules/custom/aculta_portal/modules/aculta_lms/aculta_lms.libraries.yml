@@ -2,10 +2,6 @@ admin_toolbar_icon:
   css:
     theme:
       css/admin-toolbar-icon.css: {}
-answer_form:
-  css:
-    theme:
-      css/answer-form.css: {}
 course_structure:
   css:
     theme:
