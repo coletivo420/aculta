@@ -1,0 +1,38 @@
+uuid: 280eb7fc-1734-4994-bc1d-df70e3091feb
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - views.view.aculta_forum_categories
+  module:
+    - aculta_portal
+    - system
+    - views
+  theme:
+    - aculta420_v2
+id: aculta420_v2_aculta_forum_categories_home
+theme: aculta420_v2
+region: header
+weight: 0
+provider: null
+plugin: 'views_block:aculta_forum_categories-block_landing'
+settings:
+  id: 'views_block:aculta_forum_categories-block_landing'
+  label: 'Categorias do Growroom420'
+  label_display: visible
+  provider: views
+  views_label: ''
+  items_per_page: 6
+  pager: some
+  exposed: {  }
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: |-
+      /
+      /discussoes
+  aculta_domain_purpose:
+    id: aculta_domain_purpose
+    purpose: forum
+    negate: false

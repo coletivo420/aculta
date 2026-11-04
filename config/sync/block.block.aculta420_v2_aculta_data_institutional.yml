@@ -1,0 +1,33 @@
+uuid: 05efdf81-7047-4f89-8812-4ec2bffeb1b8
+langcode: pt-br
+status: true
+dependencies:
+  content:
+    - 'block_content:aculta_institution:80f3fc02-39b5-4386-8a32-78301b635007'
+  module:
+    - aculta_portal
+    - block_content
+    - system
+  theme:
+    - aculta420_v2
+id: aculta420_v2_aculta_data_institutional
+theme: aculta420_v2
+region: content
+weight: 90
+provider: null
+plugin: 'block_content:80f3fc02-39b5-4386-8a32-78301b635007'
+settings:
+  id: 'block_content:80f3fc02-39b5-4386-8a32-78301b635007'
+  label: 'DADOS INSTITUCIONAIS'
+  label_display: visible
+  provider: block_content
+  view_mode: institutional
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: /institucional
+  aculta_domain_purpose:
+    id: aculta_domain_purpose
+    purpose: main
+    negate: false
