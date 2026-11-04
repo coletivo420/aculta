@@ -13,11 +13,19 @@ use Drupal\aculta_lms\Notice\LearningEligibilityInterface;
 use Drupal\aculta_lms\Routing\LmsFriendlySlugs;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
-/** @coversDefaultClass \Drupal\aculta_lms\Access\AnswerSubmissionAccessCheck */
+#[CoversClass(AnswerSubmissionAccessCheck::class)]
+#[Group('aculta_lms')]
+/**
+ * Tests learner access to answer submission routes.
+ */
 final class AnswerSubmissionAccessCheckTest extends UnitTestCase {
 
-  /** @covers ::access */
+  /**
+   * Anonymous raw route slugs are denied before parameter conversion.
+   */
   public function testAnonymousRawRouteSlugsAreDeniedWithoutTypeError(): void {
     $group = $this->createMock(GroupInterface::class);
     $group->method('bundle')->willReturn(LmsFriendlySlugs::COURSE_BUNDLE);
@@ -41,6 +49,8 @@ final class AnswerSubmissionAccessCheckTest extends UnitTestCase {
     ))->access($group, 'aula-1', 'true-false');
 
     self::assertTrue($result->isForbidden());
+    self::assertContains(LmsFriendlySlugs::LESSON_LIST_CACHE_TAG, $result->getCacheTags());
+    self::assertContains(LmsFriendlySlugs::ACTIVITY_LIST_CACHE_TAG, $result->getCacheTags());
   }
 
 }

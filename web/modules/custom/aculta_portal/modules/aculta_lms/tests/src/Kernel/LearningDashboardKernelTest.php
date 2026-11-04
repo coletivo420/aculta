@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Kernel;
 
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\aculta_lms\Access\AnswerSubmissionAccessCheck;
+use Drupal\aculta_lms\Access\LessonViewAccessCheck;
 use Drupal\aculta_lms\LearningDashboardManager;
 use Drupal\aculta_lms\Learning\CourseLessonReaderInterface;
 use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
 use Drupal\aculta_lms\Learning\CourseProgress;
+use Drupal\aculta_lms\Notice\LearningEligibilityInterface;
 use Drupal\aculta_learning_contracts\Learning\AccountCourseSummary;
 use Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface;
 use Drupal\group\Entity\Group;
@@ -223,6 +228,45 @@ final class LearningDashboardKernelTest extends KernelTestBase {
       ->view($course, $journey->lessons[0]->delta);
     self::assertSame('Aula visível', $lesson_page['title']['#value']);
     self::assertSame('Esta aula ainda não tem atividades.', (string) $lesson_page['activities']['#empty']);
+    self::assertContains('aculta_lms_lesson_list', $lesson_page['#cache']['tags']);
+    self::assertContains('aculta_lms_activity_list', $lesson_page['#cache']['tags']);
+
+    $cache = $this->container->get('cache.default');
+    $cache_key = 'aculta_lms_test_activity_list_invalidation';
+    $cache->set($cache_key, 'cached', Cache::PERMANENT, $lesson_page['#cache']['tags']);
+    self::assertNotFalse($cache->get($cache_key));
+    $activity = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_lms_activity')
+      ->create([
+        'lesson_id' => (int) $visible_lesson->id(),
+        'type' => 'free_text',
+        'graded' => FALSE,
+        'weight' => 0,
+        'answer_config' => '{"question":"Atividade criada no Kernel"}',
+      ]);
+    $activity->save();
+    self::assertFalse($cache->get($cache_key));
+
+    $updated_lesson_page = $this->container->get('aculta_lms.course_lesson_controller')
+      ->view($course, $journey->lessons[0]->delta);
+    self::assertCount(1, $updated_lesson_page['activities']['#rows']);
+
+    $current_user = $this->createMock(AccountProxyInterface::class);
+    $current_user->method('isAuthenticated')->willReturn(TRUE);
+    $eligibility = $this->createMock(LearningEligibilityInterface::class);
+    $eligibility->method('isContentAvailable')->willReturn(TRUE);
+    $eligibility->method('hasCurrentEnrollment')->willReturn(TRUE);
+    $eligibility->method('activityBelongsToCourse')->willReturn(TRUE);
+    $slugs = $this->container->get('aculta_portal.lms_friendly_slugs');
+    $lesson_access = (new LessonViewAccessCheck($slugs, $eligibility, $current_user))
+      ->access($course, $journey->lessons[0]->delta);
+    self::assertTrue($lesson_access->isAllowed());
+    self::assertContains('aculta_lms_lesson_list', $lesson_access->getCacheTags());
+    $answer_access = (new AnswerSubmissionAccessCheck($slugs, $eligibility, $current_user))
+      ->access($course, $journey->lessons[0]->delta, 0);
+    self::assertTrue($answer_access->isAllowed());
+    self::assertContains('aculta_lms_lesson_list', $answer_access->getCacheTags());
+    self::assertContains('aculta_lms_activity_list', $answer_access->getCacheTags());
   }
 
 }

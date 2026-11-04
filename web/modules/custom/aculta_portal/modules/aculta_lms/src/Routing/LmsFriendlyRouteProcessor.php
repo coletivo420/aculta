@@ -39,6 +39,7 @@ final class LmsFriendlyRouteProcessor implements OutboundRouteProcessorInterface
       return;
     }
     $bubbleable_metadata?->addCacheableDependency($course);
+    $bubbleable_metadata?->addCacheTags([LmsFriendlySlugs::LESSON_LIST_CACHE_TAG]);
 
     $lesson = NULL;
     if (isset($parameters['lesson_delta']) && $this->isPosition($parameters['lesson_delta'])) {
@@ -48,6 +49,7 @@ final class LmsFriendlyRouteProcessor implements OutboundRouteProcessorInterface
     }
     if ($lesson !== NULL && $route_name === self::ROUTE) {
       $bubbleable_metadata?->addCacheableDependency($lesson);
+      $bubbleable_metadata?->addCacheTags([LmsFriendlySlugs::ACTIVITY_LIST_CACHE_TAG]);
       if (isset($parameters['activity_delta']) && $this->isPosition($parameters['activity_delta'])) {
         $parameters['activity_delta'] = $this->slugs->activitySlug($lesson, (int) $parameters['activity_delta']) ?? $parameters['activity_delta'];
       }

@@ -1475,3 +1475,8 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
 - Kernel da Agenda LMS cobre as tags de cache e a transição de rascunho para publicado; Agenda Kernel 5/195 e Unit 8/18 PASS. LMS Unit 270/1.024 e Kernel 41/1.330 PASS.
 - Teste responsivo funcional já documentado: formulários de autoria de aula e atividade excedem a largura da viewport entre 320 e 600 px por campos de 635 px. Sem ajuste visual nesta entrega.
 
+# 0.1.0-dev.208 — invalida cache quando muda o currículo
+
+- A página de aula, o access check e os links amigáveis agora variam pelos tags de lista de aulas e atividades. Criar, alterar, excluir ou reordenar esses itens invalida posições e páginas dependentes.
+- Kernel `LearningDashboardKernelTest` confirma os tags no render e nos resultados de acesso permitidos, a invalidação após salvar atividade e sua presença na página refeita. LMS Unit 270/1.027 PASS; Kernel focal 1/45 PASS.
+

@@ -57,7 +57,11 @@ final class CourseLessonController {
       ->addCacheableDependency($group)
       ->addCacheableDependency($lesson)
       ->addCacheContexts(['user', 'user.permissions', 'user.group_permissions'])
-      ->addCacheTags(['group_relationship_list:plugin:lms_classes:group:' . $group->id()]);
+      ->addCacheTags([
+        'group_relationship_list:plugin:lms_classes:group:' . $group->id(),
+        LmsFriendlySlugs::LESSON_LIST_CACHE_TAG,
+        LmsFriendlySlugs::ACTIVITY_LIST_CACHE_TAG,
+      ]);
     foreach ($group->getRelationships('lms_classes') ?? [] as $relationship) {
       $class = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
       if ($class instanceof GroupInterface) {

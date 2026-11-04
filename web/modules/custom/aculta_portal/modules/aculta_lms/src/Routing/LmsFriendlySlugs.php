@@ -19,6 +19,16 @@ final class LmsFriendlySlugs {
 
   public const COURSE_BUNDLE = 'lms_course';
 
+  /**
+   * Cache tag invalidated when a lesson is created, updated, or deleted.
+   */
+  public const LESSON_LIST_CACHE_TAG = 'aculta_lms_lesson_list';
+
+  /**
+   * Cache tag invalidated when an activity is created, updated, or deleted.
+   */
+  public const ACTIVITY_LIST_CACHE_TAG = 'aculta_lms_activity_list';
+
   private const FALLBACK = 'sem-titulo';
 
   public function __construct(
@@ -88,7 +98,9 @@ final class LmsFriendlySlugs {
     return $this->lessons($course)[$delta] ?? NULL;
   }
 
-  /** Returns an ACULTA activity at the requested lesson/activity positions. */
+  /**
+   * Returns an ACULTA activity at the requested lesson/activity positions.
+   */
   public function activityAt(GroupInterface $course, int $lessonDelta, int $activityDelta): ?ContentEntityInterface {
     $lesson = $this->lessonAt($course, $lessonDelta);
     if (!$lesson instanceof ContentEntityInterface) {

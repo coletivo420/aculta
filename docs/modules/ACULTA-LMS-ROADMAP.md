@@ -783,6 +783,10 @@ permissão à espera de snapshot/import. Shell editor contextual, materiais,
 
 `aculta_lms_agenda` não importa mais `Drupal\\lms\\Entity\\Bundle\\CourseInterface` para autorizar eventos de turma. A verificação de curso publicado e `take course` foi centralizada em `ClassActivityDeadlineAccessCheck::courseAccessForClass()`, que retorna `AccessResult` com dependências e tags de cache; a agenda mantém a validação de membership ativa da turma. A negativa também depende do curso pai em rascunho, invalidando-se quando ele é publicado. **Estado:** implementada em `dev`; Agenda Kernel 5/195 e Unit 8/18, LMS Kernel 41/1.330 e Unit 270/1.024 PASS. Smoke autenticado de evento no Runtime fica pendente porque não há evento ligado a turma no banco atual e a validação não criou conteúdo. Não altera conteúdo, memberships nem configuração.
 
+### Microfase — invalidação de cache ao alterar o currículo
+
+Página de aula, acesso da aula e submissão de respostas resolvem posições dinâmicas de aulas/atividades; os links amigáveis também são derivados dessas listas. Foram adicionados os tags de lista do Core para as entidades próprias do ACULTA em cada consumidor, incluindo resultados de acesso permitidos e links gerados. O Kernel confirma que salvar uma atividade invalida uma entrada com os tags da página e que a página reconstruída inclui a nova atividade. LMS Unit 270/1.027, Kernel `LearningDashboardKernelTest` 1/45 e PHPCS PASS. Runtime não teve escrita.
+
 ### Próximos gates
 
 1. Validar a closure de instalação sem Drupal LMS contrib em ambiente isolado;

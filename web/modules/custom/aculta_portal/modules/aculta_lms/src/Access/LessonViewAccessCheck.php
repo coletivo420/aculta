@@ -38,6 +38,7 @@ final class LessonViewAccessCheck {
       ->cachePerUser()
       ->addCacheContexts(['user.permissions', 'user.group_permissions'])
       ->addCacheableDependency($group)
+      ->addCacheTags([LmsFriendlySlugs::LESSON_LIST_CACHE_TAG])
       ->addCacheTags($membership_tags);
     if (!$this->currentUser->isAuthenticated()
       || $group->bundle() !== LmsFriendlySlugs::COURSE_BUNDLE
@@ -66,6 +67,7 @@ final class LessonViewAccessCheck {
       ->addCacheContexts(['user.permissions', 'user.group_permissions'])
       ->addCacheableDependency($group)
       ->addCacheableDependency($lesson)
+      ->addCacheTags([LmsFriendlySlugs::LESSON_LIST_CACHE_TAG])
       ->addCacheTags($membership_tags);
   }
 

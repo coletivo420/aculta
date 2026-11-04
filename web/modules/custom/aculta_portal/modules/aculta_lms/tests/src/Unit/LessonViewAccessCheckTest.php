@@ -50,6 +50,7 @@ final class LessonViewAccessCheckTest extends UnitTestCase {
       ->access($group, 'introducao');
 
     self::assertTrue($access->isForbidden());
+    self::assertContains(LmsFriendlySlugs::LESSON_LIST_CACHE_TAG, $access->getCacheTags());
   }
 
 }
