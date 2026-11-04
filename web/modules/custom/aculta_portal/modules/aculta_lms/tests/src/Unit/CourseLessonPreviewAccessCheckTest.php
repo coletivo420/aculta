@@ -52,15 +52,28 @@ final class CourseLessonPreviewAccessCheckTest extends UnitTestCase {
   /**
    * @covers ::access
    */
-  public function testRejectsNonEntityLesson(): void {
-    $course = $this->createMock(GroupInterface::class);
+  public function testDeniesUserWithoutEducatorPermission(): void {
     $account = $this->createMock(AccountProxyInterface::class);
+    $account->method('hasPermission')->with('administer lms')->willReturn(FALSE);
+    $course = $this->createMock(GroupInterface::class);
+    $course->method('bundle')->willReturn('lms_course');
+    $course->method('id')->willReturn('17');
+    $course->method('hasPermission')->with('grade students', $account)->willReturn(FALSE);
+    $course->method('getCacheContexts')->willReturn([]);
+    $course->method('getCacheTags')->willReturn([]);
+    $course->method('getCacheMaxAge')->willReturn(-1);
+    $lesson = $this->createMock(ContentEntityInterface::class);
+    $lesson->method('getEntityTypeId')->willReturn('aculta_lms_lesson');
+    $lesson->method('get')->with('course_id')->willReturn(self::field(17));
+    $lesson->method('getCacheContexts')->willReturn([]);
+    $lesson->method('getCacheTags')->willReturn([]);
+    $lesson->method('getCacheMaxAge')->willReturn(-1);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
     $access = new CourseAuthoringAccessCheck($account, $manager);
 
-    $result = (new CourseLessonPreviewAccessCheck($access))->access($course, new \stdClass());
+    $result = (new CourseLessonPreviewAccessCheck($access))->access($course, $lesson);
 
-    self::assertTrue($result->isForbidden());
+    self::assertFalse($result->isAllowed());
   }
 
   /**

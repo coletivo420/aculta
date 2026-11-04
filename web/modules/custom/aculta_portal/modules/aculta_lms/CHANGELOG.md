@@ -1,3 +1,10 @@
+## 0.1.0-dev.195 — tipa o parâmetro convertido da prévia
+
+- O callback de acesso exige `ContentEntityInterface` para receber a aula já
+  convertida pelo resolvedor de argumentos do Router e delegar a política.
+- Unit cobre autorização do educador e negação de pessoa sem grant.
+- Firefox havia recebido 403 no primeiro smoke da rota; repetir após rebuild.
+
 ## 0.1.0-dev.194 — adiciona prévia privada de aula
 
 - O Educador pode abrir a prévia de uma aula, inclusive rascunhos, usando a

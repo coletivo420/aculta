@@ -20,10 +20,7 @@ final class CourseLessonPreviewAccessCheck {
   /**
    * Checks the existing educator grant and exact course-to-lesson relation.
    */
-  public function access(GroupInterface $course, mixed $lesson): AccessResult {
-    if (!$lesson instanceof ContentEntityInterface) {
-      return AccessResult::forbidden()->cachePerPermissions();
-    }
+  public function access(GroupInterface $course, ContentEntityInterface $lesson): AccessResult {
     return $this->authoringAccess->access($course, $lesson);
   }
 
