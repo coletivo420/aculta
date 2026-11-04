@@ -8,7 +8,7 @@ Legenda: ✅ D12 listado na estável atual · ⚠️ D12 só em beta/alpha · �
 
 | Pacote | Lock | Estável atual | Compat. | Status |
 |---|---|---|---|---|
-| drupal/bootstrap (tema base) | 3.45.0 | 3.45.0 (instalado) | D12 confirmado pelo responsável | ✅ (fora da revisão de releases neste inventário) |
+| drupal/bootstrap (tema base) | 3.45.0 | 3.45.0 (instalado) | `bootstrap.info.yml`: `^10.5 || ^11.2 || ^12`; `composer.json`: `^10.5 || ^11.2` | ⚠️ Código declara D12, mas metadados Composer bloqueiam o solver; manter linha 8.x e acompanhar correção upstream ([release](https://www.drupal.org/project/bootstrap/releases/8.x-3.45)) |
 | drupal/captcha | 2.0.10 | 2.0.11 | ^9.5 \|\| ^10 \|\| ^11 | ❌ |
 | drupal/ckeditor5_plugin_pack | 1.5.6 | 1.5.6 | ^10.3 \|\| ^11 | ⚠️ (2.0.0-beta1 com ^12; candidata beta para migração D12) |
 | drupal/ckeditor5_premium_features (transitivo) | 1.8.7 | 1.8.7 | ^10.3 \|\| ^11 | ⚠️ (2.0.0-beta1 é D12-only; atualizar junto ao Plugin Pack) |

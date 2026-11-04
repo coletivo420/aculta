@@ -28,7 +28,7 @@
   upstream de Core/contrib; alerta de diretório `browser_output` não gravável.
 - Não houve chamada de pagamento real nem mensagem externa. A homologação com
   comprador sandbox continua pendente do desafio de segurança do provedor.
-- Runtime `aculta_runtime`: checkout compartilhado em `92e1e43a5b`, Drupal
+- Runtime `aculta_runtime`: checkout compartilhado em `5d6f14ad4b`, Drupal
   11.5.0-beta1, PHP 8.5.12. Após a sincronização dos commits, `drush cr` PASS;
   `updatedb:status` sem pendências e `config:status` sem diferenças.
   A migração para D12 ainda não foi feita.
@@ -36,8 +36,10 @@
   Bootstrap 8.x-3.45 declara Drupal 12 no `bootstrap.info.yml`, mas o requisito
   no `composer.json` do pacote continua `drupal/core ^10.5 || ^11.2`; Commerce
   3.3.x declara apenas `^10.3 || ^11`. Não trocar a linha de Bootstrap.
-- Após a remoção de Search no commit `71a86fa9fa`, `core:requirements` não
-  reporta erros nem o aviso de módulos depreciados. Restam avisos de Claro,
+- Search foi removido no commit `71a86fa9fa`; o módulo substituto
+  `text_with_summary` 2.0.x-dev (`^11.5 || ^12`) foi instalado no commit
+  `4b176c0e72`. `core:requirements` deixou de reportar módulos depreciados.
+  Restam avisos de Claro,
   traduções disponíveis, 7 mídias duplicadas, filtros de status redundantes
   nas Views Forum/Revista/Conteúdo, cache de desenvolvimento desabilitado,
   Security Review e metadados de atualização do Core ausentes. Conteúdo e
