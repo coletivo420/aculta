@@ -260,7 +260,7 @@ RUNTIME STATUS: DEFERRED.
   lê campos privados do perfil nem monta avatar, nome, biografia ou redes.
 - O ACULTA420 renderiza o mesmo SDC de autoria usado pelos contextos do Portal.
   Firefox/X11 no Runtime confirmou a caixa editorial em 1270 e 500 px, claro e
-  escuro, com a inicial de fallback quando não há avatar. Nenhum conteúdo foi
+  escuro, com o acervo como fallback quando não há avatar (*correção 2026-11-04: a inicial do nome nunca é usada; ver `docs/architecture/avatar.md`*). Nenhum conteúdo foi
   criado ou alterado. Unit Magazine 7/31 PASS; User Unit 63/222 PASS. RUNTIME
   STATUS: PARTIAL (viewport X11 mínimo 500 px; overflow lateral de 9 px no PDF
   da publicação testada não pertence ao cartão).
