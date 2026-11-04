@@ -21,6 +21,21 @@
   --color-scrim: rgb(0 0 0 / 78%);
   --logo-filter: brightness(0);
 
+  /* Base visual herdada da V1 (ADR-046). Primitivas usadas só dentro deste arquivo. */
+  --palette-green: #689427;
+  --palette-red: #d4452d;
+  --color-brand-secondary: var(--palette-green);
+  --color-link-editorial: var(--palette-red);
+  --color-link-editorial-hover: var(--color-text-primary);
+  --color-media-stage: #e8dfcc;
+  --color-status-error-text: #b3261e;
+  --color-status-error-surface: #fde8e7;
+  --color-status-ok-text: #1e5e2f;
+  --color-status-ok-surface: #e6f4ea;
+  --color-status-warning-text: #624b00;
+  --color-status-warning-surface: #fff4cc;
+  --shadow-raised: 0 .125rem .5rem rgb(12 60 41 / 8%);
+
   --tap-target-min: 44px;
   --font-family-base: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-family-heading: Oswald, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -87,6 +102,18 @@
   --color-error: #ff9da5;
   --color-scrim: rgb(0 0 0 / 78%);
   --logo-filter: none;
+  /* Valores do modo escuro para a paleta herdada da V1 (contraste a verificar na revisão visual). */
+  --color-brand-secondary: #9ac15a;
+  --color-link-editorial: #f08a76;
+  --color-link-editorial-hover: #f4efe8;
+  --color-media-stage: #3a332a;
+  --color-status-error-text: #ff9da5;
+  --color-status-error-surface: #3a1f1e;
+  --color-status-ok-text: #8fe0a8;
+  --color-status-ok-surface: #1d3327;
+  --color-status-warning-text: #ffd27a;
+  --color-status-warning-surface: #3a3115;
+  --shadow-raised: 0 .125rem .5rem rgb(0 0 0 / 40%);
 }
 
 :root[data-theme="light"] {
