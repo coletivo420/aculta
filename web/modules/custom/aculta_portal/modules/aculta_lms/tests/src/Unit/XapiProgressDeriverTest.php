@@ -80,7 +80,7 @@ final class XapiProgressDeriverTest extends UnitTestCase {
     $statements = [$this->statement(self::VERB_COMPLETED, ['score' => ['raw' => 5, 'min' => 5, 'max' => 5]], 'reg-1', '2026-11-02T10:00:00Z')];
     $result = (new XapiProgressDeriver())->result($statements, AttemptRule::KEEP_LATEST, 0.0);
 
-    $this->assertSame(NULL, $result['score']);
+    $this->assertNull($result['score']);
     $this->assertSame(AttemptRule::PENDING, $result['status']);
   }
 
@@ -91,9 +91,9 @@ final class XapiProgressDeriverTest extends UnitTestCase {
     $statements = [$this->statement(self::VERB_ANSWERED, ['score' => ['scaled' => 1.0]], 'reg-1', '2026-11-02T10:00:00Z')];
     $result = (new XapiProgressDeriver())->result($statements, AttemptRule::KEEP_LATEST, 70.0);
 
-    $this->assertSame(NULL, $result['score']);
+    $this->assertNull($result['score']);
     $this->assertSame(AttemptRule::PENDING, $result['status']);
-    $this->assertSame(FALSE, $result['attempts'][0]['completed']);
+    $this->assertFalse($result['attempts'][0]['completed']);
   }
 
   /**
@@ -104,7 +104,7 @@ final class XapiProgressDeriverTest extends UnitTestCase {
     $result = (new XapiProgressDeriver())->result($statements, AttemptRule::KEEP_LATEST, 70.0);
 
     $this->assertSame(AttemptRule::PASSED, $result['status']);
-    $this->assertSame(TRUE, $result['attempts'][0]['completed']);
+    $this->assertTrue($result['attempts'][0]['completed']);
   }
 
   /**
@@ -113,11 +113,11 @@ final class XapiProgressDeriverTest extends UnitTestCase {
   public function testPassedAndFailedVerbsSetSuccess(): void {
     $deriver = new XapiProgressDeriver();
     $passed = $deriver->attempts([$this->statement(self::VERB_PASSED, [], 'reg-1', '2026-11-02T10:00:00Z')]);
-    $this->assertSame(TRUE, $passed[0]['success']);
-    $this->assertSame(TRUE, $passed[0]['completed']);
+    $this->assertTrue($passed[0]['success']);
+    $this->assertTrue($passed[0]['completed']);
 
     $failed = $deriver->attempts([$this->statement(self::VERB_FAILED, [], 'reg-1', '2026-11-02T10:00:00Z')]);
-    $this->assertSame(FALSE, $failed[0]['success']);
+    $this->assertFalse($failed[0]['success']);
   }
 
   /**
@@ -127,7 +127,7 @@ final class XapiProgressDeriverTest extends UnitTestCase {
     $statements = [$this->statement(self::VERB_PASSED, ['success' => FALSE], 'reg-1', '2026-11-02T10:00:00Z')];
     $attempts = (new XapiProgressDeriver())->attempts($statements);
 
-    $this->assertSame(FALSE, $attempts[0]['success']);
+    $this->assertFalse($attempts[0]['success']);
   }
 
   /**
@@ -154,7 +154,7 @@ final class XapiProgressDeriverTest extends UnitTestCase {
     $attempts = (new XapiProgressDeriver())->attempts($statements);
 
     $this->assertSame(60.0, $attempts[0]['score']);
-    $this->assertSame(TRUE, $attempts[0]['completed']);
+    $this->assertTrue($attempts[0]['completed']);
   }
 
   /**
@@ -167,7 +167,7 @@ final class XapiProgressDeriverTest extends UnitTestCase {
     ];
     $attempts = (new XapiProgressDeriver())->attempts($statements);
 
-    $this->assertSame(2, count($attempts));
+    $this->assertCount(2, $attempts);
     $this->assertSame('reg-1', $attempts[0]['registration']);
     $this->assertSame('reg-2', $attempts[1]['registration']);
   }
@@ -206,7 +206,7 @@ final class XapiProgressDeriverTest extends UnitTestCase {
     $result = (new XapiProgressDeriver())->result([], AttemptRule::KEEP_LATEST, 70.0);
 
     $this->assertSame(AttemptRule::PENDING, $result['status']);
-    $this->assertSame(NULL, $result['score']);
+    $this->assertNull($result['score']);
     $this->assertSame([], $result['attempts']);
   }
 

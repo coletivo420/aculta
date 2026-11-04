@@ -213,7 +213,7 @@ final class XapiStatementValidatorTest extends UnitTestCase {
     catch (\UnexpectedValueException) {
       $accepted = FALSE;
     }
-    $this->assertSame(FALSE, $accepted);
+    $this->assertFalse($accepted);
   }
 
 }

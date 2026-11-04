@@ -26,7 +26,7 @@ final class XapiBatchIngestorTest extends UnitTestCase {
     $body = json_encode([$this->statement('a0000000-0000-4000-8000-000000000001')]);
     $result = $this->ingestor()->ingest((string) $body, $this->claims(), []);
 
-    $this->assertSame(1, count($result['accepted']));
+    $this->assertCount(1, $result['accepted']);
     $this->assertSame(self::REGISTRATION, $result['accepted'][0]['context']['registration']);
     $this->assertSame([], $result['refused']);
   }
@@ -77,7 +77,7 @@ final class XapiBatchIngestorTest extends UnitTestCase {
     ]);
     $result = $this->ingestor()->ingest((string) $body, $this->claims(), []);
 
-    $this->assertSame(1, count($result['accepted']));
+    $this->assertCount(1, $result['accepted']);
     $this->assertSame(0, $result['refused'][0]['index']);
   }
 
@@ -89,7 +89,7 @@ final class XapiBatchIngestorTest extends UnitTestCase {
     $body = json_encode([$this->statement($id), $this->statement($id)]);
     $result = $this->ingestor()->ingest((string) $body, $this->claims(), []);
 
-    $this->assertSame(1, count($result['accepted']));
+    $this->assertCount(1, $result['accepted']);
     $this->assertSame(1, $result['refused'][0]['index']);
   }
 
