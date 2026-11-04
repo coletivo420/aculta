@@ -1,5 +1,12 @@
 # Changelog — ACULTA420 V2
 
+## 1.2.0-dev.11 — aplica o estilo ao controle HTML do Drupal
+
+- O botão de envio do formulário Core é um input com `data-drupal-selector`,
+  não um elemento `button`; o seletor do modal agora pinta o controle amarelo.
+- O foco do formulário usa um token dedicado com contraste sobre as superfícies
+  claras fixas dos campos e do provedor.
+
 ## 1.2.0-dev.10 — modal de entrada portado da V1
 
 - O diálogo nativo mantém a composição legada: painel verde, botão Google no

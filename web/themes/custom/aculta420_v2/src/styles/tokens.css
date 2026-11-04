@@ -17,6 +17,7 @@
   /* Fixed contrast pairs retained for the legacy login dialog and Google brand surface. */
   --color-auth-control-surface: #e9f1fc;
   --color-auth-control-text: #111;
+  --color-auth-control-focus: #0c3c29;
   --color-auth-provider-surface: #fff;
   --color-auth-provider-text: #163d2a;
   --color-auth-secondary-surface: #fdf8ea;
