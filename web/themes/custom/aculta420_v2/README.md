@@ -51,7 +51,9 @@ aculta420_v2/
 4. Adicione `<nome>.css` (aplicado automaticamente pelo SDC) e, só se houver interação, `<nome>.js` com `Drupal.behaviors` e `core/once`.
 5. Crie ao menos uma story (`<nome>.default.story.yml`).
 6. Rode os gates da seção [docs/gates.md](docs/gates.md) e registre a evidência visual.
-7. Atualize `docs/components.md`, `CHANGELOG.md` e, se for entrega de fase, `docs/roadmap.md`.
+7. Documente no mesmo commit, conforme a tabela da seção 6 do [AGENTS.md](AGENTS.md): `docs/components.md`, e também `docs/architecture.md`, `docs/gates.md`, `docs/ui-styles.md` quando forem afetados. Atualize `CHANGELOG.md` e, se for entrega de fase, `docs/roadmap.md`.
+
+Vale o mesmo para estilos de UI Styles, bibliotecas, hooks e variáveis do Portal.
 
 ## Limites que valem para qualquer mudança
 

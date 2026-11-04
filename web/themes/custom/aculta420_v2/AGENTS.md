@@ -41,7 +41,40 @@ Herde o `AGENTS.md` da raiz do repositório. Estas regras são específicas do t
 - Commits atômicos em português, com o trailer `Co-Authored-By`. Commit e push só quando pedido ou autorizado.
 - Toda fase termina em PR própria, com `RUNTIME STATUS: DEFERRED` quando houver código não testado no servidor de desenvolvimento.
 
-## 6. Não faça
+## 6. Documentação obrigatória no mesmo commit
+
+Quem cria ou altera um item do tema documenta **no mesmo commit**, não depois. Documentação atrasada conta como item não entregue.
+
+| Você criou ou alterou | Documente em | Conteúdo mínimo |
+| --- | --- | --- |
+| Componente SDC (`components/<nome>/`) | `docs/components.md` | nome, papel, props, slots, JavaScript, estado, regra que o componente não viola |
+| Estilo de UI Styles (plugin) | `docs/ui-styles.md` (crie o arquivo no primeiro uso) | id do estilo, componente-alvo, opções e classes geradas, versão do módulo `ui_styles` testada, compatibilidade com 11.5 e 12 (ADR-045), arquivo que registra o plugin |
+| Biblioteca em `aculta420_v2.libraries.yml` | `docs/architecture.md`, seção 5 (JavaScript) ou 4 (tokens e CSS) | o que carrega, dependências, quando é anexada |
+| Comportamento JavaScript | `docs/architecture.md`, seção 5 | arquivo, evento que dispara, fallback sem JavaScript |
+| Hook, serviço ou classe em `src/` | `docs/architecture.md`, seção 7 | o que faz, quando dispara, quais variáveis altera |
+| Variável de contrato vinda do Portal | `docs/architecture.md`, seção 2 | nome, origem, uso no tema e estado (pendente ou entregue) |
+| Gate novo ou alterado | `docs/gates.md` | comando, o que verifica, quando rodar, estado da última execução |
+| Mudança entregue | `CHANGELOG.md` e `docs/roadmap.md` | versão, o que mudou, pendências |
+
+Regras para cada entrega:
+
+1. **Story antes da documentação.** Todo SDC novo tem ao menos uma story (`*.default.story.yml`). A entrada em `docs/components.md` cita a story.
+2. **Status só com evidência.** Escreva "entregue" apenas com captura ou saída de gate. Caso contrário, escreva "pendente" e o motivo.
+3. **Sem entrada fantasma.** Não documente o que não existe no código. Ao remover um componente, estilo ou hook, remova também a entrada.
+4. **Estado explícito para pendências.** Descreva o que falta, por exemplo "sem validação autenticada" ou "DEFERRED no Homelab", em vez de deixar a seção sem status.
+5. **Versão só na entrega validada.** A documentação pode descrever uma mudança ainda não versionada, mas a palavra "versionado" só aparece quando houver número no `info.yml` e entrada no `CHANGELOG.md`.
+6. **Checagem antes do commit.** Confirme que o nome de cada componente, prop, slot e estilo na documentação bate com o arquivo fonte (`*.component.yml` e o PHP).
+
+Antes de abrir a entrega, o agente responde a este checklist no relatório:
+
+- [ ] Componentes novos ou alterados estão em `docs/components.md`, com story citada.
+- [ ] Estilos de UI Styles novos ou alterados estão em `docs/ui-styles.md`.
+- [ ] Bibliotecas, JavaScript, hooks e variáveis do Portal estão em `docs/architecture.md`.
+- [ ] Gates novos ou alterados estão em `docs/gates.md`, com a última execução.
+- [ ] `CHANGELOG.md` e `docs/roadmap.md` refletem a entrega.
+- [ ] Nenhum item documentado sem correspondência no código.
+
+## 7. Não faça
 
 - Não crie componente só para substituir uma classe utilitária simples sem contrato reutilizável.
 - Não adote UI Suite, `drupal/bootstrap_components` ou outra suíte concorrente sem nova decisão arquitetural.
