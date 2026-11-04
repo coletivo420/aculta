@@ -1,5 +1,11 @@
 # Estado da sessão
 
+## Handoff — alerta Upgrade Status em ACULTA MCP — 2026-11-03
+
+- Corrigida a propriedade injetada `entityTypeManager` em `McpAccessSettingsForm`: `private readonly` passou a `protected readonly`, para ficar visível ao `DependencySerializationTrait` herdado de `FormBase`.
+- `php -l` e `git diff --check` passaram. `upgrade_status:analyze aculta_mcp` reexecutado após `drush cr`: “No known issues found.” `updatedb:status` sem pendências e `config:status` sem diferenças.
+- Próximo passo: commit/push desta correção em `origin/dev`; Runtime é o checkout compartilhado e já executou a reanálise.
+
 ## Handoff — Text With Summary 2.0.x-dev — 2026-11-03
 
 - Adicionado `drupal/text_with_summary:2.0.x-dev@dev` ao Composer; lockado no commit upstream `89c4282cf25259564ce7fa41b9dd70f7fe7f496d` em `web/modules/contrib/text_with_summary`.
