@@ -1,5 +1,11 @@
 # Changelog — ACULTA420 V2
 
+## 1.2.0-dev.6 — corrige o slot comum do menu
+
+- O SDC `account-menu` agora declara o slot `menu_items` uma única vez, válido
+  tanto no estado visitante quanto no autenticado. Gate Drush de renderização
+  encontrou a duplicidade Twig após a correção de slots da barra.
+
 ## 1.2.0-dev.5 — declara slots aninhados do menu (2026-11-04)
 
 - Declara os slots de avatar e itens encaminhados pelo `multidomain-bar` ao

@@ -10,12 +10,14 @@
         <span class="visually-hidden">{{ summary_label|default('Minha conta'|t) }}</span>
       </summary>
       <div class="aculta-account-menu__panel">
-        {% block menu_items %}{% endblock %}
+{% else %}
+  <nav class="aculta-account-menu" aria-label="{{ 'Menu da conta'|t }}">
+{% endif %}
+    {% block menu_items %}{% endblock %}
+{% if authenticated %}
       </div>
     </details>
   </nav>
 {% else %}
-  <nav class="aculta-account-menu" aria-label="{{ 'Menu da conta'|t }}">
-    {% block menu_items %}{% endblock %}
   </nav>
 {% endif %}
