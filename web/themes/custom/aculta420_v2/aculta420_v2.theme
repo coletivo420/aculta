@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Theme functions for ACULTA420 V2.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Implements hook_preprocess_html().
+ */
+function aculta420_v2_preprocess_html(array &$variables): void {
+  // Add classes to the html element.
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function aculta420_v2_preprocess_page(array &$variables): void {
+  // Add variables to the page template.
+}

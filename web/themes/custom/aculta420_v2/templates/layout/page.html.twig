@@ -1,0 +1,49 @@
+{#
+/**
+ * @file
+ * Default theme implementation for the page.
+ *
+ * Variables:
+ * - attributes: HTML attributes for the main element.
+ * - page: The page content.
+ *
+ * @see template_preprocess_page()
+ */
+#}
+<div{{ attributes.addClass('page__content') }}>
+  {% if page.header %}
+    <header class="page__header">
+      {{ page.header }}
+    </header>
+  {% endif %}
+  
+  {% if page.navigation %}
+    <nav class="page__navigation">
+      {{ page.navigation }}
+    </nav>
+  {% endif %}
+  
+  {% if page.highlighted %}
+    <div class="page__highlighted">
+      {{ page.highlighted }}
+    </div>
+  {% endif %}
+  
+  <main id="main-content" class="page__main">
+    {% if page.sidebar_first %}
+      <aside class="page__sidebar">
+        {{ page.sidebar_first }}
+      </aside>
+    {% endif %}
+    
+    <div class="page__content">
+      {{ page.content }}
+    </div>
+  </main>
+  
+  {% if page.footer %}
+    <footer class="page__footer">
+      {{ page.footer }}
+    </footer>
+  {% endif %}
+</div>

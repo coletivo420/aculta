@@ -1,0 +1,71 @@
+/* ==========================================================================
+   Layout Styles
+   ========================================================================== */
+
+/* Main page layout */
+.page {
+  display: grid;
+  min-height: 100vh;
+  grid-template-areas:
+    "header"
+    "navigation"
+    "highlighted"
+    "content"
+    "sidebar"
+    "footer";
+  grid-template-rows: auto auto auto 1fr auto auto;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-base);
+}
+
+/* Grid areas */
+.page__header {
+  grid-area: header;
+}
+
+.page__navigation {
+  grid-area: navigation;
+}
+
+.page__highlighted {
+  grid-area: highlighted;
+}
+
+.page__content {
+  grid-area: content;
+}
+
+.page__sidebar {
+  grid-area: sidebar;
+}
+
+.page__footer {
+  grid-area: footer;
+}
+
+/* Responsive layout */
+@media (min-width: 768px) {
+  .page {
+    grid-template-areas:
+      "header header"
+      "navigation navigation"
+      "highlighted highlighted"
+      "content sidebar"
+      "footer footer";
+    grid-template-rows: auto auto auto 1fr auto;
+    grid-template-columns: 1fr 250px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .page {
+    grid-template-areas:
+      "header header"
+      "navigation navigation"
+      "highlighted highlighted"
+      "content sidebar"
+      "footer footer";
+    grid-template-rows: auto auto auto 1fr auto;
+    grid-template-columns: 1fr 300px;
+  }
+}

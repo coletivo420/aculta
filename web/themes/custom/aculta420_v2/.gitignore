@@ -1,0 +1,14 @@
+# Node.js
+/node_modules/
+dist/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local settings
+settings.php

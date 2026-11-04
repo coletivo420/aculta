@@ -1,0 +1,43 @@
+{#
+/**
+ * @file
+ * Default theme implementation for the HTML structure.
+ *
+ * Variables:
+ * - attributes: HTML attributes for the main element.
+ * - head_title: A formatted title for the page (including the site name).
+ * - head_links: Links to include in the head.
+ * - head_links_inline: Inline links to include in the head.
+ * - styles: Style tags to include in the head.
+ * - scripts: Script tags to include in the head.
+ * - content: The main content of the page.
+ * - page_top: Markup for the beginning of the page.
+ * - page_bottom: Markup for the end of the page.
+ *
+ * @see template_preprocess_html()
+ */
+#}
+{%
+  set body_classes = [
+    'page',
+    'theme-' ~ theme,
+  ]
+%}
+<!DOCTYPE html>
+<html{{ html_attributes }}>
+  <head>
+    <head-placeholder token="{{ placeholder_token }}">
+    <title>{{ head_title|safe_join(' | ') }}</title>
+    <css-placeholder token="{{ placeholder_token }}">
+    <js-placeholder token="{{ placeholder_token }}">
+  </head>
+  <body{{ attributes.addClass(body_classes) }}>
+    <a href="#main-content" class="visually-hidden focusable">
+      {{ 'Skip to main content'|t }}
+    </a>
+    {{ page_top }}
+    {{ page }}
+    {{ page_bottom }}
+    <js-bottom-placeholder token="{{ placeholder_token }}">
+  </body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "aculta420_v2",
+  "version": "1.0.0",
+  "description": "Tema ACULTA420 V2 com Vite e SDC",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
