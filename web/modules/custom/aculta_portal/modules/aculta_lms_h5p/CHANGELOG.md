@@ -1,3 +1,12 @@
+## 0.4.0-dev.173 — corrige consultas do editor de bibliotecas
+
+- A listagem H5P e a busca de detalhes falhavam com erro SQL porque um comentário
+  PHP de acompanhamento de dívida havia sido incluído dentro das strings SQL.
+  A anotação foi movida para fora das consultas sem retirar o filtro de semântica.
+- Kernel exercita ambos os caminhos de `getLibraries()` com uma biblioteca real
+  de teste e semântica cadastrada.
+- Runtime: reteste autenticado do editor após publicação pendente.
+
 ## 0.4.0-dev.172 — serve o editor H5P no domínio de cursos
 
 - O endpoint AJAX que lista bibliotecas e retorna semânticas do editor agora

@@ -121,6 +121,7 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
     $user = $this->currentUser;
     $super_user = $user->hasPermission('create restricted h5p content types');
 
+    // DT-H5P04 (DEBT-REGISTER.md): measure before changing semantics filtering.
     if ($libraries !== NULL) {
       // Get details for the specified libraries only.
       $librariesWithDetails = [];
@@ -131,7 +132,6 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
           WHERE machine_name = :name
           AND major_version = :major
           AND minor_version = :minor
-// DT-H5P04 (DEBT-REGISTER.md): measure before removing.
           AND semantics IS NOT NULL",
           [
             ':name' => $library->name,
@@ -165,7 +165,6 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
       FROM {h5p_libraries}
       WHERE runnable = 1
       AND semantics IS NOT NULL
-// DT-H5P04 (DEBT-REGISTER.md): measure before removing.
       ORDER BY title");
     foreach ($libraries_result as $library) {
       // Convert result object properties to camelCase.
