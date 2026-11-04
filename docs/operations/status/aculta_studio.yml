@@ -2,7 +2,7 @@
 version: 0.1.0-dev.51
 state: Dev
 progress_note: >-
-  Dev.51 cria rota contextual de materiais no Ganjalab Educador e compõe o formulário do owner `aculta_lms_resources`; gate permanece no `CourseAuthoringAccessCheck` do LMS e o formulário grava apenas referências pelo Form Display Group existente. Validação browser após o cache rebuild pendente.
+  Dev.51 cria rota contextual de materiais no Ganjalab Educador e compõe o formulário do owner `aculta_lms_resources`; gate permanece no `CourseAuthoringAccessCheck` do LMS e o formulário grava apenas referências pelo Form Display Group existente. Firefox autenticado confirmou GET da estrutura, link para materiais e os três campos do formulário sem submit; usuário anônimo recebe 403.
   Dev.50 adiciona rota privada de prévia de aula do Educador no purpose courses; controller/acesso pertencem ao owner aculta_lms e revalidam curso/aula sem projetar dados de estudante/resposta. Unit LMS 261/947 PASS; reteste browser da rota pendente. Dev.49 localiza os segmentos das rotas de movimento e registra as rotas do Educador no mapa operacional.
   Dev.48 publica rotas contextuais para mover aulas/atividades acima/abaixo pelo owner aculta_lms; confirmação explica o impacto imediato nas turmas. Kernel `AcultaLmsInstallTest` 8/340 e Unit LMS 253/927 PASS.
   Dev.47 mantém as rotas de confirmação para exclusão de conteúdo no Educador, com formulários e integridade de dados no aculta_lms; autorização contextual e purpose courses são revalidados pelo owner.

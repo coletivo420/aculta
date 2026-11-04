@@ -5,8 +5,15 @@
 - Config Sync agora mantém `field_lms_videos` storage/config e widget do Group
   Form Display. Sem essas cópias, `config:import` removia o campo após o update
   idempotente 8002.
-- Nenhum valor de vídeo ou curso foi escrito; a importação anterior removeu
-  somente o field recém-criado e ainda vazio. O snapshot pré-update permanece.
+- Snapshot antes de `updatedb` (hash `711a0afe…`) e antes da segunda
+  `config:import` (hash `a06031b9…`); ambos fora do repositório, modo 0600.
+- `aculta_lms_resources_update_8002` e `config:import` passaram. A primeira
+  importação removeu somente o field recém-criado e vazio; o Config Sync da
+  dev.25 o restaurou, sem valores de vídeo ou curso gravados.
+- `updatedb:status` sem pendências, `config:status` sem diferenças e `drush cr`
+  PASS. Firefox autenticado confirmou no formulário os campos de leitura,
+  galeria e vídeo e, na estrutura, o link para editar; nenhum formulário foi
+  submetido. Anônimo continua recebendo 403.
 
 ## 0.1.0-dev.24 — repara instalação parcial de field_lms_videos
 
