@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.29
+version: 0.1.0-dev.33
 state: Dev
-next_phase: 'Integrar viewers PDF/H5P apenas conforme policies e renderers dos owners, investigar os erros remanescentes do CKEditor e avançar o Course Builder acessível; depois retomar pagamentos e `updatedb` pendentes ([roadmap](docs/modules/ACULTA-LMS-ROADMAP.md))'
-progress_note: "Dev.29: boot/DI de owners verificado pelo ContentIndexOwnerIntegrationKernelTest e configuração Portal instala com schema completo. Kernel Index + upload: 8/162 PASS, 216 depreciações upstream. Dev.25 Runtime: field_lms_videos e widget instalados; updatedb/config limpos; Firefox autenticado confirmou campos de leitura, galeria e vídeo, anônimo 403. Smoke não submeteu formulário nem alterou conteúdo."
+next_phase: 'Fechar integrações F15 que dependem de storage H5P e validar acesso do Fórum; em seguida continuar as fases LMS e retomar pagamentos e `updatedb` pendentes ([roadmap](docs/modules/ACULTA-LMS-ROADMAP.md))'
+progress_note: "Dev.33: upload de PDF course_document por AJAX cria relação Group após revalidação de permissão; Unit focal 4/36. Materiais Wiki, galeria, vídeo e PDF passaram smoke funcional autenticado com conteúdo temporário limpo. Vídeo usa a URL fonte oEmbed validada após Entity Access, pois o canonical Core Media aponta a /edit sem standalone_url. Unit + Kernel do builder 9/89. Runtime updatedb/config limpos; discussão H5P bloqueada porque o storage privado não está disponível."
