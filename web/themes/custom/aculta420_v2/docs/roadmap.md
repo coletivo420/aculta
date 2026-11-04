@@ -2,8 +2,17 @@
 
 - `1.2.0-dev.13`: breadcrumb migrado da V1 para SDC e integrado ao template
   Drupal `navigation/breadcrumb`. Contrato visual preserva links editoriais,
-  separador `/`, título atual e foco; schemas e contraste adicionados aos gates.
-  Validação de Runtime e browser será registrada após execução.
+  separador `/`, título atual e foco. Baseline: V2 não possuía override nem
+  componente; referência V1 em `templates/navigation/breadcrumb.html.twig` e
+  `css/components/breadcrumb.css`. Firefox ESR visível, purpose `main`, URL
+  `/node/572`, anônimo: 320px claro, 390px escuro, 1440px claro/escuro. Uma
+  navegação, rótulo traduzido “Trilha de navegação”, título atual preservado,
+  link com contraste 5,70:1 no canvas claro e 6,79:1 na superfície escura;
+  documento sem overflow. Zoom nativo 200%, viewport CSS 320px: documento 320px,
+  breadcrumb 288px. Tab atingiu o link com foco visível de 3px. Capturas em
+  `$SUITE_OUT/v1-v2-breadcrumb-20261104/`. Gate SDC: 19/19 componentes renderizados;
+  schemas 55/764; foundations 51 pares. Cobertura focal: outras rotas e purposes
+  seguem pendentes.
 
 - `1.2.0-dev.11`: modal de entrada portado da identidade V1 para `<dialog>` e
   Fetch, mantendo o botão Google quando a integração Portal estiver configurada.

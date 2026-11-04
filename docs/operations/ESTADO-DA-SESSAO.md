@@ -1055,9 +1055,14 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   `1.2.0-dev.13` adiciona SDC `breadcrumb` com schema estrito, story, README,
   CSS mobile-first por tokens e consumer no template Drupal. O vermelho
   editorial foi aprofundado para WCAG AA: 5,70:1 no canvas claro e 6,79:1 na
-  superfície escura. Gate visual Runtime/browser ainda pendente nesta revisão.
-- **Próximo passo:** validar o breadcrumb em página real nas larguras/modos
-  afetados; depois continuar a auditoria das páginas V1→V2, começando por
-  conteúdo editorial/perfil e catálogo de estilos não migrados. O header mantém
+  superfície escura. Firefox ESR visível no purpose `main`, URL `/node/572`,
+  estado anônimo: 320px claro, 390px escuro, 1440px claro/escuro; sem overflow,
+  título atual e rótulo traduzido presentes. Zoom real 200% com viewport de
+  320 CSS px manteve documento em 320px; Tab chegou ao link com contorno de 3px.
+  Capturas em `$SUITE_OUT/v1-v2-breadcrumb-20261104/`. Gate SDC 19/19 e schemas
+  55/764 PASS; outros purposes e rotas ficam pendentes.
+- **Próximo passo:** comparar capturas de páginas V1/V2 em conteúdo editorial,
+  perfil público e Revista; continuar a auditoria de catálogo e estilos ainda
+  não migrados. O header mantém
   marca e menu juntos; a vitrine está abaixo; eventos, fórum e agenda ficam na
   sidebar. A paridade completa e a Fase 2 continuam abertas.
