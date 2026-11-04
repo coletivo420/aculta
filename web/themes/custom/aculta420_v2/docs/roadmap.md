@@ -69,6 +69,19 @@
   autenticados permanecem DEFERRED. O runner aplica o CSS baseline ao DOM atual;
   essa comparação não recupera a marcação Twig histórica da baseline.
 
+### Fase 2 — menu de conta (não versionado, ADR-047)
+
+**Status: base estrutural pronta no código; avatar do Portal e verificação pendentes.**
+
+- SDC `account-menu` criado e ligado à barra institucional. Visitante vê "Entrar"; autenticado vê o disclosure com avatar e o menu de conta.
+- A lista antiga de links de conta da barra foi substituída pelo componente.
+- Pendentes para fechar a fase:
+  1. Avatar: o Portal entrega `aculta_account_avatar` pelo AvatarResolver (foto liberada → acervo; nunca inicial). Commit separado no `aculta_portal`.
+  2. Verificação visual em 320, 390 e 1440 CSS px, claro e escuro, zoom de 200%, teclado, estado autenticado com foto, com acervo e sem foto.
+  3. Leitor de tela: o botão deve anunciar "Minha conta".
+  4. Gates do tema (ver [gates.md](gates.md)) executados no Homelab.
+  5. Versão `1.2.0-dev.3` e entrada no changelog, somente após a validação.
+
 ## Fase 3 — Purpose neutro no Portal
 
 **Status: pendente; contrato de apresentação será alterado em commit separado no `aculta_portal`.**
@@ -97,6 +110,29 @@
 - Revisão assistiva das páginas reais que usam pager, mensagens e teasers.
 - Não trocar tiles OSM por CartoDB nem introduzir endpoint de pontos sem decisão
   e revisão dos contratos de privacidade, acesso, cache e purpose.
+
+## Decisões pendentes do responsável
+
+- Chave neutra de purpose no `domain_presentation` (Fase 3): aprovar a PR no Portal.
+- Dropdown do menu de conta: lista final de itens além de Minha conta e Sair, e texto do contador do sino (ADR-047, pendências).
+- Verificação de `core/misc/ajax.js` no Drupal 11.5 e definição dos exportables e do formulário do wizard do LMS (ADR-044).
+- Migração para Drupal 12: data, sem definição (ADR-045).
+
+## Ordem sugerida a partir daqui
+
+1. Fechar a Fase 2 (avatar do Portal e validação do menu de conta).
+2. Fase 3: chave neutra de purpose, em PR própria no Portal.
+3. Fase 2 (restante): Institution Bar e Domain Header revisados, rodapé e regiões do `page.html.twig`.
+4. Fase 4: UI Styles, após checar compatibilidade com 11.5 e 12.
+5. Fase 5: componentes faltantes na ordem de uso (`avatar`, `author-box`, depois `breadcrumb`, `tabs`, `accordion`, `dialog`, `form-field`, `progress`, `data-table`, `empty-state`, `price`), e templates por tipo de conteúdo.
+
+## Documentação deste tema
+
+- [README.md](../README.md): visão geral, estrutura e como adicionar componente.
+- [AGENTS.md](../AGENTS.md): regras para agentes.
+- [architecture.md](architecture.md): camadas, contrato com o Portal, JavaScript e tokens.
+- [components.md](components.md): catálogo com props, slots e estado.
+- [gates.md](gates.md): validadores e como rodar.
 
 ## Compatibilidade e limites
 

@@ -1,0 +1,100 @@
+# Arquitetura do tema ACULTA420 V2
+
+Este documento descreve como o tema está montado hoje (`1.2.0-dev.2` mais o menu de conta não versionado). Para decisões, veja os ADRs em `docs/decisions/`; para status, veja [roadmap.md](roadmap.md).
+
+## 1. Camadas
+
+Dependência de cima para baixo. Uma camada não importa de baixo sem passar pelo contrato.
+
+```text
+Tokens primitivos (paleta)        → só dentro de src/styles/tokens.css
+Tokens semânticos                 → usados pelos componentes
+Fundações                         → tipografia, espaçamento, foco, movimento, reflow
+Componentes SDC                   → apresentação, props com schema estrito
+Shell                             → barra institucional, navegação, regiões da página
+Templates de página e de conteúdo → por tipo de conteúdo (ainda a fazer)
+```
+
+Hoje estão entregues as três primeiras camadas, os componentes do shell e a navegação SDC. Templates por tipo de conteúdo ainda não existem na V2 (Fase 5).
+
+## 2. Fronteira com o Portal
+
+O tema não conhece hostnames, domínios, purposes ou regras de acesso. Ele recebe variáveis de página preparadas pelo `aculta_portal`.
+
+| Variável | Origem | Uso no tema |
+| --- | --- | --- |
+| `domain_presentation.layout.institution_bar_account` | Portal | marca a barra como barra de conta |
+| `domain_presentation.layout.show_utility_bar` | Portal | exibe ou oculta as utilidades da barra |
+| `domain_presentation.regions.showcase` | Portal | links da vitrine de portais (`multidomain_network_links`) |
+| `aculta_account_menu` | Portal (render array de `system_menu_block:account`) | slot de itens do menu de conta |
+| `aculta_account_authenticated` | tema (`PagePresentationHooks`, via `current_user`) | escolhe o estado visitante ou autenticado do menu |
+| `aculta_account_avatar` | **pendente** no Portal (AvatarResolver) | slot do avatar do menu de conta |
+| `aculta_cart` | Portal (Commerce) | gatilho e painel do carrinho |
+| `aculta_messenger` | Portal (`aculta_messenger`) | gatilho e painel de mensagens |
+| `aculta_alerts` | Portal | gatilho e painel de avisos |
+| `aculta_search_utility` | Portal (`aculta_portal/search-preview`) | gatilho de busca |
+| `aculta_brand_home` | Portal | destino do logotipo |
+| `aculta_color_mode` | Portal | `light` ou `dark` (demais valores viram `light`) |
+
+Regras:
+
+- O Portal não instancia componentes do tema. O tema não resolve regra de domínio.
+- Links que atravessam purpose chegam como URL absoluta, gerada pelo `DomainPurposeManager` no Portal.
+- A chave neutra de purpose (Fase 3) ainda não existe no contrato. Quando existir, o tema aplica `data-purpose` no `<html>` e ajusta tokens de destaque, sem conhecer o domínio.
+
+## 3. Modo de cor
+
+- `src/Hook/ColorModeHooks.php` define `data-theme` no `<html>` a partir de `aculta_color_mode`. Valor diferente de `dark` vira `light`.
+- `src/styles/tokens.css` define `:root` (claro) e `:root[data-theme="dark"]`.
+- Não há detecção automática do sistema. Um valor legado `auto` resolve para claro até o contrato mudar.
+- Componentes não conhecem o modo. Eles usam tokens.
+
+## 4. Tokens e fundações
+
+`src/styles/tokens.css` contém:
+
+- cores semânticas de texto, superfície, marca, destaque, borda, estado e foco;
+- a base visual herdada da V1 (verde e vermelho editorial, mídia, sombra elevada), com valores para o modo escuro;
+- escalas de tipografia (Inter e Oswald), espaçamento, raios e sombras;
+- `--tap-target-min: 44px`;
+- aliases de compatibilidade (`--color-primary`, `--border-radius-*`, `--shadow-*` antigos), mantidos apenas enquanto houver consumidores.
+
+`base.css` e `layout.css` definem reset, foco visível, movimento reduzido, prevenção de overflow em conteúdo longo e a estrutura da página. A biblioteca `global-styling` carrega as duas fontes externas do Google Fonts.
+
+## 5. JavaScript
+
+Todo o JavaScript é vanilla, com `Drupal.behaviors` e `core/once`. Não há jQuery.
+
+| Arquivo | Papel |
+| --- | --- |
+| `components/multidomain-bar/multidomain-bar.js` | sincroniza a altura da barra com o espaço da página e com a barra administrativa; abre o popup de login (`/entrar/janela`) e o popup de busca (`/busca/popup`) por Fetch, em `<dialog>` nativo |
+| `components/navigation-bar/navigation-bar.js` | drawer de navegação mobile: abre, fecha com Escape e devolve o foco |
+| `js/utility-dialogs.js` | diálogos utilitários compartilhados |
+| `js/messenger-drawers.js` | gaveta de mensagens: novo contato a partir do perfil, confirmações de bloqueio e desfazer amizade dentro de `<dialog>` |
+| `js/counters.js` | atualiza contadores das utilidades |
+| `js/alerts-dismiss.js` | dispensa de avisos |
+
+A biblioteca `utility-drawers` reúne os quatro últimos. O popup de login e o de busca não usam `core/drupal.dialog.ajax`: a V2 remove essa dependência do utilitário de busca (`PagePresentationHooks::removeSearchDialogDependency`).
+
+Com JavaScript desligado, os links dos gatilhos continuam válidos: o login e a busca abrem as páginas próprias do Portal.
+
+## 6. Shell
+
+- `templates/layout/page.html.twig` monta a página e inclui a barra institucional (`multidomain-bar`) antes do `page.header`.
+- A barra institucional é fixa. A altura medida dela vira `--aculta-institution-bar-height`, e um espaçador (`.aculta-institution-bar-placeholder`) mantém o conteúdo abaixo dela.
+- O bloco `system_menu_block:main` é envolvido pelo SDC `navigation-bar` no mesmo peso e posição do cabeçalho. O render array original fica como slot, com access e cache preservados.
+- O menu de conta (`account-menu`) fica dentro da barra. Visitante vê "Entrar"; autenticado vê o disclosure com avatar e as ações de conta (ver [components.md](components.md)).
+- A barra institucional convive com a barra administrativa Gin e com o toolbar Core: a faixa fica acima das duas camadas, e cada uma começa após a altura medida da faixa.
+
+## 7. Hooks e registro
+
+- `#[Hook]` em classes com injeção de dependência. Não há `\Drupal::` em `src/`.
+- `PagePresentationHooks` (`preprocess_page`) mapeia o contrato do Portal para variáveis do tema, move o menu de conta para a barra, envolve o menu principal com `navigation-bar` e remove a dependência de diálogo AJAX do utilitário de busca.
+- `ColorModeHooks` (`preprocess_html`) aplica o modo de cor.
+- `src/Hook/*` é a única camada PHP do tema. Lógica de negócio não pertence aqui.
+
+## 8. Dependências e compatibilidade
+
+- Drupal `^11.5 || ^12`. O desenvolvimento roda no 11.5 do servidor de desenvolvimento. Compatibilidade com 12 é meta, sem validação ainda (ADR-045).
+- Ícones Phosphor (MIT, Core 2.1.1) estão vendorizados em `assets/icons/phosphor/` e são injetados inline pelo componente `icon`.
+- Não há UI Styles nem CTools no tema hoje. UI Styles entra na Fase 4; CTools fica no Portal, conforme ADR-044.
