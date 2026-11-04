@@ -3,6 +3,7 @@
 namespace Drupal\aculta_lms_h5p\Plugin\Field\FieldType;
 
 // ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
+use Drupal\Component\Utility\DeprecationHelper;
 use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\Field\Attribute\FieldType;
 use Drupal\Core\Field\FieldItemInterface;
@@ -86,7 +87,13 @@ class aculta_H5PItem extends FieldItemBase implements FieldItemInterface {
 
     // Determine if this is a new revision.
     $entity = $this->getEntity();
-    $is_new_revision = (!empty(\Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $entity->getOriginal(), fn() => $entity->original)) && $entity->getRevisionId() != \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $entity->getOriginal(), fn() => $entity->original)->getRevisionId());
+    $original = DeprecationHelper::backwardsCompatibleCall(
+      \Drupal::VERSION,
+      '11.2.0',
+      fn() => $entity->getOriginal(),
+      fn() => $entity->original,
+    );
+    $is_new_revision = !empty($original) && $entity->getRevisionId() != $original->getRevisionId();
 
     // Determine if this is a new translation.
     $do_new_translation = $this->get('h5p_content_new_translation')->getValue();

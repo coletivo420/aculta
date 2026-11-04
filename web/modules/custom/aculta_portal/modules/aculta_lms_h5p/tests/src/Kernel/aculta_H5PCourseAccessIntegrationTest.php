@@ -57,7 +57,7 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     'reporting',
     'aculta_document_viewer',
     'aculta_image',
-    'aculta_lms_h5p', 'token', 'aculta_file_uploader'
+    'aculta_lms_h5p', 'token', 'aculta_file_uploader',
   ];
 
   /**

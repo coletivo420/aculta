@@ -56,6 +56,7 @@
 - **Publicação:** pendente neste handoff; antes do push conferir/stagear somente arquivos da entrega. Depois do push, Runtime já compartilha o checkout e requer confirmação no HEAD e rebuild de cache se necessário.
 - **Responsividade:** avaliação anterior sem alteração de código; harness somente leitura exige URL/UID LMS de teste provisionados, ausentes nesta sessão. Ver seção “avaliação funcional de responsividade LMS” abaixo.
 - **Próximos passos:** publicar a entrega de limpeza; seguir auditoria de lacunas funcionais LMS e completar testes/homologações possíveis. Não fabricar conteúdo Runtime para validar checkout/pagamentos.
+- **Continuação H5P — 2026-11-04:** PHPCS Drupal/DrupalPractice integral do adapter PHP passa em dev.174 com zero erros/avisos. A classe nova de limites ZIP e seu teste foram normalizados para UpperCamelCase, preservando identificadores Drupal legados. Unit H5P completa: 34 testes/139 assertions PASS. Kernel tentado no worktree isolado abortou por carregamento duplo do Core (`system_hook_info` redeclarada); repetir após sincronizar o commit no checkout Runtime de raiz única. Código ainda aguarda publicação/sincronização.
 - **Retomar lendo:** `aculta_lms_resources/src/Cleanup/CourseDocumentCleanup.php`, seus Unit tests, changelog/README do módulo, `docs/portal/CONTENT-CLEANUP-POLICY.md`, roadmap `docs/modules/ACULTA-LMS-ROADMAP.md`, `AGENT-OPERATIONS.md` e `BANCO-DE-TESTE.md`.
 
 # Estado da sessão

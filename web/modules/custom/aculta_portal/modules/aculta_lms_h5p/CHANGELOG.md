@@ -1,3 +1,10 @@
+## 0.4.0-dev.174 — fecha o gate PHPCS do adapter
+
+- O gate integral Drupal/DrupalPractice agora não registra erros nem avisos.
+- A classe utilitária recém-criada de limites de ZIP e seu teste seguem UpperCamelCase; os identificadores H5P legados usados pela descoberta Drupal permanecem intactos.
+- Referências de namespaces Drupal usam imports, a consulta do upgrade mantém seus parâmetros explícitos e a fixture de Kernel segue a indentação Drupal.
+- Unit H5P: 34 testes/139 asserções PASS, incluindo os 6/40 do limite ZIP. PHPCS integral Drupal/DrupalPractice: 0 erros/avisos; PHP lint dos arquivos alterados e `git diff --check` PASS. Kernel não foi validado neste worktree: o bootstrap encontrou dois roots Drupal e falhou ao redeclarar `system_hook_info`; repetir após sincronização.
+
 ## 0.4.0-dev.173 — corrige consultas do editor de bibliotecas
 
 - A listagem H5P e a busca de detalhes falhavam com erro SQL porque um comentário
@@ -51,7 +58,7 @@
 
 ## 0.4.0-dev.166 — limites de recursos no instalador de bibliotecas H5P
 
-- Novo `aculta_H5PArchiveResourceLimits`, sem dependências Drupal: recusa pacotes
+- Novo `AcultaH5PArchiveResourceLimits`, sem dependências Drupal: recusa pacotes
   com mais de 10.000 entradas, arquivo descompactado acima de 32 MiB, pacote
   acima de 256 MiB descompactado e taxa de compressão acima de 100:1 (aplicada a
   entradas com mais de 1 MiB).
@@ -61,7 +68,7 @@
   extração, com o validador H5P oficial ainda como segunda barreira.
 - Referência de dimensionamento: o pacote de bibliotecas do Opigno 3.2.8 (2.683
   entradas, 16,3 MB descompactados, taxa máxima 11,4) passa com folga.
-- Testes: Unit `aculta_H5PArchiveResourceLimitsTest` (6 casos) executado
+- Testes: Unit `AcultaH5PArchiveResourceLimitsTest` (6 casos) executado
   localmente com executor mínimo compatível com as asserções usadas, sem PHPUnit
   do projeto (o Packagist estava bloqueado no ambiente). Kernel do instalador e
   PHPUnit oficial: NÃO executados.

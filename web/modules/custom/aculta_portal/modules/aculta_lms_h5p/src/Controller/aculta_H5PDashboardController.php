@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms_h5p\Controller;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -82,7 +83,7 @@ final class aculta_H5PDashboardController implements ContainerInjectionInterface
       }
       $access = $educator
         ? $entity->access('update', $this->currentUser, TRUE)
-        : \Drupal\Core\Access\AccessResult::allowedIf($entity->hasPermission('take course', $this->currentUser))
+        : AccessResult::allowedIf($entity->hasPermission('take course', $this->currentUser))
           ->cachePerUser()
           ->addCacheContexts(['user.permissions', 'user.group_permissions']);
       $cacheability->addCacheableDependency($entity)->addCacheableDependency($access);

@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms_h5p\Unit;
 
-use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PArchiveResourceLimits;
+use Drupal\aculta_lms_h5p\aculta_H5PDrupal\AcultaH5PArchiveResourceLimits;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Covers ZIP resource limits for H5P library packages.
  */
-#[CoversClass(aculta_H5PArchiveResourceLimits::class)]
-final class aculta_H5PArchiveResourceLimitsTest extends UnitTestCase {
+#[CoversClass(AcultaH5PArchiveResourceLimits::class)]
+final class AcultaH5PArchiveResourceLimitsTest extends UnitTestCase {
 
   /**
    * Temporary archives created by the test.
@@ -39,7 +39,7 @@ final class aculta_H5PArchiveResourceLimitsTest extends UnitTestCase {
       'library.json' => '{"machineName":"H5P.Example"}',
       'js/example.js' => str_repeat('var a = 1;', 5000),
     ]);
-    (new aculta_H5PArchiveResourceLimits())->assertWithinLimits($zip);
+    (new AcultaH5PArchiveResourceLimits())->assertWithinLimits($zip);
     $zip->close();
     $this->addToAssertionCount(1);
   }
@@ -52,7 +52,7 @@ final class aculta_H5PArchiveResourceLimitsTest extends UnitTestCase {
     $this->expectException(\UnexpectedValueException::class);
     $this->expectExceptionMessage('entradas demais');
     try {
-      (new aculta_H5PArchiveResourceLimits(maxEntries: 2))->assertWithinLimits($zip);
+      (new AcultaH5PArchiveResourceLimits(maxEntries: 2))->assertWithinLimits($zip);
     }
     finally {
       $zip->close();
@@ -67,7 +67,7 @@ final class aculta_H5PArchiveResourceLimitsTest extends UnitTestCase {
     $this->expectException(\UnexpectedValueException::class);
     $this->expectExceptionMessage('arquivo grande demais');
     try {
-      (new aculta_H5PArchiveResourceLimits(maxEntryBytes: 1024 * 1024))->assertWithinLimits($zip);
+      (new AcultaH5PArchiveResourceLimits(maxEntryBytes: 1024 * 1024))->assertWithinLimits($zip);
     }
     finally {
       $zip->close();
@@ -86,7 +86,7 @@ final class aculta_H5PArchiveResourceLimitsTest extends UnitTestCase {
     $this->expectException(\UnexpectedValueException::class);
     $this->expectExceptionMessage('descompactado');
     try {
-      (new aculta_H5PArchiveResourceLimits(maxTotalBytes: 1024 * 1024))->assertWithinLimits($zip);
+      (new AcultaH5PArchiveResourceLimits(maxTotalBytes: 1024 * 1024))->assertWithinLimits($zip);
     }
     finally {
       $zip->close();
@@ -101,7 +101,7 @@ final class aculta_H5PArchiveResourceLimitsTest extends UnitTestCase {
     $this->expectException(\UnexpectedValueException::class);
     $this->expectExceptionMessage('compressão suspeita');
     try {
-      (new aculta_H5PArchiveResourceLimits())->assertWithinLimits($zip);
+      (new AcultaH5PArchiveResourceLimits())->assertWithinLimits($zip);
     }
     finally {
       $zip->close();
@@ -113,7 +113,7 @@ final class aculta_H5PArchiveResourceLimitsTest extends UnitTestCase {
    */
   public function testIgnoresRatioForSmallEntries(): void {
     $zip = $this->openArchive(['small.js' => str_repeat("\0", 200 * 1024)]);
-    (new aculta_H5PArchiveResourceLimits())->assertWithinLimits($zip);
+    (new AcultaH5PArchiveResourceLimits())->assertWithinLimits($zip);
     $zip->close();
     $this->addToAssertionCount(1);
   }

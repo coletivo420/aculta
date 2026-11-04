@@ -56,15 +56,14 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 
 ## Estado de fase
 
-**H5P PHPCS (2026-10-29, 0.4.0-dev.155):** rodadas automáticas corrigiram
-849 violações sem alterar regras ou nomes históricos; a microfase atual removeu
-11 problemas de whitespace PHP. PHPCS integral recontado registra 263 erros e
-33 avisos em 38 arquivos, incluindo PHPDoc, convenções legadas e estilo. O
-formatter tentou alterar booleanos JS para tokens PHP; essas mudanças foram
-revertidas e JS não foi modificado. Unit + Kernel passaram: 43 testes/481
-assertions, com 41 depreciações Core/contrib; PHP lint dos 11 arquivos PHP
-alterados e `git diff --check` passaram. F15 segue em Dev até o gate PHPCS
-completo passar.
+**H5P PHPCS (2026-11-04, 0.4.0-dev.174):** execução integral Drupal/
+DrupalPractice em PHP registra zero erros e zero avisos. A correção renomeou
+somente a nova classe utilitária de limites ZIP e seu teste para UpperCamelCase;
+identificadores históricos H5P de descoberta Drupal foram preservados. Imports
+e indentação foram ajustados. Unit focal do limite ZIP: 6 testes/40 asserções
+PASS; PHP lint e `git diff --check` PASS. A contagem de 263 erros/33 avisos de
+2026-10-29 é histórica e não representa o gate atual. O restante de F15 segue
+pendente conforme a linha da fase, incluindo runtime e integrações HTTP.
 
 **F13 — notificações educacionais: implementação funcional; revisão visual pendente.** O responsável escolheu avisos para mudanças acionáveis persistidas; edições editoriais sem efeito acionável não notificam. Matrícula e certificado são publicados pelo contrato público do
 `aculta_messenger`, que grava Message, integra lista/contador e enfileira e-mail

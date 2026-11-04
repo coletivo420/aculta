@@ -14,7 +14,7 @@ namespace Drupal\aculta_lms_h5p\aculta_H5PDrupal;
  *
  * Dependency-free on purpose, so it can be tested without a Drupal bootstrap.
  */
-final class aculta_H5PArchiveResourceLimits {
+final class AcultaH5PArchiveResourceLimits {
 
   /**
    * Maximum number of entries in one package.

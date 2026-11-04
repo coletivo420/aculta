@@ -202,9 +202,9 @@ final class aculta_H5PContentUpgrade implements ContainerInjectionInterface {
            FROM {h5p_content}
           WHERE library_id = :id
                 {$skip_query}
-          LIMIT 40", [
-            ':id' => $library_id,
-          ]);
+          LIMIT 40",
+        [':id' => $library_id],
+      );
 
       foreach ($contents as $content) {
         $out['params'][$content->id] =
