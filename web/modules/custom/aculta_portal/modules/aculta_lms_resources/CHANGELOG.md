@@ -1,5 +1,12 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.23 — corrige classe EntityFormDisplay no editor
+
+- Corrige o namespace da implementação Core de `EntityFormDisplay` usado para
+  montar os widgets existentes do formulário de materiais.
+- Runtime apontou `Class not found` no primeiro smoke do formulário; repetir
+  validação autenticada após rebuild.
+
 ## 0.1.0-dev.22 — editor contextual de materiais
 
 - Novo formulário do Educador edita somente os campos de referência já

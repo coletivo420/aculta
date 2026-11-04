@@ -6,7 +6,7 @@ namespace Drupal\aculta_lms_resources\Form;
 
 use Drupal\aculta_lms\Access\CourseAuthoringAccessCheck;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Entity\Display\EntityFormDisplay;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;

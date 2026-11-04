@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.22
+version: 0.1.0-dev.23
 state: Dev
 next_phase: 'Validar o formulário contextual no Runtime sem salvar alterações e conferir materiais ligados ao curso com fixture permitida; então integrar viewers PDF/H5P conforme política e renderer existentes ([roadmap](docs/modules/ACULTA-LMS-ROADMAP.md))'
-progress_note: "Dev.22: lista de leituras, galerias, vídeos e documentos existentes na estrutura do curso; editor contextual para leituras/galerias/vídeos usa widgets do Form Display Group, grava somente esses campos e revalida CourseAuthoringAccessCheck no GET/POST. Documento usa relação Group do Viewer. Unit Resources 14/67; Kernel CourseResourceBuilder 4/67 PASS. Smoke autenticado do construtor passou; formulário sem salvar e validação visual dos materiais pendentes. Sem schema novo."
+progress_note: "Dev.23: corrige namespace Core de EntityFormDisplay no editor contextual; o primeiro smoke revelou a classe não encontrada e o browser retornou página de erro, então aguarda repetição autenticada. Dev.22 oferece edição contextual dos campos de leituras/galerias/vídeos com widgets Group existentes e CourseAuthoringAccessCheck em leitura/gravação. Dev.21 lista leituras, galerias, vídeos e documentos existentes com Entity Access dos owners. Unit Resources 14/67; Kernel CourseResourceBuilder 4/67 PASS. Sem schema novo."
