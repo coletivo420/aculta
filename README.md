@@ -209,6 +209,7 @@ Versões instaladas no `composer.lock` e no `web/themes/custom/aculta420/package
 | `drupal/flood_control` | 3.0.1 | Composer | Controle de tentativas repetidas |
 | `drupal/security_review` | 3.1.3 | Composer | Revisão de segurança do site |
 | `drupal/username_enumeration_prevention` | 1.4.0 | Composer | Proteção contra enumeração de usuários |
+| `drupal/text_with_summary` | 2.0.x-dev | Composer; Drupal.org (GPL-2.0-or-later) | Fornece o campo `text_with_summary` no Drupal 12; usado em campos de corpo de conteúdo |
 | `drupal/key` | 1.22.0 | Composer | Chaves usadas pelo `SecretsManager` do `aculta_portal` |
 | `drupal/rename_admin_paths` | 3.1.0 | Composer | Caminhos administrativos em `/painel-administrativo` |
 | `drupal/role_hierarchy` | 4.0.0 | Composer | Hierarquia de papéis |

@@ -60,6 +60,7 @@ Legenda: ✅ D12 listado na estável atual · ⚠️ D12 só em beta/alpha · �
 | drupal/site_alert | 1.4.0 | 1.4 | ^8 … ^11 | ❌ |
 | drupal/social_auth | 4.1.2 | 4.1.2 | ^9.5 \|\| ^10 \|\| ^11 | ❌ |
 | drupal/social_auth_google | 4.0.3 | 4.0.3 | ^9.5 \|\| ^10 \|\| ^11 | ❌ |
+| drupal/text_with_summary | 2.0.x-dev | 2.0.x-dev (instalado) | ^11.5 \|\| ^12 | ✅ (substitui no Drupal 12 o tipo de campo removido do Core) |
 | drupal/tool | 1.0.0-beta12 | ❔ erro de servidor | — | ❔ |
 | drupal/turnstile | 1.2.0 | 1.2.0 | ^10.6 \|\| ^11 \|\| ^12 | ✅ |
 | drupal/ui_patterns | 2.0.23 | ❔ página sem informação | — | ❔ |
