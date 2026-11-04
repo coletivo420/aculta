@@ -219,7 +219,7 @@ Versões instaladas no `composer.lock` e no `web/themes/custom/aculta420/package
 | `drupal/site_alert` | 1.4.0 | Composer | Avisos no topo do site |
 | `drupal/views_bulk_operations` | 4.4.9 | Composer | Operações em lote nas listagens |
 | `drupal/domain` | 4.0.0-alpha2 | Composer | Multidomínio por purpose (`main`, `account`, `shop`, `courses`, etc.) |
-| `drupal/search_api` | 1.41.0 | Composer | Índice de busca (`aculta_index`) |
+| `drupal/search_api` | 1.43.0 | Composer | Índice de busca (`aculta_index`) |
 | `drupal/google_tag` | 2.0.9 | Composer | Marcação do Google (GA4) |
 | `drupal/metatag` | 2.2.0 | Composer | Metadados das páginas |
 | `drupal/schema_metatag` | 3.0.4 | Composer | Dados estruturados (schema.org) |

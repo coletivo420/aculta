@@ -52,7 +52,7 @@ Legenda: ✅ D12 listado na estável atual · ⚠️ D12 só em beta/alpha · �
 | drupal/reporting | 2.2.0 | 2.2.0 | ^10.1 \|\| ^11 \|\| ^12 | ✅ |
 | drupal/role_hierarchy | 4.0.0 | 4.0.0 | ^8 … ^11 | ❌ |
 | drupal/schema_metatag | 3.0.4 | ❔ não verificado | — | ❔ |
-| drupal/search_api | 1.41.0 | 1.43 | ^10.3 \|\| ^11 \|\| ^12 | ✅ (atualizar para 1.43) |
+| drupal/search_api | 1.43.0 | 1.43 | ^10.3 \|\| ^11 \|\| ^12 | ✅ |
 | drupal/section_library | 2.0.1 | 2.0.1 | ^10.3 \|\| ^11 | ❌ |
 | drupal/security_review | 3.1.3 | 3.1.3 | ^10.3 \|\| ^11 | ❌ |
 | drupal/simple_oauth | 6.1.x-dev (Composer branch) | 6.1.x-dev | ^10.3 \|\| ^11 | ❌ |
