@@ -7,7 +7,7 @@
 - Validações: `updatedb:status` sem pendências, `config:status` sem diferenças, Search ausente da lista de módulos ativos, `composer validate --no-check-publish` válido com avisos preexistentes de constraints exatas.
 - Commit `20d5a2041a175a0cdc1bf88780b8ab918b5d0fbb` enviado por fast-forward a `origin/dev`; Runtime no mesmo checkout/HEAD. Próximo passo: nenhuma ação pendente para Search.
 
-## Handoff — revisão docente e estabilidade da suíte LMS — 2026-11-03
+## Handoff — LMS, pagamentos e estado do Drupal 12 — 2026-11-03
 
 - Fluxo de revisão de respostas concluído no código: listagem paginada e
   limitada à turma/estudantes ativos, verificação de curso-turma/matrícula,
@@ -15,18 +15,31 @@
   A permissão `administer lms` agora tem serviço de hook registrado.
 - Harnesses Kernel ajustados para os tipos Group/Comment e relação LMS atuais,
   sem carregar `lms`/`lms_classes` contrib legados.
-- Validações: Unit LMS 234/828 PASS; Kernel LMS 33/996 PASS; PHPCS Drupal,
-  lint PHP e `git diff --check` PASS. O Kernel ainda emite 62 depreciações
+- Validações: Unit LMS 234/828 e Kernel LMS 33/996 PASS; Unit Mercado Pago
+  258/1.156 e Kernel Checkout Pro + update de cartão 4/152 PASS. PHPCS Drupal,
+  PHP lint e `git diff --check` PASS. O Kernel LMS emite 62 depreciações
   upstream de Core/contrib; alerta de diretório `browser_output` não gravável.
-- Runtime `aculta_runtime` verificado antes da entrega: Drupal 11.5.0-beta1,
-  PHP 8.5.12, sem updates pendentes nem diferenças de Config Sync. A mudança
-  não altera schema nem configuração; após push, sincronizar código e limpar
-  cache. Inspeção visual do painel fica pendente.
+- Não houve chamada de pagamento real nem mensagem externa. A homologação com
+  comprador sandbox continua pendente do desafio de segurança do provedor.
+- Runtime `aculta_runtime`: checkout compartilhado em `71a86fa9fa`, Drupal
+  11.5.0-beta1, PHP 8.5.12. Após a sincronização concorrente do commit, `drush
+  cr` PASS; `updatedb:status` sem pendências e `config:status` sem diferenças.
+  A migração para D12 ainda não foi feita.
+- O dry-run Composer para D12 continua bloqueado por vários contrib. A release
+  Bootstrap 8.x-3.45 declara Drupal 12 no `bootstrap.info.yml`, mas o requisito
+  no `composer.json` do pacote continua `drupal/core ^10.5 || ^11.2`; Commerce
+  3.3.x declara apenas `^10.3 || ^11`. Não trocar a linha de Bootstrap.
+- `core:requirements` não reporta erro, mas mantém avisos de 7 mídias
+  duplicadas, filtros de status redundantes nas Views Forum/Revista/Conteúdo,
+  módulos Search e Text With Summary Field depreciados, Claro depreciado,
+  cache de desenvolvimento desabilitado e verificações de Security Review.
+  Nenhum conteúdo ou configuração do Runtime foi alterado por esses avisos.
 - Arquivos desta entrega: módulo `web/modules/custom/aculta_portal/modules/aculta_lms/`
   (controllers, formulário, acesso, membership reader, services/routing,
   testes e changelog), metadados/changelog do `aculta_portal` e este handoff.
-- Próxima etapa do objetivo maior: payments e, depois, resolver item a item as
-  pendências do `updatedb:status`.
+- Próxima etapa do objetivo: resolver os bloqueios Composer upstream para
+  Drupal 12 e continuar tratando os avisos de requisitos sem apagar conteúdo;
+  homologação de pagamento real depende do acesso do comprador de teste.
 
 ## Handoff — espaçamento Studio e escopo de Próximos eventos, 2026-11-03
 
