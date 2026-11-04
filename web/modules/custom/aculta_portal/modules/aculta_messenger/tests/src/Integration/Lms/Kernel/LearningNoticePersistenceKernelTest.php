@@ -122,6 +122,33 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
   }
 
   /**
+   * The LMS inbox query sorts by the real Message entity ID property.
+   */
+  public function testEmptyInboxCanBeListedWithoutInvalidMessageIdSort(): void {
+    $learner = User::create([
+      'name' => 'empty_lms_notice_learner',
+      'mail' => 'empty-lms-notice@example.invalid',
+      'status' => 1,
+    ]);
+    $learner->save();
+    $manager = new LearningNoticeManager(
+      $this->container->get('entity_type.manager'),
+      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor(),
+      $this->createMock(DateFormatterInterface::class),
+      $this->createMock(QueueFactory::class),
+      new NullLogger(),
+      $this->container->get('lock.persistent'),
+      $this->createMock(LearningEligibilityInterface::class),
+    );
+
+    $items = [];
+    $manager->addPersonalNotices($items, $learner);
+
+    self::assertSame([], $items);
+  }
+
+  /**
    * Shared LMS events use existing Message storage and remain deduplicated.
    */
   public function testSharedEventPersistsAndDeduplicates(): void {

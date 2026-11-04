@@ -196,7 +196,7 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
         $query = $storage->getQuery()->accessCheck(FALSE)
           ->condition('template', self::TEMPLATE)->condition('uid', (int) $account->id());
         NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
-        return $query->sort('created', 'DESC')->sort('id', 'DESC')->range($scanOffset, $batchSize)->execute();
+        return $query->sort('created', 'DESC')->sort('mid', 'DESC')->range($scanOffset, $batchSize)->execute();
       },
       function (array $ids) use ($storage, $account, &$resolved): array {
         $messages = array_values($storage->loadMultiple($ids));

@@ -114,7 +114,7 @@ final class GameAchievementNoticeManager implements GameAchievementNoticeManager
           ->condition('template', self::TEMPLATE)
           ->condition('uid', (int) $account->id());
         NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
-        return $query->sort('created', 'DESC')->sort('id', 'DESC')
+        return $query->sort('created', 'DESC')->sort('mid', 'DESC')
           ->range($scanOffset, $batchSize)->execute();
       },
       function (array $ids) use ($storage, &$awards): array {

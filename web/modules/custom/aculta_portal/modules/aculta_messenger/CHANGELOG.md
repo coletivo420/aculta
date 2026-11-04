@@ -1,3 +1,8 @@
+# 0.1.1-dev.411 — corrige a ordenação dos avisos no inbox
+
+- Consultas paginadas agora ordenam pelo ID real da entidade Message (`mid`). O uso de `id` lançava `QueryException` e fazia os adaptadores opcionais de Loja, Doações, Game, Eventos, Revista, Wiki, Amizades e Aprendizagem falharem ao montar a lista.
+- Kernel LMS cobre a listagem de avisos com a chave correta e confirma que origens removidas continuam fora do inbox.
+
 ## 0.1.1-dev.410 — reconcilia schema do evento de amizade
 
 - Update `10018` atualiza o registro do schema de `message.field_aculta_friendship_event` sem reescrever os valores existentes.

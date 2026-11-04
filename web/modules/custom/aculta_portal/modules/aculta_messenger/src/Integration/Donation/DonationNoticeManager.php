@@ -327,7 +327,7 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
           ->condition('template', self::TEMPLATE)
           ->condition('uid', (int) $account->id());
         NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
-        return $query->sort('created', 'DESC')->sort('id', 'DESC')
+        return $query->sort('created', 'DESC')->sort('mid', 'DESC')
           ->range($scanOffset, $batchSize)->execute();
       },
       static fn(array $ids): array => array_values($storage->loadMultiple($ids)),
