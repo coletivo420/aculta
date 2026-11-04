@@ -588,3 +588,11 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - Manifesto e `patches.lock.json` atualizados; `composer patches-repatch` removeu/reinstalou os pacotes e reaplicou o patch de `drupal/ui_patterns` com sucesso.
 - **Validações:** lint PHP dos três arquivos alterados PASS; `rg drupal_static` nos arquivos de UI Patterns sem ocorrências; Composer validate válido com avisos de constraints exatas existentes/dev; cache rebuild PASS; Upgrade Status do `aculta420` sem problemas conhecidos. Não foram executados testes automatizados.
 - **Runtime/publicação:** `updatedb:status` sem pendências; `config:status` aponta cinco Views de Commerce diferentes, alterações preexistentes fora desta entrega. Não foram importadas. O patch não altera schema nem configuração; após o push, sincronizar somente o código no Runtime.
+
+## Continuação — remove atualização automática de classes de tabela em Views Commerce — 2026-11-03
+
+- A suíte Kernel de pagamentos revelou a depreciação do Core para `commerce_order_item_table`, `commerce_order_item_table_admin`, `commerce_orders`, `commerce_user_orders` e `commerce_order_payments`: o updater do Views adicionava `class: ''`, transformação removida no Drupal 12. Declarei o valor diretamente nas cinco Views do Config Sync.
+- **Validações:** cinco YAMLs validados; import parcial confirmou somente essas cinco Views. `drush cr` executado; `updatedb:status` sem updates; `config:status` sem diferenças; `drush config:get` confirmou classe vazia nas cinco definições ativas.
+- **Runtime:** snapshot anterior à importação `$SUITE_OUT/runtime-snapshots/aculta_runtime-before-commerce-view-table-classes-20261103.sql`, 69.200.703 bytes, modo 0600, SHA-256 `c20cb2eb73d22f485b3c5da3d6f501ef7eff436dcef790079516faf60c9f2acf`. Nenhum pedido, pagamento ou conteúdo alterado.
+- A suíte Mercado Pago foi revalidada: Unit 258/1.156 PASS; Kernel 4/152 PASS em `aculta_simpletest`, com 72 depreciações do Core/contrib; nenhuma chamada externa.
+- **Arquivos:** cinco Views Commerce em `config/sync` e este handoff. Commit/push desta correção ainda pendentes.
