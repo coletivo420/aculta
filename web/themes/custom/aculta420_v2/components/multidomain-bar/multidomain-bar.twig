@@ -40,8 +40,17 @@
       {% endif %}
       {% if account_menu %}
         {% embed 'aculta420_v2:account-menu' with {
-          authenticated: account_authenticated|default(false)
+          authenticated: account_authenticated|default(false),
+          display_name: account_display_name|default(''),
+          account_avatar: account_avatar|default(null)
         } only %}
+          {% block avatar %}
+            {% if account_avatar is not empty %}
+              {{ account_avatar }}
+            {% else %}
+              {{ parent() }}
+            {% endif %}
+          {% endblock %}
           {% block menu_items %}{{ account_menu }}{% endblock %}
         {% endembed %}
       {% endif %}

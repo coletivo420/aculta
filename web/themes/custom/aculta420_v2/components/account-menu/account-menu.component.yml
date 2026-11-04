@@ -3,6 +3,10 @@ name: Menu de conta na barra institucional
 description: Menu de conta fixo na barra institucional. Visitante vê os links de acesso; usuário autenticado vê um disclosure com avatar e as ações de conta (ADR-047).
 group: ACULTA
 status: experimental
+libraryOverrides:
+  dependencies:
+    - core/drupal
+    - core/once
 props:
   type: object
   additionalProperties: false
@@ -12,12 +16,11 @@ props:
       type: boolean
       title: Usuário autenticado
       default: false
-    summary_label:
+    display_name:
       type: string
-      title: Rótulo do disclosure
-      description: Texto exibido ao lado do avatar em telas largas. Não é o nome do usuário até o contrato do Portal existir.
+      title: Apelido público
+      description: Apelido público fornecido pelo Portal. Omitido quando indisponível.
       minLength: 1
-      default: Minha conta
 slots:
   avatar:
     title: Avatar

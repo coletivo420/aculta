@@ -1,4 +1,6 @@
 {% if authenticated %}
+  {% set trimmed_display_name = display_name|default('')|trim %}
+  {% set show_name = trimmed_display_name|length > 0 and trimmed_display_name|length <= 10 %}
   <nav class="aculta-account-menu aculta-account-menu--signed-in" aria-label="{{ 'Menu da conta'|t }}">
     <details class="aculta-account-menu__details">
       <summary class="aculta-account-menu__summary">
@@ -7,7 +9,9 @@
             {{ include('aculta420_v2:icon', { name: 'user', variant: 'duotone', size: 'md' }, with_context = false) }}
           {% endblock %}
         </span>
-        <span class="aculta-account-menu__label">{{ summary_label }}</span>
+        {% if show_name %}
+          <span class="aculta-account-menu__label">{{ trimmed_display_name }}</span>
+        {% endif %}
       </summary>
       <div class="aculta-account-menu__panel">
         {% block menu_items %}{% endblock %}

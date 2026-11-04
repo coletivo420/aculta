@@ -35,6 +35,11 @@ props:
     account_authenticated:
       type: boolean
       default: false
+    account_display_name:
+      type: [string, 'null']
+      title: Apelido público
+      minLength: 1
+      default: null
     cart_url:
       type: [string, 'null']
       format: uri-reference
@@ -117,3 +122,6 @@ slots:
   account_menu:
     title: Ações de conta
     description: Menu de conta Drupal com links de login, Minha conta e logout.
+  account_avatar:
+    title: Avatar da conta
+    description: Render array de avatar fornecido pelo Portal; sem avatar, o account-menu mostra o ícone neutro.

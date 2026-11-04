@@ -1,5 +1,17 @@
 # Changelog — ACULTA420 V2
 
+## 1.2.0-dev.3 — identidade no menu da barra institucional (2026-11-04)
+
+- O SDC `account-menu` recebe o apelido público aprovado pelo Portal e exibe-o
+  somente quando tem até dez caracteres Unicode; sem apelido ou com texto mais
+  longo, mantém apenas o avatar/ícone. Em telas menores que 40rem o rótulo fica
+  oculto.
+- O avatar e o apelido chegam por render array/valor escalar do módulo
+  `aculta_user`; o tema não consulta entidades, Profile ou `user_picture`.
+- O painel mantém os links do menu Drupal, o login continua usando o diálogo
+  AJAX existente e o disclosure fecha por Escape ou clique fora.
+- O painel de conta usa largura fluida para caber na viewport estreita.
+
 ## 1.2.0-dev.2 — navegação SDC no shell (2026-11-04)
 
 - O bloco Drupal `system_menu_block:main` permanece na mesma posição da região

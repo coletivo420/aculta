@@ -1,0 +1,6 @@
+name: Conta sem apelido
+component: aculta420_v2:account-menu
+props:
+  authenticated: true
+slots:
+  menu_items: '<ul class="menu"><li><a href="/conta">Minha conta</a></li><li><a href="/sair">Sair</a></li></ul>'

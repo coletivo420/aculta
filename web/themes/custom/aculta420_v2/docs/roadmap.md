@@ -1,5 +1,9 @@
 # ACULTA420 V2 roadmap
 
+- `1.2.0-dev.3`: menu da barra institucional integrado com apelido público e
+  avatar fornecidos por `aculta_user`; revisão responsiva e evidências visuais
+  ficam registradas na entrega correspondente.
+
 ## Fase 1 — Tokens e fundações
 
 **Status: subfase de tokens/fundações entregue em `1.2.0-dev.1`; a Fase 1 do ADR-046 permanece aberta para shell, purpose e UI Styles.**
