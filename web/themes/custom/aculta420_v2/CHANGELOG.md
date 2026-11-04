@@ -1,5 +1,11 @@
 # Changelog — ACULTA420 V2
 
+## 1.2.0-dev.7 — mantém a entrada para visitantes
+
+- Quando o bloco de conta do Drupal não fornece links para visitante, a barra
+  usa o link `/entrar/janela` como fallback. O handler existente aprimora-o
+  para o diálogo AJAX; sem JavaScript continua sendo um link navegável.
+
 ## 1.2.0-dev.6 — corrige o slot comum do menu
 
 - O SDC `account-menu` agora declara o slot `menu_items` uma única vez, válido
