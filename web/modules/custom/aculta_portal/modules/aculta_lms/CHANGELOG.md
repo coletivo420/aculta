@@ -1,3 +1,14 @@
+## 0.1.0-dev.184 — exclusão segura de aulas e atividades
+
+- O workspace Educador agora oferece ações de exclusão com confirmação para
+  aulas e atividades. Uma aula com atividade não pode ser excluída; uma
+  atividade com resposta ou snapshot de tentativa preserva o histórico.
+- Relações Group são limpas pelo hook do módulo Group quando uma atividade
+  elegível é removida. Os formulários revalidam a cadeia curso→aula→atividade
+  e o histórico no submit.
+- Unit LMS: 252 testes / 911 assertions PASS; PHPCS Drupal/DrupalPractice e
+  PHP lint focais PASS.
+
 ## 0.1.0-dev.183 — autoria de aulas e atividades ACULTA
 
 - Adicionada a página de estrutura do curso no workspace Ganjalab Educador,

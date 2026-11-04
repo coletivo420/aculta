@@ -69,6 +69,14 @@ final class CourseStructureController {
             ['#plain_text' => $question !== '' ? $question : $this->t('Sem enunciado')],
             ['#plain_text' => (string) $activity->get('weight')->value],
             ['#plain_text' => $answerCount > 0 ? $this->t('@count resposta(s); edição bloqueada para preservar o histórico.', ['@count' => $answerCount]) : ''],
+            Link::fromTextAndUrl(
+              $this->t('Excluir'),
+              Url::fromRoute('aculta_lms.activity_delete', [
+                'course' => $course->id(),
+                'lesson' => $lesson->id(),
+                'activity' => $activity->id(),
+              ]),
+            )->toRenderable(),
           ],
         ];
       }
@@ -83,15 +91,29 @@ final class CourseStructureController {
           [
             'data' => [
               '#type' => 'table',
-              '#header' => [$this->t('Atividade'), $this->t('Enunciado'), $this->t('Ordem'), $this->t('Respostas')],
+              '#header' => [
+                $this->t('Atividade'),
+                $this->t('Enunciado'),
+                $this->t('Ordem'),
+                $this->t('Respostas'),
+                $this->t('Ações'),
+              ],
               '#rows' => $activityRows,
               '#empty' => $this->t('Nenhuma atividade nesta aula.'),
             ],
           ],
-          Link::fromTextAndUrl(
-            $this->t('Adicionar atividade'),
-            Url::fromRoute('aculta_lms.activity_add', ['course' => $course->id(), 'lesson' => $lesson->id()]),
-          )->toRenderable(),
+          [
+            'data' => [
+              Link::fromTextAndUrl(
+                $this->t('Adicionar atividade'),
+                Url::fromRoute('aculta_lms.activity_add', ['course' => $course->id(), 'lesson' => $lesson->id()]),
+              )->toRenderable(),
+              Link::fromTextAndUrl(
+                $this->t('Excluir aula'),
+                Url::fromRoute('aculta_lms.lesson_delete', ['course' => $course->id(), 'lesson' => $lesson->id()]),
+              )->toRenderable(),
+            ],
+          ],
         ],
       ];
     }

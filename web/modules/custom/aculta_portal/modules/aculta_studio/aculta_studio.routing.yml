@@ -348,6 +348,22 @@ aculta_lms.lesson_edit:
       lesson:
         type: entity:aculta_lms_lesson
 
+aculta_lms.lesson_delete:
+  path: '/ganjalab/educador/cursos/{course}/aulas/{lesson}/excluir'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\LessonDeleteForm'
+    _title: 'Excluir aula'
+  requirements:
+    _custom_access: 'aculta_lms.course_authoring_access:access'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: courses
+    parameters:
+      course:
+        type: entity:group
+      lesson:
+        type: entity:aculta_lms_lesson
+
 aculta_lms.activity_add:
   path: '/ganjalab/educador/cursos/{course}/aulas/{lesson}/atividades/nova'
   defaults:
@@ -369,6 +385,24 @@ aculta_lms.activity_edit:
   defaults:
     _form: '\Drupal\aculta_lms\Form\ActivityAuthoringForm'
     _title: 'Editar atividade'
+  requirements:
+    _custom_access: 'aculta_lms.course_authoring_access:access'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: courses
+    parameters:
+      course:
+        type: entity:group
+      lesson:
+        type: entity:aculta_lms_lesson
+      activity:
+        type: entity:aculta_lms_activity
+
+aculta_lms.activity_delete:
+  path: '/ganjalab/educador/cursos/{course}/aulas/{lesson}/atividades/{activity}/excluir'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\ActivityDeleteForm'
+    _title: 'Excluir atividade'
   requirements:
     _custom_access: 'aculta_lms.course_authoring_access:access'
   options:

@@ -1,3 +1,10 @@
+## 0.1.0-dev.47 — ações seguras de exclusão no Educador
+
+- O workspace mantém as rotas de confirmação para excluir aulas e atividades,
+  encaminhando a operação para os formulários do `aculta_lms`, owner dos dados.
+- A autorização contextual do curso e o purpose `courses` são aplicados nas
+  duas rotas; o LMS bloqueia exclusões que afetariam respostas ou histórico.
+
 ## 0.1.0-dev.44 — alinhar a ação Criar ao título do trabalho (2026-11-03)
 
 - A apresentação da seção agora agrupa título e ações em um cabeçalho próprio. Owners continuam fornecendo as mesmas ações e rotas; o token semântico do tema monta o botão junto ao título “Meu trabalho”.
