@@ -10,6 +10,7 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -35,6 +36,8 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
     'field_lms_readings',
     'field_lms_galleries',
     'field_lms_videos',
+    // Optional integration field owned by aculta_lms_h5p.
+    'field_h5p_activities',
   ];
 
   public function __construct(
@@ -42,6 +45,7 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
     private readonly CourseAuthoringAccessCheck $authoringAccess,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly CourseDocumentAccessCheck $documentAccess,
+    private readonly ModuleHandlerInterface $moduleHandler,
   ) {}
 
   /**
@@ -53,6 +57,7 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
       $container->get('aculta_lms.course_authoring_access'),
       $container->get('entity_type.manager'),
       $container->get('aculta_lms_resources.course_document_access'),
+      $container->get('module_handler'),
     );
     $form->setStringTranslation($container->get('string_translation'));
     $form->setMessenger($container->get('messenger'));
@@ -75,7 +80,7 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
 
     $form['#attributes']['data-aculta-lms'] = 'course-materials-form';
     $form['intro'] = [
-      '#plain_text' => $this->t('Vincule publicações, galerias e vídeos já existentes. O conteúdo e as permissões continuam sob responsabilidade dos módulos de origem.'),
+      '#plain_text' => $this->t('Vincule publicações, galerias, vídeos e atividades interativas existentes. O conteúdo e as permissões continuam sob responsabilidade dos módulos de origem.'),
     ];
 
     $display = $this->materialsFormDisplay();
@@ -128,6 +133,16 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
    */
   private function materialsFormDisplay(): EntityFormDisplay {
     $source = $this->entityTypeManager->getStorage('entity_form_display')->load('group.lms_course.default');
+    if ($source instanceof EntityFormDisplay) {
+      // Owner modules such as aculta_lms_h5p attach their widget at render
+      // time; apply the same hook before copying components into this form.
+      $displayContext = [
+        'entity_type' => 'group',
+        'bundle' => 'lms_course',
+        'form_mode' => 'default',
+      ];
+      $this->moduleHandler->alter('entity_form_display', $source, $displayContext);
+    }
     $display = EntityFormDisplay::create([
       'id' => 'group.lms_course.course_materials',
       'targetEntityType' => 'group',

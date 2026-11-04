@@ -1,5 +1,16 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.28 — reutiliza o editor H5P no workspace do educador
+
+- O formulário contextual de materiais inclui `field_h5p_activities` somente
+  quando o owner H5P registra o campo/widget no Form Display do curso. Usa o
+  widget existente e as políticas de acesso H5P/Group; não embute outro player
+  nem persiste referências paralelas.
+- A integração é opcional: sem o campo/widget do owner, o formulário segue com
+  os recursos disponíveis. A cobertura Unit verifica que o widget H5P entra
+  na lista de componentes salváveis; o display ativo no Runtime confirma o
+  componente `h5p_editor`. A renderização autenticada pelo browser ainda falta.
+
 ## 0.1.0-dev.27 — compatibilidade com ID legado da relação PDF no Group
 
 - O Group agora detecta o ID de configuração legado preservado para a relação
@@ -7,9 +18,10 @@
   criação de Media tentava abrir um tipo novo inexistente.
 - O update `8003` ativa apenas o marcador de compatibilidade já suportado pelo
   Group quando encontra um ID não canônico. Mantém o UUID/ID existente, não
-  duplica relações e não altera conteúdo.
-- Validação Runtime com o formulário Media/Group e os estados de cursos após
-  aplicar `8003` permanece necessária.
+  duplica relações e não altera conteúdo. Aplicado no Runtime; o storage agora
+  resolve `lms_course-af8ec2205541224f9d8c4` sem renomear ou duplicar a relação.
+- A criação de formulário Media/Group foi exercitada sem submit e não gravou
+  conteúdo. O smoke do browser autenticado permanece pendente.
 
 ## 0.1.0-dev.26 — edição contextual de documentos PDF do curso
 

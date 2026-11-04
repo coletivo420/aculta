@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\EntityTypeRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -49,6 +50,7 @@ final class CourseMaterialsFormTest extends UnitTestCase {
     $container = new ContainerBuilder();
     $container->set('current_user', $this->account);
     $container->set('string_translation', $this->getStringTranslationStub());
+    $container->set('module_handler', $this->createMock(ModuleHandlerInterface::class));
     \Drupal::setContainer($container);
   }
 
@@ -60,7 +62,7 @@ final class CourseMaterialsFormTest extends UnitTestCase {
     $course->method('id')->willReturn('12');
     $course->method('bundle')->willReturn('lms_course');
     $course->method('hasPermission')->willReturn(TRUE);
-    $course->method('hasField')->willReturn(FALSE);
+    $course->method('hasField')->willReturnCallback(static fn(string $field): bool => $field === 'field_h5p_activities');
     $course->method('getCacheTags')->willReturn(['group:12']);
     $course->method('getCacheContexts')->willReturn([]);
     $course->method('getCacheMaxAge')->willReturn(-1);
@@ -102,13 +104,24 @@ final class CourseMaterialsFormTest extends UnitTestCase {
     );
 
     $displayStorage = $this->createMock(EntityStorageInterface::class);
-    $displayStorage->method('load')->with('group.lms_course.default')->willReturn(NULL);
-    $displayStorage->method('create')->willReturn($this->createMock(EntityFormDisplay::class));
+    $sourceDisplay = $this->createMock(EntityFormDisplay::class);
+    $h5pWidget = ['type' => 'h5p_editor', 'settings' => []];
+    $sourceDisplay->method('getComponent')->willReturnCallback(
+      static fn(string $field): ?array => $field === 'field_h5p_activities' ? $h5pWidget : NULL,
+    );
+    $displayStorage->method('load')->with('group.lms_course.default')->willReturn($sourceDisplay);
+    $formDisplay = $this->createMock(EntityFormDisplay::class);
+    $formDisplay->expects(self::once())->method('setComponent')->with('field_h5p_activities', $h5pWidget);
+    $formDisplay->method('getComponent')->willReturnCallback(
+      static fn(string $field): ?array => $field === 'field_h5p_activities' ? $h5pWidget : NULL,
+    );
+    $displayStorage->method('create')->willReturn($formDisplay);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->with('entity_form_display')->willReturn($displayStorage);
     $container = new ContainerBuilder();
     $container->set('current_user', $this->account);
     $container->set('entity_type.manager', $entityTypeManager);
+    $container->set('module_handler', $this->createMock(ModuleHandlerInterface::class));
     $entityTypeRepository = $this->createMock(EntityTypeRepositoryInterface::class);
     $entityTypeRepository->method('getEntityTypeFromClass')->with(EntityFormDisplay::class)->willReturn('entity_form_display');
     $container->set('entity_type.repository', $entityTypeRepository);
@@ -121,6 +134,7 @@ final class CourseMaterialsFormTest extends UnitTestCase {
       new CourseAuthoringAccessCheck($this->account, $entityTypeManager),
       $entityTypeManager,
       $documentAccess,
+      $this->createMock(ModuleHandlerInterface::class),
     );
     $form->setStringTranslation($this->getStringTranslationStub());
     $form->setMessenger($this->createMock(MessengerInterface::class));
@@ -131,6 +145,7 @@ final class CourseMaterialsFormTest extends UnitTestCase {
     self::assertSame('aculta_lms.course_document_edit', $build['course_documents']['items']['#items'][0]['edit']['#url']->getRouteName());
     self::assertSame(['course' => '12', 'media' => '55'], $build['course_documents']['items']['#items'][0]['edit']['#url']->getRouteParameters());
     self::assertArrayNotHasKey('edit', $build['course_documents']['items']['#items'][1]);
+    self::assertFalse($build['actions']['submit']['#disabled']);
   }
 
 }

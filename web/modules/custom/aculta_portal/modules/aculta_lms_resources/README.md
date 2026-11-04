@@ -15,6 +15,11 @@ permissão contextual escolhe galerias publicadas no purpose Revista. A galeria
 concede visualização aos membros ativos e educadores do curso somente enquanto
 estiver vinculada a ele; a política geral de acesso da Gallery não é ampliada.
 
+O formulário contextual do Course Builder reutiliza também o widget H5P
+registrado pelo módulo owner em `field_h5p_activities`, quando disponível. A
+integração não cria um player ou storage próprio e mantém a autorização e o
+ciclo de edição do H5P/Group.
+
 O provider do Content Index projeta somente `Group:lms_course` e relações
 explícitas `course_reading` (`revista`/`wiki_entry`), `course_gallery`,
 `course_document` (quando o plugin
@@ -36,13 +41,14 @@ relações editoriais de vídeo está em
 [ACULTA-CONTENT-INDEX-VIDEO-RELATIONS](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-VIDEO-RELATIONS.md).
 
 No workspace Ganjalab Educador, os links canônicos de leituras, galerias,
-vídeos e documentos também aparecem na estrutura do curso. Vídeos e documentos
+vídeos e documentos também aparecem na estrutura do curso. H5P usa seu widget
+owner no formulário contextual quando o módulo está ativo. Vídeos e documentos
 são revalidados no Domain `courses`; documentos privados exigem a relação Group
 de curso e o Entity Access da mídia. O bloco só entra na página do curso que o
 educador já pode editar. O botão **Gerenciar materiais do curso** abre um
 formulário contextual que reusa os widgets do Form Display Group para os campos
-de referência existentes. O LMS revalida a autorização ao exibir e salvar, e o
-formulário grava somente essas referências. Não há armazenamento paralelo nem
+de referência existentes. O LMS revalida a autorização ao exibir e salvar; os
+owners mantêm conteúdo, relações e arquivos. Não há armazenamento paralelo nem
 cópia de conteúdo.
 
 ## Estado
