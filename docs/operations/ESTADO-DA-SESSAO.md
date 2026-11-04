@@ -1,5 +1,12 @@
 # Estado da sessão
 
+## Handoff — instalar Gin como tema administrativo — 2026-11-03
+
+- Instalado `drupal/gin:5.0.x-dev@dev`, lockado no commit upstream `cbb271ec8655495e61436049dd4c1c7ec780c669`; Composer também instalou `drupal/gin_toolbar` 3.0.3 como dependência.
+- Gin foi habilitado e definido em `system.theme:admin`; Config Sync registra Gin em `core.extension` e inclui os nove objetos de configuração padrão exportados. `drush cr` passou, `updatedb:status` sem pendências e `config:status` sem diferenças.
+- Claro não pôde ser desinstalado: `ThemeInstaller` bloqueia a remoção porque `gin.info.yml` declara `base theme: claro`. Claro permanece habilitado e necessário para a herança de Gin.
+- Próximo passo: commit/push da instalação e da configuração do tema Gin.
+
 ## Handoff — chave duplicada no mapa PortalUiHooks — 2026-11-03
 
 - Removida a segunda declaração idêntica do token `event-date-actions` em `web/themes/custom/aculta420/src/Hook/PortalUiHooks.php`; o mapeamento restante preserva a classe `aculta-event-date-actions`.

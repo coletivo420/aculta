@@ -286,6 +286,7 @@
         "drupal/flood_control": "^3.0",
         "drupal/freelinking": "^4.0",
         "drupal/geofield": "^10.3",
+        "drupal/gin": "5.0.x-dev@dev",
         "drupal/google_tag": "^2.0.9",
         "drupal/group": "4.0.x-dev@dev",
         "drupal/history": "^1.0",
