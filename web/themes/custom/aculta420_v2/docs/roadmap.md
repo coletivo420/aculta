@@ -1,5 +1,10 @@
 # ACULTA420 V2 roadmap
 
+- `1.2.0-dev.13`: breadcrumb migrado da V1 para SDC e integrado ao template
+  Drupal `navigation/breadcrumb`. Contrato visual preserva links editoriais,
+  separador `/`, título atual e foco; schemas e contraste adicionados aos gates.
+  Validação de Runtime e browser será registrada após execução.
+
 - `1.2.0-dev.11`: modal de entrada portado da identidade V1 para `<dialog>` e
   Fetch, mantendo o botão Google quando a integração Portal estiver configurada.
   fornecido por `aculta_user`; não há apelido na barra. Evidência visual e

@@ -48,6 +48,7 @@ $component_ids = [
   'audio-player',
   'alerts-trigger',
   'badge',
+  'breadcrumb',
   'button',
   'cart-offcanvas',
   'card-cultural',
@@ -69,6 +70,10 @@ $samples = [
   'audio-player' => ['#props' => ['src' => '/files/sample.mp3', 'title' => 'Sessão cultural']],
   'alerts-trigger' => ['#props' => ['href' => '/avisos/resumo', 'count' => 0]],
   'badge' => ['#props' => ['label' => 'Cultura', 'variant' => 'primary', 'icon_name' => 'tag']],
+  'breadcrumb' => [
+    '#props' => ['label' => 'Breadcrumb'],
+    '#slots' => ['items' => '<li class="aculta-breadcrumb__item"><a class="aculta-breadcrumb__link" href="/">Início</a></li><li class="aculta-breadcrumb__item aculta-breadcrumb__current" aria-current="page">Eventos</li>'],
+  ],
   'button' => [
     '#props' => [
       'text' => 'Abrir',
@@ -224,6 +229,10 @@ foreach ($component_ids as $component_id) {
   $output = (string) $renderer->renderInIsolation($build);
   if ($output === '') {
     throw new RuntimeException(sprintf('Empty SDC render: %s', $plugin_id));
+  }
+  if ($component_id === 'breadcrumb'
+    && (!str_contains($output, 'aria-current="page"') || !str_contains($output, 'aria-label="Breadcrumb"'))) {
+    throw new RuntimeException('Breadcrumb must render its accessible label and current page marker.');
   }
   print $plugin_id . " PASS\n";
 }

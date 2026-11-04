@@ -1,5 +1,13 @@
 # Changelog — ACULTA420 V2
 
+## 1.2.0-dev.13 — porta o breadcrumb editorial da V1
+
+- A trilha de navegação agora é um SDC e substitui o template nativo com
+  separadores, cor editorial, estado atual e foco visível da V1.
+- O template mantém a responsabilidade Drupal de montar os itens e o Portal
+  continua fornecendo o título atual. O vermelho editorial foi aprofundado para
+  atingir contraste AA: 5,70:1 no canvas claro; no escuro, 6,79:1 na superfície.
+
 ## 1.2.0-dev.12 — reconcilia painel de login com a identidade V1
 
 - O diálogo usa o verde institucional legado pela paleta semântica V2 e texto

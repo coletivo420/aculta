@@ -2,7 +2,7 @@ name: ACULTA420 V2
 type: theme
 description: 'Tema ACULTA com componentes Single Directory Components.'
 package: Custom
-version: '1.2.0-dev.12'
+version: '1.2.0-dev.13'
 core_version_requirement: ^11.5 || ^12
 base theme: false
 enforce_prop_schemas: true

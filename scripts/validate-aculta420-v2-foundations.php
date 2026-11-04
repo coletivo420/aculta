@@ -100,6 +100,8 @@ foreach ($statusPairs as [$foreground, $background]) {
 foreach ([
   ['--color-on-brand', '--color-brand-primary'],
   ['--color-on-highlight', '--color-brand-highlight'],
+  ['--color-link-editorial', '--color-surface'],
+  ['--color-link-editorial', '--color-canvas'],
   ['--color-auth-dialog-text', '--color-auth-dialog-surface'],
   ['--color-auth-dialog-link', '--color-auth-dialog-surface'],
   ['--color-auth-provider-text', '--color-auth-provider-surface'],

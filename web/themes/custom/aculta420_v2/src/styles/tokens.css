@@ -41,7 +41,8 @@
   --palette-green: #689427;
   --palette-red: #d4452d;
   --color-brand-secondary: var(--palette-green);
-  --color-link-editorial: var(--palette-red);
+  /* Editorial red is slightly deepened from the V1 primitive to meet AA on light surfaces. */
+  --color-link-editorial: #b52f22;
   --color-link-editorial-hover: var(--color-text-primary);
   --color-media-stage: #e8dfcc;
   --color-status-error-text: #b3261e;

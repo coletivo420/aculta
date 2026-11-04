@@ -1049,8 +1049,15 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Preservar:** modificações paralelas em `composer.json`, `composer.lock`,
   `web/themes/custom/aculta420/js/utility-drawers.js` e
   `web/themes/custom/aculta_theme/` não pertencem a esta tarefa.
-- **Próximo passo:** comparar as capturas atuais do shell com as referências V1
-  já salvas e revisar rodapé/regions restantes. O header agora traz marca e
-  menu juntos; a vitrine está abaixo dele; eventos, fórum e agenda estão na
-  sidebar. Fase 2 ainda não está concluída. Revisar roadmap/CHANGELOG e executar
-  os gates finais antes do commit do shell.
+- **Paridade visual V1→V2 — breadcrumb:** a V1 usa `templates/navigation/breadcrumb.html.twig`
+  e `css/components/breadcrumb.css`: links editoriais sublinhados, separador
+  `/`, página atual e foco visível. A V2 não tinha override nem componente;
+  `1.2.0-dev.13` adiciona SDC `breadcrumb` com schema estrito, story, README,
+  CSS mobile-first por tokens e consumer no template Drupal. O vermelho
+  editorial foi aprofundado para WCAG AA: 5,70:1 no canvas claro e 6,79:1 na
+  superfície escura. Gate visual Runtime/browser ainda pendente nesta revisão.
+- **Próximo passo:** validar o breadcrumb em página real nas larguras/modos
+  afetados; depois continuar a auditoria das páginas V1→V2, começando por
+  conteúdo editorial/perfil e catálogo de estilos não migrados. O header mantém
+  marca e menu juntos; a vitrine está abaixo; eventos, fórum e agenda ficam na
+  sidebar. A paridade completa e a Fase 2 continuam abertas.
