@@ -1,3 +1,11 @@
+## 0.1.0-dev.181 — valida boot dos providers owner
+
+- A integração de owners inclui o schema real da configuração Portal e deriva
+  a relação `course_document` depois de registrar o bundle Media, alinhando a
+  fixture ao comportamento do plugin owner.
+- Kernel de integração do Index junto à política de upload Portal: 8 testes /
+  162 assertions PASS; 216 depreciações Core/contrib.
+
 ## 0.1.0-dev.180 — consulta paginada de relações recebidas (2026-11-01)
 
 - `ContentIndexRelationQuery::queryIncoming()` descobre origens por uma relação

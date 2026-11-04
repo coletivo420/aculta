@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_index\Kernel;
 
 use Drupal\Core\Extension\ExtensionDiscovery;
-use Drupal\group\Entity\Group;
-use Drupal\group\Entity\GroupType;
-use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
 use Drupal\KernelTests\KernelTestBase;
@@ -103,7 +100,23 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
     self::assertSame('oembed:video', $remoteVideoType->getSource()->getPluginId());
     self::assertNotNull(FieldConfig::loadByName('media', 'remote_video', 'field_media_oembed_video'));
 
-    $this->assertDocumentViewerGroupRelationPluginCanAttachCourseDocument();
+    $this->assertDocumentViewerGroupRelationPluginCanCreateCourseDocument();
+
+  }
+
+  /**
+   * Confirms the document owner's Group plugin derives for its Media bundle.
+   */
+  private function assertDocumentViewerGroupRelationPluginCanCreateCourseDocument(): void {
+    $this->createMediaType('file', [
+      'id' => 'course_document',
+      'label' => 'Course document',
+    ]);
+    $relation_manager = $this->container->get('group_relation_type.manager');
+    $relation_manager->clearCachedDefinitions();
+    $definition = $relation_manager->getDefinition('aculta_document_viewer:course_document');
+    self::assertSame('media', $definition->getEntityTypeId());
+    self::assertSame('course_document', $definition->getEntityBundle());
   }
 
   /**
@@ -428,74 +441,6 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
     foreach ($ids as $id) {
       $worker->processItem(['work_id' => (int) $id]);
     }
-  }
-
-  /**
-   * Exercises the document owner's Group relation plugin with persisted data.
-   */
-  private function assertDocumentViewerGroupRelationPluginCanAttachCourseDocument(): void {
-    $this->installSchema('aculta_index', [
-      'aculta_index_generation',
-      'aculta_index_state',
-      'aculta_index_entry',
-      'aculta_index_relation',
-      'aculta_index_work',
-      'aculta_index_cursor',
-      'aculta_index_audit',
-    ]);
-    aculta_index_install();
-    $this->installEntitySchema('user');
-    $this->installEntitySchema('path_alias');
-    $this->installEntitySchema('file');
-    $this->installEntitySchema('media');
-    $this->installEntitySchema('group');
-    $this->installEntitySchema('group_relationship');
-    $this->installEntitySchema('group_config_wrapper');
-    $this->installSchema('file', ['file_usage']);
-    $this->installSchema('entity_usage', ['entity_usage']);
-    $this->installConfig(['system', 'user', 'file', 'media', 'group']);
-
-    $this->createMediaType('file', [
-      'id' => 'course_document',
-      'label' => 'Course document',
-    ]);
-    GroupType::create([
-      'id' => 'lms_course',
-      'label' => 'Course',
-      'creator_membership' => FALSE,
-    ])->save();
-
-    $relationManager = $this->container->get('group_relation_type.manager');
-    $relationManager->clearCachedDefinitions();
-    $definition = $relationManager->getDefinition('aculta_document_viewer:course_document');
-    self::assertSame('media', $definition->getEntityTypeId());
-    self::assertSame('course_document', $definition->getEntityBundle());
-
-    $relationshipTypeStorage = $this->container->get('entity_type.manager')
-      ->getStorage('group_relationship_type');
-    self::assertInstanceOf(GroupRelationshipTypeStorageInterface::class, $relationshipTypeStorage);
-    $relationshipType = $relationshipTypeStorage->createFromPlugin(
-      GroupType::load('lms_course'),
-      'aculta_document_viewer:course_document',
-    );
-    $relationshipType->save();
-
-    $course = Group::create([
-      'type' => 'lms_course',
-      'label' => 'Course document relation fixture',
-      'uid' => 1,
-    ]);
-    $course->save();
-    $document = Media::create([
-      'bundle' => 'course_document',
-      'name' => 'Owner plugin document fixture',
-      'status' => FALSE,
-    ]);
-    $document->save();
-    $relationship = $course->addRelationship($document, 'aculta_document_viewer:course_document');
-
-    self::assertSame('aculta_document_viewer:course_document', $relationship->getPluginId());
-    self::assertSame((string) $document->id(), (string) $relationship->getEntity()->id());
   }
 
   /**

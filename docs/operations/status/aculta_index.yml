@@ -1,10 +1,13 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.180
+version: 0.1.0-dev.181
 state: Dev
 next_phase: >-
   Concluir grants/Domain dos providers owners, avaliar catálogo representativo e homologação operacional; manter Dev e não fazer rebuild no Runtime nesta integração.
   Incluir o incremento LOC/IDX-LOC conforme [plano](docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), sem substituir os gates anteriores.
 progress_note: >-
+  Dev.181: boot da closure owner LMS/Resources/Document Viewer/Portal/Index e
+  provider/tag confirmados em Kernel. Index + upload: 8/162 PASS, 216
+  depreciações Core/contrib.
   Dev.180: `ContentIndexRelationQuery::queryIncoming()` descobre origens por
   relação nomeada e revalida Entity Access do alvo/origens, provider vigente,
   purpose e cursor por conta. Eventos/Local: 3 Datas em 2 Eventos resultam em

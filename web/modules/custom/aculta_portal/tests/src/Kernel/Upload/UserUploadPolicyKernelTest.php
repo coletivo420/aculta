@@ -32,6 +32,8 @@ final class UserUploadPolicyKernelTest extends KernelTestBase {
     'user',
     'field',
     'text',
+    'filter',
+    'token',
     'file',
     'image',
     'media',
@@ -41,6 +43,7 @@ final class UserUploadPolicyKernelTest extends KernelTestBase {
     'views',
     'entity_usage',
     'media_duplicates',
+    'aculta_file_uploader',
     'aculta_image',
     'aculta_portal_upload_test',
   ];
@@ -59,8 +62,8 @@ final class UserUploadPolicyKernelTest extends KernelTestBase {
     parent::setUp();
     $this->installConfig([
       'system', 'user', 'file', 'image', 'media', 'media_library', 'views',
-      'field', 'text', 'photoswipe', 'media_gallery', 'entity_usage', 'media_duplicates', 'aculta_image',
-      'aculta_portal_upload_test',
+      'field', 'text', 'filter', 'token', 'photoswipe', 'media_gallery', 'entity_usage', 'media_duplicates', 'aculta_image',
+      'aculta_file_uploader', 'aculta_portal_upload_test',
     ]);
     $this->installEntitySchema('user');
     $this->installEntitySchema('file');
@@ -136,17 +139,23 @@ final class UserUploadPolicyKernelTest extends KernelTestBase {
       'FileSizeLimit' => ['fileLimit' => 100 * 1024 * 1024],
     ], 'lms');
 
-    self::assertSame(['FileExtension' => ['extensions' => 'pdf docx'], 'FileSizeLimit' => ['fileLimit' => 50 * 1024 * 1024]], $validators);
+    self::assertSame([
+      'FileExtension' => ['extensions' => 'pdf docx'],
+      'FileSizeLimit' => ['fileLimit' => 50 * 1024 * 1024],
+    ], $validators);
   }
 
   /**
    * Image and document controls use the configured Core validators. */
   public function testUploadDialogUsesPolicyAndDrupalManagedFileValidators(): void {
-    $this->config('aculta_portal.user_upload')
+    $this->config('aculta_file_uploader.settings')
       ->set('allowed_extensions', 'png pdf docx')
-      ->set('max_size_mb', 35)
+      ->set('max_size_mb', 8)
       ->save();
-    $builder = new UserUploadDialogBuilder($this->policy, $this->container->get('string_translation'));
+    $builder = new UserUploadDialogBuilder(
+      $this->container->get('aculta_file_uploader.consumer_policy'),
+      $this->container->get('string_translation'),
+    );
     $form = [];
 
     $builder->wrap($form, 'forum-upload-dialog', 'forum', 'forum-attachment-dialog');
@@ -161,12 +170,12 @@ final class UserUploadPolicyKernelTest extends KernelTestBase {
     self::assertTrue($form['images']['#multiple']);
     self::assertSame([
       'FileExtension' => ['extensions' => 'png'],
-      'FileSizeLimit' => ['fileLimit' => 35 * 1024 * 1024],
+      'FileSizeLimit' => ['fileLimit' => 8 * 1024 * 1024],
       'FileIsImage' => [],
     ], $form['images']['#upload_validators']);
     self::assertSame([
       'FileExtension' => ['extensions' => 'pdf docx'],
-      'FileSizeLimit' => ['fileLimit' => 35 * 1024 * 1024],
+      'FileSizeLimit' => ['fileLimit' => 8 * 1024 * 1024],
     ], $form['documents']['#upload_validators']);
   }
 

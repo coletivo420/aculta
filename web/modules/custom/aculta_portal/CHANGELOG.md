@@ -1,3 +1,16 @@
+## 0.4.1-dev.76 — completa schema da política de upload
+
+- Adicionado ao módulo Portal o schema de `aculta_portal.user_upload`, com
+  extensões, limites de tamanho e políticas por consumidor. A configuração
+  existente deixa de depender de um schema fornecido somente pelo módulo de
+  teste, permitindo instalar e validar o Portal no Kernel real.
+- O teste de upload usa `aculta_file_uploader.consumer_policy` como o builder
+  exige e declara File Uploader/Filter nas dependências do harness; os limites
+  esperados respeitam o teto central de 10 MB.
+- Kernel de integração do Index e Kernel de upload: 8 testes / 162 assertions
+  PASS; 216 depreciações de Core/contrib. PHPCS focal, PHP lint e diff check
+  registrados após a rodada final.
+
 ## 0.4.1-dev.75 — compatibilidade Drupal 12 no Portal
 
 - Atualizadas as propriedades de serviços nas classes Drupal serializáveis para

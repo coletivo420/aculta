@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.25
+version: 0.1.0-dev.29
 state: Dev
 next_phase: 'Integrar viewers PDF/H5P apenas conforme policies e renderers dos owners, investigar os erros remanescentes do CKEditor e avançar o Course Builder acessível; depois retomar pagamentos e `updatedb` pendentes ([roadmap](docs/modules/ACULTA-LMS-ROADMAP.md))'
-progress_note: "Dev.25 concluída no Runtime: Config Sync versiona field_lms_videos storage/config e widget; snapshot antes do update hash 711a0afe… e antes da import final hash a06031b9… (modo 0600, externos ao repo). Update 8002 e import final PASS; primeira importação sem os YAMLs removeu só o campo novo e vazio, e a importação com Sync agora o mantém. `updatedb:status` limpo, `config:status` sem diferenças, `drush cr` PASS. Firefox autenticado mostra no editor os campos de leitura, galeria e vídeo e confirma link a partir da estrutura; anônimo 403. Não submeti formulário nem escrevi conteúdo. Unit Resources 14/67; Kernel CourseResourceBuilder 4/67 PASS."
+progress_note: "Dev.29: boot/DI de owners verificado pelo ContentIndexOwnerIntegrationKernelTest e configuração Portal instala com schema completo. Kernel Index + upload: 8/162 PASS, 216 depreciações upstream. Dev.25 Runtime: field_lms_videos e widget instalados; updatedb/config limpos; Firefox autenticado confirmou campos de leitura, galeria e vídeo, anônimo 403. Smoke não submeteu formulário nem alterou conteúdo."

@@ -62,6 +62,13 @@ closure declarada de 103 módulos Portal/LMS e descobriu `lms_course` e
 container e as tags; não instala configuração/schema dos módulos nem substitui
 os testes focados de acesso com Group e Domain. Runtime continua pendente.
 
+Regressão de boot em 2026-11-04: a closure de 103 módulos owners compila no
+Kernel `aculta_index`; os providers LMS e Document Viewer são descobertos e o
+plugin Group `course_document` é derivado depois de registrar seu bundle Media.
+Com a política de upload do Portal, a execução combinada passou em 8 testes /
+162 assertions (216 depreciações Core/contrib). Isso não instala os campos do
+Runtime nem substitui smoke autenticado/revisão visual, que permanecem pendentes.
+
 No dev.162, o mesmo harness criou GroupType, Group e Media reais, resolveu a
 definição `aculta_document_viewer_group:course_document` registrada pelo owner e
 persistiu a relação curso→documento (1 teste / 33 assertions; 239 depreciações

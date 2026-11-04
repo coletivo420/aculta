@@ -460,8 +460,14 @@ Em `aculta_lms_resources` 0.1.0-dev.19, Unit + Kernel passaram nesta revisão:
 teste, leitura confirmou `aculta_lms_resources` habilitado, o campo
 `group.field_lms_videos`, o bundle Media `remote_video`, o provider de vídeo no
 Content Index e `updatedb:status` sem pendências. Nenhum update ou conteúdo foi
-aplicado ao Runtime nesta verificação. A revisão visual integrada e o boot da
-cadeia completa dos owners seguem pendentes; não promover a RC.
+aplicado ao Runtime nesta verificação. Em 2026-11-04, o
+`ContentIndexOwnerIntegrationKernelTest` inicializou a closure real de owners,
+incluindo LMS/Resources/Document Viewer/Index, instalou configuração do Portal
+e validou providers/tags e a derivação do plugin `course_document`. Integrando
+essa classe ao Kernel de upload: 8 testes / 162 assertions PASS, com 216
+depreciações Core/contrib. Boot/DI dos owners tem agora cobertura Kernel; a
+instalação dos campos e smoke/autenticação/revisão visual no Runtime continuam
+pendentes. Não promover a RC.
 
 **Revisão visual do campo `field_lms_videos` (2026-10-29):** X11 e o host
 `cursos.aculta.toca.net.br` responderam; o runner criou um Group e um Media

@@ -31,6 +31,32 @@ aculta_portal.settings:
       type: uri
       label: 'Endereço da conta Mercado Pago (caixa de pagamentos em Meus pedidos; vazio oculta o link)'
 
+aculta_portal.user_upload:
+  type: config_object
+  label: 'Política de upload de arquivos de usuários'
+  mapping:
+    allowed_extensions:
+      type: string
+      label: 'Extensões globais permitidas'
+    max_size_mb:
+      type: integer
+      label: 'Tamanho global máximo em megabytes'
+    consumers:
+      type: sequence
+      label: 'Políticas por consumidor'
+      sequence:
+        type: mapping
+        mapping:
+          inherit_global:
+            type: boolean
+            label: 'Herdar política global'
+          allowed_extensions:
+            type: string
+            label: 'Extensões permitidas'
+          max_size_mb:
+            type: integer
+            label: 'Tamanho máximo em megabytes'
+
 aculta_portal.appearance:
   type: config_object
   label: 'Modo de cor padrão do ACULTA Portal'
