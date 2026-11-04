@@ -5,7 +5,7 @@
 - Instalado `drupal/gin:5.0.x-dev@dev`, lockado no commit upstream `cbb271ec8655495e61436049dd4c1c7ec780c669`; Composer também instalou `drupal/gin_toolbar` 3.0.3 como dependência.
 - Gin foi habilitado e definido em `system.theme:admin`; Config Sync registra Gin em `core.extension` e inclui os nove objetos de configuração padrão exportados. `drush cr` passou, `updatedb:status` sem pendências e `config:status` sem diferenças.
 - Claro não pôde ser desinstalado: `ThemeInstaller` bloqueia a remoção porque `gin.info.yml` declara `base theme: claro`. Claro permanece habilitado e necessário para a herança de Gin.
-- Próximo passo: commit/push da instalação e da configuração do tema Gin.
+- Publicação: commit `d7d0be3f7856a022801e00ec31333a8d2644b590` enviado por fast-forward a `origin/dev`; Runtime está no mesmo checkout/HEAD.
 
 ## Handoff — chave duplicada no mapa PortalUiHooks — 2026-11-03
 
