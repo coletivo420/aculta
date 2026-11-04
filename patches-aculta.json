@@ -1,5 +1,13 @@
 {
     "patches": {
+        "drupal/ui_patterns": [
+            {
+                "description": "UI Patterns: substituir drupal_static() depreciado pelo cache de memória do Drupal",
+                "url": "patches/aculta_patcher/ui_patterns_drupal_static_deprecation.patch",
+                "sha256": "5a00f6cd249fcc3f522ce37313770414e49f056872c9dab000144101ca68f981",
+                "depth": 1
+            }
+        ],
         "h5p/h5p-editor": [
             {
                 "description": "H5P: bloquear tipos de conteúdo restritos no upload",

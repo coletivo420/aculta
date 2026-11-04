@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0eb4c74e1435186ca521e6616ba6a138",
+    "content-hash": "cab0854a32699afe82f066a27898f87e",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -7776,17 +7776,11 @@
         },
         {
             "name": "drupal/ui_patterns",
-            "version": "2.0.23",
+            "version": "dev-2.0.x",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/ui_patterns.git",
-                "reference": "2.0.23"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/ui_patterns-2.0.23.zip",
-                "reference": "2.0.23",
-                "shasum": "e1b2f4774f03239ebb3bcd3b8a3bf31dc7efcd65"
+                "reference": "a7e9c28c522a5b0c8b71c731cab5482d60164e1e"
             },
             "require": {
                 "drupal/core": "^10.6 || ^11.3 || ^12",
@@ -7799,12 +7793,15 @@
             },
             "type": "drupal-module",
             "extra": {
+                "branch-alias": {
+                    "dev-2.0.x": "2.0.x-dev"
+                },
                 "drupal": {
-                    "version": "2.0.23",
-                    "datestamp": "1791918588",
+                    "version": "2.0.22+4-dev",
+                    "datestamp": "1791834235",
                     "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
+                        "status": "not-covered",
+                        "message": "Dev releases are not covered by Drupal security advisories."
                     }
                 }
             },
@@ -22952,6 +22949,7 @@
         "drupal/simple_sitemap": 20,
         "drupal/text_with_summary": 20,
         "drupal/tool": 10,
+        "drupal/ui_patterns": 20,
         "drupal/ui_patterns_field_group": 10,
         "drupal/upgrade_status": 15,
         "drupal/webform": 20

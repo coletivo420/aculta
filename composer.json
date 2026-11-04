@@ -327,7 +327,7 @@
         "drupal/text_with_summary": "2.0.x-dev@dev",
         "drupal/tool": "^1.0@beta",
         "drupal/turnstile": "^1.2",
-        "drupal/ui_patterns": "^2.0",
+        "drupal/ui_patterns": "2.0.x-dev@dev",
         "drupal/ui_patterns_field_group": "^2.0@beta",
         "drupal/ui_patterns_layouts": "^2.0",
         "drupal/ui_styles": "^1.22",

@@ -581,3 +581,10 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Validações:** `AnswerReviewWorkflowKernelTest` 3 testes/83 assertions PASS em `aculta_simpletest`, 14 depreciações upstream; PHPCS Drupal/DrupalPractice, PHP lint do teste e `git diff --check` PASS.
 - **Runtime:** sem alteração de configuração ou dados; conferir `updatedb:status`/`config:status` antes do push, rebuild após publicação. Runtime não recebeu fixture nem arquivo.
 - **Arquivos:** `AnswerReviewWorkflowKernelTest.php`, `aculta_lms/README.md`, `CHANGELOG.md`, `aculta_lms.info.yml`, status YAML do LMS, linha correspondente do README raiz e este handoff.
+
+## Continuação — atualização UI Patterns para Drupal 12 — 2026-11-03
+
+- Atualizado `drupal/ui_patterns` para `2.0.x-dev` (commit upstream `a7e9c28c522a5b0c8b71c731cab5482d60164e1e`) e salvo em `patches/aculta_patcher/ui_patterns_drupal_static_deprecation.patch` um patch reprodutível que troca quatro chamadas `drupal_static()` pelo cache de memória do Drupal.
+- Manifesto e `patches.lock.json` atualizados; `composer patches-repatch` removeu/reinstalou os pacotes e reaplicou o patch de `drupal/ui_patterns` com sucesso.
+- **Validações:** lint PHP dos três arquivos alterados PASS; `rg drupal_static` nos arquivos de UI Patterns sem ocorrências; Composer validate válido com avisos de constraints exatas existentes/dev; cache rebuild PASS; Upgrade Status do `aculta420` sem problemas conhecidos. Não foram executados testes automatizados.
+- **Runtime/publicação:** `updatedb:status` sem pendências; `config:status` aponta cinco Views de Commerce diferentes, alterações preexistentes fora desta entrega. Não foram importadas. O patch não altera schema nem configuração; após o push, sincronizar somente o código no Runtime.

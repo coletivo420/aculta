@@ -178,7 +178,7 @@ Versões instaladas no `composer.lock` e no `web/themes/custom/aculta420/package
 | `drupal/diff` | 2.1.1 | Composer | Comparação de revisões |
 | `drupal/freelinking` | 4.0.3 | Composer | Links internos em textos |
 | `drupal/history` | 1.0.0 | Composer | Registro de leitura de conteúdo |
-| `drupal/ui_patterns` | 2.0.23 | Composer | Padrões de interface (SDC) |
+| `drupal/ui_patterns` | `2.0.x-dev` | Composer + patch local de compatibilidade | Padrões de interface (SDC) |
 | `drupal/ui_patterns_field_group` | 2.0.0-beta2 | Composer | Agrupamento de campos com padrões de interface |
 | `drupal/ui_patterns_layouts` | 2.0.23 | Composer | Layouts com padrões de interface |
 | `drupal/ui_styles` | 1.22.0 | Composer | Estilos aplicáveis ao tema |

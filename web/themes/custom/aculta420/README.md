@@ -28,6 +28,10 @@ não foi executado. A versão 0.7.0-dev.2 não equivale à homologação.
 
 ## Fronteira de arquitetura
 
+O tema usa `drupal/ui_patterns` `2.0.x-dev` para integração com SDCs. O projeto
+mantém em `patches-aculta.json` uma correção de compatibilidade para substituir
+chamadas depreciadas a `drupal_static()` pelo cache de memória do Drupal.
+
 ```text
 Drupal Core + contrib → aculta_portal → contrato neutro → ACULTA420 → Bootstrap
 ```

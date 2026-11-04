@@ -1,5 +1,5 @@
 {
-    "_hash": "492675850695b580ba02f4b18f17d6884ae0dc373235e556d2023e4210632508",
+    "_hash": "ad83e385aeffd79136bb9dcc655f185c241bf600cc4fa2d09ab58c80387d8d67",
     "patches": {
         "drupal/address": [
             {
@@ -34,6 +34,18 @@
                 "depth": 1,
                 "extra": {
                     "provenance": "root"
+                }
+            }
+        ],
+        "drupal/ui_patterns": [
+            {
+                "package": "drupal/ui_patterns",
+                "description": "UI Patterns: substituir drupal_static() depreciado pelo cache de memória do Drupal",
+                "url": "patches/aculta_patcher/ui_patterns_drupal_static_deprecation.patch",
+                "sha256": "5a00f6cd249fcc3f522ce37313770414e49f056872c9dab000144101ca68f981",
+                "depth": 1,
+                "extra": {
+                    "provenance": "patches-file:patches-aculta.json"
                 }
             }
         ],
