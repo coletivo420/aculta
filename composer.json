@@ -367,7 +367,8 @@
         "symfony/http-client": "^7.4",
         "tabby/tabby": "12.0.3",
         "tippyjs/tippyjs": "6.3.7",
-        "twbs/bootstrap": "^5.3"
+        "twbs/bootstrap": "^5.3",
+        "drupal/entity_reference_revisions": "1.x-dev"
     },
     "conflict": {
         "drupal/drupal": "*"
