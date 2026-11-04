@@ -1,9 +1,10 @@
 # ACULTA LMS Resources
 
 Módulo opcional que permite ao educador vincular ao curso publicações existentes
-da Revista, verbetes Wiki e galerias Media Gallery. O conteúdo e suas permissões
-continuam sob responsabilidade do módulo de origem; o curso apenas guarda
-referências e mostra links canônicos no purpose correspondente.
+da Revista, verbetes Wiki, galerias Media Gallery e vídeos remotos. O conteúdo e
+suas permissões continuam sob responsabilidade do módulo de origem; o curso
+guarda as referências e exibe destinos próprios para cada tipo, revalidando o
+acesso antes de apresentar cada link.
 
 Os links são exibidos a membros autorizados e educadores com permissão contextual.
 O builder revalida publicação e Entity Access sob o purpose da origem e agrega
@@ -40,8 +41,12 @@ progresso ou dados de estudante para o catálogo. O contrato completo das
 relações editoriais de vídeo está em
 [ACULTA-CONTENT-INDEX-VIDEO-RELATIONS](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-VIDEO-RELATIONS.md).
 
-No workspace Ganjalab Educador, os links canônicos de leituras, galerias,
-vídeos e documentos também aparecem na estrutura do curso. H5P usa seu widget
+No workspace Ganjalab Educador, leituras e galerias usam os links dos seus
+purposes owners. Para `remote_video`, o builder revalida Media no purpose
+Cursos e aponta ao endereço fonte oEmbed: com `media.settings:standalone_url`
+desligado, a rota Core `entity.media.canonical` abre `/media/{id}/edit`, não um
+player público. O filtro aceita apenas URI absoluta HTTP(S) sem credenciais.
+Documentos privados usam sua rota protegida pelo viewer. H5P usa seu widget
 owner no formulário contextual quando o módulo está ativo. Vídeos e documentos
 são revalidados no Domain `courses`; documentos privados exigem a relação Group
 de curso e o Entity Access da mídia. O bloco só entra na página do curso que o
@@ -88,9 +93,24 @@ passou 2 testes / 65 assertions, comprovando a descoberta dos providers pela
 closure de módulos real. Em 2026-11-04, leitura no Runtime `cursos` confirmou
 `aculta_lms_resources` habilitado, três field storages e três instâncias de
 campo em `lms_course`; `updatedb:status` e `config:status` estão limpos. Nenhum
-update, import ou conteúdo foi aplicado. O smoke funcional autenticado com
-recursos reais vinculados ao curso continua pendente por falta de fixture
-autorizada; revisão visual está fora do escopo funcional atual.
+update ou import foi aplicado. Smoke funcional autenticado com vínculos
+existentes de leitura Wiki, galeria e vídeo passou em 2026-11-04: os três
+widgets carregaram e a submissão manteve as referências na turma descartável.
+O formulário de adição de documento também recebeu um PDF privado efêmero,
+salvou Media/File, persistiu a relação Group→Media→File e listou o documento;
+Group, Media e File foram removidos após o teste. A fixture usou associação
+criadora válida para a conta docente. Revisão visual está fora do escopo
+funcional atual.
+
+### Upload e vínculo de documento PDF no workspace — dev.32
+
+O formulário de adição usa a form owner da Media `course_document`, mas não
+envia o objeto Group no cache do Form API. Um hook restrito à rota
+`aculta_lms.course_document_add` registra um callback estático antes do cache;
+depois do salvamento owner, o callback revalida permissão e cria a relação
+Group→Media. O Runtime validou upload AJAX, salvamento e apresentação na lista,
+com remoção das entidades e do arquivo privado de teste. O Kernel focal do
+controller passou 4/36; a validação ainda não cobre produção nem Drupal 12.
 
 ### Limpeza coordenada de documentos PDF do curso — dev.31
 

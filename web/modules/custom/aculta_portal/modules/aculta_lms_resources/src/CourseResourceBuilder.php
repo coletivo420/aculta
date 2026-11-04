@@ -9,13 +9,16 @@ use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 use Drupal\media\MediaInterface;
+use Drupal\media\MediaSourceInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 
 /**
@@ -166,12 +169,20 @@ final class CourseResourceBuilder {
         continue;
       }
 
-      $canonical = $entity->toUrl('canonical');
-      $url = $this->domainPurposeManager->routeUrl(
-        $purpose,
-        $canonical->getRouteName(),
-        $canonical->getRouteParameters(),
-      );
+      if ($entity instanceof MediaInterface && $entity->bundle() === 'remote_video') {
+        // With standalone Media URLs disabled, Core's canonical route points
+        // to the editorial form (/media/{id}/edit). Link to the validated
+        // public oEmbed source instead, after the Media access check above.
+        $url = $this->videoSourceUrl($entity);
+      }
+      else {
+        $canonical = $entity->toUrl('canonical');
+        $url = $this->domainPurposeManager->routeUrl(
+          $purpose,
+          $canonical->getRouteName(),
+          $canonical->getRouteParameters(),
+        );
+      }
       if ($url !== NULL) {
         $items[] = Link::fromTextAndUrl((string) $entity->label(), $url)->toRenderable();
       }
@@ -192,6 +203,31 @@ final class CourseResourceBuilder {
     return $entity->getEntityTypeId() === 'media' && $entity->bundle() === 'remote_video'
       ? 'courses'
       : NULL;
+  }
+
+  /**
+   * Returns a safe external destination for an authorized remote video.
+   */
+  private function videoSourceUrl(MediaInterface $video): ?Url {
+    $source = $video->getSource();
+    if (!$source instanceof MediaSourceInterface || $source->getPluginId() !== 'oembed:video') {
+      return NULL;
+    }
+
+    $uri = $source->getSourceFieldValue($video);
+    if (!is_string($uri) || !UrlHelper::isValid($uri, TRUE)) {
+      return NULL;
+    }
+    $parts = parse_url($uri);
+    if (!is_array($parts)
+      || !in_array(strtolower($parts['scheme'] ?? ''), ['http', 'https'], TRUE)
+      || empty($parts['host'])
+      || isset($parts['user'])
+      || isset($parts['pass'])) {
+      return NULL;
+    }
+
+    return Url::fromUri($uri);
   }
 
   /**

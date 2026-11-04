@@ -467,8 +467,36 @@ no MariaDB dedicado 2/46 passou na versão anterior e não foi alterado nesta
 subfase. Em 2026-11-04, leitura no Runtime `cursos` confirmou os três field
 storages e instâncias em `lms_course`, `aculta_lms_resources` habilitado e
 `updatedb:status`/`config:status` limpos. Nenhuma configuração foi aplicada.
-Falta smoke funcional autenticado da seleção e dos recursos efetivamente
-vinculados; revisão visual está fora do escopo da continuidade funcional atual.
+Em 2026-11-04, um smoke funcional autenticado usou um Group temporário e a
+Media `remote_video` publicada já existente. O formulário contextual carregou,
+recebeu foco e salvou a referência; a estrutura do curso mostrou o link
+canônico. A matriz funcional passou em 320/390/600/768/1280 px sem overflow e a
+fixture foi removida, preservando a Media original. A tentativa ampliada com
+leituras e galeria havia sido interrompida por erro Twig global no tema V2
+ativo (logs 843200/843205: slots SDC não declarados e bloco Twig duplicado).
+A correção funcional está em `aculta420_v2` 1.2.0-dev.9: o template de conta
+consome os slots SDC sem redefinir blocos do `embed`. Após `drush cr`, o gate
+SDC passou e a rota autenticada de materiais carregou sem 500. Uma fixture
+Group com associação criadora válida carregou e salvou leitura Wiki, galeria e
+vídeo existentes; os três target IDs persistiram. A estrutura do curso mostrou
+Wiki no host `wiki420` e galeria no host Revista. A verificação funcional
+encontrou que `Media::toUrl('canonical')` gera `/media/12/edit` com
+`media.settings:standalone_url: false`; a URL retorna 404 sem sessão editorial.
+`aculta_lms_resources` dev.33 agora aponta `remote_video` à URL de origem
+oEmbed somente após revalidar Entity Access no purpose Cursos e rejeitar URI
+fora de HTTP(S), sem hostname ou com credenciais. Firefox headless confirmou
+no Runtime o título existente apontando ao YouTube; Group removido. O Content
+Index não projeta URL. O formulário de PDF privado
+aceitou upload AJAX, salvou Media/File, persistiu a relação Group e exibiu o
+documento. Cada Group, Media e File temporário foi removido; as fontes
+editoriais existentes foram preservadas. A versão `aculta_lms_resources`
+0.1.0-dev.32 contém a alteração do controller: o `form_alter` registra callback
+estático antes do cache, e o salvamento da relação revalida a permissão. F15
+permanece aberta para outras integrações. O smoke autenticado de discussão H5P
+foi tentado sem criar fixtures: `aculta_lms_h5p.framework` falhou antes da
+criação com “The private H5P storage directory is unavailable” (watchdog
+843707). O Runtime não foi alterado para contornar a indisponibilidade de
+storage privado. Revisão visual continua fora do escopo funcional atual.
 
 Em `aculta_lms_resources` 0.1.0-dev.16, a classe Kernel LMS/Index passou novamente em MariaDB (4 testes / 208 assertions; 53 depreciações Core/contrib). Cobre policy de estudante e educador, terceiro negado e relações de leitura, galeria e `course_document`; providers vêm dos YAMLs owner, mas a relação PDF usa plugin Group fixture. Boot/DI completo dos módulos owner, instalação e Runtime permanecem pendentes.
 

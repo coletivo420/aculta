@@ -6,7 +6,10 @@ namespace Drupal\aculta_lms_resources\Controller;
 
 use Drupal\aculta_lms_resources\Access\CourseDocumentAccessCheck;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
@@ -26,13 +29,14 @@ final class CourseDocumentController {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly EntityFormBuilderInterface $entityFormBuilder,
     private readonly CourseDocumentAccessCheck $accessCheck,
+    private readonly CurrentRouteMatch $routeMatcher,
     TranslationInterface $translation,
   ) {
     $this->stringTranslation = $translation;
   }
 
   /**
-   * Builds the owner Media form with Group's create-and-relate context.
+   * Builds the owner Media form with a contextual post-save Group relation.
    */
   public function add(GroupInterface $course): array {
     if ($course->bundle() !== 'lms_course') {
@@ -41,25 +45,61 @@ final class CourseDocumentController {
     if (!$this->accessCheck->createAccess($course)->isAllowed()) {
       throw new AccessDeniedHttpException();
     }
-    $pluginId = $this->accessCheck->relationPluginId($course);
-    if ($pluginId === NULL) {
+    if ($this->accessCheck->relationPluginId($course) === NULL) {
       throw new NotFoundHttpException();
     }
 
     $document = $this->entityTypeManager->getStorage('media')->create([
       'bundle' => 'course_document',
     ]);
-    $build = $this->entityFormBuilder->getForm($document, 'add', [
-      'group__create_form_should_enhance' => TRUE,
-      'group_relation' => $pluginId,
-      'group' => $course,
-    ]);
+    // Keep the Group entity out of cached Form API state. Managed-file AJAX
+    // rebuilds must serialize the form while an UploadedFile is in the request.
+    $build = $this->entityFormBuilder->getForm($document, 'add');
     $build['contextual_return'] = [
       '#type' => 'link',
       '#title' => $this->t('Voltar aos materiais do curso'),
       '#url' => Url::fromRoute('aculta_lms.course_materials_edit', ['course' => $course->id()]),
     ];
     return $build;
+  }
+
+  /**
+   * Static Form API callback, kept serializable across managed-file rebuilds.
+   */
+  public static function submitDocumentToCourse(array &$form, FormStateInterface $form_state): void {
+    \Drupal::service('aculta_lms_resources.course_document_controller')
+      ->attachDocumentToCourse($form, $form_state);
+  }
+
+  /**
+   * Rechecks course access and attaches the saved Media after its owner form.
+   */
+  public function attachDocumentToCourse(array &$form, FormStateInterface $form_state): void {
+    $course = $this->routeMatcher->getParameter('course');
+    $form_object = $form_state->getFormObject();
+    if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course'
+      || !$form_object instanceof EntityFormInterface
+      || !$this->accessCheck->createAccess($course)->isAllowed()) {
+      throw new AccessDeniedHttpException();
+    }
+
+    $document = $form_object->getEntity();
+    if (!$document instanceof MediaInterface || $document->bundle() !== 'course_document' || $document->isNew()) {
+      throw new NotFoundHttpException();
+    }
+    $plugin_id = $this->accessCheck->relationPluginId($course);
+    if ($plugin_id === NULL) {
+      throw new NotFoundHttpException();
+    }
+
+    foreach ($course->getRelatedEntities($plugin_id) as $related) {
+      if ($related instanceof MediaInterface && (int) $related->id() === (int) $document->id()) {
+        $form_state->setRedirect('aculta_lms.course_materials_edit', ['course' => $course->id()]);
+        return;
+      }
+    }
+    $course->addRelationship($document, $plugin_id);
+    $form_state->setRedirect('aculta_lms.course_materials_edit', ['course' => $course->id()]);
   }
 
   /**

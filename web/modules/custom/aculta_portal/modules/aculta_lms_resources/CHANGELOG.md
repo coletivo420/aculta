@@ -1,5 +1,28 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.33 — destino funcional dos vídeos vinculados ao curso
+
+- O `canonical` de Media aponta à rota `/media/{id}/edit` enquanto o Core
+  `standalone_url` global está desativado. Para `remote_video`, o Course
+  Resource Builder agora gera link direto à URL de origem oEmbed somente após
+  validar publicação e Entity Access no purpose Cursos; aceita somente URLs
+  HTTP(S) absolutas, sem credenciais na URI, e não altera configuração global.
+- Unit + Kernel: 9 testes / 89 assertions PASS. Smoke HTTP autenticado no
+  Runtime confirmou o link YouTube e a limpeza do Group descartável.
+- O Content Index permanece sem URL oEmbed; esta mudança só renderiza o destino
+  no bloco de materiais autorizado do curso.
+
+## 0.1.0-dev.32 — upload contextual de documento PDF
+
+- A Media `course_document` usa o formulário owner sem guardar o objeto Group
+  no estado cacheado do Form API. Um `form_alter` acrescenta callback estático
+  antes do cache; após salvar, o callback revalida criação e associa a Media ao
+  curso por Group.
+- Smoke autenticado no Runtime: upload AJAX de PDF privado, salvamento da
+  Media, persistência Group→Media→File, retorno à lista e remoção das fixtures.
+  Formulário sem overflow e com input focável em 320/390/768/1280 px. Unit
+  focal do controller: 4 testes / 36 assertions PASS.
+
 ## 0.1.0-dev.31 — ciclo de limpeza de documento testado no Kernel
 
 - Kernel instala Group, Media e File reais e valida retenção de documento

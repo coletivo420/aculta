@@ -16,6 +16,7 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 use Drupal\media\MediaInterface;
+use Drupal\media\MediaSourceInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Drupal\node\NodeInterface;
 use PHPUnit\Framework\Attributes\Group;
@@ -137,7 +138,7 @@ final class CourseResourceBuilderKernelTest extends KernelTestBase {
   }
 
   /**
-   * Remote videos are rendered under the courses purpose.
+   * Remote videos link to their validated source, not the Media edit route.
    */
   public function testRemoteVideoUsesCoursesDomainAndEntityAccess(): void {
     $account = $this->createMock(AccountProxyInterface::class);
@@ -149,7 +150,10 @@ final class CourseResourceBuilderKernelTest extends KernelTestBase {
     $video->method('label')->willReturn('Vídeo da aula');
     $video->method('isPublished')->willReturn(TRUE);
     $video->method('access')->with('view', $account, TRUE)->willReturn(AccessResult::allowed());
-    $video->method('toUrl')->with('canonical')->willReturn(Url::fromRoute('entity.media.canonical', ['media' => 22]));
+    $source = $this->createMock(MediaSourceInterface::class);
+    $source->method('getPluginId')->willReturn('oembed:video');
+    $source->method('getSourceFieldValue')->with($video)->willReturn('https://video.example/watch/22');
+    $video->method('getSource')->willReturn($source);
     $video->method('getCacheTags')->willReturn(['media:22']);
     $video->method('getCacheContexts')->willReturn([]);
     $video->method('getCacheMaxAge')->willReturn(-1);
@@ -169,9 +173,46 @@ final class CourseResourceBuilderKernelTest extends KernelTestBase {
     $build = $builder->build($course);
 
     self::assertCount(1, $build['videos']['#items']);
-    self::assertSame('entity.media.canonical', $build['videos']['#items'][0]['#url']->getRouteName());
-    self::assertSame(['media' => 22], $build['videos']['#items'][0]['#url']->getRouteParameters());
+    self::assertSame('https://video.example/watch/22', $build['videos']['#items'][0]['#url']->getUri());
     self::assertContains('media:22', $build['#cache']['tags']);
+  }
+
+  /**
+   * Unsupported schemes are never exposed as course video destinations.
+   */
+  public function testRemoteVideoRejectsUnsafeSourceUris(): void {
+    $account = $this->createMock(AccountProxyInterface::class);
+    $course = $this->course($account);
+    $video = $this->createMock(MediaInterface::class);
+    $video->method('getEntityTypeId')->willReturn('media');
+    $video->method('bundle')->willReturn('remote_video');
+    $video->method('id')->willReturn('23');
+    $video->method('label')->willReturn('Vídeo inválido');
+    $video->method('isPublished')->willReturn(TRUE);
+    $video->method('access')->with('view', $account, TRUE)->willReturn(AccessResult::allowed());
+    $source = $this->createMock(MediaSourceInterface::class);
+    $source->method('getPluginId')->willReturn('oembed:video');
+    $source->method('getSourceFieldValue')->with($video)->willReturn('javascript:alert(1)');
+    $video->method('getSource')->willReturn($source);
+    $video->method('getCacheTags')->willReturn(['media:23']);
+    $video->method('getCacheContexts')->willReturn([]);
+    $video->method('getCacheMaxAge')->willReturn(-1);
+    $course->method('get')->willReturnMap([
+      ['field_lms_readings', $this->referenceList([])],
+      ['field_lms_galleries', $this->referenceList([])],
+      ['field_lms_videos', $this->referenceList([$video])],
+    ]);
+    $course->method('hasField')->willReturn(TRUE);
+
+    $builder = new CourseResourceBuilder(
+      $this->purposeManager,
+      $account,
+      $this->container->get('string_translation'),
+      $this->createMock(GroupRelationTypeManagerInterface::class),
+    );
+    $build = $builder->build($course);
+
+    self::assertArrayNotHasKey('videos', $build);
   }
 
   /**

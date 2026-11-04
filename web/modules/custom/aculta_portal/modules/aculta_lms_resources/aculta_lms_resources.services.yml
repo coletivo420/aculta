@@ -7,13 +7,17 @@ services:
     class: Drupal\aculta_lms_resources\Hook\CourseDocumentCleanupHooks
     arguments: ['@aculta_lms_resources.course_document_cleanup']
 
+  Drupal\aculta_lms_resources\Hook\CourseDocumentFormHooks:
+    class: Drupal\aculta_lms_resources\Hook\CourseDocumentFormHooks
+    arguments: ['@current_route_match']
+
   aculta_lms_resources.course_document_access:
     class: Drupal\aculta_lms_resources\Access\CourseDocumentAccessCheck
     arguments: ['@aculta_lms.course_authoring_access', '@group_relation_type.manager', '@current_user']
 
   aculta_lms_resources.course_document_controller:
     class: Drupal\aculta_lms_resources\Controller\CourseDocumentController
-    arguments: ['@entity_type.manager', '@entity.form_builder', '@aculta_lms_resources.course_document_access', '@string_translation']
+    arguments: ['@entity_type.manager', '@entity.form_builder', '@aculta_lms_resources.course_document_access', '@current_route_match', '@string_translation']
 
   aculta_lms_resources.course_content_index_provider:
     class: Drupal\aculta_lms_resources\ContentIndex\LmsCourseContentIndexProvider
