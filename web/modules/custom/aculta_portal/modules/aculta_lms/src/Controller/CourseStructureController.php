@@ -58,19 +58,21 @@ final class CourseStructureController {
           ->execute();
         $activityRows[] = [
           'data' => [
-            $answerCount === 0
-              ? Link::fromTextAndUrl(
-                $this->activityLabel((string) $activity->get('type')->value),
-                Url::fromRoute('aculta_lms.activity_edit', [
-                  'course' => $course->id(),
-                  'lesson' => $lesson->id(),
-                  'activity' => $activity->id(),
-                ]),
-              )->toRenderable()
-              : ['#plain_text' => $this->activityLabel((string) $activity->get('type')->value)],
-            ['#plain_text' => $question !== '' ? $question : $this->t('Sem enunciado')],
-            ['#plain_text' => (string) $activity->get('weight')->value],
-            ['#plain_text' => $answerCount > 0 ? $this->t('@count resposta(s); edição bloqueada para preservar o histórico.', ['@count' => $answerCount]) : ''],
+            [
+              'data' => $answerCount === 0
+                ? Link::fromTextAndUrl(
+                  $this->activityLabel((string) $activity->get('type')->value),
+                  Url::fromRoute('aculta_lms.activity_edit', [
+                    'course' => $course->id(),
+                    'lesson' => $lesson->id(),
+                    'activity' => $activity->id(),
+                  ]),
+                )->toRenderable()
+                : ['#plain_text' => $this->activityLabel((string) $activity->get('type')->value)],
+            ],
+            ['data' => ['#plain_text' => $question !== '' ? $question : $this->t('Sem enunciado')]],
+            ['data' => ['#plain_text' => (string) $activity->get('weight')->value]],
+            ['data' => ['#plain_text' => $answerCount > 0 ? $this->t('@count resposta(s); edição bloqueada para preservar o histórico.', ['@count' => $answerCount]) : '']],
             [
               'data' => [
                 '#type' => 'container',
@@ -107,12 +109,12 @@ final class CourseStructureController {
       }
       $rows[] = [
         'data' => [
-          Link::fromTextAndUrl(
+          ['data' => Link::fromTextAndUrl(
             (string) $lesson->get('title')->value,
             Url::fromRoute('aculta_lms.lesson_edit', ['course' => $course->id(), 'lesson' => $lesson->id()]),
-          )->toRenderable(),
-          ['#plain_text' => $lesson->get('published')->value ? $this->t('Publicada') : $this->t('Rascunho')],
-          ['#plain_text' => (string) $lesson->get('weight')->value],
+          )->toRenderable()],
+          ['data' => ['#plain_text' => $lesson->get('published')->value ? $this->t('Publicada') : $this->t('Rascunho')]],
+          ['data' => ['#plain_text' => (string) $lesson->get('weight')->value]],
           [
             'data' => [
               '#type' => 'table',
@@ -163,6 +165,7 @@ final class CourseStructureController {
     return [
       '#type' => 'container',
       '#attributes' => ['data-aculta-lms' => 'course-structure'],
+      '#attached' => ['library' => ['aculta_lms/course_structure']],
       '#cache' => ['contexts' => ['user', 'user.permissions', 'user.group_permissions'], 'max-age' => 0],
       'course' => ['#type' => 'html_tag', '#tag' => 'h1', '#value' => $course->label()],
       'intro' => ['#plain_text' => $this->t('Estrutura do curso. Aulas e atividades são organizadas aqui; matrículas e prazos continuam nas turmas.')],

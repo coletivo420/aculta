@@ -6,3 +6,7 @@ answer_form:
   css:
     theme:
       css/answer-form.css: {}
+course_structure:
+  css:
+    theme:
+      css/course-structure.css: {}

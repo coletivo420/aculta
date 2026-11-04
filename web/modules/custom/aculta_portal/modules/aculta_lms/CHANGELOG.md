@@ -1,3 +1,19 @@
+## 0.1.0-dev.189 — contém a tabela larga do Course Builder no mobile
+
+- O viewport estreito mantém a estrutura LMS dentro de sua própria área de
+  rolagem horizontal, permitindo alcançar e acionar os comandos da tabela sem
+  alargar a página inteira.
+- Unit valida o anexo da biblioteca específica da estrutura. Revisão visual
+  final após a correção permanece pendente.
+
+## 0.1.0-dev.188 — corrige renderização da estrutura do curso
+
+- Links e conteúdo renderizado agora são encapsulados em `data` nas células da
+  Table API. Sem o wrapper, o Drupal interpretava o objeto `Url` como atributo
+  HTML e respondia 500 na estrutura do educador.
+- Regressão coberta pela Unit do `CourseStructureController`; smoke no Runtime
+  com educador autenticado passou com título, estrutura e ações de movimento.
+
 ## 0.1.0-dev.187 — conteúdo textual de aula na sala Ganjalab
 
 - A entidade ACULTA de aula recebe um campo de texto longo com formato fixo

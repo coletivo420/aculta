@@ -99,12 +99,14 @@ final class CourseStructureControllerTest extends UnitTestCase {
     $build = (new CourseStructureController($manager, $this->getStringTranslationStub()))->structure($course);
 
     self::assertSame('course-structure', $build['#attributes']['data-aculta-lms']);
+    self::assertSame(['aculta_lms/course_structure'], $build['#attached']['library']);
     self::assertSame('Curso de exemplo', $build['course']['#value']);
     self::assertCount(2, $build['lessons']['#rows']);
-    self::assertSame('Publicada', (string) $build['lessons']['#rows'][0]['data'][1]['#plain_text']);
+    self::assertSame('aculta_lms.lesson_edit', $build['lessons']['#rows'][0]['data'][0]['data']['#url']->getRouteName());
+    self::assertSame('Publicada', (string) $build['lessons']['#rows'][0]['data'][1]['data']['#plain_text']);
     self::assertCount(2, $build['lessons']['#rows'][0]['data'][3]['data']['#rows']);
-    self::assertSame('Explique a ideia.', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][1]['#plain_text']);
-    self::assertSame('aculta_lms.activity_edit', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][0]['#url']->getRouteName());
+    self::assertSame('Explique a ideia.', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][1]['data']['#plain_text']);
+    self::assertSame('aculta_lms.activity_edit', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][0]['data']['#url']->getRouteName());
     self::assertSame('aculta_lms.activity_delete', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][4]['data']['delete']['#url']->getRouteName());
     self::assertSame('aculta_lms.lesson_delete', $build['lessons']['#rows'][0]['data'][4]['data']['delete']['#url']->getRouteName());
     self::assertSame('aculta_lms.lesson_move', $build['lessons']['#rows'][0]['data'][4]['data']['move_down']['#url']->getRouteName());
@@ -114,6 +116,16 @@ final class CourseStructureControllerTest extends UnitTestCase {
     self::assertSame('aculta_lms.activity_move', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][4]['data']['move_down']['#url']->getRouteName());
     self::assertSame('abaixo', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][4]['data']['move_down']['#url']->getRouteParameters()['direcao']);
     self::assertSame('aculta_lms.activity_move', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][1]['data'][4]['data']['move_up']['#url']->getRouteName());
+    foreach ($build['lessons']['#rows'] as $lesson_row) {
+      foreach ($lesson_row['data'] as $cell) {
+        self::assertArrayHasKey('data', $cell, 'Render arrays in Drupal table cells must use the cell data wrapper.');
+      }
+      foreach ($lesson_row['data'][3]['data']['#rows'] as $activity_row) {
+        foreach ($activity_row['data'] as $cell) {
+          self::assertArrayHasKey('data', $cell, 'Render arrays in nested table cells must use the cell data wrapper.');
+        }
+      }
+    }
   }
 
   /**

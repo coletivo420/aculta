@@ -1,0 +1,6 @@
+[data-aculta-lms="course-structure"] {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
