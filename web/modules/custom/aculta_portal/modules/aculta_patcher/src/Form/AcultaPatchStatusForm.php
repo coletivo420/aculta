@@ -15,6 +15,16 @@ use Drupal\aculta_patcher\Entity\AcultaPatch;
 final class AcultaPatchStatusForm extends ConfirmFormBase {
 
   /**
+   * The patch label used by the confirmation question.
+   */
+  protected string $patchLabel = '';
+
+  /**
+   * Whether the form is enabling the patch.
+   */
+  protected bool $enableAction = FALSE;
+
+  /**
    * {@inheritdoc}
    */
   public function getFormId(): string {
@@ -25,6 +35,8 @@ final class AcultaPatchStatusForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?AcultaPatch $aculta_patch = NULL, ?string $patch_operation = NULL): array {
+    $this->patchLabel = $aculta_patch?->label() ?? '';
+    $this->enableAction = $patch_operation === 'enable';
     if ($aculta_patch === NULL || !in_array($patch_operation, ['enable', 'disable'], TRUE)) {
       $form_state->setRedirect('entity.aculta_patch.collection');
       return [];
@@ -44,11 +56,9 @@ final class AcultaPatchStatusForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getQuestion(): string {
-    $patch = $this->routeMatch->getParameter('aculta_patch');
-    $label = $patch instanceof AcultaPatch ? $patch->label() : '';
-    return $this->isEnableOperation()
-      ? (string) $this->t('Habilitar o patch @patch?', ['@patch' => $label])
-      : (string) $this->t('Desabilitar o patch @patch?', ['@patch' => $label]);
+    return $this->enableAction
+      ? (string) $this->t('Habilitar o patch @patch?', ['@patch' => $this->patchLabel])
+      : (string) $this->t('Desabilitar o patch @patch?', ['@patch' => $this->patchLabel]);
   }
 
   /**
@@ -62,7 +72,7 @@ final class AcultaPatchStatusForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getConfirmText(): string {
-    return $this->isEnableOperation() ? (string) $this->t('Habilitar') : (string) $this->t('Desabilitar');
+    return $this->enableAction ? (string) $this->t('Habilitar') : (string) $this->t('Desabilitar');
   }
 
   /**
@@ -91,13 +101,6 @@ final class AcultaPatchStatusForm extends ConfirmFormBase {
       ? $this->t('O patch %patch foi habilitado para o próximo build.', ['%patch' => $patch->label()])
       : $this->t('O patch %patch foi desabilitado para o próximo build.', ['%patch' => $patch->label()]));
     $form_state->setRedirect('entity.aculta_patch.collection');
-  }
-
-  /**
-   * Determines the operation from the protected route name.
-   */
-  private function isEnableOperation(): bool {
-    return $this->routeMatch->getRouteName() === 'entity.aculta_patch.enable_form';
   }
 
 }

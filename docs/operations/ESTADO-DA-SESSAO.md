@@ -612,3 +612,10 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - Rotas validadas no Runtime: `/painel-administrativo/configuracoes/desenvolvimento/patches-aculta/{aculta_patch}/habilitar` e `/desabilitar`. A renderização com contexto administrativo mostrou `Editar, Desabilitar` e, em estado inativo simulado sem salvar, `Editar, Habilitar`.
 - **Validações:** cache rebuild, PHP lint, PHPCS Drupal/DrupalPractice, `updatedb:status` sem pendências, `config:status` sem diferenças. Não houve escrita de configuração/dados; os testes e o navegador não foram executados.
 - **Arquivos:** list builder, entidade (templates de links), `AcultaPatchStatusForm`, rotas, versão/CHANGELOG/README do módulo, status e índice de componentes, e este handoff. Commit `3f04891c21` publicado em `origin/dev`; Runtime permanece no mesmo HEAD.
+
+## Continuação — correção do HTTP 500 ao desabilitar patch — 2026-11-03
+
+- **Causa confirmada no watchdog:** `AcultaPatchStatusForm::getQuestion()` chamava `getParameter()` em `routeMatch` nulo durante a renderização do `ConfirmFormBase`.
+- **Correção:** `buildForm()` agora prepara rótulo e ação com os argumentos de rota já recebidos; a pergunta e o botão de confirmação usam esse estado escalar. Não houve alteração no patch ativo durante a reprodução.
+- **Validações:** formulários de desabilitar e habilitar renderizados por Form API com pergunta/botão corretos; patch H5P continuou ativo no banco; PHP lint e PHPCS Drupal/DrupalPractice PASS; `drush cr` PASS; `updatedb:status` sem updates; `config:status` sem diferenças. Nenhum teste automatizado foi executado.
+- **Arquivos:** `AcultaPatchStatusForm.php`, versão/CHANGELOG/status do `aculta_patcher`, índice README e este handoff. Commit/push pendentes.

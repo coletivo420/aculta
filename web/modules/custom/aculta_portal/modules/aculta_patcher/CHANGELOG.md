@@ -1,5 +1,14 @@
 # Changelog — aculta_patcher
 
+## 0.1.0-rc.4 — correção do formulário de status — 2026-11-03
+
+- Corrigido o HTTP 500 nas confirmações: `getQuestion()` já não depende de
+  `routeMatch`, que está nulo no ciclo do `ConfirmFormBase`; o rótulo e a ação
+  são preparados em `buildForm()`.
+- Renderização das confirmações de habilitar/desabilitar, lint e PHPCS PASS;
+  status persistido do patch H5P permaneceu ativo. Runtime sem updates de banco
+  ou diferenças de configuração.
+
 ## 0.1.0-rc.3 — operações de status na coleção — 2026-11-03
 
 - O dropdown de operações usa o rótulo `Editar` e oferece `Habilitar` para

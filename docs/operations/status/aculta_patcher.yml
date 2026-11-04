@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-rc.3
+version: 0.1.0-rc.4
 state: RC
-progress_note: '0.1.0-rc.3: dropdown da coleção mantém Editar como ação principal e oferece Desabilitar em patches ativos ou Habilitar nos inativos; ambos levam a confirmação POST protegida por administer aculta patches. Rotas e operações confirmadas no Runtime; cache rebuild, lint, PHPCS, updatedb e config status PASS. A mudança vale para a próxima exportação Composer.'
+progress_note: '0.1.0-rc.4 corrige HTTP 500 nas confirmações: getQuestion usa estado preparado em buildForm, sem depender de routeMatch nulo. Formulários enable/disable renderizam no Runtime; estado persistido não mudou. Cache rebuild, lint, PHPCS, updatedb e config status PASS.'
 next_phase: 'Deploy do candidato no servidor de desenvolvimento e validação no ambiente *.aculta.org (Alpha), com posterior migração para Hostinger (Beta) conforme RELEASE-LIFECYCLE.md ([README](web/modules/custom/aculta_portal/modules/aculta_patcher/README.md))'
