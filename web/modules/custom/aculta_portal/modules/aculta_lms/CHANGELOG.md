@@ -1,3 +1,8 @@
+# 0.1.0-dev.205 — alerta para alterações não salvas na autoria
+
+- Formulários de aula, atividade e ordenação agora detectam alterações e usam o aviso nativo do navegador antes de abandonar a página; submissão limpa o estado de alteração.
+- Testes JavaScript cobrem alerta, formulário inalterado/fora do escopo e reanexação do behavior Drupal.
+
 # 0.1.0-dev.204 — remove CSS de navegação legado do formulário de resposta
 
 - Removida `answer-form.css`, que limitava overflow em IDs/classes exclusivos do Olivero e não correspondia ao tema ACULTA ativo. O formulário LMS não carrega mais uma folha sem efeito; Kernel protege esse contrato.

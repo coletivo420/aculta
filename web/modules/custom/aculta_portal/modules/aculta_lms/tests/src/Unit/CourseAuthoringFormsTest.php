@@ -32,6 +32,51 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 final class CourseAuthoringFormsTest extends UnitTestCase {
 
   /**
+   * @covers ::buildForm
+   */
+  public function testLessonAuthoringFormAttachesUnsavedChangeGuard(): void {
+    $course = $this->course();
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('loadByProperties')->willReturn([]);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('getStorage')->with('aculta_lms_lesson')->willReturn($storage);
+    $form = new LessonAuthoringForm(
+      $manager,
+      $this->route(['course' => $course, 'lesson' => NULL]),
+      $this->access($manager),
+    );
+    $this->setFormServices($form);
+
+    $build = $form->buildForm([], new FormState());
+
+    self::assertTrue($build['#attributes']['data-aculta-unsaved-changes']);
+    self::assertContains('aculta_lms/unsaved_changes', $build['#attached']['library']);
+  }
+
+  /**
+   * @covers ::buildForm
+   */
+  public function testActivityAuthoringFormAttachesUnsavedChangeGuard(): void {
+    $course = $this->course();
+    $lesson = $this->lesson(3);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('loadByProperties')->willReturn([]);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('getStorage')->with('aculta_lms_activity')->willReturn($storage);
+    $form = new ActivityAuthoringForm(
+      $manager,
+      $this->route(['course' => $course, 'lesson' => $lesson, 'activity' => NULL]),
+      $this->access($manager),
+    );
+    $this->setFormServices($form);
+
+    $build = $form->buildForm([], new FormState());
+
+    self::assertTrue($build['#attributes']['data-aculta-unsaved-changes']);
+    self::assertContains('aculta_lms/unsaved_changes', $build['#attached']['library']);
+  }
+
+  /**
    * @covers ::submitForm
    */
   public function testLessonCreateStoresRichTextInDedicatedFormat(): void {

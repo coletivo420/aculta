@@ -53,6 +53,8 @@ final class LessonAuthoringForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     [$course, $lesson] = $this->routeEntities();
+    $form['#attributes']['data-aculta-unsaved-changes'] = TRUE;
+    $form['#attached']['library'][] = 'aculta_lms/unsaved_changes';
     $form['title'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Título da aula'),

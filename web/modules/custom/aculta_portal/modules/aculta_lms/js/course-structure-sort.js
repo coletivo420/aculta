@@ -31,6 +31,7 @@
         const synchronizeOrder = () => {
           const ids = directItems().map(({ item }) => item.dataset.acultaSortItem);
           orderInput.value = ids.join(',');
+          orderInput.dispatchEvent(new Event('input', { bubbles: true }));
           form.hidden = false;
           liveRegion.textContent = Drupal.t('A nova ordem foi alterada. Salve para aplicá-la.');
         };

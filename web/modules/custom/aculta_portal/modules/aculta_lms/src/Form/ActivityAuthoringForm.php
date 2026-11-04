@@ -55,6 +55,8 @@ final class ActivityAuthoringForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     [$course, $lesson, $activity] = $this->routeEntities();
+    $form['#attributes']['data-aculta-unsaved-changes'] = TRUE;
+    $form['#attached']['library'][] = 'aculta_lms/unsaved_changes';
     $configuration = $activity ? $this->decodeConfiguration((string) $activity->get('answer_config')->value) : [];
     $type = (string) ($activity?->get('type')->value ?? 'free_text');
     $typeOptions = [
