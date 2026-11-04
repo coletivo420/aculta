@@ -32,6 +32,8 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
     'collection' => '/painel-administrativo/configuracoes/desenvolvimento/patches-aculta',
     'add-form' => '/painel-administrativo/configuracoes/desenvolvimento/patches-aculta/adicionar',
     'edit-form' => '/painel-administrativo/configuracoes/desenvolvimento/patches-aculta/{aculta_patch}',
+    'enable-form' => '/painel-administrativo/configuracoes/desenvolvimento/patches-aculta/{aculta_patch}/habilitar',
+    'disable-form' => '/painel-administrativo/configuracoes/desenvolvimento/patches-aculta/{aculta_patch}/desabilitar',
     'delete-form' => '/painel-administrativo/configuracoes/desenvolvimento/patches-aculta/{aculta_patch}/excluir',
   ],
   config_export: ['id', 'label', 'status', 'package', 'version', 'issue_url', 'patch', 'source_url', 'source_hash'],

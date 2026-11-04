@@ -1,5 +1,17 @@
 # Changelog — aculta_patcher
 
+## 0.1.0-rc.3 — operações de status na coleção — 2026-11-03
+
+- O dropdown de operações usa o rótulo `Editar` e oferece `Habilitar` para
+  patches desabilitados e `Desabilitar` para patches habilitados.
+- Habilitar/desabilitar abre confirmação POST protegida por permissão; o estado
+  vale para a próxima exportação/build Composer.
+- Cache rebuild e rotas de confirmação PASS no Runtime; renderização das
+  operações confirmou `Editar, Desabilitar` no ativo e `Editar, Habilitar` no
+  desabilitado. PHP lint e PHPCS Drupal/DrupalPractice PASS. `updatedb:status`
+  sem pendências; `config:status` sem diferenças. Navegador e testes não foram
+  executados.
+
 ## 0.1.0-rc.2 — descoberta automática dos patches Composer — 2026-11-03
 
 - A coleção administrativa importa de forma idempotente os patches locais ainda

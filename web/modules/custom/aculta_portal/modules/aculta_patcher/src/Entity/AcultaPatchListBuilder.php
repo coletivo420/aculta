@@ -67,4 +67,32 @@ final class AcultaPatchListBuilder extends ConfigEntityListBuilder {
     return $row;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getDefaultOperations(EntityInterface $entity/* , ?CacheableMetadata $cacheability = NULL */) {
+    $args = func_get_args();
+    $operations = parent::getDefaultOperations(...$args);
+    assert($entity instanceof AcultaPatch);
+
+    if (isset($operations['edit'])) {
+      $operations['edit']['title'] = $this->t('Editar');
+    }
+    if ($entity->status()) {
+      $operations['disable'] = [
+        'title' => $this->t('Desabilitar'),
+        'weight' => 40,
+        'url' => $this->ensureDestination($entity->toUrl('disable-form')),
+      ];
+    }
+    else {
+      $operations['enable'] = [
+        'title' => $this->t('Habilitar'),
+        'weight' => 40,
+        'url' => $this->ensureDestination($entity->toUrl('enable-form')),
+      ];
+    }
+    return $operations;
+  }
+
 }

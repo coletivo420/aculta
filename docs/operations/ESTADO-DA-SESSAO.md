@@ -605,3 +605,10 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Validações:** Composer repatch aplicou os cinco patches; Composer validate válido com avisos de constraints exatas; PHP lint e PHPCS Drupal/DrupalPractice do Patcher PASS; `git diff --check` PASS; cache rebuild PASS. Testes automatizados e navegador não foram executados.
 - **Bloqueio não relacionado corrigido:** o cache rebuild encontrou conflito de propriedade herdada `$routeMatch` em dois formulários LMS que ainda estavam não rastreados; renomeei apenas a propriedade local para `$currentRouteMatch` em `LessonAuthoringForm.php` e `ActivityAuthoringForm.php`. Esses arquivos continuam fora do commit do Patcher.
 - **Arquivos da entrega:** módulo `aculta_patcher` (importer, entidade, list builder, schema, serviços, README, CHANGELOG e versão); `composer.json`/lock, `patches-aculta.json`, `patches.lock.json`, quatro patches; cinco itens de Config Sync; status do componente, índice README e este handoff. Publicação pendente.
+
+## Continuação — operações de ativação no ACULTA Patcher — 2026-11-03
+
+- O dropdown mantém `Editar` como ação principal e apresenta `Desabilitar` nos registros ativos ou `Habilitar` nos inativos. Cada ação abre formulário ConfirmForm POST, exige `administer aculta patches` e redireciona à coleção; o estado vale para o próximo build após exportação.
+- Rotas validadas no Runtime: `/painel-administrativo/configuracoes/desenvolvimento/patches-aculta/{aculta_patch}/habilitar` e `/desabilitar`. A renderização com contexto administrativo mostrou `Editar, Desabilitar` e, em estado inativo simulado sem salvar, `Editar, Habilitar`.
+- **Validações:** cache rebuild, PHP lint, PHPCS Drupal/DrupalPractice, `updatedb:status` sem pendências, `config:status` sem diferenças. Não houve escrita de configuração/dados; os testes e o navegador não foram executados.
+- **Arquivos:** list builder, entidade (templates de links), `AcultaPatchStatusForm`, rotas, versão/CHANGELOG/README do módulo, status e índice de componentes, e este handoff. Commit/push pendentes.
