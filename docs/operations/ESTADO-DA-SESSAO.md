@@ -1,5 +1,12 @@
 # Estado da sessão
 
+## Handoff — chave duplicada no mapa PortalUiHooks — 2026-11-03
+
+- Removida a segunda declaração idêntica do token `event-date-actions` em `web/themes/custom/aculta420/src/Hook/PortalUiHooks.php`; o mapeamento restante preserva a classe `aculta-event-date-actions`.
+- `php -l` e `git diff --check` passaram. Reanálise `upgrade_status:analyze aculta420` não aponta a chave duplicada; ainda lista dois avisos `Ignore` de UI Patterns em `web/core/includes/bootstrap.inc`.
+- O gate `validate-aculta420-foundation.php` falha na verificação existente da camada Bootstrap do tema; não relacionada à alteração. Nenhum teste foi executado.
+- Publicação concluída no commit `0fcdbe6f802d8267d6247ca461035a2f45f2711d`, enviado por fast-forward a `origin/dev`; Runtime é o checkout compartilhado e está no mesmo HEAD.
+
 ## Handoff — alerta Upgrade Status em ACULTA MCP — 2026-11-03
 
 - Corrigida a propriedade injetada `entityTypeManager` em `McpAccessSettingsForm`: `private readonly` passou a `protected readonly`, para ficar visível ao `DependencySerializationTrait` herdado de `FormBase`.
