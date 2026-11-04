@@ -60,8 +60,9 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 DrupalPractice em PHP registra zero erros e zero avisos. A correção renomeou
 somente a nova classe utilitária de limites ZIP e seu teste para UpperCamelCase;
 identificadores históricos H5P de descoberta Drupal foram preservados. Imports
-e indentação foram ajustados. Unit focal do limite ZIP: 6 testes/40 asserções
-PASS; PHP lint e `git diff --check` PASS. A contagem de 263 erros/33 avisos de
+e indentação foram ajustados. Unit H5P: 34 testes/139 asserções PASS; Kernel:
+18 testes/480 asserções PASS, com 7 depreciações upstream Core/contrib. PHP lint
+e `git diff --check` PASS. A contagem de 263 erros/33 avisos de
 2026-10-29 é histórica e não representa o gate atual. O restante de F15 segue
 pendente conforme a linha da fase, incluindo runtime e integrações HTTP.
 

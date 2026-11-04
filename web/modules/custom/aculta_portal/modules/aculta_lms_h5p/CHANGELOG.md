@@ -3,7 +3,7 @@
 - O gate integral Drupal/DrupalPractice agora não registra erros nem avisos.
 - A classe utilitária recém-criada de limites de ZIP e seu teste seguem UpperCamelCase; os identificadores H5P legados usados pela descoberta Drupal permanecem intactos.
 - Referências de namespaces Drupal usam imports, a consulta do upgrade mantém seus parâmetros explícitos e a fixture de Kernel segue a indentação Drupal.
-- Unit H5P: 34 testes/139 asserções PASS, incluindo os 6/40 do limite ZIP. PHPCS integral Drupal/DrupalPractice: 0 erros/avisos; PHP lint dos arquivos alterados e `git diff --check` PASS. Kernel não foi validado neste worktree: o bootstrap encontrou dois roots Drupal e falhou ao redeclarar `system_hook_info`; repetir após sincronização.
+- Unit H5P: 34 testes/139 asserções PASS, incluindo os 6/40 do limite ZIP; Kernel H5P: 18 testes/480 asserções PASS, com 7 depreciações upstream Core/contrib. PHPCS integral Drupal/DrupalPractice: 0 erros/avisos; PHP lint e `git diff --check` PASS. Runtime após sincronização somente de código: `drush cr` PASS, atualização de banco ausente, configuração limpa e extensão reporta dev.174. O HEAD Git do Runtime foi preservado por alterações paralelas locais.
 
 ## 0.4.0-dev.173 — corrige consultas do editor de bibliotecas
 
