@@ -10,7 +10,7 @@
 
 ## Fase 2 — Catálogo SDC e integração Twig
 
-**Status: implementada em `1.1.0-dev.1`; validação de consumidores pendente.**
+**Status: integrada em `1.1.0-dev.2`; validação de consumidores pendente.**
 
 - Ten components with strict schemas, local assets, responsive CSS, and
   progressive enhancement for mobile navigation.
@@ -19,14 +19,14 @@
   system color-scheme detection is enabled.
 - Drush gate validates component discovery, schemas, assets, and isolated
   rendering.
+- ACULTA Maps supplies neutral popup render arrays; the active theme chooses
+  the component and Leaflet/Google reuse cloned, inert rendered templates.
 
 ### Pendências antes de promover a RC
 
 - Revisão visual Firefox em larguras móveis e amplas, nos modos claro e escuro,
   com zoom e teclado.
 - Revisão assistiva das páginas reais que usam pager, mensagens e teasers.
-- Integrar e validar `map-popup` no fluxo Leaflet do owner `aculta_maps` quando
-  o contrato neutro para conteúdo do popup estiver acordado.
 - Não trocar tiles OSM por CartoDB nem introduzir endpoint de pontos sem decisão
   e revisão dos contratos de privacidade, acesso, cache e purpose.
 

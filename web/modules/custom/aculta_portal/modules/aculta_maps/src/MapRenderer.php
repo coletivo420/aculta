@@ -37,6 +37,7 @@ final class MapRenderer {
     $provider = $googleKey ? 'google' : 'openstreetmap';
     $mapId = Html::getId((string) ($options['id'] ?? 'aculta-map'));
     $markers = [];
+    $popupTemplates = [];
     foreach ($options['markers'] ?? [] as $marker) {
       if (!is_array($marker) || !is_numeric($marker['lat'] ?? NULL) || !is_numeric($marker['lng'] ?? NULL)) {
         continue;
@@ -50,13 +51,29 @@ final class MapRenderer {
         $latitude = round($latitude, 2);
         $longitude = round($longitude, 2);
       }
-      $markers[] = [
+      $label = trim((string) ($marker['label'] ?? '')) ?: 'Local';
+      $popupId = Html::getId($mapId . '-popup-' . count($markers));
+      $markerData = [
         'lat' => $latitude,
         'lng' => $longitude,
-        'label' => (string) ($marker['label'] ?? ''),
+        'label' => $label,
         'description' => (string) ($marker['description'] ?? ''),
-        'url' => (string) ($marker['url'] ?? ''),
-        'routeUrl' => (string) ($marker['routeUrl'] ?? ''),
+        'url' => $this->safePopupUrl($marker['url'] ?? NULL),
+        'routeUrl' => $this->safePopupUrl($marker['routeUrl'] ?? NULL),
+        'popupId' => $popupId,
+      ];
+      $markers[] = $markerData;
+      $popupTemplates[$popupId] = [
+        '#theme' => 'aculta_maps_popup_template',
+        '#popup_id' => $popupId,
+        '#popup' => [
+          '#theme' => 'aculta_maps_popup_content',
+          '#title' => $markerData['label'],
+          '#url' => $markerData['url'],
+          '#category' => (string) ($marker['category'] ?? ''),
+          '#address' => $markerData['description'],
+          '#route_url' => $markerData['routeUrl'],
+        ],
       ];
     }
 
@@ -89,6 +106,9 @@ final class MapRenderer {
         ],
       ],
     ];
+    if ($popupTemplates !== []) {
+      $build['popup_templates'] = $popupTemplates;
+    }
     if ($googleKey) {
       $build['#attached']['drupalSettings']['acultaMaps'][$mapId]['googleApiKey'] = $googleKey;
     }
@@ -127,6 +147,20 @@ final class MapRenderer {
       ];
     }
     return $build;
+  }
+
+  /**
+   * Keeps only same-site relative URLs and HTTPS links in popup render data.
+   */
+  private function safePopupUrl(mixed $value): string {
+    if (!is_string($value) || $value === '' || preg_match('/[\x00-\x20]/', $value) || str_starts_with($value, '//')) {
+      return '';
+    }
+    $scheme = parse_url($value, PHP_URL_SCHEME);
+    if ($scheme === NULL) {
+      return parse_url($value) !== FALSE ? $value : '';
+    }
+    return is_string($scheme) && strtolower($scheme) === 'https' ? $value : '';
   }
 
 }

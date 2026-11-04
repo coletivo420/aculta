@@ -1,0 +1,6 @@
+<article data-portal-ui="map-popup">
+  <h2>{{ title }}</h2>
+  {% if address %}<p>{{ address }}</p>{% endif %}
+  {% if url %}<a href="{{ url }}">{{ 'Ver detalhes'|t }}</a>{% endif %}
+  {% if route_url %}<a href="{{ route_url }}" target="_blank" rel="noopener noreferrer">{{ 'Ver rota'|t }}</a>{% endif %}
+</article>

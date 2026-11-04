@@ -5,6 +5,7 @@
   'use strict';
 
   const clusterDistance = 52;
+  const popupTemplates = new WeakMap();
 
   Drupal.behaviors.acultaMaps = {
     attach(context) {
@@ -20,6 +21,10 @@
         if (!settings) {
           return;
         }
+        popupTemplates.set(element, new Map(
+          Array.from(element.querySelectorAll('template[data-aculta-map-popup-template]'))
+            .map((template) => [template.dataset.popupId, template.content.cloneNode(true)]),
+        ));
         element.dataset.acultaMapsReady = 'true';
         if (settings.provider === 'google' && settings.googleApiKey) {
           loadGoogleMaps(settings.googleApiKey)
@@ -50,7 +55,7 @@
       layer.clearLayers();
       clusterMarkers(settings.markers || [], map).forEach((group) => {
         if (group.length === 1) {
-          addLocationMarker(layer, group[0]);
+          addLocationMarker(layer, group[0], element);
         }
         else {
           addClusterMarker(layer, group, map);
@@ -115,29 +120,7 @@
         const position = { lat: marker.lat, lng: marker.lng };
         const pin = new window.google.maps.Marker({ map, position, title: marker.label });
         bounds.extend(position);
-        const content = document.createElement('div');
-        const title = document.createElement('strong');
-        title.textContent = marker.label;
-        content.appendChild(title);
-        if (marker.description) {
-          const description = document.createElement('p');
-          description.textContent = marker.description;
-          content.appendChild(description);
-        }
-        if (isSafeUrl(marker.url)) {
-          const link = document.createElement('a');
-          link.href = marker.url;
-          link.textContent = Drupal.t('Ver detalhes');
-          content.appendChild(link);
-        }
-        if (isSafeUrl(marker.routeUrl)) {
-          const route = document.createElement('a');
-          route.href = marker.routeUrl;
-          route.target = '_blank';
-          route.rel = 'noopener noreferrer';
-          route.textContent = Drupal.t('Ver rota');
-          content.appendChild(route);
-        }
+        const content = getPopupContent(element, marker);
         const info = new window.google.maps.InfoWindow({ content });
         pin.addListener('click', () => info.open({ anchor: pin, map }));
       });
@@ -214,8 +197,22 @@
     return Array.from(groups.values());
   }
 
-  function addLocationMarker(layer, marker) {
+  function addLocationMarker(layer, marker, element) {
     const pin = window.L.marker([marker.lat, marker.lng], { title: marker.label }).addTo(layer);
+    pin.bindPopup(getPopupContent(element, marker));
+  }
+
+  /**
+   * Clones theme-rendered popup markup when present, with a safe DOM fallback.
+   */
+  function getPopupContent(element, marker) {
+    const templateContent = popupTemplates.get(element)?.get(marker.popupId);
+    if (templateContent) {
+      const content = document.createElement('div');
+      content.appendChild(templateContent.cloneNode(true));
+      return content;
+    }
+
     const content = document.createElement('div');
     const title = document.createElement('strong');
     title.textContent = marker.label;
@@ -239,7 +236,7 @@
       route.textContent = Drupal.t('Ver rota');
       content.appendChild(route);
     }
-    pin.bindPopup(content);
+    return content;
   }
 
   function addClusterMarker(layer, markers, map) {

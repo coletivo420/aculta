@@ -1,5 +1,14 @@
 # Changelog — ACULTA420 V2
 
+## 1.1.0-dev.2 — 2026-11-04
+
+- Integrated the `map-popup` SDC with ACULTA Maps theme hooks. The map module
+  supplies escaped, provider-neutral render data and the theme selects the SDC.
+- Leaflet and Google InfoWindows clone the same inert server-rendered template;
+  popup HTML is not transferred through `drupalSettings`.
+- Added the optional `route_url` popup prop. Validation and visual review remain
+  pending.
+
 ## 1.1.0-dev.1 — 2026-11-04
 
 - Added ten schema-enforced Single Directory Components for buttons, badges,

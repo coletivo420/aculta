@@ -117,7 +117,7 @@ Estas regras valem para qualquer contraparte listada aqui. A fonte normativa é 
 | `web/modules/custom/aculta_portal/modules/aculta_events_openstreetmap` | 0.1.0-dev.1 | OAuth e integração de edição OSM para locais | Sem contraparte específica; telas de configuração administrativa usam o tema de administração Drupal | Dev; validação OAuth/escrita OSM segue gates do módulo |
 | `web/modules/custom/aculta_portal/modules/aculta_faq` | 0.1.0-dev.2 | Perguntas frequentes e blocos editáveis com texto sanitizado | Conteúdo segue renderização genérica de Node/Block do Drupal; sem componente visual próprio identificado | Dev |
 | `web/modules/custom/aculta_portal/modules/aculta_lms_agenda` | 0.1.0-dev.1 | Provedor de prazos e eventos de turma, restrito às matrículas | Sem contraparte própria; agenda apresentada pelo `aculta_calendar` | Dev; acesso de matrícula coberto no roadmap LMS Agenda |
-| `web/modules/custom/aculta_portal/modules/aculta_maps` | 0.1.0-dev.5 | API compartilhada de mapas e geocodificação | Tokens `map-*` mapeados em `PortalUiHooks`; motor Leaflet e atribuição alimentam a marcação neutra | Dev; fronteira módulo–tema e Kernel passam; revisão editorial/visual pendente |
+| `web/modules/custom/aculta_portal/modules/aculta_maps` | 0.1.0-dev.6 | API compartilhada de mapas e geocodificação | Popup neutro via hook de tema; ACULTA420 V2 seleciona `map-popup` e ambos providers consomem o template | Dev; revisão visual do popup e validação Runtime pendentes |
 
 ### Módulos ACULTA fora do Aculta Portal
 

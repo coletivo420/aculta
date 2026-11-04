@@ -5,3 +5,5 @@
 .map-popup__title{font-size:var(--font-size-sm);line-height:1.35;margin:0;overflow-wrap:anywhere}
 .map-popup__title a{color:var(--color-brand-primary);min-block-size:var(--tap-target-min);overflow-wrap:anywhere;text-decoration:underline;text-underline-offset:.15em}
 .map-popup__title a:focus-visible{outline:3px solid var(--color-brand-highlight);outline-offset:2px}
+.map-popup__route{align-items:center;color:var(--color-brand-primary);display:inline-flex;min-block-size:var(--tap-target-min);text-decoration:underline;text-underline-offset:.15em}
+.map-popup__route:focus-visible{outline:3px solid var(--color-brand-highlight);outline-offset:2px}

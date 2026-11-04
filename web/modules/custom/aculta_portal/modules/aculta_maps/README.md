@@ -19,6 +19,10 @@ OpenStreetMap ou Nominatim diretamente.
 - `aculta_maps.renderer` (`MapRenderer::build()`): recebe marcadores com `lat`,
   `lng`, `label`, `description`, `url`, `routeUrl` e `precision`. Coordenadas
   inválidas são descartadas; precisão `approximate` é arredondada a duas casas.
+  Para cada marcador válido, a renderização inclui um template inerte por meio
+  dos hooks `aculta_maps_popup_template` e `aculta_maps_popup_content`. O tema
+  ativo escolhe a apresentação; Leaflet/Google clonam o template quando o
+  marcador é aberto. O módulo não conhece IDs nem classes de SDC.
 - `aculta_maps.geocoding` (`GeocodingService::geocode()`): retorna `lat`/`lng`
   ou `NULL`. Nominatim é usado em todos os engines e respeita limite global de
   uma chamada por segundo. Google Geocoding não é chamado pela aplicação.

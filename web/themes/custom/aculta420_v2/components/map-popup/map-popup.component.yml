@@ -17,6 +17,9 @@ props:
       type: [string, 'null']
     address:
       type: [string, 'null']
+    route_url:
+      type: [string, 'null']
+      format: uri-reference
 slots:
   thumbnail:
     title: Miniatura
