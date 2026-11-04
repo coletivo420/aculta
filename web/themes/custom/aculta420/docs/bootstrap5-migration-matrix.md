@@ -12,8 +12,9 @@ expõe regiões `header`, `nav_branding`, `nav_main`, `nav_additional`,
 
 Há divergência no checkout limpo de `origin/dev` (HEAD `0d5a8123e5`):
 `composer.json` e `composer.lock` não declaram `drupal/bootstrap5`, enquanto o
-Runtime tem o pacote. `config/sync/core.extension.yml` também não habilita o
-tema no HEAD limpo. Essa migração não modifica requisito nem lock.
+Runtime tem o pacote. Esta entrega registra `bootstrap5: 0` em
+`config/sync/core.extension.yml`; a configuração ativa no Runtime ainda não o
+habilita. Essa migração não modifica requisito nem lock.
 `composer show drupal/bootstrap5` falha neste checkout porque o pacote não está
 declarado/resolvido; a confirmação `5.0.x-dev` é da instalação do Runtime.
 Não houve `composer update` nem alteração de versão. A reconciliação do
