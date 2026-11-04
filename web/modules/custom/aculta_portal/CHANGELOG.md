@@ -1,3 +1,13 @@
+## 0.4.1-dev.73 — completa revisão docente de respostas LMS
+
+- `aculta_lms` conecta as respostas enviadas ao painel de cada turma, limita a
+  listagem aos estudantes ativos daquela turma e oferece revisão segura com
+  nota, feedback persistido por Comment API e acesso controlado a anexos.
+- Kernel do fluxo docente 1/34; suíte Kernel LMS 33/996 e Unit LMS 234/828
+  PASS. PHPCS Drupal, lint e `git diff --check` PASS. Runtime está limpo antes
+  do push; sincronizar o código após publicar. Inspeção visual continua
+  pendente.
+
 ## 0.4.1-dev.72 — recupera migração de autores de revisão do Group
 
 - `update_11010` recupera a instalação parcial de `revision_uid`, cria a coluna

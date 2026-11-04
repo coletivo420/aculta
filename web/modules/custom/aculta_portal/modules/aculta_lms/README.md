@@ -294,6 +294,16 @@ proporcional aos acertos, desconta opções erradas e limita o resultado mínimo
 a zero. O educador pode ajustar a nota de respostas abertas pela avaliação
 nativa do LMS.
 
+No painel de cada turma, **Ver respostas e avaliações** abre a lista de
+tentativas dos estudantes atualmente matriculados naquela turma. A lista é
+isolada por curso e turma, ordenada da mais recente para a mais antiga e
+apresentada em páginas de 50 respostas. O detalhe mostra o conteúdo enviado e,
+quando houver um anexo válido, usa a rota privada da própria resposta. Somente
+um educador com `grade students` no curso e com a turma relacionada ao curso
+pode consultar ou avaliar. A nota deve estar entre 0 e 100; feedback não vazio
+é salvo como comentário publicado do Core e mantém a notificação existente.
+Rotas em `/painel-administrativo` permanecem restritas ao domínio principal.
+
 **F8 está implementada nesta branch e seus testes automatizados passaram.** A
 suíte Unit e Kernel do `aculta_lms` passou (15 testes, 259 assertions), cobrindo
 Answer/Comment reais, versões anteriores, reavaliação, exclusão, limpeza por

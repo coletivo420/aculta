@@ -30,6 +30,10 @@ use Drupal\profile\ProfileStorageInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannel;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\group\Entity\GroupRelationshipType;
+use Drupal\group\Entity\GroupType;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
@@ -41,6 +45,90 @@ use Symfony\Component\DependencyInjection\Reference;
  * needed to compile the LMS integration routes without product stubs.
  */
 trait AcultaLmsDependencyHarnessTrait {
+
+  /**
+   * Installs ACULTA course/class Group types without any LMS contrib modules.
+   *
+   * The schemas are installed here because the membership role field is a
+   * Group relationship field and Drupal 12 requires its entity schema first.
+   */
+  protected function prepareAcultaLmsGroupTypes(): void {
+    // The LMS installs its answer-feedback Comment type. Keep this shared
+    // harness complete even in focused tests that do not exercise comments.
+    if (!$this->container->get('module_handler')->moduleExists('comment')) {
+      $this->container->get('module_installer')->install(['comment'], FALSE);
+    }
+    $this->installConfig(['comment']);
+    $this->installEntitySchema('comment');
+
+    $this->installConfig(['group']);
+    foreach (['user', 'group', 'group_relationship', 'group_config_wrapper'] as $entityType) {
+      $this->installEntitySchema($entityType);
+    }
+
+    foreach (['lms_course' => 'Curso', 'lms_class' => 'Turma'] as $id => $label) {
+      if (!GroupType::load($id)) {
+        GroupType::create([
+          'id' => $id,
+          'label' => $label,
+          'creator_membership' => FALSE,
+          'creator_roles' => [],
+        ])->save();
+      }
+    }
+
+    $this->installRelationshipType('lms_course', 'group_membership');
+    $this->installRelationshipType('lms_class', 'group_membership');
+
+    if (!FieldStorageConfig::load('group_relationship.group_roles')) {
+      FieldStorageConfig::create([
+        'field_name' => 'group_roles',
+        'entity_type' => 'group_relationship',
+        'type' => 'entity_reference',
+        'settings' => ['target_type' => 'group_role'],
+        'cardinality' => -1,
+      ])->save();
+    }
+    foreach (['lms_course-group_membership', 'lms_class-group_membership'] as $bundle) {
+      if (!FieldConfig::load('group_relationship.' . $bundle . '.group_roles')) {
+        FieldConfig::create([
+          'field_name' => 'group_roles',
+          'entity_type' => 'group_relationship',
+          'bundle' => $bundle,
+          'label' => 'Group roles',
+          'settings' => ['handler' => 'default', 'handler_settings' => []],
+        ])->save();
+      }
+    }
+
+    $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
+    $this->container->get('group_relation_type.manager')->clearCachedPluginMaps();
+  }
+
+  /**
+   * Installs the ACULTA course-to-class Group relation after aculta_lms loads.
+   */
+  protected function prepareAcultaLmsClassRelationship(): void {
+    $this->installRelationshipType('lms_course', 'lms_classes');
+    $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
+    $this->container->get('group_relation_type.manager')->clearCachedPluginMaps();
+  }
+
+  /**
+   * Installs a Group relationship type if it is not already present.
+   */
+  protected function installRelationshipType(string $groupType, string $pluginId): void {
+    $id = $groupType . '-' . $pluginId;
+    if (GroupRelationshipType::load($id)) {
+      return;
+    }
+    GroupRelationshipType::create([
+      'id' => $id,
+      'group_type' => $groupType,
+      'relation_type' => $pluginId,
+      'plugin_config' => ['group_cardinality' => 0, 'entity_cardinality' => 1],
+    ])->save();
+  }
 
   /**
    * Adds the real Portal, Messenger, LMS, and Studio services used by LMS.

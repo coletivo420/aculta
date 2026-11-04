@@ -159,6 +159,7 @@ aculta_lms.answer_reviews:
     _custom_access: 'aculta_lms.answer_review_access::access'
   options:
     _admin_route: true
+    no_cache: true
     parameters:
       course:
         type: entity:group
@@ -174,6 +175,7 @@ aculta_lms.answer_review:
     _custom_access: 'aculta_lms.answer_review_access::access'
   options:
     _admin_route: true
+    no_cache: true
     parameters:
       course:
         type: entity:group

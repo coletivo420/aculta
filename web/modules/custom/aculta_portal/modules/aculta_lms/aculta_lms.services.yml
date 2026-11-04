@@ -1,4 +1,7 @@
 services:
+  Drupal\aculta_lms\Hook\CourseClassRelationHooks:
+    class: Drupal\aculta_lms\Hook\CourseClassRelationHooks
+
   Drupal\aculta_lms\Access\ClassPermissionCalculator:
     arguments: ['@config.factory', '@entity_type.manager']
     tags:
@@ -156,10 +159,10 @@ services:
     arguments: ['@entity_type.manager', '@aculta_lms.notice_eligibility']
   aculta_lms.answer_review_access:
     class: Drupal\aculta_lms\Access\AnswerReviewAccessCheck
-    arguments: ['@aculta_lms.notice_eligibility', '@current_user']
+    arguments: ['@aculta_lms.notice_eligibility', '@current_user', '@aculta_lms.group_membership_reader']
   aculta_lms.answer_review_controller:
     class: Drupal\aculta_lms\Controller\AnswerReviewController
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@aculta_lms.group_membership_reader', '@date.formatter']
   Drupal\aculta_lms\Controller\AcultaAnswerFileDownloadController:
     class: Drupal\aculta_lms\Controller\AcultaAnswerFileDownloadController
     autowire: true

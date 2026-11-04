@@ -1,5 +1,26 @@
 # Estado da sessão
 
+## Handoff — revisão docente e estabilidade da suíte LMS — 2026-11-03
+
+- Fluxo de revisão de respostas concluído no código: listagem paginada e
+  limitada à turma/estudantes ativos, verificação de curso-turma/matrícula,
+  nota validada (0–100), feedback via Comment API e arquivo privado protegido.
+  A permissão `administer lms` agora tem serviço de hook registrado.
+- Harnesses Kernel ajustados para os tipos Group/Comment e relação LMS atuais,
+  sem carregar `lms`/`lms_classes` contrib legados.
+- Validações: Unit LMS 234/828 PASS; Kernel LMS 33/996 PASS; PHPCS Drupal,
+  lint PHP e `git diff --check` PASS. O Kernel ainda emite 62 depreciações
+  upstream de Core/contrib; alerta de diretório `browser_output` não gravável.
+- Runtime `aculta_runtime` verificado antes da entrega: Drupal 11.5.0-beta1,
+  PHP 8.5.12, sem updates pendentes nem diferenças de Config Sync. A mudança
+  não altera schema nem configuração; após push, sincronizar código e limpar
+  cache. Inspeção visual do painel fica pendente.
+- Arquivos desta entrega: módulo `web/modules/custom/aculta_portal/modules/aculta_lms/`
+  (controllers, formulário, acesso, membership reader, services/routing,
+  testes e changelog), metadados/changelog do `aculta_portal` e este handoff.
+- Próxima etapa do objetivo maior: payments e, depois, resolver item a item as
+  pendências do `updatedb:status`.
+
 ## Handoff — espaçamento Studio e escopo de Próximos eventos, 2026-11-03
 
 - Dashboard Studio recebeu intervalo de 12 px e reset de margens nos títulos internos (`studio.css`); com CSS candidato em Firefox ESR, todas as verificações específicas passaram em 320/390/768/1280 px, grade 1/2 colunas e sem overflow. A suíte ampla teve 126 PASS, 2 FAIL (Montserrat candidata não carregou; verificação de moldura das abas secundárias) e 21 SKIP condicionais; os FAILs foram preservados no relatório externo `$SUITE_OUT/studio-spacing-dev36-20261103/results.json`.

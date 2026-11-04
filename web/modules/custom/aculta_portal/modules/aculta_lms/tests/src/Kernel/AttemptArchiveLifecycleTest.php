@@ -94,8 +94,11 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
       'field.field.group_relationship.lms_course-group_membership.group_roles',
     ] as $config_id) {
       $path = DRUPAL_ROOT . '/../config/sync/' . $config_id . '.yml';
+      $data = Yaml::decode(file_get_contents($path));
+      // Group 4 no longer defines creator_wizard in its GroupType schema.
+      unset($data['creator_wizard']);
       $this->container->get('config.factory')->getEditable($config_id)
-        ->setData(Yaml::decode(file_get_contents($path)))
+        ->setData($data)
         ->save();
     }
     $this->container->get('config.factory')->getEditable('group.type.lms_course')

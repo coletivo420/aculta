@@ -1,3 +1,26 @@
+## 0.1.0-dev.180 — completa revisão docente de respostas por turma
+
+- O painel de turma passou a oferecer a lista de respostas. A consulta é
+  paginada e filtra por curso, turma e estudantes ativos atualmente vinculados.
+- A autorização agora confirma a relação `lms_classes`, permissão `grade
+  students` e matrícula do autor da resposta na turma selecionada. Isso impede
+  que uma avaliação de outra turma do mesmo curso apareça por troca de URL.
+- O detalhe apresenta o payload enviado com escape, referência segura para
+  download privado e formulário próprio de nota (0–100) e feedback. A gravação
+  usa transação de banco; feedback não vazio cria comentário publicado via Core
+  Comment API para manter histórico e notificações.
+- Kernel `AnswerReviewWorkflowKernelTest`: 1 teste / 34 assertions PASS;
+  suíte Kernel LMS: 33 testes / 996 assertions PASS (62 depreciações de Core e
+  contrib ainda presentes),
+  incluindo isolamento entre duas turmas, permissão de lista, payload, nota,
+  feedback e comentário persistido. Unit LMS: 234 testes / 828 assertions
+  PASS (4 depreciações PHPUnit). O Kernel reporta depreciações upstream; a
+  validação visual de navegador permanece pendente.
+- PHPCS Drupal, PHP lint e `git diff --check` PASS. Runtime pré-push:
+  `updatedb:status` sem pendências e `config:status` sem diferenças. Depois do
+  push, sincronizar o código e limpar o cache; não há mudanças de schema ou
+  configuração planejadas.
+
 ## 0.1.0-dev.179 — abre páginas individuais de aula na jornada
 
 - A jornada do estudante agora liga cada aula publicada a uma página própria,

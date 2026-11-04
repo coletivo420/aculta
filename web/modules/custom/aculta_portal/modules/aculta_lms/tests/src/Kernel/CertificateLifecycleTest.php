@@ -54,7 +54,7 @@ final class CertificateLifecycleTest extends KernelTestBase {
   protected static $modules = [
     'key',
     'system', 'domain', 'user', 'file', 'field', 'filter', 'image', 'media', 'options', 'text', 'entity_print',
-    'entity_usage', 'aculta_image', 'aculta_file_uploader', 'flexible_permissions', 'group', 'views', 'lms',
+    'entity_usage', 'aculta_image', 'aculta_file_uploader', 'flexible_permissions', 'group', 'views',
   ];
 
   /**
@@ -70,8 +70,10 @@ final class CertificateLifecycleTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->prepareAcultaLmsGroupTypes();
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
-    $this->installConfig(['group', 'lms']);
+    $this->prepareAcultaLmsClassRelationship();
+    $this->installConfig(['group']);
     $this->installEntitySchema('action');
     $this->installEntitySchema('user');
     $this->installSchema('user', ['users_data']);

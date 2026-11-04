@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Kernel;
 
+use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\Contract\PaymentOperationsInterface;
 use Drupal\aculta_lms\CourseOrderEnrollmentManagerInterface;
@@ -50,7 +51,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system', 'user', 'file', 'image', 'media', 'field', 'comment', 'options', 'entity_print', 'domain',
+    'system', 'user', 'file', 'image', 'media', 'field', 'filter', 'comment', 'options', 'entity_print', 'domain',
     'entity_usage', 'key', 'aculta_image', 'aculta_file_uploader',
     'text', 'views', 'group', 'flexible_permissions',
   ];
@@ -68,7 +69,8 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installConfig(['field', 'comment']);
+    $this->prepareAcultaLmsGroupTypes();
+    $this->installConfig(['field', 'comment', 'filter']);
     $this->installEntitySchema('user');
     $this->installEntitySchema('comment');
     $this->installSchema('comment', ['comment_entity_statistics']);
@@ -84,6 +86,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    */
   public function testInstallRegistersOnlyTheOptionalIntegrationService(): void {
     $this->assertTrue($this->container->get('module_installer')->install(['aculta_lms'], FALSE));
+    $this->prepareAcultaLmsClassRelationship();
     $container = \Drupal::getContainer();
     $this->assertTrue($container->get('module_handler')->moduleExists('aculta_lms'));
     foreach (['lms', 'lms_classes', 'lms_answer_plugins', 'lms_answer_comments'] as $contrib_module) {
@@ -157,12 +160,13 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    */
   public function testAnswerSubmissionFormRestoresInjectedServicesAfterSerialization(): void {
     $this->assertTrue($this->container->get('module_installer')->install(['aculta_lms'], FALSE));
+    $this->prepareAcultaLmsClassRelationship();
     $form = AnswerSubmissionForm::create($this->container);
     $restored = unserialize(serialize($form));
 
     $currentRoute = new \ReflectionProperty(AnswerSubmissionForm::class, 'currentRoute');
     $this->assertTrue($currentRoute->isInitialized($restored));
-    $this->assertInstanceOf(\Drupal\Core\Routing\CurrentRouteMatch::class, $currentRoute->getValue($restored));
+    $this->assertInstanceOf(CurrentRouteMatch::class, $currentRoute->getValue($restored));
   }
 
   /**
@@ -170,6 +174,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    */
   public function testP2LearningEntityUpdateIsIdempotent(): void {
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    $this->prepareAcultaLmsClassRelationship();
     aculta_lms_update_10005();
     aculta_lms_update_10005();
     aculta_lms_update_10006();
@@ -259,7 +264,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
       'entity_id' => $attempt->id(),
       'field_name' => 'comments',
       'comment_type' => 'aculta_lms_answer_comment',
-      'comment_body' => 'Feedback do educador',
+      'comment_body' => ['value' => 'Feedback do educador', 'format' => 'plain_text'],
       'status' => 1,
     ]);
     $comment->save();
@@ -283,8 +288,9 @@ final class AcultaLmsInstallTest extends KernelTestBase {
   public function testClassPermissionConfigUpdateIsIdempotent(): void {
     require_once DRUPAL_ROOT . '/' . $this->container->get('extension.list.module')->getPath('aculta_lms') . '/aculta_lms.install';
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    $this->prepareAcultaLmsClassRelationship();
     $factory = $this->container->get('config.factory');
-    // Seed the former contrib config as raw storage: its schema is intentionally
+    // Seed former contrib config as raw storage: its schema is intentionally
     // unavailable in this kernel because no contrib LMS module is enabled.
     $this->container->get('config.storage')->write('lms_classes.settings', [
       'class_permission_mappings' => ['view group_node:aculta_lms_topic entity' => 'grade students'],
@@ -312,6 +318,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    */
   public function testAttemptArchivePersistsIsReadOnlyAndPurgesWithAccount(): void {
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    $this->prepareAcultaLmsClassRelationship();
     $this->installEntitySchema('user');
     $this->installEntitySchema('aculta_lms_attempt_archive');
     $administratorEntity = User::create([
@@ -363,6 +370,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    */
   public function testCertificateSnapshotIsPrivateToGenericRoutesAndSurvivesAccountDeletion(): void {
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    $this->prepareAcultaLmsClassRelationship();
     $this->installEntitySchema('user');
     $this->installEntitySchema('aculta_lms_certificate');
     $student = User::create(['name' => 'certificate-student', 'mail' => 'certificate@example.test', 'status' => 1]);
@@ -412,6 +420,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    */
   public function testCertificatePdfUsesEscapedSnapshotAndPrivateResponse(): void {
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    $this->prepareAcultaLmsClassRelationship();
     $this->installEntitySchema('aculta_lms_certificate');
     $code = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN0123456789';
     $certificate = $this->container->get('entity_type.manager')->getStorage('aculta_lms_certificate')->create([

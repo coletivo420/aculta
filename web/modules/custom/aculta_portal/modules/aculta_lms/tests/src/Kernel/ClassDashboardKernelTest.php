@@ -53,9 +53,6 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     'views',
     'options',
     'text',
-    'lms',
-    'lms_classes',
-    'aculta_lms',
   ];
 
   /**
@@ -77,7 +74,9 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     $portal_root = dirname($lms_root, 2);
     $this->classLoader->addPsr4('Drupal\\aculta_lms\\', $lms_root . '/src');
     $this->classLoader->addPsr4('Drupal\\aculta_studio\\', $portal_root . '/modules/aculta_studio/src');
-    $this->installConfig(['group', 'lms', 'lms_classes']);
+    $this->prepareAcultaLmsGroupTypes();
+    $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    $this->prepareAcultaLmsClassRelationship();
     $this->installEntitySchema('user');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('file', ['file_usage']);
@@ -94,7 +93,7 @@ final class ClassDashboardKernelTest extends KernelTestBase {
    * Checks contextual educator access and student denial for class metrics.
    */
   public function testEducatorDashboardAggregatesOnlyCurrentClassMembers(): void {
-    $owner = $this->createUser(['administer lms']);
+    $owner = $this->createUser();
     $educator = $this->createUser();
     $memberPending = $this->createUser();
     $memberPassed = $this->createUser();

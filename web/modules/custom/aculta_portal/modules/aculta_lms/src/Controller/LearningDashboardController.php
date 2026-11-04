@@ -145,6 +145,13 @@ final class LearningDashboardController {
           'group' => $group->id(),
         ]),
       )->toRenderable(),
+      'answer_reviews' => Link::fromTextAndUrl(
+        $this->t('Ver respostas e avaliações'),
+        Url::fromRoute('aculta_lms.answer_reviews', [
+          'course' => $course->id(),
+          'group' => $group->id(),
+        ]),
+      )->toRenderable(),
       '#cache' => ['max-age' => 0],
     ];
     CacheableMetadata::createFromRenderArray($build)
