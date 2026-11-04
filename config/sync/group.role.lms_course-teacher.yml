@@ -24,6 +24,7 @@ permissions:
   - 'delete own lms_classes relationship'
   - 'create aculta_document_viewer:course_document entity'
   - 'create aculta_document_viewer:course_document relationship'
+  - 'update own aculta_document_viewer:course_document entity'
   - 'edit group'
   - 'grade students'
   - 'revert group revisions'

@@ -1,5 +1,16 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.26 — edição contextual de documentos PDF do curso
+
+- A página de materiais lista documentos privados relacionados ao curso e
+  apresenta a criação/edição contextual por formulários existentes de Media e
+  Group; não cria bundle, arquivo ou relação paralelos.
+- Criação exige autorização de autoria do curso e permissão Group para criar a
+  relação. Edição confere curso→documento, Entity Access e `update own`; o papel
+  de educador não recebe `update any`.
+- Testes Unit de acesso, controller e formulário; rotas Studio verificadas.
+  Revisão visual/autenticada no browser permanece pendente.
+
 ## 0.1.0-dev.25 — sincroniza o vídeo do curso
 
 - Config Sync agora mantém `field_lms_videos` storage/config e widget do Group

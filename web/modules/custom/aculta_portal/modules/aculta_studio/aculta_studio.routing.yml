@@ -332,6 +332,36 @@ aculta_lms.course_materials_edit:
       course:
         type: entity:group
 
+aculta_lms.course_document_add:
+  path: '/ganjalab/educador/cursos/{course}/materiais/documentos/novo'
+  defaults:
+    _controller: 'aculta_lms_resources.course_document_controller:add'
+    _title: 'Adicionar documento ao curso'
+  requirements:
+    _custom_access: 'aculta_lms_resources.course_document_access:createAccess'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: courses
+    parameters:
+      course:
+        type: entity:group
+
+aculta_lms.course_document_edit:
+  path: '/ganjalab/educador/cursos/{course}/materiais/documentos/{media}/editar'
+  defaults:
+    _controller: 'aculta_lms_resources.course_document_controller:edit'
+    _title: 'Editar documento do curso'
+  requirements:
+    _custom_access: 'aculta_lms_resources.course_document_access:updateAccess'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: courses
+    parameters:
+      course:
+        type: entity:group
+      media:
+        type: entity:media
+
 aculta_lms.lesson_add:
   path: '/ganjalab/educador/cursos/{course}/aulas/nova'
   defaults:

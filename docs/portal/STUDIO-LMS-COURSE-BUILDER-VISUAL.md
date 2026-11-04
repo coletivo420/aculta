@@ -1,6 +1,6 @@
 # ACULTA Studio — LMS Course Builder: contrato visual e execução
 
-**Versão de design:** CB-UX 0.3.0-dev.9 · **Data:** 2026-11-04 · **Estado:** estrutura em cartões responsivos, CKEditor 5 filtrado, reordenação por arraste com controles acessíveis de fallback, prévia privada por aula, lista de materiais existentes e edição contextual de leituras/galerias/vídeos implementados; edição contextual de documentos e homologação visual seguem pendentes.
+**Versão de design:** CB-UX 0.3.0-dev.9 · **Data:** 2026-11-04 · **Estado:** estrutura em cartões responsivos, CKEditor 5 filtrado, reordenação por arraste com controles acessíveis de fallback, prévia privada por aula, lista de materiais existentes e edição contextual de leituras/galerias/vídeos/documentos implementados; homologação visual segue pendente.
 
 **Referências:** [Studio Visual](STUDIO-VISUAL-CONCEPT.md) · [Fluxos de edição](STUDIO-EDITOR-FLOWS.md) · [Roadmap Studio](STUDIO-MAGAZINE-ROADMAP.md) · [Roadmap funcional LMS](../modules/ACULTA-LMS-ROADMAP.md) · [LMS/Group](../modules/LMS-GROUP.md) · [Contratos LMS](LMS-INTEGRATION-CONTRACTS.md).
 
@@ -102,7 +102,7 @@ Desktop: arraste opcional restrito à lista de aulas ou à lista de atividades d
 | **0.3.3** | criação contextual de aulas e tipos de atividade suportados em entidades ACULTA | formulário, acesso e payload estão implementados; validação visual/Runtime pendente |
 | **0.3.4** | edição contextual com CKEditor 5/Form API, erros e salvamento real | formulário da aula usa CKEditor 5/Form API e `aculta_lms_lesson` com allowlist (parágrafos, títulos, listas, links, ênfase, citação e código); somente `lms_teacher` recebe o formato; valores `plain_text` legados são escapados antes da edição. Render é `processed_text`; edição do gabarito segue bloqueada após respostas. Integração funcional implementada; homologação visual e o erro JS residual do plugin pack ainda pendentes |
 | **0.3.5** | mover/reordenar, teclado e aviso de impacto em turmas | controles acima/abaixo e drag-and-drop por lista implementados; serialização por coleção, transação e Kernel. Homologação visual/acessível em browser pendente |
-| **0.3.6** | mídias, Gallery, PDF Viewer e H5P quando disponíveis | leituras, galerias, vídeos e documentos existentes listados via owners/Entity Access; PDF abre pelo canonical Media e formatter/viewer do owner; H5P e editor documental permanecem a confirmar por contrato e homologação, sem embed paralelo |
+| **0.3.6** | mídias, Gallery, PDF Viewer e H5P quando disponíveis | leituras, galerias, vídeos e documentos existentes listados via owners/Entity Access; documento PDF privado pode ser criado/alterado no contexto do curso reutilizando formulários Media/Group e o viewer canonical; edição limitada a autor com permissão Group `update own`; H5P segue a confirmar por contrato, sem embed paralelo |
 | **0.3.7** | prévia estudante e publicação | prévia privada de aula implementada sem respostas/dados de estudantes ou submit; prévia interativa, regras e publicação pendentes |
 | **0.3.8** | acessibilidade, testes, responsividade, documentação e homologação | gates Drupal 11+/LMS, evidências |
 
