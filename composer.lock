@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1ff85fdacd3915d40f755cd55fe7a4d2",
+    "content-hash": "d009034bb9ea70fbb3a168c8d79a33f3",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -7411,6 +7411,52 @@
             "homepage": "http://drupal.org/project/state_machine",
             "support": {
                 "source": "https://git.drupalcode.org/project/state_machine"
+            }
+        },
+        {
+            "name": "drupal/text_with_summary",
+            "version": "dev-2.0.x",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/text_with_summary.git",
+                "reference": "89c4282cf25259564ce7fa41b9dd70f7fe7f496d"
+            },
+            "require": {
+                "drupal/core": "^11.5 || ^12"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-2.0.x": "2.0.x-dev"
+                },
+                "drupal": {
+                    "version": "2.0.x-dev",
+                    "datestamp": "1791904493",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Dev releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "mfb",
+                    "homepage": "https://www.drupal.org/user/12302"
+                },
+                {
+                    "name": "smustgrave",
+                    "homepage": "https://www.drupal.org/user/3252890"
+                }
+            ],
+            "description": "Defines the text_with_summary field type.",
+            "homepage": "https://drupal.org/project/text_with_summary",
+            "support": {
+                "source": "https://git.drupalcode.org/project/text_with_summary",
+                "issues": "https://drupal.org/project/issues/text_with_summary"
             }
         },
         {
@@ -22777,6 +22823,7 @@
         "drupal/pdfpreview": 20,
         "drupal/simple_oauth": 20,
         "drupal/simple_sitemap": 20,
+        "drupal/text_with_summary": 20,
         "drupal/tool": 10,
         "drupal/ui_patterns_field_group": 10,
         "drupal/upgrade_status": 15,
