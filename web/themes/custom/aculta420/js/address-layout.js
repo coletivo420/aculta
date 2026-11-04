@@ -42,11 +42,11 @@
     const row = document.createElement('div');
     row.className = 'row portal-address-number-row';
     const numCol = document.createElement('div');
-    numCol.className = 'col-xs-3 col-sm-2';
+    numCol.className = 'col-3 col-sm-2';
     const snCol = document.createElement('div');
-    snCol.className = 'col-xs-2 col-sm-1';
+    snCol.className = 'col-2 col-sm-1';
     const compCol = document.createElement('div');
-    compCol.className = 'col-xs-7 col-sm-9';
+    compCol.className = 'col-7 col-sm-9';
     numberRow.parentElement.insertBefore(row, numberRow);
     numCol.append(numberRow);
     if (snRow) {

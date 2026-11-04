@@ -2,17 +2,17 @@
 <div class="aculta-product-tabs">
   <ul class="nav nav-tabs aculta-product-tabs__nav" role="tablist">
     <li class="nav-item" role="presentation">
-      <a class="nav-link active" id="{{ id }}-descricao-tab" data-toggle="tab" href="#{{ id }}-descricao" role="tab" aria-controls="{{ id }}-descricao" aria-selected="true">Descrição</a>
+      <button class="nav-link active" id="{{ id }}-descricao-tab" data-bs-toggle="tab" data-bs-target="#{{ id }}-descricao" type="button" role="tab" aria-controls="{{ id }}-descricao" aria-selected="true">Descrição</button>
     </li>
     <li class="nav-item" role="presentation">
-      <a class="nav-link" id="{{ id }}-info-tab" data-toggle="tab" href="#{{ id }}-info" role="tab" aria-controls="{{ id }}-info" aria-selected="false">Informação adicional</a>
+      <button class="nav-link" id="{{ id }}-info-tab" data-bs-toggle="tab" data-bs-target="#{{ id }}-info" type="button" role="tab" aria-controls="{{ id }}-info" aria-selected="false">Informação adicional</button>
     </li>
     <li class="nav-item" role="presentation">
-      <a class="nav-link" id="{{ id }}-avaliacoes-tab" data-toggle="tab" href="#{{ id }}-avaliacoes" role="tab" aria-controls="{{ id }}-avaliacoes" aria-selected="false">Avaliações ({{ review_count }})</a>
+      <button class="nav-link" id="{{ id }}-avaliacoes-tab" data-bs-toggle="tab" data-bs-target="#{{ id }}-avaliacoes" type="button" role="tab" aria-controls="{{ id }}-avaliacoes" aria-selected="false">Avaliações ({{ review_count }})</button>
     </li>
   </ul>
   <div class="tab-content aculta-product-tabs__panels">
-    <div class="tab-pane fade in active" id="{{ id }}-descricao" role="tabpanel" aria-labelledby="{{ id }}-descricao-tab" tabindex="0">
+    <div class="tab-pane fade show active" id="{{ id }}-descricao" role="tabpanel" aria-labelledby="{{ id }}-descricao-tab" tabindex="0">
       {{ description }}
     </div>
     <div class="tab-pane fade" id="{{ id }}-info" role="tabpanel" aria-labelledby="{{ id }}-info-tab" tabindex="0">

@@ -47,9 +47,9 @@ escopada ao Studio.
   na menor largura suportada, e regras para mais espaço devem ser acrescentadas
   progressivamente quando o conteúdo justificar. Não basta reduzir ou empilhar
   automaticamente uma interface desktop.
-- ACULTA420 usa Bootstrap 3.4.10 fornecido pelo tema base Drupal Bootstrap 8.x;
-  considere os breakpoints da grade (`xs` abaixo de 768 px, `sm` 768 px, `md`
-  992 px, `lg` 1200 px) como referências compartilhadas. Eles não
+- ACULTA420 herda de `bootstrap5`; `drupal/bootstrap5` permanece fixado em
+  `5.0.x-dev` e o pacote instalado fornece Bootstrap 5.3.8. Use breakpoints
+  mobile-first da grade efetivamente disponível. Eles não
   representam modelos específicos de aparelho; escolha a faixa pelo momento em
   que o conteúdo ou a tarefa pede uma mudança. CSS Grid, Flexbox e container
   queries podem responder ao espaço real do componente quando forem adequados.
@@ -112,7 +112,7 @@ No servidor de desenvolvimento, o caminho é
 `/home/piradopirata/projetos/aculta`. Não use estes gates para executar
 `updatedb`, importação de configuração ou qualquer escrita no Runtime.
 
-Referências normativas e de implementação: [Bootstrap 3 — grid](https://getbootstrap.com/docs/3.4/css/#grid), [Bootstrap 3 — JavaScript](https://getbootstrap.com/docs/3.4/javascript/) e [W3C —
+Referências normativas e de implementação: [Bootstrap 5 — grid](https://getbootstrap.com/docs/5.3/layout/grid/), [Bootstrap 5 — JavaScript](https://getbootstrap.com/docs/5.3/getting-started/javascript/) e [W3C —
 WCAG 2.2, critério 1.4.10 Reflow](https://www.w3.org/WAI/WCAG22/Understanding/reflow.html).
 
 ## Direção de arte para imagens criadas por agentes

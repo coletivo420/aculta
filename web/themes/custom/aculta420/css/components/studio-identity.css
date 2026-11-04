@@ -91,7 +91,7 @@ html.studio-identity :is(
   body.path-ganjalab .aculta-main,
   body.path-culturas .aculta-main,
   .aculta-main .we-sativa__workspace
-) :is(.panel, .aculta-card, .studio__panel, .aculta-context-header) {
+) :is(.aculta-panel, .aculta-card, .studio__panel, .aculta-context-header) {
   border-radius: var(--bs-border-radius);
 }
 

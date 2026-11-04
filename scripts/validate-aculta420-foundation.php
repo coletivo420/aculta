@@ -54,10 +54,11 @@ $assert($themeHandler->themeExists('aculta420'), 'ACULTA420 is discoverable by D
 $assert(\Drupal::config('system.theme')->get('default') === 'aculta420', 'ACULTA420 is the default public theme.');
 $coreExtension = \Drupal::config('core.extension');
 $assert($coreExtension->get('theme.aculta420') !== NULL, 'ACULTA420 is enabled in core.extension.');
+$assert($coreExtension->get('theme.bootstrap5') !== NULL, 'Bootstrap5 base theme is enabled in core.extension.');
 $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider remains enabled.');
 
 $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
-$assert(($info['base theme'] ?? NULL) === 'bootstrap', 'Drupal Bootstrap remains the sole base theme.');
+$assert(($info['base theme'] ?? NULL) === 'bootstrap5', 'Bootstrap5 is the ACULTA420 base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
 $assert(is_string($info['version'] ?? NULL) && trim($info['version']) !== '', 'Theme metadata declares a non-empty version.');
 $assert(($info['version'] ?? NULL) === '0.7.0-dev.40', 'Theme Foundation gate tracks the current development version.');
@@ -131,14 +132,14 @@ $bootstrapPackages = array_values(array_filter(
   static fn(array $package): bool => ($package['name'] ?? '') === 'drupal/bootstrap',
 ));
 $bootstrapPackage = $bootstrapPackages[0] ?? NULL;
-$assert(count($bootstrapPackages) === 1 && ($bootstrapPackage['version'] ?? NULL) === '3.45.0', 'Drupal Bootstrap base theme is pinned to release 8.x-3.45.');
+$assert(count($bootstrapPackages) === 1 && ($bootstrapPackage['version'] ?? NULL) === '3.45.0', 'Drupal Bootstrap remains installed at release 8.x-3.45; removal requires a separate dependency audit.');
 $legacyBootstrapPackages = array_filter(
   $lock['packages'] ?? [],
   static fn(array $package): bool => in_array(($package['name'] ?? ''), ['drupal/bootstrap5', 'drupal/bootstrap_sass'], TRUE),
 );
-$assert($legacyBootstrapPackages === [], 'Composer has no legacy Bootstrap5 or SASS starter theme package.');
-$bootstrapInfo = Yaml::parseFile($root . '/web/themes/contrib/bootstrap/bootstrap.info.yml');
-$assert(($bootstrapInfo['version'] ?? NULL) === '8.x-3.45', 'Installed Drupal Bootstrap base theme matches the locked release.');
+$assert($legacyBootstrapPackages === [], 'Composer has no duplicate Bootstrap5 or SASS starter theme package.');
+$bootstrapInfo = Yaml::parseFile($root . '/web/themes/contrib/bootstrap5/bootstrap5.info.yml');
+$assert(($bootstrapInfo['version'] ?? NULL) === '5.0.x-dev', 'Installed Bootstrap5 theme matches the fixed Runtime version.');
 
 $hookSourcePath = $themeRoot . '/src/Hook/ThemeHooks.php';
 $assert(is_file($hookSourcePath), 'OOP theme hook class exists.');
@@ -151,8 +152,9 @@ $libraries = Yaml::parseFile($themeRoot . '/aculta420.libraries.yml');
 $assert(
   !isset($libraries['bootstrap5-framework'])
     && !in_array('aculta420/bootstrap5-framework', $libraries['global']['dependencies'] ?? [], TRUE)
-    && in_array('bootstrap/bootstrap', $libraries['global']['dependencies'] ?? [], TRUE),
-  'ACULTA420 uses the Bootstrap framework from its Drupal Bootstrap base theme without a second framework layer.',
+    && in_array('bootstrap5/base', $libraries['global']['dependencies'] ?? [], TRUE)
+    && in_array('bootstrap5/global-styling', $libraries['global']['dependencies'] ?? [], TRUE),
+  'ACULTA420 uses the Bootstrap framework libraries from the installed Bootstrap5 base theme.',
 );
 $libraryIntegrationDependencies = [];
 foreach ($libraries as $libraryName => $definition) {

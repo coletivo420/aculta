@@ -53,8 +53,10 @@ global:
     js/navigation-top-bar-displace.js: {}
     js/studio-table-a11y.js: {}
   dependencies:
-    - bootstrap/bootstrap
-    - bootstrap/global-styling
+    - bootstrap5/base
+    - bootstrap5/messages
+    - bootstrap5/bootstrap5-js-latest
+    - bootstrap5/global-styling
     - aculta420/bootstrap-icons
     - core/drupal
     - core/once
@@ -66,8 +68,7 @@ bootstrap-icons:
     component:
       assets/icons/bootstrap-icons/font/bootstrap-icons.min.css: {}
 
-# Drupal Bootstrap 8.x supplies Bootstrap 3. ACULTA420 uses that framework
-# directly; project-specific presentation lives in ACULTA-owned styles.
+# The base theme provides Bootstrap 5 CSS/JS; ACULTA420 adds its own visual layer.
 album-slideshow:
   css:
     theme:
@@ -110,7 +111,7 @@ messenger-drawers:
     - core/drupal
     - core/drupal.dialog
     - core/once
-    - bootstrap/bootstrap
+    - bootstrap5/bootstrap5-js-latest
 
 messenger-notices:
   css:

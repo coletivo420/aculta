@@ -12,10 +12,10 @@
         <span class="aculta-cart-offcanvas__separador-total">{{ site.total }}</span>
       </div>
       {% for item in site.items %}
-        <div class="alert alert-info alert-dismissable aculta-cart-offcanvas__caixa fade in" role="listitem">
+        <div class="alert alert-info aculta-cart-offcanvas__caixa show" role="listitem">
           <span class="aculta-cart-offcanvas__title">{{ item.title }}</span>
           <span class="aculta-cart-offcanvas__meta">{{ item.quantity }} × {{ item.total }}</span>
-          <button type="button" class="close" data-dismiss="alert" aria-label="Fechar item"><span aria-hidden="true">&times;</span></button>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar item"></button>
         </div>
       {% endfor %}
     {% endif %}{% endfor %}
@@ -30,10 +30,10 @@
         <span class="aculta-cart-offcanvas__separador-total">{{ site.total }}</span>
       </div>
       {% for item in site.items %}
-        <div class="alert alert-info alert-dismissable aculta-cart-offcanvas__caixa fade in" role="listitem">
+        <div class="alert alert-info aculta-cart-offcanvas__caixa show" role="listitem">
           <span class="aculta-cart-offcanvas__title">{{ item.title }}</span>
           <span class="aculta-cart-offcanvas__meta">{{ item.quantity }} × {{ item.total }}</span>
-          <button type="button" class="close" data-dismiss="alert" aria-label="Fechar item"><span aria-hidden="true">&times;</span></button>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar item"></button>
         </div>
       {% endfor %}
       {% if site.checkout_url %}

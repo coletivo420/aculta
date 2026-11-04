@@ -8,7 +8,7 @@
   height: 100%;
 }
 
-.aculta-revista-teaser .aculta-card > .panel-heading {
+.aculta-revista-teaser .aculta-card > .aculta-card__header {
   color: var(--aculta-text-accent);
   font-size: 0.8125rem;
   font-weight: 600;
@@ -16,7 +16,7 @@
   text-transform: uppercase;
 }
 
-.aculta-revista-teaser .aculta-card > .panel-heading a {
+.aculta-revista-teaser .aculta-card > .aculta-card__header a {
   color: inherit;
   text-decoration: none;
 }
@@ -166,21 +166,21 @@
     aspect-ratio: auto;
   }
 
-  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .panel-heading {
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .aculta-card__header {
     grid-column: 2;
     grid-row: 1;
     align-self: end;
     padding: clamp(1.25rem, 2.5vw, 2.5rem) clamp(1.25rem, 2.5vw, 2.5rem) 0.5rem;
   }
 
-  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .panel-body {
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .aculta-card__body {
     grid-column: 2;
     grid-row: 2;
     align-self: center;
     padding: 0.75rem clamp(1.25rem, 2.5vw, 2.5rem);
   }
 
-  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .panel-footer {
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .aculta-card__footer {
     grid-column: 2;
     grid-row: 3;
     padding: 0.5rem clamp(1.25rem, 2.5vw, 2.5rem) clamp(1.25rem, 2.5vw, 2.5rem);
@@ -196,7 +196,7 @@
     font-size: 1.25rem;
   }
 
-  .aculta-revista-teaser .aculta-card > .panel-body {
+  .aculta-revista-teaser .aculta-card > .aculta-card__body {
     padding: 1.15rem 1.25rem;
   }
 }

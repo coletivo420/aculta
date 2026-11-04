@@ -220,7 +220,7 @@ body.path-ganjalab .aculta-main .aculta-card {
   box-shadow: var(--aculta-studio-fidelity-box-shadow);
 }
 
-body.path-ganjalab .aculta-main .aculta-card .panel-body {
+body.path-ganjalab .aculta-main .aculta-card .aculta-card__body {
   padding-block: 1rem;
   padding-inline: clamp(1rem, 2.25vw, 1.5rem);
 }
@@ -537,7 +537,7 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
   box-shadow: var(--aculta-studio-fidelity-box-shadow);
 }
 
-.aculta-main .we-sativa__workspace .aculta-card .panel-body {
+.aculta-main .we-sativa__workspace .aculta-card .aculta-card__body {
   padding-block: 1rem;
   padding-inline: 2rem;
 }
@@ -985,7 +985,7 @@ body.path-marley form.node-revista-form .form-actions :is(.form-submit, .button-
   border: 0;
 }
 
-.aculta-account-entry .studio__actions .aculta-card--studio-fidelity .panel-body > a {
+.aculta-account-entry .studio__actions .aculta-card--studio-fidelity .aculta-card__body > a {
   display: flex;
   min-block-size: 2.75rem;
   align-items: center;
@@ -1002,7 +1002,7 @@ body.path-marley form.node-revista-form .form-actions :is(.form-submit, .button-
   height: 100%;
 }
 
-.studio-hub .studio__actions .panel-body {
+.studio-hub .studio__actions .aculta-card__body {
   overflow-wrap: anywhere;
 }
 
@@ -1779,7 +1779,7 @@ body.path-marley .aculta-main > .aculta-container:has([data-aculta-studio="root"
 }
 
 [data-portal-ui="aculta-learning-home__actions"] .btn,
-[data-portal-ui="aculta-learning-home__continue"] .panel-footer .btn {
+[data-portal-ui="aculta-learning-home__continue"] .aculta-card__footer .btn {
   display: inline-flex;
   min-block-size: 2.75rem;
   align-items: center;

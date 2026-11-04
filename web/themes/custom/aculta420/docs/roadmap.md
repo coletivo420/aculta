@@ -4,12 +4,24 @@ A tipografia do tema é Inter no corpo e Oswald nos títulos. Studio e editor de
 
 # Roadmap — ACULTA420
 
-## 0.7.0-dev.39 — usar diretamente Drupal Bootstrap 8.x (2026-11-03; visual DEFERRED)
+## Migração para Bootstrap5 (em andamento; visual DEFERRED)
 
-ACULTA420 usa o Bootstrap 3.4.10 e os plugins jQuery fornecidos pela base
-Drupal Bootstrap 8.x-3.45, sem carregar outra cópia do framework. As gavetas
-usam o modal nativo com apresentação lateral própria. A revisão visual e o
-rebuild do cache no Runtime ainda estão pendentes.
+O tema local passa a herdar de `bootstrap5`, usando as libraries declaradas
+pela instalação `drupal/bootstrap5 5.0.x-dev` (framework Bootstrap 5.3.8).
+Markup legado de grade, painéis, abas, gavetas, alertas e APIs jQuery foi
+adaptado em Twig, CSS, JavaScript e contratos de apresentação do tema.
+Inventário e validações pendentes estão em
+[`bootstrap5-migration-matrix.md`](bootstrap5-migration-matrix.md). A
+configuração limpa de `origin/dev` e o Composer ainda divergem do Runtime:
+não há entrada Bootstrap5 no manifesto/lock nem habilitação na configuração
+sincronizada; esta entrega não altera a versão nem esses arquivos Composer.
+Rebuild, consumers reais e revisão visual no Runtime continuam pendentes.
+
+## 0.7.0-dev.39 — usar diretamente Drupal Bootstrap 8.x (2026-11-03; estado histórico)
+
+Naquela versão, ACULTA420 usava Bootstrap 3.4.10 e plugins jQuery fornecidos
+por Drupal Bootstrap 8.x-3.45. Esse estado foi substituído pela migração
+documentada acima.
 
 ## 0.7.0-dev.37 — metadata de compatibilidade Drupal 12 (2026-11-03; não validado)
 
