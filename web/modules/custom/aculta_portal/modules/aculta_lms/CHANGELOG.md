@@ -1,3 +1,13 @@
+# Cobertura Kernel adicional F7 — 2026-11-04
+
+- Kernel Commerce confirma que pedido gratuito em rascunho não matricula; ao
+  concluir a transição real do pedido, o hook concede membership e grava a
+  origem `field_course_order`, sem gateway remoto.
+- Seleções forjadas de turma fechada ou de outro curso falham em validação e
+  submit, sem criar carrinho.
+- `CourseEnrollmentPurchaseKernelTest`: 4 testes / 173 assertions PASS no
+  MariaDB `aculta_simpletest`; 67 depreciações são de Core/contrib.
+
 # 0.1.0-dev.206 — corrige serialização dos formulários do Course Builder
 
 - Serviços injetados nos formulários de mover, ordenar e excluir agora são `protected`, conforme o contrato de `DependencySerializationTrait`; após Form API cache serialization, as dependências são restauradas do container.

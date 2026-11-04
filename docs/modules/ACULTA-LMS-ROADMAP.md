@@ -175,6 +175,12 @@ Unit `CourseEnrollmentPurchaseFormTest` em 2026-11-04 acrescenta 2 cenários / 2
 assertions para estados sem turma publicada e sem produto, verificando que não
 há ação de checkout. O Runtime contém apenas um curso sintético sem produto ou
 turma; a compra paga ainda depende de uma fixture de integração e de sandbox.
+Na cobertura Kernel adicional do `aculta_lms`, Commerce exercita o hook real de pedido: compra
+gratuita em rascunho não cria matrícula; a transição para concluído cria a
+membership e a referência de origem. Turma fechada ou pertencente a outro curso
+é rejeitada mesmo em submit forjado e não cria carrinho. `CourseEnrollmentPurchaseKernelTest`
+passou com 4 testes / 173 assertions no banco dedicado; 67 depreciações são de
+Core/contrib. Checkout pago, sandbox e smoke HTTP permanecem pendentes.
 Backup privado em
 `/home/aculta/private/aculta/config-reconcile-20261018/aculta_runtime-before-f7.sql.gz`.
 Detalhes em

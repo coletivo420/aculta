@@ -303,6 +303,13 @@ submissão forjada sem criar carrinho. Unit: 3 testes / 24 assertions PASS;
 Kernel: 2 testes / 87 assertions PASS, com 65 depreciações upstream de
 Core/contrib. O Runtime continua sem produto/turma de negócio para smoke HTTP;
 checkout real e sandbox permanecem pendentes.
+Na cobertura Kernel adicional de F7, o teste percorre o hook real de atualização de pedido:
+pedido gratuito em rascunho não matricula; depois da transição para concluído,
+é criada a membership da turma com a origem do pedido. Submissões forjadas de
+turma fechada ou de outra turma/curso não criam carrinho. A suíte Kernel focal
+passou com 4 testes / 173 assertions; as 67 depreciações vieram de Core/contrib.
+O checkout pago, o sandbox e o smoke HTTP seguem pendentes para a etapa de
+pagamentos.
 
 Uma pessoa administradora cria o produto e a variação Commerce do curso e associa
 esse produto ao Group do curso. A variação possui preço zero ou pago; a página

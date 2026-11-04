@@ -124,6 +124,81 @@ final class CourseEnrollmentPurchaseKernelTest extends CartKernelTestBase {
   }
 
   /**
+   * A completed free course order grants the purchased class membership.
+   */
+  public function testCompletedFreeOrderGrantsMembershipThroughOrderHook(): void {
+    [$course, $class, , $learner] = $this->createPurchaseFixture(
+      TRUE,
+      new Price('0.00', 'BRL'),
+    );
+
+    $form = $this->createPurchaseForm();
+    $formState = new FormState();
+    $form->buildForm([], $formState, $course);
+    $formState->set('aculta_lms_course_id', (string) $course->id());
+    $formState->setValue('course_class', (string) $class->id());
+    $formArray = [];
+    $form->submitForm($formArray, $formState);
+
+    $cart = $this->container->get('commerce_cart.cart_provider')->getCart(
+      'curso',
+      $this->container->get('commerce_store.current_store')->getStore(),
+    );
+    self::assertNotNull($cart);
+    self::assertTrue($cart->getTotalPrice()->isZero());
+    self::assertFalse($cart->isPaid(), 'A zero-value draft order is not yet entitled to enrollment.');
+    self::assertFalse($class->getMember($learner));
+
+    $cart->setCustomerId((string) $learner->id());
+    $cart->getState()->applyTransitionById('place');
+    $cart->save();
+
+    self::assertSame('completed', $cart->getState()->getId());
+    self::assertTrue($cart->isPaid());
+    $membership = $class->getMember($learner);
+    self::assertNotFalse($membership);
+    self::assertSame((string) $cart->id(), (string) $membership->get('field_course_order')->target_id);
+  }
+
+  /**
+   * A forged selection cannot enroll a learner in a closed or foreign class.
+   */
+  public function testForgedClassSelectionDoesNotCreateCart(): void {
+    [$course, , , , $closedClass] = $this->createPurchaseFixture();
+    $learner = User::create(['name' => 'lms-kernel-foreign-class-owner', 'status' => 1]);
+    $learner->save();
+    $foreignCourse = Group::create([
+      'type' => 'lms_course', 'label' => 'Outro curso', 'uid' => $learner->id(), 'status' => 1,
+    ]);
+    $foreignCourse->save();
+    $foreignClass = Group::create([
+      'type' => 'lms_class', 'label' => 'Turma de outro curso', 'uid' => $learner->id(), 'status' => 1,
+    ]);
+    $foreignClass->save();
+    $foreignCourse->addRelationship($foreignClass, 'lms_classes')->save();
+
+    $form = $this->createPurchaseForm();
+    $formState = new FormState();
+    $build = $form->buildForm([], $formState, $course);
+    self::assertArrayNotHasKey((string) $closedClass->id(), $build['course_class']['#options']);
+
+    foreach ([$closedClass, $foreignClass] as $class) {
+      $formState->set('aculta_lms_course_id', (string) $course->id());
+      $formState->setValue('course_class', (string) $class->id());
+      $form->validateForm($build, $formState);
+      self::assertNotEmpty($formState->getErrors());
+      $formArray = [];
+      $form->submitForm($formArray, $formState);
+    }
+
+    $cart = $this->container->get('commerce_cart.cart_provider')->getCart(
+      'curso',
+      $this->container->get('commerce_store.current_store')->getStore(),
+    );
+    self::assertNull($cart);
+  }
+
+  /**
    * Rejects forged submissions when the course has been unpublished.
    */
   public function testUnpublishedCourseCannotBeAddedToCart(): void {
@@ -174,10 +249,10 @@ final class CourseEnrollmentPurchaseKernelTest extends CartKernelTestBase {
   /**
    * Creates an actual course, class, product, and variation for purchase tests.
    *
-   * @return array{0: \Drupal\group\Entity\Group, 1: \Drupal\group\Entity\Group, 2: \Drupal\commerce_product\Entity\ProductVariation}
-   *   Course, published class, and published variation.
+   * @return array{0: \Drupal\group\Entity\Group, 1: \Drupal\group\Entity\Group, 2: \Drupal\commerce_product\Entity\ProductVariation, 3: \Drupal\user\Entity\User, 4: \Drupal\group\Entity\Group}
+   *   Course, published class, published variation, learner, and closed class.
    */
-  private function createPurchaseFixture(bool $coursePublished = TRUE): array {
+  private function createPurchaseFixture(bool $coursePublished = TRUE, ?Price $price = NULL): array {
     $learner = User::create(['name' => 'lms-kernel-learner', 'status' => 1]);
     $learner->save();
     $class = Group::create([
@@ -196,7 +271,7 @@ final class CourseEnrollmentPurchaseKernelTest extends CartKernelTestBase {
     $course->addRelationship($closedClass, 'lms_classes')->save();
 
     $variation = ProductVariation::create([
-      'type' => 'curso', 'sku' => 'lms-course-kernel', 'price' => new Price('125.00', 'BRL'), 'status' => 1,
+      'type' => 'curso', 'sku' => 'lms-course-kernel', 'price' => $price ?? new Price('125.00', 'BRL'), 'status' => 1,
     ]);
     $variation->save();
     $product = Product::create([
@@ -206,7 +281,7 @@ final class CourseEnrollmentPurchaseKernelTest extends CartKernelTestBase {
     $product->save();
     $course->set('field_course_product', $product)->save();
 
-    return [$course, $class, $variation];
+    return [$course, $class, $variation, $learner, $closedClass];
   }
 
   /**
