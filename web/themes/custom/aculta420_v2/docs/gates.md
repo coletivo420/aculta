@@ -42,4 +42,4 @@ Não é um script de gate, mas faz parte da entrega de mudança visual (ver [AGE
 ## Estado atual
 
 - Os gates da V2 passaram nas entregas anteriores, conforme o [CHANGELOG.md](../CHANGELOG.md).
-- **Account-menu (não versionado):** nenhum gate foi executado sobre a versão que inclui o menu de conta neste ambiente. Não há `vendor/` aqui. Execução fica para o Homelab (`DEFERRED`).
+- **Account-menu (`1.2.0-dev.3` a `dev.11`):** a validação de renderização precisa ser refeita após a correção do `1.2.0-dev.5`, que o próprio changelog registra como pendente. Este ambiente não tem `vendor/`, então nenhum gate foi executado aqui. Execução fica para o Homelab (`DEFERRED`).

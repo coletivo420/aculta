@@ -21,11 +21,12 @@ Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context 
 - **Estado:** entregue (Fase 2, `1.2.0-dev.2`).
 
 ### account-menu — Menu de conta
-- **Papel:** menu de conta da barra institucional (ADR-047). Visitante vê a lista de acesso com "Entrar". Autenticado vê um disclosure `<details>` com avatar e, dentro do painel, as ações de conta.
-- **Props:** `authenticated` (boolean), `summary_label` (texto oculto visualmente, dá nome acessível ao botão).
-- **Slots:** `avatar` (renderizado pelo Portal; sem slot, mostra o ícone neutro), `menu_items` (menu Drupal de conta).
-- **Regras:** o nome do usuário não aparece na barra. Não há inicial nem letra no avatar.
-- **Estado:** **não versionado**. Base estrutural pronta; falta o avatar do Portal e a verificação visual (320, 390 e 1440 px, claro e escuro, zoom 200%, teclado, leitor de tela).
+- **Papel:** menu de conta da barra institucional (ADR-047). Visitante vê "Entrar". Autenticado vê um disclosure `<details>` só com o avatar e, dentro do painel, as ações de conta.
+- **Props:** `authenticated` (boolean), `summary_label` (texto oculto visualmente, dá nome acessível ao botão; padrão "Minha conta").
+- **Slots:** `avatar` (render array de `aculta_user`; sem slot, mostra o ícone neutro), `menu_items` (visitante: link "Entrar"; autenticado: menu Drupal de conta).
+- **Montagem:** `PagePresentationHooks::buildAccountMenuComponent`. O componente é um render array com `#cache` de contexto `user`.
+- **Regras:** o nome do usuário não aparece na barra, nem apelido. Não há inicial nem letra no avatar.
+- **Estado:** versionado de `1.2.0-dev.3` a `1.2.0-dev.11`. Pendentes: validação visual autenticada (foto, acervo e sem foto), leitor de tela e gates de renderização no Homelab.
 - **Status no schema:** `experimental`.
 
 ### alerts-trigger — Avisos

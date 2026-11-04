@@ -26,9 +26,9 @@ O tema não conhece hostnames, domínios, purposes ou regras de acesso. Ele rece
 | `domain_presentation.layout.institution_bar_account` | Portal | marca a barra como barra de conta |
 | `domain_presentation.layout.show_utility_bar` | Portal | exibe ou oculta as utilidades da barra |
 | `domain_presentation.regions.showcase` | Portal | links da vitrine de portais (`multidomain_network_links`) |
-| `aculta_account_menu` | Portal (render array de `system_menu_block:account`) | slot de itens do menu de conta |
+| `aculta_account_menu` | Portal (render array de `system_menu_block:account`) | slot de itens do menu de conta; o PHP do tema o encaixa no SDC |
 | `aculta_account_authenticated` | tema (`PagePresentationHooks`, via `current_user`) | escolhe o estado visitante ou autenticado do menu |
-| `aculta_account_avatar` | **pendente** no Portal (AvatarResolver) | slot do avatar do menu de conta |
+| `aculta_account_avatar` | Portal (`aculta_user`, AvatarResolver) | slot do avatar do menu de conta; ausente → ícone neutro |
 | `aculta_cart` | Portal (Commerce) | gatilho e painel do carrinho |
 | `aculta_messenger` | Portal (`aculta_messenger`) | gatilho e painel de mensagens |
 | `aculta_alerts` | Portal | gatilho e painel de avisos |

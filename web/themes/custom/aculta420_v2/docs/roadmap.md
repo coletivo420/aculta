@@ -69,18 +69,19 @@
   autenticados permanecem DEFERRED. O runner aplica o CSS baseline ao DOM atual;
   essa comparação não recupera a marcação Twig histórica da baseline.
 
-### Fase 2 — menu de conta (não versionado, ADR-047)
+### Fase 2 — menu de conta (ADR-047)
 
-**Status: base estrutural pronta no código; avatar do Portal e verificação pendentes.**
+**Status: versionado em `1.2.0-dev.3` a `1.2.0-dev.11` (ver [CHANGELOG.md](../CHANGELOG.md)). Validação visual autenticada e gates de renderização pendentes.**
 
-- SDC `account-menu` criado e ligado à barra institucional. Visitante vê "Entrar"; autenticado vê o disclosure com avatar e o menu de conta.
-- A lista antiga de links de conta da barra foi substituída pelo componente.
+- O SDC `account-menu` está na barra institucional. O PHP (`PagePresentationHooks::buildAccountMenuComponent`) monta o componente: visitante recebe "Entrar" apontando para `/entrar/janela`; autenticado recebe o avatar do Portal e o menu Drupal de conta.
+- O avatar vem de `aculta_user` como render array (`aculta_account_avatar`). Sem avatar, o componente mostra o ícone neutro.
+- A barra não mostra apelido nem nome. O rótulo "Minha conta" é texto oculto, para o nome acessível.
 - Pendentes para fechar a fase:
-  1. Avatar: o Portal entrega `aculta_account_avatar` pelo AvatarResolver (foto liberada → acervo; nunca inicial). Commit separado no `aculta_portal`.
-  2. Verificação visual em 320, 390 e 1440 CSS px, claro e escuro, zoom de 200%, teclado, estado autenticado com foto, com acervo e sem foto.
-  3. Leitor de tela: o botão deve anunciar "Minha conta".
-  4. Gates do tema (ver [gates.md](gates.md)) executados no Homelab.
-  5. Versão `1.2.0-dev.3` e entrada no changelog, somente após a validação.
+  1. Verificação visual em 320, 390 e 1440 CSS px, claro e escuro, zoom de 200%, teclado, com três cenários autenticados: foto, acervo e sem foto.
+  2. Leitor de tela: o botão deve anunciar "Minha conta".
+  3. Validação de renderização do `account-menu`. O changelog do `1.2.0-dev.5` registra que o `drush cr` revelou um problema de descoberta e que a validação seria repetida; essa repetição não aparece no changelog.
+  4. Gates do tema (ver [gates.md](gates.md)) executados no Homelab, com a saída colada na entrega.
+  5. Versão: `1.2.0-dev.11` está em `info.yml`. Revisar com o responsável se a entrega fecha em `dev.11` ou sobe para a próxima versão, após a validação.
 
 ## Fase 3 — Purpose neutro no Portal
 
