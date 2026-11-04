@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Form;
 
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\aculta_lms\Access\CourseAuthoringAccessCheck;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -59,13 +60,21 @@ final class LessonAuthoringForm extends FormBase {
       '#required' => TRUE,
       '#default_value' => $lesson?->get('title')->value ?? '',
     ];
-    $body = $lesson?->get('body')->value ?? '';
+    $bodyItem = $lesson?->get('body');
+    $body = self::prepareBodyForEditor(
+      (string) ($bodyItem?->value ?? ''),
+      (string) ($bodyItem?->format ?? 'plain_text'),
+    );
+    // Existing plain-text values can contain strings that resemble HTML. Make
+    // them literal source before the editor interprets them as rich text.
     $form['body'] = [
-      '#type' => 'textarea',
+      '#type' => 'text_format',
       '#title' => $this->t('Conteúdo da aula'),
+      '#format' => 'aculta_lms_lesson',
+      '#allowed_formats' => ['aculta_lms_lesson'],
       '#rows' => 12,
       '#default_value' => (string) $body,
-      '#description' => $this->t('O conteúdo é exibido como texto simples, com as quebras de linha preservadas.'),
+      '#description' => $this->t('Use títulos, listas, links e ênfase. Imagens e conteúdo incorporado são adicionados por fluxos próprios.'),
     ];
     $form['weight'] = [
       '#type' => 'number',
@@ -101,7 +110,13 @@ final class LessonAuthoringForm extends FormBase {
     if (trim((string) $form_state->getValue('title')) === '') {
       $form_state->setErrorByName('title', $this->t('Informe o título da aula.'));
     }
-    if ($form_state->getValue('published') && trim((string) $form_state->getValue('body')) === '') {
+    $body = $form_state->getValue('body');
+    $bodyValue = is_array($body) ? ($body['value'] ?? '') : $body;
+    $plainBody = is_string($bodyValue)
+      ? html_entity_decode(strip_tags($bodyValue), ENT_QUOTES | ENT_HTML5, 'UTF-8')
+      : '';
+    $readableBody = preg_replace('/[\p{Z}\s]+/u', '', $plainBody) ?? '';
+    if ($form_state->getValue('published') && $readableBody === '') {
       $form_state->setErrorByName('body', $this->t('Adicione o conteúdo antes de disponibilizar a aula aos estudantes.'));
     }
     $weight = filter_var($form_state->getValue('weight'), FILTER_VALIDATE_INT);
@@ -119,8 +134,10 @@ final class LessonAuthoringForm extends FormBase {
       'course_id' => (int) $course->id(),
       'title' => trim((string) $form_state->getValue('title')),
       'body' => [
-        'value' => is_string($form_state->getValue('body')) ? $form_state->getValue('body') : '',
-        'format' => 'plain_text',
+        'value' => is_array($form_state->getValue('body')) && is_string($form_state->getValue('body')['value'] ?? NULL)
+          ? $form_state->getValue('body')['value']
+          : '',
+        'format' => 'aculta_lms_lesson',
       ],
       'published' => (bool) $form_state->getValue('published'),
       'weight' => (int) $form_state->getValue('weight'),
@@ -161,6 +178,13 @@ final class LessonAuthoringForm extends FormBase {
     $lessons = $this->entityTypeManager->getStorage('aculta_lms_lesson')->loadByProperties(['course_id' => $courseId]);
     $weights = array_map(static fn($lesson): int => (int) $lesson->get('weight')->value, $lessons);
     return $weights === [] ? 0 : max($weights) + 1;
+  }
+
+  /**
+   * Preserves legacy plain-text source when moving it into the rich editor.
+   */
+  public static function prepareBodyForEditor(string $body, string $format): string {
+    return $format === 'plain_text' ? Html::escape($body) : $body;
   }
 
 }

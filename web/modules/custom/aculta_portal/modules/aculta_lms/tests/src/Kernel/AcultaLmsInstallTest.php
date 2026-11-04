@@ -54,7 +54,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system', 'user', 'file', 'image', 'media', 'field', 'filter', 'comment', 'options', 'entity_print', 'domain',
+    'system', 'user', 'file', 'image', 'media', 'field', 'filter', 'editor', 'ckeditor5', 'comment', 'options', 'entity_print', 'domain',
     'entity_usage', 'key', 'aculta_image', 'aculta_file_uploader',
     'text', 'views', 'group', 'flexible_permissions',
   ];
@@ -95,6 +95,10 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     foreach (['courses', 'courses_catalog', 'courses_admin', 'classes_admin'] as $view_id) {
       $this->assertNotNull($container->get('entity_type.manager')->getStorage('view')->load($view_id));
     }
+    $lessonFormat = $container->get('entity_type.manager')->getStorage('filter_format')->load('aculta_lms_lesson');
+    $this->assertNotNull($lessonFormat);
+    $this->assertSame('Conteúdo de aula ACULTA', $lessonFormat->label());
+    $this->assertNotNull($container->get('config.factory')->get('editor.editor.aculta_lms_lesson')->get('editor'));
     $definition_update_manager = $container->get('entity.definition_update_manager');
     $body_definition = $definition_update_manager->getFieldStorageDefinition('body', 'aculta_lms_lesson');
     $this->assertNotNull($body_definition);
@@ -124,6 +128,27 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $rendered_body = (string) $container->get('renderer')->renderRoot($page['body']);
     $this->assertStringNotContainsString('<script>', $rendered_body);
     $this->assertStringContainsString('window.pwned', $rendered_body);
+    $richLesson = $container->get('entity_type.manager')->getStorage('aculta_lms_lesson')->create([
+      'course_id' => (int) $course->id(),
+      'title' => 'Aula rica',
+      'body' => [
+        'value' => '<p>Conteúdo <strong>formatado</strong></p><script>window.pwned = true</script>',
+        'format' => 'aculta_lms_lesson',
+      ],
+      'published' => TRUE,
+      'weight' => 1,
+    ]);
+    $richLesson->save();
+    $richPage = (new CourseLessonController(
+      $container->get('entity_type.manager'),
+      $container->get('aculta_portal.lms_friendly_slugs'),
+      $container->get('aculta_lms.notice_eligibility'),
+      $container->get('string_translation'),
+    ))->view($course, 1);
+    $renderedRichBody = (string) $container->get('renderer')->renderRoot($richPage['body']);
+    $this->assertStringContainsString('<strong>formatado</strong>', $renderedRichBody);
+    $this->assertStringNotContainsString('<script>', $renderedRichBody);
+    $this->assertStringContainsString('window.pwned', $renderedRichBody);
     foreach (['lms', 'lms_classes', 'lms_answer_plugins', 'lms_answer_comments'] as $contrib_module) {
       $this->assertFalse($container->get('module_handler')->moduleExists($contrib_module));
     }

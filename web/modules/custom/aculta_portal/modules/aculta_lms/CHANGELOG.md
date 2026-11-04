@@ -1,3 +1,13 @@
+## 0.1.0-dev.190 — habilita edição rica e filtrada do conteúdo de aulas
+
+- O formulário de aula usa CKEditor 5 com formato dedicado e allowlist de
+  elementos editoriais; imagens, mídia incorporada e HTML irrestrito não são
+  habilitados nesta fase.
+- O papel `lms_teacher` recebe acesso ao formato. Valores antigos `plain_text`
+  são escapados ao abrir a edição e só passam a ser HTML filtrado ao salvar.
+- Kernel verifica configuração do editor e renderização sanitizada; Unit cobre
+  o payload do formulário e a validação de conteúdo.
+
 ## 0.1.0-dev.189 — contém a tabela larga do Course Builder no mobile
 
 - O viewport estreito mantém a estrutura LMS dentro de sua própria área de

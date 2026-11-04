@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_lms\Unit;
 use Drupal\aculta_lms\Access\CourseAuthoringAccessCheck;
 use Drupal\aculta_lms\Form\ActivityAuthoringForm;
 use Drupal\aculta_lms\Form\LessonAuthoringForm;
+use Drupal\aculta_lms\Entity\LessonEntity;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -27,12 +28,13 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  * @coversDefaultClass \Drupal\aculta_lms\Form\LessonAuthoringForm */
 #[CoversClass(LessonAuthoringForm::class)]
 #[CoversClass(ActivityAuthoringForm::class)]
+#[CoversClass(LessonEntity::class)]
 final class CourseAuthoringFormsTest extends UnitTestCase {
 
   /**
    * @covers ::submitForm
    */
-  public function testLessonCreateStoresProseAsPlainText(): void {
+  public function testLessonCreateStoresRichTextInDedicatedFormat(): void {
     $course = $this->course();
     $route = $this->route(['course' => $course, 'lesson' => NULL]);
     $lesson = $this->createMock(ContentEntityInterface::class);
@@ -41,7 +43,7 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
     $storage->expects(self::once())->method('create')->with([
       'course_id' => 3,
       'title' => 'Aula introdutória',
-      'body' => ['value' => '<script>alert(1)</script>', 'format' => 'plain_text'],
+      'body' => ['value' => '<p><strong>Conteúdo seguro</strong></p>', 'format' => 'aculta_lms_lesson'],
       'published' => FALSE,
       'weight' => 0,
     ])->willReturn($lesson);
@@ -52,7 +54,7 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
     $state = new FormState();
     $state->setValues([
       'title' => ' Aula introdutória ',
-      'body' => '<script>alert(1)</script>',
+      'body' => ['value' => '<p><strong>Conteúdo seguro</strong></p>', 'format' => 'aculta_lms_lesson'],
       'published' => 0,
       'weight' => '0',
     ]);
@@ -77,12 +79,47 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
     );
     $this->setFormServices($form);
     $state = new FormState();
-    $state->setValues(['title' => 'Aula vazia', 'published' => 1, 'body' => '  ']);
+    $state->setValues([
+      'title' => 'Aula vazia',
+      'published' => 1,
+      'body' => ['value' => '<p> &nbsp; </p>', 'format' => 'aculta_lms_lesson'],
+    ]);
 
     $form_array = [];
     $form->validateForm($form_array, $state);
 
     self::assertArrayHasKey('body', $state->getErrors());
+  }
+
+  /**
+   * @covers ::prepareBodyForEditor
+   */
+  public function testLegacyTextIsEscapedAndRichTextIsPreservedForEditor(): void {
+    self::assertSame(
+      '&lt;script&gt;alert(1)&lt;/script&gt;',
+      LessonAuthoringForm::prepareBodyForEditor('<script>alert(1)</script>', 'plain_text'),
+    );
+    self::assertSame(
+      '<p><strong>Conteúdo</strong></p>',
+      LessonAuthoringForm::prepareBodyForEditor('<p><strong>Conteúdo</strong></p>', 'aculta_lms_lesson'),
+    );
+  }
+
+  /**
+   * @covers ::assertBodyFormat
+   */
+  public function testLessonRejectsUnapprovedBodyFormat(): void {
+    $this->expectException(\InvalidArgumentException::class);
+    LessonEntity::assertBodyFormat('full_html');
+  }
+
+  /**
+   * @covers ::assertBodyFormat
+   */
+  public function testLessonAcceptsSupportedBodyFormats(): void {
+    LessonEntity::assertBodyFormat('plain_text');
+    LessonEntity::assertBodyFormat('aculta_lms_lesson');
+    self::assertTrue(TRUE);
   }
 
   /**
@@ -191,7 +228,9 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
        * Returns the fixture field value.
        */
       public function __get($property_name) {
-        return $property_name === 'value' ? $this->fieldValue : NULL;
+        return is_array($this->fieldValue)
+          ? ($this->fieldValue[$property_name] ?? NULL)
+          : ($property_name === 'value' ? $this->fieldValue : NULL);
       }
 
     };

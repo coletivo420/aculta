@@ -50,6 +50,7 @@ final class LessonEntity extends ContentEntityBase {
   public function preSave(EntityStorageInterface $storage): void {
     parent::preSave($storage);
     self::assertLessonRules((int) $this->get('course_id')->value, (string) $this->get('title')->value, (bool) $this->get('published')->value, (int) $this->get('weight')->value);
+    self::assertBodyFormat((string) ($this->get('body')->format ?? 'plain_text'));
   }
 
   /**
@@ -66,6 +67,15 @@ final class LessonEntity extends ContentEntityBase {
    */
   public static function assertLessonRules(int $course_id, string $title, bool $published, int $weight): void {
     new CourseLesson(1, $course_id, $title, $published, $weight);
+  }
+
+  /**
+   * Prevents lesson renderers from trusting formats outside the LMS allowlist.
+   */
+  public static function assertBodyFormat(string $format): void {
+    if (!in_array($format, ['plain_text', 'aculta_lms_lesson'], TRUE)) {
+      throw new \InvalidArgumentException('Lesson body uses an unsupported text format.');
+    }
   }
 
 }

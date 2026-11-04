@@ -745,13 +745,17 @@ ainda dependem do Drupal LMS.
 
 ## Conteúdo de leitura das aulas — 2026-11-04
 
-`aculta_lms_lesson` agora armazena texto longo com formato fixo `plain_text`.
-O formulário de autoria permite escrever o corpo e exige texto quando a aula é
-publicada; a sala usa o render element Drupal `processed_text`, preservando
-quebras de linha e escapando marcação. O update `aculta_lms_update_10015`
-adiciona o field storage sem migrar nem apagar registros existentes. Kernel
-validou armazenamento e renderização segura (8 testes/346 assertions na
-instalação focal); Unit validou o formulário. Editor rico/CKEditor, materiais,
+`aculta_lms_lesson` armazena texto longo. Dev.187 introduziu o formato padrão
+`plain_text`, o formulário de autoria e o render element Drupal
+`processed_text`; o update `aculta_lms_update_10015` adicionou o field storage
+sem migrar nem apagar registros existentes. Dev.190 acrescenta o formato
+restrito `aculta_lms_lesson`, editor CKEditor 5 e acesso apenas ao papel global
+`lms_teacher`; sua allowlist não permite imagens, mídia incorporada ou HTML
+irrestrito. O formulário escapa valores legados `plain_text` antes de abrir no
+editor e a entidade recusa formatos fora de `plain_text` e `aculta_lms_lesson`.
+Unit LMS 257/964 PASS; Kernel focal de instalação/editor/render filtrado 1/80
+PASS (13 depreciações upstream). Runtime tem duas configs novas e alteração de
+permissão à espera de snapshot/import. Shell editor contextual, materiais,
 índice e revisão visual continuam pendentes.
 
 ### Microfase — acesso da agenda de turma pelo adapter LMS

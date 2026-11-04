@@ -1,6 +1,6 @@
 # ACULTA Studio — LMS Course Builder: contrato visual e execução
 
-**Versão de design:** CB-UX 0.3.0-dev.3 · **Data:** 2026-11-04 · **Estado:** estrutura inicial, corpo textual plain_text e comandos acessíveis de ordenação implementados; editor rico/visual e drag-and-drop pendentes.
+**Versão de design:** CB-UX 0.3.0-dev.4 · **Data:** 2026-11-04 · **Estado:** estrutura inicial, edição rica CKEditor 5 com formato filtrado e comandos acessíveis de ordenação implementados; shell contextual/visual, preview estudante e drag-and-drop pendentes.
 
 **Referências:** [Studio Visual](STUDIO-VISUAL-CONCEPT.md) · [Fluxos de edição](STUDIO-EDITOR-FLOWS.md) · [Roadmap Studio](STUDIO-MAGAZINE-ROADMAP.md) · [Roadmap funcional LMS](../modules/ACULTA-LMS-ROADMAP.md) · [LMS/Group](../modules/LMS-GROUP.md) · [Contratos LMS](LMS-INTEGRATION-CONTRACTS.md).
 
@@ -100,7 +100,7 @@ Desktop: drag-and-drop opcional, indicador claro do destino, confirmação de po
 | **0.3.1** | shell mobile-first, árvore no desktop e estrutura em tela inteira no mobile | contraste, foco, rotas reais, fallback |
 | **0.3.2** | navegação hierárquica, seleção, expansão, histórico, estados vazios | isolamento por curso/Group |
 | **0.3.3** | criação contextual de aulas e tipos de atividade suportados em entidades ACULTA | formulário, acesso e payload estão implementados; validação visual/Runtime pendente |
-| **0.3.4** | edição contextual com CKEditor 5/Form API, erros e salvamento real | corpo de leitura plain_text salvo pela Form API e renderizado pelo filtro Drupal; edição do gabarito é bloqueada após respostas; editor rico e visual contextual ainda pendentes |
+| **0.3.4** | edição contextual com CKEditor 5/Form API, erros e salvamento real | formulário da aula usa CKEditor 5/Form API e `aculta_lms_lesson` com allowlist (parágrafos, títulos, listas, links, ênfase, citação e código); somente `lms_teacher` recebe o formato; valores `plain_text` legados são escapados antes da edição. Render é `processed_text`; edição do gabarito segue bloqueada após respostas. Shell editor contextual, mensagens visuais e homologação ainda pendentes |
 | **0.3.5** | mover/reordenar, teclado e aviso de impacto em turmas | comandos acima/abaixo e efeito nas turmas implementados com entidades ACULTA; serialização por coleção, transação e Kernel; drag-and-drop e homologação visual ainda pendentes |
 | **0.3.6** | mídias, Gallery, PDF Viewer e H5P quando disponíveis | privacidade/arquivos/Group |
 | **0.3.7** | prévia estudante, regras e publicação | controle de acesso e não vazamento |

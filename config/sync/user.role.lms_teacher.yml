@@ -3,8 +3,10 @@ langcode: pt-br
 status: true
 dependencies:
   config:
+    - filter.format.aculta_lms_lesson
     - media.type.course_document
   module:
+    - filter
     - group
     - media
     - system
@@ -20,5 +22,6 @@ permissions:
   - 'create lms_course group'
   - 'create lms_teacher profile'
   - 'update own lms_teacher profile'
+  - 'use text format aculta_lms_lesson'
   - 'view own lms_teacher profile'
   - 'view the administration theme'
