@@ -1,3 +1,13 @@
+## 0.1.0-dev.196 — reordena o currículo por arraste acessível
+
+- Aulas e atividades podem ser reordenadas por arraste dentro da sua própria
+  lista; os controles “mover acima/abaixo” seguem disponíveis como alternativa
+  por teclado e sem JavaScript.
+- O servidor confirma novamente a permissão contextual, a relação curso/aula,
+  a coleção completa de IDs e grava pesos sob lock e transação.
+- Validação executada: PHP lint, Node syntax check, parse Symfony YAML e
+  `git diff --check`. Smoke visual e testes Drupal ainda não executados.
+
 ## 0.1.0-dev.195 — tipa o parâmetro convertido da prévia
 
 - O callback de acesso exige `ContentEntityInterface` para receber a aula já

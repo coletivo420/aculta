@@ -89,6 +89,28 @@
   border-inline-start: 3px solid var(--aculta-lms-builder-border);
 }
 
+.aculta-lms-course-builder__sort-handle {
+  min-height: 2.75rem;
+  cursor: grab;
+  touch-action: manipulation;
+}
+
+.no-js .aculta-lms-course-builder__sort-handle {
+  display: none;
+}
+
+.aculta-lms-course-builder__sort-handle:active {
+  cursor: grabbing;
+}
+
+[data-aculta-sort-item].is-dragging {
+  opacity: 0.5;
+}
+
+.aculta-lms-course-sort-form[hidden] {
+  display: none;
+}
+
 .aculta-lms-course-builder__activity > * + * {
   margin-block-start: 0.5rem;
 }

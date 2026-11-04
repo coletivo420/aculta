@@ -10,3 +10,8 @@ course_structure:
   css:
     theme:
       css/course-structure.css: {}
+  js:
+    js/course-structure-sort.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

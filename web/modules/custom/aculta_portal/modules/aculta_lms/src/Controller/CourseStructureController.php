@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\Controller;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Link;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -21,6 +22,7 @@ final class CourseStructureController {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     TranslationInterface $stringTranslation,
+    private readonly ?FormBuilderInterface $formBuilder = NULL,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
@@ -91,7 +93,22 @@ final class CourseStructureController {
         ];
         $activityCards[] = [
           '#type' => 'container',
-          '#attributes' => ['class' => ['aculta-lms-course-builder__activity']],
+          '#attributes' => [
+            'class' => ['aculta-lms-course-builder__activity'],
+            'data-aculta-sort-item' => (string) $activity->id(),
+          ],
+          'sort_handle' => [
+            '#type' => 'html_tag',
+            '#tag' => 'button',
+            '#value' => $this->t('Arrastar para reordenar'),
+            '#attributes' => [
+              'type' => 'button',
+              'class' => ['aculta-lms-course-builder__sort-handle'],
+              'data-aculta-sort-handle' => TRUE,
+              'draggable' => 'true',
+              'aria-label' => $this->t('Arrastar atividade para reordenar'),
+            ],
+          ],
           'title' => $answerCount === 0
             ? Link::fromTextAndUrl(
               $this->activityLabel((string) $activity->get('type')->value),
@@ -141,11 +158,35 @@ final class CourseStructureController {
           Url::fromRoute('aculta_lms.lesson_delete', ['course' => $course->id(), 'lesson' => $lesson->id()]),
         )->toRenderable(),
       ];
+      $activityList = $activityCards === []
+        ? ['#plain_text' => $this->t('Nenhuma atividade nesta aula.')]
+        : [
+          '#theme' => 'item_list',
+          '#list_type' => 'ul',
+          '#items' => $activityCards,
+          '#attributes' => ['class' => ['aculta-lms-course-builder__activities']],
+        ];
+      if (count($activityCards) > 1 && $this->formBuilder !== NULL) {
+        $activityList['#attributes']['data-aculta-sort-list'] = 'activities';
+        $activityList['#attributes']['data-aculta-sort-form'] = 'aculta-course-order-activities-' . $lesson->id();
+        $activityList['#attached']['library'][] = 'aculta_lms/course_structure_sort';
+        $activityOrderForm = $this->formBuilder->getForm(
+          \Drupal\aculta_lms\Form\CourseStructureOrderForm::class,
+          $course,
+          'activities',
+          (int) $lesson->id(),
+          array_map('intval', $activityIds),
+        );
+      }
+      else {
+        $activityOrderForm = [];
+      }
       $lessonCards[] = [
         '#type' => 'container',
         '#attributes' => [
           'class' => ['aculta-lms-course-builder__lesson'],
           'data-aculta-lms-lesson' => (string) $lesson->id(),
+          'data-aculta-sort-item' => (string) $lesson->id(),
         ],
         'heading' => [
           '#type' => 'container',
@@ -154,6 +195,18 @@ final class CourseStructureController {
             (string) $lesson->get('title')->value,
             Url::fromRoute('aculta_lms.lesson_edit', ['course' => $course->id(), 'lesson' => $lesson->id()]),
           )->toRenderable(),
+          'sort_handle' => [
+            '#type' => 'html_tag',
+            '#tag' => 'button',
+            '#value' => $this->t('Arrastar para reordenar'),
+            '#attributes' => [
+              'type' => 'button',
+              'class' => ['aculta-lms-course-builder__sort-handle'],
+              'data-aculta-sort-handle' => TRUE,
+              'draggable' => 'true',
+              'aria-label' => $this->t('Arrastar aula para reordenar'),
+            ],
+          ],
           'preview' => Link::fromTextAndUrl(
             $this->t('Prévia de estudante'),
             Url::fromRoute('aculta_lms.lesson_preview', ['course' => $course->id(), 'lesson' => $lesson->id()]),
@@ -170,16 +223,40 @@ final class CourseStructureController {
           '#tag' => 'h3',
           '#value' => $this->t('Atividades (@count)', ['@count' => count($activities)]),
         ],
-        'activities' => $activityCards === []
-          ? ['#plain_text' => $this->t('Nenhuma atividade nesta aula.')]
-          : [
-            '#theme' => 'item_list',
-            '#list_type' => 'ul',
-            '#items' => $activityCards,
-            '#attributes' => ['class' => ['aculta-lms-course-builder__activities']],
-          ],
+        'activities' => $activityList,
+        'activity_order_form' => $activityOrderForm,
         'actions' => $lessonActions,
       ];
+    }
+
+    $lessonList = $lessonCards === []
+      ? [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['aculta-lms-course-builder__empty']],
+        'message' => ['#plain_text' => $this->t('Este curso ainda não tem aulas.')],
+        'add_lesson' => Link::fromTextAndUrl(
+          $this->t('Criar a primeira aula'),
+          Url::fromRoute('aculta_lms.lesson_add', ['course' => $course->id()]),
+        )->toRenderable(),
+      ]
+      : [
+        '#theme' => 'item_list',
+        '#list_type' => 'ol',
+        '#items' => $lessonCards,
+        '#attributes' => ['class' => ['aculta-lms-course-builder__lessons']],
+      ];
+    $lessonOrderForm = [];
+    if (count($lessonCards) > 1 && $this->formBuilder !== NULL) {
+      $lessonList['#attributes']['data-aculta-sort-list'] = 'lessons';
+      $lessonList['#attributes']['data-aculta-sort-form'] = 'aculta-course-order-lessons-' . $course->id();
+      $lessonList['#attached']['library'][] = 'aculta_lms/course_structure_sort';
+      $lessonOrderForm = $this->formBuilder->getForm(
+        \Drupal\aculta_lms\Form\CourseStructureOrderForm::class,
+        $course,
+        'lessons',
+        (int) $course->id(),
+        array_map('intval', $lessonIds),
+      );
     }
 
     return [
@@ -216,22 +293,8 @@ final class CourseStructureController {
         )->toRenderable(),
       ],
       'lessons_heading' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Estrutura do curso')],
-      'lessons' => $lessonCards === []
-        ? [
-          '#type' => 'container',
-          '#attributes' => ['class' => ['aculta-lms-course-builder__empty']],
-          'message' => ['#plain_text' => $this->t('Este curso ainda não tem aulas.')],
-          'add_lesson' => Link::fromTextAndUrl(
-            $this->t('Criar a primeira aula'),
-            Url::fromRoute('aculta_lms.lesson_add', ['course' => $course->id()]),
-          )->toRenderable(),
-        ]
-        : [
-          '#theme' => 'item_list',
-          '#list_type' => 'ol',
-          '#items' => $lessonCards,
-          '#attributes' => ['class' => ['aculta-lms-course-builder__lessons']],
-        ],
+      'lessons' => $lessonList,
+      'lesson_order_form' => $lessonOrderForm,
     ];
   }
 

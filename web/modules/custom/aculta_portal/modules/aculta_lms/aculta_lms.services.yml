@@ -122,7 +122,7 @@ services:
     arguments: ['@current_user', '@entity_type.manager']
   aculta_lms.course_structure_controller:
     class: Drupal\aculta_lms\Controller\CourseStructureController
-    arguments: ['@entity_type.manager', '@string_translation']
+    arguments: ['@entity_type.manager', '@string_translation', '@form_builder']
   aculta_lms.course_structure_order:
     class: Drupal\aculta_lms\Order\CourseStructureOrderManager
     arguments: ['@entity_type.manager', '@database', '@lock']
