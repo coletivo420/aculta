@@ -6,6 +6,7 @@ namespace Drupal\aculta_lms\Controller;
 
 use Drupal\aculta_lms\LearningDashboardManager;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
+use Drupal\aculta_lms\Learning\ClassStatusHistory;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -20,6 +21,7 @@ use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\aculta_lms\Entity\ActivityEntity;
 use Drupal\aculta_lms\Entity\LessonEntity;
 use Drupal\user\UserInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Builds student and educator LMS dashboard presentations. */
@@ -34,6 +36,8 @@ final class LearningDashboardController {
     private readonly AccountProxyInterface $currentUser,
     private readonly DateFormatterInterface $dateFormatter,
     TranslationInterface $stringTranslation,
+    private readonly ?ClassStatusHistory $classStatusHistory = NULL,
+    private readonly ?RequestStack $requestStack = NULL,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
@@ -116,6 +120,19 @@ final class LearningDashboardController {
     foreach ($labels as $key => $label) {
       $rows[] = [$label, (int) $data[$key]];
     }
+    $period = ClassStatusHistory::normalizePeriod(
+      $this->requestStack?->getCurrentRequest()?->query->get('dias'),
+    );
+    $history = $this->classStatusHistory?->series((int) $course->id(), (int) $group->id(), $period);
+    $historyRows = [];
+    if ($history !== NULL) {
+      foreach ($history['points'] as $point) {
+        $historyRows[] = [
+          $this->dateFormatter->format($point['day'] * 86400, 'custom', 'Y-m-d', 'UTC'),
+          ...array_map(static fn(string $key): int => $point['counts'][$key], ClassStatusHistory::SITUATIONS),
+        ];
+      }
+    }
     $build = [
       '#type' => 'container',
       'course' => [
@@ -130,6 +147,33 @@ final class LearningDashboardController {
         '#header' => [$this->t('Indicador'), $this->t('Quantidade')],
         '#rows' => $rows,
         '#empty' => $this->t('Ainda não há estudantes nesta turma.'),
+      ],
+      'status_history' => [
+        '#type' => 'container',
+        'title' => [
+          '#type' => 'html_tag',
+          '#tag' => 'h2',
+          '#value' => $this->t('Histórico diário da turma'),
+        ],
+        'period' => $this->buildHistoryPeriodSelector($course, $group, $period),
+        'table' => $history === NULL
+          ? ['#plain_text' => $this->t('O histórico diário não está disponível neste site.')]
+          : (!$history['has_data']
+            ? ['#plain_text' => $this->t('Não há instantâneos registrados neste período.')]
+            : [
+              '#type' => 'table',
+              '#caption' => $this->t('Situação agregada por dia nos últimos @days dias', ['@days' => $history['days']]),
+              '#header' => [
+                $this->t('Dia (UTC)'),
+                $this->t('Estudantes'),
+                $this->t('Não iniciaram'),
+                $this->t('Em andamento'),
+                $this->t('Aguardando avaliação'),
+                $this->t('Aprovados'),
+                $this->t('Não concluíram'),
+              ],
+              '#rows' => $historyRows,
+            ]),
       ],
       'activity_deadlines' => [
         '#type' => 'table',
@@ -159,6 +203,37 @@ final class LearningDashboardController {
       ->addCacheableDependency($cacheability)
       ->applyTo($build);
     return $build;
+  }
+
+  /**
+   * Builds no-JavaScript links for the allowed history periods.
+   */
+  private function buildHistoryPeriodSelector(GroupInterface $course, GroupInterface $class, int $activePeriod): array {
+    $options = [];
+    foreach (ClassStatusHistory::PERIODS as $days) {
+      $link = Link::fromTextAndUrl(
+        $this->t('@days dias', ['@days' => $days]),
+        Url::fromRoute('aculta_lms.class_dashboard', [
+          'course' => $course->id(),
+          'group' => $class->id(),
+        ], ['query' => ['dias' => $days]]),
+      )->toRenderable();
+      if ($days === $activePeriod) {
+        $link['#attributes']['class'][] = 'is-active';
+        $link['#attributes']['aria-current'] = 'page';
+      }
+      $options[] = $link;
+    }
+    return [
+      '#type' => 'container',
+      '#attributes' => ['class' => ['aculta-lms-class-status-history__period']],
+      'label' => ['#plain_text' => $this->t('Período:')],
+      'options' => [
+        '#theme' => 'item_list',
+        '#items' => $options,
+        '#attributes' => ['class' => ['links', 'inline']],
+      ],
+    ];
   }
 
   /**

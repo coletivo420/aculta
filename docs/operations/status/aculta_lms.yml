@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.197
+version: 0.1.0-dev.198
 state: Dev
-progress_note: "Dev.197: Unit do render array de reordenação 1/29 PASS; Kernel real de persistência 1/46 PASS, incluindo lista incompleta rejeitada e resposta preservada (13 depreciações upstream). Handles são decorativos/fora da árvore acessível; controles de mover são a alternativa funcional de teclado. Dev.196 adicionou arraste por lista com fallback sem JS e validação server-side sob lock/transação. PDF usa canonical Media e formatter do owner; documentos/H5P ainda aguardam verificação contextual e smoke visual. Dev.195: prévia privada sem submit ou exposição de respostas/gabaritos. Dev.193: CKEditor inicializa e ainda há TypeError no plugin pack; Plugin Pack 2 beta requer Core 12, Runtime segue em Core 11.5."
+progress_note: "Dev.198: painel do educador lê a série diária agregada lms.students.by_status por turma, com links GET 7/14/30d, somente dimensões da turma e sem IDs de estudante; Unit do history/controller e Kernel do armazenamento. Dev.197/196: reordenação por arraste e fallback acessível por teclado, lock/transação e validação de permutação. H5P reusa field/widget do owner quando disponível; smoke visual ainda pendente. CKEditor inicializa, com TypeError residual reportado no plugin pack a investigar no browser."
 next_phase: 'Continuar auditoria funcional/visual das lacunas LMS e validar o Course Builder autenticado; só então retomar pagamentos. Depois examinar cada update de banco pendente se houver, ou registrar evidência de que não há updates.'
 
 # 2026-10-22: Dependência externa de UI G420-C2-T permanece pendente.

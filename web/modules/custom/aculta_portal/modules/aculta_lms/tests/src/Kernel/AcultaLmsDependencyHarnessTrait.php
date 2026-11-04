@@ -53,9 +53,9 @@ trait AcultaLmsDependencyHarnessTrait {
    * Group relationship field and Drupal 12 requires its entity schema first.
    */
   protected function prepareAcultaLmsGroupTypes(): void {
-    // The LMS ships admin Views whose menu displays depend on system.menu.admin.
+    // LMS admin Views require system.menu.admin for their menu displays.
     // Some partial Kernels install the module before their test method installs
-    // module configuration, so prepare the dependency before enabling aculta_lms.
+    // module configuration; prepare it before enabling aculta_lms.
     $this->installConfig(['system']);
 
     // The LMS installs its answer-feedback Comment type. Keep this shared
@@ -66,8 +66,11 @@ trait AcultaLmsDependencyHarnessTrait {
     $this->installConfig(['comment']);
     $this->installEntitySchema('comment');
 
+    // Group installs the group_roles field storage from its default config.
+    // Install its base table first; Drupal 12 enforces this.
+    $this->installEntitySchema('group_relationship');
     $this->installConfig(['group']);
-    foreach (['user', 'group', 'group_relationship', 'group_config_wrapper'] as $entityType) {
+    foreach (['user', 'group', 'group_config_wrapper'] as $entityType) {
       $this->installEntitySchema($entityType);
     }
 

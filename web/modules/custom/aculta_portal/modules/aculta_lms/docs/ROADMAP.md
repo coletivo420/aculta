@@ -35,17 +35,17 @@ Não criar chat automático de curso/turma nem caixa educacional paralela.
 
 - Feito (0.1.0-dev.78): `ClassStatusSnapshotEvent` no cron, série diária por turma e situação, sem dado individual.
 - Decidido: a barra de progresso do aluno continua sendo o estado atual, sem série. Série diária **por aluno** não foi criada. Revisão LGPD feita em 2026-10-21: não aprovada para armazenamento (ver `docs/compliance/REVISAO-PROGRESSO-INDIVIDUAL.md`). Aguarda a decisão do responsável entre as opções A, B e C.
-- Pendente: seletor de período no painel da turma, lendo a série do `aculta_statistics` (regra de período em gráficos, ADR-0005).
+- Implementado (0.1.0-dev.198): o painel da turma consulta a série agregada `lms.students.by_status` do `aculta_statistics`, com período GET de 7/14/30 dias segundo ADR-0005. A leitura se limita às seis dimensões do curso/turma e mostra zeros nos dias sem snapshot; não carrega dimensões individuais.
 - Pendente: validar no Runtime com turmas reais (o de teste não tem turmas).
 
 ## Produtores de eventos para estatísticas
 
 - Já emitidos (uso pelo `aculta_statistics`): `CourseEnrollmentEvent` (matrícula, por curso e turma),
   `CourseCompletedEvent` (conclusão, uma vez por status), `CertificateIssuedEvent` (certificado, total).
-- Pendente: instantâneo de situação por turma (`lms.students.by_status`: não iniciados, em andamento,
-  aguardando avaliação, aprovados, reprovados). O painel da turma (`LearningDashboardManager::classDashboard()`)
-  calcula ao vivo; o produtor proposto é um evento `ClassStatusSnapshotEvent` emitido pelo cron, com
-  contagens por turma, sem identificação de aluno.
+- Feito (0.1.0-dev.78): instantâneo diário agregado por turma (`lms.students.by_status`: não iniciados,
+  em andamento, aguardando avaliação, aprovados, reprovados); o cron emite `ClassStatusSnapshotEvent`.
+- Feito (0.1.0-dev.198): painel de educador consulta os snapshots por período com acesso de turma já
+  validado e sem expor UIDs ou dimensões de outras turmas.
 - Decidido (2026-10-21, responsável): série diária por turma, com a supressão de célula pequena (menos de 5
   alunos) já existente em `CellSuppression`.
 - Decidido (2026-10-21, responsável): série diária **por aluno**, sob o aceite único (Termos e Política), sem

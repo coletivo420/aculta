@@ -35,6 +35,7 @@ function aculta_lms_update_10003(): void {
  *
  * Uploads of file answers need the private file system (ported from lms_file_upload).
  */
+#[\Drupal\Core\Hook\Attribute\LegacyRequirementsHook]
 function aculta_lms_requirements(string $phase): array {
   $requirements = [];
   if (\Drupal\Core\Site\Settings::get('file_private_path') === NULL) {

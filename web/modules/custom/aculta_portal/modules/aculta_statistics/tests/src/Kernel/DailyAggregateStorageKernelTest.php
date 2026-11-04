@@ -101,6 +101,31 @@ final class DailyAggregateStorageKernelTest extends KernelTestBase {
   }
 
   /**
+   * Daily totals are grouped by both day and one explicit dimension set.
+   */
+  public function testDailyDimensionTotalsAreGroupedByDayAndDimension(): void {
+    $storage = $this->storage();
+    $this->insertRow('lms.students.by_status', '4/8|students', 100, 5);
+    $this->insertRow('lms.students.by_status', '4/8|students', 101, 6);
+    $this->insertRow('lms.students.by_status', '4/8|passed', 100, 2);
+    $this->insertRow('lms.students.by_status', '4/9|passed', 101, 3);
+    $this->insertRow('lms.students.by_status', '4/9|failed', 101, 1);
+    $this->insertRow('lms.students.by_status', '9/8|students', 101, 99);
+    $this->insertRow('wiki.entries.read', '4/8|students', 100, 77);
+
+    $this->assertSame([
+      100 => ['4/8|passed' => 2, '4/8|students' => 5],
+      101 => ['4/8|students' => 6, '4/9|failed' => 1, '4/9|passed' => 3],
+    ], $storage->dailyDimensionTotalsForDimensions(
+      'lms.students.by_status',
+      100,
+      101,
+      ['4/8|students', '4/8|passed', '4/9|passed', '4/9|failed'],
+    ));
+    $this->assertSame([], $storage->dailyDimensionTotalsForDimensions('lms.students.by_status', 100, 101, []));
+  }
+
+  /**
    * The selected-dimension aggregate has a fixed parameter bound.
    */
   public function testDimensionTotalsRejectMoreThanOneHundredDimensions(): void {

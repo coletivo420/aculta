@@ -57,6 +57,8 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     'views',
     'options',
     'text',
+    'editor',
+    'ckeditor5',
     'comment',
     'aculta_lms',
   ];

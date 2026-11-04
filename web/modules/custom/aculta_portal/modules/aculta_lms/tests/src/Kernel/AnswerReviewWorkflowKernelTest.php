@@ -46,6 +46,7 @@ final class AnswerReviewWorkflowKernelTest extends KernelTestBase {
     'key', 'system', 'domain', 'user', 'file', 'image', 'media', 'options',
     'entity_print', 'entity_usage', 'aculta_image', 'aculta_file_uploader',
     'field', 'filter', 'flexible_permissions', 'group', 'views', 'text',
+    'editor', 'ckeditor5',
     'comment', 'aculta_lms',
   ];
 

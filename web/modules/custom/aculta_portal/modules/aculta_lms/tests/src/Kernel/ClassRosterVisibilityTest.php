@@ -36,6 +36,8 @@ final class ClassRosterVisibilityTest extends KernelTestBase {
     'system', 'domain', 'user', 'file', 'image', 'media', 'entity_usage', 'aculta_image', 'aculta_file_uploader',
     'field', 'filter', 'flexible_permissions', 'group', 'views', 'options',
     'text',
+    'editor',
+    'ckeditor5',
   ];
 
   /**

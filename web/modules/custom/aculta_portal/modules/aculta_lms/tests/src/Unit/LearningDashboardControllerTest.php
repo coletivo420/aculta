@@ -20,11 +20,16 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
-/** Tests fail-closed dashboard behavior for groups outside the LMS. */
+/**
+ * Tests fail-closed dashboard behavior for groups outside the LMS.
+ */
 #[CoversClass(LearningDashboardController::class)]
 #[Group('aculta_lms')]
 final class LearningDashboardControllerTest extends UnitTestCase {
 
+  /**
+   * A non-LMS Group never renders dashboard content.
+   */
   public function testDashboardRejectsGroupOutsideLms(): void {
     $account = $this->createMock(AccountProxyInterface::class);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);

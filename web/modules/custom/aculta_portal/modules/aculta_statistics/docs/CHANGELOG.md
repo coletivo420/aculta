@@ -1,3 +1,15 @@
+# 0.9.0-dev.11 — consulta séries diárias de dimensões selecionadas (2026-11-04)
+
+- `AggregateStorageInterface` e `DailyAggregateStorage` oferecem uma consulta
+  agrupada por dia e dimensão, limitada a uma allowlist explícita de até 100
+  dimensões; o novo método não altera os dados gravados nem o schema.
+- A integração do LMS usa essa consulta para exibir a situação histórica da
+  turma sem buscar dimensões de outras turmas nem dados individuais.
+- Kernel `DailyAggregateStorageKernelTest` cobre agrupamento por dia/dimensão,
+  isolamento de métrica e turma e retorno vazio.
+- Unit 108/438 e Kernel focal 16/29 passaram; PHP lint, PHPCS focal e
+  `git diff --check` passaram.
+
 # 0.9.0-dev.10 — reflow responsivo do painel (2026-10-29)
 
 - Controles de período/métrica agora podem quebrar linha e limitam o `<select>`

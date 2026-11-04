@@ -1,6 +1,6 @@
 # ACULTA Statistics
 
-**Versão:** `0.9.0-dev.10` — reflow responsivo dos controles e tabelas do painel.
+**Versão:** `0.9.0-dev.11` — consulta diária de dimensões para o painel LMS.
 
 Central de métricas da plataforma ACULTA: catálogo, agregados diários, retenção
 configurável por métrica e consulta. Não substitui os dados de origem. Pedidos
@@ -19,6 +19,9 @@ ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mai
   até 100 dimensões selecionadas em uma única consulta agrupada; consumidores
   como o Content Index podem correlacionar uma página já autorizada sem ler
   todas as dimensões globais. A autorização do conteúdo continua no módulo dono.
+- `dailyDimensionTotalsForDimensions()` lê uma allowlist de até 100 dimensões
+  agrupadas por dia UTC e dimensão; o Course Dashboard usa isso para exibir
+  snapshots históricos por turma, sem expor métricas de outros cursos ou UIDs.
 - `AuthorizedEntityMetricAggregator` implementa o contrato opcional do Portal;
   exige `view content-level statistics` para métricas públicas da allowlist e
   `administer aculta_statistics` para métricas internas. Métricas restritas

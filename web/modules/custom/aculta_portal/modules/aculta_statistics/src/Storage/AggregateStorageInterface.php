@@ -42,10 +42,10 @@ interface AggregateStorageInterface {
   public function replaceDay(string $metric, int $day, array $totals): void;
 
   /**
-   * Apaga todas as linhas de uma métrica que identificam um aluno, em todos os dias.
+   * Apaga linhas de uma métrica que identificam um aluno, em todos os dias.
    *
-   * Usado quando a conta é excluída ou o consentimento é revogado. A dimensão de métricas por aluno tem o formato
-   * `curso/uid|situação`.
+   * Usado quando a conta é excluída ou o consentimento é revogado. A dimensão
+   * de métricas por aluno tem o formato `curso/uid|situação`.
    *
    * @return int
    *   Quantidade de linhas removidas.
@@ -114,6 +114,29 @@ interface AggregateStorageInterface {
    *   Total por dimensão encontrada. Dimensões sem registro são omitidas.
    */
   public function dimensionTotalsForDimensions(
+    string $metric,
+    int $fromDay,
+    int $toDay,
+    array $dimensions,
+  ): array;
+
+  /**
+   * Totals for selected dimensions, grouped by day and dimension.
+   *
+   * @param string $metric
+   *   Identifier from the metric catalog.
+   * @param int $fromDay
+   *   First UTC day, inclusive.
+   * @param int $toDay
+   *   Last UTC day, inclusive.
+   * @param list<string|int> $dimensions
+   *   Explicit dimensions to query, limited to 100.
+   *
+   * @return array<int, array<string, int>>
+   *   Totals keyed by UTC day, then dimension. Days and dimensions with no
+   *   stored row are omitted.
+   */
+  public function dailyDimensionTotalsForDimensions(
     string $metric,
     int $fromDay,
     int $toDay,

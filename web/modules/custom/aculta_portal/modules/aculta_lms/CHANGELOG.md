@@ -1,3 +1,18 @@
+## 0.1.0-dev.198 — mostra histórico agregado por turma
+
+- O painel de educador lê a série diária `lms.students.by_status` do Statistics
+  para a turma autorizada e oferece períodos de 7, 14 ou 30 dias por links GET,
+  sem JavaScript. Dias sem snapshot aparecem como zero; a página distingue
+  ausência de histórico da integração opcional indisponível.
+- A consulta carrega só as seis dimensões da combinação curso/turma e não
+  inclui UID, notas, respostas ou dados por estudante. O resumo atual e a lista
+  de participantes mantêm suas políticas existentes.
+- `aculta_lms_requirements()` recebe `LegacyRequirementsHook`, evitando a
+  depreciação do hook procedural no Core 11.3+.
+- Unit LMS 264/984 e Kernel 36/1101; Statistics Unit 108/438 e Kernel focado
+  16/29. PHPCS focal, PHP lint e `git diff --check` passaram. O Kernel amplo
+  reporta 59 depreciações em módulos contrib/Core externos ao LMS.
+
 ## 0.1.0-dev.197 — testa reordenação do Course Builder
 
 - Unit cobre atributos e handles das listas; Kernel comprova reordenação de

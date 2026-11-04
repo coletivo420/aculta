@@ -10,12 +10,12 @@ use Drupal\Core\Database\Connection;
 /**
  * Armazenamento diário com `merge` atômico por métrica, dimensão e dia.
  *
- * Adaptado de `NodeStatisticsDatabaseStorage` (drupal/statistics, GPL-2.0-or-later,
- * commit fe20f9f). Mudanças: chave genérica (métrica + dimensão + dia UTC) em
- * vez de `node_counter` por nid; tempo injetado por `TimeInterface` em vez de
+ * Derivado de `NodeStatisticsDatabaseStorage` em `drupal/statistics`
+ * (GPL-2.0-or-later, commit fe20f9f). Usa chave métrica + dimensão + dia UTC
+ * em vez de `node_counter` por nid; tempo via `TimeInterface` no lugar de
  * `REQUEST_TIME` da requisição; sem `RequestStack`, IP ou metadados de visita.
  *
- * Schema em `aculta_statistics.install`. Retenção por métrica em `RetentionPolicy`.
+ * Schema em `aculta_statistics.install`; retenção usa `RetentionPolicy`.
  */
 final class DailyAggregateStorage implements AggregateStorageInterface {
 
@@ -75,7 +75,7 @@ final class DailyAggregateStorage implements AggregateStorageInterface {
       }
     }
 
-    // Apagar e regravar na mesma transação: leitor concorrente nunca vê o dia pela metade.
+    // Leitores concorrentes não veem o dia pela metade.
     $transaction = $this->database->startTransaction();
     $this->database->delete(self::TABLE)
       ->condition('metric', $metric)
@@ -95,7 +95,7 @@ final class DailyAggregateStorage implements AggregateStorageInterface {
         ])
         ->execute();
     }
-    unset($transaction);
+    $transaction->commitOrRelease();
   }
 
   /**
@@ -206,6 +206,48 @@ final class DailyAggregateStorage implements AggregateStorageInterface {
     $query->addExpression('SUM(stats.total)', 'total');
 
     return array_map('intval', $query->execute()->fetchAllKeyed());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function dailyDimensionTotalsForDimensions(string $metric, int $fromDay, int $toDay, array $dimensions): array {
+    $this->assertMetric($metric);
+    if ($fromDay > $toDay) {
+      throw new \InvalidArgumentException('O início do período deve ser anterior ao fim.');
+    }
+    if (count($dimensions) > 100) {
+      throw new \InvalidArgumentException('At most 100 dimensions may be aggregated in one call.');
+    }
+    foreach ($dimensions as $dimension) {
+      if (!is_string($dimension) && !is_int($dimension)) {
+        throw new \InvalidArgumentException('Every selected dimension must be a string or integer.');
+      }
+    }
+    $dimensions = array_values(array_unique(array_map('strval', $dimensions)));
+    if ($dimensions === []) {
+      return [];
+    }
+    foreach ($dimensions as $dimension) {
+      $this->assertDimension($dimension);
+    }
+
+    $query = $this->database->select(self::TABLE, 'stats')
+      ->fields('stats', ['day', 'dimension'])
+      ->condition('metric', $metric)
+      ->condition('day', [$fromDay, $toDay], 'BETWEEN')
+      ->condition('dimension', $dimensions, 'IN')
+      ->groupBy('day')
+      ->groupBy('dimension')
+      ->orderBy('day')
+      ->orderBy('dimension');
+    $query->addExpression('SUM(stats.total)', 'total');
+
+    $totals = [];
+    foreach ($query->execute() as $row) {
+      $totals[(int) $row->day][(string) $row->dimension] = (int) $row->total;
+    }
+    return $totals;
   }
 
   /**
