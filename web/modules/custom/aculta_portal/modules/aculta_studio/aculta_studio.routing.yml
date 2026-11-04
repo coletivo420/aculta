@@ -364,6 +364,23 @@ aculta_lms.lesson_delete:
       lesson:
         type: entity:aculta_lms_lesson
 
+aculta_lms.lesson_move:
+  path: '/ganjalab/educador/cursos/{course}/aulas/{lesson}/mover/{direction}'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\CourseStructureMoveForm'
+    _title: 'Mover aula'
+  requirements:
+    _custom_access: 'aculta_lms.course_authoring_access:accessForReorder'
+    direction: 'up|down'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: courses
+    parameters:
+      course:
+        type: entity:group
+      lesson:
+        type: entity:aculta_lms_lesson
+
 aculta_lms.activity_add:
   path: '/ganjalab/educador/cursos/{course}/aulas/{lesson}/atividades/nova'
   defaults:
@@ -405,6 +422,25 @@ aculta_lms.activity_delete:
     _title: 'Excluir atividade'
   requirements:
     _custom_access: 'aculta_lms.course_authoring_access:access'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: courses
+    parameters:
+      course:
+        type: entity:group
+      lesson:
+        type: entity:aculta_lms_lesson
+      activity:
+        type: entity:aculta_lms_activity
+
+aculta_lms.activity_move:
+  path: '/ganjalab/educador/cursos/{course}/aulas/{lesson}/atividades/{activity}/mover/{direction}'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\CourseStructureMoveForm'
+    _title: 'Mover atividade'
+  requirements:
+    _custom_access: 'aculta_lms.course_authoring_access:accessForReorder'
+    direction: 'up|down'
   options:
     no_cache: true
     _aculta_domain_purpose: courses

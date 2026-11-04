@@ -1,3 +1,10 @@
+## 0.1.0-dev.48 — comandos de ordenação do currículo no Educador
+
+- Rotas no purpose `courses` apresentam os formulários de confirmação de mover
+  aula/atividade do owner `aculta_lms`, com acesso contextual revalidado no POST.
+- Sem JavaScript, o workspace oferece comandos acessíveis para mover itens uma
+  posição acima/abaixo; o aviso informa que a ordem afeta turmas vinculadas.
+
 ## 0.1.0-dev.47 — ações seguras de exclusão no Educador
 
 - O workspace mantém as rotas de confirmação para excluir aulas e atividades,

@@ -57,6 +57,14 @@ final class CourseStructureControllerTest extends UnitTestCase {
         'weight' => 0,
         default => NULL,
     }));
+    $secondLesson = $this->createMock(ContentEntityInterface::class);
+    $secondLesson->method('id')->willReturn('12');
+    $secondLesson->method('get')->willReturnCallback(static fn(string $field): FieldItemListInterface => self::field(match ($field) {
+        'title' => 'Segunda aula',
+        'published' => FALSE,
+        'weight' => 1,
+        default => NULL,
+    }));
     $activity = $this->createMock(ContentEntityInterface::class);
     $activity->method('id')->willReturn('21');
     $activity->method('get')->willReturnCallback(static fn(string $field): FieldItemListInterface => self::field(match ($field) {
@@ -65,12 +73,20 @@ final class CourseStructureControllerTest extends UnitTestCase {
         'answer_config' => '{"question":"Explique a ideia."}',
         default => NULL,
     }));
+    $secondActivity = $this->createMock(ContentEntityInterface::class);
+    $secondActivity->method('id')->willReturn('22');
+    $secondActivity->method('get')->willReturnCallback(static fn(string $field): FieldItemListInterface => self::field(match ($field) {
+        'type' => 'select',
+        'weight' => 1,
+        'answer_config' => '{"question":"Selecione"}',
+        default => NULL,
+    }));
 
-    $lessonQuery = $this->query([11]);
-    $activityQuery = $this->query([21]);
+    $lessonQuery = $this->query([11, 12]);
+    $activityQuery = $this->query([21, 22]);
     $answerQuery = $this->query(0);
-    $lessonStorage = $this->storage($lessonQuery, [11 => $lesson]);
-    $activityStorage = $this->storage($activityQuery, [21 => $activity]);
+    $lessonStorage = $this->storage($lessonQuery, [11 => $lesson, 12 => $secondLesson]);
+    $activityStorage = $this->storage($activityQuery, [21 => $activity, 22 => $secondActivity]);
     $answerStorage = $this->createMock(EntityStorageInterface::class);
     $answerStorage->method('getQuery')->willReturn($answerQuery);
     $manager = $this->createMock(EntityTypeManagerInterface::class);
@@ -84,13 +100,17 @@ final class CourseStructureControllerTest extends UnitTestCase {
 
     self::assertSame('course-structure', $build['#attributes']['data-aculta-lms']);
     self::assertSame('Curso de exemplo', $build['course']['#value']);
-    self::assertCount(1, $build['lessons']['#rows']);
+    self::assertCount(2, $build['lessons']['#rows']);
     self::assertSame('Publicada', (string) $build['lessons']['#rows'][0]['data'][1]['#plain_text']);
-    self::assertCount(1, $build['lessons']['#rows'][0]['data'][3]['data']['#rows']);
+    self::assertCount(2, $build['lessons']['#rows'][0]['data'][3]['data']['#rows']);
     self::assertSame('Explique a ideia.', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][1]['#plain_text']);
     self::assertSame('aculta_lms.activity_edit', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][0]['#url']->getRouteName());
-    self::assertSame('aculta_lms.activity_delete', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][4]['#url']->getRouteName());
-    self::assertSame('aculta_lms.lesson_delete', $build['lessons']['#rows'][0]['data'][4]['data'][1]['#url']->getRouteName());
+    self::assertSame('aculta_lms.activity_delete', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][4]['data']['delete']['#url']->getRouteName());
+    self::assertSame('aculta_lms.lesson_delete', $build['lessons']['#rows'][0]['data'][4]['data']['delete']['#url']->getRouteName());
+    self::assertSame('aculta_lms.lesson_move', $build['lessons']['#rows'][0]['data'][4]['data']['move_down']['#url']->getRouteName());
+    self::assertSame('aculta_lms.lesson_move', $build['lessons']['#rows'][1]['data'][4]['data']['move_up']['#url']->getRouteName());
+    self::assertSame('aculta_lms.activity_move', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][4]['data']['move_down']['#url']->getRouteName());
+    self::assertSame('aculta_lms.activity_move', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][1]['data'][4]['data']['move_up']['#url']->getRouteName());
   }
 
   /**

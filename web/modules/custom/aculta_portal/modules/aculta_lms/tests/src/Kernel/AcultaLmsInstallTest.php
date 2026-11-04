@@ -25,6 +25,7 @@ use Drupal\aculta_lms\Plugin\ActivityAnswer\FreeTextReviewFeedback;
 use Drupal\aculta_lms\Learning\CourseAnswerReaderInterface;
 use Drupal\aculta_lms\Learning\AnswerPayload;
 use Drupal\aculta_lms\Learning\CourseLessonReaderInterface;
+use Drupal\aculta_lms\Order\CourseStructureOrderManager;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Core\Session\UserSession;
 use Drupal\user\UserInterface;
@@ -34,6 +35,7 @@ use Drupal\aculta_lms\Certificate\CertificateQrCodeProviderInterface;
 use Drupal\aculta_qrcode\Value\QrCodeFormat;
 use Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface;
 use Drupal\entity_print\Plugin\PrintEngineInterface;
+use Drupal\group\Entity\Group as GroupEntity;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -171,6 +173,72 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $currentRoute = new \ReflectionProperty(AnswerSubmissionForm::class, 'currentRoute');
     $this->assertTrue($currentRoute->isInitialized($restored));
     $this->assertInstanceOf(CurrentRouteMatch::class, $currentRoute->getValue($restored));
+  }
+
+  /**
+   * Ensures moves reorder siblings without changing answer references.
+   */
+  public function testCourseStructureMovesLessonsAndActivitiesWithoutChangingAnswers(): void {
+    $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    $this->prepareAcultaLmsClassRelationship();
+    $course = GroupEntity::create(['type' => 'lms_course', 'label' => 'Curso de ordenação']);
+    $course->save();
+    $lessonStorage = $this->container->get('entity_type.manager')->getStorage('aculta_lms_lesson');
+    $lessonA = $lessonStorage->create([
+      'course_id' => (int) $course->id(),
+      'title' => 'Aula A',
+      'published' => TRUE,
+      'weight' => 0,
+    ]);
+    $lessonA->save();
+    $lessonB = $lessonStorage->create([
+      'course_id' => (int) $course->id(),
+      'title' => 'Aula B',
+      'published' => TRUE,
+      'weight' => 9,
+    ]);
+    $lessonB->save();
+
+    $activityStorage = $this->container->get('entity_type.manager')->getStorage('aculta_lms_activity');
+    $activityA = $activityStorage->create([
+      'lesson_id' => (int) $lessonA->id(),
+      'type' => 'free_text',
+      'graded' => TRUE,
+      'weight' => 0,
+      'answer_config' => '{"question":"A"}',
+    ]);
+    $activityA->save();
+    $activityB = $activityStorage->create([
+      'lesson_id' => (int) $lessonA->id(),
+      'type' => 'free_text',
+      'graded' => TRUE,
+      'weight' => 7,
+      'answer_config' => '{"question":"B"}',
+    ]);
+    $activityB->save();
+    $student = User::create(['name' => 'lms-order-student', 'status' => 1]);
+    $student->save();
+    $answer = $this->container->get('entity_type.manager')->getStorage('aculta_lms_answer')->create([
+      'activity_id' => (int) $activityA->id(),
+      'uid' => (int) $student->id(),
+      'state' => 'submitted',
+      'answer_data' => '{}',
+    ]);
+    $answer->save();
+
+    $manager = $this->container->get('aculta_lms.course_structure_order');
+    $this->assertInstanceOf(CourseStructureOrderManager::class, $manager);
+    $this->assertFalse($manager->move('aculta_lms_lesson', (int) $course->id(), (int) $lessonA->id(), 'up'));
+    $this->assertTrue($manager->move('aculta_lms_lesson', (int) $course->id(), (int) $lessonB->id(), 'up'));
+    $this->assertSame(1, (int) $lessonStorage->load($lessonA->id())->get('weight')->value);
+    $this->assertSame(0, (int) $lessonStorage->load($lessonB->id())->get('weight')->value);
+
+    $this->assertTrue($manager->move('aculta_lms_activity', (int) $lessonA->id(), (int) $activityA->id(), 'down'));
+    $this->assertSame(0, (int) $activityStorage->load($activityB->id())->get('weight')->value);
+    $this->assertSame(1, (int) $activityStorage->load($activityA->id())->get('weight')->value);
+    $answerStorage = $this->container->get('entity_type.manager')->getStorage('aculta_lms_answer');
+    $this->assertSame((int) $activityA->id(), (int) $answerStorage->load($answer->id())->get('activity_id')->value);
+    $this->assertFalse($manager->move('aculta_lms_activity', (int) $lessonA->id(), (int) $activityA->id(), 'down'));
   }
 
   /**

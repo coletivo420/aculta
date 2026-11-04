@@ -28,6 +28,31 @@ final class CourseAuthoringAccessCheck {
     ?ContentEntityInterface $lesson = NULL,
     ?ContentEntityInterface $activity = NULL,
   ): AccessResult {
+    return $this->checkAccess($course, $lesson, $activity, TRUE);
+  }
+
+  /**
+   * Grants curriculum ordering access without unlocking answered activities.
+   *
+   * Reordering changes presentation order only; it does not change question or
+   * answer configuration, so historical answers remain safe to move.
+   */
+  public function accessForReorder(
+    GroupInterface $course,
+    ?ContentEntityInterface $lesson = NULL,
+    ?ContentEntityInterface $activity = NULL,
+  ): AccessResult {
+    return $this->checkAccess($course, $lesson, $activity, FALSE);
+  }
+
+  /**
+   * Checks the course ancestry and educator permission for an operation. */
+  private function checkAccess(
+    GroupInterface $course,
+    ?ContentEntityInterface $lesson,
+    ?ContentEntityInterface $activity,
+    bool $lockAnsweredActivity,
+  ): AccessResult {
     $validCourse = $course->bundle() === 'lms_course';
     $validLesson = $lesson === NULL
       || ($lesson->getEntityTypeId() === 'aculta_lms_lesson'
@@ -38,7 +63,7 @@ final class CourseAuthoringAccessCheck {
         && (int) $activity->get('lesson_id')->value === (int) $lesson->id());
     // Once answers exist the question and answer key form part of their audit
     // context. Editing them in place would make the historical score opaque.
-    $activityHasAnswers = $activity instanceof ContentEntityInterface
+    $activityHasAnswers = $lockAnsweredActivity && $activity instanceof ContentEntityInterface
       && $this->entityTypeManager->getStorage('aculta_lms_answer')
         ->getQuery()
         ->accessCheck(FALSE)
@@ -47,7 +72,8 @@ final class CourseAuthoringAccessCheck {
         ->count()
         ->execute() > 0;
 
-    $allowed = $validCourse && $validLesson && $validActivity && !$activityHasAnswers
+    $allowed = $validCourse && $validLesson && $validActivity
+      && (!$lockAnsweredActivity || !$activityHasAnswers)
       && ($this->currentUser->hasPermission('administer lms')
         || $course->hasPermission('grade students', $this->currentUser));
 

@@ -1,6 +1,6 @@
 # ACULTA Studio — LMS Course Builder: contrato visual e execução
 
-**Versão de design:** CB-UX 0.3.0-dev.2 · **Data:** 2026-11-03 · **Estado:** estrutura inicial implementada; editor visual e ordenação avançada pendentes.
+**Versão de design:** CB-UX 0.3.0-dev.3 · **Data:** 2026-11-04 · **Estado:** estrutura inicial e comandos acessíveis de ordenação implementados; editor visual e drag-and-drop pendentes.
 
 **Referências:** [Studio Visual](STUDIO-VISUAL-CONCEPT.md) · [Fluxos de edição](STUDIO-EDITOR-FLOWS.md) · [Roadmap Studio](STUDIO-MAGAZINE-ROADMAP.md) · [Roadmap funcional LMS](../modules/ACULTA-LMS-ROADMAP.md) · [LMS/Group](../modules/LMS-GROUP.md) · [Contratos LMS](LMS-INTEGRATION-CONTRACTS.md).
 
@@ -26,7 +26,7 @@ Construir a autoria de cursos do educador sem usar as telas administrativas do D
 | Construtor — Estrutura | central | árvore, expandir módulos, selecionar item, adicionar conforme catálogo autorizado |
 | Editor de aula/atividade | central | formulário nativo, CKEditor 5 onde cabível, materiais, salvar, erros, estado |
 | Criar item | contexto de módulo | só tipos suportados: aula, atividade, recurso; vídeo/PDF/H5P/discussão quando realmente disponíveis |
-| Reorganizar | contexto da árvore | drag-and-drop no desktop; mover acima/abaixo/entre módulos no mobile/teclado |
+| Reorganizar | contexto da árvore | comandos confirmados mover acima/abaixo em teclado e sem JS; drag-and-drop desktop e mover entre módulos no mobile ainda pendentes |
 | Informações | secundária | nome, descrição, capa e campos reais do curso |
 | Materiais | secundária | mídia/referências e PDF autorizado, via kernel |
 | Regras | secundária | disponibilidade, conclusão, pré-requisitos reais |
@@ -101,7 +101,7 @@ Desktop: drag-and-drop opcional, indicador claro do destino, confirmação de po
 | **0.3.2** | navegação hierárquica, seleção, expansão, histórico, estados vazios | isolamento por curso/Group |
 | **0.3.3** | criação contextual de aulas e tipos de atividade suportados em entidades ACULTA | formulário, acesso e payload estão implementados; validação visual/Runtime pendente |
 | **0.3.4** | edição contextual com CKEditor 5/Form API, erros e salvamento real | Form API de aula/atividade inicial implementado sem CKEditor; edição do gabarito é bloqueada após respostas; editor rico ainda pendente |
-| **0.3.5** | mover/reordenar, teclado e aviso de impacto em turmas | APIs oficiais e concorrência validadas |
+| **0.3.5** | mover/reordenar, teclado e aviso de impacto em turmas | comandos acima/abaixo e efeito nas turmas implementados com entidades ACULTA; serialização por coleção, transação e Kernel; drag-and-drop e homologação visual ainda pendentes |
 | **0.3.6** | mídias, Gallery, PDF Viewer e H5P quando disponíveis | privacidade/arquivos/Group |
 | **0.3.7** | prévia estudante, regras e publicação | controle de acesso e não vazamento |
 | **0.3.8** | acessibilidade, testes, responsividade, documentação e homologação | gates Drupal 11+/LMS, evidências |
