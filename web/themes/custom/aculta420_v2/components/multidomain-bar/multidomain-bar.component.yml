@@ -120,3 +120,9 @@ slots:
   account_avatar:
     title: Avatar da conta
     description: Render array de avatar fornecido pelo Portal; sem avatar, o account-menu mostra o ícone neutro.
+  avatar:
+    title: Avatar do menu de conta
+    description: Slot interno encaminhado ao account-menu SDC.
+  menu_items:
+    title: Itens do menu de conta
+    description: Slot interno com os links de conta recebidos pela barra.

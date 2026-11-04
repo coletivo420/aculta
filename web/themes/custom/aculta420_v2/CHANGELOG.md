@@ -1,5 +1,12 @@
 # Changelog — ACULTA420 V2
 
+## 1.2.0-dev.5 — declara slots aninhados do menu (2026-11-04)
+
+- Declara os slots de avatar e itens encaminhados pelo `multidomain-bar` ao
+  SDC `account-menu`, permitindo a compilação da árvore Twig aninhada.
+- `drush cr` revelou o problema de descoberta que o gate estático não cobria;
+  a validação de renderização será repetida após a correção.
+
 ## 1.2.0-dev.4 — botão de conta somente com avatar (2026-11-04)
 
 - A Institution Bar não recebe nem mostra apelido. O botão autenticado contém
