@@ -90,7 +90,9 @@ final class PagePresentationHooks {
         continue;
       }
       if ($this->getPluginId($block) === 'system_menu_block:account') {
-        $variables['aculta_account_menu'][$key] = $block;
+        if ($this->currentUser->isAuthenticated()) {
+          $variables['aculta_account_menu'][$key] = $block;
+        }
         unset($variables['page']['header'][$key]);
       }
     }

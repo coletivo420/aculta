@@ -1,5 +1,11 @@
 # Changelog — ACULTA420 V2
 
+## 1.2.0-dev.8 — fallback de entrada sem duplicar links
+
+- O bloco de conta Core vazio/inacessível para visitante deixa de ocupar o slot.
+  A Institution Bar então renderiza o link de entrada do Portal; autenticados
+  continuam usando o render array protegido do menu Drupal.
+
 ## 1.2.0-dev.7 — mantém a entrada para visitantes
 
 - Quando o bloco de conta do Drupal não fornece links para visitante, a barra
