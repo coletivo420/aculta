@@ -70,7 +70,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->prepareAcultaLmsGroupTypes();
-    $this->installConfig(['field', 'comment', 'filter']);
+    $this->installConfig(['system', 'field', 'comment', 'filter']);
     $this->installEntitySchema('user');
     $this->installEntitySchema('comment');
     $this->installSchema('comment', ['comment_entity_statistics']);
@@ -89,6 +89,9 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->prepareAcultaLmsClassRelationship();
     $container = \Drupal::getContainer();
     $this->assertTrue($container->get('module_handler')->moduleExists('aculta_lms'));
+    foreach (['courses', 'courses_catalog', 'courses_admin', 'classes_admin'] as $view_id) {
+      $this->assertNotNull($container->get('entity_type.manager')->getStorage('view')->load($view_id));
+    }
     foreach (['lms', 'lms_classes', 'lms_answer_plugins', 'lms_answer_comments'] as $contrib_module) {
       $this->assertFalse($container->get('module_handler')->moduleExists($contrib_module));
     }

@@ -1,3 +1,15 @@
+## 0.1.0-dev.181 — inclui Views administrativas do LMS na instalação
+
+- As Views administrativas `courses_admin` e `classes_admin` passaram a ser
+  fornecidas pelo `config/install` do módulo, junto das Views públicas já
+  existentes. Isso faz uma instalação limpa do `aculta_lms` receber o mesmo
+  conjunto de páginas do Config Sync.
+- As permissões específicas de criação de curso e turma foram preservadas. A
+  navegação mantém a hierarquia curso-primeiro e não adiciona atalho global de
+  turmas.
+- Testes de configuração verificam os quatro YAMLs instaláveis contra Config
+  Sync; Kernel de instalação verifica que as quatro Views são carregadas.
+
 ## 0.1.0-dev.180 — completa revisão docente de respostas por turma
 
 - O painel de turma passou a oferecer a lista de respostas. A consulta é

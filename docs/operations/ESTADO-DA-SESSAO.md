@@ -566,3 +566,11 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   54.082.293 bytes, SHA-256 `246cebc28f16da9496f951120047eb9cc40c67b7b377f7784c90ffbb77bdb8f5`,
   modo 0600. O snapshot foi criado após a importação, pois `config:import --diff`
   efetua a importação neste Drush.
+
+## Continuação — Views administrativas fornecidas pelo ACULTA LMS — 2026-11-03
+
+- Incluídas `courses_admin` e `classes_admin` em `aculta_lms/config/install`, mantendo-as em paridade com Config Sync e preservando as permissões de criação. A navegação continua curso-primeiro: a lista global de turmas não foi adicionada ao menu.
+- Adicionada a classe CSS vazia padrão nas tabelas das duas Views para evitar a atualização/depreciação de configuração removida no Drupal 12.
+- **Validações:** Unit `CourseViewsConfigTest` 1/24 PASS; Kernel `AcultaLmsInstallTest` 7/302 PASS em `aculta_simpletest` (17 depreciações upstream); `git diff --check` PASS. PHPCS nos dois arquivos de teste encontrou 1 erro preexistente de `unserialize()` na linha 168 de `AcultaLmsInstallTest`; a checagem não foi limpa.
+- **Runtime:** snapshot anterior à importação parcial em `$SUITE_OUT/runtime-snapshots/aculta_runtime-before-lms-views-config-20261103.sql`, 65.270.522 bytes, modo 0600, SHA-256 `982c9691ef79f10459bc9fc3d246ebd10872e30a70788b45c8999891ffa2615a`. Importadas somente as duas Views; `drush cr` passou, `updatedb:status` sem atualizações e `config:status` sem diferenças. `core:requirements` não indicou falha relacionada a estas Views.
+- **Arquivos:** configurações Sync e `config/install` de cursos/turmas, `aculta_lms.info.yml`, CHANGELOG, testes Unit/Kernel e este handoff. Publicação e sincronização de código ainda pendentes.
