@@ -18,7 +18,19 @@
 4. **UI Styles é adotado na V2.** Os estilos de apresentação de componentes são declarados como plugins do UI Styles, sem classes Bootstrap. A compatibilidade com Drupal 12 é verificada antes da adoção definitiva, conforme ADR-045.
 5. **Revisão completa da V2, começando pelo shell e pelas fundações.** Todos os componentes, templates e CSS existentes são revisados contra este ADR. Componentes que não atendem o contrato são refeitos. A ordem é: shell e fundações primeiro, depois componentes, padrões e templates de página.
 
-## 3. Fases
+## 3. Mobile-first (obrigatório em toda entrega visual)
+
+Aplica-se a todo CSS, componente SDC, template e shell da V2. Fonte normativa: `docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md`, que detalha a regra do `AGENTS.md` raiz e de `web/themes/custom/aculta420/AGENTS.md`.
+
+- **Menor largura primeiro.** A base de cada seletor atende 320 CSS px com conteúdo e operação completos. Espaço e layout ampliam por `min-width` ou container query.
+- **Sem `max-width` como estratégia.** Não converter `max-width` em `min-width` de forma mecânica. Antes de editar, rastrear seletor, cascata, library, template/SDC, consumidores e estados afetados.
+- **Sem largura ou altura rígida** para simular responsividade. Usar dimensões fluidas e propriedades lógicas (`inline`/`block`). Itens de Grid e Flex devem permitir encolher (`min-width: 0` quando apropriado). Texto longo quebra, e a mídia fica dentro do container.
+- **Sem rolagem horizontal da página** em 320 CSS px, com zoom de 200%.
+- **Shell preservado.** Institution Bar e Domain Header são contratos do shell: não são redesenhados sem decisão explícita, e a largura mínima é verificada em todos os purposes.
+- **Evidência registrada.** Cada mudança visual registra baseline, estado antes e depois, purpose, URL, viewport, estado de autenticação, modo claro/escuro, zoom e teste de teclado, no `web/themes/custom/aculta420/docs/mobile-first-audit.md` ou no roadmap do tema V2.
+- **Não declarar conclusão parcial.** Nenhuma fase é marcada como concluída com inventário parcial ou sem evidência para todos os purposes afetados.
+
+## 4. Fases
 
 **Fase 1 — Shell e fundações** (início imediato):
 - Tokens: revisar `tokens.css` com os valores de identidade da V1; manter tokens semânticos e aliases legados apenas onde ainda são usados.
@@ -35,7 +47,7 @@
 
 **Fase 5 — Formulários e autenticação**, depois **LMS e loja**.
 
-## 4. Regras de trabalho
+## 5. Regras de trabalho
 
 - Cada fase termina em PR própria, com `RUNTIME STATUS: DEFERRED` quando não testada no servidor de desenvolvimento.
 - Mudança no tema só com autorização explícita, que este ADR registra para a V2 (decisão 5).
@@ -43,13 +55,13 @@
 - Nenhuma parte nova usa Bootstrap, jQuery ou `core/drupal.dialog.ajax` sem registro em ADR.
 - Versão: revisões do shell e fundações são MINOR (`1.2.0-dev.N`), com a marcação em `aculta420_v2.info.yml`, `CHANGELOG.md` e `docs/roadmap.md`.
 
-## 5. Não-decisões
+## 6. Não-decisões
 
 - Não define a data de migração da V1 para desativação.
 - Não define a estratégia final de AJAX (ver ADR-044 e ADR-045).
 - Não define a data da migração para Drupal 12.
 
-## 6. Validação
+## 7. Validação
 
 - Gates do tema (SDC, fundações, shell, validadores de navegador) no servidor de desenvolvimento (Drupal 11.5).
 - Gate de contrato no Portal para a chave de purpose.
