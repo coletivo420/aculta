@@ -743,6 +743,17 @@ entre consumidores e o contrib, mas não torna o provider independente: o
 publisher e as funções de curso, atividade, tentativas, notas e certificados
 ainda dependem do Drupal LMS.
 
+## Conteúdo de leitura das aulas — 2026-11-04
+
+`aculta_lms_lesson` agora armazena texto longo com formato fixo `plain_text`.
+O formulário de autoria permite escrever o corpo e exige texto quando a aula é
+publicada; a sala usa o render element Drupal `processed_text`, preservando
+quebras de linha e escapando marcação. O update `aculta_lms_update_10015`
+adiciona o field storage sem migrar nem apagar registros existentes. Kernel
+validou armazenamento e renderização segura (8 testes/346 assertions na
+instalação focal); Unit validou o formulário. Editor rico/CKEditor, materiais,
+índice e revisão visual continuam pendentes.
+
 ### Microfase — acesso da agenda de turma pelo adapter LMS
 
 `aculta_lms_agenda` não importa mais `Drupal\\lms\\Entity\\Bundle\\CourseInterface` para autorizar eventos de turma. A verificação de curso publicado e `take course` foi centralizada em `ClassActivityDeadlineAccessCheck::courseAccessForClass()`, que retorna `AccessResult` com dependências e tags de cache; a agenda mantém a validação de membership ativa da turma. A mudança remove um import contrib fora do provider. **Estado:** implementada em `dev`; testes automatizados e Runtime desta microfase pendentes. Não altera conteúdo, memberships nem configuração.

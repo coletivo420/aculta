@@ -10,6 +10,7 @@ use Drupal\aculta_portal\Contract\PaymentOperationsInterface;
 use Drupal\aculta_lms\CourseOrderEnrollmentManagerInterface;
 use Drupal\aculta_lms\Access\AnswerAttachmentAccessCheck;
 use Drupal\aculta_lms\Controller\LearningDashboardController;
+use Drupal\aculta_lms\Controller\CourseLessonController;
 use Drupal\aculta_lms\Hook\EnrollmentFormHooks;
 use Drupal\aculta_lms\Hook\CourseFirstAdminMenuHooks;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -94,6 +95,35 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     foreach (['courses', 'courses_catalog', 'courses_admin', 'classes_admin'] as $view_id) {
       $this->assertNotNull($container->get('entity_type.manager')->getStorage('view')->load($view_id));
     }
+    $definition_update_manager = $container->get('entity.definition_update_manager');
+    $body_definition = $definition_update_manager->getFieldStorageDefinition('body', 'aculta_lms_lesson');
+    $this->assertNotNull($body_definition);
+    $definition_update_manager->uninstallFieldStorageDefinition($body_definition);
+    aculta_lms_update_10015();
+    $lesson_fields = $container->get('entity_field.manager')->getFieldStorageDefinitions('aculta_lms_lesson');
+    $this->assertSame('text_long', $lesson_fields['body']->getType());
+    $course = GroupEntity::create(['type' => 'lms_course', 'label' => 'Curso com conteúdo']);
+    $course->save();
+    $lesson = $container->get('entity_type.manager')->getStorage('aculta_lms_lesson')->create([
+      'course_id' => (int) $course->id(),
+      'title' => 'Leitura de teste',
+      'body' => ['value' => '<script>window.pwned = true</script>', 'format' => 'plain_text'],
+      'published' => TRUE,
+      'weight' => 0,
+    ]);
+    $lesson->save();
+    $page = (new CourseLessonController(
+      $container->get('entity_type.manager'),
+      $container->get('aculta_portal.lms_friendly_slugs'),
+      $container->get('aculta_lms.notice_eligibility'),
+      $container->get('string_translation'),
+    ))->view($course, 0);
+    $this->assertSame('<script>window.pwned = true</script>', $page['body']['#text']);
+    $this->assertSame('plain_text', $page['body']['#format']);
+    $this->assertSame('processed_text', $page['body']['#type']);
+    $rendered_body = (string) $container->get('renderer')->renderRoot($page['body']);
+    $this->assertStringNotContainsString('<script>', $rendered_body);
+    $this->assertStringContainsString('window.pwned', $rendered_body);
     foreach (['lms', 'lms_classes', 'lms_answer_plugins', 'lms_answer_comments'] as $contrib_module) {
       $this->assertFalse($container->get('module_handler')->moduleExists($contrib_module));
     }

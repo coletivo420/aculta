@@ -109,6 +109,14 @@ final class CourseLessonController {
         '#tag' => 'h1',
         '#value' => (string) $lesson->get('title')->value,
       ],
+      'body' => trim((string) ($lesson->get('body')->value ?? '')) === ''
+        ? ['#plain_text' => $this->t('O conteúdo desta aula ainda será disponibilizado.')]
+        : [
+          '#type' => 'processed_text',
+          '#text' => (string) $lesson->get('body')->value,
+          '#format' => (string) ($lesson->get('body')->format ?? 'plain_text'),
+          '#langcode' => $lesson->language()->getId(),
+        ],
       'activities' => [
         '#type' => 'table',
         '#header' => [$this->t('Atividade'), $this->t('Ação')],

@@ -59,6 +59,14 @@ final class LessonAuthoringForm extends FormBase {
       '#required' => TRUE,
       '#default_value' => $lesson?->get('title')->value ?? '',
     ];
+    $body = $lesson?->get('body')->value ?? '';
+    $form['body'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Conteúdo da aula'),
+      '#rows' => 12,
+      '#default_value' => (string) $body,
+      '#description' => $this->t('O conteúdo é exibido como texto simples, com as quebras de linha preservadas.'),
+    ];
     $form['weight'] = [
       '#type' => 'number',
       '#title' => $this->t('Posição no curso'),
@@ -93,6 +101,9 @@ final class LessonAuthoringForm extends FormBase {
     if (trim((string) $form_state->getValue('title')) === '') {
       $form_state->setErrorByName('title', $this->t('Informe o título da aula.'));
     }
+    if ($form_state->getValue('published') && trim((string) $form_state->getValue('body')) === '') {
+      $form_state->setErrorByName('body', $this->t('Adicione o conteúdo antes de disponibilizar a aula aos estudantes.'));
+    }
     $weight = filter_var($form_state->getValue('weight'), FILTER_VALIDATE_INT);
     if ($weight === FALSE || $weight < 0) {
       $form_state->setErrorByName('weight', $this->t('A posição precisa ser um inteiro não negativo.'));
@@ -107,6 +118,10 @@ final class LessonAuthoringForm extends FormBase {
     $values = [
       'course_id' => (int) $course->id(),
       'title' => trim((string) $form_state->getValue('title')),
+      'body' => [
+        'value' => is_string($form_state->getValue('body')) ? $form_state->getValue('body') : '',
+        'format' => 'plain_text',
+      ],
       'published' => (bool) $form_state->getValue('published'),
       'weight' => (int) $form_state->getValue('weight'),
     ];

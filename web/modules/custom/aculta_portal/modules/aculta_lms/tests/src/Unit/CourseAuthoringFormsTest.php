@@ -19,6 +19,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Tests course lesson and activity authoring forms.
@@ -31,7 +32,7 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
   /**
    * @covers ::submitForm
    */
-  public function testLessonCreatePersistsOnlyExistingEntityFields(): void {
+  public function testLessonCreateStoresProseAsPlainText(): void {
     $course = $this->course();
     $route = $this->route(['course' => $course, 'lesson' => NULL]);
     $lesson = $this->createMock(ContentEntityInterface::class);
@@ -40,6 +41,7 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
     $storage->expects(self::once())->method('create')->with([
       'course_id' => 3,
       'title' => 'Aula introdutória',
+      'body' => ['value' => '<script>alert(1)</script>', 'format' => 'plain_text'],
       'published' => FALSE,
       'weight' => 0,
     ])->willReturn($lesson);
@@ -48,13 +50,39 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
     $form = new LessonAuthoringForm($manager, $route, $this->access($manager));
     $this->setFormServices($form);
     $state = new FormState();
-    $state->setValues(['title' => ' Aula introdutória ', 'published' => 0, 'weight' => '0']);
+    $state->setValues([
+      'title' => ' Aula introdutória ',
+      'body' => '<script>alert(1)</script>',
+      'published' => 0,
+      'weight' => '0',
+    ]);
 
     $formArray = [];
     $form->submitForm($formArray, $state);
 
     self::assertSame('aculta_lms.course_structure', $state->getRedirect()->getRouteName());
     self::assertSame(['course' => '3'], $state->getRedirect()->getRouteParameters());
+  }
+
+  /**
+   * @covers ::validateForm
+   */
+  public function testPublishedLessonRequiresReadableContent(): void {
+    $course = $this->course();
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $form = new LessonAuthoringForm(
+      $manager,
+      $this->route(['course' => $course, 'lesson' => NULL]),
+      $this->access($manager),
+    );
+    $this->setFormServices($form);
+    $state = new FormState();
+    $state->setValues(['title' => 'Aula vazia', 'published' => 1, 'body' => '  ']);
+
+    $form_array = [];
+    $form->validateForm($form_array, $state);
+
+    self::assertArrayHasKey('body', $state->getErrors());
   }
 
   /**
@@ -146,6 +174,9 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
   private function setFormServices(LessonAuthoringForm|ActivityAuthoringForm $form): void {
     $form->setStringTranslation($this->getStringTranslationStub());
     $form->setMessenger($this->createMock(MessengerInterface::class));
+    $container = new ContainerBuilder();
+    $container->set('current_user', $this->createMock(AccountProxyInterface::class));
+    \Drupal::setContainer($container);
   }
 
   /**

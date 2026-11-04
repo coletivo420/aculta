@@ -1,3 +1,15 @@
+## 0.1.0-dev.187 — conteúdo textual de aula na sala Ganjalab
+
+- A entidade ACULTA de aula recebe um campo de texto longo com formato fixo
+  `plain_text`; o formulário do educador permite criar e editar o corpo textual.
+- A sala do estudante apresenta o texto pelo render element `processed_text`,
+  com filtro Drupal e tratamento de quebras de linha. Aula publicada sem corpo
+  não pode ser gravada pelo formulário; aulas antigas vazias mostram um aviso.
+- Update `aculta_lms_update_10015` instala o armazenamento sem alterar o conteúdo
+  existente. Kernel confirma update, armazenamento e renderização sem HTML
+  executável (8 testes/347 assertions; 14 depreciações upstream); Unit LMS 254
+  testes/928 assertions (21 depreciações PHPUnit).
+
 ## 0.1.0-dev.186 — localiza os comandos de movimento
 
 - Os caminhos de mover currículo passam a usar `acima`/`abaixo` em português;

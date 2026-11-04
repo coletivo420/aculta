@@ -259,3 +259,14 @@ function aculta_lms_update_10014(): void {
     ->getBaseFieldDefinitions('aculta_lms_answer');
   $manager->installFieldStorageDefinition('feedback', 'aculta_lms_answer', 'aculta_lms', $fields['feedback']);
 }
+
+/** Adds formatted lesson content for the ACULTA student learning room. */
+function aculta_lms_update_10015(): void {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  if ($manager->getFieldStorageDefinition('body', 'aculta_lms_lesson')) {
+    return;
+  }
+  $fields = \Drupal::service('entity_field.manager')
+    ->getBaseFieldDefinitions('aculta_lms_lesson');
+  $manager->installFieldStorageDefinition('body', 'aculta_lms_lesson', 'aculta_lms', $fields['body']);
+}
