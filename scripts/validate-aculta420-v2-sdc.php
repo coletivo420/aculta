@@ -72,7 +72,7 @@ $samples = [
   'badge' => ['#props' => ['label' => 'Cultura', 'variant' => 'primary', 'icon_name' => 'tag']],
   'breadcrumb' => [
     '#props' => ['label' => 'Breadcrumb'],
-    '#slots' => ['items' => '<li class="aculta-breadcrumb__item"><a class="aculta-breadcrumb__link" href="/">Início</a></li><li class="aculta-breadcrumb__item aculta-breadcrumb__current" aria-current="page">Eventos</li>'],
+    '#slots' => ['items' => \Drupal\Core\Render\Markup::create('<li class="aculta-breadcrumb__item"><a class="aculta-breadcrumb__link" href="/">Início</a></li><li class="aculta-breadcrumb__item aculta-breadcrumb__current" aria-current="page">Eventos</li>')],
   ],
   'button' => [
     '#props' => [
