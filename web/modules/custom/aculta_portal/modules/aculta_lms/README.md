@@ -48,7 +48,11 @@ A autorização exige `grade students` contextual ao Group de curso ou
 `administer lms`. A rota verifica que aula pertence ao curso e atividade à aula;
 os formulários repetem essa checagem no servidor ao carregar e salvar. Turmas,
 matrículas e prazos permanecem separados da estrutura curricular. Reordenação
-por arrastar, exclusão e módulos pedagógicos não fazem parte desta fatia.
+O Educador pode mover aulas e atividades uma posição acima/abaixo por comandos
+confirmados sem JavaScript; a ordem compartilhada afeta imediatamente as
+turmas do curso. A exclusão é confirmada e bloqueia conteúdo com dependências
+ou histórico. Drag-and-drop visual, módulos pedagógicos e homologação visual
+integral continuam pendentes.
 
 ## Integração de avisos — contrato vigente
 

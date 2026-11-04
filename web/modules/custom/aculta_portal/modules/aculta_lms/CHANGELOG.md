@@ -1,3 +1,9 @@
+## 0.1.0-dev.186 — localiza os comandos de movimento
+
+- Os caminhos de mover currículo passam a usar `acima`/`abaixo` em português;
+  a direção é convertida para o valor interno do serviço de ordenação.
+- Rotas do Educador e suas ações de movimento documentadas no mapa operacional.
+
 ## 0.1.0-dev.185 — comandos acessíveis de ordenação do currículo
 
 - O Educador agora oferece ações para mover aulas dentro do curso e atividades
@@ -7,7 +13,7 @@
   por coleção e normaliza os pesos em transação. Atividades com respostas podem
   mudar de posição sem desbloquear edição do enunciado ou gabarito.
 - Kernel focal (`AcultaLmsInstallTest`): 8 testes / 340 assertions PASS (14
-  depreciações upstream); suíte Unit LMS: 253 testes / 924 assertions PASS
+  depreciações upstream); suíte Unit LMS: 253 testes / 927 assertions PASS
   (20 depreciações PHPUnit). PHPCS nos arquivos de produção e Unit focais PASS.
 
 ## 0.1.0-dev.184 — exclusão segura de aulas e atividades

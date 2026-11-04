@@ -52,7 +52,7 @@ final class CourseStructureMoveForm extends ConfirmFormBase {
     $label = $activity ? $this->t('Atividade @id', ['@id' => $activity->id()]) : $lesson->get('title')->value;
     return $this->t('Mover “@item” @direction?', [
       '@item' => $label,
-      '@direction' => $direction === 'up' ? $this->t('uma posição acima') : $this->t('uma posição abaixo'),
+      '@direction' => $direction === 'acima' ? $this->t('uma posição acima') : $this->t('uma posição abaixo'),
     ]);
   }
 
@@ -79,6 +79,7 @@ final class CourseStructureMoveForm extends ConfirmFormBase {
    * {@inheritdoc} */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     [$course, $lesson, $activity, $direction] = $this->routeEntities();
+    $direction = $direction === 'acima' ? 'up' : 'down';
     $entityType = $activity ? 'aculta_lms_activity' : 'aculta_lms_lesson';
     $parentId = (int) ($activity ? $lesson->id() : $course->id());
     $itemId = (int) ($activity ? $activity->id() : $lesson->id());
@@ -106,10 +107,10 @@ final class CourseStructureMoveForm extends ConfirmFormBase {
     $course = $this->currentRouteMatch->getParameter('course');
     $lesson = $this->currentRouteMatch->getParameter('lesson');
     $activity = $this->currentRouteMatch->getParameter('activity');
-    $direction = $this->currentRouteMatch->getParameter('direction');
+    $direction = $this->currentRouteMatch->getParameter('direcao');
     if (!$course instanceof GroupInterface || !$lesson instanceof ContentEntityInterface
       || ($activity !== NULL && !$activity instanceof ContentEntityInterface)
-      || !in_array($direction, ['up', 'down'], TRUE)
+      || !in_array($direction, ['acima', 'abaixo'], TRUE)
       || !$this->accessCheck->accessForReorder(
         $course,
         $lesson,

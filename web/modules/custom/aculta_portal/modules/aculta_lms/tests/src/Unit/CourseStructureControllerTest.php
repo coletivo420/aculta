@@ -108,8 +108,11 @@ final class CourseStructureControllerTest extends UnitTestCase {
     self::assertSame('aculta_lms.activity_delete', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][4]['data']['delete']['#url']->getRouteName());
     self::assertSame('aculta_lms.lesson_delete', $build['lessons']['#rows'][0]['data'][4]['data']['delete']['#url']->getRouteName());
     self::assertSame('aculta_lms.lesson_move', $build['lessons']['#rows'][0]['data'][4]['data']['move_down']['#url']->getRouteName());
+    self::assertSame('abaixo', $build['lessons']['#rows'][0]['data'][4]['data']['move_down']['#url']->getRouteParameters()['direcao']);
     self::assertSame('aculta_lms.lesson_move', $build['lessons']['#rows'][1]['data'][4]['data']['move_up']['#url']->getRouteName());
+    self::assertSame('acima', $build['lessons']['#rows'][1]['data'][4]['data']['move_up']['#url']->getRouteParameters()['direcao']);
     self::assertSame('aculta_lms.activity_move', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][4]['data']['move_down']['#url']->getRouteName());
+    self::assertSame('abaixo', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][0]['data'][4]['data']['move_down']['#url']->getRouteParameters()['direcao']);
     self::assertSame('aculta_lms.activity_move', $build['lessons']['#rows'][0]['data'][3]['data']['#rows'][1]['data'][4]['data']['move_up']['#url']->getRouteName());
   }
 

@@ -1,8 +1,9 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.48
+version: 0.1.0-dev.49
 state: Dev
 progress_note: >-
-  Dev.48 publica rotas contextuais para mover aulas/atividades acima/abaixo pelo owner aculta_lms; confirmação explica o impacto imediato nas turmas. Validação de reordenação: Kernel LMS 1/37 e Unit da estrutura 1/13 PASS.
+  Dev.49 localiza os segmentos das rotas de movimento e registra as rotas do Educador no mapa operacional.
+  Dev.48 publica rotas contextuais para mover aulas/atividades acima/abaixo pelo owner aculta_lms; confirmação explica o impacto imediato nas turmas. Kernel `AcultaLmsInstallTest` 8/340 e Unit LMS 253/927 PASS.
   Dev.47 mantém as rotas de confirmação para exclusão de conteúdo no Educador, com formulários e integridade de dados no aculta_lms; autorização contextual e purpose courses são revalidados pelo owner.
   Dev.46 oferece a ação “Editar estrutura” no Ganjalab Educador; páginas/Form API são do aculta_lms. Testes Unit Studio 67/679 PASS; Runtime `49cc9757a4` sincronizado, revisão visual do Educador pendente. Dev.44 alinha “Criar” ao título “Meu trabalho” em cabeçalho semântico; Firefox ESR Runtime: 97/97 verificações aplicáveis PASS, 21 SKIP, 0 falhas, incluindo tabela/ação em 320 e 390px. Capturas externas em $SUITE_OUT/studio-dashboard-final-20261103/marley-header-dev30-retest/. Dev.43 corrige HTTP 500 no Dashboard: AccessResultAllowed não oferece applyTo(); a metadata do acesso agora é aplicada por CacheableMetadata. Firefox pós-correção: 94/94 PASS, 21 SKIP, 0 falhas; capturas em $SUITE_OUT/studio-dashboard-final-20261103/post-push/. Studio Unit 65/634 e Theme Unit 49/355 PASS; Design Foundations 2441, SDC schema 764, SDC audit sem findings, Portal Drupal 11+ 1202, public-slugs 42 e admin routes 172 PASS. Firefox ESR visível no Runtime anterior: Conta 92/92
   verificações aplicáveis PASS, 22 SKIP; nove rotas diretas HTTP 200,

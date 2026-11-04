@@ -80,7 +80,7 @@ final class CourseStructureController {
                     'course' => $course->id(),
                     'lesson' => $lesson->id(),
                     'activity' => $activity->id(),
-                    'direction' => 'up',
+                    'direcao' => 'acima',
                   ]),
                 )->toRenderable() : [],
                 'move_down' => $activityIndex < count($activities) - 1 ? Link::fromTextAndUrl(
@@ -89,7 +89,7 @@ final class CourseStructureController {
                     'course' => $course->id(),
                     'lesson' => $lesson->id(),
                     'activity' => $activity->id(),
-                    'direction' => 'down',
+                    'direcao' => 'abaixo',
                   ]),
                 )->toRenderable() : [],
                 'delete' => Link::fromTextAndUrl(
@@ -139,7 +139,7 @@ final class CourseStructureController {
                 Url::fromRoute('aculta_lms.lesson_move', [
                   'course' => $course->id(),
                   'lesson' => $lesson->id(),
-                  'direction' => 'up',
+                  'direcao' => 'acima',
                 ]),
               )->toRenderable() : [],
               'move_down' => $lessonIndex < count($lessons) - 1 ? Link::fromTextAndUrl(
@@ -147,7 +147,7 @@ final class CourseStructureController {
                 Url::fromRoute('aculta_lms.lesson_move', [
                   'course' => $course->id(),
                   'lesson' => $lesson->id(),
-                  'direction' => 'down',
+                  'direcao' => 'abaixo',
                 ]),
               )->toRenderable() : [],
               'delete' => Link::fromTextAndUrl(

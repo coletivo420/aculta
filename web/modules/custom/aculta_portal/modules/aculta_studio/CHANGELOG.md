@@ -1,3 +1,8 @@
+## 0.1.0-dev.49 — caminhos de ordenação localizados
+
+- Os comandos do Educador usam segmentos `acima` e `abaixo`; o mapa de rotas
+  lista as rotas de autoria e movimentação no purpose `courses`.
+
 ## 0.1.0-dev.48 — comandos de ordenação do currículo no Educador
 
 - Rotas no purpose `courses` apresentam os formulários de confirmação de mover
