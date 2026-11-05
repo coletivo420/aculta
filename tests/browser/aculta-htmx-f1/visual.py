@@ -214,7 +214,7 @@ try:
         fallback = driver_nojs.js("""return {url:location.href,
           form:!!document.querySelector('form[data-portal-ui="search-popup"]'),
           input:!!document.querySelector('form[data-portal-ui="search-popup"] input[type="search"]')};""")
-        if fallback["form"] and fallback["input"]:
+        if fallback and fallback["form"] and fallback["input"]:
             break
         time.sleep(0.25)
     fallback["passed"] = "/busca/popup" in fallback["url"] and fallback["form"] and fallback["input"]

@@ -416,12 +416,23 @@ autorização; o mapeamento de Wiki para a faixa de acento aguarda confirmação
 - Não trocar tiles OSM por CartoDB nem introduzir endpoint de pontos sem decisão
   e revisão dos contratos de privacidade, acesso, cache e purpose.
 
-### Dívida de estilo — classes mapeadas sem CSS (pendente de decisão)
+### Dívida de estilo — resolvida em 2026-11-05
 
-- 192 classes de `PortalUiHooks::TOKENS` não têm definição de CSS nem no V2 nem no V1. Principais grupos: `aculta-lms-course-builder__*` (11), `aculta-portal-requirements*` (7), `aculta-calendar-interactive__*` (5), `aculta-secret-value__*` (5), `aculta-social-links__*` (5), `event-card__*` (5), `aculta-map__*` (4), `badge--*` (4), `messages*` (4), `secrets-tabs__*` (4), `aculta-button--*` (3), `aculta-statistics__*` (3), `courses-home*` (3), e 2 a 1 de outros componentes LMS e Fórum.
-- Estilizar essas classes seria desenho novo. Decisão do responsável: manter sem estilo até haver contrato visual por componente.
-- Seis nomes do Bootstrap continuam no mapa (`bi`, `breadcrumb`, `breadcrumb-item`, `btn-primary`, `btn-outline-primary`, `btn-outline-secondary`) e não devem ser usados pelo V2. Remover do mapa muda o HTML gerado; depende de decisão.
-- Estado: pendente. Sem captura visual (DEFERRED).
+- As 189 classes de `PortalUiHooks::TOKENS` que não tinham CSS receberam estilo
+  mínimo em `src/styles/portal-ui-map.css`, agrupado por componente e usando
+  tokens semânticos. É estilo funcional, não desenho novo por componente.
+- Os nomes Bootstrap saíram do mapa do V2: `bi` e a família `bi-*`,
+  `breadcrumb`, `breadcrumb-item`, `btn-primary`, `btn-outline-primary`,
+  `btn-outline-secondary` e `btn-sm`. O atributo `data-portal-ui` permanece no
+  DOM e o CSS do V2 continua por atributo; a V1 tem mapa próprio e não foi
+  alterada.
+- Novo gate `scripts/validate-aculta420-mapped-classes.php`: cada classe
+  mapeada precisa de CSS ou de exceção documentada em
+  `docs/classes-sem-css-excecoes.md`; nomes Bootstrap proibidos no mapa fazem o
+  gate falhar. PASS (453 classes, 0 exceções, 0 Bootstrap).
+- Validação visual: `aculta-htmx-f1` 43/43 e `aculta420-v2-footer` 6/6 PASS
+  após o CSS global. A revisão visual do desenho completo por componente
+  continua como evolução, não como dívida.
 
 ### HTMX — ADR-050 (F0 concluída; F1 parcial)
 

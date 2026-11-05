@@ -187,7 +187,7 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
       '#tag' => 'dialog',
       '#attributes' => [
         'id' => 'aculta-register-dialog',
-        'class' => ['aculta-utility-dialog'],
+        'data-portal-ui' => 'donation-register-dialog',
         'aria-label' => (string) $this->t('Criar conta'),
         'data-aculta-utility-drawer' => '',
       ],
@@ -227,11 +227,11 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
         'header' => [
           '#type' => 'html_tag',
           '#tag' => 'header',
-          '#attributes' => ['class' => ['aculta-utility-dialog__header']],
+          '#attributes' => ['data-portal-ui' => 'donation-register-dialog-header'],
           'title' => [
             '#type' => 'html_tag',
             '#tag' => 'h2',
-            '#attributes' => ['class' => ['aculta-utility-dialog__title']],
+            '#attributes' => ['data-portal-ui' => 'donation-register-dialog-title'],
             '#value' => $this->t('Criar conta'),
           ],
           'close' => [
@@ -239,7 +239,7 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
             '#tag' => 'button',
             '#attributes' => [
               'type' => 'button',
-              'class' => ['aculta-utility-dialog__close'],
+              'data-portal-ui' => 'donation-register-dialog-close',
               'data-aculta-dialog-close' => '',
               'aria-label' => (string) $this->t('Fechar'),
             ],
@@ -250,7 +250,7 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
           '#type' => 'html_tag',
           '#tag' => 'div',
           '#attributes' => [
-            'class' => ['aculta-utility-dialog__body'],
+            'data-portal-ui' => 'donation-register-dialog-body',
             'data-aculta-register-content' => '',
             'aria-live' => 'polite',
             'aria-busy' => 'false',

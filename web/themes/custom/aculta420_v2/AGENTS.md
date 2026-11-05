@@ -21,6 +21,7 @@ Herde o `AGENTS.md` da raiz do repositório. Estas regras são específicas do t
 - **JavaScript mínimo.** Só onde há interação. Use `Drupal.behaviors` com `core/once`. O menu e os diálogos devem funcionar sem JavaScript quando possível.
 - **HTMX:** regra da raiz (`AGENTS.md`). Aqui, não crie componente ou biblioteca V2 com `#ajax` ou `use-ajax`. Progresso da migração: ADR-050.
 - **Gavetas de mensagens/avisos (exceção registrada em 2026-11-05):** abrem por `<button>` e HTMX; dependem de JavaScript. O fallback sem JavaScript não tem link nativo para a página completa, porque o Portal não fornece `all_href`. Decisão do responsável: manter a exceção documentada, sem converter o gatilho em link nesta fase.
+- **Classes mapeadas:** toda classe de `PortalUiHooks::TOKENS` precisa de CSS no tema ou de exceção em `docs/classes-sem-css-excecoes.md`. Nomes Bootstrap (`bi*`, `btn-*`, `breadcrumb*`) são proibidos no mapa. Gate: `scripts/validate-aculta420-mapped-classes.php`.
 - **Nada de contexto de entidade no tema.** Não leia `user_picture`, Profile, configuração Social Auth ou regra de domínio. O Portal entrega o dado pronto.
 - **Avatar.** Ordem: foto liberada → avatar do acervo → ícone neutro. Nunca letra, inicial ou monograma do nome.
 

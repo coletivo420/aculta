@@ -21,6 +21,7 @@ global-styling:
       src/styles/studio-identity.css: {}
       src/styles/buttons.css: {}
       src/styles/portal-ui-extras.css: {}
+      src/styles/portal-ui-map.css: {}
   dependencies:
     - system/base
 

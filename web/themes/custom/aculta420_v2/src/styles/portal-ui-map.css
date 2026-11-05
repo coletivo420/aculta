@@ -1,0 +1,261 @@
+/* Estilo mínimo para classes mapeadas em PortalUiHooks::TOKENS.
+   Regras funcionais com tokens semânticos, sem desenho novo por componente.
+   O gate scripts/validate-aculta420-mapped-classes.php exige cobertura. */
+
+/* Utilitários e equivalências dos nomes herdados do Bootstrap. */
+.text-muted { color: var(--color-text-muted); }
+.text-center { text-align: center; }
+.small { font-size: 0.875em; }
+.lead { font-size: 1.125rem; line-height: 1.5; }
+.inline { display: inline; }
+.clearfix::after { content: ""; display: table; clear: both; }
+.container-inline { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.list-unstyled { margin: 0; padding: 0; list-style: none; }
+.list-group { display: grid; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+.list-group > * { padding: 0.5rem 0.75rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); }
+.table { inline-size: 100%; border-collapse: collapse; }
+.table th,
+.table td { padding: 0.5rem; border-block-end: 1px solid var(--color-border); text-align: start; }
+.table-hover tbody tr:hover { background: var(--color-surface-highlight); }
+.label-default { display: inline-block; padding: 0.125rem 0.5rem; color: var(--color-text-primary); background: var(--color-surface-highlight); border-radius: var(--radius-sm); }
+.link-primary { color: var(--color-brand-primary); }
+.section-title { margin-block: 1rem 0.5rem; font-family: var(--font-family-heading); font-size: 1.25rem; }
+.nav-tabs { display: flex; flex-wrap: wrap; gap: 0.25rem; margin: 0; padding: 0; list-style: none; border-block-end: 1px solid var(--color-border); }
+.nav-tabs a { display: inline-flex; padding: 0.5rem 0.75rem; }
+.pager-next,
+.pager-prev { display: inline-flex; }
+
+.badge--danger,
+.badge--info,
+.badge--success,
+.badge--warning,
+.badge-location-type,
+.badge-reason,
+.coorganizer-item__badge { display: inline-flex; align-items: center; padding: 0.125rem 0.5rem; font-size: 0.875rem; border-radius: var(--radius-full); }
+.badge--danger { color: var(--color-status-error-text); background: var(--color-status-error-surface); }
+.badge--info { color: var(--color-text-primary); background: var(--color-surface-highlight); }
+.badge--success { color: var(--color-status-ok-text); background: var(--color-status-ok-surface); }
+.badge--warning { color: var(--color-status-warning-text); background: var(--color-status-warning-surface); }
+.badge-location-type,
+.badge-reason,
+.coorganizer-item__badge { color: var(--color-text-primary); background: var(--color-surface-highlight); }
+
+.messages,
+.messages--status,
+.messages--error,
+.messages--warning { padding: 0.75rem 1rem; border-inline-start: 0.25rem solid var(--color-border); border-radius: var(--radius-sm); }
+.messages--status { color: var(--color-status-ok-text); background: var(--color-status-ok-surface); border-inline-start-color: var(--color-status-ok-text); }
+.messages--error { color: var(--color-status-error-text); background: var(--color-status-error-surface); border-inline-start-color: var(--color-status-error-text); }
+.messages--warning { color: var(--color-status-warning-text); background: var(--color-status-warning-surface); border-inline-start-color: var(--color-status-warning-text); }
+
+/* Botões próprios do Portal. */
+.aculta-button--outline,
+.aculta-button--primary,
+.aculta-button--secondary,
+.button--action,
+.button--small { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-block-size: 2.75rem; padding: 0.5rem 1rem; border-radius: var(--radius-control-button); }
+.button--small { min-block-size: 2rem; padding: 0.25rem 0.625rem; font-size: 0.875rem; }
+.aculta-button--outline { color: var(--color-brand-primary); background: transparent; border: 1px solid var(--color-brand-primary); }
+.aculta-button--primary { color: var(--color-on-highlight); background: var(--color-brand-highlight); }
+.aculta-button--secondary { color: var(--color-text-primary); background: var(--color-surface-highlight); }
+
+/* Calendário interativo. */
+.aculta-calendar-interactive { display: grid; gap: 0.75rem; }
+.aculta-calendar-interactive__agenda,
+.aculta-calendar-interactive__alternativa,
+.aculta-calendar-interactive__controle { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.aculta-calendar-interactive__aviso { color: var(--color-text-muted); font-size: 0.9375rem; }
+.aculta-calendar-embed-hosts { display: grid; gap: 0.25rem; }
+
+/* Mapas. */
+.aculta-map,
+.aculta-map-wrapper { display: block; inline-size: 100%; min-block-size: 12rem; }
+.aculta-map__aviso,
+.aculta-map__geocoding-attribution { color: var(--color-text-muted); font-size: 0.875rem; }
+.aculta-map__location-route { display: inline-flex; gap: 0.5rem; }
+
+/* Eventos, locais, organização e apoiadores. */
+.actions-bar,
+.aculta-event-date-actions,
+.aculta-event-date-order,
+.aculta-event-date-row,
+.aculta-event-location-widget,
+.aculta-event-organization-target-id,
+.aculta-location-actions,
+.aculta-location-admin-actions,
+.location-actions,
+.location-admin-actions,
+.location-agenda { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.aculta-events-admin-overview,
+.aculta-locations-list-page,
+.aculta-location-page { display: grid; gap: 1rem; }
+.aculta-location-header,
+.aculta-location-summary-card { display: grid; gap: 0.5rem; }
+.aculta-location-title { margin: 0; font-family: var(--font-family-heading); font-size: 1.375rem; }
+.aculta-location-address,
+.aculta-location-empty,
+.aculta-location-target-id { color: var(--color-text-muted); }
+.aculta-location-badge { display: inline-flex; }
+.event-card__aviso,
+.event-card__meta,
+.event-card__subtitulo,
+.event-card__tipo,
+.event-card__titulo { display: block; }
+.event-card__titulo { font-family: var(--font-family-heading); font-size: 1.125rem; }
+.event-card__subtitulo,
+.event-card__meta { color: var(--color-text-muted); font-size: 0.875rem; }
+.event-press-quotes,
+.event-supporters,
+.press-quotes-list,
+.sponsor-logos,
+.sponsor-logos-list { display: grid; gap: 0.5rem; }
+.press-quote,
+.sponsor-item,
+.sponsor-link,
+.sponsor-name,
+.sponsor-cota { display: block; }
+.sponsor-name { font-weight: 600; }
+.sponsor-cota { color: var(--color-text-muted); font-size: 0.875rem; }
+.media-mentions { display: grid; gap: 0.75rem; }
+
+/* LMS: construtor de curso, materiais, moderação e H5P. */
+.aculta-lms-course-builder__header,
+.aculta-lms-course-builder__summary,
+.aculta-lms-course-builder__lessons,
+.aculta-lms-course-builder__activities,
+.aculta-lms-course-builder__activity,
+.aculta-lms-course-builder__lesson,
+.aculta-lms-course-builder__actions,
+.aculta-lms-course-builder__state,
+.aculta-lms-course-builder__empty { display: grid; gap: 0.5rem; }
+.aculta-lms-course-builder__lesson-heading { margin: 0; font-family: var(--font-family-heading); font-size: 1.125rem; }
+.aculta-lms-course-builder__sort-handle { cursor: grab; }
+.aculta-lms-course-materials__documents { display: grid; gap: 0.5rem; }
+.aculta-lms-course-materials__document { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.aculta-lms-class-roster,
+.aculta-lms-class-status-history__period,
+.aculta-lms-course-sort-form,
+.aculta-lms-forum-moderation__overview,
+.aculta-lms-forum-moderation__queue,
+.aculta-lms-h5p-course,
+.aculta-lms-lesson-preview__activity,
+.courses-home,
+.courses-home__collaboration,
+.courses-home__intro { display: grid; gap: 0.75rem; }
+.h5p-admin-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.h5p-content-unavailable { color: var(--color-text-muted); }
+.is-draft,
+.is-published { display: inline-flex; padding: 0.125rem 0.5rem; border-radius: var(--radius-full); font-size: 0.875rem; }
+.is-draft { color: var(--color-status-warning-text); background: var(--color-status-warning-surface); }
+.is-published { color: var(--color-status-ok-text); background: var(--color-status-ok-surface); }
+
+/* Mensagens e conversas. */
+.aculta-messenger-conversation,
+.aculta-messenger-fallback-search,
+.aculta-messenger-new-conversation,
+.aculta-messenger-sender__avatar-image,
+.aculta-messenger-sender__name,
+.aculta-messenger-state,
+.aculta-messenger-state--empty,
+.aculta-new-conversation-add { display: block; }
+.aculta-messenger-state--empty { color: var(--color-text-muted); }
+.aculta-messenger-sender__avatar-image { border-radius: var(--radius-full); overflow: hidden; }
+.aculta-messenger-sender__name { font-weight: 600; }
+
+/* Conta, perfil e autenticação. */
+.aculta-account-home,
+.aculta-account-terms,
+.aculta-fiscal-identity-other-data,
+.aculta-google-account,
+.aculta-auth-google,
+.aculta-auth-google-status,
+.aculta-registration-status,
+.portal-account-bio__text,
+.portal-account-photo__preview,
+.portal-account__commerce,
+.portal-profile__avatar-image,
+.portal-street-number-sn { display: block; }
+.aculta-auth-google { display: inline-flex; align-items: center; gap: 0.5rem; min-block-size: 2.75rem; }
+.aculta-auth-google-status,
+.portal-account__commerce { color: var(--color-text-muted); }
+.portal-profile__avatar-image { border-radius: var(--radius-full); overflow: hidden; }
+
+/* Login e popup. */
+.aculta-login-popup { display: grid; gap: 0.75rem; }
+.aculta-login-popup__divider { margin: 0; border: 0; border-block-start: 1px solid var(--color-border); }
+
+/* Busca. */
+.aculta-search-preview__footer { display: flex; justify-content: center; margin-block-start: 0.5rem; }
+.aculta-search-preview__list { margin: 0; padding: 0; list-style: none; }
+
+/* Segredos e administração. */
+.aculta-secret-value,
+.aculta-secret-value__clear,
+.aculta-secret-value__edit,
+.aculta-secret-value__eye,
+.aculta-secret-value__text { display: inline-flex; align-items: center; gap: 0.25rem; }
+.secrets-table-scroll { overflow-x: auto; }
+.secrets-tabs,
+.secrets-tabs__list,
+.secrets-tabs__panel,
+.secrets-tabs__tab { display: block; }
+.secrets-tabs__list { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+.secrets-tabs__tab { padding: 0.375rem 0.75rem; }
+.aculta-admin-filters,
+.aculta-admin-purpose-filters,
+.aculta-admin-status-filters,
+.aculta-notice-admin-intro,
+.aculta-notice-admin-list,
+.aculta-notice-admin-table,
+.aculta-forum-report-queue,
+.aculta-pager,
+.admin-item,
+.admin-list { display: grid; gap: 0.5rem; }
+.aculta-notice-admin-table,
+.aculta-pager { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.aculta-portal-requirements,
+.aculta-portal-requirements__cep,
+.aculta-portal-requirements__cep-table,
+.aculta-portal-requirements__indexing,
+.aculta-portal-requirements__indexing-table,
+.aculta-portal-requirements__legend,
+.aculta-portal-requirements__php-extensions,
+.aculta-portal-secrets-section,
+.aculta-portal-secrets__environment { display: grid; gap: 0.5rem; }
+.superficies-dns { display: grid; gap: 0.25rem; }
+.aculta-sales-panel__section { display: grid; gap: 0.5rem; }
+
+/* Links sociais, estatísticas, Studio e Wiki. */
+.aculta-social-links__list,
+.aculta-social-links__button-list,
+.aculta-social-links__channel,
+.aculta-social-links__channel--custom,
+.aculta-social-links__channel--website,
+.aculta-social-links-footer__inner,
+.aculta-social-links-settings-button,
+.aculta-statistics__controls,
+.aculta-statistics__wiki-ranking,
+.aculta-statistics__wiki-revisions,
+.aculta-wiki-proposal-decision,
+.aculta-wiki-proposal-link,
+.aculta-wiki-proposal-status,
+.aculta-wiki-title-suggestions,
+.download-badge-format,
+.download-badge-size,
+.download-link,
+.recommendation-item,
+.recommendation-reason,
+.saved-item,
+.studio-course-authoring,
+.studio-saved-summary { display: grid; gap: 0.5rem; }
+.aculta-social-links__list { margin: 0; padding: 0; list-style: none; }
+.aculta-links-page__link,
+.download-link,
+.recommendation-reason { color: var(--color-text-muted); }
+.studio-course-authoring,
+.studio-saved-summary { color: var(--color-text-primary); }
+.checkout-help { color: var(--color-text-muted); font-size: 0.875rem; }
+.aculta-cep-sources,
+.aculta-download-meta-item { display: flex; flex-wrap: wrap; gap: 0.5rem; color: var(--color-text-muted); }
+.aculta-domain-brand-image { display: block; max-inline-size: 100%; block-size: auto; }
+.aculta-gallery-dialog { inline-size: min(100%, 40rem); }

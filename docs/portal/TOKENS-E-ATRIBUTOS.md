@@ -1,6 +1,8 @@
 # Tokens e atributos do Portal para o tema
 
 > Reconciliado com o código em 2026-10-30 e validado pelo gate `scripts/validate-portal-ui-docs.php`. Quando um token ou atributo novo for criado, ele precisa entrar aqui (o gate reprova o contrário).
+>
+> **Atualização 2026-11-05:** as classes Bootstrap saíram do mapa do V2 (`bi` e `bi-*`, `breadcrumb`, `breadcrumb-item`, `btn-primary`, `btn-outline-primary`, `btn-outline-secondary`, `btn-sm`). Onde as tabelas abaixo ainda as citam, a lista descreve a origem histórica do token; o mapa vigente está em `aculta420_v2/src/Hook/PortalUiHooks.php`. Toda classe mapeada agora tem CSS mínimo em `aculta420_v2/src/styles/portal-ui-map.css` ou exceção em `aculta420_v2/docs/classes-sem-css-excecoes.md`, verificado por `scripts/validate-aculta420-mapped-classes.php`.
 
 ## Como o contrato funciona
 
@@ -12,9 +14,9 @@
 ## Como adicionar um token
 
 1. No módulo, use `data-portal-ui="novo-token"` (`#attributes`, `#element_attributes` ou template).
-2. No tema, inclua `'novo-token' => ['classe-do-tema']` em `PortalUiHooks::TOKENS`.
+2. No tema, inclua `'novo-token' => ['classe-do-tema']` em `PortalUiHooks::TOKENS`. A classe precisa de CSS no tema ou de exceção em `aculta420_v2/docs/classes-sem-css-excecoes.md`.
 3. Documente o token na tabela abaixo (nome, classes, uso).
-4. Rode `php scripts/validate-portal-ui-docs.php` e `php scripts/validate-module-theme-boundary.php`.
+4. Rode `php scripts/validate-portal-ui-docs.php`, `php scripts/validate-aculta420-mapped-classes.php` e `php scripts/validate-module-theme-boundary.php`.
 
 ## Atributos
 
@@ -41,6 +43,7 @@ Atributos: não há wildcard. Todo nome usado no código aparece na tabela acima
 | `data-aculta-bio-form` | exato | sim | 2 |
 | `data-aculta-cart-count` | exato | não | 2 |
 | `data-aculta-cart-trigger` | exato | não | 2 |
+| `data-aculta-dialog-trigger` | exato | sim | 2 |
 | `data-card-variation` | exato | não | 1 |
 | `data-aculta-cep-status` | exato | sim | 1 |
 | `data-aculta-chip` | exato | sim | 2 |
@@ -132,6 +135,7 @@ Atributos: não há wildcard. Todo nome usado no código aparece na tabela acima
 | `data-aculta-photo-open` | exato | não | 1 |
 | `data-aculta-popup` | exato | sim | 2 |
 | `data-aculta-portal-link` | exato | não | 2 |
+| `data-aculta-register-content` | exato | sim | 1 |
 | `data-aculta-reply-form` | exato | sim | 3 |
 | `data-aculta-revista` | exato | não | 1 |
 | `data-aculta-sent-date` | exato | sim | 1 |
@@ -455,7 +459,12 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `donation-monthly` | `badge`, `text-bg-secondary` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
 | `donation-in-honor` | `fst-italic` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
 | `donation-account-invite` | `alert`, `alert-info`, `mt-3` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationCheckoutPane.php` |
-| `donation-account-invite-link` | `btn`, `btn-outline-primary` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationCheckoutPane.php` |
+| `donation-account-invite-link` | `btn` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationCheckoutPane.php` |
+| `donation-register-dialog` | `aculta-utility-dialog` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationCheckoutPane.php` |
+| `donation-register-dialog-body` | `aculta-utility-dialog__body` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationCheckoutPane.php` |
+| `donation-register-dialog-close` | `aculta-utility-dialog__close` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationCheckoutPane.php` |
+| `donation-register-dialog-header` | `aculta-utility-dialog__header` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationCheckoutPane.php` |
+| `donation-register-dialog-title` | `aculta-utility-dialog__title` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationCheckoutPane.php` |
 | `register-popup` | `d-grid`, `gap-3` | `web/modules/custom/aculta_portal/src/Form/RegisterPopupForm.php` |
 | `shop-products` | `d-grid`, `gap-3`, `mt-4` | `web/modules/custom/aculta_portal/src/Controller/ShopController.php` |
 | `shop-product-card` | `d-block`, `border`, `border-2`, `rounded-3`, `text-start`, `p-3`, `text-decoration-none` | `web/modules/custom/aculta_portal/src/Controller/ShopController.php` |

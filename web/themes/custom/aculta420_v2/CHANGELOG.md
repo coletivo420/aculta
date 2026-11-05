@@ -1,5 +1,20 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — dívida de estilo resolvida
+
+- As 189 classes de `PortalUiHooks::TOKENS` sem CSS receberam estilo mínimo em
+  `src/styles/portal-ui-map.css`, agrupado por componente e com tokens
+  semânticos.
+- Nomes Bootstrap removidos do mapa do V2: `bi` e `bi-*`, `breadcrumb`,
+  `breadcrumb-item`, `btn-primary`, `btn-outline-primary`,
+  `btn-outline-secondary` e `btn-sm`. O `data-portal-ui` permanece e o CSS do
+  V2 continua por atributo; a V1 não foi alterada.
+- Novo gate `scripts/validate-aculta420-mapped-classes.php`: exige CSS ou
+  exceção documentada para cada classe mapeada e recusa nomes Bootstrap.
+  PASS (453 classes, 0 exceções).
+- Suítes `aculta-htmx-f1` (43/43) e `aculta420-v2-footer` (6/6) PASS após o CSS
+  global.
+
 ## Não versionado — data-purpose neutro no html (Fase 3)
 
 - `SurfaceSettingsHooks::preprocessHtml` aplica `data-purpose` a partir de
