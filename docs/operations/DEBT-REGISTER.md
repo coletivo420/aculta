@@ -379,3 +379,12 @@ código do módulo.
 - **Registro de deploy:** o formulário avisa a correção de deploy, mas não grava nada. `superficies-sugestao` do aculta_deployer só imprime sugestões.
 - **Caminho antigo do formulário:** `/painel-administrativo/superficies` deixou de existir (sem alias). Não há produção para redirecionar.
 - **Caminhos antigos em CHANGELOG e ROADMAP:** mantidos como histórico, com nota de substituição no topo.
+
+
+## Drupal 12 — tema administrativo e remoções do Core (2026-11-05)
+
+| ID | Dívida | Evidência | Sev. | Decisão | Fase | Estado |
+| --- | --- | --- | --- | --- | --- | --- |
+| DT-D12-01 | Nove colocações de bloco ainda no tema Claro: oito `claro_*` (breadcrumbs, content, help, local actions, messages, page title, tarefas locais primárias e secundárias) e `aculta_magazine_admin_comments` | `config/sync/block.block.*.yml` com `theme: claro` | Média | Migrar para o Gin (D-72) e validar visualmente no Runtime antes de remover o Claro | Drupal 12 | Aberta: exige captura do painel administrativo no Runtime |
+| DT-D12-02 | Gin está em `5.0.x-dev@dev` no `composer.json`, sem release estável | `composer.json` | Alta | Fixar release estável compatível com o Core 12 antes do RC | Drupal 12 | Aberta |
+| DT-D12-03 | Claro habilitado no `core.extension` (deprecado no 11.5, sai no 12.0.0) | `config/sync/core.extension.yml` | Média | Desinstalar somente com ordem explícita, porque `pm:uninstall` é proibido sem ordem | Drupal 12 | Aberta: aguarda ordem e DT-D12-01 |

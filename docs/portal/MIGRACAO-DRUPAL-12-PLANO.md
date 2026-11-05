@@ -12,8 +12,8 @@ Base: branch `dev`, commit `82db095`. Análise estática do repositório e de fo
 | Symfony | `symfony/http-client` e `symfony/brevo-mailer` `^7.4` | Drupal 12 usa Symfony 8 |
 | Drush | `drush/drush` 13.8.0 | Drupal 12 recomenda o CLI nativo `dr` (Drupal 11.4+); compatibilidade do Drush não confirmada |
 | Tema | `aculta420` com `core_version_requirement: ^11`, base `bootstrap` 5.0.2 | Precisa `^11 || ^12` |
-| Admin | `claro` habilitado | Gin deve virar tema admin estável no D12; decidir |
-| Módulos core que saem do core | `history` habilitado (contrib `drupal/history` 1.0.0 já no composer); `contact`, `ban`, `field_layout`, `migrate_drupal`, `migrate_drupal_ui` | `contact` e `ban` não estão habilitados; `history` precisa validação |
+| Admin | Gin ativo no `config/sync` (commit `d7d0be3f`). Claro segue habilitado: deprecado no 11.5, remoção prevista para o 12.0.0 | 9 colocações de bloco ainda em Claro (`DT-D12-01`); Gin está em `5.0.x-dev@dev` (`DT-D12-02`) |
+| Módulos e temas que saem do core | Confirmado em drupal.org em 2026-11-05: Search, Contact, Ban, Field Layout, History, Migrate Drupal, Migrate Drupal UI, Settings Tray, Shortcut, Telephone e Stable 9 saem do `main`. Claro é deprecado no 11.5 e sai no 12.0.0. Olivero: issue de remoção marcada como corrigida, meta ambígua. Toolbar: sem release estável, bloqueia a meta de remoções. No projeto: `history` é o contrib `^1.0`; nenhum dos módulos removidos está habilitado; Toolbar e Olivero não estão habilitados; Claro está habilitado. | Sem impacto de Search, Contact, Ban e demais; Claro é o único item de impacto real |
 | Senhas | hash padrão passa a Argon2id | Hashes antigos continuam válidos e são recalculados no login; testar |
 | Config | 284 diferenças de drift conhecidas (DT-O10) | Não deve crescer na migração |
 | Código customizado | `aculta_mcp`, `aculta_mcp_client`, `aculta_portal` (+ submódulos) | Usa atributos, sem `@Plugin`; resta procedural (`drupal_static`, `drupal_valid_test_ua`, `drupal_flush_all_caches` em scripts/testes) |
@@ -34,7 +34,7 @@ Base: branch `dev`, commit `82db095`. Análise estática do repositório e de fo
 2. Ambiente com PHP 8.5: precisa de root no host (DT-P04). Sem isso não há validação real.
 3. Usar branch dedicada ou manter em `dev` via worktree. `AGENTS.md` proíbe criar branch sem ordem explícita.
 4. Drush vs `dr`: manter Drush 13 até D12 confirmar compatibilidade, ou migrar agora.
-5. Admin theme: manter Claro ou migrar para Gin.
+5. Admin theme: **decidido em D-72, Gin.** Pendências: migrar as colocações de Claro e remover o Claro com ordem explícita (`DT-D12-01`, `DT-D12-03`).
 6. Janela de Runtime para a sincronização (D-70).
 
 ## 4. Fases
@@ -78,7 +78,7 @@ Base: branch `dev`, commit `82db095`. Análise estática do repositório e de fo
 - Testes específicos da mudança:
   - Login com hashes antigos e recálculo para Argon2id.
   - Redefinição de senha e troca de e-mail (`aculta_mail_confirmer`).
-  - Tema admin (Claro ou Gin) e o bug de Navigation (DT-P24).
+  - Tema admin: Gin (D-72); migrar as colocações de Claro (DT-D12-01) e o bug de Navigation (DT-P24).
   - Módulo `history` e a contagem de não lidos do fórum.
   - Commerce: carrinho, checkout, pagamento de teste (Mercado Pago em modo teste).
 - Gate: nenhuma regressão funcional nas suítes e nos smokes listados.

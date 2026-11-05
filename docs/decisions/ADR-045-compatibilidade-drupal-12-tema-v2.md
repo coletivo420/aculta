@@ -18,7 +18,7 @@
 2. **AJAX isolado em um único módulo JavaScript.** As interações do tema passam por um ponto único. Trocar Fetch por HTMX do core ou por `core/drupal.ajax` depois fica restrito a esse módulo.
 3. **Preferir páginas completas quando não houver ganho real com AJAX.** Isso vale, em especial, para o wizard do LMS (ADR-044, caminho A).
 4. **Nenhum seletor, API ou biblioteca deprecada no 11.5.** Antes da validação, o tema passa por análise estática de deprecações (`drupal-check` ou `phpstan-drupal`), tanto no tema quanto nos módulos do Portal que o usam.
-5. **Toolbar.** O tema não depende do Toolbar. Antes do 12, verificar se o painel administrativo depende dele; se depender, a substituição é planejada antes da migração.
+5. **Toolbar.** O tema não depende do Toolbar, e o Toolbar não está habilitado no projeto (verificado em `config/sync/core.extension.yml`, 2026-11-05). O tema administrativo é o Gin (D-72). Toolbar sem release estável é bloqueador só da meta de remoções do Core 12, não deste projeto.
 6. **Dívida de jQuery com prazo.** A remoção do jQuery do `core/drupal.dialog.ajax` nas páginas do Portal é registrada no `DEBT-REGISTER`, com responsável, e acompanhada nos change records do 12.0.0 e do 11.5.0.
 7. **CTools fora do tema.** A lógica do CTools fica no `aculta_portal` (ADR-044). O tema apenas apresenta.
 8. **UI Styles, se adotado,** precisa ter a compatibilidade com o 12 confirmada no `composer.json` antes da adoção (a página do módulo cita Drupal 12 na versão 1.22).
@@ -35,7 +35,7 @@
 - [ ] Rodar os gates do tema: `validate-aculta420-sdc-schemas.php`, `validate-aculta420-design-foundations.php`, `validate-browser-validators.php`, e via Drush `validate-aculta420-foundation.php`, `validate-aculta420-shell-contract.php` e `validate-aculta420-v2-sdc.php`.
 - [ ] Rodar a análise de deprecações no Core 12 (tema e módulos do Portal que o usam).
 - [ ] Testar login pela barra, busca, carrinho, mensagens, alertas e o menu de conta, em claro e escuro.
-- [ ] Testar o painel administrativo (Navigation e, se houver, Toolbar).
+- [ ] Testar o painel administrativo (Gin e Navigation; Toolbar não está habilitado).
 - [ ] Testar as páginas do Portal com modais (eventos, galerias, mensagens, editor de foto) e registrar o estado do jQuery.
 - [ ] Validar o Portal no tema ACULTA ativo; comparação com outros temas não é requisito.
 - [ ] Atualizar `core_version_requirement`, o `roadmap.md` e o `CHANGELOG.md` do tema conforme o resultado.

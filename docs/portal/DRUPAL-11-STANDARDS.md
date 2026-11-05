@@ -23,7 +23,7 @@ Vale para desenvolvedores humanos e para agentes de IA. Declarar compatibilidade
 
 Pontos que o Core 12 afeta, conforme fontes públicas (confirmar em drupal.org antes de agir):
 
-- **Módulos e temas que saem do Core:** notícia de terceiros indica a remoção de Search, Claro e Olivero do Core. Não crie dependência nova em nenhum deles. O tema administrativo atual é Claro; a troca é decisão do responsável (plano de migração, seção 3).
+- **Módulos e temas que saem do Core (confirmado em drupal.org, 2026-11-05):** Search, Contact, Ban, Field Layout, History, Migrate Drupal, Migrate Drupal UI, Settings Tray, Shortcut, Telephone e Stable 9 saem do `main`. Claro é deprecado no 11.5 e sai no 12.0.0. Olivero tem issue de remoção marcada como corrigida, mas a meta ainda é ambígua. Toolbar não tem release estável e bloqueia a meta. No projeto, o único item de impacto é o Claro, que ainda está habilitado. O tema administrativo é o Gin (D-72).
 - **Olivero:** já vedado para gates e testes do projeto (`AGENTS.md`, "Arquitetura e validação").
 - **Dívida Drupal 11 a eliminar antes do Core 12:** chamadas procedurais `drupal_*` e `drupal_static` em scripts e testes. Código de produção novo não usa essas funções.
 - **Senhas:** segundo o plano de migração, o hash padrão do Core 12 passa a ser Argon2id. Hashes antigos continuam válidos e são recalculados no login. Teste o login após a troca.
