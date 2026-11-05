@@ -14,6 +14,13 @@
   `AUTHOR-CARDS.md`. O gate de render Drupal cobre o cartão com identidade
   autorizada, avatar e bio; captura no fluxo da Revista ainda pendente.
 
+## Não versionado — componente Tabs
+
+- Criado SDC de navegação entre páginas, com slot para a lista de links do
+  Drupal, alvos de 44 px, scroll horizontal e estado ativo `aria-current`.
+  Não adiciona JavaScript nem troca de painéis. Gates SDC e capturas responsivas
+  passaram; integração aos render arrays das suítes segue para G3.
+
 ## Não versionado — dashboard e Minha Conta na rota definida pela ADR-048
 
 - O preprocess mapeia a rota `aculta_studio.dashboard` para `aside`, inclusive

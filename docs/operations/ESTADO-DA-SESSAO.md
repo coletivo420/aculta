@@ -1355,4 +1355,12 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   comprovam conteúdo publicado/autenticado no Runtime. O plano
   não exige SDC redundante; próximo item novo na ordem G1: `tabs` (breadcrumb e
   accordion já existem).
+- **G1 — tabs:** novo SDC de navegação horizontal, com slot de lista Drupal,
+  `aria-current="page"`, alvo mínimo de 44 px, scroll horizontal no mobile e
+  sem painel interativo/JavaScript. Schema SDC 55/764 e render Drush 30
+  componentes PASS; PHPCS/PHP lint e `git diff --check` PASS. Firefox ESR
+  visível: 12/12 viewport-modo em 320/390/768/959/960/1440 px, claro/escuro;
+  zoom real 200% em 320 CSS px sem overflow do documento; Tab no primeiro link
+  com outline visível. Capturas e JSON externos em `$SUITE_OUT` da execução. A
+  integração aos render arrays das suítes será G3; próximo item novo: `dialog`.
 

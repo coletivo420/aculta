@@ -20,6 +20,13 @@ com nome acessível; não gera iniciais nem consulta usuário. Props: `size`
 (`xs`, `sm`, `md`, `lg`, `xl`) e `label` (usado no fallback). Stories:
 `avatar.default.story.yml` e `avatar.fallback.story.yml`. Sem JavaScript.
 
+### tabs
+
+Navegação horizontal rolável entre páginas, não troca de painel. Prop: `label`;
+slot `items` recebe a lista do Drupal e preserva URLs, access/cache e
+`aria-current="page"`. Story: `tabs.default.story.yml`. Links mantêm navegação
+com e sem JavaScript; alvos de 44 px e sem role `tablist`.
+
 ### accordion
 
 Resposta expansível baseada em details/summary, sem JavaScript e operável por
@@ -212,7 +219,7 @@ original caso a descoberta Drupal ainda não conheça o SDC.
 
 ## Lacunas do catálogo
 
-Componentes previstos no ADR-046: `avatar` tem SDC próprio; a função de `author-box` é coberta pelo slot de autoria de `revista-publication` e pelo SDC compartilhado `author-card`. `tabs`, `dialog`, `form-field`, `progress`, `data-table`, `empty-state` e `price` ainda precisam de auditoria/implementação. `breadcrumb` e `accordion` já existem. Ordem e uso estão no [roadmap.md](roadmap.md).
+Componentes previstos no ADR-046: `avatar` e `tabs` têm SDC próprio; a função de `author-box` é coberta pelo slot de autoria de `revista-publication` e pelo SDC compartilhado `author-card`. `dialog`, `form-field`, `progress`, `data-table`, `empty-state` e `price` ainda precisam de auditoria/implementação. `breadcrumb` e `accordion` já existem. Ordem e uso estão no [roadmap.md](roadmap.md).
 
 ## Como documentar um componente novo
 

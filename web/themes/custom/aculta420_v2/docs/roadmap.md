@@ -19,6 +19,16 @@ SDC. Não foi criado outro componente com markup redundante. Fixture composta em
 Firefox passou nos seis viewports, claro/escuro, zoom 200% em 320 CSS px e Tab
 com foco visível. Conteúdo publicado e autenticado do Runtime permanece pendente.
 
+## Tabs — G1 implementado e validado em fixture Drupal
+
+Criado SDC de navegação por links normais, compatível com a lista de links
+renderizada pelo Drupal. O item atual usa `aria-current="page"`; a lista rola
+horizontalmente no mobile e não depende de JavaScript. Não usa semântica de
+troca de painel (`role="tablist"`), pois Studio e suites navegam entre rotas.
+Firefox ESR visível passou nas seis larguras em claro/escuro, zoom 200% em 320
+CSS px sem overflow da página e foco visível por Tab. Integração com os render
+arrays de navegação do Portal fica para os templates do Studio.
+
 ## Menu de conta e sites — C2 implementado; validação visual pendente
 
 O `account-menu` combina a lista neutra `aculta_domain_sites` com o bloco de

@@ -1,0 +1,17 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Abas de navegação
+description: Lista horizontal rolável de links de navegação entre páginas.
+group: ACULTA
+props:
+  type: object
+  additionalProperties: false
+  required: [label]
+  properties:
+    label:
+      type: string
+      title: Nome acessível da navegação
+      minLength: 1
+slots:
+  items:
+    title: Links de navegação
+    description: Lista renderizada pelo Drupal; preserva URL, access, cache e aria-current.

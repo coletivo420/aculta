@@ -80,6 +80,7 @@ $component_ids = [
   'site-footer',
   'social-links-page',
   'status-messages',
+  'tabs',
 ];
 $manager = \Drupal::service('plugin.manager.sdc');
 $validator = \Drupal::service('Drupal\Core\Theme\Component\ComponentValidator');
@@ -275,6 +276,12 @@ $samples = [
     ],
   ],
   'status-messages' => ['#props' => ['type' => 'status', 'messages' => ['Validação concluída.']]],
+  'tabs' => [
+    '#props' => ['label' => 'Suítes ACULTA'],
+    '#slots' => [
+      'items' => Markup::create('<div class="item-list"><ul class="item-list__items"><li><a href="/marley" aria-current="page">Marley</a></li><li><a href="/ganjalab">Ganjalab</a></li></ul></div>'),
+    ],
+  ],
 ];
 
 foreach ($component_ids as $component_id) {
@@ -387,6 +394,13 @@ foreach ($component_ids as $component_id) {
       || !str_contains($output, 'Biografia pública autorizada.')
       || !str_contains($output, 'alt="Retrato de exemplo"'))) {
     throw new RuntimeException('Author card must render its authorized identity, bio, and avatar slot.');
+  }
+  if ($component_id === 'tabs'
+    && (!str_contains($output, '<nav')
+      || !str_contains($output, 'aria-label="Suítes ACULTA"')
+      || !str_contains($output, 'aria-current="page"')
+      || str_contains($output, 'role="tablist"'))) {
+    throw new RuntimeException('Tabs must render page navigation links, not an interactive tab panel widget.');
   }
   if ($component_id === 'breadcrumb'
     && (!str_contains($output, 'aria-current="page"') || !str_contains($output, 'aria-label="Breadcrumb"'))) {
