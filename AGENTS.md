@@ -6,7 +6,8 @@ Regras gerais do repositório, válidas para todos os agentes. Em caso de confli
 
 ## Sessão
 
-- **Leitura de partida:** leia [`TODO.md`](TODO.md), o checkpoint do estado atual. Para continuar uma fase, leia também as entradas recentes de [`docs/operations/ESTADO-DA-SESSAO.md`](docs/operations/ESTADO-DA-SESSAO.md).
+- **Leitura de partida:** leia [`TODO.md`](TODO.md), o checkpoint do estado atual, e o `TODO.md` do componente que você vai alterar (ao lado do `info.yml`). Para continuar uma fase, leia também as entradas recentes de [`docs/operations/ESTADO-DA-SESSAO.md`](docs/operations/ESTADO-DA-SESSAO.md).
+- **Ao concluir uma fase**, atualize o `TODO.md` do componente alterado (versão, estado e próximo passo) e o status YAML, no mesmo commit. Não acrescente histórico no TODO: ele é para economizar leitura.
 - Antes de trocar de sessão, encerrar uma fase ou o trabalho (não a cada microfase), registre no handoff em [`docs/operations/ESTADO-DA-SESSAO.md`](docs/operations/ESTADO-DA-SESSAO.md): objetivo, o que foi feito, arquivos alterados, verificações e resultados, pendências e próximos passos, com caminhos concretos de leitura. Não registre segredos. Mantenha no máximo 3 entradas; mova as mais antigas para `docs/history/operations/`.
 - Atualize o registro existente em vez de criar históricos paralelos.
 

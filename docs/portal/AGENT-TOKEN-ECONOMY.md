@@ -15,7 +15,7 @@ Começar pelo modelo econômico **somente quando seguro e verificável**. Escala
 
 ## Economia de contexto e tokens
 
-1. Definir uma única subfase e o menor conjunto de arquivos-alvo. Forneça ao agente apenas `TODO.md` e o arquivo que será alterado; o resto entra por `rg` quando a tarefa pedir.
+1. Definir uma única subfase e o menor conjunto de arquivos-alvo. Forneça ao agente apenas o `TODO.md` do componente (ou o `TODO.md` raiz, se a tarefa for transversal) e o arquivo que será alterado; o resto entra por `rg` quando a tarefa pedir.
 2. Usar `rg -n` e leitura por linha; não carregar repositório, vendor, Core, contrib ou logs inteiros sem motivo.
 3. Preferir `git diff --stat` e `git diff --check`; preservar erros e linhas úteis.
 4. Não repetir roadmap extenso; citar caminhos canônicos e só registrar novas decisões.

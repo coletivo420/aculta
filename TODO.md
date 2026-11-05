@@ -47,4 +47,5 @@ Decidir com o responsável: (1) se o Claro sai agora ou depois da migração das
 
 - Estado de sessão e handoff: `docs/operations/ESTADO-DA-SESSAO.md` (máximo de 3 entradas).
 - Dívidas: `docs/operations/DEBT-REGISTER.md`.
+- Pendências de cada módulo, submódulo e tema: `TODO.md` ao lado do `info.yml` (55 arquivos). Este arquivo raiz guarda só o que é transversal.
 - Este arquivo: atualize a linha alterada no mesmo commit da mudança.
