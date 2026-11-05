@@ -140,15 +140,11 @@ def build_sample_csv() -> bytes:
 
 def build_test_page(theme: str) -> str:
     """Builds a self-contained HTML harness loading the real module JS/CSS and theme styles."""
-    if theme == "olivero":
-        theme_css = '<link rel="stylesheet" href="/core/themes/olivero/css/base/base.css">'
-        body_class = "theme-olivero"
-    else:
-        theme_css = (
-            '<link rel="stylesheet" href="/themes/custom/aculta420/css/tokens.css">\n'
-            '  <link rel="stylesheet" href="/themes/custom/aculta420/css/components/document-viewer.css">'
-        )
-        body_class = "theme-aculta420"
+    theme_css = (
+        '<link rel="stylesheet" href="/themes/custom/aculta420/css/tokens.css">\n'
+        '  <link rel="stylesheet" href="/themes/custom/aculta420/css/components/document-viewer.css">'
+    )
+    body_class = "theme-aculta420"
 
     docx_libs = json.dumps([
         "/libraries/docx-preview/dist/jszip.min.js",
@@ -362,8 +358,7 @@ class FixtureHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         if self.path.startswith("/__harness__/"):
-            theme = "olivero" if "olivero" in self.path else "aculta420"
-            body = build_test_page(theme).encode("utf-8")
+            body = build_test_page("aculta420").encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))
@@ -464,7 +459,7 @@ try:
     driver = Driver(bidi=True)
     bidi = connect(driver.websocket_url)
 
-    for theme in ("aculta420", "olivero"):
+    for theme in ("aculta420",):
         set_width(1280)
         driver.get(f"http://127.0.0.1:{port}/__harness__/{theme}")
         ready = wait_for("""

@@ -31,8 +31,7 @@ Saída: JSON com os resultados e `FALHAS: nenhuma` quando tudo passa. PNG em `SU
 
 - **Largura mínima da janela:** o Firefox desta sessão X não encolhe a janela abaixo de ~500 px. Por isso o celular é
   medido em `iframe`, e não redimensionando a janela.
-- **Olivero não coberto:** trocar o tema é mudança global. A verificação com Olivero fica para um roteiro com
-  `trap` de restauração do tema.
+- **Olivero dispensado:** por decisão do responsável (2026-11-03), esta suíte não troca o tema nem mantém validação Olivero pendente.
 - **Carrinho não coberto:** adicionar produto ao carrinho cria dados no servidor de desenvolvimento. Fica fora deste roteiro.
 - **Conta autenticada:** persistência via `user.data` e preenchimento inicial pelo CEP do perfil cobertos em Unit; este roteiro não autentica usuário nem altera dados de conta.
 - **Pacote padrão:** o teste assume o pacote cadastrado (16 × 2 × 11 cm, 0,3 kg). Se ele mudar, o resultado da cotação

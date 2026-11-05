@@ -103,7 +103,7 @@ def focus_state():
       const shadowVisible = style.boxShadow !== 'none' && style.boxShadow !== normalStyle.boxShadow;
       // Themes may express focus with background, text decoration, border or a
       // pseudo-element instead of an outline. Accept any visible delta so the
-      // smoke remains theme-neutral (ACULTA420 and Olivero).
+      // smoke runs on the active ACULTA theme.
       const comparable = ['outlineStyle', 'outlineWidth', 'outlineColor', 'outlineOffset',
         'boxShadow', 'backgroundColor', 'color', 'textDecorationLine',
         'borderTopColor', 'borderBottomColor', 'filter', 'transform'];

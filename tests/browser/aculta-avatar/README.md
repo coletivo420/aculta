@@ -40,20 +40,7 @@ DISPLAY=:0 BASE_URL=http://aculta.test:8080 LOGIN_URL="$LOGIN_URL" \
   python3 tests/browser/aculta-avatar/visual.py
 ```
 
-### Tema Olivero
-
-A troca de tema é estado global do site. O comando de execução restaura com
-`trap`, mesmo se o teste falhar:
-
-```bash
-cd /home/piradopirata/worktrees/feat-avatar-padrao
-vendor/bin/drush config:set system.theme default olivero -y && vendor/bin/drush cr
-trap 'vendor/bin/drush config:set system.theme default aculta420 -y && vendor/bin/drush cr' EXIT
-LOGIN_URL="$(vendor/bin/drush uli --uri=http://conta.aculta.test:8080 --uid=15 2>/dev/null | tail -1)"
-DISPLAY=:0 BASE_URL=http://aculta.test:8080 LOGIN_URL="$LOGIN_URL" \
-  SUITE_OUT=/home/piradopirata/worktrees/avatar-evidence-olivero \
-  python3 tests/browser/aculta-avatar/visual.py
-```
+Esta suíte valida o tema ACULTA ativo. Olivero está dispensado por decisão do responsável (2026-11-03).
 
 ## Limitações
 

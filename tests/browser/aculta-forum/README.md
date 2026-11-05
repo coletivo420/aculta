@@ -189,36 +189,16 @@ O script imprime JSON e grava capturas e `results.json` com modo `0600` em
 produção. O anexo e o download privado são medidos pelos scripts de
 `aculta_forum/tests/runtime/`, não pelo navegador.
 
-## Temas Olivero e ACULTA420 em `/categorias`
+## `/categorias` no tema ACULTA
 
-`categorias-visual.py` mede a página `/categorias` no ambiente local com o tema
+`categorias-visual.py` mede `/categorias` no ambiente local com o tema ACULTA
 ativo: h1, categorias, links `?categoria=`, contagem de tópicos, ausência de
-erros e de overflow, com capturas em 1024 px e na menor largura de janela que o
-Firefox aceita (o script registra a largura real; não usa BiDi). Ele reaproveita
-`wdlib.py` de `tests/browser/aculta-cpf-checkout/`, resolve os hostnames de
-teste para 127.0.0.1 e não troca o tema. Use `SUITE_THEME=olivero` (padrão) ou
-`SUITE_THEME=aculta420`; o caso Olivero exige esse tema como
-`system.theme.default` no Runtime local, com restauração garantida por `trap`.
+erros e overflow. Salva capturas em 1024 px e na menor largura de janela que o
+Firefox aceita. Reaproveita `wdlib.py`, resolve os hostnames para 127.0.0.1 e
+não troca configuração. Olivero foi dispensado pelo responsável (2026-11-03).
 
-```bash
-cd /home/piradopirata/projetos/aculta
-vendor/bin/drush theme:enable olivero -y
-restore() {
-  vendor/bin/drush config:set system.theme default aculta420 -y >/dev/null
-  vendor/bin/drush cache:rebuild >/dev/null
-}
-trap restore EXIT
-vendor/bin/drush config:set system.theme default olivero -y
-vendor/bin/drush cache:rebuild >/dev/null
-DISPLAY=:0 SUITE_THEME=olivero \
-SUITE_OUT='/home/<usuario>/private/aculta/visual-tests/forum-categorias-olivero' \
-  python3 -I tests/browser/aculta-forum/categorias-visual.py
-```
-
-O script confirma que o HTML carrega assets só do tema informado. Com
-`SUITE_THEME=aculta420`, ele mede a grade do tema, o contador de cada cartão e
-o reflow; a inspeção de todas as combinações de cor continua na suíte
-`forum-index-visual.mjs`.
+O script confirma os assets ACULTA, mede grade, contador dos cartões e reflow.
+A inspeção de cores permanece na suíte `forum-index-visual.mjs`.
 
 `forum-index-visual.mjs` percorre 320/360/390/575/576/600/767/768/1024/1280/
 1440px, mede cartões reais de categoria e injeta uma linha de tópico sintética
@@ -293,17 +273,15 @@ dos links, IDs únicos e indicador de foco ao percorrer o conteúdo principal
 com Tab.
 
 ```bash
-DISPLAY=:0 SUITE_OUT='/home/<usuario>/private/aculta/visual-tests/forum-a11y' \
-  SUITE_THEME=olivero python3 -I tests/browser/aculta-forum/accessibility-readonly.py
+DISPLAY=:0 SUITE_OUT="$SUITE_OUT/forum-a11y" \
+  python3 -I tests/browser/aculta-forum/accessibility-readonly.py
 ```
 
-- `SUITE_THEME` (`olivero` ou `aculta420`) troca o tema padrão **local** antes
-  da medição e restaura o original no `finally`; sem a variável, mede o tema
-  ativo.
+- Mede o tema ACULTA ativo e não troca a configuração do site.
 - O toolbar global de administração fica fora da amostra de foco por ser
   mobília do tema; as paradas são contadas dentro de `<main>`.
 - Não cria conteúdo, não envia formulário e não dispara e-mail.
-- Rodada do candidato RC: 49/49 em ACULTA420 e 49/49 em Olivero.
+- Rodada do candidato RC: 49/49 no tema ACULTA.
 
 ## Tópico público responsivo
 

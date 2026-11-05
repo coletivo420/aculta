@@ -10,8 +10,8 @@ Firefox resolve esses nomes para 127.0.0.1 via network.dns.localDomains, então
 o servidor de testes não é tocado. O link único nunca é impresso.
 
 Variáveis: DISPLAY, SUITE_OUT (absoluto, fora do checkout), SUITE_UID (padrão
-1), SUITE_THEME (olivero ou aculta420; quando presente o script troca o tema
-padrão local e restaura no final). Artefatos ficam em SUITE_OUT com modo 0600.
+1). O script mede o tema ACULTA ativo e não troca a configuração. Artefatos
+ficam em SUITE_OUT com modo 0600.
 """
 
 import base64
@@ -29,7 +29,6 @@ from wdlib import Driver, WDError  # noqa: E402
 OUT = os.environ.get("SUITE_OUT")
 DISPLAY = os.environ.get("DISPLAY")
 UID = os.environ.get("SUITE_UID", "1")
-THEME = os.environ.get("SUITE_THEME", "").strip()
 if not OUT or not os.path.isabs(OUT) or not DISPLAY:
     raise SystemExit("Defina DISPLAY da sessão X11 e SUITE_OUT absoluto fora do checkout.")
 os.umask(0o077)
@@ -128,8 +127,7 @@ return {
   images,
   links,
   duplicates: duplicates.slice(0, 5),
-  theme: document.documentElement.getAttribute('data-theme') ||
-    (document.querySelector('link[href*="olivero"]') ? 'olivero' : 'aculta420'),
+  theme: document.documentElement.getAttribute('data-theme') || 'aculta420',
 };
 """
 
@@ -161,18 +159,8 @@ return {
 };
 """
 
-original_theme = None
 driver = None
 try:
-    if THEME:
-        original_theme = drush(
-            "php:eval", 'echo \\Drupal::config("system.theme")->get("default");'
-        )
-        if THEME not in ("olivero", "aculta420"):
-            raise SystemExit("SUITE_THEME deve ser olivero ou aculta420.")
-        drush("config:set", "system.theme", "default", THEME, "-y")
-        drush("cr")
-
     nid = drush(
         "php:eval",
         '$nids = \\Drupal::entityQuery("node")->accessCheck(FALSE)'
@@ -245,12 +233,9 @@ try:
 finally:
     if driver is not None:
         driver.close()
-    if THEME and original_theme is not None:
-        drush("config:set", "system.theme", "default", original_theme, "-y")
-        drush("cr")
     passed = sum(1 for item in checks if item["pass"])
     with open(os.path.join(OUT, "results.json"), "w", encoding="utf-8") as handle:
-        json.dump({"uid": UID, "theme": THEME or "atual", "checks": checks},
+        json.dump({"uid": UID, "theme": "ativo", "checks": checks},
                   handle, ensure_ascii=False, indent=2)
     print(f"Resultado: {passed}/{len(checks)} verificações; capturas em {OUT}")
     if passed != len(checks):

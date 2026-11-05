@@ -49,6 +49,7 @@ Regras gerais do repositório, válidas para todos os agentes. Em caso de confli
 - Preserve os módulos responsáveis e valide acesso no servidor, inclusive em escritas.
 - Endereço centralizado em `aculta_portal_cep` e país exclusivo Brasil (BR), conforme ADR-034 (`docs/decisions/ADR-034-pais-unico-brasil-endereco-central.md`).
 - Padrão Drupal 11+: `docs/portal/DRUPAL-11-STANDARDS.md`.
+- **Tema de validação:** validar no tema ACULTA ativo. Olivero está dispensado por decisão do responsável (2026-11-03); não adicionar Olivero como requisito, não alternar `system.theme` para esse fim e não manter casos Olivero em suítes ou instruções ativas. Resultados históricos datados podem permanecer como registro.
 - Antes de concluir, execute as verificações relevantes e registre os resultados. Não alegue testes que não executou.
 
 ## Referências

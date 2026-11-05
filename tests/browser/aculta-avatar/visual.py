@@ -17,10 +17,7 @@ Uso:
     SUITE_OUT=/home/piradopirata/worktrees/avatar-evidence \
     python3 tests/browser/aculta-avatar/visual.py
 
-Para o tema Olivero, o comando de execução troca o tema e restaura com trap:
-  drush config:set system.theme default olivero -y && drush cr
-  trap 'drush config:set system.theme default aculta420 -y && drush cr' EXIT
-  DISPLAY=:0 python3 tests/browser/aculta-avatar/visual.py
+Valida somente o tema ACULTA ativo; esta suíte não troca configuração de tema.
 """
 
 import base64

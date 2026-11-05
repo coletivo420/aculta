@@ -47,12 +47,13 @@ memória para validar no Firefox ESR visível (`DISPLAY=:0`):
   confirmando modo inicial Tabela, seletor de aba visível, paginação de 25
   linhas e células somente leitura;
 - navegação por `Tab` com `:focus-visible` e ausência de rolagem horizontal em
-  `1280`, `390` e `320` CSS px nos temas **ACULTA420** e **Olivero**.
+  `1280`, `390` e `320` CSS px no tema **ACULTA420**.
 
 O harness mede a altura mínima do iframe DOCX e o padding do wrapper em
 1440/1280/1024/768/600/599/576/575/390/360/320px: 60vh/1rem a partir de
-`36rem` e 50vh/0.75rem abaixo desse breakpoint no ACULTA420. Olivero continua
-com a apresentação nativa.
+`36rem` e 50vh/0.75rem abaixo desse breakpoint no ACULTA420, com a
+apresentação nativa. Esta suíte executa apenas no ACULTA420; Olivero foi
+dispensado pelo responsável (2026-11-03).
 
 ```sh
 DISPLAY=:0 \

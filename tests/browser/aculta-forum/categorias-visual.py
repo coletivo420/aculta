@@ -1,10 +1,9 @@
-"""Revisão somente leitura de /categorias com Olivero ou ACULTA420 no ambiente local.
+"""Revisão somente leitura de /categorias com o tema ACULTA ativo.
 
 O Apache local responde pelos mesmos hostnames do servidor de testes; o perfil
 do Firefox resolve esses nomes para 127.0.0.1 via network.dns.localDomains.
 O script não troca o tema, não autentica e não envia formulários: ele apenas
-mede a página e salva capturas. Use SUITE_THEME (olivero, padrão, ou aculta420)
-e ative o tema antes, restaurando com trap.
+mede a página e salva capturas.
 
 O driver é reaproveitado de tests/browser/aculta-cpf-checkout/wdlib.py, que já
 implementa a sessão WebDriver visível em X11.
@@ -13,7 +12,6 @@ implementa a sessão WebDriver visível em X11.
 import base64
 import json
 import os
-import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -23,7 +21,6 @@ from wdlib import Driver, WDError  # noqa: E402
 PAGE = "https://growroom420.aculta.toca.net.br/categorias"
 OUT = os.environ.get("SUITE_OUT")
 DISPLAY = os.environ.get("DISPLAY")
-THEME = os.environ.get("SUITE_THEME", "olivero")
 if not OUT or not os.path.isabs(OUT) or not DISPLAY:
     raise SystemExit("Defina DISPLAY da sessão X11 e SUITE_OUT absoluto fora do checkout.")
 os.umask(0o077)
@@ -64,20 +61,14 @@ try:
         .map(e => e.innerText.trim()).filter(Boolean).slice(0, 5),
       overflow: document.documentElement.scrollWidth - innerWidth,
     }""")
-    markers = {
-        "olivero_assets": len(re.findall(r"/core/themes/olivero/", source)),
-        "aculta420_assets": len(re.findall(r"/themes/custom/aculta420/", source)),
-    }
+    markers = {"aculta420_assets": source.count("/themes/custom/aculta420/")}
     detail = json.dumps({**state, **markers}, ensure_ascii=False)
 
     check("Página /categorias abriu no host local simulado", state["host"] == "growroom420.aculta.toca.net.br" and state["path"] == "/categorias", detail)
     check("Título principal e região de conteúdo presentes", state["h1"] == ["Categorias"] and state["main"], detail)
-    if THEME == "olivero":
-        check("Olivero está ativo e o tema ACULTA420 não é carregado", markers["olivero_assets"] > 0 and markers["aculta420_assets"] == 0, detail)
-    else:
-        check("ACULTA420 está ativo e o Olivero não é carregado", markers["aculta420_assets"] > 0 and markers["olivero_assets"] == 0, detail)
-    check("Categorias continuam renderizando sem o tema ACULTA420", state["links"] > 0 and (state["categories"] + state["rows"]) > 0, detail)
-    check("Contagem de tópicos renderiza sem o tema ACULTA420", state["counters"] == state["links"], detail)
+    check("Tema ACULTA carregado", markers["aculta420_assets"] > 0, detail)
+    check("Categorias renderizadas", state["links"] > 0 and (state["categories"] + state["rows"]) > 0, detail)
+    check("Contagem de tópicos renderiza", state["counters"] == state["links"], detail)
     check("Nenhum erro visível na página", not state["errors"] and "The website encountered an unexpected error" not in driver.source(), detail)
     check("Sem overflow horizontal no viewport atual", state["overflow"] <= 1, detail)
 
@@ -94,7 +85,7 @@ try:
         check(f"Viewport {label} sem overflow horizontal",
               metrics["document"] <= metrics["innerWidth"] + 1 and metrics["links"] > 0,
               json.dumps(metrics))
-        screenshot(driver, f"forum-categorias-olivero-{label}.png")
+        screenshot(driver, f"forum-categorias-{label}.png")
 finally:
     driver.close()
     passed = sum(1 for item in checks if item["pass"])

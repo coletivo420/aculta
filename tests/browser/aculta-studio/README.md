@@ -328,7 +328,7 @@ não deve ser condenado genericamente como violação da política.
 
 **Não cobre:** salvamento real, CSRF, AJAX, checkout, upload/crop/foto,
 persistência de preferências, perfil sem nickname, cache HTTP com duas
-contas concorrentes, compatibilidade Olivero, zoom real, teclado completo
+contas concorrentes, zoom real, teclado completo
 nem acessibilidade WCAG. Modo claro/escuro é comparação local de geometria
 e não grava preferência. Uma auditoria humana deve ler os screenshots
 pareados, exercitar os formulários nativos e documentar ações, resultados,

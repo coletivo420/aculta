@@ -66,19 +66,11 @@ OUTLINED_PDF_BYTES = build_outlined_pdf()
 
 
 def render_harness_html(theme: str) -> str:
-    theme_links = (
-        """
+    theme_links = """
   <link rel="stylesheet" href="/themes/custom/aculta420/css/tokens.css">
   <link rel="stylesheet" href="/themes/custom/aculta420/css/base.css">
   <link rel="stylesheet" href="/themes/custom/aculta420/css/components/document-viewer.css">
 """
-        if theme == "aculta420"
-        else """
-  <link rel="stylesheet" href="/core/themes/olivero/css/base/variables.css">
-  <link rel="stylesheet" href="/core/themes/olivero/css/base/base.css">
-  <link rel="stylesheet" href="/themes/custom/aculta420/css/components/document-viewer.css">
-"""
-    )
     pdf_url = "/libraries/pdf.js/web/compressed.tracemonkey-pldi-09.pdf"
     wrapper_off = (
         "/modules/custom/aculta_portal/modules/aculta_document_viewer/viewer-wrapper.html"
@@ -368,14 +360,6 @@ class HarnessHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(payload)
             return
-        if path == "/__harness/olivero.html":
-            payload = render_harness_html("olivero").encode("utf-8")
-            self.send_response(200)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
-            self.send_header("Content-Length", str(len(payload)))
-            self.end_headers()
-            self.wfile.write(payload)
-            return
         if path == "/__harness/outlined.pdf":
             self.send_response(200)
             self.send_header("Content-Type", "application/pdf")
@@ -471,7 +455,7 @@ try:
     driver = Driver(bidi=True)
     bidi = connect(driver.websocket_url)
 
-    for index, theme in enumerate(["aculta420", "olivero"]):
+    for index, theme in enumerate(["aculta420"]):
         set_width(1280)
         driver.get(f"http://127.0.0.1:{port}/__harness/{theme}.html")
         ready = wait_for(

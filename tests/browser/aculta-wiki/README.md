@@ -76,7 +76,7 @@ Requer Drush funcional e Firefox ESR visível. A conta precisa ter confirmação
 acesso ao Studio e criação Wiki. A rodada autentica e cria uma sessão de navegador;
 não reconstrói caches/configuração, não publica nem grava conteúdo. O resultado
 avalia somente o tema ativo no Runtime de teste; a rodada dev.117 também cobriu
-Olivero e modo escuro. Leitor de tela e WCAG 2.2 AA completa permanecem fora
+modo escuro. Leitor de tela e WCAG 2.2 AA completa permanecem fora
 do escopo do script.
 
 O fluxo `we-sativa.py` abre a ação de criação em

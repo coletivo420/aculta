@@ -5,7 +5,7 @@ progress_note: >-
   Dev.18: capa pela escolha de envio recente do Studio validada no Runtime — Revista 605 salva com fid 786 e cria a media 284 (image, publicada); a conversão acontece no #after_build e grava também o user input, que o MediaLibraryWidget lê antes do #validate.
   Dev.17: a imagem editorial aceita envio recente do Studio (integração
   `revista`), somado aos envios novos. Unit Magazine 43/179 PASS; upload
-  autenticado no Runtime e tema Olivero pendentes.
+  autenticado no Runtime pendente; validação Olivero dispensada pelo responsável (2026-11-03).
   Dev.16: `EditorialCapabilitiesForm` usa Entity Storage injetado; removida
   dependência `entity_usage` duplicada. Unit/Kernel completos: 54 testes / 712
   assertions PASS; PHP lint 32/32 e PHPCS Drupal/DrupalPractice sem erros ou

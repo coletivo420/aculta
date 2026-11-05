@@ -1165,3 +1165,12 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Pendências globais:** concluir evidência de zoom/auth para Wiki; fechar Magazine; inventariar e portar eventos, Fórum, conta/perfil, cursos/LMS, FAQ, avisos, loja e demais páginas conforme os templates/CSS da V1.
 - **Retomar lendo:** `web/themes/custom/aculta420_v2/docs/roadmap.md`, `docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md`, ADR-046, `web/themes/custom/aculta420/css/components/wiki.css`, V1 `components/patterns/wiki-entry/`, e este handoff.
 
+# Continuação — remoção do gate de Olivero e menu V2 — 2026-11-05
+
+- **Instrução vigente:** o responsável dispensou validação Olivero em 2026-11-03. Atualizados `AGENTS.md`, `CLAUDE.md`, roteiros de browser afetados e índice do projeto para que suítes não o exijam, não alterem `system.theme` para essa verificação e não o listem como bloqueio. Registros históricos permanecem identificados como histórico.
+- **Scripts:** avatar e fórum deixaram de documentar/selecionar Olivero; suites de documento/planilha e PDF passam somente no harness ACULTA420; acessibilidade do Fórum não troca tema. Compilação Python e `git diff --check` PASS; a suíte visual não foi executada.
+- **Limpeza publicada:** pendente. Não incluir no commit a alteração C2 abaixo.
+- **Trabalho C2 preservado no worktree:** menu `account-menu` consome `aculta_domain_sites` e `aculta_account_name`, exibe sites, sessão, avatar e marca purpose atual com `aria-current="page"`. O contrato Portal D1/D2 já está publicado em commits anteriores. Alterações do tema C2 continuam não commitadas, separadas da limpeza.
+- **Próximos passos:** revisar diff selecionado de Olivero e publicar em `dev`; então validar SDC/shell do C2, atualizar a documentação/handoff e publicar C2 em commit próprio. Antes de qualquer troca de HEAD no Runtime, executar `updatedb:status` e `config:status`; não fazer import nem alteração de dados.
+- **Leituras para retomar:** `AGENTS.md`, `CLAUDE.md`, `tests/browser/aculta-forum/README.md`, `web/themes/custom/aculta420_v2/docs/roadmap.md`, `web/themes/custom/aculta420_v2/docs/gates.md`.
+
