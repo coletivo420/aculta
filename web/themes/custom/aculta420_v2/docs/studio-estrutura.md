@@ -42,16 +42,14 @@ Todas as telas do Studio ficam no purpose de conta. Layout e conteúdo:
 caminhos. Antes de construir, o responsável define os nomes em português
 (regra de URLs públicas, `FRIENDLY-PORTUGUESE-SLUGS.md`).
 
-### 2.1 Navegação das telas do Studio: em aberto
+### 2.1 Navegação do Studio: decidida
 
-Há duas versões no material e nenhuma foi confirmada como final:
-
-- Conversa de 2026-11-05: navegação vertical à esquerda em dashboard, perfil e conta.
-- Imagem enviada depois: navegação do Studio como abas horizontais no topo das quatro telas.
-
-Enquanto não houver confirmação, a construção começa pela estrutura comum
-(cabeçalho, conteúdo e `layout-page`), e a navegação do Studio fica atrás de
-um componente com as duas formas possíveis.
+- **Dashboard:** navegação vertical à esquerda (imagem de 2026-11-05).
+- **Minha conta:** a navegação do Studio segue à esquerda, e a sub-navegação da
+  conta fica dentro do conteúdo. São duas colunas de navegação nessa tela; a
+  decisão contraria a regra anterior e precisa ser lembrada ao construir.
+- **Suítes:** abas horizontais no topo da página.
+- **Mobile:** o menu `list` abre a navegação do Studio como painel.
 
 ### 2.2 Minha conta
 
@@ -151,17 +149,15 @@ Verificação: capturas V1 × V2 em 320, 390, 960 e 1440 px, claro e escuro, em 
 
 ## 5. Pendências
 
-1. Navegação principal do Studio: vertical à esquerda ou abas no topo (seção 2.1).
-2. Rotas em português da tela de perfil e da tela de conta (seção 2).
-3. Itens "Ajuda" e rótulos de mobile (spec, seção 9).
-4. "Multidomínio" no cabeçalho: manter ou não (spec, seção 9).
-5. Campos privados: exibição e salvamento de telefone e data de nascimento (spec, seção 9).
-6. Diálogo "Selecionar local" no mobile (spec, seção 9).
-7. Origem dos papéis Estudante e Educador (`aculta_lms`).
-8. Mecanismo do envio de arquivo e do sorteio dentro do popup de foto (seção 4.1).
-9. "Meu perfil" no hambúrguer: já listado; confirmar o caminho.
-10. Dropdown: lista final de itens e texto do contador do sino (ADR-047, seção 6).
-11. Mudança no `aculta_user`: entregar `aculta_account_name` (PR própria no Portal).
+Decisões de 2026-11-05 estão em `studio-visual-spec.md`, seção 9. Resta:
+
+1. **Como trocar de domínio sem o seletor "Multidomínio".** Candidato: listar os domínios dentro do hambúrguer.
+2. **Rotas em português (padrão `/meu-perfil` e `/minha-conta`).** Confirmar.
+3. **Popup de foto: envio e sorteio.** Padrão: `Drupal.ajax` dentro do `<dialog>`. Confirmar a dependência de jQuery no `core/misc/ajax.js` do 11.5.
+4. **Papel Estudante e Educador.** Verificado no LMS: "Educador(a)" é papel contextual por curso (`EducatorFeedbackPolicy`). A Ganjalab deve usar o papel do curso, não do Profile. Confirmar.
+5. **Campos privados (telefone e data de nascimento).** Padrão: mostrar e editar. Confirmar a necessidade.
+6. **Mudança no `aculta_user`:** entregar `aculta_account_name` (PR própria no Portal).
+7. **Mudança no `aculta_user` para o popup de foto** (PR própria, com gate de foto).
 
 ## 6. Validação antes de marcar como concluído
 

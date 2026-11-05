@@ -30,7 +30,7 @@
 Duas faixas empilhadas no topo da página.
 
 **Faixa 1 (institucional), fundo `--color-surface-institution`:**
-- Esquerda: logotipo ACULTA (wordmark), separador vertical fino, dropdown **"Multidomínio ⌄"** (`caret-down`).
+- Esquerda: logotipo ACULTA (wordmark). "Multidomínio" foi removido do cabeçalho em 2026-11-05.
 - Direita, nesta ordem, com separadores verticais finos entre os grupos:
   1. `magnifying-glass` — busca.
   2. `shopping-cart` — carrinho, com **badge numérico** (exemplo: 1). Ícone `shopping-cart`.
@@ -57,9 +57,9 @@ Duas linhas, de acordo com o celular do material:
 
 ## 3. Navegação do Studio
 
-### 3.1 Desktop: navegação vertical à esquerda (EM REVISÃO: a imagem de 2026-11-05 mostra abas horizontais)
+### 3.1 Desktop: navegação vertical à esquerda (decidido em 2026-11-05, pela imagem do dashboard)
 
-Vale para todas as telas pessoais do Studio: dashboard, Meu Perfil e Minha conta.
+Vale para o dashboard e para Meu Perfil. Em Minha conta, a navegação do Studio segue à esquerda e a sub-navegação da conta fica dentro do conteúdo: são duas colunas de navegação nessa tela, decisão do responsável em 2026-11-05, que contraria a regra anterior de não ter duas colunas.
 
 - Coluna fixa à esquerda, **largura de referência 16rem**, fundo `--color-surface-institution`, separada do conteúdo por um filete.
 - Itens, de cima para baixo, com ícone duotone à esquerda e rótulo:
@@ -319,19 +319,23 @@ Regras: nada de cor fixa no componente; nada de `prefers-color-scheme`; o modo e
 
 Tamanhos: 20 a 24 px na navegação e nos botões; 36 a 40 px nos ícones de cartão de experiência; 28 a 32 px nos ícones de cartão de conta.
 
-## 9. Pendências e incoerências do material (decidir antes de implementar)
+## 9. Pendências e decisões do material
 
-1. **Navegação principal do Studio: EM CONFLITO, pergunta aberta.** A conversa confirmou navegação vertical à esquerda (seção 3.1). A imagem enviada em 2026-11-05 mostra a navegação do Studio como abas horizontais no topo das quatro telas. Confirmar qual vale. Suítes continuam com abas no topo.
-2. **Sub-navegação da conta: resolvido em 2026-11-05.** Coluna vertical dentro do conteúdo, conforme a imagem do responsável (seção 4.3).
-3. **Rótulos "Minha conta" e "Sair" no mobile.** O material os mostra no celular, mas em 320 px podem não caber. Proposta: só ícone, com `aria-label`. Confirmar.
-4. **Item "Ajuda".** Aparece nas abas do material, mas não está na navegação do dashboard nem no ADR. Incluir ou não?
-5. **Rota do Studio: resolvido em 2026-11-05.** A tela inicial do Studio (dashboard) fica na raiz (`/`) do purpose de conta, no subdomínio `conta.aculta.*`. Caminhos `/studio*` continuam não existindo (ADR-038, ADR-048 item 9). Suítes mantêm caminho próprio.
+Estado em 2026-11-05. "Decidido" = resposta do responsável; "padrão" = sem preferência do responsável, adotado como recomendação e a confirmar.
+
+1. **Navegação principal do Studio: decidido.** Vertical à esquerda no dashboard (imagem nova). Em Minha conta, a navegação do Studio segue à esquerda e a sub-navegação fica no conteúdo (seção 3.1). Ponto de atenção: duas colunas de navegação nessa tela.
+2. **Sub-navegação da conta: decidido.** Coluna vertical dentro do conteúdo (seção 4.3).
+3. **Rótulos "Minha conta" e "Sair" na barra: decidido.** Não aparecem na barra em nenhuma largura. Ficam no menu hambúrguer (ADR-047, emenda). A imagem nova mostra os textos na barra; a regra do hambúrguer prevalece.
+4. **Item "Ajuda": decidido.** Fica no menu, junto das telas do Studio.
+5. **Rota do Studio: decidido.** Dashboard na raiz (`/`) do purpose de conta. `/studio*` não existe (ADR-038, ADR-048 item 9).
 6. **Domínio na imagem:** a imagem mostra `aculta.org.br`. O projeto usa `aculta.org`. Não usar o domínio da imagem em nenhum texto ou link.
-7. **Nome: resolvido em 2026-11-05 ("ACULTA Studio").** "Multidomínio" aparece no cabeçalho desktop; ainda confirmar se fica.
-8. **Dados privados:** "Dados cadastrais (privados)" inclui telefone e data de nascimento. Antes de implementar esses campos, confirmar com o responsável se são necessários, e tratar a tela como privada (`noindex`, sem cache público, ADR-048).
-9. **Culturas no mobile:** o painel "Selecionar local" vira diálogo em tela cheia (proposta da seção 4.7). Confirmar.
-10. **Papel Estudante/Educador:** o seletor depende do Portal informar os papéis da pessoa. Confirmar a origem do dado com o `aculta_lms`.
-11. **Dados ilustrativos:** nomes, datas, cidades e e-mails das imagens são exemplos. Não copiar para fixtures de produção.
+7. **"Multidomínio" no cabeçalho: decidido.** Removido. Pendente: como o visitante troca de domínio sem esse seletor (candidato: listar os domínios dentro do hambúrguer).
+8. **Dados privados (telefone e data de nascimento): padrão.** Mostrar e editar em "Dados cadastrais (privados)". Tela tratada como privada (`noindex`, sem cache público, ADR-048). Confirmar a necessidade dos campos.
+9. **Diálogo "Selecionar local" no mobile: decidido.** Diálogo, como o popup de login (seção 4.7).
+10. **Papel Estudante e Educador: verificado, a confirmar.** No LMS, "Educador(a)" é um papel contextual por curso: `EducatorFeedbackPolicy` só atribui esse papel a quem é educador do curso. "Estudante" é o dono da resposta ou da matrícula naquele curso. Não é campo do Profile nem role global do Drupal. Portanto, a Ganjalab deve receber o papel do curso, não do perfil. Confirmar.
+11. **Popup de foto: padrão.** Envio de arquivo e sorteio com `Drupal.ajax` dentro do `<dialog>` (seção 4.2.1). Confirmar após checar a dependência de jQuery no `core/misc/ajax.js` do 11.5.
+12. **Rotas de perfil e conta: padrão.** `/meu-perfil` e `/minha-conta`, pela regra de URLs públicas em português. Confirmar.
+13. **Dados ilustrativos:** nomes, datas, cidades e e-mails das imagens são exemplos. Não copiar para fixtures de produção.
 
 ## 10. O que o agente deve entregar a partir daqui
 

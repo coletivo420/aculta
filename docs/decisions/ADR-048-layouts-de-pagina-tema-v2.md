@@ -1,6 +1,6 @@
 # ADR-048 — Layouts de página do tema ACULTA420 V2
 
-- **Status:** aceito pelo responsável em 2026-11-04. Atualizado em 2026-11-05: nome confirmado; sub-navegação da conta em coluna vertical dentro do conteúdo, conforme a imagem do responsável (item 5); rota inicial do Studio na raiz do purpose de conta (item 9); a navegação principal do Studio está em revisão, porque a imagem mostra abas horizontais (item 5). Pontos abertos da especificação visual estão na seção 9 de `web/themes/custom/aculta420_v2/docs/studio-visual-spec.md`.
+- **Status:** aceito pelo responsável em 2026-11-04. Atualizado em 2026-11-05: nome confirmado; navegação vertical no dashboard e sub-navegação da conta em coluna dentro do conteúdo (item 5); rota inicial do Studio na raiz do purpose de conta (item 9). Pontos abertos da especificação visual estão na seção 9 de `web/themes/custom/aculta420_v2/docs/studio-visual-spec.md`.
 - **Data:** 2026-11-04.
 - **Relaciona-se com:** ADR-046 (shell, fundações e Fase 4), ADR-047 (menu de conta), ADR-038 (suítes do ACULTA Studio), `web/themes/custom/aculta420_v2/docs/layouts-plan.md` (pesquisa e detalhamento).
 
@@ -34,11 +34,11 @@
    - `40rem` (640 px): grades de cartões passam a duas colunas.
    - `60rem` (960 px): a variante `aside` passa a duas colunas.
    - A proposta de `60rem` vem do cálculo das colunas (leitura de 36 rem, barra lateral de 16 rem, espaço e margens, cerca de 56 rem), não de uma referência externa verificada. A validação deve testar 959, 960 e 961 px e zoom de 200%.
-5. **Navegação do Studio.**
-   - **Desktop, em revisão:** a conversa de 2026-11-05 confirmou navegação vertical à esquerda em todas as telas pessoais. A imagem enviada depois mostra a navegação do Studio como **abas horizontais** no topo das quatro telas (Dashboard, Meu Perfil, Minha conta, Meu trabalho). Pergunta aberta ao responsável: qual dos dois vale para a navegação principal do Studio.
-   - **Mobile:** o mesmo padrão do mockup de celular. A navegação vira um menu no cabeçalho (`list`) e o conteúdo fica em uma coluna.
-   - As suítes (Marley, Ganjalab, WE Sativa, Culturas, Green Stash) mantêm abas horizontais no topo da página.
-   - **Minha conta (confirmado em 2026-11-05 pela imagem do responsável):** as seções da conta (dados cadastrais, endereço, documentos, e-mail e segurança, senha, contas conectadas, pedidos, apoio e preferências) ficam em uma **coluna vertical dentro do conteúdo**, à esquerda do formulário, com a seção ativa destacada. No mobile, essa lista vira uma linha horizontal com rolagem no topo do conteúdo. Isso não é a navegação principal do Studio, que segue o item acima.
+5. **Navegação do Studio (decidida em 2026-11-05).**
+   - **Dashboard:** navegação vertical à esquerda, pela imagem do dashboard.
+   - **Minha conta:** a navegação do Studio segue à esquerda, e a sub-navegação da conta (nove seções) fica dentro do conteúdo. São duas colunas de navegação nessa tela. Esta decisão contraria a regra anterior de não ter duas colunas; registrada como escolha do responsável.
+   - **Suítes:** abas horizontais no topo da página.
+   - **Mobile:** o menu `list` abre a navegação do Studio como painel.
 6. **Nome da área:** "ACULTA Studio", confirmado pelo responsável em 2026-11-05, conforme o ADR-038. O nome "ACULTA Drupal Studio" do material visual não é usado em rótulos.
 7. **Mobile-first e acessibilidade:**
    - Landmarks: `banner`, `main`, `complementary` (só quando a barra lateral tem conteúdo) e `contentinfo`.

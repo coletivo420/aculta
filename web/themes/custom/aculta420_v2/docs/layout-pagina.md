@@ -57,7 +57,7 @@ zoom de 200%.
 Da esquerda para a direita:
 
 1. Logotipo ACULTA.
-2. Separador, e "Multidomínio ⌄" (a manter ou não: pendência 4 de studio-estrutura.md).
+2. Sem seletor "Multidomínio" (removido em 2026-11-05).
 3. Ações, à direita, com separadores finos:
    - busca (`magnifying-glass`);
    - carrinho (`shopping-cart`), com badge;
@@ -106,12 +106,9 @@ o login (ADR-047, 3 e 3a).
 
 ### 4.2 Dashboard do Studio (`aside` no desktop)
 
-- **Conteúdo:** cartão de identidade e grade de suítes (duas colunas a partir
-  de 40rem).
-- **Navegação do Studio:** pendente (pergunta 1). Se for vertical à esquerda,
-  a barra lateral do `aside` é ocupada por ela e a sub-navegação de Minha conta
-  fica em outra coluna, o que a decisão anterior rejeitou. Se for abas no topo,
-  a barra lateral fica livre para a sub-navegação de Minha conta.
+- **Barra lateral (`aside`):** navegação do Studio, vertical, com "Studio Dashboard", "Experiências", "Meus cursos", "Meu Perfil" e "Minha conta".
+- **Conteúdo:** cartão de identidade e grade de suítes (duas colunas a partir de 40rem).
+- **Minha conta:** a barra lateral continua com a navegação do Studio, e a sub-navegação da conta fica dentro do conteúdo. São duas colunas de navegação nessa tela (decisão de 2026-11-05).
 
 ### 4.3 Telas de suíte e perfil
 
