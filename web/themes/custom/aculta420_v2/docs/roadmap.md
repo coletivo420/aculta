@@ -10,6 +10,15 @@ Schemas, design foundations, renderização SDC Drupal, shell, browser validator
 e PHP lint passaram. As capturas e a interação autenticada ficam pendentes
 porque `DISPLAY` não está disponível nesta sessão.
 
+## Mensagens e avisos — C3 integrado; validação visual pendente
+
+Conferido no código: gavetas `<dialog>` e rodapé fora da rolagem, contador oculto
+em zero, filtros de aviso por origem/leitura entregues pelo Portal, respostas
+com estado de erro textual acessível e cancelamento de requisições antigas.
+Schema, render SDC, shell e foundations passaram na rodada atual. A revisão
+visual autenticada, teclado e Escape estão pendentes porque `DISPLAY` não está
+disponível.
+
 ## Renderização das configurações de superfície — conferida
 
 `SurfaceSettingsHooks` é a implementação única de `preprocess_html`, aplicando

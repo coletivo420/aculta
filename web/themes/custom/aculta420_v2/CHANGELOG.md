@@ -1,5 +1,12 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — paridade de mensagens e avisos (C3)
+
+- Documentada a implementação já existente no shell V2 e no Portal: filtros de
+  origem/leitura, contador zero oculto, estado de erro com texto, rodapé fixo e
+  cancelamento de respostas antigas. A revisão visual autenticada e teclado
+  ficam pendentes por ausência de `DISPLAY` nesta sessão.
+
 ## Não versionado — completa menu de conta e lista de sites
 
 - O `account-menu` apresenta `aculta_domain_sites` do Portal com links normais

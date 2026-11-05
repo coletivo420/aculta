@@ -222,20 +222,22 @@ da V1. A V2 já tem gavetas laterais à direita (26,25 rem, até 100 vw), iguais
 
 | Item | V1 | Situação na V2 | Ação |
 | --- | --- | --- | --- |
-| Gatilho | botão de 2,75 rem, ícone `bi-chat-dots` (mensagens) e `bi-bell` (avisos) | ícones Phosphor `chat-circle-dots` e `bell-simple` | ícones de **30 px** (ADR-047, item 10); manter o nome do ícone só se o Phosphor tiver a mesma leitura |
-| Contador | badge redondo no canto, com `translate(45%, -45%)`; some com zero; "99+" acima de 99 | igual, com cor de erro | manter; conferir o estado com zero |
+| Gatilho | botão de 2,75 rem, ícone `bi-chat-dots` (mensagens) e `bi-bell` (avisos) | ícones Phosphor `chat-circle-dots` e `bell-simple`, 30 px | implementado |
+| Contador | badge redondo no canto, com `translate(45%, -45%)`; some com zero; "99+" acima de 99 | badge com cor de erro, esconde `[data-count="0"]` e limita a exibição em `99+` | implementado; nome acessível acompanha atualização do contador |
 | Rótulo do gatilho | "N conversas não lidas. Abrir mensagens" / "N avisos ativos ou não lidos. Abrir avisos" | igual | manter |
 | Gaveta | lateral à direita, 26,25 rem, até 100 vw | dialog lateral, mesma largura | manter |
 | Corpo | rolagem interna; rodapé fora da rolagem | rolagem no corpo; rodapé no fim | manter |
 | Rodapé | botão "Ver todas as mensagens" e "Ver todos os avisos", largura total | igual | manter |
-| Carregamento | estado `loading` com `aria-busy`; erro com `role="alert"` e texto próprio | só `aria-busy` | incluir o estado de erro com texto |
-| Filtros de avisos | grupos recolhíveis (`details`) por origem e leitura, com resumo de 2,75 rem de altura | ausentes | **implementar** |
-| Conversas | lista com nome, data, avatar, não lida em destaque; conversa abre na gaveta com "← Todas as conversas" | ausentes na V2 | **implementar** (depende do módulo de mensagens) |
-| Foco e Escape | Escape fecha; foco volta ao gatilho | `<dialog>` nativo | manter e testar |
-| Resposta antiga | `AbortController` evita que resposta antiga substitua a gaveta (B4-02) | ausente na V2 | **implementar** no módulo de AJAX do Studio (ADR-049) |
+| Carregamento | estado `loading` com `aria-busy`; erro com `role="alert"` e texto próprio | estados de carregamento e erro com texto no diálogo | implementado em `js/messenger-drawers.js` |
+| Filtros de avisos | grupos recolhíveis (`details`) por origem e leitura, com resumo de 2,75 rem de altura | o Portal envia grupos `details`; o tema aplica estilo e navega pelo fragmento | implementado no Portal e integrado no shell V2 |
+| Conversas | lista com nome, data, avatar, não lida em destaque; conversa abre na gaveta com "← Todas as conversas" | conteúdo e ações fornecidos pelo Portal; a gaveta V2 troca conversa e retorna à lista | implementado no Portal e integrado no shell V2 |
+| Foco e Escape | Escape fecha; foco volta ao gatilho | `<dialog>` nativo | implementado; captura visual/teclado ainda pendente |
+| Resposta antiga | `AbortController` evita que resposta antiga substitua a gaveta (B4-02) | navegação cancela a requisição anterior e verifica o identificador antes de renderizar | implementado em `js/messenger-drawers.js` |
 
-Cada item de "ação" entra no mesmo módulo JavaScript do Studio (ADR-049, item 2),
-e não em um arquivo novo.
+O tema apresenta e controla as gavetas; o Portal é dono do conteúdo, filtros,
+permissões e ações. O JavaScript fica no módulo único `js/messenger-drawers.js`
+(ADR-049, item 2). A paridade de implementação foi conferida no código; falta
+evidência visual autenticada com Firefox e teclado quando houver `DISPLAY`.
 
 ## 5. Pendências
 

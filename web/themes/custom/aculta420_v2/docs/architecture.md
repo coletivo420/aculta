@@ -84,9 +84,9 @@ Todo o JavaScript é vanilla, com `Drupal.behaviors` e `core/once`. Não há jQu
 | `components/multidomain-bar/multidomain-bar.js` | sincroniza a altura da barra com o espaço da página e com a barra administrativa; abre o popup de login (`/entrar/janela`) e o popup de busca (`/busca/popup`) por Fetch, em `<dialog>` nativo |
 | `components/navigation-bar/navigation-bar.js` | drawer de navegação mobile: abre, fecha com Escape e devolve o foco |
 | `js/utility-dialogs.js` | diálogos utilitários compartilhados |
-| `js/messenger-drawers.js` | gaveta de mensagens: novo contato a partir do perfil, confirmações de bloqueio e desfazer amizade dentro de `<dialog>` |
-| `js/counters.js` | atualiza contadores das utilidades |
-| `js/alerts-dismiss.js` | dispensa de avisos |
+| `js/messenger-drawers.js` | conteúdo de mensagens/avisos em gavetas, filtros por fragmentos, estados loading/error, abort de resposta antiga, novo contato e ações de conversa |
+| `js/counters.js` | atualiza contadores das utilidades, com zero oculto |
+| `js/alerts-dismiss.js` | dispensa avisos e atualiza o contador |
 
 Os adapters de tema `templates/content/node--revista--teaser.html.twig` e
 `node--revista--full.html.twig` passam os campos renderizados do nó para os
