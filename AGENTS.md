@@ -13,8 +13,7 @@ Regras de todos os agentes. Em conflito, vale a instrução explícita mais rece
 ## Git e Runtime
 
 - Branch `dev`. Cada entrega é commitada e enviada a `origin/dev` logo após o commit. Não crie branch nem PR sem ordem; merge em `main` só com pedido explícito.
-- Um commit por entrega, só com os arquivos dela. Verifique o staged antes. Mensagem em português, com o trailer `Claude-Session`.
-- **Coautoria é proibida:** nada de `Co-Authored-By`.
+- Um commit por entrega, só com os arquivos dela, verificando o staged antes. Mensagem em português, com trailer `Claude-Session`, sem `Co-Authored-By`.
 - Nunca force push, reset destrutivo nem reescrita de histórico compartilhado. Preserve trabalho alheio.
 - Após cada push, sincronize o Runtime de desenvolvimento só no código. Nunca `pm:uninstall`, `DROP` ou apagamento de dados sem ordem explícita.
 - Ao concluir, informe os commits com hash e as validações. Não diga que publicou sem confirmar o push.
@@ -48,9 +47,6 @@ Regras de todos os agentes. Em conflito, vale a instrução explícita mais rece
 
 ## Referências (só quando a tarefa pedir)
 
-- Regras detalhadas: `docs/operations/AGENT-REGRAS-DETALHADAS.md`. Ambientes, Drush e banco de teste: `docs/operations/AGENT-OPERATIONS.md`.
-- Regras por escopo: `docs/operations/AGENT-POLICY-INDEX.md`. Mapa do projeto: `docs/operations/MAPA-PARA-AGENTES.md`.
-- Decisões do responsável: `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`.
-- Procedimentos repetidos (gates, handoff, TODO, commit, navegador): `docs/agent-skills/<nome>/SKILL.md`. O Claude Code carrega pelo link em `.claude/skills/`.
-- Gates: `docs/operations/GATES.md`. Saída de comandos: `docs/operations/AGENT-OUTPUT.md`. Economia de tokens: `docs/portal/AGENT-TOKEN-ECONOMY.md`.
+- Regras detalhadas e ambientes: `docs/operations/AGENT-REGRAS-DETALHADAS.md`, `docs/operations/AGENT-OPERATIONS.md`. Escopo: `docs/operations/AGENT-POLICY-INDEX.md`. Mapa: `docs/operations/MAPA-PARA-AGENTES.md`.
+- Decisões: `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`. Procedimentos: `docs/agent-skills/<nome>/SKILL.md`. Gates, saída e economia: `docs/operations/GATES.md`, `docs/operations/AGENT-OUTPUT.md`, `docs/portal/AGENT-TOKEN-ECONOMY.md`.
 
