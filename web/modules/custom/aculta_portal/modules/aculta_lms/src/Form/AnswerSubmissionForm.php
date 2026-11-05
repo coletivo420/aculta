@@ -108,7 +108,7 @@ final class AnswerSubmissionForm extends FormBase {
         '#type' => 'managed_file',
         '#title' => $this->t('Arquivo da resposta'),
         '#upload_location' => 'private://lms/answers/',
-        '#upload_validators' => ['FileExtension' => ['extensions' => implode(' ', array_merge($this->uploadPolicy->imageExtensions('lms'), $this->uploadPolicy->documentExtensions('lms')))]],
+        '#upload_validators' => $this->uploadPolicy->extensionValidators('lms'),
         '#required' => TRUE,
       ],
       default => throw new \UnexpectedValueException(sprintf('Tipo de atividade sem formulário ACULTA: %s.', $type)),

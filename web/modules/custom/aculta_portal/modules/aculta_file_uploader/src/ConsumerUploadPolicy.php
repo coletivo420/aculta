@@ -100,6 +100,17 @@ final class ConsumerUploadPolicy {
   }
 
   /**
+   * Validador FileExtension com imagens e documentos da integração, sem limite de tamanho.
+   *
+   * Para campos que aceitam os dois tipos (ex.: resposta de atividade do LMS).
+   *
+   * @return array<string, array<string, string>>
+   */
+  public function extensionValidators(?string $consumer = NULL): array {
+    return ['FileExtension' => ['extensions' => implode(' ', array_merge($this->imageExtensions($consumer), $this->documentExtensions($consumer)))]];
+  }
+
+  /**
    * Restringe validadores de uma atividade à política da integração.
    *
    * A integração pode só estreitar: extensões fora da lista dela são removidas
