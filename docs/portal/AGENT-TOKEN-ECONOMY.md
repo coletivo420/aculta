@@ -55,3 +55,18 @@ Estes caminhos não entram no contexto sem motivo específico da tarefa. Quando 
 | logs de execução (`$SUITE_OUT`, temporários) | variável | evidência privada e volumosa; use `agent-output.py` |
 
 Regra complementar: em documento ativo, cite o caminho canônico, não o histórico. Histórico só se a tarefa for auditar o passado.
+
+## Orçamento de leitura por tipo de tarefa
+
+Teto de leitura inicial para o contexto de partida, antes da tarefa. Valores são **estimativas de planejamento**, não medições; revisar depois de algumas rodadas. Ultrapassar o teto exige motivo escrito no relatório.
+
+| Tipo de tarefa | Leitura de partida (teto) | Além disso |
+| --- | --- | --- |
+| Pesquisa ou localização | `AGENTS.md` raiz (~8 KB) e o índice da área; resto por `rg -n` | trecho do arquivo encontrado |
+| Documentação ou status | o documento alvo e a linha da dívida (`rg -n "DT-"`) | seção citada, não o arquivo inteiro |
+| Mudança no Portal | `docs/portal/GUARDRAILS.md` e a seção do `DRUPAL-11-STANDARDS.md` da área; `AGENTS.md` do módulo (~7 KB) | símbolos usados via `rg` |
+| Mudança no tema V2 | `web/themes/custom/aculta420_v2/AGENTS.md` (~8 KB) e a seção do `docs/architecture.md` tocada | `docs/gates.md` só para o gate do escopo |
+| Revisão final | `git diff --stat` e `git diff --check`; o diff dos arquivos alterados | nenhuma leitura ampla de árvore |
+| Gate ou teste | o script do gate e a saída via `scripts/agent-output.py` | logs completos só se a saída resumida falhar |
+
+Regra de corte: se a tarefa precisar de mais de três documentos de partida, o escopo está largo. Reduzir a subfase antes de ler mais.
