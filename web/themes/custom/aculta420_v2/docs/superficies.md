@@ -170,28 +170,80 @@ Os tokens de faixa ficam por modo, em `src/styles/tokens.css`:
 - `--accent-green-stripe`, `--accent-yellow-stripe`, `--accent-red-stripe`
   (claro: 500, 700 e 500; escuro: 500, 500 e 200).
 
-### 8.3 Mapeamento por domínio (decidido em 2026-11-05)
+### 8.3 Regra de prioridade
+
+A cor da faixa vem do **tipo de conteúdo**, não só do domínio. Nível de
+conteúdo vence o domínio. Dentro de um mesmo domínio, dois níveis vizinhos
+(por exemplo, evento e mapa, ou curso e aula) nunca usam a mesma cor.
+
+Ordem de decisão:
+
+1. Tipo de conteúdo com faixa definida (tabela 8.3.1).
+2. Domínio (tabela 8.3.2), quando o tipo não tem regra própria.
+3. Sem faixa.
+
+O tema recebe a cor já resolvida como valor neutro (`accent: green | yellow | red`),
+enviado pelo Portal em `domain_presentation`. O tema não decide tipo nem domínio
+(ver `configuracao-do-tema.md`).
+
+### 8.3.1 Mapeamento por tipo de conteúdo (decidido em 2026-11-05)
+
+| Domínio | Tipo | Faixa | Token (claro / escuro) |
+| --- | --- | --- | --- |
+| Eventos (`events`) | evento | verde | `--accent-green-stripe` |
+| Eventos (`events`) | mapa | amarelo | `--accent-yellow-stripe` |
+| Eventos (`events`) | local | vermelho | `--accent-red-stripe` |
+| Cursos (`courses`) | curso | verde | `--accent-green-stripe` |
+| Cursos (`courses`) | aula | amarelo | `--accent-yellow-stripe` |
+| Fórum (`forum`) | tópico | verde | `--accent-green-stripe` |
+| Fórum (`forum`) | subtópico | vermelho | `--accent-red-stripe` |
+| Wiki (`wiki`) | verbete (equivale a tópico) | verde | `--accent-green-stripe` |
+| Wiki (`wiki`) | seção (equivale a subtópico) | vermelho | `--accent-red-stripe` |
+
+A correspondência de verbete e seção com tópico e subtópico foi aplicada como
+leitura da resposta "Fórum e Wiki". **Confirmar com o responsável** antes da
+implementação.
+
+Blocos decorativos de outros tipos seguem a mesma regra: a cor é atribuída
+pelo nível de conteúdo, e níveis vizinhos recebem cores diferentes.
+
+### 8.3.2 Mapeamento por domínio (fallback)
+
+Vale quando o tipo não está na tabela 8.3.1.
 
 | Purpose | Faixa | Token (claro / escuro) |
 | --- | --- | --- |
-| `forum` (Fórum) | verde | `--accent-green-stripe` |
-| `wiki` (Wiki) | verde | `--accent-green-stripe` |
 | `shop` (Loja) | verde | `--accent-green-stripe` |
 | `courses` (Cursos) | amarelo | `--accent-yellow-stripe` |
 | `account` (Conta) | amarelo | `--accent-yellow-stripe` |
 | `magazine` (Revista) | vermelho | `--accent-red-stripe` |
 | `events` (Eventos) | vermelho | `--accent-red-stripe` |
+| `forum` (Fórum) | verde | `--accent-green-stripe` |
+| `wiki` (Wiki) | verde | `--accent-green-stripe` |
 | `main` (principal) | sem faixa | — |
 | `support` (Apoio) | sem faixa | — (padrão, a confirmar) |
 | `links` (Links) | sem faixa | — (padrão, a confirmar) |
 
+As linhas de Eventos e Cursos deste fallback são substituídas pela tabela
+8.3.1 nos tipos que ela cobre (evento, mapa, local, curso e aula).
+
 ### 8.4 Onde a faixa aparece
 
-- Categorias do fórum e cartões de tópico, por purpose `forum`.
-- Verbetes da wiki, pelo purpose `wiki`.
+- Categorias e tópicos do fórum, pela tabela 8.3.1 (tópico e subtópico).
+- Verbetes e seções da wiki, pela tabela 8.3.1.
+- Cartões de evento, mapa e local, por Eventos.
+- Cartões de curso e aula, por Cursos.
 - Cartões de revista, pelo purpose `magazine`.
 - Demais cartões, quando o responsável indicar.
 
-Regra: a faixa é decorativa. A informação (nome da área, categoria) fica no
-texto do cartão, não só na cor.
+Regra: a faixa é decorativa. A informação (nome da área, tipo, categoria) fica
+no texto do cartão, não só na cor.
+
+### 8.5 Estado
+
+- Documentação: entregue neste documento (2026-11-05).
+- Implementação: **DEFERRED** no Homelab. Depende de tokens de faixa em
+  `tokens.css`, da classe por tipo no componente de cartão e da chave `accent`
+  no contrato do Portal.
+- Captura de contraste por modo: pendente.
 
