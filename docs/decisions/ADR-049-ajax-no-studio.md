@@ -70,7 +70,7 @@ decisão.
 ## 6. Pendências e não-decisões
 
 1. **Telas de outros purposes.** Política cross-domain exige navegação normal. Escolha entre manter a navegação normal (recomendado) ou mudar o purpose da suíte, o que altera ADR-038.
-2. **Rota `/` do purpose de conta.** ADR-038 diz que `/` é a entrada da Conta e não aponta ao Studio. O ADR-048, item 9, diz que o dashboard fica em `/`. Decidir antes de implementar.
+2. **Rota `/` do purpose de conta:** resolvida em 2026-11-05. Studio em `/`, Conta em `/conta`, retificando o ADR-038.
 - Não define o nome final do arquivo JavaScript.
 - Não define a lista de comandos além do item 7; ampliar exige teste com o
   formulário que o usa.

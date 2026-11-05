@@ -327,14 +327,14 @@ Estado em 2026-11-05. "Decidido" = resposta do responsável; "padrão" = sem pre
 2. **Sub-navegação da conta: decidido.** Coluna vertical dentro do conteúdo (seção 4.3).
 3. **Rótulos "Minha conta" e "Sair" na barra: decidido.** Não aparecem na barra em nenhuma largura. Ficam no menu hambúrguer (ADR-047, emenda). A imagem nova mostra os textos na barra; a regra do hambúrguer prevalece.
 4. **Item "Ajuda": decidido.** Fica no menu, junto das telas do Studio.
-5. **Rota do Studio: decidido.** Dashboard na raiz (`/`) do purpose de conta. `/studio*` não existe (ADR-038, ADR-048 item 9).
+5. **Rotas: decidido.** Studio em `/` e Conta em `/conta`, ambos em `conta.aculta.*` (ADR-048 item 9; ADR-038 retificado). `/studio*` não existe.
 6. **Domínio na imagem:** a imagem mostra `aculta.org.br`. O projeto usa `aculta.org`. Não usar o domínio da imagem em nenhum texto ou link.
 7. **"Multidomínio" no cabeçalho: decidido.** Removido. Pendente: como o visitante troca de domínio sem esse seletor (candidato: listar os domínios dentro do hambúrguer).
 8. **Dados privados (telefone e data de nascimento): padrão.** Mostrar e editar em "Dados cadastrais (privados)". Tela tratada como privada (`noindex`, sem cache público, ADR-048). Confirmar a necessidade dos campos.
 9. **Diálogo "Selecionar local" no mobile: decidido.** Diálogo, como o popup de login (seção 4.7).
 10. **Papel Estudante e Educador: verificado, a confirmar.** No LMS, "Educador(a)" é um papel contextual por curso: `EducatorFeedbackPolicy` só atribui esse papel a quem é educador do curso. "Estudante" é o dono da resposta ou da matrícula naquele curso. Não é campo do Profile nem role global do Drupal. Portanto, a Ganjalab deve receber o papel do curso, não do perfil. Confirmar.
 11. **Popup de foto: decidido.** Envio de arquivo e sorteio com Fetch próprio no `<dialog>`, por um único módulo JavaScript (ADR-049, seção 4.2.1).
-12. **Rotas de perfil e conta: padrão.** `/meu-perfil` e `/minha-conta`, pela regra de URLs públicas em português. Confirmar.
+12. **Rota de Meu Perfil: padrão.** `/meu-perfil`, pela regra de URLs públicas em português. Minha conta é `/conta`, decidido. Confirmar a de Meu Perfil.
 13. **Dados ilustrativos:** nomes, datas, cidades e e-mails das imagens são exemplos. Não copiar para fixtures de produção.
 
 ## 10. O que o agente deve entregar a partir daqui

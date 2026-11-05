@@ -17,7 +17,7 @@ Fontes: [ADR-046](../../../../../docs/decisions/ADR-046-desenho-tema-v2-shell-e-
 | Variantes de layout | `stack`, `aside` e `full` em um SDC `layout-page`. O tema escolhe a variante. | ADR-048, 1 e 2 |
 | Breakpoints | 40rem (cartões em duas colunas) e 60rem (`aside` em duas colunas). Base em 320 px. | ADR-048, 4 |
 | Nome da área | "ACULTA Studio". | ADR-048, 6 |
-| Rota inicial do Studio | Raiz (`/`) do purpose de conta. `/studio*` não existe (ADR-038). Suítes mantêm caminho próprio. | ADR-048, 9 |
+| Rotas do Studio e da Conta | Studio em `/` e Conta em `/conta`, ambos em `conta.aculta.*`. `/studio*` não existe. Suítes mantêm caminho próprio. | ADR-048, 9; ADR-038 retificado |
 | Popup de foto | Usa o sistema novo da V2 (`<dialog>` com Fetch), igual ao login. Não usa `core/drupal.dialog.ajax`. | ADR-048, 10 |
 | Fórum e wiki | Mantêm o acabamento visual da V1. O layout muda a estrutura, não o acabamento. | ADR-048, 11 |
 | Barra institucional | Hambúrguer geral e botão "Entrar" de destaque (seção 3). | ADR-047, emenda |
@@ -31,16 +31,16 @@ Todas as telas do Studio ficam no purpose de conta. Layout e conteúdo:
 | --- | --- | --- | --- | --- |
 | Dashboard | `/` | `aside` no desktop, `stack` no mobile | Cartão de identidade (avatar, nome, "Ver perfil público"); grade de suítes (Marley, Ganjalab, WE Sativa, Culturas, Green Stash) | 4.1 |
 | Meu Perfil | a definir | `stack` | Avatar com popup de foto; formulário "Editar perfil público" | 4.2, 4.2.1 |
-| Minha conta | rota a definir | `aside` no desktop, `stack` no mobile | Sub-navegação vertical; "Dados cadastrais (privados)" | 4.3 |
+| Minha conta | `/conta` | `aside` no desktop, `stack` no mobile | Sub-navegação vertical; "Dados cadastrais (privados)" | 4.3 |
 | Meu trabalho (Marley) | `/marley` | `stack` | Abas de status; tabela de rascunhos; botão "Criar" | 4.4 |
 | Ganjalab | `/ganjalab` | `aside` | Aprendizagem | 4.5 |
 | WE Sativa | `/we-sativa` | `aside` | Contribuições da wiki | 4.6 |
 | Culturas | `/culturas` | `aside` | Eventos, locais e organizações | 4.7 |
 | Green Stash | `/green-stash` | `stack` | Gestão da loja | 4.8 |
 
-**Rota da tela de perfil e de conta: a definir.** A especificação não fixa os
-caminhos. Antes de construir, o responsável define os nomes em português
-(regra de URLs públicas, `FRIENDLY-PORTUGUESE-SLUGS.md`).
+**Rota de Meu Perfil: a definir.** Minha conta é `/conta`, decidido em 2026-11-05.
+Meu Perfil segue o padrão `/meu-perfil`, a confirmar (regra de URLs públicas em
+português, `FRIENDLY-PORTUGUESE-SLUGS.md`).
 
 ### 2.1 Navegação do Studio: decidida
 
@@ -152,7 +152,7 @@ Verificação: capturas V1 × V2 em 320, 390, 960 e 1440 px, claro e escuro, em 
 Decisões de 2026-11-05 estão em `studio-visual-spec.md`, seção 9. Resta:
 
 1. **Como trocar de domínio sem o seletor "Multidomínio".** Candidato: listar os domínios dentro do hambúrguer.
-2. **Rotas em português (padrão `/meu-perfil` e `/minha-conta`).** Confirmar.
+2. **Rota de Meu Perfil (padrão `/meu-perfil`).** Minha conta é `/conta`, decidido. Confirmar a de Meu Perfil.
 3. **Popup de foto: envio e sorteio.** Decidido: Fetch próprio no `<dialog>`, com AJAX do Studio (ADR-049).
 4. **Papel Estudante e Educador.** Verificado no LMS: "Educador(a)" é papel contextual por curso (`EducatorFeedbackPolicy`). A Ganjalab deve usar o papel do curso, não do Profile. Confirmar.
 5. **Campos privados (telefone e data de nascimento).** Padrão: mostrar e editar. Confirmar a necessidade.
