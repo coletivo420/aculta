@@ -1,5 +1,20 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — accordion para FAQ e layout LMS
+
+- Criado o SDC accordion com story e interação HTML nativa (details), foco
+  visível e sem JavaScript. O template do FAQ usa o SDC quando disponível e
+  mantém fallback sem cache persistente atualizado.
+- Criado o SDC lms-lesson-page e sua story. Na rota de aula o tema o usa como
+  contêiner do render array original, sem mover acesso, cache, atividades ou
+  conteúdo do módulo LMS.
+
+## Não versionado — acordeão nativo para FAQ
+
+- Criado o SDC accordion com story e interação HTML nativa (details), foco
+  visível e sem JavaScript. O template do FAQ usa o SDC quando disponível e
+  mantém fallback sem cache persistente atualizado.
+
 ## Não versionado — compatibilidade com cache de descoberta aquecido
 
 - O template mantém a página renderizável com `<main>` de compatibilidade quando

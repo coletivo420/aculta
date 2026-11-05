@@ -39,6 +39,7 @@ final class PagePresentationHooks {
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
     $variables['aculta_layout_variant'] = $this->getPageLayoutVariant();
+    $variables['aculta_lms_lesson_route'] = $this->currentRouteMatch?->getRouteName() === 'aculta_lms.lesson_view';
     $variables['aculta_page_title'] = [];
     $variables['aculta_breadcrumb'] = [];
     $variables['aculta_help'] = [];
@@ -47,6 +48,10 @@ final class PagePresentationHooks {
     $variables['aculta_account_avatar'] = $variables['aculta_account_avatar'] ?? NULL;
     $variables['aculta_account_name'] = $variables['aculta_account_name'] ?? NULL;
     $this->composeDomainHeader($variables);
+    if ($variables['aculta_lms_lesson_route']) {
+      // The LMS render array owns the lesson H1; avoid a second route-title H1.
+      $variables['aculta_page_title'] = [];
+    }
     $variables['aculta_account_menu'] = $this->buildAccountMenuComponent(
       $variables['aculta_account_menu'],
       $variables['aculta_account_authenticated'],
@@ -112,6 +117,7 @@ final class PagePresentationHooks {
       'aculta_studio.we_sativa_start',
       'aculta_lms.student_dashboard',
       'aculta_lms.educator_dashboard',
+      'aculta_lms.lesson_view',
       'aculta_events.organizer_dashboard' => 'aside',
       'aculta_events.catalogue', 'aculta_events.map' => 'full',
       default => 'stack',

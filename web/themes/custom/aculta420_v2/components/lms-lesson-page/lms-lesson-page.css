@@ -1,0 +1,25 @@
+.lms-lesson-page {
+  color: var(--color-text-primary);
+  inline-size: min(100%, 68ch);
+  margin-inline: auto;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+  padding-block: var(--spacing-md);
+}
+
+.lms-lesson-page [data-portal-ui~="aculta-learning-room__lesson"] {
+  display: grid;
+  gap: var(--spacing-lg);
+  min-inline-size: 0;
+}
+
+.lms-lesson-page table {
+  display: block;
+  max-inline-size: 100%;
+  overflow-x: auto;
+}
+
+.lms-lesson-page :focus-visible {
+  outline: 3px solid var(--color-brand-highlight);
+  outline-offset: 2px;
+}

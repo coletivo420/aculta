@@ -1,0 +1,8 @@
+name: Resposta fechada
+description: Pergunta expansível por teclado com o elemento details nativo.
+component: aculta420_v2:accordion
+props:
+  title: Como posso participar?
+  expanded: false
+slots:
+  content: '<p>Consulte as atividades abertas e fale com a equipe responsável.</p>'

@@ -1209,6 +1209,13 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   própria do dashboard do Studio na raiz do purpose account não existe no
   módulo; P3 fica bloqueado nesse ponto até entrega do owner. Firefox autenticado
   continua DEFERRED por falta de `DISPLAY`/credenciais de sessão.
+- **P4 parcial:** confirmado adapter/story existente do evento; FAQ recebe
+  template de nó para SDC accordion com fallback HTML nativo; aula
+  `aculta_lms.lesson_view` envolve o render array original no SDC
+  lms-lesson-page e remove título duplicado, sem alterar ownership do LMS.
+  Schemas 55/764, design foundations 2.468, V2 foundations 55 pares, shell
+  13, render SDC 27, PHP lint/PHPCS e diff check PASS. Visual, zoom e teclado
+  DEFERRED sem `DISPLAY`.
 
 - **C4 — revisão estrutural do shell:** o adapter `aculta-links-page.html.twig`
   apresenta a micropágina do módulo Links por SDC dedicado, sem `<main>` interno;

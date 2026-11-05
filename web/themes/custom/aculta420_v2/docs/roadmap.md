@@ -58,6 +58,22 @@ purpose conta não existe no módulo atual, então não foi criada no tema nem t
 ownership inventado. P3 aguarda implementação/contrato do owner e validação
 visual autenticada.
 
+## Evento, FAQ e LMS — P4 parcial
+
+Evento já usa adapter e story próprias em event-page-layout. FAQ agora
+apresenta cada resposta por accordion SDC com fallback nativo durante cache
+SDC aquecido. A página de aula do LMS ainda precisa de adapter de apresentação
+V2 e story própria; permanece pendente. Capturas e interação autenticada das
+três áreas aguardam Firefox visível (DISPLAY indisponível).
+
+## Evento, FAQ e LMS — P4 com implementação; validação visual pendente
+
+Evento já usa adapter e story próprias em event-page-layout. FAQ apresenta cada
+resposta por accordion SDC com fallback nativo durante cache SDC aquecido. Aula
+LMS envolve o render array original em lms-lesson-page, com story dedicada; o
+módulo mantém acesso, cache, atividade e conteúdo. Capturas e interação
+autenticada das três áreas aguardam Firefox visível (DISPLAY indisponível).
+
 ## Renderização das configurações de superfície — conferida
 
 `SurfaceSettingsHooks` é a implementação única de `preprocess_html`, aplicando

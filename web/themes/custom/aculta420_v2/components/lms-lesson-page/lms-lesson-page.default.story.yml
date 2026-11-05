@@ -1,0 +1,11 @@
+name: Aula com atividades
+description: Render array da aula, conteúdo editorial e tabela de atividades.
+component: aculta420_v2:lms-lesson-page
+slots:
+  content: |
+    <div data-portal-ui="aculta-learning-room__lesson">
+      <a href="/ganjalab">Curso de cultivo responsável</a>
+      <h1>Introdução ao cultivo</h1>
+      <p>Conteúdo da aula com links e texto longo que deve refluir sem ampliar a página.</p>
+      <table><thead><tr><th>Atividade</th><th>Ação</th></tr></thead><tbody><tr><td>Verdadeiro ou falso</td><td><a href="/atividade">Abrir atividade</a></td></tr></tbody></table>
+    </div>

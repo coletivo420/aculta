@@ -56,19 +56,25 @@
     <div class="page__breadcrumb">{{ page.breadcrumb }}{{ aculta_breadcrumb }}</div>
   {% endif %}
 
+  {% set main_content = page.content %}
+  {% if aculta_lms_lesson_route|default(false) and source('aculta420_v2:lms-lesson-page', true) %}
+    {% set main_content = include('aculta420_v2:lms-lesson-page', {
+      content: page.content
+    }, with_context = false) %}
+  {% endif %}
   {% set layout_page_template = 'aculta420_v2:layout-page' %}
   {% if source(layout_page_template, true) %}
     {{ include(layout_page_template, {
       variant: aculta_layout_variant|default('stack'),
       title: aculta_page_title,
-      content: page.content,
+      content: main_content,
       aside: page.sidebar_first
     }, with_context = false) }}
   {% else %}
     {# Keep a warm Drupal SDC discovery cache from breaking the page. #}
     <main id="main-content" class="page__main" tabindex="-1">
       {% if aculta_page_title %}<div class="page__title">{{ aculta_page_title }}</div>{% endif %}
-      <div class="page__content">{{ page.content }}</div>
+      <div class="page__content">{{ main_content }}</div>
       {% if page.sidebar_first %}
         <aside class="page__sidebar" aria-label="{{ 'Related content'|t }}">{{ page.sidebar_first }}</aside>
       {% endif %}

@@ -12,6 +12,22 @@ e aside. O conteúdo principal precede o complementar no DOM; aside só forma
 duas colunas a partir de 60rem quando tem conteúdo. Não escolhe tipo nem
 domínio, responsabilidade reservada ao preprocess da fase P2. Sem JavaScript.
 
+### accordion
+
+Resposta expansível baseada em details/summary, sem JavaScript e operável por
+teclado nativamente. Props: title e expanded; slot: content. Story:
+accordion.default.story.yml. Usado pelo template node--aculta-faq--full; quando
+o cache SDC Drupal ainda não conhece o componente, o template mantém uma saída
+equivalente com HTML nativo.
+
+### lms-lesson-page
+
+Contêiner visual para o render array entregue pelo controlador do LMS na rota
+de aula. Não recebe entidade, aluno ou dados de acesso como prop. Slot único:
+content. Story: lms-lesson-page.default.story.yml. Sem JavaScript; tabela rola
+dentro do próprio bloco em telas estreitas. O template usa fallback ao render
+original caso a descoberta Drupal ainda não conheça o SDC.
+
 ## Shell e navegação
 
 ### multidomain-bar — Barra institucional

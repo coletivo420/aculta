@@ -1,0 +1,17 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Página de aula Ganjalab
+description: Contêiner de apresentação para o render array autorizado da aula.
+status: experimental
+group: LMS
+props:
+  type: object
+  additionalProperties: false
+  properties: {}
+slots:
+  content:
+    title: Conteúdo da aula
+    description: Render array da aula e das atividades, fornecido pelo módulo LMS.
+assets:
+  css:
+    component:
+      lms-lesson-page.css: {}

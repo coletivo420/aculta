@@ -51,6 +51,7 @@ foreach ($source_files as $source_file) {
   }
 }
 $component_ids = [
+  'accordion',
   'account-menu',
   'audio-player',
   'alerts-trigger',
@@ -67,6 +68,7 @@ $component_ids = [
   'hero-banner',
   'icon',
   'layout-page',
+  'lms-lesson-page',
   'map-popup',
   'messenger-trigger',
   'multidomain-bar',
@@ -99,6 +101,10 @@ $definitions = $source_manager->getDefinitions();
 (new \ReflectionProperty(DefaultPluginManager::class, 'definitions'))
   ->setValue($manager, $definitions);
 $samples = [
+  'accordion' => [
+    '#props' => ['title' => 'Pergunta frequente'],
+    '#slots' => ['content' => '<p>Resposta disponível.</p>'],
+  ],
   'account-menu' => [
     '#props' => ['authenticated' => TRUE],
     '#slots' => ['avatar' => '', 'menu_items' => '<ul><li><a href="/conta">Minha conta</a></li></ul>'],
@@ -183,6 +189,12 @@ $samples = [
       'title' => '<h1>Página de teste</h1>',
       'content' => '<p>Conteúdo principal.</p>',
       'aside' => '<p>Conteúdo complementar.</p>',
+    ],
+  ],
+  'lms-lesson-page' => [
+    '#props' => [],
+    '#slots' => [
+      'content' => '<div data-portal-ui="aculta-learning-room__lesson"><h1>Aula</h1><p>Conteúdo.</p></div>',
     ],
   ],
   'map-popup' => [
