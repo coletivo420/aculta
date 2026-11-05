@@ -45,9 +45,10 @@ sessão termina e o trabalho se perde.
 - **Ambiente declarado**: o script deve dizer se fala com o servidor de desenvolvimento
   (`*.aculta.toca.net.br`) ou com o ambiente local (`127.0.0.1` com os hosts
   resolvidos no perfil do Firefox). Não confunda os dois.
-- **Mudança global exige restauração**: se o teste troca tema, configuração ou
-  qualquer estado compartilhado, o comando de execução deve restaurar o estado
-  com `trap`, no mesmo comando, e o README deve mostrar como.
+- **Não troque o tema ativo para testar temas adicionais.** Teste somente no
+  tema ACULTA ativo, conforme `AGENTS.md`. Se um teste alterar outra
+  configuração ou estado compartilhado, o comando deve restaurá-lo com `trap`
+  no mesmo comando, e o README deve mostrar como.
 
 Algumas instruções históricas de suítes ainda mostram `/tmp` como saída. Use o
 armazenamento persistente `/home/piradopirata/aculta-suite-out/<nome-da-suite>`
