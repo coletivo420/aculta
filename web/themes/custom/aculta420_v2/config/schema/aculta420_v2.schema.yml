@@ -1,0 +1,17 @@
+# Configuração do tema ACULTA420 V2 (scaffold, ver docs/configuracao-do-tema.md).
+aculta420_v2.settings:
+  type: theme_settings
+  label: 'ACULTA420 V2 settings'
+  mapping:
+    aculta_radius_button:
+      type: string
+      label: 'Raio dos botões'
+    aculta_radius_card:
+      type: string
+      label: 'Raio dos cartões e blocos'
+    aculta_radius_field:
+      type: string
+      label: 'Raio dos campos de formulário'
+    aculta_show_accent_stripe:
+      type: boolean
+      label: 'Mostrar faixa de acento'

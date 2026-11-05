@@ -1,0 +1,5 @@
+# Valores padrão do tema ACULTA420 V2 (scaffold).
+aculta_radius_button: lg
+aculta_radius_card: lg
+aculta_radius_field: base
+aculta_show_accent_stripe: true
