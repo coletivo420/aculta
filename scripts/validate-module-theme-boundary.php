@@ -184,7 +184,8 @@ $assert($classAttrs === [], 'Classe de design no módulo (use data-portal-ui e m
 // Mapa de tokens: V1 (referência, somente leitura) somado ao V2 (tema ativo). Tokens do V1 ainda não migrados continuam válidos.
 $themeMap = (string) file_get_contents($theme . '/src/Hook/PortalUiHooks.php')
   . (string) file_get_contents($root . '/web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php');
-preg_match_all("/^\s+'([a-z0-9-]+)' => \[/m", $themeMap, $tm);
+// Aceita "_" porque os tokens do código usam BEM (elemento "__"); a chave precisa bater com o token usado.
+preg_match_all("/^\s+'([a-z0-9_-]+)' => \[/m", $themeMap, $tm);
 $known = array_flip($tm[1]);
 $used = [];
 // Todo src/ e templates/ do módulo, submódulos incluídos (aculta_lms, aculta_paths...): a checagem de tokens não pode pular submódulo.

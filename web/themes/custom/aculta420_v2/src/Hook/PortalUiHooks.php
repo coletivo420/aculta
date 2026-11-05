@@ -50,6 +50,47 @@ final class PortalUiHooks {
     'aculta-lms-course-builder--summary' => ['aculta-lms-course-builder__summary'],
     'aculta-lms-course-materials--documents' => ['aculta-lms-course-materials__documents'],
     'aculta-lms-course-materials--document' => ['aculta-lms-course-materials__document'],
+    // Sem classe no V2: estilizados por seletor de atributo (no V1, studio.css; no V2, lms-lesson-page.css e events.css).
+    // Lista vazia torna o token conhecido sem gerar classe. Estilo visual do V2 pendente de migração e captura (DEFERRED).
+    'aculta-btn-outline' => [],
+    'aculta-btn-primary' => [],
+    'aculta-course-lesson-preview' => [],
+    'aculta-learning-home__actions' => [],
+    'aculta-learning-home__course-title' => [],
+    'aculta-learning-home__lesson' => [],
+    'aculta-learning-home__meta' => [],
+    'aculta-learning-home__pending' => [],
+    'aculta-learning-home__progress' => [],
+    'aculta-learning-home__section' => [],
+    'aculta-learning-home__section-title' => [],
+    'aculta-learning-journey' => [],
+    'aculta-learning-journey__back' => [],
+    'aculta-learning-journey__current' => [],
+    'aculta-learning-journey__eyebrow' => [],
+    'aculta-learning-journey__intro' => [],
+    'aculta-learning-journey__lesson' => [],
+    'aculta-learning-journey__lesson-label' => [],
+    'aculta-learning-journey__lessons' => [],
+    'aculta-learning-journey__meta' => [],
+    'aculta-learning-journey__outline' => [],
+    'aculta-learning-journey__progress' => [],
+    'aculta-learning-journey__state' => [],
+    'aculta-learning-journey__summary' => [],
+    'aculta-learning-journey__title' => [],
+    'aculta-learning-room' => [],
+    'aculta-learning-room__back-link' => [],
+    'aculta-learning-room__layout' => [],
+    'aculta-learning-room__lesson' => [],
+    'aculta-learning-room__outline' => [],
+    'aculta-learning-room__outline-title' => [],
+    'event-contribution-queue' => [],
+    'event-contribution-status' => [],
+    'event-contribution-workspace' => [],
+    'event-location-contribution-queue' => [],
+    'event-organization-suggestion-queue' => [],
+    'patcher-table-wrapper' => [],
+    'studio-course-educator' => [],
+    'studio-mercadopago-plans' => [],
   ];
 
   /**
@@ -69,7 +110,7 @@ final class PortalUiHooks {
       return;
     }
     $tokens = preg_split('/\s+/', trim((string) $attributes[self::ATTRIBUTE]->value())) ?: [];
-    $attributes->removeAttribute(self::ATTRIBUTE);
+    // O atributo permanece no DOM: o CSS do V2 seleciona por [data-portal-ui~="token"] (events.css, lms-lesson-page.css).
     foreach ($tokens as $token) {
       foreach (self::TOKENS[$token] ?? [] as $class) {
         $attributes->addClass($class);
