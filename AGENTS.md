@@ -6,7 +6,7 @@ Regras gerais do repositório, válidas para todos os agentes. Em caso de confli
 
 ## Sessão
 
-- Antes de trocar de sessão, encerrar uma fase ou transferir o trabalho, atualize o handoff em [`docs/operations/ESTADO-DA-SESSAO.md`](docs/operations/ESTADO-DA-SESSAO.md): objetivo, o que foi feito, arquivos alterados, verificações e resultados, pendências e próximos passos, com caminhos concretos de leitura. Não registre segredos.
+- Antes de trocar de sessão, encerrar uma fase ou o trabalho (não a cada microfase), registre no handoff em [`docs/operations/ESTADO-DA-SESSAO.md`](docs/operations/ESTADO-DA-SESSAO.md): objetivo, o que foi feito, arquivos alterados, verificações e resultados, pendências e próximos passos, com caminhos concretos de leitura. Não registre segredos. Mantenha no máximo 10 entradas; mova as mais antigas para `docs/history/operations/`.
 - Atualize o registro existente em vez de criar históricos paralelos.
 
 ## Git (D-70, D-71)

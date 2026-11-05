@@ -55,10 +55,10 @@ Ainda há referências fora de `tests/browser`:
 
 ## 4. Propostas que exigem decisão do responsável
 
-1. **Mover históricos para fora do caminho de leitura.** Mover `ACULTA-CONTINUOUS-EXECUTION.md`
-   para `docs/history/operations/` e atualizar as 5 referências. Não apagar conteúdo.
-2. **Separar o handoff.** `ESTADO-DA-SESSAO.md` com estado atual curto (até ~150 linhas) e o
-   histórico movido para `docs/history/operations/`. O AGENTS continua exigindo o handoff.
+1. **Mover históricos para fora do caminho de leitura.** **Feito em 2026-11-05:** limite de 10
+   entradas em `ESTADO-DA-SESSAO.md` e `ACULTA-CONTINUOUS-EXECUTION.md`, com o restante movido
+   sem alteração para `docs/history/operations/`. Registro só ao fim de fase ou de trabalho.
+2. **Separar o handoff.** **Feito em 2026-11-05** (mesmo commit do item 1).
 3. **Reduzir a matriz de captura.** O AGENTS do tema exige captura em 320, 390 e 1440 px, em
    claro e escuro, com zoom de 200%, para cada mudança visual. Proposta: captura completa
    só na aceitação da fase; mudanças pequenas com 320 e 1440 px no modo claro.
