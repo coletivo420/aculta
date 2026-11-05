@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Form;
 
-use Drupal\aculta_portal\Upload\UserUploadPolicy;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -13,6 +12,14 @@ final class UserUploadSettingsForm extends ConfigFormBase {
 
   /** Integrations with their own tab; each may inherit the global policy. */
   private const CONSUMERS = ['forum', 'lms', 'wiki'];
+
+  /** Padrão de extensões do formulário (antes em UserUploadPolicy, classe duplicada e removida). */
+  public const DEFAULT_EXTENSIONS = 'png jpg jpeg gif webp pdf docx xls xlsx';
+
+  /** Extensões aceitas pelo formulário. */
+  public const SUPPORTED_EXTENSIONS = [
+    'png', 'jpg', 'jpeg', 'gif', 'webp', 'pdf', 'docx', 'xls', 'xlsx',
+  ];
 
   /** {@inheritdoc} */
   public function getFormId(): string {
@@ -41,7 +48,7 @@ final class UserUploadSettingsForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => $this->t('Extensões permitidas'),
       '#description' => $this->t('Informe extensões separadas por espaço. Imagens também precisam passar pela política do aculta_image.'),
-      '#default_value' => $config->get('allowed_extensions') ?? UserUploadPolicy::DEFAULT_EXTENSIONS,
+      '#default_value' => $config->get('allowed_extensions') ?? self::DEFAULT_EXTENSIONS,
       '#required' => TRUE,
       '#maxlength' => 255,
     ];
@@ -71,7 +78,7 @@ final class UserUploadSettingsForm extends ConfigFormBase {
       $form[$consumer]['allowed_extensions'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Extensões permitidas em @consumer', ['@consumer' => $label]),
-        '#default_value' => $settings['allowed_extensions'] ?? UserUploadPolicy::DEFAULT_EXTENSIONS,
+        '#default_value' => $settings['allowed_extensions'] ?? self::DEFAULT_EXTENSIONS,
         '#maxlength' => 255,
         '#states' => ['visible' => [':input[name="' . $consumer . '[inherit_global]"]' => ['checked' => FALSE]]],
       ];
@@ -101,8 +108,8 @@ final class UserUploadSettingsForm extends ConfigFormBase {
       }
       $extensions = preg_split('/\s+/', strtolower(trim((string) $form_state->getValue([$scope, 'allowed_extensions'])))) ?: [];
       $extensions = array_values(array_unique(array_filter($extensions)));
-      if ($extensions === [] || array_diff($extensions, UserUploadPolicy::SUPPORTED_EXTENSIONS) !== []) {
-        $form_state->setErrorByName($scope . '][allowed_extensions', $this->t('Em @scope, use apenas: @extensions.', ['@scope' => $label, '@extensions' => implode(', ', UserUploadPolicy::SUPPORTED_EXTENSIONS)]));
+      if ($extensions === [] || array_diff($extensions, self::SUPPORTED_EXTENSIONS) !== []) {
+        $form_state->setErrorByName($scope . '][allowed_extensions', $this->t('Em @scope, use apenas: @extensions.', ['@scope' => $label, '@extensions' => implode(', ', self::SUPPORTED_EXTENSIONS)]));
       }
       $max_size = $form_state->getValue([$scope, 'max_size_mb']);
       if (!is_numeric($max_size) || (int) $max_size < 1 || (int) $max_size > intdiv(PHP_INT_MAX, 1048576)) {
