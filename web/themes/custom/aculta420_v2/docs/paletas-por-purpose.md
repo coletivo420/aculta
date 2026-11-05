@@ -9,6 +9,7 @@ Este documento oficializa as paletas do tema V2 (`aculta420_v2`) para os purpose
 1. **Cor de referência da V1.** Cada esquema parte de uma cor da V1 (`web/themes/custom/aculta420/css/tokens.css`), sem criar matiz novo. Variações são só de tom.
 2. **Destaque e subelementos.** O destaque é a cor principal do purpose. As outras três cores da V1 (verde, amarelo e vermelho) são subelementos. Nenhum purpose usa cor fora desta paleta.
 3. **Variações discretas.** Três tons por cor: fiel à V1, tom mais claro e tom mais escuro. Ajuste de luminosidade de ±5 pontos, sem mudar matiz.
+9. **Padrão.** O tom mais escuro (profunda) é o padrão de cada base. Como a V1 tem só quatro cores de base e há dez purposes, os purposes que compartilham uma base usam os outros dois tons. Assim, cada purpose tem um esquema próprio.
 4. **Modo escuro.** O destaque sobe de luminosidade (cerca de +6 pontos) e ganha cerca de 10% de saturação. O matiz não muda. Nunca se inverte a cor.
 5. **Exceção da Conta.** O verde escuro da V1 não atinge contraste com fundo escuro. No modo escuro, a Conta usa um verde mais claro (`#06a868`), com texto preto.
 6. **Superfícies escuras.** Base e três níveis de elevação, cada um cerca de 6% mais claro que o anterior. Elevação vem de luminosidade, não de sombra.
@@ -33,20 +34,20 @@ A paleta muda **só** a faixa de destaque do purpose: uma faixa na área de cont
 
 ## Cobertura por purpose
 
-O código tem dez purposes (`DomainSurfaceMap::DOMAIN_IDS`). A tabela abaixo confirma que cada um tem esquema.
+O código tem dez purposes (`DomainSurfaceMap::DOMAIN_IDS`). Cada um tem um esquema próprio.
 
-| Purpose | Chave | Esquema |
+| Purpose | Esquema padrão | Tom |
 |---|---|---|
-| Principal (`main`) | `main` | Sativa |
-| Conta (`account`) | `account` | Indica |
-| Apoio (`support`) | `support` | Lemon Haze |
-| Revista (`magazine`) | `magazine` | Red Congolese |
-| Wiki (`wiki`) | `wiki` | Ruderalis |
-| Loja (`shop`) | `shop` | Golden Goat |
-| Cursos (`courses`) | `courses` | Red Kush |
-| Fórum (`forum`) | `forum` | Panama Red |
-| Links, LinkWeed (`links`) | `links` | Skunk |
-| Eventos (`eventos`) | `eventos` | Acapulco Gold |
+| Principal (`main`) | Skunk | `profunda` |
+| Conta (`account`) | Afghan | `profunda` |
+| Apoio (`support`) | Acapulco Gold | `profunda` |
+| Revista (`magazine`) | Red Kush | `profunda` |
+| Wiki (`wiki`) | Sativa | `fiel` |
+| Loja (`shop`) | Lemon Haze | `fiel` |
+| Cursos (`courses`) | Panama Red | `fiel` |
+| Fórum (`forum`) | Red Congolese | `suave` |
+| Links, LinkWeed (`links`) | Ruderalis | `suave` |
+| Eventos (`eventos`) | Golden Goat | `suave` |
 
 ## Verificação de acessibilidade
 
@@ -75,95 +76,100 @@ Base da pesquisa: W3C, Understanding SC 1.4.11 (non-text contrast), e recomenda�
 
 ## Esquemas
 
-Os nomes aparecem no select de cada purpose na tela Aparência → ACULTA420 V2 → Configurações. A chave é o valor guardado pelo tema. Os nomes não se referem a purposes. O purpose Links (módulo LinkWeed) tem o esquema Skunk.
+Os nomes aparecem no select de cada purpose na tela Aparência → ACULTA420 V2 → Configurações. A chave é o valor guardado pelo tema. Os nomes não se referem a purposes.
 
-| Nome | Chave | Purpose de origem | Tom | Destaque claro | Destaque escuro | Contraste destaque × creme | Contraste texto × destaque (claro) | Contraste destaque × fundo escuro | Contraste texto × destaque (escuro) |
-|---|---|---|---|---|---|---|---|---|---|
-| **Sativa** | `verde-sativa` | Principal | `fiel` | `#689427` | `#7ab327` | 3.28 | 5.85 | 6.74 | 8.3 |
-| **Ruderalis** | `verde-ruderalis` | Wiki | `suave` | `#76a82c` | `#88c72b` | 2.59 | 7.41 | 8.32 | 10.25 |
-| **Indica** | `verde-indica` | Conta | `fiel` | `#0c3c29` | `#06a868` | 11.34 | 12.4 | 5.53 | 6.81 |
-| **Lemon Haze** | `amarelo-lemon-haze` | Suporte | `fiel` | `#f2ca36` | `#fcd64b` | 1.45 | 13.28 | 12.06 | 14.86 |
-| **Golden Goat** | `amarelo-golden-goat` | Loja | `suave` | `#f4d04e` | `#fddc64` | 1.37 | 13.98 | 12.66 | 15.6 |
-| **Red Congolese** | `vermelho-red-congolese` | Revista | `suave` | `#d85842` | `#e46a55` | 3.56 | 5.39 | 5.27 | 6.49 |
-| **Red Kush** | `vermelho-red-kush` | Cursos | `profunda` | `#c03d27` | `#dd4228` | 4.88 | 5.33 | 3.97 | 4.88 |
-| **Skunk** | `verde-skunk` | Links (LinkWeed) | `profunda` | `#5a8022` | `#6c9e22` | 4.24 | 4.63 | 5.30 | 6.53 |
-| **Panama Red** | `vermelho-panama-red` | Fórum | `fiel` | `#d4452d` | `#e1563f` | 4.1 | 4.69 | 4.54 | 5.6 |
-| **Acapulco Gold** | `amarelo-acapulco-gold` | Eventos | `profunda` | `#f0c41e` | `#fbd132` | 1.52 | 12.62 | 11.57 | 14.25 |
+| Nome | Chave | Tom | Destaque claro | Destaque escuro | Contraste destaque × creme | Contraste texto × destaque (claro) | Contraste destaque × fundo escuro | Contraste texto × destaque (escuro) |
+|---|---|---|---|---|---|---|---|---|
+| **Skunk** | `verde-skunk` | `profunda` | `#5a8022` | `#6c9e22` | 4.24 | 4.63 | 5.3 | 6.53 |
+| **Sativa** | `verde-sativa` | `fiel` | `#689427` | `#7ab327` | 3.28 | 5.85 | 6.72 | 8.27 |
+| **Ruderalis** | `verde-ruderalis` | `suave` | `#76a82c` | `#89c72c` | 2.59 | 7.42 | 8.37 | 10.31 |
+| **Afghan** | `verde-afghan` | `profunda` | `#08271a` | `#059e61` | 14.64 | 16.0 | 4.92 | 6.06 |
+| **Acapulco Gold** | `amarelo-acapulco-gold` | `profunda` | `#f0c41e` | `#fbd132` | 1.52 | 12.61 | 11.56 | 14.24 |
+| **Lemon Haze** | `amarelo-lemon-haze` | `fiel` | `#f2ca36` | `#fcd64b` | 1.45 | 13.28 | 12.08 | 14.88 |
+| **Golden Goat** | `amarelo-golden-goat` | `suave` | `#f4d04e` | `#fcdc64` | 1.37 | 13.99 | 12.63 | 15.56 |
+| **Red Kush** | `vermelho-red-kush` | `profunda` | `#c03d27` | `#dd4329` | 4.86 | 5.32 | 3.99 | 4.91 |
+| **Panama Red** | `vermelho-panama-red` | `fiel` | `#d4452d` | `#e1563f` | 4.1 | 4.69 | 4.54 | 5.6 |
+| **Red Congolese** | `vermelho-red-congolese` | `suave` | `#d85842` | `#e46a55` | 3.56 | 5.4 | 5.26 | 6.48 |
+
+### Skunk (`verde-skunk`)
+
+- Padrão de purpose: Principal. Tom: `profunda`.
+- Destaque, claro: `#5a8022`. Escuro: `#6c9e22`.
+- Texto sobre destaque: claro `#ffffff`, escuro `#000000`.
+- Subelementos, claro: `#f0c41e`, `#c03d27`.
+- Subelementos, escuro: `#fbd132`, `#dd4329`.
 
 ### Sativa (`verde-sativa`)
 
-- Origem: purpose Principal. Tom escolhido: `fiel`.
+- Padrão de purpose: Wiki. Tom: `fiel`.
 - Destaque, claro: `#689427`. Escuro: `#7ab327`.
 - Texto sobre destaque: claro `#000000`, escuro `#000000`.
 - Subelementos, claro: `#f2ca36`, `#d4452d`.
 - Subelementos, escuro: `#fcd64b`, `#e1563f`.
+
 ### Ruderalis (`verde-ruderalis`)
 
-- Origem: purpose Wiki. Tom escolhido: `suave`.
-- Destaque, claro: `#76a82c`. Escuro: `#88c72b`.
+- Padrão de purpose: Links (LinkWeed). Tom: `suave`.
+- Destaque, claro: `#76a82c`. Escuro: `#89c72c`.
 - Texto sobre destaque: claro `#000000`, escuro `#000000`.
 - Subelementos, claro: `#f4d04e`, `#d85842`.
-- Subelementos, escuro: `#fddc64`, `#e46a55`.
-### Indica (`verde-indica`)
+- Subelementos, escuro: `#fcdc64`, `#e46a55`.
 
-- Origem: purpose Conta. Tom escolhido: `fiel`.
-- Destaque, claro: `#0c3c29`. Escuro: `#06a868`.
+### Afghan (`verde-afghan`)
+
+- Padrão de purpose: Conta. Tom: `profunda`.
+- Destaque, claro: `#08271a`. Escuro: `#059e61`.
 - Texto sobre destaque: claro `#ffffff`, escuro `#000000`.
-- Subelementos, claro: `#689427`, `#f2ca36`, `#d4452d`.
-- Subelementos, escuro: `#7ab327`, `#fcd64b`, `#e1563f`.
+- Subelementos, claro: `#5a8022`, `#f0c41e`, `#c03d27`.
+- Subelementos, escuro: `#6c9e22`, `#fbd132`, `#dd4329`.
+
+### Acapulco Gold (`amarelo-acapulco-gold`)
+
+- Padrão de purpose: Apoio. Tom: `profunda`.
+- Destaque, claro: `#f0c41e`. Escuro: `#fbd132`.
+- Texto sobre destaque: claro `#000000`, escuro `#000000`.
+- Subelementos, claro: `#5a8022`, `#c03d27`.
+- Subelementos, escuro: `#6c9e22`, `#dd4329`.
+
 ### Lemon Haze (`amarelo-lemon-haze`)
 
-- Origem: purpose Suporte. Tom escolhido: `fiel`.
+- Padrão de purpose: Loja. Tom: `fiel`.
 - Destaque, claro: `#f2ca36`. Escuro: `#fcd64b`.
 - Texto sobre destaque: claro `#000000`, escuro `#000000`.
 - Subelementos, claro: `#689427`, `#d4452d`.
 - Subelementos, escuro: `#7ab327`, `#e1563f`.
+
 ### Golden Goat (`amarelo-golden-goat`)
 
-- Origem: purpose Loja. Tom escolhido: `suave`.
-- Destaque, claro: `#f4d04e`. Escuro: `#fddc64`.
+- Padrão de purpose: Eventos. Tom: `suave`.
+- Destaque, claro: `#f4d04e`. Escuro: `#fcdc64`.
 - Texto sobre destaque: claro `#000000`, escuro `#000000`.
 - Subelementos, claro: `#76a82c`, `#d85842`.
-- Subelementos, escuro: `#88c72b`, `#e46a55`.
-### Red Congolese (`vermelho-red-congolese`)
+- Subelementos, escuro: `#89c72c`, `#e46a55`.
 
-- Origem: purpose Revista. Tom escolhido: `suave`.
-- Destaque, claro: `#d85842`. Escuro: `#e46a55`.
-- Texto sobre destaque: claro `#000000`, escuro `#000000`.
-- Subelementos, claro: `#76a82c`, `#f4d04e`.
-- Subelementos, escuro: `#88c72b`, `#fddc64`.
 ### Red Kush (`vermelho-red-kush`)
 
-- Origem: purpose Cursos. Tom escolhido: `profunda`.
-- Destaque, claro: `#c03d27`. Escuro: `#dd4228`.
+- Padrão de purpose: Revista. Tom: `profunda`.
+- Destaque, claro: `#c03d27`. Escuro: `#dd4329`.
 - Texto sobre destaque: claro `#ffffff`, escuro `#000000`.
 - Subelementos, claro: `#5a8022`, `#f0c41e`.
-- Subelementos, escuro: `#6c9e23`, `#fbd132`.
-
-### Skunk (`verde-skunk`)
-
-- Origem: purpose Links (LinkWeed, rota `/redes-sociais`). Tom escolhido: `profunda`.
-- Destaque, claro: `#5a8022`. Escuro: `#6c9e22`.
-- Texto sobre destaque: claro `#ffffff`, escuro `#000000`.
-- Subelementos, claro: `#08271a`, `#f0c41e`, `#c03d27`.
-- Subelementos, escuro: `#0a432c`, `#fbd132`, `#dd4329`.
-- Observação: o tom escuro da Skunk é o verde V1 mais profundo. Ele fica em contraste com o fundo escuro (5,30:1) e com o creme (4,24:1), por isso serve para as páginas de links, que são de leitura e de ação.
+- Subelementos, escuro: `#6c9e22`, `#fbd132`.
 
 ### Panama Red (`vermelho-panama-red`)
 
-- Origem: purpose Fórum (`forum`). Tom escolhido: `fiel`.
+- Padrão de purpose: Cursos. Tom: `fiel`.
 - Destaque, claro: `#d4452d`. Escuro: `#e1563f`.
 - Texto sobre destaque: claro `#000000`, escuro `#000000`.
 - Subelementos, claro: `#689427`, `#f2ca36`.
 - Subelementos, escuro: `#7ab327`, `#fcd64b`.
 
-### Acapulco Gold (`amarelo-acapulco-gold`)
+### Red Congolese (`vermelho-red-congolese`)
 
-- Origem: purpose Eventos (`eventos`). Tom escolhido: `profunda`.
-- Destaque, claro: `#f0c41e`. Escuro: `#fbd132`.
+- Padrão de purpose: Fórum. Tom: `suave`.
+- Destaque, claro: `#d85842`. Escuro: `#e46a55`.
 - Texto sobre destaque: claro `#000000`, escuro `#000000`.
-- Subelementos, claro: `#5a8022`, `#c03d27`.
-- Subelementos, escuro: `#6c9e23`, `#dd4228`.
+- Subelementos, claro: `#76a82c`, `#f4d04e`.
+- Subelementos, escuro: `#89c72c`, `#fcdc64`.
 
 ## Superfícies
 
@@ -200,5 +206,6 @@ Os tokens são definidos sob o seletor do purpose e redefinidos sob o modo escur
 - 2026-11-05: paleta gerada a partir das cores da V1 e do reggae. Versão aprovada com esquemas nomeados por variedades de cannabis, sem nome de purpose.
 - 2026-11-05: adicionado o esquema Skunk para o purpose Links (LinkWeed).
 - 2026-11-05: adicionados Panama Red (Fórum) e Acapulco Gold (Eventos). Os dez purposes passam a ter esquema.
+- 2026-11-05: tom mais escuro (profunda) definido como padrão de cada base. Esquemas refeitos: Indica sai do catálogo, substituído por Afghan na Conta (Indica falhava 3:1 no escuro). Dez esquemas, um por purpose.
 - 2026-11-05: definido o escopo da paleta. Botões, foco, barra institucional e navegação não mudam por purpose. Registrado que a F3 sobrescrevia `--color-brand-highlight`, o que deve ser corrigido.
 - 2026-11-05: incluída a seção de verificação de acessibilidade, com simulação de deuteranopia e regra de não usar verde e vermelho como único sinal.
