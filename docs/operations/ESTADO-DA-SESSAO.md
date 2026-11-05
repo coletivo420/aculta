@@ -1194,6 +1194,13 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   55/764, design foundations 2.468 e `git diff --check` PASS. Revisão visual
   ainda pendente. Próximo: commit/push P2 em `dev`, depois iniciar P3; P5 /
   Layout Builder não executar sem novo pedido.
+- **Compatibilidade runtime após P2:** requisição anônima a `/conta` inicialmente
+  retornou 500. Watchdog identificou cache persistente: invocador antigo passa
+  três argumentos ao hook e descoberta SDC desconhece layout-page. Corrigidos
+  fallback de construtor (`stack`) e fallback `<main>` para template SDC ausente;
+  CSS legado fica só no caminho transitório. Nova requisição respondeu 403
+  (acesso anônimo negado) com `X-Robots-Tag: noindex, nofollow, noarchive`.
+  Não houve rebuild/clear de cache nem alteração de banco/configuração.
 
 - **C4 — revisão estrutural do shell:** o adapter `aculta-links-page.html.twig`
   apresenta a micropágina do módulo Links por SDC dedicado, sem `<main>` interno;

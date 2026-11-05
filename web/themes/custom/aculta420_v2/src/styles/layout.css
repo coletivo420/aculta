@@ -38,6 +38,28 @@
   padding-inline: var(--page-gutter);
 }
 
+/* Compatibility while Drupal's persistent SDC discovery cache is warm. */
+.page__main {
+  align-content: start;
+  display: grid;
+  gap: var(--spacing-xl);
+  grid-area: main;
+  grid-template-columns: minmax(0, 1fr);
+  min-block-size: 0;
+  padding-block: var(--spacing-lg);
+}
+
+.page__title,
+.page__content,
+.page__sidebar {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.page__title { grid-column: 1 / -1; }
+.page__content,
+.page__sidebar { min-inline-size: 0; }
+
 .page__footer {
   background: var(--color-brand-secondary);
   color: var(--color-on-footer);
@@ -130,6 +152,12 @@
 @media (min-width: 62rem) {
   .page__footer-region {
     grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 60rem) {
+  .page__main--with-sidebar {
+    grid-template-columns: minmax(0, 2fr) minmax(14rem, 1fr);
   }
 }
 

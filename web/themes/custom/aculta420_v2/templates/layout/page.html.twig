@@ -56,12 +56,24 @@
     <div class="page__breadcrumb">{{ page.breadcrumb }}{{ aculta_breadcrumb }}</div>
   {% endif %}
 
-  {{ include('aculta420_v2:layout-page', {
-    variant: aculta_layout_variant|default('stack'),
-    title: aculta_page_title,
-    content: page.content,
-    aside: page.sidebar_first
-  }, with_context = false) }}
+  {% set layout_page_template = 'aculta420_v2:layout-page' %}
+  {% if source(layout_page_template, true) %}
+    {{ include(layout_page_template, {
+      variant: aculta_layout_variant|default('stack'),
+      title: aculta_page_title,
+      content: page.content,
+      aside: page.sidebar_first
+    }, with_context = false) }}
+  {% else %}
+    {# Keep a warm Drupal SDC discovery cache from breaking the page. #}
+    <main id="main-content" class="page__main" tabindex="-1">
+      {% if aculta_page_title %}<div class="page__title">{{ aculta_page_title }}</div>{% endif %}
+      <div class="page__content">{{ page.content }}</div>
+      {% if page.sidebar_first %}
+        <aside class="page__sidebar" aria-label="{{ 'Related content'|t }}">{{ page.sidebar_first }}</aside>
+      {% endif %}
+    </main>
+  {% endif %}
 
   {% if social_links_page_footer %}
     {{ include('aculta420_v2:site-footer', {

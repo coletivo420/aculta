@@ -28,9 +28,9 @@ final class PagePresentationHooks {
     #[Autowire(service: 'current_user')]
     private readonly AccountProxyInterface $currentUser,
     #[Autowire(service: 'current_route_match')]
-    private readonly CurrentRouteMatch $currentRouteMatch,
+    private readonly ?CurrentRouteMatch $currentRouteMatch = NULL,
     #[Autowire(service: 'path.matcher')]
-    private readonly PathMatcherInterface $pathMatcher,
+    private readonly ?PathMatcherInterface $pathMatcher = NULL,
   ) {}
 
   /**
@@ -78,6 +78,12 @@ final class PagePresentationHooks {
    * Hostname and Portal purpose are deliberately not used for this mapping.
    */
   private function getPageLayoutVariant(): string {
+    // Compiled hook discovery can call this class with the previous argument
+    // list until Drupal rebuilds its container. Keep that state safe.
+    if ($this->currentRouteMatch === NULL || $this->pathMatcher === NULL) {
+      return 'stack';
+    }
+
     if ($this->pathMatcher->isFrontPage()) {
       return 'full';
     }

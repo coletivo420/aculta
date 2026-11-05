@@ -1,5 +1,12 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — compatibilidade com cache de descoberta aquecido
+
+- O template mantém a página renderizável com `<main>` de compatibilidade quando
+  o cache Drupal ainda não descobriu o SDC layout-page. O preprocess aceita a
+  antiga lista compilada de argumentos e usa `stack` até o container conhecer
+  os serviços de rota. A variante nova depende do rebuild normal autorizado.
+
 ## Não versionado — mapeamento P2 de layout
 
 - `PagePresentationHooks` seleciona `aside` para wiki/fórum e `full` para
