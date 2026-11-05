@@ -1,6 +1,6 @@
 # Changelog — ACULTA420 V2
 
-## Não versionado — unifica preprocess_html; Runtime pendente
+## Não versionado — unifica preprocess_html; render conferido
 
 - O Core permite uma implementação `preprocess_html` por tema. Reunidos em
   `SurfaceSettingsHooks` o `data-theme` e as classes das opções de superfície;
@@ -8,9 +8,12 @@
   para resolver dependências do provider no mapa de hooks existente.
 - PHP lint, gates de foundations (55 pares), design foundations (2.468 checks)
   e schemas (55 componentes/764 checks) passaram. O HTTP do Runtime retornou
-  500 por ter duas implementações registradas no mapa de hooks compilado.
-  Atualizar esse mapa exige `drush cr`, vedado pela regra de não escrever no
-  Runtime; a validação de renderização permanece DEFERRED.
+  200; o HTML servido traz `data-theme="light"` e as cinco classes de superfície
+  esperadas no `<body>`. A tabela de hooks ativa contém somente
+  `SurfaceSettingsHooks::preprocessHtml`. `ThemeSettingsProvider` está disponível;
+  como o provider não tem valor persistido para `aculta_radius_button`, o hook
+  aplicou os defaults documentados. `updatedb:status` sem atualizações e
+  `config:status` sem diferenças. Nenhum `cex` foi feito.
 
 ## 1.2.0-dev.17 — corrige a Institution Bar com Gin e ícone administrativo (2026-11-04)
 

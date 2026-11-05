@@ -5,7 +5,7 @@ Documenta o que existe, o que não é do tema e o que falta.
 
 ## 1. Estado
 
-**B1 implementado no código; renderização no Runtime aguarda atualização do mapa de hooks.** Existem:
+**B1 implementado e renderizado no Runtime.** Existem:
 
 - `theme-settings.php`: formulário com a seção "Superfícies".
 - `src/Hook/SurfaceSettingsHooks.php`: única implementação de `preprocess_html`,
@@ -39,11 +39,12 @@ pelo formulário administrativo e exporte pelo Config Sync.
 
 Para conferir sem alterar configuração, leia o provider com Drush e renderize
 uma página; confirme no HTML `data-theme`, `aculta-radius--*` e
-`aculta-accent--*`. A última tentativa HTTP no Runtime retornou 500 porque o
-mapa de hooks compilado ainda registra duas implementações de `preprocess_html`.
-O código agora consolida ambas em `SurfaceSettingsHooks`, mas confirmar a
-correção requer atualizar o mapa de hooks com `drush cr`, operação de Runtime
-vedada pelo plano atual. `config:status` estava limpo antes desta alteração.
+`aculta-accent--*`. Verificado no Runtime: HTTP 200, `data-theme="light"`,
+cinco classes de superfície no `<body>` e uma implementação ativa de
+`preprocess_html`. O provider está disponível, mas `aculta_radius_button` não
+tem valor persistido; nesse cenário os defaults documentados são aplicados.
+`config:status` está limpo. B2 continua pendente porque não havia configuração
+salva para exportar e nenhum `cex` foi executado.
 
 ## 2. Opções atuais
 
@@ -86,8 +87,8 @@ Pela regra de fronteiras (AGENTS, seção 2 e 3), estas opções **não ficam no
    durante a adoção de componentes.
 4. Tokens `--accent-*-stripe` estão em `src/styles/tokens.css` conforme
    `docs/superficies.md`, seção 8.2.
-5. Capturas nos dois modos e gates (`docs/gates.md`), no Homelab — DEFERRED até
-   a autorização para atualizar o mapa de hooks.
+5. Capturas nos dois modos e gates (`docs/gates.md`), no Homelab — os gates
+   automatizados passaram; capturas visuais continuam pendentes.
 6. Exportar a configuração com `drush cex` para `config/sync` antes do RC. O
    Runtime não tinha diferenças de configuração, então nenhum `cex` foi feito.
 
