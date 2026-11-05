@@ -37,6 +37,18 @@ vendor/bin/phpunit -c web/core/phpunit.xml.dist \
 OK (56 tests, 124 assertions)
 ```
 
+### PASS adicional
+
+Com `SIMPLETEST_DB` carregado do arquivo local de segredos, o teste Kernel
+passou:
+
+```text
+vendor/bin/phpunit -c web/core/phpunit.xml.dist \
+  web/core/tests/Drupal/KernelTests/Core/Htmx/HtmxRequestTest.php
+
+OK (5 tests, 60 assertions)
+```
+
 ### DEFERRED / bloqueio
 
 ```text
@@ -47,12 +59,12 @@ ERROR: There is no database connection. Provide SIMPLETEST_DB.
 ```
 
 A prova mínima de navegador (Firefox ESR), com uma rota de fragmento e um
-formulário dentro de `<dialog>`, também não foi executada: o gate Kernel que
-valida o fluxo de requisição não pôde inicializar sem o banco de testes.
-Nenhum código de produção foi alterado nesta fase.
+formulário dentro de `<dialog>`, ainda não foi executada. O teste Javascript do
+Core foi tentado, mas requer `SIMPLETEST_BASE_URL` e não foi apontado para um
+servidor de teste seguro nesta sessão. Nenhum código de produção foi alterado
+nesta fase.
 
 ## Decisão de fase
 
-F0 permanece `DRAFT BLOCKED` até que o teste Kernel seja executado com o banco
-`aculta_simpletest` e a prova de navegador seja registrada. F1, F2 e F3 não
-começam enquanto F0 não for validada.
+F0 permanece `DRAFT BLOCKED` somente pela prova de navegador pendente. F1, F2 e
+F3 não começam enquanto F0 não for validada.
