@@ -1,6 +1,6 @@
 # ADR-049 — AJAX no ACULTA Studio (V2)
 
-- **Status:** aceito pelo responsável em 2026-11-05.
+- **Status:** aceito pelo responsável em 2026-11-05. **Revisado em 2026-11-05 pelo ADR-050:** o mecanismo passa de B (Fetch próprio) para C (htmx). Os itens 1, 2, 4, 6 e 8 e a seção 8 abaixo são substituídos pelo ADR-050.
 - **Data:** 2026-11-05.
 - **Relaciona-se com:** ADR-044 (decisão 8 e seção 3, mecanismo pendente, agora escolhido), ADR-045 (AJAX isolado em um módulo; preferir página completa sem ganho real), ADR-046 (sem jQuery por padrão), ADR-047 (menu), ADR-048 (layouts e popup de foto), `web/themes/custom/aculta420_v2/docs/studio-estrutura.md`.
 
@@ -87,9 +87,9 @@ decisão.
   390 e 1440 px, claro e escuro, fora do repositório (`$SUITE_OUT`).
 - Status: **DEFERRED** no Homelab, sem execução nesta sessão.
 
-## 8. Alternativa htmx (em avaliação, não decidida)
+## 8. Alternativa htmx (decidida em 2026-11-05 pelo ADR-050)
 
-Esta seção registra a opção C do ADR-044 como caminho concreto. A decisão 1 (mecanismo B) continua valendo até o responsável decidir de outra forma.
+Esta seção registra a opção C do ADR-044 como caminho concreto. Decisão do responsável em 2026-11-05: migrar para htmx. Ver ADR-050.
 
 **O que é.** htmx é uma biblioteca pequena que troca partes da página por fragmentos HTML vindos do servidor. O elemento declara o que faz (requisição, alvo, troca), e o servidor devolve HTML, sem JSON nem protocolo de comandos.
 
