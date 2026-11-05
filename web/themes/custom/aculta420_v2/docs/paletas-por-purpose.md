@@ -1,4 +1,4 @@
-# Paletas de cor por purpose
+# Paleta ACULTA Skunk Family
 
 Status: **aprovado pelo responsável em 2026-11-05**. Implementação no tema pendente (ver "Pendências").
 
