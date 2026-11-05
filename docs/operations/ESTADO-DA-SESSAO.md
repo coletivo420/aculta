@@ -5,11 +5,11 @@
 # Migração data-portal-ui, mapa do V2 e upload centralizado — 2026-11-05
 
 - **Objetivo:** migrar as classes de design de `aculta_lms`, `aculta_lms_resources` e `aculta_paths` para `data-portal-ui` e mapear os tokens no tema V2; centralizar o validador de upload da resposta do LMS.
-- **Concluído:** `8dfa7ddb` (migração de 22 pontos, hook `preprocess` genérico no V2, gate de tokens que passou a varrer submódulos) e `7c223cf6` (`ConsumerUploadPolicy::extensionValidators()`, usado por `AnswerSubmissionForm`). Ambos em `origin/dev`.
-- **Verificações:** `php -l` PASS nos arquivos PHP alterados. `validate-module-theme-boundary.php`: FAIL com 39 tokens pré-existentes sem mapa em `aculta_studio`, `aculta_events`, `aculta_patcher` e `aculta_pagamentos_mercadopago` (não causados por esta entrega; os 22 tokens da migração passam). `validate-aculta-image.php`: FAIL com 6 ocorrências em `UserUploadPolicy.php`. Captura visual, PHPUnit e Kernel: DEFERRED (sem Runtime e sem `vendor/`).
+- **Concluído:** `8dfa7ddb` (migração de 22 pontos, hook `preprocess` genérico no V2, gate de tokens que varre submódulos), `7c223cf6` (`ConsumerUploadPolicy::extensionValidators()`), `091cbf81` (39 tokens mapeados no V2 sem classe, atributo `data-portal-ui` mantido no DOM, regex do gate aceita `__`) e `044b079d` (remoção de `UserUploadPolicy` e do teste Kernel dela). Todos em `origin/dev`.
+- **Verificações:** `php -l` PASS nos PHP alterados. `validate-module-theme-boundary.php` PASS (4248 verificações). `validate-aculta-image.php` PASS. `validate-agent-token-budget.php` PASS. Captura visual, PHPUnit e Kernel: DEFERRED (sem Runtime e sem `vendor/`).
 - **Riscos:** o hook `preprocess` do V2 não foi executado no Runtime. Sem o mapa, token não mapeado não gera classe e o elemento perde estilo; a regressão visual só se confirma com captura.
-- **Pendências:** (1) mapear ou registrar como dívida os 39 tokens, cujas classes originais não estão no Git; (2) remover `UserUploadPolicy` depende de decidir o destino de `aculta_portal.user_upload`, do `UserUploadSettingsForm` (sem rota) e de `config/sync/aculta_portal.user_upload.yml`, e de portar `UserUploadPolicyKernelTest`.
-- **Próximo passo:** o responsável decidir os itens (1) e (2); depois, captura visual no Runtime.
+- **Pendências:** (1) portar a cobertura do teste Kernel removido (formulário de abas, diálogo, inspeção de bytes) para `ConsumerUploadPolicy`, DEFERRED; (2) decidir `config/sync/aculta_portal.user_upload.yml` e o schema, que continuam sem uso (exigem pedido explícito); (3) captura visual de aulas, eventos e Studio no V2, porque os 39 tokens dependem de seletor de atributo.
+- **Próximo passo:** o responsável decidir o item (2) e autorizar a porte do teste (1); depois, captura visual no Runtime.
 
 # Padrão Drupal 11+ revisado para Drupal 12 ready — 2026-11-05
 
