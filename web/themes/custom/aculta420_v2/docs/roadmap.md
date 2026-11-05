@@ -403,6 +403,16 @@ autorização; o mapeamento de Wiki para a faixa de acento aguarda confirmação
 - Revisão visual Firefox em larguras móveis e amplas, nos modos claro e escuro,
   com zoom e teclado.
 - Revisão assistiva das páginas reais que usam pager, mensagens e teasers.
+  Auditoria estática em 2026-11-05 na home, na busca com pager e no popup de
+  busca: `<main>` único, um `<h1>`, seis `<nav>` todos rotulados,
+  `aria-current` no pager, `role="alert"` nas mensagens da busca, todas as
+  imagens com `alt` e nenhum link sem nome acessível (os dois links do logotipo
+  têm `alt="Início"`). Teclado em Firefox ESR: home 12/12 focos com contorno de
+  3 px; busca 11/12, com o único foco sem contorno dentro do widget Turnstile de
+  terceiro (não é markup do tema). Os `<nav>` sem `aria-label` usam
+  `aria-labelledby`. Não havia pager nas buscas testadas; o template usa o SDC
+  `pagination` e a validação com dados reais de listagem fica DEFERRED. Leitor
+  de tela e estados autenticados permanecem pendentes.
 - Não trocar tiles OSM por CartoDB nem introduzir endpoint de pontos sem decisão
   e revisão dos contratos de privacidade, acesso, cache e purpose.
 
