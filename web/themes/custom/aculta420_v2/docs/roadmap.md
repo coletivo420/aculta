@@ -271,7 +271,7 @@ Gates foundation (55 pares), design foundations (2.468 checks), SDC schemas
 
 ## Fase 1 — Tokens e fundações
 
-**Status: subfase de tokens/fundações entregue em `1.2.0-dev.1`; a Fase 1 do ADR-046 permanece aberta para shell, purpose e UI Styles.**
+**Status: tokens e fundações entregues em `1.2.0-dev.1`. Purpose neutro (`data-purpose`) e compatibilidade do `ui_styles` foram cobertos em 2026-11-05; o shell segue em revisão na Fase 2.**
 
 - Tokens semânticos mantêm a identidade visual V1 e os modos explícitos do
   Portal. Não há detecção `prefers-color-scheme`.
@@ -299,7 +299,7 @@ Gates foundation (55 pares), design foundations (2.468 checks), SDC schemas
 
 ## Fase 2 — Shell
 
-**Status: shell em revisão; Institution Bar, Domain Header, navegação e composição de regiões estão integrados em SDC. Rodapé e restantes dos regions ainda precisam de revisão contra a V1.**
+**Status: shell em revisão; Institution Bar, Domain Header, navegação e composição de regiões estão integrados em SDC. Rodapé e regions foram capturados em 2026-11-05 (`tests/browser/aculta420-v2-footer/`, 6/6); a aceitação visual final contra a V1 segue com o responsável.**
 
 - Referência visual: V1 `templates/page.html.twig` e `docs/shell.md`, somente
   leitura. Institution Bar e Domain Header foram preservados como contratos.
@@ -366,7 +366,7 @@ Styles foi alterada nesta verificação.
 
 ## Fase 5 — Componentes e templates
 
-**Status: catálogo atual pendente de auditoria integral; componentes faltantes e templates de páginas seguem após shell e fundações.**
+**Status: catálogo auditado em 2026-11-05 — 39 componentes com entrada, schema e story, sem entrada fantasma. Consumers reais dos SDCs ainda pendentes; `price` aguarda autorização da Loja.**
 
 ### G3 — Mapa de templates por bundle/view mode (parcial)
 
