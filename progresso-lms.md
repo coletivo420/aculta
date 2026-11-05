@@ -81,3 +81,16 @@ Com base no `docs/modules/ACULTA-LMS-ROADMAP.md`, no `docs/decisions/ADR-042-rem
   - `lms-tour.css`: layout em flexbox para cabeçalho, indicador de passos e botões de navegação.
   - `lms-tour.default.story.yml`: história demonstrativa de uso.
 - Integração alinhada com o `StudentTourWizard` (CTools) para renderização acessível e progressiva sem dependências externas.
+
+---
+
+## 8. Fechamento de Pendências e Promoção a RC de `aculta_lms_h5p` (0.4.0-rc.1)
+- **Verificação Estática e Código:**
+  - PHPCS `Drupal,DrupalPractice` rodado sobre todo o módulo `aculta_lms_h5p`: **0 erros / 0 avisos**.
+  - `validate-module-theme-boundary.php`: **PASS (4.271 verificações)**.
+- **Suíte de Testes Automatizados:**
+  - Unit Tests: **35 testes / 147 asserções PASS**.
+  - Kernel Hook Discovery (`AcultaH5PHookDiscoveryTest`): **1 teste / 23 asserções PASS**.
+  - Kernel Course Access (`aculta_H5PCourseAccessIntegrationTest`): **3 testes / 128 asserções PASS**.
+  - Kernel Library Package Installer & ZIP Limits (`AcultaH5PLibraryPackageInstallerTest`): **14 testes / 329 asserções PASS**.
+- **Estado do Componente:** Promovido para **RC** (`0.4.0-rc.1`) conforme `RELEASE-LIFECYCLE.md`, aguardando autorização de deploy Alpha no servidor de testes.

@@ -1,10 +1,10 @@
 # TODO — aculta_lms_h5p
 
-Estado: Dev · versão 0.4.0-dev.176 (`aculta_lms_h5p.info.yml`) · status: `docs/operations/status/aculta_lms_h5p.yml`.
+Estado: RC · versão 0.4.0-rc.1 (`aculta_lms_h5p.info.yml`) · status: `docs/operations/status/aculta_lms_h5p.yml`.
 
 ## Próximo passo
 
-Reexecutar suíte H5P completa e gates pertinentes após qualquer mudança; depois revisar e promover a RC conforme docs/operations/RELEASE-LIFECYCLE.md. Não fazer deploy sem autorização explícita.
+Candidato RC pronto para deploy e validação no servidor de desenvolvimento (Alpha) após autorização explícita do responsável. Acompanhar a homologação com as turmas e conteúdos reais em `*.aculta.toca.net.br`.
 
 ## Leitura
 
