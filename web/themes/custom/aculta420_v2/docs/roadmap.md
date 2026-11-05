@@ -353,8 +353,11 @@ Gates foundation (55 pares), design foundations (2.468 checks), SDC schemas
 expõe `aculta_purpose` e o tema aplica `data-purpose` no `<html>` após validar
 a lista permitida. O Portal mantém o estado neutro `aculta_portal.active_purposes`
 via Core State API atualizado com hooks de ciclo de vida do Domain (`domain_insert`, `domain_update`, `domain_delete`).
-O tema oferece a seção nativa "Cores por purpose" em `theme-settings.php`, exibindo selects
-para os 10 purposes oficiais com a Paleta ACULTA Skunk Family aprovada.
+O tema oferece a seção nativa "Cores por purpose" em `theme-settings.php`, organizando os seletores
+em caixas com grid responsivo (2 colunas em desktop >= 60rem, 1 coluna em mobile), com visualização
+ao vivo lado a lado dos modos claro e escuro (faixa de destaque, hex, subelementos e contraste textual).
+A classe `src/Palette/PurposePaletteSchemes.php` provê a fonte única dos 10 esquemas oficiais e o gate
+`scripts/validate-aculta420-palette-schemes.php` valida a coerência estrita com `tokens.css`.
 O escopo estrito é respeitado: os tokens `--purpose-*` (`--purpose-accent`, `--purpose-on-accent`, `--purpose-sub-1..3`, `--purpose-surface-1..3`) isolam a variação visual na faixa de destaque, sem qualquer alteração em botões, foco, anéis, abas ou elementos institucionais.
 Critérios de contraste WCAG AA aprovados em `tokens.css`. Schema e defaults configurados em `aculta420_v2.settings`.
 

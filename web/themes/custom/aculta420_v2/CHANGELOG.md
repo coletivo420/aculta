@@ -4,7 +4,9 @@
 
 - Implementa a Paleta ACULTA Skunk Family oficial por purpose em `src/styles/tokens.css`, cobrindo os 10 purposes com os esquemas aprovados (Skunk, Sativa, Ruderalis, Afghan, Acapulco Gold, Lemon Haze, Golden Goat, Red Kush, Panama Red e Red Congolese).
 - Escopo estrito e não-negociável: isola a variação visual exclusivamente nos tokens semânticos `--purpose-accent`, `--purpose-on-accent`, `--purpose-sub-1..3` e `--purpose-surface-1..3`. Remove a sobrescrita perigosa de `--color-brand-highlight` por purpose, garantindo que botões, anéis de foco, abas, links, barra multidomínio e a conta na barra institucional permaneçam 100% consistentes e inalterados em qualquer purpose.
-- Adiciona a seção nativa "Cores por purpose" em `theme-settings.php` no formulário administrativo do tema com as 10 variantes oficiais.
+- Adiciona a seção nativa "Cores por purpose" em `theme-settings.php` no formulário administrativo do tema com as 10 variantes oficiais, organizada em caixas (cartões) em grid responsivo (2 colunas no desktop a partir de 60rem, 1 coluna no mobile).
+- Visualização ao vivo da paleta integrada em cada caixa, exibindo os modos claro e escuro lado a lado com a faixa de destaque, nome do esquema, valores hex, chips de subelementos e contraste textual. Interatividade via `Drupal.behaviors` com `core/once` em `js/theme-settings.js` e fallback acessível sem JS.
+- Criação de `src/Palette/PurposePaletteSchemes.php` como fonte única dos valores dos 10 esquemas oficiais e gate novo `scripts/validate-aculta420-palette-schemes.php`.
 - Lê a lista de purposes ativos exclusivamente a partir da Core State API neutra `aculta_portal.active_purposes`. Se o estado estiver vazio, exibe mensagem neutra e oculta os controles de seleção.
 - Schema e defaults em `aculta420_v2.settings` com mapeamento `aculta_purpose_palette` para todos os 10 purposes.
 - Validação estrita de purposes aprovados no `SurfaceSettingsHooks::preprocessHtml` para o atributo `data-purpose`.

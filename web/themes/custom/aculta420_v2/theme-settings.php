@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Drupal\aculta420_v2\Palette\PurposePaletteSchemes;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -96,18 +97,11 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
     return;
   }
 
-  $variantOptions = [
-    'verde-skunk' => t('Skunk'),
-    'verde-sativa' => t('Sativa'),
-    'verde-ruderalis' => t('Ruderalis'),
-    'verde-afghan' => t('Afghan'),
-    'amarelo-acapulco-gold' => t('Acapulco Gold'),
-    'amarelo-lemon-haze' => t('Lemon Haze'),
-    'amarelo-golden-goat' => t('Golden Goat'),
-    'vermelho-red-kush' => t('Red Kush'),
-    'vermelho-panama-red' => t('Panama Red'),
-    'vermelho-red-congolese' => t('Red Congolese'),
-  ];
+  $form['#attached']['library'][] = 'aculta420_v2/theme-settings';
+
+  $variantOptions = PurposePaletteSchemes::getOptions();
+  $purposeDefaults = PurposePaletteSchemes::getPurposeDefaults();
+  $allSchemes = PurposePaletteSchemes::SCHEMES;
 
   $purposeLabels = [
     'main' => t('Principal (main)'),
@@ -122,19 +116,6 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
     'links' => t('Links (links)'),
   ];
 
-  $purposeDefaults = [
-    'main' => 'verde-skunk',
-    'wiki' => 'verde-sativa',
-    'links' => 'verde-ruderalis',
-    'account' => 'verde-afghan',
-    'support' => 'amarelo-acapulco-gold',
-    'shop' => 'amarelo-lemon-haze',
-    'eventos' => 'amarelo-golden-goat',
-    'magazine' => 'vermelho-red-kush',
-    'courses' => 'vermelho-panama-red',
-    'forum' => 'vermelho-red-congolese',
-  ];
-
   $savedPalette = theme_get_setting('aculta_purpose_palette') ?? [];
   if (!is_array($savedPalette)) {
     $savedPalette = [];
@@ -142,6 +123,7 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
 
   $form['aculta_cores_purpose']['aculta_purpose_palette'] = [
     '#type' => 'container',
+    '#attributes' => ['class' => ['aculta-purpose-cards-grid']],
     '#tree' => TRUE,
   ];
 
@@ -156,11 +138,105 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
       $currentVariant = $defaultVariant;
     }
 
-    $form['aculta_cores_purpose']['aculta_purpose_palette'][$purpose] = [
+    $cardWrapper = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['aculta-purpose-card'],
+        'data-purpose-card' => $purpose,
+      ],
+    ];
+
+    $cardWrapper['title'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'h3',
+      '#value' => $purposeLabels[$purpose] ?? ucfirst($purpose),
+      '#attributes' => ['class' => ['aculta-purpose-card__title']],
+    ];
+
+    $cardWrapper['control'] = [
+      '#type' => 'container',
+      '#attributes' => ['class' => ['aculta-purpose-card__control']],
+    ];
+
+    $cardWrapper['control']['select'] = [
       '#type' => 'select',
-      '#title' => $purposeLabels[$purpose] ?? ucfirst($purpose),
+      '#title' => t('Esquema de cor'),
       '#options' => $variantOptions,
       '#default_value' => $currentVariant,
+      '#parents' => ['aculta_purpose_palette', $purpose],
     ];
+
+    // Renderiza a visualização da paleta para os esquemas disponíveis.
+    // Sem JS, exibe a visualização. Com JS, alterna conforme o select.
+    $cardWrapper['preview_wrapper'] = [
+      '#type' => 'container',
+      '#attributes' => ['class' => ['aculta-purpose-card__preview-wrapper']],
+    ];
+
+    foreach ($allSchemes as $schemeKey => $scheme) {
+      $isSelected = ($schemeKey === $currentVariant);
+      $cardWrapper['preview_wrapper'][$schemeKey] = [
+        '#type' => 'container',
+        '#attributes' => [
+          'class' => ['aculta-palette-preview'],
+          'data-scheme' => $schemeKey,
+          'style' => $isSelected ? 'display: flex;' : 'display: none;',
+        ],
+      ];
+
+      $modesMarkup = '<div class="aculta-palette-preview__modes">';
+
+      // Modo Claro
+      $light = $scheme['light'];
+      $modesMarkup .= '<div class="aculta-palette-mode aculta-palette-mode--light">';
+      $modesMarkup .= '<div class="aculta-palette-mode__header">' . t('Claro') . '</div>';
+      $modesMarkup .= '<div class="aculta-palette-mode__stripe" style="background-color: ' . htmlspecialchars($light['accent'], ENT_QUOTES, 'UTF-8') . '; color: ' . htmlspecialchars($light['on_accent'], ENT_QUOTES, 'UTF-8') . ';">';
+      $modesMarkup .= '<span class="aculta-palette-mode__scheme-name">' . htmlspecialchars($scheme['name'], ENT_QUOTES, 'UTF-8') . '</span>';
+      $modesMarkup .= '<span class="aculta-palette-mode__hex">' . htmlspecialchars($light['accent'], ENT_QUOTES, 'UTF-8') . '</span>';
+      $modesMarkup .= '</div>';
+      $modesMarkup .= '<div class="aculta-palette-mode__subs">';
+      foreach ($light['sub'] as $subHex) {
+        $modesMarkup .= '<div class="aculta-palette-chip">';
+        $modesMarkup .= '<span class="aculta-palette-chip__color" style="background-color: ' . htmlspecialchars($subHex, ENT_QUOTES, 'UTF-8') . ';"></span>';
+        $modesMarkup .= '<span class="aculta-palette-chip__hex">' . htmlspecialchars($subHex, ENT_QUOTES, 'UTF-8') . '</span>';
+        $modesMarkup .= '</div>';
+      }
+      $modesMarkup .= '</div>';
+      $modesMarkup .= '<div class="aculta-palette-mode__contrast">';
+      $modesMarkup .= 'Texto: ' . number_format($light['contrast_on_accent'], 2) . ':1<br>';
+      $modesMarkup .= 'Destaque: ' . number_format($light['contrast_accent_canvas'], 2) . ':1';
+      $modesMarkup .= '</div>';
+      $modesMarkup .= '</div>';
+
+      // Modo Escuro
+      $dark = $scheme['dark'];
+      $modesMarkup .= '<div class="aculta-palette-mode aculta-palette-mode--dark">';
+      $modesMarkup .= '<div class="aculta-palette-mode__header">' . t('Escuro') . '</div>';
+      $modesMarkup .= '<div class="aculta-palette-mode__stripe" style="background-color: ' . htmlspecialchars($dark['accent'], ENT_QUOTES, 'UTF-8') . '; color: ' . htmlspecialchars($dark['on_accent'], ENT_QUOTES, 'UTF-8') . ';">';
+      $modesMarkup .= '<span class="aculta-palette-mode__scheme-name">' . htmlspecialchars($scheme['name'], ENT_QUOTES, 'UTF-8') . '</span>';
+      $modesMarkup .= '<span class="aculta-palette-mode__hex">' . htmlspecialchars($dark['accent'], ENT_QUOTES, 'UTF-8') . '</span>';
+      $modesMarkup .= '</div>';
+      $modesMarkup .= '<div class="aculta-palette-mode__subs">';
+      foreach ($dark['sub'] as $subHex) {
+        $modesMarkup .= '<div class="aculta-palette-chip">';
+        $modesMarkup .= '<span class="aculta-palette-chip__color" style="background-color: ' . htmlspecialchars($subHex, ENT_QUOTES, 'UTF-8') . ';"></span>';
+        $modesMarkup .= '<span class="aculta-palette-chip__hex">' . htmlspecialchars($subHex, ENT_QUOTES, 'UTF-8') . '</span>';
+        $modesMarkup .= '</div>';
+      }
+      $modesMarkup .= '</div>';
+      $modesMarkup .= '<div class="aculta-palette-mode__contrast">';
+      $modesMarkup .= 'Texto: ' . number_format($dark['contrast_on_accent'], 2) . ':1<br>';
+      $modesMarkup .= 'Destaque: ' . number_format($dark['contrast_accent_canvas'], 2) . ':1';
+      $modesMarkup .= '</div>';
+      $modesMarkup .= '</div>';
+
+      $modesMarkup .= '</div>';
+
+      $cardWrapper['preview_wrapper'][$schemeKey]['markup'] = [
+        '#markup' => $modesMarkup,
+      ];
+    }
+
+    $form['aculta_cores_purpose']['aculta_purpose_palette'][$purpose] = $cardWrapper;
   }
 }

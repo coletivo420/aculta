@@ -46,3 +46,15 @@ utility-drawers:
     - core/once
     - core/drupalSettings
 
+theme-settings:
+  version: 1.3.0
+  css:
+    theme:
+      src/styles/theme-settings.css: {}
+  js:
+    js/theme-settings.js: { attributes: { defer: true } }
+  dependencies:
+    - core/drupal
+    - core/once
+
+
