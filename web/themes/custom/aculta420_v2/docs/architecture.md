@@ -50,6 +50,10 @@ Regras:
 - Não há detecção automática do sistema. Um valor legado `auto` resolve para claro até o contrato mudar.
 - Componentes não conhecem o modo. Eles usam tokens.
 
+`src/Hook/SurfaceSettingsHooks.php` aplica no `<body>` classes neutras derivadas
+das configurações de raio, sobrescrita de acento e visibilidade da faixa. O hook
+valida os valores do formulário e não consulta domínio nem purpose.
+
 ## 4. Tokens e fundações
 
 `src/styles/tokens.css` contém:

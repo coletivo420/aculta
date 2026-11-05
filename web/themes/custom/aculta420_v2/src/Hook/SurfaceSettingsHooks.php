@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class SurfaceSettingsHooks {
 
   public function __construct(
-    #[Autowire(service: 'theme.settings')]
+    #[Autowire(service: ThemeSettingsProvider::class)]
     private readonly ThemeSettingsProvider $themeSettings,
   ) {}
 
