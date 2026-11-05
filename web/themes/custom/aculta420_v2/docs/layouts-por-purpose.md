@@ -14,6 +14,17 @@ que o markup atual, com CSS adaptado e captura antes/depois nos dois modos.
 - **Studio e conta:** módulo `aculta_studio`, rotas `/meu-perfil`.
 - **Loja:** entra nesta rodada só com componentes sem preço (cartão e estado vazio). `price` fica fora.
 
+## 0.1 Bloqueios encontrados na execução (2026-11-05)
+
+A decisão de adotar `card-cultural` em Revista e Eventos não pode ser executada como está:
+
+- **Revista:** os cartões são `revista-teaser` (via `node--revista--teaser`). O `revista-teaser` não tem prop de `accent`, e `card-cultural` é um cartão de evento e ponto cultural (data, local, resumo). Trocar um pelo outro muda o conteúdo exibido, não só a aparência.
+- **Eventos:** a página de evento já usa `event-page-layout`. As listagens são Views (`eventos_datas_relacionadas`, `eventos_locais`, em `config/sync`), que renderizam com os templates padrão do Drupal. Adotar `card-cultural` exige um template de Views novo, que é justamente o tipo de troca que causou a regressão de `91549bc7`.
+- **Studio e Loja:** nenhum template de página localizado no repositório para `tabs`, `form-field`, `progress`, `empty-state` ou cartão de Loja.
+- **Ambiente:** `vendor/` não existe e não há servidor local, então captura visual e os gates que dependem de bootstrap do Drupal não rodam neste ambiente.
+
+Decisão necessária antes de qualquer troca de template: definir, para Revista e Eventos, se o `card-cultural` deve existir como cartão novo de listagem de eventos, ou se a faixa de acento deve ser estendida ao `revista-teaser`.
+
 ## 1. Consumo atual por componente
 
 Componentes com zero consumidores no repositório (medido por `grep` em templates
