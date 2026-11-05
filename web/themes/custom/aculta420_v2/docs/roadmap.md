@@ -128,6 +128,8 @@ Os botões do tema V2 foram integralmente migrados para o esquema único documen
 
 ## Fase 5 — Componentes e templates
 
+**Revisão 2026-11-05:** os cinco overrides de template criados em `91549bc7` (`form/form-element`, `misc/progress-bar`, `navigation/menu-local-tasks`, `views/views-view-table` e `views/views-view`) foram removidos. Eles trocavam o markup do core por markup de SDC sem manter as classes que o CSS do tema ainda usa (`form-item`, `progress`, classes de Views), o que quebrava margens e visual. A adoção de cada SDC volta a ser feita só onde preservar a estrutura, com CSS adaptado e captura antes/depois. Os componentes continuam disponíveis.
+
 **Status: implementada em 2026-11-05 — 40 componentes com catálogo e schemas estritos auditados; consumers reais implementados no tema para os 7 componentes pendentes (author-card, dialog, form-field, progress, data-table, empty-state e tabs); validação visual no servidor pendente (outro agente); `price` aguarda autorização da Loja.**
 
 ### Consumers reais dos componentes SDC implementados
