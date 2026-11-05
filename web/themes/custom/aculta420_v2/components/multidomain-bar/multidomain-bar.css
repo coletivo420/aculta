@@ -27,18 +27,19 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
   container-name: aculta-institution-bar;
   container-type: inline-size;
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-xs) var(--spacing-sm);
+  flex-wrap: nowrap;
+  gap: 0;
   justify-content: space-between;
   min-block-size: 2.25rem;
-  padding-inline: clamp(var(--spacing-base), 2.25vw, var(--spacing-xl));
+  padding-inline: clamp(var(--spacing-sm), 2.25vw, var(--spacing-xl));
 }
 
 .aculta-institution-bar__brand {
-  align-items: baseline;
+  align-items: center;
   display: flex;
   flex: 0 0 auto;
   gap: var(--spacing-xs) var(--spacing-sm);
+  min-inline-size: 0;
   margin: 0;
   padding-block: var(--spacing-xs);
 }
@@ -47,7 +48,7 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
   block-size: auto;
   display: block;
   filter: var(--logo-filter);
-  inline-size: 68px;
+  inline-size: 80px;
   max-inline-size: 100%;
 }
 
@@ -64,38 +65,28 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
 .aculta-utility {
   align-items: center;
   display: flex;
-  flex-wrap: wrap;
-  flex: 1 1 auto;
+  flex-wrap: nowrap;
+  flex: 0 1 auto;
   gap: 0;
   justify-content: flex-end;
   margin-inline-start: auto;
   min-inline-size: 0;
 }
 
+.aculta-utility > * {
+  flex: 0 0 auto;
+  margin-block: 0;
+  margin-inline: 0;
+  max-inline-size: 100%;
+  min-inline-size: var(--tap-target-min);
+}
+
 @container aculta-institution-bar (max-width: 18rem) {
   .aculta-institution-bar__brand {
-    align-self: center;
-    flex-basis: auto;
-    inline-size: 100%;
-    justify-content: center;
-    min-inline-size: 0;
+    flex: 0 0 auto;
   }
 
-  .aculta-institution-bar__home,
-  .aculta-institution-bar__logo { min-inline-size: 0; }
-
-  .aculta-institution-bar__logo { inline-size: min(68px, 100%); }
-
-  .aculta-utility {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-    justify-content: stretch;
-    margin-inline-start: 0;
-    min-inline-size: 0;
-  }
-
-  .aculta-account-menu { inline-size: 100%; justify-self: center; min-inline-size: 0; }
+  .aculta-institution-bar__inner { padding-inline: var(--spacing-xs); }
 }
 
 .aculta-account-menu__panel {
@@ -508,16 +499,9 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
     gap: var(--spacing-xs) var(--spacing-base);
   }
 
-  .aculta-institution-bar__logo {
-    inline-size: 96px;
-  }
-
   .aculta-utility {
-    flex: 0 0 auto;
+    flex: 0 1 auto;
     gap: 0;
-  }
-
-  .aculta-utility > * {
-    margin-block: 0;
+    margin-inline-start: auto;
   }
 }

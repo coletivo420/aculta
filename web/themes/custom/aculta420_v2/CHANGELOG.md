@@ -1,5 +1,11 @@
 # Changelog — ACULTA420 V2
 
+## 1.2.0-dev.19 — dá espaço aos extremos e reorganiza utilidades móveis (2026-11-05)
+
+- A logo da Institution Bar usa 80 px tanto em mobile como em desktop e mantém a proporção original; a barra não quebra de linha.
+- O recuo lateral começa em 8 px em 320 CSS px e cresce fluidamente em telas maiores. Ícones sem gap extra, com alvos de 44 px, cabem ao lado da marca em 320 CSS px.
+- Firefox ESR visível no Runtime com o CSS atualizado: propósito main, rota `/`, visitante, claro, zoom 100%, em 1014 e 500 CSS px. A logo mediu 80 px e os controles permaneceram em uma linha. Capturas em `$SUITE_OUT/aculta420-v2-institution-bar-20261105/`. Viewport físico de 320 px, modo escuro, zoom ampliado e teclado seguem DEFERRED.
+
 ## 1.2.0-dev.18 — melhora o respiro da Institution Bar (2026-11-05)
 
 - Aumentado o recuo lateral do conteúdo para afastar logo e utilidades das bordas da tela, com escala fluida baseada nos tokens de espaçamento.

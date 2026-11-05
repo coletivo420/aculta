@@ -2,20 +2,20 @@
 
 ## Shell administrativo — Institution Bar e Gin
 
-- **Implementado em `1.2.0-dev.18`:** a barra fixa mede a largura real da
-  sidebar Gin e se restringe à coluna geral. A navegação administrativa mantém
-  sua posição e não fica coberta. Em viewport estreito, marca e utilidades
-  quebram verticalmente dentro da coluna; controles conservam alvos de toque.
-- O espaçamento lateral dos extremos usa escala fluida; os ícones de utilidade
-  ficam com 32 px, o mesmo tamanho visual do avatar, e sem gap adicional entre
-  alvos. O painel da conta ancora na coluna geral.
+- **Implementado em `1.2.0-dev.19`:** a barra fixa mede a largura real da
+  sidebar Gin e se restringe à coluna geral; a navegação administrativa não é
+  coberta. Institution Bar mantém uma única linha em mobile e desktop. Logo com
+  80 px em todos os tamanhos, proporção preservada. Recuo lateral de 8 px em
+  viewport de 320 CSS px, fluido em telas maiores; ícones sem gap extra, com
+  alvos de 44 px. O painel da conta ancora na coluna geral.
 - O bloco Core Navigation `navigation_shortcuts` foi removido da configuração
   exportada porque depende do módulo `shortcut`, desativado no site, e o plugin
   legado não existe. O Runtime autenticado não mostra mais a mensagem de bloco
-  quebrado. A revisão visual seguinte, com usuário visitante no purpose main e
-  modo claro, confirmou margens laterais e espaçamento menor entre controles em
-  1024 e 500 CSS px; teclado, zoom e larguras abaixo de 500 px ficaram DEFERRED.
-  Capturas em `$SUITE_OUT/aculta420-v2-institution-bar-20261105/`.
+  quebrado. A validação visual no Firefox ESR visível, com CSS atualizado no Runtime,
+  usou visitante no purpose main, rota `/`, claro e zoom 100%, em 1014 e 500 CSS
+  px. A logo mediu 80 px nos dois viewports; a barra e os controles ficaram em
+  uma linha sem overflow. Capturas em `$SUITE_OUT/aculta420-v2-institution-bar-20261105/`.
+  Viewport físico 320 px, dark mode, zoom ampliado e teclado estão DEFERRED.
 - Firefox ESR visível autenticado com conta de teste, Gin aberto/fechado,
   claro/escuro e 11 larguras: 44/44 checks de geometria PASS. Capturas em
   `$SUITE_OUT/aculta420-v2-admin-sidebar-20261104/`. Runtime Drupal 11.5.0-beta1;
