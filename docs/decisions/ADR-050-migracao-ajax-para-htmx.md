@@ -1,6 +1,6 @@
 # ADR-050 — Migração do AJAX do ACULTA para htmx
 
-- **Status:** aceito pelo responsável em 2026-11-05. Execução **DEFERRED** no Homelab; nenhum código desta decisão foi testado nesta sessão.
+- **Status:** aceito pelo responsável em 2026-11-05. F0 executada em `htmx/f0-confirmacao` e mantida **DRAFT BLOCKED**: os testes unitários da API passaram, mas o teste Kernel e a prova de navegador dependem do banco `aculta_simpletest` e não foram executados.
 - **Data:** 2026-11-05.
 - **Relaciona-se com:** ADR-044 (opção C, htmx), ADR-045 (um único módulo de AJAX; sem Core fora do escopo), ADR-046 (V2), ADR-048 (popup de foto), ADR-049 (AJAX do Studio, revisado por este ADR), `docs/portal/CROSS-DOMAIN-REQUEST-POLICY.md`, `docs/portal/PAYMENT-DOMAIN-POLICY.md`.
 
