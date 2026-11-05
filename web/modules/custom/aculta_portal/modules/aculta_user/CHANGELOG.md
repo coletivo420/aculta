@@ -1,3 +1,10 @@
+## Não versionado — liberação de HX-Request em AccountModalAccess (ADR-050 F2 item 3)
+
+- `AccountModalAccess::isModalRequest()` passa a aceitar o cabeçalho `HX-Request`,
+  permitindo que requisições GET/POST via HTMX abram os formulários modais de
+  perfil (bio e redes sociais) sem disparar 403.
+- Adiciona o contexto de cache `headers:HX-Request` ao resultado de acesso.
+
 ## Não versionado — migração HTMX da bio bloqueada (ADR-050 F2 item 3)
 
 - Tentativa de trocar o modal `use-ajax`/fetch da bio por um `<dialog>` com
