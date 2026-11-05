@@ -1,6 +1,6 @@
 # ADR-048 — Layouts de página do tema ACULTA420 V2
 
-- **Status:** aceito pelo responsável em 2026-11-04. Atualizado em 2026-11-05: navegação do Studio e nome confirmados; a sub-navegação da conta foi definida pela recomendação (ver item 5). Pontos ainda abertos da especificação visual estão na seção 9 de `web/themes/custom/aculta420_v2/docs/studio-visual-spec.md`.
+- **Status:** aceito pelo responsável em 2026-11-04. Atualizado em 2026-11-05: nome confirmado; sub-navegação da conta em coluna vertical dentro do conteúdo, conforme a imagem do responsável (item 5); rota inicial do Studio na raiz do purpose de conta (item 9); a navegação principal do Studio está em revisão, porque a imagem mostra abas horizontais (item 5). Pontos abertos da especificação visual estão na seção 9 de `web/themes/custom/aculta420_v2/docs/studio-visual-spec.md`.
 - **Data:** 2026-11-04.
 - **Relaciona-se com:** ADR-046 (shell, fundações e Fase 4), ADR-047 (menu de conta), ADR-038 (suítes do ACULTA Studio), `web/themes/custom/aculta420_v2/docs/layouts-plan.md` (pesquisa e detalhamento).
 
@@ -35,10 +35,10 @@
    - `60rem` (960 px): a variante `aside` passa a duas colunas.
    - A proposta de `60rem` vem do cálculo das colunas (leitura de 36 rem, barra lateral de 16 rem, espaço e margens, cerca de 56 rem), não de uma referência externa verificada. A validação deve testar 959, 960 e 961 px e zoom de 200%.
 5. **Navegação do Studio.**
-   - **Desktop:** navegação vertical à esquerda em todas as telas pessoais do Studio (dashboard, Meu Perfil e Minha conta). Confirmado pelo responsável em 2026-11-05.
+   - **Desktop, em revisão:** a conversa de 2026-11-05 confirmou navegação vertical à esquerda em todas as telas pessoais. A imagem enviada depois mostra a navegação do Studio como **abas horizontais** no topo das quatro telas (Dashboard, Meu Perfil, Minha conta, Meu trabalho). Pergunta aberta ao responsável: qual dos dois vale para a navegação principal do Studio.
    - **Mobile:** o mesmo padrão do mockup de celular. A navegação vira um menu no cabeçalho (`list`) e o conteúdo fica em uma coluna.
    - As suítes (Marley, Ganjalab, WE Sativa, Culturas, Green Stash) mantêm abas horizontais no topo da página.
-   - **Minha conta:** como a navegação do Studio já fica à esquerda, as seções da conta (dados cadastrais, endereço, documentos, e-mail e segurança, senha, contas conectadas, pedidos, apoio e preferências) viram **abas horizontais** no topo do conteúdo, para não haver duas colunas de navegação. No mobile, a mesma lista de abas tem rolagem horizontal. Esta é a recomendação aplicada por padrão; se o responsável preferir uma segunda coluna, o ADR é revisado.
+   - **Minha conta (confirmado em 2026-11-05 pela imagem do responsável):** as seções da conta (dados cadastrais, endereço, documentos, e-mail e segurança, senha, contas conectadas, pedidos, apoio e preferências) ficam em uma **coluna vertical dentro do conteúdo**, à esquerda do formulário, com a seção ativa destacada. No mobile, essa lista vira uma linha horizontal com rolagem no topo do conteúdo. Isso não é a navegação principal do Studio, que segue o item acima.
 6. **Nome da área:** "ACULTA Studio", confirmado pelo responsável em 2026-11-05, conforme o ADR-038. O nome "ACULTA Drupal Studio" do material visual não é usado em rótulos.
 7. **Mobile-first e acessibilidade:**
    - Landmarks: `banner`, `main`, `complementary` (só quando a barra lateral tem conteúdo) e `contentinfo`.
@@ -46,6 +46,7 @@
    - Compensação da barra fixa com `scroll-padding-top` na base, sem JavaScript.
    - Sem rolagem horizontal da página em zoom de 200% e 400%.
 8. **Privacidade das telas de conta.** As telas de Minha conta e Meu Perfil mostram dados privados: `noindex` por rota e sem cache público.
+9. **Rota inicial do Studio.** A tela inicial (dashboard) fica na raiz (`/`) do purpose de conta, ou seja, no subdomínio `conta.aculta.*`. Caminhos `/studio*` continuam não existindo (ADR-038). As suítes mantêm caminho próprio (`/marley`, `/ganjalab`, `/we-sativa`, `/culturas`, `/green-stash`) no mesmo purpose. Os nomes reais de host ficam em `docs/architecture/multidomain.md`, não neste ADR.
 
 ## 3. Consequências
 

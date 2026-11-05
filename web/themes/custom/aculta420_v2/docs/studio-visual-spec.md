@@ -54,7 +54,7 @@ Duas linhas, de acordo com o celular do material:
 
 ## 3. Navegação do Studio
 
-### 3.1 Desktop: navegação vertical à esquerda (decidido, ADR-048; confirmado em 2026-11-05)
+### 3.1 Desktop: navegação vertical à esquerda (EM REVISÃO: a imagem de 2026-11-05 mostra abas horizontais)
 
 Vale para todas as telas pessoais do Studio: dashboard, Meu Perfil e Minha conta.
 
@@ -125,10 +125,10 @@ Para cada tela: variante (ADR-048), posição, componentes sugeridos e comportam
 
 ### 4.3 Minha conta (dados cadastrais)
 
-- **Variante:** `aside` no desktop (a coluna lateral é a navegação do Studio, seção 3.1); `stack` no mobile.
+- **Variante:** `aside` no desktop (a coluna lateral é a sub-navegação da conta, dentro do conteúdo); `stack` no mobile.
 - **Título:** "Minha conta" (H1).
 - **Desktop:**
-  - Seções da conta como **abas horizontais** no topo do conteúdo, nesta ordem: **Dados cadastrais**, Endereço, Documentos, E-mail e segurança, Senha, Contas conectadas, Meus pedidos, Meu apoio, Preferências. Aba ativa: fundo `--color-brand-highlight`, texto `--color-on-highlight`, peso 600, `aria-current="page"`. Não há segunda coluna de navegação (ADR-048, item 5).
+  - Sub-navegação **vertical, dentro do conteúdo**, em uma coluna à esquerda do formulário (conforme a imagem do responsável em 2026-11-05). Itens, nesta ordem: **Dados cadastrais**, Endereço, Documentos, E-mail e segurança, Senha, Contas conectadas, Meus pedidos, Meu apoio, Preferências. Item ativo: fundo `--color-brand-highlight`, texto `--color-on-highlight`, peso 600, `aria-current="page"`. O formulário fica em um cartão à direita, com título "Dados cadastrais (privados)" e campos em coluna. Esta coluna não é a navegação principal do Studio (ADR-048, item 5).
   - Painel à direita, cartão com título **"Dados cadastrais (privados)"** (Oswald). O rótulo "(privados)" é texto fixo: informa que a tela não é pública.
   - Campos, em duas colunas de rótulo e campo, com asterisco nos obrigatórios:
     - Nome completo* (texto)
@@ -136,7 +136,7 @@ Para cada tela: variante (ADR-048), posição, componentes sugeridos e comportam
     - Telefone (texto, máscara a definir)
     - Data de nascimento (data, com ícone `calendar-blank` no campo)
   - Botão **"Salvar"** amarelo, abaixo, alinhado à esquerda.
-- **Mobile:** as abas viram uma **lista horizontal com rolagem** no topo do conteúdo, com o item ativo marcado. Abaixo, o formulário em coluna única, com rótulo acima do campo.
+- **Mobile:** a sub-navegação vira uma **lista horizontal com rolagem** no topo do conteúdo, com o item ativo marcado. Abaixo, o formulário em coluna única, com rótulo acima do campo.
 
 ### 4.4 Meu trabalho (Marley: revista e galeria)
 
@@ -298,11 +298,11 @@ Tamanhos: 20 a 24 px na navegação e nos botões; 36 a 40 px nos ícones de car
 
 ## 9. Pendências e incoerências do material (decidir antes de implementar)
 
-1. **Navegação das telas pessoais: resolvido em 2026-11-05.** Vertical à esquerda em dashboard, Meu Perfil e Minha conta (seção 3.1). Suítes continuam com abas no topo.
-2. **Sub-navegação da conta: aplicado por recomendação.** As seções da conta são abas horizontais no topo do conteúdo (seção 4.3). O responsável não respondeu a este ponto explicitamente; se preferir a segunda coluna, esta seção e o ADR-048 são revisados.
+1. **Navegação principal do Studio: EM CONFLITO, pergunta aberta.** A conversa confirmou navegação vertical à esquerda (seção 3.1). A imagem enviada em 2026-11-05 mostra a navegação do Studio como abas horizontais no topo das quatro telas. Confirmar qual vale. Suítes continuam com abas no topo.
+2. **Sub-navegação da conta: resolvido em 2026-11-05.** Coluna vertical dentro do conteúdo, conforme a imagem do responsável (seção 4.3).
 3. **Rótulos "Minha conta" e "Sair" no mobile.** O material os mostra no celular, mas em 320 px podem não caber. Proposta: só ícone, com `aria-label`. Confirmar.
 4. **Item "Ajuda".** Aparece nas abas do material, mas não está na navegação do dashboard nem no ADR. Incluir ou não?
-5. **Rota do Studio.** A URL do material é `/studio`. O ADR-038 diz que todos os caminhos `/studio/*` respondem 404, e que cada suíte tem caminho próprio (`/marley`, `/ganjalab`, `/we-sativa`, `/culturas`, `/green-stash`). **O caminho da tela inicial do Studio ainda não foi definido.** Isso é decisão do responsável e de quem cuida das rotas.
+5. **Rota do Studio: resolvido em 2026-11-05.** A tela inicial do Studio (dashboard) fica na raiz (`/`) do purpose de conta, no subdomínio `conta.aculta.*`. Caminhos `/studio*` continuam não existindo (ADR-038, ADR-048 item 9). Suítes mantêm caminho próprio.
 6. **Domínio na imagem:** a imagem mostra `aculta.org.br`. O projeto usa `aculta.org`. Não usar o domínio da imagem em nenhum texto ou link.
 7. **Nome: resolvido em 2026-11-05 ("ACULTA Studio").** "Multidomínio" aparece no cabeçalho desktop; ainda confirmar se fica.
 8. **Dados privados:** "Dados cadastrais (privados)" inclui telefone e data de nascimento. Antes de implementar esses campos, confirmar com o responsável se são necessários, e tratar a tela como privada (`noindex`, sem cache público, ADR-048).
