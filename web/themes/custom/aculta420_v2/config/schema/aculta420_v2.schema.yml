@@ -1,4 +1,4 @@
-# Configuração do tema ACULTA420 V2 (scaffold, ver docs/configuracao-do-tema.md).
+# Configuração do tema ACULTA420 V2 (ver docs/configuracao-do-tema.md).
 aculta420_v2.settings:
   type: theme_settings
   label: 'ACULTA420 V2 settings'

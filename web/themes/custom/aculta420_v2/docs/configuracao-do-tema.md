@@ -52,11 +52,12 @@ Pela regra de fronteiras (AGENTS, seção 2 e 3), estas opções **não ficam no
 
 1. Classes neutras `aculta-radius--*` e `aculta-accent--*` são aplicadas no
    `<body>` por `SurfaceSettingsHooks::preprocessHtml`, sem lógica de domínio.
-2. Criar as variáveis `--radius-control-button`, `--radius-control-card` e
-   `--radius-control-field` em `src/styles/tokens.css`, com um valor por classe.
+2. Tokens `--radius-control-button`, `--radius-control-card` e
+   `--radius-control-field` já estão em `src/styles/tokens.css`.
 3. Trocar o uso de `--radius-base` nos componentes (botão, cartão, campo) pelas
    novas variáveis.
-4. Incluir `--accent-*-stripe` (ver `docs/superficies.md`, seção 8.2).
+4. Tokens `--accent-*-stripe` já estão em `src/styles/tokens.css` conforme
+   `docs/superficies.md`, seção 8.2.
 5. Capturas nos dois modos e gates (`docs/gates.md`), no Homelab.
 6. Exportar a configuração com `drush cex` para `config/sync` antes do RC.
    `config:status` está limpo; nenhuma alteração no Runtime ou export foi
