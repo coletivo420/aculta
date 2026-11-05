@@ -53,6 +53,25 @@ Estes caminhos não entram no contexto sem motivo específico da tarefa. Quando 
 | `handoff/` | 784 KB | ativos de marca (podplant420); consulte pelo caminho exato |
 | `docs/history/` | 2,5 MB | arquivos históricos (worklogs, changelogs antigos, estados, rodadas) |
 | logs de execução (`$SUITE_OUT`, temporários) | variável | evidência privada e volumosa; use `agent-output.py` |
+| `web/modules/custom/aculta_portal/modules/aculta_forum/docs/ROADMAP.md` | 142 KB | roadmap; leia só a seção pelo título: `rg -n '^## ' <arquivo>` |
+| `web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md` | 108 KB | roadmap; mesma regra de seção |
+| `web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md` | 93 KB | roadmap; mesma regra de seção |
+| `web/modules/custom/aculta_portal/modules/aculta_wiki/docs/TEST-MATRIX.md` | 49 KB | matriz de rodadas datadas; leia a rodada citada |
+| `web/modules/custom/aculta_portal/modules/aculta_wiki/README.md` | 50 KB | README longo; leia a seção pelo título |
+| `web/modules/custom/aculta_portal/modules/aculta_events/docs/ROADMAP.md` | 57 KB | roadmap; mesma regra de seção |
+| `web/modules/custom/aculta_portal/modules/aculta_messenger/docs/ROADMAP.md` | 48 KB | roadmap; a evolução por dev.N está arquivada |
+| `web/modules/custom/aculta_portal/modules/aculta_document_viewer/docs/ROADMAP.md` | 34 KB | roadmap; mesma regra de seção |
+| `docs/portal/ROADMAP.md` | 34 KB | roadmap do Portal; leia só a fase citada (`portal-agent-budget.py` lê este arquivo) |
+| `docs/portal/TOKENS-E-ATRIBUTOS.md` | 102 KB | referência de tokens; consulte a classe ou o atributo com `rg` |
+| `docs/architecture/ROUTES-SITEMAP.md` | 119 KB | mapa de rotas; consulte a rota com `rg` |
+| `README.md` (raiz) | 101 KB | leia só a seção necessária (`rg -n '^## ' README.md`) |
+| `docs/operations/DEBT-REGISTER.md` | 68 KB | registro de dívidas; busque o ID com `rg -n "DT-"` e leia só a linha |
+| `docs/modules/ACULTA-LMS-ROADMAP.md` | 78 KB | roadmap do LMS; leia só a seção citada |
+| `docs/operations/ACULTA-MODULES-CLOSEOUT.md` | 71 KB | fechamento de módulos; leia só o módulo citado |
+| `docs/portal/ACULTA-USER-PLAN.md` | 66 KB | plano de usuário; leia só a seção citada |
+| `CHANGELOG.md` de módulos acima de 40 KB | variável | leia só a primeira entrada, com `head -40` |
+
+Roadmaps e matrizes arquivados (rodadas e fases encerradas): `docs/history/modules/`. Não leia por padrão.
 
 Regra complementar: em documento ativo, cite o caminho canônico, não o histórico. Histórico só se a tarefa for auditar o passado.
 
