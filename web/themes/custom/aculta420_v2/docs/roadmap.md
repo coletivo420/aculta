@@ -7,7 +7,7 @@
   sua posição e não fica coberta. Em viewport estreito, marca e utilidades
   quebram verticalmente dentro da coluna; controles conservam alvos de toque.
 - O espaçamento lateral dos extremos usa escala fluida; os ícones de utilidade
-  ficam com 32 px, o mesmo tamanho visual do avatar, e sem gap adicional entre
+  ficam com 30 px, conforme ADR-047, e sem gap adicional entre
   alvos. O painel da conta ancora na coluna geral.
 - O bloco Core Navigation `navigation_shortcuts` foi removido da configuração
   exportada porque depende do módulo `shortcut`, desativado no site, e o plugin

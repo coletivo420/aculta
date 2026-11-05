@@ -71,4 +71,3 @@ Aplica-se a todo CSS, componente SDC, template e shell da V2. Fonte normativa: `
 - Gates do tema (SDC, fundações, shell, validadores de navegador) no servidor de desenvolvimento (Drupal 11.5).
 - Gate de contrato no Portal para a chave de purpose.
 - Teste visual em Firefox, em claro e escuro, de 320 px a desktop, com zoom e teclado.
-- Teste das páginas do Portal também com o tema Olivero (CLAUDE.md).

@@ -93,4 +93,3 @@ Cada fase termina em PR própria, com `RUNTIME STATUS: DEFERRED` enquanto o cód
 
 - Gates do tema e Portal, conforme `docs/gates.md`, executados no servidor de desenvolvimento.
 - Capturas em Firefox ESR visível, nas larguras e modos da seção 4, em `$SUITE_OUT`, fora do repositório.
-- Páginas do Portal também com o tema Olivero (CLAUDE.md).

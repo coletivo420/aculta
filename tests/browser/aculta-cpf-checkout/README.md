@@ -69,36 +69,6 @@ Fluxo principal da frente:
 Evidências (PNG e um HTML) em `$SUITE_OUT`, informado pelo operador em
 armazenamento persistente fora do repositório e de `/tmp`.
 
-### `olivero-smoke.py`
-
-Verificação do tema **Olivero** nas páginas públicas, feita no **ambiente
-local** e não no servidor de desenvolvimento. O Apache local responde pelos mesmos
-hostnames de teste; o perfil do Firefox recebe `network.dns.localDomains`
-com a lista de hosts, então tudo resolve para 127.0.0.1.
-
-O script não troca o tema: ele só mede. Ative o Olivero antes e garanta a
-restauração com `trap`, para não deixar o tema global trocado:
-
-```bash
-cd /home/piradopirata/projetos/aculta
-vendor/bin/drush theme:enable olivero -y
-restore() { vendor/bin/drush config:set system.theme default aculta420 -y >/dev/null; }
-trap restore EXIT
-vendor/bin/drush config:set system.theme default olivero -y
-vendor/bin/drush cache:rebuild >/dev/null
-DISPLAY=:0 python3 -I tests/browser/aculta-cpf-checkout/olivero-smoke.py
-```
-
-Páginas medidas: raiz do Portal (`aculta.toca.net.br/`), raiz do Fórum
-(`growroom420.aculta.toca.net.br/`, que serve a view `/discussoes`) e raiz
-da Revista (`revista420.../`; `/revista` responde 301 para `/`). Saída em
-`$SUITE_OUT`, informado pelo operador em armazenamento persistente.
-
-O resultado prova que o tema carrega e renderiza sem erro; não prova o
-conteúdo completo — o banco local não tem tópicos de fórum nem matérias de
-revista, e Portal/Revista dependem de blocos posicionados em regiões do tema
-`aculta420`, que o Olivero não renderiza.
-
 ## Limitações conhecidas do ambiente de teste
 
 - **Gateway desabilitado:** o checkout para em `informacoes-do-pedido` com

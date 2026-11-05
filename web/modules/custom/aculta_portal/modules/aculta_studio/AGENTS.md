@@ -56,7 +56,7 @@ Entity Access. Criar/editar/contribuir/acompanhar continuam em rotas e Form API
 do módulo Wiki, com link de retorno cacheável dos formulários ao Meu Trabalho
 quando Studio e acesso estiverem disponíveis. A classe Kernel integrada passou
 em Wiki dev.77 (23/1.039 para o ciclo Wiki, incluindo o workspace); Firefox/X11,
-320 px, Olivero e Runtime seguem sem homologação.
+320 px e Runtime seguem sem homologação.
 
 Estas regras foram realocadas do arquivo histórico de instruções; aplique somente no escopo correspondente. O `AGENTS.md` raiz continua obrigatório.
 

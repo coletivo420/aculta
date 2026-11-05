@@ -107,7 +107,6 @@ pasta.
 | `login-probe.py` | descoberta de seletores do login, `/dados` e página de produto da Loja | servidor de desenvolvimento |
 | `login-captcha.py` | login com espera do token do Cloudflare Turnstile | servidor de desenvolvimento |
 | `multi-tab-checkout.py` | carrinho e checkout em múltiplas abas, cookies sem valor, LMS (`/group/1`) | servidor de desenvolvimento |
-| `olivero-smoke.py` | tema Olivero no Portal, Fórum e Revista; assets do tema, erros visíveis, screenshot | ambiente local |
 
 ### `aculta-wiki/`
 
@@ -126,14 +125,6 @@ Raiz da Conta (Domain ACCOUNT) sem sessão: `/` e `/conta-legada` levam ao login
 público e reflow 1280/390/320 px usando uma entidade temporária `[TESTE]` no
 Runtime de desenvolvimento. Requer uma sessão administrativa efêmera. Ver o
 README local para criação e limpeza da fixture.
-
-### `aculta-portal-cep/`
-
-`olivero.py` verifica o formulário autenticado de endereço, o preenchimento
-assíncrono do CEP, campos bloqueados e reflow 1280/390/320 px com o tema Olivero.
-Usa conta descartável e link ULI; não submete o formulário. A ativação temporária
-do tema deve ser restaurada pelo `trap` documentado no README local. Capturas e
-link ULI ficam em `$SUITE_OUT`.
 
 ### `aculta-image-admin/`
 
@@ -176,7 +167,6 @@ deixou. Servem de referência de fluxo; ao evoluí-los, considere movê-los para
 ## Evidência das últimas rodadas
 
 - CPF/checkout, servidor de desenvolvimento: `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`, seção 9.6.
-- Olivero, ambiente local: mesma seção, subseção "Tema Olivero no ambiente local".
 
 ## Registro transversal do projeto — 2026-10-31
 

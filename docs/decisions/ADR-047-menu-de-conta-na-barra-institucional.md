@@ -40,7 +40,6 @@
 - Gate de administração e integrações no MAIN, se o dropdown tiver ação administrativa: `validate-admin-routes-main-domain.php`.
 - Teste no Firefox: 320 px a desktop, claro e escuro, zoom de 200%, teclado (Tab, Enter, Esc), logado e visitante, em cada purpose.
 - Verificação de rolagem horizontal da página em 320 px com a barra fixa.
-- Testes das páginas do Portal também com o tema Olivero (CLAUDE.md).
 - Runtime: `RUNTIME STATUS: DEFERRED` até o teste no servidor de desenvolvimento.
 
 ## 5. Não-decisões

@@ -11,7 +11,7 @@ Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/we-sati
   formulário próprio e classes de prévia; componentes neutros têm fallback
   semântico; o ACULTA420 mantém um único `h1` nas páginas contextuais. Firefox
   ESR/X11: ACULTA420 público 130/130, WE SATIVA 34/34, moderação 22/22, teclado
-  49/49, sem-JS 16/16; Olivero 130/130, 31/31, 20/20, 50/50, 16/16; decisão
+  49/49, sem-JS 16/16; decisão
   41/41 com fixture removida; modo escuro confirmado. Pendentes: leitor de tela,
   WCAG completa, zoom real e divergência RBAC das permissões de proposta.
 
@@ -260,7 +260,7 @@ Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/we-sati
 
 - Dev.67: Firefox ESR/X11, 46/46 em home/listagem/busca a 1280/390/320 px;
   submit do cabeçalho corrigido no `aculta420` 0.6.1-dev.5. CSS atual entrou
-  por GET browser-only; agregado Runtime, Olivero e WCAG integral pendentes.
+  por GET browser-only; agregado Runtime e WCAG integral pendentes.
 
 - Dev.66: Kernel caracteriza limite de 5.000 caracteres, bloqueio de proposta
   retirada, conflito de revisão-base, subconjunto/modes e transição oficial
@@ -480,8 +480,7 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
   ambiente.
 - Preserve UUIDs e IDs de `config/sync`; a propriedade da configuração ainda é
   decisão pendente do responsável.
-- Teste com o tema ACULTA420 e também com o Olivero: o que é do módulo deve
-  funcionar sem o tema.
+- Teste contratos e renderização do módulo sem dependência do tema ACULTA420.
 - Use os gates pertinentes ao diff. Não deduza o estado do Runtime a partir
   desta documentação.
 - Imagem de destaque (dev.12): armazenar em `private://wiki/imagens`; a Media
