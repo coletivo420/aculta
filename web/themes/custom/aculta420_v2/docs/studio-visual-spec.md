@@ -136,7 +136,7 @@ Para cada tela: variante (ADR-048), posição, componentes sugeridos e comportam
   2. Texto: "Escolha uma imagem e ajuste o enquadramento antes de salvar."
   3. Campo **"Foto"** (envio): "Envie uma imagem PNG, JPG, GIF ou WebP de até 10 MB." O campo começa vazio.
   4. Linha de ações, nesta ordem:
-     - **Sortear novo avatar**: só quando a foto é do acervo. Troca só a prévia, por AJAX, e não grava.
+     - **Sortear novo avatar**: só quando a foto é do acervo. Troca só a prévia, por AJAX (ADR-049), e não grava.
      - **Remover foto**: só quando a foto é pessoal. Volta a um avatar do acervo.
      - **Salvar foto do perfil**: ação primária.
 - **Recorte:** ao concluir o envio, abre sozinho o modal "Recortar foto". Abre uma vez por arquivo por sessão do navegador. Botões: **Aplicar recorte** (primário) e **Cancelar** (link). Aplicar já troca a foto e recarrega a tela; não há segunda etapa de salvar.
@@ -144,7 +144,7 @@ Para cada tela: variante (ADR-048), posição, componentes sugeridos e comportam
 - **Tamanho e rolagem (referência V1, `dialog.css`):** largura de `min(560px, 100vw − 2rem)`; altura máxima de 75vh com rolagem interna. No mobile, ocupa a largura disponível.
 - **Estilo na V2:** os botões usam o componente `button` (seção 6). O `<dialog>` segue a aparência da V1 (`photo-dialog` e `avatar-crop-dialog`, `dialog.css`), com as mesmas dimensões.
 - **Mudança no Portal:** o popup de foto precisa de alteração no `aculta_user` (PR própria, com gate de foto). Ver ADR-048, item 10.
-- **Pendente:** (1) decidir como o envio de arquivo e o sorteio, que usam AJAX do Drupal, funcionam dentro do `<dialog>`; (2) capturar o modal atual na V1 (claro e escuro, 320 e 1440 px) como referência; (3) confirmar a ordem e o rótulo dos botões nessa captura.
+- **Pendente:** (1) implementar o envio de arquivo e o sorteio com o módulo AJAX do Studio (ADR-049); (2) capturar o modal atual na V1 (claro e escuro, 320 e 1440 px) como referência; (3) confirmar a ordem e o rótulo dos botões nessa captura.
 
 ### 4.3 Minha conta (dados cadastrais)
 
@@ -333,7 +333,7 @@ Estado em 2026-11-05. "Decidido" = resposta do responsável; "padrão" = sem pre
 8. **Dados privados (telefone e data de nascimento): padrão.** Mostrar e editar em "Dados cadastrais (privados)". Tela tratada como privada (`noindex`, sem cache público, ADR-048). Confirmar a necessidade dos campos.
 9. **Diálogo "Selecionar local" no mobile: decidido.** Diálogo, como o popup de login (seção 4.7).
 10. **Papel Estudante e Educador: verificado, a confirmar.** No LMS, "Educador(a)" é um papel contextual por curso: `EducatorFeedbackPolicy` só atribui esse papel a quem é educador do curso. "Estudante" é o dono da resposta ou da matrícula naquele curso. Não é campo do Profile nem role global do Drupal. Portanto, a Ganjalab deve receber o papel do curso, não do perfil. Confirmar.
-11. **Popup de foto: padrão.** Envio de arquivo e sorteio com `Drupal.ajax` dentro do `<dialog>` (seção 4.2.1). Confirmar após checar a dependência de jQuery no `core/misc/ajax.js` do 11.5.
+11. **Popup de foto: decidido.** Envio de arquivo e sorteio com Fetch próprio no `<dialog>`, por um único módulo JavaScript (ADR-049, seção 4.2.1).
 12. **Rotas de perfil e conta: padrão.** `/meu-perfil` e `/minha-conta`, pela regra de URLs públicas em português. Confirmar.
 13. **Dados ilustrativos:** nomes, datas, cidades e e-mails das imagens são exemplos. Não copiar para fixtures de produção.
 

@@ -153,7 +153,7 @@ Decisões de 2026-11-05 estão em `studio-visual-spec.md`, seção 9. Resta:
 
 1. **Como trocar de domínio sem o seletor "Multidomínio".** Candidato: listar os domínios dentro do hambúrguer.
 2. **Rotas em português (padrão `/meu-perfil` e `/minha-conta`).** Confirmar.
-3. **Popup de foto: envio e sorteio.** Padrão: `Drupal.ajax` dentro do `<dialog>`. Confirmar a dependência de jQuery no `core/misc/ajax.js` do 11.5.
+3. **Popup de foto: envio e sorteio.** Decidido: Fetch próprio no `<dialog>`, com AJAX do Studio (ADR-049).
 4. **Papel Estudante e Educador.** Verificado no LMS: "Educador(a)" é papel contextual por curso (`EducatorFeedbackPolicy`). A Ganjalab deve usar o papel do curso, não do Profile. Confirmar.
 5. **Campos privados (telefone e data de nascimento).** Padrão: mostrar e editar. Confirmar a necessidade.
 6. **Mudança no `aculta_user`:** entregar `aculta_account_name` (PR própria no Portal).

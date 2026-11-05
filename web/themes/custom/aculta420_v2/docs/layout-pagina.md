@@ -274,8 +274,8 @@ tema, como o login da V2 (ADR-048, 10).
   "Salvar foto do perfil").
 - Ao enviar um arquivo, abre sozinho o recorte "Recortar foto", com "Aplicar
   recorte" e "Cancelar".
-- Mecanismo de envio e sorteio: **padrão** `Drupal.ajax` dentro do `<dialog>`,
-  a confirmar (ver [studio-estrutura.md](studio-estrutura.md), seção 5).
+- Mecanismo de envio e sorteio: Fetch próprio no `<dialog>`, por um único módulo
+  JavaScript (ADR-049). Sem `Drupal.ajax`.
 
 ### 8.3 Regras comuns dos popups
 
