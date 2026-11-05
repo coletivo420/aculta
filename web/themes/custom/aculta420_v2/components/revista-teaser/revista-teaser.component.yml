@@ -1,0 +1,48 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Publicação da Revista
+description: Cartão editorial para teasers de publicação, usado na listagem e em Views.
+status: stable
+group: Revista
+props:
+  type: object
+  additionalProperties: false
+  required: [title, url]
+  properties:
+    title:
+      type: string
+      title: Título da publicação
+      minLength: 1
+    url:
+      type: string
+      title: URL canônica
+      format: uri-reference
+    has_category:
+      type: boolean
+      title: Categoria disponível
+      default: false
+    has_subtitle:
+      type: boolean
+      title: Chamada disponível
+      default: false
+    has_summary:
+      type: boolean
+      title: Resumo disponível
+      default: false
+    has_cover:
+      type: boolean
+      title: Capa disponível
+      default: false
+    read_label:
+      type: string
+      title: Texto do link
+      default: Leia a publicação
+slots:
+  image:
+    title: Capa
+    description: Render array da mídia editorial.
+  category:
+    title: Categoria editorial
+  subtitle:
+    title: Chamada
+  summary:
+    title: Resumo

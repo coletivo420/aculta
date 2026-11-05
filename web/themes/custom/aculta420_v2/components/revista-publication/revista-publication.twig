@@ -1,0 +1,12 @@
+<div class="revista-publication">
+  {% if has_meta %}<div class="revista-publication__meta">{% block meta %}{% endblock %}</div>{% endif %}
+  {% if has_cover %}
+    <figure class="revista-publication__cover">{% block cover %}{% endblock %}</figure>
+  {% endif %}
+  {% if has_subtitle %}<div class="revista-publication__subtitle">{% block subtitle %}{% endblock %}</div>{% endif %}
+  {% if has_summary %}<div class="revista-publication__summary">{% block summary %}{% endblock %}</div>{% endif %}
+  <div class="revista-publication__body">{% block body %}{% endblock %}</div>
+  {% if has_footer %}<footer class="revista-publication__footer">{% block footer %}{% endblock %}</footer>{% endif %}
+  {% if has_authors %}<section class="revista-publication__authors">{% block authors %}{% endblock %}</section>{% endif %}
+  {% if has_discussion %}<section class="revista-publication__discussion">{% block discussion %}{% endblock %}</section>{% endif %}
+</div>

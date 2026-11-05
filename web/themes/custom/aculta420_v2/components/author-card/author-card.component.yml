@@ -1,0 +1,76 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Cartão de autoria
+description: Identidade pública preparada pelo módulo aculta_user, sem leitura de entidades no tema.
+status: stable
+group: ACULTA
+props:
+  type: object
+  additionalProperties: false
+  required: [variant, display_name]
+  properties:
+    variant:
+      type: string
+      title: Contexto de autoria
+      enum: [profile_full, profile_compact, author_editorial, author_comment, author_forum, author_forum_stacked, author_lms, author_wiki, author_growroom_historico, author_minimal]
+    size:
+      type: string
+      title: Tamanho
+      enum: [sm, md, lg]
+      default: md
+    display_name:
+      type: string
+      title: Nome público
+    profile_url:
+      type: [string, 'null']
+      title: Perfil público
+      format: uri-reference
+      default: null
+    source_label:
+      type: [string, 'null']
+      title: Origem histórica
+      default: null
+    has_avatar:
+      type: boolean
+      title: Avatar disponível
+      default: false
+    has_actions:
+      type: boolean
+      title: Ações disponíveis
+      default: false
+    member_since:
+      type: [string, 'null']
+      title: Ano de entrada
+      default: null
+    designation:
+      type: [string, 'null']
+      title: Designação contextual
+      default: null
+    bio:
+      type: [string, 'null']
+      title: Biografia autorizada
+      default: null
+    social_links:
+      type: array
+      title: Redes públicas
+      default: []
+      items:
+        type: object
+        additionalProperties: false
+        required: [network, label, url]
+        properties:
+          network:
+            type: string
+            enum: [instagram, facebook, reddit]
+          label:
+            type: string
+            minLength: 1
+          url:
+            type: string
+            format: uri
+slots:
+  avatar:
+    title: Avatar
+    description: Render array autorizado pelo aculta_user.
+  actions:
+    title: Ações
+    description: Render arrays de ações fornecidos pelo proprietário funcional.

@@ -12,10 +12,10 @@ Tokens semânticos                 → usados pelos componentes
 Fundações                         → tipografia, espaçamento, foco, movimento, reflow
 Componentes SDC                   → apresentação, props com schema estrito
 Shell                             → barra institucional, navegação, regiões da página
-Templates de página e de conteúdo → por tipo de conteúdo (ainda a fazer)
+Templates de página e de conteúdo → Revista migrada; outros tipos ainda a fazer
 ```
 
-Hoje estão entregues as três primeiras camadas, os componentes do shell e a navegação SDC. Templates por tipo de conteúdo ainda não existem na V2 (Fase 5).
+Hoje estão entregues as três primeiras camadas, os componentes do shell e a navegação SDC. Os templates e SDCs da Revista já adaptam as listagens, teasers, artigos e autoria; os demais tipos de conteúdo seguem pendentes (ADR-046, Fases 4–5).
 
 ## 2. Fronteira com o Portal
 
@@ -35,6 +35,7 @@ O tema não conhece hostnames, domínios, purposes ou regras de acesso. Ele rece
 | `aculta_search_utility` | Portal (`aculta_portal/search-preview`) | gatilho de busca |
 | `aculta_brand_home` | Portal | destino do logotipo |
 | `aculta_color_mode` | Portal | `light` ou `dark` (demais valores viram `light`) |
+| `aculta_user_author_card` | `aculta_user` | render array cacheável de identidade pública; o template do tema o encaminha ao SDC `author-card` |
 
 Regras:
 
@@ -73,6 +74,16 @@ Todo o JavaScript é vanilla, com `Drupal.behaviors` e `core/once`. Não há jQu
 | `js/messenger-drawers.js` | gaveta de mensagens: novo contato a partir do perfil, confirmações de bloqueio e desfazer amizade dentro de `<dialog>` |
 | `js/counters.js` | atualiza contadores das utilidades |
 | `js/alerts-dismiss.js` | dispensa de avisos |
+
+Os adapters de tema `templates/content/node--revista--teaser.html.twig` e
+`node--revista--full.html.twig` passam os campos renderizados do nó para os
+slots de `revista-teaser` e `revista-publication`. A View
+`templates/views/views-view--revista-sessoes--page-revista.html.twig` encaminha
+suas linhas já renderizadas para `revista-listing`. A folha dos SDCs preserva a
+grade editorial, capa 16:9, destaque da primeira publicação em telas amplas e
+coluna de leitura do artigo. O adapter
+`templates/aculta-user-author-card.html.twig` converte a API visual
+`aculta_user_author_card` para `author-card` sem ler entidades, perfil ou foto.
 
 A biblioteca `utility-drawers` reúne os quatro últimos. O popup de login e o de busca não usam `core/drupal.dialog.ajax`: a V2 remove essa dependência do utilitário de busca (`PagePresentationHooks::removeSearchDialogDependency`).
 

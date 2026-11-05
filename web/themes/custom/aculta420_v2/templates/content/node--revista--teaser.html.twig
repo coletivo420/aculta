@@ -1,0 +1,21 @@
+<article{{ attributes.addClass('node', 'node--type-revista', 'node--view-mode-teaser') }}>
+  {{ title_prefix }}
+  {{ title_suffix }}
+  {% embed 'aculta420_v2:revista-teaser' with {
+    title: label,
+    url: url,
+    has_category: not node.field_editorial_category.isEmpty,
+    has_subtitle: not node.field_subtitle.isEmpty,
+    has_summary: not node.field_summary.isEmpty,
+    has_cover: not node.field_media_image.isEmpty,
+    image_render: content.field_media_image,
+    category_render: content.field_editorial_category,
+    subtitle_render: content.field_subtitle,
+    summary_render: content.field_summary
+  } only %}
+    {% block image %}{{ image_render }}{% endblock %}
+    {% block category %}{{ category_render }}{% endblock %}
+    {% block subtitle %}{{ subtitle_render }}{% endblock %}
+    {% block summary %}{{ summary_render }}{% endblock %}
+  {% endembed %}
+</article>

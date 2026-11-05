@@ -1,0 +1,53 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Publicação completa da Revista
+description: Composição editorial do view mode full; conteúdo, acesso e cache permanecem em Drupal e Portal.
+status: stable
+group: Revista
+props:
+  type: object
+  additionalProperties: false
+  required: [has_subtitle, has_summary, has_cover, has_footer]
+  properties:
+    has_meta:
+      type: boolean
+      title: Metadados disponíveis
+      default: false
+    has_subtitle:
+      type: boolean
+      title: Chamada disponível
+    has_summary:
+      type: boolean
+      title: Resumo disponível
+    has_cover:
+      type: boolean
+      title: Capa disponível
+    has_footer:
+      type: boolean
+      title: Rodapé editorial disponível
+    has_authors:
+      type: boolean
+      title: Autoria disponível
+      default: false
+    has_discussion:
+      type: boolean
+      title: Discussão disponível
+      default: false
+slots:
+  meta:
+    title: Autor, data, hora e compartilhamento
+    description: Render array cacheável do módulo aculta_magazine.
+  cover:
+    title: Imagem de capa
+  subtitle:
+    title: Chamada editorial
+  summary:
+    title: Resumo
+  body:
+    title: Corpo da publicação
+  footer:
+    title: Categorias, tags, referências e créditos
+  authors:
+    title: Caixa de autoria
+    description: Render array cacheável do módulo aculta_user.
+  discussion:
+    title: Discussão

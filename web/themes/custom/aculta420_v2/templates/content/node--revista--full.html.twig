@@ -1,0 +1,41 @@
+<article{{ attributes.addClass('node', 'node--type-revista', 'node--view-mode-full') }}>
+  {{ title_prefix }}
+  {{ title_suffix }}
+  {% set article_footer = content|without('post_meta', 'field_media_image', 'field_subtitle', 'field_summary', 'body', 'field_editorial_category', 'field_tags', 'field_references', 'field_credits', 'article_authors', 'field_aculta_discussion', 'field_published_at') %}
+  {% embed 'aculta420_v2:revista-publication' with {
+    has_meta: content.post_meta is not empty,
+    has_cover: not node.field_media_image.isEmpty,
+    has_subtitle: not node.field_subtitle.isEmpty,
+    has_summary: not node.field_summary.isEmpty,
+    has_footer: article_footer is not empty,
+    has_authors: content.article_authors is not empty,
+    has_discussion: content.field_aculta_discussion is not empty,
+    meta_render: content.post_meta,
+    cover_render: content.field_media_image,
+    subtitle_render: content.field_subtitle,
+    summary_render: content.field_summary,
+    body_render: content.body,
+    category_render: content.field_editorial_category,
+    tags_render: content.field_tags,
+    references_render: content.field_references,
+    credits_render: content.field_credits,
+    footer_render: article_footer,
+    authors_render: content.article_authors,
+    discussion_render: content.field_aculta_discussion
+  } only %}
+    {% block meta %}{{ meta_render }}{% endblock %}
+    {% block cover %}{{ cover_render }}{% endblock %}
+    {% block subtitle %}{{ subtitle_render }}{% endblock %}
+    {% block summary %}{{ summary_render }}{% endblock %}
+    {% block body %}{{ body_render }}{% endblock %}
+    {% block footer %}
+      {{ category_render }}
+      {{ tags_render }}
+      {{ references_render }}
+      {{ credits_render }}
+      {{ footer_render }}
+    {% endblock %}
+    {% block authors %}{{ authors_render }}{% endblock %}
+    {% block discussion %}{{ discussion_render }}{% endblock %}
+  {% endembed %}
+</article>

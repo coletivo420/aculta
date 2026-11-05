@@ -1,0 +1,9 @@
+name: Listagem da Revista
+description: Cabeçalho de publicações e grade de cartões com primeiro destaque em telas amplas.
+component: aculta420_v2:revista-listing
+props:
+  eyebrow: Publicações
+  title: Revista 420
+  has_items: true
+slots:
+  items: '<div class="views-row"><article class="revista-teaser"><h2>Publicação de exemplo</h2></article></div>'

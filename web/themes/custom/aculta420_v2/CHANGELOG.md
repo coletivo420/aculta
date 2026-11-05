@@ -1,5 +1,18 @@
 # Changelog — ACULTA420 V2
 
+## Em validação — migração visual da Revista
+
+- Adicionados os SDCs `author-card`, `revista-listing`, `revista-teaser` e
+  `revista-publication`, com adapters para a View `revista_sessoes`, os view
+  modes `teaser`/`full` e o hook visual de autoria do `aculta_user`.
+- A apresentação cobre a grade de 1/2/3 colunas, destaque da primeira
+  publicação, metadados/compartilhamento, corpo editorial, imagens com modelos
+  pequena/padrão/larga/destaque e alinhamento, autoria e discussão. Render arrays
+  Drupal são mantidos como slots.
+- PHP lint do gate, parse de todos os schemas/stories e `git diff --check`
+  passaram. Validação de renderização Drupal e evidência Firefox Runtime ficam
+  pendentes; a versão será marcada após esses gates.
+
 ## 1.2.0-dev.14 — aproxima o diálogo de acesso da V1
 
 - A superfície recupera o verde exato da V1 (`#6b9a2c`), com texto escuro

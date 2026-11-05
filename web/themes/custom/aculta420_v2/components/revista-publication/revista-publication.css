@@ -1,0 +1,159 @@
+.node--type-revista.node--view-mode-full {
+  inline-size: min(100%, 60rem);
+  margin-inline: auto;
+  min-inline-size: 0;
+}
+
+.revista-publication,
+.revista-publication > * { min-inline-size: 0; }
+.revista-publication { color: var(--color-text-primary); }
+.revista-publication__meta {
+  align-items: center;
+  border-block-end: 1px solid var(--color-border);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: var(--font-size-sm);
+  gap: var(--spacing-md) var(--spacing-lg);
+  margin-block: 0;
+  padding-block: var(--spacing-md);
+}
+.revista-publication__meta [data-portal-ui="post-meta-author"],
+.revista-publication__meta [data-portal-ui="post-meta-date"],
+.revista-publication__meta [data-portal-ui="post-meta-time"] { align-items: center; display: inline-flex; min-block-size: 1.5rem; overflow-wrap: anywhere; }
+.revista-publication__meta :is([data-portal-ui="post-meta-author"], [data-portal-ui="post-meta-date"], [data-portal-ui="post-meta-time"])::before {
+  background-color: currentColor;
+  block-size: 1rem;
+  content: "";
+  flex: none;
+  inline-size: 1rem;
+  margin-inline-end: var(--spacing-xs);
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+}
+.revista-publication__meta [data-portal-ui="post-meta-author"]::before { mask-image: url("../../assets/icons/phosphor/regular/user-circle.svg"); }
+.revista-publication__meta [data-portal-ui="post-meta-date"]::before { mask-image: url("../../assets/icons/phosphor/regular/calendar-blank.svg"); }
+.revista-publication__meta [data-portal-ui="post-meta-time"]::before { mask-image: url("../../assets/icons/phosphor/regular/clock.svg"); }
+.revista-publication__meta [data-portal-ui="post-share"] { align-items: center; display: flex; flex-wrap: wrap; gap: var(--spacing-xs); margin-inline-start: auto; min-inline-size: 0; }
+.revista-publication__meta [data-portal-ui="post-share-label"] { font-weight: 600; margin-inline-end: var(--spacing-xs); }
+.revista-publication__meta [data-portal-ui^="post-share-"]:not([data-portal-ui="post-share-label"]) {
+  align-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text-primary);
+  display: inline-flex;
+  font-size: 0;
+  justify-content: center;
+  min-block-size: var(--tap-target-min);
+  min-inline-size: var(--tap-target-min);
+  text-decoration: none;
+}
+.revista-publication__meta [data-portal-ui^="post-share-"]:not([data-portal-ui="post-share-label"])::before {
+  background-color: currentColor;
+  block-size: 1.25rem;
+  content: "";
+  inline-size: 1.25rem;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+}
+.revista-publication__meta [data-portal-ui="post-share-whatsapp"]::before { mask-image: url("../../assets/icons/phosphor/regular/whatsapp-logo.svg"); }
+.revista-publication__meta [data-portal-ui="post-share-telegram"]::before { mask-image: url("../../assets/icons/phosphor/regular/telegram-logo.svg"); }
+.revista-publication__meta [data-portal-ui="post-share-facebook"]::before { mask-image: url("../../assets/icons/phosphor/regular/facebook-logo.svg"); }
+.revista-publication__meta [data-portal-ui="post-share-reddit"]::before { mask-image: url("../../assets/icons/phosphor/regular/reddit-logo.svg"); }
+.revista-publication__meta [data-portal-ui="post-share-email"]::before { mask-image: url("../../assets/icons/phosphor/regular/envelope-simple.svg"); }
+.revista-publication__meta [data-portal-ui^="post-share-"]:not([data-portal-ui="post-share-label"]):is(:hover, :focus-visible) { background: var(--color-surface); color: var(--color-link-editorial); outline: 3px solid var(--color-focus-ring); outline-offset: 2px; }
+
+.revista-publication__cover {
+  background: var(--color-media-stage);
+  border-radius: var(--radius-base);
+  inline-size: min(100%, 40rem);
+  margin: var(--spacing-lg) auto var(--spacing-sm);
+  overflow: hidden;
+}
+.revista-publication__cover :where(div, figure, picture, a, .field, .field__item, .media) { min-inline-size: 0; }
+.revista-publication__cover img { aspect-ratio: 4 / 3; block-size: auto; display: block; inline-size: 100%; object-fit: cover; }
+.revista-publication__subtitle {
+  border-block-end: 1px solid var(--color-border);
+  font-size: var(--font-size-lg);
+  font-weight: 400;
+  inline-size: 100%;
+  line-height: 1.4;
+  margin-block: var(--spacing-xs) var(--spacing-md);
+  padding-block-end: var(--spacing-md);
+  text-align: center;
+}
+.revista-publication__summary {
+  background: var(--color-surface-institution);
+  border-radius: var(--radius-base);
+  font-size: var(--font-size-lg);
+  inline-size: 100%;
+  line-height: 1.6;
+  margin-block-end: var(--spacing-lg);
+  overflow-wrap: anywhere;
+  padding: var(--spacing-base);
+}
+.revista-publication__body { font-size: var(--font-size-lg); hyphens: auto; line-height: 1.7; margin-inline: auto; inline-size: min(100%, 68ch); overflow-wrap: anywhere; text-align: start; }
+.revista-publication__body p { margin-block: 0 1.1em; }
+.revista-publication__body :is(h2, h3) { hyphens: manual; margin-block: 2em .75em; text-align: start; }
+.revista-publication__body :is(img, video, iframe) { block-size: auto; max-inline-size: 100%; }
+.revista-publication__body img { background: var(--color-media-stage); border-radius: var(--radius-base); }
+.revista-publication__body .media--type-image { display: block; margin: var(--spacing-xl) auto; text-align: center; }
+.revista-publication__body .media--type-image img { display: block; inline-size: auto; margin-inline: auto; }
+.revista-publication__body figure[data-aculta-imagem] { display: block; inline-size: 100%; margin-block: var(--spacing-xl); margin-inline: auto; max-inline-size: 100%; text-align: start; }
+.revista-publication__body figure[data-aculta-imagem] > img { block-size: auto; border-radius: var(--radius-base); display: block; inline-size: 100%; margin-inline: auto; }
+.revista-publication__body figure[data-aculta-imagem][data-aculta-imagem-modelo="pequena"] { inline-size: min(100%, 20rem); }
+.revista-publication__body figure[data-aculta-imagem][data-aculta-imagem-modelo="padrao"] { inline-size: min(100%, 36.25rem); }
+.revista-publication__body [data-aculta-imagem-legenda] { color: var(--color-text-muted); font-size: var(--font-size-sm); line-height: 1.45; margin-block-start: var(--spacing-sm); text-align: start; }
+.revista-publication__body .media--type-remote-video { inline-size: 100%; margin-block: var(--spacing-xl); margin-inline: auto; }
+.revista-publication__body .media--type-remote-video iframe,
+.revista-publication__body .media--type-remote-video video { aspect-ratio: 16 / 9; background: var(--color-media-stage); border: 0; border-radius: var(--radius-base); block-size: auto; display: block; inline-size: 100%; }
+.revista-publication__footer { margin-block-start: var(--spacing-xl); }
+.revista-publication__footer :where(.field--name-field-editorial-category, .field--name-field-tags) { align-items: baseline; display: flex; flex-wrap: wrap; font-size: var(--font-size-sm); gap: var(--spacing-xs) var(--spacing-sm); justify-content: flex-start; margin-block: var(--spacing-lg) 0; min-inline-size: 0; }
+.revista-publication__footer :where(.field--name-field-editorial-category, .field--name-field-tags) .field__label { font-weight: 600; }
+.revista-publication__footer :where(.field--name-field-editorial-category, .field--name-field-tags) .field__items { display: flex; flex-wrap: wrap; gap: var(--spacing-xs) var(--spacing-sm); min-inline-size: 0; }
+.revista-publication__footer :where(.field__label, .field__item) { margin: 0; padding: 0; }
+.revista-publication__footer a { color: var(--color-link-editorial); }
+.revista-publication__authors { border: 1px solid var(--color-border); border-radius: var(--radius-base); margin-block-start: var(--spacing-xxl); padding: var(--spacing-base); }
+.revista-publication__discussion { border-block-start: 1px solid var(--color-border); margin-block-start: var(--spacing-xxl); padding-block-start: var(--spacing-lg); }
+.revista-publication__discussion :where(img, video, iframe) { block-size: auto; max-inline-size: 100%; }
+.revista-publication__discussion :where(.comment, .comment__content) { min-inline-size: 0; overflow-wrap: anywhere; }
+.revista-publication :focus-visible { outline-offset: 2px; }
+
+@media (min-width: 36rem) {
+  .revista-publication__body { text-align: justify; }
+  .revista-publication__summary { padding: var(--spacing-lg-compact) var(--spacing-lg); }
+  .revista-publication__footer :where(.field--name-field-editorial-category, .field--name-field-tags) { justify-content: flex-end; margin-inline-start: auto; text-align: end; }
+  .revista-publication__footer :where(.field--name-field-editorial-category, .field--name-field-tags) .field__items { justify-content: flex-end; }
+
+  .revista-publication__body figure[data-aculta-imagem][data-aculta-imagem-modelo="larga"],
+  .revista-publication__body figure[data-aculta-imagem][data-aculta-imagem-modelo="destaque"] {
+    inset-inline-start: 50%;
+    inline-size: min(56.25rem, calc(100vw - 2rem));
+    margin-inline: 0;
+    max-inline-size: calc(100vw - 2rem);
+    position: relative;
+    transform: translateX(-50%);
+  }
+
+  .revista-publication__body figure[data-aculta-imagem][data-aculta-imagem-modelo="destaque"] {
+    inline-size: min(60rem, calc(100vw - 2rem));
+  }
+}
+
+.revista-publication__body figure[data-aculta-imagem][data-aculta-imagem-alinhamento="esquerda"] {
+  inset-inline-start: auto;
+  margin-inline-end: auto;
+  margin-inline-start: 0;
+  position: static;
+  transform: none;
+}
+
+.revista-publication__body figure[data-aculta-imagem][data-aculta-imagem-alinhamento="direita"] {
+  inset-inline-start: auto;
+  margin-inline-end: 0;
+  margin-inline-start: auto;
+  position: static;
+  transform: none;
+}

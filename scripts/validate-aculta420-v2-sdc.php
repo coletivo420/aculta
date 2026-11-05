@@ -9,6 +9,8 @@
 
 declare(strict_types=1);
 
+use Drupal\Core\Render\Markup;
+
 $theme_root = DRUPAL_ROOT . '/themes/custom/aculta420_v2';
 $theme_info = file_get_contents($theme_root . '/aculta420_v2.info.yml');
 $theme_libraries = file_get_contents($theme_root . '/aculta420_v2.libraries.yml');
@@ -45,6 +47,8 @@ foreach ($source_files as $source_file) {
   }
 }
 $component_ids = [
+  'account-menu',
+  'author-card',
   'audio-player',
   'alerts-trigger',
   'badge',
@@ -60,6 +64,9 @@ $component_ids = [
   'multidomain-bar',
   'navigation-bar',
   'pagination',
+  'revista-listing',
+  'revista-publication',
+  'revista-teaser',
   'status-messages',
 ];
 $manager = \Drupal::service('plugin.manager.sdc');
@@ -67,12 +74,25 @@ $validator = \Drupal::service('Drupal\Core\Theme\Component\ComponentValidator');
 $renderer = \Drupal::service('renderer');
 $definitions = $manager->getDefinitions();
 $samples = [
+  'account-menu' => [
+    '#props' => ['authenticated' => TRUE],
+    '#slots' => ['avatar' => '', 'menu_items' => '<a href="/conta">Minha conta</a>'],
+  ],
+  'author-card' => [
+    '#props' => ['variant' => 'author_editorial', 'display_name' => 'Autoria cultural', 'has_avatar' => FALSE],
+    '#slots' => ['avatar' => '', 'actions' => ''],
+  ],
   'audio-player' => ['#props' => ['src' => '/files/sample.mp3', 'title' => 'Sessão cultural']],
   'alerts-trigger' => ['#props' => ['href' => '/avisos/resumo', 'count' => 0]],
   'badge' => ['#props' => ['label' => 'Cultura', 'variant' => 'primary', 'icon_name' => 'tag']],
   'breadcrumb' => [
     '#props' => ['label' => 'Breadcrumb'],
-    '#slots' => ['items' => \Drupal\Core\Render\Markup::create('<li class="aculta-breadcrumb__item"><a class="aculta-breadcrumb__link" href="/">Início</a></li><li class="aculta-breadcrumb__item aculta-breadcrumb__current" aria-current="page">Eventos</li>')],
+    '#slots' => [
+      'items' => Markup::create(
+        '<li class="aculta-breadcrumb__item"><a class="aculta-breadcrumb__link" href="/">Início</a></li>'
+        . '<li class="aculta-breadcrumb__item aculta-breadcrumb__current" aria-current="page">Eventos</li>'
+      ),
+    ],
   ],
   'button' => [
     '#props' => [
@@ -141,6 +161,33 @@ $samples = [
       'links' => [['url' => '/?page=0', 'label' => '1', 'is_current' => TRUE]],
     ],
   ],
+  'revista-listing' => [
+    '#props' => ['eyebrow' => 'Publicações', 'title' => 'Revista 420', 'has_items' => TRUE],
+    '#slots' => ['items' => '<div class="views-row">Publicação</div>'],
+  ],
+  'revista-publication' => [
+    '#props' => [
+      'has_meta' => TRUE,
+      'has_subtitle' => TRUE,
+      'has_summary' => TRUE,
+      'has_cover' => TRUE,
+      'has_footer' => TRUE,
+    ],
+    '#slots' => [
+      'meta' => 'Autor e data',
+      'cover' => '',
+      'subtitle' => '',
+      'summary' => '',
+      'body' => 'Texto',
+      'footer' => '',
+      'authors' => '',
+      'discussion' => '',
+    ],
+  ],
+  'revista-teaser' => [
+    '#props' => ['title' => 'Publicação cultural', 'url' => '/revista/publicacao', 'has_cover' => FALSE],
+    '#slots' => ['image' => '', 'category' => '', 'subtitle' => '', 'summary' => ''],
+  ],
   'status-messages' => ['#props' => ['type' => 'status', 'messages' => ['Validação concluída.']]],
 ];
 
@@ -157,6 +204,13 @@ foreach ($component_ids as $component_id) {
     $path = $theme_root . '/components/' . $component_id . '/' . $component_id . $extension;
     if (!is_file($path)) {
       throw new RuntimeException(sprintf('Missing SDC asset: %s', $path));
+    }
+  }
+  if (in_array($component_id, ['author-card', 'revista-listing', 'revista-publication', 'revista-teaser'], TRUE)) {
+    foreach ([$component_id . '.default.story.yml', 'README.md'] as $document) {
+      if (!is_file($theme_root . '/components/' . $component_id . '/' . $document)) {
+        throw new RuntimeException(sprintf('Missing story or component documentation: %s/%s', $component_id, $document));
+      }
     }
   }
   if ($component_id === 'navigation-bar' && !is_file($theme_root . '/components/navigation-bar/navigation-bar.js')) {
@@ -218,6 +272,18 @@ foreach ($component_ids as $component_id) {
         throw new RuntimeException(sprintf('Navigation markup is missing: %s', $required_markup));
       }
     }
+  }
+  if ($component_id === 'author-card' && !is_file($theme_root . '/templates/aculta-user-author-card.html.twig')) {
+    throw new RuntimeException('The aculta_user author-card adapter is missing.');
+  }
+  if ($component_id === 'revista-listing' && !is_file($theme_root . '/templates/views/views-view--revista-sessoes--page-revista.html.twig')) {
+    throw new RuntimeException('The Revista landing View adapter is missing.');
+  }
+  if ($component_id === 'revista-teaser' && !is_file($theme_root . '/templates/content/node--revista--teaser.html.twig')) {
+    throw new RuntimeException('The Revista teaser node adapter is missing.');
+  }
+  if ($component_id === 'revista-publication' && !is_file($theme_root . '/templates/content/node--revista--full.html.twig')) {
+    throw new RuntimeException('The Revista full node adapter is missing.');
   }
 
   $build = [

@@ -1,6 +1,6 @@
 # Catálogo de componentes do tema V2
 
-Dezesseis componentes SDC, todos com schema estrito (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado; a auditoria integral do catálogo (Fase 5) ainda não foi feita.
+Vinte e um componentes SDC, todos com schema estrito (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado; a auditoria integral do catálogo (Fase 5) ainda não foi feita.
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
@@ -98,6 +98,39 @@ Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context 
 - **Papel:** ícone Phosphor vetorial, injetado inline e oculto para leitores de tela (`aria-hidden`).
 - **Props:** `name`, `variant` (`duotone` ou `regular`), `size` (`sm`, `md`, `lg`, `xl`), `color`.
 - **Estado:** entregue. Ícones ausentes do vendor são ignorados (`ignore_missing`).
+
+### author-card — Cartão de autoria
+- **Papel:** apresenta identidade pública e contextual preparada pelo `aculta_user`, inclusive autoria editorial.
+- **Props:** `variant`, `size`, `display_name`, `profile_url`, `source_label`, `has_avatar`, `has_actions`, `member_since`, `designation`, `bio`, `social_links`.
+- **Slots:** `avatar`, `actions`.
+- **Story:** `author-card.default.story.yml`.
+- **Regra:** não carrega usuário/Profile, não decide visibilidade e não inventa iniciais; os slots conservam os render arrays cacheáveis do módulo proprietário.
+- **Estado:** implementação pronta; aguardando gates SDC e verificação de Runtime. Usado pelo adapter `templates/aculta-user-author-card.html.twig` e pela autoria dos artigos da Revista.
+
+### revista-teaser — Cartão editorial
+- **Papel:** substitui a apresentação V1 do teaser de publicação na listagem da Revista.
+- **Props:** `title`, `url`, `has_category`, `has_subtitle`, `has_summary`, `has_cover`, `read_label`.
+- **Slots:** `image`, `category`, `subtitle`, `summary`.
+- **Story:** `revista-teaser.default.story.yml`.
+- **Regra:** recebe render arrays do node view, não resolve conteúdo nem cache; a capa ausente usa apenas uma superfície decorativa.
+- **Estado:** implementação pronta; aguardando gates SDC e verificação de Runtime.
+
+### revista-listing — Listagem editorial
+- **Papel:** apresenta o cabeçalho e a grade da View `revista_sessoes:page_revista`.
+- **Props:** `eyebrow`, `title`, `has_items`.
+- **Slots:** `items` (saída renderizada da View).
+- **Story:** `revista-listing.default.story.yml`.
+- **Regra:** não reordena o DOM nem consulta conteúdo; a grade mantém uma, duas e três colunas conforme o espaço.
+- **Estado:** implementação pronta; aguardando gates SDC e verificação de Runtime.
+
+### revista-publication — Publicação completa
+- **Papel:** compõe metadados, capa, chamada, resumo, corpo, conteúdo editorial adicional, autoria e discussão.
+- **Props:** `has_meta`, `has_subtitle`, `has_summary`, `has_cover`, `has_footer`, `has_authors`, `has_discussion`.
+- **Slots:** `meta`, `cover`, `subtitle`, `summary`, `body`, `footer`, `authors`, `discussion`.
+- **Story:** `revista-publication.default.story.yml`.
+- **Regra:** os dados e controles de acesso permanecem nos render arrays de `aculta_magazine` e `aculta_user`; o componente controla apenas a ordem e a apresentação.
+- **Estado:** implementação pronta; aguardando gates SDC e verificação de Runtime.
+
 
 ## Lacunas do catálogo
 

@@ -1,5 +1,25 @@
 # ACULTA420 V2 roadmap
 
+## Em andamento — migração visual da V1 para a V2
+
+- **Fatia atual: Revista.** Baseline do tema V2 antes dos templates/SCDs:
+  `$SUITE_OUT/revista-v2-before-20261104/`, no purpose `magazine`, URL raiz da
+  Revista e artigo `/editorial/teste-visual-20261030-cultura-de-bairro`, sessão
+  anônima, claro/escuro, larguras 390/1440 CSS px. A captura mobile tinha quatro
+  capas ocupando toda a largura do cartão; o artigo não possuía composição de
+  autoria própria. Código-fonte de referência V1: templates de teaser/full e
+  View da Revista, `css/components/revista-listing.css`,
+  `css/components/revista-post.css` e SDC `author-card`.
+- **Depois (em validação):** templates `node--revista--teaser/full` e View
+  encaminham render arrays aos quatro SDCs novos. A grade começa em uma coluna,
+  expande a duas em 37.5rem e três em 62rem; primeira linha editorial destaca
+  a capa em espaço amplo. O artigo mantém o conteúdo Drupal e a cacheabilidade
+  do Portal, com corpo de leitura e modelos de mídia responsivos.
+- Schemas, stories e sintaxe do gate foram validados localmente. Validação do
+  Drupal/Runtime, comparação visual Firefox e cobertura 320 CSS px com zoom
+  200% ainda pendentes. Não há versão atribuída a esta fatia até fechar esses
+  gates.
+
 - `1.2.0-dev.14`: refinamento de fidelidade do diálogo de entrada com a V1.
   A superfície usa `#6b9a2c`; texto escuro mantém 5,45:1. Google mantém o SVG
   oficial da V1 e recupera sombra e realce creme no hover/foco. Formulário,
