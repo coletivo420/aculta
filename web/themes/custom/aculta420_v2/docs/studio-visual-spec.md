@@ -123,11 +123,11 @@ Para cada tela: variante (ADR-048), posição, componentes sugeridos e comportam
     - Botão **"Salvar"** em amarelo (ação primária do formulário, ver seção 6), alinhado à esquerda, abaixo do formulário.
 - **Mobile:** avatar centralizado no topo; botão "Ver perfil público" abaixo do avatar; formulário em coluna única, com rótulo **acima** do campo (proposta: o material não mostra mobile para esta tela).
 
-### 4.2.1 Modal de foto de perfil (sistema atual, mantido)
+### 4.2.1 Popup de foto de perfil (sistema novo da V2, como o login)
 
-**Regra:** o gatilho, o modal, os botões e os estados são os do `aculta_user` hoje (`docs/architecture/avatar.md`, `UserPictureForm`, `AvatarCropForm`, `photo-flow.js`). A V2 muda só a aparência. Não criar um fluxo de foto novo.
+**Regra:** o conteúdo, os botões e os estados são os do `aculta_user` (`docs/architecture/avatar.md`, `UserPictureForm`, `AvatarCropForm`, `photo-flow.js`). O container e a forma de abrir são os do popup de login da V2 (ADR-048, item 10): `<dialog>` nativo, conteúdo por Fetch e envio por Fetch. Não usar `core/drupal.dialog.ajax`.
 
-- **Gatilho:** o próprio avatar da tela, como link com `use-ajax` e `data-dialog-type="modal"`. Rótulo acessível: "Alterar foto de perfil de {nome}". O nome aparece só no rótulo acessível, não na tela.
+- **Gatilho:** o próprio avatar da tela, como link para a rota de foto. O tema intercepta o clique e abre o `<dialog>`, como faz com `/entrar/janela`. Rótulo acessível: "Alterar foto de perfil de {nome}". O nome aparece só no rótulo acessível, não na tela.
 - **Modal "Alterar foto do perfil"**, de cima para baixo:
   1. Prévia da foto atual.
   2. Texto: "Escolha uma imagem e ajuste o enquadramento antes de salvar."
@@ -139,9 +139,9 @@ Para cada tela: variante (ADR-048), posição, componentes sugeridos e comportam
 - **Recorte:** ao concluir o envio, abre sozinho o modal "Recortar foto". Abre uma vez por arquivo por sessão do navegador. Botões: **Aplicar recorte** (primário) e **Cancelar** (link). Aplicar já troca a foto e recarrega a tela; não há segunda etapa de salvar.
 - **Regras de estado:** foto do acervo não tem "Remover" nem recorte. Nunca há inicial, letra ou monograma (`docs/architecture/avatar.md`).
 - **Tamanho e rolagem (referência V1, `dialog.css`):** largura de `min(560px, 100vw − 2rem)`; altura máxima de 75vh com rolagem interna. No mobile, ocupa a largura disponível.
-- **Estilo na V2:** os botões usam o componente `button` (seção 6). O tema precisa de regras para `data-portal-ui="photo-dialog"` e `"avatar-crop-dialog"`, iguais às da V1. Hoje a V2 não tem essas regras (verificar antes de construir).
-- **Mecanismo:** o modal usa `core/drupal.dialog.ajax`, o mesmo de hoje. O tema não escreve jQuery. A dependência do Core fica nesta tela; ver ADR-048, item 10.
-- **Pendente:** capturar o modal atual na V1 (claro e escuro, 320 e 1440 px) como referência antes de construir. Confirmar a ordem e o rótulo dos botões nessa captura.
+- **Estilo na V2:** os botões usam o componente `button` (seção 6). O `<dialog>` segue a aparência da V1 (`photo-dialog` e `avatar-crop-dialog`, `dialog.css`), com as mesmas dimensões.
+- **Mudança no Portal:** o popup de foto precisa de alteração no `aculta_user` (PR própria, com gate de foto). Ver ADR-048, item 10.
+- **Pendente:** (1) decidir como o envio de arquivo e o sorteio, que usam AJAX do Drupal, funcionam dentro do `<dialog>`; (2) capturar o modal atual na V1 (claro e escuro, 320 e 1440 px) como referência; (3) confirmar a ordem e o rótulo dos botões nessa captura.
 
 ### 4.3 Minha conta (dados cadastrais)
 
