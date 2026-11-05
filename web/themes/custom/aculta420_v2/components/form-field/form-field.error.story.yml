@@ -1,0 +1,11 @@
+name: Campo inválido
+description: Erro textual ligado ao controle e apresentado junto ao campo.
+component: aculta420_v2:form-field
+props:
+  id: email
+  invalid: true
+slots:
+  label: '<label for="email-control">E-mail</label>'
+  control: '<input id="email-control" name="email" type="email" aria-invalid="true" aria-describedby="email-description email-error">'
+  description: Informe um endereço de e-mail válido.
+  error: Revise o endereço informado.

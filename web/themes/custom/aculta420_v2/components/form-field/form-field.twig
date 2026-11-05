@@ -1,0 +1,7 @@
+{% set classes = ['form-field', invalid|default(false) ? 'form-field--invalid'] %}
+<div{{ attributes.addClass(classes) }} data-aculta-form-field-id="{{ id }}">
+  {% if label %}<div class="form-field__label">{{ label }}</div>{% endif %}
+  <div class="form-field__control">{{ control }}</div>
+  {% if description %}<div class="form-field__description" id="{{ id }}-description">{{ description }}</div>{% endif %}
+  {% if invalid|default(false) and error %}<div class="form-field__error" id="{{ id }}-error">{{ error }}</div>{% endif %}
+</div>

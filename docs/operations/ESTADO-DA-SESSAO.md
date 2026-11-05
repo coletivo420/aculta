@@ -1416,3 +1416,23 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   ao consumer na fase de templates/Studio se não houver escopo de componente que
   a use agora.
 
+## G1 — componente Form field — 2026-11-05
+
+- **Implementação:** SDC `form-field` com slots de label, control, description
+  e error; estados visual normal/inválido; controles nativos Drupal, sem lógica
+  de validação no tema. Stories demonstram IDs de label/control e associação
+  `aria-describedby`/`aria-invalid`.
+- **Gates:** schema SDC 55 componentes/764 checks PASS; design foundations
+  2.468 PASS; foundations V2 55 pares PASS; browser validators 21 checks PASS;
+  PHP lint, PHPCS, YAML parse e `git diff --check` PASS; render Drush isolado
+  32 SDCs PASS.
+- **Firefox:** fixture sintética com CSS de tokens/base e o CSS do componente,
+  visível em X11; 12/12 estados em 320/390/768/959/960/1440 px, claro/escuro,
+  sem overflow, label associado, descrição/erro conectados; zoom real 200% sem
+  overflow; Tab chegou ao campo com foco visível de 3 px. Capturas e
+  `results.json` fora do repo em `$SUITE_OUT`.
+- **Limite:** integração visual a formulário Drupal publicado/autenticado não
+  foi feita. Não houve alteração persistente de Runtime; Drush SDC usou
+  descoberta com backend nulo. `updatedb:status` e `config:status` anteriores
+  estavam limpos. Prosseguir para `progress` na sequência G1.
+

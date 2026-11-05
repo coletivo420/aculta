@@ -52,6 +52,17 @@ accordion.default.story.yml. Usado pelo template node--aculta-faq--full; quando
 o cache SDC Drupal ainda não conhece o componente, o template mantém uma saída
 equivalente com HTML nativo.
 
+### form-field
+
+Envolve o rótulo, o controle Drupal, a instrução e o erro textual em uma
+composição visual única. Props: `id` (identificador do wrapper) e `invalid`.
+Slots: `label`, `control`, `description` e `error`. Stories:
+`form-field.default.story.yml` e `form-field.error.story.yml`. O consumidor
+preserva a associação `for`/`id` do controle e associa os IDs
+`<id>-description` e `<id>-error` por `aria-describedby`; o controle também
+recebe `aria-invalid="true"` quando aplicável. O componente não cria nem altera
+controles Drupal e não valida dados.
+
 ### lms-lesson-page
 
 Contêiner visual para o render array entregue pelo controlador do LMS na rota
@@ -236,7 +247,7 @@ original caso a descoberta Drupal ainda não conheça o SDC.
 
 ## Lacunas do catálogo
 
-Componentes previstos no ADR-046: `avatar`, `tabs` e `dialog` têm SDC próprio; a função de `author-box` é coberta pelo slot de autoria de `revista-publication` e pelo SDC compartilhado `author-card`. `form-field`, `progress`, `data-table`, `empty-state` e `price` ainda precisam de auditoria/implementação. `breadcrumb` e `accordion` já existem. Ordem e uso estão no [roadmap.md](roadmap.md).
+Componentes previstos no ADR-046: `avatar`, `tabs`, `dialog` e `form-field` têm SDC próprio; a função de `author-box` é coberta pelo slot de autoria de `revista-publication` e pelo SDC compartilhado `author-card`. `progress`, `data-table`, `empty-state` e `price` ainda precisam de auditoria/implementação. `breadcrumb` e `accordion` já existem. Ordem e uso estão no [roadmap.md](roadmap.md).
 
 ## Como documentar um componente novo
 

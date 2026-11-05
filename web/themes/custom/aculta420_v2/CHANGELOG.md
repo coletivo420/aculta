@@ -1,5 +1,15 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — componente Form field
+
+- Criado o SDC experimental `form-field` com slots de rótulo, controle,
+  instrução e erro. O controle e a validação continuam sob responsabilidade
+  do Drupal/Portal; duas stories demonstram associações acessíveis.
+- Gate SDC estendido para renderizar e conferir controle, descrições e erro.
+  Firefox passou 12/12 estados em fixture sintética nas seis larguras, claro e
+  escuro, zoom 200% e foco por Tab. Integração em formulário consumidor segue
+  pendente.
+
 ## Não versionado — componente Dialog
 
 - Criado o SDC `dialog` com `<dialog>` nativo, variante fullscreen no mobile,

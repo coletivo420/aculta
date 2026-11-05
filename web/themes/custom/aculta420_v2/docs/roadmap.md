@@ -44,6 +44,16 @@ Escape, botão/backdrop, e fallback sem JavaScript. PNGs e JSON estão fora do
 repositório diretamente em `$SUITE_OUT`. A fixture não comprova integração a
 rota ou consumer Drupal no Runtime.
 
+## Form field — G1 implementado; integração a formulário real pendente
+
+Criado o SDC `form-field` para compor o rótulo, o controle Drupal, a instrução
+e a mensagem textual de erro, sem assumir a validação nem o tipo do controle.
+As stories demonstram a associação label/controle e `aria-describedby` para
+instrução/erro; o consumidor fornece os IDs correspondentes no markup do
+controle. Schema e render isolado Drupal cobrem o estado inválido e sua mensagem.
+Firefox visível em fixture sintética passou em seis larguras e dois modos, zoom
+200% e foco por Tab. O consumer de formulário Drupal publicado continua pendente.
+
 ## Menu de conta e sites — C2 implementado; validação visual pendente
 
 O `account-menu` combina a lista neutra `aculta_domain_sites` com o bloco de

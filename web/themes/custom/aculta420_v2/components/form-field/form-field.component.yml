@@ -1,0 +1,32 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Campo de formulário
+description: Apresenta rótulo, controle, instrução e erro de um campo.
+status: experimental
+group: Formulários
+props:
+  type: object
+  additionalProperties: false
+  required: [id]
+  properties:
+    id:
+      type: string
+      minLength: 1
+      pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
+      title: Identificador do campo
+    invalid:
+      type: boolean
+      default: false
+      title: Campo inválido
+slots:
+  label:
+    title: Rótulo
+    description: Rótulo renderizado e associado ao controle pelo consumidor.
+  control:
+    title: Controle
+    description: Controle de formulário renderizado pelo Drupal.
+  description:
+    title: Instrução
+    description: Instrução adicional associada ao controle por aria-describedby.
+  error:
+    title: Erro
+    description: Mensagem textual do erro de validação.

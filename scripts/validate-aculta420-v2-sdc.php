@@ -66,6 +66,7 @@ $component_ids = [
   'dialog',
   'event-page-layout',
   'filter-chips',
+  'form-field',
   'forum-category',
   'forum-topic',
   'hero-banner',
@@ -193,6 +194,15 @@ $samples = [
       'items' => [
         ['label' => 'Todos', 'url' => '/todos', 'is_active' => TRUE, 'count' => 2],
       ],
+    ],
+  ],
+  'form-field' => [
+    '#props' => ['id' => 'email', 'invalid' => TRUE],
+    '#slots' => [
+      'label' => Markup::create('<label for="email-control">E-mail</label>'),
+      'control' => Markup::create('<input id="email-control" name="email" type="email" aria-invalid="true" aria-describedby="email-description email-error">'),
+      'description' => 'Informe um endereço válido.',
+      'error' => 'Revise o endereço informado.',
     ],
   ],
   'forum-category' => [
@@ -455,6 +465,16 @@ foreach ($component_ids as $component_id) {
   if ($component_id === 'breadcrumb'
     && (!str_contains($output, 'aria-current="page"') || !str_contains($output, 'aria-label="Breadcrumb"'))) {
     throw new RuntimeException('Breadcrumb must render its accessible label and current page marker.');
+  }
+  if ($component_id === 'form-field'
+    && (!str_contains($output, 'data-aculta-form-field-id="email"')
+      || !str_contains($output, '<label for="email-control">E-mail</label>')
+      || !str_contains($output, 'aria-describedby="email-description email-error"')
+      || !str_contains($output, 'aria-invalid="true"')
+      || !str_contains($output, 'id="email-description"')
+      || !str_contains($output, 'id="email-error"')
+      || !str_contains($output, 'Revise o endereço informado.'))) {
+    throw new RuntimeException('Form field must render its Drupal control, accessible description, and textual validation error.');
   }
   print $plugin_id . " PASS\n";
 }
