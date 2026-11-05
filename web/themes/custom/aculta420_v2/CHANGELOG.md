@@ -1,5 +1,15 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — componente Progress
+
+- Criado o SDC experimental `progress` com elemento nativo `<progress>`, rótulo
+  acessível e stories para estado determinado e indeterminado. O percentual só
+  aparece quando o valor é conhecido.
+- Gate SDC cobre os dois estados e a associação do rótulo. Firefox visível
+  passou em 12 estados nas seis larguras e dois modos, com zoom 200%; a captura
+  corrigiu o estilo indeterminado que inicialmente parecia completo. Integração
+  a dados reais e consumer publicado permanecem pendentes.
+
 ## Não versionado — componente Form field
 
 - Criado o SDC experimental `form-field` com slots de rótulo, controle,

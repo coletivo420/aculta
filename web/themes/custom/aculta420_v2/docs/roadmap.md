@@ -54,6 +54,15 @@ controle. Schema e render isolado Drupal cobrem o estado inválido e sua mensage
 Firefox visível em fixture sintética passou em seis larguras e dois modos, zoom
 200% e foco por Tab. O consumer de formulário Drupal publicado continua pendente.
 
+## Progress — G1 implementado; integração a dados reais pendente
+
+Criado o SDC `progress` baseado no elemento nativo, com rótulo e valor
+percentual legíveis quando determinado; `value: null` preserva o estado
+indeterminado sem inventar percentual e o CSS deixa preenchimento parcial. O
+gate Drupal verifica ambos os estados e o rótulo. Firefox visível passou em 12
+estados nas seis larguras e dois modos, zoom 200% e sem overflow. Stories e
+catálogo documentam os contratos; consumer real permanece pendente.
+
 ## Menu de conta e sites — C2 implementado; validação visual pendente
 
 O `account-menu` combina a lista neutra `aculta_domain_sites` com o bloco de

@@ -79,6 +79,7 @@ $component_ids = [
   'navigation-bar',
   'pagination',
   'purpose-showcase',
+  'progress',
   'site-footer',
   'social-links-page',
   'status-messages',
@@ -287,6 +288,9 @@ $samples = [
       'links' => [['title' => 'Apoio', 'url' => '/apoio']],
     ],
   ],
+  'progress' => [
+    '#props' => ['id' => 'curso-progresso', 'label' => 'Progresso do curso', 'value' => 60, 'max' => 100],
+  ],
   'site-footer' => [
     '#props' => [],
     '#slots' => ['content' => '<div class="region-footer"><p>Rodapé</p></div>'],
@@ -475,6 +479,34 @@ foreach ($component_ids as $component_id) {
       || !str_contains($output, 'id="email-error"')
       || !str_contains($output, 'Revise o endereço informado.'))) {
     throw new RuntimeException('Form field must render its Drupal control, accessible description, and textual validation error.');
+  }
+  if ($component_id === 'progress'
+    && (!str_contains($output, '<label class="progress__label" for="curso-progresso">Progresso do curso</label>')
+      || !str_contains($output, '<progress')
+      || !str_contains($output, 'id="curso-progresso"')
+      || !str_contains($output, 'value="60"')
+      || !str_contains($output, 'max="100"')
+      || !str_contains($output, '>60%</span>'))) {
+    throw new RuntimeException('Determinate progress must render its native value, accessible label, and visible percentage.');
+  }
+  if ($component_id === 'progress') {
+    $progress_css = file_get_contents($theme_root . '/components/progress/progress.css');
+    if (!str_contains($progress_css, ':indeterminate::-moz-progress-bar')
+      || !str_contains($progress_css, ':indeterminate::-webkit-progress-value')
+      || !str_contains($progress_css, 'transform: scaleX(.35)')) {
+      throw new RuntimeException('Indeterminate progress must be visually distinguished from a completed bar.');
+    }
+    $indeterminate_build = [
+      '#type' => 'component',
+      '#component' => $plugin_id,
+      '#props' => ['id' => 'carregamento', 'label' => 'Carregando conteúdo', 'value' => NULL],
+    ];
+    $indeterminate_output = (string) $renderer->renderInIsolation($indeterminate_build);
+    if (!str_contains($indeterminate_output, '<progress')
+      || !str_contains($indeterminate_output, 'Carregando conteúdo')
+      || preg_match('/<progress\b[^>]*\bvalue=/', $indeterminate_output)) {
+      throw new RuntimeException('Indeterminate progress must omit the value attribute and retain its accessible label.');
+    }
   }
   print $plugin_id . " PASS\n";
 }

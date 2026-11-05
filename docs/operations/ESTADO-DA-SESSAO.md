@@ -1436,3 +1436,24 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   descoberta com backend nulo. `updatedb:status` e `config:status` anteriores
   estavam limpos. Prosseguir para `progress` na sequência G1.
 
+## G1 — componente Progress — 2026-11-05
+
+- **Implementação:** SDC `progress` com elemento `<progress>` nativo, label
+  associado, percentual visível no estado determinado e story indeterminada sem
+  percentual inventado. O CSS apresenta preenchimento parcial quando
+  `:indeterminate`; gate verifica ambos os estados e os pseudo-elementos.
+- **Gates:** SDC schema 55/764 PASS; design foundations 2.468 PASS; render
+  Drupal isolado 33 SDCs PASS; YAML parse, PHP lint/PHPCS do validador e
+  `git diff --check` PASS. Foundations V2 55 pares já passou na entrega
+  `form-field` imediatamente anterior.
+- **Firefox:** 12/12 estados sintéticos em 320/390/768/959/960/1440 CSS px,
+  claro/escuro, sem overflow; labels associados; valores/percentual determinados
+  e indicador parcial indeterminado; zoom real 200% sem overflow. Capturas e
+  `results.json` em `$SUITE_OUT`, fora do repo.
+- **Revisão visual:** captura inicial mostrou barra indeterminada preenchida por
+  inteiro no Firefox; regra `:indeterminate` foi ajustada e a repetição visual
+  confirmou segmento parcial. Consumer com dados reais permanece pendente.
+- **Runtime:** nenhuma escrita persistente. `progress` é SDC com render isolado
+  em descoberta nula; `updatedb:status`/`config:status` devem ser conferidos
+  antes de publicar. Próximo item novo na sequência G1: `data-table`.
+

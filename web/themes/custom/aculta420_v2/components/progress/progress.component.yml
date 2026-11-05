@@ -1,0 +1,30 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Progresso
+description: Indicador nativo de progresso com rótulo e valor textual.
+status: experimental
+group: Dados
+props:
+  type: object
+  additionalProperties: false
+  required: [id, label]
+  properties:
+    id:
+      type: string
+      minLength: 1
+      pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
+      title: Identificador
+    label:
+      type: string
+      minLength: 1
+      title: Rótulo acessível
+    value:
+      type: [number, 'null']
+      minimum: 0
+      default: null
+      title: Valor atual; null indica progresso indeterminado
+    max:
+      type: number
+      minimum: 0
+      exclusiveMinimum: true
+      default: 100
+      title: Valor máximo

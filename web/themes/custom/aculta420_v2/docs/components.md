@@ -63,6 +63,15 @@ preserva a associação `for`/`id` do controle e associa os IDs
 recebe `aria-invalid="true"` quando aplicável. O componente não cria nem altera
 controles Drupal e não valida dados.
 
+### progress
+
+Indicador HTML nativo `<progress>` com rótulo acessível e percentual visível
+quando o valor é conhecido. Props: `id`, `label`, `value` (null para estado
+indeterminado) e `max`. Stories: `progress.default.story.yml` e
+`progress.indeterminate.story.yml`. O controle conserva a semântica nativa e
+não busca dados nem estima progresso; valores acima de `max` são limitados ao
+máximo para a apresentação.
+
 ### lms-lesson-page
 
 Contêiner visual para o render array entregue pelo controlador do LMS na rota
@@ -247,7 +256,7 @@ original caso a descoberta Drupal ainda não conheça o SDC.
 
 ## Lacunas do catálogo
 
-Componentes previstos no ADR-046: `avatar`, `tabs`, `dialog` e `form-field` têm SDC próprio; a função de `author-box` é coberta pelo slot de autoria de `revista-publication` e pelo SDC compartilhado `author-card`. `progress`, `data-table`, `empty-state` e `price` ainda precisam de auditoria/implementação. `breadcrumb` e `accordion` já existem. Ordem e uso estão no [roadmap.md](roadmap.md).
+Componentes previstos no ADR-046: `avatar`, `tabs`, `dialog`, `form-field` e `progress` têm SDC próprio; a função de `author-box` é coberta pelo slot de autoria de `revista-publication` e pelo SDC compartilhado `author-card`. `data-table`, `empty-state` e `price` ainda precisam de auditoria/implementação. `breadcrumb` e `accordion` já existem. Ordem e uso estão no [roadmap.md](roadmap.md).
 
 ## Como documentar um componente novo
 
