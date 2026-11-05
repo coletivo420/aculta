@@ -12,6 +12,8 @@ global-styling:
       src/styles/portal-account.css: {}
       src/styles/messenger-drawer.css: {}
       src/styles/public-profile.css: {}
+      src/styles/utilities.css: {}
+      src/styles/studio.css: {}
   dependencies:
     - system/base
 

@@ -34,6 +34,7 @@
   --color-warning-text: #7a4b00;
   --color-error: #a3212d;
   --color-scrim: rgb(0 0 0 / 78%);
+  --color-shadow-tint: rgb(0 0 0 / 30%);
   --logo-filter: brightness(0);
   --color-focus-ring: var(--color-brand-primary);
   --focus-ring-width: 3px;
