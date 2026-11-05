@@ -69,6 +69,7 @@ Os valores seguem `docs/superficies.md`, seção 1.
 Decisão do responsável em 2026-11-05: o administrador escolhe a cor de destaque
 de cada purpose em uma seção nova, **Cores por purpose**, separada de
 Superfícies. Estado: **planejado**, ainda não implementado.
+Escopo: **só destaque** (faixa e tokens de acento). Fundo, texto e cabeçalho não mudam. Versão: **MINOR**, conforme `docs/versioning.md`. O controle usa a seção de configuração do tema e salva em `aculta420_v2.settings`; a exportação para `config/sync` segue o passo de `drush cex` descrito na seção 1.
 
 | Chave (planejada) | Tipo | Padrão | Opções | Aplica a |
 | --- | --- | --- | --- | --- |
