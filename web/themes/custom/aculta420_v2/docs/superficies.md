@@ -121,3 +121,70 @@ de produção (ver studio-visual-spec, seção 9, item 13).
 - Confirmar em captura o contraste visível do creme no claro.
 - Definir quais blocos viram destaque com fundo (a lista fica na especificação do Studio).
 - Atualizar `docs/components.md` quando os componentes forem alterados (AGENTS seção 6).
+
+## 8. Faixa de acento por domínio
+
+Alguns cartões ganham uma faixa colorida na borda inicial (lado esquerdo em
+texto LTR), para identificar a área do site. A cor vem do **domínio ou
+subdomínio (purpose)** onde o cartão aparece, nunca de dado do conteúdo.
+
+### 8.1 Escala de cada cor do tema
+
+Três cores de base, com variações. Valores calculados nesta sessão, com
+contraste contra o cartão branco (modo claro) e contra a superfície escura
+`#211e1b` (modo escuro).
+
+| Cor | Passo | Hex | Contra branco | Contra escuro | Uso |
+| --- | --- | --- | --- | --- | --- |
+| **Verde** (`--palette-green`, `#689427`) | 50 | `#f3f6ee` | 1,09 | 15,22 | fundo suave |
+| | 100 | `#e7eedc` | 1,19 | 13,94 | fundo de destaque |
+| | 200 | `#cfddba` | 1,43 | 11,59 | fundo de destaque forte |
+| | **500** | **`#689427`** | **3,59** | **4,62** | **faixa no claro e no escuro** |
+| | 700 | `#49681b` | 6,44 | 2,58 | texto sobre claro |
+| | 900 | `#2f4312` | 10,93 | 1,52 | texto sobre claro, uso raro |
+| **Amarelo** (`--color-brand-highlight`, `#f2ca36`) | 50 | `#fefbef` | 1,04 | 15,97 | fundo suave |
+| | 100 | `#fdf7df` | 1,08 | 15,39 | fundo de destaque |
+| | 200 | `#fbeebf` | 1,16 | 14,28 | fundo de destaque forte |
+| | 500 | `#f2ca36` | 1,58 | 10,49 | **faixa no escuro** |
+| | **700** | **`#a98d26`** | **3,20** | **5,18** | **faixa no claro** |
+| | 900 | `#6d5b18` | 6,66 | 2,49 | texto sobre claro, uso raro |
+| **Vermelho** (`--color-link-editorial`, `#b52f22`) | 50 | `#f9eeed` | 1,13 | 14,63 | fundo suave |
+| | 100 | `#f3dedc` | 1,29 | 12,85 | fundo de destaque |
+| | 200 | `#e7bcb8` | 1,70 | 9,74 | **faixa no escuro** |
+| | **500** | **`#b52f22`** | **6,19** | **2,68** | **faixa no claro** |
+| | 700 | `#7f2118` | 9,87 | 1,68 | texto sobre claro |
+| | 900 | `#51150f` | 14,29 | 1,16 | texto sobre claro, uso raro |
+
+### 8.2 Regra de contraste da faixa
+
+A faixa é elemento gráfico, não texto. Pelo critério de contraste de elementos
+gráficos (WCAG 1.4.11), precisa de 3:1 contra o fundo do cartão. Por isso:
+
+- **Claro:** verde 500 (3,59), amarelo 700 (3,20) e vermelho 500 (6,19) passam.
+  O amarelo 500 (1,58) não passa: não usar como faixa no claro.
+- **Escuro:** verde 500 (4,62), amarelo 500 (10,49) e vermelho 200 (9,74) passam.
+  O vermelho 500 (2,68) não passa: não usar como faixa no escuro.
+
+Os tokens de faixa ficam por modo, em `src/styles/tokens.css`:
+
+- `--accent-green-stripe`, `--accent-yellow-stripe`, `--accent-red-stripe`
+  (claro: 500, 700 e 500; escuro: 500, 500 e 200).
+
+### 8.3 Mapeamento por domínio (pendente)
+
+A cor de cada domínio ainda não foi decidida (pergunta ao responsável). Enquanto
+isso, nenhum cartão recebe faixa.
+
+Domínios e purposes a mapear: `main`, `account`, `support`, `magazine`, `wiki`,
+`shop`, `courses`, `events`, `links`, `forum`.
+
+### 8.4 Onde a faixa aparece
+
+- Categorias do fórum e cartões de tópico, por purpose `forum`.
+- Verbetes da wiki, pelo purpose `wiki`.
+- Cartões de revista, pelo purpose `magazine`.
+- Demais cartões, quando o responsável indicar.
+
+Regra: a faixa é decorativa. A informação (nome da área, categoria) fica no
+texto do cartão, não só na cor.
+
