@@ -1,11 +1,10 @@
 ---
-command: /graphify
+name: graphify
 description: Turn any folder of files into a navigable knowledge graph
 ---
 
 # Workflow: graphify
 
-## Steps
-Follow the graphify skill installed at ~/.gemini/config/skills/graphify/SKILL.md to run the full TypeScript-backed pipeline.
+Follow the graphify skill to run the full pipeline.
 
 If no path argument is given, use `.` (current directory).

@@ -1,0 +1,11 @@
+{
+  "name": "aculta-browser-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:firefox": "node run-playwright.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
+  }
+}

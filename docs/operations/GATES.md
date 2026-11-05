@@ -30,7 +30,7 @@ Regra: rode **somente** os gates do escopo do diff e dos módulos que dependem d
 | Papéis e hierarquia | `validate-role-hierarchy.php`, `validate-aculta-user-roles.php` | |
 | URLs públicas | `validate-public-slugs.php`, `validate-no-temporary-route-aliases.php` | |
 | Conta raiz e perfil | `validate-aculta-portal-conta-root.php`, `validate-profile-links.php` | |
-| Studio e fronteira módulo/tema | `validate-module-theme-boundary.php`, `validate-project-status-index.php` | Aceite visual do Studio: `tests/browser/aculta-studio/` |
+| Studio e fronteira módulo/tema | `validate-module-theme-boundary.php`, `validate-project-status-index.php` | Aceite visual Playwright do Studio: `tests/browser/aculta-studio/` |
 | Galeria | `validate-aculta-gallery.php` | |
 | Envio de e-mail | `validate-mail-transport.php` | |
 | Aceite único de termos | `validate-single-acceptance.php` | |
