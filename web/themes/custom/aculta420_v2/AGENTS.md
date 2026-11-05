@@ -32,7 +32,7 @@ Herde o `AGENTS.md` da raiz do repositório. Estas regras são específicas do t
 
 - Rode os gates aplicáveis listados em [docs/gates.md](docs/gates.md) e cole a saída. Não declare PASS sem execução.
 - Se um gate não puder rodar no ambiente, registre como `DEFERRED` com o motivo.
-- Mudança visual exige captura em claro e escuro, em 320, 390 e 1440 CSS px, com zoom de 200% e teste de teclado. Guarde as capturas em `$SUITE_OUT`, fora do repositório.
+- Captura na aceitação da fase: claro e escuro, em 320, 390 e 1440 CSS px, com zoom de 200% e teste de teclado. Mudança visual pequena dentro de uma fase: 320 e 1440 CSS px, claro. Guarde as capturas em `$SUITE_OUT`, fora do repositório.
 - Estados autenticados e leitores de tela são evidência separada. Se não foram testados, diga isso.
 
 ## 5. Versão e entrega

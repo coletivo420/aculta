@@ -53,31 +53,29 @@ Ainda há referências fora de `tests/browser`:
 - `web/themes/custom/aculta420/` (V1) e outros módulos podem citar Olivero em comentários;
   não tocar na V1.
 
-## 4. Propostas que exigem decisão do responsável
+## 4. Decisões do responsável e estado
 
-1. **Mover históricos para fora do caminho de leitura.** **Feito em 2026-11-05:** limite de 10
-   entradas em `ESTADO-DA-SESSAO.md` e `ACULTA-CONTINUOUS-EXECUTION.md`, com o restante movido
-   sem alteração para `docs/history/operations/`. Registro só ao fim de fase ou de trabalho.
-2. **Separar o handoff.** **Feito em 2026-11-05** (mesmo commit do item 1).
-3. **Reduzir a matriz de captura.** O AGENTS do tema exige captura em 320, 390 e 1440 px, em
-   claro e escuro, com zoom de 200%, para cada mudança visual. Proposta: captura completa
-   só na aceitação da fase; mudanças pequenas com 320 e 1440 px no modo claro.
-4. **Duplicidades de suítes.** `tests/browser/aculta420-v2-foundations`,
-   `aculta-theme-mobile-first`, `aculta-visual` e `aculta-smoke` fazem medições sobrepostas
-   de reflow. Proposta: uma suíte de reflow (`aculta-theme-mobile-first`) e as outras
-   restritas a contrato específico.
-5. **Duplicidade de módulo.** `aculta_links` e `aculta_linkweed` têm o mesmo
-   `SocialLinksSettingsForm`. Decidir qual permanece (ver ADR-050, seção 7).
-6. **Gates sem referência.** `scripts/validate-cross-domain-request-policy.php` e
-   `scripts/validate-session-cookie.php` não são citados em nenhum documento. Confirmar se
-   são necessários; se não forem, remover em PR própria.
-7. **Testes unitários por escopo.** `aculta_messenger` tem 82 testes unitários e
-   `aculta_lms` 65. Recomendação: rodar só o módulo alterado, não a suíte inteira, em cada
-   PR. A regra já existe em `docs/portal/AGENT-TOKEN-ECONOMY.md`, mas não é referenciada por
-   `AGENTS.md` nem `CLAUDE.md`. Referenciar.
-8. **Teste duplicado de design-foundations.** `scripts/tests/validate-aculta420-design-foundations-test.php`
-   (1.235 linhas) acompanha o analisador de 2.282 linhas. Decidir se o teste roda em CI ou
-   só no gate.
+Decisões de 2026-11-05 (respostas às perguntas):
+
+1. **Remover `aculta_links`:** **pendente de verificação no Runtime.** O README do módulo diz
+   "Runtime MAIN ativo", mas o `config/sync/core.extension.yml` não o inclui e o
+   `aculta_linkweed` é o nome novo. Não remover antes de confirmar com
+   `drush pm:list --status=enabled` no Runtime. Se estiver ativo lá, a remoção precisa de
+   desinstalação e de configuração própria.
+2. **Captura:** a matriz completa fica só na aceitação da fase. Mudança visual pequena dentro
+   de uma fase: 320 e 1440 CSS px, claro. **Aplicado** em `web/themes/custom/aculta420_v2/AGENTS.md`.
+3. **Suítes de reflow:** consolidar em `aculta-theme-mobile-first`. **Não há script idêntico**
+   entre as quatro suítes (verificado por `md5sum`). A sobreposição é funcional. A consolidação
+   exige reescrever medições e precisa de nova decisão (ver perguntas abertas).
+4. **Gates sem referência:**
+   - `validate-session-cookie.php` **removido.** Falhava sem `vendor/` e duplicava
+     `validate-session-cookie-policy.php`, que passa e é citado em
+     `aculta_deployer/docs/COOKIES-AMBIENTE.md`.
+   - `validate-cross-domain-request-policy.php` **mantido.** Correção desta auditoria: eu o
+     classifiquei como sem referência por busca do nome exato com `.php`. Ele é citado em
+     `docs/portal/FRONTEIRA-MODULO-TEMA.md` e implementa a política de
+     `docs/portal/CROSS-DOMAIN-REQUEST-POLICY.md`, que a migração htmx (ADR-050) depende. Ele só
+     roda dentro do Drupal (`DRUPAL_ROOT`), por isso não executa aqui.
 
 ## 5. Regras que não mudam
 
