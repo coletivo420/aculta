@@ -2,6 +2,16 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
+# Resolução do CLAUDE.md (aculta, branch dev) — 2026-11-05
+
+- **Objetivo:** reduzir o CLAUDE.md a ponteiros e mover cada regra para o arquivo dono, conforme pedido do responsável.
+- **Concluído:** `753ef5f1a3` em `origin/dev`. CLAUDE.md com 1494 bytes; `AGENTS.md` novos em `aculta_portal_cep` e `aculta_pagamentos_mercadopago`; linha de independência do tema em `aculta_portal/AGENTS.md`. No rebase, a regra de CEP já estava na raiz do `AGENTS.md` do remoto, então não a dupliquei no módulo do portal. `AGENTS.md` raiz não alterado (4984 bytes).
+- **Verificações:** `validate-agent-token-budget.php` PASS (CLAUDE 1494/3000, handoff 3/3); `validate-module-theme-boundary.php` PASS (4248); `validate-root-policy.php` PASS (13 checks); `validate-admin-routes-main-domain.php` PASS (169 rotas).
+- **Riscos:** as instruções do projeto no claude.ai ainda dizem "PR por fase". Não as alterei, porque o claude.ai está fora do repositório; até o responsável atualizá-las, o CLAUDE.md contradiz essas instruções.
+- **Pendências:** (1) atualizar as instruções do claude.ai; (2) regra de CEP duplicada entre o `AGENTS.md` raiz e `aculta_portal_cep/AGENTS.md`, a decidir qual permanece; (3) o pedido citava o repositório `aculta-site`; o trabalho foi feito no `aculta`.
+- **Próximo passo:** o responsável atualizar as instruções do claude.ai e decidir a duplicata de CEP.
+
+
 # Migração data-portal-ui, mapa do V2 e upload centralizado — 2026-11-05
 
 - **Objetivo:** migrar as classes de design de `aculta_lms`, `aculta_lms_resources` e `aculta_paths` para `data-portal-ui` e mapear os tokens no tema V2; centralizar o validador de upload da resposta do LMS.
@@ -20,13 +30,3 @@
 - **Verificações:** o gate `validate-aculta-portal-drupal11.php` confere apenas que os documentos citam o padrão, e a referência continua válida. Gate não executado aqui (sem `vendor/` e sem Drush): DEFERRED.
 - **Pendências:** confirmar em drupal.org a lista de remoções do Core 12 e a data do release; decidir o tema administrativo (Claro ou Gin); inventariar os pontos do Portal que usam `Htmx` ou `#ajax`.
 - **Próximo passo:** rodar o gate do Portal no servidor de desenvolvimento e, em seguida, testar um Core 12 beta em ambiente de teste para medir o impacto do htmx 4.
-
-# Economia de tokens — oito itens aprovados — 2026-11-05
-
-- **Objetivo:** reduzir a leitura e a saída de comandos pelos agentes, conforme aprovação do responsável (itens 1 a 8 de `docs/operations/AUDITORIA-TOKENS-TESTES-2026-11-05.md`, seção 9).
-- **Concluído:** itens 1, 2, 3 (Wiki e Studio), 4, 5, 6, 7 e 8. `TESTES-NAVEGADOR.md` caiu de 57 KB para 5,5 KB; as rodadas F a V estão em `docs/history/portal/TESTES-NAVEGADOR-RODADAS.md`. AGENTS da Wiki caiu de 34 KB para 6,7 KB; do Studio, de 13 KB para 7,5 KB. Criado `docs/operations/GATES.md`. Removidos `scripts/validate-institution.php` e `scripts/validate-podplant420-assets.php`.
-- **Commits em `origin/dev`:** `b1589e8e` (arquivo e compactação de testes de navegador), `8dbb5066` (AGENTS de módulos), `f9aa6230` (fonte única de regras, gates, não ler, saída obrigatória e remoção de validadores).
-- **Verificações:** links relativos dos arquivos alterados conferidos por script; restaram quebras anteriores a esta entrega (`docs/portal/README.md` e `ACULTA-MODULES-CLOSEOUT.md`, para módulos de PDF Viewer que já não estão no caminho indicado). Gates PHP **DEFERRED**: o ambiente não tem `vendor/` nem Drush.
-- **Pendências:** `handoff/podplant420` não foi arquivado, por causa de referências vivas em `config/sync/views.view.revista_sessoes.yml` e em scripts de verificação. `aculta_portal/docs/AGENT-POLICIES.md` não foi deduplicado, porque exige conferência item a item com `DRUPAL-11-STANDARDS.md`. Cerca de 30 documentos ativos ainda trazem caminhos de máquina; a regra está em `AGENTS.md`, seção Escopo e segurança, e a correção fica para uma fase própria. Validadores com uma única citação em auditoria ou dívida foram mantidos e precisam de decisão do responsável.
-- **Próximo passo:** no servidor de desenvolvimento, rodar `php scripts/validate-aculta-portal-drupal11.php` e os gates do escopo de cada área alterada, colando a saída; depois decidir o arquivamento de `handoff/podplant420`.
-
