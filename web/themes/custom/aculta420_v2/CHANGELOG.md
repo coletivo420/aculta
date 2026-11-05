@@ -1,5 +1,17 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — data-purpose neutro no html (Fase 3)
+
+- `SurfaceSettingsHooks::preprocessHtml` aplica `data-purpose` a partir de
+  `aculta_purpose`, fornecido pelo Portal, sem ler hostname nem regra de
+  domínio. O formato é validado antes do atributo.
+- Verificado no Runtime em Main, Conta, Eventos e Wiki. O ajuste de tokens de
+  destaque por purpose depende de `domain_presentation.accent` (D1).
+- Catálogo de componentes auditado: 39 diretórios com entrada, schema e story;
+  `breadcrumb`, `purpose-showcase` e `event-page-layout` documentados.
+- `ui_styles` 1.22.0 habilitado declara suporte a `^10.3 || ^11 || ^12`; o tema
+  não registra plugins próprios.
+
 ## Não versionado — microfase HTMX do shell (parcial)
 
 - HTMX é documentado como padrão obrigatório para interações assíncronas novas

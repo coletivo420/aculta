@@ -43,6 +43,11 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
     $htmlAttributes = $variables['html_attributes'] ?? NULL;
     if ($htmlAttributes instanceof Attribute) {
       $htmlAttributes->setAttribute('data-theme', $mode);
+      // Chave neutra fornecida pelo Portal; não é hostname nem regra de domínio.
+      $purpose = $variables['aculta_purpose'] ?? NULL;
+      if (is_string($purpose) && preg_match('/^[a-z0-9_-]+$/', $purpose) === 1) {
+        $htmlAttributes->setAttribute('data-purpose', $purpose);
+      }
     }
 
     // Core's html template renders `attributes` on <body>. `body_attributes`

@@ -1,3 +1,12 @@
+## Não versionado — chave neutra de purpose no HTML (ADR-046 Fase 3)
+
+- `AppearanceHooks::preprocessHtml` expõe `aculta_purpose`, a chave neutra do
+  purpose atual, e `page_attachments` declara o contexto de cache `domain`.
+- O tema ACULTA420 V2 aplica `data-purpose` no `<html>` após validar o formato.
+  Verificado no Runtime: `main`, `account`, `eventos` e `wiki`.
+- O ajuste de tokens de destaque por purpose continua dependente de
+  `domain_presentation.accent` (D1).
+
 ## Não versionado — suporte HTMX aos popups e à busca (ADR-050 F1b parcial)
 
 - `LoginPopupForm` configura `Htmx` apenas em requisições `HX-Request`, envia o

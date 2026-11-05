@@ -35,6 +35,13 @@ final class AppearanceHooks {
     $variables['aculta_color_mode'] = $this->preference->resolve((int) $this->currentUser->id());
     $this->accountTitle->applyHeadTitle($variables);
 
+    // Chave neutra do purpose atual (Fase 3): o tema aplica data-purpose e
+    // decide destaque sem conhecer hostname, domínio ou regra de acesso.
+    $purpose = $this->domainPurpose->getCurrentPurpose();
+    if (is_string($purpose) && $purpose !== '') {
+      $variables['aculta_purpose'] = $purpose;
+    }
+
     // Toda a interface administrativa vive no MAIN. Nos subdomínios, remove o
     // toolbar do Navigation para não exibir links administrativos que dão 404.
     if ($this->domainPurpose->getCurrentPurpose() !== 'main') {
@@ -50,6 +57,7 @@ final class AppearanceHooks {
   #[Hook('page_attachments')]
   public function pageAttachments(array &$attachments): void {
     $attachments['#cache']['contexts'][] = 'user';
+    $attachments['#cache']['contexts'][] = 'domain';
     $attachments['#cache']['tags'][] = 'config:aculta_portal.appearance';
     $uid = (int) $this->currentUser->id();
     if ($uid > 0) {

@@ -27,6 +27,7 @@ O tema não conhece hostnames, domínios, purposes ou regras de acesso. Ele rece
 | `domain_presentation.layout.show_utility_bar` | Portal | exibe ou oculta as utilidades da barra |
 | `domain_presentation.regions.showcase` | Portal | links da vitrine de portais (`multidomain_network_links`) |
 | `domain_presentation.identity.purpose` | Portal | chave neutra do purpose atual |
+| `aculta_purpose` | Portal (`AppearanceHooks::preprocessHtml`) | chave neutra aplicada como `data-purpose` no `<html>`; sem hostname nem regra de domínio |
 | `domain_presentation.accent` | Portal; **pendente (D1)** | valor neutro `green`, `yellow` ou `red` para o SDC `card-cultural`; ausente no contrato atual, então consumers não devem enviar/mapeamento permanece DRAFT |
 | `aculta_domain_sites` | Portal (`DomainPresentationBuilder`) | links dos sites publicados, com purpose, nome, URL e sinalização do atual |
 | `aculta_account_name` | Portal (`aculta_user`) | apelido aparado da pessoa autenticada; `NULL` sem apelido |
@@ -45,7 +46,7 @@ Regras:
 
 - O Portal não instancia componentes do tema. O tema não resolve regra de domínio.
 - Links que atravessam purpose chegam como URL absoluta, gerada pelo `DomainPurposeManager` no Portal.
-- A chave neutra de purpose (Fase 3) ainda não existe no contrato. Quando existir, o tema aplica `data-purpose` no `<html>` e ajusta tokens de destaque, sem conhecer o domínio.
+- A chave neutra de purpose (Fase 3) existe como `aculta_purpose` e o tema aplica `data-purpose` no `<html>` após validar o formato. O ajuste de tokens de destaque por purpose continua dependente de `domain_presentation.accent` (D1); o tema não lê hostname, domínio nem regra de acesso.
 
 ## 3. Modo de cor
 

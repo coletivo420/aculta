@@ -1599,3 +1599,13 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Riscos:** nenhum registrado.
 - **Pendências:** nenhuma desta entrega. O repositório é `aculta`.
 - **Próximo passo:** nenhum.
+
+# Skills de handoff, padrões Drupal 12, segurança e Playwright (decisão) — 2026-11-05
+
+- **Objetivo:** melhorar o handoff, adicionar skills de padrão Drupal e de segurança estática, adicionar a skill de alinhamento e renomear o padrão normativo para Drupal 12.
+- **Concluído:** `2249d7a5` (handoff com passo de retomada, `aculta-drupal-padroes`, `aculta-seguranca-estatica`, limite de 9 skills), `a55dbe1d` (`aculta-grill-me`, `/graphify-out/` no `.gitignore`, limite de 10 skills), `576760cc` (renomeia `DRUPAL-11-STANDARDS.md` para `DRUPAL-12-STANDARDS.md`). Gate do Drupal renomeado para `validate-aculta-portal-drupal12.php` nesta entrega (commit a seguir).
+- **Decisões:** Trail of Bits não copiada (licença CC-BY-SA; instalação do plugin fica com o responsável). Skill Drupal do registro não copiada (licença não declarada; conteúdo de Drupal 10 com DDEV); escrita versão própria. Navegador de teste: **Playwright como padrão único** (opção B), que aposenta o geckodriver e o Firefox ESR; o aceite visual passa a ser captura do Playwright. Esta decisão ainda não está em `NAVEGADOR-TESTES.md`.
+- **Verificações:** `validate-agent-token-budget.php` PASS (skills 10). `validate-aculta-portal-drupal12.php` DEFERRED: falta `vendor/`. Gate de caminhos PASS. Graphify: grafo gerado sem LLM (127.738 nós, 202.904 arestas), consulta funcionando; semgrep instalado, varredura de linha de base não feita.
+- **Riscos:** o padrão de navegador em `NAVEGADOR-TESTES.md` e na skill `aculta-navegador-testes` ainda diz Firefox ESR até a migração. Commit de V1 acidental foi revertido antes do push.
+- **Pendências:** migração para Playwright (prompt já entregue ao agente local); varredura do Semgrep; decidir o plugin da Trail of Bits; rodar o gate do Drupal 12 onde houver `vendor/`.
+- **Próximo passo:** o agente local migra os testes para Playwright e atualiza `NAVEGADOR-TESTES.md` e a skill, e depois roda a varredura do Semgrep sobre os módulos alterados.

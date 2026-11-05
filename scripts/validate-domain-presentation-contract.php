@@ -65,7 +65,11 @@ foreach ($expected as $purpose => [$title, $shortTitle]) {
   $assert($presentation !== NULL, 'Presentation builds for purpose: ' . $purpose);
 
   $theme = $presentation->toThemeArray();
-  $assert(array_keys($theme) === ['identity', 'regions', 'layout'], 'Theme contract has only identity, regions and layout: ' . $purpose);
+  $assert(
+    array_keys($theme) === ['identity', 'regions', 'layout', 'domain_sites'],
+    'Theme contract has identity, regions, layout and domain_sites: ' . $purpose,
+  );
+  $assert(is_array($theme['domain_sites']), 'Domain sites are a neutral list: ' . $purpose);
   $layout = $theme['layout'];
   $assert(
     array_keys($layout) === ['institution_bar_account', 'show_utility_bar', 'links_page', 'show_site_header'],

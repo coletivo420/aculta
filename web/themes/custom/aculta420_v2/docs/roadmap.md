@@ -347,7 +347,12 @@ Gates foundation (55 pares), design foundations (2.468 checks), SDC schemas
 
 ## Fase 3 — Purpose neutro no Portal
 
-**Status: pendente; contrato de apresentação será alterado em commit separado no `aculta_portal`.**
+**Status: chave neutra entregue em 2026-11-05.** `AppearanceHooks::preprocessHtml`
+expõe `aculta_purpose` e o tema aplica `data-purpose` no `<html>` após validar
+o formato; a cache de página passa a variar por `domain`. Verificado no Runtime
+em Main (`main`), Conta (`account`), Eventos (`eventos`) e Wiki (`wiki`). O
+ajuste de tokens de destaque por purpose continua dependente de
+`domain_presentation.accent` (D1), não fornecido pelo Portal.
 
 ## Fase 4 — UI Styles
 
