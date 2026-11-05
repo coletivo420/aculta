@@ -1,4 +1,5 @@
 import { spawnSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 
 const origin = process.env.ACULTA_SITE_ORIGIN;
 const urls = process.env.ACULTA_BROWSER_URLS;
@@ -14,4 +15,9 @@ const result = spawnSync(process.execPath, ['./node_modules/@playwright/test/cli
 });
 
 if (result.error) process.exit(1);
-process.exit(result.status === 124 ? 124 : result.status === 0 ? 0 : 1);
+if (result.status === 0) process.exit(0);
+
+const reportPath = process.env.SUITE_OUT ? `${process.env.SUITE_OUT}/playwright.json` : '';
+let report = '';
+try { report = reportPath ? readFileSync(reportPath, 'utf8') : ''; } catch {}
+process.exit(result.status === 124 || /TimeoutError|timeout/i.test(report) ? 124 : 1);
