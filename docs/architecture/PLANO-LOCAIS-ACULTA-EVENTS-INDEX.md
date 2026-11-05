@@ -171,7 +171,7 @@ Gate obrigatório com serviços/providers reais do owner: create/update/delete, 
 | Acesso/cache | Anônimo/A/B/admin/editor vinculado, revogação, outro purpose, registro privado e precisão aproximada | HTML/JSON/JSON-LD/autocomplete/ICS/mapa/Index e caches cruzados |
 | Index | Todos os cenários IDX-LOC da seção 6.3, consultas via API, filas, gerações e módulo opcional | Kernel integrado real e auditoria de integridade; harness não prova Runtime |
 | Agenda | Futuro/em andamento/passado, online/híbrido, recorrência, cancelamentos e reagendamentos | Suítes do owner e Calendar sem dependência invertida |
-| Experiência | Cadastro inline/independente, retorno Studio, links reais, vazios e falhas externas | Firefox ESR visível/X11, 320/390/768/1280, teclado, zoom 200%, claro/escuro e no-JS; ACULTA420 e Olivero |
+| Experiência | Cadastro inline/independente, retorno Studio, links reais, vazios e falhas externas | Firefox ESR visível/X11, 320/390/768/1280, teclado, zoom 200%, claro/escuro e no-JS no tema ACULTA ativo |
 | Volume | Diretório, agenda local e busca cultural com muitos locais/datas/negações | Medir consultas, memória e p50/p95; definir SLO e dataset antes de declarar aprovação |
 | Implantação | Migração repetível, diff ativo/sync, snapshot/rollback, canônicos e sitemap | SHA/ambiente/resultados reais; nenhum teste escrito apresentado como executado |
 

@@ -60,7 +60,7 @@ Minha Conta Studio inclui agora as páginas privadas `/studio/conta/pedidos`, `/
 
 O Studio somente envolve os render arrays e aplica navegação contextual; não duplica entity, workflow, form, tabela ou shell, nem altera o Perfil público. As rotas originais `/meu-apoio` e `/configuracoes` e o legado permanente `/conta-legada` continuam disponíveis; o hub ACCOUNT fica em `/` (`/studio` técnico bloqueado diretamente).
 
-**Unit novos escritos mas não executados**; PHPUnit/Kernel/Functional, PHP lint, PHPCS, gates, Domain, cache, HTTP autenticado/anônimo, checkout, duas contas, Firefox ESR/X11, 320 px, Olivero e no-JS permanecem pendentes. Sem RC, merge ou deploy.
+**Unit novos escritos mas não executados**; PHPUnit/Kernel/Functional, PHP lint, PHPCS, gates, Domain, cache, HTTP autenticado/anônimo, checkout, duas contas, Firefox ESR/X11, 320 px e no-JS permanecem pendentes. Sem RC, merge ou deploy.
 
 ## Histórico — auditoria S-R3-B1, Studio dev.19
 

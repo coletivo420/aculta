@@ -195,7 +195,7 @@ produção. O anexo e o download privado são medidos pelos scripts de
 ativo: h1, categorias, links `?categoria=`, contagem de tópicos, ausência de
 erros e overflow. Salva capturas em 1024 px e na menor largura de janela que o
 Firefox aceita. Reaproveita `wdlib.py`, resolve os hostnames para 127.0.0.1 e
-não troca configuração. Olivero foi dispensado pelo responsável (2026-11-03).
+não troca configuração.
 
 O script confirma os assets ACULTA, mede grade, contador dos cartões e reflow.
 A inspeção de cores permanece na suíte `forum-index-visual.mjs`.

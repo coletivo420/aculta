@@ -68,7 +68,7 @@ Migrar o ACULTA de Drupal 11.4 para Drupal 12 estável, em branch de trabalho, s
   - carrinho e checkout (Commerce) com pagamento de teste;
   - tema admin (Claro ou Gin, conforme decisão);
   - módulo `history`, com contagem de não lidos do fórum.
-- Testes de Portal, Revista e Fórum com o tema Olivero, além do ACULTA420.
+- Testes de Portal, Revista e Fórum no tema ACULTA ativo.
 - Gate: nenhuma regressão nas suítes e nos smokes. Falha registrada vira pendência, não é aceita em silêncio.
 
 ### Fase 5: homologação no Runtime (somente após fase 4 aprovada)

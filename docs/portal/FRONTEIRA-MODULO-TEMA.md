@@ -59,7 +59,7 @@ manter o design em um só lugar.
   (`data-portal-account-*` acrescentados; `is-active` trocado por `aria-current`; `is-enhanced` trocado por atributo)
   e os valores de runtime (tokens de logout, valor do carrinho, hashes de CSS/JS, JSON de settings, BigPipe).
   **Resultado: 8 de 8 idênticas.**
-- **Fluxos com outro tema:** Olivero como tema padrão no servidor de testes. Ver `docs/portal/TESTES-NAVEGADOR.md`, seção L.
+- **Independência do tema:** valide o módulo no tema ACULTA ativo; os contratos de autorização não dependem da camada visual.
 - **Navegador com captura de tela:** não executado nesta rodada (sem ferramenta de navegador disponível no ambiente).
 
 ## Título de página em uma home de propósito
@@ -116,7 +116,7 @@ no módulo.
 - **Marcação da Minha conta (HTTP, antes × depois):** 9 páginas da conta idênticas e 3 páginas de checkout/loja idênticas
   depois de normalizar: ordem de atributos e de classes, valores de runtime (tokens, carrinho, hashes de CSS/JS,
   settings, BigPipe, ids do carrossel) e as alterações intencionais (`is-active` como estado, `aria-current`).
-- **Roteiro de aceitação:** 10/10 com ACULTA420 e 10/10 com Olivero como tema padrão (o módulo funciona sem o tema).
+- **Roteiro de aceitação:** executar a suíte funcional no tema ACULTA ativo; a independência do módulo é coberta por testes de contrato e integração.
 - **Navegador com captura de tela:** não executado (sem ferramenta de navegador no ambiente).
 
 ## Limites conhecidos

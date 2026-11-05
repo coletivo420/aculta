@@ -154,7 +154,7 @@ Fonte de verdade: [auditoria 3.1.5](AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md).
 - [ ] **OC-C (P1, User/Studio/UGC/Mailer):** vínculo verificado pessoa/perfil/organização, reivindicação com padrão fechado e moderação, salvos/recomendações privados com cache por usuário, fila única e destinatários por purpose. Não criar papel genérico (D-01), nem instalar ECA.
 - [ ] **OC-D (P2, Magazine/Image/Document Viewer/tema):** menções na imprensa, apoiadores autorizados, formatos/tamanhos de download, teaser editorial e arquivo histórico somente se houver consumidor real. Licença opcional (D-10).
 - [ ] **OC-E (P2, Maps/Portal):** comparar Office Hours/OSM e breadcrumbs com funcionalidades existentes antes de portar, sem duplicidade.
-- [ ] **OC-F (aceite):** testes Unit/Kernel/Functional, cache/acesso, proveniência e revisão visual com UI Patterns, Firefox ESR, acessibilidade e Olivero quando aplicável.
+- [ ] **OC-F (aceite):** testes Unit/Kernel/Functional, cache/acesso, proveniência e revisão visual com UI Patterns, Firefox ESR e acessibilidade no tema ACULTA ativo.
 
 Inventário retificado para `profile/config/install` do 3.1.5: **42 Views** (7 desabilitadas), **9 vocabulários**, **3 workflows**, **19 tipos de parágrafo**, **3 facets** e **5 flags**. `archive`, `glossary` e `content_recent` estão desabilitadas. Nenhuma evidência confirmou funcionalidade de polígonos ou declaração de uso de IA nesta versão: estudar separadamente, sem contar como paridade. Facets e Office Hours são candidatos, **não dependências automaticamente autorizadas**. Respeitar D-10, D-11, D-13/D-14, D-17/D-20 e D-45.
 

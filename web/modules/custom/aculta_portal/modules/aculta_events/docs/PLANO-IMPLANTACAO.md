@@ -159,7 +159,7 @@ Gerar dependências só depois da decisão D8, com `composer require` no fluxo n
 | Escopo crescer para ingressos | Atraso e risco financeiro | Fora da v1; plano separado |
 | Duplicar a agenda do Magazine ou do Studio | Dois lugares para o mesmo evento | Decidir na F0 se a Revista/Studio referencia eventos (`aculta_event`) em vez de criar outro tipo |
 | Licença do material copiado | Obrigação GPL não cumprida | Preservar cabeçalhos; `ORIGEM-OPENCULTURAS.md`; revisão antes do RC |
-| Visual sem Olivero | Quebra se o tema for removido | Testes com Olivero além do ACULTA420 (regra do responsável) |
+| Independência visual do módulo | O módulo deve manter comportamento e semântica sem acoplamento ao tema | Testes de contrato e renderização no tema ACULTA ativo |
 
 ---
 
@@ -187,7 +187,7 @@ Os critérios de entrada e saída estão no `ROADMAP.md`.
 - **Kernel:** banco `aculta_simpletest` (nunca `aculta_runtime`). Cobrir purpose, rotas, acesso por purpose, datas e fuso.
 - **Unit:** regras puras (ICS, filtros, precisão de localização).
 - **Navegador:** Firefox ESR visível (`DISPLAY=:0`, geckodriver). Scripts em `tests/browser/aculta-events/` com `README.md`. Não usar Chromium nem headless.
-- **Temas:** rodar catálogo, mapa e calendário com **ACULTA420 e com Olivero**.
+- **Tema:** validar catálogo, mapa e calendário no tema ACULTA ativo.
 - **Gates existentes:** `validate-public-slugs.php`, `validate-environment-addresses.php`, `validate-no-temporary-route-aliases.php`, `validate-domain-presentation-contract.php`, `validate-single-acceptance.php` (se houver formulário ou consentimento), `validate-project-status-index.php` (índice gerado, nunca editado à mão).
 - **Acessibilidade:** teste de teclado e leitor de tela no mapa e no calendário.
 
@@ -223,7 +223,7 @@ No HEAD, a rota /culturas em purpose eventos e um dashboard inicial de Eventos j
 | CUL-03 | Fluxo do Evento e Datas subordinadas ao Evento, reaproveitando Form API e gestão já existentes | não criar entidade Data, persistência Studio nem lifecycle paralelo |
 | CUL-04 | Seleção de Local existente e criação contextual, com revalidação de acesso, precisão e links para página pública | contas A/B, anônimo, Local privado/rascunho/aproximado; não vazar endereço/ID negado |
 | CUL-05 | Relações/discovery pelo aculta_index para Eventos/Locais; resolver identidade pública do Organizador antes de expor resultados | revalidação de origem e destino, purpose canônico, paginação, cache; sem indexar conta user como se fosse Perfil público |
-| CUL-06 | Fidelidade visual, acessibilidade e estados de uso, mantendo shell global e aplicando navegação contextual no interior da Suite | ACULTA420/Olivero, mobile-first, teclado, no-JS, estados vazios/erro/sem acesso e browser visível |
+| CUL-06 | Fidelidade visual, acessibilidade e estados de uso, mantendo shell global e aplicando navegação contextual no interior da Suite | Tema ACULTA ativo, mobile-first, teclado, no-JS, estados vazios/erro/sem acesso e browser visível |
 | CUL-07 | Aceite integrado e atualização do status do módulo/versão | PHPUnit/Kernel/Functional + Firefox ESR/Runtime executados; sem DEFERRED declarado PASS |
 
 ### Decisões de adaptação

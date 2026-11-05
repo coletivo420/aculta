@@ -87,7 +87,7 @@ Não use `user_picture` diretamente em consumidores. Use o resolver ou o builder
   `PublicForumTopicAuthorHooksTest`, `AuthorCardVariantResolverTest`.
 - Kernel: `ClassRosterVisibilityTest` e testes de participação/visibilidade.
 - Navegador: `tests/browser/aculta-avatar/` (Firefox ESR em `DISPLAY=:0`, com
-  ACULTA420 e Olivero). Roster e feedback do LMS exigem turma; sem turma no
+  tema ACULTA ativo). Roster e feedback do LMS exigem turma; sem turma no
   Runtime, a verificação visual fica DEFERRED; o Kernel cobre o roster.
 - Regressão de foto: `FOTO-PERFIL.md` e a seção P de `TESTES-NAVEGADOR.md`.
 

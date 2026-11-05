@@ -37,7 +37,7 @@
 - [ ] Testar login pela barra, busca, carrinho, mensagens, alertas e o menu de conta, em claro e escuro.
 - [ ] Testar o painel administrativo (Navigation e, se houver, Toolbar).
 - [ ] Testar as páginas do Portal com modais (eventos, galerias, mensagens, editor de foto) e registrar o estado do jQuery.
-- [ ] Testar o Portal também com o tema Olivero (CLAUDE.md).
+- [ ] Validar o Portal no tema ACULTA ativo; comparação com outros temas não é requisito.
 - [ ] Atualizar `core_version_requirement`, o `roadmap.md` e o `CHANGELOG.md` do tema conforme o resultado.
 - [ ] Registrar o resultado neste ADR, com a versão testada do Core 12.
 

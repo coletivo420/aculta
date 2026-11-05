@@ -52,8 +52,7 @@ memória para validar no Firefox ESR visível (`DISPLAY=:0`):
 O harness mede a altura mínima do iframe DOCX e o padding do wrapper em
 1440/1280/1024/768/600/599/576/575/390/360/320px: 60vh/1rem a partir de
 `36rem` e 50vh/0.75rem abaixo desse breakpoint no ACULTA420, com a
-apresentação nativa. Esta suíte executa apenas no ACULTA420; Olivero foi
-dispensado pelo responsável (2026-11-03).
+apresentação nativa. Esta suíte executa no tema ACULTA ativo.
 
 ```sh
 DISPLAY=:0 \

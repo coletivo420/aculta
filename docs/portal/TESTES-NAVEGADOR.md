@@ -307,7 +307,6 @@ RUNTIME STATUS: DEFERRED. Ainda não executado.
 4. Senha errada. Esperado: mensagem no próprio modal; o modal continua aberto.
 5. Abra `/entrar` direto. Esperado: página de login com o desafio do Turnstile (INV-TS-1).
 6. Abra um modal existente (busca, Editar senha/segredo, termos). Esperado: o fundo escurece da mesma forma (INV-MODAL-1).
-7. Repita 1 e 6 com outro tema ativo (Olivero). Esperado: o login funciona e o modal abre, sem ACULTA420.
 
 ## O. Fase 10 da ACULTA Gallery (rodadas de 2026-10-14 e 2026-10-15)
 

@@ -1252,3 +1252,30 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Próximos passos:** revisar documentação, publicar C2 em commit próprio e retomar demais fases V2 conforme roadmap. Antes de qualquer troca de HEAD no Runtime, executar `updatedb:status` e `config:status`; não fazer import nem alteração de dados.
 - **Leituras para retomar:** `AGENTS.md`, `CLAUDE.md`, `tests/browser/aculta-forum/README.md`, `web/themes/custom/aculta420_v2/docs/roadmap.md`, `web/themes/custom/aculta420_v2/docs/gates.md`.
 
+## Remoção de gates de validação Olivero — 2026-11-05
+
+- **Objetivo:** retirar Olivero como requisito de teste em planos ativos,
+  instruções de agente e documentação operacional. A decisão de dispensa já
+  constava em `AGENTS.md` e `CLAUDE.md`; esta rodada corrige referências ativas
+  que ainda divergiam dessa regra.
+- **Alterações:** revisados planos de Events, Calendar, UGC, Studio, Wiki,
+  Secrets Manager, Portal e perfil; ADRs 044/045; instruções de migração Drupal
+  12; roteiros e documentação de suites. Menções aos resultados executados
+  anteriormente continuam como histórico, sem se tornarem gates.
+- **Configuração:** nenhum arquivo Olivero existe em `config/sync` e nenhuma
+  suíte dedicada Olivero existe em `tests/`. Mantidas as verificações/scripts
+  que detectam resíduos de configuração desinstalada, pois não selecionam tema
+  nem executam testes nele.
+- **Validação:** `git diff --check` PASS. `php scripts/validate-project-status-index.php
+  --write` atualizou a tabela gerada do README, mas o validador retorna FAIL por
+  nove divergências preexistentes de versão status/manifest (`aculta_calendar`,
+  `aculta_donation`, `aculta_file_uploader`, `aculta_linkweed`, `aculta_mailer`,
+  `aculta_messenger`, `aculta_paths`, `aculta_ugc`, `aculta_user`). As alterações
+  dos arquivos de status não mudaram os campos `version`. Nenhum arquivo de
+  teste dedicado a Olivero ou configuração em `config/sync` foi encontrado;
+  resultados antigos permanecem registrados, e gates ativos foram atualizados.
+- **Arquivos:** ver `git status` do commit desta entrega; documentação concentrada
+  em `docs/`, `web/modules/custom/aculta_portal/` e `tests/browser/`.
+- **Próximo passo:** concluir verificações, revisar o diff, commit e push direto
+  a `dev`; conferir `updatedb:status` e `config:status` em modo somente leitura.
+

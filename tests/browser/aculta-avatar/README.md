@@ -40,7 +40,7 @@ DISPLAY=:0 BASE_URL=http://aculta.test:8080 LOGIN_URL="$LOGIN_URL" \
   python3 tests/browser/aculta-avatar/visual.py
 ```
 
-Esta suíte valida o tema ACULTA ativo. Olivero está dispensado por decisão do responsável (2026-11-03).
+Esta suíte valida o tema ACULTA ativo.
 
 ## Limitações
 

@@ -79,7 +79,7 @@ o perfil. Regra e gate em `docs/portal/GUARDRAILS.md` (seção "Links de perfil"
 - Gates: `validate-aculta-portal-drupal11`, `validate-module-theme-boundary`, `validate-public-slugs`,
   `validate-environment-addresses`, `validate-aculta420-design-foundations`, `validate-aculta-user-photo`.
 - Navegador: Firefox ESR visível em `DISPLAY=:0`, conforme `docs/operations/NAVEGADOR-TESTES.md`, com
-  ACULTA420 e Olivero. O roteiro de avatar fica em `tests/browser/aculta-avatar/`.
+  tema ACULTA ativo. O roteiro de avatar fica em `tests/browser/aculta-avatar/`.
 - Pendente: inspeção visual humana das telas acima.
 
 ## 8. Configurações (abas)

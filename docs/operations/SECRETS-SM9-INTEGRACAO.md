@@ -74,7 +74,7 @@ Matriz de consumidores: `docs/operations/SECRETS.md` (seção "Painel por ambien
 ## Critérios de RC (ainda não atendidos)
 
 - Kernel e Functional verdes no banco de teste dedicado.
-- Revisão visual no Firefox ESR (DISPLAY=:0), larguras de celular, teclado, com Olivero e ACULTA420.
+- Revisão visual no Firefox ESR (DISPLAY=:0), larguras de celular, teclado, no tema ACULTA ativo.
 - Suíte dos módulos consumidores sem regressão.
 - Revisão de código e de segurança concluída.
 
@@ -100,8 +100,8 @@ com botões, nenhum valor real no HTML, cabeçalhos `no-store`.
 Revisão no Firefox ESR (DISPLAY=:0), servidor de testes: `tests/browser/aculta-secrets-manager/painel-visual.py`,
 16 verificações passaram: duas abas, aba do ambiente ativo selecionada, botões só na aba de testes, troca de aba sem
 alterar o texto do ambiente, teclado (setas e Home), sem rolagem horizontal da página e tabela dentro da janela em
-1280, 390 e 320 px. Com o tema Olivero ativo (troca temporária, restaurada ao final): 16 de 16 verificações visuais e 7 de 7 de popups (alterar e apagar abrem e fecham sem gravar).
+1280, 390 e 320 px. 16 de 16 verificações visuais e 7 de 7 de popups (alterar e apagar abrem e fecham sem gravar).
 
-Verificação HTTP com sessão real no servidor de testes (`tests/browser/aculta-secrets-manager/painel-http.py`), com aculta420 e com Olivero: 9 de 9. Substitui o SecretsPanelFunctionalTest, que dependia de site temporário sem cookie compartilhado nem domínios de produção. Não cobre revelar com valor real (o olho mostra o valor do servidor de testes).
+Verificação HTTP com sessão real no servidor de testes (`tests/browser/aculta-secrets-manager/painel-http.py`), no tema ACULTA ativo: 9 de 9. Substitui o SecretsPanelFunctionalTest, que dependia de site temporário sem cookie compartilhado nem domínios de produção. Não cobre revelar com valor real (o olho mostra o valor do servidor de testes).
 
-Verificação HTTP com sessão real no servidor de testes (`tests/browser/aculta-secrets-manager/painel-http.py`), com aculta420 e com Olivero: 9 de 9. Substitui o SecretsPanelFunctionalTest, que dependia de site temporário sem cookie compartilhado nem domínios de produção. O caminho de sucesso da revelação (escape do valor, `no-store`, log só com o nome) é coberto por `SecretsRevealTest`, com valor fictício. Não se revela valor real no servidor de testes.
+Verificação HTTP com sessão real no servidor de testes (`tests/browser/aculta-secrets-manager/painel-http.py`), no tema ACULTA ativo: 9 de 9. Substitui o SecretsPanelFunctionalTest, que dependia de site temporário sem cookie compartilhado nem domínios de produção. O caminho de sucesso da revelação (escape do valor, `no-store`, log só com o nome) é coberto por `SecretsRevealTest`, com valor fictício. Não se revela valor real no servidor de testes.

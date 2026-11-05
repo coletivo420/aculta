@@ -411,7 +411,7 @@ homologação dos grants ativos no Runtime.
   de viewport no campo/submit da busca, em Firefox ESR. O CSS agregado atual do
   Runtime de teste falha no submit (x=336 a 320 px; x=1282 a 1280 px); a folha
   candidata carregada por GET no browser passa 22/22. O agregado não foi
-  atualizado; Olivero e WCAG integral continuam pendentes.
+  atualizado; WCAG integral continua pendente.
 
 - `0.1.0-dev.70`: edição própria WE SATIVA agora preserva conflitos. O Form API
   carrega a revisão-base, valida antes do submit e revalida com lock transacional
@@ -435,8 +435,7 @@ homologação dos grants ativos no Runtime.
 - `0.1.0-dev.67`: Firefox ESR/X11 visualizou home, listagem e busca em 1280,
   390 e 320 px; 46/46 verificações passaram com o CSS atual da Wiki carregado
   por GET no browser. Identificado e corrigido overflow do submit em
-  `aculta420` 0.6.1-dev.5. O agregado Runtime não foi reconstruído; Olivero e
-  WCAG 2.2 AA completos pendentes.
+  `aculta420` 0.6.1-dev.5. O agregado Runtime não foi reconstruído; WCAG 2.2 AA completa pendente.
 
 - `0.1.0-dev.66`: Kernel cobre nota acima de 5.000 caracteres, decisão de
   proposta retirada, revisão-base obsoleta e aplicação editorial aprovada via

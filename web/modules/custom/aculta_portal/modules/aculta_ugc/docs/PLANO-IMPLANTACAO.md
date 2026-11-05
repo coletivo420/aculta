@@ -88,7 +88,7 @@ Ordem de dependência: U0 → U1 → (U2, U5) → U3 → U4; U6 pode correr em p
 - Unit: limites de taxa aprovados e integração do fluxo atual de proteção.
 - Navegador (Firefox ESR, `DISPLAY=:0`): formulário de denúncia com teclado e leitor de tela, e
   mensagem genérica quando bloqueado.
-- Temas: ACULTA420 e Olivero.
+- Tema de validação: ACULTA ativo.
 - Gates existentes: `validate-single-acceptance.php` (se houver consentimento), `validate-public-slugs.php`
   (rotas de denúncia em português), `validate-no-temporary-route-aliases.php`.
 

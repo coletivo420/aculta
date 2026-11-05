@@ -15,7 +15,7 @@ class ForumThemeHooks {
    * Implements hook_theme().
    *
    * Registra o agrupamento da página como tema próprio para temas sem override
-   * (como Olivero), usando o template do módulo com H2 em vez do H3 do Core.
+   * sem overrides do tema, usando o template do módulo com H2 em vez do H3 do Core.
    * O ACULTA420 sobrescreve o mesmo hook com seu template de grade.
    *
    * @return array<string, array<string, mixed>>

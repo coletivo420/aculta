@@ -261,7 +261,7 @@ final class AnswerReviewWorkflowKernelTest extends KernelTestBase {
     $form = AnswerSubmissionForm::create($this->container);
     $form_state = new FormState();
     $form_array = $form->buildForm([], $form_state);
-    self::assertArrayNotHasKey('library', $form_array['#attached'] ?? [], 'The answer form must not attach the obsolete Olivero-only overflow stylesheet.');
+    self::assertArrayNotHasKey('library', $form_array['#attached'] ?? [], 'The answer form must not attach the obsolete theme-specific overflow stylesheet.');
     $form_state->setValue('file_upload', [(int) $file->id()]);
     $form->validateForm($form_array, $form_state);
     self::assertFalse($form_state->hasAnyErrors());

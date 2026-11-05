@@ -95,7 +95,7 @@ Alternativas para AJAX no LMS e no tema:
 - Injeção de dependência nas classes (sem `\Drupal::` novos em `src/`), `#[Hook]` para hooks novos.
 - Tema: apenas apresentação, por componentes SDC e tokens. Nada de regra de acesso, domínio ou CTools no Twig/JS do tema.
 - Gates do Portal: `php scripts/validate-aculta-portal-drupal11.php`; para o tema, os gates de `aculta420_v2`.
-- Testes do Portal também com o tema Olivero (CLAUDE.md).
+- Testes do Portal no tema ACULTA ativo.
 - Validação no servidor de desenvolvimento (Drupal 11.5), com `RUNTIME STATUS: DEFERRED` até a execução.
 
 ## 5. Interação com a estratégia de diálogos da V2

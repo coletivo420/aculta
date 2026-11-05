@@ -55,7 +55,7 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Prévia e teclado da busca | Browser Firefox ESR visível | Searchbox nativo, região viva nomeada, resultados por Tab, foco/nome WebDriver-computed, 1280/320 px | aprovado dev.117: ACULTA420 49/49 e Olivero 50/50 (`keyboard.py`); leitor de tela e contraste automático pendentes |
 | Busca sem JavaScript e um único H1 | Browser Firefox ESR sem JS + HTML | Home, listagem, busca e verbete servidos pelo Drupal | aprovado dev.117 (16/16 em ACULTA420 e Olivero, `no-js.py`) |
 | Fila de moderação e decisão no Studio | Browser Firefox ESR visível, sessão autenticada | Listing compartilhado, estado vazio, formulário de decisão, oito larguras | aprovado dev.117: fila 22/22 (ACULTA420) e 20/20 (Olivero); decisão 41/41 com proposta temporária, removida ao final. A fila para `content_editor` depende da divergência RBAC de permissões no Runtime |
-| Layout sem-JS, teclado e WCAG 2.2 AA | Browser Firefox ESR visível | ACULTA420 e Olivero, 320px+, foco/leitor de tela/contraste | parcial dev.117: teclado, sem-JS, claro/escuro e um H1 aprovados; leitor de tela, zoom real e auditoria WCAG completa pendentes |
+| Layout sem-JS, teclado e WCAG 2.2 AA | Browser Firefox ESR visível | tema ACULTA ativo, 320px+, foco/leitor de tela/contraste | parcial dev.117: teclado, sem-JS, claro/escuro e um H1 aprovados; leitor de tela, zoom real e auditoria WCAG completa pendentes |
 | Content Index no Runtime | Drush + consulta anônima | Geração ativa, auditoria válida, exclusão de rascunho, sem autoria, Search API | aprovado dev.117: 145 entradas/110 relações, Wiki 7/15, audit `valid`, 6 verbetes publicados na consulta, Search API localiza o verbete |
 
 ## Regressão Content Index — dev.61
@@ -400,7 +400,7 @@ Kernel MariaDB da classe completa: 8 testes / 301 assertions, sem warnings;
 | Fila de revisões Wiki | Kernel | Usa revisão atual e exibe apenas ação de formulário cujo route access passa no purpose Wiki | aprovado |
 | Usuário sem gate editorial | Kernel | Sem seção de moderação | aprovado |
 | Owner Wiki desabilitado com bundle retido | Unit Studio | WikiTab indisponível sem módulo `aculta_wiki`, mesmo se `wiki_entry` continuar configurado | aprovado (Studio dev.4; focal 3/10; suíte Unit 13/41) |
-| Visual no Firefox ESR/X11 e WCAG | Browser | Form/filas mobile-first em ACULTA420 e Olivero, foco, teclado e reflow | pendente; Runtime ainda não habilitado |
+| Visual no Firefox ESR/X11 e WCAG | Browser | Form/filas mobile-first no tema ACULTA ativo, foco, teclado e reflow | pendente; Runtime ainda não habilitado |
 
 ## Controller — cache e acesso (dev.11)
 
@@ -459,6 +459,6 @@ ou banco persistente foi alterado.
 
 ## Navegador
 
-Revisão visual com Firefox ESR visível em `DISPLAY=:0` via geckodriver, nos temas
-ACULTA420 e Olivero, em claro e escuro, a 390, 768 e 1024 CSS px, depois que o
+Revisão visual com Firefox ESR visível em `DISPLAY=:0` via geckodriver, no tema
+ACULTA ativo, em claro e escuro, a 390, 768 e 1024 CSS px, depois que o
 módulo estiver habilitado no servidor de testes.

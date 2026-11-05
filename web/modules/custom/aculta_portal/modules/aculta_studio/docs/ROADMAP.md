@@ -301,7 +301,7 @@ Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`. Entram depois do fecham
 - Código implementado na PR #297: `StudioProfileController` usa os quatro SDCs, com props e slots de render arrays providos por ACULTA User e `aculta_image`. `PublicProfileLink` continua árbitro do link público, e somente a pessoa dona da conta pode carregar o editor.
 - Edição segue sem duplicação para `aculta_studio.profile_nickname`, `profile_privacy`, `profile_bio`, `profile_social` e o modal original `aculta_user.foto`. Bio textarea desativada, linhas sociais e tags de cache do User são preservadas; botões modais originais removidos somente na composição Studio.
 - Testes Unit escritos, não executados: usuário anônimo, permissão negada, entidade inexistente, fallback sem owner, link público condicionado, componentes aninhados, render arrays, links de ações e cache.
-- Gates pendentes: PHP lint/PHPCS, PHPUnit Unit/Kernel/Functional, tema e schema SDC/Core discovery, cache por UID e privacidade com duas contas, foto própria privada, fallback no-JS, modal AJAX, teclados, 320/390/768/1024/1440px e tema Olivero, Firefox ESR/X11, Domain ACCOUNT e Runtime. A fase S-R5 de comparação visual com `/conta-legada` somente depois das validações; não remover o legado.
+- Gates pendentes: PHP lint/PHPCS, PHPUnit Unit/Kernel/Functional, tema e schema SDC/Core discovery, cache por UID e privacidade com duas contas, foto própria privada, fallback no-JS, modal AJAX, teclados, viewports 320/390/768/1024/1440 px no Firefox ESR/X11, Domain ACCOUNT e Runtime. A fase S-R5 de comparação visual com `/conta-legada` somente depois das validações; não remover o legado.
 
 ## Histórico — Pré-S-R4 — SDCs do tema ACULTA420 (0.7.0-dev.1)
 
@@ -318,7 +318,7 @@ Firefox ESR/X11, mobile e modos claro/escuro. Não declarar homologado.
 - **Código entregue na PR #297:** três rotas canônicas `/studio/conta/{pedidos,apoio,preferencias}` com autenticação, permissão e purpose ACCOUNT. A navegação própria do Studio agora aponta a esses destinos; a Conta antiga em `/conta-legada` e as rotas originárias continuam disponíveis.
 - **Ownership:** `PortalController::orders()` mantém o filtro e o link de pedido Commerce, `SupportController::mySupport()` mantém histórico e Form API de assinatura recorrente sem duplicação, e `AppearanceForm` mantém escrita e invalidação de cache via Core Form API. Os links secundários de preferências ainda seguem `SettingsTabs` no owner; são intencionalmente preservados para outras preferências não integradas.
 - **Testes Unit escritos, não executados:** rota única, purpose/account, permissão e no-cache, navegação com/sem documentos, delegação dos métodos de pedidos e suporte, ações de assinatura, acesso negado, Form API de aparência com seus tabs. Não declarar gates PASS sem execução.
-- **Gates antes de S-R5/RC:** instalar/check-out correto; PHP lint e PHPCS, `phpunit` Unit/Kernel/Functional, `validate-module-theme-boundary.php`, `validate-aculta-portal-drupal11.php`, `validate-project-status-index.php`, `validate-no-temporary-route-aliases.php`, teste de duas contas com Commerce e assinaturas, pagamento, ação de assinatura em POST/CSRF, preferência persistida e invalidada, login anônimo, Domain ACCOUNT, cache de usuário, AJAX/no-JS e Firefox ESR/X11 em 320 px e Olivero.
+- **Gates antes de S-R5/RC:** instalar/check-out correto; PHP lint e PHPCS, `phpunit` Unit/Kernel/Functional, `validate-module-theme-boundary.php`, `validate-aculta-portal-drupal11.php`, `validate-project-status-index.php`, `validate-no-temporary-route-aliases.php`, teste de duas contas com Commerce e assinaturas, pagamento, ação de assinatura em POST/CSRF, preferência persistida e invalidada, login anônimo, Domain ACCOUNT, cache de usuário, AJAX/no-JS e Firefox ESR/X11 em 320 px no tema ACULTA ativo.
 - **Limitação externa ainda aberta:** garantir unicidade transacional de CPF/CNPJ em B1; completar homologação B1/B2 sem mexer no legado. Próximo: fase S-R4 (SDC e edição de Perfil) e S-R5 (aceite Conta/Perfil com comparação visual), condicionadas a gates proporcionais.
 
 ## S-R3-B1 — revisão (Studio dev.19, Portal dev.31)
@@ -519,7 +519,7 @@ os links condicionados a acesso e HTML renderizado no ACULTA420 (2 testes / 208
 asserções junto ao owner Wiki).
 Teste Unit do controller inclui retorno owner, rota sem o contrato de início e
 acesso negado (3/3); a suíte Studio completa passou em 20 testes / 61 asserções.
-Runtime e Firefox ESR/X11, incluindo 320px e Olivero, permanecem pendentes.
+Runtime e Firefox ESR/X11, incluindo 320px, permanecem pendentes.
 
 ### Incremento Studio dev.4 — disponibilidade da aba Wiki
 
@@ -564,7 +564,7 @@ Wiki dev.77, a classe completa de ciclo da Wiki passou em MariaDB (23 testes /
 1.039 assertions) e inclui regressões de rota, propósito, autoria, paginação e
 acesso. Os formulários Wiki têm retorno cacheável ao workspace quando o
 provider/acesso estão disponíveis. A interface visual da experiência WE SATIVA ainda não foi homologada em
-Firefox ESR/X11, 320 px, Olivero ou Runtime; a suíte atual do browser Studio
+Firefox ESR/X11, 320 px ou Runtime; a suíte atual do browser Studio
 exercita principalmente GanjaLab. O smoke WE SATIVA foi adicionado em
 `tests/browser/aculta-wiki/we-sativa.py`; a execução de 2026-10-24 não encontrou
 rota/provider no container ativo do Runtime, apesar de Studio e Wiki constarem
@@ -620,7 +620,7 @@ Os dados e sua cacheabilidade continuam provenientes do `LearningDashboardManage
 | ACULTA420 | SDC card/grid/header/empty e stories estáticas | verificar render real, contratos de slots, tokens, 320–1440px, dark/light e gates UI Suite | tema é dono do visual; Studio não cria CSS concorrente |
 | GanjaLab editorial | StudioTab/Presenter/Controller/AJAX, plugins Revista/Wiki/Forum/Cursos/Galerias | hardening de consultas, ações reais, jornadas próprias, editor e fila | prioridade imediata |
 | Wiki moderação | proposta e WikiTab existentes | provider autorizado/paginado, grants por revisão, Kernel, Content Moderation | bloqueado para produção |
-| WE SATIVA | provider e `/studio/we-sativa`; workspace Wiki com paginação, SDCs, Entity Access e links para fluxos Form API do dono | validação visual/browser de autoria a 320 px, Olivero, fallback sem JS e Runtime | avançar visualização sem criar storage ou ACL no Studio |
+| WE SATIVA | provider e `/studio/we-sativa`; workspace Wiki com paginação, SDCs, Entity Access e links para fluxos Form API do dono | validação visual/browser de autoria a 320 px, fallback sem JS e Runtime | avançar visualização sem criar storage ou ACL no Studio |
 
 ### Frente prioritária: GANJALAB E-0.1 — Editor Studio
 
@@ -677,7 +677,7 @@ Referência: [auditoria 3.1.5](../../../../../../../docs/architecture/AUDITORIA-
 - **OC-ST2:** "Minhas recomendações" terá storage/flag/autoridade separados de favoritos e seguidores; não inferir vínculo organizacional de bookmark.
 - **OC-ST3:** "Minha organização" usa vínculo de representação aprovado pela moderação, nunca credencial de **Conta** ou papel global `organizador` por si. **Perfil** público continua entidade/experiência distinta; mudanças organizacionais exigem aprovação e trilha de auditoria.
 - **OC-ST4:** primeiro acesso em cartões existentes; sem depender de Tours do OpenCulturas, sem JS obrigatório e sem duplicar onboarding.
-- Gates: grants Entity/Domain, acesso negado em cross-account/cross-purpose, cache A/B, Firefox ESR e Olivero.
+- Gates: grants Entity/Domain, acesso negado em cross-account/cross-purpose, cache A/B, Firefox ESR no tema ACULTA ativo.
 
 ## OCS-F0 — inventário visual (2026-10-29)
 

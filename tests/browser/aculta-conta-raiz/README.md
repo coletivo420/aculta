@@ -32,5 +32,5 @@ Código de saída: `0` se tudo passou; `1` se alguma verificação falhou.
 
 - **Não cobre o estado logado.** `/` logado (entrada da Conta), `/conta-legada` logado e o editor de endereço com Número/S-N precisam de uma sessão de teste. A geração do link único de login (`drush uli`) não foi autorizada nesta suíte, então essa parte fica para uma rodada própria.
 - Não captura erros do console JavaScript. Para isso seria preciso BiDi (`bidi=True` no `wdlib.Driver`).
-- A validação de tema Olivero foi dispensada pelo responsável (2026-11-03); esta suíte não exige alternância de tema.
+
 - O texto de ajuda do campo "Usuário ou endereço de e-mail" aparece em inglês ("Enter your username or email address."). Esta suíte não verifica idioma, então não reprova isso.

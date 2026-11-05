@@ -183,7 +183,7 @@ Entrada: F2 concluída.
 - [x] Página `/eventos/{slug}` com datas, local, tipo e organizador. Rascunho e inexistente: 404.
 - [x] Slugs em português, sem alias temporário (`EventSlugGenerator`: transliteração, hífen, sufixo -2 para repetido, estável depois de criado).
 
-Saída: catálogo e página do evento navegáveis. Cartão em SDC e validação com ACULTA420 e Olivero ficam para a etapa visual.
+Saída: catálogo e página do evento navegáveis. Cartão em SDC e validação no tema ACULTA ativo ficam para a etapa visual.
 
 ## Fase F4 — Locais com mapa
 
@@ -322,7 +322,7 @@ Saída: lista de ajustes aprovada.
 
 Entrada: F0–F8 concluídas.
 
-- [ ] Gates verdes; testes Kernel, Unit e navegador com ACULTA420 e Olivero.
+- [ ] Gates verdes; testes Kernel, Unit e navegador no tema ACULTA ativo.
 - [ ] Changelogs e `docs/operations/status/` atualizados pelo fluxo do projeto.
 - [ ] `ORIGEM-OPENCULTURAS.md` revisado (avisos de licença).
 - [ ] DNS e certificado de `eventos.aculta.org` planejados (fora do repositório).

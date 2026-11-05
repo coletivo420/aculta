@@ -209,7 +209,7 @@ Fonte de verdade dos dados: [data-ownership.md](data-ownership.md).
   participação/visibilidade do Fórum e da Wiki.
 - Navegador: [`tests/browser/aculta-avatar/`](../../tests/browser/aculta-avatar/README.md),
   Firefox ESR visível em `DISPLAY=:0`; cobre `/membros`, `/u/{apelido}`, Conta,
-  Mensagens, Revista, Cursos e Wiki, com ACULTA420 e Olivero. Roster e feedback
+  Mensagens, Revista, Cursos e Wiki, no tema ACULTA ativo. Roster e feedback
   do LMS dependem de turma; sem turma no Runtime, ficam DEFERRED.
 
 ## 8. Leitura relacionada
