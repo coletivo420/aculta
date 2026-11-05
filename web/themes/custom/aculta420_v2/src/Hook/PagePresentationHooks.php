@@ -91,6 +91,40 @@ final class PagePresentationHooks {
   }
 
   /**
+   * Maps compatible Portal components to V2 SDCs.
+   *
+   * The Portal fallback preprocess runs before theme preprocess and fills a
+   * generic render array. For the two supported names, replace that fallback
+   * with the matching SDC while preserving props and slots. `context-tabs`
+   * maps to `tabs`; there is no SDC named `context-tabs`.
+   */
+  #[Hook('preprocess_aculta_portal_component')]
+  public function preprocessPortalComponent(array &$variables): void {
+    $name = $variables['name'] ?? NULL;
+    $component = match ($name) {
+      'empty-state' => 'empty-state',
+      'context-tabs' => 'tabs',
+      default => NULL,
+    };
+    if ($component === NULL || !$this->componentAvailable($component)) {
+      return;
+    }
+
+    $props = is_array($variables['props'] ?? NULL) ? $variables['props'] : [];
+    $slots = is_array($variables['slots'] ?? NULL) ? $variables['slots'] : [];
+    if ($component === 'tabs' && (!is_string($props['label'] ?? NULL) || trim($props['label']) === '' || !isset($slots['items']))) {
+      return;
+    }
+
+    $variables['component'] = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:' . $component,
+      '#props' => $props,
+      '#slots' => $slots,
+    ];
+  }
+
+  /**
    * Checks the component repository without rebuilding its persistent cache.
    */
   private function componentAvailable(string $component): bool {

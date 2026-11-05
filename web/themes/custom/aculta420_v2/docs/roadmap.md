@@ -8,7 +8,7 @@
 | F2 — Shell | Em revisão | Aceitação visual final contra a V1 (responsável); faixa de acento aguarda o contrato D1 do Portal |
 | F3 — Purpose e botões | Concluída em `1.3.0`; botões migrados | Validação no servidor de testes |
 | F4 — UI Styles | Implementada; adoção por purpose pendente | Revista aguarda opção por entidade suportada pelo UI Styles; Eventos tem listagem na raiz, mas falta View e validação visual |
-| F5 — Componentes e templates | Parcial; adoção por purpose pendente | Rotas Studio existem e o preprocess foi registrado, mas a suíte falhou em composição e modo escuro; Eventos e Revista pendentes; Loja aguarda autorização; `price` fora do escopo |
+| F5 — Componentes e templates | Parcial; adoção por purpose pendente | Studio: `context-tabs`→`tabs` e `empty-state`→`empty-state` passaram em validação focal; suíte ampla 34/48 OK, 22 skipped, 14 falhas, captura real de empty-state pendente. Eventos e Revista pendentes; Loja aguarda autorização; `price` fora do escopo |
 | RC | Não promovida | Depende de F4 e F5 validadas no servidor, revisão visual em larguras e modos, Drupal 12 |
 
 Detalhes por bloco: [status-componentes.md](status-componentes.md), [status-layouts-e-shell.md](status-layouts-e-shell.md) e [htmx-status.md](htmx-status.md) (ADR-050).
@@ -130,7 +130,7 @@ Os botões do tema V2 foram integralmente migrados para o esquema único documen
 
 **Revisão 2026-11-05:** os cinco overrides de template criados em `91549bc7` (`form/form-element`, `misc/progress-bar`, `navigation/menu-local-tasks`, `views/views-view-table` e `views/views-view`) foram removidos. Eles trocavam o markup do core por markup de SDC sem manter as classes que o CSS do tema ainda usa (`form-item`, `progress`, classes de Views), o que quebrava margens e visual. A adoção de cada SDC volta a ser feita só onde preservar a estrutura, com CSS adaptado e captura antes/depois. Os componentes continuam disponíveis.
 
-**Status: implementação geral dos 40 componentes mantida; adoção visual por purpose permanece parcial.** UI Styles não oferece seleção por entidade para o accent da Revista. A raiz de Eventos serve a listagem pública, mas a View nova e sua validação visual estão pendentes. As rotas Studio existem e o hook de preprocess foi registrado; a suíte falhou em composição e modo escuro. Não declarar adoção validada até haver captura válida e gates aplicáveis. Loja segue pendente de autorização; `price` permanece fora do escopo.
+**Status: implementação geral dos 40 componentes mantida; adoção visual por purpose permanece parcial.** UI Styles não oferece seleção por entidade para o accent da Revista. A raiz de Eventos serve a listagem pública, mas a View nova e sua validação visual estão pendentes. No Studio, o mapeamento focal de `context-tabs` para `tabs` e `empty-state` para `empty-state` passou em PHPUnit e renderização Drupal; a suíte ampla teve 34/48 checks OK, 22 skipped e 14 falhas, e falta captura de consumidor real de `empty-state`. Não declarar adoção visual ampla validada. Loja segue pendente de autorização; `price` permanece fora do escopo.
 
 ### Consumers reais dos componentes SDC implementados
 

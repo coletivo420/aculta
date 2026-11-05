@@ -1,5 +1,10 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — mapeamento focal dos componentes do Studio
+
+- `PagePresentationHooks::preprocessPortalComponent()` adapta `context-tabs` ao SDC existente `tabs` e `empty-state` ao SDC homônimo, preservando props/slots e mantendo o fallback para componentes fora do escopo ou contratos incompletos.
+- PHPUnit focal (5 testes/15 assertions) e renderização Drupal dos dois SDCs passaram. A suíte visual ampla do Studio segue pendente: 34/48 checks OK, 22 skipped e 14 falhas; falta também captura de página real que consuma `empty-state`. A F5 continua parcial.
+
 ## Não versionado — Fase 5: Consumers reais dos componentes SDC implementados
 
 - Integração de consumers reais no tema `aculta420_v2` para os componentes SDC que estavam pendentes:

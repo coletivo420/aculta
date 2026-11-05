@@ -4,8 +4,8 @@ Estado: em desenvolvimento · versão 1.3.0 (`aculta420_v2.info.yml`) · status:
 
 ## Próximo passo
 
-F4 (UI Styles) implementada; accent por entidade na Revista depende de suporte do UI Styles. F5 geral implementada; listagem pública de Eventos existe na raiz, faltam View e validação visual. O candidato de Studio falhou em composição/modo escuro e ficou fora do commit. Loja requer autorização documentada; `price` permanece fora do escopo.
-Próximo passo: avaliar a View de Eventos sobre a listagem existente; revisar o CSS/markup do mapeamento Studio antes de nova captura; validar cada adoção com captura antes/depois e gates.
+F4 (UI Styles) implementada; accent por entidade na Revista depende de suporte do UI Styles. F5 geral implementada; listagem pública de Eventos existe na raiz, faltam View e validação visual. O preprocess do Studio agora mapeia `context-tabs` para o SDC `tabs` e `empty-state` para o SDC homônimo; o teste focal e renderizações Drupal passaram. A suíte visual ampla segue parcial: 34/48 checks OK, 22 skipped e 14 falhas, incluindo composição e verificação legada de modo escuro. Loja requer autorização documentada; `price` permanece fora do escopo.
+Próximo passo: corrigir/atualizar os checks de composição e modo escuro do Studio, capturar um consumidor real de `empty-state`, avaliar a View de Eventos e validar cada adoção com captura antes/depois e gates.
 
 ## Dívidas
 
