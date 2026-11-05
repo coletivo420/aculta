@@ -4,12 +4,24 @@
   gap: var(--spacing-xl);
   grid-area: main;
   grid-template-columns: minmax(0, 1fr);
-  inline-size: min(100%, var(--page-content-max));
+  inline-size: 100%;
   margin-inline: auto;
   min-block-size: 0;
   min-inline-size: 0;
   overflow-wrap: anywhere;
   padding: var(--spacing-lg) var(--page-gutter);
+}
+
+.layout-page--stack {
+  inline-size: min(100%, 68ch);
+}
+
+.layout-page--aside {
+  max-inline-size: var(--page-content-max);
+}
+
+.layout-page--full {
+  max-inline-size: none;
 }
 
 .layout-page__title,

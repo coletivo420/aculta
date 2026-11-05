@@ -1183,8 +1183,17 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Arquivos E1:** `scripts/validate-aculta420-v2-sdc.php`;
   `web/themes/custom/aculta420_v2/components/layout-page/`;
   `web/themes/custom/aculta420_v2/{src/styles/layout.css,templates/layout/page.html.twig,docs/{components.md,layout-pagina.md,roadmap.md,gates.md},CHANGELOG.md}`.
-- **Próximo passo:** revisar o staged diff de E1, commit/push em `dev`; depois
-  seguir P2. P5/Layout Builder continua fora da execução sem novo pedido.
+- **P1 publicado:** commit `e2e7fedfdc` em `origin/dev`; pós-push
+  `updatedb:status` sem updates e `config:status` limpo. Runtime não foi escrito.
+- **P2 implementado parcialmente após E1:** preprocess escolhe `aside` para
+  `wiki_entry`/`aculta_forum_topic`; `full` para `revista`, rota inicial,
+  catálogo e mapa públicos de eventos; `stack` para os demais. A loja foi
+  omitida porque o plano exige autorização explícita por tarefa. `CurrentRouteMatch`
+  é usado sem expor entidade ao SDC nem consultar domínio/purpose. Render SDC
+  25/25 PASS; PHP lint, PHPCS Drupal/DrupalPractice, shell 13/13, schema
+  55/764, design foundations 2.468 e `git diff --check` PASS. Revisão visual
+  ainda pendente. Próximo: commit/push P2 em `dev`, depois iniciar P3; P5 /
+  Layout Builder não executar sem novo pedido.
 
 - **C4 — revisão estrutural do shell:** o adapter `aculta-links-page.html.twig`
   apresenta a micropágina do módulo Links por SDC dedicado, sem `<main>` interno;

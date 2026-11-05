@@ -39,6 +39,14 @@ vira coluna a partir de 60rem. Capturas de P1, landmarks, zoom e teclado
 aguardam Firefox visível (DISPLAY indisponível). P2 permanece para mapear
 tipo/área em preprocess_page.
 
+## Layout de página — P2 parcial
+
+O preprocess seleciona `aside` para wiki e tópico do fórum; `full` para home,
+revista, catálogo de eventos e mapa; e `stack` por padrão. A variante é
+selecionada por bundle/route name, sem hostname ou purpose. Catálogo e produto
+da loja aguardam autorização explícita de tarefa. Validação visual do
+mapeamento permanece pendente por falta de `DISPLAY`.
+
 ## Renderização das configurações de superfície — conferida
 
 `SurfaceSettingsHooks` é a implementação única de `preprocess_html`, aplicando

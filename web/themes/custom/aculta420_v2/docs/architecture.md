@@ -123,6 +123,7 @@ Com JavaScript desligado, os links dos gatilhos continuam válidos: o login e a 
 
 - `#[Hook]` em classes com injeção de dependência. Não há `\Drupal::` em `src/`.
 - `PagePresentationHooks` (`preprocess_page`) mapeia o contrato do Portal para variáveis do tema, move o menu de conta para a barra, envolve o menu principal com `navigation-bar` e remove a dependência de diálogo AJAX do utilitário de busca.
+- O mesmo hook define `aculta_layout_variant` por bundle do nó ou nome de rota: wiki/fórum `aside`, revista `full`, home e catálogo/mapa de eventos `full`; demais rotas `stack`. Não consulta hostname nem purpose, e entrega ao SDC somente a variante. Catálogo e produto de loja aguardam autorização explícita de tarefa.
 - `SurfaceSettingsHooks` (`preprocess_html`) aplica o modo de cor e as classes de superfície em uma única implementação.
 - `src/Hook/*` é a única camada PHP do tema. Lógica de negócio não pertence aqui.
 

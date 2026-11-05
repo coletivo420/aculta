@@ -57,7 +57,7 @@
   {% endif %}
 
   {{ include('aculta420_v2:layout-page', {
-    variant: 'stack',
+    variant: aculta_layout_variant|default('stack'),
     title: aculta_page_title,
     content: page.content,
     aside: page.sidebar_first

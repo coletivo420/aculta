@@ -1,5 +1,12 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — mapeamento P2 de layout
+
+- `PagePresentationHooks` seleciona `aside` para wiki/fórum e `full` para
+  homepage, revista e rotas públicas de catálogo/mapa de eventos, com fallback
+  stack. Sem regra por hostname/purpose. Loja permanece fora, aguardando
+  autorização explícita de tarefa; confirmação visual também pendente.
+
 ## Não versionado — layout-page P1
 
 - Criado SDC layout-page com variantes stack, aside e full, três stories

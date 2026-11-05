@@ -85,9 +85,11 @@ quem usa leitor de tela a encontra depois dos campos. Proposta: a
 sub-navegação vem antes do conteúdo no HTML, e só se posiciona à esquerda com
 CSS. Decidir antes de construir a tela.
 
-**P1 no código:** `page.html.twig` usa o SDC `layout-page` e preserva as regiões
-Drupal. As classes de grid antigas foram removidas. Até P2, o template passa
-explicitamente `stack`; o mapeamento por tipo/área ainda está pendente.
+**Código:** `page.html.twig` usa o SDC `layout-page` e preserva as regiões
+Drupal. P2 mapeia wiki e tópico do fórum para aside; revista, home, catálogo e
+mapa de eventos para full; demais rotas caem em stack. Catálogo e produto da
+loja aguardam autorização explícita de tarefa; a validação visual permanece
+pendente.
 
 ## 3. Barra institucional (fixa)
 
@@ -360,7 +362,8 @@ Pela ADR-048, seção 4:
 - **P1:** `layout-page` com as três variantes, stories e refatoração do
   `page.html.twig` sem mudar regiões. Código e gates concluídos; capturas e
   landmarks visuais pendentes por falta de `DISPLAY`.
-- **P2:** mapeamento da seção 6.1 em `preprocess_page`.
+- **P2:** mapeamento de tipos e rotas públicas implementado; rotas de loja
+  aguardam autorização e validação visual.
 - **P3:** área do Studio e de Minha conta, com `noindex` conferido.
 - **P4:** demais áreas (evento, LMS, FAQ).
 - **P5:** revisão de Layout Builder, só se o responsável pedir.

@@ -8,6 +8,9 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ExtensionList;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Path\PathMatcherInterface;
+use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\node\NodeInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -24,6 +27,10 @@ final class PagePresentationHooks {
     private readonly ExtensionList $themes,
     #[Autowire(service: 'current_user')]
     private readonly AccountProxyInterface $currentUser,
+    #[Autowire(service: 'current_route_match')]
+    private readonly CurrentRouteMatch $currentRouteMatch,
+    #[Autowire(service: 'path.matcher')]
+    private readonly PathMatcherInterface $pathMatcher,
   ) {}
 
   /**
@@ -31,6 +38,7 @@ final class PagePresentationHooks {
    */
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
+    $variables['aculta_layout_variant'] = $this->getPageLayoutVariant();
     $variables['aculta_page_title'] = [];
     $variables['aculta_breadcrumb'] = [];
     $variables['aculta_help'] = [];
@@ -62,6 +70,31 @@ final class PagePresentationHooks {
         && is_string($link['url'] ?? NULL)
         && $link['url'] !== '',
     ));
+  }
+
+  /**
+   * Selects the layout from the route's content type or named public route.
+   *
+   * Hostname and Portal purpose are deliberately not used for this mapping.
+   */
+  private function getPageLayoutVariant(): string {
+    if ($this->pathMatcher->isFrontPage()) {
+      return 'full';
+    }
+
+    $node = $this->currentRouteMatch->getParameter('node');
+    if ($node instanceof NodeInterface) {
+      return match ($node->bundle()) {
+        'wiki_entry', 'aculta_forum_topic' => 'aside',
+        'revista' => 'full',
+        default => 'stack',
+      };
+    }
+
+    return match ($this->currentRouteMatch->getRouteName()) {
+      'aculta_events.catalogue', 'aculta_events.map' => 'full',
+      default => 'stack',
+    };
   }
 
   /**
