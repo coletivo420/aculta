@@ -7,9 +7,10 @@
   a migração. Login do shell e gavetas de mensagens/avisos usam
   `core/drupal.htmx`; foco, título e anúncios após atualização são tratados por
   `studio-htmx`.
-- Gates de SDC, foundations, shell contract e browser validators passaram. O
-  gate de render Drupal deve confirmar o contrato HTMX do login. A busca ainda
-  usa Fetch e cadastro popup permanece por migrar; esta microfase não conclui
+- Gates de SDC, foundations, shell contract, browser validators e render Drupal
+  isolado (35 SDCs) passaram; o validador de render também exige o contrato
+  HTMX do login. A busca ainda usa Fetch e cadastro popup permanece por migrar;
+  esta microfase não conclui
   ADR-050 F1. Fixture Firefox sintética não substitui autenticação Drupal real;
   matriz visual permanece pendente.
 

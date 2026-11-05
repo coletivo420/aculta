@@ -392,14 +392,29 @@ autorização; o mapeamento de Wiki para a faixa de acento aguarda confirmação
 - Não trocar tiles OSM por CartoDB nem introduzir endpoint de pontos sem decisão
   e revisão dos contratos de privacidade, acesso, cache e purpose.
 
-### HTMX — ADR-050 (F0 concluída)
+### HTMX — ADR-050 (F0 concluída; F1 parcial)
 
 Core 11.5 `Htmx`, `core/drupal.htmx`, o atributo de conteúdo principal, a
 renovação de `form_build_id` e o caminho CSRF foram inspecionados. Testes oficiais
 Core e fixture ACULTA de popup/form dentro de `<dialog>` passaram em Firefox e
-Chromium headless, incluindo token adulterado rejeitado. **F0 CONCLUÍDA; F1 pode
-iniciar**; F2 depende de F1a e F3 segue a ordem de módulos do ADR-050. Evidência em
+Chromium headless, incluindo token adulterado rejeitado. **F0 CONCLUÍDA; F1
+iniciada e parcial**; F2 depende de F1a e F3 segue a ordem de módulos do ADR-050. Evidência em
 [`docs/htmx-confirmacao.md`](../../../../../docs/htmx-confirmacao.md).
+
+**Atualização 2026-11-05 — F1 parcial:** o Portal responde ao login popup por
+HTMX, com fragmento, `HX-Redirect` após autenticação e fallback de navegação;
+no tema V2, o login do shell e as gavetas de mensagens/avisos usam
+`core/drupal.htmx`. A regra de engenharia está registrada: AJAX Drupal é legado
+e HTMX é o padrão obrigatório para novas interações assíncronas do tema. Gates
+SDC, foundations, shell contract, browser validators e render isolado dos 35
+SDCs passaram nesta entrega. O Firefox usado para a fixture foi sintético e
+não valida autenticação real no Runtime.
+
+**Falta para concluir F1:** migrar a busca do shell (hoje Fetch) e o cadastro
+popup; validar login e formulários HTMX com sessão/Form API reais; executar a
+matriz visual exigida pelo checklist (320, 390, 768, 959, 960 e 1440 px, claro,
+escuro e zoom 200%) e registrar as evidências. F2 permanece dependente de F1a;
+F3 continua seguindo a ordem de dependências de módulos definida na ADR-050.
 
 ## Compatibilidade e limites
 
