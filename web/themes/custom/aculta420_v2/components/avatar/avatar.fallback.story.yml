@@ -1,0 +1,6 @@
+name: Avatar neutro
+description: Fallback sem foto, sem iniciais ou letras geradas a partir do nome.
+component: aculta420_v2:avatar
+props:
+  size: md
+  label: Avatar sem foto

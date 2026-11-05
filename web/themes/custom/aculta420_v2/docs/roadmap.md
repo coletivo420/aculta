@@ -1,5 +1,15 @@
 # ACULTA420 V2 roadmap
 
+## Avatar — G1 implementado; integração e validação visual pendentes
+
+Criado o SDC `avatar`, com slot de mídia, fallback neutro nomeado e stories para
+os dois estados. O componente não consulta entidade/usuário nem gera iniciais.
+Schema/render Drupal passaram e Firefox ESR visível capturou os dois estados em
+320, 390, 768, 959, 960 e 1440 px nos modos claro/escuro; zoom 200% em 320 CSS
+px também passou sem overflow. Teclado não se aplica ao componente estático.
+`account-menu` e `author-card` ainda mantêm seus slots atuais; a adoção é
+separada para preservar o contrato já validado.
+
 ## Menu de conta e sites — C2 implementado; validação visual pendente
 
 O `account-menu` combina a lista neutra `aculta_domain_sites` com o bloco de

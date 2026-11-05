@@ -55,6 +55,7 @@ $component_ids = [
   'account-menu',
   'audio-player',
   'alerts-trigger',
+  'avatar',
   'badge',
   'breadcrumb',
   'button',
@@ -101,6 +102,12 @@ $definitions = $source_manager->getDefinitions();
 (new \ReflectionProperty(DefaultPluginManager::class, 'definitions'))
   ->setValue($manager, $definitions);
 $samples = [
+  'avatar' => [
+    '#props' => ['size' => 'md', 'label' => 'Avatar sem foto'],
+    '#slots' => [
+      'media' => Markup::create('<img src="/avatar-example.png" alt="Retrato de exemplo">'),
+    ],
+  ],
   'accordion' => [
     '#props' => ['title' => 'Pergunta frequente'],
     '#slots' => ['content' => '<p>Resposta disponível.</p>'],
@@ -344,6 +351,22 @@ foreach ($component_ids as $component_id) {
   $output = (string) $renderer->renderInIsolation($build);
   if ($output === '') {
     throw new RuntimeException(sprintf('Empty SDC render: %s', $plugin_id));
+  }
+  if ($component_id === 'avatar') {
+    if (!str_contains($output, 'alt="Retrato de exemplo"') || str_contains($output, 'role="img"')) {
+      throw new RuntimeException('Avatar media must preserve its own alternative text.');
+    }
+    $fallback_build = [
+      '#type' => 'component',
+      '#component' => $plugin_id,
+      '#props' => ['size' => 'md', 'label' => 'Avatar sem foto'],
+      '#slots' => [],
+    ];
+    $fallback_output = (string) $renderer->renderInIsolation($fallback_build);
+    if (!str_contains($fallback_output, 'role="img"')
+      || !str_contains($fallback_output, 'aria-label="Avatar sem foto"')) {
+      throw new RuntimeException('Avatar fallback must expose a neutral, named icon.');
+    }
   }
   if ($component_id === 'breadcrumb'
     && (!str_contains($output, 'aria-current="page"') || !str_contains($output, 'aria-label="Breadcrumb"'))) {

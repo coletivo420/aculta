@@ -12,6 +12,14 @@ e aside. O conteúdo principal precede o complementar no DOM; aside só forma
 duas colunas a partir de 60rem quando tem conteúdo. Não escolhe tipo nem
 domínio, responsabilidade reservada ao preprocess da fase P2. Sem JavaScript.
 
+### avatar
+
+Apresenta a mídia fornecida pelo módulo proprietário no slot `media` e mantém o
+texto alternativo do render array. Sem mídia, mostra o ícone neutro `user-circle`
+com nome acessível; não gera iniciais nem consulta usuário. Props: `size`
+(`xs`, `sm`, `md`, `lg`, `xl`) e `label` (usado no fallback). Stories:
+`avatar.default.story.yml` e `avatar.fallback.story.yml`. Sem JavaScript.
+
 ### accordion
 
 Resposta expansível baseada em details/summary, sem JavaScript e operável por
@@ -204,7 +212,7 @@ original caso a descoberta Drupal ainda não conheça o SDC.
 
 ## Lacunas do catálogo
 
-Componentes previstos no ADR-046 e ainda não criados: `avatar` (o `account-menu` usa só o slot), `author-box`, `breadcrumb`, `tabs`, `accordion`, `dialog`, `form-field`, `progress`, `data-table`, `empty-state` e `price`. Ordem e uso estão no [roadmap.md](roadmap.md).
+Componentes previstos no ADR-046: `avatar` agora tem SDC próprio e stories; `author-box`, `tabs`, `dialog`, `form-field`, `progress`, `data-table`, `empty-state` e `price` ainda precisam de auditoria/implementação. `author-card`, `breadcrumb` e `accordion` já existem. Ordem e uso estão no [roadmap.md](roadmap.md).
 
 ## Como documentar um componente novo
 

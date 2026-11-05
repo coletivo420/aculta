@@ -1,5 +1,12 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — componente Avatar
+
+- Criado SDC `avatar` com tamanhos responsivos, slot de mídia de responsabilidade
+  do Portal e fallback `user-circle` acessível. O componente nunca deriva letras
+  ou iniciais do nome. Stories de mídia sintética e fallback documentam os dois
+  estados; integração com os consumers existentes fica para uma entrega própria.
+
 ## Não versionado — dashboard e Minha Conta na rota definida pela ADR-048
 
 - O preprocess mapeia a rota `aculta_studio.dashboard` para `aside`, inclusive

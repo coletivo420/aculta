@@ -1,0 +1,10 @@
+{% set size = size|default('md') %}
+<span{{ attributes.addClass('aculta-avatar', 'aculta-avatar--' ~ size) }}>
+  {% if media %}
+    <span class="aculta-avatar__media">{{ media }}</span>
+  {% else %}
+    <span class="aculta-avatar__fallback" role="img" aria-label="{{ label|default('Avatar') }}">
+      {{ include('aculta420_v2:icon', { name: 'user-circle', variant: 'duotone', size: 'lg' }, with_context = false) }}
+    </span>
+  {% endif %}
+</span>

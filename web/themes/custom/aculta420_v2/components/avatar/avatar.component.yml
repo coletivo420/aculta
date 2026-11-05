@@ -1,0 +1,22 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Avatar
+description: Apresenta a mídia de avatar fornecida pelo módulo responsável ou um ícone neutro.
+group: ACULTA
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    size:
+      type: string
+      title: Tamanho
+      enum: [xs, sm, md, lg, xl]
+      default: md
+    label:
+      type: string
+      title: Nome acessível para o fallback neutro
+      minLength: 1
+      default: Avatar
+slots:
+  media:
+    title: Mídia do avatar
+    description: Render array fornecido pelo módulo proprietário; deve preservar o texto alternativo da imagem.

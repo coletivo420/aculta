@@ -1318,3 +1318,31 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   concluir PHPCS/testes, commit e push fast-forward em `dev`, sem sincronização
   de cache/configuração/dados no Runtime.
 
+## Continuação — G1 SDC Avatar — 2026-11-05
+
+- **Implementação:** criado `components/avatar` com props `size`/`label`, slot
+  `media` e fallback `user-circle` nomeado. O Twig não consulta usuário nem
+  deriva letras/iniciais; o texto alternativo da mídia fica sob responsabilidade
+  do render array do módulo proprietário. Account-menu/author-card não foram
+  refatorados nesta entrega.
+- **Documentação:** `docs/components.md`, `docs/gates.md`, `docs/roadmap.md` e
+  `CHANGELOG.md` atualizados no mesmo commit. O gate SDC agora descobre e renderiza
+  os dois estados do avatar.
+- **Verificações:** SDC schemas 55 componentes/764 checks PASS; design
+  foundations 2.468 checks PASS; render SDC Drupal 28 componentes PASS;
+  YAML parse, PHP lint e `git diff --check` PASS. Firefox ESR visível: 12/12
+  combinações de modo/largura passaram em 320/390/768/959/960/1440 CSS px;
+  zoom real 200%, viewport 320 CSS px, sem overflow. Capturas PNG e `results.json`
+  ficam fora do repositório em `$SUITE_OUT/aculta420-v2-avatar-20261105/`.
+- **Checklist AGENTS V2, seção 6:** SDC documentado com stories; sem UI Styles,
+  biblioteca, JS, hook, serviço ou variável Portal nova; gate registrado com
+  saída; changelog/roadmap atualizados; nenhum item sem arquivo fonte.
+- **Auditoria do plano:** A1–A5 e B1 já existem em código; B2 aguarda exportação
+  antes do RC, pois não há configuração salva a exportar. D1/D2 estão no Portal,
+  mas `domain_presentation` ainda não traz `accent`; F1 requer contrato neutro
+  separado. F2/Wiki continua aguardando confirmação da equivalência
+  verbete/seção. C5 e P1–P4 ainda têm aceite visual pendente nas áreas próprias.
+- **Runtime:** nenhuma alteração persistente. Próximo antes da publicação:
+  rodar `updatedb:status` e `config:status` em modo somente leitura; commit/push
+  atômico para `dev` e continuar G1 na ordem (auditar/criar author-box).
+
