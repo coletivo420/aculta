@@ -69,8 +69,11 @@ Decisões de 2026-11-05 (ADR-047, emenda).
 
 ### 3.1 Estrutura
 
-- **Barra institucional:** logotipo, "Multidomínio", busca, carrinho, mensagens,
-  sino, e à direita o botão **"Entrar"** (visitante) e o **hambúrguer** (`list`).
+- **Barra institucional:** logotipo, busca, carrinho, mensagens, sino, e à direita
+  o botão **"Entrar"** (visitante) e o **hambúrguer** (`list`). Sem seletor
+  "Multidomínio" (decidido em 2026-11-05).
+- **Alvo de toque de 35 px** e **ícones de 30 px** nos gatilhos da barra (ADR-047, item 10).
+  Exceção à regra de 44 px registrada no `AGENTS.md` da V2.
 - **Sem rótulos de conta na barra**, em nenhuma largura. "Minha conta" e "Sair"
   ficam só dentro do hambúrguer.
 - O hambúrguer da barra tem o mesmo comportamento do menu hambúrguer que hoje fica
@@ -99,6 +102,20 @@ O `aculta_user` entrega ao tema, por contrato neutro: `authenticated`,
 `aculta_account_avatar` (sem inicial), `aculta_account_menu` (itens com access
 e cache) e `aculta_account_name` (nome de exibição definido pela política do Portal).
 O tema não lê usuário, Profile, `user_picture` nem e-mail.
+
+### 3.5 Conteúdo do menu (por agora)
+
+Decidido em 2026-11-05 (ADR-047, item 9). O menu tem só dois blocos:
+
+1. **Sites (purposes):** a lista dos purposes publicados, com o nome de cada um
+   vindo do Portal. Cada item é um link comum, com o site atual marcado em
+   `aria-current`. Sem JavaScript, a lista funciona igual.
+2. **Sessão:** "Entrar" (visitante) ou, logado, o cabeçalho com avatar e nome, "Minha
+   conta", "Meu perfil" e "Sair" (seções 3.2 e 3.3).
+
+Não há item de busca, de notificação nem de idioma no menu. Itens novos exigem decisão.
+
+Os links de sites são navegação entre purposes: sem AJAX (ADR-049, item 5).
 
 ## 4. O que importar da V1
 
@@ -147,12 +164,81 @@ Verificação: capturas V1 × V2 em 320, 390, 960 e 1440 px, claro e escuro, em 
   comentário (`discussion-comment`) como SDCs próprios da V2.
 - Modal de login em `<dialog>` (`multidomain-bar.js`).
 
+### 4.4 Perfil público (base: V1)
+
+Decidido em 2026-11-05: o perfil público da V1 é a base, adaptado aos tokens e
+aos componentes da V2. O perfil público é diferente da edição de perfil.
+
+**Referência na V1:** `PublicProfileController` (`aculta_user`), tokens
+`public-profile*` em `PortalUiHooks::TOKENS` e `css/components/public-profile.css`.
+
+**O que a V1 mostra (fonte da regra):**
+
+- Cartão com largura máxima de 48 rem, borda, raio de 1 rem e cabeçalho com fundo
+  de superfície discreta.
+- Avatar redondo de 6,5 rem com borda de 3 px. Sem avatar, o acervo; nunca inicial.
+- Nome em `h2`.
+- Biografia em texto corrido, com quebras de linha, largura máxima de 60 caracteres.
+- Redes e e-mail como pílulas com ícone. O e-mail só aparece se a política do Portal
+  permitir.
+- Conquistas em grade de cartões (quando houver), com ícone, nome e descrição.
+- Ação de amizade (formulário do Portal) só para visitante logado que não é o dono.
+- Perfil privado mostra só foto e apelido. Sem apelido, responde 404.
+
+**Adaptação para a V2:**
+
+- Cores e raios pelos tokens da V2 (`--color-surface-raised`, `--color-text-primary`,
+  `--radius-lg` para o cartão; pílulas para redes e para a ação de amizade).
+- Ícones pelo componente `icon` da V2 (Phosphor), no lugar das classes `bi-*` da V1.
+- Layout: uma coluna no mobile; a partir de 36 rem, cabeçalho em linha (avatar e nome).
+- Somente leitura. Nenhum formulário de edição nesta tela.
+
+**Edição é outra tela (Meu Perfil, `/meu-perfil`).** Ali ficam foto (popup, seção 4.1),
+apelido, biografia, redes e privacidade. Esta tela é privada: `noindex` e sem cache público.
+
+**Rota.** Edição: `/meu-perfil` (decidido). Pública: a V1 usa `/u/<apelido>`. Proposta:
+`/perfil/<apelido>`, pelo mesmo critério de `/meu-perfil` (URLs em português, sem
+abreviação). Antes da versão estável não há redirecionamento, então trocar não quebra nada.
+**A confirmar.**
+
+**Purpose.** A página pública é servida no purpose principal (regra da V1). O botão
+"Ver perfil público" do Studio, que fica na conta, é um link comum para outro purpose.
+
+### 4.5 Mensagens e avisos (base: V1)
+
+Decidido em 2026-11-05: mensagens e avisos reproduzem o comportamento e a aparência
+da V1. A V2 já tem gavetas laterais à direita (26,25 rem, até 100 vw), iguais às da V1.
+
+**Referência na V1:** `messenger-trigger.twig`, `alerts-trigger.twig`,
+`js/messenger-drawers.js`, `js/alerts-dismiss.js`, `js/counters.js`,
+`css/components/messenger-drawer.css`, `css/components/unread-count.css`,
+`css/components/portal-cart.css` (gatilhos e gaveta) e `docs/messenger.md`.
+
+**Comportamento e aparência a reproduzir:**
+
+| Item | V1 | Situação na V2 | Ação |
+| --- | --- | --- | --- |
+| Gatilho | botão de 2,75 rem, ícone `bi-chat-dots` (mensagens) e `bi-bell` (avisos) | ícones Phosphor `chat-circle-dots` e `bell-simple` | ícones de **30 px** (ADR-047, item 10); manter o nome do ícone só se o Phosphor tiver a mesma leitura |
+| Contador | badge redondo no canto, com `translate(45%, -45%)`; some com zero; "99+" acima de 99 | igual, com cor de erro | manter; conferir o estado com zero |
+| Rótulo do gatilho | "N conversas não lidas. Abrir mensagens" / "N avisos ativos ou não lidos. Abrir avisos" | igual | manter |
+| Gaveta | lateral à direita, 26,25 rem, até 100 vw | dialog lateral, mesma largura | manter |
+| Corpo | rolagem interna; rodapé fora da rolagem | rolagem no corpo; rodapé no fim | manter |
+| Rodapé | botão "Ver todas as mensagens" e "Ver todos os avisos", largura total | igual | manter |
+| Carregamento | estado `loading` com `aria-busy`; erro com `role="alert"` e texto próprio | só `aria-busy` | incluir o estado de erro com texto |
+| Filtros de avisos | grupos recolhíveis (`details`) por origem e leitura, com resumo de 2,75 rem de altura | ausentes | **implementar** |
+| Conversas | lista com nome, data, avatar, não lida em destaque; conversa abre na gaveta com "← Todas as conversas" | ausentes na V2 | **implementar** (depende do módulo de mensagens) |
+| Foco e Escape | Escape fecha; foco volta ao gatilho | `<dialog>` nativo | manter e testar |
+| Resposta antiga | `AbortController` evita que resposta antiga substitua a gaveta (B4-02) | ausente na V2 | **implementar** no módulo de AJAX do Studio (ADR-049) |
+
+Cada item de "ação" entra no mesmo módulo JavaScript do Studio (ADR-049, item 2),
+e não em um arquivo novo.
+
 ## 5. Pendências
 
 Decisões de 2026-11-05 estão em `studio-visual-spec.md`, seção 9. Resta:
 
-1. **Como trocar de domínio sem o seletor "Multidomínio".** Candidato: listar os domínios dentro do hambúrguer.
-2. **Rota de Meu Perfil (padrão `/meu-perfil`).** Minha conta é `/conta`, decidido. Confirmar a de Meu Perfil.
+1. ~~Como trocar de domínio sem o seletor "Multidomínio".~~ **Decidido em 2026-11-05:** o seletor sai da barra; a troca é feita pela lista de sites no menu (seção 3.5).
+2. ~~Rota de Meu Perfil.~~ **Decidido em 2026-11-05:** `/meu-perfil`. Pendente só a rota pública do perfil (seção 4.4): `/u/<apelido>` na V1, ou `/perfil/<apelido>` por proposta.
 3. **Popup de foto: envio e sorteio.** Decidido: Fetch próprio no `<dialog>`, com AJAX do Studio (ADR-049).
 4. **Papel Estudante e Educador.** Verificado no LMS: "Educador(a)" é papel contextual por curso (`EducatorFeedbackPolicy`). A Ganjalab deve usar o papel do curso, não do Profile. Confirmar.
 5. **Campos privados (telefone e data de nascimento).** Padrão: mostrar e editar. Confirmar a necessidade.

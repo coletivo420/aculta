@@ -86,3 +86,33 @@ decisão.
 - Gates no Homelab. Capturas dos estados de carregamento, sucesso e erro em 320,
   390 e 1440 px, claro e escuro, fora do repositório (`$SUITE_OUT`).
 - Status: **DEFERRED** no Homelab, sem execução nesta sessão.
+
+## 8. Alternativa htmx (em avaliação, não decidida)
+
+Esta seção registra a opção C do ADR-044 como caminho concreto. A decisão 1 (mecanismo B) continua valendo até o responsável decidir de outra forma.
+
+**O que é.** htmx é uma biblioteca pequena que troca partes da página por fragmentos HTML vindos do servidor. O elemento declara o que faz (requisição, alvo, troca), e o servidor devolve HTML, sem JSON nem protocolo de comandos.
+
+**Estado no Drupal.** O Core 11.3 incluiu suporte nativo a htmx, como parte da iniciativa "Replace AJAX API with HTMX" (fonte: página do módulo contrib `htmx` em drupal.org). O módulo contrib `htmx` 2.x cobre 11.3 a 11.5, e a versão 3.x é a linha do Drupal 12. Pela iniciativa, htmx 4 chega com o Drupal 12. Não há versão definida para descontinuar a API atual de AJAX; a própria iniciativa prevê uma transição de várias versões maiores.
+
+**Como ficaria no Studio (conceito).**
+
+- Navegação interna: o link tem `href` real e atributos htmx (`hx-get`, `hx-target`, `hx-push-url`). Sem JavaScript, o link vai para a página completa. Com JavaScript, troca só a área de conteúdo e atualiza a URL, sem o módulo próprio de `history.pushState`.
+- Formulários: `hx-post` com o alvo do bloco. O Drupal responde só o fragmento da área (no artigo consultado, por `onlyMainContent()`).
+- Popup de foto e login: o conteúdo do `<dialog>` é trazido por `hx-get` para o alvo do dialog; o envio usa `hx-post`.
+- Comandos de resposta: a troca usa o próprio htmx. O módulo de comandos próprio (ADR-049, item 8) deixaria de existir.
+
+**Vantagens.**
+
+- Menos código próprio: o subconjunto de comandos e o controle de estado saem do tema.
+- O Core é o dono do protocolo e da resposta de fragmento.
+- Sem jQuery, e com um arquivo pequeno de dependência.
+
+**Desvantagens e riscos.**
+
+- A API do Core para htmx está em transição (Drupal 12 traz htmx 4). Uma mudança de versão pode exigir reescrever atributos.
+- O comportamento com o `Htmx` do Core (nomes de atributos e cabeçalhos) não foi confirmado nesta análise: a página consultada era do módulo contrib, não a documentação do Core. Confirmar no `core/lib` do 11.5 no Homelab antes de decidir.
+- Mudanças de estado com foco, `aria-live` e `document.title` continuam no tema; htmx não faz isso sozinho.
+- A regra de mesma origem e de navegação normal entre purposes (item 5) vale do mesmo jeito.
+
+**Recomendação.** Manter B agora, por dois motivos: o protocolo atual é pequeno e está no mesmo módulo, e o Drupal 12 vai mudar o htmx. Abrir uma decisão de migração para C quando (a) a API htmx do Core 11.5 estiver confirmada no Homelab, e (b) a primeira tela de Studio com AJAX estiver pronta e medida. Nesse ponto, o módulo do item 2 é o único arquivo a trocar.
