@@ -1,3 +1,11 @@
+## Não versionado — StudioProfileController preparado para HTMX (ADR-050 F2 item 2)
+
+- `StudioProfileController` adiciona identificador de raiz estável
+  `id="aculta-studio-profile-editor"`, `data-aculta-studio-profile-root` e ponto
+  de foco `data-aculta-focus` com `tabindex="-1"`.
+- Anexa as bibliotecas `core/drupal.htmx` e `aculta420_v2/studio-htmx` para
+  suporte a fragmento e navegação acessível.
+
 ## Não versionado — navegação do Studio e da conta por HTMX (ADR-050 F2 parcial)
 
 - `studio-navigation.js` e `account-navigation.js` deixam `Drupal.Ajax` e o

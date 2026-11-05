@@ -209,7 +209,16 @@ final class StudioProfileController {
       '#name' => 'profile-editor',
       '#props' => [],
       '#slots' => $slots,
-      '#attributes' => ['data-portal-ui' => 'studio-profile-editor'],
+      '#attributes' => [
+        'data-portal-ui' => 'studio-profile-editor',
+        'id' => 'aculta-studio-profile-editor',
+        'data-aculta-studio-profile-root' => '',
+        'data-aculta-focus' => '',
+        'tabindex' => '-1',
+      ],
+      '#attached' => [
+        'library' => ['core/drupal.htmx', 'aculta420_v2/studio-htmx'],
+      ],
       '#cache' => [
         'contexts' => ['user', 'user.permissions', 'url.site'],
         'max-age' => 0,
