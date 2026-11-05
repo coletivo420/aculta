@@ -10,7 +10,7 @@ Minha Conta legada fica em `/conta-legada` no Domain ACCOUNT, com
 `aculta_portal.dashboard` como route ID. Conforme ADR-048 (2026-11-05), a raiz `/` serve o dashboard privado do Studio e `/conta` apresenta Minha Conta. O path interno do dashboard responde 404 diretamente. O hub público `/studio` foi removido e `/studio*` responde 404. Os paths canônicos implementados são `/we-sativa/**` no purpose `wiki` e `/green-stash/**` no purpose `shop`.
 O caminho `/minha-conta` não é rota e responde 404. O legado será conservado durante e
 **após** a comparação com `/conta`. As duas experiências
-`/conta` e `/perfil` não possuem um agrupamento
+`/conta` e `/meu-perfil` não possuem um agrupamento
 `/pessoal` nem aliases. [Contrato](ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
 Runtime ainda não homologado.
 
@@ -21,7 +21,7 @@ os caminhos `/studio` e `/studio/*` permanecem retirados, sem exceções;
 os demais caminhos antigos de Ganjalab, Fórum administrativo, User e
 Conta/Commerce respondem 404, sem redirects.
 Usar `/` no ACCOUNT para o dashboard do Studio, `/conta-legada` para a Conta
-original, `/conta` para Minha Conta e `/perfil` para Meu Perfil, além de `/marley`, `/ganjalab`,
+original, `/conta` para Minha Conta e `/meu-perfil` para Meu Perfil, além de `/marley`, `/ganjalab`,
 `/we-sativa`, `/green-stash`, `/culturas`, `/dados/endereco` e `/pedidos`.
 O perfil público `/u/{apelido}` e a raiz técnica da Conta seguem seu
 contrato. **Pathauto e aliases editoriais de conteúdo são URLs de conteúdo,
@@ -344,11 +344,11 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/conta/apoio` | Meu apoio no Studio | `aculta_studio.account_support`; delega a `SupportController::mySupport()`, preserva assinatura e host SUPPORT. |
 | `conta.aculta` | `/conta/preferencias` | Preferências da Conta Studio | `aculta_studio.account_preferences`; Core Form API do `AppearanceForm` original, preserva configuração de modo de cor e abas do owner. |
 
-| `conta.aculta` | `/perfil` | **Meu Perfil Studio** | `aculta_studio.profile`; apenas identidade pública editável por User; `/u/{apelido}` em MAIN preservado. |
-| `conta.aculta` | `/perfil/apelido` | Apelido público | `aculta_studio.profile_nickname`, Form API do ACULTA User sobre `Profile.field_nickname`, acesso somente do titular, sem dados cadastrais. |
-| `conta.aculta` | `/perfil/bio` | Edição de bio | Form API original do ACULTA User, retorno contextual ao Studio. |
-| `conta.aculta` | `/perfil/privacidade` | Visibilidade pública | Form API original do ACULTA User, permissões de autores/editores preservadas. |
-| `conta.aculta` | `/perfil/redes/{rede}` | Redes sociais | Form API original do ACULTA User com validação proprietária. |
+| `conta.aculta` | `/meu-perfil` | **Meu Perfil Studio** | `aculta_studio.profile`; apenas identidade pública editável por User; `/u/{apelido}` em MAIN preservado. |
+| `conta.aculta` | `/meu-perfil/apelido` | Apelido público | `aculta_studio.profile_nickname`, Form API do ACULTA User sobre `Profile.field_nickname`, acesso somente do titular, sem dados cadastrais. |
+| `conta.aculta` | `/meu-perfil/bio` | Edição de bio | Form API original do ACULTA User, retorno contextual ao Studio. |
+| `conta.aculta` | `/meu-perfil/privacidade` | Visibilidade pública | Form API original do ACULTA User, permissões de autores/editores preservadas. |
+| `conta.aculta` | `/meu-perfil/redes/{rede}` | Redes sociais | Form API original do ACULTA User com validação proprietária. |
 | `conta.aculta` | `/marley` | **Entrada inicial canônica de Marley (minúscula)** | Declarada por `aculta_studio.home`; mantém controlador, áreas e acesso editoriais; purpose `account`. Runtime da dev.10 ainda não homologado. |
 | `conta.aculta` | `/marley/{aba}` | Área editorial Marley, como Revista, Wiki, Cursos, Fórum ou Galerias | Declarada em `aculta_studio`; plugin, disponibilidade e permissão do módulo dono determinam acesso; purpose `account`. |
 | `conta.aculta` | `/marley/{aba}/{secao}` | Seção editorial Marley | Declarada em `aculta_studio`; segmento inexistente ou sem acesso retorna 404; purpose `account`. |

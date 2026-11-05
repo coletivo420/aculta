@@ -8,7 +8,7 @@ Histórico de versões e rodadas (dev.12 a dev.117): `docs/history/modules/acult
 
 ## Contratos públicos e propriedade
 
-- Rotas são contrato público: `aculta_portal.wiki_home` em `/wiki`, `aculta_portal.wiki_search` em `/busca-wiki` e `aculta_portal.wiki_search_preview` em `/busca-wiki/previa`. O prefixo `aculta_portal.` permanece.
+- Rotas são contrato público pelos IDs `aculta_portal.wiki_home` (caminho interno `/wiki`), `aculta_portal.wiki_search` (`/busca-wiki`) e `aculta_portal.wiki_search_preview` (`/busca-wiki/previa`). No domínio `wiki420`, a entrada pública é `/` e `/wiki` responde 404. O prefixo `aculta_portal.` permanece.
 - Domínio e purpose ficam no Portal (`DomainPurposeManager`, `ContentPurposeResolver`, `PurposeFrontPathProcessor`, `DomainRouteSubscriber`). A Wiki não define purpose nem host.
 - Wiki é dona de verbetes, propostas e permissões. Rotas de moderação que pertencem à Marley continuam em `account:/marley/...`; não mova rotas automaticamente.
 - Não crie segunda fila, aba ou camada de autorização no Studio. Moderadores de propostas não recebem grants de Node por causa de gate de seção.

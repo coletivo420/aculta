@@ -1,59 +1,27 @@
 # Portal — regras locais
 
-## ADR-038 - caminhos atuais das Suites (retificado pelo responsável em 2026-10-30)
-
-Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/we-sativa`; Green Stash `shop:/green-stash`; Culturas `eventos:/culturas`. WE SATIVA e Green Stash são as áreas integradas ACULTA STUDIO WE SATIVA e ACULTA STUDIO GREEN STASH, com caminhos próprios. A entrada da Wiki (wiki420) é a raiz `/`, e a da loja (loja420) também; `/wiki` e `/loja` respondem 404. Os caminhos `/wesativa` e `/greenstash` respondem 404 sem redirect. `/studio` e todos os caminhos `/studio/*` respondem 404. O Domain Wiki canônico é `wiki420`. `aculta_studio` permanece framework compartilhado. Conforme ADR-048 (2026-11-05), a raiz de `conta` apresenta o dashboard do Studio; Minha Conta fica em `/conta` e Perfil em `/perfil`, separados. ADR-048 retifica ADR-038 nesse ponto.
-
-
 Herde `AGENTS.md` da raiz. Consulte `docs/AGENT-POLICIES.md` **somente nas seções relevantes** e os contratos `docs/portal/GUARDRAILS.md` e `docs/portal/DRUPAL-11-STANDARDS.md` quando a alteração exigir.
 
+## Rotas e domínios vigentes
+
+- Caminhos e tabela das Suites: `docs/decisions/ADR-038-aculta-studio-suites-por-dominio.md` (retificado em 2026-10-30). Conta e Perfil: ADR-048. Não repetir tabelas aqui. Matriz de rotas: `docs/architecture/ROUTES-SITEMAP.md`.
+- WE SATIVA e Green Stash são as exceções aprovadas ao prefixo retirado; `aculta_studio` permanece framework compartilhado.
+- Entrada da Wiki: domínio `wiki420` (canônico), URL pública `/`, reescrita internamente para `aculta_portal.wiki_home`. Entrada da loja: `/` no purpose `shop`. `/wiki`, `/loja`, `/wesativa`, `/greenstash` e `/studio*` respondem 404 sem redirect.
+- Conta e Perfil (ADR-048, 2026-11-05): a raiz de `conta` apresenta o dashboard do Studio, reescrito por path interno protegido. Minha Conta fica em `/conta`; Meu Perfil privado fica em `/meu-perfil` e filhos, separado da Conta. `/salvos` preserva seu owner e a Conta legada fica em `/conta-legada`.
+- Suites: rotas declaram o purpose correto e validam usuário, owner e permissão no servidor. Purpose incorreto responde 404, inclusive POST. Links cross-domain são absolutos via `DomainPurposeManager`; não há POST nem proxy de escrita entre purposes.
+- Novas Suites escolhem host, purpose e slug antes de declarar rotas; não criar `/studio/{suite}`. Hosts vêm da configuração ativa por ambiente. Não renomear `wiki420` para `wiki.aculta.*`.
+- Ao mudar `PurposeFrontPathProcessor`, `FrontPathPolicy`, subscriber de propósito ou navegação, testar a raiz de cada purpose e as rotas da Suite. Preservar route IDs e owners sempre que possível. Migração não transfere ownership de entidades, formulários, ACL ou workflows.
+- Sem redirects legados; canonical e links apontam direto para os novos hosts e caminhos.
+
+## Regras gerais
+
 - Core/contrib são a fonte de verdade; preserve a fronteira Core/contrib → Portal → contrato neutro → tema.
-- Endereço e CEP: regra na raiz (`AGENTS.md`); contrato central em `AccountAddressForm` e `aculta_portal_cep`. Não crie formulário de endereço paralelo.
+- Endereço e CEP: regra na raiz (`AGENTS.md`); contrato central em `AccountAddressForm` e `aculta_portal_cep`. Não crie formulário de endereço paralelo. Antes de criar ou editar captura de endereço, leia `docs/decisions/ADR-033-endereco-busca-e-locais.md` e `docs/portal/ACCOUNT-ADDRESS.md`. Busca por logradouro é exclusiva de Events/Maps e não está implementada; preserve o comportamento de Conta e checkout.
 - Valide DI, Entity API, access, render/cacheability e gates do escopo.
-- Para rotas/domínios, consulte `docs/architecture/AGENT-ROUTES.md` e `docs/architecture/ROUTES-SITEMAP.md`.
-- Rotas administrativas somente no MAIN (regra na raiz). Além dela: não renderize toolbar, link contextual ou ação administrativa em subdomínio. Política: `docs/portal/ADMIN-DOMAIN-POLICY.md`.
+- Rotas administrativas somente no MAIN (regra na raiz). Em subdomínio não renderize toolbar, link contextual ou ação administrativa. Política: `docs/portal/ADMIN-DOMAIN-POLICY.md`.
 - Regras adicionais de submódulos só se aplicam ao submódulo alterado.
 
-- Antes de criar ou editar captura de endereço, leia `docs/decisions/ADR-033-endereco-busca-e-locais.md` e siga `docs/portal/ACCOUNT-ADDRESS.md`: reutilize o adaptador central e CEP para endereço completo; Brasil padrão, sem seletor.
-- Busca por logradouro é exclusiva de Events/Maps e não está implementada. Preserve o comportamento de Conta/checkout. Para Activity, integre Local de Events em vez de manter campos postais avulsos.
+## Culturas
 
-## Decisão de produto — ACULTA Studio Culturas
+- Decisão de produto e domínio do ACULTA Studio Culturas: `web/modules/custom/aculta_portal/modules/aculta_events/AGENTS.md`.
 
-## ACULTA Studio Culturas — decisão de produto e domínio (2026-10-30)
-
-O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. `/culturas` e os fluxos iniciais estão declarados no purpose `eventos`; o host e links absolutos vêm do `DomainPurposeManager`. A entrada de Conta pode apenas linkar, sem escrita cross-domain. A jornada não está homologada até validar permissões por operação e rotas auxiliares.
-
-- A sessão administrativa técnica continua no domínio principal, em `/painel-administrativo/eventos`, restrita a administradores. Configuração global de permissões, auditoria e operações administrativas permanecem ali.
-- ACULTA Studio Culturas é a experiência de organizadores: composição de fluxos do owner `aculta_events`, para criar e gerir Eventos e seus componentes (Datas e Locais), usando Form API, Entity Access e moderação existentes. Não cria entidade, formulário de persistência, permissão ou catálogo duplicado.
-- A autorização para criar/editar/publicar Eventos e cadastrar Locais deve ser configurável pela administração de Eventos, com `content_editor` como padrão inicial. A configuração não concede acesso sozinha: permissões efetivas e access handlers do servidor continuam obrigatórios; criar, editar e publicar são capacidades distintas.
-- Escritas só são aceitas no purpose `eventos` através de rotas canônicas da experiência. O domínio `account` pode linkar para ela, mas não pode fazer POST nem gravar conteúdo de Eventos. Não introduzir proxy de escrita, alias de rota ou redirect de compatibilidade.
-- As telas públicas de Eventos continuam no purpose `eventos`. Outros domínios podem compor exibição somente leitura de Eventos publicados e acessíveis, sempre com link canônico de Eventos e sem expor Eventos privados do LMS.
-- Esta decisão substitui qualquer texto anterior que diga que todo trabalho editorial de Eventos só pode ocorrer no MAIN ou que o purpose `eventos` é exclusivamente público. O painel de administração permanece no MAIN; a área do organizador é a exceção explícita e separada em ACULTA Studio Culturas.
-- A implementação atual é parcial: dashboard, formulários de Evento/Data/Local e configuração de papéis existem em `aculta_events`. Não declarar a experiência homologada antes de validar purpose, autorização, acessibilidade, navegação e submissões no Runtime.
-
-## Contrato vigente em implementação: Suites do ACULTA Studio por domínio (ADR-038 retificado)
-
-Cada Suite responde em seu próprio domínio/purpose. As duas exceções explicitamente aprovadas ao prefixo retirado são WE SATIVA e Green Stash; `aculta_studio` permanece como infraestrutura compartilhada de composição e registry.
-
-| Suite | Purpose | Host de produção | Host de teste | Caminho-base |
-| --- | --- | --- | --- | --- |
-| Marley | `account` | configurado no Domain | configurado no Domain | `/marley` |
-| Ganjalab | `courses` | configurado no Domain | configurado no Domain | `/ganjalab` |
-| ACULTA STUDIO WE SATIVA | `wiki` | configurado no Domain (`wiki420`) | configurado no Domain (`wiki420`) | `/we-sativa` |
-| ACULTA STUDIO GREEN STASH | `shop` | configurado no Domain | configurado no Domain | `/green-stash` |
-| Culturas | `eventos` | configurado no Domain | configurado no Domain | `/culturas` |
-
-Manter Conta e Perfil como experiências diferentes, fora das Suites. Conforme ADR-048, a raiz de `conta` apresenta o dashboard privado do Studio, reescrito por path interno protegido; Minha Conta fica em `/conta` e Perfil em `/perfil`. `/salvos` preserva seu owner e a Conta legada continua em `/conta-legada`.
-
-Regras de implementação:
-- Rotas declaram o purpose correto e validam usuário, módulo owner e permissão no servidor. Purpose incorreto responde 404, inclusive POST. Links cross-domain são absolutos via `DomainPurposeManager`; não enviar POST/proxy de escrita entre purposes.
-- Preservar route IDs e owners sempre que possível. Rotas de negócio podem ser declaradas pelo módulo owner e ter path/purpose ajustados conforme a Suite responsável.
-- Novas Suites escolhem host/purpose e slug próprio antes de declarar rotas; não introduzir `/studio/{suite}`.
-- Hosts são lidos da configuração ativa por ambiente e URLs absolutas passam pelo `DomainPurposeManager`. Wiki mantém o Domain configurado `wiki420`; não renomear para `wiki.aculta.*`.
-- Atualizar `PurposeFrontPathProcessor`, `FrontPathPolicy`, subscriber de propósito, navegação e testes para a raiz de cada purpose e as rotas da Suite. Os cinco caminhos da matriz são rotas válidas apenas no purpose respectivo.
-- Manter `/we-sativa/**` no purpose `wiki` e `/green-stash/**` no purpose `shop`; todas as rotas `/studio*` respondem 404. Sem redirects legados; canonical e links apontam diretamente aos novos hosts/caminhos.
-- Migrar links internos/externos, login/retorno, e-mail, notificações, sitemap, canonical, cache e testes. A troca de URL não transfere ownership de entidades, formulários, ACL ou workflows.
-
-Estado em 2026-10-30: caminhos novos e rejeição global de `/studio*` testados após rebuild; matriz HTTP 275/275 e captura Firefox ESR em 1440/390 px. Wiki usa o Domain canônico `wiki420`; HTTPS e navegação autenticada foram verificados no ambiente de desenvolvimento. DNS de produção `wiki420.aculta.org` não foi resolvido neste ambiente.
-
-Ao revisar rotas, trate ADR-038 como decisão vigente e consulte `docs/architecture/ROUTES-SITEMAP.md`.

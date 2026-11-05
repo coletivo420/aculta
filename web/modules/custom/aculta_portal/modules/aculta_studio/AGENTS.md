@@ -38,7 +38,7 @@ Histórico desta área (contratos antigos, status de dev.3 a dev.6, rotas de mig
 - Ganjalab Educador (`courses:/ganjalab/educador`): autoria e gestão. Novo curso em `/ganjalab/educador/cursos/novo`. O retorno do formulário vai sempre ao dashboard do Educador.
 - O dashboard do estudante só oferece o atalho ao Educador se `Url::access()` autorizar. O dashboard do Educador só exibe retorno ao estudante se a rota estudante autorizar. Não crie toggle fixo nem oculte o curso atual ao alternar.
 - O Course Builder não pertence ao Marley. Não misture professor e estudante na navegação. Não conceda acesso educacional por causa de permissão editorial.
-- Culturas (ACULTA Studio Culturas): a decisão de produto e domínio está no AGENTS do Portal, seção "ACULTA Studio Culturas". Aqui vale: a aba de Eventos não grava no purpose `eventos` a partir de `account`; a entrada da Conta só linka. Datas e Locais pertencem ao Evento, persistidos por `aculta_events`. O painel administrativo fica no MAIN, em `/painel-administrativo/eventos`. Não duplique esse painel na interface de organizadores.
+- Culturas (ACULTA Studio Culturas): a decisão de produto e domínio está em `web/modules/custom/aculta_portal/modules/aculta_events/AGENTS.md`. Aqui vale: a aba de Eventos não grava no purpose `eventos` a partir de `account`; a entrada da Conta só linka. Datas e Locais pertencem ao Evento, persistidos por `aculta_events`. O painel administrativo fica no MAIN, em `/painel-administrativo/eventos`. Não duplique esse painel na interface de organizadores.
 
 ## Conta e Perfil
 
