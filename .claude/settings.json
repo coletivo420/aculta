@@ -1,12 +1,3 @@
 {
-  "includeCoAuthoredBy": false,
-  "permissions": {
-    "ask": [
-      "Read(./data/**)",
-      "Read(./references/**)",
-      "Read(./handoff/**)",
-      "Read(./docs/history/**)",
-      "Read(./vendor/**)"
-    ]
-  }
+  "includeCoAuthoredBy": false
 }
