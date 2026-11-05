@@ -63,6 +63,17 @@ gate Drupal verifica ambos os estados e o rótulo. Firefox visível passou em 12
 estados nas seis larguras e dois modos, zoom 200% e sem overflow. Stories e
 catálogo documentam os contratos; consumer real permanece pendente.
 
+## Data table — G1 implementado; consumer do Studio pendente
+
+Criado o SDC `data-table` com variante `cards` responsiva para o layout do
+Studio e variante `scroll` padrão conforme ADR-040. A tabela e os render arrays
+continuam no módulo consumidor; a variante de cartões exige cabeçalhos/células
+com roles e `data-label`. O JS define role de região, nome e foco do wrapper
+rolável somente quando há overflow, com observers limpos no detach Drupal. Stories e gates
+cobrem cartões e rolagem. Firefox visível passou em seis larguras, dois modos,
+sem overflow de página, zoom real 200% a 320 CSS px, Tab com foco visível e
+fallback sem JavaScript. O consumer real do Studio permanece pendente.
+
 ## Menu de conta e sites — C2 implementado; validação visual pendente
 
 O `account-menu` combina a lista neutra `aculta_domain_sites` com o bloco de

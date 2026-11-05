@@ -1,0 +1,27 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Tabela de dados
+description: Tabela semântica com cartões no mobile ou rolagem horizontal.
+status: experimental
+group: Dados
+libraryOverrides:
+  dependencies:
+    - core/drupal
+    - core/once
+props:
+  type: object
+  additionalProperties: false
+  required: [label]
+  properties:
+    label:
+      type: string
+      minLength: 1
+      title: Nome da região rolável
+    mobile_variant:
+      type: string
+      enum: [cards, scroll]
+      default: scroll
+      title: Apresentação estreita
+slots:
+  table:
+    title: Tabela
+    description: Tabela HTML renderizada com cabeçalhos e células identificados.

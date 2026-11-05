@@ -64,6 +64,7 @@ $component_ids = [
   'card-cultural',
   'discussion-comment',
   'dialog',
+  'data-table',
   'event-page-layout',
   'filter-chips',
   'form-field',
@@ -167,6 +168,12 @@ $samples = [
       'submitted' => '<time datetime="2026-11-04">4 de novembro de 2026</time>',
       'body' => 'Contribuição na discussão.',
       'footer' => '<a href="/topico/exemplo#comentario">Link permanente</a>',
+    ],
+  ],
+  'data-table' => [
+    '#props' => ['label' => 'Tabela de conteúdos', 'mobile_variant' => 'cards'],
+    '#slots' => [
+      'table' => Markup::create('<table class="data-table__table" role="table"><caption>Conteúdos recentes</caption><thead role="rowgroup"><tr role="row"><th id="col-title" scope="col" role="columnheader">Título</th><th id="col-status" scope="col" role="columnheader">Status</th></tr></thead><tbody role="rowgroup"><tr role="row"><td role="cell" headers="col-title" data-label="Título">Revista cultural</td><td role="cell" headers="col-status" data-label="Status">Rascunho</td></tr></tbody></table>'),
     ],
   ],
   'dialog' => [
@@ -464,6 +471,65 @@ foreach ($component_ids as $component_id) {
       || !str_contains($dialog_behavior, 'last.focus()')
       || !str_contains($dialog_behavior, 'first.focus()')) {
       throw new RuntimeException('Utility dialog behavior must select the SDC contract attribute.');
+    }
+  }
+  if ($component_id === 'data-table') {
+    $table_dependencies = $definition['library']['dependencies'] ?? [];
+    foreach (['core/drupal', 'core/once'] as $dependency) {
+      if (!in_array($dependency, $table_dependencies, TRUE)) {
+        throw new RuntimeException(sprintf('Data table behavior dependency is missing: %s', $dependency));
+      }
+    }
+    $table_js_assets = array_keys($definition['library']['js'] ?? []);
+    if (!array_filter($table_js_assets, static fn(string $asset): bool => str_ends_with($asset, '/data-table.js'))) {
+      throw new RuntimeException('Data table behavior was not discovered as an SDC JavaScript asset.');
+    }
+    $table_css = file_get_contents($theme_root . '/components/data-table/data-table.css');
+    $table_js = file_get_contents($theme_root . '/components/data-table/data-table.js');
+    foreach ([
+      'data-table--cards .data-table__table td::before',
+      'content: attr(data-label)',
+      'overflow: auto',
+      '::-webkit-scrollbar',
+    ] as $required_css) {
+      if (!str_contains($table_css, $required_css)) {
+        throw new RuntimeException(sprintf('Data table responsive style is missing: %s', $required_css));
+      }
+    }
+    foreach ([
+      "once('acultaDataTable'",
+      'ResizeObserver',
+      'MutationObserver',
+      'setAttribute(\'aria-label\'',
+      "removeAttribute('tabindex')",
+      "setAttribute('role', 'region')",
+      "removeAttribute('role')",
+    ] as $required_js) {
+      if (!str_contains($table_js, $required_js)) {
+        throw new RuntimeException(sprintf('Data table scroll behavior is missing: %s', $required_js));
+      }
+    }
+    foreach ([
+      'data-aculta-data-table',
+      'data-mobile-variant="cards"',
+      'role="table"',
+      'scope="col"',
+      'data-label="Título"',
+      'headers="col-title"',
+    ] as $required_markup) {
+      if (!str_contains($output, $required_markup)) {
+        throw new RuntimeException(sprintf('Data table markup contract is missing: %s', $required_markup));
+      }
+    }
+    $scroll_build = [
+      '#type' => 'component',
+      '#component' => $plugin_id,
+      '#props' => ['label' => 'Tabela larga', 'mobile_variant' => 'scroll'],
+      '#slots' => ['table' => Markup::create('<table role="table"><tbody role="rowgroup"><tr role="row"><td role="cell">Item</td></tr></tbody></table>')],
+    ];
+    $scroll_output = (string) $renderer->renderInIsolation($scroll_build);
+    if (!str_contains($scroll_output, 'data-mobile-variant="scroll"')) {
+      throw new RuntimeException('Data table scroll variant must render as an explicit supported mode.');
     }
   }
   if ($component_id === 'breadcrumb'

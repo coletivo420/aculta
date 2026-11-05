@@ -1,0 +1,8 @@
+name: Tabela em cartões no mobile
+description: Linhas se tornam cartões com rótulos de coluna em telas estreitas.
+component: aculta420_v2:data-table
+props:
+  label: Tabela de conteúdos
+  mobile_variant: cards
+slots:
+  table: '<table class="data-table__table" role="table"><caption>Conteúdos recentes</caption><thead role="rowgroup"><tr role="row"><th id="col-titulo" scope="col" role="columnheader">Título</th><th id="col-status" scope="col" role="columnheader">Status</th><th id="col-data" scope="col" role="columnheader">Atualizado em</th><th id="col-acoes" scope="col" role="columnheader">Ações</th></tr></thead><tbody role="rowgroup"><tr role="row"><td role="cell" headers="col-titulo" data-label="Título">Revista cultural</td><td role="cell" headers="col-status" data-label="Status">Rascunho</td><td role="cell" headers="col-data" data-label="Atualizado em">05/11/2026 10:30</td><td role="cell" headers="col-acoes" data-label="Ações"><a href="/editar/1">Editar</a></td></tr><tr role="row"><td role="cell" headers="col-titulo" data-label="Título">Memória da comunidade</td><td role="cell" headers="col-status" data-label="Status">Publicado</td><td role="cell" headers="col-data" data-label="Atualizado em">04/11/2026 16:15</td><td role="cell" headers="col-acoes" data-label="Ações"><a href="/editar/2">Editar</a></td></tr></tbody></table>'

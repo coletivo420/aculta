@@ -1,5 +1,16 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — componente Data table
+
+- Criado o SDC `data-table` com tabela semântica, variante de cartões móveis e
+  rolagem horizontal explícita conforme ADR-040. O comportamento JS transforma
+  o wrapper em região nomeada/focável somente durante overflow, acompanhando
+  resize e mudanças renderizadas pelo Drupal.
+- Stories cobrem as variantes. SDC render/asset, schemas, browser validators e
+  Firefox visível em 12 estados (seis larguras e dois modos), zoom 200% a 320
+  CSS px e fallback sem JavaScript passaram; consumer Drupal de Studio permanece
+  pendente.
+
 ## Não versionado — componente Progress
 
 - Criado o SDC experimental `progress` com elemento nativo `<progress>`, rótulo

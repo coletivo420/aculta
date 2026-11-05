@@ -1454,6 +1454,29 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   inteiro no Firefox; regra `:indeterminate` foi ajustada e a repetição visual
   confirmou segmento parcial. Consumer com dados reais permanece pendente.
 - **Runtime:** nenhuma escrita persistente. `progress` é SDC com render isolado
-  em descoberta nula; `updatedb:status`/`config:status` devem ser conferidos
-  antes de publicar. Próximo item novo na sequência G1: `data-table`.
+  em descoberta nula. Commit `19cdfc054d` foi publicado em `origin/dev`; pós-push
+  `updatedb:status` sem updates e `config:status` sem diferenças. Próximo item
+  na sequência G1: `data-table`.
+
+## G1 — componente Data table — 2026-11-05
+
+- **Implementação:** SDC `data-table` com stories de cartões mobile (`cards`)
+  e rolagem (`scroll`, padrão ADR-040), `role` e rótulos de célula definidos
+  pelo consumer. O JS usa Drupal behaviors/once, observers de resize/mutation e
+  torna o wrapper rolável uma região nomeada/focável somente com overflow; detach limpa
+  observers e listeners. O template mantém role `region`, `aria-label` e
+  `tabindex` como fallback sem JavaScript.
+- **Gates:** schemas 55/764 PASS; browser validators 21 PASS; render Drupal
+  isolado 34 SDCs PASS; gate confere descoberta `data-table.js`, CSS,
+  dependências, markup semântico, `data-label` e variante scroll. PHP lint,
+  PHPCS do gate, YAML e `git diff --check` PASS.
+- **Firefox:** 12/12 estados sintéticos em 320/390/768/959/960/1440 CSS px,
+  claro/escuro, sem overflow da página; cartões no mobile, tabela no desktop,
+  região scroll nomeada/focável só quando há overflow; Tab encontra foco visível
+  de 3 px. Zoom real 200% com viewport efetiva 320 CSS px PASS. JavaScript
+  desativado: cartões e scroll local nomeado/focável em 320 px PASS. PNGs e JSON
+  ficam em `$SUITE_OUT`, fora do repositório.
+- **Limites:** fixture sintética não valida consumer real do Studio. Não houve
+  escrita persistente de Runtime; render SDC usou descoberta com backend nulo.
+  Próximo item na sequência G1: `empty-state`.
 

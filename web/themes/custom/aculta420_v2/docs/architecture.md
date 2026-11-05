@@ -83,6 +83,7 @@ Todo o JavaScript é vanilla, com `Drupal.behaviors` e `core/once`. Não há jQu
 | --- | --- |
 | `components/multidomain-bar/multidomain-bar.js` | sincroniza a altura da barra com o espaço da página e com a barra administrativa; abre o popup de login (`/entrar/janela`) e o popup de busca (`/busca/popup`) por Fetch, em `<dialog>` nativo |
 | `components/navigation-bar/navigation-bar.js` | drawer de navegação mobile: abre, fecha com Escape e devolve o foco |
+| `components/data-table/data-table.js` | marca como região nomeada/focável somente a tabela com overflow; observa resize e atualizações Drupal e limpa observers no detach |
 | `js/utility-dialogs.js` | diálogos utilitários com `data-aculta-utility-drawer`: abre por `showModal()`, contém Tab/Shift+Tab, fecha por botão, Escape ou clique no fundo e atualiza `aria-expanded` dos gatilhos |
 | `js/messenger-drawers.js` | conteúdo de mensagens/avisos em gavetas, filtros por fragmentos, estados loading/error, abort de resposta antiga, novo contato e ações de conversa |
 | `js/counters.js` | atualiza contadores das utilidades, com zero oculto |

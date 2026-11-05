@@ -1,0 +1,8 @@
+name: Tabela com rolagem
+description: Tabela larga mantém colunas e rolagem local acessível.
+component: aculta420_v2:data-table
+props:
+  label: Tabela larga de dados
+  mobile_variant: scroll
+slots:
+  table: '<table class="data-table__table" role="table"><caption>Dados de atividade</caption><thead role="rowgroup"><tr role="row"><th id="col-item" scope="col" role="columnheader">Item</th><th id="col-tipo" scope="col" role="columnheader">Tipo</th><th id="col-responsavel" scope="col" role="columnheader">Responsável</th><th id="col-data" scope="col" role="columnheader">Atualizado</th></tr></thead><tbody role="rowgroup"><tr role="row"><td role="cell" headers="col-item">Atividade cultural</td><td role="cell" headers="col-tipo">Evento</td><td role="cell" headers="col-responsavel">Equipe ACULTA</td><td role="cell" headers="col-data">05/11/2026</td></tr></tbody></table>'

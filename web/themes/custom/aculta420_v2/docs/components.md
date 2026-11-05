@@ -72,6 +72,19 @@ indeterminado) e `max`. Stories: `progress.default.story.yml` e
 não busca dados nem estima progresso; valores acima de `max` são limitados ao
 máximo para a apresentação.
 
+### data-table
+
+Apresenta uma tabela HTML semântica, com variante de cartões em telas abaixo de
+40rem ou rolagem horizontal local. Props: `label` e `mobile_variant`
+(`cards` ou `scroll`, padrão `scroll`). Slot: `table`. Stories:
+`data-table.default.story.yml` e `data-table.scroll.story.yml`. Na variante
+`cards`, o consumer fornece `role="table/rowgroup/row/cell"`, `scope` e
+`headers` nos cabeçalhos/células, além de `data-label` em cada célula para os
+rótulos inline. A variante `scroll` segue ADR-040; o JS adiciona role `region`,
+nome e foco ao wrapper apenas quando há overflow, removendo-os e limpando
+observers no detach Drupal. O componente não cria linhas nem altera
+acesso/cache dos render arrays.
+
 ### lms-lesson-page
 
 Contêiner visual para o render array entregue pelo controlador do LMS na rota
@@ -256,7 +269,7 @@ original caso a descoberta Drupal ainda não conheça o SDC.
 
 ## Lacunas do catálogo
 
-Componentes previstos no ADR-046: `avatar`, `tabs`, `dialog`, `form-field` e `progress` têm SDC próprio; a função de `author-box` é coberta pelo slot de autoria de `revista-publication` e pelo SDC compartilhado `author-card`. `data-table`, `empty-state` e `price` ainda precisam de auditoria/implementação. `breadcrumb` e `accordion` já existem. Ordem e uso estão no [roadmap.md](roadmap.md).
+Componentes previstos no ADR-046: `avatar`, `tabs`, `dialog`, `form-field`, `progress` e `data-table` têm SDC próprio; a função de `author-box` é coberta pelo slot de autoria de `revista-publication` e pelo SDC compartilhado `author-card`. `empty-state` e `price` ainda precisam de auditoria/implementação. `breadcrumb` e `accordion` já existem. Ordem e uso estão no [roadmap.md](roadmap.md).
 
 ## Como documentar um componente novo
 
