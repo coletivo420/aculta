@@ -47,6 +47,18 @@
    - Sem rolagem horizontal da página em zoom de 200% e 400%.
 8. **Privacidade das telas de conta.** As telas de Minha conta e Meu Perfil mostram dados privados: `noindex` por rota e sem cache público.
 9. **Rota inicial do Studio.** A tela inicial (dashboard) fica na raiz (`/`) do purpose de conta, ou seja, no subdomínio `conta.aculta.*`. Caminhos `/studio*` continuam não existindo (ADR-038). As suítes mantêm caminho próprio (`/marley`, `/ganjalab`, `/we-sativa`, `/culturas`, `/green-stash`) no mesmo purpose. Os nomes reais de host ficam em `docs/architecture/multidomain.md`, não neste ADR.
+10. **Modal de foto de perfil mantido.** O fluxo de foto do `aculta_user` não muda: o avatar é o gatilho, o modal "Alterar foto do perfil" tem os mesmos campos, botões e regras de estado (acervo sem "Remover" e sem recorte; sorteio só na prévia; recorte "Recortar foto" abre uma vez por arquivo). A V2 muda só a aparência, com regras equivalentes às da V1 para `photo-dialog` e `avatar-crop-dialog`.
+    - **Mecanismo:** o modal usa `core/drupal.dialog.ajax`, que depende do jQuery UI do Core. O tema não escreve jQuery; a dependência vem do Core e fica restrita a essa tela.
+    - **Alternativa não adotada agora:** `dialog_native` (módulo contrib em alpha, sem release estável, pensado para Drupal ^10) e a issue de Core #2158943, ainda em revisão. Não há base verificada para trocar agora.
+    - **Decisão pendente do responsável:** aceitar a dependência do Core nessa tela (recomendado, é o que a pedido "manter o modal") ou reescrever o modal em `<dialog>` no `aculta_user`, o que é PR própria no Portal com risco nos estados de acervo e recorte.
+11. **Fórum e Wiki mantêm o visual da V1.** A V1 é a referência visual para o acabamento (decisão do responsável, ver ADR-046). O layout muda a estrutura, não o acabamento. Valores da V1 que a V2 precisa reproduzir e conferir em captura lado a lado:
+    - Wiki: container de até 76rem (`wiki.css`).
+    - Discussão do fórum: largura máxima de 58rem (`discussion.css`).
+    - Cartões do fórum: raio `--bs-border-radius-lg`, fundo de superfície elevada.
+    - Contadores de respostas: pílula com raio de 999px e fundo de superfície secundária.
+    - Ações: botão amarelo de interação, texto verde escuro, altura mínima de 2,75rem, raio `--bs-border-radius`.
+    - A variante `aside` da wiki e do tópico do fórum mantém essa aparência dentro da coluna principal e da barra lateral.
+    - Verificação: capturas V1 × V2 em 320, 390, 960 e 1440 px, claro e escuro, em `$SUITE_OUT`.
 
 ## 3. Consequências
 

@@ -123,6 +123,26 @@ Para cada tela: variante (ADR-048), posição, componentes sugeridos e comportam
     - Botão **"Salvar"** em amarelo (ação primária do formulário, ver seção 6), alinhado à esquerda, abaixo do formulário.
 - **Mobile:** avatar centralizado no topo; botão "Ver perfil público" abaixo do avatar; formulário em coluna única, com rótulo **acima** do campo (proposta: o material não mostra mobile para esta tela).
 
+### 4.2.1 Modal de foto de perfil (sistema atual, mantido)
+
+**Regra:** o gatilho, o modal, os botões e os estados são os do `aculta_user` hoje (`docs/architecture/avatar.md`, `UserPictureForm`, `AvatarCropForm`, `photo-flow.js`). A V2 muda só a aparência. Não criar um fluxo de foto novo.
+
+- **Gatilho:** o próprio avatar da tela, como link com `use-ajax` e `data-dialog-type="modal"`. Rótulo acessível: "Alterar foto de perfil de {nome}". O nome aparece só no rótulo acessível, não na tela.
+- **Modal "Alterar foto do perfil"**, de cima para baixo:
+  1. Prévia da foto atual.
+  2. Texto: "Escolha uma imagem e ajuste o enquadramento antes de salvar."
+  3. Campo **"Foto"** (envio): "Envie uma imagem PNG, JPG, GIF ou WebP de até 10 MB." O campo começa vazio.
+  4. Linha de ações, nesta ordem:
+     - **Sortear novo avatar**: só quando a foto é do acervo. Troca só a prévia, por AJAX, e não grava.
+     - **Remover foto**: só quando a foto é pessoal. Volta a um avatar do acervo.
+     - **Salvar foto do perfil**: ação primária.
+- **Recorte:** ao concluir o envio, abre sozinho o modal "Recortar foto". Abre uma vez por arquivo por sessão do navegador. Botões: **Aplicar recorte** (primário) e **Cancelar** (link). Aplicar já troca a foto e recarrega a tela; não há segunda etapa de salvar.
+- **Regras de estado:** foto do acervo não tem "Remover" nem recorte. Nunca há inicial, letra ou monograma (`docs/architecture/avatar.md`).
+- **Tamanho e rolagem (referência V1, `dialog.css`):** largura de `min(560px, 100vw − 2rem)`; altura máxima de 75vh com rolagem interna. No mobile, ocupa a largura disponível.
+- **Estilo na V2:** os botões usam o componente `button` (seção 6). O tema precisa de regras para `data-portal-ui="photo-dialog"` e `"avatar-crop-dialog"`, iguais às da V1. Hoje a V2 não tem essas regras (verificar antes de construir).
+- **Mecanismo:** o modal usa `core/drupal.dialog.ajax`, o mesmo de hoje. O tema não escreve jQuery. A dependência do Core fica nesta tela; ver ADR-048, item 10.
+- **Pendente:** capturar o modal atual na V1 (claro e escuro, 320 e 1440 px) como referência antes de construir. Confirmar a ordem e o rótulo dos botões nessa captura.
+
 ### 4.3 Minha conta (dados cadastrais)
 
 - **Variante:** `aside` no desktop (a coluna lateral é a sub-navegação da conta, dentro do conteúdo); `stack` no mobile.
