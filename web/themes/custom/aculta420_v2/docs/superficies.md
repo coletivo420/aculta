@@ -170,13 +170,20 @@ Os tokens de faixa ficam por modo, em `src/styles/tokens.css`:
 - `--accent-green-stripe`, `--accent-yellow-stripe`, `--accent-red-stripe`
   (claro: 500, 700 e 500; escuro: 500, 500 e 200).
 
-### 8.3 Mapeamento por domínio (pendente)
+### 8.3 Mapeamento por domínio (decidido em 2026-11-05)
 
-A cor de cada domínio ainda não foi decidida (pergunta ao responsável). Enquanto
-isso, nenhum cartão recebe faixa.
-
-Domínios e purposes a mapear: `main`, `account`, `support`, `magazine`, `wiki`,
-`shop`, `courses`, `events`, `links`, `forum`.
+| Purpose | Faixa | Token (claro / escuro) |
+| --- | --- | --- |
+| `forum` (Fórum) | verde | `--accent-green-stripe` |
+| `wiki` (Wiki) | verde | `--accent-green-stripe` |
+| `shop` (Loja) | verde | `--accent-green-stripe` |
+| `courses` (Cursos) | amarelo | `--accent-yellow-stripe` |
+| `account` (Conta) | amarelo | `--accent-yellow-stripe` |
+| `magazine` (Revista) | vermelho | `--accent-red-stripe` |
+| `events` (Eventos) | vermelho | `--accent-red-stripe` |
+| `main` (principal) | sem faixa | — |
+| `support` (Apoio) | sem faixa | — (padrão, a confirmar) |
+| `links` (Links) | sem faixa | — (padrão, a confirmar) |
 
 ### 8.4 Onde a faixa aparece
 
