@@ -39,6 +39,7 @@ Regra: rode **somente** os gates do escopo do diff e dos módulos que dependem d
 | Tema ACULTA420 V1 (somente referência) | `validate-aculta420-sdc-schemas.php`, `validate-aculta420-design-foundations.php`, `validate-browser-validators.php`; foundation e shell via `php:script` | Só se a tarefa tocar o tema V1, que é somente leitura |
 | Qualquer arquivo PHP alterado | `php -l` nos arquivos alterados | Projeto inteiro: via `agent-output.py` |
 | Documentos de leitura de partida (`AGENTS.md`, `CLAUDE.md`, `TODO.md`, TODO de componente, handoff) | `php scripts/validate-agent-token-budget.php` | Limites de bytes, versão do TODO igual ao `info.yml`, roadmap citado existe, handoff com até 3 entradas, trechos exigidos por gates no AGENTS |
+| Tabela "Não ler por padrão" (`AGENT-TOKEN-ECONOMY.md`) | `php scripts/validate-agent-economy-paths.php` | Caminhos existem e tamanhos declarados batem com o real (±2x); `vendor/` ausente é aceito |
 
 ## Manutenção
 
