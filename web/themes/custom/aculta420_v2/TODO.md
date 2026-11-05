@@ -8,7 +8,7 @@ Sem status YAML. Próximo passo: na seção da fase atual do roadmap citado em L
 
 ## Dívidas
 
-- Classes mapeadas em `PortalUiHooks::TOKENS` sem CSS em nenhum tema: 192. Grupos e decisão pendente em `docs/roadmap.md`, seção "Dívida de estilo".
+- Classes mapeadas em `PortalUiHooks::TOKENS` sem CSS em nenhum tema: 192. Grupos e decisão pendente em `web/themes/custom/aculta420_v2/docs/roadmap.md`, seção "Dívida de estilo".
 - Nomes Bootstrap no mapa (`bi`, `breadcrumb`, `breadcrumb-item`, `btn-primary`, `btn-outline-*`): decidir remoção.
 
 ## Leitura

@@ -53,70 +53,21 @@ A documentação deve registrar o motivo arquitetural das regras, não apenas su
 - O Portal prepara dados, URLs, acesso e cache; ACULTA420 seleciona e renderiza a apresentação. O Portal não referencia componentes SDC do tema.
 - Gates de tema e da fronteira Portal–tema permanecem obrigatórios conforme os documentos e scripts de validação correspondentes.
 
-### Integração total orientada por contexto
-
-- Antes de criar uma capacidade, faça inventário de integração no Core/contrib,
-  `aculta_portal`, todos os seus submódulos (inclusive aninhados) e `aculta420`.
-  Identifique dono dos dados e da política, APIs/serviços existentes, campos e
-  entidades, eventos, Views, formatters, cartões, componentes UI, cache, acesso,
-  Domain purpose e consumidores atuais. Consulte código instalado, contratos,
-  roadmaps, CHANGELOGs e frentes/PRs abertas antes de propor código.
-- Reutilize funções existentes quando seus contratos forem compatíveis. Não
-  duplique entidades, storage, processamento, política de upload, renderers,
-  notificações, cartões ou componentes visuais. Quando uma lacuna justificar
-  capacidade nova, construa-a sobre os contratos existentes e declare o dono,
-  consumidores e fronteira. Reuso não pode contornar access/cache, moderação,
-  privacidade, domínio ou política do módulo responsável.
-- Integre por contexto: conecte conteúdo ao purpose/Domain, entidade hospedeira
-  e estado de publicação/moderação corretos. Mantenha isolados dados e ações de
-  outros purposes, grupos/turmas, Wiki, Revista, LMS, Fórum e Loja quando os
-  contratos exigirem essa separação. Dependências opcionais permanecem
-  unidirecionais, não quebram o consumidor quando desabilitadas e não criam
-  ciclos entre módulos.
-- Para apresentação, procure primeiro cartões SDC, slots, UI Patterns/UI Styles,
-  Bootstrap, tokens, diálogos Core, componentes e padrões do tema existentes.
-  Use VVJ somente em Views e finalidades compatíveis com o engine (por exemplo,
-  VVJB para carrossel editorial e VVJS para sequência fotográfica); não o trate
-  como substituto geral de SDC, formulário, view mode ou navegação. Componentes
-  próprios devem ser neutros e reutilizáveis por sessão/contexto quando houver
-  contrato real, preservar render arrays e metadados de access/cache e deixar a
-  escolha visual ao ACULTA420.
-- Ao concluir uma fase, audite a matriz de integrações afetadas e o histórico de
-  trabalho para localizar capacidades anteriores ainda sem consumidor, contrato
-  quebrado ou dívida explicitamente pendente. Integre apenas o que cabe na fase;
-  registre dependências, lacunas e sequência restante no roadmap/CHANGELOG dono.
-  Não misture alterações de outras frentes nem marque como integrada uma
-  capacidade apenas por haver código instalado.
-
 ## Política de domínio administrativo
 
 - Regras e exceções: `docs/portal/ADMIN-DOMAIN-POLICY.md`, `CROSS-DOMAIN-REQUEST-POLICY.md` e `PAYMENT-DOMAIN-POLICY.md`.
 - Escrita mutável no purpose errado falha fechada; não redirecionar escrita entre hosts. Redirect entre hosts usa `DomainPurposeManager` e `TrustedRedirectResponse`, nunca `RedirectResponse` cru.
 - ACULTA420 não participa da política de domínio; consome a apresentação preparada pelo Portal.
 
-## Integração transversal dos módulos ACULTA (regra permanente)
+## Integração entre módulos e capacidades (regra permanente)
 
-- Antes de implementar uma capacidade, inventariar os módulos ACULTA, submódulos,
-  configuração e tema que já atendem ao mesmo domínio. Consultar seus contratos,
-  APIs, componentes SDC, cartões, view-models, catálogos e políticas antes de
-  criar uma solução local.
-- Reutilizar o dono já estabelecido: `aculta_image` para ingestão e política de
-  imagens; `aculta_gallery` para `media_gallery`, galerias e PhotoSwipe;
-  `aculta_pdf_viewer` para leitura de PDF; `aculta_user` para identidade e
-  autoria; `aculta_messenger` para avisos; ACULTA420 para apresentação. Cada
-  consumidor integra os contratos existentes e preserva acesso, cache, domínio,
-  publicação e retenção do seu próprio contexto.
-- Não duplicar storage, upload, processamento, cartões, identidade visual ou
-  permissões quando já houver componente dono. Capacidades novas devem ter
-  contrato neutro e reutilizável no módulo apropriado; comportamento específico
-  fica no submódulo consumidor.
-- Toda mudança de integração registra a relação entre produtor e consumidor,
-  a política de acesso/publicação e os testes de cada fronteira. Ao concluir uma
-  frente, pesquisar integrações anteriores pendentes e atualizar seus roadmaps.
-- No ACULTA Forum, fechar primeiro upload contextual de imagens, integração
-  Gallery e Office (DOCX e planilhas, conforme extensões habilitadas). A
-  visualização de PDF pelo ACULTA Document Viewer é a última etapa dessa frente;
-  não duplicar leitor ou conversão de PDF no Fórum.
+- Antes de criar uma capacidade, inventariar Core/contrib, `aculta_portal` (incluindo submódulos aninhados), `aculta420` e a documentação de integração: dono de dados e política, APIs e serviços, entidades e campos, eventos, Views, formatters, cartões, componentes, cache, acesso, purpose do Domain e consumidores atuais. Consultar contratos, roadmaps, CHANGELOGs e frentes abertas antes de propor código.
+- Reutilizar o que tem contrato compatível; não duplicar entidades, storage, processamento, política de upload, renderers, notificações, cartões ou componentes visuais. Lacuna justifica capacidade nova, construída sobre os contratos existentes, com dono, consumidores e fronteira declarados. Reuso não contorna acesso, cache, moderação, privacidade, domínio ou política do módulo responsável.
+- Donos já estabelecidos: `aculta_image` (ingestão e política de imagens); `aculta_gallery` (`media_gallery`, galerias e PhotoSwipe); `aculta_pdf_viewer` (leitura de PDF); `aculta_user` (identidade e autoria); `aculta_messenger` (avisos); ACULTA420 (apresentação). Cada consumidor preserva acesso, cache, domínio, publicação e retenção do próprio contexto.
+- Integrar por contexto: purpose/Domain, entidade hospedeira e estado de publicação ou moderação. Isolar dados e ações de outros purposes, grupos/turmas, Wiki, Revista, LMS, Fórum e Loja quando os contratos exigirem. Dependências opcionais são unidirecionais, não quebram quando desabilitadas e não criam ciclos.
+- Apresentação: procurar primeiro cartões SDC, slots, UI Patterns/UI Styles, Bootstrap, tokens, diálogos Core e componentes do tema. Usar VVJ só em Views e finalidades compatíveis (VVJB para carrossel editorial, VVJS para sequência fotográfica), nunca como substituto de SDC, formulário, view mode ou navegação. Componentes próprios são neutros e reutilizáveis quando há contrato real, preservam render arrays e metadados de access/cache, e deixam a escolha visual ao ACULTA420.
+- Toda mudança de integração registra produtor, consumidor, política de acesso/publicação e testes de cada fronteira. Ao concluir uma fase, auditar integrações anteriores pendentes (sem consumidor, contrato quebrado, dívida) e atualizar os roadmaps. Integrar só o que cabe na fase; não marcar capacidade como integrada só por haver código instalado.
+- Fórum: fechar primeiro upload contextual de imagens, integração Gallery e Office (DOCX e planilhas, conforme extensões habilitadas). A visualização de PDF pelo Document Viewer é a última etapa; não duplicar leitor ou conversão de PDF no Fórum.
 
 ## Código no Aculta Portal, Design no ACULTA420 (regra permanente)
 
