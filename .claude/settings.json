@@ -1,3 +1,17 @@
 {
-  "includeCoAuthoredBy": false
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(./web/sites/*/settings.local.php)",
+      "Read(./web/sites/*/settings.secrets.php)",
+      "Read(./web/sites/*/settings.hostinger.php)",
+      "Read(./web/sites/*/settings.homelab.php)",
+      "Read(./web/sites/*/aculta.secrets.php)",
+      "Read(./web/libraries/pdf.js/**)",
+      "Read(./web/modules/custom/aculta_portal/modules/aculta_user/assets/avatars/**)"
+    ]
+  }
 }
