@@ -22,6 +22,20 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
   block-size: calc(100dvh - var(--aculta-institution-bar-height, 2.25rem) - var(--aculta-admin-toolbar-bar-height, 2.4375rem));
 }
 
+/* Gin switches to a full-width mobile rail: reserve the top row for the
+   Institution Bar, then start the administrative rail beneath it. */
+@media (max-width: 39.999rem) {
+  .aculta-institution-bar {
+    inset-inline: 0;
+  }
+
+  html body:has(.aculta-institution-bar) #admin-toolbar.admin-toolbar {
+    inset-block-start: calc(var(--aculta-institution-bar-offset, 0px) + var(--aculta-institution-bar-height, 2.25rem));
+    block-size: calc(100vh - var(--aculta-institution-bar-offset, 0px) - var(--aculta-institution-bar-height, 2.25rem));
+    block-size: calc(100dvh - var(--aculta-institution-bar-offset, 0px) - var(--aculta-institution-bar-height, 2.25rem));
+  }
+}
+
 .aculta-institution-bar__inner {
   align-items: center;
   container-name: aculta-institution-bar;

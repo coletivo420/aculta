@@ -1,5 +1,14 @@
 # Changelog — ACULTA420 V2
 
+## 1.2.0-dev.21 — corrige a Institution Bar em viewports estreitos (2026-11-05)
+
+- Em telas abaixo de 40rem, a barra ocupa a faixa superior inteira e o menu
+  administrativo Gin começa abaixo dela. Logo de 100 px, ícones de 30 px e
+  alvos de toque de 35 × 35 px permanecem contidos, sem sobreposição.
+- Firefox ESR visível no Runtime autenticado: 44/44 checks em 11 larguras,
+  claro/escuro e sidebar Gin aberta/recolhida. Capturas e métricas em
+  `$SUITE_OUT/aculta420-v2-admin-sidebar-final-20261105/`.
+
 ## 1.2.0-dev.20 — ajusta a logo da Institution Bar para 100 px (2026-11-05)
 
 - Logo com largura de 100 px, igual em mobile e desktop, sem quebrar a linha da barra. Ícones e avatar mantidos em 30 px; somente os alvos de toque da Institution Bar passaram para 35 × 35 px. Recuo fluido e gap zero mantidos.

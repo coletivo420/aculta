@@ -24,6 +24,14 @@
   e `config:status` limpo. Em sidebar recolhida, o Top Bar administrativo ainda
   amplia o scrollWidth em 320/390 CSS px; isso ficou DEFERRED para revisão própria
   do toolbar. Zoom e teclado não foram executados nesta fatia.
+- **Correção mobile (`1.2.0-dev.21`):** em viewports abaixo de 40rem, a barra
+  ocupa a faixa superior inteira e o menu Gin inicia logo abaixo. Isso remove o
+  espaço de 63 px que a sidebar aberta deixava disponível em 320 px. Firefox
+  ESR visível, conta administrativa de teste, Gin aberto/recolhido, claro/escuro
+  e 11 larguras (320–1440 px): 44/44 checks PASS; logo 100 px, ícones 30 px,
+  alvos 35 × 35 px, conteúdo contido e barra sem sobreposição. Evidência em
+  `$SUITE_OUT/aculta420-v2-admin-sidebar-final-20261105/`. Zoom e teclado
+  permanecem DEFERRED.
 
 ## Em andamento — migração visual da V1 para a V2
 

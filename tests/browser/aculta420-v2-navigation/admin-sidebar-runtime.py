@@ -100,6 +100,8 @@ def record(width, color_mode, state, metrics):
         and metrics["adminSidebarPresent"]
         and metrics["noHorizontalOverlap"]
         and metrics["barContentFits"]
+        and metrics["iconsMeasure30"]
+        and metrics["touchTargetsMeasure35"]
         and metrics["accountPanelNoGinOverlap"]
         and not metrics["brokenBlockMessageVisible"]
     )
@@ -175,9 +177,13 @@ try:
                   const br=bar?.getBoundingClientRect(),sr=sidebar?.getBoundingClientRect();
                   const direction=getComputedStyle(document.documentElement).direction;
                   const visibleSidebar=sidebar&&getComputedStyle(sidebar).display!=='none'&&sr.width>0;
-                  const overlaps=visibleSidebar&&br.left<sr.right-1&&br.right>sr.left+1;
+                  const overlaps=visibleSidebar&&br.left<sr.right-1&&br.right>sr.left+1&&br.top<sr.bottom-1&&br.bottom>sr.top+1;
                   const targets=[bar?.querySelector('.aculta-institution-bar__brand'),
                     ...bar?.querySelectorAll('.aculta-utility-trigger, .aculta-account-menu__summary')??[]].filter(Boolean);
+                  const iconRects=[...bar?.querySelectorAll('.aculta-utility-trigger__icon .aculta-icon, .aculta-account-menu__avatar')??[]]
+                    .map(el=>{const r=el.getBoundingClientRect();return {width:r.width,height:r.height};});
+                  const targetRects=[...bar?.querySelectorAll('.aculta-utility-trigger, .aculta-account-menu__summary')??[]]
+                    .map(el=>{const r=el.getBoundingClientRect();return {width:r.width,height:r.height};});
                   const overflowing=targets.filter(el=>{
                     const rect=el.getBoundingClientRect();
                     return rect.width>0&&(rect.left<br.left-1||rect.right>br.right+1);
@@ -196,6 +202,8 @@ try:
                     sidebarLeft:Math.round(sr?.left??-1),sidebarRight:Math.round(sr?.right??-1),
                     sidebarVisible:!!visibleSidebar,noHorizontalOverlap:!overlaps,
                     barContentFits:overflowing.length===0,overflowing,logoLoaded:!!logo&&logo.complete&&logo.naturalWidth>0,
+                    iconRects,iconsMeasure30:iconRects.length>0&&iconRects.every(r=>Math.abs(r.width-30)<1&&Math.abs(r.height-30)<1),
+                    targetRects,touchTargetsMeasure35:targetRects.length>0&&targetRects.every(r=>Math.abs(r.width-35)<1&&Math.abs(r.height-35)<1),
                     accountPanelNoGinOverlap:!panelOverlapsGin&&panelInViewport,
                     brokenBlockMessageVisible:document.querySelector('#admin-toolbar')?.textContent
                       .replace(/\\s+/g,' ').includes('Este bloco está quebrado ou ausente')??false,
