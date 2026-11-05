@@ -29,6 +29,7 @@ final class AccountMenuPresentationHooks {
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
     $variables['aculta_account_avatar'] = NULL;
+    $variables['aculta_account_name'] = NULL;
     if (!$this->currentUser->isAuthenticated()) {
       return;
     }
@@ -39,6 +40,7 @@ final class AccountMenuPresentationHooks {
     }
     $presentation = $this->builder->build($account);
     $variables['aculta_account_avatar'] = $presentation['avatar'];
+    $variables['aculta_account_name'] = $presentation['account_name'];
     if (isset($variables['page']) && is_array($variables['page'])) {
       $presentation['cacheability']->applyTo($variables['page']);
     }

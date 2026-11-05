@@ -23,10 +23,10 @@ final class AccountMenuPresentationBuilder {
   ) {}
 
   /**
-   * Builds a policy-approved avatar for a signed-in user.
+   * Builds the signed-in user's display name and policy-approved avatar.
    *
-   * @return array{avatar: ?array, cacheability: \Drupal\Core\Cache\CacheableMetadata}
-   *   Cacheable image render array and page metadata.
+   * @return array{account_name: ?string, avatar: ?array, cacheability: \Drupal\Core\Cache\CacheableMetadata}
+   *   Portal-owned display name, avatar, and cache metadata.
    */
   public function build(UserInterface $account): array {
     $cacheability = (new CacheableMetadata())
@@ -64,7 +64,11 @@ final class AccountMenuPresentationBuilder {
       $cacheability->applyTo($avatar);
     }
 
-    return ['avatar' => $avatar, 'cacheability' => $cacheability];
+    return [
+      'account_name' => $nickname !== '' ? $nickname : NULL,
+      'avatar' => $avatar,
+      'cacheability' => $cacheability,
+    ];
   }
 
 }

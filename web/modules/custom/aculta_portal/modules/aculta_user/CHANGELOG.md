@@ -1,3 +1,13 @@
+## Não versionado — nome de exibição do menu de conta
+
+- `AccountMenuPresentationBuilder` inclui o apelido aparado em
+  `account_name`; quando ausente, retorna `NULL` sem fallback ao username.
+  `AccountMenuPresentationHooks` expõe `aculta_account_name` apenas para sessão
+  autenticada e compartilha a invalidação de cache de conta/Profile.
+- Unit `AccountMenuPresentationBuilderTest`: 2 testes/12 assertions PASS para
+  apelido presente/aparado e apelido vazio; PHP lint e PHPCS focais PASS.
+  Render autenticado no Runtime permanece DEFERRED.
+
 ## 0.4.0-dev.93 — foto do perfil pela política do aculta_file_uploader
 
 ## 0.4.0-dev.94 — publicRouteSlug normaliza com PublicRouteSlug

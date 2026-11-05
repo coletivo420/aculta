@@ -4,6 +4,15 @@ Em dev.80, os cartões de autoria histórica exibidos no Fórum acrescentam `-gr
 
 # ACULTA User (`aculta_user`)
 
+## Contrato de identidade do menu de conta
+
+`AccountMenuPresentationBuilder` fornece `aculta_account_name` somente para
+usuário autenticado. O valor é o `field_nickname` do Profile principal, aparado;
+sem apelido, retorna `NULL` e não usa username nem inicial como fallback.
+`AccountMenuPresentationHooks` expõe o nome junto ao avatar, com os mesmos
+metadados de cache por usuário, Profile e arquivo. A camada de tema apenas
+apresenta o valor, sem ler User/Profile.
+
 Em dev.86, a projeção SQL derivada mantém `slug → UID` com índice único; Profile continua como fonte de verdade. No rebuild 10013, o Profile não vazio mais recentemente alterado decide o apelido de cada UID e o valor é sincronizado nos demais Profiles de papel; timestamp empatado usa o maior ID como desempate estável. Colisões entre UIDs e valores inválidos bloqueiam o rebuild antes de substituir claims. O Kernel `NicknameRegistryKernelTest` passou 10/88 em MariaDB dedicado, incluindo disputa de claims, rollback, criação/reconciliação pelo update hook e preservação de claims em conflito entre UIDs. Instalação efêmera completa ainda pendente; nenhum update foi aplicado ao Runtime. Em dev.82, a colisão automática de apelidos pode exibir `nome#2`, com slug canônico `/u/nome-2`. O formato terminal `#N` também pode ser informado manualmente; o formulário só valida disponibilidade e não escolhe sufixo pelo usuário. `nome-2` e `nome#2` compartilham o mesmo slug. Em dev.81, `-gr` foi reservado à autoria Growroom no Fórum; autores legados continuam sem User/Profile ou rota individual, e referências internas seguem por UID.
 
 Em dev.78, os forms Profile legados gravam o apelido aparado que foi validado, mantendo-o coerente com a rota pública. User Unit 134/518 e Kernel 25/361 PASS; PHPCS/lint dos arquivos alterados PASS. A concorrência entre cadastros continua pendente.
