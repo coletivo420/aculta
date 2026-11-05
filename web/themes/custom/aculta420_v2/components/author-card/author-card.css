@@ -13,9 +13,9 @@
   border-radius: var(--radius-full);
   color: var(--color-text-primary);
   display: flex;
-  flex: 0 0 4.5rem;
-  inline-size: 4.5rem;
-  block-size: 4.5rem;
+  flex: 0 0 5.5rem;
+  inline-size: 5.5rem;
+  block-size: 5.5rem;
   justify-content: center;
   overflow: hidden;
 }
@@ -47,7 +47,7 @@
 @media (min-width: 36rem) {
   .author-card:not(.author-card--stacked) { gap: var(--spacing-md); }
   .author-card:not(.author-card--stacked):not(.author-card--author_editorial) { align-items: center; }
-  .author-card:not(.author-card--stacked) .author-card__avatar { flex-basis: 5.5rem; inline-size: 5.5rem; block-size: 5.5rem; }
+  .author-card:not(.author-card--stacked) .author-card__avatar { flex-basis: 6.5rem; inline-size: 6.5rem; block-size: 6.5rem; }
 }
 
 .author-card--sm { gap: var(--spacing-sm); }
