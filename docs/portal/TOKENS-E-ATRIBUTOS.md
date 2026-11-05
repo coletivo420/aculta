@@ -847,3 +847,449 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`, incluindo a migração de `acult
 
 | `studio-section-header` | (V1) | mapeado só no V1 (referência); sem classe equivalente no V2 |
 | `map-popup` | (nenhuma) | sem classe no V2; marcação do popup de mapa (`aculta_maps`) |
+
+## Tokens copiados do V1 para o V2 em 2026-11-05
+
+Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (referência). Estado: mapeado; a aparência depende de as classes terem CSS no V2, o que ainda não foi verificado por captura (DEFERRED).
+
+| Token | Classes no V2 | Estado |
+|---|---|---|
+| `account-avatar` | `portal-account__avatar` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-bio-actions` | `portal-account-bio__actions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-bio-card` | `aculta-panel`, `aculta-panel--default`, `aculta-panel__body`, `portal-account-bio` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-bio-edit` | `btn`, `btn-link`, `portal-account-bio__edit`, `bi`, `bi-pencil` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-bio-text` | `portal-account-bio__text` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-commerce-orders` | `portal-account__commerce`, `portal-account__commerce--orders` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-course` | `portal-account-course` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-course-meta` | `portal-account-course__meta` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-courses` | `portal-account-courses` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-data-content` | `portal-account-data__content` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-data-link` | `portal-account-data__link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-data-nav` | `portal-account-data__nav` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-document-input` | `portal-account-document-input` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-entry` | `studio`, `aculta-account-entry` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-entry-links` | `studio__actions`, `list-unstyled`, `aculta-u-grid`, `aculta-u-gap-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-experiences` | `studio__actions`, `list-unstyled`, `aculta-u-grid`, `aculta-u-gap-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-home` | `aculta-account-home` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-identity` | `portal-account__identity` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-overview-actions` | `portal-account-overview__actions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-photo-actions` | `portal-account-photo__actions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-photo-preview` | `portal-account-photo__preview` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-photo-trigger` | `portal-account-photo__trigger` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-social-card` | `portal-account-social` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-social-edit` | `btn`, `btn-link`, `btn-sm`, `portal-account-social__edit`, `bi`, `bi-pencil` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-social-item` | `portal-account-social__item` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-social-list` | `portal-account-social__list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-social-name` | `portal-account-social__name` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-social-text` | `portal-account-social__text` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-terms` | `aculta-account-terms` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-view-profile` | `btn`, `btn-outline-secondary`, `portal-account-overview__profile` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `aculta-button-outline` | `aculta-button`, `aculta-button--outline` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `aculta-button-primary` | `aculta-button`, `aculta-button--primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `aculta-button-secondary` | `aculta-button`, `aculta-button--secondary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `aculta-image-audit` | `aculta-image-audit` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `admin-org-filters` | `form--inline`, `clearfix` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `alerts-filters` | `aculta-alerts-filters` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `alerts-filters-group` | `aculta-alerts-filters__group` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `article-author` | `portal-article-author` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `article-authors` | `portal-article-authors` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `article-authors-list` | `portal-article-authors__list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `article-authors-title` | `portal-article-authors__title` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `auth-google` | `aculta-auth-google` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `auth-google-status` | `aculta-auth-google-status` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `auth-provider` | `aculta-auth-provider` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `avatar-crop-dialog` | `aculta-avatar-crop-dialog` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `breadcrumb-item` | `breadcrumb-item` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `breadcrumb-item-active` | `breadcrumb-item`, `active` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `breadcrumb-list` | `breadcrumb` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `button` | `button` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `button-ghost` | `button`, `button--ghost` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `button-primary` | `btn`, `btn-primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `button-secondary` | `button`, `button--secondary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `calendar-embed-hosts` | `aculta-calendar-embed-hosts` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `calendar-interactive` | `aculta-calendar-interactive` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `calendar-interactive-agenda` | `aculta-calendar-interactive__agenda` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `calendar-interactive-alternative` | `aculta-calendar-interactive__alternativa` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `calendar-interactive-controls` | `aculta-calendar-interactive__controle` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `calendar-interactive-notice` | `aculta-calendar-interactive__aviso` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `cep-sources` | `aculta-cep-sources` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `checkout-google` | `aculta-u-flex`, `aculta-u-justify-center`, `aculta-u-mb-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `checkout-guest-registration` | `aculta-panel`, `aculta-panel--default`, `aculta-panel__body`, `aculta-u-mb-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `checkout-help` | `checkout-help` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `consent-banner` | `aculta-consent` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `conversation-action` | `aculta-messenger-options__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `coorganizer-badge` | `badge`, `coorganizer-item__badge` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `coorganizer-card` | `coorganizer-item`, `clearfix` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `coorganizer-title` | `coorganizer-item__title` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `coorganizers-list` | `coorganizers-list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `courses-home` | `courses-home` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `courses-home-collaboration` | `courses-home__collaboration` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `courses-home-intro` | `courses-home__intro` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `document-download-format` | `download-badge-format` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `document-download-item` | `aculta-download-meta-item` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `document-download-link` | `download-link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `document-download-size` | `download-badge-size` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `domain-brand-image` | `aculta-domain-brand-image` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-account-invite` | `alert`, `alert-info`, `aculta-u-mt-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-account-invite-link` | `btn`, `btn-outline-primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-amount` | `aculta-u-display-6`, `aculta-u-bold` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-amount-block` | `aculta-u-my-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-clause` | `text-muted` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-document-link` | `link-primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-donor-name` | `aculta-u-semibold` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-in-honor` | `aculta-u-italic` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-monthly` | `badge`, `label-default` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-summaries` | `aculta-u-grid`, `aculta-u-gap-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-summary` | `aculta-panel`, `aculta-panel--default`, `aculta-panel__body` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-summary-edit` | `btn`, `btn-sm`, `btn-outline-primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-thanks` | `aculta-panel`, `aculta-panel--default`, `aculta-panel__body`, `text-center` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-card-cancel-status` | `event-card__aviso` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-card-meta` | `event-card__meta` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-card-subtitle` | `event-card__subtitulo` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-card-title` | `event-card__titulo` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-card-type` | `event-card__tipo` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-catalogue-actions-bar` | `actions-bar`, `aculta-u-my-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-coorg-button-add` | `button`, `button--primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-date-actions` | `aculta-event-date-actions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-date-cancel` | `button` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-date-delete` | `button`, `button--danger` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-date-order` | `aculta-event-date-order` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-date-row` | `aculta-event-date-row` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-actions` | `location-actions`, `aculta-u-mt-2`, `aculta-u-mb-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-actions-bar` | `actions-bar`, `aculta-u-mb-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-address` | `aculta-location-address`, `text-muted`, `aculta-u-mb-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-admin-actions` | `location-admin-actions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-agenda` | `location-agenda` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-badge` | `aculta-location-badge`, `badge` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-button-action` | `button`, `button--action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-button-danger` | `button`, `button--danger` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-button-primary` | `button`, `button--primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-button-primary-action` | `button`, `button--primary`, `button--action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-button-primary-small` | `button`, `button--small`, `button--primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-button-secondary` | `button`, `button--secondary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-button-secondary-small` | `button`, `button--secondary`, `button--small` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-empty` | `aculta-location-empty`, `aculta-u-my-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-fallback` | `description`, `aculta-u-mt-1` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-header` | `aculta-location-header` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-page` | `aculta-location-page` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-search-bar` | `container-inline`, `aculta-u-mb-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-summary-card` | `aculta-location-summary-card`, `aculta-panel`, `aculta-panel--default`, `aculta-u-p-3`, `aculta-u-my-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-target-id` | `aculta-location-target-id` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-title` | `aculta-location-title`, `h5`, `aculta-u-mb-1` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-type-badge` | `badge`, `badge-location-type` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-widget` | `aculta-event-location-widget` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-locations-list-page` | `aculta-locations-list-page` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-org-badge` | `badge`, `event-org-card__badge` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-org-button-danger` | `button`, `button--danger` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-org-button-primary` | `button`, `button--primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-org-button-secondary` | `button`, `button--secondary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-org-empty` | `event-org-empty` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-org-locality` | `event-org-card__locality` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-org-summary-card` | `event-org-card` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-org-title` | `event-org-card__title` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-actions` | `organization-footer-actions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-add-action` | `button`, `button--primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-admin-action` | `button`, `button--secondary`, `button--small` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-admin-filter-fields` | `aculta-event-organization-admin-filter-fields` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-admin-link` | `organization-admin-link`, `text-muted`, `small` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-back-action` | `button` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-body` | `organization-body` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-description` | `organization-description` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-event-link` | `organization-event-item` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-events` | `organization-events` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-fallback` | `text-muted`, `small` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-header` | `organization-header` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-intro` | `lead` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-links` | `organization-links` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-location` | `organization-location` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-location-fields` | `aculta-event-organization-location-fields` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-profile` | `aculta-organization-profile` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-results-table` | `org-modal-results-table` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-search` | `search-box` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-search-action` | `button`, `button--secondary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-small-button` | `button`, `button--small` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-status-danger` | `badge`, `badge--danger` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-status-info` | `badge`, `badge--info` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-status-success` | `badge`, `badge--success` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-status-warning` | `badge`, `badge--warning` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-target-id` | `aculta-event-organization-target-id` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-title` | `organization-title` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-unclaimed` | `organization-badge`, `organization-badge--unclaimed` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-widget` | `aculta-event-org-widget` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organizer-dashboard` | `aculta-events-organizer-dashboard` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organizer-filter-form` | `form--inline`, `clearfix` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organizer-filters` | `organizer-dashboard-filters` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organizer-guide` | `culturas-guide` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-press-quote` | `press-quote` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-press-quotes` | `event-press-quotes`, `media-mentions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-press-quotes-list` | `press-quotes-list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-section-title` | `section-title` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-supporter-item` | `sponsor-item` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-supporter-link` | `sponsor-link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-supporter-name` | `sponsor-name` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-supporter-tier` | `sponsor-cota` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-supporters` | `event-supporters`, `sponsor-logos` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-supporters-list` | `sponsor-logos-list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `events-admin-overview` | `aculta-events-admin-overview` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `events-organization-admin-overview` | `aculta-events-organization-admin-overview` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `events-upcoming-block` | `aculta-events-upcoming` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `events-upcoming-link` | `aculta-events-upcoming__link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `fiscal-identity-other-data` | `aculta-fiscal-identity-other-data` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `forum-category-count` | `aculta-forum-category__count` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `forum-report-pager` | `aculta-pager` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `forum-report-queue` | `aculta-forum-report-queue` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `friendship-action-button` | `btn`, `btn-outline-secondary`, `portal-account-overview__profile` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `friendship-action-form` | `portal-profile__friendship-form` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `gallery-dialog` | `aculta-gallery-dialog` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `google-account` | `aculta-google-account` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `green-stash-entry` | `studio`, `aculta-green-stash` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `green-stash-navigation` | `nav`, `aculta-green-stash__navigation` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `green-stash-navigation-link` | `nav-link`, `aculta-green-stash__navigation-link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `green-stash-product-create` | `aculta-green-stash__product-create` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `green-stash-product-detail` | `aculta-green-stash__product-detail` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `green-stash-products` | `aculta-green-stash__products` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `green-stash-shipments` | `aculta-green-stash__shipments` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `h5p-admin-header` | `h5p-admin-header` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `h5p-content-unavailable` | `h5p-content-unavailable` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `h5p-dashboard-course` | `aculta-lms-h5p-course` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `hint` | `small`, `aculta-u-text-secondary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `hint-muted` | `aculta-u-text-secondary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `links-page-link` | `aculta-links-page__link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `lms-activity-discussions` | `aculta-panel`, `aculta-panel--default`, `aculta-panel__body`, `aculta-u-mt-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `lms-class-roster` | `aculta-lms-class-roster`, `aculta-u-grid`, `aculta-u-gap-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `lms-forum-moderation-overview` | `aculta-lms-forum-moderation__overview` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `lms-forum-moderation-queue` | `aculta-lms-forum-moderation__queue` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `lms-h5p-activity` | `aculta-u-grid`, `aculta-u-gap-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `lms-h5p-course-documents` | `aculta-u-mt-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `lms-h5p-discussions` | `aculta-panel`, `aculta-panel--default`, `aculta-panel__body`, `aculta-u-mt-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `login-divider` | `aculta-login__divider` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `login-popup` | `aculta-login-popup` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `login-popup-divider` | `aculta-login-popup__divider` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `login-popup-links` | `aculta-login-popup__links` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `login-registration` | `aculta-login__registration` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `login-reset-link` | `aculta-login__reset-link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `map-geocoding-attribution` | `aculta-map__geocoding-attribution` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `map-location-route` | `aculta-map__location-route` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `map-privacy-notice` | `aculta-map__aviso` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `map-widget` | `aculta-map` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `map-wrapper` | `aculta-map-wrapper` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-back-link` | `aculta-messenger-back-link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-conversation-actions` | `aculta-messenger-conversation__actions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-conversation-toolbar` | `aculta-messenger-conversation-toolbar` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-drawer-conversation` | `aculta-messenger-drawer-conversation` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-notice` | `aculta-messenger-notice` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-options` | `aculta-messenger-options` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-options-icon` | `bi`, `bi-list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-options-item` | `aculta-messenger-options__item` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-options-label` | `aculta-messenger-options__label` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-options-panel` | `aculta-messenger-options__panel` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-options-status` | `aculta-messenger-options__status` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-options-summary` | `aculta-messenger-options__summary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-preview` | `aculta-messenger-preview` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-sender` | `aculta-messenger-sender`, `aculta-messenger-conversation` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-sender-avatar` | `aculta-messenger-sender__avatar` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-sender-avatar-image` | `aculta-messenger-sender__avatar-image` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-sender-date` | `aculta-messenger-sender__date` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-sender-link` | `aculta-messenger-sender__link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-sender-name` | `aculta-messenger-sender__name` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `new-conversation-add` | `aculta-new-conversation-add` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `new-conversation-back` | `btn`, `aculta-new-conversation-back` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `new-conversation-cancel` | `btn`, `aculta-new-conversation-cancel` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `new-conversation-chip` | `aculta-chip` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `new-conversation-chip-name` | `aculta-chip__name` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `new-conversation-chip-remove` | `aculta-chip__remove` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `new-conversation-chips` | `aculta-chips` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `new-conversation-fallback-search` | `aculta-messenger-fallback-search`, `aculta-u-grid`, `aculta-u-gap-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `new-conversation-link` | `btn`, `btn-primary`, `aculta-messenger-new-conversation` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `new-conversation-links` | `aculta-u-flex`, `aculta-u-wrap`, `aculta-u-gap-2`, `aculta-u-mt-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `new-conversation-message` | `form-control` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `new-conversation-submit` | `btn`, `btn-primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `notice-admin-intro` | `aculta-notice-admin-intro` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `notice-admin-item` | `admin-item` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `notice-admin-list` | `admin-list`, `aculta-notice-admin-list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `notice-admin-table` | `aculta-notice-admin-table` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `notice-detail` | `aculta-notice-detail` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `notice-origin-heading` | `aculta-messenger-notice-origin__heading` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `notice-origin-items` | `aculta-messenger-notice-origin__items` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `notice-origin-section` | `aculta-messenger-notice-origin` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `notice-origin-separator` | `aculta-messenger-notice-origin__separator` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `notice-read-state-action` | `aculta-notice-read-state-action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `notice-read-state-form` | `aculta-notice-read-state-form` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `notice-related-group` | `aculta-messenger-notice-related-group` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `notice-related-group-items` | `aculta-messenger-notice-related-group__items` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `notice-status` | `messages`, `messages--status` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `notice-summary-excerpt` | `aculta-notice-summary__excerpt` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `notice-summary-link` | `aculta-messenger-sender__link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `notice-summary-state` | `aculta-notice-summary__state` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `notice-summary-title` | `aculta-notice-summary__title` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `notice-warning` | `messages`, `messages--warning` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `photo-dialog` | `aculta-photo-dialog` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `post-meta` | `portal-post__meta` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `post-meta-author` | `portal-post__meta-item`, `bi`, `bi-person-circle` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `post-share` | `portal-post__share` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `post-share-label` | `portal-post__share-label` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `profile-achievement` | `portal-profile__achievement` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `profile-achievement-content` | `portal-profile__achievement-content` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `profile-achievement-description` | `portal-profile__achievement-description` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `profile-achievement-highlight` | `portal-profile__achievement-highlight` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `profile-achievement-image` | `portal-profile__achievement-image` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `profile-achievement-name` | `portal-profile__achievement-name` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `profile-achievements` | `portal-profile__achievements` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `profile-achievements-list` | `portal-profile__achievements-list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `profile-achievements-title` | `portal-profile__achievements-title` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `public-profile` | `portal-profile` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `public-profile-actions` | `portal-profile__actions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `public-profile-avatar` | `portal-profile__avatar` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `public-profile-avatar-image` | `portal-profile__avatar-image` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `public-profile-bio` | `portal-profile__bio` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `public-profile-header` | `portal-profile__header` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `public-profile-identity` | `portal-profile__identity` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `public-profile-link-email` | `portal-profile__link`, `bi`, `bi-envelope` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `public-profile-links` | `portal-profile__links` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `public-profile-name` | `portal-profile__name` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `register-popup` | `aculta-u-grid`, `aculta-u-gap-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `registration-status` | `aculta-registration-status` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `related-content-badge` | `aculta-related-content__badge` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `related-content-block` | `aculta-related-content` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `related-content-item` | `aculta-related-content__item` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `related-content-link` | `aculta-related-content__link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `related-content-summary` | `aculta-related-content__summary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `related-content-title` | `aculta-related-content__title` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `requirements` | `aculta-portal-requirements` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `requirements-cep` | `aculta-portal-requirements__cep` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `requirements-cep-table` | `aculta-portal-requirements__cep-table` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `requirements-indexing` | `aculta-portal-requirements__indexing` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `requirements-indexing-table` | `aculta-portal-requirements__indexing-table` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `requirements-legend` | `aculta-portal-requirements__legend` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `requirements-php-extensions` | `aculta-portal-requirements__php-extensions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `sales-heading` | `aculta-sales-panel__heading` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `sales-panel` | `aculta-sales-panel` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `sales-section` | `aculta-sales-panel__section` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `sales-table` | `table`, `table-hover`, `aculta-u-align-middle`, `aculta-sales-panel__table` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `search` | `aculta-search` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `search-popup` | `aculta-search-popup` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `search-preview` | `aculta-search-preview` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `search-preview-footer` | `aculta-search-preview__footer`, `aculta-u-flex`, `aculta-u-justify-center`, `aculta-u-mt-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `search-preview-full` | `aculta-search-preview__full`, `btn`, `btn-outline-primary`, `btn-sm` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `search-preview-input` | `aculta-search-preview-input` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `search-preview-list` | `aculta-search-preview__list`, `list-unstyled` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `search-results` | `aculta-search__results` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `search-utility` | `aculta-search-utility`, `aculta-utility-trigger` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `secret-dialog` | `aculta-secret-dialog` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `secret-popup-hint` | `aculta-secret-popup__hint` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `secret-popup-value` | `aculta-secret-popup__value` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `secret-value` | `aculta-secret-value` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `secret-value-clear` | `aculta-secret-value__clear` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `secret-value-edit` | `aculta-secret-value__edit` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `secret-value-eye` | `aculta-secret-value__eye` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `secret-value-text` | `aculta-secret-value__text` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `secrets-environment` | `aculta-portal-secrets__environment` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `secrets-tab` | `secrets-tabs__tab` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `secrets-table-scroll` | `secrets-table-scroll` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `secrets-tabs` | `secrets-tabs` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `secrets-tabs-list` | `secrets-tabs__list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `security-password-form` | `aculta-security-password-form` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `security-pending` | `aculta-security-pending` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `shop-product-card` | `aculta-u-block`, `aculta-u-border`, `aculta-u-border-2`, `aculta-u-rounded-3`, `aculta-u-text-start`, `aculta-u-p-3`, `aculta-u-no-decoration` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `shop-products` | `aculta-u-grid`, `aculta-u-gap-3`, `aculta-u-mt-4` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `social-links-button-list` | `aculta-social-links__button-list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `social-links-footer-inner` | `aculta-social-links-footer__inner` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `social-links-list` | `aculta-social-links__list`, `list-unstyled` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `social-links-settings-button` | `aculta-social-links-settings-button` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `statistics-areas` | `aculta-statistics__areas` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `statistics-chart` | `aculta-statistics__chart` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `statistics-comparison` | `aculta-statistics__comparison` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `statistics-controls` | `aculta-statistics__controls` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `statistics-form` | `aculta-statistics__form` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `statistics-note` | `aculta-statistics__note` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `statistics-panel` | `aculta-statistics` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `statistics-summary` | `aculta-statistics__summary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `statistics-table` | `aculta-statistics__table` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `statistics-wiki-ranking` | `aculta-statistics__wiki-ranking` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `statistics-wiki-revisions` | `aculta-statistics__wiki-revisions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `street-number` | `portal-street-number` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `street-number-sn` | `portal-street-number-sn` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-account-avatar` | `studio-account-identity__avatar` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-account-contextual-nav` | `studio-account-nav-list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-account-nav-link` | `nav-link`, `studio__link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-account-navigation` | `studio-account-section__navigation` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-account-section` | `studio`, `studio-account-section` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-action` | `btn`, `btn-outline-primary`, `studio__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-actions` | `studio__actions`, `list-unstyled`, `aculta-u-flex`, `aculta-u-wrap`, `aculta-u-gap-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-card-compact-list` | `studio-card-compact-list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-fidelity-scope` | `studio` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-layout` | `studio__layout` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-listing` | `table`, `table-hover`, `aculta-u-align-middle`, `studio__listing` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-listing-wrap` | `table-responsive`, `studio__listing-wrap` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-live` | `studio__live`, `small`, `text-muted` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-main` | `studio__main` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-marley-entry` | `btn`, `btn-outline-primary`, `studio__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-page-title` | `page-title` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-panel` | `studio__panel`, `aculta-panel`, `aculta-panel--default`, `aculta-panel__body` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-profile-actions` | `studio__actions`, `list-unstyled`, `aculta-u-flex`, `aculta-u-wrap`, `aculta-u-gap-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-profile-editor` | `aculta-profile-editor` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-profile-entry` | `btn`, `btn-outline-primary`, `studio__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-profile-nickname-edit` | `btn`, `btn-outline-primary`, `studio__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-profile-photo-edit` | `btn`, `btn-outline-primary`, `studio__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-profile-public-link` | `btn`, `btn-outline-primary`, `studio__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-recommendation-badge` | `badge-reason` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-recommendation-reason` | `recommendation-reason` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-saved-card-title` | `compact-card-title` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-saved-content` | `studio`, `studio-saved-page` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-saved-empty` | `studio-saved-empty` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-saved-list-wrapper` | `studio-saved-list-wrapper` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-saved-meta` | `compact-card-meta` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-saved-pager-info` | `pager-info` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-saved-pager-next` | `pager-next` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-saved-pager-prev` | `pager-prev` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-saved-pagination` | `studio-saved-pagination` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-saved-purpose` | `badge`, `badge-purpose` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-saved-summary` | `studio-saved-summary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-saved-tabs` | `nav`, `nav-tabs`, `studio-saved-tabs` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-section-header` | `studio__section-header` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-shell` | `studio` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-sidebar` | `studio__sidebar` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `support-form` | `aculta-support` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `support-intro` | `aculta-support-intro` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `support-other` | `aculta-support-other` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `terms-modal-documents` | `portal-terms-modal__documents` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `ugc-admin-purpose-filters` | `aculta-admin-purpose-filters`, `action-links` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `ugc-admin-status-filters` | `aculta-admin-status-filters`, `action-links` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `user-admin-filters` | `aculta-admin-filters`, `action-links` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `we-sativa-create` | `btn`, `btn-primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `we-sativa-intent` | `aculta-u-grid`, `aculta-u-gap-4`, `we-sativa__workspace` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `we-sativa-start` | `aculta-u-grid`, `aculta-u-gap-4`, `we-sativa__workspace` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `we-sativa-workspace` | `aculta-u-grid`, `aculta-u-gap-4`, `we-sativa__workspace` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `wiki-home` | `aculta-wiki-home` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `wiki-intro` | `aculta-wiki-intro` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `wiki-proposal-contribute` | `button`, `button--secondary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `wiki-proposal-decision` | `aculta-wiki-proposal-decision` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `wiki-proposal-link` | `aculta-wiki-proposal-link`, `btn`, `btn-outline-primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `wiki-proposal-status` | `aculta-wiki-proposal-status` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `wiki-recent-change` | `aculta-wiki-recent-change` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `wiki-search-results` | `aculta-wiki-search-results` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `wiki-title-suggestions` | `aculta-wiki-title-suggestions`, `list-group` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `wiki-workspace-return` | `btn`, `btn-outline-primary`, `aculta-u-mb-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+
+## Prefixos e tokens concatenados (2026-11-05)
+
+| Token | Classes no V2 | Estado |
+|---|---|---|
+| `email-notice` | `aculta-email-notice` | copiado do V1; estilo no V2 pendente (DEFERRED) |
+| `messenger-state` | `aculta-messenger-state` | copiado do V1; estilo no V2 pendente (DEFERRED) |
+| `messenger-state-empty` | `aculta-messenger-state--empty` | copiado do V1; estilo no V2 pendente (DEFERRED) |
+| `notice-error` | `messages`, `messages--error` | copiado do V1; estilo no V2 pendente (DEFERRED) |
+| `notice-summary` | `aculta-messenger-sender`, `aculta-notice-summary` | copiado do V1; estilo no V2 pendente (DEFERRED) |
+| `notice-summary-persistent` | `aculta-notice-summary--persistent` | copiado do V1; estilo no V2 pendente (DEFERRED) |
+| `recommendation-item` | `recommendation-item` | copiado do V1; estilo no V2 pendente (DEFERRED) |
+| `saved-item` | `saved-item` | copiado do V1; estilo no V2 pendente (DEFERRED) |
+| `secrets-section` | `aculta-portal-secrets-section` | copiado do V1; estilo no V2 pendente (DEFERRED) |
+| `secrets-tabs-panel` | `secrets-tabs__panel` | copiado do V1; estilo no V2 pendente (DEFERRED) |
+| `social-links-channel` | `aculta-social-links__channel` | copiado do V1; estilo no V2 pendente (DEFERRED) |
+| `social-links-channel-custom` | `aculta-social-links__channel--custom` | copiado do V1; estilo no V2 pendente (DEFERRED) |
+| `social-links-channel-website` | `aculta-social-links__channel--website` | copiado do V1; estilo no V2 pendente (DEFERRED) |
+| `studio-account-home` | `studio__panel`, `aculta-panel`, `aculta-panel--default`, `aculta-panel__body` | copiado do V1; estilo no V2 pendente (DEFERRED) |
+| `studio-account-identity` | `studio-account-identity` | copiado do V1; estilo no V2 pendente (DEFERRED) |
+| `studio-card-compact` | `studio-card-compact` | copiado do V1; estilo no V2 pendente (DEFERRED) |
+| `studio-course-authoring` | `studio-course-authoring` | copiado do V1; estilo no V2 pendente (DEFERRED) |
+| `studio-course-authoring-back` | `studio-course-authoring__back` | copiado do V1; estilo no V2 pendente (DEFERRED) |
