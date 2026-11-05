@@ -75,7 +75,7 @@ Estes caminhos não entram no contexto sem motivo específico da tarefa. Quando 
 | `README.md` (raiz) | 101 KB | leia só a seção necessária (`rg -n '^## ' README.md`) |
 | `docs/operations/DEBT-REGISTER.md` | 68 KB | registro de dívidas; busque o ID com `rg -n "DT-"` e leia só a linha |
 | `docs/modules/ACULTA-LMS-ROADMAP.md` | 78 KB | roadmap do LMS; leia só a seção citada |
-| `docs/operations/ACULTA-MODULES-CLOSEOUT.md` | 71 KB | fechamento de módulos; leia só o módulo citado |
+| `docs/history/operations/ACULTA-MODULES-CLOSEOUT.md` | 71 KB | fechamento de módulos; leia só o módulo citado |
 | `docs/portal/ACULTA-USER-PLAN.md` | 66 KB | plano de usuário; leia só a seção citada |
 | `CHANGELOG.md` de módulos acima de 40 KB | variável | leia só a primeira entrada, com `head -40` |
 

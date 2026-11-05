@@ -43,5 +43,5 @@ Regra: rode **somente** os gates do escopo do diff e dos módulos que dependem d
 
 ## Manutenção
 
-- Gate novo ou removido: atualize esta tabela no mesmo commit. Gate sem referência em documento de política nem em CI é candidato a remoção (auditoria de 2026-11-05: `docs/operations/AUDITORIA-TOKENS-TESTES-2026-11-05.md`).
+- Gate novo ou removido: atualize esta tabela no mesmo commit. Gate sem referência em documento de política nem em CI é candidato a remoção (auditoria de 2026-11-05: `docs/history/operations/AUDITORIA-TOKENS-TESTES-2026-11-05.md`).
 - Gate de Olivero não existe e não deve ser criado (AGENTS, "Arquitetura e validação").
