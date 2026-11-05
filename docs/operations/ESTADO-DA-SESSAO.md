@@ -8,8 +8,8 @@
 - **Objetivo:** remover `Drupal.Ajax` e o `pushState` próprio da navegação do Studio e da Minha Conta, usando o HTMX do Core.
 - **Concluído:** `d74e79a17e` migra `studio-navigation.js` e `account-navigation.js`, troca as bibliotecas para `core/drupal.htmx`, marca pontos de foco nos controllers e faz o `studio-htmx.js` resolver o novo alvo pelo id em swaps `outerHTML`. Registra `studio-heading` e `data-aculta-focus`.
 - **Verificações:** no Runtime (host `account`), `/marley` e `/conta/dados` navegam por HTMX, atualizam URL e título, devolvem o foco e funcionam com voltar/avançar, sem overflow em 1024 px. Gates: boundary 4266, docs 502 tokens, SDC 35 componentes, schemas 55/764, foundations, classes 455; PHP lint e `git diff --check` PASS.
-- **Pendências:** itens 2 a 5 da F2 (perfil, bio, redes sociais, endereço e popup de foto); captura da matriz 320/390/1440 para as navegações; migração das suítes para Playwright segue com o agente paralelo.
-- **Próximo passo:** seguir a F2 pelos formulários de conta e bio, ou a F3 por módulo.
+- **Pendências:** itens 2 a 5 da F2. A tentativa de migrar a bio (item 3) foi revertida: o diálogo abria e o `data-hx-get` chegava ao DOM, mas o HTMX não iniciava a requisição nem com disparo manual de `aculta:drawer:open`; a causa não foi identificada. O fluxo legado `use-ajax`/fetch permanece e nenhum dado foi gravado; detalhes no `CHANGELOG.md` de `aculta_user`. Também pendentes: captura da matriz 320/390/1440 das navegações e migração das suítes para Playwright (agente paralelo).
+- **Próximo passo:** investigar a ordem de processamento do HTMX nos diálogos da bio e retomar o item 3; depois redes, endereço e popup de foto.
 
 # Dívida de estilo resolvida — 2026-11-05
 

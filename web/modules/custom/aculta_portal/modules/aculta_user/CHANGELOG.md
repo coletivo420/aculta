@@ -1,3 +1,15 @@
+## Não versionado — migração HTMX da bio bloqueada (ADR-050 F2 item 3)
+
+- Tentativa de trocar o modal `use-ajax`/fetch da bio por um `<dialog>` com
+  `hx-get`/`hx-post` e `HX-Redirect`. O diálogo abria e o `data-hx-get` chegava
+  ao DOM, mas o HTMX não iniciava a requisição nem pelo disparo manual de
+  `aculta:drawer:open`; o formulário não era carregado.
+- A causa não foi identificada antes de encerrar o bloco. As alterações foram
+  revertidas e o fluxo legado (`AccountBioCard`, `AccountBioForm` e
+  `account-bio-form.js`) permanece intacto. Nenhum dado de bio foi gravado.
+- Próximo passo: investigar a ordem de processamento do HTMX em diálogos
+  renderizados dentro do card e retomar o item 3 da F2.
+
 ## Não versionado — nome de exibição do menu de conta
 
 - `AccountMenuPresentationBuilder` inclui o apelido aparado em
