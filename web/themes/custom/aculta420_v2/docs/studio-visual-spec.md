@@ -36,14 +36,9 @@ Duas faixas empilhadas no topo da página.
   2. `shopping-cart` — carrinho, com **badge numérico** (exemplo: 1). Ícone `shopping-cart`.
   3. `chat-circle` — mensagens. Pode ter badge.
   4. `bell` — avisos, com **badge** (exemplo: 4). Badge com `--color-status-error-text` ou o token de destaque de contagem já usado pelo `alerts-trigger`.
-  5. **Conta** (ADR-047, emenda de 2026-11-05):
-     - **Visitante:** botão de texto **"Entrar"**, com fundo `--color-brand-highlight` e texto `--color-on-highlight`. Abre o popup de login. Sem ícone.
-     - **Autenticado:** sem botão de avatar. O menu da conta mostra, no topo, o avatar e o nome de usuário (cabeçalho não clicável).
-- **Itens da conta (autenticado),** sempre expandidos, sem recolher:
-  1. Cabeçalho não clicável: avatar (do `AvatarResolver`, sem inicial) e nome de usuário (`aculta_account_name`).
-  2. **"Meu perfil"** e **"Minha conta"**, visíveis o tempo todo, sem sublista recolhível.
-  3. **"Sair"** por último, separado por um fio fino.
-- **Gatilho do menu autenticado: pendente** (ver ADR-047, emenda, item 5).
+  5. **Menu geral em hambúrguer** (ADR-047, emenda de 2026-11-05): um botão `list` na barra institucional, com o mesmo comportamento do menu hambúrguer que hoje fica no cabeçalho do domínio principal. A conta entra nesse menu geral; não é um menu só de conta.
+     - **Visitante:** o menu mostra **"Entrar"** (botão de texto com `--color-brand-highlight` e `--color-on-highlight`), que abre o popup de login.
+     - **Autenticado:** o menu mostra, no topo, o avatar e o nome de usuário, sem clique e sem edição. Logo abaixo, um nível já expandido, sem recolher: **"Minha conta"** e **"Meu perfil"**. **"Sair"** fica por último, separado por um fio fino.
 - Essa faixa é a barra institucional (`multidomain-bar`), que já existe. **Não redesenhar** (ADR-046).
 
 **Faixa 2 (contexto do Studio), fundo de superfície elevada ou institucional:**
@@ -54,7 +49,7 @@ Duas faixas empilhadas no topo da página.
 
 Duas linhas, de acordo com o celular do material:
 
-- **Linha 1:** logotipo ACULTA à esquerda; à direita, `shopping-cart` (com badge), `chat-circle`, `bell` (com badge) e a conta: visitante vê o botão de texto "Entrar" (mesmo estilo do desktop); autenticado vê o gatilho do menu (pendente, ver seção 2.1). Não há rótulos de "Minha conta" nem "Sair" na barra, em nenhuma largura.
+- **Linha 1:** logotipo ACULTA à esquerda; à direita, `shopping-cart` (com badge), `chat-circle`, `bell` (com badge) e o hambúrguer `list` do menu geral (visitante vê "Entrar" dentro dele). Não há rótulos de "Minha conta" nem "Sair" na barra, em nenhuma largura.
 - **Linha 2:** `list` (menu, hambúrguer) à esquerda; logotipo ACULTA; **"Domínios ⌄"** (`caret-down`) à direita; `magnifying-glass` à direita da linha.
 - O menu `list` abre a navegação do Studio (seção 3.2), no mesmo padrão de navegação do desktop, mas como painel de sobreposição.
 

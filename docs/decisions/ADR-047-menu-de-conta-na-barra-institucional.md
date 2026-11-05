@@ -59,13 +59,10 @@
 Esta emenda substitui os itens 2, 3 e 8 nos pontos abaixo. Os demais itens continuam valendo.
 
 1. **Barra institucional sem rótulos de conta.** Sem "Minha conta" nem "Sair" na barra, em qualquer largura.
-2. **Visitante.** Botão de texto "Entrar", com fundo `--color-brand-highlight` e texto `--color-on-highlight`. Abre o popup de login (item 8). Sem JavaScript, vai para a página de entrada (item 9).
-3. **Autenticado, conteúdo do menu.** No topo, avatar (sem inicial) e nome de usuário, sem clique. Abaixo, "Meu perfil" e "Minha conta", sempre expandidos, sem sublista recolhível. "Sair" por último. "Meu perfil" passa a aparecer nesta emenda por indicação do responsável.
-4. **Avatar não é botão.** O avatar deixa de ser o gatilho e fica como cabeçalho do menu.
-5. **Gatilho do menu autenticado: pendente.** Como o avatar não é mais botão, o menu precisa de outro gatilho. Opções para escolha do responsável:
-   - A: ícone pequeno de conta (sem avatar), na barra; abre o painel. Recomendação, por ser o mais parecido com o padrão atual.
-   - B: nome de usuário com seta, na barra; abre o painel. Mais largo, perde espaço em 320 px.
-   - C: painel sempre visível, sem gatilho. Só cabe em telas largas.
+2. **Menu geral em hambúrguer.** O menu fica na barra institucional, como um botão `list`, com o mesmo comportamento do menu hambúrguer que hoje fica no cabeçalho do domínio principal. A conta entra nesse menu geral; não é um menu só de conta. Não há ícone de conta separado.
+3. **Visitante.** O menu mostra "Entrar", botão de texto com `--color-brand-highlight` e `--color-on-highlight`. Abre o popup de login (item 8). Sem JavaScript, vai para a página de entrada (item 9).
+4. **Autenticado.** O menu mostra, no topo, o avatar (sem inicial) e o nome de usuário, sem clique e sem edição. Logo abaixo, um nível já expandido, sem recolher: "Minha conta" e "Meu perfil". "Sair" por último. O avatar não é botão.
+5. **Gatilho decidido em 2026-11-05.** Botão `list` (hambúrguer) na barra institucional. Substitui as opções A, B e C que estavam em aberto.
 6. **Contrato do Portal.** Além de `authenticated`, `aculta_account_avatar` e `aculta_account_menu`, o `aculta_user` entrega `aculta_account_name` (string, nome de exibição definido pela política do Portal). Sem nome, o cabeçalho mostra só o avatar. O tema não deriva nome de usuário, e-mail ou inicial.
 7. **Estado atual do código.** Em 2026-11-05, o `account-menu` já é renderizado dentro de `.aculta-utility` da barra institucional (`multidomain-bar.twig`). Não há menu de conta na faixa de domínio dos templates V2. Se o menu aparece na faixa de domínio em alguma página, a origem é outro template ou o Portal, e precisa de URL ou captura para ser localizada.
-8. **Trabalho pendente.** Depois da escolha do gatilho: mudança no tema (SDC `account-menu`; `PagePresentationHooks` passa `aculta_account_name`) e no `aculta_user` (`AccountMenuPresentationBuilder` devolve o nome). Gates e capturas em 320, 390 e 1440 px, claro e escuro, com três cenários: foto, acervo e sem foto.
+8. **Trabalho pendente.** Mudança no tema (SDC `account-menu`; `PagePresentationHooks` passa `aculta_account_name`) e no `aculta_user` (`AccountMenuPresentationBuilder` devolve o nome). Gates e capturas em 320, 390 e 1440 px, claro e escuro, com três cenários: foto, acervo e sem foto.
