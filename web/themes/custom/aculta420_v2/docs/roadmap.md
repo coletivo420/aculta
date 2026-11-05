@@ -347,14 +347,15 @@ Gates foundation (55 pares), design foundations (2.468 checks), SDC schemas
   excede o espaço do formulário. Evidência:
   `$SUITE_OUT/aculta420-v2-account-turnstile-visual/`.
 
-## Fase 3 — Purpose neutro no Portal
+## Fase 3 — Purpose neutro no Portal e Cores por purpose
 
-**Status: chave neutra entregue em 2026-11-05.** `AppearanceHooks::preprocessHtml`
+**Status: CONCLUÍDA em 2026-11-05 (versão 1.3.0-dev.1).** `AppearanceHooks::preprocessHtml`
 expõe `aculta_purpose` e o tema aplica `data-purpose` no `<html>` após validar
-o formato; a cache de página passa a variar por `domain`. Verificado no Runtime
-em Main (`main`), Conta (`account`), Eventos (`eventos`) e Wiki (`wiki`). O
-ajuste de tokens de destaque por purpose continua dependente de
-`domain_presentation.accent` (D1), não fornecido pelo Portal.
+a lista permitida. O Portal mantém o estado neutro `aculta_portal.active_purposes`
+via Core State API atualizado com hooks de ciclo de vida do Domain (`domain_insert`, `domain_update`, `domain_delete`).
+O tema oferece a seção nativa "Cores por purpose" em `theme-settings.php`, exibindo selects
+somente para purposes ativos comunicados pelo Portal e aplicando os tokens de destaque correspondentes
+com critérios de contraste WCAG AA aprovados em `tokens.css`. Schema e defaults configurados em `aculta420_v2.settings`.
 
 ## Fase 4 — UI Styles
 

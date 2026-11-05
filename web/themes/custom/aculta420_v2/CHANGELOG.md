@@ -1,5 +1,14 @@
 # Changelog — ACULTA420 V2
 
+## 1.3.0-dev.1 — Cores por purpose com detecção de purposes ativos (Fase 3)
+
+- Adiciona a seção nativa "Cores por purpose" em `theme-settings.php` no formulário administrativo do tema.
+- Lê a lista de purposes ativos exclusivamente a partir da Core State API neutra `aculta_portal.active_purposes`. Se o estado estiver vazio, exibe mensagem neutra e oculta os controles de seleção.
+- Schema e defaults em `aculta420_v2.settings` com mapeamento `aculta_purpose_palette` para todos os purposes.
+- Validação estrita de purposes aprovados no `SurfaceSettingsHooks::preprocessHtml` para o atributo `data-purpose`.
+- Paleta de destaque por purpose em `src/styles/tokens.css` com suporte aos modos claro e escuro e contraste WCAG AA aprovado (mínimo 3:1 decorativo, 4.5:1 texto).
+- Documentação atualizada em `docs/configuracao-do-tema.md`, `docs/architecture.md` e `docs/roadmap.md`.
+
 ## Não versionado — conclusão da F1 de HTMX (ADR-050)
 
 - Finalização formal da Fase 1 (F1a/F1b) do ADR-050 no roadmap do tema V2:

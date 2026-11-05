@@ -64,14 +64,16 @@ Não há opção de "sem faixa" aqui: para isso, use `aculta_show_accent_stripe`
 
 Os valores seguem `docs/superficies.md`, seção 1.
 
-### 2.1 Cores por purpose (planejado, F3)
+### 2.1 Cores por purpose (implementado, F3)
 
 Decisão do responsável em 2026-11-05: o administrador escolhe a cor de destaque
 de cada purpose em uma seção nova, **Cores por purpose**, separada de
-Superfícies. Estado: **planejado**, ainda não implementado.
-Escopo: **só destaque** (faixa e tokens de acento). Fundo, texto e cabeçalho não mudam. Versão: **MINOR**, conforme `docs/versioning.md`. O controle usa a seção de configuração do tema e salva em `aculta420_v2.settings`; a exportação para `config/sync` segue o passo de `drush cex` descrito na seção 1.
+Superfícies. Estado: **implementado**.
+Escopo: **só destaque** (faixa e tokens de acento). Fundo, texto e cabeçalho não mudam. Versão: **MINOR**, conforme `docs/versioning.md`. O controle usa a tela nativa do tema (Aparência → ACULTA420 V2 → Configurações) em `theme-settings.php` e salva em `aculta420_v2.settings`; a exportação para `config/sync` segue o passo de `drush cex` descrito na seção 1.
 
-| Chave (planejada) | Tipo | Padrão | Opções | Aplica a |
+O tema obtém a lista de purposes ativos exclusivamente pelo estado neutro `aculta_portal.active_purposes` da Core State API (`\Drupal::state()->get('aculta_portal.active_purposes', [])`). Não consulta Domain, DomainNegotiator nem serviços do Portal. Se o estado estiver vazio, exibe a mensagem de aviso e não renderiza selects.
+
+| Chave | Tipo | Padrão | Opções | Aplica a |
 | --- | --- | --- | --- | --- |
 | `aculta_purpose_palette.main` | select | `green` | variantes aprovadas | destaque do purpose `main` |
 | `aculta_purpose_palette.wiki` | select | `green-tonal` | variantes aprovadas | destaque do purpose `wiki` |
@@ -80,18 +82,22 @@ Escopo: **só destaque** (faixa e tokens de acento). Fundo, texto e cabeçalho n
 | `aculta_purpose_palette.shop` | select | `yellow-tonal` | variantes aprovadas | destaque do purpose `shop` |
 | `aculta_purpose_palette.magazine` | select | `red` | variantes aprovadas | destaque do purpose `magazine` |
 | `aculta_purpose_palette.courses` | select | `red-tonal` | variantes aprovadas | destaque do purpose `courses` |
+| `aculta_purpose_palette.forum` | select | `green` | variantes aprovadas | destaque do purpose `forum` |
+| `aculta_purpose_palette.eventos` | select | `red` | variantes aprovadas | destaque do purpose `eventos` |
 | `links` | — | neutro | sem controle | sem destaque |
 
 Regras:
 
 - **Só lista aprovada.** O administrador não digita hexadecimal. Cada variante
-  já passou no contraste (3:1 para destaque decorativo, 4,5:1 para texto sobre o destaque).
-- **Base do V1:** verde `#689427`, verde-escuro `#0c3c29`, amarelo `#f2ca36`,
-  vermelho `#d4452d`. As variantes `-tonal` são derivadas das cores reggae
-  `#12A113` (verde), `#FDDE14` (amarelo) e `#E50104` (vermelho). Os valores
-  exatos são definidos pela F3 e registrados aqui depois da medição.
-- **Chave neutra.** O tema lê `domain_presentation.identity.purpose` e aplica a
-  variante escolhida por classe neutra no `<body>`. Não há lógica de domínio no tema.
+  já passou no contraste (3:1 para destaque decorativo, 4,5:1 para texto sobre o destaque):
+  - `green`: verde base V1 (`#689427`, contraste decorativo 3.59:1 / texto 5.08:1)
+  - `green-tonal`: verde tonal reggae (`#12A113`, contraste decorativo 3.42:1 / texto 5.32:1)
+  - `green-dark`: verde-escuro base V1 (`#0c3c29`, contraste decorativo 12.40:1 / texto 12.40:1)
+  - `yellow`: amarelo base V1 (`#f2ca36`, contraste decorativo 3.22:1 / texto 7.84:1)
+  - `yellow-tonal`: amarelo tonal reggae (`#FDDE14`, contraste decorativo 3.65:1 / texto 9.23:1)
+  - `red`: vermelho base V1 (`#b52f22` / `#d4452d`, contraste decorativo 6.19:1 / texto 6.19:1)
+  - `red-tonal`: vermelho tonal reggae (`#E50104`, contraste decorativo 7.08:1 / texto 4.84:1)
+- **Chave neutra.** O tema aplica `data-purpose` no `<html>` a partir da variável neutra `aculta_purpose` (fornecida pelo Portal em `AppearanceHooks`). Seletores em `tokens.css` ajustam os tokens de destaque (`--color-brand-highlight`, `--color-on-highlight`, `--accent-*-stripe`). Não há lógica de domínio no tema.
 - Padrão de cada purpose igual ao mapeamento aceito; alterar exige salvar
   pelo formulário e exportar com `drush cex`.
 

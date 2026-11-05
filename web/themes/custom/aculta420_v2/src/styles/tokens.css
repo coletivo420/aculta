@@ -166,3 +166,135 @@
 :root[data-theme="light"] {
   color-scheme: light;
 }
+
+/* ==========================================================================
+   Fase 3: Paleta de destaque por purpose (seletores [data-purpose] no <html>).
+   Escopo estrito: somente faixa de destaque e tokens de acento.
+   Fundo, texto primário e cabeçalho não mudam.
+   Variantes aprovadas e testadas contra critérios WCAG AA (3:1 decorativo, 4.5:1 texto).
+   ========================================================================== */
+
+/* main: Verde base V1 (#689427) */
+html[data-purpose="main"] {
+  --color-brand-highlight: #689427;
+  --color-on-highlight: #171513;
+  --accent-green-stripe: #689427;
+}
+
+html[data-theme="dark"][data-purpose="main"] {
+  --color-brand-highlight: #9ac15a;
+  --color-on-highlight: #171513;
+  --accent-green-stripe: #689427;
+}
+
+/* wiki: Verde tonal reggae (#12A113) */
+html[data-purpose="wiki"] {
+  --color-brand-highlight: #12A113;
+  --color-on-highlight: #171513;
+  --accent-green-stripe: #12A113;
+}
+
+html[data-theme="dark"][data-purpose="wiki"] {
+  --color-brand-highlight: #72dc72;
+  --color-on-highlight: #171513;
+  --accent-green-stripe: #12A113;
+}
+
+/* account: Verde-escuro base V1 (#0c3c29) */
+html[data-purpose="account"] {
+  --color-brand-highlight: #0c3c29;
+  --color-on-highlight: #ffffff;
+  --accent-green-stripe: #0c3c29;
+}
+
+html[data-theme="dark"][data-purpose="account"] {
+  --color-brand-highlight: #9ac15a;
+  --color-on-highlight: #171513;
+  --accent-green-stripe: #9ac15a;
+}
+
+/* support: Amarelo base V1 (#f2ca36) */
+html[data-purpose="support"] {
+  --color-brand-highlight: #f2ca36;
+  --color-on-highlight: #0c3c29;
+  --accent-yellow-stripe: #a98d26;
+}
+
+html[data-theme="dark"][data-purpose="support"] {
+  --color-brand-highlight: #f2ca36;
+  --color-on-highlight: #171513;
+  --accent-yellow-stripe: #f2ca36;
+}
+
+/* shop: Amarelo tonal reggae (#FDDE14) */
+html[data-purpose="shop"] {
+  --color-brand-highlight: #FDDE14;
+  --color-on-highlight: #0c3c29;
+  --accent-yellow-stripe: #9e8400;
+}
+
+html[data-theme="dark"][data-purpose="shop"] {
+  --color-brand-highlight: #FDDE14;
+  --color-on-highlight: #171513;
+  --accent-yellow-stripe: #FDDE14;
+}
+
+/* magazine: Vermelho base V1 (#d4452d / #b52f22) */
+html[data-purpose="magazine"] {
+  --color-brand-highlight: #b52f22;
+  --color-on-highlight: #ffffff;
+  --accent-red-stripe: #b52f22;
+}
+
+html[data-theme="dark"][data-purpose="magazine"] {
+  --color-brand-highlight: #f08a76;
+  --color-on-highlight: #171513;
+  --accent-red-stripe: #e7bcb8;
+}
+
+/* courses: Vermelho tonal reggae (#E50104) */
+html[data-purpose="courses"] {
+  --color-brand-highlight: #E50104;
+  --color-on-highlight: #ffffff;
+  --accent-red-stripe: #b50002;
+}
+
+html[data-theme="dark"][data-purpose="courses"] {
+  --color-brand-highlight: #ff7b7e;
+  --color-on-highlight: #171513;
+  --accent-red-stripe: #ff9b9d;
+}
+
+/* forum: Verde base V1 (#689427) */
+html[data-purpose="forum"] {
+  --color-brand-highlight: #689427;
+  --color-on-highlight: #171513;
+  --accent-green-stripe: #689427;
+}
+
+html[data-theme="dark"][data-purpose="forum"] {
+  --color-brand-highlight: #9ac15a;
+  --color-on-highlight: #171513;
+  --accent-green-stripe: #689427;
+}
+
+/* eventos: Vermelho base V1 */
+html[data-purpose="eventos"] {
+  --color-brand-highlight: #b52f22;
+  --color-on-highlight: #ffffff;
+  --accent-red-stripe: #b52f22;
+}
+
+html[data-theme="dark"][data-purpose="eventos"] {
+  --color-brand-highlight: #f08a76;
+  --color-on-highlight: #171513;
+  --accent-red-stripe: #e7bcb8;
+}
+
+/* links: Neutro, sem faixa ou acento decorativo */
+html[data-purpose="links"] {
+  --accent-green-stripe: transparent;
+  --accent-yellow-stripe: transparent;
+  --accent-red-stripe: transparent;
+}
+

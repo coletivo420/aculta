@@ -44,8 +44,10 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
     if ($htmlAttributes instanceof Attribute) {
       $htmlAttributes->setAttribute('data-theme', $mode);
       // Chave neutra fornecida pelo Portal; não é hostname nem regra de domínio.
+      // Aceita apenas purposes canônicos aprovados (F3).
       $purpose = $variables['aculta_purpose'] ?? NULL;
-      if (is_string($purpose) && preg_match('/^[a-z0-9_-]+$/', $purpose) === 1) {
+      $allowedPurposes = ['main', 'account', 'support', 'magazine', 'wiki', 'shop', 'courses', 'links', 'forum', 'eventos'];
+      if (is_string($purpose) && in_array($purpose, $allowedPurposes, TRUE)) {
         $htmlAttributes->setAttribute('data-purpose', $purpose);
       }
     }
