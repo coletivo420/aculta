@@ -11,6 +11,7 @@ global-styling:
       src/styles/forum.css: {}
       src/styles/portal-account.css: {}
       src/styles/messenger-drawer.css: {}
+      src/styles/public-profile.css: {}
   dependencies:
     - system/base
 
