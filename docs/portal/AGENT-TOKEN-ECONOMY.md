@@ -89,3 +89,21 @@ Teto de leitura inicial para o contexto de partida, antes da tarefa. Valores sã
 | Gate ou teste | o script do gate e a saída via `scripts/agent-output.py` | logs completos só se a saída resumida falhar |
 
 Regra de corte: se a tarefa precisar de mais de três documentos de partida, o escopo está largo. Reduzir a subfase antes de ler mais.
+
+## Ideias externas avaliadas (2026-11-05)
+
+Fontes pesquisadas: [Composio, "9 Ways to Cut Token Consumption in Claude Code"](https://composio.dev/blog/ways-to-cut-token-consumption-in-claude-code) e [PostHog, "What nobody tells you about writing agent skills"](https://posthog.com/newsletter/writing-agent-skills).
+
+| Ideia | Decisão | Onde está no projeto |
+| --- | --- | --- |
+| Skills com divulgação progressiva: só nome e descrição entram no início | Adotado | `docs/agent-skills/`; gate `validate-agent-token-budget.php` limita descrição (200 caracteres) e SKILL.md (4000 bytes) |
+| Poucas skills, para evitar escolha errada | Adotado | Gate limita a 7 skills |
+| Filtrar a saída de comando (`grep`, `head`) | Adotado | `scripts/agent-output.py`; `AGENT-OUTPUT.md`; skill `aculta-leitura-economica` |
+| Subagente com caminhos definidos e resposta com limite | Adotado | Skill `aculta-leitura-economica`, item 6 |
+| Handoff em arquivo antes de `/clear` ou `/compact` | Adotado | Skill `aculta-handoff`; `ESTADO-DA-SESSAO.md` |
+| CLAUDE.md mínimo | Adotado | Gate limita CLAUDE.md a 3000 bytes |
+| Mapa do repositório para o agente | Já existia | `docs/operations/MAPA-PARA-AGENTES.md`; não duplicado |
+| Limitar pensamento estendido com variável de ambiente | Não adotado | Configuração da conta e da ferramenta, não do repositório. Pode ser decidido pelo responsável |
+| Modelo menor para subagentes com variável de ambiente | Não adotado | Mesma razão; o roteamento por risco já está na seção "Roteamento proporcional ao risco" |
+| Consolidar integrações em um servidor MCP de terceiros | Não adotado | Produto externo e sem necessidade do projeto; não ampliar integrações sem decisão |
+| Procedimento de migração de classe para token | Adotado como skill | `docs/agent-skills/aculta-data-portal-ui/` |

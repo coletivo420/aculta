@@ -25,6 +25,9 @@ const LIMIT_TODO_ROOT = 3000;
 const LIMIT_TODO_COMPONENT = 2000;
 const LIMIT_ENTRY_TOTAL = 10000;
 const MAX_HANDOFF_ENTRIES = 3;
+const MAX_SKILL_DESCRIPTION = 200;
+const MAX_SKILL_BYTES = 4000;
+const MAX_SKILLS = 7;
 
 /** Trechos que outros gates exigem no AGENTS.md. Não remover sem atualizar o gate dono. */
 const AGENTS_LITERALS = [
@@ -141,12 +144,26 @@ foreach ($skillDirs as $skillDir) {
     $failures[] = "docs/agent-skills/$skillName sem SKILL.md";
     continue;
   }
-  if (!preg_match('/^name: ' . preg_quote($skillName, '/') . '\s*$/m', (string) file_get_contents($skillFile))) {
+  $skillText = (string) file_get_contents($skillFile);
+  if (!preg_match('/^name: ' . preg_quote($skillName, '/') . '\s*$/m', $skillText)) {
     $failures[] = "docs/agent-skills/$skillName/SKILL.md com name diferente do diretório";
+  }
+  // Descrição sempre entra no contexto: curta e sobre o gatilho (progressive disclosure).
+  if (!preg_match('/^description: (.+)$/m', $skillText, $dm)) {
+    $failures[] = "docs/agent-skills/$skillName/SKILL.md sem description";
+  } elseif (mb_strlen($dm[1]) > MAX_SKILL_DESCRIPTION) {
+    $failures[] = "docs/agent-skills/$skillName: description com " . mb_strlen($dm[1]) . ' caracteres; limite ' . MAX_SKILL_DESCRIPTION;
+  }
+  // Corpo carregado sob demanda: acima do limite, mova o detalhe para references/ ou para o doc canônico.
+  if (strlen($skillText) > MAX_SKILL_BYTES) {
+    $failures[] = "docs/agent-skills/$skillName/SKILL.md tem " . strlen($skillText) . ' bytes; limite ' . MAX_SKILL_BYTES;
   }
   if (!is_file($root . '/.claude/skills/' . $skillName . '/SKILL.md')) {
     $failures[] = "skill $skillName sem link em .claude/skills/";
   }
+}
+if (count($skillDirs) > MAX_SKILLS) {
+  $failures[] = 'há ' . count($skillDirs) . ' skills; máximo ' . MAX_SKILLS . ' (poucas skills evitam escolha errada)';
 }
 $report[] = 'skills ' . count($skillDirs);
 
