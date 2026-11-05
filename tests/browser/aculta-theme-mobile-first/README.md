@@ -1343,3 +1343,40 @@ python3 -I tests/browser/aculta-theme-mobile-first/studio-identity.py
 O fixture cobre também o acabamento OCS-A2: Oswald nos títulos, raio
 institucional em campos/botões/cards e acento amarelo na aba ativa, sempre no
 escopo `html.studio-identity`.
++
+
+## Matrizes consolidadas de reflow
+
+### `foundations-matrix.py`
+
+Consolida reflow claro/escuro por purpose, CSS baseline via `BASELINE_REF`
+(os mesmos tokens/base/layout), foco por Tab e Shift+Tab com contorno, zoom
+nativo e perfis sem JavaScript e `prefers-reduced-motion`. Usa Firefox ESR
+visível e é somente leitura.
+
+Variáveis: `PURPOSES_JSON` (lista JSON com `purpose` e `url`) ou
+`BASE_URL`, `BASELINE_REF`, `FOUNDATIONS_WIDTHS`, `DISPLAY=:0` e
+`SUITE_OUT` externo ao repositório.
+
+### `page-matrix.py`
+
+Recebe uma ou mais URLs como argumentos e mede status HTTP, carregamento e
+rolagem horizontal em claro/escuro e nas larguras selecionadas.
+
+Variáveis: `MATRIX_WIDTHS`, `MATRIX_MODES`, `MATRIX_HEIGHT`,
+`DISPLAY=:0` e `SUITE_OUT` externo ao repositório. Não há host fixo nos
+scripts.
+
+Exemplo no Homelab, com URLs fornecidas pelo ambiente:
+
+```sh
+export DISPLAY=:0
+export SUITE_OUT="${ACULTA_SUITE_OUT:?defina um diretório persistente fora do repositório}"
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+python3 -I tests/browser/aculta-theme-mobile-first/foundations-matrix.py
+python3 -I tests/browser/aculta-theme-mobile-first/page-matrix.py $PAGE_URLS
+```
+
+PNG e `results.json` ficam somente em `SUITE_OUT`. A suíte
+`aculta-visual`/Revista não participa desta consolidação.
+

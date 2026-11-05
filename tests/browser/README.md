@@ -24,9 +24,7 @@ Regras gerais (ACL, tema de validação, Olivero, caminhos, Git) estão em `AGEN
 
 | Pasta | Script principal | Cobre | README local |
 | --- | --- | --- | --- |
-| `aculta420-v2-foundations/` | `visual.py` | tokens e reflow 320–1440 px, claro/escuro, Tab, zoom 200/400%, sem JavaScript | sim |
 | `aculta420-v2-navigation/` | `navigation.py` | SDC `navigation-bar` nos purposes, foco, Escape, alvos de toque, fallback sem JS | sim |
-| `aculta-smoke/` | `smoke-page.py`, `page-matrix.py` | harness genérico: GET de URLs, matriz de larguras e modos, axe opcional | sim |
 | `aculta-cpf-checkout/` | `login-probe.py`, `login-captcha.py`, `multi-tab-checkout.py` | CPF ID e checkout compartilhado Loja/LMS | sim |
 | `aculta-wiki/` | `visual.py`, `keyboard.py`, `we-sativa.py` | páginas públicas, teclado da busca, workspace autenticado | sim |
 | `aculta-conta-raiz/` | (roteiro) | raiz da Conta sem sessão: login sem rolagem horizontal em 390 e 1280 px | sim |
