@@ -107,6 +107,18 @@
   --purpose-surface-2: #ffffff;
   --purpose-surface-3: #ffffff;
 
+  /* Tokens de botões ACULTA (docs/botoes.md) - Modo claro */
+  --button-primary-bg: #0c3c29;
+  --button-primary-bg-hover: #092b1d;
+  --button-primary-bg-active: #051a12;
+  --button-primary-fg: #ffffff;
+  --button-secondary-bg: #ffffff;
+  --button-secondary-bg-hover: #f2f7f0;
+  --button-secondary-bg-active: #e4ece1;
+  --button-secondary-border: #6b7d70;
+  --button-secondary-fg: #0c3c29;
+  --button-focus-ring: #0c3c29;
+
   /* Compatibility aliases for the existing shell until all consumers migrate. */
   --color-primary: var(--color-brand-primary);
   --color-secondary: #4b77a8;
@@ -172,6 +184,18 @@
   --color-status-warning-text: #ffd27a;
   --color-status-warning-surface: #3a3115;
   --shadow-raised: 0 .125rem .5rem rgb(0 0 0 / 40%);
+
+  /* Tokens de botões ACULTA (docs/botoes.md) - Modo escuro */
+  --button-primary-bg: #9ac15a;
+  --button-primary-bg-hover: #a5c86d;
+  --button-primary-bg-active: #8cb745;
+  --button-primary-fg: #171513;
+  --button-secondary-bg: #2b2723;
+  --button-secondary-bg-hover: #3a352f;
+  --button-secondary-bg-active: #322d28;
+  --button-secondary-border: #8fa397;
+  --button-secondary-fg: #f4efe8;
+  --button-focus-ring: #f4efe8;
 
   /* Elevações e padrões escuros de purpose (Paleta ACULTA Skunk Family). */
   --purpose-accent: #6c9e22;

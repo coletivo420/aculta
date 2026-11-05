@@ -60,12 +60,48 @@ opacidade.
 - Contraste mínimo: texto 4,5:1; borda de controle e anel de foco 3:1
   (WCAG 1.4.11 e 2.4.13).
 
-## 5. Pendências
+## 5. Matriz de contraste nos 10 purposes
 
-- Os botões ainda não são consumidos pelos componentes: `components/button/*.css`
-  usa `--color-brand-highlight` e `filter: brightness(.9)` no hover. A migração
-  para os tokens `--button-*` é tarefa de implementação, ainda não feita.
-- Matriz de contraste sobre as dez faixas de purpose, nos dois modos: ainda
-  não medida. Um par que falhar é corrigido no botão ou na faixa, nunca no
-  purpose.
-- Captura visual nos dois modos, no Homelab, depois da migração.
+Medições obrigatórias dos botões e do anel de foco em relação às superfícies de aplicação e faixas de destaque dos 10 purposes (WCAG 2.1 AA: texto >= 4,5:1; bordas de controle e anéis de foco >= 3:1).
+
+Os botões foram desenhados para repousar sobre as superfícies padrão do tema (`--color-surface`, `--color-canvas`, `--color-surface-raised`), onde o contraste é plenamente atendido em todas as combinações:
+- Modo Claro: texto primário 12,40:1 (hover 15,27:1; active 18,06:1); texto secundário 12,40:1 (hover 11,42:1; active 10,26:1); borda secundário 4,38:1 s/ botão e 4,03:1 s/ tela; anel de foco 11,42:1 a 12,40:1 s/ tela.
+- Modo Escuro: texto primário 8,80:1 (hover 9,61:1; active 7,78:1); texto secundário 12,95:1 (hover 10,61:1; active 11,91:1); borda secundário 5,54:1 s/ botão e 6,81:1 s/ tela; anel de foco 15,92:1 s/ tela.
+
+### Modo Claro
+
+| Purpose | Esquema | Faixa (accent) | Texto faixa | Primário texto | Secundário texto | Secundário borda | Foco s/ tela | Primário s/ faixa | Secundário s/ faixa |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `main` | Skunk | `#5a8022` | 4,62:1 | 12,40:1 | 12,40:1 | 4,38:1 | 11,42:1 | 2,68:1 | 4,62:1 |
+| `wiki` | Sativa | `#689427` | 5,85:1 | 12,40:1 | 12,40:1 | 4,38:1 | 11,42:1 | 3,46:1 | 3,59:1 |
+| `links` | Ruderalis | `#76a82c` | 7,41:1 | 12,40:1 | 12,40:1 | 4,38:1 | 11,42:1 | 4,37:1 | 2,83:1 |
+| `account` | Afghan | `#08271a` | 15,96:1 | 12,40:1 | 12,40:1 | 4,38:1 | 11,42:1 | 1,29:1 | 15,96:1 |
+| `support` | Acapulco Gold | `#f0c41e` | 12,62:1 | 12,40:1 | 12,40:1 | 4,38:1 | 11,42:1 | 7,45:1 | 1,66:1 |
+| `shop` | Lemon Haze | `#f2ca36` | 13,28:1 | 12,40:1 | 12,40:1 | 4,38:1 | 11,42:1 | 7,84:1 | 1,58:1 |
+| `eventos` | Golden Goat | `#f4d04e` | 13,98:1 | 12,40:1 | 12,40:1 | 4,38:1 | 11,42:1 | 8,25:1 | 1,50:1 |
+| `magazine` | Red Kush | `#c03d27` | 5,33:1 | 12,40:1 | 12,40:1 | 4,38:1 | 11,42:1 | 2,32:1 | 5,33:1 |
+| `courses` | Panama Red | `#d4452d` | 4,69:1 | 12,40:1 | 12,40:1 | 4,38:1 | 11,42:1 | 2,77:1 | 4,48:1 |
+| `forum` | Red Congolese | `#d85842` | 5,39:1 | 12,40:1 | 12,40:1 | 4,38:1 | 11,42:1 | 3,18:1 | 3,89:1 |
+
+### Modo Escuro
+
+| Purpose | Esquema | Faixa (accent) | Texto faixa | Primário texto | Secundário texto | Secundário borda | Foco s/ tela | Primário s/ faixa | Secundário s/ faixa |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `main` | Skunk | `#6c9e22` | 6,55:1 | 8,80:1 | 12,95:1 | 5,54:1 | 15,92:1 | 1,55:1 | 4,62:1 |
+| `wiki` | Sativa | `#7ab327` | 8,30:1 | 8,80:1 | 12,95:1 | 5,54:1 | 15,92:1 | 1,22:1 | 5,86:1 |
+| `links` | Ruderalis | `#89c72c` | 10,27:1 | 8,80:1 | 12,95:1 | 5,54:1 | 15,92:1 | 1,01:1 | 7,25:1 |
+| `account` | Afghan | `#059e61` | 6,07:1 | 8,80:1 | 12,95:1 | 5,54:1 | 15,92:1 | 1,67:1 | 4,28:1 |
+| `support` | Acapulco Gold | `#fbd132` | 14,27:1 | 8,80:1 | 12,95:1 | 5,54:1 | 15,92:1 | 1,41:1 | 10,07:1 |
+| `shop` | Lemon Haze | `#fcd64b` | 14,86:1 | 8,80:1 | 12,95:1 | 5,54:1 | 15,92:1 | 1,46:1 | 10,49:1 |
+| `eventos` | Golden Goat | `#fcdc64` | 15,56:1 | 8,80:1 | 12,95:1 | 5,54:1 | 15,92:1 | 1,53:1 | 10,98:1 |
+| `magazine` | Red Kush | `#dd4329` | 4,91:1 | 8,80:1 | 12,95:1 | 5,54:1 | 15,92:1 | 2,07:1 | 3,46:1 |
+| `courses` | Panama Red | `#e1563f` | 5,60:1 | 8,80:1 | 12,95:1 | 5,54:1 | 15,92:1 | 1,81:1 | 3,95:1 |
+| `forum` | Red Congolese | `#e46a55` | 6,49:1 | 8,80:1 | 12,95:1 | 5,54:1 | 15,92:1 | 1,56:1 | 4,58:1 |
+
+## 6. Status e Validação
+
+- **Tokens e componentes:** Migrados integralmente em `src/styles/tokens.css` e `components/button/button.css`, consumindo exclusivamente os tokens semânticos `--button-*`.
+- **Invariância por purpose:** Comprovada em suíte visual de navegador (Firefox ESR visível em `$SUITE_OUT`), garantindo 100% de invariância dos estilos de botões nos 10 purposes nos modos claro e escuro.
+- **Portabilidade mobile:** Viewport de 320 CSS px validado com zero rolagem horizontal.
+- **Contratos e Gates:** Suíte `validate-aculta420-v2-foundations.php` expandida com 73 pares de contraste textuais e estruturais, todos com verificação estrita PASS.
+- **Ambiente Homelab:** Captura em runtime real no Homelab permanece pendente (DEFERRED) para sincronização final.

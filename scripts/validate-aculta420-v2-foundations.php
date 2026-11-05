@@ -140,6 +140,27 @@ foreach (['--accent-green-stripe', '--accent-yellow-stripe', '--accent-red-strip
   $accentContrastPairs += 2;
 }
 
+// Button contrast pairs (docs/botoes.md) nos dois modos:
+// Texto primário (repouso, hover, active), texto secundário (repouso, hover, active),
+// borda secundária (3:1), anel de foco (3:1).
+foreach ([
+  ['--button-primary-fg', '--button-primary-bg', 4.5, 'button primary text on bg'],
+  ['--button-primary-fg', '--button-primary-bg-hover', 4.5, 'button primary text on bg-hover'],
+  ['--button-primary-fg', '--button-primary-bg-active', 4.5, 'button primary text on bg-active'],
+  ['--button-secondary-fg', '--button-secondary-bg', 4.5, 'button secondary text on bg'],
+  ['--button-secondary-fg', '--button-secondary-bg-hover', 4.5, 'button secondary text on bg-hover'],
+  ['--button-secondary-fg', '--button-secondary-bg-active', 4.5, 'button secondary text on bg-active'],
+  ['--button-secondary-border', '--button-secondary-bg', 3.0, 'button secondary border on bg'],
+  ['--button-secondary-border', '--color-canvas', 3.0, 'button secondary border on canvas'],
+  ['--button-focus-ring', '--color-canvas', 3.0, 'button focus ring on canvas'],
+] as [$fg, $bg, $minRatio, $desc]) {
+  $lightRatio = check_contrast($fg, $bg, $rootTokens, []);
+  $assert($lightRatio >= $minRatio, sprintf('light %s (%s on %s) is %.2f:1 (minimum %.1f:1)', $desc, $fg, $bg, $lightRatio, $minRatio));
+  $darkRatio = check_contrast($fg, $bg, $rootTokens, $darkTokens);
+  $assert($darkRatio >= $minRatio, sprintf('dark %s (%s on %s) is %.2f:1 (minimum %.1f:1)', $desc, $fg, $bg, $darkRatio, $minRatio));
+  $contrastPairs += 2;
+}
+
 fwrite(STDOUT, sprintf("ACULTA420 V2 foundations: PASS (%d text contrast pairs; %d accent stripe pairs; dark focus and borders checked)\n", $contrastPairs, $accentContrastPairs));
 
 /**
