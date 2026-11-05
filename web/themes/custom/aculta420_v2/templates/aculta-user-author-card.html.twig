@@ -4,12 +4,14 @@
   display_name: display_name|default(''),
   profile_url: profile_url|default(null),
   has_avatar: has_avatar|default(false),
+  avatar: avatar,
   member_since: member_since|default(null),
   designation: designation|default(null),
   source_label: source_label|default(null),
   bio: bio|default(null),
   social_links: social_links|default([]),
-  has_actions: actions is not empty
+  has_actions: actions is not empty,
+  actions: actions
 } only %}
   {% block avatar %}{{ avatar }}{% endblock %}
   {% block actions %}{{ actions }}{% endblock %}

@@ -13,9 +13,9 @@
   border-radius: var(--radius-full);
   color: var(--color-text-primary);
   display: flex;
-  flex: 0 0 2.5rem;
-  inline-size: 2.5rem;
-  block-size: 2.5rem;
+  flex: 0 0 4.5rem;
+  inline-size: 4.5rem;
+  block-size: 4.5rem;
   justify-content: center;
   overflow: hidden;
 }
@@ -47,12 +47,12 @@
 @media (min-width: 36rem) {
   .author-card:not(.author-card--stacked) { gap: var(--spacing-md); }
   .author-card:not(.author-card--stacked):not(.author-card--author_editorial) { align-items: center; }
-  .author-card:not(.author-card--stacked) .author-card__avatar { flex-basis: 3rem; inline-size: 3rem; block-size: 3rem; }
+  .author-card:not(.author-card--stacked) .author-card__avatar { flex-basis: 5.5rem; inline-size: 5.5rem; block-size: 5.5rem; }
 }
 
 .author-card--sm { gap: var(--spacing-sm); }
-.author-card--sm .author-card__avatar { flex-basis: 2.25rem; inline-size: 2.25rem; block-size: 2.25rem; }
+.author-card--sm .author-card__avatar { flex-basis: 3rem; inline-size: 3rem; block-size: 3rem; }
 .author-card--sm .author-card__name { font-size: var(--font-size-sm); }
 .author-card--lg { gap: var(--spacing-base); }
-.author-card--lg .author-card__avatar { flex-basis: 4rem; inline-size: 4rem; block-size: 4rem; }
+.author-card--lg .author-card__avatar { flex-basis: 6.5rem; inline-size: 6.5rem; block-size: 6.5rem; }
 .author-card--lg .author-card__name { font-size: var(--font-size-lg); }
