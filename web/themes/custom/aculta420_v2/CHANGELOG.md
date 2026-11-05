@@ -6,9 +6,12 @@
   `src/styles/portal-ui-map.css`, agrupado por componente e com tokens
   semânticos.
 - Nomes Bootstrap removidos do mapa do V2: `bi` e `bi-*`, `breadcrumb`,
-  `breadcrumb-item`, `btn-primary`, `btn-outline-primary`,
-  `btn-outline-secondary` e `btn-sm`. O `data-portal-ui` permanece e o CSS do
-  V2 continua por atributo; a V1 não foi alterada.
+  `breadcrumb-item`, `btn`, `btn-link`, `form-control`, `btn-primary`,
+  `btn-outline-primary`, `btn-outline-secondary` e `btn-sm`. O `data-portal-ui`
+  permanece e o CSS do V2 continua por atributo; a V1 não foi alterada. Os
+  seletores `.btn`, `.btn-link` e `.form-control` também saíram de
+  `buttons.css`, `search.css`, `studio.css` e `studio-identity.css`, o que
+  libera o gate `validate-aculta420-v2-sdc.php` (35 componentes, PASS).
 - Novo gate `scripts/validate-aculta420-mapped-classes.php`: exige CSS ou
   exceção documentada para cada classe mapeada e recusa nomes Bootstrap.
   PASS (453 classes, 0 exceções).

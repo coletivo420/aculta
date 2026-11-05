@@ -143,13 +143,13 @@ body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
   line-height: var(--aculta-studio-fidelity-line-height-headings);
 }
 
-.studio a:not(.btn):not(.button),
-.aculta-profile-editor a:not(.btn):not(.button) {
+.studio a:not(.button),
+.aculta-profile-editor a:not(.button) {
   color: var(--aculta-studio-fidelity-link);
 }
 
-.studio a:not(.btn):not(.button):is(:hover, :focus-visible),
-.aculta-profile-editor a:not(.btn):not(.button):is(:hover, :focus-visible) {
+.studio a:not(.button):is(:hover, :focus-visible),
+.aculta-profile-editor a:not(.button):is(:hover, :focus-visible) {
   color: var(--aculta-studio-fidelity-primary);
 }
 
@@ -335,10 +335,6 @@ body.path-culturas .aculta-main input:focus-visible,
 body.path-culturas .aculta-main select:focus-visible {
   outline: 3px solid var(--color-focus-ring);
   outline-offset: 3px;
-}
-
-body.path-culturas .aculta-main .row > [class*="col"] > :is(p, details, form) {
-  margin-block: var(--aculta-studio-fidelity-row-gap);
 }
 
 body.path-culturas .aculta-main form {
@@ -784,10 +780,10 @@ body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-eve
   display: inline-block;
 }
 
-.studio__main form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select.form-control),
-.aculta-profile-editor form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select.form-control),
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select.form-control),
-:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select.form-control) {
+.studio__main form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea),
+.aculta-profile-editor form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea),
+body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea),
+:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea) {
   min-block-size: 2.75rem;
   padding: 0.5rem 1rem;
   color: var(--aculta-studio-fidelity-text);
@@ -798,18 +794,18 @@ body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-eve
   font: inherit;
 }
 
-.studio__main form :is(input, select, textarea, .form-control, select.form-control)::placeholder,
-.aculta-profile-editor form :is(input, select, textarea, .form-control, select.form-control)::placeholder,
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(input, select, textarea, .form-control, select.form-control)::placeholder,
-:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(input, select, textarea, .form-control, select.form-control)::placeholder {
+.studio__main form :is(input, select, textarea)::placeholder,
+.aculta-profile-editor form :is(input, select, textarea)::placeholder,
+body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(input, select, textarea)::placeholder,
+:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(input, select, textarea)::placeholder {
   color: var(--aculta-studio-fidelity-input-placeholder);
   font-family: var(--aculta-studio-fidelity-font-family);
 }
 
-.studio__main form :is(input, select, textarea, .form-control, select.form-control):is(:focus, :focus-visible),
-.aculta-profile-editor form :is(input, select, textarea, .form-control, select.form-control):is(:focus, :focus-visible),
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(input, select, textarea, .form-control, select.form-control):is(:focus, :focus-visible),
-:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(input, select, textarea, .form-control, select.form-control):is(:focus, :focus-visible) {
+.studio__main form :is(input, select, textarea):is(:focus, :focus-visible),
+.aculta-profile-editor form :is(input, select, textarea):is(:focus, :focus-visible),
+body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(input, select, textarea):is(:focus, :focus-visible),
+:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(input, select, textarea):is(:focus, :focus-visible) {
   border-color: var(--aculta-studio-fidelity-input-focus);
   background-color: var(--aculta-studio-fidelity-input-background);
 }
@@ -916,7 +912,7 @@ body.path-marley form.node-revista-form label.option {
   display: inline-block;
 }
 
-body.path-marley form.node-revista-form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select.form-control) {
+body.path-marley form.node-revista-form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea) {
   min-block-size: 2.75rem;
   padding: 0.5rem 1rem;
   color: var(--aculta-studio-fidelity-text);
@@ -927,12 +923,12 @@ body.path-marley form.node-revista-form :is(input:not([type="checkbox"]):not([ty
   font: inherit;
 }
 
-body.path-marley form.node-revista-form :is(input, select, textarea, .form-control, select.form-control)::placeholder {
+body.path-marley form.node-revista-form :is(input, select, textarea)::placeholder {
   color: var(--aculta-studio-fidelity-input-placeholder);
   font-family: var(--aculta-studio-fidelity-font-family);
 }
 
-body.path-marley form.node-revista-form :is(input, select, textarea, .form-control, select.form-control):is(:focus, :focus-visible) {
+body.path-marley form.node-revista-form :is(input, select, textarea):is(:focus, :focus-visible) {
   border-color: var(--aculta-studio-fidelity-input-focus);
   background-color: var(--aculta-studio-fidelity-input-background);
 }
@@ -1718,7 +1714,7 @@ body.path-marley .aculta-main > .aculta-container:has([data-aculta-studio="root"
   .aculta-main > .aculta-container:has(.we-sativa__workspace),
   body.path-ganjalab .aculta-main > .aculta-container,
   body.path-culturas .aculta-main > .aculta-container
-) > .aculta-highlighted > .alert-wrapper > .alert a:not(.btn):not(.button) {
+) > .aculta-highlighted > .alert-wrapper > .alert a:not(.button) {
   color: inherit;
   font-weight: 700;
   text-decoration: underline;
@@ -1876,13 +1872,13 @@ body.path-marley .aculta-main > .aculta-container:has([data-aculta-studio="root"
   margin-block-start: clamp(1.25rem, 3vw, 2rem);
 }
 
-[data-portal-ui="aculta-learning-journey"] a:not(.btn),
-[data-portal-ui="aculta-learning-room"] a:not(.btn) {
+[data-portal-ui="aculta-learning-journey"] a,
+[data-portal-ui="aculta-learning-room"] a {
   color: var(--aculta-studio-fidelity-link);
 }
 
-[data-portal-ui="aculta-learning-journey"] a:not(.btn):is(:hover, :focus-visible),
-[data-portal-ui="aculta-learning-room"] a:not(.btn):is(:hover, :focus-visible) {
+[data-portal-ui="aculta-learning-journey"] a:is(:hover, :focus-visible),
+[data-portal-ui="aculta-learning-room"] a:is(:hover, :focus-visible) {
   color: var(--aculta-studio-fidelity-primary);
 }
 

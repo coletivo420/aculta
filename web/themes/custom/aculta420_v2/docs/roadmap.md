@@ -422,10 +422,12 @@ autorização; o mapeamento de Wiki para a faixa de acento aguarda confirmação
   mínimo em `src/styles/portal-ui-map.css`, agrupado por componente e usando
   tokens semânticos. É estilo funcional, não desenho novo por componente.
 - Os nomes Bootstrap saíram do mapa do V2: `bi` e a família `bi-*`,
-  `breadcrumb`, `breadcrumb-item`, `btn-primary`, `btn-outline-primary`,
-  `btn-outline-secondary` e `btn-sm`. O atributo `data-portal-ui` permanece no
-  DOM e o CSS do V2 continua por atributo; a V1 tem mapa próprio e não foi
-  alterada.
+  `breadcrumb`, `breadcrumb-item`, `btn`, `btn-link`, `form-control`,
+  `btn-primary`, `btn-outline-primary`, `btn-outline-secondary` e `btn-sm`.
+  O atributo `data-portal-ui` permanece no DOM e o CSS do V2 continua por
+  atributo; a V1 tem mapa próprio e não foi alterada. Os seletores `.btn`,
+  `.btn-link` e `.form-control` também foram removidos dos CSS portados, e o
+  gate `validate-aculta420-v2-sdc.php` passou (35 componentes).
 - Novo gate `scripts/validate-aculta420-mapped-classes.php`: cada classe
   mapeada precisa de CSS ou de exceção documentada em
   `docs/classes-sem-css-excecoes.md`; nomes Bootstrap proibidos no mapa fazem o

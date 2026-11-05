@@ -271,16 +271,19 @@ def open_drawer(driver, trigger, dialog_id, content_selector):
         if driver.js("return !!document.querySelector(arguments[0]);", [trigger]):
             break
         time.sleep(0.25)
-    driver.js("const t=document.querySelector(arguments[0]); t.focus(); t.click(); return true;", [trigger])
-    deadline = time.time() + 15
-    while time.time() < deadline:
-        state = driver.js("""const dialog=document.querySelector(arguments[0]);
-          const content=dialog?.querySelector(arguments[1]);
-          return {open:!!dialog?.open,text:(content?.textContent||'').trim().slice(0,200),
-            details:content?.querySelectorAll('details').length||0};""", [dialog_id, content_selector])
-        if state and state["open"] and len(state["text"]) > 0:
-            return state
-        time.sleep(0.25)
+    for attempt in range(2):
+        driver.js("const t=document.querySelector(arguments[0]); t.focus(); t.click(); return true;", [trigger])
+        deadline = time.time() + 12
+        while time.time() < deadline:
+            state = driver.js("""const dialog=document.querySelector(arguments[0]);
+              const content=dialog?.querySelector(arguments[1]);
+              return {open:!!dialog?.open,text:(content?.textContent||'').trim().slice(0,200),
+                details:content?.querySelectorAll('details').length||0};""", [dialog_id, content_selector])
+            if state and state["open"] and len(state["text"]) > 0:
+                return state
+            time.sleep(0.25)
+        if attempt == 0:
+            time.sleep(1)
     raise SystemExit(f"A gaveta {dialog_id} não carregou por HTMX.")
 
 

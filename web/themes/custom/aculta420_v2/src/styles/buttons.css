@@ -38,19 +38,19 @@ button.link:focus {
   color: var(--color-link-editorial);
 }
 
-:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .btn, .button):not(:where(.navbar-toggle, .close, .vvjb-button, .vvjb-play-pause-button, .btn-link, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .btn, .button))) {
+:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .button):not(:where(.navbar-toggle, .close, .vvjb-button, .vvjb-play-pause-button, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .button))) {
   color: var(--color-on-highlight);
   background-color: var(--color-brand-highlight);
   border-color: var(--color-brand-highlight);
 }
 
-:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .btn, .button):not(:where(.navbar-toggle, .close, .vvjb-button, .vvjb-play-pause-button, .btn-link, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .btn, .button))):is(:hover, :active) {
+:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .button):not(:where(.navbar-toggle, .close, .vvjb-button, .vvjb-play-pause-button, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .button))):is(:hover, :active) {
   color: var(--color-on-primary);
   background-color: var(--color-primary);
   border-color: var(--color-primary);
 }
 
-:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .btn, .button):not(:where(.navbar-toggle, .close, .vvjb-button, .vvjb-play-pause-button, .btn-link, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .btn, .button))):focus-visible {
+:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .button):not(:where(.navbar-toggle, .close, .vvjb-button, .vvjb-play-pause-button, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .button))):focus-visible {
   outline: 3px solid var(--color-focus-ring);
   outline-offset: 3px;
 }

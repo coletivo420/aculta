@@ -140,7 +140,7 @@
   min-height: 0;
 }
 
-.aculta-search-preview .aculta-search-preview__full.btn:is(:hover, :focus-visible) {
+.aculta-search-preview .aculta-search-preview__full:is(:hover, :focus-visible) {
   color: var(--aculta-btn-hover-color);
   background-color: var(--aculta-btn-hover-bg);
   border-color: var(--aculta-btn-hover-border-color);

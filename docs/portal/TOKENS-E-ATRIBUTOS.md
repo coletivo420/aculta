@@ -2,7 +2,7 @@
 
 > Reconciliado com o código em 2026-10-30 e validado pelo gate `scripts/validate-portal-ui-docs.php`. Quando um token ou atributo novo for criado, ele precisa entrar aqui (o gate reprova o contrário).
 >
-> **Atualização 2026-11-05:** as classes Bootstrap saíram do mapa do V2 (`bi` e `bi-*`, `breadcrumb`, `breadcrumb-item`, `btn-primary`, `btn-outline-primary`, `btn-outline-secondary`, `btn-sm`). Onde as tabelas abaixo ainda as citam, a lista descreve a origem histórica do token; o mapa vigente está em `aculta420_v2/src/Hook/PortalUiHooks.php`. Toda classe mapeada agora tem CSS mínimo em `aculta420_v2/src/styles/portal-ui-map.css` ou exceção em `aculta420_v2/docs/classes-sem-css-excecoes.md`, verificado por `scripts/validate-aculta420-mapped-classes.php`.
+> **Atualização 2026-11-05:** as classes Bootstrap saíram do mapa do V2 (`bi` e `bi-*`, `breadcrumb`, `breadcrumb-item`, `btn`, `btn-link`, `form-control`, `btn-primary`, `btn-outline-primary`, `btn-outline-secondary`, `btn-sm`). Onde as tabelas abaixo ainda as citam, a lista descreve a origem histórica do token; o mapa vigente está em `aculta420_v2/src/Hook/PortalUiHooks.php`. Toda classe mapeada agora tem CSS mínimo em `aculta420_v2/src/styles/portal-ui-map.css` ou exceção em `aculta420_v2/docs/classes-sem-css-excecoes.md`, verificado por `scripts/validate-aculta420-mapped-classes.php`.
 
 ## Como o contrato funciona
 
