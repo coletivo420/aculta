@@ -15,6 +15,7 @@ global-styling:
       src/styles/utilities.css: {}
       src/styles/studio.css: {}
       src/styles/event-organization.css: {}
+      src/styles/content.css: {}
   dependencies:
     - system/base
 
