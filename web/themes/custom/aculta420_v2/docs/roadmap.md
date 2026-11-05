@@ -392,6 +392,13 @@ autorização; o mapeamento de Wiki para a faixa de acento aguarda confirmação
 - Não trocar tiles OSM por CartoDB nem introduzir endpoint de pontos sem decisão
   e revisão dos contratos de privacidade, acesso, cache e purpose.
 
+### Dívida de estilo — classes mapeadas sem CSS (pendente de decisão)
+
+- 192 classes de `PortalUiHooks::TOKENS` não têm definição de CSS nem no V2 nem no V1. Principais grupos: `aculta-lms-course-builder__*` (11), `aculta-portal-requirements*` (7), `aculta-calendar-interactive__*` (5), `aculta-secret-value__*` (5), `aculta-social-links__*` (5), `event-card__*` (5), `aculta-map__*` (4), `badge--*` (4), `messages*` (4), `secrets-tabs__*` (4), `aculta-button--*` (3), `aculta-statistics__*` (3), `courses-home*` (3), e 2 a 1 de outros componentes LMS e Fórum.
+- Estilizar essas classes seria desenho novo. Decisão do responsável: manter sem estilo até haver contrato visual por componente.
+- Seis nomes do Bootstrap continuam no mapa (`bi`, `breadcrumb`, `breadcrumb-item`, `btn-primary`, `btn-outline-primary`, `btn-outline-secondary`) e não devem ser usados pelo V2. Remover do mapa muda o HTML gerado; depende de decisão.
+- Estado: pendente. Sem captura visual (DEFERRED).
+
 ### HTMX — ADR-050 (F0 concluída; F1 parcial)
 
 Core 11.5 `Htmx`, `core/drupal.htmx`, o atributo de conteúdo principal, a
