@@ -6,7 +6,7 @@ Regras gerais de Git, commits, push, worktree, Runtime e coautoria estão em `AG
 
 ## Antes de começar
 
-1. Leia `AGENTS.md` e o handoff mais recente em `docs/operations/ESTADO-DA-SESSAO.md` (até 3 entradas): é o estado do trabalho em andamento.
+1. Leia `AGENTS.md` e `TODO.md` (checkpoint do estado atual). Para continuar uma fase, leia também o handoff em `docs/operations/ESTADO-DA-SESSAO.md` (até 3 entradas).
 2. Localize as regras do seu escopo em `docs/operations/AGENT-POLICY-INDEX.md`. Não leia `docs/history/operations/AGENT-GUARDRAILS-FULL.md`: é arquivo histórico.
 3. Para entender o projeto, leia `docs/operations/MAPA-PARA-AGENTES.md`.
 4. Confirme o estado no código e no git antes de afirmar status. Planos e roadmaps podem estar desatualizados.
