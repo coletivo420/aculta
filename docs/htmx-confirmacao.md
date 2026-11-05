@@ -2,11 +2,10 @@
 
 ## Resultado
 
-**F0 parcialmente verificada; BLOCKED para aceite completo.** A API está presente
-no Core 11.5 usado no Homelab e passou testes oficiais do Core em MariaDB de
-teste dedicado e Chromium headless. Falta uma prova de integração ACULTA que
-abra um popup `<dialog>`, carregue nele um formulário Drupal via HTMX e o envie.
-Não iniciar F1/F2/F3 antes dessa prova e do aceite integral de F0 (ADR-050).
+**F0 concluída.** A API está presente no Core 11.5 usado no Homelab; os testes
+oficiais do Core e a fixture ACULTA de diálogo/formulário passaram no banco
+dedicado e em duas engines de navegador. Token CSRF válido foi aceito; token
+adulterado foi rejeitado. Nenhum código de produção foi migrado.
 
 ## Inspeção do Core
 
@@ -43,13 +42,47 @@ usados como motor complementar, segundo `tests/browser/README.md` e
   PHPUnit informou que o diretório padrão de HTML de browser tests não era
   gravável; este gate Kernel não gera captura de navegador.
 - Inspeção do código confirmou o caminho de validação CSRF do Form API. A prova
-  funcional acima demonstra um POST HTMX autenticado aceito pelo formulário de
-  teste do Core, mas não é um teste negativo de token inválido.
+  oficial anterior demonstra o POST HTMX autenticado do formulário dinâmico do
+  Core. A fixture ACULTA `web/modules/custom/aculta_portal/tests/src/FunctionalJavascript/HtmxF0DialogTest.php`
+  exercita a progressão completa: abrir `<dialog>`, carregar por `Htmx::get()`
+  o formulário autenticado, enviar por `Htmx::post()` e confirmar resultado no
+  diálogo. Com token adulterado, o Core exibe a mensagem de formulário
+  desatualizado e não executa o submit handler.
+- A fixture passou em Firefox headless: **1 teste, 7 assertions, 54
+  depreciações**; e em Chromium headless: **1 teste, 7 assertions, 55
+  depreciações**. Sem falhas. Versões nesta sessão: Firefox ESR
+  153.5.1/geckodriver 0.37.1 e Chromium/ChromeDriver 156.0.8078.79. HTMLs de
+  diagnóstico foram mantidos em `$SUITE_OUT`, fora do repositório.
+
+## Reexecução humana/agente
+
+A fixture é um módulo de teste descoberto somente durante testes Drupal; não está
+habilitado no site. Rode da raiz do repositório, com o banco dedicado e com
+`SIMPLETEST_BASE_URL` configurada para o servidor de teste documentado. Inicie o
+driver escolhido e configure `MINK_DRIVER_ARGS_WEBDRIVER` conforme
+`web/core/phpunit.xml.dist`:
+
+```sh
+set -a && . secrets/simpletest-db.env && set +a
+export SIMPLETEST_BASE_URL="${SIMPLETEST_BASE_URL:?configure a URL de teste documentada}"
+export BROWSERTEST_OUTPUT_DIRECTORY="${SUITE_OUT:?configure saída persistente fora do repositório}/htmx-f0"
+export MINK_DRIVER_ARGS_WEBDRIVER="${MINK_DRIVER_ARGS_WEBDRIVER:?configure Firefox ou Chromium e o endpoint do driver}"
+vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/tests/src/FunctionalJavascript/HtmxF0DialogTest.php
+```
+
+O browser/driver pode ser Firefox ESR/geckodriver ou Chrome/Chromium headless
+com driver compatível. Registre browser, versão, saída e depreciações. A fixture
+não habilita módulo no Runtime, não altera `config/sync` nem dados do site; o
+teste usa `aculta_simpletest`.
+
+O Core grava os HTMLs de diagnóstico do FunctionalJavascript em
+`web/sites/simpletest/browser_output/` durante a execução, mesmo quando
+`BROWSERTEST_OUTPUT_DIRECTORY` está configurado no processo inicial. Mova os
+arquivos recém-gerados `Drupal_Tests_aculta_portal_FunctionalJavascript_HtmxF0DialogTest-*`
+para `$SUITE_OUT/htmx-f0/` após o teste e não os deixe no docroot; podem conter
+tokens de sessão da conta sintética de teste.
 
 ## Limite e próximo passo
 
-Essas provas não incluem um popup ACULTA em `<dialog>`, nem demonstram a
-progressão completa de abrir o popup, obter o fragmento, enviar o formulário e
-ver o resultado dentro do diálogo. Portanto F0 permanece bloqueada nesse
-critério; I2, I3 e I4 aguardam F0. F4 e F5 continuam aguardando autorização
-específica de Loja.
+F0 está concluída e permite iniciar F1; F2 depende de F1a, e F3 segue a ordem de
+módulos do ADR-050. F4 e F5 continuam aguardando autorização específica de Loja.

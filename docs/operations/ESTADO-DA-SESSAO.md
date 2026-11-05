@@ -19,13 +19,13 @@
 - Runtime `toca`, Drupal 11.5.0-beta1, banco `aculta_runtime`, V2 ativa. Antes e após o push: `updatedb:status` sem pendências e `config:status` sem diferenças; `drush cr` PASS para invalidar o registry Twig. Nenhuma alteração persistente de conteúdo/configuração/banco. O checkout Runtime e `origin/dev` estão no commit `d6a59e7af0655803dee517a2e89e488b10902dc2`.
 - Próximo: continuar G3 com inventário de adapters e templates por tipo/view mode; manter perfil público sem rota nova e demais decisões registradas aguardando o responsável.
 
-## Continuação — HTMX Core F0, confirmação parcial — 2026-11-05
+## Continuação — HTMX Core F0, confirmação e fixture — 2026-11-05
 
 - Inspecionada a API do Core 11.5: `Drupal\Core\Htmx\Htmx` sem `@internal`, library `core/drupal.htmx`, `onlyMainContent()` gera `data-hx-drupal-only-main-content`; `FormBuilder` atualiza `form_build_id` via `swapOob` em requisição HTMX e mantém o fluxo normal de token CSRF para autenticados.
 - Provas oficiais do Core em Chromium headless 156.0.8078.79/ChromeDriver 156.0.8078.79: FunctionalJavascript `HtmxDynamicFormTest` 1 teste/19 assertions PASS, com 55 depreciações Core/contrib; Kernel `HtmxRequestTest` 5 testes/60 assertions PASS. Banco `aculta_simpletest`; outputs HTML movidos para `$SUITE_OUT/aculta-htmx-f0-20261105/core-html/`. O FunctionalJavascript precisou de `SIMPLETEST_BASE_URL`; a primeira tentativa sem a variável falhou antes do teste, e a segunda passou.
-- F0 ainda BLOCKED: falta a prova de popup ACULTA em `<dialog>` carregando e enviando formulário HTMX, além de evidência explícita de token inválido. I2/I3/I4 não iniciados conforme ADR-050. Nenhum módulo de produção alterado.
-- Nota e ADR atualizados em `docs/htmx-confirmacao.md` e `docs/decisions/ADR-050-migracao-ajax-para-htmx.md`. Runtime `aculta_runtime`: `updatedb:status` sem pendências e `config:status` sem diferenças; os testes usaram o banco dedicado. Checkout limpo antes das alterações documentais.
-- Próximo: criar prova repetível de diálogo + formulário/token antes de começar F1; em paralelo, continuar itens A–H do roadmap que não dependam de F0 ou decisões/autorização.
+- F0 foi concluída com a fixture `web/modules/custom/aculta_portal/tests/modules/aculta_htmx_f0_test/` e `tests/src/FunctionalJavascript/HtmxF0DialogTest.php`: Chromium headless (1 teste/7 assertions, 55 depreciações) e Firefox headless (1/7, 54 depreciações) abriram o diálogo, carregaram/enviaram o formulário e rejeitaram token inválido. HTMLs foram movidos para `$SUITE_OUT/aculta-htmx-f0-20261105/{dialog-proof,dialog-proof-firefox}/`. O módulo só é descoberto durante testes e `config:get core.extension module.aculta_htmx_f0_test` retornou `null`; não foi habilitado nem mudou código de produção. I2/I3/I4 ficam liberados conforme dependências do ADR-050.
+- Nota, ADR e roadmap atualizados em `docs/htmx-confirmacao.md`, `docs/decisions/ADR-050-migracao-ajax-para-htmx.md` e `web/themes/custom/aculta420_v2/docs/roadmap.md`. Runtime `aculta_runtime`: `updatedb:status` sem pendências e `config:status` sem diferenças; os testes usaram o banco dedicado. Nenhum módulo foi instalado no Runtime.
+- Próximo: iniciar F1 do tema e do login como entregas separadas, em commits diretos a `dev`; F2 depende de F1a e F3 pode avançar pela sequência independente dos módulos.
 
 # Continuação — migração visual do Fórum V1 para SDC V2 — 2026-11-04
 

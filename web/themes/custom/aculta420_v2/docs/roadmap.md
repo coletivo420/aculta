@@ -381,13 +381,13 @@ autorização; o mapeamento de Wiki para a faixa de acento aguarda confirmação
 - Não trocar tiles OSM por CartoDB nem introduzir endpoint de pontos sem decisão
   e revisão dos contratos de privacidade, acesso, cache e purpose.
 
-### HTMX — ADR-050 (F0 parcial)
+### HTMX — ADR-050 (F0 concluída)
 
 Core 11.5 `Htmx`, `core/drupal.htmx`, o atributo de conteúdo principal, a
 renovação de `form_build_id` e o caminho CSRF foram inspecionados. Testes oficiais
-Core no Chromium headless e no banco dedicado passaram; a prova obrigatória de
-popup ACULTA com formulário dentro de `<dialog>` e a verificação de token inválido
-continuam pendentes. **F0 BLOCKED; F1–F3 não iniciam.** Evidência em
+Core e fixture ACULTA de popup/form dentro de `<dialog>` passaram em Firefox e
+Chromium headless, incluindo token adulterado rejeitado. **F0 CONCLUÍDA; F1 pode
+iniciar**; F2 depende de F1a e F3 segue a ordem de módulos do ADR-050. Evidência em
 [`docs/htmx-confirmacao.md`](../../../../../docs/htmx-confirmacao.md).
 
 ## Compatibilidade e limites

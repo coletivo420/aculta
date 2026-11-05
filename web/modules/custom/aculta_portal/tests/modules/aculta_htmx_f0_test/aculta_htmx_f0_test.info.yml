@@ -1,0 +1,5 @@
+name: 'ACULTA HTMX F0 test fixture'
+type: module
+description: 'Test-only dialog and authenticated form fixture for Drupal Core HTMX verification.'
+package: Testing
+core_version_requirement: ^11.5

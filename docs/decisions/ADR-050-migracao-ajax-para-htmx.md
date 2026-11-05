@@ -1,6 +1,6 @@
 # ADR-050 — Migração do AJAX do ACULTA para htmx
 
-- **Status:** aceito pelo responsável em 2026-11-05. F0 parcialmente verificada no Homelab em 2026-11-05; aceite permanece BLOCKED até a prova de popup/form dentro de `<dialog>`. Ver [`docs/htmx-confirmacao.md`](../htmx-confirmacao.md). Nenhum código de produção foi migrado.
+- **Status:** aceito pelo responsável em 2026-11-05. F0 concluída no Homelab em 2026-11-05 com testes oficiais do Core e fixture de diálogo/formulário em Firefox e Chromium; detalhes e reexecução em [`docs/htmx-confirmacao.md`](../htmx-confirmacao.md). Nenhum código de produção foi migrado.
 - **Data:** 2026-11-05.
 - **Relaciona-se com:** ADR-044 (opção C, htmx), ADR-045 (um único módulo de AJAX; sem Core fora do escopo), ADR-046 (V2), ADR-048 (popup de foto), ADR-049 (AJAX do Studio, revisado por este ADR), `docs/portal/CROSS-DOMAIN-REQUEST-POLICY.md`, `docs/portal/PAYMENT-DOMAIN-POLICY.md`.
 
@@ -9,7 +9,7 @@
 - O ADR-049 escolheu Fetch próprio (mecanismo B). O responsável decidiu migrar para htmx (mecanismo C), por ser o caminho do próprio Core (11.3 em diante, `Drupal\Core\Htmx\Htmx`, library `core/drupal.htmx`).
 - O escopo é **todo AJAX de código ACULTA**: tema V2 e módulos `aculta_portal`. Não entra nada que seja do Core ou de módulo contrib.
 - Verificado em fontes públicas (change records do Core 11.3, documentação da classe `Htmx`): os atributos `data-hx-*`, o método `onlyMainContent()` (resposta só do conteúdo), o `FormBuilder` tratando requisições htmx como as do AJAX da API atual, e a ausência de anúncio de remoção do `#ajax`.
-- Verificação local/Core 11.5 em 2026-11-05: `Htmx` não tem anotação `@internal`; `FormBuilder` mantém o token CSRF do Form API e renova `form_build_id` em POST HTMX; FunctionalJavascript e Kernel oficiais passaram. Continua pendente a prova de integração de popup e formulário dentro de `<dialog>` e a validação explícita de token inválido; ver `docs/htmx-confirmacao.md`.
+- Verificação local/Core 11.5 em 2026-11-05: `Htmx` não tem anotação `@internal`; `FormBuilder` mantém o token CSRF do Form API e renova `form_build_id` em POST HTMX; FunctionalJavascript, Kernel e fixture de popup/form dentro de `<dialog>` passaram, incluindo token adulterado rejeitado. Ver `docs/htmx-confirmacao.md`.
 
 ## 2. Decisões
 
@@ -129,7 +129,7 @@ não criar branches nem PRs.
 ### 8.1 Regras de execução
 
 - **Dependências.** F0 precede todas. F1 precede F2 (ambas usam `studio-htmx.js`). F3 depende só de F0, porque cada módulo usa o `Htmx` do Core e não o JavaScript do tema. F4 e F5 dependem de autorização, não de outra fase.
-- **Bloqueio.** Se uma fase falhar em gate ou em verificação, ela para. Registre `BLOCKED: <motivo>` no relatório, deixe a PR como rascunho e siga apenas para fases que não dependem dela.
+- **Bloqueio.** Se uma fase falhar em gate ou verificação, registre `BLOCKED: <motivo>` no roadmap/handoff e siga apenas para fases independentes.
 - **Falha de F0** interrompe a migração inteira: sem a API confirmada, nenhuma fase começa.
 - **Autorização.** F4 e F5 não rodam sem pedido explícito para a tarefa. Registre `AGUARDANDO AUTORIZAÇÃO` e siga.
 - **Decisões em aberto** (seção 7 do ADR): não decida. Registre e deixe de fora da fase.
@@ -140,22 +140,18 @@ não criar branches nem PRs.
 
 ### 8.2 F0 — Confirmação da API no Core 11.5
 
-**Estado atual (2026-11-05): BLOCKED para aceite completo.** A classe, library,
-atributo `onlyMainContent`, fluxo de `form_build_id` e caminho CSRF do Form API
-foram inspecionados. Testes oficiais Core FunctionalJavascript (Chromium
-headless, 1/19) e Kernel (5/60) passaram; depreciações e limites estão em
-`docs/htmx-confirmacao.md`. Ainda falta a prova exigida de popup ACULTA com
-formulário HTMX dentro de `<dialog>`. F1/F2/F3 não começam até a conclusão dessa
-prova e a verificação explícita do caminho CSRF. Nenhum módulo de produção mudou
-de mecanismo.
-
-Entrega direta em `dev` conforme instrução atual do responsável; sem branch de
-fase ou PR.
+**Estado atual (2026-11-05): CONCLUÍDA.** A classe, library, atributo
+`onlyMainContent`, fluxo de `form_build_id` e caminho CSRF foram inspecionados.
+Testes Core FunctionalJavascript (Chromium headless, 1/19) e Kernel (5/60), mais
+fixture ACULTA em `<dialog>`/form (Firefox e Chromium headless, 1/7 em cada)
+passaram. O token inválido é rejeitado. Saídas e depreciações estão em
+`docs/htmx-confirmacao.md`. F1 pode iniciar; F2 segue após F1a e F3 segue a ordem
+de módulos. Nenhum módulo de produção mudou de mecanismo.
 
 1. Localizar no Homelab o `core/lib/Drupal/Core/Htmx/Htmx.php`, o `core/core.libraries.yml` (entrada `drupal.htmx`) e o tratamento de htmx em `core/lib/Drupal/Core/Form/FormBuilder.php`.
 2. Registrar: se `Htmx` é `@internal`; como o CSRF do `form_build_id` é atualizado em requisição htmx; e se `onlyMainContent()` cria `hx-drupal-only-main-content` ou `data-hx-drupal-only-main-content` (divergência entre fontes).
 3. Prova mínima, em fixture isolada de teste: uma rota de fragmento e um formulário com `Htmx::post()`, trocado dentro de um `<dialog>`. Registrar a saída do navegador (`$SUITE_OUT`).
-4. Entregar `docs/htmx-confirmacao.md` (só documentação, sem código de produção) e atualizar o ADR-050 com o resultado.
+4. Entregar `docs/htmx-confirmacao.md` e atualizar o ADR-050. A fixture e o teste ficam exclusivamente em `aculta_portal/tests/`; nenhum código de produção muda nesta fase.
 
 **Aceite:** nota com trechos de código e referências do Core; prova executada; sem divergência sem registro.
 
@@ -240,6 +236,6 @@ Depende só de F0. Uma entrega/commit por módulo, nesta ordem:
 Ao terminar (ou ao parar), o agente entrega:
 
 - Uma tabela por fase: `CONCLUÍDA`, `DRAFT (BLOCKED: motivo)`, `AGUARDANDO AUTORIZAÇÃO` ou `AGUARDANDO DECISÃO`.
-- Para cada PR: branch, commit, arquivos alterados e saída dos gates (ou `DEFERRED` com o motivo).
+- Para cada entrega: commit, arquivos alterados e saída dos gates (ou `DEFERRED` com o motivo).
 - Lista de itens de documentação conforme AGENTS do tema, seção 6, com o checklist respondido.
 - Riscos encontrados, sem decidir por conta própria.
