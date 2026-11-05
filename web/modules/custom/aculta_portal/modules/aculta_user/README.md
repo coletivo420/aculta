@@ -64,6 +64,11 @@ Registros P0/P2-A abaixo são históricos.
 Submódulo do ACULTA Portal para integrações de perfil, participação e experiência
 de usuário. O Drupal User e Profile continuam como fontes de verdade.
 
+**Rotas de edição vigentes:** o Studio expõe o perfil privado do titular em
+`/meu-perfil` e seus formulários em `/meu-perfil/*`, no purpose `account`.
+`aculta_user` continua dono dos dados, Form API, regras de visibilidade e
+validação; não há rota pública definida por esse path.
+
 ## Situação STUDIO-P2-A (2026-10-24) — uso dos serviços User pelo Studio
 
 A rota privada `/studio/pessoal/perfil`, implementada em

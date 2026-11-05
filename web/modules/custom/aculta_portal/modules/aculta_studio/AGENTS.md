@@ -2,7 +2,7 @@
 
 ## ADR-038 — caminhos vigentes das Suites (retificado pelo responsável em 2026-10-30)
 
-Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/we-sativa`; Green Stash `shop:/green-stash`; Culturas `eventos:/culturas`. O prefixo `/studio` e todos os caminhos `/studio/*` respondem 404 sem alias/redirect. O Domain Wiki canônico é `wiki420`. `aculta_studio` permanece framework compartilhado. Conforme ADR-048 (2026-11-05), a raiz de `account` apresenta o dashboard do Studio; Minha Conta fica em `/conta` e Perfil em `/perfil`, separados. ADR-048 retifica ADR-038 nesse ponto.
+Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/we-sativa`; Green Stash `shop:/green-stash`; Culturas `eventos:/culturas`. O prefixo `/studio` e todos os caminhos `/studio/*` respondem 404 sem alias/redirect. O Domain Wiki canônico é `wiki420`. `aculta_studio` permanece framework compartilhado. Conforme ADR-048 (2026-11-05), a raiz de `account` apresenta o dashboard do Studio; Minha Conta fica em `/conta` e Meu Perfil privado em `/meu-perfil`, separados. A rota pública do perfil aguarda decisão própria.
 
 
 ## Contrato histórico antes do ADR-038
@@ -87,7 +87,7 @@ workspace service and WE SATIVA routes.
   permissão real do dono, nunca nome de papel) e `actions()` (ação com o acesso da rota do dono). Ação para outro
   domínio usa `DomainPurposeManager::routeUrl()` e avalia o acesso com `runInPurpose()`.
 - Nenhuma rota ou ação do Studio contorna Form API, Entity Access, Content Moderation nem as permissões do dono.
-- **Rotas canônicas, sem aliases:** WE SATIVA (`/we-sativa/**`, `wiki`) e GREEN STASH (`/green-stash/**`, `shop`) têm caminhos próprios, sem prefixo `/studio`; `/studio` e todos os outros caminhos `/studio/*` respondem 404. Marley usa `/marley/{aba}[/{secao}[/{sub}]]` em `account`; Ganjalab `/ganjalab` em `courses`; Culturas `/culturas` em `eventos`. Conta e Perfil ficam em `/conta` e `/perfil`, separados. Não criar redirects de compatibilidade; URLs aposentadas respondem 404.
+- **Rotas canônicas, sem aliases:** WE SATIVA (`/we-sativa/**`, `wiki`) e GREEN STASH (`/green-stash/**`, `shop`) têm caminhos próprios, sem prefixo `/studio`; `/studio` e todos os outros caminhos `/studio/*` respondem 404. Marley usa `/marley/{aba}[/{secao}[/{sub}]]` em `account`; Ganjalab `/ganjalab` em `courses`; Culturas `/culturas` em `eventos`. Conta e Meu Perfil ficam em `/conta` e `/meu-perfil`, separados. A rota pública do perfil aguarda decisão própria. Não criar redirects de compatibilidade; URLs aposentadas respondem 404.
   Cada aba principal, opção de submenu e aba interna tem URL própria; o AJAX melhora a troca, mas não é a única forma de
   acesso. Segmento fora do alcance da conta responde 404. Os níveis são: áreas em abas superiores (uma por dono);
   submenu à esquerda com as seções da área; abas internas da seção, com as ações no painel. Cada área implementa `sections()` com esses níveis. Apresentação: tokens `data-portal-ui`
@@ -139,7 +139,7 @@ Cada Suite responde em seu próprio domínio/purpose e sob o caminho-base abaixo
 | ACULTA STUDIO GREEN STASH | `shop` | configurado no Domain | configurado no Domain | `/green-stash` |
 | Culturas | `eventos` | configurado no Domain | configurado no Domain | `/culturas` |
 
-Manter Conta e Perfil como experiências diferentes, fora das Suites. Conforme ADR-048, a raiz de `conta` apresenta o dashboard privado do Studio, reescrito por path interno protegido; Minha Conta fica em `/conta` e Perfil em `/perfil`. `/salvos` preserva seu owner e a Conta legada continua em `/conta-legada`.
+Manter Conta e Perfil como experiências diferentes, fora das Suites. Conforme ADR-048, a raiz de `conta` apresenta o dashboard privado do Studio, reescrito por path interno protegido; Minha Conta fica em `/conta` e Meu Perfil em `/meu-perfil`. `/salvos` preserva seu owner e a Conta legada continua em `/conta-legada`.
 
 Regras de implementação:
 - Rotas declaram o purpose correto e validam usuário, módulo owner e permissão no servidor. Purpose incorreto responde 404, inclusive POST. Links cross-domain são absolutos via `DomainPurposeManager`; não enviar POST/proxy de escrita entre purposes.

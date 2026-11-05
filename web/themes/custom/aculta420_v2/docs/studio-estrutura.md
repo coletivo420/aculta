@@ -30,7 +30,7 @@ Todas as telas do Studio ficam no purpose de conta. Layout e conteúdo:
 | Tela | Rota (purpose conta) | Variante | Blocos principais | Spec |
 | --- | --- | --- | --- | --- |
 | Dashboard | `/` | `aside` no desktop, `stack` no mobile | Cartão de identidade (avatar, nome, "Ver perfil público"); grade de suítes (Marley, Ganjalab, WE Sativa, Culturas, Green Stash) | 4.1 |
-| Meu Perfil | a definir | `stack` | Avatar com popup de foto; formulário "Editar perfil público" | 4.2, 4.2.1 |
+| Meu Perfil | `/meu-perfil` | `stack` | Avatar com popup de foto; formulário "Editar perfil público" | 4.2, 4.2.1 |
 | Minha conta | `/conta` | `aside` no desktop, `stack` no mobile | Sub-navegação vertical; "Dados cadastrais (privados)" | 4.3 |
 | Meu trabalho (Marley) | `/marley` | `stack` | Abas de status; tabela de rascunhos; botão "Criar" | 4.4 |
 | Ganjalab | `/ganjalab` | `aside` | Aprendizagem | 4.5 |
@@ -38,9 +38,8 @@ Todas as telas do Studio ficam no purpose de conta. Layout e conteúdo:
 | Culturas | `/culturas` | `aside` | Eventos, locais e organizações | 4.7 |
 | Green Stash | `/green-stash` | `stack` | Gestão da loja | 4.8 |
 
-**Rota de Meu Perfil: a definir.** Minha conta é `/conta`, decidido em 2026-11-05.
-Meu Perfil segue o padrão `/meu-perfil`, a confirmar (regra de URLs públicas em
-português, `FRIENDLY-PORTUGUESE-SLUGS.md`).
+**Rota de Meu Perfil:** `/meu-perfil`, decidida em 2026-11-05. É a tela privada
+de edição; a rota do perfil público permanece em decisão separada.
 
 ### 2.1 Navegação do Studio: decidida
 
@@ -203,7 +202,7 @@ apelido, biografia, redes e privacidade. Esta tela é privada: `noindex` e sem c
 **Rota.** Edição: `/meu-perfil` (decidido). Pública: a V1 usa `/u/<apelido>`. Proposta:
 `/perfil/<apelido>`, pelo mesmo critério de `/meu-perfil` (URLs em português, sem
 abreviação). Antes da versão estável não há redirecionamento, então trocar não quebra nada.
-**A confirmar.**
+**A confirmar:** a rota pública do perfil.
 
 **Purpose.** A página pública é servida no purpose principal (regra da V1). O botão
 "Ver perfil público" do Studio, que fica na conta, é um link comum para outro purpose.
@@ -244,7 +243,7 @@ evidência visual autenticada com Firefox e teclado quando houver `DISPLAY`.
 Decisões de 2026-11-05 estão em `studio-visual-spec.md`, seção 9. Resta:
 
 1. ~~Como trocar de domínio sem o seletor "Multidomínio".~~ **Decidido em 2026-11-05:** o seletor sai da barra; a troca é feita pela lista de sites no menu (seção 3.5).
-2. ~~Rota de Meu Perfil.~~ **Decidido em 2026-11-05:** `/meu-perfil`. Pendente só a rota pública do perfil (seção 4.4): `/u/<apelido>` na V1, ou `/perfil/<apelido>` por proposta.
+2. ~~Rota de Meu Perfil.~~ **Decidido em 2026-11-05:** `/meu-perfil`, implementado na rota privada do Studio. Pendente só a rota pública do perfil (seção 4.4): `/u/<apelido>` na V1, ou `/perfil/<apelido>` por proposta.
 3. **Popup de foto: envio e sorteio.** Decidido: Fetch próprio no `<dialog>`, com AJAX do Studio (ADR-049).
 4. **Papel Estudante e Educador.** Verificado no LMS: "Educador(a)" é papel contextual por curso (`EducatorFeedbackPolicy`). A Ganjalab deve usar o papel do curso, não do Profile. Confirmar.
 5. **Campos privados (telefone e data de nascimento).** Padrão: mostrar e editar. Confirmar a necessidade.

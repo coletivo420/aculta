@@ -21,7 +21,12 @@ final class PrivatePageMetatagHooksTest extends UnitTestCase {
    * Private Studio routes receive noindex and lose public canonical tags.
    */
   public function testPrivateStudioRoutesAreNoindex(): void {
-    foreach (['aculta_studio.dashboard', 'aculta_studio.account', 'aculta_studio.account_data'] as $route) {
+    foreach ([
+      'aculta_studio.dashboard',
+      'aculta_studio.account',
+      'aculta_studio.account_data',
+      'aculta_studio.profile',
+    ] as $route) {
       $route_match = $this->createMock(RouteMatchInterface::class);
       $route_match->method('getRouteName')->willReturn($route);
       $hook = new PrivatePageMetatagHooks($route_match);

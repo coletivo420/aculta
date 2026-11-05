@@ -33,11 +33,11 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       '/conta/pedidos' => 'aculta_studio.account_orders',
       '/conta/apoio' => 'aculta_studio.account_support',
       '/conta/preferencias' => 'aculta_studio.account_preferences',
-      '/perfil' => 'aculta_studio.profile',
-      '/perfil/apelido' => 'aculta_studio.profile_nickname',
-      '/perfil/privacidade' => 'aculta_studio.profile_privacy',
-      '/perfil/bio' => 'aculta_studio.profile_bio',
-      '/perfil/redes/{rede}' => 'aculta_studio.profile_social',
+      '/meu-perfil' => 'aculta_studio.profile',
+      '/meu-perfil/apelido' => 'aculta_studio.profile_nickname',
+      '/meu-perfil/privacidade' => 'aculta_studio.profile_privacy',
+      '/meu-perfil/bio' => 'aculta_studio.profile_bio',
+      '/meu-perfil/redes/{rede}' => 'aculta_studio.profile_social',
       '/marley' => 'aculta_studio.home',
       '/marley/{aba}' => 'aculta_studio.area',
       '/marley/{aba}/{secao}' => 'aculta_studio.section',
@@ -159,7 +159,15 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     foreach ($noCacheRoutes as $id) {
       self::assertTrue($routes[$id]['options']['no_cache']);
     }
-    self::assertTrue($routes['aculta_studio.profile_nickname']['options']['no_cache']);
+    foreach ([
+      'aculta_studio.profile',
+      'aculta_studio.profile_nickname',
+      'aculta_studio.profile_privacy',
+      'aculta_studio.profile_bio',
+      'aculta_studio.profile_social',
+    ] as $id) {
+      self::assertTrue($routes[$id]['options']['no_cache']);
+    }
     self::assertSame('\\Drupal\\aculta_user\\Form\\NicknameForm', $routes['aculta_studio.profile_nickname']['defaults']['_form']);
     self::assertSame('aculta_studio.marley_controller:page',
       $routes['aculta_studio.home']['defaults']['_controller']);
@@ -180,6 +188,11 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       '/studio/salvos',
       '/studio/conta',
       '/studio/perfil',
+      '/perfil',
+      '/perfil/apelido',
+      '/perfil/privacidade',
+      '/perfil/bio',
+      '/perfil/redes/{rede}',
       '/studio/pessoal',
       '/studio/Marley',
       '/studio/inicio',

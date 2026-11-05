@@ -15,7 +15,7 @@
 | ACULTA STUDIO GREEN STASH | `shop` | `/green-stash` |
 | Culturas | `eventos` | `/culturas` |
 
-A decisão vigente da ADR-048 (2026-11-05) coloca o dashboard do Studio em `/` do purpose `account` e Minha Conta em `/conta`; Meu Perfil permanece separado em `/perfil`. A raiz usa um path interno bloqueado em acesso direto, e `/studio*` continua 404.
+A decisão vigente da ADR-048 (2026-11-05) coloca o dashboard do Studio em `/` do purpose `account`, Minha Conta em `/conta` e Meu Perfil privado em `/meu-perfil`; a rota pública do perfil permanece independente e aguarda decisão. A raiz usa um path interno bloqueado em acesso direto, e `/studio*` continua 404.
 
 **Responsabilidades atuais:** Marley reúne somente Revista, moderação do Fórum e Galerias; a aba de Fórum exige `moderar denuncias do forum` e oferece a rota de denúncias do owner, sem menu de discussões ou criação de tópicos. Ganjalab Educador e Ganjalab Estudante são experiências distintas no mesmo purpose `courses`; Course Builder/Form API fica com o Educador e dashboard/jornada com o Estudante. Group/LMS continuam owners de entidades, permissões, matrículas, progresso e notas. Os dashboards mostram links entre Educador/Estudante somente quando a rota destino autoriza a conta. Salvos usam `/salvos`, Mercado Pago usa `/conta/mercado-pago/planos` e `/conta-legada` permanece. URLs absolutas são resolvidas pelo `DomainPurposeManager`; o Domain Wiki canônico é `wiki420`, sem migração de host planejada.
 
@@ -293,7 +293,7 @@ sem alias ou redirect.
 | ACULTA STUDIO GREEN STASH | `shop` | `/green-stash` |
 | Culturas | `eventos` | `/culturas` |
 
-Conta (`/conta/*`) e Perfil (`/perfil/*`) permanecem separados; salvos usam
+Conta (`/conta/*`) e Meu Perfil privado (`/meu-perfil/*`) permanecem separados; salvos usam
 `/salvos`, Mercado Pago `/conta/mercado-pago/planos` e o legado
 `/conta-legada` permanece. URLs entre purposes são produzidas pelo
 `DomainPurposeManager`. A raiz `account` apresenta o dashboard do Studio por

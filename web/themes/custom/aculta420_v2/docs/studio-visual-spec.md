@@ -334,7 +334,7 @@ Estado em 2026-11-05. "Decidido" = resposta do responsável; "padrão" = sem pre
 9. **Diálogo "Selecionar local" no mobile: decidido.** Diálogo, como o popup de login (seção 4.7).
 10. **Papel Estudante e Educador: verificado, a confirmar.** No LMS, "Educador(a)" é um papel contextual por curso: `EducatorFeedbackPolicy` só atribui esse papel a quem é educador do curso. "Estudante" é o dono da resposta ou da matrícula naquele curso. Não é campo do Profile nem role global do Drupal. Portanto, a Ganjalab deve receber o papel do curso, não do perfil. Confirmar.
 11. **Popup de foto: decidido.** Envio de arquivo e sorteio com Fetch próprio no `<dialog>`, por um único módulo JavaScript (ADR-049, seção 4.2.1).
-12. **Rota de Meu Perfil: padrão.** `/meu-perfil`, pela regra de URLs públicas em português. Minha conta é `/conta`, decidido. Confirmar a de Meu Perfil.
+12. **Rota de Meu Perfil: decidida em 2026-11-05.** `/meu-perfil` é a entrada privada de edição, separada da rota pública que aguarda decisão. Minha conta fica em `/conta`.
 13. **Dados ilustrativos:** nomes, datas, cidades e e-mails das imagens são exemplos. Não copiar para fixtures de produção.
 
 ## 10. O que o agente deve entregar a partir daqui

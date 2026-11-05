@@ -11,6 +11,27 @@
   canonical/Open Graph URL públicas. Coberto por teste Unit para rota privada
   e preservação de metadados em rota de perfil público.
 
+## 0.1.0-dev.52 — Meu Perfil em rota canônica privada
+
+- A tela de edição do próprio perfil e seus formulários passam a usar
+  `/meu-perfil` e `/meu-perfil/*`, conforme decisão registrada em
+  `studio-estrutura.md`. `/perfil` e seus caminhos deixam de ser rotas; não há
+  alias ou redirecionamento.
+- As rotas privadas do perfil declaram `no_cache`; o hook existente mantém
+  `noindex, nofollow` e remove URLs canônicas públicas. A rota pública segue
+  independente e sem decisão de slug.
+- Gates: suíte Unit Studio 69 testes/738 assertions PASS; PHPCS Drupal e
+  DrupalPractice, parse das 40 rotas, PHP lint e `git diff --check` PASS.
+  `validate-module-theme-boundary.php` falha por seis classes de design
+  preexistentes em `aculta_lms`/`aculta_lms_resources`. O gate Portal Drupal 11+
+  e o índice de status falham por versões divergentes preexistentes em
+  `aculta_calendar`, `aculta_donation`, `aculta_file_uploader`, `aculta_linkweed`,
+  `aculta_mailer`, `aculta_messenger`, `aculta_paths`, `aculta_ugc` e
+  `aculta_user`. Nenhuma dessas falhas pertence a este incremento.
+- Runtime tinha `updatedb:status` sem updates e `config:status` limpo antes da
+  entrega; rebuild de rotas e smoke do path ficam para a sincronização após o
+  push.
+
 ## 0.1.0-dev.51 — edição contextual de materiais de curso
 
 - Rota Ganjalab Educador para editar os materiais já referenciados no curso;

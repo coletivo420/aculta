@@ -1,5 +1,14 @@
 # ACULTA420 V2 roadmap
 
+## H2 — Meu Perfil privado em `/meu-perfil`
+
+O owner `aculta_studio` agora expõe o editor e os formulários próprios em
+`/meu-perfil` e `/meu-perfil/*`, no purpose `account`. As rotas preservam o
+controle de acesso existente, declaram `no_cache` e recebem `noindex` pelo hook
+privado do Studio. Os paths anteriores `/perfil*` não são aliases. A rota
+pública permanece aguardando decisão do responsável. Validação de código e
+Runtime será registrada no handoff após os gates.
+
 ## Avatar — G1 implementado; integração e validação visual pendentes
 
 Criado o SDC `avatar`, com slot de mídia, fallback neutro nomeado e stories para

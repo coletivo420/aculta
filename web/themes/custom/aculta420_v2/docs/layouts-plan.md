@@ -129,7 +129,7 @@ Mapeamento das telas apresentadas no material visual de referência:
 | Studio dashboard, mobile | `stack` | lista de cards; a navegação vira menu horizontal |
 | Minha conta, dados cadastrais | `aside` | sub-navegação vertical (dados, endereço, documentos, e-mail e segurança, senha, contas conectadas, pedidos, apoio, preferências) à esquerda; formulário à direita |
 | Minha conta, mobile | `stack` | sub-navegação em lista horizontal com rolagem, item atual com `aria-current`; formulário abaixo |
-| Meu Perfil (edição pública) | `stack` | avatar e formulário; as duas colunas do formulário são do componente de formulário, não do layout |
+| Meu Perfil (edição privada do perfil público) | `stack` | avatar e formulário; as duas colunas do formulário são do componente de formulário, não do layout |
 | Meu trabalho (Marley) | `stack` | abas da suíte, abas de situação e tabela; no mobile, a tabela vira cartões (`data-table`) |
 | Ganjalab (estudante e educador) | `aside` | painel do educador à direita; no mobile, empilha |
 | WE Sativa (contribuições) | `aside` | editor da contribuição na lateral; no mobile, empilha |
