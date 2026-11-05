@@ -3,13 +3,17 @@
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
 
-# F2 — navegação do Studio e da conta por HTMX — 2026-11-05
+# F2 — Studio, conta e liberação HTMX em modais de perfil — 2026-11-05
 
-- **Objetivo:** remover `Drupal.Ajax` e o `pushState` próprio da navegação do Studio e da Minha Conta, usando o HTMX do Core.
-- **Concluído:** `d74e79a17e` migra `studio-navigation.js` e `account-navigation.js`, troca as bibliotecas para `core/drupal.htmx`, marca pontos de foco nos controllers e faz o `studio-htmx.js` resolver o novo alvo pelo id em swaps `outerHTML`. Registra `studio-heading` e `data-aculta-focus`.
-- **Verificações:** no Runtime (host `account`), `/marley` e `/conta/dados` navegam por HTMX, atualizam URL e título, devolvem o foco e funcionam com voltar/avançar, sem overflow em 1024 px. Gates: boundary 4266, docs 502 tokens, SDC 35 componentes, schemas 55/764, foundations, classes 455; PHP lint e `git diff --check` PASS.
-- **Pendências:** itens 2 a 5 da F2. A tentativa de migrar a bio (item 3) foi revertida: o diálogo abria e o `data-hx-get` chegava ao DOM, mas o HTMX não iniciava a requisição nem com disparo manual de `aculta:drawer:open`; a causa não foi identificada. O fluxo legado `use-ajax`/fetch permanece e nenhum dado foi gravado; detalhes no `CHANGELOG.md` de `aculta_user`. Também pendentes: captura da matriz 320/390/1440 das navegações e migração das suítes para Playwright (agente paralelo).
-- **Próximo passo:** investigar a ordem de processamento do HTMX nos diálogos da bio e retomar o item 3; depois redes, endereço e popup de foto.
+- **Objetivo:** avançar os itens da Fase 2 (F2) do ADR-050 no Studio e Minha Conta.
+- **Concluído:**
+  - `d74e79a17e`: migra `studio-navigation.js` e `account-navigation.js` para HTMX (F2 item 1).
+  - `bd834c58de`: `StudioProfileController` com raiz `#aculta-studio-profile-editor`, foco acessível `data-aculta-focus`, `tabindex="-1"` e bibliotecas HTMX (F2 item 2).
+  - `0ffb7718a9`: alinha teste unitário `DomainPresentationContractTest` ao contrato de 4 níveis com `domain_sites` (352/352 PASS).
+  - `99f3f4ee5d`: desbloqueia requisições HTMX nos modais de perfil (`AccountModalAccess` passa a reconhecer `HX-Request`, eliminando o 403 Forbidden que bloqueava o item 3).
+- **Verificações:** Unit de `aculta_user` (154/154 PASS), Unit de `aculta_studio` (69/69 PASS), Unit de `aculta_portal` (352/352 PASS); `validate-aculta-user-photo.php` PASS (INV-FOTO-1 a INV-FOTO-11); `validate-account-address.php` PASS; `validate-aculta420-v2-sdc.php` (40/40 PASS via Drush); `validate-aculta420-v2-foundations.php` PASS; `validate-browser-validators.php` PASS; `validate-agent-token-budget.php` PASS.
+- **Pendências:** migração final dos componentes de edição modal de bio e redes sociais para HTMX puro no tema V2 sem `use-ajax` (itens 3 e 4), e popup de foto de perfil (item 5).
+- **Próximo passo:** implementar os diálogos HTMX nos cards de bio e redes, preservando invariantes de foto e regras de país único no endereço.
 
 # Dívida de estilo resolvida — 2026-11-05
 
