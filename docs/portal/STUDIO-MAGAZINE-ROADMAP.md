@@ -111,8 +111,8 @@ completo revalidado em MariaDB no dev.77: 23 testes / 1.039 assertions na
 classe de ciclo da Wiki, incluindo rota, autoria, paginação e acesso. Os forms
 Core da Wiki oferecem retorno cacheável ao workspace se a rota e o acesso
 forem autorizados. Browser
-Firefox ESR/X11, 320 px, Olivero, fallback visual e Runtime permanecem
-pendentes; a suíte visual Studio atual não cobre ainda o workspace WE SATIVA.
+Firefox ESR/X11, 320 px, fallback visual e Runtime permanecem pendentes; a suíte
+visual Studio atual não cobre ainda o workspace WE SATIVA.
 
 ### Integração editorial Wiki no GanjaLab (Studio dev.2 / Wiki dev.19)
 

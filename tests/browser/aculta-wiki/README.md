@@ -93,8 +93,8 @@ presença de `main`/`h1`, erros visíveis e rolagem horizontal, e confirma que o
 caminho interno `/wiki` responde 404 por GET. Também descobre na busca o link
 canônico de um verbete publicado e repete as verificações na página do verbete
 (um `h1` titulado, sem overflow e sem erro). Testa apenas o tema ativo no
-servidor. Olivero foi homologado em dev.117 com os mesmos scripts; leitores de
-tela, teclado e WCAG 2.2 AA completa precisam de sessões separadas. O modo
+servidor; leitores de tela, teclado e WCAG 2.2 AA completa precisam de sessões
+separadas. O modo
 escuro deve ser testado pelo padrão `aculta_portal.appearance.default_mode`
 (restaurado para `light`); `WIKI_DARK=1` apenas passa
 `ui.systemUsesDarkTheme` ao Firefox e não força o contrato do site. Use

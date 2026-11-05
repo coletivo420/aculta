@@ -4,7 +4,6 @@ $host = \Drupal::request()->getHost();
 if (!in_array($host, ['localhost', '127.0.0.1'], TRUE) && !str_ends_with($host, 'aculta.toca.net.br')) throw new RuntimeException('Local or test host only.');
 $assert = static function(bool $condition, string $message): void { if (!$condition) throw new RuntimeException($message); echo "$message: OK\n"; };
 $assert(\Drupal::config('system.site')->get('name') === 'Associação Cultural Antiproibicionista', 'Public identity');
-$assert(!isset(\Drupal::config('core.extension')->get('theme')['olivero']), 'Olivero uninstalled');
 $active = \Drupal::service('config.storage'); $sync = new \Drupal\Core\Config\FileStorage(dirname(__DIR__) . '/config/sync');
 $deploy = json_decode((string) file_get_contents(dirname(__DIR__) . '/web/modules/custom/aculta_portal/modules/aculta_deployer/config/deploy.json'), TRUE);
 // Arquivos dependentes de ambiente são comparados pelo deployer (environment_bound), não aqui.

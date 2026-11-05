@@ -1364,3 +1364,25 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   com outline visível. Capturas e JSON externos em `$SUITE_OUT` da execução. A
   integração aos render arrays das suítes será G3; próximo item novo: `dialog`.
 
+## Limpeza de referências a testes de tema — 2026-11-05
+
+- **Objetivo:** remover resultados de teste do tema alternativo das instruções
+  ativas de agentes, dos roteiros e dos gates, mantendo registros históricos.
+- **Alterações:** instruções da raiz passaram a orientar validação somente no
+  tema ACULTA ativo; removida a menção antiga do README da suíte Browser Wiki,
+  o bloqueio obsoleto do roadmap Studio/Revista e a asserção no gate final que
+  verificava a instalação de um tema específico. `config/sync` não contém
+  configuração selecionando esse tema; não há teste dedicado executável em
+  `tests/`.
+- **Verificações:** busca direcionada sem menções nos arquivos ativos de agente,
+  suites, configurações versionadas e roadmap tratado; sem configurações em
+  `config/sync` que selecionem o tema e sem teste dedicado em `tests/`.
+  `php -l scripts/validate-final-drupal.php` e `git diff --check` PASS;
+  `updatedb:status` sem atualizações e `config:status` sem diferenças. Runtime
+  sem escrita persistente.
+- **Trabalho paralelo preservado:** arquivos novos de
+  `web/themes/custom/aculta420_v2/components/dialog/` permanecem fora desta
+  entrega e não devem ser descartados.
+- **Próximos passos:** commitar apenas os arquivos desta limpeza em `dev`, fazer
+  push fast-forward a `origin/dev` e prosseguir com o componente `dialog`.
+
