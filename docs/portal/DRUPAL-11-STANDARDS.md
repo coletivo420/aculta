@@ -1,12 +1,35 @@
-# Padrão Drupal 11+ — aculta_portal
+# Padrão Drupal 11+ e Drupal 12 ready — aculta_portal
 
-Status: **normativo**.
+Status: **normativo**. Revisado em 2026-11-05.
 
-Baseline arquitetural do projeto: **Drupal Core 11.3+**. No início desta revisão, o `composer.lock` registrava Drupal Core 11.4.8; esse número é evidência de estado, não substitui a verificação do Composer em cada fase.
+Vale para desenvolvedores humanos e para agentes de IA. Declarar compatibilidade com Drupal 12 exige validação do Core 12 instalado e dos módulos contrib, não apenas o `info.yml`.
 
-Este documento vale para desenvolvedores humanos, Codex, ChatGPT/agentes e demais ferramentas de IA. Compatibilidade formal com Drupal 12 ou 13 só pode ser declarada depois de validar Core **e** módulos contrib realmente instalados.
+## 1. Linha de versão
 
-## Arquitetura e fonte de verdade
+- Portal: `core_version_requirement: ^11 || ^12` (`aculta_portal.info.yml`; o gate confere). Tema V2: `^11.5 || ^12`.
+- Core de desenvolvimento: `drupal/core` 11.5.0-beta1 (`composer.json`). O gate confere que o `composer.lock` mantém o Core na linha suportada; o número travado é evidência do ambiente, não parte deste padrão.
+- PHP: o `composer.json` exige `>=8.3`. O plano de migração para o Drupal 12 pede PHP 8.5, ainda não instalado no ambiente de teste (DT-P04). Código novo roda em 8.3; a validação em 8.5 é pendente.
+- Drupal 12 está em beta. Datas de release divergem entre fontes públicas. Não informe data de lançamento como fato; confirme em drupal.org antes de usar.
+
+## 2. Drupal 12 ready
+
+"12 ready" é meta, não estado. Só se declara depois de:
+
+1. Gate do Portal (`php scripts/validate-aculta-portal-drupal11.php`) sem falha, com o Core 12 instalado no ambiente de teste.
+2. Upgrade Status e Drupal Rector executados em worktree isolado, com resultado registrado.
+3. Análise de deprecações do código do Portal e do tema V2, sem chamadas a APIs que os change records marcam como removidas.
+4. Módulos contrib e patches em `patches-aculta.json` compatíveis com a versão 12 testada.
+5. Checklist de compatibilidade do tema V2 (ADR-045, seção 4) concluído.
+
+Pontos que o Core 12 afeta, conforme fontes públicas (confirmar em drupal.org antes de agir):
+
+- **Módulos e temas que saem do Core:** notícia de terceiros indica a remoção de Search, Claro e Olivero do Core. Não crie dependência nova em nenhum deles. O tema administrativo atual é Claro; a troca é decisão do responsável (plano de migração, seção 3).
+- **Olivero:** já vedado para gates e testes do projeto (`AGENTS.md`, "Arquitetura e validação").
+- **Dívida Drupal 11 a eliminar antes do Core 12:** chamadas procedurais `drupal_*` e `drupal_static` em scripts e testes. Código de produção novo não usa essas funções.
+- **Senhas:** segundo o plano de migração, o hash padrão do Core 12 passa a ser Argon2id. Hashes antigos continuam válidos e são recalculados no login. Teste o login após a troca.
+- **Htmx:** o Core 12 usa htmx 4, com API e atributos alterados. Ver seção 5.
+
+## 3. Arquitetura e fonte de verdade
 
 Fluxo obrigatório:
 
@@ -20,212 +43,185 @@ contrato neutro
 ACULTA420
 ```
 
-- Core/contrib continuam fonte de verdade para entidades, autenticação, Commerce, LMS/Group e demais capacidades que já fornecem.
-- `aculta_portal` integra, orquestra e adapta; não cria storage paralelo sem necessidade comprovada.
-- ACULTA420 apresenta dados preparados; não recebe `DomainInterface`, entity storage, services do Portal, decisões de hostname, access ou business logic.
-- `DomainPurposeManager` continua autoridade para purpose e URLs multidomínio.
-- Administração Drupal, carrinho, checkout e pagamento permanecem em MAIN conforme as políticas canônicas do Portal.
-- Requests mutáveis cross-domain não são redirecionados nem replayados.
+- Core e contrib são a fonte de verdade para entidades, autenticação, Commerce, LMS/Group e demais capacidades que já fornecem.
+- `aculta_portal` integra, orquestra e adapta. Não cria storage paralelo quando a capacidade já existe.
+- ACULTA420 apresenta dados preparados. Não recebe `DomainInterface`, entity storage, services do Portal, decisão de hostname, access ou regra de negócio.
+- `DomainPurposeManager` é a autoridade para purpose e URLs multidomínio.
+- Administração Drupal, carrinho, checkout e pagamento ficam no purpose MAIN, conforme `PAYMENT-DOMAIN-POLICY.md` e `ADMIN-DOMAIN-POLICY.md`.
+- Requisições mutáveis entre domínios não são redirecionadas nem reenviadas.
 
-## Hooks
+## 4. Hooks
 
-Drupal Core introduziu hooks OOP com `#[Hook]` em 11.1. Para código runtime novo/refatorado do módulo:
+- Código runtime novo ou refatorado usa hooks OOP: classes em `src/Hook/` com `#[Hook('hook_name')]`. O Core aceita esse padrão desde 11.1.
+- `#[FormAlter]` não é API válida. Forms usam `#[Hook('form_alter')]`, `#[Hook('form_BASE_FORM_ID_alter')]` ou `#[Hook('form_FORM_ID_alter')]`, confirmando no Core instalado a assinatura do hook.
+- Não adicione hook runtime a `aculta_portal.module`. Esse arquivo não deve voltar para abrigar hooks migráveis. Um `.module` novo só se justifica para API procedural exigida pelo Core ou por contrib, com justificativa documentada.
+- Práticas runtime contrárias a este padrão (hook procedural quando o OOP é suportado, service locator estático, callback global novo) são deprecadas no projeto, mesmo quando o Core ainda as aceita. Exceções exigem API upstream ou necessidade comprovada.
+- Preserve ordering e module weight. Não altere ordem apenas por modernização.
+- Dependências entram por DI com autowiring compatível. Não crie definição YAML redundante para classes `#[Hook]` que o Core já registra.
+- Continuam procedurais quando o Core exige: `hook_install()`, `hook_schema()`, `hook_update_N()`, `hook_post_update_NAME()`, uninstall e lifecycle equivalente. Não crie wrapper OOP artificial para lifecycle.
+- Requisitos: `hook_requirements()` está deprecado desde 11.3. Use `InstallRequirementsInterface` no install e `hook_runtime_requirements()` / `hook_update_requirements()` no runtime e no update. Não crie novo `aculta_portal_requirements()`.
+- Contratos OOP protegidos pelo gate, uma vez cada: `form_alter`, `entity_access` e `entity_presave`.
 
-- preferir classes em `src/Hook/` com `#[Hook('hook_name')]`;
-- `#[FormAlter]` não é API válida no baseline atual: foi removido antes do Drupal 11.2 estável; forms OOP usam `#[Hook('form_alter')]`, `#[Hook('form_BASE_FORM_ID_alter')]` ou `#[Hook('form_FORM_ID_alter')]`;
-- práticas runtime legadas contrárias a este padrão (hook procedural quando OOP é suportado, service locator estático, callback global novo) são consideradas **deprecadas pelo projeto ACULTA**, mesmo quando o Core ainda as aceite por compatibilidade; exceções exigem API upstream ou necessidade comprovada;
-- confirmar no Core instalado que o hook específico aceita implementação OOP e conferir sua assinatura;
-- preservar ordering/module weight; não alterar ordem apenas por modernização;
-- dependências de hook entram por DI/autowiring compatível com o Core;
-- não adicionar novos hooks runtime a `aculta_portal.module`.
+Referência: https://www.drupal.org/node/3442349 e https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Hook%21Attribute%21Hook.php/class/Hook/11.x
 
-Continuam procedurais quando o Core assim exige: `hook_install()`, `hook_schema()`, `hook_update_N()`, `hook_post_update_NAME()`, uninstall e lifecycle equivalentes. Não criar wrapper OOP artificial para lifecycle.
+## 5. HTMX
 
-Em Drupal 11.3+, `hook_requirements()` legado está deprecado. Para código novo/refatorado, usar `InstallRequirementsInterface` no install e `hook_runtime_requirements()` / `hook_update_requirements()` para runtime/update; não introduzir novo `aculta_portal_requirements()`.
+HTMX é o padrão para interação assíncrona nova no Portal, quando há ganho real sobre a página completa. A base é o Core: biblioteca `core/drupal.htmx` e a classe `Drupal\Core\Htmx\Htmx`, presentes desde 11.3. A integração foi confirmada no Core 11.5 do ambiente de teste (`docs/htmx-confirmacao.md`).
 
-Classes em `Drupal\\<module>\\Hook` com `#[Hook]` são descobertas pelo Core 11.1+ e registradas automaticamente como serviços autowired; não criar definição YAML redundante só para registrar a classe de hook. Quando interfaces/IDs não forem resolvíveis por tipo, usar DI/autowiring explícito e verificável.
+Regras:
 
-Referência Core: https://www.drupal.org/node/3442349 e https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Hook%21Attribute%21Hook.php/class/Hook/11.x
+1. **Não crie uso novo de Drupal AJAX.** `#ajax`, `core/drupal.ajax`, `use-ajax` e jQuery são legado. Até o momento, nenhum change record encontrado anuncia a remoção do `#ajax` do Core; ele continua funcional. Usos existentes, inclusive os de contrib (Commerce, Views e modais), não entram na migração sem decisão própria (ADR-050, item 2).
+2. **Use o builder `Htmx`** aplicado a render arrays ou respostas. Não escreva `hx-*` nem `HX-*` à mão em código novo, salvo quando o builder não cobrir o caso e a exceção estiver justificada no código.
+3. **Isole a classe `Htmx` em um ponto do módulo**, um serviço ou função de apresentação. O change record de 11.3 descreve a classe como interna por política; o código não tem anotação `@internal`. Mudanças de compatibilidade podem chegar sem aviso, e o ponto único limita o impacto.
+4. **Não dependa de nomes de evento htmx nem de cabeçalhos `HX-Trigger`.** No htmx 4 (Core 12), `HX-Trigger` passa a ser `HX-Source`, `HX-Trigger-After-Swap` e `HX-Trigger-After-Settle` saem, e os nomes de evento mudam.
+5. **Respostas de fragmento usam `onlyMainContent()`.** Sem JavaScript, a mesma rota responde a página completa. Esse é o caminho de progressão: a funcionalidade não depende do fragmento.
+6. **Cacheability de fragmento.** Resposta de fragmento difere da página completa. Declare o contexto correto (cabeçalho de requisição htmx) ou torne a resposta não cacheável. Telas privadas de conta e Studio usam `Cache-Control: private` e `Vary: Cookie`.
+7. **Proxies e filtros de cabeçalho** devem permitir os cabeçalhos `HX-*` de requisição (`HX-Request`, `HX-Target` e outros).
+8. **Formulários** são tratados pela Form API, inclusive `form_build_id` em requisição htmx. Submissão com token adulterado deve ser rejeitada e não executar o submit handler. A fixture de F0 (`HtmxF0DialogTest`) é o modelo para esse teste.
+9. **Testes:** o teste do Core cobre o Core, não a rota do projeto. Rota htmx nova exige teste funcional próprio, em navegador ou FunctionalJavascript, além de checagem sem JavaScript.
 
-## Dependency Injection
+### Diferenças do htmx 4 (Core 12)
 
-Em `web/modules/custom/aculta_portal/src/`:
+Fonte: change record "htmx now uses version 4", publicado em 2026-09-03, presente em 12.0.0-beta1.
 
-- não introduzir `\Drupal::service()`, `\Drupal::entityTypeManager()`, `\Drupal::database()`, `\Drupal::request()`, `\Drupal::routeMatch()`, `\Drupal::currentUser()`, `\Drupal::config()`, `\Drupal::messenger()` ou `\Drupal::entityQuery()`;
-- services, controllers, forms, plugins, subscribers e hooks recebem dependências explicitamente;
-- `ControllerBase` e `FormBase` podem permanecer quando úteis, mas não justificam esconder novas dependências via helpers lazy;
-- não habilitar autowiring global apenas para reduzir YAML; manter definitions previsíveis quando o service contract importa;
-- service replacement/decorator exige justificativa arquitetural e teste.
+- `Htmx::disable` passa a ser `Htmx::ignore`; `Htmx::disabledElt` passa a ser `Htmx::disable`.
+- Removidos: `hx-params`, `hx-prompt`, `hx-ext`, `hx-disinherit`, `hx-inherit`, `hx-request`, `hx-history`, `HX-Prompt` e `getHtmxPrompt`.
+- Adicionados: `hx-query`, `hx-action`, `hx-method`, `hx-status`, `HX-Request-Type`, `HX-Source` (com `getHtmxSource()`).
+- Herança passa a ser explícita, com as flags `Htmx::NO_MODIFIER`, `Htmx::INHERITED` e `Htmx::APPEND`.
+- `hx-on` e `Htmx::on` mudam de sintaxe.
+- `FormBuilderInterface::HTMX_REQUEST` está deprecado e sai no Drupal 13.
 
-Referência: https://www.drupal.org/docs/drupal-apis/services-and-dependency-injection/services-and-dependency-injection-in-drupal
+Consequência: código novo do Portal deve usar apenas o builder, isolado, sem atributos removidos. A migração de código existente segue ADR-050 e a fase de Drupal 12 do plano de migração.
 
-## Form API
+## 6. Form API
 
 Desde Drupal 11.3, callbacks de Form API podem ser resolvidos pelo `CallableResolver` e viver em serviços com DI.
-
-Preferir:
 
 ```php
 $form['#validate'][] = 'aculta_activity.form_callbacks:validateActivity';
 ```
 
-Regras:
-
-- não criar novos callbacks globais `aculta_portal_*`;
-- evitar `[$this, 'callback']` quando o formulário puder ser serializado;
-- agrupar callbacks em serviço coeso;
-- antes de migrar callback legado, validar assinatura e fluxo no Core/contrib instalado.
-- preferir `form_FORM_ID_alter`/`form_BASE_FORM_ID_alter` quando o alvo é realmente específico e a mudança não altera ordering/semântica; não fragmentar um `form_alter` funcional apenas por estética sem provar paridade.
+- Não crie callbacks globais `aculta_portal_*`.
+- Evite `[$this, 'callback']` quando o formulário puder ser serializado.
+- Agrupe callbacks em um serviço coeso.
+- Antes de migrar callback legado, valide assinatura e fluxo no Core ou contrib instalado.
+- Prefira `form_FORM_ID_alter` ou `form_BASE_FORM_ID_alter` quando o alvo for específico e a mudança não alterar ordering nem semântica. Não fragmente um `form_alter` funcional por estética sem provar paridade.
+- Callbacks migrados aparecem **exatamente uma vez** no pipeline. Duplicar `#submit`, `#validate` ou `#after_build` repete efeitos colaterais.
+- O gate verifica a existência do método, o registro único `service.id:method` e as dependências explícitas do serviço.
 
 Referência: https://www.drupal.org/node/3548821
 
-- callbacks migrados devem aparecer **exatamente uma vez** no pipeline apropriado; duplicar `#submit`, `#validate` ou `#after_build` pode repetir efeitos colaterais;
-- o gate deve verificar tanto a existência do método quanto o registro único `service.id:method` e as dependências explícitas do serviço;
+## 7. Injeção de dependência
 
-## Event subscribers
+Em `web/modules/custom/aculta_portal/src/`:
 
-- implementar `EventSubscriberInterface`;
-- novos registros usam a tag Drupal `event_subscriber`;
-- usar `isMainRequest()` quando o comportamento só vale para a request principal;
-- prioridade fica em `getSubscribedEvents()` quando ordering importa;
-- não mudar prioridade sem análise de RouterListener, RedirectResponseSubscriber e demais listeners relevantes;
+- Não use `\Drupal::service()`, `\Drupal::entityTypeManager()`, `\Drupal::database()`, `\Drupal::request()`, `\Drupal::routeMatch()`, `\Drupal::currentUser()`, `\Drupal::config()`, `\Drupal::messenger()` nem `\Drupal::entityQuery()`.
+- Services, controllers, forms, plugins, subscribers e hooks recebem dependências explicitamente.
+- `ControllerBase` e `FormBase` podem permanecer quando úteis, mas não justificam helpers lazy que escondam dependências.
+- Não habilite autowiring global só para reduzir YAML. Mantenha definitions previsíveis quando o contrato do service importa.
+- Replacement ou decorator de service exige justificativa arquitetural e teste.
+
+Referência: https://www.drupal.org/docs/drupal-apis/services-and-dependency-injection/services-and-dependency-injection-in-drupal
+
+## 8. Event subscribers
+
+- Implemente `EventSubscriberInterface` e registre com a tag `event_subscriber`.
+- Use `isMainRequest()` quando o comportamento vale só para a request principal.
+- Prioridade fica em `getSubscribedEvents()` quando a ordem importa.
+- Não mude prioridade sem análise de `RouterListener`, `RedirectResponseSubscriber` e demais listeners relevantes.
 - DI é explícita.
 
 Referência: https://api.drupal.org/api/drupal/core%21core.api.php/group/events/11.x
 
-## Limites de responsabilidade — banco de dados
+## 9. Entity API, access e lifecycle
 
-O módulo `aculta_portal` utiliza as APIs de entidades e storage do Drupal e **não implementa portabilidade, migração ou conversão de banco**. Esse trabalho pertence ao projeto independente **DBTNG-2**. MariaDB é o banco de desenvolvimento e de produção; isso descreve ambientes e não transforma portabilidade em obrigação técnica do Portal. Não adicionar ferramentas ou gates de migração entre motores neste módulo.
-
-## Entity API e access
-
-Preferir storage injetado:
-
-```php
-$storage = $entityTypeManager->getStorage('node');
-$query = $storage->getQuery();
-```
-
-Toda EntityQuery de conteúdo declara conscientemente:
-
-```php
-->accessCheck(TRUE)
-```
-
-ou:
-
-```php
-->accessCheck(FALSE)
-```
-
-A escolha precisa refletir a finalidade da query; `FALSE` não é atalho de performance. Entity access, route access, permissions, ownership e Domain purpose devem ser resolvidos antes da apresentação, com cacheability correta do resultado.
-
-Em `hook_entity_access()`, retornar `AccessResultInterface` e manter metadata proporcional às condições usadas. Resultado condicionado por Domain deve variar por `domain`; resultado condicionado por rota/usuário/request/session deve carregar contexts correspondentes e, quando depender de token one-time ou estado efêmero da request, usar `max-age: 0`. Não adicionar `cachePerPermissions()` quando a decisão não depende de permissões.
-
-Em Forms que consultam gateways ou outros config entities, injetar `EntityTypeManagerInterface` e recuperar o storage adequado; block plugins usam `BlockManagerInterface` injetado. Preservar o acesso a APIs contrib e o resultado fail-closed de pagamentos. Evitar static entity loads em runtime custom quando storage injetado estiver disponível e não consultar tabelas internas de contrib quando houver API pública.
+- Prefira storage injetado: `$entityTypeManager->getStorage('node')->getQuery()`.
+- Toda EntityQuery de conteúdo declara `->accessCheck(TRUE)` ou `->accessCheck(FALSE)`. A escolha reflete a finalidade da query. `FALSE` não é atalho de performance.
+- Entity access, route access, permissões, ownership e purpose de Domain resolvem antes da apresentação, com cacheability correta.
+- Em `hook_entity_access()`, retorne `AccessResultInterface` com metadata proporcional às condições usadas. Resultado que depende de Domain varia por `domain`. Resultado que depende de rota, usuário, request ou session declara os contexts correspondentes. Quando depende de token de uso único ou estado efêmero, use `max-age: 0`. Não adicione `cachePerPermissions()` quando a decisão não depende de permissões.
+- Formulários que consultam gateways ou config entities injetam `EntityTypeManagerInterface`. Block plugins usam `BlockManagerInterface` injetado.
+- Evite static entity loads em código custom quando houver storage injetado. Não consulte tabelas internas de contrib quando houver API pública.
+- Guards de persistência usam hooks OOP. `hook_entity_presave()` recebe `EntityInterface` e roda imediatamente antes do save. Validações de segurança são fail-closed: antes do save, lançam exceção explícita quando o estado solicitado não é seguro.
+- Segredos não vão para Configuration Sync nem são persistidos apenas para facilitar formulário administrativo.
 
 Referência: https://www.drupal.org/node/3201242
 
-## Views
+## 10. Views
 
-`views_embed_view()` e `Views::getView()` existentes são dívida a revisar, não motivo para refactor cego.
+- `views_embed_view()` e `Views::getView()` existentes são dívida a revisar, não motivo para refactor cego.
+- Quando apropriado, prefira o storage da entidade `view` e `ViewExecutableFactory`/`views.executable`.
+- Antes de substituir um wrapper funcional, prove equivalência de argumentos, display, cache, access, attachments e exposed inputs.
 
-Quando apropriado, preferir storage da entidade `view` e `ViewExecutableFactory`/`views.executable`. Antes de substituir um wrapper funcional, provar equivalência de argumentos, display, cache, access, attachments e exposed inputs.
+## 11. Render API e cacheability
 
-## Render API e cacheability
-
-- render arrays permanecem render arrays;
-- não pré-renderizar HTML para atravessar a fronteira Portal → tema;
-- cache contexts, tags e max-age acompanham a decisão que exige variação;
-- preferir `CacheableMetadata`, `BubbleableMetadata` e contratos cacheáveis;
-- `max-age: 0` é válido quando o conteúdo é realmente não-cacheável, mas não deve ser usado automaticamente no lugar de contexts/tags corretos;
-- access e cacheability são parte do mesmo contrato funcional.
-
-- Token API também deve propagar `BubbleableMetadata` para qualquer configuração, entidade relacionada, Domain/alias ou outra fonte usada fora de `$data`; URLs dependentes de host/scheme exigem revisão explícita de contexts/dependencies.
+- Render arrays permanecem render arrays. Não pré-renderize HTML para atravessar a fronteira Portal → tema.
+- Cache contexts, tags e max-age acompanham a decisão que exige variação.
+- Prefira `CacheableMetadata`, `BubbleableMetadata` e contratos cacheáveis.
+- `max-age: 0` é válido quando o conteúdo é realmente não cacheável. Não use no lugar de contexts e tags corretos.
+- Access e cacheability fazem parte do mesmo contrato funcional.
+- Token API propaga `BubbleableMetadata` para configuração, entidade relacionada, Domain ou alias usados fora de `$data`. URLs que dependem de host ou scheme exigem revisão explícita de contexts e dependencies.
 
 Referência: https://www.drupal.org/docs/drupal-apis/render-api/cacheability-of-render-arrays
 
-## Commerce, pagamentos e integrações
+## 12. Commerce, pagamentos e integrações
 
-- Commerce permanece fonte de verdade para cart/order/checkout/payment;
-- MAIN centraliza carrinho, checkout, payment, callbacks browser-facing e webhooks conforme as políticas existentes;
-- não criar estado paralelo nem reimplementar Commerce;
-- segredos ficam fora de Configuration Sync/Git e entram por Key/environment;
-- Mercado Pago preserva os guards e comportamento fail-closed já definidos;
+- Commerce é a fonte de verdade para cart, order, checkout e payment. Não crie estado paralelo nem reimplemente Commerce.
+- MAIN centraliza carrinho, checkout, pagamento, callbacks voltados ao navegador e webhooks, conforme as políticas do Portal.
+- Segredos ficam fora de Configuration Sync e entram por Key com provider de ambiente.
+- Mercado Pago preserva os guards e o comportamento fail-closed já definidos.
 - LMS/Group, Social Auth e demais contrib continuam fonte de verdade de seus domínios.
+- Banco de dados: o `aculta_portal` usa as APIs de entidade e storage do Drupal e **não implementa portabilidade, migração ou conversão de banco**. Esse trabalho pertence ao projeto independente DBTNG-2. Não adicione ferramentas ou gates de migração entre motores neste módulo.
 
-## Entity lifecycle guards
+## 13. PHP
 
-- guards de persistência devem usar hooks OOP quando suportados pelo Core instalado;
-- `hook_entity_presave()` em Drupal 11 usa `EntityInterface` e roda imediatamente antes da persistência;
-- validações de segurança fail-closed devem ocorrer antes do save e lançar exceção explícita quando o estado solicitado não é seguro;
-- não mover segredos para Configuration Sync nem persistir credenciais apenas para facilitar o formulário administrativo.
+- Classes runtime novas em `src/` começam com `declare(strict_types=1);`.
+- Aplique type hints quando compatíveis com as assinaturas extensíveis do Core e de contrib. Não altere assinatura upstream válida apenas por estilo.
 
-## PHP
+## 14. Deprecações e mudanças de versão
 
-Classes runtime novas em `src/` usam:
-
-```php
-declare(strict_types=1);
-```
-
-Aplicar type hints quando compatíveis com as assinaturas extensíveis do Core/contrib. Não alterar assinatura upstream válida apenas por estilo.
-
-## Drupal 12/13 e deprecations
-
-Antes de qualquer refactor estrutural, registrar quando aplicável:
+Antes de qualquer refactor estrutural, registre quando aplicável:
 
 ```text
-CURRENTLY RECOMMENDED IN D11:
-DEPRECATED IN D11:
-REMOVED/CHANGED IN D12:
-ANNOUNCED FOR D13:
+RECOMENDADO NO D11:
+DEPRECADO NO D11:
+REMOVIDO OU ALTERADO NO D12:
+ANUNCIADO PARA D13:
 ```
 
-Consultar API do Core instalado e change records. Não fazer mudança “para Drupal 12/13” por suposição. Upgrade Status/Rector entram como parte própria quando forem úteis; atualização major do Core não pertence a esta modernização.
+Consulte a API do Core instalado e os change records. Não faça mudança "para Drupal 12" por suposição. Upgrade Status e Rector entram como fase própria, em worktree, e não se misturam com entrega funcional. Atualização major do Core não pertence à modernização corrente.
 
-## Gate progressivo
+## 15. Validação
 
-Executar:
+Nunca declare PASS sem executar.
 
-```sh
-php scripts/validate-aculta-portal-drupal11.php
-```
-
-O gate também valida que o `composer.lock` realmente mantém Drupal Core na linha suportada `>=11.3 <12`; o `.info.yml` sozinho não é evidência suficiente do runtime travado.
-
-O gate da P1 não finge que a modernização terminou. Ele registra e congela dívidas observadas na `main` de origem:
-
-- hooks runtime procedurais foram eliminados na P4; `aculta_portal.module` foi removido e não deve retornar apenas para abrigar hooks migráveis;
-- service locators ainda existentes em quatro arquivos `src/`;
-- wrappers de Views conhecidos;
-- um static load conhecido em SupportForm;
-- arquivos runtime ainda sem `strict_types`;
-- seis registros `kernel.event_subscriber`.
-
-Esses limites são **tetos**, não metas. Fases posteriores devem reduzir os allowlists/contagens no mesmo commit que eliminarem a dívida. Qualquer arquivo novo deve nascer conforme o padrão atual.
-
-Após a P4, `form_alter`, `entity_access` e `entity_presave` são contratos OOP protegidos pelo gate exatamente uma vez. A ausência de `aculta_portal.module` é intencional; criar um novo `.module` só é aceitável para uma API procedural realmente exigida pelo Core/contrib e deve vir com justificativa/documentação.
-
-## Validação por fase
-
-Nunca declarar PASS sem executar.
-
-Mudança estática/documental:
+Mudança estática ou documental:
 
 ```text
 STATIC: PASS/FAIL
 RUNTIME HOMELAB: DEFERRED quando não houver alteração funcional
 ```
 
-Quando runtime Drupal mudar, executar no mínimo lint dos PHP modificados, `git diff --check`, cache rebuild, `composer validate`, `composer audit`, `updatedb:status` e `config:status`, além dos gates específicos. Não executar `drush updb`, `cim` ou `cex` automaticamente.
+Quando o runtime Drupal mudar, execute no mínimo: lint dos PHP modificados, `git diff --check`, cache rebuild, `composer validate`, `composer audit`, `updatedb:status` e `config:status`, além dos gates do escopo. Não execute `drush updb`, `cim` ou `cex` automaticamente.
 
-## Fontes oficiais consultadas
+Gate do Portal:
 
-- OOP hooks: https://www.drupal.org/node/3442349
-- Hook attribute/API: https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Hook%21Attribute%21Hook.php/class/Hook/11.x
-- Form API CallableResolver: https://www.drupal.org/node/3548821
-- EntityQuery access: https://www.drupal.org/node/3201242
-- Events/subscribers: https://api.drupal.org/api/drupal/core%21core.api.php/group/events/11.x
-- Services/DI: https://www.drupal.org/docs/drupal-apis/services-and-dependency-injection/services-and-dependency-injection-in-drupal
+```sh
+php scripts/validate-aculta-portal-drupal11.php
+```
+
+Os tetos de dívida (contagens de service locators, wrappers de Views, arquivos sem `strict_types`, registros de subscriber) ficam no gate, não aqui. Reduza o teto no mesmo commit que eliminar a dívida. Arquivo novo nasce conforme este padrão.
+
+## 16. Fontes oficiais
+
+- Hooks OOP: https://www.drupal.org/node/3442349
+- Hook attribute: https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Hook%21Attribute%21Hook.php/class/Hook/11.x
+- Form API, CallableResolver: https://www.drupal.org/node/3548821
+- EntityQuery e access: https://www.drupal.org/node/3201242
+- Events e subscribers: https://api.drupal.org/api/drupal/core%21core.api.php/group/events/11.x
+- Services e DI: https://www.drupal.org/docs/drupal-apis/services-and-dependency-injection/services-and-dependency-injection-in-drupal
 - Render cacheability: https://www.drupal.org/docs/drupal-apis/render-api/cacheability-of-render-arrays
+- Ajax subsystem inclui HTMX (Core 11.3): https://www.drupal.org/node/3539472
+- htmx 4 no Core 12 (change record): https://www.drupal.org/node/3583674
+- Plano de migração Drupal 12 do projeto: `docs/portal/MIGRACAO-DRUPAL-12-PLANO.md`
+- Compatibilidade do tema V2: `docs/decisions/ADR-045-compatibilidade-drupal-12-tema-v2.md`
+- Migração do AJAX para htmx: `docs/decisions/ADR-050-migracao-ajax-para-htmx.md`
