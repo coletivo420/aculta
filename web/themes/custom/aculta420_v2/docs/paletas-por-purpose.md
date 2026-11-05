@@ -17,7 +17,7 @@ Este documento oficializa as paletas do tema V2 (`aculta420_v2`) para os purpose
 
 ## Esquemas
 
-Os nomes aparecem no select de cada purpose na tela Aparência → ACULTA420 V2 → Configurações. A chave é o valor guardado pelo tema. Os nomes não se referem a purposes.
+Os nomes aparecem no select de cada purpose na tela Aparência → ACULTA420 V2 → Configurações. A chave é o valor guardado pelo tema. Os nomes não se referem a purposes. O purpose Links (módulo LinkWeed) tem o esquema Skunk.
 
 | Nome | Chave | Purpose de origem | Tom | Destaque claro | Destaque escuro | Contraste destaque × creme | Contraste texto × destaque (claro) | Contraste destaque × fundo escuro | Contraste texto × destaque (escuro) |
 |---|---|---|---|---|---|---|---|---|---|
@@ -28,6 +28,7 @@ Os nomes aparecem no select de cada purpose na tela Aparência → ACULTA420 V2 
 | **Golden Goat** | `amarelo-golden-goat` | Loja | `suave` | `#f4d04e` | `#fddc64` | 1.37 | 13.98 | 12.66 | 15.6 |
 | **Red Congolese** | `vermelho-red-congolese` | Revista | `suave` | `#d85842` | `#e46a55` | 3.56 | 5.39 | 5.27 | 6.49 |
 | **Red Kush** | `vermelho-red-kush` | Cursos | `profunda` | `#c03d27` | `#dd4228` | 4.88 | 5.33 | 3.97 | 4.88 |
+| **Skunk** | `verde-skunk` | Links (LinkWeed) | `profunda` | `#5a8022` | `#6c9e22` | 4.24 | 4.63 | 5.30 | 6.53 |
 
 ### Sativa (`verde-sativa`)
 
@@ -79,6 +80,15 @@ Os nomes aparecem no select de cada purpose na tela Aparência → ACULTA420 V2 
 - Subelementos, claro: `#5a8022`, `#f0c41e`.
 - Subelementos, escuro: `#6c9e23`, `#fbd132`.
 
+### Skunk (`verde-skunk`)
+
+- Origem: purpose Links (LinkWeed, rota `/redes-sociais`). Tom escolhido: `profunda`.
+- Destaque, claro: `#5a8022`. Escuro: `#6c9e22`.
+- Texto sobre destaque: claro `#ffffff`, escuro `#000000`.
+- Subelementos, claro: `#08271a`, `#f0c41e`, `#c03d27`.
+- Subelementos, escuro: `#0a432c`, `#fbd132`, `#dd4329`.
+- Observação: o tom escuro da Skunk é o verde V1 mais profundo. Ele fica em contraste com o fundo escuro (5,30:1) e com o creme (4,24:1), por isso serve para as páginas de links, que são de leitura e de ação.
+
 ## Superfícies
 
 | Papel | Claro | Escuro |
@@ -111,3 +121,4 @@ Os tokens são definidos sob o seletor do purpose e redefinidos sob o modo escur
 ## Histórico
 
 - 2026-11-05: paleta gerada a partir das cores da V1 e do reggae. Versão aprovada com esquemas nomeados por variedades de cannabis, sem nome de purpose.
+- 2026-11-05: adicionado o esquema Skunk para o purpose Links (LinkWeed). Pendentes sem paleta: Fórum (`forum`) e Eventos (`eventos`).
