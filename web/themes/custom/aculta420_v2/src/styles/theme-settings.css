@@ -45,13 +45,24 @@
 .aculta-purpose-card__control select {
   width: 100%;
   max-width: 100%;
-  padding: var(--spacing-xs, 0.25rem) var(--spacing-sm, 0.5rem);
+  padding: var(--spacing-xs, 0.25rem) 2rem var(--spacing-xs, 0.25rem) var(--spacing-sm, 0.5rem);
   border: 1px solid var(--color-border, #6b7d70);
   border-radius: var(--radius-sm, 0.25rem);
   background: var(--color-surface, #ffffff);
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 0.8rem) 50%, calc(100% - 0.55rem) 50%;
+  background-repeat: no-repeat;
+  background-size: 0.25rem 0.25rem, 0.25rem 0.25rem;
   color: var(--color-text-primary, #0c3c29);
   font-family: var(--font-family-base, Inter, sans-serif);
   font-size: var(--font-size-sm, 0.875rem);
+  appearance: none;
+  cursor: pointer;
+}
+
+.aculta-purpose-card__control select:focus-visible {
+  outline: 2px solid var(--color-focus, #0c3c29);
+  outline-offset: 2px;
 }
 
 .aculta-purpose-card__preview-wrapper {
@@ -76,6 +87,12 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--spacing-xs, 0.25rem);
+}
+
+@media (max-width: 30rem) {
+  .aculta-palette-preview__modes {
+    grid-template-columns: 1fr;
+  }
 }
 
 .aculta-palette-mode {
