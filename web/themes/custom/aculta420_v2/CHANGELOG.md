@@ -21,6 +21,8 @@
   o cache Drupal ainda não descobriu o SDC layout-page. O preprocess aceita a
   antiga lista compilada de argumentos e usa `stack` até o container conhecer
   os serviços de rota. A variante nova depende do rebuild normal autorizado.
+- A disponibilidade de layout-page, accordion e lms-lesson-page é consultada no
+  plugin manager; o arquivo Twig sozinho não indica que o plugin está registrado.
 
 ## Não versionado — mapeamento P2 de layout
 

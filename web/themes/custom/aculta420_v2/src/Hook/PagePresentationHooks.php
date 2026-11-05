@@ -10,6 +10,7 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Path\PathMatcherInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\Core\Theme\ComponentPluginManager;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
@@ -31,6 +32,8 @@ final class PagePresentationHooks {
     private readonly ?CurrentRouteMatch $currentRouteMatch = NULL,
     #[Autowire(service: 'path.matcher')]
     private readonly ?PathMatcherInterface $pathMatcher = NULL,
+    #[Autowire(service: 'plugin.manager.sdc')]
+    private readonly ?ComponentPluginManager $componentManager = NULL,
   ) {}
 
   /**
@@ -40,6 +43,8 @@ final class PagePresentationHooks {
   public function preprocessPage(array &$variables): void {
     $variables['aculta_layout_variant'] = $this->getPageLayoutVariant();
     $variables['aculta_lms_lesson_route'] = $this->currentRouteMatch?->getRouteName() === 'aculta_lms.lesson_view';
+    $variables['aculta_layout_page_sdc_available'] = $this->componentAvailable('layout-page');
+    $variables['aculta_lms_lesson_sdc_available'] = $this->componentAvailable('lms-lesson-page');
     $variables['aculta_page_title'] = [];
     $variables['aculta_breadcrumb'] = [];
     $variables['aculta_help'] = [];
@@ -75,6 +80,21 @@ final class PagePresentationHooks {
         && is_string($link['url'] ?? NULL)
         && $link['url'] !== '',
     ));
+  }
+
+  /**
+   * Exposes whether a SDC is registered, not merely present as a source file.
+   */
+  #[Hook('preprocess_node')]
+  public function preprocessNode(array &$variables): void {
+    $variables['aculta_accordion_sdc_available'] = $this->componentAvailable('accordion');
+  }
+
+  /**
+   * Checks the component repository without rebuilding its persistent cache.
+   */
+  private function componentAvailable(string $component): bool {
+    return $this->componentManager?->hasDefinition('aculta420_v2:' . $component) ?? FALSE;
   }
 
   /**

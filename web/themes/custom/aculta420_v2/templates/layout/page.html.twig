@@ -57,13 +57,13 @@
   {% endif %}
 
   {% set main_content = page.content %}
-  {% if aculta_lms_lesson_route|default(false) and source('aculta420_v2:lms-lesson-page', true) %}
+  {% if aculta_lms_lesson_route|default(false) and aculta_lms_lesson_sdc_available|default(false) %}
     {% set main_content = include('aculta420_v2:lms-lesson-page', {
       content: page.content
     }, with_context = false) %}
   {% endif %}
   {% set layout_page_template = 'aculta420_v2:layout-page' %}
-  {% if source(layout_page_template, true) %}
+  {% if aculta_layout_page_sdc_available|default(false) %}
     {{ include(layout_page_template, {
       variant: aculta_layout_variant|default('stack'),
       title: aculta_page_title,

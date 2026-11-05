@@ -1201,6 +1201,12 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   CSS legado fica só no caminho transitório. Nova requisição respondeu 403
   (acesso anônimo negado) com `X-Robots-Tag: noindex, nofollow, noarchive`.
   Não houve rebuild/clear de cache nem alteração de banco/configuração.
+- **Hotfix de cache após P4:** nova checagem revelou que `source()` reconhecia
+  arquivo SDC mas não sua descoberta no manager; também apareceu instanciação
+  sem argumentos do novo hook Portal de noindex. Substituído por flags
+  `hasDefinition()` no preprocess (false no invocador antigo), fallback `<main>`
+  nos SDCs novos, e dependência de rota opcional no hook Portal. HTTP atual
+  `/conta`: 403 com noindex; logs sem erro novo. Sem limpar cache.
 - **P3 parcial:** `PagePresentationHooks` agora mapeia rotas existentes de conta,
   WE Sativa, Ganjalab e Culturas para aside. Confirmado por leitura do
   `StudioAccountSectionController` que a navegação da conta já marca o item

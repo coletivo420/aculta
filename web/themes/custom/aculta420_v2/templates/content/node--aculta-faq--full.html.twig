@@ -1,4 +1,4 @@
-{% if source('aculta420_v2:accordion', true) %}
+{% if aculta_accordion_sdc_available|default(false) %}
   {{ include('aculta420_v2:accordion', {
     title: label,
     content: content.body
