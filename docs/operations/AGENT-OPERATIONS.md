@@ -11,6 +11,7 @@ Estas regras foram realocadas do arquivo histórico de instruções; aplique som
 - Se um problema pontual e verificável bloquear diretamente uma entrega autorizada, agentes podem corrigi-lo durante o desenvolvimento sem interromper a tarefa. Inspecione primeiro o impacto e a reversão, limite a correção ao bloqueador, preserve o estado recuperável quando necessário e registre a causa e o resultado no changelog/documentação pertinente. Não use essa regra para ampliar escopo, remover conteúdo ou fazer alterações destrutivas.
 - Não inventar ambientes, hosts ou nomes de servidor. Use somente os definidos em `docs/architecture/environments.md` e `docs/architecture/multidomain.md`.
 - Testes em `127.0.0.1` com resolução de host própria simulam o servidor de desenvolvimento, mas não são o servidor de desenvolvimento; registre-os como tal.
+- Para testes autenticados no runtime `test`, confirme `captcha.settings:enable_globally=0` antes da rodada. Esse estado é o bypass operacional de `skip CAPTCHA` exclusivo do ambiente de testes; não desative CAPTCHA em produção.
 - Repositório: `coletivo420/aculta-site` (confira com `git remote -v`). Branch e fluxo de Git: `AGENTS.md`.
 - Sincronização do Runtime e operações persistentes (updatedb, config:import): `AGENTS.md`, seção Runtime.
 

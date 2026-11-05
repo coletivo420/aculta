@@ -29,6 +29,7 @@ Regras de todos os agentes. Em conflito, vale a instrução explícita mais rece
 ## Ambientes e URLs
 
 - Servidor de testes (`*.aculta.toca.net.br`, Homelab) não é produção. Produção (`*.aculta.org`, Hostinger) recebe deploy só com todos os módulos e temas em RC; até lá, verificações de produção são ensaios. Referência: `docs/architecture/environments.md`.
+- Nos testes autenticados do servidor de testes, use o bypass `skip CAPTCHA` já configurado no runtime `test`. Antes da rodada, confirme `captcha.settings:enable_globally=0`; nunca desative CAPTCHA nem conceda bypass em produção.
 - URL pública de conteúdo ou ação humana usa slug em português, minúsculas, hífen e sem acento. Diretiva: `docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`; gate `scripts/validate-public-slugs.php` (requer `vendor/`).
 
 ## Arquitetura e validação

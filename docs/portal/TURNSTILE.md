@@ -16,7 +16,7 @@ carrinho, cálculo de frete, identificação/cadastro de visitante e demais etap
 de checkout. O cadastro silencioso do Commerce acontece ao concluir uma compra;
 ele não usa `user_register_form`. A tela separada de cadastro continua protegida.
 
-O CAPTCHA global (`captcha.settings`, `enable_globally`) fica ligado, e as rotas de administração ficam fora dele. Quem tem o papel `email_confirmed` (com a permissão `skip CAPTCHA`) não recebe o desafio.
+Em produção, o CAPTCHA global (`captcha.settings`, `enable_globally`) fica ligado, e as rotas de administração ficam fora dele. No runtime de testes, a política operacional mantém `enable_globally=0` e os pontos Turnstile inativos para permitir testes autenticados com `skip CAPTCHA`; esse bypass é exclusivo do ambiente `test` e não altera a configuração de produção. Quem tem o papel `email_confirmed` (com a permissão `skip CAPTCHA`) também não recebe o desafio quando o CAPTCHA está ativo.
 
 ## Chaves por ambiente
 

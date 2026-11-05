@@ -37,3 +37,8 @@ Cada README local é a fonte dos URLs, critérios, fixtures e variáveis da fren
 ## Códigos
 
 `0` passou; `124` timeout; `1` erro do Playwright/asserção; `2` pré-requisito ausente. Não versionar PNG, HTML, trace, vídeo, log ou credencial.
+
+## Autenticação de teste
+
+No runtime `test`, os testes autenticados usam as credenciais locais documentadas em `secrets/` (ignoradas pelo Git). Antes da rodada, confirme que o ambiente é `test` e que `captcha.settings:enable_globally=0`; esse estado representa o bypass operacional de `skip CAPTCHA` exclusivo do servidor de testes. Não registre credenciais, tokens ou senhas nos artefatos e não use esse bypass em produção.
+
