@@ -5,17 +5,17 @@ Documenta o que existe, o que não é do tema e o que falta.
 
 ## 1. Estado
 
-**Scaffold, não aplicado.** Existem:
+**B1 implementado.** Existem:
 
 - `theme-settings.php`: formulário com a seção "Superfícies".
+- `src/Hook/SurfaceSettingsHooks.php`: aplica classes neutras no `<body>` sem
+  lógica de domínio.
 - `config/schema/aculta420_v2.schema.yml`: schema de `aculta420_v2.settings`.
 - `config/install/aculta420_v2.settings.yml`: valores padrão.
 
-As opções são salvas, mas **nenhuma altera o CSS ainda**. Para aplicar, falta
-ligar cada valor a uma classe no `<html>` ou no `<body>` e criar as regras CSS
-correspondentes (ver seção 4). Isso depende de captura nos dois modos e de
-gates no Homelab. A validação do Drupal também não foi feita aqui, porque não há
-`vendor/` nem Drush neste ambiente.
+As opções são salvas em `aculta420_v2.settings` e ligadas a classes neutras no
+`<body>`. A migração dos consumidores CSS e a captura visual continuam
+pendentes.
 
 ## 2. Opções atuais
 

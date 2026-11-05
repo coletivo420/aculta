@@ -8,8 +8,8 @@ use Drupal\Core\Form\FormStateInterface;
  * @file
  * Opções administrativas do tema ACULTA420 V2.
  *
- * Estado: scaffold. As opções são salvas em aculta420_v2.settings, mas ainda não
- * são aplicadas ao CSS (ver docs/configuracao-do-tema.md). Não controlam modo de
+ * As opções são salvas em aculta420_v2.settings e aplicadas como classes neutras
+ * no body pelo hook SurfaceSettingsHooks. Não controlam modo de
  * cor, domínio, purpose nem regra de acesso: esses pertencem ao Portal.
  */
 
@@ -20,7 +20,7 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
   $form['aculta_superficies'] = [
     '#type' => 'details',
     '#title' => t('Superfícies'),
-    '#description' => t('Raios e faixas de acento dos componentes. Ainda não aplicados ao CSS: esta seção é um scaffold.'),
+    '#description' => t('Raios e faixas de acento dos componentes. As opções são aplicadas como classes neutras no body.'),
     '#open' => TRUE,
   ];
 
