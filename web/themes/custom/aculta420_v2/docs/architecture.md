@@ -76,6 +76,8 @@ domínio nem purpose. Instruções operacionais estão em
 
 `base.css` e `layout.css` definem reset, foco visível, movimento reduzido, prevenção de overflow em conteúdo longo e a estrutura da página. `wiki.css` adapta os wrappers de listagem e busca da Wiki420. A biblioteca `global-styling` carrega essas folhas e as duas fontes externas do Google Fonts.
 
+`portal-account.css` foi portado do V1 em 2026-11-05 (cobre a Minha Conta: navegação, bio, redes, cursos e foto). As variáveis `--aculta-*` e `--bs-*` foram trocadas por tokens semânticos do V2 (ex.: `--aculta-text-primary` → `--color-text-primary`); as regras `.form-control` e `.table-responsive` do Bootstrap não foram portadas. Estado: pendente de captura visual (320 e 1440 px, claro e escuro); DEFERRED. Os demais grupos de classes sem CSS no V2 continuam pendentes.
+
 ## 5. JavaScript
 
 Todo o JavaScript é vanilla, com `Drupal.behaviors` e `core/once`. Não há jQuery.

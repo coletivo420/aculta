@@ -9,6 +9,7 @@ global-styling:
       src/styles/events.css: {}
       src/styles/wiki.css: {}
       src/styles/forum.css: {}
+      src/styles/portal-account.css: {}
   dependencies:
     - system/base
 
