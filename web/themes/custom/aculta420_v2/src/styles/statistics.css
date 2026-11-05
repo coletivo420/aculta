@@ -1,0 +1,118 @@
+/* ACULTA estatísticas (portado do V1 em 2026-11-05). Estado: DEFERRED (sem captura visual). */
+
+.aculta-statistics {
+  display: grid;
+  gap: 1rem;
+  color: var(--color-text-primary);
+}
+
+.aculta-statistics__areas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.aculta-statistics__areas a {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.aculta-statistics__areas a:hover,
+.aculta-statistics__areas a:focus-visible {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.aculta-statistics__form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.aculta-statistics__form label {
+  display: grid;
+  gap: 0.25rem;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.aculta-statistics__form select {
+  width: 100%;
+  min-width: 0;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
+}
+
+.aculta-statistics__form select:focus-visible,
+.aculta-statistics__form button:focus-visible,
+.aculta-statistics__areas a:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.aculta-statistics__summary,
+.aculta-statistics__comparison,
+.aculta-statistics__note {
+  color: var(--color-text-secondary);
+}
+
+.aculta-statistics__chart {
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  background: var(--color-canvas);
+  overflow-x: auto;
+}
+
+.aculta-statistics__chart svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.aculta-statistics__table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--color-text-primary);
+}
+
+.aculta-statistics__table th,
+.aculta-statistics__table td {
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+}
+
+.aculta-statistics__table caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.aculta-statistics__form label {
+  width: 100%;
+}
+
+@media (min-width: 36rem) {
+  .aculta-statistics__form label,
+  .aculta-statistics__form select {
+    width: auto;
+  }
+
+  .aculta-statistics__form select {
+    min-width: 12rem;
+  }
+}

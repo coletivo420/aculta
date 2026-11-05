@@ -1,0 +1,160 @@
+/* ACULTA busca (portado do V1 em 2026-11-05). Estado: DEFERRED (sem captura visual). */
+
+.aculta-search {
+  max-width: 48rem;
+  margin-block: var(--spacing-section);
+  color: var(--color-text-primary);
+}
+
+.aculta-search form[role="search"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.aculta-search form[role="search"] > div:first-child {
+  flex: 1 1 18rem;
+}
+
+.aculta-search input[type="search"],
+.aculta-search-preview {
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.aculta-search-preview-input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  color: var(--color-text-primary);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+}
+
+.aculta-search input[type="search"]:focus-visible,
+.aculta-search-preview-input:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.aculta-search form[role="search"] .form-submit,
+.aculta-search form[role="search"] button[type="submit"],
+.aculta-search-preview .form-submit {
+  font-family: var(--font-family-heading);
+  font-weight: 600;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.25rem;
+  color: var(--color-on-highlight);
+  background: var(--color-brand-highlight);
+  border: 1px solid var(--color-brand-highlight);
+  border-radius: var(--radius-base);
+  transition: color 180ms ease, background-color 180ms ease;
+}
+
+.aculta-search form[role="search"] .form-submit:is(:hover, :focus-visible),
+.aculta-search form[role="search"] button[type="submit"]:is(:hover, :focus-visible),
+.aculta-search-preview .form-submit:is(:hover, :focus-visible) {
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.aculta-search__results {
+  margin-top: 2rem;
+}
+
+.aculta-search__results > p {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.aculta-search__results .item-list ul {
+  margin: 0;
+  padding-inline-start: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-border);
+}
+
+.aculta-search__results .item-list li {
+  margin: 0;
+  padding-block: 0.875rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.aculta-search__results a {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  text-underline-offset: 0.2em;
+}
+
+.aculta-search__results a:is(:hover, :focus-visible) {
+  color: var(--color-link-editorial-hover);
+}
+
+.aculta-search__results a:focus-visible,
+.aculta-search-preview a:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 3px;
+}
+
+.aculta-search-popup {
+  color: var(--color-text-primary);
+}
+
+.aculta-search-preview {
+  margin-top: 0.75rem;
+  color: var(--color-text-primary);
+}
+
+.aculta-search-preview ul {
+  padding-inline-start: 0;
+  margin-bottom: 0.5rem;
+  list-style: none;
+  border-top: 1px solid var(--color-border);
+}
+
+.aculta-search-preview li {
+  padding-block: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.aculta-search-preview a {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.aculta-search-preview .aculta-search-preview__full {
+  --aculta-btn-color: var(--color-text-primary);
+  --aculta-btn-bg: transparent;
+  --aculta-btn-border-color: var(--color-text-primary);
+  --aculta-btn-hover-color: var(--color-on-primary);
+  --aculta-btn-hover-bg: var(--color-primary);
+  --aculta-btn-hover-border-color: var(--color-primary);
+  color: var(--aculta-btn-color);
+  background-color: var(--aculta-btn-bg);
+  border: 1px solid var(--aculta-btn-border-color);
+  font-size: 0.875rem;
+  padding: 0.25rem 0.75rem;
+  min-height: 0;
+}
+
+.aculta-search-preview .aculta-search-preview__full.btn:is(:hover, :focus-visible) {
+  color: var(--aculta-btn-hover-color);
+  background-color: var(--aculta-btn-hover-bg);
+  border-color: var(--aculta-btn-hover-border-color);
+}
+
+@media (min-width: 768px) {
+  .aculta-search-utility + .ajax-progress-throbber {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aculta-search form[role="search"] .form-submit,
+  .aculta-search-preview .form-submit {
+    transition: none;
+  }
+}

@@ -16,6 +16,10 @@ global-styling:
       src/styles/studio.css: {}
       src/styles/event-organization.css: {}
       src/styles/content.css: {}
+      src/styles/search.css: {}
+      src/styles/statistics.css: {}
+      src/styles/studio-identity.css: {}
+      src/styles/buttons.css: {}
   dependencies:
     - system/base
 

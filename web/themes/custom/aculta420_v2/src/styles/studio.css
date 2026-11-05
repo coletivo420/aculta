@@ -1,7 +1,4 @@
-/* ACULTA Studio (aculta_studio): apresentação das abas, do painel e das ações.
-   Portado do V1 em 2026-11-05. Os valores dos tokens fidelity (--aculta-studio-fidelity-*)
-   são aliases dos tokens semânticos do V2 e seguem o modo claro/escuro de tokens.css.
-   Seletores só do Bootstrap foram removidos. Estado: DEFERRED (sem captura visual). */
+/* ACULTA Studio (portado do V1 em 2026-11-05). Estado: DEFERRED (sem captura visual). */
 
 .studio,
 .aculta-profile-editor,
@@ -1047,9 +1044,9 @@ body.path-marley form.node-revista-form .form-actions :is(.form-submit, .button-
 }
 
 .studio-account-nav-list a[aria-current="page"] {
-  border-color: var(--color-primary);
-  background: var(--color-surface-raised);
-  color: var(--color-primary);
+  border-color: var(--color-brand-highlight);
+  background: var(--color-brand-highlight);
+  color: var(--color-on-highlight);
   font-weight: 700;
 }
 
@@ -1865,13 +1862,6 @@ body.path-marley .aculta-main > .aculta-container:has([data-aculta-studio="root"
   gap: 0.5rem;
 }
 
-[data-portal-ui="aculta-learning-home__continue"] .aculta-card__footer .btn {
-  display: inline-flex;
-  min-block-size: 2.75rem;
-  align-items: center;
-  justify-content: center;
-}
-
 [data-portal-ui="aculta-learning-journey"],
 [data-portal-ui="aculta-learning-room"] {
   min-width: 0;
@@ -1907,9 +1897,9 @@ body.path-marley .aculta-main > .aculta-container:has([data-aculta-studio="root"
 }
 
 .aculta-content .lms-start-link a {
-  color: var(--color-primary);
-  border: 1px solid var(--color-primary);
-  background-color: var(--color-surface-raised);
+  color: var(--color-on-highlight);
+  border: 1px solid var(--color-brand-highlight);
+  background-color: var(--color-brand-highlight);
   font-size: var(--aculta-studio-fidelity-font-size-default);
 }
 
