@@ -378,8 +378,11 @@ autorização; o mapeamento de Wiki para a faixa de acento aguarda confirmação
 
 ### Pendências de shell e fundações
 
-- Conferir visualmente o rodapé e todos os regions restantes nos templates da
-  V1, sem alterar a Institution Bar ou o contrato do Domain Header.
+- Rodapé e regions restantes: capturados em `tests/browser/aculta420-v2-footer/`
+  no Runtime de desenvolvimento (320, 390 e 1440 px, claro e escuro). Institution
+  Bar e Domain Header presentes, rodapé com conteúdo e sem overflow horizontal.
+  A aceitação visual final continua com o responsável; Institution Bar e
+  Domain Header não foram alterados.
 - Atualizar o handoff operacional após resolver a entrada `bootstrap5`
   obsoleta em `core.extension`; importação completa foi aplicada e o Runtime
   está sem diferenças de configuração. Bootstrap não foi instalado.
