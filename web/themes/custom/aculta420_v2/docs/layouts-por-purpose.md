@@ -7,6 +7,13 @@ visuais, purpose a purpose, sem repetir a regressão de `91549bc7`.
 Regra: um componente só entra num template se o resultado for igual ou melhor
 que o markup atual, com CSS adaptado e captura antes/depois nos dois modos.
 
+## 0. Decisões do responsável (2026-11-05)
+
+- **Primeiro passo:** adotar `card-cultural` em Revista e Eventos, com CSS adaptado e captura antes/depois.
+- **Precedência da faixa de acento:** o administrador (UI Styles) prevalece sobre o `accent` do Portal (Opção A, registrada na F4).
+- **Studio e conta:** módulo `aculta_studio`, rotas `/meu-perfil`.
+- **Loja:** entra nesta rodada só com componentes sem preço (cartão e estado vazio). `price` fica fora.
+
 ## 1. Consumo atual por componente
 
 Componentes com zero consumidores no repositório (medido por `grep` em templates
