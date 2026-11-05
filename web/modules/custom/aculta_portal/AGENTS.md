@@ -8,10 +8,10 @@ Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/we-sati
 Herde `AGENTS.md` da raiz. Consulte `docs/AGENT-POLICIES.md` **somente nas seções relevantes** e os contratos `docs/portal/GUARDRAILS.md` e `docs/portal/DRUPAL-11-STANDARDS.md` quando a alteração exigir.
 
 - Core/contrib são a fonte de verdade; preserve a fronteira Core/contrib → Portal → contrato neutro → tema.
-- Endereço e CEP: use exclusivamente o contrato central em `AccountAddressForm` e `aculta_portal_cep`. O país é sempre Brasil (`BR`), sem seletor de país em formulário algum. Validação no servidor obrigatória (`country_code = BR`). Preserve número, S/N e complemento no CEP. Ver ADR-034 e `docs/portal/ACCOUNT-ADDRESS.md`.
+- Endereço e CEP: regra na raiz (`AGENTS.md`); contrato central em `AccountAddressForm` e `aculta_portal_cep`. Não crie formulário de endereço paralelo.
 - Valide DI, Entity API, access, render/cacheability e gates do escopo.
 - Para rotas/domínios, consulte `docs/architecture/AGENT-ROUTES.md` e `docs/architecture/ROUTES-SITEMAP.md`.
-- **Administração e integrações somente no MAIN:** `/painel-administrativo/**` e `/integracoes/**` respondem somente no domínio principal; em subdomínios, 404 (nunca 302). Não renderize toolbar, links contextuais ou ações administrativas em subdomínio. Política: `docs/portal/ADMIN-DOMAIN-POLICY.md`; gate: `php scripts/validate-admin-routes-main-domain.php`.
+- Rotas administrativas somente no MAIN (regra na raiz). Além dela: não renderize toolbar, link contextual ou ação administrativa em subdomínio. Política: `docs/portal/ADMIN-DOMAIN-POLICY.md`.
 - Regras adicionais de submódulos só se aplicam ao submódulo alterado.
 
 - Antes de criar ou editar captura de endereço, leia `docs/decisions/ADR-033-endereco-busca-e-locais.md` e siga `docs/portal/ACCOUNT-ADDRESS.md`: reutilize o adaptador central e CEP para endereço completo; Brasil padrão, sem seletor.

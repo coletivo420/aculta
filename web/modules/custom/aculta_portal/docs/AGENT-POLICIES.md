@@ -144,10 +144,8 @@ A documentação deve registrar o motivo arquitetural das regras, não apenas su
 
 ## HTMX como padrão do tema (regra permanente)
 
-- Interações assíncronas novas ou migradas do tema ACULTA420 usam HTMX do Core (`core/drupal.htmx`, API `Drupal\Core\Htmx\Htmx` e atributos `data-hx-*`).
-- Drupal AJAX (`core/drupal.ajax`, `#ajax`, `use-ajax`) é legado e não deve ser introduzido em componentes ou bibliotecas do tema. Contratos existentes podem permanecer somente durante uma migração documentada; não crie nova dependência para ampliá-los.
-- O Portal fornece fragmentos, validação, acesso, cache e respostas HTMX sem depender do tema. Preserve links e formulários nativos como fallback sem JavaScript.
-- Progresso e exceções ficam registrados no ADR-050 e no roadmap do ACULTA420 V2.
+- Regra de HTMX e AJAX: `AGENTS.md` (raiz). Aqui vale só a parte do Portal: o Portal entrega fragmentos e respostas HTMX (`Drupal\Core\Htmx\Htmx`) com validação, acesso e cache, sem depender do tema.
+- Progresso e exceções: ADR-050 e roadmap do ACULTA420 V2.
 
 ## Papéis e hierarquia (regra permanente)
 

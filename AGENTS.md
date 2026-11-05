@@ -26,6 +26,11 @@ Regras de todos os agentes. Em conflito, vale a instrução explícita mais rece
 - Não grave caminhos absolutos de máquina nem URLs de ambiente fixas em código, testes ou docs. Use caminhos relativos à raiz e variáveis de ambiente.
 - Não grave segredos, tokens ou senhas. Credenciais ficam fora do Git.
 
+## Ambientes e URLs
+
+- Servidor de testes (`*.aculta.toca.net.br`, Homelab) não é produção. Produção (`*.aculta.org`, Hostinger) recebe deploy só com todos os módulos e temas em RC; até lá, verificações de produção são ensaios. Referência: `docs/architecture/environments.md`.
+- URL pública de conteúdo ou ação humana usa slug em português, minúsculas, hífen e sem acento. Diretiva: `docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`; gate `scripts/validate-public-slugs.php` (requer `vendor/`).
+
 ## Arquitetura e validação
 
 - Endereço centralizado em `aculta_portal_cep` e país exclusivo Brasil (BR), conforme ADR-034 (`docs/decisions/ADR-034-pais-unico-brasil-endereco-central.md`).

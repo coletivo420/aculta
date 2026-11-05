@@ -19,7 +19,7 @@ Herde o `AGENTS.md` da raiz do repositório. Estas regras são específicas do t
 - **Tema de teste:** regra canônica em `AGENTS.md` (raiz, "Arquitetura e validação"). Valide só no tema ACULTA ativo.
 - **Acessibilidade.** HTML semântico, foco visível (`:focus-visible`), estado nunca só por cor, texto oculto (`visually-hidden`) quando um controle só com ícone precisa de nome.
 - **JavaScript mínimo.** Só onde há interação. Use `Drupal.behaviors` com `core/once`. O menu e os diálogos devem funcionar sem JavaScript quando possível.
-- **HTMX obrigatório para interação assíncrona.** HTMX via `core/drupal.htmx` e atributos `data-hx-*` é o padrão do tema. Drupal AJAX (`core/drupal.ajax`, `#ajax`, `use-ajax`) é legado e não deve ser introduzido em componentes ou bibliotecas V2. Mantenha o fluxo nativo de links/formulários como fallback; integrações antigas em migração devem ter bloqueio e etapa documentados.
+- **HTMX:** regra da raiz (`AGENTS.md`). Aqui, não crie componente ou biblioteca V2 com `#ajax` ou `use-ajax`. Progresso da migração: ADR-050.
 - **Nada de contexto de entidade no tema.** Não leia `user_picture`, Profile, configuração Social Auth ou regra de domínio. O Portal entrega o dado pronto.
 - **Avatar.** Ordem: foto liberada → avatar do acervo → ícone neutro. Nunca letra, inicial ou monograma do nome.
 
