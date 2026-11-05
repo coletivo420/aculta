@@ -74,6 +74,16 @@ cobrem cartões e rolagem. Firefox visível passou em seis larguras, dois modos,
 sem overflow de página, zoom real 200% a 320 CSS px, Tab com foco visível e
 fallback sem JavaScript. O consumer real do Studio permanece pendente.
 
+## Empty state — G1 implementado; consumer Runtime pendente
+
+Criado o SDC `empty-state` com slots para mensagem e ações e variante de
+espaçamento compacto. Mantém o contrato neutro consumido pelo Studio: o módulo
+continua decidindo o estado vazio, preparando conteúdo localizado e links
+permitidos, com cache e permissões preservados. Stories, documentação e gate de
+schema estrito/renderização de 35 SDCs e descoberta CSS passaram. Firefox
+visível passou em 12 estados, foco por Tab e zoom real 200%. A integração em
+página Studio servida com a V2 permanece pendente.
+
 ## Menu de conta e sites — C2 implementado; validação visual pendente
 
 O `account-menu` combina a lista neutra `aculta_domain_sites` com o bloco de

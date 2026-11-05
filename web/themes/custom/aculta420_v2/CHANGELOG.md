@@ -1,13 +1,25 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — componente Empty state
+
+- Criado o SDC `empty-state`, compatível com o contrato neutro já consumido pelo
+  Studio: mensagem e ações vêm dos render arrays do módulo. A variante compacta
+  controla somente o espaçamento; o componente não determina acesso nem vazio.
+- Stories default/compact, catálogo, especificação do Studio e gate Drupal de
+  render/assets incluídos. A integração em página Studio servida com a V2 ainda
+  não foi exercitada no Runtime. Drupal validou schema estrito e render de 35
+  SDCs; Firefox visível passou em 12 estados, foco por Tab e zoom real 200%.
+
 ## Não versionado — componente Data table
 
 - Criado o SDC `data-table` com tabela semântica, variante de cartões móveis e
   rolagem horizontal explícita conforme ADR-040. O comportamento JS transforma
   o wrapper em região nomeada/focável somente durante overflow, acompanhando
   resize e mudanças renderizadas pelo Drupal.
-- Stories cobrem as variantes. SDC render/asset, schemas, browser validators e
-  Firefox visível em 12 estados (seis larguras e dois modos), zoom 200% a 320
+- Stories cobrem as variantes. O gate Drupal V2 validou schema, assets e render
+  de 34 SDCs; browser validators também passaram. O validador estático
+  `validate-aculta420-sdc-schemas.php` cobre a V1, não a V2. Firefox visível
+  passou em 12 estados (seis larguras e dois modos), zoom 200% a 320
   CSS px e fallback sem JavaScript passaram; consumer Drupal de Studio permanece
   pendente.
 

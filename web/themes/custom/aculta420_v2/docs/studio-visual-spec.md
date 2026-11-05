@@ -188,7 +188,7 @@ Para cada tela: variante (ADR-048), posição, componentes sugeridos e comportam
   - Subseção "Meus cursos" com botão **"+ Novo curso"** amarelo no canto superior direito.
   - Lista de cursos: nome, selo de situação ("Publicado" verde, "Rascunho" cinza) e botão de ação em linha (⋯ com `dots-three`, `aria-label` "Ações do curso").
 - **Mobile:** coluna lateral empilhada abaixo da principal; o seletor de papel continua no topo.
-- Componentes: `progress` (a criar, com texto), `badge`, `button`, `status-messages` quando não há cursos (`empty-state`, a criar).
+- Componentes: `progress` (com texto), `badge`, `button` e `empty-state` quando não há cursos.
 
 ### 4.6 WE Sativa (contribuições da wiki)
 
@@ -339,6 +339,6 @@ Estado em 2026-11-05. "Decidido" = resposta do responsável; "padrão" = sem pre
 
 ## 10. O que o agente deve entregar a partir daqui
 
-- Componentes que **faltam** para as telas: `tabs`, `data-table` (com versão em cartão), `progress` (com texto), `empty-state`, `dialog` (painel de seleção), `studio-nav` (navegação vertical, com versão em painel no mobile), `experience-card`, `form-field` (rótulo, campo, ajuda, erro). Nomes sugeridos; o agente pode propor outros, desde que registre em `docs/components.md`.
+- Componentes que **faltam** para as telas: `studio-nav` (navegação vertical, com versão em painel no mobile), `experience-card` e `price`. `tabs`, `data-table` (com versão em cartão), `progress` (com texto), `empty-state`, `dialog` e `form-field` (rótulo, campo, ajuda, erro) já têm SDC. Nomes sugeridos; o agente pode propor outros, desde que registre em `docs/components.md`.
 - Componentes que **já existem** e devem ser reutilizados: `button`, `badge`, `icon`, `status-messages`, `pagination`, `navigation-bar` (padrão do drawer mobile), `breadcrumb`, `card-cultural` (se o cartão de experiência for o mesmo padrão).
 - Cada tela entra com story e captura (320, 390, 768, 960, 1440 px; claro e escuro; zoom 200%; teclado), conforme `AGENTS.md` seção 4 e seção 6.

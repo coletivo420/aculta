@@ -65,6 +65,7 @@ $component_ids = [
   'discussion-comment',
   'dialog',
   'data-table',
+  'empty-state',
   'event-page-layout',
   'filter-chips',
   'form-field',
@@ -174,6 +175,13 @@ $samples = [
     '#props' => ['label' => 'Tabela de conteúdos', 'mobile_variant' => 'cards'],
     '#slots' => [
       'table' => Markup::create('<table class="data-table__table" role="table"><caption>Conteúdos recentes</caption><thead role="rowgroup"><tr role="row"><th id="col-title" scope="col" role="columnheader">Título</th><th id="col-status" scope="col" role="columnheader">Status</th></tr></thead><tbody role="rowgroup"><tr role="row"><td role="cell" headers="col-title" data-label="Título">Revista cultural</td><td role="cell" headers="col-status" data-label="Status">Rascunho</td></tr></tbody></table>'),
+    ],
+  ],
+  'empty-state' => [
+    '#props' => ['compact' => FALSE],
+    '#slots' => [
+      'message' => Markup::create('<p>Você ainda não está matriculado em nenhum curso.</p>'),
+      'actions' => Markup::create('<a href="/catalogo">Explorar o catálogo de cursos</a>'),
     ],
   ],
   'dialog' => [
@@ -530,6 +538,33 @@ foreach ($component_ids as $component_id) {
     $scroll_output = (string) $renderer->renderInIsolation($scroll_build);
     if (!str_contains($scroll_output, 'data-mobile-variant="scroll"')) {
       throw new RuntimeException('Data table scroll variant must render as an explicit supported mode.');
+    }
+  }
+  if ($component_id === 'empty-state') {
+    $empty_css = array_keys($definition['library']['css']['component'] ?? []);
+    if (!array_filter($empty_css, static fn(string $asset): bool => str_ends_with($asset, '/empty-state.css'))) {
+      throw new RuntimeException('Empty state component CSS was not discovered by the SDC library.');
+    }
+    foreach ([
+      'class="empty-state"',
+      'Você ainda não está matriculado em nenhum curso.',
+      'href="/catalogo"',
+      'Explorar o catálogo de cursos',
+    ] as $required_markup) {
+      if (!str_contains($output, $required_markup)) {
+        throw new RuntimeException(sprintf('Empty state render is missing consumer content: %s', $required_markup));
+      }
+    }
+    $compact_build = [
+      '#type' => 'component',
+      '#component' => $plugin_id,
+      '#props' => ['compact' => TRUE],
+      '#slots' => ['message' => Markup::create('<p>Este curso ainda não tem aulas publicadas.</p>')],
+    ];
+    $compact_output = (string) $renderer->renderInIsolation($compact_build);
+    if (!str_contains($compact_output, 'empty-state--compact')
+      || str_contains($compact_output, 'empty-state__actions')) {
+      throw new RuntimeException('Empty state compact mode must render without inventing consumer actions.');
     }
   }
   if ($component_id === 'breadcrumb'

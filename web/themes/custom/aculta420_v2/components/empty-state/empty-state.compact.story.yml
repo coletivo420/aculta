@@ -1,0 +1,8 @@
+name: Estado vazio compacto
+description: Estado vazio sem ação adicional, adequado a uma área secundária.
+component: aculta420_v2:empty-state
+props:
+  compact: true
+slots:
+  message:
+    markup: '<p>Este curso ainda não tem aulas publicadas.</p>'

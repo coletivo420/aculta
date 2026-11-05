@@ -1466,8 +1466,9 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   torna o wrapper rolável uma região nomeada/focável somente com overflow; detach limpa
   observers e listeners. O template mantém role `region`, `aria-label` e
   `tabindex` como fallback sem JavaScript.
-- **Gates:** schemas 55/764 PASS; browser validators 21 PASS; render Drupal
-  isolado 34 SDCs PASS; gate confere descoberta `data-table.js`, CSS,
+- **Gates:** gate Drupal V2 aplicou schema estrito e render isolado de 34 SDCs
+  PASS; browser validators 21 PASS. O validador estático 55/764 examina a V1,
+  não foi contado como gate do tema V2. O gate confere descoberta `data-table.js`, CSS,
   dependências, markup semântico, `data-label` e variante scroll. PHP lint,
   PHPCS do gate, YAML e `git diff --check` PASS.
 - **Firefox:** 12/12 estados sintéticos em 320/390/768/959/960/1440 CSS px,
@@ -1478,5 +1479,21 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   ficam em `$SUITE_OUT`, fora do repositório.
 - **Limites:** fixture sintética não valida consumer real do Studio. Não houve
   escrita persistente de Runtime; render SDC usou descoberta com backend nulo.
-  Próximo item na sequência G1: `empty-state`.
+  Commit `ad1ba1ab4a` foi publicado em `origin/dev`; pós-push
+  `updatedb:status` sem updates e `config:status` sem diferenças. Próximo item
+  na sequência G1: `empty-state`.
+
+## G1 — componente Empty state — 2026-11-05
+
+- **Implementação:** SDC neutro com props `compact` e slots `message`/`actions`,
+  preservando o contrato consumido por aculta_studio. Conteúdo, estado vazio,
+  permissões, URLs e cache continuam no Portal. Stories default e compactas.
+- **Gates:** render Drupal isolado, schema estrito e descoberta CSS de 35 SDCs
+  PASS; browser validators 21 PASS; PHP lint/PHPCS e YAML PASS. O validador
+  estático 55/764 cobre a V1 e não conta como gate da V2.
+- **Firefox:** matriz visível sintética 12/12 em 320/390/768/959/960/1440 CSS
+  px, claro/escuro, sem overflow; Tab confirmou foco visível de 3 px e zoom real
+  200% manteve largura efetiva de 320 CSS px. Capturas e JSON em `$SUITE_OUT`.
+- **Limites:** consumer de página Studio não foi validado com a V2 ativa no
+  Runtime. Não houve escrita de dados/configuração. Próximo item G1: `price`.
 

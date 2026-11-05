@@ -1,0 +1,20 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Estado vazio
+description: Apresentação neutra de uma lista sem resultados.
+status: experimental
+group: Feedback
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    compact:
+      type: boolean
+      default: false
+      title: Espaçamento compacto
+slots:
+  message:
+    title: Mensagem
+    description: Conteúdo localizado e escapado pelo render array do consumer.
+  actions:
+    title: Ações
+    description: Links e ações permitidos fornecidos pelo consumer.

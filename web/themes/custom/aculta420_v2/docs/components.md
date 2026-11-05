@@ -85,6 +85,15 @@ nome e foco ao wrapper apenas quando há overflow, removendo-os e limpando
 observers no detach Drupal. O componente não cria linhas nem altera
 acesso/cache dos render arrays.
 
+### empty-state
+
+Apresenta uma mensagem e, opcionalmente, ações fornecidas pelo consumer quando
+uma lista autorizada não tem resultados. Prop: `compact` (boolean, padrão
+`false`). Slots: `message` e `actions`. Stories: `empty-state.default.story.yml`
+e `empty-state.compact.story.yml`. O componente não consulta dados, decide se
+a lista está vazia nem cria links; texto, permissões, URLs e cache permanecem
+no módulo proprietário. Usa tokens semânticos V2 e não depende de JavaScript.
+
 ### lms-lesson-page
 
 Contêiner visual para o render array entregue pelo controlador do LMS na rota
@@ -269,7 +278,7 @@ original caso a descoberta Drupal ainda não conheça o SDC.
 
 ## Lacunas do catálogo
 
-Componentes previstos no ADR-046: `avatar`, `tabs`, `dialog`, `form-field`, `progress` e `data-table` têm SDC próprio; a função de `author-box` é coberta pelo slot de autoria de `revista-publication` e pelo SDC compartilhado `author-card`. `empty-state` e `price` ainda precisam de auditoria/implementação. `breadcrumb` e `accordion` já existem. Ordem e uso estão no [roadmap.md](roadmap.md).
+Componentes previstos no ADR-046: `avatar`, `tabs`, `dialog`, `form-field`, `progress`, `data-table` e `empty-state` têm SDC próprio; a função de `author-box` é coberta pelo slot de autoria de `revista-publication` e pelo SDC compartilhado `author-card`. `price` ainda precisa de auditoria/implementação. `breadcrumb` e `accordion` já existem. Ordem e uso estão no [roadmap.md](roadmap.md).
 
 ## Como documentar um componente novo
 
