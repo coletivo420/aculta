@@ -300,6 +300,10 @@ foreach ($component_ids as $component_id) {
     && (!str_contains($output, 'aria-current="page"') || !str_contains($output, 'aria-label="Breadcrumb"'))) {
     throw new RuntimeException('Breadcrumb must render its accessible label and current page marker.');
   }
+  if ($component_id === 'revista-listing'
+    && (!str_contains($output, 'revista-listing__title') || !str_contains($output, '<h1'))) {
+    throw new RuntimeException('The Revista landing component must own the page-level H1.');
+  }
   print $plugin_id . " PASS\n";
 }
 

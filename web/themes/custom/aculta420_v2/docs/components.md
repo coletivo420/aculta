@@ -116,11 +116,11 @@ Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context 
 - **Estado:** implementação pronta; aguardando gates SDC e verificação de Runtime.
 
 ### revista-listing — Listagem editorial
-- **Papel:** apresenta o cabeçalho e a grade da View `revista_sessoes:page_revista`.
+- **Papel:** apresenta o H1 editorial e a grade da View `revista_sessoes:page_revista`.
 - **Props:** `eyebrow`, `title`, `has_items`.
 - **Slots:** `items` (saída renderizada da View).
 - **Story:** `revista-listing.default.story.yml`.
-- **Regra:** não reordena o DOM nem consulta conteúdo; a grade mantém uma, duas e três colunas conforme o espaço.
+- **Regra:** não reordena o DOM nem consulta conteúdo; substitui o título genérico só na presença da listagem e mantém uma, duas e três colunas conforme o espaço.
 - **Estado:** implementação pronta; aguardando gates SDC e verificação de Runtime.
 
 ### revista-publication — Publicação completa

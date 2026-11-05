@@ -13,8 +13,9 @@
 - **Depois (em validação):** templates `node--revista--teaser/full` e View
   encaminham render arrays aos quatro SDCs novos. A grade começa em uma coluna,
   expande a duas em 37.5rem e três em 62rem; primeira linha editorial destaca
-  a capa em espaço amplo. O artigo mantém o conteúdo Drupal e a cacheabilidade
-  do Portal, com corpo de leitura e modelos de mídia responsivos.
+  a capa em espaço amplo. O H1 “Revista 420” substitui o título genérico da
+  página somente enquanto a listagem está presente. O artigo mantém o conteúdo
+  Drupal e a cacheabilidade do Portal, com corpo de leitura e modelos de mídia responsivos.
 - Schemas, stories e sintaxe do gate foram validados localmente. Validação do
   Drupal/Runtime, comparação visual Firefox e cobertura 320 CSS px com zoom
   200% ainda pendentes. Não há versão atribuída a esta fatia até fechar esses

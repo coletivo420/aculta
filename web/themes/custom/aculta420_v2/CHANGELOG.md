@@ -9,6 +9,9 @@
   publicação, metadados/compartilhamento, corpo editorial, imagens com modelos
   pequena/padrão/larga/destaque e alinhamento, autoria e discussão. Render arrays
   Drupal são mantidos como slots.
+- A listagem passa a fornecer o H1 editorial “Revista 420”; o título genérico do
+  Drupal fica oculto somente quando o SDC `revista-listing` está presente,
+  removendo o H1 duplicado que a revisão Firefox detectou.
 - PHP lint do gate, parse de todos os schemas/stories e `git diff --check`
   passaram. Validação de renderização Drupal e evidência Firefox Runtime ficam
   pendentes; a versão será marcada após esses gates.
