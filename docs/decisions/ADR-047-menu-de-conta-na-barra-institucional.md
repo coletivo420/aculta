@@ -53,3 +53,15 @@
 
 - Confirmar com o responsável a lista final de itens do dropdown e o texto do contador do sino.
 - Verificar a largura mínima da barra com o estado logado em 320 px, após a implementação.
+
+## 7. Emenda de 2026-11-05 (desenho do botão de conta)
+
+Esta emenda substitui os itens 2, 3 e 8 nos pontos abaixo. Os demais itens continuam valendo.
+
+1. **Só ícone na barra.** O menu de conta fica na barra institucional, sem texto visível e sem "Minha conta" nem "Sair" na barra, em qualquer largura.
+2. **Visitante.** Botão pequeno com ícone `user` (duotone), com `aria-label` "Entrar". Abre o popup de login (item 8). Sem JavaScript, vai para a página de entrada (item 9).
+3. **Autenticado.** O avatar pequeno é o botão. Abre o painel, de cima para baixo: avatar maior (sem inicial), nome de usuário, separador, "Minha conta" e "Sair". O nome nunca aparece na barra.
+4. **Contrato do Portal.** Além de `authenticated`, `aculta_account_avatar` e `aculta_account_menu`, o `aculta_user` entrega `aculta_account_name` (string, nome de exibição definido pela política do Portal). Sem nome, o painel mostra só o avatar. O tema não deriva nome de usuário, e-mail ou inicial.
+5. **Itens do painel.** "Minha conta" e "Sair" vêm do menu Drupal de conta (`account`). "Meu perfil" sai da lista por decisão desta emenda; a pendência do item 6 fica fechada para essa parte.
+6. **Estado atual do código.** Em 2026-11-05, o `account-menu` já é renderizado dentro de `.aculta-utility` da barra institucional (`multidomain-bar.twig`). Não há menu de conta na faixa de domínio dos templates V2. Se o menu aparece na faixa de domínio em alguma página, a origem é outro template ou o Portal, e precisa de URL ou captura para ser localizada.
+7. **Trabalho pendente.** Mudança no tema (SDC `account-menu`: botão de ícone, painel com cabeçalho e itens; `PagePresentationHooks` passa `aculta_account_name`) e no `aculta_user` (`AccountMenuPresentationBuilder` devolve o nome). Gates e capturas em 320, 390 e 1440 px, claro e escuro, com três cenários: foto, acervo e sem foto.

@@ -36,9 +36,14 @@ Duas faixas empilhadas no topo da página.
   2. `shopping-cart` — carrinho, com **badge numérico** (exemplo: 1). Ícone `shopping-cart`.
   3. `chat-circle` — mensagens. Pode ter badge.
   4. `bell` — avisos, com **badge** (exemplo: 4). Badge com `--color-status-error-text` ou o token de destaque de contagem já usado pelo `alerts-trigger`.
-  5. `user` + texto **"Minha conta"**.
-  6. `sign-out` + texto **"Sair"**.
-- Essa faixa é a barra institucional (`multidomain-bar`), que já existe. **Não redesenhar** (ADR-046); o item de conta é o `account-menu` (ADR-047).
+  5. **Conta, só ícone** (ADR-047, emenda de 2026-11-05). Sem texto visível e sem "Sair" na barra:
+     - **Visitante:** botão pequeno com ícone `user` (duotone), com `aria-label` "Entrar". Abre o popup de login.
+     - **Autenticado:** o avatar pequeno (círculo) é o botão. Abre o painel da conta (abaixo).
+- **Painel da conta (autenticado),** ancorado ao botão, de cima para baixo:
+  1. Avatar maior (do `AvatarResolver`, sem inicial) e, ao lado ou abaixo, o **nome de usuário** (fornecido pelo Portal). O nome aparece só dentro do painel, nunca na barra.
+  2. Separador fino.
+  3. **"Minha conta"** (ícone `gear`) e **"Sair"** (ícone `sign-out`), como itens do menu Drupal de conta.
+- Essa faixa é a barra institucional (`multidomain-bar`), que já existe. **Não redesenhar** (ADR-046).
 
 **Faixa 2 (contexto do Studio), fundo de superfície elevada ou institucional:**
 - Esquerda: nome da área, **"ACULTA Studio"** (ver seção 9, nome confirmado).
@@ -48,7 +53,7 @@ Duas faixas empilhadas no topo da página.
 
 Duas linhas, de acordo com o celular do material:
 
-- **Linha 1:** logotipo ACULTA à esquerda; à direita, `shopping-cart` (com badge), `chat-circle`, `bell` (com badge), e os rótulos "Minha conta" e "Sair". **Regra proposta:** abaixo de 40rem, "Minha conta" e "Sair" viram só ícones (`user` e `sign-out`), com `aria-label`, para caber em 320 px sem quebrar. O material mostra os rótulos; esta redução é uma proposta a confirmar (seção 9).
+- **Linha 1:** logotipo ACULTA à esquerda; à direita, `shopping-cart` (com badge), `chat-circle`, `bell` (com badge) e o botão de conta só com ícone (visitante: `user`; autenticado: avatar), igual ao desktop (ADR-047, emenda de 2026-11-05). Não há rótulos de "Minha conta" nem "Sair" na barra, em nenhuma largura. O painel da conta usa a mesma estrutura do desktop, com nome, avatar, "Minha conta" e "Sair".
 - **Linha 2:** `list` (menu, hambúrguer) à esquerda; logotipo ACULTA; **"Domínios ⌄"** (`caret-down`) à direita; `magnifying-glass` à direita da linha.
 - O menu `list` abre a navegação do Studio (seção 3.2), no mesmo padrão de navegação do desktop, mas como painel de sobreposição.
 
