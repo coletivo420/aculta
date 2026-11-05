@@ -16,7 +16,7 @@
 - Removido `web/themes/custom/aculta420_v2/templates/content/node--teaser.html.twig`: o override aplicava cartão cultural genericamente e podia omitir campos do entity view display (por exemplo, arquivo em Documento). Adapters específicos permanecem; bundles sem adapter usam template/display Core.
 - Documentação atualizada em `web/themes/custom/aculta420_v2/docs/architecture.md`, `docs/roadmap.md`, `docs/gates.md` e `CHANGELOG.md`. Loja/catálogo continuam aguardando autorização.
 - Verificação: gate `php vendor/drush/drush/drush.php php:script scripts/validate-aculta420-v2-sdc.php` PASS, 35 SDCs; confirmação da remoção e `git diff --check` PASS. Captura visual/teclado DEFERRED nesta execução por ausência de sessão gráfica.
-- Runtime `toca`, Drupal 11.5.0-beta1, banco `aculta_runtime`, V2 ativa. Antes da troca de HEAD: `updatedb:status` sem pendências e `config:status` sem diferenças. Nenhuma alteração persistente de conteúdo/configuração/banco. Após push, confirmar sincronização de código e repetir os dois status.
+- Runtime `toca`, Drupal 11.5.0-beta1, banco `aculta_runtime`, V2 ativa. Antes e após o push: `updatedb:status` sem pendências e `config:status` sem diferenças; `drush cr` PASS para invalidar o registry Twig. Nenhuma alteração persistente de conteúdo/configuração/banco. O checkout Runtime e `origin/dev` estão no commit `d6a59e7af0655803dee517a2e89e488b10902dc2`.
 - Próximo: continuar G3 com inventário de adapters e templates por tipo/view mode; manter perfil público sem rota nova e demais decisões registradas aguardando o responsável.
 
 # Continuação — migração visual do Fórum V1 para SDC V2 — 2026-11-04
