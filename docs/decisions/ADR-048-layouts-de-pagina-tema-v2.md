@@ -1,6 +1,6 @@
 # ADR-048 — Layouts de página do tema ACULTA420 V2
 
-- **Status:** aceito pelo responsável em 2026-11-04. Atualizado em 2026-11-05: navegação do Studio e nome confirmados; a sub-navegação da conta foi definida pela recomendação (ver item 5). Uma decisão de rota continua aberta (seção 7).
+- **Status:** aceito pelo responsável em 2026-11-04. Atualizado em 2026-11-05: navegação do Studio e nome confirmados; a sub-navegação da conta foi definida pela recomendação (ver item 5). Pontos ainda abertos da especificação visual estão na seção 9 de `web/themes/custom/aculta420_v2/docs/studio-visual-spec.md`.
 - **Data:** 2026-11-04.
 - **Relaciona-se com:** ADR-046 (shell, fundações e Fase 4), ADR-047 (menu de conta), ADR-038 (suítes do ACULTA Studio), `web/themes/custom/aculta420_v2/docs/layouts-plan.md` (pesquisa e detalhamento).
 
