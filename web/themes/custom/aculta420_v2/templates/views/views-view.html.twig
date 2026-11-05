@@ -1,0 +1,50 @@
+{#
+/**
+ * @file
+ * Template de implementação para a visualização principal de Views no aculta420_v2.
+ * Integra o componente SDC aculta420_v2:empty-state quando não há linhas.
+ */
+#}
+{%
+  set classes = [
+    dom_id ? 'js-view-dom-id-' ~ dom_id,
+  ]
+%}
+<div{{ attributes.addClass(classes) }}>
+  {{ title_prefix }}
+  {{ title }}
+  {{ title_suffix }}
+
+  {% if header %}
+    <header>
+      {{ header }}
+    </header>
+  {% endif %}
+
+  {{ exposed }}
+  {{ attachment_before }}
+
+  {% if rows -%}
+    {{ rows }}
+  {% elseif empty -%}
+    {% embed 'aculta420_v2:empty-state' with {
+      compact: false
+    } only %}
+      {% block message %}
+        {{ empty }}
+      {% endblock %}
+    {% endembed %}
+  {% endif %}
+  {{ pager }}
+
+  {{ attachment_after }}
+  {{ more }}
+
+  {% if footer %}
+    <footer>
+      {{ footer }}
+    </footer>
+  {% endif %}
+
+  {{ feed_icons }}
+</div>

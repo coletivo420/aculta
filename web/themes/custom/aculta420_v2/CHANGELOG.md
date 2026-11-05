@@ -1,5 +1,19 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — Fase 5: Consumers reais dos componentes SDC implementados
+
+- Integração de consumers reais no tema `aculta420_v2` para os componentes SDC que estavam pendentes:
+  - `tabs`: template `templates/navigation/menu-local-tasks.html.twig` adota `aculta420_v2:tabs` para abas primárias e secundárias do Drupal, mantendo títulos acessíveis e navegação por links.
+  - `progress`: template `templates/misc/progress-bar.html.twig` adota `aculta420_v2:progress` com rótulo, valor percentual e compatibilidade com o indicador nativo.
+  - `form-field`: template `templates/form/form-element.html.twig` adota `aculta420_v2:form-field` para elementos de formulário Drupal, preservando identificadores, classes nativas, prefixos/sufixos, instruções e mensagens textuais de erro acessíveis.
+  - `data-table`: template `templates/views/views-view-table.html.twig` adota `aculta420_v2:data-table` com região de rolagem acessível e `data-label` por célula para visualização mobile.
+  - `empty-state`: template `templates/views/views-view.html.twig` adota `aculta420_v2:empty-state` no bloco `{% elseif empty %}`, padronizando a renderização de estados vazios de Views.
+  - `author-card`: documentado e consolidado em `templates/aculta-user-author-card.html.twig`.
+  - `dialog`: documentado e consolidado em `components/lms-tour/lms-tour.twig`.
+- Componente `price`: segue fora do escopo, aguardando autorização explícita de Commerce/Loja.
+- Status da Fase 5: implementada, validação visual no servidor pendente (outro agente).
+
+
 ## Não versionado — Fase 4: UI Styles implementada (validação de servidor pendente)
 
 - Registro do catálogo oficial de UI Styles em `aculta420_v2.ui_styles.yml`, restrito ao administrador Drupal:

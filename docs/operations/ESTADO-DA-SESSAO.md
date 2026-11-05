@@ -2,6 +2,21 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
+# Fase 5 — Componentes e templates (SDC consumers integrados) — 2026-11-05
+
+- **Objetivo:** implementar consumers reais no tema `aculta420_v2` para os componentes SDC pendentes (`author-card`, `dialog`, `form-field`, `progress`, `data-table`, `empty-state` e `tabs`), fechar pendências de templates e preparar handoff operacional da F5.
+- **Concluído:**
+  - Implementado `templates/navigation/menu-local-tasks.html.twig` integrando `aculta420_v2:tabs` nas abas primárias e secundárias do Drupal.
+  - Implementado `templates/misc/progress-bar.html.twig` integrando `aculta420_v2:progress` com rótulo e valor percentual.
+  - Implementado `templates/form/form-element.html.twig` integrando `aculta420_v2:form-field` para campos de formulário Drupal preservando atributos e classes nativas.
+  - Implementado `templates/views/views-view-table.html.twig` integrando `aculta420_v2:data-table` com rolagem horizontal acessível e `data-label` nas células para mobile.
+  - Implementado `templates/views/views-view.html.twig` integrando `aculta420_v2:empty-state` para apresentação padronizada de resultados vazios de Views.
+  - Documentação e consolidação de consumers de `author-card` (`aculta-user-author-card.html.twig`) e `dialog` (`lms-tour.twig`).
+  - Atualização dos arquivos de documentação do tema (`docs/status-componentes.md`, `docs/roadmap.md`, `CHANGELOG.md` e `TODO.md`).
+  - Confirmação de ausência de entrada obsoleta `bootstrap5` em `core.extension` e no Runtime.
+- **Verificações:** SDC Schema PASS (55 componentes, 27 includes, 764 checks), Drush SDC PASS (40 componentes isolados), V2 Foundations PASS (73 pares de contraste, 6 pares de faixa, foco e bordas), Mapped Classes PASS (459 classes, 0 exceções, 0 Bootstrap), Module-Theme Boundary PASS (4274 checks), Browser Validators PASS (21 checks), UI Styles PASS (20 checks), `drush cr` PASS.
+- **Pendências:** componente `price` aguarda autorização de Commerce/Loja; testes de navegador/capturas visuais delegados para outro agente.
+- **Próximo passo:** validação visual no servidor de testes e avanço para Release Candidate (RC).
 
 # F2 — Conclusão da migração HTMX no Studio, Bio e Modais de Perfil — 2026-11-05
 
@@ -24,12 +39,3 @@
 - **Gates com falha preexistente/alheia:** `validate-agent-token-budget.php` (AGENTS.md raiz com 6501 bytes por alteração paralela do graphify), `validate-aculta-portal-drupal12.php` (versões divergentes) e `validate-portal-popup-rule.php` (9 ocorrências em Events/Paths).
 - **Pendências:** o estilo mínimo não é desenho final por componente; a evolução visual continua como trabalho de produto. Migração das suítes para Playwright segue com o agente paralelo.
 - **Próximo passo:** retomar F2 (navegação do Studio) ou a integração dos consumers dos SDCs.
-
-# Fase 3 — purpose neutro e auditoria do catálogo — 2026-11-05
-
-- **Objetivo:** continuar o roadmap do tema V2 pelas fases pendentes (3, 4 e 5).
-- **Concluído:** `0c2d56e65b` documenta `breadcrumb`, `purpose-showcase` e `event-page-layout` e confirma 39 componentes com entrada/schema/story; verifica `ui_styles` 1.22.0 (`^10.3 || ^11 || ^12`). O commit desta entrada expõe `aculta_purpose` no Portal, aplica `data-purpose` no `<html>` do tema, corrige o gate de contrato de apresentação para `domain_sites` e registra a Fase 3 no roadmap/architecture.
-- **Verificações:** `data-purpose` conferido no Runtime em Main (`main`), Conta (`account`), Eventos (`eventos`) e Wiki (`wiki`); `validate-domain-presentation-contract.php` PASS (259 checks, showcase DEFERRED por falta de request MAIN front-page no Drush); shell contract 13 checks PASS; SDC schemas 55/764 PASS; PHP lint e `git diff --check` PASS.
-- **Gates com falha preexistente/alheia:** `validate-agent-token-budget.php` (AGENTS.md raiz com 6501 bytes por alteração paralela do graphify), `validate-aculta-portal-drupal12.php` (versões divergentes de nove módulos) e `validate-portal-popup-rule.php` (9 ocorrências em Events/Paths).
-- **Pendências:** ajuste de tokens de destaque por purpose depende de `domain_presentation.accent` (D1); consumers reais dos SDCs G1; Fase 5 além do catálogo.
-- **Próximo passo:** retomar F2 (navegação do Studio) ou integrar consumers dos SDCs com dados reais.

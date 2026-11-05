@@ -8,7 +8,7 @@
 | F2 — Shell | Em revisão | Aceitação visual final contra a V1 (responsável); faixa de acento aguarda o contrato D1 do Portal |
 | F3 — Purpose e botões | Concluída em `1.3.0`; botões migrados | Validação no servidor de testes |
 | F4 — UI Styles | Implementada | Validação no servidor de testes |
-| F5 — Componentes e templates | Catálogo auditado (40 SDCs) | Consumidores reais; `price` aguarda autorização da Loja |
+| F5 — Componentes e templates | Implementada (consumers integrados) | Validação visual pendente (outro agente); `price` aguarda autorização da Loja |
 | RC | Não promovida | Depende de F4 e F5 validadas no servidor, revisão visual em larguras e modos, Drupal 12 |
 
 Detalhes por bloco: [status-componentes.md](status-componentes.md), [status-layouts-e-shell.md](status-layouts-e-shell.md) e [htmx-status.md](htmx-status.md) (ADR-050).
@@ -128,7 +128,19 @@ Os botões do tema V2 foram integralmente migrados para o esquema único documen
 
 ## Fase 5 — Componentes e templates
 
-**Status: catálogo auditado em 2026-11-05 — 40 componentes com entrada, schema e story, sem entrada fantasma; gate validate-aculta420-v2-sdc.php cobre os 40 componentes com descoberta, schema estrito, assets e render isolado. Consumers reais dos SDCs ainda pendentes; `price` aguarda autorização da Loja.**
+**Status: implementada em 2026-11-05 — 40 componentes com catálogo e schemas estritos auditados; consumers reais implementados no tema para os 7 componentes pendentes (author-card, dialog, form-field, progress, data-table, empty-state e tabs); validação visual no servidor pendente (outro agente); `price` aguarda autorização da Loja.**
+
+### Consumers reais dos componentes SDC implementados
+
+- **`tabs`**: implementado em `templates/navigation/menu-local-tasks.html.twig`, encapsulando abas primárias e secundárias do Drupal com `aculta420_v2:tabs` e mantendo títulos acessíveis.
+- **`progress`**: implementado em `templates/misc/progress-bar.html.twig`, encapsulando a barra de progresso nativa com `aculta420_v2:progress`.
+- **`form-field`**: implementado em `templates/form/form-element.html.twig`, encapsulando elementos de formulário Drupal com `aculta420_v2:form-field`, rótulos, controles, instruções e mensagens de erro acessíveis.
+- **`data-table`**: implementado em `templates/views/views-view-table.html.twig`, integrando tabelas de Views com `aculta420_v2:data-table`, rolagem acessível e `data-label` por célula no mobile.
+- **`empty-state`**: implementado em `templates/views/views-view.html.twig`, padronizando o bloco vazio de Views (`{% elseif empty %}`) com `aculta420_v2:empty-state`.
+- **`author-card`**: integrado via `templates/aculta-user-author-card.html.twig` para renderização de autoria e perfil.
+- **`dialog`**: integrado via `components/lms-tour/lms-tour.twig` para o percurso do estudante no LMS.
+- **`price`**: aguarda autorização explícita da frente de Commerce/Loja.
+
 
 ### G3 — Mapa de templates por bundle/view mode (parcial)
 

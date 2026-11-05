@@ -2,6 +2,15 @@
 
 Entradas anteriores às 10 mais recentes, movidas sem alteração de texto em 2026-11-05 (regra de limite: `AGENTS.md`, seção 1, instrução de handoff). Referência histórica; não é estado atual.
 
+## Handoff — Fase 3: purpose neutro e auditoria do catálogo — 2026-11-05
+
+- **Objetivo:** continuar o roadmap do tema V2 pelas fases pendentes (3, 4 e 5).
+- **Concluído:** `0c2d56e65b` documenta `breadcrumb`, `purpose-showcase` e `event-page-layout` e confirma 39 componentes com entrada/schema/story; verifica `ui_styles` 1.22.0 (`^10.3 || ^11 || ^12`). O commit desta entrada expõe `aculta_purpose` no Portal, aplica `data-purpose` no `<html>` do tema, corrige o gate de contrato de apresentação para `domain_sites` e registra a Fase 3 no roadmap/architecture.
+- **Verificações:** `data-purpose` conferido no Runtime em Main (`main`), Conta (`account`), Eventos (`eventos`) e Wiki (`wiki`); `validate-domain-presentation-contract.php` PASS (259 checks, showcase DEFERRED por falta de request MAIN front-page no Drush); shell contract 13 checks PASS; SDC schemas 55/764 PASS; PHP lint e `git diff --check` PASS.
+- **Gates com falha preexistente/alheia:** `validate-agent-token-budget.php` (AGENTS.md raiz com 6501 bytes por alteração paralela do graphify), `validate-aculta-portal-drupal12.php` (versões divergentes de nove módulos) e `validate-portal-popup-rule.php` (9 ocorrências em Events/Paths).
+- **Pendências:** ajuste de tokens de destaque por purpose depende de `domain_presentation.accent` (D1); consumers reais dos SDCs G1; Fase 5 além do catálogo.
+- **Próximo passo:** retomar F2 (navegação do Studio) ou integrar consumers dos SDCs com dados reais.
+
 ## Handoff — integração SDC `map-popup` / `aculta_maps` — 2026-11-04
 
 - `aculta_maps` entrega dados de popup por render arrays neutros e hooks de tema; ACULTA420 V2 seleciona o componente SDC e o JavaScript de Leaflet e Google clona o template inerte. O fallback DOM seguro continua disponível para consumidores que não renderizam os templates.

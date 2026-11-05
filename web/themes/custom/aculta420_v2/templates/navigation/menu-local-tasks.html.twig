@@ -1,0 +1,27 @@
+{#
+/**
+ * @file
+ * Template de implementação para tarefas locais primárias e secundárias (abas).
+ * Integra o componente SDC aculta420_v2:tabs mantendo a lista nativa do Drupal.
+ */
+#}
+{% if primary %}
+  <h2 class="visually-hidden">{{ 'Primary tabs'|t }}</h2>
+  {% embed 'aculta420_v2:tabs' with {
+    label: 'Primary tabs'|t
+  } only %}
+    {% block items %}
+      <ul>{{ primary }}</ul>
+    {% endblock %}
+  {% endembed %}
+{% endif %}
+{% if secondary %}
+  <h2 class="visually-hidden">{{ 'Secondary tabs'|t }}</h2>
+  {% embed 'aculta420_v2:tabs' with {
+    label: 'Secondary tabs'|t
+  } only %}
+    {% block items %}
+      <ul>{{ secondary }}</ul>
+    {% endblock %}
+  {% endembed %}
+{% endif %}

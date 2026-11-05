@@ -4,7 +4,8 @@ Estado: em desenvolvimento · versão 1.3.0 (`aculta420_v2.info.yml`) · status:
 
 ## Próximo passo
 
-F1 (login, busca, gavetas e cadastro) concluída. Próximo passo: F2 (investigação do HTMX nos diálogos da bio/redes/endereço em Conta/Studio) e integração de consumers reais dos SDCs.
+F5 (Componentes e templates) implementada com consumers reais integrados no tema. Validação visual automatizada em navegador/servidor segue com outro agente.
+Próximo passo do tema: validação no servidor de testes e preparação para Release Candidate (RC).
 
 ## Dívidas
 
