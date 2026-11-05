@@ -171,14 +171,25 @@ Os nomes aparecem no select de cada purpose na tela Aparência → ACULTA420 V2 
 - Subelementos, claro: `#76a82c`, `#f4d04e`.
 - Subelementos, escuro: `#89c72c`, `#fcdc64`.
 
-## Superfícies
+## Superfícies e neutros
 
-| Papel | Claro | Escuro |
-|---|---|---|
-| Fundo da página | `#fbf4e8` (creme V1) | `#08201a` |
-| Elevação 1 | — | `#0f2b21` |
-| Elevação 2 | — | `#15372b` |
-| Elevação 3 | — | `#1c4335` |
+Decisão do responsável em 2026-11-05 (opção A): os neutros claros passam para a família verde da paleta. O modo escuro usa a família atual da V2. A barra institucional não muda em nenhum modo.
+
+| Token | Papel | Claro (atual → proposto) | Contraste claro (sobre `#f2f7f0`) | Escuro |
+|---|---|---|---|---|
+| `--color-canvas` | Fundo da página | `#f2f7f0` (mantido) | — | `#171513` (V2, mantido) |
+| `--color-surface` / `--color-surface-raised` | Cartão | `#ffffff` (mantido) | — | Elevação 1 `#282421` |
+| `--color-surface-institution` | Barra institucional | `#fbf4e8` (**não muda**) | — | `#2b2723` (**não muda**) |
+| `--color-text-primary` | Texto principal | `#0c3c29` (mantido) | 11,34:1 sobre creme | V2, mantido |
+| `--color-text-secondary` | Texto secundário | `#465563` → `#4d6357` | 5,97:1 | V2, mantido |
+| `--color-text-muted` | Texto de apoio | `#596875` → `#5a6b60` | 5,22:1 | V2, mantido |
+| `--color-border` | Borda de controle (3:1 mínimo) | `#687783` → `#6b7d70` | 4,03:1 | V2, mantido |
+
+Notas:
+- As bordas de controle precisam de 3:1 (WCAG 1.4.11). `#6b7d70` tem 4,03:1 sobre o fundo claro. Bordas decorativas podem ser mais suaves, mas não usadas em campo ou botão.
+- Elevações do escuro, a partir de `#171513`, com cerca de 6% de luminosidade por nível: #282421, #39342f, #49433d. Validar contraste do texto antes da aceitação.
+- A barra institucional recebe o novo texto secundário e muted, mas o fundo continua o mesmo.
+- Saturação no escuro: testar +10% e original. Decisão pela captura.
 
 ## Tokens
 
@@ -207,5 +218,6 @@ Os tokens são definidos sob o seletor do purpose e redefinidos sob o modo escur
 - 2026-11-05: adicionado o esquema Skunk para o purpose Links (LinkWeed).
 - 2026-11-05: adicionados Panama Red (Fórum) e Acapulco Gold (Eventos). Os dez purposes passam a ter esquema.
 - 2026-11-05: tom mais escuro (profunda) definido como padrão de cada base. Esquemas refeitos: Indica sai do catálogo, substituído por Afghan na Conta (Indica falhava 3:1 no escuro). Dez esquemas, um por purpose.
+- 2026-11-05: opção A. Neutros claros da V2 ajustados para a família verde (texto secundário, muted e borda de controle). Barra institucional mantida. Superfícies do escuro usam a família atual da V2.
 - 2026-11-05: definido o escopo da paleta. Botões, foco, barra institucional e navegação não mudam por purpose. Registrado que a F3 sobrescrevia `--color-brand-highlight`, o que deve ser corrigido.
 - 2026-11-05: incluída a seção de verificação de acessibilidade, com simulação de deuteranopia e regra de não usar verde e vermelho como único sinal.
