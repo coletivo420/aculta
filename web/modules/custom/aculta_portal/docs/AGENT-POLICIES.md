@@ -37,20 +37,9 @@ A documentação deve registrar o motivo arquitetural das regras, não apenas su
 
 ## Uploads de arquivos enviados por usuários
 
-- A política reutilizável para uploads de usuários pertence ao módulo central
-  `aculta_portal`; consumidores devem usar `aculta_file_uploader.consumer_policy`
-  e não duplicar listas de extensões, limites ou validadores.
-- A configuração central mantém uma política global e abas de override por
-  consumidor integrado. Cada consumidor pode herdar a regra global ou definir
-  opções próprias sob a mesma governança administrativa.
-- O Portal fornece a política comum; cada domínio continua dono da associação
-  do arquivo à entidade Core correspondente, publicação, retenção, acesso e
-  cache. Respeite as regras privadas do conteúdo hospedeiro e `aculta_image`.
-- Wiki e LMS devem integrar-se à mesma política central depois do Fórum. A
-  integração visual e funcional deve reutilizar `aculta_gallery`, `aculta_image`,
-  Document Viewer e componentes ACULTA pertinentes, sem criar leitores ou
-  storage paralelos.
-- Contrato vigente e sequência: [`docs/portal/USER-UPLOADS.md`](../../../../../docs/portal/USER-UPLOADS.md).
+- Consumidores usam `aculta_file_uploader.consumer_policy`; não duplicar listas de extensões, limites ou validadores.
+- Cada domínio continua dono da associação do arquivo, publicação, retenção, acesso e cache. Não criar leitor ou storage paralelo.
+- Contrato e sequência: [`docs/portal/USER-UPLOADS.md`](../../../../../docs/portal/USER-UPLOADS.md).
 
 ## Fronteira de autenticação e anti-bot
 
@@ -101,12 +90,9 @@ A documentação deve registrar o motivo arquitetural das regras, não apenas su
 
 ## Política de domínio administrativo
 
-- O painel único pertence ao purpose `main`. Canonicalização e exceções de rotas estão em `docs/portal/ADMIN-DOMAIN-POLICY.md`.
-- Requests mutáveis administrativos, de checkout ou de pagamento no purpose errado falham fechados; não redirecionar escrita entre hosts. Requests públicos de purpose errado continuam 404.
-- Redirects intencionais entre hosts usam `DomainPurposeManager` e `TrustedRedirectResponse`; não usar `Symfony RedirectResponse` cru para outro host nem listas paralelas de rotas.
-- Requisições AJAX/fetch do Portal são same-origin. Não habilitar CORS para transportar sessão ou formulários entre purposes.
-- Carrinho, checkout e pagamento pertencem ao purpose `main`; a seleção de valor de apoio pertence a `support`. Regras e exceções vigentes: `docs/portal/CROSS-DOMAIN-REQUEST-POLICY.md` e `docs/portal/PAYMENT-DOMAIN-POLICY.md`.
-- ACULTA420 não participa da política de domínio; ele consome a apresentação preparada pelo Portal.
+- Regras e exceções: `docs/portal/ADMIN-DOMAIN-POLICY.md`, `CROSS-DOMAIN-REQUEST-POLICY.md` e `PAYMENT-DOMAIN-POLICY.md`.
+- Escrita mutável no purpose errado falha fechada; não redirecionar escrita entre hosts. Redirect entre hosts usa `DomainPurposeManager` e `TrustedRedirectResponse`, nunca `RedirectResponse` cru.
+- ACULTA420 não participa da política de domínio; consome a apresentação preparada pelo Portal.
 
 ## Integração transversal dos módulos ACULTA (regra permanente)
 
@@ -136,11 +122,9 @@ A documentação deve registrar o motivo arquitetural das regras, não apenas su
 
 > **Código no Aculta Portal, Design no ACULTA420.**
 
-- `aculta_portal` implementa função, integração, dados, access, cache e comportamento. ACULTA420 implementa apresentação. O Portal não emite classes de design nem referencia SDCs do tema; o tema não implementa rotas, serviços ou regras de negócio do Portal.
-- A apresentação cruza a fronteira por dados neutros e tokens `data-portal-ui`; acesso e cache devem continuar corretos sem depender do tema. Contratos: `docs/portal/FRONTEIRA-MODULO-TEMA.md`, `docs/portal/DOMAIN-PRESENTATION-CONTRACT.md` e `docs/portal/COMPONENT-DESIGN-SYSTEM.md`.
-- Antes de alterar um módulo, consulte `docs/portal/MAPA-MODULO-TEMA.md`, a documentação/código do tema e `docs/portal/TOKENS-E-ATRIBUTOS.md`. Atualize o mapa no mesmo commit quando a contraparte mudar; o gate é `php scripts/validate-module-theme-map.php`.
-- Gates de fronteira e arquitetura do Portal: `php scripts/validate-module-theme-boundary.php` e `php scripts/validate-aculta-portal-drupal11.php`. O inventário de helpers e integrações aplicadas está em `docs/portal/IMPLEMENTATIONS.md`.
-- Alterar `web/themes/custom/aculta420/**` exige autorização explícita na solicitação. Uma tarefa de Portal, por si só, não autoriza mudanças no tema; quando autorizadas, mantenha cada camada no seu dono e atualize o mapa.
+- Contrato canônico: `docs/portal/FRONTEIRA-MODULO-TEMA.md`. Mapa a atualizar no mesmo commit: `docs/portal/MAPA-MODULO-TEMA.md` (gate `php scripts/validate-module-theme-map.php`).
+- Gates de fronteira: `php scripts/validate-module-theme-boundary.php` e `php scripts/validate-aculta-portal-drupal11.php`.
+- Alterar `web/themes/custom/aculta420/**` exige autorização explícita na solicitação. Tarefa de Portal não autoriza mudança no tema.
 
 ## HTMX como padrão do tema (regra permanente)
 
