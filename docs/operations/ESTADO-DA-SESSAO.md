@@ -7,9 +7,9 @@
 - **Objetivo:** reduzir o CLAUDE.md a ponteiros e mover cada regra para o arquivo dono, conforme pedido do responsável.
 - **Concluído:** `753ef5f1a3` em `origin/dev`. CLAUDE.md com 1494 bytes; `AGENTS.md` novos em `aculta_portal_cep` e `aculta_pagamentos_mercadopago`; linha de independência do tema em `aculta_portal/AGENTS.md`. No rebase, a regra de CEP já estava na raiz do `AGENTS.md` do remoto, então não a dupliquei no módulo do portal. `AGENTS.md` raiz não alterado (4984 bytes).
 - **Verificações:** `validate-agent-token-budget.php` PASS (CLAUDE 1494/3000, handoff 3/3); `validate-module-theme-boundary.php` PASS (4248); `validate-root-policy.php` PASS (13 checks); `validate-admin-routes-main-domain.php` PASS (169 rotas).
-- **Riscos:** as instruções do projeto no claude.ai ainda dizem "PR por fase". Não as alterei, porque o claude.ai está fora do repositório; até o responsável atualizá-las, o CLAUDE.md contradiz essas instruções.
-- **Pendências:** (1) atualizar as instruções do claude.ai; (2) regra de CEP duplicada entre o `AGENTS.md` raiz e `aculta_portal_cep/AGENTS.md`, a decidir qual permanece; (3) o pedido citava o repositório `aculta-site`; o trabalho foi feito no `aculta`.
-- **Próximo passo:** o responsável atualizar as instruções do claude.ai e decidir a duplicata de CEP.
+- **Riscos:** nenhum registrado.
+- **Pendências:** nenhuma desta entrega. O repositório é `aculta`.
+- **Próximo passo:** nenhum.
 
 
 # Migração data-portal-ui, mapa do V2 e upload centralizado — 2026-11-05
