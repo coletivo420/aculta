@@ -5,7 +5,7 @@
 Os botões do tema V2 foram integralmente migrados para o esquema único documentado em `docs/botoes.md`:
 - Consumo estrito de tokens semânticos `--button-primary-*`, `--button-secondary-*` e `--button-focus-ring` nas variantes `.button--primary`, `.button--secondary`, `.button--outline` e `.button--ghost`.
 - Eliminação total do uso de `--color-brand-highlight`, `--purpose-*` e de `filter: brightness(...)` nos estados de interação.
-- Comprovação por suíte visual automatizada com Firefox ESR em `$SUITE_OUT` (viewports 320 px e 1440 px), atestando invariância absoluta dos botões nos 10 purposes nos modos claro e escuro, sem rolagem horizontal no mobile.
+- A invariância estática dos tokens foi verificada; a comprovação visual automatizada com Firefox ESR em 320 px e 1440 px, nos 10 purposes e dois modos, permanece pendente de runtime.
 - Gate `scripts/validate-aculta420-v2-foundations.php` expandido com pares de contraste textuais (repouso, hover, active), bordas e foco (todos PASS).
 - Captura de runtime real no Homelab permanece pendente (DEFERRED).
 

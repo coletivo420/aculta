@@ -19,7 +19,9 @@
 }
 
 .aculta-dialog__trigger:hover {
-  filter: brightness(.9);
+  background: var(--button-primary-bg-hover);
+  border-color: var(--button-primary-bg-hover);
+  color: var(--button-primary-fg);
 }
 
 .aculta-dialog {

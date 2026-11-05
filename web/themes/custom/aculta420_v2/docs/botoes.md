@@ -101,7 +101,7 @@ Os botões foram desenhados para repousar sobre as superfícies padrão do tema 
 ## 6. Status e Validação
 
 - **Tokens e componentes:** Migrados integralmente em `src/styles/tokens.css` e `components/button/button.css`, consumindo exclusivamente os tokens semânticos `--button-*`.
-- **Invariância por purpose:** Comprovada em suíte visual de navegador (Firefox ESR visível em `$SUITE_OUT`), garantindo 100% de invariância dos estilos de botões nos 10 purposes nos modos claro e escuro.
-- **Portabilidade mobile:** Viewport de 320 CSS px validado com zero rolagem horizontal.
+- **Invariância por purpose:** Os tokens e o CSS são invariantes por purpose no código; a confirmação visual no Firefox ESR para os 10 purposes nos modos claro e escuro permanece pendente de runtime.
+- **Portabilidade mobile:** A regra de 320 CSS px está implementada; a captura visual sem rolagem horizontal permanece pendente de runtime.
 - **Contratos e Gates:** Suíte `validate-aculta420-v2-foundations.php` expandida com 73 pares de contraste textuais e estruturais, todos com verificação estrita PASS.
 - **Ambiente Homelab:** Captura em runtime real no Homelab permanece pendente (DEFERRED) para sincronização final.

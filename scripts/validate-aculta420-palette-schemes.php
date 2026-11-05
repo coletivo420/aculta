@@ -41,7 +41,11 @@ if (count($schemes) !== 10) {
 
 $errors = [];
 $checks = 0;
-$renderedHtml = isset($argv[1]) ? file_get_contents($argv[1]) : FALSE;
+if (!isset($argv[1]) || !is_file($argv[1])) {
+  fwrite(STDERR, "ACULTA420 PALETTE SCHEMES: DEFERRED/FAIL — forneça o HTML renderizado da configuração como primeiro argumento.\n");
+  exit(2);
+}
+$renderedHtml = file_get_contents($argv[1]);
 
 foreach ($schemes as $key => $data) {
   $checks++;
@@ -106,7 +110,54 @@ if (!empty($errors)) {
 }
 
 echo "ACULTA420 PALETTE SCHEMES: PASS ({$checks} esquemas verificados contra tokens.css e paletas-por-purpose.md)\n";
-echo $renderedHtml === FALSE
-  ? "RENDER HTML: DEFERRED (passe o HTML renderizado da configuração como primeiro argumento)\n"
-  : "RENDER HTML: fornecido (validação detalhada pendente de implementação do parser DOM)\n";
+$dom = new DOMDocument();
+libxml_use_internal_errors(TRUE);
+if (!$dom->loadHTML($renderedHtml)) {
+  fwrite(STDERR, "ACULTA420 PALETTE SCHEMES: FAIL — não foi possível analisar o HTML renderizado.\n");
+  exit(1);
+}
+$xpath = new DOMXPath($dom);
+$class = static fn(string $name): string => "contains(concat(' ', normalize-space(@class), ' '), ' {$name} ')";
+$htmlErrors = [];
+foreach ($schemes as $schemeKey => $data) {
+  $preview = $xpath->query("//*[@data-scheme='{$schemeKey}' and {$class('aculta-palette-preview')}]")->item(0);
+  if (!$preview instanceof DOMElement) {
+    $htmlErrors[] = "Esquema {$schemeKey} não encontrado no HTML renderizado.";
+    continue;
+  }
+  foreach (['light', 'dark'] as $modeKey) {
+    $mode = $data[$modeKey];
+    $modeNode = $xpath->query(".//*[" . $class('aculta-palette-mode--' . $modeKey) . "]", $preview)->item(0);
+    if (!$modeNode instanceof DOMElement) {
+      $htmlErrors[] = "Modo {$modeKey} do esquema {$schemeKey} não encontrado.";
+      continue;
+    }
+    $stripe = $xpath->query(".//*[" . $class('aculta-palette-mode__stripe') . "]", $modeNode)->item(0);
+    $expectedStripe = 'background-color: ' . strtolower($mode['accent']) . '; color: ' . strtolower($mode['on_accent']) . ';';
+    $actualStripe = strtolower(preg_replace('/\\s+/', ' ', trim((string) ($stripe?->getAttribute('style') ?? ''))));
+    if (!$stripe instanceof DOMElement || $actualStripe !== $expectedStripe) {
+      $htmlErrors[] = "Faixa {$schemeKey}/{$modeKey} diverge: esperado {$expectedStripe}, encontrado {$actualStripe}.";
+    }
+    $chips = $xpath->query(".//*[" . $class('aculta-palette-chip__color') . "]", $modeNode);
+    if ($chips->length !== count($mode['sub'])) {
+      $htmlErrors[] = "Amostras {$schemeKey}/{$modeKey}: esperadas " . count($mode['sub']) . ", encontradas {$chips->length}.";
+      continue;
+    }
+    foreach ($mode['sub'] as $idx => $subHex) {
+      $actual = strtolower(preg_replace('/\\s+/', ' ', trim($chips->item($idx)->getAttribute('style'))));
+      $expected = 'background-color: ' . strtolower($subHex) . ';';
+      if ($actual !== $expected) {
+        $htmlErrors[] = "Amostra {$schemeKey}/{$modeKey}/" . ($idx + 1) . " diverge: esperado {$expected}, encontrado {$actual}.";
+      }
+    }
+  }
+}
+if ($htmlErrors) {
+  fwrite(STDERR, "ACULTA420 PALETTE SCHEMES RENDER: FAIL (" . count($htmlErrors) . " erros)\n");
+  foreach ($htmlErrors as $error) {
+    fwrite(STDERR, " - {$error}\n");
+  }
+  exit(1);
+}
+echo "RENDER HTML: PASS (10 esquemas, faixas e amostras conferidos contra PurposePaletteSchemes.php)\n";
 exit(0);
