@@ -91,6 +91,7 @@ final class PortalUiHooks {
     'patcher-table-wrapper' => [],
     'studio-course-educator' => [],
     'studio-mercadopago-plans' => [],
+    'map-popup' => [],
   ];
 
   /**

@@ -181,9 +181,8 @@ $classAttrs = array_values(array_diff($classAttrs, $knownDebt));
 $assert($classAttrs === [], 'Classe de design no módulo (use data-portal-ui e mapeie no tema): ' . implode('; ', array_slice($classAttrs, 0, 6)));
 
 // 10b. Todo token de data-portal-ui usado pelo módulo existe no mapa do tema (PortalUiHooks::TOKENS).
-// Mapa de tokens: V1 (referência, somente leitura) somado ao V2 (tema ativo). Tokens do V1 ainda não migrados continuam válidos.
-$themeMap = (string) file_get_contents($theme . '/src/Hook/PortalUiHooks.php')
-  . (string) file_get_contents($root . '/web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php');
+// Mapa de tokens: só o V2 (tema ativo). O V1 é referência e não é fonte de token.
+$themeMap = (string) file_get_contents($root . '/web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php');
 // Aceita "_" porque os tokens do código usam BEM (elemento "__"); a chave precisa bater com o token usado.
 preg_match_all("/^\s+'([a-z0-9_-]+)' => \[/m", $themeMap, $tm);
 $known = array_flip($tm[1]);

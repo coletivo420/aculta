@@ -759,3 +759,91 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `sales-state-voided` | `badge aculta-sales-panel__state aculta-sales-panel__state--voided` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
 | `sales-state-neutral` | `badge aculta-sales-panel__state aculta-sales-panel__state--neutral` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
 | `support-amounts` | `aculta-support-amounts` | `web/modules/custom/aculta_portal/src/Support/Form/SupportForm.php` |
+
+## Tokens e atributos do V2 registrados em 2026-11-05
+
+Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`, incluindo a migração de `aculta_lms`, `aculta_lms_resources`, `aculta_paths`, `aculta_studio`, `aculta_events` e `aculta_patcher`. Lista gerada a partir do mapa; a captura visual segue DEFERRED.
+
+| Token | Classes no V2 | Estado |
+|---|---|---|
+| `surface-list-edit-action` | `button`, `button--small` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `surface-dns-block` | `superficies-dns` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `aculta-lms-lesson-preview--activity` | `aculta-lms-lesson-preview__activity` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `lms-answer-review-button` | `button` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `aculta-lms-class-status-history--period` | `aculta-lms-class-status-history__period` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `lms-dashboard-links-inline` | `links`, `inline` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `aculta-lms-course-sort-form` | `aculta-lms-course-sort-form` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `aculta-lms-course-builder--actions` | `aculta-lms-course-builder__actions` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `aculta-lms-course-builder--activity` | `aculta-lms-course-builder__activity` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `aculta-lms-course-builder--activities` | `aculta-lms-course-builder__activities` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `aculta-lms-course-builder--sort-handle` | `aculta-lms-course-builder__sort-handle` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `aculta-lms-course-builder--lesson` | `aculta-lms-course-builder__lesson` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `aculta-lms-course-builder--lesson-heading` | `aculta-lms-course-builder__lesson-heading` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `aculta-lms-course-builder--state` | `aculta-lms-course-builder__state` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `aculta-lms-course-builder--published` | `is-published` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `aculta-lms-course-builder--draft` | `is-draft` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `aculta-lms-course-builder--empty` | `aculta-lms-course-builder__empty` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `aculta-lms-course-builder--lessons` | `aculta-lms-course-builder__lessons` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `aculta-lms-course-builder--header` | `aculta-lms-course-builder__header` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `aculta-lms-course-builder--summary` | `aculta-lms-course-builder__summary` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `aculta-lms-course-materials--documents` | `aculta-lms-course-materials__documents` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `aculta-lms-course-materials--document` | `aculta-lms-course-materials__document` | mapeado no V2; estilo pendente de captura (DEFERRED) |
+| `aculta-btn-outline` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-btn-outline"]` ou sem estilo próprio |
+| `aculta-btn-primary` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-btn-primary"]` ou sem estilo próprio |
+| `aculta-course-lesson-preview` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-course-lesson-preview"]` ou sem estilo próprio |
+| `aculta-learning-home__actions` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__actions"]` ou sem estilo próprio |
+| `aculta-learning-home__course-title` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__course-title"]` ou sem estilo próprio |
+| `aculta-learning-home__lesson` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__lesson"]` ou sem estilo próprio |
+| `aculta-learning-home__meta` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__meta"]` ou sem estilo próprio |
+| `aculta-learning-home__pending` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__pending"]` ou sem estilo próprio |
+| `aculta-learning-home__progress` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__progress"]` ou sem estilo próprio |
+| `aculta-learning-home__section` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__section"]` ou sem estilo próprio |
+| `aculta-learning-home__section-title` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__section-title"]` ou sem estilo próprio |
+| `aculta-learning-journey` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey"]` ou sem estilo próprio |
+| `aculta-learning-journey__back` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__back"]` ou sem estilo próprio |
+| `aculta-learning-journey__current` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__current"]` ou sem estilo próprio |
+| `aculta-learning-journey__eyebrow` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__eyebrow"]` ou sem estilo próprio |
+| `aculta-learning-journey__intro` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__intro"]` ou sem estilo próprio |
+| `aculta-learning-journey__lesson` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__lesson"]` ou sem estilo próprio |
+| `aculta-learning-journey__lesson-label` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__lesson-label"]` ou sem estilo próprio |
+| `aculta-learning-journey__lessons` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__lessons"]` ou sem estilo próprio |
+| `aculta-learning-journey__meta` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__meta"]` ou sem estilo próprio |
+| `aculta-learning-journey__outline` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__outline"]` ou sem estilo próprio |
+| `aculta-learning-journey__progress` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__progress"]` ou sem estilo próprio |
+| `aculta-learning-journey__state` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__state"]` ou sem estilo próprio |
+| `aculta-learning-journey__summary` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__summary"]` ou sem estilo próprio |
+| `aculta-learning-journey__title` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__title"]` ou sem estilo próprio |
+| `aculta-learning-room` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-room"]` ou sem estilo próprio |
+| `aculta-learning-room__back-link` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-room__back-link"]` ou sem estilo próprio |
+| `aculta-learning-room__layout` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-room__layout"]` ou sem estilo próprio |
+| `aculta-learning-room__lesson` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-room__lesson"]` ou sem estilo próprio |
+| `aculta-learning-room__outline` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-room__outline"]` ou sem estilo próprio |
+| `aculta-learning-room__outline-title` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-room__outline-title"]` ou sem estilo próprio |
+| `event-contribution-queue` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="event-contribution-queue"]` ou sem estilo próprio |
+| `event-contribution-status` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="event-contribution-status"]` ou sem estilo próprio |
+| `event-contribution-workspace` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="event-contribution-workspace"]` ou sem estilo próprio |
+| `event-location-contribution-queue` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="event-location-contribution-queue"]` ou sem estilo próprio |
+| `event-organization-suggestion-queue` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="event-organization-suggestion-queue"]` ou sem estilo próprio |
+| `patcher-table-wrapper` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="patcher-table-wrapper"]` ou sem estilo próprio |
+| `studio-course-educator` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="studio-course-educator"]` ou sem estilo próprio |
+| `studio-mercadopago-plans` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="studio-mercadopago-plans"]` ou sem estilo próprio |
+
+| Atributo | Usado em | Função |
+|---|---|---|
+| `data-aculta-focal` | `modules/aculta_wiki/src/Hook/WikiEntryImageHooks.php` | marcação de comportamento do módulo; sem contrato de tema |
+| `data-aculta-dropzone` | `modules/aculta_file_uploader/src/Element/UploadDropZone.php` | marcação de comportamento do módulo; sem contrato de tema |
+| `data-aculta-learning-home` | `modules/aculta_studio/src/Learning/LearnerDashboardComposer.php` | marcação de comportamento do módulo; sem contrato de tema |
+| `data-aculta-lms` | `modules/aculta_lms/src/Controller/CourseLessonPreviewController.php` | marcação de comportamento do módulo; sem contrato de tema |
+| `data-aculta-sort-item` | `modules/aculta_lms/src/Controller/CourseStructureController.php` | marcação de comportamento do módulo; sem contrato de tema |
+| `data-aculta-sort-handle` | `modules/aculta_lms/src/Controller/CourseStructureController.php` | marcação de comportamento do módulo; sem contrato de tema |
+| `data-aculta-sort-list` | `modules/aculta_lms/src/Controller/CourseStructureController.php` | marcação de comportamento do módulo; sem contrato de tema |
+| `data-aculta-sort-form` | `modules/aculta_lms/src/Controller/CourseStructureController.php` | marcação de comportamento do módulo; sem contrato de tema |
+| `data-aculta-lms-lesson` | `modules/aculta_lms/src/Controller/CourseStructureController.php` | marcação de comportamento do módulo; sem contrato de tema |
+| `data-aculta-unsaved-changes` | `modules/aculta_lms/src/Form/ActivityAuthoringForm.php` | marcação de comportamento do módulo; sem contrato de tema |
+| `data-aculta-sort-order` | `modules/aculta_lms/src/Form/CourseStructureOrderForm.php` | marcação de comportamento do módulo; sem contrato de tema |
+| `data-aculta-sort-submit` | `modules/aculta_lms/src/Form/CourseStructureOrderForm.php` | marcação de comportamento do módulo; sem contrato de tema |
+| `data-aculta-map-popup-template` | `modules/aculta_maps/templates/aculta-maps-popup-template.html.twig` | marcação de comportamento do módulo; sem contrato de tema |
+| `data-aculta-map-marker-icon-template` | `modules/aculta_maps/templates/aculta-maps-marker-icon-template.html.twig` | marcação de comportamento do módulo; sem contrato de tema |
+
+| `studio-section-header` | (V1) | mapeado só no V1 (referência); sem classe equivalente no V2 |
+| `map-popup` | (nenhuma) | sem classe no V2; marcação do popup de mapa (`aculta_maps`) |

@@ -20,16 +20,22 @@ if ($doc === '') {
   exit(1);
 }
 
-$hooks = (string) file_get_contents($root . '/web/themes/custom/aculta420/src/Hook/PortalUiHooks.php');
-if (!preg_match('/TOKENS = \[(.*?)\n  \];/s', $hooks, $m)) {
-  fwrite(STDERR, "FAIL: PortalUiHooks::TOKENS não encontrado.\n");
-  exit(1);
+// Mapa de tokens: só o V2 (tema ativo). O V1 é referência e não entra no gate.
+$mapped = [];
+foreach (['/web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php'] as $hookFile) {
+  $hooks = (string) file_get_contents($root . $hookFile);
+  if (!preg_match('/TOKENS = \[(.*?)\n  \];/s', $hooks, $m)) {
+    fwrite(STDERR, "FAIL: PortalUiHooks::TOKENS não encontrado em $hookFile.\n");
+    exit(1);
+  }
+  preg_match_all("/^\s*'([a-z0-9_-]+)'\s*=>/m", $m[1], $k);
+  $mapped = array_merge($mapped, $k[1]);
 }
-preg_match_all("/^\s*'([a-z0-9-]+)'\s*=>/m", $m[1], $k);
-$mapped = array_unique($k[1]);
+$mapped = array_values(array_unique($mapped));
 
 // Famílias dinâmicas e wildcards documentados: `prefixo-*`.
-preg_match_all('/`([a-z0-9-]+\*?)`/', $doc, $all);
+// Aceita "_" porque tokens BEM do código usam "__" (mesmo critério do mapa).
+preg_match_all('/`([a-z0-9_-]+\*?)`/', $doc, $all);
 $documented = array_unique($all[1]);
 $wildcards = array_values(array_map(static fn(string $w) => rtrim($w, '*'), array_filter($documented, static fn(string $w) => str_ends_with($w, '*'))));
 
