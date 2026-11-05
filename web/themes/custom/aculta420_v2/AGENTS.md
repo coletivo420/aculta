@@ -40,8 +40,8 @@ Herde o `AGENTS.md` da raiz do repositório. Estas regras são específicas do t
 
 - Classifique a mudança como PATCH, MINOR ou MAJOR. Mudança de shell ou fundações é MINOR (ADR-046).
 - Não marque versão em `aculta420_v2.info.yml` antes da validação. O número vai junto da entrega validada, no mesmo commit do `CHANGELOG.md` e do `docs/roadmap.md`.
-- Commits atômicos em português, com o trailer `Co-Authored-By`. Commit e push só quando pedido ou autorizado.
-- Toda fase termina em PR própria, com `RUNTIME STATUS: DEFERRED` quando houver código não testado no servidor de desenvolvimento.
+- Commits atômicos em português, com trailer `Claude-Session` e sem `Co-Authored-By` (regra da raiz). Cada entrega é enviada a `origin/dev` logo após o commit. PR e merge só com pedido explícito.
+- Entrega de fase com código não testado no servidor de desenvolvimento termina com `RUNTIME STATUS: DEFERRED` no relatório.
 
 ## 6. Documentação obrigatória no mesmo commit
 

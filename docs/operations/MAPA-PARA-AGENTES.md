@@ -32,7 +32,7 @@ Todos ficam em `web/modules/custom/aculta_portal/modules/`. O quadro de status (
 | LMS | `aculta_lms` (+ h5p, messenger, resources), `aculta_lms_agenda` | `aculta_lms/docs/ROADMAP.md` |
 | Fórum e Wiki | `aculta_forum` (+ lms, wiki), `aculta_wiki` (+ messenger) | `AGENTS.md` do módulo |
 | Eventos e calendário | `aculta_events`, `aculta_calendar`, `aculta_events_openstreetmap` (em andamento), `aculta_maps` (só docs) | `aculta_events/docs/ROADMAP.md`, `aculta_calendar/docs/ROADMAP.md` |
-| Conteúdo e mídia | `aculta_magazine`, `aculta_gallery`, `aculta_image`, `aculta_document_viewer`, `aculta_pdf_viewer`, `aculta_editor`, `aculta_faq`, `aculta_content_admin` | README de cada módulo |
+| Conteúdo e mídia | `aculta_magazine`, `aculta_gallery`, `aculta_image`, `aculta_document_viewer`, `aculta_editor`, `aculta_faq`, `aculta_content_admin` | README de cada módulo |
 | Plataforma | `aculta_deployer`, `aculta_secrets_manager`, `aculta_patcher`, `aculta_index`, `aculta_statistics`, `aculta_portal_sitemap`, `aculta_linkweed`, `aculta_qrcode`, `aculta_activity`, `aculta_game`, `aculta_studio` | README de cada módulo |
 | Tema | `web/themes/custom/aculta420` | `web/themes/custom/aculta420/AGENTS.md` |
 

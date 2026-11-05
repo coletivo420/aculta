@@ -25,7 +25,6 @@ O arquivo `docs/history/operations/AGENT-GUARDRAILS-FULL.md` é **arquivo histó
 | Agenda LMS | `web/modules/custom/aculta_portal/modules/aculta_lms_agenda/docs/INTEGRACAO.md` |
 | UGC | `web/modules/custom/aculta_portal/modules/aculta_ugc/docs/README.md` |
 | Visualização de documentos | `web/modules/custom/aculta_portal/modules/aculta_document_viewer/README.md` |
-| Visualização de PDF | `web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/README.md` |
 | CPF/CNPJ | `web/modules/custom/aculta_portal/modules/aculta_id_cpf/AGENTS.md` |
 | Messenger | `web/modules/custom/aculta_portal/modules/aculta_messenger/AGENTS.md` |
 | Cache e saídas | `docs/operations/AGENT-CACHE.md` e `docs/operations/AGENT-OUTPUT.md` |
