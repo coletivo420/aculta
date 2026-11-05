@@ -1,5 +1,15 @@
 > **Limite de registro:** no máximo 10 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/`, sem alteração de texto.
 
+# Padrão Drupal 11+ revisado para Drupal 12 ready — 2026-11-05
+
+- **Objetivo:** atualizar `docs/portal/DRUPAL-11-STANDARDS.md` para o alvo Drupal 12 ready e para as regras de htmx, e remover decisões históricas e legadas.
+- **Concluído:** documento normativo reescrito (linha de versão, seção Drupal 12, seção htmx com regras e diferenças do htmx 4, fases P1 e P4 e contagens de dívida removidas; os tetos ficam no gate). Texto integral anterior arquivado em `docs/history/portal/DRUPAL-11-STANDARDS-ARQUIVO-2026-11-05.md`.
+- **Commit:** `c2cc2aa8` (documento). Esta entrada foi registrada em commit separado, por falha de script na mesma sessão.
+- **Fontes verificadas em 2026-11-05:** change record de htmx 4 no Core 12 (publicado em 2026-09-03, presente em 12.0.0-beta1) e change record de htmx no Core 11.3 (`https://www.drupal.org/node/3539472`). Notícia de terceiros sobre remoções de Search, Claro e Olivero do Core, ainda não confirmada em drupal.org.
+- **Verificações:** o gate `validate-aculta-portal-drupal11.php` confere apenas que os documentos citam o padrão, e a referência continua válida. Gate não executado aqui (sem `vendor/` e sem Drush): DEFERRED.
+- **Pendências:** confirmar em drupal.org a lista de remoções do Core 12 e a data do release; decidir o tema administrativo (Claro ou Gin); inventariar os pontos do Portal que usam `Htmx` ou `#ajax`.
+- **Próximo passo:** rodar o gate do Portal no servidor de desenvolvimento e, em seguida, testar um Core 12 beta em ambiente de teste para medir o impacto do htmx 4.
+
 # Economia de tokens — oito itens aprovados — 2026-11-05
 
 - **Objetivo:** reduzir a leitura e a saída de comandos pelos agentes, conforme aprovação do responsável (itens 1 a 8 de `docs/operations/AUDITORIA-TOKENS-TESTES-2026-11-05.md`, seção 9).
@@ -133,51 +143,3 @@
 - **Retomar lendo:** seção F15 em `docs/modules/ACULTA-LMS-ROADMAP.md`, `aculta_lms_resources/src/CourseResourceBuilder.php`, o erro H5P 843707 e a regra Runtime de `AGENTS.md`; depois revisar as integrações Forum/entregas antes de iniciar pagamentos.
 
 # Estado da sessão
-
-## Handoff — assets ACULTA, multidomain-bar e fundamentos V2 — 2026-11-04
-
-- `aculta420_v2` recebe assets copiados seletivamente da V1: logos preto/branco
-  horizontais e quadrados, variante horizontal 900×300 e favicon ICO. Não há na
-  V1 logo separado do Coletivo 4e20, banners/texturas adequados ou manifest/touch
-  icon. `site.webmanifest` foi criado e `apple-touch-icon.png` (180×180) foi
-  gerado do bitmap 32×32 do favicon com fundo da superfície clara. Inventário:
-  `web/themes/custom/aculta420_v2/assets/README.md`.
-- `multidomain-bar` agora representa a faixa institucional V1: fixa no topo,
-  logo com link ao domínio principal, somente ícones de busca/carrinho/mensagens/
-  avisos e espaço reservado para não cobrir o conteúdo. Links de portais são
-  separados em uma linha secundária opcional. `aculta_portal` fornece os dados
-  neutros e cacheáveis; modo de cor continua no seletor explícito.
-- O V2 permanece `base theme: false` e sem cadeia Bootstrap/jQuery: os ícones
-  da barra são SVG inline, os painéis e confirmações usam `<dialog>` nativo, e
-  nenhuma biblioteca do tema declara Bootstrap, Popper ou jQuery. O validador
-  SDC reprova regressões de tema base, dependências, atributos ou classes do
-  framework. Os behaviors usam Vanilla JS, `Drupal.behaviors` e `core/once`.
-- A reconciliação V2 dos tokens segue a identidade da V1. A pendência do gate
-  Design Foundations foi resolvida renomeando o token de tipografia Studio para
-  seu namespace de fidelity, sem mudar seu valor nem sua apresentação.
-- Validações atuais: SDC schemas 55/764 PASS; V2 SDC 14 componentes com
-  descoberta, schema e render isolado PASS; Design Foundations 2468 PASS;
-  JavaScript syntax, PHP lint, PHPCS focal e `git diff --check` PASS. Os scripts
-  npm `lint:css/js` não se aplicam: o projeto e o tema V2 não têm `package.json` nem
-  pipeline Vite. A validação de fronteira tema/módulo falha em seis classes
-  antigas de formulários LMS, todas fora do escopo. O Runtime `toca`/
-  `aculta_runtime` estava limpo antes do rebuild desta retomada.
-- A captura visual não foi executada: `DISPLAY` e `SUITE_OUT` não estão
-  configurados e `DISPLAY=:0` não tem servidor X disponível. A referência
-  legada 390×844 permanece como artefato externo `aculta-institution-bar-scroll-baseline-581c9f571-final`;
-  manter aceite visual como pendência, sem usar Firefox headless.
-- O gate amplo `validate-aculta420-foundation.php` não pode validar esta sessão
-  porque exige V1 como tema público padrão e Runtime está com V2. O SDC strict
-  e Design Foundations foram executados separadamente e passaram. O validador
-  de índice de status ainda reporta dez divergências preexistentes entre
-  manifests e status de componentes fora do escopo; o README gerado foi
-  mantido apenas com a linha do tema ACULTA420; linhas de outros componentes
-  foram excluídas desta entrega. A validação do índice ainda reporta divergências
-  preexistentes fora do tema.
-- **Publicação:** commit `3a7341656da7fb248f37b1387c4a6352b5c7c7cb` enviado por
-  fast-forward para `origin/dev`. O Runtime é o mesmo checkout; pós-push,
-  `drush cr` passou e `updatedb:status`/`config:status` permaneceram limpos.
-- **Retomar lendo:** assets README, `components/multidomain-bar/`,
-  `PagePresentationHooks.php`, roadmap/changelog V2 e este handoff. Arquivos
-  Composer, alterações paralelas do módulo Messenger, JS solto da V1 e o tema
-  `aculta_theme` foram preservados fora desta entrega.
