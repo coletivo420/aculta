@@ -1276,6 +1276,8 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   resultados antigos permanecem registrados, e gates ativos foram atualizados.
 - **Arquivos:** ver `git status` do commit desta entrega; documentação concentrada
   em `docs/`, `web/modules/custom/aculta_portal/` e `tests/browser/`.
-- **Próximo passo:** concluir verificações, revisar o diff, commit e push direto
-  a `dev`; conferir `updatedb:status` e `config:status` em modo somente leitura.
+- **Publicação:** commit `723e927efdde078171016bc98711edb568a8509e` em
+  `origin/dev`; worktree limpo. No Runtime `aculta_runtime` em `toca`, Drush
+  confirmou Drupal 11.5.0-beta1, `updatedb:status` sem updates e
+  `config:status` sem diferenças. Nenhuma escrita de Runtime foi executada.
 
