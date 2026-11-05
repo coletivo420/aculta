@@ -2,7 +2,7 @@
 
 ## ADR-038 — caminhos vigentes das Suites (retificado pelo responsável em 2026-10-30)
 
-Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/we-sativa`; Green Stash `shop:/green-stash`; Culturas `eventos:/culturas`. O prefixo `/studio` e todos os caminhos `/studio/*` respondem 404 sem alias/redirect. O Domain Wiki canônico é `wiki420`. `aculta_studio` permanece framework compartilhado. A raiz de `account` apresenta a entrada da Conta; Conta e Perfil permanecem separados. Consulte a retificação vigente do ADR-038.
+Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/we-sativa`; Green Stash `shop:/green-stash`; Culturas `eventos:/culturas`. O prefixo `/studio` e todos os caminhos `/studio/*` respondem 404 sem alias/redirect. O Domain Wiki canônico é `wiki420`. `aculta_studio` permanece framework compartilhado. Conforme ADR-048 (2026-11-05), a raiz de `account` apresenta o dashboard do Studio; Minha Conta fica em `/conta` e Perfil em `/perfil`, separados. ADR-048 retifica ADR-038 nesse ponto.
 
 
 ## Contrato histórico antes do ADR-038
@@ -139,7 +139,7 @@ Cada Suite responde em seu próprio domínio/purpose e sob o caminho-base abaixo
 | ACULTA STUDIO GREEN STASH | `shop` | configurado no Domain | configurado no Domain | `/green-stash` |
 | Culturas | `eventos` | configurado no Domain | configurado no Domain | `/culturas` |
 
-Manter Conta e Perfil como experiências diferentes, fora das Suites. A raiz de `conta` apresenta a entrada da Conta e não reescreve para `/studio`. `/conta/*`, `/perfil/*` e `/salvos` preservam owners e dados separados. A Conta legada continua em `/conta-legada`.
+Manter Conta e Perfil como experiências diferentes, fora das Suites. Conforme ADR-048, a raiz de `conta` apresenta o dashboard privado do Studio, reescrito por path interno protegido; Minha Conta fica em `/conta` e Perfil em `/perfil`. `/salvos` preserva seu owner e a Conta legada continua em `/conta-legada`.
 
 Regras de implementação:
 - Rotas declaram o purpose correto e validam usuário, módulo owner e permissão no servidor. Purpose incorreto responde 404, inclusive POST. Links cross-domain são absolutos via `DomainPurposeManager`; não enviar POST/proxy de escrita entre purposes.

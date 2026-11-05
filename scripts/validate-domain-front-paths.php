@@ -14,7 +14,7 @@ $check = static function (bool $cond, string $msg) use (&$falhas, &$ok): void {
 
 $politica = $raiz . '/web/modules/custom/aculta_portal/src/Domain/FrontPathPolicy.php';
 $assinante = $raiz . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainPurposeRequestSubscriber.php';
-$processador = $raiz . '/web/modules/custom/aculta_portal/src/PathProcessor/PurposeFrontPathProcessor.php';
+$mapaSuperficies = $raiz . '/web/modules/custom/aculta_portal/src/Domain/DomainSurfaceMap.php';
 $doc = $raiz . '/docs/portal/DOMAIN-FRONT-PATHS.md';
 
 $check(is_file($politica), 'FrontPathPolicy existe');
@@ -30,8 +30,10 @@ $quantos301 = substr_count($textoAssinante, 'HTTP_MOVED_PERMANENTLY');
 $check($quantos301 === 1, "assinante tem somente o 301 de checkout funcional pendente de auditoria; encontrado: $quantos301");
 
 // Mapa de caminhos internos: documento e código devem listar os mesmos caminhos.
-$textoProcessador = is_file($processador) ? file_get_contents($processador) : '';
-preg_match_all("/'([a-z_]+)' => '(\/[a-z0-9\/-]+)'/", $textoProcessador, $m, PREG_SET_ORDER);
+$textoMapa = is_file($mapaSuperficies) ? file_get_contents($mapaSuperficies) : '';
+preg_match('/public const FRONT_PATHS = \[(.*?)\n  \];/s', $textoMapa, $frontPaths);
+$textoFrontPaths = $frontPaths[1] ?? '';
+preg_match_all("/'([a-z_]+)' => '(\/[a-z0-9\/-]+)'/", $textoFrontPaths, $m, PREG_SET_ORDER);
 $mapa = [];
 foreach ($m as $linha) {
   $mapa[$linha[1]] = $linha[2];

@@ -10,6 +10,7 @@ use Drupal\aculta_portal\Controller\PortalController;
 use Drupal\aculta_portal\Support\Controller\SupportController;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
@@ -31,6 +32,7 @@ final class StudioAccountSectionController {
     private readonly AccountInterface $account,
     private readonly ?AccountDocumentInterface $documents = NULL,
     private readonly ?FormBuilderInterface $forms = NULL,
+    private readonly ?RouteMatchInterface $routeMatch = NULL,
   ) {}
 
   /**
@@ -220,7 +222,12 @@ final class StudioAccountSectionController {
    */
   private function navigation(string $section): array {
     $destinations = [
-      'dados' => [new TranslatableMarkup('Dados cadastrais'), 'aculta_studio.account_data'],
+      'dados' => [
+        new TranslatableMarkup('Dados cadastrais'),
+        $this->routeMatch?->getRouteName() === 'aculta_studio.account_data'
+          ? 'aculta_studio.account_data'
+          : 'aculta_studio.account',
+      ],
       'endereco' => [new TranslatableMarkup('Endereço'), 'aculta_studio.account_address'],
       'documentos' => [new TranslatableMarkup('Documentos'), 'aculta_studio.account_documents'],
       'seguranca' => [new TranslatableMarkup('E-mail e segurança'), 'aculta_studio.account_security'],

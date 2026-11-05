@@ -94,7 +94,7 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
           [
             '#type' => 'link',
             '#title' => new TranslatableMarkup('Acessar Minha Conta'),
-            '#url' => Url::fromRoute('aculta_studio.account_data'),
+            '#url' => Url::fromRoute('aculta_studio.account'),
           ],
         ],
         '#attributes' => [

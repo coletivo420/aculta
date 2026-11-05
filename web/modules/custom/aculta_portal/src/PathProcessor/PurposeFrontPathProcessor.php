@@ -21,7 +21,9 @@ use Symfony\Component\HttpFoundation\Request;
  */
 final class PurposeFrontPathProcessor implements InboundPathProcessorInterface {
 
-  /** Atributo da requisição que marca a raiz reescrita (permite rotas públicas que só respondem em `/`). */
+  /**
+   * Request attribute marking a rewritten root (routes that only answer at `/`).
+   */
   public const FRONT_ATTRIBUTE = '_aculta_purpose_front';
 
   /**
@@ -31,8 +33,8 @@ final class PurposeFrontPathProcessor implements InboundPathProcessorInterface {
    * - wiki e courses: a raiz serve a página inicial da wiki (`/wiki`) e dos cursos (`/cursos`). Verificado: texto igual.
    * - shop: a raiz serve a página inicial da loja (rota `aculta_portal.shop_home`, `/loja`, que mostra o nó 372).
    * - forum: a raiz serve a View nova de tópicos em `/discussoes`.
-   * - account: a raiz serve a entrada da Conta (rota `aculta_studio.account`, `/conta`). A Conta legada
-   *   fica em `/conta-legada`, sem ser a raiz.
+   * - account: a raiz serve o dashboard Studio (rota `aculta_studio.dashboard`,
+   *   path interno `/aculta-studio-dashboard`). Minha Conta fica em `/conta`.
    * - magazine e main: sem reescrita. A raiz é o `<front>` (página inicial do site, com a marca do host).
    */
   public const FRONT_PATHS = DomainSurfaceMap::FRONT_PATHS;
@@ -41,6 +43,9 @@ final class PurposeFrontPathProcessor implements InboundPathProcessorInterface {
     private readonly DomainPurposeManager $domainPurposeManager,
   ) {}
 
+  /**
+   * Rewrites a purpose root to its internal route path.
+   */
   public function processInbound($path, Request $request): string {
     if ($path !== '/') {
       return $path;

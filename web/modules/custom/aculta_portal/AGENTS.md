@@ -2,7 +2,7 @@
 
 ## ADR-038 - caminhos atuais das Suites (retificado pelo responsável em 2026-10-30)
 
-Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/we-sativa`; Green Stash `shop:/green-stash`; Culturas `eventos:/culturas`. WE SATIVA e Green Stash são as áreas integradas ACULTA STUDIO WE SATIVA e ACULTA STUDIO GREEN STASH, com caminhos próprios. A entrada da Wiki (wiki420) é a raiz `/`, e a da loja (loja420) também; `/wiki` e `/loja` respondem 404. Os caminhos `/wesativa` e `/greenstash` respondem 404 sem redirect. `/studio` e todos os caminhos `/studio/*` respondem 404. O Domain Wiki canônico é `wiki420`. `aculta_studio` permanece framework compartilhado. A raiz de `conta` é entrada de Conta; Conta e Perfil permanecem separados. Veja ADR-038 e sua retificação explícita.
+Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/we-sativa`; Green Stash `shop:/green-stash`; Culturas `eventos:/culturas`. WE SATIVA e Green Stash são as áreas integradas ACULTA STUDIO WE SATIVA e ACULTA STUDIO GREEN STASH, com caminhos próprios. A entrada da Wiki (wiki420) é a raiz `/`, e a da loja (loja420) também; `/wiki` e `/loja` respondem 404. Os caminhos `/wesativa` e `/greenstash` respondem 404 sem redirect. `/studio` e todos os caminhos `/studio/*` respondem 404. O Domain Wiki canônico é `wiki420`. `aculta_studio` permanece framework compartilhado. Conforme ADR-048 (2026-11-05), a raiz de `conta` apresenta o dashboard do Studio; Minha Conta fica em `/conta` e Perfil em `/perfil`, separados. ADR-048 retifica ADR-038 nesse ponto.
 
 
 Herde `AGENTS.md` da raiz. Consulte `docs/AGENT-POLICIES.md` **somente nas seções relevantes** e os contratos `docs/portal/GUARDRAILS.md` e `docs/portal/DRUPAL-11-STANDARDS.md` quando a alteração exigir.
@@ -43,7 +43,7 @@ Cada Suite responde em seu próprio domínio/purpose. As duas exceções explici
 | ACULTA STUDIO GREEN STASH | `shop` | configurado no Domain | configurado no Domain | `/green-stash` |
 | Culturas | `eventos` | configurado no Domain | configurado no Domain | `/culturas` |
 
-Manter Conta e Perfil como experiências diferentes, fora das Suites. A raiz de `conta` apresenta uma página de entrada da Conta e não reescreve para `/studio`. `/conta/*`, `/perfil/*` e `/salvos` preservam seus owners e dados separados; `/conta-legada` continua.
+Manter Conta e Perfil como experiências diferentes, fora das Suites. Conforme ADR-048, a raiz de `conta` apresenta o dashboard privado do Studio, reescrito por path interno protegido; Minha Conta fica em `/conta` e Perfil em `/perfil`. `/salvos` preserva seu owner e a Conta legada continua em `/conta-legada`.
 
 Regras de implementação:
 - Rotas declaram o purpose correto e validam usuário, módulo owner e permissão no servidor. Purpose incorreto responde 404, inclusive POST. Links cross-domain são absolutos via `DomainPurposeManager`; não enviar POST/proxy de escrita entre purposes.

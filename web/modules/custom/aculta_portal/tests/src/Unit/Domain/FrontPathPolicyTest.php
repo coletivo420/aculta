@@ -22,9 +22,6 @@ final class FrontPathPolicyTest extends UnitTestCase {
   public static function caminhosInternos(): array {
     $casos = [];
     foreach (PurposeFrontPathProcessor::FRONT_PATHS as $purpose => $path) {
-      if ($purpose === 'account') {
-        continue;
-      }
       $casos[$purpose] = [$purpose, $path];
     }
     return $casos;
@@ -56,10 +53,11 @@ final class FrontPathPolicyTest extends UnitTestCase {
   }
 
   /**
-   * The Conta entry path is public directly as well as at the ACCOUNT root.
+   * Minha Conta is canonical; the internal dashboard path is private.
    */
-  public function testAccountEntryPathRemainsPublic(): void {
+  public function testAccountDashboardInternalPathIsPrivate(): void {
     $this->assertFalse(FrontPathPolicy::bloqueiaCaminhoInterno('account', '/conta', FALSE));
+    $this->assertTrue(FrontPathPolicy::bloqueiaCaminhoInterno('account', '/aculta-studio-dashboard', FALSE));
   }
 
   /**
@@ -81,7 +79,7 @@ final class FrontPathPolicyTest extends UnitTestCase {
   /**
    * Os caminhos /studio saíram: a política não guarda exceção alguma.
    */
-  public function testCaminhosInternosDoWikiELojaContinuamFechados(): void {
+  public function testWikiAndShopInternalPathsRemainClosed(): void {
     $this->assertTrue(FrontPathPolicy::bloqueiaCaminhoInterno('wiki', '/wiki', FALSE));
     $this->assertTrue(FrontPathPolicy::bloqueiaCaminhoInterno('shop', '/loja', FALSE));
   }

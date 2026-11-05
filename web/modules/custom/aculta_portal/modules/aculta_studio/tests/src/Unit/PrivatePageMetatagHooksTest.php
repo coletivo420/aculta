@@ -20,24 +20,26 @@ final class PrivatePageMetatagHooksTest extends UnitTestCase {
   /**
    * Private Studio routes receive noindex and lose public canonical tags.
    */
-  public function testPrivateStudioRouteIsNoindex(): void {
-    $route_match = $this->createMock(RouteMatchInterface::class);
-    $route_match->method('getRouteName')->willReturn('aculta_studio.account_data');
-    $hook = new PrivatePageMetatagHooks($route_match);
-    $tags = [
-      'robots' => 'index, follow',
-      'canonical_url' => '/conta/dados',
-      'og_url' => '/conta/dados',
-      'schema_web_page_url' => '/conta/dados',
-    ];
-    $context = [];
+  public function testPrivateStudioRoutesAreNoindex(): void {
+    foreach (['aculta_studio.dashboard', 'aculta_studio.account', 'aculta_studio.account_data'] as $route) {
+      $route_match = $this->createMock(RouteMatchInterface::class);
+      $route_match->method('getRouteName')->willReturn($route);
+      $hook = new PrivatePageMetatagHooks($route_match);
+      $tags = [
+        'robots' => 'index, follow',
+        'canonical_url' => '/conta',
+        'og_url' => '/conta',
+        'schema_web_page_url' => '/conta',
+      ];
+      $context = [];
 
-    $hook->metatagsAlter($tags, $context);
+      $hook->metatagsAlter($tags, $context);
 
-    self::assertSame('noindex, nofollow', $tags['robots']);
-    self::assertArrayNotHasKey('canonical_url', $tags);
-    self::assertArrayNotHasKey('og_url', $tags);
-    self::assertArrayNotHasKey('schema_web_page_url', $tags);
+      self::assertSame('noindex, nofollow', $tags['robots'], $route);
+      self::assertArrayNotHasKey('canonical_url', $tags, $route);
+      self::assertArrayNotHasKey('og_url', $tags, $route);
+      self::assertArrayNotHasKey('schema_web_page_url', $tags, $route);
+    }
   }
 
   /**

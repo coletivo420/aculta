@@ -22,6 +22,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
   public function testCanonicalPathsHaveOneOwner(): void {
     $routes = $this->routes();
     $expected = [
+      '/aculta-studio-dashboard' => 'aculta_studio.dashboard',
       '/conta' => 'aculta_studio.account',
       '/conta/dados' => 'aculta_studio.account_data',
       '/conta/endereco' => 'aculta_studio.account_address',
@@ -94,6 +95,10 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       self::assertSame('access aculta portal', $route['requirements']['_permission']);
       self::assertSame('TRUE', $route['requirements']['_user_is_logged_in']);
     }
+    $dashboard = $routes['aculta_studio.dashboard'];
+    self::assertSame('account', $dashboard['options']['_aculta_domain_purpose']);
+    self::assertSame('access aculta portal', $dashboard['requirements']['_permission']);
+    self::assertSame('TRUE', $dashboard['requirements']['_user_is_logged_in']);
     $profileRoutes = [
       'aculta_studio.profile',
       'aculta_studio.profile_nickname',

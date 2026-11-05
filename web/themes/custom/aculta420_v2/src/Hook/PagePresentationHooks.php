@@ -109,6 +109,11 @@ final class PagePresentationHooks {
       return 'stack';
     }
 
+    $routeName = $this->currentRouteMatch->getRouteName();
+    if ($routeName === 'aculta_studio.dashboard') {
+      return 'aside';
+    }
+
     if ($this->pathMatcher->isFrontPage()) {
       return 'full';
     }
@@ -123,6 +128,7 @@ final class PagePresentationHooks {
     }
 
     return match ($this->currentRouteMatch->getRouteName()) {
+      'aculta_studio.dashboard',
       'aculta_studio.account',
       'aculta_studio.account_data',
       'aculta_studio.account_address',

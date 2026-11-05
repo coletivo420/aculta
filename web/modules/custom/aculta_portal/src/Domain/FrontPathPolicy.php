@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Domain;
 
-
 /**
  * Política uniforme para caminhos internos de raiz de cada subdomínio.
  *
@@ -23,11 +22,6 @@ final class FrontPathPolicy {
     }
     $caminho = DomainSurfaceMap::FRONT_PATHS[$purpose] ?? NULL;
     if ($caminho !== NULL && $path === $caminho) {
-      // `/conta` is both the canonical Conta entry route and the internal
-      // target used to serve the ACCOUNT root.
-      if ($purpose === 'account' && $path === '/conta') {
-        return FALSE;
-      }
       return TRUE;
     }
     if (in_array($path, DomainSurfaceMap::CAMINHOS_LEGADOS[$purpose] ?? [], TRUE)) {
@@ -46,14 +40,14 @@ final class FrontPathPolicy {
   /**
    * Decide a guarda da entrada da Conta.
    *
-   * A política cobre `aculta_studio.account` no Domain ACCOUNT.
+   * A política cobre `aculta_studio.dashboard` no Domain ACCOUNT.
    *
    * A raiz `/` é resolvida como entrada `/conta`; `/studio` não é uma rota.
    * Visitantes anônimos na raiz vão ao login do host de conta. Fora do purpose
    * ACCOUNT ou de outra rota, não há ação (NULL).
    */
   public static function acaoDaContaNaRaiz(?string $purpose, string $path, string $route, bool $autenticado): ?string {
-    if ($purpose !== 'account' || $route !== 'aculta_studio.account') {
+    if ($purpose !== 'account' || $route !== 'aculta_studio.dashboard') {
       return NULL;
     }
     if ($path !== '/') {

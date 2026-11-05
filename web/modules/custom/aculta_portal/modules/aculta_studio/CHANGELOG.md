@@ -1,3 +1,10 @@
+## Não versionado — dashboard do Studio na raiz de Conta
+
+- `aculta_studio.dashboard` serve o dashboard privado na raiz do purpose
+  `account`; o path interno responde 404 quando acessado diretamente.
+- `/conta` apresenta Dados cadastrais privados na navegação contextual já
+  existente. Access, Form API, `noindex` e cache privado permanecem no Portal.
+
 ## Não versionado — noindex das rotas privadas do Studio
 
 - Rotas `aculta_studio.*` recebem `robots: noindex, nofollow` e removem

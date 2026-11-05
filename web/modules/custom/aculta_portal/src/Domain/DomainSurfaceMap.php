@@ -14,10 +14,14 @@ namespace Drupal\aculta_portal\Domain;
  */
 final class DomainSurfaceMap {
 
-  /** Superfície protegida: domínio principal (painel, carrinho, pagamento). */
+  /**
+   * Superfície protegida: domínio principal (painel, carrinho, pagamento).
+   */
   public const MAIN = 'main';
 
-  /** Superfície de Conta. */
+  /**
+   * Superfície de Conta.
+   */
   public const ACCOUNT = 'account';
 
   /**
@@ -46,7 +50,8 @@ final class DomainSurfaceMap {
     'shop' => '/loja',
     'forum' => '/discussoes',
     'links' => '/redes-sociais',
-    'account' => '/conta',
+    // Internal route used to serve the Studio dashboard at the account root.
+    'account' => '/aculta-studio-dashboard',
     'eventos' => '/eventos',
   ];
 

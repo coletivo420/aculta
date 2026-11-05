@@ -71,7 +71,7 @@ final class AccountExperienceProviderTest extends UnitTestCase {
     self::assertSame('account-entry-links', $build['account_link']['#attributes']['data-portal-ui']);
     $routes = array_map(static fn (array $link): string =>
       $link['#url']->getRouteName(), $build['account_link']['#items']);
-    self::assertSame(['aculta_studio.account_data'], $routes);
+    self::assertSame(['aculta_studio.account'], $routes);
     self::assertContains('user', $build['#cache']['contexts']);
     self::assertSame('Studio Dashboard', $build['heading']['#value']);
     self::assertSame([], $build['profile_link']);

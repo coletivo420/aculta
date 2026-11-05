@@ -1,5 +1,13 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — dashboard e Minha Conta na rota definida pela ADR-048
+
+- O preprocess mapeia a rota `aculta_studio.dashboard` para `aside`, inclusive
+  quando ela é servida na raiz do purpose `account`.
+- O Portal separa o dashboard em `/` de Minha Conta em `/conta`; o path interno
+  do dashboard é bloqueado diretamente e a tela de Conta reutiliza a composição
+  privada existente. Validação visual autenticada permanece pendente.
+
 ## Não versionado — accordion para FAQ e layout LMS
 
 - Criado o SDC accordion com story e interação HTML nativa (details), foco

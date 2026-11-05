@@ -1,10 +1,21 @@
 # Conta and Perfil stay separate; the legacy Portal dashboard remains at
-# /conta-legada and the account purpose root serves the Conta entry page.
+# /conta-legada and the account purpose root serves this Studio dashboard.
+aculta_studio.dashboard:
+  path: /aculta-studio-dashboard
+  defaults:
+    _controller: 'aculta_studio.account_controller:page'
+    _title: 'Studio Dashboard'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+
 aculta_studio.account:
   path: /conta
   defaults:
-    _controller: 'aculta_studio.account_controller:page'
-    _title: 'Minha Conta'
+    _controller: 'aculta_studio.account_section_controller:data'
+    _title: 'Dados cadastrais (privados)'
   requirements:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'

@@ -201,8 +201,8 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
         return;
       }
     }
-    // The Account root serves its account entry page; anonymous visitors go
-    // to the account login page. The suite framework has no public hub route.
+    // The Account root serves the private Studio dashboard; anonymous visitors
+    // go to the account login page. The dashboard has no public standalone URL.
     $accountAction = FrontPathPolicy::acaoDaContaNaRaiz(
       $this->domainPurposeManager->getCurrentPurpose(),
       $event->getRequest()->getPathInfo(),

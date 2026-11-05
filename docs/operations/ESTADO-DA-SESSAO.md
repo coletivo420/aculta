@@ -1286,3 +1286,35 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   confirmou Drupal 11.5.0-beta1, `updatedb:status` sem updates e
   `config:status` sem diferenças. Nenhuma escrita de Runtime foi executada.
 
+## Continuação — P3 dashboard e Minha Conta — 2026-11-05
+
+- **Implementação:** alinhadas as rotas com ADR-048: a raiz do purpose `account`
+  resolve para `aculta_studio.dashboard` (caminho interno
+  `/aculta-studio-dashboard`), e `/conta` abre Dados cadastrais privados.
+  A navegação mantém o item atual com `aria-current="page"`; Dashboard e Conta
+  recebem `noindex`; o layout V2 aplica `aside` ao dashboard mesmo quando a rota
+  corresponde à front page.
+- **Documentação:** atualizados os mapas de rotas, políticas dos agentes Portal
+  e Studio, README/CHANGELOG do Studio, arquitetura, roadmap e gates do tema.
+  O registro de decisão sobre a rota pública `/u/<apelido>` permanece pendente;
+  esta entrega não altera essa decisão.
+- **Gates executados:** Portal/Studio Unit 54 testes/507 assertions PASS; Theme
+  Unit 1 teste/2 assertions PASS; `validate-domain-front-paths.php` PASS (17);
+  V2 foundations PASS (55 pares), design foundations PASS (2.468 checks), shell
+  contract PASS (13) e render SDC Drupal PASS (27 componentes). PHP lint e
+  `git diff --check` PASS. PHPCS precisa ser repetido após os ajustes finais de
+  estilo; restos de avisos de linha longa em comentários preexistentes estão
+  em `PurposeFrontPathProcessor.php`.
+- **Gates com bloqueio preexistente:** `validate-module-theme-boundary.php`
+  encontra classes de apresentação em formulários/controllers LMS fora desta
+  entrega. `validate-aculta-portal-drupal11.php` falha por nove divergências
+  preexistentes entre versões do índice status e manifests (Calendar, Donation,
+  File Uploader, Linkweed, Mailer, Messenger, Paths, UGC e User).
+- **Visual/runtime:** capturas e Firefox para estas rotas estão DEFERRED; não foi
+  reconstruído cache nem alterado o Runtime. Consultas somente leitura antes da
+  troca de HEAD: `updatedb:status` sem updates e `config:status` sem diferenças.
+- **Arquivos principais:** `web/modules/custom/aculta_portal/` e
+  `web/themes/custom/aculta420_v2/`; lista exata no diff da entrega. Próximo:
+  concluir PHPCS/testes, commit e push fast-forward em `dev`, sem sincronização
+  de cache/configuração/dados no Runtime.
+

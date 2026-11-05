@@ -47,16 +47,17 @@ selecionada por bundle/route name, sem hostname ou purpose. Catálogo e produto
 da loja aguardam autorização explícita de tarefa. Validação visual do
 mapeamento permanece pendente por falta de `DISPLAY`.
 
-## Layout de Studio e conta — P3 parcial/bloqueado
+## Layout de Studio e conta — P3 implementado; validação visual pendente
 
-As rotas existentes de conta, WE Sativa, Ganjalab e Culturas agora escolhem
-aside (uma coluna no mobile; duas no desktop). Os controllers do Studio já
-fornecem `aria-current` na sub-navegação. O módulo Portal agora aplica noindex
-por rota a todas as rotas privadas `aculta_studio.*`, removendo canonical e URLs
-sociais; teste Unit cobre a regra. A rota própria do dashboard na raiz do
-purpose conta não existe no módulo atual, então não foi criada no tema nem teve
-ownership inventado. P3 aguarda implementação/contrato do owner e validação
-visual autenticada.
+ADR-048 coloca o dashboard privado em `/` no purpose `account` e Minha Conta
+em `/conta`. O Portal serve a raiz pela rota protegida
+`aculta_studio.dashboard`, bloqueia o path interno quando acessado diretamente
+e redireciona visitantes à entrada de login. `/conta` compõe Dados cadastrais
+privados e navegação contextual; rotas de Conta e Perfil mantêm `noindex` e
+sem cache público. O tema mapeia dashboard e rotas de Conta para `aside`.
+Subnavegação e `aria-current` existentes foram preservados. Gates de rota,
+guardas, layout, noindex, lint e boundary precisam constar no registro da
+entrega; Firefox autenticado, capturas, teclado e zoom permanecem pendentes.
 
 ## Evento, FAQ e LMS — P4 parcial
 

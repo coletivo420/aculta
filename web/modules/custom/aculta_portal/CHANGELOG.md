@@ -1,3 +1,10 @@
+## Não versionado — raiz do Studio e entrada de Minha Conta
+
+- ADR-048 passa a valer no roteamento: a raiz de `account` serve o dashboard
+  `aculta_studio.dashboard`; `/conta` apresenta Dados cadastrais privados.
+- O path interno da raiz não pode ser requisitado diretamente; a guarda da raiz
+  continua redirecionando visitantes anônimos ao login.
+
 ## Não versionado — contrato de sites ativos para a barra V2
 
 - `DomainPresentation` agora inclui uma lista neutra dos Domains ativos com

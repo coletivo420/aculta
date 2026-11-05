@@ -7,7 +7,7 @@ redirecionamentos. Ele complementa o sitemap XML de indexação; não o substitu
 ## Decisão vigente: Conta e Perfil separados, legado mantido
 
 Minha Conta legada fica em `/conta-legada` no Domain ACCOUNT, com
-`aculta_portal.dashboard` como route ID. A raiz `/` do Domain ACCOUNT é a entrada da Conta. O hub público `aculta_studio.hub` foi removido; `/studio` responde 404. Os paths canônicos implementados são `/we-sativa/**` no purpose `wiki` e `/green-stash/**` no purpose `shop`; a proposta anterior de prefixos `/studio/` para essas Suites foi descartada em 2026-11-01.
+`aculta_portal.dashboard` como route ID. Conforme ADR-048 (2026-11-05), a raiz `/` serve o dashboard privado do Studio e `/conta` apresenta Minha Conta. O path interno do dashboard responde 404 diretamente. O hub público `/studio` foi removido e `/studio*` responde 404. Os paths canônicos implementados são `/we-sativa/**` no purpose `wiki` e `/green-stash/**` no purpose `shop`.
 O caminho `/minha-conta` não é rota e responde 404. O legado será conservado durante e
 **após** a comparação com `/conta`. As duas experiências
 `/conta` e `/perfil` não possuem um agrupamento
@@ -20,8 +20,8 @@ Durante o desenvolvimento não há aliases temporários de rota. `/studio` e
 os caminhos `/studio` e `/studio/*` permanecem retirados, sem exceções;
 os demais caminhos antigos de Ganjalab, Fórum administrativo, User e
 Conta/Commerce respondem 404, sem redirects.
-Usar `/` no ACCOUNT para a entrada da Conta, `/conta-legada` para a Conta
-original, `/conta` e `/perfil` para as experiências, `/marley`, `/ganjalab`,
+Usar `/` no ACCOUNT para o dashboard do Studio, `/conta-legada` para a Conta
+original, `/conta` para Minha Conta e `/perfil` para Meu Perfil, além de `/marley`, `/ganjalab`,
 `/we-sativa`, `/green-stash`, `/culturas`, `/dados/endereco` e `/pedidos`.
 O perfil público `/u/{apelido}` e a raiz técnica da Conta seguem seu
 contrato. **Pathauto e aliases editoriais de conteúdo são URLs de conteúdo,
@@ -332,7 +332,8 @@ correspondentes estão habilitados no ambiente.
 | `wiki.aculta` | `/busca-wiki`, `/verbetes`, `/propostas/{proposal}` | Rotas da Wiki na raiz | Substituem `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas`, que respondem 404. |
 | `loja.aculta` | `/` | Vitrine da loja (raiz) | Raiz reescrita para `/loja` internamente; `/loja` direto responde 404. |
 | `loja.aculta` | `/green-stash` | ACULTA STUDIO GREEN STASH | Suite no purpose `shop`; substitui `/greenstash` e `/studio/green-stash`. |
-| `conta.aculta` | `/conta` | **Minha Conta Studio** | `aculta_studio.account`, autenticação + Portal; composição de serviços cadastrais privados. Não retira a Conta legada. |
+| `conta.aculta` | `/` | **Dashboard ACULTA Studio** | `aculta_studio.dashboard`, servido pela reescrita interna `/aculta-studio-dashboard`; autenticação obrigatória, path interno 404 direto. |
+| `conta.aculta` | `/conta` | **Minha Conta Studio** | `aculta_studio.account`, dados cadastrais privados com navegação contextual; noindex e sem cache público. Não retira a Conta legada. |
 | `conta.aculta` | `/conta/dados` | Dados cadastrais privados | `aculta_studio.account_data`, Profile Form API do Portal para nome e WhatsApp, sem o campo público de apelido. Legado `/dados` preservado. |
 | `conta.aculta` | `/conta/endereco` | Endereço privado no Studio | `aculta_studio.account_address`; chama `PortalController::address()` e mantém o mesmo Profile Commerce, CEP, Número/S-N e retorno contextual; legado `/dados/endereco` preservado. |
 | `conta.aculta` | `/conta/documentos` | Documentos privados CPF/CNPJ | `aculta_studio.account_documents`; mesmo form Portal, owner opcional `aculta_id_cpf`, link condicionado à disponibilidade e retorno contextual. |
@@ -564,7 +565,7 @@ módulos instalados: módulos desabilitados não expõem rotas ativas.
 
 | Origem | Destino | Título / objeto | Código/condição |
 | --- | --- | --- | --- |
-| `/` | `conta.aculta:/entrar` | Entrada da área de conta para visitante anônimo | `302`; usuário autenticado recebe a visão geral da conta. |
+| `/` | `conta.aculta:/entrar` | Entrada da área de conta para visitante anônimo | `302`; usuário autenticado recebe o dashboard privado do Studio. |
 | `/user` | `conta.aculta:/` | Página legada de usuário do Core | `302` para a raiz da Conta. |
 | `/user/{uid}` | `conta.aculta:/` | Perfil legado do próprio usuário | `302` para o dono; acesso ao perfil de outra pessoa é negado. |
 | `/identidade/editar` | `conta.aculta:/seguranca` | Edição legada do próprio perfil | `302` para o painel de segurança; usuário alheio recebe negação. |
@@ -621,4 +622,4 @@ Caminhos e purposes foram atualizados no código; Wiki mantém o Domain canônic
 | `loja.aculta.*` | `/green-stash` | ACULTA STUDIO GREEN STASH | `shop` | Path vigente no código; host vem do Domain ativo; Runtime precisa ser revalidado |
 | `eventos.aculta.*` | `/culturas` | ACULTA Studio Culturas | `eventos` | Página autenticada verificada; grants e fluxos integrais de escrita ainda pendentes |
 
-A raiz `conta` apresenta a Conta; rotas Conta, Perfil, Salvos e Mercado Pago usam paths próprios conforme tabela de correspondência no ADR-038. `/studio` e os paths não aprovados sob esse prefixo respondem 404; apenas as rotas canônicas WE SATIVA e Green Stash usam `/studio/`. O Domain canônico da Wiki permanece `wiki420`; a referência a `wiki.aculta.*` foi corrigida pelo responsável e não há troca de host planejada. A disponibilidade DNS de produção `wiki420.aculta.org` não foi verificada deste ambiente.
+A raiz `conta` apresenta o dashboard do Studio e `/conta` apresenta Minha Conta, conforme ADR-048, que retifica ADR-038 nesse ponto. `/studio` e seus caminhos respondem 404. O Domain canônico da Wiki permanece `wiki420`; a disponibilidade DNS de produção não foi verificada deste ambiente.
