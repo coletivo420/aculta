@@ -15,6 +15,22 @@ Este documento oficializa as paletas do tema V2 (`aculta420_v2`) para os purpose
 7. **Texto sobre destaque.** Preto ou branco, o que tiver mais contraste.
 8. **Contraste.** Texto normal: 4,5:1 (WCAG AA). Elementos decorativos e de interface: 3:1. Amarelos sobre creme ficam abaixo de 3:1; funcionam como faixa com texto escuro, como na V1, e não como texto ou controle sem outro sinal.
 
+## Escopo: o que a paleta muda
+
+A paleta muda **só** a faixa de destaque do purpose: uma faixa na área de conteúdo da página do purpose, com o título ou o indicador do purpose. Nada além disso.
+
+**A paleta nunca altera:**
+- botões, em todas as variantes (primário, secundário, contorno);
+- anel de foco (`--color-focus-ring`) e contorno de foco;
+- barra institucional (`.aculta-institution-bar`), incluindo a conta e o menu da conta;
+- barra multidomínio e a navegação;
+- abas, badges, status, diálogos, links e tabelas;
+- fundo, texto principal e cabeçalho.
+
+**Tokens que a paleta não pode sobrescrever:** `--color-brand-primary`, `--color-brand-highlight`, `--color-brand-secondary`, `--color-on-brand`, `--color-on-highlight`, `--color-focus-ring`, `--color-surface-institution` e os tokens de botão.
+
+**Por que essa regra existe:** a implementação da F3 sobrescrevia `--color-brand-highlight` por purpose no `<html>`. Esse token é usado por botões, foco, abas, navegação, barra multidomínio e a conta na barra institucional. Por isso, esses elementos mudavam de cor ao trocar de purpose. Essa parte deve ser substituída pelos tokens `--purpose-*`, consumidos só pela faixa do purpose.
+
 ## Cobertura por purpose
 
 O código tem dez purposes (`DomainSurfaceMap::DOMAIN_IDS`). A tabela abaixo confirma que cada um tem esquema.
@@ -164,7 +180,7 @@ Nomes semânticos, sem a cor no nome. Valores em cada modo vêm do esquema escol
 
 | Token | Papel |
 |---|---|
-| `--purpose-accent` | Destaque do purpose (faixa, destaque, realce) |
+| `--purpose-accent` | Faixa de destaque do purpose. Nenhum outro componente consome este token |
 | `--purpose-on-accent` | Texto sobre o destaque |
 | `--purpose-sub-1` a `--purpose-sub-3` | Subelementos, nesta ordem |
 | `--purpose-surface-1` a `--purpose-surface-3` | Elevações no modo escuro |
@@ -173,6 +189,7 @@ Os tokens são definidos sob o seletor do purpose e redefinidos sob o modo escur
 
 ## Pendências
 
+- Substituir a sobrescrita de `--color-brand-highlight` por purpose (F3) pelos tokens `--purpose-*`, consumidos só pela faixa do purpose. Corrige botões, foco e barra institucional.
 - Implementar o select de esquema por purpose (dez purposes) na tela de configurações do tema, com os nomes e chaves acima.
 - Trocar os valores de `tokens.css` pelos desta paleta, em versão MINOR.
 - Atualizar `configuracao-do-tema.md` seção 2.1 e `architecture.md` com o estado real.
@@ -183,4 +200,5 @@ Os tokens são definidos sob o seletor do purpose e redefinidos sob o modo escur
 - 2026-11-05: paleta gerada a partir das cores da V1 e do reggae. Versão aprovada com esquemas nomeados por variedades de cannabis, sem nome de purpose.
 - 2026-11-05: adicionado o esquema Skunk para o purpose Links (LinkWeed).
 - 2026-11-05: adicionados Panama Red (Fórum) e Acapulco Gold (Eventos). Os dez purposes passam a ter esquema.
+- 2026-11-05: definido o escopo da paleta. Botões, foco, barra institucional e navegação não mudam por purpose. Registrado que a F3 sobrescrevia `--color-brand-highlight`, o que deve ser corrigido.
 - 2026-11-05: incluída a seção de verificação de acessibilidade, com simulação de deuteranopia e regra de não usar verde e vermelho como único sinal.
