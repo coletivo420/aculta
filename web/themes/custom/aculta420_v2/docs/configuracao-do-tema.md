@@ -68,7 +68,7 @@ Os valores seguem `docs/superficies.md`, seção 1.
 
 Decisão do responsável em 2026-11-05: o administrador escolhe a cor de destaque
 de cada purpose em uma seção nova, **Cores por purpose**, separada de
-Superfícies. Estado: **implementado**.
+Superfícies. Estado: **implementado** com uma cor por purpose. A paleta aprovada em 2026-11-05, com sequência de cinco cores, modo claro e escuro e nomes de esquema, está em [paletas-por-purpose.md](paletas-por-purpose.md). Essa paleta ainda não foi implementada.
 Escopo: **só destaque** (faixa e tokens de acento). Fundo, texto e cabeçalho não mudam. Versão: **MINOR**, conforme `docs/versioning.md`. O controle usa a tela nativa do tema (Aparência → ACULTA420 V2 → Configurações) em `theme-settings.php` e salva em `aculta420_v2.settings`; a exportação para `config/sync` segue o passo de `drush cex` descrito na seção 1.
 
 O tema obtém a lista de purposes ativos exclusivamente pelo estado neutro `aculta_portal.active_purposes` da Core State API (`\Drupal::state()->get('aculta_portal.active_purposes', [])`). Não consulta Domain, DomainNegotiator nem serviços do Portal. Se o estado estiver vazio, exibe a mensagem de aviso e não renderiza selects.
