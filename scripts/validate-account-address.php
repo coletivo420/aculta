@@ -161,7 +161,18 @@ $check(
 // O CEP (field_postal_code) deve anteceder rigorosamente todos os campos de endereço visíveis,
 // inclusive o campo geral textual de endereço (field_address). Um campo antes do CEP faz o gate falhar.
 $institutionFormYaml = $read('config/sync/core.entity_form_display.block_content.aculta_institution.default.yml');
-$instData = class_exists(\Symfony\Component\Yaml\Yaml::class) ? \Symfony\Component\Yaml\Yaml::parse($institutionFormYaml) : [];
+// Sem Symfony (sem vendor/), lê só os pesos dos campos usados na ordem. A ordem do formulário é a esperada.
+if (class_exists(\Symfony\Component\Yaml\Yaml::class)) {
+  $instData = \Symfony\Component\Yaml\Yaml::parse($institutionFormYaml);
+} else {
+  $instData = ['content' => []];
+  foreach (['field_postal_code', 'field_address', 'field_street_address', 'field_locality', 'field_address_region', 'field_country'] as $fieldName) {
+    if (preg_match('/^  ' . preg_quote($fieldName, '/') . ':\n((?:    .*\n|\n)*)/m', $institutionFormYaml, $block)
+      && preg_match('/^    weight: (-?\d+)/m', $block[1], $weight)) {
+      $instData['content'][$fieldName]['weight'] = (int) $weight[1];
+    }
+  }
+}
 $instContent = $instData['content'] ?? [];
 $postalWeight = $instContent['field_postal_code']['weight'] ?? NULL;
 $institutionOrderOk = ($postalWeight !== NULL);
