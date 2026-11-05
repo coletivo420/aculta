@@ -16,6 +16,9 @@
 <dialog class="aculta-utility-dialog aculta-alerts-dialog" id="aculta-alerts-dialog"
   aria-labelledby="aculta-alerts-dialog-title" data-aculta-utility-drawer
   data-aculta-drawer-count="alerts" data-aculta-drawer-url="{{ href }}"
+  data-hx-get="{{ href }}" data-hx-trigger="aculta:drawer:open"
+  data-hx-target="find [data-aculta-drawer-content]" data-hx-swap="innerHTML"
+  data-hx-sync="this:replace"
   data-aculta-drawer-label="{{ 'Não foi possível carregar os avisos. Tente novamente.'|t }}">
   <header class="aculta-utility-dialog__header">
     <h2 class="aculta-utility-dialog__title" id="aculta-alerts-dialog-title">{{ 'Avisos'|t }}</h2>

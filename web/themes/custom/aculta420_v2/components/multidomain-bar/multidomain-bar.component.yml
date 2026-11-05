@@ -5,6 +5,7 @@ group: ACULTA
 libraryOverrides:
   dependencies:
     - core/drupal
+    - core/drupal.htmx
     - core/drupalSettings
     - core/once
     - aculta420_v2/utility-drawers
@@ -100,7 +101,7 @@ props:
 slots:
   search:
     title: Pesquisa
-    description: Gatilho AJAX do ACULTA Portal, como render array.
+    description: Gatilho de busca do ACULTA Portal, como render array.
   account_menu:
     title: Ações de conta
     description: Menu de conta Drupal com links de login, Minha conta e logout.

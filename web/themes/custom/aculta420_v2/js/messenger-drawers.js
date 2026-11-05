@@ -3,6 +3,194 @@
 
   let confirmationIndex = 0;
 
+  function drawerFor(element) {
+    return element instanceof Element ? element.closest('[data-aculta-utility-drawer]') : null;
+  }
+
+  function contentFor(drawer) {
+    const content = drawer?.querySelector('[data-aculta-drawer-content]');
+    if (content && !content.id) {
+      content.id = `aculta-drawer-content-${drawer.dataset.acultaDrawerCount || 'messages'}`;
+    }
+    return content;
+  }
+
+  function configureDrawerHtmx(element) {
+    if (!(element instanceof Element)) {
+      return;
+    }
+    const drawer = drawerFor(element);
+    const content = contentFor(drawer);
+    if (!drawer || !content) {
+      return;
+    }
+
+    if (element.matches('a[data-aculta-conversation-url], button[data-aculta-conversation-url], input[data-aculta-conversation-url], a[data-aculta-drawer-back], a[data-aculta-drawer-filter]')) {
+      const url = element.dataset.acultaDrawerFilterUrl || element.dataset.acultaConversationUrl || element.href;
+      if (url && !element.hasAttribute('data-hx-get')) {
+        element.setAttribute('data-hx-get', url);
+        element.setAttribute('data-hx-target', `#${CSS.escape(content.id)}`);
+        element.setAttribute('data-hx-swap', 'innerHTML');
+      }
+    }
+
+    if (element.matches('form[data-aculta-new-conversation-form], form[data-aculta-drawer-action], form[data-aculta-reply-form]')) {
+      element.setAttribute('data-hx-post', element.action);
+      element.setAttribute('data-hx-target', `#${CSS.escape(content.id)}`);
+      element.setAttribute('data-hx-swap', 'innerHTML');
+    }
+
+    if (element.matches('[data-aculta-options-url]')) {
+      const panel = element.querySelector('.aculta-messenger-options__panel');
+      if (panel) {
+        if (!panel.id) {
+          panel.id = `aculta-messenger-options-${++confirmationIndex}`;
+        }
+        element.setAttribute('data-hx-get', element.dataset.acultaOptionsUrl);
+        element.setAttribute('data-hx-trigger', 'toggle once');
+        element.setAttribute('data-hx-target', `#${CSS.escape(panel.id)}`);
+        element.setAttribute('data-hx-swap', 'innerHTML');
+      }
+    }
+  }
+
+  function showDrawerError(target, drawer) {
+    if (!(target instanceof Element) || !drawer?.contains(target)) {
+      return;
+    }
+    const message = drawer.dataset.acultaDrawerLabel
+      || (drawer.dataset.acultaDrawerCount === 'alerts'
+        ? Drupal.t('Não foi possível carregar estes avisos.')
+        : Drupal.t('Não foi possível carregar esta conversa.'));
+    const feedback = document.createElement('div');
+    feedback.className = 'aculta-messenger-state aculta-messenger-state--error';
+    feedback.setAttribute('role', 'alert');
+    feedback.dataset.acultaDrawerState = 'error';
+    feedback.textContent = message;
+    target.replaceChildren(feedback);
+    target.setAttribute('aria-busy', 'false');
+  }
+
+  function showChipStatus(form, text) {
+    const box = form?.querySelector('[data-aculta-chips]');
+    if (!box) {
+      return;
+    }
+    const note = document.createElement('span');
+    note.className = 'aculta-chips__status';
+    note.setAttribute('role', 'status');
+    note.textContent = text;
+    box.append(note);
+    window.setTimeout(() => note.remove(), 2500);
+  }
+
+  function clearSearchField(form) {
+    const search = form?.querySelector('input[name="q"]');
+    if (!search) {
+      return;
+    }
+    search.value = '';
+    search.dispatchEvent(new Event('input', { bubbles: true }));
+    search.focus();
+  }
+
+  function addMemberChip(form, uid, name) {
+    const box = form?.querySelector('[data-aculta-chips]');
+    if (!box || !uid || box.querySelector(`input[name="members[]"][value="${CSS.escape(uid)}"]`)) {
+      return false;
+    }
+    const max = Number.parseInt(form.dataset.acultaGroupMax || '10', 10);
+    if (box.querySelectorAll('input[name="members[]"]').length >= max) {
+      showChipStatus(form, Drupal.t('Limite de @n pessoas.', { '@n': max }));
+      return false;
+    }
+    const chip = document.createElement('span');
+    chip.className = 'aculta-chip';
+    chip.dataset.acultaChip = '';
+    const label = document.createElement('span');
+    label.className = 'aculta-chip__name';
+    label.textContent = name;
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'aculta-chip__remove';
+    remove.dataset.acultaChipRemove = '';
+    remove.setAttribute('aria-label', Drupal.t('Remover @name', { '@name': name }));
+    remove.textContent = '×';
+    const field = document.createElement('input');
+    field.type = 'hidden';
+    field.name = 'members[]';
+    field.value = uid;
+    chip.append(label, remove, field);
+    box.append(chip);
+    clearSearchField(form);
+    return true;
+  }
+
+  function processMemberLookup(button, input, item) {
+    const form = input.form;
+    const target = document.getElementById(input.dataset.previewTarget || '');
+    if (!form || !target) {
+      return;
+    }
+    const wanted = item.name.toLocaleLowerCase('pt-BR');
+    const match = [...target.querySelectorAll('[data-aculta-add-member]')]
+      .find((option) => (option.dataset.acultaMemberName || '').toLocaleLowerCase('pt-BR') === wanted);
+    if (match) {
+      const didAdd = addMemberChip(form, match.dataset.acultaAddMember, match.dataset.acultaMemberName);
+      if (!didAdd && item.clearField) {
+        input.value = '';
+      }
+    }
+    else {
+      showChipStatus(form, Drupal.t('Nenhum membro com o nome "@name".', { '@name': item.name }));
+    }
+
+    const queue = button.acultaMemberQueue || [];
+    const next = queue.shift();
+    button.acultaMemberQueue = queue;
+    if (next) {
+      const url = new URL(input.dataset.previewUrl, window.location.href);
+      url.searchParams.set('q', next.name);
+      button.setAttribute('data-hx-get', url.href);
+      button.acultaMemberCurrent = next;
+      button.click();
+    }
+    else {
+      button.acultaMemberCurrent = null;
+    }
+  }
+
+  function commitTypedMember(input, name, clearField = true) {
+    const form = input.form;
+    const previewUrl = input.dataset.previewUrl;
+    const preview = document.getElementById(input.dataset.previewTarget || '');
+    if (!form || !previewUrl || !preview) {
+      return;
+    }
+    let button = form.querySelector('[data-aculta-member-lookup]');
+    if (!button) {
+      button = document.createElement('button');
+      button.type = 'button';
+      button.hidden = true;
+      button.dataset.acultaMemberLookup = '';
+      button.setAttribute('data-hx-get', previewUrl);
+      button.setAttribute('data-hx-target', `#${CSS.escape(preview.id)}`);
+      button.setAttribute('data-hx-swap', 'innerHTML');
+      form.append(button);
+      htmx.process(button);
+    }
+    button.acultaMemberQueue = button.acultaMemberQueue || [];
+    button.acultaMemberQueue.push({ name, clearField });
+    if (!button.acultaMemberCurrent) {
+      const current = button.acultaMemberQueue.shift();
+      const url = new URL(previewUrl, window.location.href);
+      url.searchParams.set('q', current.name);
+      button.setAttribute('data-hx-get', url.href);
+      button.acultaMemberCurrent = current;
+      button.click();
+    }
+  }
+
   Drupal.behaviors.acultaMessengerDrawers = {
     attach(context) {
       once('aculta-messenger-drawer-conversation-view', '[data-aculta-conversation-view]', context).forEach((conversation) => {
@@ -16,31 +204,27 @@
         }
       });
 
-      // "Iniciar conversa" on a profile: open the bar's drawer already on the new-conversation step with that member.
       once('aculta-open-conversation', '[data-aculta-open-conversation]', context).forEach((link) => {
         link.addEventListener('click', (event) => {
           const trigger = document.querySelector('.aculta-messenger-trigger');
           const drawer = document.querySelector('[data-aculta-drawer-url][data-aculta-drawer-count="messages"]');
-          if (!trigger || !drawer || typeof drawer.acultaNavigate !== 'function') {
+          if (!trigger || !drawer) {
             return;
           }
           event.preventDefault();
-          // The trigger opens the drawer (its own offcanvas); the view then loads the new-conversation step.
-          trigger.click();
-          drawer.acultaNavigate(link.dataset.acultaOpenConversation || link.href);
+          drawer.setAttribute('data-hx-get', link.dataset.acultaOpenConversation || link.href);
+          if (drawer.open) {
+            htmx.trigger(drawer, 'aculta:drawer:open');
+          }
+          else {
+            trigger.click();
+          }
         });
       });
 
-      // "Bloquear" and "Desfazer amizade" open a native modal around a hidden
-      // container in the same form, so the confirmation still submits through
-      // Form API. "Cancelar" closes the native dialog.
       once('aculta-dialog-open', '[data-aculta-dialog-open]', context).forEach((button) => {
         button.addEventListener('click', (event) => {
-          // Form API renders these as submit inputs: the click only opens the dialog, it does not post the form.
           event.preventDefault();
-          // Each member's box has its own dialog with the same name: the open button keeps a reference to its own.
-          // Resolve the question inside the current form so repeated action
-          // names on other forms never share a confirmation dialog.
           if (!button.acultaDialogContent) {
             const form = button.closest('form');
             button.acultaDialogContent = form?.querySelector(`[data-aculta-dialog="${button.dataset.acultaDialogOpen}"]`) || null;
@@ -66,11 +250,10 @@
           }
           const content = button.acultaDialogContent;
           const dialog = content?.acultaDialog;
-          if (!content || !(dialog instanceof HTMLDialogElement)) {
-            return;
+          if (content && dialog instanceof HTMLDialogElement) {
+            content.removeAttribute('hidden');
+            dialog.showModal();
           }
-          content.removeAttribute('hidden');
-          dialog.showModal();
         });
       });
 
@@ -82,93 +265,68 @@
       });
 
       once('aculta-messenger-drawer', '[data-aculta-drawer-url]', context).forEach((drawer) => {
-        let request;
-        const content = drawer.querySelector('[data-aculta-drawer-content]');
-        const drawerType = drawer.dataset.acultaDrawerCount || 'messages';
-        const isAlertsDrawer = drawerType === 'alerts';
-        const showDrawerState = (state, message) => {
-          if (!content) {
-            return;
+        const content = contentFor(drawer);
+        drawer.addEventListener('htmx:configRequest', (event) => {
+          event.detail.headers['X-Requested-With'] = 'XMLHttpRequest';
+          drawer.acultaHtmxSource = event.detail.elt;
+          if (event.detail.elt.matches('form[data-aculta-reply-form]')) {
+            const parameters = event.detail.parameters;
+            const replyToken = parameters.get('form_token') || '';
+            ['form_build_id', 'form_id', 'form_token', 'op'].forEach((name) => parameters.delete(name));
+            parameters.set('reply_token', replyToken);
           }
-          const feedback = document.createElement('div');
-          feedback.className = `aculta-messenger-state aculta-messenger-state--${state}`;
-          feedback.setAttribute('role', state === 'error' ? 'alert' : 'status');
-          feedback.dataset.acultaDrawerState = state;
-          feedback.textContent = message;
-          content.replaceChildren(feedback);
-        };
-
-        // Drupal's nested confirmation modal handles Escape first. Keep that
-        // key from reaching another nested overlay listener, which could close
-        // both the confirmation and the whole drawer.
-        drawer.addEventListener('keydown', (event) => {
-          if (event.key === 'Escape' && event.target instanceof Element && event.target.closest('[data-aculta-confirm-dialog]')) {
-            event.stopPropagation();
+        });
+        drawer.addEventListener('htmx:beforeRequest', (event) => {
+          const target = event.detail.target;
+          if (target instanceof Element && drawer.contains(target)) {
+            target.setAttribute('aria-busy', 'true');
+            if (!target.querySelector('[data-aculta-drawer-state="loading"]')) {
+              const loading = document.createElement('p');
+              loading.className = 'aculta-messenger-state aculta-messenger-state--loading';
+              loading.setAttribute('role', 'status');
+              loading.dataset.acultaDrawerState = 'loading';
+              loading.textContent = target === content
+                ? Drupal.t('Carregando…')
+                : Drupal.t('Carregando opções…');
+              target.append(loading);
+            }
+          }
+        });
+        drawer.addEventListener('htmx:afterSettle', (event) => {
+          if (event.detail.target instanceof Element && drawer.contains(event.detail.target)) {
+            event.detail.target.setAttribute('aria-busy', 'false');
+            event.detail.target.querySelector('[data-aculta-drawer-state="loading"]')?.remove();
+          }
+          if (event.detail.target === content) {
+            content.querySelectorAll('[data-aculta-nojs-search]').forEach((form) => {
+              form.hidden = true;
+            });
+            content.querySelectorAll('[data-aculta-js-only]').forEach((element) => {
+              element.hidden = false;
+            });
+          }
+          const preview = event.detail.target;
+          const lookup = preview instanceof Element
+            ? preview.closest('form')?.querySelector('[data-aculta-member-lookup]')
+            : null;
+          if (lookup?.acultaMemberCurrent) {
+            processMemberLookup(lookup, lookup.closest('form').querySelector('input[name="q"]'), lookup.acultaMemberCurrent);
+          }
+        });
+        drawer.addEventListener('htmx:responseError', (event) => showDrawerError(event.detail.target, drawer));
+        drawer.addEventListener('htmx:sendError', (event) => showDrawerError(event.detail.target, drawer));
+        drawer.addEventListener('close', () => {
+          if (drawer.acultaHtmxSource) {
+            htmx.trigger(drawer.acultaHtmxSource, 'htmx:abort');
+            drawer.acultaHtmxSource = null;
           }
         });
 
-        // init carries a POST body for the new-conversation form; the answer replaces the drawer content either way.
-        const navigate = (url, init = {}) => {
-          if (!content || !url) {
+        drawer.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape' && event.target instanceof Element && event.target.closest('[data-aculta-confirm-dialog]')) {
+            event.stopPropagation();
             return;
           }
-          request?.abort();
-          const activeRequest = new AbortController();
-          request = activeRequest;
-          content.setAttribute('aria-busy', 'true');
-          showDrawerState('loading', isAlertsDrawer ? Drupal.t('Carregando avisos…') : Drupal.t('Carregando conversa…'));
-          fetch(url, {
-            method: 'GET',
-            credentials: 'same-origin',
-            cache: 'no-store',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-            signal: activeRequest.signal,
-            ...init,
-          })
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error('Drawer navigation failed.');
-              }
-              const counterHeader = isAlertsDrawer ? 'X-Aculta-Alerts-Count' : 'X-Aculta-Messages-Count';
-              updateCounter(drawerType, response.headers.get(counterHeader));
-              return response.text();
-            })
-            .then((html) => {
-              // A request cancelled by navigation or drawer closing must never
-              // overwrite the current panel after response.text() resolves.
-              if (activeRequest.signal.aborted || request !== activeRequest) {
-                return;
-              }
-              const template = document.createElement('template');
-              template.innerHTML = html;
-              Drupal.detachBehaviors(content, null, 'unload');
-              content.replaceChildren(template.content.cloneNode(true));
-              content.querySelectorAll('[data-aculta-nojs-search]').forEach((form) => {
-                form.hidden = true;
-              });
-              content.querySelectorAll('[data-aculta-js-only]').forEach((element) => {
-                element.hidden = false;
-              });
-              Drupal.attachBehaviors(content);
-            })
-            .catch((error) => {
-              if (!activeRequest.signal.aborted && request === activeRequest && error.name !== 'AbortError') {
-                showDrawerState('error', isAlertsDrawer ? Drupal.t('Não foi possível carregar estes avisos.') : Drupal.t('Não foi possível carregar esta conversa.'));
-              }
-            })
-            .finally(() => {
-              if (request === activeRequest) {
-                content.setAttribute('aria-busy', 'false');
-                request = null;
-              }
-            });
-        };
-
-        // Lets other parts of the page (for example the profile's "Iniciar conversa") load a drawer view.
-        drawer.acultaNavigate = navigate;
-
-        // Gmail-style entry: a comma or Enter turns the typed name into a chip, and pasted "a, b, c" makes one chip per name.
-        drawer.addEventListener('keydown', (event) => {
           const input = event.target;
           if (!(input instanceof HTMLInputElement) || input.name !== 'q' || !input.form?.matches('form[data-aculta-new-conversation]')) {
             return;
@@ -187,15 +345,11 @@
           if (!(input instanceof HTMLInputElement) || input.name !== 'q' || !input.value.includes(',')) {
             return;
           }
-          // Pasted or typed "a, b, c": every name before the last comma becomes a chip; the last one stays in the field.
           const parts = input.value.split(',');
-          const last = parts.pop();
-          input.value = last;
+          input.value = parts.pop();
           parts.map((part) => part.trim()).filter((part) => part !== '').forEach((part) => commitTypedMember(input, part, false));
         });
-
         drawer.addEventListener('click', (event) => {
-          // A search result becomes a chip in the field above the results; the chip's "×" takes it off again.
           const add = event.target.closest('[data-aculta-add-member]');
           if (add && drawer.contains(add)) {
             event.preventDefault();
@@ -206,274 +360,22 @@
           if (remove && drawer.contains(remove)) {
             event.preventDefault();
             remove.closest('[data-aculta-chip]')?.remove();
-            return;
-          }
-          // The "Iniciar nova conversa" button carries data-aculta-conversation-url too; it is not in a form.
-          const link = event.target.closest('a[data-aculta-conversation-url], button[data-aculta-conversation-url], input[data-aculta-conversation-url], a[data-aculta-drawer-back], a[data-aculta-drawer-filter]');
-          if (!link || !drawer.contains(link)) {
-            return;
-          }
-          event.preventDefault();
-          navigate(link.dataset.acultaDrawerFilterUrl || link.dataset.acultaConversationUrl || link.href);
-        });
-
-        drawer.addEventListener('submit', (event) => {
-          // The new-conversation form is one form (search, chips, message): its "Enviar" posts everything below.
-          // Enter in the member search never sends (the keydown above stops it).
-          // First message of a new conversation: posted with fetch, because the Form API AJAX needs page settings.
-          // The "Opções" actions (friendship, block) post the same way and answer with the updated conversation.
-          if (event.target.matches('form[data-aculta-new-conversation-form], form[data-aculta-drawer-action], form[data-aculta-reply-form]')) {
-            event.preventDefault();
-            const body = new FormData(event.target);
-            if (event.submitter?.name) {
-              body.append(event.submitter.name, event.submitter.value);
-            }
-            // A reply is posted without Form API keys (form_id would make the native form process it); its token
-            // travels as reply_token and the reply route checks it against the reply form.
-            if (event.target.matches('form[data-aculta-reply-form]')) {
-              const token = body.get('form_token') || '';
-              ['form_build_id', 'form_id', 'form_token', 'op'].forEach((key) => body.delete(key));
-              body.set('reply_token', token);
-            }
-            navigate(event.target.action, { method: 'POST', body });
           }
         });
+      });
 
-        drawer.addEventListener('aculta:drawer:open', () => {
-          const endpoint = drawer.dataset.acultaDrawerUrl;
-          if (!content || !endpoint) {
-            return;
-          }
-
-          request?.abort();
-          const activeRequest = new AbortController();
-          request = activeRequest;
-          content.setAttribute('aria-busy', 'true');
-          showDrawerState('loading', Drupal.t('Carregando…'));
-
-          fetch(endpoint, {
-            method: 'GET',
-            credentials: 'same-origin',
-            cache: 'no-store',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-            signal: activeRequest.signal,
-          })
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error('Drawer request failed.');
-              }
-              const counterHeader = drawer.dataset.acultaDrawerCount === 'messages'
-                ? 'X-Aculta-Messages-Count'
-                : 'X-Aculta-Alerts-Count';
-              updateCounter(drawer.dataset.acultaDrawerCount, response.headers.get(counterHeader));
-              return response.text();
-            })
-            .then((html) => {
-              // A request cancelled by navigation or drawer closing must never
-              // overwrite the current panel after response.text() resolves.
-              if (activeRequest.signal.aborted || request !== activeRequest) {
-                return;
-              }
-              const template = document.createElement('template');
-              template.innerHTML = html;
-              // Detach behaviors of the replaced content, as navigate() does, so listeners do not accumulate.
-              Drupal.detachBehaviors(content, null, 'unload');
-              content.replaceChildren(template.content.cloneNode(true));
-              Drupal.attachBehaviors(content);
-            })
-            .catch((error) => {
-              if (!activeRequest.signal.aborted && request === activeRequest && error.name !== 'AbortError') {
-                showDrawerState('error', drawer.dataset.acultaDrawerLabel || Drupal.t('Não foi possível carregar.'));
-              }
-            })
-            .finally(() => {
-              if (request === activeRequest) {
-                content.setAttribute('aria-busy', 'false');
-                request = null;
-              }
+      once('acultaMessengerHtmxDelegation', 'html', context).forEach(() => {
+        document.body.addEventListener('htmx:beforeProcessNode', (event) => configureDrawerHtmx(event.detail?.elt));
+        document.addEventListener('htmx:afterSettle', (event) => {
+          const target = event.detail?.target;
+          if (target instanceof Element) {
+            target.querySelectorAll('[data-aculta-conversation-url], [data-aculta-drawer-back], [data-aculta-drawer-filter], form[data-aculta-new-conversation-form], form[data-aculta-drawer-action], form[data-aculta-reply-form], [data-aculta-options-url]').forEach((element) => {
+              configureDrawerHtmx(element);
+              htmx.process(element);
             });
+          }
         });
-
-        drawer.addEventListener('close', () => request?.abort());
       });
     },
   };
-
-  // "Opções" loads on first open. The native details toggle does not bubble,
-  // so install a delegated capture listener once through Drupal behaviors.
-  Drupal.behaviors.acultaMessengerOptions = {
-    attach(context) {
-      once('acultaMessengerOptionsToggle', 'html', context).forEach(() => {
-        document.addEventListener('toggle', (event) => {
-          const details = event.target;
-          if (!(details instanceof HTMLDetailsElement) || !details.open) {
-            return;
-          }
-          const box = details.closest('[data-aculta-options-url]');
-          const panel = details.querySelector('.aculta-messenger-options__panel');
-          if (!box || !panel || panel.childElementCount > 0 || box.dataset.acultaOptionsLoading === 'true') {
-            return;
-          }
-          box.dataset.acultaOptionsLoading = 'true';
-          fetch(box.dataset.acultaOptionsUrl, {
-            method: 'GET',
-            credentials: 'same-origin',
-            cache: 'no-store',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-          })
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error('Options request failed.');
-              }
-              return response.text();
-            })
-            .then((html) => {
-              const template = document.createElement('template');
-              template.innerHTML = html;
-              panel.replaceChildren(template.content.cloneNode(true));
-              Drupal.attachBehaviors(panel);
-            })
-            .catch(() => {
-              panel.replaceChildren(document.createTextNode(Drupal.t('Não foi possível carregar as opções.')));
-            })
-            .finally(() => {
-              delete box.dataset.acultaOptionsLoading;
-            });
-        }, true);
-      });
-    },
-  };
-
-  // Looks the typed name up in the member search and adds that member as a chip. The field is cleared when it worked;
-  // when no member has that name, the typed text stays and the form says so.
-  function commitTypedMember(input, name, clearField = true) {
-    const form = input.form;
-    const previewUrl = input.dataset.previewUrl;
-    if (!form || !previewUrl) {
-      return;
-    }
-    fetch(`${previewUrl}?q=${encodeURIComponent(name)}`, {
-      method: 'GET',
-      credentials: 'same-origin',
-      cache: 'no-store',
-      headers: { 'X-Requested-With': 'XMLHttpRequest' },
-    })
-      .then((response) => (response.ok ? response.text() : ''))
-      .then((html) => {
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-        const wanted = name.toLocaleLowerCase('pt-BR');
-        const match = [...doc.querySelectorAll('[data-aculta-add-member]')]
-          .find((option) => (option.dataset.acultaMemberName || '').toLocaleLowerCase('pt-BR') === wanted);
-        if (!match) {
-          showChipStatus(form, Drupal.t('Nenhum membro com o nome "@name".', { '@name': name }));
-          return;
-        }
-        addMemberChip(form, match.dataset.acultaAddMember, match.dataset.acultaMemberName);
-        if (clearField) {
-          input.value = '';
-          input.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-      })
-      .catch(() => {});
-  }
-
-  function showChipStatus(form, text) {
-    const box = form?.querySelector('[data-aculta-chips]');
-    if (!box) {
-      return;
-    }
-    const note = document.createElement('span');
-    note.className = 'aculta-chips__status';
-    note.setAttribute('role', 'status');
-    note.textContent = text;
-    box.append(note);
-    window.setTimeout(() => note.remove(), 2500);
-  }
-
-  // Adds a member as a chip (name and "×") to the search form's field, up to the group limit of the form.
-  function addMemberChip(form, uid, name) {
-    const box = form?.querySelector('[data-aculta-chips]');
-    if (!box || !uid || box.querySelector(`input[name="members[]"][value="${uid}"]`)) {
-      return;
-    }
-    const max = Number.parseInt(form.dataset.acultaGroupMax || '10', 10);
-    if (box.querySelectorAll('input[name="members[]"]').length >= max) {
-      const note = document.createElement('span');
-      note.className = 'aculta-chips__status';
-      note.setAttribute('role', 'status');
-      note.textContent = Drupal.t('Limite de @n pessoas.', { '@n': max });
-      box.append(note);
-      window.setTimeout(() => note.remove(), 2500);
-      return;
-    }
-    const chip = document.createElement('span');
-    chip.className = 'aculta-chip';
-    chip.dataset.acultaChip = '';
-    const label = document.createElement('span');
-    label.className = 'aculta-chip__name';
-    label.textContent = name;
-    const remove = document.createElement('button');
-    remove.type = 'button';
-    remove.className = 'aculta-chip__remove';
-    remove.dataset.acultaChipRemove = '';
-    remove.setAttribute('aria-label', Drupal.t('Remover @name', { '@name': name }));
-    remove.textContent = '×';
-    const field = document.createElement('input');
-    field.type = 'hidden';
-    field.name = 'members[]';
-    field.value = uid;
-    chip.append(label, remove, field);
-    box.append(chip);
-    clearSearchField(form);
-  }
-
-  // After a member is chosen the search is emptied (its results go with it) and the field takes focus, so the next name
-  // can be typed right away. The field and the Continuar button stay on screen the whole time.
-  function clearSearchField(form) {
-    const search = form?.querySelector('input[name="q"]');
-    if (!search) {
-      return;
-    }
-    search.value = '';
-    search.dispatchEvent(new Event('input', { bubbles: true }));
-    search.focus();
-  }
-
-  function updateCounter(type, value) {
-    const count = Number.parseInt(value || '', 10);
-    if (!Number.isFinite(count) || count < 0) {
-      return;
-    }
-
-    const selector = type === 'messages' ? '[data-aculta-messenger-count]' : '[data-aculta-alerts-count]';
-    const counter = document.querySelector(selector);
-    if (!counter) {
-      return;
-    }
-
-    // Badges show 99+ above 99; the exact number stays in data-count for scripts and assistive labels.
-    counter.textContent = count > 99 ? '99+' : String(count);
-    counter.dataset.count = String(count);
-    const trigger = counter.closest('button');
-    if (trigger) {
-      let label;
-      if (type === 'messages') {
-        label = count === 0 ? Drupal.t('Abrir mensagens') : (count === 1
-          ? Drupal.t('1 conversa não lida. Abrir mensagens')
-          : Drupal.t('@count conversas não lidas. Abrir mensagens', { '@count': count }));
-      }
-      else if (count === 0) {
-        label = Drupal.t('Abrir avisos');
-      }
-      else if (trigger.dataset.acultaCountKind === 'attention') {
-        label = count === 1 ? Drupal.t('1 aviso ativo ou não lido. Abrir avisos')
-          : Drupal.t('@count avisos ativos ou não lidos. Abrir avisos', { '@count': count });
-      }
-      else {
-        label = count === 1 ? Drupal.t('1 aviso ativo. Abrir avisos')
-          : Drupal.t('@count avisos ativos. Abrir avisos', { '@count': count });
-      }
-      trigger.setAttribute('aria-label', label);
-    }
-  }
-})(Drupal, once, drupalSettings);
+})(Drupal, once);

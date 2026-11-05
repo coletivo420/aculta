@@ -379,15 +379,14 @@ foreach ($component_ids as $component_id) {
       }
     }
     $required_login_code = [
-      'fetch(',
-      "'_wrapper_format'",
-      "'ajax_form'",
-      "command.command === 'redirect'",
-      "command.command === 'insert'",
+      "setAttribute('data-hx-get'",
+      "setAttribute('data-hx-target'",
+      "setAttribute('data-hx-drupal-only-main-content'",
+      "htmx.trigger(link, 'aculta:login:open')",
     ];
     foreach ($required_login_code as $required_code) {
       if (!str_contains($javascript, $required_code)) {
-        throw new RuntimeException(sprintf('Institution bar AJAX login behavior is missing: %s', $required_code));
+        throw new RuntimeException(sprintf('Institution bar HTMX login behavior is missing: %s', $required_code));
       }
     }
   }

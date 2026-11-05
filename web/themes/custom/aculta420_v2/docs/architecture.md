@@ -79,16 +79,21 @@ domínio nem purpose. Instruções operacionais estão em
 ## 5. JavaScript
 
 Todo o JavaScript é vanilla, com `Drupal.behaviors` e `core/once`. Não há jQuery.
+HTMX por `core/drupal.htmx` é o padrão obrigatório das interações assíncronas;
+Drupal AJAX (`core/drupal.ajax`, `#ajax`, `use-ajax`) é legado e não deve ser
+adicionado ao tema. Migrações preservam links e formulários nativos como
+fallback e documentam qualquer compatibilidade antiga ainda necessária.
 
 | Arquivo | Papel |
 | --- | --- |
-| `components/multidomain-bar/multidomain-bar.js` | sincroniza a altura da barra com o espaço da página e com a barra administrativa; abre o popup de login (`/entrar/janela`) e o popup de busca (`/busca/popup`) por Fetch, em `<dialog>` nativo |
+| `components/multidomain-bar/multidomain-bar.js` | sincroniza a altura da barra com o espaço da página e com a barra administrativa; abre o popup de login por HTMX quando o endpoint Portal F1b estiver integrado; o popup de busca permanece em Fetch, em `<dialog>` nativo |
 | `components/navigation-bar/navigation-bar.js` | drawer de navegação mobile: abre, fecha com Escape e devolve o foco |
 | `components/data-table/data-table.js` | marca como região nomeada/focável somente a tabela com overflow; observa resize e atualizações Drupal e limpa observers no detach |
 | `js/utility-dialogs.js` | diálogos utilitários com `data-aculta-utility-drawer`: abre por `showModal()`, contém Tab/Shift+Tab, fecha por botão, Escape ou clique no fundo e atualiza `aria-expanded` dos gatilhos |
-| `js/messenger-drawers.js` | conteúdo de mensagens/avisos em gavetas, filtros por fragmentos, estados loading/error, abort de resposta antiga, novo contato e ações de conversa |
-| `js/counters.js` | atualiza contadores das utilidades, com zero oculto |
+| `js/messenger-drawers.js` | configura attrs HTMX nos links e formulários dos fragmentos de mensagens/avisos, trata loading/error, confirmação, chips de destinatários e rolagem de conversa; `hx-sync="this:replace"` cancela respostas antigas |
+| `js/counters.js` | atualiza contadores após `htmx:afterSettle`, com zero oculto |
 | `js/alerts-dismiss.js` | dispensa avisos e atualiza o contador |
+| `js/studio-htmx.js` | em `htmx:afterSettle`, move o foco para `[data-aculta-focus]` ou `h1`, atualiza `document.title` por `data-aculta-title` e anuncia a troca em região `aria-live` quando o alvo ainda não tem uma |
 
 Os adapters de tema `templates/content/node--revista--teaser.html.twig` e
 `node--revista--full.html.twig` passam os campos renderizados do nó para os
@@ -125,7 +130,7 @@ cartão cultural a bundles sem esse contrato e podia ocultar campos como o
 arquivo de um `document`. Loja (catálogo/produto) permanece aguardando autorização
 por tarefa; Layout Builder permanece desabilitado.
 
-A biblioteca `utility-drawers` reúne os quatro últimos. Os diálogos nativos usam `data-aculta-utility-drawer` como contrato de comportamento; estilos específicos de cada SDC ficam isolados para que um modal não herde dimensões de gaveta. O popup de login e o de busca não usam `core/drupal.dialog.ajax`: a V2 remove essa dependência do utilitário de busca (`PagePresentationHooks::removeSearchDialogDependency`).
+A biblioteca `studio-htmx` depende de `core/drupal.htmx`, `core/drupal` e `core/once`. A biblioteca `utility-drawers` depende de `studio-htmx` e carrega os diálogos, gavetas, contadores e dispensa de avisos. Os diálogos nativos usam `data-aculta-utility-drawer` como contrato de comportamento; estilos específicos de cada SDC ficam isolados para que um modal não herde dimensões de gaveta. As gavetas declaram `data-hx-get`, alvo e `data-hx-sync="this:replace"`; os fragmentos mantêm `href` e POST nativos como fallback sem JavaScript. O login aguarda a resposta HTMX do Portal F1b. Busca e login não usam `core/drupal.dialog.ajax`; a V2 remove essa dependência do utilitário de busca (`PagePresentationHooks::removeSearchDialogDependency`).
 
 Com JavaScript desligado, os links dos gatilhos continuam válidos: o login e a busca abrem as páginas próprias do Portal.
 

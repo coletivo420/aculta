@@ -1,4 +1,4 @@
-(function (Drupal, drupalSettings, once) {
+(function (Drupal, drupalSettings, htmx, once) {
   'use strict';
 
   const desktopTopBar = window.matchMedia('(min-width: 64rem)');
@@ -99,6 +99,7 @@
     const content = dialog.querySelector('[data-aculta-login-content]');
     const close = dialog.querySelector('[data-aculta-login-close]');
     let returnFocus = null;
+    let activeTrigger = null;
 
     close?.addEventListener('click', () => dialog.close());
     dialog.addEventListener('click', (event) => {
@@ -107,17 +108,31 @@
       }
     });
     dialog.addEventListener('close', () => {
+      if (activeTrigger) {
+        htmx.trigger(activeTrigger, 'htmx:abort');
+        activeTrigger = null;
+      }
       content.replaceChildren();
       returnFocus?.focus();
     });
-
-    dialog.addEventListener('submit', async (event) => {
-      const form = event.target;
-      if (!(form instanceof HTMLFormElement) || form.dataset.portalUi !== 'login-popup') {
+    document.addEventListener('htmx:responseError', (event) => {
+      if (event.detail?.target !== content) {
         return;
       }
-      event.preventDefault();
-      await submitLoginForm(form, content, dialog);
+      showLoginError(content, Drupal.t('Não foi possível carregar o acesso agora.'), activeTrigger?.href || window.location.href);
+    });
+    document.addEventListener('htmx:sendError', (event) => {
+      if (event.detail?.target !== content) {
+        return;
+      }
+      showLoginError(content, Drupal.t('Não foi possível carregar o acesso agora.'), activeTrigger?.href || window.location.href);
+    });
+    document.addEventListener('htmx:afterSettle', (event) => {
+      if (event.detail?.target !== content) {
+        return;
+      }
+      content.setAttribute('aria-busy', 'false');
+      content.querySelector('[aria-invalid="true"], .form-item--error input, input:not([type="hidden"]):not([disabled])')?.focus();
     });
 
     return {
@@ -125,10 +140,19 @@
       content,
       open(link) {
         returnFocus = link;
+        activeTrigger = link;
+        link.setAttribute('data-hx-get', link.href);
+        link.setAttribute('data-hx-trigger', 'aculta:login:open');
+        link.setAttribute('data-hx-target', '#aculta-login-content');
+        link.setAttribute('data-hx-select', '#aculta-login-popup');
+        link.setAttribute('data-hx-swap', 'innerHTML');
+        link.setAttribute('data-hx-sync', 'body:replace');
+        link.setAttribute('data-hx-drupal-only-main-content', 'true');
+        htmx.process(link);
         content.textContent = Drupal.t('Carregando formulário de acesso…');
         content.setAttribute('aria-busy', 'true');
         dialog.showModal();
-        loadLoginForm(link.href, content, dialog);
+        htmx.trigger(link, 'aculta:login:open');
       },
     };
   }
@@ -199,109 +223,6 @@
     }
   }
 
-  async function loadLoginForm(value, content, dialog) {
-    const url = new URL(value, window.location.href);
-    if (url.origin !== window.location.origin) {
-      showLoginError(content, Drupal.t('O endereço de acesso não pertence a este site.'), value);
-      return;
-    }
-    try {
-      const response = await fetch(url.href, {
-        credentials: 'same-origin',
-        headers: { Accept: 'text/html' },
-      });
-      if (!response.ok || response.redirected && new URL(response.url).origin !== window.location.origin) {
-        throw new Error('Login form request failed.');
-      }
-      if (response.redirected && !isLoginPopupUrl(response.url)) {
-        window.location.assign(response.url);
-        return;
-      }
-      const documentFragment = new DOMParser().parseFromString(await response.text(), 'text/html');
-      const wrapper = documentFragment.querySelector('#aculta-login-popup');
-      if (!wrapper || !wrapper.querySelector('form[data-portal-ui="login-popup"]')) {
-        throw new Error('Login form markup is missing.');
-      }
-      content.replaceChildren(document.importNode(wrapper, true));
-      content.setAttribute('aria-busy', 'false');
-      content.querySelector('input:not([type="hidden"]):not([disabled])')?.focus();
-    }
-    catch (error) {
-      showLoginError(content, Drupal.t('Não foi possível carregar o acesso agora.'), url.href);
-    }
-  }
-
-  async function submitLoginForm(form, content, dialog) {
-    const submitter = document.activeElement instanceof HTMLButtonElement
-      ? document.activeElement
-      : form.querySelector('button[type="submit"], input[type="submit"]');
-    const formData = new FormData(form);
-    if (submitter?.name && !formData.has(submitter.name)) {
-      formData.append(submitter.name, submitter.value);
-    }
-    const url = new URL(form.action || window.location.href, window.location.href);
-    if (url.origin !== window.location.origin) {
-      showLoginError(content, Drupal.t('O endereço de acesso não pertence a este site.'), window.location.href);
-      return;
-    }
-    url.searchParams.set('ajax_form', '1');
-    url.searchParams.set('_wrapper_format', 'drupal_ajax');
-    url.searchParams.set('_drupal_ajax', '1');
-    form.querySelectorAll('button[type="submit"], input[type="submit"]').forEach((control) => {
-      control.disabled = true;
-    });
-    content.setAttribute('aria-busy', 'true');
-    try {
-      const response = await fetch(url.href, {
-        body: formData,
-        credentials: 'same-origin',
-        headers: {
-          Accept: 'application/vnd.drupal-ajax',
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-        method: 'POST',
-      });
-      if (!response.ok) {
-        throw new Error('Login submission failed.');
-      }
-      const commands = await response.json();
-      for (const command of commands) {
-        if (command.command === 'redirect' && typeof command.url === 'string') {
-          const destination = new URL(command.url, window.location.href);
-          if (destination.origin === window.location.origin) {
-            dialog.close();
-            window.location.assign(destination.href);
-            return;
-          }
-        }
-        if (command.command === 'update_build_id') {
-          const buildId = content.querySelector('input[name="form_build_id"]');
-          if (buildId && command.new) {
-            buildId.value = command.new;
-          }
-        }
-        if (command.command === 'insert'
-          && (command.selector === null || command.selector === undefined || command.selector === '#aculta-login-popup')
-          && typeof command.data === 'string') {
-          const current = content.querySelector('#aculta-login-popup');
-          const fragment = document.createElement('template');
-          fragment.innerHTML = command.data;
-          const replacement = fragment.content.querySelector('#aculta-login-popup');
-          if (current && replacement && (!command.method || command.method === 'replaceWith')) {
-            current.replaceWith(replacement);
-            content.querySelector('[aria-invalid="true"], .form-item--error input')?.focus();
-            content.setAttribute('aria-busy', 'false');
-            return;
-          }
-        }
-      }
-      throw new Error('Login response did not contain a supported command.');
-    }
-    catch (error) {
-      showLoginError(content, Drupal.t('Não foi possível concluir o acesso. Tente novamente.'), form.action);
-    }
-  }
-
   Drupal.behaviors.acultaInstitutionBar = {
     attach(context) {
       once('aculta420V2InstitutionBarListener', 'html', context).forEach(() => {
@@ -332,8 +253,6 @@
           if (!loginDialog || !isLoginPopupUrl(link.href)) {
             return;
           }
-          // Portal keeps its Drupal/AJAX link contract for other themes;
-          // V2 enhances this one with the native Fetch implementation.
           link.classList.remove('use-ajax');
           link.removeAttribute('data-dialog-type');
           link.removeAttribute('data-dialog-options');
@@ -364,4 +283,4 @@
       });
     },
   };
-})(Drupal, drupalSettings, once);
+})(Drupal, drupalSettings, htmx, once);

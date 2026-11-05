@@ -231,7 +231,7 @@ da V1. A V2 já tem gavetas laterais à direita (26,25 rem, até 100 vw), iguais
 | Filtros de avisos | grupos recolhíveis (`details`) por origem e leitura, com resumo de 2,75 rem de altura | o Portal envia grupos `details`; o tema aplica estilo e navega pelo fragmento | implementado no Portal e integrado no shell V2 |
 | Conversas | lista com nome, data, avatar, não lida em destaque; conversa abre na gaveta com "← Todas as conversas" | conteúdo e ações fornecidos pelo Portal; a gaveta V2 troca conversa e retorna à lista | implementado no Portal e integrado no shell V2 |
 | Foco e Escape | Escape fecha; foco volta ao gatilho | `<dialog>` nativo | implementado; captura visual/teclado ainda pendente |
-| Resposta antiga | `AbortController` evita que resposta antiga substitua a gaveta (B4-02) | navegação cancela a requisição anterior e verifica o identificador antes de renderizar | implementado em `js/messenger-drawers.js` |
+| Resposta antiga | `hx-sync="this:replace"` no diálogo substitui a requisição anterior; fechar a gaveta aborta a requisição HTMX ativa | o Core HTMX controla sincronização e cancelamento | implementado em `js/messenger-drawers.js`; validação de navegador pendente |
 
 O tema apresenta e controla as gavetas; o Portal é dono do conteúdo, filtros,
 permissões e ações. O JavaScript fica no módulo único `js/messenger-drawers.js`

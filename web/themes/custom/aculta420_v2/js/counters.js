@@ -25,10 +25,45 @@
     root.querySelectorAll(SELECTOR).forEach(present);
   }
 
+  function updateFromHtmx(event) {
+    const source = event.detail?.elt;
+    const drawer = source instanceof Element ? source.closest('[data-aculta-utility-drawer]') : null;
+    if (!drawer) {
+      return;
+    }
+    const type = drawer.dataset.acultaDrawerCount || 'messages';
+    const header = type === 'alerts' ? 'X-Aculta-Alerts-Count' : 'X-Aculta-Messages-Count';
+    const count = Number.parseInt(event.detail.xhr?.getResponseHeader(header) || '', 10);
+    if (!Number.isFinite(count) || count < 0) {
+      return;
+    }
+    const selector = type === 'alerts' ? '[data-aculta-alerts-count]' : '[data-aculta-messenger-count]';
+    const counter = document.querySelector(selector);
+    if (!counter) {
+      return;
+    }
+    counter.dataset.count = String(count);
+    const trigger = counter.closest('button');
+    if (!trigger) {
+      return;
+    }
+    const label = type === 'messages'
+      ? (count === 0 ? Drupal.t('Abrir mensagens') : count === 1
+        ? Drupal.t('1 conversa não lida. Abrir mensagens')
+        : Drupal.t('@count conversas não lidas. Abrir mensagens', { '@count': count }))
+      : (count === 0 ? Drupal.t('Abrir avisos') : trigger.dataset.acultaCountKind === 'attention'
+        ? (count === 1 ? Drupal.t('1 aviso ativo ou não lido. Abrir avisos')
+          : Drupal.t('@count avisos ativos ou não lidos. Abrir avisos', { '@count': count }))
+        : (count === 1 ? Drupal.t('1 aviso ativo. Abrir avisos')
+          : Drupal.t('@count avisos ativos. Abrir avisos', { '@count': count })));
+    trigger.setAttribute('aria-label', label);
+  }
+
   Drupal.behaviors.acultaCounters = {
     attach(context) {
       once('acultaCountersObserver', 'html', context).forEach(() => {
         presentAll(document);
+        document.addEventListener('htmx:afterSettle', updateFromHtmx);
         new MutationObserver((mutations) => {
           mutations.forEach((mutation) => {
             if (mutation.type === 'attributes' && mutation.target.matches(SELECTOR)) {

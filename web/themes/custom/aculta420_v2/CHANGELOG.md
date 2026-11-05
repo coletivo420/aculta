@@ -1,5 +1,18 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — microfase HTMX do shell (parcial)
+
+- HTMX é documentado como padrão obrigatório para interações assíncronas novas
+  do tema; Drupal AJAX (`core/drupal.ajax`, `#ajax`, `use-ajax`) é legado durante
+  a migração. Login do shell e gavetas de mensagens/avisos usam
+  `core/drupal.htmx`; foco, título e anúncios após atualização são tratados por
+  `studio-htmx`.
+- Gates de SDC, foundations, shell contract e browser validators passaram. O
+  gate de render Drupal deve confirmar o contrato HTMX do login. A busca ainda
+  usa Fetch e cadastro popup permanece por migrar; esta microfase não conclui
+  ADR-050 F1. Fixture Firefox sintética não substitui autenticação Drupal real;
+  matriz visual permanece pendente.
+
 ## Não versionado — auditoria de templates G3
 
 - Removido `node--teaser.html.twig`, override genérico que apresentava bundles

@@ -108,7 +108,7 @@ original caso a descoberta Drupal ainda não conheça o SDC.
 - **Papel:** faixa institucional fixa com logotipo, utilidades (busca, carrinho, mensagens, avisos, conta) e vitrine de portais na home principal.
 - **Props:** `brand_home_url`, `logo_base_url`, `logo_alt`, `is_account_domain`, `show_utility_bar`, `account_authenticated`, `cart_*`, `messages_*`, `alerts_*`, `links`.
 - **Slots:** `search`, `account_menu`.
-- **JS:** `multidomain-bar.js` (altura, login e busca por Fetch em `<dialog>`).
+- **JS:** `multidomain-bar.js` (login HTMX com fragmento fornecido pelo Portal; popup de busca ainda usa Fetch e aguarda migração em F1b).
 - **Estado:** entregue. Verificada no ambiente anônimo; estado autenticado e leitor de tela pendentes.
 
 ### navigation-bar — Navegação principal
