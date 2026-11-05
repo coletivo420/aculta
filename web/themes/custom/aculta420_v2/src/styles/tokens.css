@@ -7,11 +7,11 @@
   --color-surface-raised: #fff;
   --color-surface-institution: #fbf4e8;
   --color-text-primary: #0c3c29;
-  --color-text-secondary: #465563;
-  --color-text-muted: #596875;
+  --color-text-secondary: #4d6357;
+  --color-text-muted: #5a6b60;
   --color-brand-primary: #0c3c29;
   --color-brand-highlight: #f2ca36;
-  --color-border: #687783;
+  --color-border: #6b7d70;
   --color-on-brand: #fff;
   --color-on-highlight: #0c3c29;
   /* Fixed contrast pairs retain the legacy login panel and Google surface. */
@@ -96,6 +96,17 @@
   --radius-control-field: var(--radius-base);
   --shadow-sm: 0 1px 3px rgb(0 0 0 / 12%);
 
+  /* Tokens semânticos de purpose (Fase 3: Paleta ACULTA Skunk Family). */
+  /* Consumidos exclusivamente pela faixa de destaque do purpose. */
+  --purpose-accent: #5a8022;
+  --purpose-on-accent: #ffffff;
+  --purpose-sub-1: #f0c41e;
+  --purpose-sub-2: #c03d27;
+  --purpose-sub-3: transparent;
+  --purpose-surface-1: #ffffff;
+  --purpose-surface-2: #ffffff;
+  --purpose-surface-3: #ffffff;
+
   /* Compatibility aliases for the existing shell until all consumers migrate. */
   --color-primary: var(--color-brand-primary);
   --color-secondary: #4b77a8;
@@ -132,7 +143,7 @@
   --color-text-muted: #b7aea5;
   --color-brand-primary: #9ac15a;
   --color-brand-highlight: #f2ca36;
-  --color-border: #687783;
+  --color-border: #6b7d70;
   --color-on-brand: #171513;
   --color-on-highlight: #171513;
   --color-auth-dialog-link: #171513;
@@ -161,6 +172,16 @@
   --color-status-warning-text: #ffd27a;
   --color-status-warning-surface: #3a3115;
   --shadow-raised: 0 .125rem .5rem rgb(0 0 0 / 40%);
+
+  /* Elevações e padrões escuros de purpose (Paleta ACULTA Skunk Family). */
+  --purpose-accent: #6c9e22;
+  --purpose-on-accent: #000000;
+  --purpose-sub-1: #fbd132;
+  --purpose-sub-2: #dd4329;
+  --purpose-sub-3: transparent;
+  --purpose-surface-1: #282421;
+  --purpose-surface-2: #39342f;
+  --purpose-surface-3: #49433d;
 }
 
 :root[data-theme="light"] {
@@ -168,133 +189,210 @@
 }
 
 /* ==========================================================================
-   Fase 3: Paleta de destaque por purpose (seletores [data-purpose] no <html>).
-   Escopo estrito: somente faixa de destaque e tokens de acento.
-   Fundo, texto primário e cabeçalho não mudam.
-   Variantes aprovadas e testadas contra critérios WCAG AA (3:1 decorativo, 4.5:1 texto).
+   Fase 3: Paleta ACULTA Skunk Family por purpose (seletores [data-purpose] no <html>).
+   Escopo estrito: somente tokens --purpose-* consumidos pela faixa de destaque.
+   Botões, foco, anéis, abas, links, barra institucional, barra multidomínio,
+   fundo, texto primário e cabeçalho NUNCA mudam por purpose.
+   Variantes oficiais aprovadas e testadas contra critérios WCAG AA (4.5:1 texto, 3:1 interface).
    ========================================================================== */
 
-/* main: Verde base V1 (#689427) */
+/* 1. main: Skunk (verde-skunk, profunda) */
 html[data-purpose="main"] {
-  --color-brand-highlight: #689427;
-  --color-on-highlight: #171513;
-  --accent-green-stripe: #689427;
+  --purpose-accent: #5a8022;
+  --purpose-on-accent: #ffffff;
+  --purpose-sub-1: #f0c41e;
+  --purpose-sub-2: #c03d27;
+  --purpose-sub-3: transparent;
 }
 
 html[data-theme="dark"][data-purpose="main"] {
-  --color-brand-highlight: #9ac15a;
-  --color-on-highlight: #171513;
-  --accent-green-stripe: #689427;
+  --purpose-accent: #6c9e22;
+  --purpose-on-accent: #000000;
+  --purpose-sub-1: #fbd132;
+  --purpose-sub-2: #dd4329;
+  --purpose-sub-3: transparent;
+  --purpose-surface-1: #282421;
+  --purpose-surface-2: #39342f;
+  --purpose-surface-3: #49433d;
 }
 
-/* wiki: Verde tonal reggae (#12A113) */
+/* 2. wiki: Sativa (verde-sativa, fiel) */
 html[data-purpose="wiki"] {
-  --color-brand-highlight: #12A113;
-  --color-on-highlight: #171513;
-  --accent-green-stripe: #12A113;
+  --purpose-accent: #689427;
+  --purpose-on-accent: #000000;
+  --purpose-sub-1: #f2ca36;
+  --purpose-sub-2: #d4452d;
+  --purpose-sub-3: transparent;
 }
 
 html[data-theme="dark"][data-purpose="wiki"] {
-  --color-brand-highlight: #72dc72;
-  --color-on-highlight: #171513;
-  --accent-green-stripe: #12A113;
+  --purpose-accent: #7ab327;
+  --purpose-on-accent: #000000;
+  --purpose-sub-1: #fcd64b;
+  --purpose-sub-2: #e1563f;
+  --purpose-sub-3: transparent;
+  --purpose-surface-1: #282421;
+  --purpose-surface-2: #39342f;
+  --purpose-surface-3: #49433d;
 }
 
-/* account: Verde-escuro base V1 (#0c3c29) */
+/* 3. links: Ruderalis (verde-ruderalis, suave) */
+html[data-purpose="links"] {
+  --purpose-accent: #76a82c;
+  --purpose-on-accent: #000000;
+  --purpose-sub-1: #f4d04e;
+  --purpose-sub-2: #d85842;
+  --purpose-sub-3: transparent;
+}
+
+html[data-theme="dark"][data-purpose="links"] {
+  --purpose-accent: #89c72c;
+  --purpose-on-accent: #000000;
+  --purpose-sub-1: #fcdc64;
+  --purpose-sub-2: #e46a55;
+  --purpose-sub-3: transparent;
+  --purpose-surface-1: #282421;
+  --purpose-surface-2: #39342f;
+  --purpose-surface-3: #49433d;
+}
+
+/* 4. account: Afghan (verde-afghan, profunda, exceção dark) */
 html[data-purpose="account"] {
-  --color-brand-highlight: #0c3c29;
-  --color-on-highlight: #ffffff;
-  --accent-green-stripe: #0c3c29;
+  --purpose-accent: #08271a;
+  --purpose-on-accent: #ffffff;
+  --purpose-sub-1: #5a8022;
+  --purpose-sub-2: #f0c41e;
+  --purpose-sub-3: #c03d27;
 }
 
 html[data-theme="dark"][data-purpose="account"] {
-  --color-brand-highlight: #9ac15a;
-  --color-on-highlight: #171513;
-  --accent-green-stripe: #9ac15a;
+  --purpose-accent: #059e61;
+  --purpose-on-accent: #000000;
+  --purpose-sub-1: #6c9e22;
+  --purpose-sub-2: #fbd132;
+  --purpose-sub-3: #dd4329;
+  --purpose-surface-1: #282421;
+  --purpose-surface-2: #39342f;
+  --purpose-surface-3: #49433d;
 }
 
-/* support: Amarelo base V1 (#f2ca36) */
+/* 5. support: Acapulco Gold (amarelo-acapulco-gold, profunda) */
 html[data-purpose="support"] {
-  --color-brand-highlight: #f2ca36;
-  --color-on-highlight: #0c3c29;
-  --accent-yellow-stripe: #a98d26;
+  --purpose-accent: #f0c41e;
+  --purpose-on-accent: #000000;
+  --purpose-sub-1: #5a8022;
+  --purpose-sub-2: #c03d27;
+  --purpose-sub-3: transparent;
 }
 
 html[data-theme="dark"][data-purpose="support"] {
-  --color-brand-highlight: #f2ca36;
-  --color-on-highlight: #171513;
-  --accent-yellow-stripe: #f2ca36;
+  --purpose-accent: #fbd132;
+  --purpose-on-accent: #000000;
+  --purpose-sub-1: #6c9e22;
+  --purpose-sub-2: #dd4329;
+  --purpose-sub-3: transparent;
+  --purpose-surface-1: #282421;
+  --purpose-surface-2: #39342f;
+  --purpose-surface-3: #49433d;
 }
 
-/* shop: Amarelo tonal reggae (#FDDE14) */
+/* 6. shop: Lemon Haze (amarelo-lemon-haze, fiel) */
 html[data-purpose="shop"] {
-  --color-brand-highlight: #FDDE14;
-  --color-on-highlight: #0c3c29;
-  --accent-yellow-stripe: #9e8400;
+  --purpose-accent: #f2ca36;
+  --purpose-on-accent: #000000;
+  --purpose-sub-1: #689427;
+  --purpose-sub-2: #d4452d;
+  --purpose-sub-3: transparent;
 }
 
 html[data-theme="dark"][data-purpose="shop"] {
-  --color-brand-highlight: #FDDE14;
-  --color-on-highlight: #171513;
-  --accent-yellow-stripe: #FDDE14;
+  --purpose-accent: #fcd64b;
+  --purpose-on-accent: #000000;
+  --purpose-sub-1: #7ab327;
+  --purpose-sub-2: #e1563f;
+  --purpose-sub-3: transparent;
+  --purpose-surface-1: #282421;
+  --purpose-surface-2: #39342f;
+  --purpose-surface-3: #49433d;
 }
 
-/* magazine: Vermelho base V1 (#d4452d / #b52f22) */
-html[data-purpose="magazine"] {
-  --color-brand-highlight: #b52f22;
-  --color-on-highlight: #ffffff;
-  --accent-red-stripe: #b52f22;
-}
-
-html[data-theme="dark"][data-purpose="magazine"] {
-  --color-brand-highlight: #f08a76;
-  --color-on-highlight: #171513;
-  --accent-red-stripe: #e7bcb8;
-}
-
-/* courses: Vermelho tonal reggae (#E50104) */
-html[data-purpose="courses"] {
-  --color-brand-highlight: #E50104;
-  --color-on-highlight: #ffffff;
-  --accent-red-stripe: #b50002;
-}
-
-html[data-theme="dark"][data-purpose="courses"] {
-  --color-brand-highlight: #ff7b7e;
-  --color-on-highlight: #171513;
-  --accent-red-stripe: #ff9b9d;
-}
-
-/* forum: Verde base V1 (#689427) */
-html[data-purpose="forum"] {
-  --color-brand-highlight: #689427;
-  --color-on-highlight: #171513;
-  --accent-green-stripe: #689427;
-}
-
-html[data-theme="dark"][data-purpose="forum"] {
-  --color-brand-highlight: #9ac15a;
-  --color-on-highlight: #171513;
-  --accent-green-stripe: #689427;
-}
-
-/* eventos: Vermelho base V1 */
+/* 7. eventos: Golden Goat (amarelo-golden-goat, suave) */
 html[data-purpose="eventos"] {
-  --color-brand-highlight: #b52f22;
-  --color-on-highlight: #ffffff;
-  --accent-red-stripe: #b52f22;
+  --purpose-accent: #f4d04e;
+  --purpose-on-accent: #000000;
+  --purpose-sub-1: #76a82c;
+  --purpose-sub-2: #d85842;
+  --purpose-sub-3: transparent;
 }
 
 html[data-theme="dark"][data-purpose="eventos"] {
-  --color-brand-highlight: #f08a76;
-  --color-on-highlight: #171513;
-  --accent-red-stripe: #e7bcb8;
+  --purpose-accent: #fcdc64;
+  --purpose-on-accent: #000000;
+  --purpose-sub-1: #89c72c;
+  --purpose-sub-2: #e46a55;
+  --purpose-sub-3: transparent;
+  --purpose-surface-1: #282421;
+  --purpose-surface-2: #39342f;
+  --purpose-surface-3: #49433d;
 }
 
-/* links: Neutro, sem faixa ou acento decorativo */
-html[data-purpose="links"] {
-  --accent-green-stripe: transparent;
-  --accent-yellow-stripe: transparent;
-  --accent-red-stripe: transparent;
+/* 8. magazine: Red Kush (vermelho-red-kush, profunda) */
+html[data-purpose="magazine"] {
+  --purpose-accent: #c03d27;
+  --purpose-on-accent: #ffffff;
+  --purpose-sub-1: #5a8022;
+  --purpose-sub-2: #f0c41e;
+  --purpose-sub-3: transparent;
+}
+
+html[data-theme="dark"][data-purpose="magazine"] {
+  --purpose-accent: #dd4329;
+  --purpose-on-accent: #000000;
+  --purpose-sub-1: #6c9e22;
+  --purpose-sub-2: #fbd132;
+  --purpose-sub-3: transparent;
+  --purpose-surface-1: #282421;
+  --purpose-surface-2: #39342f;
+  --purpose-surface-3: #49433d;
+}
+
+/* 9. courses: Panama Red (vermelho-panama-red, fiel) */
+html[data-purpose="courses"] {
+  --purpose-accent: #d4452d;
+  --purpose-on-accent: #000000;
+  --purpose-sub-1: #689427;
+  --purpose-sub-2: #f2ca36;
+  --purpose-sub-3: transparent;
+}
+
+html[data-theme="dark"][data-purpose="courses"] {
+  --purpose-accent: #e1563f;
+  --purpose-on-accent: #000000;
+  --purpose-sub-1: #7ab327;
+  --purpose-sub-2: #fcd64b;
+  --purpose-sub-3: transparent;
+  --purpose-surface-1: #282421;
+  --purpose-surface-2: #39342f;
+  --purpose-surface-3: #49433d;
+}
+
+/* 10. forum: Red Congolese (vermelho-red-congolese, suave) */
+html[data-purpose="forum"] {
+  --purpose-accent: #d85842;
+  --purpose-on-accent: #000000;
+  --purpose-sub-1: #76a82c;
+  --purpose-sub-2: #f4d04e;
+  --purpose-sub-3: transparent;
+}
+
+html[data-theme="dark"][data-purpose="forum"] {
+  --purpose-accent: #e46a55;
+  --purpose-on-accent: #000000;
+  --purpose-sub-1: #89c72c;
+  --purpose-sub-2: #fcdc64;
+  --purpose-sub-3: transparent;
+  --purpose-surface-1: #282421;
+  --purpose-surface-2: #39342f;
+  --purpose-surface-3: #49433d;
 }
 

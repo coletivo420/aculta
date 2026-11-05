@@ -5,12 +5,13 @@ aculta_radius_field: base
 aculta_accent_override: mapping
 aculta_show_accent_stripe: true
 aculta_purpose_palette:
-  main: green
-  wiki: green-tonal
-  account: green-dark
-  support: yellow
-  shop: yellow-tonal
-  magazine: red
-  courses: red-tonal
-  forum: green
-  eventos: red
+  main: verde-skunk
+  wiki: verde-sativa
+  links: verde-ruderalis
+  account: verde-afghan
+  support: amarelo-acapulco-gold
+  shop: amarelo-lemon-haze
+  eventos: amarelo-golden-goat
+  magazine: vermelho-red-kush
+  courses: vermelho-panama-red
+  forum: vermelho-red-congolese

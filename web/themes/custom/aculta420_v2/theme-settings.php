@@ -97,13 +97,16 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
   }
 
   $variantOptions = [
-    'green' => t('Verde (#689427 - base V1)'),
-    'green-tonal' => t('Verde tonal (#12A113 - reggae)'),
-    'green-dark' => t('Verde escuro (#0c3c29 - base V1)'),
-    'yellow' => t('Amarelo (#f2ca36 - base V1)'),
-    'yellow-tonal' => t('Amarelo tonal (#FDDE14 - reggae)'),
-    'red' => t('Vermelho (#d4452d - base V1)'),
-    'red-tonal' => t('Vermelho tonal (#E50104 - reggae)'),
+    'verde-skunk' => t('Skunk'),
+    'verde-sativa' => t('Sativa'),
+    'verde-ruderalis' => t('Ruderalis'),
+    'verde-afghan' => t('Afghan'),
+    'amarelo-acapulco-gold' => t('Acapulco Gold'),
+    'amarelo-lemon-haze' => t('Lemon Haze'),
+    'amarelo-golden-goat' => t('Golden Goat'),
+    'vermelho-red-kush' => t('Red Kush'),
+    'vermelho-panama-red' => t('Panama Red'),
+    'vermelho-red-congolese' => t('Red Congolese'),
   ];
 
   $purposeLabels = [
@@ -120,13 +123,16 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
   ];
 
   $purposeDefaults = [
-    'main' => 'green',
-    'wiki' => 'green-tonal',
-    'account' => 'green-dark',
-    'support' => 'yellow',
-    'shop' => 'yellow-tonal',
-    'magazine' => 'red',
-    'courses' => 'red-tonal',
+    'main' => 'verde-skunk',
+    'wiki' => 'verde-sativa',
+    'links' => 'verde-ruderalis',
+    'account' => 'verde-afghan',
+    'support' => 'amarelo-acapulco-gold',
+    'shop' => 'amarelo-lemon-haze',
+    'eventos' => 'amarelo-golden-goat',
+    'magazine' => 'vermelho-red-kush',
+    'courses' => 'vermelho-panama-red',
+    'forum' => 'vermelho-red-congolese',
   ];
 
   $savedPalette = theme_get_setting('aculta_purpose_palette') ?? [];
@@ -143,17 +149,8 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
     if (!is_string($purpose)) {
       continue;
     }
-    // O purpose links é neutro, sem faixa ou destaque configurável.
-    if ($purpose === 'links') {
-      $form['aculta_cores_purpose']['aculta_purpose_palette'][$purpose] = [
-        '#type' => 'item',
-        '#title' => $purposeLabels[$purpose] ?? ucfirst($purpose),
-        '#markup' => '<em>' . t('Neutro (sem destaque)') . '</em>',
-      ];
-      continue;
-    }
 
-    $defaultVariant = $purposeDefaults[$purpose] ?? 'green';
+    $defaultVariant = $purposeDefaults[$purpose] ?? 'verde-skunk';
     $currentVariant = $savedPalette[$purpose] ?? $defaultVariant;
     if (!isset($variantOptions[$currentVariant])) {
       $currentVariant = $defaultVariant;

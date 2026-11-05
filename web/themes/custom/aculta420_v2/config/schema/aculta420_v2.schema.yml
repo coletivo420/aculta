@@ -49,3 +49,6 @@ aculta420_v2.settings:
         eventos:
           type: string
           label: 'Variante de destaque do purpose eventos'
+        links:
+          type: string
+          label: 'Variante de destaque do purpose links'

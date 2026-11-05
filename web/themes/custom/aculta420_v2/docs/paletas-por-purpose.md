@@ -1,6 +1,6 @@
 # Paleta ACULTA Skunk Family
 
-Status: **aprovado pelo responsável em 2026-11-05**. Implementação no tema pendente (ver "Pendências").
+Status: **implementado no tema em 2026-11-05 (versão 1.3.0)**. Aprovado pelo responsável em 2026-11-05.
 
 Este documento oficializa as paletas do tema V2 (`aculta420_v2`) para os purposes do Portal. Ele é a fonte de verdade para nomes, chaves e valores. Se a implementação divergir, o documento vence, ou ele é alterado antes, com decisão registrada.
 
@@ -206,14 +206,16 @@ Os tokens são definidos sob o seletor do purpose e redefinidos sob o modo escur
 
 ## Pendências
 
-- Substituir a sobrescrita de `--color-brand-highlight` por purpose (F3) pelos tokens `--purpose-*`, consumidos só pela faixa do purpose. Corrige botões, foco e barra institucional.
-- Implementar o select de esquema por purpose (dez purposes) na tela de configurações do tema, com os nomes e chaves acima.
-- Trocar os valores de `tokens.css` pelos desta paleta, em versão MINOR.
-- Atualizar `configuracao-do-tema.md` seção 2.1 e `architecture.md` com o estado real.
-- Validar contraste no tema com os gates de design e de fundações.
+Nenhuma pendência técnica para a F3. Implementação concluída com sucesso:
+- Substituída a sobrescrita de `--color-brand-highlight` por purpose pelos tokens semânticos `--purpose-*` (`--purpose-accent`, `--purpose-on-accent`, `--purpose-sub-1..3`, `--purpose-surface-1..3`).
+- Implementado o select de esquema oficial para os dez purposes na tela de configurações do tema (`theme-settings.php`), com leitura de purposes ativos via Core State API.
+- Valores atualizados em `src/styles/tokens.css`, `aculta420_v2.settings.yml` e schema do tema promovido para a versão MINOR 1.3.0.
+- Documentação sincronizada em `configuracao-do-tema.md`, `architecture.md`, `roadmap.md` e `CHANGELOG.md`.
+- Contraste e fundações validados com gates de design e de fundações.
 
 ## Histórico
 
+- 2026-11-05: implementação completa da Paleta ACULTA Skunk Family no tema V2 em versão MINOR 1.3.0, com isolamento de tokens `--purpose-*`, 10 esquemas oficiais e validação de contrastes.
 - 2026-11-05: título do documento padronizado como "Paleta ACULTA Skunk Family". Comando intermediário para o agente alinhar o nome em código e documentação do tema.
 - 2026-11-05: paleta gerada a partir das cores da V1 e do reggae. Versão aprovada com esquemas nomeados por variedades de cannabis, sem nome de purpose.
 - 2026-11-05: adicionado o esquema Skunk para o purpose Links (LinkWeed).

@@ -46,7 +46,7 @@ Regras:
 
 - O Portal não instancia componentes do tema. O tema não resolve regra de domínio.
 - Links que atravessam purpose chegam como URL absoluta, gerada pelo `DomainPurposeManager` no Portal.
-- A chave neutra de purpose (Fase 3) existe como `aculta_purpose` (derivada de `domain_presentation.identity.purpose`) e o tema aplica `data-purpose` no `<html>` após validar a lista permitida. O ajuste de tokens de destaque por purpose aplica as variantes aprovadas em `tokens.css`; o tema não lê hostname, domínio nem regra de acesso.
+- A chave neutra de purpose (Fase 3) existe como `aculta_purpose` (derivada de `domain_presentation.identity.purpose`) e o tema aplica `data-purpose` no `<html>` após validar a lista permitida. O ajuste de tokens de destaque por purpose aplica a Paleta ACULTA Skunk Family oficial em `tokens.css` através dos tokens `--purpose-*` (`--purpose-accent`, `--purpose-on-accent`, `--purpose-sub-1..3`, `--purpose-surface-1..3`), mantendo botões, foco, anéis e elementos institucionais perfeitamente isolados e consistentes; o tema não lê hostname, domínio nem regra de acesso.
 
 ## 3. Modo de cor
 

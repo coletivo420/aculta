@@ -68,36 +68,30 @@ Os valores seguem `docs/superficies.md`, seção 1.
 
 Decisão do responsável em 2026-11-05: o administrador escolhe a cor de destaque
 de cada purpose em uma seção nova, **Cores por purpose**, separada de
-Superfícies. Estado: **implementado** com uma cor por purpose. A paleta aprovada em 2026-11-05, com sequência de cinco cores, modo claro e escuro e nomes de esquema, está em [paletas-por-purpose.md](paletas-por-purpose.md). Essa paleta ainda não foi implementada.
-Escopo: **só destaque** (faixa e tokens de acento). Fundo, texto e cabeçalho não mudam. Versão: **MINOR**, conforme `docs/versioning.md`. O controle usa a tela nativa do tema (Aparência → ACULTA420 V2 → Configurações) em `theme-settings.php` e salva em `aculta420_v2.settings`; a exportação para `config/sync` segue o passo de `drush cex` descrito na seção 1.
+Superfícies. Estado: **implementado** com a **Paleta ACULTA Skunk Family** (esquemas completos com destaque, texto sobre destaque, subelementos e elevações para modos claro e escuro, detalhados em [paletas-por-purpose.md](paletas-por-purpose.md)).
+Escopo: **só destaque** (tokens `--purpose-*` consumidos exclusivamente pela faixa de destaque). Fundo, botões, foco, abas, links e barra institucional **não mudam**. Versão: **MINOR** (`1.3.0`), conforme `docs/versioning.md`. O controle usa a tela nativa do tema (Aparência → ACULTA420 V2 → Configurações) em `theme-settings.php` e salva em `aculta420_v2.settings`; a exportação para `config/sync` segue o passo de `drush cex` descrito na seção 1.
 
 O tema obtém a lista de purposes ativos exclusivamente pelo estado neutro `aculta_portal.active_purposes` da Core State API (`\Drupal::state()->get('aculta_portal.active_purposes', [])`). Não consulta Domain, DomainNegotiator nem serviços do Portal. Se o estado estiver vazio, exibe a mensagem de aviso e não renderiza selects.
 
 | Chave | Tipo | Padrão | Opções | Aplica a |
 | --- | --- | --- | --- | --- |
-| `aculta_purpose_palette.main` | select | `green` | variantes aprovadas | destaque do purpose `main` |
-| `aculta_purpose_palette.wiki` | select | `green-tonal` | variantes aprovadas | destaque do purpose `wiki` |
-| `aculta_purpose_palette.account` | select | `green-dark` | variantes aprovadas | destaque do purpose `account` |
-| `aculta_purpose_palette.support` | select | `yellow` | variantes aprovadas | destaque do purpose `support` |
-| `aculta_purpose_palette.shop` | select | `yellow-tonal` | variantes aprovadas | destaque do purpose `shop` |
-| `aculta_purpose_palette.magazine` | select | `red` | variantes aprovadas | destaque do purpose `magazine` |
-| `aculta_purpose_palette.courses` | select | `red-tonal` | variantes aprovadas | destaque do purpose `courses` |
-| `aculta_purpose_palette.forum` | select | `green` | variantes aprovadas | destaque do purpose `forum` |
-| `aculta_purpose_palette.eventos` | select | `red` | variantes aprovadas | destaque do purpose `eventos` |
-| `links` | — | neutro | sem controle | sem destaque |
+| `aculta_purpose_palette.main` | select | `verde-skunk` | 10 esquemas oficiais | destaque do purpose `main` (Skunk) |
+| `aculta_purpose_palette.wiki` | select | `verde-sativa` | 10 esquemas oficiais | destaque do purpose `wiki` (Sativa) |
+| `aculta_purpose_palette.links` | select | `verde-ruderalis` | 10 esquemas oficiais | destaque do purpose `links` (Ruderalis) |
+| `aculta_purpose_palette.account` | select | `verde-afghan` | 10 esquemas oficiais | destaque do purpose `account` (Afghan) |
+| `aculta_purpose_palette.support` | select | `amarelo-acapulco-gold` | 10 esquemas oficiais | destaque do purpose `support` (Acapulco Gold) |
+| `aculta_purpose_palette.shop` | select | `amarelo-lemon-haze` | 10 esquemas oficiais | destaque do purpose `shop` (Lemon Haze) |
+| `aculta_purpose_palette.eventos` | select | `amarelo-golden-goat` | 10 esquemas oficiais | destaque do purpose `eventos` (Golden Goat) |
+| `aculta_purpose_palette.magazine` | select | `vermelho-red-kush` | 10 esquemas oficiais | destaque do purpose `magazine` (Red Kush) |
+| `aculta_purpose_palette.courses` | select | `vermelho-panama-red` | 10 esquemas oficiais | destaque do purpose `courses` (Panama Red) |
+| `aculta_purpose_palette.forum` | select | `vermelho-red-congolese` | 10 esquemas oficiais | destaque do purpose `forum` (Red Congolese) |
 
 Regras:
 
-- **Só lista aprovada.** O administrador não digita hexadecimal. Cada variante
-  já passou no contraste (3:1 para destaque decorativo, 4,5:1 para texto sobre o destaque):
-  - `green`: verde base V1 (`#689427`, contraste decorativo 3.59:1 / texto 5.08:1)
-  - `green-tonal`: verde tonal reggae (`#12A113`, contraste decorativo 3.42:1 / texto 5.32:1)
-  - `green-dark`: verde-escuro base V1 (`#0c3c29`, contraste decorativo 12.40:1 / texto 12.40:1)
-  - `yellow`: amarelo base V1 (`#f2ca36`, contraste decorativo 3.22:1 / texto 7.84:1)
-  - `yellow-tonal`: amarelo tonal reggae (`#FDDE14`, contraste decorativo 3.65:1 / texto 9.23:1)
-  - `red`: vermelho base V1 (`#b52f22` / `#d4452d`, contraste decorativo 6.19:1 / texto 6.19:1)
-  - `red-tonal`: vermelho tonal reggae (`#E50104`, contraste decorativo 7.08:1 / texto 4.84:1)
-- **Chave neutra.** O tema aplica `data-purpose` no `<html>` a partir da variável neutra `aculta_purpose` (fornecida pelo Portal em `AppearanceHooks`). Seletores em `tokens.css` ajustam os tokens de destaque (`--color-brand-highlight`, `--color-on-highlight`, `--accent-*-stripe`). Não há lógica de domínio no tema.
+- **Só lista aprovada.** O administrador não digita hexadecimal. Cada esquema oficial
+  (Skunk, Sativa, Ruderalis, Afghan, Acapulco Gold, Lemon Haze, Golden Goat, Red Kush, Panama Red, Red Congolese)
+  já passou no contraste (3:1 para destaque de interface sobre o fundo correspondente, 4,5:1 para texto sobre o destaque).
+- **Chave neutra.** O tema aplica `data-purpose` no `<html>` a partir da variável neutra `aculta_purpose` (fornecida pelo Portal em `AppearanceHooks`). Seletores em `tokens.css` ajustam os tokens de destaque `--purpose-*` (`--purpose-accent`, `--purpose-on-accent`, `--purpose-sub-1..3`, `--purpose-surface-1..3`). Não há lógica de domínio no tema.
 - Padrão de cada purpose igual ao mapeamento aceito; alterar exige salvar
   pelo formulário e exportar com `drush cex`.
 
