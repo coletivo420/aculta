@@ -414,7 +414,7 @@ Novo inventário estático no HEAD da PR #299: **54 arquivos `.component.yml`** 
 - `content/sponsor-logos`: integrar dados autorizados e mídia pela cadeia de `aculta_image`; evitar URL arbitrária.
 - `patterns/bookmark-toggle`: o consumidor do Fórum existe; ampliar sem duplicar Flag e com controle de cache por usuário.
 - `editorial-card` (imprensa) e `patterns/card` (teasers): preferir reuso com dados editoriais consistentes; não criar SDC alternativo sem gate.
-- Acessibilidade: modo escuro/claro, 320 px, zoom 200%, teclado, contraste WCAG 2.2 AA, no-JS quando aplicável e Olivero. Não marcar "concluído" sem evidência no Runtime.
+- Acessibilidade: modo escuro/claro, 320 px, zoom 200%, teclado, contraste WCAG 2.2 AA e no-JS quando aplicável. Validar no tema ACULTA ativo; Olivero não é gate de validação. Não marcar "concluído" sem evidência no Runtime.
 
 Fonte: [auditoria OpenCulturas 3.1.5](../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md).
 

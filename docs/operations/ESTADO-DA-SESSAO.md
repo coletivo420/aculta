@@ -1276,6 +1276,11 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   resultados antigos permanecem registrados, e gates ativos foram atualizados.
 - **Arquivos:** ver `git status` do commit desta entrega; documentação concentrada
   em `docs/`, `web/modules/custom/aculta_portal/` e `tests/browser/`.
+- **Revisão posterior:** removida a menção a Olivero da matriz de validação do
+  catálogo de componentes e substituído o status “mobile/Olivero pendentes” do
+  mapa módulo/tema por gates ativos explícitos. Não há config em `config/sync`
+  selecionando Olivero nem teste dedicado rastreado; referências a resultados
+  executados anteriormente permanecem históricas.
 - **Publicação:** commit `723e927efdde078171016bc98711edb568a8509e` em
   `origin/dev`; worktree limpo. No Runtime `aculta_runtime` em `toca`, Drush
   confirmou Drupal 11.5.0-beta1, `updatedb:status` sem updates e
