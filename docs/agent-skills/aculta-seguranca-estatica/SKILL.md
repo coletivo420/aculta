@@ -5,7 +5,7 @@ description: Faz análise estática de segurança em PHP e Drupal do ACULTA (Sem
 
 # Segurança estática do ACULTA
 
-Escopo prioritário: pagamento e carrinho (MAIN), uploads, formulários públicos, integrações e tratamento de credenciais. Padrão de código: `docs/portal/DRUPAL-11-STANDARDS.md`, seção 12.
+Escopo prioritário: pagamento e carrinho (MAIN), uploads, formulários públicos, integrações e tratamento de credenciais. Padrão de código: `docs/portal/DRUPAL-12-STANDARDS.md`, seção 12.
 
 1. Verifique a ferramenta: `semgrep --version`. Se faltar, registre DEFERRED com o motivo e pare nesta etapa. Não instale pacote sem aprovação do responsável.
 2. Escopo: liste só os caminhos alterados ou da área revisada. Não varra `vendor/`, `web/core/`, `web/modules/contrib/` nem `web/libraries/`.

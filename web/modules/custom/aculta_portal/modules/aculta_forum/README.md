@@ -143,7 +143,7 @@ por padrão).
 
 O contrato de cartões, privacidade e API fica em
 [`aculta_user/docs/AUTHOR-CARDS.md`](../aculta_user/docs/AUTHOR-CARDS.md). Normas
-comuns: [Drupal 11+](../../../../../../docs/portal/DRUPAL-11-STANDARDS.md),
+comuns: [Drupal 11+](../../../../../../docs/portal/DRUPAL-12-STANDARDS.md),
 [guardrails](../../../../../../docs/portal/GUARDRAILS.md),
 [fronteira módulo-tema](../../../../../../docs/portal/FRONTEIRA-MODULO-TEMA.md),
 [mapa módulo-tema](../../../../../../docs/portal/MAPA-MODULO-TEMA.md),

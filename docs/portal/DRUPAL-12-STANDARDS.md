@@ -1,6 +1,6 @@
-# Padrão Drupal 11+ e Drupal 12 ready — aculta_portal
+# Padrão Drupal 12 — aculta_portal
 
-Status: **normativo**. Revisado em 2026-11-05.
+Status: **normativo**. Alvo: Drupal 12. Compatibilidade com Drupal 11.x mantida durante a transição (seção 1). Revisado em 2026-11-05.
 
 Vale para desenvolvedores humanos e para agentes de IA. Declarar compatibilidade com Drupal 12 exige validação do Core 12 instalado e dos módulos contrib, não apenas o `info.yml`.
 

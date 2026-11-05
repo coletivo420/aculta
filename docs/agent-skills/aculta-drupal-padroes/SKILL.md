@@ -1,11 +1,11 @@
 ---
 name: aculta-drupal-padroes
-description: Revisa PHP e Drupal do ACULTA contra o padrão Drupal 11 do projeto (hooks OOP, injeção, acesso, segurança). Use ao escrever ou revisar PHP em aculta_portal ou em módulos da ACULTA.
+description: Revisa PHP e Drupal do ACULTA contra o padrão Drupal 12 do projeto (hooks OOP, injeção, acesso, segurança). Use ao escrever ou revisar PHP em aculta_portal ou em módulos da ACULTA.
 ---
 
 # Padrões Drupal do ACULTA
 
-Fonte normativa: `docs/portal/DRUPAL-11-STANDARDS.md`. Esta skill é um checklist de revisão. Não substitui o documento. Leia só a seção que a revisão exige.
+Fonte normativa: `docs/portal/DRUPAL-12-STANDARDS.md`. Esta skill é um checklist de revisão. Não substitui o documento. Leia só a seção que a revisão exige.
 
 1. **Hooks:** em código novo ou refatorado, use `#[Hook]` em classe OOP com injeção. Não crie hook procedural nem `#[FormAlter]`. Seção 4 do padrão.
 2. **Serviços:** nenhum `\Drupal::` novo em `src/`. Injete pelo construtor e declare o serviço em `*.services.yml`. Seção 7.

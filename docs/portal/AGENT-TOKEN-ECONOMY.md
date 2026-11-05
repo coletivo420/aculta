@@ -38,7 +38,7 @@ python3 scripts/portal-agent-budget.py context P5.2-A 3000
 
 ## Segurança e separação de escopo
 
-Aplicar `docs/portal/DRUPAL-11-STANDARDS.md`, `AGENTS.md`, PR #90 e roadmap. Não introduzir service locators, storage paralelo nem enfraquecer segurança/checkout. A portabilidade entre bancos pertence somente ao projeto independente DBTNG-2. Não declarar PASS sem execução.
+Aplicar `docs/portal/DRUPAL-12-STANDARDS.md`, `AGENTS.md`, PR #90 e roadmap. Não introduzir service locators, storage paralelo nem enfraquecer segurança/checkout. A portabilidade entre bancos pertence somente ao projeto independente DBTNG-2. Não declarar PASS sem execução.
 
 ## Ferramentas de leitura parcial
 
@@ -91,7 +91,7 @@ Teto de leitura inicial para o contexto de partida, antes da tarefa. Valores sã
 | --- | --- | --- |
 | Pesquisa ou localização | `AGENTS.md` raiz (~8 KB) e o índice da área; resto por `rg -n` | trecho do arquivo encontrado |
 | Documentação ou status | o documento alvo e a linha da dívida (`rg -n "DT-"`) | seção citada, não o arquivo inteiro |
-| Mudança no Portal | `docs/portal/GUARDRAILS.md` e a seção do `DRUPAL-11-STANDARDS.md` da área; `AGENTS.md` do módulo (~7 KB) | símbolos usados via `rg` |
+| Mudança no Portal | `docs/portal/GUARDRAILS.md` e a seção do `DRUPAL-12-STANDARDS.md` da área; `AGENTS.md` do módulo (~7 KB) | símbolos usados via `rg` |
 | Mudança no tema V2 | `web/themes/custom/aculta420_v2/AGENTS.md` (~8 KB) e a seção do `docs/architecture.md` tocada | `docs/gates.md` só para o gate do escopo |
 | Revisão final | `git diff --stat` e `git diff --check`; o diff dos arquivos alterados | nenhuma leitura ampla de árvore |
 | Gate ou teste | o script do gate e a saída via `scripts/agent-output.py` | logs completos só se a saída resumida falhar |

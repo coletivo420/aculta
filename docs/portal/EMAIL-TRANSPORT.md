@@ -4,7 +4,7 @@ Status do componente de envio: [aculta_mailer.yml](../operations/status/aculta_m
 
 Documentos relacionados: [DEBT-REGISTER](../operations/DEBT-REGISTER.md) (DT-P05, DT-P09, DT-O07),
 [EMAIL-CONFIRMATION-POLICY.md](EMAIL-CONFIRMATION-POLICY.md), [GUARDRAILS.md](GUARDRAILS.md),
-[DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md), `config/secrets-contract.json`.
+[DRUPAL-12-STANDARDS.md](DRUPAL-12-STANDARDS.md), `config/secrets-contract.json`.
 
 ## Status e credenciais
 

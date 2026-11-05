@@ -89,7 +89,7 @@ Core (user, node, comment, Views, image, Mailer)  +  contrib instalado (profile,
    ACULTA420  (SDC/Bootstrap de cartão de autor, avatar, badges — só apresentação)
 ```
 
-Princípios, conforme `GUARDRAILS.md` e `DRUPAL-11-STANDARDS.md`:
+Princípios, conforme `GUARDRAILS.md` e `DRUPAL-12-STANDARDS.md`:
 
 - **Sem storage novo nas fases U1–U3.** Nenhuma tabela de pontos, de seguidores, de contribuições ou de comentários. Contagens saem de Views e de entidades reais.
 - **Sem service locator** em `src/`: injeção de dependência nos serviços.

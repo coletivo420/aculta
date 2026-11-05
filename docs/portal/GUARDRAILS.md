@@ -3,7 +3,7 @@
 Regras que bloqueiam regressão no `aculta_portal`. São normativas: quem altera o Portal deve
 cumpri-las, e o gate ou a revisão deve checá-las. Não são roadmap nem relatório.
 
-Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md),
+Documentos normativos relacionados: [DRUPAL-12-STANDARDS.md](DRUPAL-12-STANDARDS.md),
 [SOURCE-OF-TRUTH.md](SOURCE-OF-TRUTH.md), [ARCHITECTURE.md](ARCHITECTURE.md),
 [ADMIN-DOMAIN-POLICY.md](ADMIN-DOMAIN-POLICY.md),
 [CROSS-DOMAIN-REQUEST-POLICY.md](CROSS-DOMAIN-REQUEST-POLICY.md),

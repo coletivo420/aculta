@@ -124,7 +124,7 @@ atende a página. Mapas explícitos atribuem os pacotes de `aculta_image` e
 
 - [Índice normativo do Portal](../../../../docs/portal/README.md) — contratos,
   políticas e padrões de implementação.
-- [Padrão Drupal 11+](../../../../docs/portal/DRUPAL-11-STANDARDS.md) — APIs,
+- [Padrão Drupal 11+](../../../../docs/portal/DRUPAL-12-STANDARDS.md) — APIs,
   DI, hooks, EntityQuery, render e cache.
 - [Guardrails](../../../../docs/portal/GUARDRAILS.md) — regras funcionais por área.
 - [Fonte de verdade](../../../../docs/portal/SOURCE-OF-TRUTH.md) — ownership de

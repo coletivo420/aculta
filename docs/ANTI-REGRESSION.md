@@ -19,7 +19,7 @@ caso de teste no navegador), consulte `docs/portal/ANTI-REGRESSAO.md`.
 
 ## Dependency Injection, hooks e padrão Drupal 11+
 
-O padrão normativo do Portal é `docs/portal/DRUPAL-11-STANDARDS.md` e vale para desenvolvimento humano e por IA.
+O padrão normativo do Portal é `docs/portal/DRUPAL-12-STANDARDS.md` e vale para desenvolvimento humano e por IA.
 
 - baseline arquitetural do `aculta_portal`: Drupal Core 11.3+;
 - preferir DI explícita em classes e não introduzir novos service locators `\Drupal::...` em `src/`;

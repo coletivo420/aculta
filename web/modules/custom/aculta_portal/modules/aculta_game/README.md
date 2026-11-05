@@ -79,7 +79,7 @@ diferenças entre páginas de projeto e pacotes foram verificadas na pesquisa.
 - [Changelog](CHANGELOG.md).
 - [ACULTA Fórum/Growroom](../aculta_forum/README.md).
 
-Normas: [Drupal 11+](../../../../../../docs/portal/DRUPAL-11-STANDARDS.md),
+Normas: [Drupal 11+](../../../../../../docs/portal/DRUPAL-12-STANDARDS.md),
 [fontes de verdade](../../../../../../docs/portal/SOURCE-OF-TRUTH.md) e
 [design system](../../../../../../docs/portal/COMPONENT-DESIGN-SYSTEM.md).
 
