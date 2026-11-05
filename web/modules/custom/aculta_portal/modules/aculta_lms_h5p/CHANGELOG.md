@@ -615,3 +615,12 @@ RUNTIME STATUS: PARTIAL.
   atualização do Runtime e validação HTTP autenticada serão registrados após
   concluir a verificação da entrega.
 
+## 0.4.0-dev.176 — serve a API do editor no domínio correto
+
+- O formulário de edição do curso Group fica no purpose `main`, e o editor H5P
+  usa AJAX same-origin. A rota `/h5peditor` deixa de declarar o purpose `courses`
+  e permanece no domínio principal, conforme a política de rotas de integração.
+- O smoke anterior mostrou HTTP 404 e “Error, unable to load libraries” porque
+  o endpoint estava bloqueado no host `main`. O Kernel agora fixa o purpose
+  principal implícito; validar listagem HTTP de bibliotecas após sincronizar.
+
