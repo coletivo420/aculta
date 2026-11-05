@@ -89,7 +89,7 @@ Não use `user_picture` diretamente em consumidores. Use o resolver ou o builder
 - Navegador: `tests/browser/aculta-avatar/` (Firefox ESR em `DISPLAY=:0`, com
   tema ACULTA ativo). Roster e feedback do LMS exigem turma; sem turma no
   Runtime, a verificação visual fica DEFERRED; o Kernel cobre o roster.
-- Regressão de foto: `FOTO-PERFIL.md` e a seção P de `TESTES-NAVEGADOR.md`.
+- Regressão de foto: `FOTO-PERFIL.md` e a seção P de `TESTES-NAVEGADOR-RODADAS.md`.
 
 ## Decisões de 2026-10-27
 

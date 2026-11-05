@@ -9,7 +9,7 @@ invariante verificável. Para as camadas de regra de arquitetura e ownership, ve
 ## Regras
 
 1. **Invariante registrado.** Todo comportamento que o responsável confirmou como correto (ou corrigiu após relato)
-   vira um invariante: uma linha no índice abaixo, com o caso correspondente em `docs/portal/TESTES-NAVEGADOR.md`
+   vira um invariante: uma linha no índice abaixo, com o caso correspondente em `docs/history/portal/TESTES-NAVEGADOR-RODADAS.md`
    (passos e resultado esperado).
 2. **Ler antes de tocar.** Antes de alterar uma área, ler os invariantes do índice que a tocam. Uma mudança que
    contraria um invariante só entra com decisão explícita do responsável, registrada no próprio índice.
@@ -29,9 +29,9 @@ invariante verificável. Para as camadas de regra de arquitetura e ownership, ve
 
 | ID | Área | Invariante | Verificação | Caso |
 |---|---|---|---|---|
-| INV-001 | Login | Login correto sai de `/entrar` e segue a política de redirecionamento (entrada direta → conta; `destination` principal → principal; `destination` da conta → rota da conta). Senha errada mostra mensagem e fica no formulário. | HTTP: 303 + `Location`; 200 com mensagem | TESTES-NAVEGADOR seção O |
-| INV-002 | Login | O formulário `user_login_form` não recebe o AJAX de salvamento da Minha conta (`FormHooks::accountAjaxSubmit`). | Revisão + INV-001 | TESTES-NAVEGADOR seção O |
-| INV-FOTO-1 | Foto | Avatar do sistema não tem botão "Remover" (campo de envio com `#aculta_acervo`; `withoutRemoveForAcervo`). | Gate `validate-aculta-user-photo.php` + HTTP | TESTES-NAVEGADOR seção P1 |
+| INV-001 | Login | Login correto sai de `/entrar` e segue a política de redirecionamento (entrada direta → conta; `destination` principal → principal; `destination` da conta → rota da conta). Senha errada mostra mensagem e fica no formulário. | HTTP: 303 + `Location`; 200 com mensagem | TESTES-NAVEGADOR-RODADAS seção O |
+| INV-002 | Login | O formulário `user_login_form` não recebe o AJAX de salvamento da Minha conta (`FormHooks::accountAjaxSubmit`). | Revisão + INV-001 | TESTES-NAVEGADOR-RODADAS seção O |
+| INV-FOTO-1 | Foto | Avatar do sistema não tem botão "Remover" (campo de envio com `#aculta_acervo`; `withoutRemoveForAcervo`). | Gate `validate-aculta-user-photo.php` + HTTP | TESTES-NAVEGADOR-RODADAS seção P1 |
 | INV-FOTO-2 | Foto | "Sortear outro avatar" só existe com foto do acervo. | Gate + HTTP | Seção P1, P3 |
 | INV-FOTO-3 | Foto | Sem link "Recortar foto"; o recorte abre só logo após o envio (`photo-flow.js`). | Gate | Seção P2, P5 |
 | INV-FOTO-4 | Foto | Recorte só do arquivo recém-enviado (temporário, do próprio usuário); foto salva recusada. | Gate + HTTP | Seção P5 |
@@ -42,11 +42,11 @@ invariante verificável. Para as camadas de regra de arquitetura e ownership, ve
 | INV-FOTO-9 | Foto | Foto importada por OAuth é personalizada (permanente, fora do acervo). | Gate + teste de criação de conta | docs/integrations/GOOGLE.md |
 | INV-FOTO-10 | Foto | O catálogo do acervo é válido e tem ao menos uma entrada ativa com arquivo; não existe estado "sem acervo" em produção. | Gate `validate-aculta-user-photo.php` | FOTO-PERFIL / architecture/avatar |
 | INV-TS-1 | Turnstile | `/entrar` (user_login_form), cadastro, recuperação de senha e formulários de contato/participação continuam com o desafio. | Gate `validate-turnstile-exceptions.php` | docs/portal/TURNSTILE.md |
-| INV-TS-2 | Turnstile | O popup "Entrar" (`aculta_login_popup_form`) não tem desafio, e o flood control do Core continua ativo. | Gate + revisão | TESTES-NAVEGADOR seção R |
+| INV-TS-2 | Turnstile | O popup "Entrar" (`aculta_login_popup_form`) não tem desafio, e o flood control do Core continua ativo. | Gate + revisão | TESTES-NAVEGADOR-RODADAS seção R |
 | INV-TS-3 | Turnstile | Carrinho, checkout e cadastro pelo fluxo de compra não recebem desafio (EXCEPTION_FORM_IDS). | Gate | docs/portal/TURNSTILE.md, seção Exceções |
 | INV-TS-4 | Turnstile | Ligar ou desligar o Turnstile nunca altera as exceções (`TurnstileToggle::setEnabled`). | Gate (constante) + revisão | docs/portal/TURNSTILE.md |
-| INV-LOGIN-POPUP-1 | Login | "Entrar" de visitante abre o modal no mesmo host; o login redireciona de volta à página atual; `/entrar` segue funcionando. | Gate + navegador | TESTES-NAVEGADOR seção R |
-| INV-MODAL-1 | Modais | Todo modal (diálogo do Drupal e `<dialog>`) escurece o fundo com `--aculta-scrim`. | Revisão + navegador | TESTES-NAVEGADOR seção R |
+| INV-LOGIN-POPUP-1 | Login | "Entrar" de visitante abre o modal no mesmo host; o login redireciona de volta à página atual; `/entrar` segue funcionando. | Gate + navegador | TESTES-NAVEGADOR-RODADAS seção R |
+| INV-MODAL-1 | Modais | Todo modal (diálogo do Drupal e `<dialog>`) escurece o fundo com `--aculta-scrim`. | Revisão + navegador | TESTES-NAVEGADOR-RODADAS seção R |
 
 Os invariantes de foto (INV-FOTO-1 a 7) estão na tabela acima; as regras completas e o motivo de cada uma estão em `web/modules/custom/aculta_portal/modules/aculta_user/docs/FOTO-PERFIL.md`.
 

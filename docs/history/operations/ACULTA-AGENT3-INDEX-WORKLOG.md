@@ -120,7 +120,7 @@ Contratos observados:
 - Limitações: fixture sintética pequena/média, sem SLO, sem EXPLAIN e sem
   owners reais nesta classe específica (os owners seguem cobertos nos Kernels
   focais). Relatório:
-  [`ACULTA-CONTENT-INDEX-REPRESENTATIVE-2026-10-26.md`](../portal/benchmarks/ACULTA-CONTENT-INDEX-REPRESENTATIVE-2026-10-26.md).
+  [`ACULTA-CONTENT-INDEX-REPRESENTATIVE-2026-10-26.md`](../../portal/benchmarks/ACULTA-CONTENT-INDEX-REPRESENTATIVE-2026-10-26.md).
 
 ### 7. Correções da revisão focada (`c80b9fa64`, `90d50c6cc`, `25e0a5958`)
 
@@ -150,7 +150,7 @@ Contratos observados:
 ### 9. Vídeo: contrato e LMS (`2f664cca9`, `6d35bd40a`)
 
 - Contrato definido em
-  [`ACULTA-CONTENT-INDEX-VIDEO-RELATIONS`](../portal/ACULTA-CONTENT-INDEX-VIDEO-RELATIONS.md):
+  [`ACULTA-CONTENT-INDEX-VIDEO-RELATIONS`](../../portal/ACULTA-CONTENT-INDEX-VIDEO-RELATIONS.md):
   `embedded_video` para embeds editoriais e `course_video` para o recurso de
   curso; alvo sempre `media:remote_video`, sem URL/corpo/miniatura.
 - O owner `aculta_lms_resources` ganhou `field_lms_videos` (somente
@@ -209,7 +209,7 @@ Observações de homologação:
   `administer aculta_statistics` porque a métrica é INTERNAL.
 - O LMS passou a permitir `remote_video` por `field_lms_videos` e a projetar
   `course_video`; o contrato completo está em
-  [`ACULTA-CONTENT-INDEX-VIDEO-RELATIONS`](../portal/ACULTA-CONTENT-INDEX-VIDEO-RELATIONS.md).
+  [`ACULTA-CONTENT-INDEX-VIDEO-RELATIONS`](../../portal/ACULTA-CONTENT-INDEX-VIDEO-RELATIONS.md).
 
 ## Achados fora do escopo (revisão de 2026-10-26)
 

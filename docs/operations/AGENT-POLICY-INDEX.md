@@ -1,6 +1,6 @@
 # Índice de regras de agentes por escopo
 
-O arquivo `docs/operations/AGENT-GUARDRAILS-FULL.md` é **arquivo histórico de auditoria**, não instrução de carregamento obrigatório. Não o leia integralmente por padrão.
+O arquivo `docs/history/operations/AGENT-GUARDRAILS-FULL.md` é **arquivo histórico de auditoria**, não instrução de carregamento obrigatório. Não o leia integralmente por padrão.
 
 | Escopo | Regras ativas/localizadas |
 |---|---|

@@ -84,7 +84,7 @@
 
 - [ROADMAP.md](ROADMAP.md) — planejamento do Portal.
 - [Registro de dívidas](../operations/DEBT-REGISTER.md) — pendências com evidência e impacto.
-- [TESTES-NAVEGADOR.md](TESTES-NAVEGADOR.md) — procedimento e registro de rodadas no navegador.
+- [TESTES-NAVEGADOR.md](TESTES-NAVEGADOR.md) — regras e roteiro. Rodadas datadas em `../history/portal/TESTES-NAVEGADOR-RODADAS.md`.
 - [Histórico documental](historico/README.md) — snapshots preservados para consulta; não são o estado atual.
 
 O estado implementado de cada componente é registrado no CHANGELOG e no código.

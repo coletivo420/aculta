@@ -89,7 +89,7 @@ estados, atualização e exclusão) passou em duas execuções com rebuild
 pico 82,5 MiB. Runtime local somente
 leitura: 145 entradas, 110 relações, uma geração ativa válida, fila vazia e
 auditoria sem achados. Detalhes em
-[worklog do Agente 3](../operations/ACULTA-AGENT3-INDEX-WORKLOG.md),
+[worklog do Agente 3](../history/operations/ACULTA-AGENT3-INDEX-WORKLOG.md),
 [benchmark de acesso](benchmarks/ACULTA-CONTENT-INDEX-ACCESS-2026-10-26.md) e
 [fixture representativa](benchmarks/ACULTA-CONTENT-INDEX-REPRESENTATIVE-2026-10-26.md).
 Grants operacionais, carga real dos owners e execução sobre catálogo no Runtime
