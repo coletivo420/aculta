@@ -96,7 +96,7 @@ fallback e documentam qualquer compatibilidade antiga ainda necessária.
 | `js/messenger-drawers.js` | configura attrs HTMX nos links e formulários dos fragmentos de mensagens/avisos, trata loading/error, confirmação, chips de destinatários e rolagem de conversa; `hx-sync="this:replace"` cancela respostas antigas |
 | `js/counters.js` | atualiza contadores após `htmx:afterSettle`, com zero oculto |
 | `js/alerts-dismiss.js` | dispensa avisos e atualiza o contador |
-| `js/studio-htmx.js` | em `htmx:afterSettle`, move o foco para `[data-aculta-focus]` ou `h1`, atualiza `document.title` por `data-aculta-title` e anuncia a troca em região `aria-live` quando o alvo ainda não tem uma |
+| `js/studio-htmx.js` | em `htmx:afterSettle`, move o foco para `[data-aculta-focus]` ou `h1`, atualiza `document.title` por `data-aculta-title` e anuncia a troca em região `aria-live` quando o alvo ainda não tem uma; em swaps `outerHTML`, resolve o novo alvo pelo id antes de focar |
 
 Os adapters de tema `templates/content/node--revista--teaser.html.twig` e
 `node--revista--full.html.twig` passam os campos renderizados do nó para os

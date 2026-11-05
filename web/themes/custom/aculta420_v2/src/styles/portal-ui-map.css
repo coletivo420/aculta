@@ -259,3 +259,4 @@
 .aculta-download-meta-item { display: flex; flex-wrap: wrap; gap: 0.5rem; color: var(--color-text-muted); }
 .aculta-domain-brand-image { display: block; max-inline-size: 100%; block-size: auto; }
 .aculta-gallery-dialog { inline-size: min(100%, 40rem); }
+[data-portal-ui="studio-heading"] { margin: 0; font-family: var(--font-family-heading); font-size: 1.375rem; }

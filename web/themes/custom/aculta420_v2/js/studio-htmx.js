@@ -50,9 +50,14 @@
     attach(context) {
       once('acultaStudioHtmxLifecycle', 'html', context).forEach(() => {
         document.body.addEventListener('htmx:afterSettle', (event) => {
-          const target = event.detail?.target;
+          let target = event.detail?.target;
           if (!(target instanceof Element)) {
             return;
+          }
+          // outerHTML swaps replace the target itself; look up the new element
+          // by id so focus, title and announcement target the live fragment.
+          if (!target.isConnected && target.id) {
+            target = document.getElementById(target.id) || target;
           }
           const titleElement = firstMatch(target, '[data-aculta-title]');
           const title = titleElement?.getAttribute('data-aculta-title')?.trim();

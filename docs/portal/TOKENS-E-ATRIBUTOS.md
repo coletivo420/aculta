@@ -86,6 +86,7 @@ Atributos: não há wildcard. Todo nome usado no código aparece na tabela acima
 | `data-aculta-drawer-filter-url` | exato | sim | 1 |
 | `data-aculta-drawer-label` | exato | não | 2 |
 | `data-aculta-drawer-url` | exato | sim | 2 |
+| `data-aculta-focus` | exato | sim | 2 |
 | `data-aculta-forum-post-timestamp` | exato | sim | 3 |
 | `data-aculta-game` | exato | não | 1 |
 | `data-aculta-group-max` | exato | sim | 1 |
@@ -638,6 +639,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `studio-heading` | `studio__heading h4` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
 | `studio-actions` | `studio__actions list-unstyled d-flex flex-wrap gap-2` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
 | `studio-action` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-heading` | estilo por atributo | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
 | `studio-empty` | `text-muted` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
 | `studio-layout` | `studio__layout` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
 | `studio-sidebar` | `studio__sidebar` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |

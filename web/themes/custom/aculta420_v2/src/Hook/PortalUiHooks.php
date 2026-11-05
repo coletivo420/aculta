@@ -462,6 +462,7 @@ final class PortalUiHooks {
     'studio-actions' => ['studio__actions', 'list-unstyled', 'aculta-u-flex', 'aculta-u-wrap', 'aculta-u-gap-2'],
     'studio-card-compact-list' => ['studio-card-compact-list'],
     'studio-fidelity-scope' => ['studio'],
+    'studio-heading' => [],
     'studio-layout' => ['studio__layout'],
     'studio-listing' => ['table', 'table-hover', 'aculta-u-align-middle', 'studio__listing'],
     'studio-listing-wrap' => ['table-responsive', 'studio__listing-wrap'],

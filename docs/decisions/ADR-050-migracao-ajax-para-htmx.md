@@ -187,7 +187,7 @@ Entrega direta em `dev` conforme fluxo vigente.
 
 Entrega direta em `dev` após F1a.
 
-1. `aculta_studio/js/studio-navigation.js` e `account-navigation.js`: remover o `pushState` próprio. Os links ganham `hx-get`, `hx-target` (a área de conteúdo) e `hx-push-url`. Sem JavaScript, o `href` responde a página completa.
+1. `aculta_studio/js/studio-navigation.js` e `account-navigation.js`: remover o `pushState` próprio. Os links ganham `hx-get`, `hx-target` (a área de conteúdo) e `hx-push-url`. Sem JavaScript, o `href` responde a página completa. **Feito em 2026-11-05:** ambas as navegações usam HTMX e foram validadas no host `account` com foco, título e histórico.
 2. `aculta_studio/src/Controller/StudioProfileController.php`: devolver fragmento com `onlyMainContent()` quando htmx. `Cache-Control: private` e `Vary: Cookie`.
 3. `aculta_user/js/account-bio-form.js` e `src/Bio/AccountBioCard.php`: `hx-post` no formulário da biografia; remover o `fetch`.
 4. `aculta_user/src/Social/SocialLinksCard.php` e `aculta_portal/src/Account/AccountAddressForm.php`: fragmento. Regra de país `BR` preservada (ACCOUNT-ADDRESS).

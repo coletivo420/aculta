@@ -205,7 +205,16 @@ final class StudioAccountSectionController {
         '#attributes' => ['data-portal-ui' => 'studio-account-navigation'],
         'links' => $this->navigation($section),
       ],
-      'content' => ['#type' => 'container', '#attributes' => ['data-aculta-account-main' => ''], 'owner' => $content],
+      'content' => [
+        '#type' => 'container',
+        '#attributes' => [
+          'data-aculta-account-main' => '',
+          // Ponto de foco após a troca HTMX; o tema move o foco para cá.
+          'data-aculta-focus' => '',
+          'tabindex' => '-1',
+        ],
+        'owner' => $content,
+      ],
       '#attached' => ['library' => ['aculta_studio/account-navigation']],
       '#cache' => [
         'contexts' => ['user', 'user.permissions', 'url.site', 'route'],

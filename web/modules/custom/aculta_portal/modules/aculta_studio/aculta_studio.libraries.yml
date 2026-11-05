@@ -3,7 +3,7 @@ navigation:
     js/studio-navigation.js: {}
   dependencies:
     - core/drupal
-    - core/drupal.ajax
+    - core/drupal.htmx
     - core/once
 
 account-navigation:
@@ -11,5 +11,5 @@ account-navigation:
     js/account-navigation.js: {}
   dependencies:
     - core/drupal
-    - core/drupal.ajax
+    - core/drupal.htmx
     - core/once

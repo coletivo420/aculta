@@ -1,3 +1,19 @@
+## Não versionado — navegação do Studio e da conta por HTMX (ADR-050 F2 parcial)
+
+- `studio-navigation.js` e `account-navigation.js` deixam `Drupal.Ajax` e o
+  `pushState` próprio. Os links reais ganham `hx-get`, alvo e seleção da raiz,
+  `outerHTML`, `hx-push-url`, `hx-sync` e `onlyMainContent`; sem JavaScript, o
+  `href` abre a página completa.
+- `MarleyController` marca o heading com `data-aculta-focus`; a seção da conta
+  marca o conteúdo com `data-aculta-focus` e `tabindex`. O tema move o foco
+  após a troca, inclusive em swaps `outerHTML`.
+- As bibliotecas `navigation` e `account-navigation` dependem de
+  `core/drupal.htmx`, não de `core/drupal.ajax`.
+- Validado no Runtime no host `account`: `/marley` e `/conta/dados` navegam por
+  HTMX, atualizam URL e título, devolvem o foco e funcionam com o histórico do
+  navegador; sem overflow em 1024 px. Faltam os itens 2 a 5 da F2 (perfil,
+  bio, redes, endereço e popup de foto).
+
 ## Não versionado — dashboard do Studio na raiz de Conta
 
 - `aculta_studio.dashboard` serve o dashboard privado na raiz do purpose

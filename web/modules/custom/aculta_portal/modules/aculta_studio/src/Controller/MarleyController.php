@@ -142,7 +142,18 @@ final class MarleyController {
       'section_header' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'studio-section-header', 'data-aculta-studio' => 'section-header'],
-        'heading' => $this->element('h2', $section['label'], 'studio-heading', 'heading'),
+        'heading' => [
+          '#theme' => 'aculta_portal_element',
+          '#tag' => 'h2',
+          '#value' => $section['label'],
+          '#element_attributes' => new Attribute([
+            'data-portal-ui' => 'studio-heading',
+            'data-aculta-studio' => 'heading',
+            // O tema move o foco para este título após a troca HTMX.
+            'data-aculta-focus' => '',
+            'tabindex' => '-1',
+          ]),
+        ],
       ],
     ];
     // Ações da seção ficam junto ao título, antes das abas de status.
