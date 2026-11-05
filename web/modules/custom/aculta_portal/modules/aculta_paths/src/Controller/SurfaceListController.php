@@ -95,7 +95,8 @@ final class SurfaceListController extends ControllerBase {
       }
       $editar = Link::createFromRoute($this->t('Editar'), 'aculta_paths.editar', ['purpose' => $purpose], [
         'attributes' => [
-          'class' => ['use-ajax', 'button', 'button--small'],
+          'class' => ['use-ajax'],
+          'data-portal-ui' => 'surface-list-edit-action',
           'data-dialog-type' => 'modal',
           'data-dialog-options' => Json::encode(['width' => 640]),
           'aria-label' => (string) $this->t('Editar @nome', ['@nome' => $linha['titulo']]),

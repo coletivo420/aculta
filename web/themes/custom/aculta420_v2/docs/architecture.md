@@ -152,6 +152,7 @@ Com JavaScript desligado, os links dos gatilhos continuam válidos: o login e a 
 - Dashboard do Studio na raiz `account` e rotas de Minha Conta (`/conta/*`), Perfil, WE Sativa, Ganjalab, aula LMS e Culturas escolhem `aside`; a raiz usa `aculta_studio.dashboard` e `/conta` apresenta Dados cadastrais privados. O Portal bloqueia acesso direto ao path interno do dashboard e aplica a guarda de autenticação.
 - `SurfaceSettingsHooks` (`preprocess_html`) aplica o modo de cor e as classes de superfície em uma única implementação.
 - Evento: o adapter `aculta-event-page.html.twig` consome render arrays do módulo no SDC `event-page-layout`, cuja story é `event-page-layout.default.story.yml`. FAQ: `node--aculta-faq--full.html.twig` apresenta cada resposta por `accordion`; o conteúdo continua vindo do render array do Portal.
+- `PortalUiHooks` (`preprocess_link`): converte `data-portal-ui` em classes do V2. Mapa inicial com um token, `surface-list-edit-action` (botão pequeno da lista de superfícies em `aculta_paths`). Os demais tokens continuam no mapa do V1 até a migração. Sem número de versão até a validação visual no Runtime; status: pendente.
 - `src/Hook/*` é a única camada PHP do tema. Lógica de negócio não pertence aqui.
 
 ## 8. Dependências e compatibilidade
