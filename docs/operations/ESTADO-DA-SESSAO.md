@@ -8,8 +8,8 @@
 - **Concluído:** `1efae40765` (Portal) migra `SearchPopupForm`, `RegisterPopupForm`, `SearchUtility` e `search-preview.js`. No tema, `multidomain-bar.js` abre a busca por `hx-get`, sem Fetch nem `DOMParser`; `multidomain-bar.twig` ganhou `id="aculta-search-content"`, que faltava e impedia o alvo HTMX. Nova suíte `tests/browser/aculta-htmx-f1/`.
 - **Verificações:** no Runtime de desenvolvimento, login real da conta de teste respondeu `HX-Redirect: /` e criou sessão; POST inválido do cadastro devolveu o fragmento com erro e não criou conta; busca retornou `data-hx-*` com `HX-Request` e manteve o script legado sem o cabeçalho. Suíte Firefox ESR visível: 26/26 checks (busca e login em 320/390/768/959/960/1440 px, claro/escuro, prévia HTMX, foco visível, zoom real 200%, fallback sem JavaScript). `validate-browser-validators` (21), `validate-aculta420-sdc-schemas` (55/764) e shell contract (13) PASS; PHP lint e `git diff --check` PASS.
 - **Gates com falha preexistente:** `validate-aculta-portal-drupal11` e `validate-project-status-index` (versões divergentes de nove módulos), `validate-portal-popup-rule` (9 ocorrências em Events/Paths) e `validate-aculta420-v2-sdc` (`src/styles/buttons.css`). Nenhum arquivo dessas falhas foi alterado nesta entrega.
-- **Pendências:** filtros de avisos por origem e leitura (`studio-estrutura.md` 4.5); consumer V2 do cadastro popup (checkout de doação, F5, aguardando autorização). ADR-050 F1 permanece parcial; não declarar concluída.
-- **Próximo passo:** implementar os filtros de avisos ou retomar F2 depois da autorização do consumer do cadastro.
+- **Pendências:** evidência visual e de teclado autenticada das gavetas de mensagens/avisos no Runtime (os grupos `details` por origem e leitura já estão implementados no Portal); consumer V2 do cadastro popup (checkout de doação, F5, aguardando autorização). ADR-050 F1 permanece parcial; não declarar concluída.
+- **Próximo passo:** capturar as gavetas com sessão autenticada ou retomar F2 depois da autorização do consumer do cadastro.
 
 # Resolução do CLAUDE.md (aculta, branch dev) — 2026-11-05
 

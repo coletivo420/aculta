@@ -429,11 +429,13 @@ conta. A suíte `tests/browser/aculta-htmx-f1/` passou 26/26 checks no Runtime
 de desenvolvimento (busca e login em 320, 390, 768, 959, 960 e 1440 px, claro e
 escuro, zoom 200%, prévia HTMX e fallback sem JavaScript).
 
-**Falta para concluir F1:** os filtros de avisos por origem e leitura
-(`studio-estrutura.md` 4.5) continuam pendentes. O consumer V2 do cadastro
-popup é o checkout de doação, reservado à F5, que aguarda autorização; não há
-ponto de entrada V2 para capturá-lo. F2 permanece dependente de F1a; F3 segue a
-ordem de dependências de módulos definida na ADR-050.
+**Falta para concluir F1:** a evidência visual e de teclado autenticada das
+gavetas de mensagens/avisos no Runtime (os grupos `details` por origem e
+leitura já estão implementados no Portal e integrados no shell V2; falta a
+captura com sessão real). O consumer V2 do cadastro popup é o checkout de
+doação, reservado à F5, que aguarda autorização; não há ponto de entrada V2
+para capturá-lo. F2 permanece dependente de F1a; F3 segue a ordem de
+dependências de módulos definida na ADR-050.
 
 ## Compatibilidade e limites
 
