@@ -1,0 +1,39 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Tour Guiado LMS
+description: Apresentacao acessivel em dialog nativo HTML para o percurso guiado do estudante no LMS.
+group: LMS
+props:
+  type: object
+  additionalProperties: false
+  required: [id, title, trigger_label, trigger_url]
+  properties:
+    id:
+      type: string
+      title: ID unico do tour
+      pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
+    title:
+      type: string
+      title: Titulo do tour
+      minLength: 1
+    trigger_label:
+      type: string
+      title: Rotulo do link de abertura
+      minLength: 1
+    trigger_url:
+      type: string
+      title: Destino sem JavaScript
+      minLength: 1
+      format: uri-reference
+    current_step:
+      type: string
+      title: Etapa atual
+      default: welcome
+    total_steps:
+      type: integer
+      title: Total de etapas
+      default: 4
+slots:
+  content:
+    title: Conteudo da etapa
+  actions:
+    title: Botoes de navegacao

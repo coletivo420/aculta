@@ -71,3 +71,13 @@ Com base no `docs/modules/ACULTA-LMS-ROADMAP.md`, no `docs/decisions/ADR-042-rem
   - `validate-admin-routes-main-domain.php`: PASS (42 arquivos, 170 rotas administrativas).
   - `validate-no-temporary-route-aliases.php`: PASS (42 arquivos).
 - Drush `cache:rebuild` executado com sucesso no Runtime.
+
+---
+
+## 7. Componente SDC de Tour Nativo em Dialog (Dev.213)
+- Criado componente Single Directory Component no tema V2: `web/themes/custom/aculta420_v2/components/lms-tour/`.
+  - `lms-tour.component.yml`: schema e metadados SDC sob o grupo LMS.
+  - `lms-tour.twig`: composição acessível embedando `aculta420_v2:dialog` nativo, com indicador de etapa e áreas de conteúdo/ações.
+  - `lms-tour.css`: layout em flexbox para cabeçalho, indicador de passos e botões de navegação.
+  - `lms-tour.default.story.yml`: história demonstrativa de uso.
+- Integração alinhada com o `StudentTourWizard` (CTools) para renderização acessível e progressiva sem dependências externas.
