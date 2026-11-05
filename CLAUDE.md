@@ -1,31 +1,23 @@
 # Claude Code — ACULTA
 
-Plataforma Drupal 11 da ACULTA. Código em `web/modules/custom/aculta_portal/` (módulos e submódulos) e no tema `web/themes/custom/aculta420/`. Documentação em `docs/`.
-
-Regras gerais de Git, commits, push, worktree, Runtime e coautoria estão em `AGENTS.md`. Ambientes, Drush, servidor web e banco de teste estão em `docs/operations/AGENT-OPERATIONS.md`. Este arquivo traz só o que é específico do Claude e do domínio.
+Plataforma Drupal 11 da ACULTA. Código em `web/modules/custom/aculta_portal/` e tema V2 em `web/themes/custom/aculta420_v2/`. Regras gerais em `AGENTS.md`; aqui só o que é específico do Claude e do domínio.
 
 ## Antes de começar
 
-1. Leia `AGENTS.md` e `TODO.md` (checkpoint do estado atual). Antes de alterar um módulo, submódulo ou tema, leia o `TODO.md` dele, ao lado do `info.yml`. Para continuar uma fase, leia também o handoff em `docs/operations/ESTADO-DA-SESSAO.md` (até 3 entradas).
-2. Localize as regras do seu escopo em `docs/operations/AGENT-POLICY-INDEX.md`. Não leia `docs/history/operations/AGENT-GUARDRAILS-FULL.md`: é arquivo histórico.
-3. Para entender o projeto, leia `docs/operations/MAPA-PARA-AGENTES.md`.
-4. Confirme o estado no código e no git antes de afirmar status. Planos e roadmaps podem estar desatualizados.
-5. Decisões do responsável: `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md` e as ADRs em `docs/decisions/`. Quando um plano conflitar com uma decisão registrada, a decisão vale; registre o conflito.
-6. Alteração visual do ACULTA420: siga `docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md` e `web/themes/custom/aculta420/AGENTS.md`. Preserve Institution Bar e Domain Header, e permita reflow da barra desde 320px.
+1. Leia `AGENTS.md` e `TODO.md`. Antes de alterar um componente, leia o `TODO.md` dele, ao lado do `info.yml`.
+2. Confirme o estado no código e no git antes de afirmar status. Planos e roadmaps podem estar desatualizados.
+3. Decisões do responsável prevalecem sobre planos: `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`. Regras por escopo (`docs/operations/AGENT-POLICY-INDEX.md`) e mapa (`docs/operations/MAPA-PARA-AGENTES.md`) são consulta sob demanda.
+4. Alteração visual do ACULTA420: siga `docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md`. Preserve Institution Bar e Domain Header.
 
 ## Regras de domínio
 
-- **Endereços e CEP:** o país é sempre `BR`, sem seletor de país em nenhum lugar. Formulários de endereço usam o contrato de `aculta_portal_cep` (`aculta_portal_cep/cep-address`). Valide `country_code = BR` no servidor. Número, S/N e complemento são sempre preservados na busca de CEP. ADR-034 e `docs/portal/ACCOUNT-ADDRESS.md`.
-- **Credenciais:** em produção, as chaves ficam no banco, criptografadas, e são provisionadas pelo `aculta_deployer` após o deploy. Arquivos em `secrets/` são só do servidor de desenvolvimento.
+- **Endereço e CEP:** país sempre `BR`, sem seletor de país. Formulários usam o contrato `aculta_portal_cep/cep-address`. Valide `country_code = BR` no servidor. Número, S/N e complemento são preservados na busca de CEP. ADR-034 e `docs/portal/ACCOUNT-ADDRESS.md`.
+- **Credenciais:** em produção, ficam no banco, criptografadas, e são provisionadas pelo `aculta_deployer`. Arquivos em `secrets/` são só do servidor de desenvolvimento.
 - **Mercado Pago:** o prefixo do token (`APP_USR-`) não identifica o ambiente. Decida pelo modo configurado e pelo `live_mode` do pagamento.
+- **Rotas administrativas e de integração:** `/painel-administrativo/**` e `/integracoes/**` respondem só no domínio principal (MAIN); nos subdomínios, 404, nunca 302. Gate: `php scripts/validate-admin-routes-main-domain.php`. Política: `docs/portal/ADMIN-DOMAIN-POLICY.md`.
+- **Independência do tema:** módulos do Portal funcionam sem depender do ACULTA420. Valide o contrato sem trocar o tema padrão do Runtime.
+- **Navegador de testes:** Firefox ESR visível em `DISPLAY=:0`, via geckodriver. Não use Chromium nem headless. Perfil temporário e artefatos vão para `$SUITE_OUT`, fora do repositório. Scripts ficam em `tests/browser/<frente>/` com `README.md`.
 - **Pesquisa na web:** liberada, sem pedir permissão. Não publique nem envie conteúdo para fora sem confirmação.
-- **Rotas administrativas e integrações:** toda rota `/painel-administrativo/**` e `/integracoes/**` responde só no domínio principal (MAIN); nos subdomínios retorna 404, nunca 302. Não crie painel, toolbar, link contextual ou ação administrativa em subdomínio. Gate: `php scripts/validate-admin-routes-main-domain.php`. Política: `docs/portal/ADMIN-DOMAIN-POLICY.md`.
-- **Independência do tema:** módulos do Portal devem funcionar sem depender do tema ACULTA420. Valide o contrato e a renderização do escopo solicitado sem trocar o tema padrão do Runtime.
-- **Navegador de testes:** Firefox ESR visível em `DISPLAY=:0`, via geckodriver. Não use Chromium nem headless. Perfil temporário e artefatos vão para `$SUITE_OUT`, fora do repositório. Scripts de teste visual ficam em `tests/browser/<frente>/` com `README.md`.
-- **Tema de validação e Olivero:** regra canônica em `AGENTS.md`, seção "Arquitetura e validação". Não repita aqui.
-- **HTMX no tema:** HTMX é o padrão obrigatório para interações assíncronas novas ou migradas do tema (`core/drupal.htmx`, `data-hx-*`). Drupal AJAX (`core/drupal.ajax`, `#ajax`, `use-ajax`) é legado; não introduza novos usos no tema. Mantenha contratos existentes só durante migração documentada e preserve links/formulários nativos como fallback.
-
-- **Caminhos e rotas:** não grave caminhos absolutos de máquina nem URLs de ambiente fixas em código, testes, scripts ou docs versionados (regra completa em `AGENTS.md`, seção Escopo e segurança).
 
 ## Dúvida ou ordem fora deste texto
 
