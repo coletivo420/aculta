@@ -47,6 +47,17 @@ selecionada por bundle/route name, sem hostname ou purpose. Catálogo e produto
 da loja aguardam autorização explícita de tarefa. Validação visual do
 mapeamento permanece pendente por falta de `DISPLAY`.
 
+## Layout de Studio e conta — P3 parcial/bloqueado
+
+As rotas existentes de conta, WE Sativa, Ganjalab e Culturas agora escolhem
+aside (uma coluna no mobile; duas no desktop). Os controllers do Studio já
+fornecem `aria-current` na sub-navegação. O módulo Portal agora aplica noindex
+por rota a todas as rotas privadas `aculta_studio.*`, removendo canonical e URLs
+sociais; teste Unit cobre a regra. A rota própria do dashboard na raiz do
+purpose conta não existe no módulo atual, então não foi criada no tema nem teve
+ownership inventado. P3 aguarda implementação/contrato do owner e validação
+visual autenticada.
+
 ## Renderização das configurações de superfície — conferida
 
 `SurfaceSettingsHooks` é a implementação única de `preprocess_html`, aplicando

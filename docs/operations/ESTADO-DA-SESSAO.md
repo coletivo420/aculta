@@ -1201,6 +1201,14 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   CSS legado fica só no caminho transitório. Nova requisição respondeu 403
   (acesso anônimo negado) com `X-Robots-Tag: noindex, nofollow, noarchive`.
   Não houve rebuild/clear de cache nem alteração de banco/configuração.
+- **P3 parcial:** `PagePresentationHooks` agora mapeia rotas existentes de conta,
+  WE Sativa, Ganjalab e Culturas para aside. Confirmado por leitura do
+  `StudioAccountSectionController` que a navegação da conta já marca o item
+  atual com `aria-current="page"`. Criado hook Portal para `noindex` em todas
+  as rotas privadas `aculta_studio.*` e teste Unit correspondente. A rota
+  própria do dashboard do Studio na raiz do purpose account não existe no
+  módulo; P3 fica bloqueado nesse ponto até entrega do owner. Firefox autenticado
+  continua DEFERRED por falta de `DISPLAY`/credenciais de sessão.
 
 - **C4 — revisão estrutural do shell:** o adapter `aculta-links-page.html.twig`
   apresenta a micropágina do módulo Links por SDC dedicado, sem `<main>` interno;

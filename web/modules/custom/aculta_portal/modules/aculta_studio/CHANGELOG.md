@@ -1,3 +1,9 @@
+## Não versionado — noindex das rotas privadas do Studio
+
+- Rotas `aculta_studio.*` recebem `robots: noindex, nofollow` e removem
+  canonical/Open Graph URL públicas. Coberto por teste Unit para rota privada
+  e preservação de metadados em rota de perfil público.
+
 ## 0.1.0-dev.51 — edição contextual de materiais de curso
 
 - Rota Ganjalab Educador para editar os materiais já referenciados no curso;
@@ -498,4 +504,5 @@ RUNTIME STATUS: DEFERRED. Testes não executados (sem vendor/ nem Runtime).
 - Fixtures do `CourseJourneyComposerTest` usam as rotas ACULTA atuais.
 - Unit de composição e integração da sala: 3 testes / 19 assertions PASS;
   PHPCS Drupal/DrupalPractice dos arquivos alterados PASS.
+
 

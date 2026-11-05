@@ -98,6 +98,21 @@ final class PagePresentationHooks {
     }
 
     return match ($this->currentRouteMatch->getRouteName()) {
+      'aculta_studio.account',
+      'aculta_studio.account_data',
+      'aculta_studio.account_address',
+      'aculta_studio.account_documents',
+      'aculta_studio.account_security',
+      'aculta_studio.account_password',
+      'aculta_studio.account_connections',
+      'aculta_studio.account_orders',
+      'aculta_studio.account_support',
+      'aculta_studio.account_preferences',
+      'aculta_studio.we_sativa',
+      'aculta_studio.we_sativa_start',
+      'aculta_lms.student_dashboard',
+      'aculta_lms.educator_dashboard',
+      'aculta_events.organizer_dashboard' => 'aside',
       'aculta_events.catalogue', 'aculta_events.map' => 'full',
       default => 'stack',
     };
