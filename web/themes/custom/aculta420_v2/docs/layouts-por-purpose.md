@@ -25,6 +25,13 @@ A decisão de adotar `card-cultural` em Revista e Eventos não pode ser executad
 
 Estado após a execução: `revista-teaser` recebeu a prop `accent` e as classes `revista-teaser--accent-*`, com a mesma faixa dos tokens `--accent-*-stripe` do `card-cultural`. Nenhum nó da Revista passa `accent` ainda, então não há mudança visível até a origem do valor ser decidida. Pendente: de onde vem o accent da Revista (campo editorial, administrador por UI Styles ou Portal). Eventos: decisão pendente sobre criar uma listagem pública de eventos com `card-cultural`, ou manter Eventos fora desta rodada.
 
+## 0.2 Decisões de execução e mapeamento (2026-11-05)
+
+- **Revista, origem do accent:** administrador pelo UI Styles (Opção A). Pendente: o `card_accent` atual em `aculta420_v2.ui_styles.yml` lista só `card-cultural--accent-*`. Para a Revista, é preciso estender a opção e fazer o `node--revista--teaser` ler a escolha do administrador. Não implementado: exige validar o plugin do UI Styles num Runtime.
+- **Eventos:** criar uma listagem pública com `card-cultural`. Pendente: a view pública, o template e a captura. Não implementado: exige configuração de Views em `config/sync` e cex, que só o agente com Runtime pode gerar e testar.
+- **Studio (`aculta_studio`):** as telas usam `aculta_portal_component` com nomes `card`, `context-header`, `content-grid`, `empty-state`, `profile-social`, `profile-identity`, `profile-editor`, `profile-bio` e `context-tabs`. O fallback do Portal (`ComponentFallbackHooks`) monta markup semântico próprio quando o tema não fornece `component`. O tema V2 não mapeia esses nomes para SDCs. Adotar os SDCs exige um preprocess no tema que preencha `component` para `empty-state` e `context-tabs`, com props e slots correspondentes. Não implementado: muda a renderização do Studio, e a verificação exige Runtime.
+- **Loja (`shop`):** o V2 não tem template de produto nem de listagem. Só o V1 tem `commerce-product--produto-loja.html.twig`. Não há cartão de loja no V2 para adotar `card-cultural` ou `empty-state`. Antes de adotar, é preciso criar o template de produto do V2, o que é escopo novo, não adoção.
+
 ## 1. Consumo atual por componente
 
 Componentes com zero consumidores no repositório (medido por `grep` em templates
