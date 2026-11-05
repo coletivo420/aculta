@@ -7,7 +7,7 @@ description: Limita a leitura e a saída de um agente ao necessário para a tare
 
 1. Leitura de partida: `AGENTS.md`, `TODO.md` raiz e o `TODO.md` do componente. Só isso.
 2. Escolha a linha do tipo de tarefa no orçamento de `docs/portal/AGENT-TOKEN-ECONOMY.md`. Mais de três documentos de partida indica escopo largo: reduza a subfase.
-3. Procure antes de ler: `rg -n "termo" caminho` e leia só o trecho. Para roadmap ou README longo, liste as seções com `rg -n '^## ' arquivo` e leia a seção necessária.
+3. Procure antes de ler: `rg -n "termo" caminho` e leia só o trecho. Para rota ou token, use `python3 scripts/lookup.py rota|token TERMO`. Para uma seção de Markdown longo, use `python3 scripts/doc-section.py ARQUIVO "Título" --max BYTES` (`--list` mostra as seções).
 4. Não leia `data/`, `references/`, `vendor/`, `docs/history/`, `web/core/`, `web/modules/contrib/` nem logs sem motivo escrito na tarefa.
 5. Saída de comando verbosa: `python3 scripts/agent-output.py --lines 60 -- COMANDO`. Para revisão, `git diff --stat` antes do diff completo.
 6. Subagente: passe só os caminhos-alvo, peça resposta com limite (ex.: "até 15 linhas") e use só a conclusão. Se a tarefa cabe em duas leituras, não delegue.

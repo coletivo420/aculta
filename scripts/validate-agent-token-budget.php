@@ -148,6 +148,10 @@ foreach ($skillDirs as $skillDir) {
   if (!preg_match('/^name: ' . preg_quote($skillName, '/') . '\s*$/m', $skillText)) {
     $failures[] = "docs/agent-skills/$skillName/SKILL.md com name diferente do diretório";
   }
+  // Sem link em .claude/skills/ a skill não é carregada pelo Claude Code.
+  if (!is_link($root . '/.claude/skills/' . $skillName)) {
+    $failures[] = "docs/agent-skills/$skillName sem link em .claude/skills/$skillName";
+  }
   // Descrição sempre entra no contexto: curta e sobre o gatilho (progressive disclosure).
   if (!preg_match('/^description: (.+)$/m', $skillText, $dm)) {
     $failures[] = "docs/agent-skills/$skillName/SKILL.md sem description";
