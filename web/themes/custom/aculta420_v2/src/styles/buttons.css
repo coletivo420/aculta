@@ -1,33 +1,4 @@
-/* ACULTA botões (portado do V1 em 2026-11-05). Estado: DEFERRED (sem captura visual). */
-
-.button,
-button.link {
-  --aculta-button-bg: var(--color-brand-highlight);
-  --aculta-button-color: var(--color-on-highlight);
-  padding: 0.625rem 1.25rem;
-  font-family: var(--font-family-heading);
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1.4;
-  text-decoration: none;
-}
-
-.button {
-  color: var(--aculta-button-color);
-  background-color: var(--aculta-button-bg);
-  border-color: var(--aculta-button-bg);
-}
-
-.button:hover,
-.button:focus {
-  color: var(--color-on-primary);
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-button.link {
-  color: var(--color-text-primary);
-}
+/* ACULTA botões globais: tokens compartilhados com o SDC button. */
 
 button.link {
   color: var(--color-text-primary);
@@ -38,50 +9,83 @@ button.link:focus {
   color: var(--color-link-editorial);
 }
 
-:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .button):not(:where(.navbar-toggle, .close, .vvjb-button, .vvjb-play-pause-button, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .button))) {
-  color: var(--color-on-highlight);
-  background-color: var(--color-brand-highlight);
-  border-color: var(--color-brand-highlight);
+:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit):not(:where(.navbar-toggle, .close, .vvjb-button, .vvjb-play-pause-button, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit))) {
+  background-color: var(--button-primary-bg);
+  border-color: var(--button-primary-bg);
+  color: var(--button-primary-fg);
 }
 
-:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .button):not(:where(.navbar-toggle, .close, .vvjb-button, .vvjb-play-pause-button, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .button))):is(:hover, :active) {
-  color: var(--color-on-primary);
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
+:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit):not(:where(.navbar-toggle, .close, .vvjb-button, .vvjb-play-pause-button, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit))):is(:hover, :focus-visible) {
+  background-color: var(--button-primary-bg-hover);
+  border-color: var(--button-primary-bg-hover);
+  color: var(--button-primary-fg);
 }
 
-:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .button):not(:where(.navbar-toggle, .close, .vvjb-button, .vvjb-play-pause-button, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .button))):focus-visible {
-  outline: 3px solid var(--color-focus-ring);
-  outline-offset: 3px;
+:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit):not(:where(.navbar-toggle, .close, .vvjb-button, .vvjb-play-pause-button, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit))):active {
+  background-color: var(--button-primary-bg-active);
+  border-color: var(--button-primary-bg-active);
+  color: var(--button-primary-fg);
+}
+
+:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit):not(:where(.navbar-toggle, .close, .vvjb-button, .vvjb-play-pause-button, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit))):focus-visible {
+  outline: 2px solid var(--button-focus-ring);
+  outline-offset: 2px;
+}
+
+:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit):not(:where(.navbar-toggle, .close, .vvjb-button, .vvjb-play-pause-button, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit))):is(:disabled, .is-disabled) {
+  cursor: not-allowed;
+  opacity: .65;
 }
 
 [data-portal-ui="aculta-btn-primary"],
 [data-portal-ui="aculta-btn-outline"] {
   display: inline-block;
-  padding: 0.625rem 1.25rem;
+  padding: .625rem 1.25rem;
   font-family: var(--font-family-heading);
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.4;
   border: 1px solid transparent;
-  border-radius: 0.375rem;
+  border-radius: var(--radius-control-button);
   text-decoration: none;
-  background-color: var(--color-brand-highlight);
-  color: var(--color-on-highlight);
   transition: background-color 150ms ease-in-out, color 150ms ease-in-out, border-color 150ms ease-in-out;
 }
 
-[data-portal-ui="aculta-btn-outline"] {
-  background-color: transparent;
-  color: var(--color-brand-highlight);
-  border-color: currentColor;
+[data-portal-ui="aculta-btn-primary"] {
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-fg);
 }
 
-[data-portal-ui="aculta-btn-primary"]:hover,
+[data-portal-ui="aculta-btn-outline"] {
+  background-color: var(--button-secondary-bg);
+  color: var(--button-secondary-fg);
+  border-color: var(--button-secondary-border);
+}
+
+[data-portal-ui="aculta-btn-primary"]:is(:hover, :focus-visible) {
+  background-color: var(--button-primary-bg-hover);
+  color: var(--button-primary-fg);
+  border-color: var(--button-primary-bg-hover);
+}
+
+[data-portal-ui="aculta-btn-outline"]:is(:hover, :focus-visible) {
+  background-color: var(--button-secondary-bg-hover);
+  color: var(--button-secondary-fg);
+  border-color: var(--button-secondary-border);
+}
+
+[data-portal-ui="aculta-btn-primary"]:active {
+  background-color: var(--button-primary-bg-active);
+  border-color: var(--button-primary-bg-active);
+}
+
+[data-portal-ui="aculta-btn-outline"]:active {
+  background-color: var(--button-secondary-bg-active);
+  border-color: var(--button-secondary-border);
+}
+
 [data-portal-ui="aculta-btn-primary"]:focus-visible,
-[data-portal-ui="aculta-btn-outline"]:hover,
 [data-portal-ui="aculta-btn-outline"]:focus-visible {
-  background-color: var(--color-primary);
-  color: var(--color-on-primary);
-  border-color: var(--color-primary);
+  outline: 2px solid var(--button-focus-ring);
+  outline-offset: 2px;
 }

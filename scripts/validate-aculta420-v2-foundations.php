@@ -161,6 +161,27 @@ foreach ([
   $contrastPairs += 2;
 }
 
+$buttonStyleFiles = glob($theme . '/components/button/*.css') ?: [];
+$buttonStyleFiles[] = $theme . '/src/styles/buttons.css';
+$buttonStyleErrors = [];
+foreach ($buttonStyleFiles as $buttonStyleFile) {
+  $buttonStyle = file_get_contents($buttonStyleFile);
+  if (!is_string($buttonStyle)) {
+    $buttonStyleErrors[] = basename($buttonStyleFile) . ': arquivo não pôde ser lido';
+    continue;
+  }
+  preg_match_all('/([^{}]+)\{([^{}]*)\}/s', $buttonStyle, $blocks, PREG_SET_ORDER);
+  foreach ($blocks as $block) {
+    $selector = $block[1];
+    $declarations = $block[2];
+    $isButtonSelector = preg_match('/(?:button|input\s*\[\s*type\s*=\s*["\'](?:submit|button|reset)["\']\]|\.form-submit|\.button|aculta-btn)/i', $selector) === 1;
+    if ($isButtonSelector && preg_match('/--color-brand-highlight|--color-on-highlight|--purpose-|filter\s*:\s*brightness/i', $declarations)) {
+      $buttonStyleErrors[] = basename($buttonStyleFile) . ': ' . trim(preg_replace('/\s+/', ' ', $selector));
+    }
+  }
+}
+$assert(!$buttonStyleErrors, 'button CSS does not use purpose/highlight tokens or filter: brightness');
+
 fwrite(STDOUT, sprintf("ACULTA420 V2 foundations: PASS (%d text contrast pairs; %d accent stripe pairs; dark focus and borders checked)\n", $contrastPairs, $accentContrastPairs));
 
 /**
