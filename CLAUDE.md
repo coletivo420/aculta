@@ -7,7 +7,7 @@ Regras gerais de Git, commits, push, worktree, Runtime e coautoria estão em `AG
 ## Antes de começar
 
 1. Leia `AGENTS.md`.
-2. Localize as regras do seu escopo em `docs/operations/AGENT-POLICY-INDEX.md`. Não leia `docs/operations/AGENT-GUARDRAILS-FULL.md`: é arquivo histórico.
+2. Localize as regras do seu escopo em `docs/operations/AGENT-POLICY-INDEX.md`. Não leia `docs/history/operations/AGENT-GUARDRAILS-FULL.md`: é arquivo histórico.
 3. Para entender o projeto, leia `docs/operations/MAPA-PARA-AGENTES.md`.
 4. Confirme o estado no código e no git antes de afirmar status. Planos e roadmaps podem estar desatualizados.
 5. Decisões do responsável: `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md` e as ADRs em `docs/decisions/`. Quando um plano conflitar com uma decisão registrada, a decisão vale; registre o conflito.
@@ -22,8 +22,7 @@ Regras gerais de Git, commits, push, worktree, Runtime e coautoria estão em `AG
 - **Rotas administrativas e integrações:** toda rota `/painel-administrativo/**` e `/integracoes/**` responde só no domínio principal (MAIN); nos subdomínios retorna 404, nunca 302. Não crie painel, toolbar, link contextual ou ação administrativa em subdomínio. Gate: `php scripts/validate-admin-routes-main-domain.php`. Política: `docs/portal/ADMIN-DOMAIN-POLICY.md`.
 - **Independência do tema:** módulos do Portal devem funcionar sem depender do tema ACULTA420. Valide o contrato e a renderização do escopo solicitado sem trocar o tema padrão do Runtime.
 - **Navegador de testes:** Firefox ESR visível em `DISPLAY=:0`, via geckodriver. Não use Chromium nem headless. Perfil temporário e artefatos vão para `$SUITE_OUT`, fora do repositório. Scripts de teste visual ficam em `tests/browser/<frente>/` com `README.md`.
-- **Tema de validação:** validar somente no tema ACULTA ativo. Não selecione temas adicionais em testes, não altere `system.theme` para validá-los e não os descreva como gates pendentes. Preserve resultados históricos datados.
-- **Olivero:** não habilitar, selecionar, testar ou exigir Olivero em gates, suítes ou aceite do projeto. Referências a execuções antigas são históricas e não geram trabalho pendente.
+- **Tema de validação e Olivero:** regra canônica em `AGENTS.md`, seção "Arquitetura e validação". Não repita aqui.
 - **HTMX no tema:** HTMX é o padrão obrigatório para interações assíncronas novas ou migradas do tema (`core/drupal.htmx`, `data-hx-*`). Drupal AJAX (`core/drupal.ajax`, `#ajax`, `use-ajax`) é legado; não introduza novos usos no tema. Mantenha contratos existentes só durante migração documentada e preserve links/formulários nativos como fallback.
 
 - **Caminhos e rotas:** não grave caminhos absolutos de máquina nem URLs de ambiente fixas em código, testes, scripts ou docs versionados (regra completa em `AGENTS.md`, seção Escopo e segurança).

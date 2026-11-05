@@ -10,9 +10,9 @@ obrigatórios nem evidência de testes. Medições feitas com `wc`, `du`, `grep`
 | --- | --- | --- |
 | `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md` | 506.904 bytes, 3.196 linhas | log histórico de execução; 5 arquivos o referenciam |
 | `docs/operations/ESTADO-DA-SESSAO.md` | 197.363 bytes, 1.112 linhas | handoff obrigatório ao fim de sessão (AGENTS, seção 1) |
-| `docs/operations/AGENT-GUARDRAILS-FULL.md` | 58.694 bytes | arquivo histórico; já marcado para não carregar |
+| `docs/history/operations/AGENT-GUARDRAILS-FULL.md` | 58.694 bytes | arquivo histórico; já marcado para não carregar |
 | `docs/portal/TESTES-NAVEGADOR.md` | 57.687 bytes, 645 linhas | histórico de rodadas, não regra |
-| `docs/operations/ACULTA-AGENT2-WORKLOG.md` | 45.786 bytes | histórico de agente |
+| `docs/history/operations/ACULTA-AGENT2-WORKLOG.md` | 45.786 bytes | histórico de agente |
 | `tests/browser/README.md` | 15.398 bytes, 254 linhas | índice de scripts; lido sempre que há teste visual |
 | `docs/history/changelog/*.md` | até 3.976 linhas (`aculta_forum.md`) | histórico; não é entrada de agente |
 | `scripts/` | 126 arquivos, 64 `validate-*` | gates; muitos com 0 ou 1 referência em docs |
@@ -93,3 +93,18 @@ Decisões de 2026-11-05 (respostas às perguntas):
 - Testes de acesso no servidor, de pagamento e de segredo.
 - Não economizar testes de segurança, evidência ou honestidade sobre resultado
   (`docs/portal/AGENT-TOKEN-ECONOMY.md`, item 8).
+
+## 9. Execução dos oito itens aprovados (2026-11-05)
+
+| Item | Situação | Evidência |
+| --- | --- | --- |
+| 1. Arquivar histórico | Feito para `ACULTA-AGENT2-WORKLOG`, `ACULTA-AGENT3-INDEX-WORKLOG` e `AGENT-GUARDRAILS-FULL` em `docs/history/operations/` (`git mv`, referências reapontadas). `handoff/podplant420` **adiado**: 11 referências vivas em `config/sync/views.view.revista_sessoes.yml`, em scripts de verificação (`scripts/verify-podplant420-assets.py`, `scripts/institution/*.json`) e em docs do tema V1. Mover quebraria gates. | `git log` do commit de arquivo |
+| 2. Compactar testes de navegador | `docs/portal/TESTES-NAVEGADOR.md` passou de 57.581 para 5.529 bytes (regras A a E e registro de rodadas). Seções F a V foram para `docs/history/portal/TESTES-NAVEGADOR-RODADAS.md`, sem alteração de texto. `tests/browser/README.md` virou índice e regras. O texto completo antigo está em `docs/history/portal/TESTES-BROWSER-README-ARQUIVO-2026-11-05.md`, com caminhos de máquina trocados por marcadores. | tamanhos acima |
+| 3. Compactar AGENTS de módulos | `aculta_wiki/AGENTS.md`: 34.286 → 6.691 bytes. `aculta_studio/AGENTS.md`: 13.107 → 7.496 bytes. Arquivos originais em `docs/history/modules/`. `aculta_portal/docs/AGENT-POLICIES.md`: **não alterado**, porque não tem histórico de versão, só regras vigentes. Deduplicar a lista Drupal 11 dele exige conferir contra `DRUPAL-11-STANDARDS.md` item a item. | tamanhos acima |
+| 4. Fonte única de regra | Canônicas: `AGENTS.md` raiz (Runtime, caminhos absolutos, tema de validação, Olivero, gates, não ler) e tema V2 `AGENTS.md` (capturas). `CLAUDE.md` e o AGENTS do tema V2 viraram ponteiros para Olivero e tema de validação. | diffs dos arquivos citados |
+| 5. Gates por escopo | Criado `docs/operations/GATES.md` (catálogo por escopo, regra de N/A e DEFERRED). Aponta para ele a partir do AGENTS raiz, da Wiki e do tema V2. | arquivo novo |
+| 6. Validadores sem uso | Escaneados 58 `scripts/validate-*.php` (o número anterior, 64, estava errado). **Removidos** `validate-institution.php` (coberto por `validate-institution-content.php`) e `validate-podplant420-assets.php` (checa derivados de ativos da V1, sem referência ativa). **Mantidos** os que têm referência em documento de política ou dívida, mesmo com uma só citação (por exemplo `validate-cross-domain-request-policy`, `validate-shop-captcha`, `validate-home-carousel`, `validate-account-profile-autocreate`, `validate-aculta-gallery`), por encarnarem regra do responsável ou de política. CI não roda nenhum validador (`php-quality.yml` só faz lint e PHPStan). | `git rm` de dois arquivos |
+| 7. Lista de não leitura | Seção "Não ler por padrão" em `docs/portal/AGENT-TOKEN-ECONOMY.md`, linkada pelo AGENTS raiz. | arquivo alterado |
+| 8. Wrapper obrigatório | `docs/operations/AGENT-OUTPUT.md` agora torna `scripts/agent-output.py` obrigatório para PHPUnit, PHPStan e lint de projeto inteiro. Linkado pelo AGENTS raiz. | arquivo alterado |
+
+Verificação: gates PHP não rodaram neste ambiente (sem `vendor/` e sem Drush). Estado: **DEFERRED**, para execução no servidor de desenvolvimento. Os únicos comandos executados aqui foram leitura, `git mv`, `git rm`, reescrita de referências e checagem de existência dos arquivos citados.

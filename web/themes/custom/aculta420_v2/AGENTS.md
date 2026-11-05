@@ -16,7 +16,7 @@ Herde o `AGENTS.md` da raiz do repositório. Estas regras são específicas do t
 - **Tokens semânticos.** Novos componentes usam o token que descreve a função visual (`--color-text-primary`, `--color-surface-raised`). Primitivas de paleta ficam dentro de `src/styles/tokens.css`.
 - **Modo de cor só por `data-theme`.** Não crie seletor de dark fora de `tokens.css` e não use `prefers-color-scheme`.
 - **Mobile-first.** Base em 320 CSS px, sem rolagem horizontal da página, alvo de toque de 44 px (exceção registrada: controles da barra institucional com 35 px, ADR-047, item 10; ícones da barra com 30 px), zoom de 200% funcional. Antes de mexer em `max-width`, rastreie seletor, cascata, componente, consumidores e estados.
-- **Tema de teste:** valide exclusivamente no tema ACULTA ativo. Não habilite nem selecione Olivero, não o inclua em suítes e não o trate como requisito ou gate; registros de validações antigas são somente históricos.
+- **Tema de teste:** regra canônica em `AGENTS.md` (raiz, "Arquitetura e validação"). Valide só no tema ACULTA ativo.
 - **Acessibilidade.** HTML semântico, foco visível (`:focus-visible`), estado nunca só por cor, texto oculto (`visually-hidden`) quando um controle só com ícone precisa de nome.
 - **JavaScript mínimo.** Só onde há interação. Use `Drupal.behaviors` com `core/once`. O menu e os diálogos devem funcionar sem JavaScript quando possível.
 - **HTMX obrigatório para interação assíncrona.** HTMX via `core/drupal.htmx` e atributos `data-hx-*` é o padrão do tema. Drupal AJAX (`core/drupal.ajax`, `#ajax`, `use-ajax`) é legado e não deve ser introduzido em componentes ou bibliotecas V2. Mantenha o fluxo nativo de links/formulários como fallback; integrações antigas em migração devem ter bloqueio e etapa documentados.
@@ -31,7 +31,7 @@ Herde o `AGENTS.md` da raiz do repositório. Estas regras são específicas do t
 
 ## 4. Gates e evidência
 
-- Rode os gates aplicáveis listados em [docs/gates.md](docs/gates.md) e cole a saída. Não declare PASS sem execução.
+- Rode só os gates do escopo: o catálogo por escopo está em `docs/operations/GATES.md` (raiz); os gates específicos do tema estão em [docs/gates.md](docs/gates.md). Cole a saída. Não declare PASS sem execução.
 - Se um gate não puder rodar no ambiente, registre como `DEFERRED` com o motivo.
 - Captura na aceitação da fase: claro e escuro, em 320, 390 e 1440 CSS px, com zoom de 200% e teste de teclado. Mudança visual pequena dentro de uma fase: 320 e 1440 CSS px, claro. Guarde as capturas em `$SUITE_OUT`, fora do repositório.
 - Estados autenticados e leitores de tela são evidência separada. Se não foram testados, diga isso.

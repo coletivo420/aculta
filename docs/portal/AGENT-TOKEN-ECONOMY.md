@@ -39,3 +39,19 @@ python3 scripts/portal-agent-budget.py context P5.2-A 3000
 ## Segurança e separação de escopo
 
 Aplicar `docs/portal/DRUPAL-11-STANDARDS.md`, `AGENTS.md`, PR #90 e roadmap. Não introduzir service locators, storage paralelo nem enfraquecer segurança/checkout. A portabilidade entre bancos pertence somente ao projeto independente DBTNG-2. Não declarar PASS sem execução.
+
+## Não ler por padrão
+
+Estes caminhos não entram no contexto sem motivo específico da tarefa. Quando precisar, leia só o trecho ou o arquivo nomeado.
+
+| Caminho | Tamanho (2026-11-05) | Motivo |
+| --- | --- | --- |
+| `data/` | 93 MB | dados de inventário e importação; não é código |
+| `references/` | 4,6 MB | material de referência externo |
+| `vendor/` | (Composer) | dependências; leia só a API usada |
+| `web/core/`, `web/modules/contrib/` | (Core e contrib) | somente leitura; use `rg` no símbolo |
+| `handoff/` | 784 KB | ativos de marca (podplant420); consulte pelo caminho exato |
+| `docs/history/` | 2,5 MB | arquivos históricos (worklogs, changelogs antigos, estados, rodadas) |
+| logs de execução (`$SUITE_OUT`, temporários) | variável | evidência privada e volumosa; use `agent-output.py` |
+
+Regra complementar: em documento ativo, cite o caminho canônico, não o histórico. Histórico só se a tarefa for auditar o passado.

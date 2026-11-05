@@ -53,6 +53,9 @@ Regras gerais do repositório, válidas para todos os agentes. Em caso de confli
 - **Olivero:** não habilitar, selecionar, testar ou exigir Olivero em gates, suítes ou aceite do projeto. Use somente o tema ACULTA ativo. Referências a execuções antigas permanecem apenas como histórico e não geram trabalho pendente.
 - **HTMX no tema:** HTMX é o padrão obrigatório para interações assíncronas novas ou migradas do tema, usando `core/drupal.htmx` e atributos `data-hx-*`. Drupal AJAX (`core/drupal.ajax`, `#ajax`, `use-ajax`) é legado: não introduza novos usos no tema. Fluxos antigos só permanecem durante migração documentada; preserve links e formulários nativos como fallback.
 - Antes de concluir, execute as verificações relevantes e registre os resultados. Não alegue testes que não executou.
+- **Gates por escopo:** rode só os gates do escopo do diff e dos módulos dependentes, listados em `docs/operations/GATES.md`. Gate fora do escopo vai como N/A no relatório, com o motivo.
+- **Saída verbosa obrigatória:** PHPUnit, PHPStan e lint de projeto inteiro rodam por `python3 scripts/agent-output.py --lines 60 -- COMANDO` (`docs/operations/AGENT-OUTPUT.md`).
+- **Não ler por padrão:** `data/`, `references/`, `vendor/`, `handoff/`, `docs/history/`, logs, `web/core/` e `web/modules/contrib/`. Leia só quando a tarefa exigir, por caminho específico. Lista e motivos em `docs/portal/AGENT-TOKEN-ECONOMY.md`, seção "Não ler por padrão".
 
 ## Referências
 
@@ -61,3 +64,4 @@ Regras gerais do repositório, válidas para todos os agentes. Em caso de confli
 - Decisões do responsável: `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md` (D-70 e D-71 vigentes).
 - Contratos de domínio e rotas: ADR-038, `docs/portal/ADMIN-DOMAIN-POLICY.md` e documentação de arquitetura pertinente.
 - Aceite único de Termos de Uso e Política de Privacidade: `docs/portal/ACEITE-UNICO.md`.
+- Gates por escopo: `docs/operations/GATES.md`. Saída de comandos: `docs/operations/AGENT-OUTPUT.md`. Economia de tokens e lista de não leitura: `docs/portal/AGENT-TOKEN-ECONOMY.md`.
