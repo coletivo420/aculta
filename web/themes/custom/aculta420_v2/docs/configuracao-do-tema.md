@@ -24,7 +24,14 @@ gates no Homelab. A validação do Drupal também não foi feita aqui, porque n�
 | `aculta_radius_button` | select | `lg` | `base` (8px), `lg` (16px), `full` (pastilha) | botões |
 | `aculta_radius_card` | select | `lg` | `base` (8px), `lg` (16px) | cartões e blocos |
 | `aculta_radius_field` | select | `base` | `sm` (4px), `base` (8px) | campos de formulário |
+| `aculta_accent_override` | select | `mapping` | `mapping` (padrão: pelo tipo de conteúdo), `green`, `yellow`, `red` (forçam uma cor para todos) | cor da faixa de acento |
 | `aculta_show_accent_stripe` | boolean | `true` | sim, não | faixa de acento dos cartões de área |
+
+`aculta_accent_override` só fica ativo com a faixa visível. Com `mapping`, o tema
+usa o valor `accent` que o Portal envia, por tipo (`docs/superficies.md`, seção 8.3).
+Com uma cor fixa, o tema ignora o `accent` do Portal. Essa escolha desfaz a
+diferença entre níveis vizinhos e deve ser usada só por pedido do responsável.
+Não há opção de "sem faixa" aqui: para isso, use `aculta_show_accent_stripe`.
 
 Os valores seguem `docs/superficies.md`, seção 1.
 

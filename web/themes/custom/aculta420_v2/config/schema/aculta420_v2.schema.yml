@@ -12,6 +12,9 @@ aculta420_v2.settings:
     aculta_radius_field:
       type: string
       label: 'Raio dos campos de formulário'
+    aculta_accent_override:
+      type: string
+      label: 'Cor da faixa de acento'
     aculta_show_accent_stripe:
       type: boolean
       label: 'Mostrar faixa de acento'

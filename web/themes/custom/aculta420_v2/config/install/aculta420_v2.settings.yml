@@ -2,4 +2,5 @@
 aculta_radius_button: lg
 aculta_radius_card: lg
 aculta_radius_field: base
+aculta_accent_override: mapping
 aculta_show_accent_stripe: true

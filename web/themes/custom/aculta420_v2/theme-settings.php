@@ -55,6 +55,24 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
     '#default_value' => theme_get_setting('aculta_radius_field') ?? 'base',
   ];
 
+  $form['aculta_superficies']['aculta_accent_override'] = [
+    '#type' => 'select',
+    '#title' => t('Cor da faixa de acento'),
+    '#description' => t('Padrão: a cor vem do mapeamento por tipo de conteúdo (evento, mapa e local; curso e aula; tópico e subtópico). Uma cor fixa para todos os cartões desfaz a diferença entre níveis vizinhos; use só se o responsável pedir.'),
+    '#options' => [
+      'mapping' => t('Padrão: pelo tipo de conteúdo'),
+      'green' => t('Forçar verde para todos'),
+      'yellow' => t('Forçar amarelo para todos'),
+      'red' => t('Forçar vermelho para todos'),
+    ],
+    '#default_value' => theme_get_setting('aculta_accent_override') ?? 'mapping',
+    '#states' => [
+      'enabled' => [
+        ':input[name="aculta_show_accent_stripe"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+
   $form['aculta_superficies']['aculta_show_accent_stripe'] = [
     '#type' => 'checkbox',
     '#title' => t('Mostrar faixa de acento nos cartões de área'),
