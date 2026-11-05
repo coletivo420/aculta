@@ -4,8 +4,8 @@ Estado: em desenvolvimento · versão 1.3.0 (`aculta420_v2.info.yml`) · status:
 
 ## Próximo passo
 
-F5 (Componentes e templates) implementada com consumers reais integrados no tema. Validação visual automatizada em navegador/servidor segue com outro agente.
-Próximo passo do tema: validação no servidor de testes e preparação para Release Candidate (RC).
+F4 (UI Styles) implementada; accent por entidade na Revista depende de suporte do UI Styles. F5 geral implementada; listagem pública de Eventos existe na raiz, faltam View e validação visual. O candidato de Studio falhou em composição/modo escuro e ficou fora do commit. Loja requer autorização documentada; `price` permanece fora do escopo.
+Próximo passo: avaliar a View de Eventos sobre a listagem existente; revisar o CSS/markup do mapeamento Studio antes de nova captura; validar cada adoção com captura antes/depois e gates.
 
 ## Dívidas
 
