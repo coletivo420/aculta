@@ -175,7 +175,7 @@ original caso a descoberta Drupal ainda não conheça o SDC.
 - **Slots:** `avatar`, `actions`.
 - **Story:** `author-card.default.story.yml`.
 - **Regra:** não carrega usuário/Profile, não decide visibilidade e não inventa iniciais; os slots conservam os render arrays cacheáveis do módulo proprietário.
-- **Estado:** implementação pronta; aguardando gates SDC e verificação de Runtime. Usado pelo adapter `templates/aculta-user-author-card.html.twig` e pela autoria dos artigos da Revista.
+- **Estado:** implementação presente, com gate de render SDC. Cumpre a função de Author box no slot `authors` de `revista-publication`, usando identidade, avatar e biografia fornecidos pelo Portal; não existe necessidade documentada para um segundo SDC homônimo. Fixture composta renderizada pelos dois SDCs passou em Firefox, modos claro/escuro, 320–1440 px, zoom 200% e foco por teclado; conteúdo publicado/autenticado no Runtime permanece sem validação.
 
 ### revista-teaser — Cartão editorial
 - **Papel:** substitui a apresentação V1 do teaser de publicação na listagem da Revista.
@@ -212,7 +212,7 @@ original caso a descoberta Drupal ainda não conheça o SDC.
 
 ## Lacunas do catálogo
 
-Componentes previstos no ADR-046: `avatar` agora tem SDC próprio e stories; `author-box`, `tabs`, `dialog`, `form-field`, `progress`, `data-table`, `empty-state` e `price` ainda precisam de auditoria/implementação. `author-card`, `breadcrumb` e `accordion` já existem. Ordem e uso estão no [roadmap.md](roadmap.md).
+Componentes previstos no ADR-046: `avatar` tem SDC próprio; a função de `author-box` é coberta pelo slot de autoria de `revista-publication` e pelo SDC compartilhado `author-card`. `tabs`, `dialog`, `form-field`, `progress`, `data-table`, `empty-state` e `price` ainda precisam de auditoria/implementação. `breadcrumb` e `accordion` já existem. Ordem e uso estão no [roadmap.md](roadmap.md).
 
 ## Como documentar um componente novo
 

@@ -56,6 +56,7 @@ $component_ids = [
   'audio-player',
   'alerts-trigger',
   'avatar',
+  'author-card',
   'badge',
   'breadcrumb',
   'button',
@@ -106,6 +107,19 @@ $samples = [
     '#props' => ['size' => 'md', 'label' => 'Avatar sem foto'],
     '#slots' => [
       'media' => Markup::create('<img src="/avatar-example.png" alt="Retrato de exemplo">'),
+    ],
+  ],
+  'author-card' => [
+    '#props' => [
+      'variant' => 'author_editorial',
+      'display_name' => 'Coletiva de Cultura',
+      'has_avatar' => TRUE,
+      'designation' => 'Autora',
+      'bio' => 'Biografia pública autorizada.',
+    ],
+    '#slots' => [
+      'avatar' => Markup::create('<img src="/author-example.png" alt="Retrato de exemplo">'),
+      'actions' => '',
     ],
   ],
   'accordion' => [
@@ -367,6 +381,12 @@ foreach ($component_ids as $component_id) {
       || !str_contains($fallback_output, 'aria-label="Avatar sem foto"')) {
       throw new RuntimeException('Avatar fallback must expose a neutral, named icon.');
     }
+  }
+  if ($component_id === 'author-card'
+    && (!str_contains($output, 'Coletiva de Cultura')
+      || !str_contains($output, 'Biografia pública autorizada.')
+      || !str_contains($output, 'alt="Retrato de exemplo"'))) {
+    throw new RuntimeException('Author card must render its authorized identity, bio, and avatar slot.');
   }
   if ($component_id === 'breadcrumb'
     && (!str_contains($output, 'aria-current="page"') || !str_contains($output, 'aria-label="Breadcrumb"'))) {

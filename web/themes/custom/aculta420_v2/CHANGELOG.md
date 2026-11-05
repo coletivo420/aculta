@@ -7,6 +7,13 @@
   ou iniciais do nome. Stories de mídia sintética e fallback documentam os dois
   estados; integração com os consumers existentes fica para uma entrega própria.
 
+## Não versionado — auditoria do Author box
+
+- Mapeada a função prevista de Author box ao slot `authors` de
+  `revista-publication` e ao SDC `author-card`, conforme o contrato Portal
+  `AUTHOR-CARDS.md`. O gate de render Drupal cobre o cartão com identidade
+  autorizada, avatar e bio; captura no fluxo da Revista ainda pendente.
+
 ## Não versionado — dashboard e Minha Conta na rota definida pela ADR-048
 
 - O preprocess mapeia a rota `aculta_studio.dashboard` para `aside`, inclusive

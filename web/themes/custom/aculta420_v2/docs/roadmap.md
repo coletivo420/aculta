@@ -10,6 +10,15 @@ px também passou sem overflow. Teclado não se aplica ao componente estático.
 `account-menu` e `author-card` ainda mantêm seus slots atuais; a adoção é
 separada para preservar o contrato já validado.
 
+## Author box — G1 coberto por author-card; captura no consumer pendente
+
+O contrato de autoria do `aculta_user` documenta a caixa de autoria como slot
+`authors` de `revista-publication`; o SDC compartilhado `author-card` renderiza
+identidade, avatar e biografia autorizados. O gate Drupal agora renderiza esse
+SDC. Não foi criado outro componente com markup redundante. Fixture composta em
+Firefox passou nos seis viewports, claro/escuro, zoom 200% em 320 CSS px e Tab
+com foco visível. Conteúdo publicado e autenticado do Runtime permanece pendente.
+
 ## Menu de conta e sites — C2 implementado; validação visual pendente
 
 O `account-menu` combina a lista neutra `aculta_domain_sites` com o bloco de

@@ -1333,7 +1333,7 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   YAML parse, PHP lint e `git diff --check` PASS. Firefox ESR visível: 12/12
   combinações de modo/largura passaram em 320/390/768/959/960/1440 CSS px;
   zoom real 200%, viewport 320 CSS px, sem overflow. Capturas PNG e `results.json`
-  ficam fora do repositório em `$SUITE_OUT/aculta420-v2-avatar-20261105/`.
+  ficam fora do repositório no diretório externo configurado em `SUITE_OUT`.
 - **Checklist AGENTS V2, seção 6:** SDC documentado com stories; sem UI Styles,
   biblioteca, JS, hook, serviço ou variável Portal nova; gate registrado com
   saída; changelog/roadmap atualizados; nenhum item sem arquivo fonte.
@@ -1345,4 +1345,14 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Runtime:** nenhuma alteração persistente. Próximo antes da publicação:
   rodar `updatedb:status` e `config:status` em modo somente leitura; commit/push
   atômico para `dev` e continuar G1 na ordem (auditar/criar author-box).
+- **Auditoria seguinte — Author box:** o Portal documenta a caixa no slot
+  `authors` de `revista-publication`; esse slot recebe o SDC `author-card` com
+  identidade, avatar e bio. Atualizado o gate para renderizar `author-card` e
+  conferir esses dados. Firefox em fixture composta: 12 combinações de modo e
+  viewport passaram, zoom 200% em 320 CSS px sem overflow e Tab encontrou link
+  com outline visível. Capturas e `results.json` ficam fora do repositório no
+  diretório externo configurado em `SUITE_OUT`; são dados sintéticos e não
+  comprovam conteúdo publicado/autenticado no Runtime. O plano
+  não exige SDC redundante; próximo item novo na ordem G1: `tabs` (breadcrumb e
+  accordion já existem).
 
