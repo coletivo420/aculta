@@ -1609,3 +1609,12 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Riscos:** o padrão de navegador em `NAVEGADOR-TESTES.md` e na skill `aculta-navegador-testes` ainda diz Firefox ESR até a migração. Commit de V1 acidental foi revertido antes do push.
 - **Pendências:** migração para Playwright (prompt já entregue ao agente local); varredura do Semgrep; decidir o plugin da Trail of Bits; rodar o gate do Drupal 12 onde houver `vendor/`.
 - **Próximo passo:** o agente local migra os testes para Playwright e atualiza `NAVEGADOR-TESTES.md` e a skill, e depois roda a varredura do Semgrep sobre os módulos alterados.
+
+# Shell — rodapé e regions — 2026-11-05
+
+- **Objetivo:** cobrir a pendência de shell de conferir o rodapé e os regions restantes sem alterar a Institution Bar nem o contrato do Domain Header.
+- **Concluído:** `1fae08f720` cria `tests/browser/aculta420-v2-footer/`. Captura 6/6 em 320, 390 e 1440 px, claro/escuro: Institution Bar e Domain Header presentes, rodapé institucional com conteúdo e sem overflow horizontal. Os regions `highlighted`, `help`, `breadcrumb` e `sidebar_first` continuam condicionais no template.
+- **Verificações:** script no Firefox ESR visível PASS 6/6; `validate-aculta420-shell-contract.php` PASS (13 checks).
+- **Riscos:** a decisão de navegador registrada no handoff é Playwright, que aposenta o geckodriver. As suítes `aculta-htmx-f1` e `aculta420-v2-footer` usam geckodriver nesta sessão por instrução do prompt e precisam de migração para Playwright.
+- **Pendências:** aceitação visual final do rodapé pelo responsável; migração das duas suítes para Playwright.
+- **Próximo passo:** migrar as suítes para Playwright ou seguir F2 depois das decisões de F1.

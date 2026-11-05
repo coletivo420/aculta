@@ -2,14 +2,14 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
-# Shell — rodapé e regions — 2026-11-05
+# Dívida de estilo resolvida — 2026-11-05
 
-- **Objetivo:** cobrir a pendência de shell de conferir o rodapé e os regions restantes sem alterar a Institution Bar nem o contrato do Domain Header.
-- **Concluído:** `1fae08f720` cria `tests/browser/aculta420-v2-footer/`. Captura 6/6 em 320, 390 e 1440 px, claro/escuro: Institution Bar e Domain Header presentes, rodapé institucional com conteúdo e sem overflow horizontal. Os regions `highlighted`, `help`, `breadcrumb` e `sidebar_first` continuam condicionais no template.
-- **Verificações:** script no Firefox ESR visível PASS 6/6; `validate-aculta420-shell-contract.php` PASS (13 checks).
-- **Riscos:** a decisão de navegador registrada no handoff é Playwright, que aposenta o geckodriver. As suítes `aculta-htmx-f1` e `aculta420-v2-footer` usam geckodriver nesta sessão por instrução do prompt e precisam de migração para Playwright.
-- **Pendências:** aceitação visual final do rodapé pelo responsável; migração das duas suítes para Playwright.
-- **Próximo passo:** migrar as suítes para Playwright ou seguir F2 depois das decisões de F1.
+- **Objetivo:** eliminar as 189 classes mapeadas sem CSS e os nomes Bootstrap do mapa do V2, com prevenção por gate.
+- **Concluído:** `92a5c3abde` cria `src/styles/portal-ui-map.css` com estilo mínimo por componente; remove 11 nomes Bootstrap (`bi`, `bi-*`, `breadcrumb`, `breadcrumb-item`, `btn-primary`, `btn-outline-primary`, `btn-outline-secondary`, `btn-sm`) do mapa; adiciona o gate `scripts/validate-aculta420-mapped-classes.php`; troca as classes de design do diálogo de cadastro do checkout por tokens `data-portal-ui` mapeados no tema.
+- **Verificações:** gate de classes PASS (458 classes, 0 exceções, 0 nomes Bootstrap); `validate-portal-ui-docs` PASS (501 tokens); `validate-module-theme-boundary` PASS (4253 verificações); suítes `aculta-htmx-f1` 43/43 e `aculta420-v2-footer` 6/6 PASS; `validate-aculta420-sdc-schemas` 55/764, browser validators 21 e foundations PASS; `updatedb:status` e `config:status` limpos.
+- **Gates com falha preexistente/alheia:** `validate-agent-token-budget.php` (AGENTS.md raiz com 6501 bytes por alteração paralela do graphify), `validate-aculta-portal-drupal12.php` (versões divergentes) e `validate-portal-popup-rule.php` (9 ocorrências em Events/Paths).
+- **Pendências:** o estilo mínimo não é desenho final por componente; a evolução visual continua como trabalho de produto. Migração das suítes para Playwright segue com o agente paralelo.
+- **Próximo passo:** retomar F2 (navegação do Studio) ou a integração dos consumers dos SDCs.
 
 # Fase 3 — purpose neutro e auditoria do catálogo — 2026-11-05
 
@@ -20,7 +20,7 @@
 - **Pendências:** ajuste de tokens de destaque por purpose depende de `domain_presentation.accent` (D1); consumers reais dos SDCs G1; Fase 5 além do catálogo.
 - **Próximo passo:** retomar F2 (navegação do Studio) ou integrar consumers dos SDCs com dados reais.
 
-# Shell — rodapé e regions — 2026-11-05
+# HTMX F1 — busca do shell e cadastro popup — 2026-11-05
 
 - **Objetivo:** concluir as pendências apontadas da microfase HTMX F1: migrar a busca do shell e o cadastro popup para HTMX, validar com sessão/Form API reais e executar a matriz visual.
 - **Concluído:** `1efae40765` (Portal) migra `SearchPopupForm`, `RegisterPopupForm`, `SearchUtility` e `search-preview.js`; `31a061ef75` corrige a pendência documental dos filtros. No tema, `multidomain-bar.js` abre a busca por `hx-get`, sem Fetch nem `DOMParser`; `multidomain-bar.twig` ganhou `id="aculta-search-content"`, que faltava e impedia o alvo HTMX. Nova suíte `tests/browser/aculta-htmx-f1/`. Validação real encontrou e este commit corrige `data-hx-post=""` no login e no cadastro, que enviava o POST à página atual em vez da rota do popup; agora a URL é explícita.
