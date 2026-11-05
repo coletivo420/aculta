@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta420_v2\Hook;
 
+use Drupal\aculta420_v2\Palette\PurposePaletteSchemes;
 use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -40,15 +41,25 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
     // A theme may provide only one preprocess_html implementation. Keep the
     // Portal's explicit color mode and surface settings in this hook.
     $mode = ($variables['aculta_color_mode'] ?? NULL) === 'dark' ? 'dark' : 'light';
+    $purpose = $variables['aculta_purpose'] ?? NULL;
+    $palette = theme_get_setting('aculta_purpose_palette');
+    $paletteStyle = self::purposePaletteStyle($palette, $purpose);
     $htmlAttributes = $variables['html_attributes'] ?? NULL;
     if ($htmlAttributes instanceof Attribute) {
       $htmlAttributes->setAttribute('data-theme', $mode);
       // Chave neutra fornecida pelo Portal; não é hostname nem regra de domínio.
       // Aceita apenas purposes canônicos aprovados (F3).
-      $purpose = $variables['aculta_purpose'] ?? NULL;
       $allowedPurposes = ['main', 'account', 'support', 'magazine', 'wiki', 'shop', 'courses', 'links', 'forum', 'eventos'];
       if (is_string($purpose) && in_array($purpose, $allowedPurposes, TRUE)) {
         $htmlAttributes->setAttribute('data-purpose', $purpose);
+      }
+      if ($paletteStyle !== NULL) {
+        $htmlAttributes->setAttribute('data-purpose-scheme', $paletteStyle['scheme']);
+        $styles = [];
+        foreach ($paletteStyle['variables'] as $name => $value) {
+          $styles[] = $name . ': ' . $value . ';';
+        }
+        $htmlAttributes->setAttribute('style', implode(' ', $styles));
       }
     }
 
@@ -70,6 +81,33 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
       'aculta-accent--' . $this->safeValue((string) $settings('aculta_accent_override', 'mapping'), ['mapping', 'green', 'yellow', 'red'], 'mapping'),
       (bool) $settings('aculta_show_accent_stripe', TRUE) ? 'aculta-accent-stripe-enabled' : 'aculta-accent-stripe-disabled',
     ]);
+  }
+
+  /**
+   * Resolves the selected palette into CSS variables for both color modes.
+   *
+   * @return array{scheme: string, variables: array<string, string>}|null
+   */
+  public static function purposePaletteStyle(mixed $palette, mixed $purpose): ?array {
+    $allowedPurposes = ['main', 'account', 'support', 'magazine', 'wiki', 'shop', 'courses', 'links', 'forum', 'eventos'];
+    if (!is_array($palette) || !is_string($purpose) || !in_array($purpose, $allowedPurposes, TRUE)) {
+      return NULL;
+    }
+    $schemeKey = $palette[$purpose] ?? NULL;
+    if (!is_string($schemeKey) || !isset(PurposePaletteSchemes::SCHEMES[$schemeKey])) {
+      return NULL;
+    }
+    $scheme = PurposePaletteSchemes::SCHEMES[$schemeKey];
+    $variables = [];
+    foreach (['light', 'dark'] as $mode) {
+      $prefix = '--aculta-purpose-' . $mode . '-';
+      $variables[$prefix . 'accent'] = $scheme[$mode]['accent'];
+      $variables[$prefix . 'on-accent'] = $scheme[$mode]['on_accent'];
+      foreach ($scheme[$mode]['sub'] as $index => $value) {
+        $variables[$prefix . 'sub-' . ($index + 1)] = $value;
+      }
+    }
+    return ['scheme' => $schemeKey, 'variables' => $variables];
   }
 
   private function safeValue(string $value, array $allowed, string $fallback): string {

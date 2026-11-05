@@ -358,7 +358,7 @@ Gates foundation (55 pares), design foundations (2.468 checks), SDC schemas
 
 ## Fase 3 — Purpose neutro no Portal e Cores por purpose
 
-**Status: CONCLUÍDA em 2026-11-05 (versão 1.3.0).** `AppearanceHooks::preprocessHtml`
+**Status: CONCLUÍDA em 2026-11-05 (versão 1.3.0); escolha de esquema ligada ao runtime neste commit.** `AppearanceHooks::preprocessHtml`
 expõe `aculta_purpose` e o tema aplica `data-purpose` no `<html>` após validar
 a lista permitida. O Portal mantém o estado neutro `aculta_portal.active_purposes`
 via Core State API atualizado com hooks de ciclo de vida do Domain (`domain_insert`, `domain_update`, `domain_delete`).

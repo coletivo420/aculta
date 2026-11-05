@@ -1,5 +1,10 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — aplicação da escolha de esquema no runtime
+
+- `SurfaceSettingsHooks::preprocessHtml` lê `aculta_purpose_palette`, valida o esquema em `PurposePaletteSchemes::SCHEMES` e aplica os tokens de purpose selecionados nos modos claro e escuro.
+- A escolha permanece isolada da barra institucional, dos botões, do foco e dos neutros.
+
 ## 1.3.0 — Paleta ACULTA Skunk Family e cores por purpose (Fase 3)
 
 - Migração completa dos botões do tema para o esquema oficial aprovado em `docs/botoes.md`:

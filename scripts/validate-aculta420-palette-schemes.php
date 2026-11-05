@@ -12,6 +12,7 @@ $theme = $root . '/web/themes/custom/aculta420_v2';
 $schemesFile = $theme . '/src/Palette/PurposePaletteSchemes.php';
 $tokensFile = $theme . '/src/styles/tokens.css';
 $docsFile = $theme . '/docs/paletas-por-purpose.md';
+$hookFile = $theme . '/src/Hook/SurfaceSettingsHooks.php';
 
 if (!file_exists($schemesFile)) {
   fwrite(STDERR, "FAIL: Arquivo de esquemas não encontrado: $schemesFile\n");
@@ -25,6 +26,10 @@ if (!file_exists($docsFile)) {
   fwrite(STDERR, "FAIL: paletas-por-purpose.md não encontrado: $docsFile\n");
   exit(1);
 }
+if (!file_exists($hookFile)) {
+  fwrite(STDERR, "FAIL: SurfaceSettingsHooks.php não encontrado: $hookFile\n");
+  exit(1);
+}
 
 require_once $schemesFile;
 
@@ -33,10 +38,30 @@ use Drupal\aculta420_v2\Palette\PurposePaletteSchemes;
 $schemes = PurposePaletteSchemes::SCHEMES;
 $tokensCss = file_get_contents($tokensFile);
 $docsContent = file_get_contents($docsFile);
+$hookContent = file_get_contents($hookFile);
 
 if (count($schemes) !== 10) {
   fwrite(STDERR, "FAIL: Esperava exatamente 10 esquemas em PurposePaletteSchemes::SCHEMES, encontrou " . count($schemes) . "\n");
   exit(1);
+}
+
+foreach ([
+  "theme_get_setting('aculta_purpose_palette')",
+  'PurposePaletteSchemes::SCHEMES',
+  '$palette[$purpose]',
+  'data-purpose-scheme',
+  "\$prefix . 'accent'",
+] as $requiredHookUse) {
+  if (!str_contains($hookContent, $requiredHookUse)) {
+    fwrite(STDERR, "FAIL: SurfaceSettingsHooks.php não consome a paleta corretamente: {$requiredHookUse}\n");
+    exit(1);
+  }
+}
+foreach (array_keys(PurposePaletteSchemes::getPurposeDefaults()) as $purpose) {
+  if (!str_contains($hookContent, '$palette[$purpose]')) {
+    fwrite(STDERR, "FAIL: A chave de configuração do purpose {$purpose} não é consumida pelo preprocess.\n");
+    exit(1);
+  }
 }
 
 $errors = [];

@@ -420,3 +420,20 @@ html[data-theme="dark"][data-purpose="forum"] {
   --purpose-surface-3: #49433d;
 }
 
+/* Seleção administrativa: valores fornecidos pelo tema a partir da fonte única. */
+html[data-purpose-scheme] {
+  --purpose-accent: var(--aculta-purpose-light-accent);
+  --purpose-on-accent: var(--aculta-purpose-light-on-accent);
+  --purpose-sub-1: var(--aculta-purpose-light-sub-1);
+  --purpose-sub-2: var(--aculta-purpose-light-sub-2);
+  --purpose-sub-3: var(--aculta-purpose-light-sub-3);
+}
+
+html[data-theme="dark"][data-purpose-scheme] {
+  --purpose-accent: var(--aculta-purpose-dark-accent);
+  --purpose-on-accent: var(--aculta-purpose-dark-on-accent);
+  --purpose-sub-1: var(--aculta-purpose-dark-sub-1);
+  --purpose-sub-2: var(--aculta-purpose-dark-sub-2);
+  --purpose-sub-3: var(--aculta-purpose-dark-sub-3);
+}
+
