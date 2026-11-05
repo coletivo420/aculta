@@ -51,8 +51,7 @@ Pela regra de fronteiras (AGENTS, seção 2 e 3), estas opções **não ficam no
    novas variáveis.
 4. Incluir `--accent-*-stripe` (ver `docs/superficies.md`, seção 8.2).
 5. Capturas nos dois modos e gates (`docs/gates.md`), no Homelab.
-6. Exportar a configuração com `drush cex` para `config/sync`, se a configuração
-   do tema for criada no Runtime (AGENTS, seção 15, equivalente da regra de loja).
+6. Exportar a configuração com `drush cex` para `config/sync` antes do RC. Configuração criada no Runtime de teste e não exportada é apagada por uma importação de configuração (regra do projeto, seção de loja e configuração).
 
 ## 5. Outras definições que faltam
 
