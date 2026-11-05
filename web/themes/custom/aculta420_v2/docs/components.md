@@ -1,6 +1,6 @@
 # Catálogo de componentes do tema V2
 
-Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado; a auditoria integral do catálogo (Fase 5) ainda não foi feita.
+Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Auditoria do catálogo em 2026-11-05: os 39 diretórios de `components/` têm entrada aqui, schema e story; não há entrada sem componente.
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
@@ -94,6 +94,15 @@ e `empty-state.compact.story.yml`. O componente não consulta dados, decide se
 a lista está vazia nem cria links; texto, permissões, URLs e cache permanecem
 no módulo proprietário. Usa tokens semânticos V2 e não depende de JavaScript.
 
+### event-page-layout
+
+Regiões semânticas para o detalhe público de evento em ordem mobile-first.
+Props: nenhuma (`additionalProperties: false`). Slots: `title`, `highlight`,
+`essentials`, `content` e `sidebar`. Story: `event-page-layout.default.story.yml`.
+Sem JavaScript. O componente não consulta entidade, mídia, datas ou acesso; o
+consumidor entrega os render arrays prontos e o `aculta_events` mantém tipo,
+permissões e cache.
+
 ### lms-lesson-page
 
 Contêiner visual para o render array entregue pelo controlador do LMS na rota
@@ -155,6 +164,22 @@ original caso a descoberta Drupal ainda não conheça o SDC.
 - **Papel:** navegação entre páginas de resultados.
 - **Props:** `current_page`, `total_pages`, `links`.
 - **Estado:** entregue.
+
+### breadcrumb — Navegação estrutural
+
+Trilha de navegação com o nome acessível configurável. Prop: `label` (padrão
+`Navegação estrutural`). Slot: `items`, com os itens já preparados pelo template
+do Drupal; o componente preserva URLs e o estado atual marcado pelo Core. Story:
+`breadcrumb.default.story.yml`. Sem JavaScript; sem link inventado e sem leitura
+de entidade, menu ou domínio.
+
+### purpose-showcase — Vitrine de portais
+
+Links entre os portais ativos da rede ACULTA. Props: `heading` (padrão
+`Ecossistema ACULTA`) e `links` (lista de `title` e `url`). Story:
+`purpose-showcase.default.story.yml`. Sem JavaScript e sem hostname fixo: as
+URLs vêm do contrato neutro do Portal; o componente só apresenta a lista
+autorizada.
 
 ### filter-chips — Filtros
 - **Papel:** faixa rolável de filtros, com link e estado atual explícitos.

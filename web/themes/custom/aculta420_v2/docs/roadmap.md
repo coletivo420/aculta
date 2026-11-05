@@ -351,7 +351,13 @@ Gates foundation (55 pares), design foundations (2.468 checks), SDC schemas
 
 ## Fase 4 — UI Styles
 
-**Status: pendente; verificar compatibilidade da versão com Drupal 11.5 e 12 antes da instalação.**
+**Status: compatibilidade verificada em 2026-11-05.** `ui_styles` 1.22.0 está
+habilitado no Runtime, junto de `ui_styles_views` e `ui_styles_ui_patterns`.
+O `ui_styles.info.yml` declara `core_version_requirement: ^10.3 || ^11 || ^12`,
+o que cobre 11.5 e a meta 12 do ADR-045. O tema não registra plugins de UI
+Styles e `docs/ui-styles.md` não existe porque não há estilo próprio a
+documentar; o arquivo será criado no primeiro uso. Nenhuma configuração de UI
+Styles foi alterada nesta verificação.
 
 ## Fase 5 — Componentes e templates
 
