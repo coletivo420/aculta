@@ -1,6 +1,6 @@
 # ADR-050 — Migração do AJAX do ACULTA para htmx
 
-- **Status:** aceito pelo responsável em 2026-11-05. Execução **DEFERRED** no Homelab; nenhum código desta decisão foi testado nesta sessão.
+- **Status:** aceito pelo responsável em 2026-11-05. F0 parcialmente verificada no Homelab em 2026-11-05; aceite permanece BLOCKED até a prova de popup/form dentro de `<dialog>`. Ver [`docs/htmx-confirmacao.md`](../htmx-confirmacao.md). Nenhum código de produção foi migrado.
 - **Data:** 2026-11-05.
 - **Relaciona-se com:** ADR-044 (opção C, htmx), ADR-045 (um único módulo de AJAX; sem Core fora do escopo), ADR-046 (V2), ADR-048 (popup de foto), ADR-049 (AJAX do Studio, revisado por este ADR), `docs/portal/CROSS-DOMAIN-REQUEST-POLICY.md`, `docs/portal/PAYMENT-DOMAIN-POLICY.md`.
 
@@ -9,7 +9,7 @@
 - O ADR-049 escolheu Fetch próprio (mecanismo B). O responsável decidiu migrar para htmx (mecanismo C), por ser o caminho do próprio Core (11.3 em diante, `Drupal\Core\Htmx\Htmx`, library `core/drupal.htmx`).
 - O escopo é **todo AJAX de código ACULTA**: tema V2 e módulos `aculta_portal`. Não entra nada que seja do Core ou de módulo contrib.
 - Verificado em fontes públicas (change records do Core 11.3, documentação da classe `Htmx`): os atributos `data-hx-*`, o método `onlyMainContent()` (resposta só do conteúdo), o `FormBuilder` tratando requisições htmx como as do AJAX da API atual, e a ausência de anúncio de remoção do `#ajax`.
-- Não verificado (depende do Homelab): se a classe `Htmx` é `@internal`, como o CSRF é tratado em formulário e o comportamento completo de `FormBuilder` com htmx.
+- Verificação local/Core 11.5 em 2026-11-05: `Htmx` não tem anotação `@internal`; `FormBuilder` mantém o token CSRF do Form API e renova `form_build_id` em POST HTMX; FunctionalJavascript e Kernel oficiais passaram. Continua pendente a prova de integração de popup e formulário dentro de `<dialog>` e a validação explícita de token inválido; ver `docs/htmx-confirmacao.md`.
 
 ## 2. Decisões
 
@@ -88,7 +88,7 @@ Itens de código ACULTA que usam AJAX, `fetch` de UI ou `#ajax`/`use-ajax`, em 2
 ## 4. Consequências
 
 - Dois mecanismos vão conviver durante a migração: htmx e `#ajax` do Core/contrib (Commerce, Views, modais contrib). O ADR-045 deixa de valer como "um único mecanismo". Vale: **um único módulo próprio de comportamento**.
-- Cada módulo do Portal que muda de `#ajax` para htmx muda o contrato da resposta. Isso exige PR própria com gate.
+- Cada módulo do Portal que muda de `#ajax` para htmx muda o contrato da resposta. Isso exige entrega/commit separado com gate.
 - A migração do Drupal 12 (htmx 4) pode exigir ajustes nos atributos. Por isso os atributos ficam concentrados nos templates e nos `Htmx` builders, não em JavaScript.
 
 ## 5. Fases e critério de aceite
@@ -97,12 +97,12 @@ Itens de código ACULTA que usam AJAX, `fetch` de UI ou `#ajax`/`use-ajax`, em 2
 | --- | --- | --- |
 | F0 | Confirmar a API `Htmx` no `core/lib` do 11.5 no Homelab; prova com um popup e um formulário; CSRF e `@internal` verificados | nota com saída de teste; ADR-050 atualizado |
 | F1 | Tema V2 e login | login, gavetas e busca funcionam com e sem JavaScript; foco e `aria-live` conferidos |
-| F2 | Studio, conta e popup de foto (PR própria no `aculta_user`) | navegação, `aria-current`, popup de foto e formulários de conta; gate de foto |
-| F3 | Módulos do Portal (uma PR por módulo) | cada módulo passa no próprio gate |
+| F2 | Studio, conta e popup de foto (entrega separada no `aculta_user`) | navegação, `aria-current`, popup de foto e formulários de conta; gate de foto |
+| F3 | Módulos do Portal (uma entrega por módulo) | cada módulo passa no próprio gate |
 | F4 | Carrinho e frete | autorização da loja |
 | F5 | Pagamento e checkout | autorização explícita por tarefa |
 
-Cada fase termina em PR própria, com `RUNTIME STATUS: DEFERRED` enquanto não for testada no Homelab.
+Cada fase termina em commit atômico publicado em `dev`, com `RUNTIME STATUS: DEFERRED` enquanto não for testada no Homelab.
 
 ## 6. Validação
 
@@ -122,9 +122,9 @@ Cada fase termina em PR própria, com `RUNTIME STATUS: DEFERRED` enquanto não f
 
 ## 8. Plano detalhado de execução
 
-Este plano é a ordem de trabalho do agente local no Homelab. Cada fase vira uma branch
-`htmx/<fase>` a partir de `dev`, com uma PR para `dev` ao final. Nenhuma PR é mesclada
-sem pedido do responsável.
+Este plano é a ordem de trabalho no Homelab. Pela instrução vigente do responsável
+e pelo `AGENTS.md` da raiz, cada entrega é um commit atômico diretamente em `dev`;
+não criar branches nem PRs.
 
 ### 8.1 Regras de execução
 
@@ -134,24 +134,34 @@ sem pedido do responsável.
 - **Autorização.** F4 e F5 não rodam sem pedido explícito para a tarefa. Registre `AGUARDANDO AUTORIZAÇÃO` e siga.
 - **Decisões em aberto** (seção 7 do ADR): não decida. Registre e deixe de fora da fase.
 - **Proibido:** jQuery, `core/drupal.ajax`, Bootstrap, Vite, Node no tema; `prefers-color-scheme`; hostnames fixos; segredo, token ou caminho de Homelab no repositório; alterar `web/themes/custom/aculta420/` (V1); alterar Core ou contrib; mesclar em `main`; force push; escrever no Runtime ou em `estados/`; versionar estado não validado.
-- **Commit e push** para `dev` e a branch da fase, com os trailers `Co-Authored-By` e `Claude-Session`.
+- **Commit e push** direto para `dev`; seguir os trailers permitidos pelo `AGENTS.md` da raiz (sem coautoria).
 - **Documentação no mesmo commit** (AGENTS do tema, seção 6): componente em `docs/components.md`, biblioteca e JavaScript em `docs/architecture.md`, gate em `docs/gates.md`.
 - **Versão:** não marque versão. Só na entrega validada.
 
 ### 8.2 F0 — Confirmação da API no Core 11.5
 
-Branch: `htmx/f0-confirmacao`.
+**Estado atual (2026-11-05): BLOCKED para aceite completo.** A classe, library,
+atributo `onlyMainContent`, fluxo de `form_build_id` e caminho CSRF do Form API
+foram inspecionados. Testes oficiais Core FunctionalJavascript (Chromium
+headless, 1/19) e Kernel (5/60) passaram; depreciações e limites estão em
+`docs/htmx-confirmacao.md`. Ainda falta a prova exigida de popup ACULTA com
+formulário HTMX dentro de `<dialog>`. F1/F2/F3 não começam até a conclusão dessa
+prova e a verificação explícita do caminho CSRF. Nenhum módulo de produção mudou
+de mecanismo.
+
+Entrega direta em `dev` conforme instrução atual do responsável; sem branch de
+fase ou PR.
 
 1. Localizar no Homelab o `core/lib/Drupal/Core/Htmx/Htmx.php`, o `core/core.libraries.yml` (entrada `drupal.htmx`) e o tratamento de htmx em `core/lib/Drupal/Core/Form/FormBuilder.php`.
 2. Registrar: se `Htmx` é `@internal`; como o CSRF do `form_build_id` é atualizado em requisição htmx; e se `onlyMainContent()` cria `hx-drupal-only-main-content` ou `data-hx-drupal-only-main-content` (divergência entre fontes).
-3. Prova mínima, em branch descartável: uma rota de fragmento e um formulário com `Htmx::post()`, trocado dentro de um `<dialog>`. Registrar a saída do navegador (Firefox ESR, `$SUITE_OUT`).
+3. Prova mínima, em fixture isolada de teste: uma rota de fragmento e um formulário com `Htmx::post()`, trocado dentro de um `<dialog>`. Registrar a saída do navegador (`$SUITE_OUT`).
 4. Entregar `docs/htmx-confirmacao.md` (só documentação, sem código de produção) e atualizar o ADR-050 com o resultado.
 
 **Aceite:** nota com trechos de código e referências do Core; prova executada; sem divergência sem registro.
 
 ### 8.3 F1 — Tema V2 e login (F1a tema; F1b Portal)
 
-Branch: `htmx/f1-tema-login`.
+Entrega direta em `dev` conforme fluxo vigente.
 
 **F1a (tema):**
 
@@ -164,7 +174,7 @@ Branch: `htmx/f1-tema-login`.
 7. Ícones de 30 px nos gatilhos da barra: adicionar tamanho `bar` em `icon.component.yml` e no CSS (ADR-047 item 10). Alvo de toque de 35 px.
 8. Alvo de toque e foco visível conferidos em 320, 390 e 1440 px, claro e escuro, zoom 200%.
 
-**F1b (Portal, PR própria):**
+**F1b (Portal, entrega separada no mesmo fluxo `dev`):**
 
 1. `aculta_portal/src/Form/LoginPopupForm.php` e `RegisterPopupForm.php`: devolver fragmento quando a requisição é htmx; usar `Htmx` no formulário.
 2. `aculta_portal/src/Hook/FormHooks.php`, `PortalHooks.php`, `PortalFormCallbacks.php`: remover o AJAX dos formulários migrados.
@@ -178,13 +188,13 @@ Branch: `htmx/f1-tema-login`.
 
 ### 8.4 F2 — Studio, conta e popup de foto
 
-Branch: `htmx/f2-studio-conta`. Depende de F1a.
+Entrega direta em `dev` após F1a.
 
 1. `aculta_studio/js/studio-navigation.js` e `account-navigation.js`: remover o `pushState` próprio. Os links ganham `hx-get`, `hx-target` (a área de conteúdo) e `hx-push-url`. Sem JavaScript, o `href` responde a página completa.
 2. `aculta_studio/src/Controller/StudioProfileController.php`: devolver fragmento com `onlyMainContent()` quando htmx. `Cache-Control: private` e `Vary: Cookie`.
 3. `aculta_user/js/account-bio-form.js` e `src/Bio/AccountBioCard.php`: `hx-post` no formulário da biografia; remover o `fetch`.
 4. `aculta_user/src/Social/SocialLinksCard.php` e `aculta_portal/src/Account/AccountAddressForm.php`: fragmento. Regra de país `BR` preservada (ACCOUNT-ADDRESS).
-5. **Popup de foto** (`aculta_user`, PR própria):
+5. **Popup de foto** (`aculta_user`, entrega separada):
    - `src/Hook/PhotoEditorHooks.php`: remover `use-ajax` e `core/drupal.dialog.ajax`; gatilho com `hx-get` para o `<dialog>`.
    - `src/Form/UserPictureForm.php`, `src/Form/AvatarCropForm.php`, `src/Controller/AvatarRerollController.php`: fragmento; recorte aplicado no mesmo `<dialog>`.
    - `src/Access/AccountModalAccess.php`: mantém as regras de acesso.
@@ -196,11 +206,11 @@ Branch: `htmx/f2-studio-conta`. Depende de F1a.
 
 ### 8.5 F3 — Módulos do Portal
 
-Depende só de F0. Uma branch e uma PR por módulo, nesta ordem:
+Depende só de F0. Uma entrega/commit por módulo, nesta ordem:
 
 1. `aculta_forum`: `ForumAttachmentUploadDialogForm.php`, `ForumGalleryUploadDialogForm.php`. `<dialog>` com htmx.
 2. `aculta_gallery`: `GalleryEmbedDialogForm.php`.
-3. `aculta_events`: 9 arquivos (formulários de data, local e organização; `EventLocationWidgetController.php`; `EventDateListBuilder.php`; widgets de campo `EventLocationModalWidget.php` e `EventOrganizationModalWidget.php`). Uma PR para o módulo inteiro.
+3. `aculta_events`: 9 arquivos (formulários de data, local e organização; `EventLocationWidgetController.php`; `EventDateListBuilder.php`; widgets de campo `EventLocationModalWidget.php` e `EventOrganizationModalWidget.php`). Uma entrega atômica para o módulo inteiro.
 4. `aculta_paths` (administração, só MAIN): `SurfaceEditController.php`, `SurfaceListController.php`, `SurfaceEditForm.php`. Gate `validate-admin-routes-main-domain.php`.
 5. `aculta_secrets_manager` (administração, só MAIN): `SecretsController.php`, `SecretEditForm.php`, `SecretClearForm.php`. A resposta **nunca** contém o valor do segredo. Gate `validate-admin-routes-main-domain.php`.
 
@@ -212,7 +222,7 @@ Depende só de F0. Uma branch e uma PR por módulo, nesta ordem:
 
 ### 8.6 F4 — Carrinho e frete (loja)
 
-`AGUARDANDO AUTORIZAÇÃO` para cada tarefa. Quando autorizada, branch `htmx/f4-loja`:
+`AGUARDANDO AUTORIZAÇÃO` para cada tarefa. Quando autorizada, entrega em `dev`:
 
 1. `aculta_portal/src/Cart/AddToCartAjax.php`: `hx-post` no botão e fragmento de status (`portal-cart-status`).
 2. `aculta_commerce_melhorenvio/assets/shipping-calculator.js`: `hx-get` no campo de CEP. Mantém a regra de CEP do projeto.
