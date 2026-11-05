@@ -2,6 +2,15 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
+
+# F2 — navegação do Studio e da conta por HTMX — 2026-11-05
+
+- **Objetivo:** remover `Drupal.Ajax` e o `pushState` próprio da navegação do Studio e da Minha Conta, usando o HTMX do Core.
+- **Concluído:** `d74e79a17e` migra `studio-navigation.js` e `account-navigation.js`, troca as bibliotecas para `core/drupal.htmx`, marca pontos de foco nos controllers e faz o `studio-htmx.js` resolver o novo alvo pelo id em swaps `outerHTML`. Registra `studio-heading` e `data-aculta-focus`.
+- **Verificações:** no Runtime (host `account`), `/marley` e `/conta/dados` navegam por HTMX, atualizam URL e título, devolvem o foco e funcionam com voltar/avançar, sem overflow em 1024 px. Gates: boundary 4266, docs 502 tokens, SDC 35 componentes, schemas 55/764, foundations, classes 455; PHP lint e `git diff --check` PASS.
+- **Pendências:** itens 2 a 5 da F2 (perfil, bio, redes sociais, endereço e popup de foto); captura da matriz 320/390/1440 para as navegações; migração das suítes para Playwright segue com o agente paralelo.
+- **Próximo passo:** seguir a F2 pelos formulários de conta e bio, ou a F3 por módulo.
+
 # Dívida de estilo resolvida — 2026-11-05
 
 - **Objetivo:** eliminar as 189 classes mapeadas sem CSS e os nomes Bootstrap do mapa do V2, com prevenção por gate.
@@ -19,13 +28,3 @@
 - **Gates com falha preexistente/alheia:** `validate-agent-token-budget.php` (AGENTS.md raiz com 6501 bytes por alteração paralela do graphify), `validate-aculta-portal-drupal12.php` (versões divergentes de nove módulos) e `validate-portal-popup-rule.php` (9 ocorrências em Events/Paths).
 - **Pendências:** ajuste de tokens de destaque por purpose depende de `domain_presentation.accent` (D1); consumers reais dos SDCs G1; Fase 5 além do catálogo.
 - **Próximo passo:** retomar F2 (navegação do Studio) ou integrar consumers dos SDCs com dados reais.
-
-# HTMX F1 — busca do shell e cadastro popup — 2026-11-05
-
-- **Objetivo:** concluir as pendências apontadas da microfase HTMX F1: migrar a busca do shell e o cadastro popup para HTMX, validar com sessão/Form API reais e executar a matriz visual.
-- **Concluído:** `1efae40765` (Portal) migra `SearchPopupForm`, `RegisterPopupForm`, `SearchUtility` e `search-preview.js`; `31a061ef75` corrige a pendência documental dos filtros. No tema, `multidomain-bar.js` abre a busca por `hx-get`, sem Fetch nem `DOMParser`; `multidomain-bar.twig` ganhou `id="aculta-search-content"`, que faltava e impedia o alvo HTMX. Nova suíte `tests/browser/aculta-htmx-f1/`. Validação real encontrou e este commit corrige `data-hx-post=""` no login e no cadastro, que enviava o POST à página atual em vez da rota do popup; agora a URL é explícita.
-- **Verificações:** no Runtime de desenvolvimento, login real da conta de teste autenticou e o `HX-Redirect` navegou; POST inválido do cadastro devolveu o fragmento com erro e não criou conta; busca retornou `data-hx-*` com `HX-Request` e manteve o script legado sem o cabeçalho. Suíte Firefox ESR visível: 43/43 checks (busca, login e gaveta de avisos autenticada em 320/390/768/959/960/1440 px, claro/escuro, prévia HTMX, foco visível, zoom real 200%, Escape com retorno de foco e fallback sem JavaScript). `validate-browser-validators` (21), `validate-aculta420-sdc-schemas` (55/764) e shell contract (13) PASS; PHP lint e `git diff --check` PASS.
-- **Gates com falha preexistente:** `validate-aculta-portal-drupal11` e `validate-project-status-index` (versões divergentes de nove módulos), `validate-portal-popup-rule` (9 ocorrências em Events/Paths) e `validate-aculta420-v2-sdc` (`src/styles/buttons.css`). Nenhum arquivo dessas falhas foi alterado nesta entrega.
-- **Decisões de 2026-11-05 (responsável):** (1) gavetas de mensagens/avisos mantêm a exceção documentada — dependem de JavaScript e não têm link nativo para a página completa, porque o Portal não fornece `all_href`; (2) o gatilho do cadastro no checkout de doação foi autorizado e migrado para o diálogo HTMX do shell, com `href` como fallback. Ambas registradas no ADR-050, no AGENTS/architecture do tema e no CHANGELOG de `aculta_donation`.
-- **Pendências:** captura do diálogo de cadastro em pedido de doação real; restante do checkout/pagamento na F5. F1 está coberta; F2 pode ser retomada.
-- **Próximo passo:** retomar F2 ou a F3 (o Fórum usa diálogos do CKEditor e precisa de decisão separada).
