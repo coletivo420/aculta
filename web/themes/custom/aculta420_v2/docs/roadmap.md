@@ -2,12 +2,13 @@
 
 ## Shell administrativo — Institution Bar e Gin
 
-- **Implementado em `1.2.0-dev.19`:** a barra fixa mede a largura real da
+- **Implementado em `1.2.0-dev.20`:** a barra fixa mede a largura real da
   sidebar Gin e se restringe à coluna geral; a navegação administrativa não é
   coberta. Institution Bar mantém uma única linha em mobile e desktop. Logo com
-  80 px em todos os tamanhos, proporção preservada. Recuo lateral de 8 px em
-  viewport de 320 CSS px, fluido em telas maiores; ícones sem gap extra, com
-  alvos de 44 px. O painel da conta ancora na coluna geral.
+  100 px em todos os tamanhos, proporção preservada. Recuo lateral de 8 px em
+  viewport de 320 CSS px, fluido em telas maiores; ícones e avatar mantidos em 30 px,
+  com alvos de toque em 35 × 35 px e sem gap extra. O painel da conta ancora
+  na coluna geral.
 - O bloco Core Navigation `navigation_shortcuts` foi removido da configuração
   exportada porque depende do módulo `shortcut`, desativado no site, e o plugin
   legado não existe. O Runtime autenticado não mostra mais a mensagem de bloco
