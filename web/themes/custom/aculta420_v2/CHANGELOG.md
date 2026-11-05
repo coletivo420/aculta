@@ -1,5 +1,12 @@
 # Changelog — ACULTA420 V2
 
+## 1.2.0-dev.18 — melhora o respiro da Institution Bar (2026-11-05)
+
+- Aumentado o recuo lateral do conteúdo para afastar logo e utilidades das bordas da tela, com escala fluida baseada nos tokens de espaçamento.
+- A logo mantém a proporção do arquivo e foi ampliada de 78 para 96 px no desktop; em faixas estreitas, reduz dentro do espaço disponível.
+- Mantidos os ícones em 32 px, no tamanho do avatar, e removido o gap adicional entre os controles da barra. Os alvos de toque de 44 px permanecem.
+- Firefox ESR visível: inspeção do purpose main na rota `/`, visitante, modo claro e zoom 100%, em 1024 e 500 CSS px; o conteúdo não ultrapassou o viewport de 500 px. O display desta sessão impediu viewport menor que 500 px. Capturas em `$SUITE_OUT/aculta420-v2-institution-bar-20261105/`; teclado e zoom ampliado ficaram DEFERRED.
+
 ## 1.2.0-dev.17 — corrige a Institution Bar com Gin e ícone administrativo (2026-11-04)
 
 - A Institution Bar mede a coluna lateral Gin e ocupa apenas o espaço geral,

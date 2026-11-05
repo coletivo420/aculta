@@ -31,7 +31,7 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
   gap: var(--spacing-xs) var(--spacing-sm);
   justify-content: space-between;
   min-block-size: 2.25rem;
-  padding-inline: clamp(var(--spacing-xs), 2vw, var(--spacing-lg));
+  padding-inline: clamp(var(--spacing-base), 2.25vw, var(--spacing-xl));
 }
 
 .aculta-institution-bar__brand {
@@ -44,10 +44,10 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
 }
 
 .aculta-institution-bar__logo {
-  block-size: 19px;
+  block-size: auto;
   display: block;
   filter: var(--logo-filter);
-  inline-size: 56px;
+  inline-size: 68px;
   max-inline-size: 100%;
 }
 
@@ -84,11 +84,12 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
   .aculta-institution-bar__home,
   .aculta-institution-bar__logo { min-inline-size: 0; }
 
-  .aculta-institution-bar__logo { block-size: auto; inline-size: min(56px, 100%); }
+  .aculta-institution-bar__logo { inline-size: min(68px, 100%); }
 
   .aculta-utility {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
+    gap: 0;
     justify-content: stretch;
     margin-inline-start: 0;
     min-inline-size: 0;
@@ -505,16 +506,18 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
 @media (min-width: 768px) {
   .aculta-institution-bar__inner {
     gap: var(--spacing-xs) var(--spacing-base);
-    padding-inline: var(--spacing-base);
   }
 
   .aculta-institution-bar__logo {
-    block-size: 26px;
-    inline-size: 78px;
+    inline-size: 96px;
   }
 
   .aculta-utility {
     flex: 0 0 auto;
-    gap: var(--spacing-sm);
+    gap: 0;
+  }
+
+  .aculta-utility > * {
+    margin-block: 0;
   }
 }
