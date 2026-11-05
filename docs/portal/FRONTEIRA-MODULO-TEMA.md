@@ -2,7 +2,7 @@
 
 > **Código no Aculta Portal, Design no ACULTA420.**
 
-Regra permanente (AGENTS.md, seção "Código no Aculta Portal, Design no ACULTA420"). Gate:
+Regra permanente: "Código no Aculta Portal, Design no ACULTA420." Este documento é o contrato canônico da fronteira. Gate:
 `php scripts/validate-module-theme-boundary.php`.
 
 ## Regra
