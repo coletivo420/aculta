@@ -99,6 +99,25 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
       );
       $this->assertSame($purpose, $data['identity']['purpose']);
       $this->assertSame($domainId, self::DOMAINS[$data['identity']['purpose']]);
+      $sites = $data['domain_sites'];
+      $this->assertCount(count(self::DOMAINS), $sites);
+      $this->assertSame($purpose, $sites[array_search(TRUE, array_column($sites, 'current'), TRUE)]['purpose']);
+      $this->assertSame(
+        array_keys(self::DOMAINS),
+        array_column($sites, 'purpose'),
+        'Sites devem permanecer na ordem neutra e estável do mapa de purposes.',
+      );
+      foreach ($sites as $site) {
+        $this->assertSame($site['purpose'] === $purpose, $site['current']);
+        $this->assertSame(
+          'https://' . $site['purpose'] . '.example.invalid/',
+          $site['url'],
+        );
+        $this->assertContains(
+          'config:domain.record.' . self::DOMAINS[$site['purpose']],
+          $presentation->getCacheTags(),
+        );
+      }
     }
 
     $cacheContexts = $presentation->getCacheContexts();

@@ -131,7 +131,9 @@ final class PortalHooks {
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
     $domainPresentation = $this->domainPresentationBuilder->buildCurrent();
-    $variables['domain_presentation'] = $domainPresentation?->toThemeArray();
+    $presentation = $domainPresentation?->toThemeArray();
+    $variables['domain_presentation'] = $presentation;
+    $variables['aculta_domain_sites'] = $presentation['domain_sites'] ?? [];
     $variables['aculta_search_utility'] = $this->searchUtility->build();
     // Ícone da ACULTA na barra multidomínio: página inicial do domínio
     // principal (purpose main), nunca fixa no código.

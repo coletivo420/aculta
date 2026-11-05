@@ -112,6 +112,7 @@ final class DomainPresentationBuilder {
     $showcase = $purpose === 'main' && $this->pathMatcher->isFrontPage()
       ? $this->buildShowcase($cacheability)
       : NULL;
+    $domainSites = $this->buildDomainSites($purpose, $cacheability);
 
     return new DomainPresentation(
       [
@@ -139,7 +140,38 @@ final class DomainPresentationBuilder {
         // theme renders this flag and never resolves purpose itself.
         'show_site_header' => TRUE,
       ],
+      $domainSites,
     );
+  }
+
+  /**
+   * Builds the cross-site navigation contract from enabled Domain entities.
+   *
+   * @return array
+   *   Published sites with environment-specific absolute URLs.
+   */
+  private function buildDomainSites(
+    string $currentPurpose,
+    CacheableMetadata $cacheability,
+  ): array {
+    $sites = [];
+    foreach (array_keys(self::PURPOSE_IDENTITIES) as $purpose) {
+      $domain = $this->domainPurpose->getDomain($purpose);
+      $url = $this->domainPurpose->pathUrl($purpose, '/');
+      if ($domain === NULL || !$domain->status() || $url === NULL) {
+        continue;
+      }
+      $cacheability->addCacheableDependency($domain);
+      $sites[] = [
+        'purpose' => $purpose,
+        'title' => (string) $this->translation->translate(
+          self::PURPOSE_IDENTITIES[$purpose]['title'],
+        ),
+        'url' => $url->toString(),
+        'current' => $purpose === $currentPurpose,
+      ];
+    }
+    return $sites;
   }
 
   /**

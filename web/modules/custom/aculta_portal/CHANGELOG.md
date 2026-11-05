@@ -1,3 +1,15 @@
+## Não versionado — contrato de sites ativos para a barra V2
+
+- `DomainPresentation` agora inclui uma lista neutra dos Domains ativos com
+  purpose estável, título, URL resolvida por ambiente e indicador do site atual.
+  `PortalHooks` também expõe a lista como `aculta_domain_sites` para o tema.
+- Teste Kernel ampliado para verificar a lista completa em cada purpose,
+  URLs de cada Domain, ordem estável e identificação do atual: 3 testes/429
+  assertions PASS em `aculta_simpletest`. PHP lint e PHPCS Drupal/DrupalPractice
+  PASS. O gate `validate-aculta-portal-drupal11.php` falhou por divergências
+  pré-existentes entre versões em 9 entradas do índice e README raiz; sem
+  executar seu modo `--write` fora do escopo.
+
 ## 0.4.1-dev.76 — completa schema da política de upload
 
 - Adicionado ao módulo Portal o schema de `aculta_portal.user_upload`, com

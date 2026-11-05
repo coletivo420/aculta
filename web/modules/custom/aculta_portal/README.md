@@ -72,6 +72,16 @@ navegação. O campo permanece um searchbox nativo; Tab percorre os resultados e
 as setas continuam disponíveis para edição do texto. Não declarar esses links
 como opções de combobox.
 
+## Contrato de apresentação para a navegação de sites
+
+`DomainPresentationBuilder` fornece `domain_presentation.identity.purpose` como
+chave neutra estável e `domain_presentation.domain_sites` como lista dos Domains
+ativos: `purpose`, `title`, `url` absoluta resolvida por `DomainPurposeManager`
+e `current`. `PortalHooks::preprocessPage()` também expõe a lista como
+`aculta_domain_sites`. A lista herda cache tags dos Domains e os contexts do
+contrato de apresentação; o tema apenas apresenta os links, sem descobrir hosts
+ou purposes. O contrato não carrega dados de conta.
+
 ## Fronteira
 
 ```text
