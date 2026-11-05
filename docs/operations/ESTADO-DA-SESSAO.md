@@ -181,12 +181,3 @@
   `PagePresentationHooks.php`, roadmap/changelog V2 e este handoff. Arquivos
   Composer, alterações paralelas do módulo Messenger, JS solto da V1 e o tema
   `aculta_theme` foram preservados fora desta entrega.
-
-## Handoff — microfase HTMX de login e gavetas — 2026-11-05
-
-- **Regra permanente:** AJAX Drupal (`core/drupal.ajax`, `#ajax`, `use-ajax`) é legado; o padrão para novas interações assíncronas do tema ACULTA420 V2 é HTMX (`core/drupal.htmx`, `data-hx-*`). A regra foi registrada em `AGENTS.md`, `CLAUDE.md`, `web/themes/custom/aculta420_v2/AGENTS.md`, `web/themes/custom/aculta420_v2/docs/architecture.md` e políticas do Portal. Compatibilidade V1 permanece identificada como legado durante a migração.
-- **Portal:** `LoginPopupForm` responde a requisições HTMX, substitui o conteúdo do popup e usa `HX-Redirect` após autenticação; fallback sem JS/HTMX permanece. Nenhum contrato novo de domínio foi criado.
-- **Tema V2:** login do multidomain bar foi conectado ao HTMX; gavetas de mensagens/avisos carregam conteúdo via HTMX; counters recebem headers da resposta e comportamentos de foco/título/anúncio são compartilhados. Busca do multidomain bar e popup de registro ainda não foram migrados; F1 não está concluída.
-- **Validação:** lint PHP/PHPCS focal e fixture Firefox sintética foram executados; a fixture cobriu drawer, título/foco, opções lazy, busca de destinatário, reply/token, counters, filtros de avisos e login/HX-Redirect. Isso não comprova autenticação real Drupal. Gates amplos do Portal continuam acusando divergências preexistentes de manifests/módulos e classes LMS; captura visual responsiva/modos/zoom e integração autenticada ficam pendentes.
-- **Runtime:** antes da entrega, `updatedb:status` e `config:status` estavam limpos em `toca`/`aculta_runtime`; o checkout Runtime é este mesmo worktree. Revalidar após os pushes. Sem import de configuração nem escrita de dados prevista.
-- **Próximos passos ao retomar:** concluir gates e commits/push desta microfase; depois retomar F1 com busca e registro, validar login contra Drupal real, capturas do checklist e demais etapas do plano. Loja permanece aguardando autorização.
