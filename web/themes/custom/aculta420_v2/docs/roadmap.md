@@ -432,11 +432,14 @@ fallback sem JavaScript).
 
 **Estado de F1:** busca, login e gavetas de mensagens/avisos usam HTMX, com
 foco, `aria-live` e teclado conferidos; a gaveta de avisos autenticada foi
-capturada em seis larguras e dois modos, com os dois grupos `details`. Resta o
-consumer V2 do cadastro popup, que é o checkout de doação, reservado à F5 e
-aguardando autorização; não há ponto de entrada V2 para capturá-lo. F2
-permanece dependente de F1a; F3 segue a ordem de dependências de módulos
-definida na ADR-050.
+capturada em seis larguras e dois modos, com os dois grupos `details`. Restam
+duas pendências: (1) o consumer V2 do cadastro popup, que é o checkout de
+doação, reservado à F5 e aguardando autorização; (2) o fallback sem JavaScript
+das gavetas — o gatilho é um `<button>` e o Portal não fornece `all_href`, então
+sem JS não há link para a página completa de mensagens/avisos. Converter o
+gatilho em link (ou fornecer a URL no contrato) muda o contrato de
+apresentação e depende de decisão do responsável. F2 permanece dependente de
+F1a; F3 segue a ordem de dependências de módulos definida na ADR-050.
 
 ## Compatibilidade e limites
 
