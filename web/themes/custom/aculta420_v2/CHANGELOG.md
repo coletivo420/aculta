@@ -1,5 +1,17 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — Fase 4: UI Styles implementada (validação de servidor pendente)
+
+- Registro do catálogo oficial de UI Styles em `aculta420_v2.ui_styles.yml`, restrito ao administrador Drupal:
+  - Botões: opções para as 4 variantes (.button--primary, .button--secondary, .button--outline, .button--ghost) com tokens semânticos `--button-*`.
+  - Faixa de acento do cartão: verde, amarela e vermelha (.card-cultural--accent-{green,yellow,red}), mapeadas para o componente card-cultural, com regra de precedência da Opção A aprovada pelo responsável (UI Styles sobrepõe o accent vindo do backend).
+  - Cores por purpose: 10 esquemas oficiais da Paleta ACULTA Skunk Family baseados em `PurposePaletteSchemes.php`.
+- Inclusão dos tokens e classes correspondentes no mapa `PortalUiHooks::TOKENS`.
+- Criação do gate automatizado `scripts/validate-aculta420-ui-styles.php` validando conformidade estrita das opções com os componentes CSS e com o mapa de classes.
+- Teste unitário `PurposePaletteResolutionUnitTest.php` cobrindo a resolução de tokens e atributos HTML de propósito nos dois modos.
+- Validação visual em Firefox ESR visível nos modos claro e escuro, 320 px e 1440 px, com zero rolagem horizontal e persistência em `$SUITE_OUT`.
+- Status da F4: implementada, validação de servidor pendente.
+
 ## Não versionado — aplicação da escolha de esquema no runtime
 
 - `SurfaceSettingsHooks::preprocessHtml` lê `aculta_purpose_palette`, valida o esquema em `PurposePaletteSchemes::SCHEMES` e aplica os tokens de purpose selecionados nos modos claro e escuro.

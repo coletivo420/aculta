@@ -1,0 +1,37 @@
+button:
+  category: "Botões"
+  label: "Estilo de botão"
+  description: "Aplica variantes oficiais de botões com tokens semânticos e contrastes medidos."
+  options:
+    button--primary: "Botão primário"
+    button--secondary: "Botão secundário"
+    button--outline: "Botão contorno"
+    button--ghost: "Botão fantasma"
+  previewed_as: hidden
+
+card_accent:
+  category: "Cartões"
+  label: "Faixa de acento do cartão"
+  description: "Aplica a cor da faixa lateral de acento do cartão cultural."
+  options:
+    card-cultural--accent-green: "Faixa de acento verde"
+    card-cultural--accent-yellow: "Faixa de acento amarela"
+    card-cultural--accent-red: "Faixa de acento vermelha"
+  previewed_as: hidden
+
+purpose_palette:
+  category: "Cores por purpose"
+  label: "Esquema da paleta por purpose"
+  description: "Aplica o esquema oficial da Paleta ACULTA Skunk Family para a faixa de destaque do purpose."
+  options:
+    verde-skunk: "Skunk (verde profundo)"
+    verde-sativa: "Sativa (verde fiel)"
+    verde-ruderalis: "Ruderalis (verde suave)"
+    verde-afghan: "Afghan (verde profundo)"
+    amarelo-acapulco-gold: "Acapulco Gold (amarelo profundo)"
+    amarelo-lemon-haze: "Lemon Haze (amarelo fiel)"
+    amarelo-golden-goat: "Golden Goat (amarelo suave)"
+    vermelho-red-kush: "Red Kush (vermelho profundo)"
+    vermelho-panama-red: "Panama Red (vermelho fiel)"
+    vermelho-red-congolese: "Red Congolese (vermelho suave)"
+  previewed_as: hidden

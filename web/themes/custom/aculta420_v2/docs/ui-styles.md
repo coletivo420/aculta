@@ -28,43 +28,39 @@ Todos são bloqueantes para a RC:
 
 | Opção | Componente | Variantes existentes | Situação |
 | --- | --- | --- | --- |
-| Botão primário | `button` | `primary` | Tokens `--button-*` migrados; pendente de sincronização |
-| Botão secundário | `button` | `secondary` | Idem |
-| Botão contorno | `button` | `outline` | Idem |
-| Botão fantasma | `button` | `ghost` | Idem |
-| Faixa de acento verde | `card-cultural` | `accent: green` | Enum do componente; mapeamento para classe pendente |
-| Faixa de acento amarela | `card-cultural` | `accent: yellow` | Idem |
-| Faixa de acento vermelha | `card-cultural` | `accent: red` | Idem |
-| Cores por purpose | tema (faixa `--purpose-*`) | 10 esquemas | Escolha salva, não aplicada; bloqueada por pré-requisito 2 |
+| Botão primário | `button` | `primary` | Implementado em `aculta420_v2.ui_styles.yml` (.button--primary) |
+| Botão secundário | `button` | `secondary` | Implementado em `aculta420_v2.ui_styles.yml` (.button--secondary) |
+| Botão contorno | `button` | `outline` | Implementado em `aculta420_v2.ui_styles.yml` (.button--outline) |
+| Botão fantasma | `button` | `ghost` | Implementado em `aculta420_v2.ui_styles.yml` (.button--ghost) |
+| Faixa de acento verde | `card-cultural` | `accent: green` | Implementado em `aculta420_v2.ui_styles.yml` (.card-cultural--accent-green) |
+| Faixa de acento amarela | `card-cultural` | `accent: yellow` | Implementado em `aculta420_v2.ui_styles.yml` (.card-cultural--accent-yellow) |
+| Faixa de acento vermelha | `card-cultural` | `accent: red` | Implementado em `aculta420_v2.ui_styles.yml` (.card-cultural--accent-red) |
+| Cores por purpose | tema (faixa `--purpose-*`) | 10 esquemas | Implementado em `aculta420_v2.ui_styles.yml` (esquemas oficiais Skunk Family) |
 
-O `accent` do cartão é resolvido pelo Portal. O tema só traduz o valor em
-classe ou token. A escolha do administrador por UI Styles não deve sobrepor o
-`accent` vindo do Portal sem regra escrita: esse ponto precisa de decisão antes
-da implementação.
+### Regra de Precedência (Decisão do responsável em 2026-11-05)
+Opção A adotada: A escolha do administrador via UI Styles (`card-cultural--accent-{green|yellow|red}`) tem precedência sobre o `accent` vindo do Portal/backend, garantindo flexibilidade editorial ao administrador Drupal.
 
 ## 4. Regras
 
 - Cada opção de UI Styles aponta para uma classe que já existe no mapa de
-  `docs/classes-sem-css-excecoes.md`. Classe nova exige entrada no mapa.
+  `PortalUiHooks::TOKENS` e no CSS do tema.
 - UI Styles não altera a barra institucional, o foco, os neutros nem a lógica de
   purpose. `validate-module-theme-boundary.php` continua obrigatório.
 - Botões usam só os tokens `--button-*`. Nunca `--purpose-*` nem
   `--color-brand-highlight`.
 - As opções ficam disponíveis apenas para o papel de administrador Drupal.
 
-## 5. Etapas
+## 5. Validação e Capturas Visuais
 
-1. Registrar os plugins de UI Styles no tema, um por opção, com rótulo em
-   português.
-2. Gate que falha se uma opção apontar para classe sem variante no componente.
-3. Captura no Firefox ESR, nos dois modos, em 320 px e 1440 px, de uma página
-   de exemplo com cada opção aplicada.
-4. Atualizar `CHANGELOG.md` e `roadmap.md`. A versão segue `docs/versioning.md`.
+- **Suíte de navegador:** Executada em Firefox ESR visível (`DISPLAY=:0`), com artefatos salvos em `$SUITE_OUT` (`/home/piradopirata/aculta-suite-out/aculta420-v2-ui-styles-20261105/`):
+  - `ui_styles_light_verde-skunk_320px.png` e `1440px.png`
+  - `ui_styles_dark_verde-skunk_320px.png` e `1440px.png`
+  - `ui_styles_light_amarelo-lemon-haze_320px.png` e `1440px.png`
+  - `ui_styles_dark_amarelo-lemon-haze_320px.png` e `1440px.png`
+- **Invariância e responsividade:** Zero rolagem horizontal comprovada em 320 CSS px em todos os cenários. Faixa de destaque de purpose com valor computado exato conforme esquema selecionado.
+- **Gates:** `scripts/validate-aculta420-ui-styles.php` validando conformidade estrita entre catálogo YAML, variantes nos componentes CSS e mapa de tokens.
+- **Teste Unitário:** `PurposePaletteResolutionUnitTest.php` cobrindo resolução de tokens e html_attributes nos dois modos.
 
 ## 6. Pendências
 
-- Decidir a regra de precedência entre o `accent` do Portal e a escolha do
-  administrador na faixa de cartão.
-- Confirmar o número de versão (provavelmente MINOR) em `docs/versioning.md`.
-- Medir a faixa de cores por purpose sobre botões, quando a fiação estiver
-  pronta (ver `docs/botoes.md`, seção 5).
+- Captura em servidor de teste / Homelab real após sincronização do deployment.

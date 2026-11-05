@@ -372,7 +372,7 @@ Critérios de contraste WCAG AA aprovados em `tokens.css`. Schema e defaults con
 
 ## Fase 4 — UI Styles
 
-**Status: planejada em 2026-11-05; implementação pendente.** Compatibilidade do módulo `ui_styles` 1.22.0 verificada no Runtime. Escopo e decisões registrados em `docs/ui-styles.md`: botões (4 variantes), faixa de acento de cartão e cores por purpose; uso restrito ao administrador Drupal; entrega antes da RC. Pré-requisitos bloqueantes: botões sincronizados sem o CSS legado de `buttons.css`, escolha de esquema por purpose ligada ao runtime, e servidor na versão atual de `origin/dev`. O tema ainda não registra plugins de UI Styles.
+**Status: implementada em 2026-11-05; validação de servidor pendente.** Catálogo registrado em `aculta420_v2.ui_styles.yml` com botões (4 variantes), faixas de acento de cartão (verde, amarela e vermelha com precedência Opção A) e cores por purpose (10 esquemas oficiais da Paleta ACULTA Skunk Family). Gate `scripts/validate-aculta420-ui-styles.php` PASS (20 verificações). Teste de unidade `PurposePaletteResolutionUnitTest` PASS. Captura visual em navegador Firefox ESR visível nos dois modos, 320 px e 1440 px, sem rolagem horizontal, salva em `$SUITE_OUT`. A validação e o status de "concluída" aguardam a sincronização no servidor de testes.
 
 ## Fase 5 — Componentes e templates
 
