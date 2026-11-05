@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.4.1-dev.76
+version: 0.5.0-dev.1
 state: Dev
 next_phase: 'Implementar adapters de inventário por módulo owner para posts, revisões e anexos; depois desenhar o executor explícito com confirmação, backup restaurável, trilha auditável e revalidação em cada lote. Homologar somente em banco isolado; não executar limpeza nem rebuild no Runtime.'
 progress_note: "2026-11-04 dev.76: schema de `aculta_portal.user_upload` incluído no owner; Kernel real instala configuração Portal. Integração de owners do Index + política de upload: 8 testes/162 assertions PASS (216 depreciações Core/contrib). Runtime após push/cache ainda pendente.

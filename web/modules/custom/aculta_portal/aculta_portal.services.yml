@@ -215,6 +215,10 @@ services:
     arguments: ['@entity_type.manager', '@domain.negotiator', '@config.factory', '@request_stack', '%app.root%']
     tags:
       - { name: aculta_portal.helper }
+  Drupal\aculta_portal\Domain\ActivePurposesState: '@aculta_portal.active_purposes_state'
+  aculta_portal.active_purposes_state:
+    class: Drupal\aculta_portal\Domain\ActivePurposesState
+    arguments: ['@state', '@aculta_portal.domain_purpose']
   aculta_portal.checkout_step_resolver:
     class: Drupal\aculta_portal\Checkout\CheckoutStepResolver
     arguments: ['@commerce_checkout.chain_checkout_flow_resolver']

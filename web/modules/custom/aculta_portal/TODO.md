@@ -1,6 +1,6 @@
 # TODO — aculta_portal
 
-Estado: Dev · versão 0.4.1-dev.76 (`aculta_portal.info.yml`) · status: `docs/operations/status/aculta_portal.yml`.
+Estado: Dev · versão 0.5.0-dev.1 (`aculta_portal.info.yml`) · status: `docs/operations/status/aculta_portal.yml`.
 
 ## Próximo passo
 

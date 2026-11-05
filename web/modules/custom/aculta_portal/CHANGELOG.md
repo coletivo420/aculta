@@ -1,3 +1,10 @@
+## 0.5.0-dev.1 — estado neutro de purposes ativos e hooks de ciclo de vida (F3)
+
+- Cria o serviço `ActivePurposesState` (`aculta_portal.active_purposes_state`) que expõe o estado neutro `aculta_portal.active_purposes` via Core State API.
+- Mantém o estado atualizado com hooks OOP em `DomainLifecycleHooks` (`domain_insert`, `domain_update`, `domain_delete`).
+- Popula o estado em sites existentes via `aculta_portal_post_update_active_purposes_state`.
+- Teste de Kernel `ActivePurposesStateKernelTest` valida ciclo de vida, persistência e pós-atualização.
+
 ## Não versionado — chave neutra de purpose no HTML (ADR-046 Fase 3)
 
 - `AppearanceHooks::preprocessHtml` expõe `aculta_purpose`, a chave neutra do
