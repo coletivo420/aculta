@@ -40,6 +40,14 @@ python3 scripts/portal-agent-budget.py context P5.2-A 3000
 
 Aplicar `docs/portal/DRUPAL-11-STANDARDS.md`, `AGENTS.md`, PR #90 e roadmap. Não introduzir service locators, storage paralelo nem enfraquecer segurança/checkout. A portabilidade entre bancos pertence somente ao projeto independente DBTNG-2. Não declarar PASS sem execução.
 
+## Ferramentas de leitura parcial
+
+Use antes de abrir um arquivo grande:
+
+- `python3 scripts/doc-section.py ARQUIVO "título" --max 4000` imprime só uma seção Markdown, com teto de bytes. `--list` mostra os títulos com número de linha.
+- `python3 scripts/lookup.py rota /caminho` ou `python3 scripts/lookup.py token nome` acha uma rota ou um token em `ROUTES-SITEMAP.md` e `TOKENS-E-ATRIBUTOS.md`, com a seção de cada resultado.
+- `python3 scripts/agent-output.py --lines 40 -- COMANDO` limita a saída de comandos (ver `AGENT-OUTPUT.md`).
+
 ## Não ler por padrão
 
 Estes caminhos não entram no contexto sem motivo específico da tarefa. Quando precisar, leia só o trecho ou o arquivo nomeado.
