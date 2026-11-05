@@ -36,6 +36,11 @@ props:
       type: string
       title: Texto do link
       default: Leia a publicação
+    accent:
+      type: [string, 'null']
+      title: Faixa de acento resolvida pelo Portal ou pelo administrador
+      enum: [green, yellow, red, null]
+      default: null
 slots:
   image:
     title: Capa

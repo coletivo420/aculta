@@ -1,4 +1,6 @@
-<div class="revista-teaser">
+{% set classes = ['revista-teaser'] %}
+{% if accent %}{% set classes = classes|merge(['revista-teaser--accent-' ~ accent]) %}{% endif %}
+<div class="{{ classes|join(' ') }}">
   <div class="revista-teaser__media">
     {% if has_cover %}
       {% block image %}{% endblock %}

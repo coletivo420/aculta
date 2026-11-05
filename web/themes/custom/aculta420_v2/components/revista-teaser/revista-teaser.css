@@ -10,6 +10,11 @@
   overflow: hidden;
 }
 
+.revista-teaser[class*="revista-teaser--accent-"] { border-inline-start-width: .375rem; }
+.revista-teaser--accent-green { border-inline-start-color: var(--accent-green-stripe); }
+.revista-teaser--accent-yellow { border-inline-start-color: var(--accent-yellow-stripe); }
+.revista-teaser--accent-red { border-inline-start-color: var(--accent-red-stripe); }
+
 .revista-teaser__media { aspect-ratio: 16 / 9; min-inline-size: 0; overflow: hidden; }
 .revista-teaser__media > :where(div, figure, picture, a),
 .revista-teaser__media :where(.field, .field__item, .media) { block-size: 100%; inline-size: 100%; }

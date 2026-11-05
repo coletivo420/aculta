@@ -19,11 +19,11 @@ que o markup atual, com CSS adaptado e captura antes/depois nos dois modos.
 A decisão de adotar `card-cultural` em Revista e Eventos não pode ser executada como está:
 
 - **Revista:** os cartões são `revista-teaser` (via `node--revista--teaser`). O `revista-teaser` não tem prop de `accent`, e `card-cultural` é um cartão de evento e ponto cultural (data, local, resumo). Trocar um pelo outro muda o conteúdo exibido, não só a aparência.
-- **Eventos:** a página de evento já usa `event-page-layout`. As listagens são Views (`eventos_datas_relacionadas`, `eventos_locais`, em `config/sync`), que renderizam com os templates padrão do Drupal. Adotar `card-cultural` exige um template de Views novo, que é justamente o tipo de troca que causou a regressão de `91549bc7`.
+- **Eventos:** a página de evento já usa `event-page-layout`. As Views de evento (`eventos_datas_relacionadas` e `eventos_locais`, em `config/sync`) são tabelas do painel administrativo (`painel-administrativo/eventos/...`), não listagens públicas. Não há listagem pública de eventos no repositório, então não existe lugar de cartão de evento para trocar por `card-cultural`. Criar um template de Views para essas tabelas seria trocar tabela administrativa por cartão, o que muda a função da tela.
 - **Studio e Loja:** nenhum template de página localizado no repositório para `tabs`, `form-field`, `progress`, `empty-state` ou cartão de Loja.
 - **Ambiente:** `vendor/` não existe e não há servidor local, então captura visual e os gates que dependem de bootstrap do Drupal não rodam neste ambiente.
 
-Decisão necessária antes de qualquer troca de template: definir, para Revista e Eventos, se o `card-cultural` deve existir como cartão novo de listagem de eventos, ou se a faixa de acento deve ser estendida ao `revista-teaser`.
+Estado após a execução: `revista-teaser` recebeu a prop `accent` e as classes `revista-teaser--accent-*`, com a mesma faixa dos tokens `--accent-*-stripe` do `card-cultural`. Nenhum nó da Revista passa `accent` ainda, então não há mudança visível até a origem do valor ser decidida. Pendente: de onde vem o accent da Revista (campo editorial, administrador por UI Styles ou Portal). Eventos: decisão pendente sobre criar uma listagem pública de eventos com `card-cultural`, ou manter Eventos fora desta rodada.
 
 ## 1. Consumo atual por componente
 
