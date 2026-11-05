@@ -1,6 +1,6 @@
 # ADR-050 — Migração do AJAX do ACULTA para htmx
 
-- **Status:** aceito pelo responsável em 2026-11-05. F0 concluída no Homelab em 2026-11-05 com testes oficiais do Core e fixture de diálogo/formulário em Firefox e Chromium; detalhes e reexecução em [`docs/htmx-confirmacao.md`](../htmx-confirmacao.md). Nenhum código de produção foi migrado.
+- **Status:** aceito pelo responsável em 2026-11-05. F0 concluída no Homelab em 2026-11-05 com testes oficiais do Core e fixture de diálogo/formulário em Firefox e Chromium; detalhes e reexecução em [`docs/htmx-confirmacao.md`](../htmx-confirmacao.md). **F1 coberta em 2026-11-05:** login, busca, gavetas (com a exceção registrada na seção 8.3, item 6) e cadastro no checkout de doação migrados e validados no Runtime de desenvolvimento. F2 e F3 seguem pendentes.
 - **Data:** 2026-11-05.
 - **Relaciona-se com:** ADR-044 (opção C, htmx), ADR-045 (um único módulo de AJAX; sem Core fora do escopo), ADR-046 (V2), ADR-048 (popup de foto), ADR-049 (AJAX do Studio, revisado por este ADR), `docs/portal/CROSS-DOMAIN-REQUEST-POLICY.md`, `docs/portal/PAYMENT-DOMAIN-POLICY.md`.
 
@@ -96,7 +96,7 @@ Itens de código ACULTA que usam AJAX, `fetch` de UI ou `#ajax`/`use-ajax`, em 2
 | Fase | Entrega | Critério |
 | --- | --- | --- |
 | F0 | Confirmar a API `Htmx` no `core/lib` do 11.5 no Homelab; prova com um popup e um formulário; CSRF e `@internal` verificados | nota com saída de teste; ADR-050 atualizado |
-| F1 | Tema V2 e login | login, gavetas e busca funcionam com e sem JavaScript; foco e `aria-live` conferidos |
+| F1 | Tema V2 e login | login e busca funcionam com e sem JavaScript; gavetas funcionam com JavaScript, sob a exceção registrada na seção 8.3; foco e `aria-live` conferidos |
 | F2 | Studio, conta e popup de foto (entrega separada no `aculta_user`) | navegação, `aria-current`, popup de foto e formulários de conta; gate de foto |
 | F3 | Módulos do Portal (uma entrega por módulo) | cada módulo passa no próprio gate |
 | F4 | Carrinho e frete | autorização da loja |
