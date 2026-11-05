@@ -1,13 +1,11 @@
 <nav class="aculta-account-menu{{ authenticated ? ' aculta-account-menu--signed-in' }}" aria-label="{{ 'Menu de conta e sites'|t }}">
   <details class="aculta-account-menu__details">
     <summary class="aculta-account-menu__summary">
-      <span class="aculta-account-menu__avatar">
-        {% if avatar is not empty %}
-          {{ avatar }}
-        {% else %}
-          {{ include('aculta420_v2:icon', { name: 'user', variant: 'duotone', size: 'bar' }, with_context = false) }}
-        {% endif %}
-      </span>
+      {% if avatar is not empty %}
+        {{ include('aculta420_v2:avatar', { media: avatar, size: 'sm' }, with_context = false) }}
+      {% else %}
+        {{ include('aculta420_v2:avatar', { size: 'sm', label: 'Avatar'|t }, with_context = false) }}
+      {% endif %}
       <span class="visually-hidden">{% if summary_label is not empty %}{{ summary_label|t }}{% else %}{{ 'Abrir menu de conta'|t }}{% endif %}</span>
     </summary>
     <div class="aculta-account-menu__panel">
@@ -24,13 +22,11 @@
       <section class="aculta-account-menu__session" aria-label="{{ 'Sessão'|t }}">
         {% if authenticated %}
           <div class="aculta-account-menu__identity">
-            <span class="aculta-account-menu__avatar">
-              {% if avatar is not empty %}
-                {{ avatar }}
-              {% else %}
-                {{ include('aculta420_v2:icon', { name: 'user', variant: 'duotone', size: 'bar' }, with_context = false) }}
-              {% endif %}
-            </span>
+            {% if avatar is not empty %}
+              {{ include('aculta420_v2:avatar', { media: avatar, size: 'sm' }, with_context = false) }}
+            {% else %}
+              {{ include('aculta420_v2:avatar', { size: 'sm', label: 'Avatar'|t }, with_context = false) }}
+            {% endif %}
             {% if account_name %}<span>{{ account_name }}</span>{% endif %}
           </div>
         {% endif %}

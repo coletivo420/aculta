@@ -11,15 +11,17 @@ PHPCS e YAML PASS; no Runtime, `drush cr` e inspeção do route provider confirm
 os cinco paths, purpose e ausência dos antigos. Acesso anônimo negado. Captura
 autenticada e fluxos de escrita permanecem pendentes.
 
-## Avatar — G1 implementado; integração e validação visual pendentes
+## Avatar — G1 implementado e integrado ao menu de conta
 
 Criado o SDC `avatar`, com slot de mídia, fallback neutro nomeado e stories para
 os dois estados. O componente não consulta entidade/usuário nem gera iniciais.
 Schema/render Drupal passaram e Firefox ESR visível capturou os dois estados em
 320, 390, 768, 959, 960 e 1440 px nos modos claro/escuro; zoom 200% em 320 CSS
 px também passou sem overflow. Teclado não se aplica ao componente estático.
-`account-menu` e `author-card` ainda mantêm seus slots atuais; a adoção é
-separada para preservar o contrato já validado.
+`account-menu` adota o componente no resumo e no painel de identidade, com
+`size: sm` e a mídia entregue pelo Portal; validado no Runtime anônimo (fallback)
+e autenticado (imagem), em 1024 px, sem overflow, e as suítes do shell seguem
+PASS. `author-card` mantém o slot de autoria atual.
 
 ## Author box — G1 coberto por author-card; captura no consumer pendente
 

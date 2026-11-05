@@ -30,22 +30,6 @@
   outline-offset: 2px;
 }
 
-.aculta-account-menu__avatar {
-  align-items: center;
-  display: inline-flex;
-  inline-size: 1.875rem;
-  block-size: 1.875rem;
-  border-radius: var(--radius-full);
-  overflow: hidden;
-  flex: none;
-}
-
-.aculta-account-menu__avatar img {
-  inline-size: 100%;
-  block-size: 100%;
-  object-fit: cover;
-}
-
 .aculta-account-menu__panel {
   box-sizing: border-box;
   background: var(--color-surface-raised);

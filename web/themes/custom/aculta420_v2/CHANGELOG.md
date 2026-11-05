@@ -1,5 +1,15 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — avatar do menu de conta usa o SDC
+
+- `account-menu` passou a renderizar o SDC `avatar` no resumo e no painel de
+  identidade, com `size: sm` (32 px), mídia fornecida pelo Portal e fallback
+  neutro. O markup duplicado e o CSS `aculta-account-menu__avatar` foram
+  removidos.
+- Validado no Runtime anônimo (1 avatar de fallback) e autenticado (2 avatares
+  com imagem), sem overflow; gate de render dos 35 SDCs, schemas e foundations
+  PASS; suítes do shell PASS.
+
 ## Não versionado — dívida de estilo resolvida
 
 - As 189 classes de `PortalUiHooks::TOKENS` sem CSS receberam estilo mínimo em

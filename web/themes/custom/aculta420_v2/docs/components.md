@@ -14,6 +14,12 @@ domínio, responsabilidade reservada ao preprocess da fase P2. Sem JavaScript.
 
 ### avatar
 
+Consumer atual: `account-menu` usa o componente no resumo e no painel de
+identidade (32 px, `size: sm`), com a mídia entregue pelo Portal e o fallback
+neutro sem foto. `author-card` mantém o slot de autoria.
+
+### avatar — contrato
+
 Apresenta a mídia fornecida pelo módulo proprietário no slot `media` e mantém o
 texto alternativo do render array. Sem mídia, mostra o ícone neutro `user-circle`
 com nome acessível; não gera iniciais nem consulta usuário. Props: `size`
