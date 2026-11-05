@@ -61,7 +61,7 @@ Itens de código ACULTA que usam AJAX, `fetch` de UI ou `#ajax`/`use-ajax`, em 2
 | `aculta_gallery` | `GalleryEmbedDialogForm` | `<dialog>` com htmx |
 | `aculta_paths` (administração, MAIN) | `SurfaceEditController`, `SurfaceListController`, `SurfaceEditForm` | fragmento; só no MAIN |
 | `aculta_secrets_manager` (administração, MAIN) | `SecretsController`, `SecretEditForm`, `SecretClearForm` | fragmento; só no MAIN; sem segredo na resposta |
-| `aculta_links` e `aculta_linkweed` | `SocialLinksSettingsForm` (nos dois) | **conferir duplicidade**: dois módulos com o mesmo formulário |
+| `aculta_linkweed` | `SocialLinksSettingsForm` | migrar (o `aculta_links` foi removido em 2026-11-05) |
 
 ### F4 — Carrinho e frete (loja)
 
@@ -115,7 +115,6 @@ Cada fase termina em commit atômico publicado em `dev`, com `RUNTIME STATUS: DE
 ## 7. Não-decisões e pendências
 
 - O nome final do módulo JavaScript (`studio-htmx.js`).
-- Se `aculta_links` e `aculta_linkweed` devem ficar em um só módulo.
 - Se `dhtmlxscheduler.js` é migrado ou substituído.
 - Se `cep-address.js` usa htmx ou continua com JSON.
 - O prazo de F5, que depende de autorização.
@@ -210,7 +209,7 @@ Depende só de F0. Uma entrega/commit por módulo, nesta ordem:
 4. `aculta_paths` (administração, só MAIN): `SurfaceEditController.php`, `SurfaceListController.php`, `SurfaceEditForm.php`. Gate `validate-admin-routes-main-domain.php`.
 5. `aculta_secrets_manager` (administração, só MAIN): `SecretsController.php`, `SecretEditForm.php`, `SecretClearForm.php`. A resposta **nunca** contém o valor do segredo. Gate `validate-admin-routes-main-domain.php`.
 
-**Parado, não seguir sem decisão:** `aculta_links` e `aculta_linkweed` (`SocialLinksSettingsForm`, nos dois). Registrar `AGUARDANDO DECISÃO` e não tocar.
+**Removido:** `aculta_links` (duplicado, removido em 2026-11-05). Só `aculta_linkweed` permanece na F3.
 
 **Gates por módulo:** `validate-aculta-portal-drupal11.php`, mais os da tabela acima quando aplicável.
 

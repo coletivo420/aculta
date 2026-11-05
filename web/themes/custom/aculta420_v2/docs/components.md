@@ -222,7 +222,7 @@ original caso a descoberta Drupal ainda não conheça o SDC.
 - **Estado:** entregue.
 
 ### social-links-page — Micropágina de links
-- **Papel:** apresenta título, descrição, identidade pública autorizada e links preparados pelo submódulo `aculta_links`.
+- **Papel:** apresenta título, descrição, identidade pública autorizada e links preparados pelo módulo `aculta_linkweed` (o antigo `aculta_links` foi removido em 2026-11-05).
 - **Props:** `title`, `description`, `has_links`, `theme_preset` (`classic`, `soft` ou `outline`).
 - **Slots:** `owner_identity`, `links` (render arrays do Portal).
 - **Story:** `social-links-page.default.story.yml`.
