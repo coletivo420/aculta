@@ -112,6 +112,8 @@ Com JavaScript desligado, os links dos gatilhos continuam válidos: o login e a 
 ## 6. Shell
 
 - `templates/layout/page.html.twig` monta a página e inclui a barra institucional (`multidomain-bar`) antes do `page.header`.
+- A região `footer` é apresentada pelo SDC `site-footer`; quando o Portal fornece `social_links_page_footer`, usa a variação `social-links` (C4).
+- `templates/aculta-links-page.html.twig` adapta o hook de apresentação do submódulo Links ao SDC `social-links-page`, sem resolver dados ou regras de domínio.
 - A barra institucional é fixa. A altura medida dela vira `--aculta-institution-bar-height`, e um espaçador (`.aculta-institution-bar-placeholder`) mantém o conteúdo abaixo dela.
 - O bloco `system_menu_block:main` é envolvido pelo SDC `navigation-bar` no mesmo peso e posição do cabeçalho. O render array original fica como slot, com access e cache preservados.
 - O menu de conta (`account-menu`) fica dentro da barra. Visitante vê "Entrar"; autenticado vê o disclosure com avatar e as ações de conta (ver [components.md](components.md)).

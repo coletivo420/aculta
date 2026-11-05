@@ -73,6 +73,12 @@ Entre 40rem e 60rem o layout é o do mobile, com cartões em duas colunas a part
 (6b) vem antes da barra lateral (6a), mesmo quando a barra lateral aparece à
 esquerda na tela. Isso dá leitura correta para leitor de tela e em zoom.
 
+**Implementação C4:** `page.html.twig` mantém as regiões `header`, `navigation`,
+`highlighted`, `help`, `breadcrumb`, `content`, `sidebar_first` e `footer`.
+Conteúdo precede a barra lateral no DOM; o `site-footer` recebe a região do
+Drupal ou, quando presente, o rodapé social renderizado pelo Portal. A diferença
+visual do rodapé social usa a variante do SDC, sem inferir purpose no tema.
+
 **Exceção proposta (padrão, a confirmar):** em Minha conta, a sub-navegação é
 navegação, não conteúdo secundário. Se ela ficar depois do formulário no HTML,
 quem usa leitor de tela a encontra depois dos campos. Proposta: a

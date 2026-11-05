@@ -1167,6 +1167,25 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 
 # Continuação — remoção do gate de Olivero e menu V2 — 2026-11-05
 
+- **C4 — revisão estrutural do shell:** o adapter `aculta-links-page.html.twig`
+  apresenta a micropágina do módulo Links por SDC dedicado, sem `<main>` interno;
+  `page.html.twig` conserva o `social_links_page_footer` via variação social do
+  `site-footer`. Stories e `docs/components.md` foram atualizados. O SDC novo
+  não exigiu limpeza do cache Drupal: o gate Drush agora faz descoberta
+  transitória com backend nulo, coberta por `docs/gates.md`.
+- **Gates C4:** schemas 55 componentes/764 checks, design foundations 2.468,
+  V2 foundations 55 pares, browser validators 21, shell contract 13, render SDC
+  Drupal 24 componentes PASS; `php -l` e `git diff --check` PASS. Capturas em
+  claro/escuro, 320/390/768/959/960/1440, zoom 200% e teclado DEFERRED porque
+  `DISPLAY` está indisponível. O adapter de conteúdo público Links fica para G3.
+- **Runtime:** nenhum cache, configuração ou banco do Runtime foi alterado.
+  Antes de sincronizar qualquer head, executar `updatedb:status` e
+  `config:status` como verificações somente leitura.
+- **Arquivos C4:** `scripts/validate-aculta420-v2-sdc.php`;
+  `web/themes/custom/aculta420_v2/{CHANGELOG.md,docs/{architecture.md,components.md,gates.md,layout-pagina.md,roadmap.md},components/site-footer/,components/social-links-page/,templates/aculta-links-page.html.twig,templates/layout/page.html.twig}`.
+- **Próximo passo:** validar PHP/style e diff, commit e push direto para `dev`;
+  depois prosseguir para o próximo item independente do roadmap.
+
 - **Instrução vigente:** o responsável dispensou validação Olivero em 2026-11-03. Atualizados `AGENTS.md`, `CLAUDE.md`, roteiros de browser afetados e índice do projeto para que suítes não o exijam, não alterem `system.theme` para essa verificação e não o listem como bloqueio. Registros históricos permanecem identificados como histórico.
 - **Scripts:** avatar e fórum deixaram de documentar/selecionar Olivero; suites de documento/planilha e PDF passam somente no harness ACULTA420; acessibilidade do Fórum não troca tema. Compilação Python e `git diff --check` PASS; a suíte visual não foi executada.
 - **Limpeza publicada:** commit `b9ac306e28` em `origin/dev`. Inclui instruções de agentes, suites/configuração de browser e status index; não contém o trabalho C2. `py_compile` dos seis scripts afetados, `git diff --check`, `updatedb:status` e `config:status` PASS. Runtime permaneceu sem escrita, no commit publicado.

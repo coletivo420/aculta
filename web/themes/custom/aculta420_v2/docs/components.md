@@ -1,6 +1,6 @@
 # Catálogo de componentes do tema V2
 
-Vinte e cinco componentes SDC, todos com schema estrito (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado; a auditoria integral do catálogo (Fase 5) ainda não foi feita.
+Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado; a auditoria integral do catálogo (Fase 5) ainda não foi feita.
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
@@ -30,6 +30,13 @@ Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context 
 - **Regras:** nome de exibição só no bloco de sessão, nunca no resumo da barra; sem inicial/letra no avatar. Alvo do controle 35 px e ícone 30 px.
 - **Estado:** implementação C2 no tema e contratos Portal D1/D2 disponíveis. Capturas autenticadas e validação dos três estados de avatar permanecem pendentes.
 - **Status no schema:** `experimental`.
+
+### site-footer — Rodapé
+- **Papel:** apresenta os blocos da região Drupal `footer` ou os canais sociais preparados pelo Portal.
+- **Props:** `variant` (`institutional` ou `social-links`).
+- **Slot:** `content` (render array Drupal, com acesso e cache preservados).
+- **Stories:** `site-footer.default.story.yml`, `site-footer.social-links.story.yml`.
+- **Estado:** variação social integrada por C4; validação visual pendente.
 
 ### alerts-trigger — Avisos
 - **Papel:** botão com contagem e diálogo de avisos carregado sob demanda.
@@ -115,6 +122,14 @@ Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context 
 - **Papel:** mensagem anunciada a tecnologias assistivas.
 - **Props:** `type` (`status`, `warning` ou `error`), `messages`.
 - **Estado:** entregue.
+
+### social-links-page — Micropágina de links
+- **Papel:** apresenta título, descrição, identidade pública autorizada e links preparados pelo submódulo `aculta_links`.
+- **Props:** `title`, `description`, `has_links`, `theme_preset` (`classic`, `soft` ou `outline`).
+- **Slots:** `owner_identity`, `links` (render arrays do Portal).
+- **Story:** `social-links-page.default.story.yml`.
+- **Regra:** o tema só apresenta os dados do módulo; não consulta dono, entidades ou destinos.
+- **Estado:** adapter e componente implementados em C4; validação visual pendente.
 
 ### icon — Ícone
 - **Papel:** ícone Phosphor vetorial, injetado inline e oculto para leitores de tela (`aria-hidden`).

@@ -6,7 +6,13 @@ group: ACULTA
 props:
   type: object
   additionalProperties: false
-  properties: {}
+  properties:
+    variant:
+      type: string
+      enum: [institutional, social-links]
+      default: institutional
+      title: Variação do rodapé
+      description: Rodapé institucional da região Drupal ou rodapé de canais sociais do Portal.
 slots:
   content:
     title: Conteúdo do rodapé

@@ -9,6 +9,12 @@
 
 declare(strict_types=1);
 
+use Drupal\Core\Cache\NullBackend;
+use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Theme\ComponentNegotiator;
+use Drupal\Core\Theme\ComponentPluginManager;
+
 $theme_root = DRUPAL_ROOT . '/themes/custom/aculta420_v2';
 $theme_info = file_get_contents($theme_root . '/aculta420_v2.info.yml');
 $theme_libraries = file_get_contents($theme_root . '/aculta420_v2.libraries.yml');
@@ -67,12 +73,30 @@ $component_ids = [
   'pagination',
   'purpose-showcase',
   'site-footer',
+  'social-links-page',
   'status-messages',
 ];
 $manager = \Drupal::service('plugin.manager.sdc');
 $validator = \Drupal::service('Drupal\Core\Theme\Component\ComponentValidator');
 $renderer = \Drupal::service('renderer');
-$definitions = $manager->getDefinitions();
+// Discover current component sources in a nonpersistent cache. This renders
+// newly added SDCs in a worktree without clearing Runtime discovery caches.
+$theme_manager = \Drupal::service('theme.manager');
+$source_manager = new ComponentPluginManager(
+  \Drupal::moduleHandler(),
+  \Drupal::service('theme_handler'),
+  new NullBackend('component_plugins'),
+  \Drupal::configFactory(),
+  $theme_manager,
+  new ComponentNegotiator($theme_manager),
+  \Drupal::service('file_system'),
+  \Drupal::service('Drupal\\Core\\Theme\\Component\\SchemaCompatibilityChecker'),
+  \Drupal::service('Drupal\\Core\\Theme\\Component\\ComponentValidator'),
+  DRUPAL_ROOT,
+);
+$definitions = $source_manager->getDefinitions();
+(new \ReflectionProperty(DefaultPluginManager::class, 'definitions'))
+  ->setValue($manager, $definitions);
 $samples = [
   'account-menu' => [
     '#props' => ['authenticated' => TRUE],
@@ -83,7 +107,7 @@ $samples = [
   'badge' => ['#props' => ['label' => 'Cultura', 'variant' => 'primary', 'icon_name' => 'tag']],
   'breadcrumb' => [
     '#props' => ['label' => 'Breadcrumb'],
-    '#slots' => ['items' => \Drupal\Core\Render\Markup::create('<li class="aculta-breadcrumb__item"><a class="aculta-breadcrumb__link" href="/">Início</a></li><li class="aculta-breadcrumb__item aculta-breadcrumb__current" aria-current="page">Eventos</li>')],
+    '#slots' => ['items' => Markup::create('<li class="aculta-breadcrumb__item"><a class="aculta-breadcrumb__link" href="/">Início</a></li><li class="aculta-breadcrumb__item aculta-breadcrumb__current" aria-current="page">Eventos</li>')],
   ],
   'button' => [
     '#props' => [
@@ -200,6 +224,13 @@ $samples = [
   'site-footer' => [
     '#props' => [],
     '#slots' => ['content' => '<div class="region-footer"><p>Rodapé</p></div>'],
+  ],
+  'social-links-page' => [
+    '#props' => ['title' => 'Página de links', 'has_links' => TRUE, 'theme_preset' => 'classic'],
+    '#slots' => [
+      'owner_identity' => '',
+      'links' => '<ul data-portal-ui="social-links-list"><li><a data-portal-ui="social-links-channel" href="https://example.invalid/">Canal</a></li></ul>',
+    ],
   ],
   'status-messages' => ['#props' => ['type' => 'status', 'messages' => ['Validação concluída.']]],
 ];

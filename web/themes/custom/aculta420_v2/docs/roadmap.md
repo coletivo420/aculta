@@ -19,6 +19,17 @@ Schema, render SDC, shell e foundations passaram na rodada atual. A revisão
 visual autenticada, teclado e Escape estão pendentes porque `DISPLAY` não está
 disponível.
 
+## Revisão do shell e rodapé — C4 implementado; validação visual pendente
+
+Revisadas as oito regiões declaradas: header, navigation, highlighted, help,
+breadcrumb, content, sidebar_first e footer; a composição preserva conteúdo
+antes da barra lateral e mantém a barra institucional/Domain Header no shell.
+Corrigidos os adapters da micropágina Links (SDC dedicado, sem `<main>` aninhado)
+e do rodapé social fornecido pelo Portal. Schemas, renderização SDC, shell e
+design foundations passaram após as alterações. Capturas em claro/escuro,
+larguras, zoom 200% e teclado permanecem DEFERRED por falta de `DISPLAY`. O
+adapter de conteúdo público Links segue no inventário de templates G3.
+
 ## Renderização das configurações de superfície — conferida
 
 `SurfaceSettingsHooks` é a implementação única de `preprocess_html`, aplicando

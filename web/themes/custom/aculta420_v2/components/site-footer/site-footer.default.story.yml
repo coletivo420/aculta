@@ -1,6 +1,8 @@
 name: Rodapé institucional
 description: Região com identidade ACULTA, descrição e navegação apresentada em colunas progressivas.
 component: aculta420_v2:site-footer
+props:
+  variant: institutional
 slots:
   content: |
     <div class="region-footer">

@@ -66,7 +66,12 @@
     {% endif %}
   </main>
 
-  {% if page.footer %}
+  {% if social_links_page_footer %}
+    {{ include('aculta420_v2:site-footer', {
+      variant: 'social-links',
+      content: social_links_page_footer
+    }, with_context = false) }}
+  {% elseif page.footer %}
     {{ include('aculta420_v2:site-footer', { content: page.footer }, with_context = false) }}
   {% endif %}
 </div>

@@ -1,5 +1,13 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — revisão estrutural do shell (C4)
+
+- `page.html.twig` adapta a micropágina de Links ao SDC próprio e apresenta o
+  `social_links_page_footer` do Portal na variação social do `site-footer`. O
+  SDC mantém dados, links e identidade como render arrays fornecidos pelo módulo.
+  Render SDC e gates estáticos passaram; a revisão visual fica pendente porque
+  `DISPLAY` não está disponível.
+
 ## Não versionado — paridade de mensagens e avisos (C3)
 
 - Documentada a implementação já existente no shell V2 e no Portal: filtros de
