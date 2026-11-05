@@ -28,9 +28,12 @@
   `aculta_calendar`, `aculta_donation`, `aculta_file_uploader`, `aculta_linkweed`,
   `aculta_mailer`, `aculta_messenger`, `aculta_paths`, `aculta_ugc` e
   `aculta_user`. Nenhuma dessas falhas pertence a este incremento.
-- Runtime tinha `updatedb:status` sem updates e `config:status` limpo antes da
-  entrega; rebuild de rotas e smoke do path ficam para a sincronização após o
-  push.
+- Runtime `toca`, Drupal 11.5.0-beta1, `aculta_runtime`: antes e depois do push,
+  `updatedb:status` sem updates e `config:status` sem diferenças. `drush cr`
+  passou; o route provider confirmou os cinco caminhos `/meu-perfil/*`, purpose
+  `account` e `no_cache: true`, e não encontrou os paths privados antigos.
+  Acesso anônimo não permitido. Nenhum dado, configuração ou formulário foi
+  alterado. HTTP autenticado e captura visual permanecem pendentes.
 
 ## 0.1.0-dev.51 — edição contextual de materiais de curso
 

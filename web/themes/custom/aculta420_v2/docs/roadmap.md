@@ -2,12 +2,14 @@
 
 ## H2 — Meu Perfil privado em `/meu-perfil`
 
-O owner `aculta_studio` agora expõe o editor e os formulários próprios em
+O owner `aculta_studio` expõe o editor e os formulários próprios em
 `/meu-perfil` e `/meu-perfil/*`, no purpose `account`. As rotas preservam o
 controle de acesso existente, declaram `no_cache` e recebem `noindex` pelo hook
-privado do Studio. Os paths anteriores `/perfil*` não são aliases. A rota
-pública permanece aguardando decisão do responsável. Validação de código e
-Runtime será registrada no handoff após os gates.
+privado do Studio. Os paths privados anteriores `/perfil*` não são aliases. A
+rota pública permanece aguardando decisão do responsável. Unit Studio 69/738,
+PHPCS e YAML PASS; no Runtime, `drush cr` e inspeção do route provider confirmam
+os cinco paths, purpose e ausência dos antigos. Acesso anônimo negado. Captura
+autenticada e fluxos de escrita permanecem pendentes.
 
 ## Avatar — G1 implementado; integração e validação visual pendentes
 

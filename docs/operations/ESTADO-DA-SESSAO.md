@@ -1,3 +1,15 @@
+# Continuação — ACULTA420 V2, Meu Perfil H2 — 2026-11-05
+
+- **Objetivo:** executar o plano V2 em `web/themes/custom/aculta420_v2/docs/roadmap.md`; respeitar decisões pendentes e publicar cada entrega em `dev`.
+- **Concluído nesta entrega:** Meu Perfil privado usa `/meu-perfil` e `/meu-perfil/*` no purpose `account`. Mantidos os route IDs, `StudioProfileAccess`, Form API e owners do `aculta_user`; todas as rotas declaram `no_cache`, o hook aplica `noindex, nofollow`, e paths privados antigos não têm alias/redirect. Rota pública segue sem decisão.
+- **Arquivos:** rotas e testes em `web/modules/custom/aculta_portal/modules/aculta_studio/`; documentação do owner em `web/modules/custom/aculta_portal/modules/aculta_studio/{AGENTS.md,README.md,CHANGELOG.md}` e `web/modules/custom/aculta_portal/modules/aculta_user/README.md`; contrato em `docs/architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md`; plano/visual em `web/themes/custom/aculta420_v2/docs/{roadmap.md,studio-estrutura.md,studio-visual-spec.md,layouts-plan.md}`; índice `docs/operations/status/aculta_studio.yml`/`README.md`.
+- **Commit enviado:** `5043cc8f5b58c180401568b8d43609f92986ae9b` (`Move edição privada de perfil para /meu-perfil`) em `origin/dev`.
+- **Validações:** Studio Unit 69 testes/738 assertions PASS; PHPCS Drupal/DrupalPractice PASS; YAML (40 rotas), PHP lint focal e `git diff --check` PASS. `drush cr` PASS; route provider Runtime confirmou cinco paths `/meu-perfil*`, purpose `account`, `no_cache: true`, ausência dos paths privados antigos; anônimo não autorizado. Antes/depois: `updatedb:status` sem updates, `config:status` sem diferenças. Nenhum formulário/conteúdo foi alterado.
+- **Gates bloqueados por estado preexistente:** `validate-module-theme-boundary.php` falha em seis classes de `aculta_lms`/`aculta_lms_resources`; `validate-aculta-portal-drupal11.php` e `validate-project-status-index.php` falham por versões divergentes de `aculta_calendar`, `aculta_donation`, `aculta_file_uploader`, `aculta_linkweed`, `aculta_mailer`, `aculta_messenger`, `aculta_paths`, `aculta_ugc` e `aculta_user`. Nenhuma foi modificada nesta entrega.
+- **Pendências H2:** HTTP autenticado, revisão visual e submissão dos formulários não executadas; nenhum dado de usuário foi alterado. Não decidir a rota pública (`/u/<apelido>` vs `/perfil/<apelido>`), nem telefone/data de nascimento.
+- **Próximo:** retomar em `web/themes/custom/aculta420_v2/docs/roadmap.md` e ADR-050. F0 está concluída; avançar I2 (F1 Tema/Login) após confirmar estado real do código. Continuar itens independentes; `price`/Loja segue aguardando autorização.
+- **Retomar lendo:** este registro; `web/themes/custom/aculta420_v2/docs/roadmap.md`; `docs/decisions/ADR-050-migracao-ajax-para-htmx.md`; `docs/htmx-confirmacao.md`; `web/modules/custom/aculta_portal/modules/aculta_studio/aculta_studio.routing.yml`.
+
 # Continuação — Institution Bar, Gin e bloco Core Navigation quebrado — 2026-11-04
 
 - **Objetivo:** corrigir a sobreposição da Institution Bar com o Gin na sessão administrativa, remover o aviso de bloco quebrado e seguir a migração visual V1→V2.
