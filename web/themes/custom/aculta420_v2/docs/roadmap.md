@@ -2,6 +2,19 @@
 
 ## Em andamento — migração visual da V1 para a V2
 
+- **Fatia atual: Wiki420.** Referências V1: `components/patterns/wiki-entry`,
+  `node--wiki-entry--teaser/full` e `css/components/wiki.css`. A V2 agora tem o
+  SDC `wiki-entry`, os dois adapters de node e estilos globais para listagens.
+  Firefox ESR visível no Runtime, visitante, home/listagem/verbete,
+  claro e escuro (atributo `data-theme` aplicado na sessão do browser), 320,
+  390, 767, 768 e 1440 CSS px: 189/189 checks, sem overflow, H1 duplicado ou
+  ordem visual quebrada; Tab e Shift+Tab passaram. Capturas em
+  `$SUITE_OUT/aculta420-v2-wiki-20261104/`. O zoom físico, autenticação e
+  leitor de tela permanecem DEFERRED. `/wiki/busca` respondeu 404 e a home não
+  contém formulário de busca; sem mudar o owner da Wiki, essa superfície não
+  foi alterada nem validada. O CSS de busca/categorias herdado ainda aguarda
+  um consumer real no Runtime. A fatia ainda não tem versão atribuída.
+
 - **Fatia atual: Revista.** Baseline do tema V2 antes dos templates/SCDs:
   `$SUITE_OUT/revista-v2-before-20261104/`, no purpose `magazine`, URL raiz da
   Revista e artigo `/editorial/teste-visual-20261030-cultura-de-bairro`, sessão

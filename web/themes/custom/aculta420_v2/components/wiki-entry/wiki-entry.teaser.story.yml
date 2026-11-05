@@ -1,0 +1,14 @@
+name: Cartão Wiki
+description: Teaser compacto de verbete para busca e listagens.
+component: aculta420_v2:wiki-entry
+props:
+  variant: teaser
+  url: /wiki/exemplo
+  has_summary: true
+  has_image: true
+  has_categories: true
+slots:
+  title: '<a href="/wiki/exemplo" rel="bookmark">Exemplo de verbete</a>'
+  summary: '<p>Resumo breve do verbete apresentado na listagem.</p>'
+  image: '<img src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22800%22 height=%22450%22 viewBox=%220 0 800 450%22%3E%3Crect width=%22800%22 height=%22450%22 fill=%22%23e8dfcc%22/%3E%3C/svg%3E" alt="Ilustração representativa do verbete">'
+  categories: '<ul><li><a href="/wiki/categoria/cultura">Cultura</a></li></ul>'

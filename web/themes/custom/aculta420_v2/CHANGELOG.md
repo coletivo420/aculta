@@ -1,5 +1,20 @@
 # Changelog — ACULTA420 V2
 
+## Em validação — Wiki420
+
+- Portados para SDC os templates de teaser e artigo completo de Wiki, com
+  abas de ação, resumo, corpo, imagem, categorias, referências, discussão e
+  links de operação renderizados pelo Drupal.
+- A família preserva a composição V1 de artigos e cartões com tokens
+  semânticos e CSS mobile-first. O artigo é dono do H1; home e listagens usam
+  a grade de cartões adaptada ao wrapper real `aculta-wiki-list`.
+- Drush descobriu e renderizou 22/22 SDCs. Firefox ESR visível no Runtime,
+  home/listagem/verbete, claro e escuro, 320/390/767/768/1440 CSS px: 189/189
+  checks; Tab/Shift+Tab e ausência de overflow passaram. Zoom físico e estados
+  autenticados seguem pendentes. `/wiki/busca` responde 404 no Runtime atual;
+  a rota não foi recriada pelo tema. O CSS de busca/categorias herdado da V1
+  ainda aguarda um consumer real no Runtime.
+
 ## Em validação — migração visual da Revista
 
 - Adicionados os SDCs `author-card`, `revista-listing`, `revista-teaser` e

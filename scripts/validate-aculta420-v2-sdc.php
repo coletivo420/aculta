@@ -68,6 +68,7 @@ $component_ids = [
   'revista-publication',
   'revista-teaser',
   'status-messages',
+  'wiki-entry',
 ];
 $manager = \Drupal::service('plugin.manager.sdc');
 $validator = \Drupal::service('Drupal\Core\Theme\Component\ComponentValidator');
@@ -189,6 +190,29 @@ $samples = [
     '#slots' => ['image' => '', 'category' => '', 'subtitle' => '', 'summary' => ''],
   ],
   'status-messages' => ['#props' => ['type' => 'status', 'messages' => ['Validação concluída.']]],
+  'wiki-entry' => [
+    '#props' => [
+      'variant' => 'article',
+      'url' => '/wiki/exemplo',
+      'has_summary' => TRUE,
+      'has_image' => TRUE,
+      'has_categories' => TRUE,
+      'has_related' => TRUE,
+      'has_references' => TRUE,
+      'has_discussion' => TRUE,
+    ],
+    '#slots' => [
+      'title' => 'Exemplo de verbete',
+      'summary' => 'Resumo',
+      'image' => '',
+      'categories' => '',
+      'body' => 'Corpo',
+      'related' => 'Relacionados',
+      'references' => 'Referências',
+      'discussion' => 'Discussão',
+      'actions' => '',
+    ],
+  ],
 ];
 
 foreach ($component_ids as $component_id) {
@@ -206,7 +230,7 @@ foreach ($component_ids as $component_id) {
       throw new RuntimeException(sprintf('Missing SDC asset: %s', $path));
     }
   }
-  if (in_array($component_id, ['author-card', 'revista-listing', 'revista-publication', 'revista-teaser'], TRUE)) {
+  if (in_array($component_id, ['author-card', 'revista-listing', 'revista-publication', 'revista-teaser', 'wiki-entry'], TRUE)) {
     foreach ([$component_id . '.default.story.yml', 'README.md'] as $document) {
       if (!is_file($theme_root . '/components/' . $component_id . '/' . $document)) {
         throw new RuntimeException(sprintf('Missing story or component documentation: %s/%s', $component_id, $document));
@@ -285,6 +309,11 @@ foreach ($component_ids as $component_id) {
   if ($component_id === 'revista-publication' && !is_file($theme_root . '/templates/content/node--revista--full.html.twig')) {
     throw new RuntimeException('The Revista full node adapter is missing.');
   }
+  if ($component_id === 'wiki-entry'
+    && (!is_file($theme_root . '/templates/content/node--wiki-entry--teaser.html.twig')
+      || !is_file($theme_root . '/templates/content/node--wiki-entry--full.html.twig'))) {
+    throw new RuntimeException('Wiki node adapters are missing.');
+  }
 
   $build = [
     '#type' => 'component',
@@ -303,6 +332,10 @@ foreach ($component_ids as $component_id) {
   if ($component_id === 'revista-listing'
     && (!str_contains($output, 'revista-listing__title') || !str_contains($output, '<h1'))) {
     throw new RuntimeException('The Revista landing component must own the page-level H1.');
+  }
+  if ($component_id === 'wiki-entry'
+    && (!str_contains($output, 'aculta-wiki-article__title') || !str_contains($output, '<h1'))) {
+    throw new RuntimeException('The Wiki article component must own the page-level H1.');
   }
   print $plugin_id . " PASS\n";
 }

@@ -60,7 +60,7 @@ Regras:
 - `--tap-target-min: 44px`;
 - aliases de compatibilidade (`--color-primary`, `--border-radius-*`, `--shadow-*` antigos), mantidos apenas enquanto houver consumidores.
 
-`base.css` e `layout.css` definem reset, foco visível, movimento reduzido, prevenção de overflow em conteúdo longo e a estrutura da página. A biblioteca `global-styling` carrega as duas fontes externas do Google Fonts.
+`base.css` e `layout.css` definem reset, foco visível, movimento reduzido, prevenção de overflow em conteúdo longo e a estrutura da página. `wiki.css` adapta os wrappers de listagem e busca da Wiki420. A biblioteca `global-styling` carrega essas folhas e as duas fontes externas do Google Fonts.
 
 ## 5. JavaScript
 
@@ -84,6 +84,13 @@ grade editorial, capa 16:9, destaque da primeira publicação em telas amplas e
 coluna de leitura do artigo. O adapter
 `templates/aculta-user-author-card.html.twig` converte a API visual
 `aculta_user_author_card` para `author-card` sem ler entidades, perfil ou foto.
+
+Os adapters `templates/content/node--wiki-entry--teaser.html.twig` e
+`node--wiki-entry--full.html.twig` encaminham campos e ações renderizados pelo
+Drupal ao SDC `wiki-entry`; o componente aplica a composição visual da V1 para
+cartões e verbetes. `src/styles/wiki.css` trata apenas as listagens, busca,
+categorias e mudanças recentes fornecidas pelo owner da Wiki. O Domain Header
+continua sob o contrato do shell.
 
 A biblioteca `utility-drawers` reúne os quatro últimos. O popup de login e o de busca não usam `core/drupal.dialog.ajax`: a V2 remove essa dependência do utilitário de busca (`PagePresentationHooks::removeSearchDialogDependency`).
 

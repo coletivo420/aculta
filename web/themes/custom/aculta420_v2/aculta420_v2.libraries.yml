@@ -6,6 +6,7 @@ global-styling:
       src/styles/tokens.css: {}
       src/styles/base.css: {}
       src/styles/layout.css: {}
+      src/styles/wiki.css: {}
   dependencies:
     - system/base
 

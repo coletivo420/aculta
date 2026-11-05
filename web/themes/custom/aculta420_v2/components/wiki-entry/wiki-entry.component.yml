@@ -1,0 +1,66 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Verbete da Wiki
+description: Apresenta um verbete completo ou um cartão de listagem usando campos e ações renderizados pelo Drupal.
+status: experimental
+group: Conteúdo
+props:
+  type: object
+  additionalProperties: false
+  required: [variant, has_summary, has_image, has_categories]
+  properties:
+    variant:
+      type: string
+      title: Variante de apresentação
+      enum: [article, teaser]
+    url:
+      type: [string, 'null']
+      title: URL canônica do verbete
+      format: uri-reference
+      default: null
+    has_summary:
+      type: boolean
+      title: Resumo visível
+    has_image:
+      type: boolean
+      title: Imagem visível
+    has_categories:
+      type: boolean
+      title: Categorias visíveis
+    has_related:
+      type: boolean
+      title: Verbetes relacionados visíveis
+      default: false
+    has_references:
+      type: boolean
+      title: Referências visíveis
+      default: false
+    has_discussion:
+      type: boolean
+      title: Discussão visível
+      default: false
+slots:
+  title:
+    title: Título
+    description: Texto simples no artigo ou título vinculado no cartão.
+  summary:
+    title: Resumo
+    description: Campo renderizado e autorizado pelo Drupal.
+  image:
+    title: Imagem de destaque
+    description: Campo de imagem renderizado pelo Drupal.
+  categories:
+    title: Categorias
+    description: Termos renderizados e autorizados pelo Drupal.
+  body:
+    title: Corpo do verbete
+    description: Corpo renderizado pelo Drupal.
+  related:
+    title: Verbetes relacionados
+  references:
+    title: Referências
+  discussion:
+    title: Discussão
+    description: Render array de discussão fornecido pelo módulo proprietário.
+  actions:
+    title: Ações do verbete
+    description: Links renderizados com access check pelo Drupal.

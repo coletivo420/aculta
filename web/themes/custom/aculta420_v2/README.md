@@ -22,7 +22,7 @@ Decisões que governam o tema estão em `docs/decisions/` na raiz do repositóri
 
 ## Estado em uma frase
 
-Fundações (tokens, tipografia, foco, movimento e reflow), a navegação SDC do shell e o menu de conta na barra institucional estão no código, na versão `1.2.0-dev.11` (`info.yml`). O menu de conta mostra só o avatar do Portal e ainda aguarda a validação visual autenticada e os gates de renderização no Homelab.
+Fundações (tokens, tipografia, foco, movimento e reflow), shell SDC e fatias de conteúdo da Revista e Wiki estão no código (`1.2.0-dev.14` em `info.yml`). A migração visual continua em andamento: a Wiki passou validação de Runtime em viewports padrão, enquanto zoom físico, autenticação e alguns fluxos sem rota ativa seguem pendentes.
 
 ## Estrutura
 
