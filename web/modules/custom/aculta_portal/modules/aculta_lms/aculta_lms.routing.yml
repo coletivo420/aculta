@@ -211,3 +211,33 @@ aculta_lms.xapi_token_settings:
     _permission: 'administer site configuration'
   options:
     _admin_route: true
+
+aculta_lms.course_builder_wizard:
+  path: '/painel-administrativo/lms/curso/builder/wizard/{step}'
+  defaults:
+    _controller: '\Drupal\ctools\Controller\WizardFormController::getContentResult'
+    _wizard: '\Drupal\aculta_lms\Wizard\CourseBuilderWizard'
+    _title: 'Course Builder Wizard'
+    step: 'details'
+  requirements:
+    _permission: 'create lms_course group'
+  options:
+    _admin_route: true
+    parameters:
+      step:
+        type: string
+
+aculta_lms.student_tour_wizard:
+  path: '/lms/tour-guiado/{step}'
+  defaults:
+    _controller: '\Drupal\ctools\Controller\WizardFormController::getContentResult'
+    _wizard: '\Drupal\aculta_lms\Wizard\StudentTourWizard'
+    _title: 'Tour Guiado'
+    step: 'welcome'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: courses
+    parameters:
+      step:
+        type: string

@@ -59,3 +59,15 @@ Com base no `docs/modules/ACULTA-LMS-ROADMAP.md`, no `docs/decisions/ADR-042-rem
 - **Testes Unitários:** Adicionados 5 novos testes cobrindo wizards e etapas (277 testes / 1.068 asserções no total de `aculta_lms`, todos PASS).
 - **PHP Lint:** 100% aprovado sem erros de sintaxe nos novos arquivos.
 - **Kernel Test:** `AttemptArchiveLifecycleTest` PASS no banco descartável `aculta_simpletest`.
+
+---
+
+## 6. Rotas Canônicas CTools Form Wizard (Dev.212)
+- Registradas rotas canônicas em `aculta_lms.routing.yml`:
+  - `/painel-administrativo/lms/curso/builder/wizard/{step}` (`aculta_lms.course_builder_wizard`) sob `_admin_route: true` e permissão `create lms_course group`.
+  - `/lms/tour-guiado/{step}` (`aculta_lms.student_tour_wizard`) com purpose `courses` e requisito `_user_is_logged_in`.
+- Passou nos gates de rota:
+  - `validate-public-slugs.php`: PASS (415 rotas).
+  - `validate-admin-routes-main-domain.php`: PASS (42 arquivos, 170 rotas administrativas).
+  - `validate-no-temporary-route-aliases.php`: PASS (42 arquivos).
+- Drush `cache:rebuild` executado com sucesso no Runtime.
