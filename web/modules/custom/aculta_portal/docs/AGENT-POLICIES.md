@@ -142,6 +142,13 @@ A documentação deve registrar o motivo arquitetural das regras, não apenas su
 - Gates de fronteira e arquitetura do Portal: `php scripts/validate-module-theme-boundary.php` e `php scripts/validate-aculta-portal-drupal11.php`. O inventário de helpers e integrações aplicadas está em `docs/portal/IMPLEMENTATIONS.md`.
 - Alterar `web/themes/custom/aculta420/**` exige autorização explícita na solicitação. Uma tarefa de Portal, por si só, não autoriza mudanças no tema; quando autorizadas, mantenha cada camada no seu dono e atualize o mapa.
 
+## HTMX como padrão do tema (regra permanente)
+
+- Interações assíncronas novas ou migradas do tema ACULTA420 usam HTMX do Core (`core/drupal.htmx`, API `Drupal\Core\Htmx\Htmx` e atributos `data-hx-*`).
+- Drupal AJAX (`core/drupal.ajax`, `#ajax`, `use-ajax`) é legado e não deve ser introduzido em componentes ou bibliotecas do tema. Contratos existentes podem permanecer somente durante uma migração documentada; não crie nova dependência para ampliá-los.
+- O Portal fornece fragmentos, validação, acesso, cache e respostas HTMX sem depender do tema. Preserve links e formulários nativos como fallback sem JavaScript.
+- Progresso e exceções ficam registrados no ADR-050 e no roadmap do ACULTA420 V2.
+
 ## Papéis e hierarquia (regra permanente)
 
 Não crie hierarquia paralela nem conceda acesso por nome de papel. Para funcionalidade nova, conceda a permissão adequada e valide por `hasPermission()`/Entity Access. A configuração e as decisões vigentes estão em `config/sync/aculta_portal.role_hierarchy.yml` e `docs/portal/PAPEIS-PARTICIPACAO.md`; não duplique aqui a lista de papéis. Mudanças na hierarquia exigem avaliação de herança, atualização da decisão e execução de `php scripts/validate-role-hierarchy.php`.

@@ -10,17 +10,21 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Render\Markup;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Render\BareHtmlPageRendererInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Url;
 use Drupal\user\Form\UserLoginForm;
 use Drupal\user\LoginFinalizer;
 use Drupal\user\UserAuthenticationInterface;
 use Drupal\user\UserAuthInterface;
 use Drupal\user\UserFloodControlInterface;
+use Drupal\user\UserInterface;
 use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Login do popup "Entrar" da barra multidomínio.
@@ -28,10 +32,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Herda do Core a validação (user.auth, flood control e bloqueio de conta).
  * Troca só o ID do formulário, então o desafio Turnstile de user_login_form
  * não se aplica. Exceção registrada em Captcha\TurnstileToggle e no gate
- * validate-turnstile-exceptions.php. O envio é AJAX no mesmo host do link;
- * sucesso redireciona para o destino (mesmo host) e erro recoloca o formulário.
- * O flood do Core responde com página HTML, que o AJAX não aceita; aqui ele
- * vira mensagem de erro no formulário.
+ * validate-turnstile-exceptions.php. O popup usa HTMX para carregar e enviar
+ * o fragmento; V1 mantém o fallback Drupal AJAX e sem JavaScript o fluxo é
+ * um formulário nativo com retorno local validado.
  */
 final class LoginPopupForm extends UserLoginForm {
 
@@ -109,7 +112,6 @@ final class LoginPopupForm extends UserLoginForm {
     $form['name']['#title'] = $this->t('Nome de usuário, e-mail ou CPF');
     $form['pass']['#title'] = $this->t('Senha');
     $form['actions']['submit']['#value'] = $this->t('Entrar');
-    // O wrapper AJAX troca o formulário inteiro em caso de erro.
     $form['#prefix'] = '<div id="' . self::WRAPPER_ID . '">';
     $form['#suffix'] = '</div>';
     $form['#attributes']['data-portal-ui'] = 'login-popup';
@@ -161,11 +163,23 @@ final class LoginPopupForm extends UserLoginForm {
     $form['actions']['#type'] = 'container';
     $form['actions']['#weight'] = 5;
     $form['links']['#weight'] = 10;
-    $form['actions']['submit']['#ajax'] = [
-      'callback' => '::ajaxSubmit',
-      'wrapper' => self::WRAPPER_ID,
-      'progress' => ['type' => 'throbber'],
-    ];
+    if ($this->isHtmxRequest()) {
+      (new Htmx())
+        ->post()
+        ->select('#' . self::WRAPPER_ID)
+        ->target('#aculta-login-content')
+        ->swap('innerHTML')
+        ->onlyMainContent()
+        ->applyTo($form);
+    }
+    else {
+      // Keep the pre-HTMX contract for the V1 theme while V2 uses HTMX.
+      $form['actions']['submit']['#ajax'] = [
+        'callback' => '::ajaxSubmit',
+        'wrapper' => self::WRAPPER_ID,
+        'progress' => ['type' => 'throbber'],
+      ];
+    }
     return $form;
   }
 
@@ -234,8 +248,7 @@ final class LoginPopupForm extends UserLoginForm {
   /**
    * {@inheritdoc}
    *
-   * Não chama o submitForm do Core: ele define um redirect que o AJAX ignora.
-   * O destino fica no ajaxSubmit.
+   * Preserves the safe return path for native and HTMX submissions.
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $uid = $form_state->get('uid');
@@ -243,15 +256,20 @@ final class LoginPopupForm extends UserLoginForm {
       return;
     }
     $account = $this->userStorage->load($uid);
-    if ($account instanceof \Drupal\user\UserInterface) {
+    if ($account instanceof UserInterface) {
       $this->loginFinalizer->finalizeLogin($account);
+    }
+    $destination = self::safeDestination($form_state->getValue('destination'));
+    if ($this->isHtmxRequest()) {
+      $form_state->setResponse(new Response('', Response::HTTP_OK, ['HX-Redirect' => $destination]));
+    }
+    else {
+      $form_state->setRedirectUrl(Url::fromUserInput($destination));
     }
   }
 
   /**
-   * Processes the popup's AJAX login response.
-   *
-   * Errors replace the form; success redirects to the safe destination.
+   * Keeps the legacy non-HTMX popup response for ACULTA420 V1.
    */
   public function ajaxSubmit(array &$form, FormStateInterface $form_state): array|AjaxResponse {
     if ($form_state->hasAnyErrors()) {

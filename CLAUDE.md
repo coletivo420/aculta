@@ -24,6 +24,7 @@ Regras gerais de Git, commits, push, worktree, Runtime e coautoria estão em `AG
 - **Navegador de testes:** Firefox ESR visível em `DISPLAY=:0`, via geckodriver. Não use Chromium nem headless. Perfil temporário e artefatos vão para `$SUITE_OUT`, fora do repositório. Scripts de teste visual ficam em `tests/browser/<frente>/` com `README.md`.
 - **Tema de validação:** validar somente no tema ACULTA ativo. Não selecione temas adicionais em testes, não altere `system.theme` para validá-los e não os descreva como gates pendentes. Preserve resultados históricos datados.
 - **Olivero:** não habilitar, selecionar, testar ou exigir Olivero em gates, suítes ou aceite do projeto. Referências a execuções antigas são históricas e não geram trabalho pendente.
+- **HTMX no tema:** HTMX é o padrão obrigatório para interações assíncronas novas ou migradas do tema (`core/drupal.htmx`, `data-hx-*`). Drupal AJAX (`core/drupal.ajax`, `#ajax`, `use-ajax`) é legado; não introduza novos usos no tema. Mantenha contratos existentes só durante migração documentada e preserve links/formulários nativos como fallback.
 
 - **Caminhos e rotas:** não grave caminhos absolutos de máquina nem URLs de ambiente fixas em código, testes, scripts ou docs versionados (regra completa em `AGENTS.md`, seção Escopo e segurança).
 

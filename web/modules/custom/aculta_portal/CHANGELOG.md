@@ -1,3 +1,17 @@
+## Não versionado — suporte HTMX no login popup (ADR-050 F1b parcial)
+
+- `LoginPopupForm` configura `Htmx` apenas em requisições `HX-Request`, envia o
+  formulário ao endpoint atual, seleciona o wrapper e retorna ao alvo do
+  diálogo. O sucesso usa `HX-Redirect` com o destino local validado; o fluxo
+  sem HTMX mantém o redirect nativo e a resposta Drupal AJAX legada para a V1.
+- A validação existente, flood control, Turnstile e finalização de sessão do
+  Core permanecem no Portal. O contrato de apresentação continua neutro; o tema
+  decide como abrir o diálogo.
+- PHP lint PASS. Fixture sintética em Firefox ESR visível comprovou fragmento,
+  envio HTMX e navegação `HX-Redirect`; a autenticação real com Form API e
+  sessão Drupal permanece DEFERRED para uma verificação sem escrita no Runtime.
+- Busca HTMX e cadastro popup continuam pendentes em F1b.
+
 ## Não versionado — raiz do Studio e entrada de Minha Conta
 
 - ADR-048 passa a valer no roteamento: a raiz de `account` serve o dashboard

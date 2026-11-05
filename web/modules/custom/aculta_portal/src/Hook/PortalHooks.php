@@ -11,7 +11,6 @@ use Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber;
 use Drupal\aculta_portal\Account\EmailConfirmationNotice;
 use Drupal\aculta_portal\Cart\CartUtility;
 use Drupal\aculta_portal\Search\SearchUtility;
-use Drupal\Component\Serialization\Json;
 use Drupal\Core\Template\Attribute;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_portal\AccountShellBuilder;
@@ -19,6 +18,7 @@ use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\AcultaBreadcrumbBuilder;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Domain\DomainRoutePolicy;
+use Drupal\Component\Serialization\Json;
 use Drupal\aculta_portal\Form\LoginPopupForm;
 use Drupal\aculta_portal\Presentation\DomainPresentationBuilder;
 use Drupal\block_content\BlockContentInterface;
@@ -470,7 +470,8 @@ final class PortalHooks {
   #[Hook('page_attachments')]
   public function pageAttachments(array &$attachments): void {
     $route = $this->routeMatch->getRouteName();
-    // O "Entrar" da barra abre o popup use-ajax para visitantes anônimos.
+    // Anonymous popup links keep their fallback for V1; ACULTA420 V2 enhances
+    // the login route with HTMX.
     if (!$this->currentUser->isAuthenticated()) {
       $attachments['#attached']['library'][] = 'core/drupal.dialog.ajax';
     }
