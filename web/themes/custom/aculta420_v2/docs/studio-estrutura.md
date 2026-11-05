@@ -115,6 +115,10 @@ Decidido em 2026-11-05 (ADR-047, item 9). O menu tem só dois blocos:
 
 Não há item de busca, de notificação nem de idioma no menu. Itens novos exigem decisão.
 
+**Implementação V2:** `account-menu` recebe `aculta_domain_sites` e
+`aculta_account_name` do Portal; links mantêm navegação normal e o site atual usa
+`aria-current="page"`. Conferir no estado autenticado e visitante antes de fechar C2.
+
 Os links de sites são navegação entre purposes: sem AJAX (ADR-049, item 5).
 
 ## 4. O que importar da V1

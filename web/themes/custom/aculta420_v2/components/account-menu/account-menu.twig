@@ -1,25 +1,41 @@
-{% if authenticated %}
-  <nav class="aculta-account-menu aculta-account-menu--signed-in" aria-label="{{ 'Menu da conta'|t }}">
-    <details class="aculta-account-menu__details">
-      <summary class="aculta-account-menu__summary">
-        <span class="aculta-account-menu__avatar">
-          {% if avatar is not empty %}
-            {{ avatar }}
-          {% else %}
-            {{ include('aculta420_v2:icon', { name: 'user', variant: 'duotone', size: 'md' }, with_context = false) }}
-          {% endif %}
-        </span>
-        <span class="visually-hidden">{{ summary_label|default('Minha conta'|t) }}</span>
-      </summary>
-      <div class="aculta-account-menu__panel">
-{% else %}
-  <nav class="aculta-account-menu" aria-label="{{ 'Menu da conta'|t }}">
-{% endif %}
-    {{ menu_items }}
-{% if authenticated %}
-      </div>
-    </details>
-  </nav>
-{% else %}
-  </nav>
-{% endif %}
+<nav class="aculta-account-menu{{ authenticated ? ' aculta-account-menu--signed-in' }}" aria-label="{{ 'Menu de conta e sites'|t }}">
+  <details class="aculta-account-menu__details">
+    <summary class="aculta-account-menu__summary">
+      <span class="aculta-account-menu__avatar">
+        {% if avatar is not empty %}
+          {{ avatar }}
+        {% else %}
+          {{ include('aculta420_v2:icon', { name: 'user', variant: 'duotone', size: 'bar' }, with_context = false) }}
+        {% endif %}
+      </span>
+      <span class="visually-hidden">{% if summary_label is not empty %}{{ summary_label|t }}{% else %}{{ 'Abrir menu de conta'|t }}{% endif %}</span>
+    </summary>
+    <div class="aculta-account-menu__panel">
+      {% if sites is not empty %}
+        <section class="aculta-account-menu__sites" aria-label="{{ 'Sites'|t }}">
+          <h2>{{ 'Sites'|t }}</h2>
+          <ul>
+            {% for site in sites %}
+              <li><a href="{{ site.url }}"{% if site.current %} aria-current="page"{% endif %}>{{ site.title }}</a></li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
+      <section class="aculta-account-menu__session" aria-label="{{ 'Sessão'|t }}">
+        {% if authenticated %}
+          <div class="aculta-account-menu__identity">
+            <span class="aculta-account-menu__avatar">
+              {% if avatar is not empty %}
+                {{ avatar }}
+              {% else %}
+                {{ include('aculta420_v2:icon', { name: 'user', variant: 'duotone', size: 'bar' }, with_context = false) }}
+              {% endif %}
+            </span>
+            {% if account_name %}<span>{{ account_name }}</span>{% endif %}
+          </div>
+        {% endif %}
+        {{ menu_items }}
+      </section>
+    </div>
+  </details>
+</nav>

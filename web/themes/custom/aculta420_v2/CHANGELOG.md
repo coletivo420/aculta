@@ -1,5 +1,18 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — completa menu de conta e lista de sites
+
+- O `account-menu` apresenta `aculta_domain_sites` do Portal com links normais
+  e `aria-current="page"` no site atual. O bloco de sessão autenticada mostra
+  o avatar e `aculta_account_name`; visitantes recebem o link Entrar dentro do
+  disclosure. Os itens de conta originais mantêm access e cache do Drupal.
+- Alvo do controle da barra alinhado em 35 px e ícone em 30 px, conforme
+  instrução do responsável. Stories anônima/autenticada e documentação SDC
+  atualizadas. Schemas (55 componentes/764 checks), design foundations (2.468),
+  render Drupal SDC (23 componentes), shell (13 checks), browser validators
+  (21 checks), PHP lint e `git diff --check` passaram. Capturas e interação
+  autenticada ficam pendentes: `DISPLAY` não está disponível nesta sessão.
+
 ## Não versionado — unifica preprocess_html; render conferido
 
 - O Core permite uma implementação `preprocess_html` por tema. Reunidos em

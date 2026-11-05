@@ -20,7 +20,33 @@ props:
       type: string
       title: Rótulo acessível
       description: Nome acessível do botão; fica visualmente oculto.
-      default: Minha conta
+      default: Abrir menu de conta
+    account_name:
+      type: [string, 'null']
+      title: Nome de exibição
+      description: Nome entregue pelo Portal, mostrado somente no bloco de sessão autenticada.
+      default: null
+    sites:
+      type: array
+      title: Sites por purpose
+      description: Links neutros entregues pelo Portal para sites publicados.
+      default: []
+      items:
+        type: object
+        additionalProperties: false
+        required: [purpose, title, url, current]
+        properties:
+          purpose:
+            type: string
+            minLength: 1
+          title:
+            type: string
+            minLength: 1
+          url:
+            type: string
+            format: uri
+          current:
+            type: boolean
 slots:
   avatar:
     title: Avatar

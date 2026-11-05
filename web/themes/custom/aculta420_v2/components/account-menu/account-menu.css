@@ -16,8 +16,8 @@
   display: inline-flex;
   gap: var(--spacing-xs);
   list-style: none;
-  min-block-size: var(--tap-target-min);
-  min-inline-size: var(--tap-target-min);
+  min-block-size: 2.1875rem;
+  min-inline-size: 2.1875rem;
   padding-inline: var(--spacing-xs);
 }
 
@@ -58,9 +58,43 @@
   inset-inline-end: 0;
   min-inline-size: 0;
   inline-size: min(20rem, calc(100vw - 2 * var(--spacing-sm)));
+  max-block-size: calc(100dvh - var(--aculta-institution-bar-height, 4rem) - 2 * var(--spacing-sm));
+  overflow-y: auto;
   padding: var(--spacing-sm);
   position: absolute;
   z-index: 20;
+}
+
+.aculta-account-menu__panel h2,
+.aculta-account-menu__panel ul {
+  margin-block: 0;
+}
+
+.aculta-account-menu__sites {
+  border-block-end: 1px solid var(--color-border);
+  padding-block-end: var(--spacing-xs);
+}
+
+.aculta-account-menu__sites h2 {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  margin: 0;
+  padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.aculta-account-menu__sites ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.aculta-account-menu__identity {
+  align-items: center;
+  display: flex;
+  gap: var(--spacing-sm);
+  min-block-size: 2.75rem;
+  overflow-wrap: anywhere;
+  padding: var(--spacing-xs) var(--spacing-sm);
 }
 
 .aculta-account-menu__panel :where(ul, li, a) {

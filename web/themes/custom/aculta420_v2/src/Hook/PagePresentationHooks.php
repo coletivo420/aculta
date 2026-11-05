@@ -37,11 +37,14 @@ final class PagePresentationHooks {
     $variables['aculta_account_menu'] = [];
     $variables['aculta_account_authenticated'] = $this->currentUser->isAuthenticated();
     $variables['aculta_account_avatar'] = $variables['aculta_account_avatar'] ?? NULL;
+    $variables['aculta_account_name'] = $variables['aculta_account_name'] ?? NULL;
     $this->composeDomainHeader($variables);
     $variables['aculta_account_menu'] = $this->buildAccountMenuComponent(
       $variables['aculta_account_menu'],
       $variables['aculta_account_authenticated'],
       $variables['aculta_account_avatar'],
+      $variables['aculta_account_name'],
+      $variables['aculta_domain_sites'] ?? [],
     );
     $this->removeSearchDialogDependency($variables);
 
@@ -70,11 +73,21 @@ final class PagePresentationHooks {
    *   Whether the current visitor is authenticated.
    * @param array<string, mixed>|null $avatar
    *   Portal-owned avatar render array.
+   * @param string|null $accountName
+   *   Display name prepared by the Portal.
+   * @param mixed $domainSites
+   *   Site links prepared by the Portal for each published purpose.
    *
    * @return array<string, mixed>
    *   Account-menu component render array.
    */
-  private function buildAccountMenuComponent(array $menuItems, bool $authenticated, ?array $avatar): array {
+  private function buildAccountMenuComponent(
+    array $menuItems,
+    bool $authenticated,
+    ?array $avatar,
+    ?string $accountName,
+    mixed $domainSites,
+  ): array {
     $slots = [];
     if ($authenticated) {
       if ($menuItems !== []) {
@@ -95,10 +108,52 @@ final class PagePresentationHooks {
     return [
       '#type' => 'component',
       '#component' => 'aculta420_v2:account-menu',
-      '#props' => ['authenticated' => $authenticated],
+      '#props' => [
+        'authenticated' => $authenticated,
+        'account_name' => $authenticated && is_string($accountName) && trim($accountName) !== ''
+          ? trim($accountName)
+          : NULL,
+        'sites' => $this->normalizeDomainSites($domainSites),
+      ],
       '#slots' => $slots,
       '#cache' => ['contexts' => ['user']],
     ];
+  }
+
+  /**
+   * Restricts the Portal sites contract to the fields consumed by the SDC.
+   *
+   * @param mixed $sites
+   *   Candidate sites supplied by ACULTA Portal.
+   *
+   * @return array
+   *   Valid absolute HTTP(S) site links.
+   */
+  private function normalizeDomainSites(mixed $sites): array {
+    if (!is_array($sites)) {
+      return [];
+    }
+    $normalized = [];
+    foreach ($sites as $site) {
+      if (!is_array($site)
+        || !is_string($site['purpose'] ?? NULL)
+        || trim($site['purpose']) === ''
+        || !is_string($site['title'] ?? NULL)
+        || trim($site['title']) === ''
+        || !is_string($site['url'] ?? NULL)
+        || !in_array(parse_url($site['url'], PHP_URL_SCHEME), ['http', 'https'], TRUE)
+        || !is_string(parse_url($site['url'], PHP_URL_HOST))
+        || !is_bool($site['current'] ?? NULL)) {
+        continue;
+      }
+      $normalized[] = [
+        'purpose' => trim($site['purpose']),
+        'title' => trim($site['title']),
+        'url' => $site['url'],
+        'current' => $site['current'],
+      ];
+    }
+    return $normalized;
   }
 
   /**

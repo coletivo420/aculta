@@ -1,5 +1,15 @@
 # ACULTA420 V2 roadmap
 
+## Menu de conta e sites — C2 implementado; validação visual pendente
+
+O `account-menu` combina a lista neutra `aculta_domain_sites` com o bloco de
+sessão, usa links normais entre purposes e marca o atual com
+`aria-current="page"`. O Portal fornece `aculta_account_name` e avatar; os
+itens Drupal preservam access/cache. Stories anônima e autenticada atualizadas.
+Schemas, design foundations, renderização SDC Drupal, shell, browser validators
+e PHP lint passaram. As capturas e a interação autenticada ficam pendentes
+porque `DISPLAY` não está disponível nesta sessão.
+
 ## Renderização das configurações de superfície — conferida
 
 `SurfaceSettingsHooks` é a implementação única de `preprocess_html`, aplicando

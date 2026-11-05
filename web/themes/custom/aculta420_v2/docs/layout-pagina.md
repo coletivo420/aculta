@@ -121,9 +121,9 @@ e `alerts_url`). Sem o recurso, o ícone não é renderizado.
 
 ### 3.4 Alvo de toque
 
-- Regra do ADR-047: 44 px mínimos. **Em aberto:** um commit de outra sessão
-  (`85e4a1d5`) reduziu os alvos da barra para 35 px. Decidir qual vale; ver
-  [studio-estrutura.md](studio-estrutura.md), seção 5.
+- A Institution Bar usa alvos de 35 px e ícones de 30 px, conforme instrução
+  explícita do responsável para esta fase. Demais controles mantêm o mínimo
+  geral de 44 px.
 
 ### 3.5 Altura e compensação
 

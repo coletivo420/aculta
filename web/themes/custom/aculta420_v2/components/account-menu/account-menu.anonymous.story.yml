@@ -1,7 +1,17 @@
 name: Menu de conta visitante
-description: Visitante vê apenas o link de entrada, que abre o diálogo de login da barra.
+description: Visitante vê os sites publicados e o link de entrada do Portal.
 component: aculta420_v2:account-menu
 props:
   authenticated: false
+  summary_label: Abrir menu de conta
+  sites:
+    - purpose: main
+      title: ACULTA
+      url: https://main.example.invalid/
+      current: true
+    - purpose: wiki
+      title: Wiki420
+      url: https://wiki.example.invalid/
+      current: false
 slots:
-  menu_items: '<ul class="menu"><li><a href="/entrar/janela" class="use-ajax" data-dialog-type="modal">Entrar</a></li></ul>'
+  menu_items: '<ul class="menu"><li><a href="/entrar/janela">Entrar</a></li></ul>'

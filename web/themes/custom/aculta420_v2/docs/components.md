@@ -20,13 +20,15 @@ Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context 
 - **JS:** `navigation-bar.js` (abre, fecha com Escape, devolve o foco).
 - **Estado:** entregue (Fase 2, `1.2.0-dev.2`).
 
-### account-menu — Menu de conta
-- **Papel:** menu de conta da barra institucional (ADR-047). Visitante vê "Entrar". Autenticado vê um disclosure `<details>` só com o avatar e, dentro do painel, as ações de conta.
-- **Props:** `authenticated` (boolean), `summary_label` (texto oculto visualmente, dá nome acessível ao botão; padrão "Minha conta").
-- **Slots:** `avatar` (render array de `aculta_user`; sem slot, mostra o ícone neutro), `menu_items` (visitante: link "Entrar"; autenticado: menu Drupal de conta).
-- **Montagem:** `PagePresentationHooks::buildAccountMenuComponent`. O componente é um render array com `#cache` de contexto `user`.
-- **Regras:** o nome do usuário não aparece na barra, nem apelido. Não há inicial nem letra no avatar.
-- **Estado:** versionado de `1.2.0-dev.3` a `1.2.0-dev.11`. Pendentes: validação visual autenticada (foto, acervo e sem foto), leitor de tela e gates de renderização no Homelab.
+### account-menu — Menu de conta e sites
+
+- **Papel:** disclosure `<details>` na barra institucional, com a lista de sites publicados e uma seção de sessão. Visitante tem o link "Entrar"; autenticado tem avatar/nome e os itens de conta.
+- **Props:** `authenticated`, `summary_label`, `account_name`, `sites` (`purpose`, `title`, URL absoluta e `current`). O site atual recebe `aria-current="page"`; a navegação entre sites usa links normais.
+- **Slots:** `avatar` (render array de `aculta_user`; sem slot, ícone neutro), `menu_items` (render array Drupal com access/cache preservados).
+- **Stories:** `account-menu.anonymous.story.yml`, `account-menu.authenticated.story.yml`.
+- **Montagem:** `PagePresentationHooks::buildAccountMenuComponent`; normaliza apenas os campos contratuais. Render array varia por `user`.
+- **Regras:** nome de exibição só no bloco de sessão, nunca no resumo da barra; sem inicial/letra no avatar. Alvo do controle 35 px e ícone 30 px.
+- **Estado:** implementação C2 no tema e contratos Portal D1/D2 disponíveis. Capturas autenticadas e validação dos três estados de avatar permanecem pendentes.
 - **Status no schema:** `experimental`.
 
 ### alerts-trigger — Avisos
