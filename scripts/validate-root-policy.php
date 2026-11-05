@@ -28,7 +28,11 @@ $assert = static function (bool $ok, string $message) use (&$failures, &$checks)
 preg_match_all("/getPathInfo\\(\\) === '\\/'/", $subscriber, $rootChecks);
 $assert(!str_contains($subscriber, "pathUrl('shop', '/loja-da-aculta')"), 'Raiz da loja redirecionando para /loja-da-aculta: a decisão é servir conteúdo na raiz.');
 $processor = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/src/PathProcessor/PurposeFrontPathProcessor.php');
+$surface = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/src/Domain/DomainSurfaceMap.php');
+$frontPolicy = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/src/Domain/FrontPathPolicy.php');
 $assert(str_contains($processor, '_disable_route_normalizer') && str_contains($processor, 'FRONT_ATTRIBUTE'), 'PurposeFrontPathProcessor sem _disable_route_normalizer/FRONT_ATTRIBUTE.');
+$assert(str_contains($processor, 'DomainSurfaceMap::FRONT_PATHS'), 'PurposeFrontPathProcessor não usa o mapa único DomainSurfaceMap::FRONT_PATHS.');
+// O mapa FRONT_PATHS vive em DomainSurfaceMap (fonte única); o processor só o reutiliza.
 foreach ([
   "'support' => '/apoio'",
   "'wiki' => '/wiki'",
@@ -36,16 +40,15 @@ foreach ([
   "'shop' => '/loja'",
   "'forum' => '/discussoes'",
 ] as $entry) {
-  $assert(str_contains($processor, $entry), "Mapa FRONT_PATHS sem $entry: a raiz do host não está uniformizada.");
+  $assert(str_contains($surface, $entry), "Mapa FRONT_PATHS sem $entry: a raiz do host não está uniformizada.");
 }
-$frontPolicy = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/src/Domain/FrontPathPolicy.php');
-$assert(str_contains($frontPolicy, "'forum' => ['/forum']"), 'O caminho antigo /forum deve continuar fechado após a troca da raiz.');
-$assert(!str_contains($subscriber, "pathUrl('main', '/')"), 'Raiz de MAIN redirecionada: a decisão é servir conteúdo.');
-// O redirecionamento de /apoio para / é permitido: só dispara quando o caminho não é a raiz.
-$assert(str_contains($subscriber, "getPathInfo() !== '/'"), 'Redirecionamento para a raiz de SUPPORT sem a guarda de caminho (raiz servida).');
-
-// A exceção da conta continua valendo.
-$assert(str_contains($subscriber, "'aculta_portal.dashboard'") && str_contains($subscriber, "routeUrl('account', 'user.login')"), 'Regra da conta (visitante na raiz vai ao login) ausente.');
+$assert(str_contains($surface, "'forum' => ['/forum']"), 'O caminho antigo /forum deve continuar fechado após a troca da raiz (CAMINHOS_LEGADOS).');
+// Só a conta redireciona a raiz (visitante sem login vai ao login); demais purposes servem conteúdo.
+preg_match_all("/pathUrl\\(\\s*(DomainSurfaceMap::\\w+|'\\w+')\\s*,\\s*'\\/'\\s*\\)/", $subscriber, $rootTargets);
+$nonAccountRootRedirects = array_filter($rootTargets[1], static fn(string $t): bool => !in_array($t, ['DomainSurfaceMap::ACCOUNT', "'account'"], true));
+$assert($nonAccountRootRedirects === [], 'Raiz redirecionada fora da conta: a decisão é servir conteúdo (' . implode(', ', $nonAccountRootRedirects) . ').');
+$assert(str_contains($subscriber, "'aculta_portal.dashboard'") && str_contains($subscriber, "routeUrl(DomainSurfaceMap::ACCOUNT, 'user.login')"), 'Regra da conta (visitante sem login vai ao login) ausente no subscriber.');
+$assert(str_contains($frontPolicy, "'aculta_studio.dashboard'") && str_contains($frontPolicy, 'ACAO_LOGIN'), 'Regra da raiz da conta (dashboard do Studio para visitante vai ao login) ausente em FrontPathPolicy.');
 
 // A decisão está registrada na documentação de redirecionamentos.
 $assert(str_contains($docs, 'serve conteúdo'), 'docs/portal/REDIRECTS.md não registra a decisão "a raiz serve conteúdo".');
