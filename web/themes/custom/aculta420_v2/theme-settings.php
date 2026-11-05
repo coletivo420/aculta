@@ -190,14 +190,14 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
       $light = $scheme['light'];
       $modesMarkup .= '<div class="aculta-palette-mode aculta-palette-mode--light">';
       $modesMarkup .= '<div class="aculta-palette-mode__header">' . t('Claro') . '</div>';
-      $modesMarkup .= '<div class="aculta-palette-mode__stripe" style="background-color: ' . htmlspecialchars($light['accent'], ENT_QUOTES, 'UTF-8') . '; color: ' . htmlspecialchars($light['on_accent'], ENT_QUOTES, 'UTF-8') . ';">';
+      $modesMarkup .= '<div class="aculta-palette-mode__stripe">';
       $modesMarkup .= '<span class="aculta-palette-mode__scheme-name">' . htmlspecialchars($scheme['name'], ENT_QUOTES, 'UTF-8') . '</span>';
       $modesMarkup .= '<span class="aculta-palette-mode__hex">' . htmlspecialchars($light['accent'], ENT_QUOTES, 'UTF-8') . '</span>';
       $modesMarkup .= '</div>';
       $modesMarkup .= '<div class="aculta-palette-mode__subs">';
       foreach ($light['sub'] as $subHex) {
         $modesMarkup .= '<div class="aculta-palette-chip">';
-        $modesMarkup .= '<span class="aculta-palette-chip__color" style="background-color: ' . htmlspecialchars($subHex, ENT_QUOTES, 'UTF-8') . ';"></span>';
+        $modesMarkup .= '<span class="aculta-palette-chip__color"></span>';
         $modesMarkup .= '<span class="aculta-palette-chip__hex">' . htmlspecialchars($subHex, ENT_QUOTES, 'UTF-8') . '</span>';
         $modesMarkup .= '</div>';
       }
@@ -212,14 +212,14 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
       $dark = $scheme['dark'];
       $modesMarkup .= '<div class="aculta-palette-mode aculta-palette-mode--dark">';
       $modesMarkup .= '<div class="aculta-palette-mode__header">' . t('Escuro') . '</div>';
-      $modesMarkup .= '<div class="aculta-palette-mode__stripe" style="background-color: ' . htmlspecialchars($dark['accent'], ENT_QUOTES, 'UTF-8') . '; color: ' . htmlspecialchars($dark['on_accent'], ENT_QUOTES, 'UTF-8') . ';">';
+      $modesMarkup .= '<div class="aculta-palette-mode__stripe">';
       $modesMarkup .= '<span class="aculta-palette-mode__scheme-name">' . htmlspecialchars($scheme['name'], ENT_QUOTES, 'UTF-8') . '</span>';
       $modesMarkup .= '<span class="aculta-palette-mode__hex">' . htmlspecialchars($dark['accent'], ENT_QUOTES, 'UTF-8') . '</span>';
       $modesMarkup .= '</div>';
       $modesMarkup .= '<div class="aculta-palette-mode__subs">';
       foreach ($dark['sub'] as $subHex) {
         $modesMarkup .= '<div class="aculta-palette-chip">';
-        $modesMarkup .= '<span class="aculta-palette-chip__color" style="background-color: ' . htmlspecialchars($subHex, ENT_QUOTES, 'UTF-8') . ';"></span>';
+        $modesMarkup .= '<span class="aculta-palette-chip__color"></span>';
         $modesMarkup .= '<span class="aculta-palette-chip__hex">' . htmlspecialchars($subHex, ENT_QUOTES, 'UTF-8') . '</span>';
         $modesMarkup .= '</div>';
       }
@@ -235,6 +235,59 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
       $cardWrapper['preview_wrapper'][$schemeKey]['markup'] = [
         '#markup' => $modesMarkup,
       ];
+      unset($cardWrapper['preview_wrapper'][$schemeKey]['markup']);
+      $cardWrapper['preview_wrapper'][$schemeKey]['modes'] = [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['aculta-palette-preview__modes']],
+      ];
+      foreach (['light' => t('Claro'), 'dark' => t('Escuro')] as $modeKey => $modeLabel) {
+        $mode = $scheme[$modeKey];
+        $modeElement = [
+          '#type' => 'container',
+          '#attributes' => ['class' => ['aculta-palette-mode', 'aculta-palette-mode--' . $modeKey]],
+          'header' => [
+            '#type' => 'html_tag', '#tag' => 'div', '#value' => $modeLabel,
+            '#attributes' => ['class' => ['aculta-palette-mode__header']],
+          ],
+          'stripe' => [
+            '#type' => 'html_tag', '#tag' => 'div',
+            '#attributes' => [
+              'class' => ['aculta-palette-mode__stripe'],
+              'style' => 'background-color: ' . $mode['accent'] . '; color: ' . $mode['on_accent'] . ';',
+            ],
+            'scheme_name' => [
+              '#type' => 'html_tag', '#tag' => 'span', '#value' => $scheme['name'],
+              '#attributes' => ['class' => ['aculta-palette-mode__scheme-name']],
+            ],
+            'hex' => [
+              '#type' => 'html_tag', '#tag' => 'span', '#value' => $mode['accent'],
+              '#attributes' => ['class' => ['aculta-palette-mode__hex']],
+            ],
+          ],
+          'subs' => [
+            '#type' => 'container',
+            '#attributes' => ['class' => ['aculta-palette-mode__subs']],
+          ],
+        ];
+        foreach ($mode['sub'] as $idx => $subHex) {
+          $modeElement['subs']['chip_' . $idx] = [
+            '#type' => 'container',
+            '#attributes' => ['class' => ['aculta-palette-chip']],
+            'color' => [
+              '#type' => 'html_tag', '#tag' => 'span',
+              '#attributes' => [
+                'class' => ['aculta-palette-chip__color'],
+                'style' => 'background-color: ' . $subHex . ';',
+              ],
+            ],
+            'hex' => [
+              '#type' => 'html_tag', '#tag' => 'span', '#value' => $subHex,
+              '#attributes' => ['class' => ['aculta-palette-chip__hex']],
+            ],
+          ];
+        }
+        $cardWrapper['preview_wrapper'][$schemeKey]['modes'][$modeKey] = $modeElement;
+      }
     }
 
     $form['aculta_cores_purpose']['aculta_purpose_palette'][$purpose] = $cardWrapper;

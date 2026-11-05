@@ -41,6 +41,7 @@ if (count($schemes) !== 10) {
 
 $errors = [];
 $checks = 0;
+$renderedHtml = isset($argv[1]) ? file_get_contents($argv[1]) : FALSE;
 
 foreach ($schemes as $key => $data) {
   $checks++;
@@ -105,4 +106,7 @@ if (!empty($errors)) {
 }
 
 echo "ACULTA420 PALETTE SCHEMES: PASS ({$checks} esquemas verificados contra tokens.css e paletas-por-purpose.md)\n";
+echo $renderedHtml === FALSE
+  ? "RENDER HTML: DEFERRED (passe o HTML renderizado da configuração como primeiro argumento)\n"
+  : "RENDER HTML: fornecido (validação detalhada pendente de implementação do parser DOM)\n";
 exit(0);
