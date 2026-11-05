@@ -84,6 +84,14 @@ schema estrito/renderização de 35 SDCs e descoberta CSS passaram. Firefox
 visível passou em 12 estados, foco por Tab e zoom real 200%. A integração em
 página Studio servida com a V2 permanece pendente.
 
+## Price — G1 aguardando autorização
+
+O ADR-046 lista `price`, mas as referências lidas não definem props,
+apresentação ou consumer semântico. A implementação é uma tarefa ligada a
+Commerce/Loja, que o plano atual exclui sem autorização explícita por tarefa.
+Não foi criado componente nem assumido formato, moeda, impostos ou desconto.
+Retomar após autorização e definição do consumer/contrato; outras fases seguem.
+
 ## Menu de conta e sites — C2 implementado; validação visual pendente
 
 O `account-menu` combina a lista neutra `aculta_domain_sites` com o bloco de

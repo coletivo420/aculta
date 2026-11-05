@@ -1495,5 +1495,8 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   px, claro/escuro, sem overflow; Tab confirmou foco visível de 3 px e zoom real
   200% manteve largura efetiva de 320 CSS px. Capturas e JSON em `$SUITE_OUT`.
 - **Limites:** consumer de página Studio não foi validado com a V2 ativa no
-  Runtime. Não houve escrita de dados/configuração. Próximo item G1: `price`.
+  Runtime. Não houve escrita de dados/configuração. `price` fica AGUARDANDO
+  AUTORIZAÇÃO: item Commerce/Loja sem contrato visual/consumer definido e
+  excluído sem autorização por tarefa. Seguir com G3 e demais itens sem essa
+  dependência.
 

@@ -278,7 +278,7 @@ original caso a descoberta Drupal ainda não conheça o SDC.
 
 ## Lacunas do catálogo
 
-Componentes previstos no ADR-046: `avatar`, `tabs`, `dialog`, `form-field`, `progress`, `data-table` e `empty-state` têm SDC próprio; a função de `author-box` é coberta pelo slot de autoria de `revista-publication` e pelo SDC compartilhado `author-card`. `price` ainda precisa de auditoria/implementação. `breadcrumb` e `accordion` já existem. Ordem e uso estão no [roadmap.md](roadmap.md).
+Componentes previstos no ADR-046: `avatar`, `tabs`, `dialog`, `form-field`, `progress`, `data-table` e `empty-state` têm SDC próprio; a função de `author-box` é coberta pelo slot de autoria de `revista-publication` e pelo SDC compartilhado `author-card`. `price` aguarda autorização por tarefa: é apresentação ligada a Commerce/Loja e não há contrato visual ou consumer neutro definido. `breadcrumb` e `accordion` já existem. Ordem e uso estão no [roadmap.md](roadmap.md).
 
 ## Como documentar um componente novo
 
