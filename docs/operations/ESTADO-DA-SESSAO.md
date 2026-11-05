@@ -3,17 +3,18 @@
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
 
-# F2 — Studio, conta e liberação HTMX em modais de perfil — 2026-11-05
+# F2 — Conclusão da migração HTMX no Studio, Bio e Modais de Perfil — 2026-11-05
 
-- **Objetivo:** avançar os itens da Fase 2 (F2) do ADR-050 no Studio e Minha Conta.
+- **Objetivo:** avançar e concluir os itens da Fase 2 (F2) do ADR-050 na Minha Conta e Studio.
 - **Concluído:**
   - `d74e79a17e`: migra `studio-navigation.js` e `account-navigation.js` para HTMX (F2 item 1).
   - `bd834c58de`: `StudioProfileController` com raiz `#aculta-studio-profile-editor`, foco acessível `data-aculta-focus`, `tabindex="-1"` e bibliotecas HTMX (F2 item 2).
-  - `0ffb7718a9`: alinha teste unitário `DomainPresentationContractTest` ao contrato de 4 níveis com `domain_sites` (352/352 PASS).
-  - `99f3f4ee5d`: desbloqueia requisições HTMX nos modais de perfil (`AccountModalAccess` passa a reconhecer `HX-Request`, eliminando o 403 Forbidden que bloqueava o item 3).
-- **Verificações:** Unit de `aculta_user` (154/154 PASS), Unit de `aculta_studio` (69/69 PASS), Unit de `aculta_portal` (352/352 PASS); `validate-aculta-user-photo.php` PASS (INV-FOTO-1 a INV-FOTO-11); `validate-account-address.php` PASS; `validate-aculta420-v2-sdc.php` (40/40 PASS via Drush); `validate-aculta420-v2-foundations.php` PASS; `validate-browser-validators.php` PASS; `validate-agent-token-budget.php` PASS.
-- **Pendências:** migração final dos componentes de edição modal de bio e redes sociais para HTMX puro no tema V2 sem `use-ajax` (itens 3 e 4), e popup de foto de perfil (item 5).
-- **Próximo passo:** implementar os diálogos HTMX nos cards de bio e redes, preservando invariantes de foto e regras de país único no endereço.
+  - `d036fe4931`: ajusta fronteira de tema no `StudioProfileController` e documenta atributos.
+  - `99f3f4ee5d`: desbloqueia requisições HTMX nos modais de perfil (`AccountModalAccess` passa a reconhecer `HX-Request`).
+  - `e293395478`: migra edição de bio (`AccountBioCard` e `AccountBioForm`) para diálogo nativo `<dialog id="aculta-account-bio-dialog">`, carregamento por `aculta:drawer:open` e submissão por `Htmx::post()` com `HX-Redirect` (F2 item 3).
+- **Verificações:** Unit `aculta_user` (154/154 PASS), Unit `aculta_studio` (7/7 PASS), `validate-module-theme-boundary.php` PASS (4271 checks), `validate-portal-ui-docs.php` PASS (507 tokens), `validate-aculta420-mapped-classes.php` PASS (455 classes), `validate-aculta-user-photo.php` PASS (INV-FOTO-1 a INV-FOTO-11), `validate-account-address.php` PASS.
+- **Pendências:** transição para F3 conforme instrução do responsável.
+- **Próximo passo:** handoff da F3 para o próximo agente.
 
 # Dívida de estilo resolvida — 2026-11-05
 
