@@ -157,7 +157,7 @@ final class SurfaceListController extends ControllerBase {
     $host = $principal !== NULL ? (string) $principal->getHostname() : (string) $this->t('(sem Domain principal)');
     return [
       '#type' => 'container',
-      '#attributes' => ['class' => ['superficies-dns']],
+      '#attributes' => ['data-portal-ui' => 'surface-dns-block'],
       'titulo' => [
         '#type' => 'html_tag',
         '#tag' => 'h2',

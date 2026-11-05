@@ -187,7 +187,12 @@ $themeMap = (string) file_get_contents($theme . '/src/Hook/PortalUiHooks.php')
 preg_match_all("/^\s+'([a-z0-9-]+)' => \[/m", $themeMap, $tm);
 $known = array_flip($tm[1]);
 $used = [];
-foreach (array_merge($files($module . '/src', ['php']), $files($module . '/templates', ['twig'])) as $path) {
+// Todo src/ e templates/ do módulo, submódulos incluídos (aculta_lms, aculta_paths...): a checagem de tokens não pode pular submódulo.
+$usageFiles = array_merge(
+  array_filter($files($module, ['php']), static fn (string $p): bool => str_contains($p, DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR) && !str_contains($p, DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR)),
+  array_filter($files($module, ['twig']), static fn (string $p): bool => str_contains($p, DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR)),
+);
+foreach ($usageFiles as $path) {
   $text = (string) file_get_contents($path);
   preg_match_all("/data-portal-ui' => '([^']*)'/", $text, $m1);
   foreach ($m1[1] as $value) {

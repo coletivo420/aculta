@@ -126,7 +126,7 @@ final class AnswerReviewForm extends FormBase {
       '#type' => 'link',
       '#title' => $this->t('Voltar às respostas'),
       '#url' => Url::fromRoute('aculta_lms.answer_reviews', ['course' => $course->id(), 'group' => $group->id()]),
-      '#attributes' => ['class' => ['button']],
+      '#attributes' => ['data-portal-ui' => 'lms-answer-review-button'],
     ];
 
     return $form;

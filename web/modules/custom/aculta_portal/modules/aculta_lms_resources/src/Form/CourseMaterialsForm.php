@@ -187,7 +187,7 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
   private function buildCourseDocuments(GroupInterface $course): array {
     $build = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-lms-course-materials__documents']],
+      '#attributes' => ['data-portal-ui' => 'aculta-lms-course-materials--documents'],
       'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Documentos PDF privados do curso')],
       'description' => [
         '#plain_text' => $this->t('Estes arquivos são privados e usam a relação Group e o visualizador do módulo de documentos.'),
@@ -224,7 +224,7 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
       }
       $row = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-lms-course-materials__document']],
+        '#attributes' => ['data-portal-ui' => 'aculta-lms-course-materials--document'],
         'label' => ['#plain_text' => (string) $document->label()],
       ];
       $updateAccess = $this->documentAccess->updateAccess($course, $document);

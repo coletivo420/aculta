@@ -58,7 +58,7 @@ final class CourseLessonPreviewController {
       $question = $this->question((string) ($activity->get('answer_config')->value ?? '{}'));
       $items[] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-lms-lesson-preview__activity']],
+        '#attributes' => ['data-portal-ui' => 'aculta-lms-lesson-preview--activity'],
         'type' => ['#plain_text' => $this->activityLabel((string) $activity->get('type')->value)],
         'question' => $question === ''
           ? []

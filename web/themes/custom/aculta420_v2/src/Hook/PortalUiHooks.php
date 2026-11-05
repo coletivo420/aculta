@@ -14,7 +14,9 @@ use Drupal\Core\Template\Attribute;
  * apresentação. Este hook troca cada token pelas classes correspondentes e remove
  * o atributo. Token desconhecido não gera classe.
  *
- * Mapa inicial: só os tokens migrados para o V2. Os demais continuam no mapa do
+ * Usa hook_preprocess genérico: vale para todo theme hook que recebe um Attribute
+ * (attributes, wrapper_attributes, title_attributes, content_attributes etc.), não só
+ * para links. Mapa: só os tokens migrados para o V2. Os demais continuam no mapa do
  * V1 (web/themes/custom/aculta420/src/Hook/PortalUiHooks.php) até a migração,
  * registrada em docs/architecture.md, seção 7.
  */
@@ -27,12 +29,38 @@ final class PortalUiHooks {
    */
   public const TOKENS = [
     'surface-list-edit-action' => ['button', 'button--small'],
+    'surface-dns-block' => ['superficies-dns'],
+    'aculta-lms-lesson-preview--activity' => ['aculta-lms-lesson-preview__activity'],
+    'lms-answer-review-button' => ['button'],
+    'aculta-lms-class-status-history--period' => ['aculta-lms-class-status-history__period'],
+    'lms-dashboard-links-inline' => ['links', 'inline'],
+    'aculta-lms-course-sort-form' => ['aculta-lms-course-sort-form'],
+    'aculta-lms-course-builder--actions' => ['aculta-lms-course-builder__actions'],
+    'aculta-lms-course-builder--activity' => ['aculta-lms-course-builder__activity'],
+    'aculta-lms-course-builder--activities' => ['aculta-lms-course-builder__activities'],
+    'aculta-lms-course-builder--sort-handle' => ['aculta-lms-course-builder__sort-handle'],
+    'aculta-lms-course-builder--lesson' => ['aculta-lms-course-builder__lesson'],
+    'aculta-lms-course-builder--lesson-heading' => ['aculta-lms-course-builder__lesson-heading'],
+    'aculta-lms-course-builder--state' => ['aculta-lms-course-builder__state'],
+    'aculta-lms-course-builder--published' => ['is-published'],
+    'aculta-lms-course-builder--draft' => ['is-draft'],
+    'aculta-lms-course-builder--empty' => ['aculta-lms-course-builder__empty'],
+    'aculta-lms-course-builder--lessons' => ['aculta-lms-course-builder__lessons'],
+    'aculta-lms-course-builder--header' => ['aculta-lms-course-builder__header'],
+    'aculta-lms-course-builder--summary' => ['aculta-lms-course-builder__summary'],
+    'aculta-lms-course-materials--documents' => ['aculta-lms-course-materials__documents'],
+    'aculta-lms-course-materials--document' => ['aculta-lms-course-materials__document'],
   ];
 
-  #[Hook('preprocess_link')]
-  public function preprocessLink(array &$variables): void {
-    if (($variables['attributes'] ?? NULL) instanceof Attribute) {
-      $this->apply($variables['attributes']);
+  /**
+   * Troca data-portal-ui por classes em todos os Attribute do theme hook.
+   */
+  #[Hook('preprocess')]
+  public function preprocess(array &$variables): void {
+    foreach ($variables as $key => $value) {
+      if (is_string($key) && str_ends_with($key, 'attributes') && $value instanceof Attribute) {
+        $this->apply($value);
+      }
     }
   }
 
