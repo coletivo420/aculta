@@ -1,20 +1,20 @@
 # TODO — aculta420_v2
 
-Estado: sem status registrado · versão 1.2.0-dev.17 (`aculta420_v2.info.yml`) · status: sem status YAML.
+Estado: em desenvolvimento · versão 1.2.0-dev.17 (`aculta420_v2.info.yml`) · status: sem status YAML.
 
 ## Próximo passo
 
-Sem status YAML. Próximo passo: na seção da fase atual do roadmap citado em Leitura.
+F1 (login, busca, gavetas e cadastro) concluída. Próximo passo: F2 (investigação do HTMX nos diálogos da bio/redes/endereço em Conta/Studio) e integração de consumers reais dos SDCs.
 
 ## Dívidas
 
-- Classes mapeadas em `PortalUiHooks::TOKENS` sem CSS em nenhum tema: 192. Grupos e decisão pendente em `web/themes/custom/aculta420_v2/docs/roadmap.md`, seção "Dívida de estilo".
-- Nomes Bootstrap no mapa (`bi`, `breadcrumb`, `breadcrumb-item`, `btn-primary`, `btn-outline-*`): decidir remoção.
+- Componente `price` (ADR-046): aguarda definição do contrato e autorização explícita da frente de Commerce/Loja.
+- Faixa de acento (`card-cultural`): em modo DRAFT até entrega da variável neutra `domain_presentation.accent` (D1) pelo Portal.
 
 ## Leitura
 
 - Leia só este arquivo, o código alvo e o `CHANGELOG.md` do componente se ele existir, pelo trecho necessário.
-- Roadmap completo, grande: `web/themes/custom/aculta420_v2/docs/roadmap.md`. Leia só a seção pelo título: `rg -n '^## ' web/themes/custom/aculta420_v2/docs/roadmap.md`.
+- Roadmap completo, grande: `web/themes/custom/aculta420_v2/docs/roadmap.md`. Leia só a seção pelo título: `grep -n '^## ' web/themes/custom/aculta420_v2/docs/roadmap.md`.
 
 ## Ao concluir uma fase
 

@@ -1,5 +1,15 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — conclusão da F1 de HTMX (ADR-050)
+
+- Finalização formal da Fase 1 (F1a/F1b) do ADR-050 no roadmap do tema V2:
+  busca do shell com prévia HTMX, login popup com fragmento e HX-Redirect,
+  gavetas utilitárias de mensagens e avisos (com filtros de avisos integrados e
+  a exceção aceita documentada) e cadastro popup no checkout de doação.
+- Validação no Runtime com suíte de navegador aculta-htmx-f1 (43/43 checks) e
+  gates de fundações, schemas e contratos em conformidade.
+- Roadmap atualizado registrando F0 e F1 como CONCLUÍDAS.
+
 ## Não versionado — auditoria completa de SDCs e gate de 40 componentes
 
 - O gate `scripts/validate-aculta420-v2-sdc.php` passou a cobrir integralmente

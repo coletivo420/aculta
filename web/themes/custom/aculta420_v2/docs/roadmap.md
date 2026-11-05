@@ -438,13 +438,12 @@ autorização; o mapeamento de Wiki para a faixa de acento aguarda confirmação
   após o CSS global. A revisão visual do desenho completo por componente
   continua como evolução, não como dívida.
 
-### HTMX — ADR-050 (F0 concluída; F1 parcial)
+### HTMX — ADR-050 (F0 e F1 concluídas)
 
 Core 11.5 `Htmx`, `core/drupal.htmx`, o atributo de conteúdo principal, a
 renovação de `form_build_id` e o caminho CSRF foram inspecionados. Testes oficiais
 Core e fixture ACULTA de popup/form dentro de `<dialog>` passaram em Firefox e
-Chromium headless, incluindo token adulterado rejeitado. **F0 CONCLUÍDA; F1
-iniciada e parcial**; F2 depende de F1a e F3 segue a ordem de módulos do ADR-050. Evidência em
+Chromium headless, incluindo token adulterado rejeitado. **F0 e F1 CONCLUÍDAS**; F2 depende de F1a e F3 segue a ordem de módulos do ADR-050. Evidência em
 [`docs/htmx-confirmacao.md`](../../../../../docs/htmx-confirmacao.md).
 
 **Atualização 2026-11-05 — F1 parcial:** o Portal responde ao login popup por
