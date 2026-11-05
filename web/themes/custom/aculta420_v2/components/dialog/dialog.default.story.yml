@@ -1,0 +1,13 @@
+name: Selecionar local
+description: Diálogo modal em tela cheia no mobile, com destino de página completa sem JavaScript.
+component: aculta420_v2:dialog
+props:
+  id: aculta-dialog-local-example
+  title: Selecionar local
+  trigger_label: Abrir seletor de local
+  trigger_url: /eventos/locais
+  close_label: Fechar seletor de local
+  variant: fullscreen
+slots:
+  content: '<p>Escolha um local para associar ao evento.</p><ul><li>Casa de Cultura</li><li>Centro Comunitário</li></ul>'
+  actions: '<a class="button button--outline" href="/eventos/locais">Cadastrar local</a><button class="button button--primary" type="button">Selecionar</button>'

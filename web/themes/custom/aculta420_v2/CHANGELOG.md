@@ -1,5 +1,17 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — componente Dialog
+
+- Criado o SDC `dialog` com `<dialog>` nativo, variante fullscreen no mobile,
+  fallback por navegação sem JavaScript e conteúdo/ações fornecidos pelo módulo
+  proprietário. O CSS é anexado pelo SDC; a abertura reutiliza o comportamento
+  compartilhado `utility-dialogs`, que mantém o foco cíclico por Tab/Shift+Tab.
+  Story, documentação e gate de render incluídos.
+- Schema (55/764), foundations (2.468) e render Drupal isolado (31 SDCs) PASS;
+  Firefox visível passou 32/32 checks em fixture sintética, incluindo seis
+  larguras, claro/escuro, zoom real 200%, teclado, fechamento e fallback sem JS.
+  Integração a consumer publicado/autenticado do Runtime permanece pendente.
+
 ## Não versionado — componente Avatar
 
 - Criado SDC `avatar` com tamanhos responsivos, slot de mídia de responsabilidade

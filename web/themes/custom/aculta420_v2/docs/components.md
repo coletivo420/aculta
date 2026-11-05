@@ -27,6 +27,23 @@ slot `items` recebe a lista do Drupal e preserva URLs, access/cache e
 `aria-current="page"`. Story: `tabs.default.story.yml`. Links mantêm navegação
 com e sem JavaScript; alvos de 44 px e sem role `tablist`.
 
+### dialog
+
+Janela modal HTML nativa com título, botão de fechar, conteúdo e ações em slots.
+Props: `id`, `title`, `trigger_label`, `trigger_url`, `close_label` e `variant`
+(`default` ou `fullscreen`). Story: `dialog.default.story.yml`. Reutiliza
+`utility-drawers` e `js/utility-dialogs.js` para abrir/fechar; o gatilho é um
+link para uma rota completa quando JavaScript está indisponível. Slots:
+`content` e `actions`. A variante fullscreen ocupa a tela no mobile e volta à
+largura modal a partir de 40rem.
+Conteúdo, permissões, URLs e ações permanecem sob responsabilidade do módulo
+proprietário; o componente não consulta entidades nem dados de domínio. Escape
+e o botão fecham; Tab/Shift+Tab mantêm o foco dentro do diálogo e o fechamento
+devolve foco ao gatilho. O gate Drupal renderiza o componente e comprova a
+descoberta automática de `dialog.css` e a dependência JS. Firefox visível passou
+em fixture sintética (32 checks); consumer Drupal publicado/autenticado permanece
+sem validação.
+
 ### accordion
 
 Resposta expansível baseada em details/summary, sem JavaScript e operável por
@@ -219,7 +236,7 @@ original caso a descoberta Drupal ainda não conheça o SDC.
 
 ## Lacunas do catálogo
 
-Componentes previstos no ADR-046: `avatar` e `tabs` têm SDC próprio; a função de `author-box` é coberta pelo slot de autoria de `revista-publication` e pelo SDC compartilhado `author-card`. `dialog`, `form-field`, `progress`, `data-table`, `empty-state` e `price` ainda precisam de auditoria/implementação. `breadcrumb` e `accordion` já existem. Ordem e uso estão no [roadmap.md](roadmap.md).
+Componentes previstos no ADR-046: `avatar`, `tabs` e `dialog` têm SDC próprio; a função de `author-box` é coberta pelo slot de autoria de `revista-publication` e pelo SDC compartilhado `author-card`. `form-field`, `progress`, `data-table`, `empty-state` e `price` ainda precisam de auditoria/implementação. `breadcrumb` e `accordion` já existem. Ordem e uso estão no [roadmap.md](roadmap.md).
 
 ## Como documentar um componente novo
 

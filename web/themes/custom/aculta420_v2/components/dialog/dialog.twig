@@ -1,0 +1,9 @@
+<a class="aculta-dialog__trigger" href="{{ trigger_url }}" aria-controls="{{ id }}" aria-expanded="false" aria-haspopup="dialog" data-aculta-dialog-trigger>{{ trigger_label }}</a>
+<dialog{{ attributes.addClass('aculta-dialog', 'aculta-dialog--' ~ (variant|default('default'))) }} id="{{ id }}" aria-labelledby="{{ id }}-title" aria-modal="true" tabindex="-1" data-aculta-utility-drawer>
+  <header class="aculta-dialog__header">
+    <h2 class="aculta-dialog__title" id="{{ id }}-title">{{ title }}</h2>
+    <button class="aculta-dialog__close" type="button" data-aculta-dialog-close aria-label="{{ close_label|default('Fechar') }}">{{ include('aculta420_v2:icon', { name: 'x', variant: 'duotone', size: 'md' }, with_context = false) }}</button>
+  </header>
+  <div class="aculta-dialog__content">{{ content }}</div>
+  {% if actions %}<footer class="aculta-dialog__actions">{{ actions }}</footer>{% endif %}
+</dialog>

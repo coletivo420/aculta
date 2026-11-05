@@ -1,0 +1,46 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Diálogo
+description: Janela modal HTML nativa, aberta pelo comportamento compartilhado do tema.
+group: ACULTA
+libraryOverrides:
+  dependencies:
+    - aculta420_v2/utility-drawers
+props:
+  type: object
+  additionalProperties: false
+  required: [id, title, trigger_label, trigger_url]
+  properties:
+    id:
+      type: string
+      title: ID único do diálogo
+      pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
+    title:
+      type: string
+      title: Título
+      minLength: 1
+    trigger_label:
+      type: string
+      title: Rótulo do link de abertura
+      minLength: 1
+    trigger_url:
+      type: string
+      title: Destino completo sem JavaScript
+      minLength: 1
+      format: uri-reference
+    close_label:
+      type: string
+      title: Rótulo acessível do botão de fechar
+      minLength: 1
+      default: Fechar
+    variant:
+      type: string
+      title: Apresentação
+      enum: [default, fullscreen]
+      default: default
+slots:
+  content:
+    title: Conteúdo
+    description: Conteúdo ou formulário fornecido pelo módulo proprietário.
+  actions:
+    title: Ações
+    description: Links e ações renderizados pelo módulo proprietário.

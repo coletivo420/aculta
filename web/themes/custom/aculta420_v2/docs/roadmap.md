@@ -29,6 +29,21 @@ Firefox ESR visível passou nas seis larguras em claro/escuro, zoom 200% em 320
 CSS px sem overflow da página e foco visível por Tab. Integração com os render
 arrays de navegação do Portal fica para os templates do Studio.
 
+## Dialog — G1 implementado; consumer Runtime pendente
+
+Criado o SDC `dialog` com `<dialog>` nativo, gatilho em forma de link para
+fallback sem JavaScript, título associado por `aria-labelledby`, ação de fechar
+e slots para conteúdo e ações. A variante `fullscreen` ocupa a tela no mobile e
+volta à largura modal a partir de 40rem. O comportamento reutiliza
+`utility-dialogs.js`, com foco cíclico por Tab/Shift+Tab; o SDC usa a descoberta
+automática de `dialog.css`. Schema 55/764, design foundations 2.468, render
+Drupal isolado (31 SDCs), PHP lint/PHPCS, YAML e diff passaram. Firefox ESR
+visível em fixture sintética passou 32/32 checks: seis larguras (320/390/768/
+959/960/1440) nos modos claro/escuro, zoom real 200% a 320 CSS px, foco cíclico,
+Escape, botão/backdrop, e fallback sem JavaScript. PNGs e JSON estão fora do
+repositório diretamente em `$SUITE_OUT`. A fixture não comprova integração a
+rota ou consumer Drupal no Runtime.
+
 ## Menu de conta e sites — C2 implementado; validação visual pendente
 
 O `account-menu` combina a lista neutra `aculta_domain_sites` com o bloco de

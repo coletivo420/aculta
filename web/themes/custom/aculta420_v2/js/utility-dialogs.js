@@ -19,7 +19,32 @@
         });
       });
 
-      once('aculta420V2UtilityDialog', 'dialog.aculta-utility-dialog', context).forEach((dialog) => {
+      once('aculta420V2UtilityDialog', 'dialog[data-aculta-utility-drawer]', context).forEach((dialog) => {
+        dialog.addEventListener('keydown', (event) => {
+          if (event.key !== 'Tab') {
+            return;
+          }
+
+          const focusable = [...dialog.querySelectorAll(
+            'a[href], area[href], button, input:not([type="hidden"]), select, summary, textarea, [contenteditable="true"], [tabindex]:not([tabindex="-1"])',
+          )].filter((element) => element.getClientRects().length > 0 && !element.matches(':disabled'));
+          if (focusable.length === 0) {
+            event.preventDefault();
+            dialog.focus();
+            return;
+          }
+
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+          if (event.shiftKey && (document.activeElement === first || document.activeElement === dialog)) {
+            event.preventDefault();
+            last.focus();
+          }
+          else if (!event.shiftKey && (document.activeElement === last || document.activeElement === dialog)) {
+            event.preventDefault();
+            first.focus();
+          }
+        });
         dialog.addEventListener('click', (event) => {
           if (event.target === dialog) {
             dialog.close();

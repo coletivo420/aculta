@@ -63,6 +63,7 @@ $component_ids = [
   'cart-offcanvas',
   'card-cultural',
   'discussion-comment',
+  'dialog',
   'event-page-layout',
   'filter-chips',
   'forum-category',
@@ -164,6 +165,18 @@ $samples = [
       'submitted' => '<time datetime="2026-11-04">4 de novembro de 2026</time>',
       'body' => 'Contribuição na discussão.',
       'footer' => '<a href="/topico/exemplo#comentario">Link permanente</a>',
+    ],
+  ],
+  'dialog' => [
+    '#props' => [
+      'id' => 'v2-sdc-dialog-validation',
+      'title' => 'Diálogo de validação',
+      'trigger_label' => 'Abrir diálogo',
+      'trigger_url' => '/destino-completo',
+    ],
+    '#slots' => [
+      'content' => Markup::create('<p>Conteúdo do diálogo.</p>'),
+      'actions' => Markup::create('<a class="button button--outline" href="/destino-completo">Continuar</a>'),
     ],
   ],
   'event-page-layout' => [
@@ -401,6 +414,43 @@ foreach ($component_ids as $component_id) {
       || !str_contains($output, 'aria-current="page"')
       || str_contains($output, 'role="tablist"'))) {
     throw new RuntimeException('Tabs must render page navigation links, not an interactive tab panel widget.');
+  }
+  if ($component_id === 'dialog') {
+    $dialog_dependencies = $definition['library']['dependencies'] ?? [];
+    foreach (['aculta420_v2/utility-drawers', 'core/drupal'] as $dependency) {
+      if (!in_array($dependency, $dialog_dependencies, TRUE)) {
+        throw new RuntimeException(sprintf('Dialog behavior dependency is missing: %s', $dependency));
+      }
+    }
+    $dialog_css = array_keys($definition['library']['css']['component'] ?? []);
+    if (!array_filter($dialog_css, static fn(string $asset): bool => str_ends_with($asset, '/dialog.css'))) {
+      throw new RuntimeException('Dialog component CSS was not discovered by the SDC library.');
+    }
+    foreach ([
+      '<a class="aculta-dialog__trigger" href="/destino-completo"',
+      'aria-controls="v2-sdc-dialog-validation"',
+      'aria-haspopup="dialog"',
+      '<dialog',
+      'id="v2-sdc-dialog-validation"',
+      'aria-labelledby="v2-sdc-dialog-validation-title"',
+      'aria-modal="true"',
+      'data-aculta-utility-drawer',
+      'data-aculta-dialog-close',
+      'tabindex="-1"',
+      'Conteúdo do diálogo.',
+      'Continuar',
+    ] as $required_markup) {
+      if (!str_contains($output, $required_markup)) {
+        throw new RuntimeException(sprintf('Dialog markup is missing: %s', $required_markup));
+      }
+    }
+    $dialog_behavior = file_get_contents($theme_root . '/js/utility-dialogs.js');
+    if (!str_contains($dialog_behavior, "dialog[data-aculta-utility-drawer]")
+      || !str_contains($dialog_behavior, "event.key !== 'Tab'")
+      || !str_contains($dialog_behavior, 'last.focus()')
+      || !str_contains($dialog_behavior, 'first.focus()')) {
+      throw new RuntimeException('Utility dialog behavior must select the SDC contract attribute.');
+    }
   }
   if ($component_id === 'breadcrumb'
     && (!str_contains($output, 'aria-current="page"') || !str_contains($output, 'aria-label="Breadcrumb"'))) {

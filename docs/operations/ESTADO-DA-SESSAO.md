@@ -1386,3 +1386,33 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Próximos passos:** commitar apenas os arquivos desta limpeza em `dev`, fazer
   push fast-forward a `origin/dev` e prosseguir com o componente `dialog`.
 
+## G1 — componente Dialog — 2026-11-05
+
+- **Implementação:** SDC `dialog` com `<dialog>` nativo, variantes default e
+  fullscreen mobile, fallback por link sem JS, título nomeado, botão de fechar,
+  slots `content`/`actions`, CSS descoberto pelo filename e dependência de
+  `utility-drawers`. O comportamento compartilhado agora seleciona a marcação
+  `data-aculta-utility-drawer`, isolando o modal do CSS de gavetas, e mantém
+  Tab/Shift+Tab dentro do diálogo.
+- **Gates:** SDC schema 55 componentes/764 checks PASS; design foundations 2.468
+  PASS; render Drush 31 SDCs PASS; PHP lint/PHPCS do validador, YAML e
+  `git diff --check` PASS.
+- **Firefox:** fixture HTML sintética usando CSS e JS atuais do tema, visível em
+  X11, 32/32 checks: 320/390/768/959/960/1440 em claro/escuro, sem overflow;
+  fullscreen em mobile e modal compacto em desktop; zoom real 200% com viewport
+  CSS 320; foco por Tab e ciclo por Tab/Shift+Tab; Escape, botão/backdrop,
+  `aria-expanded` e fallback completo com JavaScript desligado. PNGs e
+  `results.json` diretamente em `$SUITE_OUT`, fora do repo. A
+  fixture é sintética e não comprova consumo em rota Drupal publicada ou sessão
+  autenticada do Runtime.
+- **Checklist AGENTS V2 seção 6:** story e catálogo citam nome, props, slots,
+  JavaScript, estado e limites; arquitetura registra comportamento JS; gate foi
+  estendido e seu resultado registrado; roadmap/CHANGELOG atualizados; não houve
+  UI Styles, nova biblioteca, hook, classe PHP ou variável Portal.
+- **Runtime:** Drush SDC usou descoberta nula para evitar invalidar caches. Não
+  houve escrita de cache/configuração/conteúdo. Antes do commit, `updatedb:status`
+  e `config:status` passaram sem pendências/diferenças; publicar apenas os
+  arquivos do tema/gate desta entrega em `dev`. Dialog aguardará integração real
+  ao consumer na fase de templates/Studio se não houver escopo de componente que
+  a use agora.
+

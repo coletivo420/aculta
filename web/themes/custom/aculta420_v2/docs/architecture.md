@@ -83,7 +83,7 @@ Todo o JavaScript é vanilla, com `Drupal.behaviors` e `core/once`. Não há jQu
 | --- | --- |
 | `components/multidomain-bar/multidomain-bar.js` | sincroniza a altura da barra com o espaço da página e com a barra administrativa; abre o popup de login (`/entrar/janela`) e o popup de busca (`/busca/popup`) por Fetch, em `<dialog>` nativo |
 | `components/navigation-bar/navigation-bar.js` | drawer de navegação mobile: abre, fecha com Escape e devolve o foco |
-| `js/utility-dialogs.js` | diálogos utilitários compartilhados |
+| `js/utility-dialogs.js` | diálogos utilitários com `data-aculta-utility-drawer`: abre por `showModal()`, contém Tab/Shift+Tab, fecha por botão, Escape ou clique no fundo e atualiza `aria-expanded` dos gatilhos |
 | `js/messenger-drawers.js` | conteúdo de mensagens/avisos em gavetas, filtros por fragmentos, estados loading/error, abort de resposta antiga, novo contato e ações de conversa |
 | `js/counters.js` | atualiza contadores das utilidades, com zero oculto |
 | `js/alerts-dismiss.js` | dispensa avisos e atualiza o contador |
@@ -105,7 +105,7 @@ cartões e verbetes. `src/styles/wiki.css` trata apenas as listagens, busca,
 categorias e mudanças recentes fornecidas pelo owner da Wiki. O Domain Header
 continua sob o contrato do shell.
 
-A biblioteca `utility-drawers` reúne os quatro últimos. O popup de login e o de busca não usam `core/drupal.dialog.ajax`: a V2 remove essa dependência do utilitário de busca (`PagePresentationHooks::removeSearchDialogDependency`).
+A biblioteca `utility-drawers` reúne os quatro últimos. Os diálogos nativos usam `data-aculta-utility-drawer` como contrato de comportamento; estilos específicos de cada SDC ficam isolados para que um modal não herde dimensões de gaveta. O popup de login e o de busca não usam `core/drupal.dialog.ajax`: a V2 remove essa dependência do utilitário de busca (`PagePresentationHooks::removeSearchDialogDependency`).
 
 Com JavaScript desligado, os links dos gatilhos continuam válidos: o login e a busca abrem as páginas próprias do Portal.
 
