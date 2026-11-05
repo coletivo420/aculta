@@ -132,6 +132,24 @@ if (is_file($handoff)) {
   $failures[] = 'docs/operations/ESTADO-DA-SESSAO.md ausente';
 }
 
+/* 3b. Skills: cada docs/agent-skills/<nome>/SKILL.md tem frontmatter com o mesmo nome do diretório e link em .claude/skills/. */
+$skillDirs = glob($root . '/docs/agent-skills/*', GLOB_ONLYDIR) ?: [];
+foreach ($skillDirs as $skillDir) {
+  $skillName = basename($skillDir);
+  $skillFile = $skillDir . '/SKILL.md';
+  if (!is_file($skillFile)) {
+    $failures[] = "docs/agent-skills/$skillName sem SKILL.md";
+    continue;
+  }
+  if (!preg_match('/^name: ' . preg_quote($skillName, '/') . '\s*$/m', (string) file_get_contents($skillFile))) {
+    $failures[] = "docs/agent-skills/$skillName/SKILL.md com name diferente do diretório";
+  }
+  if (!is_file($root . '/.claude/skills/' . $skillName . '/SKILL.md')) {
+    $failures[] = "skill $skillName sem link em .claude/skills/";
+  }
+}
+$report[] = 'skills ' . count($skillDirs);
+
 /* 4. Literais exigidos por outros gates. */
 $agents = (string) @file_get_contents($root . '/AGENTS.md');
 foreach (AGENTS_LITERALS as $literal) {

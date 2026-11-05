@@ -45,4 +45,5 @@ Regras de todos os agentes. Em conflito, vale a instrução explícita mais rece
 - Regras detalhadas: `docs/operations/AGENT-REGRAS-DETALHADAS.md`. Ambientes, Drush e banco de teste: `docs/operations/AGENT-OPERATIONS.md`.
 - Regras por escopo: `docs/operations/AGENT-POLICY-INDEX.md`. Mapa do projeto: `docs/operations/MAPA-PARA-AGENTES.md`.
 - Decisões do responsável: `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`.
+- Procedimentos repetidos (gates, handoff, TODO, commit, navegador): `docs/agent-skills/<nome>/SKILL.md`. O Claude Code carrega pelo link em `.claude/skills/`.
 - Gates: `docs/operations/GATES.md`. Saída de comandos: `docs/operations/AGENT-OUTPUT.md`. Economia de tokens: `docs/portal/AGENT-TOKEN-ECONOMY.md`.
