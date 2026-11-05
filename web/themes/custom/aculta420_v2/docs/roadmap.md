@@ -372,13 +372,7 @@ Critérios de contraste WCAG AA aprovados em `tokens.css`. Schema e defaults con
 
 ## Fase 4 — UI Styles
 
-**Status: compatibilidade verificada em 2026-11-05.** `ui_styles` 1.22.0 está
-habilitado no Runtime, junto de `ui_styles_views` e `ui_styles_ui_patterns`.
-O `ui_styles.info.yml` declara `core_version_requirement: ^10.3 || ^11 || ^12`,
-o que cobre 11.5 e a meta 12 do ADR-045. O tema não registra plugins de UI
-Styles e `docs/ui-styles.md` não existe porque não há estilo próprio a
-documentar; o arquivo será criado no primeiro uso. Nenhuma configuração de UI
-Styles foi alterada nesta verificação.
+**Status: planejada em 2026-11-05; implementação pendente.** Compatibilidade do módulo `ui_styles` 1.22.0 verificada no Runtime. Escopo e decisões registrados em `docs/ui-styles.md`: botões (4 variantes), faixa de acento de cartão e cores por purpose; uso restrito ao administrador Drupal; entrega antes da RC. Pré-requisitos bloqueantes: botões sincronizados sem o CSS legado de `buttons.css`, escolha de esquema por purpose ligada ao runtime, e servidor na versão atual de `origin/dev`. O tema ainda não registra plugins de UI Styles.
 
 ## Fase 5 — Componentes e templates
 
