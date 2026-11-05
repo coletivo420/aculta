@@ -64,6 +64,40 @@ Não há opção de "sem faixa" aqui: para isso, use `aculta_show_accent_stripe`
 
 Os valores seguem `docs/superficies.md`, seção 1.
 
+### 2.1 Cores por purpose (planejado, F3)
+
+Decisão do responsável em 2026-11-05: o administrador escolhe a cor de destaque
+de cada purpose em uma seção nova, **Cores por purpose**, separada de
+Superfícies. Estado: **planejado**, ainda não implementado.
+
+| Chave (planejada) | Tipo | Padrão | Opções | Aplica a |
+| --- | --- | --- | --- | --- |
+| `aculta_purpose_palette.main` | select | `green` | variantes aprovadas | destaque do purpose `main` |
+| `aculta_purpose_palette.wiki` | select | `green-tonal` | variantes aprovadas | destaque do purpose `wiki` |
+| `aculta_purpose_palette.account` | select | `green-dark` | variantes aprovadas | destaque do purpose `account` |
+| `aculta_purpose_palette.support` | select | `yellow` | variantes aprovadas | destaque do purpose `support` |
+| `aculta_purpose_palette.shop` | select | `yellow-tonal` | variantes aprovadas | destaque do purpose `shop` |
+| `aculta_purpose_palette.magazine` | select | `red` | variantes aprovadas | destaque do purpose `magazine` |
+| `aculta_purpose_palette.courses` | select | `red-tonal` | variantes aprovadas | destaque do purpose `courses` |
+| `links` | — | neutro | sem controle | sem destaque |
+
+Regras:
+
+- **Só lista aprovada.** O administrador não digita hexadecimal. Cada variante
+  já passou no contraste (3:1 para destaque decorativo, 4,5:1 para texto sobre o destaque).
+- **Base do V1:** verde `#689427`, verde-escuro `#0c3c29`, amarelo `#f2ca36`,
+  vermelho `#d4452d`. As variantes `-tonal` são derivadas das cores reggae
+  `#12A113` (verde), `#FDDE14` (amarelo) e `#E50104` (vermelho). Os valores
+  exatos são definidos pela F3 e registrados aqui depois da medição.
+- **Chave neutra.** O tema lê `domain_presentation.identity.purpose` e aplica a
+  variante escolhida por classe neutra no `<body>`. Não há lógica de domínio no tema.
+- Padrão de cada purpose igual ao mapeamento aceito; alterar exige salvar
+  pelo formulário e exportar com `drush cex`.
+
+Relação com o `accent` do Portal (seção 3): a cor da faixa **por tipo de
+conteúdo** continua vindo do Portal. A cor **por purpose** é escolha do
+administrador do tema. As duas coexistem e não se substituem.
+
 ## 3. O que não é do tema
 
 Pela regra de fronteiras (AGENTS, seção 2 e 3), estas opções **não ficam no tema**:
