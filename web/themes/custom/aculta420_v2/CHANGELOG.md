@@ -1,5 +1,16 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — auditoria completa de SDCs e gate de 40 componentes
+
+- O gate `scripts/validate-aculta420-v2-sdc.php` passou a cobrir integralmente
+  todos os 40 SDCs existentes no tema (`lms-tour`, `revista-listing`,
+  `revista-publication`, `revista-teaser`, `wiki-entry` adicionados à lista de
+  descoberta, schemas estritos, assets e renderização isolada).
+- Documentação do catálogo em `docs/components.md` atualizada com o SDC
+  `lms-tour` (utilizado no percurso do estudante pelo módulo `aculta_lms`) e
+  total de 40 componentes auditados sem entradas fantasmas.
+- `docs/roadmap.md` atualizado com o status de cobertura dos 40 componentes.
+
 ## Não versionado — avatar do menu de conta usa o SDC
 
 - `account-menu` passou a renderizar o SDC `avatar` no resumo e no painel de

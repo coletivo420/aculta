@@ -1,6 +1,6 @@
 # Catálogo de componentes do tema V2
 
-Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Auditoria do catálogo em 2026-11-05: os 39 diretórios de `components/` têm entrada aqui, schema e story; não há entrada sem componente.
+Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Auditoria do catálogo em 2026-11-05: os 40 diretórios de `components/` têm entrada aqui, schema e story; não há entrada sem componente.
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
@@ -116,6 +116,17 @@ de aula. Não recebe entidade, aluno ou dados de acesso como prop. Slot único:
 content. Story: lms-lesson-page.default.story.yml. Sem JavaScript; tabela rola
 dentro do próprio bloco em telas estreitas. O template usa fallback ao render
 original caso a descoberta Drupal ainda não conheça o SDC.
+
+### lms-tour
+
+Apresentação acessível em diálogo nativo HTML para o percurso guiado do
+estudante no LMS. Embedda o SDC dialog com indicador de progresso e slots para
+conteúdo e ações. Props: id, title, trigger_label, trigger_url, current_step
+(padrão welcome), total_steps (padrão 4). Slots: content e actions. Story:
+lms-tour.default.story.yml. O componente não consulta entidades nem decide
+etapas; controle de fluxo e permissões permanecem no módulo proprietário
+(aculta_lms).
+
 
 ## Shell e navegação
 

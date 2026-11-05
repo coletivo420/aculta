@@ -368,7 +368,7 @@ Styles foi alterada nesta verificação.
 
 ## Fase 5 — Componentes e templates
 
-**Status: catálogo auditado em 2026-11-05 — 39 componentes com entrada, schema e story, sem entrada fantasma. Consumers reais dos SDCs ainda pendentes; `price` aguarda autorização da Loja.**
+**Status: catálogo auditado em 2026-11-05 — 40 componentes com entrada, schema e story, sem entrada fantasma; gate validate-aculta420-v2-sdc.php cobre os 40 componentes com descoberta, schema estrito, assets e render isolado. Consumers reais dos SDCs ainda pendentes; `price` aguarda autorização da Loja.**
 
 ### G3 — Mapa de templates por bundle/view mode (parcial)
 

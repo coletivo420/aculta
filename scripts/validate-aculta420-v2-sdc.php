@@ -75,6 +75,7 @@ $component_ids = [
   'icon',
   'layout-page',
   'lms-lesson-page',
+  'lms-tour',
   'map-popup',
   'messenger-trigger',
   'multidomain-bar',
@@ -82,10 +83,14 @@ $component_ids = [
   'pagination',
   'purpose-showcase',
   'progress',
+  'revista-listing',
+  'revista-publication',
+  'revista-teaser',
   'site-footer',
   'social-links-page',
   'status-messages',
   'tabs',
+  'wiki-entry',
 ];
 $manager = \Drupal::service('plugin.manager.sdc');
 $validator = \Drupal::service('Drupal\Core\Theme\Component\ComponentValidator');
@@ -310,6 +315,82 @@ $samples = [
   'site-footer' => [
     '#props' => [],
     '#slots' => ['content' => '<div class="region-footer"><p>Rodapé</p></div>'],
+  ],
+  'lms-tour' => [
+    '#props' => [
+      'id' => 'v2-sdc-tour-validation',
+      'title' => 'Tour guiado LMS',
+      'trigger_label' => 'Iniciar tour',
+      'trigger_url' => '/curso/iniciar-tour',
+      'current_step' => 'welcome',
+      'total_steps' => 4,
+    ],
+    '#slots' => [
+      'content' => Markup::create('<p>Bem-vindo ao percurso do curso.</p>'),
+      'actions' => Markup::create('<a class="button button--primary" href="/curso/etapa-2">Avançar</a>'),
+    ],
+  ],
+  'revista-teaser' => [
+    '#props' => [
+      'title' => 'Artigo sobre Cultivo',
+      'url' => '/revista/artigo-cultivo',
+      'has_category' => TRUE,
+      'has_subtitle' => TRUE,
+      'has_summary' => TRUE,
+      'has_cover' => FALSE,
+      'read_label' => 'Ler artigo',
+    ],
+    '#slots' => [
+      'category' => Markup::create('<span>Cultivo</span>'),
+      'subtitle' => Markup::create('<span>Subtítulo do artigo</span>'),
+      'summary' => Markup::create('<p>Resumo do artigo editorial.</p>'),
+    ],
+  ],
+  'revista-listing' => [
+    '#props' => [
+      'eyebrow' => 'Editorial',
+      'title' => 'Revista ACULTA',
+      'has_items' => TRUE,
+    ],
+    '#slots' => [
+      'items' => Markup::create('<div class="revista-items"><p>Lista de publicações</p></div>'),
+    ],
+  ],
+  'revista-publication' => [
+    '#props' => [
+      'has_meta' => TRUE,
+      'has_subtitle' => TRUE,
+      'has_summary' => TRUE,
+      'has_cover' => FALSE,
+      'has_footer' => FALSE,
+      'has_authors' => TRUE,
+      'has_discussion' => FALSE,
+    ],
+    '#slots' => [
+      'meta' => Markup::create('<div>Publicado em 2026-11-05</div>'),
+      'subtitle' => Markup::create('<h2>Subtítulo</h2>'),
+      'summary' => Markup::create('<p>Resumo da publicação</p>'),
+      'body' => Markup::create('<p>Corpo completo do artigo editorial.</p>'),
+      'authors' => Markup::create('<div>Autoria Coletiva</div>'),
+    ],
+  ],
+  'wiki-entry' => [
+    '#props' => [
+      'variant' => 'full',
+      'url' => '/wiki/canabinoides',
+      'has_summary' => TRUE,
+      'has_image' => FALSE,
+      'has_categories' => TRUE,
+      'has_related' => FALSE,
+      'has_references' => FALSE,
+      'has_discussion' => FALSE,
+    ],
+    '#slots' => [
+      'title' => Markup::create('<h1>Canabinoides</h1>'),
+      'summary' => Markup::create('<p>Resumo do verbete enciclopédico.</p>'),
+      'categories' => Markup::create('<ul><li>Ciência</li></ul>'),
+      'body' => Markup::create('<p>Texto completo do verbete.</p>'),
+    ],
   ],
   'social-links-page' => [
     '#props' => ['title' => 'Página de links', 'has_links' => TRUE, 'theme_preset' => 'classic'],
