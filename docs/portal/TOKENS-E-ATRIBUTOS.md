@@ -154,6 +154,7 @@ Atributos: não há wildcard. Todo nome usado no código aparece na tabela acima
 | `data-aculta-shipping-calculator` | exato | sim | 4 |
 | `data-aculta-shipping-resultado` | exato | sim | 4 |
 | `data-aculta-studio` | exato | sim | 3 |
+| `data-aculta-studio-profile-root` | exato | não | 1 |
 | `data-aculta-studio-tab` | exato | não | 1 |
 | `data-aculta-thread-id` | exato | não | 1 |
 | `data-aculta-thread-unread` | exato | não | 1 |

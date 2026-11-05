@@ -217,7 +217,7 @@ final class StudioProfileController {
         'tabindex' => '-1',
       ],
       '#attached' => [
-        'library' => ['core/drupal.htmx', 'aculta420_v2/studio-htmx'],
+        'library' => ['core/drupal.htmx'],
       ],
       '#cache' => [
         'contexts' => ['user', 'user.permissions', 'url.site'],
