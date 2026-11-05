@@ -443,7 +443,7 @@ Após rebuild, Chromium confirmou o formulário de atividade, o link ao tópico
 autorizado em uma turma filha e a abertura do tópico. A checagem funcional não
 encontrou overflow nos viewports efetivos 305/375/753/1265 px; curso, turma,
 aula, atividade e tópico descartáveis foram removidos, sem envio de resposta.
-H5P específico continua sem smoke por causa da indisponibilidade `private://h5p`.
+O editor H5P em `main` agora carrega a listagem AJAX e HelloWorld via HTTP 200 no iframe (dev.176); porém o submit não persistiu os campos ocultos `library`/`parameters`. A criação direta para provar o player também parou porque a identidade Drush não escreve em `private://h5p`; storage não foi alterado e a turma descartável foi removida. Salvamento e player H5P seguem pendentes.
 O constraint de imagem em entrega é exercitado pelo `file.validator` do Core
 com arquivo válido/inválido, e o Kernel cobre a rota privada após revogação;
 upload de ponta a ponta no Runtime, renderização HTTP/visual e upload de entrega

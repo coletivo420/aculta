@@ -621,6 +621,13 @@ RUNTIME STATUS: PARTIAL.
   usa AJAX same-origin. A rota `/h5peditor` deixa de declarar o purpose `courses`
   e permanece no domínio principal, conforme a política de rotas de integração.
 - O smoke anterior mostrou HTTP 404 e “Error, unable to load libraries” porque
-  o endpoint estava bloqueado no host `main`. O Kernel agora fixa o purpose
-  principal implícito; validar listagem HTTP de bibliotecas após sincronizar.
+  o endpoint estava bloqueado no host `main`. Após sincronizar, Chromium autenticado
+  confirmou HTTP 200 em `/h5peditor/.../libraries`, listagem de `H5P.HelloWorld` e
+  editor carregado no iframe. Kernel de descoberta: 1 teste/23 asserções PASS.
+- O submit do editor ainda não persistiu conteúdo: o formulário recarregou sem
+  preencher os campos Drupal ocultos `library`/`parameters`; e a criação por Drush
+  para verificar o player não pôde gravar em `private://h5p` sob a identidade CLI.
+  Grupo descartável 130 foi removido; nenhuma atividade H5P ou arquivo foi criado.
+  O caminho e as permissões privadas não foram alterados. Smoke de criação/player
+  segue pendente; atualização/configuração do Runtime continuam limpas.
 
