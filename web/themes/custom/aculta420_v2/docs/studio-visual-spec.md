@@ -37,7 +37,9 @@ Duas faixas empilhadas no topo da página.
   3. `chat-circle` — mensagens. Pode ter badge.
   4. `bell` — avisos, com **badge** (exemplo: 4). Badge com `--color-status-error-text` ou o token de destaque de contagem já usado pelo `alerts-trigger`.
   5. **Menu geral em hambúrguer** (ADR-047, emenda de 2026-11-05): um botão `list` na barra institucional, com o mesmo comportamento do menu hambúrguer que hoje fica no cabeçalho do domínio principal. A conta entra nesse menu geral; não é um menu só de conta.
-     - **Visitante:** o menu mostra **"Entrar"** (botão de texto com `--color-brand-highlight` e `--color-on-highlight`), que abre o popup de login.
+     - **Visitante:** o menu mostra **"Entrar"** como texto comum, sem destaque, que abre o popup de login.
+     - **Entrar fora do menu:** a barra institucional também tem um botão **"Entrar"** de destaque (`--color-brand-highlight` e `--color-on-highlight`), que abre o mesmo popup. Há dois pontos de entrada.
+     - **Após o login:** os dois "Entrar" desaparecem (o da barra e o do menu).
      - **Autenticado:** o menu mostra, no topo, o avatar e o nome de usuário, sem clique e sem edição. Logo abaixo, um nível já expandido, sem recolher: **"Minha conta"** e **"Meu perfil"**. **"Sair"** fica por último, separado por um fio fino.
 - Essa faixa é a barra institucional (`multidomain-bar`), que já existe. **Não redesenhar** (ADR-046).
 
