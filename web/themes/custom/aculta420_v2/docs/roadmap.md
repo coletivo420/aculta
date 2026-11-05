@@ -2,6 +2,27 @@
 
 ## Em andamento — migração visual da V1 para a V2
 
+- **Fatia entregue: Fórum (`1.2.0-dev.16`).** Referências V1: presenter
+  `node--aculta-forum-topic`, adapters de Views, `forum-category`,
+  `forum-index.css` e `discussion.css`. A V2 tem SDCs `forum-topic`,
+  `forum-category` e `discussion-comment`, adapters Drupal e CSS baseado em
+  tokens para listagem, busca, vazios, autoria, categorias e discussão.
+  Baseline V2 observado antes do adapter: tópicos eram apresentados pelo teaser
+  genérico `card-cultural`; a categoria ainda usava o tema do módulo. Após:
+  Firefox ESR visível no Runtime, purpose `forum`, visitante, rotas `/`,
+  `/categorias` e um tópico real descoberto na landing, claro/escuro, nove
+  larguras (320–1440 CSS px): 58/58 checks; Tab/Shift+Tab e zoom físico 200% e
+  400% com viewport CSS efetiva de 320 px passaram sem overflow. A auditoria
+  inicial encontrou a View de categorias da landing fora do SDC e com seletor
+  sem correspondência ao ID real; foi adicionado adapter de campo e wrapper
+  `views-view` específico, agora confirmado visualmente com cartões no Runtime.
+  Firefox ESR: 76/76 checks. Capturas em
+  `$SUITE_OUT/aculta420-v2-forum-landing-20261104/`. Drush SDC 25/25; foundations
+  51 pares PASS. O Runtime não apresentou comentário `aculta_discussion_post`
+  nas rotas verificadas; o componente e adapter passaram render isolado, mas o
+  comentário real permanece DEFERRED. Migração V1→V2 segue em andamento; próxima
+  área a inventariar: Eventos.
+
 - **Fatia atual: Wiki420.** Referências V1: `components/patterns/wiki-entry`,
   `node--wiki-entry--teaser/full` e `css/components/wiki.css`. A V2 agora tem o
   SDC `wiki-entry`, os dois adapters de node e estilos globais para listagens.

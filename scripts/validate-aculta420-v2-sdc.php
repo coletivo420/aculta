@@ -38,7 +38,7 @@ foreach ($source_files as $source_file) {
     throw new RuntimeException(sprintf('Interface SVGs must use the icon SDC: %s', $source_file->getPathname()));
   }
   $framework_class = '(?:row|col-(?:xs|sm|md|lg|xl|xxl)-\d+|d-flex|container-fluid|mb-\d+|form-control|form-select)';
-  $has_framework_class = preg_match('/class\s*=\s*[\"\'][^\"\']*\b' . $framework_class . '\b/i', $source)
+  $has_framework_class = preg_match('/class\s*=\s*[\"\'][^\"\']*(?<![a-z0-9_-])' . $framework_class . '(?![a-z0-9_-])[^\"\']*[\"\']/i', $source)
     || preg_match('/(?:^|[\s,{])\.' . $framework_class . '(?=[\s:{,#]|$)/im', $source);
   if (preg_match('/bootstrap5|bootstrap\.bundle|popper|data-bs-|core\/jquery|core\/drupal\.dialog|\bjQuery\b/i', $source)
     || preg_match('/(?:class\s*=\s*[\"\'][^\"\']*|(?:^|[\s,{])\.)\bbtn\b/i', $source)
@@ -56,7 +56,10 @@ $component_ids = [
   'button',
   'cart-offcanvas',
   'card-cultural',
+  'discussion-comment',
   'filter-chips',
+  'forum-category',
+  'forum-topic',
   'hero-banner',
   'icon',
   'map-popup',
@@ -114,11 +117,38 @@ $samples = [
     ],
     '#slots' => ['image' => '', 'actions' => ''],
   ],
+  'discussion-comment' => [
+    '#props' => ['has_author' => TRUE, 'has_submitted' => TRUE],
+    '#slots' => [
+      'author' => 'Autoria pública',
+      'submitted' => '<time datetime="2026-11-04">4 de novembro de 2026</time>',
+      'body' => 'Contribuição na discussão.',
+      'footer' => '<a href="/topico/exemplo#comentario">Link permanente</a>',
+    ],
+  ],
   'filter-chips' => [
     '#props' => [
       'items' => [
         ['label' => 'Todos', 'url' => '/todos', 'is_active' => TRUE, 'count' => 2],
       ],
+    ],
+  ],
+  'forum-category' => [
+    '#props' => [],
+    '#slots' => [
+      'parent' => 'Discussões públicas',
+      'title' => '<h3><a href="/discussoes/categoria">Cultura e sociedade</a></h3>',
+      'description' => 'Conversas culturais.',
+      'count' => '12 tópicos',
+    ],
+  ],
+  'forum-topic' => [
+    '#props' => ['variant' => 'teaser', 'has_title' => TRUE, 'has_meta' => TRUE, 'has_bookmark' => FALSE],
+    '#slots' => [
+      'title' => '<h2><a href="/forum/topico-exemplo">Conversa sobre cultura</a></h2>',
+      'meta' => 'Publicado recentemente',
+      'bookmark' => '',
+      'content' => '<div class="aculta-author-card">Autoria pública</div><div class="field--name-body">Descrição do tópico.</div>',
     ],
   ],
   'hero-banner' => [
@@ -230,7 +260,20 @@ foreach ($component_ids as $component_id) {
       throw new RuntimeException(sprintf('Missing SDC asset: %s', $path));
     }
   }
-  if (in_array($component_id, ['author-card', 'revista-listing', 'revista-publication', 'revista-teaser', 'wiki-entry'], TRUE)) {
+  if (in_array(
+    $component_id,
+    [
+      'author-card',
+      'discussion-comment',
+      'forum-category',
+      'forum-topic',
+      'revista-listing',
+      'revista-publication',
+      'revista-teaser',
+      'wiki-entry',
+    ],
+    TRUE,
+  )) {
     foreach ([$component_id . '.default.story.yml', 'README.md'] as $document) {
       if (!is_file($theme_root . '/components/' . $component_id . '/' . $document)) {
         throw new RuntimeException(sprintf('Missing story or component documentation: %s/%s', $component_id, $document));
@@ -313,6 +356,19 @@ foreach ($component_ids as $component_id) {
     && (!is_file($theme_root . '/templates/content/node--wiki-entry--teaser.html.twig')
       || !is_file($theme_root . '/templates/content/node--wiki-entry--full.html.twig'))) {
     throw new RuntimeException('Wiki node adapters are missing.');
+  }
+  if ($component_id === 'forum-topic' && !is_file($theme_root . '/templates/content/node--aculta-forum-topic.html.twig')) {
+    throw new RuntimeException('Forum topic node adapter is missing.');
+  }
+  if ($component_id === 'forum-category'
+    && (!is_file($theme_root . '/templates/views/views-view-fields--aculta-forum-categories--page-categories.html.twig')
+      || !is_file($theme_root . '/templates/views/views-view-unformatted--aculta-forum-categories--page-categories.html.twig')
+      || !is_file($theme_root . '/templates/views/views-view-fields--aculta-forum-categories--block-landing.html.twig')
+      || !is_file($theme_root . '/templates/views/views-view--aculta-forum-categories--block-landing.html.twig'))) {
+    throw new RuntimeException('Forum category View adapters are missing.');
+  }
+  if ($component_id === 'discussion-comment' && !is_file($theme_root . '/templates/comment--aculta-discussion-post.html.twig')) {
+    throw new RuntimeException('Discussion comment adapter is missing.');
   }
 
   $build = [

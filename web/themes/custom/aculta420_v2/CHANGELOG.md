@@ -1,5 +1,39 @@
 # Changelog — ACULTA420 V2
 
+## 1.2.0-dev.16 — conecta categorias da landing do Fórum ao SDC (2026-11-04)
+
+- A View `aculta_forum_categories:block_landing` agora usa `forum-category`,
+  com wrapper próprio e seletores alinhados ao ID do bloco real do Runtime.
+  Antes, a landing imprimia campos sem o cartão SDC; depois, os cartões e
+  descrições passaram a usar a mesma apresentação da página de categorias.
+- Firefox ESR visível, purpose `forum`, visitante, landing, categorias e tópico
+  real, claro/escuro, 320/360/390/599/600/768/1024/1280/1440 CSS px: 76/76
+  checks; Tab/Shift+Tab e zoom real 200%/400% com viewport CSS de 320 px sem
+  overflow. Capturas em `$SUITE_OUT/aculta420-v2-forum-landing-20261104/`.
+- Drush descobriu, validou e renderizou 25/25 SDCs. Runtime pré-sync:
+  `updatedb:status` sem pendências e `config:status` sem diferenças; `drush cr`
+  passou. O conteúdo foi somente lido.
+
+## 1.2.0-dev.15 — migra apresentações do Fórum (2026-11-04)
+
+- Portados o teaser e a apresentação completa de tópico para o SDC `forum-topic`,
+  o cartão `forum-category` e o template de comentários via `discussion-comment`,
+  além dos estilos da View pública, filtros de busca, vazios, controles de
+  discussão e formulário de comentário. Render arrays de autoria, favoritos,
+  contagens e atividade seguem sob controle do Drupal/Portal.
+- Adapters de tópico, categoria e Views preservam os render arrays Drupal.
+- Firefox ESR visível, Runtime Drupal 11.5.0-beta1, purpose `forum`, sessão
+  anônima: landing, categorias e tópico em claro/escuro, 320/360/390/599/600/
+  768/1024/1280/1440 CSS px; 58/58 verificações, sem overflow e com um H1.
+  Tab/Shift+Tab passaram. Zoom real do Firefox em 200% e 400%, viewport efetiva
+  de 320 CSS px, sem rolagem horizontal. Evidências em
+  `$SUITE_OUT/aculta420-v2-forum-final-20261104/`.
+- Gate Drush descobriu e renderizou 25/25 SDCs, incluindo três componentes do
+  Fórum. Foundations: 51 pares de contraste PASS. O template de comentário
+  renderiza no gate isolado, mas as páginas públicas consultadas não continham
+  comentários do bundle `aculta_discussion_post`; esse estado autenticado segue
+  DEFERRED. O Fórum continua anônimo; nenhuma mutação foi feita.
+
 ## Em validação — Wiki420
 
 - Portados para SDC os templates de teaser e artigo completo de Wiki, com

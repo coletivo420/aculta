@@ -1,0 +1,17 @@
+{# Preserve the Drupal comment render array and the Portal's public author identity. #}
+{% set author_card = content.author_card|default(null) %}
+{% set comment_body = content|without('author_card', 'links') %}
+{% set footer_markup %}
+  {{ permalink }}
+  {{ content.links }}
+{% endset %}
+{{ title_prefix }}
+{{ include('aculta420_v2:discussion-comment', {
+  has_author: author_card is not empty,
+  has_submitted: created is not empty,
+  author: author_card,
+  submitted: created,
+  body: comment_body,
+  footer: footer_markup,
+}, with_context = false) }}
+{{ title_suffix }}

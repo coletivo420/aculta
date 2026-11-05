@@ -1,0 +1,22 @@
+{# Keep authorship, comments and flags in Drupal render arrays. #}
+{% set bookmark_action = content.flag_salvar_topico|default(null) %}
+{% set topic_content = content|without('flag_salvar_topico') %}
+{% set title_markup %}
+  {% if label and view_mode != 'full' %}
+    <h2{{ title_attributes }}><a href="{{ url }}" rel="bookmark">{{ label }}</a></h2>
+  {% endif %}
+{% endset %}
+<article{{ attributes.addClass('node', 'aculta-forum-topic', 'aculta-forum-topic--' ~ view_mode) }}>
+  {{ title_prefix }}
+  {{ title_suffix }}
+  {{ include('aculta420_v2:forum-topic', {
+    variant: view_mode == 'full' ? 'full' : 'teaser',
+    has_title: label is not empty and view_mode != 'full',
+    has_meta: display_submitted and date is not empty,
+    has_bookmark: bookmark_action is not empty,
+    title: title_markup,
+    meta: date,
+    bookmark: bookmark_action,
+    content: topic_content
+  }, with_context = false) }}
+</article>

@@ -1,0 +1,10 @@
+<article class="aculta-discussion-comment">
+  {% if has_author or has_submitted %}
+    <header class="aculta-discussion-comment__header">
+      {% if has_author %}<div class="aculta-discussion-comment__author">{{ author }}</div>{% endif %}
+      {% if has_submitted %}<time class="aculta-discussion-comment__submitted">{{ submitted }}</time>{% endif %}
+    </header>
+  {% endif %}
+  <div class="aculta-discussion-comment__body">{{ body }}</div>
+  <footer class="aculta-discussion-comment__footer">{{ footer }}</footer>
+</article>

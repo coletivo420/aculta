@@ -1,6 +1,6 @@
 # Catálogo de componentes do tema V2
 
-Vinte e um componentes SDC, todos com schema estrito (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado; a auditoria integral do catálogo (Fase 5) ainda não foi feita.
+Vinte e cinco componentes SDC, todos com schema estrito (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado; a auditoria integral do catálogo (Fase 5) ainda não foi feita.
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
@@ -67,6 +67,26 @@ Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context 
 - **Props:** `title`, `url`, `category`, `date`, `location`, `summary`, `variant` (`default` ou `compact`).
 - **Slots:** `image`, `actions`.
 - **Estado:** entregue. A loja deve usar este componente no modo de catálogo (Fase 4).
+
+### forum-topic — Tópico do Fórum
+- **Papel:** teaser e conteúdo completo do tópico, preservando autoria, categorias, favoritos e discussão nos render arrays Drupal.
+- **Props:** `variant` (`teaser` ou `full`), `has_title`, `has_meta`, `has_bookmark`.
+- **Slots:** `title`, `meta`, `bookmark`, `content`.
+- **Consumers:** view mode de node `aculta_forum_topic`, View pública de tópicos e discussão compartilhada.
+- **Estado:** adapter, CSS e testes visuais anônimos no Runtime concluídos em `1.2.0-dev.15`; estados de comentário/autenticado pendentes.
+
+### forum-category — Categoria do Fórum
+- **Papel:** cartão de categoria para a View pública e o bloco de categorias da landing.
+- **Props:** nenhuma.
+- **Slots:** `parent`, `title`, `description`, `count`.
+- **Estado:** adapters de Views para a página de categorias e a landing usam o mesmo SDC; Firefox ESR cobriu ambos os consumers em nove larguras e dois modos.
+
+### discussion-comment — Comentário de discussão
+- **Papel:** apresentação de autoria pública, data, conteúdo e links de comentário.
+- **Props:** `has_author`, `has_submitted`.
+- **Slots:** `author`, `submitted`, `body`, `footer`.
+- **Consumer:** template de comentário `aculta_discussion_post`.
+- **Estado:** template V1 e CSS portados; não há comentário desse bundle nas páginas do Runtime verificadas.
 
 ### map-popup — Balão de mapa
 - **Papel:** cartão compacto para um marcador de mapa.

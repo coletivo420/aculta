@@ -1,0 +1,13 @@
+name: Categoria pública
+description: Categoria com hierarquia, título, texto e contagem produzidos pela View.
+component: aculta420_v2:forum-category
+props: {}
+slots:
+  parent:
+    markup: Discussões públicas
+  title:
+    markup: '<h3><a href="/discussoes/categoria">Cultura e sociedade</a></h3>'
+  description:
+    markup: Conversas e referências culturais da comunidade.
+  count:
+    markup: 12 tópicos

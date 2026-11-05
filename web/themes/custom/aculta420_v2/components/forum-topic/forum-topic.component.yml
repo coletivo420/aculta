@@ -1,0 +1,35 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Tópico do Fórum
+description: Apresenta teaser e conteúdo completo de tópico com render arrays Drupal.
+status: experimental
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [variant, has_title, has_meta, has_bookmark]
+  properties:
+    variant:
+      type: string
+      title: Variante de apresentação
+      enum: [teaser, full]
+    has_title:
+      type: boolean
+      title: Título visível no conteúdo
+    has_meta:
+      type: boolean
+      title: Data de publicação disponível
+    has_bookmark:
+      type: boolean
+      title: Ação de favorito disponível
+slots:
+  title:
+    title: Título do tópico
+    description: Heading e link processados pelo template Drupal.
+  meta:
+    title: Data de publicação
+  bookmark:
+    title: Ação de favorito
+    description: Render array de ação com acesso validado pelo Drupal.
+  content:
+    title: Conteúdo
+    description: Campos, autoria e discussão renderizados e autorizados pelo Drupal.

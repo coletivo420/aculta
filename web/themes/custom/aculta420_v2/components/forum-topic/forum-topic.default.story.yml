@@ -1,0 +1,13 @@
+name: Tópico do Fórum
+description: Teaser com autoria pública renderizada pelo owner e conteúdo do tópico.
+component: aculta420_v2:forum-topic
+props:
+  variant: teaser
+  has_title: true
+  has_meta: true
+  has_bookmark: false
+slots:
+  title: '<h2><a href="/forum/topico-exemplo" rel="bookmark">Conversa sobre cultura e direitos</a></h2>'
+  meta: '<time datetime="2026-11-04">4 de novembro de 2026</time>'
+  bookmark: ''
+  content: '<div class="field--name-field-aculta-categories">Cultura</div><div class="aculta-author-card">Autoria pública preparada pelo Portal</div>'
