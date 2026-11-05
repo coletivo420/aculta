@@ -41,11 +41,27 @@ if (count($schemes) !== 10) {
 
 $errors = [];
 $checks = 0;
-if (!isset($argv[1]) || !is_file($argv[1])) {
-  fwrite(STDERR, "ACULTA420 PALETTE SCHEMES: DEFERRED/FAIL — forneça o HTML renderizado da configuração como primeiro argumento.\n");
-  exit(2);
+if (isset($argv[1])) {
+  if (!is_file($argv[1])) {
+    fwrite(STDERR, "ACULTA420 PALETTE SCHEMES: FAIL — HTML renderizado não encontrado: {$argv[1]}\n");
+    exit(2);
+  }
+  $renderedHtml = file_get_contents($argv[1]);
 }
-$renderedHtml = file_get_contents($argv[1]);
+else {
+  $drush = $root . '/vendor/drush/drush/drush.php';
+  if (!is_file($drush)) {
+    fwrite(STDERR, "ACULTA420 PALETTE SCHEMES: DEFERRED/FAIL — Drush não encontrado para renderizar o formulário.\n");
+    exit(2);
+  }
+  $eval = '$form=\\Drupal::formBuilder()->getForm("Drupal\\\\system\\\\Form\\\\ThemeSettingsForm", "aculta420_v2"); echo \\Drupal::service("renderer")->renderRoot($form);';
+  $command = escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($drush) . ' php:eval ' . escapeshellarg($eval);
+  $renderedHtml = shell_exec($command);
+  if (!is_string($renderedHtml) || $renderedHtml === '') {
+    fwrite(STDERR, "ACULTA420 PALETTE SCHEMES: DEFERRED/FAIL — não foi possível renderizar o formulário pelo Drupal/Drush.\n");
+    exit(2);
+  }
+}
 
 foreach ($schemes as $key => $data) {
   $checks++;
