@@ -1,5 +1,14 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — auditoria de templates G3
+
+- Removido `node--teaser.html.twig`, override genérico que apresentava bundles
+  distintos como cartão cultural e podia omitir campos definidos no display,
+  como arquivo institucional. Bundles sem adapter específico retornam ao
+  template Core; adapters próprios e render arrays/access/cache permanecem.
+- `docs/architecture.md` registra o mapa por bundle/view mode. Visual no Runtime
+  com V2 ativa permanece pendente; Loja espera autorização específica.
+
 ## Não versionado — faixa de acento do card (DRAFT)
 
 - `card-cultural` aceita `accent` neutro (`green`, `yellow`, `red`) e aplica os

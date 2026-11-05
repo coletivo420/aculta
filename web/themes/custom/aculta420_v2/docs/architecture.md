@@ -12,10 +12,10 @@ Tokens semânticos                 → usados pelos componentes
 Fundações                         → tipografia, espaçamento, foco, movimento, reflow
 Componentes SDC                   → apresentação, props com schema estrito
 Shell                             → barra institucional, navegação, regiões da página
-Templates de página e de conteúdo → Revista migrada; outros tipos ainda a fazer
+Templates de página e conteúdo → adapters por tipo/view mode; fallback mantém o display Drupal
 ```
 
-Hoje estão entregues as três primeiras camadas, os componentes do shell e a navegação SDC. Os templates e SDCs da Revista já adaptam as listagens, teasers, artigos e autoria; os demais tipos de conteúdo seguem pendentes (ADR-046, Fases 4–5).
+Hoje estão entregues as três primeiras camadas, os componentes do shell e a navegação SDC. Há adapters específicos para Revista, Wiki, Fórum, FAQ, evento, Links e aula LMS; outros bundles mantêm o template Core para renderizar os campos definidos pelo display Drupal.
 
 ## 2. Fronteira com o Portal
 
@@ -107,6 +107,24 @@ cartões e verbetes. `src/styles/wiki.css` trata apenas as listagens, busca,
 categorias e mudanças recentes fornecidas pelo owner da Wiki. O Domain Header
 continua sob o contrato do shell.
 
+Templates específicos seguem a tabela de tipos e view modes:
+
+| Bundle/rota | Template/adaptador | Apresentação | Fallback/limite |
+| --- | --- | --- | --- |
+| `revista` teaser/full | `node--revista--*.html.twig` | SDCs `revista-teaser`/`revista-publication`; P2 `full` | render arrays do node |
+| `wiki_entry` teaser/full | `node--wiki-entry--*.html.twig` | SDC `wiki-entry`; P2 `aside` | campos e access Drupal |
+| `aculta_forum_topic` teaser/full | `node--aculta-forum-topic.html.twig` | SDC `forum-topic`; P2 `aside` | campos, flags e discussão do Portal |
+| `aculta_faq` full | `node--aculta-faq--full.html.twig` | SDC `accordion`; P2 `stack` | `<details>` nativo se o SDC não estiver descoberto |
+| evento | `aculta-event-page.html.twig` | SDC `event-page-layout`; rota P2 `full` | render arrays do módulo `aculta_events` |
+| aula LMS | adapter da rota `aculta_lms.lesson_view` | SDC `lms-lesson-page`; P2 `aside` | render array do LMS |
+| Links | `aculta-links-page.html.twig` | SDC `social-links-page` | hook do submódulo Links |
+| bundles restantes (`page`, `document`, `aculta_notice`, `aculta_adm`, `aculta_lms_topic`, `activity` legado) | nenhum override genérico | template/display Core; P2 `stack` por padrão | fields/access/cache do entity view display |
+
+O override genérico `node--teaser.html.twig` foi removido porque aplicava um
+cartão cultural a bundles sem esse contrato e podia ocultar campos como o
+arquivo de um `document`. Loja (catálogo/produto) permanece aguardando autorização
+por tarefa; Layout Builder permanece desabilitado.
+
 A biblioteca `utility-drawers` reúne os quatro últimos. Os diálogos nativos usam `data-aculta-utility-drawer` como contrato de comportamento; estilos específicos de cada SDC ficam isolados para que um modal não herde dimensões de gaveta. O popup de login e o de busca não usam `core/drupal.dialog.ajax`: a V2 remove essa dependência do utilitário de busca (`PagePresentationHooks::removeSearchDialogDependency`).
 
 Com JavaScript desligado, os links dos gatilhos continuam válidos: o login e a busca abrem as páginas próprias do Portal.
@@ -128,7 +146,6 @@ Com JavaScript desligado, os links dos gatilhos continuam válidos: o login e a 
 - O mesmo hook define `aculta_layout_variant` por bundle do nó ou nome de rota: wiki/fórum `aside`, revista `full`, home e catálogo/mapa de eventos `full`; demais rotas `stack`. Não consulta hostname nem purpose, e entrega ao SDC somente a variante. Catálogo e produto de loja aguardam autorização explícita de tarefa.
 - Dashboard do Studio na raiz `account` e rotas de Minha Conta (`/conta/*`), Perfil, WE Sativa, Ganjalab, aula LMS e Culturas escolhem `aside`; a raiz usa `aculta_studio.dashboard` e `/conta` apresenta Dados cadastrais privados. O Portal bloqueia acesso direto ao path interno do dashboard e aplica a guarda de autenticação.
 - `SurfaceSettingsHooks` (`preprocess_html`) aplica o modo de cor e as classes de superfície em uma única implementação.
-- Evento: o adapter aculta-event-page.html.twig consome render arrays do módulo no SDC event-page-layout, cuja story é event-page-layout.default.story.yml. FAQ: node--aculta-faq--full.html.twig apresenta cada resposta por accordion; o conteúdo continua vindo do render array do Portal. Aula LMS: na rota aculta_lms.lesson_view, o tema envolve o render array original em lms-lesson-page; o módulo permanece dono de acesso, cache, atividade e conteúdo.
 - Evento: o adapter `aculta-event-page.html.twig` consome render arrays do módulo no SDC `event-page-layout`, cuja story é `event-page-layout.default.story.yml`. FAQ: `node--aculta-faq--full.html.twig` apresenta cada resposta por `accordion`; o conteúdo continua vindo do render array do Portal.
 - `src/Hook/*` é a única camada PHP do tema. Lógica de negócio não pertence aqui.
 

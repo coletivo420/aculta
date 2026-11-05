@@ -346,6 +346,16 @@ Gates foundation (55 pares), design foundations (2.468 checks), SDC schemas
 
 **Status: catálogo atual pendente de auditoria integral; componentes faltantes e templates de páginas seguem após shell e fundações.**
 
+### G3 — Mapa de templates por bundle/view mode (parcial)
+
+Auditoria registrada em `docs/architecture.md`: Revista, Wiki, Fórum, FAQ,
+evento, Links e aula LMS têm adapters SDC específicos; os bundles restantes
+usam o template Core e seus entity view displays. Removido o override genérico
+`node--teaser.html.twig`, que não respeitava o contrato de todos os bundles e
+omitiria campos como o arquivo de Documento. Catálogo/produto de Loja aguardam
+autorização; o mapeamento de Wiki para a faixa de acento aguarda confirmação
+(F2). Captura de consumidor com a V2 ativa segue pendente.
+
 - Há quinze componentes SDC com schema estrito e um gate Drush de descoberta,
   assets e renderização isolada.
 - ACULTA Maps fornece render arrays neutros; Leaflet e Google reutilizam
