@@ -158,6 +158,7 @@ $samples = [
       'category' => 'Cultura',
       'date' => '2026-11-04',
       'location' => 'Centro',
+      'accent' => 'green',
       'variant' => 'compact',
     ],
     '#slots' => ['image' => '', 'actions' => ''],
@@ -538,6 +539,22 @@ foreach ($component_ids as $component_id) {
     $scroll_output = (string) $renderer->renderInIsolation($scroll_build);
     if (!str_contains($scroll_output, 'data-mobile-variant="scroll"')) {
       throw new RuntimeException('Data table scroll variant must render as an explicit supported mode.');
+    }
+  }
+  if ($component_id === 'card-cultural') {
+    $card_css = file_get_contents($theme_root . '/components/card-cultural/card-cultural.css');
+    foreach ([
+      'green' => '--accent-green-stripe',
+      'yellow' => '--accent-yellow-stripe',
+      'red' => '--accent-red-stripe',
+    ] as $accent => $token) {
+      if (!str_contains($card_css, 'card-cultural--accent-' . $accent)
+        || !str_contains($card_css, 'var(' . $token . ')')) {
+        throw new RuntimeException(sprintf('Card cultural accent token style is missing: %s', $accent));
+      }
+    }
+    if (!str_contains($output, 'card-cultural--accent-green')) {
+      throw new RuntimeException('Card cultural must render the explicit Portal accent value.');
     }
   }
   if ($component_id === 'empty-state') {

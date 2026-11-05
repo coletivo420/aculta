@@ -92,6 +92,16 @@ Commerce/Loja, que o plano atual exclui sem autorização explícita por tarefa.
 Não foi criado componente nem assumido formato, moeda, impostos ou desconto.
 Retomar após autorização e definição do consumer/contrato; outras fases seguem.
 
+## Faixa de acento — F1 DRAFT; F2 bloqueado por decisão
+
+O SDC `card-cultural` aceita `accent: green | yellow | red` e aplica os tokens
+de contraste claro/escuro. Stories mostram os três valores, sem consumer ou
+inferência local. O gate renderiza o valor explícito e verifica os estilos;
+Firefox passou 12 estados, foco visível e zoom real 200%. Estado DRAFT até o
+Portal fornecer `domain_presentation.accent` (D1). F2
+permanece aguardando confirmação da correspondência Wiki verbete/seção descrita
+em `superficies.md` 8.3.1; demais tipos também dependem do contrato D1.
+
 ## Menu de conta e sites — C2 implementado; validação visual pendente
 
 O `account-menu` combina a lista neutra `aculta_domain_sites` com o bloco de

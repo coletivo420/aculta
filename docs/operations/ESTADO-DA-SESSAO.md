@@ -1500,3 +1500,21 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   excluído sem autorização por tarefa. Seguir com G3 e demais itens sem essa
   dependência.
 
+## F1 — faixa de acento em card-cultural (DRAFT) — 2026-11-05
+
+- **Implementação:** `card-cultural` aceita `accent` neutro green/yellow/red;
+  CSS usa os tokens de faixa por modo. Três stories documentam os exemplos como
+  DRAFT. Nenhum template/consumer infere tipo ou purpose, e nenhum módulo Portal
+  foi alterado.
+- **Bloqueios:** D1 ainda não fornece `domain_presentation.accent`; F2 aguarda
+  o contrato. A correspondência Wiki verbete/seção exige confirmação do
+  responsável antes de mapeamento/consumer. Uso Commerce/Loja continua sob
+  autorização específica.
+- **Gates:** Drupal V2 validou schema estrito, render e os três tokens, 35 SDCs
+  PASS; PHP lint/PHPCS e stories YAML PASS. Firefox ESR visível passou 12/12
+  estados (320/390/768/959/960/1440, claro/escuro), foco de 3 px e zoom real
+  200% com viewport de 320 CSS px; capturas em `$SUITE_OUT`.
+- **Próximo trabalho:** G3 já tem adapters de Wiki, Fórum, Revista, Evento, FAQ,
+  LMS e Links; auditar o mapeamento de tipo/layout e completar apenas lacunas
+  não bloqueadas. `price` segue aguardando autorização.
+

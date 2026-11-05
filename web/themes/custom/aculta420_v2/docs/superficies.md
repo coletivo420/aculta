@@ -218,8 +218,9 @@ enviado pelo Portal em `domain_presentation`. O tema não decide tipo nem domín
 | Wiki (`wiki`) | seção (equivale a subtópico) | vermelho | `--accent-red-stripe` |
 
 A correspondência de verbete e seção com tópico e subtópico foi aplicada como
-leitura da resposta "Fórum e Wiki". **Confirmar com o responsável** antes da
-implementação.
+leitura da resposta "Fórum e Wiki". **Confirmar com o responsável** antes do
+mapeamento por tipo e de qualquer consumer. Até lá, as stories de acento ficam
+DRAFT e não atribuem cor em produção.
 
 Blocos decorativos de outros tipos seguem a mesma regra: a cor é atribuída
 pelo nível de conteúdo, e níveis vizinhos recebem cores diferentes.

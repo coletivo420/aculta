@@ -1,4 +1,8 @@
 .card-cultural{display:grid;grid-template-columns:minmax(0,1fr);overflow:hidden;border:1px solid var(--color-border);border-radius:var(--radius-base);background:var(--color-surface);color:var(--color-text-primary);box-shadow:var(--shadow-sm)}
+.card-cultural[class*="card-cultural--accent-"]{border-inline-start-width:.375rem}
+.card-cultural--accent-green{border-inline-start-color:var(--accent-green-stripe)}
+.card-cultural--accent-yellow{border-inline-start-color:var(--accent-yellow-stripe)}
+.card-cultural--accent-red{border-inline-start-color:var(--accent-red-stripe)}
 .card-cultural__image img{display:block;width:100%;height:auto;object-fit:cover}
 .card-cultural__body{display:grid;gap:var(--spacing-sm);min-width:0;padding:var(--spacing-base)}
 .card-cultural__category{margin:0;color:var(--color-brand-primary);font-size:var(--font-size-sm);font-weight:700}

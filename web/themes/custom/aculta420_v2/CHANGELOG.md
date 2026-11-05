@@ -1,5 +1,14 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — faixa de acento do card (DRAFT)
+
+- `card-cultural` aceita `accent` neutro (`green`, `yellow`, `red`) e aplica os
+  tokens contrastados por modo. Stories DRAFT mostram as cores sem mapear
+  domínios ou tipos; o Portal ainda não fornece `domain_presentation.accent`.
+- Gate Drupal verifica prop, classe e token; foundations verifica os seis
+  contrastes contra a superfície de cartão (mínimo 3:1). Nenhum consumer de
+  conteúdo foi alterado. F2 aguarda D1 e a confirmação da correspondência de Wiki.
+
 ## Não versionado — componente Empty state
 
 - Criado o SDC `empty-state`, compatível com o contrato neutro já consumido pelo

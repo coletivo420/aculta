@@ -1,4 +1,6 @@
-<article{{ attributes.addClass('card-cultural', 'card-cultural--' ~ (variant|default('default'))) }}>
+{% set classes = ['card-cultural', 'card-cultural--' ~ (variant|default('default'))] %}
+{% if accent %}{% set classes = classes|merge(['card-cultural--accent-' ~ accent]) %}{% endif %}
+<article{{ attributes.addClass(classes) }}>
   {% if image %}<div class="card-cultural__image">{{ image }}</div>{% endif %}
   <div class="card-cultural__body">
     {% if category %}<div class="card-cultural__category">{{ include('aculta420_v2:badge', { label: category, variant: 'primary' }, with_context = false) }}</div>{% endif %}

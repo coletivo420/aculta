@@ -27,6 +27,7 @@ O tema não conhece hostnames, domínios, purposes ou regras de acesso. Ele rece
 | `domain_presentation.layout.show_utility_bar` | Portal | exibe ou oculta as utilidades da barra |
 | `domain_presentation.regions.showcase` | Portal | links da vitrine de portais (`multidomain_network_links`) |
 | `domain_presentation.identity.purpose` | Portal | chave neutra do purpose atual |
+| `domain_presentation.accent` | Portal; **pendente (D1)** | valor neutro `green`, `yellow` ou `red` para o SDC `card-cultural`; ausente no contrato atual, então consumers não devem enviar/mapeamento permanece DRAFT |
 | `aculta_domain_sites` | Portal (`DomainPresentationBuilder`) | links dos sites publicados, com purpose, nome, URL e sinalização do atual |
 | `aculta_account_name` | Portal (`aculta_user`) | apelido aparado da pessoa autenticada; `NULL` sem apelido |
 | `aculta_account_menu` | Portal (render array de `system_menu_block:account`) | slot de itens do menu de conta; o PHP do tema o encaixa no SDC |

@@ -131,7 +131,16 @@ foreach ($surfaces as $background) {
   $assert($ratio >= 3, sprintf('dark component border on %s is %.2f:1 (minimum 3:1)', $background, $ratio));
 }
 
-fwrite(STDOUT, sprintf("ACULTA420 V2 foundations: PASS (%d text contrast pairs; dark focus and borders checked)\n", $contrastPairs));
+$accentContrastPairs = 0;
+foreach (['--accent-green-stripe', '--accent-yellow-stripe', '--accent-red-stripe'] as $accentToken) {
+  $lightRatio = check_contrast($accentToken, '--color-surface', $rootTokens, []);
+  $assert($lightRatio >= 3, sprintf('light %s on --color-surface is %.2f:1 (minimum 3:1)', $accentToken, $lightRatio));
+  $darkRatio = check_contrast($accentToken, '--color-surface', $rootTokens, $darkTokens);
+  $assert($darkRatio >= 3, sprintf('dark %s on --color-surface is %.2f:1 (minimum 3:1)', $accentToken, $darkRatio));
+  $accentContrastPairs += 2;
+}
+
+fwrite(STDOUT, sprintf("ACULTA420 V2 foundations: PASS (%d text contrast pairs; %d accent stripe pairs; dark focus and borders checked)\n", $contrastPairs, $accentContrastPairs));
 
 /**
  * Extracts custom property declarations from a CSS block.

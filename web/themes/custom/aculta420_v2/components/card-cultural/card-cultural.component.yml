@@ -29,6 +29,11 @@ props:
     summary:
       type: [string, 'null']
       title: Resumo do evento
+    accent:
+      type: [string, 'null']
+      title: Faixa de acento resolvida pelo Portal
+      enum: [green, yellow, red, null]
+      default: null
     variant:
       type: string
       title: Apresentação
