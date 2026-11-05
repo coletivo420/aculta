@@ -1,0 +1,56 @@
+# Regras locais do ACULTA para Semgrep (sem biblioteca remota).
+# Cada regra aponta um risco; o achado precisa de triagem (real, falso positivo ou não aplicável).
+rules:
+  - id: aculta-php-eval-or-dynamic-exec
+    languages: [php]
+    severity: ERROR
+    message: "Execução dinâmica de código ou comando. Risco de injeção."
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: shell_exec(...)
+      - pattern: exec(...)
+      - pattern: system(...)
+      - pattern: passthru(...)
+      - pattern: proc_open(...)
+
+  - id: aculta-php-unserialize-untrusted
+    languages: [php]
+    severity: ERROR
+    message: "unserialize() pode executar objetos arbitrários. Prefira json_decode."
+    pattern: unserialize(...)
+
+  - id: aculta-php-superglobal-input
+    languages: [php]
+    severity: WARNING
+    message: "Leitura direta de superglobal. Use Request da Drupal com validação."
+    pattern-either:
+      - pattern: $_GET[...]
+      - pattern: $_POST[...]
+      - pattern: $_REQUEST[...]
+      - pattern: $_COOKIE[...]
+
+  - id: aculta-php-raw-sql-concat
+    languages: [php]
+    severity: ERROR
+    message: "SQL montado por concatenação ou interpolação. Use a Entity API ou parâmetros."
+    pattern-regex: '->(query|execute)\(\s*"[^"]*"\s*\.\s*\$'
+
+
+  - id: aculta-php-static-drupal-service
+    languages: [php]
+    severity: WARNING
+    message: "\\Drupal:: estático em código de classe. Injete o serviço pelo construtor (padrão Drupal 12, seção 7)."
+    pattern-regex: '\\?Drupal::\w+\('
+
+
+  - id: aculta-php-raw-redirect-cross-host
+    languages: [php]
+    severity: ERROR
+    message: "RedirectResponse cru para destino externo. Use TrustedRedirectResponse e a política de purpose (docs/portal/CROSS-DOMAIN-REQUEST-POLICY.md)."
+    pattern: new \Symfony\Component\HttpFoundation\RedirectResponse(...)
+
+  - id: aculta-php-markup-raw-output
+    languages: [php]
+    severity: WARNING
+    message: "Saída sem escape em markup. Confirme que o conteúdo é controlado ou use Html::escape()."
+    pattern-regex: "'#markup'\\s*=>\\s*\\$(?!this->t\\()"
