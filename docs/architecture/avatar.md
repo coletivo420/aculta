@@ -200,7 +200,7 @@ Fonte de verdade dos dados: [data-ownership.md](data-ownership.md).
 
 - `php scripts/validate-aculta-user-photo.php` — invariantes INV-FOTO-1 a 10,
   incluindo catálogo válido e ao menos uma entrada ativa com arquivo.
-- `php scripts/validate-aculta-portal-drupal11.php` — fronteiras e status.
+- `php scripts/validate-aculta-portal-drupal12.php` — fronteiras e status.
 - `php scripts/validate-aculta420-sdc-schemas.php` e
   `validate-aculta420-design-foundations.php` — SDC, tokens e contraste.
 - Unit: `AvatarResolverTest`, `AuthorIdentityTest`,

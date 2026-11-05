@@ -155,7 +155,7 @@ em classes, APIs públicas do Drupal e declarações conscientes de access/cache
 Gate arquitetural obrigatório para mudanças do Portal:
 
 ```sh
-php scripts/validate-aculta-portal-drupal11.php
+php scripts/validate-aculta-portal-drupal12.php
 ```
 
 Gates específicos de fronteira, mapa, segurança ou rotas estão referenciados nos

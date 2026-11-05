@@ -156,7 +156,7 @@ Documentos normativos relacionados: [DRUPAL-12-STANDARDS.md](DRUPAL-12-STANDARDS
 
 ## Como verificar
 
-- Gate Drupal 11+: `php scripts/validate-aculta-portal-drupal11.php`.
+- Gate Drupal 11+: `php scripts/validate-aculta-portal-drupal12.php`.
 - Revisão de PR: checar cada regra que o diff toca. Regra violada é finding, não nota.
 - Regressão: comportamentos já aceitos são invariantes em `docs/portal/ANTI-REGRESSAO.md`; diff que toca um deles precisa do caso executado.
 
@@ -224,7 +224,7 @@ nunca escrever `/u/...` à mão nem guardar a URL sem tags de cache.
 - Ao criar uma capacidade, verifique que a documentação explica finalidade, fonte de verdade, fronteiras, segurança,
   cache/Domain e configuração/testes pertinentes. Atualize o changelog do Portal e a documentação específica no mesmo
   conjunto de mudanças.
-- O gate `php scripts/validate-aculta-portal-drupal11.php` valida o README/descrição do Portal, a implementação do
+- O gate `php scripts/validate-aculta-portal-drupal12.php` valida o README/descrição do Portal, a implementação do
   inventário de Status e a presença de descrição/documentação em cada submódulo.
 - Cada novo serviço reutilizável do Portal deve receber a tag `aculta_portal.helper` e metadados em
   `PortalHelperRegistry`; cada serviço de integração runtime efetivamente aplicado deve receber a tag

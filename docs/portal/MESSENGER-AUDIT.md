@@ -124,7 +124,7 @@ Severidade: **alta** = viola regra do projeto; **média** = dívida que contrari
 - Todos os tokens `data-portal-ui` que o módulo emite (12 tokens) têm mapeamento em `PortalUiHooks`.
 - O tema não contém rota, serviço, lógica de Domain nem `#component: aculta420:*` no módulo.
 - A caixa "Opções" do perfil é oferecida ao tema pelo módulo `aculta_user` (hook de alter), não pelo tema.
-- Os gates passam: `validate-module-theme-boundary` (1028 verificações), `validate-turnstile-exceptions`, `validate-public-slugs`, `validate-aculta-portal-drupal11` e `validate-aculta420-foundation` (344 verificações).
+- Os gates passam: `validate-module-theme-boundary` (1028 verificações), `validate-turnstile-exceptions`, `validate-public-slugs`, `validate-aculta-portal-drupal12` e `validate-aculta420-foundation` (344 verificações).
 
 ## 4. Ordem sugerida de correção
 

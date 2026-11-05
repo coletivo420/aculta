@@ -2,6 +2,16 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
+# Skills de handoff, padrões Drupal 12, segurança e Playwright (decisão) — 2026-11-05
+
+- **Objetivo:** melhorar o handoff, adicionar skills de padrão Drupal e de segurança estática, adicionar a skill de alinhamento e renomear o padrão normativo para Drupal 12.
+- **Concluído:** `2249d7a5` (handoff com passo de retomada, `aculta-drupal-padroes`, `aculta-seguranca-estatica`, limite de 9 skills), `a55dbe1d` (`aculta-grill-me`, `/graphify-out/` no `.gitignore`, limite de 10 skills), `576760cc` (renomeia `DRUPAL-11-STANDARDS.md` para `DRUPAL-12-STANDARDS.md`). Gate do Drupal renomeado para `validate-aculta-portal-drupal12.php` nesta entrega (commit a seguir).
+- **Decisões:** Trail of Bits não copiada (licença CC-BY-SA; instalação do plugin fica com o responsável). Skill Drupal do registro não copiada (licença não declarada; conteúdo de Drupal 10 com DDEV); escrita versão própria. Navegador de teste: **Playwright como padrão único** (opção B), que aposenta o geckodriver e o Firefox ESR; o aceite visual passa a ser captura do Playwright. Esta decisão ainda não está em `NAVEGADOR-TESTES.md`.
+- **Verificações:** `validate-agent-token-budget.php` PASS (skills 10). `validate-aculta-portal-drupal12.php` DEFERRED: falta `vendor/`. Gate de caminhos PASS. Graphify: grafo gerado sem LLM (127.738 nós, 202.904 arestas), consulta funcionando; semgrep instalado, varredura de linha de base não feita.
+- **Riscos:** o padrão de navegador em `NAVEGADOR-TESTES.md` e na skill `aculta-navegador-testes` ainda diz Firefox ESR até a migração. Commit de V1 acidental foi revertido antes do push.
+- **Pendências:** migração para Playwright (prompt já entregue ao agente local); varredura do Semgrep; decidir o plugin da Trail of Bits; rodar o gate do Drupal 12 onde houver `vendor/`.
+- **Próximo passo:** o agente local migra os testes para Playwright e atualiza `NAVEGADOR-TESTES.md` e a skill, e depois roda a varredura do Semgrep sobre os módulos alterados.
+
 # HTMX F1 — busca do shell e cadastro popup — 2026-11-05
 
 - **Objetivo:** concluir as pendências apontadas da microfase HTMX F1: migrar a busca do shell e o cadastro popup para HTMX, validar com sessão/Form API reais e executar a matriz visual.
@@ -19,13 +29,3 @@
 - **Riscos:** nenhum registrado.
 - **Pendências:** nenhuma desta entrega. O repositório é `aculta`.
 - **Próximo passo:** nenhum.
-
-
-# Migração data-portal-ui, mapa do V2 e upload centralizado — 2026-11-05
-
-- **Objetivo:** migrar as classes de design de `aculta_lms`, `aculta_lms_resources` e `aculta_paths` para `data-portal-ui` e mapear os tokens no tema V2; centralizar o validador de upload da resposta do LMS.
-- **Concluído:** `8dfa7ddb` (migração de 22 pontos, hook `preprocess` genérico no V2, gate de tokens que varre submódulos), `7c223cf6` (`ConsumerUploadPolicy::extensionValidators()`), `091cbf81` (39 tokens mapeados no V2 sem classe, atributo `data-portal-ui` mantido no DOM, regex do gate aceita `__`) e `044b079d` (remoção de `UserUploadPolicy` e do teste Kernel dela). Todos em `origin/dev`.
-- **Verificações:** `php -l` PASS nos PHP alterados. `validate-module-theme-boundary.php` PASS (4248 verificações). `validate-aculta-image.php` PASS. `validate-agent-token-budget.php` PASS. Captura visual, PHPUnit e Kernel: DEFERRED (sem Runtime e sem `vendor/`).
-- **Riscos:** o hook `preprocess` do V2 não foi executado no Runtime. Sem o mapa, token não mapeado não gera classe e o elemento perde estilo; a regressão visual só se confirma com captura.
-- **Pendências:** (1) portar a cobertura do teste Kernel removido (formulário de abas, diálogo, inspeção de bytes) para `ConsumerUploadPolicy`, DEFERRED; (2) decidir `config/sync/aculta_portal.user_upload.yml` e o schema, que continuam sem uso (exigem pedido explícito); (3) captura visual de aulas, eventos e Studio no V2, porque os 39 tokens dependem de seletor de atributo.
-- **Próximo passo:** o responsável decidir o item (2) e autorizar a porte do teste (1); depois, captura visual no Runtime.

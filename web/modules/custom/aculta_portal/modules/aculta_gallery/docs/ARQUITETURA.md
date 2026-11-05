@@ -293,7 +293,7 @@ A versão de cada fase é marcada no `aculta_gallery.info.yml` (a partir da Fase
 
 ## 10. Verificações previstas
 
-- Gates do Portal: `validate-aculta-portal-drupal11.php`, `validate-module-theme-boundary.php`, `validate-public-slugs.php`, `validate-environment-addresses.php`.
+- Gates do Portal: `validate-aculta-portal-drupal12.php`, `validate-module-theme-boundary.php`, `validate-public-slugs.php`, `validate-environment-addresses.php`.
 - Drush: `php vendor/drush/drush/drush.php status`, `cr`, `updatedb:status`, `config:status`.
 - Composer: `validate` e `audit` após a Fase 1.
 - Testes: Kernel/Functional direcionados por fase; Runtime (Homelab) na Fase 10.

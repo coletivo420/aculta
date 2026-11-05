@@ -177,7 +177,7 @@ Entrega direta em `dev` conforme fluxo vigente.
 4. `aculta_portal/src/EventSubscriber/DomainPurposeRequestSubscriber.php`: conferir que o redirecionamento de purpose continua funcionando com htmx (`HX-Redirect` quando necessário, nunca redirect cru para outro host).
 5. Contrato de sites para a lista do menu (ADR-047 item 9): o Portal entrega `aculta_domain_sites` (nome e URL de cada purpose publicado). Contrato neutro, sem hostname fixo no tema.
 
-**Gates F1:** `validate-aculta420-sdc-schemas.php`, `validate-aculta420-design-foundations.php`, `validate-browser-validators.php`, `validate-aculta420-foundation.php`, `validate-aculta420-shell-contract.php`, `validate-aculta420-v2-sdc.php` (Drush), `validate-aculta-portal-drupal11.php`, `validate-admin-routes-main-domain.php`.
+**Gates F1:** `validate-aculta420-sdc-schemas.php`, `validate-aculta420-design-foundations.php`, `validate-browser-validators.php`, `validate-aculta420-foundation.php`, `validate-aculta420-shell-contract.php`, `validate-aculta420-v2-sdc.php` (Drush), `validate-aculta-portal-drupal12.php`, `validate-admin-routes-main-domain.php`.
 
 **Aceite:** login, gavetas, busca e filtros funcionam com e sem JavaScript; foco e `aria-live` conferidos; sem jQuery nem `core/drupal.ajax`.
 
@@ -195,7 +195,7 @@ Entrega direta em `dev` após F1a.
    - `src/Access/AccountModalAccess.php`: mantém as regras de acesso.
    - `js/photo-flow.js`: removido; o que restar (abrir o recorte após o envio) vai para `studio-htmx.js`.
    - Regras de estado do ADR-048 item 10: acervo sem "Remover" e sem recorte; nunca inicial.
-6. Gates: `validate-aculta-user-photo.php` (obrigatório, o gate de foto é o da mudança), `validate-aculta-portal-drupal11.php`.
+6. Gates: `validate-aculta-user-photo.php` (obrigatório, o gate de foto é o da mudança), `validate-aculta-portal-drupal12.php`.
 
 **Aceite:** navegação do Studio com `aria-current`, foco e título; popup de foto nos três cenários de avatar (foto, acervo, sem foto), em 320, 390 e 1440 px, claro e escuro, com e sem JavaScript.
 
@@ -211,7 +211,7 @@ Depende só de F0. Uma entrega/commit por módulo, nesta ordem:
 
 **Removido:** `aculta_links` (duplicado, removido em 2026-11-05). Só `aculta_linkweed` permanece na F3.
 
-**Gates por módulo:** `validate-aculta-portal-drupal11.php`, mais os da tabela acima quando aplicável.
+**Gates por módulo:** `validate-aculta-portal-drupal12.php`, mais os da tabela acima quando aplicável.
 
 **Aceite:** cada módulo passa no gate, e o formulário funciona com e sem JavaScript.
 

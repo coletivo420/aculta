@@ -15,6 +15,6 @@ Fonte normativa: `docs/portal/DRUPAL-12-STANDARDS.md`. Esta skill é um checklis
 6. **Saída:** Twig escapa por padrão. Em PHP, use `Html::escape()` ou `Xss::filter()`. Render API com cache metadata correto. Seção 11.
 7. **Pagamento e integração:** carrinho, checkout e pagamento seguem a política de purpose MAIN. Credenciais via Drupal Key, nunca no código. Seção 12.
 8. **Estilo:** `declare(strict_types=1)`, classes `final` quando não houver extensão planejada, retornos antecipados em vez de aninhamento. Seção 13.
-9. **Gates:** rode `php scripts/validate-aculta-portal-drupal11.php` em mudança no Portal. Gate sem `vendor/` ou Drush: DEFERRED, com o motivo.
+9. **Gates:** rode `php scripts/validate-aculta-portal-drupal12.php` em mudança no Portal. Gate sem `vendor/` ou Drush: DEFERRED, com o motivo.
 
 Ao reportar, cite a seção do padrão para cada desvio encontrado. Não corrija desvio fora do escopo da tarefa.

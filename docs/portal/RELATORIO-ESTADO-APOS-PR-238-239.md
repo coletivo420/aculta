@@ -19,7 +19,7 @@ Base verificada: `origin/main` em `58ae82b` (PR #238; merge em 2026-10-13 UTC). 
 | --- | --- |
 | `vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/tests/src/Unit` | PASS — 63 testes, 118 asserções |
 | `vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests` | PASS — 47 testes, 107 asserções |
-| `php scripts/validate-aculta-portal-drupal11.php` | PASS — 659 checks |
+| `php scripts/validate-aculta-portal-drupal12.php` | PASS — 659 checks |
 | `php scripts/validate-module-theme-boundary.php` | PASS — 684 verificações |
 | `php scripts/validate-environment-addresses.php` | PASS — 1316 arquivos |
 | `php vendor/drush/drush/drush.php scr scripts/validate-aculta420-foundation.php` | FAIL por DT-T19: durações literais fora de `tokens.css` |

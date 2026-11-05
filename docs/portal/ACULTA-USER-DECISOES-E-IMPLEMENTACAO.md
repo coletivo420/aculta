@@ -189,7 +189,7 @@ Estado: decisão registrada, sem código. Detalhe da arquitetura em `ACULTA-USER
 ## 3. Verificações feitas
 | Item | Como foi verificado | Resultado |
 | --- | --- | --- |
-| Gate Drupal 11+ | `php scripts/validate-aculta-portal-drupal11.php` | PASS (675) |
+| Gate Drupal 11+ | `php scripts/validate-aculta-portal-drupal12.php` | PASS (675) |
 | Gate de slugs | `php scripts/validate-public-slugs.php` | PASS (338 rotas) |
 | Gate fronteira módulo/tema | `php scripts/validate-module-theme-boundary.php` | PASS (771) |
 | Gate de endereços | `php scripts/validate-environment-addresses.php` | PASS |

@@ -15,7 +15,7 @@ Vale para desenvolvedores humanos e para agentes de IA. Declarar compatibilidade
 
 "12 ready" é meta, não estado. Só se declara depois de:
 
-1. Gate do Portal (`php scripts/validate-aculta-portal-drupal11.php`) sem falha, com o Core 12 instalado no ambiente de teste.
+1. Gate do Portal (`php scripts/validate-aculta-portal-drupal12.php`) sem falha, com o Core 12 instalado no ambiente de teste.
 2. Upgrade Status e Drupal Rector executados em worktree isolado, com resultado registrado.
 3. Análise de deprecações do código do Portal e do tema V2, sem chamadas a APIs que os change records marcam como removidas.
 4. Módulos contrib e patches em `patches-aculta.json` compatíveis com a versão 12 testada.
@@ -206,7 +206,7 @@ Quando o runtime Drupal mudar, execute no mínimo: lint dos PHP modificados, `gi
 Gate do Portal:
 
 ```sh
-php scripts/validate-aculta-portal-drupal11.php
+php scripts/validate-aculta-portal-drupal12.php
 ```
 
 Os tetos de dívida (contagens de service locators, wrappers de Views, arquivos sem `strict_types`, registros de subscriber) ficam no gate, não aqui. Reduza o teto no mesmo commit que eliminar a dívida. Arquivo novo nasce conforme este padrão.

@@ -265,7 +265,7 @@ separada, posterior ao deploy; nenhum deploy foi feito nesta fase.
   validação. O gate global de fronteira continua vermelho em outros módulos.
 - Seguem pendentes para PV7: Office/planilhas em matriz móvel, CSP, revisão
   ampliada de acessibilidade e resolução do baseline PHPCS antes de RC.
-- `validate-aculta-portal-drupal11.php` também falha por documentação ausente
+- `validate-aculta-portal-drupal12.php` também falha por documentação ausente
   nos helper registry e CHANGELOG raiz do Portal, fora deste módulo. O gate de
   fronteira módulo–tema permanece vermelho em Events/Calendar/Magazine.
 

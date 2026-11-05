@@ -18,7 +18,7 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
 
 | # | Verificação | Comando | Resultado |
 | --- | --- | --- | --- |
-| 1 | Gate Drupal 11+ do Portal | `php scripts/validate-aculta-portal-drupal11.php` | PASS (382 checks) |
+| 1 | Gate Drupal 11+ do Portal | `php scripts/validate-aculta-portal-drupal12.php` | PASS (382 checks) |
 | 2 | Slugs públicos | `php scripts/validate-public-slugs.php` | PASS (266 rotas; 20 violações de contrib na linha de base DT-P20) |
 | 2b | Raiz da conta (sem `/conta-interna`; `/minha-conta` só interno, 404 direto) | `php scripts/validate-aculta-portal-conta-root.php` | PASS (1211 checks) |
 | 3 | Fundação do tema | `drush scr scripts/validate-aculta420-foundation.php` | PASS (310 checks) |
@@ -68,7 +68,7 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
 ## Como repetir a bateria
 
 ```sh
-php scripts/validate-aculta-portal-drupal11.php
+php scripts/validate-aculta-portal-drupal12.php
 php scripts/validate-public-slugs.php
 php scripts/validate-aculta-portal-conta-root.php
 php scripts/validate-own-module-packages.php

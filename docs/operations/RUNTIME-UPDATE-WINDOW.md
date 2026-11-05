@@ -383,7 +383,7 @@ entre 19:37:01 e 19:38:43, posterior ao registro de 19:30, e não era possível 
   do `aculta_install_b2` não foi localizada fora de `secrets/`: nenhum `settings.php` nas
   worktrees referencia esse banco. Não foi lido `secrets/`.
 - `config/sync` presente (1304 arquivos, `system.site.yml` incluído). `config:status`,
-  `validate-aculta-portal-drupal11.php` e as contagens pós-instalação não se aplicam: não
+  `validate-aculta-portal-drupal12.php` e as contagens pós-instalação não se aplicam: não
   houve instalação.
 - Contagens conferidas após a tentativa: `aculta_runtime` = 588; `aculta_runtime_copia` = 598.
   Sem alteração.

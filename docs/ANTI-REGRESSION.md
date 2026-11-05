@@ -31,7 +31,7 @@ O padrão normativo do Portal é `docs/portal/DRUPAL-12-STANDARDS.md` e vale par
 - subscribers implementam `EventSubscriberInterface` e novos registros usam `event_subscriber`; prioridade só muda com justificativa funcional e teste;
 - `max-age: 0` não é substituto automático para contexts/tags corretos; access e cacheability acompanham a decisão funcional;
 - compatibilidade formal com Drupal 12/13 só é declarada após validação de Core e contrib; deprecations são tratadas pelo substituto publicado, não por suposição;
-- o gate progressivo `php scripts/validate-aculta-portal-drupal11.php` congela a dívida atual e impede sua expansão até as fases que a removerão.
+- o gate progressivo `php scripts/validate-aculta-portal-drupal12.php` congela a dívida atual e impede sua expansão até as fases que a removerão.
 
 Refactor de infraestrutura não pode alterar comportamento, access, cache, Domain, Commerce, autenticação ou segurança como efeito colateral.
 

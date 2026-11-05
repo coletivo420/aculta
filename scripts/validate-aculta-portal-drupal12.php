@@ -955,11 +955,11 @@ foreach ($statusIndexOutput as $line) {
 $check($statusIndexExit === 0, 'The permanent project module/theme status-index gate failed.');
 
 if ($failures !== []) {
-  fwrite(STDERR, "ACULTA PORTAL DRUPAL 11+ GATE: FAIL\n");
+  fwrite(STDERR, "ACULTA PORTAL DRUPAL 12 GATE: FAIL\n");
   foreach ($failures as $failure) {
     fwrite(STDERR, '- ' . $failure . "\n");
   }
   exit(1);
 }
 
-echo 'ACULTA PORTAL DRUPAL 11+ GATE: PASS (' . $checks . " checks; progressive Drupal 11+ baseline)\n";
+echo 'ACULTA PORTAL DRUPAL 12 GATE: PASS (' . $checks . " checks; progressive Drupal 11+ baseline)\n";

@@ -71,7 +71,7 @@ responsável.
   - marca `social_auth_password_unset` removida;
   - redirect para `aculta_portal.security_password` definido;
   - conta temporária removida ao final (conferido: nenhuma `oauthteste` restante).
-- Gates: `validate-aculta-portal-drupal11` PASS. `validate-module-theme-boundary` com 1 falha, que é de outra linha de
+- Gates: `validate-aculta-portal-drupal12` PASS. `validate-module-theme-boundary` com 1 falha, que é de outra linha de
   trabalho (`SocialLinksPagePresenter.php`, classes de design no módulo), não desta mudança.
 
 ## Não verificado

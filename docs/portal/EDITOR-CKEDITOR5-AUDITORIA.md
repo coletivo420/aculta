@@ -150,7 +150,7 @@ Classificação de planejamento. **Nenhum submódulo foi habilitado nesta fase.*
 6. **F6 — estilos:** só após autorização do responsável para o tema.
 7. **F7 — testes e documentação final:** testes Kernel no banco `aculta_simpletest`, gates do Portal e validação visual.
 
-Validação exigida por fase: `php scripts/validate-aculta-portal-drupal11.php` e `php scripts/validate-project-status-index.php` quando houver componente novo.
+Validação exigida por fase: `php scripts/validate-aculta-portal-drupal12.php` e `php scripts/validate-project-status-index.php` quando houver componente novo.
 
 ## 10. Verificações desta fase
 

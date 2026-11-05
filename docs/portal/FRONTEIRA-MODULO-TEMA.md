@@ -180,7 +180,7 @@ a lista novamente. Nenhum modal de conversa ou transporte cross-domain é usado.
 
 Não foi necessário mover lógica de negócio: a inspeção confirmou os donos acima. Foi corrigida uma referência de documentação de tema que havia entrado no registry PHP do Portal; metadados de módulo agora apontam para a documentação neutra em `docs/portal/IMPLEMENTATIONS.md`.
 
-Verificação específica: `php scripts/validate-module-theme-boundary.php` PASS (973 verificações); `php scripts/validate-aculta420-sdc-schemas.php` PASS (24 componentes, 365 verificações); `php scripts/validate-aculta-portal-drupal11.php` PASS (768 verificações).
+Verificação específica: `php scripts/validate-module-theme-boundary.php` PASS (973 verificações); `php scripts/validate-aculta420-sdc-schemas.php` PASS (24 componentes, 365 verificações); `php scripts/validate-aculta-portal-drupal12.php` PASS (768 verificações).
 
 ## Documentos e gates complementares (2026-10-14)
 
@@ -211,7 +211,7 @@ agrupados por camada. Esta seção registra a delimitação e o resultado; não 
 - Linhas acrescentadas em `src/` do módulo com `\Drupal::`: 0.
 - Linhas acrescentadas no tema com classe de módulo, referência a `aculta_portal`, hex/rgb ou host fixo: 0.
 - `validate-aculta420-design-foundations`: PASS (1736 verificações). `validate-aculta420-shell-contract`: PASS (11). `validate-aculta420-sdc-schemas`: PASS (14 componentes).
-- `validate-aculta-portal-drupal11`: PASS (696). `validate-portal-ui-docs`: PASS (167 tokens). `validate-portal-popup-rule`: PASS.
+- `validate-aculta-portal-drupal12`: PASS (696). `validate-portal-ui-docs`: PASS (167 tokens). `validate-portal-popup-rule`: PASS.
 - `validate-public-slugs`: PASS. `validate-environment-addresses`: PASS. `validate-admin-domain-policy`: PASS (3.498 checks em 2026-10-26 via `drush php:script`; execução direta por PHP CLI não inicializa Drupal). `validate-payment-domain-policy`: PASS (49).
 
 ### Falhas que já existiam (não causadas por esta branch)

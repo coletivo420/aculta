@@ -260,7 +260,7 @@ Os testes de navegador criam dados. Remover contas e conversas de teste pela API
 | Tipo | Onde | Como |
 | --- | --- | --- |
 | Unitários (PHPUnit) | `aculta_messenger/tests/src/Unit/` (57 arquivos de teste) | `php vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit` |
-| Gates | `scripts/validate-module-theme-boundary.php`, `validate-turnstile-exceptions.php`, `validate-public-slugs.php`, `validate-aculta-portal-drupal11.php`, `validate-aculta420-foundation.php` (Drush: `drush scr`) | Ver `docs/portal/GUARDRAILS.md` |
+| Gates | `scripts/validate-module-theme-boundary.php`, `validate-turnstile-exceptions.php`, `validate-public-slugs.php`, `validate-aculta-portal-drupal12.php`, `validate-aculta420-foundation.php` (Drush: `drush scr`) | Ver `docs/portal/GUARDRAILS.md` |
 | Navegador | `tests/browser/aculta-messenger/`; suíte completa registrada 76/76 e smoke da central 4/4. | Firefox ESR visível (`DISPLAY=:0`) no Runtime de teste (`*.aculta.toca.net.br`) |
 
 ## 10. Pendências conhecidas

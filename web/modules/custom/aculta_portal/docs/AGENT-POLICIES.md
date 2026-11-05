@@ -31,7 +31,7 @@ Regras resumidas:
 - subscribers usam `EventSubscriberInterface` e o tag `event_subscriber`; prioridades funcionais não mudam por estética;
 - Render API, access e cacheability fazem parte do contrato funcional;
 - nenhuma mudança é chamada de “Drupal 12/13 ready” sem verificar Core, change records e módulos contrib;
-- execute `php scripts/validate-aculta-portal-drupal11.php` em mudanças do Portal e elimine, não expanda, a dívida técnica registrada pelo gate.
+- execute `php scripts/validate-aculta-portal-drupal12.php` em mudanças do Portal e elimine, não expanda, a dívida técnica registrada pelo gate.
 
 A documentação deve registrar o motivo arquitetural das regras, não apenas sua forma.
 
@@ -74,7 +74,7 @@ A documentação deve registrar o motivo arquitetural das regras, não apenas su
 > **Código no Aculta Portal, Design no ACULTA420.**
 
 - Contrato canônico: `docs/portal/FRONTEIRA-MODULO-TEMA.md`. Mapa a atualizar no mesmo commit: `docs/portal/MAPA-MODULO-TEMA.md` (gate `php scripts/validate-module-theme-map.php`).
-- Gates de fronteira: `php scripts/validate-module-theme-boundary.php` e `php scripts/validate-aculta-portal-drupal11.php`.
+- Gates de fronteira: `php scripts/validate-module-theme-boundary.php` e `php scripts/validate-aculta-portal-drupal12.php`.
 - Alterar `web/themes/custom/aculta420/**` exige autorização explícita na solicitação. Tarefa de Portal não autoriza mudança no tema.
 
 ## HTMX como padrão do tema (regra permanente)

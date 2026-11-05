@@ -31,7 +31,7 @@ Migrar o ACULTA de Drupal 11.4 para Drupal 12 estável, em branch de trabalho, s
 ### Fase 0: linha de base
 
 - Registre a versão atual: `composer.lock`, `php -v`, saída de `updatedb:status` e `config:status` (somente leitura).
-- Rode os gates: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/validate-admin-routes-main-domain.php`. Se algum gate falhar antes da migração, registre e pare.
+- Rode os gates: `php scripts/validate-aculta-portal-drupal12.php`, `php scripts/validate-admin-routes-main-domain.php`. Se algum gate falhar antes da migração, registre e pare.
 
 ### Fase 1: dívida Drupal 11 (no branch de trabalho, sem subir o core)
 

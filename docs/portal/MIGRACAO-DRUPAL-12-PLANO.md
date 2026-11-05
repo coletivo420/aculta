@@ -43,7 +43,7 @@ Base: branch `dev`, commit `82db095`. Análise estática do repositório e de fo
 - Responder as decisões da seção 3.
 - Confirmar no drupal.org a data da release 12.0.0 e os change records do Core 12.
 - Instalar PHP 8.5 no host (requer root) ou definir alternativa de container.
-- Registrar baseline: `updatedb:status`, `config:status`, saída dos gates (`validate-aculta-portal-drupal11.php`, `validate-final-drupal.php`) com `vendor/` presente.
+- Registrar baseline: `updatedb:status`, `config:status`, saída dos gates (`validate-aculta-portal-drupal12.php`, `validate-final-drupal.php`) com `vendor/` presente.
 
 ### Fase 1 — Dívida Drupal 11 (eliminar antes de subir o core)
 - Rodar Upgrade Status e Drupal Rector no código customizado e nos temas, em worktree isolado.

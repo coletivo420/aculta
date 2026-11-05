@@ -204,7 +204,7 @@ estorno. Os 22 casos existentes são preservados sem mudança de comportamento.
 
 ### Scripts
 
-- `scripts/validate-aculta-portal-drupal11.php`: imports/asserções em `355-357` e `537-538`; lista de
+- `scripts/validate-aculta-portal-drupal12.php`: imports/asserções em `355-357` e `537-538`; lista de
   arquivos em `826` inclui `src/Commerce/MercadoPago/WebhookEventSubscriber.php`. Atualizar namespace e
   caminho.
 - `scripts/validate-portal-commerce-security.php`: `450-728` usa
@@ -250,7 +250,7 @@ Testes de outros submódulos que apenas listam `aculta_pagamentos_mercadopago` c
 | 4 | Mover `RefundEligibilitySubscriber` e os ramos MP dos hooks (`EntitySaveHooks`, `EntityHooks`, `FormHooks`); manter `ProfileAddressAliasHooks` no Portal | Unit `RefundEligibilitySubscriberTest`; teste de acesso/form do gateway (criar se não houver) |
 | 5 | Inverter consumidores do Portal com interfaces (`SubscriptionStatusInterface`, `PaymentOperationsInterface`, `RefundPolicyInterface`, exceção neutra); manter `RecurringAuthorizationPane` na Doação com dependência direta do MP; declarar dependências diretas Doação/LMS → MP | `DonationReportControllerTest`, testes de Doação e LMS; Unit dos formulários de venda; instalação limpa confirma Doação e LMS puxando MP |
 | 6 | Remover `aculta_portal:aculta_pagamentos_mercadopago` de `aculta_portal.info.yml` | Instalações limpas descartáveis: Portal sem MP; Doação habilitada puxa MP; LMS habilitado puxa MP. Kernels LMS, incluindo 5/259 de course/video, passam com MP no harness; Kernel de wiring dos submódulos |
-| 7 | Atualizar scripts, status YAML, CHANGELOGs e versões; regenerar a tabela do README pelo dono | `validate-aculta-portal-drupal11.php`, `validate-portal-commerce-security.php`, `validate-project-status-index.php --write` (dono do README) |
+| 7 | Atualizar scripts, status YAML, CHANGELOGs e versões; regenerar a tabela do README pelo dono | `validate-aculta-portal-drupal12.php`, `validate-portal-commerce-security.php`, `validate-project-status-index.php --write` (dono do README) |
 
 Cada passo deve deixar a árvore verde: PHP lint, PHPCS Drupal/DrupalPractice e os testes citados. Os
 passos 1-4 são movimentação mecânica; o passo 5 é o único com desenho novo.
@@ -285,7 +285,7 @@ passos 1-4 são movimentação mecânica; o passo 5 é o único com desenho novo
    `profile.address` com MP desabilitado.
 6. `aculta_portal.recurring_donations_report`, formulários de venda e painel de suporte funcionam com a
    interface do Portal e a implementação do MP, e degradam com `moduleExists` quando o MP está ausente.
-7. Scripts `validate-aculta-portal-drupal11.php` e `validate-portal-commerce-security.php` passam com os
+7. Scripts `validate-aculta-portal-drupal12.php` e `validate-portal-commerce-security.php` passam com os
    novos namespaces/IDs.
 8. PHP lint, PHPCS Drupal/DrupalPractice e os gates de status/pacotes verdes; tabela do README
    regenerada pelo dono.

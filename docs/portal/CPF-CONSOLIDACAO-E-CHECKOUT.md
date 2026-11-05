@@ -205,7 +205,7 @@ Não aumentar a coleta de documentos sem necessidade demonstrada.
 | `aculta_id_cpf/tests/run.php` | **PASS**: 248 verificações de domínio |
 | `git diff --check` (commits desta rodada) | **PASS** |
 | `php scripts/validate-project-status-index.php` | **PASS** (39 componentes). Falha anterior corrigida: criado o status de `aculta_commerce` e regenerada a tabela |
-| `php scripts/validate-aculta-portal-drupal11.php` | **PASS** (1159 verificações). As falhas da linha de base foram corrigidas na rodada de 9.3 |
+| `php scripts/validate-aculta-portal-drupal12.php` | **PASS** (1159 verificações). As falhas da linha de base foram corrigidas na rodada de 9.3 |
 | PHPUnit Kernel do `aculta_portal` (suíte completa, com `SIMPLETEST_DB` do banco dedicado de teste) | **PASS**: 53 testes, 831 asserções; 90 deprecações registradas (as exibidas vêm de contrib), sem falhas |
 | PHPCS Drupal/DrupalPractice nos arquivos novos e no formulário de Outros dados | **0 erros**; restam 16 avisos de linha longa (acima de 80 colunas), sem efeito funcional |
 | PHPUnit Kernel (infraestrutura) | **PASS** em teste de fumaça (`EmailConfirmationPolicyKernelTest`, 3 testes), com `SIMPLETEST_DB` montado a partir da conexão do runtime de teste, só em variável de ambiente |
@@ -298,7 +298,7 @@ Medição refeita comparando o conteúdo bruto de cada objeto ativo (tabela `con
 - **Corrigidos no sync, por reordenação textual** (sem reexportar e sem importar): os dois form displays de LMS (`group.lms_course.default`, `node.aculta_lms_topic.default`), `field.field.commerce_product.produto_loja.field_imagens` (posição de `third_party_settings`), os dois papéis (`content_editor`, 51 permissões; `email_confirmed`, 25) e `filter.format.full_html` (`langcode: en` → `pt-br`). As listas foram ordenadas pelo valor sem as aspas, que é a forma que `castValue()` grava; ordenar pelo texto com aspas deixava `access content` depois de `access content overview`.
 - **Não tocados, por pertencerem a outras frentes:** `search_api.index.aculta_conteudo`, `search_api.index.aculta_forum`, `views.view.wiki_entries`, `views.view.aculta_forum_categories` e `views.view.aculta_forum_search`. O índice de conteúdo chegou a ser reordenado nesta rodada e foi revertido ao original ao se confirmar o dono.
 - **Medição após as correções:** 40 objetos divergentes (39 sem `core.extension`), 31 só no banco e 0 só no sync — eram 46/45. Os seis itens corrigidos agora comparam idênticos ao ativo.
-- **Gates e suítes:** `PROJECT STATUS INDEX: PASS (39 components)`; `ACULTA PORTAL DRUPAL 11+ GATE: PASS (1159 checks)`; Unit do `aculta_portal` `324 tests, 810 assertions` OK (6 deprecations); Kernel `53 tests, 831 assertions` OK (90 deprecations), com `SIMPLETEST_DB` só em variável de ambiente.
+- **Gates e suítes:** `PROJECT STATUS INDEX: PASS (39 components)`; `ACULTA PORTAL DRUPAL 12 GATE: PASS (1159 checks)`; Unit do `aculta_portal` `324 tests, 810 assertions` OK (6 deprecations); Kernel `53 tests, 831 assertions` OK (90 deprecations), com `SIMPLETEST_DB` só em variável de ambiente.
 - **Nada foi importado e nenhum objeto do banco foi alterado.** O backup anterior continua idêntico ao ativo, conferido item a item.
 
 ## 9.6 Verificação de navegador da frente CPF + checkout (2026-10-23)
@@ -351,7 +351,7 @@ O que o teste prova é que o tema carrega e renderiza as páginas sem erro. Há 
 ### Gates finais
 
 - `php scripts/validate-project-status-index.php` → `PROJECT STATUS INDEX: PASS (39 components)`.
-- `php scripts/validate-aculta-portal-drupal11.php` → `PROJECT STATUS INDEX: PASS (39 components)` e `ACULTA PORTAL DRUPAL 11+ GATE: PASS (1159 checks)`.
+- `php scripts/validate-aculta-portal-drupal12.php` → `PROJECT STATUS INDEX: PASS (39 components)` e `ACULTA PORTAL DRUPAL 12 GATE: PASS (1159 checks)`.
 - Unit: `324 tests, 810 assertions, OK` (6 deprecations), sem falhas.
 - Kernel, com `SIMPLETEST_DB` exportado de `secrets/simpletest-db.env` apenas como variável de ambiente: `53 tests, 831 assertions, OK` (90 deprecations).
 

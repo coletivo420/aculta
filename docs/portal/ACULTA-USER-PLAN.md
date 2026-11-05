@@ -244,7 +244,7 @@ ACULTA420: PortalUiHooks (TOKENS) e/ou SDC `author-card` (Bootstrap card), escol
   bloqueada, nó não publicado, nó de outro tipo e nó de outro purpose.
 - Unit: `AuthorshipPresenter` com `PublicProfilePolicy` simulada; nome nunca é e-mail.
 - Cache: tags presentes no render array; invalidação ao mudar a visibilidade.
-- Gates: `validate-aculta-portal-drupal11.php`, `validate-module-theme-boundary.php`, `validate-public-slugs.php` e
+- Gates: `validate-aculta-portal-drupal12.php`, `validate-module-theme-boundary.php`, `validate-public-slugs.php` e
   `validate-environment-addresses.php`.
 - Navegador no servidor de testes (`TESTES-NAVEGADOR.md`): caixa visível em artigo da Revista, link só com perfil público.
 
@@ -534,7 +534,7 @@ validação do servidor de desenvolvimento ocorre em Alpha.
 
 Versionamento (`web/themes/custom/aculta420/docs/versioning.md`): U1 é **MINOR** no Portal (submódulo novo). Linha alvo sugerida: `0.4.0-dev.N`, com o submódulo em `0.1.0-dev.N`. Marcadores coerentes no mesmo PR: `aculta_portal.info.yml`, `CHANGELOG.md` do Portal e do submódulo, `ROADMAP.md`. Nenhuma tag sem pedido do responsável.
 
-Gates por fase: `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/validate-module-theme-boundary.php`, `php scripts/validate-public-slugs.php`, `php scripts/validate-environment-addresses.php`, e os testes do submódulo.
+Gates por fase: `php scripts/validate-aculta-portal-drupal12.php`, `php scripts/validate-module-theme-boundary.php`, `php scripts/validate-public-slugs.php`, `php scripts/validate-environment-addresses.php`, e os testes do submódulo.
 
 ## 7. Decisões para o responsável
 

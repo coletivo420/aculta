@@ -20,7 +20,7 @@ Atualização: o gate R9 agora valida `image_style` e estilos PhotoSwipe nas con
 - A remoção invalida derivados do Image Style e apaga metadados de auditoria/origem/quarentena do FID removido.
 - Derivados públicos gerados por processadores opcionais podem ser registrados como arquivos temporários via `aculta_file_uploader.generated_file` e renderizados via `aculta_image.render`; a limpeza existente remove os sem uso após `system.file:temporary_maximum_age`.
 - Painel em `/painel-administrativo/imagens`, abas de relatório, limpeza e quarentena. A permissão existente `administer aculta images` protege todas as rotas; nenhuma configuração de contas ou papéis foi alterada.
-- Validação: PHP lint, parse YAML, `validate-aculta-image.php` e `validate-aculta-portal-drupal11.php` passaram. O primeiro `drush status` usou URI padrão; depois o status explícito confirmou `https://aculta.toca.net.br` e o banco `aculta_runtime`. Cache reconstruído e as quatro rotas administrativas confirmadas pelo Drush. Nenhuma configuração de contas ou papéis foi alterada.
+- Validação: PHP lint, parse YAML, `validate-aculta-image.php` e `validate-aculta-portal-drupal12.php` passaram. O primeiro `drush status` usou URI padrão; depois o status explícito confirmou `https://aculta.toca.net.br` e o banco `aculta_runtime`. Cache reconstruído e as quatro rotas administrativas confirmadas pelo Drush. Nenhuma configuração de contas ou papéis foi alterada.
 
 ## Hierarquia atual e o seletor de texto
 

@@ -131,7 +131,7 @@ separar formatos; todas as publicações usam `revista`.
 
 ## Gates e verificação
 
-- `php scripts/validate-aculta-portal-drupal11.php`, `validate-module-theme-boundary.php`,
+- `php scripts/validate-aculta-portal-drupal12.php`, `validate-module-theme-boundary.php`,
   `validate-public-slugs.php`, `validate-environment-addresses.php`.
 - Navegador: publicação de teste (`revista`) com chamada, resumo, corpo e coautora; caixa de autores; descrição de SEO.
 

@@ -76,7 +76,7 @@ o perfil. Regra e gate em `docs/portal/GUARDRAILS.md` (seção "Links de perfil"
 
 ## 7b. Verificação
 
-- Gates: `validate-aculta-portal-drupal11`, `validate-module-theme-boundary`, `validate-public-slugs`,
+- Gates: `validate-aculta-portal-drupal12`, `validate-module-theme-boundary`, `validate-public-slugs`,
   `validate-environment-addresses`, `validate-aculta420-design-foundations`, `validate-aculta-user-photo`.
 - Navegador: Firefox ESR visível em `DISPLAY=:0`, conforme `docs/operations/NAVEGADOR-TESTES.md`, com
   tema ACULTA ativo. O roteiro de avatar fica em `tests/browser/aculta-avatar/`.
@@ -109,4 +109,4 @@ visual do roster/feedback do LMS quando houver turma no Runtime.
 - O AGENTS diz que a autoria de verbete publicado é pública, e o tipo `wiki_entry` está com `display_submitted: true`.
 - Mesmo assim, os templates `node--wiki-entry--full` e `node--wiki-entry--teaser` do ACULTA420 **não exibem** a autoria.
 - Decisão do responsável em 2026-10-27: manter a apresentação oculta; a autoria aparece somente na discussão do verbete, pelo cartão `author_wiki` dos comentários. Para exibir a autoria na entrada, o tema precisa de autorização explícita e nova versão; a identidade continua vindo do `aculta_user`.
-- O gate `validate-aculta-portal-drupal11.php` verifica a configuração (`display_submitted: true`), não o template. A diferença entre configuração e apresentação fica registrada aqui.
+- O gate `validate-aculta-portal-drupal12.php` verifica a configuração (`display_submitted: true`), não o template. A diferença entre configuração e apresentação fica registrada aqui.
