@@ -50,3 +50,12 @@ Com base no `docs/modules/ACULTA-LMS-ROADMAP.md`, no `docs/decisions/ADR-042-rem
 1. **Tour de Primeiro Acesso:** Decidido uso de `<dialog>` HTML nativo e leve no tema sem dependências externas.
 2. **Form Wizard:** Decidido adotar CTools Form Wizard multietapa no Course Builder (criação e estruturação de cursos).
 3. **Pagamentos / Mercado Pago:** Confirmada existência e homologação prévia das credenciais do gateway `aculta_pagamentos_mercadopago` no projeto.
+
+---
+
+## 5. Implementação CTools Form Wizard (Dev.211)
+- **CourseBuilderWizard:** Criado wizard multietapa em `\Drupal\aculta_lms\Wizard\CourseBuilderWizard` com etapas `details` (dados do curso), `structure` (aulas e sequenciamento) e `review` (revisão e publicação).
+- **StudentTourWizard:** Criado wizard multietapa em `\Drupal\aculta_lms\Wizard\StudentTourWizard` cobrindo boas-vindas, sala de aula, atividades e conclusão com certificado.
+- **Testes Unitários:** Adicionados 5 novos testes cobrindo wizards e etapas (277 testes / 1.068 asserções no total de `aculta_lms`, todos PASS).
+- **PHP Lint:** 100% aprovado sem erros de sintaxe nos novos arquivos.
+- **Kernel Test:** `AttemptArchiveLifecycleTest` PASS no banco descartável `aculta_simpletest`.
