@@ -214,6 +214,7 @@ Os tokens são definidos sob o seletor do purpose e redefinidos sob o modo escur
 
 ## Histórico
 
+- 2026-11-05: título do documento padronizado como "Paleta ACULTA Skunk Family". Comando intermediário para o agente alinhar o nome em código e documentação do tema.
 - 2026-11-05: paleta gerada a partir das cores da V1 e do reggae. Versão aprovada com esquemas nomeados por variedades de cannabis, sem nome de purpose.
 - 2026-11-05: adicionado o esquema Skunk para o purpose Links (LinkWeed).
 - 2026-11-05: adicionados Panama Red (Fórum) e Acapulco Gold (Eventos). Os dez purposes passam a ter esquema.
