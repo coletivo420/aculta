@@ -1,0 +1,45 @@
+# Progresso — ACULTA LMS
+
+Estado atual do desenvolvimento do LMS rumo ao critério de conclusão definido pela documentação do projeto.
+
+---
+
+## 1. Critério de Conclusão do LMS
+Com base no `docs/modules/ACULTA-LMS-ROADMAP.md`, no `docs/decisions/ADR-042-remocao-dependencias-lms-contrib.md` e nas diretrizes do projeto:
+1. **Independência do contrib:** Módulo `aculta_lms` gerencia e possui entidades próprias (`Lesson`, `Activity`, `Answer`, `Progress`, `AttemptArchive`), sem requisições ao pacote `drupal/lms` no `composer.json` (ADR-042 atingido no código).
+2. **Ciclo de Fases F0 a F16:**
+   - **F0–F6 (Fundação, Viewer PDF, Consistência, Catálogo, Sala de Aula):** Concluídas e testadas funcionalmente.
+   - **F7 (Turmas e Matrículas Commerce):** Concluído no código com testes Unit/Kernel; pendente de homologação HTTP de ponta a ponta com gateway sandbox autorizado.
+   - **F8–F9 (Avaliações objetivas, uploads e Webform Score):** Cobertos por plugins e políticas de upload seguras (`aculta_file_uploader`).
+   - **F10 (H5P):** Módulo `aculta_lms_h5p` ativo no ambiente de testes; restrito a corpus de teste no Homelab, pendente de storage `private://h5p` e gates finais.
+   - **F11 (Certificados):** Entregue com emissão transacional, QR Code (`aculta_qrcode`) e cobertura Kernel.
+   - **F12–F13 (Dashboards e Notificações):** Estatísticas diárias agregadas e notificações delegadas ao `aculta_messenger`.
+   - **F14–F15 (Conexões e Recursos de Conteúdo):** `aculta_lms_resources` com suporte a `course_document` e integração Fórum/LMS.
+   - **F16 (Hardening):** PHPStan nível limpo, cobertura de cacheability (variations por turma e invalidações de tags) e sem caminhos absolutos ou credenciais de produção.
+3. **Validação e Gates:**
+   - Testes Unitários de `aculta_lms`: 272/272 PASS (1.039 asserções).
+   - Testes de Kernel no banco de teste (`aculta_simpletest`): PASS.
+   - Schema SDC e contratos de apresentação: PASS.
+   - Drush Runtime: 0 atualizações pendentes de banco (`drush updbst`).
+
+---
+
+## 2. Tarefas Realizadas Nesta Sessão
+- **Auditoria Inicial Completa:**
+  - Conferência de `TODO.md`, `ESTADO-DA-SESSAO.md`, `ADR-042`, `ADR-044`, `ADR-045`, `ADR-046`, planos de independência e inventário do Opigno (§11).
+  - Verificação de independência do LMS contrib: `composer.json` e `core.extension.yml` livres de `drupal/lms`.
+  - Execução da suíte Unit do LMS: 272 testes, 1.039 asserções com status OK.
+  - Execução de teste Kernel focal com banco `aculta_simpletest` (`AttemptArchiveLifecycleTest`): 5 testes, 146 asserções com status OK.
+  - Execução e verificação de schema SDC: 55 componentes, 764 verificações PASS.
+  - Verificação de estado do Drush Runtime e atualizações de banco: 0 pendências.
+- **Registro de Decisões e Pendências:**
+  - Criação de `pendencias-lms.md` cobrindo `opigno_tour`, CTools form wizard, homologação comercial e H5P.
+  - Criação deste documento de progresso (`progresso-lms.md`).
+
+---
+
+## 3. Estado Atual Frente ao Critério
+- **Pronto:** Arquitetura do LMS independente do contrib, entidades próprias, rotas e permissões Group, catálogo, sala de aula, controle de acesso e invalidação de cache, histórico transacional de tentativas e testes automatizados.
+- **Pendente de Decisão / Ação do Responsável:**
+  - Homologação de ponta a ponta com produto/turma e gateway de teste no Homelab.
+  - Decisões em `pendencias-lms.md` (`opigno_tour` e form wizard).
