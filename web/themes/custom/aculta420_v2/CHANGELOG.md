@@ -12,8 +12,12 @@
   link e o formulário nativos como fallback. O template do diálogo passou a ter
   o `id="aculta-search-content"` exigido pelo alvo HTMX.
 - O Portal responde ao cadastro popup com fragmento e `HX-Redirect` em
-  requisições `HX-Request`; o consumer V2 desse popup é o checkout de doação
-  (F5) e permanece aguardando autorização.
+  requisições `HX-Request`. O convite de cadastro no checkout de doação foi
+  autorizado e passou a usar o diálogo HTMX do shell, com o `href` como
+  fallback; o restante do checkout segue na F5.
+- As gavetas de mensagens/avisos mantêm a exceção aceita pelo responsável
+  em 2026-11-05: abrem por `<button>` e dependem de JavaScript, sem link nativo
+  para a página completa.
 - Gates de SDC, foundations, shell contract, browser validators e render Drupal
   isolado (35 SDCs) passaram; o validador de render também exige o contrato
   HTMX do login. A suíte `tests/browser/aculta-htmx-f1/` passou 43/43 checks no

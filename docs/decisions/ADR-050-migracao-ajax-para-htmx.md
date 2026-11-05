@@ -176,6 +176,8 @@ Entrega direta em `dev` conforme fluxo vigente.
 3. `aculta_portal/src/Search/SearchUtility.php` e `js/search-preview.js`: busca com `hx-get`.
 4. `aculta_portal/src/EventSubscriber/DomainPurposeRequestSubscriber.php`: conferir que o redirecionamento de purpose continua funcionando com htmx (`HX-Redirect` quando necessário, nunca redirect cru para outro host).
 5. Contrato de sites para a lista do menu (ADR-047 item 9): o Portal entrega `aculta_domain_sites` (nome e URL de cada purpose publicado). Contrato neutro, sem hostname fixo no tema.
+6. **Gavetas de mensagens/avisos (exceção aceita em 2026-11-05):** o gatilho é um `<button>` e depende de JavaScript. O Portal não fornece `all_href`, então não há link nativo para a página completa. O responsável decidiu manter a exceção documentada nesta fase, em vez de converter o gatilho em link.
+7. **Cadastro no checkout de doação (autorizado em 2026-11-05):** o convite de cadastro usa o diálogo HTMX do shell, com `hx-get`/`hx-post` e o `href` como fallback; o restante do checkout e do pagamento permanece na F5.
 
 **Gates F1:** `validate-aculta420-sdc-schemas.php`, `validate-aculta420-design-foundations.php`, `validate-browser-validators.php`, `validate-aculta420-foundation.php`, `validate-aculta420-shell-contract.php`, `validate-aculta420-v2-sdc.php` (Drush), `validate-aculta-portal-drupal12.php`, `validate-admin-routes-main-domain.php`.
 

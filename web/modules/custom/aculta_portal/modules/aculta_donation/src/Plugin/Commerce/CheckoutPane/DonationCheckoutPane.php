@@ -10,7 +10,7 @@ use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\Component\Serialization\Json;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -181,19 +181,32 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
     ])->toString();
     $link = Url::fromRoute('aculta_portal.register_popup', [], [
       'query' => ['destination' => $destino],
-      'attributes' => [
-        'class' => ['use-ajax'],
-        'data-dialog-type' => 'modal',
-        'data-dialog-options' => Json::encode([
-          'title' => (string) $this->t('Criar conta'),
-          'width' => 480,
-        ]),
-      ],
     ]);
+    $dialog = [
+      '#type' => 'html_tag',
+      '#tag' => 'dialog',
+      '#attributes' => [
+        'id' => 'aculta-register-dialog',
+        'class' => ['aculta-utility-dialog'],
+        'aria-label' => (string) $this->t('Criar conta'),
+        'data-aculta-utility-drawer' => '',
+      ],
+    ];
+    // V2 opens the native dialog through utility-dialogs.js, which triggers
+    // aculta:drawer:open; HTMX loads and submits the Portal fragment. The
+    // link href stays valid without JavaScript.
+    (new Htmx())
+      ->get($link)
+      ->trigger('aculta:drawer:open')
+      ->target('find [data-aculta-register-content]')
+      ->select('#aculta-register-popup')
+      ->swap('innerHTML')
+      ->sync('body:replace')
+      ->onlyMainContent()
+      ->applyTo($dialog);
     return [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'donation-account-invite'],
-      '#attached' => ['library' => ['core/drupal.dialog.ajax']],
       '#cache' => ['contexts' => ['user.roles:anonymous']],
       'texto' => [
         '#markup' => '<p>' . $this->t('Crie uma conta para acompanhar suas doações.') . '</p>',
@@ -202,7 +215,48 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
         '#type' => 'link',
         '#title' => $this->t('Criar conta'),
         '#url' => $link,
-        '#attributes' => ['data-portal-ui' => 'donation-account-invite-link'],
+        '#attributes' => [
+          'data-portal-ui' => 'donation-account-invite-link',
+          'data-aculta-dialog-trigger' => '',
+          'aria-controls' => 'aculta-register-dialog',
+          'aria-haspopup' => 'dialog',
+          'aria-expanded' => 'false',
+        ],
+      ],
+      'dialog' => $dialog + [
+        'header' => [
+          '#type' => 'html_tag',
+          '#tag' => 'header',
+          '#attributes' => ['class' => ['aculta-utility-dialog__header']],
+          'title' => [
+            '#type' => 'html_tag',
+            '#tag' => 'h2',
+            '#attributes' => ['class' => ['aculta-utility-dialog__title']],
+            '#value' => $this->t('Criar conta'),
+          ],
+          'close' => [
+            '#type' => 'html_tag',
+            '#tag' => 'button',
+            '#attributes' => [
+              'type' => 'button',
+              'class' => ['aculta-utility-dialog__close'],
+              'data-aculta-dialog-close' => '',
+              'aria-label' => (string) $this->t('Fechar'),
+            ],
+            '#value' => '×',
+          ],
+        ],
+        'content' => [
+          '#type' => 'html_tag',
+          '#tag' => 'div',
+          '#attributes' => [
+            'class' => ['aculta-utility-dialog__body'],
+            'data-aculta-register-content' => '',
+            'aria-live' => 'polite',
+            'aria-busy' => 'false',
+          ],
+          '#value' => $this->t('Carregando…'),
+        ],
       ],
     ];
   }

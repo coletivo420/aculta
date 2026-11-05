@@ -134,7 +134,7 @@ por tarefa; Layout Builder permanece desabilitado.
 
 A biblioteca `studio-htmx` depende de `core/drupal.htmx`, `core/drupal` e `core/once`. A biblioteca `utility-drawers` depende de `studio-htmx` e carrega os diálogos, gavetas, contadores e dispensa de avisos. Os diálogos nativos usam `data-aculta-utility-drawer` como contrato de comportamento; estilos específicos de cada SDC ficam isolados para que um modal não herde dimensões de gaveta. As gavetas declaram `data-hx-get`, alvo e `data-hx-sync="this:replace"`; os fragmentos mantêm `href` e POST nativos como fallback sem JavaScript. O login e a busca do shell usam os endpoints HTMX do Portal: o gatilho é um link normal, o JS acrescenta `data-hx-get`, alvo, `select` e `hx-sync` antes de abrir o `<dialog>`. A prévia da busca usa `data-hx-get` no campo, com debounce de 300 ms e `hx-sync="this:replace"` no lugar do `AbortController`. Busca e login não usam `core/drupal.dialog.ajax`; a V2 remove essa dependência do utilitário de busca (`PagePresentationHooks::removeSearchDialogDependency`). A matriz visual e o fallback sem JavaScript da busca e do login estão em `tests/browser/aculta-htmx-f1/`.
 
-Com JavaScript desligado, os links dos gatilhos continuam válidos: o login e a busca abrem as páginas próprias do Portal.
+Com JavaScript desligado, os links dos gatilhos continuam válidos: o login e a busca abrem as páginas próprias do Portal. Exceção registrada em 2026-11-05: as gavetas de mensagens/avisos são abertas por `<button>` e exigem JavaScript; o Portal não fornece `all_href` para um link nativo de página completa, e o responsável decidiu manter essa exceção documentada nesta fase.
 
 ## 6. Shell
 

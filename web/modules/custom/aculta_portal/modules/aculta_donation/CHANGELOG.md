@@ -1,3 +1,19 @@
+## Não versionado — convite de cadastro no checkout por HTMX (ADR-050 F1/F5)
+
+- O link "Criar conta" abre um `<dialog>` nativo com o formulário de cadastro
+  carregado por `hx-get` e enviado por `hx-post`; o `href` para
+  `/criar-conta/janela` permanece como fallback sem JavaScript. O diálogo usa o
+  contrato `data-aculta-dialog-trigger`/`data-aculta-utility-drawer` do shell V2.
+- Removidos `use-ajax`, `data-dialog-options` e a dependência
+  `core/drupal.dialog.ajax` do convite. A largura de 480 px deixou de ser
+  informada pelo módulo; o tamanho fica com o tema.
+- Autorização do responsável registrada em 2026-11-05. Unit do módulo:
+  26 testes/90 assertions PASS. `validate-payment-domain-policy.php` PASS
+  (44 checks). O restante do checkout e do pagamento continua na F5.
+- Pendente: captura do diálogo em pedido de doação real; o Kernel
+  `DonationPortKernelTest` falha por schema de config do Commerce
+  (`field.field.commerce_product.default.body`), preexistente ao diff.
+
 ## 0.1.0-dev.30 — instala o tipo de entidade de campanha
 
 - Update `11003` registra `aculta_donation_campaign` em instalações existentes; não cria campanhas nem altera configurações.

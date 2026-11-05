@@ -435,14 +435,14 @@ fallback sem JavaScript).
 
 **Estado de F1:** busca, login e gavetas de mensagens/avisos usam HTMX, com
 foco, `aria-live` e teclado conferidos; a gaveta de avisos autenticada foi
-capturada em seis larguras e dois modos, com os dois grupos `details`. Restam
-duas pendências: (1) o consumer V2 do cadastro popup, que é o checkout de
-doação, reservado à F5 e aguardando autorização; (2) o fallback sem JavaScript
-das gavetas — o gatilho é um `<button>` e o Portal não fornece `all_href`, então
-sem JS não há link para a página completa de mensagens/avisos. Converter o
-gatilho em link (ou fornecer a URL no contrato) muda o contrato de
-apresentação e depende de decisão do responsável. F2 permanece dependente de
-F1a; F3 segue a ordem de dependências de módulos definida na ADR-050.
+capturada em seis larguras e dois modos, com os dois grupos `details`. Duas
+decisões do responsável em 2026-11-05 fecharam as pendências: (1) as gavetas
+mantêm a exceção documentada — dependem de JavaScript e não têm link nativo
+para a página completa, porque o Portal não fornece `all_href`; (2) o gatilho do
+cadastro no checkout de doação foi autorizado e migrado para o diálogo HTMX do
+shell, com o `href` como fallback. F1 está coberta; F5 continua responsável
+pelo restante do checkout e do pagamento. F2 permanece dependente de F1a; F3
+segue a ordem de dependências de módulos definida na ADR-050.
 
 ## Compatibilidade e limites
 
