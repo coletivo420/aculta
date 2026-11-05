@@ -2,6 +2,15 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
+# Shell — rodapé e regions — 2026-11-05
+
+- **Objetivo:** cobrir a pendência de shell de conferir o rodapé e os regions restantes sem alterar a Institution Bar nem o contrato do Domain Header.
+- **Concluído:** `1fae08f720` cria `tests/browser/aculta420-v2-footer/`. Captura 6/6 em 320, 390 e 1440 px, claro/escuro: Institution Bar e Domain Header presentes, rodapé institucional com conteúdo e sem overflow horizontal. Os regions `highlighted`, `help`, `breadcrumb` e `sidebar_first` continuam condicionais no template.
+- **Verificações:** script no Firefox ESR visível PASS 6/6; `validate-aculta420-shell-contract.php` PASS (13 checks).
+- **Riscos:** a decisão de navegador registrada no handoff é Playwright, que aposenta o geckodriver. As suítes `aculta-htmx-f1` e `aculta420-v2-footer` usam geckodriver nesta sessão por instrução do prompt e precisam de migração para Playwright.
+- **Pendências:** aceitação visual final do rodapé pelo responsável; migração das duas suítes para Playwright.
+- **Próximo passo:** migrar as suítes para Playwright ou seguir F2 depois das decisões de F1.
+
 # Skills de handoff, padrões Drupal 12, segurança e Playwright (decisão) — 2026-11-05
 
 - **Objetivo:** melhorar o handoff, adicionar skills de padrão Drupal e de segurança estática, adicionar a skill de alinhamento e renomear o padrão normativo para Drupal 12.
@@ -20,12 +29,3 @@
 - **Gates com falha preexistente:** `validate-aculta-portal-drupal11` e `validate-project-status-index` (versões divergentes de nove módulos), `validate-portal-popup-rule` (9 ocorrências em Events/Paths) e `validate-aculta420-v2-sdc` (`src/styles/buttons.css`). Nenhum arquivo dessas falhas foi alterado nesta entrega.
 - **Pendências:** consumer V2 do cadastro popup (checkout de doação, F5, aguardando autorização); fallback sem JavaScript das gavetas — o gatilho é `<button>` e o Portal não fornece `all_href`, então não há link para a página completa. Converter em link ou fornecer a URL no contrato é decisão do responsável. O demais critérios de navegador de F1 (busca, login, gavetas, foco, `aria-live` e teclado) estão cobertos. ADR-050 F1 não está concluída.
 - **Próximo passo:** decidir o fallback das gavetas e a autorização do consumer do cadastro; depois retomar F2.
-
-# Resolução do CLAUDE.md (aculta, branch dev) — 2026-11-05
-
-- **Objetivo:** reduzir o CLAUDE.md a ponteiros e mover cada regra para o arquivo dono, conforme pedido do responsável.
-- **Concluído:** `753ef5f1a3` em `origin/dev`. CLAUDE.md com 1494 bytes; `AGENTS.md` novos em `aculta_portal_cep` e `aculta_pagamentos_mercadopago`; linha de independência do tema em `aculta_portal/AGENTS.md`. No rebase, a regra de CEP já estava na raiz do `AGENTS.md` do remoto, então não a dupliquei no módulo do portal. `AGENTS.md` raiz não alterado (4984 bytes).
-- **Verificações:** `validate-agent-token-budget.php` PASS (CLAUDE 1494/3000, handoff 3/3); `validate-module-theme-boundary.php` PASS (4248); `validate-root-policy.php` PASS (13 checks); `validate-admin-routes-main-domain.php` PASS (169 rotas).
-- **Riscos:** nenhum registrado.
-- **Pendências:** nenhuma desta entrega. O repositório é `aculta`.
-- **Próximo passo:** nenhum.
