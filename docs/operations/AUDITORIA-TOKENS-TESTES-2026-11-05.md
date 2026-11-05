@@ -64,9 +64,19 @@ Decisões de 2026-11-05 (respostas às perguntas):
    desinstalação e de configuração própria.
 2. **Captura:** a matriz completa fica só na aceitação da fase. Mudança visual pequena dentro
    de uma fase: 320 e 1440 CSS px, claro. **Aplicado** em `web/themes/custom/aculta420_v2/AGENTS.md`.
-3. **Suítes de reflow:** consolidar em `aculta-theme-mobile-first`. **Não há script idêntico**
-   entre as quatro suítes (verificado por `md5sum`). A sobreposição é funcional. A consolidação
-   exige reescrever medições e precisa de nova decisão (ver perguntas abertas).
+3. **Suítes de reflow:** decidido consolidar em `aculta-theme-mobile-first`, migrando as medições.
+   **Não há script idêntico** entre as quatro (verificado por `md5sum`). Plano de migração, ainda
+   **não executado**, porque cada medição precisa rodar no Firefox ESR do Homelab antes de a
+   suíte antiga ser removida:
+
+   | Origem | Medição | Destino proposto |
+   | --- | --- | --- |
+   | `aculta420-v2-foundations/visual.py` | foco por teclado, zoom, `no-js`, `reduced-motion`, modo claro e escuro por purpose | `aculta-theme-mobile-first/` (novo `foundations-matrix.py`) |
+   | `aculta-smoke/page-matrix.py` e `smoke-page.py` | matriz de páginas e HTTP | `aculta-theme-mobile-first/` (novo `page-matrix.py`) |
+   | `aculta-visual/visual.py` | álbum, história e marcador da Revista (login por link único) | manter como suíte própria da Revista; **não** mesclar, porque depende de dados de Revista |
+
+   Remoção só depois de a suíte de destino passar no Homelab (DEFERRED). A suíte da Revista não
+   é duplicada: mede outro contrato.
 4. **Gates sem referência:**
    - `validate-session-cookie.php` **removido.** Falhava sem `vendor/` e duplicava
      `validate-session-cookie-policy.php`, que passa e é citado em
