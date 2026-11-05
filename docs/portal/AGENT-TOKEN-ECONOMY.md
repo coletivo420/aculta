@@ -105,7 +105,7 @@ Fontes pesquisadas: [Composio, "9 Ways to Cut Token Consumption in Claude Code"]
 | Ideia | Decisão | Onde está no projeto |
 | --- | --- | --- |
 | Skills com divulgação progressiva: só nome e descrição entram no início | Adotado | `docs/agent-skills/`; gate `validate-agent-token-budget.php` limita descrição (200 caracteres) e SKILL.md (4000 bytes) |
-| Poucas skills, para evitar escolha errada | Adotado | Gate limita a 9 skills (7 até 2026-11-05; subiu para incluir `aculta-drupal-padroes` e `aculta-seguranca-estatica`) |
+| Poucas skills, para evitar escolha errada | Adotado | Gate limita a 10 skills (7 até 2026-11-05; subiu para 9 com `aculta-drupal-padroes` e `aculta-seguranca-estatica`, e para 10 com `aculta-grill-me`) |
 | Filtrar a saída de comando (`grep`, `head`) | Adotado | `scripts/agent-output.py`; `AGENT-OUTPUT.md`; skill `aculta-leitura-economica` |
 | Subagente com caminhos definidos e resposta com limite | Adotado | Skill `aculta-leitura-economica`, item 6 |
 | Handoff em arquivo antes de `/clear` ou `/compact` | Adotado | Skill `aculta-handoff`; `ESTADO-DA-SESSAO.md` |

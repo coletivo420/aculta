@@ -27,7 +27,7 @@ const LIMIT_ENTRY_TOTAL = 10000;
 const MAX_HANDOFF_ENTRIES = 3;
 const MAX_SKILL_DESCRIPTION = 200;
 const MAX_SKILL_BYTES = 4000;
-const MAX_SKILLS = 9; // 9: adicionadas aculta-drupal-padroes e aculta-seguranca-estatica (decisão de 2026-11-05)
+const MAX_SKILLS = 10; // 10: adicionada aculta-grill-me (decisão de 2026-11-05)
 
 /** Trechos que outros gates exigem no AGENTS.md. Não remover sem atualizar o gate dono. */
 const AGENTS_LITERALS = [

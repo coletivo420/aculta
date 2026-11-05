@@ -87,3 +87,6 @@ __pycache__/
 
 # Saída da suíte de navegador do Messenger (capturas e relatório locais).
 /.suite-out/
+
+# Grafo local do Graphify (gerado; fora do Git)
+/graphify-out/
