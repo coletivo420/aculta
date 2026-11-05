@@ -5,11 +5,12 @@ Documenta o que existe, o que não é do tema e o que falta.
 
 ## 1. Estado
 
-**B1 implementado.** Existem:
+**B1 implementado no código; renderização no Runtime aguarda atualização do mapa de hooks.** Existem:
 
 - `theme-settings.php`: formulário com a seção "Superfícies".
-- `src/Hook/SurfaceSettingsHooks.php`: aplica classes neutras no `<body>` sem
-  lógica de domínio.
+- `src/Hook/SurfaceSettingsHooks.php`: única implementação de `preprocess_html`,
+  aplica `data-theme` ao `<html>` e as classes neutras ao `<body>` sem lógica
+  de domínio.
 - `config/schema/aculta420_v2.schema.yml`: schema de `aculta420_v2.settings`.
 - `config/install/aculta420_v2.settings.yml`: valores padrão.
 
@@ -36,9 +37,13 @@ ativa ainda não existir (por exemplo, instalação anterior à inclusão do sch
 o hook usa os defaults do tema. Não crie config no Runtime manualmente: salve-a
 pelo formulário administrativo e exporte pelo Config Sync.
 
-Para conferir sem alterar configuração, use Drush para ler o provider e renderize
-uma página no ambiente; confirme no HTML as classes `aculta-radius--*` e
-`aculta-accent--*`. `config:status` deve estar limpo antes de encerrar.
+Para conferir sem alterar configuração, leia o provider com Drush e renderize
+uma página; confirme no HTML `data-theme`, `aculta-radius--*` e
+`aculta-accent--*`. A última tentativa HTTP no Runtime retornou 500 porque o
+mapa de hooks compilado ainda registra duas implementações de `preprocess_html`.
+O código agora consolida ambas em `SurfaceSettingsHooks`, mas confirmar a
+correção requer atualizar o mapa de hooks com `drush cr`, operação de Runtime
+vedada pelo plano atual. `config:status` estava limpo antes desta alteração.
 
 ## 2. Opções atuais
 
@@ -63,7 +68,7 @@ Os valores seguem `docs/superficies.md`, seção 1.
 Pela regra de fronteiras (AGENTS, seção 2 e 3), estas opções **não ficam no tema**:
 
 - **Modo de cor (claro e escuro):** é preferência do Portal (`aculta_color_mode`,
-  tratada em `ColorModeHooks`). Um padrão do site, se for pedido, vem do Portal.
+  tratada em `SurfaceSettingsHooks`). Um padrão do site, se for pedido, vem do Portal.
 - **Domínio, purpose e regra de acesso:** pertencem ao Portal.
 - **Cor da faixa de acento por área:** o mapeamento purpose → cor (ver
   `docs/superficies.md`, seção 8.3) deve vir do Portal como valor neutro
@@ -77,26 +82,26 @@ Pela regra de fronteiras (AGENTS, seção 2 e 3), estas opções **não ficam no
    `<body>` por `SurfaceSettingsHooks::preprocessHtml`, sem lógica de domínio.
 2. Tokens `--radius-control-button`, `--radius-control-card` e
    `--radius-control-field` já estão em `src/styles/tokens.css`.
-3. Trocar o uso de `--radius-base` nos componentes (botão, cartão, campo) pelas
-   novas variáveis.
-4. Tokens `--accent-*-stripe` já estão em `src/styles/tokens.css` conforme
+3. Consumidores devem usar os tokens de raio; revisar as ocorrências legadas
+   durante a adoção de componentes.
+4. Tokens `--accent-*-stripe` estão em `src/styles/tokens.css` conforme
    `docs/superficies.md`, seção 8.2.
-5. Capturas nos dois modos e gates (`docs/gates.md`), no Homelab.
-6. Exportar a configuração com `drush cex` para `config/sync` antes do RC.
-   `config:status` está limpo; nenhuma alteração no Runtime ou export foi
-   necessária nesta entrega.
+5. Capturas nos dois modos e gates (`docs/gates.md`), no Homelab — DEFERRED até
+   a autorização para atualizar o mapa de hooks.
+6. Exportar a configuração com `drush cex` para `config/sync` antes do RC. O
+   Runtime não tinha diferenças de configuração, então nenhum `cex` foi feito.
 
 ## 5. Outras definições que faltam
 
 Além das opções acima, estas definições ainda não existem na estrutura do tema:
 
-- **Tokens de faixa de acento** (`--accent-green-stripe`, `--accent-yellow-stripe`,
-  `--accent-red-stripe`), com os valores de `docs/superficies.md` seção 8.2.
-- **Tokens de bloco de destaque** (`--color-surface-highlight`, `--color-border-highlight`),
-  com os valores de `docs/superficies.md` seção 3.3.
+- **Tokens de faixa de acento:** implementados em `src/styles/tokens.css`; adoção
+  pelos cartões depende do componente e do contrato neutro do Portal.
+- **Tokens de bloco de destaque:** implementados nos modos claro e escuro em
+  `src/styles/tokens.css`.
 - **Contrato `accent`** no `domain_presentation`, a pedir ao Portal.
-- **Escala de espaçamento** (`--spacing-*`): os nomes são usados, mas a escala não está
-  documentada em um lugar só.
+- **Escala de espaçamento** (`--spacing-*`): definida em `docs/superficies.md`,
+  seção 4, e em `src/styles/tokens.css`.
 - **Componente de faixa de acento** (propriedade `accent` no SDC do cartão), ainda não criado.
 - **Padrão de cartão editorial** (imagem no topo, kicker, título, subtítulo e texto),
   pela referência de 2026-11-05.

@@ -1,5 +1,17 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — unifica preprocess_html; Runtime pendente
+
+- O Core permite uma implementação `preprocess_html` por tema. Reunidos em
+  `SurfaceSettingsHooks` o `data-theme` e as classes das opções de superfície;
+  `ColorModeHooks` foi removido. A implementação usa `ContainerInjectionInterface`
+  para resolver dependências do provider no mapa de hooks existente.
+- PHP lint, gates de foundations (55 pares), design foundations (2.468 checks)
+  e schemas (55 componentes/764 checks) passaram. O HTTP do Runtime retornou
+  500 por ter duas implementações registradas no mapa de hooks compilado.
+  Atualizar esse mapa exige `drush cr`, vedado pela regra de não escrever no
+  Runtime; a validação de renderização permanece DEFERRED.
+
 ## 1.2.0-dev.17 — corrige a Institution Bar com Gin e ícone administrativo (2026-11-04)
 
 - A Institution Bar mede a coluna lateral Gin e ocupa apenas o espaço geral,

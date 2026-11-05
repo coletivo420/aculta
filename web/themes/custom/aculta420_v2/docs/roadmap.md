@@ -1,5 +1,14 @@
 # ACULTA420 V2 roadmap
 
+## Renderização das configurações de superfície — DEFERRED
+
+`SurfaceSettingsHooks` é agora a implementação única de `preprocess_html`,
+aplicando `data-theme` ao `<html>` e as classes administrativas ao `<body>`.
+Os gates de foundations, design foundations e schemas passaram. O Runtime ainda
+mantém duas implementações no mapa de hooks compilado e responde HTTP 500.
+Recompilar o mapa requer `drush cr`, proibido pela instrução de não escrever no
+Runtime. Não marcar B1 como validado em render até essa atualização autorizada.
+
 ## Shell administrativo — Institution Bar e Gin
 
 - **Implementado em `1.2.0-dev.17`:** a barra fixa mede a largura real da

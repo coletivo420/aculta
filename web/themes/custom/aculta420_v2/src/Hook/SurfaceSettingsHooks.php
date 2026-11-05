@@ -7,11 +7,13 @@ namespace Drupal\aculta420_v2\Hook;
 use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Template\Attribute;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /** Applies theme-owned surface settings without inspecting domain context. */
-final class SurfaceSettingsHooks {
+final class SurfaceSettingsHooks implements ContainerInjectionInterface {
 
   public function __construct(
     #[Autowire(service: ThemeSettingsProvider::class)]
@@ -20,8 +22,29 @@ final class SurfaceSettingsHooks {
     private readonly ConfigFactoryInterface $configFactory,
   ) {}
 
+  /**
+   * Creates the hook implementation with Drupal's active services.
+   *
+   * ContainerInjectionInterface also lets the hook resolve correctly when
+   * Drupal's cached hook map predates this class's service definition.
+   */
+  public static function create(ContainerInterface $container): self {
+    return new self(
+      $container->get(ThemeSettingsProvider::class),
+      $container->get('config.factory'),
+    );
+  }
+
   #[Hook('preprocess_html')]
   public function preprocessHtml(array &$variables): void {
+    // A theme may provide only one preprocess_html implementation. Keep the
+    // Portal's explicit color mode and surface settings in this hook.
+    $mode = ($variables['aculta_color_mode'] ?? NULL) === 'dark' ? 'dark' : 'light';
+    $htmlAttributes = $variables['html_attributes'] ?? NULL;
+    if ($htmlAttributes instanceof Attribute) {
+      $htmlAttributes->setAttribute('data-theme', $mode);
+    }
+
     // Core's html template renders `attributes` on <body>. `body_attributes`
     // is not part of the preprocess_html contract.
     $bodyAttributes = $variables['attributes'] ??= new Attribute();

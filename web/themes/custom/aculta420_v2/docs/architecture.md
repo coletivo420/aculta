@@ -45,17 +45,19 @@ Regras:
 
 ## 3. Modo de cor
 
-- `src/Hook/ColorModeHooks.php` define `data-theme` no `<html>` a partir de `aculta_color_mode`. Valor diferente de `dark` vira `light`.
+- `SurfaceSettingsHooks::preprocessHtml()` define `data-theme` no `<html>` a partir de `aculta_color_mode`. Valor diferente de `dark` vira `light`.
 - `src/styles/tokens.css` define `:root` (claro) e `:root[data-theme="dark"]`.
 - Não há detecção automática do sistema. Um valor legado `auto` resolve para claro até o contrato mudar.
 - Componentes não conhecem o modo. Eles usam tokens.
 
-`src/Hook/SurfaceSettingsHooks.php` aplica no `<body>` classes neutras derivadas
+`src/Hook/SurfaceSettingsHooks.php` é a implementação única de `preprocess_html`
+do tema: aplica `data-theme` no `<html>` e classes neutras no `<body>` derivadas
 das configurações de raio, sobrescrita de acento e visibilidade da faixa. No
-`preprocess_html`, o Core fornece o atributo do `<body>` como `attributes`; o
-hook lê valores via `ThemeSettingsProvider`, usa os defaults do tema quando a
-configuração ativa ainda não existe, valida as opções e não consulta domínio
-nem purpose. Instruções operacionais estão em
+hook, o Core fornece o atributo do `<body>` como `attributes`; os valores vêm de
+`ThemeSettingsProvider`, com fallback aos defaults e validação dos enums. O hook
+implementa `ContainerInjectionInterface` para resolver dependências mesmo quando
+o mapa de hooks armazenado antecede uma compilação do container. Não consulta
+domínio nem purpose. Instruções operacionais estão em
 [`configuracao-do-tema.md`](configuracao-do-tema.md).
 
 ## 4. Tokens e fundações
@@ -116,7 +118,7 @@ Com JavaScript desligado, os links dos gatilhos continuam válidos: o login e a 
 
 - `#[Hook]` em classes com injeção de dependência. Não há `\Drupal::` em `src/`.
 - `PagePresentationHooks` (`preprocess_page`) mapeia o contrato do Portal para variáveis do tema, move o menu de conta para a barra, envolve o menu principal com `navigation-bar` e remove a dependência de diálogo AJAX do utilitário de busca.
-- `ColorModeHooks` (`preprocess_html`) aplica o modo de cor.
+- `SurfaceSettingsHooks` (`preprocess_html`) aplica o modo de cor e as classes de superfície em uma única implementação.
 - `src/Hook/*` é a única camada PHP do tema. Lógica de negócio não pertence aqui.
 
 ## 8. Dependências e compatibilidade
