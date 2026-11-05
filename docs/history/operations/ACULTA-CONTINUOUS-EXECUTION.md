@@ -1,6 +1,6 @@
 # Execução contínua ACULTA — histórico das frentes
 
-> **Limite de registro:** no máximo 10 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/`, sem alteração de texto.
+> **Arquivo histórico (2026-11-05).** Não registre novas entradas aqui. O handoff vigente é `docs/operations/ESTADO-DA-SESSAO.md`.
 
 ## Fórum — aposentadoria do permalink individual (2026-11-01, dev.330)
 

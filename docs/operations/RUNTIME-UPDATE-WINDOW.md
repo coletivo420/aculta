@@ -170,7 +170,7 @@ Se o passo 1 ou 2 falhar, pare antes do passo 3. O contrib continua instalado e 
 - Não removido: `/mnt/disco1/tmp/aculta-token-cipher` (18 alterações pendentes; regra de parar).
 - Preservados: `backup/checkout-antes-pr-8499180a6` (bundle verificado em `/home/piradopirata/worktrees/backup-bundles/checkout-antes-pr-8499180a6.bundle`; a branch fica até o fim da janela de updates); stashes de Fórum, Messenger e mailer, com patch em `/home/piradopirata/worktrees/backup-stashes-20261026/`; `stash@{0}` da fase B, só sai depois que o Local 2 confirmar a recuperação.
 - Não tocados: branches e worktrees de agentes (`agent/*`), do Local 2 (`feat/aculta-secrets-claro`) e do Local 3 (`docs/aculta-mp-extracao-b0`, `docs/aculta-runtime-snapshot-ensaio`, `feat/aculta-messenger-update-ensaio`, `feat/aculta-user-update-ensaio`).
-- Classificação dos 101 commits do backup: ver `ACULTA-CONTINUOUS-EXECUTION.md`.
+- Classificação dos 101 commits do backup: ver `docs/history/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
 ## Retomada 2 — 2026-10-26 19:09 (bloqueio de credencial)
 
 O responsável informou que o banco descartável e o usuário de restauração **já existem**;

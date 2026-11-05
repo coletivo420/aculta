@@ -161,7 +161,7 @@ Gate obrigatório com serviços/providers reais do owner: create/update/delete, 
 4. Antes de escrita Runtime autorizada: confirmar host/checkout/URI/banco/contagem de tabelas, snapshot com SHA-256 e plano de restauração. Kernel usa `aculta_simpletest`, nunca Runtime.
 5. Piloto com dois eventos compartilhando Local e um evento com datas em locais distintos. Registrar contagens/IDs e classificação sem dados pessoais.
 6. Rollback de código/config preserva entidades de origem e referências. Para Index, reutilizar geração anterior compatível e/ou reprocessar fila conforme contrato; não assumir compatibilidade entre fingerprints. Sem DROP/uninstall.
-7. Registrar SHA, comandos, resultados, rollback e pendências em `ACULTA-CONTINUOUS-EXECUTION.md`. Esta sessão não sincroniza o checkout servido nem executa Drush.
+7. Registrar SHA, comandos, resultados, rollback e pendências em `docs/operations/ESTADO-DA-SESSAO.md`. Esta sessão não sincroniza o checkout servido nem executa Drush.
 
 ## 9. Critérios de aceite e evidência
 

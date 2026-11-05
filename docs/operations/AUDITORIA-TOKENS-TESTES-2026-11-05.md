@@ -8,7 +8,7 @@ obrigatórios nem evidência de testes. Medições feitas com `wc`, `du`, `grep`
 
 | Item | Tamanho | Por que pesa |
 | --- | --- | --- |
-| `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md` | 506.904 bytes, 3.196 linhas | log histórico de execução; 5 arquivos o referenciam |
+| `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md` (movido para `docs/history/operations/`) | 23.663 bytes, 199 linhas | log histórico de execução; 5 arquivos o referenciam |
 | `docs/operations/ESTADO-DA-SESSAO.md` | 197.363 bytes, 1.112 linhas | handoff obrigatório ao fim de sessão (AGENTS, seção 1) |
 | `docs/history/operations/AGENT-GUARDRAILS-FULL.md` | 58.694 bytes | arquivo histórico; já marcado para não carregar |
 | `docs/portal/TESTES-NAVEGADOR.md` | 57.687 bytes, 645 linhas | histórico de rodadas, não regra |
