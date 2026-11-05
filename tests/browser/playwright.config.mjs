@@ -10,6 +10,7 @@ export default defineConfig({
   use: {
     browserName: 'firefox',
     headless: true,
+    ignoreHTTPSErrors: process.env.ACULTA_BROWSER_ENV === 'local',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'off',

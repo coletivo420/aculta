@@ -21,10 +21,12 @@ SUITE_OUT=/caminho/externo ACULTA_BROWSER_ENV=desenvolvimento \
 ACULTA_SITE_ORIGIN=https://aculta.toca.net.br/ npm run test:firefox
 
 SUITE_OUT=/caminho/externo ACULTA_BROWSER_ENV=local \
-ACULTA_SITE_ORIGIN=http://127.0.0.1/ npm run test:firefox
+ACULTA_SITE_ORIGIN=https://aculta.toca.net.br/ npm run test:firefox
 ```
 
 Hosts `*.aculta.toca.net.br` são servidor de desenvolvimento; `127.0.0.1` é local. Não misture os ambientes. O runner usa Firefox headless, locators, `expect` e espera por condição. Nunca use `sleep` fixo.
+
+No ambiente local, o Apache usa os VirtualHosts HTTPS do ACULTA. Os hosts de teste devem resolver para `127.0.0.1` no `/etc/hosts`; o Playwright aceita o certificado local somente quando `ACULTA_BROWSER_ENV=local`. O URL mantém o hostname para preservar SNI e o VirtualHost correto.
 
 ## Frentes inventariadas
 
