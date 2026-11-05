@@ -12,7 +12,11 @@ use Drupal\Component\Serialization\Json;
 use Drupal\Core\Url;
 
 /**
- * Ícone de busca da barra multidomínio. Abre o popup da busca por AJAX (modal do Core), no host atual.
+ * Ícone de busca da barra multidomínio. Abre o popup da busca no host atual.
+ *
+ * O trigger mantém o contrato Drupal AJAX (modal do Core) como fallback da V1;
+ * no ACULTA420 V2 o tema substitui esses atributos por HTMX antes da interação
+ * (ADR-050, F1). O Portal não depende do tema para renderizar o link.
  */
 final class SearchUtility {
 
@@ -31,7 +35,7 @@ final class SearchUtility {
       '#theme' => 'aculta_portal_search_trigger',
       '#label' => $this->t('Buscar no site'),
       '#url' => Url::fromRoute('aculta_portal.search_popup')->toString(),
-      // Atributos do gatilho: use-ajax (comportamento do Drupal) e o token de design do tema.
+      // Fallback V1: use-ajax (modal do Core) e o token de design do tema.
       '#trigger_attributes' => new Attribute([
         'class' => ['use-ajax'], 'data-portal-ui' => 'search-utility',
         'data-dialog-type' => 'modal',

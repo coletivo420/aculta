@@ -1,16 +1,25 @@
-## Não versionado — suporte HTMX no login popup (ADR-050 F1b parcial)
+## Não versionado — suporte HTMX aos popups e à busca (ADR-050 F1b parcial)
 
 - `LoginPopupForm` configura `Htmx` apenas em requisições `HX-Request`, envia o
   formulário ao endpoint atual, seleciona o wrapper e retorna ao alvo do
   diálogo. O sucesso usa `HX-Redirect` com o destino local validado; o fluxo
   sem HTMX mantém o redirect nativo e a resposta Drupal AJAX legada para a V1.
+- `RegisterPopupForm` segue o mesmo contrato: fragmento e `HX-Redirect` em
+  `HX-Request`, com `#ajax` preservado só no caminho sem HTMX.
+- `SearchPopupForm` adiciona `hx-get` à prévia em requisições HTMX, com debounce
+  de 300 ms e `hx-sync="this:replace"`; sem HTMX continua anexando
+  `aculta_portal/search-preview`, cujo Fetch permanece exclusivo da V1.
+  `SearchUtility` mantém o gatilho `use-ajax` como fallback da V1; o tema V2 o
+  substitui por HTMX antes da interação.
 - A validação existente, flood control, Turnstile e finalização de sessão do
   Core permanecem no Portal. O contrato de apresentação continua neutro; o tema
   decide como abrir o diálogo.
-- PHP lint PASS. Fixture sintética em Firefox ESR visível comprovou fragmento,
-  envio HTMX e navegação `HX-Redirect`; a autenticação real com Form API e
-  sessão Drupal permanece DEFERRED para uma verificação sem escrita no Runtime.
-- Busca HTMX e cadastro popup continuam pendentes em F1b.
+- PHP lint PASS. No Runtime de desenvolvimento: login real da conta de teste
+  respondeu `HX-Redirect` e criou sessão; POST inválido do cadastro devolveu o
+  fragmento com erro e não criou conta; a busca retornou `data-hx-*` só com
+  `HX-Request` e manteve o script legado sem o cabeçalho. A suíte de navegador
+  `tests/browser/aculta-htmx-f1/` passou 26/26 checks. O consumer V2 do cadastro
+  popup (checkout de doação) é F5 e aguarda autorização.
 
 ## Não versionado — raiz do Studio e entrada de Minha Conta
 

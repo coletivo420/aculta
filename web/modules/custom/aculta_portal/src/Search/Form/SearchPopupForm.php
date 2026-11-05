@@ -10,13 +10,17 @@ use Drupal\aculta_portal\Search\SearchPageController;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Popup da busca (ícone da barra multidomínio). GET para a busca central no MAIN. A prévia é carregada pelo
- * script do Portal (rota /busca/previa, mesmo host), depois de uma pausa na digitação. Sem callback AJAX no
- * Form API: a prévia não depende do objeto do formulário no cache.
+ * Popup da busca (ícone da barra multidomínio). GET para a busca central no MAIN.
+ *
+ * Em requisição HTMX (ACULTA420 V2), a prévia é carregada pela rota
+ * /busca/previa com `hx-get` no próprio campo. Na V1, sem HTMX, o script
+ * `aculta_portal/search-preview` mantém o Fetch com `AbortController`. Sem
+ * callback AJAX no Form API: a prévia não depende do cache do formulário.
  */
 final class SearchPopupForm extends FormBase implements ContainerInjectionInterface {
 
@@ -41,7 +45,7 @@ final class SearchPopupForm extends FormBase implements ContainerInjectionInterf
       : ($this->domainPurposeManager->routeUrl('main', 'aculta_portal.search')?->toString() ?? Url::fromRoute('aculta_portal.search')->toString());
     $form['#attributes'] = ['role' => 'search', 'data-portal-ui' => 'search-popup'];
     $form['#cache'] = ['contexts' => ['domain', 'url.path']];
-    $form['#attached']['library'][] = 'aculta_portal/search-preview';
+    $previewUrl = Url::fromRoute('aculta_portal.search_preview');
     $form['q'] = [
       '#type' => 'search',
       '#title' => $this->t('Buscar no site'),
@@ -52,10 +56,26 @@ final class SearchPopupForm extends FormBase implements ContainerInjectionInterf
       '#attributes' => [
         'autocomplete' => 'off',
         'data-portal-ui' => 'search-preview-input',
-        'data-preview-url' => Url::fromRoute('aculta_portal.search_preview')->toString(),
+        'data-preview-url' => $previewUrl->toString(),
         'data-min-chars' => (string) SearchPageController::MIN_CHARS,
       ],
     ];
+    if ($this->isHtmxRequest()) {
+      // HTMX owns the preview request in V2: debounce, same-request replace
+      // and the short-term filter avoid the legacy AbortController. The
+      // controller itself returns the minimum-length hint.
+      (new Htmx())
+        ->get($previewUrl)
+        ->trigger('input changed delay:300ms[this.value.trim() !== ""], search')
+        ->target('#aculta-search-preview')
+        ->swap('innerHTML')
+        ->sync('this:replace')
+        ->applyTo($form['q']);
+    }
+    else {
+      // V1 keeps the Fetch-based preview script.
+      $form['#attached']['library'][] = 'aculta_portal/search-preview';
+    }
     $form['preview'] = [
       '#type' => 'container',
       '#attributes' => [
