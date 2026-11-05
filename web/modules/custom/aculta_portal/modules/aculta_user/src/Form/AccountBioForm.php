@@ -8,11 +8,13 @@ use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
@@ -61,11 +63,20 @@ final class AccountBioForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $profile = $this->profile();
     $studio = $this->isStudioEditor();
+    $actionUrl = Url::fromRoute($studio ? 'aculta_studio.profile_bio' : 'aculta_user.bio_form');
     // Studio has a full-page Form API fallback. Existing Minha Conta modals
     // retain their owner AJAX/JSON behavior and unchanged submission route.
-    $form['#action'] = Url::fromRoute($studio ? 'aculta_studio.profile_bio' : 'aculta_user.bio_form')->toString();
+    $form['#action'] = $actionUrl->toString();
     $form['#attributes']['data-portal-ui'] = $studio ? 'studio-bio-form' : 'account-bio-dialog';
-    if (!$studio) {
+    if ($this->isHtmxRequest()) {
+      (new Htmx())
+        ->post($actionUrl)
+        ->select('#' . \Drupal\Component\Utility\Html::getId($this->getFormId()))
+        ->swap('outerHTML')
+        ->onlyMainContent()
+        ->applyTo($form);
+    }
+    elseif (!$studio) {
       $form['#attributes']['data-aculta-bio-form'] = '';
       $form['#attached']['library'][] = 'aculta_user/account-bio-form';
       $form['#attached']['drupalSettings']['acultaUser']['bioSave'] = [
@@ -116,9 +127,18 @@ final class AccountBioForm extends FormBase {
     $profile->set('field_bio', trim((string) $form_state->getValue('bio')));
     $profile->save();
     $this->messenger()->addStatus($this->t('Bio salva.'));
-    $form_state->setRedirect($this->isStudioEditor()
+
+    $targetRoute = $this->isStudioEditor()
       ? 'aculta_studio.profile'
-      : 'aculta_portal.dashboard');
+      : 'aculta_portal.dashboard';
+
+    if ($this->isHtmxRequest()) {
+      $redirectUrl = Url::fromRoute($targetRoute)->toString();
+      $form_state->setResponse(new Response('', Response::HTTP_OK, ['HX-Redirect' => $redirectUrl]));
+      return;
+    }
+
+    $form_state->setRedirect($targetRoute);
   }
 
   /**

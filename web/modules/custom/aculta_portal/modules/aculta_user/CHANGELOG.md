@@ -5,17 +5,16 @@
   perfil (bio e redes sociais) sem disparar 403.
 - Adiciona o contexto de cache `headers:HX-Request` ao resultado de acesso.
 
-## Não versionado — migração HTMX da bio bloqueada (ADR-050 F2 item 3)
+## Não versionado — migração HTMX da bio (ADR-050 F2 item 3)
 
-- Tentativa de trocar o modal `use-ajax`/fetch da bio por um `<dialog>` com
-  `hx-get`/`hx-post` e `HX-Redirect`. O diálogo abria e o `data-hx-get` chegava
-  ao DOM, mas o HTMX não iniciava a requisição nem pelo disparo manual de
-  `aculta:drawer:open`; o formulário não era carregado.
-- A causa não foi identificada antes de encerrar o bloco. As alterações foram
-  revertidas e o fluxo legado (`AccountBioCard`, `AccountBioForm` e
-  `account-bio-form.js`) permanece intacto. Nenhum dado de bio foi gravado.
-- Próximo passo: investigar a ordem de processamento do HTMX em diálogos
-  renderizados dentro do card e retomar o item 3 da F2.
+- `AccountBioCard` migra o link de edição para abertura do diálogo nativo
+  `<dialog>` via `data-aculta-dialog-trigger` e `utility-dialogs.js`, carregando
+  o formulário por HTMX (`data-hx-get` na abertura via `aculta:drawer:open`).
+- Tokens de design `account-bio-dialog-*` mapeados em `PortalUiHooks::TOKENS` no
+  tema ACULTA420 V2 e documentados em `docs/portal/TOKENS-E-ATRIBUTOS.md`.
+- `AccountBioForm` migra submissão para HTMX (`Htmx::post()`), respondendo com
+  `HX-Redirect` para `/conta-legada` em requisições HTMX e mantendo o fallback
+  legado intacto.
 
 ## Não versionado — nome de exibição do menu de conta
 
