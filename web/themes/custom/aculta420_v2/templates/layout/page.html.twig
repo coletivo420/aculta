@@ -56,15 +56,12 @@
     <div class="page__breadcrumb">{{ page.breadcrumb }}{{ aculta_breadcrumb }}</div>
   {% endif %}
 
-  <main id="main-content" class="page__main{{ page.sidebar_first ? ' page__main--with-sidebar' }}" tabindex="-1">
-    {% if aculta_page_title %}
-      <div class="page__title">{{ aculta_page_title }}</div>
-    {% endif %}
-    <div class="page__content">{{ page.content }}</div>
-    {% if page.sidebar_first %}
-      <aside class="page__sidebar" aria-label="{{ 'Related content'|t }}">{{ page.sidebar_first }}</aside>
-    {% endif %}
-  </main>
+  {{ include('aculta420_v2:layout-page', {
+    variant: 'stack',
+    title: aculta_page_title,
+    content: page.content,
+    aside: page.sidebar_first
+  }, with_context = false) }}
 
   {% if social_links_page_footer %}
     {{ include('aculta420_v2:site-footer', {

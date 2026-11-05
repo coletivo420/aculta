@@ -1167,6 +1167,25 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 
 # Continuação — remoção do gate de Olivero e menu V2 — 2026-11-05
 
+- **C4 publicado:** commit `2be0a07b47` em `origin/dev`, revisão estrutural do
+  shell, SDC da micropágina Links e rodapé social. `updatedb:status` sem
+  alterações de banco; `config:status` sem diferenças. Runtime não foi escrito.
+- **C5 bloqueado para aceite:** menu e avatar já estão implementados; a
+  confirmação visual autenticada não é possível nesta sessão, pois `DISPLAY` e
+  `SUITE_OUT` não estão definidos. Prosseguir em itens independentes e manter
+  captura/autenticação/teclado como pendência explícita.
+- **E1/P1 em andamento:** SDC `layout-page` com variantes `stack`, `aside` e
+  `full`, três stories; refatoração do `<main>` de `page.html.twig` sem alterar
+  regiões; documentação de componente, layout, roadmap, changelog e gate.
+  Schemas 55/764, design foundations 2.468, foundations V2 55 pares, shell
+  contract 13, render SDC Drupal 25, PHPCS/PHP lint e `git diff --check` PASS.
+  Visual, landmarks, zoom 200/400 e teclado DEFERRED por falta de `DISPLAY`.
+- **Arquivos E1:** `scripts/validate-aculta420-v2-sdc.php`;
+  `web/themes/custom/aculta420_v2/components/layout-page/`;
+  `web/themes/custom/aculta420_v2/{src/styles/layout.css,templates/layout/page.html.twig,docs/{components.md,layout-pagina.md,roadmap.md,gates.md},CHANGELOG.md}`.
+- **Próximo passo:** revisar o staged diff de E1, commit/push em `dev`; depois
+  seguir P2. P5/Layout Builder continua fora da execução sem novo pedido.
+
 - **C4 — revisão estrutural do shell:** o adapter `aculta-links-page.html.twig`
   apresenta a micropágina do módulo Links por SDC dedicado, sem `<main>` interno;
   `page.html.twig` conserva o `social_links_page_footer` via variação social do

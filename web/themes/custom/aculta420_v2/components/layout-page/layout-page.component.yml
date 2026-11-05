@@ -1,0 +1,29 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Layout de página
+description: Estrutura semântica de conteúdo em pilha, com barra lateral ou em largura total.
+status: experimental
+group: Layouts
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    variant:
+      type: string
+      enum: [stack, aside, full]
+      default: stack
+      title: Variante
+      description: Define a largura e a disposição da área de conteúdo.
+slots:
+  title:
+    title: Título
+    description: Região de título da página.
+  content:
+    title: Conteúdo
+    description: Conteúdo principal da página.
+  aside:
+    title: Barra lateral
+    description: Conteúdo complementar apresentado após o conteúdo principal no DOM.
+assets:
+  css:
+    component:
+      layout-page.css: {}

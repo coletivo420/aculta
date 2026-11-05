@@ -1,0 +1,30 @@
+.layout-page {
+  align-content: start;
+  display: grid;
+  gap: var(--spacing-xl);
+  grid-area: main;
+  grid-template-columns: minmax(0, 1fr);
+  inline-size: min(100%, var(--page-content-max));
+  margin-inline: auto;
+  min-block-size: 0;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+  padding: var(--spacing-lg) var(--page-gutter);
+}
+
+.layout-page__title,
+.layout-page__content,
+.layout-page__aside {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.layout-page__title {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 60rem) {
+  .layout-page--aside:has(.layout-page__aside) {
+    grid-template-columns: minmax(0, 2fr) minmax(14rem, 1fr);
+  }
+}

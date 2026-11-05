@@ -66,6 +66,7 @@ $component_ids = [
   'forum-topic',
   'hero-banner',
   'icon',
+  'layout-page',
   'map-popup',
   'messenger-trigger',
   'multidomain-bar',
@@ -176,6 +177,14 @@ $samples = [
     '#slots' => ['background_media' => ''],
   ],
   'icon' => ['#props' => ['name' => 'map-pin', 'variant' => 'duotone', 'size' => 'md']],
+  'layout-page' => [
+    '#props' => ['variant' => 'aside'],
+    '#slots' => [
+      'title' => '<h1>Página de teste</h1>',
+      'content' => '<p>Conteúdo principal.</p>',
+      'aside' => '<p>Conteúdo complementar.</p>',
+    ],
+  ],
   'map-popup' => [
     '#props' => ['title' => 'Centro cultural', 'category' => 'Cultura', 'address' => 'Centro'],
     '#slots' => ['thumbnail' => ''],

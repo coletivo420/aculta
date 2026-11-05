@@ -85,9 +85,9 @@ quem usa leitor de tela a encontra depois dos campos. Proposta: a
 sub-navegação vem antes do conteúdo no HTML, e só se posiciona à esquerda com
 CSS. Decidir antes de construir a tela.
 
-**Hoje, no código:** `page.html.twig` já mantém conteúdo antes da barra lateral,
-mas usa as classes `page__main--with-sidebar` e `page__sidebar`. Pela ADR-048,
-essas classes saem, e a regra passa a ser a variante `aside` do `layout-page`.
+**P1 no código:** `page.html.twig` usa o SDC `layout-page` e preserva as regiões
+Drupal. As classes de grid antigas foram removidas. Até P2, o template passa
+explicitamente `stack`; o mapeamento por tipo/área ainda está pendente.
 
 ## 3. Barra institucional (fixa)
 
@@ -358,7 +358,8 @@ Nenhuma região do Drupal muda de nome nesta fase, e nenhum bloco é remapeado
 Pela ADR-048, seção 4:
 
 - **P1:** `layout-page` com as três variantes, stories e refatoração do
-  `page.html.twig` sem mudar regiões. Capturas e gates.
+  `page.html.twig` sem mudar regiões. Código e gates concluídos; capturas e
+  landmarks visuais pendentes por falta de `DISPLAY`.
 - **P2:** mapeamento da seção 6.1 em `preprocess_page`.
 - **P3:** área do Studio e de Minha conta, com `noindex` conferido.
 - **P4:** demais áreas (evento, LMS, FAQ).

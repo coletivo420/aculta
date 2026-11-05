@@ -30,6 +30,15 @@ design foundations passaram após as alterações. Capturas em claro/escuro,
 larguras, zoom 200% e teclado permanecem DEFERRED por falta de `DISPLAY`. O
 adapter de conteúdo público Links segue no inventário de templates G3.
 
+## Layout de página — P1 implementado; validação visual pendente
+
+Criado o SDC layout-page com variantes stack, aside e full, stories próprias e
+slots title, content e aside. page.html.twig agora compõe o landmark main pelo
+componente sem renomear regiões; o aside permanece depois do conteúdo no DOM e
+vira coluna a partir de 60rem. Capturas de P1, landmarks, zoom e teclado
+aguardam Firefox visível (DISPLAY indisponível). P2 permanece para mapear
+tipo/área em preprocess_page.
+
 ## Renderização das configurações de superfície — conferida
 
 `SurfaceSettingsHooks` é a implementação única de `preprocess_html`, aplicando

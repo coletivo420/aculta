@@ -4,6 +4,14 @@ Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes d
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
+### layout-page
+
+Estrutura o landmark main nas variantes stack, aside e full; stories:
+layout-page.default (aside), layout-page.stack e layout-page.full. Slots: title, content
+e aside. O conteúdo principal precede o complementar no DOM; aside só forma
+duas colunas a partir de 60rem quando tem conteúdo. Não escolhe tipo nem
+domínio, responsabilidade reservada ao preprocess da fase P2. Sem JavaScript.
+
 ## Shell e navegação
 
 ### multidomain-bar — Barra institucional

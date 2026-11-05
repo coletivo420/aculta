@@ -1,5 +1,13 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — layout-page P1
+
+- Criado SDC layout-page com variantes stack, aside e full, três stories
+  e slots semânticos. Refatorado page.html.twig mantendo as oito regiões e
+  removendo o grid lateral antigo. O template seleciona stack até o mapeamento
+  P2; capturas, landmarks, zoom e teclado seguem pendentes por ausência de
+  DISPLAY.
+
 ## Não versionado — revisão estrutural do shell (C4)
 
 - `page.html.twig` adapta a micropágina de Links ao SDC próprio e apresenta o

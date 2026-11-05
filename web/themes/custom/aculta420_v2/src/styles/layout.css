@@ -31,34 +31,12 @@
 .page__highlighted,
 .page__help,
 .page__breadcrumb,
-.page__main,
 .page__footer-inner {
   inline-size: min(100%, var(--page-content-max));
   margin-inline: auto;
   min-inline-size: 0;
   padding-inline: var(--page-gutter);
 }
-
-.page__main {
-  align-content: start;
-  display: grid;
-  gap: var(--spacing-xl);
-  grid-area: main;
-  grid-template-columns: minmax(0, 1fr);
-  min-block-size: 0;
-  padding-block: var(--spacing-lg);
-}
-
-.page__title,
-.page__content,
-.page__sidebar {
-  min-inline-size: 0;
-  overflow-wrap: anywhere;
-}
-
-.page__title { grid-column: 1 / -1; }
-.page__content { min-inline-size: 0; }
-.page__sidebar { min-inline-size: 0; }
 
 .page__footer {
   background: var(--color-brand-secondary);
@@ -155,8 +133,3 @@
   }
 }
 
-@media (min-width: 62rem) {
-  .page__main--with-sidebar {
-    grid-template-columns: minmax(0, 2fr) minmax(14rem, 1fr);
-  }
-}

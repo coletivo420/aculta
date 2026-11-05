@@ -1,0 +1,8 @@
+name: Layout em pilha
+description: Conteúdo principal em uma coluna.
+component: aculta420_v2:layout-page
+props:
+  variant: stack
+slots:
+  title: '<h1>Minha página</h1>'
+  content: '<p>Conteúdo principal em uma coluna.</p>'
