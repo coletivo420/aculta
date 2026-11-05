@@ -107,3 +107,11 @@ Fontes pesquisadas: [Composio, "9 Ways to Cut Token Consumption in Claude Code"]
 | Modelo menor para subagentes com variável de ambiente | Não adotado | Mesma razão; o roteamento por risco já está na seção "Roteamento proporcional ao risco" |
 | Consolidar integrações em um servidor MCP de terceiros | Não adotado | Produto externo e sem necessidade do projeto; não ampliar integrações sem decisão |
 | Procedimento de migração de classe para token | Adotado como skill | `docs/agent-skills/aculta-data-portal-ui/` |
+| Permissão de leitura com aprovação para arquivos pesados (`permissions.ask` com `Read(...)`) | Adotado (2026-11-05) | `.claude/settings.json`: `data/`, `references/`, `handoff/`, `docs/history/`, `vendor/`. A regra usa `ask` e não `deny`, para não bloquear leitura deliberada. Gate de regra: não há; verificar no `/status` |
+| Filtro de saída que preserva linhas de falha fora da cauda (`--match`) | Adotado (2026-11-05) | `scripts/agent-output.py`; `AGENT-OUTPUT.md` |
+| Ferramenta externa de compressão de saída (binário no PATH que reescreve comandos) | Não adotado | Exige instalar binário e confiar em terceiros para reescrever comandos; o wrapper do projeto cobre o caso sem dependência |
+| Mapa do repositório gerado (repomix, aider repo map, agentmap) | Não adotado | `docs/operations/MAPA-PARA-AGENTES.md` já cumpre a função; gerar mapa automático acrescenta arquivo a ser lido e sem revisão |
+| Contexto isolado por subagente com resposta limitada | Adotado | Skill `aculta-leitura-economica` (já na tabela acima) |
+| Recuperação sob demanda e CLAUDE.md curto (princípio de "conciseness over completeness") | Adotado | Gate de tamanho de CLAUDE.md e AGENTS.md; regras de módulo em subdiretórios |
+
+Fontes desta rodada: [Composio, 9 ways](https://composio.dev/blog/ways-to-cut-token-consumption-in-claude-code); [Morph, context engineering](https://www.morphllm.com/context-engineering); [documentação de configurações do Claude Code](https://code.claude.com/docs/en/settings) (sintaxe de `permissions.ask`, `deny` e `allow`).
