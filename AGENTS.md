@@ -50,6 +50,7 @@ Regras gerais do repositório, válidas para todos os agentes. Em caso de confli
 - Endereço centralizado em `aculta_portal_cep` e país exclusivo Brasil (BR), conforme ADR-034 (`docs/decisions/ADR-034-pais-unico-brasil-endereco-central.md`).
 - Padrão Drupal 11+: `docs/portal/DRUPAL-11-STANDARDS.md`.
 - **Tema de validação:** validar somente no tema ACULTA ativo. Não alternar `system.theme` para validar temas adicionais nem mantê-los como requisito em suítes ou instruções ativas. Resultados históricos datados podem permanecer como registro.
+- **Olivero:** não habilitar, selecionar, testar ou exigir Olivero em gates, suítes ou aceite do projeto. Use somente o tema ACULTA ativo. Referências a execuções antigas permanecem apenas como histórico e não geram trabalho pendente.
 - Antes de concluir, execute as verificações relevantes e registre os resultados. Não alegue testes que não executou.
 
 ## Referências

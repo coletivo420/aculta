@@ -23,6 +23,7 @@ Regras gerais de Git, commits, push, worktree, Runtime e coautoria estão em `AG
 - **Independência do tema:** módulos do Portal devem funcionar sem depender do tema ACULTA420. Valide o contrato e a renderização do escopo solicitado sem trocar o tema padrão do Runtime.
 - **Navegador de testes:** Firefox ESR visível em `DISPLAY=:0`, via geckodriver. Não use Chromium nem headless. Perfil temporário e artefatos vão para `$SUITE_OUT`, fora do repositório. Scripts de teste visual ficam em `tests/browser/<frente>/` com `README.md`.
 - **Tema de validação:** validar somente no tema ACULTA ativo. Não selecione temas adicionais em testes, não altere `system.theme` para validá-los e não os descreva como gates pendentes. Preserve resultados históricos datados.
+- **Olivero:** não habilitar, selecionar, testar ou exigir Olivero em gates, suítes ou aceite do projeto. Referências a execuções antigas são históricas e não geram trabalho pendente.
 
 - **Caminhos e rotas:** não grave caminhos absolutos de máquina nem URLs de ambiente fixas em código, testes, scripts ou docs versionados (regra completa em `AGENTS.md`, seção Escopo e segurança).
 
