@@ -4,15 +4,23 @@
 
 - HTMX é documentado como padrão obrigatório para interações assíncronas novas
   do tema; Drupal AJAX (`core/drupal.ajax`, `#ajax`, `use-ajax`) é legado durante
-  a migração. Login do shell e gavetas de mensagens/avisos usam
+  a migração. Login do shell, busca e gavetas de mensagens/avisos usam
   `core/drupal.htmx`; foco, título e anúncios após atualização são tratados por
   `studio-htmx`.
+- A busca do shell deixou o Fetch: o gatilho abre o `<dialog>` por `hx-get` e o
+  campo de prévia usa `hx-get` com debounce de 300 ms e `hx-sync`, mantendo o
+  link e o formulário nativos como fallback. O template do diálogo passou a ter
+  o `id="aculta-search-content"` exigido pelo alvo HTMX.
+- O Portal responde ao cadastro popup com fragmento e `HX-Redirect` em
+  requisições `HX-Request`; o consumer V2 desse popup é o checkout de doação
+  (F5) e permanece aguardando autorização.
 - Gates de SDC, foundations, shell contract, browser validators e render Drupal
   isolado (35 SDCs) passaram; o validador de render também exige o contrato
-  HTMX do login. A busca ainda usa Fetch e cadastro popup permanece por migrar;
-  esta microfase não conclui
-  ADR-050 F1. Fixture Firefox sintética não substitui autenticação Drupal real;
-  matriz visual permanece pendente.
+  HTMX do login. A suíte `tests/browser/aculta-htmx-f1/` passou 26/26 checks no
+  Runtime de desenvolvimento: seis larguras em claro/escuro para busca e login,
+  prévia por HTMX, foco visível, zoom real de 200% e fallback sem JavaScript.
+  Esta microfase ainda não conclui ADR-050 F1 (faltam os filtros de avisos e a
+  validação do consumer do cadastro).
 
 ## Não versionado — auditoria de templates G3
 

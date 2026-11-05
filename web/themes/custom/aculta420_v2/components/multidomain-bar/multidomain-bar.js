@@ -1,4 +1,4 @@
-(function (Drupal, drupalSettings, htmx, once) {
+(function (Drupal, htmx, once) {
   'use strict';
 
   const desktopTopBar = window.matchMedia('(min-width: 64rem)');
@@ -76,13 +76,13 @@
     }
   }
 
-  function showLoginError(content, message, linkUrl) {
+  function showLoginError(content, message, linkUrl, linkLabel) {
     const notice = document.createElement('p');
     notice.setAttribute('role', 'alert');
     notice.textContent = message;
     const fallback = document.createElement('a');
     fallback.href = linkUrl;
-    fallback.textContent = Drupal.t('Continuar para a página de acesso');
+    fallback.textContent = linkLabel || Drupal.t('Continuar para a página de acesso');
     content.replaceChildren(notice, fallback);
     content.setAttribute('aria-busy', 'false');
   }
@@ -169,6 +169,7 @@
     const content = dialog.querySelector('[data-aculta-search-content]');
     const close = dialog.querySelector('[data-aculta-search-close]');
     let returnFocus = null;
+    let activeTrigger = null;
 
     close?.addEventListener('click', () => dialog.close());
     dialog.addEventListener('click', (event) => {
@@ -177,8 +178,41 @@
       }
     });
     dialog.addEventListener('close', () => {
+      if (activeTrigger) {
+        htmx.trigger(activeTrigger, 'htmx:abort');
+        activeTrigger = null;
+      }
       content.replaceChildren();
       returnFocus?.focus();
+    });
+    document.addEventListener('htmx:responseError', (event) => {
+      if (event.detail?.target !== content) {
+        return;
+      }
+      showLoginError(
+        content,
+        Drupal.t('Não foi possível carregar a busca agora.'),
+        activeTrigger?.href || window.location.href,
+        Drupal.t('Continuar para a página de busca'),
+      );
+    });
+    document.addEventListener('htmx:sendError', (event) => {
+      if (event.detail?.target !== content) {
+        return;
+      }
+      showLoginError(
+        content,
+        Drupal.t('Não foi possível carregar a busca agora.'),
+        activeTrigger?.href || window.location.href,
+        Drupal.t('Continuar para a página de busca'),
+      );
+    });
+    document.addEventListener('htmx:afterSettle', (event) => {
+      if (event.detail?.target !== content) {
+        return;
+      }
+      content.setAttribute('aria-busy', 'false');
+      content.querySelector('input[type="search"]')?.focus();
     });
 
     return {
@@ -186,41 +220,21 @@
       content,
       open(link) {
         returnFocus = link;
+        activeTrigger = link;
+        link.setAttribute('data-hx-get', link.href);
+        link.setAttribute('data-hx-trigger', 'aculta:search:open');
+        link.setAttribute('data-hx-target', '#aculta-search-content');
+        link.setAttribute('data-hx-select', 'form[data-portal-ui="search-popup"]');
+        link.setAttribute('data-hx-swap', 'innerHTML');
+        link.setAttribute('data-hx-sync', 'body:replace');
+        link.setAttribute('data-hx-drupal-only-main-content', 'true');
+        htmx.process(link);
         content.textContent = Drupal.t('Carregando busca…');
         content.setAttribute('aria-busy', 'true');
         dialog.showModal();
-        loadSearchForm(link.href, content);
+        htmx.trigger(link, 'aculta:search:open');
       },
     };
-  }
-
-  async function loadSearchForm(value, content) {
-    const url = new URL(value, window.location.href);
-    if (url.origin !== window.location.origin) {
-      showLoginError(content, Drupal.t('O endereço de busca não pertence a este site.'), value);
-      return;
-    }
-    try {
-      const response = await fetch(url.href, {
-        credentials: 'same-origin',
-        headers: { Accept: 'text/html' },
-      });
-      if (!response.ok) {
-        throw new Error('Search form request failed.');
-      }
-      const responseDocument = new DOMParser().parseFromString(await response.text(), 'text/html');
-      const form = responseDocument.querySelector('form[data-portal-ui="search-popup"]');
-      if (!form) {
-        throw new Error('Search form markup is missing.');
-      }
-      content.replaceChildren(document.importNode(form, true));
-      content.setAttribute('aria-busy', 'false');
-      Drupal.attachBehaviors(content, drupalSettings);
-      content.querySelector('input[type="search"]')?.focus();
-    }
-    catch (error) {
-      showLoginError(content, Drupal.t('Não foi possível carregar a busca agora.'), url.href);
-    }
   }
 
   Drupal.behaviors.acultaInstitutionBar = {
@@ -283,4 +297,4 @@
       });
     },
   };
-})(Drupal, drupalSettings, htmx, once);
+})(Drupal, htmx, once);

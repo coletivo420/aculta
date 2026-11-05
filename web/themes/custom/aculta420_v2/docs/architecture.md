@@ -88,7 +88,7 @@ fallback e documentam qualquer compatibilidade antiga ainda necessária.
 
 | Arquivo | Papel |
 | --- | --- |
-| `components/multidomain-bar/multidomain-bar.js` | sincroniza a altura da barra com o espaço da página e com a barra administrativa; abre o popup de login via HTMX integrado ao Portal; o popup de busca permanece em Fetch, em `<dialog>` nativo |
+| `components/multidomain-bar/multidomain-bar.js` | sincroniza a altura da barra com o espaço da página e com a barra administrativa; abre os popups de login e de busca via HTMX integrados ao Portal, em `<dialog>` nativo |
 | `components/navigation-bar/navigation-bar.js` | drawer de navegação mobile: abre, fecha com Escape e devolve o foco |
 | `components/data-table/data-table.js` | marca como região nomeada/focável somente a tabela com overflow; observa resize e atualizações Drupal e limpa observers no detach |
 | `js/utility-dialogs.js` | diálogos utilitários com `data-aculta-utility-drawer`: abre por `showModal()`, contém Tab/Shift+Tab, fecha por botão, Escape ou clique no fundo e atualiza `aria-expanded` dos gatilhos |
@@ -132,7 +132,7 @@ cartão cultural a bundles sem esse contrato e podia ocultar campos como o
 arquivo de um `document`. Loja (catálogo/produto) permanece aguardando autorização
 por tarefa; Layout Builder permanece desabilitado.
 
-A biblioteca `studio-htmx` depende de `core/drupal.htmx`, `core/drupal` e `core/once`. A biblioteca `utility-drawers` depende de `studio-htmx` e carrega os diálogos, gavetas, contadores e dispensa de avisos. Os diálogos nativos usam `data-aculta-utility-drawer` como contrato de comportamento; estilos específicos de cada SDC ficam isolados para que um modal não herde dimensões de gaveta. As gavetas declaram `data-hx-get`, alvo e `data-hx-sync="this:replace"`; os fragmentos mantêm `href` e POST nativos como fallback sem JavaScript. O login do shell usa o endpoint HTMX do Portal. A busca ainda usa Fetch e aguarda migração. Busca e login não usam `core/drupal.dialog.ajax`; a V2 remove essa dependência do utilitário de busca (`PagePresentationHooks::removeSearchDialogDependency`).
+A biblioteca `studio-htmx` depende de `core/drupal.htmx`, `core/drupal` e `core/once`. A biblioteca `utility-drawers` depende de `studio-htmx` e carrega os diálogos, gavetas, contadores e dispensa de avisos. Os diálogos nativos usam `data-aculta-utility-drawer` como contrato de comportamento; estilos específicos de cada SDC ficam isolados para que um modal não herde dimensões de gaveta. As gavetas declaram `data-hx-get`, alvo e `data-hx-sync="this:replace"`; os fragmentos mantêm `href` e POST nativos como fallback sem JavaScript. O login e a busca do shell usam os endpoints HTMX do Portal: o gatilho é um link normal, o JS acrescenta `data-hx-get`, alvo, `select` e `hx-sync` antes de abrir o `<dialog>`. A prévia da busca usa `data-hx-get` no campo, com debounce de 300 ms e `hx-sync="this:replace"` no lugar do `AbortController`. Busca e login não usam `core/drupal.dialog.ajax`; a V2 remove essa dependência do utilitário de busca (`PagePresentationHooks::removeSearchDialogDependency`). A matriz visual e o fallback sem JavaScript da busca e do login estão em `tests/browser/aculta-htmx-f1/`.
 
 Com JavaScript desligado, os links dos gatilhos continuam válidos: o login e a busca abrem as páginas próprias do Portal.
 

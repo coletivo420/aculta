@@ -417,11 +417,23 @@ SDC, foundations, shell contract, browser validators e render isolado dos 35
 SDCs passaram nesta entrega. O Firefox usado para a fixture foi sintético e
 não valida autenticação real no Runtime.
 
-**Falta para concluir F1:** migrar a busca do shell (hoje Fetch) e o cadastro
-popup; validar login e formulários HTMX com sessão/Form API reais; executar a
-matriz visual exigida pelo checklist (320, 390, 768, 959, 960 e 1440 px, claro,
-escuro e zoom 200%) e registrar as evidências. F2 permanece dependente de F1a;
-F3 continua seguindo a ordem de dependências de módulos definida na ADR-050.
+**Atualização 2026-11-05 — busca e cadastro migrados:** a busca do shell deixou
+o Fetch. O gatilho abre o diálogo por `hx-get` e o campo de prévia usa `hx-get`
+com debounce de 300 ms, `hx-sync="this:replace"` e a rota `/busca/previa`; o
+formulário nativo e o link continuam válidos sem JavaScript. O template ganhou
+o `id="aculta-search-content"`, que faltava para o alvo HTMX. O Portal responde
+ao cadastro popup com fragmento e `HX-Redirect`, mantendo o caminho AJAX só no
+fluxo sem HTMX. Login real com a conta de teste respondeu `HX-Redirect` e criou
+sessão; o POST inválido do cadastro devolveu o fragmento com erro sem criar
+conta. A suíte `tests/browser/aculta-htmx-f1/` passou 26/26 checks no Runtime
+de desenvolvimento (busca e login em 320, 390, 768, 959, 960 e 1440 px, claro e
+escuro, zoom 200%, prévia HTMX e fallback sem JavaScript).
+
+**Falta para concluir F1:** os filtros de avisos por origem e leitura
+(`studio-estrutura.md` 4.5) continuam pendentes. O consumer V2 do cadastro
+popup é o checkout de doação, reservado à F5, que aguarda autorização; não há
+ponto de entrada V2 para capturá-lo. F2 permanece dependente de F1a; F3 segue a
+ordem de dependências de módulos definida na ADR-050.
 
 ## Compatibilidade e limites
 

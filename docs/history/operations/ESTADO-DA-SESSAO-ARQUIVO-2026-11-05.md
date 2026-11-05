@@ -1571,3 +1571,13 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Verificações:** links relativos dos arquivos alterados conferidos por script; restaram quebras anteriores a esta entrega (`docs/portal/README.md` e `ACULTA-MODULES-CLOSEOUT.md`, para módulos de PDF Viewer que já não estão no caminho indicado). Gates PHP **DEFERRED**: o ambiente não tem `vendor/` nem Drush.
 - **Pendências:** `handoff/podplant420` não foi arquivado, por causa de referências vivas em `config/sync/views.view.revista_sessoes.yml` e em scripts de verificação. `aculta_portal/docs/AGENT-POLICIES.md` não foi deduplicado, porque exige conferência item a item com `DRUPAL-11-STANDARDS.md`. Cerca de 30 documentos ativos ainda trazem caminhos de máquina; a regra está em `AGENTS.md`, seção Escopo e segurança, e a correção fica para uma fase própria. Validadores com uma única citação em auditoria ou dívida foram mantidos e precisam de decisão do responsável.
 - **Próximo passo:** no servidor de desenvolvimento, rodar `php scripts/validate-aculta-portal-drupal11.php` e os gates do escopo de cada área alterada, colando a saída; depois decidir o arquivamento de `handoff/podplant420`.
+
+# Padrão Drupal 11+ revisado para Drupal 12 ready — 2026-11-05
+
+- **Objetivo:** atualizar `docs/portal/DRUPAL-11-STANDARDS.md` para o alvo Drupal 12 ready e para as regras de htmx, e remover decisões históricas e legadas.
+- **Concluído:** documento normativo reescrito (linha de versão, seção Drupal 12, seção htmx com regras e diferenças do htmx 4, fases P1 e P4 e contagens de dívida removidas; os tetos ficam no gate). Texto integral anterior arquivado em `docs/history/portal/DRUPAL-11-STANDARDS-ARQUIVO-2026-11-05.md`.
+- **Commit:** `c2cc2aa8` (documento). Esta entrada foi registrada em commit separado, por falha de script na mesma sessão.
+- **Fontes verificadas em 2026-11-05:** change record de htmx 4 no Core 12 (publicado em 2026-09-03, presente em 12.0.0-beta1) e change record de htmx no Core 11.3 (`https://www.drupal.org/node/3539472`). Notícia de terceiros sobre remoções de Search, Claro e Olivero do Core, ainda não confirmada em drupal.org.
+- **Verificações:** o gate `validate-aculta-portal-drupal11.php` confere apenas que os documentos citam o padrão, e a referência continua válida. Gate não executado aqui (sem `vendor/` e sem Drush): DEFERRED.
+- **Pendências:** confirmar em drupal.org a lista de remoções do Core 12 e a data do release; decidir o tema administrativo (Claro ou Gin); inventariar os pontos do Portal que usam `Htmx` ou `#ajax`.
+- **Próximo passo:** rodar o gate do Portal no servidor de desenvolvimento e, em seguida, testar um Core 12 beta em ambiente de teste para medir o impacto do htmx 4.

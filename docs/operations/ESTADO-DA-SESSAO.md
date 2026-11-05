@@ -2,6 +2,15 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
+# HTMX F1 — busca do shell e cadastro popup — 2026-11-05
+
+- **Objetivo:** concluir as pendências apontadas da microfase HTMX F1: migrar a busca do shell e o cadastro popup para HTMX, validar com sessão/Form API reais e executar a matriz visual.
+- **Concluído:** `1efae40765` (Portal) migra `SearchPopupForm`, `RegisterPopupForm`, `SearchUtility` e `search-preview.js`. No tema, `multidomain-bar.js` abre a busca por `hx-get`, sem Fetch nem `DOMParser`; `multidomain-bar.twig` ganhou `id="aculta-search-content"`, que faltava e impedia o alvo HTMX. Nova suíte `tests/browser/aculta-htmx-f1/`.
+- **Verificações:** no Runtime de desenvolvimento, login real da conta de teste respondeu `HX-Redirect: /` e criou sessão; POST inválido do cadastro devolveu o fragmento com erro e não criou conta; busca retornou `data-hx-*` com `HX-Request` e manteve o script legado sem o cabeçalho. Suíte Firefox ESR visível: 26/26 checks (busca e login em 320/390/768/959/960/1440 px, claro/escuro, prévia HTMX, foco visível, zoom real 200%, fallback sem JavaScript). `validate-browser-validators` (21), `validate-aculta420-sdc-schemas` (55/764) e shell contract (13) PASS; PHP lint e `git diff --check` PASS.
+- **Gates com falha preexistente:** `validate-aculta-portal-drupal11` e `validate-project-status-index` (versões divergentes de nove módulos), `validate-portal-popup-rule` (9 ocorrências em Events/Paths) e `validate-aculta420-v2-sdc` (`src/styles/buttons.css`). Nenhum arquivo dessas falhas foi alterado nesta entrega.
+- **Pendências:** filtros de avisos por origem e leitura (`studio-estrutura.md` 4.5); consumer V2 do cadastro popup (checkout de doação, F5, aguardando autorização). ADR-050 F1 permanece parcial; não declarar concluída.
+- **Próximo passo:** implementar os filtros de avisos ou retomar F2 depois da autorização do consumer do cadastro.
+
 # Resolução do CLAUDE.md (aculta, branch dev) — 2026-11-05
 
 - **Objetivo:** reduzir o CLAUDE.md a ponteiros e mover cada regra para o arquivo dono, conforme pedido do responsável.
@@ -20,13 +29,3 @@
 - **Riscos:** o hook `preprocess` do V2 não foi executado no Runtime. Sem o mapa, token não mapeado não gera classe e o elemento perde estilo; a regressão visual só se confirma com captura.
 - **Pendências:** (1) portar a cobertura do teste Kernel removido (formulário de abas, diálogo, inspeção de bytes) para `ConsumerUploadPolicy`, DEFERRED; (2) decidir `config/sync/aculta_portal.user_upload.yml` e o schema, que continuam sem uso (exigem pedido explícito); (3) captura visual de aulas, eventos e Studio no V2, porque os 39 tokens dependem de seletor de atributo.
 - **Próximo passo:** o responsável decidir o item (2) e autorizar a porte do teste (1); depois, captura visual no Runtime.
-
-# Padrão Drupal 11+ revisado para Drupal 12 ready — 2026-11-05
-
-- **Objetivo:** atualizar `docs/portal/DRUPAL-11-STANDARDS.md` para o alvo Drupal 12 ready e para as regras de htmx, e remover decisões históricas e legadas.
-- **Concluído:** documento normativo reescrito (linha de versão, seção Drupal 12, seção htmx com regras e diferenças do htmx 4, fases P1 e P4 e contagens de dívida removidas; os tetos ficam no gate). Texto integral anterior arquivado em `docs/history/portal/DRUPAL-11-STANDARDS-ARQUIVO-2026-11-05.md`.
-- **Commit:** `c2cc2aa8` (documento). Esta entrada foi registrada em commit separado, por falha de script na mesma sessão.
-- **Fontes verificadas em 2026-11-05:** change record de htmx 4 no Core 12 (publicado em 2026-09-03, presente em 12.0.0-beta1) e change record de htmx no Core 11.3 (`https://www.drupal.org/node/3539472`). Notícia de terceiros sobre remoções de Search, Claro e Olivero do Core, ainda não confirmada em drupal.org.
-- **Verificações:** o gate `validate-aculta-portal-drupal11.php` confere apenas que os documentos citam o padrão, e a referência continua válida. Gate não executado aqui (sem `vendor/` e sem Drush): DEFERRED.
-- **Pendências:** confirmar em drupal.org a lista de remoções do Core 12 e a data do release; decidir o tema administrativo (Claro ou Gin); inventariar os pontos do Portal que usam `Htmx` ou `#ajax`.
-- **Próximo passo:** rodar o gate do Portal no servidor de desenvolvimento e, em seguida, testar um Core 12 beta em ambiente de teste para medir o impacto do htmx 4.
