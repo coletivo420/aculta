@@ -43,3 +43,10 @@ Com base no `docs/modules/ACULTA-LMS-ROADMAP.md`, no `docs/decisions/ADR-042-rem
 - **Pendente de Decisão / Ação do Responsável:**
   - Homologação de ponta a ponta com produto/turma e gateway de teste no Homelab.
   - Decisões em `pendencias-lms.md` (`opigno_tour` e form wizard).
+
+---
+
+## 4. Atualização de Decisões do Responsável (2026-11-05)
+1. **Tour de Primeiro Acesso:** Decidido uso de `<dialog>` HTML nativo e leve no tema sem dependências externas.
+2. **Form Wizard:** Decidido adotar CTools Form Wizard multietapa no Course Builder (criação e estruturação de cursos).
+3. **Pagamentos / Mercado Pago:** Confirmada existência e homologação prévia das credenciais do gateway `aculta_pagamentos_mercadopago` no projeto.
