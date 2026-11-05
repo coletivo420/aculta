@@ -1,4 +1,4 @@
-# Valores padrão do tema ACULTA420 V2 (scaffold).
+# Valores padrão aplicados quando o tema é instalado; ver docs/configuracao-do-tema.md.
 aculta_radius_button: lg
 aculta_radius_card: lg
 aculta_radius_field: base

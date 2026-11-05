@@ -37,7 +37,6 @@ Não é um script de gate, mas faz parte da entrega de mudança visual (ver [AGE
 - Modos claro e escuro. Zoom de 200%. Teclado (Tab, Shift+Tab, Enter, Escape).
 - Movimento reduzido: `prefers-reduced-motion: reduce`.
 - Estado anônimo e estado autenticado, em separado.
-- Páginas do Portal também com o tema Olivero (CLAUDE.md).
 - Capturas em `$SUITE_OUT`, fora do repositório.
 
 ## Estado atual

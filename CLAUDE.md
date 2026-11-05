@@ -20,7 +20,7 @@ Regras gerais de Git, commits, push, worktree, Runtime e coautoria estão em `AG
 - **Mercado Pago:** o prefixo do token (`APP_USR-`) não identifica o ambiente. Decida pelo modo configurado e pelo `live_mode` do pagamento.
 - **Pesquisa na web:** liberada, sem pedir permissão. Não publique nem envie conteúdo para fora sem confirmação.
 - **Rotas administrativas e integrações:** toda rota `/painel-administrativo/**` e `/integracoes/**` responde só no domínio principal (MAIN); nos subdomínios retorna 404, nunca 302. Não crie painel, toolbar, link contextual ou ação administrativa em subdomínio. Gate: `php scripts/validate-admin-routes-main-domain.php`. Política: `docs/portal/ADMIN-DOMAIN-POLICY.md`.
-- **Testes de Portal, Revista e Fórum:** rode também com o tema Olivero, além do ACULTA420. O módulo deve funcionar sem o tema.
+- **Independência do tema:** módulos do Portal devem funcionar sem depender do tema ACULTA420. Valide o contrato e a renderização do escopo solicitado sem trocar o tema padrão do Runtime.
 - **Navegador de testes:** Firefox ESR visível em `DISPLAY=:0`, via geckodriver. Não use Chromium nem headless. Perfil temporário e artefatos vão para `$SUITE_OUT`, fora do repositório. Scripts de teste visual ficam em `tests/browser/<frente>/` com `README.md`.
 
 - **Caminhos e rotas:** não grave caminhos absolutos de máquina nem URLs de ambiente fixas em código, testes, scripts ou docs versionados (regra completa em `AGENTS.md`, seção Escopo e segurança).

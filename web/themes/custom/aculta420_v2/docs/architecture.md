@@ -51,8 +51,12 @@ Regras:
 - Componentes não conhecem o modo. Eles usam tokens.
 
 `src/Hook/SurfaceSettingsHooks.php` aplica no `<body>` classes neutras derivadas
-das configurações de raio, sobrescrita de acento e visibilidade da faixa. O hook
-valida os valores do formulário e não consulta domínio nem purpose.
+das configurações de raio, sobrescrita de acento e visibilidade da faixa. No
+`preprocess_html`, o Core fornece o atributo do `<body>` como `attributes`; o
+hook lê valores via `ThemeSettingsProvider`, usa os defaults do tema quando a
+configuração ativa ainda não existe, valida as opções e não consulta domínio
+nem purpose. Instruções operacionais estão em
+[`configuracao-do-tema.md`](configuracao-do-tema.md).
 
 ## 4. Tokens e fundações
 

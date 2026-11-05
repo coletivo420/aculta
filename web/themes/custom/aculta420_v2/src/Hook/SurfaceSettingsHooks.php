@@ -6,6 +6,7 @@ namespace Drupal\aculta420_v2\Hook;
 
 use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Template\Attribute;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -15,15 +16,23 @@ final class SurfaceSettingsHooks {
   public function __construct(
     #[Autowire(service: ThemeSettingsProvider::class)]
     private readonly ThemeSettingsProvider $themeSettings,
+    #[Autowire(service: 'config.factory')]
+    private readonly ConfigFactoryInterface $configFactory,
   ) {}
 
   #[Hook('preprocess_html')]
   public function preprocessHtml(array &$variables): void {
-    $bodyAttributes = $variables['body_attributes'] ?? NULL;
+    // Core's html template renders `attributes` on <body>. `body_attributes`
+    // is not part of the preprocess_html contract.
+    $bodyAttributes = $variables['attributes'] ??= new Attribute();
     if (!$bodyAttributes instanceof Attribute) {
-      return;
+      $bodyAttributes = $variables['attributes'] = new Attribute((array) $bodyAttributes);
     }
-    $settings = fn(string $name, mixed $default): mixed => $this->themeSettings->getSetting($name, 'aculta420_v2') ?? $default;
+    $settings = function (string $name, mixed $default): mixed {
+      $value = $this->themeSettings->getSetting($name, 'aculta420_v2');
+      $value ??= $this->configFactory->get('aculta420_v2.settings')->get($name);
+      return $value ?? $default;
+    };
     $bodyAttributes->addClass([
       'aculta-radius--button-' . $this->safeValue((string) $settings('aculta_radius_button', 'lg'), ['base', 'lg', 'full'], 'lg'),
       'aculta-radius--card-' . $this->safeValue((string) $settings('aculta_radius_card', 'lg'), ['base', 'lg'], 'lg'),

@@ -17,6 +17,29 @@ As opções são salvas em `aculta420_v2.settings` e ligadas a classes neutras n
 `<body>`. A migração dos consumidores CSS e a captura visual continuam
 pendentes.
 
+### Uso por administradores
+
+Em **Aparência → ACULTA420 V2 → Configurações → Superfícies**, ajuste os raios,
+a sobrescrita de acento e a visibilidade da faixa. Salve o formulário; Drupal
+persiste as opções em `aculta420_v2.settings`. Depois da aprovação da mudança,
+exporte essa configuração com `drush cex` e revise somente o arquivo
+`config/sync/aculta420_v2.settings.yml` antes de commitar.
+
+### Uso por agentes
+
+Leia os valores com
+`\Drupal::service(\Drupal\Core\Extension\ThemeSettingsProvider::class)->getSetting($key, 'aculta420_v2')`.
+O hook `SurfaceSettingsHooks::preprocessHtml()` aplica as classes no atributo
+`attributes` do `<body>`; esse é o nome usado pelo contrato Core
+`preprocess_html` e por `templates/layout/html.html.twig`. Se a configuração
+ativa ainda não existir (por exemplo, instalação anterior à inclusão do schema),
+o hook usa os defaults do tema. Não crie config no Runtime manualmente: salve-a
+pelo formulário administrativo e exporte pelo Config Sync.
+
+Para conferir sem alterar configuração, use Drush para ler o provider e renderize
+uma página no ambiente; confirme no HTML as classes `aculta-radius--*` e
+`aculta-accent--*`. `config:status` deve estar limpo antes de encerrar.
+
 ## 2. Opções atuais
 
 | Chave | Tipo | Padrão | Valores | Aplica a |
