@@ -10,6 +10,7 @@ global-styling:
       src/styles/wiki.css: {}
       src/styles/forum.css: {}
       src/styles/portal-account.css: {}
+      src/styles/messenger-drawer.css: {}
   dependencies:
     - system/base
 
