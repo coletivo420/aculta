@@ -1,5 +1,26 @@
 # ACULTA420 V2 roadmap
 
+## Shell administrativo — Institution Bar e Gin
+
+- **Implementado em `1.2.0-dev.17`:** a barra fixa mede a largura real da
+  sidebar Gin e se restringe à coluna geral. A navegação administrativa mantém
+  sua posição e não fica coberta. Em viewport estreito, marca e utilidades
+  quebram verticalmente dentro da coluna; controles conservam alvos de toque.
+- O espaçamento lateral dos extremos usa escala fluida; os ícones de utilidade
+  ficam com 32 px, o mesmo tamanho visual do avatar, e sem gap adicional entre
+  alvos. O painel da conta ancora na coluna geral.
+- O bloco Core Navigation `navigation_shortcuts` foi removido da configuração
+  exportada porque depende do módulo `shortcut`, desativado no site, e o plugin
+  legado não existe. O Runtime autenticado não mostra mais a mensagem de bloco
+  quebrado.
+- Firefox ESR visível autenticado com conta de teste, Gin aberto/fechado,
+  claro/escuro e 11 larguras: 44/44 checks de geometria PASS. Capturas em
+  `$SUITE_OUT/aculta420-v2-admin-sidebar-20261104/`. Runtime Drupal 11.5.0-beta1;
+  config import aplicado após snapshot externo; `updatedb:status` sem pendências
+  e `config:status` limpo. Em sidebar recolhida, o Top Bar administrativo ainda
+  amplia o scrollWidth em 320/390 CSS px; isso ficou DEFERRED para revisão própria
+  do toolbar. Zoom e teclado não foram executados nesta fatia.
+
 ## Em andamento — migração visual da V1 para a V2
 
 - **Fatia entregue: Fórum (`1.2.0-dev.16`).** Referências V1: presenter

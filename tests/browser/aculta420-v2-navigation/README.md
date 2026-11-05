@@ -25,3 +25,16 @@ não fazem parte deste gate.
 permanece acima da sidebar administrativa Gin e que a sidebar começa abaixo da
 altura medida da barra. O teste usa a folha original de Gin e uma fixture DOM
 anônima; não valida uma sessão autenticada real.
+
+`admin-sidebar-runtime.py` autentica uma conta administrativa de teste por ULI
+e valida a Institution Bar contra a sidebar Gin real, incluindo mudança de
+largura durante a expansão/recolhimento, os alvos dos ícones, o disclosure da
+conta e a ausência do aviso de bloco quebrado. Use somente a conta de teste
+fornecida pelo Runtime; UID padrão `257` pode ser substituído por
+`ACULTA_ADMIN_TEST_UID`. O Drush pode ser localizado por
+`ACULTA_DRUPAL_ROOT`; a pasta de screenshots permanece em `$SUITE_OUT`.
+
+```sh
+DISPLAY=:0 SUITE_OUT="$SUITE_OUT" ACULTA_DRUPAL_ROOT="$DRUPAL_ROOT" \
+  python3 tests/browser/aculta420-v2-navigation/admin-sidebar-runtime.py
+```

@@ -6,7 +6,7 @@
   aria-controls="aculta-messenger-dialog" aria-expanded="false" aria-haspopup="dialog"
   aria-label="{{ label }}" data-aculta-dialog-trigger>
   <span class="aculta-utility-trigger__icon">
-    {{ include('aculta420_v2:icon', { name: 'chat-circle-dots', variant: 'duotone', size: 'md' }, with_context = false) }}
+    {{ include('aculta420_v2:icon', { name: 'chat-circle-dots', variant: 'duotone', size: 'xl' }, with_context = false) }}
     <span class="aculta-unread-count aculta-utility-trigger__count" data-aculta-messenger-count data-count="{{ count }}" aria-hidden="true">{{ count > 99 ? '99+' : count }}</span>
   </span>
 </button>

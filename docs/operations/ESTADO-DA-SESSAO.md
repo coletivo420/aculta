@@ -1,3 +1,16 @@
+# Continuação — Institution Bar, Gin e bloco Core Navigation quebrado — 2026-11-04
+
+- **Objetivo:** corrigir a sobreposição da Institution Bar com o menu Gin na sessão administrativa e remover o aviso de bloco quebrado, prosseguindo a migração visual V1→V2 sem alterar Gin/core.
+- **Causa do aviso:** `navigation.block_layout` mantinha `navigation_shortcuts` com `shortcut` desativado. O plugin legado não é descoberto e o Core renderizava `block_broken`. Removida a entrada obsoleta da configuração exportada e aplicada via config import; o aviso não aparece mais.
+- **Implementado:** Institution Bar mede o retângulo real `#admin-toolbar`, move seu início inline para depois da sidebar e sincroniza mudanças por resize/ResizeObserver/transitionend. Em coluna pequena, marca/utilitários refluem verticalmente. Margem fluida nas extremidades; gap dos ícones reduzido a zero; ícones de busca, carrinho, mensagens e avisos em 32 px (avatar). Menu de conta limita-se à coluna geral.
+- **Arquivos:** `config/sync/navigation.block_layout.yml`; `web/themes/custom/aculta420_v2/components/multidomain-bar/{multidomain-bar.css,multidomain-bar.js}`; templates de ícones dos utilitários; teste `tests/browser/aculta420-v2-navigation/admin-sidebar-runtime.py`; changelog, roadmap, manifesto e README.
+- **Runtime:** Drush confirmou Drupal 11.5.0-beta1/`aculta_runtime`. Antes do import: `updatedb:status` sem updates e apenas `navigation.block_layout` divergente. Snapshot integral externo (fora do repositório), 66.256.506 bytes, modo 0600, SHA-256 `ff5eea49d393f4901f706bd57a53d8e07481edc212c097f912bc5724f95a1ea5`. Config import e `drush cr` PASS; após, updates sem pendências e config sem diferenças.
+- **Firefox ESR visível:** login via conta de teste UID 257; sidebar aberta/recolhida, painel de conta aberto, tema claro/escuro e 11 larguras (320–1440 CSS px). 44/44 verificações de geometria PASS, sem interseção da barra com Gin, sem alvos da barra fora do retângulo e sem mensagem `block_broken`. Capturas e JSON em `$SUITE_OUT/aculta420-v2-admin-sidebar-20261104/accepted/`. Zoom/teclado não foram executados. ScrollWidth da página ultrapassa a viewport com Gin recolhido (385 px para viewport 320; 420 px para viewport 390); diagnóstico aponta `.top-bar__actions`/controles administrativos fora da Institution Bar. Correção dessa rolagem fica DEFERRED para escopo próprio do toolbar.
+- **Git:** aguardando validação final, commit atômico e push fast-forward a `origin/dev`; manter mudanças paralelas do checkout principal.
+- **Próximo:** finalizar este commit e continuar inventário da família Eventos em `web/themes/custom/aculta420_v2/docs/roadmap.md`, comparando V1 somente para referência visual.
+
+---
+
 # Continuação — Phosphor Icons, Leaflet e cache/CDN da V2 — 2026-11-04
 
 - **Objetivo:** completar a integração Phosphor Icons (Duotone) no `aculta420_v2` e usar os SVGs do SDC nos marcadores Leaflet locais do `aculta_maps`, com compatibilidade de cache/CDN sem reintroduzir Vite, Bootstrap ou jQuery.

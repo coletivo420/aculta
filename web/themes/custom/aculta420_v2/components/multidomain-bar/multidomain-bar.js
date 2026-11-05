@@ -4,6 +4,7 @@
   const desktopTopBar = window.matchMedia('(min-width: 64rem)');
   const topBarSelector = '.top-bar[data-drupal-admin-styles][data-offset-top]';
   const institutionSelector = '.aculta-institution-bar';
+  const adminSidebarSelector = '#admin-toolbar.admin-toolbar';
 
   function updateTopBarDisplacement() {
     document.querySelectorAll(topBarSelector).forEach((topBar) => {
@@ -14,16 +15,26 @@
   function syncInstitutionBarSpace() {
     const bar = document.querySelector(institutionSelector);
     const spacer = bar?.previousElementSibling;
+    const adminSidebar = document.querySelector(adminSidebarSelector);
+    const rootStyle = document.documentElement.style;
     if (!bar) {
       return;
     }
     const barHeight = bar.getBoundingClientRect().height;
-    document.documentElement.style.setProperty('--aculta-institution-bar-height', `${barHeight}px`);
+    rootStyle.setProperty('--aculta-institution-bar-height', `${barHeight}px`);
+    let adminSidebarInlineSize = 0;
+    if (adminSidebar && getComputedStyle(adminSidebar).display !== 'none') {
+      const sidebarRect = adminSidebar.getBoundingClientRect();
+      const direction = getComputedStyle(document.documentElement).direction;
+      adminSidebarInlineSize = direction === 'rtl' ? window.innerWidth - sidebarRect.left : sidebarRect.right;
+    }
+    rootStyle.setProperty('--aculta-admin-sidebar-inline-size', `${Math.max(0, adminSidebarInlineSize)}px`);
+    rootStyle.setProperty('--aculta-admin-main-inline-size', `${Math.max(0, window.innerWidth - adminSidebarInlineSize)}px`);
     const adminToolbarBar = document.querySelector('.toolbar-oriented .toolbar-bar');
     if (adminToolbarBar) {
       const adminToolbarBarHeight = adminToolbarBar.getBoundingClientRect().height;
       if (adminToolbarBarHeight > 0) {
-        document.documentElement.style.setProperty('--aculta-admin-toolbar-bar-height', `${adminToolbarBarHeight}px`);
+        rootStyle.setProperty('--aculta-admin-toolbar-bar-height', `${adminToolbarBarHeight}px`);
       }
     }
     if (spacer?.matches('.aculta-institution-bar-placeholder')) {
@@ -42,7 +53,7 @@
         offset = rect.bottom;
       }
     }
-    document.documentElement.style.setProperty('--aculta-institution-bar-offset', `${Math.max(0, offset)}px`);
+    rootStyle.setProperty('--aculta-institution-bar-offset', `${Math.max(0, offset)}px`);
   }
 
   function isLoginPopupUrl(value) {
@@ -303,8 +314,13 @@
         if ('ResizeObserver' in window) {
           const observer = new ResizeObserver(syncInstitutionBarSpace);
           const bar = document.querySelector(institutionSelector);
+          const adminSidebar = document.querySelector(adminSidebarSelector);
           if (bar) {
             observer.observe(bar);
+          }
+          if (adminSidebar) {
+            observer.observe(adminSidebar);
+            adminSidebar.addEventListener('transitionend', syncInstitutionBarSpace, { passive: true });
           }
         }
       });

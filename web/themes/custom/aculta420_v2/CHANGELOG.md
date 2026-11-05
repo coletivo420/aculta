@@ -1,5 +1,26 @@
 # Changelog — ACULTA420 V2
 
+## 1.2.0-dev.17 — corrige a Institution Bar com Gin e ícone administrativo (2026-11-04)
+
+- A Institution Bar mede a coluna lateral Gin e ocupa apenas o espaço geral,
+  sem deslocar nem cobrir a navegação administrativa. O conteúdo mantém margens
+  fluidas e reorganiza as utilidades quando a coluna restante fica estreita.
+- Os ícones de busca, carrinho, mensagens e avisos passam a 32 px, alinhados ao
+  tamanho do avatar; o espaço entre controles foi reduzido.
+- Removido de `navigation.block_layout` o plugin legado `navigation_shortcuts`,
+  indisponível quando o módulo Core `shortcut` está desativado. O bloco quebrado
+  deixou de aparecer no menu Gin.
+- Firefox ESR visível autenticado com a conta administrativa de teste: a matriz
+  cobre sidebar Gin expandida/recolhida, Institution Bar, mensagem de bloco
+  quebrado, alinhamento, painel de conta e ícones em 11 larguras entre 320 e
+  1440 CSS px, nos modos claro/escuro: 44/44 checks de geometria PASS. Capturas em
+  `$SUITE_OUT/aculta420-v2-admin-sidebar-20261104/`.
+- O scrollWidth da página excede a viewport quando a sidebar Gin está recolhida
+  em telas estreitas (385 px para viewport 320; 420 px para viewport 390). A
+  inspeção aponta ações do Top Bar administrativo fora da Institution Bar; a
+  rolagem da página como um todo fica DEFERRED para uma correção própria do
+  toolbar, sem ampliar este ajuste do shell.
+
 ## 1.2.0-dev.16 — conecta categorias da landing do Fórum ao SDC (2026-11-04)
 
 - A View `aculta_forum_categories:block_landing` agora usa `forum-category`,

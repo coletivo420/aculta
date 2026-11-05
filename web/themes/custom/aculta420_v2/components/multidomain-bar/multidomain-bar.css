@@ -5,34 +5,10 @@
   color: var(--color-text-primary);
   font: 500 var(--font-size-sm)/1.4 var(--font-family-base);
   inset-block-start: var(--aculta-institution-bar-offset, 0px);
-  inset-inline: 0;
+  inset-inline: var(--aculta-admin-sidebar-inline-size, 0px) 0;
   position: fixed;
-  /* Keep the institution shell above Gin/Core admin rails and trays. */
+  /* The shell occupies the page column; Gin keeps its own left navigation rail. */
   z-index: 2000;
-}
-
-/* Gin sets its fixed rail at block-start: 0. Keep it below the fixed shell bar. */
-html body.gin--navigation:has(.aculta-institution-bar) .admin-toolbar {
-  inset-block-start: var(--aculta-institution-bar-height, 2.25rem);
-  block-size: calc(100vh - var(--aculta-institution-bar-height, 2.25rem));
-  block-size: calc(100dvh - var(--aculta-institution-bar-height, 2.25rem));
-}
-
-/* Gin Core Navigation's sidebar has an ID and an ID-specificity top: 0 rule. */
-body.gin--core-navigation #admin-toolbar.admin-toolbar[data-drupal-admin-styles] {
-  inset-block-start: var(--aculta-institution-bar-height, 2.25rem);
-  top: var(--aculta-institution-bar-height, 2.25rem);
-  block-size: calc(100vh - var(--aculta-institution-bar-height, 2.25rem));
-  block-size: calc(100dvh - var(--aculta-institution-bar-height, 2.25rem));
-  height: calc(100vh - var(--aculta-institution-bar-height, 2.25rem));
-  height: calc(100dvh - var(--aculta-institution-bar-height, 2.25rem));
-}
-
-/* Keep Core's fixed administrative controls below the shell bar as well. */
-html body:has(.aculta-institution-bar) .admin-toolbar {
-  inset-block-start: var(--aculta-institution-bar-height, 2.25rem);
-  block-size: calc(100vh - var(--aculta-institution-bar-height, 2.25rem));
-  block-size: calc(100dvh - var(--aculta-institution-bar-height, 2.25rem));
 }
 
 /* The core toolbar's vertical admin rail also has a fixed top control bar. */
@@ -48,12 +24,14 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
 
 .aculta-institution-bar__inner {
   align-items: center;
+  container-name: aculta-institution-bar;
+  container-type: inline-size;
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-xs) var(--spacing-sm);
   justify-content: space-between;
   min-block-size: 2.25rem;
-  padding-inline: var(--spacing-sm);
+  padding-inline: clamp(var(--spacing-xs), 2vw, var(--spacing-lg));
 }
 
 .aculta-institution-bar__brand {
@@ -70,7 +48,7 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
   display: block;
   filter: var(--logo-filter);
   inline-size: 56px;
-  max-inline-size: none;
+  max-inline-size: 100%;
 }
 
 .aculta-institution-bar__home {
@@ -86,12 +64,49 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
 .aculta-utility {
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   flex: 1 1 auto;
-  gap: var(--spacing-xs);
+  gap: 0;
   justify-content: flex-end;
   margin-inline-start: auto;
   min-inline-size: 0;
 }
+
+@container aculta-institution-bar (max-width: 18rem) {
+  .aculta-institution-bar__brand {
+    align-self: center;
+    flex-basis: auto;
+    inline-size: 100%;
+    justify-content: center;
+    min-inline-size: 0;
+  }
+
+  .aculta-institution-bar__home,
+  .aculta-institution-bar__logo { min-inline-size: 0; }
+
+  .aculta-institution-bar__logo { block-size: auto; inline-size: min(56px, 100%); }
+
+  .aculta-utility {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-content: stretch;
+    margin-inline-start: 0;
+    min-inline-size: 0;
+  }
+
+  .aculta-account-menu { inline-size: 100%; justify-self: center; min-inline-size: 0; }
+}
+
+.aculta-account-menu__panel {
+  inline-size: min(20rem, max(0px, calc(var(--aculta-admin-main-inline-size, 100vw) - 4 * var(--spacing-xs))));
+  inset-block-start: calc(var(--aculta-institution-bar-offset, 0px) + var(--aculta-institution-bar-height, 2.25rem));
+  inset-inline-end: var(--spacing-xs);
+  max-inline-size: calc(100vw - 2 * var(--spacing-xs));
+  padding-inline: var(--spacing-xs);
+  position: fixed;
+}
+
+.aculta-account-menu__panel a { white-space: normal; }
 
 .aculta-account-menu .menu {
   align-items: center;
@@ -264,7 +279,7 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 2rem;
   line-height: 1;
   position: relative;
 }
