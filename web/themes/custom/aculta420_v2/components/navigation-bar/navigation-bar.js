@@ -10,7 +10,7 @@
         if (!toggle || !panel || !close) return;
 
         root.classList.add('has-js');
-        const desktop = window.matchMedia('(min-width: 48rem)');
+        const desktop = window.matchMedia('(min-width: 68.75rem)');
         const setOpen = (open) => {
           toggle.setAttribute('aria-expanded', String(open));
           panel.classList.toggle('is-open', open && !desktop.matches);

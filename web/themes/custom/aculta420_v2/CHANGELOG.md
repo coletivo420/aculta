@@ -1,32 +1,5 @@
 # Changelog — ACULTA420 V2
 
-## 1.2.0-dev.21 — corrige a Institution Bar em viewports estreitos (2026-11-05)
-
-- Em telas abaixo de 40rem, a barra ocupa a faixa superior inteira e o menu
-  administrativo Gin começa abaixo dela. Logo de 100 px, ícones de 30 px e
-  alvos de toque de 35 × 35 px permanecem contidos, sem sobreposição.
-- Firefox ESR visível no Runtime autenticado: 44/44 checks em 11 larguras,
-  claro/escuro e sidebar Gin aberta/recolhida. Capturas e métricas em
-  `$SUITE_OUT/aculta420-v2-admin-sidebar-final-20261105/`.
-
-## 1.2.0-dev.20 — ajusta a logo da Institution Bar para 100 px (2026-11-05)
-
-- Logo com largura de 100 px, igual em mobile e desktop, sem quebrar a linha da barra. Ícones e avatar mantidos em 30 px; somente os alvos de toque da Institution Bar passaram para 35 × 35 px. Recuo fluido e gap zero mantidos.
-- Firefox ESR Runtime: inspeção visual da rota `/` em 1014 e 500 CSS px, modo claro, visitante, zoom 100%; evidência em `$SUITE_OUT/aculta420-v2-institution-bar-20261105/`. Viewport físico 320 px, modo escuro, zoom ampliado e teclado DEFERRED.
-
-## 1.2.0-dev.19 — dá espaço aos extremos e reorganiza utilidades móveis (2026-11-05)
-
-- A logo da Institution Bar usa 80 px tanto em mobile como em desktop e mantém a proporção original; a barra não quebra de linha.
-- O recuo lateral começa em 8 px em 320 CSS px e cresce fluidamente em telas maiores. Ícones sem gap extra, com alvos de 44 px, cabem ao lado da marca em 320 CSS px.
-- Firefox ESR visível no Runtime com o CSS atualizado: propósito main, rota `/`, visitante, claro, zoom 100%, em 1014 e 500 CSS px. A logo mediu 80 px e os controles permaneceram em uma linha. Capturas em `$SUITE_OUT/aculta420-v2-institution-bar-20261105/`. Viewport físico de 320 px, modo escuro, zoom ampliado e teclado seguem DEFERRED.
-
-## 1.2.0-dev.18 — melhora o respiro da Institution Bar (2026-11-05)
-
-- Aumentado o recuo lateral do conteúdo para afastar logo e utilidades das bordas da tela, com escala fluida baseada nos tokens de espaçamento.
-- A logo mantém a proporção do arquivo e foi ampliada de 78 para 96 px no desktop; em faixas estreitas, reduz dentro do espaço disponível.
-- Mantidos os ícones em 32 px, no tamanho do avatar, e removido o gap adicional entre os controles da barra. Os alvos de toque de 44 px permanecem.
-- Firefox ESR visível: inspeção do purpose main na rota `/`, visitante, modo claro e zoom 100%, em 1024 e 500 CSS px; o conteúdo não ultrapassou o viewport de 500 px. O display desta sessão impediu viewport menor que 500 px. Capturas em `$SUITE_OUT/aculta420-v2-institution-bar-20261105/`; teclado e zoom ampliado ficaram DEFERRED.
-
 ## 1.2.0-dev.17 — corrige a Institution Bar com Gin e ícone administrativo (2026-11-04)
 
 - A Institution Bar mede a coluna lateral Gin e ocupa apenas o espaço geral,
@@ -149,20 +122,13 @@
 - O foco do formulário usa um token dedicado com contraste sobre as superfícies
   claras fixas dos campos e do provedor.
 
-## 1.2.0-dev.10 — modal de entrada portado da V1
+## 1.2.0-dev.9 — corrige slots Twig do menu de conta (2026-11-04)
 
-- O diálogo nativo mantém a composição legada: painel verde, botão Google no
-  topo quando configurado, campos claros, ação amarela e links de acesso/cadastro.
-- Corrigida a localização dos templates do diálogo: como ficam fora da faixa
-  visual, o behavior agora procura no documento após tentar a própria barra.
-- O formulário segue sendo buscado e enviado pelo Fetch existente; nenhuma
-  dependência Bootstrap, jQuery ou CTools foi acrescentada.
-
-## 1.2.0-dev.9 — compõe o menu de conta como render array SDC
-
-- `PagePresentationHooks` entrega o menu como instância SDC e os slots como
-  render arrays, preservando access/cache do Drupal. Visitantes recebem link
-  de entrada nesse slot; a barra apenas o renderiza.
+- O template `account-menu` agora consome `avatar` e `menu_items` como slots
+  SDC, sem redefinir blocos que colidiam com o `embed` de `multidomain-bar`.
+  Fallback neutro de avatar e links recebidos foram preservados.
+- Gate SDC e smoke funcional autenticado da rota de materiais passaram; turma
+  e mídia temporárias foram removidas. Sem alteração visual/CSS.
 
 ## 1.2.0-dev.8 — fallback de entrada sem duplicar links
 
@@ -178,9 +144,8 @@
 
 ## 1.2.0-dev.6 — corrige o slot comum do menu
 
-- O SDC `account-menu` agora declara o slot `menu_items` uma única vez, válido
-  tanto no estado visitante quanto no autenticado. Gate Drush de renderização
-  encontrou a duplicidade Twig após a correção de slots da barra.
+- O SDC `account-menu` declara `menu_items` uma única vez para visitante e
+  usuário autenticado. Gate de renderização detectou a duplicidade Twig.
 
 ## 1.2.0-dev.5 — declara slots aninhados do menu (2026-11-04)
 
@@ -197,15 +162,35 @@
   o painel continua contendo os links Minha conta e Sair.
 - A entrada `1.2.0-dev.3` foi substituída após a correção final do escopo.
 
-## 1.2.0-dev.3 — identidade no menu da barra institucional (2026-11-04)
 
-- O SDC `account-menu` exibe somente o avatar/ícone. O nome acessível fica
-  visualmente oculto, e a barra não recebe apelido do módulo `aculta_user`.
-- O avatar chega como render array do módulo `aculta_user`; o tema não consulta
-  entidades, Profile ou `user_picture`.
-- O painel mantém os links do menu Drupal, o login continua usando o diálogo
-  AJAX existente e o disclosure fecha por Escape ou clique fora.
-- O painel de conta usa largura fluida para caber na viewport estreita.
+
+## 1.2.0-dev.3 — shell institucional e integração visual (2026-11-04)
+
+- A composição do Domain Header agora reúne marca e menu principal no SDC
+  `navigation-bar`, preservando os render arrays e o peso do menu. Título,
+  breadcrumb e ajuda são renderizados em suas regiões semânticas; a Institution
+  Bar continua sendo a faixa fixa superior.
+- A vitrine de portais foi isolada no SDC `purpose-showcase`, abaixo do header.
+  Logo horizontal e variantes responsivas do Wiki420 vieram dos assets da V1;
+  o tema escolhe o asset pela chave neutra fornecida por `domain_presentation`.
+- Três blocos de eventos, fórum e agenda foram movidos de `header` para
+  `sidebar_first`, recuperando a composição de duas colunas da referência V1.
+  Uma entrada obsoleta de `bootstrap5` foi removida do `core.extension` de
+  sincronização; nenhuma dependência ou instalação Bootstrap foi adicionada.
+- Gin Core Navigation fixa a sidebar em `top: 0` com especificidade baseada em
+  ID. O override do shell mede a altura real da Institution Bar e inicia a
+  sidebar abaixo dela. Turnstile conserva o desafio dentro do formulário sem
+  ampliar a largura da página em viewports estreitos.
+- Firefox ESR visível: navegação 100/100 checks nos dez purposes, em
+  320/767/768/1024/1099/1100/1440 px, com teclado e fallback sem JavaScript.
+  Camadas Gin, Gin Core Navigation e Toolbar Core: 15/15 checks em
+  320/390/768/1024/1280 px. Conta: 18/18 estados de reflow em claro/escuro nas
+  larguras 320–1440; foco, Shift+Tab, zoom nativo 200/400, sem JavaScript e
+  movimento reduzido passaram. HTTP 200; artefatos ficam em `$SUITE_OUT`.
+- Runtime Drupal 11.5: nenhum update de banco, configuração ativa igual a
+  `config/sync` e `drush cr` concluído. Shell e fundações continuam em revisão;
+  toolbar autenticado, leitor de tela e propósitos/rotas fora da matriz focal
+  permanecem DEFERRED.
 
 ## 1.2.0-dev.2 — navegação SDC no shell (2026-11-04)
 

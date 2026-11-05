@@ -16,11 +16,31 @@ props:
     site_logo_url:
       type: [string, 'null']
       format: uri-reference
+    brand_home_url:
+      type: string
+      format: uri-reference
+      default: /
+    brand_title:
+      type: string
+      default: ACULTA
+    brand_logo_url:
+      type: [string, 'null']
+      format: uri-reference
+      default: null
+    brand_logo_srcset:
+      type: string
+      default: ''
+    brand_logo_alt:
+      type: string
+      default: ''
     menu_id:
       type: string
       pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
       default: aculta-primary-navigation
 slots:
+  brand:
+    title: Marca do domínio
+    description: Bloco de identidade Drupal ou marca delegada pelo Portal.
   menu_items:
     title: Itens de navegação
     description: Links do menu principal, renderizados por Menu API.

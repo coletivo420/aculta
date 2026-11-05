@@ -3,9 +3,10 @@
 `navigation.py` valida a integração do componente `aculta420_v2:navigation-bar`
 na posição original do bloco de menu dentro do cabeçalho do domínio, usando Firefox ESR visível em
 `DISPLAY=:0`. A matriz cobre os dez purposes cujos hosts são resolvidos do
-`deploy.json`, nas larguras 320, 767, 768 e 1440 CSS px, e verifica menu
-mobile, `aria-expanded`, foco, Escape, landmarks, marca sem duplicação e
-overflow. Uma segunda sessão desativa JavaScript e confirma que os links
+`deploy.json`, nas larguras 320, 767, 768, 1024, 1099, 1100 e 1440 CSS px. A
+matriz verifica o breakpoint desktop de 1100 px, menu móvel, `aria-expanded`,
+foco, Escape, landmarks, logo do Domain Header carregado, marca sem duplicação
+e overflow. Uma segunda sessão desativa JavaScript e confirma que os links
 continuam visíveis e operáveis.
 
 Configure `SUITE_OUT` para um diretório persistente fora do repositório.
@@ -26,15 +27,23 @@ permanece acima da sidebar administrativa Gin e que a sidebar começa abaixo da
 altura medida da barra. O teste usa a folha original de Gin e uma fixture DOM
 anônima; não valida uma sessão autenticada real.
 
-`admin-sidebar-runtime.py` autentica uma conta administrativa de teste por ULI
-e valida a Institution Bar contra a sidebar Gin real, incluindo mudança de
-largura durante a expansão/recolhimento, os alvos dos ícones, o disclosure da
-conta e a ausência do aviso de bloco quebrado. Use somente a conta de teste
-fornecida pelo Runtime; UID padrão `257` pode ser substituído por
-`ACULTA_ADMIN_TEST_UID`. O Drush pode ser localizado por
-`ACULTA_DRUPAL_ROOT`; a pasta de screenshots permanece em `$SUITE_OUT`.
+`footer-layout.py` percorre os dez purposes, os modos claro/escuro e as larguras
+de referência. Confere as colunas do rodapé nas fronteiras de 576 e 992 px,
+overflow, alvos de menu e contraste renderizado; grava capturas do rodapé MAIN
+em 320 e 1280 px sob `$SUITE_OUT`.
 
 ```sh
-DISPLAY=:0 SUITE_OUT="$SUITE_OUT" ACULTA_DRUPAL_ROOT="$DRUPAL_ROOT" \
-  python3 tests/browser/aculta420-v2-navigation/admin-sidebar-runtime.py
+DISPLAY=:0 SUITE_OUT="$SUITE_OUT" python3 -I tests/browser/aculta420-v2-navigation/footer-layout.py
+```
+
+
+`admin-sidebar-runtime.py` autentica uma conta administrativa de teste por ULI
+e valida a Institution Bar contra a sidebar Gin real, incluindo mudança de
+largura durante a expansão/recolhimento, alvos dos ícones, disclosure da conta
+e ausência do aviso de bloco quebrado. UID padrão `257` pode ser substituído por
+`ACULTA_ADMIN_TEST_UID`; `ACULTA_DRUPAL_ROOT` aponta para o checkout Drupal se
+o script for executado de outro worktree. Capturas e JSON ficam em `$SUITE_OUT`.
+
+```sh
+DISPLAY=:0 SUITE_OUT="$SUITE_OUT" python3 tests/browser/aculta420-v2-navigation/admin-sidebar-runtime.py
 ```

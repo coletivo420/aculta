@@ -10,7 +10,7 @@ Estabelecer no tema `aculta420_v2` uma base SDC desacoplada, mobile-first, acess
 Core / módulos de domínio
   └─ Render API, Views, Menu API e templates de tema
        └─ SDC do aculta420_v2 (props/slots com schema obrigatório)
-            ├─ tokens e temas de cor (preferência do SO ou data-theme explícito)
+            ├─ tokens e temas de cor (seletor explícito do Portal via data-theme)
             └─ CSS e JS locais, mobile-first e progressivos
 
 aculta_maps (dono de mapa, provedor, privacidade e coordenadas)
@@ -38,12 +38,20 @@ Cada componente reside em `components/<nome>/` e mantém sua definição, Twig e
 | `audio-player` | Elemento HTML5 `<audio controls preload="none">`, sem script ou dependência externa |
 | `hero-banner` | Abertura de página com mídia opcional e CTA; painel de texto opaco preserva contraste sobre imagens |
 | `navigation-bar` | Menu progressivamente aprimorado com disclosure móvel, `aria-expanded`, `aria-controls`, Escape e foco restaurado |
+| `purpose-showcase` | Vitrine dos links de portais ativos, abaixo do Domain Header na home MAIN |
 | `pagination` | Links de pager com página atual e alvos de toque |
 | `filter-chips` | Links filtráveis em faixa horizontal rolável e navegável por teclado |
 | `status-messages` | Mensagens status/warning/error com regiões live apropriadas |
 | `map-popup` | Cartão reduzido sem largura intrínseca que force overflow do popup Leaflet |
 
 Schemas são obrigatórios via `enforce_prop_schemas: true`. Classes seguem BEM. JS usa Vanilla ES6+, `Drupal.behaviors` e `core/once`.
+
+O Domain Header compõe o bloco de identidade do Drupal e o menu principal no
+SDC `navigation-bar`. O Portal fornece apenas a chave neutra de uma marca
+específica; o tema resolve o asset `wiki420` no diretório `assets/logos/` e
+mantém a marca ACULTA do sistema como fallback. O SDC `multidomain-bar` contém
+somente a Institution Bar fixa; os links entre portais são um consumer separado
+de `purpose-showcase`, apresentado depois do Domain Header.
 
 ## Templates de integração
 
@@ -77,4 +85,4 @@ php vendor/drush/drush/drush.php cr
 php vendor/drush/drush/drush.php scr scripts/validate-aculta420-v2-sdc.php
 ```
 
-O segundo comando verifica descoberta SDC, schema estrito pelo Core, existência dos assets e renderização isolada dos dez componentes. Os templates do Core também devem ser verificados por smoke HTTP nas páginas que consomem pager, status messages e teasers; o gate isolado não substitui testes visuais ou auditoria assistiva.
+O segundo comando verifica descoberta SDC, schema estrito pelo Core, existência dos assets e renderização isolada dos componentes listados pelo gate. Os templates do Core também devem ser verificados por smoke HTTP nas páginas que consomem pager, status messages e teasers; o gate isolado não substitui testes visuais ou auditoria assistiva.

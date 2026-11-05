@@ -1,0 +1,13 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Site footer
+description: Rodapé global que apresenta os blocos configurados na região footer.
+status: experimental
+group: ACULTA
+props:
+  type: object
+  additionalProperties: false
+  properties: {}
+slots:
+  content:
+    title: Conteúdo do rodapé
+    description: Render array da região footer, preservando acesso e cacheabilidade Drupal.

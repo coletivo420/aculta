@@ -9,7 +9,7 @@ dependencies:
     - aculta420_v2
 id: aculta420_v2_aculta_lms_agenda_proximos
 theme: aculta420_v2
-region: header
+region: sidebar_first
 weight: 0
 provider: null
 plugin: aculta_lms_agenda_proximos

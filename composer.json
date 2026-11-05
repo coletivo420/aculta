@@ -471,8 +471,8 @@
         }
     },
     "require-dev": {
-        "phpstan/phpstan": "^1.10",
-        "phpunit/phpunit": "^9.6",
+        "phpstan/phpstan": "^2.3",
+        "phpunit/phpunit": "^11.5.50",
         "drupal/core-dev": "11.5.0-beta1",
         "drupal/sdc_devel": "^1.0",
         "drupal/upgrade_status": "^5.0@alpha",

@@ -1,0 +1,23 @@
+name: Rodapé institucional
+description: Região com identidade ACULTA, descrição e navegação apresentada em colunas progressivas.
+component: aculta420_v2:site-footer
+slots:
+  content: |
+    <div class="region-footer">
+      <section class="block">
+        <h2>ACULTA</h2>
+        <p class="aculta-footer-description">Cultura, comunicação e cuidado como caminhos de transformação.</p>
+      </section>
+      <section class="block">
+        <h2>Institucional</h2>
+        <ul class="menu"><li><a href="/sobre">Conheça a ACULTA</a></li><li><a href="/contato">Contato</a></li></ul>
+      </section>
+      <section class="block">
+        <h2>Conteúdo</h2>
+        <ul class="menu"><li><a href="/revista">Revista 420</a></li><li><a href="/eventos">Eventos</a></li></ul>
+      </section>
+      <section class="block">
+        <h2>Redes</h2>
+        <ul class="menu"><li><a href="/links">Canais oficiais</a></li></ul>
+      </section>
+    </div>

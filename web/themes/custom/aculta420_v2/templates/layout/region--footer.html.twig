@@ -1,0 +1,6 @@
+{# Keep the region's Drupal attributes while exposing a layout-owned hook. #}
+{% if content %}
+  <div{{ attributes.addClass('page__footer-region') }}>
+    {{ content }}
+  </div>
+{% endif %}

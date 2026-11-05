@@ -2,21 +2,17 @@
 
 ## Shell administrativo — Institution Bar e Gin
 
-- **Implementado em `1.2.0-dev.20`:** a barra fixa mede a largura real da
-  sidebar Gin e se restringe à coluna geral; a navegação administrativa não é
-  coberta. Institution Bar mantém uma única linha em mobile e desktop. Logo com
-  100 px em todos os tamanhos, proporção preservada. Recuo lateral de 8 px em
-  viewport de 320 CSS px, fluido em telas maiores; ícones e avatar mantidos em 30 px,
-  com alvos de toque em 35 × 35 px e sem gap extra. O painel da conta ancora
-  na coluna geral.
+- **Implementado em `1.2.0-dev.17`:** a barra fixa mede a largura real da
+  sidebar Gin e se restringe à coluna geral. A navegação administrativa mantém
+  sua posição e não fica coberta. Em viewport estreito, marca e utilidades
+  quebram verticalmente dentro da coluna; controles conservam alvos de toque.
+- O espaçamento lateral dos extremos usa escala fluida; os ícones de utilidade
+  ficam com 32 px, o mesmo tamanho visual do avatar, e sem gap adicional entre
+  alvos. O painel da conta ancora na coluna geral.
 - O bloco Core Navigation `navigation_shortcuts` foi removido da configuração
   exportada porque depende do módulo `shortcut`, desativado no site, e o plugin
   legado não existe. O Runtime autenticado não mostra mais a mensagem de bloco
-  quebrado. A validação visual no Firefox ESR visível, com CSS atualizado no Runtime,
-  usou visitante no purpose main, rota `/`, claro e zoom 100%, em 1014 e 500 CSS
-  px. A logo mediu 80 px nos dois viewports; a barra e os controles ficaram em
-  uma linha sem overflow. Capturas em `$SUITE_OUT/aculta420-v2-institution-bar-20261105/`.
-  Viewport físico 320 px, dark mode, zoom ampliado e teclado estão DEFERRED.
+  quebrado.
 - Firefox ESR visível autenticado com conta de teste, Gin aberto/fechado,
   claro/escuro e 11 larguras: 44/44 checks de geometria PASS. Capturas em
   `$SUITE_OUT/aculta420-v2-admin-sidebar-20261104/`. Runtime Drupal 11.5.0-beta1;
@@ -24,69 +20,6 @@
   e `config:status` limpo. Em sidebar recolhida, o Top Bar administrativo ainda
   amplia o scrollWidth em 320/390 CSS px; isso ficou DEFERRED para revisão própria
   do toolbar. Zoom e teclado não foram executados nesta fatia.
-- **Correção mobile (`1.2.0-dev.21`):** em viewports abaixo de 40rem, a barra
-  ocupa a faixa superior inteira e o menu Gin inicia logo abaixo. Isso remove o
-  espaço de 63 px que a sidebar aberta deixava disponível em 320 px. Firefox
-  ESR visível, conta administrativa de teste, Gin aberto/recolhido, claro/escuro
-  e 11 larguras (320–1440 px): 44/44 checks PASS; logo 100 px, ícones 30 px,
-  alvos 35 × 35 px, conteúdo contido e barra sem sobreposição. Evidência em
-  `$SUITE_OUT/aculta420-v2-admin-sidebar-final-20261105/`. Zoom e teclado
-  permanecem DEFERRED.
-
-## Em andamento — migração visual da V1 para a V2
-
-- **Fatia entregue: Fórum (`1.2.0-dev.16`).** Referências V1: presenter
-  `node--aculta-forum-topic`, adapters de Views, `forum-category`,
-  `forum-index.css` e `discussion.css`. A V2 tem SDCs `forum-topic`,
-  `forum-category` e `discussion-comment`, adapters Drupal e CSS baseado em
-  tokens para listagem, busca, vazios, autoria, categorias e discussão.
-  Baseline V2 observado antes do adapter: tópicos eram apresentados pelo teaser
-  genérico `card-cultural`; a categoria ainda usava o tema do módulo. Após:
-  Firefox ESR visível no Runtime, purpose `forum`, visitante, rotas `/`,
-  `/categorias` e um tópico real descoberto na landing, claro/escuro, nove
-  larguras (320–1440 CSS px): 58/58 checks; Tab/Shift+Tab e zoom físico 200% e
-  400% com viewport CSS efetiva de 320 px passaram sem overflow. A auditoria
-  inicial encontrou a View de categorias da landing fora do SDC e com seletor
-  sem correspondência ao ID real; foi adicionado adapter de campo e wrapper
-  `views-view` específico, agora confirmado visualmente com cartões no Runtime.
-  Firefox ESR: 76/76 checks. Capturas em
-  `$SUITE_OUT/aculta420-v2-forum-landing-20261104/`. Drush SDC 25/25; foundations
-  51 pares PASS. O Runtime não apresentou comentário `aculta_discussion_post`
-  nas rotas verificadas; o componente e adapter passaram render isolado, mas o
-  comentário real permanece DEFERRED. Migração V1→V2 segue em andamento; próxima
-  área a inventariar: Eventos.
-
-- **Fatia atual: Wiki420.** Referências V1: `components/patterns/wiki-entry`,
-  `node--wiki-entry--teaser/full` e `css/components/wiki.css`. A V2 agora tem o
-  SDC `wiki-entry`, os dois adapters de node e estilos globais para listagens.
-  Firefox ESR visível no Runtime, visitante, home/listagem/verbete,
-  claro e escuro (atributo `data-theme` aplicado na sessão do browser), 320,
-  390, 767, 768 e 1440 CSS px: 189/189 checks, sem overflow, H1 duplicado ou
-  ordem visual quebrada; Tab e Shift+Tab passaram. Capturas em
-  `$SUITE_OUT/aculta420-v2-wiki-20261104/`. O zoom físico, autenticação e
-  leitor de tela permanecem DEFERRED. `/wiki/busca` respondeu 404 e a home não
-  contém formulário de busca; sem mudar o owner da Wiki, essa superfície não
-  foi alterada nem validada. O CSS de busca/categorias herdado ainda aguarda
-  um consumer real no Runtime. A fatia ainda não tem versão atribuída.
-
-- **Fatia atual: Revista.** Baseline do tema V2 antes dos templates/SCDs:
-  `$SUITE_OUT/revista-v2-before-20261104/`, no purpose `magazine`, URL raiz da
-  Revista e artigo `/editorial/teste-visual-20261030-cultura-de-bairro`, sessão
-  anônima, claro/escuro, larguras 390/1440 CSS px. A captura mobile tinha quatro
-  capas ocupando toda a largura do cartão; o artigo não possuía composição de
-  autoria própria. Código-fonte de referência V1: templates de teaser/full e
-  View da Revista, `css/components/revista-listing.css`,
-  `css/components/revista-post.css` e SDC `author-card`.
-- **Depois (em validação):** templates `node--revista--teaser/full` e View
-  encaminham render arrays aos quatro SDCs novos. A grade começa em uma coluna,
-  expande a duas em 37.5rem e três em 62rem; primeira linha editorial destaca
-  a capa em espaço amplo. O H1 “Revista 420” substitui o título genérico da
-  página somente enquanto a listagem está presente. O artigo mantém o conteúdo
-  Drupal e a cacheabilidade do Portal, com corpo de leitura e modelos de mídia responsivos.
-- Schemas, stories e sintaxe do gate foram validados localmente. Validação do
-  Drupal/Runtime, comparação visual Firefox e cobertura 320 CSS px com zoom
-  200% ainda pendentes. Não há versão atribuída a esta fatia até fechar esses
-  gates.
 
 - `1.2.0-dev.14`: refinamento de fidelidade do diálogo de entrada com a V1.
   A superfície usa `#6b9a2c`; texto escuro mantém 5,45:1. Google mantém o SVG
@@ -114,13 +47,9 @@
   documento sem overflow. Zoom nativo 200%, viewport CSS 320px: documento 320px,
   breadcrumb 288px. Tab atingiu o link com foco visível de 3px. Capturas em
   `$SUITE_OUT/v1-v2-breadcrumb-20261104/`. Gate SDC: 19/19 componentes renderizados;
-  schemas 55/764; foundations 51 pares. Cobertura focal: outras rotas e purposes
+  schemas 55/764; foundations 55 pares. Cobertura focal: outras rotas e purposes
   seguem pendentes.
 
-- `1.2.0-dev.11`: modal de entrada portado da identidade V1 para `<dialog>` e
-  Fetch, mantendo o botão Google quando a integração Portal estiver configurada.
-  fornecido por `aculta_user`; não há apelido na barra. Evidência visual e
-  runtime autenticado ainda pendentes.
 - `1.2.0-dev.12`: superfície do modal alinhada ao verde institucional da V1;
   Google, campos, ação amarela e hierarquia de links visualmente conferidos.
   Firefox ESR visível no purpose `main`, rota `/`, estado anônimo: 320 px
@@ -130,6 +59,17 @@
   modal. Capturas e métricas em `$SUITE_OUT/login-modal-v2-20261104/`.
   Autenticação completa e demais purposes ficaram DEFERRED nesta verificação
   focal.
+
+- `1.2.0-dev.11`: modal de entrada portado da identidade V1 para `<dialog>` e
+  Fetch, mantendo o botão Google quando a integração Portal estiver configurada.
+
+- `1.2.0-dev.9`: corrigida a duplicidade dos blocos Twig de avatar e menu no
+  SDC de conta. Runtime autenticado renderiza a rota de materiais do curso;
+  sem alterações visuais. Smoke autenticado de leituras, galerias, vídeos e
+  PDF privado foi concluído por `aculta_lms_resources` dev.32.
+- `1.2.0-dev.8`: menu da barra institucional integrado somente com o avatar
+  fornecido por `aculta_user`; não há apelido na barra. Evidência visual e
+  runtime autenticado ainda pendentes.
 
 ## Fase 1 — Tokens e fundações
 
@@ -161,7 +101,7 @@
 
 ## Fase 2 — Shell
 
-**Status: em andamento; navegação SDC integrada. Revisões de Institution Bar, Domain Header, rodapé e demais regiões seguem pendentes.**
+**Status: shell em revisão; Institution Bar, Domain Header, navegação e composição de regiões estão integrados em SDC. Rodapé e restantes dos regions ainda precisam de revisão contra a V1.**
 
 - Referência visual: V1 `templates/page.html.twig` e `docs/shell.md`, somente
   leitura. Institution Bar e Domain Header foram preservados como contratos.
@@ -176,16 +116,22 @@
   acesso e metadados de cache preservados. O SDC não repete a marca do Domain
   Header. Menu é visível sem JavaScript; com JS, Enter abre, Escape fecha e o
   foco acompanha a interação.
-- Firefox ESR visível, anônimo: 70/70 checks nos dez purposes, em 320/767/768/
-  1440 CSS px; Enter, Escape, foco, landmarks e fallback sem JS em 320 px.
+- Firefox ESR visível, anônimo: 100/100 checks nos dez purposes, em
+  320/767/768/1024/1099/1100/1440 CSS px; Enter, Escape, foco, landmarks e
+  fallback sem JS em 320 px. A revisão focal da Conta passou 10/10 checks
+  adicionais em todas as larguras, teclado e sem JavaScript.
   Evidência: `$SUITE_OUT/aculta420-v2-navigation-final3/`.
+- A composição aproxima a referência visual V1: logo e menu no Domain Header,
+  showcase separado abaixo dele e eventos/fórum/agenda na sidebar. A marca
+  `wiki420` usa assets portados da V1. A faixa fixa permanece na mesma posição;
+  Gin Core Navigation e Toolbar Core começam abaixo dela.
 - A faixa institucional fica acima da sidebar administrativa Gin e do toolbar
-  Core; Gin inicia após a altura medida da faixa, e a bandeja Core após a faixa
-  e sua própria barra de controles. Firefox ESR visível passou 10/10 checks em
-  320/390/768/1024/1280 px, sem overflow: barra 0–73 px, Gin inicia em 73 px,
-  controles Core iniciam em 73 px e bandeja Core em 112 px. A fixture usa as
-  folhas locais de Gin e Core, mas não uma sessão administrativa real: isso
-  permanece DEFERRED.
+  Core; Gin e Gin Core Navigation começam após a altura medida da faixa, e a
+  bandeja Core após a faixa e sua própria barra de controles. Firefox ESR
+  visível passou 15/15 checks em 320/390/768/1024/1280 px, sem overflow: barra
+  0–73 px, Gin começa em 73 px, controles Core começam em 73 px e bandeja Core
+  em 112 px. A fixture usa as folhas locais de Gin e Core, mas não uma sessão
+  administrativa autenticada: isso permanece DEFERRED.
   Evidência: `$SUITE_OUT/aculta420-v2-admin-toolbar-layer-accept/`.
 - Baseline: commit `33e4dddbf5`; screenshots atuais comparam as raízes de Main,
   Conta, Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links e Eventos, URLs
@@ -194,20 +140,12 @@
   `$SUITE_OUT/aculta420-v2-shell-after-verified/`; leitores de tela e estados
   autenticados permanecem DEFERRED. O runner aplica o CSS baseline ao DOM atual;
   essa comparação não recupera a marcação Twig histórica da baseline.
-
-### Fase 2 — menu de conta (ADR-047)
-
-**Status: versionado em `1.2.0-dev.3` a `1.2.0-dev.11` (ver [CHANGELOG.md](../CHANGELOG.md)). Validação visual autenticada e gates de renderização pendentes.**
-
-- O SDC `account-menu` está na barra institucional. O PHP (`PagePresentationHooks::buildAccountMenuComponent`) monta o componente: visitante recebe "Entrar" apontando para `/entrar/janela`; autenticado recebe o avatar do Portal e o menu Drupal de conta.
-- O avatar vem de `aculta_user` como render array (`aculta_account_avatar`). Sem avatar, o componente mostra o ícone neutro.
-- A barra não mostra apelido nem nome. O rótulo "Minha conta" é texto oculto, para o nome acessível.
-- Pendentes para fechar a fase:
-  1. Verificação visual em 320, 390 e 1440 CSS px, claro e escuro, zoom de 200%, teclado, com três cenários autenticados: foto, acervo e sem foto.
-  2. Leitor de tela: o botão deve anunciar "Minha conta".
-  3. Validação de renderização do `account-menu`. O changelog do `1.2.0-dev.5` registra que o `drush cr` revelou um problema de descoberta e que a validação seria repetida; essa repetição não aparece no changelog.
-  4. Gates do tema (ver [gates.md](gates.md)) executados no Homelab, com a saída colada na entrega.
-  5. Versão: `1.2.0-dev.11` está em `info.yml`. Revisar com o responsável se a entrega fecha em `dev.11` ou sobe para a próxima versão, após a validação.
+- Uma revisão focal da Conta, após conter o widget Turnstile dentro do seu
+  contêiner, passou 18/18 estados de reflow em claro/escuro em 320/360/390/599/
+  600/768/1024/1280/1440 px. Teclado, Shift+Tab, zoom nativo 200/400, sem JS,
+  movimento reduzido e HTTP 200 passaram. O desafio mantém rolagem local quando
+  excede o espaço do formulário. Evidência:
+  `$SUITE_OUT/aculta420-v2-account-turnstile-visual/`.
 
 ## Fase 3 — Purpose neutro no Portal
 
@@ -230,6 +168,14 @@
 - A barra institucional usa dados neutros do Portal; conta, login, busca,
   carrinho, mensagens e alertas permanecem no shell.
 
+### Pendências de shell e fundações
+
+- Conferir visualmente o rodapé e todos os regions restantes nos templates da
+  V1, sem alterar a Institution Bar ou o contrato do Domain Header.
+- Atualizar o handoff operacional após resolver a entrada `bootstrap5`
+  obsoleta em `core.extension`; importação completa foi aplicada e o Runtime
+  está sem diferenças de configuração. Bootstrap não foi instalado.
+
 ### Pendências antes de promover a RC
 
 - Revisão visual Firefox em larguras móveis e amplas, nos modos claro e escuro,
@@ -237,29 +183,6 @@
 - Revisão assistiva das páginas reais que usam pager, mensagens e teasers.
 - Não trocar tiles OSM por CartoDB nem introduzir endpoint de pontos sem decisão
   e revisão dos contratos de privacidade, acesso, cache e purpose.
-
-## Decisões pendentes do responsável
-
-- Chave neutra de purpose no `domain_presentation` (Fase 3): aprovar a PR no Portal.
-- Dropdown do menu de conta: lista final de itens além de Minha conta e Sair, e texto do contador do sino (ADR-047, pendências).
-- Verificação de `core/misc/ajax.js` no Drupal 11.5 e definição dos exportables e do formulário do wizard do LMS (ADR-044).
-- Migração para Drupal 12: data, sem definição (ADR-045).
-
-## Ordem sugerida a partir daqui
-
-1. Fechar a Fase 2 (avatar do Portal e validação do menu de conta).
-2. Fase 3: chave neutra de purpose, em PR própria no Portal.
-3. Fase 2 (restante): Institution Bar e Domain Header revisados, rodapé e regiões do `page.html.twig`.
-4. Fase 4: UI Styles, após checar compatibilidade com 11.5 e 12.
-5. Fase 5: componentes faltantes na ordem de uso (`avatar`, `author-box`, depois `breadcrumb`, `tabs`, `accordion`, `dialog`, `form-field`, `progress`, `data-table`, `empty-state`, `price`), e templates por tipo de conteúdo.
-
-## Documentação deste tema
-
-- [README.md](../README.md): visão geral, estrutura e como adicionar componente.
-- [AGENTS.md](../AGENTS.md): regras para agentes.
-- [architecture.md](architecture.md): camadas, contrato com o Portal, JavaScript e tokens.
-- [components.md](components.md): catálogo com props, slots e estado.
-- [gates.md](gates.md): validadores e como rodar.
 
 ## Compatibilidade e limites
 

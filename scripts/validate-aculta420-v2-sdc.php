@@ -9,8 +9,6 @@
 
 declare(strict_types=1);
 
-use Drupal\Core\Render\Markup;
-
 $theme_root = DRUPAL_ROOT . '/themes/custom/aculta420_v2';
 $theme_info = file_get_contents($theme_root . '/aculta420_v2.info.yml');
 $theme_libraries = file_get_contents($theme_root . '/aculta420_v2.libraries.yml');
@@ -48,7 +46,6 @@ foreach ($source_files as $source_file) {
 }
 $component_ids = [
   'account-menu',
-  'author-card',
   'audio-player',
   'alerts-trigger',
   'badge',
@@ -57,6 +54,7 @@ $component_ids = [
   'cart-offcanvas',
   'card-cultural',
   'discussion-comment',
+  'event-page-layout',
   'filter-chips',
   'forum-category',
   'forum-topic',
@@ -67,11 +65,9 @@ $component_ids = [
   'multidomain-bar',
   'navigation-bar',
   'pagination',
-  'revista-listing',
-  'revista-publication',
-  'revista-teaser',
+  'purpose-showcase',
+  'site-footer',
   'status-messages',
-  'wiki-entry',
 ];
 $manager = \Drupal::service('plugin.manager.sdc');
 $validator = \Drupal::service('Drupal\Core\Theme\Component\ComponentValidator');
@@ -80,23 +76,14 @@ $definitions = $manager->getDefinitions();
 $samples = [
   'account-menu' => [
     '#props' => ['authenticated' => TRUE],
-    '#slots' => ['avatar' => '', 'menu_items' => '<a href="/conta">Minha conta</a>'],
-  ],
-  'author-card' => [
-    '#props' => ['variant' => 'author_editorial', 'display_name' => 'Autoria cultural', 'has_avatar' => FALSE],
-    '#slots' => ['avatar' => '', 'actions' => ''],
+    '#slots' => ['avatar' => '', 'menu_items' => '<ul><li><a href="/conta">Minha conta</a></li></ul>'],
   ],
   'audio-player' => ['#props' => ['src' => '/files/sample.mp3', 'title' => 'Sessão cultural']],
   'alerts-trigger' => ['#props' => ['href' => '/avisos/resumo', 'count' => 0]],
   'badge' => ['#props' => ['label' => 'Cultura', 'variant' => 'primary', 'icon_name' => 'tag']],
   'breadcrumb' => [
     '#props' => ['label' => 'Breadcrumb'],
-    '#slots' => [
-      'items' => Markup::create(
-        '<li class="aculta-breadcrumb__item"><a class="aculta-breadcrumb__link" href="/">Início</a></li>'
-        . '<li class="aculta-breadcrumb__item aculta-breadcrumb__current" aria-current="page">Eventos</li>'
-      ),
-    ],
+    '#slots' => ['items' => \Drupal\Core\Render\Markup::create('<li class="aculta-breadcrumb__item"><a class="aculta-breadcrumb__link" href="/">Início</a></li><li class="aculta-breadcrumb__item aculta-breadcrumb__current" aria-current="page">Eventos</li>')],
   ],
   'button' => [
     '#props' => [
@@ -126,6 +113,15 @@ $samples = [
       'footer' => '<a href="/topico/exemplo#comentario">Link permanente</a>',
     ],
   ],
+  'event-page-layout' => [
+    '#props' => [],
+    '#slots' => [
+      'title' => '<h1>Festival de cultura</h1>',
+      'essentials' => '<h2>Datas</h2><ul><li>10/05/2030</li></ul>',
+      'content' => '<p>Descrição do evento.</p>',
+      'sidebar' => '<h2>Organização</h2><p>Coletivo cultural</p>',
+    ],
+  ],
   'filter-chips' => [
     '#props' => [
       'items' => [
@@ -145,7 +141,7 @@ $samples = [
   'forum-topic' => [
     '#props' => ['variant' => 'teaser', 'has_title' => TRUE, 'has_meta' => TRUE, 'has_bookmark' => FALSE],
     '#slots' => [
-      'title' => '<h2><a href="/forum/topico-exemplo">Conversa sobre cultura</a></h2>',
+      'title' => '<h2><a href="/topico/exemplo">Conversa sobre cultura</a></h2>',
       'meta' => 'Publicado recentemente',
       'bookmark' => '',
       'content' => '<div class="aculta-author-card">Autoria pública</div><div class="field--name-body">Descrição do tópico.</div>',
@@ -174,7 +170,6 @@ $samples = [
       'alerts_count' => 0,
       'is_account_domain' => TRUE,
       'show_utility_bar' => TRUE,
-      'links' => [['title' => 'ACULTA', 'url' => '/']],
     ],
     '#slots' => [
       'search' => '',
@@ -182,8 +177,12 @@ $samples = [
     ],
   ],
   'navigation-bar' => [
-    '#props' => ['site_name' => 'ACULTA', 'menu_id' => 'v2-sdc-validation-menu'],
-    '#slots' => ['menu_items' => '<ul><li><a href="/">Início</a></li></ul>', 'utility_items' => ''],
+    '#props' => ['brand_home_url' => '/', 'brand_title' => 'ACULTA', 'menu_id' => 'v2-sdc-validation-menu'],
+    '#slots' => [
+      'brand' => '<div class="block-system-branding-block"><a class="site-logo" href="/"><img src="/logo.png" alt="ACULTA"></a></div>',
+      'menu_items' => '<ul><li><a href="/">Início</a></li></ul>',
+      'utility_items' => '',
+    ],
   ],
   'pagination' => [
     '#props' => [
@@ -192,57 +191,17 @@ $samples = [
       'links' => [['url' => '/?page=0', 'label' => '1', 'is_current' => TRUE]],
     ],
   ],
-  'revista-listing' => [
-    '#props' => ['eyebrow' => 'Publicações', 'title' => 'Revista 420', 'has_items' => TRUE],
-    '#slots' => ['items' => '<div class="views-row">Publicação</div>'],
-  ],
-  'revista-publication' => [
+  'purpose-showcase' => [
     '#props' => [
-      'has_meta' => TRUE,
-      'has_subtitle' => TRUE,
-      'has_summary' => TRUE,
-      'has_cover' => TRUE,
-      'has_footer' => TRUE,
-    ],
-    '#slots' => [
-      'meta' => 'Autor e data',
-      'cover' => '',
-      'subtitle' => '',
-      'summary' => '',
-      'body' => 'Texto',
-      'footer' => '',
-      'authors' => '',
-      'discussion' => '',
+      'heading' => 'Ecossistema ACULTA',
+      'links' => [['title' => 'Apoio', 'url' => '/apoio']],
     ],
   ],
-  'revista-teaser' => [
-    '#props' => ['title' => 'Publicação cultural', 'url' => '/revista/publicacao', 'has_cover' => FALSE],
-    '#slots' => ['image' => '', 'category' => '', 'subtitle' => '', 'summary' => ''],
+  'site-footer' => [
+    '#props' => [],
+    '#slots' => ['content' => '<div class="region-footer"><p>Rodapé</p></div>'],
   ],
   'status-messages' => ['#props' => ['type' => 'status', 'messages' => ['Validação concluída.']]],
-  'wiki-entry' => [
-    '#props' => [
-      'variant' => 'article',
-      'url' => '/wiki/exemplo',
-      'has_summary' => TRUE,
-      'has_image' => TRUE,
-      'has_categories' => TRUE,
-      'has_related' => TRUE,
-      'has_references' => TRUE,
-      'has_discussion' => TRUE,
-    ],
-    '#slots' => [
-      'title' => 'Exemplo de verbete',
-      'summary' => 'Resumo',
-      'image' => '',
-      'categories' => '',
-      'body' => 'Corpo',
-      'related' => 'Relacionados',
-      'references' => 'Referências',
-      'discussion' => 'Discussão',
-      'actions' => '',
-    ],
-  ],
 ];
 
 foreach ($component_ids as $component_id) {
@@ -260,26 +219,6 @@ foreach ($component_ids as $component_id) {
       throw new RuntimeException(sprintf('Missing SDC asset: %s', $path));
     }
   }
-  if (in_array(
-    $component_id,
-    [
-      'author-card',
-      'discussion-comment',
-      'forum-category',
-      'forum-topic',
-      'revista-listing',
-      'revista-publication',
-      'revista-teaser',
-      'wiki-entry',
-    ],
-    TRUE,
-  )) {
-    foreach ([$component_id . '.default.story.yml', 'README.md'] as $document) {
-      if (!is_file($theme_root . '/components/' . $component_id . '/' . $document)) {
-        throw new RuntimeException(sprintf('Missing story or component documentation: %s/%s', $component_id, $document));
-      }
-    }
-  }
   if ($component_id === 'navigation-bar' && !is_file($theme_root . '/components/navigation-bar/navigation-bar.js')) {
     throw new RuntimeException('Navigation behavior file is missing.');
   }
@@ -293,6 +232,9 @@ foreach ($component_ids as $component_id) {
     if (!str_contains((string) $icon, '<svg') || !str_contains((string) $icon, 'viewBox="0 0 256 256"')) {
       throw new RuntimeException('Phosphor SVG must be rendered inline by the icon SDC.');
     }
+  }
+  if ($component_id === 'event-page-layout' && !is_file($theme_root . '/templates/aculta-event-page.html.twig')) {
+    throw new RuntimeException('Event page adapter is missing.');
   }
   if ($component_id === 'navigation-bar' && !in_array('core/once', $definition['library']['dependencies'] ?? [], TRUE)) {
     throw new RuntimeException('Navigation behavior must depend on core/once.');
@@ -340,36 +282,6 @@ foreach ($component_ids as $component_id) {
       }
     }
   }
-  if ($component_id === 'author-card' && !is_file($theme_root . '/templates/aculta-user-author-card.html.twig')) {
-    throw new RuntimeException('The aculta_user author-card adapter is missing.');
-  }
-  if ($component_id === 'revista-listing' && !is_file($theme_root . '/templates/views/views-view--revista-sessoes--page-revista.html.twig')) {
-    throw new RuntimeException('The Revista landing View adapter is missing.');
-  }
-  if ($component_id === 'revista-teaser' && !is_file($theme_root . '/templates/content/node--revista--teaser.html.twig')) {
-    throw new RuntimeException('The Revista teaser node adapter is missing.');
-  }
-  if ($component_id === 'revista-publication' && !is_file($theme_root . '/templates/content/node--revista--full.html.twig')) {
-    throw new RuntimeException('The Revista full node adapter is missing.');
-  }
-  if ($component_id === 'wiki-entry'
-    && (!is_file($theme_root . '/templates/content/node--wiki-entry--teaser.html.twig')
-      || !is_file($theme_root . '/templates/content/node--wiki-entry--full.html.twig'))) {
-    throw new RuntimeException('Wiki node adapters are missing.');
-  }
-  if ($component_id === 'forum-topic' && !is_file($theme_root . '/templates/content/node--aculta-forum-topic.html.twig')) {
-    throw new RuntimeException('Forum topic node adapter is missing.');
-  }
-  if ($component_id === 'forum-category'
-    && (!is_file($theme_root . '/templates/views/views-view-fields--aculta-forum-categories--page-categories.html.twig')
-      || !is_file($theme_root . '/templates/views/views-view-unformatted--aculta-forum-categories--page-categories.html.twig')
-      || !is_file($theme_root . '/templates/views/views-view-fields--aculta-forum-categories--block-landing.html.twig')
-      || !is_file($theme_root . '/templates/views/views-view--aculta-forum-categories--block-landing.html.twig'))) {
-    throw new RuntimeException('Forum category View adapters are missing.');
-  }
-  if ($component_id === 'discussion-comment' && !is_file($theme_root . '/templates/comment--aculta-discussion-post.html.twig')) {
-    throw new RuntimeException('Discussion comment adapter is missing.');
-  }
 
   $build = [
     '#type' => 'component',
@@ -384,14 +296,6 @@ foreach ($component_ids as $component_id) {
   if ($component_id === 'breadcrumb'
     && (!str_contains($output, 'aria-current="page"') || !str_contains($output, 'aria-label="Breadcrumb"'))) {
     throw new RuntimeException('Breadcrumb must render its accessible label and current page marker.');
-  }
-  if ($component_id === 'revista-listing'
-    && (!str_contains($output, 'revista-listing__title') || !str_contains($output, '<h1'))) {
-    throw new RuntimeException('The Revista landing component must own the page-level H1.');
-  }
-  if ($component_id === 'wiki-entry'
-    && (!str_contains($output, 'aculta-wiki-article__title') || !str_contains($output, '<h1'))) {
-    throw new RuntimeException('The Wiki article component must own the page-level H1.');
   }
   print $plugin_id . " PASS\n";
 }

@@ -49,22 +49,22 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 | F12 — Dashboards | SDC ACULTA420 sobre LMS services/Views | dados próprios para estudante; aggregate limitado à turma para educador; sem cache cruzado | Reverter presenters/Views e manter rotas LMS |
 | F13 — Notificações educacionais | Contrato público `aculta_messenger` + elegibilidade em `aculta_lms` | avisos sempre no site; matrícula/certificado com e-mail transacional; demais eventos em resumo diário opt-in; dedupe, access atual, fila, privacidade e UI testados | Desabilitar subscriber/producer; Message permanece fonte e não apagar comunicações existentes |
 | F14 — Conexões | `FriendshipManagerInterface` e Messenger existentes | ações e notificações usam amizade atual sem duplicar estado/permissão | Reverter adapter; amizade continua em `aculta_user` |
-| F15 — Integrações de conteúdo | `aculta_lms` e `aculta_lms_h5p` integrados a `aculta_image`, ao leitor PDF existente `aculta_pdf_viewer` (solicitado como `aculta_pdf_reader`) e `aculta_forum`; Gallery, Magazine, Wiki e Content Index | Imagens de curso, atividade, entrega e discussão passam pela política `aculta_image`; PDFs usam Media `course_document`, Group e viewer compartilhado, com vínculo opcional por atividade H5P; tópicos e respostas preservam Forum/Node/Comment como fonte e revalidam membership, access, cache e purpose; discussão ligada à atividade usa referência LMS e Group do curso/turma | `aculta_forum_lms` exibe discussões autorizadas dentro da atividade; H5P referencia documentos privados existentes do mesmo Group e usa o builder do viewer compartilhado. `aculta_lms_resources` registra `Group:lms_course` no Content Index e relações explicitamente permitidas para leituras, galerias e `course_document` quando o plugin PDF Group está disponível. `aculta_portal` é owner do Media compartilhado `remote_video` e fornece sua projeção mínima; por decisão do responsável, relações de vídeo aguardam fechamento dos formatos editoriais e contratos de acesso. Ainda é necessário identificar a fonte pedagógica Media antes de definir qualquer aresta, sem presumir referência direta da turma. Kernel MariaDB percorre rebuild e consulta outgoing pelo Index: estudante por `takeAccess()` e educador por `grade students` contextual recebem recursos autorizados; terceiro e leitura em rascunho são negados. O Kernel LMS/Index cobre leituras, galerias e documento (4 testes / 208 assertions; 53 depreciações Core/contrib) com Group real e plugin fixture para a relação PDF; a opcionalidade/projeção tem Unit 5/31. Providers são compilados dos YAMLs owner; boot completo da cadeia dos módulos ainda não foi provado. Smoke autenticado Runtime do vínculo da discussão em atividade comum passou após correção do hook Form API; curso, turma, aula, atividade e tópico temporários foram removidos. O smoke específico H5P segue pendente porque `private://h5p` está indisponível. O probe autenticado de `managed_file` no Runtime aceitou PNG e recusou EXE conforme a política central; o FID temporário e arquivo foram removidos sem submeter resposta. Persistência final de resposta `file_upload`/anexo e upload de entrega real ainda requerem smoke próprio; revisão visual segue fora do escopo. O Index não substitui dashboard/progresso LMS. Não duplicar storage, reader PDF ou entidade de discussão |
+| F15 — Integrações de conteúdo | `aculta_lms` e `aculta_lms_h5p` integrados a `aculta_image`, `aculta_pdf_viewer`, `aculta_forum`, Gallery, Magazine, Wiki e Content Index | Imagens mantêm a policy `aculta_image`; PDFs usam Media `course_document`, Group e viewer compartilhado; tópicos e respostas preservam Forum/Node/Comment e revalidam membership, access, cache e purpose; discussões de atividade usam referências LMS e Group do curso/turma | `aculta_lms_resources` implementa leituras, galerias, `course_document` e `course_video` explícito; `aculta_portal` mantém Media `remote_video`. Wiki/Revista/galeria/vídeo e upload PDF passaram smoke funcional autenticado no Runtime com fixtures removidas. O Content Index tem cobertura Kernel para providers owner, acesso LMS e relações de curso. Discussões Fórum/H5P ligadas à atividade ainda não passaram smoke HTTP; a tentativa H5P parou antes de criar fixture porque `private://h5p` está indisponível. `embedded_video` da Wiki/Fórum aguarda decisão editorial. F15 segue Dev até gates PHPCS H5P e integrações Fórum/H5P restantes. Revisão visual fora do escopo atual. Não duplicar storage, reader PDF ou entidade de discussão |
 | F16 — Hardening | performance, segurança, privacidade, acessibilidade, cache e tamanho/timeout PDF | zero Critical/High; matriz completa e gates PASS | rollback por componente/flag/config, sem downgrade destrutivo de entidades |
 | RC — Candidato integrado pronto para deploy | Testes automatizados, config sync estática, navegador pré-deploy, acessibilidade, segurança, documentação, versão e rollback | Todo requisito funcional e visual aplicável passa antes de RC; evidências e limites registrados. Alpha valida o Runtime após deploy | Não implantar automaticamente; se Alpha encontrar divergência, voltar a Dev, corrigir e gerar novo RC |
 | F17 — Google Classroom (opcional e última) | Após RC aprovado e nova decisão; publicar somente link para atividade ACULTA | OAuth/scopes, consentimento e link para fonte LMS aprovados | Nenhum pacote/token/rota/storage nesta linha; desabilitar integração sem afetar LMS |
 
 ## Estado de fase
 
-**H5P PHPCS (2026-11-04, 0.4.0-dev.174):** execução integral Drupal/
-DrupalPractice em PHP registra zero erros e zero avisos. A correção renomeou
-somente a nova classe utilitária de limites ZIP e seu teste para UpperCamelCase;
-identificadores históricos H5P de descoberta Drupal foram preservados. Imports
-e indentação foram ajustados. Unit H5P: 34 testes/139 asserções PASS; Kernel:
-18 testes/480 asserções PASS, com 7 depreciações upstream Core/contrib. PHP lint
-e `git diff --check` PASS. A contagem de 263 erros/33 avisos de
-2026-10-29 é histórica e não representa o gate atual. O restante de F15 segue
-pendente conforme a linha da fase, incluindo runtime e integrações HTTP.
+**H5P PHPCS (2026-10-29, 0.4.0-dev.155):** rodadas automáticas corrigiram
+849 violações sem alterar regras ou nomes históricos; a microfase atual removeu
+11 problemas de whitespace PHP. PHPCS integral recontado registra 263 erros e
+33 avisos em 38 arquivos, incluindo PHPDoc, convenções legadas e estilo. O
+formatter tentou alterar booleanos JS para tokens PHP; essas mudanças foram
+revertidas e JS não foi modificado. Unit + Kernel passaram: 43 testes/481
+assertions, com 41 depreciações Core/contrib; PHP lint dos 11 arquivos PHP
+alterados e `git diff --check` passaram. F15 segue em Dev até o gate PHPCS
+completo passar.
 
 **F13 — notificações educacionais: implementação funcional; revisão visual pendente.** O responsável escolheu avisos para mudanças acionáveis persistidas; edições editoriais sem efeito acionável não notificam. Matrícula e certificado são publicados pelo contrato público do
 `aculta_messenger`, que grava Message, integra lista/contador e enfileira e-mail
@@ -222,9 +222,11 @@ leitura ampla e bloqueio de edição de score Webform. Auditoria somente leitura
 nenhum papel atualmente tem as permissões `view any submission score` ou `view own submission score`.
 Kernel também passou com uma submissão Webform persistida e autoria real: o dono com a permissão de leitura
 própria pode ver a nota, outra conta é negada e edição direta permanece proibida (1 teste, 11 assertions;
-42 deprecações de Core/contrib). O Runtime não tem atividade de upload, resposta de arquivo, atividade de quiz
-ou formulário com score; por isso, smoke HTTP/browser no Runtime fica `DEFERRED` e não foram criadas fixtures
-persistentes nele. A suíte automatizada cobre transmissão de arquivo privado, membership revogada, acesso
+42 deprecações de Core/contrib). Em 2026-10-22, smoke funcional HTTP no Runtime usou atividade File Upload
+temporária: `.exe` foi recusado, PNG permitido foi enviado à resposta e gravado em storage privado; cenário,
+arquivo, resposta e membership de teste foram removidos. O download da resposta validou a conta dona, outsider
+e bloqueio de conta no ciclo dev.81. O Runtime segue sem atividade de quiz ou formulário com score, então esses
+caminhos permanecem DEFERRED. A suíte automatizada cobre transmissão privada, membership revogada, acesso
 preservado de educador e autoria/controle de nota Webform com entidade persistida. Não há integração de nota
 Webform para LMS, conforme fronteira definida.
 Webform Score continua restrito às submissões Webform; não há integração que promova resultado
@@ -435,20 +437,17 @@ Node e apresenta ao estudante os tópicos autorizados para a atividade atual, no
 Group do curso ou de uma turma filha. Unit adapter: 22 testes / 256 assertions
 PASS; Kernel MariaDB: 3 testes / 168 assertions PASS, incluindo fixture real
 atividade→aula→curso, tópico autorizado por Group e exclusão de tópico em outro
-curso; 46 depreciações upstream. Config Sync foi aplicado parcialmente no
-Runtime de teste. Em 2026-11-04, o smoke autenticado no host `cursos` encontrou
-que o atributo Hook usava nome incompatível com o ID real do formulário;
-`aculta_forum_lms` dev.36 corrige o registro e um Unit focal cobre o contrato.
-Após rebuild, Chromium confirmou o formulário de atividade, o link ao tópico
-autorizado em uma turma filha e a abertura do tópico. A checagem funcional não
-encontrou overflow nos viewports efetivos 305/375/753/1265 px; curso, turma,
-aula, atividade e tópico descartáveis foram removidos, sem envio de resposta.
-O editor H5P em `main` agora carrega a listagem AJAX e HelloWorld via HTTP 200 no iframe (dev.176); porém o submit não persistiu os campos ocultos `library`/`parameters`. A criação direta para provar o player também parou porque a identidade Drush não escreve em `private://h5p`; storage não foi alterado e a turma descartável foi removida. Salvamento e player H5P seguem pendentes.
-O constraint de imagem em entrega é exercitado pelo `file.validator` do Core
-com arquivo válido/inválido, e o Kernel cobre a rota privada após revogação;
-upload de ponta a ponta no Runtime, renderização HTTP/visual e upload de entrega
-seguem pendentes. O Comment de
-discussão já reutiliza o editor `usuario_aculta` e o filtro de imagens
+curso; 46 depreciações upstream. Config Sync foi aplicado
+parcialmente no Runtime de teste e o resolver/hook foram resolvidos no
+container; não há tópico/Comment LMS real nesse Runtime, então smoke autenticado
+segue pendente. O constraint de imagem em entrega é exercitado pelo
+`file.validator` do Core com arquivo válido/inválido. Smoke Runtime dev.80
+validou envio de PNG permitido e recusa de `.exe`; o dev.81 validou o download
+da resposta e a negação após revogar acesso. O que permanece pendente é o smoke
+HTTP de tópicos/Comments ligados a uma atividade, incluindo exibição sob o
+formulário. O smoke H5P associado foi bloqueado antes de criar fixtures porque
+o storage privado H5P está indisponível. O Comment de discussão já reutiliza o
+editor `usuario_aculta` e o filtro de imagens
 `aculta_image`; anexos separados de arquivo não fazem parte do fluxo.
 O Kernel H5P também confirma persistência do estado de tentativa ao retornar
 com a mesma conta e isolamento frente a outro membro matriculado (3 testes /

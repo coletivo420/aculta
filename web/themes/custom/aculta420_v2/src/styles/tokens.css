@@ -14,7 +14,7 @@
   --color-border: #687783;
   --color-on-brand: #fff;
   --color-on-highlight: #0c3c29;
-  /* Fixed contrast pairs retained for the legacy login dialog and Google brand surface. */
+  /* Fixed contrast pairs retain the legacy login panel and Google surface. */
   --color-auth-control-surface: #e9f1fc;
   --color-auth-control-text: #111;
   --color-auth-control-focus: #0c3c29;
@@ -28,6 +28,7 @@
   --color-auth-secondary-text: #163d2a;
   --color-auth-action-text: #1a1a1a;
   --color-auth-dialog-link: #171513;
+  --color-on-footer: #171513;
   --color-status: #176b3a;
   --color-warning: #ffc107;
   --color-warning-text: #7a4b00;
@@ -42,6 +43,12 @@
   --palette-green: #689427;
   --palette-red: #d4452d;
   --color-brand-secondary: var(--palette-green);
+  /* Footer roles preserve the V1 green with text pairs meeting AA contrast. */
+  --color-footer-surface: var(--color-brand-secondary);
+  --color-footer-text: #171513;
+  --color-footer-link-surface: #0c3c29;
+  --color-footer-link-text: #fff;
+  --color-footer-focus-ring: #0c3c29;
   /* Editorial red is slightly deepened from the V1 primitive to meet AA on light surfaces. */
   --color-link-editorial: #b52f22;
   --color-link-editorial-hover: var(--color-text-primary);
@@ -120,6 +127,7 @@
   --color-on-brand: #171513;
   --color-on-highlight: #171513;
   --color-auth-dialog-link: #171513;
+  --color-on-footer: #171513;
   --color-status: #8fe0a8;
   --color-warning: #ffc107;
   --color-warning-text: #ffd27a;
@@ -128,6 +136,7 @@
   --logo-filter: none;
   /* Valores do modo escuro para a paleta herdada da V1 (contraste a verificar na revisão visual). */
   --color-brand-secondary: #9ac15a;
+  --color-footer-focus-ring: #171513;
   --color-link-editorial: #f08a76;
   --color-link-editorial-hover: #f4efe8;
   --color-media-stage: #3a332a;

@@ -12,7 +12,7 @@ dependencies:
     - aculta420_v2
 id: aculta420_v2_aculta_forum_categories_home
 theme: aculta420_v2
-region: header
+region: sidebar_first
 weight: 0
 provider: null
 plugin: 'views_block:aculta_forum_categories-block_landing'

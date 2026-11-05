@@ -1,0 +1,39 @@
+{# The page title block owns the H1, so this adapter avoids a duplicate heading. #}
+{% set essentials_region = null %}
+{% if tipo or datas or url %}
+  {% set essentials_region %}
+    {% if tipo %}<p><strong>{{ 'Tipo:'|t }}</strong> {{ tipo }}</p>{% endif %}
+    {% if datas %}
+      <h2>{{ 'Datas'|t }}</h2>
+      <ul>
+        {% for linha in datas %}<li>{{ linha }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+    {% if url %}<p><a href="{{ url }}">{{ 'Site do evento'|t }}</a></p>{% endif %}
+  {% endset %}
+{% endif %}
+
+{% set content_region = null %}
+{% if subtitulo or cancelado or descricao %}
+  {% set content_region %}
+    {% if subtitulo %}<p class="aculta-event-page-layout__subtitle">{{ subtitulo }}</p>{% endif %}
+    {% if cancelado %}
+      <p class="aculta-event-page-layout__cancelled" role="status"><strong>{{ 'Este evento foi cancelado.'|t }}</strong></p>
+    {% endif %}
+    {% if descricao %}<div class="aculta-event-page-layout__description">{{ descricao|nl2br }}</div>{% endif %}
+  {% endset %}
+{% endif %}
+
+{% set sidebar_region = null %}
+{% if organizador %}
+  {% set sidebar_region %}
+    <h2>{{ 'Organização'|t }}</h2>
+    <p>{{ organizador }}</p>
+  {% endset %}
+{% endif %}
+
+{{ include('aculta420_v2:event-page-layout', {
+  essentials: essentials_region,
+  content: content_region,
+  sidebar: sidebar_region,
+}, with_context = false) }}

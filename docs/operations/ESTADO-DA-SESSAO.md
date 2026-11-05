@@ -1,22 +1,25 @@
 # Continuação — Institution Bar, Gin e bloco Core Navigation quebrado — 2026-11-04
 
-- **Objetivo:** corrigir a sobreposição da Institution Bar com o menu Gin na sessão administrativa e remover o aviso de bloco quebrado, prosseguindo a migração visual V1→V2 sem alterar Gin/core.
-- **Ajuste visual vigente (`1.2.0-dev.20`):** logo Institution Bar 100 px em mobile e desktop, sem quebra; ícones e avatar 30 px, com alvos de toque de 35 × 35 px. Gap zero e recuo fluido.
-- **Causa do aviso:** `navigation.block_layout` mantinha `navigation_shortcuts` com `shortcut` desativado. O plugin legado não é descoberto e o Core renderizava `block_broken`. Removida a entrada obsoleta da configuração exportada e aplicada via config import; o aviso não aparece mais.
-- **Implementado:** Institution Bar mede o retângulo real `#admin-toolbar`, move seu início inline para depois da sidebar e sincroniza mudanças por resize/ResizeObserver/transitionend. Em coluna pequena, marca/utilitários refluem verticalmente. Margem fluida nas extremidades; gap dos ícones reduzido a zero; ícones de busca, carrinho, mensagens e avisos em 32 px (avatar). Menu de conta limita-se à coluna geral.
-- **Arquivos:** `config/sync/navigation.block_layout.yml`; `web/themes/custom/aculta420_v2/components/multidomain-bar/{multidomain-bar.css,multidomain-bar.js}`; templates de ícones dos utilitários; teste `tests/browser/aculta420-v2-navigation/admin-sidebar-runtime.py`; changelog, roadmap, manifesto e README.
-- **Runtime:** Drush confirmou Drupal 11.5.0-beta1/`aculta_runtime`. Antes do import: `updatedb:status` sem updates e apenas `navigation.block_layout` divergente. Snapshot integral externo (fora do repositório), 66.256.506 bytes, modo 0600, SHA-256 `ff5eea49d393f4901f706bd57a53d8e07481edc212c097f912bc5724f95a1ea5`. Config import e `drush cr` PASS; após, updates sem pendências e config sem diferenças.
-- **Firefox ESR visível:** login via conta de teste UID 257; sidebar aberta/recolhida, painel de conta aberto, tema claro/escuro e 11 larguras (320–1440 CSS px). 44/44 verificações de geometria PASS, sem interseção da barra com Gin, sem alvos da barra fora do retângulo e sem mensagem `block_broken`. Capturas e JSON em `$SUITE_OUT/aculta420-v2-admin-sidebar-20261104/accepted/`. Zoom/teclado não foram executados. ScrollWidth da página ultrapassa a viewport com Gin recolhido (385 px para viewport 320; 420 px para viewport 390); diagnóstico aponta `.top-bar__actions`/controles administrativos fora da Institution Bar. Correção dessa rolagem fica DEFERRED para escopo próprio do toolbar.
-- **Firefox ESR visível:** CSS atualizado servido no Runtime, purpose main, rota `/`, visitante, modo claro/escala 100%, viewports 1014 e 500 CSS px. Logo medida em 100 px; barra sem quebra e controles contidos. Capturas em `$SUITE_OUT/aculta420-v2-institution-bar-20261105/`; viewport físico 320, dark mode, zoom ampliado e teclado DEFERRED.
-- **Gates:** V2 foundations 51 pares de contraste PASS; V2 SDC 22/22 PASS; browser validators 21 checks PASS. A tentativa do gate SDC genérico no worktree não rodou por falta de `vendor/autoload.php`; a chamada do shell contract também não encontrou Drush nesse worktree. Drush read-only no checkout autorizado confirmou Drupal 11.5.0-beta1, banco `aculta_runtime`, `updatedb:status` sem pendências e `config:status` limpo.
-- **Git:** `93f60a212f` (respiro anterior), `e27bd3c83a` (handoff) e `8b2d80acdf` (`1.2.0-dev.19`, barra em uma linha) publicados em fast-forward. O checkout Runtime principal continua atrás do remoto e com alterações paralelas; sincronizei somente o CSS, preservei as demais edições e rodei `drush cr`. O HEAD completo do Runtime permanece DEFERRED.
-- **Próximo:** continuar inventário e migração da família Eventos em `web/themes/custom/aculta420_v2/docs/roadmap.md`, comparando V1 somente como referência visual.
-- **Correção imediata mobile (`1.2.0-dev.21`):** a 320 CSS px, o Gin expandido ocupava 257 px e deixava apenas 63 px para logo e controles, causando overflow real. A Institution Bar agora usa a faixa superior de largura total abaixo de 40rem; o menu Gin começa depois da barra. Firefox ESR visível no Runtime, usuário administrativo de teste UID 257, Gin aberto/recolhido, claro/escuro e 11 viewports (320–1440 px): 44/44 checks PASS. Ícones 30 px, alvos 35 × 35 px, logo 100 px, sem overflow da barra nem interseção visual com a região Gin. Evidências em `$SUITE_OUT/aculta420-v2-admin-sidebar-final-20261105/`. `drush cr` PASS. Zoom/teclado DEFERRED.
-- **Entrega imediata publicada:** commit `17a3f3b75cb2670e31206267e4a0ff14e5721887` (`corrige barra institucional em telas estreitas`), enviado a `origin/dev` após fetch/rebase. Arquivos: CSS da barra, teste de geometria, manifesto, changelog, roadmap e este handoff. Runtime conserva o CSS idêntico ao commit; `updatedb:status`, `config:status` e `drush cr` passaram.
-- **Pausa solicitada:** a microfase da Institution Bar está concluída. A migração de Eventos segue sem aceite visual e sem commit, pois `/eventos` respondeu 404 no Runtime; manter as alterações locais desse trabalho para retomada.
-- **Próximo:** após a pausa solicitada, retomar a migração visual da família Eventos em `web/themes/custom/aculta420_v2/docs/roadmap.md`, comparando V1 somente como referência visual.
+- **Objetivo:** corrigir a sobreposição da Institution Bar com o Gin na sessão administrativa, remover o aviso de bloco quebrado e seguir a migração visual V1→V2.
+- **Causa do aviso:** `navigation.block_layout` mantinha `navigation_shortcuts` com `shortcut` desativado. O plugin legado não é descoberto e o Core renderizava `block_broken`. A configuração exportada foi corrigida e importada; Firefox autenticado não mostra mais o aviso.
+- **Implementado:** barra fixa mede `#admin-toolbar`, ocupa a coluna geral depois da sidebar e atualiza durante resize/transição sem deslocar Gin. Coluna estreita empilha marca/utilitários. Margem fluida; gap dos ícones reduzido a zero; busca, carrinho, mensagens e avisos em 32 px (avatar). Painel de conta restrito à coluna geral.
+- **Validação:** Firefox ESR visível, UID de teste 257, 11 larguras 320–1440, Gin aberto/fechado, claro/escuro e menu de conta aberto: 44/44 verificações de geometria PASS. SDC 25/25; Foundations 51 pares PASS; Shell contract 13 checks PASS. Config import e `drush cr` PASS; `updatedb:status` sem pendências; `config:status` limpo. Capturas: `$SUITE_OUT/aculta420-v2-admin-sidebar-20261104/accepted-final/`.
+- **Limite observado:** com Gin recolhido, `scrollWidth` excede a viewport (385 px em 320; 420 px em 390). Diagnóstico aponta `.top-bar__actions` e controles do toolbar administrativo, fora da Institution Bar. A rolagem horizontal geral ficou DEFERRED para correção própria do toolbar. Zoom e teclado DEFERRED.
+- **Causa e sync de configuração:** removida a entrada obsoleta `navigation_shortcuts`; import executado após snapshot externo de 66.256.506 bytes, SHA-256 `ff5eea49d393f4901f706bd57a53d8e07481edc212c097f912bc5724f95a1ea5`.
+- **Git:** commit `26f0af0657` (`fix(aculta420_v2): reserva coluna do Gin e remove bloco quebrado`) publicado por fast-forward em `origin/dev`. Arquivos de CSS/JS, ícones e config do mesmo commit sincronizados no Runtime; HEAD local não foi trocado por estar 35 commits atrás e conter alterações paralelas.
+- **Próximo:** continuar inventário da família Eventos conforme `web/themes/custom/aculta420_v2/docs/roadmap.md`, após concluir esta correção administrativa.
 
 ---
+
+# Continuação — migração visual do Fórum V1 para SDC V2 — 2026-11-04
+
+- **Objetivo:** prosseguir na migração visual completa V1→V2 por famílias de página; esta fatia cobre tópicos, categorias, Views públicas e apresentação compartilhada de discussão.
+- **Feito:** SDCs `forum-topic`, `forum-category` e `discussion-comment`; adapters para node, Views e comentário; estilos de listagem, busca, estados vazios e discussão. A V2 mantém render arrays de conteúdo/autoria/contagem.
+- **Arquivos na worktree de migração:** `web/themes/custom/aculta420_v2/components/{forum-topic,forum-category,discussion-comment}/`, `src/styles/forum.css`, `templates/content/node--aculta-forum-topic.html.twig`, `templates/views/views-view-{fields,unformatted}--aculta-forum-*.html.twig`, `templates/comment--aculta-discussion-post.html.twig`, `scripts/validate-aculta420-v2-sdc.php`, catálogo, roadmap e changelog.
+- **Validações:** Drush descobriu e renderizou 25/25 SDCs; foundations 51 pares de contraste PASS; PHP lint e sintaxe Python PASS; Firefox ESR visível no purpose `forum`, landing/categorias/tópico real, 9 larguras, claro/escuro, teclado e zoom 200/400: 76/76 PASS. Corrigido o bloco da landing, que antes imprimia campos genéricos e não usava o SDC. Capturas em `$SUITE_OUT/aculta420-v2-forum-landing-20261104/`.
+- **Runtime:** `toca`, Drupal 11.5.0-beta1, banco `aculta_runtime`; `updatedb:status` sem pendências, `config:status` limpo; `drush cr` PASS. Nenhuma alteração de config/conteúdo. O comentário `aculta_discussion_post` não apareceu nas rotas públicas verificadas; o componente passou render isolado e o estado real continua DEFERRED.
+- **Git:** commit `79138060ae` (`feat(aculta420_v2): migra apresentação do Fórum para SDC`) enviado por fast-forward para `origin/dev`. Os templates de Views e CSS relevantes foram sincronizados ao checkout Runtime compartilhado e exercitados; o HEAD completo do Runtime não foi trocado para preservar alterações locais paralelas de conta, LMS e shell.
+- **Próximo:** inventariar a família de Eventos. Retomar lendo `web/themes/custom/aculta420_v2/docs/roadmap.md`, `docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md`, ADR-046 seção 3 e os templates/CSS de Eventos V1.
 
 # Continuação — Phosphor Icons, Leaflet e cache/CDN da V2 — 2026-11-04
 
@@ -51,27 +54,16 @@
   encontrados no HTML dos endpoints. `updatedb:status` e `config:status` sem
   pendências/diferenças. Nenhuma credencial foi enviada; autenticação de ponta
   a ponta permanece para validação manual.
-- **Retomada visual do login (2026-11-04):** o modal foi conferido em Firefox
-  ESR visível, purpose `main`, rota `/`, visitante. Em 320 px claro, 390 px
-  escuro e 1440 px nos dois modos, “Continuar com Google” aparece no topo e o
-  formulário carrega com foco inicial; larguras medidas: 288, 358 e 440 px,
-  sem overflow. Capturas em `$SUITE_OUT/login-modal-v2-20261104/`. O painel usa
-  o verde institucional da V1 via token V2; contraste texto/superfície é
-  5.08:1 claro e 8.80:1 escuro. Zoom real de 200% com viewport de 320 CSS px
-  não alargou a página; Tab avançou do usuário para senha e Escape fechou o
-  modal. A navegação Google não foi concluída; autenticação ponta a ponta e
-  demais purposes continuam DEFERRED.
-- **Ajuste da identidade do modal (dev.14, 2026-11-04):** a superfície foi
-  ajustada para o verde V1 exato `#6b9a2c`; texto escuro mede 5,45:1. O botão
-  Google usa o SVG V1, sombra sutil e fundo creme em hover/foco. No Runtime,
-  Firefox ESR visível confirmou formulário, Google, foco inicial e Escape, sem
-  overflow nos viewports efetivos 500 e 1430 CSS px em claro/escuro. A tentativa
-  de viewport 320/390 ficou limitada a 500 px pelo Firefox/X11; zoom 200%, foco
-  real do Google e outros purposes DEFERRED. Capturas e `results.json` estão em
-  `$SUITE_OUT`. `drush cr`, fundações (55 pares), SDC schemas (55/764) e SDC
-  Runtime (19/19) passaram; `updatedb:status` e `config:status` estavam limpos.
-  Commit `e546eba028` publicado em `origin/dev`; arquivos do tema sincronizados
-  no checkout Runtime sem trocar seu HEAD nem afetar as alterações locais.
+- **Refinamento visual V1 (dev.14):** o modal voltou ao verde exato `#6b9a2c`,
+  com texto escuro (5,45:1), Google com SVG V1, sombra e realce creme em hover/
+  foco. Firefox ESR visível no Runtime confirmou formulário, Google e Escape
+  em claro/escuro, sem overflow nos viewports efetivos 500 e 1430 CSS px. O
+  Firefox/X11 não reduziu abaixo de 500 px; testes em 320/390, zoom 200%, foco
+  real do Google e outros purposes ficaram DEFERRED. Capturas e resultados em
+  `$SUITE_OUT`. Gates: fundações 55 pares PASS; schemas 55/764 PASS; render SDC
+  19/19 PASS; `drush cr` PASS. Pré-check `updatedb:status`/`config:status` limpo.
+  Commit `e546eba028` publicado; só os arquivos do tema desta entrega foram
+  sincronizados ao Runtime, sem trocar HEAD nem tocar config/banco.
 - Arquivos desta entrega: `web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php`,
   `templates/layout/page.html.twig`, `components/multidomain-bar/`, manifesto/
   bibliotecas/changelog/roadmap do tema e `scripts/validate-aculta420-v2-sdc.php`.
@@ -92,15 +84,12 @@
 - **Objetivo:** concluir lacunas funcionais do LMS; somente depois trabalhar pagamentos e, por último, resolver pendências `updatedb` individualmente. Escopo da sessão é código/funcionalidade, sem revisão estética do tema.
 - **LMS Resources:** `aculta_lms_resources` local está em dev.33. Além do upload PDF AJAX e dos widgets leitura/galeria/vídeo já validados, o builder de vídeo corrige a rota Core `media/{id}/edit` para linkar a URL oEmbed apenas depois de verificar Media publicada e Entity Access sob `courses`; URLs inválidas, credenciais e esquemas diferentes de HTTP(S) não são expostos. Unit + Kernel focal: 9 testes / 89 assertions PASS.
 - **Smoke funcional Runtime:** conteúdo de teste descartável foi autorizado pelo responsável. Um Group temporário autenticado referenciou Wiki, galeria, vídeo e Media `remote_video` existente ID 12; os widgets carregaram e salvaram. A estrutura exibiu Wiki em `wiki420`, galeria em Revista e vídeo no destino YouTube. Antes da correção, o canonical Media `/media/12/edit` retornava 404 sem sessão editorial. Firefox headless verificou Form API, submit, foco e ausência de overflow em 320/390/600/768/1280 px; sem capturas ou critérios estéticos. Group removido e fontes editoriais preservadas. O PDF privado também passou pelo AJAX upload, persistência Group→Media→File e lista; todas as fixtures foram removidas. Formulário de PDF sem overflow em 320/390/768/1280 px.
-- **Bloqueio Runtime H5P:** `aculta_lms_h5p.framework` falhou antes da criação de fixtures com “The private H5P storage directory is unavailable” (watchdog 843707). A tentativa do smoke H5P parou antes de criar conta, turma, tópico ou conteúdo H5P de teste. Não alterei `private/` nem contornei a configuração do storage. Kernel permanece como cobertura da integração de discussão.
-- **H5P PHPCS:** dev.174 fecha PHPCS integral Drupal/DrupalPractice com zero erros/avisos. Unit 34/139 e Kernel MariaDB 18/480 PASS; Kernel registrou 7 depreciações Core/contrib. A classe nova de limites ZIP e o teste foram normalizados para UpperCamelCase sem renomear identificadores históricos H5P. O bootstrap do Kernel na cópia isolada encontrou Core duplicado; a execução no checkout Runtime passou.
-- **Forum/LMS atividade:** dev.36 corrige `form_aculta_lms_answer_submission_form_alter` para o hook correspondente ao ID real `aculta_lms_answer_submission`; Unit focal 1/2 PASS. Smoke Chromium autenticado em `cursos` exibiu o tópico autorizado e o abriu; viewports efetivos 305/375/753/1265 px não tiveram overflow. Curso, turma, aula, atividade e tópico temporários foram removidos; nenhuma resposta foi enviada.
-- **Upload de resposta LMS:** Runtime autenticado confirmou que o `managed_file` da atividade `file_upload` aceita PNG e recusa `.exe` conforme as extensões da política central. O PNG criou FID temporário 853; File API removeu entidade e arquivo físico. Curso, turma, aula e atividade temporários foram removidos, sem submissão de resposta. O envio final da resposta de arquivo permanece sem smoke para não deixar tentativa persistente.
-- **Runtime:** `toca`, Drupal 11.5.0-beta1, PHP 8.5.12, DB `aculta_runtime`, tema `aculta420_v2`; `aculta_lms_h5p` reporta dev.174 e `aculta_forum_lms` dev.36. Pós-smokes e sync de código: `drush cr` PASS, `updatedb:status` sem updates, `config:status` limpo e zero conteúdo Runtime de teste residual. Oito arquivos de código do H5P foram comparados byte a byte com `46334c2d22`; nenhum dado/configuração do site foi alterado.
-- **Git:** commits `972a1b4a33` (`corrige recursos funcionais dos materiais LMS`), `c5e3da6f2e` (`atualiza status do LMS Resources`) e `46334c2d22` (`corrige gate PHPCS do adapter H5P`) e `8ba56d9060` (`Corrige hook de discussões nas atividades LMS`) enviados por fast-forward a `origin/dev`; o primeiro precisou rebasear após o remoto avançar. O Runtime mantém o checkout principal no HEAD `b05a3b131b`, com alterações locais paralelas; os arquivos de Resources e os oito arquivos de código H5P foram comparados ao publicado e coincidem. O HEAD local não foi trocado para preservar trabalho alheio.
+- **Bloqueio Runtime H5P:** `aculta_lms_h5p.framework` falhou antes da criação de fixtures com “The private H5P storage directory is unavailable” (watchdog 843707). Nenhuma conta, turma, tópico ou conteúdo H5P de teste foi criado nesse smoke. Não alterei `private/` nem contornei a configuração do storage. Kernel permanece como cobertura da integração de discussão.
+- **Runtime:** `toca`, Drupal 11.5.0-beta1, PHP 8.5.12, DB `aculta_runtime`, tema `aculta420_v2`. Pós-smoke: `updatedb:status` sem updates, `config:status` limpo e zero conteúdo de teste residual.
+- **Git:** commits `972a1b4a33` (`corrige recursos funcionais dos materiais LMS`) e `c5e3da6f2e` (`atualiza status do LMS Resources`) enviados por fast-forward a `origin/dev`; o primeiro precisou rebasear após o remoto avançar. O Runtime usa o checkout principal ainda no HEAD `b05a3b131b`, 17 commits atrás, com alterações locais paralelas; os arquivos de Resources e status foram comparados ao publicado e coincidem, inclusive o hook novo. `updatedb:status` e `config:status` limpos; `drush cr` PASS. O HEAD local não foi trocado para preservar alterações alheias.
 - **Índice geral:** `docs/operations/status/aculta_lms_resources.yml` atualizado para dev.33. `scripts/validate-project-status-index.php` continua FAIL por divergências preexistentes de nove outros componentes e README raiz desatualizado; não rodei `--write` para não editar outros módulos.
-- **Próximos passos:** revisar os contratos F15/F16 ainda abertos, especialmente a indisponibilidade de storage H5P e o smoke H5P e a submissão final de resposta de arquivo/upload de entrega; não avançar para pagamentos antes de resolver o que pode ser concluído no LMS. Depois pagamentos; por último `updatedb` item a item. O link direto à fonte oEmbed não altera o Content Index nem `media.settings` global.
-- **Retomar lendo:** seção F15 em `docs/modules/ACULTA-LMS-ROADMAP.md`, `aculta_lms_resources/src/CourseResourceBuilder.php`, `aculta_lms_h5p/src/aculta_H5PDrupal/AcultaH5PArchiveResourceLimits.php`, o erro H5P 843707, o contrato de entrega, a suíte `SubmissionUploadPolicyKernelTest` e a regra Runtime de `AGENTS.md`; o vínculo de discussão em atividade comum já passou smoke autenticado. Antes de iniciar pagamentos, concluir as demais lacunas funcionais de LMS que não dependem do storage H5P.
+- **Próximos passos:** revisar os contratos F15/F16 ainda abertos, especialmente a indisponibilidade de storage H5P e o fechamento das integrações Forum/entregas; não avançar para pagamentos antes de resolver o que pode ser concluído no LMS. Depois pagamentos; por último `updatedb` item a item. O link direto à fonte oEmbed não altera o Content Index nem `media.settings` global.
+- **Retomar lendo:** seção F15 em `docs/modules/ACULTA-LMS-ROADMAP.md`, `aculta_lms_resources/src/CourseResourceBuilder.php`, o erro H5P 843707 e a regra Runtime de `AGENTS.md`; depois revisar as integrações Forum/entregas antes de iniciar pagamentos.
 
 # Estado da sessão
 
@@ -1082,31 +1071,97 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Preservar:** modificações paralelas em `composer.json`, `composer.lock`,
   `web/themes/custom/aculta420/js/utility-drawers.js` e
   `web/themes/custom/aculta_theme/` não pertencem a esta tarefa.
-- **Paridade visual V1→V2 — breadcrumb:** a V1 usa `templates/navigation/breadcrumb.html.twig`
-  e `css/components/breadcrumb.css`: links editoriais sublinhados, separador
-  `/`, página atual e foco visível. A V2 não tinha override nem componente;
-  `1.2.0-dev.13` adiciona SDC `breadcrumb` com schema estrito, story, README,
-  CSS mobile-first por tokens e consumer no template Drupal. O vermelho
-  editorial foi aprofundado para WCAG AA: 5,70:1 no canvas claro e 6,79:1 na
-  superfície escura. Firefox ESR visível no purpose `main`, URL `/node/572`,
-  estado anônimo: 320px claro, 390px escuro, 1440px claro/escuro; sem overflow,
-  título atual e rótulo traduzido presentes. Zoom real 200% com viewport de
-  320 CSS px manteve documento em 320px; Tab chegou ao link com contorno de 3px.
-  Capturas em `$SUITE_OUT/v1-v2-breadcrumb-20261104/`. Gate SDC 19/19 e schemas
-  55/764 PASS; outros purposes e rotas ficam pendentes.
-- **Próximo passo:** comparar capturas de páginas V1/V2 em conteúdo editorial,
-  perfil público e Revista; continuar a auditoria de catálogo e estilos ainda
-  não migrados. O header mantém
-  marca e menu juntos; a vitrine está abaixo; eventos, fórum e agenda ficam na
-  sidebar. A paridade completa e a Fase 2 continuam abertas.
+- **Próximo passo:** comparar as capturas atuais do shell com as referências V1
+  já salvas e revisar rodapé/regions restantes. O header agora traz marca e
+  menu juntos; a vitrine está abaixo dele; eventos, fórum e agenda estão na
+  sidebar. Fase 2 ainda não está concluída. Revisar roadmap/CHANGELOG e executar
+  os gates finais antes do commit do shell.
 
-## Continuação LMS — resposta de arquivo e editor H5P — 2026-11-04
+## Continuação LMS — desbloqueio Twig do formulário de materiais — 2026-11-04
 
-- **Objetivo:** fechar os smokes funcionais de entrega `file_upload` e H5P no Runtime, limpar fixtures criadas e registrar limites reais sem alterar a apresentação visual.
-- **Resposta de arquivo:** Firefox/Chromium autenticado no Runtime enviou resposta completa a uma atividade temporária `file_upload`. PNG aceito, estado `submitted`, resposta 16 associada à atividade 14 e FID 857 permanente em URI privada com `file.usage` somente da resposta. A fixture e respostas foram removidas pela API Drupal; FIDs temporários 854–856 da mesma sequência também foram removidos após confirmar owner, estado temporário e ausência de usos. Verificado que entidades e caminhos físicos exatos não existem mais. A política de extensão segue com teste de PNG permitido e EXE recusado.
-- **H5P dev.175:** `aculta_H5PStoragePath::getPath()` deixa de pedir `MODIFY_PERMISSIONS`, pois o PHP-FPM (`toca`) escreve na pasta privada pela associação ao grupo `aculta`, sem poder executar `chmod`. Unit focal 1/8 PASS; no Runtime HTTP o path e os settings do editor resolveram. Storage privado e permissões não foram tocados.
-- **H5P dev.176:** o formulário Group roda no purpose `main`; retirar o requisito `courses` da rota AJAX corrigiu o 404 same-origin. Kernel MariaDB `AcultaH5PHookDiscoveryTest`: 1 teste/23 assertions PASS. Chromium autenticado confirmou a listagem `/h5peditor/.../libraries` HTTP 200, opção `H5P.HelloWorld` e iframe do editor carregado.
-- **Limite do salvamento H5P:** submit do editor recarregou a página sem persistir os campos Drupal `library`/`parameters`. A tentativa seguinte de criar atividade pela API Drupal/Drush falhou porque a identidade CLI não tem escrita em `private://h5p`; não alterei permissões nem gravei direto no storage. Group 130, dono UID 5 e rótulo QA conhecido, foi removido pela Entity API; confirmadas ausência da entidade/linha. A linha preexistente H5P (ID 1) e a biblioteca `H5P.HelloWorld` foram preservadas. Criação pelo editor e reprodução pelo player seguem pendentes.
-- **Runtime:** host `toca`, Drupal 11.5.0-beta1/PHP 8.5.12, banco `aculta_runtime`; `drush cr` e checagens pós-trabalho `updatedb:status` e `config:status` PASS/limpos. O código dev.176 foi comparado byte a byte nos três arquivos sincronizados (manifesto, rota e Kernel); Runtime compartilha HEAD `aa732dfc83` após avanço remoto paralelo. Nenhuma importação de config, update de banco, alteração em `private/` ou resíduo de fixture permaneceu.
-- **Documentos atualizados:** roadmap F15, changelog e status YAML de `aculta_lms_h5p` refletem o HTTP 200 e o bloqueio real do submit/player. Este handoff foi atualizado a partir do último conteúdo publicado para preservar a seção canônica e evitar alterações locais alheias.
-- **Pendência para retomada:** investigar por que o submit do H5P não preenche os inputs Drupal ocultos durante o submit Form API. Depois, repetir criação/player com operação HTTP sob PHP-FPM e fixture exata, limpar pela API Drupal, e então continuar pagamentos e `updatedb` um item por vez.
+- **Correção funcional:** `account-menu.twig` agora usa `avatar` e
+  `menu_items` como slots SDC em vez de blocos Twig declarados dentro do
+  componente. Isso elimina o conflito ao renderizar o componente dentro do
+  `embed` da barra institucional. Marcada como `aculta420_v2` 1.2.0-dev.9;
+  nenhum CSS ou ajuste visual foi feito.
+- **Runtime:** em `toca`, Drush confirmou Drupal 11.5.0-beta1 e banco
+  `aculta_runtime`; preflight `updatedb:status` sem updates e `config:status`
+  limpo. `drush cr` e gate `scripts/validate-aculta420-v2-sdc.php` passaram
+  (16 componentes).
+- **Smoke de recursos:** Firefox headless autenticado exibiu e salvou leitura
+  Wiki, galeria e vídeo existentes em Group temporário; os três IDs persistiram.
+  A fixture tinha associação criadora válida e foi removida. Fontes editoriais
+  preexistentes foram preservadas.
+- **PDF privado:** corrigido `CourseDocumentController` (Resources dev.32). O
+  `form_alter` restrito à rota registra callback estático antes do cache; o
+  objeto Group não fica no FormState cacheado durante o upload. Após salvar, o
+  callback revalida criação e associa a Media por Group. Smoke autenticado
+  passou no AJAX `managed_file`, salvamento, relação Group→Media→File e lista de
+  materiais. Group, Media, File e PDF local foram removidos.
+- **Responsividade funcional do upload:** no formulário de PDF, 320/390/768/
+  1280 CSS px passaram sem overflow horizontal; o input file permaneceu
+  habilitado e recebeu foco por script. Sem capturas ou avaliação estética.
+- **Validação:** Unit controller 4 testes / 36 assertions PASS; PHPCS PASS;
+  gate SDC V2 cobre 17 componentes; `updatedb:status` sem updates e
+  `config:status` limpo. Tentativas com fixture sem associação de educador
+  falharam como esperado e foram limpas; uma Media órfã de uma tentativa foi
+  removida por ID/nome confirmado.
+- **Pendências:** continuar as integrações LMS ainda abertas, depois pagamentos
+  e updates pendentes. Esta correção não conclui a fase nem altera o tema
+  visualmente.
+
+## Entrega — menu de conta e avatar na Institution Bar — 2026-11-04
+
+- **Objetivo concluído em código:** SDC `account-menu` mostra somente avatar/ícone; “Minha conta” é texto visualmente oculto no `<summary>` para nome acessível. Painel continua usando links da Menu API (Minha conta/Sair). Visitante recebe “Entrar” via slot render array e o JS existente abre o diálogo. O tema não recebe apelido nem lê User/Profile/`user_picture`.
+- **Portal:** `aculta_user` fornece `aculta_account_avatar` via `AvatarResolver` e `PublicProfilePolicy`, com contexto `user` e tags cacheáveis da conta/perfil/arquivo. Sem avatar disponível, o tema usa ícone neutro; sem iniciais.
+- **Commits enviados a `origin/dev`:** `61fee4f75c` (tema, primeira implementação); `cb7cc9cf5a` (somente avatar); `5bb3a94491` (Portal); `e043035681`, `a42607570f`, `95a4077897`, `e09a808c97`, `dc51b63bbd` (correções encontradas por schema/renderização/runtime). Sem trailers de coautoria.
+- **Gates:** SDC estático 55 componentes/764 checks PASS; Design Foundations 2468 PASS; browser validators 21 PASS; foto do usuário INV-FOTO-1..11 PASS; rotas administrativas 42 arquivos/174 rotas PASS; PHP lint/PHPCS/`git diff --check` PASS. Drush SDC 17/17 e shell contract 13/13 PASS após `drush cr`. `validate-aculta420-foundation.php` falha porque exige ACULTA420 V1 como tema público; é incompatibilidade do gate legado com V2, não corrigida aqui.
+- **Runtime:** preflight `updatedb:status` sem updates e `config:status` sem diferenças; `drush cr` PASS. A correção de menu visitor foi integrada ao checkout Runtime compartilhado, que permanece no HEAD local antigo e contém alterações paralelas; preservadas sem reset/rebase. HTTP/Firefox ESR visível no host de desenvolvimento: visitante, 320/390/1440 CSS px, claro/escuro, link Entrar presente e sem overflow (6 capturas em `$SUITE_OUT/account-menu-20261104/`). O runner antigo de avatar falhou por rota `/membros` sem cartões no Runtime (0 resultados); não é PASS desta entrega.
+- **DEFERRED:** não foi possível validar autenticado com foto, avatar do acervo e sem foto, zoom nativo 200%, teclado/árvore de acessibilidade do Firefox ou Olivero. A tentativa autenticada não alcançou uma página ACULTA verificável. Não usar as capturas autenticadas em branco como evidência. Repetir com contas de teste provisionadas e sessão autenticada válida; conferir anúncio acessível “Minha conta”.
+- **Próximo passo:** retornar ao objetivo pausado da revisão ADR-046 (Shell/fundações). Antes de integrar o branch local, reavaliar `git status` e fazer rebase cuidadoso: o checkout principal segue em `b05a3b131b`, atrás de `origin/dev`, com arquivos locais de shell, LMS, Composer e outros; não sobrescrever nem stagear trabalho alheio.
+- **Retomar lendo:** este handoff, `docs/decisions/ADR-046-desenho-tema-v2-shell-e-fundacoes.md`, `docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md`, `web/themes/custom/aculta420_v2/docs/roadmap.md`, `PagePresentationHooks.php`, SDCs `account-menu`/`multidomain-bar`, e `aculta_user` `AccountMenuPresentationBuilder.php`/`AccountMenuPresentationHooks.php`.
+
+### Complemento — modal de login no padrão visual V1 — 2026-11-04
+
+- O modal de entrada da V1 foi portado para a V2 mantendo o `<dialog>` nativo,
+  o fluxo Fetch já existente e o botão Google quando o Portal o disponibiliza.
+  A apresentação usa os tokens semânticos do tema; não reintroduz Bootstrap,
+  jQuery nem dependência de runtime externa.
+- Corrigida a busca dos templates do diálogo: eles ficam fora da Institution Bar
+  no DOM. Também foi ajustado o seletor do botão Drupal de submit e o foco
+  visível dos controles. Escape fecha o diálogo e restaura foco ao link Entrar.
+- Commits enviados a `origin/dev`: `68e3df14ea` (porte visual/modal) e
+  `003716ba5a` (submit e foco). `drush cr`, SDC do tema (17 componentes),
+  shell contract (13 checks), browser validators (21), Design Foundations
+  (2468), SDC schemas (55 componentes/764 checks) e `git diff --check`
+  passaram conforme registros da sessão.
+- Correção seguinte: painel verde usa o token semântico da paleta da V1 e texto
+  escuro por contraste AA: 5.08:1 claro, 8.80:1 escuro. Commit
+  `3f9f0470a9` enviado a `origin/dev`.
+- Firefox ESR visível confirmou o link Google, carregamento do formulário e
+  layout em 320px claro, 390px escuro e 1440px nos dois modos; larguras do
+  diálogo de 288/358/440px e sem overflow. Zoom real de 200% com viewport CSS
+  de 320px manteve documento em 320px. Tab avançou de usuário para senha; Escape
+  fechou o diálogo e restaurou foco ao link. Capturas em
+  `$SUITE_OUT/login-modal-v2-20261104/`.
+- Gates: fundações V2 47 pares, incluindo login, Google, controles e ações nos
+  dois modos; schemas SDC 55 componentes/764 checks, PHP lint e `git diff
+  --check` passaram. O gate SDC no worktree isolado não rodou por ausência de
+  `vendor`; foi executado no checkout do Runtime e passou.
+- Runtime em `toca`/`aculta_runtime`: `updatedb:status` sem pendências,
+  `config:status` limpo e `drush cr` concluído. O smoke visual usou esse checkout
+  compartilhado, que permanece sujo e 20 commits atrás de `origin/dev`; por isso
+  a igualdade integral do Runtime com o HEAD publicado segue DEFERRED. O código
+  do modal foi testado no Runtime. Autenticação ponta a ponta e outros purposes
+  também permanecem DEFERRED.
+# Retomada — migração visual da V1 para V2 (Wiki420) — 2026-11-04
+
+- **Objetivo ativo:** migrar a apresentação de todas as páginas V1 para SDC/tokens V2, preservando estrutura mobile-first. Esta é uma fatia parcial (Wiki420); Magazine continua parcialmente em validação e as demais páginas ainda precisam de inventário.
+- **Feito nesta fatia:** em `web/themes/custom/aculta420_v2`, criado SDC `wiki-entry` com variantes article/teaser, adapters Drupal para node full/teaser, CSS global para listagens e CSS do componente com tokens. Adaptação do estilo de grade após identificar o wrapper real `.aculta-wiki-list` e seu cabeçalho de contagem.
+- **Evidência:** `drush cr` PASS; o gate `validate-aculta420-v2-sdc.php` rodando do worktree detectou e renderizou 22/22 SDCs. Firefox ESR visível no Runtime (toca, Drupal 11.5.0-beta1, banco aculta_runtime), anônimo, home/listagem/artigo, claro/escuro aplicado pela sessão do browser, larguras 320/390/767/768/1440 CSS px: 189/189; sem overflow, H1 duplicado ou ordem invertida; Tab e Shift+Tab PASS. Capturas em `$SUITE_OUT/aculta420-v2-wiki-20261104/`.
+- **DEFERRED:** zoom físico 200%, autenticação, leitor de tela e compatibilidade Drupal 12. `/wiki/busca` respondeu 404 e a home não tinha form de busca no Runtime; não se criou rota nem alterou o owner `aculta_wiki`. Busca/categorias da V1 permanecem sem um consumer real validado.
+- **Arquivos da fatia:** `web/themes/custom/aculta420_v2/components/wiki-entry/`, `src/styles/wiki.css`, `aculta420_v2.libraries.yml`, `templates/content/node--wiki-entry--{full,teaser}.html.twig`, `docs/{README.md,architecture.md,components.md,roadmap.md}`, `CHANGELOG.md`, `scripts/validate-aculta420-v2-sdc.php`, `tests/browser/aculta420-v2-wiki/`.
+- **Runtime:** antes do sync, `updatedb:status` informou que não há updates; `config:status` não encontrou diferenças. Nenhuma importação, update de banco, alteração de conteúdo ou configuração foi executada.
+- **Pendências globais:** concluir evidência de zoom/auth para Wiki; fechar Magazine; inventariar e portar eventos, Fórum, conta/perfil, cursos/LMS, FAQ, avisos, loja e demais páginas conforme os templates/CSS da V1.
+- **Retomar lendo:** `web/themes/custom/aculta420_v2/docs/roadmap.md`, `docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md`, ADR-046, `web/themes/custom/aculta420/css/components/wiki.css`, V1 `components/patterns/wiki-entry/`, e este handoff.
+

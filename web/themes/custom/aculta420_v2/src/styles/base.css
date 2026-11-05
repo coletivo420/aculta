@@ -91,6 +91,14 @@ fieldset {
   max-inline-size: 100%;
 }
 
+/* Third-party CAPTCHA widgets can exceed their fieldset's inline size. */
+.captcha-type-challenge--turnstile > .captcha__element {
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
 /* Accessibility */
 :focus-visible {
   outline: var(--focus-ring-width) solid var(--color-focus-ring);

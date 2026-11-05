@@ -10,7 +10,7 @@ dependencies:
     - aculta420_v2
 id: aculta420_v2_aculta_events_upcoming
 theme: aculta420_v2
-region: header
+region: sidebar_first
 weight: 1
 provider: null
 plugin: aculta_events_upcoming

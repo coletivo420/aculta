@@ -108,6 +108,8 @@ foreach ([
   ['--color-auth-control-text', '--color-auth-control-surface'],
   ['--color-auth-action-text', '--color-brand-highlight'],
   ['--color-auth-secondary-text', '--color-auth-secondary-surface'],
+  ['--color-footer-text', '--color-footer-surface'],
+  ['--color-footer-link-text', '--color-footer-link-surface'],
 ] as [$foreground, $background]) {
   $lightRatio = check_contrast($foreground, $background, $rootTokens, []);
   $assert($lightRatio >= 4.5, sprintf('light %s on %s is %.2f:1 (minimum 4.5:1)', $foreground, $background, $lightRatio));
@@ -115,6 +117,9 @@ foreach ([
   $assert($ratio >= 4.5, sprintf('dark %s on %s is %.2f:1 (minimum 4.5:1)', $foreground, $background, $ratio));
   $contrastPairs += 2;
 }
+
+$footerFocusRatio = check_contrast('--color-footer-focus-ring', '--color-footer-surface', $rootTokens, $darkTokens);
+$assert($footerFocusRatio >= 3, sprintf('dark footer focus indicator on --color-footer-surface is %.2f:1 (minimum 3:1)', $footerFocusRatio));
 
 foreach ($surfaces as $background) {
   $ratio = check_contrast('--color-focus-ring', $background, $rootTokens, $darkTokens);

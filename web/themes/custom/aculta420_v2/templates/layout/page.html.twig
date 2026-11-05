@@ -1,31 +1,45 @@
 {# Main page layout. Keep every configured region available to blocks. #}
 <div class="page">
-  {{ include('aculta420_v2:multidomain-bar', {
-    brand_home_url: aculta_brand_home|default('/'),
-    logo_base_url: base_path ~ directory ~ '/assets/logos',
-    logo_alt: 'ACULTA - Associação Cultural Antiproibicionista'|t,
-    is_account_domain: domain_presentation.layout.institution_bar_account|default(false),
-    show_utility_bar: domain_presentation.layout.show_utility_bar|default(true),
-    account_menu: aculta_account_menu|default(null),
-    cart_url: aculta_cart.url|default(null),
-    cart_count: aculta_cart.count|default(0),
-    cart_empty: aculta_cart.empty|default(true),
-    cart_total: aculta_cart.total|default(''),
-    cart_sites: aculta_cart.sites|default([]),
-    cart_checkout_url: aculta_cart.checkout_url|default(''),
-    messages_url: aculta_messenger.url|default(null),
-    messages_count: aculta_messenger.unread_count|default(0),
-    messages_all_url: aculta_messenger.all_url|default(''),
-    alerts_url: aculta_alerts.url|default(null),
-    alerts_count: aculta_alerts.count|default(0),
-    alerts_count_kind: aculta_alerts.count_kind|default('active'),
-    alerts_all_url: aculta_alerts.all_url|default(''),
-    links: multidomain_network_links|default([]),
-    search: aculta_search_utility|default(null)
-  }, with_context = false) }}
+  <div class="page__institution">
+    {{ include('aculta420_v2:multidomain-bar', {
+      brand_home_url: aculta_brand_home|default('/'),
+      logo_base_url: base_path ~ directory ~ '/assets/logos',
+      logo_alt: 'ACULTA - Associação Cultural Antiproibicionista'|t,
+      is_account_domain: domain_presentation.layout.institution_bar_account|default(false),
+      show_utility_bar: domain_presentation.layout.show_utility_bar|default(true),
+      account_menu: aculta_account_menu|default(null),
+      cart_url: aculta_cart.url|default(null),
+      cart_count: aculta_cart.count|default(0),
+      cart_empty: aculta_cart.empty|default(true),
+      cart_total: aculta_cart.total|default(''),
+      cart_sites: aculta_cart.sites|default([]),
+      cart_checkout_url: aculta_cart.checkout_url|default(''),
+      messages_url: aculta_messenger.url|default(null),
+      messages_count: aculta_messenger.unread_count|default(0),
+      messages_all_url: aculta_messenger.all_url|default(''),
+      alerts_url: aculta_alerts.url|default(null),
+      alerts_count: aculta_alerts.count|default(0),
+      alerts_count_kind: aculta_alerts.count_kind|default('active'),
+      alerts_all_url: aculta_alerts.all_url|default(''),
+      search: aculta_search_utility|default(null)
+    }, with_context = false) }}
+  </div>
 
-  {% if page.header %}
+  {% if domain_presentation.layout.show_site_header|default(true) %}
     <header class="page__header" role="banner">{{ page.header }}</header>
+  {% endif %}
+
+  {% if page.navigation %}
+    <div class="page__navigation">{{ page.navigation }}</div>
+  {% endif %}
+
+  {% if multidomain_network_links is not empty %}
+    <div class="page__showcase">
+      {{ include('aculta420_v2:purpose-showcase', {
+        heading: 'Ecossistema ACULTA'|t,
+        links: multidomain_network_links
+      }, with_context = false) }}
+    </div>
   {% endif %}
 
   {% if page.highlighted %}
@@ -34,13 +48,18 @@
 
   {% if page.help %}
     <div class="page__help">{{ page.help }}</div>
+  {% elseif aculta_help %}
+    <div class="page__help">{{ aculta_help }}</div>
   {% endif %}
 
-  {% if page.breadcrumb %}
-    <div class="page__breadcrumb">{{ page.breadcrumb }}</div>
+  {% if page.breadcrumb or aculta_breadcrumb %}
+    <div class="page__breadcrumb">{{ page.breadcrumb }}{{ aculta_breadcrumb }}</div>
   {% endif %}
 
   <main id="main-content" class="page__main{{ page.sidebar_first ? ' page__main--with-sidebar' }}" tabindex="-1">
+    {% if aculta_page_title %}
+      <div class="page__title">{{ aculta_page_title }}</div>
+    {% endif %}
     <div class="page__content">{{ page.content }}</div>
     {% if page.sidebar_first %}
       <aside class="page__sidebar" aria-label="{{ 'Related content'|t }}">{{ page.sidebar_first }}</aside>
@@ -48,6 +67,6 @@
   </main>
 
   {% if page.footer %}
-    <footer class="page__footer" role="contentinfo">{{ page.footer }}</footer>
+    {{ include('aculta420_v2:site-footer', { content: page.footer }, with_context = false) }}
   {% endif %}
 </div>

@@ -72,13 +72,3 @@
   </dialog>
 </template>
 
-{% if links is not empty %}
-  <nav class="aculta-purpose-showcase" aria-labelledby="aculta-purpose-showcase-title">
-    <h2 id="aculta-purpose-showcase-title" class="visually-hidden">{{ 'Ecossistema ACULTA'|t }}</h2>
-    <ul class="aculta-purpose-showcase__list">
-      {% for link in links %}
-        <li><a class="aculta-purpose-showcase__link" href="{{ link.url }}">{{ link.title }}</a></li>
-      {% endfor %}
-    </ul>
-  </nav>
-{% endif %}

@@ -115,7 +115,9 @@ def inspect(driver, viewport, url, width):
         expanded:toggle?.getAttribute('aria-expanded')??null,
         links:panel?.querySelectorAll('a[href]').length??0,
         linkHeight:link?Math.ceil(link.getBoundingClientRect().height):0,
-        duplicateBrand:!!root?.querySelector('.navigation-bar__brand'),
+        brandCount:root?.querySelectorAll('.navigation-bar__brand').length??0,
+        brandImage:!!root?.querySelector('.navigation-bar__brand img'),
+        brandImageLoaded:(root?.querySelector('.navigation-bar__brand img')?.naturalWidth??0)>0,
         navigationInDomainHeader:!!document.querySelector('.page__header')?.contains(root),
         institutionBars:document.querySelectorAll('.aculta-institution-bar').length,
         domainHeaders:document.querySelectorAll('.page__header').length,
@@ -136,15 +138,17 @@ driver = Driver(bidi=True, browser="firefox")
 viewport = Viewport(driver)
 try:
     for purpose, url in purposes:
-        for width in (320, 767, 768, 1440):
+        for width in (320, 767, 768, 1024, 1099, 1100, 1440):
             metrics = inspect(driver, viewport, url, width)
-            mobile = width < 768
+            mobile = width < 1100
             expected = (
                 metrics["root"] and metrics["panel"] and metrics["toggle"]
                 and metrics["links"] > 0
                 and metrics["toggleDisplay"] == ("flex" if mobile else "none")
                 and metrics["expanded"] == "false"
-                and metrics["duplicateBrand"] is False
+                and metrics["brandCount"] == 1
+                and metrics["brandImage"] is True
+                and metrics["brandImageLoaded"] is True
                 and metrics["navigationInDomainHeader"] is True
                 and metrics["institutionBars"] == 1
                 and len(metrics["navigationLandmarks"]) == 2
@@ -219,7 +223,7 @@ finally:
 (OUT / "results.json").write_text(json.dumps({
     "environment": environment,
     "authState": "anonymous",
-    "viewportWidths": [320, 767, 768, 1440],
+    "viewportWidths": [320, 767, 768, 1024, 1099, 1100, 1440],
     "purposes": {purpose: url for purpose, url in purposes},
     "checks": checks,
 }, ensure_ascii=False, indent=2) + "\n")

@@ -1,11 +1,12 @@
 global-styling:
-  version: 1.2.0-dev.2
+  version: 1.2.0-dev.3
   css:
     theme:
       'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap': { type: external, minified: true }
       src/styles/tokens.css: {}
       src/styles/base.css: {}
       src/styles/layout.css: {}
+      src/styles/events.css: {}
       src/styles/wiki.css: {}
       src/styles/forum.css: {}
   dependencies:

@@ -1,6 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Multidomain institutional bar
-description: Faixa institucional ACULTA fixa com logotipo e utilidades legadas; links de portais aparecem apenas na home principal.
+description: Faixa institucional ACULTA fixa com logotipo e utilidades legadas.
 group: ACULTA
 libraryOverrides:
   dependencies:
@@ -97,16 +97,6 @@ props:
     alerts_all_url:
       type: string
       default: ''
-    links:
-      type: array
-      default: []
-      items:
-        type: object
-        additionalProperties: false
-        required: [title, url]
-        properties:
-          title: { type: string, minLength: 1 }
-          url: { type: string, format: uri-reference }
 slots:
   search:
     title: Pesquisa

@@ -38,6 +38,10 @@ ou `Purge-Tags` por conta própria.
 - `logos/aculta420-horizontal-white-78x26.webp` e
   `logos/aculta420-horizontal-white-156x52.webp` copiam as densidades 1×/2×
   do logo usado na barra institucional legada.
+- Os três arquivos `logos/wiki420-horizontal-*.webp` e as variantes
+  `wiki420-stacked-*.webp` e `wiki420-globe-*.png` foram copiados da identidade
+  Wiki420 da V1. O Domain Header usa os logos horizontais por `srcset`; os
+  demais tamanhos ficam disponíveis para contextos responsivos futuros.
 - `icons/aculta420-favicon.ico` é o favicon da V1.
 - `icons/apple-touch-icon.png` foi criado a partir do bitmap de 32×32 do favicon
   da V1, ampliado com interpolação e centralizado em uma tela de 180×180 px com
