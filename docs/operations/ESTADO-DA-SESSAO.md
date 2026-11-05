@@ -1,5 +1,14 @@
 > **Limite de registro:** no máximo 10 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/`, sem alteração de texto.
 
+# Economia de tokens — oito itens aprovados — 2026-11-05
+
+- **Objetivo:** reduzir a leitura e a saída de comandos pelos agentes, conforme aprovação do responsável (itens 1 a 8 de `docs/operations/AUDITORIA-TOKENS-TESTES-2026-11-05.md`, seção 9).
+- **Concluído:** itens 1, 2, 3 (Wiki e Studio), 4, 5, 6, 7 e 8. `TESTES-NAVEGADOR.md` caiu de 57 KB para 5,5 KB; as rodadas F a V estão em `docs/history/portal/TESTES-NAVEGADOR-RODADAS.md`. AGENTS da Wiki caiu de 34 KB para 6,7 KB; do Studio, de 13 KB para 7,5 KB. Criado `docs/operations/GATES.md`. Removidos `scripts/validate-institution.php` e `scripts/validate-podplant420-assets.php`.
+- **Commits em `origin/dev`:** `b1589e8e` (arquivo e compactação de testes de navegador), `8dbb5066` (AGENTS de módulos), `f9aa6230` (fonte única de regras, gates, não ler, saída obrigatória e remoção de validadores).
+- **Verificações:** links relativos dos arquivos alterados conferidos por script; restaram quebras anteriores a esta entrega (`docs/portal/README.md` e `ACULTA-MODULES-CLOSEOUT.md`, para módulos de PDF Viewer que já não estão no caminho indicado). Gates PHP **DEFERRED**: o ambiente não tem `vendor/` nem Drush.
+- **Pendências:** `handoff/podplant420` não foi arquivado, por causa de referências vivas em `config/sync/views.view.revista_sessoes.yml` e em scripts de verificação. `aculta_portal/docs/AGENT-POLICIES.md` não foi deduplicado, porque exige conferência item a item com `DRUPAL-11-STANDARDS.md`. Cerca de 30 documentos ativos ainda trazem caminhos de máquina; a regra está em `AGENTS.md`, seção Escopo e segurança, e a correção fica para uma fase própria. Validadores com uma única citação em auditoria ou dívida foram mantidos e precisam de decisão do responsável.
+- **Próximo passo:** no servidor de desenvolvimento, rodar `php scripts/validate-aculta-portal-drupal11.php` e os gates do escopo de cada área alterada, colando a saída; depois decidir o arquivamento de `handoff/podplant420`.
+
 # Continuação — ACULTA420 V2, Meu Perfil H2 e HTMX F1 parcial — 2026-11-05
 
 - **Objetivo:** executar o plano V2 em `web/themes/custom/aculta420_v2/docs/roadmap.md`; respeitar decisões pendentes e publicar cada entrega em `dev`.
