@@ -51,7 +51,7 @@ final class RegisterPopupForm extends RegisterForm {
     ];
     if ($this->isHtmxRequest()) {
       (new Htmx())
-        ->post()
+        ->post(Url::fromRoute('aculta_portal.register_popup'))
         ->select('#' . self::WRAPPER_ID)
         ->swap('innerHTML')
         ->onlyMainContent()

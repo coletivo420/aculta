@@ -188,9 +188,10 @@ try:
                 user:!!form?.querySelector('input[name="name"]'),
                 pass:!!form?.querySelector('input[name="pass"]'),
                 hxPost:form?.getAttribute('data-hx-post')??null};})();""")
+            metrics["hxPost"] = (metrics["hxPost"] or "").split("?")[0]
             metrics.update(passed=(
                 metrics["dialog"] and metrics["form"] and metrics["user"] and metrics["pass"]
-                and metrics["hxPost"] == ""
+                and metrics["hxPost"].endswith("/entrar/janela")
                 and metrics["documentWidth"] <= width
             ))
             login_records.append(metrics)
@@ -224,8 +225,140 @@ try:
 finally:
     driver_nojs.close()
 
+def read_test_password():
+    env_file = ROOT / "secrets/teste_comum.env"
+    if not env_file.exists():
+        return None
+    for line in env_file.read_text().splitlines():
+        line = line.strip()
+        if line.startswith("TESTE_COMUM_PASSWORD="):
+            return line.split("=", 1)[1].strip().strip('"').strip("'")
+    return None
+
+
+def login_test_account(driver):
+    password = read_test_password()
+    if not password:
+        return None
+    driver.get(f"{BASE}/")
+    clicked = driver.js("""const a=[...document.querySelectorAll('.aculta-account-menu a[href]')]
+      .find((item)=> /\\/entrar\\/janela/.test(item.getAttribute('href')));
+      if (!a) { return false; } a.click(); return true;""")
+    if not clicked:
+        return None
+    time.sleep(1)
+    driver.js("""const form=document.querySelector('#aculta-login-content form');
+      form.querySelector('input[name="name"]').value='teste.comum';
+      form.querySelector('input[name="pass"]').value=arguments[0];
+      form.querySelector('input[type="submit"]')?.click(); return true;""", [password])
+    deadline = time.time() + 20
+    while time.time() < deadline:
+        state = driver.js("""return {loginLink:!![...document.querySelectorAll('.aculta-account-menu a[href]')]
+          .find((a)=>/\\/entrar\\/janela/.test(a.getAttribute('href'))),
+          dialog:!!document.querySelector('dialog[data-aculta-login-dialog][open]')};""")
+        if not state:
+            time.sleep(0.25)
+            continue
+        if not state["loginLink"] and not state["dialog"]:
+            return {"authenticated": True, **state}
+        time.sleep(0.25)
+    return {"authenticated": False}
+
+
+def open_drawer(driver, trigger, dialog_id, content_selector):
+    trigger_deadline = time.time() + 15
+    while time.time() < trigger_deadline:
+        if driver.js("return !!document.querySelector(arguments[0]);", [trigger]):
+            break
+        time.sleep(0.25)
+    driver.js("const t=document.querySelector(arguments[0]); t.focus(); t.click(); return true;", [trigger])
+    deadline = time.time() + 15
+    while time.time() < deadline:
+        state = driver.js("""const dialog=document.querySelector(arguments[0]);
+          const content=dialog?.querySelector(arguments[1]);
+          return {open:!!dialog?.open,text:(content?.textContent||'').trim().slice(0,200),
+            details:content?.querySelectorAll('details').length||0};""", [dialog_id, content_selector])
+        if state and state["open"] and len(state["text"]) > 0:
+            return state
+        time.sleep(0.25)
+    raise SystemExit(f"A gaveta {dialog_id} não carregou por HTMX.")
+
+
+authed = None
+drawer_result = {}
+if read_test_password():
+    driver_auth = Driver(bidi=True)
+    try:
+        reset_zoom()
+        authed = login_test_account(driver_auth)
+        if authed and authed.get("authenticated"):
+            print("PASS login da conta de teste", authed, flush=True)
+            alerts = open_drawer(
+                driver_auth,
+                ".aculta-alerts-trigger",
+                "#aculta-alerts-dialog",
+                "[data-aculta-drawer-content]",
+            )
+            messenger = open_drawer(
+                driver_auth,
+                ".aculta-messenger-trigger",
+                "#aculta-messenger-dialog",
+                "[data-aculta-drawer-content]",
+            )
+            driver_auth.js("""document.querySelector('#aculta-messenger-dialog')?.close();
+              document.querySelector('.aculta-alerts-trigger')?.click(); return true;""")
+            time.sleep(1)
+            drawer_matrix = []
+            for mode in ("light", "dark"):
+                driver_auth.js("document.documentElement.setAttribute('data-theme', arguments[0])", [mode])
+                for width in WIDTHS:
+                    set_viewport(driver_auth, width)
+                    metrics = driver_auth.js("""return (()=>{const d=document.documentElement;
+                      const dialog=document.querySelector('#aculta-alerts-dialog');
+                      const content=dialog?.querySelector('[data-aculta-drawer-content]');
+                      return {width:innerWidth,documentWidth:d.scrollWidth,mode:d.getAttribute('data-theme'),
+                        open:!!dialog?.open,text:(content?.textContent||'').trim().length,
+                        details:content?.querySelectorAll('details').length||0};})();""")
+                    metrics.update(passed=(
+                        metrics["open"] and metrics["text"] > 0
+                        and metrics["documentWidth"] <= width
+                    ))
+                    drawer_matrix.append(metrics)
+                    print(f"{'PASS' if metrics['passed'] else 'FAIL'} avisos {mode} {width}px", flush=True)
+                    (OUT / f"alerts-{mode}-{width}.png").write_bytes(base64.b64decode(
+                        driver_auth.req("GET", f"/session/{driver_auth.session}/screenshot")
+                    ))
+            driver_auth.req("POST", f"/session/{driver_auth.session}/actions", {"actions": [{
+                "type": "key", "id": "drawer-escape", "actions": [
+                    {"type": "keyDown", "value": ""}, {"type": "keyUp", "value": ""},
+                ],
+            }]})
+            time.sleep(1)
+            keyboard_drawer = driver_auth.js("""return {open:!!document.querySelector('#aculta-alerts-dialog')?.open,
+              focusOnTrigger:document.activeElement===document.querySelector('.aculta-alerts-trigger')};""")
+            keyboard_drawer["passed"] = (not keyboard_drawer["open"]) and keyboard_drawer["focusOnTrigger"]
+            print(f"{'PASS' if keyboard_drawer['passed'] else 'FAIL'} teclado das gavetas", keyboard_drawer, flush=True)
+            drawer_result = {
+                "alerts": alerts,
+                "messenger": messenger,
+                "matrix": drawer_matrix,
+                "keyboard": keyboard_drawer,
+                "passed": all(item["passed"] for item in drawer_matrix) and keyboard_drawer["passed"],
+            }
+            (OUT / "results-drawers.json").write_text(
+                json.dumps(drawer_result, ensure_ascii=False, indent=2)
+            )
+        else:
+            drawer_result = {"passed": False, "reason": "login da conta de teste não concluiu", "state": authed}
+    finally:
+        reset_zoom()
+        driver_auth.close()
+else:
+    drawer_result = {"passed": None, "reason": "secrets/teste_comum.env ausente"}
+
 result = {
     "host": HOST,
+    "authenticated_drawers": drawer_result,
     "matrix": records,
     "preview": preview,
     "keyboard": keyboard,
@@ -234,8 +367,9 @@ result = {
     "no_js": fallback,
 }
 (OUT / "results.json").write_text(json.dumps(result, ensure_ascii=False, indent=2))
+drawer_ok = drawer_result.get("passed") is not False
 if not all(item["passed"] for item in records + login_records) or not all(
     item["passed"] for item in (preview, keyboard, zoom, fallback)
-):
+) or not drawer_ok:
     raise SystemExit("Falha na validação visual da busca HTMX.")
 print("ACULTA HTMX F1 SEARCH: PASS", flush=True)

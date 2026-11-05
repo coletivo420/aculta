@@ -425,17 +425,18 @@ o `id="aculta-search-content"`, que faltava para o alvo HTMX. O Portal responde
 ao cadastro popup com fragmento e `HX-Redirect`, mantendo o caminho AJAX só no
 fluxo sem HTMX. Login real com a conta de teste respondeu `HX-Redirect` e criou
 sessão; o POST inválido do cadastro devolveu o fragmento com erro sem criar
-conta. A suíte `tests/browser/aculta-htmx-f1/` passou 26/26 checks no Runtime
-de desenvolvimento (busca e login em 320, 390, 768, 959, 960 e 1440 px, claro e
-escuro, zoom 200%, prévia HTMX e fallback sem JavaScript).
+conta. A suíte `tests/browser/aculta-htmx-f1/` passou 43/43 checks no Runtime
+de desenvolvimento (busca, login e gaveta de avisos autenticada em 320, 390,
+768, 959, 960 e 1440 px, claro e escuro, zoom 200%, prévia HTMX, teclado e
+fallback sem JavaScript).
 
-**Falta para concluir F1:** a evidência visual e de teclado autenticada das
-gavetas de mensagens/avisos no Runtime (os grupos `details` por origem e
-leitura já estão implementados no Portal e integrados no shell V2; falta a
-captura com sessão real). O consumer V2 do cadastro popup é o checkout de
-doação, reservado à F5, que aguarda autorização; não há ponto de entrada V2
-para capturá-lo. F2 permanece dependente de F1a; F3 segue a ordem de
-dependências de módulos definida na ADR-050.
+**Estado de F1:** busca, login e gavetas de mensagens/avisos usam HTMX, com
+foco, `aria-live` e teclado conferidos; a gaveta de avisos autenticada foi
+capturada em seis larguras e dois modos, com os dois grupos `details`. Resta o
+consumer V2 do cadastro popup, que é o checkout de doação, reservado à F5 e
+aguardando autorização; não há ponto de entrada V2 para capturá-lo. F2
+permanece dependente de F1a; F3 segue a ordem de dependências de módulos
+definida na ADR-050.
 
 ## Compatibilidade e limites
 

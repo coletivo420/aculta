@@ -16,11 +16,12 @@
   (F5) e permanece aguardando autorização.
 - Gates de SDC, foundations, shell contract, browser validators e render Drupal
   isolado (35 SDCs) passaram; o validador de render também exige o contrato
-  HTMX do login. A suíte `tests/browser/aculta-htmx-f1/` passou 26/26 checks no
-  Runtime de desenvolvimento: seis larguras em claro/escuro para busca e login,
-  prévia por HTMX, foco visível, zoom real de 200% e fallback sem JavaScript.
-  Esta microfase ainda não conclui ADR-050 F1 (falta a evidência visual e de
-  teclado autenticada das gavetas e a validação do consumer do cadastro).
+  HTMX do login. A suíte `tests/browser/aculta-htmx-f1/` passou 43/43 checks no
+  Runtime de desenvolvimento: seis larguras em claro/escuro para busca, login e
+  gaveta de avisos autenticada, prévia por HTMX, foco visível, zoom real de
+  200%, teclado (Escape devolve o foco ao gatilho) e fallback sem JavaScript.
+  O consumer V2 do cadastro popup é o checkout de doação (F5), aguardando
+  autorização.
 
 ## Não versionado — auditoria de templates G3
 

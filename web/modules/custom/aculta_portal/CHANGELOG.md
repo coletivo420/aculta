@@ -1,11 +1,15 @@
 ## Não versionado — suporte HTMX aos popups e à busca (ADR-050 F1b parcial)
 
 - `LoginPopupForm` configura `Htmx` apenas em requisições `HX-Request`, envia o
-  formulário ao endpoint atual, seleciona o wrapper e retorna ao alvo do
-  diálogo. O sucesso usa `HX-Redirect` com o destino local validado; o fluxo
-  sem HTMX mantém o redirect nativo e a resposta Drupal AJAX legada para a V1.
-- `RegisterPopupForm` segue o mesmo contrato: fragmento e `HX-Redirect` em
-  `HX-Request`, com `#ajax` preservado só no caminho sem HTMX.
+  formulário à URL explícita da rota do popup, seleciona o wrapper e retorna ao
+  alvo do diálogo. O sucesso usa `HX-Redirect` com o destino local validado; o
+  fluxo sem HTMX mantém o redirect nativo e a resposta Drupal AJAX legada para
+  a V1. A URL explícita corrige o `data-hx-post=""`, que enviava o POST à
+  página atual em vez de `/entrar/janela` quando o formulário era carregado em
+  outra rota.
+- `RegisterPopupForm` segue o mesmo contrato, com `hx-post` explícito para
+  `/criar-conta/janela`: fragmento e `HX-Redirect` em `HX-Request`, com `#ajax`
+  preservado só no caminho sem HTMX.
 - `SearchPopupForm` adiciona `hx-get` à prévia em requisições HTMX, com debounce
   de 300 ms e `hx-sync="this:replace"`; sem HTMX continua anexando
   `aculta_portal/search-preview`, cujo Fetch permanece exclusivo da V1.
@@ -18,7 +22,8 @@
   respondeu `HX-Redirect` e criou sessão; POST inválido do cadastro devolveu o
   fragmento com erro e não criou conta; a busca retornou `data-hx-*` só com
   `HX-Request` e manteve o script legado sem o cabeçalho. A suíte de navegador
-  `tests/browser/aculta-htmx-f1/` passou 26/26 checks. O consumer V2 do cadastro
+  `tests/browser/aculta-htmx-f1/` passou 43/43 checks, incluindo login real,
+  gavetas autenticadas de mensagens/avisos e teclado. O consumer V2 do cadastro
   popup (checkout de doação) é F5 e aguarda autorização.
 
 ## Não versionado — raiz do Studio e entrada de Minha Conta

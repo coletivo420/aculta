@@ -16,6 +16,13 @@ Cobre:
 - fallback sem JavaScript: o link de busca abre `/busca/popup` e o formulário
   nativo funciona.
 
+Quando `secrets/teste_comum.env` existe, o script também autentica a conta de
+teste pelo popup, abre as gavetas de mensagens e avisos por HTMX, captura a
+matriz de avisos e confere que Escape fecha a gaveta devolvendo o foco ao
+gatilho. A senha é lida do arquivo em tempo de execução e nunca é escrita no
+script, no repositório ou na saída padrão. Sem o arquivo, esse bloco é
+registrado como não executado.
+
 O cadastro popup (`/criar-conta/janela`) responde a requisições HTMX, mas o
 único consumidor atual é o checkout de doação (F5, aguardando autorização);
 não há ponto de entrada no V2 para capturá-lo como popup.

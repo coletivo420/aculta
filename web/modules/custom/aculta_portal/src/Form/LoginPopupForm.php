@@ -165,7 +165,7 @@ final class LoginPopupForm extends UserLoginForm {
     $form['links']['#weight'] = 10;
     if ($this->isHtmxRequest()) {
       (new Htmx())
-        ->post()
+        ->post(Url::fromRoute('aculta_portal.login_popup'))
         ->select('#' . self::WRAPPER_ID)
         ->target('#aculta-login-content')
         ->swap('innerHTML')
