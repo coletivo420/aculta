@@ -93,7 +93,7 @@ Qualquer endpoint novo precisa de teste de precedência de rotas antes de ser pu
 ## Referências
 
 - ADR-006 (servidores web), ADR-008 (fundação do tema).
-- `docs/portal/DRUPAL-11-STANDARDS.md`, `docs/portal/DOMAIN-PRESENTATION-CONTRACT.md`.
+- `docs/portal/DRUPAL-12-STANDARDS.md`, `docs/portal/DOMAIN-PRESENTATION-CONTRACT.md`.
 - Inventário da microfase A: `docs/decisions/ADR-009-inventario-0.1.0-A.md`.
 
 ## Decisões posteriores

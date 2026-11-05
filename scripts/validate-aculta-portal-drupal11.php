@@ -82,11 +82,11 @@ $check(
 );
 
 $requiredDocs = [
-  $root . '/AGENTS.md' => 'docs/portal/DRUPAL-11-STANDARDS.md',
-  $root . '/docs/ANTI-REGRESSION.md' => 'DRUPAL-11-STANDARDS.md',
-  $root . '/docs/README.md' => 'DRUPAL-11-STANDARDS.md',
-  $root . '/docs/portal/README.md' => 'DRUPAL-11-STANDARDS.md',
-  $moduleRoot . '/README.md' => 'DRUPAL-11-STANDARDS.md',
+  $root . '/AGENTS.md' => 'docs/portal/DRUPAL-12-STANDARDS.md',
+  $root . '/docs/ANTI-REGRESSION.md' => 'DRUPAL-12-STANDARDS.md',
+  $root . '/docs/README.md' => 'DRUPAL-12-STANDARDS.md',
+  $root . '/docs/portal/README.md' => 'DRUPAL-12-STANDARDS.md',
+  $moduleRoot . '/README.md' => 'DRUPAL-12-STANDARDS.md',
   $moduleRoot . '/CHANGELOG.md' => 'Drupal 11+',
 ];
 foreach ($requiredDocs as $path => $needle) {
@@ -180,8 +180,8 @@ foreach (glob($moduleRoot . '/modules/*/*.info.yml') ?: [] as $extensionInfoPath
   );
 }
 $check(
-  is_file($root . '/docs/portal/DRUPAL-11-STANDARDS.md'),
-  'Normative docs/portal/DRUPAL-11-STANDARDS.md must exist.',
+  is_file($root . '/docs/portal/DRUPAL-12-STANDARDS.md'),
+  'Normative docs/portal/DRUPAL-12-STANDARDS.md must exist.',
 );
 
 $legacySubscriberTags = preg_match_all('/name:\s*kernel\.event_subscriber\b/', $services);

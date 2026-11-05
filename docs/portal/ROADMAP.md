@@ -46,7 +46,7 @@ P0–P10 e a lista antiga de prioridades de produto.
 Dívidas e pendências, com evidência, estão em [`docs/operations/DEBT-REGISTER.md`](../operations/DEBT-REGISTER.md).
 Este roadmap planeja as fases a partir desse registro. Não planeja lançamento 1.0.
 
-Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
+Referências: [DRUPAL-12-STANDARDS.md](DRUPAL-12-STANDARDS.md) (norma),
 [SOURCE-OF-TRUTH.md](SOURCE-OF-TRUTH.md) (fontes de verdade) e
 [RELEASES.md](../operations/RELEASES.md) (gates de release).
 

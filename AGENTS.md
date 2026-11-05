@@ -34,7 +34,7 @@ Regras de todos os agentes. Em conflito, vale a instrução explícita mais rece
 ## Arquitetura e validação
 
 - Endereço centralizado em `aculta_portal_cep` e país exclusivo Brasil (BR), conforme ADR-034 (`docs/decisions/ADR-034-pais-unico-brasil-endereco-central.md`).
-- Padrão Drupal 11+ e 12 ready: `docs/portal/DRUPAL-11-STANDARDS.md`.
+- Padrão Drupal 11+ e 12 ready: `docs/portal/DRUPAL-12-STANDARDS.md`.
 - Rotas `/studio` e `/studio/*` respondem 404. Rotas administrativas e de integração existem só no domínio principal.
 - **Tema de validação:** valide só no tema ACULTA ativo. Não alterne `system.theme` para outros temas.
 - **Olivero:** não habilitar, selecionar, testar ou exigir Olivero em gates, suítes ou aceite. Execuções antigas são histórico.

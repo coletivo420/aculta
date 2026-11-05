@@ -2,7 +2,7 @@
 
 Use este prompt somente depois que a release estável do Drupal 12 estiver publicada e o responsável tiver autorizado a execução. Antes disso, não execute nenhuma etapa que altere o repositório.
 
-Leia antes de começar: `AGENTS.md`, `CLAUDE.md`, `docs/portal/DRUPAL-11-STANDARDS.md`, `docs/operations/AGENT-OPERATIONS.md`, `docs/portal/MIGRACAO-DRUPAL-12-PLANO.md` e `docs/portal/MIGRACAO-DRUPAL-12-MATRIZ-CONTRIB.md`.
+Leia antes de começar: `AGENTS.md`, `CLAUDE.md`, `docs/portal/DRUPAL-12-STANDARDS.md`, `docs/operations/AGENT-OPERATIONS.md`, `docs/portal/MIGRACAO-DRUPAL-12-PLANO.md` e `docs/portal/MIGRACAO-DRUPAL-12-MATRIZ-CONTRIB.md`.
 
 ## Objetivo
 

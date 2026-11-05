@@ -53,7 +53,7 @@ Hooks existentes relacionados ao legado aparecem em
 `aculta_user/docs/CLASSES-E-HOOKS.md` e
 `aculta_magazine/docs/README.md`; sua migração ou remoção exige paridade por
 comportamento, não renomeação em massa. Lifecycles Drupal que exigem hook
-procedural continuam procedurais conforme `DRUPAL-11-STANDARDS.md`.
+procedural continuam procedurais conforme `DRUPAL-12-STANDARDS.md`.
 
 ## Marcadores de comportamento dos posts públicos
 

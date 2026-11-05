@@ -23,7 +23,7 @@
 
 ## Normas
 
-- [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) — padrão Drupal 11+ e regras de código.
+- [DRUPAL-12-STANDARDS.md](DRUPAL-12-STANDARDS.md) — padrão Drupal 11+ e regras de código.
 - [GUARDRAILS.md](GUARDRAILS.md) — regras de Fórum, Revista, Loja, Wiki, Conta e AJAX.
 - [COMPONENTES-PROPRIOS.md](COMPONENTES-PROPRIOS.md) — rótulo único "ACULTA Portal" para módulos próprios e gate de pacote.
 - [IMPLEMENTATIONS.md](IMPLEMENTATIONS.md) — inventário de implementações, helpers e integrações aplicadas pelo Portal.

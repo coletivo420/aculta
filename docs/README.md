@@ -60,7 +60,7 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 ## Portal
 
 - [portal/README.md](portal/README.md) — índice do Portal.
-- [portal/DRUPAL-11-STANDARDS.md](portal/DRUPAL-11-STANDARDS.md) — padrão obrigatório Drupal 11+ para código.
+- [portal/DRUPAL-12-STANDARDS.md](portal/DRUPAL-12-STANDARDS.md) — padrão obrigatório Drupal 11+ para código.
 - [portal/GUARDRAILS.md](portal/GUARDRAILS.md) — regras de Fórum, Revista, Loja, Wiki e Conta.
 - [portal/ROADMAP.md](portal/ROADMAP.md) — saneamento e, depois, features de produto.
 - [portal/CHECKOUT-BILLING.md](portal/CHECKOUT-BILLING.md) — endereço único, envio (Commerce Shipping) e pagamento pelo Mercado Pago.

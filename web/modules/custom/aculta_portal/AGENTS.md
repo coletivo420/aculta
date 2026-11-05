@@ -1,6 +1,6 @@
 # Portal — regras locais
 
-Herde `AGENTS.md` da raiz. Consulte `docs/AGENT-POLICIES.md` **somente nas seções relevantes** e os contratos `docs/portal/GUARDRAILS.md` e `docs/portal/DRUPAL-11-STANDARDS.md` quando a alteração exigir.
+Herde `AGENTS.md` da raiz. Consulte `docs/AGENT-POLICIES.md` **somente nas seções relevantes** e os contratos `docs/portal/GUARDRAILS.md` e `docs/portal/DRUPAL-12-STANDARDS.md` quando a alteração exigir.
 
 ## Rotas e domínios vigentes
 

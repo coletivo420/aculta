@@ -34,7 +34,7 @@ const AGENTS_LITERALS = [
   'Endereço centralizado em `aculta_portal_cep` e país exclusivo Brasil (BR)',
   'ACEITE-UNICO',
   'PROJECT-STATUS-INDEX-GUARD',
-  'docs/portal/DRUPAL-11-STANDARDS.md',
+  'docs/portal/DRUPAL-12-STANDARDS.md',
 ];
 
 $failures = [];
