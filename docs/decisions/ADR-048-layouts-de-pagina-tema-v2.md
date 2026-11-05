@@ -1,6 +1,6 @@
 # ADR-048 — Layouts de página do tema ACULTA420 V2
 
-- **Status:** aceito pelo responsável em 2026-11-04, com um item a confirmar (seção 5, item 5).
+- **Status:** aceito pelo responsável em 2026-11-04. Atualizado em 2026-11-05: navegação do Studio e nome confirmados; a sub-navegação da conta foi definida pela recomendação (ver item 5). Uma decisão de rota continua aberta (seção 7).
 - **Data:** 2026-11-04.
 - **Relaciona-se com:** ADR-046 (shell, fundações e Fase 4), ADR-047 (menu de conta), ADR-038 (suítes do ACULTA Studio), `web/themes/custom/aculta420_v2/docs/layouts-plan.md` (pesquisa e detalhamento).
 
@@ -35,11 +35,11 @@
    - `60rem` (960 px): a variante `aside` passa a duas colunas.
    - A proposta de `60rem` vem do cálculo das colunas (leitura de 36 rem, barra lateral de 16 rem, espaço e margens, cerca de 56 rem), não de uma referência externa verificada. A validação deve testar 959, 960 e 961 px e zoom de 200%.
 5. **Navegação do Studio.**
-   - **Desktop:** navegação vertical à esquerda no dashboard, com as seções do estúdio.
-   - **Mobile:** o mesmo padrão do mockup de celular do material de referência. A navegação vira um menu no cabeçalho e o conteúdo fica em uma coluna.
+   - **Desktop:** navegação vertical à esquerda em todas as telas pessoais do Studio (dashboard, Meu Perfil e Minha conta). Confirmado pelo responsável em 2026-11-05.
+   - **Mobile:** o mesmo padrão do mockup de celular. A navegação vira um menu no cabeçalho (`list`) e o conteúdo fica em uma coluna.
    - As suítes (Marley, Ganjalab, WE Sativa, Culturas, Green Stash) mantêm abas horizontais no topo da página.
-   - **A confirmar:** a área de Minha conta usa a mesma sub-navegação vertical à esquerda no desktop, com lista horizontal com rolagem no mobile. Essa proposta não foi confirmada explicitamente; é o único item deste ADR pendente.
-6. **Nome da área:** "ACULTA Studio", conforme o ADR-038. O nome "ACULTA Drupal Studio" do material visual não é usado em rótulos.
+   - **Minha conta:** como a navegação do Studio já fica à esquerda, as seções da conta (dados cadastrais, endereço, documentos, e-mail e segurança, senha, contas conectadas, pedidos, apoio e preferências) viram **abas horizontais** no topo do conteúdo, para não haver duas colunas de navegação. No mobile, a mesma lista de abas tem rolagem horizontal. Esta é a recomendação aplicada por padrão; se o responsável preferir uma segunda coluna, o ADR é revisado.
+6. **Nome da área:** "ACULTA Studio", confirmado pelo responsável em 2026-11-05, conforme o ADR-038. O nome "ACULTA Drupal Studio" do material visual não é usado em rótulos.
 7. **Mobile-first e acessibilidade:**
    - Landmarks: `banner`, `main`, `complementary` (só quando a barra lateral tem conteúdo) e `contentinfo`.
    - A ordem do DOM coloca o conteúdo antes da barra lateral.
