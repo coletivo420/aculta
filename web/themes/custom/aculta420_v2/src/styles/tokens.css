@@ -53,12 +53,17 @@
   --color-link-editorial: #b52f22;
   --color-link-editorial-hover: var(--color-text-primary);
   --color-media-stage: #e8dfcc;
+  --color-surface-highlight: #fbf4e8;
+  --color-border-highlight: #a98d26;
   --color-status-error-text: #b3261e;
   --color-status-error-surface: #fde8e7;
   --color-status-ok-text: #1e5e2f;
   --color-status-ok-surface: #e6f4ea;
   --color-status-warning-text: #624b00;
   --color-status-warning-surface: #fff4cc;
+  --accent-green-stripe: #689427;
+  --accent-yellow-stripe: #a98d26;
+  --accent-red-stripe: #b52f22;
   --shadow-raised: 0 .125rem .5rem rgb(12 60 41 / 8%);
 
   --tap-target-min: 44px;
@@ -85,6 +90,9 @@
   --radius-base: .5rem;
   --radius-lg: 1rem;
   --radius-full: 9999px;
+  --radius-control-button: var(--radius-lg);
+  --radius-control-card: var(--radius-lg);
+  --radius-control-field: var(--radius-base);
   --shadow-sm: 0 1px 3px rgb(0 0 0 / 12%);
 
   /* Compatibility aliases for the existing shell until all consumers migrate. */
@@ -140,6 +148,11 @@
   --color-link-editorial: #f08a76;
   --color-link-editorial-hover: #f4efe8;
   --color-media-stage: #3a332a;
+  --color-surface-highlight: #2a3a2f;
+  --color-border-highlight: #f2ca36;
+  --accent-green-stripe: #689427;
+  --accent-yellow-stripe: #f2ca36;
+  --accent-red-stripe: #e7bcb8;
   --color-status-error-text: #ff9da5;
   --color-status-error-surface: #3a1f1e;
   --color-status-ok-text: #8fe0a8;

@@ -18,6 +18,7 @@
 .aculta-icon--md { block-size: 1.25rem; inline-size: 1.25rem; }
 .aculta-icon--lg { block-size: 1.5rem; inline-size: 1.5rem; }
 .aculta-icon--xl { block-size: 2rem; inline-size: 2rem; }
+.aculta-icon--bar { block-size: 30px; inline-size: 30px; }
 
 .aculta-icon--duotone svg path:first-child {
   fill: currentColor;

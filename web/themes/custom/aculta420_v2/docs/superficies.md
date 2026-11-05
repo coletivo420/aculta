@@ -88,6 +88,23 @@ identidade com a marca.
 - Borda e sombra são checadas nos dois modos. No escuro, a sombra vem do token
   (já mais forte), e a borda ajuda a separar a caixa da página.
 
+## 4.1 Escala de espaçamento
+
+A escala de espaçamento da V2 fica centralizada em `src/styles/tokens.css`.
+Componentes devem usar estes tokens, sem criar escalas paralelas:
+
+| Token | Valor | Uso de referência |
+| --- | --- | --- |
+| `--spacing-xs` | `.25rem` | separação mínima e rótulos |
+| `--spacing-sm` | `.5rem` | controles compactos e ícones |
+| `--spacing-md` | `.75rem` | grupos de controles |
+| `--spacing-base` | `1rem` | preenchimento padrão |
+| `--spacing-lg-compact` | `1.25rem` | cartões compactos |
+| `--spacing-lg` | `1.5rem` | cartões e painéis |
+| `--spacing-xl` | `2rem` | separação entre blocos |
+| `--spacing-xxl` | `3rem` | separação editorial |
+| `--spacing-section` | `clamp(1.5rem, 3vw, 2.5rem)` | seções responsivas |
+
 ## 5. Imagem de referência (cartão editorial)
 
 Referência enviada em 2026-11-05 (cartão de teste com conteúdo sintético). Pontos

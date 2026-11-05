@@ -116,7 +116,8 @@ Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context 
 
 ### icon — Ícone
 - **Papel:** ícone Phosphor vetorial, injetado inline e oculto para leitores de tela (`aria-hidden`).
-- **Props:** `name`, `variant` (`duotone` ou `regular`), `size` (`sm`, `md`, `lg`, `xl`), `color`.
+- **Props:** `name`, `variant` (`duotone` ou `regular`), `size` (`sm`, `md`, `lg`, `xl` ou `bar`), `color`.
+- **Estado:** `bar` mede 30px para os controles da barra institucional (ADR-047, item 10).
 - **Estado:** entregue. Ícones ausentes do vendor são ignorados (`ignore_missing`).
 
 ### author-card — Cartão de autoria
