@@ -18,17 +18,19 @@ Regras de economia:
 - Não repita o mesmo teste em mais de um método sem motivo. Se os resultados divergirem, registre qual prevaleceu e por quê.
 - No relatório, declare o método usado em cada teste.
 
-Versões fixadas no projeto: Node definido pelo ambiente, `@playwright/test` 1.56.1 e Firefox Playwright 142.0.1 (build Playwright 1495). A instalação mínima é:
+Versões fixadas no projeto: `@playwright/test` 1.56.1 (no `package-lock.json`). A instalação dos três motores Playwright é:
 
 ```bash
 cd tests/browser
 npm ci
-npx playwright install firefox
+npx playwright install firefox chromium webkit
 ```
 
-Os métodos 2 e 3 exigem também `npx playwright install chromium webkit`, feito só quando a frente usar esses motores.
+Não use `--with-deps`: dependências do sistema exigem decisão separada. Se o WebKit reclamar de biblioteca, `npx playwright install-deps --dry-run webkit` lista os pacotes `apt` sem instalar nada.
 
-Não use `--with-deps`: dependências do sistema exigem decisão separada.
+Os scripts são `npm run test:firefox`, `npm run test:chromium` e `npm run test:webkit`. Todos chamam o mesmo runner; o motor vem de `ACULTA_BROWSER_ENGINE` (padrão `firefox`). Detalhes em `tests/browser/README.md`.
+
+Para o método 5 (X11 com Firefox ESR), não há script: `DISPLAY=:0 firefox-esr --no-remote --profile "$SUITE_OUT/ff-profile" --new-instance "file://$SUITE_OUT/pagina.html"`, com `SUITE_OUT` externo ao repositório e um display X já ativo.
 
 ## Execução
 
@@ -40,6 +42,8 @@ ACULTA_BROWSER_ENV=desenvolvimento \
 ACULTA_SITE_ORIGIN="https://aculta.toca.net.br/" \
 npm run test:firefox
 ```
+
+Troque `test:firefox` por `test:chromium` ou `test:webkit` para outro motor, com o mesmo ambiente e os mesmos artefatos. Para o teste mínimo de sanidade, use página estática local em `file://` dentro de `$SUITE_OUT`, não `about:blank` nem `data:`, conforme `tests/browser/README.md`.
 
 O runner espera condições com locators e `expect`; não usa `sleep` fixo. Capturas, traces, logs e relatórios ficam em `$SUITE_OUT`, fora do repositório. Credenciais somente vêm do ambiente ou de arquivo local ignorado pelo Git.
 
