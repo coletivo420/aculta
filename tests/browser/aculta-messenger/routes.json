@@ -1,0 +1,8 @@
+{
+  "front": "aculta-messenger",
+  "purpose": "main",
+  "origin_env": "SUITE_BASE",
+  "source": "tests/browser/aculta-messenger/README.md",
+  "public_routes": [],
+  "notes": "Sem rota pública declarada. Os testes entram com link de login de teste (SUITE_LOGIN_URI) e usam perfis e threads de teste. Cobertura fica no script da frente."
+}

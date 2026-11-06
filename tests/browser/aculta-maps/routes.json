@@ -1,0 +1,10 @@
+{
+  "front": "aculta-maps",
+  "purpose": "eventos",
+  "origin_env": "EVENTOS_BASE",
+  "source": "tests/browser/aculta-maps/README.md (página pública /mapa no host de eventos)",
+  "public_routes": [
+    { "path": "/mapa" }
+  ],
+  "notes": "Defina EVENTOS_BASE=https://eventos.aculta.toca.net.br."
+}

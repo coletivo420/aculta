@@ -1,0 +1,8 @@
+{
+  "front": "aculta-qrcode",
+  "purpose": "main",
+  "origin_env": "ACULTA_SITE_ORIGIN",
+  "source": "tests/browser/aculta-qrcode/README.md",
+  "public_routes": [],
+  "notes": "Sem rota pública declarada. O fluxo gera login de uso único com drush uli (uid=1) no host de conta. Cobertura fica no script da frente."
+}
