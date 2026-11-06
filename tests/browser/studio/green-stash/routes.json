@@ -3,6 +3,7 @@
   "purpose": "studio",
   "origin_env": "STUDIO_PAGE",
   "source": "tests/browser/studio/green-stash/README.md",
+  "auth": { "account": "teste_comum" },
   "public_routes": [],
   "notes": "Sem rota pública: o layout do Green Stash (/greenstash) é testado com sessão de teste. Cobertura fica no script da subcategoria."
 }

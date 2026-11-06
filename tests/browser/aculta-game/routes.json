@@ -3,6 +3,7 @@
   "purpose": "main",
   "origin_env": "SUITE_BASE",
   "source": "tests/browser/aculta-game/README.md",
+  "auth": { "account": "teste_comum" },
   "public_routes": [],
   "notes": "Sem rota pública declarada. Os testes entram com link de login de teste (SUITE_LOGIN_URI). Os smokes HTTP (admin-smoke.py, http-smoke.py) estão nesta pasta e não entram na cobertura de rotas."
 }

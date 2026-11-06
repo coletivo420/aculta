@@ -3,6 +3,7 @@
   "purpose": "eventos",
   "origin_env": "ACULTA_SITE_ORIGIN",
   "source": "tests/browser/eventos/aculta-calendar-admin/README.md",
+  "auth": { "account": "teste_administrativo" },
   "public_routes": [],
   "notes": "Sem rota pública. Testa /painel-administrativo/calendario/incorporacao com sessão de administrador. Cobertura fica no script da frente."
 }

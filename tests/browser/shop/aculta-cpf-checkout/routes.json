@@ -3,6 +3,7 @@
   "purpose": "shop",
   "origin_env": "ACULTA_SITE_ORIGIN",
   "source": "tests/browser/shop/aculta-cpf-checkout/README.md",
+  "auth": { "account": "teste_comum" },
   "public_routes": [],
   "notes": "Sem rota pública. O fluxo exige pedido real, carrinho e sessão de teste (/carrinho/finalizar, /dados). Cobertura fica no script da frente."
 }

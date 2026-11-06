@@ -3,6 +3,7 @@
   "purpose": "studio",
   "origin_env": "STUDIO_PAGE",
   "source": "tests/browser/studio/geral/README.md",
+  "auth": { "account": "teste_comum" },
   "public_routes": [],
   "notes": "Sem rota pública: o Studio exige sessão de teste (STUDIO_LOGIN_URI) em /marley, /perfil e nas demais páginas. Cobertura fica nos scripts da subcategoria."
 }

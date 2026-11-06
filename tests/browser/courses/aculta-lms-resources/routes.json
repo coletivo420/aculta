@@ -3,6 +3,7 @@
   "purpose": "courses",
   "origin_env": "ACULTA_SITE_ORIGIN",
   "source": "tests/browser/courses/aculta-lms-resources/README.md",
+  "auth": { "account": "teste_comum" },
   "public_routes": [],
   "notes": "Sem rota pública. Inspeciona /group/{id}/edit e cria e remove recursos de teste em finally. Cobertura fica no script da frente."
 }

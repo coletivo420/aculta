@@ -3,6 +3,7 @@
   "purpose": "main",
   "origin_env": "ACULTA_SITE_ORIGIN",
   "source": "tests/browser/aculta-avatar/README.md",
+  "auth": { "account": "teste_comum" },
   "public_routes": [],
   "notes": "Sem rota pública confirmada na README: a listagem pública de perfis e o perfil público (/membros, /u/apelido) dependem de dados de teste. Cobertura fica no script da frente."
 }

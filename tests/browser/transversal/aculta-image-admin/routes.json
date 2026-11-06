@@ -3,6 +3,7 @@
   "purpose": "transversal",
   "origin_env": "ACULTA_SITE_ORIGIN",
   "source": "tests/browser/transversal/aculta-image-admin/README.md",
+  "auth": { "account": "teste_administrativo" },
   "public_routes": [],
   "notes": "Sem rota pública. A administração de imagens exige sessão de administrador. Cobertura fica no script da frente."
 }

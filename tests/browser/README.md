@@ -105,6 +105,12 @@ Cada frente com rotas públicas declaradas ganha um `routes.json` na sua pasta (
 - Rotas que exigem login, dados ou data específica não entram em `public_routes`; ficam em `notes` e no script da frente.
 - Para rodar só uma frente: `ACULTA_BROWSER_FRONTS=<frente>` com a variável de host definida.
 
+### Login de teste por frente (campo `auth`)
+
+Frentes que precisam de sessão declaram `"auth": { "account": "teste_comum" }` (ou `teste_administrativo`). O `auth-login.mjs` lê as credenciais de `secrets/` na raiz do checkout principal, em tempo de execução, e entra pelo `/entrar` do host de conta (`CONTA_HOST`). Nenhum valor é impresso. O runner gera um teste de login por frente; `auth_routes` lista as rotas autenticadas que a frente testa depois do login.
+
+Frentes sem decisão de login (rota pública ou privada ainda não confirmada) são classificadas pelo agente que roda o teste: ele verifica por categoria quais páginas são públicas e quais exigem sessão, e cria testes mistos (visualização pública e privada) quando a frente mistura as duas.
+
 ## Autenticação de teste
 
 No runtime `test`, os testes autenticados usam as credenciais locais documentadas em `secrets/` (ignoradas pelo Git). Antes da rodada, confirme que o ambiente é `test` e que `captcha.settings:enable_globally=0`; esse estado representa o bypass operacional de `skip CAPTCHA` exclusivo do servidor de testes. Não registre credenciais, tokens ou senhas nos artefatos e não use esse bypass em produção.
