@@ -66,9 +66,6 @@ slots:
   avatar:
     title: Avatar
     description: Avatar fornecido pelo Portal (AvatarResolver). Sem slot, o componente usa o ícone neutro. Nunca gera inicial do nome.
-  primary_menu_items:
-    title: Navegação principal
-    description: Render array do menu principal real (system_menu_block:main), com o mesmo menu que a barra de navegação usa.
   menu_items:
     title: Itens do menu
     description: Render array do menu Drupal de conta (system_menu_block:account), com access e cache preservados pelo Portal. Para visitante, traz Entrar e Criar conta.

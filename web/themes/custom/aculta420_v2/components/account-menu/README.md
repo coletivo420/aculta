@@ -26,15 +26,14 @@ O componente não tem JS próprio: a abertura, o Esc e o foco vêm de `js/utilit
 
 ## Colunas
 
-1. **Navegação principal:** slot `primary_menu_items`, com o mesmo menu
-   `system_menu_block:main` que a barra usa.
-2. **Conta:** para autenticado, avatar, nome, Minha conta e Sair (slot
+1. **Conta:** para autenticado, avatar, nome, Minha conta e Sair (slot
    `menu_items`). Para anônimo, Entrar e Criar conta.
-3. **Sites e legal:** prop `sites` (Portal, `aculta_domain_sites`) e prop
+2. **Sites e legal:** prop `sites` (Portal, `aculta_domain_sites`) e prop
    `legal_links` (Busca, Política de privacidade; Configurações de privacidade
    só para autenticado).
 
-Desktop (60 rem ou mais): três colunas. Celular (320 px): uma coluna, na ordem 1, 2, 3.
+Desktop (60 rem ou mais): duas colunas. Celular (320 px): uma coluna, na ordem 1, 2.
+A navegação principal não é repetida no painel: ela já aparece na barra.
 
 ## htmx
 
@@ -46,7 +45,7 @@ em `aculta_portal`, fora do escopo deste componente.
 ## Props e slots
 
 - `authenticated` (boolean), `summary_label`, `account_name`, `sites`, `legal_links`.
-- Slots: `avatar`, `primary_menu_items`, `menu_items`.
+- Slots: `avatar`, `menu_items`.
 
 ## Pendências
 

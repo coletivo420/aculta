@@ -199,17 +199,16 @@ def state_pass(state, theme, width):
         "return !!document.querySelector('.aculta-account-dialog img[src*=logo]')"),
         "")
     if width == 320:
-        check(f"{tag}: uma coluna na ordem 1, 2, 3",
-              p["cols"] == 3 and len(set(p["colLefts"])) == 1 and p["colTops"] == sorted(p["colTops"]),
+        check(f"{tag}: uma coluna (conta, sites) sem navegação repetida",
+              p["cols"] == 2 and len(set(p["colLefts"])) == 1 and p["colTops"] == sorted(p["colTops"]),
               f"tops={p['colTops']}")
     else:
-        check(f"{tag}: três colunas no desktop", p["cols"] == 3 and len(set(p["colTops"])) == 1,
+        check(f"{tag}: duas colunas no desktop", p["cols"] == 2 and len(set(p["colTops"])) == 1,
               f"tops={p['colTops']}")
     check(f"{tag}: alvos dos links >= 44 px", p["minLinkH"] >= 44, p["minLinkH"])
     check(f"{tag}: sem rolagem horizontal com painel aberto", p["overflowX"] <= 0, p["overflowX"])
-    if p["cols"] == 3:
-        check(f"{tag}: seções na ordem navegação, conta, sites", p["sectionLabels"][0] == "Navegação principal"
-              and p["sectionLabels"][2] == "Sites e informações legais", p["sectionLabels"])
+    check(f"{tag}: seções conta e sites, sem navegação repetida", p["sectionLabels"] == ["Conta", "Sites e informações legais"],
+          p["sectionLabels"])
     ratio_text = ratio(p["linkColor"], p["panelBg"])
     check(f"{tag}: contraste do texto dos links >= 4,5:1", ratio_text >= 4.5, f"{ratio_text:.2f}:1")
     shot(f"{tag}-aberto")

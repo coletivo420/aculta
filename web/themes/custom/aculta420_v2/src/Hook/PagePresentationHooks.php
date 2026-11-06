@@ -51,7 +51,6 @@ final class PagePresentationHooks {
     $variables['aculta_breadcrumb'] = [];
     $variables['aculta_help'] = [];
     $variables['aculta_account_menu'] = [];
-    $variables['aculta_primary_menu'] = [];
     $variables['aculta_account_authenticated'] = $this->currentUser->isAuthenticated();
     $variables['aculta_account_avatar'] = $variables['aculta_account_avatar'] ?? NULL;
     $variables['aculta_account_name'] = $variables['aculta_account_name'] ?? NULL;
@@ -66,7 +65,6 @@ final class PagePresentationHooks {
       $variables['aculta_account_avatar'],
       $variables['aculta_account_name'],
       $variables['aculta_domain_sites'] ?? [],
-      $variables['aculta_primary_menu'],
     );
     $this->removeSearchDialogDependency($variables);
 
@@ -299,12 +297,8 @@ final class PagePresentationHooks {
     ?array $avatar,
     ?string $accountName,
     mixed $domainSites,
-    array $primaryMenu = [],
   ): array {
     $slots = [];
-    if ($primaryMenu !== []) {
-      $slots['primary_menu_items'] = $primaryMenu;
-    }
     if ($authenticated) {
       if ($menuItems !== []) {
         $slots['menu_items'] = $menuItems;
@@ -461,8 +455,6 @@ final class PagePresentationHooks {
 
         case 'system_menu_block:main':
           $menu = $block;
-          // Cópia para o painel de conta; a barra de navegação continua com o menu original.
-          $variables['aculta_primary_menu'] = $block;
           $menu_key = $key;
           $weights[] = (int) ($block['#weight'] ?? 0);
           break;

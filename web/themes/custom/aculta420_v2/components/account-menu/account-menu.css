@@ -99,7 +99,7 @@
   background: var(--button-secondary-bg-active);
 }
 
-/* Três colunas no desktop; no celular, uma coluna na ordem 1, 2, 3. */
+/* Duas colunas no desktop (conta, sites/legal); no celular, uma coluna. A navegação principal fica só na barra. */
 .aculta-account-menu__columns {
   box-sizing: border-box;
   display: grid;
@@ -171,7 +171,7 @@
 
 @media (min-width: 60rem) {
   .aculta-account-menu__columns {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--spacing-xl);
   }
 
