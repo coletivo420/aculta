@@ -126,22 +126,23 @@ body:has(.aculta-studio-topbar) .layout-page h1:not(.aculta-studio-topbar__title
 }
 
 @media (min-width: 60rem) {
+  /* Absoluto dentro da página: rola com o conteúdo e não cobre o rodapé. Começa abaixo da migalha. */
   .aculta-studio-sidebar {
     background: var(--color-surface);
-    block-size: calc(100dvh - 14rem);
-    border-inline-end: 1px solid var(--color-border);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
     display: block;
     inline-size: 15rem;
-    inset-block-start: 14rem;
-    inset-inline-start: 0;
-    overflow-y: auto;
+    inset-block-start: 22rem;
+    inset-inline-start: -15.5rem;
     padding: var(--spacing-md);
-    position: fixed;
+    position: absolute;
     z-index: 5;
   }
 
   /* A página inteira (main) recua para a direita do menu lateral: migalha, aviso e conteúdo juntos. */
   :is(main, .page__main, .layout-page):has(.aculta-studio-sidebar) {
-    margin-inline-start: 15rem;
+    margin-inline-start: 16rem;
+    position: relative;
   }
 }
