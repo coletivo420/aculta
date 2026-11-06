@@ -46,7 +46,7 @@ final class EventCatalogue {
    * @param int $offset
    *   Deslocamento inicial para paginação.
    *
-   * @return array<int, array{evento: \Drupal\aculta_events\Entity\Event, proxima: array}>
+   * @return array<int, array{evento: \Drupal\aculta_events\Entity\Event, data: \Drupal\aculta_events\Entity\EventDate, proxima: array}>
    *   Eventos com suas ocorrências mais próximas.
    */
   public function busca(
@@ -106,7 +106,7 @@ final class EventCatalogue {
       $datas = $datasPorEvento[$eventoId] ?? [];
       $proxima = $this->primeiraOcorrenciaEmDatas($datas, $inicio, $fim, $agora);
       if ($proxima !== NULL) {
-        $resultados[] = ['evento' => $evento, 'proxima' => $proxima];
+        $resultados[] = ['evento' => $evento, 'data' => $proxima['data'], 'proxima' => $proxima['ocorrencia']];
       }
     }
 
@@ -131,8 +131,8 @@ final class EventCatalogue {
    * @param \DateTimeImmutable $agora
    *   Instante atual de referência.
    *
-   * @return array|null
-   *   Primeira ocorrência encontrada ou NULL.
+   * @return array{data: \Drupal\aculta_events\Entity\EventDate, ocorrencia: array}|null
+   *   Data de origem da primeira ocorrência encontrada, ou NULL.
    */
   private function primeiraOcorrenciaEmDatas(
     array $datas,
@@ -146,8 +146,8 @@ final class EventCatalogue {
         continue;
       }
       foreach ($this->ocorrencias->expandir($data, $inicio, $fim, $agora) as $ocorrencia) {
-        if ($primeira === NULL || $ocorrencia['inicio'] < $primeira['inicio']) {
-          $primeira = $ocorrencia;
+        if ($primeira === NULL || $ocorrencia['inicio'] < $primeira['ocorrencia']['inicio']) {
+          $primeira = ['data' => $data, 'ocorrencia' => $ocorrencia];
         }
       }
     }

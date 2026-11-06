@@ -43,6 +43,8 @@ services:
   aculta_events.catalogue:
     class: Drupal\aculta_events\Catalogue\EventCatalogue
     arguments: ['@entity_type.manager', '@aculta_events.occurrences']
+  Drupal\aculta_events\Hook\EventCatalogueViewsDataHooks:
+    class: Drupal\aculta_events\Hook\EventCatalogueViewsDataHooks
   aculta_events.locations:
     class: Drupal\aculta_events\Catalogue\LocationCatalogue
     arguments: ['@entity_type.manager', '@current_user']

@@ -119,7 +119,8 @@ final class EventDateHooksKernelTest extends KernelTestBase {
 
     // O tearDown restaura a pilha; esta requisição de teste não tem sessão.
     $pilha = $this->container->get('request_stack');
-    $pilha->push(Request::create('/eventos'));
+    $requisicao = Request::create('/eventos');
+    $pilha->push($requisicao);
     try {
       $pagina = EventCatalogueController::create($this->container)->page();
     }
@@ -128,7 +129,9 @@ final class EventDateHooksKernelTest extends KernelTestBase {
     }
 
     $agora = $this->container->get('datetime.time')->getCurrentTime();
-    $this->assertCount(1, $pagina['#items']);
+    $this->assertSame('view', $pagina['catalogue']['#type']);
+    $this->assertSame('eventos_publicos', $pagina['catalogue']['#name']);
+    $this->assertCount(1, $requisicao->attributes->get('_aculta_events_catalogue_cards', []));
     $this->assertEqualsWithDelta($fim->getTimestamp() - $agora, $pagina['#cache']['max-age'], 5);
     $this->assertSame([EventCacheTags::LISTA], $pagina['#cache']['tags']);
   }

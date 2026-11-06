@@ -12,9 +12,12 @@ use Drupal\Core\Session\UserSession;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\views\Views;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -29,7 +32,7 @@ final class EventCatalogueKernelTest extends KernelTestBase {
    */
   protected static $modules = [
     'system', 'user', 'key', 'address', 'geofield', 'options', 'link', 'text',
-    'filter', 'taxonomy', 'datetime', 'datetime_range', 'aculta_calendar',
+    'filter', 'taxonomy', 'datetime', 'datetime_range', 'views', 'aculta_calendar',
     'aculta_events',
   ];
 
@@ -45,7 +48,7 @@ final class EventCatalogueKernelTest extends KernelTestBase {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('taxonomy_term');
-    $this->installConfig(['system', 'taxonomy']);
+    $this->installConfig(['system', 'taxonomy', 'views', 'aculta_events']);
     $this->installEntitySchema('aculta_event');
     $this->installEntitySchema('aculta_event_date');
     $this->installEntitySchema('aculta_event_location');
@@ -123,24 +126,44 @@ final class EventCatalogueKernelTest extends KernelTestBase {
     $resultados = $this->container->get('aculta_events.catalogue')->busca(NULL, NULL, NULL, $this->agora);
     $titulos = array_map(static fn (array $r): string => (string) $r['evento']->label(), $resultados);
     $this->assertSame(['Roda cancelada', 'Oficina de cerâmica', 'Feira do livro'], $titulos);
+    foreach ($resultados as $resultado) {
+      $this->assertInstanceOf(EventDate::class, $resultado['data']);
+    }
   }
 
   /**
-   * Títulos dos cartões do catálogo seguem o H1 da página com H2.
+   * A View pública usa os IDs do catálogo e ordena os cartões.
    */
-  public function testCatalogoUsaHierarquiaDeTitulos(): void {
+  public function testCatalogoRenderizaViewComDadosFiltrados(): void {
     $this->cenario();
-    $controller = new EventCatalogueController(
+    $request = Request::create('/eventos');
+    $request->setSession(new Session(new MockArraySessionStorage()));
+    $requestStack = $this->container->get('request_stack');
+    $requestStack->push($request);
+    try {
+      $controller = new EventCatalogueController(
       $this->container->get('aculta_events.catalogue'),
       $this->container->get('aculta_events.upcoming'),
       $this->container->get('datetime.time'),
-      Request::create('/eventos'),
-    );
-    $page = $controller->page();
-
-    $this->assertNotEmpty($page['#items']);
-    foreach ($page['#items'] as $item) {
-      $this->assertSame('h2', $item['title']['#tag']);
+      $request,
+      );
+      $page = $controller->page();
+      $this->assertSame('eventos_publicos', $page['catalogue']['#name']);
+      $this->assertSame('block_1', $page['catalogue']['#display_id']);
+      $view = Views::getView('eventos_publicos');
+      $this->assertNotFalse($view);
+      $view->setDisplay('block_1');
+      $view->executeDisplay('block_1', $page['catalogue']['#arguments']);
+      $this->assertCount(3, $view->result, 'A View recebe as três Datas selecionadas pelo catálogo.');
+      $markup = (string) $this->container->get('renderer')->renderRoot($page);
+      $this->assertStringContainsString('Oficina de cerâmica', $markup);
+      $this->assertStringContainsString('Feira do livro', $markup);
+      $this->assertStringContainsString('Próxima data:', $markup);
+      $this->assertStringContainsString('views-row', $markup);
+      $this->assertLessThan(strpos($markup, 'Feira do livro'), strpos($markup, 'Roda cancelada'));
+    }
+    finally {
+      $requestStack->pop();
     }
   }
 

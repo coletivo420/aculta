@@ -4,8 +4,9 @@ Estado: em desenvolvimento · versão 1.3.0 (`aculta420_v2.info.yml`) · status:
 
 ## Próximo passo
 
-F4 (UI Styles) implementada; accent por entidade na Revista depende de suporte do UI Styles. No Studio, `/conta` e `/meu-perfil` foram validados no Runtime após rebuild; PHPUnit 8 testes/296 assertions, gate SDC 40 componentes, Firefox ESR 65/65 checks (22 ignorados, zero falhas). Capturas antes/depois em claro/escuro, 320/1440 px e foco: `$SUITE_OUT/layouts-purpose-studio-routes-20261106/studio-account-routes-{before,after}/`. `empty-state` tem captura focal real antes/depois; `context-tabs` ainda precisa de comparação visual; `profile-*` sem mapeamento SDC. Eventos responde na raiz; a listagem atual usa EventCatalogue para ACL, datas futuras e recorrência, enquanto `aculta_event` não fornece Views data. Loja requer autorização; `price` fora do escopo.
-Próximo passo: validar separadamente os SDCs de Studio com consumer real; projetar View pública de Eventos que preserve ACL, ocorrências e filtros; concluir Revista somente com seleção por entidade suportada. Cada adoção ainda requer gates e capturas próprias.
+Eventos: View pública da raiz usa `EventCatalogue` para IDs/props, preservando ACL, recorrência, ordenação e filtros; os cards usam `card-cultural`. Kernel Events passou: 155 testes/3.616 assertions (33 depreciações Core/contrib). Gates V2 aplicáveis passaram. Firefox ESR capturou listagem e detalhe em claro/escuro a 320/1440 px, foco visível e zero overflow em `$SUITE_OUT/layouts-purpose-events-cards-20261106-r2/`. Sem baseline anterior da listagem.
+
+Studio: `/conta` e `/meu-perfil` validados no Runtime; PHPUnit 8/296 e Firefox ESR 65 verificações aplicáveis (22 ignoradas). Capturas pareadas em `$SUITE_OUT/layouts-purpose-studio-routes-20261106/studio-account-routes-{before,after}/`; `empty-state` tem comparação focal; `context-tabs` e `profile-*` seguem pendentes. Revista depende de opção por entidade no UI Styles. Loja aguarda autorização; `price` fora do escopo. Gate Portal falha por divergências preexistentes de versão/status.
 
 ## Dívidas
 

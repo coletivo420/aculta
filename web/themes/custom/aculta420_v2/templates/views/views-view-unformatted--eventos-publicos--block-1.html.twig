@@ -1,0 +1,7 @@
+<div class="item-list">
+  <ul>
+    {% for row in rows %}
+      <li{{ row.attributes }}>{{ row.content }}</li>
+    {% endfor %}
+  </ul>
+</div>

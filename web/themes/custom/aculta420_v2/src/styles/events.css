@@ -15,14 +15,7 @@
 }
 
 [data-portal-ui~="event-card"] {
-  display: grid;
-  gap: var(--spacing-sm);
   min-inline-size: 0;
-  padding: clamp(var(--spacing-md), 3vw, var(--spacing-lg-compact));
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-base);
-  background: var(--color-surface-raised);
-  color: var(--color-text-primary);
   overflow-wrap: anywhere;
 }
 
@@ -72,7 +65,7 @@
   list-style: none;
 }
 
-[data-portal-ui~="event-card-cancelled"] [data-portal-ui="event-card-title"] {
+[data-portal-ui~="event-card-cancelled"] .card-cultural__title {
   text-decoration: line-through;
   text-decoration-thickness: .08em;
 }

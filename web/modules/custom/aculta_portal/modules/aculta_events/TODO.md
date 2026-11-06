@@ -1,10 +1,10 @@
 # TODO — aculta_events
 
-Estado: Dev · versão 0.2.0-dev.9 (`aculta_events.info.yml`) · status: `docs/operations/status/aculta_events.yml`.
+Estado: Dev · versão 0.2.0-dev.10 (`aculta_events.info.yml`) · status: `docs/operations/status/aculta_events.yml`.
 
 ## Próximo passo
 
-Completar P2 com contrato do item pago Commerce e gestão autorizada das ofertas; depois implementar serviço transacional de capacidade/RSVP e testes com fixtures fictícias sem ativação pública. Não coletar dados reais antes da revisão LGPD nem vender antes do parecer fiscal/jurídico. Homologação de Local, Culturas, purpose e A/B no Runtime permanece separada e somente leitura.
+Completar P2 com contrato do item pago Commerce e gestão autorizada das ofertas; depois implementar serviço transacional de capacidade/RSVP e testes com fixtures fictícias sem ativação pública. Não coletar dados reais antes da revisão LGPD nem vender antes do parecer fiscal/jurídico. A View pública do purpose Eventos usa cards SDC e preserva o catálogo; Kernel Events: 155 testes/3.616 assertions PASS (33 depreciações Core/contrib), Firefox ESR capturado. Sem baseline anterior da listagem. Homologação de Local, Culturas e A/B no Runtime permanece separada e somente leitura.
 
 ## Leitura
 

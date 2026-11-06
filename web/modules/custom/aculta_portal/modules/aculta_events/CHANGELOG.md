@@ -1,5 +1,20 @@
 > Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
 
+## 0.2.0-dev.10 — listagem pública com card-cultural (2026-11-06)
+
+- Criada a View `eventos_publicos` para a raiz do purpose Eventos. O catálogo
+  continua selecionando Eventos e ocorrências, revalidando acesso por entidade
+  e aplicando filtros e janela de cache; a View só renderiza e ordena os IDs
+  preparados na requisição.
+- `EventCatalogue` agora inclui a data de origem da próxima ocorrência; a View
+  usa handlers próprios e um hook de Views data no módulo owner. O tema V2
+  compõe `card-cultural` pelo hook de tema, mantendo fallback neutro do módulo.
+- Kernel focal: 1 teste/23 assertions PASS. Captura Firefox ESR da raiz e de um
+  detalhe em claro/escuro, 320/1440 px, foco e overflow: `$SUITE_OUT/layouts-purpose-events-cards-20261106-r2/`.
+- Suíte Kernel Events: 155 testes/3.616 assertions PASS, com 33 depreciações
+  Core/contrib. A listagem não tinha baseline anterior; não há comparação antes/depois
+  válida para essa página.
+
 ## Implementação pendente de validação — provider Culturas no Studio (2026-11-03)
 
 - Adicionado `CulturasExperienceProvider` no módulo owner Eventos para fornecer o destino existente ao dashboard apenas a usuários autorizados pela policy de criação.

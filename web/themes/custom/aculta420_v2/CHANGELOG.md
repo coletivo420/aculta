@@ -1,5 +1,17 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — card-cultural na listagem pública de Eventos
+
+- A View pública `eventos_publicos` é consumida pela raiz do purpose Eventos e
+  renderiza os cartões pelo hook de tema, compondo o SDC `card-cultural`.
+- O template mantém o wrapper de estado/cancelamento e o template de linha
+  mantém as classes de lista. `events.css` remove a caixa duplicada ao redor do
+  SDC e aplica o estado cancelado ao título do cartão.
+- Firefox ESR no Runtime: listagem e página de evento em claro/escuro, 320 e
+  1440 px, foco visível e zero overflow. Capturas em
+  `$SUITE_OUT/layouts-purpose-events-cards-20261106-r2/`. A listagem não existia
+  na baseline, então não há comparação anterior válida para ela.
+
 ## Não versionado — mapeamento focal dos componentes do Studio
 
 - `PagePresentationHooks::preprocessPortalComponent()` adapta `context-tabs` ao SDC existente `tabs` e `empty-state` ao SDC homônimo, preservando props/slots e mantendo o fallback para componentes fora do escopo ou contratos incompletos.

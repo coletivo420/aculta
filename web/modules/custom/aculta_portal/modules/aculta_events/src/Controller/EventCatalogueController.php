@@ -12,6 +12,7 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
 use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\Unicode;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -70,12 +71,12 @@ final class EventCatalogueController extends ControllerBase {
     $fins = array_map(static fn (array $item): array => ['fim' => $item['proxima']['fim']], $resultados);
     $validade = $this->proximas->validade($fins, $agoraSegundos) ?? self::VALIDADE_PADRAO;
 
-    $itens = [];
+    $acoes = [];
     // Ações editoriais existem somente no MAIN; o catálogo em eventos é
     // público.
     if ($this->purposes?->getCurrentPurpose() === 'main'
       && $this->entityTypeManager()->getAccessControlHandler('aculta_event')->createAccess(NULL, $this->currentUser())) {
-      $itens[] = [
+      $acoes[] = [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'event-catalogue-actions-bar'],
         'add_btn' => [
@@ -86,58 +87,56 @@ final class EventCatalogueController extends ControllerBase {
         ],
       ];
     }
+    $cards = [];
     foreach ($resultados as $item) {
       $evento = $item['evento'];
       $cancelado = $evento->get('field_status')->value === 'cancelado';
       $card_tokens = $cancelado ? 'event-card event-card-cancelled' : 'event-card';
-      $itens[] = [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => $card_tokens],
-        'type' => [
-          '#type' => 'html_tag',
-          '#tag' => 'p',
-          '#attributes' => ['data-portal-ui' => 'event-card-type'],
-          '#value' => Html::escape((string) ($evento->get('field_tipo')->entity?->label() ?? '')),
-          '#access' => $evento->get('field_tipo')->entity !== NULL,
-        ],
-        'title' => [
-          '#type' => 'html_tag',
-          '#tag' => 'h2',
-          '#attributes' => ['data-portal-ui' => 'event-card-title'],
-          'link' => [
-            '#type' => 'link',
-            '#title' => (string) $evento->label(),
-            '#url' => Url::fromRoute('aculta_events.page', ['slug' => (string) $evento->get('field_slug')->value]),
-          ],
-        ],
-        'subtitle' => [
-          '#type' => 'html_tag',
-          '#tag' => 'p',
-          '#attributes' => ['data-portal-ui' => 'event-card-subtitle'],
-          '#value' => Html::escape((string) $evento->get('field_subtitulo')->value),
-          '#access' => (string) $evento->get('field_subtitulo')->value !== '',
-        ],
-        'meta' => [
-          '#theme' => 'item_list',
-          '#attributes' => ['data-portal-ui' => 'event-card-meta'],
-          '#items' => [$this->t('Próxima data: @date', ['@date' => $item['proxima']['inicio']->format('d/m/Y H:i')])],
-        ],
-        'cancelled' => [
-          '#type' => 'html_tag',
-          '#tag' => 'p',
-          '#attributes' => ['role' => 'status', 'data-portal-ui' => 'event-card-cancel-status'],
-          '#value' => $this->t('Cancelado'),
-          '#access' => $cancelado,
-        ],
+      $local = $item['data']->get('field_local')->entity;
+      $resumo = (string) ($evento->get('field_subtitulo')->value ?: $evento->get('body')->value);
+      $resumo = Unicode::truncate(Html::decodeEntities(strip_tags($resumo)), 240, TRUE, TRUE);
+      $props = [
+        'title' => (string) $evento->label(),
+        'url' => $evento->toUrl('canonical')->toString(),
+        'category' => (string) ($evento->get('field_tipo')->entity?->label() ?? ''),
+        'date' => (string) $this->t('Próxima data: @date', ['@date' => $item['proxima']['inicio']->format('d/m/Y H:i')]),
+        'location' => $local !== NULL && $local->access('view') ? (string) $local->label() : '',
+        'summary' => $resumo,
+        'cancelled' => $cancelado,
+      ];
+      $cards[(string) $evento->id()] = $props + [
+        'tokens' => $card_tokens,
+        'cancel_label' => (string) $this->t('Evento cancelado'),
       ];
     }
 
+    // The View receives IDs selected by the access-checked catalogue.
+    // The render-data map stays on this request and is not input.
+    $this->requisicao->attributes->set('_aculta_events_catalogue_cards', $cards);
+    $this->requisicao->attributes->set(
+      '_aculta_events_catalogue_max_age',
+      $validade,
+    );
+    $arguments = $cards === [] ? '0' : implode(',', array_keys($cards));
+    $catalogue = $cards === []
+      ? ['#plain_text' => $this->t('Nenhum evento encontrado para este período.')]
+      : [
+        '#type' => 'view',
+        '#name' => 'eventos_publicos',
+        '#display_id' => 'block_1',
+        '#arguments' => [$arguments],
+      ];
+
     return [
-      '#theme' => 'item_list',
-      '#items' => $itens,
-      '#empty' => $this->t('Nenhum evento encontrado para este período.'),
+      '#type' => 'container',
+      'actions' => $acoes,
+      'catalogue' => $catalogue,
       '#prefix' => $this->avisos($avisos),
-      '#cache' => ['contexts' => ['url.query_args', 'user'], 'tags' => [EventCacheTags::LISTA], 'max-age' => $validade],
+      '#cache' => [
+        'contexts' => ['url.query_args', 'user', 'languages:language_interface'],
+        'tags' => [EventCacheTags::LISTA],
+        'max-age' => $validade,
+      ],
     ];
   }
 

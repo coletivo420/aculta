@@ -12,6 +12,11 @@ declare(strict_types=1);
  */
 function aculta_events_theme(): array {
   return [
+    'aculta_event_catalogue_card' => [
+      'variables' => [
+        'item' => [],
+      ],
+    ],
     'aculta_event_page' => [
       'variables' => [
         'titulo' => NULL,

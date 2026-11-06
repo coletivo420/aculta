@@ -1,0 +1,8 @@
+<article data-portal-ui="{{ item.tokens }}">
+  <h2><a href="{{ item.url }}">{{ item.title }}</a></h2>
+  {% if item.category %}<p>{{ item.category }}</p>{% endif %}
+  {% if item.date %}<p>{{ item.date }}</p>{% endif %}
+  {% if item.location %}<p>{{ item.location }}</p>{% endif %}
+  {% if item.summary %}<p>{{ item.summary }}</p>{% endif %}
+  {% if item.cancelled %}<p role="status">{{ item.cancel_label }}</p>{% endif %}
+</article>

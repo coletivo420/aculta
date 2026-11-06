@@ -12,6 +12,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\views\EntityViewsData;
 use Drupal\user\EntityOwnerInterface;
 use Drupal\user\UserInterface;
 
@@ -35,6 +36,7 @@ use Drupal\user\UserInterface;
   handlers: [
     'storage' => 'Drupal\Core\Entity\Sql\SqlContentEntityStorage',
     'access' => 'Drupal\aculta_events\Access\EventAccessControlHandler',
+    'views_data' => EntityViewsData::class,
     'form' => [
       'default' => 'Drupal\aculta_events\Form\EventForm',
       'add' => 'Drupal\aculta_events\Form\EventForm',
