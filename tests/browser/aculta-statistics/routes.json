@@ -1,0 +1,8 @@
+{
+  "front": "aculta-statistics",
+  "purpose": "main",
+  "origin_env": "ACULTA_SITE_ORIGIN",
+  "source": "tests/browser/aculta-statistics/README.md",
+  "public_routes": [],
+  "notes": "Sem rota pública declarada na README. Cobertura visual fica no script da frente."
+}

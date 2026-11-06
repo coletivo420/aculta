@@ -1,0 +1,8 @@
+{
+  "front": "aculta-culturas",
+  "purpose": "studio",
+  "origin_env": "STUDIO_PAGE",
+  "source": "tests/browser/studio/culturas/README.md",
+  "public_routes": [],
+  "notes": "Sem rota pública: o dashboard e o runtime de Culturas (/culturas) exigem sessão de teste. Cobertura fica nos scripts da subcategoria."
+}

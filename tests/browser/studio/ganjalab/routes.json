@@ -1,0 +1,8 @@
+{
+  "front": "aculta-ganjalab",
+  "purpose": "studio",
+  "origin_env": "GANJA_HOME",
+  "source": "tests/browser/studio/ganjalab/README.md",
+  "public_routes": [],
+  "notes": "Sem rota pública confirmada: o início (GANJA_HOME) e a jornada (GANJA_COURSE) são testados com link de login de teste (GANJA_LOGIN_URI). Cobertura fica no script da frente."
+}

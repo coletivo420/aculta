@@ -1,0 +1,8 @@
+{
+  "front": "aculta-game",
+  "purpose": "main",
+  "origin_env": "SUITE_BASE",
+  "source": "tests/browser/aculta-game/README.md",
+  "public_routes": [],
+  "notes": "Sem rota pública declarada. Os testes entram com link de login de teste (SUITE_LOGIN_URI). Os smokes HTTP em tests/runtime/aculta-game ficam fora desta cobertura."
+}

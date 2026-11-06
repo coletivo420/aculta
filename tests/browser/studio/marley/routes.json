@@ -1,0 +1,8 @@
+{
+  "front": "aculta-marley",
+  "purpose": "studio",
+  "origin_env": "STUDIO_PAGE",
+  "source": "tests/browser/studio/marley/README.md",
+  "public_routes": [],
+  "notes": "Sem rota pública: a suite Marley (/marley) exige sessão de teste. Cobertura fica no visual.mjs da subcategoria."
+}

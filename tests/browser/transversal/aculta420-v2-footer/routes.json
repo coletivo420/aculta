@@ -1,0 +1,8 @@
+{
+  "front": "aculta420-v2-footer",
+  "purpose": "transversal",
+  "origin_env": "ACULTA_SITE_ORIGIN",
+  "source": "tests/browser/transversal/aculta420-v2-footer/README.md",
+  "public_routes": [],
+  "notes": "Sem rota pública própria: o rodapé do tema ACULTA420 é testado em páginas do tema. Cobertura fica no script da frente."
+}

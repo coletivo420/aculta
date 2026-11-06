@@ -1,0 +1,8 @@
+{
+  "front": "aculta-content-admin",
+  "purpose": "transversal",
+  "origin_env": "ACULTA_SITE_ORIGIN",
+  "source": "tests/browser/transversal/aculta-content-admin/README.md",
+  "public_routes": [],
+  "notes": "Sem rota pública. A administração de conteúdo exige sessão de administrador. Cobertura fica no script da frente."
+}

@@ -1,0 +1,8 @@
+{
+  "front": "aculta-green-stash",
+  "purpose": "studio",
+  "origin_env": "STUDIO_PAGE",
+  "source": "tests/browser/studio/green-stash/README.md",
+  "public_routes": [],
+  "notes": "Sem rota pública: o layout do Green Stash (/greenstash) é testado com sessão de teste. Cobertura fica no script da subcategoria."
+}

@@ -1,0 +1,8 @@
+{
+  "front": "aculta-frete",
+  "purpose": "shop",
+  "origin_env": "ACULTA_SITE_ORIGIN",
+  "source": "tests/browser/shop/aculta-frete/README.md",
+  "public_routes": [],
+  "notes": "Sem rota pública declarada. Os scripts usam produto e carrinho reais da Loja (bloco-sativa). Cobertura fica no script da frente."
+}
