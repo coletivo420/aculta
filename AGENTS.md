@@ -27,15 +27,14 @@ Regras de todos os agentes. Em conflito, vale a instrução explícita mais rece
 ## Ambientes e URLs
 
 - Servidor de testes (`*.aculta.toca.net.br`, Homelab) não é produção. Produção (`*.aculta.org`, Hostinger) recebe deploy só com módulos e temas em RC; até lá, verificações de produção são ensaios. Referência: `docs/architecture/environments.md`.
-- Nos testes autenticados do servidor de testes, use o bypass `skip CAPTCHA` já configurado no runtime `test`. Antes da rodada, confirme `captcha.settings:enable_globally=0`; nunca desative CAPTCHA nem conceda bypass em produção.
+- O bypass `skip CAPTCHA` é permitido nos testes autenticados do servidor de testes (runtime `test`). Antes da rodada, confirme `captcha.settings:enable_globally=0`. Não conceda bypass em produção.
 - URL pública de conteúdo ou ação humana usa slug em português, minúsculas, hífen e sem acento (`docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`; gate `scripts/validate-public-slugs.php`).
 
 ## Arquitetura e validação
 
 - Endereço centralizado em `aculta_portal_cep` e país exclusivo Brasil (BR), ADR-034 (`docs/decisions/ADR-034-pais-unico-brasil-endereco-central.md`). Padrão Drupal 11+ e 12: `docs/portal/DRUPAL-12-STANDARDS.md`.
-- Rotas `/studio` e `/studio/*` respondem 404. Rotas administrativas e de integração existem só no domínio principal.
 - **Tema de validação:** só o tema ACULTA ativo. Não alterne `system.theme`. **Olivero:** não habilite, selecione, teste nem exija em gates, suítes ou aceite.
-- **HTMX no tema:** padrão para interações novas (`core/drupal.htmx`, `data-hx-*`). Drupal AJAX (`core/drupal.ajax`, `#ajax`, `use-ajax`) é legado: não introduza usos novos. Preserve links e formulários nativos como fallback.
+- Rotas administrativas e de integração existem só no domínio principal. Rotas `/studio` ficam nas regras do `aculta_studio`.
 - Aceite único de Termos e Política: `docs/portal/ACEITE-UNICO.md`.
 - **Gates por escopo:** só os do diff e dos módulos dependentes (`docs/operations/GATES.md`). Gate fora do escopo: N/A com motivo. Gate que não roda no ambiente: DEFERRED com motivo.
 - **Saída verbosa:** `python3 scripts/agent-output.py --lines 60 -- COMANDO`.
