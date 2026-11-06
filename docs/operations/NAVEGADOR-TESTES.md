@@ -71,6 +71,14 @@ Antes de escrever qualquer teste de navegador, verifique se a frente já tem scr
 
 Se a frente não tiver script, crie-o em `tests/browser/<purpose>/<frente>/` com um README local, para que o próximo agente reutilize. Testes do Studio ficam em `tests/browser/studio/<suite>/` (marley, we-sativa, ganjalab, green-stash, culturas, geral). Alterações em script existente entram no mesmo commit da entrega. Nunca grave segredo, link de login de uso único ou caminho absoluto de máquina no script ou no README.
 
+## Manutenção: novo, alterado ou quebrado
+
+- **Teste novo:** crie na pasta da frente, com README local. Depois rode `python3 tests/browser/gerar-indice.py` e `php scripts/validate-browser-index.php`. `tests/browser/INDICE.md` é gerado: não o edite à mão.
+- **Teste alterado:** altere o script e o README da frente no mesmo commit da entrega. Atualize `routes.json` se as rotas mudarem.
+- **Teste quebrado:** você pode corrigir o script e o README quando a página, a rota, o seletor ou o fixture mudaram. Corrija a causa, não só o sintoma. Não relaxe asserções para o teste passar. Se a falha indicar regressão do produto, não ajuste o teste: registre a falha e reporte.
+- **Não duplique:** se a frente já tem script, corrija-o em vez de criar outro.
+- **Gate:** `php scripts/validate-browser-index.php` precisa passar antes do commit.
+
 O runner comum (`playwright.spec.mjs`) cobre só smoke da origem; a cobertura funcional está nos scripts das frentes.
 
 ## Escopo e limites

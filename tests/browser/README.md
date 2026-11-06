@@ -76,7 +76,7 @@ DISPLAY=:0 firefox-esr --no-remote --profile "$SUITE_OUT/ff-profile" --new-insta
 
 Estão listadas abaixo as pastas reais, com o caminho completo. A convenção é `tests/browser/<purpose>/<frente>/` (purpose: `account`, `courses`, `eventos`, `forum`, `gallery`, `links`, `magazine`, `shop`, `studio`, `support`, `transversal`, `wiki`). Frentes antigas na raiz (`aculta-avatar`, `aculta-game`, etc.) continuam válidas. Antes de criar um script, procure a frente nesta tabela.
 
-**Manutenção do índice.** `tests/browser/INDICE.md`, a tabela abaixo e os `README.md` das pastas agrupadoras são gerados por `python3 tests/browser/gerar-indice.py`. Depois de criar, mover ou remover uma frente, rode o script. Para conferir sem alterar, use `--check`, que sai com erro se o índice estiver desatualizado.
+**Manutenção do índice.** `tests/browser/INDICE.md`, a tabela abaixo e os `README.md` das pastas agrupadoras são gerados por `python3 tests/browser/gerar-indice.py`. Depois de criar, mover ou remover uma frente, rode o script. `php scripts/validate-browser-index.php` é o gate: confere o `--check` e se algum documento cita caminho inexistente. Regras de criação, alteração e correção de testes: `docs/operations/NAVEGADOR-TESTES.md`, seção "Manutenção".
 
 <!-- INDICE:INICIO -->
 

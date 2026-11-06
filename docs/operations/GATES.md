@@ -33,6 +33,7 @@ Regra: rode **somente** os gates do escopo do diff e dos módulos que dependem d
 | Studio e fronteira módulo/tema | `validate-module-theme-boundary.php`, `validate-project-status-index.php` | Aceite visual Playwright do Studio: `tests/browser/studio/` |
 | Galeria | `validate-aculta-gallery.php` | |
 | Envio de e-mail | `validate-mail-transport.php` | |
+| Testes de navegador (`tests/browser/`): criar, mover, alterar ou corrigir teste, ou documento que cite `tests/browser/` | `php scripts/validate-browser-index.php` (executa `python3 tests/browser/gerar-indice.py --check`) | Antes do commit. Falha se o índice estiver defasado ou se um documento citar caminho inexistente |
 | Aceite único de termos | `validate-single-acceptance.php` | |
 | Wiki | Unit do `aculta_wiki` (comando em `web/modules/custom/aculta_portal/modules/aculta_wiki/AGENTS.md`) | |
 | Tema ACULTA420 V2 | Gates listados em `web/themes/custom/aculta420_v2/docs/gates.md` | Regras do tema ficam lá |
