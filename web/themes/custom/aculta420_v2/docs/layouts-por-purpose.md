@@ -28,6 +28,10 @@ que o markup atual, com CSS adaptado e captura antes/depois nos dois modos.
 - **Studio — adoção SDC parcial, com bio/redes validadas.** O Drush não oferece o comando `router:debug`; o `router.route_provider` encontrou `/meu-perfil`, `/conta` e `/marley`. A suíte Firefox ESR autenticada confirmou que `/meu-perfil` renderiza. `profile-bio` e `profile-social` agora usam `profile-details`; comparação pareada focal passou 97/97 checks (22 ignorados, zero falhas) com foco e zero overflow em claro/escuro a 320/1440 px. Capturas em `$SUITE_OUT/layouts-purpose-studio-profile-details-paired-20261106/{before,after}/`. Identidade, abas e rotas conservam as evidências acima.
 - **Loja — pendente por autorização.** Não foi encontrada autorização registrada para criar templates de produto/listagem do V2. O componente `price` permanece fora do escopo.
 
+## 0.3 Decisão da Revista (2026-11-06)
+
+O accent da Revista é uma escolha única para a Revista inteira, feita pelo UI Styles. Não é por publicação. Por isso, o campo nativo por nó deixa de ser o mecanismo de escolha. Os testes que salvaram `red` no node 602 são evidência de integração e devem ser revertidos.
+
 ## 1. Consumo atual por componente
 
 Componentes com zero consumidores no repositório (medido por `grep` em templates

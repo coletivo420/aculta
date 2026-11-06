@@ -32,6 +32,12 @@ Os scripts são `npm run test:firefox`, `npm run test:chromium` e `npm run test:
 
 Para o método 5 (X11 com Firefox ESR), não há script: `DISPLAY=:0 firefox-esr --no-remote --profile "$SUITE_OUT/ff-profile" --new-instance "file://$SUITE_OUT/pagina.html"`, com `SUITE_OUT` externo ao repositório e um display X já ativo.
 
+## Capturas
+
+As capturas de teste ficam dentro do projeto, em `tests/browser/capturas/<frente>/<AAAA-MM-DD>/`, com caminho relativo. Os arquivos PNG ficam fora do Git (`tests/browser/.gitignore`). Cada pasta de data tem um `manifest.json` versionado, com: método usado, motor, viewport, modo de cor, URL relativa, resultado de cada asserção e o hash do commit testado. Antes e depois usam subpastas `before/` e `after/`.
+
+`$SUITE_OUT` continua disponível para execuções temporárias, mas não é o destino final de evidência.
+
 ## Execução
 
 Cada execução declara `ACULTA_BROWSER_ENV` como `desenvolvimento` para hosts `*.aculta.toca.net.br` ou `local` para o Apache em loopback. A origem vem de `ACULTA_SITE_ORIGIN` ou as URLs, separadas por vírgula, de `ACULTA_BROWSER_URLS`. No modo local, use o hostname ACULTA apontando para `127.0.0.1`, não `http://127.0.0.1/`, para preservar SNI e o VirtualHost HTTPS; o certificado é ignorado somente nesse modo.
