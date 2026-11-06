@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | F1 — Tokens e fundações | Entregue em `1.2.0-dev.1` | Nenhuma no tema |
 | F2 — Shell | Pendente | Firefox ESR: 40 capturas e 108/120 verificações. Fórum tem overflow em 320 px; navegação falha contraste AA no modo claro a 1440 px nos dez purposes. D1 permanece pendente do Portal e a aceitação visual é do responsável |
-| F3 — Purpose e botões | Pendente | Firefox ESR: vínculo de palette e tokens dos botões primário/contorno passou 358/360 checks em 10 purposes × 2 modos × 320/1440. Fórum tem overflow a 320 px nos dois modos; não marcar concluída até corrigir e repetir |
+| F3 — Purpose e botões | Concluída em 2026-11-06 | Firefox ESR: palette, botões e ausência de overflow passaram 360/360 checks em 10 purposes × 2 modos × 320/1440; evidência em `tests/browser/capturas/purpose-buttons/2026-11-06/` |
 | F4 — UI Styles | Parcial | Gate de catálogo PASS (24). Submit global da Revista e classe no wrapper e no SDC validados no Firefox ESR; Eventos `card-cultural` validado. Adoção por purpose continua parcial |
 | F5 — Componentes e templates | Parcial; adoção por purpose pendente | Accent global da Revista validado em quatro cenários; Studio e Eventos mantêm validações anteriores. Loja aguarda autorização; `price` fora do escopo |
 | RC | Não promovida | Depende de F4 e F5 validadas no servidor, revisão visual em larguras e modos, Drupal 12 |
@@ -118,7 +118,7 @@ Critérios de contraste WCAG AA aprovados em `tokens.css`. Schema e defaults con
 Os botões do tema V2 foram integralmente migrados para o esquema único documentado em `docs/botoes.md`:
 - Consumo estrito de tokens semânticos `--button-primary-*`, `--button-secondary-*` e `--button-focus-ring` nas variantes `.button--primary`, `.button--secondary`, `.button--outline` e `.button--ghost`.
 - Eliminação total do uso de `--color-brand-highlight`, `--purpose-*` e de `filter: brightness(...)` nos estados de interação.
-- A invariância estática dos tokens foi verificada; a comprovação visual automatizada com Firefox ESR em 320 px e 1440 px, nos 10 purposes e dois modos, permanece pendente de runtime.
+- A invariância estática dos tokens foi verificada; Firefox ESR confirmou em runtime os botões em 10 purposes, claro/escuro e 320/1440 px. A suíte passou 360/360 checks, inclusive largura de documento sem overflow; capturas em `tests/browser/capturas/purpose-buttons/2026-11-06/`.
 - Gate `scripts/validate-aculta420-v2-foundations.php` expandido com pares de contraste textuais (repouso, hover, active), bordas e foco (todos PASS).
 - Captura de runtime real no Homelab permanece pendente (DEFERRED).
 

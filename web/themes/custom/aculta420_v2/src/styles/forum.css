@@ -31,8 +31,8 @@
   padding-block-start: var(--spacing-md);
 }
 
-.aculta-forum-topic-list-row__meta > div { align-items: baseline; display: grid; gap: var(--spacing-xs); grid-template-columns: max-content minmax(0, 1fr); }
-.aculta-forum-topic-list-row__meta dt { font-weight: 400; white-space: nowrap; }
+.aculta-forum-topic-list-row__meta > div { align-items: baseline; display: grid; gap: var(--spacing-xs); grid-template-columns: minmax(0, max-content) minmax(0, 1fr); }
+.aculta-forum-topic-list-row__meta dt { font-weight: 400; min-inline-size: 0; overflow-wrap: anywhere; }
 .aculta-forum-topic-list-row__meta dd { color: var(--color-text-primary); margin: 0; overflow-wrap: anywhere; }
 .aculta-forum-topic-list-row__meta > div > dd:first-of-type { text-align: end; }
 .aculta-forum-topic-list-row__last-author { display: flex; grid-column: 1; justify-content: flex-start; min-inline-size: 0; }
