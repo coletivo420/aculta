@@ -78,6 +78,8 @@ As frentes existentes são: `aculta-avatar`, `aculta-calendar-admin`, `aculta-ca
 
 Cada README local é a fonte dos URLs, critérios, fixtures e variáveis da frente. O runner comum cobre carregamento, visibilidade do corpo, URL final, timeout, artefatos e os códigos de saída; critérios específicos devem ser expressos em testes Playwright da própria frente.
 
+**Cobertura real por frente.** O `playwright.spec.mjs` faz só smoke: abre a origem (`ACULTA_SITE_ORIGIN` ou `ACULTA_BROWSER_URLS`) em cada frente e confirma carregamento. Ele não percorre as rotas da frente. A cobertura funcional fica no script da própria frente (`visual.py`, `*.mjs` ou similar) descrito no README local, que define suas rotas, login e ambiente. Uma frente que precise de rotas específicas roda o script dela, não o runner comum. Não há URL por frente no runner, de propósito: as frentes têm ambientes e pré-requisitos diferentes, e um mapa único ficaria falso.
+
 ## Códigos
 
 `0` passou; `124` timeout; `1` erro do Playwright/asserção; `2` pré-requisito ausente ou motor inválido. Não versionar PNG, HTML, trace, vídeo, log ou credencial.
