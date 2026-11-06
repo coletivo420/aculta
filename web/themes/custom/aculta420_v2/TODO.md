@@ -1,29 +1,26 @@
 # TODO — aculta420_v2
 
-Estado: em desenvolvimento · versão 1.3.0 (`aculta420_v2.info.yml`) · status: sem status YAML.
+Estado: em desenvolvimento · versão 1.3.0 (`aculta420_v2.info.yml`) · status YAML ausente.
 
 ## Próximo passo
 
-Revista: configuração global submetida via UI Styles; preprocess aplica classe ao wrapper do node e ao SDC, com precedência administrativa. Quatro teasers confirmados no Firefox ESR em claro/escuro, 320/1440 px e sem overflow. Configuração global restaurada vazia; banco: 5 nós Revista, zero valores próprios; node 602 vazio. Campo legado preservado sem widget/leitura e sem migração destrutiva.
-
-PHPUnit focal do tema: 12 testes/56 assertions PASS; bootstrap cria a saída automaticamente em caminho relativo ao projeto. Foundations, UI Styles, SDC schema e SDC render PASS. Firefox ESR: palette e botões primário/contorno em dez purposes, claro/escuro, 320/1440 px: 360/360 verificações; sem overflow no Fórum a 320 px. F3 concluída com evidência em `tests/browser/capturas/purpose-buttons/2026-11-06/`.
-
-F2: shell não alterado. Firefox ESR passou 120/120 verificações em dez purposes, claro/escuro, 320/1440 px, sem overflow e com contraste AA no fundo efetivo da navegação. O probe foi corrigido para compor fundos transparentes. Aceitação visual do responsável permanece pendente; evidências em `tests/browser/capturas/shell/2026-11-06/`.
-
-Editor: os casos anônimos e as negações do `content_editor` passaram. A rota `/node/add/revista` respondeu HTTP 404 com documento vazio após ULI; o CKEditor não foi renderizado, então a suíte registra bloqueio de rota e não conclui a validação do editor. Host/fluxo ULI pendente; nenhuma configuração do editor foi alterada. Captura em `tests/browser/capturas/aculta-editor/2026-11-06/`.
-
-Studio: `/conta`, abas, identidade, bio e redes validados em fase anterior. Loja aguarda autorização; `price` fora. Bootstrap contrib permanece ativo para a rodada de validação V1.
+- **Revista:** accent global via UI Styles, precedência no wrapper/SDC. Cinco nós sem accent próprio; node 602 vazio. Campo legado preservado, fora do fluxo.
+- **PHPUnit:** 12 testes/56 assertions PASS; bootstrap cria saída relativa. Foundations, UI Styles, SDC schema/render PASS.
+- **F3:** concluída; Firefox ESR palette/botões 360/360, 10 purposes, claro/escuro, 320/1440, sem overflow. `tests/browser/capturas/purpose-buttons/2026-11-06/`.
+- **F2:** shell intacto; ESR 120/120, 10 purposes, claro/escuro, 320/1440, sem overflow e contraste AA. Aceite visual pendente. `tests/browser/capturas/shell/2026-11-06/`.
+- **Editor:** anônimo/negações `content_editor` PASS. Após ULI, `/node/add/revista` retorna 404 vazio; suíte para antes do CKEditor. Host/fluxo pendente; sem mudar config. `tests/browser/capturas/aculta-editor/2026-11-06/`.
+- **Config:** sem diff seguro de tema/módulo. Config local `default_admin`, field legado e chaves sensíveis Turnstile preservados; sem `drush cex`. Ver handoff.
+- **Outros:** Bootstrap contrib fica ativo na validação V1; `/conta` validado; Loja aguarda autorização.
 
 ## Dívidas
 
-- Componente `price` (ADR-046): aguarda definição do contrato e autorização explícita da frente de Commerce/Loja.
-- Faixa de acento (`card-cultural`): em modo DRAFT até entrega da variável neutra `domain_presentation.accent` (D1) pelo Portal.
+- `price` (ADR-046): aguarda contrato/autorização de Loja.
+- Accent de `card-cultural` (D1): aguarda `domain_presentation.accent` do Portal.
 
 ## Leitura
 
-- Leia só este arquivo, o código alvo e o `CHANGELOG.md` do componente se ele existir, pelo trecho necessário.
-- Roadmap completo, grande: `web/themes/custom/aculta420_v2/docs/roadmap.md`. Leia só a seção pelo título: `grep -n '^## ' web/themes/custom/aculta420_v2/docs/roadmap.md`.
+Leia este arquivo, código alvo e trecho necessário do `CHANGELOG.md`. Roadmap: `web/themes/custom/aculta420_v2/docs/roadmap.md`.
 
 ## Ao concluir uma fase
 
-Atualize versão, estado e próximo passo aqui e em `docs/operations/status/aculta420_v2.yml` (quando houver), no mesmo commit. Remova o que foi concluído; não acrescente histórico neste arquivo.
+Atualize este TODO e `docs/operations/status/aculta420_v2.yml` se existir, no mesmo commit. Remova concluídos; sem histórico.
