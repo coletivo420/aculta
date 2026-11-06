@@ -152,6 +152,9 @@ Gates foundation (55 pares), design foundations (2.468 checks), SDC schemas
 
 - `1.3.0-dev.1`: componente SDC `studio-calendar` integrado ao Studio Dashboard (`/aculta-studio-dashboard`). Suporta filtros Cursos / Eventos / Meus eventos, troca de mês e seleção de dia assíncrona por HTMX sem recarregar a página. No celular, exibe-se abaixo do cabeçalho e antes de 'Suas experiências'; no desktop, posiciona-se na coluna direita alinhado ao conteúdo. Botão '+' leva ao formulário de propostas de eventos para autenticados. Validação com Firefox ESR (DISPLAY=:0) em 320 px e 1440 px, claro e escuro, anônimo e autenticado, sem estouro horizontal (manifest versionado em `tests/browser/capturas/studio-calendario/2026-11-06/manifest.json`).
 
+- `1.3.1`: layout de container por purpose implementado conforme o plano `docs/architecture/PLANO-LAYOUT-CONTAINER-POR-PURPOSE.md`. Adiciona a subaba "Layout de container" com suporte aos modos Boxed (padrão), Unboxed (largura total), Contained (1000 px) e Max full width (1400 px), com slider de largura geral (960-1600 px) e estreita (600-900 px). Emissão de `data-purpose-layout` e variáveis `--aculta-container-width` e `--aculta-narrow-container-width` no `<html>`. No celular (abaixo de 60 rem), a largura é forçada a 100% sem overflow. Suíte visual em Firefox ESR (:0) cobrindo 10 purposes nos modos claro e escuro, 320 e 1440 px: 300/300 checks PASS (`tests/browser/capturas/layout-container/2026-11-06/manifest.json`).
+
+
 - `1.2.0-dev.13`: breadcrumb migrado da V1 para SDC e integrado ao template
   Drupal `navigation/breadcrumb`. Contrato visual preserva links editoriais,
   separador `/`, título atual e foco. Baseline: V2 não possuía override nem
