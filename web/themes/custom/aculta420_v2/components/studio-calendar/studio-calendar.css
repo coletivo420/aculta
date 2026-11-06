@@ -295,7 +295,11 @@
     position: relative;
   }
 
-  /* O conteúdo ocupa a faixa entre o menu e o calendário, sem vão extra. */
+  /* O conteúdo ocupa a faixa entre o menu e o calendário: grid de uma coluna, sem a coluna lateral vazia. */
+  :is(main, .page__main, .layout-page):has(.aculta-studio-calendar) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   :is(main, .page__main, .layout-page):has(.aculta-studio-calendar) .layout-page__content {
     max-inline-size: none;
     inline-size: 100%;
