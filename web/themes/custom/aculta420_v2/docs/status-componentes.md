@@ -96,3 +96,15 @@ apresentação ou consumer semântico. A implementação é uma tarefa ligada a
 Commerce/Loja, que o plano atual exclui sem autorização explícita por tarefa.
 Não foi criado componente nem assumido formato, moeda, impostos ou desconto.
 Retomar após autorização e definição do consumer/contrato; outras fases seguem.
+
+## Profile details — adoção de bio e redes do Studio
+
+O SDC `profile-details` apresenta os slots de biografia, redes sociais e ações
+que `aculta_user` prepara e autoriza. O preprocess do tema adapta
+`profile-bio` e `profile-social` para esse contrato sem consultar usuários nem
+achatar render arrays; `title_id` e `heading_level` mantêm o título associado
+por `aria-labelledby`. Schema estrito, descoberta e render isolado Drupal
+passaram. A captura antes/depois de `/meu-perfil` no Firefox ESR passou 97/97
+checks (22 ignorados, zero falhas) nos modos claro/escuro e em 320/1440 px,
+incluindo foco visível e ausência de overflow; imagens em
+`$SUITE_OUT/layouts-purpose-studio-profile-details-paired-20261106/{before,after}/`.

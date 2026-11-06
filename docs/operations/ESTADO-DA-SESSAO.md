@@ -3,16 +3,15 @@
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
 
-# Adoção por purpose — Eventos e revisão focal do Studio — 2026-11-06
+# Adoção por purpose — `profile-details` no Studio — 2026-11-06
 
-- **Objetivo:** adoção de componentes por purpose; publicar Eventos e validar consumers do Studio.
-- **Estado:** Eventos usa View sobre IDs/props de `EventCatalogue`, mantendo ACL, recorrência, filtros e ordem. Kernel: 155/3.616; Unit: 30/62. Firefox ESR: dois cards, 8 estados, foco e zero overflow; listagem sem baseline. Studio: `context-tabs` (77/77) e `profile-identity`→`author-card` (89/89, 22 ignoradas cada) comparados antes/depois; quatro links de identidade alcançados por teclado. `profile-identity`: claro/escuro, 320/1440 px, zero overflow; capturas em `layouts-purpose-studio-profile-identity-paired-20261106/{before,after}/`.
-- **Decisões e alternativas descartadas:** a View não seleciona ocorrências nem concede acesso; `EventCatalogue` continua autoridade. `profile-bio` e `profile-social` ficam no fallback. Loja aguarda autorização; Revista não lê accent fora do UI Styles.
-- **Cuidados:** cache dos cards expira junto da ocorrência; args de Views vêm do mapa interno por requisição. Baselines em `$SUITE_OUT/layouts-purpose-baseline-20261105/` foram preservadas.
-- **Commits e arquivos:** `1585167034` publicado; módulo Events, View/config, templates e CSS V2, testes e docs de purpose.
-- **Verificações:** V2 foundations, mapped classes, SDC schema/render, browser validators, module/theme boundary, PHPCS, YAML e diff check PASS. Portal Drupal 12 gate falha por divergências preexistentes de versões/status em outros módulos e índice README. `drush cr` PASS; `config:status` só lista diferenças antigas.
-- **Pendências e bloqueios:** Revista aguarda escolha por entidade suportada pelo UI Styles; Loja aguarda autorização; `profile-bio` e `profile-social` do Studio ainda usam fallback. O stash temporário de baseline foi aplicado e removido.
-- **Próximo passo:** validar outra família Studio isoladamente ou encerrar a parte viável; manter Revista e Loja pendentes até seus bloqueios serem resolvidos.
+- **Objetivo:** integrar bio e redes sociais do perfil do Studio a um SDC, respeitando os limites de UI Styles e autorização de Loja.
+- **Estado:** `profile-bio` e `profile-social` mapeados a `profile-details`, sem alterar `author-card`; slots do `aculta_user` preservados. Captura Firefox ESR antes/depois em `/meu-perfil`: 97/97 checks por rodada, 22 ignorados e zero falhas, claro/escuro, 320/1440 px, foco no slot de ações e sem overflow. Evidências externas em `$SUITE_OUT/layouts-purpose-studio-profile-details-paired-20261106/{before,after}/`.
+- **Decisões e alternativas descartadas:** Revista continua pendente porque accent por nó exige integração ampla do UI Styles; não foi implementada leitura fora do mecanismo. Loja continua pendente sem autorização em `docs/`.
+- **Arquivos:** SDC `components/profile-details/`, `PagePresentationHooks`, gate de render SDC, teste unitário e suíte visual Studio; documentação de consumer/status/roadmap.
+- **Verificações:** PHPUnit 7/33; schema 764 checks; SDC render 41 componentes; mapped classes (459), foundations (73 pares), UI Styles (20), browser validators (21), module-theme boundary (4274), diff check e captura ESR PASS. `drush cr` PASS. `config:status` mostra apenas diferenças preexistentes em blocos administrativos, CAPTCHA/Turnstile e `core.extension`.
+- **Pendências:** Revista aguarda integração de seleção por nó suportada pelo UI Styles; Loja aguarda autorização documentada. Baselines anteriores não foram modificadas.
+- **Próximo passo:** definir uma integração de UI Styles compatível com entidades antes de retomar Revista; não iniciar templates de Loja até autorização em `docs/`.
 
 # Fase 5 — Componentes e templates (SDC consumers integrados) — 2026-11-05
 

@@ -1,5 +1,19 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — `profile-details` no Studio
+
+- Adicionado o SDC `profile-details` com título acessível (`aria-labelledby`) e
+  slots proprietários separados para biografia, redes e ações. O preprocess
+  mapeia `profile-bio` e `profile-social` preservando seus render arrays.
+- PHPUnit do hook: 7 testes/33 assertions. Gates: schema 764 checks, classes
+  mapeadas, fundações e render isolado de 41 SDCs passaram.
+- Firefox ESR comparou o fallback e o SDC em `/meu-perfil`: 97/97 checks em
+  cada rodada, 22 ignorados, zero falhas; claro/escuro, 320/1440 px, foco e
+  zero overflow. Capturas em
+  `$SUITE_OUT/layouts-purpose-studio-profile-details-paired-20261106/{before,after}/`.
+- Revista permanece sem mudança: seleção por nó exigiria integração ampla de
+  UI Styles. Loja continua aguardando autorização documentada.
+
 ## Não versionado — Studio `profile-identity` com `author-card`
 
 - O preprocess do tema adapta somente `profile-identity` à variante `profile_full`; nome, hint, avatar, ações e link público continuam vindos do Portal. `profile-bio` e `profile-social` seguem no fallback.

@@ -1,6 +1,6 @@
 # Catálogo de componentes do tema V2
 
-Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Auditoria do catálogo em 2026-11-05: os 40 diretórios de `components/` têm entrada aqui, schema e story; não há entrada sem componente.
+Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Auditoria do catálogo em 2026-11-06: os 41 diretórios de `components/` têm entrada aqui, schema e story; não há entrada sem componente.
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
@@ -284,6 +284,14 @@ autorizada.
 - **Story:** `author-card.default.story.yml`.
 - **Regra:** não carrega usuário/Profile, não decide visibilidade e não inventa iniciais; os slots conservam os render arrays cacheáveis do módulo proprietário.
 - **Estado:** implementação presente, com gate de render SDC. Cumpre a função de Author box no slot `authors` de `revista-publication`, usando identidade, avatar e biografia fornecidos pelo Portal; não existe necessidade documentada para um segundo SDC homônimo. O consumer `profile-identity` do Studio também usa a variante `profile_full`; comparação antes/depois em `/meu-perfil` passou no Firefox ESR (89/89, 22 ignoradas), claro/escuro, 320/1440 px, foco por teclado e zero overflow. Capturas em `$SUITE_OUT/layouts-purpose-studio-profile-identity-paired-20261106/{before,after}/`. A rota pública de perfil continua sem validação de Runtime.
+
+### profile-details — Detalhes de perfil
+- **Papel:** apresenta biografia ou redes sociais já preparadas pelo `aculta_user` no Studio.
+- **Props:** `title`, `title_id` e `heading_level` (2 ou 3), para associar `aria-labelledby` ao título sem perder a hierarquia semântica.
+- **Slots:** `bio`, `social_links` e `actions`; todos preservam render arrays do módulo proprietário.
+- **Story:** `profile-details.default.story.yml`.
+- **Regra:** o tema não carrega usuário/Profile, não transforma render arrays em texto ou links e não decide autorização/visibilidade.
+- **Estado:** `profile-bio` e `profile-social` mapeados pelo preprocess de apresentação. Schema e render Drupal passaram; captura pareada autenticada em `/meu-perfil` passou 97/97 verificações (22 ignoradas, zero falhas), em claro/escuro a 320/1440 px, com títulos acessíveis, foco por teclado e zero overflow. Evidências em `$SUITE_OUT/layouts-purpose-studio-profile-details-paired-20261106/{before,after}/`.
 
 ### revista-teaser — Cartão editorial
 - **Papel:** substitui a apresentação V1 do teaser de publicação na listagem da Revista.
