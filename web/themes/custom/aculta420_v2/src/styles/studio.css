@@ -2397,3 +2397,12 @@ body.path-ganjalab .aculta-main :is(h1, h2, h3, h4, h5, h6) {
 .aculta-account-entry .aculta-xp-grid > li > .aculta-xp-strip {
   flex: 1 1 auto;
 }
+
+/* Caixas do painel de conta: cor de destaque do purpose na borda superior e cantos arredondados (referência). */
+.aculta-account-entry .aculta-xp-hero,
+.aculta-account-entry .aculta-xp-card,
+.aculta-account-entry .aculta-xp-strip,
+.aculta-account-entry .aculta-xp-row {
+  border-block-start: 4px solid var(--purpose-accent);
+  border-radius: var(--radius-lg);
+}
