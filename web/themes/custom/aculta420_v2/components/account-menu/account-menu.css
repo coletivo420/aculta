@@ -53,20 +53,30 @@
 }
 
 /* Diálogo em tela cheia: sobrescreve o painel lateral padrão dos diálogos utilitários. */
+/* Painel lateral, como carrinho e avisos: ocupa quase toda a tela no desktop e deixa uma faixa esmaecida
+   (::backdrop) no mobile. Não é tela cheia. */
 .aculta-utility-dialog.aculta-account-dialog {
   background: var(--color-surface);
   block-size: 100vh;
   block-size: 100dvh;
   color: var(--color-text-primary);
-  inline-size: 100vw;
-  inset: 0;
+  inline-size: calc(100vw - var(--spacing-lg));
+  inset-block: 0;
+  inset-inline: auto 0;
   margin: 0;
   max-block-size: none;
   max-inline-size: none;
   overflow-x: hidden;
   overflow-y: auto;
   padding: 0;
-  width: 100vw;
+  width: calc(100vw - var(--spacing-lg));
+}
+
+@media (min-width: 60rem) {
+  .aculta-utility-dialog.aculta-account-dialog {
+    inline-size: calc(100vw - 6rem);
+    width: calc(100vw - 6rem);
+  }
 }
 
 .aculta-account-dialog .aculta-utility-dialog__header {
