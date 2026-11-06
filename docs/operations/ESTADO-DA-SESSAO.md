@@ -2,6 +2,18 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
+
+# Adoção por purpose — Eventos e revisão focal do Studio — 2026-11-06
+
+- **Objetivo:** publicar a listagem pública de Eventos com `card-cultural` e verificar o runtime do Studio.
+- **Estado:** Eventos usa View sobre os IDs/props preparados por `EventCatalogue`, mantendo ACL, recorrência, filtros e ordem. Kernel: 155/3.616 PASS; Unit: 30/62 PASS. Firefox ESR: dois cards, 8 estados (listagem/detalhe, claro/escuro, 320/1440), foco visível e zero overflow. A listagem não tinha baseline anterior. Studio: suíte 65/65, 22 ignoradas, zero falhas; captura atual em `$SUITE_OUT/layouts-purpose-studio-context-tabs-after-20261106/`. Ela não tem par antes comparável.
+- **Decisões e alternativas descartadas:** a View não seleciona ocorrências nem concede acesso; `EventCatalogue` continua autoridade. Loja aguarda autorização; Revista não lê accent fora do UI Styles.
+- **Cuidados:** cache dos cards expira junto da ocorrência; args de Views vêm do mapa interno por requisição. Baselines em `$SUITE_OUT/layouts-purpose-baseline-20261105/` foram preservadas.
+- **Commits e arquivos:** `1585167034` publicado; módulo Events, View/config, templates e CSS V2, testes e docs de purpose.
+- **Verificações:** V2 foundations, mapped classes, SDC schema/render, browser validators, module/theme boundary, PHPCS, YAML e diff check PASS. Portal Drupal 12 gate falha por divergências preexistentes de versões/status em outros módulos e índice README. `drush cr` PASS; `config:status` só lista diferenças antigas.
+- **Pendências e bloqueios:** comparação antes/depois focal de `context-tabs`; seleção por entidade suportada para Revista; Loja autorizada; perfis Studio sem mapeamento. Stash de hooks Studio não validados permanece intocado.
+- **Próximo passo:** capturar uma baseline comparável de consumer real `context-tabs` ou validar outro SDC isoladamente; manter Revista e Loja pendentes até seus bloqueios serem resolvidos.
+
 # Fase 5 — Componentes e templates (SDC consumers integrados) — 2026-11-05
 
 - **Objetivo:** implementar consumers reais no tema `aculta420_v2` para os componentes SDC pendentes (`author-card`, `dialog`, `form-field`, `progress`, `data-table`, `empty-state` e `tabs`), fechar pendências de templates e preparar handoff operacional da F5.
@@ -30,12 +42,3 @@
 - **Verificações:** Unit `aculta_user` (154/154 PASS), Unit `aculta_studio` (7/7 PASS), `validate-module-theme-boundary.php` PASS (4271 checks), `validate-portal-ui-docs.php` PASS (507 tokens), `validate-aculta420-mapped-classes.php` PASS (455 classes), `validate-aculta-user-photo.php` PASS (INV-FOTO-1 a INV-FOTO-11), `validate-account-address.php` PASS.
 - **Pendências:** transição para F3 conforme instrução do responsável.
 - **Próximo passo:** handoff da F3 para o próximo agente.
-
-# Dívida de estilo resolvida — 2026-11-05
-
-- **Objetivo:** eliminar as 189 classes mapeadas sem CSS e os nomes Bootstrap do mapa do V2, com prevenção por gate.
-- **Concluído:** `92a5c3abde` cria `src/styles/portal-ui-map.css` com estilo mínimo por componente; remove 14 nomes Bootstrap (`bi`, `bi-*`, `breadcrumb`, `breadcrumb-item`, `btn`, `btn-link`, `form-control`, `btn-primary`, `btn-outline-primary`, `btn-outline-secondary`, `btn-sm`) do mapa; adiciona o gate `scripts/validate-aculta420-mapped-classes.php`; troca as classes de design do diálogo de cadastro do checkout por tokens `data-portal-ui` mapeados no tema. `47dcbee7e1` remove `.btn`, `.btn-link` e `.form-control` dos CSS portados e faz `validate-aculta420-v2-sdc.php` passar.
-- **Verificações:** gate de classes PASS (455 classes, 0 exceções, 0 nomes Bootstrap); `validate-aculta420-v2-sdc.php` PASS (35 componentes); `validate-portal-ui-docs` PASS (501 tokens); `validate-module-theme-boundary` PASS (4253 verificações); suítes `aculta-htmx-f1` 43/43 e `aculta420-v2-footer` 6/6 PASS; `validate-aculta420-sdc-schemas` 55/764, browser validators 21 e foundations PASS; `updatedb:status` e `config:status` limpos.
-- **Gates com falha preexistente/alheia:** `validate-agent-token-budget.php` (AGENTS.md raiz com 6501 bytes por alteração paralela do graphify), `validate-aculta-portal-drupal12.php` (versões divergentes) e `validate-portal-popup-rule.php` (9 ocorrências em Events/Paths).
-- **Pendências:** o estilo mínimo não é desenho final por componente; a evolução visual continua como trabalho de produto. Migração das suítes para Playwright segue com o agente paralelo.
-- **Próximo passo:** retomar F2 (navegação do Studio) ou a integração dos consumers dos SDCs.
