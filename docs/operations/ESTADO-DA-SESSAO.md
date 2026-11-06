@@ -5,24 +5,24 @@
 # Accent administrativo da Revista — adapter UI Styles
 
 - **Objetivo:** ligar a escolha de accent do UI Styles a cada nó Revista por campo nativo.
-- **Estado:** código publicado em `153b393611`; campo instalado no Drupal local. Adapter consulta opções do plugin, salva somente valor permitido, restringe Field Access a administradores e aplica classe ao teaser. Aceitação visual não validada: Firefox ESR no host principal recebeu 403; edição no host Revista recebeu 404. Não alterei conteúdo.
+- **Estado:** código publicado em `153b393611`; campo nativo e adapter UI Styles presentes. Firefox ESR confirmou o widget e opções green/yellow/red. Builder consumiu opção red, salvou o campo em transação revertida e o HTML renderizado trouxe a classe no `<article>`; o conteúdo voltou ao valor vazio (revisão 818). Capturas ESR demonstram CSS red em claro/escuro e 320/1440 px com classe transitória no DOM.
 - **Decisões e alternativas descartadas:** sem alteração no contrib UI Styles; classes continuam definidas pelo tema. Loja permanece pendente de autorização.
-- **Cuidados:** não executar a atualização pendente `aculta_portal-post-active_purposes_state`; não salvar accent em conteúdo real antes da captura.
+- **Cuidados:** não executar a atualização pendente `aculta_portal-post-active_purposes_state`; node 602 permaneceu com o campo vazio após rollback.
 - **Commits e arquivos:** `153b393611`; adapter `aculta_magazine`, campo Config Sync, estilos e gate UI Styles, docs de layout/roadmap.
-- **Verificações:** PASS UI Styles (24), mapped classes (462), V2 foundations, SDC schemas (764), browser validators (21), module-theme boundary (4278), SDC render (41) e PHPUnit focal (6/33). Suíte Unit completa: 1 falha anterior em `MagazineAdminViewsConfigTest`. Portal Drupal12/status-index: falha por 9 componentes alheios com versões divergentes. Captura ESR DEFERRED por acesso negado.
-- **Pendências e bloqueios:** capturar formulário e publicação no Firefox ESR após liberar acesso administrativo ao host principal.
-- **Próximo passo:** validar no browser sem gravar em conteúdo existente; então atualizar o status F4/F5.
+- **Verificações:** PASS UI Styles (24), mapped classes (462), V2 foundations, SDC schemas (764), SDC render (41), PHPUnit focal (6/33), formulário, builder nativo e render Drupal transacional. Browser Firefox ESR confirmou stylesheet e breakpoints; submit de formulário automatizado expirou e não alterou o campo. Suíte Unit completa e Portal Drupal12/status-index mantêm falhas alheias documentadas.
+- **Pendências e bloqueios:** validar o submit visual pelo formulário e capturar a publicação com accent salvo; a tentativa automatizada de submit expirou antes de salvar. F4/F5 permanecem parciais.
+- **Próximo passo:** concluir validação visual do estado salvo, mantendo Loja pendente de autorização documentada.
 
 
 # Adoção por purpose — `profile-details` no Studio — 2026-11-06
 
 - **Objetivo:** integrar bio e redes sociais do perfil do Studio a um SDC, respeitando os limites de UI Styles e autorização de Loja.
 - **Estado:** `profile-bio` e `profile-social` mapeados a `profile-details`, sem alterar `author-card`; slots do `aculta_user` preservados. Captura Firefox ESR antes/depois em `/meu-perfil`: 97/97 checks por rodada, 22 ignorados e zero falhas, claro/escuro, 320/1440 px, foco no slot de ações e sem overflow. Evidências externas em `$SUITE_OUT/layouts-purpose-studio-profile-details-paired-20261106/{before,after}/`.
-- **Decisões e alternativas descartadas:** Revista continua pendente porque accent por nó exige integração ampla do UI Styles; não foi implementada leitura fora do mecanismo. Loja continua pendente sem autorização em `docs/`.
+- **Decisões e alternativas descartadas:** Revista agora tem adapter nativo no módulo owner e usa o mecanismo UI Styles sem alterar contrib; validação do estado salvo ainda pendente. Loja continua pendente sem autorização em `docs/`.
 - **Arquivos:** SDC `components/profile-details/`, `PagePresentationHooks`, gate de render SDC, teste unitário e suíte visual Studio; documentação de consumer/status/roadmap.
 - **Verificações:** PHPUnit 7/33; schema 764 checks; SDC render 41 componentes; mapped classes (459), foundations (73 pares), UI Styles (20), browser validators (21), module-theme boundary (4274), diff check e captura ESR PASS. `drush cr` PASS. `config:status` mostra apenas diferenças preexistentes em blocos administrativos, CAPTCHA/Turnstile e `core.extension`.
-- **Pendências:** Revista aguarda integração de seleção por nó suportada pelo UI Styles; Loja aguarda autorização documentada. Baselines anteriores não foram modificadas.
-- **Próximo passo:** definir uma integração de UI Styles compatível com entidades antes de retomar Revista; não iniciar templates de Loja até autorização em `docs/`.
+- **Pendências:** Revista aguarda captura do submit visual com escolha salva; Loja aguarda autorização documentada. Baselines anteriores não foram modificadas.
+- **Próximo passo:** concluir o aceite visual da seleção nativa da Revista; não iniciar templates de Loja até autorização em `docs/`.
 
 # Fase 5 — Componentes e templates (SDC consumers integrados) — 2026-11-05
 
