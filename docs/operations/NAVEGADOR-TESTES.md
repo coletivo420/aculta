@@ -4,10 +4,13 @@
 
 Todos os métodos abaixo são permitidos. Use o primeiro que atender ao teste, nesta ordem, priorizando o que gera menos tokens:
 
-1. **Navegador embutido (built-in browser):** ferramentas `mcp__Claude_Browser__*` ou `mcp__remote-devices__Claude_Browser__*`, quando disponíveis. Para leitura rápida da página e verificação pontual.
-2. **Chromium:** navegador Chromium, quando o teste precisa de comportamento de Chromium ou de um caso que os outros métodos não reproduzem.
-3. **Playwright:** Firefox distribuído pelo Playwright, em `tests/browser`. É o padrão para suítes repetíveis, com artefatos em `$SUITE_OUT`.
-4. **X11 com Gecko/Firefox ESR visível:** para aceite visual humano ou quando os métodos acima não reproduzem o caso.
+1. **Playwright com Firefox:** Firefox distribuído pelo Playwright, em `tests/browser`. É o padrão para suítes repetíveis, com artefatos em `$SUITE_OUT`.
+2. **Playwright com Chromium:** mesmo runner e mesmo script, com o motor Chromium. Para comparar motores.
+3. **Playwright com WebKit:** mesmo runner e mesmo script, com o motor WebKit. Para cobertura de motor.
+4. **Navegador embutido (built-in browser):** ferramentas `mcp__Claude_Browser__*` ou `mcp__remote-devices__Claude_Browser__*`, quando disponíveis. Para verificação pontual de uma página, porque cada passo custa tokens.
+5. **X11 com Gecko/Firefox ESR visível:** para aceite visual humano ou quando os métodos acima não reproduzem o caso. É o mais caro em tokens, porque depende de captura e leitura de imagem.
+
+A ordem vale por custo: scripts com asserções de texto custam quase nada por execução; operar o navegador passo a passo ou olhar imagens custa mais.
 
 Regras de economia:
 
@@ -15,15 +18,15 @@ Regras de economia:
 - Não repita o mesmo teste em mais de um método sem motivo. Se os resultados divergirem, registre qual prevaleceu e por quê.
 - No relatório, declare o método usado em cada teste.
 
-WebKit fica fora da ordem: uso complementar, declarado no relatório.
-
-Versões fixadas no projeto (método 3): Node definido pelo ambiente, `@playwright/test` 1.56.1 e Firefox Playwright 142.0.1 (build Playwright 1495). A instalação usa apenas:
+Versões fixadas no projeto: Node definido pelo ambiente, `@playwright/test` 1.56.1 e Firefox Playwright 142.0.1 (build Playwright 1495). A instalação mínima é:
 
 ```bash
 cd tests/browser
 npm ci
 npx playwright install firefox
 ```
+
+Os métodos 2 e 3 exigem também `npx playwright install chromium webkit`, feito só quando a frente usar esses motores.
 
 Não use `--with-deps`: dependências do sistema exigem decisão separada.
 

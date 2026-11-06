@@ -1,6 +1,6 @@
 # Testes de navegador
 
-Esta pasta é o projeto Node dos testes de navegador do ACULTA, com Playwright e Firefox próprio (método 3). A ordem de preferência está em `docs/operations/NAVEGADOR-TESTES.md`: navegador embutido, Chromium, Playwright e X11 com Gecko/Firefox ESR visível. Todos são permitidos; declare o método usado no relatório. WebKit fica fora da ordem.
+Esta pasta é o projeto Node dos testes de navegador do ACULTA, com Playwright e Firefox próprio (método 3). A ordem de preferência está em `docs/operations/NAVEGADOR-TESTES.md`: Playwright com Firefox, Chromium e WebKit (mesmo runner), navegador embutido e X11 com Gecko/Firefox ESR visível. Todos são permitidos; prefira o de menor custo de tokens e declare o método usado no relatório.
 
 ## Projeto
 

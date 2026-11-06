@@ -11,7 +11,7 @@ Só o específico do Claude. Regras gerais: `AGENTS.md`. Ambientes: `docs/operat
 
 ## Ponteiros
 
-- **Navegador:** `docs/operations/NAVEGADOR-TESTES.md`. Ordem: navegador embutido, Chromium, Playwright, X11 com Gecko/Firefox ESR. Todos permitidos; prefira o de menor custo de tokens e declare o método usado.
+- **Navegador:** `docs/operations/NAVEGADOR-TESTES.md`. Ordem: Playwright com Firefox, Chromium e WebKit, navegador embutido, X11 com Gecko/Firefox ESR. Todos permitidos; prefira o de menor custo de tokens e declare o método usado.
 - **Endereço e CEP:** `web/modules/custom/aculta_portal/modules/aculta_portal_cep/AGENTS.md`.
 - **Mercado Pago:** `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/AGENTS.md`.
 - **Credenciais:** `docs/operations/SECRETS.md`.
