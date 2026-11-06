@@ -6,7 +6,7 @@ Usa a conta existente `teste.comum`, seu perfil público e uma conquista existen
 admin existente para operações administrativas. Não imprime links de login.
 
 ```sh
-python3 tests/runtime/aculta-game/admin-smoke.py "$GAME_MAIN_BASE" "$GAME_ACCOUNT_BASE"
+python3 tests/browser/aculta-game/admin-smoke.py "$GAME_MAIN_BASE" "$GAME_ACCOUNT_BASE"
 ```
 
 Fornecer as URLs de MAIN e ACCOUNT do mapeamento do Deployer. Não usar produção.
