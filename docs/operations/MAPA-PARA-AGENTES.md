@@ -53,7 +53,7 @@ Carrinho da barra: um pedido por carrinho, com fluxo mais exigente entre as cate
 ## Testes e navegador
 
 - Kernel: banco `aculta_simpletest` (`SIMPLETEST_DB` em `secrets/simpletest-db.env`). Nunca `aculta_runtime`.
-- Navegador: ordem de preferência em `docs/operations/NAVEGADOR-TESTES.md`: Playwright com Firefox, Chromium e WebKit, navegador embutido e X11 com Gecko/Firefox ESR em `DISPLAY=:0`. Scripts visuais em `tests/browser/<frente>/` com `README.md`. Artefatos em `$SUITE_OUT`.
+- Navegador: ordem de preferência em `docs/operations/NAVEGADOR-TESTES.md`: Playwright com Firefox, Chromium e WebKit, navegador embutido e X11 com Gecko/Firefox ESR em `DISPLAY=:0`. Scripts visuais em `tests/browser/<purpose>/<frente>/` com `README.md` (ex.: `tests/browser/forum/aculta-forum/`). Índice de todas as frentes com caminho completo: `tests/browser/README.md`, seção "Frentes inventariadas". Artefatos em `$SUITE_OUT`.
 - Procedimento e histórico: `docs/operations/TESTING.md`, `docs/operations/NAVEGADOR-TESTES.md`, `tests/browser/README.md`.
 
 ## Quadro de status e documentos gerados

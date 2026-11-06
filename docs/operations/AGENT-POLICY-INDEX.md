@@ -14,6 +14,7 @@ O arquivo `docs/history/operations/AGENT-GUARDRAILS-FULL.md` é **arquivo histó
 | Tema / mobile-first global | `web/themes/custom/aculta420/AGENTS.md`; norma transversal em `docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md`, obrigatória para todos os agentes que alterem UI no tema |
 | Git, commits, push e Runtime | `AGENTS.md` (resumo) e `docs/operations/AGENT-REGRAS-DETALHADAS.md` (texto integral) |
 | Ambientes, Drush, servidor web e banco de teste | `docs/operations/AGENT-OPERATIONS.md` |
+| Testes visuais de navegador (localizar ou criar script) | `docs/operations/NAVEGADOR-TESTES.md`; índice de frentes com caminho completo em `tests/browser/README.md`; scripts em `tests/browser/<purpose>/<frente>/` |
 | Rotas e domínios | `docs/architecture/AGENT-ROUTES.md` |
 | Administração e integrações somente no MAIN | `docs/portal/ADMIN-DOMAIN-POLICY.md`; regra em `docs/architecture/AGENT-ROUTES.md`; gate `php scripts/validate-admin-routes-main-domain.php` |
 | Conteúdo institucional e Wiki | `docs/operations/AGENT-CONTENT.md` |

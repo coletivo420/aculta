@@ -74,7 +74,60 @@ DISPLAY=:0 firefox-esr --no-remote --profile "$SUITE_OUT/ff-profile" --new-insta
 
 ## Frentes inventariadas
 
-As frentes existentes são: `aculta-avatar`, `aculta-calendar-admin`, `aculta-calendar-interactive`, `aculta-calendar-piloto`, `aculta-conta-raiz`, `aculta-content-admin`, `aculta-cpf-checkout`, `aculta-document-viewer`, `aculta-editor`, `aculta-events`, `aculta-faq`, `aculta-forum`, `aculta-forum-lms`, `aculta-frete`, `aculta-gallery`, `aculta-game`, `aculta-ganjalab`, `aculta-htmx-f1`, `aculta-image-admin`, `aculta-links`, `aculta-lms`, `aculta-lms-resources`, `aculta-maps`, `aculta-mercadopago`, `aculta-messenger`, `aculta-patcher`, `aculta-portal-cep`, `aculta-qrcode`, `aculta-secrets-manager`, `aculta-statistics`, `aculta-studio`, `aculta-theme-mobile-first`, `aculta-uploader`, `aculta-visual`, `aculta-wiki`, `aculta420-v2-card-accent`, `aculta420-v2-data-table`, `aculta420-v2-empty-state`, `aculta420-v2-forum`, `aculta420-v2-navigation`, `aculta420-v2-wiki`, `eventos`, `revista-color` e `revista-editorial`.
+Estão listadas abaixo as pastas reais, com o caminho completo. A convenção é `tests/browser/<purpose>/<frente>/` (purpose: `account`, `courses`, `eventos`, `forum`, `gallery`, `links`, `magazine`, `shop`, `studio`, `support`, `transversal`, `wiki`). Frentes antigas na raiz (`aculta-avatar`, `aculta-game`, etc.) continuam válidas. Antes de criar um script, procure a frente nesta tabela.
+
+| Pasta | Frente |
+|---|---|
+| `tests/browser/account/aculta-conta-raiz/` | Raiz da Conta (Domain ACCOUNT): verificação anônima no navegador |
+| `tests/browser/aculta-avatar/` | Teste visual — avatar padrão |
+| `tests/browser/aculta-game/` | Smoke visual do ACULTA Game |
+| `tests/browser/aculta-maps/` | ACULTA Maps — visual smoke |
+| `tests/browser/aculta-messenger/` | Suíte de navegador do ACULTA Messenger |
+| `tests/browser/aculta-patcher/` | Revisão visual do ACULTA Patcher |
+| `tests/browser/aculta-portal-cep/` | Testes do Portal CEP |
+| `tests/browser/aculta-qrcode/` | Validação visual do ACULTA QR Code |
+| `tests/browser/aculta-secrets-manager/` | Painel de credenciais (aculta_secrets_manager) |
+| `tests/browser/aculta-statistics/` | Revisão visual do painel de estatísticas |
+| `tests/browser/courses/aculta-forum-lms/` | ACULTA Forum LMS — diálogo sob conteúdo H5P |
+| `tests/browser/courses/aculta-lms/` | Revisão visual do formulário de resposta com arquivo (LMS) |
+| `tests/browser/courses/aculta-lms-resources/` | Revisão visual do campo de vídeos do curso |
+| `tests/browser/eventos/` | Navegador — eventos (agenda e incorporação) |
+| `tests/browser/eventos/aculta-calendar-admin/` | Revisão visual de ADM8 — hosts de incorporação do calendário |
+| `tests/browser/eventos/aculta-calendar-interactive/` | Calendário interativo — revisão visual servida |
+| `tests/browser/eventos/aculta-calendar-piloto/` | Piloto isolado — DHTMLX Scheduler (edição GPL) |
+| `tests/browser/eventos/aculta-events/` | Firefox checks for ACULTA Studio Culturas organization layouts |
+| `tests/browser/forum/aculta-forum/` | Suíte visual X11 do ACULTA Forum |
+| `tests/browser/forum/aculta420-v2-forum/` | Firefox ESR visual smoke — Fórum V2 |
+| `tests/browser/gallery/aculta-gallery/` | Galeria ACULTA |
+| `tests/browser/links/aculta-links/` | Micropágina pública: layout mobile no navegador |
+| `tests/browser/magazine/revista-color/` | Revista — rótulos de categoria |
+| `tests/browser/magazine/revista-editorial/` | Revista — fluxo editorial (ARQ-08) |
+| `tests/browser/shop/aculta-cpf-checkout/` | Navegador — CPF/checkout compartilhado Loja/LMS |
+| `tests/browser/shop/aculta-frete/` | Navegador — simulador de frete na página do produto |
+| `tests/browser/shop/aculta-mercadopago/` | Mercado Pago — login sandbox do comprador |
+| `tests/browser/studio/` | Testes do ACULTA Studio, por subcategoria |
+| `tests/browser/studio/culturas/` | Studio · Culturas |
+| `tests/browser/studio/ganjalab/` | Experiência educacional ACULTA Studio Ganjalab |
+| `tests/browser/studio/geral/` | Revisão visual e de navegação do ACULTA Studio |
+| `tests/browser/studio/green-stash/` | Studio · Green Stash |
+| `tests/browser/studio/marley/` | Studio · Marley |
+| `tests/browser/studio/we-sativa/` | Studio · WE SATIVA |
+| `tests/browser/support/aculta-faq/` | Revisão visual do ACULTA FAQ |
+| `tests/browser/transversal/aculta-content-admin/` | Revisão visual do Painel de conteúdo |
+| `tests/browser/transversal/aculta-document-viewer/` | Revisão visual do ACULTA Document Viewer |
+| `tests/browser/transversal/aculta-editor/` | ACULTA Editor — acesso anônimo, editor e administrador |
+| `tests/browser/transversal/aculta-htmx-f1/` | ACULTA420 V2 — HTMX F1 (busca e login) |
+| `tests/browser/transversal/aculta-image-admin/` | Revisão visual das opções administrativas do ACULTA Image |
+| `tests/browser/transversal/aculta-theme-mobile-first/` | ACULTA420 — SDC responsivos do tema |
+| `tests/browser/transversal/aculta-uploader/` | Smoke do aculta_file_uploader (navegador) |
+| `tests/browser/transversal/aculta-visual/` | Revisão visual da Frente B |
+| `tests/browser/transversal/aculta420-v2-card-accent/` | ACULTA420 V2 — faixa de acento do cartão (DRAFT) |
+| `tests/browser/transversal/aculta420-v2-data-table/` | ACULTA420 V2 — Data table |
+| `tests/browser/transversal/aculta420-v2-empty-state/` | ACULTA420 V2 — Empty state |
+| `tests/browser/transversal/aculta420-v2-footer/` | ACULTA420 V2 — rodapé e regions do shell |
+| `tests/browser/transversal/aculta420-v2-navigation/` | Navegação SDC do ACULTA420 V2 |
+| `tests/browser/wiki/aculta-wiki/` | ACULTA Wiki — visual smoke test |
+| `tests/browser/wiki/aculta420-v2-wiki/` | ACULTA420 V2 — visual Wiki |
 
 Cada README local é a fonte dos URLs, critérios, fixtures e variáveis da frente. O runner comum cobre carregamento, visibilidade do corpo, URL final, timeout, artefatos e os códigos de saída; critérios específicos devem ser expressos em testes Playwright da própria frente.
 
