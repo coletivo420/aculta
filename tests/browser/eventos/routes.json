@@ -1,0 +1,13 @@
+{
+  "front": "eventos",
+  "purpose": "eventos",
+  "origin_env": "EVENTOS_BASE",
+  "source": "tests/browser/eventos/README.md, tabela de rotas públicas",
+  "public_routes": [
+    { "path": "/" },
+    { "path": "/calendario" },
+    { "path": "/calendario/incorporar" },
+    { "path": "/mapa" }
+  ],
+  "notes": "Rotas dinâmicas (/eventos/{slug}, /calendario/mes/AAAA/MM, /calendario/dia/AAAA/MM/DD) ficam fora: dependem de dados e de data. Para rodar só esta frente, defina EVENTOS_BASE e ACULTA_BROWSER_FRONTS=eventos."
+}

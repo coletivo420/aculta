@@ -86,6 +86,25 @@ Cada README local é a fonte dos URLs, critérios, fixtures e variáveis da fren
 
 `0` passou; `124` timeout; `1` erro do Playwright/asserção; `2` pré-requisito ausente ou motor inválido. Não versionar PNG, HTML, trace, vídeo, log ou credencial.
 
+## Cobertura por frente (routes.json)
+
+Cada frente com rotas públicas declaradas ganha um `routes.json` na sua pasta (`tests/browser/<purpose>/<frente>/routes.json`, ou `tests/browser/<purpose>/routes.json` quando a frente é a própria pasta do purpose). O `playwright.routes.spec.mjs` descobre todos e testa só `public_routes`: status abaixo de 400 e `body` visível.
+
+```json
+{
+  "front": "eventos",
+  "purpose": "eventos",
+  "origin_env": "EVENTOS_BASE",
+  "source": "README da frente, seção de rotas",
+  "public_routes": [{ "path": "/" }, { "path": "/mapa" }],
+  "notes": "rotas dinâmicas e de login ficam fora"
+}
+```
+
+- `origin_env` aponta para a variável com o host da frente. Sem ela, o teste é pulado com motivo.
+- Rotas que exigem login, dados ou data específica não entram em `public_routes`; ficam em `notes` e no script da frente.
+- Para rodar só uma frente: `ACULTA_BROWSER_FRONTS=<frente>` com a variável de host definida.
+
 ## Autenticação de teste
 
 No runtime `test`, os testes autenticados usam as credenciais locais documentadas em `secrets/` (ignoradas pelo Git). Antes da rodada, confirme que o ambiente é `test` e que `captcha.settings:enable_globally=0`; esse estado representa o bypass operacional de `skip CAPTCHA` exclusivo do servidor de testes. Não registre credenciais, tokens ou senhas nos artefatos e não use esse bypass em produção.
