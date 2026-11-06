@@ -282,14 +282,16 @@
   .aculta-studio-calendar {
     inline-size: 20rem;
     inset-block-start: 3.8rem;
-    inset-inline-end: -20.5rem;
+    inset-inline-end: 0;
     position: absolute;
     z-index: 5;
   }
 
   /* Ajusta o container do dashboard para acomodar menu lateral na esquerda e calendário na direita no desktop */
   :is(main, .page__main, .layout-page):has(.aculta-studio-calendar) {
-    margin-inline-end: 21rem;
+    margin-inline: auto;
+    max-inline-size: 84rem;
+    padding-inline-end: 21rem;
     position: relative;
   }
 }
