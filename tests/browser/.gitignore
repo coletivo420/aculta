@@ -1,3 +1,4 @@
 capturas/**/*.png
 capturas/**/*.jpg
 capturas/**/*.webp
+__pycache__/

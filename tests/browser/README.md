@@ -76,6 +76,12 @@ DISPLAY=:0 firefox-esr --no-remote --profile "$SUITE_OUT/ff-profile" --new-insta
 
 Estão listadas abaixo as pastas reais, com o caminho completo. A convenção é `tests/browser/<purpose>/<frente>/` (purpose: `account`, `courses`, `eventos`, `forum`, `gallery`, `links`, `magazine`, `shop`, `studio`, `support`, `transversal`, `wiki`). Frentes antigas na raiz (`aculta-avatar`, `aculta-game`, etc.) continuam válidas. Antes de criar um script, procure a frente nesta tabela.
 
+**Manutenção do índice.** `tests/browser/INDICE.md`, a tabela abaixo e os `README.md` das pastas agrupadoras são gerados por `python3 tests/browser/gerar-indice.py`. Depois de criar, mover ou remover uma frente, rode o script. Para conferir sem alterar, use `--check`, que sai com erro se o índice estiver desatualizado.
+
+<!-- INDICE:INICIO -->
+
+Índice completo, com contagem de scripts e `routes.json`: [`INDICE.md`](./INDICE.md).
+
 | Pasta | Frente |
 |---|---|
 | `tests/browser/account/aculta-conta-raiz/` | Raiz da Conta (Domain ACCOUNT): verificação anônima no navegador |
@@ -128,6 +134,7 @@ Estão listadas abaixo as pastas reais, com o caminho completo. A convenção é
 | `tests/browser/transversal/aculta420-v2-navigation/` | Navegação SDC do ACULTA420 V2 |
 | `tests/browser/wiki/aculta-wiki/` | ACULTA Wiki — visual smoke test |
 | `tests/browser/wiki/aculta420-v2-wiki/` | ACULTA420 V2 — visual Wiki |
+<!-- INDICE:FIM -->
 
 Cada README local é a fonte dos URLs, critérios, fixtures e variáveis da frente. O runner comum cobre carregamento, visibilidade do corpo, URL final, timeout, artefatos e os códigos de saída; critérios específicos devem ser expressos em testes Playwright da própria frente.
 
