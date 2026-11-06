@@ -2368,3 +2368,32 @@ body.path-ganjalab .aculta-main :is(h1, h2, h3, h4, h5, h6) {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
+
+/* Ajustes finos do painel de conta: texto do botão, faixa em largura total, sem moldura interna. */
+.aculta-account-entry .aculta-xp-card .aculta-xp-card__action,
+.aculta-account-entry .aculta-xp-card .aculta-xp-card__action:link,
+.aculta-account-entry .aculta-xp-card .aculta-xp-card__action:visited {
+  color: var(--button-primary-fg);
+}
+
+.aculta-account-entry .aculta-xp-grid > li:has(> .aculta-xp-strip) {
+  grid-column: 1 / -1;
+}
+
+.aculta-account-entry .aculta-xp-hero [data-portal-ui~="studio-account-home"] {
+  border: 0;
+  box-shadow: none;
+}
+
+.aculta-account-entry .aculta-xp-card {
+  align-content: start;
+}
+
+.aculta-account-entry .aculta-xp-grid > li {
+  display: flex;
+}
+
+.aculta-account-entry .aculta-xp-grid > li > .aculta-xp-card,
+.aculta-account-entry .aculta-xp-grid > li > .aculta-xp-strip {
+  flex: 1 1 auto;
+}
