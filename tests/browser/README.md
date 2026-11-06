@@ -108,3 +108,7 @@ Cada frente com rotas públicas declaradas ganha um `routes.json` na sua pasta (
 ## Autenticação de teste
 
 No runtime `test`, os testes autenticados usam as credenciais locais documentadas em `secrets/` (ignoradas pelo Git). Antes da rodada, confirme que o ambiente é `test` e que `captcha.settings:enable_globally=0`; esse estado representa o bypass operacional de `skip CAPTCHA` exclusivo do servidor de testes. Não registre credenciais, tokens ou senhas nos artefatos e não use esse bypass em produção.
+
+## Capturas
+
+As capturas ficam dentro do projeto, em `tests/browser/capturas/<frente>/<AAAA-MM-DD>/`, com caminho relativo. Os PNG e JPG ficam fora do Git pelo `.gitignore` deste diretório. Cada pasta de data tem um `manifest.json` versionado com método, motor, viewport, modo de cor, URL relativa, resultado das asserções e hash do commit testado. Comparações usam `before/` e `after/`. A regra completa está em `docs/operations/NAVEGADOR-TESTES.md`.
