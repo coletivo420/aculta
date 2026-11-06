@@ -551,9 +551,33 @@ final class PortalUiHooks {
   #[Hook('preprocess')]
   public function preprocess(array &$variables): void {
     foreach ($variables as $key => $value) {
-      if (is_string($key) && str_ends_with($key, 'attributes') && $value instanceof Attribute) {
-        $this->apply($value);
+      if (is_string($key) && str_ends_with($key, 'attributes')) {
+        $this->applyVariableAttributes($variables, $key);
       }
+    }
+  }
+
+  /**
+   * Applies mapped presentation classes after Core builds container attributes.
+   */
+  #[Hook('preprocess_container')]
+  public function preprocessContainer(array &$variables): void {
+    $this->applyVariableAttributes($variables, 'attributes');
+  }
+
+  /**
+   * Maps attributes represented as arrays or Attribute objects.
+   */
+  private function applyVariableAttributes(array &$variables, string $key): void {
+    $value = $variables[$key] ?? NULL;
+    if ($value instanceof Attribute) {
+      $this->apply($value);
+      return;
+    }
+    if (is_array($value)) {
+      $attributes = new Attribute($value);
+      $this->apply($attributes);
+      $variables[$key] = $attributes;
     }
   }
 

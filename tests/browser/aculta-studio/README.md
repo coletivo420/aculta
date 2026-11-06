@@ -993,3 +993,22 @@ responsive layout, target size, keyboard focus, typography, and 200%/400% browse
 zoom. It tests candidate theme CSS locally; it does not submit forms or prove
 Runtime deployment. Run with `DISPLAY=:0`, an active geckodriver on port 4444,
 and `SUITE_OUT` outside the repository.
+
+### Conta e Meu Perfil — rotas e capturas pareadas
+
+`account-routes-visual.mjs` captura `/conta` e `/meu-perfil` no Firefox ESR
+visível, nos modos claro/escuro e em 320/1440 CSS px. Verifica rota final,
+raiz de conteúdo, modo e ausência de overflow; também registra foco por
+teclado em Meu Perfil. A preferência de cor da conta de teste é restaurada ao
+final. Use `STUDIO_CAPTURE_PHASE=before` e `after` para separar as capturas;
+os artefatos ficam em `$SUITE_OUT`.
+
+```sh
+export SUITE_OUT=/caminho/fora-do-repositorio/studio-account-routes
+DISPLAY=:0 STUDIO_CAPTURE_PHASE=before node tests/browser/aculta-studio/account-routes-visual.mjs
+```
+
+Exige geckodriver ativo em `127.0.0.1:4444` (ou `GECKODRIVER`) e Drush no
+checkout do Runtime de desenvolvimento. Não submete formulários. `STUDIO_USER`,
+`STUDIO_USER_ID` e `STUDIO_LOGIN_URI` podem apontar para as credenciais de
+teste já configuradas no ambiente.

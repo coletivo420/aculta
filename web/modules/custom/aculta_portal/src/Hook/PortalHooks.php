@@ -723,6 +723,7 @@ final class PortalHooks {
           'props' => [],
           'slots' => [],
           'component' => NULL,
+          'attributes' => [],
         ],
         'template' => 'portal-component',
         'path' => $this->moduleList->getPath('aculta_portal') . '/templates',

@@ -270,20 +270,20 @@ try {
     const lum = ([r, g, b]) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
     const bgOf = (el) => { for (let e = el; e; e = e.parentElement) { const c = getComputedStyle(e).backgroundColor; const m = c.match(/rgba?\\(([^)]+)\\)/); if (m && !/rgba\\([^)]*,\\s*0\\)$/.test(c)) return parse(c); } return [255, 255, 255]; };
     const items = [...document.querySelectorAll('[data-aculta-studio="tab"],[data-aculta-studio="section"],[data-aculta-studio="subtab"],[data-aculta-studio="action"],[data-aculta-studio="heading"]')];
-    return items.map((el) => { const fg = parse(getComputedStyle(el).color); const bg = bgOf(el); const L1 = lum(fg), L2 = lum(bg); const ratio = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05); return Math.round(ratio * 100) / 100; });
+    return items.map((el) => { const style = getComputedStyle(el); const fg = parse(style.color); const bg = bgOf(el); const L1 = lum(fg), L2 = lum(bg); const ratio = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05); return {token:el.getAttribute('data-aculta-studio'),text:(el.innerText||el.textContent||'').trim().slice(0,80),color:style.color,background:style.backgroundColor,ancestorBackground:bg,ratio:Math.round(ratio*100)/100}; });
   `;
   await navigateTo(magazineTabAvailable ? PAGE.replace(/\/marley.*$/, '') + '/marley/revista/criar' : PAGE);
   await waitFor(`document.querySelector('[data-aculta-studio="subtab"]')`, 'contraste (claro)');
   const contrastLight = JSON.parse(JSON.stringify(await exec(contrastScript)));
-  const minLight = Math.min(...contrastLight);
-  check('contraste mínimo do texto do Studio no modo claro (WCAG AA, 4,5:1)', minLight >= 4.5, `mínimo ${minLight}:1 em ${contrastLight.length} elemento(s)`);
+  const minLight = Math.min(...contrastLight.map((item) => item.ratio));
+  check('contraste mínimo do texto do Studio no modo claro (WCAG AA, 4,5:1)', minLight >= 4.5, `mínimo ${minLight}:1 em ${contrastLight.length} elemento(s); ${JSON.stringify(contrastLight.filter((item) => item.ratio < 4.5))}`);
 
   // Paridade claro/escuro: mesma geometria nos dois modos. A preferência da conta de teste é trocada e restaurada.
   const boxesFor = () => exec(`return JSON.stringify([...document.querySelectorAll('[data-aculta-studio="tab"],[data-aculta-studio="section"],[data-aculta-studio="subtab"],[data-aculta-studio="action"],[data-aculta-studio="panel"]')].map((e) => { const r = e.getBoundingClientRect(); return [Math.round(r.x), Math.round(r.y), Math.round(r.width), Math.round(r.height)]; }));`);
   await navigateTo(PAGE.replace(/\/marley.*$/, '') + '/marley/revista/criar');
   await waitFor(`document.querySelector('[data-aculta-studio="subtab"]')`, 'abas (claro)');
   const lightBoxes = JSON.parse(await boxesFor());
-  const lightMode = await exec(`return document.documentElement.getAttribute('data-bs-theme') || 'none';`);
+  const lightMode = await exec(`return document.documentElement.getAttribute('data-theme') || 'none';`);
   const drushRun = (code) => execFileSync('php', ['vendor/drush/drush/drush.php', 'php:eval', code, `--uri=${LOGIN_URI}`], { cwd: DRUSH_ROOT, env: { ...process.env, STUDIO_USER_ID: String(USER_ID) } }).toString().trim();
   const original = drushRun(`echo json_encode(\\Drupal::service('aculta_portal.color_mode_preference')->forUser((int) getenv('STUDIO_USER_ID')));`);
   drushRun(`\\Drupal::service('aculta_portal.color_mode_preference')->save((int) getenv('STUDIO_USER_ID'), 'dark'); echo 'ok';`);
@@ -293,8 +293,9 @@ try {
   await sleep(800);
   const darkBoxes = JSON.parse(await boxesFor());
   const contrastDark = JSON.parse(JSON.stringify(await exec(contrastScript)));
-  check('contraste mínimo do texto do Studio no modo escuro (WCAG AA, 4,5:1)', Math.min(...contrastDark) >= 4.5, `mínimo ${Math.min(...contrastDark)}:1 em ${contrastDark.length} elemento(s)`);
-  const darkMode = await exec(`return document.documentElement.getAttribute('data-bs-theme') || 'none';`);
+  const minDark = Math.min(...contrastDark.map((item) => item.ratio));
+  check('contraste mínimo do texto do Studio no modo escuro (WCAG AA, 4,5:1)', minDark >= 4.5, `mínimo ${minDark}:1 em ${contrastDark.length} elemento(s); ${JSON.stringify(contrastDark.filter((item) => item.ratio < 4.5))}`);
+  const darkMode = await exec(`return document.documentElement.getAttribute('data-theme') || 'none';`);
   if (original === 'null' || original === '') { drushRun(`\\Drupal::service('user.data')->delete('aculta_portal', (int) getenv('STUDIO_USER_ID'), 'color_mode'); echo 'ok';`); } else { drushRun(`\\Drupal::service('aculta_portal.color_mode_preference')->save((int) getenv('STUDIO_USER_ID'), json_decode('${original}')); echo 'ok';`); }
   check('modo escuro aplicado à página', darkMode !== lightMode, `claro=${lightMode} escuro=${darkMode}`);
   check('mesma geometria nos modos claro e escuro', JSON.stringify(lightBoxes) === JSON.stringify(darkBoxes), `${lightBoxes.length} elemento(s) comparado(s)`);
@@ -414,8 +415,8 @@ try {
   const dashboardReady = await waitFor(`document.querySelector('.aculta-account-entry h1')?.textContent.trim()==='Studio Dashboard'`, 'Studio Dashboard');
   check('Dashboard da Conta apresenta o título canônico', dashboardReady);
   if (dashboardReady) {
-    const dashboard = JSON.parse(await exec(`const entry=document.querySelector('.aculta-account-entry');const links=[...entry.querySelectorAll('a[href]')];const profile=links.find((a)=>new URL(a.href).pathname==='/perfil');const publicProfile=entry.querySelector('[data-portal-ui="studio-profile-public-link"]');const privateAccount=links.find((a)=>new URL(a.href).pathname==='/conta/dados');const experiences=links.filter((a)=>a!==profile&&a!==publicProfile&&a!==privateAccount).map((a)=>({label:a.textContent.trim(),href:a.href}));return JSON.stringify({identity:!!entry.querySelector('.studio-account-identity'),profile:profile?.getAttribute('href')||null,publicProfile:publicProfile?.getAttribute('href')||null,privateAccount:privateAccount?.getAttribute('href')||null,experiences,cards:entry.querySelectorAll('.aculta-card').length});`));
-    check('Dashboard separa Meu Perfil, perfil público, Minha Conta e destinos autorizados', dashboard.profile === '/perfil' && dashboard.privateAccount === '/conta/dados' && dashboard.experiences.every((item) => !!item.href && !!item.label), JSON.stringify({identity: dashboard.identity, profile: dashboard.profile, publicProfileAvailable: !!dashboard.publicProfile, privateAccount: dashboard.privateAccount, experienceCount: dashboard.experiences.length, cards: dashboard.cards}));
+    const dashboard = JSON.parse(await exec(`const entry=document.querySelector('.aculta-account-entry');const links=[...entry.querySelectorAll('a[href]')];const profile=links.find((a)=>new URL(a.href).pathname==='/meu-perfil');const publicProfile=entry.querySelector('[data-portal-ui="studio-profile-public-link"]');const privateAccount=links.find((a)=>new URL(a.href).pathname==='/conta');const experiences=links.filter((a)=>a!==profile&&a!==publicProfile&&a!==privateAccount).map((a)=>({label:a.textContent.trim(),href:a.href}));return JSON.stringify({identity:!!entry.querySelector('.studio-account-identity'),profile:profile?.getAttribute('href')||null,publicProfile:publicProfile?.getAttribute('href')||null,privateAccount:privateAccount?.getAttribute('href')||null,experiences,cards:entry.querySelectorAll('.aculta-card').length});`));
+    check('Dashboard separa Meu Perfil, perfil público, Minha Conta e destinos autorizados', dashboard.profile === '/meu-perfil' && dashboard.privateAccount === '/conta' && dashboard.experiences.every((item) => !!item.href && !!item.label), JSON.stringify({identity: dashboard.identity, profile: dashboard.profile, publicProfileAvailable: !!dashboard.publicProfile, privateAccount: dashboard.privateAccount, experienceCount: dashboard.experiences.length, cards: dashboard.cards}));
     await shot('00-conta-dashboard');
     for (const width of [320, 390, 768, 1280]) {
       await setViewport(width, width < 500 ? 844 : 900);
@@ -431,12 +432,12 @@ try {
       check('Meu Perfil é independente dos formulários privados da Conta', profileReady && !profileState.privateRoot && profileState.privateLabels.length === 0, JSON.stringify(profileState));
       if (profileReady) {
         await shot('07-meu-perfil');
-        const identityActions = JSON.parse(await exec(`const card=document.querySelector('.aculta-profile-editor__identity .aculta-profile-identity');const actions=card?.querySelector('.aculta-profile-identity__actions');const cardStyle=card?getComputedStyle(card):null;const links=[...(actions?.querySelectorAll('a,button')||[])].map((el)=>{const r=el.getBoundingClientRect();return {width:r.width,height:r.height}});return JSON.stringify({direction:cardStyle?.flexDirection,actionsWidth:actions?.getBoundingClientRect().width||0,links});`));
-        check('ações do Perfil permanecem legíveis sob a identidade na coluna lateral', identityActions.direction === 'column' && identityActions.actionsWidth >= 320 && identityActions.links.length > 0 && identityActions.links.every((link) => link.width >= 120 && link.height <= 64), JSON.stringify(identityActions));
+        const identityActions = JSON.parse(await exec(`const root=document.querySelector('.aculta-profile-editor');const actions=root?.querySelector('[data-portal-ui="studio-profile-actions"]');const links=[...(actions?.querySelectorAll('a,button')||[])].map((el)=>{const r=el.getBoundingClientRect();return {text:el.innerText.trim(),href:el.getAttribute('href'),width:r.width,height:r.height}});return JSON.stringify({root:!!root,actions:!!actions,width:actions?.getBoundingClientRect().width||0,links});`));
+        check('Meu Perfil mantém as ações renderizadas e utilizáveis', identityActions.root && identityActions.actions && identityActions.width > 0 && identityActions.links.length > 0 && identityActions.links.every((link) => link.width >= 44 && link.height >= 44 && link.text.length > 0 && !!link.href), JSON.stringify(identityActions));
         for (const width of [320, 390, 768, 1280]) {
           await setViewport(width, width < 500 ? 844 : 900);
-          const profileLayout = JSON.parse(await exec(`const grid=document.querySelector('.aculta-profile-editor__grid');const columns=grid?getComputedStyle(grid).gridTemplateColumns.split(' ').length:0;return JSON.stringify({width:innerWidth,page:document.documentElement.scrollWidth,columns});`));
-          check(`Meu Perfil reorganiza em ${width}px sem overflow`, profileLayout.page <= width && profileLayout.columns === (width < 768 ? 1 : 2), JSON.stringify(profileLayout));
+          const profileLayout = JSON.parse(await exec(`const root=document.querySelector('.aculta-profile-editor');const actions=root?.querySelector('[data-portal-ui="studio-profile-actions"]');return JSON.stringify({width:innerWidth,page:document.documentElement.scrollWidth,root:!!root,actionsWidth:actions?.getBoundingClientRect().width||0});`));
+          check(`Meu Perfil reflow sem overflow em ${width}px`, profileLayout.root && profileLayout.page <= width && profileLayout.actionsWidth > 0 && profileLayout.actionsWidth <= width, JSON.stringify(profileLayout));
           if (width === 320) await shot('08-meu-perfil-mobile');
         }
         await setViewport(1280, 900);

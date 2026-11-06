@@ -73,7 +73,7 @@ if (!str_contains($subscriber, "\$accountPath === '/minha-conta'") || !str_conta
 $policy = $read('web/modules/custom/aculta_portal/src/Domain/FrontPathPolicy.php');
 if (!str_contains($subscriber, 'FrontPathPolicy::acaoDaContaNaRaiz(')
   || !str_contains($policy, "return \$autenticado ? NULL : self::ACAO_LOGIN;")
-  || !str_contains($policy, "\$route !== 'aculta_studio.account'")) {
+  || !str_contains($policy, "\$route !== 'aculta_studio.dashboard'")) {
   $failures[] = 'guard: the ACCOUNT root entry must be decided by FrontPathPolicy::acaoDaContaNaRaiz and used by the subscriber';
 }
 

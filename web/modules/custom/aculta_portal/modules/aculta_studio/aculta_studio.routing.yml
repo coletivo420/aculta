@@ -16,6 +16,9 @@ aculta_studio.account:
   defaults:
     _controller: 'aculta_studio.account_section_controller:data'
     _title: 'Dados cadastrais (privados)'
+    # `conta` may also be the Domain's configured front path. Keep the direct
+    # account section reachable; only `/` is rewritten to the Studio dashboard.
+    _disable_route_normalizer: TRUE
   requirements:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'

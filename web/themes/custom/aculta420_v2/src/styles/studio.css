@@ -971,6 +971,13 @@ body.path-marley form.node-revista-form .form-actions :is(.form-submit, .button-
   margin: 0;
 }
 
+.aculta-profile-editor [data-portal-ui="studio-profile-actions"] a {
+  display: inline-flex;
+  min-block-size: var(--tap-target-min);
+  align-items: center;
+  padding-block: 0.5rem;
+}
+
 .aculta-account-entry {
   display: grid;
   min-width: 0;
@@ -1449,6 +1456,17 @@ body.path-marley .aculta-main > .aculta-container:has([data-aculta-studio="root"
 .studio__subtabs a:is(:hover, :focus-visible) {
   color: var(--aculta-studio-fidelity-surface);
   background-color: var(--aculta-studio-fidelity-interaction);
+}
+
+.studio__tabs .studio__tab[aria-current="page"],
+.studio__tabs .studio__tab[aria-current="page"]:is(:hover, :focus-visible),
+.studio__subtabs a[aria-current="page"],
+.studio__subtabs a[aria-current="page"]:is(:hover, :focus-visible),
+html body a[data-portal-ui="studio-tab"][data-aculta-studio="tab"][aria-current="page"],
+html body a[data-portal-ui="studio-tab"][data-aculta-studio="tab"][aria-current="page"]:is(:hover, :focus-visible),
+html body a[data-portal-ui="studio-link"][data-aculta-studio="subtab"][aria-current="page"],
+html body a[data-portal-ui="studio-link"][data-aculta-studio="subtab"][aria-current="page"]:is(:hover, :focus-visible) {
+  color: var(--color-on-highlight);
 }
 
 .studio__sections > li {

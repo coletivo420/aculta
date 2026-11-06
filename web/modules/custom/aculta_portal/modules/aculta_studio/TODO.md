@@ -4,7 +4,7 @@ Estado: Dev · versão 0.1.0-dev.52 (`aculta_studio.info.yml`) · status: `docs/
 
 ## Próximo passo
 
-Manter a Identity servida e fechar os DEFERRED de escrita/persistência, duas lojas, pareamento upstream e leitor de tela. Preservar S-R4/S-R5 e a decisão de caminhos de ADR-038.
+Manter a Identity servida e fechar os DEFERRED de escrita/persistência, duas lojas, pareamento upstream e leitor de tela. Preservar S-R4/S-R5 e a decisão de caminhos de ADR-038. A rota `/conta` e os atributos de apresentação do fallback estão validados; prosseguir na adoção SDC por consumer real, com captura antes/depois.
 
 ## Leitura
 

@@ -4,8 +4,8 @@ Estado: em desenvolvimento · versão 1.3.0 (`aculta420_v2.info.yml`) · status:
 
 ## Próximo passo
 
-F4 (UI Styles) implementada; accent por entidade na Revista depende de suporte do UI Styles. No Studio, a correção local proposta para `/conta` e o fallback passou PHPUnit focal (8 testes, 296 assertions); runtime não validado para esse código. A suíte Firefox ESR servida passou 65/65 checks, 22 ignorados, zero falhas. Capturas locais antes/depois de `/conta` e `/meu-perfil` em `/home/piradopirata/aculta-suite-out/layouts-purpose-studio-routes-20261106/studio-account-routes-{before,after}/`. Nenhum mapeamento SDC de `profile-*` foi validado. Eventos responde na raiz; a listagem atual usa EventCatalogue para ACL, datas futuras e recorrência, enquanto `aculta_event` não fornece Views data. Loja requer autorização; `price` fora do escopo.
-Próximo passo: validar separadamente mapeamentos SDC do Studio com consumidor real; projetar integração de View para Eventos que preserve ACL, ocorrências e filtros; concluir Revista somente com seleção por entidade suportada. Cada adoção ainda requer gates e capturas próprias.
+F4 (UI Styles) implementada; accent por entidade na Revista depende de suporte do UI Styles. No Studio, `/conta` e `/meu-perfil` foram validados no Runtime após rebuild; PHPUnit 8 testes/296 assertions, gate SDC 40 componentes, Firefox ESR 65/65 checks (22 ignorados, zero falhas). Capturas antes/depois em claro/escuro, 320/1440 px e foco: `$SUITE_OUT/layouts-purpose-studio-routes-20261106/studio-account-routes-{before,after}/`. `empty-state` tem captura focal real antes/depois; `context-tabs` ainda precisa de comparação visual; `profile-*` sem mapeamento SDC. Eventos responde na raiz; a listagem atual usa EventCatalogue para ACL, datas futuras e recorrência, enquanto `aculta_event` não fornece Views data. Loja requer autorização; `price` fora do escopo.
+Próximo passo: validar separadamente os SDCs de Studio com consumer real; projetar View pública de Eventos que preserve ACL, ocorrências e filtros; concluir Revista somente com seleção por entidade suportada. Cada adoção ainda requer gates e capturas próprias.
 
 ## Dívidas
 
