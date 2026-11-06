@@ -4,8 +4,8 @@ Estado: em desenvolvimento · versão 1.3.0 (`aculta420_v2.info.yml`) · status:
 
 ## Próximo passo
 
-F4 (UI Styles) implementada; accent por entidade na Revista depende de suporte do UI Styles. No Studio, `context-tabs`→`tabs` e `empty-state`→`empty-state` passaram em teste focal e render Drupal. Capturas ESR reais antes/depois do estado vazio em `/group/131` mostram o SDC nos dois modos e tamanhos, foco visível e sem overflow. A suíte ampla segue parcial: 34/48 checks OK, 22 skipped e 14 falhas. Eventos responde na raiz; a listagem atual usa EventCatalogue para ACL, datas futuras e recorrência, enquanto `aculta_event` não fornece Views data. Loja requer autorização; `price` fora do escopo.
-Próximo passo: corrigir os checks visuais Studio desatualizados; projetar integração de View para Eventos que preserve ACL, ocorrências e filtros; concluir Revista somente com seleção por entidade suportada. Cada adoção ainda requer gates e capturas próprias.
+F4 (UI Styles) implementada; accent por entidade na Revista depende de suporte do UI Styles. No Studio, a correção local proposta para `/conta` e o fallback passou PHPUnit focal (8 testes, 296 assertions); runtime não validado para esse código. A suíte Firefox ESR servida passou 65/65 checks, 22 ignorados, zero falhas. Capturas locais antes/depois de `/conta` e `/meu-perfil` em `/home/piradopirata/aculta-suite-out/layouts-purpose-studio-routes-20261106/studio-account-routes-{before,after}/`. Nenhum mapeamento SDC de `profile-*` foi validado. Eventos responde na raiz; a listagem atual usa EventCatalogue para ACL, datas futuras e recorrência, enquanto `aculta_event` não fornece Views data. Loja requer autorização; `price` fora do escopo.
+Próximo passo: validar separadamente mapeamentos SDC do Studio com consumidor real; projetar integração de View para Eventos que preserve ACL, ocorrências e filtros; concluir Revista somente com seleção por entidade suportada. Cada adoção ainda requer gates e capturas próprias.
 
 ## Dívidas
 
