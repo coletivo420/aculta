@@ -195,7 +195,7 @@ def state_pass(state, theme, width):
         check(f"{tag}: painel com faixa esmaecida no mobile", 24 <= gutter <= 80 and p["panelH"] >= p["innerH"] - 1,
               f"{p['panelW']}x{p['panelH']} em {p['innerW']}x{p['innerH']}, faixa={gutter}")
     else:
-        check(f"{tag}: painel ocupa quase toda a tela no desktop", gutter >= 80 and p["panelH"] >= p["innerH"] - 1,
+        check(f"{tag}: painel com faixas à esquerda e embaixo no desktop", gutter >= 80 and p["innerH"] - p["panelH"] >= 100,
               f"{p['panelW']}x{p['panelH']} em {p['innerW']}x{p['innerH']}, faixa={gutter}")
     check(f"{tag}: X no canto superior direito com 44 px", p["closeExists"] and p["closeTopRight"]
           and p["closeSize"][0] >= 44 and p["closeSize"][1] >= 44, p["closeSize"])
