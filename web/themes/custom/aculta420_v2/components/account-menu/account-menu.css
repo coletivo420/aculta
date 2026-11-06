@@ -70,9 +70,12 @@
   padding: 0;
 }
 
+/* Desktop: deixa faixa à esquerda (6 rem) e uma faixa maior embaixo (8 rem) mostrando o fundo esmaecido. */
 @media (min-width: 60rem) {
   .aculta-utility-dialog.aculta-account-dialog {
+    block-size: calc(100dvh - 8rem);
     inline-size: calc(100vw - 6rem);
+    inset-block: 0 auto;
     width: calc(100vw - 6rem);
   }
 }
