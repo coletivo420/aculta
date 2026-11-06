@@ -81,6 +81,16 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
     '#default_value' => theme_get_setting('aculta_show_accent_stripe') ?? TRUE,
   ];
 
+  $form['aculta_superficies']['aculta_revista_accent'] = [
+    '#type' => 'ui_styles_styles',
+    '#tree' => TRUE,
+    '#title' => t('Faixa de acento da Revista'),
+    '#description' => t('Uma escolha única para toda a Revista; prevalece sobre o accent do Portal.'),
+    '#default_value' => theme_get_setting('aculta_revista_accent') ?? ['selected' => [], 'extra' => ''],
+    '#drupal_theme' => 'aculta420_v2',
+    '#weight' => 80,
+  ];
+
   $form['aculta_cores_purpose'] = [
     '#type' => 'details',
     '#title' => t('Cores por purpose'),

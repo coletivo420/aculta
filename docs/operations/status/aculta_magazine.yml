@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.5.0-dev.19
+version: 0.5.0-dev.20
 state: Dev
 progress_note: >-
-  Dev.19: campo nativo e adapter UI Styles por nó; `#tree: true` preserva o value callback. PHPUnit focal 7/42, gate UI Styles 24 e fronteira módulo-tema 4278 PASS; fluxo Drupal transacional aplicou classe no teaser. Firefox ESR confirmou a faixa com campo red temporariamente salvo em claro/escuro, 320/1440 px; campo restaurado vazio na revisão 825. Submit visual do formulário pendente.
-next_phase: 'Validar o submit do widget UI Styles no formulário de edição e capturar o teaser com accent salvo em Firefox ESR; preservar a configuração e conteúdo existentes. Referências: `docs/layouts-por-purpose.md` e contrato do componente `revista-teaser`.'
+  Dev.20: escolha global UI Styles da Revista no tema V2; o fluxo por nó foi removido e o campo legado ficou sem leitura para evitar remoção destrutiva. Runtime, banco e capturas canônicas ainda dependem da rodada autenticada.
+next_phase: 'Validar submit e renderização global no Firefox ESR, confirmar campo vazio no node 602 e publicar manifestos de captura.'

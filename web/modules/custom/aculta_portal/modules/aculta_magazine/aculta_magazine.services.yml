@@ -1,8 +1,4 @@
 services:
-  Drupal\aculta_magazine\Hook\RevistaAccentHooks:
-    class: Drupal\aculta_magazine\Hook\RevistaAccentHooks
-    arguments: ['@plugin.manager.ui_styles', '@current_user']
-
   Drupal\aculta_magazine\Controller\EditorialAdminController:
     class: Drupal\aculta_magazine\Controller\EditorialAdminController
     arguments: ['@aculta_magazine.capability']

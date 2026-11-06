@@ -459,3 +459,4 @@ Classificação: PATCH (correção de cache; sem mudança de contrato).
   PASS (266 depreciações Core/contrib). PHPCS e PHP lint sem achados. Nenhuma
   operação no Runtime.
 
+- Accent da Revista passou a ser uma escolha global do UI Styles nas configurações do tema; `field_revista_accent` ficou legado, sem leitura ou widget, sem migração destrutiva.

@@ -4,7 +4,7 @@ Estado: Dev · versão 0.5.0-dev.19 (`aculta_magazine.info.yml`) · status: `doc
 
 ## Próximo passo
 
-O widget `ui_styles_styles` agora usa `#tree: true`; o value callback real, o entity builder e a renderização do teaser passaram em transação revertida. Firefox ESR confirmou a faixa CSS nos dois modos e em 320/1440 px com `field_revista_accent` red temporariamente salvo no node sintético 602; o valor foi restaurado a vazio na revisão 825. Falta validar o submit visual do formulário; as sessões autenticadas oscilaram entre acesso negado e navegação incompleta. O conteúdo atual mantém accent vazio.
+O accent agora é uma escolha global `revista_accent` nas configurações do tema V2 e chega ao teaser por preprocess, com precedência sobre o Portal. O campo legado `field_revista_accent` não é mais widget, allowlist nem fonte de renderização; permanece instalado para evitar migração destrutiva e o node 602 deve permanecer vazio. Falta validar o submit visual e o runtime autenticado.
 
 ## Leitura
 

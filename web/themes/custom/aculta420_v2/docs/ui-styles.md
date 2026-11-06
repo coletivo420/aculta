@@ -37,6 +37,12 @@ Todos são bloqueantes para a RC:
 | Faixa de acento vermelha | `card-cultural` | `accent: red` | Implementado em `aculta420_v2.ui_styles.yml` (.card-cultural--accent-red) |
 | Cores por purpose | tema (faixa `--purpose-*`) | 10 esquemas | Implementado em `aculta420_v2.ui_styles.yml` (esquemas oficiais Skunk Family) |
 
+`revista_accent` é aplicado uma única vez nas configurações do ACULTA420 V2 e
+é consumido por todos os teasers da Revista. O campo legado
+`field_revista_accent` não participa mais do fluxo; permanece instalado para
+evitar remoção destrutiva de conteúdo e será removido em uma migração própria,
+com inventário e autorização.
+
 ### Regra de Precedência (Decisão do responsável em 2026-11-05)
 Opção A adotada: A escolha do administrador via UI Styles (`card-cultural--accent-{green|yellow|red}`) tem precedência sobre o `accent` vindo do Portal/backend, garantindo flexibilidade editorial ao administrador Drupal.
 
@@ -52,7 +58,7 @@ Opção A adotada: A escolha do administrador via UI Styles (`card-cultural--acc
 
 ## 5. Validação e Capturas Visuais
 
-- **Suíte de navegador:** Executada em Firefox ESR visível (`DISPLAY=:0`), com artefatos salvos em `$SUITE_OUT` (`/home/piradopirata/aculta-suite-out/aculta420-v2-ui-styles-20261105/`):
+- **Suíte de navegador:** a rodada anterior foi executada em Firefox ESR visível (`DISPLAY=:0`) e deixou artefatos temporários em `$SUITE_OUT`; nesta entrega não havia PNGs acessíveis para mover para a pasta canônica, portanto a captura autenticada da Revista segue pendente:
   - `ui_styles_light_verde-skunk_320px.png` e `1440px.png`
   - `ui_styles_dark_verde-skunk_320px.png` e `1440px.png`
   - `ui_styles_light_amarelo-lemon-haze_320px.png` e `1440px.png`
@@ -63,4 +69,5 @@ Opção A adotada: A escolha do administrador via UI Styles (`card-cultural--acc
 
 ## 6. Pendências
 
-- Captura em servidor de teste / Homelab real após sincronização do deployment.
+- Captura autenticada no servidor de teste / Homelab real após sincronização do
+  deployment, incluindo a escolha global da Revista.

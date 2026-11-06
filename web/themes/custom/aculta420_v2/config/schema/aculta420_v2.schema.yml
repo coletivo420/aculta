@@ -18,6 +18,19 @@ aculta420_v2.settings:
     aculta_show_accent_stripe:
       type: boolean
       label: 'Mostrar faixa de acento'
+    aculta_revista_accent:
+      type: mapping
+      label: 'Faixa de acento da Revista'
+      mapping:
+        selected:
+          type: mapping
+          mapping:
+            revista_accent:
+              type: string
+              label: 'Estilo UI Styles da Revista'
+        extra:
+          type: string
+          label: 'Classes extras'
     aculta_purpose_palette:
       type: mapping
       label: 'Paleta de destaque por purpose'

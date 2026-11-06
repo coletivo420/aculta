@@ -4,6 +4,9 @@ aculta_radius_card: lg
 aculta_radius_field: base
 aculta_accent_override: mapping
 aculta_show_accent_stripe: true
+aculta_revista_accent:
+  selected: {}
+  extra: ''
 aculta_purpose_palette:
   main: verde-skunk
   wiki: verde-sativa

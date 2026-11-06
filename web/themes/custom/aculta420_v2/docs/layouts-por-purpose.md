@@ -30,7 +30,7 @@ que o markup atual, com CSS adaptado e captura antes/depois nos dois modos.
 
 ## 0.3 Decisão da Revista (2026-11-06)
 
-O accent da Revista é uma escolha única para a Revista inteira, feita pelo UI Styles. Não é por publicação. Por isso, o campo nativo por nó deixa de ser o mecanismo de escolha. Os testes que salvaram `red` no node 602 são evidência de integração e devem ser revertidos.
+O accent da Revista é uma escolha única para a Revista inteira, feita pelo UI Styles nas configurações do ACULTA420 V2. A opção existente `revista_accent` é salva no tema e o preprocess do teaser a converte em `revista-teaser--accent-{green|yellow|red}`, com precedência sobre o accent do Portal. O campo nativo por nó deixa de ser o mecanismo de escolha; permanece instalado, sem leitura, para evitar remoção destrutiva. O node 602 deve permanecer vazio.
 
 ## 1. Consumo atual por componente
 
