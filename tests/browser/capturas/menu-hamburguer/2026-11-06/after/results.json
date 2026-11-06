@@ -1,0 +1,896 @@
+{
+  "phase": "after",
+  "base": "https://aculta.toca.net.br",
+  "results": [
+    {
+      "name": "anon-light-320: gatilho sem avatar",
+      "ok": true,
+      "detail": "avatar=False"
+    },
+    {
+      "name": "anon-light-320: gatilho com três linhas e rótulo 'Abrir menu'",
+      "ok": true,
+      "detail": "Abrir menu"
+    },
+    {
+      "name": "anon-light-320: alvo de toque >= 44 px",
+      "ok": true,
+      "detail": "44x44"
+    },
+    {
+      "name": "anon-light-320: aria-expanded=false antes de abrir",
+      "ok": true,
+      "detail": "false"
+    },
+    {
+      "name": "anon-light-320: sem rolagem horizontal na página",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "name": "anon-light-320: barra institucional única",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "name": "anon-light-320: abre ao clicar no gatilho",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-light-320: painel com faixa esmaecida no mobile",
+      "ok": true,
+      "detail": "420x781 em 500x781, faixa=80"
+    },
+    {
+      "name": "anon-light-320: X no canto superior direito com 44 px",
+      "ok": true,
+      "detail": "[44, 44]"
+    },
+    {
+      "name": "anon-light-320: foco entra no painel ao abrir",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-light-320: sem logotipo no painel",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-light-320: uma coluna (conta, sites) sem navegação repetida",
+      "ok": true,
+      "detail": "tops=[60, 172]"
+    },
+    {
+      "name": "anon-light-320: alvos dos links >= 44 px",
+      "ok": true,
+      "detail": "44"
+    },
+    {
+      "name": "anon-light-320: sem rolagem horizontal com painel aberto",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "name": "anon-light-320: seções conta e sites, sem navegação repetida",
+      "ok": true,
+      "detail": "['Conta', 'Sites e informações legais']"
+    },
+    {
+      "name": "anon-light-320: contraste do texto dos links >= 4,5:1",
+      "ok": true,
+      "detail": "12.40:1"
+    },
+    {
+      "name": "anon-light-320: Escape fecha",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-light-320: foco volta ao gatilho após Escape",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-light-320: X fecha",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-light-320: foco volta ao gatilho após X",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-light-320: foco preso no painel em 30 Tabs",
+      "ok": true,
+      "detail": "escapou 0x"
+    },
+    {
+      "name": "anon-light-320: Enter em /entrar/janela abre o formulário ou navega para a rota",
+      "ok": true,
+      "detail": "/"
+    },
+    {
+      "name": "anon-light-320: Enter em /criar-conta/janela abre o formulário ou navega para a rota",
+      "ok": true,
+      "detail": "/criar-conta/janela"
+    },
+    {
+      "name": "anon-light-320: Enter em https://aculta.toca.net.br/ leva a /",
+      "ok": true,
+      "detail": "/"
+    },
+    {
+      "name": "anon-light-320: Enter em /busca leva a /busca",
+      "ok": true,
+      "detail": "/busca"
+    },
+    {
+      "name": "anon-light-320: Enter em /politica-de-privacidade leva a /politica-de-privacidade",
+      "ok": true,
+      "detail": "/politica-de-privacidade"
+    },
+    {
+      "name": "anon-light-1440: gatilho sem avatar",
+      "ok": true,
+      "detail": "avatar=False"
+    },
+    {
+      "name": "anon-light-1440: gatilho com três linhas e rótulo 'Abrir menu'",
+      "ok": true,
+      "detail": "Abrir menu"
+    },
+    {
+      "name": "anon-light-1440: alvo de toque >= 44 px",
+      "ok": true,
+      "detail": "44x44"
+    },
+    {
+      "name": "anon-light-1440: aria-expanded=false antes de abrir",
+      "ok": true,
+      "detail": "false"
+    },
+    {
+      "name": "anon-light-1440: sem rolagem horizontal na página",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "name": "anon-light-1440: barra institucional única",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "name": "anon-light-1440: abre ao clicar no gatilho",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-light-1440: painel com faixas à esquerda e embaixo no desktop",
+      "ok": true,
+      "detail": "1334x653 em 1430x781, faixa=96"
+    },
+    {
+      "name": "anon-light-1440: X no canto superior direito com 44 px",
+      "ok": true,
+      "detail": "[44, 44]"
+    },
+    {
+      "name": "anon-light-1440: foco entra no painel ao abrir",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-light-1440: sem logotipo no painel",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-light-1440: duas colunas no desktop",
+      "ok": true,
+      "detail": "tops=[60, 60]"
+    },
+    {
+      "name": "anon-light-1440: alvos dos links >= 44 px",
+      "ok": true,
+      "detail": "44"
+    },
+    {
+      "name": "anon-light-1440: sem rolagem horizontal com painel aberto",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "name": "anon-light-1440: seções conta e sites, sem navegação repetida",
+      "ok": true,
+      "detail": "['Conta', 'Sites e informações legais']"
+    },
+    {
+      "name": "anon-light-1440: contraste do texto dos links >= 4,5:1",
+      "ok": true,
+      "detail": "12.40:1"
+    },
+    {
+      "name": "anon-light-1440: Escape fecha",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-light-1440: foco volta ao gatilho após Escape",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-light-1440: X fecha",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-light-1440: foco volta ao gatilho após X",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-light-1440: foco preso no painel em 30 Tabs",
+      "ok": true,
+      "detail": "escapou 0x"
+    },
+    {
+      "name": "anon-dark-320: gatilho sem avatar",
+      "ok": true,
+      "detail": "avatar=False"
+    },
+    {
+      "name": "anon-dark-320: gatilho com três linhas e rótulo 'Abrir menu'",
+      "ok": true,
+      "detail": "Abrir menu"
+    },
+    {
+      "name": "anon-dark-320: alvo de toque >= 44 px",
+      "ok": true,
+      "detail": "44x44"
+    },
+    {
+      "name": "anon-dark-320: aria-expanded=false antes de abrir",
+      "ok": true,
+      "detail": "false"
+    },
+    {
+      "name": "anon-dark-320: sem rolagem horizontal na página",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "name": "anon-dark-320: barra institucional única",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "name": "anon-dark-320: abre ao clicar no gatilho",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-dark-320: painel com faixa esmaecida no mobile",
+      "ok": true,
+      "detail": "420x781 em 500x781, faixa=80"
+    },
+    {
+      "name": "anon-dark-320: X no canto superior direito com 44 px",
+      "ok": true,
+      "detail": "[44, 44]"
+    },
+    {
+      "name": "anon-dark-320: foco entra no painel ao abrir",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-dark-320: sem logotipo no painel",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-dark-320: uma coluna (conta, sites) sem navegação repetida",
+      "ok": true,
+      "detail": "tops=[60, 172]"
+    },
+    {
+      "name": "anon-dark-320: alvos dos links >= 44 px",
+      "ok": true,
+      "detail": "44"
+    },
+    {
+      "name": "anon-dark-320: sem rolagem horizontal com painel aberto",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "name": "anon-dark-320: seções conta e sites, sem navegação repetida",
+      "ok": true,
+      "detail": "['Conta', 'Sites e informações legais']"
+    },
+    {
+      "name": "anon-dark-320: contraste do texto dos links >= 4,5:1",
+      "ok": true,
+      "detail": "14.50:1"
+    },
+    {
+      "name": "anon-dark-320: Escape fecha",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-dark-320: foco volta ao gatilho após Escape",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-dark-320: X fecha",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-dark-320: foco volta ao gatilho após X",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-dark-320: foco preso no painel em 30 Tabs",
+      "ok": true,
+      "detail": "escapou 0x"
+    },
+    {
+      "name": "anon-dark-1440: gatilho sem avatar",
+      "ok": true,
+      "detail": "avatar=False"
+    },
+    {
+      "name": "anon-dark-1440: gatilho com três linhas e rótulo 'Abrir menu'",
+      "ok": true,
+      "detail": "Abrir menu"
+    },
+    {
+      "name": "anon-dark-1440: alvo de toque >= 44 px",
+      "ok": true,
+      "detail": "44x44"
+    },
+    {
+      "name": "anon-dark-1440: aria-expanded=false antes de abrir",
+      "ok": true,
+      "detail": "false"
+    },
+    {
+      "name": "anon-dark-1440: sem rolagem horizontal na página",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "name": "anon-dark-1440: barra institucional única",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "name": "anon-dark-1440: abre ao clicar no gatilho",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-dark-1440: painel com faixas à esquerda e embaixo no desktop",
+      "ok": true,
+      "detail": "1334x653 em 1430x781, faixa=96"
+    },
+    {
+      "name": "anon-dark-1440: X no canto superior direito com 44 px",
+      "ok": true,
+      "detail": "[44, 44]"
+    },
+    {
+      "name": "anon-dark-1440: foco entra no painel ao abrir",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-dark-1440: sem logotipo no painel",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-dark-1440: duas colunas no desktop",
+      "ok": true,
+      "detail": "tops=[60, 60]"
+    },
+    {
+      "name": "anon-dark-1440: alvos dos links >= 44 px",
+      "ok": true,
+      "detail": "44"
+    },
+    {
+      "name": "anon-dark-1440: sem rolagem horizontal com painel aberto",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "name": "anon-dark-1440: seções conta e sites, sem navegação repetida",
+      "ok": true,
+      "detail": "['Conta', 'Sites e informações legais']"
+    },
+    {
+      "name": "anon-dark-1440: contraste do texto dos links >= 4,5:1",
+      "ok": true,
+      "detail": "14.50:1"
+    },
+    {
+      "name": "anon-dark-1440: Escape fecha",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-dark-1440: foco volta ao gatilho após Escape",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-dark-1440: X fecha",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-dark-1440: foco volta ao gatilho após X",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "anon-dark-1440: foco preso no painel em 30 Tabs",
+      "ok": true,
+      "detail": "escapou 0x"
+    },
+    {
+      "name": "auth-light-320: gatilho sem avatar",
+      "ok": true,
+      "detail": "avatar=False"
+    },
+    {
+      "name": "auth-light-320: gatilho com três linhas e rótulo 'Abrir menu'",
+      "ok": true,
+      "detail": "Abrir menu"
+    },
+    {
+      "name": "auth-light-320: alvo de toque >= 44 px",
+      "ok": true,
+      "detail": "44x44"
+    },
+    {
+      "name": "auth-light-320: aria-expanded=false antes de abrir",
+      "ok": true,
+      "detail": "false"
+    },
+    {
+      "name": "auth-light-320: sem rolagem horizontal na página",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "name": "auth-light-320: barra institucional única",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "name": "auth-light-320: abre ao clicar no gatilho",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-light-320: painel com faixa esmaecida no mobile",
+      "ok": true,
+      "detail": "420x781 em 500x781, faixa=80"
+    },
+    {
+      "name": "auth-light-320: X no canto superior direito com 44 px",
+      "ok": true,
+      "detail": "[44, 44]"
+    },
+    {
+      "name": "auth-light-320: foco entra no painel ao abrir",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-light-320: sem logotipo no painel",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-light-320: uma coluna (conta, sites) sem navegação repetida",
+      "ok": true,
+      "detail": "tops=[60, 172]"
+    },
+    {
+      "name": "auth-light-320: alvos dos links >= 44 px",
+      "ok": true,
+      "detail": "44"
+    },
+    {
+      "name": "auth-light-320: sem rolagem horizontal com painel aberto",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "name": "auth-light-320: seções conta e sites, sem navegação repetida",
+      "ok": true,
+      "detail": "['Conta', 'Sites e informações legais']"
+    },
+    {
+      "name": "auth-light-320: contraste do texto dos links >= 4,5:1",
+      "ok": true,
+      "detail": "12.40:1"
+    },
+    {
+      "name": "auth-light-320: Escape fecha",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-light-320: foco volta ao gatilho após Escape",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-light-320: X fecha",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-light-320: foco volta ao gatilho após X",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-light-320: foco preso no painel em 30 Tabs",
+      "ok": true,
+      "detail": "escapou 0x"
+    },
+    {
+      "name": "auth-light-320: Enter em /entrar/janela abre o formulário ou navega para a rota",
+      "ok": true,
+      "detail": "/"
+    },
+    {
+      "name": "auth-light-320: Enter em /criar-conta/janela abre o formulário ou navega para a rota",
+      "ok": true,
+      "detail": "/criar-conta/janela"
+    },
+    {
+      "name": "auth-light-320: Enter em https://aculta.toca.net.br/ leva a /",
+      "ok": true,
+      "detail": "/"
+    },
+    {
+      "name": "auth-light-320: Enter em /busca leva a /busca",
+      "ok": true,
+      "detail": "/busca"
+    },
+    {
+      "name": "auth-light-320: Enter em /politica-de-privacidade leva a /politica-de-privacidade",
+      "ok": true,
+      "detail": "/politica-de-privacidade"
+    },
+    {
+      "name": "auth-light-1440: gatilho sem avatar",
+      "ok": true,
+      "detail": "avatar=False"
+    },
+    {
+      "name": "auth-light-1440: gatilho com três linhas e rótulo 'Abrir menu'",
+      "ok": true,
+      "detail": "Abrir menu"
+    },
+    {
+      "name": "auth-light-1440: alvo de toque >= 44 px",
+      "ok": true,
+      "detail": "44x44"
+    },
+    {
+      "name": "auth-light-1440: aria-expanded=false antes de abrir",
+      "ok": true,
+      "detail": "false"
+    },
+    {
+      "name": "auth-light-1440: sem rolagem horizontal na página",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "name": "auth-light-1440: barra institucional única",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "name": "auth-light-1440: abre ao clicar no gatilho",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-light-1440: painel com faixas à esquerda e embaixo no desktop",
+      "ok": true,
+      "detail": "1334x653 em 1430x781, faixa=96"
+    },
+    {
+      "name": "auth-light-1440: X no canto superior direito com 44 px",
+      "ok": true,
+      "detail": "[44, 44]"
+    },
+    {
+      "name": "auth-light-1440: foco entra no painel ao abrir",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-light-1440: sem logotipo no painel",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-light-1440: duas colunas no desktop",
+      "ok": true,
+      "detail": "tops=[60, 60]"
+    },
+    {
+      "name": "auth-light-1440: alvos dos links >= 44 px",
+      "ok": true,
+      "detail": "44"
+    },
+    {
+      "name": "auth-light-1440: sem rolagem horizontal com painel aberto",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "name": "auth-light-1440: seções conta e sites, sem navegação repetida",
+      "ok": true,
+      "detail": "['Conta', 'Sites e informações legais']"
+    },
+    {
+      "name": "auth-light-1440: contraste do texto dos links >= 4,5:1",
+      "ok": true,
+      "detail": "12.40:1"
+    },
+    {
+      "name": "auth-light-1440: Escape fecha",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-light-1440: foco volta ao gatilho após Escape",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-light-1440: X fecha",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-light-1440: foco volta ao gatilho após X",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-light-1440: foco preso no painel em 30 Tabs",
+      "ok": true,
+      "detail": "escapou 0x"
+    },
+    {
+      "name": "auth-dark-320: gatilho sem avatar",
+      "ok": true,
+      "detail": "avatar=False"
+    },
+    {
+      "name": "auth-dark-320: gatilho com três linhas e rótulo 'Abrir menu'",
+      "ok": true,
+      "detail": "Abrir menu"
+    },
+    {
+      "name": "auth-dark-320: alvo de toque >= 44 px",
+      "ok": true,
+      "detail": "44x44"
+    },
+    {
+      "name": "auth-dark-320: aria-expanded=false antes de abrir",
+      "ok": true,
+      "detail": "false"
+    },
+    {
+      "name": "auth-dark-320: sem rolagem horizontal na página",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "name": "auth-dark-320: barra institucional única",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "name": "auth-dark-320: abre ao clicar no gatilho",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-dark-320: painel com faixa esmaecida no mobile",
+      "ok": true,
+      "detail": "420x781 em 500x781, faixa=80"
+    },
+    {
+      "name": "auth-dark-320: X no canto superior direito com 44 px",
+      "ok": true,
+      "detail": "[44, 44]"
+    },
+    {
+      "name": "auth-dark-320: foco entra no painel ao abrir",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-dark-320: sem logotipo no painel",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-dark-320: uma coluna (conta, sites) sem navegação repetida",
+      "ok": true,
+      "detail": "tops=[60, 172]"
+    },
+    {
+      "name": "auth-dark-320: alvos dos links >= 44 px",
+      "ok": true,
+      "detail": "44"
+    },
+    {
+      "name": "auth-dark-320: sem rolagem horizontal com painel aberto",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "name": "auth-dark-320: seções conta e sites, sem navegação repetida",
+      "ok": true,
+      "detail": "['Conta', 'Sites e informações legais']"
+    },
+    {
+      "name": "auth-dark-320: contraste do texto dos links >= 4,5:1",
+      "ok": true,
+      "detail": "14.50:1"
+    },
+    {
+      "name": "auth-dark-320: Escape fecha",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-dark-320: foco volta ao gatilho após Escape",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-dark-320: X fecha",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-dark-320: foco volta ao gatilho após X",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-dark-320: foco preso no painel em 30 Tabs",
+      "ok": true,
+      "detail": "escapou 0x"
+    },
+    {
+      "name": "auth-dark-1440: gatilho sem avatar",
+      "ok": true,
+      "detail": "avatar=False"
+    },
+    {
+      "name": "auth-dark-1440: gatilho com três linhas e rótulo 'Abrir menu'",
+      "ok": true,
+      "detail": "Abrir menu"
+    },
+    {
+      "name": "auth-dark-1440: alvo de toque >= 44 px",
+      "ok": true,
+      "detail": "44x44"
+    },
+    {
+      "name": "auth-dark-1440: aria-expanded=false antes de abrir",
+      "ok": true,
+      "detail": "false"
+    },
+    {
+      "name": "auth-dark-1440: sem rolagem horizontal na página",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "name": "auth-dark-1440: barra institucional única",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "name": "auth-dark-1440: abre ao clicar no gatilho",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-dark-1440: painel com faixas à esquerda e embaixo no desktop",
+      "ok": true,
+      "detail": "1334x653 em 1430x781, faixa=96"
+    },
+    {
+      "name": "auth-dark-1440: X no canto superior direito com 44 px",
+      "ok": true,
+      "detail": "[44, 44]"
+    },
+    {
+      "name": "auth-dark-1440: foco entra no painel ao abrir",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-dark-1440: sem logotipo no painel",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-dark-1440: duas colunas no desktop",
+      "ok": true,
+      "detail": "tops=[60, 60]"
+    },
+    {
+      "name": "auth-dark-1440: alvos dos links >= 44 px",
+      "ok": true,
+      "detail": "44"
+    },
+    {
+      "name": "auth-dark-1440: sem rolagem horizontal com painel aberto",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "name": "auth-dark-1440: seções conta e sites, sem navegação repetida",
+      "ok": true,
+      "detail": "['Conta', 'Sites e informações legais']"
+    },
+    {
+      "name": "auth-dark-1440: contraste do texto dos links >= 4,5:1",
+      "ok": true,
+      "detail": "14.50:1"
+    },
+    {
+      "name": "auth-dark-1440: Escape fecha",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-dark-1440: foco volta ao gatilho após Escape",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-dark-1440: X fecha",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-dark-1440: foco volta ao gatilho após X",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "auth-dark-1440: foco preso no painel em 30 Tabs",
+      "ok": true,
+      "detail": "escapou 0x"
+    }
+  ]
+}
