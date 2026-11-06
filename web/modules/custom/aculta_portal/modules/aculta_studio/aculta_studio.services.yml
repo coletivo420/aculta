@@ -102,3 +102,19 @@ services:
   aculta_studio.upload_embed_controller:
     class: Drupal\aculta_studio\Controller\StudioUploadEmbedController
     arguments: ['@form_builder']
+  aculta_studio.calendar_provider.cursos:
+    class: Drupal\aculta_studio\Calendar\StudioCoursesCalendarItemProvider
+    arguments: ['@?aculta_lms_agenda.entries', '@current_user']
+    tags:
+      - { name: aculta_calendar.item_provider }
+  aculta_studio.calendar_provider.eventos:
+    class: Drupal\aculta_studio\Calendar\StudioEventsCalendarItemProvider
+    arguments: ['@?aculta_events.calendar_provider', '@current_user']
+    tags:
+      - { name: aculta_calendar.item_provider }
+  aculta_studio.calendar_provider.meus_eventos:
+    class: Drupal\aculta_studio\Calendar\StudioMyEventsCalendarItemProvider
+    arguments: ['@entity_type.manager', '@?aculta_events.calendar_provider', '@current_user', '@?aculta_user.organization_membership_manager']
+    tags:
+      - { name: aculta_calendar.item_provider }
+
