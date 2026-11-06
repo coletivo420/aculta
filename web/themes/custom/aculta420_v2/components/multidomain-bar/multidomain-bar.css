@@ -108,18 +108,6 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
   min-inline-size: 2.1875rem;
 }
 
-.aculta-institution-bar .aculta-account-menu__summary {
-  min-block-size: 2.1875rem;
-  min-inline-size: 2.1875rem;
-  padding-inline: 0;
-}
-
-.aculta-institution-bar .aculta-account-menu:not(.aculta-account-menu--signed-in) a {
-  min-block-size: 2.1875rem;
-  min-inline-size: 2.1875rem;
-  padding-inline: 0;
-}
-
 @container aculta-institution-bar (max-width: 18rem) {
   .aculta-institution-bar__brand {
     flex: 0 0 auto;
@@ -128,46 +116,10 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
   .aculta-institution-bar__inner { padding-inline: var(--spacing-xs); }
 }
 
-.aculta-account-menu__panel {
-  inline-size: min(20rem, max(0px, calc(var(--aculta-admin-main-inline-size, 100vw) - 4 * var(--spacing-xs))));
-  inset-block-start: calc(var(--aculta-institution-bar-offset, 0px) + var(--aculta-institution-bar-height, 2.25rem));
-  inset-inline-end: var(--spacing-xs);
-  max-inline-size: calc(100vw - 2 * var(--spacing-xs));
-  padding-inline: var(--spacing-xs);
-  position: fixed;
-}
-
-.aculta-account-menu__panel a { white-space: normal; }
-
-.aculta-account-menu .menu {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 var(--spacing-xs);
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.aculta-account-menu a {
-  align-items: center;
-  border-radius: var(--radius-sm);
-  color: inherit;
-  display: inline-flex;
-  min-block-size: var(--tap-target-min);
-  padding-inline: var(--spacing-xs);
-  text-decoration: underline;
-  text-underline-offset: .15em;
-  white-space: nowrap;
-}
-
-.aculta-account-menu a:focus-visible {
-  outline: 3px solid var(--color-brand-highlight);
-  outline-offset: 2px;
-}
-
+/* Painel do account-menu: estilos ficam em components/account-menu/account-menu.css.
+   Aqui só o destaque de "Minha conta" no domínio de conta, com texto primário (contraste 4,5:1). */
 .aculta-institution-bar--account .aculta-account-menu a[data-portal-ui="account-home"] {
-  color: var(--color-brand-highlight);
+  color: var(--color-text-primary);
   font-weight: 700;
 }
 
