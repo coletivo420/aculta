@@ -2,16 +2,15 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
-# Accent administrativo da Revista — adapter UI Styles
+# Runtime ACULTA420 V2 — Revista, PHPUnit, purpose e botões — 2026-11-06
 
-- **Objetivo:** ligar a escolha de accent do UI Styles a cada nó Revista por campo nativo.
-- **Estado:** código publicado em `153b393611`; campo nativo e adapter UI Styles presentes. Firefox ESR confirmou o widget e opções green/yellow/red. A falha de submit decorreu do widget sem `#tree`; correção aplicada e coberta por teste. O value callback real do UI Styles, entity builder e render HTML passaram em transação revertida; o teaser trouxe a classe no `<article>`. Capturas ESR demonstram CSS red em claro/escuro e 320/1440 px com campo nativo temporariamente salvo; o valor foi restaurado vazio na revisão 825. Submit visual segue sem aceite: houve acesso negado/navegação incompleta; uma tentativa pré-correção criou revisão 822 sem valor.
-- **Decisões e alternativas descartadas:** sem alteração no contrib UI Styles; classes continuam definidas pelo tema. Loja permanece pendente de autorização.
-- **Cuidados:** não executar a atualização pendente `aculta_portal-post-active_purposes_state`; node 602 mantém o campo vazio (revisão 822).
-- **Commits e arquivos:** `153b393611`; adapter `aculta_magazine`, campo Config Sync, estilos e gate UI Styles, docs de layout/roadmap.
-- **Verificações:** PASS UI Styles (24), mapped classes (462), V2 foundations, SDC schemas (764), SDC render (41), PHPUnit focal (7/42), Form API value callback, builder nativo e render Drupal transacional. Browser Firefox ESR confirmou stylesheet e breakpoints com campo nativo salvo temporariamente e depois restaurado; submit automatizado pré-correção não validou persistência; revisão corrente 825 mantém o campo vazio. Suíte Unit completa e Portal Drupal12/status-index mantêm falhas alheias documentadas.
-- **Pendências e bloqueios:** validar o submit visual pelo formulário e capturar a publicação com accent salvo; a tentativa automatizada de submit expirou antes de salvar. F4/F5 permanecem parciais.
-- **Próximo passo:** concluir validação visual do estado salvo, mantendo Loja pendente de autorização documentada.
+- **Objetivo:** reconciliar configuração de teste, validar accent global da Revista, PHPUnit, palette/botões e registrar a evidência do shell.
+- **Estado:** origem `aculta420_v2.settings`; `preprocess_node` adiciona `revista-teaser--accent-{green|yellow|red}` ao wrapper do node e ao SDC, com dependência de cache. Form UI Styles submetido; quatro teasers passaram no Firefox ESR (claro/escuro, 320/1440, sem overflow). Accent global restaurado vazio; banco: 5 nós Revista, 0 accents próprios; node 602 vazio. Campo legado fica fora do fluxo e preservado sem remoção destrutiva.
+- **Configuração ativa:** CAPTCHA global `0`; divergências de captcha display e `core.extension` reconciliadas; `aculta420_v2.settings` criada. `config:status` ainda lista blocos/config local do tema administrativo, Turnstile sensível e definições legadas de field apenas no Sync.
+- **Commits publicados antes deste handoff:** `c8e9f37f9e` (config/reconciliação e shell), `42ca2af7e9` (matriz palette/botões), `80aae13a1c` (wrapper/cache/teste Revista), `33561c8743` (manifest Revista), `77904cc2ea` (suíte de botões).
+- **Verificações:** UI Styles 24 PASS; foundations 73 pares texto + 6 faixas PASS; SDC schema 55/764 PASS; SDC render 41 PASS; PHPUnit tema 12 testes/56 assertions PASS. Bootstrap criou diretório de saída a partir de ausência e a execução não mostrou aviso. Firefox: palette/botões 358/360; shell 108/120; os PNGs estão ignorados e só manifests versionados.
+- **Pendências:** F3 permanece aberta pelos dois overflows do Fórum a 320 px. F2 permanece para aceitação visual do responsável; a matriz também detectou contraste insuficiente da navegação em claro a 1440 px nos dez purposes. A suíte ampla `aculta-editor/access.py`, após corrigir seu import sob `-I`, parou por ausência de CKEditor no formulário de Revista para `content_editor`; o formulário administrativo de UID 1 foi validado separadamente. Não alterar o shell nesta fase.
+- **Próximo passo:** tratar o overflow do Fórum sem alterar o shell e repetir a suíte de botões; aguardar aceitação visual de F2 e verificar o fluxo editor quando o CKEditor do Runtime estiver disponível.
 
 
 # Adoção por purpose — `profile-details` no Studio — 2026-11-06
