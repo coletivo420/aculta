@@ -109,5 +109,5 @@ Os botões foram desenhados para repousar sobre as superfícies padrão do tema 
 ### Atualização de 2026-11-06
 
 - `scripts/validate-aculta420-v2-foundations.php`: PASS; confirmou que `buttons.css` não contém `--color-brand-highlight`, `--purpose-*` nem `filter: brightness(...)`.
-- PHPUnit focal do tema: 12 testes e 56 assertions PASS. Não há suíte de botão isolada nos caminhos de teste encontrados.
+- PHPUnit focal do tema: 12 testes e 56 assertions PASS. Suíte de browser dedicada: `tests/browser/transversal/aculta-theme-mobile-first/buttons-purpose-runtime.py`.
 - Firefox ESR no Runtime: 40 casos nos dez purposes, claro/escuro e 320/1440 px; 358/360 verificações passaram. Botões primário e contorno corresponderam aos tokens `--button-*`, sem filter. Dois casos falharam por overflow geral do Fórum a 320 px. Capturas em `tests/browser/capturas/purpose-buttons/2026-11-06/`; repetir após a correção do overflow.

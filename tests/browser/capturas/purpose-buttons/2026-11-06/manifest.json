@@ -1,5 +1,5 @@
 {
-  "metodo": "Firefox ESR visível via WebDriver BiDi; quatro tokens de esquema UI Styles verificados no HTML renderizado e botões primário/contorno inertes montados no DOM",
+  "metodo": "Suíte tests/browser/transversal/aculta-theme-mobile-first/buttons-purpose-runtime.py; Firefox ESR visível via WebDriver BiDi, palette renderizada e botões primário/contorno inertes montados no DOM",
   "motor": "Firefox ESR",
   "viewport": [320, 1440],
   "modo": ["claro", "escuro"],
@@ -16,5 +16,5 @@
     "botoes": "PASS: cores primária/contorno correspondem aos tokens --button-*; filter none em todos os casos",
     "F3": "pendente até eliminar/verificar o overflow do Fórum a 320 px"
   },
-  "hash_commit_testado_runtime": "c8e9f37f9e11ff1dfe570d085fed3cf947ab4a61"
+  "hash_commit_testado_runtime": "80aae13a1c4500e69e1bce9cb2c0c5b6c6211b9c"
 }

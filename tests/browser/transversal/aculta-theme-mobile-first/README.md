@@ -1,5 +1,26 @@
 # ACULTA420 — SDC responsivos do tema
 
+## Suíte de botões por purpose
+
+`buttons-purpose-runtime.py` valida os botões primário e contorno usando os
+atributos `data-portal-ui` em Firefox ESR visível. Percorre os dez purposes,
+claro/escuro e 320/1440 CSS px; verifica `data-purpose-scheme`, os tokens
+computados `--button-*`, ausência de `filter`, overflow e o CSS fonte. Os
+botões são controles inertes montados apenas no DOM: nenhum formulário é
+submetido e nenhum conteúdo/configuração é gravado. PNGs e `results.json` ficam
+em `$SUITE_OUT`.
+
+```sh
+export DISPLAY=:0
+: "${SUITE_OUT:?defina o diretório de saída fora do repositório}"
+export SUITE_OUT
+python3 -I tests/browser/transversal/aculta-theme-mobile-first/buttons-purpose-runtime.py
+```
+
+Rodada de 2026-11-06: 358/360 verificações PASS; os dois casos pendentes são o
+overflow geral do Fórum em 320 px, claro e escuro. Evidências versionadas
+(manifest apenas) em `tests/browser/capturas/purpose-buttons/2026-11-06/`.
+
 ## ACULTA STUDIO GREEN STASH — navegação e listagens
 
 `green-stash-layout.py` valida a folha candidata das áreas comerciais integradas
