@@ -1,6 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Menu de conta na barra institucional
-description: Menu de conta fixo na barra institucional. Visitante vê os links de acesso; usuário autenticado vê um disclosure com avatar e as ações de conta (ADR-047).
+description: Gatilho de três linhas na barra institucional que abre um painel de tela cheia com navegação principal, conta e sites/legal. Visitante vê Entrar e Criar conta; usuário autenticado vê avatar e ações de conta (ADR-047).
 group: ACULTA
 status: experimental
 libraryOverrides:
@@ -20,7 +20,7 @@ props:
       type: string
       title: Rótulo acessível
       description: Nome acessível do botão; fica visualmente oculto.
-      default: Abrir menu de conta
+      default: Abrir menu
     account_name:
       type: [string, 'null']
       title: Nome de exibição
@@ -47,10 +47,28 @@ props:
             format: uri
           current:
             type: boolean
+    legal_links:
+      type: array
+      title: Links legais
+      description: Links neutros de busca, política e privacidade. Somente rotas confirmadas.
+      default: []
+      items:
+        type: object
+        additionalProperties: false
+        required: [title, url]
+        properties:
+          title:
+            type: string
+            minLength: 1
+          url:
+            type: string
 slots:
   avatar:
     title: Avatar
     description: Avatar fornecido pelo Portal (AvatarResolver). Sem slot, o componente usa o ícone neutro. Nunca gera inicial do nome.
+  primary_menu_items:
+    title: Navegação principal
+    description: Render array do menu principal real (system_menu_block:main), com o mesmo menu que a barra de navegação usa.
   menu_items:
     title: Itens do menu
-    description: Render array do menu Drupal de conta (system_menu_block:account), com access e cache preservados pelo Portal.
+    description: Render array do menu Drupal de conta (system_menu_block:account), com access e cache preservados pelo Portal. Para visitante, traz Entrar e Criar conta.

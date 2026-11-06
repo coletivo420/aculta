@@ -159,6 +159,11 @@ foreach ([
   ['--button-secondary-border', '--button-secondary-bg', 3.0, 'button secondary border on bg'],
   ['--button-secondary-border', '--color-canvas', 3.0, 'button secondary border on canvas'],
   ['--button-focus-ring', '--color-canvas', 3.0, 'button focus ring on canvas'],
+  // Menu de conta (painel de tela cheia sobre --color-surface, gatilho ghost).
+  ['--color-text-primary', '--color-surface', 4.5, 'account menu panel text on surface'],
+  ['--button-secondary-fg', '--color-surface', 4.5, 'account menu ghost trigger and close on surface'],
+  ['--button-secondary-fg', '--button-secondary-bg-hover', 4.5, 'account menu ghost trigger on hover'],
+  ['--button-focus-ring', '--color-surface', 3.0, 'account menu focus ring on surface'],
 ] as [$fg, $bg, $minRatio, $desc]) {
   $lightRatio = check_contrast($fg, $bg, $rootTokens, []);
   $assert($lightRatio >= $minRatio, sprintf('light %s (%s on %s) is %.2f:1 (minimum %.1f:1)', $desc, $fg, $bg, $lightRatio, $minRatio));

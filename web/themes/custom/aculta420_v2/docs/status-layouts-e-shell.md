@@ -13,15 +13,31 @@ PHPCS e YAML PASS; no Runtime, `drush cr` e inspeção do route provider confirm
 os cinco paths, purpose e ausência dos antigos. Acesso anônimo negado. Captura
 autenticada e fluxos de escrita permanecem pendentes.
 
-## Menu de conta e sites — C2 implementado; validação visual pendente
+## Menu da barra institucional (hambúrguer) — implementado; validação em navegador pendente
 
-O `account-menu` combina a lista neutra `aculta_domain_sites` com o bloco de
-sessão, usa links normais entre purposes e marca o atual com
-`aria-current="page"`. O Portal fornece `aculta_account_name` e avatar; os
-itens Drupal preservam access/cache. Stories anônima e autenticada atualizadas.
-Schemas, design foundations, renderização SDC Drupal, shell, browser validators
-e PHP lint passaram. As capturas e a interação autenticada ficam pendentes
-porque `DISPLAY` não está disponível nesta sessão.
+O gatilho do `account-menu` é só o ícone de três linhas (rótulo "Abrir menu"
+visualmente oculto, `aria-expanded` do `<details>`, alvo de 44 px, variante
+ghost com tokens `--button-*`). O avatar saiu do cabeçalho.
+
+O painel abre em tela cheia sobre a página, com X no canto superior direito.
+Escape e X fecham e devolvem o foco ao gatilho; enquanto aberto, o Tab fica
+preso no painel. Sem JavaScript, o `<details>` continua abrindo e fechando.
+Sem logotipo no painel.
+
+Colunas: (1) navegação principal, com o menu `system_menu_block:main` real
+(mesmo render array que a barra usa); (2) conta, com avatar e nome, Minha conta
+e Sair para autenticado, ou Entrar e Criar conta para anônimo; (3) lista de sites
+e links legais (Busca, Política de privacidade e, só para autenticado,
+Configurações de privacidade). Desktop: três colunas; 320 px: uma coluna.
+
+Fundo do painel: `--color-surface`. Foco: `--button-focus-ring` (verde-escuro no
+claro, creme no escuro). Probe `validate-aculta420-v2-foundations.php` ganhou
+quatro pares do menu (texto, gatilho/fechar, hover e anel) nos dois modos.
+
+Pendências: "Termos" e "Informações legais" não têm rota confirmada no código
+nem no site publicado, então não aparecem. Validação em Firefox ESR (capturas
+antes/depois, 320/1440 px, claro/escuro, anônimo/autenticado) pendente porque o
+servidor local serve o checkout principal, não esta worktree.
 
 ## Mensagens e avisos — C3 integrado; validação visual pendente
 
