@@ -2,6 +2,17 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
+# Accent administrativo da Revista — adapter UI Styles
+
+- **Objetivo:** ligar a escolha de accent do UI Styles a cada nó Revista por campo nativo.
+- **Estado:** código publicado em `153b393611`; campo instalado no Drupal local. Adapter consulta opções do plugin, salva somente valor permitido, restringe Field Access a administradores e aplica classe ao teaser. Aceitação visual não validada: Firefox ESR no host principal recebeu 403; edição no host Revista recebeu 404. Não alterei conteúdo.
+- **Decisões e alternativas descartadas:** sem alteração no contrib UI Styles; classes continuam definidas pelo tema. Loja permanece pendente de autorização.
+- **Cuidados:** não executar a atualização pendente `aculta_portal-post-active_purposes_state`; não salvar accent em conteúdo real antes da captura.
+- **Commits e arquivos:** `153b393611`; adapter `aculta_magazine`, campo Config Sync, estilos e gate UI Styles, docs de layout/roadmap.
+- **Verificações:** PASS UI Styles (24), mapped classes (462), V2 foundations, SDC schemas (764), browser validators (21), module-theme boundary (4278), SDC render (41) e PHPUnit focal (6/33). Suíte Unit completa: 1 falha anterior em `MagazineAdminViewsConfigTest`. Portal Drupal12/status-index: falha por 9 componentes alheios com versões divergentes. Captura ESR DEFERRED por acesso negado.
+- **Pendências e bloqueios:** capturar formulário e publicação no Firefox ESR após liberar acesso administrativo ao host principal.
+- **Próximo passo:** validar no browser sem gravar em conteúdo existente; então atualizar o status F4/F5.
+
 
 # Adoção por purpose — `profile-details` no Studio — 2026-11-06
 
@@ -28,16 +39,3 @@
 - **Verificações:** SDC Schema PASS (55 componentes, 27 includes, 764 checks), Drush SDC PASS (40 componentes isolados), V2 Foundations PASS (73 pares de contraste, 6 pares de faixa, foco e bordas), Mapped Classes PASS (459 classes, 0 exceções, 0 Bootstrap), Module-Theme Boundary PASS (4274 checks), Browser Validators PASS (21 checks), UI Styles PASS (20 checks), `drush cr` PASS.
 - **Pendências:** componente `price` aguarda autorização de Commerce/Loja; testes de navegador/capturas visuais delegados para outro agente.
 - **Próximo passo:** validação visual no servidor de testes e avanço para Release Candidate (RC).
-
-# F2 — Conclusão da migração HTMX no Studio, Bio e Modais de Perfil — 2026-11-05
-
-- **Objetivo:** avançar e concluir os itens da Fase 2 (F2) do ADR-050 na Minha Conta e Studio.
-- **Concluído:**
-  - `d74e79a17e`: migra `studio-navigation.js` e `account-navigation.js` para HTMX (F2 item 1).
-  - `bd834c58de`: `StudioProfileController` com raiz `#aculta-studio-profile-editor`, foco acessível `data-aculta-focus`, `tabindex="-1"` e bibliotecas HTMX (F2 item 2).
-  - `d036fe4931`: ajusta fronteira de tema no `StudioProfileController` e documenta atributos.
-  - `99f3f4ee5d`: desbloqueia requisições HTMX nos modais de perfil (`AccountModalAccess` passa a reconhecer `HX-Request`).
-  - `e293395478`: migra edição de bio (`AccountBioCard` e `AccountBioForm`) para diálogo nativo `<dialog id="aculta-account-bio-dialog">`, carregamento por `aculta:drawer:open` e submissão por `Htmx::post()` com `HX-Redirect` (F2 item 3).
-- **Verificações:** Unit `aculta_user` (154/154 PASS), Unit `aculta_studio` (7/7 PASS), `validate-module-theme-boundary.php` PASS (4271 checks), `validate-portal-ui-docs.php` PASS (507 tokens), `validate-aculta420-mapped-classes.php` PASS (455 classes), `validate-aculta-user-photo.php` PASS (INV-FOTO-1 a INV-FOTO-11), `validate-account-address.php` PASS.
-- **Pendências:** transição para F3 conforme instrução do responsável.
-- **Próximo passo:** handoff da F3 para o próximo agente.
