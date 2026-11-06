@@ -1,5 +1,11 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — Studio `profile-identity` com `author-card`
+
+- O preprocess do tema adapta somente `profile-identity` à variante `profile_full`; nome, hint, avatar, ações e link público continuam vindos do Portal. `profile-bio` e `profile-social` seguem no fallback.
+- Comparação Firefox ESR antes/depois em `/meu-perfil`: 89/89 verificações, 22 ignoradas, zero falhas por execução; claro/escuro, 320/1440 px, foco por teclado e sem overflow. Capturas em `$SUITE_OUT/layouts-purpose-studio-profile-identity-paired-20261106/{before,after}/`.
+- PHPUnit focal do hook: 6 testes/23 assertions; renderização isolada: 40 SDCs PASS.
+
 ## Não versionado — validação focal do SDC `tabs` no Studio
 
 - Comparado `/marley` antes e depois do mapeamento `context-tabs`→`tabs`:

@@ -8,7 +8,7 @@
   author_wiki: 'Wiki420'|t
 } %}
 {% set social_icons = { instagram: 'instagram-logo', facebook: 'facebook-logo', reddit: 'reddit-logo' } %}
-<article class="author-card author-card--{{ layout }} author-card--{{ variant }} author-card--{{ size|default('md') }}">
+<article{{ attributes.addClass('author-card', 'author-card--' ~ layout, 'author-card--' ~ variant, 'author-card--' ~ size|default('md')) }}>
   {% if has_avatar %}
     <div class="author-card__avatar">
       {% block avatar %}{% endblock %}

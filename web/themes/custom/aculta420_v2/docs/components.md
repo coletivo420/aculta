@@ -283,7 +283,7 @@ autorizada.
 - **Slots:** `avatar`, `actions`.
 - **Story:** `author-card.default.story.yml`.
 - **Regra:** não carrega usuário/Profile, não decide visibilidade e não inventa iniciais; os slots conservam os render arrays cacheáveis do módulo proprietário.
-- **Estado:** implementação presente, com gate de render SDC. Cumpre a função de Author box no slot `authors` de `revista-publication`, usando identidade, avatar e biografia fornecidos pelo Portal; não existe necessidade documentada para um segundo SDC homônimo. Fixture composta renderizada pelos dois SDCs passou em Firefox, modos claro/escuro, 320–1440 px, zoom 200% e foco por teclado; conteúdo publicado/autenticado no Runtime permanece sem validação.
+- **Estado:** implementação presente, com gate de render SDC. Cumpre a função de Author box no slot `authors` de `revista-publication`, usando identidade, avatar e biografia fornecidos pelo Portal; não existe necessidade documentada para um segundo SDC homônimo. O consumer `profile-identity` do Studio também usa a variante `profile_full`; comparação antes/depois em `/meu-perfil` passou no Firefox ESR (89/89, 22 ignoradas), claro/escuro, 320/1440 px, foco por teclado e zero overflow. Capturas em `$SUITE_OUT/layouts-purpose-studio-profile-identity-paired-20261106/{before,after}/`. A rota pública de perfil continua sem validação de Runtime.
 
 ### revista-teaser — Cartão editorial
 - **Papel:** substitui a apresentação V1 do teaser de publicação na listagem da Revista.

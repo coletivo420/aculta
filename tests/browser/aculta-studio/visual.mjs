@@ -16,6 +16,7 @@ const USER = process.env.STUDIO_USER || 'teste.comum';
 const EXPECT_MODERATION = process.env.STUDIO_EXPECT_MODERATION || '';
 const OUT = process.env.SUITE_OUT;
 const GD = process.env.GECKODRIVER || 'http://127.0.0.1:4444';
+const EXPECT_PROFILE_IDENTITY_SDC = process.env.PROFILE_IDENTITY_EXPECT_SDC !== '0';
 const CSS_OVERRIDE = process.env.STUDIO_CSS_OVERRIDE === '1';
 const CSS_ROOT = process.env.STUDIO_CSS_ROOT || PROJECT;
 const USER_ID = Number(process.env.STUDIO_USER_ID || '5');
@@ -486,6 +487,48 @@ try {
       const profileState = JSON.parse(await exec(`const editor=document.querySelector('.aculta-profile-editor');return JSON.stringify({editor:!!editor,privateRoot:!!document.querySelector('[data-aculta-account-root]'),privateLabels:[...document.querySelectorAll('label')].map((l)=>l.innerText.trim()).filter((t)=>/CPF|CNPJ|CEP|endereço|complemento/i.test(t)),publicLink:!!document.querySelector('[data-portal-ui="studio-profile-public-link"]')});`));
       check('Meu Perfil é independente dos formulários privados da Conta', profileReady && !profileState.privateRoot && profileState.privateLabels.length === 0, JSON.stringify(profileState));
       if (profileReady) {
+        const originalProfileTheme = await exec(`return document.documentElement.getAttribute('data-theme');`);
+        for (const mode of ['light', 'dark']) {
+          for (const width of [320, 1440]) {
+            await setViewport(width, width < 500 ? 844 : 1000);
+            await exec(`document.documentElement.setAttribute('data-theme', '${mode}'); return true;`);
+            const identity = JSON.parse(await exec(`return JSON.stringify((() => {
+              const sdc = document.querySelector('[data-component-id="aculta420_v2:author-card"]');
+              const root = sdc || document.querySelector('.aculta-profile-editor');
+              const links = root ? [...root.querySelectorAll('a[href]')] : [];
+              return {
+                component: sdc?.getAttribute('data-component-id') || '',
+                fallback: !sdc && !!root,
+                ownerSlots: !!root?.querySelector('[data-portal-ui="studio-profile-actions"]') && !!root?.querySelector('[data-portal-ui="studio-profile-public-link"]'),
+                name: root?.querySelector('.author-card__name')?.textContent.trim() || '',
+                avatar: !!root?.querySelector('img[alt]'),
+                links: links.length,
+                namedLinks: links.every((link) => link.textContent.trim().length > 0),
+                overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+              };
+            })());`));
+            const expectedRoot = EXPECT_PROFILE_IDENTITY_SDC ? identity.component === 'aculta420_v2:author-card' : identity.fallback;
+            check(`profile-identity ${EXPECT_PROFILE_IDENTITY_SDC ? 'SDC' : 'fallback'} preserva dados e slots do Portal em ${mode}/${width}px`, expectedRoot && identity.ownerSlots && identity.avatar && identity.links >= 4 && identity.namedLinks, JSON.stringify(identity));
+            await exec(`document.activeElement?.blur(); document.body.tabIndex = -1; document.body.focus(); return true;`);
+            let focusedIdentityLink = false;
+            for (let tab = 0; tab < 50; tab++) {
+              focusedIdentityLink = await exec(`return Boolean(document.activeElement?.closest('[data-portal-ui="studio-profile-actions"]') && document.activeElement.matches('a:focus-visible'));`);
+              if (focusedIdentityLink) break;
+              await wd('POST', p('/actions'), { actions: [{ type: 'key', id: 'profile-identity-focus', actions: [{ type: 'keyDown', value: '\uE004' }, { type: 'keyUp', value: '\uE004' }] }] });
+            }
+            const focusState = JSON.parse(await exec(`return JSON.stringify((() => {
+              const link = document.activeElement;
+              const rect = link.getBoundingClientRect();
+              return { focused: link.matches('a:focus-visible'), outline: getComputedStyle(link).outlineStyle, visible: rect.right > 0 && rect.left < innerWidth, text: link.textContent.trim() };
+            })());`));
+            check(`profile-identity recebe foco por teclado em ${mode}/${width}px`, focusedIdentityLink && focusState.focused && focusState.outline !== 'none' && focusState.visible, JSON.stringify(focusState));
+            check(`profile-identity sem overflow em ${mode}/${width}px`, identity.overflow <= 0, String(identity.overflow));
+            await shot(`profile-identity-${mode}-${width}`);
+          }
+        }
+        if (originalProfileTheme === null) await exec(`document.documentElement.removeAttribute('data-theme'); return true;`);
+        else await exec(`document.documentElement.setAttribute('data-theme', '${originalProfileTheme}'); return true;`);
+        await setViewport(1280, 900);
         await shot('07-meu-perfil');
         const identityActions = JSON.parse(await exec(`const root=document.querySelector('.aculta-profile-editor');const actions=root?.querySelector('[data-portal-ui="studio-profile-actions"]');const links=[...(actions?.querySelectorAll('a,button')||[])].map((el)=>{const r=el.getBoundingClientRect();return {text:el.innerText.trim(),href:el.getAttribute('href'),width:r.width,height:r.height}});return JSON.stringify({root:!!root,actions:!!actions,width:actions?.getBoundingClientRect().width||0,links});`));
         check('Meu Perfil mantém as ações renderizadas e utilizáveis', identityActions.root && identityActions.actions && identityActions.width > 0 && identityActions.links.length > 0 && identityActions.links.every((link) => link.width >= 44 && link.height >= 44 && link.text.length > 0 && !!link.href), JSON.stringify(identityActions));

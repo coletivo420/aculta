@@ -75,6 +75,43 @@ final class PagePresentationHooksTest extends UnitTestCase {
   }
 
   /**
+   * Maps only the identity portion of the Studio profile to author-card.
+   */
+  public function testProfileIdentityMapsToAuthorCardAndKeepsOwnerData(): void {
+    $componentManager = $this->createMock(ComponentPluginManager::class);
+    $componentManager->expects(self::once())
+      ->method('hasDefinition')
+      ->with('aculta420_v2:author-card')
+      ->willReturn(TRUE);
+    $hooks = $this->newHooks($componentManager);
+    $avatar = ['#theme' => 'image', '#uri' => 'public://avatar.png', '#alt' => 'Avatar'];
+    $actions = ['#theme' => 'item_list', '#items' => ['Editar apelido']];
+    $publicLink = ['#type' => 'link', '#title' => 'Ver perfil público'];
+    $variables = [
+      'name' => 'profile-identity',
+      'props' => ['display_name' => 'Marley', 'hint' => 'Apelido público'],
+      'slots' => ['avatar' => $avatar, 'actions' => $actions, 'public_link' => $publicLink],
+      'attributes' => ['id' => 'profile-identity', 'data-portal-ui' => 'studio-profile-identity'],
+    ];
+
+    $hooks->preprocessPortalComponent($variables);
+
+    self::assertSame('aculta420_v2:author-card', $variables['component']['#component']);
+    self::assertSame([
+      'variant' => 'profile_full',
+      'size' => 'md',
+      'display_name' => 'Marley',
+      'designation' => 'Apelido público',
+      'has_avatar' => TRUE,
+      'has_actions' => TRUE,
+    ], $variables['component']['#props']);
+    self::assertSame($avatar, $variables['component']['#slots']['avatar']);
+    self::assertSame($actions, $variables['component']['#slots']['actions']['edit_actions']);
+    self::assertSame($publicLink, $variables['component']['#slots']['actions']['public_link']);
+    self::assertSame($variables['attributes'], $variables['component']['#attributes']);
+  }
+
+  /**
    * Leaves components outside the approved map on the Portal fallback.
    */
   public function testOtherComponentsKeepTheirExistingFallback(): void {

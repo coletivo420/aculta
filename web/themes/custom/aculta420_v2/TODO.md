@@ -6,7 +6,7 @@ Estado: em desenvolvimento · versão 1.3.0 (`aculta420_v2.info.yml`) · status:
 
 Eventos: View pública da raiz usa `EventCatalogue` para IDs/props, preservando ACL, recorrência, ordenação e filtros; os cards usam `card-cultural`. Kernel Events passou: 155 testes/3.616 assertions (33 depreciações Core/contrib). Gates V2 aplicáveis passaram. Firefox ESR capturou listagem e detalhe em claro/escuro a 320/1440 px, foco visível e zero overflow em `$SUITE_OUT/layouts-purpose-events-cards-20261106-r2/`. Sem baseline anterior da listagem.
 
-Studio: `/conta`, `/meu-perfil` e `context-tabs` validados. Rotas pareadas em `$SUITE_OUT/layouts-purpose-studio-routes-20261106/studio-account-routes-{before,after}/`; abas comparadas entre `layouts-purpose-studio-before-esr-20261105/` e `layouts-purpose-studio-context-tabs-paired-r2-20261106/`. Firefox ESR focal: 77/77 (22 ignoradas); três links com foco e teclado nos quatro estados. `empty-state` comparado; `profile-*` pendente. Revista aguarda seleção por entidade no UI Styles; Loja aguarda autorização; `price` fora. Gate Portal falha por divergências preexistentes.
+Studio: `/conta`, `context-tabs` e `profile-identity`→`author-card` validados. Comparação perfil com foco em claro/escuro, 320/1440 px: `$SUITE_OUT/layouts-purpose-studio-profile-identity-paired-20261106/{before,after}/`; Firefox ESR 89/89 (22 ignoradas), zero falhas. `profile-bio`/`profile-social` seguem fallback. Revista aguarda seleção por entidade no UI Styles; Loja aguarda autorização; `price` fora. Gate Portal falha por divergências preexistentes.
 
 ## Dívidas
 

@@ -32,6 +32,12 @@ posteriores desta validação estão em
 `layouts-purpose-studio-context-tabs-paired-r2-20261106/`. Execute com `SUITE_OUT`
 apontando para um diretório novo para preservar as duas evidências.
 
+`visual.mjs` também compara `profile-identity` com o SDC `author-card` em
+`/meu-perfil`, incluindo foco por Tab nos modos claro/escuro e a 320/1440 px.
+Para capturar a baseline anterior, use `PROFILE_IDENTITY_EXPECT_SDC=0` com o
+tema anterior; a execução posterior exige o SDC por padrão. Capturas pareadas de
+2026-11-06: `layouts-purpose-studio-profile-identity-paired-20261106/{before,after}/`.
+
 `nojs.mjs` abre Firefox ESR com JavaScript desativado e confirma GET direto de Dados, shell/Form API, navegação HTML até Endereço e voltar. É uma verificação focal, não percorre todos os formulários. `visual.mjs` mede também rotas diretas com sessão, callbacks HTTP 403/404 e zoom real de Firefox a 200%/400%; esses cenários devem permanecer somente leitura.
 
 `orca-speech.mjs` valida anúncios reais do Orca no Firefox e mede a saída de áudio. Exige `BASE` (origem configurada do Runtime), `SUITE_OUT` fora do repositório, `ORCA_LOG` fora do repositório apontando ao log iniciado com `orca --replace --debug-file="$ORCA_LOG"`, Orca ativo na sessão gráfica e geckodriver (`GECKODRIVER`). O teste usa `teste.comum` somente para navegação/leitura; não submete formulários.

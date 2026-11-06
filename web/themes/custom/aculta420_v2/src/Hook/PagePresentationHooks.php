@@ -94,9 +94,9 @@ final class PagePresentationHooks {
    * Maps compatible Portal components to V2 SDCs.
    *
    * The Portal fallback preprocess runs before theme preprocess and fills a
-   * generic render array. For the two supported names, replace that fallback
-   * with the matching SDC while preserving props and slots. `context-tabs`
-   * maps to `tabs`; there is no SDC named `context-tabs`.
+   * generic render array. Replace supported names with their matching SDCs
+   * while preserving owner render arrays. `context-tabs` maps to `tabs`;
+   * `profile-identity` maps to the `profile_full` variant of `author-card`.
    */
   #[Hook('preprocess_aculta_portal_component')]
   public function preprocessPortalComponent(array &$variables): void {
@@ -104,6 +104,7 @@ final class PagePresentationHooks {
     $component = match ($name) {
       'empty-state' => 'empty-state',
       'context-tabs' => 'tabs',
+      'profile-identity' => 'author-card',
       default => NULL,
     };
     if ($component === NULL || !$this->componentAvailable($component)) {
@@ -116,12 +117,52 @@ final class PagePresentationHooks {
       return;
     }
 
-    $variables['component'] = [
+    $attributes = [];
+    if ($component === 'author-card') {
+      if (!is_string($props['display_name'] ?? NULL) || trim($props['display_name']) === '') {
+        return;
+      }
+      $attributes = $variables['attributes'] ?? [];
+      if ($attributes instanceof \Drupal\Core\Template\Attribute) {
+        $attributes = $attributes->toArray();
+      }
+      if (!is_array($attributes)) {
+        $attributes = [];
+      }
+      $actions = [];
+      if (isset($slots['actions'])) {
+        $actions['edit_actions'] = $slots['actions'];
+      }
+      if (isset($slots['public_link'])) {
+        $actions['public_link'] = $slots['public_link'];
+      }
+      $slots = [];
+      if (isset($variables['slots']['avatar'])) {
+        $slots['avatar'] = $variables['slots']['avatar'];
+      }
+      if ($actions !== []) {
+        $slots['actions'] = ['#type' => 'container', '#attributes' => ['class' => ['author-card__actions-list']], ...$actions];
+      }
+      $props = [
+        'variant' => 'profile_full',
+        'size' => 'md',
+        'display_name' => $props['display_name'],
+        'designation' => is_string($props['hint'] ?? NULL) ? $props['hint'] : NULL,
+        'has_avatar' => isset($slots['avatar']),
+        'has_actions' => $actions !== [],
+      ];
+    }
+
+    $renderArray = [
       '#type' => 'component',
       '#component' => 'aculta420_v2:' . $component,
       '#props' => $props,
       '#slots' => $slots,
     ];
+    if ($component === 'author-card' && $attributes !== []) {
+      $renderArray['#attributes'] = $attributes;
+    }
+    $variables['component'] = $renderArray;
   }
 
   /**
