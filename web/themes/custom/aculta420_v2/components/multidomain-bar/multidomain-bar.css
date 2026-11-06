@@ -360,8 +360,23 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
   flex-direction: column;
 }
 
+/* Esmaecimento do fundo ao abrir, igual para carrinho, avisos, mensagens e menu de conta. */
 .aculta-utility-dialog::backdrop {
   background: var(--color-scrim);
+  opacity: 1;
+  transition: opacity .2s ease, overlay .2s allow-discrete, display .2s allow-discrete;
+}
+
+@starting-style {
+  .aculta-utility-dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aculta-utility-dialog::backdrop {
+    transition: none;
+  }
 }
 
 .aculta-utility-dialog__header {

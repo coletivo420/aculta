@@ -5,15 +5,24 @@ Menu da barra institucional (ADR-047). Usado em `src/Hook/PagePresentationHooks.
 
 ## Comportamento
 
-- **Gatilho:** só o ícone de três linhas, sem avatar. Rótulo acessível "Abrir menu"
-  (visualmente oculto), `aria-expanded` do `<details>`, foco visível com
-  `--button-focus-ring`. Variante ghost com tokens `--button-*`; alvo de 44 px.
-- **Painel:** tela cheia sobre a página, com X no canto superior direito.
-  - Escape e X fecham; o foco volta ao gatilho.
-  - Enquanto aberto, Tab e Shift+Tab ficam presos no painel.
-  - Sem JavaScript, o `<details>` ainda abre e fecha.
-  - Sem logotipo dentro do painel.
+Segue o mesmo padrão dos diálogos utilitários da barra (carrinho, avisos e mensagens):
+
+- **Gatilho:** `button` com `aria-controls`, `aria-haspopup="dialog"` e
+  `data-aculta-dialog-trigger`. Mostra só o ícone de três linhas, sem avatar.
+  Rótulo acessível "Abrir menu" (visualmente oculto). Variante ghost com tokens
+  `--button-*`; alvo de 44 px.
+- **Diálogo:** `<dialog>` aberto com `showModal()` pelo `js/utility-dialogs.js`
+  compartilhado. Ocupa a tela inteira e tem X no canto superior direito.
+  - Esc e X fecham; o foco volta ao gatilho (nativo do `<dialog>`).
+  - Foco preso no diálogo enquanto aberto (Tab/Shift+Tab, pelo JS compartilhado).
+  - Fundo esmaecido: `::backdrop` com transição de opacidade em
+    `components/multidomain-bar/multidomain-bar.css`, igual para os quatro diálogos.
+    Respeita `prefers-reduced-motion`.
+  - Sem logotipo dentro do diálogo.
 - **Fundo:** `--color-surface` (claro e escuro). Separadores: `--color-border`.
+- **Foco:** `--button-focus-ring` (verde-escuro no claro, creme no escuro).
+
+O componente não tem JS próprio: a abertura, o Esc e o foco vêm de `js/utility-dialogs.js`.
 
 ## Colunas
 
@@ -27,6 +36,13 @@ Menu da barra institucional (ADR-047). Usado em `src/Hook/PagePresentationHooks.
 
 Desktop (60 rem ou mais): três colunas. Celular (320 px): uma coluna, na ordem 1, 2, 3.
 
+## htmx
+
+Avisos e mensagens carregam o conteúdo com htmx ao abrir (`aculta:drawer:open`).
+O menu de conta **não** usa htmx: o conteúdo já vem na página, com access e cache
+preservados pelo Portal. Carregar o menu por htmx exigiria uma rota de fragmento
+em `aculta_portal`, fora do escopo deste componente.
+
 ## Props e slots
 
 - `authenticated` (boolean), `summary_label`, `account_name`, `sites`, `legal_links`.
@@ -36,5 +52,4 @@ Desktop (60 rem ou mais): três colunas. Celular (320 px): uma coluna, na ordem 
 
 - "Termos" e "Informações legais" não têm rota confirmada no código nem no site
   publicado, por isso não aparecem.
-- Validação em Firefox ESR (capturas antes/depois, 320/1440 px, claro/escuro,
-  anônimo/autenticado) ainda não foi feita. Ver `docs/status-layouts-e-shell.md`.
+- Validação visual em Firefox ESR: ver `docs/status-layouts-e-shell.md`.
