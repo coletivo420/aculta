@@ -4,6 +4,8 @@
   "type": "module",
   "scripts": {
     "test:firefox": "node run-playwright.mjs",
+    "test:chromium": "ACULTA_BROWSER_ENGINE=chromium node run-playwright.mjs",
+    "test:webkit": "ACULTA_BROWSER_ENGINE=webkit node run-playwright.mjs",
     "test:front": "node run-playwright.mjs"
   },
   "devDependencies": {

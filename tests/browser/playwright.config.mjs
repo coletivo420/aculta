@@ -8,7 +8,7 @@ export default defineConfig({
   outputDir: output ? `${output}/test-results` : undefined,
   reporter: [['line'], ['json', { outputFile: output ? `${output}/playwright.json` : 'playwright.json' }]],
   use: {
-    browserName: 'firefox',
+    browserName: process.env.ACULTA_BROWSER_ENGINE || 'firefox',
     headless: true,
     ignoreHTTPSErrors: process.env.ACULTA_BROWSER_ENV === 'local',
     trace: 'retain-on-failure',

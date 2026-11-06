@@ -8,10 +8,17 @@ if (!origin && !urls) {
   process.exit(2);
 }
 
+const engines = ['firefox', 'chromium', 'webkit'];
+const engine = process.env.ACULTA_BROWSER_ENGINE || 'firefox';
+if (!engines.includes(engine)) {
+  console.error(`ACULTA_BROWSER_ENGINE inválido: "${engine}". Use: ${engines.join(', ')}.`);
+  process.exit(2);
+}
+
 const result = spawnSync(process.execPath, ['./node_modules/@playwright/test/cli.js', 'test', '--config=playwright.config.mjs', ...process.argv.slice(2)], {
   cwd: new URL('.', import.meta.url).pathname,
   stdio: 'inherit',
-  env: process.env,
+  env: { ...process.env, ACULTA_BROWSER_ENGINE: engine },
 });
 
 if (result.error) process.exit(1);
