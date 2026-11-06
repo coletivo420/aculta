@@ -6,7 +6,7 @@ description: Testes de navegador do ACULTA: ordem de motores, artefatos em SUITE
 # Testes de navegador
 
 1. Ordem de preferência: Playwright com Firefox, Chromium e WebKit (mesmo runner), navegador embutido e X11 com Gecko/Firefox ESR visível. Todos são permitidos; prefira o que gera menos tokens. Declare o método usado.
-2. Artefatos (PNG, HTML, trace, vídeo e logs) vão para `$SUITE_OUT`, fora do repositório. Nunca versione evidência com dado de conta.
+2. Saídas temporárias (trace, vídeo, logs) vão para `$SUITE_OUT`. Capturas de evidência vão para `tests/browser/capturas/<frente>/<AAAA-MM-DD>/` com `manifest.json`; PNG fica fora do Git. Nunca versione dado de conta.
 3. Credenciais vêm do ambiente ou de arquivo local ignorado pelo Git. Nunca grave senha, token ou link de uso único no script.
 4. Declare o ambiente: servidor de desenvolvimento (`*.aculta.toca.net.br`) ou local (`127.0.0.1`). Não confunda os dois.
 5. Use locators e `expect`, com espera por condição; nunca `sleep` fixo.

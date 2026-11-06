@@ -43,5 +43,6 @@ Regras de todos os agentes. Em conflito, vale a instrução explícita mais rece
 ## Referências
 
 - Detalhes e ambientes: `docs/operations/AGENT-REGRAS-DETALHADAS.md`, `AGENT-OPERATIONS.md`, `AGENT-POLICY-INDEX.md`, `MAPA-PARA-AGENTES.md`.
-- Testes de navegador (Playwright Firefox, Chromium e WebKit; X11 com Firefox ESR): `docs/operations/NAVEGADOR-TESTES.md` e `tests/browser/README.md`.
+- Testes de navegador (Playwright Firefox, Chromium e WebKit; X11 com Firefox ESR): `docs/operations/NAVEGADOR-TESTES.md`.
+- Capturas de evidência: `tests/browser/capturas/<frente>/<AAAA-MM-DD>/`; PNG fora do Git; `manifest.json` versionado.
 - Decisões: `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`. Procedimentos: `docs/agent-skills/<nome>/SKILL.md`. Gates, saída e economia: `docs/operations/GATES.md`, `AGENT-OUTPUT.md`, `docs/portal/AGENT-TOKEN-ECONOMY.md`.
