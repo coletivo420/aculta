@@ -1,6 +1,6 @@
 ---
 name: aculta-navegador-testes
-description: Regras para testes de navegador do ACULTA, com a ordem de preferência (Playwright, Chromium, WebKit, embutido, X11), artefatos externos e scripts por frente. Use antes de criar ou rodar teste visual.
+description: Testes de navegador do ACULTA: ordem de motores, artefatos em SUITE_OUT e reuso dos scripts salvos em tests/browser/<frente>/. Use antes de criar ou rodar teste de navegador.
 ---
 
 # Testes de navegador
