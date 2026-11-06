@@ -150,6 +150,8 @@ Gates foundation (55 pares), design foundations (2.468 checks), SDC schemas
   de schema na worktree isolada não tinha `vendor/autoload.php`; repetida com
   sucesso no checkout Runtime.
 
+- `1.3.0-dev.1`: componente SDC `studio-calendar` integrado ao Studio Dashboard (`/aculta-studio-dashboard`). Suporta filtros Cursos / Eventos / Meus eventos, troca de mês e seleção de dia assíncrona por HTMX sem recarregar a página. No celular, exibe-se abaixo do cabeçalho e antes de 'Suas experiências'; no desktop, posiciona-se na coluna direita alinhado ao conteúdo. Botão '+' leva ao formulário de propostas de eventos para autenticados. Validação com Firefox ESR (DISPLAY=:0) em 320 px e 1440 px, claro e escuro, anônimo e autenticado, sem estouro horizontal (manifest versionado em `tests/browser/capturas/studio-calendario/2026-11-06/manifest.json`).
+
 - `1.2.0-dev.13`: breadcrumb migrado da V1 para SDC e integrado ao template
   Drupal `navigation/breadcrumb`. Contrato visual preserva links editoriais,
   separador `/`, título atual e foco. Baseline: V2 não possuía override nem
