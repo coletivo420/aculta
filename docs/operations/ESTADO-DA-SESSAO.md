@@ -5,11 +5,11 @@
 # Accent administrativo da Revista — adapter UI Styles
 
 - **Objetivo:** ligar a escolha de accent do UI Styles a cada nó Revista por campo nativo.
-- **Estado:** código publicado em `153b393611`; campo nativo e adapter UI Styles presentes. Firefox ESR confirmou o widget e opções green/yellow/red. Builder consumiu opção red, salvou o campo em transação revertida e o HTML renderizado trouxe a classe no `<article>`; o conteúdo voltou ao valor vazio (revisão 818). Capturas ESR demonstram CSS red em claro/escuro e 320/1440 px com classe transitória no DOM.
+- **Estado:** código publicado em `153b393611`; campo nativo e adapter UI Styles presentes. Firefox ESR confirmou o widget e opções green/yellow/red. A falha de submit decorreu do widget sem `#tree`; correção aplicada e coberta por teste. O value callback real do UI Styles, entity builder e render HTML passaram em transação revertida; o teaser trouxe a classe no `<article>`. Capturas ESR demonstram CSS red em claro/escuro e 320/1440 px com classe transitória no DOM. Submit visual segue sem aceite: houve acesso negado/navegação incompleta; uma tentativa criou revisão 822, mas o campo permaneceu vazio.
 - **Decisões e alternativas descartadas:** sem alteração no contrib UI Styles; classes continuam definidas pelo tema. Loja permanece pendente de autorização.
-- **Cuidados:** não executar a atualização pendente `aculta_portal-post-active_purposes_state`; node 602 permaneceu com o campo vazio após rollback.
+- **Cuidados:** não executar a atualização pendente `aculta_portal-post-active_purposes_state`; node 602 mantém o campo vazio (revisão 822).
 - **Commits e arquivos:** `153b393611`; adapter `aculta_magazine`, campo Config Sync, estilos e gate UI Styles, docs de layout/roadmap.
-- **Verificações:** PASS UI Styles (24), mapped classes (462), V2 foundations, SDC schemas (764), SDC render (41), PHPUnit focal (6/33), formulário, builder nativo e render Drupal transacional. Browser Firefox ESR confirmou stylesheet e breakpoints; submit de formulário automatizado expirou e não alterou o campo. Suíte Unit completa e Portal Drupal12/status-index mantêm falhas alheias documentadas.
+- **Verificações:** PASS UI Styles (24), mapped classes (462), V2 foundations, SDC schemas (764), SDC render (41), PHPUnit focal (7/42), Form API value callback, builder nativo e render Drupal transacional. Browser Firefox ESR confirmou stylesheet e breakpoints; submit automatizado não validou persistência; revisão 822 atual mantém o campo vazio. Suíte Unit completa e Portal Drupal12/status-index mantêm falhas alheias documentadas.
 - **Pendências e bloqueios:** validar o submit visual pelo formulário e capturar a publicação com accent salvo; a tentativa automatizada de submit expirou antes de salvar. F4/F5 permanecem parciais.
 - **Próximo passo:** concluir validação visual do estado salvo, mantendo Loja pendente de autorização documentada.
 
