@@ -86,7 +86,9 @@
   --spacing-xxl: 3rem;
   --spacing-section: clamp(1.5rem, 3vw, 2.5rem);
   --page-gutter: 1rem;
-  --page-content-max: 80rem;
+  --aculta-container-width: 1200px;
+  --aculta-narrow-container-width: 750px;
+  --page-content-max: var(--aculta-container-width, 80rem);
   --radius-sm: .25rem;
   --radius-base: .5rem;
   --radius-lg: 1rem;

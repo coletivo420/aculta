@@ -143,7 +143,7 @@ body:has(.aculta-studio-topbar) .layout-page h1:not(.aculta-studio-topbar__title
   /* A página inteira (main) recua para a direita do menu lateral: migalha, aviso e conteúdo juntos. */
   :is(main, .page__main, .layout-page):has(.aculta-studio-sidebar) {
     margin-inline: auto;
-    max-inline-size: 84rem;
+    max-inline-size: var(--aculta-container-width, 84rem);
     padding-inline-start: 16rem;
     position: relative;
   }

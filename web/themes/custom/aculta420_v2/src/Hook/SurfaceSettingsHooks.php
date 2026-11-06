@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta420_v2\Hook;
 
+use Drupal\aculta420_v2\Layout\PurposeContainerLayout;
 use Drupal\aculta420_v2\Palette\PurposePaletteSchemes;
 use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -44,6 +45,8 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
     $purpose = $variables['aculta_purpose'] ?? NULL;
     $palette = theme_get_setting('aculta_purpose_palette');
     $paletteStyle = self::purposePaletteStyle($palette, $purpose);
+    $containerSettings = theme_get_setting('aculta_purpose_container');
+    $containerStyle = PurposeContainerLayout::resolveContainerStyle($containerSettings, $purpose);
     $htmlAttributes = $variables['html_attributes'] ?? NULL;
     if ($htmlAttributes instanceof Attribute) {
       $htmlAttributes->setAttribute('data-theme', $mode);
@@ -53,12 +56,20 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
       if (is_string($purpose) && in_array($purpose, $allowedPurposes, TRUE)) {
         $htmlAttributes->setAttribute('data-purpose', $purpose);
       }
+      $styles = [];
       if ($paletteStyle !== NULL) {
         $htmlAttributes->setAttribute('data-purpose-scheme', $paletteStyle['scheme']);
-        $styles = [];
         foreach ($paletteStyle['variables'] as $name => $value) {
           $styles[] = $name . ': ' . $value . ';';
         }
+      }
+      if ($containerStyle !== NULL) {
+        $htmlAttributes->setAttribute('data-purpose-layout', $containerStyle['mode']);
+        foreach ($containerStyle['variables'] as $name => $value) {
+          $styles[] = $name . ': ' . $value . ';';
+        }
+      }
+      if (!empty($styles)) {
         $htmlAttributes->setAttribute('style', implode(' ', $styles));
       }
     }

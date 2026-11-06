@@ -290,7 +290,7 @@
   /* Ajusta o container do dashboard para acomodar menu lateral na esquerda e calendário na direita no desktop */
   :is(main, .page__main, .layout-page):has(.aculta-studio-calendar) {
     margin-inline: auto;
-    max-inline-size: 84rem;
+    max-inline-size: var(--aculta-container-width, 84rem);
     padding-inline-end: 21rem;
     position: relative;
   }

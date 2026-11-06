@@ -145,4 +145,36 @@ final class PurposeContainerLayoutUnitTest extends UnitTestCase {
     self::assertNull(PurposeContainerLayout::resolveContainerStyle($config, NULL));
   }
 
+  /**
+   * Testa aplicação dos atributos e variáveis CSS no HTML attributes.
+   */
+  public function testContainerHtmlAttributesApplication(): void {
+    $config = [
+      'account' => [
+        'mode' => 'unboxed',
+        'container_width' => 1450,
+        'narrow_width' => 780,
+      ],
+    ];
+
+    $resolved = PurposeContainerLayout::resolveContainerStyle($config, 'account');
+    self::assertNotNull($resolved);
+
+    $htmlAttributes = new \Drupal\Core\Template\Attribute();
+    $htmlAttributes->setAttribute('data-purpose', 'account');
+    $htmlAttributes->setAttribute('data-purpose-layout', $resolved['mode']);
+
+    $styles = [];
+    foreach ($resolved['variables'] as $name => $value) {
+      $styles[] = $name . ': ' . $value . ';';
+    }
+    $htmlAttributes->setAttribute('style', implode(' ', $styles));
+
+    $rendered = (string) $htmlAttributes;
+    self::assertStringContainsString('data-purpose="account"', $rendered);
+    self::assertStringContainsString('data-purpose-layout="unboxed"', $rendered);
+    self::assertStringContainsString('--aculta-container-width: 1450px;', $rendered);
+    self::assertStringContainsString('--aculta-narrow-container-width: 780px;', $rendered);
+  }
+
 }

@@ -159,5 +159,39 @@
   .page__main--with-sidebar {
     grid-template-columns: minmax(0, 2fr) minmax(14rem, 1fr);
   }
+
+  /* Modos de layout de container por purpose (aculta420_v2) */
+  html[data-purpose-layout="unboxed"] :is(.layout-page--aside, .page__main--with-sidebar) {
+    max-inline-size: 100%;
+    inline-size: 100%;
+  }
+
+  html[data-purpose-layout="unboxed"] :is(.page__navigation, .page__highlighted, .page__help, .page__breadcrumb, .page__footer-inner) {
+    inline-size: 100%;
+    max-inline-size: 100%;
+  }
+
+  html[data-purpose-layout="contained"] :is(.layout-page--aside, .page__main--with-sidebar, .page__navigation, .page__highlighted, .page__help, .page__breadcrumb, .page__footer-inner) {
+    max-inline-size: var(--aculta-container-width, 1000px);
+  }
+
+  html[data-purpose-layout="max_full_width"] :is(.layout-page--aside, .page__main--with-sidebar, .page__navigation, .page__highlighted, .page__help, .page__breadcrumb, .page__footer-inner) {
+    max-inline-size: var(--aculta-container-width, 1400px);
+  }
+
+  /* Páginas de leitura e conteúdo estreito */
+  .layout-page--stack,
+  .page__main--stack {
+    inline-size: min(100%, var(--aculta-narrow-container-width, 750px));
+  }
 }
+
+/* Celular (abaixo de 60 rem): largura sempre 100%, ignorando sliders */
+@media (max-width: 59.9375rem) {
+  :is(.layout-page, .page__main, .page__navigation, .page__highlighted, .page__help, .page__breadcrumb, .page__footer-inner) {
+    inline-size: 100% !important;
+    max-inline-size: 100% !important;
+  }
+}
+
 
