@@ -1,0 +1,39 @@
+<div class="aculta-studio-topbar">
+  <button type="button" class="aculta-utility-trigger aculta-studio-menu__trigger"
+    aria-controls="aculta-studio-menu-dialog" aria-expanded="false" aria-haspopup="dialog"
+    data-aculta-dialog-trigger>
+    <span class="aculta-account-menu__icon" aria-hidden="true"><span></span><span></span><span></span></span>
+    <span class="visually-hidden">{{ 'Abrir menu do Studio'|t }}</span>
+  </button>
+  <h1 class="aculta-studio-topbar__title">{{ title }}</h1>
+</div>
+
+<aside class="aculta-studio-sidebar" aria-label="{{ 'Menu do Studio'|t }}">
+  <ul class="aculta-studio-sidebar__list">
+    {% for item in items %}
+      <li>
+        <a href="{{ item.url }}"{% if item.current %} aria-current="page"{% endif %}>
+          {{ include('aculta420_v2:icon', { name: item.icon|default('squares-four'), variant: 'duotone', size: 'md' }, with_context = false) }}
+          <span>{{ item.title }}</span>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</aside>
+
+<dialog class="aculta-utility-dialog aculta-studio-menu-dialog" id="aculta-studio-menu-dialog"
+  aria-labelledby="aculta-studio-menu-title" data-aculta-utility-drawer>
+  <header class="aculta-utility-dialog__header">
+    <h2 class="aculta-utility-dialog__title" id="aculta-studio-menu-title">{{ 'Studio'|t }}</h2>
+    <button type="button" class="aculta-utility-dialog__close" data-aculta-dialog-close aria-label="{{ 'Fechar menu do Studio'|t }}">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </header>
+  <nav class="aculta-utility-dialog__body aculta-studio-menu__nav" aria-label="{{ 'Menu do Studio'|t }}">
+    <ul class="aculta-studio-menu__list">
+      {% for item in items %}
+        <li><a href="{{ item.url }}"{% if item.current %} aria-current="page"{% endif %}>{{ item.title }}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+</dialog>

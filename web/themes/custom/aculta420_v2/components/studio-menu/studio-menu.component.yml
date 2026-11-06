@@ -1,0 +1,37 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Menu lateral do Studio Dashboard
+description: Título do painel de conta com botão de menu no desktop. O botão abre um diálogo pela esquerda, como os diálogos da barra institucional.
+group: ACULTA
+status: experimental
+libraryOverrides:
+  dependencies:
+    - core/drupal
+    - core/once
+props:
+  type: object
+  additionalProperties: false
+  required: [title, items]
+  properties:
+    title:
+      type: string
+      title: Título
+      minLength: 1
+    items:
+      type: array
+      title: Itens do menu
+      default: []
+      items:
+        type: object
+        additionalProperties: false
+        required: [title, url, current]
+        properties:
+          title:
+            type: string
+            minLength: 1
+          url:
+            type: string
+          current:
+            type: boolean
+          icon:
+            type: string
+            description: Nome do ícone Phosphor duotone (ex.: house, squares-four).

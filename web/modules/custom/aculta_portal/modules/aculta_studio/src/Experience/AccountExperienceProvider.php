@@ -79,6 +79,14 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
     return [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'account-entry'],
+      'topbar' => [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:studio-menu',
+        '#props' => [
+          'title' => 'Studio Dashboard',
+          'items' => $this->studioMenuItems(),
+        ],
+      ],
       'hero' => [
         '#type' => 'container',
         '#attributes' => ['class' => ['aculta-xp-hero']],
@@ -104,6 +112,7 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
         '#type' => 'html_tag',
         '#tag' => 'h2',
         '#value' => 'Suas experiências',
+        '#attributes' => ['id' => 'suas-experiencias'],
       ],
       'suites_description' => [
         '#type' => 'html_tag',
@@ -239,6 +248,40 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
     // A Drupal display name may be a private/legal name. Hide identity until
     // the public identity owner is available instead of leaking that fallback.
     return [];
+  }
+
+  /**
+   * Items of the Studio side menu. Only routes the current user can open are listed.
+   *
+   * @return array<int, array{title: string, url: string, current: bool}>
+   *   Menu items for the studio-menu component.
+   */
+  private function studioMenuItems(): array {
+    $candidates = [
+      ['Studio Dashboard', '/', TRUE, NULL, 'house'],
+      ['Experiências', '/', FALSE, 'suas-experiencias', 'squares-four'],
+      ['Meus cursos', 'aculta_lms.student_dashboard', FALSE, NULL, 'graduation-cap'],
+      ['Meu Perfil', 'aculta_studio.profile', FALSE, NULL, 'user'],
+      ['Minha conta', 'aculta_studio.account', FALSE, NULL, 'gear-six'],
+    ];
+    $items = [];
+    foreach ($candidates as [$title, $target, $current, $fragment, $icon]) {
+      try {
+        $url = str_starts_with($target, '/') ? Url::fromUserInput($target) : Url::fromRoute($target);
+      }
+      catch (RouteNotFoundException) {
+        continue;
+      }
+      if ($this->currentUser === NULL || !$url->access($this->currentUser)) {
+        continue;
+      }
+      $href = $url->toString();
+      if ($fragment !== NULL) {
+        $href .= '#' . $fragment;
+      }
+      $items[] = ['title' => $title, 'url' => $href, 'current' => $current, 'icon' => $icon];
+    }
+    return $items;
   }
 
 }
