@@ -140,7 +140,8 @@
     z-index: 5;
   }
 
-  .aculta-account-entry:has(.aculta-studio-sidebar) {
+  /* A coluna da página inteira recua para a direita do menu lateral: migalha, aviso e título também. */
+  :is(main, .page__main, .layout-page):has(.aculta-studio-sidebar) {
     padding-inline-start: 16rem;
   }
 }
