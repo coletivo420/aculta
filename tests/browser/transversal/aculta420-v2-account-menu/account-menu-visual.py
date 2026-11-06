@@ -104,7 +104,7 @@ def set_theme(mode):
 
 FACTS_JS = """
 const nav = document.querySelector('.aculta-account-menu');
-const sum = nav && nav.querySelector('.aculta-account-menu__summary');
+const sum = nav && nav.querySelector('.aculta-account-menu__trigger');
 const r = sum ? sum.getBoundingClientRect() : null;
 const hid = sum ? sum.querySelector('.visually-hidden') : null;
 return {
@@ -122,9 +122,9 @@ return {
 """
 
 PANEL_JS = """
-const d = document.querySelector('.aculta-account-menu__details');
-const p = d.querySelector('.aculta-account-menu__panel');
-const close = d.querySelector('[data-aculta-account-menu-close]');
+const d = document.querySelector('.aculta-account-dialog');
+const p = d;
+const close = d.querySelector('[data-aculta-dialog-close]');
 const cols = Array.from(d.querySelectorAll('.aculta-account-menu__col'));
 const links = Array.from(p.querySelectorAll('a[href]'));
 const pr = p.getBoundingClientRect();
@@ -157,17 +157,17 @@ return {
 
 
 def open_panel():
-    driver.js("document.querySelector('.aculta-account-menu__summary').click(); return true")
+    driver.js("const t = document.querySelector('.aculta-account-menu__trigger'); t.focus(); t.click(); return true")
     time.sleep(0.4)
 
 
 def close_is_closed():
-    return driver.js("return !document.querySelector('.aculta-account-menu__details').open")
+    return driver.js("return !document.querySelector('.aculta-account-dialog').open")
 
 
 def state_pass(state, theme, width):
     tag = f"{state}-{theme}-{width}"
-    driver.js("document.querySelector('.aculta-account-menu__summary') && 0; return true")
+    driver.js("document.querySelector('.aculta-account-menu__trigger') && 0; return true")
     facts = driver.js(FACTS_JS)
     print(f"  facts[{tag}] {json.dumps(facts, ensure_ascii=False)}")
     if PHASE == "before":
@@ -196,7 +196,7 @@ def state_pass(state, theme, width):
           and p["closeSize"][0] >= 44 and p["closeSize"][1] >= 44, p["closeSize"])
     check(f"{tag}: foco entra no painel ao abrir", p["activeInPanel"], "")
     check(f"{tag}: sem logotipo no painel", p["institutionBars"] == 1 and not driver.js(
-        "return !!document.querySelector('.aculta-account-menu__details .aculta-account-menu__panel img[src*=logo]')"),
+        "return !!document.querySelector('.aculta-account-dialog img[src*=logo]')"),
         "")
     if width == 320:
         check(f"{tag}: uma coluna na ordem 1, 2, 3",
@@ -218,23 +218,23 @@ def state_pass(state, theme, width):
     press(KEY_ESC)
     check(f"{tag}: Escape fecha", close_is_closed(), "")
     check(f"{tag}: foco volta ao gatilho após Escape",
-          driver.js("return document.activeElement.classList.contains('aculta-account-menu__summary')"), "")
+          driver.js("return document.activeElement.classList.contains('aculta-account-menu__trigger')"), "")
 
     # X fecha e devolve o foco ao gatilho.
     open_panel()
-    driver.js("document.querySelector('[data-aculta-account-menu-close]').click(); return true")
+    driver.js("document.querySelector('.aculta-account-dialog [data-aculta-dialog-close]').click(); return true")
     time.sleep(0.3)
     check(f"{tag}: X fecha", close_is_closed(), "")
     check(f"{tag}: foco volta ao gatilho após X",
-          driver.js("return document.activeElement.classList.contains('aculta-account-menu__summary')"), "")
+          driver.js("return document.activeElement.classList.contains('aculta-account-menu__trigger')"), "")
 
     # Foco preso: Tab além do número de itens não sai do painel.
     open_panel()
-    driver.js("document.querySelector('[data-aculta-account-menu-close]').focus(); return true")
+    driver.js("document.querySelector('.aculta-account-dialog [data-aculta-dialog-close]').focus(); return true")
     escaped = 0
     for _ in range(30):
         press(KEY_TAB)
-        if not driver.js("return document.querySelector('.aculta-account-menu__panel').contains(document.activeElement)"):
+        if not driver.js("return document.querySelector('.aculta-account-dialog').contains(document.activeElement)"):
             escaped += 1
     check(f"{tag}: foco preso no painel em 30 Tabs", escaped == 0, f"escapou {escaped}x")
     press(KEY_ESC)
@@ -244,7 +244,7 @@ def state_pass(state, theme, width):
         hrefs = [h for h in p["linkHrefs"] if h and (h.startswith("/") or h.startswith(BASE))]
         for href in hrefs:
             open_panel()
-            driver.js("""const a = Array.from(document.querySelectorAll('.aculta-account-menu__panel a[href]'))
+            driver.js("""const a = Array.from(document.querySelectorAll('.aculta-account-dialog a[href]'))
               .find(x => x.getAttribute('href') === arguments[0]); a.focus(); return true""", [href])
             press(KEY_ENTER)
             time.sleep(1.0)

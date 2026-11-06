@@ -7,7 +7,7 @@
 }
 
 /* Gatilho: variante ghost, alvo de toque de 44 px, só ícone de três linhas. */
-.aculta-account-menu .aculta-account-menu__trigger {
+.aculta-account-menu .aculta-account-menu__trigger.aculta-utility-trigger {
   align-items: center;
   background: transparent;
   border: 1px solid transparent;
@@ -53,7 +53,7 @@
 }
 
 /* Diálogo em tela cheia: sobrescreve o painel lateral padrão dos diálogos utilitários. */
-.aculta-account-dialog {
+.aculta-utility-dialog.aculta-account-dialog {
   background: var(--color-surface);
   block-size: 100vh;
   block-size: 100dvh;
