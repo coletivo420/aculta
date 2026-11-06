@@ -2,5 +2,5 @@
 version: 0.5.0-dev.19
 state: Dev
 progress_note: >-
-  Dev.19: campo nativo `field_revista_accent` e adapter UI Styles por nó. Gate UI Styles 24 checks e PHPUnit focal 6/33 PASS. Campo aplicado no Drupal local; captura Firefox ESR no servidor de desenvolvimento pendente.
-next_phase: 'Validar no Runtime de desenvolvimento o seletor UI Styles em edição de publicação e a precedência do accent por captura Firefox ESR; preservar a configuração e conteúdo existentes. Referências: `docs/layouts-por-purpose.md` e contrato do componente `revista-teaser`.'
+  Dev.19: campo nativo e adapter UI Styles por nó; `#tree: true` preserva o value callback. PHPUnit focal 7/42, gate UI Styles 24 e fronteira módulo-tema 4278 PASS; fluxo Drupal transacional aplicou classe no teaser. Firefox ESR confirmou CSS em claro/escuro, 320/1440 px; submit visual e captura com seleção salva pendentes.
+next_phase: 'Validar o submit do widget UI Styles no formulário de edição e capturar o teaser com accent salvo em Firefox ESR; preservar a configuração e conteúdo existentes. Referências: `docs/layouts-por-purpose.md` e contrato do componente `revista-teaser`.'

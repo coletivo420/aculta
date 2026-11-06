@@ -46,6 +46,7 @@ final class RevistaAccentHooks {
     $value = $node->get(self::FIELD)->value;
     $form[self::ELEMENT] = [
       '#type' => 'ui_styles_styles',
+      '#tree' => TRUE,
       '#title' => t('Faixa de acento da publicação'),
       '#description' => t('A escolha administrativa prevalece sobre o accent automático do Portal.'),
       '#default_value' => [

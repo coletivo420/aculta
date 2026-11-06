@@ -6,10 +6,13 @@ namespace Drupal\Tests\aculta_magazine\Unit;
 
 use Drupal\aculta_magazine\Hook\RevistaAccentHooks;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\ui_styles\Definition\StyleDefinition;
+use Drupal\ui_styles\Element\Styles as UiStylesStyles;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\node\NodeInterface;
 use Drupal\ui_styles\StylePluginManagerInterface;
@@ -24,6 +27,36 @@ final class RevistaAccentHooksTest extends UnitTestCase {
     $result = RevistaAccentHooks::removeExtraClasses($element, new FormState());
     self::assertArrayNotHasKey('_ui_styles_extra', $result['wrapper']);
     self::assertArrayHasKey('ui_styles_revista_accent', $result['wrapper']);
+  }
+
+  /** @covers ::alterForm */
+  public function testUiStylesWidgetPreservesNestedInputValues(): void {
+    $node = $this->createMock(NodeInterface::class);
+    $node->method('bundle')->willReturn('revista');
+    $node->method('hasField')->with('field_revista_accent')->willReturn(TRUE);
+    $node->method('get')->with('field_revista_accent')->willReturn((object) ['value' => NULL]);
+
+    $formObject = $this->createMock(EntityForm::class);
+    $formObject->method('getEntity')->willReturn($node);
+    $formState = $this->createMock(FormStateInterface::class);
+    $formState->method('getFormObject')->willReturn($formObject);
+
+    $definition = new StyleDefinition([
+      'provider' => 'test_theme',
+      'options' => ['revista-teaser--accent-red' => 'Vermelha'],
+    ]);
+    $manager = $this->createMock(StylePluginManagerInterface::class);
+    $manager->expects(self::exactly(2))
+      ->method('getDefinition')
+      ->with('revista_accent', FALSE)
+      ->willReturn($definition);
+    $user = $this->createMock(AccountProxyInterface::class);
+    $user->method('hasPermission')->with('administer nodes')->willReturn(TRUE);
+
+    $form = [];
+    (new RevistaAccentHooks($manager, $user))->alterForm($form, $formState, 'node_revista_edit_form');
+
+    self::assertTrue($form['revista_accent_styles']['#tree']);
   }
 
   /** @covers ::applyAccent */
@@ -75,7 +108,13 @@ final class RevistaAccentHooksTest extends UnitTestCase {
     $user->method('hasPermission')->with('administer nodes')->willReturn(TRUE);
     $hook = new RevistaAccentHooks($manager, $user);
     $state = new FormState();
-    $state->setValue('revista_accent_styles', ['selected' => ['revista_accent' => $accent], 'extra' => 'forged-class']);
+    $widgetElement = ['#default_value' => ['selected' => [], 'extra' => '']];
+    $widgetValue = UiStylesStyles::valueCallback(
+      $widgetElement,
+      ['wrapper' => ['revista' => ['ui_styles_revista_accent' => $accent], '_ui_styles_extra' => 'forged-class']],
+      $state,
+    );
+    $state->setValue('revista_accent_styles', $widgetValue);
     $form = [];
     $hook->buildEntity('node', $node, $form, $state);
   }
