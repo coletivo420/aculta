@@ -38,7 +38,8 @@ Todos são bloqueantes para a RC:
 | Cores por purpose | tema (faixa `--purpose-*`) | 10 esquemas | Implementado em `aculta420_v2.ui_styles.yml` (esquemas oficiais Skunk Family) |
 
 `revista_accent` é aplicado uma única vez nas configurações do ACULTA420 V2 e
-é consumido por todos os teasers da Revista. O campo legado
+é consumido por todos os teasers da Revista; o preprocess aplica a classe ao
+wrapper do node e ao SDC. O campo legado
 `field_revista_accent` não participa mais do fluxo; permanece instalado para
 evitar remoção destrutiva de conteúdo e será removido em uma migração própria,
 com inventário e autorização.
@@ -58,7 +59,7 @@ Opção A: a escolha global do administrador `revista_accent` tem precedência s
 
 ## 5. Validação e Capturas Visuais
 
-- **Suíte de navegador:** evidência de shell em `tests/browser/capturas/shell/2026-11-06/` (manifest e 40 PNGs ignorados pelo Git). Revista: submit administrativo e teaser público com valor salvo permanecem pendentes; não declarar validação completa:
+- **Suíte de navegador:** Revista validada no Firefox ESR com submit pelo formulário UI Styles, classe no wrapper e no SDC de todos os quatro teasers, claro/escuro, 320/1440 px e sem overflow. A escolha global voltou a vazia e o banco não tem accent por nó. Manifest/capturas em `tests/browser/capturas/revista-accent/2026-11-06/`. Evidência do shell em `tests/browser/capturas/shell/2026-11-06/` (40 PNGs ignorados pelo Git): F2 segue pendente por contraste/overflow.
   - `ui_styles_light_verde-skunk_320px.png` e `1440px.png`
   - `ui_styles_dark_verde-skunk_320px.png` e `1440px.png`
   - `ui_styles_light_amarelo-lemon-haze_320px.png` e `1440px.png`

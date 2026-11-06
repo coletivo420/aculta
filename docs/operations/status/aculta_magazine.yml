@@ -2,5 +2,5 @@
 version: 0.5.0-dev.20
 state: Dev
 progress_note: >-
-  Dev.20: escolha global UI Styles da Revista; campo legado preservado sem widget/leitura. Banco confirmou cinco nós Revista e zero accents próprios; node 602 vazio. Submissão e teaser público no Firefox ESR seguem pendentes.
-next_phase: 'Submeter a escolha global pelo formulário administrativo e validar a classe no teaser público em claro/escuro, 320/1440 px.'
+  Dev.20: escolha global UI Styles submetida no formulário; Firefox ESR confirmou classe no wrapper e no SDC dos quatro teasers, em claro/escuro e 320/1440 px, sem overflow. Configuração global restaurada vazia; banco confirmou cinco nós Revista, zero accents próprios e node 602 vazio. Campo legado permanece sem widget/leitura e sem migração destrutiva.
+next_phase: 'Manter o campo legado fora do fluxo; qualquer remoção futura exige plano de migração não destrutivo e revisão do Sync.'

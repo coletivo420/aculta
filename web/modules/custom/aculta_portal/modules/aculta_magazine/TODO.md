@@ -4,7 +4,7 @@ Estado: Dev · versão 0.5.0-dev.20 (`aculta_magazine.info.yml`) · status: `doc
 
 ## Próximo passo
 
-O accent é uma escolha global `revista_accent` nas configurações do tema V2 e chega ao teaser por preprocess, com precedência sobre o Portal. O campo legado `field_revista_accent` permanece instalado para evitar remoção destrutiva, sem widget, allowlist nem leitura no builder. Consulta em 2026-11-06: cinco nós Revista, nenhum com valor próprio; node 602 vazio. Falta validar submit pelo formulário e classe no teaser da listagem pública no Firefox ESR.
+A escolha global `revista_accent` passou pelo formulário UI Styles e chega como classe ao wrapper do node teaser e ao SDC, com precedência sobre o Portal. Firefox ESR validou os quatro teasers publicados em claro/escuro e 320/1440 px, sem overflow. Consulta: cinco nós Revista, zero accents próprios; node 602 vazio. O campo legado fica instalado sem widget, allowlist ou leitura; não remover sem plano não destrutivo.
 
 ## Leitura
 

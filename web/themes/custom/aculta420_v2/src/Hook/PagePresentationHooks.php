@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Drupal\aculta420_v2\Hook;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Extension\ExtensionList;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Path\PathMatcherInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
@@ -90,13 +92,28 @@ final class PagePresentationHooks {
     $variables['aculta_accordion_sdc_available'] = $this->componentAvailable('accordion');
     if (($variables['node']?->bundle() ?? NULL) === 'revista'
       && ($variables['view_mode'] ?? NULL) === 'teaser') {
-      $selected = $this->configFactory->get('aculta420_v2.settings')->get('aculta_revista_accent.selected.revista_accent');
-      $variables['aculta_revista_accent'] = match ($selected) {
+      $config = $this->configFactory->get('aculta420_v2.settings');
+      $selected = $config->get('aculta_revista_accent.selected.revista_accent');
+      $accent = match ($selected) {
         'revista-teaser--accent-green' => 'green',
         'revista-teaser--accent-yellow' => 'yellow',
         'revista-teaser--accent-red' => 'red',
         default => NULL,
       };
+      $variables['aculta_revista_accent'] = $accent;
+      if ($accent !== NULL) {
+        $attributes = $variables['attributes'] ?? new Attribute();
+        if (!$attributes instanceof Attribute) {
+          $attributes = new Attribute((array) $attributes);
+        }
+        $attributes->addClass('revista-teaser--accent-' . $accent);
+        $variables['attributes'] = $attributes;
+      }
+      if (isset($variables['elements']) && is_array($variables['elements'])) {
+        CacheableMetadata::createFromRenderArray($variables['elements'])
+          ->addCacheableDependency($config)
+          ->applyTo($variables['elements']);
+      }
     }
   }
 

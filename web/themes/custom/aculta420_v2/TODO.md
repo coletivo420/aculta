@@ -4,9 +4,9 @@ Estado: em desenvolvimento · versão 1.3.0 (`aculta420_v2.info.yml`) · status:
 
 ## Próximo passo
 
-Revista: configuração global `revista_accent` no `aculta420_v2.settings`; preprocess do teaser aplica a classe global e prioriza UI Styles. Campo legado permanece sem widget/leitura e sem remoção destrutiva. Banco consultado: 5 nós Revista, zero valores próprios; node 602 vazio. Submit administrativo e validação do teaser público no Firefox ESR pendentes.
+Revista: configuração global submetida via UI Styles; preprocess aplica classe ao wrapper do node e ao SDC, com precedência administrativa. Quatro teasers confirmados no Firefox ESR em claro/escuro, 320/1440 px e sem overflow. Configuração global restaurada vazia; banco: 5 nós Revista, zero valores próprios; node 602 vazio. Campo legado preservado sem widget/leitura e sem migração destrutiva.
 
-PHPUnit focal do tema: 11 testes/51 assertions PASS; bootstrap cria a saída automaticamente em caminho relativo ao projeto. Foundations, UI Styles, SDC schema e SDC render PASS. Runtime Firefox ESR confirmou palette e tokens primário/contorno dos botões, 358/360 verificações; overflow do Fórum a 320 px mantém F3 pendente. Evidência em `tests/browser/capturas/purpose-buttons/2026-11-06/`.
+PHPUnit focal do tema: 12 testes/56 assertions PASS; bootstrap cria a saída automaticamente em caminho relativo ao projeto. Foundations, UI Styles, SDC schema e SDC render PASS. Runtime Firefox ESR confirmou palette e tokens primário/contorno dos botões, 358/360 verificações; overflow do Fórum a 320 px mantém F3 pendente. Evidência em `tests/browser/capturas/purpose-buttons/2026-11-06/`.
 
 F2: shell não alterado. Capturas iniciais Firefox ESR em `tests/browser/capturas/shell/2026-11-06/`; 68/120 verificações. Fórum tem overflow em 320 px e problemas de contraste; corrigir probes, repetir matriz completa e aguardar aceitação visual.
 

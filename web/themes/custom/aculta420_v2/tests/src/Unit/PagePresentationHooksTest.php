@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta420_v2\Unit;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\ImmutableConfig;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Extension\ExtensionList;
 use Drupal\Core\Path\PathMatcherInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Theme\ComponentPluginManager;
+use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\aculta420_v2\Hook\PagePresentationHooks;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -48,6 +52,43 @@ final class PagePresentationHooksTest extends UnitTestCase {
       '#props' => ['label' => 'Navegação do estúdio'],
       '#slots' => ['items' => $items],
     ], $variables['component']);
+  }
+
+  /**
+   * Applies the global accent to the node wrapper and cache dependency.
+   */
+  public function testRevistaAccentIsAppliedToTeaserWrapperAndCache(): void {
+    $config = $this->createMock(ImmutableConfig::class);
+    $config->method('get')
+      ->with('aculta_revista_accent.selected.revista_accent')
+      ->willReturn('revista-teaser--accent-green');
+    $config->method('getCacheTags')
+      ->willReturn(['config:aculta420_v2.settings']);
+    $config->method('getCacheContexts')->willReturn([]);
+    $config->method('getCacheMaxAge')->willReturn(Cache::PERMANENT);
+    $configFactory = $this->createMock(ConfigFactoryInterface::class);
+    $configFactory->method('get')
+      ->with('aculta420_v2.settings')
+      ->willReturn($config);
+    $node = $this->createMock(NodeInterface::class);
+    $node->method('bundle')->willReturn('revista');
+    $hooks = new PagePresentationHooks(
+      $configFactory,
+      $this->createMock(ExtensionList::class),
+      $this->createMock(AccountProxyInterface::class),
+    );
+    $variables = [
+      'node' => $node,
+      'view_mode' => 'teaser',
+      'attributes' => new Attribute(),
+      'elements' => ['#type' => 'container'],
+    ];
+
+    $hooks->preprocessNode($variables);
+
+    self::assertSame('green', $variables['aculta_revista_accent']);
+    self::assertTrue($variables['attributes']->hasClass('revista-teaser--accent-green'));
+    self::assertContains('config:aculta420_v2.settings', $variables['elements']['#cache']['tags']);
   }
 
   /**

@@ -7,8 +7,8 @@
 | F1 — Tokens e fundações | Entregue em `1.2.0-dev.1` | Nenhuma no tema |
 | F2 — Shell | Pendente | Firefox ESR: 40 capturas e 108/120 verificações. Fórum tem overflow em 320 px; navegação falha contraste AA no modo claro a 1440 px nos dez purposes. D1 permanece pendente do Portal e a aceitação visual é do responsável |
 | F3 — Purpose e botões | Pendente | Firefox ESR: vínculo de palette e tokens dos botões primário/contorno passou 358/360 checks em 10 purposes × 2 modos × 320/1440. Fórum tem overflow a 320 px nos dois modos; não marcar concluída até corrigir e repetir |
-| F4 — UI Styles | Parcial | Gate de catálogo PASS (24). Escolha global da Revista existe em `aculta420_v2.settings`; form submit e classe no teaser após salvar ainda sem validação autenticada. Eventos: `card-cultural` validado no Runtime |
-| F5 — Componentes e templates | Parcial; adoção por purpose pendente | Studio e Eventos mantêm validações anteriores. Accent Revista global documentado; validação autenticada pendente. Loja aguarda autorização; `price` fora do escopo |
+| F4 — UI Styles | Parcial | Gate de catálogo PASS (24). Submit global da Revista e classe no wrapper e no SDC validados no Firefox ESR; Eventos `card-cultural` validado. Adoção por purpose continua parcial |
+| F5 — Componentes e templates | Parcial; adoção por purpose pendente | Accent global da Revista validado em quatro cenários; Studio e Eventos mantêm validações anteriores. Loja aguarda autorização; `price` fora do escopo |
 | RC | Não promovida | Depende de F4 e F5 validadas no servidor, revisão visual em larguras e modos, Drupal 12 |
 
 Detalhes por bloco: [status-componentes.md](status-componentes.md), [status-layouts-e-shell.md](status-layouts-e-shell.md) e [htmx-status.md](htmx-status.md) (ADR-050).
