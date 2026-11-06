@@ -80,7 +80,7 @@ O modelo de confirmação de conta criado antes foi removido, para não duplicar
 - Caixa: `dmarc@aculta.org` é alias de `naoresponda@aculta.org`. Leitura somente, por IMAP `imap.hostinger.com:993`,
   conforme [INSPECAO-VISUAL-EMAIL.md](../operations/INSPECAO-VISUAL-EMAIL.md). A senha vem de `secrets/aculta.secrets.env`
   (`IMAP_PASSWORD`) e nunca é impressa.
-- Roteiro: `tests/browser/aculta-frete/` (script de cadastro simplificado a ser versionado; hoje está em
+- Roteiro: `tests/browser/shop/aculta-frete/` (script de cadastro simplificado a ser versionado; hoje está em
   `scratchpad`). Dispara a conclusão de checkout como convidado (pedido de teste), lê a confirmação pela caixa
   (somente `EXAMINE` e `BODY.PEEK`), abre o link no Firefox visível, confirma e segue para a senha.
 - Dados de teste: conta, confirmações e pedidos do `dmarc@aculta.org`. Limpeza restrita a esses registros.

@@ -204,7 +204,7 @@ Permissão `use text format restricted_html` revogada do papel anônimo.
 
 - Versão `aculta_editor` promovida a `0.1.0-rc.1` (candidato a RC). Unit: 16 testes / 61 assertions PASS; Kernel: 8 testes / 127 assertions PASS no MariaDB `aculta_simpletest`, com três depreciações upstream. O Kernel executa a instalação dos formatos/templates e cobre sanitização.
 - PHPCS Drupal e DrupalPractice com zero erros e zero avisos após correção de docblocks em `TextFormatPolicyTest.php`.
-- Firefox ESR visível (`DISPLAY=:0`) no servidor de desenvolvimento (`tests/browser/aculta-editor/access.py`), validado em três sessões independentes sem escrita no Runtime:
+- Firefox ESR visível (`DISPLAY=:0`) no servidor de desenvolvimento (`tests/browser/transversal/aculta-editor/access.py`), validado em três sessões independentes sem escrita no Runtime:
   1. Anônimo: rotas administrativas negadas (2/2); renderização de página editorial (`node/6`) sem tags/atributos executáveis e sem overflow horizontal em 1280, 390 e 320 px.
   2. Editor de conteúdo (`content_editor`, uid 15 via login de uso único): `full_html` e `aculta_adm` negados; formulário de criação da Revista (`node/add/revista`) com CKEditor 5 ativo, formato `revista_editorial`, sem opção de `full_html` e sem overflow em 1280, 390 e 320 px.
   3. Administrador (uid 1 via login de uso único): formulário `node/add/aculta_adm` e `node/add/page` com CKEditor 5 e barra de ferramentas ativos, sem overflow em 1280, 390 e 320 px.

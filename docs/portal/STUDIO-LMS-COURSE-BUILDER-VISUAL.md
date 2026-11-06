@@ -90,7 +90,7 @@ Desktop: arraste opcional restrito à lista de aulas ou à lista de atividades d
 - Indicador real de salvamento, erros ligados ao campo, conflito de edição/versão, perda de conexão, acesso revogado, conteúdo indisponível e ação destrutiva.
 - Alvos preferencialmente >=44×44px, inputs >=16px no mobile, rolagem sem overflow, CSS reflow/zoom 200–400%, WCAG 2.2 AA, labels, contraste, foco, teclado, ARIA e reduced-motion; não depender de cor, hover ou arrastar.
 - Matriz: 320/360/390/768/1024/1280/1440px, light/dark, AJAX/no-JS, role educador/gestor/aluno, domínio account/courses, Group A/B, cursos próprios/terceiros, turma ativa, revisões, erros e reordenação por teclado.
-- Testes automatizados e snapshots em `tests/browser/aculta-studio/` quando houver implementação; aceitação final exige evidência Runtime e smoke de não vazamento.
+- Testes automatizados e snapshots em `tests/browser/studio/geral/` quando houver implementação; aceitação final exige evidência Runtime e smoke de não vazamento.
 
 ## Roadmap visual CB-UX (não substitui fases funcionais F0–F17)
 

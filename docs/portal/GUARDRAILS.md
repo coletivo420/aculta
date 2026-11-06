@@ -61,7 +61,7 @@ Documentos normativos relacionados: [DRUPAL-12-STANDARDS.md](DRUPAL-12-STANDARDS
 - Os dados e modelos das entidades continuam separados conforme seus contratos; unificar o formulário não autoriza fundir campos, entidades, permissões ou regras de negócio.
 - Busca e preenchimento por CEP via `aculta_portal_cep` são padrão para todo formulário de endereço completo do Portal. Isso não autoriza busca por logradouro fora de Events/Maps nem mudança do comportamento de Conta/checkout. Brasil fixo, sem seletor de país.
 - Atividades editoriais legadas (`node:activity` e `/node/add/activity`) foram descontinuadas em favor exclusivo de Eventos (`aculta_events`). A adição de eventos ocorre em `/painel-administrativo/eventos/adicionar` (não confundir com as atividades educacionais do LMS nem com o módulo ACULTA Activity). O cadastro e seleção de Local como popup modal com AJAX pertencem a Events. Revalidar autorização no servidor; nunca confiar em IDs submetidos pelo cliente.
-- Mudanças nesse contrato devem atualizar `docs/portal/ACCOUNT-ADDRESS.md` e executar `scripts/validate-account-address.php`; mudanças de renderização também executam o teste Firefox documentado em `tests/browser/aculta-theme-mobile-first/README.md`.
+- Mudanças nesse contrato devem atualizar `docs/portal/ACCOUNT-ADDRESS.md` e executar `scripts/validate-account-address.php`; mudanças de renderização também executam o teste Firefox documentado em `tests/browser/transversal/aculta-theme-mobile-first/README.md`.
 
 ## Views e CTools
 

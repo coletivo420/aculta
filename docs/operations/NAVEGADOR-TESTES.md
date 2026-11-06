@@ -58,12 +58,12 @@ O runner espera condições com locators e `expect`; não usa `sleep` fixo. Capt
 
 ## Reuso de scripts por frente
 
-Antes de escrever qualquer teste de navegador, verifique se a frente já tem script salvo em `tests/browser/<frente>/`, por exemplo com `rg --files tests/browser/<frente>`. Se houver:
+Antes de escrever qualquer teste de navegador, verifique se a frente já tem script salvo em `tests/browser/<purpose>/<frente>/`, por exemplo com `rg --files tests/browser/<purpose>/<frente>`. Se houver:
 
 - rode o script existente com as variáveis descritas no README da frente;
 - não escreva um script paralelo para o mesmo fluxo.
 
-Se a frente não tiver script, crie-o em `tests/browser/<frente>/` com um README local, para que o próximo agente reutilize. Alterações em script existente entram no mesmo commit da entrega. Nunca grave segredo, link de login de uso único ou caminho absoluto de máquina no script ou no README.
+Se a frente não tiver script, crie-o em `tests/browser/<purpose>/<frente>/` com um README local, para que o próximo agente reutilize. Testes do Studio ficam em `tests/browser/studio/<suite>/` (marley, we-sativa, ganjalab, green-stash, culturas, geral). Alterações em script existente entram no mesmo commit da entrega. Nunca grave segredo, link de login de uso único ou caminho absoluto de máquina no script ou no README.
 
 O runner comum (`playwright.spec.mjs`) cobre só smoke da origem; a cobertura funcional está nos scripts das frentes.
 

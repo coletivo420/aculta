@@ -526,7 +526,7 @@ admin excedeu 60 segundos antes da navegação e dos asserts visuais. A limpeza
 foi confirmada por SQL: Group 87 e Media 270 ausentes; 607 tabelas antes/depois;
 `updatedb:status` sem pendências. Não houve alteração de schema/configuração.
 O teste visual permanece bloqueado até resolver o bootstrap de `uli`; o runner
-está em `tests/browser/aculta-lms-resources/` e foi ajustado para salvar o
+está em `tests/browser/courses/aculta-lms-resources/` e foi ajustado para salvar o
 resultado e manter IDs apenas se a limpeza falhar.
 
 Em `aculta_lms_resources` 0.1.0-dev.12, o Kernel do Content Index consulta a

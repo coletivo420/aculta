@@ -80,7 +80,7 @@ Cada README local é a fonte dos URLs, critérios, fixtures e variáveis da fren
 
 **Cobertura real por frente.** O `playwright.spec.mjs` faz só smoke: abre a origem (`ACULTA_SITE_ORIGIN` ou `ACULTA_BROWSER_URLS`) em cada frente e confirma carregamento. Ele não percorre as rotas da frente. A cobertura funcional fica no script da própria frente (`visual.py`, `*.mjs` ou similar) descrito no README local, que define suas rotas, login e ambiente. Uma frente que precise de rotas específicas roda o script dela, não o runner comum.
 
-**Reuso.** Antes de escrever teste novo, procure `tests/browser/<frente>/` e rode o script que já existe, seguindo o README local. Crie script novo só se a frente não tiver um, salvando-o na mesma pasta com README, para o próximo agente reutilizar. Regras em `docs/operations/NAVEGADOR-TESTES.md`, seção "Reuso de scripts por frente". Não há URL por frente no runner, de propósito: as frentes têm ambientes e pré-requisitos diferentes, e um mapa único ficaria falso.
+**Reuso.** Antes de escrever teste novo, procure `tests/browser/<purpose>/<frente>/` e rode o script que já existe, seguindo o README local. Crie script novo só se a frente não tiver um, salvando-o na mesma pasta com README, para o próximo agente reutilizar. Regras em `docs/operations/NAVEGADOR-TESTES.md`, seção "Reuso de scripts por frente". Não há URL por frente no runner, de propósito: as frentes têm ambientes e pré-requisitos diferentes, e um mapa único ficaria falso.
 
 ## Códigos
 

@@ -9,7 +9,7 @@
  * mesclada.
  *
  * O navegador Firefox é executado separadamente pelo teste documentado em
- * tests/browser/aculta-theme-mobile-first/README.md.
+ * tests/browser/transversal/aculta-theme-mobile-first/README.md.
  */
 
 $root = dirname(__DIR__);

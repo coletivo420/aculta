@@ -11,7 +11,7 @@ runners de navegador para identificar violações automatizáveis em páginas de
 qualquer purpose. Execute `npm ci` nesta pasta e use `ACCESSIBILITY_SCAN=1` no
 runner genérico ou `CULTURAS_AXE=1` no gate específico; consulte
 `tests/browser/aculta-smoke/README.md` e
-`tests/browser/aculta-theme-mobile-first/README.md`. Resultados
+`tests/browser/transversal/aculta-theme-mobile-first/README.md`. Resultados
 `incomplete` exigem revisão; axe-core não comprova conformidade WCAG 2.2 AA nem
 substitui teclado, zoom, inspeção visual, leitor de tela ou avaliação contextual.
 
