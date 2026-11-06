@@ -10,5 +10,5 @@ description: Regras para testes de navegador do ACULTA, com a ordem de preferên
 3. Credenciais vêm do ambiente ou de arquivo local ignorado pelo Git. Nunca grave senha, token ou link de uso único no script.
 4. Declare o ambiente: servidor de desenvolvimento (`*.aculta.toca.net.br`) ou local (`127.0.0.1`). Não confunda os dois.
 5. Use locators e `expect`, com espera por condição; nunca `sleep` fixo.
-6. Script novo fica em `tests/browser/<frente>/`, com README local. Preserve os URLs e critérios da frente e os códigos: 0 passou, 124 timeout, 1 erro, 2 pré-requisito ausente.
+6. Reuse antes de criar: se `tests/browser/<frente>/` já tem script, rode-o seguindo o README local e não escreva outro. Script novo (só se a frente não tiver) fica nessa pasta, com README, para o próximo agente reutilizar. Preserve os URLs e critérios da frente e os códigos: 0 passou, 124 timeout, 1 erro, 2 pré-requisito ausente.
 7. Regras canônicas: `docs/operations/NAVEGADOR-TESTES.md` e `tests/browser/README.md`.

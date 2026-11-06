@@ -56,6 +56,17 @@ O runner espera condições com locators e `expect`; não usa `sleep` fixo. Capt
 | 1 | erro do Playwright ou da asserção |
 | 2 | pré-requisito ausente, como origem ou URLs |
 
+## Reuso de scripts por frente
+
+Antes de escrever qualquer teste de navegador, verifique se a frente já tem script salvo em `tests/browser/<frente>/`, por exemplo com `rg --files tests/browser/<frente>`. Se houver:
+
+- rode o script existente com as variáveis descritas no README da frente;
+- não escreva um script paralelo para o mesmo fluxo.
+
+Se a frente não tiver script, crie-o em `tests/browser/<frente>/` com um README local, para que o próximo agente reutilize. Alterações em script existente entram no mesmo commit da entrega. Nunca grave segredo, link de login de uso único ou caminho absoluto de máquina no script ou no README.
+
+O runner comum (`playwright.spec.mjs`) cobre só smoke da origem; a cobertura funcional está nos scripts das frentes.
+
 ## Escopo e limites
 
 O catálogo e as frentes estão em `tests/browser/README.md`. Cada frente mantém seu README e seus critérios; o runner comum fornece Firefox, espera, timeout, artefatos e códigos consistentes. Fluxos autenticados exigem variáveis de ambiente documentadas pela frente. Não grave credenciais nem evidências no Git.
