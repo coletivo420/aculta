@@ -37,11 +37,11 @@ final class AccountController {
       throw new AccessDeniedHttpException();
     }
     $build = $provider->build();
-    $build['suites']['#items'] = $this->experiences->buildEntries(
+    $build['suites']['#items'] = $this->experienceCards($this->experiences->buildEntries(
       $this->account,
       $this->domains,
       ['conta', 'perfil', 'salvos', 'mercado_pago_plans'],
-    );
+    ));
     $cache = CacheableMetadata::createFromRenderArray($build);
     foreach ($this->experiences->all() as $candidate) {
       if (!in_array($candidate->id(), ['conta', 'perfil', 'salvos', 'mercado_pago_plans'], TRUE)) {
@@ -50,6 +50,87 @@ final class AccountController {
     }
     $cache->applyTo($build);
     return $build;
+  }
+
+  /**
+   * Visual metadata for the account experience cards, keyed by provider id.
+   */
+  private const CARD_META = [
+    'marley' => ['icon' => 'book-open', 'description' => 'Cultura, história e legado de Bob Marley.'],
+    'ganjalab' => ['icon' => 'flask', 'description' => 'Conhecimento, pesquisa e inovação na cultura.'],
+    'we_sativa' => ['icon' => 'plant', 'description' => 'Bem-estar, estilos de vida e cultura contemporânea.'],
+    'culturas' => ['icon' => 'users-three', 'description' => 'Pessoas, territórios e diversidade cultural.'],
+  ];
+
+  /**
+   * Faixa de largura total para experiências integradas (Green Stash).
+   */
+  private const STRIP_META = [
+    'green_stash' => ['icon' => 'archive', 'description' => 'Seu stash de conteúdos da ACULTA, integrado às experiências.'],
+  ];
+
+  /**
+   * Turns the account experience links into cards with icon, text and action.
+   *
+   * @param array<int, array<string, mixed>> $items
+   *   Link render arrays from StudioExperienceManager::buildEntries().
+   *
+   * @return array<int, array<string, mixed>>
+   *   Card and strip render arrays, in the same order.
+   */
+  private function experienceCards(array $items): array {
+    $cards = [];
+    foreach ($items as $item) {
+      $id = (string) ($item['#attributes']['data-experience'] ?? '');
+      $cache = $item['#cache'] ?? [];
+      if (isset(self::STRIP_META[$id])) {
+        $meta = self::STRIP_META[$id];
+        $cards[] = [
+          '#type' => 'container',
+          '#attributes' => ['class' => ['aculta-xp-strip'], 'data-experience' => $id],
+          '#cache' => $cache,
+          'icon' => $this->iconComponent($meta['icon']),
+          'body' => [
+            '#type' => 'container',
+            '#attributes' => ['class' => ['aculta-xp-strip__body']],
+            'title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $item['#title'], '#attributes' => ['class' => ['aculta-xp-strip__title']]],
+            'tag' => ['#type' => 'html_tag', '#tag' => 'span', '#value' => 'Acesso integrado', '#attributes' => ['class' => ['aculta-xp-strip__tag']]],
+            'text' => ['#type' => 'html_tag', '#tag' => 'p', '#value' => $meta['description'], '#attributes' => ['class' => ['aculta-xp-strip__text']]],
+          ],
+        ];
+        continue;
+      }
+      $meta = self::CARD_META[$id] ?? ['icon' => 'user', 'description' => ''];
+      $cards[] = [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['aculta-xp-card'], 'data-experience' => $id],
+        '#cache' => $cache,
+        'icon' => $this->iconComponent($meta['icon']),
+        'title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $item['#title'], '#attributes' => ['class' => ['aculta-xp-card__title']]],
+        'text' => ['#type' => 'html_tag', '#tag' => 'p', '#value' => $meta['description'], '#attributes' => ['class' => ['aculta-xp-card__text']]],
+        'action' => [
+          '#type' => 'link',
+          '#title' => 'Acessar',
+          '#url' => $item['#url'],
+          '#attributes' => ['class' => ['aculta-xp-card__action']],
+        ],
+      ];
+    }
+    return $cards;
+  }
+
+  /**
+   * Phosphor duotone icon from the ACULTA420 V2 theme.
+   *
+   * @return array<string, mixed>
+   *   Component render array.
+   */
+  private function iconComponent(string $name): array {
+    return [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:icon',
+      '#props' => ['name' => $name, 'variant' => 'duotone', 'size' => 'xl'],
+    ];
   }
 
 }

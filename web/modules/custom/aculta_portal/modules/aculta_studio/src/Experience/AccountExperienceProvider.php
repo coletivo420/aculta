@@ -75,6 +75,7 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
    * {@inheritdoc}
    */
   public function build(): array {
+    $profile = $this->profileLink();
     return [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'account-entry'],
@@ -83,34 +84,66 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
         '#tag' => 'h1',
         '#value' => 'Studio Dashboard',
       ],
-      'description' => [
-        '#plain_text' => new TranslatableMarkup('Acesse seus dados, segurança e experiências ACULTA.'),
-      ],
-      'identity' => $this->identity(),
-      'profile_link' => $this->profileLink(),
-      'account_link' => [
-        '#theme' => 'item_list',
-        '#items' => [
-          [
-            '#type' => 'link',
-            '#title' => new TranslatableMarkup('Acessar Minha Conta'),
-            '#url' => Url::fromRoute('aculta_studio.account'),
+      'hero' => [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['aculta-xp-hero']],
+        'identity' => $this->identity(),
+        'profile' => $profile === [] ? [] : [
+          '#type' => 'container',
+          '#attributes' => ['class' => ['aculta-xp-hero__profile']],
+          'icon' => [
+            '#type' => 'component',
+            '#component' => 'aculta420_v2:icon',
+            '#props' => ['name' => 'user', 'variant' => 'duotone', 'size' => 'xl'],
           ],
-        ],
-        '#attributes' => [
-          'data-portal-ui' => 'account-entry-links',
-          'aria-label' => new TranslatableMarkup('Minha Conta'),
+          'label' => [
+            '#type' => 'html_tag',
+            '#tag' => 'p',
+            '#value' => 'Seu perfil público na ACULTA',
+            '#attributes' => ['class' => ['aculta-xp-hero__text']],
+          ],
+          'link' => $profile,
         ],
       ],
       'suites_heading' => [
         '#type' => 'html_tag',
         '#tag' => 'h2',
-        '#value' => 'Experiências',
+        '#value' => 'Suas experiências',
+      ],
+      'suites_description' => [
+        '#type' => 'html_tag',
+        '#tag' => 'p',
+        '#value' => 'Acesse as experiências da ACULTA e explore conteúdos, projetos e comunidades.',
+        '#attributes' => ['class' => ['aculta-xp-section__text']],
       ],
       'suites' => [
         '#theme' => 'item_list',
         '#items' => [],
-        '#attributes' => ['data-portal-ui' => 'account-experiences'],
+        '#attributes' => ['data-portal-ui' => 'account-experiences', 'class' => ['aculta-xp-grid']],
+      ],
+      'account_link' => [
+        '#type' => 'link',
+        '#title' => [
+          '#type' => 'container',
+          '#attributes' => ['class' => ['aculta-xp-row__body']],
+          'icon' => [
+            '#type' => 'component',
+            '#component' => 'aculta420_v2:icon',
+            '#props' => ['name' => 'gear-six', 'variant' => 'duotone', 'size' => 'xl'],
+          ],
+          'text' => [
+            '#type' => 'container',
+            '#attributes' => ['class' => ['aculta-xp-row__text']],
+            'title' => ['#type' => 'html_tag', '#tag' => 'span', '#value' => 'Minha conta', '#attributes' => ['class' => ['aculta-xp-row__title']]],
+            'desc' => ['#type' => 'html_tag', '#tag' => 'span', '#value' => 'Dados, segurança e preferências', '#attributes' => ['class' => ['aculta-xp-row__desc']]],
+          ],
+        ],
+        '#url' => Url::fromRoute('aculta_studio.account'),
+        '#attributes' => [
+          'class' => ['aculta-xp-row'],
+          'data-portal-ui' => 'account-entry-links',
+          'aria-label' => 'Minha Conta',
+        ],
       ],
       '#cache' => [
         'contexts' => ['user', 'user.permissions', 'url.site'],
@@ -180,6 +213,15 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
           '#plain_text' => $identityValues['display_name'] ?? '',
         ],
       ];
+      $mail = $user->getEmail();
+      if (is_string($mail) && $mail !== '') {
+        $build['email'] = [
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#value' => $mail,
+          '#attributes' => ['class' => ['aculta-xp-hero__mail']],
+        ];
+      }
       if (is_array($identityValues['avatar'] ?? NULL)) {
         $build['avatar'] = [
           '#type' => 'container',

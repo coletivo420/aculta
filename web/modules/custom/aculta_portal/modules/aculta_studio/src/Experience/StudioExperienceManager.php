@@ -54,6 +54,7 @@ final class StudioExperienceManager {
         '#type' => 'link',
         '#title' => $provider->label(),
         '#url' => $url,
+        '#attributes' => ['data-experience' => $provider->id()],
         '#cache' => $cacheArray['#cache'],
       ];
     }

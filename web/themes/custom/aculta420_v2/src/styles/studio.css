@@ -2122,3 +2122,240 @@ body.path-perfil .aculta-main:has(form#aculta-user-profile-visibility-form) :is(
 body.path-ganjalab .aculta-main :is(h1, h2, h3, h4, h5, h6) {
   font-family: var(--font-family-heading);
 }
+
+/* Painel de conta (conta.aculta.*): layout das referências — cabeçalho com avatar redondo,
+   cards de experiências com ícone, faixa do Green Stash e "Minha conta" no fim. Mobile-first. */
+.aculta-account-entry {
+  display: grid;
+  gap: var(--spacing-lg);
+}
+
+.aculta-account-entry > :is(h1, h2) {
+  margin: 0;
+}
+
+.aculta-account-entry .aculta-xp-hero {
+  align-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-raised);
+  display: grid;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+}
+
+.aculta-account-entry .aculta-xp-hero [data-portal-ui~="studio-account-identity"] {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.aculta-account-entry .aculta-xp-hero [data-portal-ui~="studio-account-avatar"] img,
+.aculta-account-entry .aculta-xp-hero [data-portal-ui~="studio-account-avatar"] .avatar {
+  block-size: 6rem;
+  border-radius: 50%;
+  inline-size: 6rem;
+  object-fit: cover;
+}
+
+.aculta-account-entry .aculta-xp-hero__mail {
+  color: var(--color-text-secondary);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.aculta-account-entry .aculta-xp-hero__profile {
+  align-items: center;
+  border: 1px solid var(--button-secondary-border);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: var(--spacing-xs);
+  justify-items: start;
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.aculta-account-entry .aculta-xp-hero__profile .aculta-icon {
+  color: var(--color-brand-primary);
+}
+
+.aculta-account-entry .aculta-xp-hero__text {
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.aculta-account-entry .aculta-xp-hero__profile a {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.aculta-account-entry .aculta-xp-section__text {
+  color: var(--color-text-secondary);
+  margin: calc(var(--spacing-xs) * -1) 0 0;
+}
+
+.aculta-account-entry .aculta-xp-grid {
+  display: grid;
+  gap: var(--spacing-md);
+  grid-template-columns: minmax(0, 1fr);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.aculta-account-entry .aculta-xp-grid > li {
+  min-inline-size: 0;
+}
+
+.aculta-account-entry .aculta-xp-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-raised);
+  display: grid;
+  gap: var(--spacing-xs);
+  height: 100%;
+  justify-items: start;
+  padding: var(--spacing-md);
+}
+
+.aculta-account-entry .aculta-xp-card .aculta-icon,
+.aculta-account-entry .aculta-xp-strip .aculta-icon,
+.aculta-account-entry .aculta-xp-row__body .aculta-icon {
+  color: var(--color-brand-primary);
+}
+
+.aculta-account-entry .aculta-xp-card__title,
+.aculta-account-entry .aculta-xp-strip__title {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-lg);
+  margin: var(--spacing-xs) 0 0;
+}
+
+.aculta-account-entry .aculta-xp-card__text,
+.aculta-account-entry .aculta-xp-strip__text {
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.aculta-account-entry .aculta-xp-card__action {
+  align-items: center;
+  background: var(--button-primary-bg);
+  border: 1px solid var(--button-primary-bg);
+  border-radius: var(--radius-sm);
+  color: var(--button-primary-fg);
+  display: inline-flex;
+  font-weight: 600;
+  inline-size: 100%;
+  justify-content: center;
+  margin-block-start: var(--spacing-xs);
+  min-block-size: 2.75rem;
+  padding-inline: var(--spacing-md);
+  text-decoration: none;
+}
+
+.aculta-account-entry .aculta-xp-card__action::after {
+  content: " →";
+}
+
+.aculta-account-entry .aculta-xp-card__action:hover {
+  background: var(--button-primary-bg-hover);
+}
+
+.aculta-account-entry .aculta-xp-card__action:focus-visible,
+.aculta-account-entry .aculta-xp-row:focus-visible {
+  outline: 2px solid var(--button-focus-ring);
+  outline-offset: 2px;
+}
+
+.aculta-account-entry .aculta-xp-strip {
+  align-items: center;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm) var(--spacing-md);
+  padding: var(--spacing-md);
+}
+
+.aculta-account-entry .aculta-xp-strip__body {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs) var(--spacing-sm);
+}
+
+.aculta-account-entry .aculta-xp-strip__title {
+  margin: 0;
+}
+
+.aculta-account-entry .aculta-xp-strip__tag {
+  background: var(--color-brand-highlight);
+  border-radius: var(--radius-sm);
+  color: var(--color-on-highlight);
+  font-size: var(--font-size-sm);
+  padding: 0 var(--spacing-xs);
+}
+
+.aculta-account-entry .aculta-xp-strip__text {
+  inline-size: 100%;
+}
+
+.aculta-account-entry .aculta-xp-row {
+  align-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: space-between;
+  min-block-size: 3.5rem;
+  padding: var(--spacing-md);
+  text-decoration: none;
+}
+
+.aculta-account-entry .aculta-xp-row__body {
+  align-items: center;
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.aculta-account-entry .aculta-xp-row__text {
+  display: grid;
+}
+
+.aculta-account-entry .aculta-xp-row__title {
+  font-weight: 600;
+}
+
+.aculta-account-entry .aculta-xp-row__desc {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.aculta-account-entry .aculta-xp-row::after {
+  content: "›";
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+@media (min-width: 40rem) {
+  .aculta-account-entry .aculta-xp-hero {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: var(--spacing-lg);
+  }
+
+  .aculta-account-entry .aculta-xp-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 60rem) {
+  .aculta-account-entry .aculta-xp-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
