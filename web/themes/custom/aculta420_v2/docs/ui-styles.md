@@ -63,7 +63,7 @@ Opção A: a escolha global do administrador `revista_accent` tem precedência s
   - `ui_styles_dark_verde-skunk_320px.png` e `1440px.png`
   - `ui_styles_light_amarelo-lemon-haze_320px.png` e `1440px.png`
   - `ui_styles_dark_amarelo-lemon-haze_320px.png` e `1440px.png`
-- **Invariância e responsividade:** gate de catálogo PASS (24 verificações). Prova de runtime para os dez purposes, ambos os modos e 320/1440 px permanece pendente.
+- **Invariância e responsividade:** gate de catálogo PASS (24 verificações). Runtime Firefox ESR verificou `data-purpose-scheme` e `--purpose-accent` nos dez purposes, claro/escuro e 320/1440; 358/360 checks passaram. Overflow do Fórum a 320 px mantém F3 pendente; capturas em `tests/browser/capturas/purpose-buttons/2026-11-06/`.
 - **Gates:** `scripts/validate-aculta420-ui-styles.php` PASS nesta rodada; foundations PASS. O gate de render SDC e validação browser de runtime ainda não foram executados nesta retomada.
 - **Teste Unitário:** `PurposePaletteResolutionUnitTest.php` cobrindo resolução de tokens e html_attributes nos dois modos.
 

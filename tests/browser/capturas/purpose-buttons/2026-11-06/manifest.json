@@ -1,0 +1,20 @@
+{
+  "metodo": "Firefox ESR visível via WebDriver BiDi; quatro tokens de esquema UI Styles verificados no HTML renderizado e botões primário/contorno inertes montados no DOM",
+  "motor": "Firefox ESR",
+  "viewport": [320, 1440],
+  "modo": ["claro", "escuro"],
+  "url_relativa": "/ em cada host de purpose declarado em deploy.json (ambiente test)",
+  "purposes": ["main", "account", "support", "magazine", "wiki", "shop", "courses", "forum", "links", "eventos"],
+  "resultados": {
+    "capturas_png": 40,
+    "casos": 40,
+    "verificacoes": 360,
+    "passaram": 358,
+    "falharam": 2,
+    "falhas": ["Fórum: document.scrollWidth excede 320 px em claro e escuro"],
+    "palette_binding": "PASS nos dez purposes e dois modos; data-purpose-scheme corresponde ao esquema configurado e --purpose-accent foi resolvido",
+    "botoes": "PASS: cores primária/contorno correspondem aos tokens --button-*; filter none em todos os casos",
+    "F3": "pendente até eliminar/verificar o overflow do Fórum a 320 px"
+  },
+  "hash_commit_testado_runtime": "c8e9f37f9e11ff1dfe570d085fed3cf947ab4a61"
+}
