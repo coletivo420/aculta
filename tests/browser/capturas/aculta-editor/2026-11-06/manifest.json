@@ -1,0 +1,26 @@
+{
+  "metodo": "Firefox ESR visível via WebDriver/geckodriver; fluxo ULI de content_editor e leitura de responseStatus/DOM",
+  "motor": "Firefox ESR",
+  "viewport": {
+    "width": 1024,
+    "height": 654
+  },
+  "modo": "claro padrão do Runtime",
+  "url_relativa": "/node/add/revista",
+  "resultados": {
+    "passaram": [
+      "anonymous.full_html_format: acesso negado",
+      "anonymous.aculta_adm_create: acesso negado",
+      "anonymous.rendered_sanitization: sem tags/atributos executáveis e sem overflow",
+      "content_editor.full_html_format: acesso negado",
+      "content_editor.aculta_adm_create: acesso negado"
+    ],
+    "bloqueio": "content_editor.revista_ckeditor: HTTP 404, zero formulários, documento vazio; CKEditor não renderizado e seletores não avaliáveis",
+    "nao_executados": [
+      "administrator.aculta_adm_create",
+      "administrator.page_ckeditor"
+    ],
+    "captura": "content-editor-revista-route-unavailable.png"
+  },
+  "hash_commit_testado_runtime": "ebdecca126f3fabd89b5c7a7618ba9026a7dab10"
+}

@@ -88,6 +88,9 @@ def wait_for_ckeditor(driver: Driver, timeout: float = 12.0) -> dict:
     while time.time() < deadline:
         last = driver.js("""return {
           url: location.href,
+          responseStatus: performance.getEntriesByType('navigation')[0]?.responseStatus ?? null,
+          bodyTextLength: document.body?.innerText.length ?? 0,
+          formCount: document.forms.length,
           heading: document.querySelector('main h1, h1')?.innerText || '',
           ckEditor: !!document.querySelector('.ck-editor'),
           editableCount: document.querySelectorAll('.ck-editor__editable').length,
@@ -155,6 +158,15 @@ def main():
         driver.get(os.environ.get("EDITOR_REVISTA_ADD_URL", "https://revista.aculta.toca.net.br/node/add/revista"))
         time.sleep(1.5)
         ck_editor = wait_for_ckeditor(driver)
+        if ck_editor.get("responseStatus") != 200:
+            screenshot = base64.b64decode(driver.req("GET", f"/session/{driver.session}/screenshot"))
+            (OUT / "content-editor-revista-route-unavailable.png").write_bytes(screenshot)
+            raise RuntimeError(
+                "Rota de criação da Revista indisponível para avaliar o editor: "
+                f"HTTP {ck_editor.get('responseStatus')}, formulário(s)={ck_editor.get('formCount')}, "
+                f"texto={ck_editor.get('bodyTextLength')} caracteres. CKEditor não foi renderizado; "
+                "não é possível validar seletores nem atribuir falha ao editor."
+            )
         if not ck_editor.get("ckEditor") or "full_html" in ck_editor.get("formatOptions", []):
             raise RuntimeError(f"CKEditor inválido ou full_html exposto para content_editor: {ck_editor}")
         ck_editor["viewports"] = check_viewports(driver, "editor-node-add-revista")

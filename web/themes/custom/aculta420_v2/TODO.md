@@ -10,6 +10,8 @@ PHPUnit focal do tema: 12 testes/56 assertions PASS; bootstrap cria a saída aut
 
 F2: shell não alterado. Firefox ESR passou 120/120 verificações em dez purposes, claro/escuro, 320/1440 px, sem overflow e com contraste AA no fundo efetivo da navegação. O probe foi corrigido para compor fundos transparentes. Aceitação visual do responsável permanece pendente; evidências em `tests/browser/capturas/shell/2026-11-06/`.
 
+Editor: os casos anônimos e as negações do `content_editor` passaram. A rota `/node/add/revista` respondeu HTTP 404 com documento vazio após ULI; o CKEditor não foi renderizado, então a suíte registra bloqueio de rota e não conclui a validação do editor. Host/fluxo ULI pendente; nenhuma configuração do editor foi alterada. Captura em `tests/browser/capturas/aculta-editor/2026-11-06/`.
+
 Studio: `/conta`, abas, identidade, bio e redes validados em fase anterior. Loja aguarda autorização; `price` fora. Bootstrap contrib permanece ativo para a rodada de validação V1.
 
 ## Dívidas

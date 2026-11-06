@@ -142,6 +142,8 @@ aceitação visual do responsável.
 
 **Status: implementação geral dos 41 componentes mantida; adoção visual por purpose permanece parcial.** A escolha da Revista é global via UI Styles; o preprocess do tema dá precedência administrativa ao accent do Portal. O campo por nó permanece legado, fora do fluxo, sem remoção de dados. Falta submit pelo formulário e validação pública autenticada. Eventos: a View pública sobre `aculta_event` usa handlers próprios para exibir/ordenar IDs e props de `EventCatalogue`, preservando ACL, recorrência, filtros e datas; Kernel Events passou 155 testes/3.616 assertions (33 depreciações). Firefox ESR mostrou dois cards em claro/escuro a 320/1440 px, foco visível e zero overflow; sem baseline anterior da listagem. Config da View exportada e sincronizada. No Studio, `/conta`, abas, identidade e perfil mantêm validações registradas. Loja aguarda autorização; `price` permanece fora do escopo.
 
+Validação de acesso/editor: casos anônimos e negações do `content_editor` passaram. O fluxo ULI foi seguido no Firefox ESR; a rota de criação da Revista retornou HTTP 404 sem documento nem formulário, então não houve CKEditor para localizar e os casos administrativos seguintes não foram executados. A suíte registra essa indisponibilidade explicitamente. Host/fluxo e CKEditor permanecem pendentes; não se alterou a configuração do editor.
+
 ### Consumers reais dos componentes SDC implementados
 
 - **`tabs`**: implementado em `templates/navigation/menu-local-tasks.html.twig`, encapsulando abas primárias e secundárias do Drupal com `aculta420_v2:tabs` e mantendo títulos acessíveis.
