@@ -2,6 +2,17 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
+# V2 — formulário Revista — 2026-11-06
+
+- **Objetivo:** resolver 404 e validar CKEditor no Runtime.
+- **Estado:** causa: formulário administrativo foi solicitado no host Revista, mas a rota existe no host principal. `node.add` existe; UID 15 tem `create revista content`; ULI cria cookie compartilhado entre subdomínios. Suíte completa PASS: 8 grupos/32 checks, 12 viewports 1280/390/320, zero overflow. CKEditor usa `revista_editorial`, sem `full_html`; casos admin passaram.
+- **Decisões:** ULI no host conta; formulário no principal. Sem alteração do editor/config. Modal de aceite aparece na captura; não foi submetido.
+- **Cuidados:** espera estabilização do Gin após resize; `aculta_adm` testa formulário, CKEditor/toolbar em `page`.
+- **Commits e arquivos:** Runtime testado sobre `bf9c6e0af0`; suíte, README, captures/manifest, TODO, roadmap, layouts e handoff.
+- **Verificações:** Firefox ESR visível, `ALL PASS`; Revista em `tests/browser/capturas/aculta-editor/2026-11-06/after/`.
+- **Pendências e bloqueios:** nenhum.
+- **Próximo passo:** nenhum.
+
 # V2 — Fórum, editor e config — 2026-11-06
 
 - **Objetivo:** corrigir overflow e revisar config.
@@ -23,14 +34,4 @@
 - **Pendências:** F3 permanece aberta pelos dois overflows do Fórum a 320 px. F2 permanece para aceitação visual do responsável; a matriz também detectou contraste insuficiente da navegação em claro a 1440 px nos dez purposes. A suíte ampla `aculta-editor/access.py`, após corrigir seu import sob `-I`, parou por ausência de CKEditor no formulário de Revista para `content_editor`; o formulário administrativo de UID 1 foi validado separadamente. Não alterar o shell nesta fase.
 - **Próximo passo:** tratar o overflow do Fórum sem alterar o shell e repetir a suíte de botões; aguardar aceitação visual de F2 e verificar o fluxo editor quando o CKEditor do Runtime estiver disponível.
 
-
-# Adoção por purpose — `profile-details` no Studio — 2026-11-06
-
-- **Objetivo:** integrar bio e redes sociais do perfil do Studio a um SDC, respeitando os limites de UI Styles e autorização de Loja.
-- **Estado:** `profile-bio` e `profile-social` mapeados a `profile-details`, sem alterar `author-card`; slots do `aculta_user` preservados. Captura Firefox ESR antes/depois em `/meu-perfil`: 97/97 checks por rodada, 22 ignorados e zero falhas, claro/escuro, 320/1440 px, foco no slot de ações e sem overflow. Evidências externas em `$SUITE_OUT/layouts-purpose-studio-profile-details-paired-20261106/{before,after}/`.
-- **Decisões e alternativas descartadas:** Revista agora tem adapter nativo no módulo owner e usa o mecanismo UI Styles sem alterar contrib; validação do estado salvo ainda pendente. Loja continua pendente sem autorização em `docs/`.
-- **Arquivos:** SDC `components/profile-details/`, `PagePresentationHooks`, gate de render SDC, teste unitário e suíte visual Studio; documentação de consumer/status/roadmap.
-- **Verificações:** PHPUnit 7/33; schema 764 checks; SDC render 41 componentes; mapped classes (459), foundations (73 pares), UI Styles (20), browser validators (21), module-theme boundary (4274), diff check e captura ESR PASS. `drush cr` PASS. `config:status` mostra apenas diferenças preexistentes em blocos administrativos, CAPTCHA/Turnstile e `core.extension`.
-- **Pendências:** Revista aguarda captura do submit visual com escolha salva; Loja aguarda autorização documentada. Baselines anteriores não foram modificadas.
-- **Próximo passo:** concluir o aceite visual da seleção nativa da Revista; não iniciar templates de Loja até autorização em `docs/`.
 

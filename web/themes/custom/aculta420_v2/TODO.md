@@ -8,7 +8,7 @@ Estado: em desenvolvimento · versão 1.3.0 (`aculta420_v2.info.yml`) · status 
 - **PHPUnit:** 12 testes/56 assertions PASS; bootstrap cria saída relativa. Foundations, UI Styles, SDC schema/render PASS.
 - **F3:** concluída; Firefox ESR palette/botões 360/360, 10 purposes, claro/escuro, 320/1440, sem overflow. `tests/browser/capturas/purpose-buttons/2026-11-06/`.
 - **F2:** shell intacto; ESR 120/120, 10 purposes, claro/escuro, 320/1440, sem overflow e contraste AA. Aceite visual pendente. `tests/browser/capturas/shell/2026-11-06/`.
-- **Editor:** anônimo/negações `content_editor` PASS. Após ULI, `/node/add/revista` retorna 404 vazio; suíte para antes do CKEditor. Host/fluxo pendente; sem mudar config. `tests/browser/capturas/aculta-editor/2026-11-06/`.
+- **Editor:** suíte completa PASS. ULI cria cookie compartilhado; o formulário é administrativo no host principal, não no host Revista. CKEditor editorial e os casos administrativos passaram em 1280/390/320 sem overflow. `tests/browser/capturas/aculta-editor/2026-11-06/`.
 - **Config:** sem diff seguro de tema/módulo. Config local `default_admin`, field legado e chaves sensíveis Turnstile preservados; sem `drush cex`. Ver handoff.
 - **Outros:** Bootstrap contrib fica ativo na validação V1; `/conta` validado; Loja aguarda autorização.
 
