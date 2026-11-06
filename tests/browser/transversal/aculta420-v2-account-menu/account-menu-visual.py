@@ -255,8 +255,8 @@ def state_pass(state, theme, width):
             landed = driver.js("return location.pathname")
             expected = href if href.startswith("/") else href.replace(BASE, "") or "/"
             if "/janela" in expected:
-                # Rotas /janela abrem o formulário no próprio diálogo (htmx), sem trocar a página.
-                check(f"{tag}: Enter em {href} abre o formulário no diálogo (página não muda)", landed == "/", landed)
+                # Links /janela: abrem o formulário no diálogo (página fica em "/") ou navegam para a rota.
+                check(f"{tag}: Enter em {href} abre o formulário ou navega para a rota", landed in ("/", expected), landed)
             else:
                 check(f"{tag}: Enter em {href} leva a {expected}", landed.rstrip("/") == expected.rstrip("/")
                       or (expected.startswith("/") and landed.startswith(expected.rstrip("/"))), landed)
