@@ -3,7 +3,7 @@
 - Campo nativo `field_revista_accent` no owner `aculta_magazine`; o formulário usa o widget UI Styles com três opções fechadas, sem classes livres.
 - O hook aplica a classe oficial ao wrapper do teaser; CSS do componente garante que a escolha administrativa prevaleça sobre o accent automático do Portal.
 - `#tree: true` mantém a estrutura aninhada de valores do widget UI Styles para o submit do formulário. Teste focal cobre o value callback real; o fluxo Drupal transacional escreve o campo e renderiza a classe no teaser, com rollback ao fim.
-- Gate UI Styles: 24 verificações PASS. PHPUnit focal: 7 testes/42 assertions PASS (8 depreciações PHPUnit). Firefox ESR confirmou a faixa CSS em claro/escuro e 320/1440 px; submit visual com accent persistido segue pendente.
+- Gate UI Styles: 24 verificações PASS. PHPUnit focal: 7 testes/42 assertions PASS (8 depreciações PHPUnit). Firefox ESR confirmou a faixa com o campo nativo temporariamente salvo em claro/escuro e 320/1440 px; valor restaurado vazio após captura. Submit visual do formulário segue pendente.
 
 ## 0.5.0-dev.18 — capa pela escolha de envio recente do Studio
 

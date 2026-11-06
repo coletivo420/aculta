@@ -4,7 +4,7 @@ Estado: Dev · versão 0.5.0-dev.19 (`aculta_magazine.info.yml`) · status: `doc
 
 ## Próximo passo
 
-O widget `ui_styles_styles` agora usa `#tree: true`; o value callback real, o entity builder e a renderização do teaser passaram em transação revertida. Firefox ESR confirmou a faixa CSS nos dois modos e em 320/1440 px com classe transitória. Falta validar o submit visual e capturar o teaser com accent salvo; as tentativas no node sintético oscilaram entre acesso negado e navegação incompleta. O conteúdo atual mantém accent vazio.
+O widget `ui_styles_styles` agora usa `#tree: true`; o value callback real, o entity builder e a renderização do teaser passaram em transação revertida. Firefox ESR confirmou a faixa CSS nos dois modos e em 320/1440 px com `field_revista_accent` red temporariamente salvo no node sintético 602; o valor foi restaurado a vazio na revisão 825. Falta validar o submit visual do formulário; as sessões autenticadas oscilaram entre acesso negado e navegação incompleta. O conteúdo atual mantém accent vazio.
 
 ## Leitura
 
