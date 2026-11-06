@@ -257,6 +257,9 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
    *   Menu items for the studio-menu component.
    */
   private function studioMenuItems(): array {
+    if ($this->currentUser === NULL) {
+      return [];
+    }
     $candidates = [
       ['Studio Dashboard', '/', TRUE, NULL, 'house'],
       ['Experiências', '/', FALSE, 'suas-experiencias', 'squares-four'],
