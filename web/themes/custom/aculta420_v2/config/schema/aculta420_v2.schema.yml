@@ -65,3 +65,52 @@ aculta420_v2.settings:
         links:
           type: string
           label: 'Variante de destaque do purpose links'
+    aculta_purpose_container:
+      type: mapping
+      label: 'Layout de container por purpose'
+      mapping:
+        main:
+          type: aculta420_v2.purpose_container_layout
+          label: 'Layout de container do purpose main'
+        account:
+          type: aculta420_v2.purpose_container_layout
+          label: 'Layout de container do purpose account'
+        support:
+          type: aculta420_v2.purpose_container_layout
+          label: 'Layout de container do purpose support'
+        magazine:
+          type: aculta420_v2.purpose_container_layout
+          label: 'Layout de container do purpose magazine'
+        wiki:
+          type: aculta420_v2.purpose_container_layout
+          label: 'Layout de container do purpose wiki'
+        shop:
+          type: aculta420_v2.purpose_container_layout
+          label: 'Layout de container do purpose shop'
+        courses:
+          type: aculta420_v2.purpose_container_layout
+          label: 'Layout de container do purpose courses'
+        forum:
+          type: aculta420_v2.purpose_container_layout
+          label: 'Layout de container do purpose forum'
+        eventos:
+          type: aculta420_v2.purpose_container_layout
+          label: 'Layout de container do purpose eventos'
+        links:
+          type: aculta420_v2.purpose_container_layout
+          label: 'Layout de container do purpose links'
+
+aculta420_v2.purpose_container_layout:
+  type: mapping
+  label: 'Definição de layout de container'
+  mapping:
+    mode:
+      type: string
+      label: 'Modo do container (boxed, unboxed, contained, max_full_width)'
+    container_width:
+      type: integer
+      label: 'Largura do container (px)'
+    narrow_width:
+      type: integer
+      label: 'Largura estreita do container (px)'
+

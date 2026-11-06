@@ -18,3 +18,45 @@ aculta_purpose_palette:
   magazine: vermelho-red-kush
   courses: vermelho-panama-red
   forum: vermelho-red-congolese
+aculta_purpose_container:
+  main:
+    mode: boxed
+    container_width: 1200
+    narrow_width: 750
+  wiki:
+    mode: boxed
+    container_width: 1200
+    narrow_width: 750
+  links:
+    mode: boxed
+    container_width: 1200
+    narrow_width: 750
+  account:
+    mode: boxed
+    container_width: 1200
+    narrow_width: 750
+  support:
+    mode: boxed
+    container_width: 1200
+    narrow_width: 750
+  shop:
+    mode: boxed
+    container_width: 1200
+    narrow_width: 750
+  eventos:
+    mode: boxed
+    container_width: 1200
+    narrow_width: 750
+  magazine:
+    mode: boxed
+    container_width: 1200
+    narrow_width: 750
+  courses:
+    mode: boxed
+    container_width: 1200
+    narrow_width: 750
+  forum:
+    mode: boxed
+    container_width: 1200
+    narrow_width: 750
+
