@@ -46,7 +46,7 @@ services:
     arguments: ['@aculta_studio.marley_presenter', '@current_user']
   aculta_studio.experience.conta:
     class: Drupal\aculta_studio\Experience\AccountExperienceProvider
-    arguments: ['@entity_type.manager', '@current_user', '@?aculta_user.author_identity_resolver']
+    arguments: ['@entity_type.manager', '@current_user', '@?aculta_user.author_identity_resolver', '@?aculta_studio.calendar_composer']
   aculta_studio.profile_access:
     class: Drupal\aculta_studio\Access\StudioProfileAccess
     arguments: ['@module_handler']
@@ -118,3 +118,15 @@ services:
     tags:
       - { name: aculta_calendar.item_provider }
 
+  aculta_studio.calendar_composer:
+    class: Drupal\aculta_studio\Calendar\StudioDashboardCalendarComposer
+    arguments:
+      - '@?aculta_calendar.agenda'
+      - '@aculta_calendar.month_grid'
+      - '@current_user'
+      - '@?url_generator'
+  Drupal\aculta_studio\Calendar\StudioDashboardCalendarComposer: '@aculta_studio.calendar_composer'
+  aculta_studio.calendar_controller:
+    class: Drupal\aculta_studio\Controller\StudioCalendarController
+    arguments:
+      - '@aculta_studio.calendar_composer'

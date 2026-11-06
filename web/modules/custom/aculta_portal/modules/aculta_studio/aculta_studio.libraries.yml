@@ -13,3 +13,11 @@ account-navigation:
     - core/drupal
     - core/drupal.htmx
     - core/once
+
+calendar:
+  js:
+    js/calendar-navigation.js: {}
+  dependencies:
+    - core/drupal
+    - core/drupal.htmx
+    - core/once

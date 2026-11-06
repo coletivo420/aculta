@@ -545,3 +545,14 @@ aculta_studio.upload_embed:
   options:
     _aculta_domain_purpose: account
     no_cache: true
+
+aculta_studio.calendar_fragment:
+  path: '/estudio/calendario-fragmento'
+  defaults:
+    _controller: 'aculta_studio.calendar_controller:fragment'
+    _title: 'Calendário do Studio'
+  requirements:
+    _permission: 'access aculta portal'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
