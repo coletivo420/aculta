@@ -8,7 +8,7 @@ Revista: configuração global submetida via UI Styles; preprocess aplica classe
 
 PHPUnit focal do tema: 12 testes/56 assertions PASS; bootstrap cria a saída automaticamente em caminho relativo ao projeto. Foundations, UI Styles, SDC schema e SDC render PASS. Firefox ESR: palette e botões primário/contorno em dez purposes, claro/escuro, 320/1440 px: 360/360 verificações; sem overflow no Fórum a 320 px. F3 concluída com evidência em `tests/browser/capturas/purpose-buttons/2026-11-06/`.
 
-F2: shell não alterado. A suíte de shell será registrada após correção do probe de fundo transparente; aceitação visual do responsável permanece pendente.
+F2: shell não alterado. Firefox ESR passou 120/120 verificações em dez purposes, claro/escuro, 320/1440 px, sem overflow e com contraste AA no fundo efetivo da navegação. O probe foi corrigido para compor fundos transparentes. Aceitação visual do responsável permanece pendente; evidências em `tests/browser/capturas/shell/2026-11-06/`.
 
 Studio: `/conta`, abas, identidade, bio e redes validados em fase anterior. Loja aguarda autorização; `price` fora. Bootstrap contrib permanece ativo para a rodada de validação V1.
 

@@ -157,22 +157,28 @@ try:
                     });
                     return 0.2126*linear[0]+0.7152*linear[1]+0.0722*linear[2];
                   };
+                  const effectiveBackground=(element)=>{
+                    const layers=[];
+                    for(let node=element;node;node=node.parentElement){
+                      const value=getComputedStyle(node).backgroundColor;
+                      const rgb=colorChannels(value),parts=value.match(/[\\d.]+/g)?.map(Number);
+                      if(rgb&&parts)layers.push({rgb,alpha:parts[3]??1});
+                    }
+                    let rgb=[242,247,240],alpha=1;
+                    for(const layer of layers.reverse()){
+                      const outAlpha=layer.alpha+alpha*(1-layer.alpha);
+                      rgb=layer.rgb.map((channel,index)=>Math.round(
+                        (channel*layer.alpha+rgb[index]*alpha*(1-layer.alpha))/outAlpha));
+                      alpha=outAlpha;
+                    }
+                    return `rgb(${rgb.join(', ')})`;
+                  };
                   const shellTextLinks=[...document.querySelectorAll(
                     '.aculta-institution-bar a,.page__header a'
                   )].filter(link=>link.innerText.trim()).map(link=>{
-                    const shell=link.closest('.aculta-institution-bar,.page__header');
                     const foreground=getComputedStyle(link).color;
-                    const shellBackground=getComputedStyle(shell).backgroundColor;
-                    const linkBackground=getComputedStyle(link).backgroundColor;
-                    const shellChannels=colorChannels(shellBackground);
-                    const linkParts=linkBackground.match(/[\\d.]+/g)?.map(Number);
-                    const alpha=linkParts?.[3]??1;
-                    const backgroundChannels=shellChannels&&linkParts
-                      ? shellChannels.map((value,index)=>(linkParts[index]??0)*alpha+value*(1-alpha))
-                      : null;
-                    const background=backgroundChannels
-                      ? `rgb(${backgroundChannels.map(value=>Math.round(value)).join(', ')})`
-                      : shellBackground;
+                    const background=effectiveBackground(link);
+                    const backgroundChannels=colorChannels(background);
                     const fg=luminance(colorChannels(foreground)),bg=luminance(backgroundChannels);
                     return {label:link.innerText.trim().replace(/\\s+/g,' '),foreground,background,
                       contrast:fg===null||bg===null?null:

@@ -86,6 +86,12 @@ foreach ($textColors as $foreground) {
   }
 }
 
+$navigationLightRatio = check_contrast('--color-text-primary', '--color-surface', $rootTokens, []);
+$assert($navigationLightRatio >= 4.5, sprintf('light navigation text on navigation surface is %.2f:1 (minimum 4.5:1)', $navigationLightRatio));
+$navigationDarkRatio = check_contrast('--color-text-primary', '--color-surface', $rootTokens, $darkTokens);
+$assert($navigationDarkRatio >= 4.5, sprintf('dark navigation text on navigation surface is %.2f:1 (minimum 4.5:1)', $navigationDarkRatio));
+$contrastPairs += 2;
+
 $statusPairs = [
   ['--color-status-error-text', '--color-status-error-surface'],
   ['--color-status-ok-text', '--color-status-ok-surface'],

@@ -1,20 +1,90 @@
 {
-  "metodo": "Suíte tests/browser/transversal/aculta-theme-mobile-first/buttons-purpose-runtime.py; Firefox ESR visível via WebDriver BiDi, palette renderizada e botões primário/contorno inertes montados no DOM",
+  "metodo": "Firefox visible via WebDriver BiDi; inert primary/outline button fixtures",
   "motor": "Firefox ESR",
-  "viewport": [320, 1440],
-  "modo": ["claro", "escuro"],
-  "url_relativa": "/ em cada host de purpose declarado em deploy.json (ambiente test)",
-  "purposes": ["main", "account", "support", "magazine", "wiki", "shop", "courses", "forum", "links", "eventos"],
+  "viewport": [
+    320,
+    1440
+  ],
+  "modo": [
+    "claro",
+    "escuro"
+  ],
+  "url_relativa": "/ em cada host de purpose do deploy.json (ambiente test)",
   "resultados": {
-    "capturas_png": 40,
+    "purposes": [
+      "main",
+      "account",
+      "support",
+      "magazine",
+      "wiki",
+      "shop",
+      "courses",
+      "forum",
+      "links",
+      "eventos"
+    ],
     "casos": 40,
     "verificacoes": 360,
-    "passaram": 358,
-    "falharam": 2,
-    "falhas": ["Fórum: document.scrollWidth excede 320 px em claro e escuro"],
-    "palette_binding": "PASS nos dez purposes e dois modos; data-purpose-scheme corresponde ao esquema configurado e --purpose-accent foi resolvido",
-    "botoes": "PASS: cores primária/contorno correspondem aos tokens --button-*; filter none em todos os casos",
-    "F3": "pendente até eliminar/verificar o overflow do Fórum a 320 px"
+    "passaram": 360,
+    "falharam": 0,
+    "falhas": [],
+    "verificacoes_estaticas": {
+      "passaram": 4,
+      "total": 4,
+      "assertions": {
+        "button_tokens_present": "PASS",
+        "no_purpose_tokens": "PASS",
+        "no_brand_highlight": "PASS",
+        "no_brightness_filter": "PASS"
+      }
+    },
+    "assertions": {
+      "purpose": {
+        "passaram": 40,
+        "total": 40,
+        "resultado": "PASS"
+      },
+      "configured_scheme": {
+        "passaram": 40,
+        "total": 40,
+        "resultado": "PASS"
+      },
+      "mode": {
+        "passaram": 40,
+        "total": 40,
+        "resultado": "PASS"
+      },
+      "viewport": {
+        "passaram": 40,
+        "total": 40,
+        "resultado": "PASS"
+      },
+      "palette_accent_resolved": {
+        "passaram": 40,
+        "total": 40,
+        "resultado": "PASS"
+      },
+      "primary_uses_button_tokens": {
+        "passaram": 40,
+        "total": 40,
+        "resultado": "PASS"
+      },
+      "outline_uses_button_tokens": {
+        "passaram": 40,
+        "total": 40,
+        "resultado": "PASS"
+      },
+      "no_filter": {
+        "passaram": 40,
+        "total": 40,
+        "resultado": "PASS"
+      },
+      "no_overflow": {
+        "passaram": 40,
+        "total": 40,
+        "resultado": "PASS"
+      }
+    }
   },
-  "hash_commit_testado_runtime": "80aae13a1c4500e69e1bce9cb2c0c5b6c6211b9c"
+  "hash_commit_testado_runtime": "28ab46508817036b7dbcbd4636b39fdd7358b38b"
 }

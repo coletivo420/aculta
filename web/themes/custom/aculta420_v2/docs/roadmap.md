@@ -5,7 +5,7 @@
 | Fase | Status | Pendência principal |
 | --- | --- | --- |
 | F1 — Tokens e fundações | Entregue em `1.2.0-dev.1` | Nenhuma no tema |
-| F2 — Shell | Pendente | Firefox ESR: 40 capturas e 108/120 verificações. Fórum tem overflow em 320 px; navegação falha contraste AA no modo claro a 1440 px nos dez purposes. D1 permanece pendente do Portal e a aceitação visual é do responsável |
+| F2 — Shell | Pendente de aceitação visual | Firefox ESR: 40 capturas, 120/120 verificações em 10 purposes × 2 modos × 320/1440, sem overflow e com contraste AA no fundo efetivo. O probe de contraste foi corrigido; nenhum token CSS precisou mudar. D1 aguarda decisão do Portal e a aceitação visual é do responsável |
 | F3 — Purpose e botões | Concluída em 2026-11-06 | Firefox ESR: palette, botões e ausência de overflow passaram 360/360 checks em 10 purposes × 2 modos × 320/1440; evidência em `tests/browser/capturas/purpose-buttons/2026-11-06/` |
 | F4 — UI Styles | Parcial | Gate de catálogo PASS (24). Submit global da Revista e classe no wrapper e no SDC validados no Firefox ESR; Eventos `card-cultural` validado. Adoção por purpose continua parcial |
 | F5 — Componentes e templates | Parcial; adoção por purpose pendente | Accent global da Revista validado em quatro cenários; Studio e Eventos mantêm validações anteriores. Loja aguarda autorização; `price` fora do escopo |
@@ -121,6 +121,16 @@ Os botões do tema V2 foram integralmente migrados para o esquema único documen
 - A invariância estática dos tokens foi verificada; Firefox ESR confirmou em runtime os botões em 10 purposes, claro/escuro e 320/1440 px. A suíte passou 360/360 checks, inclusive largura de documento sem overflow; capturas em `tests/browser/capturas/purpose-buttons/2026-11-06/`.
 - Gate `scripts/validate-aculta420-v2-foundations.php` expandido com pares de contraste textuais (repouso, hover, active), bordas e foco (todos PASS).
 - Captura de runtime real no Homelab permanece pendente (DEFERRED).
+
+Revalidação Firefox ESR em 2026-11-06: a matriz de botões/palette passou 360/360
+assertions de runtime; a matriz do shell passou 120/120. O excedente anterior
+de contraste era falso positivo: o probe confundia o cabeçalho transparente
+com fundo preto. O cálculo agora compõe as camadas até o fundo opaco. A razão
+real da navegação clara é 12,40:1 na superfície normal e 7,84:1 no link ativo
+sobre amarelo. A combinação texto/superfície foi adicionada ao gate foundations;
+nenhum token existente foi alterado. Capturas e manifests ficam em
+`tests/browser/capturas/{purpose-buttons,shell}/2026-11-06/`. F2 ainda aguarda
+aceitação visual do responsável.
 
 ## Fase 4 — UI Styles
 
