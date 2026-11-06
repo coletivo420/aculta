@@ -79,11 +79,6 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
     return [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'account-entry'],
-      'heading' => [
-        '#type' => 'html_tag',
-        '#tag' => 'h1',
-        '#value' => 'Studio Dashboard',
-      ],
       'hero' => [
         '#type' => 'container',
         '#attributes' => ['class' => ['aculta-xp-hero']],

@@ -2152,6 +2152,15 @@ body.path-ganjalab .aculta-main :is(h1, h2, h3, h4, h5, h6) {
   gap: var(--spacing-md);
 }
 
+.aculta-account-entry .aculta-xp-hero [data-portal-ui~="studio-account-home"] {
+  border-block-start: 0;
+  padding: 0;
+}
+
+.aculta-account-entry .aculta-xp-hero [data-portal-ui~="studio-account-avatar"] {
+  order: -1;
+}
+
 .aculta-account-entry .aculta-xp-hero [data-portal-ui~="studio-account-avatar"] img,
 .aculta-account-entry .aculta-xp-hero [data-portal-ui~="studio-account-avatar"] .avatar {
   block-size: 6rem;
