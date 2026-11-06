@@ -294,4 +294,10 @@
     padding-inline-end: 21rem;
     position: relative;
   }
+
+  /* O conteúdo ocupa a faixa entre o menu e o calendário, sem vão extra. */
+  :is(main, .page__main, .layout-page):has(.aculta-studio-calendar) .layout-page__content {
+    max-inline-size: none;
+    inline-size: 100%;
+  }
 }
