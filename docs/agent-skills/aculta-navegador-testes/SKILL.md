@@ -1,11 +1,11 @@
 ---
 name: aculta-navegador-testes
-description: Regras para testes de navegador do ACULTA, com a ordem de preferência (embutido, WebDriver, Playwright, X11 Gecko), artefatos externos e scripts por frente. Use antes de criar ou rodar teste visual.
+description: Regras para testes de navegador do ACULTA, com a ordem de preferência (embutido, Chromium, Playwright, X11 Gecko), artefatos externos e scripts por frente. Use antes de criar ou rodar teste visual.
 ---
 
 # Testes de navegador
 
-1. Ordem de preferência: navegador embutido, WebDriver (Geckodriver), Playwright (Firefox distribuído pelo projeto) e X11 com Gecko/Firefox ESR visível. Todos são permitidos; prefira o que gera menos tokens. Declare o método usado. Chromium e WebKit ficam fora da ordem, como complemento declarado.
+1. Ordem de preferência: navegador embutido, Chromium, Playwright (Firefox distribuído pelo projeto) e X11 com Gecko/Firefox ESR visível. Todos são permitidos; prefira o que gera menos tokens. Declare o método usado. WebKit fica fora da ordem, como complemento declarado.
 2. Artefatos (PNG, HTML, trace, vídeo e logs) vão para `$SUITE_OUT`, fora do repositório. Nunca versione evidência com dado de conta.
 3. Credenciais vêm do ambiente ou de arquivo local ignorado pelo Git. Nunca grave senha, token ou link de uso único no script.
 4. Declare o ambiente: servidor de desenvolvimento (`*.aculta.toca.net.br`) ou local (`127.0.0.1`). Não confunda os dois.

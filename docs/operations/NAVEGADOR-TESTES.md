@@ -5,7 +5,7 @@
 Todos os métodos abaixo são permitidos. Use o primeiro que atender ao teste, nesta ordem, priorizando o que gera menos tokens:
 
 1. **Navegador embutido (built-in browser):** ferramentas `mcp__Claude_Browser__*` ou `mcp__remote-devices__Claude_Browser__*`, quando disponíveis. Para leitura rápida da página e verificação pontual.
-2. **WebDriver:** Geckodriver com Firefox, quando o teste precisa de sessão controlada por driver.
+2. **Chromium:** navegador Chromium, quando o teste precisa de comportamento de Chromium ou de um caso que os outros métodos não reproduzem.
 3. **Playwright:** Firefox distribuído pelo Playwright, em `tests/browser`. É o padrão para suítes repetíveis, com artefatos em `$SUITE_OUT`.
 4. **X11 com Gecko/Firefox ESR visível:** para aceite visual humano ou quando os métodos acima não reproduzem o caso.
 
@@ -15,7 +15,7 @@ Regras de economia:
 - Não repita o mesmo teste em mais de um método sem motivo. Se os resultados divergirem, registre qual prevaleceu e por quê.
 - No relatório, declare o método usado em cada teste.
 
-Chromium e WebKit ficam fora da ordem: uso complementar, declarado no relatório.
+WebKit fica fora da ordem: uso complementar, declarado no relatório.
 
 Versões fixadas no projeto (método 3): Node definido pelo ambiente, `@playwright/test` 1.56.1 e Firefox Playwright 142.0.1 (build Playwright 1495). A instalação usa apenas:
 
