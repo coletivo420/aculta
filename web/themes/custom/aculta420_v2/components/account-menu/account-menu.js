@@ -19,7 +19,12 @@
           summary.focus();
         };
 
+        // aria-expanded explícito no gatilho, além do estado nativo do <details>.
+        const syncExpanded = () => summary.setAttribute('aria-expanded', String(details.open));
+        syncExpanded();
+
         details.addEventListener('toggle', () => {
+          syncExpanded();
           if (!details.open) return;
           const items = focusables();
           (closeButton || items[0])?.focus();
