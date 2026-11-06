@@ -105,3 +105,9 @@ Os botões foram desenhados para repousar sobre as superfícies padrão do tema 
 - **Portabilidade mobile:** A regra de 320 CSS px está implementada; a captura visual sem rolagem horizontal permanece pendente de runtime.
 - **Contratos e Gates:** Suíte `validate-aculta420-v2-foundations.php` expandida com 73 pares de contraste textuais e estruturais, todos com verificação estrita PASS.
 - **Ambiente Homelab:** Captura em runtime real no Homelab permanece pendente (DEFERRED) para sincronização final.
+
+### Atualização de 2026-11-06
+
+- `scripts/validate-aculta420-v2-foundations.php`: PASS; confirmou que `buttons.css` não contém `--color-brand-highlight`, `--purpose-*` nem `filter: brightness(...)`.
+- PHPUnit focal do tema: 11 testes e 51 assertions PASS. Não há suíte de botão isolada nos caminhos de teste encontrados.
+- A matriz visual Firefox ESR do runtime para os dez purposes, claro/escuro e 320/1440 px ainda não foi concluída; invariância visual e overflow permanecem pendentes.

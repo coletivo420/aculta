@@ -1,7 +1,7 @@
 _core:
   default_config_hash: hfqTr6E3eXAcVQU25_tYHa4BzsSDaYhwkoF34xq5_k4
 langcode: pt-br
-enable_globally: 1
+enable_globally: 0
 enable_globally_on_admin_routes: false
 default_challenge: turnstile/Turnstile
 description: 'Esta verificação confirma que você é uma pessoa e ajuda a impedir envios automáticos de spam.'

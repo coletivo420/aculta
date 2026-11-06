@@ -1,0 +1,19 @@
+aculta_radius_button: lg
+aculta_radius_card: lg
+aculta_radius_field: base
+aculta_accent_override: mapping
+aculta_show_accent_stripe: true
+aculta_revista_accent:
+  selected: {  }
+  extra: ''
+aculta_purpose_palette:
+  main: verde-skunk
+  wiki: verde-sativa
+  account: verde-afghan
+  support: amarelo-acapulco-gold
+  shop: amarelo-lemon-haze
+  magazine: vermelho-red-kush
+  courses: vermelho-panama-red
+  forum: vermelho-red-congolese
+  eventos: amarelo-golden-goat
+  links: verde-ruderalis

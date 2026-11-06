@@ -1,0 +1,20 @@
+{
+  "metodo": "Firefox ESR visível via WebDriver BiDi; medições de DOM, contraste e overflow",
+  "motor": "Firefox ESR",
+  "viewport": [320, 1440],
+  "modo": ["claro", "escuro"],
+  "url_relativa": "/ (raiz pública de cada purpose configurado em deploy.json; ambiente test)",
+  "purposes": ["main", "account", "support", "magazine", "wiki", "shop", "courses", "forum", "links", "eventos"],
+  "resultados": {
+    "capturas_png": 40,
+    "verificacoes": 120,
+    "passaram": 108,
+    "falharam": 12,
+    "falhas_observadas": [
+      "Fórum excede 320 CSS px em claro e escuro a viewport 320 px",
+      "links da navegação do shell ficam abaixo de contraste AA no modo claro a 1440 px nos dez purposes"
+    ],
+    "F2": "pendente de corrigir overflow/contraste e obter aceitação visual do responsável"
+  },
+  "hash_commit_testado_runtime": "f2b463a5dae1cece8a94073e8e634e74c2cad729"
+}

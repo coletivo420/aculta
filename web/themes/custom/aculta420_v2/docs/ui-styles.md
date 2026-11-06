@@ -43,8 +43,8 @@ Todos são bloqueantes para a RC:
 evitar remoção destrutiva de conteúdo e será removido em uma migração própria,
 com inventário e autorização.
 
-### Regra de Precedência (Decisão do responsável em 2026-11-05)
-Opção A adotada: A escolha do administrador via UI Styles (`card-cultural--accent-{green|yellow|red}`) tem precedência sobre o `accent` vindo do Portal/backend, garantindo flexibilidade editorial ao administrador Drupal.
+### Regra de Precedência (decisão do responsável)
+Opção A: a escolha global do administrador `revista_accent` tem precedência sobre o `accent` do Portal e é aplicada pelo preprocess como `revista-teaser--accent-{green|yellow|red}`. Não foi criada opção nova no catálogo UI Styles. `field_revista_accent` continua instalado, fora do fluxo e sem remoção destrutiva.
 
 ## 4. Regras
 
@@ -58,13 +58,13 @@ Opção A adotada: A escolha do administrador via UI Styles (`card-cultural--acc
 
 ## 5. Validação e Capturas Visuais
 
-- **Suíte de navegador:** a rodada anterior foi executada em Firefox ESR visível (`DISPLAY=:0`) e deixou artefatos temporários em `$SUITE_OUT`; nesta entrega não havia PNGs acessíveis para mover para a pasta canônica, portanto a captura autenticada da Revista segue pendente:
+- **Suíte de navegador:** evidência de shell em `tests/browser/capturas/shell/2026-11-06/` (manifest e 40 PNGs ignorados pelo Git). Revista: submit administrativo e teaser público com valor salvo permanecem pendentes; não declarar validação completa:
   - `ui_styles_light_verde-skunk_320px.png` e `1440px.png`
   - `ui_styles_dark_verde-skunk_320px.png` e `1440px.png`
   - `ui_styles_light_amarelo-lemon-haze_320px.png` e `1440px.png`
   - `ui_styles_dark_amarelo-lemon-haze_320px.png` e `1440px.png`
-- **Invariância e responsividade:** Zero rolagem horizontal comprovada em 320 CSS px em todos os cenários. Faixa de destaque de purpose com valor computado exato conforme esquema selecionado.
-- **Gates:** `scripts/validate-aculta420-ui-styles.php` validando conformidade estrita entre catálogo YAML, variantes nos componentes CSS e mapa de tokens.
+- **Invariância e responsividade:** gate de catálogo PASS (24 verificações). Prova de runtime para os dez purposes, ambos os modos e 320/1440 px permanece pendente.
+- **Gates:** `scripts/validate-aculta420-ui-styles.php` PASS nesta rodada; foundations PASS. O gate de render SDC e validação browser de runtime ainda não foram executados nesta retomada.
 - **Teste Unitário:** `PurposePaletteResolutionUnitTest.php` cobrindo resolução de tokens e html_attributes nos dois modos.
 
 ## 6. Pendências

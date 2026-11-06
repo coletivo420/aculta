@@ -91,6 +91,7 @@ hidden:
   field_published_at: true
   field_references: true
   field_related_activity: true
+  field_revista_accent: true
   field_tags: true
   langcode: true
   private_message_link: true

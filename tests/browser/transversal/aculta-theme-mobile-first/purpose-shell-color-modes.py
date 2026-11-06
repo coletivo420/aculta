@@ -10,7 +10,7 @@ from pathlib import Path
 from websockets.sync.client import connect
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parents[2]
+ROOT = HERE.parents[3]
 sys.path.insert(0, str(ROOT / "tests/browser/shop/aculta-cpf-checkout"))
 from wdlib import Driver  # noqa: E402
 
@@ -138,12 +138,12 @@ try:
                     frame.setAttribute('data-portal-ui',tokens.join(' '));count++;
                   });return count;""")
             for mode, (expected_surface, expected_text) in MODES.items():
-                driver.js("document.documentElement.setAttribute('data-bs-theme', arguments[0]); return true", [mode])
+                driver.js("document.documentElement.setAttribute('data-theme', arguments[0]); return true", [mode])
                 time.sleep(0.05)
                 metrics = json.loads(driver.js("""return JSON.stringify((() => {
                   const root=getComputedStyle(document.documentElement);
                   const bar=document.querySelector('.aculta-institution-bar');
-                  const header=document.querySelector('.aculta-header');
+                  const header=document.querySelector('.page__header');
                   const colorChannels=(color)=>{
                     const parts=color.match(/[\\d.]+/g)?.slice(0,3).map(Number);
                     if(!parts||parts.length!==3)return null;
@@ -158,9 +158,9 @@ try:
                     return 0.2126*linear[0]+0.7152*linear[1]+0.0722*linear[2];
                   };
                   const shellTextLinks=[...document.querySelectorAll(
-                    '.aculta-institution-bar a,.aculta-header a'
+                    '.aculta-institution-bar a,.page__header a'
                   )].filter(link=>link.innerText.trim()).map(link=>{
-                    const shell=link.closest('.aculta-institution-bar,.aculta-header');
+                    const shell=link.closest('.aculta-institution-bar,.page__header');
                     const foreground=getComputedStyle(link).color;
                     const shellBackground=getComputedStyle(shell).backgroundColor;
                     const linkBackground=getComputedStyle(link).backgroundColor;
@@ -180,14 +180,14 @@ try:
                   });
                   return {
                     title:document.title,
-                    mode:document.documentElement.getAttribute('data-bs-theme'),
+                    mode:document.documentElement.getAttribute('data-theme'),
                     width:innerWidth,
                     documentWidth:document.documentElement.scrollWidth,
-                    surface:root.getPropertyValue('--aculta-surface-page').trim(),
-                    primaryText:root.getPropertyValue('--aculta-text-primary').trim(),
+                    surface:root.getPropertyValue('--color-canvas').trim(),
+                    primaryText:root.getPropertyValue('--color-text-primary').trim(),
                     authCssInjected:arguments[0],authMarkerCount:arguments[1],
                     institutionBar:document.querySelectorAll('.aculta-institution-bar').length,
-                    domainHeader:document.querySelectorAll('.aculta-header').length,
+                    domainHeader:document.querySelectorAll('.page__header').length,
                     reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,
                     barBackground:bar ? getComputedStyle(bar).backgroundColor : null,
                     headerBackground:header ? getComputedStyle(header).backgroundColor : null,

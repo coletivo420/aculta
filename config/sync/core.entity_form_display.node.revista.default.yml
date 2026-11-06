@@ -225,5 +225,6 @@ content:
 hidden:
   field_aculta_discussion: true
   field_coautores: true
+  field_revista_accent: true
   promote: true
   sticky: true

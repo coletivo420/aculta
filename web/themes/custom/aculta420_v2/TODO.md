@@ -4,9 +4,13 @@ Estado: em desenvolvimento · versão 1.3.0 (`aculta420_v2.info.yml`) · status:
 
 ## Próximo passo
 
-Eventos: View pública da raiz usa `EventCatalogue` para IDs/props, preservando ACL, recorrência, ordenação e filtros; os cards usam `card-cultural`. Kernel Events passou: 155 testes/3.616 assertions (33 depreciações Core/contrib). Gates V2 aplicáveis passaram. Firefox ESR capturou listagem e detalhe em claro/escuro a 320/1440 px, foco visível e zero overflow em `$SUITE_OUT/layouts-purpose-events-cards-20261106-r2/`. Sem baseline anterior da listagem.
+Revista: configuração global `revista_accent` no `aculta420_v2.settings`; preprocess do teaser aplica a classe global e prioriza UI Styles. Campo legado permanece sem widget/leitura e sem remoção destrutiva. Banco consultado: 5 nós Revista, zero valores próprios; node 602 vazio. Submit administrativo e validação do teaser público no Firefox ESR pendentes.
 
-Studio: `/conta`, abas, identidade, bio e redes validados; comparação Firefox ESR 97/97, claro/escuro, 320/1440 px, foco e sem overflow. Revista usa seleção global `revista_accent`; aceite autenticado e capturas canônicas pendentes. Loja aguarda autorização; `price` fora. Gate Portal com divergências de status.
+PHPUnit focal do tema: 11 testes/51 assertions PASS; bootstrap cria a saída automaticamente em caminho relativo ao projeto. Foundations, UI Styles, SDC schema e SDC render PASS. Matriz runtime de palette/botões pendente.
+
+F2: shell não alterado. Capturas iniciais Firefox ESR em `tests/browser/capturas/shell/2026-11-06/`; 68/120 verificações. Fórum tem overflow em 320 px e problemas de contraste; corrigir probes, repetir matriz completa e aguardar aceitação visual.
+
+Studio: `/conta`, abas, identidade, bio e redes validados em fase anterior. Loja aguarda autorização; `price` fora. Bootstrap contrib permanece ativo para a rodada de validação V1.
 
 ## Dívidas
 

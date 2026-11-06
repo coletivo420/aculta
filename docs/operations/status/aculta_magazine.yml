@@ -2,5 +2,5 @@
 version: 0.5.0-dev.20
 state: Dev
 progress_note: >-
-  Dev.20: escolha global UI Styles da Revista no tema V2; o fluxo por nó foi removido e o campo legado ficou sem leitura para evitar remoção destrutiva. Runtime, banco e capturas canônicas ainda dependem da rodada autenticada.
-next_phase: 'Validar submit e renderização global no Firefox ESR, confirmar campo vazio no node 602 e publicar manifestos de captura.'
+  Dev.20: escolha global UI Styles da Revista; campo legado preservado sem widget/leitura. Banco confirmou cinco nós Revista e zero accents próprios; node 602 vazio. Submissão e teaser público no Firefox ESR seguem pendentes.
+next_phase: 'Submeter a escolha global pelo formulário administrativo e validar a classe no teaser público em claro/escuro, 320/1440 px.'
