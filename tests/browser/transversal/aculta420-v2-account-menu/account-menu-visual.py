@@ -249,8 +249,12 @@ def state_pass(state, theme, width):
             time.sleep(1.0)
             landed = driver.js("return location.pathname")
             expected = href if href.startswith("/") else href.replace(BASE, "") or "/"
-            check(f"{tag}: Enter em {href} leva a {expected}", landed.rstrip("/") == expected.rstrip("/")
-                  or (expected.startswith("/") and landed.startswith(expected.rstrip("/"))), landed)
+            if "/janela" in expected:
+                # Rotas /janela abrem o formulário no próprio diálogo (htmx), sem trocar a página.
+                check(f"{tag}: Enter em {href} abre o formulário no diálogo (página não muda)", landed == "/", landed)
+            else:
+                check(f"{tag}: Enter em {href} leva a {expected}", landed.rstrip("/") == expected.rstrip("/")
+                      or (expected.startswith("/") and landed.startswith(expected.rstrip("/"))), landed)
             driver.get(f"{BASE}/")
             time.sleep(0.8)
             set_theme(theme)

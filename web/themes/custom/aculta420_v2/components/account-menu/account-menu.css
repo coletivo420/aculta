@@ -100,7 +100,7 @@
 }
 
 /* Duas colunas no desktop (conta, sites/legal); no celular, uma coluna. A navegação principal fica só na barra. */
-.aculta-account-menu__columns {
+.aculta-utility-dialog.aculta-account-dialog .aculta-account-menu__columns {
   box-sizing: border-box;
   display: grid;
   gap: var(--spacing-lg);
@@ -170,7 +170,7 @@
 }
 
 @media (min-width: 60rem) {
-  .aculta-account-menu__columns {
+  .aculta-utility-dialog.aculta-account-dialog .aculta-account-menu__columns {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--spacing-xl);
   }
