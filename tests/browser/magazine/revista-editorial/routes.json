@@ -1,0 +1,8 @@
+{
+  "front": "revista-editorial",
+  "purpose": "magazine",
+  "origin_env": "ACULTA_SITE_ORIGIN",
+  "source": "tests/browser/magazine/revista-editorial/README.md",
+  "public_routes": [],
+  "notes": "Sem rota pública declarada. O fluxo usa UIDs de editor e leitor de teste (REVISTA_EDITOR_UID, REVISTA_READER_UID) e sessão logada. Cobertura fica no script da frente."
+}
