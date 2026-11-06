@@ -93,6 +93,10 @@ foreach (array_unique($sources) as $source) {
   preg_match_all($pattern, (string) file_get_contents($full), $matches);
   foreach (array_unique($matches[0]) as $ref) {
     $ref = rtrim($ref, '.,;:)`');
+    // Evidência (capturas, PNG) fica fora do Git: o caminho pode existir só no ambiente do operador.
+    if (str_starts_with($ref, 'tests/browser/capturas')) {
+      continue;
+    }
     $checks++;
     if (!file_exists($root . '/' . $ref)) {
       $failures[] = "$source cita $ref, que não existe. Use o caminho atual em tests/browser/INDICE.md.";
