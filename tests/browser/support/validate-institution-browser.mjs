@@ -1,4 +1,4 @@
-import { devtoolsUrl, siteOrigin, supportOrigin } from './lib/browser-env.mjs';
+import { devtoolsUrl, siteOrigin, supportOrigin } from '../../../scripts/lib/browser-env.mjs';
 // Dependency-free Chrome DevTools review. Artifacts stay in ignored tmp/.
 import { writeFile, mkdir } from 'node:fs/promises';
 import { execFile } from 'node:child_process';

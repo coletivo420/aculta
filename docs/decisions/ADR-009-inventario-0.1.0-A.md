@@ -30,7 +30,7 @@ somente: nenhum módulo, configuração ou dado foi alterado.
 ## Código e testes existentes
 
 - O Portal não contém código de sitemap em `src/`.
-- `scripts/validate-institution-browser.mjs` exige que todas as URLs comecem com
+- `tests/browser/support/validate-institution-browser.mjs` exige que todas as URLs comecem com
   `https://aculta.org/` (regra a ser substituída na microfase E).
 - `scripts/validate-final-sitemap.php` gera o sitemap e exige URLs `https://aculta.org/`.
   Em `localhost` ele falha por design do host.

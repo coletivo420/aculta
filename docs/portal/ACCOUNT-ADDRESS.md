@@ -68,7 +68,7 @@ A decisão amplia e consolida o comportamento aprovado em 2026-10-18. Qualquer m
 2. Navegador (Firefox pelo X11, `DISPLAY=:0`, conta de teste `teste.comum`): gerar o link de login de uso único e rodar
 
        php vendor/drush/drush/drush.php -l conta.aculta.toca.net.br uli --uid=5 > link.txt
-       DISPLAY=:0 python3 -I scripts/test-account-address-browser.py link.txt
+       DISPLAY=:0 python3 -I tests/browser/aculta-portal-cep/test-account-address-browser.py link.txt
 
    Deve terminar com `RESULTADO: 17/17 verificações OK`. Gerar o link antes de cada execução (é de uso único).
 

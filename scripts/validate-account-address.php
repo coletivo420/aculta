@@ -277,7 +277,7 @@ $check(
 );
 
 // 6. Teste de navegador presente (a barreira só vale se o teste existir).
-$check(is_file($root . '/scripts/test-account-address-browser.py'), 'teste de navegador do endereço presente');
+$check(is_file($root . '/tests/browser/aculta-portal-cep/test-account-address-browser.py'), 'teste de navegador do endereço presente');
 
 echo $failures === 0 ? 'ACCOUNT ADDRESS GATE: PASS' . PHP_EOL : "ACCOUNT ADDRESS GATE: FAIL ({$failures})" . PHP_EOL;
 exit($failures === 0 ? 0 : 1);

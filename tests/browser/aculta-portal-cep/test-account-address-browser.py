@@ -1,7 +1,7 @@
 """Teste do comportamento esperado de Minha conta > Meus dados > Endereço, no Firefox (X11), via geckodriver.
 
 Uso: gerar o link único de login com `drush -l conta.aculta.toca.net.br uli --uid=<uid de teste>` e passar o arquivo
-com o link: `DISPLAY=:0 python3 -I scripts/test-account-address-browser.py <arquivo_do_link>`. O link é de uso único.
+com o link: `DISPLAY=:0 python3 -I tests/browser/aculta-portal-cep/test-account-address-browser.py <arquivo_do_link>`. O link é de uso único.
 
 Não imprime segredos. Entra pelo link único do Drush (procedimento documentado) e confere o formulário e o CEP.
 Saída: uma linha por verificação, PASS ou FAIL, e o código de saída 1 se alguma falhar.

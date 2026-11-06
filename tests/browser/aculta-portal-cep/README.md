@@ -2,7 +2,7 @@
 
 O smoke dedicado que alterava o tema padrão foi removido. Valide o contrato do
 formulário com o tema configurado e sem modificar o tema global. Para o fluxo de
-endereço, consulte `scripts/test-account-address-browser.py`.
+endereço, consulte `tests/browser/aculta-portal-cep/test-account-address-browser.py`.
 
 ## Maps/Events — assistente OSM (somente leitura)
 
