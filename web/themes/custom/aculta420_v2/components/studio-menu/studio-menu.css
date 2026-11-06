@@ -133,7 +133,7 @@ body:has(.aculta-studio-topbar) .layout-page h1:not(.aculta-studio-topbar__title
     border-radius: var(--radius-lg);
     display: block;
     inline-size: 15rem;
-    inset-block-start: 22rem;
+    inset-block-start: 6.5rem;
     inset-inline-start: -15.5rem;
     padding: var(--spacing-md);
     position: absolute;
