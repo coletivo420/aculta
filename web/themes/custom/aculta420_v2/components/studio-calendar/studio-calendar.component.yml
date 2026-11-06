@@ -1,0 +1,84 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Calendário do Studio Dashboard
+description: Componente visual do calendário no painel de conta, com navegação de mês, filtros por tipo, grade de dias, resumo e ação de adicionar proposta.
+group: ACULTA
+status: experimental
+props:
+  type: object
+  additionalProperties: false
+  required: [title, current_month_label, active_filter]
+  properties:
+    title:
+      type: string
+      minLength: 1
+      default: Calendário
+    current_month_label:
+      type: string
+      minLength: 1
+    previous_url:
+      type: [string, 'null']
+    next_url:
+      type: [string, 'null']
+    active_filter:
+      type: string
+      enum: [cursos, eventos, meus_eventos]
+      default: cursos
+    filters:
+      type: array
+      items:
+        type: object
+        required: [id, label, url, active]
+        properties:
+          id:
+            type: string
+          label:
+            type: string
+          url:
+            type: string
+          active:
+            type: boolean
+    weeks:
+      type: array
+      items:
+        type: array
+        items:
+          type: object
+          required: [day_number, is_current_month, is_today, is_selected, count]
+          properties:
+            day_number:
+              type: [integer, string, 'null']
+            date_string:
+              type: [string, 'null']
+            is_current_month:
+              type: boolean
+            is_today:
+              type: boolean
+            is_selected:
+              type: boolean
+            count:
+              type: integer
+            url:
+              type: [string, 'null']
+    selected_date_label:
+      type: [string, 'null']
+    selected_day_events:
+      type: array
+      items:
+        type: object
+        required: [title]
+        properties:
+          title:
+            type: string
+          time:
+            type: [string, 'null']
+          location:
+            type: [string, 'null']
+          url:
+            type: [string, 'null']
+          is_cancelled:
+            type: boolean
+    can_add_event:
+      type: boolean
+      default: false
+    add_event_url:
+      type: [string, 'null']
