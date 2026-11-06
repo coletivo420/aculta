@@ -17,6 +17,7 @@ const EXPECT_MODERATION = process.env.STUDIO_EXPECT_MODERATION || '';
 const OUT = process.env.SUITE_OUT;
 const GD = process.env.GECKODRIVER || 'http://127.0.0.1:4444';
 const EXPECT_PROFILE_IDENTITY_SDC = process.env.PROFILE_IDENTITY_EXPECT_SDC !== '0';
+const EXPECT_PROFILE_DETAILS_SDC = process.env.PROFILE_DETAILS_EXPECT_SDC !== '0';
 const CSS_OVERRIDE = process.env.STUDIO_CSS_OVERRIDE === '1';
 const CSS_ROOT = process.env.STUDIO_CSS_ROOT || PROJECT;
 const USER_ID = Number(process.env.STUDIO_USER_ID || '5');
@@ -524,6 +525,42 @@ try {
             check(`profile-identity recebe foco por teclado em ${mode}/${width}px`, focusedIdentityLink && focusState.focused && focusState.outline !== 'none' && focusState.visible, JSON.stringify(focusState));
             check(`profile-identity sem overflow em ${mode}/${width}px`, identity.overflow <= 0, String(identity.overflow));
             await shot(`profile-identity-${mode}-${width}`);
+          }
+        }
+        for (const mode of ['light', 'dark']) {
+          for (const width of [320, 1440]) {
+            await setViewport(width, width < 500 ? 844 : 1000);
+            await exec(`document.documentElement.setAttribute('data-theme', '${mode}'); return true;`);
+            const details = JSON.parse(await exec(`return JSON.stringify((() => {
+              const editor = document.querySelector('.aculta-profile-editor');
+              const components = [...document.querySelectorAll('[data-component-id="aculta420_v2:profile-details"]')];
+              const bio = components.find((item) => item.textContent.includes('Biografia'));
+              const social = components.find((item) => item.textContent.includes('Redes sociais'));
+              const actions = editor?.querySelector('[data-portal-ui="studio-profile-actions"]');
+              return {
+                editor: !!editor,
+                componentCount: components.length,
+                bio: !!bio && !!bio.querySelector('#studio-profile-bio-title') && !!bio.querySelector('.profile-details__content'),
+                social: !!social && !!social.querySelector('#studio-profile-social-title') && !!social.querySelector('.profile-details__content'),
+                fallbackSections: [...editor?.querySelectorAll('h2,h3,h4') || []].filter((heading) => /^(Biografia|Redes sociais)$/.test(heading.textContent.trim())).length,
+                actions: !!actions && actions.querySelectorAll('a,button').length > 0,
+                overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+              };
+            })());`));
+            const expectedDetails = EXPECT_PROFILE_DETAILS_SDC
+              ? details.componentCount === 2 && details.bio && details.social
+              : details.componentCount === 0 && details.fallbackSections >= 2;
+            check(`profile-bio/social ${EXPECT_PROFILE_DETAILS_SDC ? 'profile-details' : 'fallback'} preserva conteúdo e ações em ${mode}/${width}px`, details.editor && expectedDetails && details.actions && details.overflow <= 0, JSON.stringify(details));
+            await exec(`document.activeElement?.blur(); document.body.tabIndex = -1; document.body.focus(); return true;`);
+            let focusedProfileAction = false;
+            for (let tab = 0; tab < 80; tab++) {
+              focusedProfileAction = await exec(`return Boolean(document.activeElement?.closest(${JSON.stringify(EXPECT_PROFILE_DETAILS_SDC ? '.profile-details__actions' : '[data-portal-ui="studio-profile-actions"]')}) && document.activeElement.matches('a:focus-visible,button:focus-visible'));`);
+              if (focusedProfileAction) break;
+              await wd('POST', p('/actions'), { actions: [{ type: 'key', id: 'profile-details-focus', actions: [{ type: 'keyDown', value: '\uE004' }, { type: 'keyUp', value: '\uE004' }] }] });
+            }
+            const profileFocus = JSON.parse(await exec(`return JSON.stringify((() => { const el=document.activeElement;const r=el.getBoundingClientRect();return {focused:el.matches(':focus-visible'),outline:getComputedStyle(el).outlineStyle,visible:r.right>0&&r.left<innerWidth,text:el.textContent.trim()}; })());`));
+            check(`ações de bio/redes têm foco visível em ${mode}/${width}px`, focusedProfileAction && profileFocus.focused && profileFocus.outline !== 'none' && profileFocus.visible, JSON.stringify(profileFocus));
+            await shot(`profile-details-${mode}-${width}`);
           }
         }
         if (originalProfileTheme === null) await exec(`document.documentElement.removeAttribute('data-theme'); return true;`);

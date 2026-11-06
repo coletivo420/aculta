@@ -105,6 +105,7 @@ final class PagePresentationHooks {
       'empty-state' => 'empty-state',
       'context-tabs' => 'tabs',
       'profile-identity' => 'author-card',
+      'profile-bio', 'profile-social' => 'profile-details',
       default => NULL,
     };
     if ($component === NULL || !$this->componentAvailable($component)) {
@@ -115,6 +116,27 @@ final class PagePresentationHooks {
     $slots = is_array($variables['slots'] ?? NULL) ? $variables['slots'] : [];
     if ($component === 'tabs' && (!is_string($props['label'] ?? NULL) || trim($props['label']) === '' || !isset($slots['items']))) {
       return;
+    }
+    if ($component === 'profile-details') {
+      if (!is_string($props['title'] ?? NULL) || trim($props['title']) === '') {
+        return;
+      }
+      $titleId = $name === 'profile-bio' ? 'studio-profile-bio-title' : 'studio-profile-social-title';
+      $contentSlot = $name === 'profile-bio' ? 'bio' : 'social_links';
+      $sourceSlot = $name === 'profile-bio' ? 'body' : 'items';
+      if (!isset($slots[$sourceSlot])) {
+        return;
+      }
+      $mappedSlots = [$contentSlot => $slots[$sourceSlot]];
+      if (isset($slots['actions'])) {
+        $mappedSlots['actions'] = $slots['actions'];
+      }
+      $props = [
+        'title' => $props['title'],
+        'title_id' => $titleId,
+        'heading_level' => 2,
+      ];
+      $slots = $mappedSlots;
     }
 
     $attributes = [];

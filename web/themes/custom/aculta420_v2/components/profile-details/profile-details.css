@@ -1,0 +1,14 @@
+.profile-details {
+  display: grid;
+  gap: var(--spacing-md);
+  min-inline-size: 0;
+}
+
+.profile-details__title {
+  margin: 0;
+}
+
+.profile-details__content,
+.profile-details__actions {
+  min-inline-size: 0;
+}

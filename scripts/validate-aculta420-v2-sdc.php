@@ -82,6 +82,7 @@ $component_ids = [
   'navigation-bar',
   'pagination',
   'purpose-showcase',
+  'profile-details',
   'progress',
   'revista-listing',
   'revista-publication',
@@ -308,6 +309,10 @@ $samples = [
       'heading' => 'Ecossistema ACULTA',
       'links' => [['title' => 'Apoio', 'url' => '/apoio']],
     ],
+  ],
+  'profile-details' => [
+    '#props' => ['title' => 'Biografia', 'title_id' => 'studio-profile-bio-title', 'heading_level' => 2],
+    '#slots' => ['bio' => Markup::create('<p>Biografia autorizada.</p>'), 'actions' => ''],
   ],
   'progress' => [
     '#props' => ['id' => 'curso-progresso', 'label' => 'Progresso do curso', 'value' => 60, 'max' => 100],

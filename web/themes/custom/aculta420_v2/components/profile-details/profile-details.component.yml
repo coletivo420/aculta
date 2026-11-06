@@ -1,0 +1,33 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Detalhes do perfil
+description: Apresenta biografia ou redes sociais preparadas pelo proprietário funcional.
+status: experimental
+group: ACULTA
+props:
+  type: object
+  additionalProperties: false
+  required: [title, title_id, heading_level]
+  properties:
+    title:
+      type: string
+      title: Título da seção
+      minLength: 1
+    title_id:
+      type: string
+      title: Identificador do título acessível
+      pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
+    heading_level:
+      type: integer
+      title: Nível semântico do título
+      enum: [2, 3]
+      default: 2
+slots:
+  bio:
+    title: Biografia
+    description: Render array de biografia autorizado e preparado pelo módulo proprietário.
+  social_links:
+    title: Redes sociais
+    description: Render array da lista de redes autorizada pelo módulo proprietário.
+  actions:
+    title: Ações do perfil
+    description: Render array de ações preparado pelo módulo proprietário.

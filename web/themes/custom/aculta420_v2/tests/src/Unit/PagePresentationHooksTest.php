@@ -112,6 +112,40 @@ final class PagePresentationHooksTest extends UnitTestCase {
   }
 
   /**
+   * Maps profile bio and social render arrays without flattening owner data.
+   */
+  public function testProfileDetailsMapsBioAndSocialSlots(): void {
+    foreach ([
+      'profile-bio' => ['Biografia', 'body', 'bio', 'studio-profile-bio-title'],
+      'profile-social' => ['Redes sociais', 'items', 'social_links', 'studio-profile-social-title'],
+    ] as $name => [$title, $sourceSlot, $targetSlot, $titleId]) {
+      $componentManager = $this->createMock(ComponentPluginManager::class);
+      $componentManager->expects(self::once())
+        ->method('hasDefinition')
+        ->with('aculta420_v2:profile-details')
+        ->willReturn(TRUE);
+      $hooks = $this->newHooks($componentManager);
+      $ownerContent = ['#theme' => 'item_list', '#items' => ['Rede autorizada']];
+      $actions = ['#theme' => 'item_list', '#items' => ['Editar']];
+      $variables = [
+        'name' => $name,
+        'props' => ['title' => $title],
+        'slots' => [$sourceSlot => $ownerContent, 'actions' => $actions],
+      ];
+
+      $hooks->preprocessPortalComponent($variables);
+
+      self::assertSame('aculta420_v2:profile-details', $variables['component']['#component']);
+      self::assertSame([
+        'title' => $title,
+        'title_id' => $titleId,
+        'heading_level' => 2,
+      ], $variables['component']['#props']);
+      self::assertSame([$targetSlot => $ownerContent, 'actions' => $actions], $variables['component']['#slots']);
+    }
+  }
+
+  /**
    * Leaves components outside the approved map on the Portal fallback.
    */
   public function testOtherComponentsKeepTheirExistingFallback(): void {

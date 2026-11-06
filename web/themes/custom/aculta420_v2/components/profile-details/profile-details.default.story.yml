@@ -1,0 +1,9 @@
+name: Biografia e redes sociais
+props:
+  title: Detalhes do perfil
+  title_id: profile-details-title
+  heading_level: 2
+slots:
+  bio: '<p>Biografia preparada pelo módulo proprietário.</p>'
+  social_links: '<ul><li><a href="https://example.invalid/">Rede social</a></li></ul>'
+  actions: '<a href="/meu-perfil">Editar detalhes</a>'
