@@ -1,10 +1,23 @@
 # Testes de navegador
 
-## Padrão vigente
+## Ordem de preferência
 
-Playwright com o Firefox distribuído pelo Playwright é o navegador único dos testes automatizados e do aceite visual. Chromium e WebKit não são navegadores de gate. Geckodriver, WebDriver e Firefox ESR do sistema não fazem parte do fluxo.
+Todos os métodos abaixo são permitidos. Use o primeiro que atender ao teste, nesta ordem, priorizando o que gera menos tokens:
 
-Versões fixadas no projeto: Node definido pelo ambiente, `@playwright/test` 1.56.1 e Firefox Playwright 142.0.1 (build Playwright 1495). A instalação usa apenas:
+1. **Navegador embutido (built-in browser):** ferramentas `mcp__Claude_Browser__*` ou `mcp__remote-devices__Claude_Browser__*`, quando disponíveis. Para leitura rápida da página e verificação pontual.
+2. **WebDriver:** Geckodriver com Firefox, quando o teste precisa de sessão controlada por driver.
+3. **Playwright:** Firefox distribuído pelo Playwright, em `tests/browser`. É o padrão para suítes repetíveis, com artefatos em `$SUITE_OUT`.
+4. **X11 com Gecko/Firefox ESR visível:** para aceite visual humano ou quando os métodos acima não reproduzem o caso.
+
+Regras de economia:
+
+- Confira por texto (título, status, atributo, contagem) sempre que possível. Capture imagem só para aparência.
+- Não repita o mesmo teste em mais de um método sem motivo. Se os resultados divergirem, registre qual prevaleceu e por quê.
+- No relatório, declare o método usado em cada teste.
+
+Chromium e WebKit ficam fora da ordem: uso complementar, declarado no relatório.
+
+Versões fixadas no projeto (método 3): Node definido pelo ambiente, `@playwright/test` 1.56.1 e Firefox Playwright 142.0.1 (build Playwright 1495). A instalação usa apenas:
 
 ```bash
 cd tests/browser
@@ -40,4 +53,4 @@ O runner espera condições com locators e `expect`; não usa `sleep` fixo. Capt
 
 O catálogo e as frentes estão em `tests/browser/README.md`. Cada frente mantém seu README e seus critérios; o runner comum fornece Firefox, espera, timeout, artefatos e códigos consistentes. Fluxos autenticados exigem variáveis de ambiente documentadas pela frente. Não grave credenciais nem evidências no Git.
 
-O padrão anterior está arquivado em `docs/history/operations/NAVEGADOR-TESTES-GECKODRIVER-2026-11-05.md`.
+O padrão anterior está arquivado em `docs/history/operations/NAVEGADOR-TESTES-GECKODRIVER-2026-11-05.md`. A ordem acima substitui a exclusão de Geckodriver e WebDriver, em decisão do responsável em 2026-11-06.
