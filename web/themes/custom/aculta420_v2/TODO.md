@@ -6,7 +6,7 @@ Estado: em desenvolvimento · versão 1.3.0 (`aculta420_v2.info.yml`) · status:
 
 Eventos: View pública da raiz usa `EventCatalogue` para IDs/props, preservando ACL, recorrência, ordenação e filtros; os cards usam `card-cultural`. Kernel Events passou: 155 testes/3.616 assertions (33 depreciações Core/contrib). Gates V2 aplicáveis passaram. Firefox ESR capturou listagem e detalhe em claro/escuro a 320/1440 px, foco visível e zero overflow em `$SUITE_OUT/layouts-purpose-events-cards-20261106-r2/`. Sem baseline anterior da listagem.
 
-Studio: `/conta`, `context-tabs`, `profile-identity`→`author-card` e `profile-bio`/`profile-social`→`profile-details` validados. Bio/redes: captura Firefox ESR antes/depois em `$SUITE_OUT/layouts-purpose-studio-profile-details-paired-20261106/{before,after}/`, 97/97 checks em cada rodada (22 ignorados, zero falhas), claro/escuro, 320/1440 px, foco e zero overflow. Revista usa seleção global `revista_accent` nas configurações do tema; aceite autenticado e capturas canônicas seguem pendentes. Loja aguarda autorização documentada; `price` fora. Gate Portal falha por divergências preexistentes.
+Studio: `/conta`, abas, identidade, bio e redes validados; comparação Firefox ESR 97/97, claro/escuro, 320/1440 px, foco e sem overflow. Revista usa seleção global `revista_accent`; aceite autenticado e capturas canônicas pendentes. Loja aguarda autorização; `price` fora. Gate Portal com divergências de status.
 
 ## Dívidas
 

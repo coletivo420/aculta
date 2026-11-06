@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-rc.1
+version: 0.1.0-rc.2
 state: RC
 progress_note: >-
   Incremento LOC-05: agenda de Local agora usa CalendarQuery com seleção de provider e CalendarAgenda para recorrência/overrides, integrada pelo provider Events. Testes completos Calendar: 128/433 PASS; Events: 128/2528 PASS. O incremento não altera o candidato RC anterior. A/B de Kernel e ICS contextual foram verificados em 2026-11-02; a matriz HTTP de purpose/host, demais consumidores e Runtime permanecem pendentes.
