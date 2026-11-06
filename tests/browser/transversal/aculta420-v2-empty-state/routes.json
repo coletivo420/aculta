@@ -3,6 +3,9 @@
   "purpose": "transversal",
   "origin_env": "ACULTA_SITE_ORIGIN",
   "source": "tests/browser/transversal/aculta420-v2-empty-state/README.md",
-  "public_routes": [],
+  "public_routes": [
+    { "path": "/" }
+  ],
+  "auth": { "account": "teste_comum" },
   "notes": "Sem rota pública própria: verifica o estado vazio do tema ACULTA420, que aparece em listas sem dados de teste. Cobertura fica no script da frente."
 }

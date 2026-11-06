@@ -3,6 +3,9 @@
   "purpose": "transversal",
   "origin_env": "ACULTA_SITE_ORIGIN",
   "source": "tests/browser/transversal/aculta-visual/README.md",
-  "public_routes": [],
+  "public_routes": [
+    { "path": "/" }
+  ],
+  "auth": { "account": "teste_comum" },
   "notes": "Sem rota pública declarada. Cobertura visual fica no script da frente."
 }

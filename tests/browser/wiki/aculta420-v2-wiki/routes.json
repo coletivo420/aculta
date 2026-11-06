@@ -3,6 +3,9 @@
   "purpose": "wiki",
   "origin_env": "WIKI_BASE",
   "source": "tests/browser/wiki/aculta420-v2-wiki/README.md",
-  "public_routes": [],
+  "public_routes": [
+    { "path": "/" }
+  ],
+  "auth": { "account": "teste_comum" },
   "notes": "Sem rota pública confirmada na README. A rota antiga /wiki/busca está descontinuada. Cobertura visual do tema na Wiki fica no script da frente."
 }

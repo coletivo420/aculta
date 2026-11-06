@@ -3,6 +3,9 @@
   "purpose": "main",
   "origin_env": "ACULTA_SITE_ORIGIN",
   "source": "tests/browser/aculta-patcher/README.md",
-  "public_routes": [],
+  "public_routes": [
+    { "path": "/" }
+  ],
+  "auth": { "account": "teste_comum" },
   "notes": "Sem rota pública declarada. Ferramenta de manutenção, sem página pública. Cobertura fica no script da frente."
 }

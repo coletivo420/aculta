@@ -3,6 +3,9 @@
   "purpose": "forum",
   "origin_env": "FORUM_BASE",
   "source": "tests/browser/forum/aculta420-v2-forum/README.md",
-  "public_routes": [],
+  "public_routes": [
+    { "path": "/" }
+  ],
+  "auth": { "account": "teste_comum" },
   "notes": "Sem rota pública confirmada na README. Cobertura visual do tema no fórum fica no script da frente."
 }

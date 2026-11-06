@@ -3,6 +3,9 @@
   "purpose": "main",
   "origin_env": "ACULTA_SITE_ORIGIN",
   "source": "tests/browser/aculta-portal-cep/README.md",
-  "public_routes": [],
+  "public_routes": [
+    { "path": "/" }
+  ],
+  "auth": { "account": "teste_comum" },
   "notes": "Sem rota pública. O teste de endereço usa link de uso único (test-account-address-browser.py) e sessão de conta de teste."
 }

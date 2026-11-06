@@ -3,6 +3,9 @@
   "purpose": "links",
   "origin_env": "LINKS_HOST",
   "source": "tests/browser/links/aculta-links/README.md",
-  "public_routes": [],
+  "public_routes": [
+    { "path": "/" }
+  ],
+  "auth": { "account": "teste_comum" },
   "notes": "Sem rota pública declarada. O teste usa uma micropágina de teste (LINK_SLUG, padrão pagina-teste-mobile) criada no servidor de desenvolvimento; não é rota fixa. Cobertura fica no script da frente."
 }

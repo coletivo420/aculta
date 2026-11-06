@@ -3,6 +3,9 @@
   "purpose": "transversal",
   "origin_env": "ACULTA_SITE_ORIGIN",
   "source": "tests/browser/transversal/aculta420-v2-navigation/README.md",
-  "public_routes": [],
+  "public_routes": [
+    { "path": "/" }
+  ],
+  "auth": { "account": "teste_comum" },
   "notes": "Sem rota pública própria: navegação do tema ACULTA420, incluindo barra administrativa com sessão. Cobertura fica nos scripts da frente."
 }

@@ -3,6 +3,9 @@
   "purpose": "transversal",
   "origin_env": "ACULTA_SITE_ORIGIN",
   "source": "tests/browser/transversal/aculta-editor/README.md",
-  "public_routes": [],
+  "public_routes": [
+    { "path": "/" }
+  ],
+  "auth": { "account": "teste_comum" },
   "notes": "Sem rota pública. O editor precisa de conta de teste e de /node/add/revista no host de revista. Cobertura fica no script da frente."
 }
