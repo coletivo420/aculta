@@ -1,0 +1,42 @@
+{
+  "frente": "menu-hamburguer (account-menu, ACULTA420 V2)",
+  "data": "2026-11-06",
+  "metodo": "Firefox ESR visivel (DISPLAY=:0), script tests/browser/transversal/aculta420-v2-account-menu/account-menu-visual.py",
+  "motor": "firefox",
+  "viewports_css_px": [
+    320,
+    1440
+  ],
+  "modos_de_cor": [
+    "light",
+    "dark"
+  ],
+  "estados": [
+    "anon",
+    "auth"
+  ],
+  "url_testada": "https://aculta.toca.net.br/",
+  "commit_testado": {
+    "antes": "239550cd7c",
+    "depois": "37efc667a2"
+  },
+  "antes": {
+    "itens_observados": 8
+  },
+  "depois": {
+    "itens": 178,
+    "aprovados": 177,
+    "falhas": [
+      "auth-light-320: Enter em /criar-conta/janela abre o formulário no diálogo (página não muda)"
+    ]
+  },
+  "pendencias": [
+    "Painel mudou para diálogo lateral com faixa esmaecida em e58c35d56f; capturas e checagens devem ser refeitas.",
+    "Primeiro teste autenticado (claro, 320 px) rodou sem sessão ativa; reexecutar.",
+    "Termos e Informações legais fora, a pedido."
+  ],
+  "arquivos": {
+    "antes": "before/*.png, before/results.json",
+    "depois": "after/*.png, after/results.json"
+  }
+}
