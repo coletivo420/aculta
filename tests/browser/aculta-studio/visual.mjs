@@ -182,6 +182,61 @@ try {
   check('sem rolagem horizontal em 1280 px', !d.overflow, `page=${d.pageWidth}px body=${d.bodyWidth}px viewport=${d.viewportWidth}px root-font=${d.rootFontSize} media48rem=${d.media48rem} gutter=${d.pageGutterToken} body-overflow-x=${d.bodyOverflowX} Studio=${d.studioWidth}/${d.studioClientWidth}px offenders=${JSON.stringify(d.overflowNodes)} chain=${JSON.stringify(d.overflowChain)}`);
   await shot('01-desktop');
 
+  const originalTheme = await exec(`return document.documentElement.getAttribute('data-theme');`);
+  for (const mode of ['light', 'dark']) {
+    for (const width of [320, 1440]) {
+      await setViewport(width, width < 500 ? 844 : 1000);
+      await exec(`document.documentElement.setAttribute('data-theme', '${mode}'); return true;`);
+      const focalTabs = JSON.parse(await exec(`return JSON.stringify((() => {
+        const root = document.querySelector('[data-component-id="aculta420_v2:tabs"]');
+        const links = root ? [...root.querySelectorAll('a')] : [];
+        return {
+          component: root?.getAttribute('data-component-id') || '',
+          links: links.length,
+          current: links.filter((link) => link.getAttribute('aria-current') === 'page').length,
+          viewport: innerWidth,
+          overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        };
+      })());`));
+      check(`context-tabs SDC presente em ${mode}/${width}px`, focalTabs.component === 'aculta420_v2:tabs' && focalTabs.links > 0 && focalTabs.current === 1, JSON.stringify(focalTabs));
+      await exec(`document.activeElement?.blur(); document.body.tabIndex = -1; document.body.focus(); return true;`);
+      let focusedTab = false;
+      for (let tab = 0; tab < 35; tab++) {
+        focusedTab = await exec(`return Boolean(document.activeElement?.closest('[data-component-id="aculta420_v2:tabs"]') && document.activeElement.matches('a:focus-visible'));`);
+        if (focusedTab) break;
+        await wd('POST', p('/actions'), { actions: [{ type: 'key', id: 'context-tabs-focus', actions: [{ type: 'keyDown', value: '\uE004' }, { type: 'keyUp', value: '\uE004' }] }] });
+      }
+      const tabFocusStates = [];
+      for (let index = 0; focusedTab && index < focalTabs.links; index++) {
+        tabFocusStates.push(JSON.parse(await exec(`return JSON.stringify((() => {
+          const root = document.querySelector('[data-component-id="aculta420_v2:tabs"]');
+          const link = document.activeElement;
+          const rect = link.getBoundingClientRect();
+          const style = getComputedStyle(link);
+          return {
+            link: link.matches('a') && root?.contains(link),
+            focusVisible: link.matches(':focus-visible') && style.outlineStyle !== 'none',
+            visible: rect.right > 0 && rect.left < innerWidth,
+            href: link.getAttribute('href'),
+            left: Math.round(rect.left),
+            right: Math.round(rect.right),
+            scrollLeft: root?.scrollLeft || 0,
+          };
+        })());`)));
+        if (index + 1 < focalTabs.links) {
+          await wd('POST', p('/actions'), { actions: [{ type: 'key', id: 'context-tabs-focus', actions: [{ type: 'keyDown', value: '\uE004' }, { type: 'keyUp', value: '\uE004' }] }] });
+        }
+      }
+      const everyTabKeyboardReachable = focusedTab && tabFocusStates.length === focalTabs.links && tabFocusStates.every((state) => state.link && state.focusVisible && state.visible);
+      check(`todos os links de context-tabs alcançáveis e visíveis por teclado em ${mode}/${width}px`, everyTabKeyboardReachable, JSON.stringify(tabFocusStates));
+      check(`sem overflow em context-tabs ${mode}/${width}px`, focalTabs.overflow <= 0, String(focalTabs.overflow));
+      await shot(`context-tabs-${mode}-${width}`);
+    }
+  }
+  if (originalTheme === null) await exec(`document.documentElement.removeAttribute('data-theme'); return true;`);
+  else await exec(`document.documentElement.setAttribute('data-theme', '${originalTheme}'); return true;`);
+  await setViewport(1280, 900);
+
   const magazineTabAvailable = await exec(`return [...document.querySelectorAll('[data-aculta-studio="tab"]')].some((a) => (a.getAttribute('href') || '').includes('/marley/revista'));`);
   if (magazineTabAvailable) {
     await navigateTo(PAGE.replace(/\/marley.*$/, '') + '/marley/revista/publicacoes/todos');

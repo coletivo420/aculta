@@ -23,6 +23,15 @@ de 3rem, 4rem ou 5rem, sem margens duplicadas.
 
 `visual.mjs` também verifica `/` (Studio Dashboard), `/perfil`, o shell AJAX de Conta e os owners Form API. `STUDIO_ACCOUNT_CONTEXT_PAGE=https://conta.aculta.toca.net.br/conta/dados` habilita a navegação de Conta. `STUDIO_EXPECT_MODERATION=no|yes` declara a expectativa da role para a aba “Comentários e moderação”; a verificação busca a aba real sob Revista e seu destino `/marley/revista/publicacoes/comentarios`.
 
+O mesmo teste produz a captura focal de `context-tabs` em `/marley` nos modos
+claro/escuro e 320/1440 px (`context-tabs-{light,dark}-{320,1440}.png`). Confere
+no DOM o SDC `aculta420_v2:tabs`, o link atual, foco via teclado em todos os
+links e ausência de overflow. A baseline anterior ao mapeamento `91c1b5af` está
+no diretório externo `layouts-purpose-studio-before-esr-20261105/`; as capturas
+posteriores desta validação estão em
+`layouts-purpose-studio-context-tabs-paired-r2-20261106/`. Execute com `SUITE_OUT`
+apontando para um diretório novo para preservar as duas evidências.
+
 `nojs.mjs` abre Firefox ESR com JavaScript desativado e confirma GET direto de Dados, shell/Form API, navegação HTML até Endereço e voltar. É uma verificação focal, não percorre todos os formulários. `visual.mjs` mede também rotas diretas com sessão, callbacks HTTP 403/404 e zoom real de Firefox a 200%/400%; esses cenários devem permanecer somente leitura.
 
 `orca-speech.mjs` valida anúncios reais do Orca no Firefox e mede a saída de áudio. Exige `BASE` (origem configurada do Runtime), `SUITE_OUT` fora do repositório, `ORCA_LOG` fora do repositório apontando ao log iniciado com `orca --replace --debug-file="$ORCA_LOG"`, Orca ativo na sessão gráfica e geckodriver (`GECKODRIVER`). O teste usa `teste.comum` somente para navegação/leitura; não submete formulários.

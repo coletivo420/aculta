@@ -6,13 +6,13 @@
 # Adoção por purpose — Eventos e revisão focal do Studio — 2026-11-06
 
 - **Objetivo:** publicar a listagem pública de Eventos com `card-cultural` e verificar o runtime do Studio.
-- **Estado:** Eventos usa View sobre os IDs/props preparados por `EventCatalogue`, mantendo ACL, recorrência, filtros e ordem. Kernel: 155/3.616 PASS; Unit: 30/62 PASS. Firefox ESR: dois cards, 8 estados (listagem/detalhe, claro/escuro, 320/1440), foco visível e zero overflow. A listagem não tinha baseline anterior. Studio: suíte 65/65, 22 ignoradas, zero falhas; captura atual em `$SUITE_OUT/layouts-purpose-studio-context-tabs-after-20261106/`. Ela não tem par antes comparável.
+- **Estado:** Eventos usa View sobre IDs/props de `EventCatalogue`, mantendo ACL, recorrência, filtros e ordem. Kernel: 155/3.616; Unit: 30/62. Firefox ESR: dois cards, 8 estados, foco e zero overflow. A listagem não tinha baseline. Studio: comparação `context-tabs` antes/depois; Firefox ESR 77/77, 22 ignoradas, zero falhas. DOM confirmou `aculta420_v2:tabs`; três links alcançados por teclado em claro/escuro e 320/1440 px. Baseline em `layouts-purpose-studio-before-esr-20261105/`; atual em `layouts-purpose-studio-context-tabs-paired-r2-20261106/`.
 - **Decisões e alternativas descartadas:** a View não seleciona ocorrências nem concede acesso; `EventCatalogue` continua autoridade. Loja aguarda autorização; Revista não lê accent fora do UI Styles.
 - **Cuidados:** cache dos cards expira junto da ocorrência; args de Views vêm do mapa interno por requisição. Baselines em `$SUITE_OUT/layouts-purpose-baseline-20261105/` foram preservadas.
 - **Commits e arquivos:** `1585167034` publicado; módulo Events, View/config, templates e CSS V2, testes e docs de purpose.
 - **Verificações:** V2 foundations, mapped classes, SDC schema/render, browser validators, module/theme boundary, PHPCS, YAML e diff check PASS. Portal Drupal 12 gate falha por divergências preexistentes de versões/status em outros módulos e índice README. `drush cr` PASS; `config:status` só lista diferenças antigas.
-- **Pendências e bloqueios:** comparação antes/depois focal de `context-tabs`; seleção por entidade suportada para Revista; Loja autorizada; perfis Studio sem mapeamento. Stash de hooks Studio não validados permanece intocado.
-- **Próximo passo:** capturar uma baseline comparável de consumer real `context-tabs` ou validar outro SDC isoladamente; manter Revista e Loja pendentes até seus bloqueios serem resolvidos.
+- **Pendências e bloqueios:** Revista aguarda escolha por entidade suportada pelo UI Styles; Loja aguarda autorização; famílias `profile-*` do Studio não mapeadas. Stashes de hooks Studio não validados permanecem intactos.
+- **Próximo passo:** escolher uma família de perfil Studio e validá-la isoladamente com comparação antes/depois; manter Revista e Loja pendentes até seus bloqueios serem resolvidos.
 
 # Fase 5 — Componentes e templates (SDC consumers integrados) — 2026-11-05
 

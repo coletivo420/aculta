@@ -1,5 +1,14 @@
 # Changelog — ACULTA420 V2
 
+## Não versionado — validação focal do SDC `tabs` no Studio
+
+- Comparado `/marley` antes e depois do mapeamento `context-tabs`→`tabs`:
+  baseline pré-`91c1b5af` em `layouts-purpose-studio-before-esr-20261105/` e
+  estado atual em `layouts-purpose-studio-context-tabs-paired-r2-20261106/`.
+- Firefox ESR: 77/77 verificações, 22 ignoradas, zero falhas. DOM confirmou o
+  SDC e os três links; teclado alcançou cada link com foco visível nos modos
+  claro/escuro e 320/1440 px. Sem overflow da página.
+
 ## Não versionado — card-cultural na listagem pública de Eventos
 
 - A View pública `eventos_publicos` é consumida pela raiz do purpose Eventos e
