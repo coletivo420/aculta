@@ -34,4 +34,4 @@ props:
             type: boolean
           icon:
             type: string
-            description: Nome do ícone Phosphor duotone (ex.: house, squares-four).
+            description: "Nome do ícone Phosphor duotone (ex.: house, squares-four)."
