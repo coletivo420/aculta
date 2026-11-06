@@ -18,22 +18,19 @@
   "url_testada": "https://aculta.toca.net.br/",
   "commit_testado": {
     "antes": "239550cd7c",
-    "depois": "37efc667a2"
+    "depois": "5b921297a7"
   },
   "antes": {
     "itens_observados": 8
   },
   "depois": {
     "itens": 178,
-    "aprovados": 177,
-    "falhas": [
-      "auth-light-320: Enter em /criar-conta/janela abre o formulário no diálogo (página não muda)"
-    ]
+    "aprovados": 178,
+    "falhas": []
   },
   "pendencias": [
-    "Painel mudou para diálogo lateral com faixa esmaecida em e58c35d56f; capturas e checagens devem ser refeitas.",
-    "Primeiro teste autenticado (claro, 320 px) rodou sem sessão ativa; reexecutar.",
-    "Termos e Informações legais fora, a pedido."
+    "Termos e Informações legais fora, a pedido.",
+    "Sessão autenticada do primeiro teste (claro, 320 px) validada nesta rodada."
   ],
   "arquivos": {
     "antes": "before/*.png, before/results.json",
