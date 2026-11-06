@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Drupal\aculta420_v2\Layout\PurposeContainerLayout;
 use Drupal\aculta420_v2\Palette\PurposePaletteSchemes;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -301,5 +302,81 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
     }
 
     $form['aculta_cores_purpose']['aculta_purpose_palette'][$purpose] = $cardWrapper;
+  }
+
+  // Subaba: Layout de container por purpose (docs/architecture/PLANO-LAYOUT-CONTAINER-POR-PURPOSE.md).
+  $form['aculta_container_purpose'] = [
+    '#type' => 'details',
+    '#title' => t('Layout de container'),
+    '#description' => t('Define o modo e a largura do container para cada purpose. Celular (abaixo de 60 rem) usa sempre largura 100%.'),
+    '#open' => TRUE,
+  ];
+
+  $savedContainers = theme_get_setting('aculta_purpose_container') ?? [];
+  if (!is_array($savedContainers)) {
+    $savedContainers = [];
+  }
+
+  $modeOptions = PurposeContainerLayout::getModeOptions();
+
+  $form['aculta_container_purpose']['aculta_purpose_container'] = [
+    '#type' => 'container',
+    '#attributes' => ['class' => ['aculta-purpose-cards-grid', 'aculta-container-cards-grid']],
+    '#tree' => TRUE,
+  ];
+
+  foreach ($activePurposes as $purpose) {
+    if (!is_string($purpose)) {
+      continue;
+    }
+
+    $currentSetting = PurposeContainerLayout::sanitizeSetting($savedContainers[$purpose] ?? NULL, $purpose);
+
+    $cardWrapper = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['aculta-purpose-card', 'aculta-container-card'],
+        'data-purpose-container-card' => $purpose,
+      ],
+    ];
+
+    $cardWrapper['title'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'h3',
+      '#value' => $purposeLabels[$purpose] ?? ucfirst($purpose),
+      '#attributes' => ['class' => ['aculta-purpose-card__title']],
+    ];
+
+    $cardWrapper['mode'] = [
+      '#type' => 'select',
+      '#title' => t('Modo'),
+      '#options' => $modeOptions,
+      '#default_value' => $currentSetting['mode'],
+      '#parents' => ['aculta_purpose_container', $purpose, 'mode'],
+    ];
+
+    $cardWrapper['container_width'] = [
+      '#type' => 'number',
+      '#title' => t('Largura do container (px)'),
+      '#description' => t('De 960 a 1600 px (padrão 1200 px). Contained sugere 1000 px e Max full width sugere 1400 px.'),
+      '#default_value' => $currentSetting['container_width'],
+      '#min' => PurposeContainerLayout::CONTAINER_WIDTH_MIN,
+      '#max' => PurposeContainerLayout::CONTAINER_WIDTH_MAX,
+      '#step' => 10,
+      '#parents' => ['aculta_purpose_container', $purpose, 'container_width'],
+    ];
+
+    $cardWrapper['narrow_width'] = [
+      '#type' => 'number',
+      '#title' => t('Largura estreita (px)'),
+      '#description' => t('De 600 a 900 px (padrão 750 px), para páginas de leitura.'),
+      '#default_value' => $currentSetting['narrow_width'],
+      '#min' => PurposeContainerLayout::NARROW_WIDTH_MIN,
+      '#max' => PurposeContainerLayout::NARROW_WIDTH_MAX,
+      '#step' => 10,
+      '#parents' => ['aculta_purpose_container', $purpose, 'narrow_width'],
+    ];
+
+    $form['aculta_container_purpose']['aculta_purpose_container'][$purpose] = $cardWrapper;
   }
 }
