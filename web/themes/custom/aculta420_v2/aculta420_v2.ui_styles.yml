@@ -19,6 +19,16 @@ card_accent:
     card-cultural--accent-red: "Faixa de acento vermelha"
   previewed_as: hidden
 
+revista_accent:
+  category: "Revista"
+  label: "Faixa de acento da publicação"
+  description: "Escolha a faixa de acento da publicação da Revista."
+  options:
+    revista-teaser--accent-green: "Verde"
+    revista-teaser--accent-yellow: "Amarela"
+    revista-teaser--accent-red: "Vermelha"
+  previewed_as: hidden
+
 purpose_palette:
   category: "Cores por purpose"
   label: "Esquema da paleta por purpose"

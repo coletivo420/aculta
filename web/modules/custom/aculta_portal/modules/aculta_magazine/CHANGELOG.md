@@ -1,3 +1,9 @@
+## 0.5.0-dev.19 — escolha administrativa de accent na Revista
+
+- Campo nativo `field_revista_accent` no owner `aculta_magazine`; o formulário usa o widget UI Styles com três opções fechadas, sem classes livres.
+- O hook aplica a classe oficial ao wrapper do teaser; CSS do componente garante que a escolha administrativa prevaleça sobre o accent automático do Portal.
+- Gate UI Styles: 24 verificações PASS. PHPUnit focal: 6 testes/33 assertions PASS (7 depreciações PHPUnit). Runtime local recebeu o campo; validação visual no servidor de desenvolvimento permanece pendente.
+
 ## 0.5.0-dev.18 — capa pela escolha de envio recente do Studio
 
 - `MediaLibraryWidget::validateRequired` lê a seleção do **user input** bruto, antes dos handlers de `#validate`. A escolha agora é convertida no `#after_build` do formulário da Revista, que grava a Media criada no form state **e** no user input, e relaxa `#required` de novo.

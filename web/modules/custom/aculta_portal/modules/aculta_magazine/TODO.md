@@ -1,10 +1,10 @@
 # TODO — aculta_magazine
 
-Estado: Dev · versão 0.5.0-dev.18 (`aculta_magazine.info.yml`) · status: `docs/operations/status/aculta_magazine.yml`.
+Estado: Dev · versão 0.5.0-dev.19 (`aculta_magazine.info.yml`) · status: `docs/operations/status/aculta_magazine.yml`.
 
 ## Próximo passo
 
-Em janela autorizada, servir o código candidato `.16` e validar por HTTP as rotas administrativas/Marley, capacidades, workflow e discussão contextual, sem importar Config Sync global. Homologar no Firefox ESR/X11 com dados sintéticos após alinhar o checkout servido. Referências: contratos `aculta_magazine/docs/STUDIO-INTEGRATION-CONTRACT.md` e `docs/portal/STUDIO-MAGAZINE-ROADMAP.md`.
+Validar no servidor de desenvolvimento o formulário nativo de accent por publicação e a precedência visual sobre o accent do Portal. O campo `field_revista_accent` e o adapter UI Styles estão no código; o browser ainda não foi executado com essa versão. Não gravar escolha em conteúdo existente sem fixture autorizada.
 
 ## Leitura
 

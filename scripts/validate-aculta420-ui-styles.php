@@ -20,6 +20,7 @@ $tokensFile = $theme . '/src/Hook/PortalUiHooks.php';
 $schemesFile = $theme . '/src/Palette/PurposePaletteSchemes.php';
 $buttonCssFile = $theme . '/components/button/button.css';
 $cardCssFile = $theme . '/components/card-cultural/card-cultural.css';
+$revistaCssFile = $theme . '/components/revista-teaser/revista-teaser.css';
 
 $fail = static function (string $message): never {
   fwrite(STDERR, "FAIL: $message\n");
@@ -66,6 +67,7 @@ foreach ($portalTokens as $classes) {
 
 $buttonCss = (string) file_get_contents($buttonCssFile);
 $cardCss = (string) file_get_contents($cardCssFile);
+$revistaCss = (string) file_get_contents($revistaCssFile);
 
 $checks = 0;
 
@@ -105,6 +107,22 @@ foreach ($definitions as $id => $definition) {
         $fail("Classe de faixa de cartão '$classOrKey' não está mapeada em PortalUiHooks::TOKENS.");
       }
     }
+    elseif ($id === 'revista_accent') {
+      if (!in_array($classOrKey, [
+        'revista-teaser--accent-green',
+        'revista-teaser--accent-yellow',
+        'revista-teaser--accent-red',
+      ], TRUE)) {
+        $fail("Classe '$classOrKey' não pertence às três escolhas da Revista.");
+      }
+      if (!str_contains($revistaCss, '.' . $classOrKey)) {
+        $fail("Opção '$classOrKey' não possui regra em $revistaCssFile.");
+      }
+      $token = 'revista-teaser-accent-' . substr($classOrKey, strlen('revista-teaser--accent-'));
+      if (!isset($mappedClasses[$classOrKey]) || !isset($portalTokens[$token])) {
+        $fail("Classe da Revista '$classOrKey' não está mapeada no PortalUiHooks::TOKENS.");
+      }
+    }
     elseif ($id === 'purpose_palette') {
       // Must exist in PurposePaletteSchemes::SCHEMES.
       if (!isset(PurposePaletteSchemes::SCHEMES[$classOrKey])) {
@@ -112,6 +130,10 @@ foreach ($definitions as $id => $definition) {
       }
     }
   }
+}
+
+if (isset($definitions['revista_accent']['options']) && count($definitions['revista_accent']['options']) !== 3) {
+  $fail('revista_accent deve expor exatamente três opções fechadas.');
 }
 
 echo "ACULTA420 UI STYLES GATE: PASS ({$checks} verificações em aculta420_v2.ui_styles.yml)\n";

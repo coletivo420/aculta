@@ -1,3 +1,9 @@
+## Não versionado — seleção administrativa de accent da Revista
+
+- `aculta_magazine` armazena a escolha em campo nativo, expõe três opções pelo widget oficial UI Styles e aplica a classe ao wrapper do teaser. O CSS do componente assegura precedência administrativa sobre o accent do Portal.
+- Gate UI Styles: 24 verificações PASS; PHPUnit focal: 6 testes/33 assertions PASS (sete depreciações PHPUnit). A atualização de campo foi aplicada somente ao Drupal local e a atualização pendente de outro módulo foi preservada.
+- Firefox ESR no servidor com esta versão ainda não executado; a validação visual continua pendente.
+
 # Changelog — ACULTA420 V2
 
 ## Não versionado — `profile-details` no Studio
@@ -11,8 +17,7 @@
   cada rodada, 22 ignorados, zero falhas; claro/escuro, 320/1440 px, foco e
   zero overflow. Capturas em
   `$SUITE_OUT/layouts-purpose-studio-profile-details-paired-20261106/{before,after}/`.
-- Revista permanece sem mudança: seleção por nó exigiria integração ampla de
-  UI Styles. Loja continua aguardando autorização documentada.
+- Loja continua aguardando autorização documentada.
 
 ## Não versionado — Studio `profile-identity` com `author-card`
 

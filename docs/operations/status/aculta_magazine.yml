@@ -1,29 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.5.0-dev.18
+version: 0.5.0-dev.19
 state: Dev
 progress_note: >-
-  Dev.18: capa pela escolha de envio recente do Studio validada no Runtime — Revista 605 salva com fid 786 e cria a media 284 (image, publicada); a conversão acontece no #after_build e grava também o user input, que o MediaLibraryWidget lê antes do #validate.
-  Dev.17: a imagem editorial aceita envio recente do Studio (integração
-  `revista`), somado aos envios novos. Unit Magazine 43/179 PASS; upload
-  autenticado no Runtime pendente.
-  Dev.16: `EditorialCapabilitiesForm` usa Entity Storage injetado; removida
-  dependência `entity_usage` duplicada. Unit/Kernel completos: 54 testes / 712
-  assertions PASS; PHP lint 32/32 e PHPCS Drupal/DrupalPractice sem erros ou
-  avisos. O teste Kernel verifica as opções dos três grupos de capacidade e
-  omissão do papel `anonymous`. Provider v3 usa `entity_usage` na revisão atual para emitir
-  `embedded_video` apenas para Media `remote_video` embutido no campo `body`;
-  sem leitura do corpo nem projeção da URL/thumbnail. Unit 7/43, Kernel Index
-  Magazine 1/18, Kernel de acesso 2/31 e integração real dos providers 2/89
-  PASS em `aculta_simpletest`. Acesso do alvo é revalidado pelo
-  consumidor do Index; sem escrita Runtime. A central
-  administrativa `/painel-administrativo/revista` e rotas
-  editoriais `/marley/revista/*` implementadas, incluindo configuração de
-  capacidades, Forms, transições do workflow e discussão contextual Comment via
-  `aculta_forum`. Unit Magazine/Forum/Studio 285/285 (2040 assertions), PHP
-  lint e PHPCS PASS; Kernel do campo compartilhado 1/1 (18 assertions) PASS no
-  `aculta_simpletest`. MCP read-only em 2026-10-31 reportou zero diferenças
-  de configuração; a árvore `config/sync` desta branch coincide com a do
-  checkout servido. O módulo ativo está em `0.5.0-dev.14` e não recebeu
-  alterações; nenhum import/escrita Runtime. Firefox/X11 e homologação
-  funcional do código candidato permanecem pendentes. Revalidação 2026-11-02: Magazine Unit 41/168 e Kernel `RevistaEditorialAccessKernelTest` 13/544 PASS; Fórum Unit 189/1.348 PASS; comentários continuam no `field_aculta_discussion` via contexto `publication` do `aculta_forum`. Não foi executado fluxo HTTP completo de comentário/moderação no Runtime.
-next_phase: 'Em janela autorizada, servir o código candidato `.16` e validar por HTTP as rotas administrativas/Marley, capacidades, workflow e discussão contextual, sem importar Config Sync global. Homologar no Firefox ESR/X11 com dados sintéticos após alinhar o checkout servido. Referências: contratos `aculta_magazine/docs/STUDIO-INTEGRATION-CONTRACT.md` e `docs/portal/STUDIO-MAGAZINE-ROADMAP.md`.'
+  Dev.19: campo nativo `field_revista_accent` e adapter UI Styles por nó. Gate UI Styles 24 checks e PHPUnit focal 6/33 PASS. Campo aplicado no Drupal local; captura Firefox ESR no servidor de desenvolvimento pendente.
+next_phase: 'Validar no Runtime de desenvolvimento o seletor UI Styles em edição de publicação e a precedência do accent por captura Firefox ESR; preservar a configuração e conteúdo existentes. Referências: `docs/layouts-por-purpose.md` e contrato do componente `revista-teaser`.'
