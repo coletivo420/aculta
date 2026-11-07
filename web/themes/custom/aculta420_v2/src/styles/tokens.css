@@ -148,6 +148,65 @@
   --shadow-md: 0 4px 8px rgb(0 0 0 / 24%);
   --shadow-lg: 0 10px 15px rgb(0 0 0 / 10%);
 
+  /* Tokens semânticos --aculta-* exigidos pelo contrato de fundamentos de
+     design. Os valores são literais e espelham os --color-* equivalentes;
+     ainda não há consumidor, portanto não alteram a aparência do site. */
+  --aculta-surface-page: #f2f7f0; /* --color-canvas */
+  --aculta-surface-raised: #fff; /* --color-surface-raised */
+  --aculta-surface-muted: #f3f4f6; /* --color-surface-subtle */
+  --aculta-surface-header: #fff; /* --color-surface */
+  --aculta-surface-interactive: #f2f7f0; /* --button-secondary-bg-hover (equivalente mais próximo) */
+  --aculta-surface-page-rgb: 242, 247, 240; /* canais de --color-canvas */
+  --aculta-text-primary: #0c3c29; /* --color-text-primary */
+  --aculta-text-secondary: #4d6357; /* --color-text-secondary */
+  --aculta-text-muted: #5a6b60; /* --color-text-muted */
+  --aculta-text-inverse: #fff; /* --color-on-brand */
+  --aculta-text-accent: #7a4b00; /* --color-warning-text: acento legível sobre superfície clara */
+  --aculta-border-subtle: #f3f4f6; /* --color-surface-subtle (equivalente mais próximo) */
+  --aculta-border-default: #6b7d70; /* --color-border */
+  --aculta-border-strong: #4d6357; /* --color-text-secondary */
+  --aculta-border-accent: #a98d26; /* --color-border-highlight */
+  --aculta-interactive-bg: #fff; /* --button-secondary-bg */
+  --aculta-interactive-text: #0c3c29; /* --button-secondary-fg */
+  --aculta-interactive-border: #6b7d70; /* --button-secondary-border */
+  --aculta-interactive-hover-bg: #f2f7f0; /* --button-secondary-bg-hover */
+  --aculta-interactive-hover-text: #0c3c29; /* --button-secondary-fg */
+  --aculta-interactive-active-bg: #e4ece1; /* --button-secondary-bg-active */
+  --aculta-interactive-active-text: #0c3c29; /* --button-secondary-fg */
+  --aculta-focus-ring: #0c3c29; /* --focus-ring */
+  --aculta-shell-institution-bg: #fbf4e8; /* --color-surface-institution */
+  --aculta-shell-institution-text: #0c3c29; /* --color-text-primary */
+  --aculta-shell-domain-bg: #fff; /* --color-surface */
+  --aculta-shell-domain-text: #0c3c29; /* --color-text-primary */
+  --aculta-shell-border: #6b7d70; /* --color-border */
+  --aculta-shell-active-bg: #0c3c29; /* --button-primary-bg */
+  --aculta-shell-active-text: #fff; /* --button-primary-fg */
+  --aculta-green: #689427; /* --palette-green */
+  --aculta-green-dark: #0c3c29; /* --color-brand-primary */
+  --aculta-yellow: #f2ca36; /* --color-brand-highlight */
+  --aculta-red: #d4452d; /* --palette-red */
+  --aculta-cream: #fbf4e8; /* --color-surface-institution */
+  --aculta-white: #fff; /* --color-white */
+  --aculta-button-primary-bg: #0c3c29; /* --button-primary-bg */
+  --aculta-button-primary-text: #fff; /* --button-primary-fg */
+  --aculta-button-secondary-bg: #fff; /* --button-secondary-bg */
+  --aculta-button-secondary-text: #0c3c29; /* --button-secondary-fg */
+  --aculta-button-secondary-border: #6b7d70; /* --button-secondary-border */
+  --aculta-button-hover-bg: #092b1d; /* --button-primary-bg-hover */
+  --aculta-button-hover-text: #fff; /* --button-primary-fg */
+  --aculta-nav-current-bg: #f2f7f0; /* --button-secondary-bg-hover (equivalente mais próximo) */
+  --aculta-nav-current-text: #0c3c29; /* --color-text-primary */
+  --aculta-nav-current-underline: #f2ca36; /* --color-brand-highlight */
+  --aculta-nav-hover-bg: #f2f7f0; /* --button-secondary-bg-hover */
+  --aculta-nav-hover-text: #0c3c29; /* --color-text-primary */
+  --aculta-nav-hover-underline: #689427; /* --palette-green */
+  --aculta-link-editorial: #b52f22; /* --color-link-editorial */
+  --aculta-link-editorial-hover: #0c3c29; /* --color-link-editorial-hover */
+  --aculta-link: #0c3c29; /* --color-brand-primary */
+  --aculta-border: #6b7d70; /* --color-border */
+  --aculta-control-border: #6b7d70; /* --color-border */
+  --aculta-focus: #0c3c29; /* --color-focus-ring */
+
   color-scheme: light;
 }
 
@@ -212,6 +271,64 @@
   --purpose-surface-1: #282421;
   --purpose-surface-2: #39342f;
   --purpose-surface-3: #49433d;
+
+  /* Tokens semânticos --aculta-* no modo escuro. Valores literais; não há
+     consumidor ainda, portanto não alteram a aparência do site. */
+  --aculta-surface-page: #171513; /* --color-canvas */
+  --aculta-surface-raised: #211e1b; /* --color-surface (superfície neutra escura aprovada) */
+  --aculta-surface-muted: #2b2723; /* --color-surface-raised */
+  --aculta-surface-header: #211e1b; /* --color-surface */
+  --aculta-surface-interactive: #302b27; /* superfície neutra escura aprovada */
+  --aculta-surface-page-rgb: 23, 21, 19; /* canais de --color-canvas */
+  --aculta-text-primary: #f4efe8; /* --color-text-primary */
+  --aculta-text-secondary: #d8d0c8; /* --color-text-secondary */
+  --aculta-text-muted: #b7aea5; /* --color-text-muted */
+  --aculta-text-inverse: #171513; /* --color-on-brand */
+  --aculta-text-accent: #f2ca36; /* --color-brand-highlight */
+  --aculta-border-subtle: #2b2723; /* --color-surface-raised (equivalente mais próximo) */
+  --aculta-border-default: #6b7d70; /* --color-border */
+  --aculta-border-strong: #d8d0c8; /* --color-text-secondary */
+  --aculta-border-accent: #f2ca36; /* --color-border-highlight */
+  --aculta-interactive-bg: #2b2723; /* --button-secondary-bg */
+  --aculta-interactive-text: #f4efe8; /* --button-secondary-fg */
+  --aculta-interactive-border: #8fa397; /* --button-secondary-border */
+  --aculta-interactive-hover-bg: #3a352f; /* --button-secondary-bg-hover */
+  --aculta-interactive-hover-text: #f4efe8; /* --button-secondary-fg */
+  --aculta-interactive-active-bg: #322d28; /* --button-secondary-bg-active */
+  --aculta-interactive-active-text: #f4efe8; /* --button-secondary-fg */
+  --aculta-focus-ring: #f4efe8; /* --button-focus-ring */
+  --aculta-shell-institution-bg: #2b2723; /* --color-surface-institution */
+  --aculta-shell-institution-text: #f4efe8; /* --color-text-primary */
+  --aculta-shell-domain-bg: #211e1b; /* --color-surface */
+  --aculta-shell-domain-text: #f4efe8; /* --color-text-primary */
+  --aculta-shell-border: #6b7d70; /* --color-border */
+  --aculta-shell-active-bg: #9ac15a; /* --button-primary-bg */
+  --aculta-shell-active-text: #171513; /* --button-primary-fg */
+  --aculta-green: #689427; /* --palette-green */
+  --aculta-green-dark: #9ac15a; /* --color-brand-primary */
+  --aculta-yellow: #f2ca36; /* --color-brand-highlight */
+  --aculta-red: #ff9da5; /* --color-error */
+  --aculta-cream: #2b2723; /* --color-surface-institution */
+  --aculta-white: #fff; /* --color-white */
+  --aculta-button-primary-bg: #9ac15a; /* --button-primary-bg */
+  --aculta-button-primary-text: #171513; /* --button-primary-fg */
+  --aculta-button-secondary-bg: #2b2723; /* --button-secondary-bg */
+  --aculta-button-secondary-text: #f4efe8; /* --button-secondary-fg */
+  --aculta-button-secondary-border: #8fa397; /* --button-secondary-border */
+  --aculta-button-hover-bg: #a5c86d; /* --button-primary-bg-hover */
+  --aculta-button-hover-text: #171513; /* --button-primary-fg */
+  --aculta-nav-current-bg: #3a352f; /* --button-secondary-bg-hover (equivalente mais próximo) */
+  --aculta-nav-current-text: #f4efe8; /* --color-text-primary */
+  --aculta-nav-current-underline: #f2ca36; /* --color-brand-highlight */
+  --aculta-nav-hover-bg: #3a352f; /* --button-secondary-bg-hover */
+  --aculta-nav-hover-text: #f4efe8; /* --color-text-primary */
+  --aculta-nav-hover-underline: #9ac15a; /* --color-brand-primary */
+  --aculta-link-editorial: #f08a76; /* --color-link-editorial */
+  --aculta-link-editorial-hover: #f4efe8; /* --color-link-editorial-hover */
+  --aculta-link: #9ac15a; /* --color-brand-primary */
+  --aculta-border: #6b7d70; /* --color-border */
+  --aculta-control-border: #8fa397; /* --button-secondary-border */
+  --aculta-focus: #f4efe8; /* --color-focus-ring */
 
   color-scheme: dark;
 }
