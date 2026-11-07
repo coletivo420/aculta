@@ -107,6 +107,9 @@ aculta420_v2.purpose_container_layout:
     mode:
       type: string
       label: 'Modo do container (default, full, narrow)'
+    style:
+      type: string
+      label: 'Estilo do container (boxed, unboxed); vale para default e narrow'
     container_width:
       type: integer
       label: 'Largura do container (px)'

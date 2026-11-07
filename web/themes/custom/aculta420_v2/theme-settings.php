@@ -355,6 +355,15 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
       '#parents' => ['aculta_purpose_container', $purpose, 'mode'],
     ];
 
+    $cardWrapper['style'] = [
+      '#type' => 'select',
+      '#title' => t('Estilo'),
+      '#description' => t('Caixa ou sem caixa. Vale só para Padrão e Estreito; Largura total não tem estilo (como no Astra).'),
+      '#options' => PurposeContainerLayout::getStyleOptions(),
+      '#default_value' => $currentSetting['style'],
+      '#parents' => ['aculta_purpose_container', $purpose, 'style'],
+    ];
+
     $cardWrapper['container_width'] = [
       '#type' => 'number',
       '#title' => t('Largura do container (px)'),

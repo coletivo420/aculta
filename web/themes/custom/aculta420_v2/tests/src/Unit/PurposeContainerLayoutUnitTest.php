@@ -105,4 +105,30 @@ final class PurposeContainerLayoutUnitTest extends UnitTestCase {
     self::assertNull(PurposeContainerLayout::resolveContainerStyle([], NULL));
   }
 
+
+  /**
+   * Estilo Caixa é o padrão; valores inválidos caem nele.
+   */
+  public function testStyleDefaultsToBoxedAndRejectsInvalid(): void {
+    self::assertSame('boxed', PurposeContainerLayout::getDefaultSettings('main')['style']);
+    self::assertSame('boxed', PurposeContainerLayout::sanitizeSetting(['style' => 'x'])['style']);
+    self::assertSame('unboxed', PurposeContainerLayout::sanitizeSetting(['style' => 'unboxed'])['style']);
+    self::assertSame(['boxed', 'unboxed'], array_keys(PurposeContainerLayout::getStyleOptions()));
+  }
+
+  /**
+   * Como no Astra, o estilo vale para Padrão e Estreito, e não para Largura total.
+   */
+  public function testStyleAppliesOnlyToDefaultAndNarrow(): void {
+    $default = PurposeContainerLayout::resolveContainerStyle(['main' => ['mode' => 'default', 'style' => 'unboxed']], 'main');
+    self::assertSame('unboxed', $default['style']);
+
+    $narrow = PurposeContainerLayout::resolveContainerStyle(['main' => ['mode' => 'narrow', 'style' => 'boxed']], 'main');
+    self::assertSame('boxed', $narrow['style']);
+
+    $full = PurposeContainerLayout::resolveContainerStyle(['main' => ['mode' => 'full', 'style' => 'boxed']], 'main');
+    self::assertSame('full', $full['mode']);
+    self::assertNull($full['style']);
+  }
+
 }

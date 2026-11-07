@@ -72,6 +72,8 @@ final class ThemeSettingsContainerFormKernelTest extends KernelTestBase {
     $mainCard = $grid['main'];
     self::assertSame('select', $mainCard['mode']['#type']);
     self::assertSame('default', $mainCard['mode']['#default_value']);
+    self::assertSame('select', $mainCard['style']['#type']);
+    self::assertSame('boxed', $mainCard['style']['#default_value']);
     self::assertSame('number', $mainCard['container_width']['#type']);
     self::assertSame(1200, $mainCard['container_width']['#default_value']);
     self::assertSame('number', $mainCard['narrow_width']['#type']);

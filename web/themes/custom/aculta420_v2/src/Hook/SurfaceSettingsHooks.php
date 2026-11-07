@@ -65,6 +65,9 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
       }
       if ($containerStyle !== NULL) {
         $htmlAttributes->setAttribute('data-purpose-layout', $containerStyle['mode']);
+        if ($containerStyle['style'] !== NULL) {
+          $htmlAttributes->setAttribute('data-purpose-style', $containerStyle['style']);
+        }
         foreach ($containerStyle['variables'] as $name => $value) {
           $styles[] = $name . ': ' . $value . ';';
         }

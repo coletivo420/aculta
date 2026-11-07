@@ -160,6 +160,14 @@
     grid-template-columns: minmax(0, 2fr) minmax(14rem, 1fr);
   }
 
+  /* Estilo do container (aculta420_v2): Caixa vale para Padrão e Estreito; sem caixa é o padrão do CSS. */
+  html[data-purpose-style="boxed"]:is([data-purpose-layout="default"], [data-purpose-layout="narrow"]) .layout-page__content {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+  }
+
   /* Modos de layout de container por purpose (aculta420_v2): Padrão, Largura total e Estreito. */
   /* Padrão: sem regra extra; a caixa usa --aculta-container-width (1200 px). */
 
