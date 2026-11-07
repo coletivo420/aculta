@@ -2470,8 +2470,3 @@ body.path-ganjalab .aculta-main :is(h1, h2, h3, h4, h5, h6) {
   margin-block-start: auto;
   flex-shrink: 0;
 }
-
-/* Conta (conta.aculta.*): sem a faixa de logo e menu do domínio. */
-html[data-purpose="account"] .navigation-bar {
-  display: none;
-}

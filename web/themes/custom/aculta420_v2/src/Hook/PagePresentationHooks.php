@@ -486,6 +486,12 @@ final class PagePresentationHooks {
       unset($variables['page']['header'][$menu_key]);
     }
 
+    // Área da conta: a faixa de logo e menu do domínio é removida; permanece só a barra institucional.
+    if (!empty($variables['domain_presentation']['layout']['institution_bar_account'])) {
+      unset($variables['page']['header'][$targetKey]);
+      return;
+    }
+
     $slots = [];
     if ($brand !== NULL) {
       $slots['brand'] = $brand;
