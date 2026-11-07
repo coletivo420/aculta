@@ -190,3 +190,12 @@ Com JavaScript desligado, os links dos gatilhos continuam válidos: o login e a 
 - Drupal `^11.5 || ^12`. O desenvolvimento roda no 11.5 do servidor de desenvolvimento. Compatibilidade com 12 é meta, sem validação ainda (ADR-045).
 - Ícones Phosphor (MIT, Core 2.1.1) estão vendorizados em `assets/icons/phosphor/` e são injetados inline pelo componente `icon`.
 - Não há UI Styles nem CTools no tema hoje. UI Styles entra na Fase 4; CTools fica no Portal, conforme ADR-044.
+
+
+## Fórum Growroom420 — placeholders pendentes (seção 5 do plano)
+
+- Visualizações por tópico (coluna da lista).
+- Prévia do último post, miniatura do tópico e moderadores.
+- Painéis de destaque e de tópicos relacionados.
+- Estado "Seguir" e "Salvar" por usuário (botões desabilitados com "Em breve").
+- Contrato com o Portal: papel do autor, variante de faixa e contagem de posts.

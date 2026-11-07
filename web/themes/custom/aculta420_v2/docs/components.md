@@ -389,3 +389,10 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 - **Story:** `forum-composer-guidelines.default.story.yml`.
 - **Regra:** sem dependência de JavaScript obrigatório; opera com `<details>` nativo do HTML.
 - **Estado:** entregue na Entrega 2 do redesenho visual Growroom420; schema estrito validado.
+
+
+## Fórum Growroom420 (entregas 1 e 2)
+
+- `forum-category-header`: prop `actions` (markup de link de ação principal). Story: `forum-category`.
+- `forum-tabs`, `forum-topic-row`, `forum-post-card`, `forum-sidebar-panels`, `forum-composer-guidelines`: usados na lista, na página de tópico e em `/criar-topico`.
+- `forum-topic-card`: schema e story existentes; sem uso na lista nesta entrega (modo cards pendente, seção 3.4).

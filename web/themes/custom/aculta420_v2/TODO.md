@@ -24,3 +24,10 @@ Leia este arquivo, código alvo e trecho necessário do `CHANGELOG.md`. Roadmap:
 ## Ao concluir uma fase
 
 Atualize este TODO e `docs/operations/status/aculta420_v2.yml` se existir, no mesmo commit. Remova concluídos; sem histórico.
+
+
+## Fórum Growroom420 — status
+
+- Entrega 1: lista, página de tópico e cabeçalho de categoria aplicados. Captura visual DEFERRED.
+- Entrega 2: painel lateral da lista e diretrizes do `/criar-topico` aplicados. Painéis de destaque e relacionados aguardam o contrato com o Portal.
+- Pendências: decisão sobre o vocabulário de tokens do validador de fundamentos; falhas de fronteira em módulos do Portal.

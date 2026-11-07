@@ -83,3 +83,14 @@ Validação dos novos componentes SDC do Fórum (`forum-category-header`, `forum
 - **F1 — accent (DRAFT):** o gate Drupal V2 verifica prop estrita `accent`, render da classe neutra e os tokens green/yellow/red. O gate foundations passou os seis contrastes de faixa contra `--color-surface` nos modos claro/escuro (mínimo 3:1). Firefox ESR: 12/12 estados em seis larguras e dois modos, cores resolvidas pelos tokens, sem overflow; Tab e zoom real 200% em viewport efetiva 320 CSS px PASS. Reprodução: `DISPLAY=:0 SUITE_OUT="$SUITE_OUT/aculta420-v2-card-accent" python3 tests/browser/aculta420-v2-card-accent/visual.py` (ver [README](../../../../../tests/browser/aculta420-v2-card-accent/README.md)). Sem consumer: DRAFT até D1; F2 depende do contrato e da decisão Wiki.
 - **G3 — auditoria de templates:** removido o override genérico `node--teaser.html.twig`; a tabela em `docs/architecture.md` registra adapters específicos e fallback para o template/entity view display Core. `php vendor/drush/drush/drush.php php:script scripts/validate-aculta420-v2-sdc.php` PASS (35 SDCs; descoberta, schema, assets e render isolado); confirmação da remoção e `git diff --check` PASS. Captura responsiva e navegação por teclado: DEFERRED, sem sessão gráfica disponível nesta execução. Loja permanece aguardando autorização.
 - **Compatibilidade com descoberta SDC persistente:** `watchdog:show` encontrou invocador compilado com aridade anterior, ausência de SDCs novos no manager e hook Portal instanciado sem DI. O tema agora decide fallback via `plugin.manager.sdc::hasDefinition`, sem inferir disponibilidade pela existência do arquivo Twig; hooks aceitam construção antiga sem argumentos recém-adicionados. `/conta` voltou a 403 (rota protegida para visitante) com `X-Robots-Tag: noindex, nofollow, noarchive`. Sem rebuild/clear de cache no Runtime.
+
+
+## Fórum Growroom420 — gates desta entrega
+
+- `validate-aculta420-sdc-schemas.php`: PASS (52 componentes, 74 includes, 1062 checks).
+- `stylelint` em `components/forum-*/*.css` e `src/styles/forum.css`: PASS.
+- `git diff --check`: PASS.
+- `validate-aculta420-mapped-classes.php`: PASS (462 classes).
+- `validate-aculta420-design-foundations.php`: FAIL (599/1368). Exige a família `--aculta-*`; a V2 usa `--color-*`. Decisão pendente.
+- `validate-module-theme-boundary.php`: FAIL (21/7127). Falhas em módulos do Portal. Refatoração pendente.
+- Captura visual Firefox ESR (320/390/1440 px): DEFERRED. Sem `FORUM_BASE_URL` nem `SUITE_OUT` nesta sessão.
