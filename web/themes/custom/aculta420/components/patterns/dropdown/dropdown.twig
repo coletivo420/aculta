@@ -1,7 +1,7 @@
 {% set classes = ['dropdown-toggle'] %}
 <div class="dropdown">
   {% block dropdown_button %}
-    <button {{ attributes.addClass(classes).setAttribute('type', 'button').setAttribute('data-bs-toggle', 'dropdown').setAttribute('aria-expanded', 'false') }}>{{ dropdown_text }}</button>
+    <button {{ attributes.addClass(classes).setAttribute('type', 'button').setAttribute('data-toggle', 'dropdown').setAttribute('aria-expanded', 'false') }}>{{ dropdown_text }}</button>
   {% endblock %}
   {% if items %}
     <ul class="dropdown-menu">

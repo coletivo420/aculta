@@ -11,7 +11,7 @@ runners de navegador para identificar violações automatizáveis em páginas de
 qualquer purpose. Execute `npm ci` nesta pasta e use `ACCESSIBILITY_SCAN=1` no
 runner genérico ou `CULTURAS_AXE=1` no gate específico; consulte
 `tests/browser/aculta-smoke/README.md` e
-`tests/browser/transversal/aculta-theme-mobile-first/README.md`. Resultados
+`tests/browser/aculta-theme-mobile-first/README.md`. Resultados
 `incomplete` exigem revisão; axe-core não comprova conformidade WCAG 2.2 AA nem
 substitui teclado, zoom, inspeção visual, leitor de tela ou avaliação contextual.
 
@@ -27,10 +27,6 @@ composição e escape dos quatro SDCs foi adicionado, mas ainda
 não foi executado. A versão 0.7.0-dev.2 não equivale à homologação.
 
 ## Fronteira de arquitetura
-
-O tema usa `drupal/ui_patterns` `2.0.x-dev` para integração com SDCs. O projeto
-mantém em `patches-aculta.json` uma correção de compatibilidade para substituir
-chamadas depreciadas a `drupal_static()` pelo cache de memória do Drupal.
 
 ```text
 Drupal Core + contrib → aculta_portal → contrato neutro → ACULTA420 → Bootstrap

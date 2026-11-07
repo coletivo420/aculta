@@ -3,7 +3,7 @@
  *
  * Portado do webform_bootstrap 3.x (deprecado no Webform 6.3): somente as regras
  * que não estão cobertas pelo Bootstrap 5 e pelo próprio tema. Seletores de
- * Estruturas Bootstrap 3 (.panel, .well, .form-inline) não são portadas.
+ * Bootstrap 3 (.panel, .well, .form-inline) não são portados.
  */
 
 /* Título de composto (radios e checkboxes) sem a moldura do legend. */

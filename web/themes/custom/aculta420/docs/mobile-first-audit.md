@@ -135,7 +135,7 @@ JavaScript permanece o fallback e o contêiner interativo vazio não ocupa espa�
 O botão de contraste existente também foi acionado no navegador; o scheduler
 reportou `contrast-black`, `aria-pressed=true` e o token `#141414` em desktop.
 
-O harness é `tests/browser/transversal/aculta-theme-mobile-first/calendar-agenda.py` e os
+O harness é `tests/browser/aculta-theme-mobile-first/calendar-agenda.py` e os
 comandos reutilizáveis estão no README da suíte. Capturas e `summary.json`:
 `/home/piradopirata/aculta-suite-out/calendar-agenda-homologation/`. A execução
 foi somente GET, no Runtime servido em HEAD `2493d7535`; não houve CSS candidata,
@@ -518,7 +518,7 @@ em 320px, ArrowRight aumentando `scrollLeft` e ausência de overflow da página.
 `/home/piradopirata/aculta-suite-out/aculta-courses-rail-20261030-final/`.
 É navegação horizontal interna deliberada, sem JavaScript; não substitui teste
 de leitor de tela, zoom ou THEME-MF3. Harness reutilizável:
-`tests/browser/transversal/aculta-theme-mobile-first/rail-courses.py`.
+`tests/browser/aculta-theme-mobile-first/rail-courses.py`.
 
 ### THEME-MF2 — rótulo de data do cartão Eventos (2026-10-30)
 
@@ -667,7 +667,7 @@ nesta sessão, sem alterar o status global MF3.
 `wiki.css` declara tamanhos compactos do header como base; `36rem` reintroduz
 as dimensões intermediárias e `48rem` as proporções desktop anteriores. Busca,
 formulários de resultados e grids de categorias/verbetes começam em uma coluna
-e ampliam a duas em 768px. O harness `tests/browser/wiki/aculta-wiki/visual.py`
+e ampliam a duas em 768px. O harness `tests/browser/aculta-wiki/visual.py`
 injeta a CSS candidata local e verifica propriedades computadas/overflow nas
 rotas públicas em 575/576/767/768px, além das larguras já existentes.
 Stylelint e compilação Python PASS; Firefox/runtime DEFERRED por sessões
@@ -676,7 +676,7 @@ permanece pendente.
 
 O consumer público de verbete também foi migrado: `wiki-entry.css` usa uma
 coluna como base e posiciona o aside antes do texto; `min-width: 48rem` restaura
-a composição de duas colunas. `tests/browser/wiki/aculta-wiki/visual.py` injeta as
+a composição de duas colunas. `tests/browser/aculta-wiki/visual.py` injeta as
 duas folhas candidatas e mede colunas/posição do aside na fronteira 767/768px.
 O espaçamento inferior das abas também usa `1rem` como base; em `48rem` restaura
 `1.25rem`, com o mesmo smoke medindo o valor calculado no verbete.
@@ -714,7 +714,7 @@ completos. THEME-MF3 permanece pendente.
 ### THEME-MF2 — layout SDC page-columns
 
 Todas as variantes do layout empilham como base; as variantes duas/três colunas
-são restauradas a partir de `48rem`. `tests/browser/transversal/aculta-theme-mobile-first/
+são restauradas a partir de `48rem`. `tests/browser/aculta-theme-mobile-first/
 page-columns.py` compara baseline/candidata em dez larguras e preserva DOM e
 ordem. O SDC ainda não tem consumer de produto. Lint CSS, schema SDC e sintaxe
 Python passam; Firefox visível DEFERRED por `DISPLAY` ausente e sessões
@@ -728,7 +728,7 @@ trilhas, as dimensões e a posição sticky anteriores. O formulário de respost
 usa padding de `0.875rem` como base e restaura `1rem` em `36rem`. A ordem DOM,
 ações, estados e ownership da barra pelo Portal não mudam.
 
-O smoke `tests/browser/forum/aculta-forum/progress-visual.mjs` foi ampliado para
+O smoke `tests/browser/aculta-forum/progress-visual.mjs` foi ampliado para
 injetar a folha candidata e conferir geometria, áreas, sticky, foco/teclado,
 alvos de toque, claro/escuro e overflow em 320/360/390/500/575/576/900px.
 `npm run lint:css`, `node --check`, schema SDC, Design Foundations e índice de
@@ -787,7 +787,7 @@ como histórico, não como contrato vigente.
 como estilo-base; `min-width: 36rem` restaura a apresentação horizontal e os
 espaçamentos amplos anteriores. A mudança preserva a hierarquia e o markup do
 perfil público e não altera o formulário privado da Conta. A comparação
-reutilizável `tests/browser/transversal/aculta-theme-mobile-first/public-profile-layout.py`
+reutilizável `tests/browser/aculta-theme-mobile-first/public-profile-layout.py`
 usa fixture sintética. A primeira execução Firefox fez 21/22 checks e revelou
 uma diferença de espaçamento na fixture em 320 px, corrigida no CSS; a repetição
 não iniciou uma sessão pois a memória/sessões geckodriver visíveis da Revista
@@ -803,7 +803,7 @@ restaura duas colunas nas áreas/detalhes. O override mobile da View de projetos
 foi mantido por atuar sobre o consumer do SDC `content-grid`; suas variantes
 desktop permanecem sob ownership do SDC.
 
-`tests/browser/transversal/aculta-theme-mobile-first/institutional-layout.py` usou Firefox
+`tests/browser/aculta-theme-mobile-first/institutional-layout.py` usou Firefox
 ESR visível para comparar o CSS anterior com o candidato em 320/360/390/575/576/
 599/600/767/768/1024/1280/1440 px. As 24 verificações passaram: estilos
 computados iguais ao baseline, capturas PNG idênticas e nenhum overflow do
@@ -1198,7 +1198,7 @@ reduced motion, ausência de overflow em componentes não carregados ou gate MF3
 
 ### Repetição pública nos dez purposes — 2026-10-30
 
-`tests/browser/studio/geral/purpose-matrix.py` foi executado no Firefox ESR
+`tests/browser/aculta-studio/purpose-matrix.py` foi executado no Firefox ESR
 visível contra o docroot no HEAD remoto `3c1691fc5`, em 320/360/390/599/600/
 768/1024/1280/1440px. Foram 90/90 capturas, zero deferred e zero registros com
 overflow horizontal medido. A Institution Bar apareceu 90/90; `.aculta-header`
@@ -1374,7 +1374,7 @@ estreitas; o Firefox ESR confirmou 32/32 checks com consumer presente, alinhamen
 flex-start a 320/360/390/575 e central a partir de 576px, e sem overflow em
 320/360/390/575/576/600/768/1024/1280/1440. Capturas/JSON em
 `/home/piradopirata/suite-out/aculta-theme-author-card-892f803d5/`. O script
-reutilizável `tests/browser/transversal/aculta-theme-mobile-first/author-card.py` registra
+reutilizável `tests/browser/aculta-theme-mobile-first/author-card.py` registra
 consumer e breakpoint; não cobre teclado, zoom real ou WCAG completa.
 
 **Revalidação Firefox ESR visível (2026-10-30):** a rota pública real
@@ -1411,7 +1411,7 @@ foram inspecionadas. Não houve submissão nem gravação de preferências. Evid
 
 O Firefox ESR visível capturou `https://apoio.aculta.toca.net.br/`, que renderiza
 o formulário de apoio e o SDC existente `donation-quick` com cinco cartões.
-`tests/browser/transversal/aculta-theme-mobile-first/support-form.py` passou 36/36
+`tests/browser/aculta-theme-mobile-first/support-form.py` passou 36/36
 verificações em 320/360/390/480/481/599/600/768/1024/1280/1440px: consumer e
 Institution Bar presentes, cartões dentro da grade e nenhum overflow de
 documento. A grade usou 2/3/3/4/4/5/5/6/8/10/10 tracks respectivamente. PNGs e
@@ -1441,7 +1441,7 @@ os headers, mesmos valores calculados antes/depois, sem overflow, botão abre o
 menu em mobile e o fallback permaneceu visível sem JavaScript em 320/768/1099/
 1100/1440px. Evidência candidata em
 `/home/piradopirata/aculta-suite-out/aculta-navigation-candidate-final2/`.
-O teste reutilizável é `tests/browser/transversal/aculta-theme-mobile-first/navigation.py`;
+O teste reutilizável é `tests/browser/aculta-theme-mobile-first/navigation.py`;
 ele cobre somente a home MAIN e não substitui regressão nos outros purposes.
 Zoom, teclado focado completo, modo escuro, reduced motion e WCAG 2.2 AA seguem
 pendentes.
@@ -1460,7 +1460,7 @@ O Domain Header não aparecia em SUPPORT, Conta, Loja ou Fórum neste snapshot
 histórico; a presença nas dez raízes foi posteriormente confirmada no reteste
 90/90 registrado acima. Este slice não valida outros caminhos por purpose, zoom,
 teclado completo, modo escuro, reduced motion ou WCAG 2.2 AA e não aprova MF3.
-Teste reutilizável: `tests/browser/transversal/aculta-theme-mobile-first/institution-bar.py`.
+Teste reutilizável: `tests/browser/aculta-theme-mobile-first/institution-bar.py`.
 
 ### THEME-MF2 — deslocamento da Institution Bar com Navigation top-bar
 
@@ -1485,7 +1485,7 @@ Os testes usaram a página servida pelo head `c3b697e10` e injetaram os arquivos
 candidatos da worktree; validação integrada servida após cache rebuild é
 pendente. Esta correção pontual não aprova THEME-MF3 nem os gates completos de
 teclado, zoom, tema escuro, reduced motion, leitores de tela ou WCAG 2.2 AA.
-Teste reutilizável: `tests/browser/transversal/aculta-theme-mobile-first/institution-bar-scroll.py`.
+Teste reutilizável: `tests/browser/aculta-theme-mobile-first/institution-bar-scroll.py`.
 
 ### THEME-MF2 — sticky e deslocamento no HEAD servido `487596bb0`
 
@@ -1588,7 +1588,7 @@ override repetiu 22 PASS/0 FAIL e uma DEFERRED nas mesmas larguras. `updatedb:st
 sem updates; `config:status` ainda divergente (377 linhas), sem import. Snapshot
 e gates do Runtime estão em `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
 Esta rodada integrada também não aprova THEME-MF3. Teste reutilizável:
-`tests/browser/transversal/aculta-theme-mobile-first/account-orders.py`.
+`tests/browser/aculta-theme-mobile-first/account-orders.py`.
 
 ### THEME-MF2 — autenticação pública (2026-10-30)
 
@@ -1638,7 +1638,7 @@ e `editorial-carousel-20261030-final5/`. Teclado, reduced motion, claro/escuro e
 linha própria como base. `min-width: 40.0001rem` restaura a superfície ampla,
 controle não expansível, busca de 14rem e o espaço de palco original; no modo
 fullscreen também restaura padding e max-height. O smoke reutilizável
-`tests/browser/transversal/aculta-document-viewer/visual.py` foi ampliado para 1280/768/641/
+`tests/browser/aculta-document-viewer/visual.py` foi ampliado para 1280/768/641/
 640/390/320 px e aceita `PDF_VIEWER_CSS_OVERRIDE=1` para injetar a folha
 candidata. A execução Firefox e a página Runtime estão DEFERRED enquanto as
 sessões visíveis da Revista ocupam o browser. O smoke não ativa fullscreen; esse
@@ -1654,7 +1654,7 @@ behavior do modal Webform define `minWidth: 600`; a regra anterior só alterava
 viewports menores que 616px. O tema agora reduz essa largura mínima conforme o
 gutter disponível, mantendo os 600px em desktop e preservando a largura
 configurada pelo consumidor. O harness
-`tests/browser/transversal/aculta-theme-mobile-first/webform-layout.py` reproduz o mínimo do
+`tests/browser/aculta-theme-mobile-first/webform-layout.py` reproduz o mínimo do
 jQuery UI, compara baseline/candidato e captura 14 larguras, incluindo
 650/651 e 768/769. Sintaxe Python e lint CSS PASS; Firefox e rotas Webform reais
 estão DEFERRED enquanto `DISPLAY` estiver vazio e sessões concorrentes ocuparem
@@ -1700,7 +1700,7 @@ início em telas estreitas; a justificação editorial volta em `36rem` (576px).
 Resumo e metadados começam compactos; a composição anterior é restaurada
 progressivamente a partir do mesmo limite. A ordem DOM, os campos, os SDCs e
 os contratos do módulo permanecem iguais. O smoke reutilizável
-`tests/browser/transversal/aculta-theme-mobile-first/revista-article-layout.py` compara
+`tests/browser/aculta-theme-mobile-first/revista-article-layout.py` compara
 baseline/candidato em 320–1440px e mede alinhamento, padding, ordem e overflow.
 Lint CSS, schema SDC, Design Foundations, sintaxe Python e `git diff --check`
 PASS na execução original. O Firefox daquela rodada ficou DEFERRED por DISPLAY
@@ -1732,7 +1732,7 @@ geckodriver ativas. THEME-MF3 permanece pendente.
 
 `album-slideshow.css` agora declara o palco em uma coluna, miniaturas recolhidas
 e botão de alternância como base. `min-width: 30rem` (480px) restaura duas
-colunas, miniaturas visíveis e oculta o botão. `tests/browser/gallery/aculta-gallery/
+colunas, miniaturas visíveis e oculta o botão. `tests/browser/aculta-gallery/
 visual.py` mede 320/390/479/480/600/1280px nos fixtures públicos dos domains
 principal e Fórum, incluindo uso do toggle e retorno ao estado fechado. Lint CSS
 e sintaxe Python passam; Firefox/Runtime DEFERRED por `DISPLAY` ausente e
@@ -1756,7 +1756,7 @@ alinhamentos e ações sem quebra. Mantém especificidade necessária para a fol
 administrativa do Drupal Navigation. Nenhum markup, shell, comportamento da
 Institution Bar ou código de módulo foi alterado.
 
-`tests/browser/transversal/aculta-theme-mobile-first/navigation-top-bar.py` compara
+`tests/browser/aculta-theme-mobile-first/navigation-top-bar.py` compara
 baseline/candidato em 320/360/390/575/576/599/600/767/768/1024/1280/1440px,
 verificando uma coluna, ordem vertical/DOM, ausência de overflow e paridade da
 grade larga. Lint CSS e sintaxe Python são gates estáticos desta microfase;
@@ -1845,7 +1845,7 @@ DEFERRED nesta sessão sem `DISPLAY=:0`. MF3 permanece pendente.
 margem curta entre mensagem e ação e textarea de 5.5rem como base móvel. Em
 `min-width: 36rem` (576 CSS px), restaura os espaçamentos anteriores e a altura
 natural da caixa. Markup, ordem DOM, Form API e envio continuam no módulo. O
-harness `tests/browser/transversal/aculta-theme-mobile-first/messenger-reply-layout.py`
+harness `tests/browser/aculta-theme-mobile-first/messenger-reply-layout.py`
 compara baseline/candidata nas larguras globais e na fronteira 575/576px. Lint
 CSS, sintaxe do harness, Design Foundations (2.442 verificações), índice do
 projeto e `git diff --check` passaram. Firefox visível fica DEFERRED sem
@@ -2068,7 +2068,7 @@ uma coluna abaixo de 768 e duas a partir de 768, dois cartões no contexto
 320/360; `studio.css` agora limita o título com `clamp(2rem, 7vw, 3rem)`, e a
 repetição passou. PNGs e `summary.json` estão em
 `/home/piradopirata/suite-out/aculta-studio-card-fidelity/`; o harness
-reutilizável está em `tests/browser/studio/geral/`.
+reutilizável está em `tests/browser/aculta-studio/`.
 
 Também passaram Stylelint, PHP lint/PHPCS, SDC schema (55 componentes/756
 checks), Design Foundations (2421 checks e 159 fixtures), documentação de
@@ -2151,7 +2151,7 @@ captura de 320px. A verificação do DOM confirmou que isso é o rail horizontal
 intencional do SDC `patterns/rail`: os três cartões são mantidos, a região tem
 `role=region`, nome acessível `Cursos disponíveis` e `tabindex=0`, e o indicador
 de rolagem nativo aparece. Não é overflow do documento nem perda de conteúdo.
-O teste de navegador reutilizável `tests/browser/transversal/aculta-theme-mobile-first/rail-courses.py`
+O teste de navegador reutilizável `tests/browser/aculta-theme-mobile-first/rail-courses.py`
 confirmou que `ArrowRight` desloca o rail de `scrollLeft=12` para `266` a 320px.
 
 Firefox ESR visível, Runtime no HEAD `f22c8f08d`, passou 11/11 checks a
@@ -2186,7 +2186,7 @@ e a 400% o outline mediu 3px/3px de offset. Evidências e capturas em
 
 ### THEME-MF2 — shell sem JavaScript nas dez raízes públicas (2026-10-30)
 
-O teste reutilizável `tests/browser/transversal/aculta-theme-mobile-first/purpose-shell-nojs.py`
+O teste reutilizável `tests/browser/aculta-theme-mobile-first/purpose-shell-nojs.py`
 usa os domínios de teste do manifesto `aculta_deployer` e Firefox ESR visível
 com JavaScript desativado. Em MAIN, Conta, SUPPORT, Revista, Wiki, Loja, Cursos,
 Fórum, Links e Eventos, passou 210/210 verificações em 320/390/599/600/768/
@@ -2224,7 +2224,7 @@ de página no `<title>`, mas nenhum H1 em `main#main-content`. O bloco core
 da home o suprimia. O template agora o exibe também nos purposes `support` e
 `courses`, preservando os títulos geridos pelo Drupal e sem alterar módulos,
 rotas, dados ou contrato do shell. O teste reutilizável é
-`tests/browser/transversal/aculta-theme-mobile-first/purpose-headings.py`.
+`tests/browser/aculta-theme-mobile-first/purpose-headings.py`.
 
 Validação estática do candidato: parser Twig do pacote instalado PASS,
 `py_compile` do teste PASS e `git diff --check` PASS. O teste real de headings e
@@ -3221,7 +3221,7 @@ anterior mostra `body.path-marley` no editor de Publicações; todos esses
 seletores agora também exigem esse contexto. O formulário no purpose Magazine
 mantém o visual global e o editor de Publicações no Marley conserva Fidelity.
 
-Firefox ESR visível executou `tests/browser/studio/geral/studio-form-fidelity.py`
+Firefox ESR visível executou `tests/browser/aculta-studio/studio-form-fidelity.py`
 com as folhas do worktree injetadas em fixture, claro/escuro, 320/390/768/1440px:
 **54/54 checks**. A verificação confirmou ausência do token e do acabamento no
 formulário sob `body.path-magazine`, presença de Montserrat/tokens sob
@@ -3544,7 +3544,7 @@ nem atualiza o CSS servido; integração final e THEME-MF3 continuam pendentes.
 
 ### THEME-MF2 / OCS-F9 — endereço canônico com zoom real (2026-10-31)
 
-O harness reutilizável `tests/browser/transversal/aculta-theme-mobile-first/account-address.py`
+O harness reutilizável `tests/browser/aculta-theme-mobile-first/account-address.py`
 agora mede zoom real de 200% e 400% no Firefox ESR, com JavaScript e no-JS. No
 Runtime do servidor de desenvolvimento, `/dados/endereco` passou **50/50
 checks**: contrato único de campos e behavior CEP (JS), rotas/menu, ausência de
@@ -4759,7 +4759,7 @@ passou 20/20 verificações em Firefox ESR headless (13,5s), Chrome headless
 (9,7s) e Chromium headless (11,3s), cobrindo nove larguras, claro/escuro,
 overflow, estrutura e foco. Candidata de CSS foi injetada localmente; a medição
 não equivale a validação do CSS servido nem fecha THEME-MF3/OCS-F11. A receita
-reutilizável está em `tests/browser/transversal/aculta-theme-mobile-first/README.md`.
+reutilizável está em `tests/browser/aculta-theme-mobile-first/README.md`.
 
 O diagnóstico axe-core 4.14.0 em 320px identificou nos dois modos de cor:
 contraste 3,58:1 em `.aculta-footer-cnpj`, `.field--name-field-cnpj` e
@@ -5041,7 +5041,7 @@ reutiliza as raízes de fidelidade existentes e exige um ancestral
 `.aculta-container:has(.studio)`, `.aculta-profile-editor`,
 `.we-sativa__workspace` ou os purposes `ganjalab`/`culturas`.
 
-A fixture `tests/browser/studio/geral/studio-status-messages.py`
+A fixture `tests/browser/aculta-theme-mobile-first/studio-status-messages.py`
 carrega Bootstrap, Bootstrap Icons, `alerts.css` do tema base e as folhas do
 ACULTA420, e reproduz quatro mensagens (status, aviso, erro, informação) mais um
 container de controle sem `.studio`. No Firefox ESR visível (`DISPLAY=:0`)
@@ -5144,7 +5144,7 @@ passou **130/130**. Switch de head: `6cbcbdf52` → `cc02e433a`; `updatedb:statu
 e `config:status` sem pendências; `drush cr` PASS.
 
 Probe de teclado servido em `/marley`, `/conta` e `/perfil`
-(`tests/browser/studio/geral/keyboard-focus.py`, conta `teste.comum`): **648
+(`tests/browser/aculta-studio/keyboard-focus.py`, conta `teste.comum`): **648
 observações, 621 alvos focáveis, 621 com `:focus-visible` e 621 com contorno**,
 27 retornos ao `body` e 27 capturas. Evidência em
 `/home/piradopirata/aculta-suite-out/ocs-f3-keyboard-served-20261101/`.

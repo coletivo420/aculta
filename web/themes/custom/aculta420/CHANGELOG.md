@@ -1,24 +1,6 @@
-## 0.7.0-dev.41 — namespace de token de tipografia Studio — 2026-11-04
-
-- Renomeado `--aculta-studio-font-family` para
-  `--aculta-studio-fidelity-font-family` nos tokens e consumidores do Studio.
-  O valor e a apresentação permanecem iguais; a mudança coloca o token no
-  namespace exigido pelo gate de Design Foundations.
-- Design Foundations: 2468 checks PASS.
-
 ## 0.7.0-dev.40 — fontes institucionais no Studio (2026-11-03; validação pendente)
 
 - Studio e editor de perfil passam a herdar Inter do token institucional; removidos os WOFF2 e a declaração local de Montserrat. Oswald permanece reservado aos títulos conforme o sistema tipográfico do tema. Relatórios anteriores que registraram Montserrat são históricos e não representam a tipografia aprovada.
-
-## Migração da base do tema para Bootstrap5 (sem nova versão; validação pendente)
-
-- `aculta420` passa a declarar `bootstrap5` como base e usa as libraries
-  disponibilizadas por `drupal/bootstrap5 5.0.x-dev` instalado no Runtime.
-  Foram migrados grids, cards, abas, alertas e gavetas; as interações de menu e
-  gavetas deixaram de usar a API jQuery Bootstrap3.
-- `composer.json`/`composer.lock` de `origin/dev` e `config/sync` não refletem
-  o pacote/habilitação vistos no Runtime. Permanecem sem alteração; a versão
-  `5.0.x-dev` não foi atualizada. A matriz registra validações e divergências.
 
 ## 0.7.0-dev.39 — usar diretamente Bootstrap 8.x (2026-11-03; não validado visualmente)
 

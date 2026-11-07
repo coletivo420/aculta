@@ -231,8 +231,8 @@ final class PortalUiHooksTest extends UnitTestCase {
     $this->assertTrue($attributes->hasClass('messages'));
     $this->assertTrue($attributes->hasClass('messages--warning'));
     $this->assertTrue($attributes->hasClass('aculta-email-notice'));
-    $this->assertTrue($attributes->hasClass('aculta-panel'));
-    $this->assertTrue($attributes->hasClass('aculta-panel__body'));
+    $this->assertTrue($attributes->hasClass('panel'));
+    $this->assertTrue($attributes->hasClass('panel-body'));
     $this->assertTrue($attributes->hasClass('aculta-u-mt-3'));
     $this->assertTrue($attributes->hasClass('aculta-u-grid'));
     $this->assertTrue($attributes->hasClass('aculta-u-gap-3'));
@@ -385,8 +385,8 @@ final class PortalUiHooksTest extends UnitTestCase {
 
     $registration = $variables['element']['#attributes'];
     $this->assertArrayNotHasKey('data-portal-ui', $registration);
-    $this->assertContains('aculta-panel', $registration['class']);
-    $this->assertContains('aculta-panel__body', $registration['class']);
+    $this->assertContains('panel', $registration['class']);
+    $this->assertContains('panel-body', $registration['class']);
     $this->assertContains('aculta-u-mb-3', $registration['class']);
     $google = $variables['attributes'];
     $this->assertFalse($google->offsetExists('data-portal-ui'));
@@ -633,7 +633,7 @@ final class PortalUiHooksTest extends UnitTestCase {
     $this->assertTrue($attributes->hasClass('event-press-quotes'));
     $this->assertTrue($attributes->hasClass('media-mentions'));
     $this->assertTrue($attributes->hasClass('aculta-card'));
-    $this->assertTrue($attributes->hasClass('aculta-panel'));
+    $this->assertTrue($attributes->hasClass('panel'));
   }
 
   /**

@@ -54,7 +54,7 @@ html.studio-identity :is(
   --aculta-studio-fidelity-box-shadow: var(--aculta-shadow-raised);
 
   /* A2 — tipografia institucional: Inter no corpo, Oswald nos títulos. */
-  --aculta-studio-fidelity-font-family: var(--aculta-font-body);
+  --aculta-studio-font-family: var(--aculta-font-body);
 }
 
 /* A2 — acabamento próprio sobre os mesmos seletores e consumers. */
@@ -91,7 +91,7 @@ html.studio-identity :is(
   body.path-ganjalab .aculta-main,
   body.path-culturas .aculta-main,
   .aculta-main .we-sativa__workspace
-) :is(.aculta-panel, .aculta-card, .studio__panel, .aculta-context-header) {
+) :is(.panel, .aculta-card, .studio__panel, .aculta-context-header) {
   border-radius: var(--bs-border-radius);
 }
 

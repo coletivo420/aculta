@@ -287,3 +287,18 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
   margin-block-start: var(--spacing-xs);
 }
 
+/* Filtro da lista de tópicos em bloco, como na V1: rótulo acima do select, botão abaixo. */
+form[id^="views-exposed-form-aculta-forum-public-topics"] label {
+  display: block;
+  margin-block-end: .25rem;
+}
+
+form[id^="views-exposed-form-aculta-forum-public-topics"] select {
+  inline-size: 14rem;
+  min-block-size: 2.625rem;
+}
+
+form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit"], button[type="submit"]) {
+  margin-block-start: .5rem;
+}
+

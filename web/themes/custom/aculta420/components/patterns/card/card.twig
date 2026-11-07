@@ -1,4 +1,4 @@
-{% set card_classes = ['aculta-card'] %}
+{% set card_classes = ['aculta-card', 'panel', 'panel-default'] %}
 {% if variant == 'compact' %}
   {% set card_classes = card_classes|merge(['aculta-card--compact']) %}
 {% elseif variant == 'overlay' %}
@@ -15,39 +15,39 @@
     <div class="aculta-card__overlay-body">
       <div class="aculta-card__overlay-panel">
         {% if header %}<div class="aculta-card__overlay-header">{{ header }}</div>{% endif %}
-        {% if content %}<div class="aculta-card__body">{{ content }}</div>{% endif %}
-        {% if footer %}<div class="aculta-card__footer">{{ footer }}</div>{% endif %}
+        {% if content %}<div class="panel-body">{{ content }}</div>{% endif %}
+        {% if footer %}<div class="panel-footer">{{ footer }}</div>{% endif %}
       </div>
     </div>
   {% elseif variant == 'compact' %}
-    {% if image %}<div class="aculta-card__compact-media">{{ image|add_class('img-fluid') }}</div>{% endif %}
+    {% if image %}<div class="aculta-card__compact-media">{{ image|add_class('img-responsive') }}</div>{% endif %}
     <div class="aculta-card__compact-body">
-      {% if header %}<div class="aculta-card__header">{{ header }}</div>{% endif %}
-      {% if content %}<div class="aculta-card__body">{{ content }}</div>{% endif %}
-      {% if footer %}<div class="aculta-card__footer">{{ footer }}</div>{% endif %}
+      {% if header %}<div class="panel-heading">{{ header }}</div>{% endif %}
+      {% if content %}<div class="panel-body">{{ content }}</div>{% endif %}
+      {% if footer %}<div class="panel-footer">{{ footer }}</div>{% endif %}
     </div>
   {% elseif variant == 'horizontal' %}
     <div class="row">
       {% if image %}
-        <div class="col-12 col-md-4">
-          {{ image|add_class('img-fluid') }}
+        <div class="col-md-4">
+          {{ image|add_class('img-responsive') }}
         </div>
       {% endif %}
-      <div class="col-12 col-md-8">
-        {% if header %}<div class="aculta-card__header">{{ header }}</div>{% endif %}
-        {% if content %}<div class="aculta-card__body">{{ content }}</div>{% endif %}
-        {% if footer %}<div class="aculta-card__footer">{{ footer }}</div>{% endif %}
+      <div class="col-md-8">
+        {% if header %}<div class="panel-heading">{{ header }}</div>{% endif %}
+        {% if content %}<div class="panel-body">{{ content }}</div>{% endif %}
+        {% if footer %}<div class="panel-footer">{{ footer }}</div>{% endif %}
       </div>
     </div>
   {% else %}
     {% if image and image_position != 'bottom' %}
-      {{ image|add_class('img-fluid aculta-card__image') }}
+      {{ image|add_class('img-responsive aculta-card__image') }}
     {% endif %}
-    {% if header %}<div class="aculta-card__header">{{ header }}</div>{% endif %}
-    {% if content %}<div class="aculta-card__body">{{ content }}</div>{% endif %}
-    {% if footer %}<div class="aculta-card__footer">{{ footer }}</div>{% endif %}
+    {% if header %}<div class="panel-heading">{{ header }}</div>{% endif %}
+    {% if content %}<div class="panel-body">{{ content }}</div>{% endif %}
+    {% if footer %}<div class="panel-footer">{{ footer }}</div>{% endif %}
     {% if image and image_position == 'bottom' %}
-      {{ image|add_class('img-fluid') }}
+      {{ image|add_class('img-responsive') }}
     {% endif %}
   {% endif %}
 </div>

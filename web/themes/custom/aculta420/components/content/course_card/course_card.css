@@ -23,15 +23,15 @@
   box-shadow: none;
   background: transparent;
 }
-.aculta-main .lms-course-card > .aculta-card > .aculta-card__header,
-.aculta-main .lms-course-card > .aculta-card > .aculta-card__body,
-.aculta-main .lms-course-card > .aculta-card > .aculta-card__footer {
+.aculta-main .lms-course-card > .aculta-card > .panel-heading,
+.aculta-main .lms-course-card > .aculta-card > .panel-body,
+.aculta-main .lms-course-card > .aculta-card > .panel-footer {
   padding: 0;
   border: 0;
   background: transparent;
 }
-.aculta-main .lms-course-card > .aculta-card > .aculta-card__body { flex: 1 1 auto; }
-.aculta-main .lms-course-card > .aculta-card > .aculta-card__footer { margin-top: auto; }
+.aculta-main .lms-course-card > .aculta-card > .panel-body { flex: 1 1 auto; }
+.aculta-main .lms-course-card > .aculta-card > .panel-footer { margin-top: auto; }
 .aculta-main .lms-course-card:is(:hover, :focus-within) {
   border-color: var(--aculta-interactive-active-bg);
   box-shadow: var(--aculta-shadow-hover);

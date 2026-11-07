@@ -113,7 +113,7 @@ o link acessível, e reaparece progressivamente em `min-width: 23.4375rem`.
 A barra de progresso de comentários é CSS compartilhada de Fórum/Wiki/Revista,
 com markup e ações emitidos pelo Portal; a grade começa compacta e cresce em
 `22.5rem` e `36rem`. O harness e os limites por consumer estão documentados em
-`tests/browser/forum/aculta-forum/README.md` e `mobile-first-audit.md`.
+`tests/browser/aculta-forum/README.md` e `mobile-first-audit.md`.
 
 A composição pública de Wiki (header, formulários e grids de Views) permanece
 Twig/CSS de apresentação, sem SDC novo; inicia em coluna única e aprimora em
@@ -126,7 +126,7 @@ em `48rem`, validado no mesmo consumer público.
 O índice do Fórum usa Twig/Views e classes de apresentação já existentes; linhas
 de tópico empilham seus metadados até `36rem`. Não houve SDC novo nem alteração
 dos dados/handlers da View. O teste visual sintético está documentado em
-`tests/browser/forum/aculta-forum/README.md`. As ações do cabeçalho da listagem usam
+`tests/browser/aculta-forum/README.md`. As ações do cabeçalho da listagem usam
 dimensão compacta em `36rem` e restauram o tamanho em `62rem`, com progressão
 mobile-first e medição sintética nas fronteiras 575/576 e 991/992px.
 
@@ -211,19 +211,19 @@ recolhimento só aparece quando o behavior insere o controle.
 
 O leitor DOCX/planilhas mantém seu wrapper compacto e iframes de 50vh como base;
 a partir de `36rem` restaura padding de 1rem e altura mínima de 60vh. O harness
-`tests/browser/transversal/aculta-document-viewer/office-options.py` cobre 575/576px nos
+`tests/browser/aculta-document-viewer/office-options.py` cobre 575/576px nos
 temas ACULTA420 e Olivero.
 
 O modal de confirmação Webform preserva a largura dinâmica do consumidor em
 desktop e adapta o `minWidth: 600` definido pelo jQuery UI ao gutter disponível
 em telas estreitas. O teste reproduz essa configuração em
-`tests/browser/transversal/aculta-theme-mobile-first/webform-layout.py`; não há SDC novo nem
+`tests/browser/aculta-theme-mobile-first/webform-layout.py`; não há SDC novo nem
 mudança no Form API.
 
 A barra de progresso de comentários é CSS compartilhada de Fórum/Wiki/Revista,
 com markup e ações emitidos pelo Portal; a grade começa compacta e cresce em
 `22.5rem` e `36rem`. O harness e os limites por consumer estão documentados em
-`tests/browser/forum/aculta-forum/README.md` e `mobile-first-audit.md`.
+`tests/browser/aculta-forum/README.md` e `mobile-first-audit.md`.
 
 
 ## UI Styles
@@ -260,7 +260,7 @@ contratos e consumidores reais autorizem sua implementação; não são componen
 | `layouts/page-columns` (I-22) | Layout UI Patterns experimental com variações 1, 2 e 3 colunas e ordem DOM preservada no mobile | Sem consumidor real; permanece candidato. `rail` é horizontal e `content-section` não compõe regiões em colunas. |
 
 `layouts/page-columns` agora empilha todas as variantes como base; duas/três
-colunas só entram em `48rem`. `tests/browser/transversal/aculta-theme-mobile-first/page-columns.py`
+colunas só entram em `48rem`. `tests/browser/aculta-theme-mobile-first/page-columns.py`
 compara a fixture do SDC em 320–1440px; continua sem consumer de produto.
 
 ### ACULTA Studio Culturas — dashboard do owner Eventos
@@ -272,7 +272,7 @@ compara a fixture do SDC em 320–1440px; continua sem consumer de produto.
 `body.path-culturas`. Não foi criado SDC porque o controller já fornece a
 estrutura e os render arrays proprietários; não se duplica contrato visual ou
 funcional em um componente paralelo. O fixture e suas limitações estão em
-[`tests/browser/studio/geral/README.md`](../../../../../tests/browser/studio/geral/README.md).
+[`tests/browser/aculta-studio/README.md`](../../../../../tests/browser/aculta-studio/README.md).
 
 As quatro cores fechadas de seção têm tokens, pares de contraste e stories no
 `content-section`. O bloco básico expõe `field_section_color` e preserva
@@ -414,7 +414,7 @@ Novo inventário estático no HEAD da PR #299: **54 arquivos `.component.yml`** 
 - `content/sponsor-logos`: integrar dados autorizados e mídia pela cadeia de `aculta_image`; evitar URL arbitrária.
 - `patterns/bookmark-toggle`: o consumidor do Fórum existe; ampliar sem duplicar Flag e com controle de cache por usuário.
 - `editorial-card` (imprensa) e `patterns/card` (teasers): preferir reuso com dados editoriais consistentes; não criar SDC alternativo sem gate.
-- Acessibilidade: modo escuro/claro, 320 px, zoom 200%, teclado, contraste WCAG 2.2 AA e no-JS quando aplicável. Validar no tema ACULTA ativo; Olivero não é gate de validação. Não marcar "concluído" sem evidência no Runtime.
+- Acessibilidade: modo escuro/claro, 320 px, zoom 200%, teclado, contraste WCAG 2.2 AA, no-JS quando aplicável e Olivero. Não marcar "concluído" sem evidência no Runtime.
 
 Fonte: [auditoria OpenCulturas 3.1.5](../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md).
 
@@ -759,7 +759,7 @@ equivale a homologação Runtime, F11 ou MF3.
 O Hub da Conta reutiliza o SDC `patterns/card` para as experiências disponíveis.
 O adaptador mantém a lista Drupal e seus destinos; `studio.css` neutraliza apenas
 a pele `list-group-item` dos `<li>` que envolvem o SDC, evitando uma segunda
-superfície ao redor do card. A fixture `tests/browser/studio/geral/studio-card-fidelity.py`
+superfície ao redor do card. A fixture `tests/browser/aculta-studio/studio-card-fidelity.py`
 reproduz o markup Core, verifica 27 viewports, teclado e zoom de 200%/400%;
 a evidência atual é local candidata e está registrada na auditoria mobile-first.
 
@@ -791,7 +791,7 @@ A região `aculta-highlighted` fica fora da raiz que define os tokens
 fonte do documento, e essa exclusão da fidelidade tipográfica está aceita e
 encerrada. Moldura, ritmo e hierarquia seguem o Next.
 
-Fixture `tests/browser/studio/geral/studio-status-messages.py`:
+Fixture `tests/browser/aculta-theme-mobile-first/studio-status-messages.py`:
 **112/112 checks** no Firefox ESR visível (320/360/390/599/600/768/1024/1280/
 1440px, claro/escuro, zoom real 200%/400%), incluindo escopo sem vazamento para
 um container não-Studio, cores de estado iguais aos tokens semânticos,
@@ -821,7 +821,7 @@ drush state:set aculta420.studio_identity 1   # ou 0
 drush cr
 ```
 
-Fixture `tests/browser/studio/geral/studio-identity.py`: **108/108
+Fixture `tests/browser/aculta-theme-mobile-first/studio-identity.py`: **108/108
 checks** no Firefox ESR visível, comparando Fidelity e Identity em nove
 larguras e claro/escuro. No claro, link mede 5,81:1 e CTA amarelo com texto
 verde-escuro 7,84:1; no escuro, link 11,51:1 e CTA 7,84:1. Capturas em

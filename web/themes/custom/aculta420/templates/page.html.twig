@@ -1,4 +1,4 @@
-{# Semantic layout using the Bootstrap 5 assets supplied by the Bootstrap5 base theme. #}
+{# Semantic layout using the Bootstrap 3 assets supplied by Drupal Bootstrap 8.x. #}
 {% set aculta_wiki_search = domain_presentation.regions.wiki_search|default(null) %}
 {# Institution Bar: global, institutional, no Domain/purpose decisions here. #}
 {% if domain_presentation.layout.institution_bar_account|default(false) %}
@@ -65,7 +65,7 @@
       {% endif %}
       {% if not aculta_wiki_search and page.primary_menu %}
         <button class="navbar-toggle aculta-menu-toggle" type="button"
-                data-bs-toggle="collapse" data-bs-target="#aculta-primary-menu"
+                data-toggle="collapse" data-target="#aculta-primary-menu"
                 aria-controls="aculta-primary-menu" aria-expanded="false"
                 aria-label="{{ 'Menu principal'|t }}">
           <span class="aculta-navbar-toggle-icon" aria-hidden="true"></span>
@@ -123,7 +123,7 @@
       <div class="aculta-page-heading">{{ aculta_page_title }}</div>
     {% endif %}
     <div class="row">
-      <div class="{{ page.sidebar ? 'col-12 col-lg-8' : 'col-12' }} aculta-content">
+      <div class="{{ page.sidebar ? 'col-xs-12 col-lg-8' : 'col-xs-12' }} aculta-content">
         {% if aculta_account_edit_blocked %}
           <div class="aculta-account-edit-notice" role="status">
             <p>{{ 'O gerenciamento da sua conta é feito em Minha Conta.'|t }}</p>
@@ -133,7 +133,7 @@
         {{ page.content }}
       </div>
       {% if page.sidebar %}
-        <aside class="col-12 col-lg-4 aculta-sidebar" aria-label="{{ 'Informações complementares'|t }}">
+        <aside class="col-xs-12 col-lg-4 aculta-sidebar" aria-label="{{ 'Informações complementares'|t }}">
           {{ page.sidebar }}
         </aside>
       {% endif %}

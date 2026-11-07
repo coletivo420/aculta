@@ -1,16 +1,16 @@
 /* 12. Drupal and Bootstrap components: preserve behavior and remove default colors. */
-.aculta-panel, .aculta-card, .offcanvas, .dropdown-menu {
+.panel, .modal-content, .dropdown-menu {
   background-color: var(--aculta-surface-raised);
   color: var(--aculta-text-primary);
 }
-.aculta-panel, .aculta-panel--default, .offcanvas, .dropdown-menu { border-color: var(--aculta-border-default); }
-.aculta-panel__heading, .aculta-card__header { background-color: var(--aculta-surface-muted); color: var(--aculta-text-primary); }
-.dropdown-menu > li > a, .dropdown-item { color: var(--aculta-text-primary); }
-.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus, .dropdown-item:hover, .dropdown-item:focus {
+.panel, .panel-default, .modal-content, .dropdown-menu { border-color: var(--aculta-border-default); }
+.panel-heading { background-color: var(--aculta-surface-muted); color: var(--aculta-text-primary); }
+.dropdown-menu > li > a { color: var(--aculta-text-primary); }
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
   background-color: var(--aculta-surface-muted);
   color: var(--aculta-text-primary);
 }
-.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus, .dropdown-item.active {
+.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
   background-color: var(--aculta-interactive-active-bg);
   color: var(--aculta-interactive-active-text);
 }
@@ -65,7 +65,7 @@
   }
 }
 
-.form-control, select.form-control, .input-group-text {
+.form-control, select.form-control, .input-group-addon {
   color: var(--aculta-text-primary);
   background-color: var(--aculta-surface-interactive);
   border-color: var(--aculta-border-strong);
@@ -74,7 +74,7 @@
 .form-control, select.form-control { min-height: 2.75rem; }
 .form-control[type="color"] { min-height: 0; }
 .form-control::placeholder { color: var(--aculta-text-muted); opacity: 0.85; }
-.form-control:disabled, select.form-control:disabled, .input-group-text { background-color: var(--aculta-surface-muted); }
+.form-control:disabled, select.form-control:disabled, .input-group-addon { background-color: var(--aculta-surface-muted); }
 .form-control:focus, select.form-control:focus, :is(input[type="checkbox"], input[type="radio"]):focus {
   color: var(--aculta-text-primary);
   background-color: var(--aculta-surface-interactive);
@@ -190,7 +190,9 @@
 .modal-backdrop { background-color: var(--aculta-green-dark); }
 .tooltip-inner { background-color: var(--aculta-green-dark); color: var(--aculta-text-inverse); }
 .popover { background-color: var(--aculta-surface-raised); color: var(--aculta-text-primary); }
-.popover-header { background-color: var(--aculta-surface-muted); color: var(--aculta-text-primary); }
+.popover-title { background-color: var(--aculta-surface-muted); color: var(--aculta-text-primary); }
+.modal-header .close { color: var(--aculta-text-primary); opacity: 1; text-shadow: none; }
+.modal-header .close:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
 
 :is(a, button, input, select, textarea, .btn, .button):focus-visible {
   outline: 3px solid var(--aculta-focus-ring);
@@ -206,9 +208,9 @@
     transition: none;
   }
   .aculta-navbar .nav-link,
-  .aculta-card, .aculta-panel,
+  .panel,
   .aculta-editorial-list .views-row,
   .webform-submission-form .form-submit { transition: none; }
-  .aculta-card:is(:hover, :focus-within), .aculta-panel:is(:hover, :focus-within),
+  .panel:is(:hover, :focus-within),
   .aculta-editorial-list .views-row:is(:hover, :focus-within) { transform: none; }
 }

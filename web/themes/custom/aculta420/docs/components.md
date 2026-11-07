@@ -292,7 +292,7 @@ Atualização mobile-first 2026-10-29: o resumo de metadados da listagem começa
 sob o título do tópico e volta à coluna lateral em `min-width: 36rem`; o
 formulário público de busca usa uma coluna como base, duas em `36rem` e três em
 `62rem`. Harnesses candidatos e limites DEFERRED estão em
-`tests/browser/forum/aculta-forum/README.md`.
+`tests/browser/aculta-forum/README.md`.
 
 O Portal pode anexar ao campo compartilhado a navegação de progresso das
 mensagens. O tema apresenta os controles neutros `[data-aculta-discussion-progress]`
@@ -314,7 +314,7 @@ consulta History. Evidência visual em `0.6.0-dev.116`.
 
 Atualização mobile-first 2026-10-29: 2 colunas como base abaixo de 360px, 4
 colunas em `min-width: 22.5rem` e a barra desktop sticky em `min-width: 36rem`.
-O harness `tests/browser/forum/aculta-forum/progress-visual.mjs` confere esses estados
+O harness `tests/browser/aculta-forum/progress-visual.mjs` confere esses estados
 e aceita CSS candidata; a rodada Firefox desta revisão está DEFERRED.
 
 ## Patterns
@@ -432,7 +432,7 @@ Componente neutro em `components/feedback/empty-state/`, com slot `message` para
 
 ## B4 — Utility offcanvas e Minha Conta
 
-`cart-offcanvas` não oferece mais um X puramente visual nos itens: mudanças reais de carrinho pertencem ao Commerce. `alerts-trigger`, `messenger-trigger` e `cart-offcanvas` usam Offcanvas do Bootstrap 5 para foco, Escape e backdrop; `css/components/portal-cart.css` preserva a apresentação lateral ACULTA. `portal-account.css` apresenta reflow responsivo da navegação/conteúdo da Minha Conta sem alterar sua implementação AJAX. [Auditoria B4](theme-ux-0.8-b4-utility-panels.md). Validar no Runtime antes de homologar.
+`cart-offcanvas` não oferece mais um X puramente visual nos itens: mudanças reais de carrinho pertencem ao Commerce. `alerts-trigger`, `messenger-trigger` e `cart-offcanvas` usam o plugin modal do Bootstrap 3 para foco, Escape e backdrop; `css/components/portal-cart.css` apresenta o modal como gaveta lateral. `portal-account.css` apresenta reflow responsivo da navegação/conteúdo da Minha Conta sem alterar sua implementação AJAX. [Auditoria B4](theme-ux-0.8-b4-utility-panels.md). Testar no Drupal antes de homologar.
 
 ## B5 — contrato de overlays
 

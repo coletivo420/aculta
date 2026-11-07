@@ -221,7 +221,7 @@ hook OOP. **Não crie** `template_preprocess_*` legado.
 - `php scripts/validate-aculta420-foundation.php` (via `php vendor/drush/drush/drush.php scr`).
 - `php scripts/validate-module-theme-boundary.php` (fronteira de classes e tokens).
 - Navegador, em desktop e em 390 px: abrir a gaveta, "Opções", confirmação, nova conversa, perfil.
-- Registre o resultado em `docs/history/portal/TESTES-NAVEGADOR-RODADAS.md`, em seção datada.
+- Registre o resultado em `docs/portal/TESTES-NAVEGADOR.md`.
 
 ## 11. Pendências do tema para o Messenger
 

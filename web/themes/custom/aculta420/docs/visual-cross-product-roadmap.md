@@ -90,7 +90,7 @@ capturas 320/1440px foram revisadas. O CSS ainda não foi servido no Runtime.
 ACL A/B, cache, AJAX/no-JS, zoom, WCAG, demais telas da Suite e comparação
 pareada OpenCulturas seguem sem prova. Esta evidência focal não aprova OCS-F10/F11
 nem THEME-MF3. Ver [matriz de paridade](studio-visual/visual-parity-matrix.md)
-e [harnesses do Studio](../../../../../tests/browser/studio/geral/README.md).
+e [harnesses do Studio](../../../../../tests/browser/aculta-studio/README.md).
 
 **Não modificar Institution Bar ou Domain Header**, nem globalizar os estilos OpenCulturas; não ativar `opcult`, não criar CSS/Sass build paralelo. Auditar licença de fontes, ícones e SVGs antes de qualquer porte. A frente B detém tema, SDCs e CSS; arquivos de serviços/controladores/rotas pertencem à frente A.
 
@@ -260,7 +260,7 @@ validado em 320 px, além das capturas desktop/dark.
 
 ## Decisão de implementação visual — ferramentas UI Suite (2026-10-22)
 
-**Core SDC + UI Patterns + UI Styles são os instrumentos preferenciais**, integrados ao Bootstrap 5 fornecido pela base `bootstrap5`. O uso de ferramentas já configuradas é obrigatório como **etapa de avaliação** antes de qualquer Twig customizado, nova dependência ou CSS isolado; não obriga a converter todos os displays. Ver [plano UI Suite existente](ui-suite-migration-plan.md) para o inventário real, versões e exceções.
+**Core SDC + UI Patterns + UI Styles são os instrumentos preferenciais**, integrados ao Bootstrap 3.4.10 fornecido pela base Drupal Bootstrap 8.x. O uso de ferramentas já configuradas é obrigatório como **etapa de avaliação** antes de qualquer Twig customizado, nova dependência ou CSS isolado; não obriga a converter todos os displays. Ver [plano UI Suite existente](ui-suite-migration-plan.md) para o inventário real, versões e exceções.
 
 | Ferramenta | Emprego na próxima fase | Limite |
 | --- | --- | --- |
@@ -696,7 +696,7 @@ O verbete público também empilha conteúdo/aside como base e volta a duas colu
 em `48rem`; o harness Wiki existente agora mede a ordem visual principal/aside
 no consumer real. A auditoria encontrou o aside antes do conteúdo no baseline
 servido; a CSS candidata define `grid-row: auto`, preservando a ordem do DOM no
-mobile. A checagem foi consolidada em `tests/browser/wiki/aculta-wiki/visual.py`:
+mobile. A checagem foi consolidada em `tests/browser/aculta-wiki/visual.py`:
 Firefox ESR passou 302/302 verificações com CSS candidata em home, listagem,
 busca e verbete, em doze larguras. O baseline reprovou a ordem em cinco larguras
 abaixo de 768px. O Runtime ainda não serve a correção, e a rodada não cobre o
@@ -708,7 +708,7 @@ integral.
 Variantes de uma, duas e três regiões usam coluna única como base e restauram
 duas/três colunas em `48rem`, com ordem DOM preservada. O SDC segue sem consumer
 de produto; a fixture comparativa está em
-`tests/browser/transversal/aculta-theme-mobile-first/page-columns.py`. Não aprova MF3.
+`tests/browser/aculta-theme-mobile-first/page-columns.py`. Não aprova MF3.
 
 ### THEME-MF2 — índice e busca do Fórum
 
@@ -749,7 +749,7 @@ ESR visível, com fixture sintético: 24/24 checks em 12 larguras, screenshots
 idênticas e sem overflow. Lint CSS, SDC schemas, Design Foundations e browser
 validators passaram. As páginas reais ainda não foram conferidas com este
 candidato servido; THEME-MF3 segue pendente. Ver `mobile-first-audit.md` e
-`tests/browser/transversal/aculta-theme-mobile-first/institutional-layout.py`.
+`tests/browser/aculta-theme-mobile-first/institutional-layout.py`.
 
 ### OCS-F2 / THEME-MF2 — alvos de toque das abas internas (2026-10-30)
 
@@ -759,7 +759,7 @@ visível passou 243/243 checks na fixture reutilizável em 27 larguras de
 320–1920px; stylelint passou e a captura em 320px foi inspecionada. Rota real,
 zoom, modos de cor e acessibilidade completa continuam pendentes; OCS-F2,
 THEME-MF3 e OCS-F11 seguem parciais/não aprovados. Evidência em
-`mobile-first-audit.md` e `tests/browser/studio/geral/README.md`.
+`mobile-first-audit.md` e `tests/browser/aculta-studio/README.md`.
 
 ### OCS-F2 — reteste das rotas Marley e Conta com CSS candidata (2026-10-30)
 
@@ -871,7 +871,7 @@ de espaçamento em 320 px; repetição ficou DEFERRED por sessões concorrentes 
 memória baixa. A página real ainda depende de sincronização/cache rebuild no
 servidor de desenvolvimento. Esta fatia não aprova THEME-MF3. Ver
 `mobile-first-audit.md` e
-`tests/browser/transversal/aculta-theme-mobile-first/public-profile-layout.py`.
+`tests/browser/aculta-theme-mobile-first/public-profile-layout.py`.
 
 ### THEME-MF2 — autenticação pública (2026-10-30)
 
@@ -884,7 +884,7 @@ A rota real anônima `/entrar` também passou 12/12 verificações em 11 largura
 com a folha candidata injetada na sessão Firefox, sem mutação persistente; a
 confirmação do CSS servido após publicação/cache segue DEFERRED. Esta fatia não
 homologa THEME-MF3. Evidência e limites em `mobile-first-audit.md` e no README
-de `tests/browser/transversal/aculta-theme-mobile-first/`.
+de `tests/browser/aculta-theme-mobile-first/`.
 
 ### THEME-MF0 — inventário estático regenerável (snapshot histórico 2026-10-29)
 
@@ -906,7 +906,7 @@ o reflow em 12 larguras e ausência de rolagem horizontal: 15/15 checks. A
 fixture baseline/candidata passou 24/24. Não houve delta CSS neste commit: a
 folha no checkout servido, branch remota e worktree tem o mesmo hash. Evidência
 e limites em `mobile-first-audit.md` e
-`tests/browser/transversal/aculta-theme-mobile-first/README.md`. Não aprova THEME-MF3.
+`tests/browser/aculta-theme-mobile-first/README.md`. Não aprova THEME-MF3.
 
 ### THEME-MF2 — leitor PDF de Media
 
@@ -915,7 +915,7 @@ compactos e restaura a apresentação ampla acima de 640 CSS px. O smoke Firefox
 reutilizável agora mede a fronteira 640/641 além de 320–1280 e pode injetar o
 CSS candidato local na rota servida. Runtime/Firefox estão DEFERRED enquanto há
 sessões concorrentes; fullscreen não é exercitado. Evidência em
-`mobile-first-audit.md` e `tests/browser/transversal/aculta-document-viewer/README.md`.
+`mobile-first-audit.md` e `tests/browser/aculta-document-viewer/README.md`.
 
 ### THEME-MF2 — apresentação Likert de Webform
 
@@ -926,7 +926,7 @@ em todos os viewports e mantém o limite desktop de 600 px, respeitando o gutter
 do tema. O modal já não é uma exceção mobile-only. O harness comparativo
 Firefox validou baseline/candidata em 14 larguras; a execução mais recente está
 registrada abaixo e em `mobile-first-audit.md`. Ver
-`tests/browser/transversal/aculta-theme-mobile-first/webform-layout.py`.
+`tests/browser/aculta-theme-mobile-first/webform-layout.py`.
 
 ### THEME-MF2 — gavetas utilitárias do shell
 
@@ -950,7 +950,7 @@ footer social de `aculta_linkweed`; como o LinkGenerator não passa pelo
 diretamente e valida links/ícones de 44px. Resultado: 260/260 checks, sem
 overflow e com shell único. A execução usou CSS candidato só em LINKS. Detalhes
 e limites em `mobile-first-audit.md` e
-`tests/browser/transversal/aculta-theme-mobile-first/README.md`. Esta checagem isolada não
+`tests/browser/aculta-theme-mobile-first/README.md`. Esta checagem isolada não
 aprova THEME-MF3.
 
 ### THEME-MF2 — Institution Bar em viewport estreito
@@ -980,14 +980,14 @@ THEME-MF3. Ver `mobile-first-audit.md` e
 ### THEME-MF2 — galeria de álbuns
 
 O palco usa uma coluna e miniaturas recolhidas como base; a partir de `30rem`
-restaura a composição ampla. `tests/browser/gallery/aculta-gallery/visual.py` mede os
+restaura a composição ampla. `tests/browser/aculta-gallery/visual.py` mede os
 estados mobile/desktop e a fronteira 479/480px em dois domains públicos,
 incluindo a alternância de miniaturas; Firefox/Runtime permanecem pendentes.
 
 ### THEME-MF2 — leitores DOCX/planilhas
 
 O iframe DOCX começa em 50vh e amplia para 60vh em `36rem`; o wrapper retoma
-padding de 1rem no mesmo breakpoint. `tests/browser/transversal/aculta-document-viewer/
+padding de 1rem no mesmo breakpoint. `tests/browser/aculta-document-viewer/
 office-options.py` mede 575/576px em ACULTA420 e Olivero; revisão Firefox ainda
 pendente.
 
@@ -995,7 +995,7 @@ pendente.
 
 Fieldsets e ações do formulário no purpose SUPPORT usam layout compacto como
 base e recuperam espaçamentos e largura natural a partir de 481px. Os campos,
-ordem DOM e Form API permanecem iguais. `tests/browser/transversal/aculta-theme-mobile-first/
+ordem DOM e Form API permanecem iguais. `tests/browser/aculta-theme-mobile-first/
 support-form.py` mede os estados em onze larguras; lint CSS e compilação Python
 são gates desta fatia. Firefox visível e a página real ficam DEFERRED sem
 `DISPLAY=:0`; esta microfase não aprova THEME-MF3.
@@ -1022,7 +1022,7 @@ DEFERRED sem `DISPLAY=:0`. Não homologa THEME-MF3.
 
 O composer de resposta usa padding e altura compactos como base; o espaçamento
 anterior e a altura natural da caixa retornam em 576px. O teste
-`tests/browser/transversal/aculta-theme-mobile-first/messenger-reply-layout.py` compara a
+`tests/browser/aculta-theme-mobile-first/messenger-reply-layout.py` compara a
 fixture com baseline e candidata nas larguras globais, mantendo a ordem
 mensagem/ação e o alvo de toque. Firefox visível ficou DEFERRED nesta sessão; o
 script não altera conversas nem substitui homologação da gaveta real.
@@ -1210,7 +1210,7 @@ zoom real do navegador atingiu 200% e 400% (640 e 320px CSS a partir de janela
 de 1280px), sem overflow. Esses resultados são somente da home Magazine e não
 substituem testes no-JS, leitor de tela, WCAG 2.2 AA nem THEME-MF3. Evidências
 e comandos reutilizáveis estão em `mobile-first-audit.md` e
-`tests/browser/transversal/aculta-theme-mobile-first/README.md`.
+`tests/browser/aculta-theme-mobile-first/README.md`.
 
 ### Cursos — rail responsivo e teclado (2026-10-30)
 
@@ -1229,7 +1229,7 @@ nav visível. Na Wiki, o campo de busca contextual permaneceu disponível no lug
 do menu principal. O teste usa hosts do manifesto de transição. Não cobre rotas
 internas, sessões autenticadas nem gates completos de acessibilidade; THEME-MF3
 segue pendente. Comando e limites em
-`tests/browser/transversal/aculta-theme-mobile-first/README.md`.
+`tests/browser/aculta-theme-mobile-first/README.md`.
 
 ### Shell global — temas claro/escuro e reduced motion (2026-10-30)
 
@@ -1249,7 +1249,7 @@ restritas a essas duas raízes; a validação pós-correção está DEFERRED at�
 candidato chegar ao Runtime. O gate global de fronteira também identificou
 dívida em formulários de Eventos, sem alteração por haver trabalho paralelo no
 módulo. Ver `mobile-first-audit.md` e
-`tests/browser/transversal/aculta-theme-mobile-first/README.md`.
+`tests/browser/aculta-theme-mobile-first/README.md`.
 
 ### OCS-F3 — abas responsivas do WE SATIVA (2026-10-30)
 
@@ -1622,7 +1622,7 @@ O teste Unitário de `AccountExperienceProvider` verifica labels e rotas
 canônicas. A fixture Firefox ESR visível passou 250/250 checks em 27 larguras,
 foco por teclado e zoom real 200/400%, sem overflow; evidências e limites estão
 em `studio-visual/visual-parity-matrix.md` e
-`tests/browser/studio/geral/README.md`. A fixture não valida o consumer servido
+`tests/browser/aculta-studio/README.md`. A fixture não valida o consumer servido
 no Runtime. A homologação de F4/F11 e THEME-MF3 permanece pendente.
 
 Reteste OCS-F4 em 2026-10-31 no Runtime `2493d7535`: a raiz `.studio.aculta-account-entry`
@@ -2173,7 +2173,7 @@ estavam renderizados; nenhum foi enviado. Evidência e snapshot pré-ULI estão
 registrados em `mobile-first-audit.md`. Uma rodada integrada posterior passou
 12/12 checks de zoom real 100/200/400% e foco por teclado nos dois formulários;
 Complemento ficou 88,1% visível a 200% e 96,6% a 400%, com o foco visível. O
-script reutilizável é `tests/browser/studio/culturas/culturas-forms-zoom.py`.
+script reutilizável é `tests/browser/aculta-theme-mobile-first/culturas-forms-zoom.py`.
 Essas rodadas cobrem renderização, reflow, zoom e foco desta dupla de formulários;
 grants A/B, CEP ao vivo, submissão Form API, AJAX, contraste WCAG integral e os
 gates THEME-MF3/OCS-F11 permanecem pendentes.
@@ -2270,7 +2270,7 @@ mensagem do OpenCulturas Next com apresentação escopada ao Studio. Não houve
 novo SDC nem template: `studio.css` estiliza o alerta Bootstrap real das raízes
 `.studio`, `.aculta-profile-editor`, `.we-sativa__workspace`,
 `body.path-ganjalab` e `body.path-culturas`. A fixture
-`tests/browser/studio/geral/studio-status-messages.py` passou
+`tests/browser/aculta-theme-mobile-first/studio-status-messages.py` passou
 **112/112** no Firefox ESR visível (nove larguras, claro/escuro, zoom
 200%/400%, escopo sem vazamento, contraste 12,4:1/14,5:1). Evidência em
 `/home/piradopirata/aculta-suite-out/studio-status-messages-20261101/`.

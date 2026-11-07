@@ -1,33 +1,15 @@
-## 0.7.0-dev.41 — namespace de token de tipografia Studio (2026-11-04; Design Foundations PASS)
-
-`--aculta-studio-font-family` foi renomeado para o token de escopo
-`--aculta-studio-fidelity-font-family`, sem mudança do valor tipográfico ou
-de sua apresentação. Design Foundations: 2468 checks PASS.
-
 ## 0.7.0-dev.40 — tipografia institucional no Studio (2026-11-03; validação pendente)
 
 A tipografia do tema é Inter no corpo e Oswald nos títulos. Studio e editor de perfil herdam Inter pelos tokens globais; arquivos locais de Montserrat foram removidos. Evidências anteriores que citam Montserrat descrevem a implementação antiga e não são requisito visual vigente.
 
 # Roadmap — ACULTA420
 
-## Migração para Bootstrap5 (em andamento; visual DEFERRED)
+## 0.7.0-dev.39 — usar diretamente Drupal Bootstrap 8.x (2026-11-03; visual DEFERRED)
 
-O tema local passa a herdar de `bootstrap5`, usando as libraries declaradas
-pela instalação `drupal/bootstrap5 5.0.x-dev` (framework Bootstrap 5.3.8).
-Markup legado de grade, painéis, abas, gavetas, alertas e APIs jQuery foi
-adaptado em Twig, CSS, JavaScript e contratos de apresentação do tema.
-Inventário e validações pendentes estão em
-[`bootstrap5-migration-matrix.md`](bootstrap5-migration-matrix.md). A
-configuração limpa de `origin/dev` e o Composer ainda divergem do Runtime:
-não há entrada Bootstrap5 no manifesto/lock nem habilitação na configuração
-sincronizada; esta entrega não altera a versão nem esses arquivos Composer.
-Rebuild, consumers reais e revisão visual no Runtime continuam pendentes.
-
-## 0.7.0-dev.39 — usar diretamente Drupal Bootstrap 8.x (2026-11-03; estado histórico)
-
-Naquela versão, ACULTA420 usava Bootstrap 3.4.10 e plugins jQuery fornecidos
-por Drupal Bootstrap 8.x-3.45. Esse estado foi substituído pela migração
-documentada acima.
+ACULTA420 usa o Bootstrap 3.4.10 e os plugins jQuery fornecidos pela base
+Drupal Bootstrap 8.x-3.45, sem carregar outra cópia do framework. As gavetas
+usam o modal nativo com apresentação lateral própria. A revisão visual e o
+rebuild do cache no Runtime ainda estão pendentes.
 
 ## 0.7.0-dev.37 — metadata de compatibilidade Drupal 12 (2026-11-03; não validado)
 
@@ -103,7 +85,7 @@ permanece pendente.
 | 0.6.1-dev.13 | Separadores visuais entre grupos de avisos por origem | Messenger Unit 221/1.582, ThemeHooks Unit 1/1, Kernel 38/891, Foundation 345, Design Foundations 2170 e smoke Firefox ESR 8/8 PASS no Runtime de teste (1270 px); Alpha e demais viewports pendentes | Tema apresenta cabeçalhos/separadores do contrato de origem sem alterar autorização, ordem ou persistência |
 | 0.6.1-dev.7 | Schema de settings e renderização SDC da home Wiki no Kernel | Kernel Wiki 1/96; Runtime e browser pendentes | `aculta420.settings` reconhece as nove opções `b5_*` dos defaults; instalação e render pelo tema passam |
 | 0.6.1-dev.6 | Tokens visuais do workspace WE SATIVA e retorno aos trabalhos | PHPUnit Unit de PortalUiHooks; browser WE SATIVA pendente | Layout usa `d-grid/gap-4`, ação de criação `btn-primary`, retorno `btn-outline-primary`; não cria SDC paralelo |
-| 0.6.1-dev.5 | Corrigida largura do submit da busca no cabeçalho Wiki | Firefox ESR/X11, CSS candidato direto, 46/46; sem overflow em 320/390/1280 px | Largura intrínseca evita que `.form-control` ultrapasse o formulário flex; agregado Runtime pendente |
+| 0.6.1-dev.5 | Corrigida largura do submit da busca no cabeçalho Wiki | Firefox ESR/X11, CSS candidato direto, 46/46; sem overflow em 320/390/1280 px | Largura intrínseca evita que `.form-control` ultrapasse o formulário flex; agregado Runtime e Olivero pendentes |
 | 0.6.1-dev.4 | Removidos overrides de Article e Blog aposentados | Changelog registra alteração compatível no tema | `revista` permanece com override próprio |
 | 0.6.1-dev.3 | Banner de consentimento no fluxo normal para não cobrir conteúdo | Firefox ESR/X11: 15/15; capturas 390/768/1024 px em claro/escuro; sem overflow; foco do link de salto verificado | Sai da posição fixa e permanece após o rodapé; cartões sem sobreposição nas capturas inspecionadas |
 | 0.6.1-dev.2 | Hierarquia semântica de grupos e cartões de categoria | Firefox ESR/X11, seis viewports, sem overflow; modo escuro/zoom/dispositivo real pendentes | Grupo H2; categoria H3 com tipografia existente; Foundation espera `0.6.1-dev.2` |
