@@ -82,7 +82,9 @@ foreach ($moduleCode as $path) {
 
 // 2. Biblioteca do módulo não declara CSS: estilo é do tema.
 $libraries = (string) file_get_contents($module . '/aculta_portal.libraries.yml');
-$assert(!preg_match('/^\s+css:\s*$/m', $libraries), 'aculta_portal.libraries.yml declara CSS: o estilo deve ficar no tema aculta420.');
+// Exceção documentada (ADR-051): o CSS do CAPTCHA pertence ao módulo que é dono da integração anti-bot.
+$libraries_without_captcha = preg_replace('/^captcha-presentation:\n(?:[ \t]+.*\n|\n)*/m', '', $libraries) ?? $libraries;
+$assert(!preg_match('/^\s+css:\s*$/m', $libraries_without_captcha), 'aculta_portal.libraries.yml declara CSS fora da exceção do CAPTCHA (ADR-051): o estilo deve ficar no tema aculta420.');
 
 // 3. Módulo não depende de biblioteca do tema (dependencies ou attached).
 foreach (['aculta_portal.libraries.yml', 'aculta_portal.module', 'aculta_portal.info.yml'] as $name) {
