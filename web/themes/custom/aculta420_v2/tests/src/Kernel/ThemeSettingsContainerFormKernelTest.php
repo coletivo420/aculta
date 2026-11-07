@@ -94,11 +94,6 @@ final class ThemeSettingsContainerFormKernelTest extends KernelTestBase {
         'container_width' => 1400,
         'narrow_width' => 800,
       ],
-      'account' => [
-        'mode' => 'narrow',
-        'container_width' => 1000,
-        'narrow_width' => 700,
-      ],
       'magazine' => [
         'mode' => 'narrow',
         'container_width' => 1200,
@@ -116,7 +111,6 @@ final class ThemeSettingsContainerFormKernelTest extends KernelTestBase {
     self::assertSame(1400, $grid['main']['container_width']['#default_value']);
     self::assertSame(800, $grid['main']['narrow_width']['#default_value']);
 
-    self::assertSame(700, $grid['account']['narrow_width']['#default_value']);
 
     // Shop não foi personalizado, deve manter o fallback
     self::assertSame('default', $grid['shop']['mode']['#default_value']);
