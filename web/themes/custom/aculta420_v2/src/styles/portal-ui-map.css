@@ -69,7 +69,18 @@
 
 /* Mapas. */
 .aculta-map,
-.aculta-map-wrapper { display: block; inline-size: 100%; min-block-size: 12rem; }
+.aculta-map-wrapper { display: block; inline-size: 100%; max-inline-size: 100%; }
+.aculta-map { block-size: 18rem; min-block-size: 16rem; overflow: hidden; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface-highlight); }
+
+@media (min-width: 48rem) { .aculta-map { block-size: 24rem; } }
+
+@media (min-width: 64rem) { .aculta-map { block-size: 30rem; } }
+
+.aculta-map .leaflet-control-attribution { color: var(--color-text-primary); font-size: .75rem; }
+.aculta-map .leaflet-control-attribution a { color: var(--color-brand-primary); }
+.aculta-map .leaflet-bar a:focus-visible,
+.aculta-map .leaflet-marker-icon:focus-visible { outline: 3px solid var(--color-brand-primary); outline-offset: 2px; }
+.aculta-map__aviso { margin-block: .5rem 1rem; }
 .aculta-map__aviso,
 .aculta-map__geocoding-attribution { color: var(--color-text-muted); font-size: .875rem; }
 .aculta-map__location-route { display: inline-flex; gap: .5rem; }

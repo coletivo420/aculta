@@ -100,7 +100,8 @@ final class EventLocation extends ContentEntityBase implements EntityOwnerInterf
     $mudouEndereco = !$this->isNew() && $this->original !== NULL
       && $this->original->get('field_endereco')->getValue() !== $this->get('field_endereco')->getValue();
     // Geocode once when a location is created or its address changes.
-    $precisaGeocodificar = $mudouEndereco || ($this->isNew() && $this->get('field_coordenadas')->isEmpty());
+    // A Local saved while geocoding was unavailable is retried on later saves.
+    $precisaGeocodificar = $mudouEndereco || $this->get('field_coordenadas')->isEmpty();
     if (\Drupal::hasService('aculta_maps.geocoding') && $precisaGeocodificar) {
       $texto = $this->enderecoTexto();
       $coordenadas = $texto !== '' ? \Drupal::service('aculta_maps.geocoding')->geocode($texto) : NULL;

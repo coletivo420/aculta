@@ -16,8 +16,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Mapa de locais (/mapa).
  *
- * A lista textual funciona sem JavaScript e sem chave. O mapa só carrega
- * quando há credencial de provedor.
+ * A lista textual funciona sem JavaScript e sem chave. O mapa usa
+ * OpenStreetMap/Leaflet por padrão, sem chave; Google só com credencial.
  *
  * Privacidade: local "aproximado" aparece com coordenadas arredondadas (cerca
  * de 1 km), e nunca como texto de coordenada.
@@ -109,7 +109,9 @@ final class MapController extends ControllerBase {
       '#cache' => ['tags' => ['aculta_event_location_list'], 'max-age' => 900],
     ];
 
-    $render['mapa'] = $mapa;
+    // Ordem mobile-first: mapa, aviso (política) e lista textual equivalente.
+    $render['mapa'] = $mapa + ['#weight' => -10];
+    $render['aviso']['#weight'] = -5;
 
     CacheableMetadata::createFromRenderArray($render)
       ->addCacheableDependency($resultado['cache_metadata'])

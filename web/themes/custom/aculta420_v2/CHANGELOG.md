@@ -1,3 +1,7 @@
+## Não versionado — mapa com altura responsiva (2026-11-07)
+
+- `.aculta-map`: 18rem/24rem/30rem (mobile/768/1024), borda e superfície por tokens; atribuição Leaflet legível e foco visível em controles e marcadores. Antes, `min-block-size: 12rem` do tema reduzia o mapa a 192 px.
+
 ## Não versionado — fórum Growroom420 (entregas 1 e 2 do plano visual)
 
 - Lista pública (`/discussoes` e variantes): cabeçalho Growroom420 com botão "+ Novo tópico", abas ligadas às rotas existentes, cabeçalho de colunas e linhas em `forum-topic-row` com dados reais. Painel lateral com regras em `forum-sidebar-panels`. Zero respostas aparece como 0.

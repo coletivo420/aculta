@@ -106,6 +106,58 @@ final class MapControllerKernelTest extends KernelTestBase {
   }
 
   /**
+   * A Local saved without coordinates is geocoded again on a later save.
+   */
+  public function testLocationWithoutCoordinatesIsRetriedOnUpdate(): void {
+    $stub = new class() {
+
+      /**
+       * Result returned by the next call.
+       */
+      public ?array $result = NULL;
+
+      /**
+       * Number of calls.
+       */
+      public int $calls = 0;
+
+      /**
+       * Fake geocoder without network access.
+       */
+      public function geocode(string $address): ?array {
+        $this->calls++;
+        return $this->result;
+      }
+
+    };
+    $this->container->set('aculta_maps.geocoding', $stub);
+    $local = EventLocation::create([
+      'title' => 'Local sem coordenadas',
+      'field_precisao' => 'exato',
+      'field_endereco' => [
+        'country_code' => 'BR',
+        'locality' => 'Localidade de teste',
+        'address_line1' => 'Rua de teste, 1',
+      ],
+    ]);
+    $local->save();
+    $this->assertTrue($local->get('field_coordenadas')->isEmpty());
+    $page = MapController::create($this->container)->page();
+    $this->assertSame([], $page['mapa']['#attached']['drupalSettings']['acultaMaps']['aculta-map']['markers']);
+    $this->assertStringContainsString('Local sem coordenadas', (string) \Drupal::service('renderer')->renderInIsolation($page['lista']));
+
+    $stub->result = ['lat' => 0.0, 'lng' => 0.0];
+    $local->save();
+    $this->assertSame(2, $stub->calls);
+    $this->assertSame(0.0, (float) $local->get('field_coordenadas')->lat);
+
+    // Existing coordinates are kept without a new geocoding request.
+    $local = EventLocation::load($local->id());
+    $local->save();
+    $this->assertSame(2, $stub->calls);
+  }
+
+  /**
    * Map output bubbles cache contexts from hidden owner-only locations.
    */
   public function testMapBubblesOwnerAccessCacheContext(): void {

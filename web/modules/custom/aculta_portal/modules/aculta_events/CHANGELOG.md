@@ -1,5 +1,14 @@
 > Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
 
+## Não versionado — mapa: Local sem coordenadas volta a geocodificar (2026-11-07)
+
+- `EventLocation::preSave()` geocodifica também na atualização quando o Local
+  não tem coordenadas (antes só na criação ou mudança de endereço). Causa dos
+  marcadores ausentes em `/mapa` (diagnóstico em `aculta_maps/docs/DIAGNOSTICO-2026-11-07.md`).
+- `/mapa`: ordem mobile-first mapa → política → lista; docblock do `MapController`
+  corrigido (OSM/Leaflet sem chave é o padrão).
+- Kernel `MapControllerKernelTest`: 4 testes/77 assertions PASS, com geocodificador falso.
+
 ## 0.2.0-dev.10 — listagem pública com card-cultural (2026-11-06)
 
 - Criada a View `eventos_publicos` para a raiz do purpose Eventos. O catálogo
