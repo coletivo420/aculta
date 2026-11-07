@@ -111,6 +111,41 @@ body.aculta-component-library-page {
   overflow-wrap: anywhere;
 }
 
+/* Keep dashboard-only positioning from displacing previews in the component library. */
+.aculta-component-library-page .aculta-studio-calendar,
+.aculta-component-library-page .aculta-studio-connections-block {
+  position: static;
+  inset: auto;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  margin-block: 0;
+  z-index: auto;
+}
+
+.aculta-component-library-page :is(main, .page__main):has(.aculta-studio-calendar) {
+  position: static;
+  inline-size: 100%;
+  max-inline-size: none;
+  margin-inline: 0;
+  grid-template-columns: minmax(0, 1fr);
+  padding-inline-end: 0;
+}
+
+.aculta-component-library-page .layout-page:has(.aculta-studio-calendar) {
+  position: static;
+  inline-size: 100%;
+  max-inline-size: var(--aculta-container-width, 1200px);
+  margin-inline: auto;
+  grid-template-columns: minmax(0, 1fr);
+  padding-inline-end: clamp(var(--spacing-sm), 2.5vw, var(--spacing-xxl));
+}
+
+.aculta-component-library-page :is(main, .page__main, .layout-page):has(.aculta-studio-calendar) .layout-page__content {
+  inline-size: 100%;
+  max-inline-size: none;
+  margin-inline: 0;
+}
+
 .aculta-component-library-page .ui_patterns_component__title {
   margin-block: 0 var(--spacing-sm);
   color: var(--color-text-primary);

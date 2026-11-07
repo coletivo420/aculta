@@ -15,7 +15,7 @@ Detalhes por bloco: [status-componentes.md](status-componentes.md), [status-layo
 
 ## UI Patterns Library — layout administrativo
 
-As rotas de overview, provider e componente ficam fora do container por purpose. O overview usa container próprio centralizado, sem caixa externa, com largura máxima de 1200px. Cada componente é um bloco vertical; stories preservam a estrutura nativa e não recebem colunas artificiais. No overview, a barra institucional mantém somente a marca porque os utilitários chegam como texto escapado nessa rota. Playwright Chromium autenticado confirmou rota 200 e 108 componentes; a prévia com CSS local injetado passou em 320/1440px sem overflow. Rebuild de cache Twig/CSS agregado e aceite visual final no Runtime continuam pendentes.
+As rotas de overview, provider e componente ficam fora do container por purpose. O overview usa container próprio centralizado, sem caixa externa, com largura máxima de 1200px. Cada componente é um bloco vertical; stories preservam a estrutura nativa e não recebem colunas artificiais. No overview, a barra institucional mantém somente a marca porque os utilitários chegam como texto escapado nessa rota. Playwright Chromium autenticado confirmou rota 200 e 108 componentes; a prévia com CSS local injetado passou em 320/1440px sem overflow. Depois, Conexões/Calendário tiveram o posicionamento absoluto do dashboard neutralizado na galeria, e as stories de Perfil/Navegação passaram a declarar slots como render arrays Drupal. Renderer confirmou a saída esperada nos quatro SDCs. Aceite visual autenticado na página após rebuild permanece pendente.
 
 ## Higiene de CSS — Stylelint
 

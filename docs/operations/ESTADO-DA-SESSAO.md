@@ -5,13 +5,13 @@
 # V2 — UI Patterns Library — 2026-11-07
 
 - **Objetivo:** organizar visualmente `/painel-administrativo/aparencia/ui/components`, corrigir a barra institucional e definir container próprio centralizado.
-- **Estado:** implementação local publicada; rotas UI Patterns excluídas do container por purpose. Overview usa largura máxima 1200px, sem caixa externa; cada componente em bloco vertical, preservando layouts nativos internos. Ajuste seguinte ativa wrapper oficial de stories e remove recorte de pintura. Barra mantém marca e oculta utilitários quebrados.
+- **Estado:** commits `ed04d341e4` e `4987d69102` publicados; `f28ecce9fa` contém os ajustes desta etapa. Rotas UI Patterns excluídas do container por purpose. Overview usa largura máxima 1200px, sem caixa externa; cada componente em bloco vertical, preservando layouts nativos internos. Ajustes mais recentes mantêm previews dinâmicos, normalizam posição de Calendário/Conexões e convertem slots Perfil/Navegação para render arrays Drupal.
 - **Decisões:** stories/pré-visualizações aparecem antes dos metadados recolhidos. CSS contém overflow e elementos posicionados por componente. Nada de colunas artificiais.
 - **Cuidados:** preview Chromium com CSS local injetado confirmou 108 blocos e sem overflow em 320/1440. Drupal respondeu 200 após corrigir declaração duplicada que causava 500. Cache Twig/agregados no Runtime não foi reconstruído; aceite visual com assets servidos permanece pendente.
 - **Commits e arquivos:** `ed04d341e4` layout inicial; ajuste de wrapper/containment a publicar. Tema `aculta420_v2` (hooks, layout, templates, CSS, testes, TODO, CHANGELOG e docs).
-- **Verificações:** Stylelint, PHPUnit focado (19 testes/100 assertions), PHP lint, foundations (2.468 checks), foundations V2 (83 pares), token budget e `git diff --check` PASS. Ajuste mais recente repetiu Stylelint, PHPUnit focado e diff check.
-- **Pendências e bloqueios:** validar a página após rebuild do cache no Runtime de desenvolvimento.
-- **Próximo passo:** reconstruir cache Drupal no Runtime de desenvolvimento e fazer aceite visual final responsivo.
+- **Verificações:** Stylelint, schema SDC (55/764), token budget e `git diff --check` PASS. Renderer Drupal confirmou saída de 4/4 componentes. Gate `validate-aculta420-v2-sdc.php` DEFERRED/FAIL anterior ao render: falso positivo em `studio-calendar.twig` devido ao sufixo de classe `__add-btn` ser confundido com `.btn`.
+- **Pendências e bloqueios:** cache Drupal reconstruído no Runtime; `updatedb:status` e `config:status` ainda mostram pendências preexistentes, preservadas sem execução/import. Aceite visual autenticado na rota após a mudança permanece pendente.
+- **Próximo passo:** confirmar visualmente a rota autenticada no Runtime; não importar configuração nem executar updates sem escopo explícito.
 
 # V2 — Stylelint CSS — 2026-11-07
 
