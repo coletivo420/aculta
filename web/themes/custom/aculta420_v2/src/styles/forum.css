@@ -793,7 +793,7 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
 }
 
 /* Campo de comentários do tópico: o wrapper não cria uma segunda caixa; cada comentário é o próprio card. */
-.aculta-forum-topic .field--name-field-aculta-discussion section {
+.aculta-forum-topic__content > section {
   border: 0;
   background: transparent;
 }
