@@ -55,8 +55,4 @@ aculta_purpose_container:
     mode: boxed
     container_width: 1200
     narrow_width: 750
-  forum:
-    mode: boxed
-    container_width: 1200
-    narrow_width: 750
 

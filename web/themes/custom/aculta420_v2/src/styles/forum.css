@@ -571,13 +571,6 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
   background: var(--color-brand-primary);
 }
 
-/* Página do fórum: o contêiner ocupa a largura do cabeçalho institucional e o conteúdo usa o mesmo recuo lateral da barra. */
-html[data-purpose="forum"] .layout-page {
-  inline-size: 100%;
-  max-inline-size: none;
-  padding-inline: 0;
-}
-
 .aculta-forum-list,
 .aculta-forum-category-page,
 .aculta-forum-topic,
