@@ -281,7 +281,7 @@
 @media (min-width: 60rem) {
   .aculta-studio-calendar {
     inline-size: 20rem;
-    inset-block-start: 3.8rem;
+    inset-block-start: 8.625rem;
     inset-inline-end: 0;
     position: absolute;
     z-index: 5;
