@@ -6,6 +6,7 @@ arquitetura indicado como fonte canônica; changelogs e arquivos em
 
 ## ADRs
 
+- [ADR-052 — Modo escuro do envelope de e-mail é exceção ao token-only](ADR-052-modo-escuro-email.md) — aceita; exceção restrita a dois arquivos do e-mail.
 - [ADR-051 — CAPTCHA e anti-bot pertencem ao módulo aculta_portal](ADR-051-captcha-no-modulo-aculta-portal.md) — aceita; o tema não carrega CSS nem biblioteca de CAPTCHA.
 - [ADR-041 — xAPI 2.0 com LRS próprio no Drupal, substituindo SCORM](ADR-041-xapi-2-lrs-proprio.md) — aceita nas decisões D-66 a D-69; implementação pendente das fases F1 a F4.
 - [ADR-042 — Remoção das dependências do Drupal LMS contrib no aculta_lms](ADR-042-remocao-dependencias-lms-contrib.md) — proposta; plano em fases P0 a P6, aguardando aprovação por fase.
