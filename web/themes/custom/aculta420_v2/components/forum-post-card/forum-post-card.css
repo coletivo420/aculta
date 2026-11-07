@@ -200,3 +200,48 @@
   flex: 1 1 auto;
   min-inline-size: 0;
 }
+
+/* Ações do comentário em ícones da biblioteca Phosphor do tema; o texto segue no DOM para leitores de tela. */
+.forum-post-card a[href*="#comment-"],
+.forum-post-card a[href$="/delete"],
+.forum-post-card a[href$="/edit"],
+.forum-post-card a[href*="/comment/reply/"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  font-size: 0;
+  min-block-size: 44px;
+  min-inline-size: 44px;
+}
+
+.forum-post-card a[href*="#comment-"]::before,
+.forum-post-card a[href$="/delete"]::before,
+.forum-post-card a[href$="/edit"]::before,
+.forum-post-card a[href*="/comment/reply/"]::before {
+  content: "";
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  background: currentColor;
+  mask: no-repeat center / contain;
+}
+
+.forum-post-card a[href*="#comment-"]::before {
+  mask-image: url("/themes/custom/aculta420_v2/assets/icons/phosphor/duotone/link-simple-duotone.svg");
+}
+
+.forum-post-card a[href$="/delete"]::before {
+  mask-image: url("/themes/custom/aculta420_v2/assets/icons/phosphor/duotone/trash-duotone.svg");
+}
+
+.forum-post-card a[href$="/edit"]::before {
+  mask-image: url("/themes/custom/aculta420_v2/assets/icons/phosphor/duotone/pencil-simple-duotone.svg");
+}
+
+.forum-post-card a[href*="/comment/reply/"]::before {
+  mask-image: url("/themes/custom/aculta420_v2/assets/icons/phosphor/duotone/arrow-bend-up-left-duotone.svg");
+}
+
+.forum-post-card a[href*="?quote="]::before {
+  mask-image: url("/themes/custom/aculta420_v2/assets/icons/phosphor/duotone/quotes-duotone.svg");
+}
