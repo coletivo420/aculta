@@ -721,3 +721,63 @@ body:has(.aculta-forum-list) .action-links,
 body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
   display: none;
 }
+
+/* Página de tópico: coluna principal e painel "Sobre este tópico" (referência 5). */
+.aculta-forum-topic__layout {
+  display: grid;
+  gap: var(--spacing-base);
+  min-inline-size: 0;
+}
+
+.aculta-forum-topic__main {
+  min-inline-size: 0;
+}
+
+.aculta-forum-topic__about {
+  padding: var(--spacing-base);
+  border: 1px solid var(--color-border);
+  border-block-start: 4px solid var(--color-link-editorial);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-raised);
+}
+
+.aculta-forum-topic__about-title {
+  margin: 0 0 var(--spacing-sm);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.aculta-forum-topic__about-list,
+.aculta-forum-topic__about-stats {
+  display: grid;
+  margin: 0;
+  gap: var(--spacing-sm);
+}
+
+.aculta-forum-topic__about-list dt,
+.aculta-forum-topic__about-stats dt {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.aculta-forum-topic__about-list dd,
+.aculta-forum-topic__about-stats dd {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.aculta-forum-topic__about-stats {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-block-start: var(--spacing-md);
+  padding-block-start: var(--spacing-md);
+  border-block-start: 1px solid var(--color-border);
+}
+
+@media (min-width: 60rem) {
+  .aculta-forum-topic__layout {
+    grid-template-columns: minmax(0, 1fr) 18rem;
+    align-items: start;
+  }
+}

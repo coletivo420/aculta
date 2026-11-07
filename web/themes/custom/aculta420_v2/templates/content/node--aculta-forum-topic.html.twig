@@ -34,14 +34,55 @@
       </div>
     </header>
   {% endif %}
-  {{ include('aculta420_v2:forum-topic', {
-    variant: view_mode == 'full' ? 'full' : 'teaser',
-    has_title: label is not empty and view_mode != 'full',
-    has_meta: display_submitted and date is not empty,
-    has_bookmark: bookmark_action is not empty,
-    title: title_markup,
-    meta: date,
-    bookmark: bookmark_action,
-    content: topic_content
-  }, with_context = false) }}
+  {% if view_mode == 'full' %}
+    <div class="aculta-forum-topic__layout">
+      <div class="aculta-forum-topic__main">
+        {{ include('aculta420_v2:forum-topic', {
+          variant: 'full',
+          has_title: false,
+          has_meta: false,
+          has_bookmark: false,
+          title: title_markup,
+          meta: date,
+          bookmark: bookmark_action,
+          content: topic_content
+        }, with_context = false) }}
+      </div>
+      <aside class="aculta-forum-topic__aside" aria-labelledby="forum-topic-about">
+        <section class="aculta-forum-topic__about">
+          <h2 class="aculta-forum-topic__about-title" id="forum-topic-about">{{ 'Sobre este tópico'|t }}</h2>
+          <dl class="aculta-forum-topic__about-list">
+            <div>
+              <dt>{{ 'Categoria'|t }}</dt>
+              <dd>{{ node is defined and node and node.field_aculta_categories.entity ? node.field_aculta_categories.entity.label() : '—' }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'Criado por'|t }}</dt>
+              <dd>{{ node is defined and node ? node.getOwner().getDisplayName() : '—' }}</dd>
+            </div>
+            <div>
+              <dt>{{ 'Criado em'|t }}</dt>
+              <dd>{{ node is defined and node ? node.getCreatedTime()|date('d/m/Y H:i') : '—' }}</dd>
+            </div>
+          </dl>
+          <dl class="aculta-forum-topic__about-stats">
+            <div><dt>{{ 'Respostas'|t }}</dt><dd>—<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span></dd></div>
+            <div><dt>{{ 'Participantes'|t }}</dt><dd>—<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span></dd></div>
+            <div><dt>{{ 'Visualizações'|t }}</dt><dd>—<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span></dd></div>
+          </dl>
+        </section>
+      </aside>
+    </div>
+  {% else %}
+    {{ include('aculta420_v2:forum-topic', {
+      variant: 'teaser',
+      has_title: label is not empty,
+      has_meta: display_submitted and date is not empty,
+      has_bookmark: bookmark_action is not empty,
+      title: title_markup,
+      meta: date,
+      bookmark: bookmark_action,
+      content: topic_content
+    }, with_context = false) }}
+  {% endif %}
 </article>
