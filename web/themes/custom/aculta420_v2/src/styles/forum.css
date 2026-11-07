@@ -505,3 +505,14 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
     align-items: start;
   }
 }
+
+/* Contêiner do fórum: largura máxima centralizada, sem estourar a viewport. */
+.aculta-forum-list,
+.aculta-forum-category-page,
+.aculta-forum-topic {
+  box-sizing: border-box;
+  width: 100%;
+  max-inline-size: 75rem;
+  margin-inline: auto;
+  min-inline-size: 0;
+}
