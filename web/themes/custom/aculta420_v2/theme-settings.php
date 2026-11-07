@@ -358,7 +358,7 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
     $cardWrapper['container_width'] = [
       '#type' => 'number',
       '#title' => t('Largura do container (px)'),
-      '#description' => t('De 960 a 1600 px (padrão 1200 px). Contained sugere 1000 px e Max full width sugere 1400 px.'),
+      '#description' => t('Largura máxima da caixa no modo Padrão. De 960 a 1600 px (padrão 1200 px; faixa usual 1140 a 1280).'),
       '#default_value' => $currentSetting['container_width'],
       '#min' => PurposeContainerLayout::CONTAINER_WIDTH_MIN,
       '#max' => PurposeContainerLayout::CONTAINER_WIDTH_MAX,
@@ -369,7 +369,7 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
     $cardWrapper['narrow_width'] = [
       '#type' => 'number',
       '#title' => t('Largura estreita (px)'),
-      '#description' => t('De 600 a 900 px (padrão 750 px), para páginas de leitura.'),
+      '#description' => t('Largura máxima do bloco de conteúdo no modo Estreito. De 600 a 900 px (padrão 750 px).'),
       '#default_value' => $currentSetting['narrow_width'],
       '#min' => PurposeContainerLayout::NARROW_WIDTH_MIN,
       '#max' => PurposeContainerLayout::NARROW_WIDTH_MAX,

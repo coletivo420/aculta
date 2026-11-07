@@ -106,7 +106,7 @@ aculta420_v2.purpose_container_layout:
   mapping:
     mode:
       type: string
-      label: 'Modo do container (boxed, unboxed, contained, max_full_width)'
+      label: 'Modo do container (default, full, narrow)'
     container_width:
       type: integer
       label: 'Largura do container (px)'

@@ -160,23 +160,21 @@
     grid-template-columns: minmax(0, 2fr) minmax(14rem, 1fr);
   }
 
-  /* Modos de layout de container por purpose (aculta420_v2) */
-  html[data-purpose-layout="unboxed"] :is(.layout-page--aside, .page__main--with-sidebar) {
+  /* Modos de layout de container por purpose (aculta420_v2): Padrão, Largura total e Estreito. */
+  /* Padrão: sem regra extra; a caixa usa --aculta-container-width (1200 px). */
+
+  html[data-purpose-layout="full"] :is(.layout-page--aside, .page__main--with-sidebar) {
     max-inline-size: 100%;
     inline-size: 100%;
   }
 
-  html[data-purpose-layout="unboxed"] :is(.page__navigation, .page__highlighted, .page__help, .page__breadcrumb, .page__footer-inner) {
+  html[data-purpose-layout="full"] :is(.page__navigation, .page__highlighted, .page__help, .page__breadcrumb, .page__footer-inner) {
     inline-size: 100%;
     max-inline-size: 100%;
   }
 
-  html[data-purpose-layout="contained"] :is(.layout-page--aside, .page__main--with-sidebar, .page__navigation, .page__highlighted, .page__help, .page__breadcrumb, .page__footer-inner) {
-    max-inline-size: var(--aculta-container-width, 1000px);
-  }
-
-  html[data-purpose-layout="max_full_width"] :is(.layout-page--aside, .page__main--with-sidebar, .page__navigation, .page__highlighted, .page__help, .page__breadcrumb, .page__footer-inner) {
-    max-inline-size: var(--aculta-container-width, 1400px);
+  html[data-purpose-layout="narrow"] :is(.layout-page--aside, .page__main--with-sidebar, .page__navigation, .page__highlighted, .page__help, .page__breadcrumb, .page__footer-inner) {
+    max-inline-size: var(--aculta-narrow-container-width, 750px);
   }
 
   /* Páginas de leitura e conteúdo estreito */

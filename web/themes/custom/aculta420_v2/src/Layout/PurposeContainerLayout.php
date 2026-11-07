@@ -7,6 +7,9 @@ namespace Drupal\aculta420_v2\Layout;
 /**
  * Validação, sanitização e padrões de layout de container por purpose.
  *
+ * Três modos: Padrão (caixa centralizada com largura máxima), Largura Total
+ * (100% da tela) e Estreito (largura máxima reduzida para leitura).
+ *
  * Baseado no plano docs/architecture/PLANO-LAYOUT-CONTAINER-POR-PURPOSE.md.
  */
 final class PurposeContainerLayout {
@@ -14,10 +17,9 @@ final class PurposeContainerLayout {
   /**
    * Modos de layout suportados.
    */
-  public const MODE_BOXED = 'boxed';
-  public const MODE_UNBOXED = 'unboxed';
-  public const MODE_CONTAINED = 'contained';
-  public const MODE_MAX_FULL_WIDTH = 'max_full_width';
+  public const MODE_DEFAULT = 'default';
+  public const MODE_FULL = 'full';
+  public const MODE_NARROW = 'narrow';
 
   /**
    * Lista permitida de modos válidos.
@@ -25,14 +27,25 @@ final class PurposeContainerLayout {
    * @var list<string>
    */
   public const ALLOWED_MODES = [
-    self::MODE_BOXED,
-    self::MODE_UNBOXED,
-    self::MODE_CONTAINED,
-    self::MODE_MAX_FULL_WIDTH,
+    self::MODE_DEFAULT,
+    self::MODE_FULL,
+    self::MODE_NARROW,
   ];
 
   /**
-   * Purposes canônicos suportados no tema.
+   * Modos gravados antes desta revisão, convertidos para os modos atuais.
+   *
+   * @var array<string, string>
+   */
+  public const LEGACY_MODES = [
+    'boxed' => self::MODE_DEFAULT,
+    'unboxed' => self::MODE_FULL,
+    'contained' => self::MODE_DEFAULT,
+    'max_full_width' => self::MODE_DEFAULT,
+  ];
+
+  /**
+   * Purposes canônicos suportados no tema, incluindo Revista e Wiki.
    *
    * @var list<string>
    */
@@ -50,20 +63,14 @@ final class PurposeContainerLayout {
   ];
 
   /**
-   * Limites de largura do container (px).
+   * Largura da caixa no modo Padrão (px). Faixa usual de mercado: 1140 a 1280.
    */
   public const CONTAINER_WIDTH_MIN = 960;
   public const CONTAINER_WIDTH_MAX = 1600;
   public const CONTAINER_WIDTH_DEFAULT = 1200;
 
   /**
-   * Padrões específicos por modo quando aplicável.
-   */
-  public const CONTAINER_WIDTH_CONTAINED = 1000;
-  public const CONTAINER_WIDTH_MAX_FULL = 1400;
-
-  /**
-   * Limites de largura estreita (narrow) (px).
+   * Largura máxima do bloco de conteúdo no modo Estreito (px).
    */
   public const NARROW_WIDTH_MIN = 600;
   public const NARROW_WIDTH_MAX = 900;
@@ -76,10 +83,9 @@ final class PurposeContainerLayout {
    */
   public static function getModeOptions(): array {
     return [
-      self::MODE_BOXED => 'Boxed (padrão)',
-      self::MODE_UNBOXED => 'Unboxed (largura total da tela)',
-      self::MODE_CONTAINED => 'Contained (contido ao centro)',
-      self::MODE_MAX_FULL_WIDTH => 'Max full width (máxima largura)',
+      self::MODE_DEFAULT => 'Padrão (caixa centralizada com largura máxima)',
+      self::MODE_FULL => 'Largura total (100% da tela)',
+      self::MODE_NARROW => 'Estreito (leitura focada, mais respiro nas laterais)',
     ];
   }
 
@@ -90,7 +96,7 @@ final class PurposeContainerLayout {
    */
   public static function getDefaultSettings(string $purpose = 'main'): array {
     return [
-      'mode' => self::MODE_BOXED,
+      'mode' => self::MODE_DEFAULT,
       'container_width' => self::CONTAINER_WIDTH_DEFAULT,
       'narrow_width' => self::NARROW_WIDTH_DEFAULT,
     ];
@@ -114,6 +120,9 @@ final class PurposeContainerLayout {
     }
 
     $mode = $input['mode'] ?? $defaults['mode'];
+    if (is_string($mode) && isset(self::LEGACY_MODES[$mode])) {
+      $mode = self::LEGACY_MODES[$mode];
+    }
     if (!is_string($mode) || !in_array($mode, self::ALLOWED_MODES, TRUE)) {
       $mode = $defaults['mode'];
     }
@@ -121,7 +130,8 @@ final class PurposeContainerLayout {
     $containerWidth = $input['container_width'] ?? $defaults['container_width'];
     if (!is_numeric($containerWidth)) {
       $containerWidth = $defaults['container_width'];
-    } else {
+    }
+    else {
       $containerWidth = (int) $containerWidth;
       if ($containerWidth < self::CONTAINER_WIDTH_MIN || $containerWidth > self::CONTAINER_WIDTH_MAX) {
         $containerWidth = $defaults['container_width'];
@@ -131,7 +141,8 @@ final class PurposeContainerLayout {
     $narrowWidth = $input['narrow_width'] ?? $defaults['narrow_width'];
     if (!is_numeric($narrowWidth)) {
       $narrowWidth = $defaults['narrow_width'];
-    } else {
+    }
+    else {
       $narrowWidth = (int) $narrowWidth;
       if ($narrowWidth < self::NARROW_WIDTH_MIN || $narrowWidth > self::NARROW_WIDTH_MAX) {
         $narrowWidth = $defaults['narrow_width'];
@@ -183,24 +194,12 @@ final class PurposeContainerLayout {
       ? self::sanitizeSetting($allSettings[$purpose], $purpose)
       : self::getDefaultSettings($purpose);
 
-    $containerPx = $setting['container_width'];
-    $narrowPx = $setting['narrow_width'];
-
-    // Se for modo contido ou max full width e o valor não foi customizado, usa as sugestões aprovadas
-    if ($setting['mode'] === self::MODE_CONTAINED && $containerPx === self::CONTAINER_WIDTH_DEFAULT) {
-      $containerPx = self::CONTAINER_WIDTH_CONTAINED;
-    } elseif ($setting['mode'] === self::MODE_MAX_FULL_WIDTH && $containerPx === self::CONTAINER_WIDTH_DEFAULT) {
-      $containerPx = self::CONTAINER_WIDTH_MAX_FULL;
-    }
-
-    $variables = [
-      '--aculta-container-width' => $containerPx . 'px',
-      '--aculta-narrow-container-width' => $narrowPx . 'px',
-    ];
-
     return [
       'mode' => $setting['mode'],
-      'variables' => $variables,
+      'variables' => [
+        '--aculta-container-width' => $setting['container_width'] . 'px',
+        '--aculta-narrow-container-width' => $setting['narrow_width'] . 'px',
+      ],
     ];
   }
 

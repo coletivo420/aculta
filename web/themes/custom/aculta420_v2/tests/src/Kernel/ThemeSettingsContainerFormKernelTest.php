@@ -36,7 +36,14 @@ final class ThemeSettingsContainerFormKernelTest extends KernelTestBase {
     $this->container->get('state')->set('aculta_portal.active_purposes', [
       'main',
       'account',
+      'support',
+      'magazine',
+      'wiki',
       'shop',
+      'courses',
+      'links',
+      'forum',
+      'eventos',
     ]);
   }
 
@@ -58,11 +65,13 @@ final class ThemeSettingsContainerFormKernelTest extends KernelTestBase {
     self::assertArrayHasKey('main', $grid);
     self::assertArrayHasKey('account', $grid);
     self::assertArrayHasKey('shop', $grid);
+    self::assertArrayHasKey('magazine', $grid);
+    self::assertArrayHasKey('wiki', $grid);
 
     // Valida campos do purpose main
     $mainCard = $grid['main'];
     self::assertSame('select', $mainCard['mode']['#type']);
-    self::assertSame('boxed', $mainCard['mode']['#default_value']);
+    self::assertSame('default', $mainCard['mode']['#default_value']);
     self::assertSame('number', $mainCard['container_width']['#type']);
     self::assertSame(1200, $mainCard['container_width']['#default_value']);
     self::assertSame('number', $mainCard['narrow_width']['#type']);
@@ -79,14 +88,19 @@ final class ThemeSettingsContainerFormKernelTest extends KernelTestBase {
     $config = $this->container->get('config.factory')->getEditable('aculta420_v2.settings');
     $config->set('aculta_purpose_container', [
       'main' => [
-        'mode' => 'unboxed',
+        'mode' => 'full',
         'container_width' => 1400,
         'narrow_width' => 800,
       ],
       'account' => [
-        'mode' => 'contained',
+        'mode' => 'narrow',
         'container_width' => 1000,
         'narrow_width' => 700,
+      ],
+      'magazine' => [
+        'mode' => 'narrow',
+        'container_width' => 1200,
+        'narrow_width' => 680,
       ],
     ])->save();
 
@@ -96,16 +110,18 @@ final class ThemeSettingsContainerFormKernelTest extends KernelTestBase {
     aculta420_v2_form_system_theme_settings_alter($form, $formState);
 
     $grid = $form['aculta_container_purpose']['aculta_purpose_container'];
-    self::assertSame('unboxed', $grid['main']['mode']['#default_value']);
+    self::assertSame('full', $grid['main']['mode']['#default_value']);
     self::assertSame(1400, $grid['main']['container_width']['#default_value']);
     self::assertSame(800, $grid['main']['narrow_width']['#default_value']);
 
-    self::assertSame('contained', $grid['account']['mode']['#default_value']);
+    self::assertSame('narrow', $grid['account']['mode']['#default_value']);
     self::assertSame(1000, $grid['account']['container_width']['#default_value']);
     self::assertSame(700, $grid['account']['narrow_width']['#default_value']);
 
     // Shop não foi personalizado, deve manter o fallback
-    self::assertSame('boxed', $grid['shop']['mode']['#default_value']);
+    self::assertSame('default', $grid['shop']['mode']['#default_value']);
+    self::assertSame('narrow', $grid['magazine']['mode']['#default_value']);
+    self::assertSame(680, $grid['magazine']['narrow_width']['#default_value']);
     self::assertSame(1200, $grid['shop']['container_width']['#default_value']);
     self::assertSame(750, $grid['shop']['narrow_width']['#default_value']);
   }

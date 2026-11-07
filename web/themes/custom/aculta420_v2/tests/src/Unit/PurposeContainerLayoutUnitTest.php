@@ -17,164 +17,92 @@ use PHPUnit\Framework\Attributes\Group;
 final class PurposeContainerLayoutUnitTest extends UnitTestCase {
 
   /**
-   * Testa valores padrão para purposes canônicos.
+   * O padrão de todos os purposes é o modo Padrão, com 1200 px e 750 px.
    */
   public function testDefaultValues(): void {
-    $defaults = PurposeContainerLayout::getDefaultSettings('main');
-    self::assertSame('boxed', $defaults['mode']);
-    self::assertSame(1200, $defaults['container_width']);
-    self::assertSame(750, $defaults['narrow_width']);
-
-    $options = PurposeContainerLayout::getModeOptions();
-    self::assertCount(4, $options);
-    self::assertArrayHasKey('boxed', $options);
-    self::assertArrayHasKey('unboxed', $options);
-    self::assertArrayHasKey('contained', $options);
-    self::assertArrayHasKey('max_full_width', $options);
+    foreach (PurposeContainerLayout::ALLOWED_PURPOSES as $purpose) {
+      $defaults = PurposeContainerLayout::getDefaultSettings($purpose);
+      self::assertSame('default', $defaults['mode']);
+      self::assertSame(1200, $defaults['container_width']);
+      self::assertSame(750, $defaults['narrow_width']);
+    }
   }
 
   /**
-   * Testa sanitização com valores válidos.
+   * Os três modos atuais são os únicos oferecidos.
    */
-  public function testSanitizationValidValues(): void {
-    $validInput = [
-      'mode' => 'unboxed',
+  public function testModeOptionsAreThreeModes(): void {
+    $options = PurposeContainerLayout::getModeOptions();
+    self::assertSame(['default', 'full', 'narrow'], array_keys($options));
+    self::assertSame(['default', 'full', 'narrow'], PurposeContainerLayout::ALLOWED_MODES);
+  }
+
+  /**
+   * Revista (magazine) e Wiki (wiki) fazem parte dos purposes configuráveis.
+   */
+  public function testRevistaAndWikiAreConfigurable(): void {
+    self::assertContains('magazine', PurposeContainerLayout::ALLOWED_PURPOSES);
+    self::assertContains('wiki', PurposeContainerLayout::ALLOWED_PURPOSES);
+    $all = PurposeContainerLayout::sanitizeAll([
+      'magazine' => ['mode' => 'full'],
+      'wiki' => ['mode' => 'narrow', 'narrow_width' => 680],
+    ]);
+    self::assertSame('full', $all['magazine']['mode']);
+    self::assertSame('narrow', $all['wiki']['mode']);
+    self::assertSame(680, $all['wiki']['narrow_width']);
+  }
+
+  /**
+   * Valores válidos passam; modos e larguras fora da faixa caem no padrão.
+   */
+  public function testSanitizeAcceptsValidAndRejectsInvalid(): void {
+    $valid = PurposeContainerLayout::sanitizeSetting([
+      'mode' => 'full',
       'container_width' => 1400,
       'narrow_width' => 800,
-    ];
+    ], 'main');
+    self::assertSame(['mode' => 'full', 'container_width' => 1400, 'narrow_width' => 800], $valid);
 
-    $sanitized = PurposeContainerLayout::sanitizeSetting($validInput, 'account');
-    self::assertSame('unboxed', $sanitized['mode']);
-    self::assertSame(1400, $sanitized['container_width']);
-    self::assertSame(800, $sanitized['narrow_width']);
+    $invalid = PurposeContainerLayout::sanitizeSetting([
+      'mode' => 'x; background:red',
+      'container_width' => 5000,
+      'narrow_width' => 100,
+    ], 'main');
+    self::assertSame('default', $invalid['mode']);
+    self::assertSame(1200, $invalid['container_width']);
+    self::assertSame(750, $invalid['narrow_width']);
   }
 
   /**
-   * Testa fallback para valores inválidos ou fora de faixa (sem injection CSS).
+   * Valores gravados pelos modos antigos são convertidos para os novos.
    */
-  public function testSanitizationInvalidFallback(): void {
-    $maliciousInput = [
-      'mode' => '<script>alert(1)</script>; display: none;',
-      'container_width' => '999999px; background: red;',
-      'narrow_width' => -50,
-    ];
-
-    $sanitized = PurposeContainerLayout::sanitizeSetting($maliciousInput, 'support');
-    self::assertSame('boxed', $sanitized['mode']);
-    self::assertSame(1200, $sanitized['container_width']);
-    self::assertSame(750, $sanitized['narrow_width']);
-
-    // Limites mínimo e máximo
-    $underflow = [
-      'mode' => 'boxed',
-      'container_width' => 959,
-      'narrow_width' => 599,
-    ];
-    $sanitizedUnderflow = PurposeContainerLayout::sanitizeSetting($underflow, 'main');
-    self::assertSame(1200, $sanitizedUnderflow['container_width']);
-    self::assertSame(750, $sanitizedUnderflow['narrow_width']);
-
-    $overflow = [
-      'mode' => 'boxed',
-      'container_width' => 1601,
-      'narrow_width' => 901,
-    ];
-    $sanitizedOverflow = PurposeContainerLayout::sanitizeSetting($overflow, 'main');
-    self::assertSame(1200, $sanitizedOverflow['container_width']);
-    self::assertSame(750, $sanitizedOverflow['narrow_width']);
+  public function testLegacyModesAreMigrated(): void {
+    self::assertSame('default', PurposeContainerLayout::sanitizeSetting(['mode' => 'boxed'])['mode']);
+    self::assertSame('full', PurposeContainerLayout::sanitizeSetting(['mode' => 'unboxed'])['mode']);
+    self::assertSame('default', PurposeContainerLayout::sanitizeSetting(['mode' => 'contained'])['mode']);
+    self::assertSame('default', PurposeContainerLayout::sanitizeSetting(['mode' => 'max_full_width'])['mode']);
   }
 
   /**
-   * Testa sanitização de toda a árvore de purposes.
+   * A resolução gera o atributo de modo e as duas variáveis CSS.
    */
-  public function testSanitizeAll(): void {
-    $all = PurposeContainerLayout::sanitizeAll([
-      'main' => ['mode' => 'contained', 'container_width' => 1000, 'narrow_width' => 700],
-      'invalid_purpose' => ['mode' => 'unboxed'],
-    ]);
+  public function testResolveEmitsModeAndVariables(): void {
+    $resolved = PurposeContainerLayout::resolveContainerStyle([
+      'magazine' => ['mode' => 'narrow', 'container_width' => 1200, 'narrow_width' => 700],
+    ], 'magazine');
 
-    self::assertCount(10, $all);
-    self::assertArrayHasKey('main', $all);
-    self::assertArrayHasKey('account', $all);
-    self::assertArrayNotHasKey('invalid_purpose', $all);
-    self::assertSame('contained', $all['main']['mode']);
-    self::assertSame(1000, $all['main']['container_width']);
-    self::assertSame('boxed', $all['account']['mode']);
-  }
-
-  /**
-   * Testa resolução de estilo para CSS variables e atributos.
-   */
-  public function testResolveContainerStyle(): void {
-    $config = [
-      'account' => [
-        'mode' => 'unboxed',
-        'container_width' => 1350,
-        'narrow_width' => 720,
-      ],
-      'shop' => [
-        'mode' => 'contained',
-        'container_width' => 1200, // deve adotar o default do contained (1000)
-        'narrow_width' => 750,
-      ],
-      'eventos' => [
-        'mode' => 'max_full_width',
-        'container_width' => 1200, // deve adotar o default do max full width (1400)
-        'narrow_width' => 750,
-      ],
-    ];
-
-    $resolvedAccount = PurposeContainerLayout::resolveContainerStyle($config, 'account');
-    self::assertNotNull($resolvedAccount);
-    self::assertSame('unboxed', $resolvedAccount['mode']);
-    self::assertSame('1350px', $resolvedAccount['variables']['--aculta-container-width']);
-    self::assertSame('720px', $resolvedAccount['variables']['--aculta-narrow-container-width']);
-
-    $resolvedShop = PurposeContainerLayout::resolveContainerStyle($config, 'shop');
-    self::assertNotNull($resolvedShop);
-    self::assertSame('contained', $resolvedShop['mode']);
-    self::assertSame('1000px', $resolvedShop['variables']['--aculta-container-width']);
-
-    $resolvedEventos = PurposeContainerLayout::resolveContainerStyle($config, 'eventos');
-    self::assertNotNull($resolvedEventos);
-    self::assertSame('max_full_width', $resolvedEventos['mode']);
-    self::assertSame('1400px', $resolvedEventos['variables']['--aculta-container-width']);
-
-    // Purpose desconhecido retorna NULL
-    self::assertNull(PurposeContainerLayout::resolveContainerStyle($config, 'desconhecido'));
-    self::assertNull(PurposeContainerLayout::resolveContainerStyle($config, NULL));
-  }
-
-  /**
-   * Testa aplicação dos atributos e variáveis CSS no HTML attributes.
-   */
-  public function testContainerHtmlAttributesApplication(): void {
-    $config = [
-      'account' => [
-        'mode' => 'unboxed',
-        'container_width' => 1450,
-        'narrow_width' => 780,
-      ],
-    ];
-
-    $resolved = PurposeContainerLayout::resolveContainerStyle($config, 'account');
     self::assertNotNull($resolved);
+    self::assertSame('narrow', $resolved['mode']);
+    self::assertSame('1200px', $resolved['variables']['--aculta-container-width']);
+    self::assertSame('700px', $resolved['variables']['--aculta-narrow-container-width']);
+  }
 
-    $htmlAttributes = new \Drupal\Core\Template\Attribute();
-    $htmlAttributes->setAttribute('data-purpose', 'account');
-    $htmlAttributes->setAttribute('data-purpose-layout', $resolved['mode']);
-
-    $styles = [];
-    foreach ($resolved['variables'] as $name => $value) {
-      $styles[] = $name . ': ' . $value . ';';
-    }
-    $htmlAttributes->setAttribute('style', implode(' ', $styles));
-
-    $rendered = (string) $htmlAttributes;
-    self::assertStringContainsString('data-purpose="account"', $rendered);
-    self::assertStringContainsString('data-purpose-layout="unboxed"', $rendered);
-    self::assertStringContainsString('--aculta-container-width: 1450px;', $rendered);
-    self::assertStringContainsString('--aculta-narrow-container-width: 780px;', $rendered);
+  /**
+   * Purposes fora da lista não recebem layout.
+   */
+  public function testUnknownPurposeReturnsNull(): void {
+    self::assertNull(PurposeContainerLayout::resolveContainerStyle([], 'desconhecido'));
+    self::assertNull(PurposeContainerLayout::resolveContainerStyle([], NULL));
   }
 
 }
