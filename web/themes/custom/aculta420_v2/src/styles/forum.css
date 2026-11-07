@@ -800,7 +800,7 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
 }
 
 /* Formulário "Comentar" do tópico: caixa bege do tema, faixa superior vermelha, mais espaço. */
-.aculta-forum-topic__content .comment-comment-form {
+.aculta-forum-topic__content form.comment-form {
   margin-block: var(--spacing-xl);
   padding: var(--spacing-lg);
   border: 1px solid var(--color-border);
