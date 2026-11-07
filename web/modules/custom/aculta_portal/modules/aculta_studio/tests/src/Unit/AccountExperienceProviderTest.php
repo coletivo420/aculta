@@ -30,6 +30,7 @@ final class AccountExperienceProviderTest extends UnitTestCase {
     $generator->method('generateFromRoute')->willReturn('/conta-teste');
     $container = new ContainerBuilder();
     $container->set('url_generator', $generator);
+    $container->set('string_translation', $this->getStringTranslationStub());
     \Drupal::setContainer($container);
   }
 
