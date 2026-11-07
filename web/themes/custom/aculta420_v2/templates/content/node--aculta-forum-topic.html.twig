@@ -1,4 +1,4 @@
-{# Keep authorship, comments and flags in Drupal render arrays. #}
+{# Topic page presentation using ACULTA420 V2 design tokens and Growroom420 visual guide. #}
 {% set bookmark_action = content.flag_salvar_topico|default(null) %}
 {% set topic_content = content|without('flag_salvar_topico') %}
 {% set title_markup %}
@@ -6,9 +6,26 @@
     <h2{{ title_attributes }}><a href="{{ url }}" rel="bookmark">{{ label }}</a></h2>
   {% endif %}
 {% endset %}
+
 <article{{ attributes.addClass('node', 'aculta-forum-topic', 'aculta-forum-topic--' ~ view_mode) }}>
   {{ title_prefix }}
   {{ title_suffix }}
+  {% if view_mode == 'full' %}
+    <header class="aculta-forum-topic__full-header">
+      <div class="aculta-forum-topic__header-actions">
+        <button type="button" class="aculta-forum-action-btn" disabled aria-disabled="true">
+          {{ include('aculta420_v2:icon', { name: 'bell', variant: 'duotone', size: 'sm' }, with_context = false) }}
+          <span>{{ 'Seguir'|t }}</span>
+          <span class="aculta-forum-action-btn__badge">{{ 'Em breve'|t }}</span>
+        </button>
+        <button type="button" class="aculta-forum-action-btn" disabled aria-disabled="true">
+          {{ include('aculta420_v2:icon', { name: 'bookmark-simple', variant: 'duotone', size: 'sm' }, with_context = false) }}
+          <span>{{ 'Salvar'|t }}</span>
+          <span class="aculta-forum-action-btn__badge">{{ 'Em breve'|t }}</span>
+        </button>
+      </div>
+    </header>
+  {% endif %}
   {{ include('aculta420_v2:forum-topic', {
     variant: view_mode == 'full' ? 'full' : 'teaser',
     has_title: label is not empty and view_mode != 'full',

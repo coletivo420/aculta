@@ -1,3 +1,11 @@
+## Não versionado — Redesenho Visual Fórum Growroom420 (Entrega 1)
+
+- Novos componentes SDC com schema estrito: `forum-category-header`, `forum-tabs`, `forum-topic-row`, `forum-topic-card` e `forum-post-card`. Cada componente inclui `<nome>.component.yml`, `<nome>.twig`, `<nome>.css`, `<nome>.default.story.yml` e `README.md`.
+- Apresentação visual alinhada às referências de design do Growroom420 (`referencia-1.webp` a `referencia-8.webp`) e padrões Discourse (pílulas de status, miniatura em cartões, prévia de mensagem e contadores).
+- Tratamento explícito de dados não fornecidos pelo Drupal como placeholders acessíveis ("—" e `<span class="visually-hidden">Dado indisponível</span>`) e botões/ações desabilitados com rótulo "Em breve". Sem inventar dados em páginas reais.
+- Adapters de templates `node--aculta-forum-topic.html.twig`, `comment--aculta-discussion-post.html.twig` e estilos de listagem e categorias atualizados em conformidade com as regras mobile-first (320 px a 1440 px).
+- Gates CSS e SDC validados com sucesso (`npm run lint:css` e `validate-aculta420-sdc-schemas.php`).
+
 ## Não versionado — seleção administrativa de accent da Revista
 
 - `aculta_magazine` armazena a escolha em campo nativo, expõe três opções pelo widget oficial UI Styles e aplica a classe ao wrapper do teaser. O CSS do componente assegura precedência administrativa sobre o accent do Portal.

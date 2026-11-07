@@ -1,0 +1,12 @@
+name: Cabeçalho de Categoria do Fórum
+props:
+  title: Cultivo Básico e Primeiros Passos
+  description: Espaço para tirar dúvidas iniciais, aprender sobre germinação, substratos, rega e iluminação básica para seu primeiro cultivo.
+  icon: plant
+  stats:
+    - label: Tópicos
+      value: 1240
+    - label: Mensagens
+      value: 8530
+    - label: Visualizações
+      value: null

@@ -13,6 +13,10 @@
 
 Detalhes por bloco: [status-componentes.md](status-componentes.md), [status-layouts-e-shell.md](status-layouts-e-shell.md) e [htmx-status.md](htmx-status.md) (ADR-050).
 
+## Fórum Growroom420 — Redesenho Visual V2 (Entrega 1)
+
+Implementados os 5 componentes SDC essenciais da apresentação do fórum: `forum-category-header`, `forum-tabs`, `forum-topic-row`, `forum-topic-card` e `forum-post-card`. O visual segue as telas de referência (`referencia-1` a `referencia-8`), com cards contendo miniatura e prévia de mensagem, pílulas de status, botões com alvo mínimo de 44 px e botão "+ Novo tópico" de largura total em telas móveis. Campos ainda não entregues pelo Portal são mantidos como placeholders neutros devidamente documentados, sem quebra do layout ou inventar dados reais.
+
 ## UI Patterns Library — layout administrativo
 
 As rotas de overview, provider e componente ficam fora do container por purpose. O overview usa container próprio centralizado, sem caixa externa, com largura máxima de 1200px. Cada componente é um bloco vertical; stories preservam a estrutura nativa e não recebem colunas artificiais. No overview, a barra institucional mantém a marca; seus dados e os do menu do Studio vêm das stories PHP/providers reais e são repassados ao SDC. Stories sem conteúdo definido, como paginação, recebem fixture de props, nunca cópia de markup do componente. Conexões/Calendário não aplicam posicionamento de dashboard na galeria. Slots de conteúdo usam render arrays Drupal; busca Wiki420 e as stories de Breadcrumb, Cartão de autoria e Página de links sociais foram verificadas no renderer. Aceite visual autenticado na página permanece pendente.

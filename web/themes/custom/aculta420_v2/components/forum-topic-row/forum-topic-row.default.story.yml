@@ -1,0 +1,18 @@
+name: Linha de Tópico do Fórum
+props:
+  pinned: true
+  badges:
+    - label: Fixo
+      tone: official
+    - label: Guia
+      tone: highlight
+  replies: 42
+  views: null
+  last_activity: '2h atrás'
+slots:
+  title:
+    '#markup': '<a href="/discussoes/exemplo-topico">Guia Completo de Germinação e Substratos para Iniciantes</a>'
+  meta:
+    '#markup': '<span>por <strong>GrowerExperiente</strong></span> · <a href="/categorias/cultivo-basico">Cultivo Básico</a>'
+  preview:
+    '#markup': 'Aprenda o passo a passo seguro para germinar sementes com alta taxa de sucesso usando papel toalha.'

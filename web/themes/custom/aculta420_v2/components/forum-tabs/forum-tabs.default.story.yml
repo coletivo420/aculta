@@ -1,0 +1,23 @@
+name: Abas do Fórum
+props:
+  label: Categorias e seções de tópicos
+  items:
+    - label: Todas as discussões
+      href: /discussoes
+      active: true
+      count: null
+    - label: Novas
+      href: /discussoes/novas
+      active: false
+      count: 14
+    - label: Mais comentadas
+      href: /discussoes/mais-comentadas
+      active: false
+      count: null
+    - label: Categorias
+      href: /categorias
+      active: false
+      count: null
+slots:
+  filters:
+    '#markup': '<label for="story-forum-filter" class="visually-hidden">Ordenar tópicos</label><select id="story-forum-filter"><option>Mais recentes</option><option>Mais votados</option></select>'

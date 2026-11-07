@@ -1,0 +1,70 @@
+<article class="forum-post-card forum-post-card--stripe-{{ stripe|default('brand') }}">
+  <div class="forum-post-card__stripe"></div>
+  <div class="forum-post-card__inner">
+    <header class="forum-post-card__header">
+      <div class="forum-post-card__author">
+        {% if avatar %}
+          <div class="forum-post-card__avatar">
+            {{ avatar }}
+          </div>
+        {% else %}
+          <div class="forum-post-card__avatar-fallback" aria-hidden="true">
+            {{ include('aculta420_v2:icon', { name: 'user-circle', variant: 'duotone', size: 'md' }, with_context = false) }}
+          </div>
+        {% endif %}
+        <div class="forum-post-card__author-info">
+          <div class="forum-post-card__author-name-row">
+            <span class="forum-post-card__author-name">{{ author_name }}</span>
+            {% if author_role %}
+              <span class="forum-post-card__author-role">{{ author_role }}</span>
+            {% endif %}
+          </div>
+          <div class="forum-post-card__author-meta">
+            {% if author_posts is not null and author_posts is not empty %}
+              <span class="forum-post-card__post-count">{{ author_posts }} {{ 'posts'|t }}</span>
+            {% else %}
+              <span class="forum-post-card__post-count">—<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span></span>
+            {% endif %}
+            {% if timestamp %}
+              <span class="forum-post-card__time">· {{ timestamp }}</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% if reply or reply_url %}
+        <div class="forum-post-card__quick-reply">
+          {% if reply %}
+            {{ reply }}
+          {% elseif reply_url %}
+            <a href="{{ reply_url }}" class="forum-post-card__reply-link">
+              {{ include('aculta420_v2:icon', { name: 'arrow-bend-up-left', variant: 'duotone', size: 'sm' }, with_context = false) }}
+              <span>{{ 'Responder'|t }}</span>
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+    </header>
+
+    <div class="forum-post-card__body">
+      {{ body }}
+    </div>
+
+    <footer class="forum-post-card__footer">
+      <div class="forum-post-card__reactions">
+        {% if reactions and reactions|length > 0 %}
+          {% for r in reactions %}
+            <span class="forum-post-card__reaction">
+              <span class="forum-post-card__reaction-label">{{ r.label }}</span>
+              <span class="forum-post-card__reaction-count">{{ r.count }}</span>
+            </span>
+          {% endfor %}
+        {% endif %}
+      </div>
+      {% if actions %}
+        <div class="forum-post-card__actions">
+          {{ actions }}
+        </div>
+      {% endif %}
+    </footer>
+  </div>
+</article>

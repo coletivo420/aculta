@@ -48,6 +48,19 @@ Regras:
 - Links que atravessam purpose chegam como URL absoluta, gerada pelo `DomainPurposeManager` no Portal.
 - A chave neutra de purpose (Fase 3) existe como `aculta_purpose` (derivada de `domain_presentation.identity.purpose`) e o tema aplica `data-purpose` no `<html>` após validar a lista permitida. O ajuste de tokens de destaque por purpose aplica a Paleta ACULTA Skunk Family oficial em `tokens.css` através dos tokens `--purpose-*` (`--purpose-accent`, `--purpose-on-accent`, `--purpose-sub-1..3`, `--purpose-surface-1..3`), mantendo botões, foco, anéis e elementos institucionais perfeitamente isolados e consistentes; o tema não lê hostname, domínio nem regra de acesso.
 
+### Placeholders e Pedidos ao Portal (Fórum Growroom420)
+
+Conforme a seção 5 e 6 do plano visual Growroom420 (`GROWROOM420-VISUAL-PLANO.md`), o tema não consulta regras de domínio, banco de dados ou entidade. Foram estabelecidos contratos e os seguintes dados permanecem como pedidos pendentes ao Portal:
+- Papel do autor e variante de faixa (`stripe: brand | highlight | member`).
+- Contagem de posts do autor e total de visualizações por tópico.
+- Prévia do último post do tópico.
+- Lista de moderadores e participantes da comunidade.
+- Estado "seguindo" e "salvo" por usuário para os tópicos.
+
+Enquanto esses dados não existirem nos contratos de variáveis ou views fornecidos pelo Drupal/Portal, o tema renderiza:
+- Valores textuais e contadores ausentes como "—" acompanhados de `<span class="visually-hidden">Dado indisponível</span>`.
+- Ações como "Seguir", "Salvar" e lista de moderadores com atributo `disabled` e `aria-disabled="true"` com pílula ou rótulo "Em breve".
+
 ## 3. Modo de cor
 
 - `SurfaceSettingsHooks::preprocessHtml()` define `data-theme` no `<html>` a partir de `aculta_color_mode`. Valor diferente de `dark` vira `light`.

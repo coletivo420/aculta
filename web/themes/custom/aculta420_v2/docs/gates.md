@@ -43,6 +43,18 @@ Não é um script de gate, mas faz parte da entrega de mudança visual (ver [AGE
 
 ## Estado atual
 
+## Execução Recente — Redesenho Visual Growroom420 (Entrega 1)
+
+Validação dos novos componentes SDC do Fórum (`forum-category-header`, `forum-tabs`, `forum-topic-row`, `forum-topic-card`, `forum-post-card`), templates e estilo CSS:
+- `npm run lint:css` no tema: PASS sem advertências ou violações de ordem.
+- `php scripts/validate-aculta420-sdc-schemas.php`: PASS (55 componentes, 27 includes, 764 checks).
+- `php scripts/validate-aculta420-design-foundations.php`: PASS (2468 checks; Dark token-only PASS, Dark contrast AA/AAA em todos os pares avaliados).
+- `php scripts/validate-module-theme-boundary.php`: DEFERRED (7 falhas preexistentes em `modules/aculta_studio/`, sem relação com o tema `aculta420_v2`).
+- `php scripts/validate-aculta420-mapped-classes.php`: PASS (462 classes, 0 exceções, 0 classes Bootstrap).
+- `git diff --check`: PASS (sem conflitos ou trailing whitespaces).
+
+
+
 - Os gates da V2 passaram nas entregas anteriores, conforme o [CHANGELOG.md](../CHANGELOG.md).
 - **Account-menu:** o render isolado do componente apontou `summary_label` vazio quando a prop não era fornecida. A story anônima agora declara o rótulo e o Twig oferece fallback explícito. SDC schema, design foundations e shell passaram nesta rodada; o render Drupal foi repetido após a correção.
 - **C4 — revisão estrutural do shell e micropágina Links:** schema SDC (55 componentes/764 checks), design foundations (2.468 checks), foundations V2 (55 pares), browser validators (21 checks), shell contract (13 checks), render SDC Drupal (24 componentes), `php -l` e `git diff --check` PASS. Capturas responsivas, tema claro/escuro, zoom 200% e teclado: DEFERRED, `DISPLAY` indisponível. O adapter de conteúdo Links permanece no inventário G3.

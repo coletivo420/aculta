@@ -1,0 +1,55 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Linha de Tópico do Fórum
+description: Linha de tabela do fórum com pílulas, autor, categoria e contadores em colunas no desktop ou empilhados no mobile.
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [pinned]
+  properties:
+    pinned:
+      type: boolean
+      title: Tópico fixado
+      default: false
+    badges:
+      type: [array, 'null']
+      title: Pílulas de estado ou destaque
+      default: null
+      items:
+        type: object
+        additionalProperties: false
+        required: [label]
+        properties:
+          label:
+            type: string
+            title: Rótulo da pílula
+          tone:
+            type: string
+            title: Tom da pílula
+            enum: [neutral, highlight, success, official]
+            default: neutral
+    replies:
+      type: [string, integer, 'null']
+      title: Total de respostas
+      default: null
+    views:
+      type: [string, integer, 'null']
+      title: Total de visualizações
+      default: null
+    last_activity:
+      type: [string, 'null']
+      title: Timestamp ou tempo relativo da última atividade
+      default: null
+slots:
+  title:
+    title: Título do tópico
+    description: Link ou heading para o tópico.
+  meta:
+    title: Metadados
+    description: Categoria, autor e tags.
+  preview:
+    title: Prévia do último post
+    description: Trecho de texto com resumo ou última mensagem.
+  thumbnail:
+    title: Miniatura opcional
+    description: Imagem ou ícone ilustrativo.

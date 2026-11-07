@@ -1,0 +1,18 @@
+name: Cartão de Post do Fórum
+props:
+  stripe: brand
+  author_name: MarceloSilva
+  author_role: Moderador
+  author_posts: 342
+  timestamp: 'Há 3 horas'
+  reactions:
+    - label: 👍
+      count: 12
+    - label: 🌱
+      count: 7
+  reply_url: '#responder'
+slots:
+  avatar:
+    '#markup': '<img src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22 viewBox=%220 0 40 40%22%3E%3Ccircle cx=%2220%22 cy=%2220%22 r=%2220%22 fill=%22%230c3c29%22/%3E%3Ctext x=%2220%22 y=%2225%22 font-size=%2216%22 text-anchor=%22middle%22 fill=%22%23fff%22%3EGR%3C/text%3E%3C/svg%3E" alt="Avatar demonstrativo">'
+  body:
+    '#markup': '<p>Excelente tutorial! Para solos orgânicos vivos (no-till), recomendo também monitorar a umidade com tensiômetro nas primeiras semanas para evitar compactação.</p>'

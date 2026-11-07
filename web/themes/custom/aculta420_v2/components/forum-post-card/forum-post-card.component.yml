@@ -1,0 +1,62 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Cartão de Post do Fórum
+description: Card de postagem do tópico com faixa colorida no topo, cabeçalho de autoria, corpo e reações.
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [author_name]
+  properties:
+    stripe:
+      type: string
+      title: Variante da faixa colorida no topo
+      enum: [brand, highlight, member]
+      default: brand
+    author_name:
+      type: string
+      title: Nome do autor
+      minLength: 1
+    author_role:
+      type: [string, 'null']
+      title: Papel do autor entregue pelo Portal
+      default: null
+    author_posts:
+      type: [string, integer, 'null']
+      title: Contagem de posts do autor
+      default: null
+    timestamp:
+      type: [string, 'null']
+      title: Data ou horário da publicação
+      default: null
+    reactions:
+      type: [array, 'null']
+      title: Reações recebidas
+      default: null
+      items:
+        type: object
+        additionalProperties: false
+        required: [label, count]
+        properties:
+          label:
+            type: string
+            title: Rótulo da reação
+          count:
+            type: integer
+            title: Contagem da reação
+    reply_url:
+      type: [string, 'null']
+      title: URL de ação para responder
+      default: null
+slots:
+  avatar:
+    title: Avatar do autor
+    description: Elemento de avatar neutro ou imagem entregue pelo Portal.
+  body:
+    title: Conteúdo da mensagem
+    description: Texto e mídias renderizadas do post.
+  actions:
+    title: Ações do post
+    description: Botões de curtir, sinalizar ou moderar.
+  reply:
+    title: Botão ou link de resposta
+    description: Elemento alternativo para responder.

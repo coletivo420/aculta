@@ -1,0 +1,19 @@
+name: Cartão de Tópico do Fórum
+props:
+  pinned: false
+  thumbnail_src: null
+  thumbnail_alt: null
+  category_icon: plant
+  badges:
+    - label: Destaque
+      tone: highlight
+  replies: 18
+  views: null
+  last_activity: '1d atrás'
+slots:
+  title:
+    '#markup': '<a href="/discussoes/guia-iluminacao-led">Comparativo de Painéis LED Quantum Board para Cultivo Interno</a>'
+  meta:
+    '#markup': '<span>por <strong>CultivadorModerno</strong></span> · <a href="/categorias/iluminacao">Iluminação</a>'
+  preview:
+    '#markup': 'Testamos e medimos o PPFD dos principais chips Samsung LM301H versus modelos tradicionais.'

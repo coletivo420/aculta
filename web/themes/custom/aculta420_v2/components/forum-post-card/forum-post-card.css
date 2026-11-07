@@ -1,0 +1,186 @@
+.forum-post-card {
+  position: relative;
+  overflow: hidden;
+  margin-block-end: var(--spacing-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-raised);
+  min-inline-size: 0;
+}
+
+.forum-post-card__stripe {
+  block-size: 4px;
+  background: var(--color-brand-primary);
+  inline-size: 100%;
+}
+
+.forum-post-card--stripe-brand .forum-post-card__stripe {
+  background: var(--color-brand-primary);
+}
+
+.forum-post-card--stripe-highlight .forum-post-card__stripe {
+  background: var(--color-brand-highlight);
+}
+
+.forum-post-card--stripe-member .forum-post-card__stripe {
+  background: var(--color-border);
+}
+
+.forum-post-card__inner {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-base);
+  gap: var(--spacing-md);
+  min-inline-size: 0;
+}
+
+.forum-post-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  min-inline-size: 0;
+}
+
+.forum-post-card__author {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-inline-size: 0;
+}
+
+.forum-post-card__avatar {
+  display: flex;
+  overflow: hidden;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+}
+
+.forum-post-card__avatar img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.forum-post-card__avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+}
+
+.forum-post-card__author-info {
+  display: flex;
+  flex-direction: column;
+  gap: .125rem;
+  min-inline-size: 0;
+}
+
+.forum-post-card__author-name-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--spacing-xs);
+}
+
+.forum-post-card__author-name {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.forum-post-card__author-role {
+  display: inline-flex;
+  align-items: center;
+  padding: .1rem .4rem;
+  color: var(--color-brand-primary);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-highlight);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+.forum-post-card__author-meta {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.forum-post-card__reply-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-link-editorial);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  min-block-size: 44px;
+  padding-inline: var(--spacing-sm);
+  gap: var(--spacing-xs);
+}
+
+.forum-post-card__reply-link:hover {
+  text-decoration: underline;
+  color: var(--color-link-editorial-hover);
+}
+
+.forum-post-card__body {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  min-inline-size: 0;
+}
+
+.forum-post-card__body > :first-child {
+  margin-block-start: 0;
+}
+
+.forum-post-card__body > :last-child {
+  margin-block-end: 0;
+}
+
+.forum-post-card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-block-start: var(--spacing-xs);
+  padding-block-start: var(--spacing-sm);
+  border-block-start: 1px solid var(--color-border);
+  gap: var(--spacing-sm);
+}
+
+.forum-post-card__reactions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.forum-post-card__reaction {
+  display: inline-flex;
+  align-items: center;
+  padding: .25rem .5rem;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  font-size: var(--font-size-xs);
+  gap: .25rem;
+}
+
+.forum-post-card__reaction-count {
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+@media (min-width: 48rem) {
+  .forum-post-card__inner {
+    padding: var(--spacing-lg);
+  }
+}

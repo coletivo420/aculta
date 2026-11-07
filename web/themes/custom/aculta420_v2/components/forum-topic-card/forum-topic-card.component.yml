@@ -1,0 +1,65 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Cartão de Tópico do Fórum
+description: Variante do tópico em formato de cartão com miniatura (imagem ou ícone da categoria), metadados e contadores.
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [pinned]
+  properties:
+    pinned:
+      type: boolean
+      title: Tópico fixado
+      default: false
+    thumbnail_src:
+      type: [string, 'null']
+      title: URL da imagem de miniatura
+      default: null
+    thumbnail_alt:
+      type: [string, 'null']
+      title: Texto alternativo da miniatura
+      default: null
+    category_icon:
+      type: [string, 'null']
+      title: Ícone Phosphor neutro da categoria para fallback
+      pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+      default: null
+    badges:
+      type: [array, 'null']
+      title: Pílulas de estado ou destaque
+      default: null
+      items:
+        type: object
+        additionalProperties: false
+        required: [label]
+        properties:
+          label:
+            type: string
+            title: Rótulo da pílula
+          tone:
+            type: string
+            title: Tom da pílula
+            enum: [neutral, highlight, success, official]
+            default: neutral
+    replies:
+      type: [string, integer, 'null']
+      title: Total de respostas
+      default: null
+    views:
+      type: [string, integer, 'null']
+      title: Total de visualizações
+      default: null
+    last_activity:
+      type: [string, 'null']
+      title: Timestamp ou tempo relativo da última atividade
+      default: null
+slots:
+  title:
+    title: Título do tópico
+    description: Link ou heading para o tópico.
+  meta:
+    title: Metadados
+    description: Categoria, autor e data.
+  preview:
+    title: Prévia do último post
+    description: Trecho resumido de texto.

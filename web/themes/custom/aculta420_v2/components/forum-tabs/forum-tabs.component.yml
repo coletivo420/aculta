@@ -1,0 +1,39 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Abas do Fórum
+description: Abas horizontais com sublinhado verde no ativo, contador vermelho de não lidos e slot para filtros nativos.
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [label, items]
+  properties:
+    label:
+      type: string
+      title: Rótulo acessível da navegação
+      minLength: 1
+    items:
+      type: array
+      title: Itens da navegação
+      items:
+        type: object
+        additionalProperties: false
+        required: [label, href]
+        properties:
+          label:
+            type: string
+            title: Rótulo da aba
+          href:
+            type: string
+            title: Destino da aba
+          active:
+            type: boolean
+            title: Indica se a aba está selecionada
+            default: false
+          count:
+            type: [integer, 'null']
+            title: Contador opcional de itens não lidos ou total
+            default: null
+slots:
+  filters:
+    title: Filtros adicionais
+    description: Elementos adicionais como selects de categoria e ordenação.

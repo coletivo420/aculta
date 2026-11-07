@@ -1,0 +1,38 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Cabeçalho de Categoria do Fórum
+description: Eyebrow, título, descrição e estatísticas em faixa com borda vermelha no topo.
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [title]
+  properties:
+    title:
+      type: string
+      title: Título da categoria
+      minLength: 1
+    description:
+      type: [string, 'null']
+      title: Descrição explicativa
+      default: null
+    icon:
+      type: [string, 'null']
+      title: Nome do ícone Phosphor opcional
+      pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+      default: null
+    stats:
+      type: [array, 'null']
+      title: Lista de estatísticas
+      default: null
+      items:
+        type: object
+        additionalProperties: false
+        required: [label]
+        properties:
+          label:
+            type: string
+            title: Rótulo da estatística
+          value:
+            type: [string, integer, 'null']
+            title: Valor numérico ou textual da estatística
+            default: null

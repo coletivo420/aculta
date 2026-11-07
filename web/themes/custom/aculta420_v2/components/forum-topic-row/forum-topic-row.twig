@@ -1,0 +1,63 @@
+<article class="forum-topic-row{% if pinned %} forum-topic-row--pinned{% endif %}">
+  {% if thumbnail %}
+    <div class="forum-topic-row__thumbnail">
+      {{ thumbnail }}
+    </div>
+  {% endif %}
+  <div class="forum-topic-row__main">
+    <div class="forum-topic-row__header">
+      {% if badges and badges|length > 0 %}
+        <div class="forum-topic-row__badges">
+          {% for b in badges %}
+            <span class="forum-topic-row__badge forum-topic-row__badge--{{ b.tone|default('neutral') }}">{{ b.label }}</span>
+          {% endfor %}
+        </div>
+      {% endif %}
+      <div class="forum-topic-row__title">
+        {{ title }}
+      </div>
+    </div>
+    {% if preview %}
+      <div class="forum-topic-row__preview">
+        {{ preview }}
+      </div>
+    {% endif %}
+    {% if meta %}
+      <div class="forum-topic-row__meta">
+        {{ meta }}
+      </div>
+    {% endif %}
+  </div>
+  <dl class="forum-topic-row__stats">
+    <div class="forum-topic-row__stat forum-topic-row__stat--replies">
+      <dt class="forum-topic-row__stat-label">{{ 'Respostas'|t }}</dt>
+      <dd class="forum-topic-row__stat-value">
+        {% if replies is not null and replies is not empty %}
+          {{ replies }}
+        {% else %}
+          —<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span>
+        {% endif %}
+      </dd>
+    </div>
+    <div class="forum-topic-row__stat forum-topic-row__stat--views">
+      <dt class="forum-topic-row__stat-label">{{ 'Visualizações'|t }}</dt>
+      <dd class="forum-topic-row__stat-value">
+        {% if views is not null and views is not empty %}
+          {{ views }}
+        {% else %}
+          —<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span>
+        {% endif %}
+      </dd>
+    </div>
+    <div class="forum-topic-row__stat forum-topic-row__stat--activity">
+      <dt class="forum-topic-row__stat-label">{{ 'Atividade'|t }}</dt>
+      <dd class="forum-topic-row__stat-value">
+        {% if last_activity is not null and last_activity is not empty %}
+          {{ last_activity }}
+        {% else %}
+          —<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span>
+        {% endif %}
+      </dd>
+    </div>
+  </dl>
+</article>

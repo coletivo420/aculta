@@ -333,3 +333,43 @@ Componentes previstos no ADR-046: `avatar`, `tabs`, `dialog`, `form-field`, `pro
 ## Como documentar um componente novo
 
 Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra que ele não viola (por exemplo, "não lê entidade"). Atualize este arquivo no mesmo commit do componente.
+
+### forum-category-header — Cabeçalho de Categoria do Fórum
+- **Papel:** apresenta o cabeçalho de categoria com eyebrow institucional "GROWROOM420 / COMUNIDADE", título da categoria, descrição explicativa e contadores de estatísticas com faixa superior vermelha editorial.
+- **Props:** `title` (string, obrigatória), `description` (string, opcional), `icon` (string, opcional), `stats` (array de `{label, value}`, opcional).
+- **Slots:** nenhum.
+- **Story:** `forum-category-header.default.story.yml`.
+- **Regra:** não lê entidade ou regra de domínio; valores nulos/ausentes de estatísticas são renderizados como placeholder acessível `—<span class="visually-hidden">Dado indisponível</span>`.
+- **Estado:** entregue na Entrega 1 do redesenho visual Growroom420; schema estrito validado.
+
+### forum-tabs — Abas do Fórum
+- **Papel:** barra de navegação horizontal com indicador ativo verde, contadores de itens não lidos e slot de filtros.
+- **Props:** `label` (string, obrigatória), `items` (array de `{label, href, active, count}`, obrigatório).
+- **Slots:** `filters` (selects e filtros nativos).
+- **Story:** `forum-tabs.default.story.yml`.
+- **Regra:** rolagem horizontal contida internamente a `.forum-tabs__bar` para preservar viewport de 320 px sem overflow. Sem role artificial de tablist em links de navegação.
+- **Estado:** entregue na Entrega 1 do redesenho visual Growroom420; schema estrito validado.
+
+### forum-topic-row — Linha de Tópico do Fórum
+- **Papel:** linha da listagem de discussões em tabela com pílulas de status, autor, categoria e contadores em colunas no desktop ou empilhados no mobile.
+- **Props:** `pinned` (bool, obrigatório), `badges` (array de `{label, tone}`, opcional), `replies` (opcional), `views` (opcional), `last_activity` (opcional).
+- **Slots:** `title`, `meta`, `preview`, `thumbnail`.
+- **Story:** `forum-topic-row.default.story.yml`.
+- **Regra:** destaque fixado recebe fundo `--color-surface-highlight` e borda lateral verde; dados ausentes (como visualizações) viram placeholder neutro `—`.
+- **Estado:** entregue na Entrega 1 do redesenho visual Growroom420; schema estrito validado.
+
+### forum-topic-card — Cartão de Tópico do Fórum
+- **Papel:** formato de cartão com miniatura (imagem do tópico ou ícone neutro da categoria), metadados e contadores, implementando o padrão Discourse Topic Cards.
+- **Props:** `pinned` (bool, obrigatório), `thumbnail_src` (opcional), `thumbnail_alt` (opcional), `category_icon` (opcional), `badges` (opcional), `replies` (opcional), `views` (opcional), `last_activity` (opcional).
+- **Slots:** `title`, `meta`, `preview`.
+- **Story:** `forum-topic-card.default.story.yml`.
+- **Regra:** nunca utiliza letra ou inicial como avatar/miniatura (apenas imagem ou ícone neutro Phosphor).
+- **Estado:** entregue na Entrega 1 do redesenho visual Growroom420; schema estrito validado.
+
+### forum-post-card — Cartão de Post do Fórum
+- **Papel:** postagem no tópico com faixa colorida no topo (stripe), identificação de autor, papel, contagem de posts, timestamp, corpo e reações.
+- **Props:** `stripe` (enum `brand|highlight|member`), `author_name` (string, obrigatória), `author_role` (opcional), `author_posts` (opcional), `timestamp` (opcional), `reactions` (opcional), `reply_url` (opcional).
+- **Slots:** `avatar`, `body`, `actions`, `reply`.
+- **Story:** `forum-post-card.default.story.yml`.
+- **Regra:** o papel do autor e a variante de faixa vêm do Portal; o tema não consulta papel de usuário nem entidade. Dados ausentes viram placeholder `—`.
+- **Estado:** entregue na Entrega 1 do redesenho visual Growroom420; schema estrito validado.
