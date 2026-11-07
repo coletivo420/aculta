@@ -169,9 +169,9 @@
     padding: var(--spacing-md);
   }
 
-  /* Cor de faixa do Studio (painel de conta), usada também em caixas de outros purposes. */
-:root { --studio-stripe: #f0c41e; }
-html[data-theme="dark"] { --studio-stripe: #fbd132; }
+  /* Faixa do Studio: segue a cor de destaque (sub-2) do purpose account configurada no tema. */
+:root { --studio-stripe: var(--aculta-studio-light-sub-2); }
+html[data-theme="dark"] { --studio-stripe: var(--aculta-studio-dark-sub-2); }
 
 /* Modos de layout de container por purpose (aculta420_v2). O atributo do purpose manda na largura,
      qualquer que seja a variante do template (--full ou --aside). */

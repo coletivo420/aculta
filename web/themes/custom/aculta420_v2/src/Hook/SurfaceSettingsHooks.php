@@ -72,6 +72,15 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
           $styles[] = $name . ': ' . $value . ';';
         }
       }
+      // Cor de faixa do Studio (purpose account), disponível em qualquer página para as caixas que a acompanham.
+      $studioStyle = self::purposePaletteStyle($palette, 'account');
+      if ($studioStyle !== NULL) {
+        foreach ($studioStyle['variables'] as $name => $value) {
+          if (str_contains($name, '-sub-2')) {
+            $styles[] = str_replace('--aculta-purpose-', '--aculta-studio-', $name) . ': ' . $value . ';';
+          }
+        }
+      }
       if (!empty($styles)) {
         $htmlAttributes->setAttribute('style', implode(' ', $styles));
       }
