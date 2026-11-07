@@ -116,7 +116,7 @@
 .revista-publication__footer :where(.field__label, .field__item) { margin: 0; padding: 0; }
 .revista-publication__footer a { color: var(--color-link-editorial); }
 .revista-publication__authors { margin-block-start: var(--spacing-xxl); }
-.revista-publication__authors .author-card { inline-size: 100%; }
+.revista-publication__authors .author-card { inline-size: 100%; max-inline-size: none; }
 .revista-publication__discussion { border-block-start: 1px solid var(--color-border); margin-block-start: var(--spacing-xxl); padding-block-start: var(--spacing-lg); }
 .revista-publication__discussion :where(img, video, iframe) { block-size: auto; max-inline-size: 100%; }
 .revista-publication__discussion :where(.comment, .comment__content) { min-inline-size: 0; overflow-wrap: anywhere; }

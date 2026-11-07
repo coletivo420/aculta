@@ -358,7 +358,7 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
     $cardWrapper['style'] = [
       '#type' => 'select',
       '#title' => t('Estilo'),
-      '#description' => t('Caixa ou sem caixa. Vale só para Padrão e Estreito; Largura total não tem estilo (como no Astra).'),
+      '#description' => t('Caixa (fundo, borda e faixa de destaque do purpose) ou sem caixa. Vale para todos os modos.'),
       '#options' => PurposeContainerLayout::getStyleOptions(),
       '#default_value' => $currentSetting['style'],
       '#parents' => ['aculta_purpose_container', $purpose, 'style'],

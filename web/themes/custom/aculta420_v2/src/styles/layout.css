@@ -161,9 +161,10 @@
   }
 
   /* Estilo do container (aculta420_v2): Caixa vale para Padrão e Estreito; sem caixa é o padrão do CSS. */
-  html[data-purpose-style="boxed"]:is([data-purpose-layout="default"], [data-purpose-layout="narrow"]) .layout-page__content {
+  html[data-purpose-style="boxed"] .layout-page__content {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
+    border-block-start: 4px solid var(--purpose-sub-2);
     border-radius: var(--radius-lg);
     padding: var(--spacing-md);
   }
@@ -191,8 +192,9 @@
     padding-inline: 0;
   }
 
-  /* O nó da Revista tem largura máxima de 60 rem; em Largura total ele ocupa a página inteira. */
-  html[data-purpose-layout="full"] .node--type-revista.node--view-mode-full {
+  /* Largura total: os tipos de conteúdo de cada purpose (publicação, verbete, evento, aula, nó completo)
+     deixam de ter largura máxima própria e ocupam a página inteira. */
+  html[data-purpose-layout="full"] :is(.node--view-mode-full, .aculta-wiki-article, .aculta-wiki-home, .aculta-wiki-search-results, .aculta-event-page-layout, .lms-lesson-page, .social-links-page) {
     inline-size: 100%;
     max-inline-size: none;
     margin-inline: 0;

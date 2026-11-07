@@ -38,12 +38,13 @@ final class PurposeContainerLayout {
   ];
 
   /**
-   * Modos que aceitam estilo (Full Width não aceita, como no Astra).
+   * Modos que aceitam estilo. Todos os modos aceitam Caixa ou Sem caixa.
    *
    * @var list<string>
    */
   public const MODES_WITH_STYLE = [
     self::MODE_DEFAULT,
+    self::MODE_FULL,
     self::MODE_NARROW,
   ];
 
@@ -239,7 +240,7 @@ final class PurposeContainerLayout {
       ? self::sanitizeSetting($allSettings[$purpose], $purpose)
       : self::getDefaultSettings($purpose);
 
-    // Astra: estilo só vale para Padrão e Estreito; Largura total não tem estilo.
+    // Estilo vale para todos os modos (decisão do responsável em 2026-11-07).
     $style = in_array($setting['mode'], self::MODES_WITH_STYLE, TRUE) ? $setting['style'] : NULL;
 
     return [
