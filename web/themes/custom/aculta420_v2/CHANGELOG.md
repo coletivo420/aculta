@@ -1,3 +1,15 @@
+## Não versionado — tokens de cor e movimento, reset de links e gate de fundação V2
+
+- Cores literais fora de `src/styles/tokens.css` viram tokens semânticos: 27 ocorrências em `forum.css`, `theme-settings.css`, `lms-tour.css`, `studio-calendar.css` e `forum-tabs.css`. Opacidades `rgba()` passam a `color-mix()` sobre tokens existentes.
+- Fallbacks `var(--token, #literal)` viram `var(--token)`. Os tokens `--button-primary-bg-hover` e `--color-surface-subtle`, usados sem definição, passam a existir em `tokens.css` com o valor que já era aplicado.
+- Durações fixas viram tokens `--motion-instant`, `--motion-fast` (150 ms), `--motion-base` (180 ms) e `--motion-slow` (200 ms). Aproximação registrada: a transição de 160 ms do diálogo de login vai para 180 ms.
+- A reset global de `a` e `a:hover` passa para `.page a` e `.page a:hover`, para não vazar para fora do contêiner da página.
+- O CSS do widget Turnstile (`.captcha-type-challenge--turnstile`) sai do tema e vira a biblioteca `aculta_portal/captcha-presentation`, anexada pelo `CaptchaPresentationHooks`. O tema não cita mais CAPTCHA.
+- `MailEnvelopeHooks` e o template `aculta-mailer-wrap.html.twig` migram da V1 para o V2: cores dos tokens do próprio tema e logo do asset do V2.
+- Correção de lint: `color-mix(in srgb, ...)` vira `sRGB`, conforme `value-keyword-case`. `npm run lint:css` PASS.
+- Gate `scripts/validate-aculta420-foundation.php` reescrito para o V2 (sem Bootstrap, sem allowlist da V1, com tokens `--color-*` e blocos `aculta420_v2_*`). Última execução: 410 checks PASS, com Runtime sem V1 e sem Bootstrap.
+- Pendente: captura visual em 320, 390 e 1440 px, claro e escuro. Estado: DEFERRED.
+
 ## 1.4.0 — Redesenho Visual Fórum Growroom420 (Entrega 2)
 
 - Conclusão do redesenho visual do Fórum Growroom420 no tema ACULTA420 V2 (versão MINOR conforme ADR-046).

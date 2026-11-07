@@ -69,6 +69,8 @@ Na entrega 2 foram incorporados:
 - Formulário `/criar-topico` adaptado com faixa vermelha no topo, botões de ação e diretrizes integradas via template `node-add-form--aculta-forum-topic.html.twig`.
 - Nova rota e template da View `/categorias/{termo}` (`page_category_term` em `views.view.aculta_forum_public_topics.yml`), integrando `forum-category-header`, `forum-tabs`, lista de tópicos e `forum-sidebar-panels`.
 
+- O CSS do widget CAPTCHA/Turnstile pertence ao `aculta_portal` (biblioteca `captcha-presentation`, anexada por `CaptchaPresentationHooks`). O tema não cita CAPTCHA; a regra de fronteira é verificada pelo gate de fundação.
+
 ## 3. Modo de cor
 
 - `SurfaceSettingsHooks::preprocessHtml()` define `data-theme` no `<html>` a partir de `aculta_color_mode`. Valor diferente de `dark` vira `light`.
@@ -90,6 +92,7 @@ domínio nem purpose. Instruções operacionais estão em
 
 `src/styles/tokens.css` contém:
 
+- durações de movimento `--motion-instant`, `--motion-fast`, `--motion-base` e `--motion-slow`, usadas em transições e animações; opacidades de cor são feitas com `color-mix()` sobre tokens de cor;
 - cores semânticas de texto, superfície, marca, destaque, borda, estado e foco;
 - a base visual herdada da V1 (verde e vermelho editorial, mídia, sombra elevada), com valores para o modo escuro;
 - escalas de tipografia (Inter e Oswald), espaçamento, raios e sombras;
@@ -179,6 +182,7 @@ Com JavaScript desligado, os links dos gatilhos continuam válidos: o login e a 
 - `SurfaceSettingsHooks` (`preprocess_html`) aplica o modo de cor e as classes de superfície em uma única implementação.
 - Evento: o adapter `aculta-event-page.html.twig` consome render arrays do módulo no SDC `event-page-layout`, cuja story é `event-page-layout.default.story.yml`. FAQ: `node--aculta-faq--full.html.twig` apresenta cada resposta por `accordion`; o conteúdo continua vindo do render array do Portal.
 - `PortalUiHooks` (`preprocess`, genérico): converte `data-portal-ui` em classes do V2 em todo `*attributes` do theme hook. Mapa: `surface-list-edit-action` (`aculta_paths`), `surface-dns-block` e 20 tokens migrados das classes de `aculta_lms` e `aculta_lms_resources` (construtor de curso, prévia de aula, revisão de respostas, painel de status, materiais). Tokens fora desse mapa ainda não têm classe no V2 (ver o gate `validate-module-theme-boundary`, que hoje lista os pendentes de `aculta_studio`, `aculta_events`, `aculta_patcher` e `aculta_pagamentos_mercadopago`). Sem número de versão até a validação visual no Runtime; status: pendente, captura visual DEFERRED.
+- `MailEnvelopeHooks` (`preprocess_aculta_mailer_wrap`) monta o envelope HTML dos e-mails do `aculta_mailer`: cores claras e escuras lidas de `src/styles/tokens.css` a cada montagem e logo do asset do próprio V2. Não lê configuração da V1.
 - `src/Hook/*` é a única camada PHP do tema. Lógica de negócio não pertence aqui.
 
 ## 8. Dependências e compatibilidade

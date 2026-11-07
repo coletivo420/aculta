@@ -32,6 +32,8 @@ As rotas de overview, provider e componente ficam fora do container por purpose.
 
 ## Higiene de CSS — Stylelint
 
+Não versionado (2026-11-07): cores literais fora de `tokens.css` e durações fixas foram tokenizadas (27 cores, 39 durações) e a reset de links passou para `.page a`. `npm run lint:css` PASS. Pendências: captura visual DEFERRED (320, 390 e 1440 px, claro e escuro); gate `validate-aculta420-foundation.php` com 410 checks PASS.
+
 O CSS atual dos componentes e estilos globais passa pelo preset `stylelint-config-drupal`. A configuração preserva regras compactas já usadas pelo tema e reconhece unidades e at-rules modernas (`dvh`, `@container`, `@starting-style`). A normalização de propriedades e valores equivalentes não altera o comportamento visual; lint PASS. A validação visual de fases permanece conforme as pendências acima.
 
 ## Fase 1 — Tokens e fundações
