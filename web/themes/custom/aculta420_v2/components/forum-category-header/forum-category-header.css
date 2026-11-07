@@ -54,7 +54,7 @@
   gap: var(--spacing-sm);
 }
 
-.forum-category-header__actions a {
+.forum-category-header .forum-category-header__actions a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -67,11 +67,11 @@
   padding-inline: var(--spacing-base);
 }
 
-.forum-category-header__actions a:hover {
+.forum-category-header .forum-category-header__actions a:hover {
   background: var(--button-primary-bg-hover);
 }
 
-.forum-category-header__actions a:focus-visible {
+.forum-category-header .forum-category-header__actions a:focus-visible {
   outline: 3px solid var(--color-brand-highlight);
   outline-offset: 2px;
 }
