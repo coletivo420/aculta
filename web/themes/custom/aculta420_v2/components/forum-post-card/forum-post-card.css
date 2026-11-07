@@ -260,3 +260,17 @@
   margin: 0;
   padding: 0;
 }
+
+/* Ações do comentário numa única linha, alinhadas à direita. */
+.forum-post-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-xs);
+}
+
+.forum-post-card ul.links {
+  display: inline-flex;
+  align-items: center;
+}
