@@ -796,4 +796,5 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
 .aculta-forum-topic__content > section {
   border: 0;
   background: transparent;
+  row-gap: calc(var(--spacing-base) / 8);
 }
