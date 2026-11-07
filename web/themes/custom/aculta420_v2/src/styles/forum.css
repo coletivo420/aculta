@@ -516,3 +516,16 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
   margin-inline: auto;
   min-inline-size: 0;
 }
+
+/* Caixa do fórum: largura máxima, centralizada no grid da página, com margem lateral no celular. */
+.aculta-forum-list,
+.aculta-forum-category-page,
+.aculta-forum-topic {
+  inline-size: min(100%, 75rem);
+  max-inline-size: 75rem;
+  justify-self: center;
+  margin-inline: auto;
+  padding-inline: var(--spacing-base);
+  box-sizing: border-box;
+  min-inline-size: 0;
+}
