@@ -4,6 +4,18 @@
 
 **Fontes:** cinco imagens de referência (lista de tópicos desktop, página de categoria desktop, página de tópico, formulário de novo tópico e fórum mobile) e referências públicas do Discourse, usadas **apenas como padrão visual**: [guia de elementos de interface do Discourse](https://meta.discourse.org/t/interface-nomenclature-guide/103351?tl=en), [Topic Cards](https://awesome.ecosyste.ms/projects/github.com%2Fdiscourse%2Fdiscourse-topic-cards) e [Topic List Previews](https://meta.discourse.org/t/topic-list-previews-tlp/209973/692?tl=en). Não copiar marca, textos nem ícones do Discourse.
 
+**Referências salvas no repositório** (pasta `docs/architecture/growroom420-referencias/`):
+
+| Arquivo | Conteúdo |
+| --- | --- |
+| `referencia-1.webp` | Lista de tópicos, desktop (`/discussoes`) |
+| `referencia-2.webp` | Página de categoria, desktop |
+| `referencia-3.webp` | Página de tópico, desktop |
+| `referencia-4.webp` | Formulário de novo tópico, desktop (`/criar-topico`) |
+| `referencia-5.webp` | Fórum mobile (lista e categorias) |
+
+As referências citadas como "imagens 2 e 6 (mobile)" e "imagem 4" neste documento correspondem a estes arquivos: quando o texto disser "imagem N", use `referencia-N.webp`. As versões mobile de categoria, tópico e novo tópico enviadas na segunda mensagem **não foram salvas em arquivo**; o agente deve seguir as especificações textuais das seções 3 e 4 para essas telas.
+
 **Escopo:** apresentação do tema `aculta420_v2`. Não altera a V1 (`web/themes/custom/aculta420/`), não altera lógica de acesso, grants, moderação ou revisões do módulo `aculta_forum`.
 
 ## 1. Decisões fechadas
