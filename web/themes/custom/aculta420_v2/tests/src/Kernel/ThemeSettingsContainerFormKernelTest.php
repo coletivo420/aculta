@@ -31,19 +31,7 @@ final class ThemeSettingsContainerFormKernelTest extends KernelTestBase {
       ->set('default', 'aculta420_v2')
       ->save();
 
-    // Define purposes ativos no State API para popular as subabas.
-    $this->container->get('state')->set('aculta_portal.active_purposes', [
-      'main',
-      'account',
-      'support',
-      'magazine',
-      'wiki',
-      'shop',
-      'courses',
-      'links',
-      'forum',
-      'eventos',
-    ]);
+    // Os purposes vêm da lista canônica do tema; nenhum state do Portal é necessário.
   }
 
   /**
