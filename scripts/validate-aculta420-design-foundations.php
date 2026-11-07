@@ -25,7 +25,7 @@ if (!is_string($root)) {
   fwrite(STDERR, "Validator root cannot be resolved safely.\n");
   exit(2);
 }
-$theme = $root . '/web/themes/custom/aculta420';
+$theme = $root . '/web/themes/custom/aculta420_v2';
 $failures = [];
 $checks = 0;
 
@@ -70,8 +70,8 @@ $dark_twig_inline_js_branches = 0;
 $twig_inline_premature_scripts = 0;
 $dark_php_branches = 0;
 $dark_js_layout_behavior = 0;
-$theme_info = file_get_contents($theme . '/aculta420.info.yml') ?: '';
-$theme_libraries = file_get_contents($theme . '/aculta420.libraries.yml') ?: '';
+$theme_info = file_get_contents($theme . '/aculta420_v2.info.yml') ?: '';
+$theme_libraries = file_get_contents($theme . '/aculta420_v2.libraries.yml') ?: '';
 $check(preg_match($auth_pattern, $theme_info . "\n" . $theme_libraries) !== 1, 'Theme metadata and libraries have no authentication or anti-bot dependencies.');
 
 foreach ($runtime_files as $path) {

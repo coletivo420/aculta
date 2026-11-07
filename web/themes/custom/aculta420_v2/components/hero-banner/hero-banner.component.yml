@@ -1,5 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Hero banner
+status: stable
 description: Abertura de página com mídia opcional e chamada de ação.
 group: ACULTA
 props:

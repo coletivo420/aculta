@@ -1,5 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Status messages
+status: stable
 description: Mensagem de estado anunciada corretamente por tecnologias assistivas.
 group: ACULTA
 props:
@@ -7,6 +8,10 @@ props:
   additionalProperties: false
   required: [type, messages]
   properties:
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Atributos HTML opcionais
+      default: null
     type:
       type: string
       enum: [status, warning, error]

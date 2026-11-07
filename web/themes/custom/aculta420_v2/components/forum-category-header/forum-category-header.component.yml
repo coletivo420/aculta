@@ -1,5 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Cabeçalho de Categoria do Fórum
+status: stable
 description: Eyebrow, título, descrição e estatísticas em faixa com borda vermelha no topo.
 group: Comunidade
 props:
@@ -19,6 +20,10 @@ props:
       type: [string, 'null']
       title: Nome do ícone Phosphor opcional
       pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+      default: null
+    actions:
+      type: [string, 'null']
+      title: Ação principal opcional (markup de link ou botão)
       default: null
     stats:
       type: [array, 'null']

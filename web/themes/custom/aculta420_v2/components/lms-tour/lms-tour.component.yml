@@ -1,5 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Tour Guiado LMS
+status: stable
 description: Apresentacao acessivel em dialog nativo HTML para o percurso guiado do estudante no LMS.
 group: LMS
 props:

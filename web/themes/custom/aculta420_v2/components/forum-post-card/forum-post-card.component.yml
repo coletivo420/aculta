@@ -1,5 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Cartão de Post do Fórum
+status: stable
 description: Card de postagem do tópico com faixa colorida no topo, cabeçalho de autoria, corpo e reações.
 group: Comunidade
 props:

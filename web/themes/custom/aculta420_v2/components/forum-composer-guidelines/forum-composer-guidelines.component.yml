@@ -1,5 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Diretrizes do Compositor do Fórum
+status: stable
 description: Diretrizes e dicas para criação de novos tópicos em duas colunas no desktop e uma no mobile, com faixa amarela no topo e details nativo.
 group: Comunidade
 props:

@@ -47,6 +47,35 @@
   line-height: 1.5;
 }
 
+.forum-category-header__actions {
+  display: flex;
+  flex-wrap: wrap;
+  margin-block-end: var(--spacing-md);
+  gap: var(--spacing-sm);
+}
+
+.forum-category-header__actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--color-on-brand);
+  border-radius: var(--radius-base);
+  background: var(--color-brand-primary);
+  font-weight: 700;
+  min-block-size: 44px;
+  padding-inline: var(--spacing-base);
+}
+
+.forum-category-header__actions a:hover {
+  background: var(--button-primary-bg-hover);
+}
+
+.forum-category-header__actions a:focus-visible {
+  outline: 3px solid var(--color-brand-highlight);
+  outline-offset: 2px;
+}
+
 .forum-category-header__stats {
   display: flex;
   flex-wrap: wrap;

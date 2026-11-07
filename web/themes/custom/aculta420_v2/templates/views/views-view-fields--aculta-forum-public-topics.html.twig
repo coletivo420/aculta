@@ -1,21 +1,32 @@
-{# Keep Drupal's teaser render array and expose its reply/activity metadata. #}
-<div class="aculta-forum-topic-list-row">
-  <div class="aculta-forum-topic-list-row__topic">
-    {{ fields.rendered_entity.content }}
-  </div>
-  <dl class="aculta-forum-topic-list-row__meta">
-    <div>
-      <dt>{{ 'Respostas'|t }}</dt>
-      {% set reply_count = fields.comment_count.raw|default(0) %}
-      <dd>{{ reply_count }} {{ reply_count == 1 ? 'resposta'|t : 'respostas'|t }}</dd>
-    </div>
-    <div>
-      <dt>{{ 'Última atividade'|t }}</dt>
-      <dd>{{ fields.last_updated.content }}</dd>
-      {% if last_comment_author is defined %}
-        <dd class="aculta-forum-topic-list-row__last-author">{{ last_comment_author }}</dd>
-      {% endif %}
-    </div>
-    {{ last_comment_author_cache|default('') }}
-  </dl>
-</div>
+{#
+  Linha da lista pública de tópicos: apresentada por forum-topic-row.
+  Dados do tópico vêm da entidade da linha; contagem e última atividade vêm da view.
+  Visualizações ainda não existem no contrato: entram como placeholder.
+#}
+{% set topic = row._entity %}
+{% set category = topic.field_aculta_categories.entity %}
+{% set is_pinned = topic.isSticky() %}
+{% set pinned_badges = [{ label: 'Fixo'|t, tone: 'highlight' }] %}
+
+{% set title_markup %}
+  <a href="{{ url('entity.node.canonical', { node: topic.id() }) }}">{{ topic.label() }}</a>
+{% endset %}
+
+{% set meta_markup %}
+  {% if category %}
+    <span class="forum-topic-row__category">{{ category.label() }}</span>
+  {% endif %}
+  <span class="forum-topic-row__author">{{ 'por'|t }} {{ topic.getOwner().getDisplayName() }}</span>
+{% endset %}
+
+{{ include('aculta420_v2:forum-topic-row', {
+  pinned: is_pinned,
+  badges: is_pinned ? pinned_badges : null,
+  replies: fields.comment_count.raw|default(0),
+  views: null,
+  last_activity: fields.last_updated.content|default(null),
+  title: title_markup,
+  meta: meta_markup,
+  preview: null,
+  thumbnail: null
+}, with_context = false) }}

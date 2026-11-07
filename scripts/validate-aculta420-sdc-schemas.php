@@ -27,7 +27,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use Symfony\Component\Yaml\Yaml;
 
-$root = dirname(__DIR__) . '/web/themes/custom/aculta420';
+$root = dirname(__DIR__) . '/web/themes/custom/aculta420_v2';
 $failures = [];
 $checks = 0;
 $assert = static function (bool $condition, string $message) use (&$failures, &$checks): void {
@@ -107,7 +107,7 @@ foreach (['templates', 'components'] as $dir) {
       continue;
     }
     $source = file_get_contents($file->getPathname());
-    preg_match_all("/include\\(\\s*'aculta420:([a-z0-9-]+)'\\s*,\\s*\\{(.*?)\\}\\s*,/s", $source, $matches, PREG_SET_ORDER);
+    preg_match_all("/include\\(\\s*'aculta420(?:_v2)?:([a-z0-9-]+)'\\s*,\\s*\\{(.*?)\\}\\s*,/s", $source, $matches, PREG_SET_ORDER);
     foreach ($matches as $match) {
       $calls[] = [
         'component' => $match[1],

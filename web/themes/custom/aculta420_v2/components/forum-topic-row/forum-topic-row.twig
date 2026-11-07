@@ -32,7 +32,7 @@
     <div class="forum-topic-row__stat forum-topic-row__stat--replies">
       <dt class="forum-topic-row__stat-label">{{ 'Respostas'|t }}</dt>
       <dd class="forum-topic-row__stat-value">
-        {% if replies is not null and replies is not empty %}
+        {% if replies is not null %}
           {{ replies }}
         {% else %}
           —<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span>
@@ -42,7 +42,7 @@
     <div class="forum-topic-row__stat forum-topic-row__stat--views">
       <dt class="forum-topic-row__stat-label">{{ 'Visualizações'|t }}</dt>
       <dd class="forum-topic-row__stat-value">
-        {% if views is not null and views is not empty %}
+        {% if views is not null %}
           {{ views }}
         {% else %}
           —<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span>

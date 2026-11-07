@@ -1,5 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Vitrine de portais
+status: stable
 description: Links de navegação entre os portais ativos da rede ACULTA.
 group: ACULTA
 props:

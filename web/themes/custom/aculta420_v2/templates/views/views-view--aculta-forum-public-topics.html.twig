@@ -1,0 +1,58 @@
+{#
+  Lista pública de tópicos do fórum (ACULTA420 V2), aplicada a todos os displays
+  da view que não têm template próprio (/discussoes e variantes).
+  Abas usam as rotas dos displays existentes; abas sem dado ficam fora até existirem.
+#}
+{% set current_display = view.current_display %}
+
+{% set new_topic_markup %}
+  <a href="{{ url('node.add', { node_type: 'aculta_forum_topic' }) }}">{{ '+ Novo tópico'|t }}</a>
+{% endset %}
+
+{% set tab_items = [
+  { label: 'Recentes'|t, href: url('view.aculta_forum_public_topics.page_discussions'), active: current_display == 'page_discussions', count: null },
+  { label: 'Populares'|t, href: url('view.aculta_forum_public_topics.page_most_commented'), active: current_display == 'page_most_commented', count: null },
+  { label: 'Novas'|t, href: url('view.aculta_forum_public_topics.page_new_topics'), active: current_display == 'page_new_topics', count: null },
+  { label: 'Sem resposta'|t, href: url('view.aculta_forum_public_topics.page_unanswered'), active: current_display == 'page_unanswered', count: null }
+] %}
+
+<div class="aculta-forum-list">
+  {{ include('aculta420_v2:forum-category-header', {
+    title: 'Growroom420'|t,
+    description: 'Cultivo, ciência, cultura e antiproibicionismo. Um espaço para aprender e trocar experiências.'|t,
+    icon: null,
+    actions: new_topic_markup,
+    stats: null
+  }, with_context = false) }}
+
+  <section class="aculta-forum-list__panel" aria-label="{{ 'Lista de tópicos'|t }}">
+    {{ include('aculta420_v2:forum-tabs', {
+      label: 'Ordenação dos tópicos'|t,
+      items: tab_items
+    }, with_context = false) }}
+
+    {% if rows %}
+      <div class="forum-topic-row__head" aria-hidden="true">
+        <span>{{ 'Tópico'|t }}</span>
+        <span class="forum-topic-row__head-cols">
+          <span>{{ 'Respostas'|t }}</span>
+          <span>{{ 'Visualizações'|t }}</span>
+          <span>{{ 'Última atividade'|t }}</span>
+        </span>
+      </div>
+      <div class="aculta-forum-list__rows">
+        {{ rows }}
+      </div>
+    {% elseif empty %}
+      <div class="aculta-forum-list__rows">
+        <div class="view-empty">{{ empty }}</div>
+      </div>
+    {% endif %}
+
+    {% if pager %}
+      <div class="aculta-forum-list__pager">
+        {{ pager }}
+      </div>
+    {% endif %}
+  </section>
+</div>

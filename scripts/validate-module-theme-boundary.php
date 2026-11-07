@@ -26,7 +26,7 @@ declare(strict_types=1);
 
 $root = dirname(__DIR__);
 $module = $root . '/web/modules/custom/aculta_portal';
-$theme = $root . '/web/themes/custom/aculta420';
+$theme = $root . '/web/themes/custom/aculta420_v2';
 $failures = [];
 $checks = 0;
 $assert = static function (bool $ok, string $message) use (&$failures, &$checks): void {
@@ -55,6 +55,9 @@ $tokenPattern = '/\b(btn|btn-[a-z-]+|alert|alert-[a-z-]+|badge|col|col-[a-z0-9-]
 
 $files = static function (string $dir, array $exts): array {
   $out = [];
+  if (!is_dir($dir)) {
+    return $out;
+  }
   $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS));
   foreach ($it as $file) {
     if ($file->isFile() && in_array($file->getExtension(), $exts, TRUE)) {

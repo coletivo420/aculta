@@ -1,5 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Painéis Laterais do Fórum
+status: stable
 description: Painéis em coluna com faixas alternadas (vermelha e amarela) para estatísticas, destaques, moderadores, regras e categorias relacionadas.
 group: Comunidade
 props:

@@ -1,25 +1,37 @@
 {# Template for /categorias/{termo} #}
+{% set category_stats = [
+  { label: 'Tópicos'|t, value: view.total_rows|default(null) },
+  { label: 'Mensagens'|t, value: null },
+  { label: 'Visualizações'|t, value: null }
+] %}
+{% set section_items = [
+  { label: 'Todas as discussões'|t, href: url('<current>'), active: true, count: null },
+  { label: 'Em alta'|t, href: '#', active: false, count: null },
+  { label: 'Sem resposta'|t, href: '#', active: false, count: null }
+] %}
+{% set aside_stats = [
+  { label: 'Tópicos'|t, value: view.total_rows|default(null) },
+  { label: 'Participantes'|t, value: null }
+] %}
+{% set community_rules = [
+  'Mantenha as postagens no tema específico desta categoria.'|t,
+  'Sem spam ou autopromoção desautorizada.'|t,
+  'Colabore com respostas úteis e fundamentadas.'|t
+] %}
+
 <div class="aculta-forum-category-page">
   {{ include('aculta420_v2:forum-category-header', {
     title: view.getTitle()|default('Categoria'|t),
     description: null,
     icon: 'plant',
-    stats: [
-      { label: 'Tópicos'|t, value: view.total_rows|default(null) },
-      { label: 'Mensagens'|t, value: null },
-      { label: 'Visualizações'|t, value: null }
-    ]
+    stats: category_stats
   }, with_context = false) }}
 
   <div class="aculta-forum-category-page__layout">
     <div class="aculta-forum-category-page__main">
       {{ include('aculta420_v2:forum-tabs', {
         label: 'Seções da categoria'|t,
-        items: [
-          { label: 'Todas as discussões'|t, href: url('<current>'), active: true, count: null },
-          { label: 'Em alta'|t, href: '#', active: false, count: null },
-          { label: 'Sem resposta'|t, href: '#', active: false, count: null }
-        ]
+        items: section_items
       }, with_context = false) }}
 
       {% if rows %}
@@ -37,17 +49,10 @@
 
     <div class="aculta-forum-category-page__aside">
       {{ include('aculta420_v2:forum-sidebar-panels', {
-        stats: [
-          { label: 'Tópicos'|t, value: view.total_rows|default(null) },
-          { label: 'Participantes'|t, value: null }
-        ],
+        stats: aside_stats,
         featured: null,
         moderators: null,
-        rules: [
-          'Mantenha as postagens no tema específico desta categoria.'|t,
-          'Sem spam ou autopromoção desautorizada.'|t,
-          'Colabore com respostas úteis e fundamentadas.'|t
-        ],
+        rules: community_rules,
         related: null
       }, with_context = false) }}
     </div>

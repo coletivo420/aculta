@@ -1,5 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Linha de Tópico do Fórum
+status: stable
 description: Linha de tabela do fórum com pílulas, autor, categoria e contadores em colunas no desktop ou empilhados no mobile.
 group: Comunidade
 props:

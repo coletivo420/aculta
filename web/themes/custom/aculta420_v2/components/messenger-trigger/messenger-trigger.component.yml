@@ -1,5 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Mensagens no shell institucional
+status: stable
 description: Gatilho com contagem e painel de conversas carregado sob demanda.
 group: ACULTA
 libraryOverrides:
