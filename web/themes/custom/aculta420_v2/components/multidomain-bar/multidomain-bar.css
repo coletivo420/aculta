@@ -36,6 +36,12 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
   }
 }
 
+/* Barra institucional centralizada no mesmo container do conteúdo, em todos os domínios e subdomínios. */
+.aculta-institution-bar__inner {
+  inline-size: min(100%, var(--page-content-max, 84rem));
+  margin-inline: auto;
+}
+
 .aculta-institution-bar__inner {
   align-items: center;
   container-name: aculta-institution-bar;

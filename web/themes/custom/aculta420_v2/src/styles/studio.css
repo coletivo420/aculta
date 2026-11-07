@@ -2471,11 +2471,7 @@ body.path-ganjalab .aculta-main :is(h1, h2, h3, h4, h5, h6) {
   flex-shrink: 0;
 }
 
-/* Conta (conta.aculta.*): sem a faixa de logo e menu do domínio; a barra institucional segue o container centralizado. */
+/* Conta (conta.aculta.*): sem a faixa de logo e menu do domínio. */
 html[data-purpose="account"] .navigation-bar {
   display: none;
-}
-html[data-purpose="account"] .aculta-institution-bar__inner {
-  inline-size: min(100%, var(--page-content-max, 84rem));
-  margin-inline: auto;
 }
