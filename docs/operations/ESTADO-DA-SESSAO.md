@@ -2,6 +2,17 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
+# ACULTA Maps + OpenStreetMap — Diagnóstico, Visual e Homologação — 2026-11-07
+
+- **Objetivo:** diagnosticar mapas não renderizados, corrigir causa raiz, alinhar apresentação visual no tema V2 e homologar funcional e visualmente.
+- **Estado:** causa diagnosticada e documentada (EventLocation::preSave só geocodificava em isNew ou mudança de endereço; local salvo sem coordenadas ficava sem marker); corrigido no owner aculta_events. Ordem mobile-first (mapa -> aviso -> lista), URLs canônicas e categorias aplicadas. Tema V2 atualizado com alturas responsivas (18rem/24rem/30rem), Leaflet attribution legível e foco visível. Ponte SDC map-popup consolidada com story mínima. Homologação Playwright Firefox ESR completa (320, 390, 768, 1024, 1440 px, claro/escuro, zoom 200%, sem JS) com PASS e sem overflow.
+- **Decisões:** OSM/Leaflet é o padrão sem chave. OpenStreetMap integration administrativa no MAIN protegida por permission (403 anônimo) e sem escrita externa.
+- **Cuidados:** nenhuma escrita no OSM; nenhuma alteração destrutiva ou de banco no Runtime; nenhuma credencial gravada.
+- **Commits e arquivos:** 7f05e3b21b, 1ea74f2ddf, c2ca27a068; aculta_maps (docs, status, TODO), aculta_events (Entity, Controller, Kernel tests), aculta420_v2 (SDC stories, styles, docs), capturas (manifest.json).
+- **Verificações:** Kernel MapControllerKernelTest 4/4 PASS (79 assertions); Kernel OpenStreetMapOAuthSafetyKernelTest 4/4 PASS; SDC Schemas PASS (52 components, 1126 checks); Mapped Classes PASS; Stylelint PASS; PHPCS PASS; Homologação Playwright Firefox 24 capturas PASS.
+- **Pendências e bloqueios:** atualização de coordenadas do local existente no banco aguarda atualização/re-save via interface administrativa pelo responsável (sem UPDATE direto no DB conforme AGENTS.md); minuta de privacidade 0.6 pendente de aprovação antes de publicação.
+- **Próximo passo:** aprovação da minuta de privacidade com o responsável e homologação das telas de edição/importação com usuário autenticado.
+
 # V2 — UI Patterns Library — 2026-11-07
 
 - **Objetivo:** organizar visualmente `/painel-administrativo/aparencia/ui/components`, corrigir a barra institucional e definir container próprio centralizado.
@@ -23,14 +34,3 @@
 - **Verificações:** `npm run lint:css`, `php scripts/validate-aculta420-v2-foundations.php`, `php scripts/validate-agent-token-budget.php` e `git diff --check` PASS. Captura visual não repetida: CSS passou lint e gate de tokens; sem alteração de comportamento pretendida.
 - **Pendências e bloqueios:** nenhuma desta entrega; validação visual de fases anteriores mantém seu status próprio.
 - **Próximo passo:** seguir com o próximo item do roadmap V2.
-
-# V2 — formulário Revista — 2026-11-06
-
-- **Objetivo:** resolver 404 e validar CKEditor no Runtime.
-- **Estado:** causa: formulário administrativo foi solicitado no host Revista, mas a rota existe no host principal. `node.add` existe; UID 15 tem `create revista content`; ULI cria cookie compartilhado entre subdomínios. Suíte completa PASS: 8 grupos/32 checks, 12 viewports 1280/390/320, zero overflow. CKEditor usa `revista_editorial`, sem `full_html`; casos admin passaram.
-- **Decisões:** ULI no host conta; formulário no principal. Sem alteração do editor/config. Modal de aceite aparece na captura; não foi submetido.
-- **Cuidados:** espera estabilização do Gin após resize; `aculta_adm` testa formulário, CKEditor/toolbar em `page`.
-- **Commits e arquivos:** Runtime testado sobre `bf9c6e0af0`; suíte, README, captures/manifest, TODO, roadmap, layouts e handoff.
-- **Verificações:** Firefox ESR visível, `ALL PASS`; Revista em `tests/browser/capturas/aculta-editor/2026-11-06/after/`.
-- **Pendências e bloqueios:** nenhum.
-- **Próximo passo:** nenhum.

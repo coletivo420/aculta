@@ -4,7 +4,7 @@ Estado: Dev · versão 0.1.0-dev.7 (`aculta_maps.info.yml`) · status: `docs/ope
 
 ## Próximo passo
 
-Executar smoke Firefox contra o candidato publicado, verificar host tile OSM e cabeçalho `Referrer-Policy`; revisar e aprovar a minuta 0.6, publicando-a somente por janela autorizada no Runtime; completar gates LOC/IDX-LOC de propósito, consumidores e operação externa; repetir validação antes de RC ([revisão F0](web/modules/custom/aculta_portal/modules/aculta_maps/docs/REVISAO-TERMOS-MAPAS-2026-10-28.md), [roadmap](web/modules/custom/aculta_portal/modules/aculta_maps/docs/ROADMAP.md)).
+Revisar e aprovar a minuta 0.6 com o responsável, publicando-a somente por janela autorizada no Runtime; completar gates LOC/IDX-LOC de propósito e consumidores externos; repetir validação antes de RC ([revisão F0](web/modules/custom/aculta_portal/modules/aculta_maps/docs/REVISAO-TERMOS-MAPAS-2026-10-28.md), [roadmap](web/modules/custom/aculta_portal/modules/aculta_maps/docs/ROADMAP.md)).
 
 ## Leitura
 
