@@ -231,3 +231,17 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
   min-block-size: 2.75rem;
   padding-inline: var(--spacing-base);
 }
+
+/* Avatares do fórum com as dimensões da V1: autor do tópico ~3rem; lista de tópicos ~2rem. */
+.aculta-forum-topic .author-card:not(.author-card--stacked) .author-card__avatar {
+  flex-basis: 3rem;
+  inline-size: 3rem;
+  block-size: 3rem;
+}
+
+.aculta-forum-topic-list-row .author-card .author-card__avatar {
+  flex-basis: 2rem;
+  inline-size: 2rem;
+  block-size: 2rem;
+}
+
