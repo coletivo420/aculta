@@ -47,10 +47,18 @@
     </aside>
 
     <section class="aculta-forum-list__panel" aria-label="{{ 'Lista de tópicos'|t }}">
+      <div class="aculta-forum-list__search">
+        <input type="search" class="aculta-forum-list__search-input" disabled aria-disabled="true" aria-label="{{ 'Buscar tópicos'|t }}" placeholder="{{ 'Buscar tópicos (em breve)'|t }}">
+      </div>
       {{ include('aculta420_v2:forum-tabs', {
         label: 'Ordenação dos tópicos'|t,
         items: tab_items
       }, with_context = false) }}
+      <ul class="aculta-forum-list__soon" aria-label="{{ 'Em breve'|t }}">
+        {% for label in ['Não lidos'|t, 'Seguindo'|t, 'Meus tópicos'|t, 'Participações'|t] %}
+          <li><span aria-disabled="true">{{ label }} <em>{{ 'Em breve'|t }}</em></span></li>
+        {% endfor %}
+      </ul>
 
       {% if rows %}
         <div class="forum-topic-row__head" aria-hidden="true">
