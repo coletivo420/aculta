@@ -12,7 +12,7 @@ from urllib.parse import urlsplit, urlunsplit
 
 from websockets.sync.client import connect
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[4]
 OUT = Path(os.environ["SUITE_OUT"]).resolve()
 BASE = os.environ.get("FORUM_BASE_URL", "")
 WIDTHS = tuple(map(int, os.environ.get("FORUM_WIDTHS", "320,360,390,599,600,768,1024,1280,1440").split(",")))
@@ -86,7 +86,7 @@ def main():
         driver.get(BASE)
         time.sleep(0.8)
         topic_path = driver.js("""return document.querySelector(
-  'main .aculta-forum-topic--teaser .aculta-forum-topic__title a[href^="/topico/"]'
+  'main .forum-topic-row__title a[href*="/topico/"], main .aculta-forum-topic--teaser .aculta-forum-topic__title a[href*="/topico/"]'
 )?.getAttribute('href') || '';""")
         categories_path = driver.js("""return document.querySelector('main a[href="/categorias"]')?.getAttribute('href') || '';""")
         if not topic_path or not categories_path:
