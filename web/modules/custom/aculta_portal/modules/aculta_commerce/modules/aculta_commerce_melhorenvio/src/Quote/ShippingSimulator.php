@@ -106,7 +106,10 @@ class ShippingSimulator {
     $result = $options === []
       ? new ShippingSimulation(ShippingSimulation::STATE_EMPTY)
       : new ShippingSimulation(ShippingSimulation::STATE_AVAILABLE, NULL, $options);
-    $this->cache->set($key, $result, $this->time->getRequestTime() + self::CACHE_TTL, [self::CACHE_TAG, 'config:' . self::SETTINGS]);
+    $this->cache->set($key, $result, $this->time->getRequestTime() + self::CACHE_TTL, [
+      self::CACHE_TAG,
+      'config:' . self::SETTINGS,
+    ]);
     return $result;
   }
 
@@ -238,7 +241,10 @@ class ShippingSimulator {
     $result = $options === []
       ? new ShippingSimulation(ShippingSimulation::STATE_EMPTY)
       : new ShippingSimulation(ShippingSimulation::STATE_AVAILABLE, NULL, $options);
-    $this->cache->set($key, $result, $this->time->getRequestTime() + self::CACHE_TTL, [self::CACHE_TAG, 'config:' . self::SETTINGS]);
+    $this->cache->set($key, $result, $this->time->getRequestTime() + self::CACHE_TTL, [
+      self::CACHE_TAG,
+      'config:' . self::SETTINGS,
+    ]);
     return $result;
   }
 

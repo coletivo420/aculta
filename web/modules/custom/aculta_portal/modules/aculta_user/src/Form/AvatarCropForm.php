@@ -224,7 +224,8 @@ final class AvatarCropForm extends FormBase {
 
     $this->flushDerivatives($file);
 
-    // Aplicar o recorte já troca a foto da conta: o arquivo recortado vira a foto e a página recarrega (sem reabrir o popup).
+    // Aplicar o recorte já troca a foto da conta: o arquivo recortado vira a foto e a página recarrega (sem reabrir o
+    // popup).
     $file->setPermanent();
     $file->save();
     $account = $this->entityTypeManagerService->getStorage('user')->load($this->currentUserService->id());

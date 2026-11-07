@@ -20,7 +20,10 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
   label: new TranslatableMarkup('Progresso do curso'),
   base_table: 'aculta_lms_progress',
   entity_keys: ['id' => 'id', 'uuid' => 'uuid'],
-  handlers: ['access' => \Drupal\aculta_lms\Access\InternalLearningEntityAccessControlHandler::class, 'storage_schema' => LearningEntityStorageSchema::class],
+  handlers: [
+    'access' => \Drupal\aculta_lms\Access\InternalLearningEntityAccessControlHandler::class,
+    'storage_schema' => LearningEntityStorageSchema::class,
+  ],
   internal: TRUE,
 )]
 final class ProgressEntity extends ContentEntityBase {
@@ -38,9 +41,17 @@ final class ProgressEntity extends ContentEntityBase {
     $fields = parent::baseFieldDefinitions($entity_type);
     $fields['course_id'] = BaseFieldDefinition::create('integer')->setLabel(new TranslatableMarkup('Curso (referência opaca)'))->setRequired(TRUE);
     $fields['uid'] = BaseFieldDefinition::create('integer')->setLabel(new TranslatableMarkup('Estudante'))->setRequired(TRUE);
-    $fields['status'] = BaseFieldDefinition::create('list_string')->setLabel(new TranslatableMarkup('Estado'))->setSetting('allowed_values', [CourseProgress::STATUS_PROGRESS => 'Em andamento', CourseProgress::STATUS_PASSED => 'Aprovado', CourseProgress::STATUS_FAILED => 'Reprovado', CourseProgress::STATUS_NEEDS_EVALUATION => 'Aguardando avaliação'])->setRequired(TRUE);
+    $fields['status'] = BaseFieldDefinition::create('list_string')->setLabel(new TranslatableMarkup('Estado'))->setSetting('allowed_values', [
+      CourseProgress::STATUS_PROGRESS => 'Em andamento',
+      CourseProgress::STATUS_PASSED => 'Aprovado',
+      CourseProgress::STATUS_FAILED => 'Reprovado',
+      CourseProgress::STATUS_NEEDS_EVALUATION => 'Aguardando avaliação',
+    ])->setRequired(TRUE);
     $fields['finished'] = BaseFieldDefinition::create('boolean')->setLabel(new TranslatableMarkup('Concluído'))->setRequired(TRUE)->setDefaultValue(FALSE);
-    $fields['score'] = BaseFieldDefinition::create('float')->setLabel(new TranslatableMarkup('Nota'))->addConstraint('Range', ['min' => 0, 'max' => 100]);
+    $fields['score'] = BaseFieldDefinition::create('float')->setLabel(new TranslatableMarkup('Nota'))->addConstraint('Range', [
+      'min' => 0,
+      'max' => 100,
+    ]);
     $fields['changed'] = BaseFieldDefinition::create('changed')->setLabel(new TranslatableMarkup('Alterado em'));
     return $fields;
   }
@@ -56,7 +67,12 @@ final class ProgressEntity extends ContentEntityBase {
   /**
    * Rejects statuses outside the ACULTA progress vocabulary. */
   public static function assertValidStatus(string $status): void {
-    if (!in_array($status, [CourseProgress::STATUS_PROGRESS, CourseProgress::STATUS_PASSED, CourseProgress::STATUS_FAILED, CourseProgress::STATUS_NEEDS_EVALUATION], TRUE)) {
+    if (!in_array($status, [
+      CourseProgress::STATUS_PROGRESS,
+      CourseProgress::STATUS_PASSED,
+      CourseProgress::STATUS_FAILED,
+      CourseProgress::STATUS_NEEDS_EVALUATION,
+    ], TRUE)) {
       throw new \InvalidArgumentException('Estado de progresso desconhecido.');
     }
   }

@@ -148,7 +148,12 @@ final class PortalController extends ControllerBase {
         '#type' => 'html_tag',
         '#tag' => 'div',
         '#attributes' => ['data-portal-ui' => 'account-photo-preview'],
-        'avatar' => ['#type' => 'html_tag', '#tag' => 'span', '#attributes' => ['data-aculta-user-avatar' => ''], 'image' => $photo],
+        'avatar' => [
+          '#type' => 'html_tag',
+          '#tag' => 'span',
+          '#attributes' => ['data-aculta-user-avatar' => ''],
+          'image' => $photo,
+        ],
       ],
       'form' => $this->buildPortalAccountForm($account),
     ];
@@ -162,7 +167,12 @@ final class PortalController extends ControllerBase {
           '#theme' => 'aculta_portal_photo_editor',
           // Avatar em <span> (válido dentro do botão) com atributo de alvo: o sorteio (aculta_user) troca todas as
           // ocorrências por AJAX. A visualização no popup mostra o mesmo avatar antes do envio do formulário.
-          '#photo' => ['#type' => 'html_tag', '#tag' => 'span', '#attributes' => ['data-aculta-user-avatar' => ''], 'image' => $photo],
+          '#photo' => [
+            '#type' => 'html_tag',
+            '#tag' => 'span',
+            '#attributes' => ['data-aculta-user-avatar' => ''],
+            'image' => $photo,
+          ],
           '#photo_form' => $photoForm,
           '#display_name' => $display_name,
         ],
@@ -254,9 +264,22 @@ final class PortalController extends ControllerBase {
       $total = $order->getTotalPrice();
       // data-label: rótulo de cada coluna, usado pelo tema no celular (linhas empilhadas).
       $rows[] = [
-        ['data' => ['#type' => 'link', '#title' => '#' . $order->getOrderNumber(), '#url' => Url::fromRoute('entity.commerce_order.user_view', ['commerce_order' => $order->id()])], 'data-label' => (string) $this->t('Pedido')],
-        ['data' => $order->getPlacedTime() ? $this->dateFormatter->format($order->getPlacedTime(), 'short') : '', 'data-label' => (string) $this->t('Data')],
-        ['data' => $total ? $this->currencyFormatter->format($total->getNumber(), $total->getCurrencyCode()) : '', 'data-label' => (string) $this->t('Total')],
+        [
+          'data' => [
+            '#type' => 'link',
+            '#title' => '#' . $order->getOrderNumber(),
+            '#url' => Url::fromRoute('entity.commerce_order.user_view', ['commerce_order' => $order->id()]),
+          ],
+          'data-label' => (string) $this->t('Pedido'),
+        ],
+        [
+          'data' => $order->getPlacedTime() ? $this->dateFormatter->format($order->getPlacedTime(), 'short') : '',
+          'data-label' => (string) $this->t('Data'),
+        ],
+        [
+          'data' => $total ? $this->currencyFormatter->format($total->getNumber(), $total->getCurrencyCode()) : '',
+          'data-label' => (string) $this->t('Total'),
+        ],
         ['data' => $this->orderStateLabel($order), 'data-label' => (string) $this->t('Situação')],
       ];
     }
@@ -284,9 +307,19 @@ final class PortalController extends ControllerBase {
   private function googleBox(?Url $url, string $label): array {
     $markup = Markup::create('<span>' . $label . '</span>');
     if ($url !== NULL) {
-      return ['#type' => 'html_tag', '#tag' => 'a', '#attributes' => ['href' => $url->toString(), 'data-portal-ui' => 'auth-google'], '#value' => $markup];
+      return [
+        '#type' => 'html_tag',
+        '#tag' => 'a',
+        '#attributes' => ['href' => $url->toString(), 'data-portal-ui' => 'auth-google'],
+        '#value' => $markup,
+      ];
     }
-    return ['#type' => 'html_tag', '#tag' => 'div', '#attributes' => ['data-portal-ui' => 'auth-google-status'], '#value' => $markup];
+    return [
+      '#type' => 'html_tag',
+      '#tag' => 'div',
+      '#attributes' => ['data-portal-ui' => 'auth-google-status'],
+      '#value' => $markup,
+    ];
   }
 
   /**
@@ -338,7 +371,11 @@ final class PortalController extends ControllerBase {
       }
       else {
         $items['password_notice'] = ['#plain_text' => $this->t('Defina uma senha para sua conta antes de desconectar o Google.')];
-        $items['password_link'] = ['#type' => 'link', '#title' => $this->t('Gerenciar segurança da conta'), '#url' => Url::fromRoute('aculta_portal.security')];
+        $items['password_link'] = [
+          '#type' => 'link',
+          '#title' => $this->t('Gerenciar segurança da conta'),
+          '#url' => Url::fromRoute('aculta_portal.security'),
+        ];
       }
     }
     elseif ($google_ready) {
@@ -378,7 +415,10 @@ final class PortalController extends ControllerBase {
       'email' => ['title' => $this->t('E-mail'), 'route' => 'aculta_portal.security'],
       'password' => ['title' => $this->t('Senha'), 'route' => 'aculta_portal.security_password'],
     ] as $key => $tab) {
-      $link = PortalLinkElement::build($tab['title'], Url::fromRoute($tab['route']), ['data-portal-account-data-link' => 'true', 'data-portal-ui' => 'account-data-link']);
+      $link = PortalLinkElement::build($tab['title'], Url::fromRoute($tab['route']), [
+        'data-portal-account-data-link' => 'true',
+        'data-portal-ui' => 'account-data-link',
+      ]);
       if ($section === $key) {
         $link['#element_attributes']->setAttribute('aria-current', 'page');
         $link['#element_attributes']->addClass('is-active');
@@ -391,10 +431,18 @@ final class PortalController extends ControllerBase {
           : $this->t('Mantenha uma senha segura para acessar sua conta.')],
       'tabs' => [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'account-data-nav', 'aria-label' => $this->t('Seções de segurança'), 'data-portal-account-data-nav' => 'true'],
+        '#attributes' => [
+          'data-portal-ui' => 'account-data-nav',
+          'aria-label' => $this->t('Seções de segurança'),
+          'data-portal-account-data-nav' => 'true',
+        ],
         'links' => $links,
       ],
-      '#cache' => ['contexts' => ['user', 'user.permissions', 'route'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
+      '#cache' => [
+        'contexts' => ['user', 'user.permissions', 'route'],
+        'tags' => $account->getCacheTags(),
+        'max-age' => 0,
+      ],
     ];
     return ['content' => $content + ['section' => $this->securitySectionContent($account, $section)]];
   }
@@ -422,7 +470,11 @@ final class PortalController extends ControllerBase {
           '#attributes' => ['data-portal-ui' => 'security-pending', 'aria-live' => 'polite'],
           'label' => ['#theme' => 'aculta_portal_element', '#tag' => 'h4', '#value' => $this->t('Alteração pendente')],
           'email' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => $pending_email],
-          'message' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => $this->t('Aguardando confirmação no novo endereço.')],
+          'message' => [
+            '#theme' => 'aculta_portal_element',
+            '#tag' => 'p',
+            '#value' => $this->t('Aguardando confirmação no novo endereço.'),
+          ],
         ];
       }
     }
@@ -515,7 +567,10 @@ final class PortalController extends ControllerBase {
     }
     $links = [];
     foreach ($tabs as $key => $tab) {
-      $link = PortalLinkElement::build($tab['title'], Url::fromRoute($tab['route']), ['data-portal-account-data-link' => 'true', 'data-portal-ui' => 'account-data-link']);
+      $link = PortalLinkElement::build($tab['title'], Url::fromRoute($tab['route']), [
+        'data-portal-account-data-link' => 'true',
+        'data-portal-ui' => 'account-data-link',
+      ]);
       if ($section === $key) {
         // Estado da aba atual (aria-current; "is-active" é só o estado que o tema também reconhece).
         $link['#element_attributes']->setAttribute('aria-current', 'page');
@@ -527,18 +582,35 @@ final class PortalController extends ControllerBase {
       'description' => ['#plain_text' => $this->t('Mantenha suas informações pessoais e de contato atualizadas.')],
       'tabs' => [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'account-data-nav', 'aria-label' => $this->t('Seções de meus dados'), 'data-portal-account-data-nav' => 'true'],
+        '#attributes' => [
+          'data-portal-ui' => 'account-data-nav',
+          'aria-label' => $this->t('Seções de meus dados'),
+          'data-portal-account-data-nav' => 'true',
+        ],
         'links' => $links,
       ],
       'content' => [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'account-data-content', 'data-portal-account-data-content' => 'true', 'aria-busy' => 'false'],
-        'heading' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $title, '#element_attributes' => new Attribute(['tabindex' => '-1'])],
+        '#attributes' => [
+          'data-portal-ui' => 'account-data-content',
+          'data-portal-account-data-content' => 'true',
+          'aria-busy' => 'false',
+        ],
+        'heading' => [
+          '#theme' => 'aculta_portal_element',
+          '#tag' => 'h3',
+          '#value' => $title,
+          '#element_attributes' => new Attribute(['tabindex' => '-1']),
+        ],
         'form' => $section === 'other'
           ? $this->accountFormBuilder->getForm(AccountOtherDataForm::class)
           : $this->profileForm($section, $profile),
       ],
-      '#cache' => ['contexts' => ['user', 'user.permissions', 'route'], 'tags' => $account->getCacheTags(), 'max-age' => 0],
+      '#cache' => [
+        'contexts' => ['user', 'user.permissions', 'route'],
+        'tags' => $account->getCacheTags(),
+        'max-age' => 0,
+      ],
     ];
   }
 

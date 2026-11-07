@@ -17,7 +17,8 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  *
  * Donate → dedicado, cart → comum, both → os dois. Valor ausente ou desconhecido equivale a `donate`, como na
  * decisão de rotas anterior (ver CartCheckoutRoutesCharacterizationTest). Declara que controla as rotas globais do
- * Commerce (`gatesCommonCheckout`), efeito que antes estava no subscriber do próprio Donation. A assinatura recorrente usa o tipo
+ * Commerce (`gatesCommonCheckout`), efeito que antes estava no subscriber do próprio Donation. A assinatura recorrente
+ * usa o tipo
  * `assinatura`, fixo em `NewOrder`.
  */
 final class DonationCheckoutProvider implements CheckoutContextProviderInterface {

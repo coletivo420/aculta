@@ -7,7 +7,8 @@ namespace Drupal\aculta_portal\Role;
 /**
  * Cálculo puro da hierarquia de papéis (cadeia de papéis e herança).
  *
- * A cadeia vai do papel mais alto ao mais baixo; cada papel herda do papel imediatamente abaixo, e a herança é transitiva.
+ * A cadeia vai do papel mais alto ao mais baixo; cada papel herda do papel imediatamente abaixo,
+ * e a herança é transitiva.
  * Papel que não está na cadeia herda do autenticado. O administrador herda de todos os papéis do site. Mapa de herança:
  * papel => papéis dos quais herda. Não há papel lateral nem categoria: a ordem da cadeia é a única classificação.
  */

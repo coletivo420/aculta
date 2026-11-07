@@ -88,13 +88,26 @@ final class ActivityController implements ContainerInjectionInterface {
       'description' => ['#plain_text' => t('Veja o que você fez no site: verbetes, tópicos, publicações e comentários.')],
       'tabs' => [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'account-data-nav', 'aria-label' => t('Seções de atividade'), 'data-portal-account-data-nav' => 'true'],
+        '#attributes' => [
+          'data-portal-ui' => 'account-data-nav',
+          'aria-label' => t('Seções de atividade'),
+          'data-portal-account-data-nav' => 'true',
+        ],
         'links' => $this->tabLinks($aba),
       ],
       'content' => [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'account-data-content', 'data-portal-account-data-content' => 'true', 'aria-busy' => 'false'],
-        'heading' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => t(self::TABS[$aba]), '#element_attributes' => new Attribute(['tabindex' => '-1'])],
+        '#attributes' => [
+          'data-portal-ui' => 'account-data-content',
+          'data-portal-account-data-content' => 'true',
+          'aria-busy' => 'false',
+        ],
+        'heading' => [
+          '#theme' => 'aculta_portal_element',
+          '#tag' => 'h3',
+          '#value' => t(self::TABS[$aba]),
+          '#element_attributes' => new Attribute(['tabindex' => '-1']),
+        ],
         'list' => $conteudo,
       ],
     ];
@@ -105,7 +118,10 @@ final class ActivityController implements ContainerInjectionInterface {
   private function tabLinks(string $atual): array {
     $links = [];
     foreach (self::TABS as $id => $label) {
-      $link = PortalLinkElement::build(t($label), Url::fromRoute('aculta_user.atividade', ['aba' => $id]), ['data-portal-account-data-link' => 'true', 'data-portal-ui' => 'account-data-link']);
+      $link = PortalLinkElement::build(t($label), Url::fromRoute('aculta_user.atividade', ['aba' => $id]), [
+        'data-portal-account-data-link' => 'true',
+        'data-portal-ui' => 'account-data-link',
+      ]);
       if ($id === $atual) {
         $link['#element_attributes']->setAttribute('aria-current', 'page');
         $link['#element_attributes']->addClass('is-active');

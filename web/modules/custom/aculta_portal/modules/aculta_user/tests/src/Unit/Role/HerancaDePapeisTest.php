@@ -21,7 +21,18 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_user')]
 final class HerancaDePapeisTest extends UnitTestCase {
 
-  private const TODOS = ['anonymous', 'authenticated', 'email_confirmed', 'estudante', 'associado', 'lms_teacher', 'content_editor', 'gerente_loja', 'administrator', 'wiki_contributor'];
+  private const TODOS = [
+    'anonymous',
+    'authenticated',
+    'email_confirmed',
+    'estudante',
+    'associado',
+    'lms_teacher',
+    'content_editor',
+    'gerente_loja',
+    'administrator',
+    'wiki_contributor',
+  ];
 
   /**
    * Cria o serviço de herança com as dependências simuladas.
@@ -60,7 +71,15 @@ final class HerancaDePapeisTest extends UnitTestCase {
     return new HerancaDePapeis($fabrica, $etm, $banco);
   }
 
-  private const CADEIA = ['gerente_loja', 'content_editor', 'lms_teacher', 'associado', 'estudante', 'email_confirmed', 'authenticated'];
+  private const CADEIA = [
+    'gerente_loja',
+    'content_editor',
+    'lms_teacher',
+    'associado',
+    'estudante',
+    'email_confirmed',
+    'authenticated',
+  ];
 
   /**
    * Verifica que o mapa de papéis segue a cadeia configurada.

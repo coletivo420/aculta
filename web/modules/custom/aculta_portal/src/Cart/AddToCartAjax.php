@@ -18,7 +18,8 @@ use Drupal\Core\StringTranslation\TranslationInterface;
  * Adicionar ao carrinho sem recarregar a página (produto e listagens).
  *
  * O formulário nativo do Commerce (commerce_order_item_add_to_cart_form) não tem AJAX: o Portal acrescenta o #ajax no
- * botão e um contêiner de status acima do formulário. A caixa é o template do módulo (aculta_portal_cart_status): mostra
+ * botão e um contêiner de status acima do formulário. A caixa é o template do módulo
+ * (aculta_portal_cart_status): mostra
  * "Item adicionado com sucesso." com o link "Ver carrinho", ou o erro de validação, no mesmo lugar. O módulo só envia
  * dados (contagem, URL, textos). O badge do carrinho é do tema, marcado com data-aculta-cart-count e
  * data-aculta-cart-trigger; o módulo atualiza esses atributos. Sem JavaScript o envio segue o fluxo normal do Commerce.
@@ -54,7 +55,8 @@ final class AddToCartAjax {
    * Callback AJAX do botão: caixa de status, contador e rótulo do botão do carrinho. */
   public function response(array &$form, FormStateInterface $formState): AjaxResponse {
     $statusId = $formState->getTriggeringElement()['#ajax']['wrapper'] ?? $this->statusId((string) $formState->getFormObject()->getFormId());
-    // A caixa "Item adicionado com sucesso." substitui a mensagem padrão do Commerce, que não pode ficar para a próxima página.
+    // A caixa "Item adicionado com sucesso." substitui a mensagem padrão do Commerce, que não pode ficar para a
+    // próxima página.
     $this->messenger->deleteAll();
     $cart = $this->cart->build();
     $response = new AjaxResponse();

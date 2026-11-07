@@ -16,7 +16,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * Não pede a senha atual, porque a conta nunca teve uma escolhida. Ao gravar, remove a marca
  * social_auth_password_unset (gravada por SocialAuthUserCreatedSubscriber), e a aba Senha passa a mostrar o formulário
- * de troca. O envio é comum (sem AJAX): a aba recarrega para mostrar o estado novo. Ver docs/portal/SENHA-CONTA-OAUTH.md.
+ * de troca. O envio é comum (sem AJAX): a aba recarrega para mostrar o estado novo. Ver
+ * docs/portal/SENHA-CONTA-OAUTH.md.
  */
 final class AccountPasswordCreateForm extends FormBase {
 

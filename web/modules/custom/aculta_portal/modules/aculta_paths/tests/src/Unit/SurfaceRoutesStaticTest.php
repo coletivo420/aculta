@@ -27,7 +27,11 @@ final class SurfaceRoutesStaticTest extends UnitTestCase {
   private static function rotas(): array {
     $modulos = dirname(__DIR__, 4);
     $rotas = [];
-    foreach (['aculta_wiki/aculta_wiki.routing.yml', 'aculta_studio/aculta_studio.routing.yml', 'aculta_commerce/aculta_commerce.routing.yml'] as $arquivo) {
+    foreach ([
+      'aculta_wiki/aculta_wiki.routing.yml',
+      'aculta_studio/aculta_studio.routing.yml',
+      'aculta_commerce/aculta_commerce.routing.yml',
+    ] as $arquivo) {
       $dados = Yaml::parseFile($modulos . '/' . $arquivo);
       $rotas = array_merge($rotas, is_array($dados) ? $dados : []);
     }

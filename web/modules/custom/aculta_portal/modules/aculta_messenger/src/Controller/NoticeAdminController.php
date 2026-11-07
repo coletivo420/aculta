@@ -52,16 +52,32 @@ final class NoticeAdminController extends ControllerBase {
       $items['temporary'] = [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'notice-admin-item'],
-        'title' => ['#type' => 'link', '#title' => $this->t('Avisos temporários'), '#url' => Url::fromRoute('aculta_messenger.admin_temporary_notices')],
-        'description' => ['#type' => 'html_tag', '#tag' => 'p', '#value' => $this->t('Gerencie alertas curtos, com prioridade e período de exibição. Cada visitante pode dispensar o aviso na própria sessão/conta.')],
+        'title' => [
+          '#type' => 'link',
+          '#title' => $this->t('Avisos temporários'),
+          '#url' => Url::fromRoute('aculta_messenger.admin_temporary_notices'),
+        ],
+        'description' => [
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#value' => $this->t('Gerencie alertas curtos, com prioridade e período de exibição. Cada visitante pode dispensar o aviso na própria sessão/conta.'),
+        ],
       ];
     }
     if ($this->noticeAdminAccount->hasPermission('administer nodes')) {
       $items['persistent'] = [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'notice-admin-item'],
-        'title' => ['#type' => 'link', '#title' => $this->t('Avisos persistentes'), '#url' => Url::fromRoute('aculta_messenger.admin_persistent_notices')],
-        'description' => ['#type' => 'html_tag', '#tag' => 'p', '#value' => $this->t('Crie comunicados institucionais segmentados por público, com início, validade, revisão editorial e estado individual de leitura.')],
+        'title' => [
+          '#type' => 'link',
+          '#title' => $this->t('Avisos persistentes'),
+          '#url' => Url::fromRoute('aculta_messenger.admin_persistent_notices'),
+        ],
+        'description' => [
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#value' => $this->t('Crie comunicados institucionais segmentados por público, com início, validade, revisão editorial e estado individual de leitura.'),
+        ],
       ];
     }
 

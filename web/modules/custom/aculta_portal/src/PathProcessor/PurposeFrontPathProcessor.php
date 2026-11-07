@@ -30,7 +30,8 @@ final class PurposeFrontPathProcessor implements InboundPathProcessorInterface {
    * Purpose => caminho interno que serve a raiz do host (mapa único).
    *
    * - support: a raiz serve o formulário de apoio (rota `aculta_portal.support_form`, `/apoio`).
-   * - wiki e courses: a raiz serve a página inicial da wiki (`/wiki`) e dos cursos (`/cursos`). Verificado: texto igual.
+   * - wiki e courses: a raiz serve a página inicial da wiki (`/wiki`) e dos cursos (`/cursos`). Verificado: texto
+   * igual.
    * - shop: a raiz serve a página inicial da loja (rota `aculta_portal.shop_home`, `/loja`, que mostra o nó 372).
    * - forum: a raiz serve a View nova de tópicos em `/discussoes`.
    * - account: a raiz serve o dashboard Studio (rota `aculta_studio.dashboard`,

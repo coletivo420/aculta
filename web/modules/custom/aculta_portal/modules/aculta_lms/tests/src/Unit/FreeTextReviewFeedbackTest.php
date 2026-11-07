@@ -24,8 +24,16 @@ final class FreeTextReviewFeedbackTest extends UnitTestCase {
     $configuration = $plugin->decodeConfiguration(json_encode([
       'minimum_characters' => 8,
       'phrase_feedback' => [
-        ['phrase' => 'direitos humanos|direito humano', 'feedback_present' => 'Bom ponto.', 'feedback_absent' => 'Revise direitos.'],
-        ['phrase' => 'política pública', 'feedback_present' => 'Considere políticas.', 'feedback_absent' => 'Fale sobre políticas.'],
+        [
+          'phrase' => 'direitos humanos|direito humano',
+          'feedback_present' => 'Bom ponto.',
+          'feedback_absent' => 'Revise direitos.',
+        ],
+        [
+          'phrase' => 'política pública',
+          'feedback_present' => 'Considere políticas.',
+          'feedback_absent' => 'Fale sobre políticas.',
+        ],
       ],
     ], JSON_THROW_ON_ERROR));
 

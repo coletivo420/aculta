@@ -42,7 +42,13 @@ final class AccountMailRouterKernelTest extends KernelTestBase {
     $this->installSchema('user', ['users_data']);
     $this->installEntitySchema('aculta_mail_log');
     $this->installEntitySchema('domain');
-    Domain::create(['id' => 'conta_aculta_org', 'hostname' => 'conta.example.invalid', 'name' => 'conta', 'scheme' => 'https', 'weight' => 0])->save();
+    Domain::create([
+      'id' => 'conta_aculta_org',
+      'hostname' => 'conta.example.invalid',
+      'name' => 'conta',
+      'scheme' => 'https',
+      'weight' => 0,
+    ])->save();
     $t = $this->container->get('string_translation');
     $this->container->set(MailTypeRegistry::class, new MailTypeRegistry([
       new AccountPasswordResetMailType($t),
@@ -79,7 +85,13 @@ final class AccountMailRouterKernelTest extends KernelTestBase {
   public function testResetMessageUsesApprovedTextAndOneTimeLink(): void {
     $account = User::create(['name' => 'pessoa', 'mail' => 'pessoa@example.invalid', 'status' => 1]);
     $account->save();
-    $message = ['module' => 'user', 'key' => 'password_reset', 'params' => ['account' => $account], 'subject' => 'orig', 'body' => ['orig']];
+    $message = [
+      'module' => 'user',
+      'key' => 'password_reset',
+      'params' => ['account' => $account],
+      'subject' => 'orig',
+      'body' => ['orig'],
+    ];
 
     $this->router()->apply($message);
 
@@ -97,7 +109,13 @@ final class AccountMailRouterKernelTest extends KernelTestBase {
   public function testRegisterMessageNamesTheUserAndTheLoginOptions(): void {
     $account = User::create(['name' => 'nova', 'mail' => 'nova@example.invalid', 'status' => 1]);
     $account->save();
-    $message = ['module' => 'user', 'key' => 'register_no_approval_required', 'params' => ['account' => $account], 'subject' => '', 'body' => []];
+    $message = [
+      'module' => 'user',
+      'key' => 'register_no_approval_required',
+      'params' => ['account' => $account],
+      'subject' => '',
+      'body' => [],
+    ];
 
     $this->router()->apply($message);
 
@@ -113,7 +131,13 @@ final class AccountMailRouterKernelTest extends KernelTestBase {
   public function testOtherKeysAndModulesAreLeftAlone(): void {
     $account = User::create(['name' => 'outra', 'mail' => 'outra@example.invalid', 'status' => 1]);
     $account->save();
-    $message = ['module' => 'user', 'key' => 'status_blocked', 'params' => ['account' => $account], 'subject' => 'Core', 'body' => ['Core']];
+    $message = [
+      'module' => 'user',
+      'key' => 'status_blocked',
+      'params' => ['account' => $account],
+      'subject' => 'Core',
+      'body' => ['Core'],
+    ];
     $this->router()->apply($message);
     $this->assertSame('Core', $message['subject']);
     $this->assertSame(['Core'], $message['body']);

@@ -55,7 +55,16 @@ final class XapiProgressDeriverTest extends UnitTestCase {
    * Quando há scaled e raw, o scaled vale.
    */
   public function testScaledWinsOverRaw(): void {
-    $statements = [$this->statement(self::VERB_COMPLETED, ['score' => ['scaled' => 0.5, 'raw' => 90, 'min' => 0, 'max' => 100]], 'reg-1', '2026-11-02T10:00:00Z')];
+    $statements = [
+      $this->statement(self::VERB_COMPLETED, [
+        'score' => [
+          'scaled' => 0.5,
+          'raw' => 90,
+          'min' => 0,
+          'max' => 100,
+        ],
+      ], 'reg-1', '2026-11-02T10:00:00Z'),
+    ];
     $result = (new XapiProgressDeriver())->result($statements, AttemptRule::KEEP_LATEST, 0.0);
 
     $this->assertSame(50.0, $result['score']);
@@ -69,7 +78,15 @@ final class XapiProgressDeriverTest extends UnitTestCase {
     $negative = $deriver->result([$this->statement(self::VERB_COMPLETED, ['score' => ['scaled' => -0.4]], 'reg-1', '2026-11-02T10:00:00Z')], AttemptRule::KEEP_LATEST, 0.0);
     $this->assertSame(0.0, $negative['score']);
 
-    $above = $deriver->result([$this->statement(self::VERB_COMPLETED, ['score' => ['raw' => 150, 'min' => 0, 'max' => 100]], 'reg-1', '2026-11-02T10:00:00Z')], AttemptRule::KEEP_LATEST, 0.0);
+    $above = $deriver->result([
+      $this->statement(self::VERB_COMPLETED, [
+        'score' => [
+          'raw' => 150,
+          'min' => 0,
+          'max' => 100,
+        ],
+      ], 'reg-1', '2026-11-02T10:00:00Z'),
+    ], AttemptRule::KEEP_LATEST, 0.0);
     $this->assertSame(100.0, $above['score']);
   }
 

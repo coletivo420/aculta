@@ -83,7 +83,8 @@ final class MailTracker {
   }
 
   /**
-   * Confere a assinatura em tempo constante. Sem hash_salt a chave seria vazia e qualquer um a calcularia: falha fechado.
+   * Confere a assinatura em tempo constante. Sem hash_salt a chave seria vazia e qualquer um a calcularia:
+   * falha fechado.
    */
   public function verify(string $data, string $signature): bool {
     return $this->salt() !== '' && hash_equals($this->sign($data), $signature);

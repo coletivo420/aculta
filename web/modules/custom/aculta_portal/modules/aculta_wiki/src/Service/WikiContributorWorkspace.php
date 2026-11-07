@@ -270,9 +270,19 @@ final class WikiContributorWorkspace {
         $cacheability->addCacheableDependency($page);
         $items = [];
         foreach ($page->getItems() as $revision) {
-          $url = $this->domainPurposes->routeUrl('wiki', 'entity.node.revision', ['node' => $revision->id(), 'node_revision' => $revision->getRevisionId()]);
+          $url = $this->domainPurposes->routeUrl('wiki', 'entity.node.revision', [
+            'node' => $revision->id(),
+            'node_revision' => $revision->getRevisionId(),
+          ]);
           if ($url !== NULL) {
-            $items[] = ['#theme' => 'aculta_portal_component', '#name' => 'card', '#slots' => ['header' => Link::fromTextAndUrl((string) $revision->label(), $url)->toRenderable(), 'content' => ['#plain_text' => $this->t('Em revisão')]]];
+            $items[] = [
+              '#theme' => 'aculta_portal_component',
+              '#name' => 'card',
+              '#slots' => [
+                'header' => Link::fromTextAndUrl((string) $revision->label(), $url)->toRenderable(),
+                'content' => ['#plain_text' => $this->t('Em revisão')],
+              ],
+            ];
           }
         }
         $build['editorial_review'] = $this->listSection($this->t('Verbetes em revisão'), $items, $this->t('Não há verbetes autorizados para revisar.'));
@@ -289,7 +299,14 @@ final class WikiContributorWorkspace {
         foreach ($page->getItems() as $proposal) {
           $url = $this->domainPurposes->routeUrl('wiki', 'aculta_wiki.proposal_decide', ['proposal' => $proposal->id()]);
           if ($url !== NULL) {
-            $items[] = ['#theme' => 'aculta_portal_component', '#name' => 'card', '#slots' => ['header' => Link::fromTextAndUrl((string) $proposal->label(), $url)->toRenderable(), 'content' => ['#plain_text' => $this->proposalState($proposal)]]];
+            $items[] = [
+              '#theme' => 'aculta_portal_component',
+              '#name' => 'card',
+              '#slots' => [
+                'header' => Link::fromTextAndUrl((string) $proposal->label(), $url)->toRenderable(),
+                'content' => ['#plain_text' => $this->proposalState($proposal)],
+              ],
+            ];
           }
         }
         $build['proposal_moderation'] = $this->listSection($this->t('Propostas para moderação'), $items, $this->t('Não há propostas pendentes.'));

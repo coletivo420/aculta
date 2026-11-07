@@ -43,17 +43,33 @@ final class AccountAjaxMainContentRenderer implements MainContentRendererInterfa
       $last = count($links) - 1;
       foreach ($links as $index => $link) {
         if ($index === $last || !$link->getUrl() || $link->getUrl()->isExternal() || $link->getUrl()->getRouteName() === '<nolink>') {
-          $items[] = ['#markup' => Html::escape((string) $link->getText()), '#wrapper_attributes' => ['data-portal-ui' => 'breadcrumb-item-active', 'aria-current' => 'page']];
+          $items[] = [
+            '#markup' => Html::escape((string) $link->getText()),
+            '#wrapper_attributes' => [
+              'data-portal-ui' => 'breadcrumb-item-active',
+              'aria-current' => 'page',
+            ],
+          ];
         }
         else {
-          $items[] = ['#type' => 'link', '#title' => (string) $link->getText(), '#url' => $link->getUrl(), '#wrapper_attributes' => ['data-portal-ui' => 'breadcrumb-item']];
+          $items[] = [
+            '#type' => 'link',
+            '#title' => (string) $link->getText(),
+            '#url' => $link->getUrl(),
+            '#wrapper_attributes' => ['data-portal-ui' => 'breadcrumb-item'],
+          ];
         }
       }
       // Fragmento oculto que o account-navigation.js copia para a barra de navegação (título e breadcrumb do servidor).
       $main_content['portal_account_chrome'] = [
         '#type' => 'container',
         '#attributes' => ['hidden' => 'hidden', 'data-portal-chrome' => '', 'data-portal-page-title' => $title],
-        'list' => ['#theme' => 'item_list', '#list_type' => 'ol', '#items' => $items, '#attributes' => ['data-portal-ui' => 'breadcrumb-list']],
+        'list' => [
+          '#theme' => 'item_list',
+          '#list_type' => 'ol',
+          '#items' => $items,
+          '#attributes' => ['data-portal-ui' => 'breadcrumb-list'],
+        ],
         '#weight' => -1000,
       ];
     }

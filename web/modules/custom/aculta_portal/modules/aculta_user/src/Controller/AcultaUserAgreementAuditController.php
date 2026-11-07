@@ -50,7 +50,17 @@ final class AcultaUserAgreementAuditController extends ControllerBase {
     }
     return [
       '#type' => 'table',
-      '#header' => [$this->t('Data/hora'), $this->t('UID'), $this->t('Registro'), $this->t('Ação'), $this->t('IP'), $this->t('User-Agent'), $this->t('Evidência'), $this->t('Integridade'), $this->t('Hash')],
+      '#header' => [
+        $this->t('Data/hora'),
+        $this->t('UID'),
+        $this->t('Registro'),
+        $this->t('Ação'),
+        $this->t('IP'),
+        $this->t('User-Agent'),
+        $this->t('Evidência'),
+        $this->t('Integridade'),
+        $this->t('Hash'),
+      ],
       '#rows' => $rows,
       '#empty' => $this->t('Nenhum registro de aceite ou consentimento.'),
       '#cache' => ['max-age' => 0],

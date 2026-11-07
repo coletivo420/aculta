@@ -36,10 +36,25 @@ final class SecretsManagerTest extends UnitTestCase {
     mkdir($this->base . '/secrets', 0700, TRUE);
     file_put_contents($this->base . '/config/secrets-contract.json', json_encode([
       'variables' => [
-        ['name' => 'GOOGLE_OAUTH_CLIENT_ID', 'key_id' => 'g_id', 'environments' => ['production', 'test'], 'required_in' => ['production', 'test']],
+        [
+          'name' => 'GOOGLE_OAUTH_CLIENT_ID',
+          'key_id' => 'g_id',
+          'environments' => ['production', 'test'],
+          'required_in' => ['production', 'test'],
+        ],
         ['name' => 'EXEMPLO_SENHA', 'key_id' => 'smtp_pw', 'environments' => ['test'], 'required_in' => ['test']],
-        ['name' => 'TURNSTILE_KEYS_JSON', 'key_id' => 'turnstile', 'environments' => ['production'], 'required_in' => []],
-        ['name' => 'BREVO_API_KEY', 'key_id' => 'brevo_api_key', 'environments' => ['production', 'test'], 'required_in' => []],
+        [
+          'name' => 'TURNSTILE_KEYS_JSON',
+          'key_id' => 'turnstile',
+          'environments' => ['production'],
+          'required_in' => [],
+        ],
+        [
+          'name' => 'BREVO_API_KEY',
+          'key_id' => 'brevo_api_key',
+          'environments' => ['production', 'test'],
+          'required_in' => [],
+        ],
       ],
     ]));
   }
@@ -121,7 +136,12 @@ final class SecretsManagerTest extends UnitTestCase {
   public function testEnvironmentFromDeployerOverridesLocalSetting(): void {
     $this->assertSame('test', $this->manager()->environment());
     mkdir($this->base . '/var/deployer', 0700, TRUE);
-    file_put_contents($this->base . '/var/deployer/environment.json', json_encode(['schema' => 1, 'environment' => 'production', 'site' => 'https://example.invalid', 'changed_at' => 'x']));
+    file_put_contents($this->base . '/var/deployer/environment.json', json_encode([
+      'schema' => 1,
+      'environment' => 'production',
+      'site' => 'https://example.invalid',
+      'changed_at' => 'x',
+    ]));
     $this->assertSame('production', $this->manager()->environment());
     file_put_contents($this->base . '/var/deployer/environment.json', 'não é json');
     $this->assertSame('test', $this->manager()->environment());

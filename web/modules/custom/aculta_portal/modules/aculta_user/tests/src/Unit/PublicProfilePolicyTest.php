@@ -33,7 +33,14 @@ class PublicProfilePolicyTest extends UnitTestCase {
    */
   public function testPadraoMostraSomenteApelido(): void {
     $policy = new PublicProfilePolicy();
-    $perfil = ['publico' => TRUE, 'apelido' => 'maria-souza', 'exibir_foto' => FALSE, 'exibir_bio' => FALSE, 'exibir_email' => FALSE, 'exibir_redes' => FALSE];
+    $perfil = [
+      'publico' => TRUE,
+      'apelido' => 'maria-souza',
+      'exibir_foto' => FALSE,
+      'exibir_bio' => FALSE,
+      'exibir_email' => FALSE,
+      'exibir_redes' => FALSE,
+    ];
     $this->assertSame(['apelido' => TRUE], $policy->publicItems($perfil));
   }
 

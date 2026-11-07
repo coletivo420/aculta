@@ -134,7 +134,10 @@ final class UploadSettingsForm extends ConfigFormBase {
       ];
     }
     $this->config('aculta_file_uploader.settings')
-      ->set('allowed_extensions', implode(' ', $this->checkedExtensions($form_state->getValue(['global', 'allowed_extensions']))))
+      ->set('allowed_extensions', implode(' ', $this->checkedExtensions($form_state->getValue([
+        'global',
+        'allowed_extensions',
+      ]))))
       ->set('max_size_mb', $this->limit((int) $form_state->getValue(['global', 'max_size_mb'])))
       ->set('consumers', $consumers)
       ->save();

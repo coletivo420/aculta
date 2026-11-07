@@ -22,7 +22,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Fonte única: o perfil customer do cliente (o de Meus Dados > Endereço). O Commerce não aceita o perfil do cliente
  * como perfil de cobrança do pedido (Order::preSave passa o perfil de cobrança para o dono 0), então o pedido guarda
  * uma cópia. A cópia é atualizada a partir do perfil do cliente em todo resumo de rascunho, e a edição no checkout
- * grava no perfil do cliente e na cópia. O Mercado Pago lê a cópia (RedirectCheckoutForm). Ver docs/portal/CHECKOUT-BILLING.md.
+ * grava no perfil do cliente e na cópia. O Mercado Pago lê a cópia (RedirectCheckoutForm). Ver
+ * docs/portal/CHECKOUT-BILLING.md.
  *
  * Número: o perfil guarda o número no logradouro ("Avenida Paulista, 1000"). O formulário mostra a rua e o campo
  * Número recebe o número. Ao gravar, rua e número são juntados de novo. Ver StreetNumberField.

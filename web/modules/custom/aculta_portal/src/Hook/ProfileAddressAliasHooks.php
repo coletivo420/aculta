@@ -10,7 +10,8 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Hook\Attribute\Hook;
 
 /**
- * Expõe o endereço do perfil também como `address`, para o contrib do Mercado Pago (campo computado, sem armazenamento).
+ * Expõe o endereço do perfil também como `address`, para o contrib do Mercado Pago (campo computado, sem
+ * armazenamento).
  */
 final class ProfileAddressAliasHooks {
 

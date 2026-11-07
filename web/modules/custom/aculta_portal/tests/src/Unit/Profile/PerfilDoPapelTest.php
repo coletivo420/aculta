@@ -34,35 +34,55 @@ final class PerfilDoPapelTest extends UnitTestCase {
    * Confirma que o associado tem o tipo associado.
    */
   public function testAssociadoTemTipoAssociado(): void {
-    $this->assertSame('associado', PerfilDoPapel::tipoDaConta($this->conta(['authenticated', 'email_confirmed', 'associado'])));
+    $this->assertSame('associado', PerfilDoPapel::tipoDaConta($this->conta([
+      'authenticated',
+      'email_confirmed',
+      'associado',
+    ])));
   }
 
   /**
    * Confirma que quem confirmou o e-mail sem associação tem o tipo de e-mail confirmado.
    */
   public function testEmailConfirmadoSemAssociadoTemTipoEmailConfirmado(): void {
-    $this->assertSame('email_confirmed', PerfilDoPapel::tipoDaConta($this->conta(['authenticated', 'email_confirmed', 'wiki_contributor'])));
+    $this->assertSame('email_confirmed', PerfilDoPapel::tipoDaConta($this->conta([
+      'authenticated',
+      'email_confirmed',
+      'wiki_contributor',
+    ])));
   }
 
   /**
    * Confirma que o professor tem o tipo professor.
    */
   public function testProfessorTemTipoProfessor(): void {
-    $this->assertSame('lms_teacher', PerfilDoPapel::tipoDaConta($this->conta(['authenticated', 'associado', 'lms_teacher'])));
+    $this->assertSame('lms_teacher', PerfilDoPapel::tipoDaConta($this->conta([
+      'authenticated',
+      'associado',
+      'lms_teacher',
+    ])));
   }
 
   /**
    * Confirma que o gerente de loja tem o tipo gerente.
    */
   public function testGerenteDeLojaTemTipoGerente(): void {
-    $this->assertSame('gerente_loja', PerfilDoPapel::tipoDaConta($this->conta(['authenticated', 'associado', 'gerente_loja'])));
+    $this->assertSame('gerente_loja', PerfilDoPapel::tipoDaConta($this->conta([
+      'authenticated',
+      'associado',
+      'gerente_loja',
+    ])));
   }
 
   /**
    * Confirma que o administrador tem o tipo administrador.
    */
   public function testAdministradorTemTipoAdministrador(): void {
-    $this->assertSame('administrator', PerfilDoPapel::tipoDaConta($this->conta(['authenticated', 'administrator', 'gerente_loja'])));
+    $this->assertSame('administrator', PerfilDoPapel::tipoDaConta($this->conta([
+      'authenticated',
+      'administrator',
+      'gerente_loja',
+    ])));
   }
 
   /**

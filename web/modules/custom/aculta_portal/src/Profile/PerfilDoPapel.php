@@ -11,8 +11,9 @@ use Drupal\profile\ProfileStorageInterface;
 /**
  * Um tipo de perfil por papel: o perfil de uma conta é do tipo do papel mais alto que ela tem.
  *
- * Ordem de prioridade (do mais alto ao mais baixo): administrator, gerente_loja, lms_teacher, associado, email_confirmed,
- * authenticated. A hierarquia de papéis faz o papel superior herdar o inferior, então a prioridade segue a cadeia.
+ * Ordem de prioridade (do mais alto ao mais baixo): administrator, gerente_loja, lms_teacher,
+ * associado, email_confirmed, authenticated.
+ * A hierarquia de papéis faz o papel superior herdar o inferior, então a prioridade segue a cadeia.
  * Sem tipo fixo no código: quem precisa do perfil chama principal() ou obter(), com o EntityTypeManager injetado.
  */
 final class PerfilDoPapel {

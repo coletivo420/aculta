@@ -20,9 +20,9 @@ use Psr\Log\LoggerInterface;
 /**
  * Reenvio de uma mensagem com falha, a partir do conteúdo cifrado guardado no registro.
  *
- * Usa o mesmo caminho de envio do módulo (transporte, cabeçalhos e registro) e respeita a chave geral de envio e a lista
- * de supressão. O registro é atualizado no lugar: o número de tentativas sobe, e o conteúdo cifrado só é apagado quando
- * a mensagem é aceita.
+ * Usa o mesmo caminho de envio do módulo (transporte, cabeçalhos e registro) e respeita a chave geral de envio
+ * e a lista de supressão. O registro é atualizado no lugar: o número de tentativas sobe, e o conteúdo cifrado só é
+ * apagado quando a mensagem é aceita.
  */
 final class MailResend {
 

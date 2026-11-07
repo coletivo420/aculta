@@ -71,7 +71,13 @@ final class SocialLinksCard {
       '#type' => 'container',
       '#attributes' => ['id' => 'aculta-account-social-card', 'data-portal-ui' => 'account-social-card'],
       'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h4', '#value' => t('Redes sociais')],
-      'list' => ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'account-social-list'], 'items' => $items],
+      'list' => [
+        '#type' => 'container',
+        '#attributes' => [
+          'data-portal-ui' => 'account-social-list',
+        ],
+        'items' => $items,
+      ],
       '#cache' => ['tags' => $profile ? $profile->getCacheTags() : []],
     ];
   }

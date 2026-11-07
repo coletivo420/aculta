@@ -36,12 +36,30 @@ final class SurfaceConfigReader {
 
   /**
    * Slugs que não podem ser usados por superfície. */
-  public const RESERVADOS = ['painel-administrativo', 'integracoes', 'studio', 'conta-legada', 'minha-conta', 'node', 'user'];
+  public const RESERVADOS = [
+    'painel-administrativo',
+    'integracoes',
+    'studio',
+    'conta-legada',
+    'minha-conta',
+    'node',
+    'user',
+  ];
 
   /**
    * Superfícies que podem ir para diretório (Fase 3.5). MAIN fica de fora.
    */
-  public const DIRETORIO_PERMITIDO = ['courses', 'magazine', 'account', 'wiki', 'shop', 'forum', 'support', 'links', 'eventos'];
+  public const DIRETORIO_PERMITIDO = [
+    'courses',
+    'magazine',
+    'account',
+    'wiki',
+    'shop',
+    'forum',
+    'support',
+    'links',
+    'eventos',
+  ];
 
   public const PADRAO_SLUG = '/^[a-z0-9]+(-[a-z0-9]+)*$/';
 

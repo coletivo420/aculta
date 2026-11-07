@@ -10,7 +10,8 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 /**
  * Pedido de confirmação de endereço de e-mail (F9). Texto aprovado em 2026-10-20 (antes, o texto do contrib).
  *
- * `confirm_url` é o link de resposta com o hash da confirmação: é segredo, por isso não entra em logs (ver aculta_mailer).
+ * `confirm_url` é o link de resposta com o hash da confirmação: é segredo, por isso não entra em logs
+ * (ver aculta_mailer).
  */
 final class EmailConfirmationRequestMailType implements MailTypeInterface {
 

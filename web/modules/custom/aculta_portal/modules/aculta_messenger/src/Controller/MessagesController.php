@@ -514,7 +514,8 @@ final class MessagesController extends ControllerBase {
     $state = $this->threadFormState($thread);
     // A menu shown in a response is built, not submitted: its input is not processed, so a POST of another action does
     // not submit this form again. The form keeps its token, which the menu's own POST sends back.
-    // Its input is empty: Form API then takes no form_build_id from the request, so no cached copy (without its services)
+    // Its input is empty: Form API then takes no form_build_id from the request, so no cached copy (without its
+    // services)
     // is loaded and no submit runs again.
     $state->setUserInput([]);
     $state->setProcessInput(FALSE);
@@ -1393,12 +1394,33 @@ final class MessagesController extends ControllerBase {
     $title_parts = [
       '#type' => 'container',
     ];
-    $title_parts['title'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['data-portal-ui' => 'notice-summary-title']), '#value' => $title];
+    $title_parts['title'] = [
+      '#theme' => 'aculta_portal_element',
+      '#tag' => 'span',
+      '#element_attributes' => new Attribute([
+        'data-portal-ui' => 'notice-summary-title',
+      ]),
+      '#value' => $title,
+    ];
     if ($excerpt !== '') {
-      $title_parts['excerpt'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['data-portal-ui' => 'notice-summary-excerpt']), '#value' => $excerpt];
+      $title_parts['excerpt'] = [
+        '#theme' => 'aculta_portal_element',
+        '#tag' => 'span',
+        '#element_attributes' => new Attribute([
+          'data-portal-ui' => 'notice-summary-excerpt',
+        ]),
+        '#value' => $excerpt,
+      ];
     }
     if ($state !== NULL) {
-      $title_parts['state'] = ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#element_attributes' => new Attribute(['data-portal-ui' => 'notice-summary-state']), '#value' => $state];
+      $title_parts['state'] = [
+        '#theme' => 'aculta_portal_element',
+        '#tag' => 'span',
+        '#element_attributes' => new Attribute([
+          'data-portal-ui' => 'notice-summary-state',
+        ]),
+        '#value' => $state,
+      ];
     }
     return [
       '#type' => 'container',

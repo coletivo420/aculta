@@ -43,7 +43,12 @@ final class DeployerStatusController extends ControllerBase {
     $env = $data['environment'] ?? NULL;
     $build['identity'] = [
       '#type' => 'table',
-      '#header' => [$this->t('Ambiente'), $this->t('Endereço do site'), $this->t('Relatório gerado em'), $this->t('Ferramenta')],
+      '#header' => [
+        $this->t('Ambiente'),
+        $this->t('Endereço do site'),
+        $this->t('Relatório gerado em'),
+        $this->t('Ferramenta'),
+      ],
       '#rows' => [[
         ['data' => ['#plain_text' => is_array($env) ? (string) ($env['environment'] ?? '—') : $this->t('não definido')]],
         ['data' => ['#plain_text' => is_array($env) ? (string) ($env['site'] ?? '—') : '—']],
@@ -91,7 +96,11 @@ final class DeployerStatusController extends ControllerBase {
 
     $build['links'] = [
       '#type' => 'container',
-      'import' => ['#type' => 'link', '#title' => $this->t('Credenciais do ambiente'), '#url' => Url::fromRoute('aculta_portal.secrets_import')],
+      'import' => [
+        '#type' => 'link',
+        '#title' => $this->t('Credenciais do ambiente'),
+        '#url' => Url::fromRoute('aculta_portal.secrets_import'),
+      ],
     ];
     $build['not_included'] = ['#plain_text' => $this->t('Não incluído neste relatório: verificações de rede (sitemap e robots), que são comandos próprios da ferramenta.')];
     return $build;
@@ -134,7 +143,10 @@ final class DeployerStatusController extends ControllerBase {
   private function legend(): array {
     return [
       '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'requirements-legend', 'aria-label' => (string) $this->t('Legenda de status')],
+      '#attributes' => [
+        'data-portal-ui' => 'requirements-legend',
+        'aria-label' => (string) $this->t('Legenda de status'),
+      ],
       'ok' => ['#plain_text' => (string) $this->t('✔ OK: sem pendência.')],
       'attention' => ['#plain_text' => (string) $this->t('⚠ Atenção: pendência não bloqueante.')],
       'error' => ['#plain_text' => (string) $this->t('✖ Erro: pendência bloqueante ou credencial obrigatória ausente.')],

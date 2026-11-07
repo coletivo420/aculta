@@ -20,7 +20,10 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
   label: new TranslatableMarkup('Atividade'),
   base_table: 'aculta_lms_activity',
   entity_keys: ['id' => 'id', 'uuid' => 'uuid'],
-  handlers: ['access' => \Drupal\aculta_lms\Access\InternalLearningEntityAccessControlHandler::class, 'storage_schema' => LearningEntityStorageSchema::class],
+  handlers: [
+    'access' => \Drupal\aculta_lms\Access\InternalLearningEntityAccessControlHandler::class,
+    'storage_schema' => LearningEntityStorageSchema::class,
+  ],
   internal: TRUE,
 )]
 final class ActivityEntity extends ContentEntityBase {

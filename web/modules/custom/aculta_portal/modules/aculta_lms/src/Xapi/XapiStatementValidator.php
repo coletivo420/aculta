@@ -47,7 +47,17 @@ final class XapiStatementValidator {
   /**
    * Propriedades permitidas em context.
    */
-  private const CONTEXT = ['registration', 'instructor', 'team', 'contextActivities', 'revision', 'platform', 'language', 'statement', 'extensions'];
+  private const CONTEXT = [
+    'registration',
+    'instructor',
+    'team',
+    'contextActivities',
+    'revision',
+    'platform',
+    'language',
+    'statement',
+    'extensions',
+  ];
 
   /**
    * Valida e devolve a declaração normalizada.

@@ -85,13 +85,19 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     $breadcrumb->addLink(Link::fromTextAndUrl($root, $root_url));
 
     // Only add a parent where the site has a real, stable hierarchy.
-    if ($purpose === 'account' && in_array($route_match->getRouteName(), ['aculta_portal.my_data_address', 'aculta_portal.my_data_other'], TRUE)) {
+    if ($purpose === 'account' && in_array($route_match->getRouteName(), [
+      'aculta_portal.my_data_address',
+      'aculta_portal.my_data_other',
+    ], TRUE)) {
       $parent_url = $this->domainPurpose->routeUrl('account', 'aculta_portal.my_data');
       if ($parent_url) {
         $breadcrumb->addLink(Link::fromTextAndUrl($this->t('Meus dados'), $parent_url));
       }
     }
-    elseif ($purpose === 'account' && in_array($route_match->getRouteName(), ['aculta_portal.security', 'aculta_portal.security_password'], TRUE)) {
+    elseif ($purpose === 'account' && in_array($route_match->getRouteName(), [
+      'aculta_portal.security',
+      'aculta_portal.security_password',
+    ], TRUE)) {
       $parent_url = $this->domainPurpose->routeUrl('account', 'aculta_portal.security');
       if ($parent_url) {
         $breadcrumb->addLink(Link::fromTextAndUrl($this->t('Segurança'), $parent_url));

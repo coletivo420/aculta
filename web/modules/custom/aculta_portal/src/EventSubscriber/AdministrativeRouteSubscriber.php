@@ -76,7 +76,8 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
    * Roda por último: rotas registradas por outros alteradores (ex.: ui_patterns_library) também recebem a regra.
    */
   public static function getSubscribedEvents(): array {
-    // Roda depois da renomeação /admin -> /painel-administrativo (prioridade -2048): só assim a raiz do painel já existe
+    // Roda depois da renomeação /admin -> /painel-administrativo (prioridade -2048): só assim a raiz do painel
+    // já existe
     // no caminho quando a tradução dos segmentos olha para ela.
     return [RoutingEvents::ALTER => [['onAlterRoutes', -3000]]];
   }
@@ -149,7 +150,8 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
         $collection->add($nome, new Route($traduzido, $route->getDefaults(), $route->getRequirements(), $route->getOptions(), $route->getHost(), $route->getSchemes(), $route->getMethods(), $route->getCondition()));
         $route = $collection->get($nome);
       }
-      // Só rotas sem decisão explícita: `FALSE` definido por um módulo (ex.: biblioteca de componentes do ui_patterns) é respeitado.
+      // Só rotas sem decisão explícita: `FALSE` definido por um módulo (ex.: biblioteca de componentes do
+      // ui_patterns) é respeitado.
       if (str_starts_with($route->getPath(), self::PREFIXO) && $route->getOption('_admin_route') === NULL) {
         $route->setOption('_admin_route', TRUE);
       }

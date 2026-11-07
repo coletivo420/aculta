@@ -70,7 +70,8 @@ final class AcultaUserAgreementAcceptForm extends FormBase {
       '#button_type' => 'primary',
     ];
 
-    // Quando aparece como popup, o diálogo do Drupal envolve o formulário na hook page_bottom (AcultaUserAgreementHooks).
+    // Quando aparece como popup, o diálogo do Drupal envolve o formulário na hook page_bottom
+    // (AcultaUserAgreementHooks).
     $form['#cache'] = ['contexts' => ['user'], 'max-age' => 0];
 
     return $form;

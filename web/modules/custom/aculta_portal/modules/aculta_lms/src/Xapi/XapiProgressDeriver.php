@@ -115,7 +115,11 @@ final class XapiProgressDeriver {
       $result = $statement['result'] ?? [];
       $time = $this->time($statement);
 
-      if (($result['completion'] ?? FALSE) === TRUE || in_array($verb, [self::VERB_COMPLETED, self::VERB_PASSED, self::VERB_FAILED], TRUE)) {
+      if (($result['completion'] ?? FALSE) === TRUE || in_array($verb, [
+        self::VERB_COMPLETED,
+        self::VERB_PASSED,
+        self::VERB_FAILED,
+      ], TRUE)) {
         $completed = TRUE;
         $finished = max($finished, $time);
       }

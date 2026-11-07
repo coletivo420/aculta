@@ -110,7 +110,8 @@ final class UserPictureForm extends FormBase {
     $current = (int) ($account->get('user_picture')->target_id ?? 0);
     $isAcervo = $current > 0 && str_starts_with((string) $this->entityTypeManagerService->getStorage('file')->load($current)?->getFileUri(), AvatarPool::DIRECTORY . '/');
 
-    // O campo de envio começa vazio nos dois estados: nome e link da foto atual não aparecem no popup (a prévia mostra a foto).
+    // O campo de envio começa vazio nos dois estados: nome e link da foto atual não aparecem no popup
+    // (a prévia mostra a foto).
     $form['#attributes']['data-aculta-user-picture'] = '';
     $form['#attributes']['data-portal-ui'] = 'photo-dialog';
 
@@ -150,7 +151,8 @@ final class UserPictureForm extends FormBase {
     ];
     $form['#account_id'] = (int) $account->id();
 
-    // Ações: "Sortear outro avatar" (só avatar do sistema) e "Remover foto" (só foto personalizada) ficam no mesmo lugar,
+    // Ações: "Sortear outro avatar" (só avatar do sistema) e "Remover foto" (só foto personalizada) ficam no
+    // mesmo lugar,
     // ao lado de "Salvar foto do perfil" (regra de estado, docs/FOTO-PERFIL.md).
     // Linha de ações da foto (sortear, remover e salvar): token próprio do tema (account-photo-actions).
     $form['actions'] = ['#type' => 'actions', '#attributes' => ['data-portal-ui' => 'account-photo-actions']];

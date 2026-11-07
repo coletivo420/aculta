@@ -51,7 +51,8 @@ final class ProfileRelationshipController extends ControllerBase {
       $return = '/';
     }
     $postUrl = Url::fromRoute('aculta_messenger.profile_relationship', ['user' => $user->id()])->toString();
-    // The action runs with the posted input, as the drawer's does; its result message goes to the member on the profile.
+    // The action runs with the posted input, as the drawer's does; its result message goes to the member
+    // on the profile.
     $formState = new FormState();
     $formState->setRequestMethod('POST');
     $formState->setUserInput($request->request->all());

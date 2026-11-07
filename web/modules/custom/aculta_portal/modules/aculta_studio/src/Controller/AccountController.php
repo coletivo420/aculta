@@ -59,7 +59,10 @@ final class AccountController {
    * Descriptive metadata for the account experience cards, keyed by provider id.
    */
   private const CARD_META = [
-    'marley' => ['icon' => 'book-open', 'description' => 'Criação e moderação da Revista, moderação do Fórum e Galerias.'],
+    'marley' => [
+      'icon' => 'book-open',
+      'description' => 'Criação e moderação da Revista, moderação do Fórum e Galerias.',
+    ],
     'ganjalab' => ['icon' => 'flask', 'description' => 'Aprendizagem: painel e interface do estudante.'],
     'we_sativa' => ['icon' => 'plant', 'description' => 'Área integrada de contribuição à Wiki.'],
     'culturas' => ['icon' => 'users-three', 'description' => 'Eventos e organizações culturais da ACULTA.'],
@@ -69,7 +72,10 @@ final class AccountController {
    * Faixa de largura total para experiências integradas (Green Stash).
    */
   private const STRIP_META = [
-    'green_stash' => ['icon' => 'archive', 'description' => 'Área integrada de gestão comercial da Loja. A operação fica com o Commerce.'],
+    'green_stash' => [
+      'icon' => 'archive',
+      'description' => 'Área integrada de gestão comercial da Loja. A operação fica com o Commerce.',
+    ],
   ];
 
   /**

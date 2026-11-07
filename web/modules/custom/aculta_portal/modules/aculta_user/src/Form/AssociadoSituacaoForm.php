@@ -93,7 +93,13 @@ final class AssociadoSituacaoForm extends FormBase {
       '#description' => $this->t('Registrado com o nome de quem alterou. Recomendado para suspensão e desligamento.'),
       '#maxlength' => 2000,
     ];
-    $form['actions'] = ['#type' => 'actions', 'submit' => ['#type' => 'submit', '#value' => $this->t('Salvar situação')]];
+    $form['actions'] = [
+      '#type' => 'actions',
+      'submit' => [
+        '#type' => 'submit',
+        '#value' => $this->t('Salvar situação'),
+      ],
+    ];
     return $form;
   }
 
@@ -107,16 +113,26 @@ final class AssociadoSituacaoForm extends FormBase {
     $admin = (int) $this->currentUserService->id();
     if ($situacao === AssociadoMarker::CONVIDADO) {
       $ok = $this->marker->convidar($uid, $admin, $motivo);
-      $this->logger->notice('Convite de associado enviado à conta @conta por @admin.', ['@conta' => $uid, '@admin' => $admin]);
+      $this->logger->notice('Convite de associado enviado à conta @conta por @admin.', [
+        '@conta' => $uid,
+        '@admin' => $admin,
+      ]);
       $this->messenger()->addStatus($ok ? $this->t('Convite enviado. A pessoa aceita em Minha conta.') : $this->t('A conta já é associada ou já tem convite.'));
     }
     elseif ($situacao === 'recusar') {
       $ok = $this->marker->recusar($uid);
-      $this->logger->notice('Pedido de adesão da conta @conta recusado por @admin.', ['@conta' => $uid, '@admin' => $admin]);
+      $this->logger->notice('Pedido de adesão da conta @conta recusado por @admin.', [
+        '@conta' => $uid,
+        '@admin' => $admin,
+      ]);
       $this->messenger()->addStatus($ok ? $this->t('Pedido de adesão recusado.') : $this->t('Não havia pedido pendente.'));
     }
     elseif ($this->marker->definir($uid, $situacao, $admin, $motivo)) {
-      $this->logger->notice('Situação de associado da conta @conta alterada para @situacao por @admin.', ['@conta' => $uid, '@situacao' => $situacao, '@admin' => $admin]);
+      $this->logger->notice('Situação de associado da conta @conta alterada para @situacao por @admin.', [
+        '@conta' => $uid,
+        '@situacao' => $situacao,
+        '@admin' => $admin,
+      ]);
       $this->messenger()->addStatus($this->t('Situação alterada para @situacao.', ['@situacao' => $this->rotulo($situacao)]));
     }
     else {

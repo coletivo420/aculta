@@ -19,8 +19,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 /**
  * Doação rápida (/apoiar/{valor}/agora) com etapa de resumo antes do pagamento.
  *
- * Reaproveita a criação de pedido do submódulo aculta_donation (port de commerce_donation_flow) e só muda o passo de destino: `review` (resumo)
- * em vez de `payment`. O resumo lista a doação e os demais panes ativos, com link para editar, e o botão leva ao pagamento.
+ * Reaproveita a criação de pedido do submódulo aculta_donation (port de commerce_donation_flow) e só muda o
+ * passo de destino: `review` (resumo) em vez de `payment`. O resumo lista a doação e os demais panes ativos, com
+ * link para editar, e o botão leva ao pagamento.
  */
 final class DonationSummaryController implements ContainerInjectionInterface {
 

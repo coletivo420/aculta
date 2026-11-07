@@ -271,7 +271,12 @@ final class ShippingSimulatorTest extends UnitTestCase {
     $variation->method('hasField')->willReturn(TRUE);
     $variation->method('get')->willReturn($empty);
 
-    $com_padrao = $this->simulator(self::ORIGIN, TRUE, $this->quoter(), ['width' => 16, 'height' => 2, 'length' => 11, 'weight' => 0.3]);
+    $com_padrao = $this->simulator(self::ORIGIN, TRUE, $this->quoter(), [
+      'width' => 16,
+      'height' => 2,
+      'length' => 11,
+      'weight' => 0.3,
+    ]);
     $pacote = $com_padrao->packageForVariation($variation);
     $this->assertNotNull($pacote);
     $this->assertSame(16.0, $pacote->widthCm);

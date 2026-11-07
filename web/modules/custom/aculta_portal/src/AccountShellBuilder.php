@@ -55,16 +55,60 @@ final class AccountShellBuilder {
   public function build(array &$variables): void {
     $route = $this->routeMatch->getRouteName();
     $sections = [
-      'aculta_portal.dashboard' => ['title' => $this->translation->translate('Visão geral'), 'route' => 'aculta_portal.dashboard', 'icon' => 'grid'],
-      'aculta_portal.support_my' => ['title' => $this->translation->translate('Meu Apoio'), 'route' => 'aculta_portal.support_my', 'icon' => 'heart'],
-      'aculta_portal.account_courses' => ['title' => $this->translation->translate('Cursos'), 'route' => 'aculta_portal.account_courses', 'icon' => 'mortarboard'],
-      ...($this->routeExists('aculta_user.atividade') ? ['aculta_user.atividade' => ['title' => $this->translation->translate('Atividade'), 'route' => 'aculta_user.atividade', 'icon' => 'activity']] : []),
-      ...($this->routeExists('aculta_user.associado_pedido') ? ['aculta_user.associado_pedido' => ['title' => $this->translation->translate('Associado'), 'route' => 'aculta_user.associado_pedido', 'icon' => 'person-badge']] : []),
-      'view.commerce_user_orders.order_page' => ['title' => $this->translation->translate('Meus pedidos'), 'route' => 'view.commerce_user_orders.order_page', 'icon' => 'bag'],
-      'aculta_portal.my_data' => ['title' => $this->translation->translate('Meus Dados'), 'route' => 'aculta_portal.my_data', 'icon' => 'person-vcard'],
-      'aculta_portal.connections' => ['title' => $this->translation->translate('Conexões'), 'route' => 'aculta_portal.connections', 'icon' => 'link-45deg'],
-      'aculta_portal.security' => ['title' => $this->translation->translate('Segurança'), 'route' => 'aculta_portal.security', 'icon' => 'shield-lock'],
-      'aculta_portal.account_settings' => ['title' => $this->translation->translate('Configurações'), 'route' => 'aculta_portal.account_settings', 'icon' => 'sliders'],
+      'aculta_portal.dashboard' => [
+        'title' => $this->translation->translate('Visão geral'),
+        'route' => 'aculta_portal.dashboard',
+        'icon' => 'grid',
+      ],
+      'aculta_portal.support_my' => [
+        'title' => $this->translation->translate('Meu Apoio'),
+        'route' => 'aculta_portal.support_my',
+        'icon' => 'heart',
+      ],
+      'aculta_portal.account_courses' => [
+        'title' => $this->translation->translate('Cursos'),
+        'route' => 'aculta_portal.account_courses',
+        'icon' => 'mortarboard',
+      ],
+      ...($this->routeExists('aculta_user.atividade') ? [
+        'aculta_user.atividade' => [
+          'title' => $this->translation->translate('Atividade'),
+          'route' => 'aculta_user.atividade',
+          'icon' => 'activity',
+        ],
+      ] : []),
+      ...($this->routeExists('aculta_user.associado_pedido') ? [
+        'aculta_user.associado_pedido' => [
+          'title' => $this->translation->translate('Associado'),
+          'route' => 'aculta_user.associado_pedido',
+          'icon' => 'person-badge',
+        ],
+      ] : []),
+      'view.commerce_user_orders.order_page' => [
+        'title' => $this->translation->translate('Meus pedidos'),
+        'route' => 'view.commerce_user_orders.order_page',
+        'icon' => 'bag',
+      ],
+      'aculta_portal.my_data' => [
+        'title' => $this->translation->translate('Meus Dados'),
+        'route' => 'aculta_portal.my_data',
+        'icon' => 'person-vcard',
+      ],
+      'aculta_portal.connections' => [
+        'title' => $this->translation->translate('Conexões'),
+        'route' => 'aculta_portal.connections',
+        'icon' => 'link-45deg',
+      ],
+      'aculta_portal.security' => [
+        'title' => $this->translation->translate('Segurança'),
+        'route' => 'aculta_portal.security',
+        'icon' => 'shield-lock',
+      ],
+      'aculta_portal.account_settings' => [
+        'title' => $this->translation->translate('Configurações'),
+        'route' => 'aculta_portal.account_settings',
+        'icon' => 'sliders',
+      ],
     ];
     $currentUser = $this->currentUser;
     $this->moduleHandler?->alter('aculta_portal_account_sections', $sections, $currentUser);

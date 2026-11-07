@@ -47,7 +47,8 @@ final class LoginValidatorSwapTest extends UnitTestCase {
    */
   private function validators(array $start): array {
     // Serviços finais (DomainPurposeManager, CartUtility, AddToCartAjax) são construídos de verdade, não duplicados.
-    // AddToCartAjax::alter() ignora formulários que não são "Adicionar ao carrinho", então os mocks não são usados aqui.
+    // AddToCartAjax::alter() ignora formulários que não são "Adicionar ao carrinho", então os mocks
+    // não são usados aqui.
     $purpose = new DomainPurposeManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(DomainNegotiatorInterface::class),

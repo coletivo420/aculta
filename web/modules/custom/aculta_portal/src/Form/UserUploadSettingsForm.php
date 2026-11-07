@@ -117,7 +117,10 @@ final class UserUploadSettingsForm extends ConfigFormBase {
       $extensions = preg_split('/\s+/', strtolower(trim((string) $form_state->getValue([$scope, 'allowed_extensions'])))) ?: [];
       $extensions = array_values(array_unique(array_filter($extensions)));
       if ($extensions === [] || array_diff($extensions, self::SUPPORTED_EXTENSIONS) !== []) {
-        $form_state->setErrorByName($scope . '][allowed_extensions', $this->t('Em @scope, use apenas: @extensions.', ['@scope' => $label, '@extensions' => implode(', ', self::SUPPORTED_EXTENSIONS)]));
+        $form_state->setErrorByName($scope . '][allowed_extensions', $this->t('Em @scope, use apenas: @extensions.', [
+          '@scope' => $label,
+          '@extensions' => implode(', ', self::SUPPORTED_EXTENSIONS),
+        ]));
       }
       $max_size = $form_state->getValue([$scope, 'max_size_mb']);
       if (!is_numeric($max_size) || (int) $max_size < 1 || (int) $max_size > intdiv(PHP_INT_MAX, 1048576)) {
@@ -129,7 +132,10 @@ final class UserUploadSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc} */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $global_extensions = preg_split('/\s+/', strtolower(trim((string) $form_state->getValue(['global', 'allowed_extensions'])))) ?: [];
+    $global_extensions = preg_split('/\s+/', strtolower(trim((string) $form_state->getValue([
+      'global',
+      'allowed_extensions',
+    ])))) ?: [];
     $global_extensions = array_values(array_unique(array_filter($global_extensions)));
     $config = $this->config('aculta_portal.user_upload')
       ->set('allowed_extensions', implode(' ', $global_extensions))

@@ -17,8 +17,8 @@ use Drupal\user\UserInterface;
 /**
  * Relatório de associados (situação, data de adesão e pedidos pendentes).
  *
- * Associado é situação definida pelo administrador (decisão de 2026-10-21). Na tela, o RG aparece mascarado; a exportação
- * CSV, com o RG completo, é restrita à permissão `export aculta associados` (somente administrador).
+ * Associado é situação definida pelo administrador (decisão de 2026-10-21). Na tela, o RG aparece mascarado;
+ * a exportação CSV, com o RG completo, é restrita à permissão `export aculta associados` (somente administrador).
  */
 final class AssociadosController extends ControllerBase {
 
@@ -50,14 +50,24 @@ final class AssociadosController extends ControllerBase {
           $conta->getDisplayName(),
           (string) $conta->getEmail(),
           [
-            'data' => ['#type' => 'link', '#title' => $this->t('Decidir'), '#url' => Url::fromRoute('aculta_user.associado_situacao', ['user' => $uid])],
+            'data' => [
+              '#type' => 'link',
+              '#title' => $this->t('Decidir'),
+              '#url' => Url::fromRoute('aculta_user.associado_situacao', ['user' => $uid]),
+            ],
           ],
         ];
       }
     }
     $rows = array_map(fn (array $r): array => [
       $r['apelido'], $r['email'], $r['situacao'], $r['adesao'], $this->mask($r['rg']), $r['orgao'], $r['profissao'], $r['nascimento'],
-      ['data' => ['#type' => 'link', '#title' => $this->t('Alterar'), '#url' => Url::fromRoute('aculta_user.associado_situacao', ['user' => $r['uid']])]],
+      [
+        'data' => [
+          '#type' => 'link',
+          '#title' => $this->t('Alterar'),
+          '#url' => Url::fromRoute('aculta_user.associado_situacao', ['user' => $r['uid']]),
+        ],
+      ],
     ], $this->rows());
     return [
       'pendentes' => [
@@ -70,7 +80,17 @@ final class AssociadosController extends ControllerBase {
       'situacoes' => [
         '#type' => 'table',
         '#caption' => $this->t('Associados e situações'),
-        '#header' => [$this->t('Apelido'), $this->t('E-mail'), $this->t('Situação'), $this->t('Data de adesão'), $this->t('RG'), $this->t('Órgão emissor'), $this->t('Profissão'), $this->t('Nascimento'), $this->t('Ações')],
+        '#header' => [
+          $this->t('Apelido'),
+          $this->t('E-mail'),
+          $this->t('Situação'),
+          $this->t('Data de adesão'),
+          $this->t('RG'),
+          $this->t('Órgão emissor'),
+          $this->t('Profissão'),
+          $this->t('Nascimento'),
+          $this->t('Ações'),
+        ],
         '#rows' => $rows,
         '#empty' => $this->t('Nenhum associado cadastrado.'),
       ],
@@ -82,7 +102,16 @@ final class AssociadosController extends ControllerBase {
    * CSV completo, somente para quem tem a permissão de exportação. */
   public function export(): Response {
     $handle = fopen('php://temp', 'r+');
-    fputcsv($handle, ['apelido', 'email', 'situacao', 'data_adesao', 'rg', 'orgao_emissor', 'profissao', 'data_nascimento']);
+    fputcsv($handle, [
+      'apelido',
+      'email',
+      'situacao',
+      'data_adesao',
+      'rg',
+      'orgao_emissor',
+      'profissao',
+      'data_nascimento',
+    ]);
     foreach ($this->rows() as $r) {
       fputcsv($handle, [
         $this->safeSpreadsheetCell($r['apelido']),

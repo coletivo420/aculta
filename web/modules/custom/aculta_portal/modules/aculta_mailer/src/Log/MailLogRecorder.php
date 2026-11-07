@@ -138,7 +138,8 @@ final class MailLogRecorder {
    * Cancela o conteúdo guardado para reenvio das mensagens anteriores do mesmo destinatário e tipo.
    *
    * Usado quando o usuário pede um novo link de uso único: o link antigo não é reaproveitado. Exceção: a retentativa
-   * automática da mesma mensagem (fila e failover) mantém o conteúdo e o link, por isso a própria correlação fica de fora. O registro anterior
+   * automática da mesma mensagem (fila e failover) mantém o conteúdo e o link, por isso a própria
+   * correlação fica de fora. O registro anterior
    * continua, sem conteúdo, e o novo pedido gera outra cifra com conteúdo novo.
    *
    * @return int

@@ -219,8 +219,24 @@ function aculta_linkweed_update_10009(): string {
 function aculta_linkweed_rename_value(mixed $value): mixed {
   if (is_string($value)) {
     return str_replace(
-      ['aculta_linkweedweed_page', 'aculta_linkweedweed_item', 'aculta_linkweedweed', 'aculta_links', 'aculta_link_page', 'aculta_link_item', 'aculta_link'],
-      ['aculta_linkweed_page', 'aculta_linkweed_item', 'aculta_linkweed', 'aculta_linkweed', 'aculta_linkweed_page', 'aculta_linkweed_item', 'aculta_linkweed'],
+      [
+        'aculta_linkweedweed_page',
+        'aculta_linkweedweed_item',
+        'aculta_linkweedweed',
+        'aculta_links',
+        'aculta_link_page',
+        'aculta_link_item',
+        'aculta_link',
+      ],
+      [
+        'aculta_linkweed_page',
+        'aculta_linkweed_item',
+        'aculta_linkweed',
+        'aculta_linkweed',
+        'aculta_linkweed_page',
+        'aculta_linkweed_item',
+        'aculta_linkweed',
+      ],
       $value,
     );
   }

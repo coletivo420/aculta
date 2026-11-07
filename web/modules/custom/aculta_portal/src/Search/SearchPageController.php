@@ -70,11 +70,19 @@ final class SearchPageController implements ContainerInjectionInterface {
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'search'],
-      '#cache' => ['contexts' => ['url.query_args:q', 'user.permissions'], 'tags' => ['search_api_list:' . self::INDEX_ID]],
+      '#cache' => [
+        'contexts' => ['url.query_args:q', 'user.permissions'],
+        'tags' => ['search_api_list:' . self::INDEX_ID],
+      ],
       'form' => $this->formBuilder->getForm(SearchPageForm::class),
     ];
     if ($term === '') {
-      $build['hint'] = ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#element_attributes' => new Attribute(['data-portal-ui' => 'hint-muted']), '#value' => $this->t('Digite um termo para buscar no site.')];
+      $build['hint'] = [
+        '#theme' => 'aculta_portal_element',
+        '#tag' => 'p',
+        '#element_attributes' => new Attribute(['data-portal-ui' => 'hint-muted']),
+        '#value' => $this->t('Digite um termo para buscar no site.'),
+      ];
       return $build;
     }
     if (mb_strlen($term) < self::MIN_CHARS) {

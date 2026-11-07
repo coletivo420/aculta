@@ -93,7 +93,8 @@ final class PhotoEditorHooks {
     if (!$account instanceof UserInterface || (int) $account->id() !== (int) $this->currentUser->id()) {
       return;
     }
-    // O painel envia só a foto. O buildEntity do Core espera o campo "roles": mantém os papéis atuais (sem apagar nenhum).
+    // O painel envia só a foto. O buildEntity do Core espera o campo "roles": mantém os papéis
+    // atuais (sem apagar nenhum).
     $form['roles'] = ['#type' => 'value', '#value' => array_values($account->getRoles(TRUE))];
 
     $fid = (int) ($account->get('user_picture')->target_id ?? 0);

@@ -22,9 +22,27 @@ final class RoleHierarchyTest extends UnitTestCase {
     'gerente_loja' => ['content_editor'],
   ];
 
-  private const CADEIA_ATUAL = ['gerente_loja', 'content_editor', 'lms_teacher', 'associado', 'estudante', 'email_confirmed', 'authenticated'];
+  private const CADEIA_ATUAL = [
+    'gerente_loja',
+    'content_editor',
+    'lms_teacher',
+    'associado',
+    'estudante',
+    'email_confirmed',
+    'authenticated',
+  ];
 
-  private const TODOS = ['anonymous', 'authenticated', 'email_confirmed', 'estudante', 'associado', 'lms_teacher', 'content_editor', 'gerente_loja', 'administrator'];
+  private const TODOS = [
+    'anonymous',
+    'authenticated',
+    'email_confirmed',
+    'estudante',
+    'associado',
+    'lms_teacher',
+    'content_editor',
+    'gerente_loja',
+    'administrator',
+  ];
 
   /**
    * Confirma que os papéis efetivos são herdados de forma transitiva.
@@ -98,7 +116,16 @@ final class RoleHierarchyTest extends UnitTestCase {
    * Confirma que reordenar a cadeia muda o papel pai.
    */
   public function testReordenarMudaOPai(): void {
-    $mapa = RoleHierarchy::derivarMapa(['content_editor', 'gerente_loja', 'authenticated'], ['authenticated', 'content_editor', 'gerente_loja', 'administrator']);
+    $mapa = RoleHierarchy::derivarMapa([
+      'content_editor',
+      'gerente_loja',
+      'authenticated',
+    ], [
+      'authenticated',
+      'content_editor',
+      'gerente_loja',
+      'administrator',
+    ]);
     $this->assertSame(['gerente_loja'], $mapa['content_editor']);
     $this->assertSame(['authenticated'], $mapa['gerente_loja']);
   }
@@ -124,7 +151,18 @@ final class RoleHierarchyTest extends UnitTestCase {
    */
   public function testCompletarRemoveOPapelExcluido(): void {
     $existentes = ['gerente_loja', 'content_editor', 'lms_teacher', 'authenticated'];
-    $this->assertSame(['gerente_loja', 'lms_teacher', 'authenticated'], RoleHierarchy::completar(['gerente_loja', 'content_editor', 'lms_teacher', 'authenticated'], array_diff($existentes, ['content_editor'])));
+    $this->assertSame([
+      'gerente_loja',
+      'lms_teacher',
+      'authenticated',
+    ], RoleHierarchy::completar([
+      'gerente_loja',
+      'content_editor',
+      'lms_teacher',
+      'authenticated',
+    ], array_diff($existentes, [
+      'content_editor',
+    ])));
   }
 
   /**

@@ -151,11 +151,20 @@ final class UserEmailChangeHooks {
           $user->save();
           $this->messenger->addStatus($this->currentUser->id() == $user_id
             ? t('Your email address has been updated to %mail', ['%mail' => $new_email])
-            : t("%user's email address has been updated to %mail", ['%user' => $user->getDisplayName(), '%mail' => $new_email]));
+            : t("%user's email address has been updated to %mail", [
+              '%user' => $user->getDisplayName(),
+              '%mail' => $new_email,
+            ]));
           break;
 
         case 'cancel':
-          $this->loggerFactory->get('aculta_mail_confirmer_user')->warning('Requested user email change for %user has been rejected by the %mail email address owner.', ['%user' => $user->getDisplayName(), '%mail' => $new_email]);
+          $this->loggerFactory->get('aculta_mail_confirmer_user')->warning(
+            'Requested user email change for %user has been rejected by the %mail email address owner.',
+            [
+              '%user' => $user->getDisplayName(),
+              '%mail' => $new_email,
+            ]
+          );
           break;
       }
     }

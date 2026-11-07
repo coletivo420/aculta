@@ -13,7 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
  * O Brevo não assina os eventos. A autenticação é o token de portador configurado no próprio webhook (`auth` com
  * `type: bearer`), guardado em BREVO_WEBHOOK_TOKEN. Sem token configurado, todo pedido é recusado.
  *
- * O correlation ID vem na tag `aculta-mail:<id>`, que o envio grava com o cabeçalho `X-Tag` (ver LegacyMessageConverter).
+ * O correlation ID vem na tag `aculta-mail:<id>`, que o envio grava com o cabeçalho `X-Tag`
+ * (ver LegacyMessageConverter).
  */
 final class BrevoWebhook implements ProviderWebhookInterface {
 

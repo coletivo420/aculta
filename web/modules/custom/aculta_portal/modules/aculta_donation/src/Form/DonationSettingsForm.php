@@ -230,7 +230,15 @@ final class DonationSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $valores = $form_state->getValues();
     $config = $this->config('aculta_donation.settings');
-    foreach (['donation_route', 'donate_item_type', 'donate_order_type', 'donate_checkout_flow', 'cart_item_type', 'cart_order_type', 'cart_checkout_flow'] as $chave) {
+    foreach ([
+      'donation_route',
+      'donate_item_type',
+      'donate_order_type',
+      'donate_checkout_flow',
+      'cart_item_type',
+      'cart_order_type',
+      'cart_checkout_flow',
+    ] as $chave) {
       $config->set($chave, $valores[$chave] ?? NULL);
     }
     $config->save();

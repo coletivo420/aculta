@@ -114,7 +114,13 @@ final class CheckoutCommonForm extends ConfigFormBase {
     $form['contextos'] = [
       '#type' => 'table',
       '#caption' => $this->t('Contextos de checkout registrados'),
-      '#header' => [$this->t('Contexto'), $this->t('Modalidade'), $this->t('Tipos de pedido'), $this->t('Checkout flows'), $this->t('Controla as rotas globais')],
+      '#header' => [
+        $this->t('Contexto'),
+        $this->t('Modalidade'),
+        $this->t('Tipos de pedido'),
+        $this->t('Checkout flows'),
+        $this->t('Controla as rotas globais'),
+      ],
       '#rows' => $linhas,
       '#empty' => $this->t('Nenhum contexto registrado.'),
     ];
@@ -145,7 +151,10 @@ final class CheckoutCommonForm extends ConfigFormBase {
     $this->config(CheckoutSettings::CONFIG)->set('common_checkout_enabled', $novo)->save();
     $this->routeBuilder->setRebuildNeeded();
     if ($novo !== $anterior) {
-      $this->logger->warning('Checkout comum do Commerce @estado (uid @uid).', ['@estado' => $novo ? 'habilitado' : 'desabilitado', '@uid' => $this->currentUser()->id()]);
+      $this->logger->warning('Checkout comum do Commerce @estado (uid @uid).', [
+        '@estado' => $novo ? 'habilitado' : 'desabilitado',
+        '@uid' => $this->currentUser()->id(),
+      ]);
     }
     parent::submitForm($form, $form_state);
   }
@@ -162,7 +171,11 @@ final class CheckoutCommonForm extends ConfigFormBase {
     }
     $linhas = [];
     foreach ($this->entityTypeManager->getStorage('commerce_payment_gateway')->loadMultiple() as $gateway) {
-      $linhas[] = [(string) $gateway->label(), $gateway->getPluginId(), $gateway->status() ? $this->t('Sim') : $this->t('Não')];
+      $linhas[] = [
+        (string) $gateway->label(),
+        $gateway->getPluginId(),
+        $gateway->status() ? $this->t('Sim') : $this->t('Não'),
+      ];
     }
     return $linhas;
   }

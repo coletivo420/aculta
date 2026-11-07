@@ -45,7 +45,13 @@ final class CheckoutContextRegistry {
       }
       $por_id[$id] = $provider;
     }
-    uasort($por_id, static fn(CheckoutContextProviderInterface $a, CheckoutContextProviderInterface $b): int => [$a->weight(), $a->id()] <=> [$b->weight(), $b->id()]);
+    uasort($por_id, static fn(CheckoutContextProviderInterface $a, CheckoutContextProviderInterface $b): int => [
+      $a->weight(),
+      $a->id(),
+    ] <=> [
+      $b->weight(),
+      $b->id(),
+    ]);
     return $this->ordenados = $por_id;
   }
 

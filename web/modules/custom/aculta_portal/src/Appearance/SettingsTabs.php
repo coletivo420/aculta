@@ -31,7 +31,10 @@ final class SettingsTabs {
 
     $links = [];
     foreach ($tabs as $key => $tab) {
-      $link = PortalLinkElement::build($tab['title'], Url::fromRoute($tab['route']), ['data-portal-account-data-link' => 'true', 'data-portal-ui' => 'account-data-link']);
+      $link = PortalLinkElement::build($tab['title'], Url::fromRoute($tab['route']), [
+        'data-portal-account-data-link' => 'true',
+        'data-portal-ui' => 'account-data-link',
+      ]);
       if ($key === $active) {
         $link['#element_attributes']->setAttribute('aria-current', 'page');
         $link['#element_attributes']->addClass('is-active');
@@ -41,7 +44,11 @@ final class SettingsTabs {
 
     return [
       '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'account-data-nav', 'aria-label' => (string) t('Seções de configurações'), 'data-portal-account-data-nav' => 'true'],
+      '#attributes' => [
+        'data-portal-ui' => 'account-data-nav',
+        'aria-label' => (string) t('Seções de configurações'),
+        'data-portal-account-data-nav' => 'true',
+      ],
       'links' => $links,
     ];
   }

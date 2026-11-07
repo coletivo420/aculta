@@ -48,12 +48,28 @@ final class AchievementDefinitions {
       BadgeCatalog::PERFIL_BASICO => ['profile_basic'],
     ];
     $legacy = [
-      BadgeCatalog::FUNDADORE => ['Reconhece quem participou da criação da Associação Cultural Antiproibicionista e da construção inicial do Coletivo 420.', 'fundadore'],
-      BadgeCatalog::ASSOCIADO => ['Reconhecimento da participação na categoria Membro Antiproibicionista do Coletivo 420.', 'associado'],
-      BadgeCatalog::APOIADOR => ['Reconhece o apoio e a participação nas atividades e nos ideais do Coletivo 420.', 'apoiador'],
+      BadgeCatalog::FUNDADORE => [
+        'Reconhece quem participou da criação da Associação Cultural Antiproibicionista e da construção inicial do Coletivo 420.',
+        'fundadore',
+      ],
+      BadgeCatalog::ASSOCIADO => [
+        'Reconhecimento da participação na categoria Membro Antiproibicionista do Coletivo 420.',
+        'associado',
+      ],
+      BadgeCatalog::APOIADOR => [
+        'Reconhece o apoio e a participação nas atividades e nos ideais do Coletivo 420.',
+        'apoiador',
+      ],
     ];
     foreach (BadgeCatalog::all() as $id => $definition) {
-      $defaults[$id] = $definition + ['description' => $legacy[$id][0] ?? '', 'enabled' => TRUE, 'triggers' => $triggers[$id], 'criterion_version' => 1, 'image' => $legacy[$id][1] ?? '', 'image_uuid' => ''];
+      $defaults[$id] = $definition + [
+        'description' => $legacy[$id][0] ?? '',
+        'enabled' => TRUE,
+        'triggers' => $triggers[$id],
+        'criterion_version' => 1,
+        'image' => $legacy[$id][1] ?? '',
+        'image_uuid' => '',
+      ];
     }
     foreach ($this->configs->get('aculta_user.achievement_definitions')->get('definitions') ?? [] as $id => $definition) {
       if (!preg_match('/^[a-z][a-z0-9_]{2,63}$/D', (string) $id) || !is_array($definition) || empty($definition['label'])) {
@@ -115,7 +131,11 @@ final class AchievementDefinitions {
         'enabled' => !empty($definition['enabled']),
         'triggers' => $triggers,
         'criterion_version' => $version,
-        'image' => !empty($definition['remove_image']) ? '' : (in_array($definition['image'] ?? $previous['image'] ?? '', ['fundadore', 'associado', 'apoiador'], TRUE) ? ($definition['image'] ?? $previous['image']) : ''),
+        'image' => !empty($definition['remove_image']) ? '' : (in_array($definition['image'] ?? $previous['image'] ?? '', [
+          'fundadore',
+          'associado',
+          'apoiador',
+        ], TRUE) ? ($definition['image'] ?? $previous['image']) : ''),
         'image_uuid' => $imageUuid,
       ])->save();
       if ($imageChanged && $oldFile) {

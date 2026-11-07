@@ -7,7 +7,8 @@ namespace Drupal\aculta_mailer\Monitor;
 /**
  * Cliente IMAP sobre a extensão curl do PHP (protocolo imaps). Não usa biblioteca nova.
  *
- * O progresso é controlado por UID (cursor no State), então o sinalizador \Seen que o FETCH possa marcar não afeta a leitura.
+ * O progresso é controlado por UID (cursor no State), então o sinalizador \Seen que o FETCH possa marcar não afeta a
+ * leitura.
  */
 final class CurlImapClient implements ImapClientInterface {
 

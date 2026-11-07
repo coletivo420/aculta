@@ -33,7 +33,13 @@ final class EntityCourseActivityReader implements CourseActivityReaderInterface 
         'weight' => (int) self::fieldValue($entity, 'weight'),
       ];
     }
-    usort($activities, static fn(array $a, array $b): int => [$a['weight'], $a['activity']->id] <=> [$b['weight'], $b['activity']->id]);
+    usort($activities, static fn(array $a, array $b): int => [
+      $a['weight'],
+      $a['activity']->id,
+    ] <=> [
+      $b['weight'],
+      $b['activity']->id,
+    ]);
 
     return array_column($activities, 'activity');
   }

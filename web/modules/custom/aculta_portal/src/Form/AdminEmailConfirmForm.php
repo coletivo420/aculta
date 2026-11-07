@@ -74,7 +74,12 @@ final class AdminEmailConfirmForm extends ConfirmFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?UserInterface $user = NULL): array {
     $form_state->set('uid', (int) $user?->id());
-    $form['conta'] = ['#markup' => '<p>' . $this->t('Conta: @nome (uid @uid)', ['@nome' => $user?->getAccountName(), '@uid' => $user?->id()]) . '</p>'];
+    $form['conta'] = [
+      '#markup' => '<p>' . $this->t('Conta: @nome (uid @uid)', [
+        '@nome' => $user?->getAccountName(),
+        '@uid' => $user?->id(),
+      ]) . '</p>',
+    ];
     return parent::buildForm($form, $form_state);
   }
 
@@ -89,7 +94,10 @@ final class AdminEmailConfirmForm extends ConfirmFormBase {
       return;
     }
     $this->policy->markConfirmed($uid);
-    $this->logger->notice('Confirmação manual de e-mail: conta @conta confirmada pela administração (uid @admin).', ['@conta' => $uid, '@admin' => $this->currentUser->id()]);
+    $this->logger->notice('Confirmação manual de e-mail: conta @conta confirmada pela administração (uid @admin).', [
+      '@conta' => $uid,
+      '@admin' => $this->currentUser->id(),
+    ]);
     $this->messenger()->addStatus($this->t('E-mail confirmado para a conta @uid.', ['@uid' => $uid]));
     $form_state->setRedirect('aculta_portal.email_confirmacao_pendentes');
   }

@@ -31,7 +31,10 @@ final class TestMailRedirectTest extends UnitTestCase {
    */
   public function testComConfiguracaoRedirecionaERegistraOOriginal(): void {
     $mensagem = ['to' => 'Teste.Comum@testuser.com', 'subject' => 'Pedido', 'headers' => ['Cc' => 'x@example.com']];
-    $ajuste = new Settings(['aculta_mail_redirect' => '4e20coletivo@gmail.com', 'aculta_mail_redirect_for' => ['teste.comum@testuser.com']]);
+    $ajuste = new Settings([
+      'aculta_mail_redirect' => '4e20coletivo@gmail.com',
+      'aculta_mail_redirect_for' => ['teste.comum@testuser.com'],
+    ]);
     (new TestMailRedirect($ajuste))->aplicar($mensagem);
     $this->assertSame('4e20coletivo@gmail.com', $mensagem['to']);
     $this->assertSame('[TESTE para Teste.Comum@testuser.com] Pedido', $mensagem['subject']);
@@ -44,7 +47,10 @@ final class TestMailRedirectTest extends UnitTestCase {
    */
   public function testOutrosDestinatariosNaoSaoRedirecionados(): void {
     $mensagem = ['to' => 'pessoa@example.com', 'subject' => 'Pedido', 'headers' => []];
-    $ajuste = new Settings(['aculta_mail_redirect' => '4e20coletivo@gmail.com', 'aculta_mail_redirect_for' => ['teste.comum@testuser.com']]);
+    $ajuste = new Settings([
+      'aculta_mail_redirect' => '4e20coletivo@gmail.com',
+      'aculta_mail_redirect_for' => ['teste.comum@testuser.com'],
+    ]);
     (new TestMailRedirect($ajuste))->aplicar($mensagem);
     $this->assertSame('pessoa@example.com', $mensagem['to']);
     $this->assertArrayNotHasKey('X-Aculta-Destino-Original', $mensagem['headers']);

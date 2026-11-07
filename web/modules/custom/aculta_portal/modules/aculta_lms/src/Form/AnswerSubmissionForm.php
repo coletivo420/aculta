@@ -81,8 +81,16 @@ final class AnswerSubmissionForm extends FormBase {
       $form['evaluation'] = [
         '#type' => 'fieldset',
         '#title' => $this->t('Avaliação da sua resposta'),
-        'score' => ['#type' => 'item', '#title' => $this->t('Nota'), '#plain_text' => (string) $latest->get('score')->value],
-        'feedback' => ['#type' => 'item', '#title' => $this->t('Feedback'), '#plain_text' => (string) $latest->get('feedback')->value],
+        'score' => [
+          '#type' => 'item',
+          '#title' => $this->t('Nota'),
+          '#plain_text' => (string) $latest->get('score')->value,
+        ],
+        'feedback' => [
+          '#type' => 'item',
+          '#title' => $this->t('Feedback'),
+          '#plain_text' => (string) $latest->get('feedback')->value,
+        ],
       ];
     }
     if ($form_state->has('aculta_lms_formative_feedback')) {
@@ -96,7 +104,11 @@ final class AnswerSubmissionForm extends FormBase {
       return $form;
     }
     if (($configuration['question'] ?? '') !== '') {
-      $form['question'] = ['#type' => 'item', '#title' => $this->t('Atividade'), '#plain_text' => $configuration['question']];
+      $form['question'] = [
+        '#type' => 'item',
+        '#title' => $this->t('Atividade'),
+        '#plain_text' => $configuration['question'],
+      ];
     }
     $type = (string) $activity->get('type')->value;
     $answerElement = match ($type) {
@@ -129,7 +141,11 @@ final class AnswerSubmissionForm extends FormBase {
     else {
       $form['answer'] = $answerElement;
     }
-    $form['actions']['submit'] = ['#type' => 'submit', '#value' => $this->t('Enviar resposta'), '#button_type' => 'primary'];
+    $form['actions']['submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Enviar resposta'),
+      '#button_type' => 'primary',
+    ];
     return $form;
   }
 
@@ -242,7 +258,11 @@ final class AnswerSubmissionForm extends FormBase {
     }
     $element = ['#type' => 'fieldset', '#title' => $this->t('Sua resposta'), '#tree' => TRUE];
     foreach ($blanks as $index => $_accepted) {
-      $element['blank_' . $index] = ['#type' => 'textfield', '#title' => $this->t('Lacuna @number', ['@number' => (string) ((int) $index + 1)]), '#required' => FALSE];
+      $element['blank_' . $index] = [
+        '#type' => 'textfield',
+        '#title' => $this->t('Lacuna @number', ['@number' => (string) ((int) $index + 1)]),
+        '#required' => FALSE,
+      ];
     }
     return $element;
   }

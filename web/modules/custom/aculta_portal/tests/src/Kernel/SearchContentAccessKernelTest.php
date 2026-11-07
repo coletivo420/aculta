@@ -78,12 +78,23 @@ final class SearchContentAccessKernelTest extends KernelTestBase {
       ],
       'field_settings' => [
         'title' => ['label' => 'Título', 'datasource_id' => 'entity:node', 'property_path' => 'title', 'type' => 'text'],
-        'status' => ['label' => 'Publicado', 'datasource_id' => 'entity:node', 'property_path' => 'status', 'type' => 'boolean'],
+        'status' => [
+          'label' => 'Publicado',
+          'datasource_id' => 'entity:node',
+          'property_path' => 'status',
+          'type' => 'boolean',
+        ],
       ],
       // Processadores de texto como no índice de produção: sem eles a busca por palavra não casa.
       'processor_settings' => [
         'content_access' => ['weights' => ['preprocess_query' => -30]],
-        'tokenizer' => ['weights' => [], 'spaces' => '', 'ignored' => '._-', 'overlap_cjk' => 1, 'minimum_word_size' => '3'],
+        'tokenizer' => [
+          'weights' => [],
+          'spaces' => '',
+          'ignored' => '._-',
+          'overlap_cjk' => 1,
+          'minimum_word_size' => '3',
+        ],
         'transliteration' => ['weights' => ['preprocess_index' => -2, 'preprocess_query' => -2]],
       ],
       'options' => ['index_directly' => TRUE, 'cron_limit' => 50],

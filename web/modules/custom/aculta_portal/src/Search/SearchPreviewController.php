@@ -79,7 +79,15 @@ final class SearchPreviewController implements ContainerInjectionInterface {
     if (mb_strlen($term) < SearchPageController::MIN_CHARS) {
       return [
         '#cache' => ['max-age' => 0],
-        'hint' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#element_attributes' => new Attribute(['data-portal-ui' => 'hint']), '#value' => $this->t('Digite pelo menos @n caracteres para ver resultados.', ['@n' => SearchPageController::MIN_CHARS])],
+        'hint' => [
+          '#theme' => 'aculta_portal_element',
+          '#tag' => 'p',
+          '#element_attributes' => new Attribute(['data-portal-ui' => 'hint']),
+          '#value' => $this->t(
+            'Digite pelo menos @n caracteres para ver resultados.',
+            ['@n' => SearchPageController::MIN_CHARS],
+          ),
+        ],
       ];
     }
     $preview = $this->searchResults->search($term, self::PREVIEW_LIMIT);
@@ -102,13 +110,20 @@ final class SearchPreviewController implements ContainerInjectionInterface {
     $full->setOption('query', ['q' => $term]);
     return [
       '#cache' => ['max-age' => 0, 'contexts' => ['domain', 'user.permissions']],
-      'list' => ['#theme' => 'item_list', '#items' => $items, '#attributes' => ['data-portal-ui' => 'search-preview-list']],
+      'list' => [
+        '#theme' => 'item_list',
+        '#items' => $items,
+        '#attributes' => ['data-portal-ui' => 'search-preview-list'],
+      ],
       'full' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'search-preview-footer'],
         'link' => [
           '#type' => 'link',
-          '#title' => $this->t('Pesquisa completa por «@term» (@total resultados)', ['@term' => $term, '@total' => $preview['total']]),
+          '#title' => $this->t(
+            'Pesquisa completa por «@term» (@total resultados)',
+            ['@term' => $term, '@total' => $preview['total']],
+          ),
           '#url' => $full,
           '#attributes' => ['data-portal-ui' => 'search-preview-full'],
         ],

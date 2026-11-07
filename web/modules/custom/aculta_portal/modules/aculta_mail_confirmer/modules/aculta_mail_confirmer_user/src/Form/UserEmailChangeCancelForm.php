@@ -100,7 +100,10 @@ class UserEmailChangeCancelForm extends ContentEntityConfirmFormBase {
     $new_email = $this->userData->get('aculta_mail_confirmer_user', $this->entity->id(), 'email_change_new_address');
     return $this->currentUser()->id() == $this->entity->id()
       ? $this->t('Are you sure you want to cancel the pending change of your email address to %email?', ['%email' => $new_email])
-      : $this->t('Are you sure you want to cancel the pending change of the email address of user %user to %email?', ['%email' => $new_email, '%user' => $this->entity->getDisplayName()]);
+      : $this->t('Are you sure you want to cancel the pending change of the email address of user %user to %email?', [
+        '%email' => $new_email,
+        '%user' => $this->entity->getDisplayName(),
+      ]);
   }
 
   /**

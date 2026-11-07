@@ -130,7 +130,11 @@ final class MailTemplateForm extends EntityForm {
         '#title' => $this->t('Prévia (valores de exemplo)'),
         '#open' => TRUE,
         'subject' => ['#markup' => '<p><strong>' . $this->t('Assunto:') . '</strong> ' . htmlspecialchars($preview['subject'], ENT_QUOTES) . '</p>'],
-        'body' => ['#type' => 'container', '#attributes' => ['data-aculta-mailer-preview' => 'corpo'], '#markup' => $preview['body']],
+        'body' => [
+          '#type' => 'container',
+          '#attributes' => ['data-aculta-mailer-preview' => 'corpo'],
+          '#markup' => $preview['body'],
+        ],
       ];
     }
     return $form;

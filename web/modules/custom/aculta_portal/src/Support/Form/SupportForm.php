@@ -88,7 +88,11 @@ final class SupportForm extends FormBase {
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'support-other'],
       'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $this->t('Outras formas de apoio')],
-      'text' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => $this->t('Parcerias institucionais, apoio cultural e patrocínio de projetos também fortalecem nossas iniciativas.')],
+      'text' => [
+        '#theme' => 'aculta_portal_element',
+        '#tag' => 'p',
+        '#value' => $this->t('Parcerias institucionais, apoio cultural e patrocínio de projetos também fortalecem nossas iniciativas.'),
+      ],
       'contact' => PortalLinkElement::build($this->t('Fale com a Associação'), Url::fromUri('internal:/contato'), ['data-portal-ui' => 'aculta-button-outline']),
     ];
     return $form;

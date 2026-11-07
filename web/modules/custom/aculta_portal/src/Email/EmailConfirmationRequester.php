@@ -43,7 +43,8 @@ class EmailConfirmationRequester {
   /**
    * Requests a confirmation for an account.
    *
-   * $responseUrl: para onde a pessoa vai depois de confirmar (padrão: painel). A conta simplificada usa a etapa de senha.
+   * $responseUrl: para onde a pessoa vai depois de confirmar (padrão: painel). A conta simplificada usa a etapa de
+   * senha.
    *
    * ACCEPTED means Email Confirmer's MailManager call returned success. It does
    * not establish final delivery to the recipient's mailbox.

@@ -17,8 +17,8 @@ use Drupal\Core\State\StateInterface;
  * (texto de cota ou limite no erro ou no bounce, ver QuotaSignal). Com qualquer uma, o transporte sai de uso até o fim
  * do sinal, e a mensagem segue pelo transporte de contingência.
  *
- * Configuração: `aculta_mailer.policy:rate_limit.<transporte>.<janela>` (hour, day, week, month). A chave `quota.<transporte>`
- * continua valendo como limite diário.
+ * Configuração: `aculta_mailer.policy:rate_limit.<transporte>.<janela>` (hour, day, week, month).
+ * A chave `quota.<transporte>` continua valendo como limite diário.
  */
 final class TransportQuota {
 

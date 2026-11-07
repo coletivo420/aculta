@@ -202,14 +202,46 @@ final class PortalRequirementsController extends ControllerBase {
   public function overview(): array {
     $rows = [];
     foreach ([
-      ['aculta_portal.requirements', $this->t('Status'), $this->t('Confira os requisitos, versões instaladas e pendências conhecidas das integrações do Portal.')],
-      ['aculta_portal.turnstile_settings', $this->t('Turnstile (anti-bot)'), $this->t('Ativar ou desativar o desafio Turnstile em cadastro, login, recuperação de senha e contato. Só ativa com a chave configurada no ambiente.')],
-      ['aculta_portal_cep.settings', $this->t('Consulta de CEP'), $this->t('Banco de dados padrão e ordem das fontes de consulta de CEP (base local, ViaCEP e BrasilAPI), com a ativação de cada uma.')],
-      ['aculta_portal.support_settings', $this->t('Configurações do Apoio'), $this->t('Edite o texto institucional exibido na página pública Apoie.')],
-      ['aculta_portal.deployer_status', $this->t('ACULTA Deployer: status'), $this->t('Relatório de fronteiras, correções de deploy abertas e credenciais por ambiente. Somente leitura.')],
-      ['aculta_portal.secrets_import', $this->t('Credenciais do ambiente'), $this->t('Cadastrar e conferir as credenciais do ambiente. Valores salvos ficam mascarados e podem ser revelados pelo botão de olho.')],
-      ['entity.simple_sitemap.collection', $this->t('Sitemaps: variantes'), $this->t('Variantes de sitemap por purpose (MAIN, SUPPORT, WIKI, MAGAZINE, COURSES) e o índice em /sitemap.xml.')],
-      ['simple_sitemap.settings', $this->t('Sitemaps: configurações'), $this->t('Configurações gerais do sitemap (base URL, geração e limites).')],
+      [
+        'aculta_portal.requirements',
+        $this->t('Status'),
+        $this->t('Confira os requisitos, versões instaladas e pendências conhecidas das integrações do Portal.'),
+      ],
+      [
+        'aculta_portal.turnstile_settings',
+        $this->t('Turnstile (anti-bot)'),
+        $this->t('Ativar ou desativar o desafio Turnstile em cadastro, login, recuperação de senha e contato. Só ativa com a chave configurada no ambiente.'),
+      ],
+      [
+        'aculta_portal_cep.settings',
+        $this->t('Consulta de CEP'),
+        $this->t('Banco de dados padrão e ordem das fontes de consulta de CEP (base local, ViaCEP e BrasilAPI), com a ativação de cada uma.'),
+      ],
+      [
+        'aculta_portal.support_settings',
+        $this->t('Configurações do Apoio'),
+        $this->t('Edite o texto institucional exibido na página pública Apoie.'),
+      ],
+      [
+        'aculta_portal.deployer_status',
+        $this->t('ACULTA Deployer: status'),
+        $this->t('Relatório de fronteiras, correções de deploy abertas e credenciais por ambiente. Somente leitura.'),
+      ],
+      [
+        'aculta_portal.secrets_import',
+        $this->t('Credenciais do ambiente'),
+        $this->t('Cadastrar e conferir as credenciais do ambiente. Valores salvos ficam mascarados e podem ser revelados pelo botão de olho.'),
+      ],
+      [
+        'entity.simple_sitemap.collection',
+        $this->t('Sitemaps: variantes'),
+        $this->t('Variantes de sitemap por purpose (MAIN, SUPPORT, WIKI, MAGAZINE, COURSES) e o índice em /sitemap.xml.'),
+      ],
+      [
+        'simple_sitemap.settings',
+        $this->t('Sitemaps: configurações'),
+        $this->t('Configurações gerais do sitemap (base URL, geração e limites).'),
+      ],
     ] as [$route, $title, $description]) {
       $url = Url::fromRoute($route);
       if (!$url->access($this->account)) {
@@ -409,7 +441,12 @@ final class PortalRequirementsController extends ControllerBase {
       'extras_title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('Extras aplicados')],
       'extras' => [
         '#type' => 'table',
-        '#header' => [$this->t('Implementação'), $this->t('Efeito aplicado'), $this->t('Serviço'), $this->t('Documentação')],
+        '#header' => [
+          $this->t('Implementação'),
+          $this->t('Efeito aplicado'),
+          $this->t('Serviço'),
+          $this->t('Documentação'),
+        ],
         '#rows' => $this->implementationRegistry->rows(),
         '#empty' => $this->t('Nenhuma implementação extra está registrada.'),
       ],
@@ -439,9 +476,18 @@ final class PortalRequirementsController extends ControllerBase {
       $rows[] = [$this->t('Como publicar'), $this->t('Execute a verificação de robots do ACULTA Deployer no ambiente.')];
     }
     else {
-      $rows[] = [$this->t('Última verificação'), $this->t('@at (ambiente @env)', ['@at' => (string) ($result['checked_at'] ?? ''), '@env' => (string) ($result['environment'] ?? '')])];
+      $rows[] = [
+        $this->t('Última verificação'),
+        $this->t('@at (ambiente @env)', [
+          '@at' => (string) ($result['checked_at'] ?? ''),
+          '@env' => (string) ($result['environment'] ?? ''),
+        ]),
+      ];
       if (($result['environment'] ?? NULL) !== $environment) {
-        $rows[] = [$this->t('Atenção'), $this->t('O resultado publicado é de outro ambiente. Execute a verificação de robots neste ambiente.')];
+        $rows[] = [
+          $this->t('Atenção'),
+          $this->t('O resultado publicado é de outro ambiente. Execute a verificação de robots neste ambiente.'),
+        ];
       }
       $rows[] = [$this->t('Resultado'), ($result['ok'] ?? FALSE) === TRUE
           ? $this->t('OK: @passed verificações aprovadas.', ['@passed' => (int) ($result['passed'] ?? 0)])
