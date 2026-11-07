@@ -7,7 +7,6 @@
 use Drupal\Core\Menu\MenuTreeParameters;
 
 foreach (['footer', 'tools', 'content', 'navigation-user-links'] as $menu) {
-  $links = \Drupal::service('plugin.manager.menu.link')->loadLinksByRoute('', [], $menu);
   $count = \Drupal::service('menu.link_tree')->load($menu, new MenuTreeParameters());
   echo $menu . ': ' . count($count) . ' roots' . PHP_EOL;
 }

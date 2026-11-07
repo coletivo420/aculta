@@ -16,7 +16,6 @@ declare(strict_types=1);
 $root = dirname(__DIR__);
 $theme = $root . '/web/themes/custom/aculta420_v2';
 $uiStylesFile = $theme . '/aculta420_v2.ui_styles.yml';
-$tokensFile = $theme . '/src/Hook/PortalUiHooks.php';
 $schemesFile = $theme . '/src/Palette/PurposePaletteSchemes.php';
 $buttonCssFile = $theme . '/components/button/button.css';
 $cardCssFile = $theme . '/components/card-cultural/card-cultural.css';
@@ -38,12 +37,12 @@ if ($yamlContent === FALSE) {
 
 // Simple YAML parser for standard ui_styles structures.
 // In runtime, symfony/yaml or pecl-yaml may be available, but we can use yaml_parse or Symfony Yaml if available.
+require_once $root . '/vendor/autoload.php';
 if (function_exists('yaml_parse')) {
   $definitions = yaml_parse($yamlContent);
 }
 else {
-  require_once $root . '/vendor/autoload.php';
-  $definitions = Yaml::parse($yamlContent);
+  $definitions = \Symfony\Component\Yaml\Yaml::parse($yamlContent);
 }
 
 if (!is_array($definitions) || empty($definitions)) {
@@ -54,11 +53,23 @@ require_once $schemesFile;
 use Symfony\Component\Yaml\Yaml;
 use Drupal\aculta420_v2\Palette\PurposePaletteSchemes;
 
-$tokensSource = (string) file_get_contents($tokensFile);
+// Lê TOKENS sem eval: cada entrada é 'chave' => ['classe', ...]. Qualquer outra forma é recusada.
+$tokensSource = (string) file_get_contents($root . '/web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php');
 if (!preg_match('/TOKENS = \[(.*?)\n  \];/s', $tokensSource, $m)) {
   $fail("TOKENS não encontrado em PortalUiHooks.php.");
 }
-eval('$portalTokens = [' . $m[1] . '];');
+$portalTokens = [];
+foreach (preg_split('/\R/', trim($m[1])) as $linha) {
+  $linha = trim($linha);
+  if ($linha === '' || str_starts_with($linha, '//')) {
+    continue;
+  }
+  if (!preg_match("/^'([^']+)'\s*=>\s*\[((?:'[^']*'(?:,\s*)?)*)\],?$/", $linha, $entrada)) {
+    $fail("Entrada de TOKENS fora do formato esperado: " . $linha);
+  }
+  preg_match_all("/'([^']*)'/", $entrada[2], $classes);
+  $portalTokens[$entrada[1]] = $classes[1];
+}
 
 $mappedClasses = [];
 foreach ($portalTokens as $classes) {
