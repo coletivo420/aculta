@@ -12,8 +12,9 @@ use Drupal\aculta_portal\Checkout\OrderTypeCheckoutFlows;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Contexto LMS: compras de curso, pedidos do tipo configurado (padrão `curso`) e o histórico `curso`,
- * no carrinho e no checkout comuns do Commerce.
+ * Contexto LMS: compras de curso, pedidos do tipo configurado (padrão `curso`) e o histórico `curso`.
+ *
+ * Vale no carrinho e no checkout comuns do Commerce.
  *
  * O LMS lê o mesmo valor de `CheckoutSettings` ao criar compras e reconhecer pedidos; o provider apenas o declara.
  */

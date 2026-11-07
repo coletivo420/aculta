@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Instalação e atualização do módulo aculta_portal.
+ */
+
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\profile\Entity\ProfileType;

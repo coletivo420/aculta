@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * Hooks do módulo aculta_lms_agenda.
+ *
  * @file
  */
 

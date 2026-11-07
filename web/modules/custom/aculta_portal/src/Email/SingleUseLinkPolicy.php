@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Email;
 
 /**
- * Validade dos links de acesso único do projeto: 24 horas, para todos os módulos
- * (ver docs/portal/LINKS-DE-USO-UNICO.md).
+ * Validade dos links de acesso único: 24 horas, para todos os módulos.
+ *
+ * Ver docs/portal/LINKS-DE-USO-UNICO.md.
  *
  * Fonte única da regra no Portal. O aculta_mailer tem a mesma constante (módulo não pode importar classe do Portal, que
  * depende dele); o gate scripts/validate-single-use-links.php confere que os dois valores são iguais.

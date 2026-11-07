@@ -38,7 +38,8 @@ function aculta_lms_h5p_install(): void {
  * @param string $phase
  *   The phase in which requirements are checked.
  *
- * @return array $requirements Requirements and their severity
+ * @return array
+ *   Requirements and their severity.
  */
 #[\Drupal\Core\Hook\Attribute\LegacyRequirementsHook]
 function aculta_lms_h5p_requirements($phase) {
@@ -627,6 +628,7 @@ function aculta_lms_h5p_schema() {
 
 /**
  * Removes config for library update and content type update times.
+ *
  * This has been moved to the State API.
  */
 function aculta_lms_h5p_update_8001(&$sandbox) {
@@ -807,6 +809,7 @@ function aculta_lms_h5p_update_8005() {
  * Historical placeholder. The current entity is installed by update 8007.
  *
  * @deprecated in aculta_lms_h5p: The H5P entity ID changed in update 8007.
+ * @see aculta_lms_h5p_update_8007()
  */
 function aculta_lms_h5p_update_8006(): void {
 }

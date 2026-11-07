@@ -22,8 +22,9 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 final class MailWebhookController extends ControllerBase {
 
   /**
-   * Teto do corpo de um pedido de evento. Um evento do Brevo tem poucas centenas de bytes;
-   * o teto impede corpos grandes.
+   * Teto do corpo de um pedido de evento.
+   *
+   * Um evento do Brevo tem poucas centenas de bytes; o teto impede corpos grandes.
    */
   public const MAX_BODY_BYTES = 16384;
 

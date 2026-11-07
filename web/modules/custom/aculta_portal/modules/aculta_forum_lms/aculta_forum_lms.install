@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * Instalação e atualização do módulo aculta_forum_lms.
+ *
  * @file
  */
 
@@ -12,7 +14,9 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 
 /**
+ * Troca o alvo de referência de field_lms_activity para aculta_lms_activity.
  *
+ * Só atua quando o campo ainda aponta para outro tipo e há referências gravadas.
  */
 function aculta_forum_lms_update_10001(): string {
   $entity_type_manager = \Drupal::entityTypeManager();

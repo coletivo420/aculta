@@ -11,8 +11,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Edições de perfil (bio e redes sociais) só existem dentro do modal: abertura por AJAX (drupal_modal) ou envio
- * do próprio formulário.
+ * Edições de perfil (bio e redes sociais) só existem dentro do modal.
+ *
+ * A abertura é por AJAX (drupal_modal) ou pelo envio do próprio formulário.
  *
  * Mesmo padrão do modal de foto (UserPictureForm, #action na rota): visita direta à URL responde 403.
  */
