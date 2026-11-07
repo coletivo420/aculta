@@ -61,7 +61,7 @@ final class PurposeContainerLayoutUnitTest extends UnitTestCase {
       'container_width' => 1400,
       'narrow_width' => 800,
     ], 'main');
-    self::assertSame(['mode' => 'full', 'container_width' => 1400, 'narrow_width' => 800], $valid);
+    self::assertSame(['mode' => 'full', 'style' => 'boxed', 'container_width' => 1400, 'narrow_width' => 800], $valid);
 
     $invalid = PurposeContainerLayout::sanitizeSetting([
       'mode' => 'x; background:red',
