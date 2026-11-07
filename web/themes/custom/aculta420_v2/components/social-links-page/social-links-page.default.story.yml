@@ -7,5 +7,7 @@ props:
   has_links: true
   theme_preset: classic
 slots:
-  owner_identity: '<p>Identidade pública autorizada</p>'
-  links: '<ul data-portal-ui="social-links-list"><li><a data-portal-ui="social-links-channel" href="https://example.invalid/projeto">Projeto demonstrativo</a></li></ul>'
+  owner_identity:
+    '#markup': '<p>Identidade pública autorizada</p>'
+  links:
+    '#markup': '<ul data-portal-ui="social-links-list"><li><a data-portal-ui="social-links-channel" href="/">Página inicial da ACULTA</a></li></ul>'

@@ -15,6 +15,7 @@
 - As prévias de Conexões e Calendário anulam, só na galeria, o posicionamento absoluto do dashboard; slots das stories de Detalhes do perfil e Navegação de suíte usam render arrays `markup` para produzir HTML no componente real, sem duplicar markup no template da galeria. Renderer Drupal: 4/4 componentes produziram a estrutura esperada.
 - Stories sem preview agora têm dados; o menu do Studio usa os itens atuais do `AccountExperienceProvider`, stories PHP recebem props/slots resolvidas pelo preprocess do tema, e a barra institucional do preview flui dentro do bloco. O diálogo Selecionar local declara a biblioteca de interação e usa o destino de rota real. Renderer Drupal e dependências de JS: PASS nos quatro componentes desta rodada.
 - Badge, Button e Ícone ganharam stories para renderizar seus SDCs; slots de Conexões do Studio, Rodapé, Verbete, Data Table e Form Field passaram a usar render arrays Drupal (`markup` ou `html_tag`) em vez de texto escapado. Renderer Drupal: 12/12 stories/componentes PASS, incluindo variantes de rodapé, Wiki, tabela e formulário.
+- Breadcrumb, Cartão de autoria e Página de links sociais agora fornecem slots como render arrays `#markup`, para o Drupal renderizar a trilha, avatar e conteúdo de links sem escapar tags. Cabeçalho Wiki420 comprovado com busca gerada pela apresentação atual do domínio. Renderer: 3/3 SDCs mais busca Wiki PASS.
 
 ## Não versionado — conformidade Stylelint
 

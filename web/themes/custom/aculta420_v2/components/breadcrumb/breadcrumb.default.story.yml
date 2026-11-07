@@ -2,4 +2,5 @@ name: Trilha de navegação
 props:
   label: Navegação estrutural
 slots:
-  items: '<li class="aculta-breadcrumb__item"><a class="aculta-breadcrumb__link" href="/">Início</a></li><li class="aculta-breadcrumb__item"><a class="aculta-breadcrumb__link" href="/eventos">Eventos</a></li><li class="aculta-breadcrumb__item aculta-breadcrumb__current" aria-current="page">Agenda cultural</li>'
+  items:
+    '#markup': '<li class="aculta-breadcrumb__item"><a class="aculta-breadcrumb__link" href="/">Início</a></li><li class="aculta-breadcrumb__item"><a class="aculta-breadcrumb__link" href="/culturas">Culturas</a></li><li class="aculta-breadcrumb__item aculta-breadcrumb__current" aria-current="page">Agenda cultural</li>'
