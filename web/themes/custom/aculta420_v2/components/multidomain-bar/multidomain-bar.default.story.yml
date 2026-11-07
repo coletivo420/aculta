@@ -1,25 +1,4 @@
-name: Barra institucional e menu de conta
-description: Barra institucional ACULTA com valores padrão do template page.html.twig fora da área de conta.
+name: Barra institucional
+description: Barra institucional com os dados reais da página (carrinho, mensagens, alertas e busca) para o usuário atual.
 component: aculta420_v2:multidomain-bar
-props:
-  brand_home_url: /
-  logo_base_url: /themes/custom/aculta420_v2/assets/logos
-  logo_alt: 'ACULTA - Associação Cultural Antiproibicionista'
-  is_account_domain: false
-  show_utility_bar: true
-  cart_url: /carrinho
-  cart_count: 0
-  cart_empty: true
-  cart_total: ''
-  cart_sites: []
-  cart_checkout_url: ''
-  messages_url: null
-  messages_count: 0
-  messages_all_url: ''
-  alerts_url: null
-  alerts_count: 0
-  alerts_count_kind: active
-  alerts_all_url: ''
-slots:
-  search: '<a href="/busca/popup" class="aculta-utility-trigger">Buscar</a>'
-  account_menu: '<ul class="menu"><li><a href="/conta" data-portal-ui="account-home">Minha conta</a></li><li><a href="/sair">Sair</a></li></ul>'
+class: Drupal\aculta420_v2\Story\MultidomainBarStory
