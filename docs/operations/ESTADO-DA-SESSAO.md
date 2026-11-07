@@ -5,11 +5,11 @@
 # V2 — UI Patterns Library — 2026-11-07
 
 - **Objetivo:** organizar visualmente `/painel-administrativo/aparencia/ui/components`, corrigir a barra institucional e definir container próprio centralizado.
-- **Estado:** implementação local concluída; rotas UI Patterns excluídas do container por purpose. Overview usa largura máxima 1200px, sem caixa externa; cada componente em bloco vertical, preservando layouts nativos internos. Barra mantém marca e oculta utilitários quebrados.
+- **Estado:** implementação local publicada; rotas UI Patterns excluídas do container por purpose. Overview usa largura máxima 1200px, sem caixa externa; cada componente em bloco vertical, preservando layouts nativos internos. Ajuste seguinte ativa wrapper oficial de stories e remove recorte de pintura. Barra mantém marca e oculta utilitários quebrados.
 - **Decisões:** stories/pré-visualizações aparecem antes dos metadados recolhidos. CSS contém overflow e elementos posicionados por componente. Nada de colunas artificiais.
 - **Cuidados:** preview Chromium com CSS local injetado confirmou 108 blocos e sem overflow em 320/1440. Drupal respondeu 200 após corrigir declaração duplicada que causava 500. Cache Twig/agregados no Runtime não foi reconstruído; aceite visual com assets servidos permanece pendente.
-- **Commits e arquivos:** entrega a publicar; tema `aculta420_v2` (hooks, layout, templates, CSS, testes, TODO, CHANGELOG e docs).
-- **Verificações:** Stylelint, PHPUnit focado (19 testes/100 assertions), PHP lint, foundations (2.468 checks), foundations V2 (83 pares), token budget e `git diff --check` PASS.
+- **Commits e arquivos:** `ed04d341e4` layout inicial; ajuste de wrapper/containment a publicar. Tema `aculta420_v2` (hooks, layout, templates, CSS, testes, TODO, CHANGELOG e docs).
+- **Verificações:** Stylelint, PHPUnit focado (19 testes/100 assertions), PHP lint, foundations (2.468 checks), foundations V2 (83 pares), token budget e `git diff --check` PASS. Ajuste mais recente repetiu Stylelint, PHPUnit focado e diff check.
 - **Pendências e bloqueios:** validar a página após rebuild do cache no Runtime de desenvolvimento.
 - **Próximo passo:** reconstruir cache Drupal no Runtime de desenvolvimento e fazer aceite visual final responsivo.
 

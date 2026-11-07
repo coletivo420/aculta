@@ -106,7 +106,7 @@ body.aculta-component-library-page {
   border-radius: var(--radius-lg);
   background: var(--color-surface);
   box-shadow: var(--shadow-raised);
-  contain: layout paint;
+  contain: layout;
   min-inline-size: 0;
   overflow-wrap: anywhere;
 }

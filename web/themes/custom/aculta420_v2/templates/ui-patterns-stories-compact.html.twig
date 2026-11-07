@@ -19,11 +19,11 @@
               {% if variant.description %}
                 <p class="ui_patterns_variant__description">{{ variant.description }}</p>
               {% endif %}
-              {{ component_story(component.id, story_id, {}, {variant: variant_id}) }}
+              {{ component_story(component.id, story_id, {}, {variant: variant_id}, true) }}
             </section>
           {% endfor %}
         {% else %}
-          {{ component_story(component.id, story_id) }}
+          {{ component_story(component.id, story_id, {}, {}, true) }}
         {% endif %}
       </div>
     </section>
