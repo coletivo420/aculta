@@ -2453,3 +2453,17 @@ body.path-ganjalab .aculta-main :is(h1, h2, h3, h4, h5, h6) {
   display: block;
   margin-block-start: var(--spacing-md);
 }
+
+/* Caixas do carrossel com tamanho fixo; o botão fica sempre na mesma posição (base da caixa). */
+.aculta-account-entry .aculta-xp-carousel__track > li {
+  display: flex;
+}
+.aculta-account-entry .aculta-xp-carousel__track > li > .aculta-xp-card {
+  block-size: 24rem;
+  flex: 1 1 auto;
+  min-block-size: 0;
+  overflow: hidden;
+}
+.aculta-account-entry .aculta-xp-carousel__track .aculta-xp-card__action {
+  margin-block-start: auto;
+}

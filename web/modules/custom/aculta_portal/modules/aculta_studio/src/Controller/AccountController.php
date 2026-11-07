@@ -58,7 +58,7 @@ final class AccountController {
    */
   private const CARD_META = [
     'marley' => ['icon' => 'book-open', 'description' => 'Criação e moderação da Revista, moderação do Fórum e Galerias.'],
-    'ganjalab' => ['icon' => 'flask', 'description' => 'Aprendizagem: painel e interface do estudante. Regras acadêmicas ficam no LMS.'],
+    'ganjalab' => ['icon' => 'flask', 'description' => 'Aprendizagem: painel e interface do estudante.'],
     'we_sativa' => ['icon' => 'plant', 'description' => 'Área integrada de contribuição à Wiki.'],
     'culturas' => ['icon' => 'users-three', 'description' => 'Eventos e organizações culturais da ACULTA.'],
   ];
