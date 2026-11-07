@@ -49,7 +49,7 @@
   background: var(--color-surface-raised);
   font-size: var(--font-size-sm);
   font-weight: 600;
-  min-block-size: var(--tap-target-min);
+  min-block-size: 2.5rem;
   padding-inline: var(--spacing-md);
 }
 
@@ -75,13 +75,13 @@
 .aculta-wiki-article__discussion,
 .aculta-forum-topic__discussion {
   display: grid;
-  padding: var(--spacing-base);
+  padding: 1.25rem 1.5rem;
   border: 1px solid var(--color-border);
   border-inline-start: .25rem solid var(--color-brand-primary);
-  border-radius: var(--radius-base);
+  border-radius: .75rem;
   background: var(--color-surface-raised);
-  gap: var(--spacing-md);
-  margin-block: var(--spacing-lg-compact) 0;
+  gap: .75rem;
+  margin-block: 1.5rem 0;
   min-inline-size: 0;
 }
 
@@ -92,12 +92,12 @@
   grid-template-areas: "first previous" "next last" "range range" "status status" "unread unread";
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: center;
-  padding: var(--spacing-sm);
+  padding: .375rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-base);
   background: var(--color-surface-raised);
   box-shadow: var(--shadow-sm);
-  gap: var(--spacing-xs);
+  gap: .2rem;
   margin-block: var(--spacing-md);
   margin-inline: auto;
   min-inline-size: 0;
@@ -111,7 +111,7 @@
   inline-size: 100%;
   min-block-size: var(--tap-target-min);
   min-inline-size: 0;
-  padding-inline: var(--spacing-xs);
+  padding-inline: .2rem;
 }
 
 [data-aculta-discussion-progress] :is(button, input):focus-visible,
@@ -134,12 +134,12 @@
 
 .field--name-field-aculta-discussion .comment-comment-form {
   display: grid;
-  padding: var(--spacing-md);
+  padding: .875rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-base);
   background: var(--color-surface-raised);
   gap: var(--spacing-md);
-  margin-block: var(--spacing-base);
+  margin-block: 1rem;
   min-inline-size: 0;
 }
 
