@@ -2,6 +2,17 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
+# V2 — Stylelint CSS — 2026-11-07
+
+- **Objetivo:** corrigir as violações Stylelint no CSS da V2 e fazer a configuração compatível com os contratos locais.
+- **Estado:** CSS normalizado pelo preset Drupal; nenhuma mudança intencional de apresentação. Stylelint e gate de fundações PASS.
+- **Decisões e alternativas descartadas:** mantidas regras compactas usadas pelo tema; exceções para `dvh`, `@container`, `@starting-style`, `.75rem` e nomes Inter/Oswald, porque o preset legado conflita com recursos e contratos validados da V2.
+- **Cuidados:** auto-fix reordena declarações e normaliza valores equivalentes; `color-scheme` permanece no grupo claro. Não substituir o preset sem repetir os gates de fundações.
+- **Commits e arquivos:** `ecdb0a84f8`; `.stylelintrc.json`, CSS em `web/themes/custom/aculta420_v2`, TODO, CHANGELOG e roadmap.
+- **Verificações:** `npm run lint:css`, `php scripts/validate-aculta420-v2-foundations.php`, `php scripts/validate-agent-token-budget.php` e `git diff --check` PASS. Captura visual não repetida: CSS passou lint e gate de tokens; sem alteração de comportamento pretendida.
+- **Pendências e bloqueios:** nenhuma desta entrega; validação visual de fases anteriores mantém seu status próprio.
+- **Próximo passo:** seguir com o próximo item do roadmap V2.
+
 # V2 — formulário Revista — 2026-11-06
 
 - **Objetivo:** resolver 404 e validar CKEditor no Runtime.
@@ -23,15 +34,4 @@
 - **Verificações:** foundations PASS (75 pares/6 faixas), diff check PASS. Editor: 5 checks PASS; admin não rodou.
 - **Pendências:** host/ULI e CKEditor; aceite F2; config local/legada e chaves fora da exportação.
 - **Próximo passo:** restaurar rota autenticada, repetir editor e obter aceite F2.
-
-# Runtime ACULTA420 V2 — Revista, PHPUnit, purpose e botões — 2026-11-06
-
-- **Objetivo:** reconciliar configuração de teste, validar accent global da Revista, PHPUnit, palette/botões e registrar a evidência do shell.
-- **Estado:** origem `aculta420_v2.settings`; `preprocess_node` adiciona `revista-teaser--accent-{green|yellow|red}` ao wrapper do node e ao SDC, com dependência de cache. Form UI Styles submetido; quatro teasers passaram no Firefox ESR (claro/escuro, 320/1440, sem overflow). Accent global restaurado vazio; banco: 5 nós Revista, 0 accents próprios; node 602 vazio. Campo legado fica fora do fluxo e preservado sem remoção destrutiva.
-- **Configuração ativa:** CAPTCHA global `0`; divergências de captcha display e `core.extension` reconciliadas; `aculta420_v2.settings` criada. `config:status` ainda lista blocos/config local do tema administrativo, Turnstile sensível e definições legadas de field apenas no Sync.
-- **Commits publicados antes deste handoff:** `c8e9f37f9e` (config/reconciliação e shell), `42ca2af7e9` (matriz palette/botões), `80aae13a1c` (wrapper/cache/teste Revista), `33561c8743` (manifest Revista), `77904cc2ea` (suíte de botões).
-- **Verificações:** UI Styles 24 PASS; foundations 73 pares texto + 6 faixas PASS; SDC schema 55/764 PASS; SDC render 41 PASS; PHPUnit tema 12 testes/56 assertions PASS. Bootstrap criou diretório de saída a partir de ausência e a execução não mostrou aviso. Firefox: palette/botões 358/360; shell 108/120; os PNGs estão ignorados e só manifests versionados.
-- **Pendências:** F3 permanece aberta pelos dois overflows do Fórum a 320 px. F2 permanece para aceitação visual do responsável; a matriz também detectou contraste insuficiente da navegação em claro a 1440 px nos dez purposes. A suíte ampla `aculta-editor/access.py`, após corrigir seu import sob `-I`, parou por ausência de CKEditor no formulário de Revista para `content_editor`; o formulário administrativo de UID 1 foi validado separadamente. Não alterar o shell nesta fase.
-- **Próximo passo:** tratar o overflow do Fórum sem alterar o shell e repetir a suíte de botões; aguardar aceitação visual de F2 e verificar o fluxo editor quando o CKEditor do Runtime estiver disponível.
-
 
