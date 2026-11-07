@@ -291,3 +291,71 @@
 .navigation-bar:has(.navigation-bar__search) .navigation-bar__logo {
   max-block-size: 3.85rem;
 }
+
+/* Espaçamentos do cabeçalho da wiki, como na V1 (valores literais da V1 nos mesmos pontos de quebra). */
+.navigation-bar:has(.navigation-bar__search) .navigation-bar__inner {
+  gap: .5rem;
+  padding-block: .75rem;
+}
+.navigation-bar:has(.navigation-bar__search) .navigation-bar__brand {
+  flex: 0 0 7rem;
+  min-inline-size: 7rem;
+}
+.navigation-bar__search {
+  margin-inline-start: 0;
+}
+.navigation-bar__search form {
+  gap: .375rem;
+}
+.navigation-bar__search .form-submit {
+  flex: 0 0 auto;
+  inline-size: auto;
+  min-block-size: 2.75rem;
+  padding-inline: .625rem;
+}
+@media (min-width: 36rem) {
+  .navigation-bar:has(.navigation-bar__search) .navigation-bar__inner {
+    gap: .75rem;
+  }
+  .navigation-bar:has(.navigation-bar__search) .navigation-bar__brand {
+    flex-basis: 8.5rem;
+  }
+  .navigation-bar__search form {
+    gap: .5rem;
+  }
+  .navigation-bar__search .form-submit {
+    padding-inline: 1rem;
+  }
+}
+@media (min-width: 48rem) {
+  .navigation-bar:has(.navigation-bar__search) .navigation-bar__inner {
+    gap: clamp(.5rem, 2vw, 1.5rem);
+  }
+  .navigation-bar:has(.navigation-bar__search) .navigation-bar__brand {
+    flex-basis: 12rem;
+  }
+  .navigation-bar__search {
+    margin-inline-start: clamp(.5rem, 3vw, 2rem);
+  }
+}
+
+/* Abaixo do desktop: marca e botão Menu na primeira linha; a busca ocupa a largura toda na segunda. */
+@media (max-width: 68.6875rem) {
+  .navigation-bar:has(.navigation-bar__search) .navigation-bar__inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .navigation-bar:has(.navigation-bar__search) .navigation-bar__brand {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .navigation-bar:has(.navigation-bar__search) .navigation-bar__toggle {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .navigation-bar__search {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin-inline: 0;
+    max-inline-size: none;
+  }
+}
