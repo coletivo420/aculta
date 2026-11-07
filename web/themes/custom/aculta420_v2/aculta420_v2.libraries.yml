@@ -83,3 +83,10 @@ studio-connections-page:
   css:
     theme:
       components/studio-connections-page/studio-connections-page.css: {}
+
+forum-quote:
+  js:
+    js/forum-quote.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

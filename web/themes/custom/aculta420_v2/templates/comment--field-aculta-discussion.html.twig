@@ -1,3 +1,4 @@
+{{ attach_library('aculta420_v2/forum-quote') }}
 {# Preserve the Drupal comment render array, presenting it via forum-post-card. #}
 {% set author_card = content.author_card|default(null) %}
 {% set comment_body = content|without('author_card', 'links') %}
