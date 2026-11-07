@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
-use Drupal\Core\Template\Attribute;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_portal\Presentation\AccountCoursePresenter;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -12,7 +11,8 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Presents the current user's LMS memberships inside ACCOUNT. */
+/**
+ * Presents the current user's LMS memberships inside ACCOUNT. */
 final class AccountCoursesController implements ContainerInjectionInterface {
 
   public function __construct(
@@ -21,6 +21,9 @@ final class AccountCoursesController implements ContainerInjectionInterface {
     private readonly TranslationInterface $translation,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.presentation.account_course'),
@@ -29,6 +32,9 @@ final class AccountCoursesController implements ContainerInjectionInterface {
     );
   }
 
+  /**
+   *
+   */
   public function page(): array {
     $view = $this->presenter->present($this->currentAccount);
     $items = $view['items'];

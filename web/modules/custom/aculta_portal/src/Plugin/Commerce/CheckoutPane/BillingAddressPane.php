@@ -37,13 +37,17 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
 
   protected InlineFormManager $inlineFormManager;
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?CheckoutFlowInterface $checkout_flow = NULL) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition, $checkout_flow);
     $instance->inlineFormManager = $container->get('plugin.manager.commerce_inline_form');
     return $instance;
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function buildPaneSummary() {
     if (!$profile = $this->billingCopy()) {
       return [];
@@ -51,7 +55,8 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     return $this->entityTypeManager->getViewBuilder('profile')->view($profile, 'default');
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function buildPaneForm(array $pane_form, FormStateInterface $form_state, array &$complete_form) {
     $profile = $this->customerProfile() ?? $this->entityTypeManager->getStorage('profile')->create([
       'type' => 'authenticated',
@@ -125,7 +130,8 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     }
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function submitPaneForm(array &$pane_form, FormStateInterface $form_state, array &$complete_form) {
     /** @var \Drupal\commerce\Plugin\Commerce\InlineForm\EntityInlineFormInterface $inline_form */
     $inline_form = $pane_form['profile']['#inline_form'];
@@ -145,7 +151,8 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     $this->order->setBillingProfile($this->syncBillingCopy($profile));
   }
 
-  /** Perfil do cliente do pedido (Meus Dados > Endereço, tipo authenticated), ou NULL. */
+  /**
+   * Perfil do cliente do pedido (Meus Dados > Endereço, tipo authenticated), ou NULL. */
   private function customerProfile(): ?ProfileInterface {
     if ((int) $this->order->getCustomerId() <= 0) {
       return NULL;
@@ -167,7 +174,8 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     return $customer ? $this->syncBillingCopy($customer) : $this->order->getBillingProfile();
   }
 
-  /** Copia o endereço do perfil do cliente para o perfil de cobrança (salvo se trocou); o pedido só é ligado em memória. */
+  /**
+   * Copia o endereço do perfil do cliente para o perfil de cobrança (salvo se trocou); o pedido só é ligado em memória. */
   private function syncBillingCopy(ProfileInterface $customer): ProfileInterface {
     $storage = $this->entityTypeManager->getStorage('profile');
     $billing = $this->order->getBillingProfile() ?? $storage->create(['type' => 'authenticated', 'uid' => 0]);
@@ -191,7 +199,8 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     return $billing;
   }
 
-  /** Bairro (dependent_locality) obrigatório: o endereço salvo precisa ter bairro preenchido. */
+  /**
+   * Bairro (dependent_locality) obrigatório: o endereço salvo precisa ter bairro preenchido. */
   private function hasNeighborhood($profile): bool {
     if (!$profile || !$profile->hasField('field_address') || $profile->get('field_address')->isEmpty()) {
       return FALSE;
@@ -199,7 +208,8 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     return trim((string) $profile->get('field_address')->first()->getDependentLocality()) !== '';
   }
 
-  /** Rua, número e S/N salvos no logradouro (para preencher o formulário ao voltar à etapa). */
+  /**
+   * Rua, número e S/N salvos no logradouro (para preencher o formulário ao voltar à etapa). */
   private function savedParts($profile): array {
     if (!$profile || !$profile->hasField('field_address') || $profile->get('field_address')->isEmpty()) {
       return ['street' => '', 'number' => '', 'sn' => FALSE];

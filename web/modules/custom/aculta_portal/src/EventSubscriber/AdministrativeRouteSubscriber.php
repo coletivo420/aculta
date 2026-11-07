@@ -77,6 +77,9 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
     return [RoutingEvents::ALTER => [['onAlterRoutes', -3000]]];
   }
 
+  /**
+   *
+   */
   public function onAlterRoutes(RouteBuildEvent $event): void {
     $this->alterRoutes($event->getRouteCollection());
   }
@@ -102,6 +105,9 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
     return implode('/', array_map(fn (string $segmento): string => self::SEGMENTOS[$segmento] ?? $segmento, explode('/', $caminho)));
   }
 
+  /**
+   *
+   */
   protected function alterRoutes(RouteCollection $collection): void {
     // A página de papéis do Core (/painel-administrativo/pessoas/roles) é substituída pela página Papéis e perfis do
     // ACULTA: cadeia de papéis, operações de cada papel (mesmo menu do Core) e criação de papel.

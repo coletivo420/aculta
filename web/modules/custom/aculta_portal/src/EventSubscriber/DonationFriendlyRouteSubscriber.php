@@ -15,6 +15,9 @@ use Symfony\Component\Routing\RouteCollection;
  */
 final class DonationFriendlyRouteSubscriber extends RouteSubscriberBase {
 
+  /**
+   *
+   */
   protected function alterRoutes(RouteCollection $collection): void {
     $paths = [
       'aculta_donation.donation.default' => '/apoiar',

@@ -17,7 +17,8 @@ use Drupal\user\UserInterface;
  */
 final class EmailConfirmedRoleGuard {
 
-  /** Papel de e-mail confirmado. */
+  /**
+   * Papel de e-mail confirmado. */
   public const ROLE = EmailConfirmationPolicy::ROLE;
 
   /**

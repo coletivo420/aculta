@@ -26,7 +26,8 @@ final class RoleHierarchyForm extends ConfigFormBase {
 
   private const ESTADO = 'aculta_portal.role_hierarchy';
 
-  /** Cadeia de partida quando a configuração ainda não existe (instalação). */
+  /**
+   * Cadeia de partida quando a configuração ainda não existe (instalação). */
   private const CADEIA_PADRAO = ['gerente_loja', 'content_editor', 'lms_teacher', 'email_confirmed', 'authenticated'];
 
   public function __construct(
@@ -37,6 +38,9 @@ final class RoleHierarchyForm extends ConfigFormBase {
     parent::__construct($config_factory, $typedConfigManager);
   }
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('config.factory'),
@@ -45,14 +49,23 @@ final class RoleHierarchyForm extends ConfigFormBase {
     );
   }
 
+  /**
+   *
+   */
   public function getFormId(): string {
     return 'aculta_role_hierarchy_form';
   }
 
+  /**
+   *
+   */
   protected function getEditableConfigNames(): array {
     return [self::ESTADO];
   }
 
+  /**
+   *
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $papeis = $this->papeis();
     $cadeia = $this->cadeiaAtual($papeis);
@@ -132,6 +145,9 @@ final class RoleHierarchyForm extends ConfigFormBase {
     return parent::buildForm($form, $form_state);
   }
 
+  /**
+   *
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
     $papeis = $this->papeis();
@@ -141,6 +157,9 @@ final class RoleHierarchyForm extends ConfigFormBase {
     }
   }
 
+  /**
+   *
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->config(self::ESTADO)->set('cadeia', $this->ordemDoEnvio($form_state))->save();
     $this->messenger()->addStatus($this->t('Hierarquia de papéis salva.'));

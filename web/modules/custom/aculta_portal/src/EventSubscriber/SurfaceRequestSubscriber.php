@@ -26,10 +26,16 @@ final class SurfaceRequestSubscriber implements EventSubscriberInterface {
     private readonly DomainPurposeManager $purposes,
   ) {}
 
+  /**
+   *
+   */
   public static function getSubscribedEvents(): array {
     return [KernelEvents::REQUEST => [['onRequest', 31]]];
   }
 
+  /**
+   *
+   */
   public function onRequest(RequestEvent $event): void {
     if (!$event->isMainRequest() || !$this->surfaces->leituraAtiva()) {
       return;

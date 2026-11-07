@@ -15,10 +15,12 @@ use Drupal\user\UserInterface;
  */
 interface AccountDocumentInterface {
 
-  /** TRUE quando é possível ler um documento salvo de forma cifrada neste ambiente. */
+  /**
+   * TRUE quando é possível ler um documento salvo de forma cifrada neste ambiente. */
   public function isAvailable(): bool;
 
-  /** TRUE quando as chaves e os campos necessários para uma nova gravação estão disponíveis. */
+  /**
+   * TRUE quando as chaves e os campos necessários para uma nova gravação estão disponíveis. */
   public function canSave(): bool;
 
   /**

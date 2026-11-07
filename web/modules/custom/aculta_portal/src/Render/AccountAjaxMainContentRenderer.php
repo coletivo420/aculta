@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Render;
 
+use Drupal\Core\Url;
+use Drupal\Core\Link;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Breadcrumb\BreadcrumbManager;
 use Drupal\Core\Controller\TitleResolverInterface;
@@ -25,7 +27,8 @@ final class AccountAjaxMainContentRenderer implements MainContentRendererInterfa
     private readonly BreadcrumbManager $breadcrumbManager,
   ) {}
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function renderResponse(array $main_content, Request $request, RouteMatchInterface $route_match) {
     $route = $route_match->getRouteObject();
     if ($route !== NULL && $route->getOption('_aculta_domain_purpose') === 'account') {
@@ -35,7 +38,7 @@ final class AccountAjaxMainContentRenderer implements MainContentRendererInterfa
       // Como na página direta: o título da página entra como último nível (quando não repete o último link).
       $lastText = $links !== [] ? (string) end($links)->getText() : '';
       if ($title !== '' && $title !== $lastText) {
-        $links[] = new \Drupal\Core\Link($title, new \Drupal\Core\Url('<nolink>'));
+        $links[] = new Link($title, new Url('<nolink>'));
       }
       $last = count($links) - 1;
       foreach ($links as $index => $link) {

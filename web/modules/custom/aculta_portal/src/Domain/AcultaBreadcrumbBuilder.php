@@ -16,15 +16,18 @@ use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-/** Builds concise, domain-aware breadcrumbs for public ACULTA experiences. */
+/**
+ * Builds concise, domain-aware breadcrumbs for public ACULTA experiences. */
 final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
 
   use StringTranslationTrait;
 
-  /** Purposes with a real public experience in this phase. */
+  /**
+   * Purposes with a real public experience in this phase. */
   private const PUBLIC_PURPOSES = ['main', 'account', 'support', 'magazine'];
 
-  /** Routes whose paths or titles may contain tokens or technical identifiers. */
+  /**
+   * Routes whose paths or titles may contain tokens or technical identifiers. */
   private const HIDDEN_ROUTES = [
     'system.403',
     'system.404',
@@ -46,7 +49,8 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     private readonly PathMatcherInterface $pathMatcher,
   ) {}
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function applies(RouteMatchInterface $route_match, ?CacheableMetadata $cacheable_metadata = NULL): bool {
     $route = $route_match->getRouteObject();
     // Claro keeps its own breadcrumb behavior.
@@ -58,7 +62,8 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     return $purpose !== NULL;
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function build(RouteMatchInterface $route_match): Breadcrumb {
     $breadcrumb = (new Breadcrumb())
       ->addCacheContexts(['route', 'url.path', 'domain']);
@@ -116,7 +121,8 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     return $breadcrumb;
   }
 
-  /** Returns the safely resolved title for the current, non-technical page. */
+  /**
+   * Returns the safely resolved title for the current, non-technical page. */
   public function currentTitle(RouteMatchInterface $route_match): ?string {
     $route = $route_match->getRouteObject();
     $purpose = $this->domainPurpose->getCurrentPurpose();
@@ -139,7 +145,8 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     return $title !== '' ? $title : NULL;
   }
 
-  /** Gets real taxonomy ancestors from the existing parent relationship. */
+  /**
+   * Gets real taxonomy ancestors from the existing parent relationship. */
   private function taxonomyParents(TermInterface $term): array {
     $parents = [];
     $seen = [];
@@ -155,7 +162,8 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     return $parents;
   }
 
-  /** Supplies each public domain's own root label. */
+  /**
+   * Supplies each public domain's own root label. */
   private function root(string $purpose): string {
     return match ($purpose) {
       'account' => (string) $this->t('Minha conta'),
@@ -165,6 +173,9 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     };
   }
 
+  /**
+   *
+   */
   private function isFrontPage(): bool {
     return $this->pathMatcher->isFrontPage();
   }

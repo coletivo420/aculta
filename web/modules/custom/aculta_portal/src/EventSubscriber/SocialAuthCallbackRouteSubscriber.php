@@ -16,9 +16,13 @@ use Symfony\Component\Routing\RouteCollection;
  */
 final class SocialAuthCallbackRouteSubscriber extends RouteSubscriberBase {
 
-  /** Caminho do retorno OAuth das redes sociais, no padrão de integrações. */
+  /**
+   * Caminho do retorno OAuth das redes sociais, no padrão de integrações. */
   public const CALLBACK_PATH = '/integracoes/{network}/retorno';
 
+  /**
+   *
+   */
   protected function alterRoutes(RouteCollection $collection): void {
     $route = $collection->get('social_auth.network.callback');
     if ($route !== NULL) {

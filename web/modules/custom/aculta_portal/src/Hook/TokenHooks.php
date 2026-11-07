@@ -45,7 +45,8 @@ final class TokenHooks {
     private readonly AcultaMailConfirmerManagerInterface $confirmationManager,
   ) {}
 
-  /** Declares institutional and editorial tokens. */
+  /**
+ * Declares institutional and editorial tokens. */
   #[Hook('token_info')]
   public function tokenInfo(): array {
     $tokens = [];
@@ -134,7 +135,8 @@ final class TokenHooks {
     $metadata->setCacheMaxAge(0);
   }
 
-  /** Replaces institutional/editorial tokens while preserving cacheability. */
+  /**
+ * Replaces institutional/editorial tokens while preserving cacheability. */
   #[Hook('tokens')]
   public function tokens(
     string $type,

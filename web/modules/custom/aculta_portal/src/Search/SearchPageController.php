@@ -44,6 +44,9 @@ final class SearchPageController implements ContainerInjectionInterface {
     private readonly FormBuilderInterface $formBuilder,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
@@ -53,6 +56,9 @@ final class SearchPageController implements ContainerInjectionInterface {
     );
   }
 
+  /**
+   *
+   */
   public function page(Request $request): array {
     $term = mb_substr(trim((string) $request->query->get('q', '')), 0, self::MAX_CHARS);
     $build = [

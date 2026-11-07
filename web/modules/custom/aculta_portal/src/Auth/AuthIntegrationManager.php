@@ -6,7 +6,8 @@ namespace Drupal\aculta_portal\Auth;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 
-/** Reads availability of authentication integrations for Portal consumers. */
+/**
+ * Reads availability of authentication integrations for Portal consumers. */
 final class AuthIntegrationManager {
 
   public function __construct(

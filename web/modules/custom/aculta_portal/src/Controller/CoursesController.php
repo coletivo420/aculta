@@ -9,7 +9,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\views\ViewExecutableFactory;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Presents the course catalog on the COURSES Domain. */
+/**
+ * Presents the course catalog on the COURSES Domain. */
 final class CoursesController extends ControllerBase {
 
   private const CATALOG_VIEW = 'courses_catalog';
@@ -22,7 +23,8 @@ final class CoursesController extends ControllerBase {
     private readonly ViewExecutableFactory $viewExecutableFactory,
   ) {}
 
-  /** Builds the public course landing page from the configured catalog View. */
+  /**
+   * Builds the public course landing page from the configured catalog View. */
   public function home(): array {
     return [
       '#type' => 'container',

@@ -7,17 +7,27 @@ namespace Drupal\aculta_portal\Appearance;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-/** Configurações do Portal: padrão global do modo de cor, usado por quem não escolheu. */
+/**
+ * Configurações do Portal: padrão global do modo de cor, usado por quem não escolheu. */
 final class SettingsForm extends ConfigFormBase {
 
+  /**
+   *
+   */
   public function getFormId(): string {
     return 'aculta_portal_appearance_settings';
   }
 
+  /**
+   *
+   */
   protected function getEditableConfigNames(): array {
     return ['aculta_portal.appearance'];
   }
 
+  /**
+   *
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['default_mode'] = [
       '#type' => 'radios',
@@ -34,6 +44,9 @@ final class SettingsForm extends ConfigFormBase {
     return parent::buildForm($form, $form_state);
   }
 
+  /**
+   *
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->config('aculta_portal.appearance')
       ->set('default_mode', (string) $form_state->getValue('default_mode'))

@@ -17,10 +17,12 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  */
 final class ShopController extends ControllerBase {
 
-  /** Nó da página inicial da loja ("Loja da Associação"). */
+  /**
+   * Nó da página inicial da loja ("Loja da Associação"). */
   public const PAGINA_INICIAL_NODE = 372;
 
-  /** Tipo de produto vendido na loja. */
+  /**
+   * Tipo de produto vendido na loja. */
   private const TIPO_PRODUTO = 'produto_loja';
 
   public function __construct(
@@ -28,6 +30,9 @@ final class ShopController extends ControllerBase {
     private readonly EntityTypeManagerInterface $entities,
   ) {}
 
+  /**
+   *
+   */
   public function home(): array {
     $cache = (new CacheableMetadata())->addCacheTags(['commerce_product_list']);
     $build = [];
@@ -82,7 +87,8 @@ final class ShopController extends ControllerBase {
     return $ids === [] ? [] : array_values($this->entities->getStorage('commerce_product')->loadMultiple($ids));
   }
 
-  /** Menor preço entre as variações publicadas, formatado em reais; NULL se o produto não tiver variação vendável. */
+  /**
+   * Menor preço entre as variações publicadas, formatado em reais; NULL se o produto não tiver variação vendável. */
   private function menorPreco(ProductInterface $produto): ?string {
     $valores = [];
     foreach ($produto->getVariations() as $variacao) {

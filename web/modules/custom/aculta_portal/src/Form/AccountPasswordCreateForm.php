@@ -20,7 +20,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class AccountPasswordCreateForm extends FormBase {
 
-  /** Mínimo igual ao do cadastro (FormHooks::alter, user_register_form). */
+  /**
+   * Mínimo igual ao do cadastro (FormHooks::alter, user_register_form). */
   private const MIN_LENGTH = 8;
 
   public function __construct(
@@ -29,6 +30,9 @@ final class AccountPasswordCreateForm extends FormBase {
     protected readonly MessengerInterface $messages,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
@@ -37,10 +41,16 @@ final class AccountPasswordCreateForm extends FormBase {
     );
   }
 
+  /**
+   *
+   */
   public function getFormId(): string {
     return 'aculta_portal_account_password_create';
   }
 
+  /**
+   *
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['intro'] = [
       '#plain_text' => $this->t('Sua conta foi criada com acesso externo e ainda não tem senha. Crie uma senha para também entrar com seu e-mail e senha.'),
@@ -61,6 +71,9 @@ final class AccountPasswordCreateForm extends FormBase {
     return $form;
   }
 
+  /**
+   *
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $password = (string) $form_state->getValue('pass');
     if ($password !== '' && mb_strlen($password) < self::MIN_LENGTH) {
@@ -68,6 +81,9 @@ final class AccountPasswordCreateForm extends FormBase {
     }
   }
 
+  /**
+   *
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     // Sempre a conta da sessão: o formulário não recebe o usuário como parâmetro.
     $account = $this->entities->getStorage('user')->load($this->currentUser()->id());

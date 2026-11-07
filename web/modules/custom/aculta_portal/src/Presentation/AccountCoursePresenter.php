@@ -39,7 +39,7 @@ final class AccountCoursePresenter {
    *     message: string,
    *     action: array{label: string, url: \Drupal\Core\Url, kind: string}|null
    *   }
-   * }
+   *   }
    */
   public function present(AccountInterface $account): array {
     $items = [];

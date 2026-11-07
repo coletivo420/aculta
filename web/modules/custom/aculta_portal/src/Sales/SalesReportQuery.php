@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Sales;
 
+use Drupal\Core\Database\Statement\FetchAs;
+use Drupal\Component\Utility\DeprecationHelper;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -63,7 +65,7 @@ class SalesReportQuery {
     $consulta->groupBy('variacao_id');
     $consulta->groupBy('moeda');
     $consulta->orderBy('quantidade', 'DESC');
-    $linhas = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $consulta->execute()->fetchAll(\Drupal\Core\Database\Statement\FetchAs::Associative), fn() => $consulta->execute()->fetchAll(\PDO::FETCH_ASSOC));
+    $linhas = DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $consulta->execute()->fetchAll(FetchAs::Associative), fn() => $consulta->execute()->fetchAll(\PDO::FETCH_ASSOC));
 
     // Nome do produto e da variação vêm das entidades, para não depender de joins em tabelas de tradução.
     $variacoes = $this->entityTypeManager->getStorage('commerce_product_variation')
@@ -108,7 +110,7 @@ class SalesReportQuery {
       'pedidos' => (int) $l['pedidos'],
       'total' => (string) $l['total'],
       'moeda' => (string) $l['moeda'],
-    ], \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $consulta->execute()->fetchAll(\Drupal\Core\Database\Statement\FetchAs::Associative), fn() => $consulta->execute()->fetchAll(\PDO::FETCH_ASSOC)));
+    ], DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $consulta->execute()->fetchAll(FetchAs::Associative), fn() => $consulta->execute()->fetchAll(\PDO::FETCH_ASSOC)));
   }
 
   /**

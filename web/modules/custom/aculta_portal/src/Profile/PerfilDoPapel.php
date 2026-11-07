@@ -17,7 +17,8 @@ use Drupal\profile\ProfileStorageInterface;
  */
 final class PerfilDoPapel {
 
-  /** Tipos de perfil, em ordem de prioridade. 'associado' é o tipo de dados da situação de associado (não é papel). */
+  /**
+   * Tipos de perfil, em ordem de prioridade. 'associado' é o tipo de dados da situação de associado (não é papel). */
   public const TIPOS = ['administrator', 'gerente_loja', 'lms_teacher', 'associado', 'email_confirmed', 'authenticated'];
 
   /**

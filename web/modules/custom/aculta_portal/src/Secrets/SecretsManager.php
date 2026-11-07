@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Secrets;
 
+use Drupal\aculta_portal\Environment\DeployerEnvironment;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\key\KeyRepositoryInterface;
@@ -19,10 +20,12 @@ use Psr\Log\LoggerInterface;
  */
 final class SecretsManager {
 
-  /** Número de caracteres mantidos visíveis em cada extremidade da máscara. */
+  /**
+   * Número de caracteres mantidos visíveis em cada extremidade da máscara. */
   private const MASK_VISIBLE = 2;
 
-  /** Tamanho máximo aceito para um valor (bytes). */
+  /**
+   * Tamanho máximo aceito para um valor (bytes). */
   private const MAX_VALUE_BYTES = 4096;
 
   private readonly LoggerInterface $logger;
@@ -36,16 +39,18 @@ final class SecretsManager {
     $this->logger = $loggerFactory->get('aculta_portal');
   }
 
-  /** Arquivo de credenciais lido pelo bootstrap (aculta_secrets_file em settings.local.php). */
+  /**
+   * Arquivo de credenciais lido pelo bootstrap (aculta_secrets_file em settings.local.php). */
   public function storePath(): string {
     return (string) $this->settings->get('aculta_secrets_file', dirname($this->appRoot) . '/secrets/aculta.secrets.env');
   }
 
-  /** Ambiente do contrato (production|test). Padrão: production. */
+  /**
+   * Ambiente do contrato (production|test). Padrão: production. */
   public function environment(): string {
     // O ambiente definido pelo deployer (arquivo neutro) tem precedência sobre a configuração local.
     $env = (string) $this->settings->get('aculta_secrets_environment', 'production');
-    return \Drupal\aculta_portal\Environment\DeployerEnvironment::current(dirname($this->appRoot), $env);
+    return DeployerEnvironment::current(dirname($this->appRoot), $env);
   }
 
   /**
@@ -57,18 +62,22 @@ final class SecretsManager {
     return $mode === 'database' ? 'database' : 'file';
   }
 
-  /** Verdadeiro quando o painel pode gravar o arquivo de credenciais neste ambiente. */
+  /**
+   * Verdadeiro quando o painel pode gravar o arquivo de credenciais neste ambiente. */
   public function canSaveHere(): bool {
     return $this->storageMode() === 'file';
   }
 
-  /** Ambientes do contrato, na ordem das abas do painel. */
+  /**
+   * Ambientes do contrato, na ordem das abas do painel. */
   public const ENVIRONMENTS = ['production', 'test'];
 
-  /** Estado de credenciais de outro ambiente: o servidor atual não consulta nem afirma nada sobre elas. */
+  /**
+   * Estado de credenciais de outro ambiente: o servidor atual não consulta nem afirma nada sobre elas. */
   public const STATE_ELSEWHERE = 'managed_elsewhere';
 
-  /** @return array<string, mixed> */
+  /**
+   * @return array<string, mixed> */
   public function contract(): array {
     $file = dirname($this->appRoot) . '/config/secrets-contract.json';
     $data = is_file($file) ? json_decode((string) file_get_contents($file), TRUE) : NULL;
@@ -137,7 +146,8 @@ final class SecretsManager {
     return $this->statusForEnvironment($this->environment());
   }
 
-  /** @return string[] obrigatórias no ambiente sem valor. */
+  /**
+   * @return string[] obrigatórias no ambiente sem valor. */
   public function missingRequired(): array {
     $missing = [];
     foreach ($this->status() as $name => $row) {
@@ -190,7 +200,8 @@ final class SecretsManager {
     return $matchedName !== NULL && $matchedName !== '' ? $this->value($matchedName) : NULL;
   }
 
-  /** Valor de uma variável no arquivo de credenciais do servidor, ou NULL. Nunca registrado. */
+  /**
+   * Valor de uma variável no arquivo de credenciais do servidor, ou NULL. Nunca registrado. */
   private function fileValue(string $name): ?string {
     $store = $this->storePath();
     if (!is_file($store) || !is_readable($store)) {
@@ -201,7 +212,8 @@ final class SecretsManager {
     return is_string($value) && $value !== '' ? $value : NULL;
   }
 
-  /** Máscara para exibição: mantém poucos caracteres nas pontas. Valores curtos viram só bolinhas. */
+  /**
+   * Máscara para exibição: mantém poucos caracteres nas pontas. Valores curtos viram só bolinhas. */
   public static function mask(string $value): string {
     $length = mb_strlen($value);
     if ($length <= 2 * self::MASK_VISIBLE + 2) {
@@ -213,7 +225,9 @@ final class SecretsManager {
   /**
    * Salva valores digitados. Campo vazio mantém o valor atual. Só nomes do contrato são aceitos.
    *
-   * @param array<string, string> $submitted nome => valor digitado
+   * @param array<string, string> $submitted
+   *   nome => valor digitado.
+   *
    * @return array{ok: bool, message: string, updated: string[]}
    */
   public function save(array $submitted): array {
@@ -268,8 +282,11 @@ final class SecretsManager {
    * Única escrita do arquivo de credenciais: aplica alterações e remoções sobre o conteúdo atual,
    * na ordem do contrato, de forma atômica.
    *
-   * @param array<string, string> $changes nome => valor novo
-   * @param string[] $removals nomes a apagar
+   * @param array<string, string> $changes
+   *   nome => valor novo.
+   * @param string[] $removals
+   *   nomes a apagar.
+   *
    * @return array{ok: bool, message: string, updated: string[]}
    */
   private function persist(array $changes, array $removals): array {
@@ -314,12 +331,14 @@ final class SecretsManager {
     ];
   }
 
-  /** Registra no log a revelação de um valor (nome e usuário; nunca o valor). */
+  /**
+   * Registra no log a revelação de um valor (nome e usuário; nunca o valor). */
   public function logReveal(string $name, string $account): void {
     $this->logger->notice('Credencial revelada no painel: @name por @account.', ['@name' => $name, '@account' => $account]);
   }
 
-  /** @return array<string, mixed>|null */
+  /**
+   * @return array<string, mixed>|null */
   private function variable(string $name): ?array {
     foreach ($this->contract()['variables'] ?? [] as $variable) {
       if (($variable['name'] ?? NULL) === $name) {
@@ -329,6 +348,9 @@ final class SecretsManager {
     return NULL;
   }
 
+  /**
+   *
+   */
   private function writeAtomic(string $target, string $content): bool {
     $dir = dirname($target);
     if (!is_dir($dir) && !mkdir($dir, 0700, TRUE)) {

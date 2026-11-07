@@ -7,8 +7,13 @@ namespace Drupal\aculta_portal\Plugin\metatag\Tag;
 use Drupal\Component\Render\PlainTextOutput;
 use Drupal\schema_metatag\Plugin\metatag\Tag\SchemaNameBase;
 
-/** Preserve commas inside a single street address in structured properties. */
+/**
+ * Preserve commas inside a single street address in structured properties. */
 class PostalAddressTag extends SchemaNameBase {
+
+  /**
+   *
+   */
   protected function processItem(&$value, $key = 0) {
     if ($key === 'streetAddress' || $key === 'name') {
       $value = trim(PlainTextOutput::renderFromHtml($value));
@@ -16,4 +21,5 @@ class PostalAddressTag extends SchemaNameBase {
     }
     parent::processItem($value, $key);
   }
+
 }

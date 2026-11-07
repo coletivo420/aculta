@@ -14,7 +14,8 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-/** Keeps ordinary users in the Portal for account management. */
+/**
+ * Keeps ordinary users in the Portal for account management. */
 final class AccountRouteSubscriber implements EventSubscriberInterface {
 
   public function __construct(
@@ -22,12 +23,18 @@ final class AccountRouteSubscriber implements EventSubscriberInterface {
     private readonly DomainPurposeManager $domainPurposeManager,
   ) {}
 
+  /**
+   *
+   */
   public static function getSubscribedEvents(): array {
     // RouterListener resolves _route at priority 32. This runs after routing,
     // before controller dispatch, and only examines explicit route names.
     return [KernelEvents::REQUEST => ['onKernelRequest', 29]];
   }
 
+  /**
+   *
+   */
   public function onKernelRequest(RequestEvent $event): void {
     if (!$event->isMainRequest() || !$this->currentUser->isAuthenticated()
       || $this->currentUser->hasPermission('administer users')) {
@@ -74,7 +81,7 @@ final class AccountRouteSubscriber implements EventSubscriberInterface {
         $destination = '<front>';
       }
       else {
-        $event->setResponse(new \Symfony\Component\HttpFoundation\Response('', 403));
+        $event->setResponse(new Response('', 403));
         return;
       }
     }

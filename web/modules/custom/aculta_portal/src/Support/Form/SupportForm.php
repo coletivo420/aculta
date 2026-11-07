@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Support\Form;
 
+use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
-use Drupal\aculta_portal\Support\Form\SettingsForm;
 use Drupal\aculta_portal\Support\SupportAmountsProviderInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -16,7 +16,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Component\Utility\Html;
 
-/** Institutional support page, integrated with Commerce Donation Flow. */
+/**
+ * Institutional support page, integrated with Commerce Donation Flow. */
 final class SupportForm extends FormBase {
 
   public function __construct(
@@ -27,6 +28,9 @@ final class SupportForm extends FormBase {
     protected readonly ?SupportAmountsProviderInterface $campanhas = NULL,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('config.factory'),
@@ -37,10 +41,16 @@ final class SupportForm extends FormBase {
     );
   }
 
+  /**
+   *
+   */
   public function getFormId(): string {
     return 'aculta_support_form';
   }
 
+  /**
+   *
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['#cache']['max-age'] = 0;
     $form['#attributes']['data-portal-ui'] = 'support-form';
@@ -71,11 +81,14 @@ final class SupportForm extends FormBase {
       '#attributes' => ['data-portal-ui' => 'support-other'],
       'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h2', '#value' => $this->t('Outras formas de apoio')],
       'text' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#value' => $this->t('Parcerias institucionais, apoio cultural e patrocínio de projetos também fortalecem nossas iniciativas.')],
-      'contact' => PortalLinkElement::build($this->t('Fale com a Associação'), \Drupal\Core\Url::fromUri('internal:/contato'), ['data-portal-ui' => 'aculta-button-outline']),
+      'contact' => PortalLinkElement::build($this->t('Fale com a Associação'), Url::fromUri('internal:/contato'), ['data-portal-ui' => 'aculta-button-outline']),
     ];
     return $form;
   }
 
+  /**
+   *
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     // There is intentionally no payment submission until the Commerce flow is
     // implemented and a restricted Commerce gateway is configured.

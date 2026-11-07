@@ -21,6 +21,9 @@ final class EmailConfirmedAccessCheck {
     private readonly EmailConfirmationPolicy $policy,
   ) {}
 
+  /**
+   *
+   */
   public function access(AccountInterface $account): AccessResult {
     if ($account->isAnonymous()) {
       return AccessResult::neutral()->cachePerUser();

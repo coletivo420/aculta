@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
-use Drupal\Core\Template\Attribute;
 use Composer\InstalledVersions;
 use Composer\Semver\Semver;
 use Drupal\aculta_portal\Deployer\DeployerStatusReader;
@@ -22,10 +21,12 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Administrative status report for the Portal's runtime integrations. */
+/**
+ * Administrative status report for the Portal's runtime integrations. */
 final class PortalRequirementsController extends ControllerBase {
 
-  /** @var array<string, string>|null */
+  /**
+   * @var array<string, string>|null */
   private ?array $composerRequirements = NULL;
 
   public function __construct(
@@ -168,7 +169,8 @@ final class PortalRequirementsController extends ControllerBase {
     ],
   ];
 
-  /** Composer packages used by custom modules that need explicit attribution. */
+  /**
+   * Composer packages used by custom modules that need explicit attribution. */
   private const PHP_EXTENSION_MODULE_REQUIREMENTS = [
     [
       'name' => 'ACULTA Image',
@@ -192,7 +194,8 @@ final class PortalRequirementsController extends ControllerBase {
     ],
   ];
 
-  /** Administrative landing page for the ACULTA Portal section. */
+  /**
+   * Administrative landing page for the ACULTA Portal section. */
   public function overview(): array {
     $rows = [];
     foreach ([
@@ -227,7 +230,8 @@ final class PortalRequirementsController extends ControllerBase {
     ];
   }
 
-  /** Builds the report without exposing configuration or credential values. */
+  /**
+   * Builds the report without exposing configuration or credential values. */
   public function report(): array {
     $rows = [];
     foreach (self::MODULE_REQUIREMENTS as $requirement) {
@@ -282,7 +286,8 @@ final class PortalRequirementsController extends ControllerBase {
     return $build;
   }
 
-  /** Reports the runtime PHP extensions required by the integrated modules. */
+  /**
+   * Reports the runtime PHP extensions required by the integrated modules. */
   private function buildPhpExtensionSection(): array {
     $lockFile = dirname($this->appRoot) . '/composer.lock';
     $decoded = is_readable($lockFile) ? json_decode((string) file_get_contents($lockFile), TRUE) : NULL;
@@ -383,7 +388,8 @@ final class PortalRequirementsController extends ControllerBase {
     ];
   }
 
-  /** Lists active, explicitly registered Portal implementation services. */
+  /**
+   * Lists active, explicitly registered Portal implementation services. */
   private function buildPortalImplementations(): array {
     return [
       '#type' => 'details',
@@ -432,8 +438,8 @@ final class PortalRequirementsController extends ControllerBase {
         $rows[] = [$this->t('Atenção'), $this->t('O resultado publicado é de outro ambiente. Execute a verificação de robots neste ambiente.')];
       }
       $rows[] = [$this->t('Resultado'), ($result['ok'] ?? FALSE) === TRUE
-        ? $this->t('OK: @passed verificações aprovadas.', ['@passed' => (int) ($result['passed'] ?? 0)])
-        : $this->t('Falha: @failed verificação(ões) com problema.', ['@failed' => (int) ($result['failed'] ?? 0)]),
+          ? $this->t('OK: @passed verificações aprovadas.', ['@passed' => (int) ($result['passed'] ?? 0)])
+          : $this->t('Falha: @failed verificação(ões) com problema.', ['@failed' => (int) ($result['failed'] ?? 0)]),
       ];
       $failed = is_array($result['failed_urls'] ?? NULL) ? array_map('strval', $result['failed_urls']) : [];
       if ($failed !== []) {
@@ -484,7 +490,8 @@ final class PortalRequirementsController extends ControllerBase {
     ];
   }
 
-  /** Texto do status, junto do símbolo (OK, Atenção ou Erro). */
+  /**
+   * Texto do status, junto do símbolo (OK, Atenção ou Erro). */
   private function statusText(string $status): string {
     return match ($status) {
       'ok' => (string) $this->t('OK'),
@@ -493,7 +500,8 @@ final class PortalRequirementsController extends ControllerBase {
     };
   }
 
-  /** Builds one module requirement row. */
+  /**
+   * Builds one module requirement row. */
   private function buildModuleRow(array $requirement): array {
     $missing = [];
     foreach ($requirement['modules'] as $module) {
@@ -539,7 +547,8 @@ final class PortalRequirementsController extends ControllerBase {
     ];
   }
 
-  /** Builds the enabled public theme row. */
+  /**
+   * Builds the enabled public theme row. */
   private function buildBaseThemeRow(): array {
     // Tema base do ACULTA420 (base theme: bootstrap). O pacote é drupal/bootstrap (Bootstrap 5), não drupal/bootstrap5.
     $exists = $this->themes->themeExists('bootstrap');
@@ -559,7 +568,8 @@ final class PortalRequirementsController extends ControllerBase {
     ];
   }
 
-  /** Builds the enabled public theme row. */
+  /**
+   * Builds the enabled public theme row. */
   private function buildThemeRow(): array {
     $theme_exists = $this->themes->themeExists('aculta420');
     $default_theme = $this->configs->get('system.theme')->get('default');
@@ -577,7 +587,8 @@ final class PortalRequirementsController extends ControllerBase {
     ];
   }
 
-  /** Returns an installed Composer package version when available. */
+  /**
+   * Returns an installed Composer package version when available. */
   private function packageVersion(string $package): ?string {
     if (!class_exists(InstalledVersions::class) || !InstalledVersions::isInstalled($package)) {
       return NULL;
@@ -586,7 +597,8 @@ final class PortalRequirementsController extends ControllerBase {
       ?: InstalledVersions::getVersion($package);
   }
 
-  /** Reads the actual project requirement, falling back to the audited map. */
+  /**
+   * Reads the actual project requirement, falling back to the audited map. */
   private function minimumConstraint(string $package, string $fallback): string {
     if ($this->composerRequirements === NULL) {
       $file = dirname($this->appRoot) . '/composer.json';
@@ -596,7 +608,8 @@ final class PortalRequirementsController extends ControllerBase {
     return $this->composerRequirements[$package] ?? $fallback;
   }
 
-  /** Tests a Composer version constraint, including legacy Drupal versions. */
+  /**
+   * Tests a Composer version constraint, including legacy Drupal versions. */
   private function versionSatisfies(string $version, string $constraint): bool {
     // Composer packages with older Drupal.org tags can expose versions like
     // "8.x-1.22"; Semver expects the project release portion only.
@@ -609,7 +622,8 @@ final class PortalRequirementsController extends ControllerBase {
     }
   }
 
-  /** Returns an accessible textual status symbol. */
+  /**
+   * Returns an accessible textual status symbol. */
   private function statusSymbol(string $status): string {
     return match ($status) {
       'ok' => '✔',

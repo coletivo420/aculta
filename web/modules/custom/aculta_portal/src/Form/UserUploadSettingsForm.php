@@ -7,31 +7,38 @@ namespace Drupal\aculta_portal\Form;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-/** Configures the shared policy for user file uploads across the Portal. */
+/**
+ * Configures the shared policy for user file uploads across the Portal. */
 final class UserUploadSettingsForm extends ConfigFormBase {
 
-  /** Integrations with their own tab; each may inherit the global policy. */
+  /**
+   * Integrations with their own tab; each may inherit the global policy. */
   private const CONSUMERS = ['forum', 'lms', 'wiki'];
 
-  /** Padrão de extensões do formulário (antes em UserUploadPolicy, classe duplicada e removida). */
+  /**
+   * Padrão de extensões do formulário (antes em UserUploadPolicy, classe duplicada e removida). */
   public const DEFAULT_EXTENSIONS = 'png jpg jpeg gif webp pdf docx xls xlsx';
 
-  /** Extensões aceitas pelo formulário. */
+  /**
+   * Extensões aceitas pelo formulário. */
   public const SUPPORTED_EXTENSIONS = [
     'png', 'jpg', 'jpeg', 'gif', 'webp', 'pdf', 'docx', 'xls', 'xlsx',
   ];
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function getFormId(): string {
     return 'aculta_portal_user_upload_settings';
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   protected function getEditableConfigNames(): array {
     return ['aculta_portal.user_upload'];
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('aculta_portal.user_upload');
     $form['introduction'] = [
@@ -95,7 +102,8 @@ final class UserUploadSettingsForm extends ConfigFormBase {
     return parent::buildForm($form, $form_state);
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
     $scopes = ['global' => 'Política global'];
@@ -118,7 +126,8 @@ final class UserUploadSettingsForm extends ConfigFormBase {
     }
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $global_extensions = preg_split('/\s+/', strtolower(trim((string) $form_state->getValue(['global', 'allowed_extensions'])))) ?: [];
     $global_extensions = array_values(array_unique(array_filter($global_extensions)));
@@ -138,7 +147,8 @@ final class UserUploadSettingsForm extends ConfigFormBase {
     parent::submitForm($form, $form_state);
   }
 
-  /** Returns the administrative label of a consumer tab. */
+  /**
+   * Returns the administrative label of a consumer tab. */
   private function consumerLabel(string $consumer): string|\Stringable {
     return match ($consumer) {
       'forum' => $this->t('Fórum'),

@@ -43,6 +43,9 @@ final class SalesReportController implements ContainerInjectionInterface {
     $this->stringTranslation = $stringTranslation;
   }
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.sales_report_query'),
@@ -93,6 +96,9 @@ final class SalesReportController implements ContainerInjectionInterface {
     ];
   }
 
+  /**
+   *
+   */
   private function paginaAtual(Request $request): int {
     return max(0, (int) $request->query->get('pagina', 0));
   }

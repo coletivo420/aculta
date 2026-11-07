@@ -19,7 +19,8 @@ use Drupal\Core\Url;
  */
 final class AccountShellBuilder {
 
-  /** Subrotas da conta e a seção do menu que as contém. */
+  /**
+   * Subrotas da conta e a seção do menu que as contém. */
   private const PARENT_SECTION = [
     'aculta_portal.my_data_address' => 'aculta_portal.my_data',
     'aculta_portal.my_data_other' => 'aculta_portal.my_data',
@@ -103,7 +104,7 @@ final class AccountShellBuilder {
 
     $variables['page']['content'] = [
       '#theme' => 'aculta_portal_shell',
-      // Todo shell da conta carrega o comportamento (navegação AJAX, sanfona do celular), inclusive pedidos.
+      // @todo shell da conta carrega o comportamento (navegação AJAX, sanfona do celular), inclusive pedidos.
       '#attached' => ['library' => ['aculta_portal/account-navigation']],
       '#section_title' => $sections[$route]['title'],
       '#menu_items' => $menuItems,
@@ -120,8 +121,8 @@ final class AccountShellBuilder {
     $variables['aculta_account_menu'] = [];
   }
 
-
-  /** Verdadeiro quando a rota existe (módulo opcional ativo). O Portal não depende do submódulo. */
+  /**
+   * Verdadeiro quando a rota existe (módulo opcional ativo). O Portal não depende do submódulo. */
   private function routeExists(string $name): bool {
     if ($this->routeProvider === NULL) {
       return FALSE;

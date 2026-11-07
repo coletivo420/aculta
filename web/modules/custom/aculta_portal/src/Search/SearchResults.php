@@ -59,7 +59,8 @@ final class SearchResults {
     return $results;
   }
 
-  /** Link do resultado no host do conteúdo (pelo purpose do nó). */
+  /**
+   * Link do resultado no host do conteúdo (pelo purpose do nó). */
   public function url(NodeInterface $node): Url {
     $relative = $node->toUrl();
     $domainId = $node->hasField('field_domain_source') ? $node->get('field_domain_source')->target_id : NULL;

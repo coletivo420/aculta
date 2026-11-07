@@ -19,7 +19,8 @@ final class SurfaceConfigReader {
 
   public const MODOS = ['subdominio', 'diretorio', 'desativado'];
 
-  /** Títulos padrão por purpose (rótulos do formulário). */
+  /**
+   * Títulos padrão por purpose (rótulos do formulário). */
   public const TITULOS = [
     'main' => 'Principal',
     'account' => 'Conta',
@@ -33,7 +34,8 @@ final class SurfaceConfigReader {
     'eventos' => 'Eventos',
   ];
 
-  /** Slugs que não podem ser usados por superfície. */
+  /**
+   * Slugs que não podem ser usados por superfície. */
   public const RESERVADOS = ['painel-administrativo', 'integracoes', 'studio', 'conta-legada', 'minha-conta', 'node', 'user'];
 
   /**

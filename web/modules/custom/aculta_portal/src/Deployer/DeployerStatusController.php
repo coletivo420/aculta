@@ -19,6 +19,9 @@ final class DeployerStatusController extends ControllerBase {
     private readonly DeployerStatusReader $reader,
   ) {}
 
+  /**
+   *
+   */
   public function page(): array {
     $data = $this->reader->read();
     $build = [
@@ -89,6 +92,9 @@ final class DeployerStatusController extends ControllerBase {
     return $build;
   }
 
+  /**
+   *
+   */
   private function statusCell(string $state, $label = NULL): array {
     $symbol = match ($state) {
       'ok' => '✔',
@@ -106,6 +112,9 @@ final class DeployerStatusController extends ControllerBase {
     ];
   }
 
+  /**
+   *
+   */
   private function legend(): array {
     return [
       '#type' => 'container',

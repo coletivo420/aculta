@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Hook;
 
+use Drupal\Core\Extension\Requirement\RequirementSeverity;
+use Drupal\Component\Utility\DeprecationHelper;
 use Drupal\aculta_portal\Secrets\SecretsManager;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -25,7 +27,8 @@ final class SecretsRequirementsHook {
     $this->setStringTranslation($stringTranslation);
   }
 
-  /** @return array<string, array<string, mixed>> */
+  /**
+ * @return array<string, array<string, mixed>> */
   #[Hook('runtime_requirements')]
   public function runtimeRequirements(): array {
     $missing = $this->secrets->missingRequired();
@@ -34,13 +37,13 @@ final class SecretsRequirementsHook {
       return ['aculta_secrets' => [
         'title' => $title,
         'value' => $this->t('Todas as credenciais obrigatórias estão configuradas (@env).', ['@env' => $this->secrets->environment()]),
-        'severity' => \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\Core\Extension\Requirement\RequirementSeverity::OK, fn() => REQUIREMENT_OK),
+        'severity' => DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => RequirementSeverity::OK, fn() => REQUIREMENT_OK),
       ]];
     }
     return ['aculta_secrets' => [
       'title' => $title,
       'value' => $this->t('Faltam: @names. Preencha em /painel-administrativo/aculta/segredos.', ['@names' => implode(', ', $missing)]),
-      'severity' => \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\Core\Extension\Requirement\RequirementSeverity::Warning, fn() => REQUIREMENT_WARNING),
+      'severity' => DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => RequirementSeverity::Warning, fn() => REQUIREMENT_WARNING),
     ]];
   }
 

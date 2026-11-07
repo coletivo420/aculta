@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
+use Drupal\aculta_portal\Account\StreetNumberField;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\aculta_user\Avatar\AvatarResolver;
 use Drupal\aculta_portal\Secrets\SecretsManager;
 use Drupal\Core\Template\Attribute;
@@ -34,14 +36,16 @@ use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
-/** Private user account area. */
+/**
+ * Private user account area. */
 final class PortalController extends ControllerBase {
 
-  /** Social Auth stores the network plugin ID, not its URL short name. */
+  /**
+   * Social Auth stores the network plugin ID, not its URL short name. */
   private const GOOGLE_SOCIAL_AUTH_PLUGIN_ID = 'social_auth_google';
 
-  /** Transporte da camada de envio E-Mails ACULTA usado pelo Portal (ver docs/portal/EMAIL-TRANSPORT.md). */
-
+  /**
+   * Transporte da camada de envio E-Mails ACULTA usado pelo Portal (ver docs/portal/EMAIL-TRANSPORT.md). */
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
     private readonly EntityFormBuilderInterface $forms,
@@ -62,6 +66,9 @@ final class PortalController extends ControllerBase {
     private readonly SecretsManager $secrets,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
@@ -112,6 +119,9 @@ final class PortalController extends ControllerBase {
     );
   }
 
+  /**
+   *
+   */
   public function dashboard(): array {
     $account = $this->entities->getStorage('user')->load($this->account->id());
     $profile = $this->loadRoleProfile($account);
@@ -169,29 +179,40 @@ final class PortalController extends ControllerBase {
     return $build;
   }
 
+  /**
+   *
+   */
   public function myData(): array {
     return $this->buildDataSection('basics');
   }
 
+  /**
+   *
+   */
   public function address(): array {
     return $this->buildDataSection('address');
   }
 
-  /** Outros Dados (CPF ou CNPJ). Sem o submódulo que implementa o documento, o caminho responde 404. */
+  /**
+   * Outros Dados (CPF ou CNPJ). Sem o submódulo que implementa o documento, o caminho responde 404. */
   public function otherData(): array {
     if ($this->accountDocument === NULL) {
-      throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
+      throw new NotFoundHttpException();
     }
     return $this->buildDataSection('other');
   }
 
-  /** Caminho aposentado (página do acordo substituída pelo popup de aceite): responde 404. */
+  /**
+   * Caminho aposentado (página do acordo substituída pelo popup de aceite): responde 404. */
   public function retiredNotFound(): never {
-    throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
+    throw new NotFoundHttpException();
   }
 
-  /** Meus pedidos: compras da pessoa logada (rascunhos de carrinho ficam fora). */
-  /** Situação do pedido em português (os rótulos do workflow vêm em inglês). */
+  /**
+   * Meus pedidos: compras da pessoa logada (rascunhos de carrinho ficam fora). */
+
+  /**
+   * Situação do pedido em português (os rótulos do workflow vêm em inglês). */
   private function orderStateLabel($order): string {
     return match ($order->getState()->getId()) {
       'completed' => (string) $this->t('Concluído'),
@@ -215,6 +236,9 @@ final class PortalController extends ControllerBase {
     ];
   }
 
+  /**
+   *
+   */
   public function orders(): array {
     $storage = $this->entities->getStorage('commerce_order');
     $ids = $storage->getQuery()->accessCheck(TRUE)
@@ -260,6 +284,9 @@ final class PortalController extends ControllerBase {
     return ['#type' => 'html_tag', '#tag' => 'div', '#attributes' => ['data-portal-ui' => 'auth-google-status'], '#value' => $markup];
   }
 
+  /**
+   *
+   */
   public function connections(): array {
     $account = $this->entities->getStorage('user')->load($this->account->id());
     $google_ready = $this->authIntegrationManager->isGoogleConfigured();
@@ -320,12 +347,14 @@ final class PortalController extends ControllerBase {
     return $items;
   }
 
-  /** Segurança, aba E-mail (/seguranca): e-mail atual e troca do endereço (com confirmação). */
+  /**
+   * Segurança, aba E-mail (/seguranca): e-mail atual e troca do endereço (com confirmação). */
   public function security(): array {
     return $this->buildSecuritySection('email');
   }
 
-  /** Segurança, aba Senha (/seguranca/senha): troca da senha (exige a senha atual). */
+  /**
+   * Segurança, aba Senha (/seguranca/senha): troca da senha (exige a senha atual). */
   public function securityPassword(): array {
     return $this->buildSecuritySection('password');
   }
@@ -350,8 +379,8 @@ final class PortalController extends ControllerBase {
     }
     $content = [
       'description' => ['#plain_text' => $section === 'email'
-        ? $this->t('Veja o e-mail de acesso e solicite a troca dele.')
-        : $this->t('Mantenha uma senha segura para acessar sua conta.')],
+          ? $this->t('Veja o e-mail de acesso e solicite a troca dele.')
+          : $this->t('Mantenha uma senha segura para acessar sua conta.')],
       'tabs' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'account-data-nav', 'aria-label' => $this->t('Seções de segurança'), 'data-portal-account-data-nav' => 'true'],
@@ -362,7 +391,8 @@ final class PortalController extends ControllerBase {
     return ['content' => $content + ['section' => $this->securitySectionContent($account, $section)]];
   }
 
-  /** Conteúdo de cada aba de Segurança (e-mail ou senha). */
+  /**
+   * Conteúdo de cada aba de Segurança (e-mail ou senha). */
   private function securitySectionContent(UserInterface $account, string $section): array {
     if ($section === 'password') {
       if ($this->hasUserChosenPassword($account)) {
@@ -396,7 +426,8 @@ final class PortalController extends ControllerBase {
     return $section_content;
   }
 
-  /** Returns TRUE only when the account has a user-chosen local password. */
+  /**
+   * Returns TRUE only when the account has a user-chosen local password. */
   private function hasUserChosenPassword(UserInterface $account): bool {
     $password = $account->getPassword();
     return is_string($password)
@@ -424,6 +455,9 @@ final class PortalController extends ControllerBase {
       && $site_mail !== '';
   }
 
+  /**
+   *
+   */
   private function pendingEmail(int|string $uid): ?string {
     if (!$this->modules->moduleExists('aculta_mail_confirmer_user')) {
       return NULL;
@@ -441,6 +475,9 @@ final class PortalController extends ControllerBase {
     return NULL;
   }
 
+  /**
+   *
+   */
   private function buildDataSection(string $section): array {
     $account = $this->entities->getStorage('user')->load($this->account->id());
     $profile = match ($section) {
@@ -515,14 +552,18 @@ final class PortalController extends ControllerBase {
     return $this->forms->getForm($display, 'edit');
   }
 
-  /** Rua, número e S/N salvos no logradouro. */
+  /**
+   * Rua, número e S/N salvos no logradouro. */
   private function savedParts($profile): array {
     if (!$profile->hasField('field_address') || $profile->get('field_address')->isEmpty()) {
       return ['street' => '', 'number' => '', 'sn' => FALSE];
     }
-    return \Drupal\aculta_portal\Account\StreetNumberField::split((string) $profile->get('field_address')->first()->getAddressLine1());
+    return StreetNumberField::split((string) $profile->get('field_address')->first()->getAddressLine1());
   }
 
+  /**
+   *
+   */
   private function loadRoleProfile(UserInterface $account) {
     $profiles = PerfilDoPapel::principal($this->entities->getStorage('profile'), $account);
     return $profiles ?: $this->entities->getStorage('profile')->create([

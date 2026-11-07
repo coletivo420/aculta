@@ -31,6 +31,9 @@ final class DonationSummaryController implements ContainerInjectionInterface {
     private readonly DomainPurposeManager $purposes,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('class_resolver'),

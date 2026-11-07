@@ -13,7 +13,8 @@ final class CheckoutConfigurationResolver {
 
   public function __construct(private readonly CheckoutContextRegistry $registry) {}
 
-  /** NULL quando o contexto não está registrado. */
+  /**
+   * NULL quando o contexto não está registrado. */
   public function resolve(string $contextId): ?CheckoutContextConfiguration {
     return $this->registry->get($contextId)?->configuration();
   }

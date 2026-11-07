@@ -28,14 +28,23 @@ final class SearchPopupForm extends FormBase implements ContainerInjectionInterf
     protected readonly DomainPurposeManager $domainPurposeManager,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('aculta_portal.domain_purpose'));
   }
 
+  /**
+   *
+   */
   public function getFormId(): string {
     return 'aculta_search_popup_form';
   }
 
+  /**
+   *
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $onMain = $this->domainPurposeManager->getCurrentPurpose() === 'main';
     $form['#method'] = 'get';
@@ -91,6 +100,9 @@ final class SearchPopupForm extends FormBase implements ContainerInjectionInterf
     return $form;
   }
 
+  /**
+   *
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     // GET: o navegador envia direto para a busca central; nada a processar no servidor.
   }

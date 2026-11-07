@@ -12,10 +12,12 @@ namespace Drupal\aculta_portal\Checkout;
  */
 final class CheckoutContextConfiguration {
 
-  /** @var list<string> */
+  /**
+   * @var list<string> */
   public readonly array $orderTypeIds;
 
-  /** @var list<string> */
+  /**
+   * @var list<string> */
   public readonly array $checkoutFlowIds;
 
   /**

@@ -16,6 +16,9 @@ final class EmailConfirmationSubscriber implements EventSubscriberInterface {
 
   public function __construct(private readonly EmailConfirmationPolicy $policy) {}
 
+  /**
+   *
+   */
   public static function getSubscribedEvents(): array {
     return [
       SocialAuthEvents::USER_CREATED => 'markConfirmed',
@@ -23,6 +26,9 @@ final class EmailConfirmationSubscriber implements EventSubscriberInterface {
     ];
   }
 
+  /**
+   *
+   */
   public function markConfirmed(UserEvent $event): void {
     $this->policy->markConfirmed((int) $event->getUser()->id());
   }

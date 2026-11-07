@@ -20,7 +20,8 @@ use Drupal\user\UserInterface;
  */
 final class AccountMailRouter {
 
-  /** Chave do Core => ID do tipo na camada. */
+  /**
+   * Chave do Core => ID do tipo na camada. */
   public const TYPES = [
     'password_reset' => AccountPasswordResetMailType::ID,
     'register_no_approval_required' => AccountRegisterMailType::ID,

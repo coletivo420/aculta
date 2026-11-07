@@ -19,7 +19,8 @@ use Drupal\Core\Session\AccountInterface;
  */
 final class CartConsolidator {
 
-  /** Tipo de pedido de assinatura: fora do carrinho unificado. */
+  /**
+   * Tipo de pedido de assinatura: fora do carrinho unificado. */
   public const TIPO_ASSINATURA = 'assinatura';
 
   public function __construct(
@@ -94,7 +95,8 @@ final class CartConsolidator {
     return $destino;
   }
 
-  /** Categoria final: a mais exigente entre as presentes. */
+  /**
+   * Categoria final: a mais exigente entre as presentes. */
   private function tipoFinal(array $carrinhos): string {
     $presentes = array_map(static fn(OrderInterface $c): string => $c->bundle(), $carrinhos);
     foreach ($this->prioridade() as $tipo) {

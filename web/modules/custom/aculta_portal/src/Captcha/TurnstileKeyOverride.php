@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Captcha;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\aculta_portal\Environment\DeployerEnvironment;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
@@ -20,6 +21,9 @@ final class TurnstileKeyOverride implements ConfigFactoryOverrideInterface {
 
   public function __construct(private readonly string $appRoot) {}
 
+  /**
+   *
+   */
   public function loadOverrides($names): array {
     if (!in_array(self::CONFIG_NAME, $names, TRUE)) {
       return [];
@@ -29,16 +33,25 @@ final class TurnstileKeyOverride implements ConfigFactoryOverrideInterface {
     return [self::CONFIG_NAME => ['keys' => $key]];
   }
 
+  /**
+   *
+   */
   public function getCacheSuffix(): string {
     return 'aculta_portal_turnstile_key_' . DeployerEnvironment::current(dirname($this->appRoot), 'production');
   }
 
+  /**
+   *
+   */
   public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
     return NULL;
   }
 
-  public function getCacheableMetadata($name): \Drupal\Core\Cache\CacheableMetadata {
-    return new \Drupal\Core\Cache\CacheableMetadata();
+  /**
+   *
+   */
+  public function getCacheableMetadata($name): CacheableMetadata {
+    return new CacheableMetadata();
   }
 
 }

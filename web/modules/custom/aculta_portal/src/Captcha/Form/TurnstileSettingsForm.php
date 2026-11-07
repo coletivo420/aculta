@@ -11,7 +11,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Caixa de ativação do Turnstile na administração do ACULTA Portal. */
+/**
+ * Caixa de ativação do Turnstile na administração do ACULTA Portal. */
 final class TurnstileSettingsForm extends FormBase implements ContainerInjectionInterface {
 
   public function __construct(
@@ -19,14 +20,23 @@ final class TurnstileSettingsForm extends FormBase implements ContainerInjection
     protected readonly AccountProxyInterface $currentUser,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('aculta_portal.turnstile_toggle'), $container->get('current_user'));
   }
 
+  /**
+   *
+   */
   public function getFormId(): string {
     return 'aculta_portal_turnstile_settings';
   }
 
+  /**
+   *
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $keyText = $this->toggle->keyConfigured()
       ? $this->t('configurada neste ambiente')
@@ -53,6 +63,9 @@ final class TurnstileSettingsForm extends FormBase implements ContainerInjection
     return $form;
   }
 
+  /**
+   *
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $enabled = (bool) $form_state->getValue('enabled');
     if ($enabled && !$this->toggle->keyConfigured()) {
@@ -63,6 +76,9 @@ final class TurnstileSettingsForm extends FormBase implements ContainerInjection
     }
   }
 
+  /**
+   *
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $enabled = (bool) $form_state->getValue('enabled');
     $this->toggle->setEnabled($enabled, $this->currentUser->getAccountName());

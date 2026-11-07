@@ -16,6 +16,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 final class ContaAdministracaoPaginaController extends ControllerBase {
 
+  /**
+   *
+   */
   public function pagina(): RedirectResponse {
     return $this->redirect('entity.user_role.collection');
   }

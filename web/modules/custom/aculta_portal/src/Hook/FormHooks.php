@@ -64,7 +64,7 @@ final class FormHooks {
         '#required' => TRUE,
         '#size' => 25,
         '#description' => $this->translation->translate('Escolha uma senha com pelo menos 8 caracteres.')
-        . ' ' . $this->translation->translate('Enviaremos um link para confirmar o seu e-mail.'),
+          . ' ' . $this->translation->translate('Enviaremos um link para confirmar o seu e-mail.'),
       ];
       $form['#validate'][] = 'aculta_portal.form_callbacks:validateRegistrationPassword';
       $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:storeRegistrationPassword';
@@ -269,7 +269,7 @@ final class FormHooks {
       '#attributes' => ['data-portal-ui' => 'notice-error email-notice', 'role' => 'alert'],
       'text' => [
         '#markup' => '<p><strong>' . htmlspecialchars((string) $this->translation->translate('Você precisa confirmar seu e-mail para participar desta área.'), ENT_QUOTES) . '</strong> '
-        . '<a href="' . htmlspecialchars($url, ENT_QUOTES) . '">' . htmlspecialchars((string) $this->translation->translate('Confirme o e-mail em Minha conta > Segurança'), ENT_QUOTES) . '</a>.</p>',
+          . '<a href="' . htmlspecialchars($url, ENT_QUOTES) . '">' . htmlspecialchars((string) $this->translation->translate('Confirme o e-mail em Minha conta > Segurança'), ENT_QUOTES) . '</a>.</p>',
       ],
     ];
     foreach (array_keys($form) as $key) {

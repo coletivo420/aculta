@@ -7,10 +7,12 @@ namespace Drupal\aculta_portal\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
 
-/** Provides the public registration status while account creation is closed. */
+/**
+ * Provides the public registration status while account creation is closed. */
 final class RegistrationController extends ControllerBase {
 
-  /** Returns an informational page without exposing account creation. */
+  /**
+   * Returns an informational page without exposing account creation. */
   public function closed(): array {
     return [
       '#type' => 'container',

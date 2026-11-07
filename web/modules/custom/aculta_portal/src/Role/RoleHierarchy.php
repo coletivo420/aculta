@@ -13,7 +13,8 @@ namespace Drupal\aculta_portal\Role;
  */
 final class RoleHierarchy {
 
-  /** Papéis que não entram na cadeia editável. */
+  /**
+   * Papéis que não entram na cadeia editável. */
   public const FORA_DA_CADEIA = ['anonymous', 'administrator'];
 
   /**
@@ -71,7 +72,7 @@ final class RoleHierarchy {
    * @param string[] $cadeia
    *   Papéis da cadeia, do mais alto para o mais baixo (sem administrator).
    * @param string[] $todos
-   *   Todos os papéis do site (inclui anonymous e administrator).
+   *   @todo s os papéis do site (inclui anonymous e administrator).
    *
    * @return array<string, string[]>
    */

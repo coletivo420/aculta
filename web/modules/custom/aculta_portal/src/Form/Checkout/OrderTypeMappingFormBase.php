@@ -32,6 +32,9 @@ abstract class OrderTypeMappingFormBase extends ConfigFormBase {
 
   protected LoggerInterface $logger;
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     $instance = parent::create($container);
     $instance->entityTypeManager = $container->get('entity_type.manager');
@@ -42,21 +45,33 @@ abstract class OrderTypeMappingFormBase extends ConfigFormBase {
     return $instance;
   }
 
-  /** ID do contexto no registry de checkout. */
+  /**
+   * ID do contexto no registry de checkout. */
   abstract protected function contextId(): string;
 
-  /** Chave de `aculta_portal.checkout_settings` com o tipo de pedido do contexto. */
+  /**
+   * Chave de `aculta_portal.checkout_settings` com o tipo de pedido do contexto. */
   abstract protected function settingKey(): string;
 
-  /** Tipo de pedido efetivo hoje. */
+  /**
+   * Tipo de pedido efetivo hoje. */
   abstract protected function currentOrderType(CheckoutSettings $settings): string;
 
+  /**
+   *
+   */
   abstract protected function intro(): string;
 
+  /**
+   *
+   */
   protected function getEditableConfigNames(): array {
     return [CheckoutSettings::CONFIG];
   }
 
+  /**
+   *
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $tipoAtual = $this->currentOrderType(new CheckoutSettings($this->configFactory()));
     $form['introducao'] = ['#plain_text' => $this->intro()];
@@ -78,6 +93,9 @@ abstract class OrderTypeMappingFormBase extends ConfigFormBase {
     return parent::buildForm($form, $form_state);
   }
 
+  /**
+   *
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
     $tipo = (string) $form_state->getValue('order_type');
@@ -93,6 +111,9 @@ abstract class OrderTypeMappingFormBase extends ConfigFormBase {
     }
   }
 
+  /**
+   *
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $tipo = (string) $form_state->getValue('order_type');
     $anterior = $this->currentOrderType(new CheckoutSettings($this->configFactory()));

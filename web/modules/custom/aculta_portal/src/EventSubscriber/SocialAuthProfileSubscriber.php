@@ -9,17 +9,24 @@ use Drupal\social_auth\Event\LoginEvent;
 use Drupal\social_auth\Event\SocialAuthEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-/** Stores the Google account email needed by the private Connections page. */
+/**
+ * Stores the Google account email needed by the private Connections page. */
 final class SocialAuthProfileSubscriber implements EventSubscriberInterface {
 
   private const GOOGLE_PLUGIN_ID = 'social_auth_google';
 
   public function __construct(private readonly EntityTypeManagerInterface $entityTypeManager) {}
 
+  /**
+   *
+   */
   public static function getSubscribedEvents(): array {
     return [SocialAuthEvents::USER_LOGIN => 'onUserLogin'];
   }
 
+  /**
+   *
+   */
   public function onUserLogin(LoginEvent $event): void {
     if ($event->getPluginId() !== self::GOOGLE_PLUGIN_ID) {
       return;

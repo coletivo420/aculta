@@ -17,9 +17,9 @@ use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface;
 use Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface;
 use Drupal\user\UserInterface;
-use Throwable;
 
-/** Reliably requests a new registration confirmation without invalidating a usable link on failure. */
+/**
+ * Reliably requests a new registration confirmation without invalidating a usable link on failure. */
 class EmailConfirmationRequester {
 
   public const REALM = 'aculta_registration';
@@ -96,7 +96,7 @@ class EmailConfirmationRequester {
       try {
         $accepted = $this->sendRequest($confirmation);
       }
-      catch (Throwable $exception) {
+      catch (\Throwable $exception) {
         $this->logFailure('The email confirmation backend threw while sending.', $exception);
         // An exception does not prove that an external transport rejected the
         // message. Keep this persisted token usable and preserve prior tokens.
@@ -108,7 +108,7 @@ class EmailConfirmationRequester {
         try {
           $confirmation->delete();
         }
-        catch (Throwable $exception) {
+        catch (\Throwable $exception) {
           $this->logFailure('An unsent email confirmation could not be removed.', $exception);
         }
         return EmailConfirmationRequestResult::FAILED;
@@ -120,7 +120,7 @@ class EmailConfirmationRequester {
       try {
         $confirmation->save();
       }
-      catch (Throwable $exception) {
+      catch (\Throwable $exception) {
         $this->logFailure('An accepted email confirmation timestamp could not be saved.', $exception);
         return EmailConfirmationRequestResult::ACCEPTED;
       }
@@ -129,7 +129,7 @@ class EmailConfirmationRequester {
       try {
         $pending = $this->pendingFor($email, $uid);
       }
-      catch (Throwable $exception) {
+      catch (\Throwable $exception) {
         $this->logFailure('The previous email confirmations could not be listed.', $exception);
         return EmailConfirmationRequestResult::ACCEPTED;
       }
@@ -141,7 +141,7 @@ class EmailConfirmationRequester {
           $this->manager->cancelConfirmation($old);
           $old->save();
         }
-        catch (Throwable $exception) {
+        catch (\Throwable $exception) {
           // SMTP is already outside the database transaction. Keep the accepted
           // new request and report only its acceptance, even if an old token
           // could not be invalidated.
@@ -151,7 +151,7 @@ class EmailConfirmationRequester {
 
       return EmailConfirmationRequestResult::ACCEPTED;
     }
-    catch (Throwable $exception) {
+    catch (\Throwable $exception) {
       $this->logFailure('The email confirmation request failed before acceptance.', $exception);
       return EmailConfirmationRequestResult::FAILED;
     }
@@ -190,7 +190,8 @@ class EmailConfirmationRequester {
     return $accepted;
   }
 
-  /** @return \Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface[] */
+  /**
+   * @return \Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface[] */
   private function pendingFor(string $email, int $uid): array {
     $storage = $this->entityTypeManager->getStorage('aculta_mail_confirmer');
     $ids = $storage->getQuery()
@@ -209,7 +210,10 @@ class EmailConfirmationRequester {
     ));
   }
 
-  private function logFailure(string $message, Throwable $exception): void {
+  /**
+   *
+   */
+  private function logFailure(string $message, \Throwable $exception): void {
     // The exception message may contain an address or transport payload. Log
     // only its class so operational logs do not acquire message PII.
     $this->logger->error('@message Exception type: @type', [

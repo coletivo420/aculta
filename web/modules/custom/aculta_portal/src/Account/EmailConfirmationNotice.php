@@ -19,7 +19,8 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  */
 final class EmailConfirmationNotice {
 
-  /** Rotas da área "Minha conta" onde o aviso aparece. */
+  /**
+   * Rotas da área "Minha conta" onde o aviso aparece. */
   private const ACCOUNT_ROUTES = [
     'aculta_portal.dashboard',
     'aculta_portal.support_my',
@@ -42,7 +43,8 @@ final class EmailConfirmationNotice {
     private readonly ModuleHandlerInterface $moduleHandler,
   ) {}
 
-  /** Render array do aviso, ou NULL quando não deve aparecer. */
+  /**
+   * Render array do aviso, ou NULL quando não deve aparecer. */
   public function build(): ?array {
     if (!in_array($this->routeMatch->getRouteName(), self::ACCOUNT_ROUTES, TRUE)
       || $this->currentUser->isAnonymous()

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Account;
 
+use Drupal\Core\Render\Element;
 use Drupal\address\Element\Address;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -242,7 +243,7 @@ final class AccountAddressForm {
     if (isset($element['dependent_locality'])) {
       $element['dependent_locality']['#weight'] = -20;
     }
-    foreach (\Drupal\Core\Render\Element::children($element) as $key) {
+    foreach (Element::children($element) as $key) {
       if (str_starts_with((string) $key, 'container')) {
         $element[$key]['#weight'] = -10;
       }

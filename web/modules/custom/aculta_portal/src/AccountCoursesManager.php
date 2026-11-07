@@ -59,10 +59,16 @@ final class AccountCoursesManager {
     return $items;
   }
 
+  /**
+   *
+   */
   public function countCourses(AccountInterface $account): int {
     return count($this->getCourses($account));
   }
 
+  /**
+   *
+   */
   public function catalogUrl(): ?Url {
     return $this->domainPurposeManager->routeUrl('courses', 'aculta_portal.courses_home');
   }

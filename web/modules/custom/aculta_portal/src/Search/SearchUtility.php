@@ -29,7 +29,8 @@ final class SearchUtility {
     $this->setStringTranslation($translation);
   }
 
-  /** @return array<string, mixed> */
+  /**
+   * @return array<string, mixed> */
   public function build(): array {
     return [
       '#theme' => 'aculta_portal_search_trigger',

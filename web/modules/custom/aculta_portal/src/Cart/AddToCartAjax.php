@@ -34,7 +34,8 @@ final class AddToCartAjax {
     private readonly MessengerInterface $messenger,
   ) {}
 
-  /** Liga o AJAX ao botão de adicionar e cria o contêiner de status acima do formulário. */
+  /**
+   * Liga o AJAX ao botão de adicionar e cria o contêiner de status acima do formulário. */
   public function alter(array &$form, string $formId): void {
     if (!str_starts_with($formId, self::FORM_ID_PREFIX) || !isset($form['actions']['submit'])) {
       return;
@@ -49,7 +50,8 @@ final class AddToCartAjax {
     ];
   }
 
-  /** Callback AJAX do botão: caixa de status, contador e rótulo do botão do carrinho. */
+  /**
+   * Callback AJAX do botão: caixa de status, contador e rótulo do botão do carrinho. */
   public function response(array &$form, FormStateInterface $formState): AjaxResponse {
     $statusId = $formState->getTriggeringElement()['#ajax']['wrapper'] ?? $this->statusId((string) $formState->getFormObject()->getFormId());
     // A caixa "Item adicionado com sucesso." substitui a mensagem padrão do Commerce, que não pode ficar para a próxima página.
@@ -94,7 +96,8 @@ final class AddToCartAjax {
     return $response;
   }
 
-  /** Id estável a partir do form_id (o #id do formulário ganha sufixo na reconstrução do AJAX). */
+  /**
+   * Id estável a partir do form_id (o #id do formulário ganha sufixo na reconstrução do AJAX). */
   private function statusId(string $formId): string {
     return Html::cleanCssIdentifier('portal-cart-status-' . $formId);
   }

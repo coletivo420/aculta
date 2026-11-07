@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Plugin\Condition;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Condition\Attribute\Condition;
 use Drupal\Core\Condition\ConditionPluginBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -29,6 +30,9 @@ final class DomainPurposeCondition extends ConditionPluginBase implements Contai
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new self(
       $configuration,
@@ -38,13 +42,19 @@ final class DomainPurposeCondition extends ConditionPluginBase implements Contai
     );
   }
 
+  /**
+   *
+   */
   public function defaultConfiguration(): array {
     // An unconfigured condition must never silently mean MAIN. Keeping the
     // empty default also lets explicit MAIN visibility survive config saves.
     return ['purpose' => ''] + parent::defaultConfiguration();
   }
 
-  public function buildConfigurationForm(array $form, \Drupal\Core\Form\FormStateInterface $form_state): array {
+  /**
+   *
+   */
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     $form['purpose'] = [
       '#type' => 'select',
       '#title' => $this->t('Domain purpose'),
@@ -67,27 +77,45 @@ final class DomainPurposeCondition extends ConditionPluginBase implements Contai
     return parent::buildConfigurationForm($form, $form_state);
   }
 
-  public function submitConfigurationForm(array &$form, \Drupal\Core\Form\FormStateInterface $form_state): void {
+  /**
+   *
+   */
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
     parent::submitConfigurationForm($form, $form_state);
     $this->configuration['purpose'] = $form_state->getValue('purpose');
   }
 
+  /**
+   *
+   */
   public function evaluate(): bool {
     return $this->domainPurposeManager->getCurrentPurpose() === $this->configuration['purpose'];
   }
 
+  /**
+   *
+   */
   public function summary(): string {
     return (string) $this->t('Visible for the @purpose domain purpose.', ['@purpose' => $this->configuration['purpose']]);
   }
 
+  /**
+   *
+   */
   public function getCacheContexts(): array {
     return ['domain'];
   }
 
+  /**
+   *
+   */
   public function getCacheTags(): array {
     return [];
   }
 
+  /**
+   *
+   */
   public function getCacheMaxAge(): int {
     return -1;
   }

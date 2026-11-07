@@ -16,7 +16,8 @@ use Drupal\Component\PhpStorage\MTimeProtectedFileStorage;
  */
 final class RestrictedTwigStorage extends MTimeProtectedFileStorage {
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function save($name, $data) {
     if (!parent::save($name, $data)) {
       return FALSE;
@@ -31,14 +32,16 @@ final class RestrictedTwigStorage extends MTimeProtectedFileStorage {
     return chmod($path, 0440);
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   protected function ensureDirectory($directory, $mode = 02770) {
     if ($this->createDirectory($directory, 02770)) {
       FileSecurity::writeHtaccess($directory);
     }
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   protected function createDirectory($directory, $mode = 02770) {
     if (is_dir($directory)) {
       return TRUE;
@@ -49,7 +52,7 @@ final class RestrictedTwigStorage extends MTimeProtectedFileStorage {
       return FALSE;
     }
 
-    // mkdir inherits the Homelab runtime directory's setgid bit and default
+    // Mkdir inherits the Homelab runtime directory's setgid bit and default
     // ACL. Do not chmod here: PHP-FPM runs as aculta, which is not a member of
     // www-data, so chmod would clear the inherited setgid bit.
     @mkdir($directory);
@@ -67,7 +70,8 @@ final class RestrictedTwigStorage extends MTimeProtectedFileStorage {
     return FALSE;
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function garbageCollection() {
     $flags = \FilesystemIterator::CURRENT_AS_FILEINFO + \FilesystemIterator::SKIP_DOTS;
 
@@ -97,7 +101,8 @@ final class RestrictedTwigStorage extends MTimeProtectedFileStorage {
     }
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   protected function unlink($path) {
     if (!file_exists($path)) {
       return TRUE;

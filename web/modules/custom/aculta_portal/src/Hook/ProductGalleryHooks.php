@@ -26,6 +26,9 @@ final class ProductGalleryHooks {
     private readonly ViewExecutableFactory $viewExecutableFactory,
   ) {}
 
+  /**
+ *
+ */
   #[Hook('preprocess_commerce_product')]
   public function preprocessCommerceProduct(array &$variables): void {
     $product = $variables['elements']['#commerce_product'] ?? NULL;

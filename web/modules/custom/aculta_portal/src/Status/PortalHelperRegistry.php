@@ -36,7 +36,7 @@ final class PortalHelperRegistry {
     'aculta_user.author_card_variant_resolver' => [
       'label' => 'Variantes contextuais de autoria',
       'summary' => 'Seleciona a variante do cartão pelo host sem conceder acesso ou misturar '
-      . 'Fórum, Revista, LMS e Wiki.',
+        . 'Fórum, Revista, LMS e Wiki.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARD-VARIANTS.md',
     ],
     'aculta_game.mission_progress' => [
@@ -102,7 +102,7 @@ final class PortalHelperRegistry {
     'aculta_portal.content_cleanup_preview' => [
       'label' => 'Prévia de limpeza de anexos',
       'summary' => 'Avalia IDs explícitos de File e Media em modo somente leitura; '
-      . 'não inclui nomes, URIs ou conteúdo no relatório.',
+        . 'não inclui nomes, URIs ou conteúdo no relatório.',
       'docs' => 'docs/portal/CONTENT-CLEANUP-POLICY.md',
     ],
     'aculta_file_uploader.cleanup' => [

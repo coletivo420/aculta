@@ -25,9 +25,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 final class RegisterPopupForm extends RegisterForm {
 
-  /** Id do wrapper trocado pelo AJAX em caso de erro de validação. */
+  /**
+   * Id do wrapper trocado pelo AJAX em caso de erro de validação. */
   public const WRAPPER_ID = 'aculta-register-popup';
 
+  /**
+   *
+   */
   public function getFormId() {
     return 'aculta_register_popup_form';
   }
@@ -40,6 +44,9 @@ final class RegisterPopupForm extends RegisterForm {
     return NULL;
   }
 
+  /**
+   *
+   */
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
     $form['#prefix'] = '<div id="' . self::WRAPPER_ID . '">';

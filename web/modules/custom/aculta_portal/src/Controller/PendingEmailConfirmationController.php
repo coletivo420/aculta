@@ -16,7 +16,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class PendingEmailConfirmationController extends ControllerBase {
 
-  /** Limite de contas listadas. */
+  /**
+   * Limite de contas listadas. */
   private const LIMIT = 200;
 
   public function __construct(

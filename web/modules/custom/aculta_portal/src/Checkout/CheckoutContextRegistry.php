@@ -12,7 +12,8 @@ namespace Drupal\aculta_portal\Checkout;
  */
 final class CheckoutContextRegistry {
 
-  /** @var array<string, \Drupal\aculta_portal\Checkout\CheckoutContextProviderInterface>|null */
+  /**
+   * @var array<string, \Drupal\aculta_portal\Checkout\CheckoutContextProviderInterface>|null */
   private ?array $ordenados = NULL;
 
   /**
@@ -40,10 +41,16 @@ final class CheckoutContextRegistry {
     return $this->ordenados = $por_id;
   }
 
+  /**
+   *
+   */
   public function get(string $id): ?CheckoutContextProviderInterface {
     return $this->all()[$id] ?? NULL;
   }
 
+  /**
+   *
+   */
   public function has(string $id): bool {
     return isset($this->all()[$id]);
   }

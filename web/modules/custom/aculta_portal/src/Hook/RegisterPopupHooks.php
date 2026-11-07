@@ -15,6 +15,9 @@ use Drupal\Core\Hook\Attribute\Hook;
  */
 final class RegisterPopupHooks {
 
+  /**
+ *
+ */
   #[Hook('entity_type_alter')]
   public function registrarFormularioPopup(array &$entity_types): void {
     if (isset($entity_types['user'])) {

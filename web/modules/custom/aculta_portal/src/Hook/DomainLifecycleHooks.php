@@ -19,16 +19,25 @@ final class DomainLifecycleHooks {
     private readonly ActivePurposesState $activePurposesState,
   ) {}
 
+  /**
+ *
+ */
   #[Hook('domain_insert')]
   public function onDomainInsert(EntityInterface $entity): void {
     $this->activePurposesState->rebuild();
   }
 
+  /**
+ *
+ */
   #[Hook('domain_update')]
   public function onDomainUpdate(EntityInterface $entity): void {
     $this->activePurposesState->rebuild();
   }
 
+  /**
+ *
+ */
   #[Hook('domain_delete')]
   public function onDomainDelete(EntityInterface $entity): void {
     $this->activePurposesState->rebuild();

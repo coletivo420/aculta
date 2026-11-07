@@ -35,6 +35,9 @@ final class SearchPreviewController implements ContainerInjectionInterface {
     $this->setStringTranslation($translation);
   }
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.search_results'),
@@ -44,6 +47,9 @@ final class SearchPreviewController implements ContainerInjectionInterface {
     );
   }
 
+  /**
+   *
+   */
   public function preview(Request $request): Response {
     $term = mb_substr(trim((string) $request->query->get('q', '')), 0, SearchPageController::MAX_CHARS);
     $html = (string) $this->renderer->renderInIsolation($this->build($term));
@@ -52,7 +58,8 @@ final class SearchPreviewController implements ContainerInjectionInterface {
     return $response;
   }
 
-  /** @return array<string, mixed> */
+  /**
+   * @return array<string, mixed> */
   private function build(string $term): array {
     if (mb_strlen($term) < SearchPageController::MIN_CHARS) {
       return [

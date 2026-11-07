@@ -11,7 +11,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Minha Conta > Configurações: escolha do modo de cor da própria conta. */
+/**
+ * Minha Conta > Configurações: escolha do modo de cor da própria conta. */
 final class AppearanceForm extends FormBase implements ContainerInjectionInterface {
 
   public function __construct(
@@ -20,6 +21,9 @@ final class AppearanceForm extends FormBase implements ContainerInjectionInterfa
     protected readonly SettingsTabs $settingsTabs,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.color_mode_preference'),
@@ -28,10 +32,16 @@ final class AppearanceForm extends FormBase implements ContainerInjectionInterfa
     );
   }
 
+  /**
+   *
+   */
   public function getFormId(): string {
     return 'aculta_portal_appearance_form';
   }
 
+  /**
+   *
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $uid = (int) $this->currentUser->id();
     $form['tabs'] = $this->settingsTabs->build('color');
@@ -52,6 +62,9 @@ final class AppearanceForm extends FormBase implements ContainerInjectionInterfa
     return $form;
   }
 
+  /**
+   *
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $uid = (int) $this->currentUser->id();
     $this->preference->save($uid, (string) $form_state->getValue('color_mode'));

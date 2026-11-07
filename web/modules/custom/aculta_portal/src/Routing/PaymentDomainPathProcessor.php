@@ -18,7 +18,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 final class PaymentDomainPathProcessor implements OutboundPathProcessorInterface {
 
-  /** Padrões (sem o host) dos caminhos que recebem o domínio principal. */
+  /**
+   * Padrões (sem o host) dos caminhos que recebem o domínio principal. */
   private const CAMINHOS_DE_PAGAMENTO = [
     '#^/integracoes/pagamentos/[^/]+/notificacao$#',
     '#^/checkout/[^/]+/[^/]+/(return|cancel)$#',
@@ -27,6 +28,9 @@ final class PaymentDomainPathProcessor implements OutboundPathProcessorInterface
 
   public function __construct(private readonly DomainPurposeManager $purposes) {}
 
+  /**
+   *
+   */
   public function processOutbound($path, &$options = [], ?Request $request = NULL, ?BubbleableMetadata $bubbleable_metadata = NULL) {
     if (!self::ehCaminhoDePagamento($path)) {
       return $path;
@@ -40,6 +44,9 @@ final class PaymentDomainPathProcessor implements OutboundPathProcessorInterface
     return $path;
   }
 
+  /**
+   *
+   */
   private static function ehCaminhoDePagamento(string $path): bool {
     foreach (self::CAMINHOS_DE_PAGAMENTO as $padrao) {
       if (preg_match($padrao, $path) === 1) {

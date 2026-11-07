@@ -32,6 +32,9 @@ final class CheckoutCommonForm extends ConfigFormBase {
 
   protected LoggerInterface $logger;
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     $instance = parent::create($container);
     $instance->registry = $container->get('aculta_portal.checkout_context_registry');
@@ -42,14 +45,23 @@ final class CheckoutCommonForm extends ConfigFormBase {
     return $instance;
   }
 
+  /**
+   *
+   */
   public function getFormId(): string {
     return 'aculta_portal_checkout_common';
   }
 
+  /**
+   *
+   */
   protected function getEditableConfigNames(): array {
     return [CheckoutSettings::CONFIG];
   }
 
+  /**
+   *
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $habilitado = (new CheckoutSettings($this->configFactory()))->commonCheckoutEnabled();
     $form['common_checkout_enabled'] = [
@@ -99,6 +111,9 @@ final class CheckoutCommonForm extends ConfigFormBase {
     return parent::buildForm($form, $form_state);
   }
 
+  /**
+   *
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $novo = (bool) $form_state->getValue('common_checkout_enabled');
     $anterior = (new CheckoutSettings($this->configFactory()))->commonCheckoutEnabled();

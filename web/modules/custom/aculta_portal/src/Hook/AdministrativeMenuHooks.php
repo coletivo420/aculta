@@ -14,7 +14,8 @@ use Drupal\Core\Hook\Attribute\Hook;
  */
 final class AdministrativeMenuHooks {
 
-  /** Itens do menu desativados por duplicarem uma aba de Pessoas. */
+  /**
+   * Itens do menu desativados por duplicarem uma aba de Pessoas. */
   private const DUPLICADOS = [
     'entity.profile_type.collection',
   ];
@@ -34,6 +35,9 @@ final class AdministrativeMenuHooks {
     'entity.user.admin_form',
   ];
 
+  /**
+ *
+ */
   #[Hook('menu_links_discovered_alter')]
   public function menuLinksDiscoveredAlter(array &$links): void {
     foreach (array_merge(self::DUPLICADOS, self::EM_ABAS) as $id) {

@@ -18,22 +18,28 @@ final class CheckoutSettings {
 
   public const DEFAULT_SHOP_ORDER_TYPE = 'default';
 
-  /** Tipo de pedido de curso histórico: continua reconhecido mesmo se o LMS passar a usar outro. */
+  /**
+   * Tipo de pedido de curso histórico: continua reconhecido mesmo se o LMS passar a usar outro. */
   public const LEGACY_LMS_ORDER_TYPE = 'curso';
 
   public function __construct(private readonly ConfigFactoryInterface $configFactory) {}
 
-  /** Chave global: FALSE fecha as rotas globais de carrinho e checkout do Commerce. */
+  /**
+   * Chave global: FALSE fecha as rotas globais de carrinho e checkout do Commerce. */
   public function commonCheckoutEnabled(): bool {
     $valor = $this->configFactory->get(self::CONFIG)->get('common_checkout_enabled');
     return $valor === NULL ? TRUE : (bool) $valor;
   }
 
+  /**
+   *
+   */
   public function shopOrderType(): string {
     return $this->texto('shop_order_type', self::DEFAULT_SHOP_ORDER_TYPE);
   }
 
-  /** Tipo de pedido com que o LMS cria novas compras de curso. */
+  /**
+   * Tipo de pedido com que o LMS cria novas compras de curso. */
   public function lmsOrderType(): string {
     return $this->texto('lms_order_type', self::LEGACY_LMS_ORDER_TYPE);
   }
@@ -48,6 +54,9 @@ final class CheckoutSettings {
     return array_values(array_unique([$this->lmsOrderType(), self::LEGACY_LMS_ORDER_TYPE]));
   }
 
+  /**
+   *
+   */
   private function texto(string $chave, string $padrao): string {
     $valor = $this->configFactory->get(self::CONFIG)->get($chave);
     return is_string($valor) && $valor !== '' ? $valor : $padrao;
