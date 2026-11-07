@@ -501,6 +501,12 @@ body.aculta-component-library-page {
   .page__main--stack {
     inline-size: min(100%, var(--aculta-narrow-container-width, 750px));
   }
+
+  /* Purpose com layout de largura total (forum, por exemplo): a lista ocupa a tela, sem o teto de leitura. */
+  html[data-purpose-layout="full"] .layout-page--stack,
+  html[data-purpose-layout="full"] .page__main--stack {
+    inline-size: 100%;
+  }
 }
 
 /* Celular (abaixo de 60 rem): largura sempre 100%, ignorando sliders */
