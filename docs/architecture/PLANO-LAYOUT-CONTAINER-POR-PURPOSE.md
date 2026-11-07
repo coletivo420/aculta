@@ -9,7 +9,7 @@ Criar uma subaba nas configurações do tema `aculta420_v2` para definir o layou
 ## Decisões aprovadas
 
 - **Padrão:** caixa centralizada (antes chamada Boxed) para todos os purposes. Outros modos ficam disponíveis na seleção.
-- **Unboxed:** largura total da tela (faixa sem margens laterais).
+- **Largura total:** 100% da tela, sem limite lateral.
 - **Celular:** largura sempre 100%, ignorando os sliders.
 - **Este documento** é o registro do planejamento; a implementação só começa depois de aprovação explícita.
 
@@ -60,7 +60,7 @@ Subaba "Layout de container" em Aparência > aculta420_v2, com um bloco por purp
 
 ### Fase 4 — validação visual
 - Captura em Firefox ESR por purpose, claro e escuro, 320 e 1440 px, em `tests/browser/capturas/layout-container/<data>/` com `manifest.json`.
-- Aceite: Unboxed ocupa a tela; Boxed mantém margens; celular sempre 100%.
+- Aceite: Largura total ocupa a tela; Padrão mantém margens; Estreito limita a leitura; celular sempre 100%.
 
 ### Fase 5 — entrega
 - Commit em português com o trailer da sessão, push em `origin/dev`, confirmar hash com `git ls-remote`.
@@ -68,4 +68,4 @@ Subaba "Layout de container" em Aparência > aculta420_v2, com um bloco por purp
 
 ## Pontos abertos
 
-- Se a configuração vale para páginas de conteúdo editorial (Revista, Wiki) além do painel.
+- Nenhum no momento. Revista e Wiki entram na configuração, como os demais purposes.
