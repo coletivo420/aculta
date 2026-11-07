@@ -715,3 +715,9 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
   font-weight: 700;
   font-style: normal;
 }
+
+/* Lista do fórum: as categorias já estão na coluna da lista; o bloco de categorias da home e a ação local saem da página. */
+body:has(.aculta-forum-list) .action-links,
+body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
+  display: none;
+}
