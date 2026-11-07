@@ -229,7 +229,7 @@ foreach (glob($root . '/config/sync/block.block.' . $themeName . '_*.yml') ?: []
 
 // Templates: the V2 presenters the theme depends on must exist.
 $requiredTemplates = [
-  'page.html.twig',
+  'layout/page.html.twig',
   'layout/html.html.twig',
   'aculta-mailer-wrap.html.twig',
   'content/node--aculta-forum-topic.html.twig',
@@ -263,7 +263,8 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($themeRoot
   }
   if ($extension === 'twig') {
     $componentName = basename($file->getFilename(), '.twig');
-    $isComponent = preg_match('#/components/[^/]+/' . preg_quote($componentName, '#') . '\.twig$#', $file->getPathname()) === 1;
+    // Só o template que tem o mesmo nome da pasta é componente SDC; partials (ex.: _content) não são.
+    $isComponent = basename(dirname($file->getPathname())) === $componentName && str_contains($file->getPathname(), '/components/');
     $sourceName = $isComponent
       ? $themeName . ':' . $componentName
       : '@' . $themeName . '/' . str_replace($themeRoot . DIRECTORY_SEPARATOR, '', $file->getPathname());
