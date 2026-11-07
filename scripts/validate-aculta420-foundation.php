@@ -143,18 +143,10 @@ $assert(
 $assert(is_file($themeRoot . '/assets/icons/aculta420-favicon.ico'), 'V2 favicon asset exists.');
 $assert(is_file($themeRoot . '/' . ($info['logo'] ?? '')), 'V2 logo declared in info exists.');
 
-$syncThemeSettings = Yaml::parseFile($root . '/config/sync/aculta420.settings.yml');
-foreach (['logo', 'favicon'] as $assetSetting) {
-  $path = (string) ($syncThemeSettings[$assetSetting]['path'] ?? '');
-  $assert(str_starts_with($path, 'themes/custom/' . $themeName . '/'), 'Config sync points the theme ' . $assetSetting . ' at ACULTA420 V2.');
-  $assert(is_file($root . '/web/' . $path), 'Config sync theme ' . $assetSetting . ' asset exists.');
-}
-$assert(!isset($syncThemeSettings['b5_theme_mode']) && !isset($syncThemeSettings['schemas']), 'Config sync has no Bootstrap 5 or schema settings.');
-
-$themeSettings = \Drupal::config('aculta420.settings');
-foreach (['institution_data_uuid', 'institution_home_nid', 'institution_transparency_nid'] as $functionalSetting) {
-  $assert($themeSettings->get($functionalSetting) === NULL, 'Theme settings do not own functional institutional data: ' . $functionalSetting);
-}
+// A configuração da V1 (aculta420.settings e bootstrap.settings) foi removida: o V2 usa os próprio assets.
+$assert(!is_file($root . '/config/sync/aculta420.settings.yml'), 'Config sync has no legacy aculta420.settings file.');
+$assert(!is_file($root . '/config/sync/bootstrap.settings.yml'), 'Config sync has no legacy bootstrap.settings file.');
+$assert(\Drupal::config('aculta420.settings')->isNew(), 'Runtime has no legacy aculta420.settings configuration.');
 
 $portalSettings = \Drupal::config('aculta_portal.settings');
 $assert(trim((string) $portalSettings->get('institution_data_uuid')) !== '', 'Portal owns the institutional block UUID.');
