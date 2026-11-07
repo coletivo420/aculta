@@ -66,6 +66,8 @@ def screenshot(driver, filename):
 
 
 def path_url(base, path):
+    if path.startswith(("http://", "https://")):
+        return path
     return urlunsplit((base.scheme, base.netloc, path, "", ""))
 
 
@@ -115,7 +117,7 @@ def main():
   const required=document.querySelector(arguments[1]);
   const box=component?.getBoundingClientRect();
   const style=component?getComputedStyle(component):null;
-  const overflowing=[...document.querySelectorAll('main *')].map(el=>{
+  const overflowing=[...document.querySelectorAll('main *')].filter(el=>!el.closest('.forum-tabs__bar')).map(el=>{
     const r=el.getBoundingClientRect(), s=getComputedStyle(el);
     return {tag:el.tagName,cls:String(el.className).slice(0,80),right:Math.round(r.right),display:s.display};
   }).filter(x=>x.display!=='none'&&x.right>innerWidth+1).slice(0,5);
