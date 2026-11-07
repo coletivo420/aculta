@@ -781,3 +781,13 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
     align-items: start;
   }
 }
+
+/* Tópico: a navegação de progresso das mensagens (módulo aculta_forum) fica oculta visualmente; continua acessível a leitores de tela e ao teclado. */
+[data-aculta-discussion-thread] nav[aria-label="Navega\E7\E3o das mensagens nesta p\E1gina"] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

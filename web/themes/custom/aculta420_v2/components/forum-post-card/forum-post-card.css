@@ -184,3 +184,19 @@
     padding: var(--spacing-lg);
   }
 }
+
+/* Card de comentário: faixa colorida à esquerda, cabeçalho e corpo ao lado. */
+.forum-post-card {
+  display: flex;
+}
+
+.forum-post-card__stripe {
+  flex: 0 0 4px;
+  block-size: auto;
+  inline-size: 4px;
+}
+
+.forum-post-card__inner {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
