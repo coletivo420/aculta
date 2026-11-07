@@ -14,6 +14,9 @@
         </a>
       {% endif %}
     </div>
+    {% if wiki_search %}
+      <div class="navigation-bar__search">{{ wiki_search }}</div>
+    {% endif %}
     <button class="navigation-bar__toggle" type="button" aria-expanded="false" aria-controls="{{ menu_id|default('aculta-primary-navigation') }}" data-aculta-navigation-toggle>
       <span class="navigation-bar__toggle-label">{{ 'Menu'|t }}</span>
       <span class="navigation-bar__icon" aria-hidden="true">

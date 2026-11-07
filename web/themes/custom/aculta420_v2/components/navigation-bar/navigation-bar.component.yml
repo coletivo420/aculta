@@ -44,6 +44,9 @@ slots:
   menu_items:
     title: Itens de navegação
     description: Links do menu principal, renderizados por Menu API.
+  wiki_search:
+    title: Busca da Wiki
+    description: Formulário de busca da Wiki, exibido no cabeçalho apenas no domínio wiki.
   utility_items:
     title: Ações utilitárias
     description: Links ou ações auxiliares do site.

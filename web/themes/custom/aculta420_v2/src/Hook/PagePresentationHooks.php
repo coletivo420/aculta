@@ -496,6 +496,11 @@ final class PagePresentationHooks {
     if ($brand !== NULL) {
       $slots['brand'] = $brand;
     }
+    // Wiki: a busca fica no cabeçalho, entre a marca e o menu (como no aculta420 v1).
+    $wikiSearch = $variables['domain_presentation']['regions']['wiki_search'] ?? NULL;
+    if ($wikiSearch !== NULL && $wikiSearch !== []) {
+      $slots['wiki_search'] = $wikiSearch;
+    }
     if ($menu !== NULL) {
       $slots['menu_items'] = $menu;
     }

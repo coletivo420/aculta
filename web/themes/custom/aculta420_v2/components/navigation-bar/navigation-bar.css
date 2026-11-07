@@ -262,3 +262,27 @@
 [dir="rtl"] .navigation-bar.has-js .navigation-bar__panel.is-open {
   transform: translateX(0);
 }
+
+/* Wiki (v1 restaurada na v2): busca no cabeçalho, ao lado da logo pequena e antes do menu. */
+.navigation-bar__search {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  max-inline-size: 44rem;
+  margin-inline: var(--spacing-sm);
+}
+.navigation-bar__search form {
+  align-items: center;
+  display: flex;
+  gap: 0.375rem;
+  margin: 0;
+  inline-size: 100%;
+}
+.navigation-bar__search .form-item { flex: 1 1 auto; min-inline-size: 0; margin: 0; }
+.navigation-bar__search input[type="search"] {
+  background: var(--color-surface-raised);
+  inline-size: 100%;
+  min-block-size: 2.75rem;
+}
+.navigation-bar:has(.navigation-bar__search) .navigation-bar__logo {
+  max-block-size: 3.85rem;
+}
