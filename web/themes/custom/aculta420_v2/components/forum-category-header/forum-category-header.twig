@@ -12,7 +12,7 @@
       <div class="forum-category-header__description">{{ description }}</div>
     {% endif %}
     {% if actions %}
-      <div class="forum-category-header__actions">{{ actions }}</div>
+      <div class="forum-category-header__actions">{{ actions|raw }}</div>
     {% endif %}
     {% if stats and stats|length > 0 %}
       <dl class="forum-category-header__stats">
