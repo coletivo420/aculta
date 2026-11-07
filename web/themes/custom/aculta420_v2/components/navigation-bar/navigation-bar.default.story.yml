@@ -1,0 +1,10 @@
+name: Cabeçalho de domínio (Wiki420)
+description: Cabeçalho do purpose Wiki, com a própria marca e a busca. Sem menu do purpose principal. Valores iguais aos renderizados pelo tema para o domínio da Wiki.
+component: aculta420_v2:navigation-bar
+props:
+  brand_home_url: http://wiki420.aculta.toca.net.br/
+  brand_title: Wiki420
+  brand_logo_url: /themes/custom/aculta420_v2/assets/logos/wiki420-horizontal-960w.webp
+  brand_logo_srcset: /themes/custom/aculta420_v2/assets/logos/wiki420-horizontal-480w.webp 480w, /themes/custom/aculta420_v2/assets/logos/wiki420-horizontal-720w.webp 720w, /themes/custom/aculta420_v2/assets/logos/wiki420-horizontal-960w.webp 960w
+  brand_logo_alt: Wiki420
+  menu_id: aculta-primary-navigation

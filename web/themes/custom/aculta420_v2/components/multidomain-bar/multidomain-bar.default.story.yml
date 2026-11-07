@@ -1,11 +1,11 @@
 name: Barra institucional e menu de conta
-description: Barra ACULTA fixa com menu Drupal de conta autenticada.
+description: Barra institucional ACULTA com valores padrão do template page.html.twig fora da área de conta.
 component: aculta420_v2:multidomain-bar
 props:
   brand_home_url: /
   logo_base_url: /themes/custom/aculta420_v2/assets/logos
   logo_alt: 'ACULTA - Associação Cultural Antiproibicionista'
-  is_account_domain: true
+  is_account_domain: false
   show_utility_bar: true
   cart_url: /carrinho
   cart_count: 0
