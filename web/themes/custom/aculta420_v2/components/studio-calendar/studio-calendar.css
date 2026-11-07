@@ -108,7 +108,7 @@
   color: var(--color-text-primary);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .05);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--color-shadow-tint) 17%, transparent);
   font-weight: 700;
 }
 
@@ -183,7 +183,7 @@
 /* Dia selecionado com --purpose-accent */
 .aculta-studio-calendar__day.is-selected .aculta-studio-calendar__day-link,
 .aculta-studio-calendar__day.is-selected span.aculta-studio-calendar__day-num {
-  color: #fff;
+  color: var(--color-on-brand);
   background: var(--purpose-accent);
   font-weight: 700;
 }
@@ -197,7 +197,7 @@
 }
 
 .aculta-studio-calendar__day.is-selected .aculta-studio-calendar__day-dot {
-  background: #fff;
+  background: var(--color-on-brand);
 }
 
 /* Resumo do dia */

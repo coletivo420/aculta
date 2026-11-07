@@ -5,7 +5,7 @@
   box-sizing: border-box;
   padding: var(--spacing-sm) var(--spacing-base);
   cursor: pointer;
-  transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+  transition: background-color var(--motion-fast) ease, color var(--motion-fast) ease, border-color var(--motion-fast) ease;
   text-align: center;
   text-decoration: none;
   border: 2px solid transparent;

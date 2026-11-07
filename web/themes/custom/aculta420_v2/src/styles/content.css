@@ -191,7 +191,7 @@
 .aculta-card,
 .aculta-panel,
 .aculta-editorial-list .views-row {
-  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  transition: border-color var(--motion-base) ease, box-shadow var(--motion-base) ease, transform var(--motion-base) ease;
 }
 
 .aculta-card:is(:hover, :focus-within),

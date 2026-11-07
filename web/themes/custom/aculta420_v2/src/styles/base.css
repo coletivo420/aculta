@@ -56,12 +56,13 @@ p {
   margin-bottom: 1rem;
 }
 
-a {
+/* Links da página (cabeçalho, conteúdo e rodapé), sem vazar para fora do contêiner .page. */
+.page a {
   text-decoration: none;
   color: var(--color-primary);
 }
 
-a:hover {
+.page a:hover {
   text-decoration: underline;
 }
 
@@ -139,8 +140,8 @@ fieldset {
   *,
   *::before,
   *::after {
-    transition-duration: .01ms !important;
-    animation-duration: .01ms !important;
+    transition-duration: var(--motion-instant) !important;
+    animation-duration: var(--motion-instant) !important;
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
   }

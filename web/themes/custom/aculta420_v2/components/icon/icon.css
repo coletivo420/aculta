@@ -21,7 +21,7 @@
 .aculta-icon--bar { block-size: 30px; inline-size: 30px; }
 
 .aculta-icon--duotone svg path:first-child {
-  transition: opacity .2s ease, fill .2s ease;
+  transition: opacity var(--motion-slow) ease, fill var(--motion-slow) ease;
   opacity: .22;
   fill: currentColor;
 }

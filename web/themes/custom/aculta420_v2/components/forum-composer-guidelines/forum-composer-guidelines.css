@@ -40,7 +40,7 @@
 }
 
 .forum-composer-guidelines__chevron {
-  transition: transform .2s ease;
+  transition: transform var(--motion-slow) ease;
   color: var(--color-text-secondary);
 }
 

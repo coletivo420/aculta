@@ -64,7 +64,7 @@
   align-items: center;
   min-height: 2.75rem;
   padding: .625rem .75rem;
-  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease;
+  transition: color var(--motion-base) ease, background-color var(--motion-base) ease, border-color var(--motion-base) ease;
   text-decoration: none;
   color: var(--color-text-primary);
   border-inline-start: 4px solid transparent;
@@ -309,7 +309,7 @@
   place-items: center;
   width: 2rem;
   height: 2rem;
-  transition: opacity 150ms ease;
+  transition: opacity var(--motion-fast) ease;
   transform: translate(-.1rem, -.1rem);
   pointer-events: none;
   opacity: 1;
@@ -351,7 +351,7 @@
   align-items: center;
   min-height: 2.75rem;
   padding: .625rem .875rem;
-  transition: color 180ms ease, background-color 180ms ease;
+  transition: color var(--motion-base) ease, background-color var(--motion-base) ease;
   text-decoration: none;
   color: var(--color-text-primary);
   border: 1px solid var(--color-text-primary);
@@ -435,7 +435,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .portal-account__chevron {
-    transition: transform 180ms ease;
+    transition: transform var(--motion-base) ease;
   }
 }
 

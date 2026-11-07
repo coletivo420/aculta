@@ -127,7 +127,7 @@
   overflow-x: hidden;
   overflow-y: auto;
   padding: var(--spacing-base);
-  transition: transform .2s ease, visibility .2s ease;
+  transition: transform var(--motion-slow) ease, visibility var(--motion-slow) ease;
   transform: translateX(100%);
   background: var(--color-surface);
   box-shadow: var(--shadow-lg);

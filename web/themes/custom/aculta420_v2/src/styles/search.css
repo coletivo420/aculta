@@ -44,7 +44,7 @@
 .aculta-search-preview .form-submit {
   min-height: 2.75rem;
   padding: .625rem 1.25rem;
-  transition: color 180ms ease, background-color 180ms ease;
+  transition: color var(--motion-base) ease, background-color var(--motion-base) ease;
   color: var(--color-on-highlight);
   border: 1px solid var(--color-brand-highlight);
   border-radius: var(--radius-base);

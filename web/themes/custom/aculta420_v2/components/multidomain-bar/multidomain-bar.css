@@ -227,7 +227,7 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
 .aculta-login-dialog__content [data-portal-ui="login-popup-links"] a:last-of-type { display: flex; align-items: center; justify-content: center; box-sizing: border-box; padding: var(--spacing-sm) var(--spacing-base); text-align: center; color: var(--color-auth-secondary-text); border-radius: var(--radius-sm); background: var(--color-auth-secondary-surface); font-weight: 700; inline-size: min(100%, 14rem); min-block-size: var(--tap-target-min); }
 
 @media (prefers-reduced-motion: no-preference) {
-  .aculta-login-dialog[open] { animation: aculta-login-enter 160ms ease-out both; }
+  .aculta-login-dialog[open] { animation: aculta-login-enter var(--motion-base) ease-out both; }
 }
 
 @keyframes aculta-login-enter {
@@ -368,7 +368,7 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
 
 /* Esmaecimento do fundo ao abrir, igual para carrinho, avisos, mensagens e menu de conta. */
 .aculta-utility-dialog::backdrop {
-  transition: opacity .2s ease, overlay .2s allow-discrete, display .2s allow-discrete;
+  transition: opacity var(--motion-slow) ease, overlay var(--motion-slow) allow-discrete, display var(--motion-slow) allow-discrete;
   opacity: 1;
   background: var(--color-scrim);
 }

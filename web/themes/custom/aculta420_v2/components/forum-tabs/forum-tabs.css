@@ -38,7 +38,7 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  transition: color .2s ease, border-color .2s ease;
+  transition: color var(--motion-slow) ease, border-color var(--motion-slow) ease;
   text-decoration: none;
   color: var(--color-text-secondary);
   border-block-end: 3px solid transparent;
@@ -69,7 +69,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--color-on-brand);
   border-radius: var(--radius-full);
   background: var(--color-link-editorial);
   font-size: var(--font-size-xs);

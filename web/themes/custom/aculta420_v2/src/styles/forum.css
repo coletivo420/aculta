@@ -340,7 +340,7 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
   justify-content: center;
   padding: var(--spacing-sm) var(--spacing-lg);
   text-decoration: none;
-  color: #fff;
+  color: var(--color-on-brand);
   border: 1px solid transparent;
   border-radius: var(--radius-full);
   background: var(--color-brand-primary);
@@ -352,8 +352,8 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
 }
 
 .aculta-forum-new-topic-btn:hover {
-  color: #fff;
-  background: var(--button-primary-bg-hover, #092b1d);
+  color: var(--color-on-brand);
+  background: var(--button-primary-bg-hover);
 }
 
 @media (min-width: 48rem) {
@@ -421,13 +421,13 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
 }
 
 .node-aculta-forum-topic-form .form-actions .button--primary {
-  color: #fff;
+  color: var(--color-on-brand);
   border: 1px solid transparent;
   background: var(--color-brand-primary);
 }
 
 .node-aculta-forum-topic-form .form-actions .button--primary:hover {
-  background: var(--button-primary-bg-hover, #092b1d);
+  background: var(--button-primary-bg-hover);
 }
 
 @media (min-width: 48rem) {

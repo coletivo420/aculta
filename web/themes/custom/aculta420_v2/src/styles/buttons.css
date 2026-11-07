@@ -41,7 +41,7 @@ button.link:focus {
 [data-portal-ui="aculta-btn-outline"] {
   display: inline-block;
   padding: .625rem 1.25rem;
-  transition: background-color 150ms ease-in-out, color 150ms ease-in-out, border-color 150ms ease-in-out;
+  transition: background-color var(--motion-fast) ease-in-out, color var(--motion-fast) ease-in-out, border-color var(--motion-fast) ease-in-out;
   text-decoration: none;
   border: 1px solid transparent;
   border-radius: var(--radius-control-button);

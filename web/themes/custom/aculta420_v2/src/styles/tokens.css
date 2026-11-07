@@ -1,6 +1,12 @@
 /* ACULTA420 V2 design tokens. The Portal's explicit mode controls the theme. */
 :root {
   --color-canvas: #f2f7f0;
+  --button-primary-bg-hover: #092b1d;
+  --motion-instant: .01ms;
+  --motion-fast: 150ms;
+  --motion-base: 180ms;
+  --motion-slow: 200ms;
+  --color-surface-subtle: #f3f4f6;
   --color-surface: #fff;
   --color-surface-raised: #fff;
   --color-surface-institution: #fbf4e8;
