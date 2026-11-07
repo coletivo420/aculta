@@ -302,3 +302,15 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
   margin-block-start: .5rem;
 }
 
+/* Último autor na lista de tópicos, como na V1: avatar de 1.5rem, sem contexto nem data de entrada. */
+.aculta-forum-topic-list-row__last-author .author-card__avatar {
+  flex-basis: 1.5rem;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+}
+
+.aculta-forum-topic-list-row__last-author .author-card__context,
+.aculta-forum-topic-list-row__last-author .author-card__joined {
+  display: none;
+}
+
