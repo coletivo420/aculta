@@ -15,7 +15,7 @@ Detalhes por bloco: [status-componentes.md](status-componentes.md), [status-layo
 
 ## UI Patterns Library — layout administrativo
 
-As rotas de overview, provider e componente ficam fora do container por purpose. O overview usa container próprio centralizado, sem caixa externa, com largura máxima de 1200px. Cada componente é um bloco vertical; stories preservam a estrutura nativa e não recebem colunas artificiais. No overview, a barra institucional mantém a marca; seus dados e os do menu do Studio vêm das stories PHP/providers reais e são repassados ao SDC. Stories sem conteúdo definido, como paginação, recebem fixture de props, nunca cópia de markup do componente. Conexões/Calendário não aplicam posicionamento de dashboard na galeria; slots HTML são render arrays Drupal. Renderer e bibliotecas de diálogo passaram nos quatro SDCs desta etapa. Aceite visual autenticado na página permanece pendente.
+As rotas de overview, provider e componente ficam fora do container por purpose. O overview usa container próprio centralizado, sem caixa externa, com largura máxima de 1200px. Cada componente é um bloco vertical; stories preservam a estrutura nativa e não recebem colunas artificiais. No overview, a barra institucional mantém a marca; seus dados e os do menu do Studio vêm das stories PHP/providers reais e são repassados ao SDC. Stories sem conteúdo definido, como paginação, recebem fixture de props, nunca cópia de markup do componente. Conexões/Calendário não aplicam posicionamento de dashboard na galeria. Slots de conteúdo usam render arrays Drupal e Badge/Button/Ícone têm stories; renderer confirmou 12/12 stories/componentes recentes. Aceite visual autenticado na página permanece pendente.
 
 ## Higiene de CSS — Stylelint
 

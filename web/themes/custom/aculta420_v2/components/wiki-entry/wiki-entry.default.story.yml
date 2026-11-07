@@ -12,11 +12,19 @@ props:
   has_discussion: true
 slots:
   title: Exemplo de verbete
-  summary: '<p>Resumo do verbete com uma apresentação direta do assunto.</p>'
-  image: '<figure><img src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22800%22 height=%22450%22 viewBox=%220 0 800 450%22%3E%3Crect width=%22800%22 height=%22450%22 fill=%22%23e8dfcc%22/%3E%3C/svg%3E" alt="Ilustração representativa do verbete"></figure>'
-  categories: '<ul><li><a href="/wiki/categoria/cultura">Cultura</a></li></ul>'
-  body: '<p>O corpo do verbete preserva a marcação e os links gerados pelo Drupal.</p><h2>História</h2><p>Texto de exemplo para demonstrar a coluna de leitura.</p>'
-  related: '<h2>Verbetes relacionados</h2><ul><li><a href="/wiki/outro">Outro verbete</a></li></ul>'
-  references: '<h2>Referências</h2><ol><li>Referência editorial de exemplo.</li></ol>'
-  discussion: '<p>Discussão do verbete fornecida pelo módulo proprietário.</p>'
-  actions: '<ul class="links"><li><a href="/wiki/exemplo/editar">Editar</a></li></ul>'
+  summary:
+    markup: '<p>Resumo do verbete com uma apresentação direta do assunto.</p>'
+  image:
+    markup: '<figure><img src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22800%22 height=%22450%22 viewBox=%220 0 800 450%22%3E%3Crect width=%22800%22 height=%22450%22 fill=%22%23e8dfcc%22/%3E%3C/svg%3E" alt="Ilustração representativa do verbete"></figure>'
+  categories:
+    markup: '<ul><li><a href="/wiki/categoria/cultura">Cultura</a></li></ul>'
+  body:
+    markup: '<p>O corpo do verbete preserva a marcação e os links gerados pelo Drupal.</p><h2>História</h2><p>Texto de exemplo para demonstrar a coluna de leitura.</p>'
+  related:
+    markup: '<h2>Verbetes relacionados</h2><ul><li><a href="/wiki/outro">Outro verbete</a></li></ul>'
+  references:
+    markup: '<h2>Referências</h2><ol><li>Referência editorial de exemplo.</li></ol>'
+  discussion:
+    markup: '<p>Discussão do verbete fornecida pelo módulo proprietário.</p>'
+  actions:
+    markup: '<ul class="links"><li><a href="/wiki/exemplo/editar">Editar</a></li></ul>'

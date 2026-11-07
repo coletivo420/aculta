@@ -1,0 +1,8 @@
+name: Botão de ação
+description: Link renderizado pelo SDC de button.
+props:
+  text: Acessar a página inicial
+  url: /
+  variant: primary
+  is_submit: false
+  disabled: false

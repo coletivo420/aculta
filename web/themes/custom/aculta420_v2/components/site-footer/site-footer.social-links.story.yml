@@ -4,4 +4,5 @@ component: aculta420_v2:site-footer
 props:
   variant: social-links
 slots:
-  content: '<div data-portal-ui="social-links-footer-inner"><p>ACULTA - Associação Cultural Antiproibicionista</p><ul data-portal-ui="social-links-list"><li><a data-portal-ui="social-links-channel" href="https://example.invalid/canal" aria-label="Canal demonstrativo">Canal</a></li></ul></div>'
+  content:
+    markup: '<div data-portal-ui="social-links-footer-inner"><p>ACULTA - Associação Cultural Antiproibicionista</p><ul data-portal-ui="social-links-list"><li><a data-portal-ui="social-links-channel" href="/" aria-label="Página inicial da ACULTA">ACULTA</a></li></ul></div>'

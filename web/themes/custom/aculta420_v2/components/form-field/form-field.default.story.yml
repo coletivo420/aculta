@@ -4,6 +4,19 @@ component: aculta420_v2:form-field
 props:
   id: nome-publico
 slots:
-  label: '<label for="nome-publico-control">Nome público</label>'
-  control: '<input id="nome-publico-control" name="nome_publico" type="text" aria-describedby="nome-publico-description" autocomplete="name">'
+  label:
+    type: html_tag
+    tag: label
+    attributes:
+      for: nome-publico-control
+    value: Nome público
+  control:
+    type: html_tag
+    tag: input
+    attributes:
+      id: nome-publico-control
+      name: nome_publico
+      type: text
+      aria-describedby: nome-publico-description
+      autocomplete: name
   description: Use o nome que deve aparecer em autoria pública.

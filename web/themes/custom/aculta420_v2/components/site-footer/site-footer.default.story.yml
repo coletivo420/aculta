@@ -4,8 +4,9 @@ component: aculta420_v2:site-footer
 props:
   variant: institutional
 slots:
-  content: |
-    <div class="region-footer">
+  content:
+    markup: |
+      <div class="region-footer">
       <section class="block">
         <h2>ACULTA</h2>
         <p class="aculta-footer-description">Cultura, comunicação e cuidado como caminhos de transformação.</p>
@@ -22,4 +23,4 @@ slots:
         <h2>Redes</h2>
         <ul class="menu"><li><a href="/links">Canais oficiais</a></li></ul>
       </section>
-    </div>
+      </div>
