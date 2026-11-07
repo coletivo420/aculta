@@ -57,4 +57,10 @@ theme-settings:
     - core/drupal
     - core/once
 
-
+# Componentes incluídos com {% embed %} não anexam o CSS do SDC: a publicação da Revista declara o seu aqui.
+revista-publication:
+  version: 1.0.0
+  css:
+    component:
+      components/revista-publication/revista-publication.css: {}
+      components/author-card/author-card.css: {}
