@@ -191,6 +191,13 @@
     padding-inline: 0;
   }
 
+  /* O nó da Revista tem largura máxima de 60 rem; em Largura total ele ocupa a página inteira. */
+  html[data-purpose-layout="full"] .node--type-revista.node--view-mode-full {
+    inline-size: 100%;
+    max-inline-size: none;
+    margin-inline: 0;
+  }
+
   /* Páginas de leitura e conteúdo estreito */
   .layout-page--stack,
   .page__main--stack {
