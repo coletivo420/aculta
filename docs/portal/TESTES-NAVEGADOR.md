@@ -14,7 +14,7 @@ Regra: o agente do repositório só afirma que algo funciona depois de verificar
 
 ## B) Hosts e URLs (servidor de desenvolvimento)
 
-Os hosts do servidor de desenvolvimento são `*.aculta.toca.net.br`. `*.aculta.org` é produção; não usar produção nos testes.
+Os hosts do servidor de desenvolvimento são `*.aculta.toca.net.br`. Não há host de produção ainda; os testes rodam só nesses hosts.
 
 | Host | Papel | Caminhos principais |
 | --- | --- | --- |

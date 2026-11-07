@@ -17,7 +17,7 @@ informações institucionais; se algum dado não estiver aqui, peça ao respons�
 | Endereço | Avenida Cristóvão Colombo, 736, Quadra 205, Lote 27, Sala 3, Jardim Novo Mundo, Goiânia - GO, CEP 74705-130, Brasil |
 | Telefone | (62) 9282-0666 |
 | E-mail de contato e privacidade | faleconosco@aculta.org |
-| Domínio | aculta.org (produção); aculta.toca.net.br (servidor de testes, não divulgar como canal) |
+| Domínio | aculta.org (domínio institucional reservado; não há host de produção ainda); aculta.toca.net.br (servidor de desenvolvimento, não divulgar como canal) |
 
 ## Uso por agentes
 

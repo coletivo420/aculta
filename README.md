@@ -115,7 +115,7 @@ Core e contrib são fontes de verdade para entidades e capacidades existentes.
 O Portal integra dados, acesso e cache; o tema implementa a apresentação.
 
 - Homelab/desenvolvimento (Alpha): Debian, Apache, PHP-FPM e MariaDB, em hosts `*.aculta.toca.net.br`.
-- Produção (Beta): Hostinger Cloud Startup, LiteSpeed, PHP e MariaDB, em `*.aculta.org`.
+- Produção: ainda não existe. Previsão de Hostinger em `*.aculta.org`, sem data.
 - O checkout local não é, por si só, uma validação do Runtime de testes.
 
 Detalhes e regras operacionais: [ambientes](docs/architecture/environments.md),

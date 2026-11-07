@@ -48,4 +48,4 @@ As rotas abaixo estão declaradas no código e respondem somente no purpose corr
 
 A raiz `conta` apresenta o dashboard privado do Studio, resolvido pela rota `aculta_studio.dashboard`; o path interno `/aculta-studio-dashboard` retorna 404 se solicitado diretamente. Minha Conta usa `/conta` e seus subpaths; Perfil usa `/perfil/*`. `/salvos`, planos de Mercado Pago e `/conta-legada` permanecem separados. ADR-048 (2026-11-05) retifica ADR-038 sobre o destino da raiz. O Domain `wiki` é `wiki420`, conforme configuração.
 
-O cache de rotas no Runtime foi reconstruído em 2026-10-30 e o site respondeu HTTP 200 na raiz MAIN e na entrada de Conta; `/studio` respondeu 404. A rota `/we-sativa` foi capturada autenticada em Firefox ESR visível no host `wiki420.aculta.toca.net.br`; produção (`wiki420.aculta.org`) não foi validada.
+O cache de rotas no Runtime foi reconstruído em 2026-10-30 e o site respondeu HTTP 200 na raiz MAIN e na entrada de Conta; `/studio` respondeu 404. A rota `/we-sativa` foi capturada autenticada em Firefox ESR visível no host `wiki420.aculta.toca.net.br`; não há produção ainda, então `wiki420.aculta.org` não existe como host em uso.

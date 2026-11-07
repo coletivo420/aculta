@@ -6,11 +6,11 @@ Resumo de onde estão as coisas. Confirme sempre no código e no git antes de af
 
 | Ambiente | O que é | Regra |
 | --- | --- | --- |
-| Produção | `*.aculta.org` (Hostinger, Beta) | Só recebe deploy depois de Alpha validado e com tudo em RC |
+| Produção | Não existe ainda | Nenhum host de produção definido; `*.aculta.org` é destino futuro, sem data |
 | Servidor de desenvolvimento | `*.aculta.toca.net.br` (checkout `<checkout-do-servidor>`) | Não é o Alpha. Banco `aculta_runtime`, testes Kernel em `aculta_simpletest` |
 | Local | `127.0.0.1` | Simula o servidor de desenvolvimento; não é ele |
 
-Estados de release: Dev → RC → Alpha (migração para `*.aculta.org`, depois do RC) → Beta (produção). Detalhes: `docs/operations/RELEASE-LIFECYCLE.md`.
+Estado atual: desenvolvimento, no servidor de desenvolvimento. RC, Alpha e Beta são etapas futuras, sem data. Detalhes: `docs/operations/RELEASE-LIFECYCLE.md`.
 
 ## Onde estão as decisões
 

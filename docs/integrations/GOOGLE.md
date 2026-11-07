@@ -63,7 +63,7 @@ sendo responsável por validar o usuário e o vínculo OAuth existente.
 | Ambiente | URI de redirecionamento autorizado |
 | --- | --- |
 | Homelab | `https://conta.aculta.toca.net.br/oauth/google/retorno` |
-| Produção | `https://conta.aculta.org/oauth/google/retorno` |
+| Produção futura (sem host ainda) | `https://conta.aculta.org/oauth/google/retorno` |
 
 Se o cliente também usar APIs Google iniciadas diretamente por JavaScript,
 cadastre estas origens autorizadas (origem é somente esquema + host, sem

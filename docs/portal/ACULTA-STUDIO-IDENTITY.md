@@ -201,7 +201,7 @@ Regras de implementação:
 - Remover todas as rotas `/studio` e `/studio/*` após mover destinos. Sem redirects legados; canonical e links apontam diretamente aos novos hosts/caminhos.
 - Migrar links internos/externos, login/retorno, e-mail, notificações, sitemap, canonical, cache e testes. A troca de URL não transfere ownership de entidades, formulários, ACL ou workflows.
 
-Estado em 2026-10-30: paths canônicos implementados; o host Wiki mantém `wiki420`. A disponibilidade de produção (`wiki420.aculta.org`) não foi confirmada a partir deste ambiente.
+Estado em 2026-10-30: paths canônicos implementados; o host Wiki mantém `wiki420`. Não há host de produção ainda; `wiki420.aculta.org` é destino futuro.
 
 O conteúdo histórico abaixo descreve o estado anterior e não deve orientar novas rotas.
 

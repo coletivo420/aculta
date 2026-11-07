@@ -24,7 +24,7 @@ Este documento é a fonte única da frente. Cada fase termina antes da próxima 
 
 - Tipo `wiki_entry`, fluxo `wiki_editorial` (rascunho, em revisão, publicado).
 - Views `wiki_entries` (`/verbetes`) e `wiki_categories`.
-- Domínio `wiki420` (produção `wiki420.aculta.org`).
+- Domínio `wiki420` (servidor de desenvolvimento `wiki420.aculta.toca.net.br`).
 - Formato de texto `wiki`, com mídia `document` no CKEditor.
 
 **Código** (fora de `aculta_wiki`, ainda sem submódulo):
@@ -171,7 +171,7 @@ Ordem sugerida, depois das Fases 1–4:
 
 ## Riscos
 
-- **Produção ativa:** `wiki420.aculta.org` está no ar. A mudança precisa ser invisível ao visitante.
+- **Ambiente:** a Wiki existe só no servidor de desenvolvimento; não há produção ativa. A mudança deve ser conferida lá antes de qualquer etapa futura.
 - **URLs:** nenhuma URL pode mudar. Redirecionamentos não são previstos nesta frente.
 - **Dependência circular:** `aculta_wiki` não depende de `aculta_statistics`, e o Statistics
   não importa classes do submódulo.

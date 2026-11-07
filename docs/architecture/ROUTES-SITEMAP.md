@@ -34,7 +34,7 @@ Runtime pendente. Gate: `scripts/validate-no-temporary-route-aliases.php`.
 
 - Identificadores de host usam a forma `*.aculta`, sem hostname de ambiente:
   `main.aculta`, `conta.aculta`, `apoio.aculta`, `loja.aculta` etc. Isso cobre
-  produção (`*.aculta.org`) e Homelab (`*.aculta.toca.net.br`). Consulte
+  produção futura (`*.aculta.org`, ainda sem host) e servidor de desenvolvimento (`*.aculta.toca.net.br`). Consulte
   [multidomínio](multidomain.md) para o mapeamento completo.
 - Todo caminho começa com `/`. Parâmetros variáveis aparecem entre chaves, como
   `/pedidos/{pedido}`. `/{alias}` indica alias editorial dinâmico e não uma

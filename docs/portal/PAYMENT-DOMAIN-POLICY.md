@@ -17,7 +17,7 @@ SUPPORT → intenção de apoiar        ─┘
 
 Os subdomínios não mantêm checkout ou processador de pagamento próprio.
 
-Em produção, MAIN resolve para `aculta.org`. Em Homelab, resolve para o alias
+Em produção futura (ainda sem host), MAIN resolverá para `aculta.org`. Em Homelab, resolve para o alias
 MAIN do ambiente via `DomainPurposeManager`. Nenhum hostname é hardcoded.
 
 ## Rotas centrais

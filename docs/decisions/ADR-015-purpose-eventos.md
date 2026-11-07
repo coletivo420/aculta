@@ -18,7 +18,7 @@ sem misturar a rota de evento com os demais purposes.
    português (`docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`).
 2. **Domain ID: `eventos_aculta_org`** (D2), no padrão do Domain 3.0.1 gerado a partir do host de produção.
 3. **Hosts:**
-   - Produção: `eventos.aculta.org`.
+   - Produção futura (ainda sem host): `eventos.aculta.org`.
    - Teste: `eventos.aculta.toca.net.br`.
    O host de teste exige registro DNS no Cloudflare (ainda não resolvido em 2026-10-28) e certificado.
 4. **Dois submódulos** (D3): `aculta_events` (dados, catálogo, locais e mapa) e `aculta_calendar`

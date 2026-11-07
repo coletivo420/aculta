@@ -75,7 +75,7 @@ Os dois submódulos têm a mesma estrutura de arquivos. Após normalizar o nome 
 | Módulo presente no código | Sim, em ambos os casos |
 | `drush config:status` | Há diferenças de configuração não relacionadas a CPF, herdadas de outras frentes; não foram tocadas |
 
-Limite: a verificação cobre somente o ambiente local acessível a partir desta sessão. **Os servidores de testes (`*.aculta.toca.net.br`) e de produção (`*.aculta.org`) não foram verificados** a partir daqui.
+Limite: a verificação cobre somente o ambiente local acessível a partir desta sessão. **O servidor de desenvolvimento (`*.aculta.toca.net.br`) não foi verificado** a partir daqui.
 
 ## 3. Consolidação realizada (R2)
 
@@ -93,7 +93,7 @@ Verificação feita antes da remoção, no runtime de teste acessível (ambiente
 
 Ação: removidos o diretório `web/modules/custom/aculta_portal/modules/aculta_associado_id/` e o status `docs/operations/status/aculta_associado_id.yml`. A tabela do README raiz foi regenerada pelo validador.
 
-**Pendente antes de produção:** o mesmo teste deve ser feito no servidor de testes (`*.aculta.toca.net.br`) e no de produção (`*.aculta.org`). Se o módulo estiver habilitado em algum deles, ele precisa ser desinstalado primeiro, com backup, em clone. Produção recebe esta mudança somente após todos os módulos, temas e subtemas estarem em RC.
+**Pendente:** o mesmo teste deve ser feito no servidor de desenvolvimento (`*.aculta.toca.net.br`). Se o módulo estiver habilitado nele, ele precisa ser desinstalado primeiro, com backup, em clone. Não há produção ainda.
 
 ## 5. Auditoria I-A — carrinhos e checkouts reais
 

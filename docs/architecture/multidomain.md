@@ -144,7 +144,7 @@ hostname/purpose sem introduzir snippets específicos em cada tema.
 ## Página de apoio (SUPPORT)
 
 Decisão do responsável: o apoio fica vinculado somente aos subdomínios de apoio
-(homologação `apoio.aculta.toca.net.br`, produção `apoio.aculta.org`). O domínio
+(desenvolvimento `apoio.aculta.toca.net.br`; produção futura `apoio.aculta.org`, sem host ainda). O domínio
 principal não serve apoio.
 
 - **Página pública:** é a página inicial do subdomínio de apoio, em `/`. Não existe
@@ -169,7 +169,7 @@ principal não serve apoio.
 
 ## Loja (SHOP): onde cada página vive
 
-- Página do produto (`entity.commerce_product.canonical`): purpose `shop`. Teste: `loja.aculta.toca.net.br`; produção: `loja.aculta.org`. No host principal responde 404.
+- Página do produto (`entity.commerce_product.canonical`): purpose `shop`. Desenvolvimento: `loja.aculta.toca.net.br`; produção futura, sem host: `loja.aculta.org`. No host principal responde 404.
 - Carrinho e checkout: purpose `main` (`DomainRoutePolicy`). A compra começa no host da loja e segue para o carrinho do principal.
 - Canonical do produto: sempre no host da loja (token absoluto da metatag, na requisição atual).
 - Deployer: `domain_transition.shop` em `web/modules/custom/aculta_portal/modules/aculta_deployer/config/deploy.json`.
