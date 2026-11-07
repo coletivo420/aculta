@@ -37,7 +37,9 @@ final class EntityAccessCrossUserTest extends UnitTestCase {
    */
   private function hooks(string $route): EntityHooks {
     $routeMatch = new class($route) extends CurrentRouteMatch {
+
       public function __construct(private readonly string $name) {}
+
       /**
        * Retorna o nome da rota atual.
        *
@@ -47,6 +49,7 @@ final class EntityAccessCrossUserTest extends UnitTestCase {
       public function getRouteName() {
         return $this->name;
       }
+
     };
     // DomainPurposeManager is final and is not reached for user entities; it is
     // built without its constructor so the Domain branch stays untouched.
