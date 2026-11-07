@@ -39,7 +39,7 @@ $check = static function (bool $condition, string $message) use (&$checks, &$fai
 $tokens_path = $theme . '/src/styles/tokens.css';
 $tokens_css = is_file($tokens_path) ? file_get_contents($tokens_path) : FALSE;
 $check(is_string($tokens_css), 'Semantic token stylesheet exists and is readable.');
-$token_analysis = Aculta420DesignFoundationsAnalyzer::analyzeTokens(is_string($tokens_css) ? $tokens_css : '');
+$token_analysis = Aculta420DesignFoundationsAnalyzer::analyzeTokensV2(is_string($tokens_css) ? $tokens_css : '');
 foreach ($token_analysis['assertions'] as [$condition, $message]) {
   $check($condition, $message);
 }
