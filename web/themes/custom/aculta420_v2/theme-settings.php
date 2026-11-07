@@ -103,9 +103,9 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
     '#open' => TRUE,
   ];
 
-  // Leitura exclusivamente neutra via Core State API; o tema não chama serviços do Portal.
-  $activePurposes = \Drupal::state()->get('aculta_portal.active_purposes', []);
-  if (!is_array($activePurposes) || empty($activePurposes)) {
+  // O tema usa a lista canônica de purposes que ele próprio define; não lê state do Portal.
+  $activePurposes = PurposeContainerLayout::ALLOWED_PURPOSES;
+  if ($activePurposes === []) {
     $form['aculta_cores_purpose']['empty_message'] = [
       '#markup' => '<p>' . t('Nenhum purpose ativo informado pelo Portal.') . '</p>',
     ];
