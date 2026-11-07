@@ -261,7 +261,6 @@
         "composer/installers": "^2.3",
         "composer/semver": "^3.4",
         "cweagans/composer-patches": "^2.0",
-        "drupal/bootstrap": "^3.45",
         "drupal/captcha": "^2.0",
         "drupal/ckeditor5_plugin_pack": "^1.5",
         "drupal/commerce": "^3.3",
@@ -367,7 +366,6 @@
         "symfony/http-client": "^7.4",
         "tabby/tabby": "12.0.3",
         "tippyjs/tippyjs": "6.3.7",
-        "twbs/bootstrap": "^5.3",
         "drupal/entity_reference_revisions": "1.x-dev"
     },
     "conflict": {
@@ -393,12 +391,10 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "@php scripts/sync-bootstrap-assets.php",
             "@php scripts/restore-aculta-htaccess.php",
             "@php scripts/remove-optional-ai-modules.php"
         ],
         "post-update-cmd": [
-            "@php scripts/sync-bootstrap-assets.php",
             "@php scripts/restore-aculta-htaccess.php",
             "@php scripts/remove-optional-ai-modules.php"
         ]

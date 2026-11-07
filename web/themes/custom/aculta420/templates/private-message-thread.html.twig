@@ -1,5 +1,0 @@
-{# Keep the contrib entity's render array intact; only expose its per-thread state. #}
-<div{{ attributes }}>
-  {% if read_status is defined %}{{ read_status }}{% endif %}
-  {{ content }}
-</div>

@@ -1,4 +1,0 @@
-name: Banner de consentimento
-description: Banner oculto até a decisão do visitante; exibido pelo JavaScript do Portal.
-component: aculta420:consent-banner
-props: {}

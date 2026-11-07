@@ -1,9 +1,0 @@
-name: Faixa amarela
-description: Título amarelo com texto verde-escuro e espaçamento fluido com base compacta.
-component: aculta420:content-section
-props:
-  title: Formação
-  color: yellow
-slots:
-  body:
-    markup: '<p>Texto de exemplo da seção.</p>'
