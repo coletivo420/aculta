@@ -49,6 +49,8 @@ body:has(.aculta-studio-topbar) .layout-page h1:not(.aculta-studio-topbar__title
   .aculta-studio-topbar {
     height: 0;
     margin-block-start: 5.125rem;
+    /* Compensa o espaçamento entre as partes do painel, para o perfil começar em 138 px. */
+    margin-block-end: calc(var(--spacing-lg) * -1);
   }
   .aculta-studio-topbar__title {
     inset-block-start: 3.25rem;
