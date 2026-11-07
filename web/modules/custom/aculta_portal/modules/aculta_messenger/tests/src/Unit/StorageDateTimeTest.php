@@ -14,6 +14,9 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_messenger')]
 final class StorageDateTimeTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testStoredValueIsReadAsUtcForAnyDefaultTimezone(): void {
     $previous = date_default_timezone_get();
     try {
@@ -29,6 +32,9 @@ final class StorageDateTimeTest extends UnitTestCase {
     $this->assertSame(1792065600, $utc);
   }
 
+  /**
+   *
+   */
   public function testEmptyAndInvalidValuesAreNull(): void {
     $this->assertNull(StorageDateTime::toTimestamp(NULL));
     $this->assertNull(StorageDateTime::toTimestamp(''));

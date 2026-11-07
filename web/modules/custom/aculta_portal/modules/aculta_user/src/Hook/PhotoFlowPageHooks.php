@@ -27,6 +27,9 @@ final class PhotoFlowPageHooks {
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
+  /**
+ *
+ */
   #[Hook('page_attachments')]
   public function pageAttachments(array &$attachments): void {
     if ($this->routeMatch->getRouteName() !== 'aculta_portal.dashboard' || (int) $this->currentUser->id() <= 0) {

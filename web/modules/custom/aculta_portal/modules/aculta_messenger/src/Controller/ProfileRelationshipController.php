@@ -26,10 +26,16 @@ final class ProfileRelationshipController extends ControllerBase {
     private readonly MessengerInterface $statusMessenger,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('form_builder'), $container->get('messenger'));
   }
 
+  /**
+   *
+   */
   public function post(UserInterface $user, Request $request): RedirectResponse {
     // Back to the profile only: a path of /u/<apelido>, never another address.
     $return = (string) $request->request->get('return', '');

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Wizard;
 
+use Drupal\aculta_lms\Wizard\Step\CourseReviewStepForm;
+use Drupal\aculta_lms\Wizard\Step\CourseStructureStepForm;
+use Drupal\aculta_lms\Wizard\Step\CourseDetailsStepForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
 use Drupal\ctools\Wizard\FormWizardBase;
 
 /**
@@ -41,15 +43,15 @@ class CourseBuilderWizard extends FormWizardBase {
     return [
       'details' => [
         'title' => (string) $this->t('Dados do Curso'),
-        'form' => \Drupal\aculta_lms\Wizard\Step\CourseDetailsStepForm::class,
+        'form' => CourseDetailsStepForm::class,
       ],
       'structure' => [
         'title' => (string) $this->t('Estrutura e Aulas'),
-        'form' => \Drupal\aculta_lms\Wizard\Step\CourseStructureStepForm::class,
+        'form' => CourseStructureStepForm::class,
       ],
       'review' => [
         'title' => (string) $this->t('Revisao e Publicacao'),
-        'form' => \Drupal\aculta_lms\Wizard\Step\CourseReviewStepForm::class,
+        'form' => CourseReviewStepForm::class,
       ],
     ];
   }
@@ -66,10 +68,10 @@ class CourseBuilderWizard extends FormWizardBase {
    */
   public function finish(array &$form, FormStateInterface $form_state): void {
     $cached_values = $form_state->getTemporaryValue('wizard') ?? [];
-    
+
     // Mensagem informativa ao concluir o percurso do wizard.
     $this->messenger()->addStatus($this->t('O percurso de estruturacao do curso foi concluido com sucesso.'));
-    
+
     // Redireciona para a rota padrao de cursos/estrutura caso disponivel.
     if (!empty($cached_values['course_id'])) {
       $form_state->setRedirect('entity.group.canonical', ['group' => $cached_values['course_id']]);

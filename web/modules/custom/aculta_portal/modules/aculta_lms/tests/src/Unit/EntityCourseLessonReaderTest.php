@@ -13,9 +13,15 @@ use Drupal\aculta_lms\Learning\EntityCourseLessonReader;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ *
+ */
 #[Group('aculta_lms')]
 final class EntityCourseLessonReaderTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testMapsLessonsAndOrdersByWeightThenId(): void {
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->expects(self::once())
@@ -36,6 +42,9 @@ final class EntityCourseLessonReaderTest extends UnitTestCase {
     self::assertFalse($lessons[2]->published);
   }
 
+  /**
+   *
+   */
   public function testReturnsNoLessonsWhenStorageIsEmpty(): void {
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('loadByProperties')->willReturn([]);
@@ -45,6 +54,9 @@ final class EntityCourseLessonReaderTest extends UnitTestCase {
     self::assertSame([], (new EntityCourseLessonReader($manager))->forCourse(42));
   }
 
+  /**
+   *
+   */
   private function lessonEntity(int $id, int $courseId, string $title, bool $published, int $weight): ContentEntityInterface {
     $entity = $this->createMock(ContentEntityInterface::class);
     $entity->method('id')->willReturn($id);

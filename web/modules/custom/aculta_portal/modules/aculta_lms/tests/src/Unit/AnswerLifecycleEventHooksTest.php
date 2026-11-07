@@ -14,6 +14,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
+/**
+ *
+ */
 #[CoversClass(AnswerLifecycleEventHooks::class)]
 #[Group('aculta_lms')]
 final class AnswerLifecycleEventHooksTest extends UnitTestCase {

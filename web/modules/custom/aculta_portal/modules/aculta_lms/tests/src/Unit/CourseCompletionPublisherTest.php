@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Unit;
 
-use DateTimeImmutable;
 use Drupal\aculta_learning_contracts\Event\CourseCompletedEvent;
 use Drupal\aculta_lms\Event\CourseCompletionPublisher;
 use Drupal\aculta_lms\Learning\CourseProgress;
@@ -15,10 +14,16 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
+/**
+ *
+ */
 #[CoversClass(CourseCompletionPublisher::class)]
 #[Group('aculta_lms')]
 final class CourseCompletionPublisherTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testPublishesOnlyPassedAndFinishedProgress(): void {
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
     $dispatcher->expects($this->once())
@@ -28,7 +33,7 @@ final class CourseCompletionPublisherTest extends UnitTestCase {
         && $event->sourceUuid === 'progress-uuid'
         && $event->courseId === '42'
         && $event->accountId === '7'
-        && $event->completedAt == new DateTimeImmutable('@1760000000')
+        && $event->completedAt == new \DateTimeImmutable('@1760000000')
       ));
 
     $event = (new CourseCompletionPublisher($dispatcher))->publish($this->progressEntity(
@@ -39,6 +44,9 @@ final class CourseCompletionPublisherTest extends UnitTestCase {
     self::assertInstanceOf(CourseCompletedEvent::class, $event);
   }
 
+  /**
+   *
+   */
   public function testDoesNotPublishUnpassedUnfinishedOrNewProgress(): void {
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
     $dispatcher->expects(self::never())->method('dispatch');
@@ -49,6 +57,9 @@ final class CourseCompletionPublisherTest extends UnitTestCase {
     self::assertNull($publisher->publish($this->progressEntity(CourseProgress::STATUS_PASSED, TRUE, TRUE)));
   }
 
+  /**
+   *
+   */
   private function progressEntity(string $status, bool $finished, bool $new = FALSE): ContentEntityInterface {
     $entity = $this->createMock(ContentEntityInterface::class);
     $entity->method('uuid')->willReturn('progress-uuid');

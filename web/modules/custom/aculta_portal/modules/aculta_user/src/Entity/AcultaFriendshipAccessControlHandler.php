@@ -9,9 +9,13 @@ use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 
-/** Restricts relationship records to their two participants. */
+/**
+ * Restricts relationship records to their two participants. */
 final class AcultaFriendshipAccessControlHandler extends EntityAccessControlHandler {
 
+  /**
+   *
+   */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
     if (!in_array($operation, ['view', 'update', 'delete'], TRUE)) {
       return AccessResult::neutral()->cachePerPermissions();
@@ -34,6 +38,9 @@ final class AcultaFriendshipAccessControlHandler extends EntityAccessControlHand
       ->addCacheableDependency($entity);
   }
 
+  /**
+   *
+   */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResult {
     return AccessResult::allowedIf($account->isAuthenticated())
       ->cachePerUser();

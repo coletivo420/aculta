@@ -17,12 +17,17 @@ use Drupal\Core\Session\AccountInterface;
  */
 final class DonationRefundAccess {
 
-  /** Tipo do item de pedido de doação. */
+  /**
+   * Tipo do item de pedido de doação. */
   public const TIPO_ITEM_DOACAO = 'donation';
 
-  /** Operação do Commerce que estorna um pagamento. */
+  /**
+   * Operação do Commerce que estorna um pagamento. */
   public const OPERACAO_ESTORNO = 'refund-payment';
 
+  /**
+   *
+   */
   public function access(RouteMatchInterface $route_match, AccountInterface $account): AccessResult {
     if ($route_match->getParameter('operation') !== self::OPERACAO_ESTORNO) {
       return AccessResult::allowed();
@@ -36,7 +41,8 @@ final class DonationRefundAccess {
       : AccessResult::allowed()->addCacheableDependency($pedido);
   }
 
-  /** Indica se o pedido tem ao menos um item de doação. */
+  /**
+   * Indica se o pedido tem ao menos um item de doação. */
   public static function pedidoTemDoacao(OrderInterface $pedido): bool {
     foreach ($pedido->getItems() as $item) {
       if ($item->bundle() === self::TIPO_ITEM_DOACAO) {

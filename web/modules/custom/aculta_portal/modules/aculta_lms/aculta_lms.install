@@ -5,15 +5,21 @@
  * Install and update hooks for ACULTA LMS.
  */
 
+use Drupal\Core\Extension\Requirement\RequirementSeverity;
+use Drupal\Core\Url;
+use Drupal\Core\Site\Settings;
+
 declare(strict_types=1);
 
-/** Installs the append-only attempt archive entity definition. */
+/**
+ * Installs the append-only attempt archive entity definition. */
 function aculta_lms_update_10001(): void {
   $manager = \Drupal::entityDefinitionUpdateManager();
   $manager->installEntityType(\Drupal::entityTypeManager()->getDefinition('aculta_lms_attempt_archive'));
 }
 
-/** Installs the certificate storage definition. */
+/**
+ * Installs the certificate storage definition. */
 function aculta_lms_update_10002(): void {
   $manager = \Drupal::entityDefinitionUpdateManager();
   $definition = \Drupal::entityTypeManager()->getDefinition('aculta_lms_certificate');
@@ -22,7 +28,8 @@ function aculta_lms_update_10002(): void {
   }
 }
 
-/** Installs the xAPI statement storage (ADR-041, D-67). */
+/**
+ * Installs the xAPI statement storage (ADR-041, D-67). */
 function aculta_lms_update_10003(): void {
   $manager = \Drupal::entityDefinitionUpdateManager();
   if (!$manager->getEntityType('aculta_lms_xapi_statement')) {
@@ -38,20 +45,21 @@ function aculta_lms_update_10003(): void {
 #[\Drupal\Core\Hook\Attribute\LegacyRequirementsHook]
 function aculta_lms_requirements(string $phase): array {
   $requirements = [];
-  if (\Drupal\Core\Site\Settings::get('file_private_path') === NULL) {
+  if (Settings::get('file_private_path') === NULL) {
     $requirements['aculta_lms_file_upload'] = [
       'title' => t('LMS file upload'),
       'value' => t('The private file system has not been configured.'),
       'description' => t('The private file system is required for storing student uploaded files. Configure it at <a href=":url">file system settings</a>.', [
-        ':url' => \Drupal\Core\Url::fromRoute('system.file_system_settings')->toString(),
+        ':url' => Url::fromRoute('system.file_system_settings')->toString(),
       ]),
-      'severity' => \Drupal\Core\Extension\Requirement\RequirementSeverity::Error,
+      'severity' => RequirementSeverity::Error,
     ];
   }
   return $requirements;
 }
 
-/** Installs the certificate template definition (modelo separado do registro emitido). */
+/**
+ * Installs the certificate template definition (modelo separado do registro emitido). */
 function aculta_lms_update_10004(): void {
   $manager = \Drupal::entityDefinitionUpdateManager();
   if (!$manager->getEntityType('aculta_lms_certificate_template')) {
@@ -59,7 +67,8 @@ function aculta_lms_update_10004(): void {
   }
 }
 
-/** Installs the four ACULTA-owned learning entities (ADR-042, P2). */
+/**
+ * Installs the four ACULTA-owned learning entities (ADR-042, P2). */
 function aculta_lms_update_10005(): void {
   $manager = \Drupal::entityDefinitionUpdateManager();
   $entity_type_manager = \Drupal::entityTypeManager();
@@ -70,7 +79,8 @@ function aculta_lms_update_10005(): void {
   }
 }
 
-/** Aligns required columns and constrained list lengths for the P2 tables. */
+/**
+ * Aligns required columns and constrained list lengths for the P2 tables. */
 function aculta_lms_update_10006(): void {
   $database_schema = \Drupal::database()->schema();
   $required_columns = [
@@ -113,7 +123,8 @@ function aculta_lms_update_10006(): void {
   }
 }
 
-/** Copies Group class permission mappings into ACULTA-owned configuration. */
+/**
+ * Copies Group class permission mappings into ACULTA-owned configuration. */
 function aculta_lms_update_10007(): void {
   $config_factory = \Drupal::configFactory();
   $legacy = $config_factory->get('lms_classes.settings');
@@ -128,7 +139,8 @@ function aculta_lms_update_10007(): void {
   $editable->save();
 }
 
-/** Adds the immutable JSON payload field to ACULTA answer attempts. */
+/**
+ * Adds the immutable JSON payload field to ACULTA answer attempts. */
 function aculta_lms_update_10008(): void {
   $manager = \Drupal::entityDefinitionUpdateManager();
   if ($manager->getFieldStorageDefinition('answer_data', 'aculta_lms_answer')) {
@@ -138,7 +150,8 @@ function aculta_lms_update_10008(): void {
   $manager->installFieldStorageDefinition('answer_data', 'aculta_lms_answer', 'aculta_lms', $fields['answer_data']);
 }
 
-/** Adds Core comments to ACULTA answer attempts. */
+/**
+ * Adds Core comments to ACULTA answer attempts. */
 function aculta_lms_update_10009(): void {
   $comment_type_storage = \Drupal::entityTypeManager()->getStorage('comment_type');
   if (!$comment_type_storage->load('aculta_lms_answer_comment')) {
@@ -196,7 +209,8 @@ function aculta_lms_update_10009(): void {
   }
 }
 
-/** Adds the missing Core comment body field for existing answer comments. */
+/**
+ * Adds the missing Core comment body field for existing answer comments. */
 function aculta_lms_update_10010(): void {
   $entity_type_manager = \Drupal::entityTypeManager();
   $field_config_storage = $entity_type_manager->getStorage('field_config');
@@ -219,7 +233,8 @@ function aculta_lms_update_10010(): void {
   $comment_body->save();
 }
 
-/** Adds a precision field without changing existing integer score storage. */
+/**
+ * Adds a precision field without changing existing integer score storage. */
 function aculta_lms_update_10011(): void {
   $manager = \Drupal::entityDefinitionUpdateManager();
   $installed = $manager->getFieldStorageDefinition('score_precise', 'aculta_lms_attempt_archive');
@@ -231,7 +246,8 @@ function aculta_lms_update_10011(): void {
   $manager->installFieldStorageDefinition('score_precise', 'aculta_lms_attempt_archive', 'aculta_lms', $definitions['score_precise']);
 }
 
-/** Keeps course-to-class Group relationships owned by ACULTA after P5. */
+/**
+ * Keeps course-to-class Group relationships owned by ACULTA after P5. */
 function aculta_lms_update_10012(): void {
   $name = 'group.relationship_type.lms_course-lms_classes';
   $config = \Drupal::configFactory()->getEditable($name);
@@ -240,7 +256,8 @@ function aculta_lms_update_10012(): void {
   }
 }
 
-/** Adds activity answer configuration used by ACULTA answer plugins. */
+/**
+ * Adds activity answer configuration used by ACULTA answer plugins. */
 function aculta_lms_update_10013(): void {
   $manager = \Drupal::entityDefinitionUpdateManager();
   if ($manager->getFieldStorageDefinition('answer_config', 'aculta_lms_activity')) {
@@ -250,7 +267,8 @@ function aculta_lms_update_10013(): void {
   $manager->installFieldStorageDefinition('answer_config', 'aculta_lms_activity', 'aculta_lms', $fields['answer_config']);
 }
 
-/** Adds the educator feedback projection to ACULTA answer entities. */
+/**
+ * Adds the educator feedback projection to ACULTA answer entities. */
 function aculta_lms_update_10014(): void {
   $manager = \Drupal::entityDefinitionUpdateManager();
   if ($manager->getFieldStorageDefinition('feedback', 'aculta_lms_answer')) {
@@ -261,7 +279,8 @@ function aculta_lms_update_10014(): void {
   $manager->installFieldStorageDefinition('feedback', 'aculta_lms_answer', 'aculta_lms', $fields['feedback']);
 }
 
-/** Adds formatted lesson content for the ACULTA student learning room. */
+/**
+ * Adds formatted lesson content for the ACULTA student learning room. */
 function aculta_lms_update_10015(): void {
   $manager = \Drupal::entityDefinitionUpdateManager();
   if ($manager->getFieldStorageDefinition('body', 'aculta_lms_lesson')) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_user\Unit\Social;
 
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\aculta_user\Entity\AcultaFriendshipInterface;
 use Drupal\aculta_user\Identity\PublicMemberIdentityInterface;
 use Drupal\aculta_user\Social\ConnectionQueryService;
@@ -25,6 +26,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(ConnectionQueryService::class)]
 final class ConnectionQueryServiceTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testAnonymousReturnsEmptyConnections(): void {
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $currentUser = $this->createMock(AccountProxyInterface::class);
@@ -38,6 +42,9 @@ final class ConnectionQueryServiceTest extends UnitTestCase {
     self::assertSame(['items' => [], 'total' => 0, 'has_more' => FALSE], $result);
   }
 
+  /**
+   *
+   */
   public function testSearchTermUnderThreeCharsReturnsEmpty(): void {
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $currentUser = $this->createMock(AccountProxyInterface::class);
@@ -51,6 +58,9 @@ final class ConnectionQueryServiceTest extends UnitTestCase {
     self::assertSame(['items' => [], 'total' => 0, 'has_more' => FALSE], $result);
   }
 
+  /**
+   *
+   */
   public function testAcceptedConnectionsFiltersBannedAndPrivate(): void {
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $friendshipStorage = $this->createMock(EntityStorageInterface::class);
@@ -81,17 +91,17 @@ final class ConnectionQueryServiceTest extends UnitTestCase {
 
     $friendshipStorage->method('getQuery')->willReturn($query);
 
-    // Friendship 1: with uid 2 (active, public, not banned) -> KEEP
+    // Friendship 1: with uid 2 (active, public, not banned) -> KEEP.
     $f1 = $this->createMock(AcultaFriendshipInterface::class);
     $f1->method('getMemberLowId')->willReturn(1);
     $f1->method('getMemberHighId')->willReturn(2);
 
-    // Friendship 2: with uid 3 (banned by current user) -> EXCLUDE
+    // Friendship 2: with uid 3 (banned by current user) -> EXCLUDE.
     $f2 = $this->createMock(AcultaFriendshipInterface::class);
     $f2->method('getMemberLowId')->willReturn(1);
     $f2->method('getMemberHighId')->willReturn(3);
 
-    // Friendship 3: with uid 4 (private/no public name) -> EXCLUDE
+    // Friendship 3: with uid 4 (private/no public name) -> EXCLUDE.
     $f3 = $this->createMock(AcultaFriendshipInterface::class);
     $f3->method('getMemberLowId')->willReturn(1);
     $f3->method('getMemberHighId')->willReturn(4);
@@ -112,16 +122,17 @@ final class ConnectionQueryServiceTest extends UnitTestCase {
 
     $userStorage->method('loadMultiple')->willReturn([2 => $u2, 3 => $u3, 4 => $u4]);
 
-    // Bans
+    // Bans.
     $banManager->method('isBanned')->willReturnCallback(fn(int $uid): bool => $uid === 3);
     $banManager->method('isCurrentUserBannedByUser')->willReturn(FALSE);
 
-    // Public names
+    // Public names.
     $publicIdentity->method('publicDisplayName')->willReturnCallback(function (UserInterface $user): ?string {
       return match ((int) $user->id()) {
         2 => 'Alice',
         3 => 'Bob',
-        4 => NULL, // Private
+        // Private.
+        4 => NULL,
         default => NULL,
       };
     });
@@ -136,8 +147,9 @@ final class ConnectionQueryServiceTest extends UnitTestCase {
     self::assertFalse($result['has_more']);
   }
 
-
-
+  /**
+   *
+   */
   public function testSearchCandidatesWithStatusesAndBans(): void {
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $profileStorage = $this->createMock(EntityStorageInterface::class);
@@ -169,15 +181,19 @@ final class ConnectionQueryServiceTest extends UnitTestCase {
 
     $profileStorage->method('getQuery')->willReturn($query);
 
-    // Profile mocks
-    $p1 = $this->createMock(\Drupal\profile\Entity\ProfileInterface::class);
-    $p1->method('getOwnerId')->willReturn(2); // Connected
-    $p2 = $this->createMock(\Drupal\profile\Entity\ProfileInterface::class);
-    $p2->method('getOwnerId')->willReturn(3); // Pending sent
-    $p3 = $this->createMock(\Drupal\profile\Entity\ProfileInterface::class);
-    $p3->method('getOwnerId')->willReturn(4); // Pending received
-    $p4 = $this->createMock(\Drupal\profile\Entity\ProfileInterface::class);
-    $p4->method('getOwnerId')->willReturn(5); // None
+    // Profile mocks.
+    $p1 = $this->createMock(ProfileInterface::class);
+    // Connected.
+    $p1->method('getOwnerId')->willReturn(2);
+    $p2 = $this->createMock(ProfileInterface::class);
+    // Pending sent.
+    $p2->method('getOwnerId')->willReturn(3);
+    $p3 = $this->createMock(ProfileInterface::class);
+    // Pending received.
+    $p3->method('getOwnerId')->willReturn(4);
+    $p4 = $this->createMock(ProfileInterface::class);
+    // None.
+    $p4->method('getOwnerId')->willReturn(5);
 
     $profileStorage->method('loadMultiple')->willReturn([101 => $p1, 102 => $p2, 103 => $p3, 104 => $p4]);
 
@@ -206,7 +222,7 @@ final class ConnectionQueryServiceTest extends UnitTestCase {
       return 'User ' . $user->id();
     });
 
-    // Friendships
+    // Friendships.
     $fConnected = $this->createMock(AcultaFriendshipInterface::class);
     $fConnected->method('getStatus')->willReturn(FriendshipStatus::Accepted->value);
 
@@ -237,4 +253,5 @@ final class ConnectionQueryServiceTest extends UnitTestCase {
     self::assertSame('pending_received', $result['items'][2]['state']);
     self::assertSame('none', $result['items'][3]['state']);
   }
+
 }

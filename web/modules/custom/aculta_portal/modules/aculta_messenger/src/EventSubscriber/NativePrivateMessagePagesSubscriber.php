@@ -16,11 +16,17 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 final class NativePrivateMessagePagesSubscriber implements EventSubscriberInterface {
 
+  /**
+   *
+   */
   public static function getSubscribedEvents(): array {
     // After the Portal's domain and account routing (-2049/-2050), so the purpose set there is kept.
     return [RoutingEvents::ALTER => ['onAlterRoutes', -2060]];
   }
 
+  /**
+   *
+   */
   public function onAlterRoutes(RouteBuildEvent $event): void {
     $collection = $event->getRouteCollection();
     $inbox = $collection->get('private_message.private_message_page');

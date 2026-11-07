@@ -33,7 +33,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class UserPictureForm extends FormBase {
 
 
-  /** Pasta dos envios. Prefixo pictures/: a limpeza do cron trata esses temporários. */
+  /**
+   * Pasta dos envios. Prefixo pictures/: a limpeza do cron trata esses temporários. */
   public const UPLOAD_LOCATION = 'public://pictures/uploads';
 
   public function __construct(
@@ -47,6 +48,9 @@ final class UserPictureForm extends FormBase {
     protected readonly RendererInterface $renderer,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
@@ -60,16 +64,23 @@ final class UserPictureForm extends FormBase {
     );
   }
 
+  /**
+   *
+   */
   public function getFormId(): string {
     return 'aculta_user_picture_form';
   }
 
-  /** Conta atual, ou NULL. */
+  /**
+   * Conta atual, ou NULL. */
   private function account(): ?UserInterface {
     $account = $this->entityTypeManagerService->getStorage('user')->load($this->currentUserService->id());
     return $account instanceof UserInterface ? $account : NULL;
   }
 
+  /**
+   *
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $account = $this->account();
     if ($account === NULL) {
@@ -83,7 +94,6 @@ final class UserPictureForm extends FormBase {
     $isAcervo = $current > 0 && str_starts_with((string) $this->entityTypeManagerService->getStorage('file')->load($current)?->getFileUri(), AvatarPool::DIRECTORY . '/');
 
     // O campo de envio começa vazio nos dois estados: nome e link da foto atual não aparecem no popup (a prévia mostra a foto).
-
     $form['#attributes']['data-aculta-user-picture'] = '';
     $form['#attributes']['data-portal-ui'] = 'photo-dialog';
 
@@ -153,10 +163,12 @@ final class UserPictureForm extends FormBase {
     return $form;
   }
 
-  /** Sortear não grava nada: a escolha só vale quando o formulário é salvo (AvatarPool::applyPending). */
+  /**
+   * Sortear não grava nada: a escolha só vale quando o formulário é salvo (AvatarPool::applyPending). */
   public function noSubmit(array &$form, FormStateInterface $form_state): void {}
 
-  /** Callback AJAX do sorteio: troca só a prévia dentro do modal (a visão geral muda ao salvar). */
+  /**
+   * Callback AJAX do sorteio: troca só a prévia dentro do modal (a visão geral muda ao salvar). */
   public function sortearPrevia(array &$form, FormStateInterface $form_state): AjaxResponse {
     $response = new AjaxResponse();
     $account = $this->account();
@@ -178,7 +190,8 @@ final class UserPictureForm extends FormBase {
     return $response;
   }
 
-  /** Remove o botão "Remover" do campo quando a foto é do acervo do sistema (regra de estado). */
+  /**
+   * Remove o botão "Remover" do campo quando a foto é do acervo do sistema (regra de estado). */
   public static function withoutRemoveForAcervo(array $element, FormStateInterface $form_state): array {
     if (!empty($element['#aculta_acervo'])) {
       unset($element['remove_button']);
@@ -204,6 +217,9 @@ final class UserPictureForm extends FormBase {
     $form_state->setRedirect('aculta_portal.dashboard');
   }
 
+  /**
+   *
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $account = $this->account();
     if ($account === NULL) {

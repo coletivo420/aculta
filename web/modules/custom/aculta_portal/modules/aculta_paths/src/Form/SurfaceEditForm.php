@@ -34,6 +34,9 @@ final class SurfaceEditForm extends FormBase {
     protected EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('config.factory'),
@@ -43,6 +46,9 @@ final class SurfaceEditForm extends FormBase {
     );
   }
 
+  /**
+   *
+   */
   public function getFormId(): string {
     return 'aculta_paths_editar_form_v2';
   }
@@ -170,6 +176,9 @@ final class SurfaceEditForm extends FormBase {
     return $resposta;
   }
 
+  /**
+   *
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     // O seletor AJAX produz estados intermediários (por exemplo, modo
     // desativado ainda com ativa marcada). Valide a combinação completa só no
@@ -225,6 +234,9 @@ final class SurfaceEditForm extends FormBase {
     }
   }
 
+  /**
+   *
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $purpose = (string) $form['#purpose'];
     $antes = $this->reader->superficies()[$purpose];

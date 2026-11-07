@@ -23,6 +23,9 @@ final class PrivacyFormHooks {
     private readonly MessagePrivacyForm $privacy,
   ) {}
 
+  /**
+ *
+ */
   #[Hook('form_alter')]
   public function formAlter(array &$form, FormStateInterface $formState, string $formId): void {
     if ($formId !== 'aculta_user_profile_visibility_form') {

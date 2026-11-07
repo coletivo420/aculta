@@ -20,6 +20,9 @@ final class AccountSectionsHooks {
     private readonly AvisoService $avisos,
   ) {}
 
+  /**
+ *
+ */
   #[Hook('aculta_portal_account_sections_alter')]
   public function sectionsAlter(array &$sections, AccountInterface $account): void {
     if ($account->isAnonymous()) {
@@ -33,6 +36,9 @@ final class AccountSectionsHooks {
     ];
   }
 
+  /**
+ *
+ */
   #[Hook('aculta_portal_account_parent_sections_alter')]
   public function parentSectionsAlter(array &$parents): void {
     // A aba da central fica destacada no item Avisos/Mensagens.

@@ -260,7 +260,7 @@ final class MessengerSettingsForm extends ConfigFormBase {
       $selected = array_filter((array) $form_state->getValue(['email_modes', $category]));
       $emailModes[$category] = [
         'digest' => !in_array($category, AvisoPreferencias::EMAIL_IMMEDIATE_ONLY_CATEGORIES, TRUE)
-        && in_array(AvisoPreferencias::EMAIL_DIGEST, $selected, TRUE),
+          && in_array(AvisoPreferencias::EMAIL_DIGEST, $selected, TRUE),
         'immediate' => in_array(AvisoPreferencias::EMAIL_IMMEDIATE, $selected, TRUE),
       ];
       $defaultMode = $form_state->getValue(['email_modes', $category . '_default_mode']);

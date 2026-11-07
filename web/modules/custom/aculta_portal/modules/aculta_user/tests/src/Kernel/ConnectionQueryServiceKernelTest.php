@@ -49,6 +49,9 @@ final class ConnectionQueryServiceKernelTest extends KernelTestBase {
     'aculta_user',
   ];
 
+  /**
+   *
+   */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
     $loader = require dirname(DRUPAL_ROOT) . '/vendor/autoload.php';
@@ -74,6 +77,9 @@ final class ConnectionQueryServiceKernelTest extends KernelTestBase {
     $container->register('aculta_file_uploader.unused_file_cleaner', \stdClass::class);
   }
 
+  /**
+   *
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
@@ -100,6 +106,9 @@ final class ConnectionQueryServiceKernelTest extends KernelTestBase {
     }
   }
 
+  /**
+   *
+   */
   public function testAcceptedConnectionsAndCandidateSearch(): void {
     $u1 = User::create(['name' => 'user1', 'status' => 1]);
     $u1->save();
@@ -108,7 +117,7 @@ final class ConnectionQueryServiceKernelTest extends KernelTestBase {
     $u3 = User::create(['name' => 'user3', 'status' => 1]);
     $u3->save();
 
-    // Profiles
+    // Profiles.
     Profile::create([
       'type' => 'authenticated',
       'uid' => $u1->id(),
@@ -136,7 +145,7 @@ final class ConnectionQueryServiceKernelTest extends KernelTestBase {
       'status' => 1,
     ])->save();
 
-    // Friendship between 1 and 2: accepted
+    // Friendship between 1 and 2: accepted.
     AcultaFriendship::create([
       'id' => '1:2',
       'member_low' => (int) $u1->id(),
@@ -146,7 +155,7 @@ final class ConnectionQueryServiceKernelTest extends KernelTestBase {
       'status' => FriendshipStatus::Accepted->value,
     ])->save();
 
-    // Friendship between 1 and 3: pending sent by 1
+    // Friendship between 1 and 3: pending sent by 1.
     AcultaFriendship::create([
       'id' => '1:3',
       'member_low' => (int) $u1->id(),

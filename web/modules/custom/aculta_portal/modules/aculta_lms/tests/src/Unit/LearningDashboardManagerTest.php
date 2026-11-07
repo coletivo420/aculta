@@ -13,8 +13,6 @@ use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
 use Drupal\aculta_lms\LearningDashboardManager;
 use Drupal\aculta_learning_contracts\Learning\AccountCourseSummary;
 use Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -25,10 +23,14 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-/** Tests ACULTA-backed learning dashboard projections and access. */
+/**
+ * Tests ACULTA-backed learning dashboard projections and access. */
 #[Group('aculta_lms')]
 final class LearningDashboardManagerTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testEmptyStudentDashboardStaysScopedToTheSuppliedAccount(): void {
     $certificates = $this->createMock(CourseCertificateManagerInterface::class);
     $certificates->expects(self::once())->method('loadForStudent')->with(42)->willReturn([]);
@@ -43,6 +45,9 @@ final class LearningDashboardManagerTest extends UnitTestCase {
     self::assertContains('user', $dashboard['cache']->getCacheContexts());
   }
 
+  /**
+   *
+   */
   public function testStudentDashboardUsesOwnPublishedLessonsAndCourseLevelProgress(): void {
     $account = new UserSession(['uid' => 42]);
     $course = $this->createMock(GroupInterface::class);
@@ -88,6 +93,9 @@ final class LearningDashboardManagerTest extends UnitTestCase {
     self::assertContains('user.group_permissions', $dashboard['cache']->getCacheContexts());
   }
 
+  /**
+   *
+   */
   public function testClassWithoutLmsCourseRelationshipIsDenied(): void {
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->expects(self::exactly(2))->method('loadByProperties')->with([
@@ -108,6 +116,9 @@ final class LearningDashboardManagerTest extends UnitTestCase {
     self::assertNull($manager->classDashboard($class, $account));
   }
 
+  /**
+   *
+   */
   public function testCertificatePdfRouteFailsClosedWhenPrintEngineIsMissing(): void {
     $translation = $this->createMock(TranslationInterface::class);
     $translation->method('translateString')->willReturn('PDF indisponível.');
@@ -123,6 +134,9 @@ final class LearningDashboardManagerTest extends UnitTestCase {
     $controller->pdf('opaque-verification-code');
   }
 
+  /**
+   *
+   */
   private function manager(?AccountCoursesReaderInterface $coursesReader, CourseCertificateManagerInterface $certificates, EntityTypeManagerInterface $entityTypeManager): LearningDashboardManager {
     return new LearningDashboardManager(
       $coursesReader,

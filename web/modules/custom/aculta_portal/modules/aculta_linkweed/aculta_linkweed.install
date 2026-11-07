@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 declare(strict_types=1);
 
 /**
@@ -210,7 +214,8 @@ function aculta_linkweed_update_10009(): string {
   return 'Renomeados o módulo LinkWeed, suas entidades, tabelas, schema e configurações ativas.';
 }
 
-/** Recursively renames LinkWeed identifiers without corrupting serialized values. */
+/**
+ * Recursively renames LinkWeed identifiers without corrupting serialized values. */
 function aculta_linkweed_rename_value(mixed $value): mixed {
   if (is_string($value)) {
     return str_replace(
@@ -229,7 +234,8 @@ function aculta_linkweed_rename_value(mixed $value): mixed {
   return $value;
 }
 
-/** Repairs identifiers produced by the first idempotent migration pass. */
+/**
+ * Repairs identifiers produced by the first idempotent migration pass. */
 function aculta_linkweed_update_10010(): string {
   $repair = static function (mixed $value) use (&$repair): mixed {
     if (is_string($value)) {
@@ -295,7 +301,8 @@ function aculta_linkweed_repair_installed_entity_definitions(): void {
   }
 }
 
-/** Repairs stale serialized IDs before Core's pending entity updates run. */
+/**
+ * Repairs stale serialized IDs before Core's pending entity updates run. */
 function aculta_linkweed_update_10011(): string {
   aculta_linkweed_repair_installed_entity_definitions();
 
@@ -327,4 +334,3 @@ function aculta_linkweed_update_10013(): string {
     ? 'Reconciled installed schema metadata for: ' . implode(', ', $updated) . '.'
     : 'LinkWeed field schema metadata was already current.';
 }
-

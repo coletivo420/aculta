@@ -8,7 +8,8 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Validation\Attribute\Constraint;
 use Symfony\Component\Validator\Constraint as SymfonyConstraint;
 
-/** Validates raster images attached to LMS answer uploads. */
+/**
+ * Validates raster images attached to LMS answer uploads. */
 #[Constraint(
   id: 'AcultaLmsSubmissionImage',
   label: new TranslatableMarkup('ACULTA LMS submission image', [], ['context' => 'Validation']),
@@ -16,10 +17,12 @@ use Symfony\Component\Validator\Constraint as SymfonyConstraint;
 )]
 final class LmsSubmissionImage extends SymfonyConstraint {
 
-  /** Message shown when an image attachment violates ACULTA image policy. */
+  /**
+   * Message shown when an image attachment violates ACULTA image policy. */
   public string $message = 'This image does not meet the ACULTA image upload policy.';
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function validatedBy(): string {
     return 'aculta_lms.submission_image_validator';
   }

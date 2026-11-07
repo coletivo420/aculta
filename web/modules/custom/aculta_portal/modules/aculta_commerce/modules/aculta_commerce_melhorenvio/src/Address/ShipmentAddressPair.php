@@ -14,6 +14,9 @@ final class ShipmentAddressPair {
     public readonly LogisticsAddress $to,
   ) {}
 
+  /**
+   *
+   */
   public function isValid(): bool {
     return $this->from->isValid() && $this->to->isValid();
   }

@@ -20,6 +20,9 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_commerce')]
 final class ShopCheckoutProviderTest extends UnitTestCase {
 
+  /**
+   *
+   */
   private function provider(?string $flow, array $settings = []): ShopCheckoutProvider {
     $type = $this->createMock(ConfigEntityInterface::class);
     $type->method('getThirdPartySetting')->willReturn($flow);
@@ -31,6 +34,9 @@ final class ShopCheckoutProviderTest extends UnitTestCase {
     return new ShopCheckoutProvider(new OrderTypeCheckoutFlows($manager), new CheckoutSettings($this->getConfigFactoryStub([CheckoutSettings::CONFIG => $settings])));
   }
 
+  /**
+   *
+   */
   public function testDeclaraContextoModoTipoEFluxo(): void {
     $provider = $this->provider('default');
     $this->assertSame('shop', $provider->id());
@@ -41,10 +47,16 @@ final class ShopCheckoutProviderTest extends UnitTestCase {
     $this->assertSame(['default'], $config->checkoutFlowIds);
   }
 
+  /**
+   *
+   */
   public function testTipoSemFluxoUsaOFallbackNativoDoCommerce(): void {
     $this->assertSame(['default'], $this->provider(NULL)->configuration()->checkoutFlowIds);
   }
 
+  /**
+   *
+   */
   public function testTipoConfiguradoSubstituiODefault(): void {
     $config = $this->provider('loja', ['shop_order_type' => 'loja'])->configuration();
     $this->assertSame(['loja'], $config->orderTypeIds);

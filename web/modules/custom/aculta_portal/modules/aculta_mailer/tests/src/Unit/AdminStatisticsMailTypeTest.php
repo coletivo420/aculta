@@ -43,10 +43,16 @@ final class AdminStatisticsMailTypeTest extends TestCase {
   private function translation(): TranslationInterface {
     $translation = $this->createMock(TranslationInterface::class);
     $translation->method('translate')->willReturnCallback(static fn (string $text): object => new class($text) {
+
       public function __construct(private readonly string $text) {}
+
+      /**
+       *
+       */
       public function __toString(): string {
         return $this->text;
       }
+
     });
     return $translation;
   }

@@ -218,7 +218,8 @@ $quiet = static function (callable $fn): int {
   ob_start();
   try {
     return $fn();
-  } finally {
+  }
+  finally {
     ob_end_clean();
   }
 };
@@ -583,7 +584,8 @@ $assert(Provision::namesIn($tmpSecrets) === ['KEEP', 'BREVO_API_KEY', 'MAILER_PA
 @unlink($tmpSecrets);
 
 echo $failures === 0 ? "tests: PASS\n" : "tests: FAIL ($failures)\n";
-exit($failures === 0 ? 0 : 1);// Domínios: decisão de hostname por ambiente (sem banco).
+// Domínios: decisão de hostname por ambiente (sem banco).
+exit($failures === 0 ? 0 : 1);
 $entries = [
   ['domain_id' => 'forum_aculta_org', 'test_host' => 'growroom420.aculta.toca.net.br', 'production_host' => 'growroom420.aculta.org'],
   ['domain_id' => 'wiki420_aculta_org', 'test_host' => 'wiki420.aculta.toca.net.br', 'production_host' => 'wiki420.aculta.org'],
@@ -595,5 +597,3 @@ $p2 = DomainHostnames::plan($entries, 'test', []);
 $assert($p2[0]['action'] === 'unknown', 'dominio: sem leitura vira unknown, nunca grava');
 $p3 = DomainHostnames::plan($entries, 'production', ['forum_aculta_org' => 'growroom420.aculta.toca.net.br']);
 $assert($p3[0]['target'] === 'growroom420.aculta.org' && $p3[0]['action'] === 'set', 'dominio: production usa production_host');
-
-

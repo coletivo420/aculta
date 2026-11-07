@@ -6,10 +6,12 @@ namespace Drupal\aculta_lms\Plugin\ActivityAnswer;
 
 use Drupal\aculta_lms\Learning\CourseActivity;
 
-/** Resolves the ACULTA objective-answer plugin from CourseActivity's stable type. */
+/**
+ * Resolves the ACULTA objective-answer plugin from CourseActivity's stable type. */
 final class ObjectiveAnswerPluginResolver {
 
-  /** @var array<string, \Drupal\aculta_lms\Plugin\ActivityAnswer\ObjectiveAnswerPluginInterface> */
+  /**
+   * @var array<string, \Drupal\aculta_lms\Plugin\ActivityAnswer\ObjectiveAnswerPluginInterface> */
   private readonly array $plugins;
 
   public function __construct(
@@ -24,6 +26,9 @@ final class ObjectiveAnswerPluginResolver {
     ];
   }
 
+  /**
+   *
+   */
   public function forActivity(CourseActivity $activity): ObjectiveAnswerPluginInterface {
     if (!isset($this->plugins[$activity->type])) {
       throw new \UnexpectedValueException(sprintf('Não há plugin de resposta objetiva para o tipo %s.', $activity->type));
@@ -31,6 +36,9 @@ final class ObjectiveAnswerPluginResolver {
     return $this->plugins[$activity->type];
   }
 
+  /**
+   *
+   */
   public function score(CourseActivity $activity, mixed $answer, mixed $correct): float {
     return $this->forActivity($activity)->score($activity, $answer, $correct);
   }

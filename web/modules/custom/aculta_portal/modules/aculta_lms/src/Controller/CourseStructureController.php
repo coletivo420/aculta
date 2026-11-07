@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Controller;
 
+use Drupal\aculta_lms\Form\CourseStructureOrderForm;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Link;
@@ -169,7 +170,7 @@ final class CourseStructureController {
         $activityList['#attributes']['data-aculta-sort-list'] = 'activities';
         $activityList['#attributes']['data-aculta-sort-form'] = 'aculta-course-order-activities-' . $lesson->id();
         $activityOrderForm = $this->formBuilder->getForm(
-          \Drupal\aculta_lms\Form\CourseStructureOrderForm::class,
+          CourseStructureOrderForm::class,
           $course,
           'activities',
           (int) $lesson->id(),
@@ -247,7 +248,7 @@ final class CourseStructureController {
       $lessonList['#attributes']['data-aculta-sort-list'] = 'lessons';
       $lessonList['#attributes']['data-aculta-sort-form'] = 'aculta-course-order-lessons-' . $course->id();
       $lessonOrderForm = $this->formBuilder->getForm(
-        \Drupal\aculta_lms\Form\CourseStructureOrderForm::class,
+        CourseStructureOrderForm::class,
         $course,
         'lessons',
         (int) $course->id(),

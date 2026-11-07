@@ -19,7 +19,8 @@ final class EmailPendingAvisoHooks {
     private readonly EmailPendingAviso $pending,
   ) {}
 
-  /** Título e texto do aviso de atenção em "Minha conta" vêm do mesmo aviso persistente. */
+  /**
+ * Título e texto do aviso de atenção em "Minha conta" vêm do mesmo aviso persistente. */
   #[Hook('aculta_portal_email_notice_alter')]
   public function emailNoticeAlter(array &$context, AccountInterface $account): void {
     if (!$this->pending->isPending($account)) {

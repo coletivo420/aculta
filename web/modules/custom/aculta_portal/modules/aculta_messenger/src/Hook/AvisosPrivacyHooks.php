@@ -17,6 +17,9 @@ final class AvisosPrivacyHooks {
     private readonly AvisosPrivacyForm $form,
   ) {}
 
+  /**
+ *
+ */
   #[Hook('form_alter')]
   public function formAlter(array &$form, FormStateInterface $formState, string $formId): void {
     if ($formId !== 'aculta_user_profile_visibility_form') {

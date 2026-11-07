@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Unit;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -28,7 +29,7 @@ final class ClassActivityDeadlineFormTest extends UnitTestCase {
    */
   public function testDateInputUsesEducatorTimezone(): void {
     $form = $this->createForm('America/Sao_Paulo');
-    $build = $form->buildForm([], $this->createMock(\Drupal\Core\Form\FormStateInterface::class));
+    $build = $form->buildForm([], $this->createMock(FormStateInterface::class));
 
     self::assertSame('America/Sao_Paulo', $build['due_at']['#date_timezone']);
     self::assertStringContainsString('America/Sao_Paulo', (string) $build['intro']['#description']);
@@ -39,7 +40,7 @@ final class ClassActivityDeadlineFormTest extends UnitTestCase {
    */
   public function testDateInputFallsBackToUtc(): void {
     $form = $this->createForm(NULL);
-    $build = $form->buildForm([], $this->createMock(\Drupal\Core\Form\FormStateInterface::class));
+    $build = $form->buildForm([], $this->createMock(FormStateInterface::class));
 
     self::assertSame('UTC', $build['due_at']['#date_timezone']);
     self::assertStringContainsString('UTC', (string) $build['intro']['#description']);

@@ -5,6 +5,7 @@
  * Install and update hooks for ACULTA Messenger.
  */
 
+use Drupal\Core\Config\Entity\ConfigDependencyManager;
 use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
 use Drupal\Core\Config\FileStorage;
 
@@ -280,7 +281,7 @@ function aculta_messenger_update_10015(): void {
     'field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_prop_uuid',
   ];
   $config = $source->readMultiple($names);
-  $ordered_names = (new \Drupal\Core\Config\Entity\ConfigDependencyManager())
+  $ordered_names = (new ConfigDependencyManager())
     ->setData($config)
     ->sortAll();
   $config_manager = \Drupal::service('config.manager');
@@ -349,7 +350,7 @@ function aculta_messenger_update_10017(): void {
   ];
   $config = $source->readMultiple($names);
   $config_manager = \Drupal::service('config.manager');
-  $ordered_names = (new \Drupal\Core\Config\Entity\ConfigDependencyManager())->setData($config)->sortAll();
+  $ordered_names = (new ConfigDependencyManager())->setData($config)->sortAll();
   foreach ($ordered_names as $name) {
     if ($config_manager->loadConfigEntityByName($name) !== NULL) {
       continue;

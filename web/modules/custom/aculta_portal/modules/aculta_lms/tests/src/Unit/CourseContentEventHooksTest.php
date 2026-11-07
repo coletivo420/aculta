@@ -15,11 +15,15 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
-/** Tests learner notices for content stored in ACULTA's own entities. */
+/**
+ * Tests learner notices for content stored in ACULTA's own entities. */
 #[CoversClass(CourseContentEventHooks::class)]
 #[TestGroup('aculta_lms')]
 final class CourseContentEventHooksTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testPublishedCourseInsertPublishesRelease(): void {
     $course = $this->createMock(Group::class);
     $course->method('bundle')->willReturn('lms_course');
@@ -36,6 +40,9 @@ final class CourseContentEventHooksTest extends UnitTestCase {
     (new CourseContentEventHooks($dispatcher, $this->createMock(EntityTypeManagerInterface::class)))->entityInsert($course);
   }
 
+  /**
+   *
+   */
   public function testPublishedOwnLessonInsertPublishesRelease(): void {
     $lesson = $this->contentEntity('aculta_lms_lesson', 'lesson-uuid', ['published' => TRUE]);
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
@@ -48,6 +55,9 @@ final class CourseContentEventHooksTest extends UnitTestCase {
     (new CourseContentEventHooks($dispatcher, $this->createMock(EntityTypeManagerInterface::class)))->entityInsert($lesson);
   }
 
+  /**
+   *
+   */
   public function testActivityAvailabilityInheritsPublishedLesson(): void {
     $lesson = $this->contentEntity('aculta_lms_lesson', 'lesson-uuid', ['published' => TRUE]);
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -65,6 +75,9 @@ final class CourseContentEventHooksTest extends UnitTestCase {
     (new CourseContentEventHooks($dispatcher, $manager))->entityInsert($activity);
   }
 
+  /**
+   *
+   */
   public function testActivityUnderUnpublishedLessonDoesNotPublish(): void {
     $lesson = $this->contentEntity('aculta_lms_lesson', 'lesson-uuid', ['published' => FALSE]);
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -78,6 +91,9 @@ final class CourseContentEventHooksTest extends UnitTestCase {
     (new CourseContentEventHooks($dispatcher, $manager))->entityInsert($activity);
   }
 
+  /**
+   *
+   */
   public function testEditorialUpdateOfAvailableLessonDoesNotPublish(): void {
     $original = $this->contentEntity('aculta_lms_lesson', 'lesson-uuid', ['published' => TRUE]);
     $lesson = $this->contentEntity('aculta_lms_lesson', 'lesson-uuid', ['published' => TRUE], $original);
@@ -87,6 +103,9 @@ final class CourseContentEventHooksTest extends UnitTestCase {
     (new CourseContentEventHooks($dispatcher, $this->createMock(EntityTypeManagerInterface::class)))->entityUpdate($lesson);
   }
 
+  /**
+   *
+   */
   private function contentEntity(string $type, string $uuid, array $fields, ?ContentEntityBase $original = NULL): ContentEntityBase {
     $entity = $this->createMock(ContentEntityBase::class);
     $entity->method('getEntityTypeId')->willReturn($type);

@@ -94,6 +94,7 @@ final class MailTemplateKernelTest extends KernelTestBase {
   /**
    * Modelo com layout: cabeçalho e rodapé da marca em torno do corpo, e o corpo não é reprocessado.
    */
+
   /**
    * Com corpo HTML, o texto de marca e de layout é escapado e as quebras viram <br>; o HTML do modelo não muda.
    */
@@ -132,6 +133,9 @@ final class MailTemplateKernelTest extends KernelTestBase {
     $this->assertTrue($rendered['layout']);
   }
 
+  /**
+   *
+   */
   public function testLayoutWrapsBodyWithBrand(): void {
     MailBrand::create([
       'id' => 'aculta',

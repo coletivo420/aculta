@@ -42,7 +42,7 @@ final class XapiProgressDeriverTest extends UnitTestCase {
   }
 
   /**
-   * min ausente vale 0: raw 15 de max 20 dá 75, como no Opigno.
+   * Min ausente vale 0: raw 15 de max 20 dá 75, como no Opigno.
    */
   public function testMissingMinDefaultsToZero(): void {
     $statements = [$this->statement(self::VERB_COMPLETED, ['score' => ['raw' => 15, 'max' => 20]], 'reg-1', '2026-11-02T10:00:00Z')];
@@ -62,7 +62,7 @@ final class XapiProgressDeriverTest extends UnitTestCase {
   }
 
   /**
-   * scaled negativo é tratado como zero; raw fora do intervalo é limitado.
+   * Scaled negativo é tratado como zero; raw fora do intervalo é limitado.
    */
   public function testOutOfRangeScoresAreClamped(): void {
     $deriver = new XapiProgressDeriver();
@@ -74,7 +74,7 @@ final class XapiProgressDeriverTest extends UnitTestCase {
   }
 
   /**
-   * min igual a max não define percentual: não há nota.
+   * Min igual a max não define percentual: não há nota.
    */
   public function testZeroRangeGivesNoScore(): void {
     $statements = [$this->statement(self::VERB_COMPLETED, ['score' => ['raw' => 5, 'min' => 5, 'max' => 5]], 'reg-1', '2026-11-02T10:00:00Z')];
@@ -97,7 +97,7 @@ final class XapiProgressDeriverTest extends UnitTestCase {
   }
 
   /**
-   * result.completion verdadeiro conclui, mesmo com verbo que não é de conclusão.
+   * Result.completion verdadeiro conclui, mesmo com verbo que não é de conclusão.
    */
   public function testCompletionFlagCompletesTheAttempt(): void {
     $statements = [$this->statement(self::VERB_ANSWERED, ['completion' => TRUE, 'score' => ['scaled' => 0.9]], 'reg-1', '2026-11-02T10:00:00Z')];

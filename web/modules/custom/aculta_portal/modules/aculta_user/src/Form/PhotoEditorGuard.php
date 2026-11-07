@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Form;
 
+use Drupal\file\FileInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\UserInterface;
 
@@ -15,18 +16,22 @@ use Drupal\user\UserInterface;
  */
 final class PhotoEditorGuard {
 
-  /** Pasta das cópias do acervo (ver AvatarPool). */
+  /**
+   * Pasta das cópias do acervo (ver AvatarPool). */
   public const ACERVO_PREFIX = 'public://pictures/acervo/';
 
-  /** Chave do form_state com a foto de acervo atual, para restaurar no salvamento. */
+  /**
+   * Chave do form_state com a foto de acervo atual, para restaurar no salvamento. */
   public const STATE_KEY = 'aculta_user_acervo_fid';
 
-  /** Verdadeiro se a foto da conta é uma cópia do acervo do sistema. */
-  public static function isAcervo(UserInterface $account, \Drupal\file\FileInterface|null $file): bool {
+  /**
+   * Verdadeiro se a foto da conta é uma cópia do acervo do sistema. */
+  public static function isAcervo(UserInterface $account, FileInterface|null $file): bool {
     return $file !== NULL && str_starts_with($file->getFileUri(), self::ACERVO_PREFIX);
   }
 
-  /** Ajusta o formulário de foto para foto do acervo: sem remover e sem recorte; upload disponível. */
+  /**
+   * Ajusta o formulário de foto para foto do acervo: sem remover e sem recorte; upload disponível. */
   public function adjustForm(array &$form, FormStateInterface $form_state, int $fid): void {
     $form_state->set(self::STATE_KEY, $fid);
     if (!isset($form['user_picture']['widget'][0])) {
@@ -41,7 +46,8 @@ final class PhotoEditorGuard {
     $form['#entity_builders'][] = [$this, 'restoreAcervoPicture'];
   }
 
-  /** Entity builder: se nada foi enviado, mantém a foto do acervo. */
+  /**
+   * Entity builder: se nada foi enviado, mantém a foto do acervo. */
   public function restoreAcervoPicture(string $entity_type, UserInterface $entity, array &$form, FormStateInterface $form_state): void {
     $fid = (int) $form_state->get(self::STATE_KEY);
     if ($fid > 0 && $entity->get('user_picture')->isEmpty()) {
@@ -49,7 +55,8 @@ final class PhotoEditorGuard {
     }
   }
 
-  /** After build do widget de foto: retira o recorte inline (o recorte fica no popup próprio). */
+  /**
+   * After build do widget de foto: retira o recorte inline (o recorte fica no popup próprio). */
   public static function hideInlineCrop(array $element, FormStateInterface $form_state): array {
     unset($element['image_crop']);
     return $element;

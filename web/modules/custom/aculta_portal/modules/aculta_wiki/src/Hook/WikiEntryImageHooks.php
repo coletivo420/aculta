@@ -219,6 +219,7 @@ final class WikiEntryImageHooks {
   /**
    * Orders core fields and adds concise guidance for a new Wiki entry.
    */
+
   /**
    * Monta a prévia da imagem atual com a URL de query do core para arquivos privados.
    *
@@ -252,6 +253,9 @@ final class WikiEntryImageHooks {
     return $relative === '' ? NULL : $relative;
   }
 
+  /**
+   *
+   */
   private function prepareAuthoringForm(array &$form, NodeInterface $node): void {
     $weights = [
       'title' => 0,

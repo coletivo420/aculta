@@ -7,7 +7,8 @@ namespace Drupal\aculta_lms\Event;
 use Drupal\aculta_learning_contracts\Event\CourseCompletedEvent;
 use Drupal\Core\Entity\ContentEntityInterface;
 
-/** Publishes a confirmed course pass to integration subscribers. */
+/**
+ * Publishes a confirmed course pass to integration subscribers. */
 interface CourseCompletionPublisherInterface {
 
   /**

@@ -9,7 +9,8 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Loads the ACULTA LMS icon for users who can access administration. */
+/**
+ * Loads the ACULTA LMS icon for users who can access administration. */
 final class AdminToolbarIconHooks {
 
   public function __construct(
@@ -17,6 +18,9 @@ final class AdminToolbarIconHooks {
     private readonly AccountInterface $currentUser,
   ) {}
 
+  /**
+ *
+ */
   #[Hook('page_attachments')]
   public function pageAttachments(array &$attachments): void {
     if (!$this->currentUser->hasPermission('access administration pages')) {

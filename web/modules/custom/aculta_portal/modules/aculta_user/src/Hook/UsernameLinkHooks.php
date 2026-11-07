@@ -28,6 +28,9 @@ final class UsernameLinkHooks {
     private readonly PublicProfileLink $publicProfileLink,
   ) {}
 
+  /**
+ *
+ */
   #[Hook('preprocess_username')]
   public function preprocessUsername(array &$variables): void {
     $account = $variables['account'] ?? NULL;
@@ -50,6 +53,9 @@ final class UsernameLinkHooks {
     $cache->applyTo($variables);
   }
 
+  /**
+ *
+ */
   #[Hook('preprocess_field')]
   public function preprocessField(array &$variables): void {
     $items = $variables['element']['#items'] ?? NULL;

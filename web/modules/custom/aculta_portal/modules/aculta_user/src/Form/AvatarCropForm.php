@@ -32,7 +32,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 final class AvatarCropForm extends FormBase {
 
-  /** Tipo de recorte do avatar (config/sync/crop.type.aculta_avatar_1x1.yml). */
+  /**
+   * Tipo de recorte do avatar (config/sync/crop.type.aculta_avatar_1x1.yml). */
   public const CROP_TYPE = 'aculta_avatar_1x1';
 
   /**
@@ -40,9 +41,9 @@ final class AvatarCropForm extends FormBase {
    */
   public const DIALOG_OPTIONS = ['title' => 'Recortar foto'];
 
-  /** Estilo de imagem usado pela visualização do avatar. */
+  /**
+   * Estilo de imagem usado pela visualização do avatar. */
   public const STYLE = 'aculta_avatar';
-
 
   public function __construct(
     protected ImageWidgetCropInterface $cropManager,
@@ -53,6 +54,9 @@ final class AvatarCropForm extends FormBase {
     protected readonly ImageRenderer $imageRenderer,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('image_widget_crop.manager'),
@@ -64,6 +68,9 @@ final class AvatarCropForm extends FormBase {
     );
   }
 
+  /**
+   *
+   */
   public function getFormId(): string {
     return 'aculta_user_avatar_crop_form';
   }
@@ -87,11 +94,15 @@ final class AvatarCropForm extends FormBase {
     return $file;
   }
 
-  /** Imagem que não é do acervo do sistema. */
+  /**
+   * Imagem que não é do acervo do sistema. */
   private function isCroppable(FileInterface $file): bool {
     return !str_starts_with($file->getFileUri(), AvatarPool::DIRECTORY . '/');
   }
 
+  /**
+   *
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['#attributes']['data-portal-ui'] = 'avatar-crop-dialog';
     $file = $this->targetFile();
@@ -141,7 +152,8 @@ final class AvatarCropForm extends FormBase {
     return $form;
   }
 
-  /** Troca a moldura (tipo e theme_wrappers) de details/vertical_tabs por container, em todos os níveis. */
+  /**
+   * Troca a moldura (tipo e theme_wrappers) de details/vertical_tabs por container, em todos os níveis. */
   private static function flattenElement(array &$element): void {
     foreach (Element::children($element) as $key) {
       if (!is_array($element[$key])) {
@@ -163,6 +175,9 @@ final class AvatarCropForm extends FormBase {
     }
   }
 
+  /**
+   *
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $file = $this->targetFile();
     $wrapper = $form_state->getValue('image_crop')['crop_wrapper'] ?? [];
@@ -199,7 +214,8 @@ final class AvatarCropForm extends FormBase {
     $form_state->setRedirect('aculta_portal.dashboard');
   }
 
-  /** Apaga os derivados do estilo de avatar deste arquivo, para não servir recorte antigo. */
+  /**
+   * Apaga os derivados do estilo de avatar deste arquivo, para não servir recorte antigo. */
   private function flushDerivatives(FileInterface $file): void {
     $style = $this->imageRenderer->styleEntity('avatar');
     if ($style !== NULL) {

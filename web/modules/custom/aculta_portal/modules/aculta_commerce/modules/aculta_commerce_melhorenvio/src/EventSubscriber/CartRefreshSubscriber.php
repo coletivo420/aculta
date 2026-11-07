@@ -11,7 +11,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * Refaz o frete do visitante sempre que o carrinho muda: adição, quantidade alterada ou item removido.
  *
- * Todos os carrinhos passam pelo CartManager do Commerce (carrinho completo, botão de remover e "Adicionar ao carrinho",
+ * @todo s os carrinhos passam pelo CartManager do Commerce (carrinho completo, botão de remover e "Adicionar ao carrinho",
  * inclusive o AJAX), então o recálculo fica em um único ponto. O evento de atualização é disparado antes do save do
  * carrinho no formulário; o recálculo atual não lê o carrinho. Quando o cálculo passar a usar o pacote do carrinho,
  * ele precisa rodar depois do save (ver docs/DECISOES-FRETE.md).

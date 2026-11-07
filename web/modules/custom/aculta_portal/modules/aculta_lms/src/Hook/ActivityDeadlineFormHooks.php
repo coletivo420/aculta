@@ -18,7 +18,8 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\user\UserInterface;
 
-/** Adds the current learner's class deadline to the ACULTA answer form. */
+/**
+ * Adds the current learner's class deadline to the ACULTA answer form. */
 final class ActivityDeadlineFormHooks {
 
   use StringTranslationTrait;
@@ -33,6 +34,9 @@ final class ActivityDeadlineFormHooks {
     $this->stringTranslation = $stringTranslation;
   }
 
+  /**
+ *
+ */
   #[Hook('form_aculta_lms_answer_submission_alter')]
   public function answerFormAlter(array &$form, FormStateInterface $form_state): void {
     $course = $form_state->get('aculta_lms_course');

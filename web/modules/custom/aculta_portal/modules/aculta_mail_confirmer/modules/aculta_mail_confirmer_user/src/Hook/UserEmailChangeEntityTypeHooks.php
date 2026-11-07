@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mail_confirmer_user\Hook;
 
-use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 
 /**

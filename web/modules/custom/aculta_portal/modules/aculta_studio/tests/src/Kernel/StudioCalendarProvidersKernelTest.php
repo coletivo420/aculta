@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_studio\Kernel;
 
+use Drupal\aculta_studio\Learning\LearnerDashboardComposer;
 use Drupal\aculta_calendar\Item\CalendarQuery;
-use Drupal\aculta_events\Calendar\EventCalendarItemProvider;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventLocation;
@@ -60,7 +60,7 @@ final class StudioCalendarProvidersKernelTest extends KernelTestBase {
       ->addArgument(new Reference('entity_type.manager'));
 
     // Instancia o compositor e ganjalab necessários caso a rota seja construída.
-    $container->register('aculta_studio.learner_dashboard_composer', \Drupal\aculta_studio\Learning\LearnerDashboardComposer::class)
+    $container->register('aculta_studio.learner_dashboard_composer', LearnerDashboardComposer::class)
       ->addArgument(new Reference('aculta_learning_contracts.student_learning_summary_reader', ContainerBuilder::NULL_ON_INVALID_REFERENCE))
       ->addArgument(new Reference('current_user'))
       ->addArgument(new Reference('date.formatter'))
@@ -141,6 +141,9 @@ final class StudioCalendarProvidersKernelTest extends KernelTestBase {
     $this->installSchema('system', ['sequences']);
   }
 
+  /**
+   *
+   */
   public function testAnonimoRecebeListaVazia(): void {
     $anonymous = new AnonymousUserSession();
     \Drupal::currentUser()->setAccount($anonymous);
@@ -160,6 +163,9 @@ final class StudioCalendarProvidersKernelTest extends KernelTestBase {
     $this->assertSame([], iterator_to_array($meusEventos->items($query)));
   }
 
+  /**
+   *
+   */
   public function testUsuarioSemMatriculaNaoVeCursos(): void {
     $user = $this->createUser();
     \Drupal::currentUser()->setAccount($user);
@@ -176,18 +182,21 @@ final class StudioCalendarProvidersKernelTest extends KernelTestBase {
     $this->assertSame([], iterator_to_array($cursos->items($query)));
   }
 
+  /**
+   *
+   */
   public function testMeusEventosNaoRepeteOMesmoEvento(): void {
     $user = $this->createUser();
     \Drupal::currentUser()->setAccount($user);
 
-    // Cria um local publicado
+    // Cria um local publicado.
     $local = EventLocation::create([
       'title' => 'Galpão Cultural',
       'field_status' => 'publicado',
     ]);
     $local->save();
 
-    // Cria um evento pertencente ao usuário
+    // Cria um evento pertencente ao usuário.
     $evento = Event::create([
       'title' => 'Festival da Primavera',
       'field_status' => 'publicado',
@@ -195,7 +204,7 @@ final class StudioCalendarProvidersKernelTest extends KernelTestBase {
     ]);
     $evento->save();
 
-    // Cria duas datas para o mesmo evento
+    // Cria duas datas para o mesmo evento.
     $data1 = EventDate::create([
       'field_evento' => $evento->id(),
       'field_local' => $local->id(),
@@ -228,12 +237,12 @@ final class StudioCalendarProvidersKernelTest extends KernelTestBase {
     );
 
     $items = iterator_to_array($meusEventos->items($query));
-    // As duas datas distintas do evento aparecem
+    // As duas datas distintas do evento aparecem.
     $this->assertCount(2, $items);
     $this->assertSame('meus_eventos', $items[0]->origem);
     $this->assertSame('meus_eventos', $items[1]->origem);
 
-    // Desduplicação estável por ocorrência/data
+    // Desduplicação estável por ocorrência/data.
     $ids = array_map(fn($it) => $it->id, $items);
     $this->assertCount(2, array_unique($ids));
   }

@@ -125,7 +125,8 @@ final class HostingerLayout {
         return 'public_html anterior excluído e substituído pelo symlink relativo para web/';
       }
       return 'public_html criado como symlink relativo para web/ na raiz do projeto';
-    } finally {
+    }
+    finally {
       flock($lock, LOCK_UN);
       fclose($lock);
     }

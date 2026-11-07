@@ -55,7 +55,8 @@ final class CourseBuilderWizardStepsTest extends UnitTestCase {
 
     $formState = new FormState();
     $formState->setValue('initial_lessons', "Aula 1\nAula 2");
-    $form = []; $step->submitForm($form, $formState);
+    $form = [];
+    $step->submitForm($form, $formState);
 
     $cached = $formState->getTemporaryValue('wizard');
     $this->assertSame("Aula 1\nAula 2", $cached['initial_lessons']);

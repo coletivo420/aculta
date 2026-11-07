@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_commerce_melhorenvio\Unit\Quote;
 
+use Drupal\commerce_product\Entity\ProductVariationInterface;
 use Drupal\aculta_commerce_melhorenvio\Quote\CartQuoteLines;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingCartRefresher;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingQuoteStore;
@@ -39,7 +40,7 @@ final class ShippingCartRefresherTest extends UnitTestCase {
   public function testStoredQuoteIsRecalculatedForSamePostalCodeAndCart(): void {
     $stored = ['postal_code' => '01310100', 'at' => 1, 'result' => ['state' => 'available']];
     $fresh = ShippingSimulation::unavailable(ShippingSimulation::REASON_NO_PACKAGE);
-    $lines = [['variation' => $this->createMock(\Drupal\commerce_product\Entity\ProductVariationInterface::class), 'quantity' => 2, 'total' => 60.0]];
+    $lines = [['variation' => $this->createMock(ProductVariationInterface::class), 'quantity' => 2, 'total' => 60.0]];
     $cartLines = $this->createMock(CartQuoteLines::class);
     $cartLines->method('lines')->willReturn($lines);
     $simulator = $this->createMock(ShippingSimulator::class);

@@ -24,6 +24,9 @@ final class RoleInheritanceHooks {
     private readonly ?EmailConfirmationPolicy $emailConfirmationPolicy = NULL,
   ) {}
 
+  /**
+ *
+ */
   #[Hook('user_load')]
   public function userLoad(array $users): void {
     foreach ($users as $user) {
@@ -39,6 +42,9 @@ final class RoleInheritanceHooks {
     }
   }
 
+  /**
+ *
+ */
   #[Hook('user_presave')]
   public function userPresave(UserInterface $user): void {
     $emailConfirmado = $this->emailConfirmationPolicy?->isConfirmed($user) ?? TRUE;
@@ -49,6 +55,9 @@ final class RoleInheritanceHooks {
     }
   }
 
+  /**
+ *
+ */
   #[Hook('form_user_form_alter')]
   public function formUserAlter(array &$form, FormStateInterface $form_state): void {
     $conta = $form_state->getFormObject()->getEntity();

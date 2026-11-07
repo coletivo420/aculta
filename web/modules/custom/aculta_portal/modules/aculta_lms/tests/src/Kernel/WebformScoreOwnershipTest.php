@@ -13,7 +13,8 @@ use Drupal\webform\Entity\WebformSubmission;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
-/** Verifies Webform Score access against persisted submission ownership. */
+/**
+ * Verifies Webform Score access against persisted submission ownership. */
 #[TestGroup('aculta_lms')]
 #[RunTestsInSeparateProcesses]
 final class WebformScoreOwnershipTest extends KernelTestBase {
@@ -30,6 +31,9 @@ final class WebformScoreOwnershipTest extends KernelTestBase {
     'webform_score',
   ];
 
+  /**
+   *
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->installSchema('webform', ['webform']);
@@ -38,6 +42,9 @@ final class WebformScoreOwnershipTest extends KernelTestBase {
     $this->installEntitySchema('webform_submission');
   }
 
+  /**
+   *
+   */
   public function testOnlyOwnerWithPermissionCanViewPersistedSubmissionScore(): void {
     $owner = $this->createUser();
     $webform = Webform::create(['id' => 'score_ownership']);
@@ -70,6 +77,9 @@ final class WebformScoreOwnershipTest extends KernelTestBase {
     self::assertTrue($edit_access->isForbidden());
   }
 
+  /**
+   *
+   */
   private function account(int $id): AccountInterface {
     $account = $this->createMock(AccountInterface::class);
     $account->method('id')->willReturn((string) $id);

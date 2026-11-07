@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_studio\Kernel;
 
-use Drupal\aculta_calendar\Agenda\CalendarAgenda;
-use Drupal\aculta_calendar\Agenda\MonthGrid;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Saved\SavedContentQuery;
 use Drupal\aculta_studio\Calendar\StudioDashboardCalendarComposer;

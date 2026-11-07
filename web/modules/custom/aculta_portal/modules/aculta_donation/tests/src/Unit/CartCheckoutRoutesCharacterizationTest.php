@@ -32,6 +32,9 @@ use Symfony\Component\Routing\RouteCollection;
 #[Group('aculta_donation')]
 final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
 
+  /**
+   *
+   */
   private function colecao(): RouteCollection {
     $colecao = new RouteCollection();
     $colecao->add('commerce_cart.page', new Route('/cart', [], ['_access' => 'TRUE']));
@@ -91,6 +94,9 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
     return $resumo;
   }
 
+  /**
+ *
+ */
   #[DataProvider('modos')]
   public function testResultadoNaoDependeDaOrdemDosSubscribers(string $modo): void {
     $settings = ['donation_route' => $modo];
@@ -100,6 +106,9 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
     );
   }
 
+  /**
+   *
+   */
   public static function modos(): array {
     return [
       'donate' => [DonationSettingsForm::ROTA_DONATE],
@@ -108,6 +117,9 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
     ];
   }
 
+  /**
+   *
+   */
   public function testDonateBloqueiaCarrinhoECheckoutMasMantemCaminho(): void {
     $resumo = $this->resumo($this->aplicar(['donation_route' => DonationSettingsForm::ROTA_DONATE], TRUE));
     $this->assertSame('/carrinho', $resumo['commerce_cart.page']['path']);
@@ -118,6 +130,9 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
     }
   }
 
+  /**
+ *
+ */
   #[DataProvider('modosComCommerce')]
   public function testCartOuBothMantemCommerceIntacto(string $modo): void {
     $resumo = $this->resumo($this->aplicar(['donation_route' => $modo], TRUE));
@@ -129,6 +144,9 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
     $this->assertArrayNotHasKey('_access', $resumo['commerce_checkout.form']['requirements']);
   }
 
+  /**
+   *
+   */
   public static function modosComCommerce(): array {
     return [
       'cart' => [DonationSettingsForm::ROTA_CART],
@@ -136,6 +154,9 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
     ];
   }
 
+  /**
+   *
+   */
   public function testCartOuBothGeramMesmaColecao(): void {
     $this->assertSame(
       $this->resumo($this->aplicar(['donation_route' => DonationSettingsForm::ROTA_CART], TRUE)),
@@ -143,12 +164,18 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
     );
   }
 
+  /**
+   *
+   */
   public function testConfiguracaoAusenteOuDesconhecidaSeComportaComoDonate(): void {
     $donate = $this->resumo($this->aplicar(['donation_route' => DonationSettingsForm::ROTA_DONATE], TRUE));
     $this->assertSame($donate, $this->resumo($this->aplicar([], TRUE)));
     $this->assertSame($donate, $this->resumo($this->aplicar(['donation_route' => 'valor_invalido'], TRUE)));
   }
 
+  /**
+   *
+   */
   public function testColecaoSemRotasDoCommerceNaoQuebra(): void {
     $colecao = new RouteCollection();
     $colecao->add('outra.rota', new Route('/outra'));
@@ -156,6 +183,9 @@ final class CartCheckoutRoutesCharacterizationTest extends UnitTestCase {
     $this->assertCount(1, $colecao);
   }
 
+  /**
+   *
+   */
   public function testSemDonationRegistradoAsRotasDoCommerceFicamIntactas(): void {
     $colecao = $this->colecao();
     $antes = $this->resumo($colecao);

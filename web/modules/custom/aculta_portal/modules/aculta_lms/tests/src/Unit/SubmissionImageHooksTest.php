@@ -17,10 +17,16 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ *
+ */
 #[CoversClass(SubmissionImageHooks::class)]
 #[Group('aculta_lms')]
 final class SubmissionImageHooksTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testAddsAcultaImageConstraintToManagedAnswerUpload(): void {
     $form = [
       'file_upload' => [
@@ -38,6 +44,9 @@ final class SubmissionImageHooksTest extends UnitTestCase {
     self::assertSame('png jpg pdf', $form['file_upload']['#upload_validators']['FileExtension']['extensions']);
   }
 
+  /**
+   *
+   */
   public function testHelpTextListsOnlyTheExtensionsAccepted(): void {
     $form = [
       'file_upload' => [
@@ -54,6 +63,9 @@ final class SubmissionImageHooksTest extends UnitTestCase {
     self::assertSame('Envie um arquivo. Extensões permitidas: png pdf.', (string) $form['file_upload']['#description']);
   }
 
+  /**
+   *
+   */
   public function testActivityCannotWidenExtensionsOrSizeBeyondTheLmsPolicy(): void {
     $form = [
       'file_upload' => [
@@ -71,6 +83,9 @@ final class SubmissionImageHooksTest extends UnitTestCase {
     self::assertSame(5 * 1048576, $form['file_upload']['#upload_validators']['FileSizeLimit']['fileLimit']);
   }
 
+  /**
+   *
+   */
   public function testLeavesFormsWithoutManagedUploadAlone(): void {
     $form = ['answer' => ['#type' => 'textarea']];
     $original = $form;
@@ -80,6 +95,9 @@ final class SubmissionImageHooksTest extends UnitTestCase {
     self::assertSame($original, $form);
   }
 
+  /**
+   *
+   */
   public function testKeepsNativeValidatorsWhenThePortalPolicyIsAbsent(): void {
     $form = [
       'file_upload' => [

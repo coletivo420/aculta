@@ -151,7 +151,7 @@ final class XapiProgressDeriver {
       return max(0.0, (float) $score['scaled']) * 100.0;
     }
     if (isset($score['raw'], $score['max'])) {
-      // min é opcional na xAPI; ausente, vale 0 (mesmo padrão do Opigno, sem nota máxima por success).
+      // Min é opcional na xAPI; ausente, vale 0 (mesmo padrão do Opigno, sem nota máxima por success).
       $min = (float) ($score['min'] ?? 0);
       $range = (float) $score['max'] - $min;
       if ($range <= 0) {

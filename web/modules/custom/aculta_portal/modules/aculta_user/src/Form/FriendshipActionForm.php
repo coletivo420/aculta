@@ -14,7 +14,8 @@ use Drupal\aculta_user\Social\FriendshipStatus;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Presents the current member's allowed action for a profile relationship. */
+/**
+ * Presents the current member's allowed action for a profile relationship. */
 final class FriendshipActionForm extends FormBase {
 
   public function __construct(
@@ -23,14 +24,23 @@ final class FriendshipActionForm extends FormBase {
     protected readonly EntityTypeManagerInterface $entityManager,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('aculta_user.friendship_manager'), $container->get('current_user'), $container->get('entity_type.manager'));
   }
 
+  /**
+   *
+   */
   public function getFormId(): string {
     return 'aculta_user_friendship_action';
   }
 
+  /**
+   *
+   */
   public function buildForm(array $form, FormStateInterface $form_state, ?UserInterface $target = NULL, ?AcultaFriendshipInterface $relationship = NULL): array {
     if ($target === NULL || !$target->isActive() || !$this->currentAccount->isAuthenticated() || (int) $target->id() === (int) $this->currentAccount->id()) {
       return [];
@@ -59,6 +69,9 @@ final class FriendshipActionForm extends FormBase {
     return $form;
   }
 
+  /**
+   *
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $uid = (int) $form_state->get('target_uid');
     $target = $this->entityManager->getStorage('user')->load($uid);
@@ -72,24 +85,27 @@ final class FriendshipActionForm extends FormBase {
         case 'request':
           $this->friendshipManager->request($target);
           break;
+
         case 'cancel':
           if ($relationship === NULL) {
             throw new \DomainException('This relationship no longer exists.');
           }
           $this->friendshipManager->cancel($relationship);
           break;
+
         case 'remove':
           if ($relationship === NULL) {
             throw new \DomainException('This relationship no longer exists.');
           }
           $this->friendshipManager->remove($relationship);
           break;
+
         default:
           throw new \DomainException('Unknown relationship action.');
       }
       $this->messenger()->addStatus($this->t('Relacionamento atualizado.'));
     }
-    catch (\DomainException|\RuntimeException|\InvalidArgumentException $exception) {
+    catch (\DomainException | \RuntimeException | \InvalidArgumentException $exception) {
       $this->messenger()->addError($this->t('Não foi possível concluir a ação. Atualize a página e tente novamente.'));
     }
     $form_state->setRebuild(TRUE);

@@ -28,13 +28,16 @@ final class EnrollmentRoleHooks {
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
-  /** Tipo de grupo dos cursos. */
+  /**
+   * Tipo de grupo dos cursos. */
   private const GROUP_TYPE_CURSO = 'lms_course';
 
-  /** Tipo de grupo de turmas. */
+  /**
+   * Tipo de grupo de turmas. */
   private const GROUP_TYPE_TURMA = 'lms_class';
 
-  /** Papéis de grupo que não são de aluno: a matrícula com algum deles não concede estudante. */
+  /**
+   * Papéis de grupo que não são de aluno: a matrícula com algum deles não concede estudante. */
   private const PAPEIS_NAO_ALUNO = [
     'lms_course-teacher',
     'lms_course-course_creator',

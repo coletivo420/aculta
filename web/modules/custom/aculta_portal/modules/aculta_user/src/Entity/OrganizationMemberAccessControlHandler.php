@@ -14,6 +14,9 @@ use Drupal\Core\Session\AccountInterface;
  */
 final class OrganizationMemberAccessControlHandler extends EntityAccessControlHandler {
 
+  /**
+   *
+   */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
     if ($account->hasPermission('administer aculta claims')) {
       return AccessResult::allowed()->cachePerPermissions();
@@ -29,6 +32,9 @@ final class OrganizationMemberAccessControlHandler extends EntityAccessControlHa
     return AccessResult::forbidden()->cachePerUser();
   }
 
+  /**
+   *
+   */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResult {
     return AccessResult::allowedIfHasPermission($account, 'administer aculta claims');
   }

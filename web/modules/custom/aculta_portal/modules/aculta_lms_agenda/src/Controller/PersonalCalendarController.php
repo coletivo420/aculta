@@ -63,8 +63,8 @@ final class PersonalCalendarController extends ControllerBase {
     $revogar = $this->urlComCsrf('aculta_lms_agenda.revogar');
     return [
       '#markup' => '<p>' . $this->t('O link do calendário mostra os prazos e eventos das turmas em que você está matriculado. Quem tem o link consegue ver essas datas, por isso não o compartilhe.') . '</p>'
-      . '<p><a href="' . Html::escape($gerar) . '">' . $this->t('Gerar link (substitui o anterior)') . '</a></p>'
-      . '<p><a href="' . Html::escape($revogar) . '">' . $this->t('Revogar link') . '</a></p>',
+        . '<p><a href="' . Html::escape($gerar) . '">' . $this->t('Gerar link (substitui o anterior)') . '</a></p>'
+        . '<p><a href="' . Html::escape($revogar) . '">' . $this->t('Revogar link') . '</a></p>',
       '#cache' => ['max-age' => 0],
     ];
   }

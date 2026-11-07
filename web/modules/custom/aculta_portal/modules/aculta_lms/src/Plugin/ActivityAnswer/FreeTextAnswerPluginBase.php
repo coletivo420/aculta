@@ -6,15 +6,22 @@ namespace Drupal\aculta_lms\Plugin\ActivityAnswer;
 
 use Drupal\Component\Utility\Html;
 
-/** Shared configuration and safe phrase feedback for free-text answer plugins. */
+/**
+ * Shared configuration and safe phrase feedback for free-text answer plugins. */
 abstract class FreeTextAnswerPluginBase implements FreeTextAnswerPluginInterface {
 
   public const ACTIVITY_TYPE = 'free_text';
 
+  /**
+   *
+   */
   public function activityType(): string {
     return static::ACTIVITY_TYPE;
   }
 
+  /**
+   *
+   */
   public function decodeConfiguration(string $json): array {
     try {
       $root = json_decode($json === '' ? '{}' : $json, FALSE, 512, JSON_THROW_ON_ERROR);
@@ -46,6 +53,9 @@ abstract class FreeTextAnswerPluginBase implements FreeTextAnswerPluginInterface
     return $decoded;
   }
 
+  /**
+   *
+   */
   public function formativeScore(string $answer, array $configuration): float {
     $phrases = $configuration['phrase_feedback'] ?? [];
     if ($phrases === []) {
@@ -60,6 +70,9 @@ abstract class FreeTextAnswerPluginBase implements FreeTextAnswerPluginInterface
     return 100.0 * $matched / count($phrases);
   }
 
+  /**
+   *
+   */
   public function formativeFeedback(string $answer, array $configuration): array {
     $matched = [];
     $unmatched = [];
@@ -89,6 +102,9 @@ abstract class FreeTextAnswerPluginBase implements FreeTextAnswerPluginInterface
     return $build;
   }
 
+  /**
+   *
+   */
   public function validate(string $answer, array $configuration): ?string {
     $minimum = (int) ($configuration['minimum_characters'] ?? 0);
     $length = mb_strlen(trim(strip_tags($answer)));
@@ -97,6 +113,9 @@ abstract class FreeTextAnswerPluginBase implements FreeTextAnswerPluginInterface
       : NULL;
   }
 
+  /**
+   *
+   */
   private function phraseMatches(string $answer, string $configured): bool {
     foreach (explode('|', $configured) as $phrase) {
       $phrase = trim($phrase);

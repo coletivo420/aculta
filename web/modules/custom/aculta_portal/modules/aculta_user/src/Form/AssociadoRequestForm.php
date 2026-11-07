@@ -27,6 +27,9 @@ final class AssociadoRequestForm extends FormBase {
     protected readonly EmailConfirmationPolicy $emailConfirmation,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_user.associado_marker'),
@@ -36,10 +39,16 @@ final class AssociadoRequestForm extends FormBase {
     );
   }
 
+  /**
+   *
+   */
   public function getFormId(): string {
     return 'aculta_user_associado_pedido';
   }
 
+  /**
+   *
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $uid = (int) $this->currentUserService->id();
     $situacao = $this->marker->situacao($uid);
@@ -58,6 +67,9 @@ final class AssociadoRequestForm extends FormBase {
     return $form;
   }
 
+  /**
+   *
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $uid = (int) $this->currentUserService->id();
     // Convite: aceitar ou recusar, sem depender de e-mail confirmado além do que o convite já exige.
@@ -92,12 +104,14 @@ final class AssociadoRequestForm extends FormBase {
     $form_state->setRedirect('aculta_user.associado_pedido');
   }
 
-  /** Só quem não tem situação ou foi desligado pode pedir. */
+  /**
+   * Só quem não tem situação ou foi desligado pode pedir. */
   private function podePedir(?string $situacao): bool {
     return $situacao === NULL || $situacao === AssociadoMarker::DESLIGADO;
   }
 
-  /** Texto conforme a situação. */
+  /**
+   * Texto conforme a situação. */
   private function texto(?string $situacao, int $uid): string {
     if (!$this->emailConfirmation->isConfirmed($this->currentUserService)) {
       return (string) $this->t('Confirme seu e-mail antes de pedir adesão à associação.');

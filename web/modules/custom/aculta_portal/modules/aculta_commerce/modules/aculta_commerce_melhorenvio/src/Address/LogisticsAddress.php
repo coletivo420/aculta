@@ -27,11 +27,15 @@ final class LogisticsAddress {
     public readonly array $errors = [],
   ) {}
 
+  /**
+   *
+   */
   public function isValid(): bool {
     return $this->errors === [];
   }
 
-  /** Payload mínimo da cotação: só CEP. Número e demais campos não são exigidos pelo endpoint. */
+  /**
+   * Payload mínimo da cotação: só CEP. Número e demais campos não são exigidos pelo endpoint. */
   public function toQuoteArray(): array {
     return ['postal_code' => $this->postalCode];
   }

@@ -17,10 +17,16 @@ use Drupal\Core\Access\AccessResult;
  */
 final class CertificateAccessControlHandler extends EntityAccessControlHandler {
 
+  /**
+   *
+   */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
     return AccessResult::forbidden()->addCacheableDependency($entity);
   }
 
+  /**
+   *
+   */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResult {
     return AccessResult::forbidden();
   }

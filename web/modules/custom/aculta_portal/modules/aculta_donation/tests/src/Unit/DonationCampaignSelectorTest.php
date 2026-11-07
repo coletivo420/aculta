@@ -15,11 +15,13 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Janela de vigência das campanhas: início e término inclusivos, sobreposição e ausência.
- *
  */
 #[Group('aculta_donation')]
 final class DonationCampaignSelectorTest extends UnitTestCase {
 
+  /**
+   *
+   */
   private function campanha(string $id, string $inicio, string $fim): DonationCampaign {
     $campanha = new DonationCampaign([], 'aculta_donation_campaign');
     $campanha->set('id', $id);
@@ -27,6 +29,9 @@ final class DonationCampaignSelectorTest extends UnitTestCase {
     return $campanha;
   }
 
+  /**
+   *
+   */
   private function selector(DonationCampaign ...$campanhas): DonationCampaignSelector {
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('loadByProperties')->willReturn($campanhas);
@@ -41,26 +46,41 @@ final class DonationCampaignSelectorTest extends UnitTestCase {
     return new DonationCampaignSelector($tipos, $fabrica);
   }
 
+  /**
+   *
+   */
   private function dia(string $data): \DateTimeImmutable {
     return new \DateTimeImmutable($data . ' 12:00:00', new \DateTimeZone('America/Sao_Paulo'));
   }
 
+  /**
+   *
+   */
   public function testInicioETerminoSaoInclusivos(): void {
     $selector = $this->selector($this->campanha('natal', '2026-12-01', '2026-12-25'));
     $this->assertSame('natal', $selector->vigente($this->dia('2026-12-01'))?->id());
     $this->assertSame('natal', $selector->vigente($this->dia('2026-12-25'))?->id());
   }
 
+  /**
+   *
+   */
   public function testForaDaJanelaNaoHaCampanha(): void {
     $selector = $this->selector($this->campanha('natal', '2026-12-01', '2026-12-25'));
     $this->assertNull($selector->vigente($this->dia('2026-11-30')));
     $this->assertNull($selector->vigente($this->dia('2026-12-26')));
   }
 
+  /**
+   *
+   */
   public function testSemCampanhasNaoHaCampanha(): void {
     $this->assertNull($this->selector()->vigente($this->dia('2026-10-17')));
   }
 
+  /**
+   *
+   */
   public function testSobreposicaoVenceADeInicioMaisRecente(): void {
     $selector = $this->selector(
       $this->campanha('geral', '2026-10-01', '2026-10-31'),

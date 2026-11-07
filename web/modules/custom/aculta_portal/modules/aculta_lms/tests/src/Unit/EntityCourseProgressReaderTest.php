@@ -15,9 +15,15 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ *
+ */
 #[Group('aculta_lms')]
 final class EntityCourseProgressReaderTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testReadsCurrentProgressAndConvertsScoreToFloat(): void {
     $entity = $this->progressEntity('passed', TRUE, '82.5', ['aculta_lms_progress:12']);
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -42,6 +48,9 @@ final class EntityCourseProgressReaderTest extends UnitTestCase {
     self::assertSame(123, $progress->changedTime);
   }
 
+  /**
+   *
+   */
   public function testReturnsNullScoreAndMissingProgress(): void {
     $entity = $this->progressEntity(CourseProgress::STATUS_PROGRESS, FALSE, NULL);
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -58,6 +67,9 @@ final class EntityCourseProgressReaderTest extends UnitTestCase {
     self::assertNull($reader->current($course, $account));
   }
 
+  /**
+   *
+   */
   private function progressEntity(string $status, bool $finished, mixed $score, array $cacheTags = []): ContentEntityInterface {
     $entity = $this->createMock(ContentEntityInterface::class);
     $entity->method('get')->willReturnCallback(function (string $field) use ($status, $finished, $score): FieldItemListInterface {

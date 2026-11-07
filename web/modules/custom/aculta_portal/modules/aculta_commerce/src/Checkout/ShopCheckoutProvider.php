@@ -21,18 +21,30 @@ final class ShopCheckoutProvider implements CheckoutContextProviderInterface {
     private readonly CheckoutSettings $settings,
   ) {}
 
+  /**
+   *
+   */
   public function id(): string {
     return 'shop';
   }
 
+  /**
+   *
+   */
   public function label(): TranslatableMarkup {
     return new TranslatableMarkup('Loja');
   }
 
+  /**
+   *
+   */
   public function weight(): int {
     return 10;
   }
 
+  /**
+   *
+   */
   public function configuration(): CheckoutContextConfiguration {
     $tipo = $this->settings->shopOrderType();
     return new CheckoutContextConfiguration('shop', CheckoutMode::Common, [$tipo], array_filter([$this->flows->flowId($tipo)]));

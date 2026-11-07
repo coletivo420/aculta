@@ -18,6 +18,9 @@ final class GreenStashAccessPolicy {
 
   public const ACCESS = 'access aculta green stash';
 
+  /**
+   *
+   */
   public function access(AccountInterface $account): AccessResultInterface {
     return AccessResult::allowedIfHasPermission($account, self::ACCESS);
   }

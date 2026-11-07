@@ -1,11 +1,13 @@
 <?php
+
 /**
  * @file
  * Install, update and uninstall functions for the H5P module.
  */
 
+use Drupal\Core\Extension\Requirement\RequirementSeverity;
+use Drupal\Component\Utility\DeprecationHelper;
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\aculta_lms_h5p\Entity\aculta_H5PContent;
 
 /**
  * Preserve private content files when the integration is uninstalled.
@@ -31,41 +33,41 @@ function aculta_lms_h5p_install(): void {
 }
 
 /**
- * Check that H5P PHP setup and extension requirements are met
+ * Check that H5P PHP setup and extension requirements are met.
  *
- * @param string $phase The phase in which requirements are checked
+ * @param string $phase
+ *   The phase in which requirements are checked.
+ *
  * @return array $requirements Requirements and their severity
  */
 #[\Drupal\Core\Hook\Attribute\LegacyRequirementsHook]
 function aculta_lms_h5p_requirements($phase) {
   $requirements = [];
 
-  // Replicates functionality in H5P checkSetupErrorMessages since we can't include code from core for this
-
-  // ZipArchive requirement
+  // Replicates functionality in H5P checkSetupErrorMessages since we can't include code from core for this.
+  // ZipArchive requirement.
   $requirements['h5p_php_extension_ziparchive'] = [
     'title' => t('ZipArchive extension'),
     'description' => t('ZipArchive PHP extensions must be installed and enabled.'),
-    'severity' => class_exists('ZipArchive') ? \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\Core\Extension\Requirement\RequirementSeverity::OK, fn() => REQUIREMENT_OK) : \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\Core\Extension\Requirement\RequirementSeverity::Error, fn() => REQUIREMENT_ERROR),
+    'severity' => class_exists('ZipArchive') ? DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => RequirementSeverity::OK, fn() => REQUIREMENT_OK) : DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => RequirementSeverity::Error, fn() => REQUIREMENT_ERROR),
   ];
 
-  // mbstring requirement
+  // Mbstring requirement.
   $requirements['h5p_php_extension_mbstring'] = [
     'title' => t('Mbstring extension'),
     'description' => t('Mbstring PHP extension must be installed and enabled.'),
-    'severity' => extension_loaded('mbstring') ? \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\Core\Extension\Requirement\RequirementSeverity::OK, fn() => REQUIREMENT_OK) : \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\Core\Extension\Requirement\RequirementSeverity::Error, fn() => REQUIREMENT_ERROR),
+    'severity' => extension_loaded('mbstring') ? DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => RequirementSeverity::OK, fn() => REQUIREMENT_OK) : DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => RequirementSeverity::Error, fn() => REQUIREMENT_ERROR),
   ];
 
   $supported_php = version_compare(PHP_VERSION, '8.3.0', '>=');
   $requirements['h5p_php_version'] = [
     'title' => t('PHP version'),
     'description' => t('PHP 8.3 or later is required by the Drupal 11 integration.'),
-    'severity' => $supported_php ? \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\Core\Extension\Requirement\RequirementSeverity::OK, fn() => REQUIREMENT_OK) : \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\Core\Extension\Requirement\RequirementSeverity::Error, fn() => REQUIREMENT_ERROR),
+    'severity' => $supported_php ? DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => RequirementSeverity::OK, fn() => REQUIREMENT_OK) : DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => RequirementSeverity::Error, fn() => REQUIREMENT_ERROR),
   ];
 
   return $requirements;
 }
-
 
 /**
  * Creates database schema.
@@ -73,555 +75,556 @@ function aculta_lms_h5p_requirements($phase) {
  * @see hook_schema
  */
 function aculta_lms_h5p_schema() {
-  $schema['h5p_content_libraries'] = array(
+  $schema['h5p_content_libraries'] = [
     'description' => 'Stores information about what h5p uses what libraries.',
-    'fields' => array(
-      'content_id' => array(
+    'fields' => [
+      'content_id' => [
         'description' => 'The identifier of an H5P Content entity.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'library_id' => array(
+      ],
+      'library_id' => [
         'description' => 'The identifier of an H5P Library used by the H5P Content',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'dependency_type' => array(
+      ],
+      'dependency_type' => [
         'description' => "dynamic, preloaded or editor",
         'type' => 'varchar',
         'length' => 31,
         'not null' => TRUE,
         'default' => 'preloaded',
-      ),
-      'drop_css' => array(
+      ],
+      'drop_css' => [
         'description' => '1 if the preloaded css from the dependency is to be excluded.',
         'type' => 'int',
         'size' => 'tiny',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
-      ),
-      'weight' => array(
+      ],
+      'weight' => [
         'description' => 'Determines the order in which the preloaded libraries will be loaded',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 999999,
-      ),
-    ),
-    'primary key' => array('content_id', 'library_id', 'dependency_type'),
-    'indexes' => array(
-      'weight' => array('weight')
-    )
-  );
+      ],
+    ],
+    'primary key' => ['content_id', 'library_id', 'dependency_type'],
+    'indexes' => [
+      'weight' => ['weight'],
+    ],
+  ];
 
-  $schema['h5p_libraries'] = array(
+  $schema['h5p_libraries'] = [
     'description' => 'Stores information about what h5p uses what libraries.',
-    'fields' => array(
-      'library_id' => array(
+    'fields' => [
+      'library_id' => [
         'description' => 'Primary Key: The id of the library.',
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'machine_name' => array(
+      ],
+      'machine_name' => [
         'description' => 'The library machine name',
         'type' => 'varchar',
         'length' => 127,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'title' => array(
+      ],
+      'title' => [
         'description' => 'The human readable name of this library',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'major_version' => array(
+      ],
+      'major_version' => [
         'description' => 'The version of this library',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'minor_version' => array(
+      ],
+      'minor_version' => [
         'description' => 'The minor version of this library',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'patch_version' => array(
+      ],
+      'patch_version' => [
         'description' => 'The patch version of this library',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'runnable' => array(
+      ],
+      'runnable' => [
         'description' => 'Whether or not this library is executable.',
         'type' => 'int',
         'size' => 'tiny',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 1,
-      ),
-      'fullscreen' => array(
+      ],
+      'fullscreen' => [
         'description' => 'Indicates if this library can be opened in fullscreen.',
         'type' => 'int',
         'size' => 'tiny',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
-      ),
-      'embed_types' => array(
+      ],
+      'embed_types' => [
         'description' => 'The allowed embed types for this library as a comma separated list',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'preloaded_js' => array(
+      ],
+      'preloaded_js' => [
         'description' => 'The preloaded js for this library as a comma separated list',
         'type' => 'text',
-      ),
-      'preloaded_css' => array(
+      ],
+      'preloaded_css' => [
         'description' => 'The preloaded css for this library as a comma separated list',
         'type' => 'text',
-      ),
+      ],
       // DT-H5P01 (docs/operations/DEBT-REGISTER.md): column placement kept
       // for upstream parity; moving it requires a schema migration.
-      'drop_library_css' => array(
+      'drop_library_css' => [
         'description' => 'List of libraries that should not have CSS included if this library is used. Comma separated list.',
         'type' => 'text',
-      ),
-      'semantics' => array(
+      ],
+      'semantics' => [
         'description' => 'The semantics definition in json format',
         'type' => 'text',
         'not null' => TRUE,
-      ),
-      'restricted' => array(
+      ],
+      'restricted' => [
         'description' => 'Restricts the ability to create new content using this library.',
         'type' => 'int',
         'size' => 'tiny',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
-      ),
-      'tutorial_url' => array(
+      ],
+      'tutorial_url' => [
         'description' => 'URL to a tutorial for this library',
         'type' => 'varchar',
-        'length' => 1000
-      ),
-      'has_icon' => array(
+        'length' => 1000,
+      ],
+      'has_icon' => [
         'description' => 'Whether or not this library contains an icon.svg',
         'type' => 'int',
         'size' => 'tiny',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
-      ),
-      'add_to' => array(
+      ],
+      'add_to' => [
         'description' => 'Plugin configuration data',
         'type' => 'text',
-      ),
-      'metadata_settings' => array(
+      ],
+      'metadata_settings' => [
         'description' => 'Metadata settings',
-        'type' => 'text'
-      ),
-    ),
-    'primary key' => array('library_id'),
-    'indexes' => array(
-      'library' => array('machine_name', 'major_version', 'minor_version'),
-      'title' => array('title')
-    )
-  );
+        'type' => 'text',
+      ],
+    ],
+    'primary key' => ['library_id'],
+    'indexes' => [
+      'library' => ['machine_name', 'major_version', 'minor_version'],
+      'title' => ['title'],
+    ],
+  ];
 
-  $schema['h5p_libraries_hub_cache'] = array(
+  $schema['h5p_libraries_hub_cache'] = [
     'description' => 'Stores information about what h5p uses what libraries.',
-    'fields' => array(
-      'id' => array(
+    'fields' => [
+      'id' => [
         'description' => 'Primary Key: The id of the library.',
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'machine_name' => array(
+      ],
+      'machine_name' => [
         'description' => 'The library machine name',
         'type' => 'varchar',
         'length' => 127,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'major_version' => array(
+      ],
+      'major_version' => [
         'description' => 'The version of this library',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'minor_version' => array(
+      ],
+      'minor_version' => [
         'description' => 'The minor version of this library',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'patch_version' => array(
+      ],
+      'patch_version' => [
         'description' => 'The patch version of this library',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'h5p_major_version' => array(
+      ],
+      'h5p_major_version' => [
         'description' => 'The major version required of H5P core.',
         'type' => 'int',
-        'unsigned' => TRUE
-      ),
-      'h5p_minor_version' => array(
+        'unsigned' => TRUE,
+      ],
+      'h5p_minor_version' => [
         'description' => 'The minor version required of H5P core.',
         'type' => 'int',
-        'unsigned' => TRUE
-      ),
-      'title' => array(
+        'unsigned' => TRUE,
+      ],
+      'title' => [
         'description' => 'The human readable name of this library',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'summary' => array(
+      ],
+      'summary' => [
         'description' => 'Short description of library.',
         'type' => 'text',
         'size' => 'small',
         'not null' => TRUE,
-      ),
-      'description' => array(
+      ],
+      'description' => [
         'description' => 'Long description of library.',
         'type' => 'text',
         'size' => 'medium',
         'not null' => TRUE,
-      ),
-      'icon' => array(
+      ],
+      'icon' => [
         'description' => 'URL to icon.',
         'type' => 'varchar',
         'length' => 511,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'created_at' => array(
+      ],
+      'created_at' => [
         'description' => 'Time that the library was uploaded.',
         'type' => 'int',
         'not null' => TRUE,
-      ),
-      'updated_at' => array(
+      ],
+      'updated_at' => [
         'description' => 'Time that the library had its latest update.',
         'type' => 'int',
         'not null' => TRUE,
-      ),
-      'is_recommended' => array(
+      ],
+      'is_recommended' => [
         'description' => 'Whether the library is recommended by the HUB moderators.',
         'type' => 'int',
         'size' => 'tiny',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 1,
-      ),
-      'popularity' => array(
+      ],
+      'popularity' => [
         'description' => 'How many times the library has been downloaded.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
-      ),
-      'screenshots' => array(
+      ],
+      'screenshots' => [
         'description' => 'Screenshot URLs json encoded',
         'type' => 'text',
-        'size' => 'medium'
-      ),
-      'license' => array(
+        'size' => 'medium',
+      ],
+      'license' => [
         'description' => 'Library license(s) json encoded',
         'type' => 'text',
-        'size' => 'medium'
-      ),
-      'example' => array(
+        'size' => 'medium',
+      ],
+      'example' => [
         'description' => 'URL to example content for this library.',
         'type' => 'varchar',
         'length' => 511,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'tutorial' => array(
+      ],
+      'tutorial' => [
         'description' => 'Tutorial URL',
         'type' => 'varchar',
-        'length' => 511
-      ),
-      'keywords' => array(
+        'length' => 511,
+      ],
+      'keywords' => [
         'description' => 'Keywords for library json encoded',
         'type' => 'text',
-        'size' => 'medium'
-      ),
-      'categories' => array(
+        'size' => 'medium',
+      ],
+      'categories' => [
         'description' => 'Categories for library json encoded',
         'type' => 'text',
-        'size' => 'medium'
-      ),
-      'owner' => array(
+        'size' => 'medium',
+      ],
+      'owner' => [
         'description' => 'Owner of the library',
         'type' => 'varchar',
-        'length' => 511
-      )
-    ),
-    'primary key' => array('id'),
-    'indexes' => array(
-      'machine_name' => array('machine_name')
-    )
-  );
+        'length' => 511,
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'machine_name' => ['machine_name'],
+    ],
+  ];
 
-  $schema['h5p_libraries_libraries'] = array(
+  $schema['h5p_libraries_libraries'] = [
     'description' => 'Stores information about library dependencies.',
-    'fields' => array(
-      'library_id' => array(
+    'fields' => [
+      'library_id' => [
         'description' => 'Primary Key: The id of a h5p library.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'required_library_id' => array(
+      ],
+      'required_library_id' => [
         'description' => 'Primary Key: The id of a h5p library.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'dependency_type' => array(
+      ],
+      'dependency_type' => [
         'description' => 'preloaded, dynamic, or editor',
         'type' => 'varchar',
         'length' => 31,
         'not null' => TRUE,
-      ),
-    ),
-    'primary key' => array('library_id', 'required_library_id'),
-  );
+      ],
+    ],
+    'primary key' => ['library_id', 'required_library_id'],
+  ];
 
-  $schema['h5p_libraries_languages'] = array(
+  $schema['h5p_libraries_languages'] = [
     'description' => 'Stores translations for the languages.',
-    'fields' => array(
-      'library_id' => array(
+    'fields' => [
+      'library_id' => [
         'description' => 'Primary Key: The id of a h5p library.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'language_code' => array(
+      ],
+      'language_code' => [
         'description' => 'Primary Key: The language code.',
         'type' => 'varchar',
         'length' => 31,
         'not null' => TRUE,
-      ),
-      'language_json' => array(
+      ],
+      'language_json' => [
         'description' => 'The translations defined in json format',
         'type' => 'text',
         'not null' => TRUE,
-      ),
-    ),
-    'primary key' => array('library_id', 'language_code'),
-  );
+      ],
+    ],
+    'primary key' => ['library_id', 'language_code'],
+  ];
 
-  $schema['h5p_points'] = array(
+  $schema['h5p_points'] = [
     'description' => 'Stores user statistics.',
-    'fields' => array(
-      'content_id' => array(
+    'fields' => [
+      'content_id' => [
         'description' => 'Primary Key: The unique identifier for this node.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'uid' => array(
+      ],
+      'uid' => [
         'description' => 'Primary Key: The id for the user answering this H5P.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'started' => array(
+      ],
+      'started' => [
         'description' => 'When the user started on the interaction',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'finished' => array(
+      ],
+      'finished' => [
         'description' => 'When the user submitted the result',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
-      ),
-      'points' => array(
+      ],
+      'points' => [
         'description' => 'The users score',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => FALSE,
-      ),
-      'max_points' => array(
+      ],
+      'max_points' => [
         'description' => 'The maximum score for this test',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => FALSE,
-      ),
-    ),
-    'primary key' => array('content_id', 'uid'),
-  );
+      ],
+    ],
+    'primary key' => ['content_id', 'uid'],
+  ];
 
-  $schema['h5p_content_user_data'] = array(
+  $schema['h5p_content_user_data'] = [
     'description' => 'Stores user data about the content',
-    'fields' => array(
-      'user_id' => array(
+    'fields' => [
+      'user_id' => [
         'description' => 'The user identifier',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'content_main_id' => array(
+      ],
+      'content_main_id' => [
         'description' => 'The main identifier for the h5p content',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'sub_content_id' => array(
+      ],
+      'sub_content_id' => [
         'description' => 'The sub identifier for the h5p content',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'data_id' => array(
+      ],
+      'data_id' => [
         'description' => 'The data type identifier',
         'type' => 'varchar',
         'length' => 127,
         'not null' => TRUE,
-      ),
-      'timestamp' => array(
+      ],
+      'timestamp' => [
         'description' => 'What the time is',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'data' => array(
+      ],
+      'data' => [
         'description' => 'Contains the data saved',
         'type' => 'text',
         'not null' => TRUE,
         'size' => 'big',
-      ),
-      'preloaded' => array(
+      ],
+      'preloaded' => [
         'description' => 'Indicates if the is to be preloaded',
         'type' => 'int',
         'size' => 'tiny',
         'unsigned' => TRUE,
         'not null' => FALSE,
-      ),
-      'delete_on_content_change' => array(
+      ],
+      'delete_on_content_change' => [
         'description' => 'Indicates if the data is to be deleted when the content gets updated',
         'type' => 'int',
         'size' => 'tiny',
         'unsigned' => TRUE,
         'not null' => FALSE,
-      ),
-    ),
-    'primary key' => array('user_id', 'content_main_id', 'sub_content_id', 'data_id'),
-  );
+      ],
+    ],
+    'primary key' => ['user_id', 'content_main_id', 'sub_content_id', 'data_id'],
+  ];
 
-  $schema['h5p_events'] = array(
+  $schema['h5p_events'] = [
     'description' => 'Keeps track of what happens in the H5P system',
-    'fields' => array(
-      'id' => array(
+    'fields' => [
+      'id' => [
         'description' => 'The unique event identifier',
         'type' => 'serial',
         'unsigned' => TRUE,
-        'not null' => TRUE
-      ),
-      'user_id' => array(
+        'not null' => TRUE,
+      ],
+      'user_id' => [
         'description' => 'User id',
         'type' => 'int',
         'unsigned' => TRUE,
-        'not null' => TRUE
-      ),
-      'created_at' => array(
+        'not null' => TRUE,
+      ],
+      'created_at' => [
         'description' => 'Time of the event',
         'type' => 'int',
-        'not null' => TRUE
-      ),
-      'type' => array(
+        'not null' => TRUE,
+      ],
+      'type' => [
         'description' => 'Type of event',
         'type' => 'varchar',
         'length' => 63,
-        'not null' => TRUE
-      ),
-      'sub_type' => array(
+        'not null' => TRUE,
+      ],
+      'sub_type' => [
         'description' => 'Sub type of event',
         'type' => 'varchar',
         'length' => 63,
-        'not null' => TRUE
-      ),
-      'content_id' => array(
+        'not null' => TRUE,
+      ],
+      'content_id' => [
         'description' => 'Content id',
         'type' => 'int',
         'unsigned' => TRUE,
-        'not null' => TRUE
-      ),
-      'content_title' => array(
+        'not null' => TRUE,
+      ],
+      'content_title' => [
         'description' => 'Content title',
         'type' => 'varchar',
         'length' => 255,
-        'not null' => TRUE
-      ),
-      'library_name' => array(
+        'not null' => TRUE,
+      ],
+      'library_name' => [
         'description' => 'Library name',
         'type' => 'varchar',
         'length' => 127,
-        'not null' => TRUE
-      ),
-      'library_version' => array(
+        'not null' => TRUE,
+      ],
+      'library_version' => [
         'description' => 'Version of library',
         'type' => 'varchar',
         'length' => 31,
-        'not null' => TRUE
-      )
-    ),
-    'primary key' => array('id'),
-    'indexes' => array(
-      'created_at' => array('created_at')
-    )
-  );
+        'not null' => TRUE,
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'created_at' => ['created_at'],
+    ],
+  ];
 
-  $schema['h5p_counters'] = array(
+  $schema['h5p_counters'] = [
     'description' => 'Global counters for the H5P system',
-    'fields' => array(
-      'type' => array(
+    'fields' => [
+      'type' => [
         'description' => 'Type of counter',
         'type' => 'varchar',
         'length' => 63,
-        'not null' => TRUE
-      ),
-      'library_name' => array(
+        'not null' => TRUE,
+      ],
+      'library_name' => [
         'description' => 'Library',
         'type' => 'varchar',
         'length' => 127,
-        'not null' => TRUE
-      ),
-      'library_version' => array(
+        'not null' => TRUE,
+      ],
+      'library_version' => [
         'description' => 'Version of library',
         'type' => 'varchar',
         'length' => 31,
-        'not null' => TRUE
-      ),
-      'num' => array(
+        'not null' => TRUE,
+      ],
+      'num' => [
         'description' => 'Number value of counter',
         'type' => 'int',
         'unsigned' => TRUE,
-        'not null' => TRUE
-      ),
-    ),
-    'primary key' => array('type', 'library_name', 'library_version')
-  );
+        'not null' => TRUE,
+      ],
+    ],
+    'primary key' => ['type', 'library_name', 'library_version'],
+  ];
 
   return $schema;
 }
+
 /**
  * Removes config for library update and content type update times.
  * This has been moved to the State API.
@@ -650,13 +653,13 @@ function aculta_lms_h5p_update_8002() {
   if (!$schema->fieldExists('h5p_libraries', 'add_to')) {
     $schema->addField('h5p_libraries', 'add_to', [
       'description' => 'plugin configuration data',
-      'type' => 'text'
+      'type' => 'text',
     ]);
   }
   if (!$schema->fieldExists('h5p_libraries', 'metadata_settings')) {
     $schema->addField('h5p_libraries', 'metadata_settings', [
       'description' => 'Metadata settings',
-      'type' => 'text'
+      'type' => 'text',
     ]);
   }
 
@@ -697,10 +700,10 @@ function aculta_lms_h5p_update_8002() {
     ->installFieldStorageDefinition('year_from', 'h5p_content', 'h5p_content', $storage_definition);
 
   $storage_definition = BaseFieldDefinition::create('integer')
-  ->setLabel(t('Year (to)'))
-  ->setDescription(t('End year for copyright'))
-  ->setSetting('unsigned', TRUE)
-  ->setSetting('size', 'normal');
+    ->setLabel(t('Year (to)'))
+    ->setDescription(t('End year for copyright'))
+    ->setSetting('unsigned', TRUE)
+    ->setSetting('size', 'normal');
 
   \Drupal::entityDefinitionUpdateManager()
     ->installFieldStorageDefinition('year_to', 'h5p_content', 'h5p_content', $storage_definition);
@@ -751,7 +754,6 @@ function aculta_lms_h5p_update_8002() {
     ->installFieldStorageDefinition('author_comments', 'h5p_content', 'h5p_content', $storage_definition);
 }
 
-
 /**
  * Retain the historical update ID without touching legacy public files.
  *
@@ -762,7 +764,7 @@ function aculta_lms_h5p_update_8003(&$sandbox): void {
 }
 
 /**
- * Add field for default commmon field language
+ * Add field for default commmon field language.
  */
 function aculta_lms_h5p_update_8004() {
   $storage_definition = BaseFieldDefinition::create('string')
@@ -899,7 +901,8 @@ function aculta_lms_h5p_update_8007(): void {
   }
 }
 
-/** Publishes pinned Composer assets outside request-time library discovery. */
+/**
+ * Publishes pinned Composer assets outside request-time library discovery. */
 function aculta_lms_h5p_update_8008(): void {
   \Drupal::service('aculta_lms_h5p.asset_file_manager')->mirrorAssets();
 }

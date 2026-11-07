@@ -10,18 +10,23 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Read-only, data-minimized administration list of account holders. */
+/**
+ * Read-only, data-minimized administration list of account holders. */
 final class PeopleListController extends ControllerBase {
 
   public function __construct(EntityTypeManagerInterface $entityTypeManager) {
     $this->entityTypeManager = $entityTypeManager;
   }
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('entity_type.manager'));
   }
 
-  /** Lists only display name, nickname, and account status. */
+  /**
+   * Lists only display name, nickname, and account status. */
   public function listing(): array {
     $userStorage = $this->entityTypeManager->getStorage('user');
     $profileStorage = $this->entityTypeManager->getStorage('profile');

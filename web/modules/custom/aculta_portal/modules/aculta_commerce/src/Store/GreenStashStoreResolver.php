@@ -17,6 +17,9 @@ final class GreenStashStoreResolver {
 
   public function __construct(private readonly EntityTypeManagerInterface $entities) {}
 
+  /**
+   *
+   */
   public function resolve(AccountInterface $account): ?object {
     $storage = $this->entities->getStorage('commerce_store');
     $ids = $storage->getQuery()->accessCheck(FALSE)->range(0, 2)->execute();

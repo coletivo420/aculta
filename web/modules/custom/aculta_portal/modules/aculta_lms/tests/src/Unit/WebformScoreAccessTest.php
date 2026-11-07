@@ -13,9 +13,15 @@ use PHPUnit\Framework\Attributes\CoversFunction;
 
 require_once dirname(__DIR__, 8) . '/modules/contrib/webform_score/webform_score.module';
 
+/**
+ *
+ */
 #[CoversFunction('webform_score_entity_field_access')]
 final class WebformScoreAccessTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testOnlySubmissionOwnerCanViewOwnScoreWhenGranted(): void {
     [$field, $items, $account] = $this->scoreField(TRUE, ['view own submission score']);
 
@@ -25,6 +31,9 @@ final class WebformScoreAccessTest extends UnitTestCase {
     self::assertContains('user', $result->getCacheContexts());
   }
 
+  /**
+   *
+   */
   public function testOtherUserCannotViewOwnScore(): void {
     [$field, $items, $account] = $this->scoreField(FALSE, ['view own submission score']);
 
@@ -34,12 +43,18 @@ final class WebformScoreAccessTest extends UnitTestCase {
     self::assertContains('user', $result->getCacheContexts());
   }
 
+  /**
+   *
+   */
   public function testDedicatedPermissionCanViewAnyScore(): void {
     [$field, $items, $account] = $this->scoreField(FALSE, ['view any submission score']);
 
     self::assertTrue(webform_score_entity_field_access('view', $field, $account, $items)->isNeutral());
   }
 
+  /**
+   *
+   */
   public function testScoreCannotBeEditedDirectly(): void {
     [$field, $items, $account] = $this->scoreField(TRUE, ['view own submission score']);
 

@@ -224,7 +224,7 @@ final class Cli {
           'url' => (string) $url,
           'ok' => $ok,
           'observed' => ($advertised ? 'Sitemap índice' : 'Sitemap ausente')
-          . ', Disallow: / ' . ($blocked ? 'presente' : 'ausente'),
+            . ', Disallow: / ' . ($blocked ? 'presente' : 'ausente'),
         ];
         $code = $ok ? $code : 1;
       }
@@ -249,8 +249,8 @@ final class Cli {
         'url' => (string) $url,
         'ok' => $ok,
         'observed' => 'status ' . ($status ?? '?')
-        . ', X-Robots-Tag ' . ($value ?? 'ausente')
-        . ', meta ' . ($meta ? 'noindex' : 'ausente'),
+          . ', X-Robots-Tag ' . ($value ?? 'ausente')
+          . ', meta ' . ($meta ? 'noindex' : 'ausente'),
       ];
       $code = $ok ? $code : 1;
     }
@@ -575,6 +575,7 @@ final class Cli {
    * @return int
    *   Process exit code.
    */
+
   /**
    * Sugere entradas de correção de deploy para superfícies em diretório.
    *
@@ -611,6 +612,9 @@ final class Cli {
     return 0;
   }
 
+  /**
+   *
+   */
   private function register(array $o): int {
     if (isset($o['from-json'])) {
       return $this->importFindings((string) $o['from-json']);

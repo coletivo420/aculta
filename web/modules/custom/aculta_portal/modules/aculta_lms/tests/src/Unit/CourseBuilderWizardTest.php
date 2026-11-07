@@ -48,7 +48,7 @@ final class CourseBuilderWizardTest extends UnitTestCase {
 
     $this->assertSame('aculta_lms.course_builder_wizard', $wizard->getTempstoreId());
     $this->assertSame('aculta_lms.course_builder_wizard', $wizard->getRouteName());
-    
+
     $operations = $wizard->getOperations([]);
     $this->assertArrayHasKey('details', $operations);
     $this->assertArrayHasKey('structure', $operations);

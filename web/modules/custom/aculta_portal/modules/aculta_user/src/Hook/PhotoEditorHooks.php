@@ -14,9 +14,7 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\aculta_user\Form\AvatarCropForm;
 use Drupal\aculta_user\Form\PhotoEditorGuard;
-use Drupal\aculta_user\Form\UserPictureForm;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
 
@@ -31,7 +29,8 @@ use Drupal\user\UserInterface;
  */
 final class PhotoEditorHooks {
 
-  /** Caminho da rota de sorteio (o token CSRF é gerado para este caminho). */
+  /**
+   * Caminho da rota de sorteio (o token CSRF é gerado para este caminho). */
   private const PATH = '/avatar/sortear';
 
   public function __construct(
@@ -51,6 +50,9 @@ final class PhotoEditorHooks {
     private readonly FormBuilderInterface $formBuilder,
   ) {}
 
+  /**
+ *
+ */
   #[Hook('aculta_portal_photo_editor_alter')]
   public function photoEditorAlter(array &$photoForm, UserInterface $account): void {
     // O gatilho é o avatar: abre o modal Drupal com o formulário da foto (rota própria, upload por AJAX). O conteúdo

@@ -30,7 +30,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 final class ActivityController implements ContainerInjectionInterface {
 
-  /** Rótulos das abas, na ordem do menu. */
+  /**
+   * Rótulos das abas, na ordem do menu. */
   public const TABS = [
     'wiki' => 'Wiki',
     'forum' => 'Fórum',
@@ -60,7 +61,8 @@ final class ActivityController implements ContainerInjectionInterface {
     );
   }
 
-  /** Renderiza a aba pedida. */
+  /**
+   * Renderiza a aba pedida. */
   public function view(string $aba): array {
     if ($this->purposeManager->getCurrentPurpose() !== 'account' || !isset(self::TABS[$aba])) {
       throw new NotFoundHttpException();
@@ -98,7 +100,8 @@ final class ActivityController implements ContainerInjectionInterface {
     ];
   }
 
-  /** Links das abas, com a aba atual marcada (aria-current e is-active), como em Meus Dados e Segurança. */
+  /**
+   * Links das abas, com a aba atual marcada (aria-current e is-active), como em Meus Dados e Segurança. */
   private function tabLinks(string $atual): array {
     $links = [];
     foreach (self::TABS as $id => $label) {
@@ -112,7 +115,8 @@ final class ActivityController implements ContainerInjectionInterface {
     return $links;
   }
 
-  /** Verbetes publicados em que a pessoa criou pelo menos uma revisão, com link para o histórico público. */
+  /**
+   * Verbetes publicados em que a pessoa criou pelo menos uma revisão, com link para o histórico público. */
   private function wiki(int $uid): array {
     $revisions = $this->entityTypeManager->getStorage('node')->getQuery()
       ->accessCheck(FALSE)
@@ -124,7 +128,8 @@ final class ActivityController implements ContainerInjectionInterface {
     return $this->nodeList($nids, 'wiki_entry', 'Você ainda não revisou verbetes publicados.', TRUE);
   }
 
-  /** Tópicos de Fórum criados pela pessoa que continuam publicados. */
+  /**
+   * Tópicos de Fórum criados pela pessoa que continuam publicados. */
   private function forum(int $uid): array {
     $query = $this->entityTypeManager->getStorage('node')->getQuery();
     $nids = $query
@@ -143,14 +148,16 @@ final class ActivityController implements ContainerInjectionInterface {
     );
   }
 
-  /** Publicações da Revista de autoria da pessoa, publicadas. */
+  /**
+   * Publicações da Revista de autoria da pessoa, publicadas. */
   private function revista(int $uid): array {
     $nids = $this->entityTypeManager->getStorage('node')->getQuery()
       ->accessCheck(FALSE)->condition('type', 'revista')->condition('uid', $uid)->condition('status', 1)->execute();
     return $this->nodeList(array_values($nids), 'revista', 'Você ainda não tem publicações na Revista.', FALSE);
   }
 
-  /** Respostas publicadas pela pessoa, em Comments ou posts revisionáveis do Fórum. */
+  /**
+   * Respostas publicadas pela pessoa, em Comments ou posts revisionáveis do Fórum. */
   private function comentarios(int $uid): array {
     $ids = $this->entityTypeManager->getStorage('comment')->getQuery()
       ->accessCheck(FALSE)
@@ -270,7 +277,8 @@ final class ActivityController implements ContainerInjectionInterface {
     return ['#theme' => 'item_list', '#items' => array_column(array_slice($entries, 0, 50), 'link')];
   }
 
-  /** Mantém os nós publicados do tipo indicado. */
+  /**
+   * Mantém os nós publicados do tipo indicado. */
   private function publishedNodeIds(array $nids, string $bundle): array {
     if ($nids === []) {
       return [];
@@ -285,7 +293,8 @@ final class ActivityController implements ContainerInjectionInterface {
     return array_values(array_unique($ids));
   }
 
-  /** Lista de nós com link, ou mensagem de vazio com link para a área. */
+  /**
+   * Lista de nós com link, ou mensagem de vazio com link para a área. */
   private function nodeList(
     array $nids,
     string $bundle,

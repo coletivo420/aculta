@@ -121,6 +121,7 @@ final class MailTemplate extends ConfigEntityBase {
   /**
    * Define o corpo do modelo.
    */
+
   /**
    * Formato do corpo ('' = texto simples).
    */
@@ -143,6 +144,9 @@ final class MailTemplate extends ConfigEntityBase {
     return $this;
   }
 
+  /**
+   *
+   */
   public function setBody(string $body): static {
     $this->body = $body;
     return $this;

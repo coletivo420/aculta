@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Event;
 
-use DateTimeImmutable;
-use InvalidArgumentException;
-
 /**
  * A passed course status recorded by Drupal LMS.
  *
@@ -21,10 +18,10 @@ final readonly class CourseCompletedEvent {
     public string $sourceStatusUuid,
     public string $courseId,
     public string $accountId,
-    public DateTimeImmutable $completedAt,
+    public \DateTimeImmutable $completedAt,
   ) {
     if (trim($sourceStatusUuid) === '' || trim($courseId) === '' || !ctype_digit($accountId) || (int) $accountId < 1) {
-      throw new InvalidArgumentException('A course completion event requires source, course, and authenticated account identifiers.');
+      throw new \InvalidArgumentException('A course completion event requires source, course, and authenticated account identifiers.');
     }
   }
 

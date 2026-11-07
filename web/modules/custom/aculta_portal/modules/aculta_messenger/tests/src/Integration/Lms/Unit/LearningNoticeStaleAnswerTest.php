@@ -24,11 +24,15 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use Psr\Log\NullLogger;
 
-/** Tests stale ACULTA answer links close safely when the activity is gone. */
+/**
+ * Tests stale ACULTA answer links close safely when the activity is gone. */
 #[CoversClass(LearningNoticeManager::class)]
 #[Group('aculta_messenger')]
 final class LearningNoticeStaleAnswerTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testSubmissionWithMissingActivityIsIgnoredSafely(): void {
     $answer = $this->createMock(ContentEntityInterface::class);
     $answer->method('getEntityTypeId')->willReturn('aculta_lms_answer');
@@ -82,6 +86,9 @@ final class LearningNoticeStaleAnswerTest extends UnitTestCase {
     self::assertNull($manager->resolve($message, $account));
   }
 
+  /**
+   *
+   */
   private function field(mixed $value): FieldItemListInterface {
     return new class($value) extends FieldItemList {
 
@@ -89,6 +96,9 @@ final class LearningNoticeStaleAnswerTest extends UnitTestCase {
         parent::__construct(DataDefinition::create('field_item_list'));
       }
 
+      /**
+       *
+       */
       public function __get($property_name): mixed {
         return $property_name === 'value' ? $this->scalar : parent::__get($property_name);
       }

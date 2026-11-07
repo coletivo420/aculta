@@ -8,7 +8,8 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_lms\Entity\CourseCertificate;
 use Drupal\aculta_lms\Entity\ProgressEntity;
 
-/** Issues and manages immutable snapshots of approved course certificates. */
+/**
+ * Issues and manages immutable snapshots of approved course certificates. */
 interface CourseCertificateManagerInterface {
 
   /**
@@ -19,13 +20,16 @@ interface CourseCertificateManagerInterface {
    */
   public function issue(ProgressEntity $progress, AccountInterface $issuer): CourseCertificate;
 
-  /** Revokes an active certificate while preserving its issue snapshot. */
+  /**
+   * Revokes an active certificate while preserving its issue snapshot. */
   public function revoke(CourseCertificate $certificate, AccountInterface $issuer, string $reason): void;
 
-  /** Loads a certificate from its non-sequential public verification code. */
+  /**
+   * Loads a certificate from its non-sequential public verification code. */
   public function loadByCode(string $code): ?CourseCertificate;
 
-  /** @return \Drupal\aculta_lms\Entity\CourseCertificate[] */
+  /**
+   * @return \Drupal\aculta_lms\Entity\CourseCertificate[] */
   public function loadForStudent(int $uid): array;
 
 }

@@ -161,7 +161,8 @@ final class UserEmailChangeHooks {
     }
   }
 
-  /** Checks the request-local guard set while saving a confirmed address. */
+  /**
+   * Checks the request-local guard set while saving a confirmed address. */
   private function isConfirmationGuardActive(int $userId): bool {
     $entry = \Drupal::cache('memory')->get('aculta_mail_confirmer_user_' . $userId);
     return $entry !== FALSE && $entry->data === TRUE;

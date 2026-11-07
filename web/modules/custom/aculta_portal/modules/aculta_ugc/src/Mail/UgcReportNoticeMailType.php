@@ -72,9 +72,9 @@ final class UgcReportNoticeMailType implements MailTypeInterface {
     return implode("\n\n", [
       (string) $this->translation->translate('Uma nova denúncia aguarda análise da moderação.'),
       (string) $this->translation->translate('Área: {{ purpose }}') . "\n"
-      . (string) $this->translation->translate('Conteúdo: {{ tipo_entidade }} {{ id_entidade }}') . "\n"
-      . (string) $this->translation->translate('Motivo: {{ motivo }}') . "\n"
-      . (string) $this->translation->translate('Referência: {{ referencia }}'),
+        . (string) $this->translation->translate('Conteúdo: {{ tipo_entidade }} {{ id_entidade }}') . "\n"
+        . (string) $this->translation->translate('Motivo: {{ motivo }}') . "\n"
+        . (string) $this->translation->translate('Referência: {{ referencia }}'),
       (string) $this->translation->translate('Abra a fila de moderação para decidir. A identidade de quem denunciou não é informada.'),
     ]);
   }

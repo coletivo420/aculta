@@ -33,7 +33,8 @@ final class NoticeAdminController extends ControllerBase {
     private readonly AccountInterface $noticeAdminAccount,
   ) {}
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
@@ -157,8 +158,8 @@ final class NoticeAdminController extends ControllerBase {
       $end = $this->timestamp($node->get('field_aculta_notice_end')->value);
       $rows[] = [
         'title' => ['data' => $titleAccess->isAllowed()
-          ? $node->toLink()->toRenderable()
-          : ['#plain_text' => $node->label()]],
+            ? $node->toLink()->toRenderable()
+            : ['#plain_text' => $node->label()]],
         'status' => ['data' => ['#plain_text' => $node->isPublished() ? $this->t('Publicado') : $this->t('Rascunho')]],
         'audience' => ['data' => ['#plain_text' => $audiences ? implode(', ', $audiences) : $this->t('Sem público definido')]],
         'validity' => ['data' => ['#plain_text' => $this->formatValidity($start, $end)]],
@@ -191,12 +192,14 @@ final class NoticeAdminController extends ControllerBase {
     return $build;
   }
 
-  /** Converts a Drupal datetime value to a display timestamp. */
+  /**
+   * Converts a Drupal datetime value to a display timestamp. */
   private function timestamp(?string $value): ?int {
     return StorageDateTime::toTimestamp($value);
   }
 
-  /** Formats an optional start/end validity range. */
+  /**
+   * Formats an optional start/end validity range. */
   private function formatValidity(?int $start, ?int $end): string {
     if ($start === NULL && $end === NULL) {
       return (string) $this->t('Sem prazo');

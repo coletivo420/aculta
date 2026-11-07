@@ -45,6 +45,9 @@ final class CourseStatusEventHooks {
     $this->publisher->publish($entity);
   }
 
+  /**
+   *
+   */
   private static function fieldValue(ProgressEntity $progress, string $field): mixed {
     $values = $progress->get($field)->getValue();
     return $values[0]['value'] ?? NULL;

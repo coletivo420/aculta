@@ -14,10 +14,16 @@ use Drupal\Core\Session\AccountInterface;
  */
 final class AssociadoMarcadorAccessControlHandler extends EntityAccessControlHandler {
 
+  /**
+   *
+   */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
     return AccessResult::allowedIfHasPermission($account, 'administer aculta associados');
   }
 
+  /**
+   *
+   */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
     return AccessResult::allowedIfHasPermission($account, 'administer aculta associados');
   }

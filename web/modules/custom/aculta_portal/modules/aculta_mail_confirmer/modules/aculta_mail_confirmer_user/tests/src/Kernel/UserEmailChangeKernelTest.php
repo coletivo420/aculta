@@ -22,6 +22,9 @@ final class UserEmailChangeKernelTest extends KernelTestBase {
   private const OLD_EMAIL = 'antiga@example.invalid';
   private const NEW_EMAIL = 'nova@example.invalid';
 
+  /**
+   *
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
@@ -31,10 +34,16 @@ final class UserEmailChangeKernelTest extends KernelTestBase {
     $this->config('system.mail')->set('interface.default', 'test_mail_collector')->save();
   }
 
+  /**
+   *
+   */
   private function manager(): AcultaMailConfirmerManagerInterface {
     return $this->container->get('aculta_mail_confirmer');
   }
 
+  /**
+   *
+   */
   private function createUserAndRequestChange(): User {
     $user = User::create(['name' => 'pessoa', 'mail' => self::OLD_EMAIL, 'status' => 1]);
     $user->save();
@@ -44,6 +53,9 @@ final class UserEmailChangeKernelTest extends KernelTestBase {
     return $user;
   }
 
+  /**
+   *
+   */
   public function testEmailChangeIsOnlyAppliedAfterConfirmation(): void {
     $user = $this->createUserAndRequestChange();
     $this->assertSame(self::OLD_EMAIL, User::load($user->id())->getEmail(), 'O e-mail atual continua até a confirmação.');
@@ -57,6 +69,9 @@ final class UserEmailChangeKernelTest extends KernelTestBase {
     $this->assertSame(self::NEW_EMAIL, User::load($user->id())->getEmail(), 'A confirmação aplica o novo e-mail.');
   }
 
+  /**
+   *
+   */
   public function testCancelledChangeKeepsTheCurrentEmail(): void {
     $user = $this->createUserAndRequestChange();
     $pending = $this->manager()->getConfirmation(self::NEW_EMAIL, 'pending', 'aculta_mail_confirmer_user');

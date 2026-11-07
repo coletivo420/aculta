@@ -22,7 +22,8 @@ final class BadgeCatalog {
   public const AUTOMATICA = 'automatica';
   public const MANUAL = 'manual';
 
-  /** @return array<string, array{label: string, origem: string}> */
+  /**
+   * @return array<string, array{label: string, origem: string}> */
   public static function all(): array {
     return [
       self::FUNDADORE => ['label' => 'Fundadore', 'origem' => self::MANUAL],
@@ -35,6 +36,9 @@ final class BadgeCatalog {
     ];
   }
 
+  /**
+   *
+   */
   public static function isManual(string $badge): bool {
     return (self::all()[$badge]['origem'] ?? '') === self::MANUAL;
   }

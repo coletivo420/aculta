@@ -29,6 +29,9 @@ final class ChangemailHooks {
     private readonly ModuleHandlerInterface $moduleHandler,
   ) {}
 
+  /**
+ *
+ */
   #[Hook('aculta_portal_changemail_alter')]
   public function changemailAlter(array &$section, UserInterface $account, bool $emailReady): void {
     if (!$emailReady

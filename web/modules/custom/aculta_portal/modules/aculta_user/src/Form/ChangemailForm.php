@@ -25,16 +25,20 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class ChangemailForm extends FormBase {
 
-  /** Tentativas erradas de senha atual, por conta, dentro da janela. */
+  /**
+   * Tentativas erradas de senha atual, por conta, dentro da janela. */
   private const MAX_PASSWORD_ATTEMPTS = 5;
 
-  /** Janela de contagem das tentativas erradas, em segundos. */
+  /**
+   * Janela de contagem das tentativas erradas, em segundos. */
   private const PASSWORD_WINDOW = 3600;
 
-  /** Nome do evento de flood das tentativas de senha atual. */
+  /**
+   * Nome do evento de flood das tentativas de senha atual. */
   private const FLOOD_EVENT = 'aculta_user_changemail_password';
 
-  /** Ajuste do aculta_mail_confirmer_user que liga a confirmação da troca. */
+  /**
+   * Ajuste do aculta_mail_confirmer_user que liga a confirmação da troca. */
   private const CONFIRMER_SETTING = 'aculta_mail_confirmer_user.settings';
 
   public function __construct(

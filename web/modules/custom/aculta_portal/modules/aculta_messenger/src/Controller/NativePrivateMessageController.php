@@ -25,18 +25,23 @@ final class NativePrivateMessageController extends ControllerBase {
     private readonly DomainPurposeManager $domainPurposeManager,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('aculta_portal.domain_purpose'));
   }
 
-  /** The inbox page is gone: redirect to the account home (purpose account). */
+  /**
+   * The inbox page is gone: redirect to the account home (purpose account). */
   public function redirectToAccount(): Response {
     // The account home is the root of the account purpose (as the account shell links it), not /minha-conta.
     $target = $this->domainPurposeManager->pathUrl('account', '/');
     return new TrustedRedirectResponse($target?->setAbsolute()->toString() ?? '/', 302);
   }
 
-  /** Native conversation pages are not served; the drawer is the only conversation view. */
+  /**
+   * Native conversation pages are not served; the drawer is the only conversation view. */
   public function gone(): never {
     throw new NotFoundHttpException();
   }

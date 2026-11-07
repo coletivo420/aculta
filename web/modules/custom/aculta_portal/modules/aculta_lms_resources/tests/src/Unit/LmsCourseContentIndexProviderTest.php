@@ -6,7 +6,6 @@ namespace Drupal\Tests\aculta_lms_resources\Unit;
 
 use Drupal\aculta_lms_resources\ContentIndex\LmsCourseContentIndexProvider;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;

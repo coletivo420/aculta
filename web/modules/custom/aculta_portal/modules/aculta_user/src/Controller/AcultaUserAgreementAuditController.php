@@ -10,7 +10,8 @@ use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\aculta_user\Consent\AcultaUserAgreementLedger;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Read-only administrative view of consent evidence and chain integrity. */
+/**
+ * Read-only administrative view of consent evidence and chain integrity. */
 final class AcultaUserAgreementAuditController extends ControllerBase {
 
   public function __construct(
@@ -19,10 +20,16 @@ final class AcultaUserAgreementAuditController extends ControllerBase {
     private readonly AcultaUserAgreementLedger $ledger,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('database'), $container->get('date.formatter'), $container->get('aculta_user.aculta_user_agreement_ledger'));
   }
 
+  /**
+   *
+   */
   public function listing(): array {
     $rows = [];
     foreach ($this->database->select('aculta_user_agreement', 'c')->fields('c')->orderBy('id', 'DESC')->range(0, 200)->execute() as $event) {

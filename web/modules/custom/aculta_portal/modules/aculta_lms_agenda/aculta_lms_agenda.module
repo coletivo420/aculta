@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 declare(strict_types=1);
 
 /**
@@ -7,6 +11,7 @@ declare(strict_types=1);
  * Campos que o submódulo acrescenta às entidades de eventos.
  */
 
+use Drupal\Component\Utility\DeprecationHelper;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
@@ -83,7 +88,7 @@ function aculta_lms_agenda_aculta_event_insert(EntityInterface $evento): void {
  * Implements hook_ENTITY_TYPE_update() for aculta_event.
  */
 function aculta_lms_agenda_aculta_event_update(EntityInterface $evento): void {
-  _aculta_lms_agenda_avisa_turma($evento, \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $evento->getOriginal(), fn() => $evento->original) ?? NULL);
+  _aculta_lms_agenda_avisa_turma($evento, DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $evento->getOriginal(), fn() => $evento->original) ?? NULL);
 }
 
 /**

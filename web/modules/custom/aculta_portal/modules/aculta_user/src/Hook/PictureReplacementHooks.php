@@ -21,7 +21,8 @@ use Drupal\user\UserInterface;
  */
 final class PictureReplacementHooks {
 
-  /** Pasta das cópias do acervo de avatares. Essas não são fotos enviadas pela pessoa. */
+  /**
+   * Pasta das cópias do acervo de avatares. Essas não são fotos enviadas pela pessoa. */
   private const ACERVO_PREFIX = 'public://pictures/acervo/';
 
   public function __construct(
@@ -72,7 +73,8 @@ final class PictureReplacementHooks {
     }
   }
 
-  /** Verdadeiro se alguma conta ainda referencia a foto. */
+  /**
+   * Verdadeiro se alguma conta ainda referencia a foto. */
   private function isUsedByOthers(int $fid): bool {
     return $this->entityTypeManager->getStorage('user')->getQuery()
       ->accessCheck(FALSE)

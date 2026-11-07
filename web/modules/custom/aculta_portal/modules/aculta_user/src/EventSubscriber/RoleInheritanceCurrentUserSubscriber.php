@@ -27,10 +27,16 @@ final class RoleInheritanceCurrentUserSubscriber implements EventSubscriberInter
     private readonly ?EmailConfirmationPolicy $emailConfirmationPolicy = NULL,
   ) {}
 
+  /**
+   *
+   */
   public static function getSubscribedEvents(): array {
     return [KernelEvents::REQUEST => [['estenderUsuario', 299]]];
   }
 
+  /**
+   *
+   */
   public function estenderUsuario(RequestEvent $event): void {
     if (!$event->isMainRequest()) {
       return;

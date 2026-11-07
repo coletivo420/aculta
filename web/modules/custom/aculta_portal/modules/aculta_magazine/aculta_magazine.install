@@ -42,7 +42,8 @@ function aculta_magazine_update_10003(): string {
   return count($topics) . ' tópico(s) do Fórum com URL de /topico/.';
 }
 
-/** Adds the native, owner-managed accent choice to Revista nodes. */
+/**
+ * Adds the native, owner-managed accent choice to Revista nodes. */
 function aculta_magazine_update_10004(): string {
   $storage = new FileStorage(__DIR__ . '/config/install');
   $entity_types = [

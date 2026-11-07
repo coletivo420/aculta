@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_learning_contracts\Event;
 
-use DateTimeImmutable;
-use InvalidArgumentException;
-
 /**
  * A confirmed course completion published by an education provider.
  *
@@ -21,10 +18,10 @@ final readonly class CourseCompletedEvent {
     public string $sourceUuid,
     public string $courseId,
     public string $accountId,
-    public DateTimeImmutable $completedAt,
+    public \DateTimeImmutable $completedAt,
   ) {
     if (trim($sourceUuid) === '' || trim($courseId) === '' || !ctype_digit($accountId) || (int) $accountId < 1) {
-      throw new InvalidArgumentException('A course completion event requires source, course, and authenticated account identifiers.');
+      throw new \InvalidArgumentException('A course completion event requires source, course, and authenticated account identifiers.');
     }
   }
 

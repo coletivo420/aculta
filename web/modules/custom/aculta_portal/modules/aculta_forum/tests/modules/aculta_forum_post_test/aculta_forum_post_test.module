@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 use Drupal\Core\Entity\ContentEntityType;
 use Drupal\aculta_user\Entity\LegacyAuthor;
 use Drupal\aculta_user\Entity\LegacyAuthorAccessControlHandler;

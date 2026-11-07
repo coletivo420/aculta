@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Form;
 
+use Drupal\profile\Entity\ProfileInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
@@ -53,7 +55,7 @@ final class SocialLinkForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, string $rede = ''): array {
     if (!isset(SocialNetworks::NETWORKS[$rede])) {
-      throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
+      throw new NotFoundHttpException();
     }
     $definition = SocialNetworks::NETWORKS[$rede];
     $profile = $this->profile();
@@ -126,7 +128,7 @@ final class SocialLinkForm extends FormBase {
   /**
    * Perfil participante da conta atual, criado se ainda não existe.
    */
-  private function profile(): \Drupal\profile\Entity\ProfileInterface {
+  private function profile(): ProfileInterface {
     $storage = $this->entityTypeManagerService->getStorage('profile');
     $account = $this->currentUserService->getAccount();
     return PerfilDoPapel::obter($storage, $account);

@@ -21,19 +21,25 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class DonationSettingsForm extends ConfigFormBase {
 
-  /** Só a rota /donate (doação dedicada). */
+  /**
+   * Só a rota /donate (doação dedicada). */
   public const ROTA_DONATE = 'donate';
 
-  /** Só a rota /cart e /checkout padrão (doação como item da loja). */
+  /**
+   * Só a rota /cart e /checkout padrão (doação como item da loja). */
   public const ROTA_CART = 'cart';
 
-  /** As duas rotas. Exige tipos de item e de pedido diferentes. */
+  /**
+   * As duas rotas. Exige tipos de item e de pedido diferentes. */
   public const ROTA_AMBAS = 'both';
 
   protected EntityTypeManagerInterface $entityTypeManager;
 
   protected RouteBuilderInterface $routeBuilder;
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     $instance = parent::create($container);
     $instance->entityTypeManager = $container->get('entity_type.manager');
@@ -41,14 +47,23 @@ final class DonationSettingsForm extends ConfigFormBase {
     return $instance;
   }
 
+  /**
+   *
+   */
   public function getFormId(): string {
     return 'aculta_donation_fluxo_form';
   }
 
+  /**
+   *
+   */
   protected function getEditableConfigNames(): array {
     return ['aculta_donation.settings'];
   }
 
+  /**
+   *
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('aculta_donation.settings');
     $tiposDePedido = EntityHelper::extractLabels($this->entityTypeManager->getStorage('commerce_order_type')->loadMultiple());
@@ -148,6 +163,9 @@ final class DonationSettingsForm extends ConfigFormBase {
     return parent::buildForm($form, $form_state);
   }
 
+  /**
+   *
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $rota = $form_state->getValue('donation_route');
     if ($rota === self::ROTA_DONATE) {
@@ -166,6 +184,9 @@ final class DonationSettingsForm extends ConfigFormBase {
     parent::validateForm($form, $form_state);
   }
 
+  /**
+   *
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $valores = $form_state->getValues();
     $config = $this->config('aculta_donation.settings');
@@ -195,7 +216,8 @@ final class DonationSettingsForm extends ConfigFormBase {
     parent::submitForm($form, $form_state);
   }
 
-  /** Lista os fluxos de doação (TRUE) ou da loja (FALSE), com rótulos. */
+  /**
+   * Lista os fluxos de doação (TRUE) ou da loja (FALSE), com rótulos. */
   private function filtrarFluxos(array $fluxos, bool $doacao): array {
     $filtrados = array_filter(
       $fluxos,
@@ -204,12 +226,18 @@ final class DonationSettingsForm extends ConfigFormBase {
     return EntityHelper::extractLabels($filtrados);
   }
 
+  /**
+   *
+   */
   private function limparRotaCart(FormStateInterface $form_state): void {
     foreach (['cart_item_type', 'cart_order_type', 'cart_checkout_flow'] as $chave) {
       $form_state->setValue($chave, NULL);
     }
   }
 
+  /**
+   *
+   */
   private function limparRotaDonate(FormStateInterface $form_state): void {
     foreach (['donate_item_type', 'donate_order_type', 'donate_checkout_flow'] as $chave) {
       $form_state->setValue($chave, NULL);

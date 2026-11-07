@@ -27,10 +27,16 @@ final class PublicProfileNotCanonicalSubscriber implements EventSubscriberInterf
 
   public function __construct(private readonly RouteProviderInterface $routes) {}
 
+  /**
+   *
+   */
   public static function getSubscribedEvents(): array {
     return [KernelEvents::REQUEST => [['desativarNormalizador', 31]]];
   }
 
+  /**
+   *
+   */
   public function desativarNormalizador(RequestEvent $event): void {
     try {
       $modelo = $this->routes->getRouteByName(self::ROTA)->getPath();

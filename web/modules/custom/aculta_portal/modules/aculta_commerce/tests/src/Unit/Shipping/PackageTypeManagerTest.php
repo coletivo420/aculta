@@ -10,6 +10,9 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ *
+ */
 #[CoversClass(\Drupal\aculta_commerce\Shipping\PackageTypeManager::class)]
 #[Group('aculta_commerce')]
 final class PackageTypeManagerTest extends UnitTestCase {

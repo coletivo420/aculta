@@ -8,7 +8,6 @@ use Drupal\commerce_checkout\CheckoutOrderManagerInterface;
 use Drupal\aculta_donation\Form\DonationSettingsForm;
 use Drupal\aculta_donation\NewOrder;
 use Drupal\aculta_donation\Plugin\Commerce\CheckoutFlow\DonationCheckoutFlow;
-use Drupal\aculta_donation\Routing\DonationSecuredRedirectResponse;
 use Drupal\commerce_store\CurrentStoreInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;

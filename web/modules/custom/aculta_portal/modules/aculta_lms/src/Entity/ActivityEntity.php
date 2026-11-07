@@ -12,6 +12,9 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
+/**
+ *
+ */
 #[ContentEntityType(
   id: 'aculta_lms_activity',
   label: new TranslatableMarkup('Atividade'),
@@ -22,6 +25,9 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 )]
 final class ActivityEntity extends ContentEntityBase {
 
+  /**
+   *
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
     $fields['lesson_id'] = BaseFieldDefinition::create('integer')->setLabel(new TranslatableMarkup('Aula'))->setRequired(TRUE);
@@ -36,12 +42,16 @@ final class ActivityEntity extends ContentEntityBase {
     return $fields;
   }
 
+  /**
+   *
+   */
   public function preSave(EntityStorageInterface $storage): void {
     parent::preSave($storage);
     self::assertActivityRules((string) $this->get('type')->value, (int) $this->get('lesson_id')->value, (bool) $this->get('graded')->value, (int) $this->get('weight')->value);
   }
 
-  /** Applies the activity contract and its non-negative ordering constraint. */
+  /**
+   * Applies the activity contract and its non-negative ordering constraint. */
   public static function assertActivityRules(string $type, int $lesson_id, bool $graded, int $weight): void {
     new CourseActivity(1, $lesson_id, $type, $graded);
     if ($weight < 0) {

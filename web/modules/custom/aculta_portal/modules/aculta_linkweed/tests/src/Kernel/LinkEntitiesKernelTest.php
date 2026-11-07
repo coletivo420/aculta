@@ -18,7 +18,6 @@ use Drupal\aculta_linkweed\Entity\LinkItem;
 use Drupal\aculta_linkweed\Entity\LinkPage;
 use Drupal\aculta_linkweed\Form\LinkPageItemAddForm;
 use Drupal\aculta_linkweed\Form\LinkPageEditorForm;
-use Drupal\aculta_linkweed\Service\LinkAnalytics;
 use Drupal\aculta_statistics\Storage\DailyAggregateStorage;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\aculta_user\Identity\AuthorIdentityResolver;

@@ -7,14 +7,16 @@ namespace Drupal\aculta_lms\Learning;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
-/** Reads lesson activities from ACULTA-owned entities. */
+/**
+ * Reads lesson activities from ACULTA-owned entities. */
 final class EntityCourseActivityReader implements CourseActivityReaderInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function forLesson(int $lessonId): array {
     $entities = $this->entityTypeManager
       ->getStorage('aculta_lms_activity')
@@ -36,6 +38,9 @@ final class EntityCourseActivityReader implements CourseActivityReaderInterface 
     return array_column($activities, 'activity');
   }
 
+  /**
+   *
+   */
   private static function fieldValue(ContentEntityInterface $entity, string $field): mixed {
     $values = $entity->get($field)->getValue();
     return $values[0]['value'] ?? NULL;

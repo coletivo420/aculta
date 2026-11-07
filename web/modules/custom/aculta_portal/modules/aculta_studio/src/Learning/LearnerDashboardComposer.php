@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_studio\Learning;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\aculta_learning_contracts\Learning\StudentLearningCertificate;
 use Drupal\aculta_learning_contracts\Learning\StudentLearningCourse;
 use Drupal\aculta_learning_contracts\Learning\StudentLearningSummaryReaderInterface;
@@ -43,7 +44,7 @@ final class LearnerDashboardComposer {
    */
   public function build(): array {
     if ($this->summaries === NULL) {
-      throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
+      throw new NotFoundHttpException();
     }
     $data = $this->summaries->getStudentLearningSummary($this->currentUser);
     $build = [

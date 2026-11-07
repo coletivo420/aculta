@@ -10,11 +10,15 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ *
+ */
 #[CoversClass(ShippingAddressAdapter::class)]
 #[Group('aculta_commerce_melhorenvio')]
 class ShippingAddressAdapterTest extends UnitTestCase {
 
-  /** Endereço completo que não deve gerar consulta. */
+  /**
+   * Endereço completo que não deve gerar consulta. */
   private const COMPLETE = [
     'country_code' => 'BR',
     'postal_code' => '01310-100',
@@ -134,17 +138,25 @@ final class FakeCepLookup implements CepLookupInterface {
 
   public int $calls = 0;
 
-  /** @param array<string, string>|null $found */
+  /**
+   * @param array<string, string>|null $found
+   *   */
   public function __construct(
     private readonly ?array $found = NULL,
     private readonly bool $throw = FALSE,
   ) {}
 
+  /**
+   *
+   */
   public function normalize(string $cep): ?string {
     $digits = preg_replace('/\D+/', '', $cep) ?? '';
     return strlen($digits) === 8 ? $digits : NULL;
   }
 
+  /**
+   *
+   */
   public function lookup(string $cep): ?array {
     $this->calls++;
     if ($this->throw) {

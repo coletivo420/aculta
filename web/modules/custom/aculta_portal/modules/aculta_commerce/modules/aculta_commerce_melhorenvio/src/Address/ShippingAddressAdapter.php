@@ -26,7 +26,8 @@ final class ShippingAddressAdapter {
   public const STATUS_INVALID = 'invalid_postal_code';
   public const STATUS_UNAVAILABLE = 'unavailable';
 
-  /** Campos que o CEP pode preencher. Número e complemento ficam de fora de propósito. */
+  /**
+   * Campos que o CEP pode preencher. Número e complemento ficam de fora de propósito. */
   public const CEP_FIELDS = ['address_line1', 'dependent_locality', 'locality', 'administrative_area'];
 
   public function __construct(private readonly CepLookupInterface $lookup) {}

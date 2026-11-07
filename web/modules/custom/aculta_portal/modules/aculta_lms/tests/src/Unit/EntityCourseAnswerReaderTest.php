@@ -13,9 +13,15 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ *
+ */
 #[Group('aculta_lms')]
 final class EntityCourseAnswerReaderTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testMapsAnswersAndSortsById(): void {
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->expects(self::once())
@@ -36,6 +42,9 @@ final class EntityCourseAnswerReaderTest extends UnitTestCase {
     self::assertSame(75.0, $answers[1]->score);
   }
 
+  /**
+   *
+   */
   public function testReturnsNoAnswersWhenStorageIsEmpty(): void {
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('loadByProperties')->willReturn([]);
@@ -45,6 +54,9 @@ final class EntityCourseAnswerReaderTest extends UnitTestCase {
     self::assertSame([], (new EntityCourseAnswerReader($manager))->forStudent(22, 7));
   }
 
+  /**
+   *
+   */
   private function answerEntity(int $id, int $activityId, int $uid, string $state, mixed $score): ContentEntityInterface {
     $entity = $this->createMock(ContentEntityInterface::class);
     $entity->method('id')->willReturn($id);

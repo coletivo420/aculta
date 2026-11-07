@@ -9,10 +9,16 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ *
+ */
 #[CoversClass(FreeTextReviewFeedback::class)]
 #[Group('aculta_lms')]
 final class FreeTextReviewFeedbackTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testPhraseMatchesAreFormativeAndDoNotAssignFinalGrade(): void {
     $plugin = new FreeTextReviewFeedback();
     $configuration = $plugin->decodeConfiguration(json_encode([
@@ -30,6 +36,9 @@ final class FreeTextReviewFeedbackTest extends UnitTestCase {
     self::assertArrayHasKey('unmatched', $plugin->formativeFeedback('Acesso aos direitos humanos.', $configuration));
   }
 
+  /**
+   *
+   */
   public function testEmptyPhraseListProducesNoAutomaticGradeOrFeedback(): void {
     $plugin = new FreeTextReviewFeedback();
     $configuration = $plugin->decodeConfiguration('{"phrase_feedback":[]}');
@@ -39,6 +48,9 @@ final class FreeTextReviewFeedbackTest extends UnitTestCase {
     self::assertNull($plugin->validate('texto', $configuration));
   }
 
+  /**
+   *
+   */
   public function testRejectsMalformedPluginConfiguration(): void {
     $this->expectException(\InvalidArgumentException::class);
     (new FreeTextReviewFeedback())->decodeConfiguration('[]');

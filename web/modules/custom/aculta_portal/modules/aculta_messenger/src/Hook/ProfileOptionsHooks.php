@@ -35,6 +35,9 @@ final class ProfileOptionsHooks {
     private readonly RequestStack $requestStack,
   ) {}
 
+  /**
+ *
+ */
   #[Hook('aculta_user_public_profile_actions_alter')]
   public function alterActions(array &$actions, ProfileInterface $profile): void {
     if (!$this->currentUser->isAuthenticated()
@@ -50,6 +53,9 @@ final class ProfileOptionsHooks {
     $actions['messenger'] = $this->optionsBox($owner);
   }
 
+  /**
+   *
+   */
   private function optionsBox(UserInterface $target): array {
     $returnPath = (string) $this->requestStack->getCurrentRequest()?->getPathInfo();
     $postUrl = Url::fromRoute('aculta_messenger.profile_relationship', ['user' => $target->id()])->toString();

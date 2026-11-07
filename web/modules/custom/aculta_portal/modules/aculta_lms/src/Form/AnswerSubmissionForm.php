@@ -22,7 +22,8 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Persists an immutable answer attempt against an ACULTA activity. */
+/**
+ * Persists an immutable answer attempt against an ACULTA activity. */
 final class AnswerSubmissionForm extends FormBase {
 
   public function __construct(
@@ -36,6 +37,9 @@ final class AnswerSubmissionForm extends FormBase {
     protected FileUsageInterface $fileUsage,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     $form = new static(
       $container->get('entity_type.manager'),
@@ -52,10 +56,16 @@ final class AnswerSubmissionForm extends FormBase {
     return $form;
   }
 
+  /**
+   *
+   */
   public function getFormId(): string {
     return 'aculta_lms_answer_submission';
   }
 
+  /**
+   *
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     [$course, $activity] = $this->routeEntities();
     $form_state->set('aculta_lms_course', $course);
@@ -123,6 +133,9 @@ final class AnswerSubmissionForm extends FormBase {
     return $form;
   }
 
+  /**
+   *
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     [, $activity] = $this->routeEntities();
     if ((string) $activity->get('type')->value !== $this->freeText->activityType()) {
@@ -141,6 +154,9 @@ final class AnswerSubmissionForm extends FormBase {
     }
   }
 
+  /**
+   *
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     [, $activity] = $this->routeEntities();
     $type = (string) $activity->get('type')->value;
@@ -193,6 +209,9 @@ final class AnswerSubmissionForm extends FormBase {
     $this->messenger()->addStatus($this->t('Sua resposta foi enviada.'));
   }
 
+  /**
+   *
+   */
   private function selectElement(array $configuration): array {
     $options = $configuration['options'] ?? NULL;
     if (!is_array($options) || $options === []) {
@@ -201,6 +220,9 @@ final class AnswerSubmissionForm extends FormBase {
     return ['#type' => 'checkboxes', '#title' => $this->t('Sua resposta'), '#options' => $options];
   }
 
+  /**
+   *
+   */
   private function fillBlanksElement(array $configuration): array {
     $blanks = $configuration['correct'] ?? NULL;
     if (!is_array($blanks) || $blanks === []) {
@@ -213,6 +235,9 @@ final class AnswerSubmissionForm extends FormBase {
     return $element;
   }
 
+  /**
+   *
+   */
   private function objectiveAnswer(string $type, mixed $value, array $configuration): array {
     return match ($type) {
       'true_false' => ['answer' => $value === 'true'],
@@ -222,6 +247,9 @@ final class AnswerSubmissionForm extends FormBase {
     };
   }
 
+  /**
+   *
+   */
   private function blankValues(array $value, array $configuration): array {
     $answers = [];
     foreach (array_keys((array) ($configuration['correct'] ?? [])) as $index) {
@@ -230,6 +258,9 @@ final class AnswerSubmissionForm extends FormBase {
     return $answers;
   }
 
+  /**
+   *
+   */
   private function submittedFile(mixed $value): ?FileInterface {
     $ids = is_array($value) ? array_values(array_filter($value)) : [(int) $value];
     if (count($ids) !== 1) {
@@ -240,6 +271,9 @@ final class AnswerSubmissionForm extends FormBase {
     return $file instanceof FileInterface ? $file : NULL;
   }
 
+  /**
+   *
+   */
   private function validUpload(?FileInterface $file): bool {
     if (!$file instanceof FileInterface || !$file->access('view', $this->currentUser)
       || (int) $file->getOwnerId() !== (int) $this->currentUser->id()
@@ -254,6 +288,9 @@ final class AnswerSubmissionForm extends FormBase {
       && $this->uploadPolicy->isValidDocument($file, 'lms');
   }
 
+  /**
+   *
+   */
   private function configuration(ContentEntityInterface $activity): array {
     $json = (string) ($activity->get('answer_config')->value ?? '{}');
     if ((string) $activity->get('type')->value === $this->freeText->activityType()) {
@@ -271,7 +308,8 @@ final class AnswerSubmissionForm extends FormBase {
     return (array) json_decode($json === '' ? '{}' : $json, TRUE, 512, JSON_THROW_ON_ERROR);
   }
 
-  /** @return array{0: GroupInterface, 1: ContentEntityInterface} */
+  /**
+   * @return array{0: GroupInterface, 1: ContentEntityInterface} */
   private function routeEntities(): array {
     $course = $this->currentRoute->getParameter('group');
     $lessonDelta = $this->currentRoute->getParameter('lesson_delta');

@@ -24,7 +24,8 @@ final class CourseOrderEnrollmentManager implements CourseOrderEnrollmentManager
     private readonly ?CheckoutSettings $checkoutSettings = NULL,
   ) {}
 
-  /** Whether the order is a course purchase: the configured course order type or the legacy `curso`. */
+  /**
+   * Whether the order is a course purchase: the configured course order type or the legacy `curso`. */
   public function isCourseOrder(OrderInterface $order): bool {
     return in_array($order->bundle(), $this->checkoutSettings?->lmsOrderTypes() ?? [CheckoutSettings::LEGACY_LMS_ORDER_TYPE], TRUE);
   }

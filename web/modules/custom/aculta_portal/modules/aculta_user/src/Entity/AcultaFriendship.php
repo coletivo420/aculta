@@ -11,7 +11,8 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
-/** Defines the private relationship record shared by a member pair. */
+/**
+ * Defines the private relationship record shared by a member pair. */
 #[ContentEntityType(
   id: 'aculta_friendship',
   label: new TranslatableMarkup('Relacionamento entre membros'),
@@ -30,6 +31,9 @@ final class AcultaFriendship extends ContentEntityBase implements AcultaFriendsh
 
   use EntityChangedTrait;
 
+  /**
+   *
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
 
@@ -70,22 +74,37 @@ final class AcultaFriendship extends ContentEntityBase implements AcultaFriendsh
     return $fields;
   }
 
+  /**
+   *
+   */
   public function getMemberLowId(): int {
     return (int) $this->get('member_low')->target_id;
   }
 
+  /**
+   *
+   */
   public function getMemberHighId(): int {
     return (int) $this->get('member_high')->target_id;
   }
 
+  /**
+   *
+   */
   public function getRequesterId(): int {
     return (int) $this->get('requester')->target_id;
   }
 
+  /**
+   *
+   */
   public function getRecipientId(): int {
     return (int) $this->get('recipient')->target_id;
   }
 
+  /**
+   *
+   */
   public function getStatus(): string {
     return (string) $this->get('status')->value;
   }

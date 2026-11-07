@@ -10,7 +10,6 @@ use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\aculta_user\Entity\LegacyAuthorAccessControlHandler;
 
 /**
  * Autoria histórica do Fórum (ACULTA Fórum, F2).
@@ -40,6 +39,9 @@ final class LegacyAuthor extends ContentEntityBase {
 
   use EntityChangedTrait;
 
+  /**
+   *
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
 

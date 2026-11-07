@@ -1,7 +1,18 @@
 <?php
 
 /**
+ * @file
+ */
+
+/**
  * Rebuilds the discussion reference against the ACULTA activity entity.
+ */
+
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+
+/**
+ *
  */
 function aculta_forum_lms_update_10001(): string {
   $entity_type_manager = \Drupal::entityTypeManager();
@@ -32,7 +43,7 @@ function aculta_forum_lms_update_10001(): string {
   }
 
   if (!$field_storage) {
-    $field_storage = \Drupal\field\Entity\FieldStorageConfig::create([
+    $field_storage = FieldStorageConfig::create([
       'entity_type' => 'node',
       'field_name' => 'field_lms_activity',
       'type' => 'entity_reference',
@@ -45,7 +56,7 @@ function aculta_forum_lms_update_10001(): string {
 
   $field_config_storage = $entity_type_manager->getStorage('field_config');
   if (!$field_config_storage->load('node.aculta_lms_topic.field_lms_activity')) {
-    \Drupal\field\Entity\FieldConfig::create([
+    FieldConfig::create([
       'entity_type' => 'node',
       'bundle' => 'aculta_lms_topic',
       'field_name' => 'field_lms_activity',

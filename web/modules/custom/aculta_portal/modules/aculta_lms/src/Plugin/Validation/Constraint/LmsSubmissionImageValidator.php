@@ -26,7 +26,8 @@ final class LmsSubmissionImageValidator extends ConstraintValidator {
     private readonly ConsumerUploadPolicy $uploadPolicy,
   ) {}
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function validate(mixed $value, Constraint $constraint): void {
     if (!$constraint instanceof LmsSubmissionImage) {
       throw new UnexpectedTypeException($constraint, LmsSubmissionImage::class);

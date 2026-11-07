@@ -201,7 +201,8 @@ final class LmsActivityDiscussionResolverTest extends UnitTestCase {
     self::assertContains('group_relationship_list:plugin:lms_classes:entity:7', $build['#cache']['tags']);
   }
 
-  /** Creates an ACULTA activity linked to lesson 11. */
+  /**
+   * Creates an ACULTA activity linked to lesson 11. */
   private function activity(): ContentEntityInterface {
     $activity = $this->createMock(ContentEntityInterface::class);
     $activity->method('getEntityTypeId')->willReturn('aculta_lms_activity');
@@ -212,7 +213,8 @@ final class LmsActivityDiscussionResolverTest extends UnitTestCase {
     return $activity;
   }
 
-  /** Creates a course lesson with publication and course fields. */
+  /**
+   * Creates a course lesson with publication and course fields. */
   private function lesson(int $courseId): ContentEntityInterface {
     $lesson = $this->createMock(ContentEntityInterface::class);
     $lesson->method('hasField')->willReturnMap([['published', TRUE], ['course_id', TRUE]]);
@@ -223,7 +225,8 @@ final class LmsActivityDiscussionResolverTest extends UnitTestCase {
     return $lesson;
   }
 
-  /** Creates a field item list with one value. */
+  /**
+   * Creates a field item list with one value. */
   private function fieldList(mixed $value): FieldItemListInterface {
     $item = $this->createMock(FieldItemInterface::class);
     $item->method('getValue')->willReturn(['value' => $value]);

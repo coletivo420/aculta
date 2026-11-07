@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_user\Kernel;
 
+use Drupal\Core\Form\FormState;
+use Drupal\aculta_user\Form\OwnershipClaimDecisionForm;
+use Symfony\Component\HttpFoundation\Request;
+use Drupal\aculta_user\Controller\OwnershipClaimAdminController;
+use Drupal\aculta_image\FileRemover;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
@@ -55,6 +60,9 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
   private User $editorUser;
   private User $commonUser;
 
+  /**
+   *
+   */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
 
@@ -71,7 +79,7 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
       ->addArgument(new RequestStack());
 
     $container->register('aculta_image.render', \stdClass::class);
-    $container->register('aculta_image.file_remover', \Drupal\aculta_image\FileRemover::class)
+    $container->register('aculta_image.file_remover', FileRemover::class)
       ->addArgument(new Reference('file.usage'))
       ->addArgument(new Reference('entity_type.manager'))
       ->addArgument(new Reference('database'))
@@ -84,6 +92,9 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $container->register('aculta_file_uploader.unused_file_cleaner', \stdClass::class);
   }
 
+  /**
+   *
+   */
   protected function setUp(): void {
     parent::setUp();
 
@@ -134,6 +145,9 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $this->commonUser->save();
   }
 
+  /**
+   *
+   */
   public function testOwnershipClaimClosedByDefault(): void {
     /** @var \Drupal\aculta_user\Organization\OwnershipClaimService $claimService */
     $claimService = $this->container->get('aculta_user.ownership_claim_service');
@@ -151,6 +165,9 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $claimService->submitClaim($event, $this->commonUser, 'Quero gerenciar este evento');
   }
 
+  /**
+   *
+   */
   public function testOwnershipClaimLifecycleAndApproval(): void {
     /** @var \Drupal\aculta_user\Organization\OwnershipClaimService $claimService */
     $claimService = $this->container->get('aculta_user.ownership_claim_service');
@@ -204,6 +221,9 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $claimService->decideClaim($claim, $this->adminUser, FALSE, 'Tentativa de reabrir');
   }
 
+  /**
+   *
+   */
   public function testOwnershipClaimRejection(): void {
     /** @var \Drupal\aculta_user\Organization\OwnershipClaimService $claimService */
     $claimService = $this->container->get('aculta_user.ownership_claim_service');
@@ -227,6 +247,9 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $this->assertSame((int) $this->editorUser->id(), (int) $reloadedEvent->get('field_organizador')->target_id);
   }
 
+  /**
+   *
+   */
   public function testOrganizationMembershipAndBehalf(): void {
     /** @var \Drupal\aculta_user\Organization\OrganizationMembershipManager $memberManager */
     $memberManager = $this->container->get('aculta_user.organization_membership_manager');
@@ -247,6 +270,9 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $this->assertFalse($accessService->canActOnBehalf($this->commonUser, $orgId));
   }
 
+  /**
+   *
+   */
   public function testContentEditorScopedAccess(): void {
     $eventOwn = Event::create([
       'title' => 'Evento Próprio do Editor',
@@ -272,6 +298,9 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $this->assertFalse($eventOther->access('update', $this->commonUser));
   }
 
+  /**
+   *
+   */
   public function testOwnershipClaimAdminControllerAndDecisionForm(): void {
     $event = Event::create([
       'title' => 'Festival Comunitário Reivindicável',
@@ -285,16 +314,16 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $claim = $claimService->submitClaim($event, $this->commonUser, 'Sou o produtor executivo do festival.');
 
     // 1. Controller overview.
-    $controller = \Drupal\aculta_user\Controller\OwnershipClaimAdminController::create($this->container);
-    $request = \Symfony\Component\HttpFoundation\Request::create('/painel-administrativo/pessoas/reivindicacoes');
+    $controller = OwnershipClaimAdminController::create($this->container);
+    $request = Request::create('/painel-administrativo/pessoas/reivindicacoes');
     $build = $controller->overview($request);
     $this->assertArrayHasKey('table', $build);
     $this->assertCount(1, $build['table']['#rows']);
     $this->assertSame($claim->id(), $build['table']['#rows'][0]['id']);
 
     // 2. Decision form build & submission.
-    $formObject = \Drupal\aculta_user\Form\OwnershipClaimDecisionForm::create($this->container);
-    $formState = new \Drupal\Core\Form\FormState();
+    $formObject = OwnershipClaimDecisionForm::create($this->container);
+    $formState = new FormState();
     $form = $formObject->buildForm([], $formState, $claim);
     $this->assertArrayHasKey('decision', $form);
 

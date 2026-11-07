@@ -40,6 +40,9 @@ class ShipmentAddressBinderTest extends UnitTestCase {
     'administrative_area' => 'SP',
   ];
 
+  /**
+   *
+   */
   private function binder(?array $origin): ShipmentAddressBinder {
     $config = $this->createMock(ImmutableConfig::class);
     $config->method('get')->with('origin')->willReturn($origin);
@@ -48,11 +51,17 @@ class ShipmentAddressBinderTest extends UnitTestCase {
 
     $cep = new class implements CepLookupInterface {
 
+      /**
+       *
+       */
       public function normalize(string $cep): ?string {
         $digits = preg_replace('/\D+/', '', $cep) ?? '';
         return strlen($digits) === 8 ? $digits : NULL;
       }
 
+      /**
+       *
+       */
       public function lookup(string $cep): ?array {
         throw new \LogicException('O binder não pode consultar CEP.');
       }
@@ -61,6 +70,9 @@ class ShipmentAddressBinderTest extends UnitTestCase {
     return new ShipmentAddressBinder(new MelhorEnvioAddressMapper($cep), $configs);
   }
 
+  /**
+   *
+   */
   public function testOriginComesFromConfigAndDestinationFromProfile(): void {
     $pair = $this->binder(self::ORIGIN)->bind(self::DESTINATION, MelhorEnvioAddressMapper::PURPOSE_SHIPMENT);
 
@@ -70,6 +82,9 @@ class ShipmentAddressBinderTest extends UnitTestCase {
     $this->assertSame('Apto 12', $pair->to->complement);
   }
 
+  /**
+   *
+   */
   public function testQuoteAndShipmentUseTheSameDestinationPostalCode(): void {
     $binder = $this->binder(self::ORIGIN);
     $quote = $binder->bind(self::DESTINATION, MelhorEnvioAddressMapper::PURPOSE_QUOTE);
@@ -79,6 +94,9 @@ class ShipmentAddressBinderTest extends UnitTestCase {
     $this->assertSame($quote->from->postalCode, $shipment->from->postalCode);
   }
 
+  /**
+   *
+   */
   public function testEmptyOriginConfigBlocksOperationWithoutFallback(): void {
     $pair = $this->binder(['postal_code' => '', 'address_line1' => ''])->bind(self::DESTINATION, MelhorEnvioAddressMapper::PURPOSE_QUOTE);
 
@@ -87,6 +105,9 @@ class ShipmentAddressBinderTest extends UnitTestCase {
     $this->assertSame([], $pair->errors()['destination']);
   }
 
+  /**
+   *
+   */
   public function testMissingDestinationProfileIsReportedOnDestinationSide(): void {
     $pair = $this->binder(self::ORIGIN)->bind(NULL, MelhorEnvioAddressMapper::PURPOSE_SHIPMENT);
 
@@ -95,6 +116,9 @@ class ShipmentAddressBinderTest extends UnitTestCase {
     $this->assertSame([], $pair->errors()['origin']);
   }
 
+  /**
+   *
+   */
   public function testSnDestinationBlocksShipmentButNotQuote(): void {
     $sn = ['address_line1' => 'Rua Exemplo, S/N'] + self::DESTINATION;
     $binder = $this->binder(self::ORIGIN);

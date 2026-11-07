@@ -60,6 +60,9 @@ final class MimeTypeVerifierTest extends UnitTestCase {
     $this->assertFalse($verifier->matches($pdf, 'png'));
   }
 
+  /**
+   *
+   */
   public function testExtensionOutsideCatalogIsRejected(): void {
     $verifier = new MimeTypeVerifier();
     $this->assertFalse($verifier->matches((string) base64_decode(self::PNG_1X1), 'svg'));
@@ -75,7 +78,7 @@ final class MimeTypeVerifierTest extends UnitTestCase {
   }
 
   /**
-   * docx exige as entradas do pacote OOXML, não só o cabeçalho ZIP.
+   * Docx exige as entradas do pacote OOXML, não só o cabeçalho ZIP.
    */
   public function testDocxNeedsWordPackageEntries(): void {
     $verifier = new MimeTypeVerifier();
@@ -85,7 +88,7 @@ final class MimeTypeVerifierTest extends UnitTestCase {
   }
 
   /**
-   * xlsx exige a pasta de planilhas do pacote OOXML.
+   * Xlsx exige a pasta de planilhas do pacote OOXML.
    */
   public function testXlsxNeedsWorkbookEntry(): void {
     $verifier = new MimeTypeVerifier();

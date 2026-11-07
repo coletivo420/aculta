@@ -2,6 +2,7 @@
 
 namespace Drupal\aculta_donation\Plugin\Block;
 
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_donation\Form\DonationSettingsForm;
 use Drupal\Core\Block\Attribute\Block;
 use Drupal\Core\Block\BlockBase;
@@ -51,7 +52,7 @@ class DonateBlock extends BlockBase implements ContainerFactoryPluginInterface {
   /**
    * Gerenciador de domínio: o botão Doar aponta para o domínio de apoio.
    */
-  protected \Drupal\aculta_portal\Domain\DomainPurposeManager $purposes;
+  protected DomainPurposeManager $purposes;
 
   // phpcs:disable Generic.CodeAnalysis.UselessOverridingMethod.Found
 

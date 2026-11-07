@@ -13,7 +13,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Drupal\aculta_user\Entity\AcultaFriendshipInterface;
 use Drupal\user\UserInterface;
 
-/** Implements the ACULTA member friendship workflow. */
+/**
+ * Implements the ACULTA member friendship workflow. */
 final class FriendshipManager implements FriendshipManagerInterface {
 
   public function __construct(
@@ -24,6 +25,9 @@ final class FriendshipManager implements FriendshipManagerInterface {
     private readonly EventDispatcherInterface $eventDispatcher,
   ) {}
 
+  /**
+   *
+   */
   public function request(UserInterface $target): AcultaFriendshipInterface {
     $requesterId = $this->activeCurrentUid();
     $targetId = (int) $target->id();
@@ -75,26 +79,44 @@ final class FriendshipManager implements FriendshipManagerInterface {
     }
   }
 
+  /**
+   *
+   */
   public function accept(AcultaFriendshipInterface $friendship): void {
     $this->transition($friendship, FriendshipStatus::Pending, FriendshipStatus::Accepted, 'recipient');
   }
 
+  /**
+   *
+   */
   public function decline(AcultaFriendshipInterface $friendship): void {
     $this->transition($friendship, FriendshipStatus::Pending, FriendshipStatus::Declined, 'recipient');
   }
 
+  /**
+   *
+   */
   public function cancel(AcultaFriendshipInterface $friendship): void {
     $this->transition($friendship, FriendshipStatus::Pending, FriendshipStatus::Cancelled, 'requester');
   }
 
+  /**
+   *
+   */
   public function remove(AcultaFriendshipInterface $friendship): void {
     $this->transition($friendship, FriendshipStatus::Accepted, FriendshipStatus::Removed, 'participant');
   }
 
+  /**
+   *
+   */
   public function areFriendsWith(int $targetUid): bool {
     return $this->getRelationshipWith($targetUid)?->getStatus() === FriendshipStatus::Accepted->value;
   }
 
+  /**
+   *
+   */
   public function getRelationshipWith(int $targetUid): ?AcultaFriendshipInterface {
     $currentUid = $this->activeCurrentUid();
     if ($targetUid < 1 || $targetUid === $currentUid) {
@@ -104,6 +126,9 @@ final class FriendshipManager implements FriendshipManagerInterface {
     return $this->loadPair($low, $high);
   }
 
+  /**
+   *
+   */
   public function getIncomingRequests(): array {
     $uid = $this->activeCurrentUid();
     $storage = $this->entityTypeManager->getStorage('aculta_friendship');
@@ -138,6 +163,9 @@ final class FriendshipManager implements FriendshipManagerInterface {
     return $requests;
   }
 
+  /**
+   *
+   */
   private function activeCurrentUid(): int {
     $uid = (int) $this->currentUser->id();
     $account = $uid > 0 ? $this->entityTypeManager->getStorage('user')->load($uid) : NULL;
@@ -147,6 +175,9 @@ final class FriendshipManager implements FriendshipManagerInterface {
     return $uid;
   }
 
+  /**
+   *
+   */
   private function transition(AcultaFriendshipInterface $candidate, FriendshipStatus $from, FriendshipStatus $to, string $actorField): void {
     $uid = $this->activeCurrentUid();
     if (!$candidate->access('update', $this->currentUser, TRUE)->isAllowed()) {
@@ -180,7 +211,8 @@ final class FriendshipManager implements FriendshipManagerInterface {
     }
   }
 
-  /** Notifica a transição para quem integra (ver FriendshipChangedEvent). */
+  /**
+   * Notifica a transição para quem integra (ver FriendshipChangedEvent). */
   private function dispatchChange(string $transition, AcultaFriendshipInterface $friendship): void {
     $this->eventDispatcher->dispatch(new FriendshipChangedEvent(
       $transition,
@@ -191,6 +223,9 @@ final class FriendshipManager implements FriendshipManagerInterface {
     ), FriendshipChangedEvent::NAME);
   }
 
+  /**
+   *
+   */
   private function loadPair(int $low, int $high): ?AcultaFriendshipInterface {
     $storage = $this->entityTypeManager->getStorage('aculta_friendship');
     $entity = $storage->load("$low:$high");
@@ -200,7 +235,8 @@ final class FriendshipManager implements FriendshipManagerInterface {
       : NULL;
   }
 
-  /** @return array{int, int} */
+  /**
+   * @return array{int, int} */
   private function orderedPair(int $first, int $second): array {
     return $first < $second ? [$first, $second] : [$second, $first];
   }

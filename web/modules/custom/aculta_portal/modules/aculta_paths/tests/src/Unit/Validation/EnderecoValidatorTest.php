@@ -15,6 +15,9 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_paths')]
 final class EnderecoValidatorTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public static function validos(): array {
     return [
       'slug simples' => ['loja', FALSE],
@@ -25,11 +28,17 @@ final class EnderecoValidatorTest extends UnitTestCase {
     ];
   }
 
+  /**
+ *
+ */
   #[DataProvider('validos')]
   public function testValoresCertosPassam(string $valor, bool $host): void {
     $this->assertNull(EnderecoValidator::motivo($valor, $host));
   }
 
+  /**
+   *
+   */
   public static function invalidos(): array {
     return [
       'slug com espaço' => ['loja sativa', FALSE, 'caracteres', '«espaço»'],
@@ -48,6 +57,9 @@ final class EnderecoValidatorTest extends UnitTestCase {
     ];
   }
 
+  /**
+ *
+ */
   #[DataProvider('invalidos')]
   public function testValoresErradosSaoRecusadosComMotivo(string $valor, bool $host, string $codigo, ?string $caractere): void {
     $motivo = EnderecoValidator::motivo($valor, $host);
@@ -58,6 +70,9 @@ final class EnderecoValidatorTest extends UnitTestCase {
     }
   }
 
+  /**
+   *
+   */
   public function testVazioEhRecusado(): void {
     $this->assertSame('vazio', EnderecoValidator::motivo('', FALSE)['codigo']);
   }

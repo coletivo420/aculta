@@ -10,7 +10,6 @@ use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Regras de visibilidade do perfil público (plano aculta_user, seção B2).
- *
  */
 #[Group('aculta_user')]
 class PublicProfilePolicyTest extends UnitTestCase {

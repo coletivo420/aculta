@@ -17,7 +17,8 @@ use Drupal\comment\CommentInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\user\UserInterface;
 
-/** Archives previous ACULTA answer states and exposes access-checked history. */
+/**
+ * Archives previous ACULTA answer states and exposes access-checked history. */
 final class AttemptArchiveManager {
 
   public function __construct(
@@ -155,7 +156,8 @@ final class AttemptArchiveManager {
     return ['course' => $course, 'lesson' => $lesson, 'activity' => $activity];
   }
 
-  /** Reads a scalar field value from a content entity, if present. */
+  /**
+   * Reads a scalar field value from a content entity, if present. */
   private function fieldValue(ContentEntityInterface $entity, string $field_name): mixed {
     if (!$entity->hasField($field_name)) {
       return NULL;
@@ -184,7 +186,8 @@ final class AttemptArchiveManager {
       ->condition('uid', (string) $user->id()));
   }
 
-  /** Loads published Core comments attached to an ACULTA answer. */
+  /**
+   * Loads published Core comments attached to an ACULTA answer. */
   private function getAnswerComments(ContentEntityInterface $answer): string {
     if (!$answer->hasField('comments') || $answer->get('comments')->isEmpty()) {
       return '';
@@ -217,7 +220,8 @@ final class AttemptArchiveManager {
     return Json::encode($comments);
   }
 
-  /** Deletes the explicitly selected archive records. */
+  /**
+   * Deletes the explicitly selected archive records. */
   private function purge(QueryInterface $query): void {
     $storage = $this->entityTypeManager->getStorage('aculta_lms_attempt_archive');
     foreach ($storage->loadMultiple($query->execute()) as $record) {

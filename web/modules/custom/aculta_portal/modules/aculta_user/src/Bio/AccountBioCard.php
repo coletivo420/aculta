@@ -86,7 +86,7 @@ final class AccountBioCard {
 
     return [
       '#type' => 'container',
-      // id estável para a substituição AJAX: o tema troca data-portal-ui por classes ao renderizar.
+      // Id estável para a substituição AJAX: o tema troca data-portal-ui por classes ao renderizar.
       '#attributes' => ['id' => 'aculta-account-bio-card', 'data-portal-ui' => 'account-bio-card'],
       'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => t('Bio')],
       // Caixa de formulário bloqueada: leitura da bio, ou o aviso como placeholder quando vazia.

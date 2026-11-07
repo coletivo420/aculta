@@ -28,6 +28,9 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 )]
 final class AttemptArchive extends ContentEntityBase {
 
+  /**
+   *
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
     $fields['uid'] = BaseFieldDefinition::create('integer')

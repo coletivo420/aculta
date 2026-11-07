@@ -12,7 +12,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Aviso\PersonalNoticePageState;
-use Drupal\aculta_messenger\Entity\Aviso;
 use Drupal\aculta_messenger\Form\ConversationRelationshipForm;
 use Drupal\aculta_messenger\Aviso\EmailPendingAviso;
 use Drupal\aculta_messenger\Support\NoticeType;
@@ -20,7 +19,6 @@ use Drupal\aculta_messenger\Support\OptionsDisclosure;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Component\Utility\Unicode;
 use Drupal\site_alert\Entity\SiteAlert;
-use Drupal\aculta_messenger\Form\FriendRequestsForm;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Template\Attribute;
@@ -28,13 +26,11 @@ use Drupal\flag\FlagInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\flag\Entity\Storage\FlaggingStorageInterface;
 use Drupal\node\NodeInterface;
-use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
-use Drupal\message\MessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\aculta_messenger\Form\PrivateMessageFormValidator;
@@ -59,7 +55,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
-/** Pages for the account communication center. */
+/**
+ * Pages for the account communication center. */
 final class MessagesController extends ControllerBase {
 
   private const PRIVATE_MESSAGE_TEMPLATE = 'aculta_msg_private_notification';
@@ -92,6 +89,9 @@ final class MessagesController extends ControllerBase {
     private readonly ?ModuleHandlerInterface $extensionModuleHandler = NULL,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.domain_purpose'),
@@ -120,7 +120,8 @@ final class MessagesController extends ControllerBase {
     );
   }
 
-  /** Returns the inbox preview used by the existing drawer fetch. */
+  /**
+   * Returns the inbox preview used by the existing drawer fetch. */
   public function preview(): Response {
     $build = $this->newConversationAction() + $this->buildConversationList();
     // The native clear-history action remains a Drupal confirmation form.
@@ -142,7 +143,8 @@ final class MessagesController extends ControllerBase {
     ]);
   }
 
-  /** Returns a member-authorized thread fragment for the open drawer. */
+  /**
+   * Returns a member-authorized thread fragment for the open drawer. */
   public function drawerConversation(PrivateMessageThreadInterface $private_message_thread): Response {
     $thread = $private_message_thread;
     $access = $thread->access('view', $this->account, TRUE);
@@ -171,7 +173,8 @@ final class MessagesController extends ControllerBase {
     return $this->menuFragment($this->relationshipForm($private_message_thread));
   }
 
-  /** A menu rendered alone, for the drawer to load: never cached, never sniffed as another type. */
+  /**
+   * A menu rendered alone, for the drawer to load: never cached, never sniffed as another type. */
   private function menuFragment(array $build): Response {
     $content = $this->renderer->renderInIsolation($build);
     return new Response((string) $content, Response::HTTP_OK, [
@@ -315,7 +318,8 @@ final class MessagesController extends ControllerBase {
     return $this->menuFragment($this->forms->buildForm(ConversationRelationshipForm::class, $state));
   }
 
-  /** The action of one member's box, posted from the drawer: the drawer gets the conversation again, with the new state. */
+  /**
+   * The action of one member's box, posted from the drawer: the drawer gets the conversation again, with the new state. */
   public function drawerMemberRelationship(PrivateMessageThreadInterface $private_message_thread, UserInterface $user): Response {
     $access = $private_message_thread->access('view', $this->account, TRUE);
     $this->assertOtherMember($private_message_thread, $user, $access);
@@ -330,7 +334,8 @@ final class MessagesController extends ControllerBase {
     return $this->conversationResponse($private_message_thread, $access, [], (int) $user->id(), $this->memberPanel($private_message_thread, $user, $result));
   }
 
-  /** The menu of one member's box, built with the result of the action just run. The box stays open to show it. */
+  /**
+   * The menu of one member's box, built with the result of the action just run. The box stays open to show it. */
   private function memberPanel(PrivateMessageThreadInterface $thread, UserInterface $user, array $result): array {
     $state = $this->memberFormState($thread, $user);
     // Built, not submitted: the same rule as the conversation's menu in a response.
@@ -342,7 +347,8 @@ final class MessagesController extends ControllerBase {
     return ['relationship' => $this->forms->buildForm(ConversationRelationshipForm::class, $state)];
   }
 
-  /** The member must be another member of the thread: a box never acts on the current member or on a stranger. */
+  /**
+   * The member must be another member of the thread: a box never acts on the current member or on a stranger. */
   private function assertOtherMember(PrivateMessageThreadInterface $thread, UserInterface $user, $access): void {
     if (!$access->isAllowed()
       || !$thread->isMember($this->account->id())
@@ -352,7 +358,8 @@ final class MessagesController extends ControllerBase {
     }
   }
 
-  /** The form state of one member's box: the target is the member, and the box posts to its own route. */
+  /**
+   * The form state of one member's box: the target is the member, and the box posts to its own route. */
   private function memberFormState(PrivateMessageThreadInterface $thread, UserInterface $user): FormState {
     $state = new FormState();
     $state->set('target', (int) $user->id());
@@ -365,7 +372,8 @@ final class MessagesController extends ControllerBase {
     return $state;
   }
 
-  /** Runs the posted action of one member's box with the request's input. Returns the message the box shows. */
+  /**
+   * Runs the posted action of one member's box with the request's input. Returns the message the box shows. */
   private function runMemberAction(PrivateMessageThreadInterface $thread, UserInterface $user): array {
     $state = $this->memberFormState($thread, $user);
     $this->submitRelationshipForm($state, $this->requestStack->getCurrentRequest()?->request->all() ?? []);
@@ -384,7 +392,8 @@ final class MessagesController extends ControllerBase {
     $this->forms->buildForm(ConversationRelationshipForm::class, $state);
   }
 
-  /** The message the submit left for the member, or NULL when the action set none. */
+  /**
+   * The message the submit left for the member, or NULL when the action set none. */
   private function resultMessage(FormState $state): ?string {
     return $state->get('message') === NULL ? NULL : (string) $state->get('message');
   }
@@ -414,7 +423,8 @@ final class MessagesController extends ControllerBase {
     return $boxes;
   }
 
-  /** The conversation list, with an optional message from the action just run. */
+  /**
+   * The conversation list, with an optional message from the action just run. */
   private function listWithMessage(?string $message): Response {
     $build = $this->newConversationAction() + $this->buildConversationList();
     if ($message !== NULL) {
@@ -441,7 +451,8 @@ final class MessagesController extends ControllerBase {
     return $box;
   }
 
-  /** The conversation container: toolbar (back on the left, "Opções" on the right), then the thread. */
+  /**
+   * The conversation container: toolbar (back on the left, "Opções" on the right), then the thread. */
   private function conversationResponse(PrivateMessageThreadInterface $thread, $access, array $panel = [], ?int $actedUid = NULL, array $actedPanel = []): Response {
     $threadBuild = $this->entityTypes->getViewBuilder('private_message_thread')->view($thread, 'full');
     $build = [
@@ -535,7 +546,8 @@ final class MessagesController extends ControllerBase {
     ) + ['#weight' => -100];
   }
 
-  /** Starts the shared new-conversation flow from the inbox. */
+  /**
+   * Starts the shared new-conversation flow from the inbox. */
   private function newConversationAction(): array {
     return [
       'new_conversation' => PortalLinkElement::build(
@@ -558,7 +570,8 @@ final class MessagesController extends ControllerBase {
     return $this->newConversationAction() + $this->buildConversationList();
   }
 
-  /** Builds the authorized conversation list for drawer AJAX navigation. */
+  /**
+   * Builds the authorized conversation list for drawer AJAX navigation. */
   private function buildConversationList(): array {
     $threads = $this->privateMessageService->getThreadsForUser(50)['threads'];
     $items = [];
@@ -621,15 +634,15 @@ final class MessagesController extends ControllerBase {
       ];
       // Conversations are read in the bar drawer only; without JavaScript the link opens the same drawer route.
       $openLink = PortalLinkElement::build($linkTitle, $drawerConversationUrl, [
-          'data-portal-ui' => 'messenger-sender-link',
-          'data-aculta-conversation-url' => $drawerConversationUrl->toString(),
-          'data-aculta-thread-id' => (string) $thread->id(),
-          'data-aculta-thread-unread' => $isUnread ? 'true' : 'false',
-          'data-aculta-sent-date' => $sentDate,
-          'aria-label' => (string) $this->translation->translate('Abrir conversa com @name. Última mensagem em @date.', [
-            '@name' => $senderName,
-            '@date' => $sentDate,
-          ]),
+        'data-portal-ui' => 'messenger-sender-link',
+        'data-aculta-conversation-url' => $drawerConversationUrl->toString(),
+        'data-aculta-thread-id' => (string) $thread->id(),
+        'data-aculta-thread-unread' => $isUnread ? 'true' : 'false',
+        'data-aculta-sent-date' => $sentDate,
+        'aria-label' => (string) $this->translation->translate('Abrir conversa com @name. Última mensagem em @date.', [
+          '@name' => $senderName,
+          '@date' => $sentDate,
+        ]),
       ]);
       $senderId = $sender?->id() ?? 'thread-' . $thread->id();
       $senderKey = (string) $senderId;
@@ -710,7 +723,8 @@ final class MessagesController extends ControllerBase {
     return $build;
   }
 
-  /** Selects the latest incoming author, or the conversation partner. */
+  /**
+   * Selects the latest incoming author, or the conversation partner. */
   private function getConversationSender(PrivateMessageThreadInterface $thread): ?UserInterface {
     $messages = array_values($thread->getMessages());
     $latestMessage = $messages === [] ? NULL : $messages[array_key_last($messages)];
@@ -728,7 +742,8 @@ final class MessagesController extends ControllerBase {
     return $sender;
   }
 
-  /** Displays currently active native Site Alerts in the same-origin modal. */
+  /**
+   * Displays currently active native Site Alerts in the same-origin modal. */
   public function alertsPreview(): Response {
     $filters = $this->noticeListFilter->normalize($this->requestStack->getCurrentRequest()?->query->all() ?? []);
     $resultado = $this->alertsBuild($filters, FALSE, TRUE);
@@ -1210,7 +1225,8 @@ final class MessagesController extends ControllerBase {
     ];
   }
 
-  /** Renders a same-origin, uncached HTML fragment for the Bootstrap drawers. */
+  /**
+   * Renders a same-origin, uncached HTML fragment for the Bootstrap drawers. */
   private function buildDrawerResponse(array $build, array $headers = []): Response {
     $content = $this->renderer->renderInIsolation($build);
     return new Response((string) $content, Response::HTTP_OK, $headers + [
@@ -1227,7 +1243,8 @@ final class MessagesController extends ControllerBase {
     return PersonalNoticePageState::normalizeOffset($value);
   }
 
-  /** Builds authorized notice render arrays and native per-member Flag actions. */
+  /**
+   * Builds authorized notice render arrays and native per-member Flag actions. */
   private function buildPersistentNoticeItems(
     int $limit,
     CacheableMetadata $cacheability,
@@ -1370,7 +1387,8 @@ final class MessagesController extends ControllerBase {
     ];
   }
 
-  /** The text of a notice's summary, or its body when the summary is empty. */
+  /**
+   * The text of a notice's summary, or its body when the summary is empty. */
   private function noticeText(NodeInterface $node): string {
     if (!$node->hasField('body') || $node->get('body')->isEmpty()) {
       return '';
@@ -1379,14 +1397,16 @@ final class MessagesController extends ControllerBase {
     return (string) ($body->summary ?: $body->value);
   }
 
-  /** A short plain text of an HTML body, for a summary. */
+  /**
+   * A short plain text of an HTML body, for a summary. */
   private function excerpt(string $html): string {
     // Block tags become spaces, so two paragraphs do not run into one word.
     $spaced = (string) preg_replace('/<\/?(p|h[1-6]|li|div|br)\b[^>]*>/i', ' ', $html);
     return Unicode::truncate(trim((string) preg_replace('/\s+/', ' ', strip_tags($spaced))), 160, TRUE, TRUE);
   }
 
-  /** "← Todos os avisos": back to the notices list, in the same drawer. */
+  /**
+   * "← Todos os avisos": back to the notices list, in the same drawer. */
   private function backToNoticesLink(): array {
     $filters = $this->noticeListFilter->normalize($this->requestStack->getCurrentRequest()?->query->all() ?? []);
     $query = array_filter($filters, static fn(string $value): bool => $value !== '');
@@ -1397,7 +1417,8 @@ final class MessagesController extends ControllerBase {
     ) + ['#weight' => -100];
   }
 
-  /** One site notice in full, in the drawer. */
+  /**
+   * One site notice in full, in the drawer. */
   public function alertDetail(SiteAlert $site_alert): Response {
     $access = $site_alert->access('view', $this->account, TRUE);
     if (!$access->isAllowed()) {
@@ -1426,7 +1447,8 @@ final class MessagesController extends ControllerBase {
     return $this->buildDrawerResponse($build);
   }
 
-  /** One notice in full, in the drawer, with its state and its dismissal. */
+  /**
+   * One notice in full, in the drawer, with its state and its dismissal. */
   public function noticeDetail(NodeInterface $node): Response {
     $access = $node->access('view', $this->account, TRUE);
     if ($node->bundle() !== 'aculta_notice' || !$access->isAllowed()) {
@@ -1446,7 +1468,8 @@ final class MessagesController extends ControllerBase {
     return $this->buildDrawerResponse($build);
   }
 
-  /** "Marcar como lido" in a persistent notice's full view: the read state, as text, never an "×". */
+  /**
+   * "Marcar como lido" in a persistent notice's full view: the read state, as text, never an "×". */
   private function buildReadLink(FlagInterface $flag, EntityInterface $entity): array {
     if (!$this->account->isAuthenticated()) {
       return [];
@@ -1456,7 +1479,8 @@ final class MessagesController extends ControllerBase {
     return $link;
   }
 
-  /** Builds the native per-user flag link used to dismiss a notice. */
+  /**
+   * Builds the native per-user flag link used to dismiss a notice. */
   private function buildDismissalLink(?FlagInterface $flag, EntityInterface $entity): array {
     if (!$flag instanceof FlagInterface || !$this->account->isAuthenticated()) {
       return [];
@@ -1469,7 +1493,8 @@ final class MessagesController extends ControllerBase {
     return $link;
   }
 
-  /** A same-site, non-prefetch request, i.e. one the member opened on this site. */
+  /**
+   * A same-site, non-prefetch request, i.e. one the member opened on this site. */
   private function isMemberInitiatedRequest(): bool {
     return MemberInitiatedRequest::isMemberInitiated($this->requestStack->getCurrentRequest());
   }

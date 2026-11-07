@@ -262,22 +262,34 @@ final class XapiStatementValidator {
     }
   }
 
+  /**
+   *
+   */
   private function isUuid(mixed $value): bool {
     return is_string($value) && preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $value) === 1;
   }
 
+  /**
+   *
+   */
   private function isIso8601(mixed $value): bool {
     return is_string($value)
       && preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})$/', $value) === 1
       && strtotime($value) !== FALSE;
   }
 
+  /**
+   *
+   */
   private function requireIri(mixed $value, string $field): void {
     if (!is_string($value) || preg_match('/^[a-zA-Z][a-zA-Z0-9+.-]*:\S+$/', $value) !== 1) {
       throw new \UnexpectedValueException("{$field} deve ser um IRI com esquema.");
     }
   }
 
+  /**
+   *
+   */
   private function requireMatch(mixed $value, string $pattern, string $message): void {
     if (!is_string($value) || preg_match($pattern, $value) !== 1) {
       throw new \UnexpectedValueException($message . '.');

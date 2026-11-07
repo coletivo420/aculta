@@ -13,7 +13,8 @@ use Drupal\aculta_lms\Plugin\ActivityAnswer\TrueFalseAnswerPlugin;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
-/** Covers the ACULTA objective answer plugins without Drupal Kernel. */
+/**
+ * Covers the ACULTA objective answer plugins without Drupal Kernel. */
 #[CoversClass(FillBlanksAnswerPlugin::class)]
 #[CoversClass(ObjectiveAnswerPluginResolver::class)]
 #[CoversClass(SelectAnswerPlugin::class)]
@@ -22,11 +23,17 @@ final class ObjectiveAnswerPluginsTest extends UnitTestCase {
 
   private ObjectiveAnswerScorer $scorer;
 
+  /**
+   *
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->scorer = new ObjectiveAnswerScorer();
   }
 
+  /**
+   *
+   */
   public function testTrueFalsePluginScoresCorrectWrongAndEmptyAnswers(): void {
     $plugin = new TrueFalseAnswerPlugin($this->scorer);
     $activity = $this->activity('true_false');
@@ -35,6 +42,9 @@ final class ObjectiveAnswerPluginsTest extends UnitTestCase {
     $this->assertSame(0.0, $plugin->score($activity, NULL, TRUE));
   }
 
+  /**
+   *
+   */
   public function testSelectPluginRequiresTheExactSelectionAndHandlesEmptyAnswer(): void {
     $plugin = new SelectAnswerPlugin($this->scorer);
     $activity = $this->activity('select');
@@ -44,6 +54,9 @@ final class ObjectiveAnswerPluginsTest extends UnitTestCase {
     $this->assertSame(0.0, $plugin->score($activity, ['first'], []));
   }
 
+  /**
+   *
+   */
   public function testFillBlanksPluginNormalizesCorrectWrongAndEmptyAnswers(): void {
     $plugin = new FillBlanksAnswerPlugin($this->scorer);
     $activity = $this->activity('fill_blanks');
@@ -53,6 +66,9 @@ final class ObjectiveAnswerPluginsTest extends UnitTestCase {
     $this->assertSame(0.0, $plugin->score($activity, [], $correct));
   }
 
+  /**
+   *
+   */
   public function testResolverSelectsPluginFromStableActivityType(): void {
     $resolver = new ObjectiveAnswerPluginResolver(
       new TrueFalseAnswerPlugin($this->scorer),
@@ -64,11 +80,17 @@ final class ObjectiveAnswerPluginsTest extends UnitTestCase {
     $this->assertSame(100.0, $resolver->score($activity, ['yes'], ['yes']));
   }
 
+  /**
+   *
+   */
   public function testPluginRejectsActivityWithAnotherStableType(): void {
     $this->expectException(\UnexpectedValueException::class);
     (new TrueFalseAnswerPlugin($this->scorer))->score($this->activity('select'), TRUE, TRUE);
   }
 
+  /**
+   *
+   */
   private function activity(string $type): CourseActivity {
     return new CourseActivity(10, 20, $type, TRUE);
   }

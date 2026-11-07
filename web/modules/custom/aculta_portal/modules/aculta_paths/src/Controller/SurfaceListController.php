@@ -42,6 +42,9 @@ final class SurfaceListController extends ControllerBase {
     private readonly DnsStatusChecker $dns,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.surface_config_reader'),
@@ -178,6 +181,9 @@ final class SurfaceListController extends ControllerBase {
     ];
   }
 
+  /**
+   *
+   */
   private function rotuloModo(string $modo): string {
     return match ($modo) {
       'diretorio' => (string) $this->t('Diretório'),

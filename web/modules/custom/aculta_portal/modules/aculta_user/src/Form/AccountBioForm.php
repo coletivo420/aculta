@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Form;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
@@ -71,7 +72,7 @@ final class AccountBioForm extends FormBase {
     if ($this->isHtmxRequest()) {
       (new Htmx())
         ->post($actionUrl)
-        ->select('#' . \Drupal\Component\Utility\Html::getId($this->getFormId()))
+        ->select('#' . Html::getId($this->getFormId()))
         ->swap('outerHTML')
         ->onlyMainContent()
         ->applyTo($form);

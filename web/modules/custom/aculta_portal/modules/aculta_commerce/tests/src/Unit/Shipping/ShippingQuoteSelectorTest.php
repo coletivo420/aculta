@@ -11,6 +11,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ *
+ */
 #[CoversClass(\Drupal\aculta_commerce\Shipping\ShippingQuoteSelector::class)]
 #[Group('aculta_commerce')]
 final class ShippingQuoteSelectorTest extends UnitTestCase {

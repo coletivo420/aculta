@@ -12,6 +12,9 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
+/**
+ *
+ */
 #[ContentEntityType(
   id: 'aculta_lms_progress',
   label: new TranslatableMarkup('Progresso do curso'),
@@ -22,6 +25,9 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 )]
 final class ProgressEntity extends ContentEntityBase {
 
+  /**
+   *
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
     $fields['course_id'] = BaseFieldDefinition::create('integer')->setLabel(new TranslatableMarkup('Curso (referência opaca)'))->setRequired(TRUE);
@@ -33,12 +39,16 @@ final class ProgressEntity extends ContentEntityBase {
     return $fields;
   }
 
+  /**
+   *
+   */
   public function preSave(EntityStorageInterface $storage): void {
     parent::preSave($storage);
     self::assertValidStatus((string) $this->get('status')->value);
   }
 
-  /** Rejects statuses outside the ACULTA progress vocabulary. */
+  /**
+   * Rejects statuses outside the ACULTA progress vocabulary. */
   public static function assertValidStatus(string $status): void {
     if (!in_array($status, [CourseProgress::STATUS_PROGRESS, CourseProgress::STATUS_PASSED, CourseProgress::STATUS_FAILED, CourseProgress::STATUS_NEEDS_EVALUATION], TRUE)) {
       throw new \InvalidArgumentException('Estado de progresso desconhecido.');

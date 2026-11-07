@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Avatar;
 
+use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ExtensionList;
-use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\user\UserDataInterface;
@@ -53,7 +53,8 @@ final class AvatarPool {
     return $ok;
   }
 
-  /** Copia a imagem da entrada para o acervo público e a grava em user_picture. */
+  /**
+   * Copia a imagem da entrada para o acervo público e a grava em user_picture. */
   private function assignEntry(UserInterface $account, array $entry): bool {
     $root = $this->appRoot . '/' . $this->modules->getPath('aculta_user') . '/assets/avatars/';
     $basename = basename($entry['file']);
@@ -142,7 +143,8 @@ final class AvatarPool {
     return $entry;
   }
 
-  /** Entrada sorteada e ainda não salva, ou NULL. */
+  /**
+   * Entrada sorteada e ainda não salva, ou NULL. */
   public function pendingEntry(UserInterface $account): ?array {
     $id = (string) $this->userData->get('aculta_user', (int) $account->id(), 'sorteio_pendente');
     if ($id === '') {
@@ -156,17 +158,20 @@ final class AvatarPool {
     return NULL;
   }
 
-  /** Limpa a escolha pendente (ao abrir o modal, ao salvar e ao sortear de novo). */
+  /**
+   * Limpa a escolha pendente (ao abrir o modal, ao salvar e ao sortear de novo). */
   public function clearPending(UserInterface $account): void {
     $this->userData->delete('aculta_user', (int) $account->id(), 'sorteio_pendente');
   }
 
-  /** URL pública da imagem de uma entrada do catálogo (prévia, sem copiar para o acervo). */
+  /**
+   * URL pública da imagem de uma entrada do catálogo (prévia, sem copiar para o acervo). */
   public function previewUrl(array $entry): string {
-    return \Drupal\Core\Url::fromUri('base:' . $this->modules->getPath('aculta_user') . '/assets/avatars/' . $entry['file'])->toString();
+    return Url::fromUri('base:' . $this->modules->getPath('aculta_user') . '/assets/avatars/' . $entry['file'])->toString();
   }
 
-  /** Avatar ilustrativo estável para apresentações públicas sem foto de conta. */
+  /**
+   * Avatar ilustrativo estável para apresentações públicas sem foto de conta. */
   public function fallbackEntry(int $seed = 0): ?array {
     $available = $this->available();
     if ($available === []) {
@@ -200,13 +205,15 @@ final class AvatarPool {
     return TRUE;
   }
 
-  /** Verdadeiro se outra conta ainda usa a foto. */
+  /**
+   * Verdadeiro se outra conta ainda usa a foto. */
   private function isUsedByOthers(int $fid, int $uid): bool {
     return $this->entityTypeManager->getStorage('user')->getQuery()
       ->accessCheck(FALSE)->condition('user_picture.target_id', $fid)->condition('uid', $uid, '<>')->range(0, 1)->count()->execute() > 0;
   }
 
-  /** Entradas ativas do catálogo cujo arquivo existe. */
+  /**
+   * Entradas ativas do catálogo cujo arquivo existe. */
   private function available(): array {
     $catalog = json_decode((string) file_get_contents($this->appRoot . '/' . $this->modules->getPath('aculta_user') . '/assets/avatars/meta/avatars.json'), TRUE);
     $root = $this->appRoot . '/' . $this->modules->getPath('aculta_user') . '/assets/avatars/';
@@ -216,7 +223,8 @@ final class AvatarPool {
     ));
   }
 
-  /** Sorteia uma entrada ativa cujo arquivo existe, diferente da atual quando possível. */
+  /**
+   * Sorteia uma entrada ativa cujo arquivo existe, diferente da atual quando possível. */
   private function pick(string $exclude = ''): ?array {
     $available = $this->available();
     $others = array_values(array_filter($available, static fn (array $item): bool => (string) ($item['id'] ?? '') !== $exclude));

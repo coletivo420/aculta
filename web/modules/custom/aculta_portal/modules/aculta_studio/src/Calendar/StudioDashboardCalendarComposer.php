@@ -62,7 +62,7 @@ final class StudioDashboardCalendarComposer {
     $primeiroDiaMes = new \DateTimeImmutable(sprintf('%04d-%02d-01 00:00:00', $ano, $mes), $fuso);
     $ultimoDiaMes = $primeiroDiaMes->modify('last day of this month')->setTime(23, 59, 59);
 
-    // Consulta ocorrências do mês para o provedor selecionado
+    // Consulta ocorrências do mês para o provedor selecionado.
     $porDia = [];
     if ($this->agenda !== NULL) {
       $query = new CalendarQuery(
@@ -82,7 +82,7 @@ final class StudioDashboardCalendarComposer {
 
     $grid = $this->monthGrid->build($ano, $mes, $porDia, $agora);
 
-    // Se dia selecionado não for especificado ou não pertencer a este mês, default para hoje (se neste mês) ou dia 1
+    // Se dia selecionado não for especificado ou não pertencer a este mês, default para hoje (se neste mês) ou dia 1.
     $hojeStr = $agora->format('Y-m-d');
     if ($diaSelecionado === NULL) {
       if ((int) $agora->format('Y') === $ano && (int) $agora->format('n') === $mes) {
@@ -93,7 +93,7 @@ final class StudioDashboardCalendarComposer {
       }
     }
 
-    // URLs de navegação
+    // URLs de navegação.
     $prevAno = $grid['anterior']['ano'];
     $prevMes = $grid['anterior']['mes'];
     $nextAno = $grid['seguinte']['ano'];
@@ -102,7 +102,7 @@ final class StudioDashboardCalendarComposer {
     $prevUrl = $this->buildCalendarUrl($prevAno, $prevMes, $filtroValido, NULL);
     $nextUrl = $this->buildCalendarUrl($nextAno, $nextMes, $filtroValido, NULL);
 
-    // Filtros
+    // Filtros.
     $filtrosProps = [
       [
         'id' => 'cursos',
@@ -124,7 +124,7 @@ final class StudioDashboardCalendarComposer {
       ],
     ];
 
-    // Semanas da grade
+    // Semanas da grade.
     $weeksProps = [];
     foreach ($grid['semanas'] as $semana) {
       $semanaProps = [];
@@ -155,7 +155,7 @@ final class StudioDashboardCalendarComposer {
       $weeksProps[] = $semanaProps;
     }
 
-    // Itens do dia selecionado
+    // Itens do dia selecionado.
     $eventosDoDia = $porDia[$diaSelecionado] ?? [];
     $selectedDayEventsProps = [];
     foreach ($eventosDoDia as $ev) {

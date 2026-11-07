@@ -79,6 +79,9 @@ final class AnswerLifecycleEventHooks {
     ));
   }
 
+  /**
+   *
+   */
   private function state(EntityInterface $answer): string {
     return (string) $answer->get('state')->value;
   }

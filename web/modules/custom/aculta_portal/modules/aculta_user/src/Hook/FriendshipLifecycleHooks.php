@@ -8,12 +8,14 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\user\UserInterface;
 
-/** Maintains friendship data through account deletion and module lifecycle. */
+/**
+ * Maintains friendship data through account deletion and module lifecycle. */
 final class FriendshipLifecycleHooks {
 
   public function __construct(private readonly EntityTypeManagerInterface $entityTypeManager) {}
 
-  /** Removes private relationships when either member account is deleted. */
+  /**
+ * Removes private relationships when either member account is deleted. */
   #[Hook('user_delete')]
   public function removeRelationshipsForDeletedMember(UserInterface $account): void {
     $uid = (int) $account->id();
@@ -32,7 +34,8 @@ final class FriendshipLifecycleHooks {
     }
   }
 
-  /** Stops uninstall if friendship records would otherwise be discarded. */
+  /**
+ * Stops uninstall if friendship records would otherwise be discarded. */
   #[Hook('module_preuninstall')]
   public function protectFriendshipData(string $module, bool $isSyncing): void {
     if ($module !== 'aculta_user') {

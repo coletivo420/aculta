@@ -13,9 +13,15 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+/**
+ *
+ */
 #[CoversClass(ActivityDeadlineFormHooks::class)]
 final class ActivityDeadlineFormHooksTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testNonAnswerFormIsLeftUnchanged(): void {
     $form = ['existing' => ['#plain_text' => 'answer form']];
     $state = $this->createMock(FormStateInterface::class);

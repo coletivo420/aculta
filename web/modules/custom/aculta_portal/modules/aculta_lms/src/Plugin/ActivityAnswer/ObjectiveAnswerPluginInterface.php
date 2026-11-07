@@ -6,7 +6,8 @@ namespace Drupal\aculta_lms\Plugin\ActivityAnswer;
 
 use Drupal\aculta_lms\Learning\CourseActivity;
 
-/** Scores an ACULTA activity answer without depending on LMS contrib entities. */
+/**
+ * Scores an ACULTA activity answer without depending on LMS contrib entities. */
 interface ObjectiveAnswerPluginInterface {
 
   /**
@@ -19,7 +20,8 @@ interface ObjectiveAnswerPluginInterface {
    */
   public function score(CourseActivity $activity, mixed $answer, mixed $correct): float;
 
-  /** Returns the stable CourseActivity type handled by this plugin. */
+  /**
+   * Returns the stable CourseActivity type handled by this plugin. */
   public function activityType(): string;
 
 }

@@ -82,9 +82,9 @@ final class LegacyMemorialController extends ControllerBase {
       'perfil' => $this->profileBox(),
       'busca' => [
         '#markup' => '<form method="get" action="" role="search"><label for="memorial-busca">'
-        . $this->t('Buscar pelo nome') . '</label> <input id="memorial-busca" type="search" name="q" value="'
-        . Html::escape($termo) . '" maxlength="' . self::QUERY_MAX . '"> <button type="submit">'
-        . $this->t('Buscar') . '</button></form>',
+          . $this->t('Buscar pelo nome') . '</label> <input id="memorial-busca" type="search" name="q" value="'
+          . Html::escape($termo) . '" maxlength="' . self::QUERY_MAX . '"> <button type="submit">'
+          . $this->t('Buscar') . '</button></form>',
       ],
     ];
 

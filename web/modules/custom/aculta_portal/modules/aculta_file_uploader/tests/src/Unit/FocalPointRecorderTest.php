@@ -19,6 +19,9 @@ use Drupal\Tests\UnitTestCase;
  */
 final class FocalPointRecorderTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testReturnsFalseForEveryTypeWhenCropTypeIsMissing(): void {
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('load')->willReturn(NULL);

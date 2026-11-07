@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_commerce_melhorenvio\Unit\Quote;
 
+use Drupal\commerce_product\Entity\ProductVariationInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioClientInterface;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioException;
 use Drupal\aculta_commerce_melhorenvio\Quote\MelhorEnvioQuoter;
@@ -65,10 +67,16 @@ final class ShippingSimulatorTest extends UnitTestCase {
     return new ShippingSimulator($client, $quoter, $configs, $cep, new MemoryBackend($time), $time, $loggers);
   }
 
+  /**
+   *
+   */
   private function package(): QuotePackage {
     return new QuotePackage(widthCm: 11.0, heightCm: 2.0, lengthCm: 16.0, weightKg: 0.3, insuranceValue: 0.0);
   }
 
+  /**
+   *
+   */
   private function quoter(): MelhorEnvioQuoter {
     return $this->createMock(MelhorEnvioQuoter::class);
   }
@@ -246,9 +254,9 @@ final class ShippingSimulatorTest extends UnitTestCase {
    * pacote e fica indisponível (nenhuma medida é presumida).
    */
   public function testVariationWithoutMeasuresUsesDefaultOrIsUnavailable(): void {
-    $empty = $this->createMock(\Drupal\Core\Field\FieldItemListInterface::class);
+    $empty = $this->createMock(FieldItemListInterface::class);
     $empty->method('isEmpty')->willReturn(TRUE);
-    $variation = $this->createMock(\Drupal\commerce_product\Entity\ProductVariationInterface::class);
+    $variation = $this->createMock(ProductVariationInterface::class);
     $variation->method('hasField')->willReturn(TRUE);
     $variation->method('get')->willReturn($empty);
 

@@ -21,10 +21,12 @@ use Drupal\aculta_portal_cep\Lookup\CepLookupInterface;
  */
 final class MelhorEnvioAddressMapper {
 
-  /** Cotação: só CEP de origem e destino. */
+  /**
+   * Cotação: só CEP de origem e destino. */
   public const PURPOSE_QUOTE = 'quote';
 
-  /** Contratação no carrinho, geração e impressão de etiqueta: endereço completo. */
+  /**
+   * Contratação no carrinho, geração e impressão de etiqueta: endereço completo. */
   public const PURPOSE_SHIPMENT = 'shipment';
 
   public const ERR_MISSING = 'address_missing';
@@ -125,7 +127,9 @@ final class MelhorEnvioAddressMapper {
     );
   }
 
-  /** @param list<string> $errors */
+  /**
+   * @param list<string> $errors
+   *   */
   private function invalid(array $errors, string $postalCode = ''): LogisticsAddress {
     return new LogisticsAddress($postalCode, '', '', FALSE, '', '', '', '', 'BR', array_values(array_unique($errors)));
   }

@@ -26,6 +26,9 @@ final class GreenStashProductController {
     private readonly EntityTypeManagerInterface $entities,
   ) {}
 
+  /**
+   *
+   */
   public function detail(string $produto): array {
     if (!$this->experiences->access('green_stash', 'shop', $this->account)->isAllowed()) {
       throw new AccessDeniedHttpException();

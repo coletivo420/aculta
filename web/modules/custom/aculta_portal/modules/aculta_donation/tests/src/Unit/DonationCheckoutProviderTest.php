@@ -20,6 +20,9 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_donation')]
 final class DonationCheckoutProviderTest extends UnitTestCase {
 
+  /**
+   *
+   */
   private function provider(array $settings, ?string $subscriptionFlow = 'assinatura_flow'): DonationCheckoutProvider {
     $type = NULL;
     if ($subscriptionFlow !== NULL) {
@@ -37,11 +40,17 @@ final class DonationCheckoutProviderTest extends UnitTestCase {
     );
   }
 
+  /**
+ *
+ */
   #[DataProvider('modos')]
   public function testTraduzDonationRouteParaModoNeutro(?string $route, CheckoutMode $esperado): void {
     $this->assertSame($esperado, $this->provider(['donation_route' => $route])->configuration()->mode);
   }
 
+  /**
+   *
+   */
   public static function modos(): array {
     return [
       'donate' => ['donate', CheckoutMode::Dedicated],
@@ -52,6 +61,9 @@ final class DonationCheckoutProviderTest extends UnitTestCase {
     ];
   }
 
+  /**
+   *
+   */
   public function testDeclaraTiposDePedidoEFluxosDaConfiguracaoMaisAssinatura(): void {
     $config = $this->provider([
       'donation_route' => 'both',
@@ -65,6 +77,9 @@ final class DonationCheckoutProviderTest extends UnitTestCase {
     $this->assertSame(['assinatura_flow', 'doacao'], $config->checkoutFlowIds);
   }
 
+  /**
+   *
+   */
   public function testSemFluxoDeAssinaturaNoCommerceNaoInventaUm(): void {
     $config = $this->provider(['donation_route' => 'donate', 'donate_checkout_flow' => 'doacao'], NULL)->configuration();
     $this->assertSame(['doacao'], $config->checkoutFlowIds);

@@ -17,6 +17,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(StudioDashboardConnectionsComposer::class)]
 final class StudioConnectionsBlockTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testComposeForAnonymousOrEmpty(): void {
     $container = new ContainerBuilder();
     $urlGenerator = $this->createMock(UrlGeneratorInterface::class);

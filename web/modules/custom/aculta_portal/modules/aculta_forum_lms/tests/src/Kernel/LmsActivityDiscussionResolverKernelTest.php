@@ -33,7 +33,8 @@ final class LmsActivityDiscussionResolverKernelTest extends KernelTestBase {
   use AcultaLmsDependencyHarnessTrait;
   use UserCreationTrait;
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
     $this->registerLmsDependencyServices($container);

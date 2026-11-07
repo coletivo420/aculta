@@ -21,6 +21,9 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_commerce_melhorenvio')]
 final class CartQuoteLinesTest extends UnitTestCase {
 
+  /**
+   *
+   */
   private function item(string $bundle, int $quantity): OrderItemInterface {
     $product = $this->createMock(ProductInterface::class);
     $product->method('bundle')->willReturn($bundle);
@@ -33,6 +36,9 @@ final class CartQuoteLinesTest extends UnitTestCase {
     return $item;
   }
 
+  /**
+   *
+   */
   private function cart(array $items, string $orderType = 'default'): OrderInterface {
     $cart = $this->createMock(OrderInterface::class);
     $cart->method('getItems')->willReturn($items);

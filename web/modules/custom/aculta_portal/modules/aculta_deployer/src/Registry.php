@@ -130,7 +130,8 @@ final class Registry {
         throw new \RuntimeException('Falha ao gravar o registro.');
       }
       $this->loadedDigest = hash('sha256', $json);
-    } finally {
+    }
+    finally {
       flock($lock, LOCK_UN);
       fclose($lock);
     }

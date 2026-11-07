@@ -11,7 +11,8 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\private_message\Entity\PrivateMessageInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Prepares privacy-aware, theme-neutral sender data for message rendering. */
+/**
+ * Prepares privacy-aware, theme-neutral sender data for message rendering. */
 final class PrivateMessagePresentationHooks {
 
   public function __construct(
@@ -21,7 +22,8 @@ final class PrivateMessagePresentationHooks {
     private readonly AvatarResolver $avatars,
   ) {}
 
-  /** Adds the sender avatar and direction state without changing message data. */
+  /**
+ * Adds the sender avatar and direction state without changing message data. */
   #[Hook('preprocess_private_message')]
   public function preprocessPrivateMessage(array &$variables): void {
     $message = $variables['private_message'] ?? $variables['elements']['#private_message'] ?? NULL;

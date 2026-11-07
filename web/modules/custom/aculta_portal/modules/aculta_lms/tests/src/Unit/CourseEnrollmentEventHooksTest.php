@@ -17,10 +17,16 @@ use PHPUnit\Framework\Attributes\Group;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Drupal\user\UserInterface;
 
+/**
+ *
+ */
 #[CoversClass(CourseEnrollmentEventHooks::class)]
 #[Group('aculta_lms')]
 final class CourseEnrollmentEventHooksTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testPublishesEnrollmentForCourseClassMembership(): void {
     $student = $this->createMock(UserInterface::class);
     $student->method('id')->willReturn('27');

@@ -40,50 +40,74 @@ final class DonationCampaign extends ConfigEntityBase {
 
   protected string $label = '';
 
-  /** Data de início, AAAA-MM-DD. */
+  /**
+   * Data de início, AAAA-MM-DD. */
   protected string $start = '';
 
-  /** Data de término, AAAA-MM-DD. */
+  /**
+   * Data de término, AAAA-MM-DD. */
   protected string $end = '';
 
-  /** Valores sugeridos em reais, em ordem de exibição. */
+  /**
+   * Valores sugeridos em reais, em ordem de exibição. */
   protected array $amounts = [];
 
   protected bool $customAmount = TRUE;
 
+  /**
+   *
+   */
   public function getStart(): string {
     return $this->start;
   }
 
+  /**
+   *
+   */
   public function getEnd(): string {
     return $this->end;
   }
 
-  /** @return int[] */
+  /**
+   * @return int[] */
   public function getAmounts(): array {
     return array_map('intval', $this->amounts);
   }
 
+  /**
+   *
+   */
   public function allowsCustomAmount(): bool {
     return $this->customAmount;
   }
 
+  /**
+   *
+   */
   public function setStart(string $start): static {
     $this->start = $start;
     return $this;
   }
 
+  /**
+   *
+   */
   public function setEnd(string $end): static {
     $this->end = $end;
     return $this;
   }
 
-  /** @param int[] $amounts */
+  /**
+   * @param int[] $amounts
+   *   */
   public function setAmounts(array $amounts): static {
     $this->amounts = array_values(array_map('intval', $amounts));
     return $this;
   }
 
+  /**
+   *
+   */
   public function setCustomAmount(bool $permite): static {
     $this->customAmount = $permite;
     return $this;

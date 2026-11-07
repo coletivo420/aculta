@@ -226,14 +226,14 @@ final class EventProposalEditorialApprovalKernelTest extends KernelTestBase {
     $proposal = reset($contributions);
     self::assertSame('submitted', $proposal->get('state')->value);
 
-    // Comprova que NENHUM evento publicado (nem qualquer aculta_event) foi criado
+    // Comprova que NENHUM evento publicado (nem qualquer aculta_event) foi criado.
     $events = $this->container->get('entity_type.manager')
       ->getStorage('aculta_event')->loadByProperties([
         'title' => 'Festival Comunitário sem Aprovação Editorial',
       ]);
     self::assertCount(0, $events, 'Nenhum evento oficial pode ser criado sem aprovação editorial prévia.');
 
-    // Comprova que nenhuma data de evento associada existe
+    // Comprova que nenhuma data de evento associada existe.
     $eventDates = $this->container->get('entity_type.manager')
       ->getStorage('aculta_event_date')->loadMultiple();
     foreach ($eventDates as $eventDate) {

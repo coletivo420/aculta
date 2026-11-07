@@ -14,6 +14,9 @@ use Drupal\Core\Session\AccountInterface;
  */
 final class AvisoAccessControlHandler extends EntityAccessControlHandler {
 
+  /**
+   *
+   */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
     if ($account->hasPermission('administer aculta avisos')) {
       return AccessResult::allowed()->addCacheContexts(['user.permissions']);
@@ -23,6 +26,9 @@ final class AvisoAccessControlHandler extends EntityAccessControlHandler {
       ->cachePerUser();
   }
 
+  /**
+   *
+   */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
     return AccessResult::allowedIfHasPermission($account, 'administer aculta avisos');
   }

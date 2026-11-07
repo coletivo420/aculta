@@ -13,7 +13,8 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Lets a course educator revoke a certificate while preserving its record. */
+/**
+ * Lets a course educator revoke a certificate while preserving its record. */
 final class CourseCertificateRevokeForm extends FormBase {
 
   public function __construct(
@@ -22,6 +23,9 @@ final class CourseCertificateRevokeForm extends FormBase {
     protected readonly AccountProxyInterface $account,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     $form = new static(
       $container->get('current_route_match'),
@@ -33,10 +37,16 @@ final class CourseCertificateRevokeForm extends FormBase {
     return $form;
   }
 
+  /**
+   *
+   */
   public function getFormId(): string {
     return 'aculta_lms_course_certificate_revoke';
   }
 
+  /**
+   *
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $certificate = $this->certificateRouteMatch->getParameter('certificate');
     if (!$certificate instanceof CourseCertificate || $certificate->get('state')->value !== 'active') {
@@ -70,12 +80,18 @@ final class CourseCertificateRevokeForm extends FormBase {
     return $form;
   }
 
+  /**
+   *
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     if (trim((string) $form_state->getValue('reason')) === '') {
       $form_state->setErrorByName('reason', $this->t('Informe o motivo para manter o histórico da revogação.'));
     }
   }
 
+  /**
+   *
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $certificate = $this->certificateRouteMatch->getParameter('certificate');
     $group = $this->certificateRouteMatch->getParameter('group');

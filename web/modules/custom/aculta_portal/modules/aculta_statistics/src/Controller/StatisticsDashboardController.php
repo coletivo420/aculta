@@ -165,7 +165,7 @@ final class StatisticsDashboardController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'statistics-note'],
         '#markup' => '<p>' . $this->t('Google Analytics (GA4): @estado.', ['@estado' => $ga4State]) . '</p>'
-        . '<p>' . $this->t('Search Console: @estado.', ['@estado' => $gscState]) . '</p>',
+          . '<p>' . $this->t('Search Console: @estado.', ['@estado' => $gscState]) . '</p>',
       ],
       '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
     ];

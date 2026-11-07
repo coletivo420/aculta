@@ -21,7 +21,6 @@ class CartQuoteLines {
    */
   public const BUNDLE_LOJA = 'produto_loja';
 
-
   /**
    * Cria o leitor.
    */

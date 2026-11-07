@@ -9,7 +9,8 @@ use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 
-/** Catálogo configurável de critérios fechados; User preserva definições e fatos. */
+/**
+ * Catálogo configurável de critérios fechados; User preserva definições e fatos. */
 final class AchievementDefinitions {
 
   public const TRIGGERS = [
@@ -29,6 +30,9 @@ final class AchievementDefinitions {
     private readonly FileUsageInterface $fileUsage,
   ) {}
 
+  /**
+   *
+   */
   public function all(): array {
     $defaults = [];
     $triggers = [
@@ -59,7 +63,8 @@ final class AchievementDefinitions {
     return $defaults;
   }
 
-  /** Salva um item sem sobrescrever edições concorrentes dos demais. */
+  /**
+   * Salva um item sem sobrescrever edições concorrentes dos demais. */
   public function save(string $id, array $definition): void {
     if (!preg_match('/^[a-z][a-z0-9_]{2,63}$/D', $id) || trim((string) ($definition['label'] ?? '')) === '') {
       throw new \InvalidArgumentException('Identificador ou nome de conquista inválido.');
@@ -125,7 +130,8 @@ final class AchievementDefinitions {
     }
   }
 
-  /** Detach the image and delete its managed file when it has no other usage. */
+  /**
+   * Detach the image and delete its managed file when it has no other usage. */
   public function removeImage(string $id): void {
     $definition = $this->all()[$id] ?? NULL;
     if ($definition === NULL) {

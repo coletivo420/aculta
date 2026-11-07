@@ -6,11 +6,15 @@ namespace Drupal\aculta_lms\Plugin\ActivityAnswer;
 
 use Drupal\aculta_lms\Learning\CourseActivity;
 
-/** Answer scorer for the stable true_false activity type. */
+/**
+ * Answer scorer for the stable true_false activity type. */
 final class TrueFalseAnswerPlugin extends ObjectiveAnswerPluginBase {
 
   public const ACTIVITY_TYPE = 'true_false';
 
+  /**
+   *
+   */
   public function score(CourseActivity $activity, mixed $answer, mixed $correct): float {
     $this->assertActivityType($activity);
     if ($answer === NULL) {

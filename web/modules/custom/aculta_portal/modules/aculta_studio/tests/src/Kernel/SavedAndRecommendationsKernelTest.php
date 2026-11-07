@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_studio\Kernel;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Session\AnonymousUserSession;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
@@ -343,7 +344,7 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $this->assertContains('flagging_list', $build['#cache']['tags']);
     $this->assertContains('user.permissions', $build['#cache']['contexts']);
     $this->assertContains('url.query_args:purpose', $build['#cache']['contexts']);
-    $this->assertSame(\Drupal\Core\Cache\Cache::PERMANENT, $build['#cache']['max-age']);
+    $this->assertSame(Cache::PERMANENT, $build['#cache']['max-age']);
   }
 
   /**

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ */
+
+use Drupal\Core\Utility\UpdateException;
+
 declare(strict_types=1);
 
 /**
@@ -19,7 +25,7 @@ function aculta_pagamentos_mercadopago_update_10001(): string {
   $required_fields = ['card_type', 'card_number', 'card_exp_month', 'card_exp_year'];
   $missing_fields = array_diff($required_fields, array_keys($definitions));
   if ($missing_fields) {
-    throw new \Drupal\Core\Utility\UpdateException(sprintf(
+    throw new UpdateException(sprintf(
       'Commerce payment method type credit_card is missing expected bundle fields: %s.',
       implode(', ', $missing_fields),
     ));
@@ -41,7 +47,7 @@ function aculta_pagamentos_mercadopago_update_10002(): string {
   $definitions = $bundle_handler->getFieldDefinitions($bundle);
   foreach ($required_fields as $field_name) {
     if (!isset($definitions[$field_name])) {
-      throw new \Drupal\Core\Utility\UpdateException(sprintf(
+      throw new UpdateException(sprintf(
         'The Mercado Pago payment method bundle does not define the expected field %s.',
         $field_name,
       ));
@@ -66,7 +72,7 @@ function aculta_pagamentos_mercadopago_update_10002(): string {
   $installed = $repository->getLastInstalledFieldStorageDefinitions($entity_type_id);
   $still_missing = array_diff($required_fields, array_keys($installed));
   if ($still_missing) {
-    throw new \Drupal\Core\Utility\UpdateException(sprintf(
+    throw new UpdateException(sprintf(
       'Failed to install Mercado Pago payment method fields: %s.',
       implode(', ', $still_missing),
     ));

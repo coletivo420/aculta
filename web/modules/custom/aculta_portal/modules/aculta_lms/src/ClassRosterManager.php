@@ -135,7 +135,8 @@ class ClassRosterManager {
     }));
   }
 
-  /** Loads class Groups through their course relationship records. */
+  /**
+   * Loads class Groups through their course relationship records. */
   private function classesForCourse(GroupInterface $course): array {
     $relationships = $this->entityTypeManager->getStorage('group_relationship')->loadByProperties([
       'gid' => $course->id(),

@@ -28,6 +28,9 @@ final class AssociadosController extends ControllerBase {
     private readonly DateFormatterInterface $dateFormatter,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
@@ -36,7 +39,8 @@ final class AssociadosController extends ControllerBase {
     );
   }
 
-  /** Tela: pedidos pendentes (com link para decidir) e situações, com RG mascarado. */
+  /**
+   * Tela: pedidos pendentes (com link para decidir) e situações, com RG mascarado. */
   public function report(): array {
     $pendentes = [];
     foreach ($this->marker->pendentes() as $uid) {
@@ -74,7 +78,8 @@ final class AssociadosController extends ControllerBase {
     ];
   }
 
-  /** CSV completo, somente para quem tem a permissão de exportação. */
+  /**
+   * CSV completo, somente para quem tem a permissão de exportação. */
   public function export(): Response {
     $handle = fopen('php://temp', 'r+');
     fputcsv($handle, ['apelido', 'email', 'situacao', 'data_adesao', 'rg', 'orgao_emissor', 'profissao', 'data_nascimento']);
@@ -100,7 +105,8 @@ final class AssociadosController extends ControllerBase {
     ]);
   }
 
-  /** @return array<int, array<string, string>> */
+  /**
+   * @return array<int, array<string, string>> */
   private function rows(): array {
     $rows = [];
     foreach ($this->marker->listadas() as $linha) {
@@ -127,6 +133,9 @@ final class AssociadosController extends ControllerBase {
     return $rows;
   }
 
+  /**
+   *
+   */
   private function rotulo(string $situacao): string {
     return match ($situacao) {
       AssociadoMarker::ATIVO => (string) $this->t('Ativo'),
@@ -147,6 +156,9 @@ final class AssociadosController extends ControllerBase {
     return preg_match('/^[\s\x00-\x1F]*[=+@-]/u', $value) ? "'" . $value : $value;
   }
 
+  /**
+   *
+   */
   private function mask(string $rg): string {
     return $rg === '' ? '' : str_repeat('•', max(0, strlen($rg) - 2)) . substr($rg, -2);
   }

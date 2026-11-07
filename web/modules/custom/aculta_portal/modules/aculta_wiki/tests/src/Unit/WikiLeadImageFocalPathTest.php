@@ -10,7 +10,6 @@ use Drupal\image_widget_crop\ImageWidgetCropManager;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\FileInterface;
 use Drupal\Tests\UnitTestCase;
@@ -24,10 +23,12 @@ use PHPUnit\Framework\Attributes\Group;
 #[CoversClass(WikiLeadImageUploader::class)]
 final class WikiLeadImageFocalPathTest extends UnitTestCase {
 
-  /** @var string[] */
+  /**
+   * @var string[] */
   private array $expectedTypes = [];
 
-  /** @var string[] */
+  /**
+   * @var string[] */
   private array $expectedCalls = [];
 
   /**

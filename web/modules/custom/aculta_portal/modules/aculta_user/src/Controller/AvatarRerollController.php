@@ -24,7 +24,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 final class AvatarRerollController implements ContainerInjectionInterface {
 
-  /** Atributo que marca cada avatar exibido no painel (alvo do AJAX). */
+  /**
+   * Atributo que marca cada avatar exibido no painel (alvo do AJAX). */
   public const SLOT_ATTRIBUTE = 'data-aculta-user-avatar';
 
   public function __construct(
@@ -34,6 +35,9 @@ final class AvatarRerollController implements ContainerInjectionInterface {
     private readonly EntityTypeManagerInterface $entityTypeManagerService,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_user.avatar_pool'),

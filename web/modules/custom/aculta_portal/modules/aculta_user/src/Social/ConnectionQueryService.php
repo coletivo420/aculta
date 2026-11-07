@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Social;
 
-use Drupal\aculta_portal\Profile\PerfilDoPapel;
 use Drupal\aculta_user\Identity\PublicMemberIdentityInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -48,7 +47,7 @@ class ConnectionQueryService {
    *   }>,
    *   total: int,
    *   has_more: bool,
-   * }
+   *   }
    */
   public function getAcceptedConnections(?int $uid = NULL, int $limit = 5, int $offset = 0, string $filter = ''): array {
     $uid ??= (int) $this->currentUser->id();
@@ -161,7 +160,7 @@ class ConnectionQueryService {
    *   }>,
    *   total: int,
    *   has_more: bool,
-   * }
+   *   }
    */
   public function searchCandidates(string $term, int $limit = 10, int $offset = 0): array {
     $currentUid = (int) $this->currentUser->id();

@@ -44,14 +44,14 @@ final class ForumHistoricModerationQueueHooksTest extends UnitTestCase {
         [
           0,
           'NOT EXISTS (SELECT 1 FROM {node__field_autor_legado} historical_topic '
-          . 'WHERE historical_topic.entity_id = node_host.nid AND historical_topic.deleted = 0 '
-          . 'AND historical_topic.field_autor_legado_target_id IS NOT NULL)',
+            . 'WHERE historical_topic.entity_id = node_host.nid AND historical_topic.deleted = 0 '
+            . 'AND historical_topic.field_autor_legado_target_id IS NOT NULL)',
         ],
         [
           0,
           'NOT EXISTS (SELECT 1 FROM {comment__field_autor_legado} historical_comment '
-          . 'WHERE historical_comment.entity_id = comment_field_data.cid AND historical_comment.deleted = 0 '
-          . 'AND historical_comment.field_autor_legado_target_id IS NOT NULL)',
+            . 'WHERE historical_comment.entity_id = comment_field_data.cid AND historical_comment.deleted = 0 '
+            . 'AND historical_comment.field_autor_legado_target_id IS NOT NULL)',
         ],
       ], $conditions);
     }

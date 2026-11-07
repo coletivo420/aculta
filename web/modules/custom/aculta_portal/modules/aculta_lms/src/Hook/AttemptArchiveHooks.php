@@ -23,7 +23,8 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Captures deleted ACULTA answers and renders protected attempt history. */
+/**
+ * Captures deleted ACULTA answers and renders protected attempt history. */
 final class AttemptArchiveHooks {
 
   public function __construct(
@@ -36,6 +37,9 @@ final class AttemptArchiveHooks {
     private readonly TranslationInterface $translation,
   ) {}
 
+  /**
+ *
+ */
   #[Hook('entity_predelete')]
   public function entityPredelete(EntityInterface $entity): void {
     if ($entity instanceof AnswerEntity) {
@@ -43,6 +47,9 @@ final class AttemptArchiveHooks {
     }
   }
 
+  /**
+ *
+ */
   #[Hook('entity_delete')]
   public function entityDelete(EntityInterface $entity): void {
     if ($entity instanceof GroupInterface && $entity->bundle() === 'lms_course') {
@@ -54,6 +61,9 @@ final class AttemptArchiveHooks {
     }
   }
 
+  /**
+ *
+ */
   #[Hook('entity_presave')]
   public function entityPresave(EntityInterface $entity): void {
     if ($entity instanceof AnswerEntity) {
@@ -61,6 +71,9 @@ final class AttemptArchiveHooks {
     }
   }
 
+  /**
+ *
+ */
   #[Hook('entity_access')]
   public function attemptArchiveAccess(EntityInterface $entity, string $operation, AccountInterface $account): AccessResult {
     if (!$entity instanceof AttemptArchive) {
@@ -98,6 +111,9 @@ final class AttemptArchiveHooks {
     return AccessResult::forbidden()->addCacheableDependency($entity);
   }
 
+  /**
+ *
+ */
   #[Hook('entity_create_access')]
   public function attemptArchiveCreateAccess(AccountInterface $account, array $context, ?string $entityBundle): AccessResult {
     if (($context['entity_type_id'] ?? NULL) !== 'aculta_lms_attempt_archive') {
@@ -106,6 +122,9 @@ final class AttemptArchiveHooks {
     return AccessResult::forbidden()->cachePerUser();
   }
 
+  /**
+ *
+ */
   #[Hook('entity_view')]
   public function attemptArchiveView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
     if (!$entity instanceof AnswerEntity || $view_mode !== 'full') {
@@ -134,11 +153,11 @@ final class AttemptArchiveHooks {
         ['data' => ['#plain_text' => $this->dateFormatter->format((int) $record->get('answered')->value, 'short')]],
         ['data' => ['#plain_text' => $event_label]],
         ['data' => ['#plain_text' => $record->get('evaluated')->value
-          ? $this->translation->translate('Avaliada: @score de @maximum pontos', [
-            '@score' => $record->get('score_precise')->value ?? $record->get('score')->value,
-            '@maximum' => $record->get('max_score')->value,
-          ])
-          : $this->translation->translate('Aguardando avaliação do educador')]],
+            ? $this->translation->translate('Avaliada: @score de @maximum pontos', [
+              '@score' => $record->get('score_precise')->value ?? $record->get('score')->value,
+              '@maximum' => $record->get('max_score')->value,
+            ])
+            : $this->translation->translate('Aguardando avaliação do educador')]],
         ['data' => ['#plain_text' => $this->answerText($record->get('answer_data')->value)]],
       ];
       $comments = Json::decode((string) $record->get('answer_comments')->value) ?: [];
@@ -178,6 +197,9 @@ final class AttemptArchiveHooks {
     ];
   }
 
+  /**
+   *
+   */
   private function answerText(string $json): string {
     $data = Json::decode($json);
     $answer = $data['answer'] ?? $data;

@@ -23,18 +23,30 @@ final class LmsCheckoutProvider implements CheckoutContextProviderInterface {
     private readonly CheckoutSettings $settings,
   ) {}
 
+  /**
+   *
+   */
   public function id(): string {
     return 'lms';
   }
 
+  /**
+   *
+   */
   public function label(): TranslatableMarkup {
     return new TranslatableMarkup('LMS');
   }
 
+  /**
+   *
+   */
   public function weight(): int {
     return 20;
   }
 
+  /**
+   *
+   */
   public function configuration(): CheckoutContextConfiguration {
     $tipos = $this->settings->lmsOrderTypes();
     return new CheckoutContextConfiguration('lms', CheckoutMode::Common, $tipos, array_filter([$this->flows->flowId($this->settings->lmsOrderType())]));

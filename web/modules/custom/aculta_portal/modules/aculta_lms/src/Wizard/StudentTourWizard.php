@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Wizard;
 
+use Drupal\aculta_lms\Wizard\Step\TourCompleteStepForm;
+use Drupal\aculta_lms\Wizard\Step\TourActivitiesStepForm;
+use Drupal\aculta_lms\Wizard\Step\TourNavigationStepForm;
+use Drupal\aculta_lms\Wizard\Step\TourWelcomeStepForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\ctools\Wizard\FormWizardBase;
 
@@ -40,19 +44,19 @@ class StudentTourWizard extends FormWizardBase {
     return [
       'welcome' => [
         'title' => (string) $this->t('Boas-vindas'),
-        'form' => \Drupal\aculta_lms\Wizard\Step\TourWelcomeStepForm::class,
+        'form' => TourWelcomeStepForm::class,
       ],
       'navigation' => [
         'title' => (string) $this->t('Navegacao e Sala de Aula'),
-        'form' => \Drupal\aculta_lms\Wizard\Step\TourNavigationStepForm::class,
+        'form' => TourNavigationStepForm::class,
       ],
       'activities' => [
         'title' => (string) $this->t('Atividades e Avaliacoes'),
-        'form' => \Drupal\aculta_lms\Wizard\Step\TourActivitiesStepForm::class,
+        'form' => TourActivitiesStepForm::class,
       ],
       'complete' => [
         'title' => (string) $this->t('Conclusao e Certificados'),
-        'form' => \Drupal\aculta_lms\Wizard\Step\TourCompleteStepForm::class,
+        'form' => TourCompleteStepForm::class,
       ],
     ];
   }

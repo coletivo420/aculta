@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_commerce_melhorenvio\Quote;
 
-use Drupal\aculta_commerce_melhorenvio\Address\ShipmentAddressBinder;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioClientInterface;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioException;
 use Drupal\aculta_portal_cep\Lookup\CepLookupInterface;

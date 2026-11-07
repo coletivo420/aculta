@@ -56,4 +56,5 @@ final class ForumTab extends MarleyTabBase {
       ],
     ];
   }
+
 }

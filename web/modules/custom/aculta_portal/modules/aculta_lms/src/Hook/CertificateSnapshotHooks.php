@@ -8,7 +8,8 @@ use Drupal\aculta_lms\Entity\CourseCertificate;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 
-/** Enforces append-only certificate snapshots outside the manager service. */
+/**
+ * Enforces append-only certificate snapshots outside the manager service. */
 final class CertificateSnapshotHooks {
 
   /**

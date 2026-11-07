@@ -648,13 +648,13 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     $this->assertSame(
       0,
       (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
-      ->condition('generation_id', $generationId)
-      ->condition('provider_id', 'test_sample_content')
-      ->condition('entity_type', 'node')
-      ->condition('entity_id', (string) $node->id())
-      ->countQuery()
-      ->execute()
-      ->fetchField());
+        ->condition('generation_id', $generationId)
+        ->condition('provider_id', 'test_sample_content')
+        ->condition('entity_type', 'node')
+        ->condition('entity_id', (string) $node->id())
+        ->countQuery()
+        ->execute()
+        ->fetchField());
   }
 
   /**

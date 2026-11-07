@@ -10,7 +10,6 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Url;
 use Drupal\aculta_user\Associado\AssociadoMarker;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -29,6 +28,9 @@ final class AssociadoSituacaoForm extends FormBase {
     protected readonly DateFormatterInterface $dateFormatter,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_user.associado_marker'),
@@ -39,18 +41,24 @@ final class AssociadoSituacaoForm extends FormBase {
     );
   }
 
+  /**
+   *
+   */
   public function getFormId(): string {
     return 'aculta_user_associado_situacao';
   }
 
+  /**
+   *
+   */
   public function buildForm(array $form, FormStateInterface $form_state, ?UserInterface $user = NULL): array {
     $uid = (int) $user?->id();
     $form_state->set('uid', $uid);
     $atual = $this->marker->situacao($uid);
     $adesao = $this->marker->dataAdesao($uid);
     $form['estado'] = ['#markup' => '<p>' . $this->t('Situação atual: @situacao.', ['@situacao' => $this->rotulo($atual)])
-      . ($adesao !== NULL ? ' ' . $this->t('Data de adesão: @data.', ['@data' => $this->dateFormatter->format($adesao, 'custom', 'd/m/Y')]) : '')
-      . '</p>'];
+        . ($adesao !== NULL ? ' ' . $this->t('Data de adesão: @data.', ['@data' => $this->dateFormatter->format($adesao, 'custom', 'd/m/Y')]) : '')
+        . '</p>'];
     $opcoes = [
       AssociadoMarker::ATIVO => $this->t('Adicionar como associado (ativo, sem convite)'),
       AssociadoMarker::CONVIDADO => $this->t('Convidar (a pessoa aceita ou recusa em Minha conta)'),
@@ -76,6 +84,9 @@ final class AssociadoSituacaoForm extends FormBase {
     return $form;
   }
 
+  /**
+   *
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $uid = (int) $form_state->get('uid');
     $situacao = (string) $form_state->getValue('situacao');
@@ -101,7 +112,8 @@ final class AssociadoSituacaoForm extends FormBase {
     $form_state->setRedirect('aculta_user.associados');
   }
 
-  /** Rótulo legível de uma situação. */
+  /**
+   * Rótulo legível de uma situação. */
   private function rotulo(?string $situacao): string {
     return match ($situacao) {
       AssociadoMarker::PENDENTE => (string) $this->t('pedido em análise'),

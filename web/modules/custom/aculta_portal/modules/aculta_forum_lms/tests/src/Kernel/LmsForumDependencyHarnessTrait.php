@@ -14,7 +14,8 @@ trait LmsForumDependencyHarnessTrait {
 
   use AcultaLmsDependencyHarnessTrait;
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
     $this->registerLmsDependencyServices($container);

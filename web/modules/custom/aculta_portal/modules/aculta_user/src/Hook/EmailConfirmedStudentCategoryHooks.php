@@ -9,7 +9,8 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Assigns the LMS student category when an account confirms its email address. */
+/**
+ * Assigns the LMS student category when an account confirms its email address. */
 final class EmailConfirmedStudentCategoryHooks {
 
   public function __construct(
@@ -17,7 +18,8 @@ final class EmailConfirmedStudentCategoryHooks {
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
-  /** Implements hook_aculta_portal_email_confirmed(). */
+  /**
+ * Implements hook_aculta_portal_email_confirmed(). */
   #[Hook('aculta_portal_email_confirmed')]
   public function emailConfirmed(int $uid): void {
     $account = $this->entityTypeManager->getStorage('user')->load($uid);

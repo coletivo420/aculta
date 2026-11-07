@@ -15,7 +15,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
  */
 final class LegacyAuthorManager {
 
-  /** Limite do nome histórico. */
+  /**
+   * Limite do nome histórico. */
   private const NAME_MAX = 255;
 
   public function __construct(

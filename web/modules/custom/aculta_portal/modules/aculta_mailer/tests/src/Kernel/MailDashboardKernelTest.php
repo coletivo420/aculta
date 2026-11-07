@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_mailer\Kernel;
 
+use Drupal\aculta_mailer\Message\MailStatus;
 use Drupal\aculta_mailer\Controller\MailDashboardController;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\KernelTests\KernelTestBase;
@@ -87,7 +88,7 @@ final class MailDashboardKernelTest extends KernelTestBase {
     $fresh = MailDashboardController::create($this->container)->overview($request);
     $status_html = (string) $this->container->get('renderer')->renderInIsolation($fresh['status_chart']);
     $this->assertStringContainsString('<progress', $status_html);
-    $this->assertSame(count(\Drupal\aculta_mailer\Message\MailStatus::cases()), substr_count($status_html, '<progress'), 'Uma barra por estado.');
+    $this->assertSame(count(MailStatus::cases()), substr_count($status_html, '<progress'), 'Uma barra por estado.');
   }
 
   /**
