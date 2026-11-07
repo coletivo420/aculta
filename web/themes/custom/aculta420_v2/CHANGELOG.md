@@ -1,3 +1,11 @@
+## Não versionado — fórum Growroom420 (entregas 1 e 2 do plano visual)
+
+- Lista pública (`/discussoes` e variantes): cabeçalho Growroom420 com botão "+ Novo tópico", abas ligadas às rotas existentes, cabeçalho de colunas e linhas em `forum-topic-row` com dados reais. Painel lateral com regras em `forum-sidebar-panels`. Zero respostas aparece como 0.
+- Página de tópico: breadcrumb e pílula de categoria no cabeçalho.
+- `forum-category-header` aceita a ação principal (prop `actions`).
+- Validadores apontam para `aculta420_v2`; componentes ganham `status`; `validate-aculta420-sdc-schemas.php` PASS.
+- Pendente (DEFERRED): captura visual Firefox ESR em 320/390/1440 px (sem `FORUM_BASE_URL` nem `SUITE_OUT` nesta sessão); painéis de destaque, moderadores e relacionados com placeholder até o contrato com o Portal; `validate-aculta420-design-foundations.php` ainda exige a família `--aculta-*`; `validate-module-theme-boundary.php` acusa 21 falhas em módulos do Portal.
+
 ## Não versionado — tokens de cor e movimento, reset de links e gate de fundação V2
 
 - Cores literais fora de `src/styles/tokens.css` viram tokens semânticos: 27 ocorrências em `forum.css`, `theme-settings.css`, `lms-tour.css`, `studio-calendar.css` e `forum-tabs.css`. Opacidades `rgba()` passam a `color-mix()` sobre tokens existentes.

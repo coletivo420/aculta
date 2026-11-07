@@ -25,6 +25,7 @@
     stats: null
   }, with_context = false) }}
 
+  <div class="aculta-forum-list__layout">
   <section class="aculta-forum-list__panel" aria-label="{{ 'Lista de tópicos'|t }}">
     {{ include('aculta420_v2:forum-tabs', {
       label: 'Ordenação dos tópicos'|t,
@@ -55,4 +56,19 @@
       </div>
     {% endif %}
   </section>
+
+  <aside class="aculta-forum-list__aside">
+    {{ include('aculta420_v2:forum-sidebar-panels', {
+      stats: null,
+      featured: null,
+      moderators: null,
+      rules: [
+        'Mantenha as postagens no tema específico de cada discussão.'|t,
+        'Sem spam ou autopromoção desautorizada.'|t,
+        'Colabore com respostas úteis e fundamentadas.'|t
+      ],
+      related: null
+    }, with_context = false) }}
+  </aside>
+  </div>
 </div>

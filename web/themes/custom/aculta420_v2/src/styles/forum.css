@@ -459,3 +459,49 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
     grid-template-columns: minmax(0, 1fr) 20rem;
   }
 }
+
+/* Página de tópico: breadcrumb e pílula de categoria (referência 3). */
+.aculta-forum-topic__breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-block-end: var(--spacing-sm);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  gap: var(--spacing-xs);
+}
+
+.aculta-forum-topic__breadcrumb a {
+  min-block-size: 44px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-link-editorial);
+}
+
+.aculta-forum-topic__category-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: .15rem .6rem;
+  color: var(--color-text-primary);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-highlight);
+  font-weight: 600;
+}
+
+/* Lista com painel lateral: uma coluna no mobile, duas a partir de 60rem. */
+.aculta-forum-list__layout {
+  display: grid;
+  gap: var(--spacing-base);
+  min-inline-size: 0;
+}
+
+.aculta-forum-list__aside {
+  min-inline-size: 0;
+}
+
+@media (min-width: 60rem) {
+  .aculta-forum-list__layout {
+    grid-template-columns: minmax(0, 1fr) 18rem;
+    align-items: start;
+  }
+}
