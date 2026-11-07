@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta420_v2\Story;
 
+use Drupal\aculta_messenger\Hook\MessengerBarHooks;
+use Drupal\aculta_portal\Hook\PortalHooks;
 use Drupal\ui_patterns_library\StoryDefault;
 
 /**
@@ -67,8 +69,8 @@ final class MultidomainBarStory extends StoryDefault {
    */
   private function pageVariables(): array {
     $vars = ['page' => []];
-    \Drupal::service(\Drupal\aculta_portal\Hook\PortalHooks::class)->preprocessPage($vars);
-    \Drupal::service(\Drupal\aculta_messenger\Hook\MessengerBarHooks::class)->preprocessPage($vars);
+    \Drupal::service(PortalHooks::class)->preprocessPage($vars);
+    \Drupal::service(MessengerBarHooks::class)->preprocessPage($vars);
     return $vars;
   }
 

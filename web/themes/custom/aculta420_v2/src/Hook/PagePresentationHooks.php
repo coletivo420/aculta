@@ -175,7 +175,7 @@ final class PagePresentationHooks {
         return;
       }
       $attributes = $variables['attributes'] ?? [];
-      if ($attributes instanceof \Drupal\Core\Template\Attribute) {
+      if ($attributes instanceof Attribute) {
         $attributes = $attributes->toArray();
       }
       if (!is_array($attributes)) {

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta420_v2\Hook;
 
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\ui_patterns_library\StoryDefault;
 use Drupal\ui_patterns_library\StoryPluginManager;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;

@@ -135,7 +135,6 @@ final class PurposeContainerLayoutUnitTest extends UnitTestCase {
     self::assertNull(PurposeContainerLayout::resolveContainerStyle([], NULL));
   }
 
-
   /**
    * Estilo Caixa é o padrão; valores inválidos caem nele.
    */

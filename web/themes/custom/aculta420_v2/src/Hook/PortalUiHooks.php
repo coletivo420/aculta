@@ -584,6 +584,9 @@ final class PortalUiHooks {
     }
   }
 
+  /**
+   *
+   */
   private function apply(Attribute $attributes): void {
     if (!$attributes->offsetExists(self::ATTRIBUTE)) {
       return;

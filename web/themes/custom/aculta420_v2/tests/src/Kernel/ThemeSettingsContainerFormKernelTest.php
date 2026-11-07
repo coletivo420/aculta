@@ -6,7 +6,6 @@ namespace Drupal\Tests\aculta420_v2\Kernel;
 
 use Drupal\Core\Form\FormState;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\aculta420_v2\Layout\PurposeContainerLayout;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -69,7 +68,7 @@ final class ThemeSettingsContainerFormKernelTest extends KernelTestBase {
     self::assertArrayHasKey('magazine', $grid);
     self::assertArrayHasKey('wiki', $grid);
 
-    // Valida campos do purpose main
+    // Valida campos do purpose main.
     $mainCard = $grid['main'];
     self::assertSame('select', $mainCard['mode']['#type']);
     self::assertSame('default', $mainCard['mode']['#default_value']);
@@ -87,7 +86,7 @@ final class ThemeSettingsContainerFormKernelTest extends KernelTestBase {
   public function testSavedValuesAppearInForm(): void {
     require_once dirname(__DIR__, 3) . '/theme-settings.php';
 
-    // Salva configuração personalizada de container
+    // Salva configuração personalizada de container.
     $config = $this->container->get('config.factory')->getEditable('aculta420_v2.settings');
     $config->set('aculta_purpose_container', [
       'main' => [
@@ -102,7 +101,7 @@ final class ThemeSettingsContainerFormKernelTest extends KernelTestBase {
       ],
     ])->save();
 
-    // Reabre o formulário
+    // Reabre o formulário.
     $form = [];
     $formState = new FormState();
     aculta420_v2_form_system_theme_settings_alter($form, $formState);
@@ -112,8 +111,7 @@ final class ThemeSettingsContainerFormKernelTest extends KernelTestBase {
     self::assertSame(1400, $grid['main']['container_width']['#default_value']);
     self::assertSame(800, $grid['main']['narrow_width']['#default_value']);
 
-
-    // Shop não foi personalizado, deve manter o fallback
+    // Shop não foi personalizado, deve manter o fallback.
     self::assertSame('default', $grid['shop']['mode']['#default_value']);
     self::assertSame('narrow', $grid['magazine']['mode']['#default_value']);
     self::assertSame(680, $grid['magazine']['narrow_width']['#default_value']);

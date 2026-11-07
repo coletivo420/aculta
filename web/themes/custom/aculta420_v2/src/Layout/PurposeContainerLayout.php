@@ -14,7 +14,8 @@ namespace Drupal\aculta420_v2\Layout;
  */
 final class PurposeContainerLayout {
 
-  /** UI Patterns library routes use their own full-width documentation layout. */
+  /**
+   * UI Patterns library routes use their own full-width documentation layout. */
   private const COMPONENT_LIBRARY_ROUTES = [
     'ui_patterns_library.overview',
     'ui_patterns_library.provider',

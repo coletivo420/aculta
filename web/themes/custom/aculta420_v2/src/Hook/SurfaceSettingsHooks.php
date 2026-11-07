@@ -15,7 +15,8 @@ use Drupal\Core\Template\Attribute;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Applies theme-owned surface settings without inspecting domain context. */
+/**
+ * Applies theme-owned surface settings without inspecting domain context. */
 final class SurfaceSettingsHooks implements ContainerInjectionInterface {
 
   public function __construct(
@@ -41,6 +42,9 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
     );
   }
 
+  /**
+ *
+ */
   #[Hook('preprocess_html')]
   public function preprocessHtml(array &$variables): void {
     // A theme may provide only one preprocess_html implementation. Keep the
@@ -145,6 +149,9 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
     return ['scheme' => $schemeKey, 'variables' => $variables];
   }
 
+  /**
+   *
+   */
   private function safeValue(string $value, array $allowed, string $fallback): string {
     return in_array($value, $allowed, TRUE) ? $value : $fallback;
   }

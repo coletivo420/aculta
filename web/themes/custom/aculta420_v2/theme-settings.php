@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 declare(strict_types=1);
 
 use Drupal\aculta420_v2\Layout\PurposeContainerLayout;
@@ -197,7 +201,7 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
 
       $modesMarkup = '<div class="aculta-palette-preview__modes">';
 
-      // Modo Claro
+      // Modo Claro.
       $light = $scheme['light'];
       $modesMarkup .= '<div class="aculta-palette-mode aculta-palette-mode--light">';
       $modesMarkup .= '<div class="aculta-palette-mode__header">' . t('Claro') . '</div>';
@@ -219,7 +223,7 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
       $modesMarkup .= '</div>';
       $modesMarkup .= '</div>';
 
-      // Modo Escuro
+      // Modo Escuro.
       $dark = $scheme['dark'];
       $modesMarkup .= '<div class="aculta-palette-mode aculta-palette-mode--dark">';
       $modesMarkup .= '<div class="aculta-palette-mode__header">' . t('Escuro') . '</div>';
