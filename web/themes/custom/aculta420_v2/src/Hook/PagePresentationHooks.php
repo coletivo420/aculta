@@ -248,6 +248,11 @@ final class PagePresentationHooks {
       return 'full';
     }
 
+    // Lista pública de tópicos do fórum: largura total, sem o teto de leitura.
+    if (str_starts_with((string) $routeName, 'view.aculta_forum_public_topics.')) {
+      return 'full';
+    }
+
     $node = $this->currentRouteMatch->getParameter('node');
     if ($node instanceof NodeInterface) {
       return match ($node->bundle()) {
