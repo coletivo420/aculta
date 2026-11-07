@@ -281,7 +281,7 @@
 }
 
 .forum-post-card a[href$="/edit"] {
-  color: var(--color-brand-highlight);
+  color: var(--color-brand-primary);
 }
 
 .forum-post-card a[href$="/delete"] {
@@ -291,4 +291,14 @@
 .forum-post-card a[href*="/comment/reply/"],
 .forum-post-card a[href*="?quote="] {
   color: var(--color-link-editorial);
+}
+
+/* Ícones de ação mais encorpados: maiores e com contorno da própria cor (a biblioteca não tem variante bold). */
+.forum-post-card a[href*="#comment-"]::before,
+.forum-post-card a[href$="/delete"]::before,
+.forum-post-card a[href$="/edit"]::before,
+.forum-post-card a[href*="/comment/reply/"]::before {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  filter: drop-shadow(0 0 .35px currentColor) drop-shadow(0 0 .35px currentColor);
 }
