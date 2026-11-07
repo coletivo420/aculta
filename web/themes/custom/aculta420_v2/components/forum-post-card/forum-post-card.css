@@ -274,3 +274,21 @@
   display: inline-flex;
   align-items: center;
 }
+
+/* Cores dos ícones de ação do comentário, com tokens do tema. */
+.forum-post-card a[href*="#comment-"] {
+  color: var(--color-brand-primary);
+}
+
+.forum-post-card a[href$="/edit"] {
+  color: var(--color-brand-highlight);
+}
+
+.forum-post-card a[href$="/delete"] {
+  color: var(--color-status-error-text);
+}
+
+.forum-post-card a[href*="/comment/reply/"],
+.forum-post-card a[href*="?quote="] {
+  color: var(--color-link-editorial);
+}
