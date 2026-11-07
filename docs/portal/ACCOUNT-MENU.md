@@ -134,4 +134,4 @@ A Minha Conta original tem URL própria, `/conta-legada`, porque ela não é a r
   - o reenvio de confirmação fora de `/confirmar-email/reenviar`;
   - divergência entre `aculta_portal.info.yml` e o topo do `CHANGELOG.md`.
 - Sonda privada do `aculta_deployer` (`deploy.json`, `private_probes`): a sonda de `/conta-interna` foi removida em 0.3.0-dev.13, junto com o caminho. A proteção principal é o gate acima.
-- Verificação HTTP no servidor de testes, depois do deploy: `https://conta.aculta.toca.net.br/` anônimo redireciona ao login; logado, serve o hub do Studio; `https://conta.aculta.toca.net.br/conta-legada` anônimo redireciona ao login; logado, serve a Minha Conta original; `/minha-conta` e `/studio` respondem 404.
+- Verificação HTTP no servidor de desenvolvimento, depois do deploy: `https://conta.aculta.toca.net.br/` anônimo redireciona ao login; logado, serve o hub do Studio; `https://conta.aculta.toca.net.br/conta-legada` anônimo redireciona ao login; logado, serve a Minha Conta original; `/minha-conta` e `/studio` respondem 404.

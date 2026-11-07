@@ -134,7 +134,7 @@ no módulo.
 
 ## Teste de compatibilidade de tema (2026-10-13)
 
-- Tema padrão trocado temporariamente para Claro (Core) no servidor de testes, e restaurado para aculta420 ao fim.
+- Tema padrão trocado temporariamente para Claro (Core) no servidor de desenvolvimento, e restaurado para aculta420 ao fim.
 - Com Claro: painel 200 com gatilho e avatar; popup de foto como modal centralizado (centro em 640×400 de uma tela 1280×800),
   com prévia, texto, campo de envio e botões. Upload → recorte → aplicar: uma única requisição de recorte, navegação ao
   painel, sem loop e sem erro de JavaScript. "Remover foto" → 303 e avatar do acervo.

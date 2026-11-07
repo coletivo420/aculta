@@ -106,10 +106,10 @@ Qualquer endpoint novo precisa de teste de precedência de rotas antes de ser pu
 
 ## Estado final da implementação (2026-10-09)
 
-- Microfases A a J concluídas no servidor de testes; submódulo `aculta_portal_sitemap` 0.1.1.
+- Microfases A a J concluídas no servidor de desenvolvimento; submódulo `aculta_portal_sitemap` 0.1.1.
 - Índice central em `/sitemap.xml` com as variantes `main`, `support`, `wiki`, `magazine` e `courses`; `default` desabilitada.
 - Endereço por ambiente: a `base_url` segue o site definido pelo `aculta_deployer` (`environment.json`).
 - `/wiki/verbetes` incluído na variante `wiki` conforme D-49 (2026-10-29).
-- DEP-0002 resolvida no servidor de testes; probe de produção/Search Console são gates Beta. Pendente pré-RC: teste Kernel por domínio para `isPurposeFrontNode()`.
+- DEP-0002 resolvida no servidor de desenvolvimento; probe de produção/Search Console são gates Beta. Pendente pré-RC: teste Kernel por domínio para `isPurposeFrontNode()`.
 - Nós de teste 69 e 70 removidos (2026-10-09, autorizado).
-- DEP-0002 está resolvida no servidor de testes desde 2026-10-10; sua sonda de produção e a verificação Search Console ficam para Beta, após RC e Alpha, conforme `RELEASE-LIFECYCLE.md`.
+- DEP-0002 está resolvida no servidor de desenvolvimento desde 2026-10-10; sua sonda de produção e a verificação Search Console ficam para Beta, após RC e Alpha, conforme `RELEASE-LIFECYCLE.md`.

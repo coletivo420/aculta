@@ -66,7 +66,7 @@ Matriz de consumidores: `docs/operations/SECRETS.md` (seção "Painel por ambien
 - Sem fallback entre ambientes; sem cópia ou sincronização de valores.
 - Revelação por clique com token CSRF, sem cache (`no-store`), registrada no log com nome e usuário,
   sem o valor.
-- Nenhum valor nos logs, nas URLs, no Config Sync ou no HTML inicial (verificado no servidor de testes
+- Nenhum valor nos logs, nas URLs, no Config Sync ou no HTML inicial (verificado no servidor de desenvolvimento
   por leitura, sem imprimir valores).
 - Pendências de segurança para RC: permissão única (decidido manter nesta versão), revisão de Form API
   nos popups no browser, teste funcional de CSRF com sessão real.
@@ -94,14 +94,14 @@ Procedimento seguido em 2026-10-26, conforme `docs/operations/TESTE-COMUM.md` e 
 Observação: a conta criada recebeu, além de `administrator`, os papéis `content_editor`, `lms_teacher` e
 `gerente_loja`, que não foram pedidos. Confirmar a origem (hook de atribuição automática) antes de reutilizar a conta.
 
-Verificação por HTTP no servidor de testes (sem navegador): aba de produção sem botões, aba de testes ativa
+Verificação por HTTP no servidor de desenvolvimento (sem navegador): aba de produção sem botões, aba de testes ativa
 com botões, nenhum valor real no HTML, cabeçalhos `no-store`.
 
-Revisão no Firefox ESR (DISPLAY=:0), servidor de testes: `tests/browser/aculta-secrets-manager/painel-visual.py`,
+Revisão no Firefox ESR (DISPLAY=:0), servidor de desenvolvimento: `tests/browser/aculta-secrets-manager/painel-visual.py`,
 16 verificações passaram: duas abas, aba do ambiente ativo selecionada, botões só na aba de testes, troca de aba sem
 alterar o texto do ambiente, teclado (setas e Home), sem rolagem horizontal da página e tabela dentro da janela em
 1280, 390 e 320 px. 16 de 16 verificações visuais e 7 de 7 de popups (alterar e apagar abrem e fecham sem gravar).
 
-Verificação HTTP com sessão real no servidor de testes (`tests/browser/aculta-secrets-manager/painel-http.py`), no tema ACULTA ativo: 9 de 9. Substitui o SecretsPanelFunctionalTest, que dependia de site temporário sem cookie compartilhado nem domínios de produção. Não cobre revelar com valor real (o olho mostra o valor do servidor de testes).
+Verificação HTTP com sessão real no servidor de desenvolvimento (`tests/browser/aculta-secrets-manager/painel-http.py`), no tema ACULTA ativo: 9 de 9. Substitui o SecretsPanelFunctionalTest, que dependia de site temporário sem cookie compartilhado nem domínios de produção. Não cobre revelar com valor real (o olho mostra o valor do servidor de desenvolvimento).
 
-Verificação HTTP com sessão real no servidor de testes (`tests/browser/aculta-secrets-manager/painel-http.py`), no tema ACULTA ativo: 9 de 9. Substitui o SecretsPanelFunctionalTest, que dependia de site temporário sem cookie compartilhado nem domínios de produção. O caminho de sucesso da revelação (escape do valor, `no-store`, log só com o nome) é coberto por `SecretsRevealTest`, com valor fictício. Não se revela valor real no servidor de testes.
+Verificação HTTP com sessão real no servidor de desenvolvimento (`tests/browser/aculta-secrets-manager/painel-http.py`), no tema ACULTA ativo: 9 de 9. Substitui o SecretsPanelFunctionalTest, que dependia de site temporário sem cookie compartilhado nem domínios de produção. O caminho de sucesso da revelação (escape do valor, `no-store`, log só com o nome) é coberto por `SecretsRevealTest`, com valor fictício. Não se revela valor real no servidor de desenvolvimento.

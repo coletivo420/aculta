@@ -85,7 +85,7 @@ Limite: a verificação cobre somente o ambiente local acessível a partir desta
 
 ## 4. Remoção do módulo substituto (R3) — CONCLUÍDA NO AMBIENTE DE TESTE
 
-Verificação feita antes da remoção, no runtime de teste acessível (ambiente local, Drush somente leitura):
+Verificação feita antes da remoção, no runtime de desenvolvimento acessível (ambiente local, Drush somente leitura):
 
 - `aculta_associado_id` não está habilitado (`moduleHandler()->moduleExists` = FALSE) e nunca foi instalado (`system.schema` = `NULL`).
 - Nenhuma configuração ativa referencia o módulo (verificado no export de backup).
@@ -172,7 +172,7 @@ Dependências: R2 e R3 antes de I-D; I-B antes de I-C e I-D; I-D e LMS antes de 
 | R0 | Inventário e matriz (seção 2) | Matriz completa com riscos | **Concluída** |
 | R1 | Decisões e documentação atualizadas | ADR, roadmaps, status e READMEs coerentes | **Concluída nesta rodada** |
 | R2 | Portal usa só `aculta_id_cpf` | Sem preferência nem fallback ao associado; testes do portal | **Concluída nesta rodada** |
-| R3 | Remoção do diretório do associado | Runtime verificado; remoção no ambiente de teste | **Concluída no ambiente de teste**; servidor de testes e produção verificados antes da promoção (seção 4) |
+| R3 | Remoção do diretório do associado | Runtime verificado; remoção no ambiente de teste | **Concluída no ambiente de teste**; servidor de desenvolvimento e produção verificados antes da promoção (seção 4) |
 | R4 | Segurança e preservação de dados | Chaves, campos e HMAC inalterados; testes sintéticos de cifra e fingerprint | Parcial: chaves e HMAC inalterados; a suíte existente (248 verificações) cobre a validação e o fingerprint, mas não há teste novo de leitura de cifra antiga |
 | R5 | Roadmap do `aculta_id_cpf` | Fases 0.2-A a 0.2-E registradas | **Concluída nesta rodada** (seção 8) |
 | R6 | Validação e encerramento | Gates reais | Parcial (seção 9) |
@@ -208,10 +208,10 @@ Não aumentar a coleta de documentos sem necessidade demonstrada.
 | `php scripts/validate-aculta-portal-drupal12.php` | **PASS** (1159 verificações). As falhas da linha de base foram corrigidas na rodada de 9.3 |
 | PHPUnit Kernel do `aculta_portal` (suíte completa, com `SIMPLETEST_DB` do banco dedicado de teste) | **PASS**: 53 testes, 831 asserções; 90 deprecações registradas (as exibidas vêm de contrib), sem falhas |
 | PHPCS Drupal/DrupalPractice nos arquivos novos e no formulário de Outros dados | **0 erros**; restam 16 avisos de linha longa (acima de 80 colunas), sem efeito funcional |
-| PHPUnit Kernel (infraestrutura) | **PASS** em teste de fumaça (`EmailConfirmationPolicyKernelTest`, 3 testes), com `SIMPLETEST_DB` montado a partir da conexão do runtime de teste, só em variável de ambiente |
+| PHPUnit Kernel (infraestrutura) | **PASS** em teste de fumaça (`EmailConfirmationPolicyKernelTest`, 3 testes), com `SIMPLETEST_DB` montado a partir da conexão do runtime de desenvolvimento, só em variável de ambiente |
 | PHPUnit Kernel do pane de identidade fiscal | **PASS** (6 testes), sem habilitar `aculta_portal`: classes instanciadas diretamente com o container do Commerce. Antes, a tentativa de habilitar o Portal esbarrava em dezenas de dependências. Histórico: **DEFERRED**: o container do `aculta_portal` depende de quase todo o ecossistema (`aculta_user`, `lms`, `group`, `aculta_mailer`, `token`, `social_api`…). Cada tentativa revelou um novo serviço ausente. O teste foi removido para não deixar vermelho. Próximo passo: Kernel sem `aculta_portal`, com o pane isolado, ou Functional |
 | Config Sync | **Rodada anterior:** import parcial aplicado no ambiente de teste (`config:import --partial` só com `commerce_checkout.commerce_checkout_flow.default` e `commerce_order.commerce_order_type.curso`); flow `curso` removido com `config:delete`. Import completo **não** foi feito: ver 9.2. **Rodada de 2026-10-23:** nenhum import aplicado, nenhum arquivo de `config/sync` editado; os 46 itens divergentes foram reclassificados e a decisão por grupo está em 9.5. Nenhum item existe só no sync; os 31 só-no-banco incluem `core.extension`, que não deve ser importado. |
-| Gates de Loja, LMS e Doações no servidor de testes | **DEFERRED** |
+| Gates de Loja, LMS e Doações no servidor de desenvolvimento | **DEFERRED** |
 
 ## 9.1 Efeitos de runtime ao ativar a configuração
 
@@ -224,7 +224,7 @@ Aplicar `drush config:import` no runtime alvo, somente com autorização:
 
 ## 9.2 Por que o import completo não foi feito
 
-`drush config:status` no runtime de teste: 64 itens diferentes, 47 só no sync, 35 só no banco. Um `config:import` completo teria:
+`drush config:status` no runtime de desenvolvimento: 64 itens diferentes, 47 só no sync, 35 só no banco. Um `config:import` completo teria:
 
 - **Apagado 35 itens só no banco**, entre eles `field.storage.profile.address`, `field.storage.message.*` e `message.template.*`. Apagar storage de campo destrói dados. Não executado.
 - **Desinstalado módulos** ao importar `core.extension`: o banco tem `ckeditor5_plugin_pack*`, `entity_print`, `google_tag`, `aculta_document_viewer`, `aculta_editor` e `aculta_lms_messenger` que o sync não tem. Não executado.
@@ -256,7 +256,7 @@ Backup do estado ativo antes de qualquer alteração: export em `scratchpad/acti
 - **Gate Drupal 11+:** PASS (1151 verificações). Três falhas foram corrigidas: caminho do `WikiController` (movido para `aculta_wiki`), registros de status dos helpers de checkout e do subscriber da ADR-013, e a contagem de subscribers, agora quatorze. Commit `e02608c0`.
 - **Cenários de sessão:**
   - *Verificado em Kernel (Commerce, sem o Portal):* carrinhos de loja, curso e doação coexistem para a mesma conta; o mesmo tipo não é duplicado; carrinhos de lojas diferentes são separados. Arquivo `CartIsolationKernelTest`, 3 testes passando.
-  - *Verificado em navegador no servidor de testes (2026-10-23):* carrinho anônimo preservado depois do login (pedido 117), login no pane durante o checkout (pedido 119) e troca de Domain (loja → MAIN). Evidências em 9.6.
+  - *Verificado em navegador no servidor de desenvolvimento (2026-10-23):* carrinho anônimo preservado depois do login (pedido 117), login no pane durante o checkout (pedido 119) e troca de Domain (loja → MAIN). Evidências em 9.6.
   - *Não exercitado:* múltiplas abas simultâneas e expiração por TTL da sessão. O descarte da sessão por logout foi verificado; o vencimento por tempo exigiria aguardar o `cookie_lifetime` configurado.
 - **Duplicação Loja × LMS:** removida na configuração (flow `curso` retirado, tipo `curso` aponta para o flow `default`). A rota de import foi aplicada no ambiente de teste.
 
@@ -303,7 +303,7 @@ Medição refeita comparando o conteúdo bruto de cada objeto ativo (tabela `con
 
 ## 9.6 Verificação de navegador da frente CPF + checkout (2026-10-23)
 
-Ambiente: servidor de testes `*.aculta.toca.net.br`; Firefox ESR visível em `DISPLAY=:0` via geckodriver, perfil temporário em `/tmp`; conta `teste.comum` (uid 5), conforme `docs/operations/TESTE-COMUM.md`. Nenhuma configuração do ambiente foi alterada. A verificação do tema Olivero foi feita à parte, no ambiente local (Apache em 127.0.0.1 com os hostnames de teste resolvidos no perfil do Firefox), porque trocar o tema no servidor de testes é global para todos os agentes.
+Ambiente: servidor de desenvolvimento `*.aculta.toca.net.br`; Firefox ESR visível em `DISPLAY=:0` via geckodriver, perfil temporário em `/tmp`; conta `teste.comum` (uid 5), conforme `docs/operations/TESTE-COMUM.md`. Nenhuma configuração do ambiente foi alterada. A verificação do tema Olivero foi feita à parte, no ambiente local (Apache em 127.0.0.1 com os hostnames de teste resolvidos no perfil do Firefox), porque trocar o tema no servidor de desenvolvimento é global para todos os agentes.
 
 ### Correções feitas antes dos testes
 
@@ -332,11 +332,11 @@ Ambiente: servidor de testes `*.aculta.toca.net.br`; Firefox ESR visível em `DI
 - **`profile.type.customer` ausente:** o pedido 113 falhou com 500 (`PluginNotFoundException: The "entity:profile:customer" plugin does not exist.`, log de 23-Oct-2026 10:13:26) ao tentar criar o perfil de cobrança. Os tipos existentes são `administrator, associado, authenticated, email_confirmed, estudante, gerente_loja, lms_teacher`. O tipo foi removido do repositório por outras frentes (`e85c3dbe`, `b66646ef`), como registra 9.5. É configuração de outra frente; não foi alterada.
 - **403 em deep link depois do logout:** `/finalizar-compra/{id}/{step}` devolve 403 sem CTA de login, enquanto a entrada `/carrinho/finalizar` mostra o pane. Avaliar se convém redirecionar o deep link para a entrada.
 - **LMS no navegador:** `cursos.aculta.toca.net.br/group/1` foi aberto na aba C do `multi-tab-checkout.py`. É uma página informativa do grupo, sem preço, botão de matrícula nem entrada de checkout — coerente com a ADR-013 (sem multi-cart público e sem compra própria do LMS). O pane fiscal no LMS, portanto, não tem fluxo de compra para percorrer nesta rodada; a cobertura desse caso vem do `FiscalIdentityPaneKernelTest` (12 testes, 343 asserções), que inclui o order type `curso`.
-- **Olivero:** testado no **ambiente local**, não no servidor de testes. Ver a subseção seguinte.
+- **Olivero:** testado no **ambiente local**, não no servidor de desenvolvimento. Ver a subseção seguinte.
 
 ### Tema Olivero no ambiente local
 
-O tema foi exercitado em 2026-10-23 contra o Apache local (127.0.0.1), com os hostnames de teste resolvidos para 127.0.0.1 no perfil do Firefox (`network.dns.localDomains`). O servidor de testes não foi tocado.
+O tema foi exercitado em 2026-10-23 contra o Apache local (127.0.0.1), com os hostnames de teste resolvidos para 127.0.0.1 no perfil do Firefox (`network.dns.localDomains`). O servidor de desenvolvimento não foi tocado.
 
 Ativação e restauração no mesmo comando, com `trap` para não deixar `system.theme` trocado para outros agentes: `drush theme:enable olivero -y`, `drush config:set system.theme default olivero -y`, `cache:rebuild`, execução do `olivero-smoke.py` e restauração de `aculta420` na saída. Estado final conferido: `system.theme:default = aculta420`, admin `claro`.
 
@@ -362,10 +362,10 @@ O que o teste prova é que o tema carrega e renderiza as páginas sem erro. Há 
 3. **Retorno do link `destination`: COBERTO.** `AccountOtherDataForm::returnUrl` (`d46f39e8d`) aceita apenas caminho interno sob `/checkout/`; URL externa, relativa de protocolo, caminho fora do checkout, vazio e ausente voltam para `/dados/outros-dados`. `AccountOtherDataFormKernelTest` cobre os seis casos, PASS.
 4. **Procedimento administrativo de correção** (permissão, justificativa, auditoria sem CPF/CNPJ em claro): escopo a definir.
 5. **Avisos de linha longa: RESOLVIDO.** A medição encontrou **15 avisos** (não 16) em seis arquivos de identidade fiscal e no formulário, nenhum erro. Os docblocks foram encurtados (commit `76c194002`); `phpcs --standard=Drupal,DrupalPractice` nos sete arquivos agora termina com código 0, sem erros nem avisos.
-6. **Runtime de teste e produção:** `aculta_associado_id` **não está habilitado** no runtime local (`pm:list` = 0) e **não aparece** em `config/sync/core.extension.yml`. O mesmo teste continua pendente nos servidores de teste (`*.aculta.toca.net.br`) e produção (`*.aculta.org`), que exigem acesso.
+6. **Runtime de desenvolvimento e produção:** `aculta_associado_id` **não está habilitado** no runtime local (`pm:list` = 0) e **não aparece** em `config/sync/core.extension.yml`. O mesmo teste continua pendente nos servidores de teste (`*.aculta.toca.net.br`) e produção (`*.aculta.org`), que exigem acesso.
 7. **Gate Drupal 11:** resolvido. O `WikiController` foi movido para `aculta_wiki` e o gate passa (1151 verificações).
 8. **Divergência:** ADR-013 diz que `aculta_commerce` não está habilitado, mas o runtime local e o `core.extension` do sync o listam como habilitado. Registrado em adendo datado da própria ADR (2026-10-23, commit `84cc65051`), com a frase original preservada. A correção do texto antigo, se desejada, é decisão do responsável.
-9. **Cenários de sessão da seção 5:** verificados no servidor de testes em 2026-10-23, com a conta `teste.comum` (uid 5). Detalhes em 9.6.
+9. **Cenários de sessão da seção 5:** verificados no servidor de desenvolvimento em 2026-10-23, com a conta `teste.comum` (uid 5). Detalhes em 9.6.
     - **PASS — login durante o checkout:** pedido 119; o login no próprio pane avança o mesmo pedido para `informacoes-do-pedido` com `?check_logged_in=1`.
     - **PASS — anônimo antes do login:** pedido 117 criado anonimamente e preservado depois do login.
     - **PASS — troca de Domain:** `loja.aculta.toca.net.br/carrinho` redireciona (302) para `aculta.toca.net.br/carrinho`.
@@ -374,7 +374,7 @@ O que o teste prova é que o tema carrega e renderiza as páginas sem erro. Há 
     - **PASS — múltiplas abas:** exercitadas em 2026-10-23 com o `multi-tab-checkout.py`. Aba A com o carrinho do pedido 120, aba B abrindo `/carrinho/finalizar` do mesmo pedido, volta à aba A: a sessão é a mesma, o item e o total continuam lá, e o checkout da aba B para na etapa 1 pelo gateway desabilitado. Detalhes em 9.6.
     - **Parcial — expiração por TTL:** o cookie `SSESS…` foi inspecionado sem valor, com expiração em 2026-11-15T20:39:15Z (cerca de 23 dias), coerente com a ausência de `cookie_lifetime` em `config/sync` e nos `settings.php` do repositório. O vencimento em si não foi exercitado: exigiria encurtar a configuração do ambiente compartilhado ou aguardar o prazo.
 10. **Drift dos 46 itens de configuração (45 sem `core.extension`):** reclassificado e decidido em 9.5. A contagem anterior de 29 estava incompleta — faltavam 6 diferenças de ordem de mapa, 9 campos/mídia/workflow que diferem só pelo `uuid` e `filter.format.full_html`. Não há item só no sync; o conjunto só-no-banco é de 31. Execução em 9.5: já corrigidos no sync 6 itens (2 form displays de LMS, 1 campo da Loja, 2 papéis e o `langcode` de `full_html`); nada importado e nenhum objeto do banco alterado. Medição final: 40 divergentes (39 sem `core.extension`), 31 só no banco, 0 só no sync. **A reexportação dos 11 foi medida em 2026-10-23 e não é cópia fiel:** nos 9 sem `settings` ela só acrescenta o `uuid`, mas nos 2 campos com `settings` ela grava `settings: []` e perde `max_length/is_ascii/case_sensitive` e `on_label/off_label`, que só existem no sync. Pendente, por grupo: os 5 itens de ordem dos donos de `aculta_index`, `aculta_wiki` e fórum; reexportar do ativo, com revisão, os 23 displays e os 9 campos sem `settings`; decidir com os donos qual lado é correto nos 2 campos com `settings` antes de mexer neles; e manter `core.extension` fora de qualquer import.
-11. **Verificação de navegador no servidor de testes (2026-10-23):** Firefox ESR visível em `DISPLAY=:0`, via geckodriver, com `scripts/check-browser-hosts.sh`; sem processos do navegador restantes ao final.
+11. **Verificação de navegador no servidor de desenvolvimento (2026-10-23):** Firefox ESR visível em `DISPLAY=:0`, via geckodriver, com `scripts/check-browser-hosts.sh`; sem processos do navegador restantes ao final.
     - **PASS — carregamento dos hosts:** `aculta.toca.net.br`, `links.aculta.toca.net.br`, `conta.aculta.toca.net.br/entrar` e `apoio.aculta.toca.net.br` carregaram (código 0, títulos esperados), com `example.com` como controle. A home da loja (`loja.aculta.toca.net.br/`) responde 200.
     - **PASS — rotas da frente, anônimo:** `conta.../dados` e `.../painel-administrativo/aculta/checkout` respondem 403; `loja.../checkout/{id}` responde 301 para `/finalizar-compra/{id}`, como em `CheckoutSlugMap` e `DomainPurposeRequestSubscriber`.
     - **Observação 1:** `loja.aculta.toca.net.br/loja-da-aculta`, listado em `docs/operations/NAVEGADOR-TESTES.md`, responde 404; a home da loja publica produtos em `/loja/produto/...`.
@@ -382,7 +382,7 @@ O que o teste prova é que o tema carrega e renderiza as páginas sem erro. Há 
     - **PASS — cenários de sessão:** login durante o checkout, carrinho anônimo, troca de Domain, logout, múltiplas abas e o TTL medido, com a conta de teste (itens 9 e 9.6).
     - **PASS — pane de identidade fiscal na Loja:** pedido 113 em `revisao` recusa vazio e inválido, permanecendo no passo, e conclui com documento válido; o pedido 114 mostra o documento mascarado e sem campo de edição. Evidências em 9.6.
     - **LMS:** `cursos.aculta.toca.net.br/group/1` é página informativa do grupo, sem preço, matrícula ou entrada de checkout; não há fluxo de compra no LMS para percorrer o pane fiscal. Coerente com a ADR-013 e coberto no nível Kernel.
-    - **PASS — tema Olivero (ambiente local):** Portal, Fórum e Revista renderizam com Olivero, 6 assets do tema e nenhum de `aculta420`, sem mensagens de erro; a view do Fórum renderiza completa. Feito no ambiente local, não no servidor de testes, com restauração de `aculta420` ao final. Limitação de conteúdo registrada em 9.6.
+    - **PASS — tema Olivero (ambiente local):** Portal, Fórum e Revista renderizam com Olivero, 6 assets do tema e nenhum de `aculta420`, sem mensagens de erro; a view do Fórum renderiza completa. Feito no ambiente local, não no servidor de desenvolvimento, com restauração de `aculta420` ao final. Limitação de conteúdo registrada em 9.6.
 
 ## 11. Login local por CPF — D-51 (2026-10-29)
 

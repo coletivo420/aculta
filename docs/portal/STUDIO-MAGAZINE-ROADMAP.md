@@ -130,7 +130,7 @@ iniciada, mas ficou aguardando o Drush `uli` sem produzir URL de login ou
 artefatos; foi encerrada após cerca de dois minutos. Runtime e visual seguem
 pendentes.
 
-Este documento substitui a antiga sequência linear que condicionava a criação do Studio ao fechamento do Magazine. A migração `article`/`blog` → `revista`, já executada no Runtime de teste, permanece documentada em `web/modules/custom/aculta_portal/modules/aculta_magazine/docs/MIGRATION-ARTICLE-BLOG-TO-REVISTA.md` e no CHANGELOG. Não repetir migração, apagar dados ou importar Config Sync global.
+Este documento substitui a antiga sequência linear que condicionava a criação do Studio ao fechamento do Magazine. A migração `article`/`blog` → `revista`, já executada no Runtime de desenvolvimento, permanece documentada em `web/modules/custom/aculta_portal/modules/aculta_magazine/docs/MIGRATION-ARTICLE-BLOG-TO-REVISTA.md` e no CHANGELOG. Não repetir migração, apagar dados ou importar Config Sync global.
 
 ## Produto e fronteiras
 
@@ -148,7 +148,7 @@ Este documento substitui a antiga sequência linear que condicionava a criação
 
 ## Estado constatado na branch
 
-**Implementado/código:** bundle `revista` único; hooks de formulário, autoria e discussão; serviço de apresentação `PostPresentation`; Views administrativas e por sessão; metatags e Pathauto; galeria via CKEditor/Entity Embed; coautoria via `node_co_authors`. Migração dos 16 Nodes/revisões e 26 aliases no Runtime de teste registrada; não equivale a deploy de produção.
+**Implementado/código:** bundle `revista` único; hooks de formulário, autoria e discussão; serviço de apresentação `PostPresentation`; Views administrativas e por sessão; metatags e Pathauto; galeria via CKEditor/Entity Embed; coautoria via `node_co_authors`. Migração dos 16 Nodes/revisões e 26 aliases no Runtime de desenvolvimento registrada; não equivale a deploy de produção.
 
 **Parcial / exigir prova:** Content Moderation e transições por papel, permissões de coautores e revisões não-default, envio e moderação de Comment contextual, preview real de rascunho, URLs entre account/magazine, Config Sync com drift concorrente, comportamento mobile do formulário autenticado, cache de perfil público e SEO/canonical em páginas acessíveis.
 
@@ -275,7 +275,7 @@ um Media deixar de aparecer no Content Index. Ver
 
 ## Registro de execução — Magazine 0.5-B — 2026-10-22
 
-Limpeza de dados no Runtime de teste autorizada em 2026-10-22: 12 Nodes
+Limpeza de dados no Runtime de desenvolvimento autorizada em 2026-10-22: 12 Nodes
 `revista`, 17 Media `image` e 17 arquivos sem uso externo foram removidos; um
 Media `remote_video` ficou preservado. Evidências e backups:
 [`MAGAZINE-TEST-CLEANUP-2026-10-22.md`](MAGAZINE-TEST-CLEANUP-2026-10-22.md).

@@ -327,7 +327,7 @@ Código: PR `6e3d93d8b` + `feat/aculta-user-10013-contagem` (`fc2abf903`) + `fea
 - **Cutover:** métodos migrados 1 (`Envio`, `aculta_flat_rate`); não mapeado mantido: `aculta_melhorenvio` (ver abaixo). Remessas legadas apagadas 1; pedido ajustado 1, **salvo sem erro de transação**; campo → `aculta_shipment`.
 - **Pós-checagens:** pedidos por tipo idênticos (2 e 6); `commerce_order__shipments` 0; `commerce_shipment` 0; token sandbox do Melhor Envio em `encrypted_v1`; índice único de CPF presente; índice de apelidos com 15 linhas.
 - **Desinstalação do `commerce_shipping`: BLOQUEADA** por `blockersForUninstall()`: `método sem mapeamento: 2`. O método 2 é "Melhor Envio", plugin `aculta_melhorenvio`, ativo. O mapa de migração não cobre esse plugin. **Achado a corrigir em revisão:** mapear `aculta_melhorenvio` para `aculta_melhorenvio` na migração. Não corrigido nesta execução.
-- **Checkout no Firefox até o passo de envio:** **DEFERRED**. Servir a cópia exige apontar o docroot do servidor de teste, o que toca o checkout servido.
+- **Checkout no Firefox até o passo de envio:** **DEFERRED**. Servir a cópia exige apontar o docroot do servidor de desenvolvimento, o que toca o checkout servido.
 - **Tempos:** `updatedb` total 55 s. O log não traz horário individual por etapa.
 - **Rollback:** dump `31d5350b…` em `/home/piradopirata/worktrees/ensaio-cutover-private/`, reimportável em 16 s em `aculta_runtime_copia`.
 

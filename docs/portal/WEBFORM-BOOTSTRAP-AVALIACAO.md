@@ -21,7 +21,7 @@ Vinculado à PR #297 (linha do ACULTA Forum), por commit no branch da própria P
 | Tema padrão do Runtime | `aculta420`, com `base theme: bootstrap` (`aculta420.info.yml`) |
 | Bootstrap contrib instalado | `web/themes/contrib/bootstrap`, versão `5.0.2` |
 | Submódulo no Runtime | Desabilitado (`moduleExists('webform_bootstrap') = false`; `core.extension.yml` não lista o módulo) |
-| Classe `Drupal\bootstrap\Bootstrap` | Inexistente no Bootstrap 5 (`class_exists = false`, leitura no Runtime de teste) |
+| Classe `Drupal\bootstrap\Bootstrap` | Inexistente no Bootstrap 5 (`class_exists = false`, leitura no Runtime de desenvolvimento) |
 | Forms do Portal | `aculta_contact` e `aculta_participation` (`config/sync/webform.webform.*.yml`), sem `image_button`, sem `likert` como elemento e sem `title_display: inline` |
 
 Ambiente: `hostname=toca`; Drush alcança o Runtime `aculta_runtime` (`Site URI: http://default`, esperado neste ambiente). O Drupal root é `web/` do checkout `/home/piradopirata/projetos/aculta`; não há `public_html` nesse caminho.
@@ -65,7 +65,7 @@ A implementação atual está em `web/themes/custom/aculta420/css/components/web
 ## Fontes
 
 - Código local: `web/modules/contrib/webform/modules/webform_bootstrap/` (módulo, hooks, `install`, `info.yml`, `README.md`, CSS e JS); `web/modules/contrib/webform/src/WebformThemeManager.php` (`getActiveThemeNames`, `isActiveTheme`); `web/themes/contrib/bootstrap/templates/form/form-element.html.twig` e `fieldset.html.twig`.
-- Runtime de teste (leitura): `drush status` e `php:eval` com `class_exists`, `moduleExists`, tema padrão e base do `aculta420`.
+- Runtime de desenvolvimento (leitura): `drush status` e `php:eval` com `class_exists`, `moduleExists`, tema padrão e base do `aculta420`.
 - Web: FAQ do Webform 6.x sobre módulos depreciados ([documentação oficial](https://www.drupal.org/docs/8/modules/webform/webform-frequently-asked-questions/what-to-do-about-deprecated-external-libraries-in-webform-6x)); projeto separado [Webform Bootstrap](https://www.drupal.org/project/webform_bootstrap) (continuidade para Bootstrap 3); [Webform Bootstrap5](https://www.drupal.org/project/webform_bootstrap5) (sem release estável suportada na consulta de 2026-10-21).
 
 ## 7. Implementação portada e comparação com `webform_bootstrap5`
@@ -112,8 +112,8 @@ Os formulários atuais (`aculta_contact`: textfield, email, textarea; `aculta_pa
 
 - Tema `0.6.0-dev.92`: `css/components/webform.css` (library `global`), CHANGELOG, roadmap do tema e versão no `info.yml`.
 - Gate de Foundation: versão atualizada e o template `aculta-user-author-card.html.twig` incluído na allowlist de overrides Twig. A reprovação existia desde a 0.6.0-dev.91 e bloqueava a entrega. Gate com 368 checks PASS. Os demais gates (design foundations, SDC schemas, shell contract, fronteira módulo/tema, mapa módulo/tema) passam.
-- Runtime de teste: cache rebuild; `webform.css` confirmado na library `aculta420/global`. Validação visual nos formulários não executada (estado NÃO VALIDADO).
+- Runtime de desenvolvimento: cache rebuild; `webform.css` confirmado na library `aculta420/global`. Validação visual nos formulários não executada (estado NÃO VALIDADO).
 
 ### 7.4 Remoção do `webform_bootstrap` 3.x
 
-Verificado no Runtime de teste em 2026-10-21: o submódulo está `Disabled`; `moduleExists = false`; não há entrada em `core.extension` nem schema em `system.schema`. Portanto, não há instalação no banco para desinstalar. O diretório continua dentro do pacote contrib `drupal/webform` 6.3.1 e não pode ser apagado isoladamente sem alterar o pacote contrib, proibido pelos guardrails. A remoção física virá quando uma versão do Webform retirar o submódulo; até lá, ele permanece inerte e não é incluído como dependência Composer própria.
+Verificado no Runtime de desenvolvimento em 2026-10-21: o submódulo está `Disabled`; `moduleExists = false`; não há entrada em `core.extension` nem schema em `system.schema`. Portanto, não há instalação no banco para desinstalar. O diretório continua dentro do pacote contrib `drupal/webform` 6.3.1 e não pode ser apagado isoladamente sem alterar o pacote contrib, proibido pelos guardrails. A remoção física virá quando uma versão do Webform retirar o submódulo; até lá, ele permanece inerte e não é incluído como dependência Composer própria.

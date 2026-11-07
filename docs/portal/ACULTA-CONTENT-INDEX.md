@@ -28,7 +28,7 @@ status. A revalidação confirma o harness, não a ativação completa dos owner
 Grants operacionais e carga representativa continuam pendentes; nenhum rebuild
 ou escrita no Runtime foi executado. O módulo permanece Dev.
 
-Consulta read-only repetida em 2026-10-29 no Runtime de teste: código ativo
+Consulta read-only repetida em 2026-10-29 no Runtime de desenvolvimento: código ativo
 dev.177, `aculta_index_file` Disabled, fila vazia e pronta; uma auditoria já
 existente (id 1) permanece `running`, com 1 projeção stale e `valid=false`.
 Não avancei essa auditoria nem iniciei rebuild. Resolver a auditoria pendente
@@ -70,7 +70,7 @@ com operador autorizado é pré-requisito para nova homologação do catálogo.
 
 **Validação dev.165 (2026-10-23):** o Portal agora instala e mantém como owner o bundle `media:remote_video` (`oembed:video`) e registra seu provider mínimo no Index. Service-map: 1/3; boot/DI owner com o tipo Media e o campo de origem: 1/46 (239 depreciações Core/contrib); Kernel Media: 5/101, incluindo CRUD pela fila e confirmação de que a URL não entra na projeção. A configuração da Media Library fica opcional quando o módulo Core correspondente está habilitado. Entity Access de vídeo é revalidado no contexto da consulta; o provider não força um purpose de consumidor. A configuração editorial da Revista já permite `remote_video`; `filter.format.forum` permite apenas `forum_attachment` e `filter.format.wiki` apenas `document`. Não foi identificado ainda um campo/relação de curso LMS para Media. **Decisão do responsável:** adiar todas as relações de vídeo até fechar os formatos editoriais e os contratos de acesso dos consumidores; nenhum adapter de relação será implementado antes dessa definição. Não indexar corpo nem URL oEmbed.
 
-**Runtime de teste (2026-10-23):** no host `toca`, URI `aculta.toca.net.br`, Drupal 11.4.10/Drush 13.8.0 e banco `aculta_runtime`, confirmei o Index desinstalado e zero tabelas antes da operação. A ativação temporária criou apenas o schema inicial: zero entradas, relações, jobs ou gerações; `audit status` e `queue status` responderam e o help de `aculta-index:rebuild` foi resolvido. Desinstalei em seguida; o módulo voltou a Disabled e a consulta final encontrou zero tabelas `aculta_index`. Não executei rebuild sobre conteúdo original. Isso valida instalação/descoberta dos comandos e rollback do schema vazio; a operação sobre catálogo com conteúdo segue pendente.
+**Runtime de desenvolvimento (2026-10-23):** no host `toca`, URI `aculta.toca.net.br`, Drupal 11.4.10/Drush 13.8.0 e banco `aculta_runtime`, confirmei o Index desinstalado e zero tabelas antes da operação. A ativação temporária criou apenas o schema inicial: zero entradas, relações, jobs ou gerações; `audit status` e `queue status` responderam e o help de `aculta-index:rebuild` foi resolvido. Desinstalei em seguida; o módulo voltou a Disabled e a consulta final encontrou zero tabelas `aculta_index`. Não executei rebuild sobre conteúdo original. Isso valida instalação/descoberta dos comandos e rollback do schema vazio; a operação sobre catálogo com conteúdo segue pendente.
 
 **Validação de 2026-10-26 (proposta dev.176):** o `ContentIndexAccessFilter` passou a limpar
 o cache interno de Entity Access dos tipos candidatos no início de cada página.

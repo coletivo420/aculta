@@ -81,7 +81,7 @@ Documentos normativos relacionados: [DRUPAL-12-STANDARDS.md](DRUPAL-12-STANDARDS
   categorias usam Taxonomy e navegação/listagem usa Views. Posts públicos revisionáveis
   coexistem com Comments durante a migração aprovada; Comments contextuais de Publicações,
   LMS e Wiki permanecem sob seus contratos. Não criar storage paralelo de tópico/categoria.
-- `drupal/forum` foi retirado do Composer e do Runtime de teste na limpeza aprovada. Conteúdo e
+- `drupal/forum` foi retirado do Composer e do Runtime de desenvolvimento na limpeza aprovada. Conteúdo e
   configuração legados foram inventariados/limpos conforme
   `aculta_forum/docs/MIGRATION-REMOVAL.md`; não reintroduzir o contrib nem presumir presença
   de dados antigos. Operações em Runtime continuam sujeitas ao preflight e à política de

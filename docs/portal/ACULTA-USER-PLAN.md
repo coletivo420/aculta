@@ -246,7 +246,7 @@ ACULTA420: PortalUiHooks (TOKENS) e/ou SDC `author-card` (Bootstrap card), escol
 - Cache: tags presentes no render array; invalidação ao mudar a visibilidade.
 - Gates: `validate-aculta-portal-drupal12.php`, `validate-module-theme-boundary.php`, `validate-public-slugs.php` e
   `validate-environment-addresses.php`.
-- Navegador no servidor de testes (`TESTES-NAVEGADOR.md`): caixa visível em artigo da Revista, link só com perfil público.
+- Navegador no servidor de desenvolvimento (`TESTES-NAVEGADOR.md`): caixa visível em artigo da Revista, link só com perfil público.
 
 **Entrega:** fase U2 em commits na branch autorizada. Código, testes, gates e
 revisão visual aplicável ficam prontos antes de RC; o Runtime é validado em

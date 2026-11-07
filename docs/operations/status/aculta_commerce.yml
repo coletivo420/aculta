@@ -25,4 +25,4 @@ progress_note: >-
   `aculta_simpletest` em 2026-10-31: 80 testes / 591 assertions PASS, 7 skipped,
   222 depreciações upstream. Nenhum pedido, cotação ou pagamento real foi
   criado. Ingressos não estão implementados; ver ADR-036 e decisão do item.
-next_phase: 'Homologar checkout e seleção de frete em Firefox ESR no servidor de testes, validar cotação sandbox sem contratar envio e planejar cutover autorizado preservando pedidos LMS/Doações ([roadmap](web/modules/custom/aculta_portal/modules/aculta_commerce/docs/ROADMAP.md))'
+next_phase: 'Homologar checkout e seleção de frete em Firefox ESR no servidor de desenvolvimento, validar cotação sandbox sem contratar envio e planejar cutover autorizado preservando pedidos LMS/Doações ([roadmap](web/modules/custom/aculta_portal/modules/aculta_commerce/docs/ROADMAP.md))'

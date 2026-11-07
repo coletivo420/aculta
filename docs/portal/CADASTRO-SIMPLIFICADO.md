@@ -41,10 +41,10 @@ Alterado: `EmailConfirmationRequester::request()` aceita a URL de resposta opcio
 ## 3. Estado da implementação
 
 - Feito: confirmação pelo fluxo existente, login depois da confirmação, etapa de senha, marcas de controle.
-- **Checkout ligado no servidor de testes (autorizado em 2026-10-27):** `guest_new_account` ligado em `default`,
+- **Checkout ligado no servidor de desenvolvimento (autorizado em 2026-10-27):** `guest_new_account` ligado em `default`,
   `doacao` e `assinatura_flow`, com o aviso nativo do Commerce desligado (`guest_new_account_notify`), para não haver dois
   e-mails. Compra como convidado permitida no login da loja, da doação e da assinatura. Mudança feita no banco do
-  servidor de testes (configuração de fluxo), não exportada no repositório.
+  servidor de desenvolvimento (configuração de fluxo), não exportada no repositório.
 - Verificado: o requester existente aceita o pedido de confirmação e entrega ao `aculta_mailer`. A entrega real não foi
   verificada: o SMTP recusa domínios inexistentes (554), o que é esperado para endereço de teste fictício. Falta um
   endereço que receba e-mail para confirmar a entrega e o link.
@@ -87,7 +87,7 @@ O modelo de confirmação de conta criado antes foi removido, para não duplicar
 
 ## 6. Estado e achados
 
-- Confirmado no servidor de testes: pedido de confirmação enviado pelo `aculta_mailer`, mensagem recebida na caixa,
+- Confirmado no servidor de desenvolvimento: pedido de confirmação enviado pelo `aculta_mailer`, mensagem recebida na caixa,
   link lido, confirmação feita, conta com papel `email_confirmed`, sessão logada.
 - Achado 1: depois de confirmar, a página mostra "Confirmação de e-mail confirmada" mas **não redireciona** para
   `/criar-senha`, embora o destino da resposta esteja definido. Investigação em andamento.
@@ -100,7 +100,7 @@ O modelo de confirmação de conta criado antes foi removido, para não duplicar
 
 ## 7. Resultado do teste automático ponta a ponta (2026-10-27)
 
-Roteiro executado no servidor de testes, com o e-mail `dmarc@aculta.org` (caixa de monitoramento, leitura somente):
+Roteiro executado no servidor de desenvolvimento, com o e-mail `dmarc@aculta.org` (caixa de monitoramento, leitura somente):
 
 1. Conclusão de checkout como convidado (pedido de teste): conta criada pelo Commerce, pedido de confirmação enviado.
 2. Mensagem recebida pela caixa; link lido; host local trocado pelo de conta.
@@ -139,10 +139,10 @@ Decisões do responsável, por pergunta interativa:
   sem envio. `doacao` ganhou o painel de nome. A loja (`default`) não ganhou painel de nome: o nome já vem no endereço
   de cobrança.
 
-Configuração de fluxo e de tipo de pedido fica só no servidor de testes (não exportada): `commerce_checkout.commerce_checkout_flow.curso`
+Configuração de fluxo e de tipo de pedido fica só no servidor de desenvolvimento (não exportada): `commerce_checkout.commerce_checkout_flow.curso`
 (criado), `commerce_checkout.commerce_checkout_flow.doacao` (painel de nome) e o tipo de pedido `curso` (flow `curso`).
 
-### Verificado no navegador (servidor de testes, caixa dmarc@aculta.org)
+### Verificado no navegador (servidor de desenvolvimento, caixa dmarc@aculta.org)
 
 1. **Confirmação e criação de senha** com modal sem X: e-mail chegou, link confirmado, `/criar-senha` abriu como modal,
    Esc não fechou, senha criada ("Senha criada. Bem-vindo!").
@@ -155,7 +155,7 @@ Configuração de fluxo e de tipo de pedido fica só no servidor de testes (não
 ### Bloqueio encontrado no LMS (2026-10-28)
 
 - Na compra de curso (pedido do tipo `curso`, fluxo `curso`), o painel de pagamento mostra "Não existem gateways de pagamento
-  disponíveis para este pedido". O gateway Mercado Pago do servidor de testes tem a condição de tipo de pedido limitada a
+  disponíveis para este pedido". O gateway Mercado Pago do servidor de desenvolvimento tem a condição de tipo de pedido limitada a
   `default` (loja). Liberar o tipo `curso` nessa condição é mudança de pagamento: precisa de autorização e de alinhamento com
   o agente do Mercado Pago. Não foi alterado.
 - Teste de LMS feito com curso e turma de teste (grupos 75 e 76) e pedido 197. Removidos ao final, com o produto 10 mantido.
@@ -166,11 +166,11 @@ Configuração de fluxo e de tipo de pedido fica só no servidor de testes (não
   tentativa caiu na revisão de um pedido já existente da sessão e o painel de nome não apareceu; falta repetir com pedido novo.
 - Testes automáticos (unit/kernel) do `PersonalNameStore`, do `PersonalNameCompletionSubscriber` e do painel administrativo.
 
-### Atualização (2026-10-28): gateway do LMS e bloqueio do servidor de testes
+### Atualização (2026-10-28): gateway do LMS e bloqueio do servidor de desenvolvimento
 
 - Autorizado pelo responsável: o tipo de pedido `curso` foi incluído nas condições do gateway Mercado Pago do servidor de
   testes (`commerce_payment.commerce_payment_gateway.mercado_pago`, condição `order_type`). Alteração só de configuração do
-  servidor de testes, feita por API de configuração. Não está no repositório: produção precisa de decisão própria.
+  servidor de desenvolvimento, feita por API de configuração. Não está no repositório: produção precisa de decisão própria.
 - Correção local dev.64: `EntitySaveHooks` agora tolera instanciação direta pelo resolvedor do Drupal e a regressão Unit
   confirma que salvar entidades de usuário (fora do gateway) não depende de credenciais Mercado Pago. Ainda não foi repetido
   o fluxo Runtime; o erro `releaseLock(): null` permanece sem diagnóstico confirmado. O smoke X11 de 2026-10-27 chegou à etapa de endereço sem reproduzi-lo, mas não enviou o endereço nem avançou à revisão/pagamento; a transição que pode liberá-lo continua sem evidência.
@@ -190,7 +190,7 @@ Configuração de fluxo e de tipo de pedido fica só no servidor de testes (não
 - **Doação, painel de nome: não verificado.** Em um pedido de doação de visitante, a revisão aparece direto, sem a etapa de
   contato e sem o painel de nome. Isso não foi causado pelo painel: a etapa `billing` do fluxo de doação é pulada. Falta
   investigar esse comportamento do fluxo de doação (módulo `aculta_donation`) antes de dizer que o nome é pedido.
-- O gateway do Mercado Pago voltou a aceitar pedidos do tipo `curso` no servidor de testes (autorizado; só config).
+- O gateway do Mercado Pago voltou a aceitar pedidos do tipo `curso` no servidor de desenvolvimento (autorizado; só config).
 - Limpeza: pedidos 199 a 205, grupos 75 a 78 e a conta dmarc (uid 216) removidos. O produto 10 foi mantido.
 - Bloqueio do servidor: uma edição em andamento do agente do Mercado Pago quebrou o login por alguns minutos
   (`PaymentGatewayFormHooks` não encontrada). `drush cr` resolveu quando o código estabilizou.

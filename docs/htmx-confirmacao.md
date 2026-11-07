@@ -58,7 +58,7 @@ usados como motor complementar, segundo `tests/browser/README.md` e
 
 A fixture é um módulo de teste descoberto somente durante testes Drupal; não está
 habilitado no site. Rode da raiz do repositório, com o banco dedicado e com
-`SIMPLETEST_BASE_URL` configurada para o servidor de teste documentado. Inicie o
+`SIMPLETEST_BASE_URL` configurada para o servidor de desenvolvimento documentado. Inicie o
 driver escolhido e configure `MINK_DRIVER_ARGS_WEBDRIVER` conforme
 `web/core/phpunit.xml.dist`:
 

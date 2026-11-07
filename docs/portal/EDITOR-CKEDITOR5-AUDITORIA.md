@@ -14,7 +14,7 @@ Pacote avaliado: `drupal/ckeditor5_plugin_pack` (módulo externo, não é fork).
 | Requisito do projeto | `drupal/core-recommended ^11.4` | `composer.json` |
 | PHP | 8.4.26 (CLI) | `php -v` |
 | Composer | 2.8.8 | `composer --version` |
-| Ambiente | servidor de testes (`hostname` = `toca`) | `docs/architecture/environments.md` |
+| Ambiente | servidor de desenvolvimento (`hostname` = `toca`) | `docs/architecture/environments.md` |
 
 O projeto declara PHP 8.5 como alvo. O host de testes roda PHP 8.4 (`DT-P04` em `docs/operations/DEBT-REGISTER.md`). A verificação deste documento foi feita em 8.4.26.
 
@@ -117,7 +117,7 @@ Classificação de planejamento. **Nenhum submódulo foi habilitado nesta fase.*
 | --- | --- |
 | Dependência Composer (`composer.json` e `composer.lock`) | Implementada e instalada no checkout (`composer install --no-scripts`) |
 | Auditoria (este documento) | Implementada |
-| Submódulo `aculta_editor` (`0.1.0-dev.1`, estado Dev) | Implementado; habilitado no Runtime de teste |
+| Submódulo `aculta_editor` (`0.1.0-dev.1`, estado Dev) | Implementado; habilitado no Runtime de desenvolvimento |
 | Formatos `aculta_basico`, `aculta_editorial`, `aculta_institucional`, `aculta_email` | Implementados (formatos e editores criados, `filter_html` explícito) |
 | Templates editoriais (8) | Implementados em `config/install` |
 | Submódulos do Plugin Pack habilitados | 15 gratuitos (lista no README do submódulo) |
@@ -125,7 +125,7 @@ Classificação de planejamento. **Nenhum submódulo foi habilitado nesta fase.*
 | HTML Embed, WProofreader, Font, Emoji, Todo, Empty Block, Restricted Editing | Não habilitados |
 | Premium Features | Instalado no código, não habilitado |
 | Testes Kernel | 6 testes, 93 asserções, OK (`aculta_simpletest`) |
-| Interação no navegador (editar, inserir modelo e tabela, salvar, reabrir, renderizar) | Validada em 2026-10-22 no servidor de testes (Chromium headless), no nó de teste 500, removido ao final |
+| Interação no navegador (editar, inserir modelo e tabela, salvar, reabrir, renderizar) | Validada em 2026-10-22 no servidor de desenvolvimento (Chromium headless), no nó de teste 500, removido ao final |
 | Integração com Drupal Media (além de `drupalMedia` na toolbar) | **Não implementada** |
 | Integração com `aculta_mailer` | **Não implementada** (o formato `aculta_email` existe; renderização e envio seguem no `aculta_mailer`) |
 | CSS do editor no tema `aculta420` | **Não implementado** (autorizado; falta fazer e validar visualmente) |
@@ -142,7 +142,7 @@ Classificação de planejamento. **Nenhum submódulo foi habilitado nesta fase.*
 
 ## 9. Fases propostas (planejamento, não executadas)
 
-1. **F1 — submódulo `aculta_editor`:** criar o submódulo com `package: 'ACULTA Portal'`, `status` em `docs/operations/status/`, README e CHANGELOG. Habilitar apenas os submódulos gratuitos aprovados no Runtime de teste, com verificação de URI e banco antes de cada alteração.
+1. **F1 — submódulo `aculta_editor`:** criar o submódulo com `package: 'ACULTA Portal'`, `status` em `docs/operations/status/`, README e CHANGELOG. Habilitar apenas os submódulos gratuitos aprovados no Runtime de desenvolvimento, com verificação de URI e banco antes de cada alteração.
 2. **F2 — formatos:** criar os formatos novos, com permissões mínimas. Testes de persistência e de sanitização.
 3. **F3 — templates:** modelos do Plugin Pack (`templates`), um por tipo da missão, sem conteúdo fictício.
 4. **F4 — Media:** verificar a integração com `aculta_image` e `drupalMedia` nos formatos novos.

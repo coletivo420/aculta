@@ -2,7 +2,7 @@
 
 > **Snapshot histórico (2026-10-09):** os resultados abaixo registram aquela rodada e não definem o status atual. O fluxo vigente é [Dev → RC (tudo pronto) → deploy/validação Alpha → produção](RELEASE-LIFECYCLE.md). Revalidar componentes e roadmaps antes de usar qualquer status deste relatório.
 
-Estado do projeto em 2026-10-09, medido no servidor de testes (`aculta.toca.net.br`, Drupal
+Estado do projeto em 2026-10-09, medido no servidor de desenvolvimento (`aculta.toca.net.br`, Drupal
 11.4.8, MariaDB). Este documento registra a bateria executada, o resultado de cada item naquela rodada e os bloqueios então identificados.
 
 ## Escopo coberto por este documento
@@ -29,8 +29,8 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
 | 8 | Testes do submódulo de sitemap | `php web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/run.php` | PASS |
 | 9 | Testes do deployer | `php web/modules/custom/aculta_portal/modules/aculta_deployer/tests/run.php` | PASS (com `FAIL` esperados de DEP-0001/0002 no `verify`, ver abaixo) |
 | 10 | Fronteiras do deployer | `aculta-deployer boundaries` | PASS |
-| 11 | Sitemap no servidor de testes | `aculta-deployer sitemap --env=test` | PASS (índice com 5 filhos; hosts de conteúdo respondem pelos equivalentes de teste) |
-| 12 | Robots no servidor de testes | `aculta-deployer robots --env=test` | PASS (noindex em todos os hosts de teste) |
+| 11 | Sitemap no servidor de desenvolvimento | `aculta-deployer sitemap --env=test` | PASS (índice com 5 filhos; hosts de conteúdo respondem pelos equivalentes de teste) |
+| 12 | Robots no servidor de desenvolvimento | `aculta-deployer robots --env=test` | PASS (noindex em todos os hosts de teste) |
 | 13 | Regressão de cache `url.site` | `tests/homologacao-url-site.sh 5` | PASS (6 hosts, 5 ciclos, sem vazamento) |
 | 14 | Verificadores de assets | `scripts/verify-{baque-sativa,bloco-sativa420,podplant420}-assets.py` | PASS |
 | 15 | Integridade de pacote | `scripts/audit-package-integrity.py` | PASS |
@@ -50,7 +50,7 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
    de exibição `catalog` agora estão em `config/sync`, com página `/produtos`, bloco
    CTools restrito a pager/itens por página, filtros internos de tipo/publicação e
    purpose SHOP. A permissão anônima `view commerce_product` já estava ativa no
-   Runtime de teste e não foi alterada. Isso entrega a listagem configurada, mas
+   Runtime de desenvolvimento e não foi alterada. Isso entrega a listagem configurada, mas
    não conclui ativação comercial/RC: revisar política comercial e LGPD, confirmar
    categoria/variações, checkout e gateway, validar isolamento de Domain e executar
    smoke visual/compra em MariaDB. Produtos e imagens são conteúdo, não configuração;
@@ -60,8 +60,8 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
 
 | Componente | Versão | Status |
 | --- | --- | --- |
-| `aculta_portal_sitemap` | 0.1.0 (fases A a J) | Pronto para RC no servidor de testes |
-| `aculta_deployer` | 0.1.7 | Pronto para RC no servidor de testes; `verify` de produção depende da decisão de entrega em produção |
+| `aculta_portal_sitemap` | 0.1.0 (fases A a J) | Pronto para RC no servidor de desenvolvimento |
+| `aculta_deployer` | 0.1.7 | Pronto para RC no servidor de desenvolvimento; `verify` de produção depende da decisão de entrega em produção |
 | `aculta_portal` | 0.2.0-dev.11 | Sitemap, robots, `noindex` e cadastro de credenciais; release depende do RC geral |
 | `aculta420` (tema) | 0.4.x | Não avaliado como release; item 1 pendente |
 

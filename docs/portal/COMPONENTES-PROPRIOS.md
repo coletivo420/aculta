@@ -51,7 +51,7 @@ O gate de rótulo é estático: lê os `.info.yml` com o parser YAML, não inici
 Ele foi testado nos dois sentidos: passa com a configuração atual e falha quando um submódulo recebe o rótulo
 `Associação Cultural Antiproibicionista`.
 
-Após mudar um rótulo no Runtime de teste, limpar o cache (`php vendor/drush/drush/drush.php cr`) e conferir com
+Após mudar um rótulo no Runtime de desenvolvimento, limpar o cache (`php vendor/drush/drush/drush.php cr`) e conferir com
 `extension.list.module`. O painel só reflete a mudança depois do cache.
 
 ## 5. O que esta orientação não cobre

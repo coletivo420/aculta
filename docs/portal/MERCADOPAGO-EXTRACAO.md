@@ -259,7 +259,7 @@ passos 1-4 são movimentação mecânica; o passo 5 é o único com desenho novo
 
 | Risco | Impacto | Mitigação |
 |---|---|---|
-| Webhook em produção | Alta | Rota `commerce_payment.notify`, prioridade 29, headers `x-signature`/`x-request-id`, Key `mercadopago_webhook_secret` e env `MERCADOPAGO_WEBHOOK_SECRET` **não mudam**. Teste de fail-closed e smoke autenticado no servidor de testes, com `live_mode` conferido |
+| Webhook em produção | Alta | Rota `commerce_payment.notify`, prioridade 29, headers `x-signature`/`x-request-id`, Key `mercadopago_webhook_secret` e env `MERCADOPAGO_WEBHOOK_SECRET` **não mudam**. Teste de fail-closed e smoke autenticado no servidor de desenvolvimento, com `live_mode` conferido |
 | Config entity do gateway | Alta | Não mudar `mercado_pago` nem o plugin id `aculta_mercadopago_checkout_pro`; o Config Sync referencia ambos |
 | Dados persistidos em pedidos | Alta | Manter valores de `mp_preapproval_id`, `mp_status`, `mp_cobranca_situacao`; não renomear constantes de valor |
 | Renome de service IDs | Média | Atualizar todos os consumidores no mesmo commit; sem alias; `drush cr` no deploy. IDs não são persistidos em banco |
@@ -290,7 +290,7 @@ passos 1-4 são movimentação mecânica; o passo 5 é o único com desenho novo
 8. PHP lint, PHPCS Drupal/DrupalPractice e os gates de status/pacotes verdes; tabela do README
    regenerada pelo dono.
 9. Nenhum alias de serviço ou rota temporário.
-10. Deploy no servidor de testes com smoke de webhook e checkout; produção só na janela de RC.
+10. Deploy no servidor de desenvolvimento com smoke de webhook e checkout; produção só na janela de RC.
 
 ## Decisões aprovadas pelo responsável
 

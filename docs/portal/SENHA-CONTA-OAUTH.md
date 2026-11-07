@@ -62,7 +62,7 @@ extra. Pendência: identificar contas com registro em `social_auth` e sem marca,
 (por exemplo, uma atualização de dados com regra explícita). Isso depende de consulta no runtime e de decisão do
 responsável.
 
-## Verificação feita (Homelab, runtime de teste)
+## Verificação feita (Homelab, runtime de desenvolvimento)
 
 - Lint dos arquivos alterados: sem erros.
 - Teste direto da lógica com uma conta temporária marcada como criada por OAuth:

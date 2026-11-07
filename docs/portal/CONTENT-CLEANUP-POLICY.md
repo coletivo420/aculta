@@ -54,7 +54,7 @@ de posts; os owners ainda devem fornecer seus candidatos e relações.
 2. **Parcial:** `aculta_portal.content_cleanup_preview` analisa IDs File/Media explícitos e não tem efeitos colaterais. Falta receber IDs de conteúdo e adapters dos módulos donos para produzir o inventário agregado de posts, revisões, dependências e anexos.
 3. Executor em lotes, iniciado por comando administrativo explícito, que revalida dependências e acessos antes de cada exclusão e delega remoção de imagens ao `aculta_image`.
 4. Testes de referências compartilhadas, revisões, traduções, embeds sem registro de uso, concorrência e falha parcial; logging sem conteúdo sensível.
-5. Homologação no banco dedicado e Runtime de testes com backup restaurável antes de qualquer limpeza real.
+5. Homologação no banco dedicado e Runtime de desenvolvimentos com backup restaurável antes de qualquer limpeza real.
 
 ## Integrações por projeto
 
@@ -76,4 +76,4 @@ existente ativa até prova de equivalência.
 
 ## Estado do Runtime consultado
 
-Na prévia de 2026-10-22 foram encontrados 12 Nodes `revista`, quatro com marcadores de embed e nenhum `media_gallery`. Após autorização explícita para excluir os 12 no Runtime de teste, os Nodes, 17 Media `image` e 17 arquivos de imagem sem uso externo foram removidos. Um Media `remote_video` permaneceu porque seu owner ainda não estava definido naquela data; em dev.22 ele passou a ser do Portal, sem alterar o registro histórico. Evidências, salvaguardas e verificação estão em [MAGAZINE-TEST-CLEANUP-2026-10-22.md](MAGAZINE-TEST-CLEANUP-2026-10-22.md). A política e o executor compartilhado ainda estão planejados.
+Na prévia de 2026-10-22 foram encontrados 12 Nodes `revista`, quatro com marcadores de embed e nenhum `media_gallery`. Após autorização explícita para excluir os 12 no Runtime de desenvolvimento, os Nodes, 17 Media `image` e 17 arquivos de imagem sem uso externo foram removidos. Um Media `remote_video` permaneceu porque seu owner ainda não estava definido naquela data; em dev.22 ele passou a ser do Portal, sem alterar o registro histórico. Evidências, salvaguardas e verificação estão em [MAGAZINE-TEST-CLEANUP-2026-10-22.md](MAGAZINE-TEST-CLEANUP-2026-10-22.md). A política e o executor compartilhado ainda estão planejados.

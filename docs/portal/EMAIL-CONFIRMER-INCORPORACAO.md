@@ -1,6 +1,6 @@
 # Incorporação do email_confirmer (contrib) ao código do projeto
 
-Estado em 2026-10-20: **incorporação concluída no código e no Runtime de teste; validação no navegador pendente**. O contrib foi desinstalado e removido do Composer.
+Estado em 2026-10-20: **incorporação concluída no código e no Runtime de desenvolvimento; validação no navegador pendente**. O contrib foi desinstalado e removido do Composer.
 Objetivo: remover a dependência de `drupal/email_confirmer` (e do `email_confirmer_user`) com código próprio do
 aculta_portal, sem perder confirmações pendentes nem quebrar links já enviados.
 
@@ -16,7 +16,7 @@ aculta_portal, sem perder confirmações pendentes nem quebrar links já enviado
 | Cron e fila `DelayedRequestDispatcher` | Reenvio atrasado e limpeza de pedidos antigos | Precisa de equivalente |
 | `email_confirmer_user`: opções `user_email_change` e `user_login` (`email_confirmer_user.settings`), rota `/user/{user}/email-change/cancel`, formulário de cancelamento e acesso a troca pendente | O contrib original tinha comportamento de bloqueio de login; o ACULTA mantém a troca e o registro de confirmação no login, mas segue sua própria política de conta ativa com capacidades restritas | A política vigente está em `EMAIL-CONFIRMATION-POLICY.md`; não se deve reproduzir o bloqueio de login do contrib |
 
-## Estado do Runtime de teste (2026-10-20, somente leitura)
+## Estado do Runtime de desenvolvimento (2026-10-20, somente leitura)
 
 - Entidade `email_confirmer_confirmation`: **28 registros**.
 - `email_confirmer_user.settings`: chaves `user_email_change` e `user_login` presentes.
@@ -58,7 +58,7 @@ Recuperação: `drush cr` (atualiza os metadados), reinstalação dos módulos n
 
 ## Pendências
 
-- Validação no servidor de teste (2026-10-20):
+- Validação no servidor de desenvolvimento (2026-10-20):
   - Troca de e-mail, de ponta a ponta com e-mail real: usuário de teste novo, pedido para `dmarc@aculta.org`, mensagem
     recebida por IMAP com o link do próprio e-mail, confirmação pelo serviço, e-mail da conta alterado. Usuário e pedido
     de teste removidos; aviso ao endereço antigo desligado só durante o teste e restaurado.

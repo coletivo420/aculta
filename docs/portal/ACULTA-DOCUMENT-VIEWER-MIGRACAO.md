@@ -251,7 +251,7 @@ Riscos abertos da estado B:
 ## 0.1.0-dev.5 — spike de isolamento do DOCX (evidência)
 
 Medido no Chromium 155 com a sessão X11 do sistema (`DISPLAY=:0`, janela visível, depuração remota
-via CDP). Servidor de teste local em 127.0.0.1, sem o Runtime. Cada caso rodou duas vezes; os
+via CDP). Servidor de desenvolvimento local em 127.0.0.1, sem o Runtime. Cada caso rodou duas vezes; os
 resultados foram idênticos.
 
 | Caso | Sandbox | Renderizou | Script do `altChunk` executou | Acesso ao DOM do pai | Requisição a rastreador externo |

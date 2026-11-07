@@ -115,7 +115,7 @@ asserções (5 depreciações do PHPUnit). Kernel LMS/H5P passou com 24 testes e
 573 asserções no MariaDB dedicado; 83 depreciações foram reportadas por
 Drupal Core/contrib instalados. A cobertura H5P inclui instalação e exclusão
 de biblioteca privada, arquivos gerenciados, widget serializado e ciclo de
-imagens via `aculta_image`. Runtime de teste `cursos` validou salvamento e
+imagens via `aculta_image`. Runtime de desenvolvimento `cursos` validou salvamento e
 reprodução por estudante, bloqueio anônimo e limpeza via formulário
 administrativo. Após refatorar DI, Drush como conta `aculta` confirmou URLs
 absolutas do editor; os assets H5P CSS/JS e a tradução pt-br responderam HTTP
@@ -133,7 +133,7 @@ Execução adicional em 2026-10-20: `aculta_forum_lms` Unit passou com 14 testes
 147 assertions; Kernel passou com 2 testes e 74 assertions. Foram emitidas 38
 depreciações de Core/contrib/LMS, sem falha. PHP CLI disponível no Homelab é
 8.4.26, abaixo do alvo PHP 8.5; resultado não substitui validação nessa versão.
-No Runtime de teste, ativação do adapter, importação parcial de cinco
+No Runtime de desenvolvimento, ativação do adapter, importação parcial de cinco
 configurações de permissões e smoke HTTP foram confirmados; o Runtime usa
 `aculta_runtime`, nunca o banco dedicado desta suíte. RUNTIME STATUS: PARTIAL;
 ver o changelog do adapter para limites de configuração e acesso.
@@ -246,7 +246,7 @@ Após adicionar referências de Media `course_document` às atividades H5P, a
 suíte Unit passou com 23 testes / 67 assertions e a Kernel com 14 testes / 341
 assertions no MariaDB dedicado; 43 depreciações de Core/Group/Views. O Kernel
 confirma o campo de referência multivalorado. O update `8006` foi aplicado no
-Runtime de teste depois de confirmar zero conteúdos H5P e zero Media
+Runtime de desenvolvimento depois de confirmar zero conteúdos H5P e zero Media
 `course_document`; nenhuma entidade existente foi alterada. O smoke visual
 autenticado ainda depende de fixtures temporárias. PHP CLI 8.4.26; PHP 8.5 não
 validado.

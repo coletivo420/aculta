@@ -19,11 +19,11 @@ invariante verificável. Para as camadas de regra de arquitetura e ownership, ve
    (`scripts/validate-*.php`), requisição HTTP com status/`Location` esperados, teste jsdom, ou passo de navegador
    executado pelo agente de testes. "Verificado por leitura" não basta para invariante de comportamento.
 5. **Teste antes do merge.** Mudança com invariante afetado só vai para merge depois de rodar os casos afetados no
-   servidor de testes. Caso não executado é dito como não executado, sem marcar como aprovado.
+   servidor de desenvolvimento. Caso não executado é dito como não executado, sem marcar como aprovado.
 6. **Não remover caso para passar.** Um caso falhando não é retirado do roteiro para liberar o PR. O caso só sai
    com decisão do responsável, com o motivo no índice.
 7. **Mudança de branch não apaga regressão.** Correção em branch separado é registrada no índice do branch de
-   origem e na `main` quando for integrada. O servidor de testes serve um checkout só: dizer qual branch está em uso.
+   origem e na `main` quando for integrada. O servidor de desenvolvimento serve um checkout só: dizer qual branch está em uso.
 
 ## Índice de invariantes
 

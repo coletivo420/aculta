@@ -117,7 +117,7 @@ de conta do Core não oferece o campo de e-mail (`EmailChangeHooks`).
 
 ## 9. Aplicação atual no site (2026-10-16)
 
-Verificada no código e na configuração do Runtime de teste. Itens marcados como "a confirmar" não têm verificação
+Verificada no código e na configuração do Runtime de desenvolvimento. Itens marcados como "a confirmar" não têm verificação
 própria e não devem ser tratados como garantia.
 
 | Área | Regra | Situação | Onde |

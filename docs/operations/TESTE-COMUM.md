@@ -19,7 +19,7 @@ Documento para humanos e agentes. **Não contém a senha.** O valor fica em `sec
 4. Não copie a senha para documentos, commits, mensagens ou saídas de comando.
 
 ## E-mail da conta e comprador do Mercado Pago (2026-10-18)
-- E-mail atual da conta `teste.comum` no Runtime de testes: `test_user_fluxo@testuser.com`, salvo pelo caminho de administrador (`email_confirmer`, bypass do `administrator`). A conta continua confirmada.
+- E-mail atual da conta `teste.comum` no Runtime de desenvolvimentos: `test_user_fluxo@testuser.com`, salvo pelo caminho de administrador (`email_confirmer`, bypass do `administrator`). A conta continua confirmada.
 - Sandbox do Mercado Pago (2026-10-18): aceitou como pagador `test_user_fluxo@testuser.com`. Recusou (HTTP 400, `User bad request`) `testecomum@testuser.com`, `teste.comum@testuser.com`, `testecomum1@testuser.com`, `testecomum2@testuser.com` e `teste-comum@testuser.com`.
 - Não é possível criar comprador de teste novo: a API retorna 403 (limite de contas de teste da conta vendedora). Por isso o e-mail usado é o que o sandbox já aceita.
 
