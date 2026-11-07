@@ -1468,6 +1468,14 @@ final class Cli {
     }
     $config = $this->json($this->toolRoot . '/config/deploy.json');
     $entries = $config['domain_transition']['entries'] ?? [];
+    if (isset($o['only'])) {
+      $only = array_filter(array_map('trim', explode(',', (string) $o['only'])));
+      $entries = array_values(array_filter($entries, static fn($e) => in_array((string) ($e['domain_id'] ?? ''), $only, TRUE)));
+      if ($entries === []) {
+        $this->err('domains: --only não corresponde a nenhum domain_id de domain_transition');
+        return 1;
+      }
+    }
     $current = [];
     foreach ($entries as $entry) {
       $id = (string) ($entry['domain_id'] ?? '');
