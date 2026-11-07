@@ -1,0 +1,7 @@
+/* Widgets de desafio de terceiros (Turnstile) podem exceder a largura do fieldset. */
+.captcha-type-challenge--turnstile > .captcha__element {
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
