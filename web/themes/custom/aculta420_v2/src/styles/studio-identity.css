@@ -1,19 +1,19 @@
 /* ACULTA Studio Identity (portado do V1 em 2026-11-05). Estado: DEFERRED (sem captura visual). */
 
 html.studio-identity :is(
-  .studio,
-  .aculta-profile-editor,
-  body.path-marley .aculta-main:has(form.node-revista-form),
-  body.path-marley form.node-revista-form,
-  .aculta-main:has(form.studio-profile-form),
-  form.studio-profile-form,
-  body.path-perfil .aculta-main:has(form#aculta-user-studio-nickname-form),
-  body.path-perfil form#aculta-user-studio-nickname-form,
-  body.path-perfil .aculta-main:has(form#aculta-user-profile-visibility-form),
-  body.path-perfil form#aculta-user-profile-visibility-form,
-  body.path-ganjalab .aculta-main,
-  body.path-culturas .aculta-main,
-  .aculta-main .we-sativa__workspace
+.studio,
+.aculta-profile-editor,
+body.path-marley .aculta-main:has(form.node-revista-form),
+body.path-marley form.node-revista-form,
+.aculta-main:has(form.studio-profile-form),
+form.studio-profile-form,
+body.path-perfil .aculta-main:has(form#aculta-user-studio-nickname-form),
+body.path-perfil form#aculta-user-studio-nickname-form,
+body.path-perfil .aculta-main:has(form#aculta-user-profile-visibility-form),
+body.path-perfil form#aculta-user-profile-visibility-form,
+body.path-ganjalab .aculta-main,
+body.path-culturas .aculta-main,
+.aculta-main .we-sativa__workspace
 ) {
   --aculta-studio-fidelity-primary: var(--color-text-primary);
   --aculta-studio-fidelity-link: var(--color-text-primary);
@@ -47,76 +47,76 @@ html.studio-identity :is(
 }
 
 html.studio-identity :is(
-  .studio,
-  .aculta-profile-editor,
-  body.path-marley .aculta-main:has(form.node-revista-form),
-  body.path-marley form.node-revista-form,
-  .aculta-main:has(form.studio-profile-form),
-  form.studio-profile-form,
-  body.path-perfil .aculta-main:has(form#aculta-user-studio-nickname-form),
-  body.path-perfil form#aculta-user-studio-nickname-form,
-  body.path-perfil .aculta-main:has(form#aculta-user-profile-visibility-form),
-  body.path-perfil form#aculta-user-profile-visibility-form,
-  body.path-ganjalab .aculta-main,
-  body.path-culturas .aculta-main,
-  .aculta-main .we-sativa__workspace
+.studio,
+.aculta-profile-editor,
+body.path-marley .aculta-main:has(form.node-revista-form),
+body.path-marley form.node-revista-form,
+.aculta-main:has(form.studio-profile-form),
+form.studio-profile-form,
+body.path-perfil .aculta-main:has(form#aculta-user-studio-nickname-form),
+body.path-perfil form#aculta-user-studio-nickname-form,
+body.path-perfil .aculta-main:has(form#aculta-user-profile-visibility-form),
+body.path-perfil form#aculta-user-profile-visibility-form,
+body.path-ganjalab .aculta-main,
+body.path-culturas .aculta-main,
+.aculta-main .we-sativa__workspace
 ) :is(h1, h2, h3, h4, h5, h6, .alert-heading) {
-  font-family: var(--font-family-heading);
   letter-spacing: normal;
+  font-family: var(--font-family-heading);
 }
 
 html.studio-identity :is(
-  .studio,
-  .aculta-profile-editor,
-  body.path-marley .aculta-main:has(form.node-revista-form),
-  body.path-marley form.node-revista-form,
-  .aculta-main:has(form.studio-profile-form),
-  form.studio-profile-form,
-  body.path-perfil .aculta-main:has(form#aculta-user-studio-nickname-form),
-  body.path-perfil form#aculta-user-studio-nickname-form,
-  body.path-perfil .aculta-main:has(form#aculta-user-profile-visibility-form),
-  body.path-perfil form#aculta-user-profile-visibility-form,
-  body.path-ganjalab .aculta-main,
-  body.path-culturas .aculta-main,
-  .aculta-main .we-sativa__workspace
+.studio,
+.aculta-profile-editor,
+body.path-marley .aculta-main:has(form.node-revista-form),
+body.path-marley form.node-revista-form,
+.aculta-main:has(form.studio-profile-form),
+form.studio-profile-form,
+body.path-perfil .aculta-main:has(form#aculta-user-studio-nickname-form),
+body.path-perfil form#aculta-user-studio-nickname-form,
+body.path-perfil .aculta-main:has(form#aculta-user-profile-visibility-form),
+body.path-perfil form#aculta-user-profile-visibility-form,
+body.path-ganjalab .aculta-main,
+body.path-culturas .aculta-main,
+.aculta-main .we-sativa__workspace
 ) :is(.aculta-panel, .aculta-card, .studio__panel, .aculta-context-header) {
   border-radius: var(--radius-base);
 }
 
 html.studio-identity :is(
-  .studio,
-  .aculta-profile-editor,
-  .aculta-main:has(form.studio-profile-form),
-  form.studio-profile-form,
-  body.path-ganjalab .aculta-main,
-  body.path-culturas .aculta-main,
-  .aculta-main .we-sativa__workspace
+.studio,
+.aculta-profile-editor,
+.aculta-main:has(form.studio-profile-form),
+form.studio-profile-form,
+body.path-ganjalab .aculta-main,
+body.path-culturas .aculta-main,
+.aculta-main .we-sativa__workspace
 ) form :is(
-  input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]),
-  select,
-  textarea,
-  button,
-  .button,
-  .form-submit
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]),
+select,
+textarea,
+button,
+.button,
+.form-submit
 ) {
   border-radius: var(--radius-base);
 }
 
 html.studio-identity :is(
-  .studio,
-  .aculta-profile-editor,
-  .aculta-main:has(form.studio-profile-form),
-  body.path-ganjalab .aculta-main,
-  body.path-culturas .aculta-main,
-  .aculta-main .we-sativa__workspace
+.studio,
+.aculta-profile-editor,
+.aculta-main:has(form.studio-profile-form),
+body.path-ganjalab .aculta-main,
+body.path-culturas .aculta-main,
+.aculta-main .we-sativa__workspace
 ) :is(.studio__tab, .studio__link)[aria-current="page"] {
   box-shadow: inset 0 -3px 0 var(--color-brand-highlight);
 }
 
 html.studio-identity .aculta-main > :is(
-  .aculta-container:has(.studio),
-  .aculta-container:has(.aculta-profile-editor),
-  .aculta-container:has(.we-sativa__workspace)
+.aculta-container:has(.studio),
+.aculta-container:has(.aculta-profile-editor),
+.aculta-container:has(.we-sativa__workspace)
 ) > .aculta-highlighted > .alert-wrapper > .alert {
   border-radius: var(--radius-base);
 }

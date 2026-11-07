@@ -13,6 +13,10 @@
 
 Detalhes por bloco: [status-componentes.md](status-componentes.md), [status-layouts-e-shell.md](status-layouts-e-shell.md) e [htmx-status.md](htmx-status.md) (ADR-050).
 
+## Higiene de CSS — Stylelint
+
+O CSS atual dos componentes e estilos globais passa pelo preset `stylelint-config-drupal`. A configuração preserva regras compactas já usadas pelo tema e reconhece unidades e at-rules modernas (`dvh`, `@container`, `@starting-style`). A normalização de propriedades e valores equivalentes não altera o comportamento visual; lint PASS. A validação visual de fases permanece conforme as pendências acima.
+
 ## Fase 1 — Tokens e fundações
 
 **Status: tokens e fundações entregues em `1.2.0-dev.1`. Purpose neutro (`data-purpose`) e compatibilidade do `ui_styles` foram cobertos em 2026-11-05; o shell segue em revisão na Fase 2.**

@@ -1,9 +1,9 @@
 .data-table {
+  overflow: hidden;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-control-card);
   max-inline-size: 100%;
   min-inline-size: 0;
-  overflow: hidden;
 }
 
 .data-table__viewport {
@@ -39,31 +39,31 @@
 }
 
 .data-table__table caption {
+  position: absolute;
+  overflow: hidden;
+  white-space: nowrap;
   block-size: 1px;
   clip-path: inset(50%);
   inline-size: 1px;
-  overflow: hidden;
-  position: absolute;
-  white-space: nowrap;
 }
 
 .data-table__table :is(th, td) {
-  border-block-end: 1px solid var(--color-border);
-  min-inline-size: 8rem;
   padding: var(--spacing-base);
   text-align: start;
   vertical-align: top;
+  border-block-end: 1px solid var(--color-border);
+  min-inline-size: 8rem;
 }
 
 .data-table__table th {
-  background: var(--color-surface-highlight);
   color: var(--color-text-primary);
+  background: var(--color-surface-highlight);
   font-weight: 700;
 }
 
 .data-table__table td {
-  background: var(--color-surface-raised);
   color: var(--color-text-primary);
+  background: var(--color-surface-raised);
 }
 
 .data-table__table tr:last-child td {
@@ -94,12 +94,12 @@
   }
 
   .data-table--cards .data-table__table thead {
+    position: absolute;
+    overflow: hidden;
+    white-space: nowrap;
     block-size: 1px;
     clip-path: inset(50%);
     inline-size: 1px;
-    overflow: hidden;
-    position: absolute;
-    white-space: nowrap;
   }
 
   .data-table--cards .data-table__table tbody {
@@ -109,35 +109,35 @@
   }
 
   .data-table--cards .data-table__table tr {
-    background: var(--color-surface-raised);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-control-card);
     display: grid;
     grid-template-columns: minmax(0, 1fr);
+    padding: var(--spacing-sm) var(--spacing-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-control-card);
+    background: var(--color-surface-raised);
     inline-size: 100%;
     max-inline-size: 100%;
     min-inline-size: 0;
     overflow-wrap: anywhere;
-    padding: var(--spacing-sm) var(--spacing-base);
   }
 
   .data-table--cards .data-table__table td {
-    align-items: start;
-    background: transparent;
-    border: 0;
     display: grid;
-    gap: var(--spacing-sm);
     grid-template-columns: minmax(6rem, .65fr) minmax(0, 1fr);
+    align-items: start;
+    padding: var(--spacing-xs) 0;
+    border: 0;
+    background: transparent;
+    gap: var(--spacing-sm);
     inline-size: 100%;
     max-inline-size: 100%;
     min-inline-size: 0;
     overflow-wrap: anywhere;
-    padding: var(--spacing-xs) 0;
   }
 
   .data-table--cards .data-table__table td::before {
-    color: var(--color-text-secondary);
     content: attr(data-label);
+    color: var(--color-text-secondary);
     font-weight: 600;
   }
 

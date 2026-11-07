@@ -9,38 +9,38 @@
 .aculta-statistics__areas {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  list-style: none;
   margin: 0;
   padding: 0;
+  list-style: none;
+  gap: .5rem;
 }
 
 .aculta-statistics__areas a {
   display: inline-block;
-  padding: 0.35rem 0.75rem;
+  padding: .35rem .75rem;
+  text-decoration: none;
+  color: var(--color-text-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-base);
   background: var(--color-surface-raised);
-  color: var(--color-text-primary);
-  text-decoration: none;
 }
 
 .aculta-statistics__areas a:hover,
 .aculta-statistics__areas a:focus-visible {
-  background: var(--color-primary);
   color: var(--color-on-primary);
+  background: var(--color-primary);
 }
 
 .aculta-statistics__form {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
-  gap: 0.75rem;
+  gap: .75rem;
 }
 
 .aculta-statistics__form label {
   display: grid;
-  gap: 0.25rem;
+  gap: .25rem;
   color: var(--color-text-secondary);
   font-weight: 600;
 }
@@ -48,11 +48,11 @@
 .aculta-statistics__form select {
   width: 100%;
   min-width: 0;
-  padding: 0.4rem 0.5rem;
+  padding: .4rem .5rem;
+  color: var(--color-text-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-base);
   background: var(--color-surface-raised);
-  color: var(--color-text-primary);
 }
 
 .aculta-statistics__form select:focus-visible,
@@ -69,11 +69,11 @@
 }
 
 .aculta-statistics__chart {
-  padding: 0.75rem;
+  overflow-x: auto;
+  padding: .75rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-base);
   background: var(--color-canvas);
-  overflow-x: auto;
 }
 
 .aculta-statistics__chart svg {
@@ -84,22 +84,22 @@
 
 .aculta-statistics__table {
   width: 100%;
-  border-collapse: collapse;
   color: var(--color-text-primary);
+  border-collapse: collapse;
 }
 
 .aculta-statistics__table th,
 .aculta-statistics__table td {
-  padding: 0.4rem 0.6rem;
-  border-bottom: 1px solid var(--color-border);
+  padding: .4rem .6rem;
   text-align: left;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .aculta-statistics__table caption {
   caption-side: top;
   text-align: left;
-  font-weight: 600;
   color: var(--color-text-secondary);
+  font-weight: 600;
 }
 
 .aculta-statistics__form label {

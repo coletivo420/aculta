@@ -8,16 +8,16 @@
 
 .aculta-institution-bar--account .aculta-utility .navbar-nav .nav-link.aculta-account-home:is(:hover, :focus-visible) {
   color: var(--color-status-error-text);
+  border-radius: .25rem;
   background: var(--color-status-error-surface);
-  border-radius: 0.25rem;
 }
 
 /* Origem V1: dialog.css */
 .aculta-login-popup__links {
   display: grid;
   justify-items: center;
-  gap: 0.6rem;
-  margin-top: 0.25rem;
+  gap: .6rem;
+  margin-top: .25rem;
 }
 
 .aculta-login-popup__links a {
@@ -31,27 +31,27 @@
 .aculta-login-popup__links a:first-of-type {
   display: inline-flex;
   align-items: center;
-  min-block-size: 2.75rem;
-  padding-inline: 0.5rem;
+  color: var(--color-brand-highlight);
   font-family: var(--font-family-heading);
   font-size: 1.05rem;
-  color: var(--color-brand-highlight);
+  min-block-size: 2.75rem;
+  padding-inline: .5rem;
 }
 
 .aculta-login-popup__links a:last-of-type {
   display: flex;
-  box-sizing: border-box;
   align-items: center;
   justify-content: center;
-  inline-size: min(100%, 14rem);
-  min-block-size: 2.75rem;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  font-weight: 600;
+  box-sizing: border-box;
+  padding: .5rem 1rem;
   text-align: center;
   color: var(--color-text-primary);
+  border-radius: .25rem;
   background: var(--color-surface-highlight);
-  border-radius: 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  inline-size: min(100%, 14rem);
+  min-block-size: 2.75rem;
 }
 
 .ui-dialog:has(:is([data-portal-ui="photo-dialog"], .aculta-photo-dialog, [data-portal-ui="avatar-crop-dialog"], .aculta-avatar-crop-dialog, [data-portal-ui="account-bio-dialog"], .aculta-account-bio-dialog)) {
@@ -70,12 +70,12 @@
 .aculta-consent {
   position: static;
   display: grid;
-  gap: 0.5rem;
-  padding: 1rem;
   margin-block-start: 1rem;
-  background: var(--color-surface-raised);
+  padding: 1rem;
   color: var(--color-text-primary);
   border-top: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+  gap: .5rem;
 }
 
 .aculta-consent[hidden] {
@@ -99,17 +99,17 @@
 .aculta-security-pending {
   margin-block-start: 1rem;
   padding: 1rem;
-  background: var(--color-canvas);
   border-inline-start: 3px solid var(--color-brand-primary);
+  background: var(--color-canvas);
   overflow-wrap: anywhere;
 }
 
 .aculta-security-pending > h4 {
-  margin-block: 0 0.5rem;
+  margin-block: 0 .5rem;
 }
 
 .aculta-security-pending > p {
-  margin-block: 0 0.5rem;
+  margin-block: 0 .5rem;
 }
 
 .aculta-security-pending > p:last-child {
@@ -124,9 +124,9 @@
   margin-block-end: 1.5rem;
   padding: 1rem 1.25rem;
   color: var(--color-status-warning-text);
-  background-color: var(--color-status-warning-surface);
-  border-inline-start: 0.25rem solid var(--color-warning);
+  border-inline-start: .25rem solid var(--color-warning);
   border-radius: var(--radius-base);
+  background-color: var(--color-status-warning-surface);
 }
 
 .aculta-email-notice p {
@@ -135,17 +135,17 @@
 
 .aculta-email-notice a {
   color: inherit;
-  text-underline-offset: 0.2em;
+  text-underline-offset: .2em;
 }
 
 /* Origem V1: portal-requirements-report.css */
 .aculta-secret-popup__value {
+  padding: .75rem;
   white-space: pre-wrap;
   word-break: break-all;
-  font-family: monospace;
-  padding: 0.75rem;
-  border-radius: 0.25rem;
+  border-radius: .25rem;
   background-color: var(--color-canvas);
+  font-family: monospace;
 }
 
 .aculta-secret-popup__hint {
@@ -160,43 +160,43 @@
 /* Origem V1: auth.css */
 body.path-entrar .aculta-login__reset-link {
   display: inline-block;
-  margin-block: 0.25rem 1rem;
-  color: var(--color-text-primary);
   text-decoration: underline;
+  color: var(--color-text-primary);
+  margin-block: .25rem 1rem;
   text-decoration-color: var(--color-brand-primary);
-  text-underline-offset: 0.2em;
+  text-underline-offset: .2em;
 }
 
 body.path-entrar .aculta-login__divider {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-block: 1rem;
-  color: var(--color-text-secondary);
-  font: 500 0.875rem/1.4 var(--font-family-base);
   text-transform: uppercase;
+  color: var(--color-text-secondary);
+  font: 500 .875rem/1.4 var(--font-family-base);
+  gap: .75rem;
+  margin-block: 1rem;
 }
 
 body.path-entrar .aculta-login__divider span {
-  height: 1px;
   flex: 1;
+  height: 1px;
   background-color: var(--color-brand-primary);
 }
 
 body.path-entrar .aculta-login__registration {
   margin-block-start: 1.25rem;
   padding-block-start: 1rem;
-  border-block-start: 1px solid var(--color-border);
   color: var(--color-text-primary);
-  font: 400 0.875rem/1.5 var(--font-family-base);
+  border-block-start: 1px solid var(--color-border);
+  font: 400 .875rem/1.5 var(--font-family-base);
 }
 
 body.path-entrar .aculta-login__registration a {
+  text-decoration: underline;
   color: var(--color-text-primary);
   font-weight: 600;
-  text-decoration: underline;
   text-decoration-color: var(--color-brand-highlight);
-  text-underline-offset: 0.2em;
+  text-underline-offset: .2em;
 }
 
 /* Origem V1: messenger-notices.css */
@@ -212,21 +212,21 @@ body.path-entrar .aculta-login__registration a {
 }
 
 .aculta-messenger-notice-origin__separator {
-  margin-block: 0.75rem;
-  border-color: var(--color-border);
   opacity: 1;
+  border-color: var(--color-border);
+  margin-block: .75rem;
 }
 
 .aculta-messenger-notice-origin__items > ul {
   display: grid;
-  gap: 0.65rem;
-  margin: 0.5rem 0 0;
+  gap: .65rem;
+  margin: .5rem 0 0;
   padding: 0;
   list-style: none;
 }
 
 .aculta-messenger-notice-related-group {
-  margin-block: 0.75rem;
+  margin-block: .75rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-base);
   background: var(--color-surface-raised);
@@ -234,10 +234,10 @@ body.path-entrar .aculta-login__registration a {
 
 .aculta-messenger-notice-related-group > summary {
   min-height: 2.75rem;
-  padding: 0.75rem 1rem;
+  padding: .75rem 1rem;
+  cursor: pointer;
   color: var(--color-text-primary);
   font-weight: 600;
-  cursor: pointer;
 }
 
 .aculta-messenger-notice-related-group > summary:focus-visible {
@@ -247,9 +247,9 @@ body.path-entrar .aculta-login__registration a {
 
 .aculta-messenger-notice-related-group__items > ul {
   display: grid;
-  gap: 0.5rem;
+  gap: .5rem;
   margin: 0;
-  padding: 0.5rem;
+  padding: .5rem;
   list-style: none;
 }
 
@@ -261,15 +261,15 @@ body.path-entrar .aculta-login__registration a {
 }
 
 .aculta-sales-panel__heading {
-  font-family: var(--font-family-heading);
+  margin: 0 0 .5rem;
   color: var(--color-text-primary);
-  margin: 0 0 0.5rem;
+  font-family: var(--font-family-heading);
 }
 
 .aculta-sales-panel__table {
+  min-width: 100%;
   color: var(--color-text-primary);
   border-color: var(--color-border);
-  min-width: 100%;
 }
 
 /* Origem V1: portal-support.css */
@@ -331,10 +331,10 @@ body.path-entrar .aculta-login__registration a {
 }
 
 :is(.aculta-support, [data-portal-ui="support-form"]) .aculta-button:disabled {
-  background: var(--color-canvas);
+  cursor: not-allowed;
   color: var(--color-text-primary);
   border: 1px solid var(--color-border);
-  cursor: not-allowed;
+  background: var(--color-canvas);
 }
 
 .aculta-support-other {
@@ -373,28 +373,28 @@ body.path-entrar .aculta-login__registration a {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem 1.5rem;
+  gap: .75rem 1.5rem;
   margin-block: 0;
-  padding-block: 0.75rem;
+  padding-block: .75rem;
   border-block-end: 1px solid var(--color-border);
-  font-size: 0.9375rem;
+  font-size: .9375rem;
 }
 
 .node--view-mode-full .portal-post__meta-item::before {
-  margin-inline-end: 0.35rem;
+  margin-inline-end: .35rem;
 }
 
 .node--view-mode-full .portal-post__share {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: .5rem;
   margin-inline-start: auto;
 }
 
 .node--view-mode-full .portal-post__share-label {
+  margin-inline-end: .25rem;
   font-weight: 600;
-  margin-inline-end: 0.25rem;
 }
 
 /* Origem V1: portal-address-number.css */

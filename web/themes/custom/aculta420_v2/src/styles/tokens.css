@@ -1,7 +1,5 @@
 /* ACULTA420 V2 design tokens. The Portal's explicit mode controls the theme. */
 :root {
-  color-scheme: light;
-
   --color-canvas: #f2f7f0;
   --color-surface: #fff;
   --color-surface-raised: #fff;
@@ -66,7 +64,6 @@
   --accent-yellow-stripe: #a98d26;
   --accent-red-stripe: #b52f22;
   --shadow-raised: 0 .125rem .5rem rgb(12 60 41 / 8%);
-
   --tap-target-min: 44px;
   --font-family-base: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-family-heading: Oswald, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -101,20 +98,20 @@
   /* Tokens semânticos de purpose (Fase 3: Paleta ACULTA Skunk Family). */
   /* Consumidos exclusivamente pela faixa de destaque do purpose. */
   --purpose-accent: #5a8022;
-  --purpose-on-accent: #ffffff;
+  --purpose-on-accent: #fff;
   --purpose-sub-1: #f0c41e;
   --purpose-sub-2: #c03d27;
   --purpose-sub-3: transparent;
-  --purpose-surface-1: #ffffff;
-  --purpose-surface-2: #ffffff;
-  --purpose-surface-3: #ffffff;
+  --purpose-surface-1: #fff;
+  --purpose-surface-2: #fff;
+  --purpose-surface-3: #fff;
 
   /* Tokens de botões ACULTA (docs/botoes.md) - Modo claro */
   --button-primary-bg: #0c3c29;
   --button-primary-bg-hover: #092b1d;
   --button-primary-bg-active: #051a12;
-  --button-primary-fg: #ffffff;
-  --button-secondary-bg: #ffffff;
+  --button-primary-fg: #fff;
+  --button-secondary-bg: #fff;
   --button-secondary-bg-hover: #f2f7f0;
   --button-secondary-bg-active: #e4ece1;
   --button-secondary-border: #6b7d70;
@@ -144,10 +141,11 @@
   --shadow-base: 0 4px 6px rgb(0 0 0 / 10%);
   --shadow-md: 0 4px 8px rgb(0 0 0 / 24%);
   --shadow-lg: 0 10px 15px rgb(0 0 0 / 10%);
+
+  color-scheme: light;
 }
 
 :root[data-theme="dark"] {
-  color-scheme: dark;
   --color-canvas: #171513;
   --color-surface: #211e1b;
   --color-surface-raised: #2b2723;
@@ -201,13 +199,15 @@
 
   /* Elevações e padrões escuros de purpose (Paleta ACULTA Skunk Family). */
   --purpose-accent: #6c9e22;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #fbd132;
   --purpose-sub-2: #dd4329;
   --purpose-sub-3: transparent;
   --purpose-surface-1: #282421;
   --purpose-surface-2: #39342f;
   --purpose-surface-3: #49433d;
+
+  color-scheme: dark;
 }
 
 :root[data-theme="light"] {
@@ -225,7 +225,7 @@
 /* 1. main: Skunk (verde-skunk, profunda) */
 html[data-purpose="main"] {
   --purpose-accent: #5a8022;
-  --purpose-on-accent: #ffffff;
+  --purpose-on-accent: #fff;
   --purpose-sub-1: #f0c41e;
   --purpose-sub-2: #c03d27;
   --purpose-sub-3: transparent;
@@ -233,7 +233,7 @@ html[data-purpose="main"] {
 
 html[data-theme="dark"][data-purpose="main"] {
   --purpose-accent: #6c9e22;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #fbd132;
   --purpose-sub-2: #dd4329;
   --purpose-sub-3: transparent;
@@ -245,7 +245,7 @@ html[data-theme="dark"][data-purpose="main"] {
 /* 2. wiki: Sativa (verde-sativa, fiel) */
 html[data-purpose="wiki"] {
   --purpose-accent: #689427;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #f2ca36;
   --purpose-sub-2: #d4452d;
   --purpose-sub-3: transparent;
@@ -253,7 +253,7 @@ html[data-purpose="wiki"] {
 
 html[data-theme="dark"][data-purpose="wiki"] {
   --purpose-accent: #7ab327;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #fcd64b;
   --purpose-sub-2: #e1563f;
   --purpose-sub-3: transparent;
@@ -265,7 +265,7 @@ html[data-theme="dark"][data-purpose="wiki"] {
 /* 3. links: Ruderalis (verde-ruderalis, suave) */
 html[data-purpose="links"] {
   --purpose-accent: #76a82c;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #f4d04e;
   --purpose-sub-2: #d85842;
   --purpose-sub-3: transparent;
@@ -273,7 +273,7 @@ html[data-purpose="links"] {
 
 html[data-theme="dark"][data-purpose="links"] {
   --purpose-accent: #89c72c;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #fcdc64;
   --purpose-sub-2: #e46a55;
   --purpose-sub-3: transparent;
@@ -285,7 +285,7 @@ html[data-theme="dark"][data-purpose="links"] {
 /* 4. account: Afghan (verde-afghan, profunda, exceção dark) */
 html[data-purpose="account"] {
   --purpose-accent: #08271a;
-  --purpose-on-accent: #ffffff;
+  --purpose-on-accent: #fff;
   --purpose-sub-1: #5a8022;
   --purpose-sub-2: #f0c41e;
   --purpose-sub-3: #c03d27;
@@ -293,7 +293,7 @@ html[data-purpose="account"] {
 
 html[data-theme="dark"][data-purpose="account"] {
   --purpose-accent: #059e61;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #6c9e22;
   --purpose-sub-2: #fbd132;
   --purpose-sub-3: #dd4329;
@@ -305,7 +305,7 @@ html[data-theme="dark"][data-purpose="account"] {
 /* 5. support: Acapulco Gold (amarelo-acapulco-gold, profunda) */
 html[data-purpose="support"] {
   --purpose-accent: #f0c41e;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #5a8022;
   --purpose-sub-2: #c03d27;
   --purpose-sub-3: transparent;
@@ -313,7 +313,7 @@ html[data-purpose="support"] {
 
 html[data-theme="dark"][data-purpose="support"] {
   --purpose-accent: #fbd132;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #6c9e22;
   --purpose-sub-2: #dd4329;
   --purpose-sub-3: transparent;
@@ -325,7 +325,7 @@ html[data-theme="dark"][data-purpose="support"] {
 /* 6. shop: Lemon Haze (amarelo-lemon-haze, fiel) */
 html[data-purpose="shop"] {
   --purpose-accent: #f2ca36;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #689427;
   --purpose-sub-2: #d4452d;
   --purpose-sub-3: transparent;
@@ -333,7 +333,7 @@ html[data-purpose="shop"] {
 
 html[data-theme="dark"][data-purpose="shop"] {
   --purpose-accent: #fcd64b;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #7ab327;
   --purpose-sub-2: #e1563f;
   --purpose-sub-3: transparent;
@@ -345,7 +345,7 @@ html[data-theme="dark"][data-purpose="shop"] {
 /* 7. eventos: Golden Goat (amarelo-golden-goat, suave) */
 html[data-purpose="eventos"] {
   --purpose-accent: #f4d04e;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #76a82c;
   --purpose-sub-2: #d85842;
   --purpose-sub-3: transparent;
@@ -353,7 +353,7 @@ html[data-purpose="eventos"] {
 
 html[data-theme="dark"][data-purpose="eventos"] {
   --purpose-accent: #fcdc64;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #89c72c;
   --purpose-sub-2: #e46a55;
   --purpose-sub-3: transparent;
@@ -365,7 +365,7 @@ html[data-theme="dark"][data-purpose="eventos"] {
 /* 8. magazine: Red Kush (vermelho-red-kush, profunda) */
 html[data-purpose="magazine"] {
   --purpose-accent: #c03d27;
-  --purpose-on-accent: #ffffff;
+  --purpose-on-accent: #fff;
   --purpose-sub-1: #5a8022;
   --purpose-sub-2: #f0c41e;
   --purpose-sub-3: transparent;
@@ -373,7 +373,7 @@ html[data-purpose="magazine"] {
 
 html[data-theme="dark"][data-purpose="magazine"] {
   --purpose-accent: #dd4329;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #6c9e22;
   --purpose-sub-2: #fbd132;
   --purpose-sub-3: transparent;
@@ -385,7 +385,7 @@ html[data-theme="dark"][data-purpose="magazine"] {
 /* 9. courses: Panama Red (vermelho-panama-red, fiel) */
 html[data-purpose="courses"] {
   --purpose-accent: #d4452d;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #689427;
   --purpose-sub-2: #f2ca36;
   --purpose-sub-3: transparent;
@@ -393,7 +393,7 @@ html[data-purpose="courses"] {
 
 html[data-theme="dark"][data-purpose="courses"] {
   --purpose-accent: #e1563f;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #7ab327;
   --purpose-sub-2: #fcd64b;
   --purpose-sub-3: transparent;
@@ -405,7 +405,7 @@ html[data-theme="dark"][data-purpose="courses"] {
 /* 10. forum: Red Congolese (vermelho-red-congolese, suave) */
 html[data-purpose="forum"] {
   --purpose-accent: #d85842;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #76a82c;
   --purpose-sub-2: #f4d04e;
   --purpose-sub-3: transparent;
@@ -413,7 +413,7 @@ html[data-purpose="forum"] {
 
 html[data-theme="dark"][data-purpose="forum"] {
   --purpose-accent: #e46a55;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #89c72c;
   --purpose-sub-2: #fcdc64;
   --purpose-sub-3: transparent;
@@ -438,4 +438,3 @@ html[data-theme="dark"][data-purpose-scheme] {
   --purpose-sub-2: var(--aculta-purpose-dark-sub-2);
   --purpose-sub-3: var(--aculta-purpose-dark-sub-3);
 }
-

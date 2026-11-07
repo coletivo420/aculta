@@ -4,20 +4,20 @@
 }
 
 .aculta-forum-topic--teaser {
-  background: var(--color-surface-raised);
+  display: grid;
+  padding: var(--spacing-base);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-base);
-  display: grid;
+  background: var(--color-surface-raised);
   gap: var(--spacing-md);
   margin-block: var(--spacing-md);
   min-inline-size: 0;
-  padding: var(--spacing-base);
 }
 
 .aculta-forum-topic--teaser .aculta-forum-topic__title { font: 500 1.2rem/1.35 var(--font-family-heading); }
 .aculta-forum-topic--teaser .aculta-forum-topic__title h2 { margin: 0; overflow-wrap: anywhere; }
-.aculta-forum-topic--teaser .aculta-forum-topic__title a { color: var(--color-text-primary); text-decoration: none; }
-.aculta-forum-topic--teaser .aculta-forum-topic__title a:is(:hover, :focus-visible) { color: var(--color-link-editorial-hover); text-decoration: underline; }
+.aculta-forum-topic--teaser .aculta-forum-topic__title a { text-decoration: none; color: var(--color-text-primary); }
+.aculta-forum-topic--teaser .aculta-forum-topic__title a:is(:hover, :focus-visible) { text-decoration: underline; color: var(--color-link-editorial-hover); }
 .aculta-forum-topic--teaser .aculta-forum-topic__title a:focus-visible { outline: var(--focus-ring-width) solid var(--color-focus-ring); outline-offset: 3px; }
 
 .aculta-forum-topic--full {
@@ -26,37 +26,37 @@
   min-inline-size: 0;
 }
 
-.aculta-forum-topic__meta { color: var(--color-text-secondary); font-size: var(--font-size-sm); margin: 0; }
+.aculta-forum-topic__meta { margin: 0; color: var(--color-text-secondary); font-size: var(--font-size-sm); }
 .aculta-forum-topic__content { min-inline-size: 0; overflow-wrap: anywhere; }
 .aculta-forum-topic--full .aculta-forum-topic__content > .field--name-body { line-height: 1.7; }
 
 .aculta-forum-topic .field--name-field-aculta-categories {
+  display: inline-flex;
   align-items: center;
-  background: var(--color-surface-raised);
+  color: var(--color-text-secondary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
-  color: var(--color-text-secondary);
-  display: inline-flex;
+  background: var(--color-surface-raised);
   font-size: var(--font-size-xs);
   min-block-size: 1.75rem;
   padding-inline: var(--spacing-sm);
 }
 
 .aculta-forum-topic .field--name-field-aculta-categories .field__item a {
+  display: inline-flex;
   align-items: center;
-  background: var(--color-surface-raised);
+  text-decoration: none;
+  color: var(--color-text-secondary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
-  color: var(--color-text-secondary);
-  display: inline-flex;
+  background: var(--color-surface-raised);
   min-block-size: 1.75rem;
   padding-inline: var(--spacing-sm);
-  text-decoration: none;
 }
 
 .aculta-forum-topic .field--name-field-aculta-categories .field__item a:is(:hover, :focus-visible) {
-  color: var(--color-text-primary);
   text-decoration: underline;
+  color: var(--color-text-primary);
   text-underline-offset: .15em;
 }
 
@@ -68,21 +68,20 @@
 
 .aculta-forum-topic--full .flag { display: inline-flex; margin: var(--spacing-md) var(--spacing-sm) 0 0; }
 .aculta-forum-topic--full .flag a {
-  align-items: center;
-  background: var(--color-brand-primary);
-  border: 1px solid var(--color-brand-primary);
-  border-radius: var(--radius-sm);
-  color: var(--color-on-brand);
   display: inline-flex;
-  font-weight: 600;
-  min-block-size: var(--tap-target-min);
+  align-items: center;
   padding: var(--spacing-sm) var(--spacing-base);
   text-decoration: none;
+  color: var(--color-on-brand);
+  border: 1px solid var(--color-brand-primary);
+  border-radius: var(--radius-sm);
+  background: var(--color-brand-primary);
+  font-weight: 600;
+  min-block-size: var(--tap-target-min);
 }
 
 .aculta-forum-topic--full .flag a:hover {
-  background: var(--color-brand-highlight);
-  border-color: var(--color-brand-highlight);
   color: var(--color-on-highlight);
+  border-color: var(--color-brand-highlight);
+  background: var(--color-brand-highlight);
 }
-

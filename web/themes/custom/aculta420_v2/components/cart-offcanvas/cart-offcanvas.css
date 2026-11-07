@@ -1,10 +1,10 @@
 .aculta-cart-offcanvas__caixa {
-  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
+  background: var(--color-surface);
 }
 
 .aculta-cart-offcanvas__assinatura {
-  border-block-start: 1px solid var(--color-border);
   padding-block-start: var(--spacing-sm);
+  border-block-start: 1px solid var(--color-border);
 }

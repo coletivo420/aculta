@@ -1,23 +1,23 @@
 .author-card {
+  display: flex;
   align-items: flex-start;
   color: var(--color-text-primary);
-  display: flex;
   gap: var(--spacing-sm);
   min-inline-size: 0;
 }
 
 .author-card__avatar {
+  display: flex;
+  overflow: hidden;
+  flex: 0 0 6rem;
   align-items: center;
-  background: var(--color-surface);
+  justify-content: center;
+  color: var(--color-text-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
-  color: var(--color-text-primary);
-  display: flex;
-  flex: 0 0 6rem;
+  background: var(--color-surface);
   inline-size: 6rem;
   block-size: 6rem;
-  justify-content: center;
-  overflow: hidden;
 }
 
 .author-card__avatar img {
@@ -28,17 +28,17 @@
 
 .author-card__identity { min-inline-size: 0; }
 .author-card__name { font-weight: 700; overflow-wrap: anywhere; }
-.author-card__name a { color: var(--color-link-editorial); text-decoration: underline; text-underline-offset: .15em; }
+.author-card__name a { text-decoration: underline; color: var(--color-link-editorial); text-underline-offset: .15em; }
 .author-card__name a:focus-visible,
 .author-card__actions :focus-visible,
 .author-card__social-links a:focus-visible { outline: 3px solid var(--color-focus-ring); outline-offset: 2px; }
 .author-card__joined,
 .author-card__designation,
-.author-card__source { color: var(--color-text-secondary); display: block; font-size: var(--font-size-sm); }
-.author-card__context { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-full); color: var(--color-text-secondary); display: inline-flex; font-size: var(--font-size-xs); line-height: 1.4; margin-block-start: var(--spacing-xs); padding: var(--spacing-xs) var(--spacing-sm); }
+.author-card__source { display: block; color: var(--color-text-secondary); font-size: var(--font-size-sm); }
+.author-card__context { display: inline-flex; margin-block-start: var(--spacing-xs); padding: var(--spacing-xs) var(--spacing-sm); color: var(--color-text-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-full); background: var(--color-surface); font-size: var(--font-size-xs); line-height: 1.4; }
 .author-card__bio { color: var(--color-text-secondary); font-size: var(--font-size-sm); line-height: 1.5; margin-block: var(--spacing-sm) 0; overflow-wrap: anywhere; }
-.author-card__social-links { display: flex; flex-wrap: wrap; gap: var(--spacing-xs); list-style: none; margin: var(--spacing-sm) 0 0; padding: 0; }
-.author-card__social-links a { align-items: center; border-radius: var(--radius-full); color: var(--color-link-editorial); display: inline-flex; justify-content: center; min-block-size: var(--tap-target-min); min-inline-size: var(--tap-target-min); }
+.author-card__social-links { display: flex; flex-wrap: wrap; margin: var(--spacing-sm) 0 0; padding: 0; list-style: none; gap: var(--spacing-xs); }
+.author-card__social-links a { display: inline-flex; align-items: center; justify-content: center; color: var(--color-link-editorial); border-radius: var(--radius-full); min-block-size: var(--tap-target-min); min-inline-size: var(--tap-target-min); }
 .author-card__social-links a:hover { background: var(--color-surface); }
 .author-card__actions { margin-block-start: var(--spacing-xs); }
 .author-card--stacked { flex-direction: column; }

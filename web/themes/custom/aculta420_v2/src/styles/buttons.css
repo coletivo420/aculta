@@ -10,21 +10,21 @@ button.link:focus {
 }
 
 :where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit):not(:where(.navbar-toggle, .close, .vvjb-button, .vvjb-play-pause-button, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit))) {
-  background-color: var(--button-primary-bg);
-  border-color: var(--button-primary-bg);
   color: var(--button-primary-fg);
+  border-color: var(--button-primary-bg);
+  background-color: var(--button-primary-bg);
 }
 
 :where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit):not(:where(.navbar-toggle, .close, .vvjb-button, .vvjb-play-pause-button, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit))):is(:hover, :focus-visible) {
-  background-color: var(--button-primary-bg-hover);
-  border-color: var(--button-primary-bg-hover);
   color: var(--button-primary-fg);
+  border-color: var(--button-primary-bg-hover);
+  background-color: var(--button-primary-bg-hover);
 }
 
 :where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit):not(:where(.navbar-toggle, .close, .vvjb-button, .vvjb-play-pause-button, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit))):active {
-  background-color: var(--button-primary-bg-active);
-  border-color: var(--button-primary-bg-active);
   color: var(--button-primary-fg);
+  border-color: var(--button-primary-bg-active);
+  background-color: var(--button-primary-bg-active);
 }
 
 :where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit):not(:where(.navbar-toggle, .close, .vvjb-button, .vvjb-play-pause-button, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit))):focus-visible {
@@ -41,47 +41,47 @@ button.link:focus {
 [data-portal-ui="aculta-btn-outline"] {
   display: inline-block;
   padding: .625rem 1.25rem;
+  transition: background-color 150ms ease-in-out, color 150ms ease-in-out, border-color 150ms ease-in-out;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control-button);
   font-family: var(--font-family-heading);
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.4;
-  border: 1px solid transparent;
-  border-radius: var(--radius-control-button);
-  text-decoration: none;
-  transition: background-color 150ms ease-in-out, color 150ms ease-in-out, border-color 150ms ease-in-out;
 }
 
 [data-portal-ui="aculta-btn-primary"] {
-  background-color: var(--button-primary-bg);
   color: var(--button-primary-fg);
+  background-color: var(--button-primary-bg);
 }
 
 [data-portal-ui="aculta-btn-outline"] {
-  background-color: var(--button-secondary-bg);
   color: var(--button-secondary-fg);
   border-color: var(--button-secondary-border);
+  background-color: var(--button-secondary-bg);
 }
 
 [data-portal-ui="aculta-btn-primary"]:is(:hover, :focus-visible) {
-  background-color: var(--button-primary-bg-hover);
   color: var(--button-primary-fg);
   border-color: var(--button-primary-bg-hover);
+  background-color: var(--button-primary-bg-hover);
 }
 
 [data-portal-ui="aculta-btn-outline"]:is(:hover, :focus-visible) {
-  background-color: var(--button-secondary-bg-hover);
   color: var(--button-secondary-fg);
   border-color: var(--button-secondary-border);
+  background-color: var(--button-secondary-bg-hover);
 }
 
 [data-portal-ui="aculta-btn-primary"]:active {
-  background-color: var(--button-primary-bg-active);
   border-color: var(--button-primary-bg-active);
+  background-color: var(--button-primary-bg-active);
 }
 
 [data-portal-ui="aculta-btn-outline"]:active {
-  background-color: var(--button-secondary-bg-active);
   border-color: var(--button-secondary-border);
+  background-color: var(--button-secondary-bg-active);
 }
 
 [data-portal-ui="aculta-btn-primary"]:focus-visible,

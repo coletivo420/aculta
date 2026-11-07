@@ -1,15 +1,15 @@
 .layout-page {
-  align-content: start;
   display: grid;
-  gap: var(--spacing-xl);
   grid-area: main;
   grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  padding: var(--spacing-lg) var(--page-gutter);
+  gap: var(--spacing-xl);
   inline-size: 100%;
   margin-inline: auto;
   min-block-size: 0;
   min-inline-size: 0;
   overflow-wrap: anywhere;
-  padding: var(--spacing-lg) var(--page-gutter);
 }
 
 .layout-page--stack {

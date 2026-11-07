@@ -14,24 +14,24 @@
 
 .aculta-highlighted > .alert-wrapper {
   position: static;
-  inset: auto;
+  z-index: auto;
   width: auto;
   max-height: none;
-  z-index: auto;
+  inset: auto;
 }
 
 .aculta-highlighted > .alert-wrapper > .alert {
-  max-height: none;
   overflow: visible;
+  max-height: none;
   margin-block-end: 1rem;
 }
 
 .aculta-highlighted > .alert-wrapper > .alert :is(h1, h2, h3, h4, h5, h6, .alert-heading) {
-  margin-block: 0 0.5rem;
+  text-wrap: balance;
   font-size: clamp(1.125rem, 1.5vw, 1.25rem);
   line-height: 1.25;
+  margin-block: 0 .5rem;
   overflow-wrap: normal;
-  text-wrap: balance;
 }
 
 .aculta-content .view-empty {
@@ -41,7 +41,7 @@
 
 .aculta-events-upcoming {
   display: grid;
-  gap: 0.5rem;
+  gap: .5rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -50,19 +50,19 @@
 .aculta-events-upcoming__link {
   display: block;
   min-height: 2.75rem;
-  padding: 0.75rem 1rem;
-  overflow-wrap: anywhere;
+  padding: .75rem 1rem;
+  text-decoration: none;
   color: var(--color-text-primary);
-  background-color: var(--color-surface-raised);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-base);
-  text-decoration: none;
+  background-color: var(--color-surface-raised);
+  overflow-wrap: anywhere;
 }
 
 .aculta-events-upcoming__link:is(:hover, :focus-visible) {
-  border-color: var(--color-border);
   text-decoration: underline;
-  text-underline-offset: 0.2em;
+  border-color: var(--color-border);
+  text-underline-offset: .2em;
 }
 
 .aculta-events-upcoming__link:focus-visible {
@@ -79,16 +79,16 @@
 .aculta-surface,
 .aculta-content-surface {
   padding: clamp(1.25rem, 3vw, 2rem);
-  background-color: var(--color-surface-raised);
   border-inline-start: 3px solid var(--color-brand-primary);
   border-radius: var(--radius-base);
+  background-color: var(--color-surface-raised);
 }
 
 .aculta-related-content ul {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  margin: 0.75rem 0;
+  gap: .75rem;
+  margin: .75rem 0;
   padding: 0;
   list-style: none;
 }
@@ -96,9 +96,9 @@
 .aculta-related-content__item {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 0.5rem;
+  gap: .5rem;
   min-inline-size: 0;
-  padding: 0.875rem 1rem;
+  padding: .875rem 1rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-base);
   background: var(--color-surface-raised);
@@ -107,8 +107,8 @@
 
 .aculta-related-content__link,
 .aculta-related-content__title {
-  font-weight: 600;
   color: var(--color-text-primary);
+  font-weight: 600;
 }
 
 .aculta-related-content__link {
@@ -117,7 +117,7 @@
 
 .aculta-related-content__link:is(:hover, :focus-visible) {
   text-decoration: underline;
-  text-underline-offset: 0.2em;
+  text-underline-offset: .2em;
 }
 
 .aculta-related-content__link:focus-visible {
@@ -128,19 +128,19 @@
 .aculta-related-content__badge {
   display: inline-block;
   justify-self: start;
-  padding: 0.15rem 0.5rem;
+  padding: .15rem .5rem;
+  letter-spacing: .03em;
+  color: var(--color-text-secondary);
   border-radius: var(--radius-base);
   background: var(--color-canvas);
-  color: var(--color-text-secondary);
-  font-size: 0.75rem;
+  font-size: .75rem;
   font-weight: 600;
-  letter-spacing: 0.03em;
 }
 
 .aculta-related-content__summary {
   margin: 0;
   color: var(--color-text-secondary);
-  font-size: 0.875rem;
+  font-size: .875rem;
   line-height: 1.45;
 }
 
@@ -151,13 +151,13 @@
 
 .aculta-card .aculta-card__title,
 .aculta-panel .aculta-panel__title {
-  margin-block: 0 0.75rem;
+  margin-block: 0 .75rem;
 }
 
 .aculta-card .aculta-card__title a,
 .aculta-panel .aculta-panel__title a {
-  color: var(--color-text-primary);
   text-decoration: none;
+  color: var(--color-text-primary);
 }
 
 .aculta-card .aculta-card__title a:hover,
@@ -197,9 +197,9 @@
 .aculta-card:is(:hover, :focus-within),
 .aculta-panel:is(:hover, :focus-within),
 .aculta-editorial-list .views-row:is(:hover, :focus-within) {
+  transform: translateY(-2px);
   border-color: var(--color-brand-highlight);
   box-shadow: var(--shadow-raised);
-  transform: translateY(-2px);
 }
 
 .aculta-metadata,
@@ -214,9 +214,9 @@
 
 .field--name-field-editorial-category .aculta-category {
   display: inline-block;
-  padding: 0.125rem 0.5rem;
-  border-radius: var(--radius-full);
+  padding: .125rem .5rem;
   text-decoration: none;
+  border-radius: var(--radius-full);
 }
 
 .field--name-field-editorial-category .aculta-category--red {
@@ -246,9 +246,9 @@
 }
 
 .view-aculta-albuns .views-view-grid .views-col {
+  float: none;
   width: auto !important;
   min-width: 0;
-  float: none;
 }
 
 @media (min-width: 768px) {

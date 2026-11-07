@@ -7,13 +7,13 @@
 }
 
 .aculta-breadcrumb__list {
-  align-items: baseline;
   display: flex;
   flex-wrap: wrap;
-  list-style: none;
+  align-items: baseline;
   margin: 0;
-  min-inline-size: 0;
   padding: 0;
+  list-style: none;
+  min-inline-size: 0;
 }
 
 .aculta-breadcrumb__item {
@@ -22,9 +22,9 @@
 }
 
 .aculta-breadcrumb__item + .aculta-breadcrumb__item::before {
-  color: var(--color-text-secondary);
-  content: "/";
   display: inline-block;
+  content: "/";
+  color: var(--color-text-secondary);
   margin-inline: var(--spacing-xs);
 }
 

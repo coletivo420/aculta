@@ -1,71 +1,71 @@
 /* Componente SDC studio-calendar: Caixa com faixa superior --purpose-sub-2 e raio --radius-lg */
 .aculta-studio-calendar {
-  background: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: var(--spacing-md);
   border: 1px solid var(--color-border);
   border-block-start: 4px solid var(--purpose-sub-2);
   border-radius: var(--radius-lg);
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
+  background: var(--color-surface);
   gap: var(--spacing-sm);
   inline-size: 100%;
   max-inline-size: 100%;
-  padding: var(--spacing-md);
 }
 
 .aculta-studio-calendar__header {
-  align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-xs);
+  align-items: center;
   justify-content: space-between;
+  gap: var(--spacing-xs);
 }
 
 .aculta-studio-calendar__title-wrap {
-  align-items: center;
   display: flex;
+  align-items: center;
   gap: var(--spacing-xs);
 }
 
 .aculta-studio-calendar__title {
+  margin: 0;
   font-family: var(--font-family-display, inherit);
   font-size: var(--font-size-lg, 1.25rem);
   font-weight: 700;
   line-height: 1.2;
-  margin: 0;
 }
 
 .aculta-studio-calendar__add-btn {
-  align-items: center;
-  border-radius: var(--radius-full);
   display: inline-flex;
+  align-items: center;
   justify-content: center;
+  padding: 0;
+  border-radius: var(--radius-full);
   min-block-size: 2rem;
   min-inline-size: 2rem;
-  padding: 0;
 }
 
 .aculta-studio-calendar__nav {
-  align-items: center;
   display: flex;
-  gap: var(--spacing-2xs, 0.25rem);
+  align-items: center;
+  gap: var(--spacing-2xs, .25rem);
 }
 
 .aculta-studio-calendar__month-label {
-  font-size: var(--font-size-sm, 0.875rem);
+  text-align: center;
+  font-size: var(--font-size-sm, .875rem);
   font-weight: 600;
   min-inline-size: 7.5rem;
-  text-align: center;
 }
 
 .aculta-studio-calendar__nav-btn {
-  align-items: center;
-  border-radius: var(--radius-sm);
   display: inline-flex;
+  align-items: center;
   justify-content: center;
+  padding: 0;
+  border-radius: var(--radius-sm);
   min-block-size: 2rem;
   min-inline-size: 2rem;
-  padding: 0;
 }
 
 /* Filtros segmentados */
@@ -75,40 +75,40 @@
 }
 
 .aculta-studio-calendar__filter-group {
-  background: var(--color-surface-raised);
+  display: flex;
+  padding: 2px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  display: flex;
+  background: var(--color-surface-raised);
   gap: 2px;
-  padding: 2px;
 }
 
 .aculta-studio-calendar__filter-chip {
-  align-items: center;
-  border-radius: var(--radius-xs, 2px);
-  color: var(--color-text-secondary);
   display: inline-flex;
   flex: 1 1 0;
-  font-size: var(--font-size-xs, 0.75rem);
-  font-weight: 500;
+  align-items: center;
   justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-xs, 2px);
+  font-size: var(--font-size-xs, .75rem);
+  font-weight: 500;
   min-block-size: 2rem;
   padding-inline: var(--spacing-xs);
-  text-align: center;
-  text-decoration: none;
-  white-space: nowrap;
 }
 
 .aculta-studio-calendar__filter-chip:hover {
-  background: var(--button-secondary-bg-hover);
   color: var(--color-text-primary);
+  background: var(--button-secondary-bg-hover);
 }
 
 .aculta-studio-calendar__filter-chip.is-active {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .05);
   font-weight: 700;
 }
 
@@ -123,17 +123,17 @@
 }
 
 .aculta-studio-calendar__grid {
+  table-layout: fixed;
   border-collapse: collapse;
   inline-size: 100%;
-  table-layout: fixed;
 }
 
 .aculta-studio-calendar__grid th {
+  text-align: center;
   color: var(--color-text-muted);
-  font-size: var(--font-size-xs, 0.75rem);
+  font-size: var(--font-size-xs, .75rem);
   font-weight: 600;
   padding-block: var(--spacing-xs);
-  text-align: center;
 }
 
 .aculta-studio-calendar__grid td {
@@ -147,17 +147,17 @@
 
 .aculta-studio-calendar__day-link,
 .aculta-studio-calendar__day > span.aculta-studio-calendar__day-num {
-  align-items: center;
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
-  color: var(--color-text-primary);
+  position: relative;
   display: flex;
   flex-direction: column;
-  font-size: var(--font-size-xs, 0.75rem);
+  align-items: center;
   justify-content: center;
-  min-block-size: 2rem;
-  position: relative;
   text-decoration: none;
+  color: var(--color-text-primary);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs, .75rem);
+  min-block-size: 2rem;
 }
 
 .aculta-studio-calendar__day-link:hover {
@@ -170,8 +170,8 @@
 }
 
 .aculta-studio-calendar__day.is-outside .aculta-studio-calendar__day-num {
+  opacity: .4;
   color: var(--color-text-muted);
-  opacity: 0.4;
 }
 
 .aculta-studio-calendar__day.is-today .aculta-studio-calendar__day-link,
@@ -183,66 +183,66 @@
 /* Dia selecionado com --purpose-accent */
 .aculta-studio-calendar__day.is-selected .aculta-studio-calendar__day-link,
 .aculta-studio-calendar__day.is-selected span.aculta-studio-calendar__day-num {
+  color: #fff;
   background: var(--purpose-accent);
-  color: #ffffff;
   font-weight: 700;
 }
 
 .aculta-studio-calendar__day-dot {
-  background: var(--color-brand-primary);
+  margin-block-start: 1px;
   border-radius: var(--radius-full);
+  background: var(--color-brand-primary);
   block-size: 4px;
   inline-size: 4px;
-  margin-block-start: 1px;
 }
 
 .aculta-studio-calendar__day.is-selected .aculta-studio-calendar__day-dot {
-  background: #ffffff;
+  background: #fff;
 }
 
 /* Resumo do dia */
 .aculta-studio-calendar__summary {
-  border-block-start: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
   padding-block-start: var(--spacing-sm);
+  border-block-start: 1px solid var(--color-border);
+  gap: var(--spacing-xs);
 }
 
 .aculta-studio-calendar__summary-title {
-  font-size: var(--font-size-xs, 0.75rem);
-  font-weight: 700;
-  letter-spacing: 0.05em;
   margin: 0;
+  letter-spacing: .05em;
   text-transform: uppercase;
+  font-size: var(--font-size-xs, .75rem);
+  font-weight: 700;
 }
 
 .aculta-studio-calendar__events-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
-  list-style: none;
   margin: 0;
   padding: 0;
+  list-style: none;
+  gap: var(--spacing-xs);
 }
 
 .aculta-studio-calendar__event-item {
-  background: var(--color-surface-raised);
+  padding: var(--spacing-xs) var(--spacing-sm);
   border-left: 3px solid var(--purpose-sub-2);
   border-radius: var(--radius-xs, 2px);
-  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-surface-raised);
 }
 
 .aculta-studio-calendar__event-item.is-cancelled {
-  opacity: 0.6;
   text-decoration: line-through;
+  opacity: .6;
 }
 
 .aculta-studio-calendar__event-link {
-  color: var(--color-text-primary);
-  font-size: var(--font-size-sm, 0.875rem);
-  font-weight: 600;
   text-decoration: none;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm, .875rem);
+  font-weight: 600;
 }
 
 .aculta-studio-calendar__event-link:hover {
@@ -254,19 +254,19 @@
 }
 
 .aculta-studio-calendar__event-meta {
-  color: var(--color-text-muted);
   display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-xs);
-  font-size: var(--font-size-xs, 0.75rem);
   margin-block-start: 2px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs, .75rem);
+  gap: var(--spacing-xs);
 }
 
 .aculta-studio-calendar__empty-msg {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs, 0.75rem);
-  font-style: italic;
   margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs, .75rem);
+  font-style: italic;
 }
 
 /* Posicionamento responsivo */
@@ -289,10 +289,10 @@
 
   /* Ajusta o container do dashboard para acomodar menu lateral na esquerda e calendário na direita no desktop */
   :is(main, .page__main, .layout-page):has(.aculta-studio-calendar) {
+    position: relative;
+    padding-inline-end: 21rem;
     margin-inline: auto;
     max-inline-size: var(--aculta-container-width, 84rem);
-    padding-inline-end: 21rem;
-    position: relative;
   }
 
   /* O conteúdo ocupa a faixa entre o menu e o calendário: grid de uma coluna, sem a coluna lateral vazia. */

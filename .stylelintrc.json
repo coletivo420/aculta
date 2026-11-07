@@ -1,3 +1,44 @@
 {
-  "extends": ["stylelint-config-drupal"]
+  "extends": ["stylelint-config-drupal"],
+  "rules": {
+    "at-rule-no-unknown": [
+      true,
+      {
+        "ignoreAtRules": ["container", "starting-style"]
+      }
+    ],
+    "declaration-block-single-line-max-declarations": null,
+    "number-leading-zero": "never",
+    "unit-allowed-list": [
+      "ch",
+      "deg",
+      "dvh",
+      "em",
+      "ex",
+      "fr",
+      "ms",
+      "rem",
+      "%",
+      "s",
+      "px",
+      "vw",
+      "vh"
+    ],
+    "unit-no-unknown": [
+      true,
+      {
+        "ignoreUnits": ["dvh"]
+      }
+    ],
+    "value-keyword-case": [
+      "lower",
+      {
+        "ignoreProperties": [
+          "font-family",
+          "--font-family-base",
+          "--font-family-heading"
+        ]
+      }
+    ]
+  }
 }

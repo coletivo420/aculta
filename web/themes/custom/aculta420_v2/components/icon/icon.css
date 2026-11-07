@@ -1,11 +1,11 @@
 .aculta-icon {
-  align-items: center;
-  color: var(--icon-primary, currentColor);
   display: inline-flex;
   flex: 0 0 auto;
+  align-items: center;
   justify-content: center;
-  line-height: 1;
   vertical-align: middle;
+  color: var(--icon-primary, currentColor);
+  line-height: 1;
 }
 
 .aculta-icon svg {
@@ -21,9 +21,9 @@
 .aculta-icon--bar { block-size: 30px; inline-size: 30px; }
 
 .aculta-icon--duotone svg path:first-child {
-  fill: currentColor;
-  opacity: .22;
   transition: opacity .2s ease, fill .2s ease;
+  opacity: .22;
+  fill: currentColor;
 }
 
 .aculta-icon--duotone svg path:last-child { fill: currentColor; }

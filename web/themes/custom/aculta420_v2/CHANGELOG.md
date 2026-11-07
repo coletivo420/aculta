@@ -6,6 +6,12 @@
 
 # Changelog — ACULTA420 V2
 
+## Não versionado — conformidade Stylelint
+
+- CSS dos SDCs e estilos globais reordenados e normalizados conforme o preset Drupal; sem mudança intencional de comportamento.
+- O preset mantém regras de comunidade. Regras antigas incompatíveis com o CSS usado pela V2 foram ajustadas para preservar regras compactas existentes e aceitar `dvh`, `@container` e `@starting-style`.
+- `npm run lint:css`: PASS.
+
 ## Não versionado — `profile-details` no Studio
 
 - Adicionado o SDC `profile-details` com título acessível (`aria-labelledby`) e

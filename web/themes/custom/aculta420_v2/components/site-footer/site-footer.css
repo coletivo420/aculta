@@ -1,7 +1,7 @@
 .site-footer {
   grid-area: footer;
-  background: var(--color-footer-surface);
   color: var(--color-footer-text);
+  background: var(--color-footer-surface);
   min-inline-size: 0;
   padding-block: var(--spacing-section);
 }
@@ -36,11 +36,11 @@
 }
 
 .site-footer :is(.region-footer, .page__footer-region) h2::after {
-  border-block-end: 2px solid var(--color-brand-highlight);
-  content: "";
   display: block;
-  inline-size: 2.25rem;
   margin-block-start: var(--spacing-sm);
+  content: "";
+  border-block-end: 2px solid var(--color-brand-highlight);
+  inline-size: 2.25rem;
 }
 
 .site-footer :is(p, dd, .aculta-footer-description, .aculta-footer-cnpj, .aculta-institution-details, .field--name-field-headquarters) {
@@ -65,11 +65,11 @@
 }
 
 .site-footer--social-links {
-  background: var(--color-surface-raised);
-  border-block-start: 1px solid var(--color-border);
-  color: var(--color-text-secondary);
-  padding-block: var(--spacing-md);
   text-align: center;
+  color: var(--color-text-secondary);
+  border-block-start: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+  padding-block: var(--spacing-md);
 }
 
 .site-footer--social-links .site-footer__inner {
@@ -81,29 +81,29 @@
 .site-footer--social-links .site-footer__content [data-portal-ui~="social-links-list"] {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-sm);
   justify-content: center;
-  list-style: none;
   margin: 0;
   padding: 0;
+  list-style: none;
+  gap: var(--spacing-sm);
 }
 
 .site-footer--social-links .site-footer__content [data-portal-ui~="social-links-channel"] {
-  align-items: center;
-  background: transparent;
-  border: 0;
-  color: var(--color-text-primary);
   display: inline-flex;
+  align-items: center;
   justify-content: center;
-  min-block-size: var(--tap-target-min);
-  min-inline-size: var(--tap-target-min);
   padding: var(--spacing-xs);
   text-decoration: none;
+  color: var(--color-text-primary);
+  border: 0;
+  background: transparent;
+  min-block-size: var(--tap-target-min);
+  min-inline-size: var(--tap-target-min);
 }
 
 .site-footer--social-links .site-footer__content [data-portal-ui~="social-links-channel"]:is(:hover, :focus-visible) {
-  color: var(--color-brand-primary);
   text-decoration: underline;
+  color: var(--color-brand-primary);
   text-underline-offset: .2em;
 }
 
@@ -122,35 +122,35 @@
 .site-footer :is(.region-footer, .page__footer-region) :is(nav ul, .menu) {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
-  list-style: none;
   margin: 0;
-  min-inline-size: 0;
   padding: 0;
+  list-style: none;
+  gap: var(--spacing-xs);
+  min-inline-size: 0;
 }
 
 .site-footer :is(.region-footer, .page__footer-region) :is(nav a, .menu a) {
+  display: inline-flex;
   align-items: center;
-  background: var(--color-footer-link-surface);
+  box-sizing: border-box;
+  padding: var(--spacing-sm) var(--spacing-md);
+  text-decoration: none;
+  color: var(--color-footer-link-text);
   border: 1px solid var(--color-footer-link-text);
   border-radius: var(--radius-sm);
-  box-sizing: border-box;
-  color: var(--color-footer-link-text);
-  display: inline-flex;
+  background: var(--color-footer-link-surface);
   font: 500 var(--font-size-base)/1.4 var(--font-family-base);
   inline-size: fit-content;
   max-inline-size: 100%;
   min-block-size: var(--tap-target-min);
   overflow-wrap: anywhere;
-  padding: var(--spacing-sm) var(--spacing-md);
-  text-decoration: none;
 }
 
 .site-footer :is(.region-footer, .page__footer-region) :is(nav a, .menu a):is(:hover, :focus-visible, .is-active, .active, [aria-current="page"]) {
-  background: var(--color-brand-highlight);
-  border-color: var(--color-brand-highlight);
-  color: var(--color-on-highlight);
   text-decoration: underline;
+  color: var(--color-on-highlight);
+  border-color: var(--color-brand-highlight);
+  background: var(--color-brand-highlight);
   text-decoration-thickness: 2px;
   text-underline-offset: .2em;
 }

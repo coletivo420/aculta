@@ -3,9 +3,9 @@
 .private-message-thread-inbox.aculta-messenger-conversation {
   position: relative;
   margin-block: 0;
-  padding: 0.75rem;
+  padding: .75rem;
   border: 1px solid var(--color-border);
-  border-radius: 0.75rem;
+  border-radius: .75rem;
   background: var(--color-surface-raised);
 }
 
@@ -13,15 +13,15 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 0.8rem;
   min-height: 4.25rem;
-  margin: 0.25rem 0;
-  padding: 0.55rem 0.75rem;
+  margin: .25rem 0;
+  padding: .55rem .75rem;
+  transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
   border: 1px solid var(--color-border);
-  border-radius: 0.4rem;
+  border-radius: .4rem;
   background: var(--color-surface-raised);
   box-shadow: var(--shadow-sm);
-  transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+  gap: .8rem;
 }
 
 .aculta-messenger-sender:not(.aculta-notice-summary):hover,
@@ -33,16 +33,16 @@
 
 .aculta-messenger-sender__avatar {
   display: grid;
+  overflow: hidden;
   flex: 0 0 3rem;
+  place-items: center;
   width: 3rem;
   height: 3rem;
-  place-items: center;
-  overflow: hidden;
+  color: var(--color-on-primary);
   border: 2px solid var(--color-surface-raised);
   border-radius: 50%;
   background: var(--color-primary);
   box-shadow: 0 0 0 1px var(--color-border);
-  color: var(--color-on-primary);
   font-size: 1.1rem;
   font-weight: 700;
 }
@@ -51,13 +51,13 @@
   display: block;
   width: 100%;
   height: 100%;
-  border-radius: 50%;
   object-fit: cover;
+  border-radius: 50%;
 }
 
 .aculta-messenger-preview .item-list > ul {
   display: grid;
-  gap: 0.65rem;
+  gap: .65rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -68,23 +68,23 @@
   flex: 1 1 auto;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: center;
   align-self: stretch;
+  justify-content: center;
   min-width: 0;
   padding-inline-end: 2rem;
-  line-height: 1.2;
+  text-decoration: none;
   color: var(--color-text-primary);
   font-size: 1rem;
   font-weight: 600;
-  text-decoration: none;
+  line-height: 1.2;
 }
 
 .aculta-messenger-sender__details {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  justify-content: center;
   align-self: stretch;
+  justify-content: center;
   min-width: 0;
   padding-inline-end: 2rem;
 }
@@ -100,7 +100,7 @@
   position: absolute;
   z-index: 2;
   inset: 0;
-  content: '';
+  content: "";
 }
 
 .aculta-messenger-sender__link:focus-visible::after {
@@ -112,37 +112,37 @@
 .aculta-messenger-sender__date {
   display: block;
   overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   color: var(--color-text-secondary);
-  font-size: 0.7rem;
+  font-size: .7rem;
   font-weight: 400;
   line-height: 1.2;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .aculta-messenger-sender__link:hover,
 .aculta-messenger-sender__link:focus-visible {
-  color: var(--color-on-primary);
   text-decoration: none;
+  color: var(--color-on-primary);
 }
 
 .aculta-read-label {
   flex: 0 0 auto;
   align-self: flex-start;
-  margin-block-start: 0.5rem;
-  padding: 0.1rem 0.45rem;
+  margin-block-start: .5rem;
+  padding: .1rem .45rem;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
   border-radius: var(--radius-base);
   background: var(--color-canvas);
-  color: var(--color-text-secondary);
-  font-size: 0.7rem;
+  font-size: .7rem;
   font-weight: 500;
   line-height: 1.3;
-  white-space: nowrap;
 }
 
 .aculta-read-label--unread {
-  background: var(--color-brand-highlight);
   color: var(--color-on-highlight);
+  background: var(--color-brand-highlight);
   font-weight: 700;
 }
 
@@ -154,14 +154,14 @@
 .private-message-thread-inbox .private-message-inbox-thread-link {
   position: absolute;
   z-index: 1;
-  inset: 0;
   display: block;
+  overflow: hidden;
   width: 100%;
   height: 100%;
-  overflow: hidden;
   border: 0;
   border-radius: inherit;
   font-size: 0;
+  inset: 0;
 }
 
 .private-message-thread-inbox .private-message-inbox-thread-link:focus-visible {
@@ -188,9 +188,9 @@
 
 .aculta-messenger-conversation__actions .aculta-messenger-options__label,
 .aculta-messenger-conversation__actions .aculta-messenger-options__summary {
-  min-width: 2.25rem;
   justify-content: center;
-  padding-inline: 0.45rem;
+  min-width: 2.25rem;
+  padding-inline: .45rem;
 }
 
 .aculta-messenger-conversation__actions .accordion,
@@ -218,59 +218,59 @@
   z-index: 5;
   width: min(18rem, 80vw);
   min-width: 0;
-  margin-block-start: 0.35rem;
+  margin-block-start: .35rem;
 }
 
 .aculta-messenger-offcanvas .aculta-utility-offcanvas__body {
-  min-height: 0;
   overflow-y: auto;
+  min-height: 0;
   overscroll-behavior: contain;
 }
 
 .aculta-messenger-offcanvas .aculta-utility-offcanvas__body.aculta-messenger-drawer-content--conversation {
-  min-height: 0;
-  gap: 0;
   overflow-y: auto;
-  padding: 0.35rem;
+  min-height: 0;
+  padding: .35rem;
+  gap: 0;
 }
 
 .aculta-messenger-drawer-conversation {
   display: flex;
+  overflow: visible;
   flex: 0 0 auto;
   flex-direction: column;
   min-width: 0;
-  overflow: visible;
 }
 
 .aculta-messenger-drawer-conversation > :not(.aculta-messenger-back-link):not(.aculta-messenger-conversation-toolbar) {
   display: flex;
   flex: 0 0 auto;
-  min-width: 0;
   flex-direction: column;
+  min-width: 0;
 }
 
 .aculta-messenger-drawer-conversation #private-message-page {
   display: flex;
   flex: 1 1 auto;
-  width: 100%;
-  height: 100%;
-  min-width: 0;
-  min-height: 0;
   flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  min-height: 0;
 }
 
 .aculta-messenger-drawer-conversation .private-message-thread-full {
   display: flex;
+  flex-direction: column;
   height: 100%;
   min-height: 0;
-  flex-direction: column;
 }
 
 .aculta-messenger-drawer-conversation .private-message-thread-full > .contextual-region {
   display: flex;
+  flex-direction: column;
   height: 100%;
   min-height: 0;
-  flex-direction: column;
 }
 
 .aculta-messenger-drawer-conversation .private-message-thread-full > .contextual-region > .private_message_thread_delete_link_wrapper,
@@ -281,11 +281,11 @@
 }
 
 .aculta-messenger-drawer-conversation .private-message-thread-full > .contextual-region > .field--name-private-messages {
+  overflow-y: auto;
+  flex: 1 1 0%;
   order: 1;
   min-height: 0;
-  flex: 1 1 0%;
-  overflow-y: auto;
-  padding-inline: 0.25rem;
+  padding-inline: .25rem;
 }
 
 .aculta-messenger-drawer-conversation .private-message-thread-full > .contextual-region > div:has(> form[data-aculta-reply-form]) {
@@ -295,15 +295,15 @@
 .aculta-messenger-drawer-conversation .aculta-messenger-back-link {
   flex: 0 0 auto;
   align-self: flex-end;
-  margin-block-end: 0.4rem;
+  margin-block-end: .4rem;
 }
 
 .aculta-messenger-drawer-conversation [data-aculta-reply-form] {
-  order: 2;
   position: static;
   flex: 0 0 auto;
-  margin-block-start: 0.35rem;
-  padding: 0.55rem 0.15rem 0.25rem;
+  order: 2;
+  margin-block-start: .35rem;
+  padding: .55rem .15rem .25rem;
   border-top: 1px solid var(--color-border);
   background: var(--color-surface-raised);
 }
@@ -311,7 +311,7 @@
 .aculta-messenger-drawer-conversation [data-aculta-reply-form] .form-actions {
   display: flex;
   justify-content: flex-end;
-  margin-block: 0.5rem 0;
+  margin-block: .5rem 0;
 }
 
 .aculta-messenger-drawer-conversation [data-aculta-reply-form] {
@@ -324,7 +324,7 @@
 }
 
 .aculta-messenger-drawer-conversation [data-aculta-reply-form] .field--name-message {
-  margin-block-end: 0.25rem;
+  margin-block-end: .25rem;
 }
 
 .aculta-messenger-drawer-conversation [data-aculta-reply-form] textarea {
@@ -338,7 +338,7 @@
 
 @media (min-width: 36rem) {
   .aculta-messenger-offcanvas .aculta-utility-offcanvas__body.aculta-messenger-drawer-content--conversation {
-    padding: 0.5rem;
+    padding: .5rem;
   }
 
   .aculta-messenger-drawer-conversation [data-aculta-reply-form] .field--name-message {
@@ -346,8 +346,8 @@
   }
 
   .aculta-messenger-drawer-conversation [data-aculta-reply-form] {
-    margin-block-start: 0.5rem;
-    padding: 0.75rem 0.25rem 0.5rem;
+    margin-block-start: .5rem;
+    padding: .75rem .25rem .5rem;
   }
 
   .aculta-messenger-drawer-conversation [data-aculta-reply-form] textarea {
@@ -358,27 +358,27 @@
 
 .aculta-messenger-back-link {
   display: flex;
-  width: fit-content;
   align-items: center;
-  gap: 0.4rem;
-  margin-block-end: 0.75rem;
+  width: fit-content;
+  margin-block-end: .75rem;
+  text-decoration: none;
   color: var(--color-primary);
   font-weight: 600;
-  text-decoration: none;
+  gap: .4rem;
 }
 
 .aculta-messenger-conversation-toolbar {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
   flex: 0 0 auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: start;
-  gap: 0.5rem;
-  margin-block-end: 0.25rem;
+  margin-block-end: .25rem;
+  gap: .5rem;
 }
 
 .aculta-messenger-drawer-conversation .aculta-messenger-conversation-toolbar .aculta-messenger-back-link {
-  justify-self: start;
   align-self: start;
+  justify-self: start;
   margin: 0;
 }
 
@@ -386,8 +386,8 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  margin-inline-start: auto;
   min-width: 0;
+  margin-inline-start: auto;
 }
 
 .aculta-messenger-conversation-toolbar .aculta-messenger-options {
@@ -398,16 +398,16 @@
 .aculta-messenger-options__summary {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
   min-height: 2.25rem;
-  padding: 0.3rem 0.65rem;
+  padding: .3rem .65rem;
+  list-style: none;
+  cursor: pointer;
+  color: var(--color-text-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-base);
   background: var(--color-surface-raised);
-  color: var(--color-text-primary);
   font-weight: 600;
-  list-style: none;
-  cursor: pointer;
+  gap: .35rem;
 }
 
 .aculta-messenger-options__label {
@@ -415,9 +415,9 @@
 }
 
 .aculta-messenger-options__summary {
-  min-width: 2.25rem;
   justify-content: center;
-  padding-inline: 0.45rem;
+  min-width: 2.25rem;
+  padding-inline: .45rem;
 }
 
 @media (min-width: 36rem) {
@@ -426,9 +426,9 @@
   }
 
   .aculta-messenger-options__summary {
-    min-width: auto;
     justify-content: normal;
-    padding-inline: 0.65rem;
+    min-width: auto;
+    padding-inline: .65rem;
   }
 }
 
@@ -446,8 +446,8 @@
   flex-direction: column;
   min-width: 14rem;
   max-width: min(18rem, 80vw);
-  margin-block-start: 0.4rem;
-  padding: 0.25rem;
+  margin-block-start: .4rem;
+  padding: .25rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-base);
   background: var(--color-surface-raised);
@@ -459,16 +459,16 @@
   display: block;
   width: 100%;
   margin: 0;
-  padding: 0.6rem 0.75rem;
+  padding: .6rem .75rem;
+  cursor: pointer;
+  text-align: start;
+  text-decoration: none;
+  color: var(--color-text-primary);
   border: 0;
   border-bottom: 1px solid var(--color-border);
   border-radius: 0;
   background: transparent;
-  color: var(--color-text-primary);
   font: inherit;
-  text-align: start;
-  text-decoration: none;
-  cursor: pointer;
 }
 
 .aculta-messenger-options__item:last-child,
@@ -480,9 +480,9 @@
 .aculta-messenger-options__item:focus-visible,
 .aculta-messenger-options__action:hover,
 .aculta-messenger-options__action:focus-visible {
-  background: var(--color-primary);
   color: var(--color-on-primary);
   outline: none;
+  background: var(--color-primary);
 }
 
 .aculta-messenger-options__item:focus-visible,
@@ -505,22 +505,22 @@ form[data-aculta-drawer-action] .form-actions :is(button, input[type="submit"]) 
   display: block;
   width: 100%;
   margin: 0;
-  padding: 0.6rem 0.75rem;
+  padding: .6rem .75rem;
+  cursor: pointer;
+  text-align: start;
+  color: var(--color-text-primary);
   border: 0;
   border-bottom: 1px solid var(--color-border);
   border-radius: 0;
   background: transparent;
-  color: var(--color-text-primary);
   font: inherit;
-  text-align: start;
-  cursor: pointer;
 }
 
 form[data-aculta-drawer-action] .aculta-messenger-options__status {
   margin: 0;
-  padding: 0.6rem 0.75rem;
+  padding: .6rem .75rem;
   color: var(--color-text-secondary);
-  font-size: 0.875rem;
+  font-size: .875rem;
 }
 
 .aculta-messenger-back-link:hover,
@@ -532,13 +532,13 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.25rem;
-  margin-block: 0.75rem;
-  padding: 0.75rem;
-  border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
-  background: var(--color-canvas);
+  padding: .75rem;
   color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: .5rem;
+  background: var(--color-canvas);
+  gap: .25rem;
+  margin-block: .75rem;
 }
 
 .aculta-messenger-notice form,
@@ -551,13 +551,13 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status {
   display: inline;
   margin: 0;
   padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  color: var(--color-primary);
   border: 0;
   background: transparent;
-  color: var(--color-primary);
   font: inherit;
   font-weight: 600;
-  text-decoration: underline;
-  cursor: pointer;
 }
 
 .aculta-messenger-notice__action:hover,
@@ -575,26 +575,26 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status {
 }
 
 [data-aculta-dialog] p {
-  margin: 0 0 0.75rem;
+  margin: 0 0 .75rem;
   font-weight: 600;
 }
 
 [data-aculta-dialog] .form-actions {
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
+  gap: .5rem;
   justify-content: flex-end;
 }
 
 [data-aculta-dialog] .form-actions :is(button, input[type="submit"]) {
   width: auto;
   margin: 0;
-  padding: 0.5rem 0.9rem;
+  padding: .5rem .9rem;
+  text-align: center;
+  color: var(--color-text-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-base);
   background: var(--color-surface-raised);
-  color: var(--color-text-primary);
-  text-align: center;
 }
 
 .aculta-notice-summary {
@@ -614,7 +614,7 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status {
   display: -webkit-box;
   overflow: hidden;
   color: var(--color-text-secondary);
-  font-size: 0.875rem;
+  font-size: .875rem;
   line-height: 1.35;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -623,7 +623,7 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status {
 .aculta-notice-summary__state {
   display: block;
   color: var(--color-text-secondary);
-  font-size: 0.75rem;
+  font-size: .75rem;
 }
 
 .aculta-notice-summary [data-aculta-alert-dismiss] {
@@ -634,19 +634,19 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status {
 .aculta-notice-read-state-form {
   display: flex;
   justify-content: flex-end;
-  margin: 0.35rem 0 0;
+  margin: .35rem 0 0;
 }
 
 .aculta-notice-read-state-action {
   max-width: 100%;
-  padding: 0.2rem 0.35rem;
+  padding: .2rem .35rem;
+  cursor: pointer;
+  text-decoration: underline;
+  color: var(--color-primary);
   border: 0;
   background: transparent;
-  color: var(--color-primary);
   font: inherit;
-  font-size: 0.875rem;
-  text-decoration: underline;
-  cursor: pointer;
+  font-size: .875rem;
 }
 
 .aculta-notice-read-state-action:hover {
@@ -661,13 +661,13 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status {
 .aculta-notice-detail {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: .75rem;
 }
 
 .aculta-messenger-sender.aculta-notice-summary--persistent {
+  color: var(--color-on-highlight);
   border: 3px solid var(--color-brand-highlight);
   background: var(--color-brand-highlight);
-  color: var(--color-on-highlight);
 }
 
 .aculta-notice-summary--persistent .aculta-notice-summary__title,
@@ -683,17 +683,17 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status {
 
 .aculta-notice-summary .aculta-messenger-sender__link:hover,
 .aculta-notice-summary .aculta-messenger-sender__link:focus-visible {
-  color: inherit;
   text-decoration: underline;
+  color: inherit;
 }
 
 .aculta-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem;
+  gap: .35rem;
   align-items: center;
   min-height: 0;
-  margin-block-end: 0.5rem;
+  margin-block-end: .5rem;
 }
 
 .aculta-chips:empty {
@@ -703,42 +703,42 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status {
 .aculta-chip {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
   max-width: 100%;
-  padding: 0.2rem 0.25rem 0.2rem 0.65rem;
+  padding: .2rem .25rem .2rem .65rem;
+  color: var(--color-on-highlight);
   border: 1px solid var(--color-brand-highlight);
   border-radius: 999px;
   background: var(--color-brand-highlight);
-  color: var(--color-on-highlight);
-  font-size: 0.875rem;
+  font-size: .875rem;
+  gap: .25rem;
 }
 
 .aculta-chip__name {
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   max-width: 14rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .aculta-chip__remove {
   display: inline-grid;
+  place-items: center;
   width: 1.5rem;
   height: 1.5rem;
-  place-items: center;
   padding: 0;
+  cursor: pointer;
+  color: inherit;
   border: 0;
   border-radius: 50%;
   background: transparent;
-  color: inherit;
   font-size: 1.1rem;
   line-height: 1;
-  cursor: pointer;
 }
 
 .aculta-chip__remove:hover,
 .aculta-chip__remove:focus-visible {
-  background: var(--color-primary);
   color: var(--color-on-primary);
+  background: var(--color-primary);
 }
 
 .aculta-chip__remove:focus-visible {
@@ -749,7 +749,7 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status {
 .aculta-chips__status {
   flex-basis: 100%;
   color: var(--color-text-secondary);
-  font-size: 0.8125rem;
+  font-size: .8125rem;
 }
 
 .aculta-messenger-sender.aculta-notice-type--info:not(.aculta-notice-summary--persistent) {
@@ -774,9 +774,10 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status {
   --aculta-btn-hover-color: var(--color-on-primary);
   --aculta-btn-hover-bg: var(--color-primary);
   --aculta-btn-hover-border-color: var(--color-primary);
+
   color: var(--color-text-primary);
-  background-color: transparent;
   border: 2px solid var(--color-border);
+  background-color: transparent;
 }
 
 .aculta-new-conversation-back {
@@ -786,9 +787,10 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status {
   --aculta-btn-hover-color: var(--color-on-primary);
   --aculta-btn-hover-bg: var(--color-primary);
   --aculta-btn-hover-border-color: var(--color-primary);
+
   color: var(--color-text-primary);
-  background-color: var(--color-canvas);
   border: 1px solid var(--color-border);
+  background-color: var(--color-canvas);
 }
 
 [data-aculta-account-list] {
@@ -796,28 +798,28 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status {
 }
 
 [data-aculta-account-list] .private-message-thread-inbox.aculta-messenger-conversation {
-  padding: 0.5rem;
+  padding: .5rem;
   border-radius: var(--radius-lg);
 }
 
 [data-aculta-account-list] .aculta-messenger-sender {
   min-height: 3.25rem;
   margin: 0;
-  padding: 0.4rem 0.6rem;
-  gap: 0.6rem;
+  padding: .4rem .6rem;
+  gap: .6rem;
 }
 
 [data-aculta-account-list] .aculta-messenger-sender__avatar {
   flex-basis: 2.5rem;
   width: 2.5rem;
   height: 2.5rem;
-  font-size: 0.95rem;
+  font-size: .95rem;
 }
 
 [data-aculta-account-list] .aculta-messenger-sender__link {
-  font-size: 0.95rem;
+  font-size: .95rem;
 }
 
 .aculta-achievement-notices {
-  margin-block: 0.75rem;
+  margin-block: .75rem;
 }

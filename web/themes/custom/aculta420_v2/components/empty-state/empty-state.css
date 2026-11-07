@@ -1,9 +1,9 @@
 .empty-state {
-  background: var(--color-surface-raised);
+  padding: var(--spacing-lg);
+  color: var(--color-text-secondary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-control-card);
-  color: var(--color-text-secondary);
-  padding: var(--spacing-lg);
+  background: var(--color-surface-raised);
 }
 
 .empty-state--compact {

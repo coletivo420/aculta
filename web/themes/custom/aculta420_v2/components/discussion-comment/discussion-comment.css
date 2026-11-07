@@ -1,13 +1,13 @@
 .aculta-discussion-comment {
-  border-block-end: 1px solid var(--color-border);
   display: grid;
+  border-block-end: 1px solid var(--color-border);
   gap: var(--spacing-md);
   min-inline-size: 0;
   padding-block: var(--spacing-base);
 }
 
 .aculta-discussion-comment__header,
-.aculta-discussion-comment__footer { align-items: center; display: flex; flex-wrap: wrap; gap: var(--spacing-md); min-inline-size: 0; }
+.aculta-discussion-comment__footer { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-md); min-inline-size: 0; }
 .aculta-discussion-comment__author,
 .aculta-discussion-comment__body { min-inline-size: 0; overflow-wrap: anywhere; }
 .aculta-discussion-comment__submitted,

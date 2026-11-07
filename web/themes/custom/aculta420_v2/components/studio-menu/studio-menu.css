@@ -1,9 +1,9 @@
 /* Menu lateral do Studio Dashboard: botão de três linhas no desktop e diálogo pela esquerda. */
 .aculta-studio-topbar {
-  align-items: center;
   display: flex;
-  gap: var(--spacing-sm);
+  align-items: center;
   margin: 0;
+  gap: var(--spacing-sm);
 }
 
 .aculta-studio-topbar__title {
@@ -16,17 +16,17 @@ body:has(.aculta-studio-topbar) .layout-page h1:not(.aculta-studio-topbar__title
 }
 
 .aculta-studio-topbar .aculta-studio-menu__trigger {
+  display: none;
   align-items: center;
-  background: transparent;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  color: var(--button-secondary-fg);
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
-  color: var(--button-secondary-fg);
-  cursor: pointer;
-  display: none;
-  justify-content: center;
+  background: transparent;
   min-block-size: 2.75rem;
   min-inline-size: 2.75rem;
-  padding: 0;
 }
 
 .aculta-studio-topbar .aculta-studio-menu__trigger:hover {
@@ -74,9 +74,9 @@ body:has(.aculta-studio-topbar) .layout-page h1:not(.aculta-studio-topbar__title
 }
 
 .aculta-studio-menu__list {
-  list-style: none;
   margin: 0;
   padding: 0;
+  list-style: none;
 }
 
 .aculta-studio-menu__list li {
@@ -84,11 +84,11 @@ body:has(.aculta-studio-topbar) .layout-page h1:not(.aculta-studio-topbar__title
 }
 
 .aculta-studio-menu__list a {
-  align-items: center;
-  color: var(--color-text-primary);
   display: flex;
-  min-block-size: 2.75rem;
+  align-items: center;
   text-decoration: none;
+  color: var(--color-text-primary);
+  min-block-size: 2.75rem;
 }
 
 .aculta-studio-menu__list a[aria-current="page"] {
@@ -106,21 +106,21 @@ body:has(.aculta-studio-topbar) .layout-page h1:not(.aculta-studio-topbar__title
 
 .aculta-studio-sidebar__list {
   display: grid;
-  gap: var(--spacing-xs);
-  list-style: none;
   margin: 0;
   padding: 0;
+  list-style: none;
+  gap: var(--spacing-xs);
 }
 
 .aculta-studio-sidebar__list a {
-  align-items: center;
-  border-radius: var(--radius-sm);
-  color: var(--color-text-primary);
   display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-text-primary);
+  border-radius: var(--radius-sm);
   gap: var(--spacing-sm);
   min-block-size: 2.75rem;
   padding-inline: var(--spacing-sm);
-  text-decoration: none;
 }
 
 .aculta-studio-sidebar__list a:hover {
@@ -128,8 +128,8 @@ body:has(.aculta-studio-topbar) .layout-page h1:not(.aculta-studio-topbar__title
 }
 
 .aculta-studio-sidebar__list a[aria-current="page"] {
-  background: var(--color-brand-highlight);
   color: var(--color-on-highlight);
+  background: var(--color-brand-highlight);
   font-weight: 700;
 }
 
@@ -145,24 +145,24 @@ body:has(.aculta-studio-topbar) .layout-page h1:not(.aculta-studio-topbar__title
 @media (min-width: 60rem) {
   /* Absoluto dentro da página: rola com o conteúdo e não cobre o rodapé. Começa abaixo da migalha. */
   .aculta-studio-sidebar {
-    background: var(--color-surface);
+    position: absolute;
+    z-index: 5;
+    display: block;
+    padding: var(--spacing-md);
     border: 1px solid var(--color-border);
     border-block-start: 4px solid var(--studio-stripe);
     border-radius: var(--radius-lg);
-    display: block;
+    background: var(--color-surface);
     inline-size: 15rem;
     inset-block-start: 8.625rem;
     inset-inline-start: 0;
-    padding: var(--spacing-md);
-    position: absolute;
-    z-index: 5;
   }
 
   /* A página inteira (main) recua para a direita do menu lateral: migalha, aviso e conteúdo juntos. */
   :is(main, .page__main, .layout-page):has(.aculta-studio-sidebar) {
+    position: relative;
+    padding-inline-start: 16rem;
     margin-inline: auto;
     max-inline-size: var(--aculta-container-width, 84rem);
-    padding-inline-start: 16rem;
-    position: relative;
   }
 }

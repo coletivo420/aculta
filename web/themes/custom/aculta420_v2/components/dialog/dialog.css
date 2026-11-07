@@ -1,14 +1,14 @@
 .aculta-dialog__trigger {
+  display: inline-flex;
   align-items: center;
-  background: var(--color-brand-primary);
+  justify-content: center;
+  text-decoration: none;
+  color: var(--color-on-brand);
   border: 1px solid var(--color-brand-primary);
   border-radius: var(--radius-control-button);
-  color: var(--color-on-brand);
-  display: inline-flex;
-  justify-content: center;
+  background: var(--color-brand-primary);
   min-block-size: var(--tap-target-min);
   padding-inline: var(--spacing-base);
-  text-decoration: none;
 }
 
 .aculta-dialog__trigger:focus-visible,
@@ -19,24 +19,24 @@
 }
 
 .aculta-dialog__trigger:hover {
-  background: var(--button-primary-bg-hover);
-  border-color: var(--button-primary-bg-hover);
   color: var(--button-primary-fg);
+  border-color: var(--button-primary-bg-hover);
+  background: var(--button-primary-bg-hover);
 }
 
 .aculta-dialog {
-  background: var(--color-surface-raised);
-  block-size: fit-content;
+  overflow: auto;
+  margin: auto;
+  padding: 0;
+  color: var(--color-text-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-control-card);
+  background: var(--color-surface-raised);
   box-shadow: var(--shadow-raised);
-  color: var(--color-text-primary);
+  block-size: fit-content;
   inline-size: min(36rem, calc(100vw - 2 * var(--spacing-base)));
-  margin: auto;
   max-block-size: min(80dvh, 48rem);
   max-inline-size: calc(100vw - 2 * var(--spacing-base));
-  overflow: auto;
-  padding: 0;
 }
 
 .aculta-dialog::backdrop {
@@ -44,32 +44,32 @@
 }
 
 .aculta-dialog__header {
-  align-items: center;
-  border-block-end: 1px solid var(--color-border);
   display: flex;
-  gap: var(--spacing-base);
+  align-items: center;
   justify-content: space-between;
   padding: var(--spacing-base);
+  border-block-end: 1px solid var(--color-border);
+  gap: var(--spacing-base);
 }
 
 .aculta-dialog__title {
+  margin: 0;
   font-family: var(--font-family-heading);
   font-size: var(--font-size-xl);
-  margin: 0;
   overflow-wrap: anywhere;
 }
 
 .aculta-dialog__close {
-  align-items: center;
-  background: transparent;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-control-button);
-  color: var(--color-text-primary);
-  cursor: pointer;
   display: inline-flex;
   flex: 0 0 auto;
-  inline-size: 2.75rem;
+  align-items: center;
   justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control-button);
+  background: transparent;
+  inline-size: 2.75rem;
   min-block-size: 2.75rem;
 }
 
@@ -79,11 +79,11 @@
 }
 
 .aculta-dialog__actions {
-  border-block-start: 1px solid var(--color-border);
   display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-sm);
   padding: var(--spacing-base);
+  border-block-start: 1px solid var(--color-border);
+  gap: var(--spacing-sm);
 }
 
 .aculta-dialog--fullscreen {

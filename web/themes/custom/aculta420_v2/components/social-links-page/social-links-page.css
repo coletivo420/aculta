@@ -1,12 +1,12 @@
 .social-links-page {
-  background: var(--color-surface-raised);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-control-card);
-  color: var(--color-text-primary);
-  inline-size: min(100%, 34rem);
-  margin-inline: auto;
   padding: var(--spacing-base);
   text-align: center;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control-card);
+  background: var(--color-surface-raised);
+  inline-size: min(100%, 34rem);
+  margin-inline: auto;
 }
 
 .social-links-page--soft {
@@ -14,8 +14,8 @@
 }
 
 .social-links-page--outline {
-  background: transparent;
   border-width: 2px;
+  background: transparent;
 }
 
 .social-links-page__title {
@@ -29,33 +29,33 @@
 
 .social-links-page__links [data-portal-ui~="social-links-list"] {
   display: grid;
-  gap: var(--spacing-sm);
-  list-style: none;
   margin: var(--spacing-md) 0 0;
   padding: 0;
+  list-style: none;
+  gap: var(--spacing-sm);
 }
 
 .social-links-page__links [data-portal-ui~="social-links-channel"] {
-  align-items: center;
-  background: var(--color-surface-page);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-control-button);
-  box-sizing: border-box;
-  color: var(--color-text-primary);
   display: flex;
-  font-weight: 600;
+  align-items: center;
   justify-content: center;
-  min-block-size: var(--tap-target-min);
-  overflow-wrap: anywhere;
+  box-sizing: border-box;
   padding: var(--spacing-sm) var(--spacing-base);
   text-decoration: none;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control-button);
+  background: var(--color-surface-page);
+  font-weight: 600;
+  min-block-size: var(--tap-target-min);
+  overflow-wrap: anywhere;
 }
 
 .social-links-page__links [data-portal-ui~="social-links-channel"]:is(:hover, :focus-visible) {
-  background: var(--color-interactive-bg);
-  border-color: var(--color-interactive-bg);
-  color: var(--color-brand-primary);
   text-decoration: underline;
+  color: var(--color-brand-primary);
+  border-color: var(--color-interactive-bg);
+  background: var(--color-interactive-bg);
   text-underline-offset: .2em;
 }
 

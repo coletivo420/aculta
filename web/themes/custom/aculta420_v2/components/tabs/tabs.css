@@ -15,12 +15,12 @@
 .aculta-tabs :is(.item-list__items, ul) {
   display: flex;
   flex-wrap: nowrap;
+  margin: 0;
+  padding: 2px;
+  list-style: none;
   gap: var(--spacing-xs);
   inline-size: max-content;
-  list-style: none;
-  margin: 0;
   min-inline-size: 100%;
-  padding: 2px;
 }
 
 .aculta-tabs li {
@@ -28,22 +28,22 @@
 }
 
 .aculta-tabs a {
+  display: inline-flex;
   align-items: center;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--color-text-primary);
   border: 1px solid transparent;
   border-radius: var(--radius-control-button);
-  color: var(--color-text-primary);
-  display: inline-flex;
   gap: var(--spacing-xs);
   min-block-size: var(--tap-target-min);
   padding-inline: var(--spacing-base);
-  text-decoration: none;
-  white-space: nowrap;
 }
 
 .aculta-tabs a[aria-current="page"] {
-  background: var(--color-brand-highlight);
-  border-color: var(--color-brand-highlight);
   color: var(--color-on-highlight);
+  border-color: var(--color-brand-highlight);
+  background: var(--color-brand-highlight);
   font-weight: 700;
 }
 

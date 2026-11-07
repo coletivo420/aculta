@@ -1,23 +1,23 @@
 /* ACULTA perfil público (portado do V1 em 2026-11-05). Aparência não validada por captura: DEFERRED. */
 
 .portal-profile {
-  max-inline-size: 48rem;
-  margin-inline: auto;
+  overflow: hidden;
   border: 1px solid var(--color-border);
   border-radius: 1rem;
-  overflow: hidden;
   background: var(--color-canvas);
+  max-inline-size: 48rem;
+  margin-inline: auto;
 }
 
 .portal-profile__header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
   padding: 1.5rem;
+  text-align: center;
   border-block-end: 1px solid var(--color-border);
   background: var(--color-canvas);
-  text-align: center;
+  gap: 1.25rem;
 }
 
 .portal-profile__avatar {
@@ -26,11 +26,11 @@
 
 .portal-profile__avatar img {
   display: grid;
+  object-fit: cover;
+  border: 3px solid var(--color-canvas);
+  border-radius: 50%;
   inline-size: 6.5rem;
   block-size: 6.5rem;
-  border-radius: 50%;
-  border: 3px solid var(--color-canvas);
-  object-fit: cover;
 }
 
 .portal-profile__identity {
@@ -57,17 +57,17 @@
 }
 
 .portal-profile__bio {
-  max-inline-size: 60ch;
   margin: 1.5rem 1.5rem 0;
-  line-height: 1.6;
   white-space: pre-line;
+  line-height: 1.6;
+  max-inline-size: 60ch;
   overflow-wrap: anywhere;
 }
 
 .portal-profile__links {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: .5rem;
   margin-inline: 1.5rem;
   padding: 1rem 1.5rem 1.5rem;
 }
@@ -75,13 +75,13 @@
 .portal-profile__link {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.9rem;
+  padding: .5rem .9rem;
+  text-decoration: none;
+  color: inherit;
   border: 1px solid var(--color-border);
   border-radius: 999px;
   background: transparent;
-  color: inherit;
-  text-decoration: none;
+  gap: .5rem;
 }
 
 .portal-profile__link::before {
@@ -91,8 +91,8 @@
 
 .portal-profile__link:hover,
 .portal-profile__link:focus-visible {
-  border-color: var(--color-brand-highlight);
   color: var(--color-on-highlight);
+  border-color: var(--color-brand-highlight);
 }
 
 .portal-profile__achievements {
@@ -109,17 +109,17 @@
 .portal-profile__achievements-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
-  gap: 0.75rem;
+  gap: .75rem;
 }
 
 .portal-profile__achievement {
   display: flex;
   align-items: flex-start;
-  gap: 0.875rem;
+  gap: .875rem;
   min-inline-size: 0;
   padding: 1rem;
   border: 1px solid var(--color-border);
-  border-radius: 0.75rem;
+  border-radius: .75rem;
   background: var(--color-canvas);
 }
 
@@ -146,20 +146,20 @@
 }
 
 .portal-profile__achievement-description {
-  margin: 0.375rem 0 0;
-  font-size: 0.875rem;
+  margin: .375rem 0 0;
+  font-size: .875rem;
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
 
 .portal-profile__achievement-highlight {
   display: inline-flex;
-  margin-block-start: 0.5rem;
-  padding: 0.125rem 0.5rem;
+  margin-block-start: .5rem;
+  padding: .125rem .5rem;
+  color: var(--color-on-highlight);
   border: 1px solid var(--color-brand-highlight);
   border-radius: 999px;
-  color: var(--color-on-highlight);
-  font-size: 0.75rem;
+  font-size: .75rem;
   font-weight: 600;
 }
 
@@ -192,23 +192,23 @@
   margin-block: 2rem 0;
   padding: 1.25rem;
   border: 1px solid var(--color-border);
-  border-radius: 0.75rem;
+  border-radius: .75rem;
 }
 
 .portal-article-authors__title {
-  margin: 0 0 0.75rem;
+  margin: 0 0 .75rem;
   font-size: 1.125rem;
 }
 
 .portal-article-authors__list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-  gap: 0.75rem;
+  gap: .75rem;
 }
 
 .portal-article-author {
   min-inline-size: 0;
-  padding: 0.5rem;
+  padding: .5rem;
   border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
+  border-radius: .5rem;
 }

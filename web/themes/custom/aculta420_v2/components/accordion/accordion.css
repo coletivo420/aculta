@@ -4,12 +4,12 @@
 }
 
 .accordion__summary {
-  align-items: center;
-  color: var(--color-text-primary);
-  cursor: pointer;
   display: flex;
-  font-weight: 600;
+  align-items: center;
   justify-content: space-between;
+  cursor: pointer;
+  color: var(--color-text-primary);
+  font-weight: 600;
   min-block-size: var(--tap-target-min);
   padding-block: var(--spacing-sm);
 }

@@ -1,7 +1,6 @@
 /* Mobile-first page shell; individual regions keep their configured content. */
 .page {
   display: grid;
-  gap: 0;
   grid-template-areas:
     "institution"
     "header"
@@ -12,8 +11,9 @@
     "breadcrumb"
     "main"
     "footer";
-  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto auto auto auto auto auto auto 1fr auto;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
   min-block-size: 100vh;
   min-block-size: 100dvh;
   min-inline-size: 0;
@@ -40,11 +40,11 @@
 
 /* Compatibility while Drupal's persistent SDC discovery cache is warm. */
 .page__main {
-  align-content: start;
   display: grid;
-  gap: var(--spacing-xl);
   grid-area: main;
   grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: var(--spacing-xl);
   min-block-size: 0;
   padding-block: var(--spacing-lg);
 }
@@ -61,17 +61,17 @@
 .page__sidebar { min-inline-size: 0; }
 
 .page__footer {
-  background: var(--color-brand-secondary);
-  color: var(--color-on-footer);
   grid-area: footer;
+  color: var(--color-on-footer);
+  background: var(--color-brand-secondary);
   min-inline-size: 0;
   padding-block: clamp(1.5rem, 4vw, 3rem);
 }
 
 .page__footer-inner {
-  background: var(--color-brand-secondary);
-  border-radius: var(--radius-sm);
   color: var(--color-on-footer);
+  border-radius: var(--radius-sm);
+  background: var(--color-brand-secondary);
   margin-inline: auto;
   padding-block: clamp(1.25rem, 3vw, 2rem);
 }
@@ -104,38 +104,38 @@
 }
 
 .page__footer-region h2::after {
-  border-block-end: 2px solid var(--color-brand-highlight);
-  content: "";
   display: block;
-  inline-size: 2.25rem;
   margin-block-start: .4rem;
+  content: "";
+  border-block-end: 2px solid var(--color-brand-highlight);
+  inline-size: 2.25rem;
 }
 
 .page__footer-region nav ul {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
-  list-style: none;
   margin: 0;
   padding-inline-start: 0;
+  list-style: none;
+  gap: var(--spacing-xs);
 }
 
 .page__footer-region nav a {
-  align-items: center;
-  background: var(--color-brand-primary);
-  border-radius: var(--radius-sm);
   display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-on-brand);
+  border-radius: var(--radius-sm);
+  background: var(--color-brand-primary);
   font-family: var(--font-family-base);
   font-size: var(--font-size-sm);
   min-block-size: var(--tap-target-min);
   padding-inline: var(--spacing-sm);
-  color: var(--color-on-brand);
-  text-decoration: none;
 }
 
 .page__footer-region nav a:is(:hover, :focus-visible) {
-  background: var(--color-brand-highlight);
   color: var(--color-on-highlight);
+  background: var(--color-brand-highlight);
 }
 
 .page__footer-region nav a[aria-current="page"] {
@@ -162,18 +162,18 @@
 
   /* Estilo do container (aculta420_v2): Caixa vale para Padrão e Estreito; sem caixa é o padrão do CSS. */
   html[data-purpose-style="boxed"] .layout-page__content {
-    background: var(--color-surface);
+    padding: var(--spacing-md);
     border: 1px solid var(--color-border);
     border-block-start: 4px solid var(--purpose-sub-2);
     border-radius: var(--radius-lg);
-    padding: var(--spacing-md);
+    background: var(--color-surface);
   }
 
   /* Faixa do Studio: segue a cor de destaque (sub-2) do purpose account configurada no tema. */
-:root { --studio-stripe: var(--aculta-studio-light-sub-2); }
-html[data-theme="dark"] { --studio-stripe: var(--aculta-studio-dark-sub-2); }
+  :root { --studio-stripe: var(--aculta-studio-light-sub-2); }
+  html[data-theme="dark"] { --studio-stripe: var(--aculta-studio-dark-sub-2); }
 
-/* Modos de layout de container por purpose (aculta420_v2). O atributo do purpose manda na largura,
+  /* Modos de layout de container por purpose (aculta420_v2). O atributo do purpose manda na largura,
      qualquer que seja a variante do template (--full ou --aside). */
   html[data-purpose-layout="default"] .layout-page,
   html[data-purpose-layout="narrow"] .layout-page {
@@ -218,5 +218,3 @@ html[data-theme="dark"] { --studio-stripe: var(--aculta-studio-dark-sub-2); }
     max-inline-size: 100% !important;
   }
 }
-
-
