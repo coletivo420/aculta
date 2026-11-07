@@ -2,36 +2,40 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta420\Hook;
+namespace Drupal\aculta420_v2\Hook;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ExtensionList;
 use Drupal\Core\Hook\Attribute\Hook;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Apresentação do envelope HTML dos e-mails (aculta_mailer_wrap), montada pelo tema.
+ * Apresentação do envelope HTML dos e-mails (aculta_mailer_wrap), montada pelo tema V2.
  *
- * As cores vêm dos tokens do próprio tema (css/tokens.css), lidos a cada montagem: quando um token muda, o e-mail muda
- * junto, sem alteração manual. O modo escuro usa as sobrescritas do bloco prefers-color-scheme do mesmo arquivo.
+ * As cores vêm dos tokens do próprio tema (src/styles/tokens.css), lidos a cada montagem: quando um token muda, o e-mail
+ * muda junto, sem alteração manual. O modo escuro usa as sobrescritas do bloco :root[data-theme="dark"] do mesmo arquivo.
+ * O logo vem do asset do próprio tema, sem depender da configuração da V1.
  */
 final class MailEnvelopeHooks {
 
   /**
-   * Papel visual do e-mail => token do tema.
+   * Caminho do logo do envelope, relativo ao tema.
+   */
+  private const LOGO = 'assets/logos/aculta420-horizontal-white-900x300.png';
+
+  /**
+   * Papel visual do e-mail => token do tema V2.
    */
   private const ROLES = [
-    'page' => '--aculta-surface-page',
-    'card' => '--aculta-surface-raised',
-    'text' => '--aculta-text-primary',
-    'header' => '--aculta-green-dark',
-    'footer' => '--aculta-surface-muted',
-    'footer_text' => '--aculta-text-secondary',
-    'accent' => '--aculta-text-accent',
+    'page' => '--color-canvas',
+    'card' => '--color-surface-raised',
+    'text' => '--color-text-primary',
+    'header' => '--color-brand-primary',
+    'footer' => '--color-surface-institution',
+    'footer_text' => '--color-text-secondary',
+    'accent' => '--color-link-editorial',
   ];
 
   public function __construct(
-    private readonly ConfigFactoryInterface $configFactory,
     #[Autowire(service: 'extension.list.theme')]
     private readonly ExtensionList $themes,
   ) {}
@@ -41,9 +45,8 @@ final class MailEnvelopeHooks {
    */
   #[Hook('preprocess_aculta_mailer_wrap')]
   public function preprocess(array &$variables): void {
-    $path = ltrim((string) $this->configFactory->get('aculta420.settings')->get('logo.path'), '/');
     $base = (string) ($variables['public_base'] ?? '');
-    $variables['theme_logo'] = $base !== '' ? $base . $path : '/' . $path;
+    $variables['theme_logo'] = $base !== '' ? $base . self::LOGO : '/' . self::LOGO;
 
     $tokens = $this->tokens();
     $light = [];
@@ -67,23 +70,19 @@ final class MailEnvelopeHooks {
   }
 
   /**
-   * Valores dos tokens em claro e em escuro (escuro = claro sobreposto pelo bloco prefers-color-scheme).
+   * Valores dos tokens em claro e em escuro (escuro = claro sobreposto pelo bloco :root[data-theme="dark"]).
    *
    * @return array{light: array<string, string>, dark: array<string, string>}
    *   Valores resolvidos, em claro e em escuro.
    */
   private function tokens(): array {
-    $css = (string) @file_get_contents($this->themes->getPath('aculta420') . '/css/tokens.css');
-    // Claro: o primeiro bloco :root do arquivo (os demais blocos de tema não entram).
-    $rootAt = strpos($css, ':root');
-    $rootEnd = $rootAt === FALSE ? FALSE : strpos($css, '}', $rootAt);
-    $lightCss = $rootAt === FALSE || $rootEnd === FALSE ? '' : substr($css, $rootAt, $rootEnd - $rootAt + 1);
-    // Escuro: o bloco prefers-color-scheme, aplicado sobre o claro.
-    $marker = '@media (prefers-color-scheme: dark)';
-    $pos = strpos($css, $marker);
-    $darkCss = $pos === FALSE ? '' : substr($css, $pos);
-    $light = $this->declarations($lightCss);
-    $dark = array_replace($light, $this->declarations($darkCss));
+    $css = (string) @file_get_contents($this->themes->getPath('aculta420_v2') . '/src/styles/tokens.css');
+    // Claro: o primeiro bloco :root (sem seletor de atributo).
+    $light = preg_match('/:root\s*\{([^}]*)\}/', $css, $lightBlock) === 1 ? $this->declarations($lightBlock[1]) : [];
+    // Escuro: o bloco :root[data-theme="dark"], aplicado sobre o claro.
+    $dark = preg_match('/:root\[data-theme="dark"\]\s*\{([^}]*)\}/', $css, $darkBlock) === 1
+      ? array_replace($light, $this->declarations($darkBlock[1]))
+      : $light;
     return ['light' => $this->resolve($light), 'dark' => $this->resolve($dark)];
   }
 

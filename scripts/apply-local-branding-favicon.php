@@ -4,7 +4,7 @@
 if (!in_array(\Drupal::request()->getHost(), ['localhost', '127.0.0.1'], TRUE)) {
   throw new RuntimeException('Local only.');
 }
-$path = 'themes/custom/aculta420/assets/branding/aculta420/web/aculta420-favicon.ico';
+$path = 'themes/custom/aculta420_v2/assets/icons/aculta420-favicon.ico';
 if (!is_file(DRUPAL_ROOT . '/' . $path)) {
   throw new RuntimeException('Reviewed favicon asset is missing.');
 }

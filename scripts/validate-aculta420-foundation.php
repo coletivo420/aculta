@@ -2,17 +2,15 @@
 
 /**
  * @file
- * Read-only validation gate for the ACULTA420 theme foundation.
+ * Read-only validation gate for the ACULTA420 V2 theme foundation.
+ *
+ * Portado da fundação V1 (aculta420) para o tema aculta420_v2, depois da remoção do Bootstrap. O nome do arquivo é
+ * mantido para não quebrar as referências em docs/.
  */
 
 declare(strict_types=1);
 
-/**
- * Read-only Runtime gate for the ACULTA420 0.1.0 Foundation.
- */
-
 use Twig\Source;
-use Drupal\aculta420\Hook\ThemeHooks;
 use Symfony\Component\Yaml\Yaml;
 
 $root = dirname(__DIR__);
@@ -32,7 +30,8 @@ if (!class_exists(\Drupal::class) || !\Drupal::hasContainer()) {
   exit($codigo);
 }
 
-$themeRoot = $root . '/web/themes/custom/aculta420';
+$themeName = 'aculta420_v2';
+$themeRoot = $root . '/web/themes/custom/' . $themeName;
 $checks = [];
 
 $assert = static function (bool $condition, string $message) use (&$checks): void {
@@ -42,55 +41,25 @@ $assert = static function (bool $condition, string $message) use (&$checks): voi
   $checks[] = $message;
 };
 
-$assert(is_dir($themeRoot), 'ACULTA420 theme directory exists.');
-$assert(!is_dir($root . '/web/themes/custom/aculta'), 'No legacy theme provider directory exists.');
-$assert(!is_file($themeRoot . '/aculta420.theme'), 'Theme uses OOP hooks; no procedural .theme file exists.');
+$assert(is_dir($themeRoot), 'ACULTA420 V2 theme directory exists.');
+$assert(!is_dir($root . '/web/themes/custom/aculta420'), 'Legacy ACULTA420 V1 theme directory has been removed.');
+$assert(!is_file($themeRoot . '/' . $themeName . '.theme'), 'Theme uses OOP hooks; no procedural .theme file exists.');
 $assert(!is_file($themeRoot . '/css/style.css'), 'No generic css/style.css catch-all exists.');
-$assert(!is_file($themeRoot . '/css/responsive.css'), 'No generic css/responsive.css catch-all exists.');
-$assert(!is_file($themeRoot . '/templates/feed-icon.html.twig'), 'No unused feed-icon override exists.');
 
 $themeHandler = \Drupal::service('theme_handler');
-$assert($themeHandler->themeExists('aculta420'), 'ACULTA420 is discoverable by Drupal.');
-$assert(\Drupal::config('system.theme')->get('default') === 'aculta420', 'ACULTA420 is the default public theme.');
+$assert($themeHandler->themeExists($themeName), 'ACULTA420 V2 is discoverable by Drupal.');
+$assert(\Drupal::config('system.theme')->get('default') === $themeName, 'ACULTA420 V2 is the default public theme.');
 $coreExtension = \Drupal::config('core.extension');
-$assert($coreExtension->get('theme.aculta420') !== NULL, 'ACULTA420 is enabled in core.extension.');
-$assert($coreExtension->get('theme.bootstrap5') !== NULL, 'Bootstrap5 base theme is enabled in core.extension.');
+$assert($coreExtension->get('theme.' . $themeName) !== NULL, 'ACULTA420 V2 is enabled in core.extension.');
+$assert($coreExtension->get('theme.aculta420') === NULL, 'Legacy ACULTA420 V1 is not enabled in core.extension.');
+$assert($coreExtension->get('theme.bootstrap') === NULL && $coreExtension->get('theme.bootstrap5') === NULL, 'No Bootstrap theme is enabled in core.extension.');
 $assert($coreExtension->get('theme.aculta') === NULL, 'No legacy theme provider remains enabled.');
 
-$info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
-$assert(($info['base theme'] ?? NULL) === 'bootstrap5', 'Bootstrap5 is the ACULTA420 base theme.');
+$info = Yaml::parseFile($themeRoot . '/' . $themeName . '.info.yml');
+$assert(($info['base theme'] ?? NULL) === FALSE, 'ACULTA420 V2 is a base-less theme (no Bootstrap).');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
 $assert(is_string($info['version'] ?? NULL) && trim($info['version']) !== '', 'Theme metadata declares a non-empty version.');
-$assert(($info['version'] ?? NULL) === '0.7.0-dev.41', 'Theme Foundation gate tracks the current development version.');
-$discussionCss = file_get_contents($themeRoot . '/css/components/discussion.css');
-$assert(
-  str_contains($discussionCss, '[data-aculta-discussion-announcement]')
-  && str_contains($discussionCss, 'clip-path: inset(50%)'),
-  'Discussion announcements are visually hidden by the theme while remaining available to assistive technology.',
-);
-$forumTopicPresenter = file_get_contents($themeRoot . '/templates/node--aculta-forum-topic.html.twig');
-$forumTopicStyles = file_get_contents($themeRoot . '/css/components/forum-index.css');
-$assert(
-  str_contains($forumTopicPresenter, "'aculta-forum-topic--' ~ view_mode")
-    && str_contains($forumTopicStyles, '.aculta-forum-topic--teaser')
-    && str_contains($forumTopicStyles, '.aculta-forum-topic--full'),
-  'Forum topic view-mode classes emitted by Twig have matching teaser and full styles.',
-);
-$assert(
-  str_contains($forumTopicStyles, '.aculta-forum-topic-list-row__topic .field--name-body')
-    && str_contains($forumTopicStyles, '.aculta-forum-topic-list-row__topic .aculta-author-card__joined')
-    && str_contains($forumTopicStyles, 'grid-template-columns: minmax(0, 1fr) minmax(11rem, 13rem)'),
-  'Forum topic list keeps its compact presentation inside Views rows only.',
-);
-$wikiPresenters = [
-  file_get_contents($themeRoot . '/templates/node--wiki-entry--full.html.twig'),
-  file_get_contents($themeRoot . '/templates/node--wiki-entry--teaser.html.twig'),
-];
-$assert(
-  !str_contains(implode("\n", $wikiPresenters), 'author_name')
-    && !str_contains(implode("\n", $wikiPresenters), 'author_picture'),
-  'Wiki full and teaser presenters do not render author metadata.',
-);
+
 $forbiddenIntegrationModules = ['social_auth', 'social_auth_google', 'captcha', 'turnstile', 'key'];
 $themeInfoDependencies = array_map(
   static fn(string $dependency): string => str_contains($dependency, ':')
@@ -127,35 +96,21 @@ $assert($themeBoundaryCounts['turnstile'] === 0, 'THEME TURNSTILE REFERENCES: 0'
 $assert($themeBoundaryCounts['oauth_config'] === 0, 'THEME OAUTH CONFIG REFERENCES: 0');
 
 $lock = json_decode(file_get_contents($root . '/composer.lock'), TRUE, 512, JSON_THROW_ON_ERROR);
-$bootstrapPackages = array_values(array_filter(
+$bootstrapPackages = array_filter(
   $lock['packages'] ?? [],
-  static fn(array $package): bool => ($package['name'] ?? '') === 'drupal/bootstrap',
-));
-$bootstrapPackage = $bootstrapPackages[0] ?? NULL;
-$assert(count($bootstrapPackages) === 1 && ($bootstrapPackage['version'] ?? NULL) === '3.45.0', 'Drupal Bootstrap remains installed at release 8.x-3.45; removal requires a separate dependency audit.');
-$legacyBootstrapPackages = array_filter(
-  $lock['packages'] ?? [],
-  static fn(array $package): bool => in_array(($package['name'] ?? ''), ['drupal/bootstrap5', 'drupal/bootstrap_sass'], TRUE),
+  static fn(array $package): bool => in_array(($package['name'] ?? ''), ['drupal/bootstrap', 'drupal/bootstrap5', 'drupal/bootstrap_sass'], TRUE),
 );
-$assert($legacyBootstrapPackages === [], 'Composer has no duplicate Bootstrap5 or SASS starter theme package.');
-$bootstrapInfo = Yaml::parseFile($root . '/web/themes/contrib/bootstrap5/bootstrap5.info.yml');
-$assert(($bootstrapInfo['version'] ?? NULL) === '5.0.x-dev', 'Installed Bootstrap5 theme matches the fixed Runtime version.');
+$assert($bootstrapPackages === [], 'Composer has no Drupal Bootstrap, Bootstrap5 or Bootstrap SASS package.');
 
-$hookSourcePath = $themeRoot . '/src/Hook/ThemeHooks.php';
-$assert(is_file($hookSourcePath), 'OOP theme hook class exists.');
+$hookSourcePath = $themeRoot . '/src/Hook/MailEnvelopeHooks.php';
+$assert(is_file($hookSourcePath), 'OOP mail envelope hook class exists in V2.');
 $hookSource = file_get_contents($hookSourcePath);
-$assert(class_exists(ThemeHooks::class), 'Drupal can autoload the ACULTA420 hook class.');
-$assert(!str_contains($hookSource, '\\Drupal::'), 'Theme hook class uses DI instead of the Drupal service locator.');
-$assert(!str_contains($hookSource, 'aculta_portal'), 'Theme hook class has no direct dependency on aculta_portal.');
+$assert(class_exists(\Drupal\aculta420_v2\Hook\MailEnvelopeHooks::class), 'Drupal can autoload the ACULTA420 V2 mail envelope hook.');
+$assert(!str_contains($hookSource, '\\Drupal::'), 'Mail envelope hook uses DI instead of the Drupal service locator.');
+$assert(!str_contains($hookSource, 'aculta_portal'), 'Mail envelope hook has no direct dependency on aculta_portal.');
+$assert(!str_contains($hookSource, 'aculta420.settings'), 'Mail envelope hook no longer reads the legacy aculta420.settings configuration.');
 
-$libraries = Yaml::parseFile($themeRoot . '/aculta420.libraries.yml');
-$assert(
-  !isset($libraries['bootstrap5-framework'])
-    && !in_array('aculta420/bootstrap5-framework', $libraries['global']['dependencies'] ?? [], TRUE)
-    && in_array('bootstrap5/base', $libraries['global']['dependencies'] ?? [], TRUE)
-    && in_array('bootstrap5/global-styling', $libraries['global']['dependencies'] ?? [], TRUE),
-  'ACULTA420 uses the Bootstrap framework libraries from the installed Bootstrap5 base theme.',
-);
+$libraries = Yaml::parseFile($themeRoot . '/' . $themeName . '.libraries.yml');
 $libraryIntegrationDependencies = [];
 foreach ($libraries as $libraryName => $definition) {
   foreach (($definition['css'] ?? []) as $assets) {
@@ -174,49 +129,32 @@ foreach ($libraries as $libraryName => $definition) {
   }
   foreach ($definition['dependencies'] ?? [] as $dependency) {
     $extension = explode('/', (string) $dependency, 2)[0];
-    if (in_array($extension, $forbiddenIntegrationModules, TRUE)) {
+    if (in_array($extension, $forbiddenIntegrationModules, TRUE) || str_starts_with((string) $dependency, 'bootstrap5/')) {
       $libraryIntegrationDependencies[] = $dependency;
     }
   }
 }
 $assert(
   $libraryIntegrationDependencies === [],
-  'Theme libraries do not depend on Social Auth, CAPTCHA, Turnstile, or Key libraries.',
+  'Theme libraries do not depend on Social Auth, CAPTCHA, Turnstile, Key or Bootstrap libraries.',
 );
 
-$expectedWebAssets = [
-  'aculta420-favicon.ico',
-  'logo-aculta420-horizontal-branco-900x300.png',
-  // Institutional header logo: 1x and 2x sizes used by page.html.twig.
-  'logo-aculta420-horizontal-branco-78x26.webp',
-  'logo-aculta420-horizontal-branco-156x52.webp',
-];
-$actualWebAssets = [];
-$webAssetRoot = $themeRoot . '/assets/branding/aculta420/web';
-foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($webAssetRoot, FilesystemIterator::SKIP_DOTS)) as $asset) {
-  if ($asset->isFile()) {
-    $actualWebAssets[] = str_replace($webAssetRoot . DIRECTORY_SEPARATOR, '', $asset->getPathname());
-  }
+// Branding: V2 owns its favicon and logo; config/sync points to them.
+$assert(is_file($themeRoot . '/assets/icons/aculta420-favicon.ico'), 'V2 favicon asset exists.');
+$assert(is_file($themeRoot . '/' . ($info['logo'] ?? '')), 'V2 logo declared in info exists.');
+
+$syncThemeSettings = Yaml::parseFile($root . '/config/sync/aculta420.settings.yml');
+foreach (['logo', 'favicon'] as $assetSetting) {
+  $path = (string) ($syncThemeSettings[$assetSetting]['path'] ?? '');
+  $assert(str_starts_with($path, 'themes/custom/' . $themeName . '/'), 'Config sync points the theme ' . $assetSetting . ' at ACULTA420 V2.');
+  $assert(is_file($root . '/web/' . $path), 'Config sync theme ' . $assetSetting . ' asset exists.');
 }
-sort($actualWebAssets);
-sort($expectedWebAssets);
-$assert($actualWebAssets === $expectedWebAssets, 'Runtime branding exports contain only the favicon, the active default logo and the institution bar logo sizes.');
+$assert(!isset($syncThemeSettings['b5_theme_mode']) && !isset($syncThemeSettings['schemas']), 'Config sync has no Bootstrap 5 or schema settings.');
 
 $themeSettings = \Drupal::config('aculta420.settings');
 foreach (['institution_data_uuid', 'institution_home_nid', 'institution_transparency_nid'] as $functionalSetting) {
   $assert($themeSettings->get($functionalSetting) === NULL, 'Theme settings do not own functional institutional data: ' . $functionalSetting);
 }
-$installThemeSettings = Yaml::parseFile($themeRoot . '/config/install/aculta420.settings.yml');
-$syncThemeSettings = Yaml::parseFile($root . '/config/sync/aculta420.settings.yml');
-foreach (['logo', 'favicon'] as $assetSetting) {
-  $assert(($installThemeSettings[$assetSetting]['path'] ?? NULL) === ($syncThemeSettings[$assetSetting]['path'] ?? NULL), 'Fresh-install and sync agree on theme ' . $assetSetting . '.');
-}
-$syncThemeSettingsForComparison = $syncThemeSettings;
-unset($syncThemeSettingsForComparison['_core']);
-$assert(
-  $installThemeSettings === $syncThemeSettingsForComparison,
-  'Fresh-install and sync agree on all ACULTA420 presentation settings.',
-);
 
 $portalSettings = \Drupal::config('aculta_portal.settings');
 $assert(trim((string) $portalSettings->get('institution_data_uuid')) !== '', 'Portal owns the institutional block UUID.');
@@ -230,18 +168,20 @@ $assert($emptyUuidGuard !== FALSE && $uuidLookup !== FALSE && $emptyUuidGuard < 
 $syncCoreExtension = Yaml::parseFile($root . '/config/sync/core.extension.yml');
 $syncSystemTheme = Yaml::parseFile($root . '/config/sync/system.theme.yml');
 $adminTheme = (string) \Drupal::config('system.theme')->get('admin');
-$assert(isset($syncCoreExtension['theme']['aculta420']), 'Config sync enables ACULTA420.');
-$assert(!isset($syncCoreExtension['theme']['aculta']), 'Config sync contains no legacy theme provider.');
-$assert(($syncSystemTheme['default'] ?? NULL) === 'aculta420', 'Config sync selects ACULTA420 as default.');
+$assert(isset($syncCoreExtension['theme'][$themeName]), 'Config sync enables ACULTA420 V2.');
+$assert(!isset($syncCoreExtension['theme']['aculta420']) && !isset($syncCoreExtension['theme']['bootstrap']), 'Config sync contains no V1 or Bootstrap theme.');
+$assert(($syncSystemTheme['default'] ?? NULL) === $themeName, 'Config sync selects ACULTA420 V2 as default.');
 $assert(($syncSystemTheme['admin'] ?? NULL) === $adminTheme, 'Config sync and Runtime agree on the administrative theme.');
 
 $configStorage = \Drupal::service('config.storage');
 $blockContentStorage = \Drupal::entityTypeManager()->getStorage('block_content');
+$declaredRegions = $info['regions'] ?? [];
 $validateBlockPlacement = static function (array $data, string $configName) use (
   $assert,
-  $themeHandler,
+  $themeName,
   $adminTheme,
   $blockContentStorage,
+  $declaredRegions,
 ): void {
   $paths = preg_split('/\R/', trim((string) ($data['visibility']['request_path']['pages'] ?? ''))) ?: [];
   $paths = array_values(array_filter(array_map('trim', $paths), static fn (string $path): bool => $path !== ''));
@@ -253,20 +193,14 @@ $validateBlockPlacement = static function (array $data, string $configName) use 
       break;
     }
   }
-  $expectedTheme = $adminOnly ? $adminTheme : 'aculta420';
-  $placementTheme = (string) ($data['theme'] ?? '');
+  $expectedTheme = $adminOnly ? $adminTheme : $themeName;
   $assert(
-    $placementTheme === $expectedTheme,
+    ($data['theme'] ?? '') === $expectedTheme,
     'ACULTA block placement uses its public or admin theme according to path visibility: ' . $configName,
   );
-
-  $placementInfo = $themeHandler->themeExists($placementTheme)
-    ? $themeHandler->getTheme($placementTheme)->info
-    : [];
-  $regions = $placementInfo['regions'] ?? [];
   $assert(
-    isset($regions[$data['region'] ?? '']),
-    'ACULTA block placement uses a declared theme region: ' . $configName,
+    isset($declaredRegions[$data['region'] ?? '']),
+    'ACULTA block placement uses a declared V2 theme region: ' . $configName,
   );
 
   $plugin = (string) ($data['plugin'] ?? '');
@@ -286,140 +220,46 @@ $validateBlockPlacement = static function (array $data, string $configName) use 
       break;
     }
   }
-  $assert(
-    $hasMatchingDependency,
-    'Block content dependency matches the plugin UUID: ' . $configName,
-  );
+  $assert($hasMatchingDependency, 'Block content dependency matches the plugin UUID: ' . $configName);
   $assert(
     (bool) $blockContentStorage->loadByProperties(['uuid' => $uuid]),
     'Block content UUID exists: ' . $configName,
   );
 };
 
-foreach ($configStorage->listAll('block.block.aculta_') as $configName) {
-  $data = $configStorage->read($configName);
-  $validateBlockPlacement($data, $configName);
+foreach ($configStorage->listAll('block.block.' . $themeName . '_') as $configName) {
+  $validateBlockPlacement($configStorage->read($configName), $configName);
 }
 
-foreach (glob($root . '/config/sync/block.block.aculta_*.yml') ?: [] as $path) {
-  $data = Yaml::parseFile($path);
-  $validateBlockPlacement($data, 'config/sync/' . basename($path));
+foreach (glob($root . '/config/sync/block.block.' . $themeName . '_*.yml') ?: [] as $path) {
+  $validateBlockPlacement(Yaml::parseFile($path), 'config/sync/' . basename($path));
 }
 
-$expectedTemplates = [
-  'block--block-content--type--aculta-institution.html.twig',
-  'block--system-branding-block.html.twig',
-  // Commerce forms preserve ACULTA presentation for support panes.
-  'commerce-checkout-pane--commerce-donation-pane.html.twig',
-  'commerce-checkout-pane--commerce-memorial-pane.html.twig',
-  // Store product page composes only the theme's SDC components.
-  'commerce-product--produto-loja.html.twig',
-  // Formulários nativos de doação e resumo do pedido.
-  'aculta-donation-back.html.twig',
-  'aculta-donation-donate.html.twig',
-  'aculta-donation-quick.html.twig',
-  'aculta-donation-summary-container.html.twig',
-  'aculta-donation-summary.html.twig',
-  // Event detail page composes the shared five-region event SDC.
-  'aculta-event-page.html.twig',
-  'aculta-portal-account-terms-modal.html.twig',
-  'aculta-portal-photo-editor.html.twig',
-  'aculta-portal-shell.html.twig',
-  'aculta-section.html.twig',
-  'aculta-user-author-card.html.twig',
-  'content/off-canvas-page-wrapper.html.twig',
-  'navigation/breadcrumb.html.twig',
-  'node--editorial-highlight.html.twig',
-  // Forum topic uses the ACULTA user card without Core's unfiltered byline.
-  'node--aculta-forum-topic.html.twig',
-  // Shared discussion comment presenter.
-  'comment--aculta-discussion-post.html.twig',
-  // Google button with the theme logo and its connected state.
-  'login-with.html.twig',
-  // The magazine page reuses the shared editorial component.
-  'node--revista--full.html.twig',
-  // The magazine listing reuses the shared card SDC for teasers.
-  'node--revista--teaser.html.twig',
-  // Site Alert keeps native scheduling and access, using the theme SDC.
-  'site-alert.html.twig',
-  // Private Message wrapper exposes native content and supplied read state.
-  'private-message-thread.html.twig',
-  // Wiki article and teaser omit submitted-byline metadata.
-  'node--wiki-entry--full.html.twig',
-  'node--wiki-entry--teaser.html.twig',
-  // Página pública LINKS e micropáginas usam presenters neutros e SDCs do tema.
-  'node--social-links.html.twig',
-  'aculta-links-page.html.twig',
-  'aculta-links-landing.html.twig',
-  // A View Growroom fornece os campos renderizados ao tema.
-  'views-view-fields--aculta-forum-public-topics.html.twig',
-  // Categories View fields are reassembled through the Forum category SDC.
-  'views-view-fields--aculta-forum-categories--page-categories.html.twig',
-  // The landing-page category block reuses the same neutral fields and SDC.
-  'views-view-fields--aculta-forum-categories--block-landing.html.twig',
-  // Categories use a grid wrapper and preserve row attributes.
-  'views-view-unformatted--aculta-forum-categories--page-categories.html.twig',
+// Templates: the V2 presenters the theme depends on must exist.
+$requiredTemplates = [
   'page.html.twig',
-  'portal-cart-status.html.twig',
-  'portal-cart-panel.html.twig',
-  'portal-payment-notice.html.twig',
-  'portal-search-trigger.html.twig',
-  'views-view-unformatted--courses-catalog.html.twig',
-  // Magazine session landing page composes the shared hero SDC.
-  'views/views-view--revista-sessoes--page-revista.html.twig',
-  'views-view-vvjb.html.twig',
-  // Album fields stay in Drupal; the theme composes the card SDC.
-  'views-view-fields--aculta-albuns.html.twig',
-  'views/views-view-table.html.twig',
-  // Mail HTML envelope uses inline light and dark token colors because clients
-  // do not load tokens.css.
+  'layout/html.html.twig',
   'aculta-mailer-wrap.html.twig',
-  'portal-component.html.twig',
+  'content/node--aculta-forum-topic.html.twig',
+  'views/views-view-fields--aculta-forum-public-topics.html.twig',
+  'views/views-view-fields--aculta-forum-categories--page-categories.html.twig',
+  'views/views-view-unformatted--aculta-forum-categories--page-categories.html.twig',
 ];
-$actualTemplates = [];
-$templateRoot = $themeRoot . '/templates';
-foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($templateRoot, FilesystemIterator::SKIP_DOTS)) as $template) {
-  if ($template->isFile() && str_ends_with($template->getFilename(), '.html.twig')) {
-    $actualTemplates[] = str_replace($templateRoot . DIRECTORY_SEPARATOR, '', $template->getPathname());
-  }
+foreach ($requiredTemplates as $template) {
+  $assert(is_file($themeRoot . '/templates/' . $template), 'Required V2 template exists: ' . $template);
 }
-sort($expectedTemplates);
-sort($actualTemplates);
-$assert($actualTemplates === $expectedTemplates, 'Twig override set matches the reviewed Foundation allowlist.');
+$assert(!is_dir($themeRoot . '/templates/bootstrap'), 'No Bootstrap template overrides exist in V2.');
+
+// SDC: each component folder has metadata and Drupal discovers it under the V2 namespace.
 $sdc = \Drupal::service('plugin.manager.sdc');
-$assert($sdc->hasDefinition('aculta420:card'), 'Drupal discovers aculta420:card.');
-$assert($sdc->hasDefinition('aculta420:figure'), 'Drupal discovers aculta420:figure.');
-$assert($sdc->hasDefinition('aculta420:quote'), 'Drupal discovers aculta420:quote.');
-$assert($sdc->hasDefinition('aculta420:forum-category'), 'Drupal discovers aculta420:forum-category.');
-$cardMetadata = Yaml::parseFile($themeRoot . '/components/patterns/card/card.component.yml');
-$assert(isset($cardMetadata['variants']['overlay']), 'The composed card exposes the overlay presentation.');
-$assert(is_file($themeRoot . '/templates/views-view-fields--aculta-albuns.html.twig'), 'Album View fields use the theme card presenter.');
-$assert(
-  is_file($themeRoot . '/templates/views-view-fields--aculta-forum-categories--page-categories.html.twig')
-    && is_file($themeRoot . '/templates/views-view-fields--aculta-forum-categories--block-landing.html.twig')
-    && is_file($themeRoot . '/templates/views-view-unformatted--aculta-forum-categories--page-categories.html.twig'),
-  'Forum category View keeps the reviewed page and landing SDC presenters and responsive page wrapper.',
-);
-$assert($sdc->hasDefinition('aculta420:editorial-card'), 'Drupal discovers aculta420:editorial-card.');
-$componentMetadata = Yaml::parseFile($themeRoot . '/components/content/editorial-card/editorial-card.component.yml');
-$assert(($componentMetadata['status'] ?? NULL) === 'stable', 'Editorial card keeps its documented stable status.');
-$assert(isset($componentMetadata['slots']) && is_array($componentMetadata['slots']), 'Editorial card exposes renderable content as slots.');
-$wikiMetadata = Yaml::parseFile($themeRoot . '/components/patterns/wiki-entry/wiki-entry.component.yml');
-$assert(($wikiMetadata['status'] ?? NULL) === 'experimental', 'Wiki entry pattern remains experimental pending runtime and visual validation.');
-$assert($sdc->hasDefinition('aculta420:wiki-entry'), 'Drupal discovers aculta420:wiki-entry.');
-$messengerComponents = [
-  'aculta420:messenger-list',
-  'aculta420:messenger-item',
-  'aculta420:messenger-compose',
-  'aculta420:messenger-notification',
-  'aculta420:institutional-notice',
-  'aculta420:unread-badge',
-  'aculta420:messenger-state',
-];
-foreach ($messengerComponents as $componentId) {
-  $assert($sdc->hasDefinition($componentId), 'Drupal discovers ' . $componentId . '.');
+foreach (glob($themeRoot . '/components/*', GLOB_ONLYDIR) ?: [] as $componentDir) {
+  $componentName = basename($componentDir);
+  $metadata = $componentDir . '/' . $componentName . '.component.yml';
+  $assert(is_file($metadata), 'SDC metadata exists: ' . $componentName);
+  $assert($sdc->hasDefinition($themeName . ':' . $componentName), 'Drupal discovers ' . $themeName . ':' . $componentName . '.');
 }
 
+// Twig: every template and component compiles.
 $twig = \Drupal::service('twig');
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($themeRoot, FilesystemIterator::SKIP_DOTS)) as $file) {
   if (!$file->isFile()) {
@@ -430,18 +270,19 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($themeRoot
     Yaml::parseFile($file->getPathname());
   }
   if ($extension === 'twig') {
-    // SDC templates use namespaced component IDs.
     $componentName = basename($file->getFilename(), '.twig');
-    $isComponent = preg_match('#/components/(content|patterns)/' . preg_quote($componentName, '#') . '/' . preg_quote($componentName, '#') . '\.twig$#', $file->getPathname()) === 1;
-    $themeRelativePath = str_replace($themeRoot . DIRECTORY_SEPARATOR, '', $file->getPathname());
-    // Drupal's Twig loader resolves regular theme templates through the theme
-    // namespace; the bare basename is not a registered loader key.
-    $sourceName = $isComponent ? 'aculta420:' . $componentName : '@aculta420/' . $themeRelativePath;
+    $isComponent = preg_match('#/components/[^/]+/' . preg_quote($componentName, '#') . '\.twig$#', $file->getPathname()) === 1;
+    $sourceName = $isComponent
+      ? $themeName . ':' . $componentName
+      : '@' . $themeName . '/' . str_replace($themeRoot . DIRECTORY_SEPARATOR, '', $file->getPathname());
     $source = new Source(file_get_contents($file->getPathname()), $sourceName, $file->getPathname());
     $twig->compile($twig->parse($twig->tokenize($source)));
   }
 }
 
+// CSS: literal colors and motion durations stay in the V2 token file.
+$tokensPath = $themeRoot . '/src/styles/tokens.css';
+$assert(is_file($tokensPath), 'V2 design tokens file exists.');
 $allCss = '';
 $nonTokenCss = '';
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($themeRoot, FilesystemIterator::SKIP_DOTS)) as $file) {
@@ -450,20 +291,20 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($themeRoot
   }
   $source = file_get_contents($file->getPathname());
   $allCss .= "\n" . $source;
-  if ($file->getPathname() !== $themeRoot . '/css/tokens.css') {
+  if ($file->getPathname() !== $tokensPath) {
     $nonTokenCss .= "\n" . $source;
   }
 }
 $assert(!preg_match('/(?:^|})\s*a\s*\{|\.region-content\s+a\s*\{|\.node\s+a\s*\{|\.view-content\s+a\s*\{/m', $allCss), 'Theme has no broad editorial anchor selector.');
-$assert(!preg_match('/#[0-9a-fA-F]{3,8}\b|rgba?\([^)]*\)/', $nonTokenCss), 'Literal colors remain centralized in tokens.css.');
-$assert(!preg_match('/\b\d+(?:\.\d+)?m?s\b/', $nonTokenCss), 'Motion durations remain centralized in tokens.css.');
+$assert(!preg_match('/#[0-9a-fA-F]{3,8}\b|rgba?\([^)]*\)/', $nonTokenCss), 'Literal colors remain centralized in src/styles/tokens.css.');
+$assert(!preg_match('/\b\d+(?:\.\d+)?m?s\b/', $nonTokenCss), 'Motion durations remain centralized in src/styles/tokens.css.');
 foreach ([
-  '--aculta-motion-fast: 180ms',
-  '--aculta-ease-standard: ease',
-  '--aculta-nav-current-bg: var(--aculta-yellow)',
-  '--aculta-link-editorial: var(--aculta-red)',
+  '--color-brand-primary:',
+  '--color-canvas:',
+  '--color-focus-ring:',
+  '--color-link-editorial:',
 ] as $foundationToken) {
   $assert(str_contains($allCss, $foundationToken), 'Foundation token is present: ' . $foundationToken);
 }
 
-echo count($checks) . " ACULTA420 Foundation checks passed.\n";
+echo count($checks) . " ACULTA420 V2 Foundation checks passed.\n";

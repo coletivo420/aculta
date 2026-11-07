@@ -3,13 +3,13 @@
  * @file
  * Envelope HTML dos e-mails do ACULTA (hook aculta_mailer_wrap), montado pelo tema.
  *
- * Cores dos tokens do ACULTA420 (tokens.css), em claro e em escuro automático (prefers-color-scheme). Cada cor vem
+ * Cores dos tokens do ACULTA420 V2 (src/styles/tokens.css), em claro e em escuro automático (prefers-color-scheme). Cada cor vem
  * inline no modo claro (clientes sem CSS) e em classe, com override escuro com !important (clientes que leem o <style>).
  *
  * Variables:
  * - body: corpo já escapado (HTML), quando is_html.
- * - theme_logo: logo do tema, da configuração do tema (preprocess em src/Hook/MailEnvelopeHooks.php).
- * - mail_colors: cores claras e escuras lidas dos tokens do tema (css/tokens.css) pelo mesmo preprocess.
+ * - theme_logo: logo do tema V2, do próprio asset (preprocess em src/Hook/MailEnvelopeHooks.php).
+ * - mail_colors: cores claras e escuras lidas dos tokens do tema (src/styles/tokens.css) pelo mesmo preprocess.
 * - color_mode: light, dark ou auto (modo de cor do site). Em auto, o bloco prefers-color-scheme é emitido.
 * - show_footer: False quando o corpo já traz o rodapé do layout de marca (aculta_mailer).
  * - is_html: True if generating HTML output, false for plain text.
