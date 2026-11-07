@@ -43,6 +43,13 @@ body:has(.aculta-studio-topbar) .layout-page h1:not(.aculta-studio-topbar__title
   outline-offset: 2px;
 }
 
+/* Desktop: o título começa na mesma altura do topo do menu lateral (138 px). */
+@media (min-width: 60rem) {
+  .aculta-studio-topbar {
+    margin-block-start: 5.125rem;
+  }
+}
+
 /* Somente no celular: o botão aparece ao lado do título. No desktop fica oculto. */
 @media (max-width: 59.9375rem) {
   .aculta-studio-topbar .aculta-studio-menu__trigger {
