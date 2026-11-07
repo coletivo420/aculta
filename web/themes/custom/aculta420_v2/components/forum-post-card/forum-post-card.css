@@ -245,3 +245,18 @@
 .forum-post-card a[href*="?quote="]::before {
   mask-image: url("/themes/custom/aculta420_v2/assets/icons/phosphor/duotone/quotes-duotone.svg");
 }
+
+/* Lista de ações do comentário: em linha, sem marcadores. */
+.forum-post-card ul.links {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: var(--spacing-xs);
+}
+
+.forum-post-card ul.links li {
+  margin: 0;
+  padding: 0;
+}
