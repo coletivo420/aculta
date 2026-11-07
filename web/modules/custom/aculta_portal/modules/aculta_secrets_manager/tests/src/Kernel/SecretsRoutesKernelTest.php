@@ -79,6 +79,7 @@ final class SecretsRoutesKernelTest extends KernelTestBase {
     'schema_product',
     'schema_web_site',
     'schema_web_page',
+      'aculta_file_uploader',
   ];
 
   /**
