@@ -189,7 +189,7 @@ html[data-theme="dark"] { --studio-stripe: var(--aculta-studio-dark-sub-2); }
   /* Largura total: a página e o conteúdo ocupam a tela inteira, sem o espaçamento lateral do layout. */
   html[data-purpose-layout="full"] .layout-page {
     max-inline-size: none;
-    padding-inline: var(--spacing-xs);
+    padding-inline: var(--spacing-md);
   }
 
   html[data-purpose-layout="full"] .layout-page__content {

@@ -178,3 +178,11 @@ html[data-purpose-layout="full"] .revista-publication__body {
   inline-size: 100%;
   max-inline-size: none;
 }
+
+/* Autoria sem caixas dentro de caixas: só a faixa da seção; os itens internos não têm borda. */
+.revista-publication__authors :is(.portal-article-authors, .portal-article-authors__list, .portal-article-author, .author-card) {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+.revista-publication__authors .portal-article-author { padding: 0; }
