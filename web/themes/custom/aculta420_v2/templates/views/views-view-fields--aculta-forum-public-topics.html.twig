@@ -1,10 +1,12 @@
 {#
   Linha da lista pública de tópicos: apresentada por forum-topic-row.
-  Dados do tópico vêm da entidade da linha; contagem e última atividade vêm da view.
+  Miniatura: foto do autor quando existir; senão, ícone neutro (nunca letra).
   Visualizações ainda não existem no contrato: entram como placeholder.
 #}
 {% set topic = row._entity %}
 {% set category = topic.field_aculta_categories.entity %}
+{% set owner = topic.getOwner() %}
+{% set picture = owner.user_picture.entity %}
 {% set is_pinned = topic.isSticky() %}
 {% set pinned_badges = [{ label: 'Fixo'|t, tone: 'highlight' }] %}
 
@@ -16,7 +18,17 @@
   {% if category %}
     <span class="forum-topic-row__category">{{ category.label() }}</span>
   {% endif %}
-  <span class="forum-topic-row__author">{{ 'por'|t }} {{ topic.getOwner().getDisplayName() }}</span>
+  <span class="forum-topic-row__author">{{ 'por'|t }} {{ owner.getDisplayName() }}</span>
+{% endset %}
+
+{% set thumbnail_markup %}
+  {% if picture %}
+    <img class="forum-topic-row__avatar" src="{{ file_url(picture.uri.value) }}" alt="" width="40" height="40" loading="lazy">
+  {% else %}
+    <span class="forum-topic-row__avatar forum-topic-row__avatar--icon" aria-hidden="true">
+      {{ include('aculta420_v2:icon', { name: 'chat-circle-text', variant: 'duotone', size: 'md' }, with_context = false) }}
+    </span>
+  {% endif %}
 {% endset %}
 
 {{ include('aculta420_v2:forum-topic-row', {
@@ -28,5 +40,5 @@
   title: title_markup,
   meta: meta_markup,
   preview: null,
-  thumbnail: null
+  thumbnail: thumbnail_markup
 }, with_context = false) }}

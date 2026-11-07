@@ -586,3 +586,95 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
 .aculta-forum-list {
   padding-inline: max(0px, calc(clamp(var(--spacing-sm), 2.25vw, var(--spacing-xl)) - var(--spacing-base)));
 }
+
+/* Lista do fórum em três colunas (referência): categorias, lista e números. */
+.aculta-forum-list__categories,
+.aculta-forum-list__aside {
+  min-inline-size: 0;
+}
+
+.aculta-forum-list__aside-title {
+  margin: 0 0 var(--spacing-sm);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.aculta-forum-list__categories {
+  padding: var(--spacing-base);
+  border: 1px solid var(--color-border);
+  border-block-start: 4px solid var(--color-link-editorial);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-raised);
+}
+
+.aculta-forum-list__category-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: .25rem;
+}
+
+.aculta-forum-list__category {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none;
+  color: var(--color-text-primary);
+  border-radius: var(--radius-base);
+  min-block-size: 44px;
+  padding-inline: var(--spacing-sm);
+  gap: var(--spacing-sm);
+}
+
+.aculta-forum-list__category:hover {
+  background: var(--color-surface-highlight);
+}
+
+.aculta-forum-list__category.is-all {
+  background: var(--color-surface-highlight);
+  font-weight: 700;
+}
+
+.aculta-forum-list__category-count {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.forum-topic-row__avatar {
+  object-fit: cover;
+  border-radius: 50%;
+  inline-size: 40px;
+  block-size: 40px;
+}
+
+.forum-topic-row__avatar--icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface-highlight);
+}
+
+@media (min-width: 60rem) {
+  .aculta-forum-list__layout {
+    grid-template-columns: minmax(0, 1fr) 18rem;
+  }
+
+  .aculta-forum-list__categories {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 75rem) {
+  .aculta-forum-list__layout {
+    grid-template-columns: 14rem minmax(0, 1fr) 18rem;
+  }
+
+  .aculta-forum-list__categories {
+    grid-row: 1 / span 2;
+    grid-column: 1;
+    align-self: start;
+  }
+}

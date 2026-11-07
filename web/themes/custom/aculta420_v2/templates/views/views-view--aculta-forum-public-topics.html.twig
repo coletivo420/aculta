@@ -1,7 +1,7 @@
 {#
-  Lista pública de tópicos do fórum (ACULTA420 V2), aplicada a todos os displays
-  da view que não têm template próprio (/discussoes e variantes).
-  Abas usam as rotas dos displays existentes; abas sem dado ficam fora até existirem.
+  Lista pública de tópicos do fórum (ACULTA420 V2), três colunas como na referência:
+  categorias à esquerda, lista ao centro e números e regras à direita.
+  Categorias e totais vêm de ForumListHooks; abas usam as rotas dos displays existentes.
 #}
 {% set current_display = view.current_display %}
 
@@ -26,49 +26,73 @@
   }, with_context = false) }}
 
   <div class="aculta-forum-list__layout">
-  <section class="aculta-forum-list__panel" aria-label="{{ 'Lista de tópicos'|t }}">
-    {{ include('aculta420_v2:forum-tabs', {
-      label: 'Ordenação dos tópicos'|t,
-      items: tab_items
-    }, with_context = false) }}
+    <aside class="aculta-forum-list__categories" aria-labelledby="forum-categories-title">
+      <h2 class="aculta-forum-list__aside-title" id="forum-categories-title">{{ 'Categorias'|t }}</h2>
+      <ul class="aculta-forum-list__category-list">
+        <li>
+          <a href="{{ url('view.aculta_forum_public_topics.page_discussions') }}" class="aculta-forum-list__category is-all">
+            <span>{{ 'Todas as categorias'|t }}</span>
+            <span class="aculta-forum-list__category-count">{{ forum_total_topics }}</span>
+          </a>
+        </li>
+        {% for category in forum_categories %}
+          <li>
+            <a href="{{ category.url }}" class="aculta-forum-list__category">
+              <span>{{ category.label }}</span>
+              <span class="aculta-forum-list__category-count">{{ category.count }}</span>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </aside>
 
-    {% if rows %}
-      <div class="forum-topic-row__head" aria-hidden="true">
-        <span>{{ 'Tópico'|t }}</span>
-        <span class="forum-topic-row__head-cols">
-          <span>{{ 'Respostas'|t }}</span>
-          <span>{{ 'Visualizações'|t }}</span>
-          <span>{{ 'Última atividade'|t }}</span>
-        </span>
-      </div>
-      <div class="aculta-forum-list__rows">
-        {{ rows }}
-      </div>
-    {% elseif empty %}
-      <div class="aculta-forum-list__rows">
-        <div class="view-empty">{{ empty }}</div>
-      </div>
-    {% endif %}
+    <section class="aculta-forum-list__panel" aria-label="{{ 'Lista de tópicos'|t }}">
+      {{ include('aculta420_v2:forum-tabs', {
+        label: 'Ordenação dos tópicos'|t,
+        items: tab_items
+      }, with_context = false) }}
 
-    {% if pager %}
-      <div class="aculta-forum-list__pager">
-        {{ pager }}
-      </div>
-    {% endif %}
-  </section>
+      {% if rows %}
+        <div class="forum-topic-row__head" aria-hidden="true">
+          <span>{{ 'Tópico'|t }}</span>
+          <span class="forum-topic-row__head-cols">
+            <span>{{ 'Respostas'|t }}</span>
+            <span>{{ 'Visualizações'|t }}</span>
+            <span>{{ 'Última atividade'|t }}</span>
+          </span>
+        </div>
+        <div class="aculta-forum-list__rows">
+          {{ rows }}
+        </div>
+      {% elseif empty %}
+        <div class="aculta-forum-list__rows">
+          <div class="view-empty">{{ empty }}</div>
+        </div>
+      {% endif %}
 
-  <aside class="aculta-forum-list__aside">
-    {{ include('aculta420_v2:forum-sidebar-panels', {
-      stats: null,
-      featured: null,
-      moderators: null,
-      rules: [
-        'Mantenha as postagens no tema específico de cada discussão.'|t,
-        'Sem spam ou autopromoção desautorizada.'|t,
-        'Colabore com respostas úteis e fundamentadas.'|t
-      ],
-      related: null
-    }, with_context = false) }}
-  </aside>
+      {% if pager %}
+        <div class="aculta-forum-list__pager">
+          {{ pager }}
+        </div>
+      {% endif %}
+    </section>
+
+    <aside class="aculta-forum-list__aside">
+      {{ include('aculta420_v2:forum-sidebar-panels', {
+        stats: [
+          { label: 'Tópicos'|t, value: forum_total_topics },
+          { label: 'Respostas'|t, value: null },
+          { label: 'Pessoas'|t, value: null }
+        ],
+        featured: null,
+        moderators: null,
+        rules: [
+          'Mantenha as postagens no tema específico de cada discussão.'|t,
+          'Sem spam ou autopromoção desautorizada.'|t,
+          'Colabore com respostas úteis e fundamentadas.'|t
+        ],
+        related: null
+      }, with_context = false) }}
+    </aside>
   </div>
 </div>
