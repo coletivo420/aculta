@@ -100,9 +100,13 @@ Rota: a definir (ver decisões abertas). Acesso só para usuário autenticado.
 4. Validação: kernel de privacidade, de bloqueio e de paginação; captura em Firefox ESR nos dois tamanhos, claro e escuro.
 5. Entrega: commit, push, sincronização do checkout e limpeza de cache.
 
+## Decisões tomadas (respostas do responsável, 2026-11-07)
+
+- **Rota da página:** `/conta/conexoes`, dentro da área de conta.
+- **Celular:** o bloco Conexões aparece depois de "Suas experiências".
+- **Confirmação de "Desfazer amizade" e "Bloquear":** janela (popup) de confirmação. A mesma janela deve ser usada em todos os pontos do ACULTA que pedem confirmação, por isso o popup deve ser padronizado (possivelmente no `aculta_messenger`, como componente compartilhado). Não criar um popup novo por tela.
+- **Resultados da busca de novas conexões:** 10 no desktop e 5 no celular, com carregamento de mais itens ao rolar.
+
 ## Decisões abertas
 
-- **Rota da página:** `/conexoes` no purpose de conta, ou outro caminho?
-- **Mobile:** o bloco aparece antes ou depois de "Suas experiências"?
-- **Desfazer amizade:** confirmação em janela ou em linha?
-- **Limite de resultados** na busca (sugestão: 10).
+- Nenhuma no momento.
