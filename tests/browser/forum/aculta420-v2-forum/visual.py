@@ -93,7 +93,7 @@ def main():
             raise RuntimeError("Fórum não expôs um link público de tópico e categorias na landing.")
 
         pages = [
-            ("lista", BASE, ".aculta-forum-topic-list-row", ".aculta-forum-topic--teaser"),
+            ("lista", BASE, ".forum-topic-row", ".aculta-forum-list__panel"),
             ("categorias-da-landing", BASE,
              "#block-aculta420-v2-aculta-forum-categories-home .aculta-forum-category",
              "#block-aculta420-v2-aculta-forum-categories-home .aculta-forum-category"),
