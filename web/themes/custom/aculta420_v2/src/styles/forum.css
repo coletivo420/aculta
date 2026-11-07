@@ -529,3 +529,13 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
   box-sizing: border-box;
   min-inline-size: 0;
 }
+
+/* Alinhamento com a barra institucional: mesma largura de conteúdo (--page-content-max), sem recuo extra. */
+.aculta-forum-list,
+.aculta-forum-category-page,
+.aculta-forum-topic {
+  inline-size: min(100%, var(--page-content-max));
+  max-inline-size: var(--page-content-max);
+  padding-inline: 0;
+  margin-inline: auto;
+}
