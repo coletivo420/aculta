@@ -680,7 +680,7 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
 }
 
 /* Página da lista: sem título repetido e sem ação local de marcar tudo como lido (o cabeçalho Growroom420 é o título). */
-.page:has(.aculta-forum-list) .page__title,
+.page:has(.aculta-forum-list) .layout-page__title,
 .page:has(.aculta-forum-list) .action-links {
   display: none;
 }
