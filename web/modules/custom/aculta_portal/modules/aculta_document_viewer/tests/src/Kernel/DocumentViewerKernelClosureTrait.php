@@ -62,7 +62,6 @@ trait DocumentViewerKernelClosureTrait {
     'social_api',
     'group',
     'flexible_permissions',
-    'lms',
     'commerce',
     'inline_entity_form',
     'datetime',

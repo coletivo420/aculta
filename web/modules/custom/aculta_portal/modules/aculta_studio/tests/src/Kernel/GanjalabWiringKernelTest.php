@@ -65,7 +65,6 @@ final class GanjalabWiringKernelTest extends KernelTestBase {
     'commerce_payment',
     'commerce_product',
     'commerce_store',
-    'lms',
     'lms_classes',
     'lms_answer_plugins',
     'lms_answer_comments',

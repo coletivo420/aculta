@@ -58,7 +58,6 @@ final class LmsClosedDiscussionFieldKernelTest extends KernelTestBase {
     'flexible_permissions',
     'group',
     'gnode',
-    'lms',
     'lms_classes',
     'aculta_lms',
     'key',
