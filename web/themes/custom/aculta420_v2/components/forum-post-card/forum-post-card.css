@@ -1,7 +1,7 @@
 .forum-post-card {
   position: relative;
   overflow: hidden;
-  margin-block-end: calc(var(--spacing-base) / 4);
+  margin-block-end: calc(var(--spacing-base) / 8);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   background: var(--color-surface-raised);
