@@ -78,12 +78,13 @@
     </section>
 
     <aside class="aculta-forum-list__aside">
+      {% set aside_stats = [
+        { label: 'Tópicos'|t, value: forum_total_topics },
+        { label: 'Respostas'|t, value: null },
+        { label: 'Pessoas'|t, value: null }
+      ] %}
       {{ include('aculta420_v2:forum-sidebar-panels', {
-        stats: [
-          { label: 'Tópicos'|t, value: forum_total_topics },
-          { label: 'Respostas'|t, value: null },
-          { label: 'Pessoas'|t, value: null }
-        ],
+        stats: aside_stats,
         featured: null,
         moderators: null,
         rules: [
