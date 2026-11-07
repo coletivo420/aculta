@@ -461,6 +461,13 @@ final class PagePresentationHooks {
       }
     }
 
+    // Wiki (e demais purposes sem menu próprio): o menu do purpose principal não é reproduzido.
+    if (($variables['domain_presentation']['layout']['show_site_menu'] ?? TRUE) === FALSE && $menu_key !== NULL) {
+      unset($variables['page']['header'][$menu_key]);
+      $menu = NULL;
+      $menu_key = NULL;
+    }
+
     $brandMedia = $variables['domain_presentation']['regions']['brand_media'] ?? NULL;
     $brandProps = is_array($brandMedia) ? $this->buildBrandMediaProps($brandMedia, $variables) : NULL;
     if ($brandProps !== NULL) {

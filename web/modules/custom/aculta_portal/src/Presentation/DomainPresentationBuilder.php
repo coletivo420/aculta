@@ -136,9 +136,11 @@ final class DomainPresentationBuilder {
         'institution_bar_account' => $purpose === 'account',
         'show_utility_bar' => $purpose !== 'links',
         'links_page' => $purpose === 'links',
-        // Institution Bar and Domain Header are present in every purpose. The
-        // theme renders this flag and never resolves purpose itself.
-        'show_site_header' => TRUE,
+        // Domain Header (navigation-bar) só existe no purpose principal e na Wiki.
+        // O tema apenas renderiza estes flags e não resolve o purpose.
+        'show_site_header' => in_array($purpose, ['main', 'wiki'], TRUE),
+        // Menu do purpose principal: só aparece no próprio cabeçalho principal.
+        'show_site_menu' => $purpose === 'main',
       ],
       $domainSites,
     );

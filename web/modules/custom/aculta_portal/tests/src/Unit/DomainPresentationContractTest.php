@@ -42,6 +42,7 @@ final class DomainPresentationContractTest extends UnitTestCase {
         'show_utility_bar' => TRUE,
         'links_page' => FALSE,
         'show_site_header' => TRUE,
+        'show_site_menu' => FALSE,
       ],
       [
         [
@@ -67,7 +68,7 @@ final class DomainPresentationContractTest extends UnitTestCase {
   public function testLayoutFlagsAreBooleanVisibilityOnly(): void {
     $layout = $this->presentation()->toThemeArray()['layout'];
     $this->assertSame(
-      ['institution_bar_account', 'show_utility_bar', 'links_page', 'show_site_header'],
+      ['institution_bar_account', 'show_utility_bar', 'links_page', 'show_site_header', 'show_site_menu'],
       array_keys($layout),
     );
     foreach ($layout as $flag) {
