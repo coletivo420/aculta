@@ -54,14 +54,31 @@ final class MapController extends ControllerBase {
     $resultado = $this->locais->buscaPaginada(NULL, NULL, 0, 0);
     foreach ($resultado['items'] as $item) {
       $local = $item['local'];
-      $linha = '<strong>' . Html::escape((string) $local->label()) . '</strong>';
-      if ($item['endereco'] !== '') {
-        $linha .= '<br>' . Html::escape($item['endereco']);
+      $urlGerada = $local->toUrl()->toString(TRUE);
+      $resultado['cache_metadata']->addCacheableDependency($urlGerada);
+      $urlLocal = $urlGerada->getGeneratedUrl();
+      $categoria = '';
+      $tipo = $local->get('field_tipo')->entity;
+      if ($tipo !== NULL) {
+        $acessoTipo = $tipo->access('view', NULL, TRUE);
+        $resultado['cache_metadata']->addCacheableDependency($acessoTipo);
+        if ($acessoTipo->isAllowed()) {
+          $resultado['cache_metadata']->addCacheableDependency($tipo);
+          $categoria = (string) $tipo->label();
+        }
       }
       $itemRender = [
         '#type' => 'container',
-        'location' => ['#markup' => $linha],
+        'location' => [
+          '#markup' => '<a href="' . Html::escape($urlLocal) . '"><strong>' . Html::escape((string) $local->label()) . '</strong></a>',
+        ],
       ];
+      if ($categoria !== '') {
+        $itemRender['category'] = ['#markup' => '<br>' . Html::escape($categoria)];
+      }
+      if ($item['endereco'] !== '') {
+        $itemRender['address'] = ['#markup' => '<br>' . Html::escape($item['endereco']) . ' '];
+      }
       if ($item['endereco'] !== '') {
         $itemRender['route'] = [
           '#type' => 'link',
@@ -83,6 +100,8 @@ final class MapController extends ControllerBase {
           'lat' => round((float) $coords['lat'], $casas),
           'lng' => round((float) $coords['lon'], $casas),
           'description' => $item['endereco'],
+          'url' => $urlLocal,
+          'category' => $categoria,
           'precision' => $casas === self::CASAS_APROXIMADO ? 'approximate' : 'exact',
           'routeUrl' => $item['endereco'] !== '' ? $this->routeLinks->build($item['endereco'])->toString() : '',
         ];

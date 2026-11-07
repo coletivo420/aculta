@@ -23,6 +23,9 @@ OpenStreetMap ou Nominatim diretamente.
   dos hooks `aculta_maps_popup_template` e `aculta_maps_popup_content`. O tema
   ativo escolhe a apresentação; Leaflet/Google clonam o template quando o
   marcador é aberto. O módulo não conhece IDs nem classes de SDC.
+  `/mapa` (consumer `aculta_events`) envia `url` canônico do Local e `category`
+  (termo de tipo com acesso verificado); no V2 o popup usa o SDC
+  `aculta420_v2:map-popup`. Local sem coordenada aparece só na lista.
   Para Leaflet, um hook separado fornece template inerte de ícone; o tema pode
   renderizar Phosphor inline e o cliente o clona para `L.divIcon`. Isso mantém
   SVG fora de `drupalSettings` e não requer sprites externos nem CORS.

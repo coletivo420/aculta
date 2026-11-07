@@ -69,7 +69,10 @@ final class MapControllerKernelTest extends KernelTestBase {
     $this->assertCount(1, $marcadores);
     $this->assertSame(-16.68, $marcadores[0]['lat']);
     $this->assertSame(-49.26, $marcadores[0]['lng']);
-    $this->assertStringContainsString('Casa de cultura', (string) \Drupal::service('renderer')->renderInIsolation($pagina['lista']));
+    $this->assertStringStartsWith('/locais/', $marcadores[0]['url']);
+    $lista = (string) \Drupal::service('renderer')->renderInIsolation($pagina['lista']);
+    $this->assertStringContainsString('Casa de cultura', $lista);
+    $this->assertStringContainsString('href="/locais/', $lista);
     $aviso = (string) \Drupal::service('renderer')->renderInIsolation($pagina['aviso']);
     // D-52: only the privacy-policy link remains; the provider attribution is
     // rendered by the map component, not by the inline notice.
