@@ -539,3 +539,34 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
   padding-inline: 0;
   margin-inline: auto;
 }
+
+/* /criar-topico: card com faixa vermelha, largura máxima e botões do plano (seção 4). */
+.aculta-forum-composer-form-wrapper {
+  box-sizing: border-box;
+  padding: var(--spacing-base);
+  border: 1px solid var(--color-border);
+  border-block-start: 4px solid var(--color-link-editorial);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-raised);
+  inline-size: min(100%, var(--page-content-max));
+  max-inline-size: var(--page-content-max);
+  margin-inline: auto;
+  min-inline-size: 0;
+}
+
+.aculta-forum-composer-form-wrapper .form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.aculta-forum-composer-form-wrapper .form-actions .button {
+  min-block-size: 44px;
+  padding-inline: var(--spacing-base);
+  border-radius: var(--radius-base);
+}
+
+.aculta-forum-composer-form-wrapper .form-actions .button--primary {
+  color: var(--color-on-brand);
+  background: var(--color-brand-primary);
+}
