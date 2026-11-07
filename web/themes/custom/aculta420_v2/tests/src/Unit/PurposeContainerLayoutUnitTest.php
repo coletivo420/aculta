@@ -117,18 +117,18 @@ final class PurposeContainerLayoutUnitTest extends UnitTestCase {
   }
 
   /**
-   * Como no Astra, o estilo vale para Padrão e Estreito, e não para Largura total.
+   * O estilo vale para todos os modos, inclusive Largura total.
    */
-  public function testStyleAppliesOnlyToDefaultAndNarrow(): void {
+  public function testStyleAppliesToEveryMode(): void {
     $default = PurposeContainerLayout::resolveContainerStyle(['main' => ['mode' => 'default', 'style' => 'unboxed']], 'main');
     self::assertSame('unboxed', $default['style']);
 
     $narrow = PurposeContainerLayout::resolveContainerStyle(['main' => ['mode' => 'narrow', 'style' => 'boxed']], 'main');
     self::assertSame('boxed', $narrow['style']);
 
-    $full = PurposeContainerLayout::resolveContainerStyle(['main' => ['mode' => 'full', 'style' => 'boxed']], 'main');
+    $full = PurposeContainerLayout::resolveContainerStyle(['main' => ['mode' => 'full', 'style' => 'unboxed']], 'main');
     self::assertSame('full', $full['mode']);
-    self::assertNull($full['style']);
+    self::assertSame('unboxed', $full['style']);
   }
 
 }
