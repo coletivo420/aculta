@@ -808,3 +808,15 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
   border-radius: var(--radius-lg);
   background: var(--color-surface-highlight);
 }
+
+/* Mobile: a coluna dos comentários do tópico cabe na tela, sem rolagem horizontal. */
+.aculta-forum-topic__content > section {
+  grid-template-columns: minmax(0, 1fr);
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.aculta-forum-topic__content > section .forum-post-card {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
