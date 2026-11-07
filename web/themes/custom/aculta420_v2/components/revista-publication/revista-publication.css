@@ -115,8 +115,15 @@
 .revista-publication__footer :where(.field--name-field-editorial-category, .field--name-field-tags) .field__items { display: flex; flex-wrap: wrap; gap: var(--spacing-xs) var(--spacing-sm); min-inline-size: 0; }
 .revista-publication__footer :where(.field__label, .field__item) { margin: 0; padding: 0; }
 .revista-publication__footer a { color: var(--color-link-editorial); }
-.revista-publication__authors { margin-block-start: var(--spacing-xxl); }
-.revista-publication__authors .author-card { inline-size: 100%; max-inline-size: none; }
+.revista-publication__authors {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-block-start: 4px solid var(--studio-stripe);
+  border-radius: var(--radius-lg);
+  margin-block-start: var(--spacing-xxl);
+  padding: var(--spacing-md);
+}
+.revista-publication__authors .author-card { border: 0; inline-size: 100%; max-inline-size: none; }
 .revista-publication__authors .portal-article-authors { border: 0; padding: 0; }
 .revista-publication__authors .portal-article-authors__list { grid-template-columns: minmax(0, 1fr); }
 .revista-publication__authors .portal-article-author { inline-size: 100%; max-inline-size: none; }

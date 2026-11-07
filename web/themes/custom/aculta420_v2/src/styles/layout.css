@@ -169,7 +169,11 @@
     padding: var(--spacing-md);
   }
 
-  /* Modos de layout de container por purpose (aculta420_v2). O atributo do purpose manda na largura,
+  /* Cor de faixa do Studio (painel de conta), usada também em caixas de outros purposes. */
+:root { --studio-stripe: #f0c41e; }
+html[data-theme="dark"] { --studio-stripe: #fbd132; }
+
+/* Modos de layout de container por purpose (aculta420_v2). O atributo do purpose manda na largura,
      qualquer que seja a variante do template (--full ou --aside). */
   html[data-purpose-layout="default"] .layout-page,
   html[data-purpose-layout="narrow"] .layout-page {
@@ -185,7 +189,7 @@
   /* Largura total: a página e o conteúdo ocupam a tela inteira, sem o espaçamento lateral do layout. */
   html[data-purpose-layout="full"] .layout-page {
     max-inline-size: none;
-    padding-inline: 0;
+    padding-inline: var(--spacing-xs);
   }
 
   html[data-purpose-layout="full"] .layout-page__content {
