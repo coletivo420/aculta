@@ -8,29 +8,29 @@ Criar uma subaba nas configurações do tema `aculta420_v2` para definir o layou
 
 ## Decisões aprovadas
 
-- **Padrão:** Boxed para todos os purposes. Outros modos ficam disponíveis na seleção.
+- **Padrão:** caixa centralizada (antes chamada Boxed) para todos os purposes. Outros modos ficam disponíveis na seleção.
 - **Unboxed:** largura total da tela (faixa sem margens laterais).
 - **Celular:** largura sempre 100%, ignorando os sliders.
 - **Este documento** é o registro do planejamento; a implementação só começa depois de aprovação explícita.
 
 ## Modos de container
 
-Pesquisa de modos comuns em temas e page builders (nomes variam por fornecedor):
+Revisão de 2026-11-07, pedida pelo responsável. Três modos:
 
 | Modo | Comportamento |
 | --- | --- |
-| Boxed (padrão) | Conteúdo em largura fixa, centralizado, com margens laterais e fundo de bloco |
-| Unboxed | Faixa de largura total da tela, sem margens laterais |
-| Contained | Conteúdo e fundo restritos ao centro, com espaço branco dos dois lados |
-| Max full width | Meio-termo: mais largo que o contained, sem chegar à tela inteira |
+| Padrão (padrão de todos os purposes) | Caixa centralizada com largura máxima de 1200 px (faixa usual 1140 a 1280), com margens laterais |
+| Largura total | Ocupa 100% da tela, sem limite lateral |
+| Estreito | Reduz a largura máxima do bloco de conteúdo para leitura focada (600 a 900 px, padrão 750) |
 
-Referências: [Astra, full width contained](https://wpastra.com/es/docs/full-width-contained-container-layout/), [BoldGrid, layout](https://www.boldgrid.com/support/wp-json/wp/v2/posts/49310), [Heelium, theme container](https://heelium.web.unc.edu/documentation/theme-options/theme-container/), [Advanced Columns, boxed mode](https://advancedcolumns-site-t7wxk.kinsta.page/docs/columns/boxed-mode/), [Elementor, container layout](https://elementor.com/help/container-layout-tab-settings).
+Valores gravados com os modos antigos (boxed, unboxed, contained, max_full_width) são convertidos automaticamente.
+Revista (magazine) e Wiki (wiki) fazem parte da configuração, como os demais purposes.
 
 ## Configuração
 
 Subaba "Layout de container" em Aparência > aculta420_v2, com um bloco por purpose:
 
-- **Modo:** Boxed (padrão), Unboxed, Contained ou Max full width.
+- **Modo:** Padrão (padrão), Largura total ou Estreito.
 - **Largura do container:** slider em px, de 960 a 1600 (padrão 1200).
 - **Largura estreita:** slider em px, de 600 a 900 (padrão 750), para páginas de leitura.
 
@@ -68,5 +68,4 @@ Subaba "Layout de container" em Aparência > aculta420_v2, com um bloco por purp
 
 ## Pontos abertos
 
-- Largura padrão do modo Contained e do Max full width (sugestão: 1000 px e 1400 px).
 - Se a configuração vale para páginas de conteúdo editorial (Revista, Wiki) além do painel.
