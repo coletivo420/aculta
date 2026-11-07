@@ -1,0 +1,31 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Diretrizes do Compositor do Fórum
+description: Diretrizes e dicas para criação de novos tópicos em duas colunas no desktop e uma no mobile, com faixa amarela no topo e details nativo.
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    collapsed:
+      type: boolean
+      title: Inicialmente recolhido
+      default: false
+    tips:
+      type: [array, 'null']
+      title: Dicas de redação e boas práticas
+      default: null
+      items:
+        type: string
+    community_rules:
+      type: [array, 'null']
+      title: Regras da comunidade
+      default: null
+      items:
+        type: object
+        additionalProperties: false
+        required: [title, text]
+        properties:
+          title:
+            type: string
+          text:
+            type: string

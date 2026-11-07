@@ -373,3 +373,19 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 - **Story:** `forum-post-card.default.story.yml`.
 - **Regra:** o papel do autor e a variante de faixa vêm do Portal; o tema não consulta papel de usuário nem entidade. Dados ausentes viram placeholder `—`.
 - **Estado:** entregue na Entrega 1 do redesenho visual Growroom420; schema estrito validado.
+
+### forum-sidebar-panels — Painéis Laterais do Fórum
+- **Papel:** painéis informativos verticais para o fórum com faixas alternadas nas cores vermelha editorial e amarela de destaque (`stats`, `featured`, `moderators`, `rules` e `related`).
+- **Props:** `stats` (array de `{label, value}`), `featured` (array de `{title, url, thumbnail, replies}`), `moderators` (array de `{name, role}`), `rules` (array de strings), `related` (array de `{name, url, count}`).
+- **Slots:** nenhum.
+- **Story:** `forum-sidebar-panels.default.story.yml`.
+- **Regra:** campos sem valor ou pendentes no Portal (como moderadores e estatísticas ausentes) são renderizados como placeholder `—<span class="visually-hidden">Dado indisponível</span>` e pílula "Em breve".
+- **Estado:** entregue na Entrega 2 do redesenho visual Growroom420; schema estrito validado.
+
+### forum-composer-guidelines — Diretrizes do Compositor do Fórum
+- **Papel:** painel de boas práticas e normas de publicação para o formulário `/criar-topico`, com duas colunas no desktop e uma coluna no mobile, faixa amarela de destaque e opção de recolhimento via `<details>` nativo.
+- **Props:** `collapsed` (bool), `tips` (array de strings), `community_rules` (array de `{title, text}`).
+- **Slots:** nenhum.
+- **Story:** `forum-composer-guidelines.default.story.yml`.
+- **Regra:** sem dependência de JavaScript obrigatório; opera com `<details>` nativo do HTML.
+- **Estado:** entregue na Entrega 2 do redesenho visual Growroom420; schema estrito validado.

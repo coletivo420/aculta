@@ -61,6 +61,14 @@ Enquanto esses dados não existirem nos contratos de variáveis ou views forneci
 - Valores textuais e contadores ausentes como "—" acompanhados de `<span class="visually-hidden">Dado indisponível</span>`.
 - Ações como "Seguir", "Salvar" e lista de moderadores com atributo `disabled` e `aria-disabled="true"` com pílula ou rótulo "Em breve".
 
+### Componentes e Telas da Entrega 2 (Growroom420)
+
+Na entrega 2 foram incorporados:
+- `forum-sidebar-panels`: painéis laterais em coluna com faixas alternadas vermelha/amarela (`stats`, `featured`, `moderators`, `rules`, `related`). Moderadores e campos não entregues pelo backend operam com placeholder neutro e desabilitados com "Em breve".
+- `forum-composer-guidelines`: diretrizes de publicação em duas colunas no desktop e uma coluna no mobile, faixa amarela no topo e detalhes nativos recolhíveis.
+- Formulário `/criar-topico` adaptado com faixa vermelha no topo, botões de ação e diretrizes integradas via template `node-add-form--aculta-forum-topic.html.twig`.
+- Nova rota e template da View `/categorias/{termo}` (`page_category_term` em `views.view.aculta_forum_public_topics.yml`), integrando `forum-category-header`, `forum-tabs`, lista de tópicos e `forum-sidebar-panels`.
+
 ## 3. Modo de cor
 
 - `SurfaceSettingsHooks::preprocessHtml()` define `data-theme` no `<html>` a partir de `aculta_color_mode`. Valor diferente de `dark` vira `light`.

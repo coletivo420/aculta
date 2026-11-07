@@ -1,0 +1,55 @@
+{# Template for /categorias/{termo} #}
+<div class="aculta-forum-category-page">
+  {{ include('aculta420_v2:forum-category-header', {
+    title: view.getTitle()|default('Categoria'|t),
+    description: null,
+    icon: 'plant',
+    stats: [
+      { label: 'Tópicos'|t, value: view.total_rows|default(null) },
+      { label: 'Mensagens'|t, value: null },
+      { label: 'Visualizações'|t, value: null }
+    ]
+  }, with_context = false) }}
+
+  <div class="aculta-forum-category-page__layout">
+    <div class="aculta-forum-category-page__main">
+      {{ include('aculta420_v2:forum-tabs', {
+        label: 'Seções da categoria'|t,
+        items: [
+          { label: 'Todas as discussões'|t, href: url('<current>'), active: true, count: null },
+          { label: 'Em alta'|t, href: '#', active: false, count: null },
+          { label: 'Sem resposta'|t, href: '#', active: false, count: null }
+        ]
+      }, with_context = false) }}
+
+      {% if rows %}
+        <div class="aculta-forum-category-page__topics">
+          {{ rows }}
+        </div>
+      {% elseif empty %}
+        <div class="view-empty">{{ empty }}</div>
+      {% endif %}
+
+      {% if pager %}
+        {{ pager }}
+      {% endif %}
+    </div>
+
+    <div class="aculta-forum-category-page__aside">
+      {{ include('aculta420_v2:forum-sidebar-panels', {
+        stats: [
+          { label: 'Tópicos'|t, value: view.total_rows|default(null) },
+          { label: 'Participantes'|t, value: null }
+        ],
+        featured: null,
+        moderators: null,
+        rules: [
+          'Mantenha as postagens no tema específico desta categoria.'|t,
+          'Sem spam ou autopromoção desautorizada.'|t,
+          'Colabore com respostas úteis e fundamentadas.'|t
+        ],
+        related: null
+      }, with_context = false) }}
+    </div>
+  </div>
+</div>

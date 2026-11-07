@@ -1,0 +1,23 @@
+{# Form layout for creating a new forum topic (/criar-topico) #}
+{{ include('aculta420_v2:forum-composer-guidelines', {
+  collapsed: false,
+  tips: [
+    'Escolha a categoria mais adequada para sua dúvida ou relato.'|t,
+    'Seja específico no título, evitando termos genéricos como "Ajuda urgente".'|t,
+    'Descreva seu cultivo, iluminação, substrato e regas para facilitar o diagnóstico.'|t
+  ],
+  community_rules: [
+    {
+      title: 'Respeito e colaboração'|t,
+      text: 'O Growroom420 é um espaço de apoio mútuo. Trate todos os cultivadores com cordialidade.'|t
+    },
+    {
+      title: 'Proibição de comércio'|t,
+      text: 'É estritamente vedada a compra, venda, troca ou oferta de substâncias e produtos ilícitos.'|t
+    }
+  ]
+}, with_context = false) }}
+
+<div class="aculta-forum-composer-form-wrapper">
+  {{ form }}
+</div>

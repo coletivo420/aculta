@@ -1,0 +1,72 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Painéis Laterais do Fórum
+description: Painéis em coluna com faixas alternadas (vermelha e amarela) para estatísticas, destaques, moderadores, regras e categorias relacionadas.
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    stats:
+      type: [array, 'null']
+      title: Estatísticas da comunidade
+      default: null
+      items:
+        type: object
+        additionalProperties: false
+        required: [label]
+        properties:
+          label:
+            type: string
+          value:
+            type: [string, integer, 'null']
+    featured:
+      type: [array, 'null']
+      title: Tópicos em destaque
+      default: null
+      items:
+        type: object
+        additionalProperties: false
+        required: [title, url]
+        properties:
+          title:
+            type: string
+          url:
+            type: string
+          thumbnail:
+            type: [string, 'null']
+          replies:
+            type: [string, integer, 'null']
+    moderators:
+      type: [array, 'null']
+      title: Moderadores da comunidade
+      default: null
+      items:
+        type: object
+        additionalProperties: false
+        required: [name]
+        properties:
+          name:
+            type: string
+          role:
+            type: [string, 'null']
+    rules:
+      type: [array, 'null']
+      title: Regras da comunidade
+      default: null
+      items:
+        type: string
+    related:
+      type: [array, 'null']
+      title: Categorias relacionadas
+      default: null
+      items:
+        type: object
+        additionalProperties: false
+        required: [name, url]
+        properties:
+          name:
+            type: string
+          url:
+            type: string
+          count:
+            type: [string, integer, 'null']

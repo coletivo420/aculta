@@ -43,6 +43,15 @@ Não é um script de gate, mas faz parte da entrega de mudança visual (ver [AGE
 
 ## Estado atual
 
+## Execução Recente — Redesenho Visual Growroom420 (Entrega 2)
+
+Validação dos componentes SDC complementares (`forum-sidebar-panels`, `forum-composer-guidelines`), do template `/criar-topico`, da nova rota `/categorias/{termo}` e da View em `config/sync`:
+- `npm run lint:css` no tema: PASS sem erros.
+- `php scripts/validate-aculta420-sdc-schemas.php`: PASS (55 componentes, 27 includes, 764 checks).
+- `php scripts/validate-aculta420-design-foundations.php`: PASS (2468 checks; Dark token-only e contrastes em conformidade).
+- `php scripts/validate-aculta420-mapped-classes.php`: PASS (462 classes mapeadas).
+- `git diff --check`: PASS.
+
 ## Execução Recente — Redesenho Visual Growroom420 (Entrega 1)
 
 Validação dos novos componentes SDC do Fórum (`forum-category-header`, `forum-tabs`, `forum-topic-row`, `forum-topic-card`, `forum-post-card`), templates e estilo CSS:

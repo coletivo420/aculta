@@ -1,3 +1,11 @@
+## 1.4.0 — Redesenho Visual Fórum Growroom420 (Entrega 2)
+
+- Conclusão do redesenho visual do Fórum Growroom420 no tema ACULTA420 V2 (versão MINOR conforme ADR-046).
+- Componentes SDC complementares: `forum-sidebar-panels` e `forum-composer-guidelines`, com schemas estritos, stories funcionais e documentação completa.
+- Adapters de criação de tópico (`/criar-topico`) com diretrizes e normas em duas colunas no desktop e uma coluna no mobile, além de botões e card com faixa editorial vermelha.
+- Adição da exibição da View `/categorias/{termo}` (`page_category_term` em `config/sync/views.view.aculta_forum_public_topics.yml`), permitindo a navegação contextual por categoria integrada aos novos cabeçalhos e painéis laterais.
+- Gates de lint CSS, schemas SDC, design foundations e mapeamento de classes verificados com aprovação.
+
 ## Não versionado — Redesenho Visual Fórum Growroom420 (Entrega 1)
 
 - Novos componentes SDC com schema estrito: `forum-category-header`, `forum-tabs`, `forum-topic-row`, `forum-topic-card` e `forum-post-card`. Cada componente inclui `<nome>.component.yml`, `<nome>.twig`, `<nome>.css`, `<nome>.default.story.yml` e `README.md`.

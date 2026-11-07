@@ -13,6 +13,15 @@
 
 Detalhes por bloco: [status-componentes.md](status-componentes.md), [status-layouts-e-shell.md](status-layouts-e-shell.md) e [htmx-status.md](htmx-status.md) (ADR-050).
 
+## Fórum Growroom420 — Redesenho Visual V2 (Entrega 2 e Versão 1.4.0)
+
+Conclusão completa da redesign visual do Fórum Growroom420 no tema ACULTA420 V2 (versão 1.4.0):
+- Entregues os 7 componentes SDC previstos no plano: `forum-category-header`, `forum-tabs`, `forum-topic-row`, `forum-topic-card`, `forum-post-card`, `forum-sidebar-panels` e `forum-composer-guidelines`.
+- Telas desktop e mobile validadas conforme o guia visual e as oito imagens de referência (`referencia-1.webp` a `referencia-8.webp`).
+- Criação de tópico (`/criar-topico`) com diretrizes e formulário estilizado em card.
+- Rota e View `/categorias/{termo}` habilitadas em `config/sync`, mantendo total retrocompatibilidade com links legados (`/?categoria={{ tid }}`).
+- Todos os dados não entregues pelo Drupal foram documentados como placeholders e tratados sem invenção de números ou dados reais.
+
 ## Fórum Growroom420 — Redesenho Visual V2 (Entrega 1)
 
 Implementados os 5 componentes SDC essenciais da apresentação do fórum: `forum-category-header`, `forum-tabs`, `forum-topic-row`, `forum-topic-card` e `forum-post-card`. O visual segue as telas de referência (`referencia-1` a `referencia-8`), com cards contendo miniatura e prévia de mensagem, pílulas de status, botões com alvo mínimo de 44 px e botão "+ Novo tópico" de largura total em telas móveis. Campos ainda não entregues pelo Portal são mantidos como placeholders neutros devidamente documentados, sem quebra do layout ou inventar dados reais.
