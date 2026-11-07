@@ -21,11 +21,25 @@ final class PurposeContainerLayoutUnitTest extends UnitTestCase {
    */
   public function testDefaultValues(): void {
     foreach (PurposeContainerLayout::ALLOWED_PURPOSES as $purpose) {
+      if (PurposeContainerLayout::isCodeControlled($purpose)) {
+        continue;
+      }
       $defaults = PurposeContainerLayout::getDefaultSettings($purpose);
       self::assertSame('default', $defaults['mode']);
       self::assertSame(1200, $defaults['container_width']);
       self::assertSame(750, $defaults['narrow_width']);
     }
+  }
+
+  /**
+   * O fórum tem layout fixo pelo código: largura total, sem caixa, ignorando valor salvo.
+   */
+  public function testForumLayoutIsFixedByCode(): void {
+    self::assertTrue(PurposeContainerLayout::isCodeControlled('forum'));
+    $saved = ['mode' => 'default', 'style' => 'boxed', 'container_width' => 900, 'narrow_width' => 600];
+    $setting = PurposeContainerLayout::sanitizeSetting($saved, 'forum');
+    self::assertSame('full', $setting['mode']);
+    self::assertSame('unboxed', $setting['style']);
   }
 
   /**
