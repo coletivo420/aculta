@@ -264,3 +264,14 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
   text-decoration: none;
 }
 
+/* Bloco "Respostas da discussão": caixa com borda e raio da V1 (o wrapper traz só o atributo de dados). */
+[data-aculta-discussion-thread] {
+  display: grid;
+  gap: .75rem;
+  margin-block: 1.5rem 0;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: .75rem;
+  background: var(--color-surface-raised);
+}
+
