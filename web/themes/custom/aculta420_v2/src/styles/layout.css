@@ -181,8 +181,14 @@
     margin-inline: auto;
   }
 
+  /* Largura total: a página e o conteúdo ocupam a tela inteira, sem o espaçamento lateral do layout. */
   html[data-purpose-layout="full"] .layout-page {
     max-inline-size: none;
+    padding-inline: 0;
+  }
+
+  html[data-purpose-layout="full"] .layout-page__content {
+    padding-inline: var(--spacing-sm);
   }
 
   /* Páginas de leitura e conteúdo estreito */
