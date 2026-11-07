@@ -1,0 +1,52 @@
+{#
+  Fallback neutro do Studio Dashboard (aculta_studio).
+
+  Sem apresentação: o tema ativo sobrescreve este template com as classes,
+  ícones e o layout. O módulo entrega apenas os dados.
+#}
+<div data-portal-ui="account-entry">
+  <header>
+    <h1>{{ menu_title }}</h1>
+  </header>
+  <nav aria-label="{{ 'Menu do Studio'|t }}">
+    <ul>
+      {% for item in menu_items %}
+        <li><a href="{{ item.url }}"{% if item.current %} aria-current="page"{% endif %}>{{ item.title }}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+  {% if identity is not empty %}
+    <section data-portal-ui="studio-account-home studio-account-identity">
+      <p>{{ identity.name }}</p>
+      {% if identity.email %}
+        <p>{{ identity.email }}</p>
+      {% endif %}
+      {% if identity.avatar %}
+        <div data-portal-ui="studio-account-avatar">{{ identity.avatar }}</div>
+      {% endif %}
+      {% if identity.profile_url %}
+        <a href="{{ identity.profile_url }}" data-portal-ui="studio-profile-public-link">{{ 'Ver perfil público'|t }}</a>
+      {% endif %}
+    </section>
+  {% endif %}
+  {% if profile_link is not empty %}
+    <div>{{ profile_link }}</div>
+  {% endif %}
+  {{ calendar }}
+  {{ connections }}
+  <h2 id="suas-experiencias">{{ experiences_title }}</h2>
+  <p>{{ experiences_description }}</p>
+  <ul data-portal-ui="account-experiences">
+    {% for experience in experiences %}
+      {{ experience }}
+    {% endfor %}
+  </ul>
+  {% if account_url %}
+    <a href="{{ account_url }}" data-portal-ui="account-entry-links" aria-label="{{ account_link_label }}">
+      <span>
+        <span>{{ account_link_title }}</span>
+        <span>{{ account_link_description }}</span>
+      </span>
+    </a>
+  {% endif %}
+</div>

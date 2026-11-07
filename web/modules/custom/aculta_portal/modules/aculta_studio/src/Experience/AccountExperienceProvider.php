@@ -20,6 +20,9 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
  * Private account experience: never edit the public/community profile here.
  *
  * The legacy account UI remains at /conta-legada in the ACCOUNT purpose.
+ *
+ * This provider returns the account data contract only. The active theme
+ * renders it through the `aculta_studio_account` theme hook.
  */
 final class AccountExperienceProvider implements StudioExperienceProviderInterface {
 
@@ -79,82 +82,21 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
    * {@inheritdoc}
    */
   public function build(): array {
-    $profile = $this->profileLink();
     return [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'account-entry'],
-      'topbar' => [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:studio-menu',
-        '#props' => [
-          'title' => 'Studio Dashboard',
-          'items' => $this->studioMenuItems(),
-        ],
-      ],
-      'hero' => [
-        '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-xp-hero']],
-        'identity' => $this->identity(),
-        'profile' => $profile === [] ? [] : [
-          '#type' => 'container',
-          '#attributes' => ['class' => ['aculta-xp-hero__profile']],
-          'icon' => [
-            '#type' => 'component',
-            '#component' => 'aculta420_v2:icon',
-            '#props' => ['name' => 'user', 'variant' => 'duotone', 'size' => 'xl'],
-          ],
-          'label' => [
-            '#type' => 'html_tag',
-            '#tag' => 'p',
-            '#value' => 'Seu perfil público na ACULTA',
-            '#attributes' => ['class' => ['aculta-xp-hero__text']],
-          ],
-          'link' => $profile,
-        ],
-      ],
-      'calendar' => $this->calendarComposer?->compose(),
-      'connections' => $this->connectionsComposer?->compose(),
-      'suites_heading' => [
-        '#type' => 'html_tag',
-        '#tag' => 'h2',
-        '#value' => 'Suas experiências',
-        '#attributes' => ['id' => 'suas-experiencias'],
-      ],
-      'suites_description' => [
-        '#type' => 'html_tag',
-        '#tag' => 'p',
-        '#value' => 'Acesse as experiências da ACULTA e explore conteúdos, projetos e comunidades.',
-        '#attributes' => ['class' => ['aculta-xp-section__text']],
-      ],
-      'suites' => [
-        '#theme' => 'item_list',
-        '#items' => [],
-        '#attributes' => ['data-portal-ui' => 'account-experiences', 'class' => ['aculta-xp-grid']],
-      ],
-      'account_link' => [
-        '#type' => 'link',
-        '#title' => [
-          '#type' => 'container',
-          '#attributes' => ['class' => ['aculta-xp-row__body']],
-          'icon' => [
-            '#type' => 'component',
-            '#component' => 'aculta420_v2:icon',
-            '#props' => ['name' => 'gear-six', 'variant' => 'duotone', 'size' => 'xl'],
-          ],
-          'text' => [
-            '#type' => 'container',
-            '#attributes' => ['class' => ['aculta-xp-row__text']],
-            'title' => ['#type' => 'html_tag', '#tag' => 'span', '#value' => 'Minha conta', '#attributes' => ['class' => ['aculta-xp-row__title']]],
-            'desc' => ['#type' => 'html_tag', '#tag' => 'span', '#value' => 'Dados, segurança e preferências', '#attributes' => ['class' => ['aculta-xp-row__desc']]],
-          ],
-        ],
-        '#url' => Url::fromRoute('aculta_studio.account'),
-        '#attributes' => [
-          'class' => ['aculta-xp-row'],
-          'data-portal-ui' => 'account-entry-links',
-          'aria-label' => 'Minha Conta',
-        ],
-      ],
+      '#theme' => 'aculta_studio_account',
+      '#menu_title' => 'Studio Dashboard',
+      '#menu_items' => $this->studioMenuItems(),
+      '#identity' => $this->identity(),
+      '#profile_link' => $this->profileLink(),
+      '#calendar' => $this->calendarComposer?->compose() ?? [],
+      '#connections' => $this->connectionsComposer?->compose() ?? [],
+      '#experiences' => [],
+      '#experiences_title' => new TranslatableMarkup('Suas experiências'),
+      '#experiences_description' => new TranslatableMarkup('Acesse as experiências da ACULTA e explore conteúdos, projetos e comunidades.'),
+      '#account_url' => Url::fromRoute('aculta_studio.account')->toString(),
+      '#account_link_title' => new TranslatableMarkup('Minha conta'),
+      '#account_link_description' => new TranslatableMarkup('Dados, segurança e preferências'),
+      '#account_link_label' => new TranslatableMarkup('Minha Conta'),
       '#cache' => [
         'contexts' => ['user', 'user.permissions', 'url.site'],
         'max-age' => 0,
@@ -200,7 +142,10 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
   }
 
   /**
-   * Builds current-user identity from the ACULTA User identity resolver.
+   * Builds the current-user identity data from the ACULTA User resolver.
+   *
+   * @return array<string, mixed>
+   *   Name, e-mail, avatar and public profile URL, or an empty array.
    */
   private function identity(): array {
     if ($this->entities === NULL || $this->currentUser === NULL || !$this->currentUser->id()) {
@@ -211,56 +156,37 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
       return [];
     }
     $identity = $this->identityResolver?->resolve($user, 'profile_full');
-    if ($identity !== NULL) {
-      $identityValues = $identity->toArray();
-      $identityCache = CacheableMetadata::createFromObject($user)
-        ->addCacheableDependency($identity)
-        ->addCacheContexts(['user', 'user.permissions']);
-      $build = [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'studio-account-home studio-account-identity'],
-        'name' => [
-          '#plain_text' => $identityValues['display_name'] ?? '',
-        ],
-      ];
-      $mail = $user->getEmail();
-      if (is_string($mail) && $mail !== '') {
-        $build['email'] = [
-          '#type' => 'html_tag',
-          '#tag' => 'p',
-          '#value' => $mail,
-          '#attributes' => ['class' => ['aculta-xp-hero__mail']],
-        ];
-      }
-      if (is_array($identityValues['avatar'] ?? NULL)) {
-        $build['avatar'] = [
-          '#type' => 'container',
-          '#attributes' => ['data-portal-ui' => 'studio-account-avatar'],
-          'image' => $identityValues['avatar'],
-        ];
-      }
-      $profileUrl = $identityValues['profile_url'] ?? NULL;
-      if (is_string($profileUrl) && $profileUrl !== '') {
-        $build['public_profile_link'] = [
-          '#type' => 'link',
-          '#title' => new TranslatableMarkup('Ver perfil público'),
-          '#url' => Url::fromUri($profileUrl),
-          '#attributes' => ['data-portal-ui' => 'studio-profile-public-link'],
-        ];
-      }
-      $identityCache->applyTo($build);
-      return $build;
+    if ($identity === NULL) {
+      // A Drupal display name may be a private/legal name. Hide identity until
+      // the public identity owner is available instead of leaking that fallback.
+      return [];
     }
-    // A Drupal display name may be a private/legal name. Hide identity until
-    // the public identity owner is available instead of leaking that fallback.
-    return [];
+    $identityValues = $identity->toArray();
+    $values = [
+      'name' => $identityValues['display_name'] ?? '',
+      'email' => NULL,
+      'avatar' => NULL,
+      'profile_url' => NULL,
+    ];
+    $mail = $user->getEmail();
+    if (is_string($mail) && $mail !== '') {
+      $values['email'] = $mail;
+    }
+    if (is_array($identityValues['avatar'] ?? NULL)) {
+      $values['avatar'] = $identityValues['avatar'];
+    }
+    $profileUrl = $identityValues['profile_url'] ?? NULL;
+    if (is_string($profileUrl) && $profileUrl !== '') {
+      $values['profile_url'] = $profileUrl;
+    }
+    return $values;
   }
 
   /**
    * Items of the Studio side menu. Only routes the current user can open are listed.
    *
-   * @return array<int, array{title: string, url: string, current: bool}>
-   *   Menu items for the studio-menu component.
+   * @return array<int, array{title: string, url: string, current: bool, icon: string}>
+   *   Menu items for the Studio menu.
    */
   private function studioMenuItems(): array {
     if ($this->currentUser === NULL) {

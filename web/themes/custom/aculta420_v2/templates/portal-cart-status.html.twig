@@ -1,0 +1,14 @@
+{#
+  Caixa de status do carrinho (aculta_portal), apresentação ACULTA420.
+
+  O JS do módulo fecha a caixa pelo botão [data-portal-cart-status-close].
+#}
+<div class="messages {{ status_type == 'error' ? 'messages--error' : 'messages--status' }}" role="{{ status_role }}" data-portal-cart-status>
+  <p>
+    <span>{{ message }}</span>
+    {% if url %}
+      <a href="{{ url }}">{{ link_label }}</a>
+    {% endif %}
+  </p>
+  <button type="button" class="messages__close" data-portal-cart-status-close aria-label="{{ close_label }}">&times;</button>
+</div>

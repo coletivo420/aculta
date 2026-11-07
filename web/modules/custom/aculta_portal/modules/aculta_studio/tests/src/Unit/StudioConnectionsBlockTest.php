@@ -33,10 +33,9 @@ final class StudioConnectionsBlockTest extends UnitTestCase {
     $composer = new StudioDashboardConnectionsComposer(NULL, $currentUser);
     $build = $composer->compose();
 
-    self::assertSame('component', $build['#type']);
-    self::assertSame('aculta420_v2:studio-connections-block', $build['#component']);
-    self::assertSame('CONEXÕES', $build['#props']['title']);
-    self::assertSame([], $build['#props']['connections']);
+    self::assertSame('aculta_studio_connections', $build['#theme']);
+    self::assertSame('CONEXÕES', $build['#title']);
+    self::assertSame([], $build['#connections']);
   }
 
 }

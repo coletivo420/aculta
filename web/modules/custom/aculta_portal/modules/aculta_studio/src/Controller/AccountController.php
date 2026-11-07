@@ -37,13 +37,15 @@ final class AccountController {
       throw new AccessDeniedHttpException();
     }
     $build = $provider->build();
-    $build['#attached']['library'][] = 'aculta420_v2/account-carousel';
-    $build['suites']['#items'] = $this->experienceCards($this->experiences->buildEntries(
+    $build['#experiences'] = $this->experienceCards($this->experiences->buildEntries(
       $this->account,
       $this->domains,
       ['conta', 'perfil', 'salvos', 'mercado_pago_plans'],
     ));
     $cache = CacheableMetadata::createFromRenderArray($build);
+    foreach ($build['#experiences'] as $card) {
+      $cache->addCacheableDependency($card);
+    }
     foreach ($this->experiences->all() as $candidate) {
       if (!in_array($candidate->id(), ['conta', 'perfil', 'salvos', 'mercado_pago_plans'], TRUE)) {
         $cache->addCacheableDependency($candidate->access($this->account));
@@ -54,7 +56,7 @@ final class AccountController {
   }
 
   /**
-   * Visual metadata for the account experience cards, keyed by provider id.
+   * Descriptive metadata for the account experience cards, keyed by provider id.
    */
   private const CARD_META = [
     'marley' => ['icon' => 'book-open', 'description' => 'Criação e moderação da Revista, moderação do Fórum e Galerias.'],
@@ -71,67 +73,48 @@ final class AccountController {
   ];
 
   /**
-   * Turns the account experience links into cards with icon, text and action.
+   * Turns the account experience links into neutral card data.
    *
    * @param array<int, array<string, mixed>> $items
    *   Link render arrays from StudioExperienceManager::buildEntries().
    *
    * @return array<int, array<string, mixed>>
-   *   Card and strip render arrays, in the same order.
+   *   Card render arrays using the `aculta_studio_account_card` theme hook.
    */
   private function experienceCards(array $items): array {
     $cards = [];
     foreach ($items as $item) {
       $id = (string) ($item['#attributes']['data-experience'] ?? '');
       $cache = $item['#cache'] ?? [];
+      $title = $item['#title'] ?? NULL;
       if (isset(self::STRIP_META[$id])) {
         $meta = self::STRIP_META[$id];
         $cards[] = [
-          '#type' => 'container',
-          '#attributes' => ['class' => ['aculta-xp-strip'], 'data-experience' => $id],
+          '#theme' => 'aculta_studio_account_card',
+          '#id' => $id,
+          '#kind' => 'strip',
+          '#icon' => $meta['icon'],
+          '#title' => $title,
+          '#description' => $meta['description'],
+          '#tag' => 'Acesso integrado',
           '#cache' => $cache,
-          'icon' => $this->iconComponent($meta['icon']),
-          'body' => [
-            '#type' => 'container',
-            '#attributes' => ['class' => ['aculta-xp-strip__body']],
-            'title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $item['#title'], '#attributes' => ['class' => ['aculta-xp-strip__title']]],
-            'tag' => ['#type' => 'html_tag', '#tag' => 'span', '#value' => 'Acesso integrado', '#attributes' => ['class' => ['aculta-xp-strip__tag']]],
-            'text' => ['#type' => 'html_tag', '#tag' => 'p', '#value' => $meta['description'], '#attributes' => ['class' => ['aculta-xp-strip__text']]],
-          ],
         ];
         continue;
       }
       $meta = self::CARD_META[$id] ?? ['icon' => 'user', 'description' => ''];
       $cards[] = [
-        '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-xp-card'], 'data-experience' => $id],
+        '#theme' => 'aculta_studio_account_card',
+        '#id' => $id,
+        '#kind' => 'card',
+        '#icon' => $meta['icon'],
+        '#title' => $title,
+        '#description' => $meta['description'],
+        '#url' => isset($item['#url']) ? $item['#url']->toString() : NULL,
+        '#action_label' => 'Acessar',
         '#cache' => $cache,
-        'icon' => $this->iconComponent($meta['icon']),
-        'title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $item['#title'], '#attributes' => ['class' => ['aculta-xp-card__title']]],
-        'text' => ['#type' => 'html_tag', '#tag' => 'p', '#value' => $meta['description'], '#attributes' => ['class' => ['aculta-xp-card__text']]],
-        'action' => [
-          '#type' => 'link',
-          '#title' => 'Acessar',
-          '#url' => $item['#url'],
-          '#attributes' => ['class' => ['aculta-xp-card__action']],
-        ],
       ];
     }
     return $cards;
-  }
-
-  /**
-   * Phosphor duotone icon from the ACULTA420 V2 theme.
-   *
-   * @return array<string, mixed>
-   *   Component render array.
-   */
-  private function iconComponent(string $name): array {
-    return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:icon',
-      '#props' => ['name' => $name, 'variant' => 'duotone', 'size' => 'xl'],
-    ];
   }
 
 }

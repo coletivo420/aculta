@@ -1,0 +1,26 @@
+{#
+  Cartão de experiência do Studio Dashboard (aculta_studio), apresentação ACULTA420.
+
+  Sobrescreve o fallback neutro do módulo. A célula da lista é o próprio <li>.
+#}
+<li>
+  {% if kind == 'strip' %}
+    <div class="aculta-xp-strip" data-experience="{{ id }}">
+      {{ include('aculta420_v2:icon', { name: icon|default('user'), variant: 'duotone', size: 'xl' }, with_context = false) }}
+      <div class="aculta-xp-strip__body">
+        <h3 class="aculta-xp-strip__title">{{ title }}</h3>
+        {% if tag %}<span class="aculta-xp-strip__tag">{{ tag }}</span>{% endif %}
+        <p class="aculta-xp-strip__text">{{ description }}</p>
+      </div>
+    </div>
+  {% else %}
+    <div class="aculta-xp-card" data-experience="{{ id }}">
+      {{ include('aculta420_v2:icon', { name: icon|default('user'), variant: 'duotone', size: 'xl' }, with_context = false) }}
+      <h3 class="aculta-xp-card__title">{{ title }}</h3>
+      <p class="aculta-xp-card__text">{{ description }}</p>
+      {% if url %}
+        <a class="aculta-xp-card__action" href="{{ url }}">{{ action_label }}</a>
+      {% endif %}
+    </div>
+  {% endif %}
+</li>

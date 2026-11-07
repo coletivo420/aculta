@@ -5,48 +5,60 @@ declare(strict_types=1);
 namespace Drupal\aculta420_v2\Story;
 
 use Drupal\aculta420_v2\Presentation\WikiBrandMediaProps;
+use Drupal\Core\Extension\ExtensionList;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\ui_patterns_library\StoryDefault;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Story do navigation-bar com a apresentação real do purpose Wiki.
+ * Story do navigation-bar com a marca Wiki do tema.
  *
- * As props e os slots vêm do DomainPresentationBuilder e do mesmo código de
- * marca usado no cabeçalho de produção: não há valores copiados.
+ * Usa o mesmo código de marca do cabeçalho de produção (WikiBrandMediaProps),
+ * alimentado por valores de exemplo. O tema não consulta o Portal.
  */
-final class NavigationBarWikiStory extends StoryDefault {
+final class NavigationBarWikiStory extends StoryDefault implements ContainerFactoryPluginInterface {
+
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    private readonly ExtensionList $themes,
+  ) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('extension.list.theme'),
+    );
+  }
 
   /**
    * {@inheritdoc}
    */
   public function props(): array {
-    $regions = $this->presentation()['regions'] ?? [];
-    $brandMedia = is_array($regions['brand_media'] ?? NULL) ? $regions['brand_media'] : [];
-    $identity = $this->presentation()['identity'] ?? [];
-
-    $themes = \Drupal::service('extension.list.theme');
-    $brand = (new WikiBrandMediaProps($themes))->build($brandMedia, $identity);
-
-    return $brand ?? [];
+    $brandMedia = [
+      '#brand_key' => 'wiki420',
+      '#alt' => 'Wiki420 - Enciclopédia da cultura canábica',
+    ];
+    $identity = [
+      'home_url' => '/',
+      'title' => 'Wiki420',
+    ];
+    return (new WikiBrandMediaProps($this->themes))->build($brandMedia, $identity) ?? [];
   }
 
   /**
    * {@inheritdoc}
    */
   public function slots(): array {
-    $regions = $this->presentation()['regions'] ?? [];
-    return array_filter([
-      'wiki_search' => $regions['wiki_search'] ?? NULL,
-    ]);
-  }
-
-  /**
-   * Apresentação real do purpose Wiki, como array do tema.
-   *
-   * @return array<string, mixed>
-   */
-  private function presentation(): array {
-    $presentation = \Drupal::service('aculta_portal.presentation.domain')->build('wiki');
-    return $presentation?->toThemeArray() ?? [];
+    return [];
   }
 
 }

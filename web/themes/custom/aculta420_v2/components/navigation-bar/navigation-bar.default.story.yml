@@ -1,4 +1,4 @@
 name: Cabeçalho de domínio (Wiki420)
-description: Cabeçalho do purpose Wiki com a apresentação real do DomainPresentationBuilder (marca e busca). Sem menu do purpose principal.
+description: Cabeçalho com a marca Wiki do tema montada pelo WikiBrandMediaProps e valores de exemplo.
 component: aculta420_v2:navigation-bar
 class: Drupal\aculta420_v2\Story\NavigationBarWikiStory

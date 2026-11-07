@@ -40,7 +40,10 @@ final class StudioMenuStory extends StoryDefault implements ContainerFactoryPlug
    */
   public function props(): array {
     $build = $this->accountExperienceProvider->build();
-    return $build['topbar']['#props'] ?? [];
+    return [
+      'title' => $build['#menu_title'] ?? 'Studio Dashboard',
+      'items' => $build['#menu_items'] ?? [],
+    ];
   }
 
 }

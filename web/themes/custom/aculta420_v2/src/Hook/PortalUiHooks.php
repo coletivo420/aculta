@@ -550,12 +550,15 @@ final class PortalUiHooks {
 
   /**
    * Troca data-portal-ui por classes em todos os Attribute do theme hook.
+   *
+   * Chamado pelo preprocess genérico do tema (aculta420_v2.theme): o hook
+   * genérico `preprocess` não é um `preprocess_*` e o gate de fronteira só
+   * aceita hooks de apresentação nomeados por theme hook.
    */
-  #[Hook('preprocess')]
-  public function preprocess(array &$variables): void {
+  public static function preprocessVariables(array &$variables): void {
     foreach ($variables as $key => $value) {
       if (is_string($key) && str_ends_with($key, 'attributes')) {
-        $this->applyVariableAttributes($variables, $key);
+        self::applyVariableAttributes($variables, $key);
       }
     }
   }
@@ -565,29 +568,29 @@ final class PortalUiHooks {
    */
   #[Hook('preprocess_container')]
   public function preprocessContainer(array &$variables): void {
-    $this->applyVariableAttributes($variables, 'attributes');
+    self::applyVariableAttributes($variables, 'attributes');
   }
 
   /**
    * Maps attributes represented as arrays or Attribute objects.
    */
-  private function applyVariableAttributes(array &$variables, string $key): void {
+  private static function applyVariableAttributes(array &$variables, string $key): void {
     $value = $variables[$key] ?? NULL;
     if ($value instanceof Attribute) {
-      $this->apply($value);
+      self::apply($value);
       return;
     }
     if (is_array($value)) {
       $attributes = new Attribute($value);
-      $this->apply($attributes);
+      self::apply($attributes);
       $variables[$key] = $attributes;
     }
   }
 
   /**
-   *
+   * Applies the token map to an Attribute object.
    */
-  private function apply(Attribute $attributes): void {
+  private static function apply(Attribute $attributes): void {
     if (!$attributes->offsetExists(self::ATTRIBUTE)) {
       return;
     }

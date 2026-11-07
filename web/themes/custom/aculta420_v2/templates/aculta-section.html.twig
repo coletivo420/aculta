@@ -1,0 +1,15 @@
+{#
+  Seção editorial (aculta_section), apresentação ACULTA420.
+
+  O módulo entrega título, subtítulo, variante, cor e corpo; o tema decide a
+  apresentação.
+#}
+<section class="aculta-section aculta-section--{{ section_variant|default('default') }} aculta-section--color-{{ section_color|default('default') }}">
+  {% if section_title %}
+    <h2 class="aculta-section-title">{{ section_title }}</h2>
+  {% endif %}
+  {% if section_heading %}
+    <h3 class="aculta-section-heading">{{ section_heading }}</h3>
+  {% endif %}
+  {{ section_body }}
+</section>

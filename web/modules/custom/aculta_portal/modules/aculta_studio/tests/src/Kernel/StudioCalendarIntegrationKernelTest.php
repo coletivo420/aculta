@@ -94,14 +94,13 @@ final class StudioCalendarIntegrationKernelTest extends KernelTestBase {
     self::assertInstanceOf(StudioDashboardCalendarComposer::class, $composer);
 
     $build = $composer->compose(2026, 11, 'cursos', '2026-11-06');
-    self::assertSame('component', $build['#type']);
-    self::assertSame('aculta420_v2:studio-calendar', $build['#component']);
-    self::assertSame('Novembro de 2026', $build['#props']['current_month_label']);
-    self::assertSame('cursos', $build['#props']['active_filter']);
-    self::assertTrue($build['#props']['can_add_event']);
-    self::assertSame('/culturas/propostas/evento/nova', $build['#props']['add_event_url']);
-    self::assertNotEmpty($build['#props']['weeks']);
-    self::assertCount(3, $build['#props']['filters']);
+    self::assertSame('aculta_studio_calendar', $build['#theme']);
+    self::assertSame('Novembro de 2026', $build['#current_month_label']);
+    self::assertSame('cursos', $build['#active_filter']);
+    self::assertTrue($build['#can_add_event']);
+    self::assertSame('/culturas/propostas/evento/nova', $build['#add_event_url']);
+    self::assertNotEmpty($build['#weeks']);
+    self::assertCount(3, $build['#filters']);
 
     /** @var \Drupal\aculta_studio\Controller\StudioCalendarController $controller */
     $controller = $this->container->get('aculta_studio.calendar_controller');
@@ -114,8 +113,8 @@ final class StudioCalendarIntegrationKernelTest extends KernelTestBase {
       'dia' => '2026-11-10',
     ]);
     $fragBuild = $controller->fragment($request);
-    self::assertSame('eventos', $fragBuild['#props']['active_filter']);
-    self::assertSame('Novembro de 2026', $fragBuild['#props']['current_month_label']);
+    self::assertSame('eventos', $fragBuild['#active_filter']);
+    self::assertSame('Novembro de 2026', $fragBuild['#current_month_label']);
   }
 
   /**
@@ -125,8 +124,8 @@ final class StudioCalendarIntegrationKernelTest extends KernelTestBase {
     /** @var \Drupal\aculta_studio\Calendar\StudioDashboardCalendarComposer $composer */
     $composer = $this->container->get('aculta_studio.calendar_composer');
     $build = $composer->compose(2026, 11, 'cursos');
-    self::assertFalse($build['#props']['can_add_event']);
-    self::assertNull($build['#props']['add_event_url']);
+    self::assertFalse($build['#can_add_event']);
+    self::assertNull($build['#add_event_url']);
   }
 
 }

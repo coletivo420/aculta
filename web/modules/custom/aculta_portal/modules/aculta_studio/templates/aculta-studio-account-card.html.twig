@@ -1,0 +1,23 @@
+{#
+  Fallback neutro do cartão de experiência do Studio (aculta_studio).
+
+  Sem apresentação: o tema ativo sobrescreve este template. O item é a própria
+  célula da lista de experiências.
+#}
+<li data-experience="{{ id }}">
+  {% if kind == 'strip' %}
+    <div>
+      <h3>{{ title }}</h3>
+      {% if tag %}<span>{{ tag }}</span>{% endif %}
+      <p>{{ description }}</p>
+    </div>
+  {% else %}
+    <div>
+      <h3>{{ title }}</h3>
+      <p>{{ description }}</p>
+      {% if url %}
+        <a href="{{ url }}">{{ action_label }}</a>
+      {% endif %}
+    </div>
+  {% endif %}
+</li>

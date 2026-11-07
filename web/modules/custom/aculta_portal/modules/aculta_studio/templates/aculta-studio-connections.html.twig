@@ -1,0 +1,29 @@
+{#
+  Fallback neutro do bloco de conexões do Studio (aculta_studio).
+
+  Sem apresentação: o tema ativo sobrescreve este template.
+#}
+<div data-portal-ui="studio-connections">
+  <h3>{{ title }}</h3>
+  {% if connections is not empty %}
+    <ul>
+      {% for item in connections %}
+        <li>
+          {% if item.avatar_url %}
+            <img src="{{ item.avatar_url }}" alt="{{ item.avatar_alt|default(item.name) }}">
+          {% endif %}
+          <span>{{ item.name }}</span>
+          <a href="{{ item.profile_url }}">{{ 'Ver perfil'|t }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+    {% if all_connections_url %}
+      <a href="{{ all_connections_url }}">{{ all_connections_label }}</a>
+    {% endif %}
+  {% else %}
+    <p>{{ empty_message }}</p>
+    {% if find_connections_url %}
+      <a href="{{ find_connections_url }}">{{ find_connections_label }}</a>
+    {% endif %}
+  {% endif %}
+</div>

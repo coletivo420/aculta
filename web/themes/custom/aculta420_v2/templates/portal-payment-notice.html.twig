@@ -1,0 +1,11 @@
+{#
+  Caixa "pagamentos pelo Mercado Pago" (aculta_portal), apresentação ACULTA420.
+#}
+<section class="aculta-panel aculta-panel--default aculta-panel__body" data-portal-payment-notice>
+  <p>
+    {{ intro }}
+    {% if url %}
+      <a class="link-primary" href="{{ url }}" target="_blank" rel="noopener">{{ link_label }} ({{ 'abre em nova aba'|t }})</a>
+    {% endif %}
+  </p>
+</section>

@@ -414,3 +414,11 @@ body.path-entrar .aculta-login__registration a {
   gap: 1rem;
   margin-bottom: 1rem;
 }
+
+/* Widget de desafio de terceiros (Turnstile): pode exceder a largura do fieldset. */
+.captcha-type-challenge--turnstile > .captcha__element {
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}

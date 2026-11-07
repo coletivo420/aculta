@@ -1,0 +1,18 @@
+{#
+  Card de calendário do Studio (aculta_studio), apresentação ACULTA420.
+
+  Sobrescreve o fallback neutro do módulo e delega ao SDC do tema.
+#}
+{{ include('aculta420_v2:studio-calendar', {
+  title: title|default('Calendário'|t),
+  current_month_label: current_month_label,
+  previous_url: previous_url,
+  next_url: next_url,
+  active_filter: active_filter,
+  filters: filters,
+  weeks: weeks,
+  selected_date_label: selected_date_label,
+  selected_day_events: selected_day_events,
+  can_add_event: can_add_event,
+  add_event_url: add_event_url,
+}, with_context = false) }}
