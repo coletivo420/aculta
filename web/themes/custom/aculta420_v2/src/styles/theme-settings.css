@@ -150,7 +150,7 @@
   display: flex;
   flex-wrap: wrap;
   padding: .375rem .5rem;
-  background: color-mix(in srgb, var(--color-text-muted) 5%, transparent);
+  background: var(--color-alpha-text-muted-5);
   gap: .25rem;
 }
 
@@ -165,12 +165,12 @@
   box-sizing: border-box;
   width: 1.5rem;
   height: 1.5rem;
-  border: 1px solid color-mix(in srgb, var(--color-shadow-tint) 50%, transparent);
+  border: 1px solid var(--color-alpha-shadow-tint-50);
   border-radius: var(--radius-sm, .25rem);
 }
 
 .aculta-palette-mode--dark .aculta-palette-chip__color {
-  border-color: color-mix(in srgb, var(--color-on-brand) 20%, transparent);
+  border-color: var(--color-alpha-on-brand-20);
 }
 
 .aculta-palette-chip__hex {

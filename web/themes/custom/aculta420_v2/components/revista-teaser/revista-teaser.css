@@ -31,8 +31,8 @@
   display: block;
   background-color: var(--color-media-stage);
   background-image:
-    radial-gradient(circle at 76% 34%, transparent 0 4rem, color-mix(in sRGB, var(--color-border) 75%, transparent) 4.06rem 4.2rem, transparent 4.27rem),
-    linear-gradient(135deg, transparent 48%, color-mix(in sRGB, var(--color-brand-primary) 76%, transparent) 48.2% 70%, transparent 70.2%),
+    radial-gradient(circle at 76% 34%, transparent 0 4rem, var(--color-alpha-border-75) 4.06rem 4.2rem, transparent 4.27rem),
+    linear-gradient(135deg, transparent 48%, var(--color-alpha-brand-primary-76) 48.2% 70%, transparent 70.2%),
     linear-gradient(135deg, var(--color-media-stage), var(--color-canvas));
   inline-size: 100%;
 }
