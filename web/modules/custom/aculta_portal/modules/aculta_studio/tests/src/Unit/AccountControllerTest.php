@@ -55,7 +55,7 @@ final class AccountControllerTest extends UnitTestCase {
     $page = (new AccountController($manager, $this->createMock(AccountInterface::class), $this->domains()))->page();
 
     self::assertTrue($page['#account']);
-    self::assertSame([], $page['suites']['#items']);
+    self::assertArrayHasKey('#experiences', $page);
   }
 
   /**

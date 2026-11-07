@@ -6,6 +6,8 @@ namespace Drupal\Tests\aculta_studio\Unit;
 
 use Drupal\aculta_studio\Experience\AccountExperienceProvider;
 use Drupal\aculta_studio\Experience\StudioExperienceManager;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -17,6 +19,19 @@ use PHPUnit\Framework\Attributes\Group;
 #[CoversClass(AccountExperienceProvider::class)]
 #[Group('aculta_studio')]
 final class AccountExperienceProviderTest extends UnitTestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    // Url::fromRoute() precisa de um url_generator registrado nos testes unitários.
+    $generator = $this->createMock(UrlGeneratorInterface::class);
+    $generator->method('generateFromRoute')->willReturn('/conta-teste');
+    $container = new ContainerBuilder();
+    $container->set('url_generator', $generator);
+    \Drupal::setContainer($container);
+  }
 
   /**
    * The account entry is registered for the account purpose only.
