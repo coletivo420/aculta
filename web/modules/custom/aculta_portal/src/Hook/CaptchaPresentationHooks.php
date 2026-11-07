@@ -29,7 +29,6 @@ final class CaptchaPresentationHooks {
       $tokens = preg_split('/\s+/', trim((string) ($element['#attributes']['data-portal-ui'] ?? '')), -1, PREG_SPLIT_NO_EMPTY) ?: [];
       $tokens[] = 'challenge-frame';
       $element['#attributes']['data-portal-ui'] = implode(' ', array_values(array_unique($tokens)));
-      $element['#attached']['library'][] = 'aculta_portal/captcha-presentation';
       return;
     }
 
