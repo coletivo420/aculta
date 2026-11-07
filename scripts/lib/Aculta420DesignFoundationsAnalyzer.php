@@ -213,8 +213,9 @@ final class Aculta420DesignFoundationsAnalyzer {
     $dark = [];
     foreach ($rules as $rule) {
       $selector = self::normalizeSelector((string) $rule['selector']);
-      $is_dark = str_contains($selector, 'data-theme="dark"') || str_contains($selector, "data-theme='dark'");
-      $is_light = !$is_dark && in_array($selector, [':root', ':root:not([data-theme="dark"])', 'html'], TRUE);
+      // Só o bloco base conta: variações por purpose (html[data-purpose=...]) são validadas à parte.
+      $is_dark = in_array($selector, [':root[data-theme="dark"]', 'html[data-theme="dark"]'], TRUE);
+      $is_light = !$is_dark && in_array($selector, [':root', ':root:not([data-theme="dark"])'], TRUE);
       if (!$is_dark && !$is_light) {
         continue;
       }
