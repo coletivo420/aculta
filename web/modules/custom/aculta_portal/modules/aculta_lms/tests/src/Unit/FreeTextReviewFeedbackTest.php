@@ -10,14 +10,14 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- *
+ * Feedback formativo de respostas dissertativas baseado em frases-chave.
  */
 #[CoversClass(FreeTextReviewFeedback::class)]
 #[Group('aculta_lms')]
 final class FreeTextReviewFeedbackTest extends UnitTestCase {
 
   /**
-   *
+   * Confirma que as frases encontradas geram feedback formativo sem nota final.
    */
   public function testPhraseMatchesAreFormativeAndDoNotAssignFinalGrade(): void {
     $plugin = new FreeTextReviewFeedback();
@@ -37,7 +37,7 @@ final class FreeTextReviewFeedbackTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que uma lista de frases vazia não gera nota nem feedback automático.
    */
   public function testEmptyPhraseListProducesNoAutomaticGradeOrFeedback(): void {
     $plugin = new FreeTextReviewFeedback();
@@ -49,7 +49,7 @@ final class FreeTextReviewFeedbackTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que configurações de plugin malformadas são rejeitadas.
    */
   public function testRejectsMalformedPluginConfiguration(): void {
     $this->expectException(\InvalidArgumentException::class);

@@ -32,7 +32,13 @@ final class DonationSummaryController implements ContainerInjectionInterface {
   ) {}
 
   /**
+   * Cria a instância do controlador com os serviços do container.
    *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   Container de serviços.
+   *
+   * @return static
+   *   Nova instância do controlador.
    */
   public static function create(ContainerInterface $container): static {
     return new static(

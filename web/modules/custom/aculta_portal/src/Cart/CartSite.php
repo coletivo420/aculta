@@ -45,14 +45,26 @@ final class CartSite {
   ];
 
   /**
+   * Devolve o separador do tipo de pedido, caindo na loja quando desconhecido.
    *
+   * @param string $tipoDePedido
+   *   Tipo de pedido.
+   *
+   * @return string
+   *   Identificador do separador.
    */
   public static function paraTipo(string $tipoDePedido): string {
     return self::POR_TIPO[$tipoDePedido] ?? self::LOJA;
   }
 
   /**
+   * Devolve o rótulo visível do separador.
    *
+   * @param string $site
+   *   Identificador do separador.
+   *
+   * @return string
+   *   Rótulo do separador.
    */
   public static function rotulo(string $site): string {
     return self::ROTULOS[$site];

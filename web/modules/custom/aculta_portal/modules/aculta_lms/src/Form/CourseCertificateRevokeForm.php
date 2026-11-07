@@ -24,7 +24,13 @@ final class CourseCertificateRevokeForm extends FormBase {
   ) {}
 
   /**
+   * Cria a instância do formulário com os serviços necessários.
    *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   Container de serviços.
+   *
+   * @return static
+   *   Instância do formulário.
    */
   public static function create(ContainerInterface $container): static {
     $form = new static(
@@ -38,14 +44,25 @@ final class CourseCertificateRevokeForm extends FormBase {
   }
 
   /**
+   * Devolve o ID do formulário.
    *
+   * @return string
+   *   ID do formulário.
    */
   public function getFormId(): string {
     return 'aculta_lms_course_certificate_revoke';
   }
 
   /**
+   * Monta o formulário de revogação do certificado.
    *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
+   *
+   * @return array
+   *   Estrutura do formulário.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $certificate = $this->certificateRouteMatch->getParameter('certificate');
@@ -81,7 +98,12 @@ final class CourseCertificateRevokeForm extends FormBase {
   }
 
   /**
+   * Exige o motivo da revogação.
    *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     if (trim((string) $form_state->getValue('reason')) === '') {
@@ -90,7 +112,12 @@ final class CourseCertificateRevokeForm extends FormBase {
   }
 
   /**
+   * Revoga o certificado preservando o registro e a verificação pública.
    *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $certificate = $this->certificateRouteMatch->getParameter('certificate');

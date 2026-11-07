@@ -160,8 +160,10 @@ final class EventProposalEditorialApprovalKernelTest extends KernelTestBase {
   }
 
   /**
-   * Proves that submitting an event proposal creates only a pending contribution entity
-   * and NEVER creates a published aculta_event entity until approved by an editor.
+   * Garante que a proposta de evento só é publicada após aprovação editorial.
+   *
+   * A submissão cria apenas uma entidade de contribuição pendente e nunca uma
+   * entidade aculta_event publicada até a aprovação por um editor.
    */
   public function testCommonUserProposalNeverPublishesWithoutEditorialApproval(): void {
     $this->setEventosPurpose();

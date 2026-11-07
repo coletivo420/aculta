@@ -32,6 +32,7 @@ class CartQuoteLines {
    * Linhas de produto da loja de todos os carrinhos do visitante. Lista vazia sem itens da loja.
    *
    * @return list<array{variation: \Drupal\commerce_product\Entity\ProductVariationInterface, quantity: int, total: float}>
+   *   Linhas de produto dos carrinhos do visitante.
    */
   public function lines(): array {
     $lines = [];

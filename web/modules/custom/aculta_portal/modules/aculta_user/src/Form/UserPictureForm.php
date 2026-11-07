@@ -49,7 +49,13 @@ final class UserPictureForm extends FormBase {
   ) {}
 
   /**
+   * Cria a instância do formulário com os serviços do container.
    *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   Container de serviços.
+   *
+   * @return static
+   *   Nova instância do formulário.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -65,7 +71,10 @@ final class UserPictureForm extends FormBase {
   }
 
   /**
+   * Retorna o identificador do formulário.
    *
+   * @return string
+   *   Identificador do formulário.
    */
   public function getFormId(): string {
     return 'aculta_user_picture_form';
@@ -79,7 +88,15 @@ final class UserPictureForm extends FormBase {
   }
 
   /**
+   * Monta o formulário de foto do perfil.
    *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
+   *
+   * @return array
+   *   Estrutura do formulário renderizável.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $account = $this->account();
@@ -200,8 +217,15 @@ final class UserPictureForm extends FormBase {
   }
 
   /**
-   * Botão "Remover foto" (só foto personalizada): volta a um avatar sorteado do acervo e recarrega o painel.
-   * A foto personalizada substituída é apagada pelo hook de troca de foto (PictureReplacementHooks).
+   * Remove a foto personalizada e volta ao avatar sorteado do acervo.
+   *
+   * A foto personalizada substituída é apagada pelo hook de troca de foto
+   * (PictureReplacementHooks).
+   *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
    */
   public function removePersonal(array &$form, FormStateInterface $form_state): void {
     $account = $this->account();
@@ -218,7 +242,12 @@ final class UserPictureForm extends FormBase {
   }
 
   /**
+   * Salva a foto enviada ou aplica o avatar sorteado no modal.
    *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $account = $this->account();

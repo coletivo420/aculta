@@ -15,14 +15,14 @@ use PHPUnit\Framework\Attributes\Group;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
- *
+ * Testa a publicação do evento de curso concluído.
  */
 #[CoversClass(CourseCompletionPublisher::class)]
 #[Group('aculta_lms')]
 final class CourseCompletionPublisherTest extends UnitTestCase {
 
   /**
-   *
+   * Publica evento apenas para progresso aprovado e finalizado.
    */
   public function testPublishesOnlyPassedAndFinishedProgress(): void {
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
@@ -45,7 +45,7 @@ final class CourseCompletionPublisherTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Não publica evento para progresso reprovado, não finalizado ou novo.
    */
   public function testDoesNotPublishUnpassedUnfinishedOrNewProgress(): void {
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
@@ -58,7 +58,17 @@ final class CourseCompletionPublisherTest extends UnitTestCase {
   }
 
   /**
+   * Cria uma entidade de progresso simulada com os valores informados.
    *
+   * @param string $status
+   *   Status do progresso.
+   * @param bool $finished
+   *   Indica se o progresso está finalizado.
+   * @param bool $new
+   *   Indica se a entidade ainda não foi salva.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface
+   *   Entidade simulada.
    */
   private function progressEntity(string $status, bool $finished, bool $new = FALSE): ContentEntityInterface {
     $entity = $this->createMock(ContentEntityInterface::class);

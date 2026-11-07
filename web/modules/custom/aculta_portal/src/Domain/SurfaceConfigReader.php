@@ -96,6 +96,7 @@ final class SurfaceConfigReader {
    * Superfícies por purpose, com padrões onde a configuração não define.
    *
    * @return array<string, array{modo: string, ativa: bool, slug: string, titulo: string}>
+   *   Superfícies por purpose, com os padrões aplicados.
    */
   public function superficies(): array {
     $gravado = $this->configFactory->get(self::CONFIG_NAME)->get('superficies') ?? [];
@@ -117,8 +118,10 @@ final class SurfaceConfigReader {
    * Regras que a configuração precisa cumprir. Retorna erros por purpose.
    *
    * @param array<string, array{modo: string, ativa: bool, slug: string, titulo: string}> $superficies
+   *   Superfícies a validar, indexadas por purpose.
    *
    * @return array<string, string>
+   *   Mensagens de erro por purpose.
    */
   public static function validar(array $superficies): array {
     $erros = [];

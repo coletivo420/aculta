@@ -24,8 +24,15 @@ final class PrivacyFormHooks {
   ) {}
 
   /**
- *
- */
+   * Adiciona a seção de privacidade de mensagens ao formulário de privacidade.
+   *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $formState
+   *   Estado do formulário.
+   * @param string $formId
+   *   ID do formulário alterado.
+   */
   #[Hook('form_alter')]
   public function formAlter(array &$form, FormStateInterface $formState, string $formId): void {
     if ($formId !== 'aculta_user_profile_visibility_form') {

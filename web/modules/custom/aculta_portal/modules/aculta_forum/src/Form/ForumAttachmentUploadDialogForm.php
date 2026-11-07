@@ -130,6 +130,7 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
    * Resolve o arquivo escolhido: upload novo, ou envio recente do Studio do dono.
    *
    * @return array{file: ?FileInterface, is_image: bool, field: string, error: ?\Drupal\Core\StringTranslation\TranslatableMarkup}
+   *   Dados do arquivo resolvido e eventual mensagem de erro.
    */
   private function resolveSelection(FormStateInterface $form_state): array {
     $image_fids = array_values(array_filter(array_map('intval', (array) $form_state->getValue('image_file'))));

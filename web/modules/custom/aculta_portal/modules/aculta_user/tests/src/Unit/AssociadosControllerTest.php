@@ -36,6 +36,8 @@ final class AssociadosControllerTest extends UnitTestCase {
   }
 
   /**
+   * Fornece valores de célula e o valor neutralizado esperado.
+   *
    * @return array<string, array{string, string}>
    *   Text and its expected neutralized value.
    */

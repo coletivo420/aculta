@@ -22,7 +22,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 final class CourseContentEventHooksTest extends UnitTestCase {
 
   /**
-   *
+   * Confirma que a publicação de um curso dispara o aviso de liberação.
    */
   public function testPublishedCourseInsertPublishesRelease(): void {
     $course = $this->createMock(Group::class);
@@ -41,7 +41,7 @@ final class CourseContentEventHooksTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que a publicação de uma aula dispara o aviso de liberação.
    */
   public function testPublishedOwnLessonInsertPublishesRelease(): void {
     $lesson = $this->contentEntity('aculta_lms_lesson', 'lesson-uuid', ['published' => TRUE]);
@@ -56,7 +56,7 @@ final class CourseContentEventHooksTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que a atividade herda a disponibilidade de uma aula publicada.
    */
   public function testActivityAvailabilityInheritsPublishedLesson(): void {
     $lesson = $this->contentEntity('aculta_lms_lesson', 'lesson-uuid', ['published' => TRUE]);
@@ -76,7 +76,7 @@ final class CourseContentEventHooksTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que atividade em aula não publicada não dispara aviso.
    */
   public function testActivityUnderUnpublishedLessonDoesNotPublish(): void {
     $lesson = $this->contentEntity('aculta_lms_lesson', 'lesson-uuid', ['published' => FALSE]);
@@ -92,7 +92,7 @@ final class CourseContentEventHooksTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que edição editorial de aula já disponível não dispara aviso.
    */
   public function testEditorialUpdateOfAvailableLessonDoesNotPublish(): void {
     $original = $this->contentEntity('aculta_lms_lesson', 'lesson-uuid', ['published' => TRUE]);
@@ -104,7 +104,19 @@ final class CourseContentEventHooksTest extends UnitTestCase {
   }
 
   /**
+   * Cria uma entidade de conteúdo simulada com os campos informados.
    *
+   * @param string $type
+   *   ID do tipo de entidade.
+   * @param string $uuid
+   *   UUID da entidade.
+   * @param array $fields
+   *   Valores dos campos indexados pelo nome.
+   * @param \Drupal\Core\Entity\ContentEntityBase|null $original
+   *   Entidade original, ou NULL.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityBase
+   *   Entidade simulada.
    */
   private function contentEntity(string $type, string $uuid, array $fields, ?ContentEntityBase $original = NULL): ContentEntityBase {
     $entity = $this->createMock(ContentEntityBase::class);

@@ -30,8 +30,15 @@ final class ChangemailHooks {
   ) {}
 
   /**
- *
- */
+   * Entrega o formulário de troca de e-mail quando o envio está pronto.
+   *
+   * @param array $section
+   *   Seção de e-mail da página de segurança da conta.
+   * @param \Drupal\user\UserInterface $account
+   *   Conta exibida.
+   * @param bool $emailReady
+   *   Se o envio de e-mail está pronto.
+   */
   #[Hook('aculta_portal_changemail_alter')]
   public function changemailAlter(array &$section, UserInterface $account, bool $emailReady): void {
     if (!$emailReady

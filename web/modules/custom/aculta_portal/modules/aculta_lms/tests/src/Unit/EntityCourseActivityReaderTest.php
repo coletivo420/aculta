@@ -14,13 +14,13 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- *
+ * Testa a leitura e a ordenação de atividades a partir de entidades.
  */
 #[Group('aculta_lms')]
 final class EntityCourseActivityReaderTest extends UnitTestCase {
 
   /**
-   *
+   * Verifica o mapeamento e a ordenação das atividades da lição.
    */
   public function testMapsAndOrdersActivities(): void {
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -43,7 +43,7 @@ final class EntityCourseActivityReaderTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Verifica que a lista fica vazia quando o armazenamento não tem itens.
    */
   public function testReturnsNoActivitiesWhenStorageIsEmpty(): void {
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -55,7 +55,21 @@ final class EntityCourseActivityReaderTest extends UnitTestCase {
   }
 
   /**
+   * Cria uma entidade de atividade simulada.
    *
+   * @param int $id
+   *   ID da atividade.
+   * @param int $lessonId
+   *   ID da lição associada.
+   * @param string $type
+   *   Tipo da atividade.
+   * @param bool $graded
+   *   Indica se a atividade é avaliada.
+   * @param int $weight
+   *   Peso de ordenação.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface
+   *   Entidade simulada.
    */
   private function activityEntity(int $id, int $lessonId, string $type, bool $graded, int $weight): ContentEntityInterface {
     $entity = $this->createMock(ContentEntityInterface::class);

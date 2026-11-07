@@ -20,24 +20,33 @@ final class DomainLifecycleHooks {
   ) {}
 
   /**
- *
- */
+   * Reconstrói o estado dos propósitos ativos após inserir um domínio.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Domínio inserido.
+   */
   #[Hook('domain_insert')]
   public function onDomainInsert(EntityInterface $entity): void {
     $this->activePurposesState->rebuild();
   }
 
   /**
- *
- */
+   * Reconstrói o estado dos propósitos ativos após atualizar um domínio.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Domínio atualizado.
+   */
   #[Hook('domain_update')]
   public function onDomainUpdate(EntityInterface $entity): void {
     $this->activePurposesState->rebuild();
   }
 
   /**
- *
- */
+   * Reconstrói o estado dos propósitos ativos após excluir um domínio.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Domínio excluído.
+   */
   #[Hook('domain_delete')]
   public function onDomainDelete(EntityInterface $entity): void {
     $this->activePurposesState->rebuild();

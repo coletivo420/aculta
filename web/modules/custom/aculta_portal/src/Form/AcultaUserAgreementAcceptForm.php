@@ -25,7 +25,7 @@ final class AcultaUserAgreementAcceptForm extends FormBase {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -35,14 +35,14 @@ final class AcultaUserAgreementAcceptForm extends FormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getFormId(): string {
     return 'aculta_portal_aculta_user_agreement_accept';
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['#action'] = Url::fromRoute('aculta_portal.aculta_user_agreement.accept', [], [
@@ -77,7 +77,7 @@ final class AcultaUserAgreementAcceptForm extends FormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->policy->record($this->currentUser());

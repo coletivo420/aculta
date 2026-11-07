@@ -15,7 +15,10 @@ final class ShipmentAddressPair {
   ) {}
 
   /**
+   * Informa se os dois lados do par de endereços são válidos.
    *
+   * @return bool
+   *   TRUE quando origem e destino são válidos.
    */
   public function isValid(): bool {
     return $this->from->isValid() && $this->to->isValid();
@@ -25,6 +28,7 @@ final class ShipmentAddressPair {
    * Erros por lado, para mensagem administrativa: ['origin' => [...], 'destination' => [...]].
    *
    * @return array{origin: list<string>, destination: list<string>}
+   *   Lista de erros de origem e de destino.
    */
   public function errors(): array {
     return ['origin' => $this->from->errors, 'destination' => $this->to->errors];

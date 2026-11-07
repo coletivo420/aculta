@@ -9,8 +9,10 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Url;
 
 /**
- * Abas de Minha conta > Configurações. O Portal tem a aba "Modo de cor"; submódulos acrescentam as suas
- * pelo alter aculta_portal_settings_tabs (ex.: aculta_user adiciona "Privacidade").
+ * Abas de Minha conta > Configurações.
+ *
+ * O Portal tem a aba "Modo de cor"; submódulos acrescentam as suas pelo alter
+ * aculta_portal_settings_tabs (ex.: aculta_user adiciona "Privacidade").
  */
 final class SettingsTabs {
 

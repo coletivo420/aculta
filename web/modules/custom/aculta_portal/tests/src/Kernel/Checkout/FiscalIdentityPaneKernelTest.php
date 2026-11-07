@@ -99,6 +99,8 @@ final class FiscalIdentityPaneKernelTest extends OrderKernelTestBase {
    *   Serviço de documento simulado.
    * @param \Drupal\aculta_portal\Checkout\CheckoutSettings|null $settings
    *   Configuração de checkout alternativa; sem ela, a real (config ausente).
+   * @param \Drupal\commerce_product\Entity\ProductVariation|null $variation
+   *   Variação de produto associada ao pedido, ou NULL.
    */
   private function pane(string $orderType, AccountDocumentInterface $doc, ?CheckoutSettings $settings = NULL, ?ProductVariation $variation = NULL): FiscalIdentityPane {
     if (!OrderType::load($orderType)) {

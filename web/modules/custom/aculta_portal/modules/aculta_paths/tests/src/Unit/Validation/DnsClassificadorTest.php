@@ -17,7 +17,7 @@ final class DnsClassificadorTest extends UnitTestCase {
   private const PRINCIPAL = 'exemplo.org';
 
   /**
-   *
+   * Trata o domínio principal sem resolução como aviso.
    */
   public function testPrincipalSemResolucaoEhAviso(): void {
     $r = DnsClassificador::classificar(self::PRINCIPAL, ['ips' => [], 'cnames' => []], ['ips' => ['1.1.1.1'], 'cnames' => []]);
@@ -25,7 +25,7 @@ final class DnsClassificadorTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Trata o subdomínio sem registro como erro.
    */
   public function testSubdominioSemRegistroEhErro(): void {
     $r = DnsClassificador::classificar(self::PRINCIPAL, ['ips' => ['1.1.1.1'], 'cnames' => []], ['ips' => [], 'cnames' => []]);
@@ -34,7 +34,7 @@ final class DnsClassificadorTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Aceita CNAME apontando para o domínio principal.
    */
   public function testCnameParaPrincipalEhOk(): void {
     $r = DnsClassificador::classificar(self::PRINCIPAL, ['ips' => ['1.1.1.1'], 'cnames' => []], ['ips' => [], 'cnames' => ['Exemplo.org']]);
@@ -43,7 +43,7 @@ final class DnsClassificadorTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Aceita o mesmo IP do domínio principal.
    */
   public function testMesmoIpDoPrincipalEhOk(): void {
     $r = DnsClassificador::classificar(self::PRINCIPAL, ['ips' => ['1.1.1.1', '2.2.2.2'], 'cnames' => []], ['ips' => ['2.2.2.2'], 'cnames' => []]);
@@ -51,7 +51,7 @@ final class DnsClassificadorTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Sinaliza erro com destino quando o subdomínio aponta para outro IP.
    */
   public function testOutroDestinoEhErroComDestino(): void {
     $r = DnsClassificador::classificar(self::PRINCIPAL, ['ips' => ['1.1.1.1'], 'cnames' => []], ['ips' => ['9.9.9.9'], 'cnames' => []]);

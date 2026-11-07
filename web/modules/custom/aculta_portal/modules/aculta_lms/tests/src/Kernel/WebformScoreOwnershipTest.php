@@ -21,6 +21,11 @@ final class WebformScoreOwnershipTest extends KernelTestBase {
 
   use UserCreationTrait;
 
+  /**
+   * Módulos necessários para o teste.
+   *
+   * @var string[]
+   */
   protected static $modules = [
     'key',
     'system',
@@ -32,7 +37,7 @@ final class WebformScoreOwnershipTest extends KernelTestBase {
   ];
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
@@ -43,7 +48,7 @@ final class WebformScoreOwnershipTest extends KernelTestBase {
   }
 
   /**
-   *
+   * Verifica que só o dono com permissão vê a nota persistida.
    */
   public function testOnlyOwnerWithPermissionCanViewPersistedSubmissionScore(): void {
     $owner = $this->createUser();
@@ -78,7 +83,13 @@ final class WebformScoreOwnershipTest extends KernelTestBase {
   }
 
   /**
+   * Cria uma conta simulada com a permissão de ver a própria nota.
    *
+   * @param int $id
+   *   ID da conta simulada.
+   *
+   * @return \Drupal\Core\Session\AccountInterface
+   *   Conta simulada.
    */
   private function account(int $id): AccountInterface {
     $account = $this->createMock(AccountInterface::class);

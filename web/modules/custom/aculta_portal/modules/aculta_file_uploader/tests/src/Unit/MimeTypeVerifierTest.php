@@ -61,7 +61,7 @@ final class MimeTypeVerifierTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que uma extensão fora do catálogo é rejeitada.
    */
   public function testExtensionOutsideCatalogIsRejected(): void {
     $verifier = new MimeTypeVerifier();

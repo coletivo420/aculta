@@ -13,10 +13,15 @@ interface ObjectiveAnswerPluginInterface {
   /**
    * Scores one answer against the correct answer data for the activity.
    *
+   * @param \Drupal\aculta_lms\Learning\CourseActivity $activity
+   *   Atividade cuja resposta será avaliada.
    * @param mixed $answer
    *   Student answer in the type-specific ACULTA format.
    * @param mixed $correct
    *   Correct answer data in the type-specific ACULTA format.
+   *
+   * @return float
+   *   Nota calculada para a resposta.
    */
   public function score(CourseActivity $activity, mixed $answer, mixed $correct): float;
 

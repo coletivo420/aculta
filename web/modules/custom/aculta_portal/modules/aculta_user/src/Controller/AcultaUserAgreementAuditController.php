@@ -21,14 +21,17 @@ final class AcultaUserAgreementAuditController extends ControllerBase {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('database'), $container->get('date.formatter'), $container->get('aculta_user.aculta_user_agreement_ledger'));
   }
 
   /**
+   * Lista os registros de consentimento com a integridade da cadeia.
    *
+   * @return array
+   *   Estrutura renderizável da tabela de auditoria.
    */
   public function listing(): array {
     $rows = [];

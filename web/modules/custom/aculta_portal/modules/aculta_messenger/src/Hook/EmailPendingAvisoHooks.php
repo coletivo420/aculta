@@ -32,8 +32,11 @@ final class EmailPendingAvisoHooks {
   }
 
   /**
-   * Remove o aviso quando o e-mail é confirmado. Vem do ponto aculta_portal_email_confirmed, e não de user_update:
-   * a confirmação pode não salvar a conta (o papel já existe), e o aviso não pode sobrar.
+   * Remove o aviso quando o e-mail é confirmado.
+   *
+   * Vem do ponto aculta_portal_email_confirmed, e não de user_update: a
+   * confirmação pode não salvar a conta (o papel já existe), e o aviso não pode
+   * sobrar.
    */
   #[Hook('aculta_portal_email_confirmed')]
   public function emailConfirmed(int $uid): void {

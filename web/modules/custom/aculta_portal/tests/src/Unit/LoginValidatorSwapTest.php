@@ -26,14 +26,25 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * The login form always runs the Portal callback exactly once, whatever Core's
- * validator list looks like. A silent miss would restore the disclosure.
+ * Garante que o callback do Portal rode exatamente uma vez no login.
+ *
+ * Independentemente da lista de validadores do Core. Uma falha silenciosa
+ * restauraria a revelação.
  */
 #[Group('aculta_portal')]
 final class LoginValidatorSwapTest extends UnitTestCase {
 
   private const WRAPPER = 'aculta_portal.form_callbacks:validateLoginAuthentication';
 
+  /**
+   * Executa o alter do formulário de login e devolve os validadores.
+   *
+   * @param array $start
+   *   Lista inicial de validadores do formulário.
+   *
+   * @return array
+   *   Lista de validadores após o alter.
+   */
   private function validators(array $start): array {
     // Serviços finais (DomainPurposeManager, CartUtility, AddToCartAjax) são construídos de verdade, não duplicados.
     // AddToCartAjax::alter() ignora formulários que não são "Adicionar ao carrinho", então os mocks não são usados aqui.
@@ -69,6 +80,9 @@ final class LoginValidatorSwapTest extends UnitTestCase {
     return $form['#validate'];
   }
 
+  /**
+   * Verifica que o validador do Core é substituído no mesmo lugar.
+   */
   public function testCoreValidatorIsReplacedInPlace(): void {
     $this->assertSame(
       [self::WRAPPER, '::validateFinal'],
@@ -76,6 +90,9 @@ final class LoginValidatorSwapTest extends UnitTestCase {
     );
   }
 
+  /**
+   * Verifica que o wrapper é adicionado primeiro quando falta o validador.
+   */
   public function testWrapperIsAddedFirstWhenCoreValidatorIsMissing(): void {
     $this->assertSame(
       [self::WRAPPER, '::validateFinal'],
@@ -83,6 +100,9 @@ final class LoginValidatorSwapTest extends UnitTestCase {
     );
   }
 
+  /**
+   * Verifica que o wrapper aparece exatamente uma vez na lista.
+   */
   public function testWrapperAppearsExactlyOnce(): void {
     $result = $this->validators([self::WRAPPER, '::validateAuthentication', '::validateFinal']);
     $this->assertSame(1, count(array_filter($result, static fn($v) => $v === self::WRAPPER)));

@@ -7,6 +7,8 @@ namespace Drupal\aculta_portal\Plugin\metatag\Tag;
 use Drupal\schema_metatag\Plugin\metatag\Tag\SchemaNameBase;
 
 /**
+ * Define a metatag do nome da página web do schema.
+ *
  * @MetatagTag(
  *   id = "schema_web_page_name",
  *   label = @Translation("name"),

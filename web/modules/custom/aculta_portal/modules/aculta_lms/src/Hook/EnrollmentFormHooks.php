@@ -247,6 +247,7 @@ final class EnrollmentFormHooks {
    * transition; replacing its provider is tracked in the P5 inventory.
    *
    * @return \Drupal\group\Entity\GroupRelationshipInterface[]
+   *   Relações de turma do grupo do curso.
    */
   private function classRelationships(GroupInterface $course): array {
     return array_values(array_filter(

@@ -21,7 +21,7 @@ final class SocialAuthCallbackRouteSubscriber extends RouteSubscriberBase {
   public const CALLBACK_PATH = '/integracoes/{network}/retorno';
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection): void {
     $route = $collection->get('social_auth.network.callback');

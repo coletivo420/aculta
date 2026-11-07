@@ -11,7 +11,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- *
+ * Testa os tipos de embalagem usados no cálculo de frete.
  */
 #[CoversClass(\Drupal\aculta_commerce\Shipping\PackageTypeManager::class)]
 #[Group('aculta_commerce')]

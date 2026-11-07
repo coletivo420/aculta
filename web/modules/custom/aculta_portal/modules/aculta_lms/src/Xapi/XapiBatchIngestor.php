@@ -34,6 +34,8 @@ final class XapiBatchIngestor {
   public function __construct(private readonly XapiStatementValidator $validator) {}
 
   /**
+   * Valida e ingere um lote de statements em JSON.
+   *
    * @param string $body
    *   Corpo JSON recebido.
    * @param array{uid: int, content: string, registration: string, lesson_status_id: int, actor_mbox_sha1sum: string} $claims

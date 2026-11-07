@@ -26,7 +26,7 @@ final class CommerceCheckoutRouteSubscriber extends RouteSubscriberBase {
   public function __construct(private readonly CheckoutPolicyManager $policy) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection): void {
     if ($this->policy->commonCheckoutRoutesAvailable()) {

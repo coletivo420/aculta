@@ -33,12 +33,28 @@ final class DonationSettingsForm extends ConfigFormBase {
    * As duas rotas. Exige tipos de item e de pedido diferentes. */
   public const ROTA_AMBAS = 'both';
 
+  /**
+   * Gerenciador de tipos de entidade.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
   protected EntityTypeManagerInterface $entityTypeManager;
 
+  /**
+   * Construtor de rotas usado para marcar reconstrução.
+   *
+   * @var \Drupal\Core\Routing\RouteBuilderInterface
+   */
   protected RouteBuilderInterface $routeBuilder;
 
   /**
+   * Cria a instância do formulário com os serviços necessários.
    *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   Container de serviços.
+   *
+   * @return static
+   *   Instância do formulário.
    */
   public static function create(ContainerInterface $container): static {
     $instance = parent::create($container);
@@ -48,21 +64,35 @@ final class DonationSettingsForm extends ConfigFormBase {
   }
 
   /**
+   * Devolve o ID do formulário.
    *
+   * @return string
+   *   ID do formulário.
    */
   public function getFormId(): string {
     return 'aculta_donation_fluxo_form';
   }
 
   /**
+   * Devolve os nomes das configurações editáveis pelo formulário.
    *
+   * @return array
+   *   Nomes de configurações editáveis.
    */
   protected function getEditableConfigNames(): array {
     return ['aculta_donation.settings'];
   }
 
   /**
+   * Monta o formulário de configuração do fluxo de doação.
    *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
+   *
+   * @return array
+   *   Estrutura do formulário.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('aculta_donation.settings');
@@ -164,7 +194,12 @@ final class DonationSettingsForm extends ConfigFormBase {
   }
 
   /**
+   * Valida a combinação de rotas e tipos de pedido escolhida.
    *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $rota = $form_state->getValue('donation_route');
@@ -185,7 +220,12 @@ final class DonationSettingsForm extends ConfigFormBase {
   }
 
   /**
+   * Salva a configuração do fluxo e aplica as ligações de tipos de pedido.
    *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $valores = $form_state->getValues();
@@ -227,7 +267,10 @@ final class DonationSettingsForm extends ConfigFormBase {
   }
 
   /**
+   * Limpa os valores da rota de carrinho no estado do formulário.
    *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
    */
   private function limparRotaCart(FormStateInterface $form_state): void {
     foreach (['cart_item_type', 'cart_order_type', 'cart_checkout_flow'] as $chave) {
@@ -236,7 +279,10 @@ final class DonationSettingsForm extends ConfigFormBase {
   }
 
   /**
+   * Limpa os valores da rota de doação no estado do formulário.
    *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
    */
   private function limparRotaDonate(FormStateInterface $form_state): void {
     foreach (['donate_item_type', 'donate_order_type', 'donate_checkout_flow'] as $chave) {

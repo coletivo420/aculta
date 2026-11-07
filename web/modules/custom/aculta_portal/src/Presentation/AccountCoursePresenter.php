@@ -87,6 +87,7 @@ final class AccountCoursePresenter {
    * Maps the shared learning status vocabulary to account presentation.
    *
    * @return array{code: string, label: string, tone: string}
+   *   Código, rótulo e tom visual do status.
    */
   private function statusPresentation(string $status): array {
     return match ($status) {

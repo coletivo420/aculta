@@ -22,7 +22,13 @@ final class EmailConfirmedAccessCheck {
   ) {}
 
   /**
+   * Verifica se a conta com e-mail confirmado pode acessar o recurso.
    *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta cujo acesso será verificado.
+   *
+   * @return \Drupal\Core\Access\AccessResult
+   *   Resultado do acesso, com cache por usuário.
    */
   public function access(AccountInterface $account): AccessResult {
     if ($account->isAnonymous()) {

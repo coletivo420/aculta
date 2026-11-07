@@ -31,7 +31,7 @@ final class DomainPurposeCondition extends ConditionPluginBase implements Contai
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     return new self(
@@ -43,7 +43,7 @@ final class DomainPurposeCondition extends ConditionPluginBase implements Contai
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function defaultConfiguration(): array {
     // An unconfigured condition must never silently mean MAIN. Keeping the
@@ -52,7 +52,7 @@ final class DomainPurposeCondition extends ConditionPluginBase implements Contai
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     $form['purpose'] = [
@@ -78,7 +78,7 @@ final class DomainPurposeCondition extends ConditionPluginBase implements Contai
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
     parent::submitConfigurationForm($form, $form_state);
@@ -86,35 +86,35 @@ final class DomainPurposeCondition extends ConditionPluginBase implements Contai
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function evaluate(): bool {
     return $this->domainPurposeManager->getCurrentPurpose() === $this->configuration['purpose'];
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function summary(): string {
     return (string) $this->t('Visible for the @purpose domain purpose.', ['@purpose' => $this->configuration['purpose']]);
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getCacheContexts(): array {
     return ['domain'];
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getCacheTags(): array {
     return [];
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getCacheMaxAge(): int {
     return -1;

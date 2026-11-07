@@ -20,7 +20,17 @@ use PHPUnit\Framework\Attributes\Group;
 final class DonationCampaignSelectorTest extends UnitTestCase {
 
   /**
+   * Cria uma campanha de doação com período e valores informados.
    *
+   * @param string $id
+   *   Identificador da campanha.
+   * @param string $inicio
+   *   Data inicial no formato AAAA-MM-DD.
+   * @param string $fim
+   *   Data final no formato AAAA-MM-DD.
+   *
+   * @return \Drupal\aculta_donation\Entity\DonationCampaign
+   *   Campanha criada.
    */
   private function campanha(string $id, string $inicio, string $fim): DonationCampaign {
     $campanha = new DonationCampaign([], 'aculta_donation_campaign');
@@ -30,7 +40,13 @@ final class DonationCampaignSelectorTest extends UnitTestCase {
   }
 
   /**
+   * Cria o seletor de campanhas com as campanhas informadas.
    *
+   * @param \Drupal\aculta_donation\Entity\DonationCampaign ...$campanhas
+   *   Campanhas disponíveis para o seletor.
+   *
+   * @return \Drupal\aculta_donation\Campaign\DonationCampaignSelector
+   *   Seletor configurado.
    */
   private function selector(DonationCampaign ...$campanhas): DonationCampaignSelector {
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -47,14 +63,20 @@ final class DonationCampaignSelectorTest extends UnitTestCase {
   }
 
   /**
+   * Converte uma data em um instante fixo do meio-dia no fuso de São Paulo.
    *
+   * @param string $data
+   *   Data no formato AAAA-MM-DD.
+   *
+   * @return \DateTimeImmutable
+   *   Instante correspondente.
    */
   private function dia(string $data): \DateTimeImmutable {
     return new \DateTimeImmutable($data . ' 12:00:00', new \DateTimeZone('America/Sao_Paulo'));
   }
 
   /**
-   *
+   * O início e o término do período da campanha são inclusivos.
    */
   public function testInicioETerminoSaoInclusivos(): void {
     $selector = $this->selector($this->campanha('natal', '2026-12-01', '2026-12-25'));
@@ -63,7 +85,7 @@ final class DonationCampaignSelectorTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Não há campanha vigente fora da janela de vigência.
    */
   public function testForaDaJanelaNaoHaCampanha(): void {
     $selector = $this->selector($this->campanha('natal', '2026-12-01', '2026-12-25'));
@@ -72,14 +94,14 @@ final class DonationCampaignSelectorTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Sem campanhas cadastradas não há campanha vigente.
    */
   public function testSemCampanhasNaoHaCampanha(): void {
     $this->assertNull($this->selector()->vigente($this->dia('2026-10-17')));
   }
 
   /**
-   *
+   * Em caso de sobreposição, vence a campanha de início mais recente.
    */
   public function testSobreposicaoVenceADeInicioMaisRecente(): void {
     $selector = $this->selector(

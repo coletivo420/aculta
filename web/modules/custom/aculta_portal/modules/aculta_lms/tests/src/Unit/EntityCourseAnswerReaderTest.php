@@ -14,13 +14,13 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- *
+ * Testa a leitura de respostas de curso a partir das entidades.
  */
 #[Group('aculta_lms')]
 final class EntityCourseAnswerReaderTest extends UnitTestCase {
 
   /**
-   *
+   * Confirma que mapeia as respostas e as ordena pelo ID.
    */
   public function testMapsAnswersAndSortsById(): void {
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -43,7 +43,7 @@ final class EntityCourseAnswerReaderTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que não devolve respostas quando o storage está vazio.
    */
   public function testReturnsNoAnswersWhenStorageIsEmpty(): void {
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -55,7 +55,21 @@ final class EntityCourseAnswerReaderTest extends UnitTestCase {
   }
 
   /**
+   * Cria uma entidade de resposta simulada.
    *
+   * @param int $id
+   *   ID da resposta.
+   * @param int $activityId
+   *   ID da atividade.
+   * @param int $uid
+   *   ID da conta da pessoa.
+   * @param string $state
+   *   Estado da resposta.
+   * @param mixed $score
+   *   Nota da resposta, ou NULL.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface
+   *   Entidade de resposta simulada.
    */
   private function answerEntity(int $id, int $activityId, int $uid, string $state, mixed $score): ContentEntityInterface {
     $entity = $this->createMock(ContentEntityInterface::class);

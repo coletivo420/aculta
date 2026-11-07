@@ -60,14 +60,23 @@ final class AccountCoursesManager {
   }
 
   /**
+   * Conta os cursos autorizados da conta.
    *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta consultada.
+   *
+   * @return int
+   *   Quantidade de cursos.
    */
   public function countCourses(AccountInterface $account): int {
     return count($this->getCourses($account));
   }
 
   /**
+   * URL do catálogo de cursos, quando o domínio de cursos existe.
    *
+   * @return \Drupal\Core\Url|null
+   *   URL do catálogo ou NULL quando não disponível.
    */
   public function catalogUrl(): ?Url {
     return $this->domainPurposeManager->routeUrl('courses', 'aculta_portal.courses_home');

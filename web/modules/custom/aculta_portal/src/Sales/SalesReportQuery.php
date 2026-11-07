@@ -53,6 +53,7 @@ class SalesReportQuery {
    * Vendas de produto por variação e moeda, ordenadas pela quantidade.
    *
    * @return array<int, array{variacao_id: int, produto: string, variacao: string, quantidade: string, total: string, moeda: string}>
+   *   Linhas agregadas por variação e moeda.
    */
   public function porVariacao(SalesReportFilters $filtros): array {
     $consulta = $this->itens($filtros, self::ESCOPO_PRODUTO);
@@ -91,6 +92,7 @@ class SalesReportQuery {
    * Pedidos e valor por período e moeda, para o escopo informado.
    *
    * @return array<int, array{periodo: string, pedidos: int, total: string, moeda: string}>
+   *   Linhas agregadas por período e moeda.
    */
   public function porPeriodo(SalesReportFilters $filtros, string $escopo = self::ESCOPO_PRODUTO): array {
     $formato = self::FORMATOS[$filtros->granularidade] ?? self::FORMATOS['dia'];
@@ -117,6 +119,7 @@ class SalesReportQuery {
    * IDs dos pedidos com itens do escopo no intervalo, do mais recente ao mais antigo, com paginação.
    *
    * @return array{ids: int[], total: int}
+   *   IDs dos pedidos da página e total de pedidos.
    */
   public function pedidos(SalesReportFilters $filtros, string $escopo, int $pagina, int $porPagina): array {
     // A contagem é uma consulta separada: fetchField() lê a primeira coluna, então não pode herdar o campo de id.

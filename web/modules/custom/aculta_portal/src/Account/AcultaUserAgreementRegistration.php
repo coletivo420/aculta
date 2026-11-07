@@ -8,8 +8,11 @@ use Drupal\aculta_user\Consent\AcultaUserAgreementLedger;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Registra o aceite dos termos (acordo aculta_user_agreement_terms) no momento do cadastro, quando o visitante
- * marca o checkbox do formulário. Assim o aceite não depende de uma etapa posterior.
+ * Registra o aceite dos termos no momento do cadastro.
+ *
+ * O acordo aculta_user_agreement_terms é gravado quando o visitante marca o
+ * checkbox do formulário, de modo que o aceite não dependa de uma etapa
+ * posterior.
  */
 final class AcultaUserAgreementRegistration {
 

@@ -18,7 +18,7 @@ final class DomainHostnames {
    * @param array<int, array{domain_id: string, test_host?: string, production_host?: string}> $entries
    *   Entradas de domain_transition.entries em config/deploy.json.
    * @param string $env
-   *   'test' ou 'production'.
+   *   Ambiente de destino: 'test' ou 'production'.
    * @param array<string, ?string> $current
    *   Hostname atual de cada domain_id no banco (NULL se não lido).
    *

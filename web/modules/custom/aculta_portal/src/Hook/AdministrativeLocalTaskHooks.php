@@ -27,8 +27,11 @@ final class AdministrativeLocalTaskHooks {
   ];
 
   /**
- *
- */
+   * Remove das abas de Pessoas o que foi migrado para Configurações.
+   *
+   * @param array $local_tasks
+   *   Abas locais descobertas, indexadas pelo ID.
+   */
   #[Hook('local_tasks_alter')]
   public function localTasksAlter(array &$local_tasks): void {
     foreach (self::MIGRADAS as $id) {

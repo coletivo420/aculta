@@ -26,6 +26,24 @@ final readonly class AccountCourseSummary {
   public const STATUS_AWAITING_EVALUATION = 'awaiting_evaluation';
 
   /**
+   * Constrói um resumo de curso autorizado para a seção de aprendizagem.
+   *
+   * @param string $id
+   *   Identificador do curso.
+   * @param string $label
+   *   Rótulo exibido do curso.
+   * @param string $description
+   *   Descrição do curso em texto de origem.
+   * @param string $descriptionFormat
+   *   Formato de texto da descrição.
+   * @param string $status
+   *   Status normalizado do curso.
+   * @param int|float|null $score
+   *   Nota obtida no curso, quando houver.
+   * @param bool $finished
+   *   Indica se o curso foi concluído.
+   * @param \Drupal\Core\Url|null $url
+   *   URL do curso, quando houver.
    * @param list<string> $cacheTags
    *   Cache tags for the authorized course projection.
    */

@@ -174,7 +174,10 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
   }
 
   /**
+   * Informa se a rota atual é a página inicial.
    *
+   * @return bool
+   *   TRUE quando é a página inicial.
    */
   private function isFrontPage(): bool {
     return $this->pathMatcher->isFrontPage();

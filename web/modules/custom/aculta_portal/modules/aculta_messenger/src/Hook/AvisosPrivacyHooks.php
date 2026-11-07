@@ -18,8 +18,15 @@ final class AvisosPrivacyHooks {
   ) {}
 
   /**
- *
- */
+   * Acrescenta o bloco de avisos ao formulário de privacidade da conta.
+   *
+   * @param array $form
+   *   Estrutura do formulário alterado.
+   * @param \Drupal\Core\Form\FormStateInterface $formState
+   *   Estado atual do formulário.
+   * @param string $formId
+   *   Identificador do formulário.
+   */
   #[Hook('form_alter')]
   public function formAlter(array &$form, FormStateInterface $formState, string $formId): void {
     if ($formId !== 'aculta_user_profile_visibility_form') {

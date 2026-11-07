@@ -241,6 +241,7 @@ final class EnrollmentFormHooksTest extends UnitTestCase {
    * Creates a course selection form with one related class Group.
    *
    * @return array{\Drupal\aculta_lms\Hook\EnrollmentFormHooks,\Drupal\Core\Form\FormStateInterface}
+   *   Hooks de inscrição e estado do formulário montados.
    */
   private function classSelectionContext(string $selected_class): array {
     $class = $this->createMock(GroupInterface::class);

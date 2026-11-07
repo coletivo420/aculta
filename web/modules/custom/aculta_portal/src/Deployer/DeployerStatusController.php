@@ -9,8 +9,10 @@ use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Painel somente leitura do ACULTA Deployer. Usa o mesmo sistema de status do diagnóstico do
- * Portal (✔ OK, ⚠ Atenção, ✖ Erro). Não executa a ferramenta.
+ * Painel somente leitura do ACULTA Deployer.
+ *
+ * Usa o mesmo sistema de status do diagnóstico do Portal (✔ OK, ⚠ Atenção,
+ * ✖ Erro). Não executa a ferramenta.
  */
 final class DeployerStatusController extends ControllerBase {
 
@@ -20,7 +22,10 @@ final class DeployerStatusController extends ControllerBase {
   ) {}
 
   /**
+   * Renderiza o painel de status do ACULTA Deployer.
    *
+   * @return array
+   *   Render array do painel.
    */
   public function page(): array {
     $data = $this->reader->read();
@@ -93,7 +98,15 @@ final class DeployerStatusController extends ControllerBase {
   }
 
   /**
+   * Monta a célula de status com símbolo e texto.
    *
+   * @param string $state
+   *   Estado: "ok", "attention" ou "error".
+   * @param string|null $label
+   *   Rótulo opcional; usa o padrão do estado quando NULL.
+   *
+   * @return array
+   *   Célula de tabela formatada.
    */
   private function statusCell(string $state, $label = NULL): array {
     $symbol = match ($state) {
@@ -113,7 +126,10 @@ final class DeployerStatusController extends ControllerBase {
   }
 
   /**
+   * Monta a legenda dos símbolos de status.
    *
+   * @return array
+   *   Render array da legenda.
    */
   private function legend(): array {
     return [

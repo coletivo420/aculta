@@ -28,7 +28,7 @@ final class EmailResendForm extends FormBase {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -41,14 +41,14 @@ final class EmailResendForm extends FormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getFormId(): string {
     return 'aculta_portal_email_resend_form';
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['description'] = [
@@ -63,7 +63,7 @@ final class EmailResendForm extends FormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $account = $this->entityTypeManager->getStorage('user')->load($this->currentUser->id());

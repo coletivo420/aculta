@@ -7,6 +7,8 @@ namespace Drupal\aculta_portal\Plugin\metatag\Tag;
 use Drupal\schema_metatag\Plugin\metatag\Tag\SchemaNameBase;
 
 /**
+ * Metatag com a URL canônica da página web.
+ *
  * @MetatagTag(
  *   id = "schema_web_page_url",
  *   label = @Translation("url"),

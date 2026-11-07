@@ -17,13 +17,18 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[RunTestsInSeparateProcesses]
 final class UserEmailChangeKernelTest extends KernelTestBase {
 
+  /**
+   * Módulos necessários ao teste.
+   *
+   * @var string[]
+   */
   protected static $modules = ['system', 'user', 'token', 'aculta_mail_confirmer', 'aculta_mail_confirmer_user'];
 
   private const OLD_EMAIL = 'antiga@example.invalid';
   private const NEW_EMAIL = 'nova@example.invalid';
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
@@ -35,14 +40,20 @@ final class UserEmailChangeKernelTest extends KernelTestBase {
   }
 
   /**
+   * Devolve o gerenciador de confirmação de e-mail.
    *
+   * @return \Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface
+   *   Gerenciador de confirmação.
    */
   private function manager(): AcultaMailConfirmerManagerInterface {
     return $this->container->get('aculta_mail_confirmer');
   }
 
   /**
+   * Cria uma conta e solicita a troca para o novo e-mail.
    *
+   * @return \Drupal\user\Entity\User
+   *   Conta com a troca pendente.
    */
   private function createUserAndRequestChange(): User {
     $user = User::create(['name' => 'pessoa', 'mail' => self::OLD_EMAIL, 'status' => 1]);
@@ -54,7 +65,7 @@ final class UserEmailChangeKernelTest extends KernelTestBase {
   }
 
   /**
-   *
+   * Confirma que a troca de e-mail só é aplicada após a confirmação.
    */
   public function testEmailChangeIsOnlyAppliedAfterConfirmation(): void {
     $user = $this->createUserAndRequestChange();
@@ -70,7 +81,7 @@ final class UserEmailChangeKernelTest extends KernelTestBase {
   }
 
   /**
-   *
+   * Confirma que cancelar a troca mantém o e-mail atual.
    */
   public function testCancelledChangeKeepsTheCurrentEmail(): void {
     $user = $this->createUserAndRequestChange();

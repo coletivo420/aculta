@@ -31,7 +31,10 @@ final class AchievementDefinitions {
   ) {}
 
   /**
+   * Retorna todas as conquistas, combinando padrões e configuração.
    *
+   * @return array<string, array<string, mixed>>
+   *   Definições de conquistas indexadas pelo identificador.
    */
   public function all(): array {
     $defaults = [];

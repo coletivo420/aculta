@@ -13,15 +13,23 @@ namespace Drupal\aculta_portal\Checkout;
 final class CheckoutContextRegistry {
 
   /**
-   * @var array<string, \Drupal\aculta_portal\Checkout\CheckoutContextProviderInterface>|null */
+   * Providers ordenados por ID, ou NULL antes do primeiro uso.
+   *
+   * @var array<string, \Drupal\aculta_portal\Checkout\CheckoutContextProviderInterface>|null
+   */
   private ?array $ordenados = NULL;
 
   /**
+   * Constrói o registro a partir dos providers marcados com a tag.
+   *
    * @param iterable<\Drupal\aculta_portal\Checkout\CheckoutContextProviderInterface> $providers
+   *   Providers de contexto de checkout.
    */
   public function __construct(private readonly iterable $providers) {}
 
   /**
+   * Retorna os providers na ordem determinística.
+   *
    * @return array<string, \Drupal\aculta_portal\Checkout\CheckoutContextProviderInterface>
    *   Providers por ID, na ordem determinística.
    */
@@ -42,14 +50,26 @@ final class CheckoutContextRegistry {
   }
 
   /**
+   * Retorna o provider do identificador informado.
    *
+   * @param string $id
+   *   Identificador do provider.
+   *
+   * @return \Drupal\aculta_portal\Checkout\CheckoutContextProviderInterface|null
+   *   Provider encontrado, ou NULL quando ausente.
    */
   public function get(string $id): ?CheckoutContextProviderInterface {
     return $this->all()[$id] ?? NULL;
   }
 
   /**
+   * Informa se existe um provider com o identificador informado.
    *
+   * @param string $id
+   *   Identificador do provider.
+   *
+   * @return bool
+   *   TRUE quando o provider existe.
    */
   public function has(string $id): bool {
     return isset($this->all()[$id]);

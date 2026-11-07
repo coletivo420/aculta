@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Support;
 
 /**
- * The types of notice and the colour each one has in the drawer. A persistent notice chooses its type in the admin form
- * (field_aculta_notice_type); a site notice takes it from its severity (low, medium, high).
+ * Tipos de aviso e a cor de cada um na gaveta.
+ *
+ * Um aviso persistente escolhe o tipo no formulário administrativo
+ * (field_aculta_notice_type); um aviso do site o obtém da severidade (low,
+ * medium, high).
  */
 final class NoticeType {
 
@@ -19,7 +22,11 @@ final class NoticeType {
   public const DEFAULT = self::WARNING;
 
   /**
-   * @return array<string, string> */
+   * Opções de tipo de aviso, com o rótulo de cada um.
+   *
+   * @return array<string, string>
+   *   Tipos indexados pelo identificador e seus rótulos.
+   */
   public static function options(): array {
     return [
       self::INFO => 'Informação',

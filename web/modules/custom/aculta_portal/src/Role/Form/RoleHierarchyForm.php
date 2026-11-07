@@ -39,7 +39,7 @@ final class RoleHierarchyForm extends ConfigFormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -50,21 +50,21 @@ final class RoleHierarchyForm extends ConfigFormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getFormId(): string {
     return 'aculta_role_hierarchy_form';
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function getEditableConfigNames(): array {
     return [self::ESTADO];
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $papeis = $this->papeis();
@@ -146,7 +146,7 @@ final class RoleHierarchyForm extends ConfigFormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
@@ -158,7 +158,7 @@ final class RoleHierarchyForm extends ConfigFormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->config(self::ESTADO)->set('cadeia', $this->ordemDoEnvio($form_state))->save();
@@ -170,6 +170,7 @@ final class RoleHierarchyForm extends ConfigFormBase {
    * Papéis da cadeia na ordem dos pesos enviados (empate: ordem atual).
    *
    * @return string[]
+   *   Papéis da cadeia ordenados por peso.
    */
   private function ordemDoEnvio(FormStateInterface $form_state): array {
     $linhas = $form_state->getValue('cadeia') ?? [];
@@ -187,8 +188,10 @@ final class RoleHierarchyForm extends ConfigFormBase {
    * Cadeia salva, coerente com os papéis que existem. Sem configuração, usa a cadeia de instalação.
    *
    * @param array<string, string> $papeis
+   *   Mapa de identificador do papel para o rótulo.
    *
    * @return string[]
+   *   Papéis da cadeia que existem no site.
    */
   private function cadeiaAtual(array $papeis): array {
     $salva = $this->config(self::ESTADO)->get('cadeia');
@@ -200,6 +203,7 @@ final class RoleHierarchyForm extends ConfigFormBase {
    * Papéis do site (inclui anônimo, que aparece só como papel pai do administrador).
    *
    * @return array<string, string>
+   *   Mapa de identificador do papel para o rótulo.
    */
   private function papeis(): array {
     $papeis = [];
@@ -210,7 +214,10 @@ final class RoleHierarchyForm extends ConfigFormBase {
   }
 
   /**
+   * Tipos de perfil disponíveis, por identificador.
+   *
    * @return array<string, string>
+   *   Mapa de identificador do tipo de perfil para o rótulo.
    */
   private function tiposDePerfil(): array {
     $tipos = [];

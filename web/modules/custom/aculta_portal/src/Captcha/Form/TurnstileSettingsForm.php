@@ -21,21 +21,21 @@ final class TurnstileSettingsForm extends FormBase implements ContainerInjection
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('aculta_portal.turnstile_toggle'), $container->get('current_user'));
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getFormId(): string {
     return 'aculta_portal_turnstile_settings';
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $keyText = $this->toggle->keyConfigured()
@@ -64,7 +64,7 @@ final class TurnstileSettingsForm extends FormBase implements ContainerInjection
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $enabled = (bool) $form_state->getValue('enabled');
@@ -77,7 +77,7 @@ final class TurnstileSettingsForm extends FormBase implements ContainerInjection
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $enabled = (bool) $form_state->getValue('enabled');

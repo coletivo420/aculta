@@ -35,10 +35,29 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 )]
 final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneInterface {
 
+  /**
+   * Gerenciador de formulários inline do Commerce.
+   *
+   * @var \Drupal\commerce\InlineFormManager
+   */
   protected InlineFormManager $inlineFormManager;
 
   /**
+   * Cria a instância do pane com o gerenciador de formulários inline.
    *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   Container de serviços.
+   * @param array $configuration
+   *   Configuração do plugin.
+   * @param string $plugin_id
+   *   ID do plugin.
+   * @param mixed $plugin_definition
+   *   Definição do plugin.
+   * @param \Drupal\commerce_checkout\Plugin\Commerce\CheckoutFlow\CheckoutFlowInterface|null $checkout_flow
+   *   Fluxo de checkout, ou NULL.
+   *
+   * @return static
+   *   Instância do pane.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?CheckoutFlowInterface $checkout_flow = NULL) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition, $checkout_flow);
@@ -102,8 +121,12 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
   }
 
   /**
-   * Número obrigatório também quando o campo não veio no envio (resumo do endereço): a validação do campo só roda
-   * quando o formulário está em edição. Sem número nem S/N, o pedido não avança e a etapa reabre em edição.
+   * Valida o número, o S/N e o bairro do endereço de cobrança.
+   *
+   * O número é obrigatório também quando o campo não veio no envio (resumo
+   * do endereço): a validação do campo só roda quando o formulário está em
+   * edição. Sem número nem S/N, o pedido não avança e a etapa reabre em
+   * edição.
    */
   public function validatePaneForm(array &$pane_form, FormStateInterface $form_state, array &$complete_form) {
     if (!isset($pane_form['profile']['#inline_form'])) {
@@ -162,8 +185,11 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
   }
 
   /**
-   * Endereço de cobrança do pedido. Rascunho: cópia atualizada a partir do perfil do cliente. Pedido concluído: o
-   * perfil gravado no fechamento. Público para o pane de envio usar o mesmo endereço (ver
+   * Devolve o endereço de cobrança do pedido.
+   *
+   * Rascunho: cópia atualizada a partir do perfil do cliente. Pedido
+   * concluído: o perfil gravado no fechamento. Público para o pane de envio
+   * usar o mesmo endereço (ver
    * \Drupal\aculta_commerce\Plugin\Commerce\CheckoutPane\AcultaShippingInformation).
    */
   public function billingCopy(): ?ProfileInterface {

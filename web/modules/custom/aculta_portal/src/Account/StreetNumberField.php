@@ -48,7 +48,14 @@ final class StreetNumberField {
   }
 
   /**
+   * Anexa os processos do campo Número ao elemento de endereço.
    *
+   * @param array $element
+   *   Elemento de endereço alterado por referência.
+   * @param string $number
+   *   Número do endereço.
+   * @param bool $sn
+   *   Indica se o endereço não tem número (S/N).
    */
   public static function attach(array &$element, string $number, bool $sn): void {
     $element['#process'] = [
@@ -76,7 +83,7 @@ final class StreetNumberField {
   }
 
   /**
-   * #process: cria o campo Número e a marca S/N depois do Logradouro. */
+   * Processa: cria o campo Número e a marca S/N depois do Logradouro. */
   public static function processStreetNumber(array $element, FormStateInterface $form_state, array &$complete_form): array {
     if (isset($element['address_line1'])) {
       $weight = ($element['address_line1']['#weight'] ?? 0);

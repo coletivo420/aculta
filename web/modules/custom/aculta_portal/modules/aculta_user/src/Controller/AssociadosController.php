@@ -29,7 +29,7 @@ final class AssociadosController extends ControllerBase {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -106,7 +106,11 @@ final class AssociadosController extends ControllerBase {
   }
 
   /**
-   * @return array<int, array<string, string>> */
+   * Monta as linhas do relatório a partir dos associados cadastrados.
+   *
+   * @return array<int, array<string, string>>
+   *   Linhas com os dados de cada associado.
+   */
   private function rows(): array {
     $rows = [];
     foreach ($this->marker->listadas() as $linha) {
@@ -134,7 +138,13 @@ final class AssociadosController extends ControllerBase {
   }
 
   /**
+   * Traduz o código de situação para o rótulo exibido.
    *
+   * @param string $situacao
+   *   Código da situação do associado.
+   *
+   * @return string
+   *   Rótulo legível da situação.
    */
   private function rotulo(string $situacao): string {
     return match ($situacao) {
@@ -157,7 +167,13 @@ final class AssociadosController extends ControllerBase {
   }
 
   /**
+   * Mascara o RG, mantendo visíveis apenas os dois últimos caracteres.
    *
+   * @param string $rg
+   *   RG a mascarar.
+   *
+   * @return string
+   *   RG mascarado ou string vazia quando não informado.
    */
   private function mask(string $rg): string {
     return $rg === '' ? '' : str_repeat('•', max(0, strlen($rg) - 2)) . substr($rg, -2);

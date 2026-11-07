@@ -24,7 +24,15 @@ final class HerancaDePapeisTest extends UnitTestCase {
   private const TODOS = ['anonymous', 'authenticated', 'email_confirmed', 'estudante', 'associado', 'lms_teacher', 'content_editor', 'gerente_loja', 'administrator', 'wiki_contributor'];
 
   /**
+   * Cria o serviço de herança com as dependências simuladas.
    *
+   * @param array $cadeia
+   *   Cadeia de papéis configurada.
+   * @param array $gravadosNoBanco
+   *   Papéis já gravados na conta.
+   *
+   * @return \Drupal\aculta_user\Role\HerancaDePapeis
+   *   Serviço configurado.
    */
   private function servico(array $cadeia, array $gravadosNoBanco = []): HerancaDePapeis {
     $configuracao = $this->createMock(Config::class);
@@ -55,7 +63,7 @@ final class HerancaDePapeisTest extends UnitTestCase {
   private const CADEIA = ['gerente_loja', 'content_editor', 'lms_teacher', 'associado', 'estudante', 'email_confirmed', 'authenticated'];
 
   /**
-   *
+   * Verifica que o mapa de papéis segue a cadeia configurada.
    */
   public function testMapaSegueACadeia(): void {
     $mapa = $this->servico(self::CADEIA)->mapa();
@@ -64,7 +72,7 @@ final class HerancaDePapeisTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Verifica que os herdados são transitivos e excluem os papéis básicos.
    */
   public function testHerdadosSaoTransitivosSemOsBasicos(): void {
     $herdados = $this->servico(self::CADEIA)->herdados(['lms_teacher']);
@@ -72,7 +80,7 @@ final class HerancaDePapeisTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Verifica que um papel novo sem categoria herda do autenticado.
    */
   public function testPapelNovoSemCategoriaHerdaDoAutenticado(): void {
     // Papel criado depois da configuração: entra como lateral do autenticado (equivale ao insert do contrib).
@@ -82,7 +90,7 @@ final class HerancaDePapeisTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Verifica que os papéis herdados não gravados ignoram o que está no banco.
    */
   public function testHerdadosNaoGravadosIgnoraOQueEstaNoBanco(): void {
     // Conta gravada com gerente_loja: lms_teacher e associado são herdados e não devem ser salvos.

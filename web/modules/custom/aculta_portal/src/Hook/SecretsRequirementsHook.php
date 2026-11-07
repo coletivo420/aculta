@@ -28,7 +28,11 @@ final class SecretsRequirementsHook {
   }
 
   /**
- * @return array<string, array<string, mixed>> */
+   * Informa o estado das credenciais obrigatórias do ambiente.
+   *
+   * @return array<string, array<string, mixed>>
+   *   Requisitos de runtime indexados pelo identificador.
+   */
   #[Hook('runtime_requirements')]
   public function runtimeRequirements(): array {
     $missing = $this->secrets->missingRequired();

@@ -49,14 +49,23 @@ final class UgcRecipientConfig extends ConfigEntityBase {
   protected array $emails = [];
 
   /**
+   * Retorna os e-mails dos moderadores deste purpose.
+   *
    * @return string[]
+   *   Lista de e-mails dos moderadores.
    */
   public function getEmails(): array {
     return $this->emails;
   }
 
   /**
+   * Define os e-mails dos moderadores, sem repetição e sem valores vazios.
+   *
    * @param string[] $emails
+   *   E-mails dos moderadores.
+   *
+   * @return $this
+   *   A própria configuração, para encadeamento.
    */
   public function setEmails(array $emails): self {
     $this->emails = array_values(array_unique(array_filter($emails)));

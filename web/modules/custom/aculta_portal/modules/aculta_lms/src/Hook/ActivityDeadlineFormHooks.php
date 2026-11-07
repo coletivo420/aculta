@@ -35,8 +35,13 @@ final class ActivityDeadlineFormHooks {
   }
 
   /**
- *
- */
+   * Mostra o prazo da atividade no formulário de resposta.
+   *
+   * @param array $form
+   *   Estrutura do formulário, alterada no lugar.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado do formulário.
+   */
   #[Hook('form_aculta_lms_answer_submission_alter')]
   public function answerFormAlter(array &$form, FormStateInterface $form_state): void {
     $course = $form_state->get('aculta_lms_course');

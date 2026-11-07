@@ -13,7 +13,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- *
+ * Define a entidade de atividade de uma aula do LMS.
  */
 #[ContentEntityType(
   id: 'aculta_lms_activity',
@@ -26,7 +26,13 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 final class ActivityEntity extends ContentEntityBase {
 
   /**
+   * Define os campos base da atividade.
    *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   Definição do tipo de entidade.
+   *
+   * @return \Drupal\Core\Field\FieldDefinitionInterface[]
+   *   Campos base indexados pelo nome.
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
@@ -43,7 +49,10 @@ final class ActivityEntity extends ContentEntityBase {
   }
 
   /**
+   * Valida as regras da atividade antes de salvar.
    *
+   * @param \Drupal\Core\Entity\EntityStorageInterface $storage
+   *   Armazenamento da entidade.
    */
   public function preSave(EntityStorageInterface $storage): void {
     parent::preSave($storage);

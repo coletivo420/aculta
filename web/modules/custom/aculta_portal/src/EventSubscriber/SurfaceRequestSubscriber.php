@@ -27,14 +27,17 @@ final class SurfaceRequestSubscriber implements EventSubscriberInterface {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function getSubscribedEvents(): array {
     return [KernelEvents::REQUEST => [['onRequest', 31]]];
   }
 
   /**
+   * Responde 404 quando a superfície da requisição está desativada.
    *
+   * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
+   *   Evento da requisição.
    */
   public function onRequest(RequestEvent $event): void {
     if (!$event->isMainRequest() || !$this->surfaces->leituraAtiva()) {

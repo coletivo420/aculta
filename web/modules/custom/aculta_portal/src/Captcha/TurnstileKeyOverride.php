@@ -22,7 +22,13 @@ final class TurnstileKeyOverride implements ConfigFactoryOverrideInterface {
   public function __construct(private readonly string $appRoot) {}
 
   /**
+   * Aplica a chave do Turnstile conforme o ambiente do deployer.
    *
+   * @param array $names
+   *   Nomes das configurações carregadas.
+   *
+   * @return array
+   *   Sobrescritas da configuração do Turnstile.
    */
   public function loadOverrides($names): array {
     if (!in_array(self::CONFIG_NAME, $names, TRUE)) {
@@ -34,21 +40,38 @@ final class TurnstileKeyOverride implements ConfigFactoryOverrideInterface {
   }
 
   /**
+   * Devolve o sufixo de cache da sobrescrita.
    *
+   * @return string
+   *   Sufixo composto pelo ambiente atual.
    */
   public function getCacheSuffix(): string {
     return 'aculta_portal_turnstile_key_' . DeployerEnvironment::current(dirname($this->appRoot), 'production');
   }
 
   /**
+   * Não cria objetos de configuração, pois só sobrescreve valores.
    *
+   * @param string $name
+   *   Nome da configuração.
+   * @param string $collection
+   *   Coleção de configuração.
+   *
+   * @return mixed|null
+   *   Sempre NULL.
    */
   public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
     return NULL;
   }
 
   /**
+   * Devolve os metadados de cache da sobrescrita.
    *
+   * @param string $name
+   *   Nome da configuração.
+   *
+   * @return \Drupal\Core\Cache\CacheableMetadata
+   *   Metadados de cache vazios.
    */
   public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();

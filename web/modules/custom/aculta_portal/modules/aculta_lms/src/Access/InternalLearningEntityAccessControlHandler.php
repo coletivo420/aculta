@@ -14,7 +14,7 @@ use Drupal\Core\Session\AccountInterface;
 final class InternalLearningEntityAccessControlHandler extends EntityAccessControlHandler {
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
     return AccessResult::forbidden()->addCacheableDependency($entity);

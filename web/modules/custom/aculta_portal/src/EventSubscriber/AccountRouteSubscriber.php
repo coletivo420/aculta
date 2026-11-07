@@ -24,7 +24,7 @@ final class AccountRouteSubscriber implements EventSubscriberInterface {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function getSubscribedEvents(): array {
     // RouterListener resolves _route at priority 32. This runs after routing,
@@ -33,7 +33,10 @@ final class AccountRouteSubscriber implements EventSubscriberInterface {
   }
 
   /**
+   * Redireciona usuários comuns para o Portal nas rotas de conta.
    *
+   * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
+   *   Evento da requisição do kernel.
    */
   public function onKernelRequest(RequestEvent $event): void {
     if (!$event->isMainRequest() || !$this->currentUser->isAuthenticated()

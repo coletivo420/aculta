@@ -38,8 +38,8 @@ final class AttemptArchiveHooks {
   ) {}
 
   /**
- *
- */
+   * Arquiva a resposta ACULTA antes de ela ser excluída.
+   */
   #[Hook('entity_predelete')]
   public function entityPredelete(EntityInterface $entity): void {
     if ($entity instanceof AnswerEntity) {
@@ -48,8 +48,8 @@ final class AttemptArchiveHooks {
   }
 
   /**
- *
- */
+   * Remove os registros de tentativa do grupo de curso ou do usuário excluído.
+   */
   #[Hook('entity_delete')]
   public function entityDelete(EntityInterface $entity): void {
     if ($entity instanceof GroupInterface && $entity->bundle() === 'lms_course') {
@@ -62,8 +62,8 @@ final class AttemptArchiveHooks {
   }
 
   /**
- *
- */
+   * Arquiva a versão anterior da resposta antes de ela ser salva.
+   */
   #[Hook('entity_presave')]
   public function entityPresave(EntityInterface $entity): void {
     if ($entity instanceof AnswerEntity) {
@@ -72,8 +72,18 @@ final class AttemptArchiveHooks {
   }
 
   /**
- *
- */
+   * Controla o acesso ao histórico de tentativas arquivadas.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Entidade cujo acesso está sendo verificado.
+   * @param string $operation
+   *   Operação de acesso solicitada.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta que solicita o acesso.
+   *
+   * @return \Drupal\Core\Access\AccessResult
+   *   Resultado do acesso.
+   */
   #[Hook('entity_access')]
   public function attemptArchiveAccess(EntityInterface $entity, string $operation, AccountInterface $account): AccessResult {
     if (!$entity instanceof AttemptArchive) {
@@ -112,8 +122,18 @@ final class AttemptArchiveHooks {
   }
 
   /**
- *
- */
+   * Nega a criação de registros de tentativa por qualquer pessoa.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta que solicita a criação.
+   * @param array $context
+   *   Contexto da operação de criação.
+   * @param string|null $entityBundle
+   *   Bundle da entidade, quando aplicável.
+   *
+   * @return \Drupal\Core\Access\AccessResult
+   *   Resultado do acesso.
+   */
   #[Hook('entity_create_access')]
   public function attemptArchiveCreateAccess(AccountInterface $account, array $context, ?string $entityBundle): AccessResult {
     if (($context['entity_type_id'] ?? NULL) !== 'aculta_lms_attempt_archive') {
@@ -123,8 +143,17 @@ final class AttemptArchiveHooks {
   }
 
   /**
- *
- */
+   * Acrescenta o histórico de tentativas à exibição completa da resposta.
+   *
+   * @param array $build
+   *   Render array da resposta, alterado no lugar.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Entidade exibida.
+   * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
+   *   Display de exibição em uso.
+   * @param string $view_mode
+   *   Modo de exibição solicitado.
+   */
   #[Hook('entity_view')]
   public function attemptArchiveView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
     if (!$entity instanceof AnswerEntity || $view_mode !== 'full') {
@@ -198,7 +227,13 @@ final class AttemptArchiveHooks {
   }
 
   /**
+   * Extrai o texto legível dos dados JSON de uma resposta.
    *
+   * @param string $json
+   *   Dados JSON da resposta arquivada.
+   *
+   * @return string
+   *   Texto sem marcação HTML.
    */
   private function answerText(string $json): string {
     $data = Json::decode($json);

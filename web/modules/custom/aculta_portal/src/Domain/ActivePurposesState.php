@@ -44,6 +44,7 @@ final class ActivePurposesState {
    * Retrieves the cached list of active purpose keys from state.
    *
    * @return list<string>
+   *   Lista das chaves de propósito ativas.
    */
   public function get(): array {
     $purposes = $this->state->get(self::STATE_KEY);

@@ -16,8 +16,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Prévia da busca (popup): HTML da lista de resultados para o termo, carregado pelo script do Portal depois de
- * uma pausa na digitação. Sem Form API: a rota não depende do objeto do formulário, então não há estado a
+ * Prévia da busca (popup): HTML da lista de resultados.
+ *
+ * Carregado pelo script do Portal depois de uma pausa na digitação. Sem
+ * Form API: a rota não depende do objeto do formulário, então não há estado a
  * restaurar no cache de formulários.
  */
 final class SearchPreviewController implements ContainerInjectionInterface {
@@ -36,7 +38,7 @@ final class SearchPreviewController implements ContainerInjectionInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -48,7 +50,13 @@ final class SearchPreviewController implements ContainerInjectionInterface {
   }
 
   /**
+   * Devolve o HTML da prévia de resultados para o termo pesquisado.
    *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   Requisição com o termo no parâmetro de consulta q.
+   *
+   * @return \Symfony\Component\HttpFoundation\Response
+   *   Resposta HTML sem cache.
    */
   public function preview(Request $request): Response {
     $term = mb_substr(trim((string) $request->query->get('q', '')), 0, SearchPageController::MAX_CHARS);
@@ -59,7 +67,14 @@ final class SearchPreviewController implements ContainerInjectionInterface {
   }
 
   /**
-   * @return array<string, mixed> */
+   * Monta o render array da prévia de resultados.
+   *
+   * @param string $term
+   *   Termo pesquisado.
+   *
+   * @return array<string, mixed>
+   *   Render array da lista, com dica ou estado vazio quando aplicável.
+   */
   private function build(string $term): array {
     if (mb_strlen($term) < SearchPageController::MIN_CHARS) {
       return [

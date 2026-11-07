@@ -44,10 +44,15 @@ final class MelhorEnvioAddressMapper {
   public function __construct(private readonly CepLookupInterface $cep) {}
 
   /**
+   * Converte um endereço do Drupal em endereço logístico do Melhor Envio.
+   *
    * @param array<string, mixed>|null $address
    *   Campos do Drupal Address de um perfil (perfil de envio do pedido, ou configuração da origem). Não é alterado.
    * @param string $purpose
    *   PURPOSE_QUOTE ou PURPOSE_SHIPMENT.
+   *
+   * @return \Drupal\aculta_commerce_melhorenvio\Address\LogisticsAddress
+   *   Endereço logístico ou endereço inválido com os erros encontrados.
    */
   public function map(?array $address, string $purpose): LogisticsAddress {
     if (!in_array($purpose, [self::PURPOSE_QUOTE, self::PURPOSE_SHIPMENT], TRUE)) {
@@ -128,8 +133,16 @@ final class MelhorEnvioAddressMapper {
   }
 
   /**
+   * Cria um endereço inválido com os erros informados.
+   *
    * @param list<string> $errors
-   *   */
+   *   Códigos dos erros encontrados.
+   * @param string $postalCode
+   *   CEP normalizado, quando já disponível.
+   *
+   * @return \Drupal\aculta_commerce_melhorenvio\Address\LogisticsAddress
+   *   Endereço inválido com a lista de erros.
+   */
   private function invalid(array $errors, string $postalCode = ''): LogisticsAddress {
     return new LogisticsAddress($postalCode, '', '', FALSE, '', '', '', '', 'BR', array_values(array_unique($errors)));
   }

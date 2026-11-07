@@ -29,7 +29,7 @@ final class SupportForm extends FormBase {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -42,14 +42,22 @@ final class SupportForm extends FormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getFormId(): string {
     return 'aculta_support_form';
   }
 
   /**
+   * Monta o formulário de apoio institucional e verifica o gateway de pagamento.
    *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
+   *
+   * @return array
+   *   Estrutura do formulário renderizável.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['#cache']['max-age'] = 0;
@@ -87,7 +95,7 @@ final class SupportForm extends FormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     // There is intentionally no payment submission until the Commerce flow is

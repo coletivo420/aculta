@@ -44,7 +44,7 @@ final class SalesReportController implements ContainerInjectionInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -81,6 +81,7 @@ final class SalesReportController implements ContainerInjectionInterface {
    * Seção do painel: título semântico e conteúdo. Aparência decidida pelo tema (tokens sales-*).
    *
    * @return array<string, mixed>
+   *   Render array da seção.
    */
   private function secao(mixed $titulo, array $conteudo): array {
     return [
@@ -97,7 +98,13 @@ final class SalesReportController implements ContainerInjectionInterface {
   }
 
   /**
+   * Número da página atual da listagem, a partir da URL.
    *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   Requisição atual.
+   *
+   * @return int
+   *   Página solicitada, nunca negativa.
    */
   private function paginaAtual(Request $request): int {
     return max(0, (int) $request->query->get('pagina', 0));
@@ -107,6 +114,7 @@ final class SalesReportController implements ContainerInjectionInterface {
    * Filtros da URL repassados à paginação (sem o parâmetro de página).
    *
    * @return array<string, string>
+   *   Filtros da URL, sem o parâmetro de página.
    */
   private function filtrosDaUrl(Request $request): array {
     return array_filter($request->query->all(), static fn ($valor, $chave): bool => $chave !== 'pagina' && is_scalar($valor), ARRAY_FILTER_USE_BOTH);

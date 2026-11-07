@@ -17,6 +17,9 @@ use Symfony\Component\Routing\RouteCollection;
 #[Group('aculta_portal')]
 final class CartFriendlyRouteSubscriberTest extends UnitTestCase {
 
+  /**
+   * Confirma que o carrinho vai ao caminho em português sem trocar o nome da rota.
+   */
   public function testCarrinhoPassaParaCaminhoEmPortuguesSemTrocarNome(): void {
     $colecao = new RouteCollection();
     $colecao->add('commerce_cart.page', new Route('/cart', [], ['_access' => 'TRUE']));
@@ -29,6 +32,9 @@ final class CartFriendlyRouteSubscriberTest extends UnitTestCase {
     $this->assertSame('/checkout/{commerce_order}/{step}', $colecao->get('commerce_checkout.form')->getPath());
   }
 
+  /**
+   * Confirma que a ausência da rota do Commerce não altera nada.
+   */
   public function testSemARotaDoCommerceNaoFazNada(): void {
     $colecao = new RouteCollection();
     $colecao->add('outra.rota', new Route('/outra'));

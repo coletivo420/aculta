@@ -25,21 +25,21 @@ final class FriendshipActionForm extends FormBase {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('aculta_user.friendship_manager'), $container->get('current_user'), $container->get('entity_type.manager'));
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getFormId(): string {
     return 'aculta_user_friendship_action';
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?UserInterface $target = NULL, ?AcultaFriendshipInterface $relationship = NULL): array {
     if ($target === NULL || !$target->isActive() || !$this->currentAccount->isAuthenticated() || (int) $target->id() === (int) $this->currentAccount->id()) {
@@ -70,7 +70,7 @@ final class FriendshipActionForm extends FormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $uid = (int) $form_state->get('target_uid');

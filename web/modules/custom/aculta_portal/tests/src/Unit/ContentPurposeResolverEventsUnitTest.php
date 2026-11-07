@@ -22,6 +22,7 @@ class ContentPurposeResolverEventsUnitTest extends UnitTestCase {
    * Rotas canônicas de evento, data e local.
    *
    * @return array<string, array{string}>
+   *   Rotas de evento indexadas por tipo.
    */
   public static function rotasDeEvento(): array {
     return [

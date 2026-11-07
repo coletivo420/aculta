@@ -23,8 +23,17 @@ final class CertificateEntityViewHooks {
   ) {}
 
   /**
- *
- */
+   * Monta o snapshot do certificado para a visualização da entidade.
+   *
+   * @param array $build
+   *   Render array da entidade.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Entidade exibida.
+   * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
+   *   Exibição usada.
+   * @param string $viewMode
+   *   Modo de visualização.
+   */
   #[Hook('entity_view')]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $viewMode): void {
     if (!$entity instanceof CourseCertificate) {

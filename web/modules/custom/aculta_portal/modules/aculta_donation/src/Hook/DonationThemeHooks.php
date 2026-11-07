@@ -15,6 +15,7 @@ class DonationThemeHooks {
    * Implements hook_theme().
    *
    * @return array<string, array<string, mixed>>
+   *   Definições de tema do fluxo de doação.
    */
   #[Hook('theme')]
   public function theme(): array {

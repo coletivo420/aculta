@@ -22,7 +22,7 @@ final class AccountListPathProcessor implements OutboundPathProcessorInterface {
   private const PREFIX_PATTERN = '#^/pedidos(/|$)#';
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function processOutbound($path, &$options = [], ?Request $request = NULL, $bubbleable_metadata = NULL): string {
     if (in_array($path, self::PATHS, TRUE) || preg_match(self::PREFIX_PATTERN, $path)) {

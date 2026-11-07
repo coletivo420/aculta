@@ -55,7 +55,13 @@ final class AvatarCropForm extends FormBase {
   ) {}
 
   /**
+   * Cria a instância do formulário com os serviços necessários.
    *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   Container de serviços.
+   *
+   * @return static
+   *   Instância do formulário.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -69,7 +75,10 @@ final class AvatarCropForm extends FormBase {
   }
 
   /**
+   * Devolve o ID do formulário.
    *
+   * @return string
+   *   ID do formulário.
    */
   public function getFormId(): string {
     return 'aculta_user_avatar_crop_form';
@@ -101,7 +110,15 @@ final class AvatarCropForm extends FormBase {
   }
 
   /**
+   * Monta o formulário de recorte da foto.
    *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
+   *
+   * @return array
+   *   Estrutura do formulário.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['#attributes']['data-portal-ui'] = 'avatar-crop-dialog';
@@ -176,7 +193,12 @@ final class AvatarCropForm extends FormBase {
   }
 
   /**
+   * Aplica o recorte, torna o arquivo permanente e troca a foto da conta.
    *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $file = $this->targetFile();

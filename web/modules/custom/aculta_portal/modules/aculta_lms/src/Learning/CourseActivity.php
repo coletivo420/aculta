@@ -13,6 +13,8 @@ namespace Drupal\aculta_lms\Learning;
 final class CourseActivity {
 
   /**
+   * Constrói a atividade com seus identificadores e dados de exibição.
+   *
    * @param int $id
    *   Identificador da atividade na fonte atual.
    * @param int $lessonId

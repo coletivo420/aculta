@@ -47,9 +47,13 @@ final class QuoteRequestBuilder {
   }
 
   /**
-   * Payload com um produto por item do carrinho (cada um com a própria medida e quantidade). A API do Melhor Envio
-   * monta as caixas a partir da lista `products`; o módulo não soma dimensões.
+   * Monta o payload de cotação com um produto por item do carrinho.
    *
+   * A API do Melhor Envio monta as caixas a partir da lista `products`; o
+   * módulo não soma dimensões.
+   *
+   * @param \Drupal\aculta_commerce_melhorenvio\Quote\ShipmentAddressPair $pair
+   *   Par de endereços de origem e destino.
    * @param list<\Drupal\aculta_commerce_melhorenvio\Quote\QuoteItem> $items
    *   Itens do carrinho.
    *

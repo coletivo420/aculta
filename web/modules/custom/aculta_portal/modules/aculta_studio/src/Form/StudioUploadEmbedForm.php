@@ -113,7 +113,11 @@ final class StudioUploadEmbedForm extends FormBase {
   /**
    * Lista os envios recentes da integração: os do usuário, ou todos se administrador.
    *
+   * @param string $integracao
+   *   Identificador da integração consultada.
+   *
    * @return array<string, mixed>
+   *   Linhas dos envios recentes.
    */
   private function recentList(string $integracao): array {
     $isAdmin = $this->currentUser->hasPermission('administer site configuration');

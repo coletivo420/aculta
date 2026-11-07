@@ -23,14 +23,18 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
   private const PREFIXO = '/painel-administrativo';
 
   /**
-   * Árvore de configuração de pessoas, com slugs em português. Só esta árvore é traduzida: a área operacional de pessoas
+   * Árvore de configuração de pessoas, com slugs em português.
+   *
+   * Só esta árvore é traduzida: a área operacional de pessoas
    * (/painel-administrativo/pessoas) mantém os caminhos do Core.
    */
   private const RAIZ_CONFIGURACAO_PESSOAS = '/painel-administrativo/configuracoes/people';
 
   /**
-   * Ferramentas de administração de contas que saem de /pessoas (usuário individual) para Configurações > Pessoas.
-   * Cada entrada move o caminho e todas as subpáginas dele. OAuth e perfis individuais continuam em /pessoas.
+   * Ferramentas de contas que saem de /pessoas para Configurações > Pessoas.
+   *
+   * Cada entrada move o caminho e todas as subpáginas dele. OAuth e perfis
+   * individuais continuam em /pessoas.
    */
   /**
    * Caminhos de usuário individual que ficam em /pessoas, com o nome em português.
@@ -78,7 +82,7 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function onAlterRoutes(RouteBuildEvent $event): void {
     $this->alterRoutes($event->getRouteCollection());
@@ -106,7 +110,7 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection): void {
     // A página de papéis do Core (/painel-administrativo/pessoas/roles) é substituída pela página Papéis e perfis do

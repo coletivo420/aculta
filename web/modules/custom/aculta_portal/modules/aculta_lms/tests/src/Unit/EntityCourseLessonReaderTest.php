@@ -14,13 +14,13 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- *
+ * Leitura das aulas de um curso a partir das entidades de conteúdo.
  */
 #[Group('aculta_lms')]
 final class EntityCourseLessonReaderTest extends UnitTestCase {
 
   /**
-   *
+   * Confirma que as aulas são mapeadas e ordenadas por peso e depois por ID.
    */
   public function testMapsLessonsAndOrdersByWeightThenId(): void {
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -43,7 +43,7 @@ final class EntityCourseLessonReaderTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que nenhuma aula é retornada quando o armazenamento está vazio.
    */
   public function testReturnsNoLessonsWhenStorageIsEmpty(): void {
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -55,7 +55,21 @@ final class EntityCourseLessonReaderTest extends UnitTestCase {
   }
 
   /**
+   * Cria uma entidade de aula simulada com os campos informados.
    *
+   * @param int $id
+   *   Identificador da aula.
+   * @param int $courseId
+   *   Identificador do curso da aula.
+   * @param string $title
+   *   Título da aula.
+   * @param bool $published
+   *   Se a aula está publicada.
+   * @param int $weight
+   *   Peso de ordenação da aula.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface
+   *   Entidade de aula simulada.
    */
   private function lessonEntity(int $id, int $courseId, string $title, bool $published, int $weight): ContentEntityInterface {
     $entity = $this->createMock(ContentEntityInterface::class);

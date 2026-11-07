@@ -21,8 +21,13 @@ final class AccountSectionsHooks {
   ) {}
 
   /**
- *
- */
+   * Acrescenta o item de avisos às seções de Minha conta.
+   *
+   * @param array $sections
+   *   Seções da conta, por chave de rota.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta cuja navegação está sendo montada.
+   */
   #[Hook('aculta_portal_account_sections_alter')]
   public function sectionsAlter(array &$sections, AccountInterface $account): void {
     if ($account->isAnonymous()) {
@@ -37,8 +42,11 @@ final class AccountSectionsHooks {
   }
 
   /**
- *
- */
+   * Define a seção pai da central de avisos.
+   *
+   * @param array $parents
+   *   Mapeamento de seções para suas seções pai.
+   */
   #[Hook('aculta_portal_account_parent_sections_alter')]
   public function parentSectionsAlter(array &$parents): void {
     // A aba da central fica destacada no item Avisos/Mensagens.

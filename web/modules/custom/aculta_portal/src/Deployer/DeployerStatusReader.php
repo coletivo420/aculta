@@ -21,10 +21,6 @@ final class DeployerStatusReader {
   }
 
   /**
-   * @return array<string, mixed>|null null se o arquivo não existe, não pode ser lido ou tem outro esquema.
-   */
-
-  /**
    * Resultado da última verificação de indexação publicado pelo deployer (`indexing`), ou null. */
   public function indexing(): ?array {
     $data = $this->read();
@@ -33,7 +29,11 @@ final class DeployerStatusReader {
   }
 
   /**
+   * Lê o relatório de status publicado pelo deployer.
    *
+   * @return array<string, mixed>|null
+   *   Conteúdo do relatório, ou NULL se o arquivo não existe, não pode ser
+   *   lido ou tem outro esquema.
    */
   public function read(): ?array {
     $file = $this->path();

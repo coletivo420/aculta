@@ -43,7 +43,7 @@ final class SurfaceListController extends ControllerBase {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -88,7 +88,10 @@ final class SurfaceListController extends ControllerBase {
   }
 
   /**
+   * Monta as linhas da tabela de superfícies configuradas.
+   *
    * @return array<int, array<int, mixed>>
+   *   Linhas da tabela, cada uma com as células da superfície.
    */
   private function linhas(): array {
     $linhas = [];
@@ -182,7 +185,13 @@ final class SurfaceListController extends ControllerBase {
   }
 
   /**
+   * Retorna o rótulo traduzido do modo de caminho.
    *
+   * @param string $modo
+   *   Modo de caminho configurado.
+   *
+   * @return string
+   *   Rótulo traduzido para exibição.
    */
   private function rotuloModo(string $modo): string {
     return match ($modo) {

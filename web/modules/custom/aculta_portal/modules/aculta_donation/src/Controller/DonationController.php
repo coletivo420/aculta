@@ -116,6 +116,8 @@ class DonationController implements ContainerInjectionInterface {
    *   Injected service.
    * @param \Drupal\aculta_donation\NewOrder $newOrder
    *   Injected service.
+   * @param \Drupal\aculta_portal\Domain\DomainPurposeManager $purposes
+   *   Gerenciador de domínio usado no checkout.
    */
   final public function __construct(
     FormBuilderInterface $form_builder,

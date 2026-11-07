@@ -26,7 +26,13 @@ final class NativePrivateMessageController extends ControllerBase {
   ) {}
 
   /**
+   * Cria a instância do controlador com o serviço de propósito de domínio.
    *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   Container de serviços.
+   *
+   * @return static
+   *   Instância do controlador.
    */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('aculta_portal.domain_purpose'));

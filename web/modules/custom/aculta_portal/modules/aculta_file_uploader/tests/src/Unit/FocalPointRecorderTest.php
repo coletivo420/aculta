@@ -20,7 +20,7 @@ use Drupal\Tests\UnitTestCase;
 final class FocalPointRecorderTest extends UnitTestCase {
 
   /**
-   *
+   * Verifica que todos os tipos retornam falso quando falta o tipo de recorte.
    */
   public function testReturnsFalseForEveryTypeWhenCropTypeIsMissing(): void {
     $storage = $this->createMock(EntityStorageInterface::class);

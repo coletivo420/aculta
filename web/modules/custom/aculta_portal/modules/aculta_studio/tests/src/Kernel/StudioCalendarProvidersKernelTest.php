@@ -142,7 +142,7 @@ final class StudioCalendarProvidersKernelTest extends KernelTestBase {
   }
 
   /**
-   *
+   * Confirma que visitante anônimo recebe listas vazias.
    */
   public function testAnonimoRecebeListaVazia(): void {
     $anonymous = new AnonymousUserSession();
@@ -164,7 +164,7 @@ final class StudioCalendarProvidersKernelTest extends KernelTestBase {
   }
 
   /**
-   *
+   * Confirma que usuário sem matrícula não vê cursos.
    */
   public function testUsuarioSemMatriculaNaoVeCursos(): void {
     $user = $this->createUser();
@@ -183,7 +183,7 @@ final class StudioCalendarProvidersKernelTest extends KernelTestBase {
   }
 
   /**
-   *
+   * Confirma que a lista de meus eventos não repete o mesmo evento.
    */
   public function testMeusEventosNaoRepeteOMesmoEvento(): void {
     $user = $this->createUser();

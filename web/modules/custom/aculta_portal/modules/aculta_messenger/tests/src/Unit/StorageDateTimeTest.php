@@ -15,7 +15,7 @@ use PHPUnit\Framework\Attributes\Group;
 final class StorageDateTimeTest extends UnitTestCase {
 
   /**
-   *
+   * Lê o valor armazenado como UTC independentemente do fuso padrão.
    */
   public function testStoredValueIsReadAsUtcForAnyDefaultTimezone(): void {
     $previous = date_default_timezone_get();
@@ -33,7 +33,7 @@ final class StorageDateTimeTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Devolve NULL para valores vazios ou inválidos.
    */
   public function testEmptyAndInvalidValuesAreNull(): void {
     $this->assertNull(StorageDateTime::toTimestamp(NULL));

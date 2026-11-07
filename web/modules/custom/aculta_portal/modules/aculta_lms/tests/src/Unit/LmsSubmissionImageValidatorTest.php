@@ -20,15 +20,20 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
- *
+ * Testa o validador de imagem de envio do LMS.
  */
 #[CoversClass(LmsSubmissionImageValidator::class)]
 final class LmsSubmissionImageValidatorTest extends TestCase {
 
+  /**
+   * Caminho do arquivo temporário usado nos testes.
+   *
+   * @var string
+   */
   private string $path;
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
@@ -37,7 +42,7 @@ final class LmsSubmissionImageValidatorTest extends TestCase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function tearDown(): void {
     if (isset($this->path) && is_file($this->path)) {
@@ -47,7 +52,7 @@ final class LmsSubmissionImageValidatorTest extends TestCase {
   }
 
   /**
-   *
+   * Confirma que imagem raster válida passa e não-imagem usa a validação nativa.
    */
   public function testValidRasterImagePassesAndNonImageUsesNativeValidation(): void {
     file_put_contents($this->path, base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l1sAAAAASUVORK5CYII=', TRUE));
@@ -61,7 +66,7 @@ final class LmsSubmissionImageValidatorTest extends TestCase {
   }
 
   /**
-   *
+   * Confirma que imagem inválida e imagem acima do limite são rejeitadas.
    */
   public function testInvalidImageAndOversizedImageAreRejected(): void {
     file_put_contents($this->path, 'not an image');
@@ -75,7 +80,10 @@ final class LmsSubmissionImageValidatorTest extends TestCase {
   }
 
   /**
+   * Cria um validador configurado com mocks de serviço.
    *
+   * @return \Drupal\aculta_lms\Plugin\Validation\Constraint\LmsSubmissionImageValidator
+   *   Validador pronto para uso nos testes.
    */
   private function validator(): LmsSubmissionImageValidator {
     $config = $this->createMock(Config::class);
@@ -101,7 +109,15 @@ final class LmsSubmissionImageValidatorTest extends TestCase {
   }
 
   /**
+   * Cria um mock de arquivo com nome, URI e tamanho informados.
    *
+   * @param string $name
+   *   Nome do arquivo.
+   * @param int|false $size
+   *   Tamanho do arquivo em bytes ou FALSO quando desconhecido.
+   *
+   * @return \Drupal\file\FileInterface
+   *   Mock do arquivo.
    */
   private function file(string $name, int|false $size): FileInterface {
     $file = $this->createMock(FileInterface::class);

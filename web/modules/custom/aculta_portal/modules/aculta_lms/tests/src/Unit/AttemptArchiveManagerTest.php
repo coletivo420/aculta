@@ -24,11 +24,14 @@ use PHPUnit\Framework\Attributes\Group;
 final class AttemptArchiveManagerTest extends UnitTestCase {
 
   /**
-   * @var array<string, mixed> */
+   * Valores capturados na criação da entidade de arquivo.
+   *
+   * @var array<string, mixed>
+   */
   private array $createdValues = [];
 
   /**
-   *
+   * Confirma que a reavaliação arquiva a resposta anterior e a nota exata.
    */
   public function testReevaluationArchivesPreviousAnswerAndExactScore(): void {
     $original = $this->buildAnswer(['answer' => 'Resposta original'], '80.25', 'graded');
@@ -48,7 +51,7 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que excluir uma tentativa arquiva o payload imutável e o contexto.
    */
   public function testDeletingAttemptArchivesItsImmutablePayloadAndContext(): void {
     $answer = $this->buildAnswer(['answer' => 'Resposta da tentativa'], NULL, 'submitted');
@@ -71,7 +74,7 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que uma nota inalterada não cria arquivo duplicado.
    */
   public function testUnchangedGradeDoesNotCreateDuplicateArchive(): void {
     $answer = $this->buildAnswer(['answer' => 'Sem alterações'], '80', 'graded');
@@ -85,7 +88,7 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que uma referência de atividade ausente ignora o arquivo e o histórico.
    */
   public function testMissingActivityReferenceSkipsArchiveAndHistoryQuery(): void {
     $answer = $this->buildAnswer(['answer' => 'Sem atividade'], NULL, 'submitted');
@@ -105,6 +108,7 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
    * Creates the manager and captures the archive entity values.
    *
    * @return array{0: AttemptArchiveManager, 1: EntityInterface}
+   *   Gerenciador criado e entidade de arquivo simulada.
    */
   private function managerForArchive(?ContentEntityInterface $original = NULL): array {
     $archive_entity = $this->createMock(EntityInterface::class);
@@ -138,7 +142,15 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
   }
 
   /**
+   * Cria o gerenciador com storages simulados de resposta e arquivo.
    *
+   * @param \Drupal\Core\Entity\EntityStorageInterface $answer_storage
+   *   Storage simulado das respostas.
+   * @param \Drupal\Core\Entity\EntityStorageInterface $archive_storage
+   *   Storage simulado dos arquivos.
+   *
+   * @return \Drupal\aculta_lms\AttemptArchiveManager
+   *   Gerenciador de arquivamento de tentativas.
    */
   private function manager(EntityStorageInterface $answer_storage, EntityStorageInterface $archive_storage): AttemptArchiveManager {
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
@@ -150,7 +162,15 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
   }
 
   /**
+   * Cria um storage de entidade que devolve a entidade para o ID informado.
    *
+   * @param string $id
+   *   Identificador esperado na carga.
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   Entidade devolvida pela carga.
+   *
+   * @return \Drupal\Core\Entity\EntityStorageInterface
+   *   Storage simulado.
    */
   private function entityStorage(string $id, ContentEntityInterface $entity): EntityStorageInterface {
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -159,7 +179,17 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
   }
 
   /**
+   * Monta uma entidade de resposta simulada.
    *
+   * @param array $data
+   *   Dados da resposta.
+   * @param string|null $score
+   *   Nota da resposta, ou NULL se não avaliada.
+   * @param string $state
+   *   Estado da resposta.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface
+   *   Entidade de resposta simulada.
    */
   private function buildAnswer(array $data, ?string $score, string $state): ContentEntityInterface {
     return $this->contentEntity('aculta_lms_answer', '21', [
@@ -173,7 +203,10 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
   }
 
   /**
+   * Monta uma entidade de atividade simulada.
    *
+   * @return \Drupal\Core\Entity\ContentEntityInterface
+   *   Entidade de atividade simulada.
    */
   private function activity(): ContentEntityInterface {
     return $this->contentEntity('aculta_lms_activity', '5', [
@@ -183,7 +216,10 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
   }
 
   /**
+   * Monta uma entidade de aula simulada.
    *
+   * @return \Drupal\Core\Entity\ContentEntityInterface
+   *   Entidade de aula simulada.
    */
   private function lesson(): ContentEntityInterface {
     return $this->contentEntity('aculta_lms_lesson', '3', [
@@ -193,7 +229,10 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
   }
 
   /**
+   * Monta um grupo de curso simulado.
    *
+   * @return \Drupal\group\Entity\GroupInterface
+   *   Grupo de curso simulado.
    */
   private function course(): GroupInterface {
     $course = $this->createMock(GroupInterface::class);
@@ -220,7 +259,13 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
   }
 
   /**
+   * Cria um item de campo simulado com o valor informado.
    *
+   * @param mixed $value
+   *   Valor armazenado no campo.
+   *
+   * @return \Drupal\Core\Field\FieldItemListInterface
+   *   Item de campo simulado.
    */
   private function valueField(mixed $value): FieldItemListInterface {
     return new class($value) extends FieldItemList {
@@ -228,14 +273,23 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
       public function __construct(protected readonly mixed $fieldValue) {}
 
       /**
+       * Informa se o valor do campo está vazio.
        *
+       * @return bool
+       *   TRUE se o valor for NULL.
        */
       public function isEmpty(): bool {
         return $this->fieldValue === NULL;
       }
 
       /**
+       * Devolve o valor do campo para a propriedade solicitada.
        *
+       * @param string $property_name
+       *   Nome da propriedade solicitada.
+       *
+       * @return mixed
+       *   Valor da propriedade.
        */
       public function __get($property_name) {
         if ($property_name === 'value') {
@@ -248,7 +302,10 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
   }
 
   /**
+   * Cria um serviço de tempo simulado com tempo fixo.
    *
+   * @return \Drupal\Component\Datetime\TimeInterface
+   *   Serviço de tempo simulado.
    */
   private function buildTime(): TimeInterface {
     $time = $this->createMock(TimeInterface::class);

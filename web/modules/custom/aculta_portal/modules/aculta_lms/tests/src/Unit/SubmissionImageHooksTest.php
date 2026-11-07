@@ -18,14 +18,14 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- *
+ * Testa os hooks de imagem de envio de respostas do LMS.
  */
 #[CoversClass(SubmissionImageHooks::class)]
 #[Group('aculta_lms')]
 final class SubmissionImageHooksTest extends UnitTestCase {
 
   /**
-   *
+   * Confirma que a restrição de imagem é adicionada ao envio de resposta.
    */
   public function testAddsAcultaImageConstraintToManagedAnswerUpload(): void {
     $form = [
@@ -45,7 +45,7 @@ final class SubmissionImageHooksTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que o texto de ajuda lista apenas as extensões aceitas.
    */
   public function testHelpTextListsOnlyTheExtensionsAccepted(): void {
     $form = [
@@ -64,7 +64,7 @@ final class SubmissionImageHooksTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que a atividade não amplia extensões nem tamanho além da política do LMS.
    */
   public function testActivityCannotWidenExtensionsOrSizeBeyondTheLmsPolicy(): void {
     $form = [
@@ -84,7 +84,7 @@ final class SubmissionImageHooksTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que formulários sem upload gerenciado não são alterados.
    */
   public function testLeavesFormsWithoutManagedUploadAlone(): void {
     $form = ['answer' => ['#type' => 'textarea']];
@@ -96,7 +96,7 @@ final class SubmissionImageHooksTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que os validadores nativos são mantidos sem a política do Portal.
    */
   public function testKeepsNativeValidatorsWhenThePortalPolicyIsAbsent(): void {
     $form = [
@@ -115,7 +115,16 @@ final class SubmissionImageHooksTest extends UnitTestCase {
   }
 
   /**
-   * Builds the hook over the real Portal policy with a fixed site-wide config. */
+   * Monta o hook sobre a política real do Portal com configuração fixa.
+   *
+   * @param string $extensions
+   *   Extensões permitidas na configuração do site.
+   * @param int $megabytes
+   *   Tamanho máximo em megabytes.
+   *
+   * @return \Drupal\aculta_lms\Hook\SubmissionImageHooks
+   *   Hook configurado para os testes.
+   */
   private function hooks(string $extensions, int $megabytes): SubmissionImageHooks {
     $config = $this->createMock(Config::class);
     $config->method('get')->willReturnCallback(static fn (string $key) => match ($key) {

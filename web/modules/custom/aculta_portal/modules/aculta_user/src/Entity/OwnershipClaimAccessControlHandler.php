@@ -15,7 +15,7 @@ use Drupal\Core\Session\AccountInterface;
 final class OwnershipClaimAccessControlHandler extends EntityAccessControlHandler {
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
     if ($account->hasPermission('administer aculta claims')) {
@@ -33,7 +33,7 @@ final class OwnershipClaimAccessControlHandler extends EntityAccessControlHandle
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResult {
     return AccessResult::allowedIf($account->isAuthenticated())->cachePerPermissions();

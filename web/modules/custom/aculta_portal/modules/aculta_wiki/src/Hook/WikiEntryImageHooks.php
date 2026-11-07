@@ -254,7 +254,12 @@ final class WikiEntryImageHooks {
   }
 
   /**
+   * Ajusta os pesos dos campos do formulário de autoria.
    *
+   * @param array $form
+   *   Estrutura do formulário, alterada no lugar.
+   * @param \Drupal\node\NodeInterface $node
+   *   Nó em edição.
    */
   private function prepareAuthoringForm(array &$form, NodeInterface $node): void {
     $weights = [

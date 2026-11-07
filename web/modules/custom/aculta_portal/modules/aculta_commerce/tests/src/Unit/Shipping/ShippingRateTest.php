@@ -12,7 +12,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- *
+ * Testa a identidade e o valor da tarifa de frete.
  */
 #[CoversClass(\Drupal\aculta_commerce\Shipping\ShippingRate::class)]
 #[Group('aculta_commerce')]

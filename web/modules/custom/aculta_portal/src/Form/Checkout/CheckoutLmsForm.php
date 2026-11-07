@@ -11,35 +11,35 @@ use Drupal\aculta_portal\Checkout\CheckoutSettings;
 final class CheckoutLmsForm extends OrderTypeMappingFormBase {
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getFormId(): string {
     return 'aculta_portal_checkout_lms';
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function contextId(): string {
     return 'lms';
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function settingKey(): string {
     return 'lms_order_type';
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function currentOrderType(CheckoutSettings $settings): string {
     return $settings->lmsOrderType();
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function intro(): string {
     return (string) $this->t('Tipo de pedido usado nas novas compras de curso. Pedidos já feitos com o tipo "curso" continuam concedendo matrícula, aparecendo em Cursos e sem estorno. Cursos e doações não têm estorno, seja qual for o tipo escolhido. A lógica pedagógica não é alterada.');

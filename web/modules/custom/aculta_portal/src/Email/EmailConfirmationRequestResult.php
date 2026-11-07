@@ -8,24 +8,19 @@ namespace Drupal\aculta_portal\Email;
  * Outcome of attempting to request a registration confirmation email. */
 enum EmailConfirmationRequestResult {
 
-  /**
- * The MailManager accepted the request; final mailbox delivery is unknown. */
+  // O MailManager aceitou o pedido; a entrega final na caixa é desconhecida.
   case ACCEPTED;
 
-  /**
- * The account has already used its confirmation request allowance. */
+  // A conta já usou a cota de pedidos de confirmação.
   case RATE_LIMITED;
 
-  /**
- * Another request for this account currently holds the serialization lock. */
+  // Outro pedido desta conta está segurando o bloqueio de serialização.
   case BUSY;
 
-  /**
- * The supplied account cannot own a confirmation request. */
+  // A conta informada não pode ter um pedido de confirmação.
   case INVALID_ACCOUNT;
 
-  /**
- * Persistence or the mail backend did not accept the request. */
+  // A persistência ou o backend de e-mail não aceitou o pedido.
   case FAILED;
 
 }

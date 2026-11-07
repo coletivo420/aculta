@@ -14,7 +14,7 @@ use Drupal\Core\Session\AccountInterface;
 final class AcultaFriendshipAccessControlHandler extends EntityAccessControlHandler {
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
     if (!in_array($operation, ['view', 'update', 'delete'], TRUE)) {
@@ -39,7 +39,7 @@ final class AcultaFriendshipAccessControlHandler extends EntityAccessControlHand
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResult {
     return AccessResult::allowedIf($account->isAuthenticated())

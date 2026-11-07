@@ -29,7 +29,17 @@ final class ActivePurposesStateKernelTest extends KernelTestBase {
     'domain',
   ];
 
+  /**
+   * Estado dos propósitos ativos.
+   *
+   * @var \Drupal\aculta_portal\Domain\ActivePurposesState
+   */
   private ActivePurposesState $activePurposesState;
+  /**
+   * Hooks do ciclo de vida de domínio.
+   *
+   * @var \Drupal\aculta_portal\Hook\DomainLifecycleHooks
+   */
   private DomainLifecycleHooks $lifecycleHooks;
 
   /**
@@ -85,7 +95,7 @@ final class ActivePurposesStateKernelTest extends KernelTestBase {
     $this->assertContains('main', $active);
     $this->assertNotContains('wiki', $active);
 
-    // Also verify directly from Core State API
+    // Verifica também diretamente pela State API do core.
     $this->assertSame($active, $this->container->get('state')->get(ActivePurposesState::STATE_KEY));
 
     // Activate the inactive domain: onDomainUpdate rebuilds the state.

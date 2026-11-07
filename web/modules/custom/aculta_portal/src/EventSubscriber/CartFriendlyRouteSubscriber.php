@@ -16,7 +16,7 @@ use Symfony\Component\Routing\RouteCollection;
 final class CartFriendlyRouteSubscriber extends RouteSubscriberBase {
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection): void {
     $route = $collection->get('commerce_cart.page');

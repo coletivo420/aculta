@@ -13,7 +13,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- *
+ * Registro interno do progresso de um estudante em um curso.
  */
 #[ContentEntityType(
   id: 'aculta_lms_progress',
@@ -26,7 +26,13 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 final class ProgressEntity extends ContentEntityBase {
 
   /**
+   * Define os campos base do progresso do curso.
    *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   Definição do tipo de entidade.
+   *
+   * @return array
+   *   Campos base indexados pelo nome.
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
@@ -40,7 +46,7 @@ final class ProgressEntity extends ContentEntityBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function preSave(EntityStorageInterface $storage): void {
     parent::preSave($storage);

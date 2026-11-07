@@ -30,7 +30,11 @@ final class SearchUtility {
   }
 
   /**
-   * @return array<string, mixed> */
+   * Monta o ícone de busca da barra multidomínio.
+   *
+   * @return array<string, mixed>
+   *   Estrutura renderizável do ícone de busca.
+   */
   public function build(): array {
     return [
       '#theme' => 'aculta_portal_search_trigger',

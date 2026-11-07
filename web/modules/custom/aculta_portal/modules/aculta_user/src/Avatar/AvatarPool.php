@@ -92,8 +92,10 @@ final class AvatarPool {
   }
 
   /**
-   * Atribui um avatar do acervo dentro de user_presave, sem salvar a conta (salvar dentro de hook de usuário
-   * quebra outros módulos, como group, porque o original fica nulo).
+   * Atribui um avatar do acervo dentro de user_presave, sem salvar a conta.
+   *
+   * Salvar dentro de hook de usuário quebra outros módulos, como group, porque
+   * o original fica nulo.
    */
   public function assignPresave(UserInterface $account): bool {
     if (!$account->hasField('user_picture') || !$account->get('user_picture')->isEmpty()) {
@@ -104,10 +106,12 @@ final class AvatarPool {
   }
 
   /**
-   * Sorteia outro avatar do acervo para a conta (botão "sortear outro" do popup de foto).
+   * Sorteia outro avatar do acervo para a conta.
    *
-   * Substitui a foto atual. A cópia anterior do acervo é apagada quando nenhuma outra conta a usa; fotos enviadas
-   * pela pessoa não são tocadas aqui (ver PictureReplacementHooks). Retorna o uri da nova foto, ou NULL.
+   * Corresponde ao botão "sortear outro" do popup de foto. Substitui a foto
+   * atual; a cópia anterior do acervo é apagada quando nenhuma outra conta a
+   * usa, e fotos enviadas pela pessoa não são tocadas aqui (ver
+   * PictureReplacementHooks). Retorna o uri da nova foto, ou NULL.
    */
   public function reroll(UserInterface $account): ?string {
     $current = (string) $this->userData->get('aculta_user', (int) $account->id(), 'avatar_id');
@@ -131,8 +135,11 @@ final class AvatarPool {
   }
 
   /**
-   * Sorteio em duas etapas: escolhe uma entrada e a guarda como pendente, sem alterar a foto da conta. Só vale quando
-   * a pessoa clica em "Salvar foto do perfil" (applyPending). Fechar o modal descarta a escolha.
+   * Sorteia em duas etapas e guarda a escolha como pendente.
+   *
+   * Escolhe uma entrada sem alterar a foto da conta; só vale quando a pessoa
+   * clica em "Salvar foto do perfil" (applyPending). Fechar o modal descarta a
+   * escolha.
    */
   public function preview(UserInterface $account): ?array {
     $current = (string) $this->userData->get('aculta_user', (int) $account->id(), 'avatar_id');
@@ -182,8 +189,11 @@ final class AvatarPool {
   }
 
   /**
-   * Salva a escolha pendente: copia para o acervo, troca a foto e apaga a cópia anterior do acervo se ninguém mais a usa.
-   * Quem chama é responsável por salvar a conta; aqui a conta é salva para a troca valer.
+   * Salva a escolha pendente e troca a foto da conta.
+   *
+   * Copia para o acervo, troca a foto e apaga a cópia anterior do acervo se
+   * ninguém mais a usa. Quem chama é responsável por salvar a conta; aqui a
+   * conta é salva para a troca valer.
    */
   public function applyPending(UserInterface $account): bool {
     $entry = $this->pendingEntry($account);

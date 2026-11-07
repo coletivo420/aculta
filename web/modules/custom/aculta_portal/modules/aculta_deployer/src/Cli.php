@@ -613,7 +613,13 @@ final class Cli {
   }
 
   /**
+   * Registra uma sugestão de alteração a partir das opções da linha de comando.
    *
+   * @param array $o
+   *   Opções informadas na linha de comando.
+   *
+   * @return int
+   *   Código de saída do comando.
    */
   private function register(array $o): int {
     if (isset($o['from-json'])) {

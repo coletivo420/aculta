@@ -90,7 +90,7 @@ final class MessagesController extends ControllerBase {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -162,8 +162,10 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * The "Opções" menu of one conversation, for a row of the list: the same form as the conversation's, loaded when the
-   * member opens the row's "Opções" (see lazyOptionsDisclosure).
+   * Retorna o menu "Opções" de uma conversa para uma linha da lista.
+   *
+   * É o mesmo formulário da conversa, carregado quando o membro abre o
+   * "Opções" da linha (ver lazyOptionsDisclosure).
    */
   public function drawerOptions(PrivateMessageThreadInterface $private_message_thread): Response {
     $access = $private_message_thread->access('view', $this->account, TRUE);
@@ -185,8 +187,11 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * The "Opções" form of a conversation posts here: the drawer gets the conversation again, with the new state.
-   * The form is processed while the conversation is built, so the answer already shows the change.
+   * Processa o envio do formulário "Opções" de uma conversa.
+   *
+   * A gaveta recebe a conversa de novo, com o novo estado. O formulário é
+   * processado enquanto a conversa é montada, então a resposta já mostra a
+   * mudança.
    */
   public function drawerRelationship(PrivateMessageThreadInterface $private_message_thread): Response {
     $access = $private_message_thread->access('view', $this->account, TRUE);
@@ -208,8 +213,11 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * A reply sent from the drawer: the native Private Message form processes the post here, and the drawer gets
-   * the conversation back. The redirect the native form would send (to its own page) is not followed.
+   * Processa uma resposta enviada pela gaveta.
+   *
+   * O formulário nativo de mensagem privada processa o envio aqui e a gaveta
+   * recebe a conversa de volta. O redirecionamento que o formulário nativo
+   * faria para a própria página não é seguido.
    */
   public function drawerReply(PrivateMessageThreadInterface $private_message_thread): Response {
     $access = $private_message_thread->access('view', $this->account, TRUE);
@@ -280,8 +288,10 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * Runs the posted "Opções" action with the request's input. Returns what the panel must show: the message of the
-   * action, and the step of the two-step "Limpar histórico".
+   * Executa a ação "Opções" enviada com os dados da requisição.
+   *
+   * Retorna o que o painel deve mostrar: a mensagem da ação e a etapa do
+   * "Limpar histórico" em duas etapas.
    */
   private function runRelationshipAction(PrivateMessageThreadInterface $thread): array {
     $input = $this->requestStack->getCurrentRequest()?->request->all() ?? [];
@@ -305,8 +315,10 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * The box of one member of a conversation: friendship and block with that member. Loaded the first time the box is
-   * opened (memberBoxes), so each action names the member it acts on.
+   * Retorna a caixa de um membro da conversa: amizade e bloqueio.
+   *
+   * Carregada na primeira vez que a caixa é aberta (memberBoxes), de modo que
+   * cada ação nomeie o membro sobre o qual atua.
    */
   public function memberOptions(PrivateMessageThreadInterface $private_message_thread, UserInterface $user): Response {
     $access = $private_message_thread->access('view', $this->account, TRUE);
@@ -381,9 +393,12 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * Runs the posted "Opções" form with the request's input, as the drawer's POST does. The form is built here, with
-   * its services, from the input: a cached copy loses its constructor services, and its submit would read uninitialized
-   * properties. The state's target (a member's box) or thread (the conversation's menu) decides what the submit acts on.
+   * Executa o formulário "Opções" enviado, como o POST da gaveta faz.
+   *
+   * O formulário é construído aqui, com seus serviços, a partir da entrada:
+   * uma cópia em cache perde os serviços do construtor e o envio leria
+   * propriedades não inicializadas. O alvo do estado (a caixa de um membro) ou
+   * a conversa (o menu da conversa) decidem sobre o que o envio atua.
    */
   private function submitRelationshipForm(FormState $state, array $input): void {
     $state->setRequestMethod('POST');
@@ -399,8 +414,10 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * One box per other member of the conversation, above the messages. A group has a box for each member, so the
-   * friendship and block actions always name the member they act on.
+   * Monta uma caixa por outro membro da conversa, acima das mensagens.
+   *
+   * Um grupo tem uma caixa para cada membro, então as ações de amizade e
+   * bloqueio sempre nomeiam o membro sobre o qual atuam.
    */
   private function memberBoxes(PrivateMessageThreadInterface $thread, ?int $actedUid = NULL, array $actedPanel = []): array {
     $boxes = ['#type' => 'container', '#weight' => -5];
@@ -442,8 +459,11 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * The "Opções" of a row in the list. Its menu is not built for every row of every list: the row carries the address
-   * of the menu, and the drawer loads it the first time the member opens it (drawerOptions).
+   * Retorna o "Opções" de uma linha da lista.
+   *
+   * O menu não é montado para cada linha de cada lista: a linha carrega o
+   * endereço do menu e a gaveta o carrega na primeira vez que o membro o abre
+   * (drawerOptions).
    */
   private function lazyOptionsDisclosure(PrivateMessageThreadInterface $thread): array {
     $box = OptionsDisclosure::build((string) $this->translation->translate('Opções'), []);
@@ -452,7 +472,10 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * The conversation container: toolbar (back on the left, "Opções" on the right), then the thread. */
+   * Monta o contêiner da conversa com barra de ferramentas e mensagens.
+   *
+   * A barra traz o voltar à esquerda e "Opções" à direita, seguida da conversa.
+   */
   private function conversationResponse(PrivateMessageThreadInterface $thread, $access, array $panel = [], ?int $actedUid = NULL, array $actedPanel = []): Response {
     $threadBuild = $this->entityTypes->getViewBuilder('private_message_thread')->view($thread, 'full');
     $build = [
@@ -480,9 +503,12 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * The menu of a thread: the friendship and block form of the other member (one-to-one), or only "Limpar histórico"
-   * (group). Built from a new state each time: a rebuilt form comes back from the cache without its constructor
-   * dependencies.
+   * Monta o menu de uma conversa.
+   *
+   * Traz o formulário de amizade e bloqueio do outro membro (conversa
+   * individual), ou só "Limpar histórico" (grupo). É construído a partir de um
+   * novo estado a cada vez: um formulário reconstruído volta do cache sem suas
+   * dependências de construtor.
    */
   private function relationshipForm(PrivateMessageThreadInterface $thread, array $panel = []): array {
     $state = $this->threadFormState($thread);
@@ -502,8 +528,11 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * The form state of a thread's menu. Friendship and block are per member (memberFormState), so the menu of the
-   * conversation carries only "Limpar histórico" (group). The notice of a one-to-one conversation keeps its other member.
+   * Cria o estado do formulário do menu de uma conversa.
+   *
+   * Amizade e bloqueio são por membro (memberFormState), então o menu da
+   * conversa traz apenas "Limpar histórico" (grupo). O aviso de uma conversa
+   * individual mantém o outro membro.
    */
   private function threadFormState(PrivateMessageThreadInterface $thread, bool $notice = FALSE): FormState {
     $state = new FormState();
@@ -521,9 +550,11 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * "Opções": a native disclosure (a sanfona). On a narrow screen the label is hidden and only the hamburger
-   * icon remains, which is how the CSS decides whether it fits. Its items are the relationship form, which holds
-   * the friendship actions, "Limpar histórico" and the block, in that order.
+   * Monta o "Opções" como disclosure nativo (uma sanfona).
+   *
+   * Em tela estreita o rótulo é ocultado e resta apenas o ícone de hambúrguer,
+   * que é como o CSS decide se cabe. Seus itens são o formulário de relação, com
+   * as ações de amizade, "Limpar histórico" e o bloqueio, nessa ordem.
    */
   private function optionsDisclosure(PrivateMessageThreadInterface $thread, array $panel = []): array {
     // After an action the menu stays open, so its result (a message, the clear confirmation) is what the member sees.
@@ -535,8 +566,10 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * "← Todas as conversas": back to the drawer's conversation list. Used by every drawer subview, so it sits
-   * in the same place (top, right-aligned, under the X) in each one.
+   * Monta o link "← Todas as conversas", que volta à lista da gaveta.
+   *
+   * É usado por toda subvisão da gaveta, então fica no mesmo lugar (topo,
+   * alinhado à direita, sob o X) em cada uma.
    */
   private function backToConversationsLink(): array {
     return PortalLinkElement::build(
@@ -547,7 +580,8 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * Starts the shared new-conversation flow from the inbox. */
+   * Inicia o fluxo compartilhado de nova conversa a partir da caixa de entrada.
+   */
   private function newConversationAction(): array {
     return [
       'new_conversation' => PortalLinkElement::build(
@@ -563,8 +597,10 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * Lista de conversas da gaveta (ação de nova conversa + lista). Usada pela gaveta da barra e pela aba Mensagens da
-   * conta, para que as duas mostrem a mesma coisa com o mesmo comportamento.
+   * Monta a lista de conversas da gaveta com a ação de nova conversa.
+   *
+   * É usada pela gaveta da barra e pela aba Mensagens da conta, para que as
+   * duas mostrem a mesma coisa com o mesmo comportamento.
    */
   public function conversasBuild(): array {
     return $this->newConversationAction() + $this->buildConversationList();
@@ -1328,10 +1364,30 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * One notice in the drawer's list: a button-like summary (title, excerpt, state). Clicking it loads the full notice in
-   * the same drawer; the dismissal link stays on the summary.
+   * Monta um aviso na lista da gaveta como resumo clicável.
    *
+   * Clicar carrega o aviso completo na mesma gaveta; o link de descarte
+   * permanece no resumo.
+   *
+   * @param string $title
+   *   Título do aviso.
+   * @param string $excerpt
+   *   Trecho do texto do aviso.
+   * @param \Drupal\Core\Url $url
+   *   Endereço do aviso completo.
    * @param array<string, mixed> $dismiss
+   *   Elemento de descarte do aviso.
+   * @param string|null $state
+   *   Rótulo de estado (lido ou não lido), ou NULL.
+   * @param bool $persistent
+   *   Indica se o aviso é persistente.
+   * @param string|null $type
+   *   Tipo do aviso, ou NULL.
+   * @param array|null $rotulo
+   *   Elemento do rótulo lateral, ou NULL.
+   *
+   * @return array
+   *   Array de renderização do resumo do aviso.
    */
   private function noticeSummary(string $title, string $excerpt, Url $url, array $dismiss, ?string $state, bool $persistent = FALSE, ?string $type = NULL, ?array $rotulo = NULL): array {
     $title_parts = [
@@ -1375,8 +1431,10 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * Rótulo "Lido" ou "Não lido" de uma caixa de conversa ou de aviso do Fórum. Substitui a marcação por cor: o texto é a
-   * única indicação de estado. Os avisos persistentes não usam este rótulo.
+   * Monta o rótulo "Lido" ou "Não lido" de uma conversa ou de um aviso.
+   *
+   * Substitui a marcação por cor: o texto é a única indicação de estado. Os
+   * avisos persistentes não usam este rótulo.
    */
   private function readLabel(bool $naoLido): array {
     return [
@@ -1406,7 +1464,8 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * "← Todos os avisos": back to the notices list, in the same drawer. */
+   * Monta o link "← Todos os avisos", que volta à lista na mesma gaveta.
+   */
   private function backToNoticesLink(): array {
     $filters = $this->noticeListFilter->normalize($this->requestStack->getCurrentRequest()?->query->all() ?? []);
     $query = array_filter($filters, static fn(string $value): bool => $value !== '');
@@ -1469,7 +1528,10 @@ final class MessagesController extends ControllerBase {
   }
 
   /**
-   * "Marcar como lido" in a persistent notice's full view: the read state, as text, never an "×". */
+   * Monta "Marcar como lido" na visão completa de um aviso persistente.
+   *
+   * Mostra o estado de leitura como texto, nunca um "×".
+   */
   private function buildReadLink(FlagInterface $flag, EntityInterface $entity): array {
     if (!$this->account->isAuthenticated()) {
       return [];

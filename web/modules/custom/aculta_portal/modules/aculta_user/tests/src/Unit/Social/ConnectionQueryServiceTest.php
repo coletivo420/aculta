@@ -27,7 +27,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 final class ConnectionQueryServiceTest extends UnitTestCase {
 
   /**
-   *
+   * Confirma que visitante anônimo recebe lista de conexões vazia.
    */
   public function testAnonymousReturnsEmptyConnections(): void {
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
@@ -43,7 +43,7 @@ final class ConnectionQueryServiceTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que busca com menos de três caracteres retorna vazio.
    */
   public function testSearchTermUnderThreeCharsReturnsEmpty(): void {
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
@@ -59,7 +59,7 @@ final class ConnectionQueryServiceTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que conexões aceitas filtram membros banidos e sem nome público.
    */
   public function testAcceptedConnectionsFiltersBannedAndPrivate(): void {
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
@@ -148,7 +148,7 @@ final class ConnectionQueryServiceTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que a busca de candidatos aplica estados de amizade e banimentos.
    */
   public function testSearchCandidatesWithStatusesAndBans(): void {
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);

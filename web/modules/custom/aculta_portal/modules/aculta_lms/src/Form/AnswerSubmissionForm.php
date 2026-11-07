@@ -38,7 +38,7 @@ final class AnswerSubmissionForm extends FormBase {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     $form = new static(
@@ -57,14 +57,14 @@ final class AnswerSubmissionForm extends FormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getFormId(): string {
     return 'aculta_lms_answer_submission';
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     [$course, $activity] = $this->routeEntities();
@@ -134,7 +134,7 @@ final class AnswerSubmissionForm extends FormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     [, $activity] = $this->routeEntities();
@@ -155,7 +155,7 @@ final class AnswerSubmissionForm extends FormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     [, $activity] = $this->routeEntities();
@@ -210,7 +210,13 @@ final class AnswerSubmissionForm extends FormBase {
   }
 
   /**
+   * Monta o elemento de resposta para atividades de seleção.
    *
+   * @param array $configuration
+   *   Configuração da atividade com as opções disponíveis.
+   *
+   * @return array
+   *   Elemento de formulário com as opções de resposta.
    */
   private function selectElement(array $configuration): array {
     $options = $configuration['options'] ?? NULL;
@@ -221,7 +227,13 @@ final class AnswerSubmissionForm extends FormBase {
   }
 
   /**
+   * Monta o elemento de resposta para atividades de preenchimento de lacunas.
    *
+   * @param array $configuration
+   *   Configuração da atividade com o gabarito das lacunas.
+   *
+   * @return array
+   *   Elemento de formulário com um campo por lacuna.
    */
   private function fillBlanksElement(array $configuration): array {
     $blanks = $configuration['correct'] ?? NULL;
@@ -236,7 +248,17 @@ final class AnswerSubmissionForm extends FormBase {
   }
 
   /**
+   * Normaliza o valor enviado em dados de resposta de atividade objetiva.
    *
+   * @param string $type
+   *   Tipo da atividade objetiva.
+   * @param mixed $value
+   *   Valor enviado pelo formulário.
+   * @param array $configuration
+   *   Configuração da atividade.
+   *
+   * @return array
+   *   Dados de resposta normalizados.
    */
   private function objectiveAnswer(string $type, mixed $value, array $configuration): array {
     return match ($type) {
@@ -248,7 +270,15 @@ final class AnswerSubmissionForm extends FormBase {
   }
 
   /**
+   * Extrai os valores enviados para cada lacuna na ordem do gabarito.
    *
+   * @param array $value
+   *   Valores enviados pelo formulário.
+   * @param array $configuration
+   *   Configuração da atividade com o gabarito.
+   *
+   * @return array
+   *   Valores das lacunas indexados pela posição.
    */
   private function blankValues(array $value, array $configuration): array {
     $answers = [];
@@ -259,7 +289,13 @@ final class AnswerSubmissionForm extends FormBase {
   }
 
   /**
+   * Carrega o arquivo enviado quando há exatamente um identificador válido.
    *
+   * @param mixed $value
+   *   Valor enviado pelo elemento de arquivo.
+   *
+   * @return \Drupal\file\FileInterface|null
+   *   Arquivo carregado ou nulo quando ausente ou ambíguo.
    */
   private function submittedFile(mixed $value): ?FileInterface {
     $ids = is_array($value) ? array_values(array_filter($value)) : [(int) $value];
@@ -272,7 +308,13 @@ final class AnswerSubmissionForm extends FormBase {
   }
 
   /**
+   * Verifica se o arquivo é privado, pertence ao usuário e respeita a política de upload.
    *
+   * @param \Drupal\file\FileInterface|null $file
+   *   Arquivo a validar.
+   *
+   * @return bool
+   *   VERDADEIRO se o arquivo pode ser usado na resposta.
    */
   private function validUpload(?FileInterface $file): bool {
     if (!$file instanceof FileInterface || !$file->access('view', $this->currentUser)
@@ -289,7 +331,13 @@ final class AnswerSubmissionForm extends FormBase {
   }
 
   /**
+   * Decodifica a configuração de resposta da atividade.
    *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $activity
+   *   Atividade cuja configuração será lida.
+   *
+   * @return array
+   *   Configuração decodificada da atividade.
    */
   private function configuration(ContentEntityInterface $activity): array {
     $json = (string) ($activity->get('answer_config')->value ?? '{}');
@@ -309,7 +357,11 @@ final class AnswerSubmissionForm extends FormBase {
   }
 
   /**
-   * @return array{0: GroupInterface, 1: ContentEntityInterface} */
+   * Obtém o curso e a atividade a partir da rota atual.
+   *
+   * @return array
+   *   Lista com o curso na posição 0 e a atividade na posição 1.
+   */
   private function routeEntities(): array {
     $course = $this->currentRoute->getParameter('group');
     $lessonDelta = $this->currentRoute->getParameter('lesson_delta');

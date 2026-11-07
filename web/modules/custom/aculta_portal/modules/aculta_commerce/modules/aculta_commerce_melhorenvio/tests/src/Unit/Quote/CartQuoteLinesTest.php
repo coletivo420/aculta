@@ -22,7 +22,15 @@ use PHPUnit\Framework\Attributes\Group;
 final class CartQuoteLinesTest extends UnitTestCase {
 
   /**
+   * Cria um item de pedido simulado para o bundle e a quantidade informados.
    *
+   * @param string $bundle
+   *   Bundle do produto comprado.
+   * @param int $quantity
+   *   Quantidade do item.
+   *
+   * @return \Drupal\commerce_order\Entity\OrderItemInterface
+   *   Item de pedido simulado.
    */
   private function item(string $bundle, int $quantity): OrderItemInterface {
     $product = $this->createMock(ProductInterface::class);
@@ -37,7 +45,15 @@ final class CartQuoteLinesTest extends UnitTestCase {
   }
 
   /**
+   * Cria um carrinho simulado com os itens e o tipo de pedido informados.
    *
+   * @param array $items
+   *   Itens de pedido do carrinho.
+   * @param string $orderType
+   *   Bundle do pedido.
+   *
+   * @return \Drupal\commerce_order\Entity\OrderInterface
+   *   Carrinho simulado.
    */
   private function cart(array $items, string $orderType = 'default'): OrderInterface {
     $cart = $this->createMock(OrderInterface::class);
@@ -61,8 +77,10 @@ final class CartQuoteLinesTest extends UnitTestCase {
   }
 
   /**
-   * Pedido misto: produto da loja junto de LMS num pedido de curso entra só o produto da loja. Doação no pedido de
-   * doação não entra.
+   * Cota o produto da loja em pedido misto.
+   *
+   * Pedido misto: produto da loja junto de LMS num pedido de curso entra só o
+   * produto da loja. Doação no pedido de doação não entra.
    */
   public function testStoreItemInMixedOrderIsQuotedButDigitalItemsAreNot(): void {
     $carts = $this->createMock(CartProviderInterface::class);

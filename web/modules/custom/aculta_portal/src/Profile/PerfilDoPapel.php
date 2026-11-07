@@ -35,8 +35,9 @@ final class PerfilDoPapel {
   }
 
   /**
-   * Perfil publicado da conta, procurando pelos tipos em ordem de prioridade. Preserva o perfil do papel anterior
-   * enquanto a conta não tem o novo tipo.
+   * Perfil publicado da conta, em ordem de prioridade dos tipos.
+   *
+   * Preserva o perfil do papel anterior enquanto a conta não tem o novo tipo.
    */
   public static function principal(ProfileStorageInterface $storage, AccountInterface $conta): ?ProfileInterface {
     foreach (self::TIPOS as $tipo) {

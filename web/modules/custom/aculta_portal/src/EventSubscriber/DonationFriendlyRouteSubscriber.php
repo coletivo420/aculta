@@ -16,7 +16,7 @@ use Symfony\Component\Routing\RouteCollection;
 final class DonationFriendlyRouteSubscriber extends RouteSubscriberBase {
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection): void {
     $paths = [

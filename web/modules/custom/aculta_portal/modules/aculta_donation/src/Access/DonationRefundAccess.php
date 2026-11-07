@@ -26,7 +26,15 @@ final class DonationRefundAccess {
   public const OPERACAO_ESTORNO = 'refund-payment';
 
   /**
+   * Bloqueia o estorno quando o pedido tem item de doação.
    *
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   Correspondência da rota acessada.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta que solicita o acesso.
+   *
+   * @return \Drupal\Core\Access\AccessResult
+   *   Resultado do acesso à operação.
    */
   public function access(RouteMatchInterface $route_match, AccountInterface $account): AccessResult {
     if ($route_match->getParameter('operation') !== self::OPERACAO_ESTORNO) {

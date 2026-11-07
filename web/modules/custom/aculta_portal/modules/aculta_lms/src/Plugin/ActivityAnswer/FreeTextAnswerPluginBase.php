@@ -13,14 +13,14 @@ abstract class FreeTextAnswerPluginBase implements FreeTextAnswerPluginInterface
   public const ACTIVITY_TYPE = 'free_text';
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function activityType(): string {
     return static::ACTIVITY_TYPE;
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function decodeConfiguration(string $json): array {
     try {
@@ -54,7 +54,7 @@ abstract class FreeTextAnswerPluginBase implements FreeTextAnswerPluginInterface
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function formativeScore(string $answer, array $configuration): float {
     $phrases = $configuration['phrase_feedback'] ?? [];
@@ -71,7 +71,7 @@ abstract class FreeTextAnswerPluginBase implements FreeTextAnswerPluginInterface
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function formativeFeedback(string $answer, array $configuration): array {
     $matched = [];
@@ -103,7 +103,7 @@ abstract class FreeTextAnswerPluginBase implements FreeTextAnswerPluginInterface
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function validate(string $answer, array $configuration): ?string {
     $minimum = (int) ($configuration['minimum_characters'] ?? 0);
@@ -114,7 +114,17 @@ abstract class FreeTextAnswerPluginBase implements FreeTextAnswerPluginInterface
   }
 
   /**
+   * Indica se a resposta contém alguma das frases configuradas.
    *
+   * As frases são separadas por barra vertical no valor configurado.
+   *
+   * @param string $answer
+   *   Resposta do estudante.
+   * @param string $configured
+   *   Frases configuradas separadas por barra vertical.
+   *
+   * @return bool
+   *   TRUE se alguma frase estiver presente na resposta.
    */
   private function phraseMatches(string $answer, string $configured): bool {
     foreach (explode('|', $configured) as $phrase) {

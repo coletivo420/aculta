@@ -36,8 +36,10 @@ final class EventLocationWidgetControllerTest extends UnitTestCase {
   }
 
   /**
+   * Confirma que parâmetros inválidos são rejeitados com erro 400.
+   *
    * @param array<string, string> $query
-   *   Query parameters to validate.
+   *   Parâmetros de consulta a validar.
    */
   #[DataProvider('invalidParameterProvider')]
   public function testInvalidWidgetParametersAreRejected(array $query): void {
@@ -49,8 +51,10 @@ final class EventLocationWidgetControllerTest extends UnitTestCase {
   }
 
   /**
+   * Fornece conjuntos inválidos de parâmetros de consulta.
+   *
    * @return array<string, array{array<string, string>}>
-   *   Invalid query parameter sets.
+   *   Conjuntos inválidos indexados por descrição.
    */
   public static function invalidParameterProvider(): array {
     return [

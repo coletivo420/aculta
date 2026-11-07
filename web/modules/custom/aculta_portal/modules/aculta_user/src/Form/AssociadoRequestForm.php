@@ -28,7 +28,7 @@ final class AssociadoRequestForm extends FormBase {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -40,14 +40,14 @@ final class AssociadoRequestForm extends FormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getFormId(): string {
     return 'aculta_user_associado_pedido';
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $uid = (int) $this->currentUserService->id();
@@ -68,7 +68,7 @@ final class AssociadoRequestForm extends FormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $uid = (int) $this->currentUserService->id();

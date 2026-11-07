@@ -38,6 +38,11 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  */
 final class DonationCampaign extends ConfigEntityBase {
 
+  /**
+   * Rótulo da campanha.
+   *
+   * @var string
+   */
   protected string $label = '';
 
   /**
@@ -52,37 +57,61 @@ final class DonationCampaign extends ConfigEntityBase {
    * Valores sugeridos em reais, em ordem de exibição. */
   protected array $amounts = [];
 
+  /**
+   * Se valores personalizados são permitidos.
+   *
+   * @var bool
+   */
   protected bool $customAmount = TRUE;
 
   /**
+   * Devolve a data de início da campanha.
    *
+   * @return string
+   *   Data de início no formato AAAA-MM-DD.
    */
   public function getStart(): string {
     return $this->start;
   }
 
   /**
+   * Devolve a data de término da campanha.
    *
+   * @return string
+   *   Data de término no formato AAAA-MM-DD.
    */
   public function getEnd(): string {
     return $this->end;
   }
 
   /**
-   * @return int[] */
+   * Devolve os valores sugeridos da campanha.
+   *
+   * @return int[]
+   *   Valores sugeridos em reais.
+   */
   public function getAmounts(): array {
     return array_map('intval', $this->amounts);
   }
 
   /**
+   * Informa se a campanha permite valores personalizados.
    *
+   * @return bool
+   *   TRUE se valores personalizados são permitidos.
    */
   public function allowsCustomAmount(): bool {
     return $this->customAmount;
   }
 
   /**
+   * Define a data de início da campanha.
    *
+   * @param string $start
+   *   Data de início no formato AAAA-MM-DD.
+   *
+   * @return static
+   *   A própria instância.
    */
   public function setStart(string $start): static {
     $this->start = $start;
@@ -90,7 +119,13 @@ final class DonationCampaign extends ConfigEntityBase {
   }
 
   /**
+   * Define a data de término da campanha.
    *
+   * @param string $end
+   *   Data de término no formato AAAA-MM-DD.
+   *
+   * @return static
+   *   A própria instância.
    */
   public function setEnd(string $end): static {
     $this->end = $end;
@@ -98,15 +133,27 @@ final class DonationCampaign extends ConfigEntityBase {
   }
 
   /**
+   * Define os valores sugeridos da campanha.
+   *
    * @param int[] $amounts
-   *   */
+   *   Valores sugeridos em reais.
+   *
+   * @return static
+   *   A própria instância.
+   */
   public function setAmounts(array $amounts): static {
     $this->amounts = array_values(array_map('intval', $amounts));
     return $this;
   }
 
   /**
+   * Define se a campanha permite valores personalizados.
    *
+   * @param bool $permite
+   *   TRUE para permitir valores personalizados.
+   *
+   * @return static
+   *   A própria instância.
    */
   public function setCustomAmount(bool $permite): static {
     $this->customAmount = $permite;

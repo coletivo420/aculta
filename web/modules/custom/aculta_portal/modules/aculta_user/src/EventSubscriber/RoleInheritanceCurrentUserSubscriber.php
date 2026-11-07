@@ -28,14 +28,20 @@ final class RoleInheritanceCurrentUserSubscriber implements EventSubscriberInter
   ) {}
 
   /**
+   * Declara o evento de requisição com a prioridade de herança de papéis.
    *
+   * @return array
+   *   Mapa de eventos para os métodos tratadores.
    */
   public static function getSubscribedEvents(): array {
     return [KernelEvents::REQUEST => [['estenderUsuario', 299]]];
   }
 
   /**
+   * Substitui a sessão pelo usuário com os papéis herdados.
    *
+   * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
+   *   Evento da requisição atual.
    */
   public function estenderUsuario(RequestEvent $event): void {
     if (!$event->isMainRequest()) {

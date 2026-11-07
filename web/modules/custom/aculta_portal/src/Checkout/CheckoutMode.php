@@ -13,27 +13,24 @@ namespace Drupal\aculta_portal\Checkout;
  */
 enum CheckoutMode: string {
 
-  /**
- * Somente o checkout dedicado do contexto. */
+  // Somente o checkout dedicado do contexto.
   case Dedicated = 'dedicated';
 
-  /**
- * Somente o carrinho e o checkout comuns do Commerce. */
+  // Somente o carrinho e o checkout comuns do Commerce.
   case Common = 'common';
 
-  /**
- * Os dois. */
+  // Os dois.
   case Both = 'both';
 
   /**
-   *
+   * Informa se o modo permite o checkout dedicado.
    */
   public function allowsDedicated(): bool {
     return $this !== self::Common;
   }
 
   /**
-   *
+   * Informa se o modo permite o carrinho e o checkout comuns.
    */
   public function allowsCommon(): bool {
     return $this !== self::Dedicated;

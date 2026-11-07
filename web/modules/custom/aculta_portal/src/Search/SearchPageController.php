@@ -45,7 +45,7 @@ final class SearchPageController implements ContainerInjectionInterface {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -57,7 +57,13 @@ final class SearchPageController implements ContainerInjectionInterface {
   }
 
   /**
+   * Monta a página pública de busca.
    *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   Requisição com o termo de busca no parâmetro query `q`.
+   *
+   * @return array
+   *   Array de renderização da busca e dos resultados.
    */
   public function page(Request $request): array {
     $term = mb_substr(trim((string) $request->query->get('q', '')), 0, self::MAX_CHARS);
@@ -140,8 +146,11 @@ final class SearchPageController implements ContainerInjectionInterface {
   }
 
   /**
-   * Link do resultado no host do conteúdo: a busca é centralizada no MAIN, mas cada item abre no purpose
-   * ao qual pertence (field_domain_source). Sem purpose conhecido, usa o caminho do próprio host.
+   * Retorna o link do resultado no host do conteúdo.
+   *
+   * A busca é centralizada no MAIN, mas cada item abre no purpose ao qual
+   * pertence (field_domain_source). Sem purpose conhecido, usa o caminho do
+   * próprio host.
    */
   private function resultUrl(NodeInterface $node): Url {
     $relative = $node->toUrl();

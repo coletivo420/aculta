@@ -13,7 +13,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 final class PrivateMessageAccountRouteSubscriber implements EventSubscriberInterface {
 
   /**
+   * Declara a assinatura das rotas, depois do DomainRouteSubscriber.
    *
+   * @return array
+   *   Mapa de eventos para os métodos tratadores.
    */
   public static function getSubscribedEvents(): array {
     // Runs after the Portal's DomainRouteSubscriber (-2049).
@@ -21,7 +24,10 @@ final class PrivateMessageAccountRouteSubscriber implements EventSubscriberInter
   }
 
   /**
+   * Atribui as rotas nativas de mensagens privadas ao propósito de conta.
    *
+   * @param \Drupal\Core\Routing\RouteBuildEvent $event
+   *   Evento de construção das rotas.
    */
   public function onAlterRoutes(RouteBuildEvent $event): void {
     foreach ($event->getRouteCollection() as $route) {

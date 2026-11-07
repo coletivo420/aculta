@@ -29,7 +29,7 @@ use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 final class LearningDashboardManagerTest extends UnitTestCase {
 
   /**
-   *
+   * Confirma que o painel vazio fica restrito à conta informada.
    */
   public function testEmptyStudentDashboardStaysScopedToTheSuppliedAccount(): void {
     $certificates = $this->createMock(CourseCertificateManagerInterface::class);
@@ -46,7 +46,7 @@ final class LearningDashboardManagerTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que o painel usa as aulas publicadas do próprio aluno e o progresso do curso.
    */
   public function testStudentDashboardUsesOwnPublishedLessonsAndCourseLevelProgress(): void {
     $account = new UserSession(['uid' => 42]);
@@ -94,7 +94,7 @@ final class LearningDashboardManagerTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que uma turma sem vínculo com curso LMS é negada.
    */
   public function testClassWithoutLmsCourseRelationshipIsDenied(): void {
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -117,7 +117,7 @@ final class LearningDashboardManagerTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que a rota do PDF falha fechada quando falta o motor de impressão.
    */
   public function testCertificatePdfRouteFailsClosedWhenPrintEngineIsMissing(): void {
     $translation = $this->createMock(TranslationInterface::class);
@@ -135,7 +135,17 @@ final class LearningDashboardManagerTest extends UnitTestCase {
   }
 
   /**
+   * Monta o gerenciador do painel com leitores simulados.
    *
+   * @param \Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface|null $coursesReader
+   *   Leitor de cursos da conta.
+   * @param \Drupal\aculta_lms\Certificate\CourseCertificateManagerInterface $certificates
+   *   Gerenciador de certificados.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   Gerenciador de tipos de entidade.
+   *
+   * @return \Drupal\aculta_lms\LearningDashboardManager
+   *   Gerenciador pronto para o teste.
    */
   private function manager(?AccountCoursesReaderInterface $coursesReader, CourseCertificateManagerInterface $certificates, EntityTypeManagerInterface $entityTypeManager): LearningDashboardManager {
     return new LearningDashboardManager(

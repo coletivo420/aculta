@@ -67,7 +67,7 @@ final class PortalController extends ControllerBase {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -120,7 +120,7 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   *
+   * Visão geral da conta: identidade, foto e caixas extras do submódulo de usuário.
    */
   public function dashboard(): array {
     $account = $this->entities->getStorage('user')->load($this->account->id());
@@ -180,14 +180,14 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   *
+   * Aba de informações básicas de Meus Dados.
    */
   public function myData(): array {
     return $this->buildDataSection('basics');
   }
 
   /**
-   *
+   * Aba de endereço de Meus Dados.
    */
   public function address(): array {
     return $this->buildDataSection('address');
@@ -223,8 +223,11 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   * Caixa da Mercado Pago em "Meus pedidos": os pagamentos são processados pelo Mercado Pago, e o portal não guarda
-   * meios de pagamento. O texto e o link vêm da configuração aculta_portal.settings (mercado_pago_account_url).
+   * Caixa da Mercado Pago em "Meus pedidos".
+   *
+   * Os pagamentos são processados pelo Mercado Pago, e o portal não guarda
+   * meios de pagamento. O texto e o link vêm da configuração
+   * aculta_portal.settings (mercado_pago_account_url).
    */
   private function paymentNotice(): array {
     return [
@@ -237,7 +240,7 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   *
+   * Meus pedidos: listagem das compras da pessoa logada.
    */
   public function orders(): array {
     $storage = $this->entities->getStorage('commerce_order');
@@ -273,6 +276,8 @@ final class PortalController extends ControllerBase {
   /**
    * Caixa do Google: link para conectar (com URL) ou estado "Conectado" (sem URL). Marca e cores são do tema.
    *
+   * @param \Drupal\Core\Url|null $url
+   *   URL de conexão; NULL para exibir o estado "Conectado".
    * @param string $label
    *   Texto já traduzido; aceita <strong> apenas em textos de desenvolvimento.
    */
@@ -285,7 +290,7 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   *
+   * Contas externas conectadas à conta do portal (Google).
    */
   public function connections(): array {
     $account = $this->entities->getStorage('user')->load($this->account->id());
@@ -360,8 +365,11 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   * Abas internas da Segurança, no mesmo padrão de Meus Dados: E-mail e Senha, cada uma com URL própria. O conteúdo
-   * fica no shell da conta; os formulários salvam por AJAX (mensagens em português).
+   * Abas internas da Segurança.
+   *
+   * No mesmo padrão de Meus Dados: E-mail e Senha, cada uma com URL própria.
+   * O conteúdo fica no shell da conta; os formulários salvam por AJAX
+   * (mensagens em português).
    */
   private function buildSecuritySection(string $section): array {
     $account = $this->entities->getStorage('user')->load($this->account->id());
@@ -436,8 +444,11 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   * O envio do site é a camada de envio E-Mails ACULTA (system.mail): pronto quando o transporte padrão tem usuário e
-   * senha, e a senha está no arquivo de segredos. Nenhuma Key participa.
+   * Indica se o envio de e-mail do site está pronto.
+   *
+   * O envio do site é a camada de envio E-Mails ACULTA (system.mail): pronto
+   * quando o transporte padrão tem usuário e senha, e a senha está no arquivo
+   * de segredos. Nenhuma Key participa.
    */
   private function transactionalMailReady(): bool {
     $site_mail = trim((string) $this->configs->get('system.site')->get('mail'));
@@ -456,7 +467,7 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   *
+   * E-mail pendente de confirmação para a conta, se houver.
    */
   private function pendingEmail(int|string $uid): ?string {
     if (!$this->modules->moduleExists('aculta_mail_confirmer_user')) {
@@ -476,7 +487,7 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   *
+   * Monta uma seção de Meus Dados conforme a aba pedida.
    */
   private function buildDataSection(string $section): array {
     $account = $this->entities->getStorage('user')->load($this->account->id());
@@ -532,8 +543,11 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   * Formulário do perfil. No endereço, o número e a marca S/N saem do logradouro para os campos próprios
-   * (StreetNumberField), logo depois da rua; ao gravar, são juntados de novo (PortalHooks, entity builder).
+   * Formulário do perfil.
+   *
+   * No endereço, o número e a marca S/N saem do logradouro para os campos
+   * próprios (StreetNumberField), logo depois da rua; ao gravar, são juntados
+   * de novo (PortalHooks, entity builder).
    */
   private function profileForm(string $section, $profile): array {
     if ($section !== 'address') {
@@ -562,7 +576,7 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   *
+   * Carrega o perfil principal da pessoa, criando um em memória se não existir.
    */
   private function loadRoleProfile(UserInterface $account) {
     $profiles = PerfilDoPapel::principal($this->entities->getStorage('profile'), $account);

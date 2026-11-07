@@ -16,17 +16,32 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * F3 (busca): o índice "conteúdo público" aplica content_access. Um visitante anônimo encontra só nós
- * publicados; o total e a paginação do índice batem com o que a pessoa vê.
+ * Testa o índice de conteúdo público da busca com o processador content_access.
+ *
+ * Um visitante anônimo encontra só nós publicados; o total e a paginação do
+ * índice batem com o que a pessoa vê.
  */
 #[Group('aculta_portal')]
 #[RunTestsInSeparateProcesses]
 final class SearchContentAccessKernelTest extends KernelTestBase {
 
+  /**
+   * Módulos necessários para o teste.
+   *
+   * @var array
+   */
   protected static $modules = ['system', 'user', 'node', 'field', 'text', 'filter', 'search_api', 'search_api_db'];
 
+  /**
+   * Índice de busca configurado no teste.
+   *
+   * @var \Drupal\search_api\Entity\Index
+   */
   private Index $index;
 
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
@@ -76,6 +91,9 @@ final class SearchContentAccessKernelTest extends KernelTestBase {
     $this->index->save();
   }
 
+  /**
+   * Verifica que o visitante anônimo vê apenas o conteúdo publicado.
+   */
   public function testAnonymousSeesOnlyPublishedContent(): void {
     Node::create(['type' => 'article', 'title' => 'Artigo público', 'status' => 1])->save();
     Node::create(['type' => 'article', 'title' => 'Artigo rascunho', 'status' => 0])->save();
@@ -94,6 +112,9 @@ final class SearchContentAccessKernelTest extends KernelTestBase {
     $this->assertEquals(1, $query->execute()->getResultCount(), 'O total do índice conta só o que é visível.');
   }
 
+  /**
+   * Verifica que o processador content_access está ativo no índice.
+   */
   public function testContentAccessProcessorIsEnabledOnIndex(): void {
     $this->index->save();
     $processors = $this->index->getProcessors();
@@ -102,7 +123,15 @@ final class SearchContentAccessKernelTest extends KernelTestBase {
     $this->assertCount(1, $grants, 'O campo de grants (search_api_node_grants) existe no índice.');
   }
 
-  /** @param \Drupal\search_api\Item\ItemInterface[] $items */
+  /**
+   * Extrai os títulos dos itens de resultado da busca.
+   *
+   * @param \Drupal\search_api\Item\ItemInterface[] $items
+   *   Itens de resultado retornados pela consulta.
+   *
+   * @return array
+   *   Títulos dos itens na mesma ordem.
+   */
   private function titles(array $items): array {
     $titles = [];
     foreach ($items as $item) {

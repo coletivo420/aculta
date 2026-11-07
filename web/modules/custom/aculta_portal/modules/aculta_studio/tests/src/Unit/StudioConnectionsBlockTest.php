@@ -18,7 +18,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 final class StudioConnectionsBlockTest extends UnitTestCase {
 
   /**
-   *
+   * Visitante anônimo recebe o bloco de conexões sem conexões.
    */
   public function testComposeForAnonymousOrEmpty(): void {
     $container = new ContainerBuilder();

@@ -30,6 +30,11 @@ use Symfony\Component\DependencyInjection\Reference;
 #[Group('aculta_user')]
 final class ConnectionQueryServiceKernelTest extends KernelTestBase {
 
+  /**
+   * Módulos necessários para o teste.
+   *
+   * @var array
+   */
   protected static $modules = [
     'system',
     'user',
@@ -50,7 +55,7 @@ final class ConnectionQueryServiceKernelTest extends KernelTestBase {
   ];
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
@@ -78,7 +83,7 @@ final class ConnectionQueryServiceKernelTest extends KernelTestBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
@@ -107,7 +112,7 @@ final class ConnectionQueryServiceKernelTest extends KernelTestBase {
   }
 
   /**
-   *
+   * Verifica conexões aceitas e a busca de candidatos.
    */
   public function testAcceptedConnectionsAndCandidateSearch(): void {
     $u1 = User::create(['name' => 'user1', 'status' => 1]);

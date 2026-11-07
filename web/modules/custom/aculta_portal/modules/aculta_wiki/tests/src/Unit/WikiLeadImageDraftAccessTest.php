@@ -73,6 +73,7 @@ final class WikiLeadImageDraftAccessTest extends UnitTestCase {
    * Query fake que devolve os ids informados.
    *
    * @param string[] $ids
+   *   IDs devolvidos pela consulta.
    */
   private function queryReturning(array $ids): QueryInterface {
     $query = $this->createMock(QueryInterface::class);

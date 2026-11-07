@@ -25,6 +25,7 @@ class CommerceEntityHooks {
    * Implements hook_commerce_entity_trait_info_alter().
    *
    * @param array<string, array<string, mixed>> $definitions
+   *   Definições de traits de entidade, alteradas por referência.
    */
   #[Hook('commerce_entity_trait_info_alter')]
   public function commerceEntityTraitInfoAlter(array &$definitions): void {
@@ -43,6 +44,7 @@ class CommerceEntityHooks {
    * Implements hook_entity_bundle_info_alter().
    *
    * @param array<string, array<string, array<string, mixed>>> $bundles
+   *   Informações de bundles, alteradas por referência.
    */
   #[Hook('entity_bundle_info_alter')]
   public function entityBundleInfoAlter(array &$bundles): void {
@@ -76,7 +78,13 @@ class CommerceEntityHooks {
   /**
    * Implements hook_entity_bundle_field_info().
    *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   Tipo de entidade analisado.
+   * @param string $bundle
+   *   Bundle do tipo de entidade.
+   *
    * @return array<string, \Drupal\Core\Field\BaseFieldDefinition>
+   *   Campos base do bundle, indexados pelo nome.
    */
   #[Hook('entity_bundle_field_info')]
   public function entityBundleFieldInfo(EntityTypeInterface $entity_type, string $bundle): array {

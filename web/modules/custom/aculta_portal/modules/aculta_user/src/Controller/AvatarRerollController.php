@@ -36,7 +36,7 @@ final class AvatarRerollController implements ContainerInjectionInterface {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -48,8 +48,10 @@ final class AvatarRerollController implements ContainerInjectionInterface {
   }
 
   /**
-   * Sorteia uma prévia no modal. Não grava a foto: "Salvar foto do perfil" aplica a escolha (AvatarPool::applyPending).
-   * Só o modal é atualizado; o avatar da visão geral muda quando a pessoa salva.
+   * Sorteia uma prévia no modal sem gravar a foto.
+   *
+   * "Salvar foto do perfil" aplica a escolha (AvatarPool::applyPending). Só o
+   * modal é atualizado; o avatar da visão geral muda quando a pessoa salva.
    */
   public function reroll(Request $request): AjaxResponse|RedirectResponse {
     $uid = (int) $this->currentUserService->id();

@@ -13,7 +13,17 @@ final class SelectAnswerPlugin extends ObjectiveAnswerPluginBase {
   public const ACTIVITY_TYPE = 'select';
 
   /**
+   * Calcula a nota da resposta de seleção exata.
    *
+   * @param \Drupal\aculta_lms\Learning\CourseActivity $activity
+   *   Atividade respondida.
+   * @param mixed $answer
+   *   Resposta enviada pelo aluno.
+   * @param mixed $correct
+   *   Gabarito da atividade.
+   *
+   * @return float
+   *   Nota calculada para a resposta.
    */
   public function score(CourseActivity $activity, mixed $answer, mixed $correct): float {
     $this->assertActivityType($activity);

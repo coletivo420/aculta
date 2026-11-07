@@ -27,7 +27,13 @@ final class GreenStashProductController {
   ) {}
 
   /**
+   * Exibe o detalhe de um produto do Green Stash.
    *
+   * @param string $produto
+   *   Identificador do produto solicitado.
+   *
+   * @return array
+   *   Estrutura renderizável da página do produto.
    */
   public function detail(string $produto): array {
     if (!$this->experiences->access('green_stash', 'shop', $this->account)->isAllowed()) {

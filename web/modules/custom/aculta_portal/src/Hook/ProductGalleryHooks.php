@@ -27,8 +27,11 @@ final class ProductGalleryHooks {
   ) {}
 
   /**
- *
- */
+   * Prepara a galeria do produto com as mídias do campo field_galeria.
+   *
+   * @param array $variables
+   *   Variáveis de preprocess do produto, alteradas no lugar.
+   */
   #[Hook('preprocess_commerce_product')]
   public function preprocessCommerceProduct(array &$variables): void {
     $product = $variables['elements']['#commerce_product'] ?? NULL;

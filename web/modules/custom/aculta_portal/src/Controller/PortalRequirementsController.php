@@ -26,7 +26,10 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class PortalRequirementsController extends ControllerBase {
 
   /**
-   * @var array<string, string>|null */
+   * Requisitos do composer por pacote, ou NULL antes da primeira leitura.
+   *
+   * @var array<string, string>|null
+   */
   private ?array $composerRequirements = NULL;
 
   public function __construct(
@@ -415,8 +418,11 @@ final class PortalRequirementsController extends ControllerBase {
   }
 
   /**
-   * Indexação: regra do ambiente declarado e último resultado do deployer. O Portal não executa
-   * a verificação; ela é feita pela verificação de robots do ACULTA Deployer, que grava var/deployer/status.json.
+   * Monta a seção de indexação do relatório.
+   *
+   * Usa a regra do ambiente declarado e o último resultado do deployer. O
+   * Portal não executa a verificação; ela é feita pela verificação de robots
+   * do ACULTA Deployer, que grava var/deployer/status.json.
    */
   private function buildIndexingSection(): array {
     $environment = DeployerEnvironment::current(dirname($this->appRoot));
@@ -460,8 +466,11 @@ final class PortalRequirementsController extends ControllerBase {
   }
 
   /**
-   * Consultas de CEP (aculta_portal_cep): último resultado das APIs (cron) e versão da base local, pela data de hoje.
-   * Mesma legenda e mesmas classes de status das demais linhas do relatório.
+   * Monta a seção de consultas de CEP do relatório.
+   *
+   * Mostra o último resultado das APIs (cron) e a versão da base local, pela
+   * data de hoje. Usa a mesma legenda e as mesmas classes de status das demais
+   * linhas do relatório.
    */
   private function buildCepSection(): array {
     $rows = [];

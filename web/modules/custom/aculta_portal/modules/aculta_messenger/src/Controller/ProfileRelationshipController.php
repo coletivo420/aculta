@@ -27,14 +27,22 @@ final class ProfileRelationshipController extends ControllerBase {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('form_builder'), $container->get('messenger'));
   }
 
   /**
+   * Processa a ação de relacionamento e devolve a pessoa ao perfil.
    *
+   * @param \Drupal\user\UserInterface $user
+   *   Conta do perfil de destino.
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   Requisição POST recebida.
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   Resposta com redirect de volta ao perfil.
    */
   public function post(UserInterface $user, Request $request): RedirectResponse {
     // Back to the profile only: a path of /u/<apelido>, never another address.

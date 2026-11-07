@@ -81,7 +81,14 @@ final class EmailPendingAviso {
   }
 
   /**
-   * @return int[] */
+   * Devolve os IDs dos avisos de e-mail pendente da conta.
+   *
+   * @param int $uid
+   *   ID da conta.
+   *
+   * @return int[]
+   *   IDs dos avisos encontrados.
+   */
   private function ids(int $uid): array {
     return array_values(array_map('intval', $this->entityTypeManager->getStorage('message')->getQuery()
       ->accessCheck(FALSE)

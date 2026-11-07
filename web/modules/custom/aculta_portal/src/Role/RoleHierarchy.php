@@ -21,8 +21,12 @@ final class RoleHierarchy {
    * Papéis herdados por um papel (direta ou transitivamente), sem o próprio papel.
    *
    * @param array<string, string[]> $mapa
+   *   Mapa de herança no formato papel => papéis dos quais herda.
+   * @param string $papel
+   *   Papel cujos herdados serão calculados.
    *
    * @return string[]
+   *   Papéis herdados pelo papel informado.
    */
   public static function efetivos(array $mapa, string $papel): array {
     $resultado = [];
@@ -42,6 +46,10 @@ final class RoleHierarchy {
    * Verdadeiro se o mapa contém autorreferência ou ciclo (ex.: A herda de B e B herda de A).
    *
    * @param array<string, string[]> $mapa
+   *   Mapa de herança no formato papel => papéis dos quais herda.
+   *
+   * @return bool
+   *   VERDADEIRO se houver autorreferência ou ciclo no mapa.
    */
   public static function temCiclo(array $mapa): bool {
     foreach (array_keys($mapa) as $papel) {
@@ -72,9 +80,10 @@ final class RoleHierarchy {
    * @param string[] $cadeia
    *   Papéis da cadeia, do mais alto para o mais baixo (sem administrator).
    * @param string[] $todos
-   *   @todo s os papéis do site (inclui anonymous e administrator).
+   *   Papéis existentes no site (inclui anonymous e administrator).
    *
    * @return array<string, string[]>
+   *   Mapa de herança derivado da cadeia.
    */
   public static function derivarMapa(array $cadeia, array $todos): array {
     $mapa = [];
@@ -95,9 +104,12 @@ final class RoleHierarchy {
    * Papéis herdados pelos papéis informados (sem os próprios).
    *
    * @param string[] $papeis
+   *   Papéis cujos herdados serão reunidos.
    * @param array<string, string[]> $mapa
+   *   Mapa de herança no formato papel => papéis dos quais herda.
    *
    * @return string[]
+   *   Papéis herdados pelos papéis informados, sem os próprios.
    */
   public static function herdados(array $papeis, array $mapa): array {
     $herdados = [];
@@ -117,9 +129,12 @@ final class RoleHierarchy {
    * Papel excluído sai da cadeia. Papel novo não entra aqui: ele herda do autenticado por derivarMapa().
    *
    * @param string[] $cadeia
+   *   Papéis da cadeia na ordem informada.
    * @param string[] $existentes
+   *   Papéis que existem atualmente no site.
    *
    * @return string[]
+   *   Cadeia contendo apenas papéis existentes, sem repetição.
    */
   public static function completar(array $cadeia, array $existentes): array {
     $saida = [];

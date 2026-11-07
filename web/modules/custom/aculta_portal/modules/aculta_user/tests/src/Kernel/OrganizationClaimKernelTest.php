@@ -38,6 +38,11 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 #[RunTestsInSeparateProcesses]
 final class OrganizationClaimKernelTest extends KernelTestBase {
 
+  /**
+   * Módulos necessários para o teste.
+   *
+   * @var string[]
+   */
   protected static $modules = [
     'system',
     'user',
@@ -56,12 +61,29 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     'aculta_user',
   ];
 
+  /**
+   * Usuário com papel de administrador de reivindicações.
+   *
+   * @var \Drupal\user\Entity\User
+   */
   private User $adminUser;
+
+  /**
+   * Usuário com papel de editor de conteúdo.
+   *
+   * @var \Drupal\user\Entity\User
+   */
   private User $editorUser;
+
+  /**
+   * Usuário comum, sem papéis especiais.
+   *
+   * @var \Drupal\user\Entity\User
+   */
   private User $commonUser;
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
@@ -93,7 +115,7 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
@@ -146,7 +168,7 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
   }
 
   /**
-   *
+   * Verifica que a reivindicação de posse é fechada por padrão.
    */
   public function testOwnershipClaimClosedByDefault(): void {
     /** @var \Drupal\aculta_user\Organization\OwnershipClaimService $claimService */
@@ -166,7 +188,7 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
   }
 
   /**
-   *
+   * Verifica o ciclo de vida e a aprovação de uma reivindicação.
    */
   public function testOwnershipClaimLifecycleAndApproval(): void {
     /** @var \Drupal\aculta_user\Organization\OwnershipClaimService $claimService */
@@ -222,7 +244,7 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
   }
 
   /**
-   *
+   * Verifica a recusa de uma reivindicação.
    */
   public function testOwnershipClaimRejection(): void {
     /** @var \Drupal\aculta_user\Organization\OwnershipClaimService $claimService */
@@ -248,7 +270,7 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
   }
 
   /**
-   *
+   * Verifica vínculo de organização e atuação em nome dela.
    */
   public function testOrganizationMembershipAndBehalf(): void {
     /** @var \Drupal\aculta_user\Organization\OrganizationMembershipManager $memberManager */
@@ -271,7 +293,7 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
   }
 
   /**
-   *
+   * Verifica o acesso restrito ao escopo do editor de conteúdo.
    */
   public function testContentEditorScopedAccess(): void {
     $eventOwn = Event::create([
@@ -299,7 +321,7 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
   }
 
   /**
-   *
+   * Verifica o controlador administrativo e o formulário de decisão.
    */
   public function testOwnershipClaimAdminControllerAndDecisionForm(): void {
     $event = Event::create([

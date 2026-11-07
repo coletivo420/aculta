@@ -40,7 +40,13 @@ final class LegacyAuthor extends ContentEntityBase {
   use EntityChangedTrait;
 
   /**
+   * Define os campos base da autoria histórica.
    *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   Definição do tipo de entidade.
+   *
+   * @return \Drupal\Core\Field\FieldDefinitionInterface[]
+   *   Campos base indexados pelo nome.
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);

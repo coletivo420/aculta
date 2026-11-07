@@ -42,6 +42,11 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
     . "3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 200 200]>>endobj\n"
     . "trailer<</Root 1 0 R>>\n%%EOF\n";
 
+  /**
+   * Módulos necessários ao teste de kernel.
+   *
+   * @var string[]
+   */
   protected static $modules = [
     'system',
     'user',

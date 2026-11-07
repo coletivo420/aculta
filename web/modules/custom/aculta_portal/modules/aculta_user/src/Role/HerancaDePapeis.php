@@ -31,6 +31,7 @@ class HerancaDePapeis {
    * Mapa de herança derivado da cadeia atual.
    *
    * @return array<string, string[]>
+   *   Mapa de herança por papel.
    */
   public function mapa(): array {
     $configuracao = $this->configFactory->get('aculta_portal.role_hierarchy');
@@ -44,8 +45,12 @@ class HerancaDePapeis {
    * Herdados (sem os básicos) dos papéis informados.
    *
    * @param string[] $papeis
+   *   Papéis informados.
+   * @param bool $emailConfirmado
+   *   Se o e-mail da conta está confirmado.
    *
    * @return string[]
+   *   Papéis herdados, sem os básicos.
    */
   public function herdados(array $papeis, bool $emailConfirmado = TRUE): array {
     $herdados = array_values(array_diff(RoleHierarchy::herdados($papeis, $this->mapa()), self::PAPEIS_BASICOS));
@@ -59,6 +64,7 @@ class HerancaDePapeis {
    * Papéis gravados diretamente na conta (sem herança), lidos do banco.
    *
    * @return string[]
+   *   Papéis gravados diretamente na conta.
    */
   public function papeisDiretos(int $uid): array {
     if ($uid <= 0) {
@@ -86,6 +92,7 @@ class HerancaDePapeis {
    * Papéis herdados que não foram gravados diretamente na conta: são os que a conta não deve salvar.
    *
    * @return string[]
+   *   Papéis herdados que não devem ser gravados.
    */
   public function herdadosNaoGravados(int $uid, bool $emailConfirmado = TRUE): array {
     $diretos = $this->papeisDiretos($uid);
@@ -96,6 +103,7 @@ class HerancaDePapeis {
    * Conta a que se aplica a herança (o usuário logado precisa do mesmo cálculo).
    *
    * @return string[]
+   *   Papéis da conta somados aos herdados.
    */
   public function papeisEstendidos(AccountInterface $conta, bool $emailConfirmado = TRUE): array {
     return array_values(array_unique(array_merge($conta->getRoles(), $this->herdados($conta->getRoles(), $emailConfirmado))));

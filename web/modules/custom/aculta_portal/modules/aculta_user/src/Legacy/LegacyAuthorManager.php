@@ -33,7 +33,8 @@ final class LegacyAuthorManager {
   /**
    * Cria ou atualiza a autoria. Retorna o id da entidade e se foi criada agora.
    *
-   * @throws \InvalidArgumentException Origem fora do formato ou nome vazio, longo demais ou com caracteres de controle.
+   * @throws \InvalidArgumentException
+   *   Origem fora do formato ou nome vazio, longo demais ou com caracteres de controle.
    */
   public function upsert(string $sourceId, string $displayName): array {
     if (!self::isValidSourceId($sourceId)) {

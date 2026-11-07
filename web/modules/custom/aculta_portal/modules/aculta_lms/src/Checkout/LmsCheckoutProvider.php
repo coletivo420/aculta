@@ -24,28 +24,28 @@ final class LmsCheckoutProvider implements CheckoutContextProviderInterface {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function id(): string {
     return 'lms';
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function label(): TranslatableMarkup {
     return new TranslatableMarkup('LMS');
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function weight(): int {
     return 20;
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function configuration(): CheckoutContextConfiguration {
     $tipos = $this->settings->lmsOrderTypes();

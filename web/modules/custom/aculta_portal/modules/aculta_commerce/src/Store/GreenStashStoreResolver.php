@@ -18,7 +18,13 @@ final class GreenStashStoreResolver {
   public function __construct(private readonly EntityTypeManagerInterface $entities) {}
 
   /**
+   * Resolve a única store do Commerce usada pelo Green Stash.
    *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta que precisa de acesso de atualização à store.
+   *
+   * @return object|null
+   *   Store única resolvida ou nulo quando não há exatamente uma.
    */
   public function resolve(AccountInterface $account): ?object {
     $storage = $this->entities->getStorage('commerce_store');

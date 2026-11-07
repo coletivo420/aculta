@@ -29,7 +29,14 @@ interface CourseCertificateManagerInterface {
   public function loadByCode(string $code): ?CourseCertificate;
 
   /**
-   * @return \Drupal\aculta_lms\Entity\CourseCertificate[] */
+   * Carrega os certificados de um aluno.
+   *
+   * @param int $uid
+   *   Identificador da conta do aluno.
+   *
+   * @return \Drupal\aculta_lms\Entity\CourseCertificate[]
+   *   Certificados do aluno informado.
+   */
   public function loadForStudent(int $uid): array;
 
 }

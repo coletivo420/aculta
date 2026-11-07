@@ -13,9 +13,10 @@ use Drupal\commerce_store\CurrentStoreInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Une o carrinho em um pedido só, com o fluxo de checkout mais exigente entre as categorias presentes
- * (decisão do responsável, 2026-10-17): LMS (curso) > loja (default) > doação (doacao). A assinatura fica de fora:
- * tem checkout próprio.
+ * Une os carrinhos em um pedido só conforme o fluxo de checkout mais exigente.
+ *
+ * Decisão do responsável, 2026-10-17: LMS (curso) > loja (default) > doação
+ * (doacao). A assinatura fica de fora: tem checkout próprio.
  */
 final class CartConsolidator {
 
@@ -32,10 +33,12 @@ final class CartConsolidator {
   ) {}
 
   /**
-   * Categorias do carrinho, da mais exigente para a mais simples: LMS (tipo configurado e histórico `curso`),
-   * Loja e doação.
+   * Lista as categorias do carrinho, da mais exigente para a mais simples.
+   *
+   * LMS (tipo configurado e histórico `curso`), loja e doação.
    *
    * @return list<string>
+   *   Tipos de pedido, do mais exigente ao mais simples.
    */
   private function prioridade(): array {
     return [

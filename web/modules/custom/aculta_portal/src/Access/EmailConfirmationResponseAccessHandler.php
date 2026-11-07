@@ -39,7 +39,7 @@ final class EmailConfirmationResponseAccessHandler extends AcultaMailConfirmatio
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
     if ($operation === 'response' && $this->confirmationManager->isPending($entity) && !$this->confirmationManager->isExpired($entity)) {

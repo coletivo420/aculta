@@ -41,7 +41,13 @@ class ShipmentAddressBinderTest extends UnitTestCase {
   ];
 
   /**
+   * Cria o binder com a origem configurada e um dublê de CEP.
    *
+   * @param array|null $origin
+   *   Endereço de origem da configuração, ou NULL.
+   *
+   * @return \Drupal\aculta_commerce_melhorenvio\Address\ShipmentAddressBinder
+   *   Binder configurado.
    */
   private function binder(?array $origin): ShipmentAddressBinder {
     $config = $this->createMock(ImmutableConfig::class);
@@ -52,7 +58,13 @@ class ShipmentAddressBinderTest extends UnitTestCase {
     $cep = new class implements CepLookupInterface {
 
       /**
+       * Normaliza o CEP para oito dígitos.
        *
+       * @param string $cep
+       *   CEP informado, possivelmente com máscara.
+       *
+       * @return string|null
+       *   CEP com oito dígitos, ou NULL se inválido.
        */
       public function normalize(string $cep): ?string {
         $digits = preg_replace('/\D+/', '', $cep) ?? '';
@@ -60,7 +72,13 @@ class ShipmentAddressBinderTest extends UnitTestCase {
       }
 
       /**
+       * Impede consulta de CEP durante a montagem do par.
        *
+       * @param string $cep
+       *   CEP consultado.
+       *
+       * @throws \LogicException
+       *   Sempre, pois o binder não pode consultar CEP.
        */
       public function lookup(string $cep): ?array {
         throw new \LogicException('O binder não pode consultar CEP.');
@@ -71,7 +89,7 @@ class ShipmentAddressBinderTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que a origem vem da configuração e o destino vem do perfil.
    */
   public function testOriginComesFromConfigAndDestinationFromProfile(): void {
     $pair = $this->binder(self::ORIGIN)->bind(self::DESTINATION, MelhorEnvioAddressMapper::PURPOSE_SHIPMENT);
@@ -83,7 +101,7 @@ class ShipmentAddressBinderTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que cotação e contratação usam o mesmo CEP de destino.
    */
   public function testQuoteAndShipmentUseTheSameDestinationPostalCode(): void {
     $binder = $this->binder(self::ORIGIN);
@@ -95,7 +113,7 @@ class ShipmentAddressBinderTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que uma origem vazia bloqueia a operação sem fallback.
    */
   public function testEmptyOriginConfigBlocksOperationWithoutFallback(): void {
     $pair = $this->binder(['postal_code' => '', 'address_line1' => ''])->bind(self::DESTINATION, MelhorEnvioAddressMapper::PURPOSE_QUOTE);
@@ -106,7 +124,7 @@ class ShipmentAddressBinderTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que a falta do perfil de destino é reportada no lado do destino.
    */
   public function testMissingDestinationProfileIsReportedOnDestinationSide(): void {
     $pair = $this->binder(self::ORIGIN)->bind(NULL, MelhorEnvioAddressMapper::PURPOSE_SHIPMENT);
@@ -117,7 +135,7 @@ class ShipmentAddressBinderTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que destino sem número bloqueia a contratação, mas não a cotação.
    */
   public function testSnDestinationBlocksShipmentButNotQuote(): void {
     $sn = ['address_line1' => 'Rua Exemplo, S/N'] + self::DESTINATION;

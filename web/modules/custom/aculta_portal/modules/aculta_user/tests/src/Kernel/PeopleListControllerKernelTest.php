@@ -25,10 +25,15 @@ use Symfony\Component\Yaml\Yaml;
 #[RunTestsInSeparateProcesses]
 final class PeopleListControllerKernelTest extends KernelTestBase {
 
+  /**
+   * Módulos necessários para o teste.
+   *
+   * @var string[]
+   */
   protected static $modules = ['system', 'user', 'field', 'filter', 'views', 'profile'];
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
@@ -57,7 +62,7 @@ final class PeopleListControllerKernelTest extends KernelTestBase {
   }
 
   /**
-   *
+   * Verifica que a listagem expõe apenas os campos de identidade aprovados.
    */
   public function testListingContainsOnlyApprovedIdentityFields(): void {
     $account = User::create([
@@ -86,7 +91,7 @@ final class PeopleListControllerKernelTest extends KernelTestBase {
   }
 
   /**
-   *
+   * Verifica que uma conta comum não acessa a rota da lista de pessoas.
    */
   public function testCommonAccountCannotAccessPeopleListRoute(): void {
     $modulePath = DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_user/aculta_user.routing.yml';

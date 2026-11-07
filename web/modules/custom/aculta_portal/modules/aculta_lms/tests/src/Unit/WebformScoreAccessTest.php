@@ -14,13 +14,13 @@ use PHPUnit\Framework\Attributes\CoversFunction;
 require_once dirname(__DIR__, 8) . '/modules/contrib/webform_score/webform_score.module';
 
 /**
- *
+ * Testa o acesso aos campos de nota do módulo webform_score.
  */
 #[CoversFunction('webform_score_entity_field_access')]
 final class WebformScoreAccessTest extends UnitTestCase {
 
   /**
-   *
+   * Permite que a pessoa dona veja a própria nota quando tem permissão.
    */
   public function testOnlySubmissionOwnerCanViewOwnScoreWhenGranted(): void {
     [$field, $items, $account] = $this->scoreField(TRUE, ['view own submission score']);
@@ -32,7 +32,7 @@ final class WebformScoreAccessTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Impede que outra pessoa veja a nota como se fosse a própria.
    */
   public function testOtherUserCannotViewOwnScore(): void {
     [$field, $items, $account] = $this->scoreField(FALSE, ['view own submission score']);
@@ -44,7 +44,7 @@ final class WebformScoreAccessTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Permite ver qualquer nota com a permissão dedicada.
    */
   public function testDedicatedPermissionCanViewAnyScore(): void {
     [$field, $items, $account] = $this->scoreField(FALSE, ['view any submission score']);
@@ -53,7 +53,7 @@ final class WebformScoreAccessTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Impede a edição direta da nota.
    */
   public function testScoreCannotBeEditedDirectly(): void {
     [$field, $items, $account] = $this->scoreField(TRUE, ['view own submission score']);
@@ -70,6 +70,7 @@ final class WebformScoreAccessTest extends UnitTestCase {
    *   Permissions granted to the account.
    *
    * @return array{0: \Drupal\Core\Field\FieldDefinitionInterface, 1: \Drupal\Core\Field\FieldItemListInterface, 2: \Drupal\Core\Session\AccountInterface}
+   *   Campo, lista de itens e conta simulados.
    */
   private function scoreField(bool $is_owner, array $permissions): array {
     $field = $this->createMock(FieldDefinitionInterface::class);

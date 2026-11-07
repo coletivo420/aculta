@@ -161,6 +161,8 @@ final class XapiBatchIngestorTest extends UnitTestCase {
   }
 
   /**
+   * Monta as claims do token usadas nos testes.
+   *
    * @return array{uid: int, content: string, registration: string,
    *   lesson_status_id: int, actor_mbox_sha1sum: string}
    */
@@ -175,8 +177,10 @@ final class XapiBatchIngestorTest extends UnitTestCase {
   }
 
   /**
+   * Monta um statement xAPI para o teste.
+   *
    * @return array<string, mixed>
-   *   Statement payload.
+   *   Carga do statement.
    */
   private function statement(string $id, ?string $registration = NULL): array {
     $statement = [

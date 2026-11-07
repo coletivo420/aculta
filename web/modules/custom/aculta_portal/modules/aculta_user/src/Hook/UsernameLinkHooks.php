@@ -29,8 +29,11 @@ final class UsernameLinkHooks {
   ) {}
 
   /**
- *
- */
+   * Aplica o link do perfil público nas variáveis do nome de usuário.
+   *
+   * @param array $variables
+   *   Variáveis de preprocessamento, alteradas por referência.
+   */
   #[Hook('preprocess_username')]
   public function preprocessUsername(array &$variables): void {
     $account = $variables['account'] ?? NULL;
@@ -54,8 +57,11 @@ final class UsernameLinkHooks {
   }
 
   /**
- *
- */
+   * Aplica o link do perfil público em campos de referência a usuário.
+   *
+   * @param array $variables
+   *   Variáveis de preprocessamento, alteradas por referência.
+   */
   #[Hook('preprocess_field')]
   public function preprocessField(array &$variables): void {
     $items = $variables['element']['#items'] ?? NULL;

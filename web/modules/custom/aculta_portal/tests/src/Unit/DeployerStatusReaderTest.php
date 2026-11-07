@@ -13,8 +13,16 @@ use Drupal\Tests\UnitTestCase;
 #[\PHPUnit\Framework\Attributes\Group('aculta_portal')]
 final class DeployerStatusReaderTest extends UnitTestCase {
 
+  /**
+   * Caminho base do diretório temporário usado pelo teste.
+   *
+   * @var string
+   */
   private string $base;
 
+  /**
+   * Cria os diretórios temporários usados pelo teste.
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->base = sys_get_temp_dir() . '/aculta-reader-' . bin2hex(random_bytes(6));
@@ -22,6 +30,9 @@ final class DeployerStatusReaderTest extends UnitTestCase {
     mkdir($this->base . '/var/deployer', 0700, TRUE);
   }
 
+  /**
+   * Remove os diretórios temporários criados pelo teste.
+   */
   protected function tearDown(): void {
     @unlink($this->base . '/var/deployer/status.json');
     @rmdir($this->base . '/var/deployer');
@@ -31,10 +42,16 @@ final class DeployerStatusReaderTest extends UnitTestCase {
     parent::tearDown();
   }
 
+  /**
+   * Confirma que a ausência do arquivo resulta em status indisponível.
+   */
   public function testMissingFileIsUnavailable(): void {
     $this->assertNull((new DeployerStatusReader($this->base . '/web'))->read());
   }
 
+  /**
+   * Confirma que o esquema 1 é lido e outros esquemas são rejeitados.
+   */
   public function testSchemaOneIsReadAndOtherSchemaRejected(): void {
     $file = $this->base . '/var/deployer/status.json';
     file_put_contents($file, json_encode(['schema' => 1, 'tool' => 'ferramenta 0.1.6']));

@@ -52,7 +52,12 @@ final class ColorModePreference {
   }
 
   /**
+   * Salva o modo de cor escolhido pela pessoa usuária.
    *
+   * @param int $uid
+   *   Identificador da pessoa usuária.
+   * @param string $mode
+   *   Modo de cor a salvar.
    */
   public function save(int $uid, string $mode): void {
     if (!in_array($mode, self::MODES, TRUE)) {

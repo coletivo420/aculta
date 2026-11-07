@@ -409,6 +409,7 @@ final class WikiLeadImageUploader {
    * IDs do upload novo, feito pelo próprio campo de arquivo.
    *
    * @return int[]
+   *   IDs dos arquivos enviados pelo campo.
    */
   private function managedFids(FormStateInterface $form_state): array {
     $value = $form_state->getValue([self::TAB, self::FILE], []);

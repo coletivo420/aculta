@@ -51,8 +51,13 @@ final class PhotoEditorHooks {
   ) {}
 
   /**
- *
- */
+   * Troca o gatilho do editor de foto pelo link que abre o modal.
+   *
+   * @param array $photoForm
+   *   Estrutura do editor de foto da conta.
+   * @param \Drupal\user\UserInterface $account
+   *   Conta cuja foto está sendo editada.
+   */
   #[Hook('aculta_portal_photo_editor_alter')]
   public function photoEditorAlter(array &$photoForm, UserInterface $account): void {
     // O gatilho é o avatar: abre o modal Drupal com o formulário da foto (rota própria, upload por AJAX). O conteúdo

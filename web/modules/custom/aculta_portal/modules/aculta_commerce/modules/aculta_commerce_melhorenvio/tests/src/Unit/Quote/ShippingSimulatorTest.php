@@ -41,6 +41,10 @@ final class ShippingSimulatorTest extends UnitTestCase {
    *   Origem da configuração.
    * @param bool $credentials
    *   Se o cliente tem as chaves do ambiente.
+   * @param \Drupal\aculta_commerce_melhorenvio\Quote\MelhorEnvioQuoter $quoter
+   *   Cotador usado pelo simulador.
+   * @param array<string, mixed>|null $package
+   *   Pacote padrão da configuração.
    */
   private function simulator(?array $origin, bool $credentials, MelhorEnvioQuoter $quoter, ?array $package = NULL): ShippingSimulator {
     $config = $this->createMock(ImmutableConfig::class);
@@ -68,14 +72,20 @@ final class ShippingSimulatorTest extends UnitTestCase {
   }
 
   /**
+   * Cria o pacote padrão usado nos testes.
    *
+   * @return \Drupal\aculta_commerce_melhorenvio\Quote\QuotePackage
+   *   Pacote de exemplo.
    */
   private function package(): QuotePackage {
     return new QuotePackage(widthCm: 11.0, heightCm: 2.0, lengthCm: 16.0, weightKg: 0.3, insuranceValue: 0.0);
   }
 
   /**
+   * Cria um cotador simulado.
    *
+   * @return \Drupal\aculta_commerce_melhorenvio\Quote\MelhorEnvioQuoter
+   *   Cotador de teste.
    */
   private function quoter(): MelhorEnvioQuoter {
     return $this->createMock(MelhorEnvioQuoter::class);
@@ -250,8 +260,9 @@ final class ShippingSimulatorTest extends UnitTestCase {
   }
 
   /**
-   * Variação sem medidas usa o pacote padrão da configuração. Sem padrão configurado, a variação sem medidas não tem
-   * pacote e fica indisponível (nenhuma medida é presumida).
+   * Variação sem medidas usa o pacote padrão da configuração.
+   *
+   * Sem padrão configurado, a variação sem medidas não tem pacote e fica indisponível (nenhuma medida é presumida).
    */
   public function testVariationWithoutMeasuresUsesDefaultOrIsUnavailable(): void {
     $empty = $this->createMock(FieldItemListInterface::class);

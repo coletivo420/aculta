@@ -134,7 +134,7 @@ final class MailTemplateKernelTest extends KernelTestBase {
   }
 
   /**
-   *
+   * Confirma que o layout envolve o corpo com a marca.
    */
   public function testLayoutWrapsBodyWithBrand(): void {
     MailBrand::create([

@@ -31,7 +31,13 @@ final class AccountPasswordCreateForm extends FormBase {
   ) {}
 
   /**
+   * Cria a instância do formulário com os serviços do container.
    *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   Container de serviços.
+   *
+   * @return static
+   *   Nova instância do formulário.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -42,14 +48,25 @@ final class AccountPasswordCreateForm extends FormBase {
   }
 
   /**
+   * Retorna o identificador do formulário.
    *
+   * @return string
+   *   Identificador do formulário.
    */
   public function getFormId(): string {
     return 'aculta_portal_account_password_create';
   }
 
   /**
+   * Monta o formulário de criação de senha.
    *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
+   *
+   * @return array
+   *   Estrutura do formulário renderizável.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['intro'] = [
@@ -72,7 +89,12 @@ final class AccountPasswordCreateForm extends FormBase {
   }
 
   /**
+   * Valida o comprimento mínimo da senha informada.
    *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $password = (string) $form_state->getValue('pass');
@@ -82,7 +104,12 @@ final class AccountPasswordCreateForm extends FormBase {
   }
 
   /**
+   * Define a senha na conta da sessão e remove a marca de senha não definida.
    *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     // Sempre a conta da sessão: o formulário não recebe o usuário como parâmetro.

@@ -21,10 +21,15 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(TrueFalseAnswerPlugin::class)]
 final class ObjectiveAnswerPluginsTest extends UnitTestCase {
 
+  /**
+   * Avaliador de respostas objetivas usado nos testes.
+   *
+   * @var \Drupal\aculta_lms\Assessment\ObjectiveAnswerScorer
+   */
   private ObjectiveAnswerScorer $scorer;
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
@@ -32,7 +37,7 @@ final class ObjectiveAnswerPluginsTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Verifica a pontuação do plugin verdadeiro/falso em cada caso.
    */
   public function testTrueFalsePluginScoresCorrectWrongAndEmptyAnswers(): void {
     $plugin = new TrueFalseAnswerPlugin($this->scorer);
@@ -43,7 +48,7 @@ final class ObjectiveAnswerPluginsTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Verifica que o plugin select exige a seleção exata e trata ausência.
    */
   public function testSelectPluginRequiresTheExactSelectionAndHandlesEmptyAnswer(): void {
     $plugin = new SelectAnswerPlugin($this->scorer);
@@ -55,7 +60,7 @@ final class ObjectiveAnswerPluginsTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Verifica a normalização de respostas do plugin de lacunas.
    */
   public function testFillBlanksPluginNormalizesCorrectWrongAndEmptyAnswers(): void {
     $plugin = new FillBlanksAnswerPlugin($this->scorer);
@@ -67,7 +72,7 @@ final class ObjectiveAnswerPluginsTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Verifica que o resolvedor escolhe o plugin pelo tipo estável.
    */
   public function testResolverSelectsPluginFromStableActivityType(): void {
     $resolver = new ObjectiveAnswerPluginResolver(
@@ -81,7 +86,7 @@ final class ObjectiveAnswerPluginsTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Verifica que o plugin rejeita atividade de outro tipo estável.
    */
   public function testPluginRejectsActivityWithAnotherStableType(): void {
     $this->expectException(\UnexpectedValueException::class);
@@ -89,7 +94,13 @@ final class ObjectiveAnswerPluginsTest extends UnitTestCase {
   }
 
   /**
+   * Cria uma atividade de curso para o tipo informado.
    *
+   * @param string $type
+   *   Tipo estável da atividade.
+   *
+   * @return \Drupal\aculta_lms\Learning\CourseActivity
+   *   Atividade de curso instanciada.
    */
   private function activity(string $type): CourseActivity {
     return new CourseActivity(10, 20, $type, TRUE);

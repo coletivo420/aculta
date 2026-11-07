@@ -35,8 +35,18 @@ final class EmailConfirmationAccessHooks {
   ) {}
 
   /**
- *
- */
+   * Restringe a criação de entidades para quem não confirmou o e-mail.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta que tenta criar a entidade.
+   * @param array $context
+   *   Contexto do hook, com o tipo de entidade.
+   * @param string|null $entity_bundle
+   *   Bundle da entidade, quando houver.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   Proibição quando a política restringe, neutro caso contrário.
+   */
   #[Hook('entity_create_access')]
   public function createAccess(AccountInterface $account, array $context, ?string $entity_bundle): AccessResultInterface {
     if (!$this->isRestricted($context['entity_type_id'] ?? '', $entity_bundle, $account)) {

@@ -18,8 +18,16 @@ use Drupal\Tests\UnitTestCase;
 #[\PHPUnit\Framework\Attributes\Group('aculta_portal')]
 final class SecretsManagerTest extends UnitTestCase {
 
+  /**
+   * Caminho base do diretório temporário usado pelo teste.
+   *
+   * @var string
+   */
   private string $base;
 
+  /**
+   * Prepara os diretórios temporários e o contrato de segredos do teste.
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->base = sys_get_temp_dir() . '/aculta-manager-' . bin2hex(random_bytes(6));
@@ -36,6 +44,9 @@ final class SecretsManagerTest extends UnitTestCase {
     ]));
   }
 
+  /**
+   * Remove os arquivos e diretórios temporários criados pelo teste.
+   */
   protected function tearDown(): void {
     foreach (glob($this->base . '/secrets/*') ?: [] as $f) {
       @unlink($f);
@@ -48,11 +59,17 @@ final class SecretsManagerTest extends UnitTestCase {
     parent::tearDown();
   }
 
+  /**
+   * Confirma que a máscara mantém as bordas e oculta valores curtos.
+   */
   public function testMaskKeepsOnlyEdgesAndHidesShortValues(): void {
     $this->assertSame('ab••••••••kl', SecretsManager::mask('abcdefghijkl'));
     $this->assertSame('••••••••', SecretsManager::mask('abc'));
   }
 
+  /**
+   * Confirma que salvar mescla os valores e preserva os deixados vazios.
+   */
   public function testSaveMergesAndKeepsValuesLeftEmpty(): void {
     file_put_contents($this->store(), "GOOGLE_OAUTH_CLIENT_ID=antigo\nEXEMPLO_SENHA=senha-antiga\n");
     $result = $this->manager()->save(['GOOGLE_OAUTH_CLIENT_ID' => 'novo', 'EXEMPLO_SENHA' => '', 'BREVO_API_KEY' => '']);
@@ -65,12 +82,18 @@ final class SecretsManagerTest extends UnitTestCase {
     $this->assertSame(0640, fileperms($this->store()) & 0777);
   }
 
+  /**
+   * Confirma que nomes desconhecidos e valores multilinha são recusados.
+   */
   public function testSaveRejectsUnknownNamesAndMultilineValues(): void {
     $this->assertFalse($this->manager()->save(['NAO_EXISTE' => 'x'])['ok']);
     $this->assertFalse($this->manager()->save(['GOOGLE_OAUTH_CLIENT_ID' => "a\nb"])['ok']);
     $this->assertFileDoesNotExist($this->store());
   }
 
+  /**
+   * Confirma que valores que o carregador alteraria são recusados.
+   */
   public function testSaveRefusesValuesTheLoaderWouldAlter(): void {
     // parse_ini_file (INI_SCANNER_RAW) corta em ";", remove aspas e tira espaços das pontas.
     foreach (['a;b', '"quoted"', ' espaco ', 'fim '] as $value) {
@@ -82,6 +105,9 @@ final class SecretsManagerTest extends UnitTestCase {
     $this->assertTrue($this->manager()->save(['BREVO_API_KEY' => 'abc#def=123'])['ok']);
   }
 
+  /**
+   * Confirma que o armazenamento em banco não escreve o arquivo de segredos.
+   */
   public function testDatabaseStorageRefusesToWriteFile(): void {
     $manager = $this->manager('database');
     $this->assertFalse($manager->canSaveHere());
@@ -89,6 +115,9 @@ final class SecretsManagerTest extends UnitTestCase {
     $this->assertFileDoesNotExist($this->store());
   }
 
+  /**
+   * Confirma que o ambiente do deployer prevalece sobre a configuração local.
+   */
   public function testEnvironmentFromDeployerOverridesLocalSetting(): void {
     $this->assertSame('test', $this->manager()->environment());
     mkdir($this->base . '/var/deployer', 0700, TRUE);
@@ -100,6 +129,15 @@ final class SecretsManagerTest extends UnitTestCase {
     @rmdir($this->base . '/var/deployer');
   }
 
+  /**
+   * Monta um gerenciador de segredos com chaves e configurações simuladas.
+   *
+   * @param string $storage
+   *   Modo de armazenamento usado pela instância.
+   *
+   * @return \Drupal\aculta_portal\Secrets\SecretsManager
+   *   Gerenciador configurado para o diretório temporário.
+   */
   private function manager(string $storage = 'file'): SecretsManager {
     $keys = $this->createMock(KeyRepositoryInterface::class);
     $logger = $this->createMock(LoggerChannelInterface::class);
@@ -113,15 +151,27 @@ final class SecretsManagerTest extends UnitTestCase {
     return new SecretsManager($keys, $settings, $factory, $this->base . '/web');
   }
 
+  /**
+   * Retorna o caminho do arquivo de segredos da instalação temporária.
+   *
+   * @return string
+   *   Caminho absoluto do arquivo de segredos.
+   */
   private function store(): string {
     return $this->base . '/secrets/aculta.secrets.env';
   }
 
+  /**
+   * Confirma que o valor vem do arquivo do servidor quando não há chave.
+   */
   public function testValueReadsServerFileWhenNoKeyExists(): void {
     file_put_contents($this->store(), "BREVO_API_KEY=valor-de-teste\n");
     $this->assertSame('valor-de-teste', $this->manager()->value('BREVO_API_KEY'));
   }
 
+  /**
+   * Confirma que o valor da chave prevalece sobre o do arquivo.
+   */
   public function testValuePrefersKeyWhenKeyExists(): void {
     file_put_contents($this->store(), "BREVO_API_KEY=do-arquivo\n");
     $key = $this->createMock(\Drupal\key\KeyInterface::class);
@@ -140,10 +190,16 @@ final class SecretsManagerTest extends UnitTestCase {
     $this->assertSame('da-key', $manager->value('BREVO_API_KEY'));
   }
 
+  /**
+   * Confirma que o valor é nulo quando nem chave nem arquivo têm o segredo.
+   */
   public function testValueIsNullWhenNeitherKeyNorFileHasIt(): void {
     $this->assertNull($this->manager()->value('BREVO_API_KEY'));
   }
 
+  /**
+   * Confirma que credenciais de outro ambiente não são lidas nem gravadas.
+   */
   public function testOtherEnvironmentCredentialIsNeverResolvedOrWritten(): void {
     // Ambiente test: TURNSTILE_KEYS_JSON é só de produção, mesmo que exista no arquivo desta instalação.
     file_put_contents($this->store(), "TURNSTILE_KEYS_JSON=chave-de-producao\n");
@@ -161,6 +217,9 @@ final class SecretsManagerTest extends UnitTestCase {
     );
   }
 
+  /**
+   * Confirma que o status de outro ambiente não expõe valores.
+   */
   public function testStatusForOtherEnvironmentReadsNoValues(): void {
     $keys = $this->createMock(KeyRepositoryInterface::class);
     $keys->expects($this->never())->method('getKey');
@@ -174,6 +233,9 @@ final class SecretsManagerTest extends UnitTestCase {
     }
   }
 
+  /**
+   * Confirma que o status do ambiente ativo relata os estados reais.
+   */
   public function testStatusForActiveEnvironmentReportsRealStates(): void {
     file_put_contents($this->store(), "GOOGLE_OAUTH_CLIENT_ID=ok\n");
     $status = $this->manager()->status();
@@ -184,6 +246,9 @@ final class SecretsManagerTest extends UnitTestCase {
     $this->assertSame('missing_optional', $status['BREVO_API_KEY']['state']);
   }
 
+  /**
+   * Confirma que o mesmo nome guarda valores independentes por ambiente.
+   */
   public function testSameNameHoldsIndependentValuesPerEnvironment(): void {
     $production = $this->base . '/secrets/producao.env';
     file_put_contents($production, "BREVO_API_KEY=valor-producao\n");
@@ -195,12 +260,18 @@ final class SecretsManagerTest extends UnitTestCase {
     @unlink($production);
   }
 
+  /**
+   * Confirma que o valor por identificador de chave usa o mapeamento do contrato.
+   */
   public function testValueForKeyIdUsesContractMapping(): void {
     file_put_contents($this->store(), "BREVO_API_KEY=valor-contratual\n");
     $this->assertSame('valor-contratual', $this->manager()->valueForKeyId('brevo_api_key'));
     $this->assertNull($this->manager()->valueForKeyId('not_a_contract_key'));
   }
 
+  /**
+   * Confirma que identificadores de chave duplicados falham fechados.
+   */
   public function testValueForDuplicateKeyIdFailsClosed(): void {
     $contractPath = $this->base . '/config/secrets-contract.json';
     $contract = json_decode((string) file_get_contents($contractPath), TRUE);
@@ -215,6 +286,19 @@ final class SecretsManagerTest extends UnitTestCase {
     $this->assertNull($this->manager()->valueForKeyId('brevo_api_key'));
   }
 
+  /**
+   * Monta um gerenciador de segredos para um ambiente e armazenamento.
+   *
+   * @param string $environment
+   *   Ambiente de execução usado pelo gerenciador.
+   * @param string $store
+   *   Caminho do arquivo de segredos.
+   * @param \Drupal\key\KeyRepositoryInterface $keys
+   *   Repositório de chaves simulado.
+   *
+   * @return \Drupal\aculta_portal\Secrets\SecretsManager
+   *   Gerenciador configurado com os dados informados.
+   */
   private function managerWith(string $environment, string $store, KeyRepositoryInterface $keys): SecretsManager {
     $logger = $this->createMock(LoggerChannelInterface::class);
     $factory = $this->createMock(LoggerChannelFactoryInterface::class);

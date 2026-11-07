@@ -10,8 +10,10 @@ use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 
 /**
- * Resultados do índice geral para a prévia (popup) e para a página de busca. O índice é do site inteiro,
- * então a consulta roda no host atual; cada resultado abre no host do próprio conteúdo.
+ * Resultados do índice geral para a prévia e para a página de busca.
+ *
+ * O índice é do site inteiro, então a consulta roda no host atual; cada
+ * resultado abre no host do próprio conteúdo.
  */
 final class SearchResults {
 
@@ -24,6 +26,7 @@ final class SearchResults {
    * Prévia: até $limit resultados e o total do índice para o termo (o total já vem filtrado por content_access).
    *
    * @return array{total: int, items: array<int, array{title: string, type: string, url: \Drupal\Core\Url}>}
+   *   Total de resultados e itens da prévia.
    */
   public function search(string $term, int $limit = 8): array {
     $index = $this->entityTypeManager->getStorage('search_api_index')->load(SearchPageController::INDEX_ID);
@@ -39,8 +42,13 @@ final class SearchResults {
   }
 
   /**
+   * Monta os itens de resultado a partir dos resultados do índice.
+   *
    * @param array<int, \Drupal\search_api\Item\ItemInterface> $resultItems
+   *   Resultados retornados pelo índice.
+   *
    * @return array<int, array{title: string, type: string, url: \Drupal\Core\Url}>
+   *   Itens de resultado já filtrados por acesso.
    */
   private function items(array $resultItems): array {
     $results = [];

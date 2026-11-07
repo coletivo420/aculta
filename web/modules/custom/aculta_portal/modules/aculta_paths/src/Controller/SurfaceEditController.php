@@ -21,7 +21,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final class SurfaceEditController extends ControllerBase {
 
   /**
+   * Cria a instância do controlador.
    *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   Container de serviços.
+   *
+   * @return static
+   *   Nova instância do controlador.
    */
   public static function create(ContainerInterface $container): static {
     return new static();

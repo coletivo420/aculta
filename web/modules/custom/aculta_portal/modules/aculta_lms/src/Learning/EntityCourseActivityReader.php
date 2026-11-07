@@ -39,7 +39,15 @@ final class EntityCourseActivityReader implements CourseActivityReaderInterface 
   }
 
   /**
+   * Lê o primeiro valor de um campo da entidade.
    *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   Entidade de onde o valor será lido.
+   * @param string $field
+   *   Nome do campo consultado.
+   *
+   * @return mixed
+   *   Primeiro valor do campo ou nulo quando vazio.
    */
   private static function fieldValue(ContentEntityInterface $entity, string $field): mixed {
     $values = $entity->get($field)->getValue();

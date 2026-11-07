@@ -19,8 +19,11 @@ final class AdminToolbarIconHooks {
   ) {}
 
   /**
- *
- */
+   * Anexa a biblioteca do ícone para usuários com acesso administrativo.
+   *
+   * @param array $attachments
+   *   Anexos da página, alterados por referência.
+   */
   #[Hook('page_attachments')]
   public function pageAttachments(array &$attachments): void {
     if (!$this->currentUser->hasPermission('access administration pages')) {

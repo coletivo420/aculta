@@ -165,6 +165,7 @@ final class GalleryEmbedDialogForm extends FormBase {
    * IDs de imagens escolhidas da lista do Studio.
    *
    * @return int[]
+   *   IDs das imagens escolhidas na lista do Studio.
    */
   private function studioPicks(FormStateInterface $form_state): array {
     return array_values(array_map('intval', array_keys(array_filter((array) $form_state->getValue('studio_images')))));

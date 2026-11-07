@@ -20,6 +20,7 @@ class ShippingCalculatorThemeHooks {
    * Registra o template aculta_shipping_calculator.
    *
    * @return array<string, array<string, mixed>>
+   *   Registro do template da calculadora de frete.
    */
   #[Hook('theme')]
   public function theme(): array {

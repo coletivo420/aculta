@@ -15,7 +15,7 @@ use Drupal\Core\Session\AccountInterface;
 final class AvisoAccessControlHandler extends EntityAccessControlHandler {
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
     if ($account->hasPermission('administer aculta avisos')) {
@@ -27,7 +27,7 @@ final class AvisoAccessControlHandler extends EntityAccessControlHandler {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
     return AccessResult::allowedIfHasPermission($account, 'administer aculta avisos');

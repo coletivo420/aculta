@@ -86,6 +86,10 @@ class DonateBlock extends BlockBase implements ContainerFactoryPluginInterface {
    * URL do passo inicial da doação, no domínio de apoio, com a query de retorno quando houver.
    *
    * @param array<string, mixed> $options
+   *   Opções adicionais da URL, como a query de retorno.
+   *
+   * @return string
+   *   URL do passo inicial da doação.
    */
   private function urlDoacao(array $options): string {
     $url = $this->purposes->routeUrl('support', 'aculta_donation.donation.default') ?? Url::fromRoute('aculta_donation.donation.default');

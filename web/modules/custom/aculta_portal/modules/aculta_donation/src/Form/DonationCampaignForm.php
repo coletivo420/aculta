@@ -13,7 +13,7 @@ use Drupal\Core\Form\FormStateInterface;
 final class DonationCampaignForm extends EntityForm {
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state): array {
     $form = parent::form($form, $form_state);
@@ -67,14 +67,20 @@ final class DonationCampaignForm extends EntityForm {
   }
 
   /**
+   * Verifica se já existe uma campanha com o identificador informado.
    *
+   * @param string $id
+   *   Identificador da campanha.
+   *
+   * @return bool
+   *   TRUE se a campanha existir.
    */
   public function exists(string $id): bool {
     return (bool) $this->entityTypeManager->getStorage('aculta_donation_campaign')->load($id);
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
@@ -91,7 +97,7 @@ final class DonationCampaignForm extends EntityForm {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state): int {
     /** @var \Drupal\aculta_donation\Entity\DonationCampaign $campanha */

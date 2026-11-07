@@ -221,7 +221,17 @@ final class XapiProgressDeriverTest extends UnitTestCase {
   /**
    * Monta uma declaração já validada, com o mínimo de campos usados pelo deriver.
    *
+   * @param string $verb
+   *   Identificador do verbo da declaração.
    * @param array<string, mixed> $result
+   *   Resultado da declaração, quando houver.
+   * @param string $registration
+   *   Identificador de registro da declaração.
+   * @param string $timestamp
+   *   Data e hora da declaração.
+   *
+   * @return array
+   *   Declaração xAPI montada.
    */
   private function statement(string $verb, array $result, string $registration, string $timestamp): array {
     $statement = [

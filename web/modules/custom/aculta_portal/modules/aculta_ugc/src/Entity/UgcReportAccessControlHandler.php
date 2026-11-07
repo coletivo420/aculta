@@ -19,7 +19,7 @@ use Drupal\aculta_ugc\ModerationScope;
 final class UgcReportAccessControlHandler extends EntityAccessControlHandler {
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
     $purpose = (string) $entity->get('purpose')->value;
@@ -38,7 +38,7 @@ final class UgcReportAccessControlHandler extends EntityAccessControlHandler {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResult {
     return AccessResult::allowedIf($account->isAuthenticated())->cachePerPermissions()->cachePerUser();

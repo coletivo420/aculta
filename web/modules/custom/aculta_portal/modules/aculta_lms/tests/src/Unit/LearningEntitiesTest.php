@@ -22,7 +22,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 final class LearningEntitiesTest extends UnitTestCase {
 
   /**
-   *
+   * Verifica que uma resposta avaliada exige nota.
    */
   public function testGradedAnswerRequiresScore(): void {
     $this->expectException(\InvalidArgumentException::class);
@@ -30,7 +30,7 @@ final class LearningEntitiesTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Verifica que o estado da resposta precisa ser conhecido.
    */
   public function testAnswerStateMustBeKnown(): void {
     $this->expectException(\InvalidArgumentException::class);
@@ -38,7 +38,7 @@ final class LearningEntitiesTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Verifica que o status de progresso precisa ser conhecido.
    */
   public function testProgressStatusMustBeKnown(): void {
     $this->expectException(\InvalidArgumentException::class);
@@ -46,7 +46,7 @@ final class LearningEntitiesTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Verifica que o status de progresso definido no contrato é aceito.
    */
   public function testProgressStatusFromContractIsAccepted(): void {
     ProgressEntity::assertValidStatus(CourseProgress::STATUS_PROGRESS);
@@ -54,7 +54,7 @@ final class LearningEntitiesTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Verifica as regras de tipo e peso não negativo da atividade.
    */
   public function testActivityUsesContractTypeAndNonNegativeWeightRules(): void {
     ActivityEntity::assertActivityRules('objective', 10, TRUE, 0);
@@ -63,7 +63,7 @@ final class LearningEntitiesTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Verifica que a atividade rejeita peso negativo.
    */
   public function testActivityRejectsNegativeWeight(): void {
     $this->expectException(\InvalidArgumentException::class);
@@ -71,7 +71,7 @@ final class LearningEntitiesTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Verifica a regra de peso não negativo da lição.
    */
   public function testLessonUsesContractNonNegativeWeightRule(): void {
     $this->expectException(\InvalidArgumentException::class);

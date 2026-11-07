@@ -24,11 +24,17 @@ use PHPUnit\Framework\Attributes\Group;
 final class WikiLeadImageFocalPathTest extends UnitTestCase {
 
   /**
-   * @var string[] */
+   * Tipos de recorte esperados no teste.
+   *
+   * @var string[]
+   */
   private array $expectedTypes = [];
 
   /**
-   * @var string[] */
+   * Chamadas esperadas ao recorder.
+   *
+   * @var string[]
+   */
   private array $expectedCalls = [];
 
   /**
@@ -88,9 +94,19 @@ final class WikiLeadImageFocalPathTest extends UnitTestCase {
   }
 
   /**
-   * Recorder real com gerenciador de recorte mockado: o crop_type só é consultado se o record() recebeu valores.
+   * Cria um recorder real com gerenciador de recorte mockado.
    *
+   * O crop_type só é consultado se o record() recebeu valores.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $etm
+   *   Gerenciador de tipos de entidade usado na asserção de chamadas.
+   * @param \Drupal\file\FileInterface|null $file
+   *   Arquivo associado ao ponto focal, ou NULL.
    * @param string[] $expected_types
+   *   Tipos de recorte que devem ser consultados.
+   *
+   * @return \Drupal\aculta_file_uploader\FocalPointRecorder
+   *   Recorder configurado.
    */
   private function realRecorder(EntityTypeManagerInterface $etm, ?FileInterface $file, array $expected_types): FocalPointRecorder {
     $cropTypes = $this->createMock(EntityStorageInterface::class);

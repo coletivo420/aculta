@@ -29,7 +29,7 @@ final class PaymentDomainPathProcessor implements OutboundPathProcessorInterface
   public function __construct(private readonly DomainPurposeManager $purposes) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function processOutbound($path, &$options = [], ?Request $request = NULL, ?BubbleableMetadata $bubbleable_metadata = NULL) {
     if (!self::ehCaminhoDePagamento($path)) {
@@ -45,7 +45,13 @@ final class PaymentDomainPathProcessor implements OutboundPathProcessorInterface
   }
 
   /**
+   * Indica se o caminho é de pagamento.
    *
+   * @param string $path
+   *   Caminho interno a verificar.
+   *
+   * @return bool
+   *   TRUE quando coincide com um padrão de pagamento.
    */
   private static function ehCaminhoDePagamento(string $path): bool {
     foreach (self::CAMINHOS_DE_PAGAMENTO as $padrao) {

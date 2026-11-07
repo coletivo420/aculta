@@ -15,8 +15,11 @@ use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Situação de associado de uma conta: concede, suspende, desliga ou recusa um pedido. Só o administrador
- * (permissão `administer aculta associados`). Não concede acesso a conteúdo; é registro da associação.
+ * Situação de associado de uma conta.
+ *
+ * Concede, suspende, desliga ou recusa um pedido. Só o administrador
+ * (permissão `administer aculta associados`). Não concede acesso a conteúdo; é
+ * registro da associação.
  */
 final class AssociadoSituacaoForm extends FormBase {
 
@@ -29,7 +32,7 @@ final class AssociadoSituacaoForm extends FormBase {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -42,14 +45,24 @@ final class AssociadoSituacaoForm extends FormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getFormId(): string {
     return 'aculta_user_associado_situacao';
   }
 
   /**
+   * Monta o formulário de alteração da situação de associado.
    *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado do formulário.
+   * @param \Drupal\user\UserInterface|null $user
+   *   Conta cuja situação será alterada.
+   *
+   * @return array
+   *   Formulário renderizável.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?UserInterface $user = NULL): array {
     $uid = (int) $user?->id();
@@ -85,7 +98,7 @@ final class AssociadoSituacaoForm extends FormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $uid = (int) $form_state->get('uid');

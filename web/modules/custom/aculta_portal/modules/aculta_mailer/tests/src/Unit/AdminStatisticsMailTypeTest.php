@@ -47,7 +47,10 @@ final class AdminStatisticsMailTypeTest extends TestCase {
       public function __construct(private readonly string $text) {}
 
       /**
+       * Devolve o texto traduzido original.
        *
+       * @return string
+       *   Texto guardado.
        */
       public function __toString(): string {
         return $this->text;

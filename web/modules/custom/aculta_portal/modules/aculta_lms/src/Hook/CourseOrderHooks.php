@@ -21,8 +21,11 @@ final class CourseOrderHooks {
   ) {}
 
   /**
- *
- */
+   * Sincroniza as matrículas em turmas quando o pedido de curso muda.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Pedido salvo.
+   */
   #[Hook('commerce_order_insert')]
   #[Hook('commerce_order_update')]
   public function orderSaved(EntityInterface $entity): void {

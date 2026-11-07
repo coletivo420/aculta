@@ -9,12 +9,22 @@ namespace Drupal\aculta_lms\Plugin\ActivityAnswer;
 interface FreeTextAnswerPluginInterface {
 
   /**
+   * Retorna o tipo estável de CourseActivity tratado por este plugin.
    *
+   * @return string
+   *   Identificador do tipo de atividade.
    */
   public function activityType(): string;
 
   /**
-   * @return array<string, mixed> */
+   * Decodifica a configuração JSON do plugin.
+   *
+   * @param string $json
+   *   Configuração codificada em JSON.
+   *
+   * @return array<string, mixed>
+   *   Configuração decodificada.
+   */
   public function decodeConfiguration(string $json): array;
 
   /**

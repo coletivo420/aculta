@@ -36,7 +36,7 @@ final class OwnershipClaim extends ContentEntityBase {
   use EntityChangedTrait;
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);

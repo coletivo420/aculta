@@ -170,6 +170,7 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
    * O link abre o cadastro em modal (aculta_portal.register_popup) e volta para a etapa atual depois do cadastro.
    *
    * @return array<string, mixed>
+   *   Elemento de convite para criar conta, ou array vazio se já autenticado.
    */
   private function contaConvite(): array {
     if (!$this->order || $this->currentUser->isAuthenticated()) {

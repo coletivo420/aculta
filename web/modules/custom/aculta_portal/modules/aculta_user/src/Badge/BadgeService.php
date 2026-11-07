@@ -132,7 +132,15 @@ final class BadgeService {
   }
 
   /**
+   * Informa se a pessoa possui a conquista ativa.
    *
+   * @param int $uid
+   *   ID da conta.
+   * @param string $badge
+   *   ID da conquista.
+   *
+   * @return bool
+   *   TRUE se houver concessão ativa.
    */
   public function hasActive(int $uid, string $badge): bool {
     return $this->activeAwards($uid, $badge) !== [];
@@ -146,14 +154,30 @@ final class BadgeService {
   }
 
   /**
-   * Conquistas ativas da pessoa, mais antigas primeiro. @return \Drupal\aculta_user\Entity\BadgeAward[] */
+   * Conquistas ativas da pessoa, mais antigas primeiro.
+   *
+   * @param int $uid
+   *   ID da conta.
+   *
+   * @return \Drupal\aculta_user\Entity\BadgeAward[]
+   *   Concessões ativas.
+   */
   public function activeFor(int $uid): array {
     $ids = $this->storage()->getQuery()->accessCheck(FALSE)->condition('uid', $uid)->condition('revogado_em', NULL, 'IS NULL')->sort('concedido_em')->execute();
     return array_values($this->storage()->loadMultiple($ids));
   }
 
   /**
-   * @return \Drupal\aculta_user\Entity\BadgeAward[] */
+   * Devolve as concessões ativas de uma conquista para a pessoa.
+   *
+   * @param int $uid
+   *   ID da conta.
+   * @param string $badge
+   *   ID da conquista.
+   *
+   * @return \Drupal\aculta_user\Entity\BadgeAward[]
+   *   Concessões ativas.
+   */
   private function activeAwards(int $uid, string $badge): array {
     $ids = $this->storage()->getQuery()->accessCheck(FALSE)
       ->condition('uid', $uid)->condition('badge', $badge)->condition('revogado_em', NULL, 'IS NULL')->execute();
@@ -161,7 +185,10 @@ final class BadgeService {
   }
 
   /**
+   * Devolve o storage das concessões de conquista.
    *
+   * @return \Drupal\Core\Entity\EntityStorageInterface
+   *   Storage da entidade de concessão.
    */
   private function storage() {
     return $this->entityTypeManager->getStorage('aculta_badge_award');

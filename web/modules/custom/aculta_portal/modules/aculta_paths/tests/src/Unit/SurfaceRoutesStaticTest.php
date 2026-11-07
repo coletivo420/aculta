@@ -22,6 +22,7 @@ final class SurfaceRoutesStaticTest extends UnitTestCase {
    * Rotas declaradas nos YAML dos módulos envolvidos.
    *
    * @return array<string, array<string, mixed>>
+   *   Rotas indexadas pelo nome, conforme os arquivos YAML.
    */
   private static function rotas(): array {
     $modulos = dirname(__DIR__, 4);

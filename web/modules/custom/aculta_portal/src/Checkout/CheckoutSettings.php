@@ -32,7 +32,10 @@ final class CheckoutSettings {
   }
 
   /**
+   * Retorna o tipo de pedido usado pela Loja.
    *
+   * @return string
+   *   Tipo de pedido configurado para a Loja.
    */
   public function shopOrderType(): string {
     return $this->texto('shop_order_type', self::DEFAULT_SHOP_ORDER_TYPE);
@@ -45,17 +48,29 @@ final class CheckoutSettings {
   }
 
   /**
-   * Tipos de pedido reconhecidos como curso: o configurado primeiro e o histórico `curso`, para que pedidos já
-   * feitos continuem concedendo matrícula, aparecendo no separador de cursos e sem estorno.
+   * Lista os tipos de pedido reconhecidos como curso.
+   *
+   * O configurado vem primeiro e o histórico `curso` depois, para que pedidos
+   * já feitos continuem concedendo matrícula, aparecendo no separador de cursos
+   * e sem estorno.
    *
    * @return list<string>
+   *   Tipos de pedido aceitos como curso.
    */
   public function lmsOrderTypes(): array {
     return array_values(array_unique([$this->lmsOrderType(), self::LEGACY_LMS_ORDER_TYPE]));
   }
 
   /**
+   * Lê um valor textual da configuração, com padrão de reserva.
    *
+   * @param string $chave
+   *   Chave da configuração.
+   * @param string $padrao
+   *   Valor usado quando a configuração não tem texto válido.
+   *
+   * @return string
+   *   Valor configurado ou o padrão informado.
    */
   private function texto(string $chave, string $padrao): string {
     $valor = $this->configFactory->get(self::CONFIG)->get($chave);

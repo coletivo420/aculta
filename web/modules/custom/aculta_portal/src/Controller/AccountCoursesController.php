@@ -22,7 +22,7 @@ final class AccountCoursesController implements ContainerInjectionInterface {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -33,7 +33,10 @@ final class AccountCoursesController implements ContainerInjectionInterface {
   }
 
   /**
+   * Monta a página de cursos do usuário atual.
    *
+   * @return array
+   *   Array de renderização da lista de cursos.
    */
   public function page(): array {
     $view = $this->presenter->present($this->currentAccount);

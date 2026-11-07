@@ -26,8 +26,16 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[RunTestsInSeparateProcesses]
 final class AccountMailRouterKernelTest extends KernelTestBase {
 
+  /**
+   * Módulos necessários para o teste.
+   *
+   * @var array
+   */
   protected static $modules = ['system', 'user', 'aculta_mailer', 'domain'];
 
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
@@ -45,6 +53,9 @@ final class AccountMailRouterKernelTest extends KernelTestBase {
 
   /**
    * Router com o gerenciador de domínio real (o domínio de Conta criado no setUp).
+   *
+   * @return \Drupal\aculta_portal\Email\AccountMailRouter
+   *   Router configurado com os serviços do container.
    */
   private function router(): AccountMailRouter {
     $purposes = new DomainPurposeManager(
@@ -62,6 +73,9 @@ final class AccountMailRouterKernelTest extends KernelTestBase {
     );
   }
 
+  /**
+   * Confirma que a redefinição usa o texto aprovado e um link de uso único.
+   */
   public function testResetMessageUsesApprovedTextAndOneTimeLink(): void {
     $account = User::create(['name' => 'pessoa', 'mail' => 'pessoa@example.invalid', 'status' => 1]);
     $account->save();
@@ -77,6 +91,9 @@ final class AccountMailRouterKernelTest extends KernelTestBase {
     $this->assertStringNotContainsString('orig', $message['body'][0]);
   }
 
+  /**
+   * Confirma que o registro nomeia a pessoa e as opções de acesso.
+   */
   public function testRegisterMessageNamesTheUserAndTheLoginOptions(): void {
     $account = User::create(['name' => 'nova', 'mail' => 'nova@example.invalid', 'status' => 1]);
     $account->save();
@@ -90,6 +107,9 @@ final class AccountMailRouterKernelTest extends KernelTestBase {
     $this->assertStringContainsString('https://conta.example.invalid/', $message['body'][0]);
   }
 
+  /**
+   * Confirma que outras chaves e módulos não são alterados.
+   */
   public function testOtherKeysAndModulesAreLeftAlone(): void {
     $account = User::create(['name' => 'outra', 'mail' => 'outra@example.invalid', 'status' => 1]);
     $account->save();

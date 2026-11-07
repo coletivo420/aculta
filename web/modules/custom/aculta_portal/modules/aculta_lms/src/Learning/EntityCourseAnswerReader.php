@@ -41,7 +41,15 @@ final class EntityCourseAnswerReader implements CourseAnswerReaderInterface {
   }
 
   /**
+   * Lê o primeiro valor do campo informado da entidade.
    *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   Entidade de onde o valor será lido.
+   * @param string $field
+   *   Nome do campo a consultar.
+   *
+   * @return mixed
+   *   Valor do campo, ou NULL quando ausente.
    */
   private static function fieldValue(ContentEntityInterface $entity, string $field): mixed {
     $values = $entity->get($field)->getValue();

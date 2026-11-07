@@ -44,7 +44,15 @@ final class CourseCompletionPublisher implements CourseCompletionPublisherInterf
   }
 
   /**
+   * Lê o primeiro valor de um campo da entidade.
    *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   Entidade consultada.
+   * @param string $field
+   *   Nome do campo.
+   *
+   * @return mixed
+   *   Valor do campo ou NULL quando vazio.
    */
   private static function fieldValue(ContentEntityInterface $entity, string $field): mixed {
     $values = $entity->get($field)->getValue();

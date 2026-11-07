@@ -20,8 +20,8 @@ final class XapiRetentionCronHooks {
   ) {}
 
   /**
- *
- */
+   * Executa a tarefa mensal de retenção dos statements xAPI.
+   */
   #[Hook('cron')]
   public function cron(): void {
     $months = $this->configFactory->get(XapiTokenSettings::CONFIG_NAME)->get(XapiRetention::KEY_MONTHS);

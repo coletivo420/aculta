@@ -12,7 +12,28 @@ namespace Drupal\aculta_commerce_melhorenvio\Address;
 final class LogisticsAddress {
 
   /**
+   * Constrói o endereço logístico com os campos já normalizados.
+   *
+   * @param string $postalCode
+   *   CEP do endereço.
+   * @param string $street
+   *   Logradouro.
+   * @param string $number
+   *   Número do imóvel.
+   * @param bool $sn
+   *   Indica endereço sem número.
+   * @param string $complement
+   *   Complemento do endereço.
+   * @param string $district
+   *   Bairro.
+   * @param string $city
+   *   Cidade.
+   * @param string $stateAbbr
+   *   Sigla da unidade federativa.
+   * @param string $countryId
+   *   Identificador do país.
    * @param list<string> $errors
+   *   Lista de erros de validação, vazia quando o endereço é válido.
    */
   public function __construct(
     public readonly string $postalCode,
@@ -28,14 +49,17 @@ final class LogisticsAddress {
   ) {}
 
   /**
-   *
+   * Indica se o endereço não possui erros de validação.
    */
   public function isValid(): bool {
     return $this->errors === [];
   }
 
   /**
-   * Payload mínimo da cotação: só CEP. Número e demais campos não são exigidos pelo endpoint. */
+   * Payload mínimo da cotação: só CEP.
+   *
+   * Número e demais campos não são exigidos pelo endpoint.
+   */
   public function toQuoteArray(): array {
     return ['postal_code' => $this->postalCode];
   }
@@ -44,6 +68,7 @@ final class LogisticsAddress {
    * Payload do endereço para o carrinho (contratação) e a etiqueta. Chaves como na referência oficial.
    *
    * @return array<string, string>
+   *   Endereço formatado para o carrinho e a etiqueta.
    */
   public function toShipmentArray(): array {
     return [

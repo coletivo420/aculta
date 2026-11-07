@@ -11,7 +11,10 @@ use Drupal\aculta_lms\Learning\CourseActivity;
 final class ObjectiveAnswerPluginResolver {
 
   /**
-   * @var array<string, \Drupal\aculta_lms\Plugin\ActivityAnswer\ObjectiveAnswerPluginInterface> */
+   * Plugins de resposta objetiva indexados pelo tipo de atividade.
+   *
+   * @var array<string, \Drupal\aculta_lms\Plugin\ActivityAnswer\ObjectiveAnswerPluginInterface>
+   */
   private readonly array $plugins;
 
   public function __construct(
@@ -27,7 +30,13 @@ final class ObjectiveAnswerPluginResolver {
   }
 
   /**
+   * Retorna o plugin de resposta objetiva do tipo da atividade.
    *
+   * @param \Drupal\aculta_lms\Learning\CourseActivity $activity
+   *   Atividade cujo tipo define o plugin.
+   *
+   * @return \Drupal\aculta_lms\Plugin\ActivityAnswer\ObjectiveAnswerPluginInterface
+   *   Plugin de resposta objetiva correspondente.
    */
   public function forActivity(CourseActivity $activity): ObjectiveAnswerPluginInterface {
     if (!isset($this->plugins[$activity->type])) {
@@ -37,7 +46,17 @@ final class ObjectiveAnswerPluginResolver {
   }
 
   /**
+   * Calcula a nota da resposta usando o plugin do tipo da atividade.
    *
+   * @param \Drupal\aculta_lms\Learning\CourseActivity $activity
+   *   Atividade respondida.
+   * @param mixed $answer
+   *   Resposta enviada pela pessoa.
+   * @param mixed $correct
+   *   Gabarito da atividade, quando houver.
+   *
+   * @return float
+   *   Nota calculada para a resposta.
    */
   public function score(CourseActivity $activity, mixed $answer, mixed $correct): float {
     return $this->forActivity($activity)->score($activity, $answer, $correct);

@@ -17,7 +17,7 @@ use PHPUnit\Framework\Attributes\Group;
 final class RoleInheritanceHooksTest extends UnitTestCase {
 
   /**
-   *
+   * Confirma que o carregamento adiciona os papéis herdados.
    */
   public function testCarregarAdicionaOsHerdados(): void {
     $heranca = $this->createMock(HerancaDePapeis::class);
@@ -31,7 +31,7 @@ final class RoleInheritanceHooksTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Confirma que o salvamento retira apenas o herdado não gravado.
    */
   public function testSalvarRetiraSoOHerdadoNaoGravado(): void {
     $heranca = $this->createMock(HerancaDePapeis::class);

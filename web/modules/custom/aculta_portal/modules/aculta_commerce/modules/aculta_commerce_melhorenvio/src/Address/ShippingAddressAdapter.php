@@ -39,6 +39,7 @@ final class ShippingAddressAdapter {
    *   Campos do Drupal Address do perfil de envio. Não é alterado.
    *
    * @return array{status: string, postal_code: ?string, missing: list<string>, suggestion: array<string, string>}
+   *   Status da resolução, CEP normalizado, campos faltantes e sugestão.
    */
   public function resolve(array $address): array {
     $postalCode = $this->lookup->normalize((string) ($address['postal_code'] ?? ''));
@@ -72,10 +73,19 @@ final class ShippingAddressAdapter {
   }
 
   /**
+   * Monta o resultado da resolução do endereço.
+   *
+   * @param string $status
+   *   Código de status da resolução.
+   * @param string|null $postalCode
+   *   CEP normalizado, ou NULL quando inválido.
    * @param list<string> $missing
+   *   Campos do endereço ainda faltantes.
    * @param array<string, string> $suggestion
+   *   Valores sugeridos pela consulta de CEP.
    *
    * @return array{status: string, postal_code: ?string, missing: list<string>, suggestion: array<string, string>}
+   *   Resultado estruturado da resolução.
    */
   private function result(string $status, ?string $postalCode, array $missing, array $suggestion): array {
     return [

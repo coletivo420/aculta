@@ -30,13 +30,15 @@ final class RegisterPopupForm extends RegisterForm {
   public const WRAPPER_ID = 'aculta-register-popup';
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getFormId() {
     return 'aculta_register_popup_form';
   }
 
   /**
+   * Retorna nulo para desligar o CAPTCHA global neste formulário.
+   *
    * Sem formulário base: o módulo captcha, ao não achar o ponto deste formulário, usaria o do ID base (user_form), e a
    * regra global de CAPTCHA passaria a valer. O cadastro em modal fica só com o ponto desligado deste formulário.
    */
@@ -45,7 +47,7 @@ final class RegisterPopupForm extends RegisterForm {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);

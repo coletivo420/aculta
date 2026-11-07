@@ -80,7 +80,13 @@ final class AnswerLifecycleEventHooks {
   }
 
   /**
+   * Retorna o estado atual da resposta.
    *
+   * @param \Drupal\Core\Entity\EntityInterface $answer
+   *   Entidade de resposta.
+   *
+   * @return string
+   *   Estado persistido da resposta.
    */
   private function state(EntityInterface $answer): string {
     return (string) $answer->get('state')->value;

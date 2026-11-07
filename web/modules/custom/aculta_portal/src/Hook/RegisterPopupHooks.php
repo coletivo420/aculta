@@ -16,8 +16,11 @@ use Drupal\Core\Hook\Attribute\Hook;
 final class RegisterPopupHooks {
 
   /**
- *
- */
+   * Registra o formulário de cadastro em popup para a entidade de usuário.
+   *
+   * @param array $entity_types
+   *   Tipos de entidade alterados pelo hook.
+   */
   #[Hook('entity_type_alter')]
   public function registrarFormularioPopup(array &$entity_types): void {
     if (isset($entity_types['user'])) {

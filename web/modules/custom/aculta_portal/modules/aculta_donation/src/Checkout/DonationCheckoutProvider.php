@@ -30,28 +30,40 @@ final class DonationCheckoutProvider implements CheckoutContextProviderInterface
   ) {}
 
   /**
+   * Retorna o identificador do provedor de contexto.
    *
+   * @return string
+   *   Identificador do provedor.
    */
   public function id(): string {
     return 'donation';
   }
 
   /**
+   * Retorna o rótulo do provedor de contexto.
    *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   *   Rótulo traduzível do provedor.
    */
   public function label(): TranslatableMarkup {
     return new TranslatableMarkup('Doações');
   }
 
   /**
+   * Retorna o peso de ordenação do provedor.
    *
+   * @return int
+   *   Peso do provedor.
    */
   public function weight(): int {
     return 30;
   }
 
   /**
+   * Monta a configuração de checkout a partir das opções de doação.
    *
+   * @return \Drupal\aculta_portal\Checkout\CheckoutContextConfiguration
+   *   Configuração de contexto do checkout de doações.
    */
   public function configuration(): CheckoutContextConfiguration {
     $config = $this->configFactory->get('aculta_donation.settings');

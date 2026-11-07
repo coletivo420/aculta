@@ -20,6 +20,8 @@ final class CheckoutConfigurationResolver {
   }
 
   /**
+   * Resolve a configuração de todos os contextos registrados.
+   *
    * @return array<string, \Drupal\aculta_portal\Checkout\CheckoutContextConfiguration>
    *   Configurações por ID de contexto, na ordem do registry.
    */

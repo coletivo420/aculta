@@ -173,8 +173,10 @@ final class XapiStatementValidatorTest extends UnitTestCase {
    * Declaração base, com sobrescritas.
    *
    * @param array<string, mixed> $overrides
+   *   Valores que sobrescrevem a declaração base.
    *
    * @return array<string, mixed>
+   *   Declaração de teste com as sobrescritas aplicadas.
    */
   private function statement(array $overrides = []): array {
     $base = [
@@ -192,8 +194,10 @@ final class XapiStatementValidatorTest extends UnitTestCase {
    * Valida só o objeto da declaração e devolve o objeto normalizado.
    *
    * @param array<string, mixed> $object
+   *   Objeto da declaração a validar.
    *
    * @return array<string, mixed>
+   *   Objeto normalizado pelo validador.
    */
   private function validatedObject(array $object): array {
     $statement = $this->statement(['object' => $object]);
@@ -204,6 +208,7 @@ final class XapiStatementValidatorTest extends UnitTestCase {
    * Afirma que a declaração foi recusada com exceção de validação.
    *
    * @param array<string, mixed> $statement
+   *   Declaração que deve ser recusada.
    */
   private function refused(array $statement): void {
     $accepted = TRUE;

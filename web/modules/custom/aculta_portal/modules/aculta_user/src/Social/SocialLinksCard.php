@@ -13,8 +13,10 @@ use Drupal\Core\Url;
 use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
- * Caixa "Redes sociais" da Minha conta, embaixo da bio: uma linha por rede, com ícone, valor atual e lápis.
- * O lápis abre o modal de edição do link (aculta_user.redes_form).
+ * Caixa "Redes sociais" da Minha conta, embaixo da bio.
+ *
+ * Mostra uma linha por rede, com ícone, valor atual e lápis. O lápis abre o
+ * modal de edição do link (aculta_user.redes_form).
  */
 final class SocialLinksCard {
 

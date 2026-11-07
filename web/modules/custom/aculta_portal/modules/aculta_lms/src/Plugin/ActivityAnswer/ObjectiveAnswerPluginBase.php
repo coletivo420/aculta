@@ -20,14 +20,23 @@ abstract class ObjectiveAnswerPluginBase implements ObjectiveAnswerPluginInterfa
   ) {}
 
   /**
+   * Devolve o identificador de tipo estável do plugin.
    *
+   * @return string
+   *   Identificador do tipo de atividade.
    */
   public function activityType(): string {
     return static::ACTIVITY_TYPE;
   }
 
   /**
+   * Garante que a atividade é do tipo aceito pelo plugin.
    *
+   * @param \Drupal\aculta_lms\Learning\CourseActivity $activity
+   *   Atividade a validar.
+   *
+   * @throws \UnexpectedValueException
+   *   Quando o tipo da atividade não corresponde ao do plugin.
    */
   protected function assertActivityType(CourseActivity $activity): void {
     if ($activity->type !== static::ACTIVITY_TYPE) {
@@ -36,7 +45,19 @@ abstract class ObjectiveAnswerPluginBase implements ObjectiveAnswerPluginInterfa
   }
 
   /**
-   * @return string[] */
+   * Valida e converte um valor em lista de textos.
+   *
+   * @param mixed $value
+   *   Valor recebido.
+   * @param string $label
+   *   Rótulo usado nas mensagens de erro.
+   *
+   * @return string[]
+   *   Lista de textos validada.
+   *
+   * @throws \InvalidArgumentException
+   *   Quando o valor não é uma lista de textos.
+   */
   protected function stringList(mixed $value, string $label): array {
     if (!is_array($value)) {
       throw new \InvalidArgumentException(sprintf('%s deve ser uma lista de textos.', $label));

@@ -13,7 +13,7 @@ use Symfony\Component\Routing\RouteCollection;
 final class DonationRefundRouteSubscriber extends RouteSubscriberBase {
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection): void {
     if ($route = $collection->get('entity.commerce_payment.operation_form')) {

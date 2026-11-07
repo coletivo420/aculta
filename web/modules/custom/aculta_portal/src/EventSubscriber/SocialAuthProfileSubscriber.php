@@ -18,14 +18,17 @@ final class SocialAuthProfileSubscriber implements EventSubscriberInterface {
   public function __construct(private readonly EntityTypeManagerInterface $entityTypeManager) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function getSubscribedEvents(): array {
     return [SocialAuthEvents::USER_LOGIN => 'onUserLogin'];
   }
 
   /**
+   * Guarda o e-mail do Google na conta após o login social.
    *
+   * @param \Drupal\social_auth\Event\LoginEvent $event
+   *   Evento de login social.
    */
   public function onUserLogin(LoginEvent $event): void {
     if ($event->getPluginId() !== self::GOOGLE_PLUGIN_ID) {

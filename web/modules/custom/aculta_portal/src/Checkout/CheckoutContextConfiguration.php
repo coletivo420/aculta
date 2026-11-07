@@ -13,14 +13,26 @@ namespace Drupal\aculta_portal\Checkout;
 final class CheckoutContextConfiguration {
 
   /**
-   * @var list<string> */
+   * Tipos de pedido reivindicados pelo contexto.
+   *
+   * @var list<string>
+   */
   public readonly array $orderTypeIds;
 
   /**
-   * @var list<string> */
+   * Checkout flows utilizados pelo contexto.
+   *
+   * @var list<string>
+   */
   public readonly array $checkoutFlowIds;
 
   /**
+   * Constrói a configuração efetiva de um contexto de checkout.
+   *
+   * @param string $contextId
+   *   Identificador do contexto.
+   * @param \Drupal\aculta_portal\Checkout\CheckoutMode $mode
+   *   Modalidade de checkout declarada pelo contexto.
    * @param list<string> $orderTypeIds
    *   Tipos de pedido do Commerce que o contexto reivindica.
    * @param list<string> $checkoutFlowIds
@@ -41,8 +53,13 @@ final class CheckoutContextConfiguration {
   }
 
   /**
+   * Remove valores vazios e duplicados e ordena os identificadores.
+   *
    * @param list<string> $ids
+   *   Identificadores a normalizar.
+   *
    * @return list<string>
+   *   Identificadores únicos e ordenados.
    */
   private static function normalize(array $ids): array {
     $ids = array_values(array_unique(array_filter($ids, static fn(string $id): bool => $id !== '')));

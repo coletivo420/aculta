@@ -90,6 +90,10 @@ final class CourseStructureOrderManager {
   /**
    * Persists an exact permutation of one course structure collection.
    *
+   * @param string $entityType
+   *   Tipo de entidade dos filhos reordenados.
+   * @param int $parentId
+   *   ID da entidade pai da coleção.
    * @param list<int> $orderedIds
    *   Complete ordered list of child entity IDs supplied by the editor.
    *

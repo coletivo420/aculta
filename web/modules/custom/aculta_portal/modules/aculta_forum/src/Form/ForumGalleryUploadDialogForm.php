@@ -142,6 +142,7 @@ final class ForumGalleryUploadDialogForm extends FormBase {
    * Imagens escolhidas: uploads novos e envios recentes do Studio, sem repetição.
    *
    * @return int[]
+   *   Identificadores dos arquivos escolhidos, sem repetição.
    */
   private function selectedFids(FormStateInterface $form_state): array {
     $uploaded = array_values(array_filter(array_map('intval', (array) $form_state->getValue('images'))));

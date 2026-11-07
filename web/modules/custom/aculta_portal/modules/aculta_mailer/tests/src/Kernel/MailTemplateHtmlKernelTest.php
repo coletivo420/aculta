@@ -133,6 +133,7 @@ final class MailTemplateHtmlKernelTest extends KernelTestBase {
    * Renderiza o tipo de teste com o contexto dado.
    *
    * @return array{subject: string, body: string, html: bool}
+   *   Assunto, corpo e indicador de HTML renderizados.
    */
   private function renderTemplate(array $context): array {
     $type = $this->container->get(MailTypeRegistry::class)->get('aculta_mailer_test_message');

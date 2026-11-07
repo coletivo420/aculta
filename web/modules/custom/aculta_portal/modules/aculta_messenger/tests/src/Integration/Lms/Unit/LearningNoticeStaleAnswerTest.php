@@ -31,7 +31,7 @@ use Psr\Log\NullLogger;
 final class LearningNoticeStaleAnswerTest extends UnitTestCase {
 
   /**
-   *
+   * Confere que uma resposta com atividade ausente é ignorada sem erro.
    */
   public function testSubmissionWithMissingActivityIsIgnoredSafely(): void {
     $answer = $this->createMock(ContentEntityInterface::class);
@@ -87,7 +87,13 @@ final class LearningNoticeStaleAnswerTest extends UnitTestCase {
   }
 
   /**
+   * Cria uma lista de campo simulada com o valor informado.
    *
+   * @param mixed $value
+   *   Valor exposto pela lista.
+   *
+   * @return \Drupal\Core\Field\FieldItemListInterface
+   *   Lista de campo de teste.
    */
   private function field(mixed $value): FieldItemListInterface {
     return new class($value) extends FieldItemList {
@@ -97,7 +103,7 @@ final class LearningNoticeStaleAnswerTest extends UnitTestCase {
       }
 
       /**
-       *
+       * {@inheritdoc}
        */
       public function __get($property_name): mixed {
         return $property_name === 'value' ? $this->scalar : parent::__get($property_name);

@@ -12,10 +12,16 @@ use Drupal\Core\Cache\CacheableMetadata;
 final readonly class StudentLearningSummary {
 
   /**
+   * Constrói o resumo de aprendizagem da conta.
+   *
    * @param array<int, \Drupal\aculta_learning_contracts\Learning\StudentLearningCourse> $courses
-   *   Courses visible to this account.
+   *   Cursos visíveis para esta conta.
+   * @param \Drupal\aculta_learning_contracts\Learning\StudentLearningCourse|null $continueCourse
+   *   Curso a continuar, ou NULL quando não houver.
    * @param array<int, \Drupal\aculta_learning_contracts\Learning\StudentLearningCertificate> $certificates
-   *   Certificates visible to this account.
+   *   Certificados visíveis para esta conta.
+   * @param \Drupal\Core\Cache\CacheableMetadata $cache
+   *   Metadados de cache do resumo.
    */
   public function __construct(
     public array $courses,

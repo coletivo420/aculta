@@ -29,7 +29,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 final class AttemptArchive extends ContentEntityBase {
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);

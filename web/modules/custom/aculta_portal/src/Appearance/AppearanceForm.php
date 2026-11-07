@@ -22,7 +22,7 @@ final class AppearanceForm extends FormBase implements ContainerInjectionInterfa
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -33,14 +33,14 @@ final class AppearanceForm extends FormBase implements ContainerInjectionInterfa
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getFormId(): string {
     return 'aculta_portal_appearance_form';
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $uid = (int) $this->currentUser->id();
@@ -63,7 +63,7 @@ final class AppearanceForm extends FormBase implements ContainerInjectionInterfa
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $uid = (int) $this->currentUser->id();

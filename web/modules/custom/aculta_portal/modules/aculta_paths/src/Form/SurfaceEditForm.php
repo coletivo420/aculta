@@ -35,7 +35,7 @@ final class SurfaceEditForm extends FormBase {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -47,7 +47,7 @@ final class SurfaceEditForm extends FormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getFormId(): string {
     return 'aculta_paths_editar_form_v2';
@@ -56,6 +56,10 @@ final class SurfaceEditForm extends FormBase {
   /**
    * {@inheritdoc}
    *
+   * @param array $form
+   *   Estrutura do formulário a construir.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
    * @param string $purpose
    *   Purpose da superfície (validado pelo controlador).
    */
@@ -177,7 +181,7 @@ final class SurfaceEditForm extends FormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     // O seletor AJAX produz estados intermediários (por exemplo, modo
@@ -235,7 +239,7 @@ final class SurfaceEditForm extends FormBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $purpose = (string) $form['#purpose'];
@@ -313,7 +317,13 @@ final class SurfaceEditForm extends FormBase {
   /**
    * Valores do formulário no formato da configuração, para um purpose.
    *
+   * @param string $purpose
+   *   Purpose da superfície editada.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
+   *
    * @return array{modo: string, ativa: bool, slug: string, titulo: string}
+   *   Valores normalizados da superfície.
    */
   private function valoresDoFormulario(string $purpose, FormStateInterface $form_state): array {
     $modo = (string) $form_state->getValue('modo');

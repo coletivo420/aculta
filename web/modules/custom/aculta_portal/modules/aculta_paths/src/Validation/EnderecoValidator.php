@@ -14,7 +14,15 @@ namespace Drupal\aculta_paths\Validation;
 final class EnderecoValidator {
 
   /**
+   * Informa o motivo de invalidação de um slug ou endereço de subdomínio.
+   *
+   * @param string $valor
+   *   Valor já convertido para minúsculas.
+   * @param bool $host
+   *   Indica se o valor é um endereço de subdomínio.
+   *
    * @return array{codigo: string, args: array<string, string>}|null
+   *   Código e argumentos do motivo, ou NULL quando o valor é válido.
    */
   public static function motivo(string $valor, bool $host): ?array {
     if ($valor === '') {

@@ -18,7 +18,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 final class CertificateIssueAccessCheckTest extends UnitTestCase {
 
   /**
-   *
+   * O acesso por permissão de grupo declara o contexto de permissões do usuário.
    */
   public function testGroupPermissionAccessDeclaresGroupPermissionContext(): void {
     $account = $this->createMock(AccountProxyInterface::class);

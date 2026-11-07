@@ -12,7 +12,9 @@ use Drupal\commerce_product\Entity\ProductInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Página inicial da loja (SHOP). A raiz de loja.aculta serve esta rota, como a raiz de cada subdomínio serve a sua
+ * Página inicial da loja (SHOP).
+ *
+ * A raiz de loja.aculta serve esta rota, como a raiz de cada subdomínio serve a sua
  * (`/apoio`, `/wiki`, `/cursos`). Mostra o texto da página "Loja da Associação" (nó 372) e os produtos publicados.
  */
 final class ShopController extends ControllerBase {
@@ -31,7 +33,10 @@ final class ShopController extends ControllerBase {
   ) {}
 
   /**
+   * Monta a página inicial da loja com o texto editorial e a lista de produtos.
    *
+   * @return array
+   *   Estrutura renderizável da página.
    */
   public function home(): array {
     $cache = (new CacheableMetadata())->addCacheTags(['commerce_product_list']);
@@ -76,6 +81,7 @@ final class ShopController extends ControllerBase {
    * Produtos publicados da loja, do mais recente para o mais antigo.
    *
    * @return \Drupal\commerce_product\Entity\ProductInterface[]
+   *   Produtos publicados disponíveis na loja.
    */
   private function produtosDisponiveis(): array {
     $ids = $this->entities->getStorage('commerce_product')->getQuery()

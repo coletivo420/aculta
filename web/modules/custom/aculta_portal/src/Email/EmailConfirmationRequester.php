@@ -191,7 +191,16 @@ class EmailConfirmationRequester {
   }
 
   /**
-   * @return \Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface[] */
+   * Confirmações pendentes de um endereço para a conta informada.
+   *
+   * @param string $email
+   *   Endereço de e-mail consultado.
+   * @param int $uid
+   *   ID da conta dona das confirmações.
+   *
+   * @return \Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface[]
+   *   Confirmações ativas e pendentes da conta.
+   */
   private function pendingFor(string $email, int $uid): array {
     $storage = $this->entityTypeManager->getStorage('aculta_mail_confirmer');
     $ids = $storage->getQuery()
@@ -211,7 +220,12 @@ class EmailConfirmationRequester {
   }
 
   /**
+   * Registra uma falha sem expor dados pessoais no log.
    *
+   * @param string $message
+   *   Mensagem de contexto da falha.
+   * @param \Throwable $exception
+   *   Exceção capturada.
    */
   private function logFailure(string $message, \Throwable $exception): void {
     // The exception message may contain an address or transport payload. Log

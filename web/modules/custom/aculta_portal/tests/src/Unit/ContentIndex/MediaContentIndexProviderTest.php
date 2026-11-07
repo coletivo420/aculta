@@ -11,6 +11,9 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ * Testa a projeção de mídia do índice de conteúdo.
+ */
 #[CoversClass(\Drupal\aculta_portal\ContentIndex\MediaContentIndexProvider::class)]
 #[Group('aculta_portal')]
 final class MediaContentIndexProviderTest extends UnitTestCase {

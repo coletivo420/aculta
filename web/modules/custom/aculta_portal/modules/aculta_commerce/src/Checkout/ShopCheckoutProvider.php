@@ -22,28 +22,28 @@ final class ShopCheckoutProvider implements CheckoutContextProviderInterface {
   ) {}
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function id(): string {
     return 'shop';
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function label(): TranslatableMarkup {
     return new TranslatableMarkup('Loja');
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function weight(): int {
     return 10;
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function configuration(): CheckoutContextConfiguration {
     $tipo = $this->settings->shopOrderType();
