@@ -1,7 +1,7 @@
 favicon:
   mimetype: image/vnd.microsoft.icon
-  path: themes/custom/aculta420/assets/branding/aculta420/web/aculta420-favicon.ico
-  url: /themes/custom/aculta420/assets/branding/aculta420/web/aculta420-favicon.ico
+  path: themes/custom/aculta420_v2/assets/icons/aculta420-favicon.ico
+  url: /themes/custom/aculta420_v2/assets/icons/aculta420-favicon.ico
   use_default: false
 features:
   comment_user_picture: true
@@ -9,18 +9,6 @@ features:
   favicon: true
   node_user_picture: true
 logo:
-  path: themes/custom/aculta420/assets/branding/aculta420/web/logo-aculta420-horizontal-branco-900x300.png
+  path: themes/custom/aculta420_v2/assets/logos/aculta420-horizontal-white-900x300.png
   url: null
   use_default: false
-b5_body_schema: none
-b5_body_bg_schema: none
-b5_theme_mode: light
-b5_top_container: container
-b5_top_container_config: ''
-b5_navbar_schema: dark
-b5_navbar_bg_schema: none
-b5_footer_schema: dark
-b5_footer_bg_schema: none
-schemas:
-  bootstrap: 8000
-  aculta420: 8000
