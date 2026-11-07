@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ */
+
+use Symfony\Component\Yaml\Yaml;
+
 declare(strict_types=1);
 
 /**
@@ -72,9 +78,10 @@ if ($failures !== []) {
 }
 echo "UNIQUE PATHS AND TEXTS GATE: PASS\n";
 
-/** Lê YAML de rotas e menus sem depender de extensão: usa o parser do Symfony do vendor. */
+/**
+ * Lê YAML de rotas e menus sem depender de extensão: usa o parser do Symfony do vendor. */
 function yaml_parse_file_safe(string $file): array {
   require_once dirname(__DIR__) . '/vendor/autoload.php';
-  $data = \Symfony\Component\Yaml\Yaml::parseFile($file);
+  $data = Yaml::parseFile($file);
   return is_array($data) ? $data : [];
 }

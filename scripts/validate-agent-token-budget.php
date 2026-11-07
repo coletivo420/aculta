@@ -1,13 +1,18 @@
 <?php
 
+/**
+ * @file
+ */
+
 declare(strict_types=1);
 
 /**
  * Gate de orçamento de leitura dos agentes (somente leitura; sem vendor, sem Drush).
  *
  * Confere:
- * 1. Tamanho dos documentos de leitura de partida (AGENTS.md, CLAUDE.md, TODO.md e
- *    TODO.md de cada componente). Esses arquivos são reenviados a cada turno.
+ * 1. Tamanho dos documentos de leitura de partida (AGENTS.md, CLAUDE.md, TODO.md e.
+ *
+ *    @todo .md de cada componente). Esses arquivos são reenviados a cada turno.
  * 2. Cobertura e consistência: todo componente com *.info.yml tem TODO.md; a versão
  *    citada bate com o manifesto; o roadmap citado existe; não há seção de histórico.
  * 3. Handoff: docs/operations/ESTADO-DA-SESSAO.md tem no máximo 3 entradas.
@@ -27,9 +32,11 @@ const LIMIT_ENTRY_TOTAL = 10000;
 const MAX_HANDOFF_ENTRIES = 3;
 const MAX_SKILL_DESCRIPTION = 200;
 const MAX_SKILL_BYTES = 4000;
-const MAX_SKILLS = 10; // 10: adicionada aculta-grill-me (decisão de 2026-11-05)
+// 10: adicionada aculta-grill-me (decisão de 2026-11-05)
+const MAX_SKILLS = 10;
 
-/** Trechos que outros gates exigem no AGENTS.md. Não remover sem atualizar o gate dono. */
+/**
+ * Trechos que outros gates exigem no AGENTS.md. Não remover sem atualizar o gate dono. */
 const AGENTS_LITERALS = [
   'Endereço centralizado em `aculta_portal_cep` e país exclusivo Brasil (BR)',
   'ACEITE-UNICO',
@@ -131,7 +138,8 @@ if (is_file($handoff)) {
     $failures[] = "ESTADO-DA-SESSAO.md tem $entries entradas; máximo " . MAX_HANDOFF_ENTRIES;
   }
   $report[] = "handoff $entries/" . MAX_HANDOFF_ENTRIES;
-} else {
+}
+else {
   $failures[] = 'docs/operations/ESTADO-DA-SESSAO.md ausente';
 }
 
@@ -155,7 +163,8 @@ foreach ($skillDirs as $skillDir) {
   // Descrição sempre entra no contexto: curta e sobre o gatilho (progressive disclosure).
   if (!preg_match('/^description: (.+)$/m', $skillText, $dm)) {
     $failures[] = "docs/agent-skills/$skillName/SKILL.md sem description";
-  } elseif (mb_strlen($dm[1]) > MAX_SKILL_DESCRIPTION) {
+  }
+  elseif (mb_strlen($dm[1]) > MAX_SKILL_DESCRIPTION) {
     $failures[] = "docs/agent-skills/$skillName: description com " . mb_strlen($dm[1]) . ' caracteres; limite ' . MAX_SKILL_DESCRIPTION;
   }
   // Corpo carregado sob demanda: acima do limite, mova o detalhe para references/ ou para o doc canônico.

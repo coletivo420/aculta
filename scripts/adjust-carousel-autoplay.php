@@ -1,8 +1,16 @@
 <?php
-/** Targeted local VVJB timing and group-size adjustment. */
+
+/**
+ * @file
+ * Targeted local VVJB timing and group-size adjustment. */
+
+use Drupal\views\Entity\View;
 use Symfony\Component\Yaml\Yaml;
-if (!in_array(\Drupal::request()->getHost(), ['localhost', '127.0.0.1'], TRUE)) throw new RuntimeException('Local only.');
-$view = \Drupal\views\Entity\View::load('home_editorial_highlights');
+
+if (!in_array(\Drupal::request()->getHost(), ['localhost', '127.0.0.1'], TRUE)) {
+  throw new RuntimeException('Local only.');
+}
+$view = View::load('home_editorial_highlights');
 $display = $view->get('display');
 $options = &$display['default']['display_options']['style']['options'];
 $options['items_big'] = 2;

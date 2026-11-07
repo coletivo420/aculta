@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Gate das diretivas próprias do ACULTA no web/.htaccess (ADR-010: Apache no Homelab, LiteSpeed na produção).
  *
  * Reprova se o bloco que serve módulos ES do PDF.js com o MIME type correto sumir ou for alterado. O PDF.js precisa

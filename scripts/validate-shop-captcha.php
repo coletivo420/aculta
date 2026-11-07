@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Gate estático da barreira de CAPTCHA da loja. Somente leitura; não inicia o Drupal.
  *
  * Reprova se a loja voltar a ter CAPTCHA: os pontos de carrinho e checkout padrão precisam estar desativados em

@@ -40,9 +40,10 @@ if ($yamlContent === FALSE) {
 // In runtime, symfony/yaml or pecl-yaml may be available, but we can use yaml_parse or Symfony Yaml if available.
 if (function_exists('yaml_parse')) {
   $definitions = yaml_parse($yamlContent);
-} else {
+}
+else {
   require_once $root . '/vendor/autoload.php';
-  $definitions = Symfony\Component\Yaml\Yaml::parse($yamlContent);
+  $definitions = Yaml::parse($yamlContent);
 }
 
 if (!is_array($definitions) || empty($definitions)) {
@@ -50,6 +51,7 @@ if (!is_array($definitions) || empty($definitions)) {
 }
 
 require_once $schemesFile;
+use Symfony\Component\Yaml\Yaml;
 use Drupal\aculta420_v2\Palette\PurposePaletteSchemes;
 
 $tokensSource = (string) file_get_contents($tokensFile);

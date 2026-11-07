@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Barreira módulo x tema (aculta_portal x aculta420). Somente leitura; não inicia o Drupal.
  *
  * Regra (AGENTS.md, "Fronteira módulo x tema"):
@@ -29,7 +30,8 @@ $assert = static function (bool $ok, string $message) use (&$failures, &$checks)
   }
 };
 
-/** Arquivos do módulo que citam o tema por motivo registrado (dívida, não padrão). */
+/**
+ * Arquivos do módulo que citam o tema por motivo registrado (dívida, não padrão). */
 $allowedThemeReferences = [
   // Verificação de ambiente: o relatório de requisitos mostra se o tema está instalado. Não é dependência visual.
   'src/Controller/PortalRequirementsController.php',
@@ -37,7 +39,8 @@ $allowedThemeReferences = [
   'modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php',
 ];
 
-/** Cliquet: marcação de apresentação (classes Bootstrap/utilitárias) dentro de atributos de classe do módulo. */
+/**
+ * Cliquet: marcação de apresentação (classes Bootstrap/utilitárias) dentro de atributos de classe do módulo. */
 $presentationBaseline = 0;
 
 $tokenPattern = '/\b(btn|btn-[a-z-]+|alert|alert-[a-z-]+|badge|col|col-[a-z0-9-]+|row|g-[0-9]|d-[a-z-]+|m[trblxy]?-[0-9a-z]+|p[trblxy]?-[0-9a-z]+|text-[a-z-]+|bi-[a-z0-9-]+|visually-hidden|form-[a-z-]+|card[a-z-]*|list-group[a-z-]*|nav-[a-z-]+|justify-content-[a-z-]+|align-items-[a-z-]+|collapse|offcanvas[a-z-]*|pb-[0-9]|fw-[a-z0-9]+)\b/';
@@ -125,7 +128,7 @@ $assert($tokens <= $presentationBaseline, "Marcação de apresentação no módu
 foreach ($files($module . '/templates', ['twig']) as $path) {
   $text = (string) file_get_contents($path);
   $assert(!preg_match('/\sclass\s*=/', $text), 'Template do módulo com class= (apresentação deve ficar no tema): ' . basename($path));
-  // Todo template do módulo tem um correspondente no tema (ou é só estrutura com fallback neutro).
+  // @todo template do módulo tem um correspondente no tema (ou é só estrutura com fallback neutro).
   $themeTemplate = $theme . '/templates/' . basename($path);
   // Template estrutural sem design (fallback de elemento genérico): o tema não precisa sobrescrever.
   $structural = ['portal-element.html.twig'];
@@ -187,7 +190,7 @@ $themeMap = (string) file_get_contents($root . '/web/themes/custom/aculta420_v2/
 preg_match_all("/^\s+'([a-z0-9_-]+)' => \[/m", $themeMap, $tm);
 $known = array_flip($tm[1]);
 $used = [];
-// Todo src/ e templates/ do módulo, submódulos incluídos (aculta_lms, aculta_paths...): a checagem de tokens não pode pular submódulo.
+// @todo src/ e templates/ do módulo, submódulos incluídos (aculta_lms, aculta_paths...): a checagem de tokens não pode pular submódulo.
 $usageFiles = array_merge(
   array_filter($files($module, ['php']), static fn (string $p): bool => str_contains($p, DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR) && !str_contains($p, DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR)),
   array_filter($files($module, ['twig']), static fn (string $p): bool => str_contains($p, DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR)),

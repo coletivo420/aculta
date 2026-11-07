@@ -1,9 +1,13 @@
 <?php
 
 /**
+ * @file
  * Applies the official registration supplied by the responsible person, locally.
  * One-time update; later editorial changes belong in the Drupal administration.
  */
+
+use Drupal\user\Entity\Role;
+use Drupal\contact\Entity\ContactForm;
 use Drupal\block\Entity\Block;
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
@@ -112,11 +116,11 @@ $privacy = Node::load($state['nodes']['privacy']);
 $privacy->set('body', ['value' => '<p>Esta página descreve as funcionalidades de privacidade presentes nesta versão do site oficial da Associação Cultural Antiproibicionista.</p><h2>Formulário de contato</h2><p>O formulário solicita nome, e-mail, assunto e mensagem. Essas informações são usadas para encaminhar o contato à Associação e permitir sua resposta. O formulário não publica a mensagem.</p><h2>Navegação e autenticação</h2><p>O site utiliza mecanismos de sessão e proteção para permitir o acesso de usuários autenticados e o funcionamento dos formulários.</p><h2>Fontes externas</h2><p>O site carrega Inter e Oswald pelo Google Fonts. O navegador faz requisições ao serviço para obter esses arquivos.</p><h2>Contato sobre dados pessoais</h2><p>Entre em contato pelo e-mail <a href="mailto:4e20coletivo@gmail.com">4e20coletivo@gmail.com</a>.</p>', 'format' => 'full_html'])->setNewRevision(TRUE);
 $privacy->save();
 
-$contact = \Drupal\contact\Entity\ContactForm::load('aculta_contact');
+$contact = ContactForm::load('aculta_contact');
 $contact->set('label', 'Contato')->set('recipients', [$data['email']])->save();
 \Drupal::configFactory()->getEditable('contact.settings')->set('default_form', 'aculta_contact')->save();
 foreach (['anonymous', 'authenticated'] as $role_id) {
-  \Drupal\user\Entity\Role::load($role_id)->grantPermission('access site-wide contact form')->save();
+  Role::load($role_id)->grantPermission('access site-wide contact form')->save();
 }
 \Drupal::configFactory()->getEditable('aculta_portal.settings')->set('institution_data_uuid', $block->uuid())->set('institution_transparency_nid', (int) $state['nodes']['transparency'])->save();
 

@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Gate: regra de usuários de teste de agentes existe e está operacional (docs/portal/GUARDRAILS.md).
  *
  * Verifica no repositório (sem Runtime): a seção da regra, o prefixo e o domínio exigidos, a exclusão de

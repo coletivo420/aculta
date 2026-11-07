@@ -29,9 +29,11 @@ $root = dirname(__DIR__);
 require_once $root . '/web/modules/custom/aculta_portal/src/Role/RoleHierarchy.php';
 
 use Drupal\aculta_portal\Role\RoleHierarchy;
+
 $errors = [];
 
-/** Herança decidida: papel => papéis dos quais herda (conjunto exato). */
+/**
+ * Herança decidida: papel => papéis dos quais herda (conjunto exato). */
 $decidida = [
   'email_confirmed' => ['authenticated'],
   'lms_teacher' => ['email_confirmed'],
@@ -39,7 +41,8 @@ $decidida = [
   'gerente_loja' => ['content_editor'],
 ];
 
-/** Linha de base de checagens por nome de papel em código customizado (dívida: não pode subir). */
+/**
+ * Linha de base de checagens por nome de papel em código customizado (dívida: não pode subir). */
 // 15: as duas chamadas novas (aculta_user, RoleInheritanceHooks) são da própria herança (adicionar e retirar o papel
 // herdado da conta), não decisões de acesso. Acesso novo continua por permissão.
 const LINHA_DE_BASE_HASROLE = 15;

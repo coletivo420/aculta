@@ -1,7 +1,16 @@
 <?php
-/** Administrative reference text; no changes to public editorial copy. */
+
+/**
+ * @file
+ * Administrative reference text; no changes to public editorial copy. */
+
+use Drupal\field\Entity\FieldConfig;
+use Drupal\views\Entity\View;
 use Symfony\Component\Yaml\Yaml;
-if (!in_array(\Drupal::request()->getHost(), ['localhost', '127.0.0.1'], TRUE)) throw new RuntimeException('Local only.');
+
+if (!in_array(\Drupal::request()->getHost(), ['localhost', '127.0.0.1'], TRUE)) {
+  throw new RuntimeException('Local only.');
+}
 $changed = [];
 $map = [
   'node_type' => [
@@ -40,15 +49,19 @@ foreach (\Drupal::entityTypeManager()->getStorage('menu')->loadMultiple() as $me
   }
 }
 foreach (['aculta_projects' => ['Projetos da associação', 'Lista projetos publicados, ordenados pelo campo de ordem. Utilizada na Home e na página de Projetos.'], 'aculta_activities' => ['Atividades da associação', 'Lista atividades reais publicadas, com seus dados e relações editoriais.'], 'aculta_news' => ['Notícias da associação', 'Lista notícias publicadas para acompanhamento da atuação institucional.'], 'aculta_documents' => ['Documentos da associação', 'Lista documentos oficiais publicados para a área de Transparência. Não substitui o contexto institucional em HTML.'], 'home_editorial_highlights' => ['Destaques editoriais da Home', 'Carrossel VVJB de destaques publicados. Ordenação crescente por Ordem e, em caso de empate, identificador do conteúdo. Não depende de três IDs fixos.']] as $id => [$label, $description]) {
-  if ($view = \Drupal\views\Entity\View::load($id)) {
-    $view->set('label', $label)->set('description', $description)->save(); $changed[] = $view->getConfigDependencyName();
+  if ($view = View::load($id)) {
+    $view->set('label', $label)->set('description', $description)->save();
+    $changed[] = $view->getConfigDependencyName();
   }
 }
 foreach (['field_category' => 'Categoria curta do destaque. Exemplo: COMUNICAÇÃO • CULTURA.', 'field_summary' => 'Resumo curto e legível; não utilizar HTML ou cortar informação com reticências.', 'field_complement' => 'Parágrafo complementar opcional que aprofunda o resumo.', 'field_link' => 'Escolha um destino existente e informe o texto do CTA. Não inserir URL fictícia.', 'field_weight' => 'Número inteiro para ordenar os destaques: os menores números aparecem primeiro.'] as $name => $description) {
-  $field = \Drupal\field\Entity\FieldConfig::loadByName('node', 'editorial_highlight', $name);
-  $field->setDescription($description)->save(); $changed[] = $field->getConfigDependencyName();
+  $field = FieldConfig::loadByName('node', 'editorial_highlight', $name);
+  $field->setDescription($description)->save();
+  $changed[] = $field->getConfigDependencyName();
 }
 $directory = dirname(__DIR__) . '/config/sync/';
-foreach ($changed as $name) file_put_contents($directory . $name . '.yml', Yaml::dump(\Drupal::service('config.storage')->read($name), 12, 2));
+foreach ($changed as $name) {
+  file_put_contents($directory . $name . '.yml', Yaml::dump(\Drupal::service('config.storage')->read($name), 12, 2));
+}
 \Drupal::state()->set('aculta.admin_reference_config', $changed);
 echo json_encode($changed, JSON_PRETTY_PRINT) . PHP_EOL;

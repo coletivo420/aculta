@@ -1,4 +1,9 @@
 <?php
+
+/**
+ * @file
+ */
+
 echo 'Modules: ' . implode(', ', array_keys(\Drupal::moduleHandler()->getModuleList())) . PHP_EOL;
 foreach (['node_type', 'block_content_type', 'filter_format', 'contact_form'] as $type) {
   if (!\Drupal::entityTypeManager()->hasDefinition($type)) {

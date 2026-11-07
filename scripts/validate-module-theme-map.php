@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Static gate for the module x theme map (docs/portal/MAPA-MODULO-TEMA.md).
  *
  * Checks that:

@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Reject administrative and integration routes outside the MAIN domain.
  *
  * The ACULTA administration is unique and lives on the MAIN purpose:

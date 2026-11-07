@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Gate: contrato do palco do álbum entre aculta_gallery (módulo), aculta420 (tema) e VVJS (contrib).
  *
  * Regra (docs: web/modules/custom/aculta_portal/modules/aculta_gallery/docs/FRONTEIRA-MODULO-TEMA.md):
@@ -90,7 +91,7 @@ else {
   $vvjsText = '';
   $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($vvjs, FilesystemIterator::SKIP_DOTS));
   foreach ($it as $file) {
-    if (in_array($file->getExtension(), ['css', 'js', 'twig', 'php'], true)) {
+    if (in_array($file->getExtension(), ['css', 'js', 'twig', 'php'], TRUE)) {
       $vvjsText .= (string) file_get_contents($file->getPathname());
     }
   }

@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Barreira do aculta_image: todo uso de imagem passa pelo sistema único (docs do submódulo, seção 3.8).
  * Somente leitura; não inicia o Drupal.
  *
@@ -29,7 +30,8 @@ $root = dirname(__DIR__);
 $image = 'web/modules/custom/aculta_portal/modules/aculta_image/';
 $catalogFile = $root . '/' . $image . 'src/ImageCatalog.php';
 
-/** Exceções revisadas: arquivo => [padrão => motivo]. */
+/**
+ * Exceções revisadas: arquivo => [padrão => motivo]. */
 $EXCECOES = [
   'web/modules/custom/aculta_portal/modules/aculta_game/src/Form/AchievementDefinitionForm.php' => [
     'FileSizeLimit' => 'Exceção aprovada pelo responsável: a conquista mantém 2 MB próprios.',
@@ -51,10 +53,12 @@ $EXCECOES = [
   ],
 ];
 
-/** Caminhos que pertencem ao próprio sistema. */
+/**
+ * Caminhos que pertencem ao próprio sistema. */
 $DONO = [$image];
 
-/** Estilos do catálogo (lista lida de ImageCatalog::STYLES). */
+/**
+ * Estilos do catálogo (lista lida de ImageCatalog::STYLES). */
 $estilos = [];
 if (is_file($catalogFile)) {
   if (preg_match('/const STYLES = \[(.*?)\];/s', (string) file_get_contents($catalogFile), $m)) {

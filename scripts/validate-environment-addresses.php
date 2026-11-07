@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Gate: endereços dependentes de ambiente só existem no mapeamento do aculta_deployer.
  *
  * Regra permanente (AGENTS.md, seção "Endereços dependentes de ambiente"): domínio, subdomínio, URL absoluta, redirect

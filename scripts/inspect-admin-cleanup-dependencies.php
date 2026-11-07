@@ -1,11 +1,18 @@
 <?php
+
+/**
+ * @file
+ */
+
+use Drupal\Core\Menu\MenuTreeParameters;
+
 foreach (['footer', 'tools', 'content', 'navigation-user-links'] as $menu) {
   $links = \Drupal::service('plugin.manager.menu.link')->loadLinksByRoute('', [], $menu);
-  $count = \Drupal::service('menu.link_tree')->load($menu, new \Drupal\Core\Menu\MenuTreeParameters());
+  $count = \Drupal::service('menu.link_tree')->load($menu, new MenuTreeParameters());
   echo $menu . ': ' . count($count) . ' roots' . PHP_EOL;
 }
 echo 'Contact uninstall blockers: ' . json_encode(\Drupal::service('module_installer')->validateUninstall(['contact'])) . PHP_EOL;
-foreach (['contact','aculta_contact'] as $id) {
+foreach (['contact', 'aculta_contact'] as $id) {
   $count = \Drupal::entityTypeManager()->getStorage('webform_submission')->getQuery()->accessCheck(FALSE)->condition('webform_id', $id)->count()->execute();
   echo "Webform $id submissions: $count\n";
 }

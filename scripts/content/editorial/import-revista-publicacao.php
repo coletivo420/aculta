@@ -1,5 +1,7 @@
 <?php
+
 /**
+ * @file
  * Importa uma publicação da Revista (Notícia = article) a partir de um arquivo JSON de scripts/content/editorial/.
  *
  * Arquivo: ACULTA_IMPORT_FILE (caminho relativo à raiz do repositório). Padrão: revista-bloco-sativa-fiocruz.json.

@@ -1,6 +1,10 @@
 <?php
 
-// Add this allowlist to the production settings.php during controlled deploy.
+/**
+ * @file
+ * Add this allowlist to the production settings.php during controlled deploy.
+ */
+
 // Never replace it with a wildcard subdomain pattern.
 $settings['trusted_host_patterns'] = [
   '^aculta\.org$',

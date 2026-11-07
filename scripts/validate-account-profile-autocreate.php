@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Gate: perfil participante é criado automaticamente na criação da conta (aculta_user).
  *
  * Regra do responsável (2026-10-14): ao criar o usuário, o perfil participante nasce no hook

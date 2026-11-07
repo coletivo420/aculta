@@ -1,6 +1,11 @@
 <?php
 
-/** @file Logical local backup before additive editorial changes. */
+/**
+ * @file
+ * Logical local backup before additive editorial changes. */
+
+use Drupal\Core\Config\FileStorage;
+
 if (!in_array(\Drupal::request()->getHost(), ['localhost', '127.0.0.1'], TRUE)) {
   throw new RuntimeException('Local execution only.');
 }
@@ -13,7 +18,7 @@ $storage = \Drupal::service('config.storage');
 $manifest = ['config' => [], 'content' => [], 'created' => date(DATE_ATOM)];
 foreach (array_merge([''], $storage->getAllCollectionNames()) as $collection) {
   $source = $collection === '' ? $storage : $storage->createCollection($collection);
-  $target = new \Drupal\Core\Config\FileStorage($directory . '/config', $collection);
+  $target = new FileStorage($directory . '/config', $collection);
   foreach ($source->listAll() as $name) {
     $target->write($name, $source->read($name));
     $manifest['config'][$collection ?: 'default'][] = $name;

@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @file
+ */
+
+use Drupal\Core\DrupalKernel;
+use Symfony\Component\HttpFoundation\Request;
+
 declare(strict_types=1);
 
 /**
@@ -10,16 +17,15 @@ declare(strict_types=1);
  *   drush scr scripts/migrate-activity-locations.php -- --inspect
  *   drush scr scripts/migrate-activity-locations.php -- --dry-run
  *   drush scr scripts/migrate-activity-locations.php -- --execute
- *   drush scr scripts/migrate-activity-locations.php -- --rollback
+ *   drush scr scripts/migrate-activity-locations.php -- --rollback.
  */
 
-use Drupal\aculta_events\Migration\ActivityLocationMigrator;
 
 if (!class_exists('\Drupal')) {
   $autoloader = require_once dirname(__DIR__) . '/vendor/autoload.php';
   require_once dirname(__DIR__) . '/web/core/includes/bootstrap.inc';
-  $request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
-  $kernel = \Drupal\Core\DrupalKernel::createFromRequest('prod', $autoloader, dirname(__DIR__) . '/web');
+  $request = Request::createFromGlobals();
+  $kernel = DrupalKernel::createFromRequest('prod', $autoloader, dirname(__DIR__) . '/web');
   $kernel->boot();
   $kernel->preHandle($request);
 }
@@ -33,7 +39,8 @@ foreach ($args as $arg) {
   }
 }
 
-/** @var ActivityLocationMigrator $migrator */
+/**
+ * @var ActivityLocationMigrator $migrator */
 $migrator = \Drupal::service('aculta_events.activity_location_migrator');
 
 echo "=== ACULTA Events: Migração de Endereços Legados (Activity -> Locais) ===\n";

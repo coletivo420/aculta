@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Backwards-compatible entry point for the canonical LMS pilot content loader.
  *
  * The editorial source is scripts/content/courses/introducao-antiproibicionismo.json.
@@ -12,4 +13,3 @@
  */
 
 require dirname(__DIR__) . '/content/load-course-introducao-antiproibicionismo.php';
-

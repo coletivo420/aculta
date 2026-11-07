@@ -1,11 +1,12 @@
 <?php
 
 /**
+ * @file
  * Loads the versioned course source into the LMS. Idempotent: matches the course by label,
  * lessons and activities by name; updates what exists and creates what is missing. Deletes nothing.
  *
  * Usage (from the repository root):
- *   php vendor/drush/drush/drush.php php:script load-course-introducao-antiproibicionismo --script-path=scripts/content
+ *   php vendor/drush/drush/drush.php php:script load-course-introducao-antiproibicionismo --script-path=scripts/content.
  *
  * The course source is scripts/content/courses/introducao-antiproibicionismo.json. It holds no credentials.
  */
@@ -41,7 +42,8 @@ $course->setPublished();
 $lessonRefs = [];
 $report = ['lessons' => [], 'activities' => 0];
 foreach ($source['lessons'] as $spec) {
-  /** @var \Drupal\lms\Entity\LessonInterface $lesson */
+  /**
+ * @var \Drupal\lms\Entity\LessonInterface $lesson */
   $lesson = $findOne($lessonStorage, ['lms_lesson_type' => 'lesson', 'name' => $spec['name']], 'pilot lesson');
   $lesson ??= Lesson::create(['lms_lesson_type' => 'lesson', 'name' => $spec['name'], 'randomization' => 0, 'backwards_navigation' => FALSE, 'random_activities' => 0]);
   $lesson->set('name', $spec['name']);

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 declare(strict_types=1);
 
 /**
@@ -8,7 +12,7 @@ declare(strict_types=1);
  * Checks that scripts/content/institution/home-content.json is complete for the configuration
  * that depends on it: every block_content UUID referenced by a block placement in config/sync
  * is declared in the JSON, UUIDs are unique, and the content is in the SDC shape (no legacy
- * section or hero markup left in bodies). Run: php scripts/validate-institution-content.php
+ * section or hero markup left in bodies). Run: php scripts/validate-institution-content.php.
  */
 
 $root = dirname(__DIR__);

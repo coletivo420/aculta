@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 declare(strict_types=1);
 
 /**
@@ -9,7 +13,7 @@ declare(strict_types=1);
  * - Every LMS class the skin selects must exist in the LMS course card markup or stylesheet.
  * - The LMS version is pinned. An upgrade fails this gate until the skin and the reference
  *   capture of the catalog are reviewed; then the pin moves with the review.
- * Run: php scripts/validate-lms-skin.php
+ * Run: php scripts/validate-lms-skin.php.
  */
 
 const LMS_REVIEWED_VERSION = '1.2.4';

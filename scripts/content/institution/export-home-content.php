@@ -1,10 +1,11 @@
 <?php
 
 /**
+ * @file
  * Exports the home content declared by the institution pages (DT-T10).
  *
  * Read-only: writes home-content.json next to this script. Run from web/:
- *   php ../vendor/drush/drush/drush.php php:script export-home-content --script-path=../scripts/content/institution
+ *   php ../vendor/drush/drush/drush.php php:script export-home-content --script-path=../scripts/content/institution.
  */
 
 use Drupal\block_content\Entity\BlockContent;

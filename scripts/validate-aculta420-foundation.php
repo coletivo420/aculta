@@ -10,6 +10,7 @@
 
 declare(strict_types=1);
 
+use Drupal\aculta420_v2\Hook\MailEnvelopeHooks;
 use Twig\Source;
 use Symfony\Component\Yaml\Yaml;
 
@@ -105,7 +106,7 @@ $assert($bootstrapPackages === [], 'Composer has no Drupal Bootstrap, Bootstrap5
 $hookSourcePath = $themeRoot . '/src/Hook/MailEnvelopeHooks.php';
 $assert(is_file($hookSourcePath), 'OOP mail envelope hook class exists in V2.');
 $hookSource = file_get_contents($hookSourcePath);
-$assert(class_exists(\Drupal\aculta420_v2\Hook\MailEnvelopeHooks::class), 'Drupal can autoload the ACULTA420 V2 mail envelope hook.');
+$assert(class_exists(MailEnvelopeHooks::class), 'Drupal can autoload the ACULTA420 V2 mail envelope hook.');
 $assert(!str_contains($hookSource, '\\Drupal::'), 'Mail envelope hook uses DI instead of the Drupal service locator.');
 $assert(!str_contains($hookSource, 'aculta_portal'), 'Mail envelope hook has no direct dependency on aculta_portal.');
 $assert(!str_contains($hookSource, 'aculta420.settings'), 'Mail envelope hook no longer reads the legacy aculta420.settings configuration.');

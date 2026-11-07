@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Reject temporary compatibility routes in all custom ACULTA modules.
  *
  * Permanent functional redirects (authentication, checkout, cross-purpose,

@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Gate da tabela "Não ler por padrão" de docs/portal/AGENT-TOKEN-ECONOMY.md.
  *
  * Confere, para cada linha com caminho entre crases:
@@ -22,7 +23,7 @@ if ($text === '') {
 }
 $start = strpos($text, '## Não ler por padrão');
 $end = strpos($text, "\n## ", $start + 5);
-$section = substr($text, $start, $end === false ? null : $end - $start);
+$section = substr($text, $start, $end === FALSE ? NULL : $end - $start);
 
 $units = ['B' => 1, 'KB' => 1024, 'MB' => 1024 ** 2, 'GB' => 1024 ** 3];
 $failures = [];

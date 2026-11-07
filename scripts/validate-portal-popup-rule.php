@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Gate da regra do popup padrão do Portal (docs/portal/POPUP-PADRAO.md).
  *
  * Reprova, no módulo aculta_portal e no tema aculta420 (PHP, JS, Twig):
@@ -41,7 +42,7 @@ foreach (['web/modules/custom/aculta_portal', 'web/themes/custom/aculta420'] as 
 $errors = [];
 foreach ($scan as $path) {
   $rel = substr($path, strlen($root) + 1);
-  if (in_array($rel, $exceptions, true)) {
+  if (in_array($rel, $exceptions, TRUE)) {
     continue;
   }
   $lines = preg_split('/\R/', (string) file_get_contents($path));

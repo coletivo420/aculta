@@ -1,4 +1,9 @@
 <?php
+
+/**
+ * @file
+ */
+
 $storage = \Drupal::entityTypeManager()->getStorage('aculta_contribution');
 foreach ($storage->loadMultiple() as $item) {
   print json_encode([

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 declare(strict_types=1);
 
 /**
@@ -33,10 +37,10 @@ if ($code !== 0) {
 }
 
 // 2. Frentes com README e routes.json válido.
-$purposes = array_filter(glob($browser . '/*', GLOB_ONLYDIR) ?: [], static fn (string $d): bool => !in_array(basename($d), ['node_modules', '__pycache__'], true));
+$purposes = array_filter(glob($browser . '/*', GLOB_ONLYDIR) ?: [], static fn (string $d): bool => !in_array(basename($d), ['node_modules', '__pycache__'], TRUE));
 foreach ($purposes as $purposeDir) {
   $candidates = [];
-  if (is_file($purposeDir . '/README.md') && !str_contains((string) file_get_contents($purposeDir . '/README.md', false, null, 0, 400), 'gerar-indice.py')) {
+  if (is_file($purposeDir . '/README.md') && !str_contains((string) file_get_contents($purposeDir . '/README.md', FALSE, NULL, 0, 400), 'gerar-indice.py')) {
     $candidates[] = $purposeDir;
   }
   foreach (glob($purposeDir . '/*', GLOB_ONLYDIR) ?: [] as $sub) {
@@ -59,7 +63,7 @@ foreach ($purposes as $purposeDir) {
     }
     if (is_file($frente . '/routes.json')) {
       $checks++;
-      json_decode((string) file_get_contents($frente . '/routes.json'), true);
+      json_decode((string) file_get_contents($frente . '/routes.json'), TRUE);
       if (json_last_error() !== JSON_ERROR_NONE) {
         $failures[] = "tests/browser/$rel/routes.json não é JSON válido: " . json_last_error_msg() . '.';
       }

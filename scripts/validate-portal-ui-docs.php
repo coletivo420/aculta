@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Gate de documentação dos tokens e atributos do Portal (docs/portal/TOKENS-E-ATRIBUTOS.md).
  *
  * Confere, no módulo aculta_portal (e submódulos) e no tema aculta420:
@@ -68,13 +69,13 @@ foreach ($base as $dir) {
 
 $errors = [];
 foreach ($tokensUsed as $token => $files) {
-  if (in_array($token, $placeholders, true) || in_array($token, $mapped, true)) {
+  if (in_array($token, $placeholders, TRUE) || in_array($token, $mapped, TRUE)) {
     continue;
   }
-  $family = false;
+  $family = FALSE;
   foreach ($wildcards as $w) {
     if (str_starts_with($token, $w)) {
-      $family = true;
+      $family = TRUE;
     }
   }
   if (!$family) {
@@ -82,7 +83,7 @@ foreach ($tokensUsed as $token => $files) {
   }
 }
 foreach ($mapped as $token) {
-  if (!in_array("`$token`", array_map(static fn(string $d) => "`$d`", $documented), true) && !in_array($token, $documented, true)) {
+  if (!in_array("`$token`", array_map(static fn(string $d) => "`$d`", $documented), TRUE) && !in_array($token, $documented, TRUE)) {
     $errors[] = "token \"$token\" do mapa não está documentado em TOKENS-E-ATRIBUTOS.md.";
   }
 }
@@ -90,10 +91,10 @@ foreach ($attrsUsed as $attr => $files) {
   if (str_ends_with($attr, '-')) {
     continue;
   }
-  $ok = in_array($attr, $documented, true);
+  $ok = in_array($attr, $documented, TRUE);
   foreach ($wildcards as $w) {
     if (str_starts_with($attr, $w)) {
-      $ok = true;
+      $ok = TRUE;
     }
   }
   if (!$ok) {

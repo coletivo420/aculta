@@ -7,6 +7,8 @@
  * Existing editorial entities are never overwritten on subsequent executions.
  */
 
+use Drupal\editor\Entity\Editor;
+use Drupal\Core\Url;
 use Drupal\block\Entity\Block;
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\block_content\Entity\BlockContentType;
@@ -40,15 +42,30 @@ if (!isset($state['original_front'])) {
   \Drupal::state()->set('aculta.institution_setup', $state);
 }
 
+/**
+ *
+ */
 function institution_escape(string $text): string {
   return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
+
+/**
+ *
+ */
 function institution_paragraphs(array $paragraphs): string {
   return implode('', array_map(fn($text) => '<p>' . institution_escape($text) . '</p>', $paragraphs));
 }
+
+/**
+ *
+ */
 function institution_link(string $path, string $label, string $class = ''): string {
   return '<a href="' . institution_escape($path) . '"' . ($class ? ' class="' . institution_escape($class) . '"' : '') . '>' . institution_escape($label) . '</a>';
 }
+
+/**
+ *
+ */
 function institution_section(array $section, string $extra = '', string $class = ''): string {
   $html = '<section class="aculta-editorial-section ' . institution_escape($class) . '">';
   if (!empty($section['bar'])) {
@@ -60,6 +77,10 @@ function institution_section(array $section, string $extra = '', string $class =
   }
   return $html . '<div class="aculta-prose">' . institution_paragraphs($section['paragraphs']) . $extra . '</div></section>';
 }
+
+/**
+ *
+ */
 function institution_field(string $entity_type, string $bundle, string $name, string $type, string $label, array $settings = [], int $cardinality = 1): void {
   if (!FieldStorageConfig::loadByName($entity_type, $name)) {
     FieldStorageConfig::create(['entity_type' => $entity_type, 'field_name' => $name, 'type' => $type, 'cardinality' => $cardinality, 'settings' => $settings])->save();
@@ -75,6 +96,10 @@ function institution_field(string $entity_type, string $bundle, string $name, st
     FieldConfig::create(['entity_type' => $entity_type, 'bundle' => $bundle, 'field_name' => $name, 'label' => $label, 'required' => FALSE, 'settings' => $field_settings])->save();
   }
 }
+
+/**
+ *
+ */
 function institution_display(string $entity_type, string $bundle, string $mode, array $components, bool $form = FALSE): void {
   $class = $form ? EntityFormDisplay::class : EntityViewDisplay::class;
   $display = $class::load("$entity_type.$bundle.$mode") ?? $class::create(['targetEntityType' => $entity_type, 'bundle' => $bundle, 'mode' => $mode, 'status' => TRUE]);
@@ -83,6 +108,10 @@ function institution_display(string $entity_type, string $bundle, string $mode, 
   }
   $display->save();
 }
+
+/**
+ *
+ */
 function institution_alias(string $source, string $alias): void {
   $storage = \Drupal::entityTypeManager()->getStorage('path_alias');
   $existing = $storage->loadByProperties(['alias' => $alias, 'langcode' => 'pt-br']);
@@ -94,6 +123,10 @@ function institution_alias(string $source, string $alias): void {
   }
   PathAlias::create(['path' => $source, 'alias' => $alias, 'langcode' => 'pt-br'])->save();
 }
+
+/**
+ *
+ */
 function institution_node(string $key, string $type, string $title, string $body, string $path, bool $published = TRUE, array $extra = []): Node {
   global $state;
   if (!empty($state['nodes'][$key])) {
@@ -120,6 +153,10 @@ function institution_node(string $key, string $type, string $title, string $body
   echo 'Node: ' . $title . ' / ' . $path . PHP_EOL;
   return $node;
 }
+
+/**
+ *
+ */
 function institution_place(string $id, string $plugin, string $region, int $weight, string $label, string $paths = '', array $extra = []): void {
   if (Block::load($id)) {
     return;
@@ -127,6 +164,10 @@ function institution_place(string $id, string $plugin, string $region, int $weig
   $visibility = $paths ? ['request_path' => ['id' => 'request_path', 'negate' => FALSE, 'pages' => $paths]] : [];
   Block::create(['id' => $id, 'theme' => 'aculta420', 'region' => $region, 'plugin' => $plugin, 'weight' => $weight, 'status' => TRUE, 'visibility' => $visibility, 'settings' => array_replace(['id' => $plugin, 'label' => $label, 'label_display' => '0'], $extra)])->save();
 }
+
+/**
+ *
+ */
 function institution_block(string $key, string $label, string $html, int $weight, string $paths = '<front>', string $region = 'content'): void {
   global $state;
   if (empty($state['blocks'][$key])) {
@@ -263,7 +304,9 @@ foreach (['footer', 'contact'] as $mode) {
 }
 institution_place('aculta_footer_data', 'block_content:' . $institution_data->uuid(), 'footer', 0, $data['organization'], '', ['view_mode' => 'footer']);
 
-// Core Views use published nodes and allow future projects, news and documents.
+/**
+ * Core Views use published nodes and allow future projects, news and documents.
+ */
 function institution_view(string $id, string $label, array $bundles, string $paths, int $weight, string $header = '', string $sort = 'created', string $row_mode = 'teaser'): void {
   if (!View::load($id)) {
     $filters = [
@@ -279,11 +322,14 @@ function institution_view(string $id, string $label, array $bundles, string $pat
   }
   institution_place($id, 'views_block:' . $id . '-block_1', 'content', $weight, $label, $paths);
 }
+
 institution_view('aculta_news', 'Publicações da Associação', ['article'], '/noticias', 30);
 institution_view('aculta_activities', 'Registros de atividades', ['activity'], '/atividades', 30);
 institution_view('aculta_documents', 'Documentos institucionais', ['document'], '/transparencia', 100, '<h2>DOCUMENTOS</h2>');
 
-// Real menu destinations: canonical entity URLs are resolved through aliases.
+/**
+ * Real menu destinations: canonical entity URLs are resolved through aliases.
+ */
 function institution_menu_link(string $menu, string $key, string $label, string $uri, int $weight): void {
   global $state;
   if (!empty($state['menus'][$key])) {
@@ -291,7 +337,7 @@ function institution_menu_link(string $menu, string $key, string $label, string 
   }
   $existing = \Drupal::entityTypeManager()->getStorage('menu_link_content')->loadByProperties(['menu_name' => $menu]);
   foreach ($existing as $link) {
-    if ($link->get('link')->uri === $uri || $link->getUrlObject()->toString() === \Drupal\Core\Url::fromUri($uri)->toString()) {
+    if ($link->get('link')->uri === $uri || $link->getUrlObject()->toString() === Url::fromUri($uri)->toString()) {
       $state['menus'][$key] = (int) $link->id();
       \Drupal::state()->set('aculta.institution_setup', $state);
       return;
@@ -302,6 +348,7 @@ function institution_menu_link(string $menu, string $key, string $label, string 
   $state['menus'][$key] = (int) $link->id();
   \Drupal::state()->set('aculta.institution_setup', $state);
 }
+
 if (!\Drupal::service('plugin.manager.menu.link')->getDefinition('standard.front_page', FALSE)) {
   institution_menu_link('main', 'main_home', 'Início', 'route:<front>', 0);
 }
@@ -315,7 +362,7 @@ institution_place('aculta_contact_data', 'block_content:' . $institution_data->u
 
 $footer_menus = [
   'aculta-footer-institution' => ['INSTITUCIONAL', ['institutional' => 'Quem somos', 'projects' => 'Projetos', 'transparency' => 'Transparência']],
-  'aculta-footer-content' => ['CONTEÚDO', ['news' => 'Notícias', 'activities' => 'Atividades',]],
+  'aculta-footer-content' => ['CONTEÚDO', ['news' => 'Notícias', 'activities' => 'Atividades']],
 ];
 foreach ($footer_menus as $id => [$label, $links]) {
   if (!Menu::load($id)) {
@@ -344,7 +391,7 @@ if ($account) {
 \Drupal::configFactory()->getEditable('aculta_portal.settings')->set('institution_data_uuid', $institution_data->uuid())->save();
 $state['complete'] = TRUE;
 // Preserve section wrappers and their classes when editing via CKEditor 5.
-$editor = \Drupal\editor\Entity\Editor::load('full_html');
+$editor = Editor::load('full_html');
 if ($editor) {
   $settings = $editor->getSettings();
   $allowed = $settings['plugins']['ckeditor5_sourceEditing']['allowed_tags'] ?? [];

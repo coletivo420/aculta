@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Barreira da decisão de raiz (`/`) dos subdomínios. Somente leitura; não inicia o Drupal.
  *
  * Decisão do responsável (2026-10-11): a raiz de cada host SERVE conteúdo (sem redirecionar). A única exceção é
@@ -45,7 +46,7 @@ foreach ([
 $assert(str_contains($surface, "'forum' => ['/forum']"), 'O caminho antigo /forum deve continuar fechado após a troca da raiz (CAMINHOS_LEGADOS).');
 // Só a conta redireciona a raiz (visitante sem login vai ao login); demais purposes servem conteúdo.
 preg_match_all("/pathUrl\\(\\s*(DomainSurfaceMap::\\w+|'\\w+')\\s*,\\s*'\\/'\\s*\\)/", $subscriber, $rootTargets);
-$nonAccountRootRedirects = array_filter($rootTargets[1], static fn(string $t): bool => !in_array($t, ['DomainSurfaceMap::ACCOUNT', "'account'"], true));
+$nonAccountRootRedirects = array_filter($rootTargets[1], static fn(string $t): bool => !in_array($t, ['DomainSurfaceMap::ACCOUNT', "'account'"], TRUE));
 $assert($nonAccountRootRedirects === [], 'Raiz redirecionada fora da conta: a decisão é servir conteúdo (' . implode(', ', $nonAccountRootRedirects) . ').');
 $assert(str_contains($subscriber, "'aculta_portal.dashboard'") && str_contains($subscriber, "routeUrl(DomainSurfaceMap::ACCOUNT, 'user.login')"), 'Regra da conta (visitante sem login vai ao login) ausente no subscriber.');
 $assert(str_contains($frontPolicy, "'aculta_studio.dashboard'") && str_contains($frontPolicy, 'ACAO_LOGIN'), 'Regra da raiz da conta (dashboard do Studio para visitante vai ao login) ausente em FrontPathPolicy.');

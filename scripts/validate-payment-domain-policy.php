@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 declare(strict_types=1);
 
 /**
@@ -74,7 +78,7 @@ if ($modules->moduleExists('aculta_donation')) {
   ]);
   $assert(count($donationRoutes) === 3, 'Donation flow routes exist.');
   foreach ($donationRoutes as $name => $route) {
-    $esperado = \Drupal\aculta_portal\Domain\DomainRoutePolicy::purposeForDonationRoute($name);
+    $esperado = DomainRoutePolicy::purposeForDonationRoute($name);
     $assert($route->getOption('_aculta_domain_purpose') === $esperado, "Donation route {$name} belongs to the {$esperado} purpose.");
   }
 }

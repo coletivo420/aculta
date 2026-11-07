@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 declare(strict_types=1);
 
 /**
@@ -7,7 +11,7 @@ declare(strict_types=1);
  *
  * Every scripts/*.mjs must read its endpoints through scripts/lib/browser-env.mjs, which
  * takes ACULTA_DEVTOOLS_PORT and ACULTA_SITE_ORIGIN from the environment. Run:
- *   php scripts/validate-browser-validators.php
+ *   php scripts/validate-browser-validators.php.
  */
 
 $root = dirname(__DIR__);

@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Gate anti-regressão das exceções do Turnstile (docs/portal/TURNSTILE.md, seção "Exceções").
  *
  * Confere, sem bootstrap do Drupal:
@@ -37,7 +38,7 @@ else {
 // Exceções obrigatórias (contrato): loja, checkout (cadastro pela compra) e popup "Entrar".
 $required = ['commerce_order_item_add_to_cart_form', 'commerce_checkout_flow_default', 'aculta_login_popup_form'];
 foreach ($required as $formId) {
-  if (!in_array($formId, $exceptions, true)) {
+  if (!in_array($formId, $exceptions, TRUE)) {
     $errors[] = "Exceção obrigatória fora de EXCEPTION_FORM_IDS: {$formId}.";
   }
 }

@@ -1,6 +1,13 @@
 <?php
 
-/** Configure Composer-managed CMS enhancements on the local institutional site. */
+/**
+ * @file
+ * Configure Composer-managed CMS enhancements on the local institutional site. */
+
+use Drupal\pathauto\PathautoState;
+use Drupal\pathauto\PathautoGeneratorInterface;
+use Drupal\user\Entity\Role;
+use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -64,15 +71,15 @@ foreach (\Drupal::entityTypeManager()->getStorage('path_alias')->loadByPropertie
   $alias->setPath('/webform/aculta_contact')->save();
 }
 foreach (['main_contact'] as $key) {
-  $link = \Drupal\menu_link_content\Entity\MenuLinkContent::load($state['menus'][$key]);
+  $link = MenuLinkContent::load($state['menus'][$key]);
   $link->set('link', ['uri' => 'entity:webform/aculta_contact'])->save();
 }
 foreach (['anonymous', 'authenticated'] as $role) {
-  \Drupal\user\Entity\Role::load($role)->revokePermission('access site-wide contact form')->save();
+  Role::load($role)->revokePermission('access site-wide contact form')->save();
 }
 
 // Pathauto applies to future content; existing reviewed aliases are protected.
-\Drupal::configFactory()->getEditable('pathauto.settings')->set('update_action', \Drupal\pathauto\PathautoGeneratorInterface::UPDATE_ACTION_NO_NEW)->save();
+\Drupal::configFactory()->getEditable('pathauto.settings')->set('update_action', PathautoGeneratorInterface::UPDATE_ACTION_NO_NEW)->save();
 $patterns = ['page' => '[node:title]', 'project' => 'projetos/[node:title]', 'activity' => 'atividades/[node:title]', 'article' => 'noticias/[node:title]', 'document' => 'transparencia/documentos/[node:title]'];
 foreach ($patterns as $bundle => $pattern) {
   if (!PathautoPattern::load('aculta_' . $bundle)) {
@@ -110,7 +117,7 @@ foreach (array_keys($patterns) as $bundle) {
 foreach ($state['nodes'] as $key => $id) {
   \Drupal::entityTypeManager()->getStorage('node')->resetCache([$id]);
   $node = Node::load($id);
-  $node->get('path')->pathauto = \Drupal\pathauto\PathautoState::SKIP;
+  $node->get('path')->pathauto = PathautoState::SKIP;
   if ($key !== 'home') {
     preg_match('@<p[^>]*>(.*?)</p>@s', $node->get('body')->value, $matches);
     $description = html_entity_decode(strip_tags($matches[1] ?? ''), ENT_QUOTES, 'UTF-8');

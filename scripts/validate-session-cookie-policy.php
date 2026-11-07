@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Gate: cookie de sessão por ambiente (aculta_deployer, seção session_cookie) continua batendo com os arquivos de serviços.
  *
  * Barreira para alterações futuras de cookie: se o services.homelab.yml (teste) ou o modelo de produção
