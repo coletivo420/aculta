@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @file
  * Instalação e atualização do aculta_user.
@@ -8,8 +10,6 @@
 use Drupal\aculta_user\Entity\OrganizationMember;
 use Drupal\aculta_user\Entity\AssociadoMarcador;
 use Drupal\Core\Field\BaseFieldDefinition;
-
-declare(strict_types=1);
 
 /**
  * Implements hook_schema(). */

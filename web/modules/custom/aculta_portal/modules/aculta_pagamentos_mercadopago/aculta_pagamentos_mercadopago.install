@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @file
  */
 
 use Drupal\Core\Utility\UpdateException;
-
-declare(strict_types=1);
 
 /**
  * @file
