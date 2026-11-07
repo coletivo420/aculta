@@ -196,3 +196,38 @@
   #views-exposed-form-aculta-forum-search-page-search { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; }
   #views-exposed-form-aculta-forum-search-page-search #edit-actions { grid-column: auto; align-self: start; margin-block-start: 1.85rem; }
 }
+
+/* Fórum (discussões e categorias): links de navegação do view como pílulas, e filtro compacto. */
+.views-element-container:has([id^="views-exposed-form-aculta-forum-public-topics"]) > div > header p a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.5rem;
+  padding-inline: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-raised);
+  color: var(--color-link-editorial);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.views-element-container:has([id^="views-exposed-form-aculta-forum-public-topics"]) > div > header p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin: 0;
+}
+
+/* Filtro: select e botão com largura do conteúdo, não da linha inteira. */
+form[id^="views-exposed-form-aculta-forum-public-topics"] select {
+  inline-size: auto;
+  min-inline-size: 16rem;
+  max-inline-size: 100%;
+}
+
+form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit"], button[type="submit"]) {
+  inline-size: auto;
+  min-block-size: 2.75rem;
+  padding-inline: var(--spacing-base);
+}

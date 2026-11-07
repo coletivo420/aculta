@@ -334,6 +334,10 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
     if ($purpose === 'account') {
       continue;
     }
+    // Purposes com layout definido pelo código (fórum) não aparecem aqui.
+    if (PurposeContainerLayout::isCodeControlled($purpose)) {
+      continue;
+    }
 
     $currentSetting = PurposeContainerLayout::sanitizeSetting($savedContainers[$purpose] ?? NULL, $purpose);
 

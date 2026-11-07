@@ -130,11 +130,40 @@ final class PurposeContainerLayout {
   }
 
   /**
+   * Purposes cujo layout é definido só pelo código (não aparece em Layout de container).
+   *
+   * @return array{mode: string, style: string, container_width: int, narrow_width: int}|null
+   *   Configuração fixa do purpose, ou NULL quando o purpose é configurável.
+   */
+  public static function codeSettings(string $purpose): ?array {
+    return match ($purpose) {
+      'forum' => [
+        'mode' => self::MODE_FULL,
+        'style' => self::STYLE_UNBOXED,
+        'container_width' => self::CONTAINER_WIDTH_DEFAULT,
+        'narrow_width' => self::NARROW_WIDTH_DEFAULT,
+      ],
+      default => NULL,
+    };
+  }
+
+  /**
+   * Indica se o layout do purpose é controlado só pelo código.
+   */
+  public static function isCodeControlled(string $purpose): bool {
+    return self::codeSettings($purpose) !== NULL;
+  }
+
+  /**
    * Retorna os valores padrão de layout para um purpose.
    *
    * @return array{mode: string, style: string, container_width: int, narrow_width: int}
    */
   public static function getDefaultSettings(string $purpose = 'main'): array {
+    $fixed = self::codeSettings($purpose);
+    if ($fixed !== NULL) {
+      return $fixed;
+    }
     return [
       'mode' => self::MODE_DEFAULT,
       'style' => self::STYLE_BOXED,
@@ -167,6 +196,10 @@ final class PurposeContainerLayout {
    */
   public static function sanitizeSetting(mixed $input, string $purpose = 'main'): array {
     $defaults = self::getDefaultSettings($purpose);
+    // Purpose controlado pelo código: o valor salvo é ignorado.
+    if (self::codeSettings($purpose) !== NULL) {
+      return $defaults;
+    }
 
     if (!is_array($input)) {
       return $defaults;

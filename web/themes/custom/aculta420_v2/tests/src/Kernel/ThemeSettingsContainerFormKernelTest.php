@@ -64,6 +64,7 @@ final class ThemeSettingsContainerFormKernelTest extends KernelTestBase {
     $grid = $form['aculta_container_purpose']['aculta_purpose_container'];
     self::assertArrayHasKey('main', $grid);
     self::assertArrayNotHasKey('account', $grid);
+    self::assertArrayNotHasKey('forum', $grid);
     self::assertArrayHasKey('shop', $grid);
     self::assertArrayHasKey('magazine', $grid);
     self::assertArrayHasKey('wiki', $grid);
