@@ -81,13 +81,12 @@ final class AccountExperienceProviderTest extends UnitTestCase {
   public function testDashboardLinksSeparatePrivateAccountAndPublicProfile(): void {
     $build = (new AccountExperienceProvider())->build();
 
-    self::assertSame('account-entry', $build['#attributes']['data-portal-ui']);
-    self::assertSame('link', $build['account_link']['#type']);
-    self::assertSame('account-entry-links', $build['account_link']['#attributes']['data-portal-ui']);
-    self::assertSame('aculta_studio.account', $build['account_link']['#url']->getRouteName());
+    self::assertSame('aculta_studio_account', $build['#theme']);
+    self::assertSame('/conta-teste', $build['#account_url']);
+    self::assertSame('Minha conta', (string) $build['#account_link_title']);
+    self::assertSame([], $build['#profile_link']);
     self::assertContains('user', $build['#cache']['contexts']);
-    self::assertSame('Studio Dashboard', $build['topbar']['#props']['title']);
-    self::assertArrayNotHasKey('profile_link', $build);
+    self::assertSame('Studio Dashboard', $build['#menu_title']);
   }
 
   /**
@@ -99,7 +98,7 @@ final class AccountExperienceProviderTest extends UnitTestCase {
 
     // The provider alone has no authority to enumerate suites. The dashboard
     // controller adds only manager-resolved links after access checks.
-    self::assertSame([], $build['suites']['#items']);
+    self::assertSame([], $build['#experiences']);
   }
 
 }
