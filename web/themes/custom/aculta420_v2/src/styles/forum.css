@@ -245,3 +245,22 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
   block-size: 2rem;
 }
 
+/* Categorias do tópico como pílulas, como na V1. */
+.aculta-forum-topic .field--name-field-aculta-categories {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 1.75rem;
+  padding-inline: .6rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  margin-block-start: var(--spacing-xs);
+}
+
+.aculta-forum-topic .field--name-field-aculta-categories .field__item a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 1.75rem;
+  color: inherit;
+  text-decoration: none;
+}
+
