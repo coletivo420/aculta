@@ -43,8 +43,14 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
   }
 
   /**
- *
- */
+   * Aplica o modo de cor e as classes de superfície no html.
+   *
+   * Implementação única de preprocess_html para o tema, para não haver
+   * duas implementações concorrendo pelas mesmas variáveis.
+   *
+   * @param array $variables
+   *   Variáveis do template html, alteradas por referência.
+   */
   #[Hook('preprocess_html')]
   public function preprocessHtml(array &$variables): void {
     // A theme may provide only one preprocess_html implementation. Keep the
@@ -150,7 +156,17 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
   }
 
   /**
+   * Devolve o valor se ele estiver na lista permitida; senão, o fallback.
    *
+   * @param string $value
+   *   Valor recebido da configuração.
+   * @param array $allowed
+   *   Valores aceitos.
+   * @param string $fallback
+   *   Valor usado quando $value não é permitido.
+   *
+   * @return string
+   *   O valor permitido ou o fallback.
    */
   private function safeValue(string $value, array $allowed, string $fallback): string {
     return in_array($value, $allowed, TRUE) ? $value : $fallback;
