@@ -43,10 +43,18 @@ body:has(.aculta-studio-topbar) .layout-page h1:not(.aculta-studio-topbar__title
   outline-offset: 2px;
 }
 
-/* Desktop: o título começa na mesma altura do topo do menu lateral (138 px). */
+/* Desktop: o título fica acima da linha dos blocos (menu, perfil, calendário), com a borda esquerda
+   alinhada à do menu. Os blocos mantêm o topo em 138 px; o título não entra na área do menu. */
 @media (min-width: 60rem) {
   .aculta-studio-topbar {
+    height: 0;
     margin-block-start: 5.125rem;
+  }
+  .aculta-studio-topbar__title {
+    inset-block-start: 3.25rem;
+    inset-inline-start: 0;
+    position: absolute;
+    white-space: nowrap;
   }
 }
 
