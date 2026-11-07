@@ -791,3 +791,9 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* Campo de comentários do tópico: o wrapper não cria uma segunda caixa; cada comentário é o próprio card. */
+.aculta-forum-topic .field--name-field-aculta-discussion section {
+  border: 0;
+  background: transparent;
+}
