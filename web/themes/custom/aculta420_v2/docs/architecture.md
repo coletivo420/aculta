@@ -146,6 +146,7 @@ Com JavaScript desligado, os links dos gatilhos continuam válidos: o login e a 
 - O bloco `system_menu_block:main` é envolvido pelo SDC `navigation-bar` no mesmo peso e posição do cabeçalho. O render array original fica como slot, com access e cache preservados.
 - O menu de conta (`account-menu`) fica dentro da barra. Visitante vê "Entrar"; autenticado vê o disclosure com avatar e as ações de conta (ver [components.md](components.md)).
 - A barra institucional convive com a barra administrativa Gin e com o toolbar Core: a faixa fica acima das duas camadas, e cada uma começa após a altura medida da faixa.
+- UI Patterns Library (`overview`, `provider` e `single`) é uma exceção administrativa aos containers por purpose: `PurposeContainerLayout::isComponentLibraryRoute()` deixa de aplicar `data-purpose-layout`, e `PagePresentationHooks` usa a variante `full`. A classe `aculta-component-library-page` estiliza cada `.ui_patterns_component` como bloco de largura ampla, sem impor grid às stories; a barra institucional mantém a marca e oculta a faixa de utilidades só nessas rotas.
 
 ## 7. Hooks e registro
 

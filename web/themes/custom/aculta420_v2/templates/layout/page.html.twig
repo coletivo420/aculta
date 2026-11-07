@@ -6,8 +6,8 @@
       logo_base_url: base_path ~ directory ~ '/assets/logos',
       logo_alt: 'ACULTA - Associação Cultural Antiproibicionista'|t,
       is_account_domain: domain_presentation.layout.institution_bar_account|default(false),
-      show_utility_bar: domain_presentation.layout.show_utility_bar|default(true),
-      account_menu: aculta_account_menu|default(null),
+      show_utility_bar: (domain_presentation.layout.show_utility_bar|default(true)) and not (aculta_component_library_page|default(false)),
+      account_menu: aculta_component_library_page|default(false) ? null : aculta_account_menu|default(null),
       cart_url: aculta_cart.url|default(null),
       cart_count: aculta_cart.count|default(0),
       cart_empty: aculta_cart.empty|default(true),
@@ -21,7 +21,7 @@
       alerts_count: aculta_alerts.count|default(0),
       alerts_count_kind: aculta_alerts.count_kind|default('active'),
       alerts_all_url: aculta_alerts.all_url|default(''),
-      search: aculta_search_utility|default(null)
+      search: aculta_component_library_page|default(false) ? null : aculta_search_utility|default(null)
     }, with_context = false) }}
   </div>
 

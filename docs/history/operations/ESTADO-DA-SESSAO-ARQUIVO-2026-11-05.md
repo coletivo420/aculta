@@ -1682,3 +1682,14 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Verificações:** UI Styles 24 PASS; foundations 73 pares texto + 6 faixas PASS; SDC schema 55/764 PASS; SDC render 41 PASS; PHPUnit tema 12 testes/56 assertions PASS. Bootstrap criou diretório de saída a partir de ausência e a execução não mostrou aviso. Firefox: palette/botões 358/360; shell 108/120; os PNGs estão ignorados e só manifests versionados.
 - **Pendências:** F3 permanece aberta pelos dois overflows do Fórum a 320 px. F2 permanece para aceitação visual do responsável; a matriz também detectou contraste insuficiente da navegação em claro a 1440 px nos dez purposes. A suíte ampla `aculta-editor/access.py`, após corrigir seu import sob `-I`, parou por ausência de CKEditor no formulário de Revista para `content_editor`; o formulário administrativo de UID 1 foi validado separadamente. Não alterar o shell nesta fase.
 - **Próximo passo:** tratar o overflow do Fórum sem alterar o shell e repetir a suíte de botões; aguardar aceitação visual de F2 e verificar o fluxo editor quando o CKEditor do Runtime estiver disponível.
+
+# V2 — Fórum, editor e config — 2026-11-06
+
+- **Objetivo:** corrigir overflow e revisar config.
+- **Estado:** Fórum corrigido. ESR: botões 360/360, shell 120/120 (10 purposes, dois modos, 320/1440). F3 concluída; F2 aguarda aceite visual. Contraste AA; probe corrigido. Editor bloqueado por 404 vazio após ULI, sem CKEditor.
+- **Decisões:** tokens intactos (falso positivo); sem `drush cex`, sem diff seguro.
+- **Cuidados:** `config:status` (12): DB-only `block.block.default_admin_{breadcrumbs,content,help,local_actions,messages,page_title,primary_local_tasks,secondary_local_tasks}` + `default_admin.settings`; Sync-only `field.field.node.revista.field_revista_accent`, `field.storage.node.field_revista_accent`; diferente `turnstile.settings` (só chaves de teste divergem; widget seguro igual). Preservados, sem valores.
+- **Commits:** `28ab465088`, `ebdecca126`, `b2fd1f3bbe`.
+- **Verificações:** foundations PASS (75 pares/6 faixas), diff check PASS. Editor: 5 checks PASS; admin não rodou.
+- **Pendências:** host/ULI e CKEditor; aceite F2; config local/legada e chaves fora da exportação.
+- **Próximo passo:** restaurar rota autenticada, repetir editor e obter aceite F2.

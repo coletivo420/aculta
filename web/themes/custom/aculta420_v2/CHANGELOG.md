@@ -6,6 +6,12 @@
 
 # Changelog — ACULTA420 V2
 
+## Não versionado — galeria da UI Patterns Library
+
+- As rotas da biblioteca saem dos containers por purpose e usam largura total. O overview apresenta cada componente em um bloco próprio, sem criar colunas para stories.
+- A barra institucional permanece com a marca e omite os utilitários nesta interface administrativa, evitando a saída textual quebrada dos render arrays.
+- A rota respondeu 200 e o CSS local injetado no Chromium mostrou 108 blocos verticais, container por purpose ausente, barra sem markup quebrado e sem overflow horizontal em 320/1440 px. O CSS agregado e os templates Twig novos ainda aguardam rebuild de cache no Runtime; aceite visual final pendente.
+
 ## Não versionado — conformidade Stylelint
 
 - CSS dos SDCs e estilos globais reordenados e normalizados conforme o preset Drupal; sem mudança intencional de comportamento.

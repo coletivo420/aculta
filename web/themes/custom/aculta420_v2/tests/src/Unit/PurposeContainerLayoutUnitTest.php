@@ -29,6 +29,22 @@ final class PurposeContainerLayoutUnitTest extends UnitTestCase {
   }
 
   /**
+   * UI Patterns documentation does not use purpose container settings.
+   */
+  public function testComponentLibraryRoutesAreExcludedFromPurposeLayout(): void {
+    foreach ([
+      'ui_patterns_library.overview',
+      'ui_patterns_library.provider',
+      'ui_patterns_library.single',
+    ] as $routeName) {
+      self::assertTrue(PurposeContainerLayout::isComponentLibraryRoute($routeName));
+    }
+
+    self::assertFalse(PurposeContainerLayout::isComponentLibraryRoute('aculta_studio.dashboard'));
+    self::assertFalse(PurposeContainerLayout::isComponentLibraryRoute(NULL));
+  }
+
+  /**
    * Os três modos atuais são os únicos oferecidos.
    */
   public function testModeOptionsAreThreeModes(): void {

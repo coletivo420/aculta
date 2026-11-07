@@ -10,6 +10,7 @@ use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Template\Attribute;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -22,6 +23,8 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
     private readonly ThemeSettingsProvider $themeSettings,
     #[Autowire(service: 'config.factory')]
     private readonly ConfigFactoryInterface $configFactory,
+    #[Autowire(service: 'current_route_match')]
+    private readonly CurrentRouteMatch $currentRouteMatch,
   ) {}
 
   /**
@@ -34,6 +37,7 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
     return new self(
       $container->get(ThemeSettingsProvider::class),
       $container->get('config.factory'),
+      $container->get('current_route_match'),
     );
   }
 
@@ -43,13 +47,18 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
     // Portal's explicit color mode and surface settings in this hook.
     $mode = ($variables['aculta_color_mode'] ?? NULL) === 'dark' ? 'dark' : 'light';
     $purpose = $variables['aculta_purpose'] ?? NULL;
+    $isComponentLibrary = PurposeContainerLayout::isComponentLibraryRoute($this->currentRouteMatch->getRouteName());
     $palette = theme_get_setting('aculta_purpose_palette');
     $paletteStyle = self::purposePaletteStyle($palette, $purpose);
     $containerSettings = theme_get_setting('aculta_purpose_container');
-    $containerStyle = PurposeContainerLayout::resolveContainerStyle($containerSettings, $purpose);
+    $containerStyle = $isComponentLibrary ? NULL : PurposeContainerLayout::resolveContainerStyle($containerSettings, $purpose);
     $htmlAttributes = $variables['html_attributes'] ?? NULL;
     if ($htmlAttributes instanceof Attribute) {
       $htmlAttributes->setAttribute('data-theme', $mode);
+      if ($isComponentLibrary) {
+        $htmlAttributes->removeAttribute('data-purpose-layout');
+        $htmlAttributes->removeAttribute('data-purpose-style');
+      }
       // Chave neutra fornecida pelo Portal; não é hostname nem regra de domínio.
       // Aceita apenas purposes canônicos aprovados (F3).
       $allowedPurposes = ['main', 'account', 'support', 'magazine', 'wiki', 'shop', 'courses', 'links', 'forum', 'eventos'];
@@ -104,6 +113,9 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
       'aculta-accent--' . $this->safeValue((string) $settings('aculta_accent_override', 'mapping'), ['mapping', 'green', 'yellow', 'red'], 'mapping'),
       (bool) $settings('aculta_show_accent_stripe', TRUE) ? 'aculta-accent-stripe-enabled' : 'aculta-accent-stripe-disabled',
     ]);
+    if ($isComponentLibrary) {
+      $bodyAttributes->addClass('aculta-component-library-page');
+    }
   }
 
   /**

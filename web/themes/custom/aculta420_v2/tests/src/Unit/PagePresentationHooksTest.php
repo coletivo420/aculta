@@ -256,6 +256,27 @@ final class PagePresentationHooksTest extends UnitTestCase {
   }
 
   /**
+   * UI Patterns library pages use the page-wide documentation layout.
+   */
+  public function testComponentLibraryUsesFullLayout(): void {
+    $routeMatch = $this->createMock(CurrentRouteMatch::class);
+    $routeMatch->method('getRouteName')->willReturn('ui_patterns_library.overview');
+    $pathMatcher = $this->createMock(PathMatcherInterface::class);
+    $pathMatcher->method('isFrontPage')->willReturn(FALSE);
+
+    $hooks = new PagePresentationHooks(
+      $this->createMock(ConfigFactoryInterface::class),
+      $this->createMock(ExtensionList::class),
+      $this->createMock(AccountProxyInterface::class),
+      $routeMatch,
+      $pathMatcher,
+    );
+    $method = new \ReflectionMethod(PagePresentationHooks::class, 'getPageLayoutVariant');
+
+    self::assertSame('full', $method->invoke($hooks));
+  }
+
+  /**
    * Builds the hook object with its optional component discovery dependency.
    */
   private function newHooks(ComponentPluginManager $componentManager): PagePresentationHooks {

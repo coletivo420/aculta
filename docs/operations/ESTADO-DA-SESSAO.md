@@ -2,6 +2,17 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
+# V2 — UI Patterns Library — 2026-11-07
+
+- **Objetivo:** organizar visualmente `/painel-administrativo/aparencia/ui/components`, corrigir a barra institucional e definir container próprio centralizado.
+- **Estado:** implementação local concluída; rotas UI Patterns excluídas do container por purpose. Overview usa largura máxima 1200px, sem caixa externa; cada componente em bloco vertical, preservando layouts nativos internos. Barra mantém marca e oculta utilitários quebrados.
+- **Decisões:** stories/pré-visualizações aparecem antes dos metadados recolhidos. CSS contém overflow e elementos posicionados por componente. Nada de colunas artificiais.
+- **Cuidados:** preview Chromium com CSS local injetado confirmou 108 blocos e sem overflow em 320/1440. Drupal respondeu 200 após corrigir declaração duplicada que causava 500. Cache Twig/agregados no Runtime não foi reconstruído; aceite visual com assets servidos permanece pendente.
+- **Commits e arquivos:** entrega a publicar; tema `aculta420_v2` (hooks, layout, templates, CSS, testes, TODO, CHANGELOG e docs).
+- **Verificações:** Stylelint, PHPUnit focado (19 testes/100 assertions), PHP lint, foundations (2.468 checks), foundations V2 (83 pares), token budget e `git diff --check` PASS.
+- **Pendências e bloqueios:** validar a página após rebuild do cache no Runtime de desenvolvimento.
+- **Próximo passo:** reconstruir cache Drupal no Runtime de desenvolvimento e fazer aceite visual final responsivo.
+
 # V2 — Stylelint CSS — 2026-11-07
 
 - **Objetivo:** corrigir as violações Stylelint no CSS da V2 e fazer a configuração compatível com os contratos locais.
@@ -23,15 +34,3 @@
 - **Verificações:** Firefox ESR visível, `ALL PASS`; Revista em `tests/browser/capturas/aculta-editor/2026-11-06/after/`.
 - **Pendências e bloqueios:** nenhum.
 - **Próximo passo:** nenhum.
-
-# V2 — Fórum, editor e config — 2026-11-06
-
-- **Objetivo:** corrigir overflow e revisar config.
-- **Estado:** Fórum corrigido. ESR: botões 360/360, shell 120/120 (10 purposes, dois modos, 320/1440). F3 concluída; F2 aguarda aceite visual. Contraste AA; probe corrigido. Editor bloqueado por 404 vazio após ULI, sem CKEditor.
-- **Decisões:** tokens intactos (falso positivo); sem `drush cex`, sem diff seguro.
-- **Cuidados:** `config:status` (12): DB-only `block.block.default_admin_{breadcrumbs,content,help,local_actions,messages,page_title,primary_local_tasks,secondary_local_tasks}` + `default_admin.settings`; Sync-only `field.field.node.revista.field_revista_accent`, `field.storage.node.field_revista_accent`; diferente `turnstile.settings` (só chaves de teste divergem; widget seguro igual). Preservados, sem valores.
-- **Commits:** `28ab465088`, `ebdecca126`, `b2fd1f3bbe`.
-- **Verificações:** foundations PASS (75 pares/6 faixas), diff check PASS. Editor: 5 checks PASS; admin não rodou.
-- **Pendências:** host/ULI e CKEditor; aceite F2; config local/legada e chaves fora da exportação.
-- **Próximo passo:** restaurar rota autenticada, repetir editor e obter aceite F2.
-

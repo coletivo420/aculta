@@ -14,6 +14,13 @@ namespace Drupal\aculta420_v2\Layout;
  */
 final class PurposeContainerLayout {
 
+  /** UI Patterns library routes use their own full-width documentation layout. */
+  private const COMPONENT_LIBRARY_ROUTES = [
+    'ui_patterns_library.overview',
+    'ui_patterns_library.provider',
+    'ui_patterns_library.single',
+  ];
+
   /**
    * Modos de layout suportados.
    */
@@ -101,6 +108,13 @@ final class PurposeContainerLayout {
   public const NARROW_WIDTH_MIN = 600;
   public const NARROW_WIDTH_MAX = 900;
   public const NARROW_WIDTH_DEFAULT = 750;
+
+  /**
+   * Whether a route belongs to the UI Patterns component documentation.
+   */
+  public static function isComponentLibraryRoute(?string $routeName): bool {
+    return $routeName !== NULL && in_array($routeName, self::COMPONENT_LIBRARY_ROUTES, TRUE);
+  }
 
   /**
    * Retorna os rótulos legíveis de cada modo.

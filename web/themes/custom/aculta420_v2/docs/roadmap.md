@@ -13,6 +13,10 @@
 
 Detalhes por bloco: [status-componentes.md](status-componentes.md), [status-layouts-e-shell.md](status-layouts-e-shell.md) e [htmx-status.md](htmx-status.md) (ADR-050).
 
+## UI Patterns Library — layout administrativo
+
+As rotas de overview, provider e componente ficam fora do container por purpose. O overview usa container próprio centralizado, sem caixa externa, com largura máxima de 1200px. Cada componente é um bloco vertical; stories preservam a estrutura nativa e não recebem colunas artificiais. No overview, a barra institucional mantém somente a marca porque os utilitários chegam como texto escapado nessa rota. Playwright Chromium autenticado confirmou rota 200 e 108 componentes; a prévia com CSS local injetado passou em 320/1440px sem overflow. Rebuild de cache Twig/CSS agregado e aceite visual final no Runtime continuam pendentes.
+
 ## Higiene de CSS — Stylelint
 
 O CSS atual dos componentes e estilos globais passa pelo preset `stylelint-config-drupal`. A configuração preserva regras compactas já usadas pelo tema e reconhece unidades e at-rules modernas (`dvh`, `@container`, `@starting-style`). A normalização de propriedades e valores equivalentes não altera o comportamento visual; lint PASS. A validação visual de fases permanece conforme as pendências acima.

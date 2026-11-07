@@ -1,0 +1,32 @@
+{#
+/**
+ * @file
+ * ACULTA UI Patterns overview: component previews first, technical details after.
+ */
+#}
+{% if groups is not empty %}
+  {{ include('ui-patterns-overview-quicklinks.html.twig', {groups: groups}, with_context: false) }}
+  <hr>
+  {% for group_name, components in groups %}
+    {% if groups|length > 1 %}
+      <h2 class="aculta-component-library__group-title">{{ group_name }}</h2>
+    {% endif %}
+    {% for component in components %}
+      <section class="ui_patterns_component" id="{{ component.id }}">
+        <h2 class="ui_patterns_component__title">
+          <a href="{{ url('ui_patterns_library.single', {provider: component.provider, machineName: component.machineName}) }}" class="component__link">{{ component.name }}</a>
+        </h2>
+        {% if component.stories %}
+          {{ include('ui-patterns-stories-compact.html.twig', {component: component}, with_context: false) }}
+        {% endif %}
+        <details class="aculta-component-library__details">
+          <summary>{{ 'Descrição, propriedades e slots'|t }}</summary>
+          <div class="aculta-component-library__details-content">
+            {{ include('ui-patterns-component-metadata.html.twig', {component: component}, with_context: false) }}
+            {{ include('ui-patterns-component-table.html.twig', {component: component}, with_context: false) }}
+          </div>
+        </details>
+      </section>
+    {% endfor %}
+  {% endfor %}
+{% endif %}
