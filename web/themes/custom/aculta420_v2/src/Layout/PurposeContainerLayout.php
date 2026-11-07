@@ -138,7 +138,7 @@ final class PurposeContainerLayout {
   public static function codeSettings(string $purpose): ?array {
     return match ($purpose) {
       'forum' => [
-        'mode' => self::MODE_FULL,
+        'mode' => self::MODE_DEFAULT,
         'style' => self::STYLE_UNBOXED,
         'container_width' => self::CONTAINER_WIDTH_DEFAULT,
         'narrow_width' => self::NARROW_WIDTH_DEFAULT,

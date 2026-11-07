@@ -32,13 +32,13 @@ final class PurposeContainerLayoutUnitTest extends UnitTestCase {
   }
 
   /**
-   * O fórum tem layout fixo pelo código: largura total, sem caixa, ignorando valor salvo.
+   * O fórum tem layout fixo pelo código: modo padrão (1200 px), sem caixa, ignorando valor salvo.
    */
   public function testForumLayoutIsFixedByCode(): void {
     self::assertTrue(PurposeContainerLayout::isCodeControlled('forum'));
     $saved = ['mode' => 'default', 'style' => 'boxed', 'container_width' => 900, 'narrow_width' => 600];
     $setting = PurposeContainerLayout::sanitizeSetting($saved, 'forum');
-    self::assertSame('full', $setting['mode']);
+    self::assertSame('default', $setting['mode']);
     self::assertSame('unboxed', $setting['style']);
   }
 

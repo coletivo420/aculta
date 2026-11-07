@@ -275,42 +275,15 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
   background: var(--color-surface-raised);
 }
 
-/* Categorias do tópico: o bloco do campo sai sem classe do render do Drupal. Estrutura: rótulo + valor.
-   O valor vira pílula, como na V1. */
-.aculta-forum-topic__content > div:not([class]) > div:last-child {
+/* Categorias do tópico como pílula colada (rótulo e valor dentro da mesma pílula), como na V1.
+   O bloco do campo sai sem classe do render do Drupal; a estrutura é rótulo + valor. */
+.aculta-forum-topic__content > div:not([class]) {
   display: inline-flex;
   align-items: center;
+  gap: .25rem;
   min-block-size: 1.75rem;
   padding-inline: .6rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
   margin-block-start: var(--spacing-xs);
 }
-
-/* Filtro da lista de tópicos em bloco, como na V1: rótulo acima do select, botão abaixo. */
-form[id^="views-exposed-form-aculta-forum-public-topics"] label {
-  display: block;
-  margin-block-end: .25rem;
-}
-
-form[id^="views-exposed-form-aculta-forum-public-topics"] select {
-  inline-size: 14rem;
-  min-block-size: 2.625rem;
-}
-
-form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit"], button[type="submit"]) {
-  margin-block-start: .5rem;
-}
-
-/* Último autor na lista de tópicos, como na V1: avatar de 1.5rem, sem contexto nem data de entrada. */
-.aculta-forum-topic-list-row__last-author .author-card:not(.author-card--stacked) .author-card__avatar {
-  flex-basis: 1.5rem;
-  inline-size: 1.5rem;
-  block-size: 1.5rem;
-}
-
-.aculta-forum-topic-list-row__last-author .author-card__context,
-.aculta-forum-topic-list-row__last-author .author-card__joined {
-  display: none;
-}
-
