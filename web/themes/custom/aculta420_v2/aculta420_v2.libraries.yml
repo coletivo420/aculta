@@ -73,3 +73,13 @@ account-carousel:
   dependencies:
     - core/drupal
     - core/once
+
+studio-connections-block:
+  css:
+    theme:
+      components/studio-connections-block/studio-connections-block.css: {}
+
+studio-connections-page:
+  css:
+    theme:
+      components/studio-connections-page/studio-connections-page.css: {}

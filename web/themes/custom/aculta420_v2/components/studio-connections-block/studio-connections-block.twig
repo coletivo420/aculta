@@ -1,0 +1,49 @@
+{#
+/**
+ * @file
+ * Template para o componente studio-connections-block.
+ */
+#}
+{{ attach_library('aculta420_v2/studio-connections-block') }}
+
+<div class="aculta-studio-connections-block" data-portal-ui="studio-connections-block">
+  <div class="aculta-studio-connections-block__header">
+    <h3 class="aculta-studio-connections-block__title">{{ title|default('CONEXÕES'|t) }}</h3>
+  </div>
+
+  <div class="aculta-studio-connections-block__body">
+    {% if connections is not empty %}
+      <ul class="aculta-studio-connections-block__list">
+        {% for item in connections %}
+          <li class="aculta-studio-connections-block__item">
+            <div class="aculta-studio-connections-block__avatar">
+              {% if item.avatar_url %}
+                <img src="{{ item.avatar_url }}" alt="{{ item.avatar_alt|default(item.name) }}" class="aculta-avatar aculta-avatar--md" />
+              {% else %}
+                <div class="aculta-avatar aculta-avatar--md aculta-avatar--fallback" aria-hidden="true"></div>
+              {% endif %}
+            </div>
+            <div class="aculta-studio-connections-block__info">
+              <span class="aculta-studio-connections-block__name">{{ item.name }}</span>
+              <a href="{{ item.profile_url }}" class="aculta-studio-connections-block__profile-link">{{ 'Ver perfil'|t }}</a>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+      {% if all_connections_url %}
+        <div class="aculta-studio-connections-block__footer">
+          <a href="{{ all_connections_url }}" class="button button--secondary aculta-studio-connections-block__all-btn">
+            {{ all_connections_label|default('Ver todas'|t) }}
+          </a>
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="aculta-studio-connections-block__empty">
+        <p class="aculta-studio-connections-block__empty-msg">{{ empty_message|default('Você ainda não tem conexões'|t) }}</p>
+        <a href="{{ find_connections_url }}" class="button button--primary aculta-studio-connections-block__find-btn">
+          {{ find_connections_label|default('Encontrar conexões'|t) }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>

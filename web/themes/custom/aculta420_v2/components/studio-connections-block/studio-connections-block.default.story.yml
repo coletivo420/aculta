@@ -1,0 +1,17 @@
+component: aculta420_v2:studio-connections-block
+props:
+  title: CONEXÕES
+  empty_message: Você ainda não tem conexões
+  find_connections_label: Encontrar conexões
+  find_connections_url: /conta/conexoes
+  all_connections_label: Ver todas
+  all_connections_url: /conta/conexoes
+  connections:
+    - name: Maria Silva
+      profile_url: /u/maria-silva
+      avatar_url: null
+      avatar_alt: Maria Silva
+    - name: João Santos
+      profile_url: /u/joao-santos
+      avatar_url: null
+      avatar_alt: João Santos

@@ -1,4 +1,9 @@
 services:
+  aculta_studio.connections_composer:
+    class: Drupal\aculta_studio\Connections\StudioDashboardConnectionsComposer
+    arguments:
+      - '@?aculta_user.connection_query_service'
+      - '@current_user'
   aculta_studio.course_journey_composer:
     class: Drupal\aculta_studio\Learning\CourseJourneyComposer
     arguments: ['@string_translation']
@@ -46,7 +51,7 @@ services:
     arguments: ['@aculta_studio.marley_presenter', '@current_user']
   aculta_studio.experience.conta:
     class: Drupal\aculta_studio\Experience\AccountExperienceProvider
-    arguments: ['@entity_type.manager', '@current_user', '@?aculta_user.author_identity_resolver', '@?aculta_studio.calendar_composer']
+    arguments: ['@entity_type.manager', '@current_user', '@?aculta_user.author_identity_resolver', '@?aculta_studio.calendar_composer', '@?aculta_studio.connections_composer']
   aculta_studio.profile_access:
     class: Drupal\aculta_studio\Access\StudioProfileAccess
     arguments: ['@module_handler']

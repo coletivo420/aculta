@@ -1,6 +1,6 @@
 # TODO — aculta_studio
 
-Estado: Dev · versão 0.1.0-dev.52 (`aculta_studio.info.yml`) · status: `docs/operations/status/aculta_studio.yml`.
+Estado: Dev · versão 0.1.0-dev.53 (`aculta_studio.info.yml`) · status: `docs/operations/status/aculta_studio.yml`.
 
 ## Próximo passo
 

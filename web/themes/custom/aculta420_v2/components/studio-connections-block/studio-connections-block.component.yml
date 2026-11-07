@@ -1,0 +1,40 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Bloco Conexões do Studio Dashboard
+description: Bloco de conexões para o Studio Dashboard com resumo das 3 primeiras conexões ou estado vazio.
+group: ACULTA
+status: experimental
+props:
+  type: object
+  additionalProperties: false
+  required: [title, empty_message, find_connections_label, find_connections_url]
+  properties:
+    title:
+      type: string
+      default: CONEXÕES
+    connections:
+      type: array
+      items:
+        type: object
+        required: [name, profile_url]
+        properties:
+          name:
+            type: string
+          profile_url:
+            type: string
+          avatar_url:
+            type: [string, 'null']
+          avatar_alt:
+            type: [string, 'null']
+    empty_message:
+      type: string
+      default: Você ainda não tem conexões
+    find_connections_label:
+      type: string
+      default: Encontrar conexões
+    find_connections_url:
+      type: string
+    all_connections_label:
+      type: string
+      default: Ver todas
+    all_connections_url:
+      type: [string, 'null']

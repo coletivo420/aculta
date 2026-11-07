@@ -1,0 +1,33 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Página de Conexões do Studio
+description: Página com duas caixas independentes para gerenciar conexões existentes e buscar novas conexões.
+group: ACULTA
+status: experimental
+props:
+  type: object
+  additionalProperties: false
+  required: [connections_title, search_title, search_input_placeholder, search_hint]
+  properties:
+    connections_title:
+      type: string
+      default: Suas conexões
+    search_title:
+      type: string
+      default: Buscar novas conexões
+    filter_placeholder:
+      type: string
+      default: Filtrar suas conexões...
+    search_input_placeholder:
+      type: string
+      default: Digite o nome ou apelido...
+    search_hint:
+      type: string
+      default: Digite pelo menos 3 caracteres para buscar.
+    empty_connections_message:
+      type: string
+      default: Você ainda não tem conexões.
+slots:
+  connections_list:
+    title: Lista de conexões aceitas
+  search_results:
+    title: Resultados da busca de conexões

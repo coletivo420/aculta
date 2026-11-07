@@ -12,6 +12,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\aculta_studio\Calendar\StudioDashboardCalendarComposer;
+use Drupal\aculta_studio\Connections\StudioDashboardConnectionsComposer;
 use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
@@ -27,6 +28,7 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
     private readonly ?AccountInterface $currentUser = NULL,
     private readonly ?AuthorIdentityResolver $identityResolver = NULL,
     private readonly ?StudioDashboardCalendarComposer $calendarComposer = NULL,
+    private readonly ?StudioDashboardConnectionsComposer $connectionsComposer = NULL,
   ) {}
 
   /**
@@ -111,6 +113,7 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
         ],
       ],
       'calendar' => $this->calendarComposer?->compose(),
+      'connections' => $this->connectionsComposer?->compose(),
       'suites_heading' => [
         '#type' => 'html_tag',
         '#tag' => 'h2',
