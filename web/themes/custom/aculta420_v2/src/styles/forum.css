@@ -581,3 +581,8 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
   padding-inline: clamp(var(--spacing-sm), 2.25vw, var(--spacing-xl));
   box-sizing: border-box;
 }
+
+/* A página já tem recuo de .layout-page (--spacing-md); a caixa da lista desconta esse recuo para alinhar com a barra. */
+.aculta-forum-list {
+  padding-inline: max(0px, calc(clamp(var(--spacing-sm), 2.25vw, var(--spacing-xl)) - var(--spacing-md)));
+}
