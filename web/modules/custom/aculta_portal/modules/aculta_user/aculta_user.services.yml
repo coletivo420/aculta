@@ -14,6 +14,15 @@ services:
     arguments: ['@config.factory', '@lock.persistent', '@entity_type.manager', '@file.usage']
     tags:
       - { name: aculta_portal.helper }
+  aculta_user.connection_query_service:
+    class: Drupal\aculta_user\Social\ConnectionQueryService
+    arguments:
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@database'
+      - '@aculta_user.friendship_manager'
+      - '@?private_message.ban_manager'
+      - '@?aculta_user.author_identity_resolver'
   aculta_user.friendship_manager:
     class: Drupal\aculta_user\Social\FriendshipManager
     arguments: ['@entity_type.manager', '@current_user', '@lock.persistent', '@flood', '@event_dispatcher']
