@@ -820,3 +820,13 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
   min-inline-size: 0;
   max-inline-size: 100%;
 }
+
+/* Mobile: o conteúdo do tópico e os comentários usam o mesmo recuo lateral da página (16px). */
+@media (max-width: 59.99rem) {
+  .aculta-forum-topic__content > section {
+    padding-inline: 0;
+  }
+  article.aculta-forum-topic {
+    padding-inline: 0;
+  }
+}
