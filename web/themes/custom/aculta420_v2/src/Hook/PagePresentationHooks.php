@@ -249,14 +249,21 @@ final class PagePresentationHooks {
     }
 
     // Lista pública de tópicos do fórum: largura total, sem o teto de leitura.
-    if (str_starts_with((string) $routeName, 'view.aculta_forum_public_topics.')) {
+    if (str_starts_with((string) $routeName, 'view.aculta_forum_public_topics.')
+      || str_starts_with((string) $routeName, 'view.aculta_forum_categories.')) {
+      return 'full';
+    }
+    // Páginas do fórum (tópico, criação de tópico) usam o mesmo container da lista.
+    $formNodeType = $this->currentRouteMatch->getParameter('node_type');
+    if ($routeName === 'node.add' && is_object($formNodeType) && $formNodeType->id() === 'aculta_forum_topic') {
       return 'full';
     }
 
     $node = $this->currentRouteMatch->getParameter('node');
     if ($node instanceof NodeInterface) {
       return match ($node->bundle()) {
-        'wiki_entry', 'aculta_forum_topic' => 'aside',
+        'wiki_entry' => 'aside',
+        'aculta_forum_topic' => 'full',
         'revista' => 'full',
         default => 'stack',
       };
