@@ -78,7 +78,6 @@ final class PurposeContainerLayout {
    */
   public const ALLOWED_PURPOSES = [
     'main',
-    'account',
     'support',
     'magazine',
     'wiki',

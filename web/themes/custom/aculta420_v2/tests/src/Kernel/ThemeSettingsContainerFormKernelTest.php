@@ -63,7 +63,7 @@ final class ThemeSettingsContainerFormKernelTest extends KernelTestBase {
 
     $grid = $form['aculta_container_purpose']['aculta_purpose_container'];
     self::assertArrayHasKey('main', $grid);
-    self::assertArrayHasKey('account', $grid);
+    self::assertArrayNotHasKey('account', $grid);
     self::assertArrayHasKey('shop', $grid);
     self::assertArrayHasKey('magazine', $grid);
     self::assertArrayHasKey('wiki', $grid);
@@ -116,8 +116,6 @@ final class ThemeSettingsContainerFormKernelTest extends KernelTestBase {
     self::assertSame(1400, $grid['main']['container_width']['#default_value']);
     self::assertSame(800, $grid['main']['narrow_width']['#default_value']);
 
-    self::assertSame('narrow', $grid['account']['mode']['#default_value']);
-    self::assertSame(1000, $grid['account']['container_width']['#default_value']);
     self::assertSame(700, $grid['account']['narrow_width']['#default_value']);
 
     // Shop não foi personalizado, deve manter o fallback

@@ -330,6 +330,11 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
       continue;
     }
 
+    // A Conta (account) não tem seletor de layout: segue o padrão do template, sem caixa.
+    if ($purpose === 'account') {
+      continue;
+    }
+
     $currentSetting = PurposeContainerLayout::sanitizeSetting($savedContainers[$purpose] ?? NULL, $purpose);
 
     $cardWrapper = [
