@@ -64,3 +64,12 @@ revista-publication:
     component:
       components/revista-publication/revista-publication.css: {}
       components/author-card/author-card.css: {}
+
+# Carrossel de experiências do painel de conta: três caixas visíveis no desktop, rolagem automática.
+account-carousel:
+  version: 1.0.0
+  js:
+    js/account-carousel.js: { attributes: { defer: true } }
+  dependencies:
+    - core/drupal
+    - core/once

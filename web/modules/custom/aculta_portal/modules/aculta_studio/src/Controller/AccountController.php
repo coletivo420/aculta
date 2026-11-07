@@ -37,6 +37,7 @@ final class AccountController {
       throw new AccessDeniedHttpException();
     }
     $build = $provider->build();
+    $build['#attached']['library'][] = 'aculta420_v2/account-carousel';
     $build['suites']['#items'] = $this->experienceCards($this->experiences->buildEntries(
       $this->account,
       $this->domains,
@@ -56,17 +57,17 @@ final class AccountController {
    * Visual metadata for the account experience cards, keyed by provider id.
    */
   private const CARD_META = [
-    'marley' => ['icon' => 'book-open', 'description' => 'Cultura, história e legado de Bob Marley.'],
-    'ganjalab' => ['icon' => 'flask', 'description' => 'Conhecimento, pesquisa e inovação na cultura.'],
-    'we_sativa' => ['icon' => 'plant', 'description' => 'Bem-estar, estilos de vida e cultura contemporânea.'],
-    'culturas' => ['icon' => 'users-three', 'description' => 'Pessoas, territórios e diversidade cultural.'],
+    'marley' => ['icon' => 'book-open', 'description' => 'Criação e moderação da Revista, moderação do Fórum e Galerias.'],
+    'ganjalab' => ['icon' => 'flask', 'description' => 'Aprendizagem: painel e interface do estudante. Regras acadêmicas ficam no LMS.'],
+    'we_sativa' => ['icon' => 'plant', 'description' => 'Área integrada de contribuição à Wiki.'],
+    'culturas' => ['icon' => 'users-three', 'description' => 'Eventos e organizações culturais da ACULTA.'],
   ];
 
   /**
    * Faixa de largura total para experiências integradas (Green Stash).
    */
   private const STRIP_META = [
-    'green_stash' => ['icon' => 'archive', 'description' => 'Seu stash de conteúdos da ACULTA, integrado às experiências.'],
+    'green_stash' => ['icon' => 'archive', 'description' => 'Área integrada de gestão comercial da Loja. A operação fica com o Commerce.'],
   ];
 
   /**
