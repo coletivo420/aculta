@@ -5,9 +5,11 @@ props:
   id: aculta-dialog-local-example
   title: Selecionar local
   trigger_label: Abrir seletor de local
-  trigger_url: /eventos/locais
+  trigger_url: /painel-administrativo/eventos/locais
   close_label: Fechar seletor de local
   variant: fullscreen
 slots:
-  content: '<p>Escolha um local para associar ao evento.</p><ul><li>Casa de Cultura</li><li>Centro Comunitário</li></ul>'
-  actions: '<a class="button button--outline" href="/eventos/locais">Cadastrar local</a><button class="button button--primary" type="button">Selecionar</button>'
+  content:
+    markup: '<p>Escolha um local para associar ao evento.</p><ul><li>Casa de Cultura</li><li>Centro Comunitário</li></ul>'
+  actions:
+    markup: '<a class="button button--outline" href="/painel-administrativo/eventos/locais">Cadastrar local</a><button class="button button--primary" type="button">Selecionar</button>'

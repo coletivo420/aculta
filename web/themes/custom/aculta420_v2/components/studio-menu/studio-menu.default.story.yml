@@ -1,0 +1,4 @@
+name: Menu lateral do Studio Dashboard
+description: Menu lateral real com links de conta e diálogo acionado pela biblioteca do componente.
+component: aculta420_v2:studio-menu
+class: Drupal\aculta420_v2\Story\StudioMenuStory

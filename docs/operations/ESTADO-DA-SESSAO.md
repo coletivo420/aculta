@@ -5,13 +5,13 @@
 # V2 — UI Patterns Library — 2026-11-07
 
 - **Objetivo:** organizar visualmente `/painel-administrativo/aparencia/ui/components`, corrigir a barra institucional e definir container próprio centralizado.
-- **Estado:** commits `ed04d341e4` e `4987d69102` publicados; `f28ecce9fa` contém os ajustes desta etapa. Rotas UI Patterns excluídas do container por purpose. Overview usa largura máxima 1200px, sem caixa externa; cada componente em bloco vertical, preservando layouts nativos internos. Ajustes mais recentes mantêm previews dinâmicos, normalizam posição de Calendário/Conexões e convertem slots Perfil/Navegação para render arrays Drupal.
+- **Estado:** commits `ed04d341e4`, `4987d69102` e `c57fd98d68` publicados; o commit desta entrada contém esta rodada. Ajustes locais desta rodada resolvem stories PHP no preprocess do overview/single; Menu Studio usa provider atual, Pagination tem story de props, Dialog slots renderizam como HTML e biblioteca de diálogo é dependência explícita; Barra institucional passa a fluir no bloco.
 - **Decisões:** stories/pré-visualizações aparecem antes dos metadados recolhidos. CSS contém overflow e elementos posicionados por componente. Nada de colunas artificiais.
-- **Cuidados:** preview Chromium com CSS local injetado confirmou 108 blocos e sem overflow em 320/1440. Drupal respondeu 200 após corrigir declaração duplicada que causava 500. Cache Twig/agregados no Runtime não foi reconstruído; aceite visual com assets servidos permanece pendente.
-- **Commits e arquivos:** `ed04d341e4` layout inicial; ajuste de wrapper/containment a publicar. Tema `aculta420_v2` (hooks, layout, templates, CSS, testes, TODO, CHANGELOG e docs).
-- **Verificações:** Stylelint, schema SDC (55/764), token budget e `git diff --check` PASS. Renderer Drupal confirmou saída de 4/4 componentes. Gate `validate-aculta420-v2-sdc.php` DEFERRED/FAIL anterior ao render: falso positivo em `studio-calendar.twig` devido ao sufixo de classe `__add-btn` ser confundido com `.btn`.
-- **Pendências e bloqueios:** cache Drupal reconstruído no Runtime; `updatedb:status` e `config:status` ainda mostram pendências preexistentes, preservadas sem execução/import. Aceite visual autenticado na rota após a mudança permanece pendente.
-- **Próximo passo:** confirmar visualmente a rota autenticada no Runtime; não importar configuração nem executar updates sem escopo explícito.
+- **Cuidados:** preview Chromium com CSS local injetado confirmou 108 blocos e sem overflow em 320/1440. Drupal respondeu 200 após corrigir declaração duplicada que causava 500. Cache foi reconstruído após a implementação; aceite visual autenticado permanece pendente.
+- **Commits e arquivos:** `ed04d341e4`, `4987d69102`, `c57fd98d68` e o commit desta entrada. Tema `aculta420_v2` (hooks, stories, layout, templates, CSS, testes, TODO, CHANGELOG e docs).
+- **Verificações:** renderer Drupal 4/4 (Dialog, Studio menu, Barra, Pagination); dependência `utility-drawers` confirmada nas bibliotecas Dialog/Menu/Barra; stories dinâmicas customizadas e hook testados. Schema SDC 55/764, PHP lint e Stylelint do CSS alterado PASS. `npm run lint:css` encontra violações preexistentes em `src/styles/forum.css`; gate V2 SDC encontra falso positivo `__add-btn` em `studio-calendar.twig`. Token budget e `git diff --check` PASS.
+- **Pendências e bloqueios:** cache Drupal reconstruído no Runtime. `updatedb:status` e `config:status` ainda mostram pendências preexistentes, preservadas sem execução/import. Aceite visual autenticado e teste de clique no browser permanecem pendentes.
+- **Próximo passo:** confirmar visualmente e clicar nas prévias no overview autenticado; não importar configuração nem executar updates sem escopo explícito.
 
 # V2 — Stylelint CSS — 2026-11-07
 

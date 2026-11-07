@@ -122,6 +122,39 @@ body.aculta-component-library-page {
   z-index: auto;
 }
 
+.aculta-component-library-page .ui_patterns_component .aculta-institution-bar {
+  position: static;
+  inset: auto;
+  inline-size: 100%;
+  z-index: auto;
+}
+
+.aculta-component-library-page .aculta-studio-topbar {
+  block-size: auto;
+  margin-block: 0;
+}
+
+.aculta-component-library-page .aculta-studio-topbar__title {
+  position: static;
+  white-space: normal;
+}
+
+.aculta-component-library-page .aculta-studio-menu__trigger {
+  display: inline-flex;
+}
+
+.aculta-component-library-page .aculta-studio-sidebar {
+  position: static;
+  z-index: auto;
+  display: block;
+  inline-size: 100%;
+  margin-block-start: var(--spacing-sm);
+}
+
+.aculta-component-library-page .ui_patterns_component:has(.aculta-studio-topbar) .aculta-studio-menu-dialog {
+  position: fixed;
+}
+
 .aculta-component-library-page :is(main, .page__main):has(.aculta-studio-calendar) {
   position: static;
   inline-size: 100%;
@@ -138,6 +171,32 @@ body.aculta-component-library-page {
   margin-inline: auto;
   grid-template-columns: minmax(0, 1fr);
   padding-inline-end: clamp(var(--spacing-sm), 2.5vw, var(--spacing-xxl));
+}
+
+.aculta-component-library-page :is(main, .page__main):has(.aculta-studio-sidebar) {
+  position: static;
+  inline-size: 100%;
+  max-inline-size: none;
+  margin-inline: 0;
+  padding-inline-start: 0;
+}
+
+.aculta-component-library-page .layout-page:has(.aculta-studio-sidebar) {
+  position: static;
+  inline-size: 100%;
+  max-inline-size: var(--aculta-container-width, 1200px);
+  margin-inline: auto;
+  padding-inline-start: clamp(var(--spacing-sm), 2.5vw, var(--spacing-xxl));
+}
+
+.aculta-component-library-page .layout-page:has(.aculta-studio-sidebar) .layout-page__content {
+  inline-size: 100%;
+  max-inline-size: none;
+  margin-inline: 0;
+}
+
+.aculta-component-library-page .layout-page h1:not(.aculta-studio-topbar__title) {
+  display: revert;
 }
 
 .aculta-component-library-page :is(main, .page__main, .layout-page):has(.aculta-studio-calendar) .layout-page__content {

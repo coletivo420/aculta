@@ -5,6 +5,7 @@ group: ACULTA
 status: experimental
 libraryOverrides:
   dependencies:
+    - aculta420_v2/utility-drawers
     - core/drupal
     - core/once
 props:

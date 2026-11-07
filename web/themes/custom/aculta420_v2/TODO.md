@@ -10,7 +10,7 @@ Estado: em desenvolvimento · versão 1.3.0 (`aculta420_v2.info.yml`) · status 
 - **F2:** shell intacto; ESR 120/120, 10 purposes, claro/escuro, 320/1440, sem overflow e contraste AA. Aceite visual pendente. `tests/browser/capturas/shell/2026-11-06/`.
 - **Editor:** suíte completa PASS. ULI cria cookie compartilhado; o formulário é administrativo no host principal, não no host Revista. CKEditor editorial e os casos administrativos passaram em 1280/390/320 sem overflow. `tests/browser/capturas/aculta-editor/2026-11-06/`.
 - **Config:** sem diff seguro de tema/módulo. Config local `default_admin`, field legado e chaves sensíveis Turnstile preservados; sem `drush cex`. Ver handoff.
-- **UI Patterns:** galeria dinâmica; Conexões/Calendário sem posicionamento de dashboard e slots Perfil/Navegação renderizados. Renderer Drupal 4/4 PASS; aceite visual autenticado no Runtime pendente. Loja aguarda autorização.
+- **UI Patterns:** stories PHP agora alimentam os SDCs com props/slots atuais; menu usa provider real, diálogo com biblioteca funcional, barra sem posição fixa no cartão e paginação com story. Renderer Drupal 4/4 PASS; aceite visual autenticado no Runtime pendente. Loja aguarda autorização.
 
 ## Dívidas
 

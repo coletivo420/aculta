@@ -13,6 +13,7 @@
 - A rota respondeu 200 e o CSS local injetado no Chromium mostrou 108 blocos verticais, container por purpose ausente, barra sem markup quebrado e sem overflow horizontal em 320/1440 px. O CSS agregado e os templates Twig novos ainda aguardam rebuild de cache no Runtime; aceite visual final pendente.
 - Os previews agora usam o wrapper oficial de stories da UI Patterns; a contenção dos cartões deixa de recortar pintura de elementos posicionados.
 - As prévias de Conexões e Calendário anulam, só na galeria, o posicionamento absoluto do dashboard; slots das stories de Detalhes do perfil e Navegação de suíte usam render arrays `markup` para produzir HTML no componente real, sem duplicar markup no template da galeria. Renderer Drupal: 4/4 componentes produziram a estrutura esperada.
+- Stories sem preview agora têm dados; o menu do Studio usa os itens atuais do `AccountExperienceProvider`, stories PHP recebem props/slots resolvidas pelo preprocess do tema, e a barra institucional do preview flui dentro do bloco. O diálogo Selecionar local declara a biblioteca de interação e usa o destino de rota real. Renderer Drupal e dependências de JS: PASS nos quatro componentes desta rodada.
 
 ## Não versionado — conformidade Stylelint
 
