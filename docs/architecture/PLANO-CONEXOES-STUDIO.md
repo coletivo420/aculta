@@ -74,6 +74,29 @@ Rota: a definir (ver decisões abertas). Acesso só para usuário autenticado.
 - Sincronizar o checkout compartilhado e limpar cache dos hosts.
 - Atualizar `docs/status-layouts-e-shell.md` e o README do componente.
 
+
+## Revisão de 2026-11-07 (referência do Opigno)
+
+**Opigno (referência visual e de comportamento, sem reuso de código):** a página "Gerenciar conexões" tem duas caixas: "Suas conexões" (busca, lista com avatar, nome, papel, ícone de mensagem e menu "⋯" com "Remover conexão") e "Buscar novas conexões" (busca e resultados). No celular as caixas empilham e o menu fica abaixo do nome. O Opigno guarda conexões na entidade `user_invitation` (dono, convidado, aceito); o ACULTA usa `aculta_user` (`FriendshipManager`), e a visão é do ACULTA.
+
+**Decisões desta revisão:**
+
+- **Dados:** continuam no `aculta_user` (`FriendshipManager`). Nada é importado do Opigno.
+- **Avatares:** avatar do ACULTA (`AvatarResolver` / identidade pública), com o mesmo formato circular e tamanho do Opigno, sem inicial do nome.
+- **Ícone de mensagem:** abre uma nova conversa com o usuário, usando o sistema de mensagens do ACULTA (`NewConversationController::compose`). **Não cria página de mensagens:** a nova mensagem é aberta a partir da barra institucional (`messenger-trigger`), como diálogo.
+- **Menu "⋯":** "Desfazer amizade" e "Bloquear". "Desfazer amizade" chama `remove()`. **Bloquear é novo**: o `aculta_user` não tem bloqueio hoje, então o plano inclui um estado `blocked` em `FriendshipStatus` e a regra de que um bloqueado não aparece na busca nem envia convites.
+- **Listas com carregamento progressivo:** 3 itens por carregamento no celular e 5 no desktop. Ao rolar até o fim, o próximo lote é carregado (como seguidores e seguidos no Instagram). Vale para "Suas conexões" e para "Buscar novas conexões".
+- **Busca:** a partir de 3 caracteres (`SearchPageController::MIN_CHARS`), com resultados interativos (padrão htmx do `SearchPreviewController`). Cada resultado mostra "Adicionar", "Pendente" ou "Conectado".
+- **Caixas:** faixa superior na cor do purpose (`--purpose-sub-2` ou o token do Studio, conforme o contexto) e cantos `--radius-lg`, sem bordas internas duplicadas.
+
+**Fases atualizadas:**
+
+1. Dados e serviço: lista paginada de conexões, busca paginada, estado `blocked`, transições de bloquear e desbloquear, e política de privacidade.
+2. Componentes: bloco no painel, página de conexões com as duas caixas, avatares, menu "⋯" e ícone de mensagem.
+3. Interação: carregamento progressivo, busca htmx, ação de remover e bloquear com confirmação, e nova mensagem pela barra institucional.
+4. Validação: kernel de privacidade, de bloqueio e de paginação; captura em Firefox ESR nos dois tamanhos, claro e escuro.
+5. Entrega: commit, push, sincronização do checkout e limpeza de cache.
+
 ## Decisões abertas
 
 - **Rota da página:** `/conexoes` no purpose de conta, ou outro caminho?
