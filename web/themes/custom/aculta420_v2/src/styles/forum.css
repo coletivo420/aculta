@@ -239,7 +239,7 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
   block-size: 3rem;
 }
 
-.aculta-forum-topic-list-row .author-card .author-card__avatar {
+.aculta-forum-topic-list-row .aculta-forum-topic .author-card:not(.author-card--stacked) .author-card__avatar {
   flex-basis: 2rem;
   inline-size: 2rem;
   block-size: 2rem;
