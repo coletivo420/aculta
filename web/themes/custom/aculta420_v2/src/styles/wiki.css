@@ -11,8 +11,8 @@
 .aculta-wiki-search-results > h2 {
   border-block-end: 1px solid var(--color-border);
   font: 500 1.65rem/1.3 var(--font-family-heading);
-  margin: var(--spacing-xxl) 0 var(--spacing-base);
-  padding-block-end: var(--spacing-xs);
+  margin: var(--spacing-xl) 0 var(--spacing-base);
+  padding-block-end: .4rem;
 }
 
 .aculta-wiki-intro {
@@ -20,13 +20,13 @@
   border: 1px solid var(--color-border);
   border-inline-start: .3rem solid var(--color-brand-secondary);
   min-inline-size: 0;
-  padding: clamp(var(--spacing-base), 3vw, var(--spacing-xl));
+  padding: clamp(1.25rem, 3vw, var(--spacing-xl));
 }
 
 .aculta-wiki-intro h1 {
   color: var(--color-text-primary);
   font: 500 clamp(2rem, 4vw, 2.8rem)/1.15 var(--font-family-heading);
-  margin: 0 0 var(--spacing-sm);
+  margin: 0 0 .65rem;
   overflow-wrap: anywhere;
 }
 
@@ -88,7 +88,7 @@
   color: var(--color-link-editorial);
   display: flex;
   min-block-size: 3.25rem;
-  padding: var(--spacing-sm) var(--spacing-md);
+  padding: .7rem .9rem;
   text-decoration: none;
   overflow-wrap: anywhere;
 }
@@ -130,6 +130,56 @@
 }
 
 .aculta-wiki-recent-change time { color: var(--color-text-secondary); font-size: var(--font-size-sm); }
+
+/* Categorias da home: o view renderiza sem view-wiki-categories nem taxonomy-term. O alvo é o
+   contêiner cujas linhas trazem link para um termo de taxonomia, com as caixas e espaçamentos da V1. */
+.aculta-wiki-home .views-element-container:has(h2 a[href*="/taxonomy/term/"]) > div {
+  display: grid;
+  gap: var(--spacing-base);
+  grid-template-columns: minmax(0, 1fr);
+  min-inline-size: 0;
+}
+
+.aculta-wiki-home .views-element-container:has(h2 a[href*="/taxonomy/term/"]) > div > .views-row {
+  block-size: 100%;
+  min-inline-size: 0;
+}
+
+.aculta-wiki-home .views-element-container:has(h2 a[href*="/taxonomy/term/"]) > div > .views-row h2 {
+  block-size: 100%;
+  font: 600 1rem/1.35 var(--font-family-base);
+  margin: 0;
+}
+
+.aculta-wiki-home .views-element-container:has(h2 a[href*="/taxonomy/term/"]) > div > .views-row h2 a {
+  align-items: center;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  color: var(--color-link-editorial);
+  display: flex;
+  min-block-size: 3.25rem;
+  overflow-wrap: anywhere;
+  padding: .7rem .9rem;
+  text-decoration: none;
+}
+
+.aculta-wiki-home .views-element-container:has(h2 a[href*="/taxonomy/term/"]) > div > .views-row h2 a:is(:hover, :focus-visible) {
+  border-color: var(--color-brand-secondary);
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  text-underline-offset: .18em;
+}
+
+.aculta-wiki-home .views-element-container:has(h2 a[href*="/taxonomy/term/"]) > div > .views-row h2 a:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+@media (min-width: 48rem) {
+  .aculta-wiki-home .views-element-container:has(h2 a[href*="/taxonomy/term/"]) > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
 
 @media (min-width: 48rem) {
   .aculta-wiki-search,

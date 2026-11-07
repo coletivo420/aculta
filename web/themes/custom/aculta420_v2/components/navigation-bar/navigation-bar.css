@@ -60,6 +60,11 @@
   object-position: left center;
 }
 
+/* A marca da wiki é colorida, como na V1: o filtro monocromático do tema não se aplica a ela. */
+.navigation-bar__logo[src*="wiki420-"] {
+  filter: none;
+}
+
 .navigation-bar__toggle,
 .navigation-bar__close {
   align-items: center;
