@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+  Revisão de estilo PHP do ACULTA (Drupal coding standards + DrupalPractice).
+  Uso: vendor/bin/phpcs  (usa este arquivo automaticamente).
+  Correção automática: vendor/bin/phpcbf.
+-->
+<ruleset name="ACULTA">
+  <description>Padrão de estilo do ACULTA: Drupal e DrupalPractice, em código próprio.</description>
+
+  <file>web/modules/custom</file>
+  <file>web/themes/custom</file>
+  <file>scripts</file>
+
+  <exclude-pattern>*/node_modules/*</exclude-pattern>
+  <exclude-pattern>*/vendor/*</exclude-pattern>
+  <exclude-pattern>*/tests/browser/*/__pycache__/*</exclude-pattern>
+
+  <arg name="extensions" value="php,module,inc,install,theme,profile"/>
+  <arg name="colors"/>
+  <arg value="sp"/>
+
+  <rule ref="Drupal"/>
+  <rule ref="DrupalPractice"/>
+</ruleset>
