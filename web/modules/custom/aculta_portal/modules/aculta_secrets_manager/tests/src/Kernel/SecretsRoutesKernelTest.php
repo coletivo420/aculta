@@ -69,7 +69,6 @@ final class SecretsRoutesKernelTest extends KernelTestBase {
     'login_emailusername',
     'social_auth',
     'group',
-    'lms',
     'commerce',
     'aculta_pagamentos_mercadopago',
     'schema_metatag',
