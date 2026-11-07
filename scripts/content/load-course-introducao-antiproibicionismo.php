@@ -2,13 +2,17 @@
 
 /**
  * @file
- * Loads the versioned course source into the LMS. Idempotent: matches the course by label,
- * lessons and activities by name; updates what exists and creates what is missing. Deletes nothing.
+ * Loads the versioned course source into the LMS. Idempotent: matches
+ * the course by label, lessons and activities by name; updates what
+ * exists and creates what is missing. Deletes nothing.
  *
  * Usage (from the repository root):
- *   php vendor/drush/drush/drush.php php:script load-course-introducao-antiproibicionismo --script-path=scripts/content.
+ *   php vendor/drush/drush/drush.php php:script
+ *   load-course-introducao-antiproibicionismo --script-path=scripts/content.
  *
- * The course source is scripts/content/courses/introducao-antiproibicionismo.json. It holds no credentials.
+ * The course source is scripts/content/courses/
+ * introducao-antiproibicionismo.json. It holds no
+ * credentials.
  */
 
 use Drupal\group\Entity\Group;
@@ -45,7 +49,13 @@ foreach ($source['lessons'] as $spec) {
   /**
  * @var \Drupal\lms\Entity\LessonInterface $lesson */
   $lesson = $findOne($lessonStorage, ['lms_lesson_type' => 'lesson', 'name' => $spec['name']], 'pilot lesson');
-  $lesson ??= Lesson::create(['lms_lesson_type' => 'lesson', 'name' => $spec['name'], 'randomization' => 0, 'backwards_navigation' => FALSE, 'random_activities' => 0]);
+  $lesson ??= Lesson::create([
+    'lms_lesson_type' => 'lesson',
+    'name' => $spec['name'],
+    'randomization' => 0,
+    'backwards_navigation' => FALSE,
+    'random_activities' => 0,
+  ]);
   $lesson->set('name', $spec['name']);
   $lesson->set('description', ['value' => $spec['description'], 'format' => 'basic_html']);
 
@@ -75,4 +85,9 @@ foreach ($source['lessons'] as $spec) {
 $course->set('lessons', $lessonRefs);
 $course->save();
 
-echo json_encode(['course' => $course->id(), 'published' => $course->isPublished(), 'lessons' => $report['lessons'], 'activities' => $report['activities']], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . "\n";
+echo json_encode([
+  'course' => $course->id(),
+  'published' => $course->isPublished(),
+  'lessons' => $report['lessons'],
+  'activities' => $report['activities'],
+], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . "\n";

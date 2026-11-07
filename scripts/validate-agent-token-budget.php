@@ -7,19 +7,24 @@
 declare(strict_types=1);
 
 /**
- * Gate de orçamento de leitura dos agentes (somente leitura; sem vendor, sem Drush).
+ * Gate de orçamento de leitura dos agentes.
+ *
+ * Somente leitura; sem vendor, sem Drush.
  *
  * Confere:
- * 1. Tamanho dos documentos de leitura de partida (AGENTS.md, CLAUDE.md, TODO.md e.
+ * 1. Tamanho dos documentos de leitura de partida (AGENTS.md,
+ *    CLAUDE.md, TODO.md e.
  *
  *    @todo .md de cada componente). Esses arquivos são reenviados a cada turno.
- * 2. Cobertura e consistência: todo componente com *.info.yml tem TODO.md; a versão
- *    citada bate com o manifesto; o roadmap citado existe; não há seção de histórico.
+ * 2. Cobertura e consistência: todo componente com *.info.yml tem TODO.md;
+ *    a versão citada bate com o manifesto; o roadmap citado existe;
+ *    não há seção de histórico.
  * 3. Handoff: docs/operations/ESTADO-DA-SESSAO.md tem no máximo 3 entradas.
- * 4. Trechos literais do AGENTS.md exigidos por outros gates continuam presentes.
+ * 4. Trechos literais do AGENTS.md exigidos por outros gates
+ *    continuam presentes.
  *
- * Limites em bytes são alvos de economia; alterar um limite exige nota no CHANGELOG
- * do tema ou do Portal e justificativa no commit.
+ * Limites em bytes são alvos de economia; alterar um limite exige nota
+ * no CHANGELOG do tema ou do Portal e justificativa no commit.
  */
 
 $root = dirname(__DIR__);
@@ -160,14 +165,16 @@ foreach ($skillDirs as $skillDir) {
   if (!is_link($root . '/.claude/skills/' . $skillName)) {
     $failures[] = "docs/agent-skills/$skillName sem link em .claude/skills/$skillName";
   }
-  // Descrição sempre entra no contexto: curta e sobre o gatilho (progressive disclosure).
+  // Descrição sempre entra no contexto: curta e sobre o gatilho
+  // (progressive disclosure).
   if (!preg_match('/^description: (.+)$/m', $skillText, $dm)) {
     $failures[] = "docs/agent-skills/$skillName/SKILL.md sem description";
   }
   elseif (mb_strlen($dm[1]) > MAX_SKILL_DESCRIPTION) {
     $failures[] = "docs/agent-skills/$skillName: description com " . mb_strlen($dm[1]) . ' caracteres; limite ' . MAX_SKILL_DESCRIPTION;
   }
-  // Corpo carregado sob demanda: acima do limite, mova o detalhe para references/ ou para o doc canônico.
+  // Corpo carregado sob demanda: acima do limite, mova o detalhe para
+  // references/ ou para o doc canônico.
   if (strlen($skillText) > MAX_SKILL_BYTES) {
     $failures[] = "docs/agent-skills/$skillName/SKILL.md tem " . strlen($skillText) . ' bytes; limite ' . MAX_SKILL_BYTES;
   }

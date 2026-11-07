@@ -27,7 +27,17 @@ if (!empty($state['cms_enhancements'])) {
   echo 'CMS enhancements already configured; edit through Drupal.' . PHP_EOL;
   return;
 }
-foreach (['webform', 'webform_ui', 'simple_sitemap', 'pathauto', 'metatag', 'metatag_open_graph', 'redirect', 'media', 'media_library'] as $module) {
+foreach ([
+  'webform',
+  'webform_ui',
+  'simple_sitemap',
+  'pathauto',
+  'metatag',
+  'metatag_open_graph',
+  'redirect',
+  'media',
+  'media_library',
+] as $module) {
   if (!\Drupal::moduleHandler()->moduleExists($module)) {
     throw new RuntimeException('Enable the Composer-managed module first: ' . $module);
   }
@@ -39,7 +49,13 @@ $webform = Webform::load('aculta_contact');
 if (!$webform) {
   $webform = Webform::create(['id' => 'aculta_contact', 'title' => 'Contato', 'langcode' => 'pt-br', 'status' => 'open']);
   $webform->setElements([
-    'name' => ['#type' => 'textfield', '#title' => 'Nome', '#required' => TRUE, '#autocomplete' => 'name', '#maxlength' => 255],
+    'name' => [
+      '#type' => 'textfield',
+      '#title' => 'Nome',
+      '#required' => TRUE,
+      '#autocomplete' => 'name',
+      '#maxlength' => 255,
+    ],
     'email' => ['#type' => 'email', '#title' => 'E-mail', '#required' => TRUE, '#autocomplete' => 'email'],
     'subject' => ['#type' => 'textfield', '#title' => 'Assunto', '#required' => TRUE, '#maxlength' => 255],
     'message' => ['#type' => 'textarea', '#title' => 'Mensagem', '#required' => TRUE, '#rows' => 8],
@@ -67,7 +83,10 @@ if (!$webform) {
 if ($example = Webform::load('contact')) {
   $example->set('status', 'closed')->setSetting('page', FALSE)->save();
 }
-foreach (\Drupal::entityTypeManager()->getStorage('path_alias')->loadByProperties(['alias' => '/contato', 'langcode' => 'pt-br']) as $alias) {
+foreach (\Drupal::entityTypeManager()->getStorage('path_alias')->loadByProperties([
+  'alias' => '/contato',
+  'langcode' => 'pt-br',
+]) as $alias) {
   $alias->setPath('/webform/aculta_contact')->save();
 }
 foreach (['main_contact'] as $key) {
@@ -80,13 +99,26 @@ foreach (['anonymous', 'authenticated'] as $role) {
 
 // Pathauto applies to future content; existing reviewed aliases are protected.
 \Drupal::configFactory()->getEditable('pathauto.settings')->set('update_action', PathautoGeneratorInterface::UPDATE_ACTION_NO_NEW)->save();
-$patterns = ['page' => '[node:title]', 'project' => 'projetos/[node:title]', 'activity' => 'atividades/[node:title]', 'article' => 'noticias/[node:title]', 'document' => 'transparencia/documentos/[node:title]'];
+$patterns = [
+  'page' => '[node:title]',
+  'project' => 'projetos/[node:title]',
+  'activity' => 'atividades/[node:title]',
+  'article' => 'noticias/[node:title]',
+  'document' => 'transparencia/documentos/[node:title]',
+];
 foreach ($patterns as $bundle => $pattern) {
   if (!PathautoPattern::load('aculta_' . $bundle)) {
     $condition_id = \Drupal::service('uuid')->generate();
     PathautoPattern::create([
       'id' => 'aculta_' . $bundle, 'label' => 'URLs — ' . $bundle, 'type' => 'canonical_entities:node', 'pattern' => $pattern,
-      'selection_criteria' => [$condition_id => ['id' => 'entity_bundle:node', 'negate' => FALSE, 'bundles' => [$bundle => $bundle], 'context_mapping' => ['node' => 'node']]],
+      'selection_criteria' => [
+        $condition_id => [
+          'id' => 'entity_bundle:node',
+          'negate' => FALSE,
+          'bundles' => [$bundle => $bundle],
+          'context_mapping' => ['node' => 'node'],
+        ],
+      ],
       'selection_logic' => 'and', 'weight' => 0, 'status' => TRUE,
     ])->save();
   }
@@ -94,9 +126,31 @@ foreach ($patterns as $bundle => $pattern) {
 
 // Editable SEO fields plus site-wide defaults; no fabricated social imagery.
 $defaults = [
-  'global' => ['title' => '[current-page:title] | [site:name]', 'description' => 'Site oficial da Associação Cultural Antiproibicionista em Goiânia: cultura, informação, cuidado e participação social.', 'canonical_url' => '[current-page:url]', 'og_site_name' => $data['organization'], 'og_type' => 'website', 'og_title' => '[current-page:title]', 'og_url' => '[current-page:url]'],
-  'front' => ['title' => 'Associação Cultural Antiproibicionista | Goiânia - GO', 'description' => $data['hero']['text'], 'canonical_url' => 'https://aculta.org/', 'og_title' => $data['organization'], 'og_description' => $data['hero']['text'], 'og_url' => 'https://aculta.org/'],
-  'node' => ['title' => '[node:title] | [site:name]', 'description' => '[node:summary]', 'canonical_url' => '[node:url]', 'og_title' => '[node:title]', 'og_description' => '[node:summary]', 'og_url' => '[node:url]'],
+  'global' => [
+    'title' => '[current-page:title] | [site:name]',
+    'description' => 'Site oficial da Associação Cultural Antiproibicionista em Goiânia: cultura, informação, cuidado e participação social.',
+    'canonical_url' => '[current-page:url]',
+    'og_site_name' => $data['organization'],
+    'og_type' => 'website',
+    'og_title' => '[current-page:title]',
+    'og_url' => '[current-page:url]',
+  ],
+  'front' => [
+    'title' => 'Associação Cultural Antiproibicionista | Goiânia - GO',
+    'description' => $data['hero']['text'],
+    'canonical_url' => 'https://aculta.org/',
+    'og_title' => $data['organization'],
+    'og_description' => $data['hero']['text'],
+    'og_url' => 'https://aculta.org/',
+  ],
+  'node' => [
+    'title' => '[node:title] | [site:name]',
+    'description' => '[node:summary]',
+    'canonical_url' => '[node:url]',
+    'og_title' => '[node:title]',
+    'og_description' => '[node:summary]',
+    'og_url' => '[node:url]',
+  ],
 ];
 foreach ($defaults as $id => $tags) {
   $entity = MetatagDefaults::load($id) ?? MetatagDefaults::create(['id' => $id, 'label' => $id]);
@@ -108,7 +162,12 @@ if (!FieldStorageConfig::loadByName('node', 'field_meta_tags')) {
 }
 foreach (array_keys($patterns) as $bundle) {
   if (!FieldConfig::loadByName('node', $bundle, 'field_meta_tags')) {
-    FieldConfig::create(['entity_type' => 'node', 'bundle' => $bundle, 'field_name' => 'field_meta_tags', 'label' => 'SEO — títulos e descrições'])->save();
+    FieldConfig::create([
+      'entity_type' => 'node',
+      'bundle' => $bundle,
+      'field_name' => 'field_meta_tags',
+      'label' => 'SEO — títulos e descrições',
+    ])->save();
   }
   $display = EntityFormDisplay::load('node.' . $bundle . '.default');
   $display->setComponent('field_meta_tags', ['type' => 'metatag_firehose', 'weight' => 50])->save();
@@ -134,11 +193,17 @@ $body = str_replace('O formulário do Drupal não cria uma publicação pública
 $privacy->set('body', ['value' => $body, 'format' => 'full_html'])->setNewRevision(TRUE);
 $privacy->save();
 
-// Sitemap includes public editorial content; excludes drafts and old contact node.
+// Sitemap includes public editorial content; excludes drafts and
+// old contact node.
 \Drupal::configFactory()->getEditable('simple_sitemap.settings')->set('base_url', 'https://aculta.org')->set('enabled_entity_types', ['node'])->set('cron_generate', TRUE)->save();
 $generator = \Drupal::service('simple_sitemap.generator');
 foreach (array_keys($patterns) as $bundle) {
-  $generator->entityManager()->setBundleSettings('node', $bundle, ['index' => TRUE, 'priority' => '0.5', 'changefreq' => '', 'include_images' => FALSE]);
+  $generator->entityManager()->setBundleSettings('node', $bundle, [
+    'index' => TRUE,
+    'priority' => '0.5',
+    'changefreq' => '',
+    'include_images' => FALSE,
+  ]);
 }
 foreach (['home', 'contact'] as $key) {
   $generator->entityManager()->setEntityInstanceSettings('node', (string) $state['nodes'][$key], ['index' => FALSE]);

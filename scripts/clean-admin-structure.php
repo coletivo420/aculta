@@ -35,7 +35,16 @@ foreach ($active->getAllCollectionNames() as $collection) {
 }
 file_put_contents(dirname(__DIR__) . '/tmp/admin-cleanup-before.json', json_encode($backup, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 $removed = [];
-foreach (['archive', 'content_recent', 'frontpage', 'glossary', 'taxonomy_term', 'who_s_new', 'who_s_online', 'vvjb_example'] as $id) {
+foreach ([
+  'archive',
+  'content_recent',
+  'frontpage',
+  'glossary',
+  'taxonomy_term',
+  'who_s_new',
+  'who_s_online',
+  'vvjb_example',
+] as $id) {
   if ($view = View::load($id)) {
     $dependents = \Drupal::service('config.manager')->getConfigDependencyManager()->getDependentEntities('config', $view->getConfigDependencyName());
     if ($dependents) {
@@ -46,7 +55,12 @@ foreach (['archive', 'content_recent', 'frontpage', 'glossary', 'taxonomy_term',
   }
 }
 foreach (Block::loadMultiple() as $block) {
-  if ($block->getTheme() === 'bootstrap5' || in_array($block->id(), ['aculta_home_care', 'aculta_home_knowledge', 'aculta_home_research', 'aculta_powered'])) {
+  if ($block->getTheme() === 'bootstrap5' || in_array($block->id(), [
+    'aculta_home_care',
+    'aculta_home_knowledge',
+    'aculta_home_research',
+    'aculta_powered',
+  ])) {
     $removed[] = $block->getConfigDependencyName();
     $block->delete();
   }
@@ -60,7 +74,8 @@ if ($sample) {
   $sample->delete();
   $removed[] = 'webform.webform.contact';
 }
-// No fields reference this empty vocabulary. Preserve taxonomy itself (Core/profile).
+// No fields reference this empty vocabulary. Preserve taxonomy itself
+// (Core/profile).
 $tags = Vocabulary::load('tags');
 if ($tags) {
   if (\Drupal::entityTypeManager()->getStorage('taxonomy_term')->getQuery()->accessCheck(FALSE)->condition('vid', 'tags')->count()->execute()) {
@@ -78,7 +93,8 @@ if ($tags) {
   $tags->delete();
   $removed[] = 'taxonomy.vocabulary.tags';
 }
-// This Core module's two forms were replaced by the actual institutional Webform.
+// This Core module's two forms were replaced by the actual institutional
+// Webform.
 if (\Drupal::moduleHandler()->moduleExists('contact')) {
   $blockers = \Drupal::service('module_installer')->validateUninstall(['contact']);
   if ($blockers) {
@@ -103,25 +119,64 @@ foreach (['footer', 'tools'] as $id) {
 }
 // Translate and explain administrative Views that are still actually required.
 foreach ([
-  'content' => ['Conteúdo', 'Administração de páginas, projetos, notícias, atividades, documentos e destaques. Permite filtrar, editar e controlar a publicação.'],
-  'block_content' => ['Blocos de conteúdo', 'Administração dos textos reutilizáveis e dos dados institucionais. A colocação pública é configurada em Layout de blocos.'],
-  'files' => ['Arquivos', 'Inventário dos arquivos gerenciados pelo Drupal e de seu uso. Não representa uma listagem pública de documentos.'],
-  'media' => ['Mídia', 'Administração de imagens, documentos, áudio e vídeo gerenciados pela biblioteca de mídia.'],
-  'media_library' => ['Biblioteca de mídia', 'Seleção e reutilização de mídia no editor. Mantém os displays e argumentos exigidos pelo Media Library.'],
-  'user_admin_people' => ['Usuários', 'Administração de contas, estados e papéis de acesso. Preserve os filtros e as ações de gestão de usuários.'],
-  'watchdog' => ['Registro de eventos', 'Consulta administrativa de erros, avisos e eventos registrados pelo Drupal. Usada para diagnóstico do ambiente.'],
-  'redirect' => ['Redirecionamentos', 'Administração dos redirecionamentos de URLs, incluindo mudanças de aliases. Evita destinos antigos sem continuidade.'],
-  'webform_submissions' => ['Submissões de formulários', 'Consulta administrativa das mensagens e demais submissões do Webform, conforme as permissões de acesso.'],
+  'content' => [
+    'Conteúdo',
+    'Administração de páginas, projetos, notícias, atividades, documentos e destaques. Permite filtrar, editar e controlar a publicação.',
+  ],
+  'block_content' => [
+    'Blocos de conteúdo',
+    'Administração dos textos reutilizáveis e dos dados institucionais. A colocação pública é configurada em Layout de blocos.',
+  ],
+  'files' => [
+    'Arquivos',
+    'Inventário dos arquivos gerenciados pelo Drupal e de seu uso. Não representa uma listagem pública de documentos.',
+  ],
+  'media' => [
+    'Mídia',
+    'Administração de imagens, documentos, áudio e vídeo gerenciados pela biblioteca de mídia.',
+  ],
+  'media_library' => [
+    'Biblioteca de mídia',
+    'Seleção e reutilização de mídia no editor. Mantém os displays e argumentos exigidos pelo Media Library.',
+  ],
+  'user_admin_people' => [
+    'Usuários',
+    'Administração de contas, estados e papéis de acesso. Preserve os filtros e as ações de gestão de usuários.',
+  ],
+  'watchdog' => [
+    'Registro de eventos',
+    'Consulta administrativa de erros, avisos e eventos registrados pelo Drupal. Usada para diagnóstico do ambiente.',
+  ],
+  'redirect' => [
+    'Redirecionamentos',
+    'Administração dos redirecionamentos de URLs, incluindo mudanças de aliases. Evita destinos antigos sem continuidade.',
+  ],
+  'webform_submissions' => [
+    'Submissões de formulários',
+    'Consulta administrativa das mensagens e demais submissões do Webform, conforme as permissões de acesso.',
+  ],
 ] as $id => [$label, $description]) {
   if ($view = View::load($id)) {
     $view->set('label', $label)->set('description', $description)->save();
   }
 }
 foreach ([
-  'admin' => ['Administração', 'Navegação administrativa do Drupal: conteúdo, estrutura, configuração, usuários e relatórios.'],
-  'content' => ['Gestão de conteúdo', 'Menu utilizado pelo módulo Navigation para acessar conteúdo, mídia, blocos e arquivos. É necessário mesmo sem links criados manualmente.'],
-  'navigation-user-links' => ['Links do usuário', 'Menu utilizado pela navegação administrativa para conta e ações do usuário autenticado.'],
-  'account' => ['Conta do usuário', 'Acesso à conta e saída de usuários autenticados; utilizado pela faixa utilitária do site.'],
+  'admin' => [
+    'Administração',
+    'Navegação administrativa do Drupal: conteúdo, estrutura, configuração, usuários e relatórios.',
+  ],
+  'content' => [
+    'Gestão de conteúdo',
+    'Menu utilizado pelo módulo Navigation para acessar conteúdo, mídia, blocos e arquivos. É necessário mesmo sem links criados manualmente.',
+  ],
+  'navigation-user-links' => [
+    'Links do usuário',
+    'Menu utilizado pela navegação administrativa para conta e ações do usuário autenticado.',
+  ],
+  'account' => [
+    'Conta do usuário',
+    'Acesso à conta e saída de usuários autenticados; utilizado pela faixa utilitária do site.',
+  ],
 ] as $id => [$label, $description]) {
   if ($menu = Menu::load($id)) {
     $menu->set('label', $label)->set('description', $description)->save();
@@ -131,7 +186,8 @@ $basic = BlockContentType::load('basic');
 if ($basic) {
   $basic->set('label', 'Bloco editorial')->set('description', 'Textos reutilizáveis das seções institucionais. Edite o conteúdo aqui; configure posição e visibilidade em Layout de blocos.')->save();
 }
-// Translation overrides inherited from Standard can otherwise mask the new names.
+// Translation overrides inherited from Standard can otherwise mask the new
+// names.
 $overrides = \Drupal::languageManager()->getLanguageConfigOverride('pt-br', 'block_content.type.basic');
 $overrides->set('label', 'Bloco editorial')->set('description', $basic->get('description'))->save();
 foreach (['admin', 'content', 'navigation-user-links', 'account'] as $id) {
@@ -141,7 +197,17 @@ foreach (['admin', 'content', 'navigation-user-links', 'account'] as $id) {
     $override->set('label', $menu->get('label'))->set('description', $menu->getDescription())->save();
   }
 }
-foreach (['content', 'block_content', 'files', 'media', 'media_library', 'user_admin_people', 'watchdog', 'redirect', 'webform_submissions'] as $id) {
+foreach ([
+  'content',
+  'block_content',
+  'files',
+  'media',
+  'media_library',
+  'user_admin_people',
+  'watchdog',
+  'redirect',
+  'webform_submissions',
+] as $id) {
   $view = View::load($id);
   if ($view) {
     $override = \Drupal::languageManager()->getLanguageConfigOverride('pt-br', 'views.view.' . $id);
@@ -187,7 +253,11 @@ foreach (array_unique(array_merge(array_keys($backup['translations']), $active->
     }
   }
 }
-$report = ['changed' => $changed, 'deleted' => $deleted, 'editorial_content' => 'Preserved; no nodes, blocks of content, media or submissions deleted.'];
+$report = [
+  'changed' => $changed,
+  'deleted' => $deleted,
+  'editorial_content' => 'Preserved; no nodes, blocks of content, media or submissions deleted.',
+];
 \Drupal::state()->set('aculta.admin_cleanup_done', $report);
 file_put_contents(dirname(__DIR__) . '/tmp/admin-cleanup-result.json', json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 echo json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;

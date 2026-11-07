@@ -2,11 +2,14 @@
 
 /**
  * @file
- * Gate estático da barreira de CAPTCHA da loja. Somente leitura; não inicia o Drupal.
+ * Gate estático da barreira de CAPTCHA da loja.
  *
- * Reprova se a loja voltar a ter CAPTCHA: os pontos de carrinho e checkout padrão precisam estar desativados em
- * config/sync, a lista SHOP_FORM_IDS do TurnstileToggle precisa cobri-los, e o hook que remove o script do
- * Turnstile nas rotas da loja precisa existir com as três rotas.
+ * Somente leitura; não inicia o Drupal.
+ * Reprova se a loja voltar a ter CAPTCHA: os pontos de carrinho e
+ * checkout padrão precisam estar desativados em config/sync, a lista
+ * SHOP_FORM_IDS do TurnstileToggle precisa cobri-los, e o hook que
+ * remove o script do Turnstile nas rotas da loja precisa existir com as
+ * três rotas.
  */
 
 declare(strict_types=1);

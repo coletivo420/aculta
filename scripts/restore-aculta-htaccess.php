@@ -9,9 +9,10 @@ declare(strict_types=1);
 /**
  * Restore the ACULTA block in web/.htaccess after Composer scaffolding.
  *
- * The Drupal scaffold rewrites web/.htaccess on install and update, which removes the
- * ACULTA directive that serves .mjs files (PDF.js) with a JavaScript MIME type. This
- * script re-adds that block when it is missing. It is idempotent.
+ * The Drupal scaffold rewrites web/.htaccess on install and update,
+ * which removes the ACULTA directive that serves .mjs files (PDF.js)
+ * with a JavaScript MIME type. This script re-adds that block when it is
+ * missing. It is idempotent.
  */
 
 $file = dirname(__DIR__) . '/web/.htaccess';

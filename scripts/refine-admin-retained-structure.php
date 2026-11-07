@@ -34,17 +34,43 @@ foreach (['audio', 'video'] as $id) {
   }
 }
 foreach ([
-  'image' => ['Imagem', 'Imagens para projetos, notícias, atividades e demais conteúdos institucionais. Informe texto alternativo e utilize arquivos autorizados.'],
-  'document' => ['Documento', 'Arquivos institucionais reutilizáveis na biblioteca de mídia. Os documentos de Transparência também possuem tipo de conteúdo próprio para contexto em HTML.'],
-  'remote_video' => ['Vídeo remoto', 'Vídeos incorporados por URL de provedor suportado, como os registros audiovisuais dos projetos. Use somente destinos reais e autorizados.'],
+  'image' => [
+    'Imagem',
+    'Imagens para projetos, notícias, atividades e demais conteúdos institucionais. Informe texto alternativo e utilize arquivos autorizados.',
+  ],
+  'document' => [
+    'Documento',
+    'Arquivos institucionais reutilizáveis na biblioteca de mídia. Os documentos de Transparência também possuem tipo de conteúdo próprio para contexto em HTML.',
+  ],
+  'remote_video' => [
+    'Vídeo remoto',
+    'Vídeos incorporados por URL de provedor suportado, como os registros audiovisuais dos projetos. Use somente destinos reais e autorizados.',
+  ],
 ] as $id => [$label, $description]) {
   if ($type = MediaType::load($id)) {
     $type->set('label', $label)->set('description', $description)->save();
     \Drupal::languageManager()->getLanguageConfigOverride('pt-br', 'media.type.' . $id)->set('label', $label)->set('description', $description)->save();
   }
 }
-$displayNames = ['default' => 'Padrão', 'page' => 'Página', 'block' => 'Bloco', 'attachment' => 'Anexo', 'feed' => 'Feed', 'embed' => 'Incorporado'];
-foreach (['content', 'block_content', 'files', 'media', 'media_library', 'user_admin_people', 'watchdog', 'redirect', 'webform_submissions'] as $id) {
+$displayNames = [
+  'default' => 'Padrão',
+  'page' => 'Página',
+  'block' => 'Bloco',
+  'attachment' => 'Anexo',
+  'feed' => 'Feed',
+  'embed' => 'Incorporado',
+];
+foreach ([
+  'content',
+  'block_content',
+  'files',
+  'media',
+  'media_library',
+  'user_admin_people',
+  'watchdog',
+  'redirect',
+  'webform_submissions',
+] as $id) {
   $view = View::load($id);
   if (!$view) {
     continue;
@@ -52,7 +78,14 @@ foreach (['content', 'block_content', 'files', 'media', 'media_library', 'user_a
   $displays = $view->get('display');
   $override = \Drupal::languageManager()->getLanguageConfigOverride('pt-br', 'views.view.' . $id);
   foreach ($displays as $key => &$display) {
-    $special = ['widget' => 'Seletor de mídia', 'widget_table' => 'Seletor de mídia em tabela', 'embed_administer' => 'Incorporado: administração', 'embed_default' => 'Incorporado: padrão', 'embed_manage' => 'Incorporado: gestão', 'embed_review' => 'Incorporado: revisão'];
+    $special = [
+      'widget' => 'Seletor de mídia',
+      'widget_table' => 'Seletor de mídia em tabela',
+      'embed_administer' => 'Incorporado: administração',
+      'embed_default' => 'Incorporado: padrão',
+      'embed_manage' => 'Incorporado: gestão',
+      'embed_review' => 'Incorporado: revisão',
+    ];
     $title = $special[$key] ?? ($key === 'default' ? 'Padrão' : ($displayNames[$display['display_plugin']] ?? 'Exibição'));
     $display['display_title'] = $title;
     $override->set('display.' . $key . '.display_title', $title);

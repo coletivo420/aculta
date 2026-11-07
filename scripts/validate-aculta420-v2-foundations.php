@@ -147,8 +147,8 @@ foreach (['--accent-green-stripe', '--accent-yellow-stripe', '--accent-red-strip
 }
 
 // Button contrast pairs (docs/botoes.md) nos dois modos:
-// Texto primário (repouso, hover, active), texto secundário (repouso, hover, active),
-// borda secundária (3:1), anel de foco (3:1).
+// Texto primário (repouso, hover, active), texto secundário (repouso,
+// hover, active), borda secundária (3:1), anel de foco (3:1).
 foreach ([
   ['--button-primary-fg', '--button-primary-bg', 4.5, 'button primary text on bg'],
   ['--button-primary-fg', '--button-primary-bg-hover', 4.5, 'button primary text on bg-hover'],

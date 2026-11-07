@@ -31,7 +31,10 @@ if ($home_link) {
     $home_link->set('enabled', FALSE)->save();
     echo 'Disabled installer Home link; preserved standard.front_page.' . PHP_EOL;
   }
-  foreach (\Drupal::entityTypeManager()->getStorage('menu_link_content')->loadByProperties(['menu_name' => 'main', 'enabled' => TRUE]) as $link) {
+  foreach (\Drupal::entityTypeManager()->getStorage('menu_link_content')->loadByProperties([
+    'menu_name' => 'main',
+    'enabled' => TRUE,
+  ]) as $link) {
     if ($link->id() !== $home_link->id() && $link->getUrlObject()->toString() === $home_link->getUrlObject()->toString()) {
       $home_link->set('enabled', FALSE)->save();
       echo 'Disabled duplicate installer Home link; preserved existing Home link.' . PHP_EOL;
@@ -47,7 +50,13 @@ if (!empty($state['official_applied'])) {
     }
   }
   \Drupal::configFactory()->getEditable('aculta_portal.settings')->set('institution_data_uuid', $data_entity->uuid())->save();
-  foreach (['aculta_institution_data', 'aculta_footer_data', 'aculta_contact_data', 'aculta_data_institutional', 'aculta_data_registration'] as $id) {
+  foreach ([
+    'aculta_institution_data',
+    'aculta_footer_data',
+    'aculta_contact_data',
+    'aculta_data_institutional',
+    'aculta_data_registration',
+  ] as $id) {
     $placement = Block::load($id);
     if ($placement && $placement->getPluginId() !== 'block_content:' . $data_entity->uuid()) {
       $placement->set('plugin', 'block_content:' . $data_entity->uuid())->save();
@@ -56,7 +65,10 @@ if (!empty($state['official_applied'])) {
   // Preserve the active form module, retaining the earlier page and revisions.
   $contact_path = !empty($state['cms_enhancements']) ? '/webform/aculta_contact' : '/contact/aculta_contact';
   $contact_uri = !empty($state['cms_enhancements']) ? 'entity:webform/aculta_contact' : 'internal:/contact/aculta_contact';
-  $aliases = \Drupal::entityTypeManager()->getStorage('path_alias')->loadByProperties(['alias' => '/contato', 'langcode' => 'pt-br']);
+  $aliases = \Drupal::entityTypeManager()->getStorage('path_alias')->loadByProperties([
+    'alias' => '/contato',
+    'langcode' => 'pt-br',
+  ]);
   foreach ($aliases as $alias) {
     if ($alias->getPath() !== $contact_path) {
       $alias->setPath($contact_path)->save();
@@ -83,7 +95,8 @@ if (!empty($state['cms_enhancements']) && \Drupal::moduleHandler()->moduleExists
     echo 'Webform canonical page set to /contato.' . PHP_EOL;
   }
   // A partial migration can leave more than one alias for the same form route.
-  // Align all retained records so Drupal cannot select a competing canonical URL.
+  // Align all retained records so Drupal cannot select a competing
+  // canonical URL.
   foreach (\Drupal::entityTypeManager()->getStorage('path_alias')->loadByProperties(['path' => '/webform/aculta_contact']) as $alias) {
     if ($alias->getAlias() !== '/contato') {
       $alias->setAlias('/contato')->save();
@@ -93,7 +106,21 @@ if (!empty($state['cms_enhancements']) && \Drupal::moduleHandler()->moduleExists
   $editor = Editor::load('full_html');
   if ($format && $editor && empty($state['media_editor_ready'])) {
     $filters = $format->get('filters');
-    $filters['media_embed'] = ['id' => 'media_embed', 'provider' => 'media', 'status' => TRUE, 'weight' => 20, 'settings' => ['default_view_mode' => 'default', 'allowed_view_modes' => [], 'allowed_media_types' => ['image', 'document', 'remote_video']]];
+    $filters['media_embed'] = [
+      'id' => 'media_embed',
+      'provider' => 'media',
+      'status' => TRUE,
+      'weight' => 20,
+      'settings' => [
+        'default_view_mode' => 'default',
+        'allowed_view_modes' => [],
+        'allowed_media_types' => [
+          'image',
+          'document',
+          'remote_video',
+        ],
+      ],
+    ];
     $format->set('filters', $filters)->save();
     $settings = $editor->getSettings();
     $settings['toolbar']['items'][] = 'drupalMedia';

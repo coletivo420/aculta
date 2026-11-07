@@ -2,8 +2,10 @@
 
 /**
  * @file
- * Applies the official registration supplied by the responsible person, locally.
- * One-time update; later editorial changes belong in the Drupal administration.
+ * Applies the official registration supplied by the responsible person,
+ * locally.
+ * One-time update; later editorial changes belong in the Drupal
+ * administration.
  */
 
 use Drupal\user\Entity\Role;
@@ -53,9 +55,17 @@ foreach ($fields as $name => [$type, $label, $value]) {
     FieldStorageConfig::create(['entity_type' => 'block_content', 'field_name' => $name, 'type' => $type])->save();
   }
   if (!FieldConfig::loadByName('block_content', 'aculta_institution', $name)) {
-    FieldConfig::create(['entity_type' => 'block_content', 'bundle' => 'aculta_institution', 'field_name' => $name, 'label' => $label])->save();
+    FieldConfig::create([
+      'entity_type' => 'block_content',
+      'bundle' => 'aculta_institution',
+      'field_name' => $name,
+      'label' => $label,
+    ])->save();
   }
-  $form_display->setComponent($name, ['type' => $type === 'string_long' ? 'string_textarea' : 'string_textfield', 'weight' => 20 + count($form_display->getComponents())]);
+  $form_display->setComponent($name, [
+    'type' => $type === 'string_long' ? 'string_textarea' : 'string_textfield',
+    'weight' => 20 + count($form_display->getComponents()),
+  ]);
 }
 $form_display->save();
 // Reload with the new field definitions before setting the entity values.
@@ -65,43 +75,134 @@ $block = BlockContent::load($block->id());
 foreach ($fields as $name => [$type, $label, $value]) {
   $block->set($name, $value);
 }
-foreach (['field_cnpj' => $official['cnpj'], 'field_legal_nature' => $official['legal_nature'], 'field_address' => $official['address'], 'field_email' => $data['email'], 'field_phone' => $official['phone']] as $name => $value) {
+foreach ([
+  'field_cnpj' => $official['cnpj'],
+  'field_legal_nature' => $official['legal_nature'],
+  'field_address' => $official['address'],
+  'field_email' => $data['email'],
+  'field_phone' => $official['phone'],
+] as $name => $value) {
   $block->set($name, $value);
 }
 $block->setNewRevision(TRUE);
 $block->setRevisionLogMessage('Dados oficiais fornecidos pelo responsável, conferidos no comprovante do CNPJ.');
 $block->save();
 
-$common = ['field_org_name', 'field_legal_nature', 'field_cnpj', 'field_opening_date', 'field_headquarters', 'field_address', 'field_email', 'field_phone', 'field_site'];
+$common = [
+  'field_org_name',
+  'field_legal_nature',
+  'field_cnpj',
+  'field_opening_date',
+  'field_headquarters',
+  'field_address',
+  'field_email',
+  'field_phone',
+  'field_site',
+];
 $modes = [
   'home' => ['field_org_name', 'field_nonprofit_description', 'field_cnpj', 'field_headquarters', 'field_site'],
   'institutional' => $common,
-  'registration' => ['field_org_name', 'field_trade_name', 'field_cnpj', 'field_legal_nature', 'field_legal_code', 'field_opening_date', 'field_registration_status', 'field_main_activity', 'field_secondary_activity', 'field_address', 'field_email', 'field_phone', 'field_site', 'field_governance'],
+  'registration' => [
+    'field_org_name',
+    'field_trade_name',
+    'field_cnpj',
+    'field_legal_nature',
+    'field_legal_code',
+    'field_opening_date',
+    'field_registration_status',
+    'field_main_activity',
+    'field_secondary_activity',
+    'field_address',
+    'field_email',
+    'field_phone',
+    'field_site',
+    'field_governance',
+  ],
   'footer' => ['field_org_name', 'field_org_description', 'field_cnpj', 'field_headquarters', 'field_site'],
   'contact' => ['field_org_name', 'field_email', 'field_phone', 'field_address', 'field_site'],
 ];
 foreach ($modes as $mode => $names) {
   if (!EntityViewMode::load('block_content.' . $mode)) {
-    EntityViewMode::create(['id' => 'block_content.' . $mode, 'label' => ['home' => 'Home compacta', 'institutional' => 'Dados institucionais', 'registration' => 'Dados cadastrais completos', 'footer' => 'Rodapé', 'contact' => 'Contato'][$mode], 'targetEntityType' => 'block_content'])->save();
+    EntityViewMode::create([
+      'id' => 'block_content.' . $mode,
+      'label' => [
+        'home' => 'Home compacta',
+        'institutional' => 'Dados institucionais',
+        'registration' => 'Dados cadastrais completos',
+        'footer' => 'Rodapé',
+        'contact' => 'Contato',
+      ][$mode],
+      'targetEntityType' => 'block_content',
+    ])->save();
   }
-  $display = EntityViewDisplay::load('block_content.aculta_institution.' . $mode) ?? EntityViewDisplay::create(['targetEntityType' => 'block_content', 'bundle' => 'aculta_institution', 'mode' => $mode, 'status' => TRUE]);
+  $display = EntityViewDisplay::load('block_content.aculta_institution.' . $mode) ?? EntityViewDisplay::create([
+    'targetEntityType' => 'block_content',
+    'bundle' => 'aculta_institution',
+    'mode' => $mode,
+    'status' => TRUE,
+  ]);
   foreach (array_keys($display->getComponents()) as $name) {
     $display->removeComponent($name);
   }
   foreach ($names as $weight => $name) {
     $type = $block->getFieldDefinition($name)->getType();
-    $display->setComponent($name, ['type' => ['string' => 'string', 'string_long' => 'basic_string', 'email' => 'email_mailto', 'link' => 'link', 'text_long' => 'text_default'][$type], 'label' => 'hidden', 'weight' => $weight]);
+    $display->setComponent($name, [
+      'type' => [
+        'string' => 'string',
+        'string_long' => 'basic_string',
+        'email' => 'email_mailto',
+        'link' => 'link',
+        'text_long' => 'text_default',
+      ][$type],
+      'label' => 'hidden',
+      'weight' => $weight,
+    ]);
   }
   $display->setStatus(TRUE)->save();
 }
 $home_placement = Block::load('aculta_institution_data');
 $settings = $home_placement->get('settings');
 $settings['view_mode'] = 'home';
-$home_placement->set('settings', $settings)->setVisibilityConfig('request_path', ['id' => 'request_path', 'negate' => FALSE, 'pages' => '<front>'])->save();
-foreach (['institutional' => ['institutional', 'DADOS INSTITUCIONAIS', '/institucional'], 'registration' => ['transparency', 'DADOS CADASTRAIS', '/transparencia']] as $mode => [$node_key, $label, $path]) {
+$home_placement->set('settings', $settings)->setVisibilityConfig('request_path', [
+  'id' => 'request_path',
+  'negate' => FALSE,
+  'pages' => '<front>',
+])->save();
+foreach ([
+  'institutional' => [
+    'institutional',
+    'DADOS INSTITUCIONAIS',
+    '/institucional',
+  ],
+  'registration' => [
+    'transparency',
+    'DADOS CADASTRAIS',
+    '/transparencia',
+  ],
+] as $mode => [$node_key, $label, $path]) {
   $id = 'aculta_data_' . $mode;
   if (!Block::load($id)) {
-    Block::create(['id' => $id, 'theme' => 'aculta420', 'region' => 'content', 'plugin' => 'block_content:' . $block->uuid(), 'weight' => 90, 'status' => TRUE, 'settings' => ['id' => 'block_content:' . $block->uuid(), 'label' => $label, 'label_display' => 'visible', 'view_mode' => $mode], 'visibility' => ['request_path' => ['id' => 'request_path', 'negate' => FALSE, 'pages' => $path]]])->save();
+    Block::create([
+      'id' => $id,
+      'theme' => 'aculta420',
+      'region' => 'content',
+      'plugin' => 'block_content:' . $block->uuid(),
+      'weight' => 90,
+      'status' => TRUE,
+      'settings' => [
+        'id' => 'block_content:' . $block->uuid(),
+        'label' => $label,
+        'label_display' => 'visible',
+        'view_mode' => $mode,
+      ],
+      'visibility' => [
+        'request_path' => [
+          'id' => 'request_path',
+          'negate' => FALSE,
+          'pages' => $path,
+        ],
+      ],
+    ])->save();
   }
 }
 
@@ -113,7 +214,10 @@ $institutional->set('body', ['value' => $body, 'format' => 'full_html'])->setNew
 $institutional->save();
 
 $privacy = Node::load($state['nodes']['privacy']);
-$privacy->set('body', ['value' => '<p>Esta página descreve as funcionalidades de privacidade presentes nesta versão do site oficial da Associação Cultural Antiproibicionista.</p><h2>Formulário de contato</h2><p>O formulário solicita nome, e-mail, assunto e mensagem. Essas informações são usadas para encaminhar o contato à Associação e permitir sua resposta. O formulário não publica a mensagem.</p><h2>Navegação e autenticação</h2><p>O site utiliza mecanismos de sessão e proteção para permitir o acesso de usuários autenticados e o funcionamento dos formulários.</p><h2>Fontes externas</h2><p>O site carrega Inter e Oswald pelo Google Fonts. O navegador faz requisições ao serviço para obter esses arquivos.</p><h2>Contato sobre dados pessoais</h2><p>Entre em contato pelo e-mail <a href="mailto:4e20coletivo@gmail.com">4e20coletivo@gmail.com</a>.</p>', 'format' => 'full_html'])->setNewRevision(TRUE);
+$privacy->set('body', [
+  'value' => '<p>Esta página descreve as funcionalidades de privacidade presentes nesta versão do site oficial da Associação Cultural Antiproibicionista.</p><h2>Formulário de contato</h2><p>O formulário solicita nome, e-mail, assunto e mensagem. Essas informações são usadas para encaminhar o contato à Associação e permitir sua resposta. O formulário não publica a mensagem.</p><h2>Navegação e autenticação</h2><p>O site utiliza mecanismos de sessão e proteção para permitir o acesso de usuários autenticados e o funcionamento dos formulários.</p><h2>Fontes externas</h2><p>O site carrega Inter e Oswald pelo Google Fonts. O navegador faz requisições ao serviço para obter esses arquivos.</p><h2>Contato sobre dados pessoais</h2><p>Entre em contato pelo e-mail <a href="mailto:4e20coletivo@gmail.com">4e20coletivo@gmail.com</a>.</p>',
+  'format' => 'full_html',
+])->setNewRevision(TRUE);
 $privacy->save();
 
 $contact = ContactForm::load('aculta_contact');
@@ -124,9 +228,21 @@ foreach (['anonymous', 'authenticated'] as $role_id) {
 }
 \Drupal::configFactory()->getEditable('aculta_portal.settings')->set('institution_data_uuid', $block->uuid())->set('institution_transparency_nid', (int) $state['nodes']['transparency'])->save();
 
-// Create a private, editable document record. No download appears without its PDF.
+// Create a private, editable document record. No download appears without
+// its PDF.
 if (empty($state['nodes']['cnpj_document'])) {
-  $document = Node::create(['type' => 'document', 'title' => 'COMPROVANTE DE INSCRIÇÃO E SITUAÇÃO CADASTRAL - CNPJ', 'langcode' => 'pt-br', 'uid' => 1, 'status' => FALSE, 'body' => ['value' => '<p>Comprovante de inscrição da Associação Cultural Antiproibicionista no Cadastro Nacional da Pessoa Jurídica.</p>', 'format' => 'full_html'], 'field_category' => 'Documentos institucionais']);
+  $document = Node::create([
+    'type' => 'document',
+    'title' => 'COMPROVANTE DE INSCRIÇÃO E SITUAÇÃO CADASTRAL - CNPJ',
+    'langcode' => 'pt-br',
+    'uid' => 1,
+    'status' => FALSE,
+    'body' => [
+      'value' => '<p>Comprovante de inscrição da Associação Cultural Antiproibicionista no Cadastro Nacional da Pessoa Jurídica.</p>',
+      'format' => 'full_html',
+    ],
+    'field_category' => 'Documentos institucionais',
+  ]);
   $document->save();
   $state['nodes']['cnpj_document'] = (int) $document->id();
 }

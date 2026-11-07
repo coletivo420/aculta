@@ -18,7 +18,12 @@ if (in_array(\Drupal::request()->getHost(), ['localhost', '127.0.0.1'], TRUE)) {
 }
 $class = BasicCarousel::class;
 $loader = \Drupal::service('class_loader');
-echo json_encode(['class' => $class, 'file' => $loader->findFile($class), 'exists' => class_exists($class), 'modules' => array_filter(\Drupal::getContainer()->getParameter('container.namespaces'), static fn($k) => str_contains($k, 'vvj'), ARRAY_FILTER_USE_KEY)]) . PHP_EOL;
+echo json_encode([
+  'class' => $class,
+  'file' => $loader->findFile($class),
+  'exists' => class_exists($class),
+  'modules' => array_filter(\Drupal::getContainer()->getParameter('container.namespaces'), static fn($k) => str_contains($k, 'vvj'), ARRAY_FILTER_USE_KEY),
+]) . PHP_EOL;
 $view = Views::getView('home_editorial_highlights');
 $view->setDisplay('block_1');
 $view->execute();

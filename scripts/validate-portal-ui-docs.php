@@ -2,13 +2,16 @@
 
 /**
  * @file
- * Gate de documentação dos tokens e atributos do Portal (docs/portal/TOKENS-E-ATRIBUTOS.md).
+ * Gate de documentação dos tokens e atributos do Portal.
  *
+ * Documento: docs/portal/TOKENS-E-ATRIBUTOS.md.
  * Confere, no módulo aculta_portal (e submódulos) e no tema aculta420:
- * - todo token data-portal-ui usado no código existe no mapa PortalUiHooks::TOKENS ou em uma família dinâmica documentada;
+ * - todo token data-portal-ui usado no código existe no mapa
+ *   PortalUiHooks::TOKENS ou em uma família dinâmica documentada;
  * - todo token do mapa está documentado;
- * - todo atributo data-portal-*, data-aculta-* ou data-dialog-* usado no código está documentado (nome exato
- *   ou família com wildcard, ex.: `data-portal-account-*`).
+ * - todo atributo data-portal-*, data-aculta-* ou data-dialog-* usado no
+ *   código está documentado (nome exato ou família com wildcard, ex.:
+ *   `data-portal-account-*`).
  */
 
 declare(strict_types=1);

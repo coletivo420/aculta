@@ -70,7 +70,8 @@ $assert(
 
 $modules = \Drupal::moduleHandler();
 if ($modules->moduleExists('aculta_donation')) {
-  // Escolha do valor no apoio (SUPPORT); etapa de checkout da doação no MAIN (decisão de 2026-10-17).
+  // Escolha do valor no apoio (SUPPORT); etapa de checkout da doação
+  // no MAIN (decisão de 2026-10-17).
   $donationRoutes = \Drupal::service('router.route_provider')->getRoutesByNames([
     'aculta_donation.donation.default',
     'aculta_donation.donation.quick',

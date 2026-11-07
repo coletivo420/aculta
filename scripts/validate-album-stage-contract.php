@@ -2,18 +2,23 @@
 
 /**
  * @file
- * Gate: contrato do palco do álbum entre aculta_gallery (módulo), aculta420 (tema) e VVJS (contrib).
+ * Gate: contrato do palco do álbum.
+ *
+ * Entre aculta_gallery (módulo), aculta420 (tema) e VVJS (contrib).
  *
  * Regra (docs: web/modules/custom/aculta_portal/modules/aculta_gallery/docs/FRONTEIRA-MODULO-TEMA.md):
- * 1. o módulo emite data-aculta-album-stage, data-aculta-album-thumbs e data-aculta-album-thumb, sem classes;
+ * 1. o módulo emite data-aculta-album-stage, data-aculta-album-thumbs e
+ * data-aculta-album-thumb, sem classes;
  * 2. o tema usa os mesmos atributos e cria data-aculta-album-toggle no JS;
  * 3. o tema não depende do nome da view do módulo (aculta_album_fotos);
  * 4. a View do álbum usa o formato views_vvjs;
  * 5. cada seletor .vvjs-* usado pelo CSS do palco existe no VVJS instalado;
- * 6. VVJS expõe vvjs-slideshow com goToSlide()/getCurrentSlide(), e VVJ Core publica vvj:slideChanged.
+ * 6. VVJS expõe vvjs-slideshow com goToSlide()/getCurrentSlide(), e
+ * VVJ Core publica vvj:slideChanged.
  *
  * Só lê arquivos. Não consulta o Runtime. Sai com código 1 em caso de falha.
- * VVJS e VVJ Core são lidos de web/modules/contrib; se não existirem, o gate falha.
+ * VVJS e VVJ Core são lidos de web/modules/contrib; se não existirem,
+ * o gate falha.
  */
 
 declare(strict_types=1);
@@ -47,7 +52,8 @@ foreach (['data-aculta-album-stage', 'data-aculta-album-thumbs', 'data-aculta-al
     $errors[] = "módulo não emite $attr (GalleryViewHooks)";
   }
 }
-// Única classe permitida: photoswipe-gallery (comportamento do PhotoSwipe, agrupa o lightbox).
+// Única classe permitida: photoswipe-gallery (comportamento do PhotoSwipe,
+// agrupa o lightbox).
 preg_match_all("/'class'\s*=>\s*\[([^\]]*)\]/", $hooks, $classes);
 foreach ($classes[1] as $list) {
   if (trim($list, " '\"") !== 'photoswipe-gallery') {
@@ -119,8 +125,10 @@ if (!is_dir($vvjCore)) {
 }
 else {
   $base = $read($vvjCore . '/js/vvj-element-base.js');
-  // O VVJ Core publica todo evento como CustomEvent `vvj:<nome>` no document, com source: this. O VVJS emite
-  // slideChanged pelo próprio elemento (this.emit), então o contrato se verifica nos dois arquivos.
+  // O VVJ Core publica todo evento como CustomEvent `vvj:<nome>` no
+  // document, com source: this. O VVJS emite
+  // slideChanged pelo próprio elemento (this.emit), então o contrato
+  // se verifica nos dois arquivos.
   if (!str_contains($base, 'new CustomEvent(`vvj:${name}`') || !str_contains($base, 'source: this')) {
     $errors[] = 'VVJ Core não publica os eventos vvj:<nome> com source: this';
   }

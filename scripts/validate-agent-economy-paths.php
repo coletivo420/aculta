@@ -6,9 +6,11 @@
  *
  * Confere, para cada linha com caminho entre crases:
  * - o caminho existe no repositório;
- * - quando a coluna de tamanho traz um valor numérico (ex.: "93 MB", "4,6 MB", "784 KB"), o tamanho real
- *   está entre a metade e o dobro do declarado. Fora disso a tabela envelheceu e deve ser atualizada.
- * Linhas com tamanho "variável", "(Composer)" ou "(Core e contrib)" só têm a existência verificada.
+ * - quando a coluna de tamanho traz um valor numérico (ex.: "93 MB",
+ *   "4,6 MB", "784 KB"), o tamanho real está entre a metade e o dobro
+ *   do declarado. Fora disso a tabela envelheceu e deve ser atualizada.
+ * Linhas com tamanho "variável", "(Composer)" ou "(Core e contrib)" só
+ * têm a existência verificada.
  * Somente leitura; não lê o conteúdo dos arquivos.
  */
 
@@ -38,7 +40,8 @@ foreach (explode("\n", $section) as $line) {
   $declared = trim($m[2]);
   $path = $root . '/' . $relative;
   if (!file_exists($path) && str_starts_with($declared, '(')) {
-    // Dependência gerada (ex.: vendor/ antes do Composer) ou camada de Core/contrib: ausência é aceitável.
+    // Dependência gerada (ex.: vendor/ antes do Composer) ou camada de
+    // Core/contrib: ausência é aceitável.
     $skipped[] = $relative;
     continue;
   }

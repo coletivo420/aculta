@@ -28,7 +28,12 @@ foreach (['node', 'block_content', 'menu_link_content', 'path_alias', 'redirect'
   $values = [];
   foreach (\Drupal::entityTypeManager()->getStorage($type)->loadMultiple() as $entity) {
     $values[$entity->uuid()] = $entity->toArray();
-    $manifest['content'][$type][] = ['uuid' => $entity->uuid(), 'id' => $entity->id(), 'bundle' => $entity->bundle(), 'label' => $entity->label()];
+    $manifest['content'][$type][] = [
+      'uuid' => $entity->uuid(),
+      'id' => $entity->id(),
+      'bundle' => $entity->bundle(),
+      'label' => $entity->label(),
+    ];
   }
   file_put_contents($directory . '/' . $type . '.json', json_encode($values, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR));
 }

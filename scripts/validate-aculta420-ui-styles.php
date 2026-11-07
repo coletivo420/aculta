@@ -6,7 +6,8 @@
  *
  * Garante que:
  * 1. O arquivo aculta420_v2.ui_styles.yml existe e é um YAML válido.
- * 2. Cada opção aponta para uma variante existente no componente ou esquema oficial.
+ * 2. Cada opção aponta para uma variante existente no componente ou
+ *    esquema oficial.
  * 3. As classes CSS geradas existem em arquivos CSS do tema e estão no mapa de
  *    PortalUiHooks::TOKENS ou exceções documentadas.
  */
@@ -36,7 +37,8 @@ if ($yamlContent === FALSE) {
 }
 
 // Simple YAML parser for standard ui_styles structures.
-// In runtime, symfony/yaml or pecl-yaml may be available, but we can use yaml_parse or Symfony Yaml if available.
+// In runtime, symfony/yaml or pecl-yaml may be available, but we can use
+// yaml_parse or Symfony Yaml if available.
 require_once $root . '/vendor/autoload.php';
 if (function_exists('yaml_parse')) {
   $definitions = yaml_parse($yamlContent);
@@ -53,7 +55,8 @@ require_once $schemesFile;
 use Symfony\Component\Yaml\Yaml;
 use Drupal\aculta420_v2\Palette\PurposePaletteSchemes;
 
-// Lê TOKENS sem eval: cada entrada é 'chave' => ['classe', ...]. Qualquer outra forma é recusada.
+// Lê TOKENS sem eval: cada entrada é 'chave' => ['classe', ...].
+// Qualquer outra forma é recusada.
 $tokensSource = (string) file_get_contents($root . '/web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php');
 if (!preg_match('/TOKENS = \[(.*?)\n  \];/s', $tokensSource, $m)) {
   $fail("TOKENS não encontrado em PortalUiHooks.php.");

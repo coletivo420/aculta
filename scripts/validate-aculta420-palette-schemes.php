@@ -2,7 +2,10 @@
 
 /**
  * @file
- * Validates consistency between PurposePaletteSchemes.php, tokens.css and paletas-por-purpose.md.
+ * Validates palette schemes consistency.
+ *
+ * Compares PurposePaletteSchemes.php, tokens.css and
+ * paletas-por-purpose.md.
  */
 
 declare(strict_types=1);

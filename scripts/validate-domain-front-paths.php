@@ -1,6 +1,7 @@
 <?php
 
-// Gate anti-regressão: caminhos internos de raiz devem responder 404 (sem 301), e a política deve estar ligada ao assinante.
+// Gate anti-regressão: caminhos internos de raiz devem responder 404
+// (sem 301), e a política deve estar ligada ao assinante.
 // Uso: php scripts/validate-domain-front-paths.php [--live]
 
 declare(strict_types=1);
@@ -29,7 +30,8 @@ $check(str_contains($textoAssinante, 'throw new NotFoundHttpException()'), 'assi
 $quantos301 = substr_count($textoAssinante, 'HTTP_MOVED_PERMANENTLY');
 $check($quantos301 === 1, "assinante tem somente o 301 de checkout funcional pendente de auditoria; encontrado: $quantos301");
 
-// Mapa de caminhos internos: documento e código devem listar os mesmos caminhos.
+// Mapa de caminhos internos: documento e código devem listar os mesmos
+// caminhos.
 $textoMapa = is_file($mapaSuperficies) ? file_get_contents($mapaSuperficies) : '';
 preg_match('/public const FRONT_PATHS = \[(.*?)\n  \];/s', $textoMapa, $frontPaths);
 $textoFrontPaths = $frontPaths[1] ?? '';
@@ -44,7 +46,8 @@ foreach ($mapa as $purpose => $caminho) {
 }
 $check(count($mapa) >= 6, 'mapa de raiz tem as seis finalidades');
 
-// Endereços de produção não podem voltar nas sobreposições de metadados por domínio (canonical e og:url usam o token [site:url]).
+// Endereços de produção não podem voltar nas sobreposições de metadados
+// por domínio (canonical e og:url usam o token [site:url]).
 $sobreposicoes = glob($raiz . '/config/sync/domain*/metatag.metatag_defaults.front.yml') ?: [];
 foreach ($sobreposicoes as $arquivo) {
   $texto = file_get_contents($arquivo) ?: '';

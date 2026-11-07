@@ -5,7 +5,18 @@
  * Read-only inventory of administrative structures and actual usage. */
 
 $result = [];
-foreach (['node_type', 'block_content_type', 'menu', 'view', 'block', 'taxonomy_vocabulary', 'media_type', 'contact_form', 'webform', 'filter_format'] as $type) {
+foreach ([
+  'node_type',
+  'block_content_type',
+  'menu',
+  'view',
+  'block',
+  'taxonomy_vocabulary',
+  'media_type',
+  'contact_form',
+  'webform',
+  'filter_format',
+] as $type) {
   if (!\Drupal::entityTypeManager()->hasDefinition($type)) {
     continue;
   }
@@ -15,12 +26,20 @@ foreach (['node_type', 'block_content_type', 'menu', 'view', 'block', 'taxonomy_
       $entry += ['theme' => $entity->getTheme(), 'region' => $entity->getRegion(), 'plugin' => $entity->getPluginId()];
     }
     if ($type === 'view') {
-      $entry['displays'] = array_map(static fn($d) => ['plugin' => $d['display_plugin'], 'path' => $d['display_options']['path'] ?? NULL], $entity->get('display'));
+      $entry['displays'] = array_map(static fn($d) => [
+        'plugin' => $d['display_plugin'],
+        'path' => $d['display_options']['path'] ?? NULL,
+      ], $entity->get('display'));
     }
     if ($type === 'menu') {
       $entry['links'] = count(\Drupal::entityTypeManager()->getStorage('menu_link_content')->loadByProperties(['menu_name' => $entity->id()]));
     }
-    $content_type = ['node_type' => 'node', 'block_content_type' => 'block_content', 'media_type' => 'media', 'taxonomy_vocabulary' => 'taxonomy_term'][$type] ?? NULL;
+    $content_type = [
+      'node_type' => 'node',
+      'block_content_type' => 'block_content',
+      'media_type' => 'media',
+      'taxonomy_vocabulary' => 'taxonomy_term',
+    ][$type] ?? NULL;
     if ($content_type) {
       $key = \Drupal::entityTypeManager()->getDefinition($content_type)->getKey('bundle');
       $entry['entities'] = \Drupal::entityTypeManager()->getStorage($content_type)->getQuery()->accessCheck(FALSE)->condition($key, $entity->id())->count()->execute();
@@ -30,9 +49,17 @@ foreach (['node_type', 'block_content_type', 'menu', 'view', 'block', 'taxonomy_
 }
 foreach (['node', 'block_content', 'menu_link_content'] as $type) {
   foreach (\Drupal::entityTypeManager()->getStorage($type)->loadMultiple() as $entity) {
-    $result['content'][$type][$entity->id()] = ['label' => $entity->label(), 'bundle' => $entity->bundle(), 'uuid' => $entity->uuid()];
+    $result['content'][$type][$entity->id()] = [
+      'label' => $entity->label(),
+      'bundle' => $entity->bundle(),
+      'uuid' => $entity->uuid(),
+    ];
     if ($type === 'menu_link_content') {
-      $result['content'][$type][$entity->id()] += ['menu' => $entity->getMenuName(), 'enabled' => $entity->isEnabled(), 'uri' => $entity->get('link')->uri];
+      $result['content'][$type][$entity->id()] += [
+        'menu' => $entity->getMenuName(),
+        'enabled' => $entity->isEnabled(),
+        'uri' => $entity->get('link')->uri,
+      ];
     }
   }
 }

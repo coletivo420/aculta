@@ -3,7 +3,8 @@
 /**
  * @file
  * Applies the reviewed institutional content to the local site using Core APIs.
- * Run with: php vendor/drush/drush/drush.php php:script scripts/install-institution.php
+ * Run with: php vendor/drush/drush/drush.php php:script
+ * scripts/install-institution.php
  * Existing editorial entities are never overwritten on subsequent executions.
  */
 
@@ -25,7 +26,8 @@ use Drupal\system\Entity\Menu;
 use Drupal\views\Entity\View;
 
 $data = json_decode(file_get_contents(__DIR__ . '/institution/content.json'), TRUE, 512, JSON_THROW_ON_ERROR);
-// This installer is deliberately local-only; production requires a separate review.
+// This installer is deliberately local-only; production requires a
+// separate review.
 if (!in_array(\Drupal::request()->getHost(), ['localhost', '127.0.0.1', 'default'], TRUE)) {
   throw new RuntimeException('Run this installer only against the local Drupal site.');
 }
@@ -83,17 +85,39 @@ function institution_section(array $section, string $extra = '', string $class =
  */
 function institution_field(string $entity_type, string $bundle, string $name, string $type, string $label, array $settings = [], int $cardinality = 1): void {
   if (!FieldStorageConfig::loadByName($entity_type, $name)) {
-    FieldStorageConfig::create(['entity_type' => $entity_type, 'field_name' => $name, 'type' => $type, 'cardinality' => $cardinality, 'settings' => $settings])->save();
+    FieldStorageConfig::create([
+      'entity_type' => $entity_type,
+      'field_name' => $name,
+      'type' => $type,
+      'cardinality' => $cardinality,
+      'settings' => $settings,
+    ])->save();
   }
   if (!FieldConfig::loadByName($entity_type, $bundle, $name)) {
     $field_settings = $type === 'entity_reference' ? ['handler' => 'default:node'] : [];
     if ($type === 'file') {
-      $field_settings = ['file_extensions' => 'pdf', 'file_directory' => 'institutional-documents', 'description_field' => TRUE];
+      $field_settings = [
+        'file_extensions' => 'pdf',
+        'file_directory' => 'institutional-documents',
+        'description_field' => TRUE,
+      ];
     }
     if ($type === 'image') {
-      $field_settings = ['alt_field' => TRUE, 'alt_field_required' => TRUE, 'file_extensions' => 'png gif jpg jpeg webp', 'file_directory' => 'projects'];
+      $field_settings = [
+        'alt_field' => TRUE,
+        'alt_field_required' => TRUE,
+        'file_extensions' => 'png gif jpg jpeg webp',
+        'file_directory' => 'projects',
+      ];
     }
-    FieldConfig::create(['entity_type' => $entity_type, 'bundle' => $bundle, 'field_name' => $name, 'label' => $label, 'required' => FALSE, 'settings' => $field_settings])->save();
+    FieldConfig::create([
+      'entity_type' => $entity_type,
+      'bundle' => $bundle,
+      'field_name' => $name,
+      'label' => $label,
+      'required' => FALSE,
+      'settings' => $field_settings,
+    ])->save();
   }
 }
 
@@ -102,7 +126,12 @@ function institution_field(string $entity_type, string $bundle, string $name, st
  */
 function institution_display(string $entity_type, string $bundle, string $mode, array $components, bool $form = FALSE): void {
   $class = $form ? EntityFormDisplay::class : EntityViewDisplay::class;
-  $display = $class::load("$entity_type.$bundle.$mode") ?? $class::create(['targetEntityType' => $entity_type, 'bundle' => $bundle, 'mode' => $mode, 'status' => TRUE]);
+  $display = $class::load("$entity_type.$bundle.$mode") ?? $class::create([
+    'targetEntityType' => $entity_type,
+    'bundle' => $bundle,
+    'mode' => $mode,
+    'status' => TRUE,
+  ]);
   foreach ($components as $name => $options) {
     $display->setComponent($name, $options);
   }
@@ -132,8 +161,12 @@ function institution_node(string $key, string $type, string $title, string $body
   if (!empty($state['nodes'][$key])) {
     return Node::load($state['nodes'][$key]);
   }
-  // Recover a partial installation by its exact alias without overwriting content.
-  $aliases = \Drupal::entityTypeManager()->getStorage('path_alias')->loadByProperties(['alias' => $path, 'langcode' => 'pt-br']);
+  // Recover a partial installation by its exact alias without overwriting
+  // content.
+  $aliases = \Drupal::entityTypeManager()->getStorage('path_alias')->loadByProperties([
+    'alias' => $path,
+    'langcode' => 'pt-br',
+  ]);
   foreach ($aliases as $alias) {
     if (preg_match('@^/node/(\d+)$@', $alias->getPath(), $matches)) {
       $existing = Node::load($matches[1]);
@@ -145,7 +178,18 @@ function institution_node(string $key, string $type, string $title, string $body
     }
     throw new RuntimeException('Existing alias must be reviewed before installation: ' . $path);
   }
-  $node = Node::create(['type' => $type, 'title' => $title, 'langcode' => 'pt-br', 'uid' => 1, 'status' => $published, 'promote' => FALSE, 'body' => ['value' => $body, 'format' => 'full_html']] + $extra);
+  $node = Node::create([
+    'type' => $type,
+    'title' => $title,
+    'langcode' => 'pt-br',
+    'uid' => 1,
+    'status' => $published,
+    'promote' => FALSE,
+    'body' => [
+      'value' => $body,
+      'format' => 'full_html',
+    ],
+  ] + $extra);
   $node->save();
   $state['nodes'][$key] = (int) $node->id();
   \Drupal::state()->set('aculta.institution_setup', $state);
@@ -162,7 +206,20 @@ function institution_place(string $id, string $plugin, string $region, int $weig
     return;
   }
   $visibility = $paths ? ['request_path' => ['id' => 'request_path', 'negate' => FALSE, 'pages' => $paths]] : [];
-  Block::create(['id' => $id, 'theme' => 'aculta420', 'region' => $region, 'plugin' => $plugin, 'weight' => $weight, 'status' => TRUE, 'visibility' => $visibility, 'settings' => array_replace(['id' => $plugin, 'label' => $label, 'label_display' => '0'], $extra)])->save();
+  Block::create([
+    'id' => $id,
+    'theme' => 'aculta420',
+    'region' => $region,
+    'plugin' => $plugin,
+    'weight' => $weight,
+    'status' => TRUE,
+    'visibility' => $visibility,
+    'settings' => array_replace([
+      'id' => $plugin,
+      'label' => $label,
+      'label_display' => '0',
+    ], $extra),
+  ])->save();
 }
 
 /**
@@ -171,8 +228,19 @@ function institution_place(string $id, string $plugin, string $region, int $weig
 function institution_block(string $key, string $label, string $html, int $weight, string $paths = '<front>', string $region = 'content'): void {
   global $state;
   if (empty($state['blocks'][$key])) {
-    $existing = \Drupal::entityTypeManager()->getStorage('block_content')->loadByProperties(['type' => 'basic', 'info' => $label]);
-    $entity = $existing ? reset($existing) : BlockContent::create(['type' => 'basic', 'info' => $label, 'langcode' => 'pt-br', 'body' => ['value' => $html, 'format' => 'full_html']]);
+    $existing = \Drupal::entityTypeManager()->getStorage('block_content')->loadByProperties([
+      'type' => 'basic',
+      'info' => $label,
+    ]);
+    $entity = $existing ? reset($existing) : BlockContent::create([
+      'type' => 'basic',
+      'info' => $label,
+      'langcode' => 'pt-br',
+      'body' => [
+        'value' => $html,
+        'format' => 'full_html',
+      ],
+    ]);
     $entity->save();
     $state['blocks'][$key] = (int) $entity->id();
     \Drupal::state()->set('aculta.institution_setup', $state);
@@ -182,7 +250,12 @@ function institution_block(string $key, string $label, string $html, int $weight
 }
 
 // Core content types; no pre-existing type or content is removed.
-foreach (['page' => 'Página institucional', 'activity' => 'Atividade', 'article' => 'Notícia', 'document' => 'Documento institucional'] as $id => $label) {
+foreach ([
+  'page' => 'Página institucional',
+  'activity' => 'Atividade',
+  'article' => 'Notícia',
+  'document' => 'Documento institucional',
+] as $id => $label) {
   if (!NodeType::load($id)) {
     $type = NodeType::create(['type' => $id, 'name' => $label, 'new_revision' => TRUE, 'display_submitted' => FALSE]);
     $type->save();
@@ -193,7 +266,10 @@ foreach (['page' => 'Página institucional', 'activity' => 'Atividade', 'article
   institution_display('node', $id, 'full', ['body' => ['type' => 'text_default', 'label' => 'hidden', 'weight' => 5]]);
 }
 institution_field('node', 'activity', 'field_activity_date', 'datetime', 'Data da atividade', ['datetime_type' => 'date']);
-institution_field('node', 'document', 'field_document', 'file', 'Documento PDF', ['uri_scheme' => 'public', 'target_type' => 'file']);
+institution_field('node', 'document', 'field_document', 'file', 'Documento PDF', [
+  'uri_scheme' => 'public',
+  'target_type' => 'file',
+]);
 institution_field('node', 'document', 'field_category', 'string', 'Categoria');
 foreach (['article', 'activity', 'document'] as $bundle) {
   $widgets = ['body' => ['type' => 'text_textarea_with_summary', 'weight' => 5]];
@@ -203,7 +279,15 @@ foreach (['article', 'activity', 'document'] as $bundle) {
     if (!str_starts_with($name, 'field_')) {
       continue;
     }
-    $widget = ['string' => 'string_textfield', 'integer' => 'number', 'entity_reference' => 'entity_reference_autocomplete', 'image' => 'image_image', 'file' => 'file_generic', 'datetime' => 'datetime_default', 'text_long' => 'text_textarea'][$definition->getType()];
+    $widget = [
+      'string' => 'string_textfield',
+      'integer' => 'number',
+      'entity_reference' => 'entity_reference_autocomplete',
+      'image' => 'image_image',
+      'file' => 'file_generic',
+      'datetime' => 'datetime_default',
+      'text_long' => 'text_textarea',
+    ][$definition->getType()];
     $widgets[$name] = ['type' => $widget, 'weight' => $weight++];
   }
   institution_display('node', $bundle, 'default', $widgets, TRUE);
@@ -212,10 +296,28 @@ foreach (['article', 'activity', 'document'] as $bundle) {
     $components['field_category'] = ['type' => 'string', 'label' => 'hidden', 'weight' => -5];
   }
   if (isset($fields['field_image'])) {
-    $components['field_image'] = ['type' => 'image', 'label' => 'hidden', 'weight' => 0, 'settings' => ['image_link' => '', 'image_style' => 'large', 'image_loading' => ['attribute' => 'lazy']]];
+    $components['field_image'] = [
+      'type' => 'image',
+      'label' => 'hidden',
+      'weight' => 0,
+      'settings' => [
+        'image_link' => '',
+        'image_style' => 'large',
+        'image_loading' => [
+          'attribute' => 'lazy',
+        ],
+      ],
+    ];
   }
   if (isset($fields['field_document'])) {
-    $components['field_document'] = ['type' => 'file_default', 'label' => 'above', 'weight' => 10, 'settings' => ['use_description_as_link_text' => TRUE]];
+    $components['field_document'] = [
+      'type' => 'file_default',
+      'label' => 'above',
+      'weight' => 10,
+      'settings' => [
+        'use_description_as_link_text' => TRUE,
+      ],
+    ];
   }
   foreach (['default', 'full', 'teaser'] as $mode) {
     $mode_components = $components;
@@ -223,7 +325,8 @@ foreach (['article', 'activity', 'document'] as $bundle) {
   }
 }
 
-// Verified content supplied by the responsible person; no legal identifiers invented.
+// Verified content supplied by the responsible person; no legal identifiers
+// invented.
 $home_body = '<section class="aculta-hero"><p class="aculta-eyebrow">' . institution_escape($data['hero']['eyebrow']) . '</p><h1>Associação Cultural<br>Antiproibicionista</h1><p class="aculta-hero-lead">' . institution_escape($data['hero']['text']) . '</p><div class="aculta-actions">' . institution_link('/institucional', 'CONHEÇA NOSSA HISTÓRIA', 'btn btn-primary') . institution_link('/projetos', 'NOSSOS PROJETOS', 'btn btn-outline-primary') . '</div></section>';
 $home = institution_node('home', 'page', $data['organization'], $home_body, '/inicio');
 $who = institution_section($data['who'], '<p>' . institution_link('/institucional', 'SAIBA MAIS SOBRE A ASSOCIAÇÃO', 'aculta-editorial-link') . '</p>');
@@ -273,8 +376,27 @@ $widgets = [];
 $components = [];
 foreach ($data_fields as $name => [$type, $label]) {
   institution_field('block_content', 'aculta_institution', $name, $type, $label);
-  $widgets[$name] = ['type' => ['string' => 'string_textfield', 'string_long' => 'string_textarea', 'email' => 'email_default', 'link' => 'link_default', 'text_long' => 'text_textarea'][$type], 'weight' => count($widgets)];
-  $components[$name] = ['type' => ['string' => 'string', 'string_long' => 'basic_string', 'email' => 'email_mailto', 'link' => 'link', 'text_long' => 'text_default'][$type], 'label' => 'hidden', 'weight' => count($components)];
+  $widgets[$name] = [
+    'type' => [
+      'string' => 'string_textfield',
+      'string_long' => 'string_textarea',
+      'email' => 'email_default',
+      'link' => 'link_default',
+      'text_long' => 'text_textarea',
+    ][$type],
+    'weight' => count($widgets),
+  ];
+  $components[$name] = [
+    'type' => [
+      'string' => 'string',
+      'string_long' => 'basic_string',
+      'email' => 'email_mailto',
+      'link' => 'link',
+      'text_long' => 'text_default',
+    ][$type],
+    'label' => 'hidden',
+    'weight' => count($components),
+  ];
 }
 institution_display('block_content', 'aculta_institution', 'default', $widgets, TRUE);
 $public_components = $components;
@@ -282,18 +404,38 @@ unset($public_components['field_org_description']);
 institution_display('block_content', 'aculta_institution', 'default', $public_components);
 institution_display('block_content', 'aculta_institution', 'full', $public_components);
 if (empty($state['blocks']['institution_data'])) {
-  $entity = BlockContent::create(['type' => 'aculta_institution', 'info' => 'Dados oficiais da Associação', 'langcode' => 'pt-br', 'field_org_name' => $data['organization'], 'field_org_description' => 'Cultura, informação, cuidado e participação social.', 'field_legal_nature' => 'Associação privada sem fins lucrativos', 'field_headquarters' => 'Goiânia - Goiás - Brasil', 'field_email' => $data['email'], 'field_site' => ['uri' => 'https://aculta.org/', 'title' => 'aculta.org']]);
+  $entity = BlockContent::create([
+    'type' => 'aculta_institution',
+    'info' => 'Dados oficiais da Associação',
+    'langcode' => 'pt-br',
+    'field_org_name' => $data['organization'],
+    'field_org_description' => 'Cultura, informação, cuidado e participação social.',
+    'field_legal_nature' => 'Associação privada sem fins lucrativos',
+    'field_headquarters' => 'Goiânia - Goiás - Brasil',
+    'field_email' => $data['email'],
+    'field_site' => [
+      'uri' => 'https://aculta.org/',
+      'title' => 'aculta.org',
+    ],
+  ]);
   $entity->save();
   $state['blocks']['institution_data'] = (int) $entity->id();
   \Drupal::state()->set('aculta.institution_setup', $state);
 }
 $institution_data = BlockContent::load($state['blocks']['institution_data']);
-institution_place('aculta_institution_data', 'block_content:' . $institution_data->uuid(), 'content', 90, 'INFORMAÇÕES INSTITUCIONAIS', "<front>\n/institucional\n/transparencia", ['view_mode' => 'full', 'label_display' => 'visible']);
+institution_place('aculta_institution_data', 'block_content:' . $institution_data->uuid(), 'content', 90, 'INFORMAÇÕES INSTITUCIONAIS', "<front>\n/institucional\n/transparencia", [
+  'view_mode' => 'full',
+  'label_display' => 'visible',
+]);
 
 // Footer data uses the same entity, with an appropriate display mode.
 foreach (['footer', 'contact'] as $mode) {
   if (!EntityViewMode::load('block_content.' . $mode)) {
-    EntityViewMode::create(['id' => 'block_content.' . $mode, 'label' => ucfirst($mode), 'targetEntityType' => 'block_content'])->save();
+    EntityViewMode::create([
+      'id' => 'block_content.' . $mode,
+      'label' => ucfirst($mode),
+      'targetEntityType' => 'block_content',
+    ])->save();
   }
   $selected = $components;
   unset($selected['field_governance']);
@@ -310,15 +452,91 @@ institution_place('aculta_footer_data', 'block_content:' . $institution_data->uu
 function institution_view(string $id, string $label, array $bundles, string $paths, int $weight, string $header = '', string $sort = 'created', string $row_mode = 'teaser'): void {
   if (!View::load($id)) {
     $filters = [
-      'status' => ['id' => 'status', 'table' => 'node_field_data', 'field' => 'status', 'value' => '1', 'entity_type' => 'node', 'entity_field' => 'status', 'plugin_id' => 'boolean'],
-      'type' => ['id' => 'type', 'table' => 'node_field_data', 'field' => 'type', 'value' => array_combine($bundles, $bundles), 'entity_type' => 'node', 'entity_field' => 'type', 'plugin_id' => 'bundle'],
+      'status' => [
+        'id' => 'status',
+        'table' => 'node_field_data',
+        'field' => 'status',
+        'value' => '1',
+        'entity_type' => 'node',
+        'entity_field' => 'status',
+        'plugin_id' => 'boolean',
+      ],
+      'type' => [
+        'id' => 'type',
+        'table' => 'node_field_data',
+        'field' => 'type',
+        'value' => array_combine($bundles, $bundles),
+        'entity_type' => 'node',
+        'entity_field' => 'type',
+        'plugin_id' => 'bundle',
+      ],
     ];
-    $sorting = ['created' => ['id' => 'created', 'table' => 'node_field_data', 'field' => 'created', 'entity_type' => 'node', 'entity_field' => 'created', 'plugin_id' => 'date', 'order' => 'DESC']];
-    $options = ['title' => $label, 'access' => ['type' => 'perm', 'options' => ['perm' => 'access content']], 'cache' => ['type' => 'tag', 'options' => []], 'query' => ['type' => 'views_query', 'options' => []], 'pager' => ['type' => 'none', 'options' => ['offset' => 0]], 'style' => ['type' => 'default', 'options' => ['default_row_class' => TRUE]], 'row' => ['type' => 'entity:node', 'options' => ['view_mode' => $row_mode]], 'filters' => $filters, 'sorts' => $sorting, 'css_class' => $id === 'aculta_projects' ? 'aculta-project-list' : 'aculta-editorial-list'];
+    $sorting = [
+      'created' => [
+        'id' => 'created',
+        'table' => 'node_field_data',
+        'field' => 'created',
+        'entity_type' => 'node',
+        'entity_field' => 'created',
+        'plugin_id' => 'date',
+        'order' => 'DESC',
+      ],
+    ];
+    $options = [
+      'title' => $label,
+      'access' => ['type' => 'perm', 'options' => ['perm' => 'access content']],
+      'cache' => ['type' => 'tag', 'options' => []],
+      'query' => ['type' => 'views_query', 'options' => []],
+      'pager' => ['type' => 'none', 'options' => ['offset' => 0]],
+      'style' => ['type' => 'default', 'options' => ['default_row_class' => TRUE]],
+      'row' => ['type' => 'entity:node', 'options' => ['view_mode' => $row_mode]],
+      'filters' => $filters,
+      'sorts' => $sorting,
+      'css_class' => $id === 'aculta_projects' ? 'aculta-project-list' : 'aculta-editorial-list',
+    ];
     if ($header) {
-      $options['header'] = ['area' => ['id' => 'area', 'table' => 'views', 'field' => 'area', 'plugin_id' => 'text', 'empty' => FALSE, 'content' => ['value' => $header, 'format' => 'full_html'], 'tokenize' => FALSE]];
+      $options['header'] = [
+        'area' => [
+          'id' => 'area',
+          'table' => 'views',
+          'field' => 'area',
+          'plugin_id' => 'text',
+          'empty' => FALSE,
+          'content' => [
+            'value' => $header,
+            'format' => 'full_html',
+          ],
+          'tokenize' => FALSE,
+        ],
+      ];
     }
-    View::create(['id' => $id, 'label' => $label, 'module' => 'views', 'base_table' => 'node_field_data', 'base_field' => 'nid', 'status' => TRUE, 'display' => ['default' => ['id' => 'default', 'display_title' => 'Padrão', 'display_plugin' => 'default', 'position' => 0, 'display_options' => $options], 'block_1' => ['id' => 'block_1', 'display_title' => 'Bloco', 'display_plugin' => 'block', 'position' => 1, 'display_options' => ['block_description' => $label, 'display_extenders' => []]]]])->save();
+    View::create([
+      'id' => $id,
+      'label' => $label,
+      'module' => 'views',
+      'base_table' => 'node_field_data',
+      'base_field' => 'nid',
+      'status' => TRUE,
+      'display' => [
+        'default' => [
+          'id' => 'default',
+          'display_title' => 'Padrão',
+          'display_plugin' => 'default',
+          'position' => 0,
+          'display_options' => $options,
+        ],
+        'block_1' => [
+          'id' => 'block_1',
+          'display_title' => 'Bloco',
+          'display_plugin' => 'block',
+          'position' => 1,
+          'display_options' => [
+            'block_description' => $label,
+            'display_extenders' => [],
+          ],
+        ],
+      ],
+    ])->save();
   }
   institution_place($id, 'views_block:' . $id . '-block_1', 'content', $weight, $label, $paths);
 }
@@ -343,7 +561,14 @@ function institution_menu_link(string $menu, string $key, string $label, string 
       return;
     }
   }
-  $link = MenuLinkContent::create(['title' => $label, 'menu_name' => $menu, 'langcode' => 'pt-br', 'link' => ['uri' => $uri], 'weight' => $weight, 'enabled' => TRUE]);
+  $link = MenuLinkContent::create([
+    'title' => $label,
+    'menu_name' => $menu,
+    'langcode' => 'pt-br',
+    'link' => ['uri' => $uri],
+    'weight' => $weight,
+    'enabled' => TRUE,
+  ]);
   $link->save();
   $state['menus'][$key] = (int) $link->id();
   \Drupal::state()->set('aculta.institution_setup', $state);
@@ -352,17 +577,37 @@ function institution_menu_link(string $menu, string $key, string $label, string 
 if (!\Drupal::service('plugin.manager.menu.link')->getDefinition('standard.front_page', FALSE)) {
   institution_menu_link('main', 'main_home', 'Início', 'route:<front>', 0);
 }
-foreach (['institutional' => 'Institucional', 'projects' => 'Projetos', 'activities' => 'Atividades', 'news' => 'Notícias', 'transparency' => 'Transparência'] as $key => $label) {
+foreach ([
+  'institutional' => 'Institucional',
+  'projects' => 'Projetos',
+  'activities' => 'Atividades',
+  'news' => 'Notícias',
+  'transparency' => 'Transparência',
+] as $key => $label) {
   institution_menu_link('main', 'main_' . $key, $label, 'entity:node/' . $state['nodes'][$key], count($state['menus']));
 }
 
-// The institutional Webform owns /contato; no legacy node or Core Contact form is created.
+// The institutional Webform owns /contato; no legacy node or Core Contact
+// form is created.
 institution_menu_link('main', 'main_contact', 'Contato', 'internal:/contato', 99);
 institution_place('aculta_contact_data', 'block_content:' . $institution_data->uuid(), 'content', -10, 'Contato institucional', '/contato', ['view_mode' => 'contact']);
 
 $footer_menus = [
-  'aculta-footer-institution' => ['INSTITUCIONAL', ['institutional' => 'Quem somos', 'projects' => 'Projetos', 'transparency' => 'Transparência']],
-  'aculta-footer-content' => ['CONTEÚDO', ['news' => 'Notícias', 'activities' => 'Atividades']],
+  'aculta-footer-institution' => [
+    'INSTITUCIONAL',
+    [
+      'institutional' => 'Quem somos',
+      'projects' => 'Projetos',
+      'transparency' => 'Transparência',
+    ],
+  ],
+  'aculta-footer-content' => [
+    'CONTEÚDO',
+    [
+      'news' => 'Notícias',
+      'activities' => 'Atividades',
+    ],
+  ],
 ];
 foreach ($footer_menus as $id => [$label, $links]) {
   if (!Menu::load($id)) {
@@ -372,11 +617,17 @@ foreach ($footer_menus as $id => [$label, $links]) {
     $uri = $key === 'contact' ? 'internal:/contato' : 'entity:node/' . $state['nodes'][$key];
     institution_menu_link($id, $id . '_' . $key, $title, $uri, array_search($key, array_keys($links), TRUE));
   }
-  institution_place(str_replace('-', '_', $id), 'system_menu_block:' . $id, 'footer', 10 + array_search($id, array_keys($footer_menus), TRUE), $label, '', ['label_display' => 'visible', 'level' => 1, 'depth' => 1, 'expand_all_items' => FALSE]);
+  institution_place(str_replace('-', '_', $id), 'system_menu_block:' . $id, 'footer', 10 + array_search($id, array_keys($footer_menus), TRUE), $label, '', [
+    'label_display' => 'visible',
+    'level' => 1,
+    'depth' => 1,
+    'expand_all_items' => FALSE,
+  ]);
 }
 institution_menu_link('aculta-footer-institution', 'footer_privacy', 'Política de Privacidade', 'entity:node/' . $state['nodes']['privacy'], 3);
 
-// Replace the default empty landing route; preserve its View and all existing blocks.
+// Replace the default empty landing route; preserve its View and all
+// existing blocks.
 \Drupal::configFactory()->getEditable('system.site')->set('page.front', '/node/' . $home->id())->set('name', $data['organization'])->save();
 $powered = Block::load('aculta_powered');
 if ($powered) {
@@ -385,7 +636,14 @@ if ($powered) {
 $account = Block::load('aculta_account_menu');
 if ($account) {
   $visibility = $account->getVisibility();
-  $visibility['user_role'] = ['id' => 'user_role', 'negate' => FALSE, 'roles' => ['authenticated' => 'authenticated'], 'context_mapping' => ['user' => '@user.current_user_context:current_user']];
+  $visibility['user_role'] = [
+    'id' => 'user_role',
+    'negate' => FALSE,
+    'roles' => ['authenticated' => 'authenticated'],
+    'context_mapping' => [
+      'user' => '@user.current_user_context:current_user',
+    ],
+  ];
   $account->setVisibilityConfig('user_role', $visibility['user_role'])->save();
 }
 \Drupal::configFactory()->getEditable('aculta_portal.settings')->set('institution_data_uuid', $institution_data->uuid())->save();
@@ -395,7 +653,16 @@ $editor = Editor::load('full_html');
 if ($editor) {
   $settings = $editor->getSettings();
   $allowed = $settings['plugins']['ckeditor5_sourceEditing']['allowed_tags'] ?? [];
-  $settings['plugins']['ckeditor5_sourceEditing']['allowed_tags'] = array_values(array_unique(array_merge($allowed, ['<section class>', '<div class>', '<p class>', '<h1>', '<h2 class>', '<h3 class>', '<a class>', '<ol class>'])));
+  $settings['plugins']['ckeditor5_sourceEditing']['allowed_tags'] = array_values(array_unique(array_merge($allowed, [
+    '<section class>',
+    '<div class>',
+    '<p class>',
+    '<h1>',
+    '<h2 class>',
+    '<h3 class>',
+    '<a class>',
+    '<ol class>',
+  ])));
   $editor->setSettings($settings)->save();
 }
 \Drupal::state()->set('aculta.institution_setup', $state);

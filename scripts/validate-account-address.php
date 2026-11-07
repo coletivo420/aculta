@@ -141,7 +141,8 @@ $check(
   'config: commerce_store oculta billing_countries',
 );
 
-// Validação no servidor em AccountAddressForm e normalização em buildStreetNumber.
+// Validação no servidor em AccountAddressForm e normalização em
+// buildStreetNumber.
 $check(
   str_contains($form, 'validateCountryCode') && str_contains($form, 'validateAddressElement') && str_contains($form, "country_code'] = 'BR'"),
   'AccountAddressForm: validação e confirmação no servidor de country_code = BR',
@@ -158,15 +159,24 @@ $check(
 );
 
 // Formulário institucional (block_content.aculta_institution):
-// O CEP (field_postal_code) deve anteceder rigorosamente todos os campos de endereço visíveis,
-// inclusive o campo geral textual de endereço (field_address). Um campo antes do CEP faz o gate falhar.
+// O CEP (field_postal_code) deve anteceder rigorosamente todos os campos
+// de endereço visíveis, inclusive o campo geral textual de endereço
+// (field_address). Um campo antes do CEP faz o gate falhar.
 $institutionFormYaml = $read('config/sync/core.entity_form_display.block_content.aculta_institution.default.yml');
-// Sem Symfony (sem vendor/), lê só os pesos dos campos usados na ordem. A ordem do formulário é a esperada.
+// Sem Symfony (sem vendor/), lê só os pesos dos campos usados na ordem.
+// A ordem do formulário é a esperada.
 if (class_exists(\Symfony\Component\Yaml\Yaml::class)) {
   $instData = \Symfony\Component\Yaml\Yaml::parse($institutionFormYaml);
 } else {
   $instData = ['content' => []];
-  foreach (['field_postal_code', 'field_address', 'field_street_address', 'field_locality', 'field_address_region', 'field_country'] as $fieldName) {
+  foreach ([
+    'field_postal_code',
+    'field_address',
+    'field_street_address',
+    'field_locality',
+    'field_address_region',
+    'field_country',
+  ] as $fieldName) {
     if (preg_match('/^  ' . preg_quote($fieldName, '/') . ':\n((?:    .*\n|\n)*)/m', $institutionFormYaml, $block)
       && preg_match('/^    weight: (-?\d+)/m', $block[1], $weight)) {
       $instData['content'][$fieldName]['weight'] = (int) $weight[1];
@@ -189,7 +199,8 @@ $check(
     . ($failedAddressFields ? ': ' . implode(', ', $failedAddressFields) : ''),
 );
 
-// Separação estrita entre ordem de formulário (CEP primeiro) e ordem de exibição (convencional: CEP ao final).
+// Separação estrita entre ordem de formulário (CEP primeiro) e
+// ordem de exibição (convencional: CEP ao final).
 $locationCatalogue = $read('web/modules/custom/aculta_portal/modules/aculta_events/src/Catalogue/LocationCatalogue.php');
 $modalWidget = $read('web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php');
 $institutionViewDisplay = $read('config/sync/core.entity_view_display.block_content.aculta_institution.default.yml');
@@ -251,7 +262,8 @@ $check(str_contains($cep, 'const resolvedCep = new Map()'), 'cep-address.js: CEP
 $check(str_contains($cep, 'isReplacement'), 'cep-address.js: troca de CEP substitui o endereço');
 $check(str_contains($cep, 'pendingFill.delete(prefix)'), 'cep-address.js: preenchimento pendente vale só para o próprio rebuild');
 
-// 4b. Campos preenchidos pelo CEP continuam editáveis (permitindo cidades com CEP geral e ajustes).
+// 4b. Campos preenchidos pelo CEP continuam editáveis (permitindo
+// cidades com CEP geral e ajustes).
 $check(
   !str_contains($cep, 'readOnly =') && !str_contains($cep, 'field.disabled = true') && str_contains($cep, 'applyFieldValues'),
   'cep-address.js: campos continuam editáveis após autopreenchimento do CEP',

@@ -4,17 +4,22 @@
  * @file
  * Gate: hierarquia de papéis (role_inheritance) e checagens por nome de papel.
  *
- * Decisão do responsável (2026-10-21): estudante e associado são categorias, não papéis. Cadeia de papéis: authenticated <
- * email_confirmed < lms_teacher < content_editor < gerente_loja < administrator. Associado mantém situação e data de adesão; ver
- * docs/ASSOCIADO.md em aculta_user). A herança é transitiva; administrator herda de todos.
+ * Decisão do responsável (2026-10-21): estudante e associado são
+ * categorias, não papéis. Cadeia de papéis: authenticated <
+ * email_confirmed < lms_teacher < content_editor < gerente_loja <
+ * administrator. Associado mantém situação e data de adesão; ver
+ * docs/ASSOCIADO.md em aculta_user). A herança é transitiva;
+ * administrator herda de todos.
  *
  * Verifica no config/sync (sem Runtime):
  * - a cadeia de herança exatamente como decidida (email_confirmed, lms_teacher,
  *   content_editor, gerente_loja);
  * - o mapa não tem ciclo nem autorreferência;
  * - administrator herda de todos os demais papéis de negócio;
- * - a contagem de checagens de acesso por nome de papel no código (hasRole e in_array com nome de papel) não sobe
- *   acima da linha de base. Acesso novo deve usar permissão (hasPermission), que respeita a hierarquia.
+ * - a contagem de checagens de acesso por nome de papel no código
+ *   (hasRole e in_array com nome de papel) não sobe
+ *   acima da linha de base. Acesso novo deve usar permissão
+ *   (hasPermission), que respeita a hierarquia.
  *
  * Só lê config/sync e código. Não importa configuração nem consulta o Runtime.
  */
@@ -43,13 +48,17 @@ $decidida = [
 
 /**
  * Linha de base de checagens por nome de papel em código customizado (dívida: não pode subir). */
-// 15: as duas chamadas novas (aculta_user, RoleInheritanceHooks) são da própria herança (adicionar e retirar o papel
-// herdado da conta), não decisões de acesso. Acesso novo continua por permissão.
+// 15: as duas chamadas novas (aculta_user, RoleInheritanceHooks) são
+// da própria herança (adicionar e retirar o papel
+// herdado da conta), não decisões de acesso. Acesso novo continua
+// por permissão.
 const LINHA_DE_BASE_HASROLE = 15;
 const LINHA_DE_BASE_IN_ARRAY_PAPEL = 4;
 
-// Mapa derivado da cadeia decidida (aculta_portal.role_hierarchy): cada papel herda o próximo da cadeia, e o
-// administrador herda toda a cadeia. O módulo contrib role_inheritance saiu; a herança é do aculta_user.
+// Mapa derivado da cadeia decidida (aculta_portal.role_hierarchy):
+// cada papel herda o próximo da cadeia, e o
+// administrador herda toda a cadeia. O módulo contrib
+// role_inheritance saiu; a herança é do aculta_user.
 $cadeia = Yaml::parseFile($root . '/config/sync/aculta_portal.role_hierarchy.yml')['cadeia'] ?? [];
 $mapa = [];
 foreach ($cadeia as $i => $papel) {

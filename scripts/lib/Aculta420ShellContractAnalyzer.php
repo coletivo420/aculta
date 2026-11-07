@@ -69,7 +69,8 @@ final class Aculta420ShellContractAnalyzer {
     )) {
       $findings[] = 'Twig must not branch on a concrete Domain purpose.';
     }
-    // Wiki logo/search are consumed by the header; navigation and actions stay deferred.
+    // Wiki logo/search are consumed by the header; navigation and actions
+    // stay deferred.
     foreach ([
       'regions.navigation',
       'regions.actions',

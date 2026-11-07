@@ -25,9 +25,18 @@ $short['work'] = [
   'Desenvolvemos ações orientadas pelo cuidado, pela autonomia, pela informação e pela promoção da saúde em atividades culturais e comunitárias.',
   'Participamos de espaços de diálogo e construção coletiva relacionados a direitos humanos, cidadania e políticas públicas.',
 ];
-$short['knowledge'] = ['Produzir cultura também significa produzir conhecimento. Entrevistas, publicações e projetos audiovisuais aproximam diferentes experiências e saberes.', 'Nossa comunicação cria espaços de escuta e diálogo sobre cultura, saúde, direitos e sociedade.'];
-$short['care'] = ['A redução de danos integra nossa atuação social por meio de informação, autonomia e cuidado em atividades culturais e comunitárias.', 'Também participamos de debates sobre direitos humanos e políticas públicas, sempre com respeito à dignidade das pessoas.'];
-$short['research'] = ['Experiências construídas em nossos projetos também dialogam com pesquisa, educação popular e produção de conhecimento.', 'Práticas culturais comunitárias podem fortalecer vínculos, redes de cuidado e participação social.'];
+$short['knowledge'] = [
+  'Produzir cultura também significa produzir conhecimento. Entrevistas, publicações e projetos audiovisuais aproximam diferentes experiências e saberes.',
+  'Nossa comunicação cria espaços de escuta e diálogo sobre cultura, saúde, direitos e sociedade.',
+];
+$short['care'] = [
+  'A redução de danos integra nossa atuação social por meio de informação, autonomia e cuidado em atividades culturais e comunitárias.',
+  'Também participamos de debates sobre direitos humanos e políticas públicas, sempre com respeito à dignidade das pessoas.',
+];
+$short['research'] = [
+  'Experiências construídas em nossos projetos também dialogam com pesquisa, educação popular e produção de conhecimento.',
+  'Práticas culturais comunitárias podem fortalecer vínculos, redes de cuidado e participação social.',
+];
 $saveBody = static function ($entity, string $html): void {
   $entity->set('body', ['value' => $html, 'format' => 'full_html'])->setNewRevision(TRUE);
   $entity->setRevisionLogMessage('Revisão institucional final local aprovada pelo responsável.');
@@ -46,7 +55,11 @@ foreach ($short['work'] as $i => $text) {
 }
 $saveBody($work, preg_replace('/<div class="aculta-areas">.*?<\/div>/us', '<div class="aculta-areas">' . $areas . '</div>', $work->body->value, 1));
 $highlights = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties(['type' => 'editorial_highlight']);
-$copy = ['INFORMAÇÃO TAMBÉM É CULTURA' => $short['knowledge'], 'CUIDADO, INFORMAÇÃO E DIREITOS' => $short['care'], 'CULTURA, CUIDADO E PRODUÇÃO DE CONHECIMENTO' => $short['research']];
+$copy = [
+  'INFORMAÇÃO TAMBÉM É CULTURA' => $short['knowledge'],
+  'CUIDADO, INFORMAÇÃO E DIREITOS' => $short['care'],
+  'CULTURA, CUIDADO E PRODUÇÃO DE CONHECIMENTO' => $short['research'],
+];
 foreach ($highlights as $node) {
   if (isset($copy[$node->label()])) {
     $node->set('field_summary', $copy[$node->label()][0])->set('field_complement', $copy[$node->label()][1])->setNewRevision(TRUE);
@@ -64,11 +77,45 @@ $sections = '<section class="aculta-editorial-section aculta-transparency-sectio
 $newBlocks = [];
 foreach ([
   'aculta_transparency_sections' => ['Organização e documentos da Transparência', $sections, '/transparencia', 20],
-  'aculta_home_partnership' => ['Construir em parceria — Home', '<section class="aculta-editorial-section"><h2>CONSTRUIR EM PARCERIA</h2><div class="aculta-prose"><p>Acreditamos na colaboração entre sociedade civil, instituições, empresas, universidades, poder público e iniciativas culturais para ampliar o alcance de projetos e fortalecer ações de interesse coletivo.</p><p><a class="aculta-editorial-link" href="/contato">FALE COM A ASSOCIAÇÃO</a></p></div></section>', '<front>', 95],
+  'aculta_home_partnership' => [
+    'Construir em parceria — Home',
+    '<section class="aculta-editorial-section"><h2>CONSTRUIR EM PARCERIA</h2><div class="aculta-prose"><p>Acreditamos na colaboração entre sociedade civil, instituições, empresas, universidades, poder público e iniciativas culturais para ampliar o alcance de projetos e fortalecer ações de interesse coletivo.</p><p><a class="aculta-editorial-link" href="/contato">FALE COM A ASSOCIAÇÃO</a></p></div></section>',
+    '<front>',
+    95,
+  ],
 ] as $id => [$label, $html, $path, $weight]) {
-  $entity = BlockContent::create(['type' => 'basic', 'info' => $label, 'langcode' => 'pt-br', 'body' => ['value' => $html, 'format' => 'full_html']]);
+  $entity = BlockContent::create([
+    'type' => 'basic',
+    'info' => $label,
+    'langcode' => 'pt-br',
+    'body' => [
+      'value' => $html,
+      'format' => 'full_html',
+    ],
+  ]);
   $entity->save();
-  Block::create(['id' => $id, 'langcode' => 'pt-br', 'theme' => 'aculta420', 'region' => 'content', 'weight' => $weight, 'plugin' => 'block_content:' . $entity->uuid(), 'settings' => ['id' => 'block_content:' . $entity->uuid(), 'label' => $label, 'label_display' => FALSE, 'provider' => 'block_content', 'view_mode' => 'full'], 'visibility' => ['request_path' => ['id' => 'request_path', 'negate' => FALSE, 'pages' => $path]]])->save();
+  Block::create([
+    'id' => $id,
+    'langcode' => 'pt-br',
+    'theme' => 'aculta420',
+    'region' => 'content',
+    'weight' => $weight,
+    'plugin' => 'block_content:' . $entity->uuid(),
+    'settings' => [
+      'id' => 'block_content:' . $entity->uuid(),
+      'label' => $label,
+      'label_display' => FALSE,
+      'provider' => 'block_content',
+      'view_mode' => 'full',
+    ],
+    'visibility' => [
+      'request_path' => [
+        'id' => 'request_path',
+        'negate' => FALSE,
+        'pages' => $path,
+      ],
+    ],
+  ])->save();
   $newBlocks[$id] = ['id' => $entity->id(), 'uuid' => $entity->uuid()];
 }
 Block::load('aculta_data_registration')->setWeight(10)->save();
@@ -79,7 +126,8 @@ $official = reset($officialBlocks);
 $official->set('field_org_description', 'Lutando por um futuro livre da proibição.')->setNewRevision(TRUE);
 $official->save();
 FieldConfig::loadByName('block_content', 'aculta_institution', 'field_org_description')->setLabel('Slogan institucional')->setDescription('Slogan oficial exibido na identificação institucional do rodapé.')->save();
-// Preserve the superseded page as an unpublished revision; /contato is the existing Webform.
+// Preserve the superseded page as an unpublished revision;
+// /contato is the existing Webform.
 if (!empty($state['nodes']['contact'])) {
   $oldContact = Node::load($state['nodes']['contact']);
   $oldContact->setUnpublished()->setNewRevision(TRUE);

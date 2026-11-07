@@ -4,8 +4,9 @@
  * @file
  * Read-only validation gate for the ACULTA420 V2 theme foundation.
  *
- * Portado da fundação V1 (aculta420) para o tema aculta420_v2, depois da remoção do Bootstrap. O nome do arquivo é
- * mantido para não quebrar as referências em docs/.
+ * Portado da fundação V1 (aculta420) para o tema aculta420_v2, depois da
+ * remoção do Bootstrap. O nome do arquivo é mantido para não quebrar as
+ * referências em docs/.
  */
 
 declare(strict_types=1);
@@ -99,7 +100,11 @@ $assert($themeBoundaryCounts['oauth_config'] === 0, 'THEME OAUTH CONFIG REFERENC
 $lock = json_decode(file_get_contents($root . '/composer.lock'), TRUE, 512, JSON_THROW_ON_ERROR);
 $bootstrapPackages = array_filter(
   $lock['packages'] ?? [],
-  static fn(array $package): bool => in_array(($package['name'] ?? ''), ['drupal/bootstrap', 'drupal/bootstrap5', 'drupal/bootstrap_sass'], TRUE),
+  static fn(array $package): bool => in_array(($package['name'] ?? ''), [
+    'drupal/bootstrap',
+    'drupal/bootstrap5',
+    'drupal/bootstrap_sass',
+  ], TRUE),
 );
 $assert($bootstrapPackages === [], 'Composer has no Drupal Bootstrap, Bootstrap5 or Bootstrap SASS package.');
 
@@ -144,7 +149,8 @@ $assert(
 $assert(is_file($themeRoot . '/assets/icons/aculta420-favicon.ico'), 'V2 favicon asset exists.');
 $assert(is_file($themeRoot . '/' . ($info['logo'] ?? '')), 'V2 logo declared in info exists.');
 
-// A configuração da V1 (aculta420.settings e bootstrap.settings) foi removida: o V2 usa os próprio assets.
+// A configuração da V1 (aculta420.settings e bootstrap.settings) foi
+// removida: o V2 usa os próprio assets.
 $assert(!is_file($root . '/config/sync/aculta420.settings.yml'), 'Config sync has no legacy aculta420.settings file.');
 $assert(!is_file($root . '/config/sync/bootstrap.settings.yml'), 'Config sync has no legacy bootstrap.settings file.');
 $assert(\Drupal::config('aculta420.settings')->isNew(), 'Runtime has no legacy aculta420.settings configuration.');
@@ -243,7 +249,8 @@ foreach ($requiredTemplates as $template) {
 }
 $assert(!is_dir($themeRoot . '/templates/bootstrap'), 'No Bootstrap template overrides exist in V2.');
 
-// SDC: each component folder has metadata and Drupal discovers it under the V2 namespace.
+// SDC: each component folder has metadata and Drupal discovers it under
+// the V2 namespace.
 $sdc = \Drupal::service('plugin.manager.sdc');
 foreach (glob($themeRoot . '/components/*', GLOB_ONLYDIR) ?: [] as $componentDir) {
   $componentName = basename($componentDir);
@@ -264,7 +271,8 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($themeRoot
   }
   if ($extension === 'twig') {
     $componentName = basename($file->getFilename(), '.twig');
-    // Só o template que tem o mesmo nome da pasta é componente SDC; partials (ex.: _content) não são.
+    // Só o template que tem o mesmo nome da pasta é componente SDC;
+    // partials (ex.: _content) não são.
     $isComponent = basename(dirname($file->getPathname())) === $componentName && str_contains($file->getPathname(), '/components/');
     $sourceName = $isComponent
       ? $themeName . ':' . $componentName

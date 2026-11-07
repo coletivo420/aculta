@@ -11,13 +11,31 @@ use Drupal\Core\Config\FileStorage;
 if (!in_array(\Drupal::request()->getHost(), ['localhost', '127.0.0.1'], TRUE)) {
   throw new RuntimeException('Local only.');
 }
-$result = ['site' => \Drupal::config('system.site')->getRawData(), 'theme' => \Drupal::config('system.theme')->getRawData(), 'modules' => array_keys(\Drupal::moduleHandler()->getModuleList()), 'content' => [], 'config_diff' => ['changed' => [], 'active_only' => [], 'sync_only' => []]];
+$result = [
+  'site' => \Drupal::config('system.site')->getRawData(),
+  'theme' => \Drupal::config('system.theme')->getRawData(),
+  'modules' => array_keys(\Drupal::moduleHandler()->getModuleList()),
+  'content' => [],
+  'config_diff' => [
+    'changed' => [],
+    'active_only' => [],
+    'sync_only' => [],
+  ],
+];
 foreach (['node', 'block_content', 'menu_link_content', 'path_alias', 'redirect', 'media', 'file'] as $type) {
   foreach (\Drupal::entityTypeManager()->getStorage($type)->loadMultiple() as $entity) {
-    $result['content'][$type][$entity->id()] = ['label' => $entity->label(), 'uuid' => $entity->uuid(), 'bundle' => $entity->bundle(), 'values' => $entity->toArray()];
+    $result['content'][$type][$entity->id()] = [
+      'label' => $entity->label(),
+      'uuid' => $entity->uuid(),
+      'bundle' => $entity->bundle(),
+      'values' => $entity->toArray(),
+    ];
   }
 }
-$result['state'] = ['institution' => \Drupal::state()->get('aculta.institution_setup'), 'carousel' => \Drupal::state()->get('aculta.home_carousel_ready')];
+$result['state'] = [
+  'institution' => \Drupal::state()->get('aculta.institution_setup'),
+  'carousel' => \Drupal::state()->get('aculta.home_carousel_ready'),
+];
 $active = \Drupal::service('config.storage');
 $sync = new FileStorage(dirname(__DIR__) . '/config/sync');
 foreach (array_unique(array_merge($active->listAll(), $sync->listAll())) as $name) {
@@ -62,11 +80,24 @@ $base = DRUPAL_ROOT . '/sites/default/files';
 if (is_dir($base)) {
   foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($base, FilesystemIterator::SKIP_DOTS)) as $file) {
     if ($file->isFile()) {
-      $result['assets'][] = ['path' => str_replace('\\', '/', substr($file->getPathname(), strlen($base) + 1)), 'size' => $file->getSize()];
+      $result['assets'][] = [
+        'path' => str_replace('\\', '/', substr($file->getPathname(), strlen($base) + 1)),
+        'size' => $file->getSize(),
+      ];
     }
   }
 }
 $result['editor'] = \Drupal::config('editor.editor.full_html')->getRawData();
-$result['privacy_tools'] = ['filter' => \Drupal::config('filter.format.full_html')->getRawData(), 'mail_system' => \Drupal::config('system.mail')->getRawData()];
+$result['privacy_tools'] = [
+  'filter' => \Drupal::config('filter.format.full_html')->getRawData(),
+  'mail_system' => \Drupal::config('system.mail')->getRawData(),
+];
 file_put_contents(dirname(__DIR__) . '/tmp/final-local-audit.json', json_encode($result, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
-echo json_encode(['mail' => $result['site']['mail'], 'front' => $result['site']['page']['front'], 'config_diff' => $result['config_diff'], 'collection_diff' => $result['collections'], 'counts' => array_map('count', $result['content']), 'asset_count' => count($result['assets'])], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
+echo json_encode([
+  'mail' => $result['site']['mail'],
+  'front' => $result['site']['page']['front'],
+  'config_diff' => $result['config_diff'],
+  'collection_diff' => $result['collections'],
+  'counts' => array_map('count', $result['content']),
+  'asset_count' => count($result['assets']),
+], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;

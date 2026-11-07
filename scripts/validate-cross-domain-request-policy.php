@@ -93,8 +93,10 @@ $assert(
   'Portal AJAX explicitly uses same-origin credentials (search-preview.js).',
 );
 
-// Interceptação AJAX só para mesma origem: isInternalLink() compara a origem do link com a da página, e o handler de clique
-// sai antes de preventDefault() quando o link não é interno. Links de outra origem seguem a navegação normal.
+// Interceptação AJAX só para mesma origem: isInternalLink() compara a
+// origem do link com a da página, e o handler de clique sai antes de
+// preventDefault() quando o link não é interno. Links de outra origem
+// seguem a navegação normal.
 $navJs = file_get_contents($root . '/js/account-navigation.js');
 $assert(
   str_contains($navJs, 'target.origin === window.location.origin') && str_contains($navJs, 'if (!isInternalLink(anchor)'),

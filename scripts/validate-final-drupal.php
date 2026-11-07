@@ -21,9 +21,11 @@ $assert(\Drupal::config('system.site')->get('name') === 'Associação Cultural A
 $active = \Drupal::service('config.storage');
 $sync = new FileStorage(dirname(__DIR__) . '/config/sync');
 $deploy = json_decode((string) file_get_contents(dirname(__DIR__) . '/web/modules/custom/aculta_portal/modules/aculta_deployer/config/deploy.json'), TRUE);
-// Arquivos dependentes de ambiente são comparados pelo deployer (environment_bound), não aqui.
+// Arquivos dependentes de ambiente são comparados pelo deployer
+// (environment_bound), não aqui.
 $environment_bound = array_map(static fn(array $e): string => basename($e['file'], '.yml'), $deploy['environment_bound'] ?? []);
-// Linha de base DT-O10 (scripts/institution/CONFIG-DRIFT-BASELINE.json). Só pode diminuir.
+// Linha de base DT-O10 (scripts/institution/CONFIG-DRIFT-BASELINE.json).
+// Só pode diminuir.
 $baseline_file = json_decode((string) file_get_contents(dirname(__DIR__) . '/scripts/institution/CONFIG-DRIFT-BASELINE.json'), TRUE);
 $known_drift = $baseline_file['names'];
 $differences = [];
@@ -46,10 +48,19 @@ foreach ($deploy['profiles']['test']['rules'] ?? [] as $rule) {
 $assert($test_site_mail !== NULL && \Drupal::config('system.site')->get('mail') === $test_site_mail, 'Institutional site mail matches the test profile of config/deploy.json');
 $assert(($sync->read('system.mail')['interface']['default'] ?? NULL) === 'aculta_mailer', 'Versioned default mailer is camada de envio E-Mails ACULTA (aculta_mailer).');
 $assert(!$sync->exists('smtp.settings'), 'Legacy smtp.settings is not versioned (drupal/smtp removed).');
-$manifest = ['note' => 'Content is NOT included in config export. Preserve IDs/UUIDs during the separately planned secure migration; this is an inventory, not a database dump.', 'entities' => []];
+$manifest = [
+  'note' => 'Content is NOT included in config export. Preserve IDs/UUIDs during the separately planned secure migration; this is an inventory, not a database dump.',
+  'entities' => [],
+];
 foreach (['node', 'block_content', 'menu_link_content', 'path_alias', 'redirect', 'media', 'file'] as $type) {
   foreach (\Drupal::entityTypeManager()->getStorage($type)->loadMultiple() as $entity) {
-    $manifest['entities'][$type][] = ['id' => $entity->id(), 'uuid' => $entity->uuid(), 'bundle' => $entity->bundle(), 'label' => $entity->label(), 'published' => $entity instanceof EntityPublishedInterface ? $entity->isPublished() : NULL];
+    $manifest['entities'][$type][] = [
+      'id' => $entity->id(),
+      'uuid' => $entity->uuid(),
+      'bundle' => $entity->bundle(),
+      'label' => $entity->label(),
+      'published' => $entity instanceof EntityPublishedInterface ? $entity->isPublished() : NULL,
+    ];
   }
 }
 foreach (['node_type', 'block_content_type', 'menu'] as $type) {
@@ -65,7 +76,8 @@ foreach ($templates as $path) {
 }
 echo count($templates) . " custom Twig templates compile: OK\n";
 $assets = \Drupal::entityTypeManager()->getStorage('file')->loadMultiple();
-// Linha de base de arquivos geridos aceita em 2026-10-20 (scripts/institution/MANAGED-FILES-BASELINE.json).
+// Linha de base de arquivos geridos aceita em 2026-10-20
+// (scripts/institution/MANAGED-FILES-BASELINE.json).
 // Arquivo novo sem registro falha o gate.
 $known_files = json_decode((string) file_get_contents(dirname(__DIR__) . '/scripts/institution/MANAGED-FILES-BASELINE.json'), TRUE)['names'];
 $new_files = array_values(array_filter(array_map(static fn($f) => basename($f->getFileUri()), $assets), static fn(string $n): bool => !in_array($n, $known_files, TRUE)));

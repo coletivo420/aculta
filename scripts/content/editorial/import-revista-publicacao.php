@@ -2,22 +2,32 @@
 
 /**
  * @file
- * Importa uma publicação da Revista (Notícia = article) a partir de um arquivo JSON de scripts/content/editorial/.
+ * Importa uma publicação da Revista a partir de um JSON.
  *
- * Arquivo: ACULTA_IMPORT_FILE (caminho relativo à raiz do repositório). Padrão: revista-bloco-sativa-fiocruz.json.
- * Conteúdo: texto integral e imagens da origem, com a mesma ordem do texto. Blocos do corpo:
- *   ["h2"|"h3"|"p", texto], ["ul", [[rótulo, texto], ...]] (rótulo em negrito), ["image", chave-de-images].
+ * Notícia = article; arquivo JSON em scripts/content/editorial/.
+ * Arquivo: ACULTA_IMPORT_FILE (caminho relativo à raiz do repositório).
+ * Padrão: revista-bloco-sativa-fiocruz.json.
+ * Conteúdo: texto integral e imagens da origem, com a mesma ordem do
+ * texto. Blocos do corpo:
+ *   ["h2"|"h3"|"p", texto], ["ul", [[rótulo, texto], ...]] (rótulo em
+ *   negrito), ["image", chave-de-images].
  *
- * Padrão das publicações reais da Revista (nids 71 e 86): sessão em field_editorial_category, autor editorial em
- * field_editorial_author, origem em field_domain_source e metatag com o resumo. Cada entrada de "images" vira uma
- * mídia do bundle `image` (arquivo em public://editorial/revista), reaproveitada pelo nome. A capa vai em
- * field_media_image; imagens do corpo entram como <drupal-media> (mesmo formato das publicações existentes).
+ * Padrão das publicações reais da Revista (nids 71 e 86): sessão em
+ * field_editorial_category, autor editorial em field_editorial_author,
+ * origem em field_domain_source e metatag com o resumo. Cada entrada de
+ * "images" vira uma mídia do bundle `image` (arquivo em
+ * public://editorial/revista), reaproveitada pelo nome. A capa vai em
+ * field_media_image; imagens do corpo entram como <drupal-media> (mesmo
+ * formato das publicações existentes).
  *
- * Idempotente: a publicação é localizada pelo título e tipo; as mídias, pelo nome.
+ * Idempotente: a publicação é localizada pelo título e tipo; as mídias,
+ * pelo nome.
  *
- * Por padrão, apenas mostra o plano (nenhuma imagem é baixada). Para gravar: ACULTA_APPLY=1.
+ * Por padrão, apenas mostra o plano (nenhuma imagem é baixada). Para
+ * gravar: ACULTA_APPLY=1.
  * Execução: ACULTA_IMPORT_FILE=scripts/content/editorial/<arquivo>.json \
- *   php vendor/drush/drush/drush.php --uri=<host> scr scripts/content/editorial/import-revista-publicacao.php
+ *   php vendor/drush/drush/drush.php --uri=<host> scr
+ *   scripts/content/editorial/import-revista-publicacao.php
  */
 
 use Drupal\file\FileRepositoryInterface;
@@ -35,7 +45,9 @@ $e = static fn(string $s): string => htmlspecialchars($s, ENT_QUOTES | ENT_HTML5
 
 $mediaCache = [];
 /**
- * Cria ou reaproveita a mídia de uma imagem da origem. No dry-run, só informa o plano.
+ * Cria ou reaproveita a mídia de uma imagem da origem.
+ *
+ * No dry-run, só informa o plano.
  */
 $ensureMedia = function (string $key) use ($data, $apply, $mediaStorage, $fs, $fileRepo, &$mediaCache): ?Media {
   $img = $data['images'][$key];
@@ -55,7 +67,12 @@ $ensureMedia = function (string $key) use ($data, $apply, $mediaStorage, $fs, $f
   $dir = dirname($dest);
   $fs->prepareDirectory($dir, $fs::CREATE_DIRECTORY);
   $fileEntity = $fileRepo->writeData($bytes, $dest, $fs::EXISTS_REPLACE);
-  $media = $existing ? reset($existing) : Media::create(['bundle' => 'image', 'name' => $img['name'], 'uid' => $data['uid'], 'status' => 1]);
+  $media = $existing ? reset($existing) : Media::create([
+    'bundle' => 'image',
+    'name' => $img['name'],
+    'uid' => $data['uid'],
+    'status' => 1,
+  ]);
   $media->set('field_media_image', ['target_id' => $fileEntity->id(), 'alt' => $img['alt'], 'title' => $img['name']]);
   $media->save();
   echo "IMAGEM [$key]: mídia {$media->id()}, arquivo {$fileEntity->id()}\n";

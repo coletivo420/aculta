@@ -13,8 +13,9 @@ declare(strict_types=1);
  * 1. tests/browser/INDICE.md e os README gerados estão em dia com
  *    tests/browser/gerar-indice.py (executado com --check);
  * 2. toda frente tem README.md e todo routes.json é JSON válido;
- * 3. todo caminho tests/browser/... citado em AGENTS.md, CLAUDE.md, docs/ (fora de
- *    docs/history/) e .claude/ existe, exceto caminhos com placeholder (<frente>, etc.).
+ * 3. todo caminho tests/browser/... citado em AGENTS.md, CLAUDE.md,
+ *    docs/ (fora de docs/history/) e .claude/ existe, exceto caminhos
+ *    com placeholder (<frente>, etc.).
  *
  * Para corrigir a falha 1: python3 tests/browser/gerar-indice.py
  * Executar: php scripts/validate-browser-index.php
@@ -37,7 +38,10 @@ if ($code !== 0) {
 }
 
 // 2. Frentes com README e routes.json válido.
-$purposes = array_filter(glob($browser . '/*', GLOB_ONLYDIR) ?: [], static fn (string $d): bool => !in_array(basename($d), ['node_modules', '__pycache__'], TRUE));
+$purposes = array_filter(glob($browser . '/*', GLOB_ONLYDIR) ?: [], static fn (string $d): bool => !in_array(basename($d), [
+  'node_modules',
+  '__pycache__',
+], TRUE));
 foreach ($purposes as $purposeDir) {
   $candidates = [];
   if (is_file($purposeDir . '/README.md') && !str_contains((string) file_get_contents($purposeDir . '/README.md', FALSE, NULL, 0, 400), 'gerar-indice.py')) {
@@ -97,7 +101,8 @@ foreach (array_unique($sources) as $source) {
   preg_match_all($pattern, (string) file_get_contents($full), $matches);
   foreach (array_unique($matches[0]) as $ref) {
     $ref = rtrim($ref, '.,;:)`');
-    // Evidência (capturas, PNG) fica fora do Git: o caminho pode existir só no ambiente do operador.
+    // Evidência (capturas, PNG) fica fora do Git: o caminho pode
+    // existir só no ambiente do operador.
     if (str_starts_with($ref, 'tests/browser/capturas')) {
       continue;
     }

@@ -14,11 +14,12 @@ use Symfony\Component\Yaml\Yaml;
 // Reviewed inventory of Views. Portal and enabled modules provide the course,
 // Wiki, Commerce, LMS and Social Auth views; any other Views fail the check.
 $expected = [
-  // Views do próprio projeto e do núcleo, e Views providas por módulos habilitados
-  // (Commerce, LMS/Group, Wiki, Social Auth, Webform, Revista, dblog, Private Message). Cada uma depende de módulo
-  // habilitado (verificado em 2026-10-14; as exportadas em config/sync e a 'message' em 2026-10-19). Qualquer outra View
-  // reprova o gate. As Views de exemplo do VVJ habilitadas no Runtime não estão aqui: a decisão de desabilitá-las é do
-  // responsável.
+  // Views do próprio projeto e do núcleo, e Views providas por módulos
+  // habilitados (Commerce, LMS/Group, Wiki, Social Auth, Webform, Revista,
+  // dblog, Private Message). Cada uma depende de módulo habilitado (verificado
+  // em 2026-10-14; as exportadas em config/sync e a 'message' em 2026-10-19).
+  // Qualquer outra View reprova o gate. As Views de exemplo do VVJ habilitadas
+  // no Runtime não estão aqui: a decisão de desabilitá-las é do responsável.
   'aculta_album_fotos',
   'aculta_albuns',
   'aculta_shop_catalog',
@@ -67,8 +68,10 @@ $expected = [
   'galeria_produto',
   'order_shipments',
   'revista_sessoes',
-  // Views exportadas e de donos de módulo, incluídas no retrato depois da limpeza: Fórum (aculta_forum), Revista (aculta_magazine),
-  // Group (group_nodes) e exemplos opcionais do pacote vvj (config/optional de cada vvj*).
+  // Views exportadas e de donos de módulo, incluídas no retrato depois da
+  // limpeza: Fórum (aculta_forum), Revista (aculta_magazine), Group
+  // (group_nodes) e exemplos opcionais do pacote vvj (config/optional de cada
+  // vvj*).
   'aculta_forum_admin_comments',
   'aculta_forum_admin_topics',
   'aculta_forum_categories',
@@ -93,14 +96,36 @@ if ($actual !== $expected) {
 // Curated administrative Views must document their purpose. Views shipped by
 // Commerce, LMS, Wiki and Social Auth are owned by those modules; their
 // descriptions are not part of this cleanup contract.
-$curated = ['aculta_activities', 'aculta_documents', 'aculta_news', 'home_editorial_highlights', 'block_content', 'content', 'files', 'media', 'media_library', 'redirect', 'user_admin_people', 'watchdog', 'webform_submissions'];
+$curated = [
+  'aculta_activities',
+  'aculta_documents',
+  'aculta_news',
+  'home_editorial_highlights',
+  'block_content',
+  'content',
+  'files',
+  'media',
+  'media_library',
+  'redirect',
+  'user_admin_people',
+  'watchdog',
+  'webform_submissions',
+];
 foreach ($views as $view) {
   if (in_array($view->id(), $curated, TRUE) && !$view->get('description')) {
     throw new RuntimeException('Missing View description: ' . $view->id());
   }
   $view->getExecutable()->initDisplay();
 }
-foreach (['admin', 'content', 'navigation-user-links', 'account', 'main', 'aculta-footer-content', 'aculta-footer-institution'] as $id) {
+foreach ([
+  'admin',
+  'content',
+  'navigation-user-links',
+  'account',
+  'main',
+  'aculta-footer-content',
+  'aculta-footer-institution',
+] as $id) {
   $menu = Menu::load($id);
   if (!$menu || !$menu->getDescription()) {
     throw new RuntimeException('Missing menu/reference: ' . $id);
@@ -119,12 +144,14 @@ foreach (['image', 'document', 'remote_video'] as $id) {
 }
 $media = array_keys(MediaType::loadMultiple());
 sort($media);
-// course_document é do LMS (aculta_lms, exportado em config/sync); os três editoriais continuam obrigatórios.
+// course_document é do LMS (aculta_lms, exportado em config/sync); os três
+// editoriais continuam obrigatórios.
 if ($media !== ['course_document', 'document', 'image', 'remote_video']) {
   throw new RuntimeException('Unexpected media types.');
 }
 $before = json_decode(file_get_contents(dirname(__DIR__) . '/tmp/admin-structure-audit.json'), TRUE, 512, JSON_THROW_ON_ERROR);
-// Itens aposentados por decisão do responsável (2026-10-20): bloco de participação da home e os três links de
+// Itens aposentados por decisão do responsável (2026-10-20): bloco de
+// participação da home e os três links de
 // participação do rodapé. Qualquer outro item do snapshot ausente reprova.
 $retired = [
 // Home — Participação (block_content)
@@ -148,7 +175,8 @@ $retired = [
   'ae127c2e-aa03-4a8e-b89c-69f864b7e2eb',
 ];
 foreach (['node', 'block_content', 'menu_link_content'] as $type) {
-  // A limpeza não pode apagar conteúdo existente. O conteúdo novo (importações, publicações) é esperado: a checagem é
+  // A limpeza não pode apagar conteúdo existente. O conteúdo novo
+  // (importações, publicações) é esperado: a checagem é
   // por UUID do snapshot, sem exigir igualdade de contagem.
   $present = [];
   foreach (\Drupal::entityTypeManager()->getStorage($type)->loadMultiple() as $entity) {
@@ -188,8 +216,20 @@ echo "Editorial entity counts preserved; configuration dependencies intact; $cou
 $switcher = \Drupal::service('account_switcher');
 $switcher->switchTo(User::load(1));
 try {
-  // Checked by stable route name: admin paths are localized (e.g. /painel-administrativo/conteudo).
-  foreach (['system.admin_content', 'entity.block_content.collection', 'entity.media.collection', 'view.files.page_1', 'entity.user.collection', 'dblog.overview', 'redirect.list', 'entity.webform.collection', 'entity.view.collection', 'entity.menu.collection'] as $routeName) {
+  // Checked by stable route name: admin paths are localized (e.g.
+  // /painel-administrativo/conteudo).
+  foreach ([
+    'system.admin_content',
+    'entity.block_content.collection',
+    'entity.media.collection',
+    'view.files.page_1',
+    'entity.user.collection',
+    'dblog.overview',
+    'redirect.list',
+    'entity.webform.collection',
+    'entity.view.collection',
+    'entity.menu.collection',
+  ] as $routeName) {
     if (!\Drupal::service('router.route_provider')->getRoutesByNames([$routeName])) {
       throw new RuntimeException('Required administrative route missing: ' . $routeName);
     }

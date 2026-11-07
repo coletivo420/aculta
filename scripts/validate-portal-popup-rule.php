@@ -7,9 +7,11 @@
  * Reprova, no módulo aculta_portal e no tema aculta420 (PHP, JS, Twig):
  * - marcação de <dialog> nativo e chamada showModal() fora de Drupal.dialog;
  * - data-dialog-type diferente de "modal";
- * - tamanho, posição ou classe de diálogo informados pelo módulo (width, maxHeight, position, dialogClass).
+ * - tamanho, posição ou classe de diálogo informados pelo módulo
+ *   (width, maxHeight, position, dialogClass).
  *
- * Arquivos listados na tabela "Exceções explícitas" de POPUP-PADRAO.md ficam fora da regra.
+ * Arquivos listados na tabela "Exceções explícitas" de POPUP-PADRAO.md
+ * ficam fora da regra.
  */
 
 declare(strict_types=1);
@@ -17,7 +19,8 @@ declare(strict_types=1);
 $root = dirname(__DIR__);
 $doc = (string) file_get_contents($root . '/docs/portal/POPUP-PADRAO.md');
 
-// Exceções: linhas "| `caminho` | motivo | aprovado | data |" dentro da seção "## Exceções explícitas".
+// Exceções: linhas "| `caminho` | motivo | aprovado | data |" dentro da
+// seção "## Exceções explícitas".
 $exceptions = [];
 if (preg_match('/^## Exceções explícitas\s*$(.*?)(?=^## |\z)/ms', $doc, $section)) {
   foreach (preg_split('/\R/', $section[1]) as $line) {

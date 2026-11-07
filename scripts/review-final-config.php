@@ -14,7 +14,11 @@ foreach (array_merge([''], $active->getAllCollectionNames(), $sync->getAllCollec
   $a = $collection === '' ? $active : $active->createCollection($collection);
   $s = $collection === '' ? $sync : $sync->createCollection($collection);
   foreach (array_unique(array_merge($a->listAll(), $s->listAll())) as $name) {
-    if ($a->read($name) != $s->read($name)) $diff[$collection ?: 'default'][$name] = ['paths' => $paths($a->read($name), $s->read($name)), 'active_exists' => $a->exists($name), 'sync_exists' => $s->exists($name)];
+    if ($a->read($name) != $s->read($name)) $diff[$collection ?: 'default'][$name] = [
+      'paths' => $paths($a->read($name), $s->read($name)),
+      'active_exists' => $a->exists($name),
+      'sync_exists' => $s->exists($name),
+    ];
   }
 }
 file_put_contents(dirname(__DIR__) . '/tmp/final-config-review.json', json_encode($diff, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
