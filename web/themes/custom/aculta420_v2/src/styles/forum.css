@@ -277,7 +277,7 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
 
 /* Categorias do tópico como pílula colada (rótulo e valor dentro da mesma pílula), como na V1.
    O bloco do campo sai sem classe do render do Drupal; a estrutura é rótulo + valor. */
-.aculta-forum-topic__content > div:not([class]) {
+.aculta-forum-topic__content > div:not([class]):not([data-aculta-discussion-thread]) {
   display: inline-flex;
   align-items: center;
   gap: .25rem;
