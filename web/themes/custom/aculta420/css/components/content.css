@@ -136,7 +136,7 @@
   font-size: 0.875rem;
   line-height: 1.45;
 }
-.panel {
+.aculta-card, .aculta-panel {
   --bs-card-border-color: var(--aculta-border-default);
   --bs-card-border-radius: var(--bs-border-radius);
   --bs-card-inner-border-radius: calc(var(--bs-border-radius) - 1px);
@@ -144,26 +144,27 @@
   --bs-card-spacer-y: 1.5rem;
   box-shadow: none;
 }
-.panel .panel-title { margin-block: 0 0.75rem; }
-.panel .panel-title a { color: var(--aculta-text-primary); text-decoration: none; }
-.panel .panel-title a:hover, .panel .panel-title a:focus-visible { text-decoration: underline; text-decoration-color: var(--aculta-border-accent); }
-.panel .panel-body:last-child { margin-bottom: 0; }
-.panel,
+.aculta-card .aculta-card__title, .aculta-panel .aculta-panel__title { margin-block: 0 0.75rem; }
+.aculta-card .aculta-card__title a, .aculta-panel .aculta-panel__title a { color: var(--aculta-text-primary); text-decoration: none; }
+.aculta-card .aculta-card__title a:hover, .aculta-card .aculta-card__title a:focus-visible,
+.aculta-panel .aculta-panel__title a:hover, .aculta-panel .aculta-panel__title a:focus-visible { text-decoration: underline; text-decoration-color: var(--aculta-border-accent); }
+.aculta-card .aculta-card__body:last-child, .aculta-panel .aculta-panel__body:last-child { margin-bottom: 0; }
+.aculta-card, .aculta-panel,
 .aculta-areas > section,
 .aculta-editorial-list .views-row {
   background-color: var(--aculta-surface-raised);
 }
-.panel,
+.aculta-card, .aculta-panel,
 .aculta-editorial-list .views-row {
   border: 1px solid var(--aculta-border-default);
   border-top: 3px solid var(--aculta-interactive-active-bg);
   border-radius: var(--bs-border-radius);
 }
-.panel,
+.aculta-card, .aculta-panel,
 .aculta-editorial-list .views-row {
   transition: border-color var(--aculta-motion-fast) var(--aculta-ease-standard), box-shadow var(--aculta-motion-fast) var(--aculta-ease-standard), transform var(--aculta-motion-fast) var(--aculta-ease-standard);
 }
-.panel:is(:hover, :focus-within),
+.aculta-card:is(:hover, :focus-within), .aculta-panel:is(:hover, :focus-within),
 .aculta-editorial-list .views-row:is(:hover, :focus-within) {
   border-color: var(--aculta-interactive-active-bg);
   box-shadow: var(--aculta-shadow-hover);

@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  * vive aqui e delega a `PortalUiHooks` a tradução de tokens.
  *
  * Ícones: o webform_bootstrap 3.x (deprecado) trocava os ícones do Webform por
- * glifos do Bootstrap 3. Aqui o botão continua `input[type=image]`, porque o Form
+ * glifos da fonte legada. Aqui o botão continua `input[type=image]`, porque o Form
  * API identifica o clique pelas coordenadas da imagem; só o `src` muda, para o SVG
  * oficial do Bootstrap Icons em `assets/icons/bootstrap-icons/icons/`.
  *

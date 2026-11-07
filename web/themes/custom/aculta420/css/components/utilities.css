@@ -38,12 +38,19 @@
   min-height: 100vh;
 }
 
-.panel-default {
+.aculta-panel, .aculta-card {
+  color: var(--aculta-text-primary);
+  background: var(--aculta-surface-raised);
+  border: 1px solid var(--aculta-border-default);
+  border-radius: var(--bs-border-radius);
+}
+.aculta-panel__body, .aculta-card__body { padding: 1rem; }
+.aculta-panel--default {
   border-color: var(--aculta-border-default);
   background: var(--aculta-surface-raised);
   color: var(--aculta-text-primary);
 }
-.panel-default > .panel-heading {
+.aculta-panel--default > .aculta-panel__heading {
   border-color: var(--aculta-border-default);
   background: var(--aculta-surface-muted);
   color: var(--aculta-text-primary);

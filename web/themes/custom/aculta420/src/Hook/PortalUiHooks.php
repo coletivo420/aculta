@@ -120,7 +120,7 @@ final class PortalUiHooks {
     'event-location-button-secondary-small' => ['button', 'button--secondary', 'button--small'],
     'event-location-button-primary-action' => ['button', 'button--primary', 'button--action'],
     'event-location-button-danger' => ['button', 'button--danger'],
-    'event-location-summary-card' => ['aculta-location-summary-card', 'panel', 'panel-default', 'aculta-u-p-3', 'aculta-u-my-2'],
+    'event-location-summary-card' => ['aculta-location-summary-card', 'aculta-panel', 'aculta-panel--default', 'aculta-u-p-3', 'aculta-u-my-2'],
     'event-location-title' => ['aculta-location-title', 'h5', 'aculta-u-mb-1'],
     'event-location-address' => ['aculta-location-address', 'text-muted', 'aculta-u-mb-2'],
     'event-location-badge' => ['aculta-location-badge', 'badge'],
@@ -160,10 +160,10 @@ final class PortalUiHooks {
     'wiki-proposal-contribute' => ['button', 'button--secondary'],
     // Doação (aculta_donation): resumo da etapa de revisão e links de edição.
     'donation-summaries' => ['aculta-u-grid', 'aculta-u-gap-3'],
-    'donation-summary' => ['panel', 'panel-default', 'panel-body'],
+    'donation-summary' => ['aculta-panel', 'aculta-panel--default', 'aculta-panel__body'],
     'donation-summary-edit' => ['btn', 'btn-sm', 'btn-outline-primary'],
     'donation-document-link' => ['link-primary'],
-    'donation-thanks' => ['panel', 'panel-default', 'panel-body', 'text-center'],
+    'donation-thanks' => ['aculta-panel', 'aculta-panel--default', 'aculta-panel__body', 'text-center'],
     'donation-donor-name' => ['aculta-u-semibold'],
     'donation-clause' => ['text-muted'],
     'donation-amount-block' => ['aculta-u-my-3'],
@@ -178,7 +178,7 @@ final class PortalUiHooks {
     // Cartão do produto: caixa com borda neutra (sem cor de botão), texto
     // alinhado à esquerda.
     'shop-product-card' => ['aculta-u-block', 'aculta-u-border', 'aculta-u-border-2', 'aculta-u-rounded-3', 'aculta-u-text-start', 'aculta-u-p-3', 'aculta-u-no-decoration'],
-    'editorial-card' => ['aculta-card', 'panel', 'panel-default'],
+    'editorial-card' => ['aculta-card', 'aculta-panel', 'aculta-panel--default'],
     // Relatórios de requisitos e segredos (administração do Portal).
     // Estatísticas (aculta_statistics): painel central e por área. O módulo
     // envia só tokens; o tema define o visual.
@@ -215,11 +215,11 @@ final class PortalUiHooks {
     // grupo, sem CSS próprio.
     'lms-forum-moderation-overview' => ['aculta-lms-forum-moderation__overview'],
     'lms-forum-moderation-queue' => ['aculta-lms-forum-moderation__queue'],
-    // Discussões LMS e áreas administrativas usam classes Bootstrap 3 nativas
-    // e utilitários ACULTA próprios.
-    'lms-activity-discussions' => ['panel', 'panel-default', 'panel-body', 'aculta-u-mt-3'],
+    // Discussões LMS e áreas administrativas usam classes de apresentação
+    // ACULTA próprias e utilitários sem dependência do framework.
+    'lms-activity-discussions' => ['aculta-panel', 'aculta-panel--default', 'aculta-panel__body', 'aculta-u-mt-3'],
     'lms-h5p-activity' => ['aculta-u-grid', 'aculta-u-gap-3'],
-    'lms-h5p-discussions' => ['panel', 'panel-default', 'panel-body', 'aculta-u-mt-3'],
+    'lms-h5p-discussions' => ['aculta-panel', 'aculta-panel--default', 'aculta-panel__body', 'aculta-u-mt-3'],
     'lms-h5p-course-documents' => ['aculta-u-mt-3'],
     'lms-class-roster' => ['aculta-lms-class-roster', 'aculta-u-grid', 'aculta-u-gap-3'],
     'consent-banner' => ['aculta-consent'],
@@ -285,7 +285,7 @@ final class PortalUiHooks {
     'h5p-content-unavailable' => ['h5p-content-unavailable'],
     'h5p-dashboard-course' => ['aculta-lms-h5p-course'],
     'checkout-help' => ['checkout-help'],
-    'checkout-guest-registration' => ['panel', 'panel-default', 'panel-body', 'aculta-u-mb-3'],
+    'checkout-guest-registration' => ['aculta-panel', 'aculta-panel--default', 'aculta-panel__body', 'aculta-u-mb-3'],
     'checkout-google' => ['aculta-u-flex', 'aculta-u-justify-center', 'aculta-u-mb-3'],
     'gallery-dialog' => ['aculta-gallery-dialog'],
     'icon-search' => ['bi', 'bi-search'],
@@ -328,7 +328,7 @@ final class PortalUiHooks {
     'account-avatar' => ['portal-account__avatar'],
     'account-photo-preview' => ['portal-account-photo__preview'],
     'account-photo-actions' => ['portal-account-photo__actions'],
-    'account-bio-card' => ['panel', 'panel-default', 'panel-body', 'portal-account-bio'],
+    'account-bio-card' => ['aculta-panel', 'aculta-panel--default', 'aculta-panel__body', 'portal-account-bio'],
     'account-bio-text' => ['portal-account-bio__text'],
     'account-bio-edit' => ['btn', 'btn-link', 'portal-account-bio__edit', 'bi', 'bi-pencil'],
     'account-bio-actions' => ['portal-account-bio__actions'],
@@ -525,7 +525,6 @@ final class PortalUiHooks {
     'button' => ['button'],
     'user-admin-filters' => ['aculta-admin-filters', 'action-links'],
     'event-date-order' => ['aculta-event-date-order'],
-    'event-date-actions' => ['aculta-event-date-actions'],
     'ugc-admin-status-filters' => ['aculta-admin-status-filters', 'action-links'],
     'ugc-admin-purpose-filters' => ['aculta-admin-purpose-filters', 'action-links'],
     'event-organizer-guide' => ['culturas-guide'],
@@ -564,7 +563,7 @@ final class PortalUiHooks {
     'studio-course-authoring' => ['studio-course-authoring'],
     'studio-course-authoring-back' => ['studio-course-authoring__back'],
     'studio-marley-entry' => ['btn', 'btn-outline-primary', 'studio__action'],
-    'studio-account-home' => ['studio__panel', 'panel', 'panel-default', 'panel-body'],
+    'studio-account-home' => ['studio__panel', 'aculta-panel', 'aculta-panel--default', 'aculta-panel__body'],
     'studio-account-avatar' => ['studio-account-identity__avatar'],
     'studio-profile-entry' => ['btn', 'btn-outline-primary', 'studio__action'],
     'studio-profile-nickname-edit' => ['btn', 'btn-outline-primary', 'studio__action'],
@@ -602,7 +601,7 @@ final class PortalUiHooks {
     'studio-experiences' => ['studio__actions', 'list-unstyled', 'aculta-u-grid', 'aculta-u-gap-2'],
     'studio-tabs' => ['nav', 'nav-tabs', 'studio__tabs'],
     'studio-tab' => ['nav-link', 'studio__tab'],
-    'studio-panel' => ['studio__panel', 'panel', 'panel-default', 'panel-body'],
+    'studio-panel' => ['studio__panel', 'aculta-panel', 'aculta-panel--default', 'aculta-panel__body'],
     'studio-heading' => ['studio__heading', 'h4'],
     'studio-actions' => ['studio__actions', 'list-unstyled', 'aculta-u-flex', 'aculta-u-wrap', 'aculta-u-gap-2'],
     'studio-action' => ['btn', 'btn-outline-primary', 'studio__action'],
@@ -668,7 +667,7 @@ final class PortalUiHooks {
    * @var string[]
    */
   private const COMPONENTS = [
-    'panel', 'panel-default',
+    'aculta-panel', 'aculta-panel--default', 'aculta-panel__body',
     'content-grid',
     'content-section',
     'context-header',

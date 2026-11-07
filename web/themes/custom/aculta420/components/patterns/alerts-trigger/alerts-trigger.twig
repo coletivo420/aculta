@@ -8,8 +8,8 @@
 {{ attach_library('aculta420/messenger-drawers') }}
 <button type="button"
         class="aculta-utility-trigger aculta-alerts-trigger"
-        data-toggle="modal"
-        data-target="#aculta-alerts-offcanvas"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#aculta-alerts-offcanvas"
         aria-controls="aculta-alerts-offcanvas"
         aria-expanded="false"
         aria-label="{{ label }}"
@@ -20,21 +20,19 @@
   </span>
 </button>
 
-<div class="modal fade aculta-utility-offcanvas aculta-alerts-offcanvas"
+<div class="offcanvas offcanvas-end aculta-utility-offcanvas aculta-alerts-offcanvas"
      tabindex="-1"
      id="aculta-alerts-offcanvas"
-     role="dialog"
      aria-labelledby="aculta-alerts-offcanvas-title"
      data-aculta-utility-drawer
      data-aculta-drawer-count="alerts"
      data-aculta-drawer-url="{{ href }}"
      data-aculta-drawer-label="{{ 'Não foi possível carregar os avisos. Tente novamente.'|t }}">
-  <div class="modal-dialog" role="document"><div class="modal-content">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-label="{{ 'Fechar avisos'|t }}"><span aria-hidden="true">&times;</span></button>
-    <h2 class="modal-title h5" id="aculta-alerts-offcanvas-title">{{ 'Avisos'|t }}</h2>
+  <div class="offcanvas-header">
+    <h2 class="offcanvas-title h5" id="aculta-alerts-offcanvas-title">{{ 'Avisos'|t }}</h2>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{{ 'Fechar avisos'|t }}"></button>
   </div>
-  <div class="modal-body aculta-utility-offcanvas__body" data-aculta-drawer-content aria-live="polite" aria-busy="false">
+  <div class="offcanvas-body aculta-utility-offcanvas__body" data-aculta-drawer-content aria-live="polite" aria-busy="false">
     <p>{{ 'Abra para atualizar os avisos.'|t }}</p>
   </div>
   {# Rodapé fixo da gaveta, abaixo de todos os avisos (persistentes, alertas e do Fórum). Mesmo estilo do botão do carrinho. #}
@@ -43,5 +41,5 @@
       <a class="btn btn-primary aculta-alerts-offcanvas__action" href="{{ all_href }}">{{ 'Ver todos os avisos'|t }}</a>
     </div>
   {% endif %}
-  </div></div>
+  </div>
 </div>
