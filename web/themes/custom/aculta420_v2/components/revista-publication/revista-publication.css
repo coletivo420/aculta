@@ -159,12 +159,12 @@
   transform: none;
 }
 
-/* Largura total (data-purpose-layout="full"): a publicação ocupa toda a largura disponível.
-   O corpo do texto mantém a medida de leitura (68ch) para legibilidade. */
+/* Largura total (data-purpose-layout="full"): tudo ocupa a página inteira, inclusive o corpo do texto. */
 html[data-purpose-layout="full"] .revista-publication {
   inline-size: 100%;
   max-inline-size: none;
 }
 html[data-purpose-layout="full"] .revista-publication__body {
-  margin-inline: auto;
+  inline-size: 100%;
+  max-inline-size: none;
 }

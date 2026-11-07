@@ -188,11 +188,7 @@
   }
 
   html[data-purpose-layout="full"] .layout-page__content {
-    padding-inline: var(--spacing-sm);
-  }
-
-  html[data-purpose-layout="full"] .layout-page__title {
-    padding-inline: var(--spacing-sm);
+    padding-inline: 0;
   }
 
   /* Páginas de leitura e conteúdo estreito */
