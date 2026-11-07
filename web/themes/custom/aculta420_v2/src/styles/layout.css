@@ -168,21 +168,21 @@
     padding: var(--spacing-md);
   }
 
-  /* Modos de layout de container por purpose (aculta420_v2): Padrão, Largura total e Estreito. */
-  /* Padrão: sem regra extra; a caixa usa --aculta-container-width (1200 px). */
-
-  html[data-purpose-layout="full"] :is(.layout-page--aside, .page__main--with-sidebar) {
-    max-inline-size: 100%;
-    inline-size: 100%;
+  /* Modos de layout de container por purpose (aculta420_v2). O atributo do purpose manda na largura,
+     qualquer que seja a variante do template (--full ou --aside). */
+  html[data-purpose-layout="default"] .layout-page,
+  html[data-purpose-layout="narrow"] .layout-page {
+    max-inline-size: var(--aculta-container-width, 1200px);
+    margin-inline: auto;
   }
 
-  html[data-purpose-layout="full"] :is(.page__navigation, .page__highlighted, .page__help, .page__breadcrumb, .page__footer-inner) {
-    inline-size: 100%;
-    max-inline-size: 100%;
-  }
-
-  html[data-purpose-layout="narrow"] :is(.layout-page--aside, .page__main--with-sidebar, .page__navigation, .page__highlighted, .page__help, .page__breadcrumb, .page__footer-inner) {
+  html[data-purpose-layout="narrow"] .layout-page__content {
     max-inline-size: var(--aculta-narrow-container-width, 750px);
+    margin-inline: auto;
+  }
+
+  html[data-purpose-layout="full"] .layout-page {
+    max-inline-size: none;
   }
 
   /* Páginas de leitura e conteúdo estreito */
