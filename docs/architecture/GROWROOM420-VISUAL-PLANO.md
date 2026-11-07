@@ -13,8 +13,11 @@
 | `referencia-3.webp` | Página de tópico, desktop |
 | `referencia-4.webp` | Formulário de novo tópico, desktop (`/criar-topico`) |
 | `referencia-5.webp` | Fórum mobile (lista e categorias) |
+| `referencia-6.webp` | Página de categoria, mobile (`/categorias/{termo}`) |
+| `referencia-7.webp` | Página de tópico, mobile |
+| `referencia-8.webp` | Formulário de novo tópico, mobile (`/criar-topico`) |
 
-As referências citadas como "imagens 2 e 6 (mobile)" e "imagem 4" neste documento correspondem a estes arquivos: quando o texto disser "imagem N", use `referencia-N.webp`. As versões mobile de categoria, tópico e novo tópico enviadas na segunda mensagem **não foram salvas em arquivo**; o agente deve seguir as especificações textuais das seções 3 e 4 para essas telas.
+São oito referências no total. Quando o texto disser "imagem N", use `referencia-N.webp`. As telas mobile (6 a 8) são a versão responsiva das desktop (2 a 4) e devem seguir a mesma hierarquia visual.
 
 **Escopo:** apresentação do tema `aculta420_v2`. Não altera a V1 (`web/themes/custom/aculta420/`), não altera lógica de acesso, grants, moderação ou revisões do módulo `aculta_forum`.
 
