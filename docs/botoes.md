@@ -139,3 +139,12 @@ Migram para o SDC em entregas anteriores: Portal, Fórum, Studio (calendário, c
 - Resultado em 2026-11-08: **12/12 verificações OK**, **22 botões** anunciados (conta 4, eventos 6, admin-redes 3, admin-caminhos 9). Botões só com ícone foram anunciados pelo `aria-label`; botões de envio, como `Filtrar`/`Salvar`, como `push button`.
 - Evidência resumida: `tests/browser/capturas/botoes-a11y/2026-11-08/results.json`. O log de fala completo fica fora do repositório.
 - Limitação: as rotas administrativas usam o tema Gin; nelas o envio é o `<input type="submit">` do Gin (nome acessível em `value`). O teste cobre os dois temas.
+
+## Limpeza de CSS de área (passo 5): resultado
+
+Verificado com `grep` em `src/Hook/PortalUiHooks.php`, módulos e componentes:
+- `studio.css` `:is(.button--danger, .danger)`: mantido. `button--danger` é emitido pelos tokens `event-date-delete`, `event-location-button-danger`, `event-org-button-danger` e `friendship-remove-action`, e pelo template `input--submit`.
+- `event-organization.css` `.search-box .button`, `.search-box .button--primary`, `.search-box .button--secondary`: mantido. `.search-box` é emitido pelo token `event-organization-search` no `EventOrganizationModalForm`, e `.button` é a classe gerada pelo SDC.
+- As demais regras `.aculta-button--*` e `.aculta-btn-*` já foram removidas em `ad6335e19`; nenhum markup as usa.
+
+Conclusão: não há regra de área sem markup ativo para remover com segurança neste momento.
