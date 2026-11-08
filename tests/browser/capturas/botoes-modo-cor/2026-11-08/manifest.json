@@ -1,0 +1,43 @@
+{
+  "checks": {
+    "seletor_radios": 2,
+    "barra_institucional": 0,
+    "previews": 89,
+    "previews_light": 89,
+    "previews_dark": 89
+  },
+  "captures": [
+    {
+      "file": "light-320.png",
+      "mode": "light",
+      "width": 320,
+      "overflow_px": 0
+    },
+    {
+      "file": "light-1440.png",
+      "mode": "light",
+      "width": 1440,
+      "overflow_px": 0
+    },
+    {
+      "file": "dark-320.png",
+      "mode": "dark",
+      "width": 320,
+      "overflow_px": 0
+    },
+    {
+      "file": "dark-1440.png",
+      "mode": "dark",
+      "width": 1440,
+      "overflow_px": 0
+    }
+  ],
+  "apos_uli": {
+    "url": "https://conta.aculta.toca.net.br/?check_logged_in=1",
+    "titulo": "Studio Dashboard | Conta ACULTA"
+  },
+  "sessao": true,
+  "url": "https://aculta.toca.net.br/painel-administrativo/aparencia/ui/components",
+  "titulo": "Components library | Associação Cultural Antiproibicionista",
+  "ok": true
+}
