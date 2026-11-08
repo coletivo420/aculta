@@ -375,12 +375,12 @@ final class AnswerReviewWorkflowKernelTest extends KernelTestBase {
    * Creates a Group type used by the fixture.
    */
   private function createGroupType(string $id): void {
-    GroupType::create([
+    (GroupType::load($id) ?? GroupType::create([
       'id' => $id,
       'label' => $id,
       'creator_membership' => FALSE,
       'creator_roles' => [],
-    ])->save();
+    ]))->save();
   }
 
   /**
