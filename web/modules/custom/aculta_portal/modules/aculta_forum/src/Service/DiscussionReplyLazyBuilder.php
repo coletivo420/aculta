@@ -16,7 +16,7 @@ class DiscussionReplyLazyBuilder implements TrustedCallbackInterface {
   public function __construct(
     protected readonly EntityTypeManagerInterface $entityTypeManager,
     protected readonly AccountProxyInterface $currentUser,
-    protected readonly DiscussionReplyFormBuilder $formBuilder,
+    protected readonly DiscussionReplyFormBuilder $replyFormBuilder,
   ) {}
 
   /**
@@ -49,7 +49,7 @@ class DiscussionReplyLazyBuilder implements TrustedCallbackInterface {
 
     $parsedParentId = ($parentId !== NULL && $parentId !== '' && ctype_digit($parentId)) ? (int) $parentId : NULL;
 
-    return $this->formBuilder->buildReplyForm($host, $this->currentUser, $parsedParentId, $quote);
+    return $this->replyFormBuilder->buildReplyForm($host, $this->currentUser, $parsedParentId, $quote);
   }
 
 }

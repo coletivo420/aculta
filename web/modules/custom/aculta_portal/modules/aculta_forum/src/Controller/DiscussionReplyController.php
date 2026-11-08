@@ -22,7 +22,7 @@ class DiscussionReplyController extends ControllerBase {
 
   public function __construct(
     protected readonly EntityTypeManagerInterface $forumEntityTypeManager,
-    protected readonly DiscussionReplyFormBuilder $formBuilder,
+    protected readonly DiscussionReplyFormBuilder $replyFormBuilder,
     protected readonly DiscussionReplyAccess $replyAccess,
     protected readonly DiscussionContextResolver $contextResolver,
     protected readonly ForumQuoteBuilder $quoteBuilder,
@@ -57,7 +57,7 @@ class DiscussionReplyController extends ControllerBase {
       }
     }
 
-    return $this->formBuilder->buildReplyForm($host, $this->forumCurrentUser, $parentId, $quote);
+    return $this->replyFormBuilder->buildReplyForm($host, $this->forumCurrentUser, $parentId, $quote);
   }
 
 }

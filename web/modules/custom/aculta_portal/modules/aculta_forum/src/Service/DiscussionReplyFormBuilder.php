@@ -11,7 +11,6 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Core\Url;
 
 /**
  * Builds contextual discussion reply forms for Comment and ForumPost entities.
@@ -59,8 +58,7 @@ class DiscussionReplyFormBuilder {
       ];
     }
 
-    $context = $this->contextResolver->resolve($host, $account);
-    $commentField = $context?->getCommentField() ?? 'field_aculta_discussion';
+    $commentField = 'field_aculta_discussion';
 
     $commentStorage = $this->entityTypeManager->getStorage('comment');
     $commentValues = [

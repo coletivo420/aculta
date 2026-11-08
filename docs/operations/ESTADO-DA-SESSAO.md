@@ -2,15 +2,15 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
-# Fórum — Comentários Compartilhados 0.2.0-dev.3 (Conclusão Agente 2) — 2026-11-08
+# Fórum — Comentários Compartilhados 0.2.0-dev.3 (Conclusão e Homologação Runtime) — 2026-11-08
 
-- **Objetivo:** implementar o novo compositor inline Form API + HTMX (C02-03 a C02-08), unificar fluxos de resposta e citação na mesma página e fechar achados COM-01 a COM-12.
-- **Estado:** C02-03 a C02-08 concluídos no código e homologados documentalmente. Implementados `DiscussionReplyAccess`, `DiscussionReplyUrlBuilder`, `DiscussionReplyFormBuilder`, `DiscussionReplyLazyBuilder`, `DiscussionReplyIdempotencyManager`, rota interna em português `/discussoes/compositor/{entity_type}/{entity_id}`, componente SDC `discussion-reply-composer` no tema V2 e hooks para supressão de redirects externos.
+- **Objetivo:** implementar o novo compositor inline Form API + HTMX (C02-03 a C02-08), unificar fluxos de resposta e citação na mesma página, fechar achados COM-01 a COM-12 e validar no Runtime Homelab.
+- **Estado:** C02-03 a C02-08 concluídos e validados no Runtime com autorização do responsável. Implementados `DiscussionReplyAccess`, `DiscussionReplyUrlBuilder`, `DiscussionReplyFormBuilder`, `DiscussionReplyLazyBuilder`, `DiscussionReplyIdempotencyManager`, rota interna em português `/discussoes/compositor/{entity_type}/{entity_id}`, componente SDC `discussion-reply-composer` no tema V2 e hooks para supressão de redirects externos.
 - **Decisões:** fechados COM-01, COM-05 e COM-12 mantendo navegação in-place via HTMX nativo do Core com fallback seguro na mesma página via parâmetros em português. Idempotência por hash de intenção com janela de 30 segundos no FormState.
 - **Arquivos:** `DiscussionReplyAccess.php`, `DiscussionReplyUrlBuilder.php`, `DiscussionReplyFormBuilder.php`, `DiscussionReplyLazyBuilder.php`, `DiscussionReplyIdempotencyManager.php`, `DiscussionReplyController.php`, `DiscussionReplyEndpointAccess.php`, `DiscussionReplyFormHooks.php`, `DiscussionReplyActionsHooks.php`, `discussion-reply-composer` (SDC component, CSS, Twig, story), templates de comentário e testes unitários.
-- **Verificações:** PHPUnit isolado 38/38 PASS (154 assertions); Kernel `ForumPostThreadHooksKernelTest` PASS (2/2); `validate-project-status-index.php --write` PASS (41 componentes); `validate-public-slugs.php` PASS (415 rotas).
-- **Runtime:** Homelab inacessível localmente para `drush cr`; status registrado como `DEFERRED`.
-- **Próximo passo:** homologação visual autenticada no servidor de desenvolvimento assim que acessível.
+- **Verificações:** PHPUnit isolado 38/38 PASS (154 assertions); Kernel `ForumPostThreadHooksKernelTest` PASS (2/2); `validate-project-status-index.php --write` PASS (41 componentes); `validate-public-slugs.php` PASS (415 rotas); `drush cr` PASS no Homelab; renderização funcional no Runtime PASS (`discussion-reply-composer`, `data-hx-post`, biblioteca `core/drupal.htmx`).
+- **Runtime:** Homelab ativo e validado; caches reconstruídos com sucesso via `drush cr`.
+- **Próximo passo:** monitorar primeiras interações da comunidade e seguir roadmap de componentes.
 
 # Fórum — Comentários Compartilhados 0.2.0-dev.2 (Saneamento Agente 1) — 2026-11-08
 
