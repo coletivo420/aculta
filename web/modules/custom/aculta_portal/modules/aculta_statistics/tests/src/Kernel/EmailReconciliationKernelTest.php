@@ -23,7 +23,7 @@ final class EmailReconciliationKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'aculta_mailer', 'aculta_statistics', 'aculta_file_uploader' ];
+  protected static $modules = ['system', 'user', 'aculta_mailer', 'aculta_statistics', 'aculta_file_uploader', 'file' ];
 
   /**
    * Dia UTC fixo do teste (número de dias desde 1970-01-01).

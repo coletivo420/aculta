@@ -24,7 +24,7 @@ final class DailyAggregateStorageKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['aculta_statistics', 'aculta_file_uploader' ];
+  protected static $modules = ['aculta_statistics', 'aculta_file_uploader', 'file' ];
 
   /**
    * {@inheritdoc}

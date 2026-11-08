@@ -23,7 +23,7 @@ final class MailTemplateHtmlKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'filter', 'aculta_mailer', 'aculta_mailer_test', 'aculta_file_uploader' ];
+  protected static $modules = ['system', 'user', 'filter', 'aculta_mailer', 'aculta_mailer_test', 'aculta_file_uploader', 'file' ];
 
   /**
    * {@inheritdoc}

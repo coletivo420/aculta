@@ -26,7 +26,7 @@ final class MailWebhookKernelTest extends KernelTestBase {
    *
    * @var string[]
    */
-  protected static $modules = ['system', 'user', 'aculta_mailer', 'aculta_mailer_test', 'aculta_file_uploader' ];
+  protected static $modules = ['system', 'user', 'aculta_mailer', 'aculta_mailer_test', 'aculta_file_uploader', 'file' ];
 
   /**
    * Correlation ID da mensagem de teste.

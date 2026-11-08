@@ -29,7 +29,7 @@ final class MailTemplateKernelTest extends KernelTestBase {
    *
    * @var string[]
    */
-  protected static $modules = ['system', 'user', 'filter', 'aculta_mailer', 'aculta_mailer_test', 'aculta_file_uploader' ];
+  protected static $modules = ['system', 'user', 'filter', 'aculta_mailer', 'aculta_mailer_test', 'aculta_file_uploader', 'file' ];
 
   /**
    * Correlation ID fixo usado nas mensagens de teste.

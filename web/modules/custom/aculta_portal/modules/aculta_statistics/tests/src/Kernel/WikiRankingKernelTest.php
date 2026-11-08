@@ -27,7 +27,7 @@ final class WikiRankingKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['aculta_statistics', 'node', 'user', 'system', 'field', 'text', 'filter', 'aculta_file_uploader' ];
+  protected static $modules = ['aculta_statistics', 'node', 'user', 'system', 'field', 'text', 'filter', 'aculta_file_uploader', 'file' ];
 
   /**
    * {@inheritdoc}
