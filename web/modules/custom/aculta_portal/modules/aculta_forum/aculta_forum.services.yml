@@ -56,6 +56,12 @@ services:
   Drupal\aculta_forum\Hook\ForumAttachmentPublicationHooks:
     class: Drupal\aculta_forum\Hook\ForumAttachmentPublicationHooks
     arguments: ['@aculta_forum.attachment_publication', '@aculta_forum.gallery_publication']
+  Drupal\aculta_forum\Hook\DiscussionReplyActionsHooks:
+    class: Drupal\aculta_forum\Hook\DiscussionReplyActionsHooks
+    arguments: ['@aculta_forum.discussion_context_resolver', '@current_user', '@aculta_forum.discussion_reply_access', '@aculta_forum.discussion_reply_url_builder', '@string_translation']
+  Drupal\aculta_forum\Hook\DiscussionReplyFormHooks:
+    class: Drupal\aculta_forum\Hook\DiscussionReplyFormHooks
+    arguments: ['@aculta_forum.discussion_context_resolver', '@current_user', '@aculta_forum.discussion_reply_url_builder', '@aculta_forum.discussion_reply_idempotency_manager', '@request_stack', '@current_route_match']
   Drupal\aculta_forum\Hook\ForumCommentMoveHooks:
     class: Drupal\aculta_forum\Hook\ForumCommentMoveHooks
     arguments: ['@aculta_forum.comment_mover', '@current_user']
