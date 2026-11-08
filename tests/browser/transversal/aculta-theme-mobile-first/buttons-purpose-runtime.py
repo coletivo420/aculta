@@ -166,11 +166,11 @@ def main():
                     })());"""))
                     primary, outline = metrics["buttons"]
                     checks = {
-                        "purpose": metrics["purpose"] == purpose,
-                        "configured_scheme": metrics["scheme"] == EXPECTED_SCHEMES[purpose],
-                        "mode": metrics["mode"] == mode,
-                        "viewport": metrics["width"] == width,
-                        "palette_accent_resolved": bool(metrics["accent"]),
+                        "purpose": metrics.get("purpose") == purpose,
+                        "configured_scheme": metrics.get("scheme") == EXPECTED_SCHEMES[purpose],
+                        "mode": metrics.get("mode") == mode,
+                        "viewport": metrics.get("width") == width,
+                        "palette_accent_resolved": bool(metrics.get("accent")),
                         "primary_uses_button_tokens": (
                             primary["background"] == metrics["primaryBackground"]
                             and primary["foreground"] == metrics["primaryForeground"]
