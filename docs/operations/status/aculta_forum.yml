@@ -1,5 +1,5 @@
 # Fonte do índice de status do README raiz.
-version: 0.2.0-dev.1
+version: 0.2.0-dev.2
 state: Dev
-next_phase: "Executar C02-01 e C02-02 do plano de comentários 0.2.0: centralizar no aculta_forum o provider da Wiki, preservar acesso dos quatro contextos e corrigir atributos/permalinks. Depois provar Form API/HTMX na mesma página em C02-03 antes de integrar os consumidores. D-65 HTTP e F-M3/F-M6/F-M7 permanecem pendentes; nenhuma migração de dados autorizada."
-progress_note: "0.2.0-dev.1: ciclo documental de comentários compartilhados aberto; inventário, bugs estáticos, arquitetura, pesquisa primária e microfases C02-00 a C02-08 registrados. Implementação, testes funcionais e Runtime pendentes. Evidências 0.1 preservadas no CHANGELOG e roadmap."
+next_phase: "Agente 2: executar C02-03 (experimento Form API + HTMX) e C02-04 (backend compartilhado Comment) para o novo compositor inline."
+progress_note: "0.2.0-dev.2: saneamento da base de comentários concluído (C02-01 e C02-02). WikiDiscussionContextProvider movido para aculta_forum; templates corrigidos para preservar attributes do Core e acessibilidade de pai; DiscussionCommentPermalinkBuilder implementado para permalinks no hospedeiro sob D-65; forum-quote.js saneado sem manipulação insegura de texto; ForumQuoteHooks desacoplado de aculta420_v2:button e revalidando getWriteAccess; seletores semânticos e contrato #links Link::preRenderLinks garantidos. Entregue handoff ao Agente 2."

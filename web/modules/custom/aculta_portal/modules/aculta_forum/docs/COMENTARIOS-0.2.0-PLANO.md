@@ -78,26 +78,25 @@ Render/Element/Link::preRenderLinks.
 
 ## 3. Achados e grau de evidência
 
-Inspeção estática não equivale a reprodução HTTP ou homologação autenticada.
+Inspeção estática não equivale a reprodução HTTP ou homologação autenticada. A base foi saneada na microfase preparatória (0.2.0-dev.2) antes da introdução do novo compositor inline.
 
-| ID | Evidência | Efeito e correção planejada |
-| --- | --- | --- |
-| COM-01 | Core gera comment.reply; ForumPostThreadBuilder usa /publicacao/nova | Resposta abre página separada. Substituir entrada por compositor contextual. |
-| COM-02 | forum-quote.js cancela clique e acrescenta texto sem definir pid | Citação pode ser salva no nível principal. Construir entidade com pai validado no servidor. |
-| COM-03 | JS usa document.querySelector('form#comment-form') | Falha ou seleciona outro contexto com múltiplos formulários. Usar identificadores por discussão. |
-| COM-04 | Templates não repassam attributes ao cartão | Perdem ID comment-{id} e data-comment-user-id do Core. Preservar atributos autorizados e estados. |
-| COM-05 | Core CommentForm define action comment.reply para novo comentário sem pai | Envio/prévia/erros podem sair da página mesmo com caixa inline. Controlar action e resposta. |
-| COM-06 | Template imprime permalink Core e D-65 bloqueia canonical standalone | Link gerado aponta a rota bloqueada. Resolver URL do hospedeiro, pager e âncora no backend. |
-| COM-07 | PHP usa ForumQuoteBuilder; JS copia innerText sem limite equivalente | Citações inconsistentes. Uma única política no servidor; preservar texto já digitado. |
-| COM-08 | ForumQuoteHooks instancia aculta420_v2:button no módulo | Dependência indevida do tema. Entregar ação neutra e aplicar SDC no adapter visual. |
-| COM-09 | Citação consulta getReadAccess, não getWriteAccess | Lacuna entre CTA e escrita contextual; reproduzir em discussão fechada e acesso revogado. |
-| COM-10 | CSS/JS detectam ação pelo literal da URL | Fragilidade com slugs e ordem de query. Usar atributos de ação, alvo e contexto explícitos. |
-| COM-11 | Citar é adicionado como componente fora do grupo #links do Core | Contrato de renderização a conferir: Core coleta grupos #links. Provar render final e corrigir a estrutura. |
-| COM-12 | Formulário salvo retorna por redirect e pode respeitar destination | Controlar o retorno; ignorar destination no fluxo contextual. Testar parâmetros manipulados. |
+| ID | Evidência | Efeito e correção planejada | Estado | Fase / Responsável |
+| --- | --- | --- | --- | --- |
+| COM-01 | Core gera `comment.reply`; ForumPostThreadBuilder usa `/publicacao/nova` | Resposta abre página separada. Requer novo compositor inline Form API/HTMX. | Aberto / Atribuído | Agente 2 (C02-03, C02-04, C02-06) |
+| COM-02 | `forum-quote.js` cancelava clique e anexava texto sem estabelecer pid validado no servidor | Citação podia gerar resposta com pai incorreto ou órfão. Interceptação insegura eliminada; quote preserva fluxo servidor seguro com pid e pai validado. | Corrigido (0.2.0-dev.2) | Agente 1 (concluído) |
+| COM-03 | JS usava `document.querySelector('form#comment-form')` global | Colisão com múltiplos formulários/discussões na mesma página. Seletor agora é contextual por thread (`[data-aculta-discussion-thread]`) com `data-parent-id`. | Corrigido (0.2.0-dev.2) | Agente 1 (concluído) |
+| COM-04 | Templates `comment--field-aculta-discussion` e `comment--comments` descartavam `attributes` do Drupal | Perdiam âncora `id="comment-{id}"`, `data-comment-user-id`, classes de estado e acessibilidade. Templates atualizados com encapsulamento de `<article{{ attributes... }}>` e `<p class="visually-hidden">{{ parent }}</p>`. | Corrigido (0.2.0-dev.2) | Agente 1 (concluído) |
+| COM-05 | Core `CommentForm` define action `comment.reply` para novo comentário sem pai | Envio/prévia/erros podem sair da página mesmo com caixa inline. Controlar action e resposta. | Aberto / Atribuído | Agente 2 (C02-03, C02-04) |
+| COM-06 | Template imprimia permalink Core e D-65 bloqueia rota standalone canonical (`/comment/{cid}`) | Link gerado apontava para 404 standalone. Criado `DiscussionCommentPermalinkBuilder` e hook de preprocess para apontar ao hospedeiro, idioma, pager 0 e âncora `#comment-{cid}`. | Corrigido (0.2.0-dev.2) | Agente 1 (concluído) |
+| COM-07 | JS copiava `innerText` sem sanitização ou limite, divergindo de `ForumQuoteBuilder` | Citações inconsistentes e risco de injeção. JS não manipula mais texto no cliente sem validação; política única central no servidor (`ForumQuoteBuilder`, limite 1200 chars). | Corrigido (0.2.0-dev.2) | Agente 1 (concluído) |
+| COM-08 | `ForumQuoteHooks` instanciava componente `aculta420_v2:button` diretamente no módulo PHP | Acoplamento indevido do módulo PHP ao tema SDC. Módulo agora emite render array neutro Drupal com metadados semânticos; o tema renderiza os links. | Corrigido (0.2.0-dev.2) | Agente 1 (concluído) |
+| COM-09 | Citação consultava apenas `getReadAccess()`, não `getWriteAccess()` | Lacuna de autorização: botão de citação aparecia em discussões fechadas ou para usuários sem escrita. Corrigido com revalidação estrita de `getWriteAccess()` no hook de links e de form. | Corrigido (0.2.0-dev.2) | Agente 1 (concluído) |
+| COM-10 | CSS e JS detectavam ação por literais frágeis de URL (`?quote=`, `/comment/reply`) | Fragilidade com URLs amigáveis e queries. Ação de citação agora emite `data-action="comment-quote"`, `data-quote-id` e classes semânticas. | Corrigido (0.2.0-dev.2) | Agente 1 (concluído) |
+| COM-11 | Citar era inserido fora do grupo `#links` do Core (`links['aculta_forum_quote']`), quebrando coleta de `preRenderLinks` | Componente não era mesclado aos links do comentário. Ação inserida dentro da chave estrutural `#links['comment-quote']`, coletada nativamente por `Link::preRenderLinks`. | Corrigido (0.2.0-dev.2) | Agente 1 (concluído) |
+| COM-12 | Formulário salvo retorna por redirect e pode respeitar destination manipulado | No fluxo do novo compositor inline, redirects devem ser eliminados (resposta em fragmento). Saneado na preparação; fechamento completo do fluxo inline atribuído a C02-03/04/07. | Aberto / Atribuído | Agente 2 (C02-03, C02-04, C02-07) |
 
-COM-09 e o efeito final de COM-11 exigem reprodução antes de declarar exploração,
-falha visual universal ou perda de acesso. Preservar cacheabilidade também em
-resultados negados; não registrar apenas os metadados do caminho permitido.
+A reprodução estática e unitária confirmou as falhas e as correções de COM-02, 03, 04, 06, 07, 08, 09, 10 e 11.
+COM-01, COM-05 e a eliminação completa de redirects do novo fluxo em COM-12 dependem da implementação do novo compositor inline Form API/HTMX (C02-03 a C02-07).
 
 ## 4. Arquitetura proposta
 
@@ -224,15 +223,15 @@ de resposta aponta para a rota standalone bloqueada por D-65.
 
 | Fase | Entrega | Critério de saída | Estado |
 | --- | --- | --- | --- |
-| C02-00 | Inventário, decisões, pesquisa e plano | Fontes, bugs e dependências documentados | Documentada nesta entrega |
-| C02-01 | Registro central dos providers, incluindo Wiki | Container com/sem Wiki; um provider por host; revisão dos contratos | Pendente |
-| C02-02 | Atributos, autoria e permalinks | Âncoras reais, pager correto, sem link humano standalone | Pendente |
-| C02-03 | Experimento Form API + HTMX | POST, prévia, erros, attachments e fallback na mesma página | Pendente |
-| C02-04 | Backend compartilhado Comment | Revista, Wiki, LMS e Comment do Fórum com pai correto e acesso revalidado | Pendente |
-| C02-05 | SDC e citação unificada | Formulário acessível, sem dependência do tema no módulo e sem JS global antigo | Pendente |
-| C02-06 | Adapter ForumPost | Resposta geral e por pai inline, revisões/moderação e dois pagers preservados | Pendente |
-| C02-07 | URLs, concorrência e integrações | Slugs, destination, retry/duplo envio e eventos cobertos | Pendente |
-| C02-08 | Homologação integrada | Matriz autenticada, visual e regressão focal aprovada | Pendente |
+| C02-00 | Inventário, decisões, pesquisa e plano | Fontes, bugs e dependências documentados | Documentada (0.2.0-dev.1) |
+| C02-01 | Registro central dos providers, incluindo Wiki | Container com/sem Wiki; um provider por host; revisão dos contratos | Concluída (0.2.0-dev.2) |
+| C02-02 | Atributos, autoria e permalinks | Âncoras reais, pager correto, sem link humano standalone | Concluída (0.2.0-dev.2) |
+| C02-03 | Experimento Form API + HTMX | POST, prévia, erros, attachments e fallback na mesma página | Pendente (Agente 2) |
+| C02-04 | Backend compartilhado Comment | Revista, Wiki, LMS e Comment do Fórum com pai correto e acesso revalidado | Pendente (Agente 2) |
+| C02-05 | SDC e citação unificada | Formulário acessível, sem dependência do tema no módulo e sem JS global antigo | Pendente (Agente 2) |
+| C02-06 | Adapter ForumPost | Resposta geral e por pai inline, revisões/moderação e dois pagers preservados | Pendente (Agente 2) |
+| C02-07 | URLs, concorrência e integrações | Slugs, destination, retry/duplo envio e eventos cobertos | Pendente (Agente 2) |
+| C02-08 | Homologação integrada | Matriz autenticada, visual e regressão focal aprovada | Pendente (Agente 2) |
 
 C02-03 é prova técnica para fechar o mecanismo, não autorização para manter
 dois caminhos concorrentes. Resolver falhas encontradas antes das fases consumidoras.

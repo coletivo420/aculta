@@ -1,23 +1,28 @@
-{# Preserve the Drupal comment render array, presenting it via forum-post-card. #}
+{# Preserve the Drupal comment render array, presenting it via forum-post-card with Core attributes and accessibility metadata. #}
 {% set author_card = content.author_card|default(null) %}
 {% set comment_body = content|without('author_card', 'links') %}
 {% set actions_markup %}
   {{ permalink }}
   {{ content.links }}
 {% endset %}
-{% set author_name_val = author_card ? comment.getOwner().getDisplayName() : comment.getAuthorName() %}
+{% set author_name_val = author_card ? (author_card['#display_name']|default(author)) : author %}
 {{ title_prefix }}
-{{ include('aculta420_v2:forum-post-card', {
-  stripe: 'brand',
-  author_name: author_name_val|default('Participante'|t),
-  author_role: null,
-  author_posts: null,
-  timestamp: created|default(null),
-  reactions: null,
-  reply_url: null,
-  avatar: author_card,
-  body: comment_body,
-  actions: actions_markup,
-  reply: null,
-}, with_context = false) }}
+<article{{ attributes.addClass('comment', 'comment--discussion', 'js-comment', status ? 'comment--' ~ status) }}>
+  {% if parent %}
+    <p class="visually-hidden">{{ parent }}</p>
+  {% endif %}
+  {{ include('aculta420_v2:forum-post-card', {
+    stripe: 'brand',
+    author_name: author_name_val|default('Participante'|t),
+    author_role: null,
+    author_posts: null,
+    timestamp: created|default(null),
+    reactions: null,
+    reply_url: null,
+    avatar: author_card,
+    body: comment_body,
+    actions: actions_markup,
+    reply: null,
+  }, with_context = false) }}
+</article>
 {{ title_suffix }}

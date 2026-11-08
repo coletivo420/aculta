@@ -78,8 +78,8 @@ homologação dos grants ativos no Runtime.
   continuam necessários antes de declarar a migração concluída.
 
 - Discussões contextuais integradas via `aculta_forum`:
-  A Wiki consome diretamente o serviço de fórum através de `WikiDiscussionContextProvider`
-  para associar tópicos e discussões contextuais aos verbetes, sem módulo intermediário.
+  O `aculta_forum` registra e provê o contexto de discussão para verbetes da Wiki (`WikiDiscussionContextProvider`),
+  associando discussões contextuais aos verbetes sem acoplamento reverso ou módulo intermediário.
 
 - Contrato Wiki→Messenger v1 documentado em
   [`docs/MESSENGER-EVENT-CONTRACT.md`](docs/MESSENGER-EVENT-CONTRACT.md): dois

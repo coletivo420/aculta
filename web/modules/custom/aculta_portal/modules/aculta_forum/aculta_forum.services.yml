@@ -174,6 +174,11 @@ services:
     tags:
       - { name: aculta_forum.discussion_context_provider }
 
+  aculta_forum.discussion_context_provider.wiki:
+    class: Drupal\aculta_forum\Context\Provider\WikiDiscussionContextProvider
+    tags:
+      - { name: aculta_forum.discussion_context_provider }
+
   aculta_forum.read_access:
     class: Drupal\aculta_forum\Access\ForumReadAccess
     arguments: ['@aculta_portal.domain_purpose']
@@ -229,5 +234,13 @@ services:
 
   Drupal\aculta_forum\Hook\LmsCommentModerationAccessHooks:
     arguments: ['@aculta_forum.discussion_context_resolver']
+
+  aculta_forum.discussion_comment_permalink_builder:
+    class: Drupal\aculta_forum\Service\DiscussionCommentPermalinkBuilder
+    arguments: ['@pager.manager']
+
+  Drupal\aculta_forum\Hook\DiscussionCommentPermalinkHooks:
+    arguments: ['@aculta_forum.discussion_comment_permalink_builder']
+
 
 

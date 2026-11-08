@@ -109,7 +109,3 @@ services:
     tags:
       - { name: event_subscriber }
 
-  Drupal\aculta_wiki\Context\WikiDiscussionContextProvider:
-    tags:
-      - { name: aculta_forum.discussion_context_provider }
-

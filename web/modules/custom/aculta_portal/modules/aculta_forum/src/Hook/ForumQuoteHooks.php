@@ -49,7 +49,10 @@ final class ForumQuoteHooks {
       return;
     }
     $discussion = $this->contextResolver->resolve($host, $this->currentUser);
-    if ($discussion === NULL || !$discussion->getReadAccess()->isAllowed()) {
+    // COM-09: Revalida leitura E escrita do contexto da discussão.
+    if ($discussion === NULL
+      || !$discussion->getReadAccess()->isAllowed()
+      || !$discussion->getWriteAccess()->isAllowed()) {
       return;
     }
 
@@ -63,24 +66,36 @@ final class ForumQuoteHooks {
       'fragment' => 'comment-form',
     ]);
 
-    $linkBuild = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:button',
-      '#props' => [
-        'text' => (string) $this->translation->translate('Citar'),
-        'url' => $url->toString(),
-        'variant' => 'secondary',
+    // COM-08/COM-10/COM-11: Estrutura neutra de links Drupal, com atributos semânticos,
+    // inserida no grupo 'comment' para ser coletada por Link::preRenderLinks.
+    $quoteLink = [
+      'title' => $this->translation->translate('Citar'),
+      'url' => $url,
+      'attributes' => [
+        'class' => ['comment-action', 'comment-action--quote'],
+        'data-action' => 'comment-quote',
+        'data-quote-id' => (string) $comment->id(),
+        'aria-label' => (string) $this->translation->translate('Citar comentário #@id', ['@id' => $comment->id()]),
       ],
     ];
-    (new CacheableMetadata())
+
+    $cacheability = (new CacheableMetadata())
       ->addCacheableDependency($comment)
       ->addCacheableDependency($commentAccess)
       ->addCacheableDependency($replyAccess)
       ->addCacheableDependency($discussion)
       ->addCacheableDependency($discussion->getReadAccess())
-      ->addCacheContexts(['user.permissions'])
-      ->applyTo($linkBuild);
-    $links['aculta_forum_quote'] = $linkBuild;
+      ->addCacheableDependency($discussion->getWriteAccess())
+      ->addCacheContexts(['user.permissions']);
+
+    if (isset($links['comment'])) {
+      $links['comment']['#links']['comment-quote'] = $quoteLink;
+      $cacheability->applyTo($links['comment']);
+    }
+    else {
+      $links['#links']['comment-quote'] = $quoteLink;
+      $cacheability->applyTo($links);
+    }
   }
 
   /**
@@ -118,7 +133,11 @@ final class ForumQuoteHooks {
     }
     $discussion = $this->contextResolver->resolve($host, $this->currentUser);
     $sourceAccess = $parent->access('view', $this->currentUser, TRUE);
-    if ($discussion === NULL || !$discussion->getReadAccess()->isAllowed() || !$sourceAccess->isAllowed()) {
+    // COM-09: Revalida também escrita no formulário
+    if ($discussion === NULL
+      || !$discussion->getReadAccess()->isAllowed()
+      || !$discussion->getWriteAccess()->isAllowed()
+      || !$sourceAccess->isAllowed()) {
       return;
     }
 
@@ -158,6 +177,7 @@ final class ForumQuoteHooks {
       ->addCacheableDependency($host)
       ->addCacheableDependency($discussion)
       ->addCacheableDependency($discussion->getReadAccess())
+      ->addCacheableDependency($discussion->getWriteAccess())
       ->addCacheableDependency($sourceAccess)
       ->addCacheableDependency($processedBody)
       ->addCacheContexts(['url.query_args:quote'])

@@ -104,18 +104,18 @@ final class ForumQuoteHooksTest extends UnitTestCase {
    * Readable published comments link to Core's reply form with the source ID.
    */
   public function testReadableCommentLinksToCoreReplyForm(): void {
-    $hooks = $this->hooks(AccessResult::allowed());
+    $hooks = $this->hooks(AccessResult::allowed(), NULL, AccessResult::allowed());
     $comment = $this->comment(AccessResult::allowed());
     $links = [];
     $context = [];
 
     $hooks->commentLinksAlter($links, $comment, $context);
 
-    $element = $links['aculta_forum_quote'];
-    self::assertSame('component', $element['#type']);
-    self::assertSame('aculta420_v2:button', $element['#component']);
-    self::assertSame('secondary', $element['#props']['variant']);
-    $url = $element['#props']['url'];
+    $quoteLink = $links['#links']['comment-quote'];
+    self::assertSame('Citar', (string) $quoteLink['title']);
+    self::assertSame('comment-quote', $quoteLink['attributes']['data-action']);
+    self::assertSame('42', $quoteLink['attributes']['data-quote-id']);
+    $url = $quoteLink['url']->toString();
     self::assertStringContainsString('quote=42', $url);
     self::assertStringContainsString('#comment-form', $url);
   }
@@ -125,7 +125,7 @@ final class ForumQuoteHooksTest extends UnitTestCase {
    */
   public function testReplyFormPrefillsSanitizedParentQuote(): void {
     [$formState, $stack] = $this->quoteReplyContext();
-    $hooks = $this->hooks(AccessResult::allowed(), $stack);
+    $hooks = $this->hooks(AccessResult::allowed(), $stack, AccessResult::allowed());
     $form = ['comment_body' => ['widget' => [0 => ['value' => ['#default_value' => '']]]]];
 
     $hooks->commentFormAlter($form, $formState, 'comment_form');
@@ -145,7 +145,7 @@ final class ForumQuoteHooksTest extends UnitTestCase {
    */
   public function testReplyFormPrefillsUnprocessedTextFormatElement(): void {
     [$formState, $stack] = $this->quoteReplyContext();
-    $hooks = $this->hooks(AccessResult::allowed(), $stack);
+    $hooks = $this->hooks(AccessResult::allowed(), $stack, AccessResult::allowed());
     // A new reply has no body, so Core keeps #default_value NULL at the root.
     $form = [
       'comment_body' => [
@@ -247,7 +247,11 @@ final class ForumQuoteHooksTest extends UnitTestCase {
   /**
    * Creates the hook with a single provider returning the chosen access result.
    */
-  private function hooks(AccessResult $readAccess, ?RequestStack $requestStack = NULL): ForumQuoteHooks {
+  private function hooks(
+    AccessResult $readAccess,
+    ?RequestStack $requestStack = NULL,
+    ?AccessResult $writeAccess = NULL,
+  ): ForumQuoteHooks {
     $host = $this->createMock(EntityInterface::class);
     $this->makeCacheable($host);
     $context = new DiscussionContext(
@@ -255,7 +259,7 @@ final class ForumQuoteHooksTest extends UnitTestCase {
       'public_forum',
       'public_forum:node:uuid',
       $readAccess,
-      AccessResult::neutral(),
+      $writeAccess ?? AccessResult::neutral(),
       AccessResult::neutral(),
       Url::fromRoute('system.404'),
       'public_if_entity_accessible',

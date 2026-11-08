@@ -1,3 +1,12 @@
+## 0.2.0-dev.2 — saneamento da base de comentários e desacoplamento (2026-11-08)
+
+- C02-01: WikiDiscussionContextProvider movido para aculta_forum/src/Context/Provider e registrado centralmente em aculta_forum.services.yml. Isolamento e contratos provados sem dependência da Wiki.
+- C02-02: templates comment--field-aculta-discussion e comment--comments repassam attributes, classes e acessibilidade do pai; DiscussionCommentPermalinkBuilder e DiscussionCommentPermalinkHooks implementam permalinks apontando para o hospedeiro canônico (com âncora e pager) sob D-65.
+- Saneamento COM-02/03/07: forum-quote.js deixa de realizar manipulação insegura de innerText e de forçar pid no cliente sem formulário contextual validado pelo servidor. Seletores globais substituídos por escopo contextual de thread.
+- Saneamento COM-08/10/11: ForumQuoteHooks desacoplado de aculta420_v2:button, gerando render array neutro com data-action e data-quote-id dentro de #links['comment-quote'], compatível com Link::preRenderLinks.
+- Saneamento COM-09: citação revalida getWriteAccess() da discussão além de getReadAccess(), impedindo citação em discussões fechadas ou para contas sem permissão de escrita.
+- Handoff registrado em docs/HANDOFF-AGENTE-1-SANEAMENTO-0.2.0.md para o Agente 2 conduzir C02-03 a C02-08.
+
 ## 0.2.0-dev.1 - abertura do ciclo de comentários compartilhados (2026-11-08)
 
 - Inventário de Revista, Wiki, LMS e Growroom420; pontos de resposta Comment e ForumPost.

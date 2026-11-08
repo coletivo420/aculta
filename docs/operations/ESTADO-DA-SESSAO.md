@@ -2,16 +2,15 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
-# Fórum - comentários compartilhados 0.2.0-dev.1 - 2026-11-08
+# Fórum — Comentários Compartilhados 0.2.0-dev.2 (Saneamento Agente 1) — 2026-11-08
 
-- Objetivo: documentar resposta/citação na página atual para Revista, Wiki, LMS e Growroom420.
-- Arquivos: plano COMENTARIOS-0.2.0-PLANO.md, README/roadmap/TODO/changelog/manifesto do Fórum, status e índice raiz.
-- Estado: C02-00 documental; providers centralizados, SDC e correções funcionais ainda pendentes.
-- Decisão: provider Wiki será movido e registrado pelo aculta_forum, preservando ownership editorial na Wiki.
-- Verificações: revisão documental e consistência focal; PHP/gates completos, PHPUnit e navegador DEFERRED.
-- Runtime: sem acesso ao Homelab nesta sessão; sincronização de código/cache DEFERRED.
-- Próximo passo: C02-01/C02-02 e prova Form API/HTMX C02-03 conforme plano.
-- Registro anterior V2 preservado em docs/history/operations/ESTADO-DA-SESSAO-FORUM-0.2.0-2026-11-08.md.
+- **Objetivo:** executar saneamento da base de comentários antes do novo compositor inline (C02-01 e C02-02, achados COM-02/03/07/08/09/10/11) e preparar entrega para o Agente 2.
+- **Estado:** C02-01 e C02-02 concluídos. `WikiDiscussionContextProvider` migrado e registrado em `aculta_forum` sem dependência reversa; contrato neutro de ações `#links['comment-quote']` em conformidade com o Drupal Core; atributos `id`, classes, autoria SDC sem leitura do User no Twig; permalinks sob D-65 apontando ao host canônico com pager 0 e `#comment-{cid}`; remoção de injeção insegura no cliente e escopo global em `forum-quote.js`.
+- **Decisões:** COM-01, COM-05 e eliminação de redirects em COM-12 dependem da criação do compositor inline e foram atribuídos explicitamente ao Agente 2 (C02-03 a C02-08). Idempotência auditada no fluxo nativo (não possui deduplicação; recomendada inclusão de token no compositor inline em C02-07).
+- **Arquivos:** `WikiDiscussionContextProvider.php`, `DiscussionCommentPermalinkBuilder.php`, `DiscussionCommentPermalinkHooks.php`, `ForumQuoteHooks.php`, templates `comment--field-aculta-discussion` e `comment--comments`, `forum-quote.js`, `forum-post-card.css`, planos e testes unitários.
+- **Verificações:** PHPUnit isolado 32/32 PASS (123 assertions); `validate-project-status-index.php --write` PASS (41 componentes); SDC schemas e classes mapeadas validadas.
+- **Runtime:** Homelab inacessível localmente para `drush cr`; status registrado como `DEFERRED`.
+- **Próximo passo:** Agente 2 inicia C02-03 (experimento Form API + HTMX para resposta inline na mesma página) e fecha COM-01, COM-05 e COM-12.
 
 # ACULTA CGU e Consolidação Modular Transversal — 2026-11-08
 
