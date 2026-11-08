@@ -154,7 +154,7 @@ PHP, FILE_APPEND);
     $this->assertSession()->pageTextContains('membro-' . $recipient->id());
     $body = 'Mensagem funcional inicial do ACULTA Messenger.';
     $this->getSession()->getPage()->fillField('message', $body);
-    $this->getSession()->getPage()->find('css', 'form[data-aculta-new-conversation-form] input[type="submit"]')->click();
+    $this->getSession()->getPage()->find('css', 'form[data-aculta-new-conversation-form] input[type="submit"], button[type="submit"]')->click();
 
     $threadIdsAfter = array_keys($threadStorage->loadMultiple());
     $newThreadIds = array_values(array_diff($threadIdsAfter, $threadIdsBefore));
@@ -239,7 +239,7 @@ PHP, FILE_APPEND);
     $searchForm = $this->getSession()->getPage()->find('css', 'form[data-aculta-nojs-search]');
     self::assertNotNull($searchForm, 'The native GET search is available without JavaScript.');
     $searchForm->find('css', 'input[name="q"]')->setValue('membro-' . $secondRecipient->id());
-    $searchForm->find('css', 'input[type="submit"]')->click();
+    $searchForm->find('css', 'input[type="submit"], button[type="submit"]')->click();
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->linkExists('membro-' . $secondRecipient->id());
     $this->clickLink('membro-' . $secondRecipient->id());
@@ -258,7 +258,7 @@ PHP, FILE_APPEND);
 
     $body = 'Mensagem funcional de grupo sem JavaScript.';
     $this->getSession()->getPage()->fillField('message', $body);
-    $form->find('css', 'input[type="submit"]')->click();
+    $form->find('css', 'input[type="submit"], button[type="submit"]')->click();
 
     $threadIdsAfter = array_keys($threadStorage->loadMultiple());
     $newThreadIds = array_values(array_diff($threadIdsAfter, $threadIdsBefore));

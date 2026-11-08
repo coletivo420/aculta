@@ -242,7 +242,7 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
     $page = $this->getSession()->getPage();
     $page->fillField('name', $account->getAccountName());
     $page->fillField('pass', $account->passRaw);
-    $page->find('css', 'input[type="submit"]')->click();
+    $page->find('css', 'input[type="submit"], button[type="submit"]')->click();
     $this->loggedInUser = $account;
     $this->container->get('current_user')->setAccount($account);
     $url = $this->getSession()->getCurrentUrl();
