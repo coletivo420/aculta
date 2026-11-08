@@ -95,7 +95,6 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $this->installEntitySchema('taxonomy_vocabulary');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('flagging');
-    $this->installSchema('system', ['sequences']);
     $this->installSchema('flag', ['flag_counts']);
     $this->installSchema('node', ['node_access']);
     $this->installConfig(['system', 'filter', 'node', 'flag']);

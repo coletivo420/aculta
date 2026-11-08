@@ -97,7 +97,6 @@ final class UgcNotifierAndQueueKernelTest extends KernelTestBase {
     $this->installEntitySchema('flagging');
     $this->installEntitySchema('aculta_ugc_report');
     $this->installSchema('node', ['node_access']);
-    $this->installSchema('system', ['sequences']);
     $this->installSchema('flag', ['flag_counts']);
     $this->installConfig(['system', 'user', 'filter', 'node', 'flag']);
 

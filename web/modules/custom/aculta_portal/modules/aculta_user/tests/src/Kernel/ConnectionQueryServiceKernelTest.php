@@ -28,6 +28,7 @@ use Symfony\Component\DependencyInjection\Reference;
  * Kernel tests for ConnectionQueryService.
  */
 #[Group('aculta_user')]
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 final class ConnectionQueryServiceKernelTest extends KernelTestBase {
 
   /**

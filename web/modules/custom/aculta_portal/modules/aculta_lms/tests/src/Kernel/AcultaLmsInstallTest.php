@@ -422,7 +422,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $relationship_config->set('dependencies', [
       'config' => ['group.type.lms_course'],
       'module' => ['lms', 'lms_classes'],
-    ])->save(TRUE);
+    ])->save();
     aculta_lms_update_10012();
     aculta_lms_update_10012();
     self::assertSame(['aculta_lms'], $this->container->get('config.factory')

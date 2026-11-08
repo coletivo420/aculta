@@ -199,7 +199,6 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_forum_post');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
-    $this->installSchema('system', ['sequences']);
     $this->installSchema('flag', ['flag_counts']);
     $this->installConfig(['system', 'user', 'filter', 'node', 'comment', 'flag']);
 

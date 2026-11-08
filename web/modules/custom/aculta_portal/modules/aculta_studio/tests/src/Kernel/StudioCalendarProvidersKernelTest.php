@@ -90,6 +90,10 @@ final class StudioCalendarProvidersKernelTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
 
+    $this->installEntitySchema('comment');
+    $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installEntitySchema('group');
+    $this->installEntitySchema('group_relationship');
     $this->installConfig(['system', 'comment', 'group']);
     foreach ([
       'group.type.lms_class',
@@ -138,7 +142,6 @@ final class StudioCalendarProvidersKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_event_location');
     $this->installEntitySchema('aculta_lms_activity');
     $this->installEntitySchema('aculta_lms_lesson');
-    $this->installSchema('system', ['sequences']);
   }
 
   /**

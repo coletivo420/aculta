@@ -19,6 +19,7 @@ use PHPUnit\Framework\Attributes\Group;
  * SalesReportQuery sobre pedidos reais: escopo de produto e de doação, estado, datas e paginação.
  */
 #[Group('aculta_portal')]
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 final class SalesReportQueryKernelTest extends OrderKernelTestBase {
 
   /**

@@ -77,7 +77,6 @@ final class AnswerReviewWorkflowKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installConfig(['system', 'node', 'node_storage_body_field', 'group', 'comment', 'file', 'aculta_file_uploader']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installSchema('comment', ['comment_entity_statistics']);
@@ -90,6 +89,7 @@ final class AnswerReviewWorkflowKernelTest extends KernelTestBase {
     foreach ($entityTypes as $entityType) {
       $this->installEntitySchema($entityType);
     }
+    $this->installConfig(['system', 'node', 'node_storage_body_field', 'group', 'comment', 'file', 'aculta_file_uploader']);
     // O storage field_aculta_discussion pertence ao aculta_forum; criar aqui
     // evita habilitar o fórum inteiro só para instalar a config do LMS.
     FieldStorageConfig::create([

@@ -63,7 +63,6 @@ final class ActivityLocationMigrationKernelTest extends KernelTestBase {
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('node');
     $this->installEntitySchema('aculta_event_location');
-    $this->installSchema('system', ['sequences']);
     $this->installSchema('node', ['node_access']);
 
     if (!NodeType::load('activity')) {

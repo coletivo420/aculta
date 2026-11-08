@@ -77,7 +77,6 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_event_date');
     $this->installEntitySchema('aculta_event_location');
     $this->installEntitySchema('aculta_event_organization');
-    $this->installSchema('system', ['sequences']);
     $this->installSchema('node', ['node_access']);
     $this->installConfig(['system']);
 

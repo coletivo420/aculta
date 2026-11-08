@@ -90,6 +90,18 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->installEntitySchema('action');
+    $this->installEntitySchema('group');
+    $this->installEntitySchema('group_relationship');
+    $this->installEntitySchema('group_config_wrapper');
+    $this->installEntitySchema('user');
+    $this->installSchema('user', ['users_data']);
+    $this->installEntitySchema('file');
+    $this->installSchema('file', ['file_usage']);
+    $this->installSchema('entity_usage', ['entity_usage']);
+    $this->installEntitySchema('comment');
+    $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installEntitySchema('node');
     $this->installConfig(['system', 'comment']);
     foreach ([
       'group.type.lms_course',
@@ -111,25 +123,13 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
       ->save();
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
     $this->container->get('group_relation_type.manager')->clearCachedPluginMaps();
-    $this->installEntitySchema('action');
-    $this->installEntitySchema('group');
-    $this->installEntitySchema('group_relationship');
-    $this->installEntitySchema('group_config_wrapper');
-    $this->installEntitySchema('user');
-    $this->installEntitySchema('file');
-    $this->installSchema('user', ['users_data']);
-    $this->installSchema('file', ['file_usage']);
-    $this->installSchema('entity_usage', ['entity_usage']);
     $this->installConfig(['file']);
     $this->installEntitySchema('aculta_lms_activity');
     $this->installEntitySchema('aculta_lms_lesson');
     $this->installEntitySchema('aculta_lms_answer');
-    $this->installEntitySchema('comment');
-    $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installEntitySchema('aculta_lms_attempt_archive');
     $this->installConfig(['group']);
     $this->installConfig(['node', 'node_storage_body_field']);
-    $this->installEntitySchema('node');
     // O storage field_aculta_discussion pertence ao aculta_forum; criar aqui
     // evita habilitar o fórum inteiro só para instalar a config do LMS.
     FieldStorageConfig::create([

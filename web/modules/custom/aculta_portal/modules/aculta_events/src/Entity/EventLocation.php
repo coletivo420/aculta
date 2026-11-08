@@ -97,8 +97,9 @@ final class EventLocation extends ContentEntityBase implements EntityOwnerInterf
     }
     // Geocodifica quando o endereço muda ou ainda não há coordenadas.
     // Cada endereço é geocodificado uma vez.
-    $mudouEndereco = !$this->isNew() && $this->original !== NULL
-      && $this->original->get('field_endereco')->getValue() !== $this->get('field_endereco')->getValue();
+    $original = $this->getOriginal();
+    $mudouEndereco = !$this->isNew() && $original !== NULL
+      && $original->get('field_endereco')->getValue() !== $this->get('field_endereco')->getValue();
     // Geocode once when a location is created or its address changes.
     // A Local saved while geocoding was unavailable is retried on later saves.
     $precisaGeocodificar = $mudouEndereco || $this->get('field_coordenadas')->isEmpty();
