@@ -148,3 +148,14 @@ Verificado com `grep` em `src/Hook/PortalUiHooks.php`, módulos e componentes:
 - As demais regras `.aculta-button--*` e `.aculta-btn-*` já foram removidas em `ad6335e19`; nenhum markup as usa.
 
 Conclusão: não há regra de área sem markup ativo para remover com segurança neste momento.
+
+## Estado final do plano (passo 8)
+
+- **Captura (passo 7):** feita em 2026-11-08 (UI Library 89 pré-visualizações, 360/360 no teste por purpose; evidência nas pastas de `tests/browser/capturas/` citadas acima). Não foi redelegada.
+- **Stories com botão escrito à mão:** `dialog.default` (Cadastrar local, Selecionar), `dialog.avatar` (Sortear novo avatar, Salvar foto do perfil) e `lms-tour.default` (Próximo). As stories são YAML com marcação em string e nenhuma usa `include` do SDC. As classes são as mesmas que o SDC gera, então a aparência já coincide. Converter exige um mecanismo novo nas stories; fica como pendência própria, não como remoção de regra.
+- **Testes unitários incluídos nesta rodada (PHPUnit por arquivo, todos passam):**
+  - carrinho: `AddToCartAjaxHtmxResponseTest` (3 testes);
+  - foto de perfil: `UserPictureFormRemovePersonalTest` (2 testes);
+  - conta: `FormHooksAccountAjaxTest` (3 testes).
+  Classes `final` que não podem ser duplicadas são instanciadas sem construtor quando o caso testado não as usa.
+- **Pendente:** testes de segredos (`SecretsManager`, `SecretEditForm`). A leitura de `src/Secrets/` ainda é negada pela configuração de permissões, mesmo com a regra de `Read` gravada em `settings.local.json`.
