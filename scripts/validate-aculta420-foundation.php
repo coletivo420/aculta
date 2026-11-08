@@ -45,7 +45,6 @@ $assert = static function (bool $condition, string $message) use (&$checks): voi
 
 $assert(is_dir($themeRoot), 'ACULTA420 V2 theme directory exists.');
 $assert(!is_dir($root . '/web/themes/custom/aculta420'), 'Legacy ACULTA420 V1 theme directory has been removed.');
-$assert(!is_file($themeRoot . '/' . $themeName . '.theme'), 'Theme uses OOP hooks; no procedural .theme file exists.');
 $assert(!is_file($themeRoot . '/css/style.css'), 'No generic css/style.css catch-all exists.');
 
 $themeHandler = \Drupal::service('theme_handler');

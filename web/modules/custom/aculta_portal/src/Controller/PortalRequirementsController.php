@@ -626,14 +626,14 @@ final class PortalRequirementsController extends ControllerBase {
   /**
    * Builds the enabled public theme row. */
   private function buildThemeRow(): array {
-    $theme_exists = $this->themes->themeExists('aculta420');
+    $theme_exists = $this->themes->themeExists('aculta420_v2');
     $default_theme = $this->configs->get('system.theme')->get('default');
-    $enabled = $theme_exists && $default_theme === 'aculta420';
+    $enabled = $theme_exists && $default_theme === 'aculta420_v2';
     $status = $enabled ? 'ok' : 'error';
     return [
-      'name' => ['data' => ['#plain_text' => 'Tema ACULTA420 (aculta420)']],
-      'purpose' => ['data' => ['#plain_text' => $this->t('Identidade visual global, componentes, header e footer usados pelo Portal.')]],
-      'minimum' => ['data' => ['#plain_text' => '^11 (core_version_requirement)']],
+      'name' => ['data' => ['#plain_text' => 'Tema ACULTA420 V2 (aculta420_v2)']],
+      'purpose' => ['data' => ['#plain_text' => $this->t('Identidade visual global, componentes SDC, header e footer usados pelo Portal.')]],
+      'minimum' => ['data' => ['#plain_text' => '^11.5 || ^12 (core_version_requirement)']],
       'installed' => ['data' => ['#plain_text' => $theme_exists ? $this->t('Tema custom do repositório; sem versão Composer') : $this->t('Não encontrado')]],
       'status' => [
         'data' => ['#plain_text' => $this->statusSymbol($status) . ' ' . ($enabled ? $this->t('OK — tema padrão habilitado.') : $this->t('Erro — tema ausente ou não é o tema padrão.'))],

@@ -1,6 +1,6 @@
 # TODO — aculta420_v2
 
-Estado: em desenvolvimento · versão 1.3.0 (`aculta420_v2.info.yml`) · status YAML ausente.
+Estado: em desenvolvimento · versão 1.4.0 (`aculta420_v2.info.yml`) · status: `docs/operations/status/aculta420_v2.yml`.
 
 ## Próximo passo
 

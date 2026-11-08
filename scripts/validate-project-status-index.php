@@ -55,9 +55,9 @@ foreach ($iterator as $file) {
   }
   $manifests[substr($file->getFilename(), 0, -strlen('.info.yml'))] = $file->getPathname();
 }
-$theme = $root . '/web/themes/custom/aculta420/aculta420.info.yml';
+$theme = $root . '/web/themes/custom/aculta420_v2/aculta420_v2.info.yml';
 if (is_file($theme)) {
-  $manifests['aculta420'] = $theme;
+  $manifests['aculta420_v2'] = $theme;
 }
 
 $manifestVersion = static function (string $manifest): ?string {
@@ -87,8 +87,8 @@ $order = array_keys($manifests);
 usort($order, static fn (string $a, string $b): int => match (TRUE) {
   $a === 'aculta_portal' => -1,
   $b === 'aculta_portal' => 1,
-  $a === 'aculta420' => 1,
-  $b === 'aculta420' => -1,
+  $a === 'aculta420_v2' => 1,
+  $b === 'aculta420_v2' => -1,
   default => strcmp($a, $b),
 });
 

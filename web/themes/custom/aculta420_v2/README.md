@@ -1,6 +1,6 @@
 # ACULTA420 V2
 
-Tema Drupal da ACULTA em **Single Directory Components (SDC)**, sem Bootstrap, sem Vite e sem Node. É a base de apresentação do site (aculta.org) enquanto a V1 (`web/themes/custom/aculta420`) fica como referência visual somente leitura.
+Tema Drupal da ACULTA em **Single Directory Components (SDC)**, nativo, sem Bootstrap, sem Vite e sem Node. É o tema padrão e exclusivo do portal, desenvolvido com base no design system autônomo e mobile-first. A versão legada V1 foi purgada.
 
 Para quem vai mexer no tema, leia nesta ordem:
 
@@ -17,12 +17,12 @@ Decisões que governam o tema estão em `docs/decisions/` na raiz do repositóri
 | --- | --- |
 | ADR-044 | CTools no tema V2 e ampliação caso a caso; AJAX e jQuery caso a caso |
 | ADR-045 | Compatibilidade com Drupal 12 (desenvolvimento em 11.5) |
-| ADR-046 | Desenho do tema V2: V1 como base visual, UI Styles, shell e fundações primeiro, mobile-first |
+| ADR-046 | Desenho do tema V2: UI Styles, shell e fundações primeiro, mobile-first |
 | ADR-047 | Menu de conta fixo na barra institucional |
 
 ## Estado em uma frase
 
-Fundações (tokens, tipografia, foco, movimento e reflow), shell SDC e fatias de conteúdo da Revista e Wiki estão no código (`1.2.0-dev.14` em `info.yml`). A migração visual continua em andamento: a Wiki passou validação de Runtime em viewports padrão, enquanto zoom físico, autenticação e alguns fluxos sem rota ativa seguem pendentes.
+Fundações (tokens, tipografia, foco, movimento e reflow), shell SDC, componentes do Fórum, Revista, Wiki, Eventos e UI Patterns estão implementados no código (`1.4.0` em `info.yml`). O tema opera com CSS nativo e paleta Skunk Family em tokens semânticos por purpose.
 
 ## Estrutura
 

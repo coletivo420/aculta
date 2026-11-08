@@ -57,7 +57,7 @@ Novos serviços transversais e adaptações devem ter um dono único, contrato d
 | Consumidor | Projetos (`node.type.project`) | Conteúdo do domínio principal; pode referenciar galerias e publicações. |
 | Consumidor futuro | `aculta_eventos` | Eventos próprios; não criar dados de evento em Magazine. |
 | Ferramenta | `aculta_studio` (planejado) | Painel frontend por abas; opera serviços dos proprietários, não armazena versões paralelas. |
-| Visual | `aculta420` | SDC, UI Patterns, UI Styles, Twig, CSS e tokens. |
+| Visual | `aculta420_v2` | SDC, UI Patterns, UI Styles, Twig, CSS nativo e tokens semânticos (sem Bootstrap). |
 
 ## Matriz de consumo transversal
 

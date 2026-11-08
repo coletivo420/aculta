@@ -6,7 +6,7 @@ Este documento oficializa as paletas do tema V2 (`aculta420_v2`) para os purpose
 
 ## Regras
 
-1. **Cor de referência da V1.** Cada esquema parte de uma cor da V1 (`web/themes/custom/aculta420/css/tokens.css`), sem criar matiz novo. Variações são só de tom.
+1. **Cor de referência.** Cada esquema parte de uma cor de marca consolidada, sem criar matiz novo. Variações são só de tom.
 2. **Destaque e subelementos.** O destaque é a cor principal do purpose. As outras três cores da V1 (verde, amarelo e vermelho) são subelementos. Nenhum purpose usa cor fora desta paleta.
 3. **Variações discretas.** Três tons por cor: fiel à V1, tom mais claro e tom mais escuro. Ajuste de luminosidade de ±5 pontos, sem mudar matiz.
 9. **Padrão.** O tom mais escuro (profunda) é o padrão de cada base. Como a V1 tem só quatro cores de base e há dez purposes, os purposes que compartilham uma base usam os outros dois tons. Assim, cada purpose tem um esquema próprio.
