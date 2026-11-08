@@ -8,15 +8,14 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Domain\DomainSurfaceMap;
 use Drupal\aculta_portal\Domain\SurfaceConfigReader;
 use Drupal\aculta_paths\Validation\EnderecoValidator;
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\CloseModalDialogCommand;
-use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Edição de uma superfície dentro de modal (Fase 3.6).
@@ -70,6 +69,10 @@ final class SurfaceEditForm extends FormBase {
     $modo = (string) ($form_state->getValue('modo') ?? $linha['modo']);
 
     $form['#purpose'] = $purpose;
+    // Wrapper do fragmento devolvido ao envio HTMX; é o mesmo bloco que o
+    // callback AJAX de salvar reabria em caso de erro.
+    $form['#prefix'] = '<div id="aculta-paths-surface-edit">';
+    $form['#suffix'] = '</div>';
     $form['titulo'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Nome do Site'),
@@ -155,8 +158,16 @@ final class SurfaceEditForm extends FormBase {
       '#type' => 'submit',
       '#value' => $this->t('Salvar'),
       '#button_type' => 'primary',
-      '#ajax' => ['callback' => '::ajaxSalvar'],
     ];
+    // O envio devolve o formulário (erro de validação) ou redireciona para a
+    // lista (sucesso). A URL é a própria rota do formulário, com o purpose.
+    (new Htmx())
+      ->post(Url::fromRoute('aculta_paths.editar', ['purpose' => $purpose]))
+      ->select('#aculta-paths-surface-edit')
+      ->target('#aculta-paths-surface-edit')
+      ->swap('innerHTML')
+      ->onlyMainContent()
+      ->applyTo($form['actions']['submit']);
     return $form;
   }
 
@@ -165,19 +176,6 @@ final class SurfaceEditForm extends FormBase {
    */
   public function ajaxAtualizaCaminho(array &$form, FormStateInterface $form_state): array {
     return $form['caminho'];
-  }
-
-  /**
-   * Callback do botão Salvar: erro reabre o modal; sucesso fecha e volta à lista.
-   */
-  public function ajaxSalvar(array &$form, FormStateInterface $form_state): array|AjaxResponse {
-    if ($form_state->hasAnyErrors()) {
-      return $form;
-    }
-    $resposta = new AjaxResponse();
-    $resposta->addCommand(new CloseModalDialogCommand());
-    $resposta->addCommand(new RedirectCommand(Url::fromRoute('aculta_paths.form')->toString()));
-    return $resposta;
   }
 
   /**
@@ -271,6 +269,16 @@ final class SurfaceEditForm extends FormBase {
         '@titulo' => $depois['titulo'],
       ]));
     }
+
+    // HTMX: navega para a lista (fecha o diálogo); sem HTMX o Form API
+    // redireciona normalmente.
+    if ($this->isHtmxRequest()) {
+      $form_state->setResponse(new Response('', Response::HTTP_OK, [
+        'HX-Redirect' => Url::fromRoute('aculta_paths.form')->toString(),
+      ]));
+      return;
+    }
+    $form_state->setRedirect('aculta_paths.form');
   }
 
   /**

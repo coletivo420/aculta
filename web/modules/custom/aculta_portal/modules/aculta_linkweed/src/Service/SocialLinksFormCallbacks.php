@@ -40,10 +40,4 @@ final class SocialLinksFormCallbacks {
     $form_state->setRebuild();
   }
 
-  /**
-   * Returns the dynamic button controls wrapper to Drupal AJAX. */
-  public function buttonsAjax(array &$form, FormStateInterface $form_state): array {
-    return $form['buttons_wrapper'];
-  }
-
 }
