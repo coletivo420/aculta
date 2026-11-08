@@ -1,0 +1,13 @@
+{
+  "checks": {
+    "social_add_items_before": 0,
+    "social_add_items_after": 2,
+    "social_add_htmx": true,
+    "social_add_no_navigation": true,
+    "surface_validation_error": "erro de validação no fragmento",
+    "surface_htmx_error_fragment": true,
+    "surface_no_navigation": true
+  },
+  "failures": [],
+  "ok": true
+}

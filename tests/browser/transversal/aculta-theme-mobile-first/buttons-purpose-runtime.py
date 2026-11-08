@@ -123,7 +123,8 @@ def main():
                   for (const variant of ['primary', 'outline']) {
                     const button = document.createElement('button');
                     button.type = 'button';
-                    button.dataset.portalUi = `aculta-btn-${variant}`;
+                    button.className = `button button--${variant}`;
+                    button.dataset.portalUi = variant;
                     button.textContent = variant;
                     fixture.append(button);
                   }
@@ -175,7 +176,7 @@ def main():
                             and primary["foreground"] == metrics["primaryForeground"]
                         ),
                         "outline_uses_button_tokens": (
-                            outline["background"] == metrics["secondaryBackground"]
+                            outline["background"] == "rgba(0, 0, 0, 0)"
                             and outline["foreground"] == metrics["secondaryForeground"]
                             and outline["border"] == metrics["secondaryBorder"]
                         ),

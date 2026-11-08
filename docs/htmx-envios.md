@@ -28,6 +28,13 @@ formulário/fragmento quando a requisição vem do HTMX. O JS do Core acrescenta
 `_wrapper_format=drupal_htmx` e `_triggering_element_name`, então o Form API
 identifica o botão acionado exatamente como no AJAX.
 
+**Nome único no botão.** O JS do Core envia só `_triggering_element_name`, sem
+`_triggering_element_value`. Quando dois botões do mesmo formulário usam
+`name="op"` (padrão do Form API), o Form API escolhe o **último** elemento com
+esse nome — normalmente o "Salvar". Por isso os botões dinâmicos do ACULTA Links
+têm `#name` próprio (`remove_social_button_N` e `add_social_button`). Formulários
+novos com mais de um envio precisam do mesmo cuidado.
+
 ## Convertidos
 
 | # | Arquivo | Envio | Rota do `hx-post` | Bloco atualizado |
@@ -81,10 +88,30 @@ envios: `AccountAddressForm` (país), `AcultaCheckoutLogin` (blur do e-mail),
 `DonationCheckoutPane` e `CheckoutPro` (change; F5, pagamento), `EventForm`
 (rebuild das datas) e o seletor `modo` de `SurfaceEditForm`.
 
-## Validação desta entrega
+## Links `use-ajax` mantidos
+
+Estes links continuam abrindo ou fechando o diálogo jQuery do Core, ou
+disparam resposta AJAX de múltiplos alvos. HTMX não tem comando equivalente sem
+antes migrar o diálogo para `<dialog>` (F2/F3 do ADR-050), então ficam como
+exceção registrada:
+
+| Arquivo | Link | Motivo |
+| --- | --- | --- |
+| `aculta_paths/src/Controller/SurfaceListController.php` | Editar superfície (agora SDC `size: small`) | Abre o formulário em `data-dialog-type="modal"` (jQuery). O botão é SDC; só o modal permanece no diálogo do Core. |
+| `aculta_user/src/Hook/PhotoEditorHooks.php` | Avatar / Alterar foto | Abre o diálogo jQuery e depende de upload/resposta AJAX. |
+| `aculta_user/src/Social/SocialLinksCard.php` | Editar rede social | Abre o diálogo jQuery. |
+| `aculta_user/src/Controller/AvatarRerollController.php` | Sortear novo avatar | Resposta AJAX troca todos os avatares do painel. |
+| `aculta_secrets_manager/src/Controller/SecretsController.php` | Ações do cofre | Diálogo jQuery e área sensível. |
+| `aculta_messenger/src/Support/ConfirmDialog.php` | Ações de conversa | Abre/fecha `<dialog>` nativo controlado por JS. |
+| `aculta_portal/src/Search/SearchUtility.php` e `PortalHooks.php` | Buscar / Entrar | Fallback deliberado da V1; a V2 usa HTMX nos popups equivalentes. |
+| `aculta_events/.../EventDateListBuilder.php`, `EventLocationModalWidget`, `EventOrganizationModalWidget` | Datas, locais e organizações | Abrem diálogos jQuery e atualizam mais de um alvo. |
+
+## Validação funcional (2026-11-08)
 
 - `php -l` nos arquivos PHP alterados.
-- `php scripts/validate-aculta420-ui-styles.php`.
-- `php scripts/validate-aculta420-v2-foundations.php`.
-- Sem `SIMPLETEST_DB`; não foram executadas suítes de navegador nem testes de
-  integração do Drupal. A validação funcional no Runtime continua pendente.
+- `php scripts/validate-aculta420-ui-styles.php`, `validate-aculta420-v2-foundations.php` e `validate-aculta420-palette-schemes.php`: PASS.
+- Teste de navegador em Firefox ESR visível (`DISPLAY=:0`), com conta de teste por `drush uli`: `tests/browser/transversal/aculta-htmx-envios/submit-forms.py`.
+  - **SocialLinksSettingsForm**: "+ Adicionar botão" responde 200, troca o wrapper `#aculta-social-links-settings` e acrescenta os campos da nova linha sem recarregar a página.
+  - **SurfaceEditForm**: "Salvar" com o título obrigatório vazio responde 200 e devolve o formulário com o estado de erro no fragmento, sem navegar nem gravar configuração.
+- Evidência: `tests/browser/capturas/htmx-envios/2026-11-08/manifest.json`.
+- Correção encontrada nesta validação: o botão "+ Adicionar botão" passou a ter `#name => add_social_button`. Sem isso, o `_triggering_element_name=op` compartilhado fazia o "Salvar" virar o disparador e o envio salvava a configuração em vez de adicionar a linha.

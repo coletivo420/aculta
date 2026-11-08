@@ -1,6 +1,6 @@
 # Botões do ACULTA420 V2
 
-Status: **links e ações migrados para o SDC; envios e casos com comportamento próprio ficam como exceção documentada.** A limpeza de CSS de área e a verificação visual dos purposes seguem pendentes.
+Status: **links, ações e envios de formulário usam o SDC `aculta420_v2:button`; exceções abaixo são só as que dependem de comportamento próprio do navegador/JS.** Limpeza de CSS de área, verificação visual por purpose e validação funcional dos envios HTMX concluídas em 2026-11-08.
 
 ## Componente
 
@@ -12,6 +12,7 @@ Status: **links e ações migrados para o SDC; envios e casos com comportamento 
 - `url` gera `<a>`; sem `url`, gera `<button>`. `disabled` com `url` gera `<span aria-disabled="true">`.
 - Classes e atributos extras passam por `attributes` (`create_attribute` no Twig; `#attributes` no PHP).
 - Ícones: `icon_before` e `icon_after`.
+- `action` vira `primary`. `small` não é variante.
 
 Uso em PHP (render array):
 
@@ -29,8 +30,6 @@ Uso em Twig:
 ```twig
 {{ include('aculta420_v2:button', { text: 'Entrar', url: '/login', variant: 'primary' }, with_context = false) }}
 ```
-
-`action` vira `primary`. `small` não é variante.
 
 ## Contraste (medido)
 
@@ -50,52 +49,74 @@ Tokens em `src/styles/tokens.css` (`--button-danger-*`). Mínimos: texto 4,5:1; 
 - Escolha lembrada em `localStorage` com try/catch.
 - A barra institucional não aparece na UI Library (`templates/layout/page.html.twig`).
 - A grade "Esquema de botões" não tem modo próprio: herda o modo da página.
-- Captura e checagem: `tests/browser/transversal/aculta420-v2-component-library/library-mode.py` (conta de teste por `drush uli` no host de conta; rota real `/painel-administrativo/aparencia/ui/components`). Resultado: seletor com 2 opções, sem barra institucional, 89 pré-visualizações com `data-theme` nos dois modos, sem rolagem horizontal em 320 e 1440 px.
+- Captura e checagem: `tests/browser/transversal/aculta420-v2-component-library/library-mode.py` (conta de teste por `drush uli` no host de conta; rota real `/painel-administrativo/aparencia/ui/components`).
 
-## Migrado para o SDC
+## Migração por variação da tabela
+
+| Variação encontrada | Estado final |
+| --- | --- |
+| `data-portal-ui: button`, `button-primary`, `aculta-button-primary` | SDC `variant: primary` |
+| `data-portal-ui: button-secondary`, `aculta-button-secondary` | SDC `variant: secondary` |
+| `button-ghost`, `button-outline`, `aculta-button-outline` | SDC `outline` (links de volta/ação) ou `ghost` (navegação de calendário); tokens mantidos no mapa só por exigência do `ui_styles` |
+| `button--danger`, `event-*-danger` | SDC `variant: danger` (envios via `input--submit`) |
+| `button--small`, `*-small` | SDC `size: small` |
+| `button--action`, `*-primary-action` | SDC `variant: primary` |
+| `button--cta`, `oc-button--primary`, `.form-submit` | SDC `primary` via `input--submit` |
+| `aculta-btn-outline`, `aculta-btn-primary` (`buttons.css`) | removidos do mapa e do CSS; links passam por `outline`/`primary` |
+| `<input type="submit">` | `input--submit` mantém `id`, `name`, `value`, `formnovalidate`, `js-form-submit` e `form-submit` |
+| `<button type="button">` com JS próprio | exceção documentada (sem conversão) |
+| links com `data-portal-ui` de botão dentro de `#links` | SDC via array de links (Fórum) |
+| botão só com ícone | SDC com `aria_label` e sem `text` |
+| botão desativado (`is-disabled`, `aria-disabled`) | SDC `disabled`; exceção do Fórum abaixo |
+| botão que dispara `#ajax` (envio ou link `use-ajax`) | HTMX onde havia rota e fragmento claros; demais exceções em `docs/htmx-envios.md` |
+
+## Migrado para o SDC (fechamento de 2026-11-08)
 
 | Área | Pontos | Commit |
 | --- | --- | --- |
-| Portal (decisão UGC, ownership, data de evento) | Cancelar e Voltar | `d2f4d85b7` |
-| Portal (cadastro, suporte, conexão Google) | 4 links | `04b76f6ea` |
-| Fórum (criar tópico) | 1 link | `c0c76ead1` |
-| Studio (calendário) | adicionar evento e setas de mês | `1f9de9b2a` |
-| Studio (conexões) | 2 links | `1b6fd3a52` |
-| Eventos (editar evento e datas) | 1 link | `1b6fd3a52` |
-| Eventos (membros, recuperação, localização, admin, painel do organizador, workspace) | links de voltar, cancelar, limpar e ações | `068359018`, `6526fb5b2`, `6fe053338` |
-| Studio (novo curso) | 1 link com `data-aculta-studio` em `#attributes` | `6fe053338` |
-| Cursos da conta | 2 links | `17e0f3b49` |
-| Portal (ver informações sobre o cadastro) | 1 link | `6fe053338` |
+| Learner Dashboard do Studio | Continuar aula/curso, Ver jornada, Explorar catálogo, Ver certificado | `ad6335e19` |
+| LMS | Voltar às respostas (revisão de resposta) | `ad6335e19` |
+| Wiki | Contribuir e Retirar proposta | `ad6335e19` |
+| Eventos | Cadastrar organização, Ver pedidos de reivindicação, Filtrar do painel do organizador | `ad6335e19` |
+| Caminhos | Editar superfície (`size: small`, mantém o modal jQuery) | `ad6335e19` |
+| Mensagens | Iniciar nova conversa (removeu `btn btn-primary`) | `ad6335e19` |
+
+Migram para o SDC em entregas anteriores: Portal, Fórum, Studio (calendário, conexões, novo curso), Eventos (editar, membros, recuperação, organizador, locais, cadastro), cursos da conta, Melhor Envio, envios de formulário via `input--submit` e os três envios convertidos para HTMX.
 
 ## Exceções (não vão ao SDC sem mudar comportamento)
 
-- **Envios de formulário** (`#type => submit`, `button type=submit`): precisam continuar como `<input>` ou `<button name=…>` para preservar `name`, `value`, `id`, `formnovalidate` e o envio/HTMX. Pontos: `EventOrganizationMembersForm` (adicionar), `EventOrganizationAdminController` (filtrar), `EventOrganizerDashboardController` (filtrar, GET).
-- **`#type => button` com JS próprio**: `SocialLinkForm` e `AccountBioForm` (botão de limpar, com `data-aculta-clear` e `data-aculta-bio-clear`, usados por script). Migrar exige revisar o JS.
+- **Envios de formulário com `name`/`value`** permanecem `<input>`/`<button>` do Form API e são renderizados pelo SDC por `templates/input--submit.html.twig`. Pontos com token próprio: `EventOrganizationMembersForm`, `EventOrganizationAdminController`, `EventOrganizerDashboardController`, `SocialLinksSettingsForm`, `FriendshipActionForm`, `NoticeReadStateForm`, dialogs e widgets de eventos.
+- **`#type => button` com JS próprio**: `SocialLinkForm` e `AccountBioForm` (limpar), `ConfirmDialog` (abrir/fechar `<dialog>`), widgets de local/organização de eventos.
+- **Links `use-ajax` que abrem/fecham diálogo jQuery**: superfícies de caminhos, foto do perfil, redes sociais, avatares, segredos e busca. Não há comando HTMX para o diálogo jQuery; detalhes em `docs/htmx-envios.md`.
+- **Botões "Em breve" do tópico do Fórum**: `<button disabled>` com ícone, texto e badge próprio (`aculta-forum-action-btn__badge`). O SDC não tem slot de badge; converter perderia o selo "Em breve". Revisão futura do componente.
+- **Filtros GET em marcação crua** (`statistics`, `agenda`, `memorial`, `green stash`, `mailer`): `<button type="submit">` sem classe de variante, dentro de HTML gerado por `#markup`/`#template`; styled pelo CSS global de elemento. Converter exigiria reescrever cada formulário como render array, sem ganho de variante.
+- **Gavetas e gatilhos da barra institucional**: `<button type="button">` com JS, exceção já registrada no `AGENTS.md` do tema.
 
-## Pendente
+## Limpeza de CSS de área (2026-11-08)
 
-- Limpeza de CSS de área (`forum.css`, `studio.css`, `portal-ui-map.css`, `event-organization.css`, `buttons.css`). Foi tentada e **revertida**: as regras ainda estilizam os envios e os tokens de exceção acima. Só remover depois dessas exceções e de verificação visual.
-- Purposes: a marcação de botões dos purposes `shop`, `courses`, `magazine`, `wiki`, `links`, `account`, `support` e `main` está migrada na parte de links; falta a verificação visual por purpose.
-- Captura no Firefox ESR: feita para a UI Library (claro e escuro, 320 e 1440 px). Falta a verificação visual de Fórum, Studio e Eventos.
-- Modo escuro dos componentes SDC: revisão de todos os componentes e criação do modo escuro onde faltar (pedido posterior; depois da conclusão dos botões).
-
-## Validação feita
-
-- Gates: `validate-aculta420-v2-foundations.php`, `validate-aculta420-ui-styles.php` e `validate-aculta420-palette-schemes.php` passam.
-- Suítes Kernel rodadas na worktree (banco de teste): `EventOrganizationAdminAndModalKernelTest` (8, OK), `EventDomainBoundaryKernelTest` (10, OK), `EventOrganizationLifecycleKernelTest` (31, OK). `UgcModerationKernelTest` (5, OK, rodada antes na cópia principal).
-- Unitários: `PublicForumTopicCreateActionHooksTest` (5, OK), `CourseAuthoringControllerTest` (4, OK).
-- Renders via Drush na worktree: link, botão desativado, só ícone, calendário do Studio e a grade de estados.
+- Removidos de `buttons.css` os seletores `[data-portal-ui="aculta-btn-primary"]` e `[data-portal-ui="aculta-btn-outline"]`, sem markup ativo.
+- Removidas de `portal-ui-map.css` as regras `.aculta-button--outline`, `.aculta-button--primary` e `.aculta-button--secondary`.
+- Removidos de `studio.css` os atalhos `.button--cta` e `.oc-button--primary` dentro das listas `:is(...)`; `.button--primary` e `.button--danger` continuam porque o próprio componente SDC emite essas classes.
+- Mantidas as regras globais de elemento (`button`, `input[type="submit"]`, `.form-submit`) e as regras de `.button--primary`/`.button--secondary` em `forum.css` e `event-organization.css`, ainda aplicadas aos botões do SDC e aos envios.
 
 ## Modo escuro da UI Library: auditoria de contraste
 
 - Medição: `tests/browser/transversal/aculta420-v2-component-library/library-mode.py` (auditoria no modo escuro, razão mínima 4,5:1).
-- Resultado atual: 1 falha, `rfc-matrix` do módulo contrib `simple_oauth_21` ("No RFC data available.", texto cinza fixo `#6b7280`, 3,77:1). Fora do tema; registrado como exceção, sem patch em contrib.
-- Causas corrigidas: cor de texto resolvida no `body` (herdada com o valor claro); tokens derivados por `var()` sem par escuro; seletor global `.page a` sobrescrevendo o texto de destaque; controles do mapa com fundo branco fixo; variante neutra do rodapé com texto de rodapé verde.
+- Resultado em 2026-11-08: 1 falha, `rfc-matrix` do módulo contrib `simple_oauth_21` ("No RFC data available.", texto cinza fixo `#6b7280`, 3,77:1). Fora do tema; exceção registrada.
+- Causas corrigidas em entregas anteriores: cor de texto resolvida no `body`; tokens derivados por `var()` sem par escuro; seletor global `.page a`; controles do mapa com fundo branco fixo; variante neutra do rodapé.
 
 ## Revisão dos SDC no modo escuro
 
 - Componentes SDC do tema: 55. Todos têm story na UI Library e entram na auditoria.
-- Nenhum componente tem cor fixa no CSS: todos usam tokens semânticos, que trocam de valor com `data-theme`. Não há bloco de modo escuro duplicado por componente.
-- Auditoria de contraste no modo escuro: 1 falha, exceção registrada (`rfc-matrix`, módulo contrib `simple_oauth_21`, texto cinza fixo `#6b7280`, 3,77:1). Também fora do tema: `messages-info` do `compliance-tip` (contrib `simple_oauth_21`).
-- Superfícies claras no modo escuro, intencionais: amarelo de destaque em badges e faixas (texto com token escuro), polegar de rolagem claro sobre trilho escuro.
-- Pendentes: verificação visual no Firefox ESR por purpose, e remoção das duplicatas de CSS de área depois dessa verificação.
+- Nenhum componente tem cor fixa no CSS: usam tokens semânticos, que trocam de valor com `data-theme`.
+- Exceção de contraste: `rfc-matrix` do contrib `simple_oauth_21` (3,77:1), fora do tema.
+- Superfícies claras no modo escuro, intencionais: amarelo de destaque em badges e faixas e polegar de rolagem claro sobre trilho escuro.
+
+## Validação de 2026-11-08
+
+- Gates: `validate-aculta420-ui-styles.php`, `validate-aculta420-v2-foundations.php` e `validate-aculta420-palette-schemes.php` PASS.
+- `php -l` em todos os PHP alterados.
+- Unitários: `aculta_studio` 70 testes OK (inclui `LearnerDashboardComposerTest`, ajustado para registrar `url_generator`); `aculta_events` 30 testes OK.
+- Kernel: **DEFERRED**. As suítes de `aculta_events` e `aculta_lms` não inicializam porque vários `$modules` de teste ainda citam `aculta_ugc`, removido pela unificação em `aculta_cgu` (commit `ca1015201`). O `LearningDashboardKernelTest` também falha por dependência de serviço `aculta_events.occurrences` não habilitada no teste. Nenhuma falha é causada pelas mudanças de botão.
+- UI Library (Firefox ESR, `DISPLAY=:0`, claro e escuro, 320 e 1440 px): 2 opções no seletor, sem barra institucional, 89 pré-visualizações com `data-theme` nos dois modos, `overflow_px` 0 em todas as capturas. Evidência: `tests/browser/capturas/botoes-modo-cor/2026-11-08/`.
+- Verificação visual por purpose (`buttons-purpose-runtime.py`, 10 purposes × claro/escuro × 320/1440 px, incluindo 200% de zoom): **360/360 verificações PASS**. O fixture foi atualizado do token legado `aculta-btn-outline` para a marcação do SDC (`button button--outline`, fundo transparente e tokens secundários). Evidência: `tests/browser/capturas/purpose-buttons/2026-11-08/`.

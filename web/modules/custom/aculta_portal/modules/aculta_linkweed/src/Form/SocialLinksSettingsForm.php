@@ -129,6 +129,10 @@ final class SocialLinksSettingsForm extends ConfigFormBase {
     $form['buttons_wrapper']['add'] = [
       '#type' => 'submit',
       '#value' => $this->t('+ Adicionar botão'),
+      // Nome próprio: o HTMX envia só _triggering_element_name, sem o valor.
+      // Com name "op" compartilhado, o Salvar (posterior na árvore) viraria o
+      // disparador e o formulário seria salvo em vez de adicionar a linha.
+      '#name' => 'add_social_button',
       '#submit' => ['aculta_linkweed.social_links_form_callbacks:addButton'],
       '#limit_validation_errors' => [],
       '#attributes' => ['formnovalidate' => 'formnovalidate'],
