@@ -78,13 +78,16 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->prepareAcultaLmsGroupTypes();
+    // Não cria os group types: a config do aculta_lms os fornece e a
+    // instalação falharia com PreExistingConfigException.
+    $this->installConfig(['system']);
     $this->installEntitySchema('user');
     $this->installEntitySchema('comment');
     $this->installSchema('comment', ['comment_entity_statistics']);
-    $this->installConfig(['system', 'field', 'comment', 'filter']);
+    $this->installConfig(['system', 'field', 'comment', 'filter', 'group']);
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
+    $this->installEntitySchema('group_config_wrapper');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
