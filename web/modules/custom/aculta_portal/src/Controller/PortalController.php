@@ -357,15 +357,26 @@ final class PortalController extends ControllerBase {
           '#type' => 'container',
           '#attributes' => ['data-portal-ui' => 'google-account'],
           'text' => ['#plain_text' => $this->t('O endereço da conta Google ainda não está disponível nesta conexão.')],
-          'reconnect' => PortalLinkElement::build($this->t('Atualizar conexão Google'), Url::fromRoute('social_auth.network.redirect', ['network' => 'google']), ['data-portal-ui' => 'button-secondary']),
+          'reconnect' => [
+            '#type' => 'component',
+            '#component' => 'aculta420_v2:button',
+            '#props' => [
+              'text' => (string) $this->t('Atualizar conexão Google'),
+              'url' => Url::fromRoute('social_auth.network.redirect', ['network' => 'google'])->toString(),
+              'variant' => 'secondary',
+            ],
+          ],
         ];
       }
       if ($this->hasUserChosenPassword($account)) {
         $items['disconnect'] = [
-          '#type' => 'link',
-          '#title' => $this->t('Desconectar Google'),
-          '#url' => Url::fromRoute('entity.social_auth.delete_form', ['social_auth' => $social_auth->id()]),
-          '#attributes' => ['data-portal-ui' => 'button-secondary'],
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:button',
+          '#props' => [
+            'text' => (string) $this->t('Desconectar Google'),
+            'url' => Url::fromRoute('entity.social_auth.delete_form', ['social_auth' => $social_auth->id()])->toString(),
+            'variant' => 'secondary',
+          ],
           '#access' => $social_auth->access('delete'),
         ];
       }

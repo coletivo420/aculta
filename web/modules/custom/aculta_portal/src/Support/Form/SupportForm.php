@@ -6,7 +6,6 @@ namespace Drupal\aculta_portal\Support\Form;
 
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_portal\Support\SupportAmountsProviderInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -93,7 +92,15 @@ final class SupportForm extends FormBase {
         '#tag' => 'p',
         '#value' => $this->t('Parcerias institucionais, apoio cultural e patrocínio de projetos também fortalecem nossas iniciativas.'),
       ],
-      'contact' => PortalLinkElement::build($this->t('Fale com a Associação'), Url::fromUri('internal:/contato'), ['data-portal-ui' => 'aculta-button-outline']),
+      'contact' => [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:button',
+        '#props' => [
+          'text' => (string) $this->t('Fale com a Associação'),
+          'url' => Url::fromUri('internal:/contato')->toString(),
+          'variant' => 'outline',
+        ],
+      ],
     ];
     return $form;
   }
