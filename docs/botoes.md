@@ -71,8 +71,7 @@ Tokens em `src/styles/tokens.css` (`--button-danger-*`). Mínimos: texto 4,5:1; 
 
 - **Envios de formulário** (`#type => submit`, `button type=submit`): precisam continuar como `<input>` ou `<button name=…>` para preservar `name`, `value`, `id`, `formnovalidate` e o envio/HTMX. Pontos: `EventOrganizationMembersForm` (adicionar), `EventOrganizationAdminController` (filtrar), `EventOrganizerDashboardController` (filtrar, GET).
 - **`#type => button` com JS próprio**: `SocialLinkForm` e `AccountBioForm` (botão de limpar, com `data-aculta-clear` e `data-aculta-bio-clear`, usados por script). Migrar exige revisar o JS.
-- **Link "Citar" do fórum** (`ForumQuoteHooks.php`): usa o tema `links__comment__comment` com `#links`, que não aceita componente.
-- **Link do Melhor Envio** (`MelhorEnvioStatusController.php`): o teste Kernel `MelhorEnvioWiringKernelTest` renderiza sem o tema V2, e o componente não existe nesse ambiente. Migrar pede ajuste do teste (habilitar o tema) antes.
+- **Link do Melhor Envio** (`MelhorEnvioStatusController.php`): o teste Kernel `MelhorEnvioWiringKernelTest` renderiza sem o tema V2. Habilitar o tema exige a cadeia de módulos de `aculta_events` (inclui `geofield`), fora do escopo. Migrar depois de ajustar esse teste.
 
 ## Pendente
 

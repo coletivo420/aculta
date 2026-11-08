@@ -32,6 +32,17 @@ use Symfony\Component\HttpFoundation\Request;
 #[Group('aculta_forum')]
 final class ForumQuoteHooksTest extends UnitTestCase {
 
+  protected function setUp(): void {
+    parent::setUp();
+    // Url::toString() precisa do gerador de URL; o teste unitário fornece um falso.
+    $generator = $this->createMock(\Drupal\Core\Routing\UrlGeneratorInterface::class);
+    $generator->method('generateFromRoute')->willReturn('/comentario/42/responder?quote=42#comment-form');
+    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container->set('url_generator', $generator);
+    $container->set('string_translation', $this->getStringTranslationStub());
+    \Drupal::setContainer($container);
+  }
+
   /**
    * Comments outside the shared discussion bundle never receive a quote link.
    */
@@ -100,14 +111,13 @@ final class ForumQuoteHooksTest extends UnitTestCase {
 
     $hooks->commentLinksAlter($links, $comment, $context);
 
-    $url = $links['aculta_forum_quote']['#links']['aculta-forum-quote']['url'];
-    self::assertSame('comment.reply', $url->getRouteName());
-    self::assertSame(42, $url->getRouteParameters()['pid']);
-    self::assertSame(['quote' => 42], $url->getOption('query'));
-    self::assertSame(
-      ['data-portal-ui' => 'button-secondary'],
-      $links['aculta_forum_quote']['#links']['aculta-forum-quote']['attributes'],
-    );
+    $element = $links['aculta_forum_quote'];
+    self::assertSame('component', $element['#type']);
+    self::assertSame('aculta420_v2:button', $element['#component']);
+    self::assertSame('secondary', $element['#props']['variant']);
+    $url = $element['#props']['url'];
+    self::assertStringContainsString('quote=42', $url);
+    self::assertStringContainsString('#comment-form', $url);
   }
 
   /**

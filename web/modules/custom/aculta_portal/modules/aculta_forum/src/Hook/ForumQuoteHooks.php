@@ -64,13 +64,12 @@ final class ForumQuoteHooks {
     ]);
 
     $linkBuild = [
-      '#theme' => 'links__comment__comment',
-      '#links' => [
-        'aculta-forum-quote' => [
-          'title' => $this->translation->translate('Citar'),
-          'url' => $url,
-          'attributes' => ['data-portal-ui' => 'button-secondary'],
-        ],
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:button',
+      '#props' => [
+        'text' => (string) $this->translation->translate('Citar'),
+        'url' => $url->toString(),
+        'variant' => 'secondary',
       ],
     ];
     (new CacheableMetadata())

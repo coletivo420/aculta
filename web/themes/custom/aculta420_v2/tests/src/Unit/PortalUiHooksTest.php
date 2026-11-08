@@ -36,7 +36,7 @@ final class PortalUiHooksTest extends UnitTestCase {
   public function testGenericPreprocessConvertsAndMapsAttributeArrays(): void {
     $variables = ['wrapper_attributes' => ['data-portal-ui' => 'studio-profile-editor']];
 
-    (new PortalUiHooks())->preprocess($variables);
+    PortalUiHooks::preprocessVariables($variables);
 
     self::assertInstanceOf(Attribute::class, $variables['wrapper_attributes']);
     self::assertTrue($variables['wrapper_attributes']->hasClass('aculta-profile-editor'));
