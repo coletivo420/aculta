@@ -15,6 +15,7 @@ Visualização aprovada: artefato "Botões ACULTA claro e escuro"
 | `.button--secondary` | ação alternativa, com borda visível |
 | `.button--outline` | ação de baixa ênfase dentro de cartões e listas |
 | `.button--ghost` | ação terciária, sem borda, em barras e menus |
+| `.button--danger` | ação destrutiva (remover, apagar), com contraste medido |
 
 Estados: repouso, `:hover`, `:active`, `:focus-visible` e desativado.
 Desativado usa `opacity: .65` e `cursor: not-allowed`; é a única exceção de
@@ -101,13 +102,21 @@ Os botões foram desenhados para repousar sobre as superfícies padrão do tema 
 ## 6. Status e Validação
 
 - **Tokens e componentes:** Migrados integralmente em `src/styles/tokens.css` e `components/button/button.css`, consumindo exclusivamente os tokens semânticos `--button-*`.
-- **Invariância por purpose:** Os tokens e o CSS são invariantes por purpose no código; a confirmação visual no Firefox ESR para os 10 purposes nos modos claro e escuro permanece pendente de runtime.
-- **Portabilidade mobile:** A regra de 320 CSS px está implementada; a captura visual sem rolagem horizontal permanece pendente de runtime.
-- **Contratos e Gates:** Suíte `validate-aculta420-v2-foundations.php` expandida com 73 pares de contraste textuais e estruturais, todos com verificação estrita PASS.
-- **Ambiente Homelab:** Captura em runtime real no Homelab permanece pendente (DEFERRED) para sincronização final.
+- **Invariância por purpose:** Confirmada no Firefox ESR em 2026-11-08: 10 purposes, claro e escuro, 320 e 1440 px, 360/360 verificações PASS.
+- **Portabilidade mobile:** Sem rolagem horizontal nas capturas de 320 px de todos os purposes (`overflow_px` 0).
+- **Contratos e Gates:** Suíte `validate-aculta420-v2-foundations.php` com 83 pares de contraste textuais e estruturais, PASS.
+- **Leitor de tela:** Orca real em páginas autenticadas (conta, Eventos e painel administrativo): 12/12 verificações, 22 botões anunciados; script `tests/browser/transversal/aculta-botoes-a11y/orca-buttons.mjs`.
+- **Ambiente Homelab:** Captura no Runtime de desenvolvimento (*.aculta.toca.net.br) concluída; não há host de produção nesta fase.
 
 ### Atualização de 2026-11-06
 
 - `scripts/validate-aculta420-v2-foundations.php`: PASS; confirmou que `buttons.css` não contém `--color-brand-highlight`, `--purpose-*` nem `filter: brightness(...)`.
 - PHPUnit focal do tema: 12 testes e 56 assertions PASS. Suíte de browser dedicada: `tests/browser/transversal/aculta-theme-mobile-first/buttons-purpose-runtime.py`.
 - Firefox ESR no Runtime: 40 casos nos dez purposes, claro/escuro e 320/1440 px; 358/360 verificações passaram. Botões primário e contorno corresponderam aos tokens `--button-*`, sem filter. Dois casos falharam por overflow geral do Fórum a 320 px. Capturas em `tests/browser/capturas/purpose-buttons/2026-11-06/`; repetir após a correção do overflow.
+
+### Atualização de 2026-11-08
+
+- Firefox ESR no Runtime: **360/360 verificações PASS** nos dez purposes, claro/escuro e 320/1440 px, com zoom de 200%. O overflow a 320 px do Fórum foi corrigido. Capturas em `tests/browser/capturas/purpose-buttons/2026-11-08/`.
+- O fixture do teste passou do token legado `aculta-btn-outline` para a marcação do SDC (`button button--outline`, fundo transparente e tokens secundários). Os seletores legados `[data-portal-ui="aculta-btn-*"]` foram removidos de `buttons.css`.
+- UI Library: 89 pré-visualizações com `data-theme` nos modos claro e escuro, sem rolagem horizontal; 1 falha de contraste conhecida em `rfc-matrix` do contrib `simple_oauth_21` (3,77:1), fora do tema.
+- Orca em estados autenticados: 22 botões (contas, Eventos e painel administrativo) com nome acessível anunciado; botões só com ícone usam `aria-label`.
