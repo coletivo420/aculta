@@ -10,6 +10,7 @@ dependencies:
   - aculta_portal:aculta_calendar
   - aculta_portal:aculta_events
   - aculta_portal:aculta_forum
+  - drupal:text_with_summary
   - group:gnode
   - aculta_portal:aculta_wiki
   - aculta_portal:aculta_messenger
