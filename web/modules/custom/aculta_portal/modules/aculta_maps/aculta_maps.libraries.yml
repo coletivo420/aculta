@@ -7,6 +7,7 @@ map:
   js:
     assets/vendor/leaflet/leaflet.js: { minified: true }
     js/aculta-map.js: {}
+    js/aculta-map-story.js: {}
   dependencies:
     - core/drupal
     - core/drupalSettings

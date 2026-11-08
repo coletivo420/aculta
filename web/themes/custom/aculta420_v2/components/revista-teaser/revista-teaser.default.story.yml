@@ -9,6 +9,12 @@ props:
   has_summary: true
   has_cover: false
 slots:
-  category: '<span>Território e memória</span>'
-  subtitle: '<span>Histórias e práticas culturais nos bairros.</span>'
-  summary: '<p>Uma publicação sobre cultura, território e memória.</p>'
+  category:
+    type: inline_template
+    template: '<span>Território e memória</span>'
+  subtitle:
+    type: inline_template
+    template: '<span>Histórias e práticas culturais nos bairros.</span>'
+  summary:
+    type: inline_template
+    template: '<p>Uma publicação sobre cultura, território e memória.</p>'

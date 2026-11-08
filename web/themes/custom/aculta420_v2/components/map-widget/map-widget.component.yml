@@ -3,6 +3,9 @@ name: Mapa Interativo
 description: Container do mapa com Leaflet/OpenStreetMap, marcadores e templates de popup e ícones.
 group: Mapas
 status: experimental
+libraryOverrides:
+  dependencies:
+    - aculta_maps/map
 props:
   type: object
   additionalProperties: false

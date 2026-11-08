@@ -6,4 +6,6 @@ props:
   title: Revista 420
   has_items: true
 slots:
-  items: '<div class="views-row"><article class="revista-teaser"><h2>Publicação de exemplo</h2></article></div>'
+  items:
+    type: inline_template
+    template: '<div class="views-row"><article class="revista-teaser"><h2>Publicação de exemplo</h2></article></div>'

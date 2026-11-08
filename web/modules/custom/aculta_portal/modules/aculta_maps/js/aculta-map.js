@@ -10,11 +10,15 @@
 
   Drupal.behaviors.acultaMaps = {
     attach(context) {
-      once('acultaMaps', '[data-aculta-map="true"]', context).forEach((element) => {
+      document.querySelectorAll('[data-aculta-map="true"]').forEach((element) => {
+        if (element.classList.contains('leaflet-container')) {
+          return;
+        }
         const settings = drupalSettings.acultaMaps && drupalSettings.acultaMaps[element.id];
         if (!settings) {
           return;
         }
+        once('acultaMaps', element);
         popupTemplates.set(element, new Map(
           Array.from(element.querySelectorAll('template[data-aculta-map-popup-template]'))
             .map((template) => [template.dataset.popupId, template.content.cloneNode(true)]),

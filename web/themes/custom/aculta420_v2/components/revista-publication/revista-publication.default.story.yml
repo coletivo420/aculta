@@ -10,10 +10,24 @@ props:
   has_authors: true
   has_discussion: false
 slots:
-  meta: '<div>Autoria · 4 de novembro de 2026</div>'
-  cover: '<img src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22800%22 height=%22600%22 viewBox=%220 0 800 600%22%3E%3Crect width=%22800%22 height=%22600%22 fill=%22%23e8dfcc%22/%3E%3C/svg%3E" alt="Capa editorial de exemplo">'
-  subtitle: '<p>Chamada editorial de exemplo.</p>'
-  summary: '<p>Resumo breve da publicação.</p>'
-  body: '<p>Corpo de texto para demonstrar a coluna de leitura.</p>'
-  footer: '<p>Categoria editorial</p>'
-  authors: '<p>Autoria pública preparada pelo Portal.</p>'
+  meta:
+    type: inline_template
+    template: '<div>Autoria · 4 de novembro de 2026</div>'
+  cover:
+    type: inline_template
+    template: '<img src="/themes/custom/aculta420_v2/assets/logos/wiki420-globe-512.png" alt="Capa editorial de exemplo" width="800" height="600">'
+  subtitle:
+    type: inline_template
+    template: '<p>Chamada editorial de exemplo.</p>'
+  summary:
+    type: inline_template
+    template: '<p>Resumo breve da publicação.</p>'
+  body:
+    type: inline_template
+    template: '<p>Corpo de texto para demonstrar a coluna de leitura.</p>'
+  footer:
+    type: inline_template
+    template: '<p>Categoria editorial</p>'
+  authors:
+    type: inline_template
+    template: '<p>Autoria pública preparada pelo Portal.</p>'
