@@ -1,10 +1,10 @@
 # TODO — aculta_forum
 
-Estado: Dev · versão 0.2.0-dev.2 · status: docs/operations/status/aculta_forum.yml.
+Estado: Dev · versão 0.2.0-dev.3 · status: docs/operations/status/aculta_forum.yml.
 
 ## Próximo passo
 
-Agente 2: Executar C02-03 (experimento Form API + HTMX) e C02-04 (backend compartilhado Comment) para o novo compositor inline. C02-01 e C02-02 concluídos (handoff em docs/HANDOFF-AGENTE-1-SANEAMENTO-0.2.0.md). D-65 HTTP e F-M3/F-M6/F-M7 permanecem pendentes; nenhuma migração de dados autorizada.
+Concluir homologação integrada no Runtime e validação de navegadores. Fases C02-01 a C02-08 implementadas e testadas com Unit e Kernel tests (38 tests PASS). D-65 HTTP e F-M3/F-M6/F-M7 permanecem pendentes; nenhuma migração de dados autorizada.
 
 ## Leitura
 

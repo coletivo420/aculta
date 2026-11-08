@@ -2,6 +2,16 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
+# Fórum — Comentários Compartilhados 0.2.0-dev.3 (Conclusão Agente 2) — 2026-11-08
+
+- **Objetivo:** implementar o novo compositor inline Form API + HTMX (C02-03 a C02-08), unificar fluxos de resposta e citação na mesma página e fechar achados COM-01 a COM-12.
+- **Estado:** C02-03 a C02-08 concluídos no código e homologados documentalmente. Implementados `DiscussionReplyAccess`, `DiscussionReplyUrlBuilder`, `DiscussionReplyFormBuilder`, `DiscussionReplyLazyBuilder`, `DiscussionReplyIdempotencyManager`, rota interna em português `/discussoes/compositor/{entity_type}/{entity_id}`, componente SDC `discussion-reply-composer` no tema V2 e hooks para supressão de redirects externos.
+- **Decisões:** fechados COM-01, COM-05 e COM-12 mantendo navegação in-place via HTMX nativo do Core com fallback seguro na mesma página via parâmetros em português. Idempotência por hash de intenção com janela de 30 segundos no FormState.
+- **Arquivos:** `DiscussionReplyAccess.php`, `DiscussionReplyUrlBuilder.php`, `DiscussionReplyFormBuilder.php`, `DiscussionReplyLazyBuilder.php`, `DiscussionReplyIdempotencyManager.php`, `DiscussionReplyController.php`, `DiscussionReplyEndpointAccess.php`, `DiscussionReplyFormHooks.php`, `DiscussionReplyActionsHooks.php`, `discussion-reply-composer` (SDC component, CSS, Twig, story), templates de comentário e testes unitários.
+- **Verificações:** PHPUnit isolado 38/38 PASS (154 assertions); Kernel `ForumPostThreadHooksKernelTest` PASS (2/2); `validate-project-status-index.php --write` PASS (41 componentes); `validate-public-slugs.php` PASS (415 rotas).
+- **Runtime:** Homelab inacessível localmente para `drush cr`; status registrado como `DEFERRED`.
+- **Próximo passo:** homologação visual autenticada no servidor de desenvolvimento assim que acessível.
+
 # Fórum — Comentários Compartilhados 0.2.0-dev.2 (Saneamento Agente 1) — 2026-11-08
 
 - **Objetivo:** executar saneamento da base de comentários antes do novo compositor inline (C02-01 e C02-02, achados COM-02/03/07/08/09/10/11) e preparar entrega para o Agente 2.
@@ -22,15 +32,3 @@
 - **Verificações:** Unit CGU 3/19 PASS; Unit Wiki/Events 129/545 PASS; `validate-project-status-index.php` PASS (44 componentes); `validate-config-extension-dependencies.php` PASS (1714 checks); smoke test HTTP 200 PASS. Kernels com banco isolado: `UgcReportPolicyKernelTest` 12/162 PASS.
 - **Pendências e bloqueios:** homologação funcional autenticada da fila unificada em `/painel-administrativo/moderacao/denuncias` e submissões com perfis de teste.
 - **Próximo passo:** homologar operacionalmente o painel administrativo de denúncias e o ciclo de revisão de propostas no Runtime.
-
-# ACULTA Maps + OpenStreetMap — Diagnóstico, Visual e Homologação — 2026-11-07
-
-- **Objetivo:** diagnosticar mapas não renderizados, corrigir causa raiz, alinhar apresentação visual no tema V2 e homologar funcional e visualmente.
-- **Estado:** causa diagnosticada e documentada (EventLocation::preSave só geocodificava em isNew ou mudança de endereço; local salvo sem coordenadas ficava sem marker); corrigido no owner aculta_events. Ordem mobile-first (mapa -> aviso -> lista), URLs canônicas e categorias aplicadas. Tema V2 atualizado com alturas responsivas (18rem/24rem/30rem), Leaflet attribution legível e foco visível. Ponte SDC map-popup consolidada com story mínima. Homologação Playwright Firefox ESR completa (320, 390, 768, 1024, 1440 px, claro/escuro, zoom 200%, sem JS) com PASS e sem overflow.
-- **Decisões:** OSM/Leaflet é o padrão sem chave. OpenStreetMap integration administrativa no MAIN protegida por permission (403 anônimo) e sem escrita externa.
-- **Cuidados:** nenhuma escrita no OSM; nenhuma alteração destrutiva ou de banco no Runtime; nenhuma credencial gravada.
-- **Commits e arquivos:** 7f05e3b21b, 1ea74f2ddf, c2ca27a068; aculta_maps (docs, status, TODO), aculta_events (Entity, Controller, Kernel tests), aculta420_v2 (SDC stories, styles, docs), capturas (manifest.json).
-- **Verificações:** Kernel MapControllerKernelTest 4/4 PASS (79 assertions); Kernel OpenStreetMapOAuthSafetyKernelTest 4/4 PASS; SDC Schemas PASS (52 components, 1126 checks); Mapped Classes PASS; Stylelint PASS; PHPCS PASS; Homologação Playwright Firefox 24 capturas PASS.
-- **Pendências e bloqueios:** atualização de coordenadas do local existente no banco aguarda atualização/re-save via interface administrativa pelo responsável (sem UPDATE direto no DB conforme AGENTS.md); minuta de privacidade 0.6 pendente de aprovação antes de publicação.
-- **Próximo passo:** aprovação da minuta de privacidade com o responsável e homologação das telas de edição/importação com usuário autenticado.
-

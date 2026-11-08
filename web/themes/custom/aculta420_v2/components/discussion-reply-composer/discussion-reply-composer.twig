@@ -1,0 +1,31 @@
+<div id="{{ target_id }}" class="discussion-reply-composer discussion-reply-composer--{{ status }}" data-discussion-reply-composer data-status="{{ status }}" data-parent-id="{{ parent_id|default('') }}">
+  <div class="discussion-reply-composer__inner">
+    {% if parent_id and parent_author %}
+      <div class="discussion-reply-composer__parent-banner">
+        <span class="discussion-reply-composer__parent-label">{{ 'Respondendo a:'|t }}</span>
+        <strong class="discussion-reply-composer__parent-author">{{ parent_author }}</strong>
+        {% if parent_subject %}
+          <span class="discussion-reply-composer__parent-subject">({{ parent_subject }})</span>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if messages %}
+      <div class="discussion-reply-composer__messages" role="status" aria-live="polite">
+        {{ messages }}
+      </div>
+    {% endif %}
+
+    {% if context %}
+      <div class="discussion-reply-composer__context">
+        {{ context }}
+      </div>
+    {% endif %}
+
+    {% if form %}
+      <div class="discussion-reply-composer__form">
+        {{ form }}
+      </div>
+    {% endif %}
+  </div>
+</div>

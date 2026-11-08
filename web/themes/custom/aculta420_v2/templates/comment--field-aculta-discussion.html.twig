@@ -7,6 +7,7 @@
   {{ content.links }}
 {% endset %}
 {% set author_name_val = author_card ? (author_card['#display_name']|default(author)) : author %}
+{% set composer_target_id = 'discussion-composer-' ~ commented_entity_type ~ '-' ~ commented_entity_id ~ '-' ~ comment.id %}
 {{ title_prefix }}
 <article{{ attributes.addClass('comment', 'comment--discussion', 'js-comment', status ? 'comment--' ~ status) }}>
   {% if parent %}
@@ -25,5 +26,6 @@
     actions: actions_markup,
     reply: null,
   }, with_context = false) }}
+  <div id="{{ composer_target_id }}" class="discussion-reply-target"></div>
 </article>
 {{ title_suffix }}

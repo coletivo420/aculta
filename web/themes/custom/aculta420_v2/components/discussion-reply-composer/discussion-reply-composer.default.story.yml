@@ -1,0 +1,22 @@
+name: Padrão (Editando)
+props:
+  target_id: discussion-composer-demo-1
+  status: editando
+  parent_id: "42"
+  parent_author: "Maria Silva"
+  parent_subject: "Dúvida sobre o cultivo orgânico"
+  host_title: "Guia de Cultivo Sustentável"
+slots:
+  messages: ""
+  context: ""
+  form: |
+    <form class="comment-form">
+      <div class="form-item form-type-textarea">
+        <label for="edit-body">Sua resposta</label>
+        <textarea id="edit-body" class="form-textarea" rows="4" placeholder="Escreva sua resposta aqui..."></textarea>
+      </div>
+      <div class="form-actions">
+        <input type="submit" class="button button--primary" value="Enviar resposta" />
+        <input type="button" class="button button--secondary" value="Cancelar" />
+      </div>
+    </form>

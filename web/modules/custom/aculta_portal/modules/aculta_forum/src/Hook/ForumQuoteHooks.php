@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Hook;
 
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
+use Drupal\aculta_forum\Service\DiscussionReplyUrlBuilder;
 use Drupal\aculta_forum\Service\ForumQuoteBuilder;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -31,6 +32,8 @@ final class ForumQuoteHooks {
     private readonly ForumQuoteBuilder $quoteBuilder,
     private readonly RequestStack $requestStack,
     private readonly TranslationInterface $translation,
+    #[Autowire(service: 'aculta_forum.discussion_reply_url_builder')]
+    private readonly ?DiscussionReplyUrlBuilder $urlBuilder = NULL,
   ) {}
 
   /**
@@ -56,25 +59,34 @@ final class ForumQuoteHooks {
       return;
     }
 
-    $url = Url::fromRoute('comment.reply', [
-      'entity_type' => $comment->getCommentedEntityTypeId(),
-      'entity' => $comment->getCommentedEntityId(),
-      'field_name' => $comment->getFieldName(),
-      'pid' => $comment->id(),
+    $urlBuilder = $this->urlBuilder ?? new DiscussionReplyUrlBuilder();
+    $fallbackUrl = $urlBuilder->buildHostReplyUrl($host, (int) $comment->id(), 'citar');
+    $composerId = 'discussion-composer-' . $host->getEntityTypeId() . '-' . $host->id() . '-' . $comment->id();
+
+    // Endpoint for loading composer with quote prefilled via HTMX.
+    $endpointUrl = Url::fromRoute('aculta_forum.discussion_composer', [
+      'entity_type' => $host->getEntityTypeId(),
+      'entity_id' => $host->id(),
     ], [
-      'query' => ['quote' => (int) $comment->id()],
-      'fragment' => 'comment-form',
+      'query' => [
+        'resposta' => (int) $comment->id(),
+        'citacao' => (int) $comment->id(),
+        'modo' => 'citar',
+      ],
     ]);
 
     // COM-08/COM-10/COM-11: Estrutura neutra de links Drupal, com atributos semânticos,
     // inserida no grupo 'comment' para ser coletada por Link::preRenderLinks.
     $quoteLink = [
       'title' => $this->translation->translate('Citar'),
-      'url' => $url,
+      'url' => $fallbackUrl,
       'attributes' => [
-        'class' => ['comment-action', 'comment-action--quote'],
+        'class' => ['comment-action', 'comment-action--quote', 'use-htmx'],
         'data-action' => 'comment-quote',
         'data-quote-id' => (string) $comment->id(),
+        'data-hx-get' => $endpointUrl->toString(),
+        'data-hx-target' => '#' . $composerId,
+        'data-hx-swap' => 'outerHTML',
         'aria-label' => (string) $this->translation->translate('Citar comentário #@id', ['@id' => $comment->id()]),
       ],
     ];
@@ -104,10 +116,10 @@ final class ForumQuoteHooks {
   #[Hook('form_comment_form_alter')]
   public function commentFormAlter(array &$form, FormStateInterface $formState, string $formId): void {
     $request = $this->requestStack->getCurrentRequest();
-    if ($request === NULL || $request->attributes->get('_route') !== 'comment.reply') {
+    if ($request === NULL) {
       return;
     }
-    $quoteId = $request->query->get('quote');
+    $quoteId = $request->query->get('citacao') ?? $request->query->get('quote');
     if (!is_scalar($quoteId) || !ctype_digit((string) $quoteId) || (int) $quoteId < 1) {
       return;
     }
@@ -180,7 +192,7 @@ final class ForumQuoteHooks {
       ->addCacheableDependency($discussion->getWriteAccess())
       ->addCacheableDependency($sourceAccess)
       ->addCacheableDependency($processedBody)
-      ->addCacheContexts(['url.query_args:quote'])
+      ->addCacheContexts(['url.query_args:citacao', 'url.query_args:quote'])
       ->applyTo($form);
   }
 

@@ -1,5 +1,5 @@
 # Fonte do índice de status do README raiz.
-version: 0.2.0-dev.2
+version: 0.2.0-dev.3
 state: Dev
-next_phase: "Agente 2: executar C02-03 (experimento Form API + HTMX) e C02-04 (backend compartilhado Comment) para o novo compositor inline."
-progress_note: "0.2.0-dev.2: saneamento da base de comentários concluído (C02-01 e C02-02). WikiDiscussionContextProvider movido para aculta_forum; templates corrigidos para preservar attributes do Core e acessibilidade de pai; DiscussionCommentPermalinkBuilder implementado para permalinks no hospedeiro sob D-65; forum-quote.js saneado sem manipulação insegura de texto; ForumQuoteHooks desacoplado de aculta420_v2:button e revalidando getWriteAccess; seletores semânticos e contrato #links Link::preRenderLinks garantidos. Entregue handoff ao Agente 2."
+next_phase: "Homologação integrada no Runtime e validação de navegadores. Fases C02-01 a C02-08 implementadas no código com suite de testes."
+progress_note: "0.2.0-dev.3: Ciclo C02-03 a C02-08 implementado. Prova técnica Form API + HTMX nativo integrada em DiscussionReplyController, DiscussionReplyAccess, DiscussionReplyFormBuilder e DiscussionReplyLazyBuilder. Compositor inline discussion-reply-composer em SDC com tokens e schema estrito no tema V2. Idempotência implementada em DiscussionReplyIdempotencyManager. Ações inline e links unificados sem redirect externo."

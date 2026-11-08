@@ -541,3 +541,13 @@ migração ou alteração de Runtime foi executada.
 - Focal: 2 testes / 4 assertions PASS; PHP lint e PHPCS Drupal/DrupalPractice
   PASS. Nenhuma escrita Runtime.
 
+
+## [0.2.0-dev.3] - 2026-11-08
+
+### Conclusão do ciclo de comentários compartilhados inline (C02-03 a C02-08)
+- Implementado backend neutro de resposta inline (`DiscussionReplyAccess`, `DiscussionReplyUrlBuilder`, `DiscussionReplyFormBuilder` e `DiscussionReplyLazyBuilder`).
+- Criado endpoint interno em português `/discussoes/compositor/{entity_type}/{entity_id}` com renderização HTMX do Core (`options: _htmx_route: true`).
+- Criado componente SDC `discussion-reply-composer` no tema V2 com schema estrito, tokens semânticos e story funcional (`discussion-reply-composer.default.story.yml`).
+- Implementado gerenciador de idempotência contra duplo envio e concorrência (`DiscussionReplyIdempotencyManager`).
+- Unificadas ações inline em `#links['comment-reply']` e `#links['comment-quote']` em conformidade com o contrato Drupal Core de `Link::preRenderLinks`.
+- Fechados achados COM-01 a COM-12 e gerada documentação de homologação em `HOMOLOGACAO-COMENTARIOS-0.2.0.md`.

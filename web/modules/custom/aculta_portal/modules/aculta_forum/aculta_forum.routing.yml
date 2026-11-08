@@ -169,3 +169,14 @@ aculta_forum.post_edit:
   requirements:
     _custom_access: 'aculta_forum.post_public_edit_access:access'
   methods: [GET, HEAD, POST]
+
+aculta_forum.discussion_composer:
+  path: '/discussoes/compositor/{entity_type}/{entity_id}'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\DiscussionReplyController::composer'
+    _title: 'Responder à discussão'
+  requirements:
+    _custom_access: 'aculta_forum.discussion_reply_endpoint_access:access'
+  options:
+    _htmx_route: TRUE
+  methods: [GET, HEAD]

@@ -1,0 +1,45 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Compositor de Resposta da Discussão
+status: stable
+description: Componente visual SDC para composição de respostas e citações em discussões compartilhadas.
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [target_id]
+  properties:
+    target_id:
+      type: string
+      title: Identificador do container alvo
+      minLength: 1
+    status:
+      type: string
+      title: Estado do compositor
+      enum: [fechado, carregando, editando, previa, invalido, enviando, enviado, moderacao, acesso_revogado, sessao_expirada, erro_rede]
+      default: editando
+    parent_id:
+      type: [string, integer, 'null']
+      title: Identificador do comentário ou publicação pai
+      default: null
+    parent_author:
+      type: [string, 'null']
+      title: Nome do autor do comentário pai
+      default: null
+    parent_subject:
+      type: [string, 'null']
+      title: Título ou assunto do comentário pai
+      default: null
+    host_title:
+      type: [string, 'null']
+      title: Título do conteúdo hospedeiro
+      default: null
+slots:
+  messages:
+    title: Mensagens de status ou erro
+    description: Região de alerta acessível (role="status").
+  form:
+    title: Formulário Drupal
+    description: Render array do formulário Form API.
+  context:
+    title: Contexto de resposta
+    description: Informações adicionais do pai ou citação.

@@ -1,0 +1,96 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_forum\Hook;
+
+use Drupal\aculta_forum\Context\DiscussionContextResolver;
+use Drupal\aculta_forum\Service\DiscussionReplyAccess;
+use Drupal\aculta_forum\Service\DiscussionReplyUrlBuilder;
+use Drupal\comment\CommentInterface;
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Htmx\Htmx;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+
+/**
+ * Adds unified inline reply actions to discussion comments.
+ */
+final class DiscussionReplyActionsHooks {
+
+  public function __construct(
+    #[Autowire(service: 'aculta_forum.discussion_context_resolver')]
+    private readonly DiscussionContextResolver $contextResolver,
+    private readonly AccountProxyInterface $currentUser,
+    #[Autowire(service: 'aculta_forum.discussion_reply_access')]
+    private readonly DiscussionReplyAccess $replyAccess,
+    #[Autowire(service: 'aculta_forum.discussion_reply_url_builder')]
+    private readonly DiscussionReplyUrlBuilder $urlBuilder,
+    private readonly TranslationInterface $translation,
+  ) {}
+
+  /**
+   * Implements hook_comment_links_alter().
+   */
+  #[Hook('comment_links_alter')]
+  public function commentLinksAlter(array &$links, CommentInterface $comment, array &$context): void {
+    if ($comment->bundle() !== 'aculta_discussion_post' || !$comment->isPublished()) {
+      return;
+    }
+    $host = $comment->getCommentedEntity();
+    if (!$host instanceof EntityInterface) {
+      return;
+    }
+
+    $access = $this->replyAccess->checkAccess($host, $this->currentUser, (int) $comment->id());
+    if (!$access->isAllowed()) {
+      return;
+    }
+
+    $fallbackUrl = $this->urlBuilder->buildHostReplyUrl($host, (int) $comment->id(), 'responder');
+    $composerId = 'discussion-composer-' . $host->getEntityTypeId() . '-' . $host->id() . '-' . $comment->id();
+
+    // HTMX action to load reply composer inline under this comment.
+    $endpointUrl = Url::fromRoute('aculta_forum.discussion_composer', [
+      'entity_type' => $host->getEntityTypeId(),
+      'entity_id' => $host->id(),
+    ], [
+      'query' => [
+        'resposta' => (int) $comment->id(),
+        'modo' => 'responder',
+      ],
+    ]);
+
+    $replyLink = [
+      'title' => $this->translation->translate('Responder'),
+      'url' => $fallbackUrl,
+      'attributes' => [
+        'class' => ['comment-action', 'comment-action--reply', 'use-htmx'],
+        'data-action' => 'comment-reply',
+        'data-parent-id' => (string) $comment->id(),
+        'data-hx-get' => $endpointUrl->toString(),
+        'data-hx-target' => '#' . $composerId,
+        'data-hx-swap' => 'outerHTML',
+        'aria-label' => (string) $this->translation->translate('Responder ao comentário #@id', ['@id' => $comment->id()]),
+      ],
+    ];
+
+    $cacheability = (new CacheableMetadata())
+      ->addCacheableDependency($comment)
+      ->addCacheableDependency($access);
+
+    if (isset($links['comment'])) {
+      $links['comment']['#links']['comment-reply'] = $replyLink;
+      $cacheability->applyTo($links['comment']);
+    }
+    else {
+      $links['#links']['comment-reply'] = $replyLink;
+      $cacheability->applyTo($links);
+    }
+  }
+
+}

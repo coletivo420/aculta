@@ -35,6 +35,9 @@ final class DiscussionCommentPermalinkHooks {
       return;
     }
 
+    $variables['commented_entity_type'] = $comment->getCommentedEntityTypeId();
+    $variables['commented_entity_id'] = $comment->getCommentedEntityId();
+
     $url = $this->permalinkBuilder->build($comment);
     if ($url !== NULL) {
       $attributes = $url->getOption('attributes') ?: [];

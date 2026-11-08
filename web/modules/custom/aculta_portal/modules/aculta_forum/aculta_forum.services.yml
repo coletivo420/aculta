@@ -244,3 +244,49 @@ services:
 
 
 
+
+  aculta_forum.discussion_reply_access:
+    class: Drupal\aculta_forum\Service\DiscussionReplyAccess
+    arguments:
+      - '@aculta_forum.discussion_context_resolver'
+      - '@entity_type.manager'
+
+  aculta_forum.discussion_reply_url_builder:
+    class: Drupal\aculta_forum\Service\DiscussionReplyUrlBuilder
+
+  aculta_forum.discussion_reply_idempotency_manager:
+    class: Drupal\aculta_forum\Service\DiscussionReplyIdempotencyManager
+    arguments:
+      - '@database'
+
+  aculta_forum.discussion_reply_form_builder:
+    class: Drupal\aculta_forum\Service\DiscussionReplyFormBuilder
+    arguments:
+      - '@aculta_forum.discussion_context_resolver'
+      - '@entity_type.manager'
+      - '@entity.form_builder'
+      - '@aculta_forum.discussion_reply_access'
+      - '@aculta_forum.quote_builder'
+
+  aculta_forum.discussion_reply_lazy_builder:
+    class: Drupal\aculta_forum\Service\DiscussionReplyLazyBuilder
+    arguments:
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@aculta_forum.discussion_reply_form_builder'
+
+  aculta_forum.discussion_reply_endpoint_access:
+    class: Drupal\aculta_forum\Access\DiscussionReplyEndpointAccess
+    arguments:
+      - '@entity_type.manager'
+      - '@aculta_forum.discussion_reply_access'
+
+  aculta_forum.discussion_reply_controller:
+    class: Drupal\aculta_forum\Controller\DiscussionReplyController
+    arguments:
+      - '@entity_type.manager'
+      - '@aculta_forum.discussion_reply_form_builder'
+      - '@aculta_forum.discussion_reply_access'
+      - '@aculta_forum.discussion_context_resolver'
+      - '@aculta_forum.quote_builder'
+      - '@current_user'

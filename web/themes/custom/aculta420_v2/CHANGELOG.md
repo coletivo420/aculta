@@ -758,3 +758,7 @@
   smoke. Full consumer visual and assistive technology review remains pending.
 
 State: Dev. No RC, production deployment, or release tag is declared.
+
+## [1.4.1] - 2026-11-08
+- Adicionado componente SDC `discussion-reply-composer` para renderização acessível e integrada de respostas inline no fórum e discussões compartilhadas.
+- Atualizado `forum-quote.js` para focar suavemente no editor ou textarea após o swap HTMX, respeitando `prefers-reduced-motion`.

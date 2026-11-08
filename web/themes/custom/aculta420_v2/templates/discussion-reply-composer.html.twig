@@ -1,0 +1,11 @@
+{{ include('aculta420_v2:discussion-reply-composer', {
+  target_id: target_id,
+  status: status|default('editando'),
+  parent_id: parent_id|default(null),
+  parent_author: parent_author|default(null),
+  parent_subject: parent_subject|default(null),
+  host_title: host_title|default(null),
+  messages: messages|default(null),
+  form: form|default(null),
+  context: null,
+}, with_context = false) }}
