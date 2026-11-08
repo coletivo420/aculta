@@ -244,7 +244,7 @@
   --color-border: #6b7d70;
   --color-on-brand: #171513;
   --color-on-highlight: #171513;
-  --color-auth-dialog-link: #171513;
+  --color-auth-dialog-link: #9ac15a;
   --color-on-footer: #171513;
   --color-status: #8fe0a8;
   --color-warning: #ffc107;
@@ -355,6 +355,41 @@
   --aculta-border: #6b7d70; /* --color-border */
   --aculta-control-border: #8fa397; /* --button-secondary-border */
   --aculta-focus: #f4efe8; /* --color-focus-ring */
+
+  /* Tokens derivados por var(): repetidos aqui para resolver com os valores escuros.
+     Declarados só no :root, eles herdariam o valor claro já calculado. */
+  --color-alpha-border-75: color-mix(in sRGB, var(--color-border) 75%, transparent);
+  --color-alpha-brand-primary-76: color-mix(in sRGB, var(--color-brand-primary) 76%, transparent);
+  --color-alpha-on-brand-20: color-mix(in sRGB, var(--color-on-brand) 20%, transparent);
+  --color-alpha-shadow-tint-17: color-mix(in sRGB, var(--color-shadow-tint) 17%, transparent);
+  --color-alpha-shadow-tint-50: color-mix(in sRGB, var(--color-shadow-tint) 50%, transparent);
+  --color-alpha-text-muted-5: color-mix(in sRGB, var(--color-text-muted) 5%, transparent);
+  --color-alpha-text-primary-16: color-mix(in sRGB, var(--color-text-primary) 16%, transparent);
+  --color-focus-ring: var(--color-brand-primary);
+  --color-footer-surface: var(--color-brand-secondary);
+  --color-primary: var(--color-brand-primary);
+  --color-accent: var(--color-brand-highlight);
+  --color-success: var(--color-status);
+  --color-danger: var(--color-error);
+  --color-light: var(--color-canvas);
+  --color-dark: var(--color-text-primary);
+  --color-on-primary: var(--color-on-brand);
+  /* Tokens de cor com valor literal claro e sem par escuro (usados por componentes). */
+  --color-auth-action-text: #171513;
+  --color-auth-control-focus: #f4efe8;
+  --color-auth-control-surface: #302b27;
+  --color-auth-control-text: #f4efe8;
+  --color-auth-dialog-divider: #6b7d70;
+  --color-auth-dialog-surface: #211e1b;
+  --color-auth-dialog-text: #f4efe8;
+  --color-auth-provider-surface: #2b2723;
+  --color-auth-provider-text: #f4efe8;
+  --color-auth-secondary-surface: #2b2723;
+  --color-auth-secondary-text: #f4efe8;
+  --color-footer-link-surface: #2b2723;
+  --color-footer-link-text: #f4efe8;
+  --color-footer-text: #171513;
+  --color-surface-subtle: #2b2723;
 
   color-scheme: dark;
 }
