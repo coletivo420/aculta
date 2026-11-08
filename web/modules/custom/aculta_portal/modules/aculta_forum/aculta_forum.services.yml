@@ -212,3 +212,22 @@ services:
   aculta_forum.report_ugc_bridge:
     alias: Drupal\aculta_forum\Hook\ForumReportUgcBridgeHooks
     public: true
+
+  Drupal\aculta_forum\Context\Provider\LmsDiscussionContextProvider:
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: aculta_forum.discussion_context_provider }
+
+  aculta_forum.lms_edit_window_exemption:
+    class: Drupal\aculta_forum\Access\LmsEditWindowExemption
+    arguments: ['@Drupal\aculta_forum\Context\Provider\LmsDiscussionContextProvider']
+    tags:
+      - { name: aculta_user.edit_window_exemption, priority: 0 }
+
+  Drupal\aculta_forum\Hook\LmsDiscussionEntityAccessHooks:
+    arguments: ['@Drupal\aculta_forum\Context\Provider\LmsDiscussionContextProvider']
+
+  Drupal\aculta_forum\Hook\LmsCommentModerationAccessHooks:
+    arguments: ['@aculta_forum.discussion_context_resolver']
+
+

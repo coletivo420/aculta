@@ -178,11 +178,10 @@ criada, então o download real de resposta continua sem smoke positivo.
   Group e o viewer `aculta_pdf_viewer`; o acesso ao arquivo é revalidado pela
   rota privada do Core. O módulo declara a dependência do submódulo Group do
   viewer para evitar configuração de curso sem o plugin correspondente.
-- Discussões LMS usam o adapter opcional `aculta_forum_lms`, com Node e Comment
+- Discussões LMS consom os serviços e o motor de discussão do `aculta_forum`, com Node e Comment
   compartilhado em Group de curso/turma, access contextual, membership
   revalidada e moderação por `grade students` do curso. `lms_classes.settings`
-  herda essa permissão Group Node para turmas. O adapter e suas permissões estão
-  ativos no Runtime de teste. Desde `aculta_forum_lms` dev.24, tópicos podem
+  herda essa permissão Group Node para turmas. As permissões estão ativas no Runtime de teste. Tópicos podem
   referenciar `field_lms_activity`; o formulário de resposta lista discussões
   autorizadas no Group do curso ou turma da atividade. Config Sync parcial e
   resolução do serviço/hook foram confirmadas, mas o Runtime ainda não tem

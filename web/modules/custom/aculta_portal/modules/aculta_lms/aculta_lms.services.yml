@@ -237,3 +237,23 @@ services:
     arguments: ['@aculta_lms.notice_recipients', '@aculta_messenger.notice_event_publisher', '@logger.channel.aculta_messenger']
     tags:
       - { name: event_subscriber }
+
+  aculta_forum_lms.activity_discussion_resolver:
+    class: Drupal\aculta_lms\Context\LmsActivityDiscussionResolver
+    arguments: ['@entity_type.manager', '@aculta_lms.class_activity_deadline_manager', '@string_translation']
+  Drupal\aculta_lms\Context\LmsActivityDiscussionResolver: '@aculta_forum_lms.activity_discussion_resolver'
+
+  Drupal\aculta_lms\Hook\LmsActivityDiscussionHooks:
+    arguments: ['@aculta_forum_lms.activity_discussion_resolver', '@current_user', '@entity_type.manager']
+
+  aculta_forum_lms.moderation_manager:
+    class: Drupal\aculta_lms\Access\LmsForumModerationManager
+    arguments: ['@entity_type.manager', '@Drupal\aculta_forum\Context\Provider\LmsDiscussionContextProvider']
+
+  aculta_lms.moderation_controller:
+    class: Drupal\aculta_lms\Controller\LmsForumModerationController
+    arguments: ['@aculta_forum_lms.moderation_manager', '@entity_type.manager', '@views.executable', '@current_user', '@string_translation']
+
+  Drupal\aculta_lms\Hook\LmsCommentModerationOperationsHooks:
+    arguments: ['@aculta_forum_lms.moderation_manager', '@current_user']
+

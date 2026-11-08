@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.field_h5p_content
     - node.type.aculta_lms_topic
   module:
-    - aculta_forum_lms
+    - aculta_lms
     - aculta_lms_h5p
     - node
 id: node.aculta_lms_topic.field_h5p_content

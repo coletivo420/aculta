@@ -8,7 +8,7 @@ dependencies:
     - user.role.lms_teacher
   module:
     - aculta_document_viewer
-    - aculta_forum_lms
+    - aculta_lms
 id: lms_course-teacher
 label: Educador
 weight: 10

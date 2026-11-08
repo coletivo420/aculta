@@ -1,0 +1,9 @@
+services:
+  # Stand-ins for services owned by modules outside this Kernel test's scope.
+  # They are never executed; they only satisfy the adapter service wiring.
+  aculta_lms.class_activity_deadline_manager:
+    class: Drupal\aculta_forum_lms_test\UnusedService
+  aculta_lms_h5p.course_access:
+    class: Drupal\aculta_forum_lms_test\UnusedService
+  aculta_forum.discussion_context_resolver:
+    class: Drupal\aculta_forum_lms_test\UnusedService
