@@ -83,8 +83,9 @@ final class DiscussionReplyFormHooks {
       '#tag' => 'button',
       '#value' => t('Limpar'),
       '#attributes' => [
-        'type' => 'reset',
+        'type' => 'button',
         'class' => ['button', 'button--secondary'],
+        'data-aculta-reply-clear' => '',
       ],
       '#weight' => 50,
     ];

@@ -61,6 +61,103 @@
     },
   };
 
+  const dialogId = 'aculta-reply-dialog';
+  const dialogBodyId = 'aculta-reply-dialog-body';
+
+  /**
+   * Cria, uma única vez, o <dialog> modal que recebe o compositor de Responder/Citar.
+   */
+  function ensureReplyDialog() {
+    let dialog = document.getElementById(dialogId);
+    if (dialog) {
+      return dialog;
+    }
+    dialog = document.createElement('dialog');
+    dialog.id = dialogId;
+    dialog.className = 'aculta-reply-dialog';
+    dialog.setAttribute('aria-labelledby', dialogId + '-title');
+    dialog.innerHTML = '<div class="aculta-reply-dialog__header">'
+      + '<h2 class="aculta-reply-dialog__title" id="' + dialogId + '-title">Responder</h2>'
+      + '<button type="button" class="button button--ghost aculta-reply-dialog__close" data-aculta-reply-close>Fechar</button>'
+      + '</div>'
+      + '<div id="' + dialogBodyId + '" class="aculta-reply-dialog__body"></div>';
+    document.body.appendChild(dialog);
+    dialog.addEventListener('click', (event) => {
+      if (event.target.closest('[data-aculta-reply-close]') || event.target === dialog) {
+        dialog.close();
+      }
+    });
+    dialog.addEventListener('close', () => {
+      document.getElementById(dialogBodyId).innerHTML = '';
+    });
+    return dialog;
+  }
+
+  Drupal.behaviors.acultaForumReplyPopup = {
+    attach(context) {
+      once('aculta-reply-popup', document.body, context).forEach((body) => {
+        ensureReplyDialog();
+
+        // Responder/Citar: o conteúdo do compositor vai para o diálogo, não para a linha do comentário.
+        body.addEventListener('htmx:beforeSwap', (event) => {
+          const detail = event.detail || {};
+          const element = detail.elt;
+          if (!element || typeof element.closest !== 'function' || !element.closest(triggerSelector)) {
+            return;
+          }
+          detail.target = document.getElementById(dialogBodyId);
+          detail.shouldSwap = true;
+          detail.isError = false;
+        });
+
+        // Ao abrir o compositor no diálogo, mostra o modal e foca o editor.
+        body.addEventListener('htmx:afterSwap', (event) => {
+          const target = event.detail && event.detail.target;
+          if (target && target.id === dialogBodyId) {
+            const dialog = ensureReplyDialog();
+            if (!dialog.open) {
+              dialog.showModal();
+            }
+          }
+        });
+
+        // Postagem concluída: o thread é trocado, então o diálogo fecha.
+        body.addEventListener('htmx:afterSwap', (event) => {
+          const target = event.detail && event.detail.target;
+          if (target && target.matches && target.matches('[data-aculta-discussion-thread]')) {
+            const dialog = document.getElementById(dialogId);
+            if (dialog && dialog.open) {
+              dialog.close();
+            }
+          }
+        });
+
+        // Limpar: esvazia o editor CKEditor e o restante do formulário, sem depender do reset nativo.
+        body.addEventListener('click', (event) => {
+          const clear = event.target.closest && event.target.closest('[data-aculta-reply-clear]');
+          if (!clear) {
+            return;
+          }
+          event.preventDefault();
+          const form = clear.closest('form');
+          if (!form) {
+            return;
+          }
+          const textarea = form.querySelector('textarea');
+          const instances = Drupal.CKEditor5Instances ? [...Drupal.CKEditor5Instances.values()] : [];
+          const editor = instances.find((instance) => form.contains(instance.sourceElement));
+          if (editor) {
+            editor.setData('');
+          }
+          form.reset();
+          if (textarea) {
+            textarea.value = '';
+          }
+        });
+      });
+    },
+  };
+
   Drupal.behaviors.acultaForumQuote = {
     attach(context) {
       // Monitora o término da carga do compositor via HTMX para colocar o foco no editor.
