@@ -36,7 +36,7 @@ final class DonationPortKernelTest extends OrderKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['commerce_cart', 'commerce_checkout', 'commerce_payment', 'aculta_donation'];
+  protected static $modules = ['commerce_cart', 'commerce_checkout', 'commerce_payment', 'aculta_donation', 'text', 'text_with_summary'];
 
   /**
    * {@inheritdoc}
