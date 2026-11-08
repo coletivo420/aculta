@@ -183,3 +183,9 @@ a.button.button--danger:active {
     transition: none;
   }
 }
+
+/* Foco forçado para a grade "Esquema de botões" (espelha :focus-visible). */
+.button.is-focus {
+  outline: 2px solid var(--button-focus-ring);
+  outline-offset: 2px;
+}

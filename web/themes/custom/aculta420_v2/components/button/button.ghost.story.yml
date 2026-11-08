@@ -1,0 +1,6 @@
+name: Fantasma
+description: Ação discreta, sem borda nem fundo em repouso.
+props:
+  text: Ver mais
+  url: /
+  variant: ghost

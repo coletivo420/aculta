@@ -1,0 +1,6 @@
+name: Contorno
+description: Ação de baixa ênfase, com borda e fundo transparente.
+props:
+  text: Fale com a Associação
+  url: /
+  variant: outline

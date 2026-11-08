@@ -1,0 +1,6 @@
+name: Primário
+description: Ação principal da página, com link.
+props:
+  text: Criar tópico
+  url: /
+  variant: primary

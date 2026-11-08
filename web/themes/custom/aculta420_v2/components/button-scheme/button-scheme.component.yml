@@ -1,0 +1,8 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Esquema de botões
+status: stable
+description: Grade de estados de botão em claro e escuro lado a lado, para a UI Library.
+group: ACULTA
+props:
+  type: object
+  additionalProperties: false

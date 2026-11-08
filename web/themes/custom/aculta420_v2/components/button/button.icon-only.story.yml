@@ -1,0 +1,7 @@
+name: Só ícone
+description: Botão sem texto visível; o nome acessível vem de aria_label.
+props:
+  url: /
+  variant: ghost
+  icon_before: caret-left
+  aria_label: Mês anterior
