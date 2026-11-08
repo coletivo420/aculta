@@ -19,8 +19,10 @@
   .removeAttribute('type')
   .removeAttribute('disabled')
   .removeClass(['button', 'button--primary', 'button--secondary', 'button--outline', 'button--ghost', 'button--danger', 'button--small', 'button--action', 'button--cta']) %}
+{# O rótulo do Drupal chega em attributes.value; value só existe quando o chamador o passa. #}
+{% set label %}{{ value|default(attributes.value) }}{% endset %}
 {{ include('aculta420_v2:button', {
-  text: value,
+  text: label|trim,
   is_submit: true,
   variant: variant,
   size: is_small ? 'small' : 'default',
