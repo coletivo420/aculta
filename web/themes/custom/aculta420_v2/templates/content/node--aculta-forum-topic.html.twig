@@ -47,8 +47,7 @@
           bookmark: bookmark_action,
           content: topic_content
         }, with_context = false) }}
-      </div>
-      <aside class="aculta-forum-topic__aside" aria-labelledby="forum-topic-about">
+        <aside class="aculta-forum-topic__aside" aria-labelledby="forum-topic-about">
         <section class="aculta-forum-topic__about">
           <h2 class="aculta-forum-topic__about-title" id="forum-topic-about">{{ 'Sobre este tópico'|t }}</h2>
           <dl class="aculta-forum-topic__about-list">
@@ -72,6 +71,7 @@
           </dl>
         </section>
       </aside>
+    </div>
     </div>
   {% else %}
     {{ include('aculta420_v2:forum-topic', {

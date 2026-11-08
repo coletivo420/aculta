@@ -762,15 +762,25 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
   display: none;
 }
 
-/* Página de tópico: coluna principal e painel "Sobre este tópico" (referência 5). */
+/* Página de tópico: coluna única; o painel "Sobre este tópico" fica no fim do conteúdo principal. */
 .aculta-forum-topic__layout {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--spacing-base);
   min-inline-size: 0;
 }
 
 .aculta-forum-topic__main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-base);
   min-inline-size: 0;
+  inline-size: 100%;
+}
+
+.aculta-forum-topic__aside {
+  min-inline-size: 0;
+  inline-size: 100%;
 }
 
 .aculta-forum-topic__about {
@@ -817,8 +827,7 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
 
 @media (min-width: 60rem) {
   .aculta-forum-topic__layout {
-    grid-template-columns: minmax(0, 1fr) 18rem;
-    align-items: start;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
