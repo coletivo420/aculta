@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_studio\Unit;
 
-use Drupal\aculta_learning_contracts\Learning\StudentLearningSummary;
-use Drupal\aculta_learning_contracts\Learning\StudentLearningSummaryReaderInterface;
+use Drupal\aculta_lms\Learning\StudentLearningSummary;
+use Drupal\aculta_lms\Learning\StudentLearningSummaryReaderInterface;
 use Drupal\aculta_studio\Learning\LearnerDashboardComposer;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Datetime\DateFormatterInterface;

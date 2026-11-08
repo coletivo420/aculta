@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_studio\Hook;
 
-use Drupal\aculta_learning_contracts\Learning\CourseJourneyReaderInterface;
+use Drupal\aculta_lms\Learning\CourseJourneyReaderInterface;
 use Drupal\aculta_studio\Learning\CourseJourneyComposer;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;

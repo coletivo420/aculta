@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_studio\Learning;
 
-use Drupal\aculta_learning_contracts\Learning\CourseJourney;
-use Drupal\aculta_learning_contracts\Learning\CourseJourneyLesson;
+use Drupal\aculta_lms\Learning\CourseJourney;
+use Drupal\aculta_lms\Learning\CourseJourneyLesson;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Link;

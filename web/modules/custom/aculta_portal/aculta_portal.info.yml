@@ -10,7 +10,6 @@ dependencies:
   - ctools:ctools_views
   - aculta_portal:aculta_image
   - aculta_portal:aculta_mailer
-  - aculta_portal:aculta_learning_contracts
   - profile:profile
   - drupal:views
   - vvjs:vvjs

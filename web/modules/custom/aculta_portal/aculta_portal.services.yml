@@ -233,7 +233,7 @@ services:
   aculta_portal.account_courses:
     class: Drupal\aculta_portal\AccountCoursesManager
     arguments:
-      - '@?Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface'
+      - '@?Drupal\aculta_lms\Learning\AccountCoursesReaderInterface'
       - '@aculta_portal.domain_purpose'
     tags:
       - { name: aculta_portal.helper }

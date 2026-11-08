@@ -10,7 +10,6 @@ dependencies:
   - aculta_portal:aculta_calendar
   - aculta_portal:aculta_events
   - aculta_portal:aculta_forum
-  - aculta_portal:aculta_learning_contracts
   - aculta_portal:aculta_messenger
   - aculta_portal:aculta_pagamentos_mercadopago
   - aculta_portal:aculta_file_uploader

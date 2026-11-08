@@ -11,7 +11,7 @@ services:
   aculta_studio.learner_dashboard_composer:
     class: Drupal\aculta_studio\Learning\LearnerDashboardComposer
     arguments:
-      - '@?Drupal\aculta_learning_contracts\Learning\StudentLearningSummaryReaderInterface'
+      - '@?Drupal\aculta_lms\Learning\StudentLearningSummaryReaderInterface'
       - '@current_user'
       - '@date.formatter'
       - '@string_translation'
@@ -21,7 +21,7 @@ services:
     arguments:
       - '@current_route_match'
       - '@current_user'
-      - '@?Drupal\aculta_learning_contracts\Learning\CourseJourneyReaderInterface'
+      - '@?Drupal\aculta_lms\Learning\CourseJourneyReaderInterface'
       - '@aculta_studio.course_journey_composer'
   aculta_studio.marley_tab_manager:
     class: Drupal\aculta_studio\MarleyTabManager

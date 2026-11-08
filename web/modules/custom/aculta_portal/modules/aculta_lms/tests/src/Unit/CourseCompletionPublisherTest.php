@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Unit;
 
-use Drupal\aculta_learning_contracts\Event\CourseCompletedEvent;
+use Drupal\aculta_lms\Event\CourseCompletedEvent;
 use Drupal\aculta_lms\Event\CourseCompletionPublisher;
 use Drupal\aculta_lms\Learning\CourseProgress;
 use Drupal\Core\Entity\ContentEntityInterface;

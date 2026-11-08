@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_studio\Unit;
 
-use Drupal\aculta_learning_contracts\Learning\CourseJourney;
-use Drupal\aculta_learning_contracts\Learning\CourseJourneyLesson;
-use Drupal\aculta_learning_contracts\Learning\CourseJourneyReaderInterface;
+use Drupal\aculta_lms\Learning\CourseJourney;
+use Drupal\aculta_lms\Learning\CourseJourneyLesson;
+use Drupal\aculta_lms\Learning\CourseJourneyReaderInterface;
 use Drupal\aculta_studio\Hook\CourseJourneyPresentationHooks;
 use Drupal\aculta_studio\Learning\CourseJourneyComposer;
 use Drupal\Core\Cache\CacheableMetadata;

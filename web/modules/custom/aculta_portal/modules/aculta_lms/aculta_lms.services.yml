@@ -77,7 +77,7 @@ services:
     class: Drupal\aculta_lms\Group\GroupMembershipReader
     arguments: ['@entity_type.manager']
   Drupal\aculta_lms\Group\GroupMembershipReaderInterface: '@aculta_lms.group_membership_reader'
-  Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface: '@aculta_lms.account_courses_reader'
+  Drupal\aculta_lms\Learning\AccountCoursesReaderInterface: '@aculta_lms.account_courses_reader'
   aculta_portal.lms_friendly_slugs:
     class: Drupal\aculta_lms\Routing\LmsFriendlySlugs
     arguments: ['@entity_type.manager', '@transliteration']
@@ -102,18 +102,18 @@ services:
       - { name: aculta_portal.implementation }
   aculta_lms.learning_dashboard:
     class: Drupal\aculta_lms\LearningDashboardManager
-    arguments: ['@?Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface', '@aculta_lms.course_certificate_manager', '@entity_type.manager', '@Drupal\aculta_lms\Learning\CourseProgressReaderInterface', '@Drupal\aculta_lms\Learning\CourseLessonReaderInterface']
+    arguments: ['@?Drupal\aculta_lms\Learning\AccountCoursesReaderInterface', '@aculta_lms.course_certificate_manager', '@entity_type.manager', '@Drupal\aculta_lms\Learning\CourseProgressReaderInterface', '@Drupal\aculta_lms\Learning\CourseLessonReaderInterface']
   aculta_lms.student_status_cron_hooks:
     class: Drupal\aculta_lms\Hook\StudentStatusSnapshotCronHooks
     arguments: ['@aculta_lms.learning_dashboard', '@entity_type.manager', '@event_dispatcher', '@?aculta_user.aculta_user_agreement_ledger']
 
   # Alias por classe: o hook de cron recebe o gerenciador por tipo.
   Drupal\aculta_lms\LearningDashboardManager: '@aculta_lms.learning_dashboard'
-  Drupal\aculta_learning_contracts\Learning\StudentLearningSummaryReaderInterface: '@aculta_lms.learning_dashboard'
+  Drupal\aculta_lms\Learning\StudentLearningSummaryReaderInterface: '@aculta_lms.learning_dashboard'
   # Contrato de leitura da jornada: o Studio depende da interface, não do LMS.
   aculta_lms.course_journey_reader:
     alias: aculta_lms.learning_dashboard
-  Drupal\aculta_learning_contracts\Learning\CourseJourneyReaderInterface: '@aculta_lms.course_journey_reader'
+  Drupal\aculta_lms\Learning\CourseJourneyReaderInterface: '@aculta_lms.course_journey_reader'
   aculta_lms.class_dashboard_access:
     class: Drupal\aculta_lms\Access\ClassDashboardAccessCheck
     arguments: ['@aculta_lms.learning_dashboard', '@current_user']

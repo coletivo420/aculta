@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_learning_contracts\Learning;
+namespace Drupal\aculta_lms\Learning;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Url;
@@ -46,7 +46,7 @@ final readonly class CourseJourney {
    *   Number of published lessons marked finished.
    * @param int $progressPercent
    *   Progress derived from the completed and total lessons.
-   * @param array<int, \Drupal\aculta_learning_contracts\Learning\CourseJourneyLesson> $lessons
+   * @param array<int, \Drupal\aculta_lms\Learning\CourseJourneyLesson> $lessons
    *   Ordered, authorized lessons.
    * @param \Drupal\Core\Url|null $continueUrl
    *   Canonical "continue" destination, when the provider offers one.

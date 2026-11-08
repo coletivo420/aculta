@@ -7,7 +7,6 @@ core_version_requirement: ^11 || ^12
 dependencies:
   - aculta_portal:aculta_portal
   - aculta_portal:aculta_file_uploader
-  - aculta_portal:aculta_learning_contracts
   - aculta_portal:aculta_calendar
   - aculta_portal:aculta_lms
   - group:group

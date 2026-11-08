@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_learning_contracts\Learning;
+namespace Drupal\aculta_lms\Learning;
 
 use Drupal\Core\Session\AccountInterface;
 
@@ -18,7 +18,7 @@ interface AccountCoursesReaderInterface {
    * metadata. Implementations return neutral DTOs rather than provider
    * entities or render arrays.
    *
-   * @return list<\Drupal\aculta_learning_contracts\Learning\AccountCourseSummary>
+   * @return list<\Drupal\aculta_lms\Learning\AccountCourseSummary>
    *   The account's authorized courses.
    */
   public function getAccountCourses(AccountInterface $account): array;

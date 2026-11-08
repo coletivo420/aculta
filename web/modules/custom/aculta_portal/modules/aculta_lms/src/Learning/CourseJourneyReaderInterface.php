@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_learning_contracts\Learning;
+namespace Drupal\aculta_lms\Learning;
 
 use Drupal\Core\Session\AccountInterface;
 
@@ -27,7 +27,7 @@ interface CourseJourneyReaderInterface {
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Account whose access and progress are resolved.
    *
-   * @return \Drupal\aculta_learning_contracts\Learning\CourseJourney|null
+   * @return \Drupal\aculta_lms\Learning\CourseJourney|null
    *   The journey, including a denied result when the course exists but the
    *   account cannot take it, or NULL when the identifier is not a course.
    */

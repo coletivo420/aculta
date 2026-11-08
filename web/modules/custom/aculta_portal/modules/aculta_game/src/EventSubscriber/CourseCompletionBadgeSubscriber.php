@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_game\EventSubscriber;
 
-use Drupal\aculta_learning_contracts\Event\CourseCompletedEvent;
+use Drupal\aculta_lms\Event\CourseCompletedEvent;
 use Drupal\aculta_user\Badge\BadgeService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

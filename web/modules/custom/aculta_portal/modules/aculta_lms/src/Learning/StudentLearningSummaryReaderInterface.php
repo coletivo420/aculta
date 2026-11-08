@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_learning_contracts\Learning;
+namespace Drupal\aculta_lms\Learning;
 
 use Drupal\Core\Session\AccountInterface;
 

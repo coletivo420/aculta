@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Event;
 
-use Drupal\aculta_learning_contracts\Event\CourseCompletedEvent;
+use Drupal\aculta_lms\Event\CourseCompletedEvent;
 use Drupal\Core\Entity\ContentEntityInterface;
 
 /**
@@ -18,7 +18,7 @@ interface CourseCompletionPublisherInterface {
    * saved and changed from a non-passed state. This service does not save
    * entities or retain a delivery/deduplication record.
    *
-   * @return \Drupal\aculta_learning_contracts\Event\CourseCompletedEvent|null
+   * @return \Drupal\aculta_lms\Event\CourseCompletedEvent|null
    *   The event dispatched, or NULL when progress is not marked as passed.
    */
   public function publish(ContentEntityInterface $progress): ?CourseCompletedEvent;

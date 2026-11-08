@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Account;
 
-use Drupal\aculta_learning_contracts\Learning\AccountCourseSummary;
-use Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface;
+use Drupal\aculta_lms\Learning\AccountCourseSummary;
+use Drupal\aculta_lms\Learning\AccountCoursesReaderInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;

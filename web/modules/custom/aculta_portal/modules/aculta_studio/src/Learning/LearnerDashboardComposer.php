@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Drupal\aculta_studio\Learning;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Drupal\aculta_learning_contracts\Learning\StudentLearningCertificate;
-use Drupal\aculta_learning_contracts\Learning\StudentLearningCourse;
-use Drupal\aculta_learning_contracts\Learning\StudentLearningSummaryReaderInterface;
+use Drupal\aculta_lms\Learning\StudentLearningCertificate;
+use Drupal\aculta_lms\Learning\StudentLearningCourse;
+use Drupal\aculta_lms\Learning\StudentLearningSummaryReaderInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -84,7 +84,7 @@ final class LearnerDashboardComposer {
   /**
    * Builds the resume card only for a canonical, unfinished course.
    *
-   * @param \Drupal\aculta_learning_contracts\Learning\StudentLearningCourse $course
+   * @param \Drupal\aculta_lms\Learning\StudentLearningCourse $course
    *   One authorized course summary from the learning provider.
    *
    * @return array<string, mixed>
@@ -136,7 +136,7 @@ final class LearnerDashboardComposer {
   /**
    * Builds the enrolled courses list.
    *
-   * @param array<int, \Drupal\aculta_learning_contracts\Learning\StudentLearningCourse> $courses
+   * @param array<int, \Drupal\aculta_lms\Learning\StudentLearningCourse> $courses
    *   Authorized course records.
    *
    * @return array<string, mixed>
@@ -188,7 +188,7 @@ final class LearnerDashboardComposer {
   /**
    * Builds one enrolled course card with only canonical destinations.
    *
-   * @param \Drupal\aculta_learning_contracts\Learning\StudentLearningCourse $course
+   * @param \Drupal\aculta_lms\Learning\StudentLearningCourse $course
    *   Authorized course summary.
    *
    * @return array<string, mixed>
@@ -261,7 +261,7 @@ final class LearnerDashboardComposer {
   /**
    * Chooses a label for the canonical LMS course destination.
    *
-   * @param \Drupal\aculta_learning_contracts\Learning\StudentLearningCourse $course
+   * @param \Drupal\aculta_lms\Learning\StudentLearningCourse $course
    *   Authorized course summary.
    */
   private function courseActionLabel(StudentLearningCourse $course): string {
@@ -277,7 +277,7 @@ final class LearnerDashboardComposer {
   /**
    * Builds accessible progress text and bar, or an honest empty state.
    *
-   * @param \Drupal\aculta_learning_contracts\Learning\StudentLearningCourse $course
+   * @param \Drupal\aculta_lms\Learning\StudentLearningCourse $course
    *   Authorized course summary.
    *
    * @return array<string, mixed>
@@ -323,7 +323,7 @@ final class LearnerDashboardComposer {
   /**
    * Builds the emitted certificates list.
    *
-   * @param array<int, \Drupal\aculta_learning_contracts\Learning\StudentLearningCertificate> $certificates
+   * @param array<int, \Drupal\aculta_lms\Learning\StudentLearningCertificate> $certificates
    *   Authorized certificate summary DTOs supplied by the learning provider.
    *
    * @return array<string, mixed>
