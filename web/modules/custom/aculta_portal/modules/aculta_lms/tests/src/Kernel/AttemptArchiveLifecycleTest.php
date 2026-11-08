@@ -90,6 +90,7 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->installEntitySchema('comment');
     $this->installConfig(['system', 'comment']);
     foreach ([
       'group.type.lms_course',
@@ -124,12 +125,10 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     $this->installEntitySchema('aculta_lms_activity');
     $this->installEntitySchema('aculta_lms_lesson');
     $this->installEntitySchema('aculta_lms_answer');
-    $this->installEntitySchema('comment');
-    $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installEntitySchema('aculta_lms_attempt_archive');
     $this->installConfig(['group']);
-    $this->installConfig(['node', 'node_storage_body_field']);
     $this->installEntitySchema('node');
+    $this->installConfig(['node', 'node_storage_body_field']);
     // O storage field_aculta_discussion pertence ao aculta_forum; criar aqui
     // evita habilitar o fórum inteiro só para instalar a config do LMS.
     FieldStorageConfig::create([
