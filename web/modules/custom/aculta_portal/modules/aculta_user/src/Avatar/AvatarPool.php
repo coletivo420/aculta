@@ -18,7 +18,7 @@ use Drupal\user\UserInterface;
  * Fonte da verdade: assets/avatars/meta/avatars.json, com entradas ativas e arquivo existente. A escolha fica em
  * user.data (aculta_user, avatar_id), para que a rotação futura saiba o que já foi sorteado.
  */
-final class AvatarPool {
+class AvatarPool {
 
   public const DIRECTORY = 'public://pictures/acervo';
 

@@ -28,7 +28,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * - Foto personalizada: pode ser removida (volta ao sorteio do acervo) e recortada pelo popup de recorte.
  * - Recorte pendente (aplicado e aguardando "Salvar"): é o arquivo mostrado e salvo.
  */
-final class UserPictureForm extends FormBase {
+class UserPictureForm extends FormBase {
 
 
   /**

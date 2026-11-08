@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
  * rótulo do gatilho vêm no HX-Trigger `aculta:cart-updated`, tratado pelo JS do tema. Sem JavaScript o envio segue o
  * fluxo normal do Commerce.
  */
-final class AddToCartAjax {
+class AddToCartAjax {
 
   public const FORM_ID_PREFIX = 'commerce_order_item_add_to_cart_form';
 

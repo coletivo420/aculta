@@ -22,7 +22,7 @@ use Drupal\user\UserInterface;
  * O NULL abaixo é contrato defensivo do teste sem pool: o site não tem estado
  * "sem acervo" e a inicial do nome nunca é usada.
  */
-final class AvatarResolver {
+class AvatarResolver {
 
   public function __construct(
     private readonly ImageRenderer $imageRenderer,

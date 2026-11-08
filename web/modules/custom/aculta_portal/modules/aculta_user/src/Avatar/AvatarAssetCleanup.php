@@ -18,7 +18,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
  *
  * Toda remoção passa pela verificação global de referências do Portal.
  */
-final class AvatarAssetCleanup {
+class AvatarAssetCleanup {
 
   /**
    * Idade mínima de um upload temporário para ser apagado (segundos).

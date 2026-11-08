@@ -18,7 +18,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
  *
  * Cada separador tem seu botão de checkout no domínio principal.
  */
-final class CartUtility {
+class CartUtility {
 
   use StringTranslationTrait;
 

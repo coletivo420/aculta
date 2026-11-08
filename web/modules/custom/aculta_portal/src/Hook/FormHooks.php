@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Account and Commerce form alterations owned by the Portal.
  */
-final class FormHooks {
+class FormHooks {
 
   public function __construct(
     #[Autowire(service: 'current_route_match')]
