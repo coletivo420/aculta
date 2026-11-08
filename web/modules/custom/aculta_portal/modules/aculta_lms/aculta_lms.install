@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @file
  * Install and update hooks for ACULTA LMS.
@@ -9,7 +11,6 @@ use Drupal\Core\Extension\Requirement\RequirementSeverity;
 use Drupal\Core\Url;
 use Drupal\Core\Site\Settings;
 
-declare(strict_types=1);
 
 /**
  * Installs the append-only attempt archive entity definition. */
