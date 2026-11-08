@@ -106,12 +106,16 @@ final class LocationPageController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'event-location-actions'],
         'edit_link' => [
-          '#type' => 'link',
-          '#title' => $this->t('Editar este local'),
-          '#url' => Url::fromRoute('aculta_events.location_edit', [
-            'aculta_event_location' => $aculta_event_location->id(),
-          ]),
-          '#attributes' => ['data-portal-ui' => 'event-location-button-secondary-small'],
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:button',
+          '#props' => [
+            'text' => (string) $this->t('Editar este local'),
+            'url' => Url::fromRoute('aculta_events.location_edit', [
+              'aculta_event_location' => $aculta_event_location->id(),
+            ])->toString(),
+            'variant' => 'secondary',
+            'size' => 'small',
+          ],
         ],
       ];
     }
@@ -169,10 +173,13 @@ final class LocationPageController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'event-location-admin-actions'],
         'edit' => [
-          '#type' => 'link',
-          '#title' => $this->t('Editar local'),
-          '#url' => Url::fromRoute('aculta_events.location_edit', ['aculta_event_location' => $aculta_event_location->id()]),
-          '#attributes' => ['data-portal-ui' => 'event-location-button-action'],
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:button',
+          '#props' => [
+            'text' => (string) $this->t('Editar local'),
+            'url' => Url::fromRoute('aculta_events.location_edit', ['aculta_event_location' => $aculta_event_location->id()])->toString(),
+            'variant' => 'primary',
+          ],
         ],
       ];
     }
