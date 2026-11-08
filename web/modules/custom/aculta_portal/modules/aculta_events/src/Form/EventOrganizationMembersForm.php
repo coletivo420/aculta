@@ -283,10 +283,13 @@ final class EventOrganizationMembersForm extends FormBase {
     $backRoute = $isAdmin ? 'aculta_events.admin_organizations' : 'aculta_events.organizer_dashboard';
     $backTitle = $isAdmin ? $this->t('Voltar às organizações') : $this->t('Voltar ao Studio Culturas');
     $form['back'] = [
-      '#type' => 'link',
-      '#title' => $backTitle,
-      '#url' => Url::fromRoute($backRoute),
-      '#attributes' => ['data-portal-ui' => 'button'],
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:button',
+      '#props' => [
+        'text' => (string) $backTitle,
+        'url' => Url::fromRoute($backRoute)->toString(),
+        'variant' => 'secondary',
+      ],
     ];
 
     return $form;

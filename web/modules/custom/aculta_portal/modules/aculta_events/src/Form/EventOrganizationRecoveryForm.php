@@ -120,10 +120,13 @@ final class EventOrganizationRecoveryForm extends FormBase {
         '#button_type' => 'primary',
       ],
       'cancel' => [
-        '#type' => 'link',
-        '#title' => $this->t('Cancelar'),
-        '#url' => Url::fromRoute('aculta_events.admin_organizations'),
-        '#attributes' => ['data-portal-ui' => 'button'],
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:button',
+        '#props' => [
+          'text' => (string) $this->t('Cancelar'),
+          'url' => Url::fromRoute('aculta_events.admin_organizations')->toString(),
+          'variant' => 'secondary',
+        ],
       ],
     ];
 
