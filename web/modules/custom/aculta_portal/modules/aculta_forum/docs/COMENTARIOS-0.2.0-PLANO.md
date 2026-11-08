@@ -318,3 +318,16 @@ reações novas, chat, alteração de editor e migração Comment -> ForumPost
 não são pré-requisitos para a resposta inline. Avaliar como backlog após
 estabilidade e privacidade. Acessibilidade, moderação e acesso são requisitos
 da primeira entrega, não melhorias adiadas.
+
+## 11. Execução pelos agentes
+
+1. [Agente 1 - saneamento da base](PROMPT-AGENTE-1-SANEAMENTO-0.2.0.md):
+   C02-01/C02-02 e correções independentes do novo compositor, com handoff.
+2. [Agente 2 - implementação e homologação](PROMPT-AGENTE-2-IMPLEMENTACAO-0.2.0.md):
+   depois da entrega do agente 1, concluir C02-03 a C02-08 e pendências
+   predecessoras efetivamente abertas.
+
+Os agentes executam em sequência no escopo compartilhado. COM-01/COM-05 e
+o controle completo de retorno COM-12 são parte da implementação e não podem
+ser declarados resolvidos apenas no saneamento prévio. A divisão não altera
+o critério final: respostas e citações permanecem na página hospedeira.
