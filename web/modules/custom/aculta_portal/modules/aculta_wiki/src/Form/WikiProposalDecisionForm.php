@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Form;
 
-use Drupal\aculta_contributions\Entity\Contribution;
-use Drupal\aculta_contributions\Service\ContributionLifecycle;
+use Drupal\aculta_cgu\Entity\Contribution;
+use Drupal\aculta_cgu\Service\ContributionLifecycle;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\aculta_wiki\Service\WikiProposalDecision;

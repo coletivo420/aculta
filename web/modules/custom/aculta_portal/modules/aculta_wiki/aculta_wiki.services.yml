@@ -55,7 +55,7 @@ services:
     class: Drupal\aculta_wiki\Adapter\WikiContributionAdapter
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@aculta_portal.email_confirmation_policy', '@aculta_wiki.proposal_submission', '@aculta_wiki.proposal_decision', '@aculta_wiki.contribution_migration_gate']
     tags:
-      - { name: aculta_contributions.adapter }
+      - { name: aculta_cgu.contribution_adapter }
 
   aculta_wiki.contribution_migration:
     class: Drupal\aculta_wiki\Service\WikiContributionMigration

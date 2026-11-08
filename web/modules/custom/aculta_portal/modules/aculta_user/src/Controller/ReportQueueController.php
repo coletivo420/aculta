@@ -9,7 +9,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Link;
 use Drupal\Core\Routing\LocalRedirectResponse;
 use Drupal\Core\Url;
-use Drupal\aculta_ugc\ModerationScope;
+use Drupal\aculta_cgu\ModerationScope;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;

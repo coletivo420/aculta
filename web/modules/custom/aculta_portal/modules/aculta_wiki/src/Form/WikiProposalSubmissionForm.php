@@ -6,7 +6,7 @@ namespace Drupal\aculta_wiki\Form;
 
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\aculta_wiki\Service\WikiProposalSubmission;
-use Drupal\aculta_contributions\Service\ContributionLifecycle;
+use Drupal\aculta_cgu\Service\ContributionLifecycle;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;

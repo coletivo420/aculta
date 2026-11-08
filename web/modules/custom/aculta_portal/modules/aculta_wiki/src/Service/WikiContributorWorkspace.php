@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_wiki\Service;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\CacheableMetadata;

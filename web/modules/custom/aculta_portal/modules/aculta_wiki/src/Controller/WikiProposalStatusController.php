@@ -11,7 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\node\NodeInterface;
 use Symfony\Component\HttpFoundation\Request;

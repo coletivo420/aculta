@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Controller;
 
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;

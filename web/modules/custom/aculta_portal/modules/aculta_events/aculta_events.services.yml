@@ -18,17 +18,17 @@ services:
     class: Drupal\aculta_events\Adapter\OrganizationContributionAdapter
     arguments: ['@entity_type.manager', '@?aculta_portal.domain_purpose', '@aculta_events.permission_policy', '@lock', '@database', '@aculta_events.organization_contribution_event_queue']
     tags:
-      - { name: aculta_contributions.adapter }
+      - { name: aculta_cgu.contribution_adapter }
   aculta_events.location_contribution_adapter:
     class: Drupal\aculta_events\Adapter\LocationContributionAdapter
     arguments: ['@entity_type.manager', '@?aculta_portal.domain_purpose', '@aculta_events.permission_policy', '@lock', '@database', '@aculta_events.organization_contribution_event_queue']
     tags:
-      - { name: aculta_contributions.adapter }
+      - { name: aculta_cgu.contribution_adapter }
   aculta_events.event_contribution_adapter:
     class: Drupal\aculta_events\Adapter\EventContributionAdapter
     arguments: ['@entity_type.manager', '@?aculta_portal.domain_purpose', '@aculta_events.permission_policy', '@?aculta_user.organization_access_service', '@lock', '@database', '@aculta_events.organization_contribution_event_queue']
     tags:
-      - { name: aculta_contributions.adapter }
+      - { name: aculta_cgu.contribution_adapter }
   aculta_events.organization_contribution_event_queue:
     class: Drupal\aculta_events\Service\OrganizationContributionEventQueue
     arguments: ['@queue', '@keyvalue']

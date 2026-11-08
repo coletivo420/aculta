@@ -1,0 +1,10 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.1
+state: Dev
+progress_note: >-
+  Módulo transversal para gestão e consolidação de Conteúdo Gerado por Usuários
+  (CGU). Unifica o ciclo de vida privado e revisionável de submissões comunitárias
+  (anteriormente em aculta_contributions) e a infraestrutura comum de moderação
+  transversal, denúncias e regras de destinatários por propósito (anteriormente
+  em aculta_ugc).
+next_phase: 'Homologação operacional dos fluxos unificados de CGU (submissões Wiki/Eventos e denúncias/moderação).'

@@ -9,7 +9,7 @@ use Drupal\aculta_events\Adapter\OrganizationContributionAdapter;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Plugin\Field\FieldWidget\EventOrganizationModalWidget;
 use Drupal\aculta_events\Slug\EventSlugGenerator;
-use Drupal\aculta_contributions\Service\ContributionLifecycle;
+use Drupal\aculta_cgu\Service\ContributionLifecycle;
 use Drupal\aculta_user\Organization\OrganizationAccessService;
 use Drupal\aculta_user\Organization\OrganizationMembershipManager;
 use Drupal\aculta_user\Organization\OwnershipClaimService;

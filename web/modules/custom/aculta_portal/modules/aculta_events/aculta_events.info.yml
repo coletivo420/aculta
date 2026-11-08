@@ -20,4 +20,4 @@ dependencies:
   - aculta_portal:aculta_calendar
   - aculta_portal:aculta_maps
   - aculta_portal:aculta_user
-  - aculta_portal:aculta_contributions
+  - aculta_portal:aculta_cgu

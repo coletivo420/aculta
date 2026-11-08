@@ -10,7 +10,7 @@ use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_wiki\Event\WikiEntryReviewRequestedEvent;
 use Drupal\aculta_wiki\Event\WikiProposalOutcomeRecordedEvent;
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\user\UserInterface;

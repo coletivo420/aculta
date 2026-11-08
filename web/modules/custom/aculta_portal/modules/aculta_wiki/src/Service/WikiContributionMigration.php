@@ -7,7 +7,7 @@ namespace Drupal\aculta_wiki\Service;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\KeyValueStore\KeyValueExpirableFactoryInterface;
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_wiki\Entity\WikiProposal;
 
 /**

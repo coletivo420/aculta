@@ -1,0 +1,87 @@
+services:
+  # Logging
+  logger.channel.aculta_cgu:
+    parent: logger.channel_base
+    arguments: ['aculta_cgu']
+
+  logger.channel.aculta_contributions:
+    parent: logger.channel_base
+    arguments: ['aculta_cgu']
+
+  logger.channel.aculta_ugc:
+    parent: logger.channel_base
+    arguments: ['aculta_cgu']
+
+  # Contributions / Propostas
+  aculta_cgu.contribution_adapter_registry:
+    class: Drupal\aculta_cgu\Adapter\ContributionAdapterRegistry
+    tags:
+      - { name: service_collector, tag: aculta_cgu.contribution_adapter, call: addAdapter }
+
+  aculta_cgu.contribution_state_machine:
+    class: Drupal\aculta_cgu\Service\ContributionStateMachine
+
+  aculta_cgu.contribution_lifecycle:
+    class: Drupal\aculta_cgu\Service\ContributionLifecycle
+    arguments:
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@aculta_cgu.contribution_adapter_registry'
+      - '@aculta_cgu.contribution_state_machine'
+      - '@flood'
+      - '@lock'
+      - '@database'
+      - '@config.factory'
+      - '@logger.channel.aculta_cgu'
+
+  # Moderação e Denúncias (UGC)
+  aculta_cgu.moderation_notifier:
+    class: Drupal\aculta_cgu\Service\ModerationNotifier
+    arguments:
+      - '@entity_type.manager'
+      - '@logger.channel.aculta_cgu'
+      - '@?aculta_mailer.mailer'
+
+  aculta_cgu.report_service:
+    class: Drupal\aculta_cgu\Service\ReportService
+    arguments:
+      - '@entity_type.manager'
+      - '@datetime.time'
+      - '@aculta_cgu.moderation_notifier'
+      - '@lock'
+      - '@logger.channel.aculta_cgu'
+
+  aculta_cgu.report_queue:
+    class: Drupal\aculta_cgu\Service\UgcReportQueue
+    arguments:
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@database'
+
+  aculta_cgu.mail_type.report_notice:
+    class: Drupal\aculta_cgu\Mail\UgcReportNoticeMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
+
+  # Aliases legados para retrocompatibilidade
+  aculta_contributions.adapter_registry:
+    alias: aculta_cgu.contribution_adapter_registry
+
+  aculta_contributions.lifecycle:
+    alias: aculta_cgu.contribution_lifecycle
+
+  aculta_contributions.state_machine:
+    alias: aculta_cgu.contribution_state_machine
+
+  aculta_ugc.moderation_notifier:
+    alias: aculta_cgu.moderation_notifier
+
+  aculta_ugc.report_service:
+    alias: aculta_cgu.report_service
+
+  aculta_ugc.report_queue:
+    alias: aculta_cgu.report_queue
+
+  aculta_ugc.mail_type.report_notice:
+    alias: aculta_cgu.mail_type.report_notice

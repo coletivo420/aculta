@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Form;
 
-use Drupal\aculta_contributions\Entity\Contribution;
-use Drupal\aculta_contributions\Service\ContributionLifecycle;
+use Drupal\aculta_cgu\Entity\Contribution;
+use Drupal\aculta_cgu\Service\ContributionLifecycle;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -40,7 +40,7 @@ final class EventOrganizationContributionReviewForm extends FormBase {
    *   Existing form render array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Current form state.
-   * @param \Drupal\aculta_contributions\Entity\Contribution|null $aculta_contribution
+   * @param \Drupal\aculta_cgu\Entity\Contribution|null $aculta_contribution
    *   Proposal being reviewed.
    *
    * @return array

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Form;
 
-use Drupal\aculta_contributions\Adapter\ContributionAdapterRegistry;
-use Drupal\aculta_contributions\Service\ContributionLifecycle;
+use Drupal\aculta_cgu\Adapter\ContributionAdapterRegistry;
+use Drupal\aculta_cgu\Service\ContributionLifecycle;
 use Drupal\aculta_events\Adapter\EventContributionAdapter;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventLocation;

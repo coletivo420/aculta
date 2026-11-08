@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Form;
 
-use Drupal\aculta_contributions\Adapter\ContributionAdapterRegistry;
-use Drupal\aculta_contributions\Entity\Contribution;
-use Drupal\aculta_contributions\Service\ContributionLifecycle;
+use Drupal\aculta_cgu\Adapter\ContributionAdapterRegistry;
+use Drupal\aculta_cgu\Entity\Contribution;
+use Drupal\aculta_cgu\Service\ContributionLifecycle;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_portal\Account\AccountAddressForm;

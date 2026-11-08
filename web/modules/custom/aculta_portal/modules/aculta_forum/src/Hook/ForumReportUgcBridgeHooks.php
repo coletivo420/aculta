@@ -10,7 +10,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\aculta_ugc\Service\ReportService;
+use Drupal\aculta_cgu\Service\ReportService;
 use Drupal\flag\FlaggingInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -142,7 +142,7 @@ final class ForumReportUgcBridgeHooks {
 
       $flagIdNum = (int) $entity->id();
 
-      /** @var \Drupal\aculta_ugc\Entity\UgcReport $report */
+      /** @var \Drupal\aculta_cgu\Entity\UgcReport $report */
       $report = $reportStorage->create([
         'target_type' => $targetType,
         'target_id' => $targetId,

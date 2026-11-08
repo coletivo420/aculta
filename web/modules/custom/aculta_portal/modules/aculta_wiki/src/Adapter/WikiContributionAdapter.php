@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Adapter;
 
-use Drupal\aculta_contributions\Contract\ContributionAdapterInterface;
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Contract\ContributionAdapterInterface;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_wiki\Service\WikiProposalDecision;

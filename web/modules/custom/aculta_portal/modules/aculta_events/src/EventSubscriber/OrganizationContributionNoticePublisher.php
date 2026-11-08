@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\EventSubscriber;
 
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_events\Event\OrganizationContributionOutcomeRecordedEvent;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;

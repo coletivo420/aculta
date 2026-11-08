@@ -2,10 +2,10 @@ _core:
   default_config_hash: 4GIX5Esnc_umpXUBj4IIocRX7Mt5fPhm4AgXfE3E56E
 module:
   aculta_calendar: 0
+  aculta_cgu: 0
   aculta_commerce: 0
   aculta_commerce_melhorenvio: 0
   aculta_content_admin: 0
-  aculta_contributions: 0
   aculta_document_viewer: 0
   aculta_donation: 0
   aculta_editor: 0
@@ -40,7 +40,6 @@ module:
   aculta_secrets_manager: 0
   aculta_statistics: 0
   aculta_studio: 0
-  aculta_ugc: 0
   aculta_user: 0
   aculta_wiki: 0
   address: 0

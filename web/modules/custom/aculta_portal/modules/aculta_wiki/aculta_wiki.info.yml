@@ -8,7 +8,7 @@ dependencies:
   - aculta_portal:aculta_portal
   - aculta_portal:aculta_forum
   - aculta_portal:aculta_file_uploader
-  - aculta_portal:aculta_contributions
+  - aculta_portal:aculta_cgu
   - aculta_portal:aculta_messenger
   - aculta_portal:aculta_user
   - domain:domain

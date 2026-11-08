@@ -7,7 +7,7 @@ namespace Drupal\aculta_events\Form;
 use Drupal\aculta_portal\Account\AccountAddressForm;
 use Drupal\aculta_events\Access\EventPermissionPolicy;
 use Drupal\aculta_events\Adapter\LocationContributionAdapter;
-use Drupal\aculta_contributions\Service\ContributionLifecycle;
+use Drupal\aculta_cgu\Service\ContributionLifecycle;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\EntityRepositoryInterface;

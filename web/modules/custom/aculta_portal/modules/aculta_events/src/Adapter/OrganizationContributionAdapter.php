@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Adapter;
 
-use Drupal\aculta_contributions\Contract\ContributionAdapterInterface;
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Contract\ContributionAdapterInterface;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_events\Access\EventPermissionPolicy;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Event\OrganizationContributionOutcomeRecordedEvent;

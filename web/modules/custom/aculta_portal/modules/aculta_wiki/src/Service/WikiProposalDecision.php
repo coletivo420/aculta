@@ -12,7 +12,7 @@ use Drupal\content_moderation\ModerationInformationInterface;
 use Drupal\content_moderation\StateTransitionValidationInterface;
 use Drupal\domain\DomainInterface;
 use Drupal\aculta_wiki\Entity\WikiProposal;
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_wiki\Event\WikiProposalOutcomeRecordedEvent;
 use Drupal\node\NodeInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
