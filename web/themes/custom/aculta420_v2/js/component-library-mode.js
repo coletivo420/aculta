@@ -29,8 +29,13 @@
   }
 
   function applyMode(mode) {
-    // Todas as pré-visualizações de componente: overview (__preview) e página
-    // de componente único (__story). Vale para qualquer componente, não só botões.
+    // Página inteira da biblioteca: o contêiner principal recebe o modo, e
+    // todo o conteúdo herda os tokens (texto, superfícies, bordas e componentes).
+    var page = document.querySelector('.layout-page__content') || document.querySelector('main');
+    if (page) {
+      page.setAttribute('data-theme', mode);
+    }
+    // Pré-visualizações de componente: overview (__preview) e página única (__story).
     var previews = document.querySelectorAll('.ui_patterns_story__preview, .ui_patterns_story__story');
     Array.prototype.forEach.call(previews, function (node) {
       node.setAttribute('data-theme', mode);
