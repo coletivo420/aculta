@@ -90,10 +90,13 @@ final class EventDateOrderForm extends FormBase {
       '#ajax' => ['callback' => '::ajaxSubmit'],
     ];
     $form['actions']['cancel'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Cancelar'),
-      '#url' => Url::fromRoute(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $aculta_event->id()]),
-      '#attributes' => ['data-portal-ui' => 'button'],
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:button',
+      '#props' => [
+        'text' => $this->t('Cancelar'),
+        'url' => Url::fromRoute(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $aculta_event->id()])->toString(),
+        'variant' => 'secondary',
+      ],
     ];
 
     return $form;
