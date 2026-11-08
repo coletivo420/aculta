@@ -99,7 +99,7 @@ def main():
         results["sessao"] = driver.js(
             "return !!document.querySelector('#toolbar, #admin-toolbar, .toolbar, a[href*=\"user/logout\"]')")
         driver.get(LIBRARY)
-        time.sleep(3)
+        time.sleep(6)
         results["url"] = driver.url()
         results["titulo"] = driver.title()
 
@@ -129,7 +129,10 @@ def main():
                                             "overflow_px": overflow})
         driver.js("var r=document.querySelector('.aculta-library-mode input[value=\"dark\"]'); if(r){r.click();}")
         time.sleep(0.5)
-        results["auditoria_escuro"] = driver.js("\nreturn (function(){\n  function parse(c){var m=c.match(/rgba?\\(([^)]+)\\)/); if(!m) return null; var p=m[1].split(/[ ,\\/]+/).filter(Boolean).map(Number); return {r:p[0],g:p[1],b:p[2],a:p.length>3?p[3]:1};}\n  function lum(c){var f=[c.r,c.g,c.b].map(function(v){v=v/255; return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);}); return 0.2126*f[0]+0.7152*f[1]+0.0722*f[2];}\n  function ratio(a,b){var x=lum(a),y=lum(b); var hi=Math.max(x,y),lo=Math.min(x,y); return (hi+0.05)/(lo+0.05);}\n  function bgOf(el){var n=el; while(n&&n.nodeType===1){var c=parse(getComputedStyle(n).backgroundColor); if(c&&c.a>0.95) return c; n=n.parentElement;} return {r:23,g:21,b:19,a:1};}\n  var page=document.querySelector('.layout-page__content')||document.querySelector('main');\n  var out=[];\n  var walker=document.createTreeWalker(page,NodeFilter.SHOW_TEXT);\n  var node; while((node=walker.nextNode())){\n    var t=node.textContent.trim(); if(!t) continue;\n    var el=node.parentElement; if(!el) continue;\n    var cs=getComputedStyle(el); if(cs.visibility==='hidden'||cs.display==='none') continue;\n    var fg=parse(cs.color); if(!fg) continue;\n    var bg=bgOf(el); var r=ratio(fg,bg);\n    if(r<4.5){\n      var story=el.closest('.ui_patterns_story'); var name=story?(story.querySelector('.ui_patterns_story__name')||{}).textContent:(el.closest('.ui_patterns_component')?(el.closest('.ui_patterns_component').querySelector('.ui_patterns_component__title')||{}).textContent:'(página)');\n      out.push({componente:(name||'').trim().slice(0,60), texto:t.slice(0,50), cor:cs.color, fundo:'rgb('+bg.r+','+bg.g+','+bg.b+')', razao:Math.round(r*100)/100});\n    }\n  }\n  return out.slice(0,400);\n})();\n")
+        audit_js = (Path(__file__).parent / "audit-contraste.js").read_text(encoding="utf-8")
+        audit = driver.js(audit_js)
+        results["auditoria_escuro"] = audit["falhas"]
+        results["origem_cor"] = audit["origem"]
         results["ok"] = (
             results["checks"]["seletor_radios"] == 2
             and results["checks"]["barra_institucional"] == 0

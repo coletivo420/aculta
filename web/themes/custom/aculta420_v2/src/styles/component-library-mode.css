@@ -38,3 +38,12 @@
   padding: 1rem;
   border-radius: .75rem;
 }
+
+/* Cor e fundo no próprio contêiner de modo. O body define color com o token claro,
+   e os filhos herdam esse valor já calculado; resolver aqui faz o modo escuro valer. */
+.layout-page__content[data-theme],
+.ui_patterns_story__preview[data-theme],
+.ui_patterns_story__story[data-theme] {
+  color: var(--color-text-primary);
+  background-color: var(--color-canvas);
+}
