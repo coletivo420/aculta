@@ -6,8 +6,6 @@ dependencies:
     - field.storage.node.field_aculta_categories
     - node.type.aculta_forum_topic
     - taxonomy.vocabulary.aculta_forum_categories
-_core:
-  default_config_hash: 0HWIif5d6pkxMTG-foDnB3ZBhUJaTJ3L2JFtPFKd1z8
 id: node.aculta_forum_topic.field_aculta_categories
 field_name: field_aculta_categories
 entity_type: node

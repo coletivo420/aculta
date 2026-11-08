@@ -6,9 +6,7 @@ dependencies:
     - field.storage.node.body
     - node.type.aculta_forum_topic
   module:
-    - text_with_summary
-_core:
-  default_config_hash: jen6NQ7gH_NQdNJ-CIyENpVOPijNiDjmLBamiVInPsA
+    - text
 id: node.aculta_forum_topic.body
 field_name: body
 entity_type: node

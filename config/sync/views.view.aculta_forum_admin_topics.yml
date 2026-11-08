@@ -87,8 +87,7 @@ display:
           show_multipage_selection_box: always_show
           show_select_all: always_show
           selected_actions:
-            -
-              action_id: aculta_forum_move_topics
+            - action_id: aculta_forum_move_topics
               preconfiguration:
                 add_confirmation: true
                 confirm_help_text: 'Confirme a categoria de destino e revise os tópicos selecionados antes de mover até 50 itens.'
@@ -197,7 +196,7 @@ display:
           perm: 'access content overview'
       cache:
         type: tag
-        options: {  }
+        options: { }
       sorts:
         changed:
           id: changed
@@ -241,7 +240,7 @@ display:
             use_operator: false
             operator: status_op
             operator_limit_selection: false
-            operator_list: {  }
+            operator_list: { }
             identifier: status
             required: false
             remember: false
@@ -258,7 +257,7 @@ display:
             multiple: false
             remember: false
             default_group: All
-            default_group_multiple: {  }
+            default_group_multiple: { }
             group_items:
               1:
                 title: Publicado
@@ -268,6 +267,18 @@ display:
                 title: 'Não publicado'
                 operator: '='
                 value: '0'
+        status_extra:
+          id: status_extra
+          table: node_field_data
+          field: status_extra
+          entity_type: node
+          plugin_id: node_status
+          operator: '='
+          value: false
+          group: 1
+          expose:
+            operator_limit_selection: false
+            operator_list: { }
         field_domain_source_target_id:
           id: field_domain_source_target_id
           table: node__field_domain_source
@@ -288,7 +299,7 @@ display:
             use_operator: false
             operator: ''
             operator_limit_selection: false
-            operator_list: {  }
+            operator_list: { }
             identifier: ''
             required: false
             remember: false
@@ -305,8 +316,8 @@ display:
             multiple: false
             remember: false
             default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
+            default_group_multiple: { }
+            group_items: { }
       filter_groups:
         operator: AND
         groups:
@@ -314,7 +325,8 @@ display:
       style:
         type: table
         options:
-          grouping: {  }
+          class: ''
+          grouping: { }
           row_class: ''
           default_row_class: true
           columns:
@@ -390,7 +402,7 @@ display:
           admin_label: autor
           plugin_id: standard
           required: false
-      display_extenders: {  }
+      display_extenders: { }
     cache_metadata:
       max-age: 0
       contexts:
@@ -401,7 +413,7 @@ display:
         - user
         - 'user.node_grants:view'
         - user.permissions
-      tags: {  }
+      tags: { }
   page_forum:
     id: page_forum
     display_title: Fórum
@@ -409,10 +421,10 @@ display:
     position: 1
     display_options:
       title: Fórum
-      display_extenders: {  }
       path: painel-administrativo/forum/conteudo
       menu:
         type: none
+      display_extenders: { }
     cache_metadata:
       max-age: 0
       contexts:
@@ -423,4 +435,4 @@ display:
         - user
         - 'user.node_grants:view'
         - user.permissions
-      tags: {  }
+      tags: { }
