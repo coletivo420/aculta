@@ -72,15 +72,22 @@ final class DiscussionReplyFormHooks {
     // Prevent destination manipulation.
     $formState->setIgnoreDestination(TRUE);
 
-    // Botões do comentário: rótulos explícitos e variante secundária do SDC aculta420_v2:button.
+    // Ações do comentário: sem Visualizar; "Limpar" zera o formulário (reset nativo, sem JavaScript).
+    unset($form['actions']['preview']);
     if (isset($form['actions']['submit'])) {
       $form['actions']['submit']['#value'] = t('Publicar comentário');
       $form['actions']['submit']['#button_type'] = 'secondary';
     }
-    if (isset($form['actions']['preview'])) {
-      $form['actions']['preview']['#value'] = t('Visualizar');
-      $form['actions']['preview']['#button_type'] = 'secondary';
-    }
+    $form['actions']['clear'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'button',
+      '#value' => t('Limpar'),
+      '#attributes' => [
+        'type' => 'reset',
+        'class' => ['button', 'button--secondary'],
+      ],
+      '#weight' => 50,
+    ];
 
     // Apply native HTMX submission to the form element.
     $htmx = new Htmx();
