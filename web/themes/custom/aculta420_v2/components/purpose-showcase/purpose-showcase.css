@@ -27,7 +27,8 @@
   min-inline-size: 0;
 }
 
-.purpose-showcase__link {
+.purpose-showcase__link,
+.page a.purpose-showcase__link {
   display: inline-flex;
   align-items: center;
   justify-content: center;

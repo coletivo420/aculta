@@ -271,3 +271,10 @@
 .aculta-domain-brand-image { display: block; max-inline-size: 100%; block-size: auto; }
 .aculta-gallery-dialog { inline-size: min(100%, 40rem); }
 [data-portal-ui="studio-heading"] { margin: 0; font-family: var(--font-family-heading); font-size: 1.375rem; }
+
+/* Controles de zoom do mapa: superfície e texto dos tokens do modo (o fundo do Leaflet é branco fixo). */
+.aculta-map .leaflet-control-zoom a {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+}
