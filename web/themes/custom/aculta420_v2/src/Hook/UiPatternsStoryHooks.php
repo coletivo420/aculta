@@ -19,7 +19,7 @@ final class UiPatternsStoryHooks {
     #[Autowire(service: 'plugin.manager.component_story')]
     private readonly StoryPluginManager $storyPluginManager,
     #[Autowire(service: 'plugin.manager.sdc')]
-    private readonly ?ComponentPluginManager $componentPluginManager = NULL,
+    private readonly ComponentPluginManager $componentPluginManager,
   ) {}
 
   /**
@@ -29,7 +29,7 @@ final class UiPatternsStoryHooks {
   public function preprocessOverview(array &$variables): void {
     // Invalida cache de descoberta para que qualquer alteração nos SDCs,
     // templates Twig, CSS ou stories reflita automaticamente no overview.
-    $sdcManager = $this->componentPluginManager ?? \Drupal::service('plugin.manager.sdc');
+    $sdcManager = $this->componentPluginManager;
     $sdcManager->clearCachedDefinitions();
     $this->storyPluginManager->clearCachedDefinitions();
 
@@ -49,7 +49,7 @@ final class UiPatternsStoryHooks {
    */
   #[Hook('preprocess_ui_patterns_single_page')]
   public function preprocessSingle(array &$variables): void {
-    $sdcManager = $this->componentPluginManager ?? \Drupal::service('plugin.manager.sdc');
+    $sdcManager = $this->componentPluginManager;
     $sdcManager->clearCachedDefinitions();
     $this->storyPluginManager->clearCachedDefinitions();
 

@@ -103,7 +103,10 @@ foreach ($runtime_files as $path) {
     continue;
   }
   if ($extension === 'css') {
-    $structural_dark_overrides += Aculta420DesignFoundationsAnalyzer::countModeSelectors($source, Aculta420DesignFoundationsAnalyzer::pathsEquivalent($path, $tokens_path));
+    // tokens.css é o único lugar permitido para seletores de modo: não entra na contagem.
+    if (!Aculta420DesignFoundationsAnalyzer::pathsEquivalent($path, $tokens_path)) {
+      $structural_dark_overrides += Aculta420DesignFoundationsAnalyzer::countModeSelectors($source, FALSE);
+    }
   }
   elseif ($extension === 'twig') {
     $dark_twig_inline_js_branches += Aculta420DesignFoundationsAnalyzer::countTwigEmbeddedJsModeBranches($source);
