@@ -85,9 +85,13 @@ final class ForumTopicMoveForm extends FormBase {
       '#button_type' => 'primary',
     ];
     $form['actions']['cancel'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Cancelar'),
-      '#url' => Url::fromRoute('aculta_forum.admin'),
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:button',
+      '#props' => [
+        'text' => (string) $this->t('Cancelar'),
+        'url' => Url::fromRoute('aculta_forum.admin')->toString(),
+        'variant' => 'secondary',
+      ],
     ];
     return $form;
   }

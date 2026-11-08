@@ -164,6 +164,7 @@ final class StudioUploadEmbedForm extends FormBase {
         '#name' => 'remove_recent',
         '#limit_validation_errors' => [['recentes', 'table'], ['integracao']],
         '#submit' => ['::removeUnused'],
+        '#attributes' => ['data-portal-ui' => 'button-danger'],
       ],
     ];
   }

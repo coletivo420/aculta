@@ -207,6 +207,7 @@ final class WikiProposalSubmissionForm extends FormBase {
         '#value' => $this->t('Voltar e ajustar'),
         '#submit' => ['::backToEdit'],
         '#limit_validation_errors' => [],
+        '#attributes' => ['data-portal-ui' => 'button-secondary'],
       ];
       $form['actions']['submit'] = [
         '#type' => 'submit',

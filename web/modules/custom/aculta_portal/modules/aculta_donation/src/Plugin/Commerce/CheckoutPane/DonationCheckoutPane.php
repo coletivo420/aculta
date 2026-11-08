@@ -236,15 +236,17 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
             '#value' => $this->t('Criar conta'),
           ],
           'close' => [
-            '#type' => 'html_tag',
-            '#tag' => 'button',
+            '#type' => 'component',
+            '#component' => 'aculta420_v2:button',
+            '#props' => [
+              'text' => '×',
+              'aria_label' => (string) $this->t('Fechar'),
+              'variant' => 'ghost',
+            ],
             '#attributes' => [
-              'type' => 'button',
               'data-portal-ui' => 'donation-register-dialog-close',
               'data-aculta-dialog-close' => '',
-              'aria-label' => (string) $this->t('Fechar'),
             ],
-            '#value' => '×',
           ],
         ],
         'content' => [

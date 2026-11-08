@@ -108,9 +108,13 @@ final class AchievementDefinitionForm extends FormBase {
       ];
       if ($conquista !== NULL) {
         $form['image_section']['remove_link'] = [
-          '#type' => 'link',
-          '#title' => $this->t('Remover imagem atual'),
-          '#url' => Url::fromRoute('aculta_game.achievement_image_remove_confirm', ['conquista' => $conquista]),
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:button',
+          '#props' => [
+            'text' => (string) $this->t('Remover imagem atual'),
+            'url' => Url::fromRoute('aculta_game.achievement_image_remove_confirm', ['conquista' => $conquista])->toString(),
+            'variant' => 'danger',
+          ],
         ];
       }
     }

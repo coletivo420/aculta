@@ -95,12 +95,17 @@ final class ClassActivityDeadlineForm extends FormBase {
         '#value' => $this->t('Remover prazo'),
         '#submit' => ['::clearDeadline'],
         '#limit_validation_errors' => [],
+        '#attributes' => ['data-portal-ui' => 'button-danger'],
       ];
     }
     $form['actions']['cancel'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Voltar ao painel da turma'),
-      '#url' => Url::fromRoute('aculta_lms.class_dashboard', ['course' => $course->id(), 'group' => $class->id()]),
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:button',
+      '#props' => [
+        'text' => (string) $this->t('Voltar ao painel da turma'),
+        'url' => Url::fromRoute('aculta_lms.class_dashboard', ['course' => $course->id(), 'group' => $class->id()])->toString(),
+        'variant' => 'secondary',
+      ],
     ];
     return $form;
   }

@@ -54,9 +54,13 @@ final class GreenStashProductController {
     $build['heading']['#value'] = $entity->label();
     $build['notice']['#value'] = 'Detalhes do produto. A edição dentro do Green Stash será disponibilizada na próxima fase.';
     $build['back'] = [
-      '#type' => 'link',
-      '#title' => 'Voltar aos produtos',
-      '#url' => Url::fromRoute('aculta_commerce.green_stash_area', ['secao' => 'produtos']),
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:button',
+      '#props' => [
+        'text' => 'Voltar aos produtos',
+        'url' => Url::fromRoute('aculta_commerce.green_stash_area', ['secao' => 'produtos'])->toString(),
+        'variant' => 'secondary',
+      ],
     ];
     $build['detail'] = [
       '#type' => 'container',

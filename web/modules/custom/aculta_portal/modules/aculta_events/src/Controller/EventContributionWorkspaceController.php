@@ -106,9 +106,13 @@ final class EventContributionWorkspaceController extends ControllerBase {
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'event-contribution-status'],
       'back' => [
-        '#type' => 'link',
-        '#title' => $this->t('Voltar às minhas propostas'),
-        '#url' => Url::fromRoute('aculta_events.organizer_contributions'),
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:button',
+        '#props' => [
+          'text' => (string) $this->t('Voltar às minhas propostas'),
+          'url' => Url::fromRoute('aculta_events.organizer_contributions')->toString(),
+          'variant' => 'secondary',
+        ],
       ],
       'subject' => [
         '#type' => 'html_tag',

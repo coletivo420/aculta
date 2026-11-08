@@ -57,11 +57,13 @@ final class SecretsController {
       $is_active = $environment === $active;
       $tab_id = 'credenciais-tab-' . $environment;
       $buttons[$environment] = [
-        '#type' => 'html_tag',
-        '#tag' => 'button',
-        '#value' => $this->tabLabel($environment),
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:button',
+        '#props' => [
+          'text' => (string) $this->tabLabel($environment),
+          'variant' => 'ghost',
+        ],
         '#attributes' => [
-          'type' => 'button',
           'role' => 'tab',
           'id' => $tab_id,
           'aria-controls' => 'credenciais-' . $environment,

@@ -58,7 +58,7 @@ final class FriendshipActionForm extends FormBase {
         '#type' => 'submit',
         '#value' => $this->t('Remover amizade'),
         '#name' => 'remove',
-        '#attributes' => ['data-portal-ui' => 'friendship-action-button'],
+        '#attributes' => ['data-portal-ui' => 'friendship-remove-action'],
       ];
     }
     elseif ($status === FriendshipStatus::Pending->value && $requester === $uid) {
@@ -67,7 +67,7 @@ final class FriendshipActionForm extends FormBase {
         '#type' => 'submit',
         '#value' => $this->t('Cancelar pedido'),
         '#name' => 'cancel',
-        '#attributes' => ['data-portal-ui' => 'friendship-action-button'],
+        '#attributes' => ['data-portal-ui' => 'friendship-cancel-action'],
       ];
     }
     elseif ($status === FriendshipStatus::Pending->value) {

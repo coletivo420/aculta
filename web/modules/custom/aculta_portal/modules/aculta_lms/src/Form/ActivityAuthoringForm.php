@@ -148,9 +148,13 @@ final class ActivityAuthoringForm extends FormBase {
       '#button_type' => 'primary',
     ];
     $form['actions']['cancel'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Voltar à estrutura do curso'),
-      '#url' => Url::fromRoute('aculta_lms.course_structure', ['course' => $course->id()]),
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:button',
+      '#props' => [
+        'text' => (string) $this->t('Voltar à estrutura do curso'),
+        'url' => Url::fromRoute('aculta_lms.course_structure', ['course' => $course->id()])->toString(),
+        'variant' => 'secondary',
+      ],
     ];
     return $form;
   }

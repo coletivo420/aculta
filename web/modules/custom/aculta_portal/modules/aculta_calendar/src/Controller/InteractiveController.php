@@ -61,10 +61,13 @@ final class InteractiveController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'calendar-interactive-controls'],
         'contrast' => [
-          '#type' => 'html_tag',
-          '#tag' => 'button',
-          '#attributes' => ['type' => 'button', 'id' => 'aculta-calendar-contrast', 'aria-pressed' => 'false'],
-          '#value' => $this->t('Alto contraste'),
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:button',
+          '#props' => [
+            'text' => (string) $this->t('Alto contraste'),
+            'variant' => 'secondary',
+          ],
+          '#attributes' => ['id' => 'aculta-calendar-contrast', 'aria-pressed' => 'false'],
         ],
       ],
       'componente' => [

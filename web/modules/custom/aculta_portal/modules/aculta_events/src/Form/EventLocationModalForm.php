@@ -160,6 +160,7 @@ final class EventLocationModalForm extends FormBase {
           'wrapper' => 'aculta-location-modal-form-wrapper',
         ],
         '#limit_validation_errors' => [],
+        '#attributes' => ['data-portal-ui' => 'button-secondary'],
       ];
     }
 
@@ -355,6 +356,7 @@ final class EventLocationModalForm extends FormBase {
         '#ajax' => [
           'callback' => '::ajaxCloseModal',
         ],
+        '#attributes' => ['data-portal-ui' => 'button-secondary'],
       ],
     ];
   }

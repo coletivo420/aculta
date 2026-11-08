@@ -249,6 +249,7 @@ final class OpenStreetMapImportWizard extends FormBase {
       '#value' => $this->t('Cancelar e começar de novo'),
       '#submit' => ['::restartSubmit'],
       '#limit_validation_errors' => [],
+      '#attributes' => ['data-portal-ui' => 'button-secondary'],
     ];
     return $form;
   }

@@ -172,6 +172,7 @@ final class UserPictureForm extends FormBase {
         '#value' => $this->t('Remover foto'),
         '#limit_validation_errors' => [],
         '#submit' => ['::removePersonal'],
+        '#attributes' => ['data-portal-ui' => 'button-danger'],
       ];
     }
     $form['actions']['salvar'] = [

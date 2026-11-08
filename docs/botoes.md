@@ -83,10 +83,20 @@ Tokens em `src/styles/tokens.css` (`--button-danger-*`). Mínimos: texto 4,5:1; 
 
 Migram para o SDC em entregas anteriores: Portal, Fórum, Studio (calendário, conexões, novo curso), Eventos (editar, membros, recuperação, organizador, locais, cadastro), cursos da conta, Melhor Envio, envios de formulário via `input--submit` e os três envios convertidos para HTMX.
 
+## Entregas 2026-11-08 (PASSOS 2 e 3)
+
+- **Links de apoio (`#type => link` com URL clara)** viraram SDC `secondary`: Cancelar/Voltar de ForumCommentMoveForm, ForumTopicMoveForm, LessonAuthoringForm, ClassRosterVisibilityForm, ClassActivityDeadlineForm, LmsCommentModerationForm, CourseCertificateRevokeForm, ActivityAuthoringForm, CourseDocumentController (adicionar e editar), AvatarCropForm, EventDateDeleteForm, EventContributionWorkspaceController, GreenStashProductController, WikiProposalWithdrawalForm e WikiEntryImageHooks. `Remover imagem atual` (AchievementDefinitionForm) virou `danger`.
+- **Envios (`#type submit`/`#type button`)** receberam token do mapa, mantendo `input--submit`: `button-danger` em Remover prazo, Remover (SocialLinksSettingsForm), Remover foto, Remover amizade (novo token `friendship-remove-action`), Remover selecionados sem uso; `button-secondary` em Cancelar e começar de novo, Voltar e ajustar, Limpar da busca de local e Cancelar do modal de local; `friendship-cancel-action` (secondary) em Cancelar pedido. `event-organization-back-action` passou a mapear para `button--secondary`.
+- **Limpar de SocialLinkForm e AccountBioForm** agora é SDC `secondary` com `is_submit: true`; os atributos `data-aculta-clear`/`data-aculta-bio-clear` permanecem e o JS de `account-bio-form.js` continua tratando o clique.
+- **Controles com `#tag => button`** convertidos: PdfViewerBuilder (paginação, zoom, rotação, tela cheia e busca; `ghost` na navegação, `secondary` em Buscar), SecretsController (abas, `ghost`), InteractiveController (Alto contraste, `secondary`), DonationCheckoutPane e AccountBioCard (fechar diálogo, `ghost` com `aria_label` e `×`).
+- **Fixture do visualizador de PDF** regenerada (`PdfViewerBuilderEquivalenceTest`) após a troca de `html_tag` por componente.
+
+
 ## Exceções (não vão ao SDC sem mudar comportamento)
 
 - **Envios de formulário com `name`/`value`** permanecem `<input>`/`<button>` do Form API e são renderizados pelo SDC por `templates/input--submit.html.twig`. Pontos com token próprio: `EventOrganizationMembersForm`, `EventOrganizationAdminController`, `EventOrganizerDashboardController`, `SocialLinksSettingsForm`, `FriendshipActionForm`, `NoticeReadStateForm`, dialogs e widgets de eventos.
-- **`#type => button` com JS próprio**: `SocialLinkForm` e `AccountBioForm` (limpar), `ConfirmDialog` (abrir/fechar `<dialog>`), widgets de local/organização de eventos.
+- **`#type => button` com JS próprio**: `ConfirmDialog` (abrir/fechar `<dialog>`), widgets de local/organização de eventos e o Cancelar do modal de local (dispara `#ajax` para fechar).
+- **Miniaturas da galeria** (`GalleryViewHooks`): `<button>` com a imagem do thumbnail como filho do render array. O SDC `aculta420_v2:button` não tem slot de conteúdo, só `text`/ícones; converter perderia a miniatura. Mantido `html_tag`.
 - **Links `use-ajax` que abrem/fecham diálogo jQuery**: superfícies de caminhos, foto do perfil, redes sociais, avatares, segredos e busca. Não há comando HTMX para o diálogo jQuery; detalhes em `docs/htmx-envios.md`.
 - **Botões "Em breve" do tópico do Fórum**: `<button disabled>` com ícone, texto e badge próprio (`aculta-forum-action-btn__badge`). O SDC não tem slot de badge; converter perderia o selo "Em breve". Revisão futura do componente.
 - **Filtros GET em marcação crua** (`statistics`, `agenda`, `memorial`, `green stash`, `mailer`): `<button type="submit">` sem classe de variante, dentro de HTML gerado por `#markup`/`#template`; styled pelo CSS global de elemento. Converter exigiria reescrever cada formulário como render array, sem ganho de variante.

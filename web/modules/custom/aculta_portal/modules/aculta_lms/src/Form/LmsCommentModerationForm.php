@@ -94,9 +94,13 @@ final class LmsCommentModerationForm extends FormBase {
       '#button_type' => 'primary',
     ];
     $form['actions']['cancel'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Cancelar'),
-      '#url' => Url::fromRoute('aculta_forum_lms.comments_pending', ['course' => $course->id(), 'group' => $group->id()]),
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:button',
+      '#props' => [
+        'text' => (string) $this->t('Cancelar'),
+        'url' => Url::fromRoute('aculta_forum_lms.comments_pending', ['course' => $course->id(), 'group' => $group->id()])->toString(),
+        'variant' => 'secondary',
+      ],
     ];
     return $form;
   }

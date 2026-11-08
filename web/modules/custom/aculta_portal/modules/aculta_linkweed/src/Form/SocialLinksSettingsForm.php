@@ -121,7 +121,7 @@ final class SocialLinksSettingsForm extends ConfigFormBase {
           '#limit_validation_errors' => [],
           // O envio dinâmico não deve ser barrado pela validação do navegador;
           // a validação do servidor continua limitada aos campos deste botão.
-          '#attributes' => ['formnovalidate' => 'formnovalidate'],
+          '#attributes' => ['formnovalidate' => 'formnovalidate', 'data-portal-ui' => 'button-danger'],
         ],
       ];
       $this->applyHtmxSubmit($form['buttons_wrapper']['items'][$id]['remove'], $buttonsUrl);
