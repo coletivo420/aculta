@@ -53,3 +53,11 @@ Fonte: skill `design-tokens` (laurigates/claude-plugins), revisada e adaptada. N
 - Regra: componente consome semântico ou de componente. Nunca primitivo, nem hexadecimal.
 - Tema: valores claros em `:root, [data-theme="light"]`; escuros em `:root[data-theme="dark"], [data-theme="dark"]`. Não use `prefers-color-scheme` sem o `:root:not([data-theme="light"])`, para não contrariar o modo escolhido.
 - Camada e cascata: o escopo do modo é o contêiner, não o `body`. Se o `body` define cor com token claro, os filhos herdam o valor já calculado (ver causa resolvida na UI Library).
+
+## Modo escuro e acessibilidade (complemento, fontes da web revisadas)
+- `color-scheme`: declare `color-scheme: light` no contêiner claro e `color-scheme: dark` no escuro. Assim scrollbar e controles nativos acompanham o modo escolhido, mesmo com o sistema no outro modo. Declare no contêiner de modo, não só no `:root`.
+- `light-dark()`: útil para troca de cor pura (CSS moderno). Não substitui `data-theme` para o ACULTA: o modo vem da escolha do usuário, não só do sistema. Use `light-dark()` só se o modo escuro for o do contêiner.
+- Não relaxe contraste no modo escuro. Meça cada par de texto e de fundo do modo escuro, não presuma que o claro vale.
+- Modo de contraste forçado (`forced-colors`): não remova o foco nem a borda de controle. Teste também esse caso.
+- Critérios de referência (WCAG 2.2): texto normal 4,5:1 (SC 1.4.3); texto grande 3:1; componente de interface e gráfico 3:1 (SC 1.4.11). O critério de aparência de foco (2.4.13) tem nível que deve ser conferido no texto oficial do W3C antes de citar: não declarar nível sem conferir.
+- Fontes para conferir antes de citar: https://www.w3.org/TR/WCAG22/ e https://developer.mozilla.org (páginas de `color-scheme` e `light-dark()`).
