@@ -20,5 +20,9 @@
   <arg value="sp"/>
 
   <rule ref="Drupal"/>
+  <!-- Métodos de teste seguem o padrão do PHPUnit (testNomeDoCaso), igual ao Drupal core. -->
+  <rule ref="Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps">
+    <exclude-pattern>*/tests/*</exclude-pattern>
+  </rule>
   <rule ref="DrupalPractice"/>
 </ruleset>
