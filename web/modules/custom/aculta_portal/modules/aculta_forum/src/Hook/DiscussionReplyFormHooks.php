@@ -76,7 +76,7 @@ final class DiscussionReplyFormHooks {
     unset($form['actions']['preview']);
     if (isset($form['actions']['submit'])) {
       $form['actions']['submit']['#value'] = t('Publicar comentário');
-      $form['actions']['submit']['#button_type'] = 'secondary';
+      $form['actions']['submit']['#button_type'] = 'primary';
     }
     $form['actions']['clear'] = [
       '#type' => 'html_tag',
