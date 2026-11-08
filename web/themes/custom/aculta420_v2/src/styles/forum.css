@@ -123,6 +123,8 @@
 [data-aculta-discussion-status] { grid-area: status; text-align: center; color: var(--color-text-secondary); font-size: var(--font-size-xs); min-inline-size: 0; overflow-wrap: anywhere; }
 [data-aculta-discussion-announcement] { position: absolute; overflow: hidden; margin: -1px; white-space: nowrap; block-size: 1px; clip-path: inset(50%); inline-size: 1px; }
 .field--name-field-aculta-discussion article.js-comment { scroll-margin-block-start: 5rem; }
+/* Espaço entre comentários: o gap atual (--spacing-md) somado a 4x dá 5x no total, sem espaço extra após o último. */
+.field--name-field-aculta-discussion article.js-comment + article.js-comment { margin-block-start: calc(var(--spacing-md) * 4); }
 
 .field--name-field-aculta-discussion .comment__in-reply-to {
   margin: 0 0 var(--spacing-xs);
