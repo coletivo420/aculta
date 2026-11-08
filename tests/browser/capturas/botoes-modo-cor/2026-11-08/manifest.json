@@ -41,74 +41,11 @@
   "titulo": "Components library | Associação Cultural Antiproibicionista",
   "auditoria_escuro": [
     {
-      "componente": "Gatilho de alertas",
-      "cor": "rgb(154, 193, 90)",
-      "fundo": "rgb(242,202,54)",
-      "razao": 1.31,
-      "texto": "Ver todos os avisos"
-    },
-    {
-      "componente": "Gatilho de mensagens",
-      "cor": "rgb(154, 193, 90)",
-      "fundo": "rgb(242,202,54)",
-      "razao": 1.31,
-      "texto": "Ver todas as mensagens"
-    },
-    {
-      "componente": "Barra institucional",
-      "cor": "rgb(154, 193, 90)",
-      "fundo": "rgb(242,202,54)",
-      "razao": 1.31,
-      "texto": "Ver todas as mensagens"
-    },
-    {
-      "componente": "Barra institucional",
-      "cor": "rgb(154, 193, 90)",
-      "fundo": "rgb(242,202,54)",
-      "razao": 1.31,
-      "texto": "Ver todos os avisos"
-    },
-    {
       "componente": "Canais sociais",
       "cor": "rgb(23, 21, 19)",
       "fundo": "rgb(43,39,35)",
       "razao": 1.23,
       "texto": "ACULTA - Associação Cultural Antiproibicionista"
-    },
-    {
-      "componente": "Vitrine de portais",
-      "cor": "rgb(154, 193, 90)",
-      "fundo": "rgb(242,202,54)",
-      "razao": 1.31,
-      "texto": "Apoio"
-    },
-    {
-      "componente": "Vitrine de portais",
-      "cor": "rgb(154, 193, 90)",
-      "fundo": "rgb(242,202,54)",
-      "razao": 1.31,
-      "texto": "Revista 420"
-    },
-    {
-      "componente": "Vitrine de portais",
-      "cor": "rgb(154, 193, 90)",
-      "fundo": "rgb(242,202,54)",
-      "razao": 1.31,
-      "texto": "Wiki420"
-    },
-    {
-      "componente": "Mapa com marcadores",
-      "cor": "rgb(154, 193, 90)",
-      "fundo": "rgb(255,255,255)",
-      "razao": 2.07,
-      "texto": "+"
-    },
-    {
-      "componente": "Mapa com marcadores",
-      "cor": "rgb(154, 193, 90)",
-      "fundo": "rgb(255,255,255)",
-      "razao": 2.07,
-      "texto": "−"
     },
     {
       "componente": "",
@@ -119,61 +56,61 @@
     }
   ],
   "origem_cor": {
-    "corComputada": "rgb(154, 193, 90)",
-    "elemento": "A.aculta-utility-dialog__action",
+    "corComputada": "rgb(23, 21, 19)",
+    "elemento": "P.",
     "modoDaPagina": "dark",
     "regras": [
+      {
+        "cor": "var(--color-footer-text)",
+        "elemento": "FOOTER.site-footer site-footer--social-links",
+        "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
+        "nivel": 4,
+        "sel": ".site-footer"
+      },
+      {
+        "cor": "var(--color-footer-text)",
+        "elemento": "P.",
+        "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
+        "nivel": 0,
+        "sel": ".site-footer :is(p, dd, .aculta-footer-description, .aculta-footer-cnpj, .aculta-institution-details, .field--name-field"
+      },
+      {
+        "cor": "var(--color-text-secondary)",
+        "elemento": "FOOTER.site-footer site-footer--social-links",
+        "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
+        "nivel": 4,
+        "sel": ".site-footer--social-links"
+      },
       {
         "cor": "var(--color-text-primary)",
         "elemento": "DIV.ui_patterns_story__preview",
         "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
-        "nivel": 3,
+        "nivel": 5,
         "sel": ".ui_patterns_story__preview[data-theme], .ui_patterns_story__story[data-theme]"
       },
       {
         "cor": "var(--color-text-primary)",
         "elemento": "DIV.ui_patterns_story__preview",
         "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
-        "nivel": 3,
+        "nivel": 5,
         "sel": ".layout-page__content[data-theme], .ui_patterns_story__preview[data-theme], .ui_patterns_story__story[data-theme]"
       },
       {
         "cor": "var(--color-text-primary)",
         "elemento": "DIV.layout-page__content",
         "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
-        "nivel": 9,
+        "nivel": 11,
         "sel": ".layout-page__content[data-theme], .ui_patterns_story__preview[data-theme], .ui_patterns_story__story[data-theme]"
-      },
-      {
-        "cor": "var(--color-text-primary)",
-        "elemento": "DIALOG.aculta-utility-dialog aculta-alerts-dialog",
-        "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
-        "nivel": 2,
-        "sel": ".aculta-utility-dialog"
-      },
-      {
-        "cor": "var(--color-on-highlight)",
-        "elemento": "A.aculta-utility-dialog__action",
-        "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
-        "nivel": 0,
-        "sel": ".aculta-utility-dialog__action"
       },
       {
         "cor": "var(--color-text-primary)",
         "elemento": "BODY.aculta-radius--button-lg aculta-radius--card-lg ac",
         "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
-        "nivel": 13,
+        "nivel": 15,
         "sel": "body"
-      },
-      {
-        "cor": "var(--color-primary)",
-        "elemento": "A.aculta-utility-dialog__action",
-        "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
-        "nivel": 0,
-        "sel": ".page a"
       }
     ],
-    "texto": "Ver todos os avisos",
+    "texto": "ACULTA - Associação Cultural Antiproibic",
     "tokenTextoNaPagina": "#f4efe8",
     "tokenTextoNoElemento": "#f4efe8"
   },
