@@ -170,7 +170,8 @@ final class ForumQuoteHooks {
     // Before processing, text_format keeps #default_value on the element
     // itself; the nested value/format children only exist afterwards.
     // #default_value is NULL for a new reply, so array_key_exists() is used.
-    if (isset($form['comment_body']['widget'][0]['value'])) {
+    $processed = isset($form['comment_body']['widget'][0]['value']);
+    if ($processed) {
       $body =& $form['comment_body']['widget'][0]['value'];
     }
     elseif (array_key_exists('#default_value', $form['comment_body']['widget'][0] ?? [])) {
@@ -179,10 +180,14 @@ final class ForumQuoteHooks {
     else {
       return;
     }
-    if (!empty($body['#default_value'])) {
+    if (!empty($body['#default_value']) || !empty($body['#value'])) {
       return;
     }
     $body['#default_value'] = $quote;
+    if ($processed) {
+      // A processed textarea renders #value, not #default_value.
+      $body['#value'] = $quote;
+    }
 
     (new CacheableMetadata())
       ->addCacheableDependency($parent)

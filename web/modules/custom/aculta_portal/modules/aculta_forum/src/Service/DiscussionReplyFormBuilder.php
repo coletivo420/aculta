@@ -76,19 +76,34 @@ class DiscussionReplyFormBuilder {
 
     $form = $this->entityFormBuilder->getForm($comment);
 
-    // Apply quote if provided and form has comment_body.
+    // Apply quote if provided and form has comment_body. The entity form is
+    // already processed when it comes back from the form builder, so the
+    // rendered textarea reads #value; #default_value alone never reaches it.
     if ($quote !== NULL && $quote !== '') {
       if (isset($form['comment_body']['widget'][0]['value'])) {
-        if (empty($form['comment_body']['widget'][0]['value']['#default_value'])) {
-          $form['comment_body']['widget'][0]['value']['#default_value'] = $quote;
-        }
+        $body =& $form['comment_body']['widget'][0]['value'];
       }
-      elseif (isset($form['comment_body']['widget'][0]) && array_key_exists('#default_value', $form['comment_body']['widget'][0])) {
-        if (empty($form['comment_body']['widget'][0]['#default_value'])) {
-          $form['comment_body']['widget'][0]['#default_value'] = $quote;
-        }
+      elseif (array_key_exists('#default_value', $form['comment_body']['widget'][0] ?? [])) {
+        $body =& $form['comment_body']['widget'][0];
       }
+      else {
+        $body = NULL;
+      }
+      if (is_array($body) && empty($body['#default_value']) && empty($body['#value'])) {
+        $body['#default_value'] = $quote;
+        // Processed text_format renders #value; without it the quote is lost.
+        $body['#value'] = $quote;
+      }
+      unset($body);
     }
+
+    // The composer posts back to the host page, which returns the whole main
+    // content. Swapping only the discussion thread keeps the topic aside (which
+    // lives at the end of the main column) out of the replaced fragment, so it
+    // is not rendered twice after posting a reply.
+    $form['#attributes']['data-hx-target'] = '[data-aculta-discussion-thread]';
+    $form['#attributes']['data-hx-select'] = '[data-aculta-discussion-thread]';
+    $form['#attributes']['data-hx-swap'] = 'outerHTML';
 
     $parentSubject = NULL;
     $parentAuthor = NULL;
