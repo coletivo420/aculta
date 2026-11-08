@@ -42,8 +42,9 @@ novos com mais de um envio precisam do mesmo cuidado.
 | 1 | `aculta_linkweed/src/Form/SocialLinksSettingsForm.php` | botão "Remover" de cada linha | `aculta_linkweed.social_links_settings` | `#aculta-social-links-settings` — wrapper do formulário inteiro, que contém o `buttons_wrapper` e o `form_build_id` renovado (`hx-select` + `hx-swap="outerHTML"`) |
 | 2 | `aculta_linkweed/src/Form/SocialLinksSettingsForm.php` | botão "+ Adicionar botão" | `aculta_linkweed.social_links_settings` | `#aculta-social-links-settings` (`hx-select` + `hx-swap="outerHTML"`) |
 | 3 | `aculta_paths/src/Form/SurfaceEditForm.php` | botão "Salvar" | `aculta_paths.editar` (com `purpose`) | `#aculta-paths-surface-edit` (erro de validação); `HX-Redirect` para `aculta_paths.form` no sucesso |
+| 4 | `modules/aculta_events/src/Form/EventForm.php` | botão "Adicionar outra data" (`add_more_event_date`) | `aculta_events.event_add` ou `aculta_events.organizer_event_add`, conforme o purpose (`EventRouteContext::route`) | `#event-dates-wrapper` — contêiner `date_location.dates`, trocado por `outerHTML` (`hx-select` + `hx-swap`) |
 
-Total: **3 envios convertidos**.
+Total: **4 envios convertidos**.
 
 Observações:
 
@@ -54,6 +55,11 @@ Observações:
   foi removido. O seletor de modo mantém o `#ajax` de `change` (não é envio de
   formulário) e o `validateForm()` continua ignorando a reconstrução
   intermediária.
+- `EventForm` mantém o submit handler `addDateRow` (incrementa `date_delta` e
+  marca rebuild) e o `#limit_validation_errors`; só o canal de resposta mudou. O
+  callback `ajaxRebuildDates`, que só existia para devolver o fragmento ao AJAX,
+  foi removido. O `#ajax` de campo dos botões "Remover local/organização" nos
+  widgets de campo continua fora de escopo.
 - Os formulários sem JavaScript passam a seguir o redirect nativo no sucesso
   (`aculta_paths.form`), o mesmo destino que o AJAX fechava; nos botões
   dinâmicos do ACULTA Links, o POST nativo devolve a página inteira.
@@ -85,8 +91,8 @@ Observações:
 
 Continuam como estão, por serem gatilhos de campo (change/blur/click) e não
 envios: `AccountAddressForm` (país), `AcultaCheckoutLogin` (blur do e-mail),
-`DonationCheckoutPane` e `CheckoutPro` (change; F5, pagamento), `EventForm`
-(rebuild das datas) e o seletor `modo` de `SurfaceEditForm`.
+`DonationCheckoutPane` e `CheckoutPro` (change; F5, pagamento) e o seletor
+`modo` de `SurfaceEditForm`.
 
 ## Links `use-ajax` mantidos
 
@@ -115,3 +121,10 @@ exceção registrada:
   - **SurfaceEditForm**: "Salvar" com o título obrigatório vazio responde 200 e devolve o formulário com o estado de erro no fragmento, sem navegar nem gravar configuração.
 - Evidência: `tests/browser/capturas/htmx-envios/2026-11-08/manifest.json`.
 - Correção encontrada nesta validação: o botão "+ Adicionar botão" passou a ter `#name => add_social_button`. Sem isso, o `_triggering_element_name=op` compartilhado fazia o "Salvar" virar o disparador e o envio salvava a configuração em vez de adicionar a linha.
+
+### `EventForm` (envio #4)
+
+- `php -l web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventForm.php`: sem erros.
+- `php scripts/validate-aculta420-ui-styles.php`: PASS.
+- `php scripts/validate-aculta420-v2-foundations.php`: PASS.
+- Sem teste de navegador nesta rodada: o botão "Adicionar outra data" depende de conta autenticada com permissão de criar Evento e do formulário completo de entidade. O `#ajax` era um bloco único (`#event-dates-wrapper`), sem diálogo nem CKEditor; a rota do `hx-post` é a mesma do próprio formulário (`event_add`/`organizer_event_add`).

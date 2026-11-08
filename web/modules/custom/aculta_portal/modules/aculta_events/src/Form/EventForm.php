@@ -14,6 +14,8 @@ use Drupal\aculta_user\Organization\OrganizationAccessService;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -109,11 +111,17 @@ final class EventForm extends ContentEntityForm {
       '#submit' => ['::addDateRow'],
       '#limit_validation_errors' => [],
       '#weight' => 23,
-      '#ajax' => [
-        'callback' => '::ajaxRebuildDates',
-        'wrapper' => 'event-dates-wrapper',
-      ],
     ];
+    // Envio sem Drupal AJAX: a rota do formulário devolve o próprio bloco de
+    // Datas, que o HTMX troca no lugar. O envio continua sendo um submit do
+    // Form API (name, submitHandler e limite de validação preservados).
+    (new Htmx())
+      ->post(Url::fromRoute(EventRouteContext::route('aculta_events.event_add', 'aculta_events.organizer_event_add')))
+      ->select('#event-dates-wrapper')
+      ->target('#event-dates-wrapper')
+      ->swap('outerHTML')
+      ->onlyMainContent()
+      ->applyTo($form['date_add_more']);
   }
 
   /**
@@ -161,13 +169,6 @@ final class EventForm extends ContentEntityForm {
   public function addDateRow(array &$form, FormStateInterface $form_state): void {
     $form_state->set('date_delta', (int) $form_state->get('date_delta') + 1);
     $form_state->setRebuild(TRUE);
-  }
-
-  /**
-   * Devolve o contêiner de Datas para o rebuild AJAX.
-   */
-  public function ajaxRebuildDates(array &$form, FormStateInterface $form_state): array {
-    return $form['date_location']['dates'];
   }
 
   /**
