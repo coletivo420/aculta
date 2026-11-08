@@ -86,7 +86,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = [, 'aculta_calendar' ];
+  protected static $modules = ['aculta_calendar' ];
 
   /**
    * Temporary private scheme root for this isolated Kernel.
