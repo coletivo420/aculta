@@ -54,6 +54,7 @@ final class LmsRolePermissionsConfigSyncKernelTest extends KernelTestBase {
     'field',
     'filter',
     'text',
+    'text_with_summary',
     'comment',
     'views',
     'node',
@@ -62,8 +63,6 @@ final class LmsRolePermissionsConfigSyncKernelTest extends KernelTestBase {
     'group',
     'gnode',
     'domain',
-    'lms',
-    'lms_classes',
     'aculta_lms',
     // The exported roles declare these modules as dependencies, and Group
     // validates them when the configuration is imported through Config Sync.
@@ -93,7 +92,8 @@ final class LmsRolePermissionsConfigSyncKernelTest extends KernelTestBase {
     $this->installEntitySchema('group_config_wrapper');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
-    $this->installConfig(['system', 'user', 'node', 'comment', 'group', 'lms', 'lms_classes']);
+    $this->installConfig(['system', 'user', 'node', 'comment', 'group']);
+    $this->installLmsGroupTypesFromSync();
 
     CommentType::create([
       'id' => 'aculta_discussion_post',
@@ -162,9 +162,9 @@ final class LmsRolePermissionsConfigSyncKernelTest extends KernelTestBase {
         ->grantPermission('post comments')
         ->save();
 
-    // Mirror the exported class settings, including the conditional default.
-    $settings = $this->readSyncConfig('lms_classes.settings');
-    $this->config('lms_classes.settings')->setData($settings)->save();
+    // Mirror the exported class permission mappings.
+    $settings = $this->readSyncConfig('aculta_lms.settings');
+    $this->config('aculta_lms.settings')->setData($settings)->save();
   }
 
   /**
@@ -269,14 +269,12 @@ final class LmsRolePermissionsConfigSyncKernelTest extends KernelTestBase {
   }
 
   /**
-   * The class settings export keeps only the intended topic-view mapping.
+   * The class permission mapping export matches the installed default.
    */
   public function testClassSettingsMatchExport(): void {
-    $sync = $this->readSyncConfig('lms_classes.settings');
+    $sync = $this->readSyncConfig('aculta_lms.settings');
     self::assertSame(
       [
-        'create_default_class' => FALSE,
-        'class_name_pattern' => '',
         'class_permission_mappings' => [
           'view group_node:aculta_lms_topic entity' => 'grade students',
         ],
@@ -284,16 +282,14 @@ final class LmsRolePermissionsConfigSyncKernelTest extends KernelTestBase {
       ],
       $sync,
     );
-    self::assertEquals($sync, $this->config('lms_classes.settings')->getRawData());
+    self::assertEquals($sync, $this->config('aculta_lms.settings')->getRawData());
 
-    // The module install defaults differ only in the keys the export owns.
-    $installPath = dirname(__DIR__, 7) . '/contrib/lms/modules/lms_classes/config/install/lms_classes.settings.yml';
+    // The module install default must not diverge from the export.
+    $installPath = dirname(__DIR__, 4) . '/aculta_lms/config/install/aculta_lms.settings.yml';
     self::assertFileExists($installPath);
     $install = Yaml::parseFile($installPath);
     self::assertEqualsCanonicalizing(array_keys($sync), array_keys($install));
-    self::assertTrue($install['create_default_class']);
-    self::assertSame($sync['class_name_pattern'], $install['class_name_pattern']);
-    self::assertSame([], $install['class_permission_mappings']);
+    self::assertSame($sync['class_permission_mappings'], $install['class_permission_mappings']);
     self::assertSame($sync['course_permission_mappings'], $install['course_permission_mappings']);
   }
 

@@ -73,6 +73,7 @@ final class LmsModuleLifecycleKernelTest extends KernelTestBase {
     'field',
     'filter',
     'text',
+    'text_with_summary',
     'comment',
     'views',
     'node',
@@ -80,8 +81,6 @@ final class LmsModuleLifecycleKernelTest extends KernelTestBase {
     'flexible_permissions',
     'group',
     'gnode',
-    'lms',
-    'lms_classes',
     'aculta_lms',
     'key',
     'file',
@@ -106,7 +105,8 @@ final class LmsModuleLifecycleKernelTest extends KernelTestBase {
     $this->installSchema('comment', ['comment_entity_statistics']);
     // The uninstall removes the module's user data rows.
     $this->installSchema('user', ['users_data']);
-    $this->installConfig(['system', 'user', 'node', 'comment', 'group', 'lms', 'lms_classes']);
+    $this->installConfig(['system', 'user', 'node', 'comment', 'group']);
+    $this->installLmsGroupTypesFromSync();
 
     self::assertInstanceOf(GroupType::class, GroupType::load('lms_course'));
     self::assertInstanceOf(GroupType::class, GroupType::load('lms_class'));
@@ -194,7 +194,7 @@ final class LmsModuleLifecycleKernelTest extends KernelTestBase {
    */
   public function testDeactivationLeavesNoConfigurationResidue(): void {
     $baseline = $this->baselineConfigNames;
-    $classSettings = $this->config('lms_classes.settings')->getRawData();
+    $classSettings = $this->config('aculta_lms.settings')->getRawData();
 
     $this->installAdapter();
     $this->uninstallAdapter();
@@ -222,7 +222,7 @@ final class LmsModuleLifecycleKernelTest extends KernelTestBase {
     }
 
     // Configuration owned by other modules is not rewritten.
-    self::assertSame($classSettings, $this->config('lms_classes.settings')->getRawData());
+    self::assertSame($classSettings, $this->config('aculta_lms.settings')->getRawData());
     self::assertArrayNotHasKey(
       'aculta_forum_lms',
       $this->moduleHandler()->getModuleList(),

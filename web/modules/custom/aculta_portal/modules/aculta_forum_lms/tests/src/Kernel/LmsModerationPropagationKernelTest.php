@@ -44,6 +44,7 @@ final class LmsModerationPropagationKernelTest extends KernelTestBase {
     'field',
     'filter',
     'text',
+    'text_with_summary',
     'node',
     'comment',
     'aculta_user_test',

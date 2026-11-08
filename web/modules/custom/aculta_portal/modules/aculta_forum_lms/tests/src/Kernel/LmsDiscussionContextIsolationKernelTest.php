@@ -45,6 +45,9 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
     'field',
     'filter',
     'text',
+    'text_with_summary',
+    'editor',
+    'ckeditor5',
     'comment',
     'views',
     'node',
@@ -88,8 +91,11 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
     ] as $config_id) {
       $path = dirname(__DIR__, 9) . '/config/sync/' . $config_id . '.yml';
       self::assertFileExists($path);
+      $data = Yaml::parseFile($path);
+      // creator_wizard belonged to the removed contrib LMS schema.
+      unset($data['creator_wizard']);
       $this->container->get('config.factory')->getEditable($config_id)
-        ->setData(Yaml::parseFile($path))
+        ->setData($data)
         ->save();
     }
     $this->installConfig(['system', 'user', 'node', 'comment', 'aculta_lms']);

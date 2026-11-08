@@ -61,6 +61,7 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     'field',
     'filter',
     'text',
+    'text_with_summary',
     'comment',
     'views',
     'node',
@@ -69,8 +70,6 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     'group',
     'gnode',
     'domain',
-    'lms',
-    'lms_classes',
     'aculta_lms',
     'aculta_file_uploader',
     'aculta_forum_lms_test',
@@ -90,7 +89,8 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     $this->installEntitySchema('group_config_wrapper');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
-    $this->installConfig(['system', 'user', 'node', 'comment', 'group', 'lms', 'lms_classes']);
+    $this->installConfig(['system', 'user', 'node', 'comment', 'group']);
+    $this->installLmsGroupTypesFromSync();
 
     CommentType::create([
       'id' => 'aculta_discussion_post',
@@ -172,10 +172,10 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
       $this->createGroupRoleFromSync($roleConfigName);
     }
 
-    $syncPath = dirname(__DIR__, 9) . '/config/sync/lms_classes.settings.yml';
+    $syncPath = dirname(__DIR__, 9) . '/config/sync/aculta_lms.settings.yml';
     self::assertFileExists($syncPath);
     $syncConfig = Yaml::parseFile($syncPath);
-    $this->config('lms_classes.settings')
+    $this->config('aculta_lms.settings')
       ->set('class_permission_mappings', $syncConfig['class_permission_mappings'])
       ->save();
   }

@@ -38,6 +38,7 @@ final class LmsTopicBundleInstallKernelTest extends KernelTestBase {
     'field',
     'filter',
     'text',
+    'text_with_summary',
     'comment',
     'views',
     'node',
@@ -45,8 +46,6 @@ final class LmsTopicBundleInstallKernelTest extends KernelTestBase {
     'flexible_permissions',
     'group',
     'gnode',
-    'lms',
-    'lms_classes',
     'aculta_lms',
     'key',
     'file',
@@ -69,10 +68,11 @@ final class LmsTopicBundleInstallKernelTest extends KernelTestBase {
     $this->installEntitySchema('group_config_wrapper');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
-    $this->installConfig(['system', 'user', 'node', 'comment', 'group', 'lms', 'lms_classes']);
+    $this->installConfig(['system', 'user', 'node', 'comment', 'group']);
+    $this->installLmsGroupTypesFromSync();
 
-    // Contrib LMS provides both Group types as optional configuration. Their
-    // presence is the real prerequisite for the adapter relationships.
+    // The exported LMS Group types are the real prerequisite for the adapter
+    // relationships; they are no longer installed by a contrib module.
     self::assertInstanceOf(GroupType::class, GroupType::load('lms_course'));
     self::assertInstanceOf(GroupType::class, GroupType::load('lms_class'));
 
@@ -175,7 +175,7 @@ final class LmsTopicBundleInstallKernelTest extends KernelTestBase {
       self::assertNotNull($relationship, "Relationship $relationship_id was installed.");
       $config = $this->config("group.relationship_type.$relationship_id");
       self::assertSame($group_type_id, $config->get('group_type'));
-      self::assertSame('group_node:aculta_lms_topic', $config->get('content_plugin'));
+      self::assertSame('group_node:aculta_lms_topic', $config->get('relation_type'));
       self::assertSame(1, $config->get('plugin_config.entity_cardinality'));
       self::assertSame(0, $config->get('plugin_config.group_cardinality'));
     }

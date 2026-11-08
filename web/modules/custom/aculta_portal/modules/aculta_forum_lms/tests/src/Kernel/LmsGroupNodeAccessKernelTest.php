@@ -27,6 +27,7 @@ final class LmsGroupNodeAccessKernelTest extends KernelTestBase {
     'field',
     'filter',
     'text',
+    'text_with_summary',
     'node',
     'entity',
     'flexible_permissions',

@@ -39,7 +39,9 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
   protected static $modules = [
     'aculta_commerce',
     'aculta_commerce_melhorenvio',
+    'aculta_calendar',
     'aculta_document_viewer',
+    'aculta_file_uploader',
     'aculta_forum',
     'aculta_gallery',
     'aculta_image',
@@ -94,7 +96,6 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
     'key',
     'language',
     'link',
-    'lms',
     'login_emailusername',
     'media',
     'media_duplicates',

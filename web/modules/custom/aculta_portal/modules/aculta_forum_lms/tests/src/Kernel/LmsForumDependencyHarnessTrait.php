@@ -13,6 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 trait LmsForumDependencyHarnessTrait {
 
   use AcultaLmsDependencyHarnessTrait;
+  use LmsGroupTypesSyncTrait;
 
   /**
    * {@inheritdoc} */

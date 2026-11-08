@@ -51,6 +51,7 @@ final class LmsClosedDiscussionFieldKernelTest extends KernelTestBase {
     'field',
     'filter',
     'text',
+    'text_with_summary',
     'comment',
     'views',
     'node',
@@ -58,7 +59,6 @@ final class LmsClosedDiscussionFieldKernelTest extends KernelTestBase {
     'flexible_permissions',
     'group',
     'gnode',
-    'lms_classes',
     'aculta_lms',
     'key',
     'file',
@@ -86,7 +86,8 @@ final class LmsClosedDiscussionFieldKernelTest extends KernelTestBase {
     $this->installEntitySchema('group_config_wrapper');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
-    $this->installConfig(['system', 'user', 'node', 'comment', 'group', 'lms', 'lms_classes']);
+    $this->installConfig(['system', 'user', 'node', 'comment', 'group']);
+    $this->installLmsGroupTypesFromSync();
 
     CommentType::create([
       'id' => 'aculta_discussion_post',

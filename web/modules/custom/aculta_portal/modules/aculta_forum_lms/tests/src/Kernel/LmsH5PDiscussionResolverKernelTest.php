@@ -35,6 +35,7 @@ final class LmsH5PDiscussionResolverKernelTest extends KernelTestBase {
 
   use UserCreationTrait;
   use AcultaLmsDependencyHarnessTrait;
+  use LmsGroupTypesSyncTrait;
   use PortalCleanupKernelServicesTrait;
 
   /**
@@ -50,6 +51,7 @@ final class LmsH5PDiscussionResolverKernelTest extends KernelTestBase {
     'media',
     'filter',
     'text',
+    'text_with_summary',
     'options',
     'entity_usage',
     'entity',
@@ -58,8 +60,6 @@ final class LmsH5PDiscussionResolverKernelTest extends KernelTestBase {
     'gnode',
     'views',
     'node',
-    'lms',
-    'lms_classes',
     'aculta_image',
     'aculta_lms',
     'aculta_lms_h5p', 'token', 'aculta_file_uploader',
@@ -88,7 +88,7 @@ final class LmsH5PDiscussionResolverKernelTest extends KernelTestBase {
    * {@inheritdoc} */
   protected function setUp(): void {
     parent::setUp();
-    $this->installConfig(['system', 'user', 'node', 'group', 'lms', 'lms_classes']);
+    $this->installConfig(['system', 'user', 'node', 'group']);
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
     $this->installEntitySchema('group');
@@ -100,6 +100,7 @@ final class LmsH5PDiscussionResolverKernelTest extends KernelTestBase {
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installSchema('aculta_lms_h5p', ['h5p_content_libraries', 'h5p_points', 'h5p_content_user_data']);
+    $this->installLmsGroupTypesFromSync();
 
     NodeType::create(['type' => 'aculta_lms_topic', 'name' => 'LMS discussion topic'])->save();
     FieldStorageConfig::create([
