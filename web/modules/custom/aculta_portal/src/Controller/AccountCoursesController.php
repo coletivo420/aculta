@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
-use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_portal\Presentation\AccountCoursePresenter;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -56,7 +55,7 @@ final class AccountCoursesController implements ContainerInjectionInterface {
         'message' => ['#plain_text' => $view['empty']['message']],
       ];
       if ($view['empty']['action'] !== NULL) {
-        $build['empty']['link'] = PortalLinkElement::build($view['empty']['action']['label'], $view['empty']['action']['url'], ['data-portal-ui' => 'button-primary']);
+        $build['empty']['link'] = ['#type' => 'component', '#component' => 'aculta420_v2:button', '#props' => ['text' => (string) $view['empty']['action']['label'], 'url' => $view['empty']['action']['url']->toString(), 'variant' => 'primary']];
       }
       return $build;
     }
@@ -85,7 +84,7 @@ final class AccountCoursesController implements ContainerInjectionInterface {
         $card['meta']['score'] = ['#plain_text' => $course['score_label']];
       }
       if ($course['action'] !== NULL) {
-        $card['action'] = PortalLinkElement::build($course['action']['label'], $course['action']['url'], ['data-portal-ui' => 'button-primary']);
+        $card['action'] = ['#type' => 'component', '#component' => 'aculta420_v2:button', '#props' => ['text' => (string) $course['action']['label'], 'url' => $course['action']['url']->toString(), 'variant' => 'primary']];
       }
       $build['course_' . $delta] = $card;
     }
