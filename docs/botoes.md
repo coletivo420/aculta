@@ -87,3 +87,9 @@ Tokens em `src/styles/tokens.css` (`--button-danger-*`). Mínimos: texto 4,5:1; 
 - Suítes Kernel rodadas na worktree (banco de teste): `EventOrganizationAdminAndModalKernelTest` (8, OK), `EventDomainBoundaryKernelTest` (10, OK), `EventOrganizationLifecycleKernelTest` (31, OK). `UgcModerationKernelTest` (5, OK, rodada antes na cópia principal).
 - Unitários: `PublicForumTopicCreateActionHooksTest` (5, OK), `CourseAuthoringControllerTest` (4, OK).
 - Renders via Drush na worktree: link, botão desativado, só ícone, calendário do Studio e a grade de estados.
+
+## Modo escuro da UI Library: auditoria de contraste
+
+- Medição: `tests/browser/transversal/aculta420-v2-component-library/library-mode.py` (auditoria no modo escuro, razão mínima 4,5:1).
+- Resultado atual: 1 falha, `rfc-matrix` do módulo contrib `simple_oauth_21` ("No RFC data available.", texto cinza fixo `#6b7280`, 3,77:1). Fora do tema; registrado como exceção, sem patch em contrib.
+- Causas corrigidas: cor de texto resolvida no `body` (herdada com o valor claro); tokens derivados por `var()` sem par escuro; seletor global `.page a` sobrescrevendo o texto de destaque; controles do mapa com fundo branco fixo; variante neutra do rodapé com texto de rodapé verde.
