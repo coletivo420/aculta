@@ -1,5 +1,6 @@
 {# Main page layout. Keep every configured region available to blocks. #}
 <div class="page">
+  {% if not aculta_component_library_page|default(false) %}
   <div class="page__institution">
     {{ include('aculta420_v2:multidomain-bar', {
       brand_home_url: aculta_brand_home|default('/'),
@@ -24,6 +25,7 @@
       search: aculta_component_library_page|default(false) ? null : aculta_search_utility|default(null)
     }, with_context = false) }}
   </div>
+  {% endif %}
 
   {# |default(true) trata false como ausente e exibiria o cabeçalho; só ausência conta como visível. #}
   {% if domain_presentation.layout.show_site_header is not defined or domain_presentation.layout.show_site_header %}
