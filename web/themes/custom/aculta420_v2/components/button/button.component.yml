@@ -6,11 +6,14 @@ group: ACULTA
 props:
   type: object
   additionalProperties: false
-  required: [text]
   properties:
     text:
       type: string
+      title: Texto visível. Opcional quando houver aria_label (botão só com ícone).
+    aria_label:
+      type: string
       minLength: 1
+      title: Nome acessível. Obrigatório quando text não existir.
     url:
       type: [string, 'null']
       format: uri-reference

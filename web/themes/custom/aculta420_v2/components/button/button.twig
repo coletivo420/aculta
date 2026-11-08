@@ -1,10 +1,12 @@
 {% set classes = ['button', 'button--' ~ (variant|default('primary')), (size|default('default')) == 'small' ? 'button--small', disabled ? 'is-disabled'] %}
+{% set attrs = attributes.addClass(classes) %}
+{% if aria_label %}{% set attrs = attrs.setAttribute('aria-label', aria_label) %}{% endif %}
 {% set icon_before_markup = icon_before ? include('aculta420_v2:icon', { name: icon_before, variant: 'duotone', size: 'md' }, with_context = false) : '' %}
 {% set icon_after_markup = icon_after ? include('aculta420_v2:icon', { name: icon_after, variant: 'duotone', size: 'md' }, with_context = false) : '' %}
 {% if url and not disabled %}
-  <a{{ attributes.addClass(classes) }} href="{{ url }}">{{ icon_before_markup }}<span>{{ text }}</span>{{ icon_after_markup }}</a>
+  <a{{ attrs }} href="{{ url }}">{{ icon_before_markup }}{% if text %}<span>{{ text }}</span>{% endif %}{{ icon_after_markup }}</a>
 {% elseif url and disabled %}
-  <span{{ attributes.addClass(classes) }} aria-disabled="true">{{ icon_before_markup }}<span>{{ text }}</span>{{ icon_after_markup }}</span>
+  <span{{ attrs }} aria-disabled="true">{{ icon_before_markup }}{% if text %}<span>{{ text }}</span>{% endif %}{{ icon_after_markup }}</span>
 {% else %}
-  <button{{ attributes.addClass(classes) }} type="{{ is_submit ? 'submit' : 'button' }}"{{ disabled ? ' disabled' }}>{{ icon_before_markup }}<span>{{ text }}</span>{{ icon_after_markup }}</button>
+  <button{{ attrs }} type="{{ is_submit ? 'submit' : 'button' }}"{{ disabled ? ' disabled' }}>{{ icon_before_markup }}{% if text %}<span>{{ text }}</span>{% endif %}{{ icon_after_markup }}</button>
 {% endif %}

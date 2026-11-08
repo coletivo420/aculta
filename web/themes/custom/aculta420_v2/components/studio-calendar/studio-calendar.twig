@@ -9,33 +9,53 @@
     <div class="aculta-studio-calendar__title-wrap">
       <h2 class="aculta-studio-calendar__title">{{ title|default('Calendário'|t) }}</h2>
       {% if can_add_event and add_event_url %}
-        <a href="{{ add_event_url }}" class="button button--secondary aculta-studio-calendar__add-btn" aria-label="{{ 'Propor novo evento'|t }}" title="{{ 'Propor novo evento'|t }}">
-          {{ include('aculta420_v2:icon', { name: 'plus', variant: 'bold', size: 'sm' }, with_context = false) }}
-        </a>
+        {{ include('aculta420_v2:button', {
+          url: add_event_url,
+          variant: 'secondary',
+          icon_before: 'plus',
+          aria_label: 'Propor novo evento'|t,
+          attributes: create_attribute({ class: ['aculta-studio-calendar__add-btn'], title: 'Propor novo evento'|t }),
+        }, with_context = false) }}
       {% endif %}
     </div>
 
     <div class="aculta-studio-calendar__nav">
       {% if previous_url %}
-        <a href="{{ previous_url }}" class="button button--ghost aculta-studio-calendar__nav-btn" aria-label="{{ 'Mês anterior'|t }}" data-nav="prev">
-          {{ include('aculta420_v2:icon', { name: 'caret-left', variant: 'bold', size: 'sm' }, with_context = false) }}
-        </a>
+        {{ include('aculta420_v2:button', {
+          url: previous_url,
+          variant: 'ghost',
+          icon_before: 'caret-left',
+          aria_label: 'Mês anterior'|t,
+          attributes: create_attribute({ class: ['aculta-studio-calendar__nav-btn'], 'data-nav': 'prev' }),
+        }, with_context = false) }}
       {% else %}
-        <span class="button button--ghost aculta-studio-calendar__nav-btn is-disabled" aria-hidden="true">
-          {{ include('aculta420_v2:icon', { name: 'caret-left', variant: 'bold', size: 'sm' }, with_context = false) }}
-        </span>
+        {{ include('aculta420_v2:button', {
+          variant: 'ghost',
+          icon_before: 'caret-left',
+          aria_label: 'Mês anterior'|t,
+          disabled: true,
+          attributes: create_attribute({ class: ['aculta-studio-calendar__nav-btn'], 'aria-hidden': 'true' }),
+        }, with_context = false) }}
       {% endif %}
 
       <span class="aculta-studio-calendar__month-label">{{ current_month_label }}</span>
 
       {% if next_url %}
-        <a href="{{ next_url }}" class="button button--ghost aculta-studio-calendar__nav-btn" aria-label="{{ 'Próximo mês'|t }}" data-nav="next">
-          {{ include('aculta420_v2:icon', { name: 'caret-right', variant: 'bold', size: 'sm' }, with_context = false) }}
-        </a>
+        {{ include('aculta420_v2:button', {
+          url: next_url,
+          variant: 'ghost',
+          icon_before: 'caret-right',
+          aria_label: 'Próximo mês'|t,
+          attributes: create_attribute({ class: ['aculta-studio-calendar__nav-btn'], 'data-nav': 'next' }),
+        }, with_context = false) }}
       {% else %}
-        <span class="button button--ghost aculta-studio-calendar__nav-btn is-disabled" aria-hidden="true">
-          {{ include('aculta420_v2:icon', { name: 'caret-right', variant: 'bold', size: 'sm' }, with_context = false) }}
-        </span>
+        {{ include('aculta420_v2:button', {
+          variant: 'ghost',
+          icon_before: 'caret-right',
+          aria_label: 'Próximo mês'|t,
+          disabled: true,
+          attributes: create_attribute({ class: ['aculta-studio-calendar__nav-btn'], 'aria-hidden': 'true' }),
+        }, with_context = false) }}
       {% endif %}
     </div>
   </div>
