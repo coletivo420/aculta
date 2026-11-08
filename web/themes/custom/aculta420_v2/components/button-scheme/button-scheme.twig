@@ -1,33 +1,28 @@
 {#
-  Grade de estados: repouso, desativado e foco, em claro e escuro lado a lado.
-  Cada modo é um contêiner com data-theme; os tokens --button-* dele valem só ali.
-  Hover e active reais aparecem ao passar o ponteiro sobre os botões de repouso.
+  Grade de estados: repouso, desativado e foco, para as cinco variantes.
+  Não tem modo próprio: o modo claro/escuro é trocado na página inteira pelo
+  seletor da UI Library, e esta grade herda os tokens do contêiner de pré-visualização.
 #}
 {% set variants = ['primary', 'secondary', 'outline', 'ghost', 'danger'] %}
 <div class="aculta-button-scheme">
-  {% for mode in ['light', 'dark'] %}
-    <section class="aculta-button-scheme__mode" data-theme="{{ mode }}" aria-label="{{ mode == 'light' ? 'Modo claro'|t : 'Modo escuro'|t }}">
-      <h3 class="aculta-button-scheme__title">{{ mode == 'light' ? 'Claro'|t : 'Escuro'|t }}</h3>
-      <table class="aculta-button-scheme__grid">
-        <thead>
-          <tr>
-            <th scope="col">{{ 'Variante'|t }}</th>
-            <th scope="col">{{ 'Repouso'|t }}</th>
-            <th scope="col">{{ 'Desativado'|t }}</th>
-            <th scope="col">{{ 'Foco'|t }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for variant in variants %}
-            <tr>
-              <th scope="row"><code>{{ variant }}</code></th>
-              <td>{{ include('aculta420_v2:button', { text: 'Ação', url: '#', variant: variant }, with_context = false) }}</td>
-              <td>{{ include('aculta420_v2:button', { text: 'Ação', url: '#', variant: variant, disabled: true }, with_context = false) }}</td>
-              <td>{{ include('aculta420_v2:button', { text: 'Ação', url: '#', variant: variant, attributes: create_attribute({ class: ['is-focus'] }) }, with_context = false) }}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </section>
-  {% endfor %}
+  <table class="aculta-button-scheme__grid">
+    <thead>
+      <tr>
+        <th scope="col">{{ 'Variante'|t }}</th>
+        <th scope="col">{{ 'Repouso'|t }}</th>
+        <th scope="col">{{ 'Desativado'|t }}</th>
+        <th scope="col">{{ 'Foco'|t }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for variant in variants %}
+        <tr>
+          <th scope="row"><code>{{ variant }}</code></th>
+          <td>{{ include('aculta420_v2:button', { text: 'Ação', url: '#', variant: variant }, with_context = false) }}</td>
+          <td>{{ include('aculta420_v2:button', { text: 'Ação', url: '#', variant: variant, disabled: true }, with_context = false) }}</td>
+          <td>{{ include('aculta420_v2:button', { text: 'Ação', url: '#', variant: variant, attributes: create_attribute({ class: ['is-focus'] }) }, with_context = false) }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
