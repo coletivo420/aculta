@@ -26,6 +26,8 @@ final class ForumSettingsFormKernelTest extends KernelTestBase {
     'system',
     'user',
     'aculta_forum_post_test',
+    'text',
+    'filter',
   ];
 
   /**

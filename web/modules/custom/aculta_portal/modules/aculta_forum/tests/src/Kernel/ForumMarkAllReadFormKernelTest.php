@@ -39,6 +39,7 @@ final class ForumMarkAllReadFormKernelTest extends KernelTestBase {
     'node',
     'domain',
     'history',
+    'filter',
   ];
 
   /**

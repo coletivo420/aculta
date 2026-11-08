@@ -31,6 +31,7 @@ final class ForumPostModerationAccessKernelTest extends KernelTestBase {
     'text',
     'node',
     'domain',
+    'filter',
   ];
 
   /**

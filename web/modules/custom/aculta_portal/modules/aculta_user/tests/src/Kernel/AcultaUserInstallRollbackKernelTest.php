@@ -117,6 +117,7 @@ final class AcultaUserInstallRollbackKernelTest extends KernelTestBase {
     $this->installEntitySchema('profile');
     $this->installEntitySchema('node');
     $this->installEntitySchema('comment');
+    $this->installEntitySchema('path_alias');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);

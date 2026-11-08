@@ -33,6 +33,7 @@ final class ForumAttachmentUploadAccessKernelTest extends KernelTestBase {
     'field',
     'filter',
     'domain',
+    'text',
   ];
 
   /**
