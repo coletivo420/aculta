@@ -23,7 +23,6 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[RunTestsInSeparateProcesses]
 final class CommerceCleanInstallKernelTest extends KernelTestBase {
 
-  use LmsGroupTypesPrerequisiteTrait;
 
   /**
    * {@inheritdoc}
@@ -56,7 +55,6 @@ final class CommerceCleanInstallKernelTest extends KernelTestBase {
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
     $this->installConfig(['group']);
-    $this->installLmsGroupTypesFromSync();
     // aculta_magazine's install config references the claro theme and the
     // revista content type, which the module itself does not create at install.
     $this->installConfig(['node']);

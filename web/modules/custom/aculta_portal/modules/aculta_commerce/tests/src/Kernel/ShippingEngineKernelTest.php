@@ -41,7 +41,6 @@ use PHPUnit\Framework\Attributes\Group;
 #[RunTestsInSeparateProcesses]
 final class ShippingEngineKernelTest extends KernelTestBase {
 
-  use LmsGroupTypesPrerequisiteTrait;
 
   /**
    * {@inheritdoc}
@@ -195,7 +194,6 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
     $this->installConfig(['group']);
-    $this->installLmsGroupTypesFromSync();
     $this->installConfig(['commerce_store', 'commerce_order', 'profile', 'aculta_commerce']);
     $this->container->get('commerce_price.currency_importer')->import('BRL');
 
