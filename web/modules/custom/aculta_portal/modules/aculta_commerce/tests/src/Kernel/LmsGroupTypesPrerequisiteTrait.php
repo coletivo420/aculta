@@ -15,6 +15,11 @@ use Symfony\Component\Yaml\Yaml;
  *
  * This is a test-side workaround: aculta_lms/config/install still depends on
  * these Group types, which is a production defect tracked separately.
+ *
+ * Removal plan: delete this trait and its calls once aculta_lms installs
+ * without the Group types (config/install self-contained or moved to
+ * config/optional). Until then the trait is the only thing keeping the
+ * shipping and Melhor Envio suites from failing on aculta_lms configuration.
  */
 trait LmsGroupTypesPrerequisiteTrait {
 

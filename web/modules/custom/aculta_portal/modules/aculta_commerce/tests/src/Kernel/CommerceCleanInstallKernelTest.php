@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_commerce\Kernel;
 
 use Drupal\aculta_commerce\Attribute\AcultaShippingMethod;
 use Drupal\aculta_commerce\Shipping\ShipmentManagerInterface;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -27,7 +28,12 @@ final class CommerceCleanInstallKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'field', 'entity', 'views', 'profile', 'flexible_permissions', 'group'];
+  protected static $modules = ['system', 'user', 'field', 'entity', 'views', 'profile', 'flexible_permissions', 'group', 'node', 'comment', 'text', 'text_with_summary', 'filter'];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $themes = ['claro'];
 
   /**
    * Installs aculta_commerce from scratch and checks the shipping engine.
@@ -44,8 +50,28 @@ final class CommerceCleanInstallKernelTest extends KernelTestBase {
     $this->installEntitySchema('group_config_wrapper');
     $this->installConfig(['group']);
     $this->installLmsGroupTypesFromSync();
+    // aculta_magazine's install config references the claro theme and the
+    // revista content type, which the module itself does not create at install.
+    $this->installConfig(['node']);
+    \Drupal\node\Entity\NodeType::create(['type' => 'revista', 'name' => 'Revista'])->save();
+    $this->container->get('theme_installer')->install(['claro']);
+    $this->installEntitySchema('comment');
+    $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installConfig(['comment']);
+    $this->installConfig(['filter', 'text']);
+    $this->installEntitySchema('node');
+    $this->installSchema('node', ['node_access']);
 
     $installer = $this->container->get('module_installer');
+    // The forum owns the discussion field storage; the revista field config is
+    // created on top of it before aculta_magazine's views are installed.
+    self::assertTrue($installer->install(['aculta_forum'], TRUE));
+    FieldConfig::create([
+      'entity_type' => 'node',
+      'bundle' => 'revista',
+      'field_name' => 'field_aculta_discussion',
+      'label' => 'Discussão',
+    ])->save();
     self::assertTrue($installer->install(['aculta_commerce'], TRUE));
 
     $module_handler = $this->container->get('module_handler');
