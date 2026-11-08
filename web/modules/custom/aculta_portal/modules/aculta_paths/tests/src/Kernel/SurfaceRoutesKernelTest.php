@@ -70,6 +70,7 @@ final class SurfaceRoutesKernelTest extends KernelTestBase {
     'flexible_permissions',
     'aculta_forum',
     'entity_usage',
+    'migrate',
   ];
 
   /**
