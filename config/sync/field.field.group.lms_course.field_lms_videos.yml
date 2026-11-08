@@ -7,7 +7,7 @@ dependencies:
     - group.type.lms_course
     - media.type.remote_video
   module:
-    - aculta_lms_resources
+    - aculta_lms
     - media
 id: group.lms_course.field_lms_videos
 field_name: field_lms_videos

@@ -133,13 +133,13 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       self::assertTrue($routes[$id]['options']['no_cache']);
     }
     self::assertSame('aculta_lms.course_structure_controller:structure', $routes['aculta_lms.course_structure']['defaults']['_controller']);
-    self::assertSame('\\Drupal\\aculta_lms_resources\\Form\\CourseMaterialsForm', $routes['aculta_lms.course_materials_edit']['defaults']['_form']);
-    self::assertSame('aculta_lms_resources.course_document_controller:add', $routes['aculta_lms.course_document_add']['defaults']['_controller']);
-    self::assertSame('aculta_lms_resources.course_document_access:createAccess', $routes['aculta_lms.course_document_add']['requirements']['_custom_access']);
+    self::assertSame('\\Drupal\\aculta_lms\\Resources\\Form\\CourseMaterialsForm', $routes['aculta_lms.course_materials_edit']['defaults']['_form']);
+    self::assertSame('aculta_lms.course_document_controller:add', $routes['aculta_lms.course_document_add']['defaults']['_controller']);
+    self::assertSame('aculta_lms.course_document_access:createAccess', $routes['aculta_lms.course_document_add']['requirements']['_custom_access']);
     self::assertSame('courses', $routes['aculta_lms.course_document_add']['options']['_aculta_domain_purpose']);
     self::assertTrue($routes['aculta_lms.course_document_add']['options']['no_cache']);
-    self::assertSame('aculta_lms_resources.course_document_controller:edit', $routes['aculta_lms.course_document_edit']['defaults']['_controller']);
-    self::assertSame('aculta_lms_resources.course_document_access:updateAccess', $routes['aculta_lms.course_document_edit']['requirements']['_custom_access']);
+    self::assertSame('aculta_lms.course_document_controller:edit', $routes['aculta_lms.course_document_edit']['defaults']['_controller']);
+    self::assertSame('aculta_lms.course_document_access:updateAccess', $routes['aculta_lms.course_document_edit']['requirements']['_custom_access']);
     self::assertSame('courses', $routes['aculta_lms.course_document_edit']['options']['_aculta_domain_purpose']);
     self::assertTrue($routes['aculta_lms.course_document_edit']['options']['no_cache']);
     self::assertSame('\\Drupal\\aculta_lms\\Form\\LessonAuthoringForm', $routes['aculta_lms.lesson_add']['defaults']['_form']);

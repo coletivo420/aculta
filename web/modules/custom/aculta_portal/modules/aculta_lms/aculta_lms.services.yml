@@ -305,4 +305,49 @@ services:
   aculta_lms_agenda.mail_type_evento_turma:
     alias: aculta_lms.agenda_mail_type_evento_turma
 
+  aculta_lms.course_document_cleanup:
+    class: Drupal\aculta_lms\Resources\Cleanup\CourseDocumentCleanup
+    arguments: ['@entity_type.manager', '@aculta_portal.unused_media_cleaner', '@aculta_file_uploader.unused_file_cleaner']
+  aculta_lms_resources.course_document_cleanup:
+    alias: aculta_lms.course_document_cleanup
+
+  Drupal\aculta_lms\Hook\CourseDocumentCleanupHooks:
+    arguments: ['@aculta_lms.course_document_cleanup']
+
+  Drupal\aculta_lms\Hook\CourseDocumentFormHooks:
+    arguments: ['@current_route_match']
+
+  Drupal\aculta_lms\Hook\CourseResourcesHooks:
+    arguments: ['@aculta_lms.course_resource_builder', '@current_route_match']
+
+  Drupal\aculta_lms\Hook\GalleryCourseAccessHooks:
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+
+  aculta_lms.course_document_access:
+    class: Drupal\aculta_lms\Resources\Access\CourseDocumentAccessCheck
+    arguments: ['@aculta_lms.course_authoring_access', '@group_relation_type.manager', '@current_user']
+  aculta_lms_resources.course_document_access:
+    alias: aculta_lms.course_document_access
+
+  aculta_lms.course_document_controller:
+    class: Drupal\aculta_lms\Resources\Controller\CourseDocumentController
+    arguments: ['@entity_type.manager', '@entity.form_builder', '@aculta_lms.course_document_access', '@current_route_match', '@string_translation']
+  aculta_lms_resources.course_document_controller:
+    alias: aculta_lms.course_document_controller
+
+  aculta_lms.course_content_index_provider:
+    class: Drupal\aculta_lms\Resources\ContentIndex\LmsCourseContentIndexProvider
+    arguments: ['@aculta_portal.domain_purpose', '@group_relation_type.manager']
+    tags:
+      - { name: aculta_index.provider }
+  aculta_lms_resources.course_content_index_provider:
+    alias: aculta_lms.course_content_index_provider
+
+  aculta_lms.course_resource_builder:
+    class: Drupal\aculta_lms\Resources\CourseResourceBuilder
+    arguments: ['@aculta_portal.domain_purpose', '@current_user', '@string_translation', '@group_relation_type.manager']
+  aculta_lms_resources.course_resource_builder:
+    alias: aculta_lms.course_resource_builder
+
+
 

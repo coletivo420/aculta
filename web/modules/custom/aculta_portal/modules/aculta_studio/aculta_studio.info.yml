@@ -10,5 +10,4 @@ dependencies:
   - aculta_portal:aculta_learning_contracts
   - aculta_portal:aculta_calendar
   - aculta_portal:aculta_lms
-  - aculta_portal:aculta_lms_resources
   - group:group

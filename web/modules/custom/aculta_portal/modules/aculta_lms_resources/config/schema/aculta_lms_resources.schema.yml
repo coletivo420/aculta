@@ -1,6 +1,0 @@
-# Schema for the published gallery selection handler used by
-# field_lms_galleries. It has the same settings as the default selection
-# handler (target bundles, sort, auto_create), so it reuses that type.
-entity_reference_selection.aculta_lms_resources:published_gallery:
-  type: entity_reference_selection.default
-  label: 'Published gallery selection handler settings'

@@ -15,7 +15,7 @@ dependencies:
     - image.style.thumbnail
   module:
     - image
-    - aculta_lms_resources
+    - aculta_lms
     - media
     - path
     - text
