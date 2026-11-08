@@ -39,5 +39,2807 @@
   "sessao": true,
   "url": "https://aculta.toca.net.br/painel-administrativo/aparencia/ui/components",
   "titulo": "Components library | Associação Cultural Antiproibicionista",
+  "auditoria_escuro": [
+    {
+      "componente": "(página)",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Componentes disponíveis"
+    },
+    {
+      "componente": "(página)",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "ACULTA"
+    },
+    {
+      "componente": "(página)",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Comunidade"
+    },
+    {
+      "componente": "(página)",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Conteúdo"
+    },
+    {
+      "componente": "(página)",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Dados"
+    },
+    {
+      "componente": "(página)",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Eventos"
+    },
+    {
+      "componente": "(página)",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Feedback"
+    },
+    {
+      "componente": "(página)",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Formulários"
+    },
+    {
+      "componente": "(página)",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Layouts"
+    },
+    {
+      "componente": "(página)",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "LMS"
+    },
+    {
+      "componente": "(página)",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Mapas"
+    },
+    {
+      "componente": "(página)",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Outros"
+    },
+    {
+      "componente": "(página)",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Revista"
+    },
+    {
+      "componente": "(página)",
+      "cor": "rgb(244, 239, 232)",
+      "fundo": "rgb(242,247,240)",
+      "razao": 1.05,
+      "texto": "ACULTA"
+    },
+    {
+      "componente": "Navegação de suíte",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(23,21,19)",
+      "razao": 1.47,
+      "texto": "Ganjalab"
+    },
+    {
+      "componente": "Navegação de suíte",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(23,21,19)",
+      "razao": 1.47,
+      "texto": "WE Sativa"
+    },
+    {
+      "componente": "Navegação de suíte",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(23,21,19)",
+      "razao": 1.47,
+      "texto": "Culturas"
+    },
+    {
+      "componente": "Navegação de suíte",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(23,21,19)",
+      "razao": 1.47,
+      "texto": "Green Stash"
+    },
+    {
+      "componente": "Abas de navegação",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "ID:"
+    },
+    {
+      "componente": "Abas de navegação",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "aculta420_v2:tabs"
+    },
+    {
+      "componente": "Abas de navegação",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Lista horizontal rolável de links de navegação ent"
+    },
+    {
+      "componente": "Abas de navegação",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Status: stable"
+    },
+    {
+      "componente": "Abas de navegação",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Nome"
+    },
+    {
+      "componente": "Abas de navegação",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Rótulo"
+    },
+    {
+      "componente": "Abas de navegação",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Tipo"
+    },
+    {
+      "componente": "Abas de navegação",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Descrição"
+    },
+    {
+      "componente": "Abas de navegação",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "items"
+    },
+    {
+      "componente": "Abas de navegação",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Links de navegação"
+    },
+    {
+      "componente": "Abas de navegação",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Slot"
+    },
+    {
+      "componente": "Abas de navegação",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Lista renderizada pelo Drupal; preserva URL, acces"
+    },
+    {
+      "componente": "Abas de navegação",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "label"
+    },
+    {
+      "componente": "Abas de navegação",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Nome acessível da navegação"
+    },
+    {
+      "componente": "Abas de navegação",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Abas de navegação",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Obrigatório"
+    },
+    {
+      "componente": "Abas de navegação",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Min length: 1"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "ID:"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "aculta420_v2:audio-player"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Player leve com controles nativos de áudio acessív"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Status: stable"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Nome"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Rótulo"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Tipo"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Descrição"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "src"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "src"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "URL"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Obrigatório"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "title"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "title"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Obrigatório"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Min length: 1"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "artist"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "artist"
+    },
+    {
+      "componente": "Audio player",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "ID:"
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "aculta420_v2:avatar"
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Apresenta a mídia de avatar fornecida pelo módulo "
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Status: stable"
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Nome"
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Rótulo"
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Tipo"
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Descrição"
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "media"
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Mídia do avatar"
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Slot"
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Render array fornecido pelo módulo proprietário; d"
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "size"
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Tamanho"
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Enum"
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: \"md\""
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Allowed values: xs, sm, md, lg, xl"
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "label"
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Nome acessível para o fallback neutro"
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: \"Avatar\""
+    },
+    {
+      "componente": "Avatar",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Min length: 1"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "ID:"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "aculta420_v2:alerts-trigger"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Gatilho com contagem e painel de avisos carregado "
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Status: stable"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Nome"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Rótulo"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Tipo"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Descrição"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "href"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "href"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "URL"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Obrigatório"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "all_href"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "all_href"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: \"\""
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "count"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "count"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Número"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: 0"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Integers only"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Minimum: 0"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "count_kind"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "count_kind"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Enum"
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: \"active\""
+    },
+    {
+      "componente": "Avisos no shell institucional",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Allowed values: active, attention"
+    },
+    {
+      "componente": "Badge",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "ID:"
+    },
+    {
+      "componente": "Badge",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "aculta420_v2:badge"
+    },
+    {
+      "componente": "Badge",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Etiqueta compacta para categoria ou estado."
+    },
+    {
+      "componente": "Badge",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Status: stable"
+    },
+    {
+      "componente": "Badge",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Nome"
+    },
+    {
+      "componente": "Badge",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Rótulo"
+    },
+    {
+      "componente": "Badge",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Tipo"
+    },
+    {
+      "componente": "Badge",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Descrição"
+    },
+    {
+      "componente": "Badge",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "label"
+    },
+    {
+      "componente": "Badge",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "label"
+    },
+    {
+      "componente": "Badge",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Badge",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Obrigatório"
+    },
+    {
+      "componente": "Badge",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Min length: 1"
+    },
+    {
+      "componente": "Badge",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "icon_name"
+    },
+    {
+      "componente": "Badge",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Ícone Phosphor opcional"
+    },
+    {
+      "componente": "Badge",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Ver perfil"
+    },
+    {
+      "componente": "",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Ver perfil"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "ID:"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "aculta420_v2:studio-connections-block"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Bloco de conexões para o Studio Dashboard com resu"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Status: experimental"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Nome"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Rótulo"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Tipo"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Descrição"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "title"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "title"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: \"CONEX\\u00d5ES\""
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Obrigatório"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "connections"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "connections"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Links"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "empty_message"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "empty_message"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: \"Voc\\u00ea ainda n\\u00e3o tem conex\\u00f5"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Obrigatório"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "find_connections_label"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "find_connections_label"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: \"Encontrar conex\\u00f5es\""
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Obrigatório"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "find_connections_url"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "find_connections_url"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Obrigatório"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "all_connections_label"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "all_connections_label"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: \"Ver todas\""
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "all_connections_url"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "all_connections_url"
+    },
+    {
+      "componente": "Bloco Conexões do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Trilha de navegação",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(23,21,19)",
+      "razao": 1.47,
+      "texto": "Início"
+    },
+    {
+      "componente": "Trilha de navegação",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(23,21,19)",
+      "razao": 1.47,
+      "texto": "Culturas"
+    },
+    {
+      "componente": "Breadcrumb",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "ID:"
+    },
+    {
+      "componente": "Breadcrumb",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "aculta420_v2:breadcrumb"
+    },
+    {
+      "componente": "Breadcrumb",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Trilha de navegação do site com indicação da págin"
+    },
+    {
+      "componente": "Breadcrumb",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Status: experimental"
+    },
+    {
+      "componente": "Breadcrumb",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Nome"
+    },
+    {
+      "componente": "Breadcrumb",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Rótulo"
+    },
+    {
+      "componente": "Breadcrumb",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Tipo"
+    },
+    {
+      "componente": "Breadcrumb",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Descrição"
+    },
+    {
+      "componente": "Breadcrumb",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "items"
+    },
+    {
+      "componente": "Breadcrumb",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Itens da trilha"
+    },
+    {
+      "componente": "Breadcrumb",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Slot"
+    },
+    {
+      "componente": "Breadcrumb",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Itens HTML de navegação já preparados pelo templat"
+    },
+    {
+      "componente": "Breadcrumb",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "label"
+    },
+    {
+      "componente": "Breadcrumb",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Nome acessível da navegação"
+    },
+    {
+      "componente": "Breadcrumb",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Breadcrumb",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: \"Navega\\u00e7\\u00e3o estrutural\""
+    },
+    {
+      "componente": "Breadcrumb",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Min length: 1"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "ID:"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "aculta420_v2:button"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Controle de ação ou link com estados acessíveis."
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Status: stable"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Nome"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Rótulo"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Tipo"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Descrição"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "text"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Texto visível. Opcional quando houver aria_label ("
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "aria_label"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Nome acessível. Obrigatório quando text não existi"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Min length: 1"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "url"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "url"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "size"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Tamanho (só altera espaçamento e fonte; alvo de to"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Enum"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: \"default\""
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Allowed values: default, small"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "is_submit"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "is_submit"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Booleano"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: false"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "disabled"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "disabled"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Booleano"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: false"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "icon_before"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Ícone anterior ao texto"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "icon_after"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Ícone posterior ao texto"
+    },
+    {
+      "componente": "Button",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(43,39,35)",
+      "razao": 1.2,
+      "texto": "Eventos"
+    },
+    {
+      "componente": "",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(43,39,35)",
+      "razao": 1.2,
+      "texto": "Meus eventos"
+    },
+    {
+      "componente": "",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(43,39,35)",
+      "razao": 1.2,
+      "texto": "Aula Inaugural de Cultivo Sustentável"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "ID:"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "aculta420_v2:studio-calendar"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Componente visual do calendário no painel de conta"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Status: experimental"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Nome"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Rótulo"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Tipo"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Descrição"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "title"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "title"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: \"Calend\\u00e1rio\""
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Obrigatório"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Min length: 1"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "current_month_label"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "current_month_label"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Obrigatório"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Min length: 1"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "previous_url"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "previous_url"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "next_url"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "next_url"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "active_filter"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "active_filter"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Enum"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: \"cursos\""
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Obrigatório"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Allowed values: cursos, eventos, meus_eventos"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "filters"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "filters"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Desconhecido"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "⚠️ {\"items\":{\"properties\":{\"id\":{\"type\":\"string\"},"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "weeks"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "weeks"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Desconhecido"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "⚠️ {\"items\":{\"items\":{\"properties\":{\"day_number\":{"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "selected_date_label"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "selected_date_label"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "selected_day_events"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "selected_day_events"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Desconhecido"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "⚠️ {\"items\":{\"properties\":{\"title\":{\"type\":\"string"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "can_add_event"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "can_add_event"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Booleano"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: false"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "add_event_url"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "add_event_url"
+    },
+    {
+      "componente": "Calendário do Studio Dashboard",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "ID:"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "aculta420_v2:card-cultural"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Cartão informativo para eventos e pontos culturais"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Status: experimental"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Nome"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Rótulo"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Tipo"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Descrição"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "image"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Imagem"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Slot"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Imagem de capa do cartão."
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "actions"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Ações"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Slot"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Ações complementares do cartão."
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "title"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Título do evento"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Obrigatório"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Min length: 1"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "url"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "URL de destino"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "category"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Categoria cultural"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "date"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Data do evento"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "location"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Local ou bairro"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "summary"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Resumo do evento"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "accent"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Faixa de acento resolvida pelo Portal"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Enum"
+    },
+    {
+      "componente": "Card cultural",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Allowed values: green, yellow, red,"
+    },
+    {
+      "componente": "Carrinho lateral",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(43,39,35)",
+      "razao": 1.2,
+      "texto": "Finalizar carrinho"
+    },
+    {
+      "componente": "Carrinho lateral",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(43,39,35)",
+      "razao": 1.2,
+      "texto": "Ver carrinho completo"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "ID:"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "aculta420_v2:cart-offcanvas"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Gatilho de carrinho e painel lateral nativo do she"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Status: stable"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Nome"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Rótulo"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Tipo"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Descrição"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "count"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "count"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Número"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: 0"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Integers only"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Minimum: 0"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "empty"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "empty"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Booleano"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: true"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "url"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "url"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: \"\""
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "total"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "total"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: \"\""
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "sites"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "sites"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Links"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: []"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "checkout_url"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "checkout_url"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: \"\""
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "banner"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "banner"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Carrinho ACULTA",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: \"Compre na loja e apoie a luta antiproibi"
+    },
+    {
+      "componente": "Cartão editorial de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(23,21,19)",
+      "razao": 1.47,
+      "texto": "Coletiva de Cultura"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "ID:"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "aculta420_v2:author-card"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Identidade pública preparada pelo módulo aculta_us"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Status: stable"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Nome"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Rótulo"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Tipo"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Descrição"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "avatar"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Avatar"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Slot"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Render array autorizado pelo aculta_user."
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "actions"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Ações"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Slot"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Render arrays de ações fornecidos pelo proprietári"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "size"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Tamanho"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Enum"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: \"md\""
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Allowed values: sm, md, lg"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "display_name"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Nome público"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Obrigatório"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "profile_url"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Perfil público"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "source_label"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Origem histórica"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "has_avatar"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Avatar disponível"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Booleano"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: false"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "has_actions"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Ações disponíveis"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Booleano"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Default: false"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "member_since"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Ano de entrada"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "designation"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Designação contextual"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "bio"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "Biografia autorizada"
+    },
+    {
+      "componente": "Cartão de autoria",
+      "cor": "rgb(12, 60, 41)",
+      "fundo": "rgb(33,30,27)",
+      "razao": 1.34,
+      "texto": "String"
+    }
+  ],
   "ok": true
 }
