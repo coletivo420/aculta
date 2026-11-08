@@ -9,6 +9,7 @@ dependencies:
   - aculta_portal:aculta_gallery
   - aculta_portal:aculta_lms
   - aculta_portal:aculta_magazine
+  - aculta_portal:aculta_wiki
   - aculta_portal:aculta_portal
   - drupal:media
   - drupal:node
