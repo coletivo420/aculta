@@ -87,14 +87,16 @@ final class CourseAuthoringController {
         '#plain_text' => $this->t('Crie e acompanhe cursos conforme suas permissões de educador.'),
         '#weight' => -90,
       ],
-      'create' => PortalLinkElement::build(
-        $this->t('Novo curso'),
-        Url::fromRoute('aculta_lms.course_create'),
-        [
-          'data-aculta-studio' => 'course-create',
-          'data-portal-ui' => 'button-primary',
+      'create' => [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:button',
+        '#props' => [
+          'text' => (string) $this->t('Novo curso'),
+          'url' => Url::fromRoute('aculta_lms.course_create')->toString(),
+          'variant' => 'primary',
         ],
-      ),
+        '#attributes' => ['data-aculta-studio' => 'course-create'],
+      ],
       'courses' => ['#weight' => 0] + ($items ?: [
         '#plain_text' => $this->t('Nenhum curso disponível para gestão.'),
       ]),

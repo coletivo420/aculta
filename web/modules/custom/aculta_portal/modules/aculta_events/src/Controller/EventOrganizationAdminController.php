@@ -301,10 +301,13 @@ final class EventOrganizationAdminController extends ControllerBase {
               '#attributes' => ['data-portal-ui' => 'button'],
             ],
             'reset' => [
-              '#type' => 'link',
-              '#title' => $this->t('Limpar'),
-              '#url' => Url::fromRoute('aculta_events.admin_organizations'),
-              '#attributes' => ['data-portal-ui' => 'button'],
+              '#type' => 'component',
+              '#component' => 'aculta420_v2:button',
+              '#props' => [
+                'text' => (string) $this->t('Limpar'),
+                'url' => Url::fromRoute('aculta_events.admin_organizations')->toString(),
+                'variant' => 'secondary',
+              ],
             ],
           ],
         ],

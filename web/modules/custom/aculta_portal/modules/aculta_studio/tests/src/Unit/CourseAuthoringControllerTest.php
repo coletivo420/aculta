@@ -79,14 +79,12 @@ final class CourseAuthoringControllerTest extends UnitTestCase {
       $this->getStringTranslationStub(),
     ))->dashboard();
 
-    self::assertSame('aculta_portal_element', $build['create']['#theme']);
-    self::assertSame(
-      'button-primary',
-      (string) $build['create']['#element_attributes']['data-portal-ui'],
-    );
+    self::assertSame('component', $build['create']['#type']);
+    self::assertSame('aculta420_v2:button', $build['create']['#component']);
+    self::assertSame('primary', $build['create']['#props']['variant']);
     self::assertSame(
       'course-create',
-      (string) $build['create']['#element_attributes']['data-aculta-studio'],
+      (string) $build['create']['#attributes']['data-aculta-studio'],
     );
     self::assertSame(-80, $build['create']['#weight']);
   }

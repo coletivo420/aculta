@@ -511,10 +511,13 @@ final class PortalHooks {
         '#attributes' => ['data-portal-ui' => 'login-registration'],
         'text' => ['#plain_text' => $this->translation->translate('Ainda não tem uma conta?')],
         'link' => [
-          '#type' => 'link',
-          '#title' => $this->translation->translate('Ver informações sobre o cadastro'),
-          '#url' => Url::fromRoute('user.register'),
-          '#attributes' => ['data-portal-ui' => 'aculta-button-secondary'],
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:button',
+          '#props' => [
+            'text' => (string) $this->translation->translate('Ver informações sobre o cadastro'),
+            'url' => Url::fromRoute('user.register')->toString(),
+            'variant' => 'secondary',
+          ],
         ],
         '#weight' => 30,
       ];
