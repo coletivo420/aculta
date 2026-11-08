@@ -4,6 +4,12 @@ component: aculta420_v2:layout-page
 props:
   variant: aside
 slots:
-  title: '<h1>Artigo</h1>'
-  content: '<p>Texto principal do artigo.</p>'
-  aside: '<h2>Relacionados</h2><p>Links e informações complementares.</p>'
+  title:
+    type: inline_template
+    template: '<h1>Artigo</h1>'
+  content:
+    type: inline_template
+    template: '<p>Texto principal do artigo.</p>'
+  aside:
+    type: inline_template
+    template: '<h2>Relacionados</h2><p>Links e informações complementares.</p>'

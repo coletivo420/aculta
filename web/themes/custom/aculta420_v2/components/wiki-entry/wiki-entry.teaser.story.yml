@@ -13,6 +13,6 @@ slots:
   summary:
     markup: '<p>Resumo breve do verbete apresentado na listagem.</p>'
   image:
-    markup: '<img src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22800%22 height=%22450%22 viewBox=%220 0 800 450%22%3E%3Crect width=%22800%22 height=%22450%22 fill=%22%23e8dfcc%22/%3E%3C/svg%3E" alt="Ilustração representativa do verbete">'
+    markup: '<img src="/themes/custom/aculta420_v2/assets/logos/wiki420-globe-512.png" alt="Ilustração representativa do verbete" width="512" height="512">'
   categories:
     markup: '<ul><li><a href="/wiki/categoria/cultura">Cultura</a></li></ul>'

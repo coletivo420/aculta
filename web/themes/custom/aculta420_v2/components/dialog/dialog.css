@@ -1,4 +1,7 @@
-.aculta-dialog__trigger {
+.aculta-dialog__trigger,
+a.aculta-dialog__trigger,
+.button.aculta-dialog__trigger,
+a.aculta-dialog__trigger:is(a) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -18,7 +21,10 @@
   outline-offset: 2px;
 }
 
-.aculta-dialog__trigger:hover {
+.aculta-dialog__trigger:hover,
+a.aculta-dialog__trigger:hover,
+.button.aculta-dialog__trigger:hover,
+a.aculta-dialog__trigger:is(a):hover {
   color: var(--button-primary-fg);
   border-color: var(--button-primary-bg-hover);
   background: var(--button-primary-bg-hover);

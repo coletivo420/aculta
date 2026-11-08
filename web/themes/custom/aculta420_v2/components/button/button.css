@@ -26,76 +26,112 @@
 }
 
 /* Primário */
-.button--primary {
+.button--primary,
+a.button--primary,
+.button.button--primary,
+a.button.button--primary {
   color: var(--button-primary-fg);
   border-color: var(--button-primary-bg);
   background-color: var(--button-primary-bg);
 }
 
-.button--primary:hover {
+.button--primary:hover,
+a.button--primary:hover,
+.button.button--primary:hover,
+a.button.button--primary:hover {
   color: var(--button-primary-fg);
   border-color: var(--button-primary-bg-hover);
   background-color: var(--button-primary-bg-hover);
 }
 
-.button--primary:active {
+.button--primary:active,
+a.button--primary:active,
+.button.button--primary:active,
+a.button.button--primary:active {
   color: var(--button-primary-fg);
   border-color: var(--button-primary-bg-active);
   background-color: var(--button-primary-bg-active);
 }
 
 /* Secundário */
-.button--secondary {
+.button--secondary,
+a.button--secondary,
+.button.button--secondary,
+a.button.button--secondary {
   color: var(--button-secondary-fg);
   border-color: var(--button-secondary-border);
   background-color: var(--button-secondary-bg);
 }
 
-.button--secondary:hover {
+.button--secondary:hover,
+a.button--secondary:hover,
+.button.button--secondary:hover,
+a.button.button--secondary:hover {
   color: var(--button-secondary-fg);
   border-color: var(--button-secondary-border);
   background-color: var(--button-secondary-bg-hover);
 }
 
-.button--secondary:active {
+.button--secondary:active,
+a.button--secondary:active,
+.button.button--secondary:active,
+a.button.button--secondary:active {
   color: var(--button-secondary-fg);
   border-color: var(--button-secondary-border);
   background-color: var(--button-secondary-bg-active);
 }
 
 /* Contorno (Outline) */
-.button--outline {
+.button--outline,
+a.button--outline,
+.button.button--outline,
+a.button.button--outline {
   color: var(--button-secondary-fg);
   border-color: var(--button-secondary-border);
   background-color: transparent;
 }
 
-.button--outline:hover {
+.button--outline:hover,
+a.button--outline:hover,
+.button.button--outline:hover,
+a.button.button--outline:hover {
   color: var(--button-secondary-fg);
   border-color: var(--button-secondary-border);
   background-color: var(--button-secondary-bg-hover);
 }
 
-.button--outline:active {
+.button--outline:active,
+a.button--outline:active,
+.button.button--outline:active,
+a.button.button--outline:active {
   color: var(--button-secondary-fg);
   border-color: var(--button-secondary-border);
   background-color: var(--button-secondary-bg-active);
 }
 
 /* Fantasma (Ghost) */
-.button--ghost {
+.button--ghost,
+a.button--ghost,
+.button.button--ghost,
+a.button.button--ghost {
   color: var(--button-secondary-fg);
   border-color: transparent;
   background-color: transparent;
 }
 
-.button--ghost:hover {
+.button--ghost:hover,
+a.button--ghost:hover,
+.button.button--ghost:hover,
+a.button.button--ghost:hover {
   color: var(--button-secondary-fg);
   border-color: transparent;
   background-color: var(--button-secondary-bg-hover);
 }
 
-.button--ghost:active {
+.button--ghost:active,
+a.button--ghost:active,
+.button.button--ghost:active,
+a.button.button--ghost:active {
   color: var(--button-secondary-fg);
   border-color: transparent;
   background-color: var(--button-secondary-bg-active);

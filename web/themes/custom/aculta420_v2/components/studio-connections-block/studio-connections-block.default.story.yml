@@ -9,9 +9,9 @@ props:
   connections:
     - name: Maria Silva
       profile_url: /u/maria-silva
-      avatar_url: null
+      avatar_url: /themes/custom/aculta420_v2/assets/avatars/pirates-002-polvo-pirata.png
       avatar_alt: Maria Silva
     - name: João Santos
       profile_url: /u/joao-santos
-      avatar_url: null
+      avatar_url: /themes/custom/aculta420_v2/assets/avatars/pirates-003-caveira-pirata-420.png
       avatar_alt: João Santos

@@ -4,5 +4,9 @@ component: aculta420_v2:layout-page
 props:
   variant: full
 slots:
-  title: '<h1>Revista</h1>'
-  content: '<p>Conteúdo editorial em largura total.</p>'
+  title:
+    type: inline_template
+    template: '<h1>Revista</h1>'
+  content:
+    type: inline_template
+    template: '<p>Conteúdo editorial em largura total.</p>'
