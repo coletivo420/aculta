@@ -34,6 +34,7 @@ final class AcultaDocumentViewerInstallTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->installEntitySchema('group_relationship');
     // Language's modules_installed hook reads its negotiation config.
     $this->installConfig(['language']);
   }
