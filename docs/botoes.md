@@ -120,3 +120,12 @@ Migram para o SDC em entregas anteriores: Portal, Fórum, Studio (calendário, c
 - Kernel: **DEFERRED**. As suítes de `aculta_events` e `aculta_lms` não inicializam porque vários `$modules` de teste ainda citam `aculta_ugc`, removido pela unificação em `aculta_cgu` (commit `ca1015201`). O `LearningDashboardKernelTest` também falha por dependência de serviço `aculta_events.occurrences` não habilitada no teste. Nenhuma falha é causada pelas mudanças de botão.
 - UI Library (Firefox ESR, `DISPLAY=:0`, claro e escuro, 320 e 1440 px): 2 opções no seletor, sem barra institucional, 89 pré-visualizações com `data-theme` nos dois modos, `overflow_px` 0 em todas as capturas. Evidência: `tests/browser/capturas/botoes-modo-cor/2026-11-08/`.
 - Verificação visual por purpose (`buttons-purpose-runtime.py`, 10 purposes × claro/escuro × 320/1440 px, incluindo 200% de zoom): **360/360 verificações PASS**. O fixture foi atualizado do token legado `aculta-btn-outline` para a marcação do SDC (`button button--outline`, fundo transparente e tokens secundários). Evidência: `tests/browser/capturas/purpose-buttons/2026-11-08/`.
+
+## Leitor de tela em estados autenticados (Orca)
+
+- Teste: `tests/browser/transversal/aculta-botoes-a11y/orca-buttons.mjs` (Orca real com `--debug-file`, Firefox via geckodriver em `DISPLAY=:0`, conta de teste por `drush uli`).
+- Páginas: conta (calendário do Studio), painel do organizador em Eventos, redes sociais e caminhos no painel administrativo.
+- O que confere por página: existe botão visível; todo botão tem nome acessível (`aria-label`, `value` ou texto); e o Orca anuncia esse nome ao receber foco.
+- Resultado em 2026-11-08: **12/12 verificações OK**, **22 botões** anunciados (conta 4, eventos 6, admin-redes 3, admin-caminhos 9). Botões só com ícone foram anunciados pelo `aria-label`; botões de envio, como `Filtrar`/`Salvar`, como `push button`.
+- Evidência resumida: `tests/browser/capturas/botoes-a11y/2026-11-08/results.json`. O log de fala completo fica fora do repositório.
+- Limitação: as rotas administrativas usam o tema Gin; nelas o envio é o `<input type="submit">` do Gin (nome acessível em `value`). O teste cobre os dois temas.
