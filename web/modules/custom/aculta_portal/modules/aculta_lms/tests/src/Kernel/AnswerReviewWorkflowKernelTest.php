@@ -83,7 +83,7 @@ final class AnswerReviewWorkflowKernelTest extends KernelTestBase {
     $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installSchema('user', ['users_data']);
     $entityTypes = [
-      'user', 'file', 'comment', 'group', 'group_relationship', 'group_config_wrapper',
+      'node', 'user', 'file', 'comment', 'group', 'group_relationship', 'group_config_wrapper',
       'aculta_lms_lesson', 'aculta_lms_activity', 'aculta_lms_answer',
       'aculta_lms_attempt_archive',
     ];
