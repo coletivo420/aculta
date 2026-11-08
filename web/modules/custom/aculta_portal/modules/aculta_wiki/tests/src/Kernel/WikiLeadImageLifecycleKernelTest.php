@@ -99,6 +99,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   protected function bootKernel(): void {
     // Portal consumes the shared account ledger when aculta_user is present.
     static::$modules = $this->resolveModuleDependencyClosure([
+      'text_with_summary',
+      'aculta_calendar',
       'aculta_lms',
       'aculta_studio',
       'aculta_user',
