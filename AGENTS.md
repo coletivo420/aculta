@@ -30,6 +30,15 @@ Regras de todos os agentes. Em conflito, vale a instrução explícita mais rece
 - O bypass `skip CAPTCHA` é permitido nos testes autenticados do servidor de desenvolvimento (runtime `test`). Antes da rodada, confirme `captcha.settings:enable_globally=0`. Não conceda bypass em produção.
 - URL pública de conteúdo ou ação humana usa slug em português, minúsculas, hífen e sem acento (`docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`; gate `scripts/validate-public-slugs.php`).
 
+## Interações no front-end: HTMX antes de AJAX
+
+- Use HTMX em toda interação nova ou alterada: envios, links e diálogos. Atributos `data-hx-*` (via `Drupal\Core\Htmx\Htmx`) e a biblioteca `core/drupal.htmx`.
+- Drupal AJAX (`#ajax`, `use-ajax`, `core/drupal.ajax`) é legado. Não crie interação nova com ele.
+- Interação existente que usa AJAX migra para HTMX quando houver rota e fragmento claros. Se não houver, registre a exceção em `docs/htmx-envios.md` com o motivo técnico.
+- Não adicione jQuery nem `core/drupal.dialog.ajax` (ver `web/themes/custom/aculta420_v2/AGENTS.md`).
+- Envio de formulário continua sendo submit do Form API: `name`, `value`, `id`, `#submit` e `formnovalidate` são preservados.
+- Toda rota HTMX nova tem teste que verifique os atributos `data-hx-*` e a resposta do fragmento.
+
 ## Arquitetura e validação
 
 - Endereço centralizado em `aculta_portal_cep` e país exclusivo Brasil (BR), ADR-034 (`docs/decisions/ADR-034-pais-unico-brasil-endereco-central.md`). Padrão Drupal 11+ e 12: `docs/portal/DRUPAL-12-STANDARDS.md`.

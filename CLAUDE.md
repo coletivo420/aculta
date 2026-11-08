@@ -9,6 +9,10 @@ Só o específico do Claude. Regras gerais: `AGENTS.md`. Ambientes: `docs/operat
 3. Confirme status no código e no git.
 4. Decisões do responsável: `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md` e `docs/decisions/`. Decisão vale sobre plano; registre o conflito.
 
+## HTMX antes de AJAX
+
+Preferir HTMX em toda interação de front-end nova ou alterada. Drupal AJAX (`#ajax`, `use-ajax`) é legado. A regra completa está em `AGENTS.md`, seção "Interações no front-end: HTMX antes de AJAX".
+
 ## Ponteiros
 
 - **Navegador:** `docs/operations/NAVEGADOR-TESTES.md`. Ordem: Playwright com Firefox, Chromium e WebKit, navegador embutido, X11 com Gecko/Firefox ESR. Todos permitidos; prefira o de menor custo de tokens e declare o método usado.
