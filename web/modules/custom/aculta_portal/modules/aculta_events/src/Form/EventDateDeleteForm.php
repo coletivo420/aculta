@@ -7,14 +7,10 @@ namespace Drupal\aculta_events\Form;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Event\EventDateListBuilder;
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\CloseModalDialogCommand;
-use Drupal\Core\Ajax\MessageCommand;
-use Drupal\Core\Ajax\ReplaceCommand;
-use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Url;
 use Drupal\aculta_events\Route\EventRouteContext;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -24,6 +20,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * Confirma a exclusão de uma Data dentro do contexto do Evento.
  */
 final class EventDateDeleteForm extends FormBase {
+
+  use HtmxDateListResponseTrait;
+
+  /**
+   * Wrapper do formulário trocado pelo envio HTMX.
+   */
+  private const WRAPPER_ID = 'aculta-event-date-delete-form';
 
   public function __construct(
     protected readonly EntityTypeManagerInterface $entities,
@@ -62,6 +65,8 @@ final class EventDateDeleteForm extends FormBase {
     $form_state->set('event_id', (int) $event->id());
     $form_state->set('date_id', (int) $date->id());
 
+    $form['#prefix'] = '<div id="' . self::WRAPPER_ID . '">';
+    $form['#suffix'] = '</div>';
     $form['event_id'] = ['#type' => 'hidden', '#value' => (string) $event->id()];
     $form['date_id'] = ['#type' => 'hidden', '#value' => (string) $date->id()];
 
@@ -77,8 +82,18 @@ final class EventDateDeleteForm extends FormBase {
       '#type' => 'submit',
       '#value' => $this->t('Remover data'),
       '#attributes' => ['data-portal-ui' => 'event-date-delete'],
-      '#ajax' => ['callback' => '::ajaxSubmit'],
     ];
+    (new Htmx())
+      ->post($this->htmxRouteUrl(
+        'aculta_events.event_date_delete',
+        'aculta_events.organizer_event_date_delete',
+        ['aculta_event' => $event->id(), 'aculta_event_date' => $date->id()],
+      ))
+      ->select('#' . self::WRAPPER_ID)
+      ->target('#' . self::WRAPPER_ID)
+      ->swap('outerHTML')
+      ->onlyMainContent()
+      ->applyTo($form['actions']['submit']);
     $form['actions']['cancel'] = [
       '#type' => 'component',
       '#component' => 'aculta420_v2:button',
@@ -108,32 +123,11 @@ final class EventDateDeleteForm extends FormBase {
     $title = $date->label();
     $date->delete();
     $this->messenger()->addStatus($this->t('A data %title foi removida.', ['%title' => $title]));
+    if ($this->isHtmxRequest()) {
+      $form_state->setResponse($this->htmxDateListResponse($event));
+      return;
+    }
     $form_state->setRedirect(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $event->id()]);
-  }
-
-  /**
-   * Fecha o diálogo e retorna ao Evento de origem.
-   */
-  public function ajaxSubmit(array &$form, FormStateInterface $form_state): AjaxResponse|array {
-    if ($form_state->hasAnyErrors()) {
-      return $form;
-    }
-    $event = $this->entityFromState($form_state, 'event_id', 'aculta_event');
-    if (!$event instanceof Event) {
-      $eventId = (int) ($form_state->get('event_id') ?? 0);
-      $response = new AjaxResponse();
-      $response->addCommand(new CloseModalDialogCommand());
-      $response->addCommand(new RedirectCommand(
-        Url::fromRoute(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $eventId])->toString()
-      ));
-      return $response;
-    }
-
-    $response = new AjaxResponse();
-    $response->addCommand(new CloseModalDialogCommand());
-    $response->addCommand(new MessageCommand($this->t('A data foi removida.')));
-    $response->addCommand(new ReplaceCommand('#event-dates-list', $this->dateListBuilder->build($event)));
-    return $response;
   }
 
   /**

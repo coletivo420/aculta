@@ -6,125 +6,109 @@ para HTMX (`core/drupal.htmx`, ADR-050), no escopo de
 
 ## Padrão usado
 
-Seguimos o padrão já existente no projeto (`RegisterPopupForm`,
-`LoginPopupForm`, `AccountBioForm`, `SearchPopupForm`):
-
 - atributos gerados por `Drupal\Core\Htmx\Htmx` (`data-hx-post`,
   `data-hx-select`, `data-hx-target`, `data-hx-swap`);
 - `onlyMainContent()` para receber só o conteúdo principal na requisição HTMX;
 - o fragmento é recortado com `hx-select` do mesmo bloco que o callback AJAX
   devolvia;
 - `core/drupal.htmx` é anexado por `Htmx::applyTo()`;
-- `name`, `value`, `id` e `formnovalidate` dos botões foram preservados (o
-  `formnovalidate` foi acrescentado onde o AJAX dispensava a validação do
-  navegador);
+- `name`, `value`, `id` e `formnovalidate` dos botões foram preservados;
 - as validações e os submit handlers do Form API continuam os mesmos; só o
   canal de resposta mudou;
-- o envio sem JavaScript permanece um POST nativo do formulário, que recarrega
-  a página (progressão).
-
-A rota usada no `hx-post` é a própria rota dedicada do formulário, que devolve o
-formulário/fragmento quando a requisição vem do HTMX. O JS do Core acrescenta
-`_wrapper_format=drupal_htmx` e `_triggering_element_name`, então o Form API
-identifica o botão acionado exatamente como no AJAX.
+- o envio sem JavaScript permanece um POST nativo do formulário.
 
 **Nome único no botão.** O JS do Core envia só `_triggering_element_name`, sem
 `_triggering_element_value`. Quando dois botões do mesmo formulário usam
-`name="op"` (padrão do Form API), o Form API escolhe o **último** elemento com
-esse nome — normalmente o "Salvar". Por isso os botões dinâmicos do ACULTA Links
-têm `#name` próprio (`remove_social_button_N` e `add_social_button`). Formulários
-novos com mais de um envio precisam do mesmo cuidado.
+`name="op"`, o Form API escolhe o **último** elemento com esse nome. Por isso os
+botões com envio próprio têm `#name` próprio (`add_social_button`,
+`remove_social_button_N`, `sortear`).
+
+**Diálogos e vários alvos.** Quando o callback AJAX fechava o diálogo jQuery e
+atualizava outro bloco (o formulário pai), a resposta HTMX devolve um fragmento
+`hx-swap-oob` com o bloco a substituir e envia `HX-Trigger:
+aculta:close-dialog`. O listener mínimo no tema
+(`web/themes/custom/aculta420_v2/js/htmx-dialogs.js`) fecha o diálogo nativo ou
+jQuery UI clicando no botão de fechar existente — sem jQuery novo. O mesmo JS
+trata `aculta:cart-updated` (contador e rótulo do carrinho). A biblioteca
+`aculta420_v2/htmx-dialogs` é carregada globalmente pelo tema.
 
 ## Convertidos
 
-| # | Arquivo | Envio | Rota do `hx-post` | Bloco atualizado |
-| --- | --- | --- | --- | --- |
-| 1 | `aculta_linkweed/src/Form/SocialLinksSettingsForm.php` | botão "Remover" de cada linha | `aculta_linkweed.social_links_settings` | `#aculta-social-links-settings` — wrapper do formulário inteiro, que contém o `buttons_wrapper` e o `form_build_id` renovado (`hx-select` + `hx-swap="outerHTML"`) |
-| 2 | `aculta_linkweed/src/Form/SocialLinksSettingsForm.php` | botão "+ Adicionar botão" | `aculta_linkweed.social_links_settings` | `#aculta-social-links-settings` (`hx-select` + `hx-swap="outerHTML"`) |
-| 3 | `aculta_paths/src/Form/SurfaceEditForm.php` | botão "Salvar" | `aculta_paths.editar` (com `purpose`) | `#aculta-paths-surface-edit` (erro de validação); `HX-Redirect` para `aculta_paths.form` no sucesso |
-| 4 | `modules/aculta_events/src/Form/EventForm.php` | botão "Adicionar outra data" (`add_more_event_date`) | `aculta_events.event_add` ou `aculta_events.organizer_event_add`, conforme o purpose (`EventRouteContext::route`) | `#event-dates-wrapper` — contêiner `date_location.dates`, trocado por `outerHTML` (`hx-select` + `hx-swap`) |
+| # | Arquivo | Envio | Rota do `hx-post` | Fragmento | Teste |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `aculta_linkweed/src/Form/SocialLinksSettingsForm.php` | "Remover" e "+ Adicionar botão" | `aculta_linkweed.social_links_settings` | `#aculta-social-links-settings` (`outerHTML`) | `aculta_events/tests` (padrão `EventFormDatesKernelTest`) |
+| 2 | `aculta_paths/src/Form/SurfaceEditForm.php` | "Salvar" | `aculta_paths.editar` | `#aculta-paths-surface-edit`; `HX-Redirect` para `aculta_paths.form` | — |
+| 3 | `aculta_events/src/Form/EventForm.php` | "Adicionar outra data" | `event_add` / `organizer_event_add` | `#event-dates-wrapper` | `aculta_events/tests/src/Kernel/EventFormDatesKernelTest.php` |
+| 4 | `aculta_secrets_manager/src/Form/SecretEditForm.php` | "Salvar" | `aculta_portal.secrets_edit` | `#aculta-secret-edit`; erro devolve o popup; sucesso `HX-Redirect` para `aculta_portal.secrets_import` | `aculta_secrets_manager/tests/src/Kernel/SecretFormsHtmxKernelTest.php` |
+| 5 | `aculta_secrets_manager/src/Form/SecretClearForm.php` | "Apagar valor" | `aculta_portal.secrets_clear` | `#aculta-secret-clear`; sucesso `HX-Redirect` para `aculta_portal.secrets_import` | `aculta_secrets_manager/tests/src/Kernel/SecretFormsHtmxKernelTest.php` |
+| 6 | `aculta_events/src/Form/EventDateOrderForm.php` | "Salvar ordem" | `event_date_order` / `organizer_event_date_order` | `#aculta-event-date-order-form` (`outerHTML`); `#event-dates-list` em `hx-swap-oob`; `HX-Trigger: aculta:close-dialog` | `aculta_events/tests/src/Kernel/EventDateHtmxKernelTest.php` |
+| 7 | `aculta_events/src/Form/EventDateCreateForm.php` | "Criar data" | `event_date_add` / `organizer_event_date_add` | `#aculta-event-date-form`; `#event-dates-list` OOB; `aculta:close-dialog` | `EventDateHtmxKernelTest.php` |
+| 8 | `aculta_events/src/Form/EventDateEditForm.php` | "Salvar data" | `event_date_edit` / `organizer_event_date_edit` | `#aculta-event-date-edit-form`; `#event-dates-list` OOB; `aculta:close-dialog` | `EventDateHtmxKernelTest.php` |
+| 9 | `aculta_events/src/Form/EventDateDeleteForm.php` | "Remover data" | `event_date_delete` / `organizer_event_date_delete` | `#aculta-event-date-delete-form`; `#event-dates-list` OOB; `aculta:close-dialog` | `EventDateHtmxKernelTest.php` |
+| 10 | `aculta_events/src/Form/EventLocationModalForm.php` | "Buscar", "Limpar", "Selecionar", "Cadastrar novo local", "Salvar e selecionar", "Voltar para busca" | `location_modal` / `organizer_location_modal` (com `field_name`, `wrapper_id`, `is_multiple`, `target_id`) | `#aculta-location-modal-form-wrapper`; seleção/criação devolve o widget do formulário pai em `hx-swap-oob` + `aculta:close-dialog` | `aculta_events/tests/src/Kernel/EventModalHtmxKernelTest.php` |
+| 11 | `aculta_events/src/Form/EventOrganizationModalForm.php` | Idem para organizações | `organization_modal` / `organizer_organization_modal` | `#aculta-organization-modal-form-wrapper`; widget do pai em OOB + `aculta:close-dialog` | `EventModalHtmxKernelTest.php` |
+| 12 | `aculta_user/src/Form/UserPictureForm.php` | "Sortear novo avatar" (`#name` `sortear`) | `aculta_user.foto` | `[data-aculta-user-avatar]` (`outerHTML`); o rebuild devolve o avatar pendente | `aculta_user/tests/src/Kernel/UserPictureHtmxKernelTest.php` |
+| 13 | `src/Cart/AddToCartAjax.php` | "Adicionar ao carrinho" (Commerce) | URL da página do produto (o formulário não tem `#action`) | `#portal-cart-status-*` (`innerHTML`); `#aculta-cart-offcanvas-body` OOB; `HX-Trigger: aculta:cart-updated` com contagem e rótulo | `tests/src/Kernel/Cart/AddToCartHtmxKernelTest.php` |
+| 14 | `src/Hook/FormHooks.php` (`accountAjaxSubmit`) | "Salvar" dos formulários de conta no host `account` | rota atual do formulário | `#portal-account-<form_id>` (`outerHTML`); mensagens viajam dentro do wrapper | `tests/src/Kernel/Form/AccountHtmxKernelTest.php` |
 
-Total: **4 envios convertidos**.
+Total: **14 envios convertidos** (o item 1 cobre dois botões).
 
 Observações:
 
-- `SocialLinksSettingsForm` continua usando os callbacks
-  `addButton` e `removeButton` de `SocialLinksFormCallbacks`. O callback
-  `buttonsAjax`, que só existia para montar a resposta AJAX, foi removido.
-- `SurfaceEditForm` reutiliza `validateForm()` e `submitForm()`; `ajaxSalvar`
-  foi removido. O seletor de modo mantém o `#ajax` de `change` (não é envio de
-  formulário) e o `validateForm()` continua ignorando a reconstrução
-  intermediária.
-- `EventForm` mantém o submit handler `addDateRow` (incrementa `date_delta` e
-  marca rebuild) e o `#limit_validation_errors`; só o canal de resposta mudou. O
-  callback `ajaxRebuildDates`, que só existia para devolver o fragmento ao AJAX,
-  foi removido. O `#ajax` de campo dos botões "Remover local/organização" nos
-  widgets de campo continua fora de escopo.
-- Os formulários sem JavaScript passam a seguir o redirect nativo no sucesso
-  (`aculta_paths.form`), o mesmo destino que o AJAX fechava; nos botões
-  dinâmicos do ACULTA Links, o POST nativo devolve a página inteira.
+- `SurfaceEditForm` mantém o `#ajax` de `change` do seletor de modo; não é
+  envio de formulário.
+- Os formulários de data mantêm os submit handlers e o `#limit_validation_errors`;
+  só o canal de resposta mudou. `EventDateCreateForm`/`Edit`/`Order`/`Delete`
+  reutilizam `HtmxDateListResponseTrait`.
+- `AddToCartAjax` deixou de usar `AjaxResponse`; `status_messages` não é
+  renderizado nessa resposta, por isso a caixa de status viaja no próprio
+  fragmento.
+- Os botões "Cancelar"/"Fechar" dos modais deixaram de usar `#ajax`: são
+  `#type => button` com `data-aculta-dialog-close`, tratado pelo JS do tema.
 
 ## Não convertidos
 
-| Arquivo | Envio com `#ajax` | Motivo |
+| Arquivo | Envio com `#ajax` | Motivo técnico |
 | --- | --- | --- |
-| `src/Form/RegisterPopupForm.php` | `actions.submit` | O HTMX já está implementado para a V2. O `#ajax` restante é o fallback deliberado da V1 (tema `aculta420`), registrado no docblock e no ADR-050. Removê-lo mudaria o comportamento da V1. |
-| `src/Form/LoginPopupForm.php` | `actions.submit` | Mesmo caso do cadastro: HTMX na V2 e `#ajax` como fallback da V1. |
-| `src/Hook/FormHooks.php` (`accountAjaxSubmit`) | `actions.submit` de todos os formulários de conta | Altera muitos formulários de uma vez no host `account`; a resposta AJAX mantém o formulário e as mensagens na mesma área e desliga os redirects. A conversão é a F2 do ADR-050 e precisa de validação em navegador no Runtime (foco/erros/redirect), que não está disponível nesta tarefa sem SIMPLETEST_DB. |
-| `src/Cart/AddToCartAjax.php` | `actions.submit` do formulário de adicionar ao carrinho (Commerce) | Um único envio atualiza três alvos (caixa de status, corpo do painel do carrinho e contador/rótulo do gatilho) com comandos distintos. A conversão exige contrato de vários fragmentos/OOB e autorização da loja (F4 do ADR-050). |
-| `modules/aculta_events/src/Form/EventDateOrderForm.php` | "Salvar ordem" | O callback fecha o diálogo jQuery e substitui `#event-dates-list` no formulário pai. HTMX não tem comando para fechar o diálogo jQuery, e um `HX-Redirect` perderia os campos não salvos do formulário pai. |
-| `modules/aculta_events/src/Form/EventDateCreateForm.php` | "Criar data" | Mesmo caso: fecha o diálogo e atualiza a lista de datas do evento pai; exige coordenação de dois blocos e do diálogo. |
-| `modules/aculta_events/src/Form/EventDateEditForm.php` | "Salvar data" | Idem: fecha o diálogo e substitui `#event-dates-list`. |
-| `modules/aculta_events/src/Form/EventDateDeleteForm.php` | "Remover data" | Idem: fecha o diálogo e substitui `#event-dates-list`. |
-| `modules/aculta_events/src/Form/EventLocationModalForm.php` | `ajaxCreateLocation` (submit) e demais `#ajax` de botões/campos | Modal aberto por `use-ajax`; o submit cria o local, fecha o diálogo e reconstrói o widget do campo no formulário pai. Depende do diálogo jQuery e de vários alvos. |
-| `modules/aculta_events/src/Form/EventOrganizationModalForm.php` | `ajaxCreateOrganization` (submit) e demais `#ajax` de botões/campos | Mesmo caso do formulário de local. |
-| `modules/aculta_gallery/src/Form/GalleryEmbedDialogForm.php` | "Criar e inserir" | O callback devolve HTML para o diálogo e insere o código no CKEditor por comandos AJAX (`HtmlCommand` + fechamento do diálogo). HTMX não expressa a inserção no editor. |
-| `modules/aculta_forum/src/Form/ForumGalleryUploadDialogForm.php` | "Criar galeria e inserir" | Idem: upload + inserção no CKEditor por comandos AJAX; requer a migração do diálogo para `<dialog>` (F3). |
-| `modules/aculta_forum/src/Form/ForumAttachmentUploadDialogForm.php` | "Enviar e inserir" | Idem: upload de anexo e inserção no CKEditor por comandos AJAX. |
-| `modules/aculta_user/src/Form/UserPictureForm.php` | "Sortear novo avatar" | O callback substitui a prévia dentro do diálogo jQuery (`.ui-dialog [data-aculta-user-avatar]`). O popup de foto inteiro está na F2 do ADR-050 (migração para `<dialog>`); converter só o botão misturaria os dois mecanismos e exigiria token CSRF na rota `aculta_user.avatar_reroll`. |
-| `modules/aculta_secrets_manager/src/Form/SecretEditForm.php` | "Salvar" | O sucesso só fecha o diálogo jQuery (`CloseModalDialogCommand`), sem destino de página; não há comando HTMX equivalente sem antes migrar o diálogo. Área sensível: não alterar sem validação no Runtime. |
-| `modules/aculta_secrets_manager/src/Form/SecretClearForm.php` | "Apagar valor" | Mesmo caso do SecretEditForm. |
-| `modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php` | botão "Remover local" | É `#type => button` dentro de um widget de campo, não um envio de formulário; a troca é do próprio widget e o formulário depende do diálogo jQuery do local. |
-| `modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php` | botões de limpar/remover | Mesmo caso: botões de widget, não envio de formulário. |
+| `src/Form/RegisterPopupForm.php` | `actions.submit` | O `#ajax` só existe quando a requisição NÃO é HTMX: é o contrato da V1 (tema `aculta420`). A V2 já usa HTMX no mesmo formulário. Remover o fallback muda a regra de compatibilidade da V1 registrada no ADR-050. |
+| `src/Form/LoginPopupForm.php` | `actions.submit` | Mesmo caso do cadastro. |
+| `modules/aculta_gallery/src/Form/GalleryEmbedDialogForm.php` | "Criar e inserir" | O sucesso insere atributos no CKEditor 5 (`EditorDialogSave`) e fecha o diálogo do editor. A inserção no editor não é expressa por HTMX; regra 4. |
+| `modules/aculta_forum/src/Form/ForumGalleryUploadDialogForm.php` | "Criar galeria e inserir" | Idem: upload + `EditorDialogSave` no CKEditor; regra 4. |
+| `modules/aculta_forum/src/Form/ForumAttachmentUploadDialogForm.php` | "Enviar e inserir" | Idem: upload de anexo + `EditorDialogSave`; regra 4. |
 
-### `#ajax` fora do escopo (não são envios de formulário)
+### `#ajax` de campo ou de botão de widget (não são envios de formulário)
 
-Continuam como estão, por serem gatilhos de campo (change/blur/click) e não
-envios: `AccountAddressForm` (país), `AcultaCheckoutLogin` (blur do e-mail),
-`DonationCheckoutPane` e `CheckoutPro` (change; F5, pagamento) e o seletor
-`modo` de `SurfaceEditForm`.
+Continuam como estão por serem gatilhos de campo/widget, não envio:
+
+- `src/Account/AccountAddressForm.php` — `country_code` (`change`).
+- `src/Plugin/Commerce/CheckoutPane/AcultaCheckoutLogin.php` — `blur` do e-mail.
+- `modules/aculta_donation/.../DonationCheckoutPane.php` — `change`.
+- `modules/aculta_pagamentos_mercadopago/.../CheckoutPro.php` — `change`.
+- `aculta_paths/src/Form/SurfaceEditForm.php` — seletor `modo` (`change`).
+- `modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`
+  — botão `#type => button` "Remover local", que troca o próprio widget.
+- `modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`
+  — botões de limpar/remover do widget.
 
 ## Links `use-ajax` mantidos
 
-Estes links continuam abrindo ou fechando o diálogo jQuery do Core, ou
-disparam resposta AJAX de múltiplos alvos. HTMX não tem comando equivalente sem
-antes migrar o diálogo para `<dialog>` (F2/F3 do ADR-050), então ficam como
-exceção registrada:
+Continuam abrindo ou fechando o diálogo jQuery do Core (os formulários dentro
+dele agora enviam por HTMX):
 
-| Arquivo | Link | Motivo |
-| --- | --- | --- |
-| `aculta_paths/src/Controller/SurfaceListController.php` | Editar superfície (agora SDC `size: small`) | Abre o formulário em `data-dialog-type="modal"` (jQuery). O botão é SDC; só o modal permanece no diálogo do Core. |
-| `aculta_user/src/Hook/PhotoEditorHooks.php` | Avatar / Alterar foto | Abre o diálogo jQuery e depende de upload/resposta AJAX. |
-| `aculta_user/src/Social/SocialLinksCard.php` | Editar rede social | Abre o diálogo jQuery. |
-| `aculta_user/src/Controller/AvatarRerollController.php` | Sortear novo avatar | Resposta AJAX troca todos os avatares do painel. |
-| `aculta_secrets_manager/src/Controller/SecretsController.php` | Ações do cofre | Diálogo jQuery e área sensível. |
-| `aculta_messenger/src/Support/ConfirmDialog.php` | Ações de conversa | Abre/fecha `<dialog>` nativo controlado por JS. |
-| `aculta_portal/src/Search/SearchUtility.php` e `PortalHooks.php` | Buscar / Entrar | Fallback deliberado da V1; a V2 usa HTMX nos popups equivalentes. |
-| `aculta_events/.../EventDateListBuilder.php`, `EventLocationModalWidget`, `EventOrganizationModalWidget` | Datas, locais e organizações | Abrem diálogos jQuery e atualizam mais de um alvo. |
+| Arquivo | Link |
+| --- | --- |
+| `aculta_paths/src/Controller/SurfaceListController.php` | Editar superfície |
+| `aculta_user/src/Hook/PhotoEditorHooks.php` | Avatar / Alterar foto |
+| `aculta_user/src/Social/SocialLinksCard.php` | Editar rede social |
+| `aculta_secrets_manager/src/Controller/SecretsController.php` | Ações do cofre |
+| `aculta_events/.../EventDateListBuilder.php`, `EventLocationModalWidget`, `EventOrganizationModalWidget` | Datas, locais e organizações |
 
-## Validação funcional (2026-11-08)
+## Validação
 
 - `php -l` nos arquivos PHP alterados.
-- `php scripts/validate-aculta420-ui-styles.php`, `validate-aculta420-v2-foundations.php` e `validate-aculta420-palette-schemes.php`: PASS.
-- Teste de navegador em Firefox ESR visível (`DISPLAY=:0`), com conta de teste por `drush uli`: `tests/browser/transversal/aculta-htmx-envios/submit-forms.py`.
-  - **SocialLinksSettingsForm**: "+ Adicionar botão" responde 200, troca o wrapper `#aculta-social-links-settings` e acrescenta os campos da nova linha sem recarregar a página.
-  - **SurfaceEditForm**: "Salvar" com o título obrigatório vazio responde 200 e devolve o formulário com o estado de erro no fragmento, sem navegar nem gravar configuração.
-- Evidência: `tests/browser/capturas/htmx-envios/2026-11-08/manifest.json`.
-- Correção encontrada nesta validação: o botão "+ Adicionar botão" passou a ter `#name => add_social_button`. Sem isso, o `_triggering_element_name=op` compartilhado fazia o "Salvar" virar o disparador e o envio salvava a configuração em vez de adicionar a linha.
-
-### `EventForm` (envio #4)
-
-- `php -l web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventForm.php`: sem erros.
-- `php scripts/validate-aculta420-ui-styles.php`: PASS.
-- `php scripts/validate-aculta420-v2-foundations.php`: PASS.
-- Sem teste de navegador nesta rodada: o botão "Adicionar outra data" depende de conta autenticada com permissão de criar Evento e do formulário completo de entidade. O `#ajax` era um bloco único (`#event-dates-wrapper`), sem diálogo nem CKEditor; a rota do `hx-post` é a mesma do próprio formulário (`event_add`/`organizer_event_add`).
+- `php scripts/validate-aculta420-ui-styles.php` e
+  `php scripts/validate-aculta420-v2-foundations.php`.
+- Testes Kernel criados (não executados nesta rodada por falta de
+  `SIMPLETEST_DB`): `EventDateHtmxKernelTest`, `EventModalHtmxKernelTest`,
+  `SecretFormsHtmxKernelTest`, `UserPictureHtmxKernelTest`,
+  `AddToCartHtmxKernelTest`, `AccountHtmxKernelTest`.

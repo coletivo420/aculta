@@ -7,13 +7,10 @@ namespace Drupal\aculta_events\Form;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Event\EventDateListBuilder;
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\CloseModalDialogCommand;
-use Drupal\Core\Ajax\MessageCommand;
-use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Url;
 use Drupal\aculta_events\Route\EventRouteContext;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -26,6 +23,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * Datas do formulário pai é atualizada por AJAX, preservando os demais campos.
  */
 final class EventDateOrderForm extends FormBase {
+
+  use HtmxDateListResponseTrait;
+
+  /**
+   * Wrapper do formulário trocado pelo envio HTMX.
+   */
+  private const WRAPPER_ID = 'aculta-event-date-order-form';
 
   public function __construct(
     protected readonly EntityTypeManagerInterface $entities,
@@ -58,6 +62,8 @@ final class EventDateOrderForm extends FormBase {
     }
     $form_state->set('event_id', (int) $aculta_event->id());
 
+    $form['#prefix'] = '<div id="' . self::WRAPPER_ID . '">';
+    $form['#suffix'] = '</div>';
     $form['event_id'] = ['#type' => 'hidden', '#value' => (string) $aculta_event->id()];
     $form['intro'] = [
       '#markup' => '<p>' . $this->t('Valores menores aparecem primeiro. Em caso de empate, vale o horário de início.') . '</p>',
@@ -87,8 +93,20 @@ final class EventDateOrderForm extends FormBase {
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Salvar ordem'),
-      '#ajax' => ['callback' => '::ajaxSubmit'],
     ];
+    // O envio devolve o formulário (erro de validação) ou a lista de Datas em
+    // `hx-swap-oob` com o diálogo fechado (sucesso).
+    (new Htmx())
+      ->post($this->htmxRouteUrl(
+        'aculta_events.event_date_order',
+        'aculta_events.organizer_event_date_order',
+        ['aculta_event' => $aculta_event->id()],
+      ))
+      ->select('#' . self::WRAPPER_ID)
+      ->target('#' . self::WRAPPER_ID)
+      ->swap('outerHTML')
+      ->onlyMainContent()
+      ->applyTo($form['actions']['submit']);
     $form['actions']['cancel'] = [
       '#type' => 'component',
       '#component' => 'aculta420_v2:button',
@@ -135,26 +153,11 @@ final class EventDateOrderForm extends FormBase {
     }
 
     $this->messenger()->addStatus($this->t('A ordem das datas foi atualizada.'));
+    if ($this->isHtmxRequest()) {
+      $form_state->setResponse($this->htmxDateListResponse($event));
+      return;
+    }
     $form_state->setRedirect(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $event->id()]);
-  }
-
-  /**
-   * Fecha o diálogo e atualiza a lista de Datas no formulário pai.
-   */
-  public function ajaxSubmit(array &$form, FormStateInterface $form_state): AjaxResponse|array {
-    if ($form_state->hasAnyErrors()) {
-      return $form;
-    }
-    $event = $this->eventFromState($form_state);
-    if (!$event instanceof Event) {
-      return $form;
-    }
-
-    $response = new AjaxResponse();
-    $response->addCommand(new CloseModalDialogCommand());
-    $response->addCommand(new MessageCommand($this->t('A ordem das datas foi atualizada.')));
-    $response->addCommand(new ReplaceCommand('#event-dates-list', $this->dateListBuilder->build($event)));
-    return $response;
   }
 
   /**

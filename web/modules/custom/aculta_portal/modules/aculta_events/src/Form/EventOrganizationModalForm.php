@@ -8,22 +8,22 @@ use Drupal\aculta_events\Access\EventPermissionPolicy;
 use Drupal\aculta_events\Adapter\OrganizationContributionAdapter;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Plugin\Field\FieldWidget\EventOrganizationModalWidget;
+use Drupal\aculta_events\Route\EventRouteContext;
 use Drupal\aculta_events\Slug\EventSlugGenerator;
 use Drupal\aculta_cgu\Service\ContributionLifecycle;
 use Drupal\aculta_user\Organization\OrganizationAccessService;
 use Drupal\aculta_user\Organization\OrganizationMembershipManager;
 use Drupal\aculta_user\Organization\OwnershipClaimService;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\CloseModalDialogCommand;
-use Drupal\Core\Ajax\InvokeCommand;
-use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Modal AJAX para busca, cadastro e seleção de organizações culturais.
@@ -32,6 +32,16 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * administrativo e do Studio Culturas, garantindo devolução de foco.
  */
 final class EventOrganizationModalForm extends FormBase {
+
+  /**
+   * Wrapper do formulário trocado pelo envio HTMX.
+   */
+  private const WRAPPER_ID = 'aculta-organization-modal-form-wrapper';
+
+  /**
+   * URL do próprio modal (com o contexto do widget) para o `hx-post`.
+   */
+  private Url $htmxUrl;
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
@@ -99,7 +109,20 @@ final class EventOrganizationModalForm extends FormBase {
     $form_state->set('is_multiple', $isMultiple);
     $form_state->set('wrapper_id', $wrapperId);
 
+    $query = [
+      'field_name' => $fieldName,
+      'wrapper_id' => $wrapperId,
+      'is_multiple' => $isMultiple ? 1 : 0,
+    ];
     $targetId = $form_state->get('target_id') ?? $request->query->get('target_id');
+    if ($targetId !== NULL && (int) $targetId > 0) {
+      $query['target_id'] = (int) $targetId;
+    }
+    $this->htmxUrl = Url::fromRoute(
+      EventRouteContext::route('aculta_events.organization_modal', 'aculta_events.organizer_organization_modal'),
+      [],
+      ['query' => $query],
+    );
     if ($targetId !== NULL) {
       $form_state->set('target_id', (int) $targetId);
     }
@@ -155,10 +178,6 @@ final class EventOrganizationModalForm extends FormBase {
         '#type' => 'submit',
         '#value' => $this->t('Buscar'),
         '#submit' => ['::submitSearch'],
-        '#ajax' => [
-          'callback' => '::ajaxRebuildModal',
-          'wrapper' => 'aculta-organization-modal-form-wrapper',
-        ],
         '#attributes' => ['data-portal-ui' => 'event-organization-search-action'],
       ],
       'switch_create' => [
@@ -166,13 +185,11 @@ final class EventOrganizationModalForm extends FormBase {
         '#value' => $this->t('+ Cadastrar nova organização'),
         '#submit' => ['::switchToCreate'],
         '#limit_validation_errors' => [],
-        '#ajax' => [
-          'callback' => '::ajaxRebuildModal',
-          'wrapper' => 'aculta-organization-modal-form-wrapper',
-        ],
         '#attributes' => ['data-portal-ui' => 'event-organization-add-action'],
       ],
     ];
+    $this->applyHtmx($form['search_box']['submit_search']);
+    $this->applyHtmx($form['search_box']['switch_create']);
 
     // Consulta de organizações existentes.
     $termo = trim((string) ($form_state->get('termo') ?? ''));
@@ -235,18 +252,7 @@ final class EventOrganizationModalForm extends FormBase {
           'badge' => [
             '#markup' => '<span class="badge ' . $badgeClass . '">' . htmlspecialchars((string) $badgeText, ENT_QUOTES, 'UTF-8') . '</span>',
           ],
-          'select' => [
-            '#type' => 'submit',
-            '#value' => $this->t('Selecionar'),
-            '#name' => 'select_org_' . $oid,
-            '#org_id' => $oid,
-            '#submit' => ['::submitSelectOrganization'],
-            '#ajax' => [
-              'callback' => '::ajaxSelectOrganization',
-              'wrapper' => 'aculta-organization-modal-form-wrapper',
-            ],
-            '#attributes' => ['data-portal-ui' => 'event-organization-small-button'],
-          ],
+          'select' => $this->selectButton($oid),
         ];
       }
     }
@@ -263,15 +269,27 @@ final class EventOrganizationModalForm extends FormBase {
     $form['cancel_action'] = [
       '#type' => 'actions',
       'close' => [
-        '#type' => 'submit',
+        '#type' => 'button',
         '#value' => $this->t('Fechar'),
-        '#submit' => ['::submitCloseModal'],
-        '#limit_validation_errors' => [],
-        '#ajax' => [
-          'callback' => '::ajaxCloseModal',
-        ],
+        '#attributes' => ['data-aculta-dialog-close' => ''],
       ],
     ];
+  }
+
+  /**
+   * Botão "Selecionar" de uma organização, com o envelope HTMX.
+   */
+  private function selectButton(int $orgId, string $namePrefix = 'select_org_', ?string $label = NULL): array {
+    $button = [
+      '#type' => 'submit',
+      '#value' => $label ?? $this->t('Selecionar'),
+      '#name' => $namePrefix . $orgId,
+      '#org_id' => $orgId,
+      '#submit' => ['::submitSelectOrganization'],
+      '#attributes' => ['data-portal-ui' => 'event-organization-small-button'],
+    ];
+    $this->applyHtmx($button);
+    return $button;
   }
 
   /**
@@ -310,18 +328,7 @@ final class EventOrganizationModalForm extends FormBase {
         $form['duplicate_table'][$did] = [
           'name' => ['#markup' => '<strong>' . htmlspecialchars((string) $dup->label(), ENT_QUOTES, 'UTF-8') . '</strong>'],
           'status' => ['#markup' => htmlspecialchars((string) $bText, ENT_QUOTES, 'UTF-8')],
-          'select' => [
-            '#type' => 'submit',
-            '#value' => $this->t('Selecionar esta'),
-            '#name' => 'select_dup_' . $did,
-            '#org_id' => $did,
-            '#submit' => ['::submitSelectOrganization'],
-            '#ajax' => [
-              'callback' => '::ajaxSelectOrganization',
-              'wrapper' => 'aculta-organization-modal-form-wrapper',
-            ],
-            '#attributes' => ['data-portal-ui' => 'event-organization-small-button'],
-          ],
+          'select' => $this->selectButton($did, 'select_dup_', (string) $this->t('Selecionar esta')),
         ];
       }
     }
@@ -451,10 +458,6 @@ final class EventOrganizationModalForm extends FormBase {
         '#value' => !empty($candidates) ? $this->t('Confirmar cadastro mesmo assim') : $this->t('Cadastrar e selecionar'),
         '#name' => 'op_create_save',
         '#submit' => ['::submitCreateOrganization'],
-        '#ajax' => [
-          'callback' => '::ajaxCreateOrganization',
-          'wrapper' => 'aculta-organization-modal-form-wrapper',
-        ],
         '#attributes' => ['data-portal-ui' => 'event-organization-add-action'],
       ],
       'back_search' => [
@@ -462,13 +465,11 @@ final class EventOrganizationModalForm extends FormBase {
         '#value' => $this->t('Voltar para a busca'),
         '#submit' => ['::switchToSearch'],
         '#limit_validation_errors' => [],
-        '#ajax' => [
-          'callback' => '::ajaxRebuildModal',
-          'wrapper' => 'aculta-organization-modal-form-wrapper',
-        ],
         '#attributes' => ['data-portal-ui' => 'event-organization-back-action'],
       ],
     ];
+    $this->applyHtmx($form['create_actions']['submit_create']);
+    $this->applyHtmx($form['create_actions']['back_search']);
   }
 
   /**
@@ -495,13 +496,6 @@ final class EventOrganizationModalForm extends FormBase {
     $form_state->set('mode', 'search');
     $form_state->set('duplicate_candidates', []);
     $form_state->setRebuild(TRUE);
-  }
-
-  /**
-   * Fecha o modal.
-   */
-  public function submitCloseModal(array &$form, FormStateInterface $form_state): void {
-    // Processado pelo AJAX callback ajaxCloseModal.
   }
 
   /**
@@ -584,6 +578,14 @@ final class EventOrganizationModalForm extends FormBase {
       }
 
       $form_state->set('selected_org_id', $orgId);
+      if ($this->isHtmxRequest()) {
+        $form_state->setResponse($this->htmxUpdateParentResponse(
+          $orgId,
+          (string) $form_state->get('field_name'),
+          (string) $form_state->get('wrapper_id'),
+          (bool) $form_state->get('is_multiple'),
+        ));
+      }
     }
   }
 
@@ -663,6 +665,14 @@ final class EventOrganizationModalForm extends FormBase {
     }
 
     $form_state->set('selected_org_id', (int) $org->id());
+    if ($this->isHtmxRequest()) {
+      $form_state->setResponse($this->htmxUpdateParentResponse(
+        (int) $org->id(),
+        (string) $form_state->get('field_name'),
+        (string) $form_state->get('wrapper_id'),
+        (bool) $form_state->get('is_multiple'),
+      ));
+    }
   }
 
   /**
@@ -673,93 +683,43 @@ final class EventOrganizationModalForm extends FormBase {
   }
 
   /**
-   * AJAX callback para reconstrução de passos do modal.
+   * Aplica HTMX a um botão do modal: recorta e troca o wrapper do formulário.
    */
-  public function ajaxRebuildModal(array &$form, FormStateInterface $form_state): array {
-    return $form;
+  private function applyHtmx(array &$button): void {
+    (new Htmx())
+      ->post($this->htmxUrl)
+      ->select('#' . self::WRAPPER_ID)
+      ->target('#' . self::WRAPPER_ID)
+      ->swap('outerHTML')
+      ->onlyMainContent()
+      ->applyTo($button);
   }
 
   /**
-   * AJAX callback para fechar modal.
+   * Resposta HTMX que fecha o modal e troca o widget no formulário pai.
    */
-  public function ajaxCloseModal(array &$form, FormStateInterface $form_state): AjaxResponse {
-    $response = new AjaxResponse();
-    $response->addCommand(new CloseModalDialogCommand());
-    return $response;
-  }
+  private function htmxUpdateParentResponse(int $orgId, string $fieldName, string $wrapperId, bool $isMultiple): Response {
+    $card = [
+      '#type' => 'container',
+      '#attributes' => [
+        'id' => $wrapperId,
+        'data-portal-ui' => 'event-organization-widget',
+        'data-field-name' => $fieldName,
+        'hx-swap-oob' => 'outerHTML',
+      ],
+    ];
+    $card += $isMultiple
+      ? EventOrganizationModalWidget::buildMultipleCards([$orgId], $fieldName, $wrapperId)
+      : EventOrganizationModalWidget::buildSingleCardOrEmpty($orgId, $fieldName, $wrapperId);
 
-  /**
-   * AJAX callback de seleção de organização.
-   */
-  public function ajaxSelectOrganization(array &$form, FormStateInterface $form_state): AjaxResponse|array {
-    if ($form_state->hasAnyErrors()) {
-      return $form;
-    }
-    $orgId = (int) $form_state->get('selected_org_id');
-    // Defensive check: ensure we have a valid org ID.
-    if ($orgId <= 0) {
-      // Return the form when no organization was selected.
-      return $form;
-    }
-    return $this->buildUpdateParentResponse(
-      $orgId,
-      (string) $form_state->get('field_name'),
-      (string) $form_state->get('wrapper_id'),
-      (bool) $form_state->get('is_multiple')
+    return new Response(
+      (string) \Drupal::service('renderer')->renderInIsolation($card),
+      Response::HTTP_OK,
+      [
+        'Content-Type' => 'text/html; charset=UTF-8',
+        'HX-Trigger' => 'aculta:close-dialog',
+      ],
     );
-  }
-
-  /**
-   * AJAX callback de criação de organização.
-   */
-  public function ajaxCreateOrganization(array &$form, FormStateInterface $form_state): AjaxResponse|array {
-    if ($form_state->hasAnyErrors()) {
-      return $form;
-    }
-    if ($form_state->get('proposal_submitted')) {
-      return $form;
-    }
-    $orgId = (int) $form_state->get('selected_org_id');
-    return $this->buildUpdateParentResponse(
-      $orgId,
-      (string) $form_state->get('field_name'),
-      (string) $form_state->get('wrapper_id'),
-      (bool) $form_state->get('is_multiple')
-    );
-  }
-
-  /**
-   * Constrói a resposta AJAX que fecha o modal e devolve o foco.
-   */
-  private function buildUpdateParentResponse(int $orgId, string $fieldName, string $wrapperId, bool $isMultiple): AjaxResponse {
-    $response = new AjaxResponse();
-    $response->addCommand(new CloseModalDialogCommand());
-
-    if (!$isMultiple) {
-      // Caso simples: substitui o card e valor do target_id.
-      $cardArray = EventOrganizationModalWidget::buildSingleCardOrEmpty($orgId, $fieldName, $wrapperId);
-      $cardArray['#prefix'] = '<div id="' . $wrapperId . '" data-portal-ui="event-organization-widget" data-field-name="' . $fieldName . '">';
-      $cardArray['#suffix'] = '</div>';
-
-      $targetInputId = '#' . $wrapperId . '-target-id';
-      $response->addCommand(new ReplaceCommand('#' . $wrapperId, $cardArray));
-      $response->addCommand(new InvokeCommand($targetInputId, 'val', [(string) $orgId]));
-      $response->addCommand(new InvokeCommand($targetInputId, 'trigger', ['change']));
-    }
-    else {
-      // Caso múltiplo: obtém o elemento do form_state ou adiciona à lista.
-      $currentIds = [$orgId];
-      $cardArray = EventOrganizationModalWidget::buildMultipleCards($currentIds, $fieldName, $wrapperId);
-      $cardArray['#prefix'] = '<div id="' . $wrapperId . '" data-portal-ui="event-organization-widget" data-field-name="' . $fieldName . '">';
-      $cardArray['#suffix'] = '</div>';
-
-      $response->addCommand(new ReplaceCommand('#' . $wrapperId, $cardArray));
-    }
-
-    // Devolve o foco ao botão/controle que abriu o modal (acessibilidade).
-    $response->addCommand(new InvokeCommand('[data-portal-trigger="' . $wrapperId . '"]', 'focus'));
-
-    return $response;
   }
 
 }

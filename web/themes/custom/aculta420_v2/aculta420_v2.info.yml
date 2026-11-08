@@ -18,3 +18,4 @@ regions:
   footer: Rodapé
 libraries:
   - aculta420_v2/global-styling
+  - aculta420_v2/htmx-dialogs

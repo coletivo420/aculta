@@ -13,6 +13,7 @@ use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -50,7 +51,7 @@ final class FormHooks {
   public function formAlter(array &$form, FormStateInterface $formState, string $formId): void {
     $formObject = $formState->getFormObject();
     $this->accountAjaxSubmit($form, $formId);
-    $this->cartAjax->alter($form, $formId);
+    $this->cartAjax->alter($form, $formId, $formState);
 
     $this->restrictedFormNotice($form, $formId);
     $this->recoveryPasswordModal($form, $formState, $formId);
@@ -165,16 +166,16 @@ final class FormHooks {
   }
 
   /**
-   * Adds AJAX submit behavior to account forms.
+   * Adds HTMX submit behavior to account forms.
    *
-   * The submit callback returns the form and its messages inside the same
-   * wrapper without reloading. Save redirects are disabled and focus moves to
-   * the first error (aculta_portal/account-navigation).
+   * The response returns the form and its messages inside the same wrapper
+   * without reloading. Save redirects are disabled and the theme focus
+   * behavior moves to the first error (aculta_portal/account-navigation).
    *
    * The bio form uses its modal's JSON route and stays outside this behavior.
    *
    * The login form stays outside this behavior so Core can redirect after
-   * authentication. AJAX previously kept the new session on the login page.
+   * authentication.
    */
   private function accountAjaxSubmit(array &$form, string $formId): void {
     $route = $this->routeMatch->getRouteObject();
@@ -186,13 +187,22 @@ final class FormHooks {
     $form['#prefix'] = '<div id="' . $wrapper . '">' . ($form['#prefix'] ?? '');
     $form['#suffix'] = ($form['#suffix'] ?? '') . '</div>';
     $submit = &$form['actions']['submit'];
-    $submit['#ajax'] = [
-      'callback' => 'aculta_portal.form_callbacks:accountAjaxResponse',
-      'wrapper' => $wrapper,
-      'progress' => ['type' => 'throbber'],
-      // Focus moves to the first form error through the account error handler.
-      'disable-refocus' => TRUE,
-    ];
+    $routeName = (string) $this->routeMatch->getRouteName();
+    $url = $routeName === ''
+      ? Url::fromRoute('<current>')
+      : Url::fromRoute($routeName, $this->routeMatch->getRawParameters()->all());
+    (new Htmx())
+      ->post($url)
+      ->select('#' . $wrapper)
+      ->target('#' . $wrapper)
+      ->swap('outerHTML')
+      ->onlyMainContent()
+      ->applyTo($submit);
+    // Na resposta HTMX as mensagens precisam viajar dentro do wrapper. Na
+    // página normal elas continuam apenas na região global, sem duplicar.
+    if ($this->requestStack->getCurrentRequest()?->headers->has('HX-Request')) {
+      $form['status_messages'] = ['#type' => 'status_messages', '#weight' => -100];
+    }
     // Keep the response and status message in place instead of redirecting.
     if (!empty($submit['#submit'])) {
       $submit['#submit'][] = 'aculta_portal.form_callbacks:disableAccountRedirect';

@@ -195,7 +195,7 @@ services:
       - { name: aculta_portal.implementation }
   aculta_portal.cart_ajax:
     class: Drupal\aculta_portal\Cart\AddToCartAjax
-    arguments: ['@aculta_portal.cart_utility', '@string_translation', '@renderer', '@messenger']
+    arguments: ['@aculta_portal.cart_utility', '@string_translation', '@renderer', '@messenger', '@request_stack']
   aculta_portal.cart_consolidator:
     class: Drupal\aculta_portal\Cart\CartConsolidator
     arguments: ['@commerce_cart.cart_provider', '@commerce_cart.cart_session', '@commerce_store.current_store', '@current_user', '@aculta_portal.checkout_settings']

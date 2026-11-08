@@ -1,10 +1,11 @@
 {#
   Corpo do painel do carrinho (aculta_portal), apresentação ACULTA420.
 
-  O AJAX de adicionar ao carrinho substitui `.aculta-cart-offcanvas__body` por
-  este markup, por isso o wrapper com a mesma classe é obrigatório.
+  O envio HTMX de adicionar ao carrinho substitui este corpo por
+  `hx-swap-oob` (o id é o alvo), por isso o wrapper com a mesma classe e o id
+  estável são obrigatórios.
 #}
-<div class="aculta-utility-dialog__body aculta-cart-offcanvas__body">
+<div id="aculta-cart-offcanvas-body" class="aculta-utility-dialog__body aculta-cart-offcanvas__body"{% if htmx_oob %} hx-swap-oob="outerHTML"{% endif %}>
   {% if empty %}
     <p class="aculta-cart-offcanvas__empty">{{ 'Sem produto(s) no carrinho.'|t }}</p>
   {% else %}

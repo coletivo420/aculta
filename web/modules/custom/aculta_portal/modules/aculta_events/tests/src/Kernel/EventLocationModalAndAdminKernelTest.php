@@ -259,27 +259,15 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
     // Selecionar existente.
     $formStateSearch->set('selected_location_id', (int) $existing->id());
     $formStateSearch->set('field_name', 'field_event_location');
-    $ajaxResponse = $modalForm->ajaxSelectLocation($formSearch, $formStateSearch);
-
-    $commands = $ajaxResponse->getCommands();
-    self::assertNotEmpty($commands);
-    $closeFound = FALSE;
-    $replaceFound = FALSE;
-    $invokeFound = FALSE;
-    foreach ($commands as $cmd) {
-      if ($cmd instanceof CloseModalDialogCommand || ($cmd['command'] ?? '') === 'closeDialog') {
-        $closeFound = TRUE;
-      }
-      if ($cmd instanceof ReplaceCommand || ($cmd['command'] ?? '') === 'insert') {
-        $replaceFound = TRUE;
-      }
-      if ($cmd instanceof InvokeCommand || ($cmd['command'] ?? '') === 'invoke') {
-        $invokeFound = TRUE;
-      }
-    }
-    self::assertTrue($closeFound);
-    self::assertTrue($replaceFound);
-    self::assertTrue($invokeFound);
+    // A resposta HTMX fecha o modal e devolve o widget do formulário pai em OOB.
+    $htmxResponse = $modalForm->htmxUpdateParentResponse(
+      (int) $existing->id(),
+      'field_event_location',
+      'field-event-location-wrapper',
+    );
+    self::assertSame('aculta:close-dialog', $htmxResponse->headers->get('HX-Trigger'));
+    self::assertStringContainsString('hx-swap-oob', (string) $htmxResponse->getContent());
+    self::assertStringContainsString('field-event-location-wrapper', (string) $htmxResponse->getContent());
 
     // 2. Etapa de criação de novo local
     $formStateCreate = new FormState();

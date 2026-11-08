@@ -7,12 +7,10 @@ namespace Drupal\aculta_user\Form;
 use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\Core\Access\CsrfTokenGenerator;
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\ReplaceCommand;
-use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_user\Avatar\AvatarPool;
@@ -45,7 +43,6 @@ final class UserPictureForm extends FormBase {
     protected AvatarPool $avatarPool,
     protected readonly ImageRenderer $imageRenderer,
     protected readonly ConsumerUploadPolicy $uploadPolicy,
-    protected readonly RendererInterface $renderer,
   ) {}
 
   /**
@@ -66,7 +63,6 @@ final class UserPictureForm extends FormBase {
       $container->get('aculta_user.avatar_pool'),
       $container->get('aculta_image.render'),
       $container->get('aculta_file_uploader.consumer_policy'),
-      $container->get('renderer'),
     );
   }
 
@@ -117,7 +113,16 @@ final class UserPictureForm extends FormBase {
 
     // Mesmo conteúdo do popup anterior: prévia do avatar atual e a orientação de uso.
     $currentFile = $current > 0 ? $this->entityTypeManagerService->getStorage('file')->load($current) : NULL;
-    if ($currentFile !== NULL) {
+    $pending = $this->avatarPool->pendingEntry($account);
+    if ($currentFile !== NULL || $pending !== NULL) {
+      $image = $pending !== NULL
+        ? [
+          '#theme' => 'image',
+          '#uri' => $this->avatarPool->previewUrl($pending),
+          '#alt' => (string) $account->label(),
+          '#attributes' => ['data-portal-ui' => 'account-avatar'],
+        ]
+        : $this->imageRenderer->build('avatar', $currentFile?->getFileUri() ?? '', (string) $this->t('Foto de perfil de @name', ['@name' => $account->getDisplayName()]), ['data-portal-ui' => 'account-avatar']);
       $form['preview'] = [
         '#type' => 'html_tag',
         '#tag' => 'div',
@@ -126,7 +131,7 @@ final class UserPictureForm extends FormBase {
           '#type' => 'html_tag',
           '#tag' => 'span',
           '#attributes' => ['data-aculta-user-avatar' => ''],
-          'image' => $this->imageRenderer->build('avatar', $currentFile->getFileUri(), (string) $this->t('Foto de perfil de @name', ['@name' => $account->getDisplayName()]), ['data-portal-ui' => 'account-avatar']),
+          'image' => $image,
         ],
       ];
     }
@@ -161,10 +166,21 @@ final class UserPictureForm extends FormBase {
       $form['actions']['sortear'] = [
         '#type' => 'submit',
         '#value' => $this->t('Sortear novo avatar'),
+        // Nome próprio: o HTMX envia só o nome do disparador, e "op"
+        // compartilhado faria o "Salvar" ser acionado no lugar do sorteio.
+        '#name' => 'sortear',
         '#limit_validation_errors' => [],
         '#submit' => ['::noSubmit'],
-        '#ajax' => ['callback' => '::sortearPrevia', 'event' => 'click', 'progress' => ['type' => 'none']],
       ];
+      // O sorteio troca só a prévia dentro do diálogo; o formulário é devolvido
+      // como fragmento e o `hx-select` recorta o avatar.
+      (new Htmx())
+        ->post(Url::fromRoute('aculta_user.foto'))
+        ->select('[data-aculta-user-avatar]')
+        ->target('[data-aculta-user-avatar]')
+        ->swap('outerHTML')
+        ->onlyMainContent()
+        ->applyTo($form['actions']['sortear']);
     }
     if (!$isAcervo && $current > 0) {
       $form['actions']['remover'] = [
@@ -184,30 +200,16 @@ final class UserPictureForm extends FormBase {
   }
 
   /**
-   * Sortear não grava nada: a escolha só vale quando o formulário é salvo (AvatarPool::applyPending). */
-  public function noSubmit(array &$form, FormStateInterface $form_state): void {}
-
-  /**
-   * Callback AJAX do sorteio: troca só a prévia dentro do modal (a visão geral muda ao salvar). */
-  public function sortearPrevia(array &$form, FormStateInterface $form_state): AjaxResponse {
-    $response = new AjaxResponse();
+   * Sortear não grava nada: a escolha só vale quando o formulário é salvo (AvatarPool::applyPending).
+   *
+   * O sorteio só troca a prévia pendente; o rebuild do formulário devolve o
+   * avatar sorteado no fragmento do HTMX.
+   */
+  public function noSubmit(array &$form, FormStateInterface $form_state): void {
     $account = $this->account();
-    $entry = $account !== NULL ? $this->avatarPool->preview($account) : NULL;
-    if ($entry !== NULL) {
-      $build = [
-        '#type' => 'html_tag',
-        '#tag' => 'span',
-        '#attributes' => ['data-aculta-user-avatar' => ''],
-        'image' => [
-          '#theme' => 'image',
-          '#uri' => $this->avatarPool->previewUrl($entry),
-          '#alt' => (string) $account->label(),
-          '#attributes' => ['data-portal-ui' => 'account-avatar'],
-        ],
-      ];
-      $response->addCommand(new ReplaceCommand('.ui-dialog [data-aculta-user-avatar]', (string) $this->renderer->renderInIsolation($build)));
+    if ($account !== NULL) {
+      $this->avatarPool->preview($account);
     }
-    return $response;
   }
 
   /**

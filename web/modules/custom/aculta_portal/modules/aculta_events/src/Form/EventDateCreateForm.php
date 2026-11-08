@@ -8,17 +8,12 @@ use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Event\EventDateListBuilder;
 use Drupal\aculta_events\Plugin\Field\FieldWidget\EventLocationModalWidget;
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\CloseModalDialogCommand;
-use Drupal\Core\Ajax\MessageCommand;
-use Drupal\Core\Ajax\ReplaceCommand;
-use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\Core\Url;
 use Drupal\aculta_events\Route\EventRouteContext;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -30,6 +25,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * rota, é obrigatório e a autorização é revalidada no servidor no submit.
  */
 class EventDateCreateForm extends FormBase {
+
+  use HtmxDateListResponseTrait;
+
+  /**
+   * Wrapper do formulário trocado pelo envio HTMX.
+   */
+  protected const WRAPPER_ID = 'aculta-event-date-form';
 
   public function __construct(
     protected readonly EntityTypeManagerInterface $entities,
@@ -66,6 +68,8 @@ class EventDateCreateForm extends FormBase {
 
     $form_state->set('event_id', (int) $event->id());
 
+    $form['#prefix'] = '<div id="' . static::WRAPPER_ID . '">';
+    $form['#suffix'] = '</div>';
     $form['event_id'] = [
       '#type' => 'hidden',
       '#value' => (string) $event->id(),
@@ -121,10 +125,18 @@ class EventDateCreateForm extends FormBase {
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Criar data'),
-      '#ajax' => [
-        'callback' => '::ajaxSubmit',
-      ],
     ];
+    (new Htmx())
+      ->post($this->htmxRouteUrl(
+        'aculta_events.event_date_add',
+        'aculta_events.organizer_event_date_add',
+        ['aculta_event' => $event->id()],
+      ))
+      ->select('#' . static::WRAPPER_ID)
+      ->target('#' . static::WRAPPER_ID)
+      ->swap('outerHTML')
+      ->onlyMainContent()
+      ->applyTo($form['actions']['submit']);
 
     return $form;
   }
@@ -194,33 +206,11 @@ class EventDateCreateForm extends FormBase {
     $date = $this->entities->getStorage('aculta_event_date')->create($dateData);
     $date->save();
     $this->messenger()->addStatus($this->t('A data foi criada.'));
+    if ($this->isHtmxRequest()) {
+      $form_state->setResponse($this->htmxDateListResponse($event));
+      return;
+    }
     $form_state->setRedirect(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $event->id()]);
-  }
-
-  /**
-   * Fecha o diálogo e retorna ao Evento de origem.
-   */
-  public function ajaxSubmit(array &$form, FormStateInterface $form_state): AjaxResponse|array {
-    if ($form_state->hasAnyErrors()) {
-      return $form;
-    }
-
-    $event = $this->eventFromState($form_state);
-    if (!$event instanceof Event) {
-      $eventId = (int) ($form_state->get('event_id') ?? 0);
-      $response = new AjaxResponse();
-      $response->addCommand(new CloseModalDialogCommand());
-      $response->addCommand(new RedirectCommand(
-        Url::fromRoute(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $eventId])->toString()
-      ));
-      return $response;
-    }
-
-    $response = new AjaxResponse();
-    $response->addCommand(new CloseModalDialogCommand());
-    $response->addCommand(new MessageCommand($this->t('A data foi criada.')));
-    $response->addCommand(new ReplaceCommand('#event-dates-list', $this->dateListBuilder->build($event)));
-    return $response;
   }
 
   /**

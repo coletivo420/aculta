@@ -5,24 +5,26 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Cart;
 
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\HtmlCommand;
-use Drupal\Core\Ajax\InvokeCommand;
-use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Adicionar ao carrinho sem recarregar a página (produto e listagens).
  *
- * O formulário nativo do Commerce (commerce_order_item_add_to_cart_form) não tem AJAX: o Portal acrescenta o #ajax no
+ * O formulário nativo do Commerce (commerce_order_item_add_to_cart_form) não tem AJAX: o Portal aplica HTMX no
  * botão e um contêiner de status acima do formulário. A caixa é o template do módulo
  * (aculta_portal_cart_status): mostra
  * "Item adicionado com sucesso." com o link "Ver carrinho", ou o erro de validação, no mesmo lugar. O módulo só envia
- * dados (contagem, URL, textos). O badge do carrinho é do tema, marcado com data-aculta-cart-count e
- * data-aculta-cart-trigger; o módulo atualiza esses atributos. Sem JavaScript o envio segue o fluxo normal do Commerce.
+ * dados (contagem, URL, textos). O badge e o corpo do carrinho são atualizados por `hx-swap-oob`; o contador e o
+ * rótulo do gatilho vêm no HX-Trigger `aculta:cart-updated`, tratado pelo JS do tema. Sem JavaScript o envio segue o
+ * fluxo normal do Commerce.
  */
 final class AddToCartAjax {
 
@@ -33,51 +35,65 @@ final class AddToCartAjax {
     private readonly TranslationInterface $translation,
     private readonly RendererInterface $renderer,
     private readonly MessengerInterface $messenger,
+    #[Autowire(service: 'request_stack')]
+    private readonly RequestStack $requestStack,
   ) {}
 
   /**
-   * Liga o AJAX ao botão de adicionar e cria o contêiner de status acima do formulário. */
-  public function alter(array &$form, string $formId): void {
+   * Aplica HTMX ao botão de adicionar e cria o contêiner de status acima do formulário.
+   */
+  public function alter(array &$form, string $formId, FormStateInterface $formState): void {
     if (!str_starts_with($formId, self::FORM_ID_PREFIX) || !isset($form['actions']['submit'])) {
       return;
     }
     $statusId = $this->statusId($formId);
-    $form['#prefix'] = ($form['#prefix'] ?? '') . '<div id="' . $statusId . '"></div>';
-    $form['actions']['submit']['#ajax'] = [
-      'callback' => 'aculta_portal.cart_ajax:response',
-      'progress' => ['type' => 'throbber'],
-      // O id do contêiner vai no wrapper: o callback o lê do botão acionado (o #id do formulário muda na reconstrução).
-      'wrapper' => $statusId,
-    ];
+    // Na reconstrução por erro de validação o status já vai preenchido; o HTMX
+    // recorta este id do formulário devolvido.
+    $statusHtml = $formState->hasAnyErrors()
+      ? (string) $this->renderer->renderInIsolation($this->statusBox($formState, ''))
+      : '';
+    $form['#prefix'] = ($form['#prefix'] ?? '') . '<div id="' . $statusId . '">' . $statusHtml . '</div>';
+    $form['#attached']['library'][] = 'aculta_portal/cart-status';
+
+    $request = $this->requestStack->getCurrentRequest();
+    if ($request === NULL) {
+      return;
+    }
+    // O formulário não tem #action: o POST nativo vai para a própria página.
+    $url = Url::fromUserInput($request->getRequestUri());
+    (new Htmx())
+      ->post($url)
+      ->select('#' . $statusId)
+      ->target('#' . $statusId)
+      ->swap('innerHTML')
+      ->onlyMainContent()
+      ->applyTo($form['actions']['submit']);
+
+    $submit = &$form['actions']['submit'];
+    if (!empty($submit['#submit'])) {
+      $submit['#submit'][] = 'aculta_portal.cart_ajax:htmxResponse';
+    }
+    else {
+      $form['#submit'][] = 'aculta_portal.cart_ajax:htmxResponse';
+    }
   }
 
   /**
-   * Callback AJAX do botão: caixa de status, contador e rótulo do botão do carrinho. */
-  public function response(array &$form, FormStateInterface $formState): AjaxResponse {
-    $statusId = $formState->getTriggeringElement()['#ajax']['wrapper'] ?? $this->statusId((string) $formState->getFormObject()->getFormId());
-    // A caixa "Item adicionado com sucesso." substitui a mensagem padrão do Commerce, que não pode ficar para a
-    // próxima página.
-    $this->messenger->deleteAll();
+   * Resposta HTMX do botão: caixa de status, painel do carrinho e contador.
+   */
+  public function htmxResponse(array &$form, FormStateInterface $formState): void {
+    $request = $this->requestStack->getCurrentRequest();
+    if ($request === NULL || !$request->headers->has('HX-Request')) {
+      return;
+    }
+    $formId = (string) $formState->getFormObject()->getFormId();
+    $statusId = $this->statusId($formId);
     $cart = $this->cart->build();
-    $response = new AjaxResponse();
-    $errors = array_map(static fn($error): string => strip_tags((string) $error), array_values($formState->getErrors()));
+    // A caixa "Item adicionado com sucesso." substitui a mensagem padrão do
+    // Commerce, que não pode ficar para a próxima página.
+    $this->messenger->deleteAll();
 
-    // Variáveis do template com nomes próprios: "#type" é o tipo de elemento do Drupal, não uma variável.
-    $box = [
-      '#theme' => 'aculta_portal_cart_status',
-      '#status_type' => $errors === [] ? 'success' : 'error',
-      '#status_role' => $errors === [] ? 'status' : 'alert',
-      '#message' => $errors === []
-        ? (string) $this->translation->translate('Item adicionado com sucesso.')
-        : implode(' ', $errors),
-      '#url' => $errors === [] ? $cart['url'] : '',
-      '#link_label' => (string) $this->translation->translate('Ver carrinho'),
-      '#close_label' => (string) $this->translation->translate('Fechar'),
-    ];
-    $response->addCommand(new HtmlCommand('#' . $statusId, $this->renderer->renderInIsolation($box)));
-    $response->addAttachments(['library' => ['aculta_portal/cart-status']]);
-
-    // Corpo do painel do carrinho: a lista e os totais são atualizados sem recarregar a página.
+    $box = $this->statusBox($formState, (string) $cart['url']);
     $painel = [
       '#theme' => 'aculta_portal_cart_panel',
       '#sites' => $cart['sites'],
@@ -85,21 +101,48 @@ final class AddToCartAjax {
       '#url' => $cart['url'],
       '#empty' => $cart['empty'],
       '#checkout_url' => $cart['checkout_url'],
+      'htmx_oob' => TRUE,
     ];
-    $response->addCommand(new ReplaceCommand('#aculta-cart-offcanvas .aculta-cart-offcanvas__body', $this->renderer->renderInIsolation($painel)));
+    $body = '<div id="' . $statusId . '">'
+      . $this->renderer->renderInIsolation($box)
+      . '</div>'
+      . $this->renderer->renderInIsolation($painel);
 
     $count = (string) $cart['count'];
-    $response->addCommand(new InvokeCommand('[data-aculta-cart-count]', 'text', [$count]));
-    $response->addCommand(new InvokeCommand('[data-aculta-cart-count]', 'attr', ['data-count', $count]));
-    $response->addCommand(new InvokeCommand('[data-aculta-cart-trigger]', 'attr', [
-      'aria-label',
-      (string) $this->translation->translate('Abrir carrinho (@count itens)', ['@count' => $count]),
-    ]));
-    return $response;
+    $headers = [
+      'Content-Type' => 'text/html; charset=UTF-8',
+      'HX-Trigger' => json_encode([
+        'aculta:cart-updated' => [
+          'count' => $count,
+          'label' => (string) $this->translation->translate('Abrir carrinho (@count itens)', ['@count' => $count]),
+        ],
+      ]),
+    ];
+    $formState->setResponse(new Response($body, Response::HTTP_OK, $headers));
   }
 
   /**
-   * Id estável a partir do form_id (o #id do formulário ganha sufixo na reconstrução do AJAX). */
+   * Caixa de status do carrinho (sucesso ou erro de validação).
+   */
+  private function statusBox(FormStateInterface $formState, string $url): array {
+    $errors = array_map(static fn($error): string => strip_tags((string) $error), array_values($formState->getErrors()));
+    // Variáveis do template com nomes próprios: "#type" é o tipo de elemento do Drupal, não uma variável.
+    return [
+      '#theme' => 'aculta_portal_cart_status',
+      '#status_type' => $errors === [] ? 'success' : 'error',
+      '#status_role' => $errors === [] ? 'status' : 'alert',
+      '#message' => $errors === []
+        ? (string) $this->translation->translate('Item adicionado com sucesso.')
+        : implode(' ', $errors),
+      '#url' => $errors === [] ? $url : '',
+      '#link_label' => (string) $this->translation->translate('Ver carrinho'),
+      '#close_label' => (string) $this->translation->translate('Fechar'),
+    ];
+  }
+
+  /**
+   * Id estável a partir do form_id (o #id do formulário ganha sufixo na reconstrução).
+   */
   private function statusId(string $formId): string {
     return Html::cleanCssIdentifier('portal-cart-status-' . $formId);
   }

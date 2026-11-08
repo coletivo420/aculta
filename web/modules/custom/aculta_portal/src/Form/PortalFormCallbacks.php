@@ -66,14 +66,6 @@ final class PortalFormCallbacks {
   }
 
   /**
-   * Returns the messages and account form in the same AJAX response.
-   */
-  public function accountAjaxResponse(array &$form, FormStateInterface $formState): array {
-    unset($form['#prefix'], $form['#suffix']);
-    return ['messages' => ['#type' => 'status_messages'], 'form' => $form];
-  }
-
-  /**
    * Keeps account saves on the same page.
    */
   public function disableAccountRedirect(array &$form, FormStateInterface $formState): void {

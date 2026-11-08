@@ -555,8 +555,9 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $this->assertFalse($formState->hasAnyErrors());
 
     $modalForm->submitCreateOrganization($formBuild, $formState);
-    $ajaxResponse = $modalForm->ajaxCreateOrganization($formBuild, $formState);
-    $this->assertIsArray($ajaxResponse, 'A proposta mantém o modal aberto para mostrar o status.');
+    // A proposta mantém o modal aberto para mostrar o status: o envio marca
+    // rebuild e não define resposta HTMX.
+    $this->assertNull($formState->getResponse());
     $this->assertTrue($formState->get('proposal_submitted'));
     $this->assertNull($formState->get('selected_org_id'));
 
