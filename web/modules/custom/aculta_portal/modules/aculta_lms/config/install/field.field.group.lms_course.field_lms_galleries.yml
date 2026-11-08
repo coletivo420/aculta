@@ -19,7 +19,7 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  handler: 'aculta_lms:published_gallery'
+  handler: 'aculta_lms_resources:published_gallery'
   handler_settings:
     sort:
       field: _none

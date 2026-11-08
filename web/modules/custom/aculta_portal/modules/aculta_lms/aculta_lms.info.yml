@@ -17,6 +17,7 @@ dependencies:
   - aculta_portal:aculta_document_viewer
   - aculta_portal:aculta_qrcode
   - aculta_portal:aculta_user
+  - media_gallery:media_gallery
   - entity_print:entity_print
   - commerce:commerce_cart
   - commerce:commerce_checkout

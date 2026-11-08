@@ -47,7 +47,8 @@ final class AnswerReviewWorkflowKernelTest extends KernelTestBase {
     'entity_print', 'entity_usage', 'aculta_image', 'aculta_file_uploader',
     'field', 'filter', 'flexible_permissions', 'group', 'views', 'text',
     'editor', 'ckeditor5',
-    'comment', 'aculta_lms',
+    'node', 'node_storage_body_field', 'gnode',
+    'comment', 'media_library', 'photoswipe', 'media_gallery', 'aculta_lms',
   ];
 
   /**
@@ -76,7 +77,7 @@ final class AnswerReviewWorkflowKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installConfig(['system', 'group', 'comment', 'file', 'aculta_file_uploader']);
+    $this->installConfig(['system', 'node', 'node_storage_body_field', 'group', 'comment', 'file', 'aculta_file_uploader']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installSchema('comment', ['comment_entity_statistics']);
@@ -89,6 +90,17 @@ final class AnswerReviewWorkflowKernelTest extends KernelTestBase {
     foreach ($entityTypes as $entityType) {
       $this->installEntitySchema($entityType);
     }
+    // O storage field_aculta_discussion pertence ao aculta_forum; criar aqui
+    // evita habilitar o fórum inteiro só para instalar a config do LMS.
+    FieldStorageConfig::create([
+      'field_name' => 'field_aculta_discussion',
+      'entity_type' => 'node',
+      'type' => 'comment',
+      'settings' => ['comment_type' => 'aculta_discussion_post'],
+      'cardinality' => 1,
+      'translatable' => TRUE,
+      'module' => 'comment',
+    ])->save();
     $this->installConfig(['aculta_lms']);
     $this->createGroupType('lms_course');
     $this->createGroupType('lms_class');
