@@ -26,6 +26,7 @@ final class ActivityWithoutIndexKernelTest extends KernelTestBase {
     'text',
     'node',
     'aculta_activity',
+    'aculta_file_uploader',
   ];
 
   /**

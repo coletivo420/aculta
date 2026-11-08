@@ -41,6 +41,9 @@ final class ContentIndexMediaProviderKernelTest extends KernelTestBase {
     'image',
     'media',
     'aculta_index',
+    'aculta_calendar',
+    'aculta_file_uploader',
+    'filter',
   ];
 
   /**

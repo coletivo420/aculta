@@ -47,6 +47,9 @@ final class ContentIndexStatisticsBridgeKernelTest extends KernelTestBase {
     'aculta_index',
     'aculta_index_file',
     'aculta_index_statistics_test',
+    'aculta_calendar',
+    'aculta_file_uploader',
+    'filter',
   ];
 
   /**

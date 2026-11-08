@@ -112,6 +112,7 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     'aculta_user',
     'aculta_index',
     'aculta_activity',
+    'aculta_file_uploader',
   ];
 
   /**

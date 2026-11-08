@@ -52,6 +52,9 @@ final class ContentIndexSchemaKernelTest extends KernelTestBase {
     'media_duplicates',
     'aculta_image',
     'aculta_index',
+    'aculta_calendar',
+    'aculta_file_uploader',
+    'filter',
   ];
 
   /**

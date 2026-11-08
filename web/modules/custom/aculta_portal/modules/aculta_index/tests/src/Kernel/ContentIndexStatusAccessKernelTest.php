@@ -29,6 +29,9 @@ final class ContentIndexStatusAccessKernelTest extends KernelTestBase {
   protected static $modules = [
     'system', 'user', 'field', 'file', 'image', 'media', 'entity_usage', 'media_duplicates',
     'aculta_image', 'aculta_index',
+    'aculta_calendar',
+    'aculta_file_uploader',
+    'filter',
   ];
 
   /**

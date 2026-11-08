@@ -79,6 +79,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     'comment',
     'aculta_forum_post_test',
     'aculta_messenger_aviso_test',
+    'aculta_file_uploader',
   ];
 
   /**

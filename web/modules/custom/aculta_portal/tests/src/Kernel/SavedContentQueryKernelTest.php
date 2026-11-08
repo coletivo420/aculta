@@ -42,6 +42,7 @@ final class SavedContentQueryKernelTest extends KernelTestBase {
     'text',
     'node',
     'flag',
+    'aculta_file_uploader',
   ];
 
   /**

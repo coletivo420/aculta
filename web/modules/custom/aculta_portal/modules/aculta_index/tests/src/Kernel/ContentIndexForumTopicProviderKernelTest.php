@@ -46,6 +46,9 @@ final class ContentIndexForumTopicProviderKernelTest extends KernelTestBase {
     'comment',
     'aculta_index',
     'aculta_index_forum_test',
+    'aculta_calendar',
+    'aculta_file_uploader',
+    'filter',
   ];
 
   /**

@@ -38,6 +38,9 @@ final class ContentIndexQueryKernelTest extends KernelTestBase {
     'node',
     'aculta_index',
     'aculta_index_test',
+    'aculta_calendar',
+    'aculta_file_uploader',
+    'filter',
   ];
 
   /**

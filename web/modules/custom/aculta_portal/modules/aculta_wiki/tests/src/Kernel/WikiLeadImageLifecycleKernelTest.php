@@ -814,6 +814,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'aculta_portal.wiki_home' => '/wiki',
       'aculta_portal.wiki_search' => '/busca-wiki',
       'aculta_portal.wiki_search_preview' => '/busca-wiki/previa',
+    'aculta_calendar',
     ];
     $purposeResolver = $this->container->get('aculta_portal.content_purpose_resolver');
     foreach ($routePaths as $routeName => $path) {

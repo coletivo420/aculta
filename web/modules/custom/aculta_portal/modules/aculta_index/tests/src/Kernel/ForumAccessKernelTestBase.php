@@ -65,6 +65,9 @@ abstract class ForumAccessKernelTestBase extends KernelTestBase {
     'aculta_index',
     'aculta_index_forum_test',
     'aculta_index_forum_access_test',
+    'aculta_calendar',
+    'aculta_file_uploader',
+    'filter',
   ];
 
   /**

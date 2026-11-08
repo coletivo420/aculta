@@ -42,6 +42,7 @@ final class FriendshipNoticePipelineKernelTest extends KernelTestBase {
     'options',
     'message',
     'aculta_messenger_friendship_test',
+    'aculta_file_uploader',
   ];
 
   /**

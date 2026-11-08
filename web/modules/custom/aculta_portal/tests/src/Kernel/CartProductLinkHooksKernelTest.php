@@ -73,6 +73,7 @@ final class CartProductLinkHooksKernelTest extends KernelTestBase {
         ],
       ],
       '#cache' => ['contexts' => []],
+    'aculta_file_uploader',
     ];
 
     (new CartProductLinkHooks($manager))->entityViewAlter($build, $variation, $display);

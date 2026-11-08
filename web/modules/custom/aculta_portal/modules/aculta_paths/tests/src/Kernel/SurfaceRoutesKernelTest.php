@@ -60,6 +60,7 @@ final class SurfaceRoutesKernelTest extends KernelTestBase {
     'aculta_studio',
     'aculta_commerce',
     'aculta_paths',
+    'aculta_calendar',
   ];
 
   /**

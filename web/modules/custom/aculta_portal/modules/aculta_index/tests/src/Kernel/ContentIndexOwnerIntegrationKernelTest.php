@@ -326,6 +326,9 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
         'entity_type' => 'node',
         'entity_id' => (string) $node->id(),
         'langcode' => $node->language()->getId(),
+    'aculta_calendar',
+    'aculta_file_uploader',
+    'filter',
       ];
     }
     foreach ([$publicCategory, $privateCategory] as $term) {

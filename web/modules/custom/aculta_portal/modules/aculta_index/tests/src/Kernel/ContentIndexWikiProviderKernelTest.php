@@ -39,6 +39,9 @@ final class ContentIndexWikiProviderKernelTest extends KernelTestBase {
     'text',
     'node',
     'aculta_index',
+    'aculta_calendar',
+    'aculta_file_uploader',
+    'filter',
   ];
 
   /**

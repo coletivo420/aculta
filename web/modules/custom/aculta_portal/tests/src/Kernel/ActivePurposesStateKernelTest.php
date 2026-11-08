@@ -27,6 +27,7 @@ final class ActivePurposesStateKernelTest extends KernelTestBase {
     'system',
     'user',
     'domain',
+    'aculta_file_uploader',
   ];
 
   /**

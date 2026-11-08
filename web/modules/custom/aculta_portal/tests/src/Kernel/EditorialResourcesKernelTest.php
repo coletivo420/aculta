@@ -34,6 +34,7 @@ final class EditorialResourcesKernelTest extends KernelTestBase {
     'options',
     'taxonomy',
     'aculta_events',
+    'aculta_file_uploader',
   ];
 
   /**

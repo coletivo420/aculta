@@ -51,6 +51,7 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
     'aculta_calendar',
     'aculta_index',
     'aculta_events',
+    'aculta_file_uploader',
   ];
 
   /**

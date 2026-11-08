@@ -91,6 +91,7 @@ final class AccountMailRouterKernelTest extends KernelTestBase {
       'params' => ['account' => $account],
       'subject' => 'orig',
       'body' => ['orig'],
+    'aculta_file_uploader',
     ];
 
     $this->router()->apply($message);

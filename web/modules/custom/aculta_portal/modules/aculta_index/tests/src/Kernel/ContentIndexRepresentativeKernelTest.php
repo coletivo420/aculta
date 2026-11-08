@@ -44,6 +44,9 @@ final class ContentIndexRepresentativeKernelTest extends KernelTestBase {
     'content_translation',
     'aculta_index',
     'aculta_index_representative_test',
+    'aculta_calendar',
+    'aculta_file_uploader',
+    'filter',
   ];
 
   /**
