@@ -2029,7 +2029,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $previewForm = $formBuilder->buildForm($previewFormObject, $previewFormState);
     $previewFormState->setValue($previewForm['moderation_state']['widget'][0]['state']['#parents'], 'draft');
     $previewFormState->setTriggeringElement($previewForm['actions']['preview']);
-    $formBuilder->submitForm($previewFormObject, $previewFormState);
+    $previewFormObject->submitForm($previewForm, $previewFormState);
     $previewFormObject->getEntity()->setTitle('Prévia sem salvar');
     $previewFormObject->getEntity()->set('body', ['value' => 'Texto de prévia com fonte.', 'format' => 'plain_text']);
     $previewFormObject->getEntity()->set('moderation_state', 'draft');
