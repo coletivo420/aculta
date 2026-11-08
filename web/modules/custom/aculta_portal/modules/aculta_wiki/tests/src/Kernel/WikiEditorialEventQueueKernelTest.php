@@ -24,7 +24,7 @@ final class WikiEditorialEventQueueKernelTest extends KernelTestBase {
    *
    * @var list<string>
    */
-  protected static $modules = [];
+  protected static $modules = [, 'aculta_calendar' ];
 
   /**
    * {@inheritdoc}

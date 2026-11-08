@@ -42,7 +42,7 @@ final class CourseDocumentAccessTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = [];
+  protected static $modules = [, 'aculta_file_uploader' ];
 
   /**
    * {@inheritdoc}

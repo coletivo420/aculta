@@ -36,7 +36,7 @@ final class WikiContentIndexRebuildKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = [];
+  protected static $modules = [, 'aculta_calendar' ];
 
   /**
    * Boots the actual Wiki, Image, Portal, and Content Index dependency graph.

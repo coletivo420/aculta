@@ -25,6 +25,7 @@ final class ModeratableCollectionAccessKernelTest extends KernelTestBase {
     'system', 'user', 'file', 'field', 'node', 'node_storage_body_field', 'text', 'filter',
     'block_content', 'block_content_storage_body_field', 'menu_ui', 'views', 'aculta_faq',
     'aculta_content_admin',
+    'text_with_summary',
   ];
 
   /**
