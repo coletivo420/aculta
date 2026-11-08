@@ -7,7 +7,7 @@ namespace Drupal\aculta_studio\Calendar;
 use Drupal\aculta_calendar\Item\CalendarItem;
 use Drupal\aculta_calendar\Item\CalendarItemProviderInterface;
 use Drupal\aculta_calendar\Item\CalendarQuery;
-use Drupal\aculta_lms_agenda\AgendaEntriesProvider;
+use Drupal\aculta_lms\Agenda\AgendaEntriesProvider;
 use Drupal\Core\Session\AccountInterface;
 
 /**

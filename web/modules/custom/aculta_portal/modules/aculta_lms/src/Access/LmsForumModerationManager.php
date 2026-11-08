@@ -28,7 +28,7 @@ final class LmsForumModerationManager {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly LmsDiscussionContextProvider $contextProvider,
+    private readonly ?LmsDiscussionContextProvider $contextProvider = NULL,
   ) {}
 
   /**

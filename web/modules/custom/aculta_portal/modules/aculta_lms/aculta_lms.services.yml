@@ -248,7 +248,7 @@ services:
 
   aculta_forum_lms.moderation_manager:
     class: Drupal\aculta_lms\Access\LmsForumModerationManager
-    arguments: ['@entity_type.manager', '@Drupal\aculta_forum\Context\Provider\LmsDiscussionContextProvider']
+    arguments: ['@entity_type.manager', '@?Drupal\aculta_forum\Context\Provider\LmsDiscussionContextProvider']
 
   aculta_lms.moderation_controller:
     class: Drupal\aculta_lms\Controller\LmsForumModerationController
@@ -256,4 +256,53 @@ services:
 
   Drupal\aculta_lms\Hook\LmsCommentModerationOperationsHooks:
     arguments: ['@aculta_forum_lms.moderation_manager', '@current_user']
+
+  Drupal\aculta_lms\Hook\EventAccessHooks:
+    arguments: ['@aculta_lms.agenda_event_access']
+
+  aculta_lms.agenda_event_access:
+    class: Drupal\aculta_lms\Agenda\EventClassAccess
+    arguments: ['@aculta_lms.class_activity_deadline_access']
+  aculta_lms_agenda.event_access:
+    alias: aculta_lms.agenda_event_access
+
+  aculta_lms.agenda_event_route_access:
+    class: Drupal\aculta_lms\Agenda\EventRouteAccess
+    arguments: ['@entity_type.manager', '@current_user']
+  aculta_lms_agenda.event_route_access:
+    alias: aculta_lms.agenda_event_route_access
+
+  aculta_lms.agenda_event_route_subscriber:
+    class: Drupal\aculta_lms\Agenda\EventSubscriber\LmsEventRouteSubscriber
+    tags:
+      - { name: event_subscriber }
+
+  aculta_lms.agenda_entries:
+    class: Drupal\aculta_lms\Agenda\AgendaEntriesProvider
+    arguments: ['@entity_type.manager', '@aculta_lms.class_activity_deadline_manager', '@aculta_events.occurrences', '@datetime.time']
+  aculta_lms_agenda.entries:
+    alias: aculta_lms.agenda_entries
+
+  aculta_lms.agenda_calendar_provider:
+    class: Drupal\aculta_lms\Agenda\Calendar\LmsCalendarItemProvider
+    arguments: ['@aculta_lms.agenda_entries', '@current_user']
+    tags:
+      - { name: aculta_calendar.item_provider }
+  aculta_lms_agenda.calendar_provider:
+    alias: aculta_lms.agenda_calendar_provider
+
+  aculta_lms.agenda_tokens:
+    class: Drupal\aculta_lms\Agenda\Calendar\PersonalCalendarTokens
+    arguments: ['@state']
+  aculta_lms_agenda.tokens:
+    alias: aculta_lms.agenda_tokens
+
+  aculta_lms.agenda_mail_type_evento_turma:
+    class: Drupal\aculta_lms\Agenda\Mail\EventoTurmaMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
+  aculta_lms_agenda.mail_type_evento_turma:
+    alias: aculta_lms.agenda_mail_type_evento_turma
+
 

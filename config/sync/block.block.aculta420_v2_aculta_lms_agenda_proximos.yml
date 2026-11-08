@@ -3,7 +3,7 @@ langcode: pt-br
 status: true
 dependencies:
   module:
-    - aculta_lms_agenda
+    - aculta_lms
     - system
   theme:
     - aculta420_v2
@@ -17,7 +17,7 @@ settings:
   id: aculta_lms_agenda_proximos
   label: 'Próximos prazos e eventos das turmas'
   label_display: visible
-  provider: aculta_lms_agenda
+  provider: aculta_lms
 visibility:
   request_path:
     id: request_path

@@ -40,7 +40,7 @@ final class StudioCalendarProvidersKernelTest extends KernelTestBase {
     'system', 'key', 'address', 'geofield', 'domain', 'datetime', 'datetime_range', 'user', 'file', 'image', 'media', 'options', 'link',
     'entity_print', 'entity_usage', 'aculta_image', 'aculta_file_uploader', 'field', 'filter', 'flexible_permissions',
     'comment', 'group', 'views', 'text', 'taxonomy', 'aculta_lms', 'aculta_calendar',
-    'aculta_events', 'aculta_lms_agenda', 'aculta_studio',
+    'aculta_events', 'aculta_studio',
   ];
 
   /**

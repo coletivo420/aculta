@@ -109,7 +109,7 @@ services:
     arguments: ['@form_builder']
   aculta_studio.calendar_provider.cursos:
     class: Drupal\aculta_studio\Calendar\StudioCoursesCalendarItemProvider
-    arguments: ['@?aculta_lms_agenda.entries', '@current_user']
+    arguments: ['@?aculta_lms.agenda_entries', '@current_user']
     tags:
       - { name: aculta_calendar.item_provider }
   aculta_studio.calendar_provider.eventos:
