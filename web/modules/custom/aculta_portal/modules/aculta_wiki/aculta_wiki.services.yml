@@ -108,3 +108,8 @@ services:
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@aculta_messenger.notice_event_publisher', '@Drupal\aculta_messenger\Integration\Wiki\EditorialReviewNoticeInterface', '@datetime.time', '@logger.channel.aculta_messenger']
     tags:
       - { name: event_subscriber }
+
+  Drupal\aculta_wiki\Context\WikiDiscussionContextProvider:
+    tags:
+      - { name: aculta_forum.discussion_context_provider }
+

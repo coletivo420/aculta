@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_forum_wiki\Context;
+namespace Drupal\aculta_wiki\Context;
 
 use Drupal\aculta_forum\Context\DiscussionContext;
 use Drupal\aculta_forum\Context\DiscussionContextInterface;

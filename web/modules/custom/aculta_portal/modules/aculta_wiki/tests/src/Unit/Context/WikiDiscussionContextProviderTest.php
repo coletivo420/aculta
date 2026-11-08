@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_forum_wiki\Unit;
+namespace Drupal\Tests\aculta_wiki\Unit\Context;
 
-use Drupal\aculta_forum_wiki\Context\WikiDiscussionContextProvider;
+use Drupal\aculta_wiki\Context\WikiDiscussionContextProvider;
 use Drupal\comment\CommentingStatus;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Tests the wiki discussion context access contract.
  */
-#[Group('aculta_forum_wiki')]
+#[Group('aculta_wiki')]
 final class WikiDiscussionContextProviderTest extends TestCase {
 
   /**
