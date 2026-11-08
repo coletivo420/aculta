@@ -58,10 +58,13 @@ final class PublicForumTopicCreateActionHooks {
     }
 
     $view->attachment_before['aculta_forum_create_topic'] = [
-      '#type' => 'link',
-      '#title' => new TranslatableMarkup('Criar tópico'),
-      '#url' => Url::fromRoute('aculta_forum.topic_add'),
-      '#attributes' => ['data-portal-ui' => 'button-primary'],
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:button',
+      '#props' => [
+        'text' => (string) new TranslatableMarkup('Criar tópico'),
+        'url' => Url::fromRoute('aculta_forum.topic_add')->toString(),
+        'variant' => 'primary',
+      ],
     ];
     CacheableMetadata::createFromObject($access)
       ->applyTo($view->attachment_before['aculta_forum_create_topic']);

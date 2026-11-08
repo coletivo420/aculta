@@ -24,6 +24,17 @@ use Symfony\Component\HttpFoundation\RequestStack;
 #[Group('aculta_forum')]
 final class PublicForumTopicCreateActionHooksTest extends UnitTestCase {
 
+  protected function setUp(): void {
+    parent::setUp();
+    // Url::toString() precisa do gerador de URL; o teste unitário fornece um falso.
+    $generator = $this->createMock(\Drupal\Core\Routing\UrlGeneratorInterface::class);
+    $generator->method('generateFromRoute')->willReturn('/forum/topico/novo');
+    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container->set('url_generator', $generator);
+    $container->set('string_translation', $this->getStringTranslationStub());
+    \Drupal::setContainer($container);
+  }
+
   /**
    * Tests the action and its cache metadata when route access allows it. */
   public function testActionAppearsOnlyAfterRouteAccessAllowsIt(): void {
@@ -38,7 +49,8 @@ final class PublicForumTopicCreateActionHooksTest extends UnitTestCase {
     $hooks = new PublicForumTopicCreateActionHooks($access_manager, $this->domainPurposeManager('forum'));
     $hooks->viewsPreRender($view);
 
-    self::assertSame('button-primary', $view->attachment_before['aculta_forum_create_topic']['#attributes']['data-portal-ui']);
+    self::assertSame('aculta420_v2:button', $view->attachment_before['aculta_forum_create_topic']['#component']);
+    self::assertSame('primary', $view->attachment_before['aculta_forum_create_topic']['#props']['variant']);
     self::assertSame(['user.permissions'], $view->attachment_before['aculta_forum_create_topic']['#cache']['contexts']);
     self::assertEqualsCanonicalizing(['url.query_args', 'user.permissions'], $view->element['#cache']['contexts']);
   }
