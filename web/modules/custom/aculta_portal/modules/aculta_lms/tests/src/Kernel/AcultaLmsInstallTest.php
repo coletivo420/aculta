@@ -94,7 +94,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    * Tests the module's optional service integration.
    */
   public function testInstallRegistersOnlyTheOptionalIntegrationService(): void {
-    $this->assertTrue($this->container->get('module_installer')->install(['aculta_lms'], FALSE));
+    $this->assertTrue($this->container->get('module_installer')->install(['aculta_lms'], TRUE));
     $this->prepareAcultaLmsClassRelationship();
     $container = \Drupal::getContainer();
     $this->assertTrue($container->get('module_handler')->moduleExists('aculta_lms'));
@@ -238,7 +238,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    * Ensures injected form services survive Form API cache serialization.
    */
   public function testAnswerSubmissionFormRestoresInjectedServicesAfterSerialization(): void {
-    $this->assertTrue($this->container->get('module_installer')->install(['aculta_lms'], FALSE));
+    $this->assertTrue($this->container->get('module_installer')->install(['aculta_lms'], TRUE));
     $this->prepareAcultaLmsClassRelationship();
     $form = AnswerSubmissionForm::create($this->container);
     $restored = unserialize(serialize($form), ['allowed_classes' => [AnswerSubmissionForm::class]]);
@@ -252,7 +252,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    * Ensures course-builder Form API services survive cache serialization.
    */
   public function testCourseBuilderFormsRestoreInjectedServicesAfterSerialization(): void {
-    $this->assertTrue($this->container->get('module_installer')->install(['aculta_lms'], FALSE));
+    $this->assertTrue($this->container->get('module_installer')->install(['aculta_lms'], TRUE));
     $forms = [
       ActivityDeleteForm::class => [
         'entityTypeManager' => EntityTypeManagerInterface::class,
@@ -292,7 +292,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    * Ensures moves reorder siblings without changing answer references.
    */
   public function testCourseStructureMovesAndReordersLessonsAndActivitiesWithoutChangingAnswers(): void {
-    $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    $this->container->get('module_installer')->install(['aculta_lms'], TRUE);
     $this->prepareAcultaLmsClassRelationship();
     $course = GroupEntity::create(['type' => 'lms_course', 'label' => 'Curso de ordenação']);
     $course->save();
@@ -382,7 +382,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    * Tests the P2 entity update installs all schemas and is idempotent.
    */
   public function testP2LearningEntityUpdateIsIdempotent(): void {
-    $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    $this->container->get('module_installer')->install(['aculta_lms'], TRUE);
     $this->prepareAcultaLmsClassRelationship();
     aculta_lms_update_10005();
     aculta_lms_update_10005();
@@ -496,7 +496,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    */
   public function testClassPermissionConfigUpdateIsIdempotent(): void {
     require_once DRUPAL_ROOT . '/' . $this->container->get('extension.list.module')->getPath('aculta_lms') . '/aculta_lms.install';
-    $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    $this->container->get('module_installer')->install(['aculta_lms'], TRUE);
     $this->prepareAcultaLmsClassRelationship();
     $factory = $this->container->get('config.factory');
     // Seed former contrib config as raw storage: its schema is intentionally
@@ -526,7 +526,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    * Tests that archived attempts are private, immutable, and purged.
    */
   public function testAttemptArchivePersistsIsReadOnlyAndPurgesWithAccount(): void {
-    $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    $this->container->get('module_installer')->install(['aculta_lms'], TRUE);
     $this->prepareAcultaLmsClassRelationship();
     $this->installEntitySchema('user');
     $this->installEntitySchema('aculta_lms_attempt_archive');
@@ -578,7 +578,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    * Tests certificate snapshot privacy and retention after account deletion.
    */
   public function testCertificateSnapshotIsPrivateToGenericRoutesAndSurvivesAccountDeletion(): void {
-    $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    $this->container->get('module_installer')->install(['aculta_lms'], TRUE);
     $this->prepareAcultaLmsClassRelationship();
     $this->installEntitySchema('user');
     $this->installEntitySchema('aculta_lms_certificate');
@@ -628,7 +628,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    * Tests safe PDF output and inclusion of the generated QR image.
    */
   public function testCertificatePdfUsesEscapedSnapshotAndPrivateResponse(): void {
-    $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    $this->container->get('module_installer')->install(['aculta_lms'], TRUE);
     $this->prepareAcultaLmsClassRelationship();
     $this->installEntitySchema('aculta_lms_certificate');
     $code = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN0123456789';

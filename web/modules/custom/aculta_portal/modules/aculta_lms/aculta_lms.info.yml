@@ -10,6 +10,9 @@ dependencies:
   - aculta_portal:aculta_calendar
   - aculta_portal:aculta_events
   - aculta_portal:aculta_forum
+  - drupal:node_storage_body_field
+  - group:gnode
+  - aculta_portal:aculta_wiki
   - aculta_portal:aculta_messenger
   - aculta_portal:aculta_pagamentos_mercadopago
   - aculta_portal:aculta_file_uploader
