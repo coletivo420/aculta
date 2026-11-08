@@ -44,6 +44,7 @@ final class ContentIndexMagazineAccessKernelTest extends KernelTestBase {
     'aculta_calendar',
     'aculta_file_uploader',
     'filter',
+    'file',
   ];
 
   /**

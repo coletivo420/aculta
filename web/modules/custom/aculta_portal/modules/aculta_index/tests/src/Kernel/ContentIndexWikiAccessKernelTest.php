@@ -39,7 +39,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
 
   /**
    * {@inheritdoc} */
-  protected static $modules = [];
+  protected static $modules = ['file' ];
 
   /**
    * Boots the real Wiki, Image, Portal, and Index modules and dependencies.

@@ -49,6 +49,7 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
     'aculta_calendar',
     'aculta_file_uploader',
     'filter',
+    'file',
   ];
 
   /**

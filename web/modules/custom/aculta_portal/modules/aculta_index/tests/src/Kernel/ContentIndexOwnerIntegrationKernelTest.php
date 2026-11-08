@@ -47,7 +47,7 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
    *
    * @var string[]
    */
-  protected static $modules = [];
+  protected static $modules = ['file' ];
 
   /**
    * {@inheritdoc}

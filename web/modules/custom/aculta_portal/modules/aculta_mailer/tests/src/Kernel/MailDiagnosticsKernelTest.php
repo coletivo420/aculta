@@ -22,7 +22,7 @@ final class MailDiagnosticsKernelTest extends KernelTestBase {
    *
    * @var string[]
    */
-  protected static $modules = ['system', 'user', 'aculta_mailer'];
+  protected static $modules = ['system', 'user', 'aculta_mailer', 'aculta_file_uploader' ];
 
   /**
    * {@inheritdoc}

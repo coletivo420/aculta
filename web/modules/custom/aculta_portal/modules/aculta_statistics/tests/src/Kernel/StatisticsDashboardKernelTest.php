@@ -27,7 +27,7 @@ final class StatisticsDashboardKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'aculta_statistics'];
+  protected static $modules = ['system', 'user', 'aculta_statistics', 'aculta_file_uploader' ];
 
   /**
    * {@inheritdoc}
