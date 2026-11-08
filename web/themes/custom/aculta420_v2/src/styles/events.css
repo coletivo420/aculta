@@ -87,26 +87,6 @@
   margin-block-end: var(--spacing-base);
 }
 
-[data-portal-ui="event-location-button-primary-action"] {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-sm) var(--spacing-base);
-  text-decoration: none;
-  color: var(--color-on-brand);
-  border-radius: var(--radius-sm);
-  background: var(--color-brand-primary);
-  font-weight: 700;
-  min-block-size: var(--tap-target-min);
-  max-inline-size: 100%;
-  overflow-wrap: anywhere;
-}
-
-[data-portal-ui="event-location-button-primary-action"]:focus-visible {
-  outline: 3px solid var(--color-focus-ring);
-  outline-offset: 2px;
-}
-
 @media (min-width: 48rem) {
   .item-list:has(> ul [data-portal-ui~="event-card"]) > ul {
     grid-template-columns: repeat(2, minmax(0, 1fr));

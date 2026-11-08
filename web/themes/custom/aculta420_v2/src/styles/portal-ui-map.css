@@ -51,10 +51,7 @@
 /* Botões próprios do Portal. */
 .aculta-button--outline,
 .aculta-button--primary,
-.aculta-button--secondary,
-.button--action,
-.button--small { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-block-size: 2.75rem; padding: .5rem 1rem; border-radius: var(--radius-control-button); }
-.button--small { min-block-size: 2rem; padding: .25rem .625rem; font-size: .875rem; }
+.aculta-button--secondary { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-block-size: 2.75rem; padding: .5rem 1rem; border-radius: var(--radius-control-button); }
 .aculta-button--outline { color: var(--color-brand-primary); border: 1px solid var(--color-brand-primary); background: transparent; }
 .aculta-button--primary { color: var(--color-on-highlight); background: var(--color-brand-highlight); }
 .aculta-button--secondary { color: var(--color-text-primary); background: var(--color-surface-highlight); }

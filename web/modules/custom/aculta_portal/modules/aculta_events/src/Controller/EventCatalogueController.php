@@ -80,10 +80,13 @@ final class EventCatalogueController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'event-catalogue-actions-bar'],
         'add_btn' => [
-          '#type' => 'link',
-          '#title' => $this->t('+ Cadastrar novo evento'),
-          '#url' => Url::fromRoute('aculta_events.event_add'),
-          '#attributes' => ['data-portal-ui' => 'event-location-button-primary-action'],
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:button',
+          '#props' => [
+            'text' => (string) $this->t('+ Cadastrar novo evento'),
+            'url' => Url::fromRoute('aculta_events.event_add')->toString(),
+            'variant' => 'primary',
+          ],
         ],
       ];
     }
