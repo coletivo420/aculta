@@ -93,3 +93,11 @@ Tokens em `src/styles/tokens.css` (`--button-danger-*`). Mínimos: texto 4,5:1; 
 - Medição: `tests/browser/transversal/aculta420-v2-component-library/library-mode.py` (auditoria no modo escuro, razão mínima 4,5:1).
 - Resultado atual: 1 falha, `rfc-matrix` do módulo contrib `simple_oauth_21` ("No RFC data available.", texto cinza fixo `#6b7280`, 3,77:1). Fora do tema; registrado como exceção, sem patch em contrib.
 - Causas corrigidas: cor de texto resolvida no `body` (herdada com o valor claro); tokens derivados por `var()` sem par escuro; seletor global `.page a` sobrescrevendo o texto de destaque; controles do mapa com fundo branco fixo; variante neutra do rodapé com texto de rodapé verde.
+
+## Revisão dos SDC no modo escuro
+
+- Componentes SDC do tema: 55. Todos têm story na UI Library e entram na auditoria.
+- Nenhum componente tem cor fixa no CSS: todos usam tokens semânticos, que trocam de valor com `data-theme`. Não há bloco de modo escuro duplicado por componente.
+- Auditoria de contraste no modo escuro: 1 falha, exceção registrada (`rfc-matrix`, módulo contrib `simple_oauth_21`, texto cinza fixo `#6b7280`, 3,77:1). Também fora do tema: `messages-info` do `compliance-tip` (contrib `simple_oauth_21`).
+- Superfícies claras no modo escuro, intencionais: amarelo de destaque em badges e faixas (texto com token escuro), polegar de rolagem claro sobre trilho escuro.
+- Pendentes: verificação visual no Firefox ESR por purpose, e remoção das duplicatas de CSS de área depois dessa verificação.
