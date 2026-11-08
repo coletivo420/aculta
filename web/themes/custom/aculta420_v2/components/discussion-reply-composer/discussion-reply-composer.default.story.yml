@@ -9,14 +9,40 @@ props:
 slots:
   messages: ""
   context: ""
-  form: |
-    <form class="comment-form">
-      <div class="form-item form-type-textarea">
-        <label for="edit-body">Sua resposta</label>
-        <textarea id="edit-body" class="form-textarea" rows="4" placeholder="Escreva sua resposta aqui..."></textarea>
-      </div>
-      <div class="form-actions">
-        <input type="submit" class="button button--primary" value="Enviar resposta" />
-        <input type="button" class="button button--secondary" value="Cancelar" />
-      </div>
-    </form>
+  form:
+    label:
+      type: html_tag
+      tag: label
+      attributes:
+        for: edit-body
+        class:
+          - form-item__label
+      value: Sua resposta
+    control:
+      type: html_tag
+      tag: textarea
+      attributes:
+        id: edit-body
+        class:
+          - form-textarea
+        rows: 5
+        placeholder: Escreva sua resposta aqui...
+      value: Excelente ponto sobre adubação orgânica. Em solos vivos, o manejo preventivo reduz significativamente pragas.
+    submit_button:
+      type: html_tag
+      tag: button
+      attributes:
+        type: submit
+        class:
+          - button
+          - button--primary
+      value: Enviar resposta
+    cancel_button:
+      type: html_tag
+      tag: button
+      attributes:
+        type: button
+        class:
+          - button
+          - button--secondary
+      value: Cancelar

@@ -1,16 +1,12 @@
+/* Compositor de Resposta da Discussão — estilizado como Forum Post Card nativo */
+
 .discussion-reply-composer {
-  margin-top: 1rem;
-  margin-bottom: 1.5rem;
-  padding: 1.25rem;
-  border-radius: var(--radius-md, 0.5rem);
-  background: var(--color-surface, #ffffff);
-  border: 1px solid var(--color-border, #e5e7eb);
-  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  margin-block-start: var(--spacing-md, 1rem);
+  margin-block-end: var(--spacing-lg, 1.5rem);
 }
 
 .discussion-reply-composer--fechado {
-  display: none;
+  display: none !important;
 }
 
 .discussion-reply-composer--carregando {
@@ -19,47 +15,133 @@
 }
 
 .discussion-reply-composer--invalido {
-  border-color: var(--color-danger, #ef4444);
+  border-color: var(--color-status-error-text, #ef4444);
 }
 
 .discussion-reply-composer__parent-banner {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  margin-bottom: 1rem;
-  background: var(--color-surface-subtle, #f3f4f6);
-  border-left: 3px solid var(--color-primary, #10b981);
-  border-radius: var(--radius-sm, 0.25rem);
-  font-size: 0.875rem;
+  gap: var(--spacing-xs, 0.5rem);
+  padding-inline: var(--spacing-sm, 0.75rem);
+  padding-block: var(--spacing-xs, 0.5rem);
+  margin-block-end: var(--spacing-md, 1rem);
+  background-color: var(--color-surface-subtle);
+  border-left: 3px solid var(--color-brand-primary);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-sm);
 }
 
 .discussion-reply-composer__parent-label {
-  color: var(--color-text-muted, #6b7280);
+  color: var(--color-text-secondary);
 }
 
 .discussion-reply-composer__parent-author {
-  color: var(--color-text, #111827);
+  color: var(--color-text-primary);
 }
 
 .discussion-reply-composer__parent-subject {
-  color: var(--color-text-subtle, #9ca3af);
+  color: var(--color-text-secondary);
   font-style: italic;
 }
 
 .discussion-reply-composer__messages {
-  margin-bottom: 1rem;
+  margin-block-end: var(--spacing-md, 1rem);
 }
 
-.discussion-reply-composer__form .form-item {
-  margin-bottom: 1rem;
-}
-
-.discussion-reply-composer__form .form-actions {
+.discussion-reply-composer__form {
   display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm, 0.75rem);
+}
+
+.discussion-reply-composer__form label,
+.discussion-reply-composer__form .form-item__label {
+  display: block;
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-text-primary);
+  margin-block-end: var(--spacing-xs, 0.25rem);
+}
+
+.discussion-reply-composer__form textarea,
+.discussion-reply-composer__form .form-textarea {
+  display: block;
+  width: 100%;
+  min-height: 8rem;
+  padding: var(--spacing-sm, 0.75rem);
+  border-radius: var(--border-radius-md, 0.375rem);
+  border: 1px solid var(--color-border-subtle);
+  background-color: var(--color-surface-raised, #ffffff);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: var(--font-size-base, 1rem);
+  line-height: var(--line-height-normal, 1.5);
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.discussion-reply-composer__form textarea:focus,
+.discussion-reply-composer__form .form-textarea:focus {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: -1px;
+  border-color: var(--color-brand-primary);
+}
+
+.discussion-reply-composer__form .form-actions,
+.discussion-reply-composer__form > div:has(button, input[type="submit"]),
+.discussion-reply-composer__form:has(> button) {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem;
-  margin-top: 1rem;
+  gap: var(--spacing-sm, 0.75rem);
+  margin-block-start: var(--spacing-xs, 0.5rem);
+}
+
+.discussion-reply-composer__form button,
+.discussion-reply-composer__form .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--spacing-md, 1.25rem);
+  padding-block: var(--spacing-xs, 0.5rem);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-medium, 500);
+  border-radius: var(--border-radius-md, 0.375rem);
+  cursor: pointer;
+  text-decoration: none;
+  min-height: 2.75rem; /* Touch target acessível 44px */
+}
+
+.discussion-reply-composer__form button--primary,
+.discussion-reply-composer__form .button--primary,
+.discussion-reply-composer__form button[type="submit"],
+.discussion-reply-composer__form input[type="submit"] {
+  background-color: var(--color-brand-primary);
+  color: #ffffff;
+  border: 1px solid transparent;
+}
+
+.discussion-reply-composer__form button--primary:hover,
+.discussion-reply-composer__form .button--primary:hover,
+.discussion-reply-composer__form button[type="submit"]:hover,
+.discussion-reply-composer__form input[type="submit"]:hover {
+  filter: brightness(0.92);
+}
+
+.discussion-reply-composer__form button--secondary,
+.discussion-reply-composer__form .button--secondary,
+.discussion-reply-composer__form button[type="button"],
+.discussion-reply-composer__form input[type="button"] {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.discussion-reply-composer__form button--secondary:hover,
+.discussion-reply-composer__form .button--secondary:hover,
+.discussion-reply-composer__form button[type="button"]:hover,
+.discussion-reply-composer__form input[type="button"]:hover {
+  background-color: var(--color-surface-subtle);
 }
 
 @media (prefers-reduced-motion: reduce) {

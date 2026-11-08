@@ -1,31 +1,55 @@
-<div id="{{ target_id }}" class="discussion-reply-composer discussion-reply-composer--{{ status }}" data-discussion-reply-composer data-status="{{ status }}" data-parent-id="{{ parent_id|default('') }}">
-  <div class="discussion-reply-composer__inner">
-    {% if parent_id and parent_author %}
-      <div class="discussion-reply-composer__parent-banner">
-        <span class="discussion-reply-composer__parent-label">{{ 'Respondendo a:'|t }}</span>
-        <strong class="discussion-reply-composer__parent-author">{{ parent_author }}</strong>
-        {% if parent_subject %}
-          <span class="discussion-reply-composer__parent-subject">({{ parent_subject }})</span>
-        {% endif %}
+<div id="{{ target_id }}" class="discussion-reply-composer discussion-reply-composer--{{ status }} forum-post-card forum-post-card--stripe-brand" data-discussion-reply-composer data-status="{{ status }}" data-parent-id="{{ parent_id|default('') }}">
+  <div class="forum-post-card__stripe"></div>
+  <div class="forum-post-card__inner">
+    <header class="forum-post-card__header discussion-reply-composer__header">
+      <div class="forum-post-card__author">
+        <div class="forum-post-card__avatar">
+          <div class="forum-post-card__avatar-fallback" aria-hidden="true">
+            {{ include('aculta420_v2:icon', { name: 'user-circle', variant: 'duotone', size: 'md' }, with_context = false) }}
+          </div>
+        </div>
+        <div class="forum-post-card__author-info">
+          <div class="forum-post-card__author-name-row">
+            <span class="forum-post-card__author-name">{{ 'Sua Resposta'|t }}</span>
+            <span class="forum-post-card__author-role">{{ 'Compositor'|t }}</span>
+          </div>
+          {% if host_title %}
+            <div class="forum-post-card__author-meta">
+              <span class="discussion-reply-composer__host-title">{{ host_title }}</span>
+            </div>
+          {% endif %}
+        </div>
       </div>
-    {% endif %}
+    </header>
 
-    {% if messages %}
-      <div class="discussion-reply-composer__messages" role="status" aria-live="polite">
-        {{ messages }}
-      </div>
-    {% endif %}
+    <div class="forum-post-card__body discussion-reply-composer__body">
+      {% if parent_id and parent_author %}
+        <div class="discussion-reply-composer__parent-banner">
+          <span class="discussion-reply-composer__parent-label">{{ 'Respondendo a:'|t }}</span>
+          <strong class="discussion-reply-composer__parent-author">{{ parent_author }}</strong>
+          {% if parent_subject %}
+            <span class="discussion-reply-composer__parent-subject">({{ parent_subject }})</span>
+          {% endif %}
+        </div>
+      {% endif %}
 
-    {% if context %}
-      <div class="discussion-reply-composer__context">
-        {{ context }}
-      </div>
-    {% endif %}
+      {% if messages %}
+        <div class="discussion-reply-composer__messages" role="status" aria-live="polite">
+          {{ messages }}
+        </div>
+      {% endif %}
 
-    {% if form %}
-      <div class="discussion-reply-composer__form">
-        {{ form }}
-      </div>
-    {% endif %}
+      {% if context %}
+        <div class="discussion-reply-composer__context">
+          {{ context }}
+        </div>
+      {% endif %}
+
+      {% if form %}
+        <div class="discussion-reply-composer__form">
+          {{ form }}
+        </div>
+      {% endif %}
+    </div>
   </div>
 </div>
