@@ -145,7 +145,7 @@ final class ContributionLifecycle {
       try {
         $proposal->save();
         $this->flood->register(self::FLOOD_EVENT, $floodWindow, (string) $accountId);
-        unset($transaction);
+        $transaction->commitOrRelease();
       }
       catch (\Throwable $exception) {
         $transaction->rollBack();
@@ -246,7 +246,7 @@ final class ContributionLifecycle {
         $current->isDefaultRevision(TRUE);
         $current->setRevisionLogMessage($sourceConflict ? 'Source revision conflict' : 'Proposal decision: ' . $outcome);
         $current->save();
-        unset($transaction);
+        $transaction->commitOrRelease();
       }
       catch (\Throwable $exception) {
         $transaction->rollBack();
