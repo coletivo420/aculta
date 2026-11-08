@@ -41,13 +41,6 @@
   "titulo": "Components library | Associação Cultural Antiproibicionista",
   "auditoria_escuro": [
     {
-      "componente": "Canais sociais",
-      "cor": "rgb(23, 21, 19)",
-      "fundo": "rgb(43,39,35)",
-      "razao": 1.23,
-      "texto": "ACULTA - Associação Cultural Antiproibicionista"
-    },
-    {
       "componente": "",
       "cor": "rgb(107, 114, 128)",
       "fundo": "rgb(23,21,19)",
@@ -56,61 +49,47 @@
     }
   ],
   "origem_cor": {
-    "corComputada": "rgb(23, 21, 19)",
+    "corComputada": "rgb(107, 114, 128)",
     "elemento": "P.",
     "modoDaPagina": "dark",
     "regras": [
       {
-        "cor": "var(--color-footer-text)",
-        "elemento": "FOOTER.site-footer site-footer--social-links",
+        "cor": "rgb(107, 114, 128)",
+        "elemento": "DIV.empty-message",
         "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
-        "nivel": 4,
-        "sel": ".site-footer"
-      },
-      {
-        "cor": "var(--color-footer-text)",
-        "elemento": "P.",
-        "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
-        "nivel": 0,
-        "sel": ".site-footer :is(p, dd, .aculta-footer-description, .aculta-footer-cnpj, .aculta-institution-details, .field--name-field"
-      },
-      {
-        "cor": "var(--color-text-secondary)",
-        "elemento": "FOOTER.site-footer site-footer--social-links",
-        "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
-        "nivel": 4,
-        "sel": ".site-footer--social-links"
+        "nivel": 1,
+        "sel": ".empty-message"
       },
       {
         "cor": "var(--color-text-primary)",
         "elemento": "DIV.ui_patterns_story__preview",
         "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
-        "nivel": 5,
+        "nivel": 3,
         "sel": ".ui_patterns_story__preview[data-theme], .ui_patterns_story__story[data-theme]"
       },
       {
         "cor": "var(--color-text-primary)",
         "elemento": "DIV.ui_patterns_story__preview",
         "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
-        "nivel": 5,
+        "nivel": 3,
         "sel": ".layout-page__content[data-theme], .ui_patterns_story__preview[data-theme], .ui_patterns_story__story[data-theme]"
       },
       {
         "cor": "var(--color-text-primary)",
         "elemento": "DIV.layout-page__content",
         "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
-        "nivel": 11,
+        "nivel": 9,
         "sel": ".layout-page__content[data-theme], .ui_patterns_story__preview[data-theme], .ui_patterns_story__story[data-theme]"
       },
       {
         "cor": "var(--color-text-primary)",
         "elemento": "BODY.aculta-radius--button-lg aculta-radius--card-lg ac",
         "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
-        "nivel": 15,
+        "nivel": 13,
         "sel": "body"
       }
     ],
-    "texto": "ACULTA - Associação Cultural Antiproibic",
+    "texto": "No RFC data available.",
     "tokenTextoNaPagina": "#f4efe8",
     "tokenTextoNoElemento": "#f4efe8"
   },
