@@ -41,6 +41,8 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
     'aculta_commerce',
     'aculta_commerce_melhorenvio',
     'aculta_calendar',
+    'aculta_events',
+    'geofield',
     'aculta_document_viewer',
     'aculta_file_uploader',
     'aculta_lms',
@@ -399,12 +401,16 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
     $this->installEntitySchema('path_alias');
     $this->container->get('router.builder')->rebuild();
     $build = $this->container->get('aculta_commerce_melhorenvio.status_controller')->page();
-    $html = (string) $this->container->get('renderer')->renderInIsolation($build);
+    // Renderiza só a tabela de status: o botão é um SDC e o tema V2 não está ativo neste teste.
+    $html = (string) $this->container->get('renderer')->renderInIsolation($build['status']);
     self::assertStringContainsString('Sandbox (testes)', $html);
     self::assertStringContainsString('Não conectada', $html);
-    self::assertStringContainsString('data-aculta-popup="melhorenvio_autorizacao"', $html);
-    self::assertStringContainsString('data-portal-ui="button-primary"', $html);
-    self::assertStringContainsString('/integracoes/melhorenvio/autorizar', $html);
+    $connect = $build['connect'];
+    self::assertSame('component', $connect['#type']);
+    self::assertSame('aculta420_v2:button', $connect['#component']);
+    self::assertSame('primary', $connect['#props']['variant']);
+    self::assertSame('melhorenvio_autorizacao', $connect['#attributes']['data-aculta-popup']);
+    self::assertStringContainsString('/integracoes/melhorenvio/autorizar', $connect['#props']['url']);
     self::assertSame(0, $build['#cache']['max-age']);
   }
 
