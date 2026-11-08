@@ -45,6 +45,7 @@ final class AcultaEditorFormatsKernelTest extends KernelTestBase {
     'ckeditor5_plugin_pack',
     'ckeditor5_plugin_pack_templates',
     'aculta_editor',
+    'text_with_summary',
   ];
 
   /**

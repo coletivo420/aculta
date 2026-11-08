@@ -26,6 +26,7 @@ final class FaqEditorialSafetyKernelTest extends KernelTestBase {
   protected static $modules = [
     'system', 'user', 'file', 'field', 'node', 'node_storage_body_field', 'text', 'filter',
     'block_content', 'block_content_storage_body_field', 'menu_ui', 'aculta_faq',
+    'text_with_summary',
   ];
 
   /**
