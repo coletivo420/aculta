@@ -30,7 +30,8 @@
   outline-offset: 2px;
 }
 
-.ui_patterns_story__preview[data-theme] {
+.ui_patterns_story__preview[data-theme],
+.ui_patterns_story__story[data-theme] {
   background: var(--color-canvas);
   color: var(--color-text-primary);
   padding: 1rem;

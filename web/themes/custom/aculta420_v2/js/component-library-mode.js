@@ -29,7 +29,9 @@
   }
 
   function applyMode(mode) {
-    var previews = document.querySelectorAll('.ui_patterns_story__preview, .aculta-library-scheme-grid');
+    // Todas as pré-visualizações de componente: overview (__preview) e página
+    // de componente único (__story). Vale para qualquer componente, não só botões.
+    var previews = document.querySelectorAll('.ui_patterns_story__preview, .ui_patterns_story__story');
     Array.prototype.forEach.call(previews, function (node) {
       node.setAttribute('data-theme', mode);
     });
