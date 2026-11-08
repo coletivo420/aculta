@@ -105,7 +105,6 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     'vvjs',
     'aculta_image',
     'aculta_mail_confirmer',
-    'aculta_mail_confirmer_user',
     'aculta_mailer',
     'aculta_portal',
     'aculta_portal_cep',

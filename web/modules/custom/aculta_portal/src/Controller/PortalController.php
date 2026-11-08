@@ -462,7 +462,7 @@ final class PortalController extends ControllerBase {
       'current_label' => ['#theme' => 'aculta_portal_element', '#tag' => 'h4', '#value' => $this->t('E-mail atual')],
       'current_email' => ['#plain_text' => $account->getEmail()],
     ];
-    if ($email_ready && $this->modules->moduleExists('aculta_mail_confirmer_user')) {
+    if ($email_ready && $this->modules->moduleExists('aculta_mail_confirmer')) {
       $pending_email = $this->pendingEmail($account->id());
       if ($pending_email !== NULL) {
         $section_content['pending'] = [
@@ -522,7 +522,7 @@ final class PortalController extends ControllerBase {
    * E-mail pendente de confirmação para a conta, se houver.
    */
   private function pendingEmail(int|string $uid): ?string {
-    if (!$this->modules->moduleExists('aculta_mail_confirmer_user')) {
+    if (!$this->modules->moduleExists('aculta_mail_confirmer')) {
       return NULL;
     }
     $pending = $this->userData->get('aculta_mail_confirmer_user', $uid, 'email_change_new_address');

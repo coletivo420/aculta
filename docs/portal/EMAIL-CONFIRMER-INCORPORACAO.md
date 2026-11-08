@@ -43,7 +43,7 @@ aculta_portal, sem perder confirmações pendentes nem quebrar links já enviado
 
 ## Resultado (2026-10-20)
 
-- Código: módulo `aculta_mail_confirmer` (com `aculta_mail_confirmer_user`) em `web/modules/custom/aculta_portal/modules/`, com nomes do projeto, hooks com `#[Hook]` e entidade com atributo.
+- Código: módulo `aculta_mail_confirmer` em `web/modules/custom/aculta_portal/modules/`, com nomes do projeto, hooks com `#[Hook]` e entidade com atributo (com as funções de usuário fundidas no módulo principal).
 - Caminhos públicos: `/aculta-mail-confirmer/responder/...` e `/aculta-mail-confirmer/reenviar/...`. No domínio de Conta, o Portal publica `/confirmar-email/...`. Links já enviados com o caminho antigo (`/email-confirmer/reply/...`) passam a responder 404: os de mais de 24 horas já estavam expirados; os recentes precisam de um novo pedido.
 - Dados: as 28 confirmações foram copiadas para `aculta_mail_confirmer`, preservando `cid`, `uuid` e demais campos; conferência campo a campo com comparação que aceita `NULL` (28/28). Só o `realm` de troca de e-mail muda (`email_confirmer_user` para `aculta_mail_confirmer_user`; 27 registros). A tabela antiga foi apagada depois dessa conferência, na desinstalação.
 - Permissão: `access aculta mail confirmer` concedida a `authenticated` (configuração versionada igual ao Runtime, exceto a ordem da lista).

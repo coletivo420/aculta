@@ -1,5 +1,11 @@
 # Changelog — ACULTA Mail Confirmer
 
+## 0.1.0-dev.5 — fusão do aculta_mail_confirmer_user ao módulo principal — 2026-11-08
+
+- O submódulo `aculta_mail_confirmer_user` foi fundido diretamente ao `aculta_mail_confirmer` como funcionalidade nativa.
+- Hooks de troca de e-mail de usuário, login, form alter e access checker migrados para o namespace `Drupal\aculta_mail_confirmer`.
+- Suíte Kernel do módulo combinada: 8 testes / 60 assertions PASS em `aculta_simpletest`.
+
 ## 0.1.0-dev.4 — proteger a rota de reenvio pela autorização da entidade — 2026-10-26
 
 - A rota `/aculta-mail-confirmer/reenviar/{confirmation}` agora usa o access checker do Entity API para exigir `update` na confirmação, além do token CSRF. Confirmações privadas são restritas ao UID proprietário, conforme o handler existente; o endpoint deixou de depender somente da permissão genérica `access aculta mail confirmer`.

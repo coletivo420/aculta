@@ -52,7 +52,6 @@ final class SecretsRoutesKernelTest extends KernelTestBase {
     'aculta_mailer',
     'aculta_user',
     'aculta_mail_confirmer',
-    'aculta_mail_confirmer_user',
     'commerce_price',
     'commerce_product',
     'commerce_store',

@@ -42,7 +42,7 @@ final class ChangemailHooks {
   #[Hook('aculta_portal_changemail_alter')]
   public function changemailAlter(array &$section, UserInterface $account, bool $emailReady): void {
     if (!$emailReady
-      || !$this->moduleHandler->moduleExists('aculta_mail_confirmer_user')
+      || !$this->moduleHandler->moduleExists('aculta_mail_confirmer')
       || !$this->configFactory->get('aculta_mail_confirmer_user.settings')->get('user_email_change.enabled')) {
       return;
     }

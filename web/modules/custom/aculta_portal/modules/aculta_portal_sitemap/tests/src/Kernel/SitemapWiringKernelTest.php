@@ -36,7 +36,6 @@ final class SitemapWiringKernelTest extends KernelTestBase {
     'aculta_image',
     'aculta_file_uploader',
     'aculta_mail_confirmer',
-    'aculta_mail_confirmer_user',
     'aculta_mailer',
     'aculta_pagamentos_mercadopago',
     'aculta_portal',

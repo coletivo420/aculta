@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_mail_confirmer_user\Hook;
+namespace Drupal\aculta_mail_confirmer\Hook;
 
 use Drupal\Core\Hook\Attribute\Hook;
 
@@ -19,7 +19,7 @@ final class UserEmailChangeEntityTypeHooks {
    */
   #[Hook('entity_type_alter')]
   public function entityTypeAlter(array &$entity_types): void {
-    $entity_types['user']->setFormClass('cancel_email_change', '\Drupal\aculta_mail_confirmer_user\Form\UserEmailChangeCancelForm');
+    $entity_types['user']->setFormClass('cancel_email_change', '\Drupal\aculta_mail_confirmer\Form\UserEmailChangeCancelForm');
   }
 
 }

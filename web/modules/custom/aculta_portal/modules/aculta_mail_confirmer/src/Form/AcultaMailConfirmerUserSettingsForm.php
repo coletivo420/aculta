@@ -1,6 +1,8 @@
 <?php
 
-namespace Drupal\aculta_mail_confirmer_user\Form;
+declare(strict_types=1);
+
+namespace Drupal\aculta_mail_confirmer\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;

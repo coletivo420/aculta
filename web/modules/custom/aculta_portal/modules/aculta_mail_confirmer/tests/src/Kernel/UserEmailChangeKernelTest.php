@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_mail_confirmer_user\Kernel;
+namespace Drupal\Tests\aculta_mail_confirmer\Kernel;
 
 use Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface;
 use Drupal\KernelTests\KernelTestBase;
@@ -13,7 +13,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 /**
  * Troca de e-mail da conta: só vale depois da confirmação do novo endereço.
  */
-#[Group('aculta_mail_confirmer_user')]
+#[Group('aculta_mail_confirmer')]
 #[RunTestsInSeparateProcesses]
 final class UserEmailChangeKernelTest extends KernelTestBase {
 
@@ -22,7 +22,7 @@ final class UserEmailChangeKernelTest extends KernelTestBase {
    *
    * @var string[]
    */
-  protected static $modules = ['system', 'user', 'token', 'aculta_mail_confirmer', 'aculta_mail_confirmer_user'];
+  protected static $modules = ['system', 'user', 'token', 'aculta_mail_confirmer'];
 
   private const OLD_EMAIL = 'antiga@example.invalid';
   private const NEW_EMAIL = 'nova@example.invalid';
@@ -35,7 +35,7 @@ final class UserEmailChangeKernelTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('aculta_mail_confirmer');
     $this->installSchema('user', ['users_data']);
-    $this->installConfig(['aculta_mail_confirmer', 'aculta_mail_confirmer_user']);
+    $this->installConfig(['aculta_mail_confirmer']);
     $this->config('system.mail')->set('interface.default', 'test_mail_collector')->save();
   }
 

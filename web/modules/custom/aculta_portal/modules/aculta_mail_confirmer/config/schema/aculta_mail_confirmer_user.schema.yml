@@ -1,4 +1,4 @@
-# Schema for the configuration files of the email confirmer user submodule.
+# Schema for the configuration files of the email confirmer user settings.
 
 aculta_mail_confirmer_user.settings:
   type: config_object

@@ -23,14 +23,22 @@ final class MailHooks {
    */
   #[Hook('mail')]
   public function mail(string $key, array &$message, array $params): void {
-    if ($key !== 'confirmation_request') {
+    if ($key === 'confirmation_request') {
+      $context = $params['context'];
+      $settings = $this->configFactory->get('aculta_mail_confirmer.settings');
+      $message['to'] = $context['aculta_mail_confirmer']->getEmail();
+      $message['subject'] = $this->token->replace($settings->get('confirmation_request.subject'), $context, ['sanitize' => FALSE]);
+      $message['body'][] = $this->token->replace($settings->get('confirmation_request.body'), $context, ['sanitize' => FALSE]);
       return;
     }
-    $context = $params['context'];
-    $settings = $this->configFactory->get('aculta_mail_confirmer.settings');
-    $message['to'] = $context['aculta_mail_confirmer']->getEmail();
-    $message['subject'] = $this->token->replace($settings->get('confirmation_request.subject'), $context, ['sanitize' => FALSE]);
-    $message['body'][] = $this->token->replace($settings->get('confirmation_request.body'), $context, ['sanitize' => FALSE]);
+
+    if ($key === 'notify_current') {
+      $context = $params['context'];
+      $message['to'] = $context['user']->getEmail();
+      $message['subject'] = $this->token->replace(t('Email change request for your user account at [site:name]'), $context, ['sanitize' => FALSE]);
+      $message['body'][] = $this->token->replace(t('A request to change your email address has been made at [site:name]. In order to confirm the update of your email address you will need to follow the instructions sent to your new email address.'), $context, ['sanitize' => FALSE]);
+      return;
+    }
   }
 
 }

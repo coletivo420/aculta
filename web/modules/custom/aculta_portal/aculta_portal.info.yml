@@ -23,7 +23,6 @@ dependencies:
   - drupal:user
   - login_emailusername:login_emailusername
   - aculta_portal:aculta_mail_confirmer
-  - aculta_portal:aculta_mail_confirmer_user
   - social_auth:social_auth
   - group:group
   - commerce:commerce

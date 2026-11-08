@@ -1,6 +1,8 @@
 <?php
 
-namespace Drupal\aculta_mail_confirmer_user\Access;
+declare(strict_types=1);
+
+namespace Drupal\aculta_mail_confirmer\Access;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -16,20 +18,16 @@ class UserEmailPendingChangeAccess implements AccessInterface {
 
   /**
    * The config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * The user data service.
-   *
-   * @var \Drupal\user\UserDataInterface
    */
-  protected $userData;
+  protected UserDataInterface $userData;
 
   /**
-   * Constructs a UserEmailChangeAccess instance.
+   * Constructs a UserEmailPendingChangeAccess instance.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
@@ -68,7 +66,7 @@ class UserEmailPendingChangeAccess implements AccessInterface {
     }
 
     // The target user must have a pending email change.
-    if (!$new_email = $this->userData->get('aculta_mail_confirmer_user', $user->id(), 'email_change_new_address')) {
+    if (!$this->userData->get('aculta_mail_confirmer_user', $user->id(), 'email_change_new_address')) {
       $access_result = AccessResult::forbidden();
     }
     else {

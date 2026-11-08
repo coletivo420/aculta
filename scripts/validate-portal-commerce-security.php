@@ -64,7 +64,7 @@ $assert(!$modules->moduleExists('user_registrationpassword'), 'Incompatible user
 $assert($modules->moduleExists('username_enumeration_prevention'), 'Username Enumeration Prevention remains enabled.');
 $assert(!$modules->moduleExists('honeypot'), 'Honeypot is not enabled.');
 $assert($modules->moduleExists('login_emailusername'), 'The existing Login Email or Username module is enabled.');
-$assert($modules->moduleExists('aculta_mail_confirmer') && $modules->moduleExists('aculta_mail_confirmer_user'), 'ACULTA Mail Confirmer and its user integration are enabled.');
+$assert($modules->moduleExists('aculta_mail_confirmer'), 'ACULTA Mail Confirmer is enabled.');
 $assert($modules->moduleExists('aculta_user') && !$modules->moduleExists('change_mail_page'), 'ACULTA User supplies the canonical new-address form; the contrib Change Mail Page is retired.');
 $assert(\Drupal::config('aculta_mail_confirmer_user.settings')->get('user_email_change.enabled') === TRUE, 'ACULTA Mail Confirmer intercepts user email changes.');
 // A camada de envio E-Mails ACULTA controla o envio: o transporte padrão

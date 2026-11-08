@@ -60,7 +60,6 @@ trait DocumentViewerKernelClosureTrait {
     'login_emailusername',
     'aculta_mail_confirmer',
     'token',
-    'aculta_mail_confirmer_user',
     'social_auth',
     'social_api',
     'group',

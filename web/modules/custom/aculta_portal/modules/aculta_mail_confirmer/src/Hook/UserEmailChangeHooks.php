@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_mail_confirmer_user\Hook;
+namespace Drupal\aculta_mail_confirmer\Hook;
 
 use Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface;
 use Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface;
@@ -110,7 +110,7 @@ final class UserEmailChangeHooks {
 
     // Send notification to the current email address.
     if ($config['notify_current']) {
-      $this->mailManager->mail('aculta_mail_confirmer_user',
+      $this->mailManager->mail('aculta_mail_confirmer',
         'notify_current',
         $old_email,
         $this->languageManager->getDefaultLanguage()->getId(),
@@ -158,7 +158,7 @@ final class UserEmailChangeHooks {
           break;
 
         case 'cancel':
-          $this->loggerFactory->get('aculta_mail_confirmer_user')->warning(
+          $this->loggerFactory->get('aculta_mail_confirmer')->warning(
             'Requested user email change for %user has been rejected by the %mail email address owner.',
             [
               '%user' => $user->getDisplayName(),

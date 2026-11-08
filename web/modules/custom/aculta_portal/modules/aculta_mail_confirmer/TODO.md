@@ -1,6 +1,6 @@
 # TODO — aculta_mail_confirmer
 
-Estado: Dev · versão 0.1.0-dev.4 (`aculta_mail_confirmer.info.yml`) · status: `docs/operations/status/aculta_mail_confirmer.yml`.
+Estado: Dev · versão 0.1.0-dev.5 (`aculta_mail_confirmer.info.yml`) · status: `docs/operations/status/aculta_mail_confirmer.yml`.
 
 ## Próximo passo
 

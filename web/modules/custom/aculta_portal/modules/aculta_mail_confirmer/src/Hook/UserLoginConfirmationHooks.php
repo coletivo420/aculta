@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_mail_confirmer_user\Hook;
+namespace Drupal\aculta_mail_confirmer\Hook;
 
 use Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface;
 use Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface;
