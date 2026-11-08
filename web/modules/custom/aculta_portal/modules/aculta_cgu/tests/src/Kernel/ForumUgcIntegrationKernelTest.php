@@ -50,6 +50,7 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
     'field',
     'text',
     'filter',
+    'options',
     'node',
     'comment',
     'flag',
