@@ -32,17 +32,23 @@
       </ul>
       {% if all_connections_url %}
         <div class="aculta-studio-connections-block__footer">
-          <a href="{{ all_connections_url }}" class="button button--secondary aculta-studio-connections-block__all-btn">
-            {{ all_connections_label|default('Ver todas'|t) }}
-          </a>
+          {{ include('aculta420_v2:button', {
+            text: all_connections_label|default('Ver todas'|t),
+            url: all_connections_url,
+            variant: 'secondary',
+            attributes: create_attribute({ class: ['aculta-studio-connections-block__all-btn'] }),
+          }, with_context = false) }}
         </div>
       {% endif %}
     {% else %}
       <div class="aculta-studio-connections-block__empty">
         <p class="aculta-studio-connections-block__empty-msg">{{ empty_message|default('Você ainda não tem conexões'|t) }}</p>
-        <a href="{{ find_connections_url }}" class="button button--primary aculta-studio-connections-block__find-btn">
-          {{ find_connections_label|default('Encontrar conexões'|t) }}
-        </a>
+        {{ include('aculta420_v2:button', {
+          text: find_connections_label|default('Encontrar conexões'|t),
+          url: find_connections_url,
+          variant: 'primary',
+          attributes: create_attribute({ class: ['aculta-studio-connections-block__find-btn'] }),
+        }, with_context = false) }}
       </div>
     {% endif %}
   </div>

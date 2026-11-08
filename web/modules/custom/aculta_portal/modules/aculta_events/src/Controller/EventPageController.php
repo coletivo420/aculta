@@ -17,6 +17,7 @@ use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Component\Utility\Html;
@@ -53,6 +54,7 @@ final class EventPageController extends ControllerBase {
     private readonly ?MapRenderer $mapRenderer = NULL,
     private readonly ?RouteLinkBuilder $routeLinks = NULL,
     private readonly ?LocationCatalogue $locationCatalogue = NULL,
+    private readonly ?RendererInterface $renderer = NULL,
   ) {}
 
   /**
@@ -68,6 +70,7 @@ final class EventPageController extends ControllerBase {
       $container->has('aculta_maps.renderer') ? $container->get('aculta_maps.renderer') : NULL,
       $container->has('aculta_maps.route_link_builder') ? $container->get('aculta_maps.route_link_builder') : NULL,
       $container->has('aculta_events.locations') ? $container->get('aculta_events.locations') : NULL,
+      $container->has('renderer') ? $container->get('renderer') : NULL,
     );
   }
 
@@ -312,7 +315,17 @@ final class EventPageController extends ControllerBase {
       $adminUrl = $this->purposes?->environmentPathUrl('main', $adminPath);
       $editUrl = $adminUrl?->toString()
         ?? Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $evento->id()])->toString();
-      $prefix = '<div class="event-admin-actions mb-4"><a href="' . Html::escape($editUrl) . '" class="button button--primary">' . $this->t('Editar evento e datas') . '</a></div>';
+      $adminButton = [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:button',
+        '#props' => [
+          'text' => (string) $this->t('Editar evento e datas'),
+          'url' => $editUrl,
+          'variant' => 'primary',
+        ],
+      ];
+      $buttonHtml = $this->renderer !== NULL ? (string) $this->renderer->renderInIsolation($adminButton) : '';
+      $prefix = '<div class="event-admin-actions mb-4">' . $buttonHtml . '</div>';
     }
 
     // Organização verificada e coorganizadores (ARQ-05 / OC-C).
