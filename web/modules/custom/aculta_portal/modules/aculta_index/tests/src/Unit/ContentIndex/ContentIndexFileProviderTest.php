@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_index_file\Unit;
+namespace Drupal\Tests\aculta_index\Unit\ContentIndex;
 
-use Drupal\aculta_index_file\ContentIndex\FileContentIndexProvider;
+use Drupal\aculta_index\ContentIndex\FileContentIndexProvider;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\file\FileInterface;
 use Drupal\Tests\UnitTestCase;
@@ -13,7 +13,6 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Verifies the minimal File provider used by the Statistics bridge.
  */
-#[Group('aculta_index')]
 #[Group('aculta_index')]
 final class ContentIndexFileProviderTest extends UnitTestCase {
 

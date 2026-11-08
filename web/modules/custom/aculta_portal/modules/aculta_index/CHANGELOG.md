@@ -1,3 +1,10 @@
+## 0.1.0-dev.182 — integra provider file:file ao aculta_index
+
+- O submódulo `aculta_index_file` deixa de existir como submódulo independente
+  e tem sua função integrada diretamente como provider `FileContentIndexProvider`
+  (serviço `aculta_index.file_provider`) em `aculta_index`.
+- Unit e Kernel atualizados: Unit 53/286 e Kernel `ContentIndexStatisticsBridgeKernelTest` 3/55 PASS.
+
 ## 0.1.0-dev.181 — valida boot dos providers owner
 
 - A integração de owners inclui o schema real da configuração Portal e deriva

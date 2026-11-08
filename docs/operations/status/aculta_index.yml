@@ -1,10 +1,11 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.181
+version: 0.1.0-dev.182
 state: Dev
 next_phase: >-
   Concluir grants/Domain dos providers owners, avaliar catálogo representativo e homologação operacional; manter Dev e não fazer rebuild no Runtime nesta integração.
   Incluir o incremento LOC/IDX-LOC conforme [plano](docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), sem substituir os gates anteriores.
 progress_note: >-
+  Dev.182: submódulo aculta_index_file integrado diretamente a aculta_index como provider nativo FileContentIndexProvider (serviço aculta_index.file_provider). Unit 53/286 e Kernel ContentIndexStatisticsBridgeKernelTest 3/55 PASS.
   Dev.181: boot da closure owner LMS/Resources/Document Viewer/Portal/Index e
   provider/tag confirmados em Kernel. Index + upload: 8/162 PASS, 216
   depreciações Core/contrib.

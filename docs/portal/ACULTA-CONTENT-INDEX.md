@@ -22,14 +22,14 @@ Adapters permanecem no aculta_events; aculta_index não ganha entidades de orige
 No branch `refactor/opencultures-codigo-visual`, as suítes atuais no MariaDB
 `aculta_simpletest` passaram: Unit Index 51 testes / 265 assertions; Kernel
 Index 120 / 2.020, com 270 depreciações Core/contrib/PHPUnit; Unit opcional
-`aculta_index_file` 2 / 21. O lint dos 85 arquivos PHP e PHPCS
+`aculta_index` Unit File 2 / 21. O lint dos 85 arquivos PHP e PHPCS
 Drupal/DrupalPractice passaram depois de corrigir os docblocks do painel de
 status. A revalidação confirma o harness, não a ativação completa dos owners.
 Grants operacionais e carga representativa continuam pendentes; nenhum rebuild
 ou escrita no Runtime foi executado. O módulo permanece Dev.
 
 Consulta read-only repetida em 2026-10-29 no Runtime de desenvolvimento: código ativo
-dev.177, `aculta_index_file` Disabled, fila vazia e pronta; uma auditoria já
+dev.177, provider `file:file` integrado, fila vazia e pronta; uma auditoria já
 existente (id 1) permanece `running`, com 1 projeção stale e `valid=false`.
 Não avancei essa auditoria nem iniciei rebuild. Resolver a auditoria pendente
 com operador autorizado é pré-requisito para nova homologação do catálogo.
@@ -40,7 +40,7 @@ com operador autorizado é pré-requisito para nova homologação do catálogo.
 **Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
 **Schema IDX 0.1-C:** [modelo inicial e gates pendentes](ACULTA-CONTENT-INDEX-SCHEMA-0.1-C.md).
 **Benchmarks IDX 0.1-G/R:** [matriz, operações e evidências](ACULTA-CONTENT-INDEX-BENCHMARK.md).
-**Bridge de Statistics:** [contrato opcional e estratégia de correlação](ACULTA-CONTENT-INDEX-STATISTICS-BRIDGE.md). Uma página incompatível com a métrica selecionada é rejeitada integralmente; não há totais parciais nem descarte silencioso de itens. O submódulo opcional `aculta_index_file` registra `file:file` (somente permanentes, sem nome/URI/MIME/tamanho) e torna `media.files.requests` alcançável quando habilitado e a conta tem `administer aculta_statistics`.
+**Bridge de Statistics:** [contrato opcional e estratégia de correlação](ACULTA-CONTENT-INDEX-STATISTICS-BRIDGE.md). Uma página incompatível com a métrica selecionada é rejeitada integralmente; não há totais parciais nem descarte silencioso de itens. O provider nativo `file:file` de `aculta_index` registra `file:file` (somente permanentes, sem nome/URI/MIME/tamanho) e torna `media.files.requests` alcançável quando a conta tem `administer aculta_statistics`.
 
 **Validação dev.152 (2026-10-23):** suíte Kernel completa MariaDB 102/1.518, sem falhas (39 depreciações Core/contrib; 54 PHPUnit). Os benchmarks 10k, 100k e 1M passaram; em 1M, rebuild 2.137,817 s, auditoria 724,020 s, pico 214,5 MiB e zero divergências. As 2.001 páginas usaram descoberta `base_table`. Medição sintética única, sem SLO. Ver [relatório de escala](benchmarks/ACULTA-CONTENT-INDEX-MAINTENANCE-2026-10-23.md).
 
@@ -105,8 +105,8 @@ relação `course_video` e teste Kernel com membro/educador e terceiro negado
 (provider v4 com o plugin PDF Group, v3 sem ele; update `8001` para sites
 existentes). Detalhes em
 [ACULTA-CONTENT-INDEX-VIDEO-RELATIONS](ACULTA-CONTENT-INDEX-VIDEO-RELATIONS.md).
-Para `media.files.requests`, o submódulo opcional `aculta_index_file` fornece
-`file:file`; sem ele a métrica segue sem provider.
+Para `media.files.requests`, o provider nativo de arquivos do `aculta_index` fornece
+`file:file`.
 
 ## Propósito e propriedade
 

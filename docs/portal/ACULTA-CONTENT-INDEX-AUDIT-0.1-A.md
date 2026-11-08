@@ -160,7 +160,7 @@ provider/tipo.
 | `course_document` | 2 | `media:course_document` | `courses` | — | Kernel Group/curso |
 | `remote_video` | 2 | `media:remote_video` | request atual | — | Kernel Media/Portal |
 | `lms_course` | 4 com plugin / 3 sem | `group:lms_course` | `courses` | `course_reading`, `course_gallery`, `course_document`, `course_video` | Kernel LMS + `takeAccess`; `field_lms_videos` |
-| `file` (submódulo `aculta_index_file`) | 1 | `file:file` | request atual | — | Unit 2/21; bridge 3/55; somente permanentes, sem nome/URI/MIME/tamanho |
+| `file` (provider nativo `aculta_index`) | 1 | `file:file` | request atual | — | Unit 2/21; bridge 3/55; somente permanentes, sem nome/URI/MIME/tamanho |
 
 Matriz de autorização exercitada:
 
@@ -183,7 +183,7 @@ Achados de integração:
   quando o verbete está publicado. O Index deve revalidar o estado atual, não
   tratar a publicação da projeção como definitiva; a fixture do Kernel ajusta
   explicitamente o estado depois do hook.
-- O submódulo opcional `aculta_index_file` fornece `file:file` (somente
+- O provider `file:file` integrado em `aculta_index` fornece `file:file` (somente
   permanentes; sem nome, URI, MIME ou tamanho) e torna
   `media.files.requests` alcançável pelo bridge quando habilitado; a conta
   precisa de `administer aculta_statistics` porque a métrica é INTERNAL.

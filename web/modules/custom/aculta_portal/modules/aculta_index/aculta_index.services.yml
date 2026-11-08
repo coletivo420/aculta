@@ -78,6 +78,11 @@ services:
 
   Drupal\aculta_index\Queue\ContentIndexWorkManager: '@aculta_index.work_manager'
 
+  aculta_index.file_provider:
+    class: Drupal\aculta_index\ContentIndex\FileContentIndexProvider
+    tags:
+      - { name: aculta_index.provider }
+
   logger.channel.aculta_index:
     parent: logger.channel_base
     arguments: ['aculta_index']
