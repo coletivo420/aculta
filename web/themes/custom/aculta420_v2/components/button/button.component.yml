@@ -16,8 +16,13 @@ props:
       format: uri-reference
     variant:
       type: string
-      enum: [primary, secondary, outline, ghost]
+      enum: [primary, secondary, outline, ghost, danger]
       default: primary
+    size:
+      type: string
+      title: Tamanho (só altera espaçamento e fonte; alvo de toque mínimo de 44 px)
+      enum: [default, small]
+      default: default
     is_submit:
       type: boolean
       default: false

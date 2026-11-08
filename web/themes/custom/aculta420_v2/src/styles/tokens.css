@@ -135,6 +135,11 @@
   --button-secondary-border: #6b7d70;
   --button-secondary-fg: #0c3c29;
   --button-focus-ring: #0c3c29;
+  /* Perigo (danger): texto branco 6,19:1; borda/anel 5,7:1 sobre o canvas claro. */
+  --button-danger-bg: #b52f22;
+  --button-danger-bg-hover: #9a2619;
+  --button-danger-bg-active: #7f1f14;
+  --button-danger-fg: #ffffff;
 
   /* Compatibility aliases for the existing shell until all consumers migrate. */
   --color-primary: var(--color-brand-primary);
@@ -277,6 +282,11 @@
   --button-secondary-border: #8fa397;
   --button-secondary-fg: #f4efe8;
   --button-focus-ring: #f4efe8;
+  /* Perigo (danger): texto escuro 7,46:1 sobre o fundo; borda/anel 7,46:1 sobre o canvas. */
+  --button-danger-bg: #f08a76;
+  --button-danger-bg-hover: #f59a86;
+  --button-danger-bg-active: #e27b66;
+  --button-danger-fg: #171513;
 
   /* Elevações e padrões escuros de purpose (Paleta ACULTA Skunk Family). */
   --purpose-accent: #6c9e22;

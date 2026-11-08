@@ -137,6 +137,40 @@ a.button.button--ghost:active {
   background-color: var(--button-secondary-bg-active);
 }
 
+/* Perigo (danger): ação destrutiva. Tokens --button-danger-* em tokens.css. */
+.button--danger,
+a.button--danger,
+.button.button--danger,
+a.button.button--danger {
+  color: var(--button-danger-fg);
+  border-color: var(--button-danger-bg);
+  background-color: var(--button-danger-bg);
+}
+
+.button--danger:hover,
+a.button--danger:hover,
+.button.button--danger:hover,
+a.button.button--danger:hover {
+  color: var(--button-danger-fg);
+  border-color: var(--button-danger-bg-hover);
+  background-color: var(--button-danger-bg-hover);
+}
+
+.button--danger:active,
+a.button--danger:active,
+.button.button--danger:active,
+a.button.button--danger:active {
+  color: var(--button-danger-fg);
+  border-color: var(--button-danger-bg-active);
+  background-color: var(--button-danger-bg-active);
+}
+
+/* Tamanho small: só espaçamento e fonte. O alvo de toque continua em 44 px. */
+.button--small {
+  padding: var(--spacing-xs, .25rem) var(--spacing-sm, .5rem);
+  font-size: var(--font-size-sm, .875rem);
+}
+
 /* Desativado */
 .button.is-disabled,
 .button:disabled {
