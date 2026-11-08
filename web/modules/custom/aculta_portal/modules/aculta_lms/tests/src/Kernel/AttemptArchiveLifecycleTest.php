@@ -59,7 +59,8 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     'text',
     'editor',
     'ckeditor5',
-    'comment',
+    'node', 'node_storage_body_field', 'text_with_summary', 'gnode',
+    'comment', 'media_library', 'photoswipe', 'media_gallery',
     'aculta_lms',
   ];
 
@@ -109,7 +110,6 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
       ->save();
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
     $this->container->get('group_relation_type.manager')->clearCachedPluginMaps();
-    $this->installConfig(['aculta_lms']);
     $this->installEntitySchema('action');
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
@@ -127,6 +127,20 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installEntitySchema('aculta_lms_attempt_archive');
     $this->installConfig(['group']);
+    $this->installConfig(['node', 'node_storage_body_field']);
+    $this->installEntitySchema('node');
+    // O storage field_aculta_discussion pertence ao aculta_forum; criar aqui
+    // evita habilitar o fórum inteiro só para instalar a config do LMS.
+    FieldStorageConfig::create([
+      'field_name' => 'field_aculta_discussion',
+      'entity_type' => 'node',
+      'type' => 'comment',
+      'settings' => ['comment_type' => 'aculta_discussion_post'],
+      'cardinality' => 1,
+      'translatable' => TRUE,
+      'module' => 'comment',
+    ])->save();
+    $this->installConfig(['aculta_lms']);
   }
 
   /**
