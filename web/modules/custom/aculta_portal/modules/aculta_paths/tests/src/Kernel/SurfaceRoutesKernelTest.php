@@ -71,6 +71,13 @@ final class SurfaceRoutesKernelTest extends KernelTestBase {
     'aculta_forum',
     'entity_usage',
     'migrate',
+    'comment',
+    'taxonomy',
+    'image',
+    'datetime',
+    'link',
+    'filter',
+    'field',
   ];
 
   /**
