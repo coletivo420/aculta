@@ -6,6 +6,8 @@ namespace Drupal\aculta_forum\Service;
 
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\comment\CommentInterface;
+use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -90,11 +92,16 @@ class DiscussionReplyFormBuilder {
 
     $parentSubject = NULL;
     $parentAuthor = NULL;
+    $parentCacheTags = [];
     if ($parentId !== NULL && $parentId > 0) {
       $parent = $commentStorage->load($parentId);
       if ($parent instanceof CommentInterface) {
-        $parentSubject = $parent->label();
+        $parentSubject = trim((string) $parent->label());
+        if ($parentSubject === '') {
+          $parentSubject = $this->parentBodyExcerpt($parent);
+        }
         $parentAuthor = $parent->getAuthorName();
+        $parentCacheTags = $parent->getCacheTags();
       }
     }
 
@@ -111,8 +118,28 @@ class DiscussionReplyFormBuilder {
       '#form' => $form,
       '#cache' => [
         'contexts' => ['user.permissions', 'url.query_args'],
+        'tags' => $parentCacheTags,
       ],
     ];
+  }
+
+  /**
+   * Builds a short plain-text excerpt of a comment body.
+   */
+  private function parentBodyExcerpt(CommentInterface $parent): ?string {
+    if (!$parent->hasField('comment_body') || $parent->get('comment_body')->isEmpty()) {
+      return NULL;
+    }
+    $bodyItem = $parent->get('comment_body')->get(0);
+    if ($bodyItem === NULL) {
+      return NULL;
+    }
+    $processed = (string) $bodyItem->get('processed')->getValue();
+    $text = trim((string) preg_replace('/[\s\x{00A0}]+/u', ' ', Html::decodeEntities(strip_tags($processed))));
+    if ($text === '') {
+      return NULL;
+    }
+    return Unicode::truncate($text, 60, TRUE, TRUE);
   }
 
 }

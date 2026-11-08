@@ -124,6 +124,16 @@
 [data-aculta-discussion-announcement] { position: absolute; overflow: hidden; margin: -1px; white-space: nowrap; block-size: 1px; clip-path: inset(50%); inline-size: 1px; }
 .field--name-field-aculta-discussion article.js-comment { scroll-margin-block-start: 5rem; }
 
+.field--name-field-aculta-discussion .comment__in-reply-to {
+  margin: 0 0 var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.field--name-field-aculta-discussion .comment__in-reply-to-author {
+  color: var(--color-text-primary);
+}
+
 .field--name-field-aculta-discussion .comment-comment-form {
   display: grid;
   padding: .875rem;

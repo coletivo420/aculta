@@ -10,8 +10,11 @@
 {% set composer_target_id = 'discussion-composer-' ~ commented_entity_type ~ '-' ~ commented_entity_id ~ '-' ~ comment.id %}
 {{ title_prefix }}
 <article{{ attributes.addClass('comment', 'comment--discussion', 'js-comment', status ? 'comment--' ~ status) }}>
-  {% if parent %}
-    <p class="visually-hidden">{{ parent }}</p>
+  {% if parent_comment %}
+    <p class="comment__in-reply-to">
+      {{ 'Em resposta a'|t }}
+      <strong class="comment__in-reply-to-author">{{ parent_comment.getAuthorName() }}</strong>
+    </p>
   {% endif %}
   {{ include('aculta420_v2:forum-post-card', {
     stripe: 'brand',
