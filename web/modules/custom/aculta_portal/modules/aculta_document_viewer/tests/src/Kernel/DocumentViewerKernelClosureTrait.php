@@ -25,6 +25,8 @@ trait DocumentViewerKernelClosureTrait {
   protected const DOCUMENT_VIEWER_KERNEL_CLOSURE = [
     'aculta_portal',
     'aculta_file_uploader',
+    'group',
+    'flexible_permissions',
     'ctools',
     'ctools_views',
     'block',

@@ -66,6 +66,7 @@ final class ContentIndexTranslationKernelTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
+    $this->installEntitySchema('file');
     $this->installEntitySchema('node');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('aculta_index', [

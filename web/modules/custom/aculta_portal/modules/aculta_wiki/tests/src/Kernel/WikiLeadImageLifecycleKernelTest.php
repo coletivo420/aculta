@@ -1006,9 +1006,9 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     // Kernel. Installing the theme also validates its exported settings schema.
     $this->installEntitySchema('taxonomy_term');
     $this->installConfig(['taxonomy']);
-    $this->container->get('theme_installer')->install(['aculta420']);
+    $this->container->get('theme_installer')->install(['aculta420_v2']);
     $this->container->get('config.factory')->getEditable('system.theme')
-      ->set('default', 'aculta420')
+      ->set('default', 'aculta420_v2')
       ->save();
     $this->container->get('current_user')->setAccount(new AnonymousUserSession());
     $this->container->get(DomainNegotiatorInterface::class)
@@ -1356,9 +1356,9 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('context-header', $startBuild['header']['#name']);
     self::assertSame('aculta_wiki.studio_entry_create', $startBuild['header']['#slots']['actions']['#url']->getRouteName());
     self::assertSame('content-section', $startBuild['guide']['#name']);
-    $this->container->get('theme_installer')->install(['aculta420']);
+    $this->container->get('theme_installer')->install(['aculta420_v2']);
     $this->container->get('config.factory')->getEditable('system.theme')
-      ->set('default', 'aculta420')
+      ->set('default', 'aculta420_v2')
       ->save();
     $this->container->get('theme.manager')->resetActiveTheme();
     $startHtml = (string) $this->container->get('renderer')->renderRoot($startBuild);
@@ -1407,9 +1407,9 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'status' => TRUE,
     ]);
     $entry->save();
-    $this->container->get('theme_installer')->install(['aculta420']);
+    $this->container->get('theme_installer')->install(['aculta420_v2']);
     $this->container->get('config.factory')->getEditable('system.theme')
-      ->set('default', 'aculta420')
+      ->set('default', 'aculta420_v2')
       ->save();
     $this->container->get('theme.manager')->resetActiveTheme();
 
