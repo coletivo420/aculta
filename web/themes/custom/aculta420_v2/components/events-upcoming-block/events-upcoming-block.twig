@@ -1,0 +1,21 @@
+<div{{ attributes.addClass('aculta-events-upcoming-block') }} data-portal-ui="events-upcoming-block">
+  {% if title %}
+    <div class="aculta-events-upcoming-block__header">
+      <h2 class="aculta-events-upcoming-block__title">{{ title }}</h2>
+      {% if header_actions %}
+        <div class="aculta-events-upcoming-block__actions">{{ header_actions }}</div>
+      {% endif %}
+    </div>
+  {% endif %}
+  {% if items is not empty %}
+    <ul class="aculta-events-upcoming-block__list">
+      {% for item in items %}
+        <li class="aculta-events-upcoming-block__item">
+          <a href="{{ item.url }}" class="aculta-events-upcoming-block__link" data-portal-ui="events-upcoming-link">{{ item.title }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="aculta-events-upcoming-block__empty">{{ empty_text|default('Nenhum evento publicado no momento.'|t) }}</p>
+  {% endif %}
+</div>

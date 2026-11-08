@@ -1,0 +1,10 @@
+name: Mapa com marcadores
+description: Visualização do componente de mapa com container Leaflet e aviso de privacidade.
+component: aculta420_v2:map-widget
+props:
+  map_id: map-preview-sample
+  label: Mapa de espaços culturais
+  privacy_notice_url: /sobre/politica-de-privacidade
+  privacy_notice_text: Política de privacidade
+slots:
+  fallback_list: '<ul><li><a href="/locais/1">Casa de cultura (teste)</a> — Rua 10, 123, Goiânia</li><li><a href="/locais/3">Centro Cultural Martim Cererê</a> — Setor Sul, Goiânia</li></ul>'

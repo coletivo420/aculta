@@ -1,0 +1,10 @@
+name: Próximos eventos
+description: Bloco de próximos eventos com links diretos e lista estruturada.
+component: aculta420_v2:events-upcoming-block
+props:
+  title: Próximos eventos
+  items:
+    - title: Feira do livro (teste) — 09/11/2026 09:00
+      url: https://eventos.aculta.toca.net.br/eventos/feira-do-livro-teste
+    - title: Festival Cultural ACULTA 420 (Teste) — 15/11/2026 18:00
+      url: https://eventos.aculta.toca.net.br/eventos/festival-cultural-aculta-420-teste

@@ -1,0 +1,22 @@
+<div{{ attributes.addClass('aculta-map-container') }}>
+  <div id="{{ map_id }}"
+       data-portal-ui="map-widget"
+       role="region"
+       aria-label="{{ label|default('Mapa de locais'|t) }}"
+       data-aculta-map="true"
+       class="aculta-map">
+    {% if templates %}
+      {{ templates }}
+    {% endif %}
+  </div>
+  {% if privacy_notice_url %}
+    <div data-portal-ui="map-privacy-notice" class="aculta-map__aviso">
+      <a href="{{ privacy_notice_url }}">{{ privacy_notice_text|default('Política de privacidade'|t) }}</a>
+    </div>
+  {% endif %}
+  {% if fallback_list %}
+    <div class="aculta-map__fallback-list">
+      {{ fallback_list }}
+    </div>
+  {% endif %}
+</div>

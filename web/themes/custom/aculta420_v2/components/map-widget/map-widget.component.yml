@@ -1,0 +1,33 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Mapa Interativo
+description: Container do mapa com Leaflet/OpenStreetMap, marcadores e templates de popup e ícones.
+group: Mapas
+status: experimental
+props:
+  type: object
+  additionalProperties: false
+  required: [map_id]
+  properties:
+    map_id:
+      type: string
+      minLength: 1
+    label:
+      type: string
+      default: Mapa interativo
+    privacy_notice_url:
+      type: [string, 'null']
+      format: uri-reference
+    privacy_notice_text:
+      type: string
+      default: Política de privacidade
+slots:
+  templates:
+    title: Templates de marcadores e popups
+    description: Elementos <template> que o Leaflet usa para clonar popups e marcadores dinâmicos.
+  fallback_list:
+    title: Lista alternativa acessível
+    description: Conteúdo textual de apoio para usuários sem JavaScript ou com leitores de tela.
+assets:
+  css:
+    component:
+      map-widget.css: {}
