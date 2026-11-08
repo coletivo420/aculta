@@ -45,7 +45,7 @@ final class AnswerReviewWorkflowKernelTest extends KernelTestBase {
   protected static $modules = [
     'key', 'system', 'domain', 'user', 'file', 'image', 'media', 'options',
     'entity_print', 'entity_usage', 'aculta_image', 'aculta_file_uploader',
-    'field', 'filter', 'flexible_permissions', 'group', 'views', 'text',
+    'field', 'filter', 'flexible_permissions', 'group', 'views', 'text', 'text_with_summary',
     'editor', 'ckeditor5',
     'node', 'node_storage_body_field', 'gnode',
     'comment', 'media_library', 'photoswipe', 'media_gallery', 'aculta_lms',
