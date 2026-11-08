@@ -176,3 +176,8 @@
 .site-footer--social-links a {
   color: var(--color-footer-link-text);
 }
+
+/* Variante neutra de canais sociais: textos internos usam o texto secundário, não o token do rodapé verde. */
+.site-footer--social-links :is(p, dd, .aculta-footer-description, .aculta-footer-cnpj, .aculta-institution-details, .field--name-field-headquarters) {
+  color: var(--color-text-secondary);
+}
