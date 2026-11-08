@@ -86,10 +86,10 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->installSchema('comment', ['comment_entity_statistics']);
     // media já está habilitado no boot; a config do fórum cria storages nele.
     $this->installEntitySchema('media');
-    $this->installConfig(['system', 'field', 'comment', 'filter', 'group']);
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
+    $this->installConfig(['system', 'field', 'comment', 'filter', 'group']);
     $this->installSchema('user', ['users_data']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
