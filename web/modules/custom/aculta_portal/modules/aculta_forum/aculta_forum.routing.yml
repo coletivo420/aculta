@@ -173,7 +173,7 @@ aculta_forum.post_edit:
 aculta_forum.discussion_composer:
   path: '/discussoes/compositor/{entity_type}/{entity_id}'
   defaults:
-    _controller: 'aculta_forum.discussion_reply_controller::composer'
+    _controller: 'aculta_forum.discussion_reply_controller:composer'
     _title: 'Responder à discussão'
   requirements:
     _custom_access: 'aculta_forum.discussion_reply_endpoint_access:access'
