@@ -91,6 +91,7 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('comment');
+    $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installConfig(['system', 'comment']);
     foreach ([
       'group.type.lms_course',
