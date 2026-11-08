@@ -171,3 +171,8 @@
     grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
   }
 }
+
+/* Canais sociais: texto de link sobre a superfície de link do rodapé (modo claro e escuro). */
+.site-footer--social-links a {
+  color: var(--color-footer-link-text);
+}
