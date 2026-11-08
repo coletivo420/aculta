@@ -125,6 +125,7 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
     ]);
     if ($isComponentLibrary) {
       $bodyAttributes->addClass('aculta-component-library-page');
+      $variables['#attached']['library'][] = 'aculta420_v2/component-library-mode';
     }
   }
 

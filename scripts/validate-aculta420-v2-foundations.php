@@ -34,12 +34,13 @@ foreach ([$tokensCss, $baseCss, $layoutCss, $libraries] as $source) {
 
 $rootTokens = [];
 $darkTokens = [];
-if (preg_match('/^:root\s*\{(?<body>.*?)^\}/ms', $tokensCss, $matches) !== 1) {
+// Aceita ":root {" ou a lista ":root, [data-theme=\"light\"] {" (contêiner claro da UI Library).
+if (preg_match('/^:root(?:,\s*\[data-theme="light"\])?\s*\{(?<body>.*?)^\}/ms', $tokensCss, $matches) !== 1) {
   fwrite(STDERR, "V2 foundations: base token block is missing.\n");
   exit(1);
 }
 $rootTokens = token_map($matches['body']);
-if (preg_match('/^:root\[data-theme="dark"\]\s*\{(?<body>.*?)^\}/ms', $tokensCss, $matches) !== 1) {
+if (preg_match('/^:root\[data-theme="dark"\](?:,\s*\[data-theme="dark"\])?\s*\{(?<body>.*?)^\}/ms', $tokensCss, $matches) !== 1) {
   fwrite(STDERR, "V2 foundations: explicit dark token block is missing.\n");
   exit(1);
 }

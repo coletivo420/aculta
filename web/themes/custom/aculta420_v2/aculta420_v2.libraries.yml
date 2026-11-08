@@ -34,6 +34,15 @@ studio-htmx:
     - core/once
     - core/drupal.htmx
 
+component-library-mode:
+  css:
+    component:
+      src/styles/component-library-mode.css: {}
+  js:
+    js/component-library-mode.js: { attributes: { defer: true } }
+  dependencies:
+    - core/drupal
+
 utility-drawers:
   js:
     js/utility-dialogs.js: { attributes: { defer: true } }

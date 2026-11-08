@@ -1,5 +1,8 @@
 /* ACULTA420 V2 design tokens. The Portal's explicit mode controls the theme. */
-:root {
+/* Modo claro: base de todos os tokens; também vale para [data-theme="light"]
+   para que um contêiner claro continue claro com o sistema em modo escuro. */
+:root,
+[data-theme="light"] {
   --color-canvas: #f2f7f0;
   /* Transparências semânticas (antes em color-mix inline nos componentes). */
   --color-alpha-border-75: color-mix(in sRGB, var(--color-border) 75%, transparent);
@@ -219,7 +222,10 @@
   color-scheme: light;
 }
 
-:root[data-theme="dark"] {
+/* Modo escuro: vale para o <html> e para qualquer contêiner [data-theme="dark"]
+   (pré-visualizações da UI Library). Mesmos valores, sem duplicação. */
+:root[data-theme="dark"],
+[data-theme="dark"] {
   --studio-stripe: var(--aculta-studio-dark-sub-2);
   --color-canvas: #171513;
   --color-surface: #211e1b;

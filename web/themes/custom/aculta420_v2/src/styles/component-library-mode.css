@@ -1,0 +1,38 @@
+/* Seletor Claro/Escuro da UI Library (só pré-visualizações). Alvo de toque 44 px. */
+.aculta-library-mode {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-block: 1rem;
+}
+
+.aculta-library-mode__option {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  min-block-size: 44px;
+  min-inline-size: 44px;
+  padding-inline: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+.aculta-library-mode__option:has(input:checked) {
+  background: var(--color-brand-primary);
+  color: var(--color-on-brand);
+}
+
+.aculta-library-mode__option:has(input:focus-visible) {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.ui_patterns_story__preview[data-theme] {
+  background: var(--color-canvas);
+  color: var(--color-text-primary);
+  padding: 1rem;
+  border-radius: .75rem;
+}
