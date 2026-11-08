@@ -2,6 +2,16 @@
 
 # Roadmap — ACULTA Forum
 
+## Ciclo vigente 0.2.0-dev - comentários compartilhados (2026-11-08)
+
+O ponto de entrada para trabalho novo é o [plano C02-00 a C02-08](COMENTARIOS-0.2.0-PLANO.md).
+0.2.0-dev.1 abre a fase documental; C02-01 a C02-08 aguardam implementação e
+validação. O Fórum registra os providers de Revista, Wiki, LMS e Growroom420;
+a Wiki mantém suas entidades e autorização editorial. Respostas, citações,
+prévia e erros ficam na página hospedeira, com Form API e SDC compartilhados.
+As pendências 0.1 e F-M continuam abaixo; não autorizam migração nem são
+consideradas concluídas pela mudança de versão.
+
 **Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Fechar escopo, testes, gates e revisão visual aplicável antes de RC; Alpha valida o deploy no servidor de desenvolvimento; após aprovação, preparar produção. Seções `rc.*` abaixo são planejamento/histórico legado, não autorizam deixar critérios para depois do deploy.
 
 Linha do projeto `aculta_forum`: começou em **0.1.0-dev.1**. Roadmap de escopo
@@ -28,7 +38,7 @@ consultado nesta microfase; a resposta HTTP após rebuild permanece pendente.
 
 ## Plano vigente de evolução — Fórum + Messenger (F-D41, 2026-10-24)
 
-**Este é o ponto de entrada normativo para trabalho novo.** As seções
+**Plano anterior de integração, mantido como dependência e histórico do ciclo 0.2.0.** As seções
 numeradas por `0.1.0-dev.*` e as tabelas extensas abaixo preservam
 histórico técnico, evidências de execução e backlog de outras frentes; não
 devem ser interpretadas como autorização para implementar chats contextuais,

@@ -1,6 +1,14 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-**Estado: Dev `0.1.0-dev.332`.** O registro `0.1.0-rc.2` é histórico e foi
+**Ciclo atual: 0.2.0-dev.1 - abertura documental.** O novo ciclo consolida
+comentários e respostas na página atual para Revista, Wiki, LMS e Growroom420.
+Inclui registro central dos providers pelo aculta_forum (também o da Wiki),
+Form API/HTMX, SDC de resposta, citação, acesso/cache e URLs em português.
+Plano e critérios: [Comentários 0.2.0](docs/COMENTARIOS-0.2.0-PLANO.md).
+Implementação funcional e homologação permanecem pendentes; esta versão não
+declara o comportamento corrigido. Evidências 0.1 abaixo são históricas.
+
+**Baseline histórico: Dev `0.1.0-dev.332`.** O registro `0.1.0-rc.2` é histórico e foi
 reclassificado após auditorias posteriores. A migração cobre embeds Media e
 Gallery válidos e os preserva sem alteração no corpo. O dry-run atual não
 localizou Comments de origem; por isso não consultou avisos globalmente. Segue

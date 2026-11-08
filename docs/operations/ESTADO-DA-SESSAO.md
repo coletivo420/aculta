@@ -2,6 +2,17 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
+# Fórum - comentários compartilhados 0.2.0-dev.1 - 2026-11-08
+
+- Objetivo: documentar resposta/citação na página atual para Revista, Wiki, LMS e Growroom420.
+- Arquivos: plano COMENTARIOS-0.2.0-PLANO.md, README/roadmap/TODO/changelog/manifesto do Fórum, status e índice raiz.
+- Estado: C02-00 documental; providers centralizados, SDC e correções funcionais ainda pendentes.
+- Decisão: provider Wiki será movido e registrado pelo aculta_forum, preservando ownership editorial na Wiki.
+- Verificações: revisão documental e consistência focal; PHP/gates completos, PHPUnit e navegador DEFERRED.
+- Runtime: sem acesso ao Homelab nesta sessão; sincronização de código/cache DEFERRED.
+- Próximo passo: C02-01/C02-02 e prova Form API/HTMX C02-03 conforme plano.
+- Registro anterior V2 preservado em docs/history/operations/ESTADO-DA-SESSAO-FORUM-0.2.0-2026-11-08.md.
+
 # ACULTA CGU e Consolidação Modular Transversal — 2026-11-08
 
 - **Objetivo:** unificar e consolidar módulos intermediários e duplicados no portal, integrando recursos aos seus donos de domínio e criando o módulo transversal `aculta_cgu` para gestão de Conteúdo Gerado por Usuários.
@@ -24,13 +35,3 @@
 - **Pendências e bloqueios:** atualização de coordenadas do local existente no banco aguarda atualização/re-save via interface administrativa pelo responsável (sem UPDATE direto no DB conforme AGENTS.md); minuta de privacidade 0.6 pendente de aprovação antes de publicação.
 - **Próximo passo:** aprovação da minuta de privacidade com o responsável e homologação das telas de edição/importação com usuário autenticado.
 
-# V2 — UI Patterns Library — 2026-11-07
-
-- **Objetivo:** organizar visualmente `/painel-administrativo/aparencia/ui/components`, corrigir a barra institucional e definir container próprio centralizado.
-- **Estado:** commits `ed04d341e4`, `4987d69102`, `c57fd98d68` e `df5351c35c` publicados; esta rodada adicionou stories ausentes e converteu slots HTML para render arrays Drupal. Stories PHP são resolvidas no preprocess do overview/single; menu usa o provider atual e a barra flui dentro do bloco.
-- **Decisões:** stories/pré-visualizações aparecem antes dos metadados recolhidos. CSS contém overflow e elementos posicionados por componente. Nada de colunas artificiais.
-- **Cuidados:** preview Chromium com CSS local injetado confirmou 108 blocos e sem overflow em 320/1440. Drupal respondeu 200 após corrigir declaração duplicada que causava 500. Cache foi reconstruído após a implementação; aceite visual autenticado permanece pendente.
-- **Commits e arquivos:** `ed04d341e4`, `4987d69102`, `c57fd98d68`, `df5351c35c` e commit desta atualização; tema `aculta420_v2` (hooks, stories, layout, templates, CSS, testes, TODO, CHANGELOG e docs).
-- **Verificações:** renderer Drupal 12/12 na rodada atual (Badge, Button, Conexões, Rodapé, Ícone, Wiki, Data Table e Form Field); rodada anterior Dialog/Menu/Barra/Pagination 4/4 e `utility-drawers` confirmado. Stories dinâmicas customizadas e hook testados. Schema SDC 55/764, PHP lint e Stylelint do CSS alterado PASS. `npm run lint:css` encontra violações preexistentes em `src/styles/forum.css`; gate V2 SDC encontra falso positivo `__add-btn` em `studio-calendar.twig`. Token budget e `git diff --check` PASS.
-- **Pendências e bloqueios:** cache Drupal reconstruído no Runtime. `updatedb:status` e `config:status` ainda mostram pendências preexistentes, preservadas sem execução/import. Aceite visual autenticado e teste de clique no browser permanecem pendentes.
-- **Próximo passo:** confirmar visualmente e clicar nas prévias no overview autenticado; não importar configuração nem executar updates sem escopo explícito.

@@ -1,3 +1,18 @@
+## 0.2.0-dev.1 - abertura do ciclo de comentários compartilhados (2026-11-08)
+
+- Inventário de Revista, Wiki, LMS e Growroom420; pontos de resposta Comment e ForumPost.
+- Plano C02-00 a C02-08: providers registrados centralmente pelo aculta_forum,
+  compositor Form API/HTMX, SDC, citação, atributos, permalinks e URLs em português.
+- Pesquisa adicional sobre destination, POST/render cache, lazy builders, ciclo do
+  editor e concorrência incorporada ao plano com fontes primárias.
+- Achados estáticos classificados; implementação e reprodução HTTP pendentes.
+- README, roadmap, TODO, status, manifesto e índice raiz sincronizados.
+
+Verificação desta entrega: revisão documental e consistência focal de versão/
+links/índice. Gates PHP, PHPUnit, navegador e sincronização do Runtime DEFERRED:
+ambiente desta sessão sem checkout executável, vendor ou acesso ao Homelab.
+Nenhum comportamento funcional, schema, dependência ou configuração foi alterado.
+
 ## 0.1.0-dev.339 — diálogos de anexo e galeria sobrevivem ao cache de formulário
 
 - As dependências de `ForumAttachmentUploadDialogForm` e `ForumGalleryUploadDialogForm` passam a `protected readonly`: o `DependencySerializationTrait` do FormBase não serializa propriedades privadas da subclasse, então o upload em dois passos devolvia 500 ("typed property must not be accessed before initialization").

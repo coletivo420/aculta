@@ -1,16 +1,18 @@
 # TODO — aculta_forum
 
-Estado: Dev · versão 0.1.0-dev.339 (`aculta_forum.info.yml`) · status: `docs/operations/status/aculta_forum.yml`.
+Estado: Dev · versão 0.2.0-dev.1 · status: docs/operations/status/aculta_forum.yml.
 
 ## Próximo passo
 
-Verificar a reconstrução de rotas e HTTP 404 de `/comment/{cid}` no próximo ambiente autorizado; o código substitui o acesso standalone por 404, sem alterar rotas contextuais. Repetir o inventário de migração se surgirem Comments elegíveis; o relatório atual não audita avisos globalmente. Não executar migração de dados no Runtime. Depois reavaliar F-M3/F-M6/F-M7, gates e revisão visual antes de RC. RC.2 é histórico.
+Executar C02-01 e C02-02 do plano de comentários 0.2.0: centralizar no aculta_forum o provider da Wiki, preservar acesso dos quatro contextos e corrigir atributos/permalinks. Depois provar Form API/HTMX na mesma página em C02-03 antes de integrar os consumidores. D-65 HTTP e F-M3/F-M6/F-M7 permanecem pendentes; nenhuma migração de dados autorizada.
 
 ## Leitura
 
-- Leia só este arquivo, o código alvo e o `CHANGELOG.md` do componente se ele existir, pelo trecho necessário.
-- Roadmap completo, grande: `web/modules/custom/aculta_portal/modules/aculta_forum/docs/ROADMAP.md`. Leia só a seção pelo título: `rg -n '^## ' web/modules/custom/aculta_portal/modules/aculta_forum/docs/ROADMAP.md`.
+- [Plano vigente C02](docs/COMENTARIOS-0.2.0-PLANO.md).
+- Código alvo e trecho pertinente do CHANGELOG.
+- [Roadmap](docs/ROADMAP.md) conserva dependências e pendências 0.1.
 
 ## Ao concluir uma fase
 
-Atualize versão, estado e próximo passo aqui e em `docs/operations/status/aculta_forum.yml` (quando houver), no mesmo commit. Remova o que foi concluído; não acrescente histórico neste arquivo.
+Atualizar TODO e status YAML no mesmo commit; remover o concluído sem acrescentar
+histórico ao TODO. Registrar verificações reais e DEFERRED quando não executadas.
