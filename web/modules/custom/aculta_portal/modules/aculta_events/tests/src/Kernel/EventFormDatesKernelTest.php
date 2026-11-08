@@ -77,6 +77,21 @@ final class EventFormDatesKernelTest extends KernelTestBase {
     self::assertArrayHasKey('local_id', $form['date_location']['dates'][0]);
     self::assertArrayHasKey('date_add_more', $form);
 
+    // O envio "Adicionar outra data" usa HTMX na rota do próprio formulário e
+    // troca só o bloco de Datas (ADR-050). name, submit handler e limite de
+    // validação continuam os do Form API.
+    $botao = $form['date_add_more'];
+    self::assertSame('submit', $botao['#type']);
+    self::assertSame('add_more_event_date', $botao['#name']);
+    self::assertSame(['::addDateRow'], $botao['#submit']);
+    self::assertSame([], $botao['#limit_validation_errors']);
+    self::assertSame('/painel-administrativo/eventos/adicionar', (string) $botao['#attributes']['data-hx-post']);
+    self::assertSame('#event-dates-wrapper', (string) $botao['#attributes']['data-hx-select']);
+    self::assertSame('#event-dates-wrapper', (string) $botao['#attributes']['data-hx-target']);
+    self::assertStringStartsWith('outerHTML', (string) $botao['#attributes']['data-hx-swap']);
+    self::assertArrayHasKey('data-hx-drupal-only-main-content', $botao['#attributes']);
+    self::assertContains('core/drupal.htmx', $botao['#attached']['library']);
+
     // Add a second row through the AJAX submit handler.
     $state->set('date_delta', 1);
     $formObject->addDateRow($form, $state);
