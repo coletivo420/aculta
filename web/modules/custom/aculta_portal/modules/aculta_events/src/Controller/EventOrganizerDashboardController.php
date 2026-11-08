@@ -59,38 +59,53 @@ final class EventOrganizerDashboardController extends ControllerBase {
     $items = [];
     if ($canCreateEvent->isAllowed()) {
       $items[] = [
-        '#type' => 'link',
-        '#title' => $this->t('Criar evento'),
-        '#url' => Url::fromRoute('aculta_events.organizer_event_add'),
-        '#attributes' => ['data-portal-ui' => 'button-primary'],
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:button',
+        '#props' => [
+          'text' => (string) $this->t('Criar evento'),
+          'url' => Url::fromRoute('aculta_events.organizer_event_add')->toString(),
+          'variant' => 'primary',
+        ],
       ];
       $items[] = [
-        '#type' => 'link',
-        '#title' => $this->t('Propor novo Evento para revisão'),
-        '#url' => Url::fromRoute('aculta_events.organizer_event_contribution_add'),
-        '#attributes' => ['data-portal-ui' => 'button-secondary'],
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:button',
+        '#props' => [
+          'text' => (string) $this->t('Propor novo Evento para revisão'),
+          'url' => Url::fromRoute('aculta_events.organizer_event_contribution_add')->toString(),
+          'variant' => 'secondary',
+        ],
       ];
     }
     $items[] = [
-      '#type' => 'link',
-      '#title' => $this->t('Minhas propostas'),
-      '#url' => Url::fromRoute('aculta_events.organizer_contributions'),
-      '#attributes' => ['data-portal-ui' => 'button-secondary'],
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:button',
+      '#props' => [
+        'text' => (string) $this->t('Minhas propostas'),
+        'url' => Url::fromRoute('aculta_events.organizer_contributions')->toString(),
+        'variant' => 'secondary',
+      ],
     ];
     if ($canCreateLocation->isAllowed()) {
       $items[] = [
-        '#type' => 'link',
-        '#title' => $this->t('Cadastrar local'),
-        '#url' => Url::fromRoute('aculta_events.organizer_location_add'),
-        '#attributes' => ['data-portal-ui' => 'button-secondary'],
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:button',
+        '#props' => [
+          'text' => (string) $this->t('Cadastrar local'),
+          'url' => Url::fromRoute('aculta_events.organizer_location_add')->toString(),
+          'variant' => 'secondary',
+        ],
       ];
     }
     if ($canCreateEvent->isAllowed()) {
       $items[] = [
-        '#type' => 'link',
-        '#title' => $this->t('Cadastrar organização'),
-        '#url' => Url::fromRoute('aculta_events.organizer_organization_add'),
-        '#attributes' => ['data-portal-ui' => 'button-secondary'],
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:button',
+        '#props' => [
+          'text' => (string) $this->t('Cadastrar organização'),
+          'url' => Url::fromRoute('aculta_events.organizer_organization_add')->toString(),
+          'variant' => 'secondary',
+        ],
       ];
     }
 
@@ -390,10 +405,13 @@ final class EventOrganizerDashboardController extends ControllerBase {
 
     if ($hasFilters) {
       $build['filters']['form']['reset'] = [
-        '#type' => 'link',
-        '#title' => $this->t('Limpar filtros'),
-        '#url' => Url::fromRoute('aculta_events.organizer_dashboard'),
-        '#attributes' => ['data-portal-ui' => 'button-ghost'],
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:button',
+        '#props' => [
+          'text' => (string) $this->t('Limpar filtros'),
+          'url' => Url::fromRoute('aculta_events.organizer_dashboard')->toString(),
+          'variant' => 'ghost',
+        ],
       ];
     }
 

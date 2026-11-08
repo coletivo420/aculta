@@ -180,7 +180,7 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     self::assertContains('url.query_args', $build['#cache']['contexts']);
     self::assertArrayHasKey('guide', $build);
     self::assertContains('Minhas propostas', array_map(
-      static fn(array $item): string => (string) ($item['#title'] ?? ''),
+      static fn(array $item): string => (string) ($item['#title'] ?? $item['#props']['text'] ?? ''),
       $build['actions']['items'],
     ));
     self::assertSame('details', $build['guide']['#type']);
