@@ -30,3 +30,17 @@ Tokens em `web/themes/custom/aculta420_v2/src/styles/tokens.css`. Bloco claro em
 3. `php scripts/validate-aculta420-palette-schemes.php`
 4. Auditoria de contraste no modo escuro, sem falha nova.
 5. Remoção de regra de área só depois de `grep` confirmar que nenhum markup ativo usa o seletor. Nunca remova regra global de elemento (`button`, `input[type=submit]`, `.form-submit`).
+
+## Classes de design vindas de módulos (data-portal-ui)
+Herdado da skill `aculta-data-portal-ui`. Regra: o módulo marca `data-portal-ui="token"`; o tema traduz o token em classes.
+1. O módulo não escreve `class` de apresentação. Troque `class` por `'#attributes' => ['data-portal-ui' => 'token']`. Token em minúsculas com hífen e BEM.
+2. Abra o mapa `TOKENS` em `web/themes/custom/aculta420_v2/src/Hook/PortalUiHooks.php`. Para cada token: classe que existe no CSS do V2, ou `[]` (estilizado por seletor de atributo). Não invente classe.
+3. O CSS seleciona por atributo: `[data-portal-ui~="token"]`. Não remova o atributo do DOM.
+4. Gate de fronteira: `php scripts/validate-module-theme-boundary.php` (esperado PASS; cada FAIL aponta token sem mapa).
+
+## Gates por escopo (convenção do projeto)
+- Liste o diff e rode só os gates do escopo (`docs/operations/GATES.md`, só a tabela de escopo).
+- Gate fora do escopo: N/A com motivo. Gate que não roda no ambiente: DEFERRED com motivo.
+- Nunca declare PASS sem execução.
+- Saída verbosa de comando: `python3 scripts/agent-output.py --lines 60 -- COMANDO`.
+- Estilo visual só se confirma na captura (320 e 1440 px, claro e escuro). Sem captura, registre DEFERRED.
