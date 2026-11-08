@@ -69,12 +69,17 @@ homologação dos grants ativos no Runtime.
   antigas não eram armazenadas pelo modelo anterior. A migração aborta em
   colisões ou revisões traduzidas, em vez de copiar parcialmente esse histórico.
 
-- Adapter `wiki` registrado em `aculta_contributions`: valida purpose, conta,
+- Adapter `wiki` registrado em `aculta_cgu`: valida purpose, conta,
   alvo, campos e escolhas de lista, delegando a aplicação seletiva ao serviço
-  editorial existente. Unit focal: 3 testes/5 assertions; Kernel focal:
-  1/223. A capacidade dual-store foi implementada no código; a migração dos dados
+  editorial existente. A unificação de propostas e contribuições agora reside no
+  módulo transversal `aculta_cgu` (`Drupal\aculta_cgu\Adapter\WikiContributionAdapter`).
+  A capacidade dual-store foi implementada no código; a migração dos dados
   legados no Runtime não foi executada. O update 10003 e seus checkpoints
   continuam necessários antes de declarar a migração concluída.
+
+- Discussões contextuais integradas via `aculta_forum`:
+  A Wiki consome diretamente o serviço de fórum através de `WikiDiscussionContextProvider`
+  para associar tópicos e discussões contextuais aos verbetes, sem módulo intermediário.
 
 - Contrato Wiki→Messenger v1 documentado em
   [`docs/MESSENGER-EVENT-CONTRACT.md`](docs/MESSENGER-EVENT-CONTRACT.md): dois

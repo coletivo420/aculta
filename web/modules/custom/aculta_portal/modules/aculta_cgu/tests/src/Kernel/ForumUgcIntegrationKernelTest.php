@@ -54,7 +54,7 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
     'comment',
     'flag',
     'migrate',
-    'aculta_ugc',
+    'aculta_cgu',
     'aculta_forum',
     'aculta_forum_post_test',
   ];
@@ -101,7 +101,7 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
     parent::register($container);
     $root = dirname(DRUPAL_ROOT);
     $loader = require $root . '/vendor/autoload.php';
-    $loader->addPsr4('Drupal\\aculta_ugc\\', dirname(__DIR__, 3) . '/src', TRUE);
+    $loader->addPsr4('Drupal\\aculta_cgu\\', dirname(__DIR__, 3) . '/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_portal\\', $root . '/web/modules/custom/aculta_portal/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_forum\\', $root . '/web/modules/custom/aculta_portal/modules/aculta_forum/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_user\\', $root . '/web/modules/custom/aculta_portal/modules/aculta_user/src', TRUE);

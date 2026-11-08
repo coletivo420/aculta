@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_events\Kernel;
 
-use Drupal\aculta_contributions\Service\ContributionStateMachine;
-use Drupal\aculta_contributions\Service\ContributionLifecycle;
-use Drupal\aculta_contributions\Adapter\ContributionAdapterRegistry;
+use Drupal\aculta_cgu\Service\ContributionStateMachine;
+use Drupal\aculta_cgu\Service\ContributionLifecycle;
+use Drupal\aculta_cgu\Adapter\ContributionAdapterRegistry;
 use Drupal\aculta_events\Service\OrganizationContributionEventQueue;
 use Drupal\aculta_events\Adapter\OrganizationContributionAdapter;
 use Drupal\aculta_events\Controller\EventAdminOverviewController;
@@ -19,7 +19,7 @@ use Drupal\aculta_events\Form\EventOrganizationRecoveryForm;
 use Drupal\aculta_image\FileRemover;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_ugc\Entity\UgcReport;
+use Drupal\aculta_cgu\Entity\UgcReport;
 use Drupal\aculta_user\Controller\OwnershipClaimAdminController;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
@@ -70,9 +70,8 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     'aculta_calendar',
     'aculta_maps',
     'aculta_user',
-    'aculta_ugc',
+    'aculta_cgu',
     'aculta_index',
-    'aculta_contributions',
     'aculta_events',
   ];
 
@@ -102,9 +101,8 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $loader->addPsr4('Drupal\\aculta_portal\\', $customRoot . '/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_image\\', $customRoot . '/modules/aculta_image/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_user\\', $customRoot . '/modules/aculta_user/src', TRUE);
-    $loader->addPsr4('Drupal\\aculta_ugc\\', $customRoot . '/modules/aculta_ugc/src', TRUE);
+    $loader->addPsr4('Drupal\\aculta_cgu\\', $customRoot . '/modules/aculta_cgu/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_index\\', $customRoot . '/modules/aculta_index/src', TRUE);
-    $loader->addPsr4('Drupal\\aculta_contributions\\', $customRoot . '/modules/aculta_contributions/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_events\\', $customRoot . '/modules/aculta_events/src', TRUE);
 
     $container->register('aculta_portal.domain_purpose', DomainPurposeManager::class)
@@ -155,7 +153,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_event_location');
     $this->installEntitySchema('aculta_event_organization');
     $this->installEntitySchema('aculta_contribution');
-    $this->installConfig(['system', 'user', 'taxonomy', 'domain', 'aculta_contributions']);
+    $this->installConfig(['system', 'user', 'taxonomy', 'domain', 'aculta_cgu']);
 
     FieldStorageConfig::create([
       'entity_type' => 'profile',

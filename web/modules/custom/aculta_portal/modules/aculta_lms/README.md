@@ -60,8 +60,8 @@ visual integral continuam pendentes.
 
 O `aculta_lms` é dono dos cursos, matrículas, status e da elegibilidade dos
 destinatários. A conclusão é publicada pelo provider atual como o evento neutro
-`aculta_learning_contracts\Event\CourseCompletedEvent`; Game concede a conquista
-por esse contrato e Messenger encaminha o aviso ao fluxo centralizado.
+`Drupal\aculta_lms\Event\CourseCompletedEvent` (incorporado do antigo `aculta_learning_contracts`);
+Game concede a conquista por esse contrato e Messenger encaminha o aviso ao fluxo centralizado.
 Consumidores, avisos no site, persistência, central, deduplicação, preferências
 e a orquestração de e-mail são centralizados no `aculta_messenger`.
 O aviso no site é obrigatório; o membro pode escolher e-mail desligado, direto

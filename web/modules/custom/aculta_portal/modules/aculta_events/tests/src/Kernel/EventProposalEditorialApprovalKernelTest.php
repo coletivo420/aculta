@@ -61,10 +61,9 @@ final class EventProposalEditorialApprovalKernelTest extends KernelTestBase {
     'aculta_calendar',
     'aculta_maps',
     'aculta_user',
-    'aculta_ugc',
+    'aculta_cgu',
     'aculta_index',
     'aculta_events',
-    'aculta_contributions',
   ];
 
   /**
@@ -79,7 +78,7 @@ final class EventProposalEditorialApprovalKernelTest extends KernelTestBase {
     $loader->addPsr4('Drupal\\aculta_portal\\', $customRoot . '/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_image\\', $customRoot . '/modules/aculta_image/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_user\\', $customRoot . '/modules/aculta_user/src', TRUE);
-    $loader->addPsr4('Drupal\\aculta_ugc\\', $customRoot . '/modules/aculta_ugc/src', TRUE);
+    $loader->addPsr4('Drupal\\aculta_cgu\\', $customRoot . '/modules/aculta_cgu/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_index\\', $customRoot . '/modules/aculta_index/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_events\\', $customRoot . '/modules/aculta_events/src', TRUE);
 
@@ -132,7 +131,7 @@ final class EventProposalEditorialApprovalKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_event_organization');
     $this->installEntitySchema('aculta_event_org_suggestion');
     $this->installEntitySchema('aculta_contribution');
-    $this->installConfig(['system', 'user', 'taxonomy', 'domain', 'aculta_contributions']);
+    $this->installConfig(['system', 'user', 'taxonomy', 'domain', 'aculta_cgu']);
 
     FieldStorageConfig::create([
       'entity_type' => 'profile',

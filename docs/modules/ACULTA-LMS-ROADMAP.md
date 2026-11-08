@@ -6,7 +6,11 @@ Revisado em 2026-10-19. A implementação segue fases independentes, com autoriz
 
 > **Atualização 2026-11-01:** a extensão `aculta_lms_messenger` foi removida. A elegibilidade educacional vive em `aculta_lms\\Notice\\LearningEligibility`; os produtores publicam `MessengerNoticeEvent` pelo contrato público e o Messenger mantém persistência, leitura, contadores, preferências e digest. Registro em `docs/architecture/MESSENGER-CONSOLIDATION-2026-11.md`.
 
-> **Independência do Drupal LMS contrib — B1/B2/B3-A (2026-11-01):** os contratos de jornada, resumo do estudante, cursos da Conta e conclusão educacional vivem em `aculta_learning_contracts`; `aculta_portal` não declara `lms:lms` nem injeta `lms.training_manager`; e o Studio compõe as experiências do estudante e do Educador. O provider `aculta_lms` continua lendo/escrevendo dados do Drupal LMS, que permanece a fonte de verdade. O Runtime foi validado no commit [`e60abcb62`](https://github.com/coletivo420/aculta/commit/e60abcb624a1bf3e73a46631915663cca39fddcb): smoke responsivo 74/74 em 320–1440 px, smoke final a 390 px, rotas do estudante/Educador respondendo e testes Unit/Kernels focais aprovados. Não houve migração de dados. Restam a instalação limpa sem contrib e a migração gradual de ownership, conteúdo, tentativas e progresso.
+> **Consolidação e Independência Arquitetural (2026-11-08):**
+> 1. Os contratos neutros de jornada, resumo do estudante, cursos da Conta e conclusão educacional foram incorporados diretamente no namespace `Drupal\aculta_lms\Learning` e `Drupal\aculta_lms\Event\CourseCompletedEvent`; a extensão intermediária `aculta_learning_contracts` foi descontinuada e incorporada ao `aculta_lms`.
+> 2. As funcionalidades de materiais de curso (`aculta_lms_resources`) foram unificadas nativamente dentro de `aculta_lms\Resources`.
+> 3. As funcionalidades de agenda, prazos e eventos de turma (`aculta_lms_agenda`) foram incorporadas dentro de `aculta_lms\Agenda`, consumindo diretamente o provedor central `aculta_calendar`.
+> 4. O Studio (`aculta_studio`) compõe as experiências do estudante e do Educador consumindo os contratos desacoplados do `aculta_lms`. O Runtime foi validado com rotas respondendo HTTP 200 OK e testes Unit/Kernels focais aprovados.
 
 ## Princípios e estado inicial
 

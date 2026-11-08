@@ -21,11 +21,11 @@ use Drupal\aculta_events\Form\EventContributionRevisionForm;
 use Drupal\aculta_events\Form\EventContributionSubmissionForm;
 use Drupal\aculta_events\Form\EventUpdateContributionSubmissionForm;
 use Drupal\aculta_events\Form\EventLocationModalForm;
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_image\FileRemover;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_ugc\Entity\UgcReport;
+use Drupal\aculta_cgu\Entity\UgcReport;
 use Drupal\aculta_user\Entity\OwnershipClaim;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
@@ -75,10 +75,9 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     'aculta_calendar',
     'aculta_maps',
     'aculta_user',
-    'aculta_ugc',
+    'aculta_cgu',
     'aculta_index',
     'aculta_events',
-    'aculta_contributions',
   ];
 
   /**
@@ -117,7 +116,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $loader->addPsr4('Drupal\\aculta_portal\\', $customRoot . '/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_image\\', $customRoot . '/modules/aculta_image/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_user\\', $customRoot . '/modules/aculta_user/src', TRUE);
-    $loader->addPsr4('Drupal\\aculta_ugc\\', $customRoot . '/modules/aculta_ugc/src', TRUE);
+    $loader->addPsr4('Drupal\\aculta_cgu\\', $customRoot . '/modules/aculta_cgu/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_index\\', $customRoot . '/modules/aculta_index/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_events\\', $customRoot . '/modules/aculta_events/src', TRUE);
 
@@ -169,7 +168,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_event_organization');
     $this->installEntitySchema('aculta_event_org_suggestion');
     $this->installEntitySchema('aculta_contribution');
-    $this->installConfig(['system', 'user', 'taxonomy', 'domain', 'aculta_contributions']);
+    $this->installConfig(['system', 'user', 'taxonomy', 'domain', 'aculta_cgu']);
 
     FieldStorageConfig::create([
       'entity_type' => 'profile',
@@ -1921,7 +1920,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
    * Valida integração com denúncias e moderação UGC.
    */
   public function testUgcReportIntegration(): void {
-    /** @var \Drupal\aculta_ugc\Service\ReportService $reportService */
+    /** @var \Drupal\aculta_cgu\Service\ReportService $reportService */
     $reportService = $this->container->get('aculta_ugc.report_service');
 
     $org = EventOrganization::create([

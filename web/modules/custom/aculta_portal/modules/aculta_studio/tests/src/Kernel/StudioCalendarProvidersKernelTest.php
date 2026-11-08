@@ -61,7 +61,7 @@ final class StudioCalendarProvidersKernelTest extends KernelTestBase {
 
     // Instancia o compositor e ganjalab necessários caso a rota seja construída.
     $container->register('aculta_studio.learner_dashboard_composer', LearnerDashboardComposer::class)
-      ->addArgument(new Reference('aculta_learning_contracts.student_learning_summary_reader', ContainerBuilder::NULL_ON_INVALID_REFERENCE))
+      ->addArgument(new Reference('aculta_lms.learning_dashboard', ContainerBuilder::NULL_ON_INVALID_REFERENCE))
       ->addArgument(new Reference('current_user'))
       ->addArgument(new Reference('date.formatter'))
       ->addArgument(new Reference('string_translation'));

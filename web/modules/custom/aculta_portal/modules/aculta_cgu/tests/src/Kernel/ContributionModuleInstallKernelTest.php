@@ -25,10 +25,10 @@ final class ContributionModuleInstallKernelTest extends KernelTestBase {
    * The module installs its config, entity storage, and lifecycle services.
    */
   public function testCleanModuleInstall(): void {
-    self::assertTrue($this->container->get('module_installer')->install(['aculta_contributions'], FALSE));
+    self::assertTrue($this->container->get('module_installer')->install(['aculta_cgu'], FALSE));
 
     $container = \Drupal::getContainer();
-    self::assertTrue($container->get('module_handler')->moduleExists('aculta_contributions'));
+    self::assertTrue($container->get('module_handler')->moduleExists('aculta_cgu'));
     self::assertInstanceOf(ContributionAdapterRegistry::class, $container->get('aculta_contributions.adapter_registry'));
     self::assertSame(10, $container->get('config.factory')->get('aculta_contributions.settings')->get('flood_limit'));
     self::assertSame(3600, $container->get('config.factory')->get('aculta_contributions.settings')->get('flood_window'));

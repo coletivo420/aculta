@@ -28,7 +28,7 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
 
   /**
    * {@inheritdoc} */
-  protected static $modules = ['system', 'user', 'options', 'views', 'aculta_contributions'];
+  protected static $modules = ['system', 'user', 'options', 'views', 'aculta_cgu'];
 
   /**
    * {@inheritdoc} */
@@ -37,7 +37,7 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
     $this->container->set('lock', new DatabaseLockBackend($this->container->get('database')));
     $this->installEntitySchema('user');
     $this->installEntitySchema('aculta_contribution');
-    $this->installConfig(['system', 'user', 'aculta_contributions']);
+    $this->installConfig(['system', 'user', 'aculta_cgu']);
   }
 
   /**
@@ -340,6 +340,10 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
     [$author, $target] = $this->createAccountsAndTarget();
     $this->registerAdapter($this->createAdapter());
     $this->container->get('current_user')->setAccount($author);
+    $this->container->get('config.factory')->getEditable('aculta_cgu.settings')
+      ->set('flood_limit', 1)
+      ->set('flood_window', 3600)
+      ->save();
     $this->container->get('config.factory')->getEditable('aculta_contributions.settings')
       ->set('flood_limit', 1)
       ->set('flood_window', 3600)

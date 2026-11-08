@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Kernel;
 
+use Drupal\aculta_events\Occurrence\EventDateOccurrences;
 use Drupal\aculta_lms\Access\ClassActivityDeadlineAccessCheck;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager;
@@ -15,6 +16,7 @@ use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoPaymentService;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoRecurrenceService;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionRecorder;
+use Drupal\aculta_portal\Cleanup\UnusedMediaCleaner;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\RecurrenceRequestBuilder;
 use Drupal\aculta_pagamentos_mercadopago\Sales\MercadoPagoPaymentPolicy;
 use Drupal\aculta_studio\Controller\GanjalabController;
@@ -142,6 +144,20 @@ trait AcultaLmsDependencyHarnessTrait {
    * Adds the real Portal, Messenger, LMS, and Studio services used by LMS.
    */
   protected function registerLmsDependencyServices(ContainerBuilder $container): void {
+    // AgendaEntriesProvider depende de aculta_events.occurrences. Os Kernels
+    // parciais do LMS não habilitam aculta_events; a definição real, com as
+    // mesmas dependências, evita referência inválida na compilação. Quando o
+    // aculta_events está habilitado, o serviço do módulo prevalece.
+    $container->register('aculta_events.occurrences', EventDateOccurrences::class)
+      ->addArgument(new Reference('entity_type.manager'));
+    // CourseDocumentCleanup depende do avaliador de mídia não publicada do
+    // Portal; os Kernels parciais do LMS não habilitam o aculta_portal inteiro.
+    $container->register('logger.channel.aculta_portal', LoggerChannel::class)
+      ->setFactory([new Reference('logger.factory'), 'get'])
+      ->addArgument('aculta_portal');
+    $container->register('aculta_portal.unused_media_cleaner', UnusedMediaCleaner::class)
+      ->addArgument(new Reference('aculta_file_uploader.file_reference_inspector'))
+      ->addArgument(new Reference('logger.channel.aculta_portal'));
     $container->register('aculta_pagamentos_mercadopago.client_factory', MercadoPagoClientFactory::class);
     $container->register('aculta_pagamentos_mercadopago.recurrence_request_builder', RecurrenceRequestBuilder::class);
     $container->register('aculta_pagamentos_mercadopago.payment_policy', MercadoPagoPaymentPolicy::class);

@@ -1,7 +1,12 @@
-# Plano de arquitetura e implementação - ACULTA Contributions
+# Plano de arquitetura e implementação - ACULTA Contributions / CGU
+
+> **Atualização de Consolidação 2026-11-08:**
+> As propostas comunitárias e o ciclo de contribuições (`aculta_contributions`) foram unificados
+> com a gestão de moderação e denúncias (`aculta_ugc`) sob o módulo transversal `aculta_cgu`
+> (Conteúdo Gerado por Usuários).
 
 **Estado:** F0 revalidado; F1/F2 concluídas e revalidadas localmente; F3 concluída quanto à migração/cutover dual-store, sem conteúdo Runtime a copiar; F4 concluída com escopo restrito a perfis públicos não reivindicados; F5 implementada localmente, incluindo escolha por site, e-mail imediato ou digest diário (padrão somente no site); F6/F7 implementadas localmente com homologação autenticada pendente; F8 concluída sem integração adicional (Calendar/Forum/UGC preservam owners); F9 permanece fase separada, sem remoção de Content Moderation. Updates Wiki/Messenger 10015–10017 foram aplicados no Runtime; o diff de import de `aculta_messenger.settings` continha somente a categoria `eventos_contribuicoes` com inbox obrigatório e opções de e-mail autorizadas. Pendentes: jornadas autenticadas de domínio, entrega real de e-mail e upload H5P no Runtime.
-**Base de código auditada:** branch `dev`, HEAD `9e6975fab` (2026-11-02). Inventário de domínios e regras permanece no [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md); nesta ponta, Messenger Unit 402/4.374, Contributions Unit+Kernel 18/188, adapter Wiki Unit 3/5, migração Wiki Kernel 3/133 e Events `EventOrganizationLifecycleKernelTest` 30/973 passaram. Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
+**Base de código auditada:** branch `dev`
 **Escopo:** motor de propostas comunitárias reutilizável por domínios ACULTA, sem depender de Workflow Participants ou de Content Moderation para o ciclo de contribuições.
 
 ## 1. Decisão de arquitetura

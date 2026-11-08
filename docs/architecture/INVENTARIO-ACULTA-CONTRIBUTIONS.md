@@ -1,6 +1,12 @@
-# Inventário dos consumidores de Contributions
+# Inventário dos consumidores de Contributions / CGU
 
-**Base de código:** branch `dev`, commit `9e6975fab` (2026-11-02)
+> **Atualização Arquitetural 2026-11-08:**
+> Os módulos `aculta_contributions` e `aculta_ugc` foram unificados no módulo transversal `aculta_cgu`.
+> A entidade `aculta_contribution` e o ciclo de vida/máquina de estados de propostas comunitárias
+> agora residem em `aculta_cgu`, mantendo aliases de compatibilidade para os serviços legados.
+> O inventário abaixo documenta a consolidação dos dados e consumidores.
+
+**Base de código:** branch `dev`
 **Revalidado em:** 2026-11-02
 
 Este inventário foi revalidado em `9e6975fab` após a integração de

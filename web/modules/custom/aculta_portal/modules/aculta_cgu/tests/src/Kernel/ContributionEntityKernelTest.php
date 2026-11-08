@@ -18,7 +18,7 @@ final class ContributionEntityKernelTest extends KernelTestBase {
 
   /**
    * {@inheritdoc} */
-  protected static $modules = ['system', 'user', 'options', 'views', 'aculta_contributions'];
+  protected static $modules = ['system', 'user', 'options', 'views', 'aculta_cgu'];
 
   /**
    * {@inheritdoc} */
@@ -105,29 +105,6 @@ final class ContributionEntityKernelTest extends KernelTestBase {
       'state' => 'submitted',
     ]);
     self::assertFalse($unknown_source->access('view', $author));
-  }
-
-  /**
-   * The schema update restores missing context fields and is repeatable.
-   */
-  public function testContextFieldUpdateIsIdempotent(): void {
-    $update_manager = $this->container->get('entity.definition_update_manager');
-    foreach (['source_data', 'decision_data'] as $field_name) {
-      $definition = $update_manager->getFieldStorageDefinition($field_name, 'aculta_contribution');
-      self::assertNotNull($definition);
-      $update_manager->uninstallFieldStorageDefinition($definition);
-    }
-
-    $module_path = $this->container->get('extension.list.module')->getPath('aculta_contributions');
-    require_once DRUPAL_ROOT . '/' . $module_path . '/aculta_contributions.install';
-    self::assertSame(
-      'Installed contribution context fields: source_data, decision_data.',
-      aculta_contributions_update_10001(),
-    );
-    self::assertSame('Contribution context fields already exist.', aculta_contributions_update_10001());
-    foreach (['source_data', 'decision_data'] as $field_name) {
-      self::assertNotNull($update_manager->getFieldStorageDefinition($field_name, 'aculta_contribution'));
-    }
   }
 
 }

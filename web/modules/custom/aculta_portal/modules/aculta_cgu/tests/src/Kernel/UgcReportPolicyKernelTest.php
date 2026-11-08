@@ -35,7 +35,7 @@ final class UgcReportPolicyKernelTest extends KernelTestBase {
     'text',
     'filter',
     'node',
-    'aculta_ugc',
+    'aculta_cgu',
   ];
 
   /**
@@ -79,7 +79,7 @@ final class UgcReportPolicyKernelTest extends KernelTestBase {
   public function register(ContainerBuilder $container): void {
     parent::register($container);
     $loader = require dirname(DRUPAL_ROOT) . '/vendor/autoload.php';
-    $loader->addPsr4('Drupal\\aculta_ugc\\', dirname(__DIR__, 3) . '/src', TRUE);
+    $loader->addPsr4('Drupal\\aculta_cgu\\', dirname(__DIR__, 3) . '/src', TRUE);
   }
 
   /**

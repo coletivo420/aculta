@@ -50,7 +50,7 @@ final class GanjalabWiringKernelTest extends KernelTestBase {
     'flag',
     'aculta_file_uploader',
     'aculta_image',
-    'aculta_learning_contracts',
+    'aculta_lms',
     'aculta_mail_confirmer',
     'aculta_mailer',
     'aculta_portal',

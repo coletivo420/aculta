@@ -37,13 +37,17 @@ na chamada do manager. Na dev.111, `ParamConverterManager` do Core converte os
 IDs Group/Comment pela definição `entity:group`/`entity:comment` antes do check;
 o teste nega aluno e Group diferente do proprietário do tópico.
 
-## Contrato de leitura da jornada (B1, 2026-11-01)
+## Contrato de leitura da jornada e desacoplamento (Atualizado em 2026-11-08)
 
-`Drupal\aculta_learning_contracts\Learning\CourseJourneyReaderInterface` é o contrato neutro da jornada Ganjalab. Ele vive em `aculta_learning_contracts`, módulo sem dependência de `lms:lms`, `aculta_portal`, `aculta_studio` ou `aculta_lms`. `getCourseJourney(string $course_id, AccountInterface $account): ?CourseJourney` devolve o modelo de apresentação `CourseJourney` (com `CourseJourneyLesson`), já autorizado, com estrutura publicada, estados, progresso, aula atual e destinos permitidos. Retorna `NULL` quando o identificador não é um curso e um DTO com `access: FALSE` quando o curso existe mas a conta não pode cursá-lo.
+`Drupal\aculta_lms\Learning\CourseJourneyReaderInterface` é o contrato neutro da jornada Ganjalab. Ele agora reside nativamente no namespace `Drupal\aculta_lms\Learning` (anteriormente sediado temporariamente em `aculta_learning_contracts`, cujas interfaces e DTOs foram consolidados no LMS). `getCourseJourney(string $course_id, AccountInterface $account): ?CourseJourney` devolve o modelo de apresentação `CourseJourney` (com `CourseJourneyLesson`), já autorizado, com estrutura publicada, estados, progresso, aula atual e destinos permitidos. Retorna `NULL` quando o identificador não é um curso e um DTO com `access: FALSE` quando o curso existe mas a conta não pode cursá-lo.
 
-`Drupal\aculta_lms\LearningDashboardManager` implementa o contrato como adaptador Drupal LMS/Group; o alias `aculta_lms.course_journey_reader` é o único ponto de composição. O adaptador é o único que importa `CourseInterface`, `LessonInterface`, `LessonStatusInterface` e `TrainingManager` nesse caminho. `CourseRoomBuilder` (matrícula/roster no LMS) e `CourseJourneyPresentationHooks` (jornada/sala no Studio) consomem o contrato; `CourseJourneyComposer` consome apenas o DTO e não importa classes do contrib nem de `aculta_lms`. O `aculta_lms` não depende mais de `aculta_studio`.
+`Drupal\aculta_lms\LearningDashboardManager` implementa o contrato como adaptador LMS/Group; o alias `aculta_lms.course_journey_reader` é o ponto de composição. `CourseRoomBuilder` (matrícula/roster no LMS) e `CourseJourneyPresentationHooks` (jornada/sala no Studio) consomem o contrato; `CourseJourneyComposer` consome apenas o DTO e não importa classes internas do contrib nem de detalhes de infraestrutura do `aculta_lms`. O `aculta_lms` não depende de `aculta_studio`.
 
-O contrato fica em `aculta_learning_contracts` porque precisava sobreviver à remoção de `lms:lms` do Portal (B3-A concluída em 2026-11-01) e não deve pertencer nem ao consumidor nem ao adaptador. Colocá-lo em `aculta_studio` fazia o adaptador do LMS depender do namespace do consumidor; colocá-lo em `aculta_lms` faria o Studio importar um módulo de integração que não precisa conhecer. O novo módulo não declara dependência de nenhum dos três e contém apenas interfaces e value objects. Na B2, o `LearnerDashboardComposer` vive no Studio e consome `StudentLearningSummaryReaderInterface`; o `aculta_lms` implementa o leitor de resumo e não depende de `aculta_studio`.
+Na consolidação arquitetural, os contratos residem sob `aculta_lms\Learning`:
+- `CourseJourneyReaderInterface`
+- `StudentLearningSummaryReaderInterface` (consumido pelo `LearnerDashboardComposer` no Studio)
+- `AccountCoursesReaderInterface`
+- `CourseCompletedEvent` em `Drupal\aculta_lms\Event\CourseCompletedEvent`
 
 A fonte de verdade permanece no LMS/Group durante a transição. Nenhum dado é duplicado, nenhuma escrita é redirecionada e a autorização continua decidida no servidor pelo adaptador. O inventário e a contagem reproduzível de imports estão em [LMS-CONTRIB-DEPENDENCY-INVENTORY.md](../modules/LMS-CONTRIB-DEPENDENCY-INVENTORY.md).
 

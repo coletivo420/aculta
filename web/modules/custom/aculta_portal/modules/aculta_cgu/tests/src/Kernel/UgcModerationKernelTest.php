@@ -40,7 +40,7 @@ final class UgcModerationKernelTest extends KernelTestBase {
     'datetime',
     'aculta_calendar',
     'aculta_events',
-    'aculta_ugc',
+    'aculta_cgu',
   ];
 
   /**
@@ -65,7 +65,7 @@ final class UgcModerationKernelTest extends KernelTestBase {
     parent::register($container);
 
     $loader = require dirname(DRUPAL_ROOT) . '/vendor/autoload.php';
-    $loader->addPsr4('Drupal\\aculta_ugc\\', dirname(__DIR__, 3) . '/src', TRUE);
+    $loader->addPsr4('Drupal\\aculta_cgu\\', dirname(__DIR__, 3) . '/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_events\\', dirname(__DIR__, 5) . '/modules/aculta_events/src', TRUE);
   }
 
