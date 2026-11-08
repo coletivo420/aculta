@@ -227,11 +227,17 @@ final class AcultaUserInstallRollbackKernelTest extends KernelTestBase {
       $installer->uninstall(['aculta_user']);
       $this->fail('Uninstall must be blocked while friendship records remain.');
     }
-    catch (\RuntimeException $exception) {
-      $this->assertSame(
-        'ACULTA User cannot be uninstalled while friendship records remain. Export or remove the records explicitly first.',
-        $exception->getMessage(),
-      );
+    // Two guards may refuse this: the core validator for entity types that
+    // still hold content (ModuleUninstallValidatorException) and the module's
+    // own module_preuninstall hook (RuntimeException). Either one must block.
+    catch (\InvalidArgumentException | \RuntimeException $exception) {
+      if ($exception instanceof \RuntimeException && !$exception instanceof \InvalidArgumentException) {
+        $this->assertSame(
+          'ACULTA User cannot be uninstalled while friendship records remain. Export or remove the records explicitly first.',
+          $exception->getMessage(),
+        );
+      }
+      $this->assertNotSame('', $exception->getMessage());
     }
 
     // The refused rollback changes nothing.
