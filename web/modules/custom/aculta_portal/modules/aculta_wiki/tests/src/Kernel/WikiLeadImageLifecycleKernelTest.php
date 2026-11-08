@@ -86,7 +86,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['aculta_calendar', 'text', 'text_with_summary' ];
+  protected static $modules = ['aculta_calendar', 'text', 'text_with_summary', 'ui_patterns_library'];
 
   /**
    * Temporary private scheme root for this isolated Kernel.
@@ -100,6 +100,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     // Portal consumes the shared account ledger when aculta_user is present.
     static::$modules = $this->resolveModuleDependencyClosure([
       'text_with_summary',
+      'ui_patterns_library',
       'aculta_calendar',
       'aculta_lms',
       'aculta_studio',
@@ -461,7 +462,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
    * Retains old-revision images, then removes the orphan Media and File.
    */
   public function testLeadImageCleanupWaitsForHistoricalRevisionReferences(): void {
-    $this->installEntitySchema('lms_lesson');
+    $this->installEntitySchema('aculta_lms_lesson');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('comment');
     $this->installSchema('comment', ['comment_entity_statistics']);
@@ -546,7 +547,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
    * Retains orphan candidates whenever global reference inspection fails.
    */
   public function testLeadImageCleanupFailsClosedWhenReferenceStorageIsUnavailable(): void {
-    $this->installEntitySchema('lms_lesson');
+    $this->installEntitySchema('aculta_lms_lesson');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('comment');
     $this->installSchema('comment', ['comment_entity_statistics']);
@@ -583,7 +584,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
    * Processes at most 25 old Wiki files during one cleanup pass.
    */
   public function testLeadImageCleanupUsesBoundedBatches(): void {
-    $this->installEntitySchema('lms_lesson');
+    $this->installEntitySchema('aculta_lms_lesson');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('comment');
     $this->installSchema('comment', ['comment_entity_statistics']);
@@ -816,7 +817,6 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'aculta_portal.wiki_home' => '/wiki',
       'aculta_portal.wiki_search' => '/busca-wiki',
       'aculta_portal.wiki_search_preview' => '/busca-wiki/previa',
-    'aculta_calendar',
     ];
     $purposeResolver = $this->container->get('aculta_portal.content_purpose_resolver');
     foreach ($routePaths as $routeName => $path) {

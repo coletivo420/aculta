@@ -79,6 +79,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     'domain',
     'filter',
     'text',
+    'text_with_summary',
     'options',
     'path',
     'path_alias',
