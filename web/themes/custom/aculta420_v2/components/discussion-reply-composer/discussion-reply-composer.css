@@ -1,8 +1,62 @@
 /* Compositor de Resposta da Discussão — estilizado como Forum Post Card nativo */
 
 .discussion-reply-composer {
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
   margin-block-start: var(--spacing-md, 1rem);
   margin-block-end: var(--spacing-lg, 1.5rem);
+}
+
+/* Alvo do swap HTMX: não pode estourar a coluna do comentário. */
+.discussion-reply-target {
+  max-inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.discussion-reply-composer .forum-post-card__inner,
+.discussion-reply-composer__body,
+.discussion-reply-composer__form {
+  min-inline-size: 0;
+}
+
+.discussion-reply-composer :is(.form-item, input:not([type="submit"]), textarea, select) {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+/* O compositor ocupa uma única coluna em todos os breakpoints: nada de coluna lateral. */
+.discussion-reply-composer .forum-post-card__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: none;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  box-sizing: border-box;
+}
+
+/* A coluna lateral "Sua Resposta" não aparece; o banner "Respondendo a" fica no corpo. */
+.discussion-reply-composer .forum-post-card__header {
+  display: none;
+}
+
+/* O corpo herda a coluna única e a largura total do cartão. */
+.discussion-reply-composer .forum-post-card__body {
+  grid-area: auto;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  box-sizing: border-box;
+}
+
+@media (min-width: 48rem) {
+  .discussion-reply-composer .forum-post-card__inner {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: none;
+  }
 }
 
 .discussion-reply-composer--fechado {

@@ -107,7 +107,7 @@
 }
 
 [data-aculta-discussion-progress] :is(button, input):focus-visible,
-.field--name-field-aculta-discussion :is(a, button, input, select, textarea):focus-visible {
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) :is(a, button, input, select, textarea):focus-visible {
   outline: var(--focus-ring-width) solid var(--color-focus-ring);
   outline-offset: var(--focus-ring-offset);
 }
@@ -122,36 +122,64 @@
 [data-aculta-discussion-unread] { grid-area: unread; }
 [data-aculta-discussion-status] { grid-area: status; text-align: center; color: var(--color-text-secondary); font-size: var(--font-size-xs); min-inline-size: 0; overflow-wrap: anywhere; }
 [data-aculta-discussion-announcement] { position: absolute; overflow: hidden; margin: -1px; white-space: nowrap; block-size: 1px; clip-path: inset(50%); inline-size: 1px; }
-.field--name-field-aculta-discussion article.js-comment { scroll-margin-block-start: 5rem; }
-/* Espaço entre comentários: o gap atual (--spacing-md) somado a 4x dá 5x no total, sem espaço extra após o último. */
-.field--name-field-aculta-discussion article.js-comment + article.js-comment { margin-block-start: calc(var(--spacing-md) * 4); }
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) article.js-comment { scroll-margin-block-start: 5rem; }
+/* Espaço entre comentários: o gap do contêiner (--spacing-md) somado a 4x dá 5x no total, sem espaço extra após o último. */
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) article.js-comment + article.js-comment { margin-block-start: calc(var(--spacing-md) * 4); }
 
-.field--name-field-aculta-discussion .comment__in-reply-to {
+/* Faixa lateral alternada: remove a faixa superior e fixa 4px na borda esquerda (1º) ou direita (2º) de cada cartão. */
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) article.js-comment > .forum-post-card > .forum-post-card__stripe {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: .25rem;
+  block-size: auto;
+}
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) article.js-comment:nth-of-type(even) > .forum-post-card > .forum-post-card__stripe {
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+}
+
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) .comment__in-reply-to {
   margin: 0 0 var(--spacing-xs);
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
 }
 
-.field--name-field-aculta-discussion .comment__in-reply-to-author {
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) .comment__in-reply-to-author {
   color: var(--color-text-primary);
 }
 
-.field--name-field-aculta-discussion .comment-comment-form {
+/* Compositor de resposta: largura total, depois do último comentário, nunca em coluna lateral. */
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) .discussion-reply-target,
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) .discussion-reply-composer {
+  display: block;
+  float: none;
+  order: 2;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  box-sizing: border-box;
+}
+
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) .comment-comment-form {
   display: grid;
+  box-sizing: border-box;
   padding: .875rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-base);
   background: var(--color-surface-raised);
   gap: var(--spacing-md);
   margin-block: 1rem;
+  inline-size: 100%;
+  max-inline-size: 100%;
   min-inline-size: 0;
 }
 
-.field--name-field-aculta-discussion .comment-comment-form .form-item,
-.field--name-field-aculta-discussion .comment-comment-form .form-actions { margin: 0; min-inline-size: 0; }
-.field--name-field-aculta-discussion .comment-comment-form label { display: block; margin-block-end: var(--spacing-xs); color: var(--color-text-primary); font-weight: 600; }
-.field--name-field-aculta-discussion .comment-comment-form :is(input:not([type="submit"]):not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="button"]):not([type="reset"]), textarea, select) { color: var(--color-text-primary); border-color: var(--color-border); background: var(--color-surface); inline-size: 100%; max-inline-size: 100%; min-inline-size: 0; }
-.field--name-field-aculta-discussion .comment-comment-form .form-submit { min-block-size: var(--tap-target-min); }
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) .comment-comment-form .form-item,
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) .comment-comment-form .form-actions { margin: 0; min-inline-size: 0; }
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) .comment-comment-form label { display: block; margin-block-end: var(--spacing-xs); color: var(--color-text-primary); font-weight: 600; }
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) .comment-comment-form :is(input:not([type="submit"]):not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="button"]):not([type="reset"]), textarea, select) { color: var(--color-text-primary); border-color: var(--color-border); background: var(--color-surface); inline-size: 100%; max-inline-size: 100%; min-inline-size: 0; }
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) .comment-comment-form .form-submit { min-block-size: var(--tap-target-min); }
 
 .action-links { display: flex; flex-wrap: wrap; margin: 0 0 var(--spacing-base); padding: 0; list-style: none; gap: var(--spacing-sm); }
 .action-links .button-action { display: inline-flex; align-items: center; padding: var(--spacing-sm) var(--spacing-base); text-decoration: none; color: var(--color-on-brand); border: 1px solid var(--color-brand-primary); border-radius: var(--radius-sm); background: var(--color-brand-primary); font-weight: 600; min-block-size: var(--tap-target-min); }
