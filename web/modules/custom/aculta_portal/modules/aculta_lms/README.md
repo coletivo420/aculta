@@ -66,9 +66,8 @@ Consumidores, avisos no site, persistência, central, deduplicação, preferênc
 e a orquestração de e-mail são centralizados no `aculta_messenger`.
 O aviso no site é obrigatório; o membro pode escolher e-mail desligado, direto
 ou digest/resumo, sempre sujeito às políticas administrativas. Transporte,
-templates e logs de entrega permanecem no `aculta_mailer`. O adapter executável
-foi migrado para o núcleo; o antigo `aculta_lms_messenger` não mantém fluxo
-legado ativo. Consulte [`docs/ROADMAP.md`](docs/ROADMAP.md).
+templates e logs de entrega permanecem no `aculta_mailer`. O `aculta_lms` é consumidor
+direto do `aculta_messenger`, publicando eventos de aviso através dos contratos centrais. Consulte [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 
 ## Administração organizada por curso
@@ -456,7 +455,7 @@ assertions; Kernel MariaDB 20 testes/634 assertions PASS. O Kernel registrou 90
 depreciações de Core/contrib e uma de `webform_score`; a Unit registrou 8
 depreciações do PHPUnit.
 
-Regressão combinada atual do LMS e `aculta_lms_messenger`: Unit 84 testes/445
+Regressão combinada do LMS com `aculta_messenger`: Unit 84 testes/445
 assertions; Kernel MariaDB 23 testes/719 assertions PASS. No total, houve 8
 depreciações PHPUnit e 95 de Core/contrib, sem falhas.
 
