@@ -22,10 +22,12 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[RunTestsInSeparateProcesses]
 final class CommerceCleanInstallKernelTest extends KernelTestBase {
 
+  use LmsGroupTypesPrerequisiteTrait;
+
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'field', 'entity', 'views', 'profile'];
+  protected static $modules = ['system', 'user', 'field', 'entity', 'views', 'profile', 'flexible_permissions', 'group'];
 
   /**
    * Installs aculta_commerce from scratch and checks the shipping engine.
@@ -37,6 +39,11 @@ final class CommerceCleanInstallKernelTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installSchema('user', ['users_data']);
     $this->installEntitySchema('profile');
+    $this->installEntitySchema('group');
+    $this->installEntitySchema('group_relationship');
+    $this->installEntitySchema('group_config_wrapper');
+    $this->installConfig(['group']);
+    $this->installLmsGroupTypesFromSync();
 
     $installer = $this->container->get('module_installer');
     self::assertTrue($installer->install(['aculta_commerce'], TRUE));

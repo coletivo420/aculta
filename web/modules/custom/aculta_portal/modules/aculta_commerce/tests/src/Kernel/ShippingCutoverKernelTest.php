@@ -23,6 +23,8 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[RunTestsInSeparateProcesses]
 class ShippingCutoverKernelTest extends KernelTestBase {
 
+  use LmsGroupTypesPrerequisiteTrait;
+
   /**
    * Whether the legacy commerce_shipping module is available in this checkout.
    */
@@ -53,6 +55,8 @@ class ShippingCutoverKernelTest extends KernelTestBase {
   protected static $modules = [
     'aculta_commerce',
     'aculta_document_viewer',
+    'aculta_calendar',
+    'aculta_file_uploader',
     'aculta_forum',
     'aculta_gallery',
     'aculta_image',
@@ -176,6 +180,11 @@ class ShippingCutoverKernelTest extends KernelTestBase {
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installEntitySchema('path_alias');
+    $this->installEntitySchema('group');
+    $this->installEntitySchema('group_relationship');
+    $this->installEntitySchema('group_config_wrapper');
+    $this->installConfig(['group']);
+    $this->installLmsGroupTypesFromSync();
     $this->installConfig([
       'commerce_order',
       'commerce_store',

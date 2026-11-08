@@ -41,6 +41,8 @@ use PHPUnit\Framework\Attributes\Group;
 #[RunTestsInSeparateProcesses]
 final class ShippingEngineKernelTest extends KernelTestBase {
 
+  use LmsGroupTypesPrerequisiteTrait;
+
   /**
    * {@inheritdoc}
    */
@@ -48,6 +50,10 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     'aculta_commerce',
     'aculta_commerce_shipping_test',
     'aculta_document_viewer',
+    'aculta_lms',
+    'aculta_lms_resources',
+    'aculta_calendar',
+    'aculta_file_uploader',
     'aculta_forum',
     'aculta_gallery',
     'aculta_image',
@@ -186,6 +192,11 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installEntitySchema('aculta_shipment');
     $this->installEntitySchema('aculta_shipping_method');
+    $this->installEntitySchema('group');
+    $this->installEntitySchema('group_relationship');
+    $this->installEntitySchema('group_config_wrapper');
+    $this->installConfig(['group']);
+    $this->installLmsGroupTypesFromSync();
     $this->installConfig(['commerce_store', 'commerce_order', 'profile', 'aculta_commerce']);
     $this->container->get('commerce_price.currency_importer')->import('BRL');
 

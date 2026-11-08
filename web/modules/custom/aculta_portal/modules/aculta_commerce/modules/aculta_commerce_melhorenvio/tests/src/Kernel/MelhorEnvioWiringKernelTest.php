@@ -16,6 +16,7 @@ use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\key\Entity\Key;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\Tests\aculta_commerce\Kernel\LmsGroupTypesPrerequisiteTrait;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,6 +34,8 @@ use Symfony\Component\Yaml\Yaml;
 #[RunTestsInSeparateProcesses]
 final class MelhorEnvioWiringKernelTest extends KernelTestBase {
 
+  use LmsGroupTypesPrerequisiteTrait;
+
   /**
    * {@inheritdoc}
    */
@@ -42,6 +45,8 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
     'aculta_calendar',
     'aculta_document_viewer',
     'aculta_file_uploader',
+    'aculta_lms',
+    'aculta_lms_resources',
     'aculta_forum',
     'aculta_gallery',
     'aculta_image',
@@ -149,6 +154,11 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->installEntitySchema('group');
+    $this->installEntitySchema('group_relationship');
+    $this->installEntitySchema('group_config_wrapper');
+    $this->installConfig(['group']);
+    $this->installLmsGroupTypesFromSync();
     $this->installConfig(['key', 'aculta_commerce_melhorenvio']);
     Key::create([
       'id' => 'me_sb_id',
