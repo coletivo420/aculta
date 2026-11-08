@@ -101,9 +101,13 @@ class DiscussionReplyFormBuilder {
     // content. Swapping only the discussion thread keeps the topic aside (which
     // lives at the end of the main column) out of the replaced fragment, so it
     // is not rendered twice after posting a reply.
-    $form['#attributes']['data-hx-target'] = '[data-aculta-discussion-thread]';
-    $form['#attributes']['data-hx-select'] = '[data-aculta-discussion-thread]';
-    $form['#attributes']['data-hx-swap'] = 'outerHTML';
+    // O compositor vive no diálogo modal. O envio troca só o corpo do diálogo e busca o
+    // próprio compositor: se a resposta trouxer o compositor (erro de validação), ele
+    // aparece no diálogo; se não trouxer, a postagem foi publicada (ver forum-quote.js).
+    $dialogBodyId = 'aculta-reply-dialog-body';
+    $form['#attributes']['data-hx-target'] = '#' . $dialogBodyId;
+    $form['#attributes']['data-hx-select'] = '[data-discussion-reply-composer]';
+    $form['#attributes']['data-hx-swap'] = 'innerHTML';
 
     $parentSubject = NULL;
     $parentAuthor = NULL;

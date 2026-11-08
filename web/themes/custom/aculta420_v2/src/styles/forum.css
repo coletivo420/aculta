@@ -892,40 +892,13 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
   }
 }
 
-/* Responder/Citar: o compositor abre num diálogo modal (popup), não inline. */
-.aculta-reply-dialog {
-  box-sizing: border-box;
-  inline-size: min(48rem, calc(100% - 2rem));
-  max-inline-size: calc(100% - 2rem);
-  max-block-size: calc(100% - 2rem);
-  overflow: auto;
-  padding: 0;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface-raised);
-  color: var(--color-text-primary);
-}
-
-.aculta-reply-dialog::backdrop {
-  background: rgb(0 0 0 / 0.45);
-}
-
-.aculta-reply-dialog__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-base);
-  border-block-end: 1px solid var(--color-border);
-}
-
-.aculta-reply-dialog__title {
-  margin: 0;
-  font-size: var(--font-size-lg);
+/* Responder/Citar: popup do SDC dialog (centralizado, fundo esmaecido). O link de abertura
+   do SDC não é usado: o JS abre o diálogo a partir dos botões Responder e Citar. */
+.aculta-dialog__trigger[aria-controls="aculta-reply-dialog"] {
+  display: none;
 }
 
 .aculta-reply-dialog__body {
-  padding: var(--spacing-base);
   min-inline-size: 0;
 }
 
