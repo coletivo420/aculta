@@ -15,6 +15,9 @@
       {% for linha in datas %}<li>{{ linha }}</li>{% endfor %}
     </ul>
   {% endif %}
+  {% if mapa %}
+    <div class="aculta-event__mapa">{{ mapa }}</div>
+  {% endif %}
   {% if descricao %}<div class="aculta-event__descricao">{{ descricao|nl2br }}</div>{% endif %}
   {% if url %}<p><a href="{{ url }}">Site do evento</a></p>{% endif %}
 </article>

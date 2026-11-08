@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Drupal\aculta_events\Controller;
 
 use Drupal\aculta_events\Cache\EventCacheTags;
+use Drupal\aculta_events\Catalogue\LocationCatalogue;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Occurrence\UpcomingDates;
+use Drupal\aculta_maps\MapRenderer;
+use Drupal\aculta_maps\RouteLinkBuilder;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 use Drupal\Component\Datetime\TimeInterface;
@@ -47,6 +50,9 @@ final class EventPageController extends ControllerBase {
     private readonly TimeInterface $tempo,
     private readonly ?DomainPurposeManager $purposes = NULL,
     private readonly ?AuthorIdentityResolver $identities = NULL,
+    private readonly ?MapRenderer $mapRenderer = NULL,
+    private readonly ?RouteLinkBuilder $routeLinks = NULL,
+    private readonly ?LocationCatalogue $locationCatalogue = NULL,
   ) {}
 
   /**
@@ -59,6 +65,9 @@ final class EventPageController extends ControllerBase {
       $container->get('datetime.time'),
       $container->has('aculta_portal.domain_purpose') ? $container->get('aculta_portal.domain_purpose') : NULL,
       $container->has('aculta_user.author_identity_resolver') ? $container->get('aculta_user.author_identity_resolver') : NULL,
+      $container->has('aculta_maps.renderer') ? $container->get('aculta_maps.renderer') : NULL,
+      $container->has('aculta_maps.route_link_builder') ? $container->get('aculta_maps.route_link_builder') : NULL,
+      $container->has('aculta_events.locations') ? $container->get('aculta_events.locations') : NULL,
     );
   }
 
@@ -358,6 +367,63 @@ final class EventPageController extends ControllerBase {
     $seguranca = (string) $evento->get('field_seguranca')->value;
     $cacheability->setCacheMaxAge($validade);
 
+    // Mapa contextual: se houver locais físicos autorizados com coordenadas,
+    // renderiza o mapa com marcadores dos locais deste evento.
+    $mapaRender = NULL;
+    if ($this->mapRenderer !== NULL) {
+      $marcadores = [];
+      $locaisProcessados = [];
+      foreach ($ocorrencias as $ocorrencia) {
+        $loc = $ocorrencia['data']->get('field_local')->entity;
+        if (!$loc instanceof EventLocation) {
+          continue;
+        }
+        $locId = (string) $loc->id();
+        if (isset($locaisProcessados[$locId])) {
+          continue;
+        }
+        $locaisProcessados[$locId] = TRUE;
+        $locAccess = $localViewAccess[$locId] ?? $loc->access('view', $this->currentUser(), TRUE);
+        if (!$locAccess->isAllowed()) {
+          continue;
+        }
+        $coords = $loc->get('field_coordenadas')->first()?->getValue();
+        if (!is_numeric($coords['lat'] ?? NULL) || !is_numeric($coords['lon'] ?? NULL)) {
+          continue;
+        }
+        $casas = (string) $loc->get('field_precisao')->value === 'aproximado' ? 2 : 6;
+        $enderecoLoc = $this->locationCatalogue !== NULL ? $this->locationCatalogue->enderecoPublico($loc) : '';
+        $locUrl = Url::fromRoute('aculta_events.location_canonical', [
+          'aculta_event_location' => $loc->id(),
+        ])->toString();
+        $routeUrl = ($enderecoLoc !== '' && $this->routeLinks !== NULL)
+          ? $this->routeLinks->build($enderecoLoc)->toString()
+          : '';
+        $categoriaLoc = '';
+        $tipoLoc = $loc->get('field_tipo')->entity;
+        if ($tipoLoc !== NULL && $tipoLoc->access('view')) {
+          $categoriaLoc = (string) $tipoLoc->label();
+        }
+        $marcadores[] = [
+          'label' => (string) $loc->label(),
+          'lat' => round((float) $coords['lat'], $casas),
+          'lng' => round((float) $coords['lon'], $casas),
+          'description' => $enderecoLoc,
+          'url' => $locUrl,
+          'category' => $categoriaLoc,
+          'precision' => $casas === 2 ? 'approximate' : 'exact',
+          'routeUrl' => $routeUrl,
+        ];
+      }
+      if ($marcadores !== []) {
+        $mapaRender = $this->mapRenderer->build([
+          'id' => 'event-page-map',
+          'label' => (string) $this->t('Mapa do local do evento'),
+          'markers' => $marcadores,
+        ]);
+      }
+    }
+
     return [
       '#theme' => 'aculta_event_page',
       '#prefix' => $prefix !== '' ? $prefix : NULL,
@@ -373,6 +439,7 @@ final class EventPageController extends ControllerBase {
       '#seguranca' => $seguranca !== '' ? $seguranca : NULL,
       '#url' => (string) $evento->get('field_url')->value,
       '#datas' => $linhas,
+      '#mapa' => $mapaRender,
       '#cancelado' => $evento->get('field_status')->value === 'cancelado',
       '#cache' => [
         'contexts' => $cacheability->getCacheContexts(),

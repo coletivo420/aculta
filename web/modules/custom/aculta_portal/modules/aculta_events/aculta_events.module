@@ -32,6 +32,7 @@ function aculta_events_theme(): array {
         'organizador' => NULL,
         'url' => NULL,
         'datas' => [],
+        'mapa' => NULL,
         'cancelado' => FALSE,
       ],
     ],

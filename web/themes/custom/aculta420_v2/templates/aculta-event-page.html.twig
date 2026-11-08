@@ -1,6 +1,6 @@
 {# The page title block owns the H1, so this adapter avoids a duplicate heading. #}
 {% set essentials_region = null %}
-{% if tipo or datas or url %}
+{% if tipo or datas or url or mapa %}
   {% set essentials_region %}
     {% if tipo %}<p><strong>{{ 'Tipo:'|t }}</strong> {{ tipo }}</p>{% endif %}
     {% if datas %}
@@ -10,6 +10,7 @@
       </ul>
     {% endif %}
     {% if url %}<p><a href="{{ url }}">{{ 'Site do evento'|t }}</a></p>{% endif %}
+    {% if mapa %}<div class="aculta-event-page-layout__map">{{ mapa }}</div>{% endif %}
   {% endset %}
 {% endif %}
 
