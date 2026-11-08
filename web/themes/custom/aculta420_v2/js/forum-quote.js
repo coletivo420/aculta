@@ -49,7 +49,21 @@
   Drupal.behaviors.acultaForumReplyPopup = {
     attach(context) {
       once('aculta-reply-popup', document.body, context).forEach((body) => {
-        // Responder/Citar: o compositor vai para o diálogo, não para a linha do comentário.
+        // Responder/Citar: antes de o HTMX ler o alvo, o link passa a apontar para o corpo do diálogo.
+        // Fase de captura: roda antes do listener do HTMX no próprio link.
+        document.addEventListener('click', (event) => {
+          const link = event.target && event.target.closest ? event.target.closest(triggerSelector) : null;
+          const bodyEl = getDialogBody();
+          if (!link || !bodyEl) {
+            return;
+          }
+          link.setAttribute('data-hx-target', '#' + dialogBodyId);
+          link.setAttribute('hx-target', '#' + dialogBodyId);
+          link.setAttribute('data-hx-swap', 'innerHTML');
+          link.setAttribute('hx-swap', 'innerHTML');
+        }, true);
+
+        // Rede de segurança: se o alvo ainda assim chegar à linha do comentário, redireciona no swap.
         body.addEventListener('htmx:beforeSwap', (event) => {
           const detail = event.detail || {};
           const element = detail.elt;
