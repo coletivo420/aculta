@@ -44,3 +44,12 @@ Herdado da skill `aculta-data-portal-ui`. Regra: o módulo marca `data-portal-ui
 - Nunca declare PASS sem execução.
 - Saída verbosa de comando: `python3 scripts/agent-output.py --lines 60 -- COMANDO`.
 - Estilo visual só se confirma na captura (320 e 1440 px, claro e escuro). Sem captura, registre DEFERRED.
+
+## Tokens em três camadas (boa prática de design tokens, adaptada ao ACULTA)
+Fonte: skill `design-tokens` (laurigates/claude-plugins), revisada e adaptada. Não adotamos as sugestões de ferramentas (npx, stylelint) dela.
+1. **Primitivos**: valores brutos com nome de categoria e escala (cor da marca, escala de espaço). No ACULTA ficam na paleta de `tokens.css`.
+2. **Semânticos**: papel na interface (`--color-text-primary`, `--color-surface-raised`, `--color-on-highlight`). É a camada que o componente consome. Apontam para os primitivos.
+3. **De componente**: declarados no próprio componente (`--button-*`), com sobrescrita por variante (ex.: `--button-danger-*`). O componente não usa primitivo direto.
+- Regra: componente consome semântico ou de componente. Nunca primitivo, nem hexadecimal.
+- Tema: valores claros em `:root, [data-theme="light"]`; escuros em `:root[data-theme="dark"], [data-theme="dark"]`. Não use `prefers-color-scheme` sem o `:root:not([data-theme="light"])`, para não contrariar o modo escolhido.
+- Camada e cascata: o escopo do modo é o contêiner, não o `body`. Se o `body` define cor com token claro, os filhos herdam o valor já calculado (ver causa resolvida na UI Library).
