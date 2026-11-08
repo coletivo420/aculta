@@ -13,6 +13,8 @@ use Drupal\Core\Utility\Token;
  */
 final class MailHooks {
 
+  use \Drupal\Core\StringTranslation\StringTranslationTrait;
+
   public function __construct(
     private readonly ConfigFactoryInterface $configFactory,
     private readonly Token $token,
@@ -35,8 +37,8 @@ final class MailHooks {
     if ($key === 'notify_current') {
       $context = $params['context'];
       $message['to'] = $context['user']->getEmail();
-      $message['subject'] = $this->token->replace(t('Email change request for your user account at [site:name]'), $context, ['sanitize' => FALSE]);
-      $message['body'][] = $this->token->replace(t('A request to change your email address has been made at [site:name]. In order to confirm the update of your email address you will need to follow the instructions sent to your new email address.'), $context, ['sanitize' => FALSE]);
+      $message['subject'] = $this->token->replace($this->t('Email change request for your user account at [site:name]'), $context, ['sanitize' => FALSE]);
+      $message['body'][] = $this->token->replace($this->t('A request to change your email address has been made at [site:name]. In order to confirm the update of your email address you will need to follow the instructions sent to your new email address.'), $context, ['sanitize' => FALSE]);
       return;
     }
   }

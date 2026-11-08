@@ -11,12 +11,14 @@ use Drupal\Core\Hook\Attribute\Hook;
  */
 final class SettingsTabsHooks {
 
+  use \Drupal\Core\StringTranslation\StringTranslationTrait;
+
   /**
    * Acrescenta a aba Privacidade depois de "Modo de cor".
    */
   #[Hook('aculta_portal_settings_tabs_alter')]
   public function settingsTabsAlter(array &$tabs): void {
-    $tabs['privacy'] = ['title' => (string) t('Privacidade'), 'route' => 'aculta_user.configuracoes_privacidade'];
+    $tabs['privacy'] = ['title' => (string) $this->t('Privacidade'), 'route' => 'aculta_user.configuracoes_privacidade'];
   }
 
 }

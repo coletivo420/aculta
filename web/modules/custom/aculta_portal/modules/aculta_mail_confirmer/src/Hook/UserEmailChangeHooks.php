@@ -22,6 +22,8 @@ use Drupal\user\UserInterface;
  */
 final class UserEmailChangeHooks {
 
+  use \Drupal\Core\StringTranslation\StringTranslationTrait;
+
   /**
    * Creates the hooks.
    *
@@ -104,7 +106,7 @@ final class UserEmailChangeHooks {
       ->setResponseUrl($entity->toUrl('edit-form'), 'confirm');
     $this->manager->sendRequest($confirmation);
     $confirmation->save();
-    $this->messenger->addStatus(t(
+    $this->messenger->addStatus($this->t(
       'A message has been sent to the new email address %email to confirm the change. Until confirmed, your current address will be used.',
       ['%email' => $new_email]));
 
@@ -138,7 +140,7 @@ final class UserEmailChangeHooks {
         case 'confirm':
           // User's email address must be unique on the site.
           if (!empty($user_storage->loadByProperties(['mail' => $new_email]))) {
-            $this->messenger->addError(t(
+            $this->messenger->addError($this->t(
               'The email address %value is already taken.',
               ['%value' => $new_email]));
             break;
@@ -150,8 +152,8 @@ final class UserEmailChangeHooks {
           \Drupal::cache('memory')->set('aculta_mail_confirmer_user_' . $user_id, TRUE);
           $user->save();
           $this->messenger->addStatus($this->currentUser->id() == $user_id
-            ? t('Your email address has been updated to %mail', ['%mail' => $new_email])
-            : t("%user's email address has been updated to %mail", [
+            ? $this->t('Your email address has been updated to %mail', ['%mail' => $new_email])
+            : $this->t("%user's email address has been updated to %mail", [
               '%user' => $user->getDisplayName(),
               '%mail' => $new_email,
             ]));

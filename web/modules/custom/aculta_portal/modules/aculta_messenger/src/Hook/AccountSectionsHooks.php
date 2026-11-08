@@ -16,6 +16,8 @@ use Drupal\aculta_messenger\Aviso\AvisoService;
  */
 final class AccountSectionsHooks {
 
+  use \Drupal\Core\StringTranslation\StringTranslationTrait;
+
   public function __construct(
     private readonly AvisoService $avisos,
   ) {}
@@ -34,7 +36,7 @@ final class AccountSectionsHooks {
       return;
     }
     $sections['aculta_messenger.avisos_raiz'] = [
-      'title' => (string) t('Avisos/Mensagens'),
+      'title' => (string) $this->t('Avisos/Mensagens'),
       'route' => 'aculta_messenger.avisos_raiz',
       'icon' => 'bell',
       'badge_count' => $this->avisos->naoLidosTotal((int) $account->id()),

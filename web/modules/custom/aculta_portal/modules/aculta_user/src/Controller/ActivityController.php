@@ -79,18 +79,18 @@ final class ActivityController implements ContainerInjectionInterface {
       'forum' => $this->forum($uid),
       'revista' => $this->revista($uid),
       'comentarios' => $this->comentarios($uid),
-      default => ['#markup' => (string) t('Nenhuma conquista ainda. As conquistas chegam em uma etapa futura.')],
+      default => ['#markup' => (string) $this->stringTranslation->translate('Nenhuma conquista ainda. As conquistas chegam em uma etapa futura.')],
     };
     $this->modules->alter('aculta_user_activity_content', $conteudo, $aba, $uid);
     // Mesmo padrão de Meus Dados e Segurança: descrição, abas (links com URL própria) e o conteúdo da aba.
     return [
       '#cache' => ['contexts' => $cache->getCacheContexts(), 'tags' => $cache->getCacheTags(), 'max-age' => 0],
-      'description' => ['#plain_text' => t('Veja o que você fez no site: verbetes, tópicos, publicações e comentários.')],
+      'description' => ['#plain_text' => $this->stringTranslation->translate('Veja o que você fez no site: verbetes, tópicos, publicações e comentários.')],
       'tabs' => [
         '#type' => 'container',
         '#attributes' => [
           'data-portal-ui' => 'account-data-nav',
-          'aria-label' => t('Seções de atividade'),
+          'aria-label' => $this->stringTranslation->translate('Seções de atividade'),
           'data-portal-account-data-nav' => 'true',
         ],
         'links' => $this->tabLinks($aba),
@@ -105,7 +105,7 @@ final class ActivityController implements ContainerInjectionInterface {
         'heading' => [
           '#theme' => 'aculta_portal_element',
           '#tag' => 'h3',
-          '#value' => t(self::TABS[$aba]),
+          '#value' => $this->stringTranslation->translate(self::TABS[$aba]),
           '#element_attributes' => new Attribute(['tabindex' => '-1']),
         ],
         'list' => $conteudo,
@@ -118,7 +118,7 @@ final class ActivityController implements ContainerInjectionInterface {
   private function tabLinks(string $atual): array {
     $links = [];
     foreach (self::TABS as $id => $label) {
-      $link = PortalLinkElement::build(t($label), Url::fromRoute('aculta_user.atividade', ['aba' => $id]), [
+      $link = PortalLinkElement::build($this->stringTranslation->translate($label), Url::fromRoute('aculta_user.atividade', ['aba' => $id]), [
         'data-portal-account-data-link' => 'true',
         'data-portal-ui' => 'account-data-link',
       ]);
@@ -285,7 +285,7 @@ final class ActivityController implements ContainerInjectionInterface {
     }
 
     if ($entries === []) {
-      return ['#markup' => (string) t('Você ainda não comentou nas discussões do Fórum.')];
+      return ['#markup' => (string) $this->stringTranslation->translate('Você ainda não comentou nas discussões do Fórum.')];
     }
     usort($entries, static fn (array $left, array $right): int =>
       ($right['created'] <=> $left['created']) ?: strcmp($left['sort_id'], $right['sort_id'])
@@ -319,7 +319,7 @@ final class ActivityController implements ContainerInjectionInterface {
     bool $showReplies = FALSE,
   ): array {
     if ($nids === []) {
-      return ['#markup' => (string) t($vazio)];
+      return ['#markup' => (string) $this->stringTranslation->translate($vazio)];
     }
     $items = [];
     foreach ($this->entityTypeManager->getStorage('node')->loadMultiple($nids) as $node) {

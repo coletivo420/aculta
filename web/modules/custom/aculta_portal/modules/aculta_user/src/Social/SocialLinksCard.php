@@ -20,6 +20,8 @@ use Drupal\aculta_portal\Profile\PerfilDoPapel;
  */
 final class SocialLinksCard {
 
+  use \Drupal\Core\StringTranslation\StringTranslationTrait;
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly SocialNetworks $networks,
@@ -34,7 +36,7 @@ final class SocialLinksCard {
 
     $items = [];
     foreach (SocialNetworks::NETWORKS as $key => $definition) {
-      $label = (string) t($definition['label']);
+      $label = (string) $this->t($definition['label']);
       $items[$key] = [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'account-social-item'],
@@ -51,7 +53,7 @@ final class SocialLinksCard {
             ])
             : $this->element('span', $label, 'account-social-name'),
           // Sem link: o status aparece abaixo do nome. Com link, nada é exibido (o valor fica armazenado).
-          'status' => isset($links[$key]) ? [] : $this->element('span', (string) t('Não informado'), 'account-social-status'),
+          'status' => isset($links[$key]) ? [] : $this->element('span', (string) $this->t('Não informado'), 'account-social-status'),
         ],
         'edit' => PortalLinkElement::build(
           '',
@@ -59,9 +61,9 @@ final class SocialLinksCard {
           [
             'class' => 'use-ajax',
             'data-dialog-type' => 'modal',
-            'data-dialog-options' => Json::encode(['title' => (string) t('Editar @rede', ['@rede' => $label])]),
+            'data-dialog-options' => Json::encode(['title' => (string) $this->t('Editar @rede', ['@rede' => $label])]),
             'data-portal-ui' => 'account-social-edit',
-            'aria-label' => (string) t('Editar @rede', ['@rede' => $label]),
+            'aria-label' => (string) $this->t('Editar @rede', ['@rede' => $label]),
           ],
         ) + ['#attached' => ['library' => ['core/drupal.dialog.ajax']]],
       ];
@@ -70,7 +72,7 @@ final class SocialLinksCard {
     return [
       '#type' => 'container',
       '#attributes' => ['id' => 'aculta-account-social-card', 'data-portal-ui' => 'account-social-card'],
-      'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h4', '#value' => t('Redes sociais')],
+      'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h4', '#value' => $this->t('Redes sociais')],
       'list' => [
         '#type' => 'container',
         '#attributes' => [

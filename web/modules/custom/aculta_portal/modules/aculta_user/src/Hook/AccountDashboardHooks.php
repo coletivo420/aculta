@@ -21,6 +21,8 @@ use Drupal\aculta_portal\Profile\PerfilDoPapel;
  */
 final class AccountDashboardHooks {
 
+  use \Drupal\Core\StringTranslation\StringTranslationTrait;
+
   public function __construct(
     #[Autowire(service: 'aculta_user.account_bio_card')]
     private readonly AccountBioCard $bioCard,
@@ -66,9 +68,9 @@ final class AccountDashboardHooks {
       '#weight' => -10,
       '#cache' => ['tags' => $cache->getCacheTags()],
       'profile' => PortalLinkElement::build(
-        (string) t('Ver Perfil'),
+        (string) $this->t('Ver Perfil'),
         $url,
-        ['data-portal-ui' => 'account-view-profile', 'title' => (string) t('Abrir o perfil público')],
+        ['data-portal-ui' => 'account-view-profile', 'title' => (string) $this->t('Abrir o perfil público')],
       ),
     ];
   }

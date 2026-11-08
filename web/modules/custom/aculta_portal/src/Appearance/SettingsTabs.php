@@ -16,6 +16,8 @@ use Drupal\Core\Url;
  */
 final class SettingsTabs {
 
+  use \Drupal\Core\StringTranslation\StringTranslationTrait;
+
   public function __construct(
     private readonly ModuleHandlerInterface $moduleHandler,
   ) {}
@@ -25,7 +27,7 @@ final class SettingsTabs {
    */
   public function build(string $active): array {
     $tabs = [
-      'color' => ['title' => (string) t('Modo de cor'), 'route' => 'aculta_portal.account_settings'],
+      'color' => ['title' => (string) $this->t('Modo de cor'), 'route' => 'aculta_portal.account_settings'],
     ];
     $this->moduleHandler->alter('aculta_portal_settings_tabs', $tabs);
 
@@ -46,7 +48,7 @@ final class SettingsTabs {
       '#type' => 'container',
       '#attributes' => [
         'data-portal-ui' => 'account-data-nav',
-        'aria-label' => (string) t('Seções de configurações'),
+        'aria-label' => (string) $this->t('Seções de configurações'),
         'data-portal-account-data-nav' => 'true',
       ],
       'links' => $links,

@@ -29,6 +29,8 @@ use Drupal\user\UserInterface;
  */
 final class PhotoEditorHooks {
 
+  use \Drupal\Core\StringTranslation\StringTranslationTrait;
+
   /**
    * Caminho da rota de sorteio (o token CSRF é gerado para este caminho). */
   private const PATH = '/avatar/sortear';
@@ -70,9 +72,9 @@ final class PhotoEditorHooks {
         'class' => ['use-ajax'],
         'data-portal-ui' => 'account-photo-trigger',
         'data-dialog-type' => 'modal',
-        'data-dialog-options' => Json::encode(['title' => (string) t('Alterar foto do perfil')]),
+        'data-dialog-options' => Json::encode(['title' => (string) $this->t('Alterar foto do perfil')]),
         'data-aculta-photo-open' => '',
-        'aria-label' => (string) t('Alterar foto de perfil de @name', ['@name' => $account->getDisplayName()]),
+        'aria-label' => (string) $this->t('Alterar foto de perfil de @name', ['@name' => $account->getDisplayName()]),
       ],
       '#attached' => [
         'library' => ['core/drupal.dialog.ajax', 'aculta_user/photo-flow'],

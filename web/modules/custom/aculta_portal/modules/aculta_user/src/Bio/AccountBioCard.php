@@ -18,6 +18,8 @@ use Drupal\aculta_portal\Profile\PerfilDoPapel;
  */
 final class AccountBioCard {
 
+  use \Drupal\Core\StringTranslation\StringTranslationTrait;
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
@@ -36,7 +38,7 @@ final class AccountBioCard {
       '#attributes' => [
         'id' => 'aculta-account-bio-dialog',
         'data-portal-ui' => 'account-bio-dialog',
-        'aria-label' => (string) t('Editar bio'),
+        'aria-label' => (string) $this->t('Editar bio'),
         'data-aculta-utility-drawer' => '',
       ],
       'header' => [
@@ -47,7 +49,7 @@ final class AccountBioCard {
           '#type' => 'html_tag',
           '#tag' => 'h2',
           '#attributes' => ['data-portal-ui' => 'account-bio-dialog-title'],
-          '#value' => t('Editar bio'),
+          '#value' => $this->t('Editar bio'),
         ],
         'close' => [
           '#type' => 'html_tag',
@@ -56,7 +58,7 @@ final class AccountBioCard {
             'type' => 'button',
             'data-portal-ui' => 'account-bio-dialog-close',
             'data-aculta-dialog-close' => '',
-            'aria-label' => (string) t('Fechar'),
+            'aria-label' => (string) $this->t('Fechar'),
           ],
           '#value' => '×',
         ],
@@ -70,7 +72,7 @@ final class AccountBioCard {
           'aria-live' => 'polite',
           'aria-busy' => 'false',
         ],
-        '#value' => t('Carregando…'),
+        '#value' => $this->t('Carregando…'),
       ],
     ];
 
@@ -88,11 +90,11 @@ final class AccountBioCard {
       '#type' => 'container',
       // Id estável para a substituição AJAX: o tema troca data-portal-ui por classes ao renderizar.
       '#attributes' => ['id' => 'aculta-account-bio-card', 'data-portal-ui' => 'account-bio-card'],
-      'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => t('Bio')],
+      'title' => ['#theme' => 'aculta_portal_element', '#tag' => 'h3', '#value' => $this->t('Bio')],
       // Caixa de formulário bloqueada: leitura da bio, ou o aviso como placeholder quando vazia.
       'text' => [
         '#type' => 'textarea',
-        '#title' => t('Bio'),
+        '#title' => $this->t('Bio'),
         '#title_display' => 'invisible',
         '#value' => $bio,
         '#disabled' => TRUE,
@@ -101,13 +103,13 @@ final class AccountBioCard {
         '#attributes' => [
           'disabled' => 'disabled',
           'readonly' => 'readonly',
-          'placeholder' => (string) t('Você ainda não escreveu sua bio.'),
+          'placeholder' => (string) $this->t('Você ainda não escreveu sua bio.'),
           'data-portal-ui' => 'account-bio-text',
         ],
       ],
       // Lápis abaixo da caixa: abre o modal de edição.
       'edit' => PortalLinkElement::build(
-        t('Editar bio'),
+        $this->t('Editar bio'),
         $editUrl,
         [
           'data-portal-ui' => 'account-bio-edit',
@@ -115,7 +117,7 @@ final class AccountBioCard {
           'aria-controls' => 'aculta-account-bio-dialog',
           'aria-haspopup' => 'dialog',
           'aria-expanded' => 'false',
-          'aria-label' => (string) t('Editar bio'),
+          'aria-label' => (string) $this->t('Editar bio'),
         ],
       ),
       'dialog' => $dialog,

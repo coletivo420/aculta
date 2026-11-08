@@ -17,6 +17,8 @@ use Drupal\user\UserDataInterface;
  */
 final class UserEmailChangeFormHooks {
 
+  use \Drupal\Core\StringTranslation\StringTranslationTrait;
+
   /**
    * Creates the hooks.
    *
@@ -58,7 +60,7 @@ final class UserEmailChangeFormHooks {
       foreach ($confirmations as $confirmation) {
         if ($confirmation->uid->target_id == $user->id()) {
           $confirmation_url = Url::fromRoute('entity.aculta_mail_confirmer.resend', ['confirmation' => $confirmation->id()], ['query' => $this->destination->getAsArray()])->toString();
-          $form['account']['mail']['#description'] = t(
+          $form['account']['mail']['#description'] = $this->t(
             '<strong>An update of your email address to %mail is pending of confirmation</strong>. <a href=":resend_url">Resend confirmation email</a> or <a href=":cancel_url">cancel the pending change</a>.',
             [
               '%mail' => $new_email,
