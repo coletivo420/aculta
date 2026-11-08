@@ -68,6 +68,7 @@ final class SurfaceRoutesKernelTest extends KernelTestBase {
     'media',
     'group',
     'flexible_permissions',
+    'aculta_forum',
   ];
 
   /**
