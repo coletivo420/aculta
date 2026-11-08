@@ -783,6 +783,16 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
   inline-size: 100%;
 }
 
+/* "Sobre este tópico" é sempre o último item da coluna principal: depois do
+   texto, de todos os comentários e do formulário "Comentar". */
+.aculta-forum-topic__main > .aculta-forum-topic__presentation {
+  order: 0;
+}
+
+.aculta-forum-topic__main > .aculta-forum-topic__aside {
+  order: 1;
+}
+
 .aculta-forum-topic__about {
   padding: var(--spacing-base);
   border: 1px solid var(--color-border);
