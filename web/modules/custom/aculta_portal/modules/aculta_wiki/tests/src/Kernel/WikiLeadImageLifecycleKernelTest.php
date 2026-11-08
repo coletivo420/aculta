@@ -1015,7 +1015,9 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       ->getContext()->setDomain(Domain::load('wiki420_aculta_org'));
     $this->container->get('theme.manager')->resetActiveTheme();
     $homeHtml = $this->container->get('renderer')->renderRoot($homeBuild);
-    self::assertStringContainsString('aculta-context-tabs', (string) $homeHtml);
+    // The context navigation is now the aculta420_v2 tabs component (class
+    // aculta-tabs); the old context-tabs class name is no longer rendered.
+    self::assertStringContainsString('aculta-tabs', (string) $homeHtml);
     self::assertStringContainsString('aculta-wiki-home', (string) $homeHtml);
 
     Role::load('anonymous')->revokePermission('access content')->save();
@@ -1027,8 +1029,9 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
 
     $this->container->get('router.builder')->rebuild();
     $listingRoute = $routeProvider->getRouteByName('view.wiki_entries.page_1');
-    self::assertSame('/verbetes', $listingRoute->getPath());
-    self::assertCount(1, $routeProvider->getRoutesByPattern('/verbetes'));
+    // The wiki_entries view declares wiki/verbetes in config/sync.
+    self::assertSame('/wiki/verbetes', $listingRoute->getPath());
+    self::assertCount(1, $routeProvider->getRoutesByPattern('/wiki/verbetes'));
     self::assertSame('wiki', $listingRoute->getOption('_aculta_domain_purpose'));
     self::assertTrue($accessManager->checkNamedRoute(
       'view.wiki_entries.page_1',
@@ -2024,8 +2027,9 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $previewFormState = new FormState();
     $previewFormState->setFormObject($previewFormObject);
     $previewForm = $formBuilder->buildForm($previewFormObject, $previewFormState);
+    $previewFormState->setValue($previewForm['moderation_state']['widget'][0]['state']['#parents'], 'draft');
     $previewFormState->setTriggeringElement($previewForm['actions']['preview']);
-    $previewFormObject->submitForm($previewForm, $previewFormState);
+    $formBuilder->submitForm($previewFormObject, $previewFormState);
     $previewFormObject->getEntity()->setTitle('Prévia sem salvar');
     $previewFormObject->getEntity()->set('body', ['value' => 'Texto de prévia com fonte.', 'format' => 'plain_text']);
     $previewFormObject->getEntity()->set('moderation_state', 'draft');
