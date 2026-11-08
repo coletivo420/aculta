@@ -1693,3 +1693,14 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Verificações:** foundations PASS (75 pares/6 faixas), diff check PASS. Editor: 5 checks PASS; admin não rodou.
 - **Pendências:** host/ULI e CKEditor; aceite F2; config local/legada e chaves fora da exportação.
 - **Próximo passo:** restaurar rota autenticada, repetir editor e obter aceite F2.
+
+# V2 — Stylelint CSS — 2026-11-07
+
+- **Objetivo:** corrigir as violações Stylelint no CSS da V2 e fazer a configuração compatível com os contratos locais.
+- **Estado:** CSS normalizado pelo preset Drupal; nenhuma mudança intencional de apresentação. Stylelint e gate de fundações PASS.
+- **Decisões e alternativas descartadas:** mantidas regras compactas usadas pelo tema; exceções para `dvh`, `@container`, `@starting-style`, `.75rem` e nomes Inter/Oswald, porque o preset legado conflita com recursos e contratos validados da V2.
+- **Cuidados:** auto-fix reordena declarações e normaliza valores equivalentes; `color-scheme` permanece no grupo claro. Não substituir o preset sem repetir os gates de fundações.
+- **Commits e arquivos:** `ecdb0a84f8`; `.stylelintrc.json`, CSS em `web/themes/custom/aculta420_v2`, TODO, CHANGELOG e roadmap.
+- **Verificações:** `npm run lint:css`, `php scripts/validate-aculta420-v2-foundations.php`, `php scripts/validate-agent-token-budget.php` e `git diff --check` PASS. Captura visual não repetida: CSS passou lint e gate de tokens; sem alteração de comportamento pretendida.
+- **Pendências e bloqueios:** nenhuma desta entrega; validação visual de fases anteriores mantém seu status próprio.
+- **Próximo passo:** seguir com o próximo item do roadmap V2.

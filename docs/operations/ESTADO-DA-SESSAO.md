@@ -2,6 +2,17 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
+# ACULTA CGU e Consolidação Modular Transversal — 2026-11-08
+
+- **Objetivo:** unificar e consolidar módulos intermediários e duplicados no portal, integrando recursos aos seus donos de domínio e criando o módulo transversal `aculta_cgu` para gestão de Conteúdo Gerado por Usuários.
+- **Estado:** funcional e estável. `aculta_cgu` reúne propostas comunitárias privadas (`Contribution`) e moderação de denúncias (`UgcReport`); submódulos `aculta_forum_wiki`, `aculta_lms_resources`, `aculta_lms_agenda`, `aculta_lms_messenger`, `aculta_forum_lms` foram incorporados diretamente nos seus módulos de domínio (`aculta_wiki`, `aculta_lms`, `aculta_forum`, `aculta_calendar`, `aculta_messenger`). Runtime respondendo HTTP 200 OK.
+- **Decisões e alternativas descartadas:** criação de aliases de serviços legados (`aculta_contributions.*` e `aculta_ugc.*`) no `aculta_cgu` para transição transparente; desregistro ordenado dos módulos extintos no banco e em `core.extension.yml` antes da remoção dos arquivos do disco para prevenir erro 500 no autoloader.
+- **Cuidados:** preservação dos esquemas de banco e entidades (`aculta_contribution` e `aculta_ugc_report`) sob o novo provider para manter os dados existentes íntegros; `drush cr` disparado a cada intervenção estrutural.
+- **Commits e arquivos:** `3c16b497c`, `900734aa8`, `c44b8e3c5`, `9a734b0ef`, `a92c31f58`, `8f4e9e534`, `7f05433a2`, `ca1015201`; módulos `aculta_cgu`, `aculta_lms`, `aculta_wiki`, `aculta_forum`, `aculta_events`, `aculta_user`, `aculta_content_admin` e sync `core.extension.yml`.
+- **Verificações:** Unit CGU 3/19 PASS; Unit Wiki/Events 129/545 PASS; `validate-project-status-index.php` PASS (44 componentes); `validate-config-extension-dependencies.php` PASS (1714 checks); smoke test HTTP 200 PASS. Kernels com banco isolado: `UgcReportPolicyKernelTest` 12/162 PASS.
+- **Pendências e bloqueios:** homologação funcional autenticada da fila unificada em `/painel-administrativo/moderacao/denuncias` e submissões com perfis de teste.
+- **Próximo passo:** homologar operacionalmente o painel administrativo de denúncias e o ciclo de revisão de propostas no Runtime.
+
 # ACULTA Maps + OpenStreetMap — Diagnóstico, Visual e Homologação — 2026-11-07
 
 - **Objetivo:** diagnosticar mapas não renderizados, corrigir causa raiz, alinhar apresentação visual no tema V2 e homologar funcional e visualmente.
@@ -23,14 +34,3 @@
 - **Verificações:** renderer Drupal 12/12 na rodada atual (Badge, Button, Conexões, Rodapé, Ícone, Wiki, Data Table e Form Field); rodada anterior Dialog/Menu/Barra/Pagination 4/4 e `utility-drawers` confirmado. Stories dinâmicas customizadas e hook testados. Schema SDC 55/764, PHP lint e Stylelint do CSS alterado PASS. `npm run lint:css` encontra violações preexistentes em `src/styles/forum.css`; gate V2 SDC encontra falso positivo `__add-btn` em `studio-calendar.twig`. Token budget e `git diff --check` PASS.
 - **Pendências e bloqueios:** cache Drupal reconstruído no Runtime. `updatedb:status` e `config:status` ainda mostram pendências preexistentes, preservadas sem execução/import. Aceite visual autenticado e teste de clique no browser permanecem pendentes.
 - **Próximo passo:** confirmar visualmente e clicar nas prévias no overview autenticado; não importar configuração nem executar updates sem escopo explícito.
-
-# V2 — Stylelint CSS — 2026-11-07
-
-- **Objetivo:** corrigir as violações Stylelint no CSS da V2 e fazer a configuração compatível com os contratos locais.
-- **Estado:** CSS normalizado pelo preset Drupal; nenhuma mudança intencional de apresentação. Stylelint e gate de fundações PASS.
-- **Decisões e alternativas descartadas:** mantidas regras compactas usadas pelo tema; exceções para `dvh`, `@container`, `@starting-style`, `.75rem` e nomes Inter/Oswald, porque o preset legado conflita com recursos e contratos validados da V2.
-- **Cuidados:** auto-fix reordena declarações e normaliza valores equivalentes; `color-scheme` permanece no grupo claro. Não substituir o preset sem repetir os gates de fundações.
-- **Commits e arquivos:** `ecdb0a84f8`; `.stylelintrc.json`, CSS em `web/themes/custom/aculta420_v2`, TODO, CHANGELOG e roadmap.
-- **Verificações:** `npm run lint:css`, `php scripts/validate-aculta420-v2-foundations.php`, `php scripts/validate-agent-token-budget.php` e `git diff --check` PASS. Captura visual não repetida: CSS passou lint e gate de tokens; sem alteração de comportamento pretendida.
-- **Pendências e bloqueios:** nenhuma desta entrega; validação visual de fases anteriores mantém seu status próprio.
-- **Próximo passo:** seguir com o próximo item do roadmap V2.
