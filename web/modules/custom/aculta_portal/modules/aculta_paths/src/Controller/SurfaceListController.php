@@ -10,7 +10,7 @@ use Drupal\aculta_portal\Domain\SurfaceConfigReader;
 use Drupal\aculta_paths\Service\DnsStatusChecker;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Link;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -99,15 +99,23 @@ final class SurfaceListController extends ControllerBase {
       if ($purpose === DomainSurfaceMap::MAIN) {
         continue;
       }
-      $editar = Link::createFromRoute($this->t('Editar'), 'aculta_paths.editar', ['purpose' => $purpose], [
-        'attributes' => [
+      $editar = [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:button',
+        '#props' => [
+          'text' => (string) $this->t('Editar'),
+          'url' => Url::fromRoute('aculta_paths.editar', ['purpose' => $purpose])->toString(),
+          'variant' => 'primary',
+          'size' => 'small',
+        ],
+        '#attributes' => [
+          // O modal continua no diálogo jQuery do Core (exceção registrada em docs/botoes.md).
           'class' => ['use-ajax'],
-          'data-portal-ui' => 'surface-list-edit-action',
           'data-dialog-type' => 'modal',
           'data-dialog-options' => Json::encode(['width' => 640]),
           'aria-label' => (string) $this->t('Editar @nome', ['@nome' => $linha['titulo']]),
         ],
-      ])->toRenderable();
+      ];
       $linhas[] = [
         self::MODULOS[$purpose] ?? (string) $this->t('(sem módulo)'),
         $linha['titulo'],

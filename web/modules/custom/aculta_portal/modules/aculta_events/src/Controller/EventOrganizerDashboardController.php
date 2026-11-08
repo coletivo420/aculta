@@ -374,12 +374,12 @@ final class EventOrganizerDashboardController extends ControllerBase {
             '#default_value' => $statusFilter,
           ],
           'submit' => [
-            '#type' => 'html_tag',
-            '#tag' => 'button',
-            '#value' => $this->t('Filtrar'),
-            '#attributes' => [
-              'type' => 'submit',
-              'data-portal-ui' => 'button-secondary',
+            '#type' => 'component',
+            '#component' => 'aculta420_v2:button',
+            '#props' => [
+              'text' => (string) $this->t('Filtrar'),
+              'variant' => 'secondary',
+              'is_submit' => TRUE,
             ],
           ],
         ],

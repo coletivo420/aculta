@@ -10,7 +10,6 @@ use Drupal\aculta_learning_contracts\Learning\StudentLearningCourse;
 use Drupal\aculta_learning_contracts\Learning\StudentLearningSummaryReaderInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Datetime\DateFormatterInterface;
-use Drupal\Core\Link;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -106,7 +105,6 @@ final class LearnerDashboardComposer {
 
     $url = $course->continueUrl;
     $label = $show_lesson ? $this->t('Continuar aula') : $this->t('Continuar curso');
-    $url->setOption('attributes', ['data-portal-ui' => 'aculta-btn-primary']);
 
     return [
       '#type' => 'container',
@@ -129,7 +127,7 @@ final class LearnerDashboardComposer {
             '#attributes' => ['data-portal-ui' => 'aculta-learning-home__course-title'],
           ],
           'content' => $content,
-          'footer' => Link::fromTextAndUrl($label, $url)->toRenderable(),
+          'footer' => $this->button($label, $url, 'primary'),
         ],
       ],
     ];
@@ -158,7 +156,6 @@ final class LearnerDashboardComposer {
 
     if ($courses === []) {
       $catalog_url = Url::fromRoute('aculta_portal.courses_home');
-      $catalog_url->setOption('attributes', ['data-portal-ui' => 'aculta-btn-primary']);
       $section['empty'] = [
         '#theme' => 'aculta_portal_component',
         '#name' => 'empty-state',
@@ -169,7 +166,7 @@ final class LearnerDashboardComposer {
             '#tag' => 'p',
             '#value' => $this->t('Você ainda não está matriculado em nenhum curso. Quando se matricular, seus cursos aparecem aqui.'),
           ],
-          'actions' => Link::fromTextAndUrl($this->t('Explorar o catálogo de cursos'), $catalog_url)->toRenderable(),
+          'actions' => $this->button($this->t('Explorar o catálogo de cursos'), $catalog_url, 'primary'),
         ],
       ];
       return $section;
@@ -210,12 +207,9 @@ final class LearnerDashboardComposer {
 
     $actions = [];
     $journey_url = Url::fromRoute('entity.group.canonical', ['group' => $course->id]);
-    $journey_url->setOption('attributes', ['data-portal-ui' => 'aculta-btn-outline']);
-    $actions['journey'] = Link::fromTextAndUrl($this->t('Ver jornada'), $journey_url)->toRenderable();
+    $actions['journey'] = $this->button($this->t('Ver jornada'), $journey_url, 'outline');
     if ($course->continueUrl instanceof Url) {
-      $course_url = $course->continueUrl;
-      $course_url->setOption('attributes', ['data-portal-ui' => 'aculta-btn-primary']);
-      $actions['continue'] = Link::fromTextAndUrl($this->courseActionLabel($course), $course_url)->toRenderable();
+      $actions['continue'] = $this->button($this->courseActionLabel($course), $course->continueUrl, 'primary');
     }
 
     return [
@@ -235,6 +229,31 @@ final class LearnerDashboardComposer {
           '#attributes' => ['data-portal-ui' => 'aculta-learning-home__actions'],
           'items' => $actions,
         ],
+      ],
+    ];
+  }
+
+  /**
+   * Builds a link as the aculta420_v2:button SDC.
+   *
+   * @param mixed $label
+   *   Visible label.
+   * @param \Drupal\Core\Url $url
+   *   Destination URL.
+   * @param string $variant
+   *   SDC variant (primary, secondary, outline, ghost or danger).
+   *
+   * @return array
+   *   Component render array.
+   */
+  private function button(mixed $label, Url $url, string $variant): array {
+    return [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:button',
+      '#props' => [
+        'text' => (string) $label,
+        'url' => $url->toString(),
+        'variant' => $variant,
       ],
     ];
   }
@@ -335,7 +354,7 @@ final class LearnerDashboardComposer {
               ]),
             ],
           ],
-          'footer' => Link::fromTextAndUrl($this->t('Ver certificado'), $certificate->verificationUrl)->toRenderable(),
+          'footer' => $this->button($this->t('Ver certificado'), $certificate->verificationUrl, 'primary'),
         ],
       ];
     }

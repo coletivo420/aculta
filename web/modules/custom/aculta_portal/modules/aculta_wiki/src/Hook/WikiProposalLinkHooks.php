@@ -76,11 +76,14 @@ final class WikiProposalLinkHooks {
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'wiki-proposal-link'],
       'link' => [
-        '#type' => 'link',
-        '#title' => new TranslatableMarkup('Contribuir'),
-        '#url' => $url,
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:button',
+        '#props' => [
+          'text' => (string) new TranslatableMarkup('Contribuir'),
+          'url' => $url->toString(),
+          'variant' => 'secondary',
+        ],
         '#access' => $access,
-        '#attributes' => ['data-portal-ui' => 'wiki-proposal-contribute'],
       ],
       '#weight' => 100,
       '#cache' => [

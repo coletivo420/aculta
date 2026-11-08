@@ -28,10 +28,8 @@ final class PortalUiHooks {
    * Mapa token → classes do V2. A ordem dos tokens define a ordem das classes.
    */
   public const TOKENS = [
-    'surface-list-edit-action' => ['button', 'button--small'],
     'surface-dns-block' => ['superficies-dns'],
     'aculta-lms-lesson-preview--activity' => ['aculta-lms-lesson-preview__activity'],
-    'lms-answer-review-button' => ['button'],
     'aculta-lms-class-status-history--period' => ['aculta-lms-class-status-history__period'],
     'lms-dashboard-links-inline' => ['links', 'inline'],
     'aculta-lms-course-sort-form' => ['aculta-lms-course-sort-form'],
@@ -52,8 +50,6 @@ final class PortalUiHooks {
     'aculta-lms-course-materials--document' => ['aculta-lms-course-materials__document'],
     // Sem classe no V2: estilizados por seletor de atributo (no V1, studio.css; no V2, lms-lesson-page.css e events.css).
     // Lista vazia torna o token conhecido sem gerar classe. Estilo visual do V2 pendente de migração e captura (DEFERRED).
-    'aculta-btn-outline' => [],
-    'aculta-btn-primary' => [],
     'aculta-course-lesson-preview' => [],
     'aculta-learning-home__actions' => [],
     'aculta-learning-home__course-title' => [],
@@ -128,9 +124,6 @@ final class PortalUiHooks {
     'account-social-text' => ['portal-account-social__text'],
     'account-terms' => ['aculta-account-terms'],
     'account-view-profile' => ['portal-account-overview__profile'],
-    'aculta-button-outline' => ['aculta-button', 'aculta-button--outline'],
-    'aculta-button-primary' => ['aculta-button', 'aculta-button--primary'],
-    'aculta-button-secondary' => ['aculta-button', 'aculta-button--secondary'],
     'aculta-image-audit' => ['aculta-image-audit'],
     'admin-org-filters' => ['form--inline', 'clearfix'],
     'alerts-filters' => ['aculta-alerts-filters'],
@@ -220,10 +213,8 @@ final class PortalUiHooks {
     'event-location-button-action' => ['button', 'button--primary'],
     'event-location-button-danger' => ['button', 'button--danger'],
     'event-location-button-primary' => ['button', 'button--primary'],
-    'event-location-button-primary-action' => ['button', 'button--primary'],
     'event-location-button-primary-small' => ['button', 'button--small', 'button--primary'],
     'event-location-button-secondary' => ['button', 'button--secondary'],
-    'event-location-button-secondary-small' => ['button', 'button--secondary', 'button--small'],
     'event-location-empty' => ['aculta-location-empty', 'aculta-u-my-2'],
     'event-location-fallback' => ['description', 'aculta-u-mt-1'],
     'event-location-header' => ['aculta-location-header'],
@@ -245,7 +236,6 @@ final class PortalUiHooks {
     'event-org-title' => ['event-org-card__title'],
     'event-organization-actions' => ['organization-footer-actions'],
     'event-organization-add-action' => ['button', 'button--primary'],
-    'event-organization-admin-action' => ['button', 'button--secondary', 'button--small'],
     'event-organization-admin-filter-fields' => ['aculta-event-organization-admin-filter-fields'],
     'event-organization-admin-link' => ['organization-admin-link', 'text-muted', 'small'],
     'event-organization-back-action' => ['button'],
@@ -519,7 +509,6 @@ final class PortalUiHooks {
     'we-sativa-workspace' => ['aculta-u-grid', 'aculta-u-gap-4', 'we-sativa__workspace'],
     'wiki-home' => ['aculta-wiki-home'],
     'wiki-intro' => ['aculta-wiki-intro'],
-    'wiki-proposal-contribute' => ['button', 'button--secondary'],
     'wiki-proposal-decision' => ['aculta-wiki-proposal-decision'],
     'wiki-proposal-link' => ['aculta-wiki-proposal-link'],
     'wiki-proposal-status' => ['aculta-wiki-proposal-status'],

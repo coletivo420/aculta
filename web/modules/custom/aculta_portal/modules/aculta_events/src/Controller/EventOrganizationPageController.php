@@ -190,10 +190,14 @@ final class EventOrganizationPageController extends ControllerBase {
       $adminClaimsUrl = $this->purposes->environmentPathUrl('main', '/painel-administrativo/pessoas/reivindicacoes?target_type=aculta_event_organization&target_id=' . $org->id());
       if ($adminClaimsUrl !== NULL) {
         $build['actions']['admin_claims'] = [
-          '#type' => 'link',
-          '#title' => $this->t('Ver pedidos de reivindicação desta organização'),
-          '#url' => $adminClaimsUrl,
-          '#attributes' => ['data-portal-ui' => 'event-organization-admin-action'],
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:button',
+          '#props' => [
+            'text' => (string) $this->t('Ver pedidos de reivindicação desta organização'),
+            'url' => $adminClaimsUrl->toString(),
+            'variant' => 'secondary',
+            'size' => 'small',
+          ],
         ];
       }
     }

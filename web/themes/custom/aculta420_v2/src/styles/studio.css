@@ -848,10 +848,10 @@ body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-eve
   background: var(--aculta-studio-fidelity-button-hover-background);
 }
 
-.studio__main form :is(.form-submit, .button--cta, .button--primary, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.close),
-.aculta-profile-editor form :is(.form-submit, .button--cta, .button--primary, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.close),
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(.form-submit, .button--cta, .button--primary, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.close),
-:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(.form-submit, .button--cta, .button--primary, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.close) {
+.studio__main form :is(.form-submit, .button--primary):not([data-drupal-selector="edit-reset"]):not(.close),
+.aculta-profile-editor form :is(.form-submit, .button--primary):not([data-drupal-selector="edit-reset"]):not(.close),
+body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(.form-submit, .button--primary):not([data-drupal-selector="edit-reset"]):not(.close),
+:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(.form-submit, .button--primary):not([data-drupal-selector="edit-reset"]):not(.close) {
   color: var(--aculta-studio-fidelity-button-primary-text);
   border-color: var(--aculta-studio-fidelity-button-primary-border);
   background: var(--aculta-studio-fidelity-button-primary-background);
@@ -961,7 +961,7 @@ body.path-marley form.node-revista-form .form-actions :is(button, input[type="su
   background: var(--aculta-studio-fidelity-button-hover-background);
 }
 
-body.path-marley form.node-revista-form .form-actions :is(.form-submit, .button--cta, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.close) {
+body.path-marley form.node-revista-form .form-actions :is(.form-submit):not([data-drupal-selector="edit-reset"]):not(.close) {
   color: var(--aculta-studio-fidelity-button-primary-text);
   border-color: var(--aculta-studio-fidelity-button-primary-border);
   background: var(--aculta-studio-fidelity-button-primary-background);

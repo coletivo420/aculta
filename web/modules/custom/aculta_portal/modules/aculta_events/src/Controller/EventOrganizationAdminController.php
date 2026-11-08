@@ -240,10 +240,13 @@ final class EventOrganizationAdminController extends ControllerBase {
       'header_actions' => [
         '#type' => 'actions',
         'add' => [
-          '#type' => 'link',
-          '#title' => $this->t('+ Cadastrar organização'),
-          '#url' => Url::fromRoute('aculta_events.admin_organization_add'),
-          '#attributes' => ['data-portal-ui' => 'event-organization-add-action'],
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:button',
+          '#props' => [
+            'text' => (string) $this->t('+ Cadastrar organização'),
+            'url' => Url::fromRoute('aculta_events.admin_organization_add')->toString(),
+            'variant' => 'primary',
+          ],
         ],
       ],
       'filters' => [

@@ -585,15 +585,20 @@ final class MessagesController extends ControllerBase {
    */
   private function newConversationAction(): array {
     return [
-      'new_conversation' => PortalLinkElement::build(
-        $this->translation->translate('Iniciar nova conversa'),
-        Url::fromRoute('aculta_messenger.new_conversation'),
-        [
-          'class' => 'btn btn-primary aculta-messenger-new-conversation',
-          'data-aculta-conversation-url' => Url::fromRoute('aculta_messenger.new_conversation')->toString(),
-          'data-portal-ui' => 'new-conversation-link',
+      'new_conversation' => [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:button',
+        '#props' => [
+          'text' => (string) $this->translation->translate('Iniciar nova conversa'),
+          'url' => Url::fromRoute('aculta_messenger.new_conversation')->toString(),
+          'variant' => 'primary',
         ],
-      ) + ['#weight' => -100],
+        '#attributes' => [
+          'class' => ['aculta-messenger-new-conversation'],
+          'data-aculta-conversation-url' => Url::fromRoute('aculta_messenger.new_conversation')->toString(),
+        ],
+        '#weight' => -100,
+      ],
     ];
   }
 
