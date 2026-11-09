@@ -53,6 +53,7 @@ class ForumThemeHooks {
           'can_react' => FALSE,
           'is_own_content' => FALSE,
           'react_url' => '',
+          'picker_url' => NULL,
           'csrf_token' => '',
         ],
         'path' => $path . '/templates',

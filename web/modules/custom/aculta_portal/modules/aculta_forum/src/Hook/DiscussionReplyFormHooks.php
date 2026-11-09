@@ -83,7 +83,7 @@ final class DiscussionReplyFormHooks {
     if ($comment->isNew()) {
       $form['pid'] = [
         '#type' => 'hidden',
-        '#value' => $parentId !== NULL ? (string) $parentId : '',
+        '#default_value' => $parentId !== NULL ? (string) $parentId : '',
       ];
       $form['#entity_builders'][] = [self::class, 'buildCommentEntityWithPid'];
     }
@@ -138,6 +138,10 @@ final class DiscussionReplyFormHooks {
       return;
     }
     $pidVal = $formState->getValue('pid');
+    if (($pidVal === NULL || $pidVal === '') && \Drupal::hasService('request_stack')) {
+      $req = \Drupal::requestStack()->getCurrentRequest();
+      $pidVal = $req ? ($req->request->get('pid') ?? $req->query->get('resposta') ?? $req->query->get('pid')) : NULL;
+    }
     if ($pidVal !== NULL && $pidVal !== '' && is_numeric($pidVal)) {
       /** @var \Drupal\aculta_forum\Service\DiscussionThreadDepthResolver $depthResolver */
       $depthResolver = \Drupal::service('aculta_forum.discussion_thread_depth_resolver');

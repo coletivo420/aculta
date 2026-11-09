@@ -90,11 +90,12 @@
 
 .discussion-reaction-bar__picker-wrapper {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
 }
 
 .discussion-reaction-bar__picker-container {
-  position: relative;
+  position: static;
 }
 
 .discussion-reaction-bar__popup {

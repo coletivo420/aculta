@@ -3,6 +3,10 @@ name: Barra de Reações por Emoji
 description: Barra interativa de reações com contador de emojis e seletor popup no estilo Discourse.
 status: stable
 group: Comunidade
+libraryOverrides:
+  dependencies:
+    - core/drupal
+    - core/once
 props:
   type: object
   additionalProperties: false

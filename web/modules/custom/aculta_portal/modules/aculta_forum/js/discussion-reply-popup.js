@@ -57,9 +57,13 @@
         + '<h2 class="aculta-dialog__title">Discussão</h2>'
         + '<button type="button" class="aculta-dialog__close" data-aculta-dialog-close aria-label="Fechar">✕</button>'
         + '</div>'
-        + '<div id="' + dialogBodyId + '" class="aculta-reply-dialog__body"></div>'
+        + '<div class="aculta-dialog__content"><div id="' + dialogBodyId + '" class="aculta-reply-dialog__body"></div></div>'
         + '</div>';
       document.body.appendChild(dialog);
+    }
+    if (!document.getElementById(dialogBodyId)) {
+      const container = dialog.querySelector('.aculta-dialog__content') || dialog.querySelector('.aculta-dialog__inner') || dialog;
+      container.insertAdjacentHTML('beforeend', '<div id="' + dialogBodyId + '" class="aculta-reply-dialog__body"></div>');
     }
     return dialog;
   }
@@ -95,6 +99,9 @@
   Drupal.behaviors.acultaForumReplyPopup = {
     attach(context) {
       once('aculta-reply-popup', document.body, context).forEach((body) => {
+        // Garante que o corpo do diálogo exista antes de o HTMX processar os links na página.
+        ensureDialog();
+
         // Responder/Citar: antes de o HTMX ler o alvo, o link passa a apontar para o corpo do diálogo.
         // Fase de captura: roda antes do listener do HTMX no próprio link.
         document.addEventListener('click', (event) => {

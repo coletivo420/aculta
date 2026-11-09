@@ -50,8 +50,10 @@ class DiscussionReplyController extends ControllerBase {
         $form = $this->formBuilder()->getForm(TopicDeleteConfirmForm::class, $host);
         return [
           '#theme' => 'discussion_reply_composer',
+          '#status' => 'editando',
           '#form' => $form,
           '#mode' => 'excluir',
+          '#host_title' => $host->label(),
           '#target_id' => 'discussion-composer-' . $host->getEntityTypeId() . '-' . $host->id(),
         ];
       }
@@ -60,8 +62,10 @@ class DiscussionReplyController extends ControllerBase {
         $form = $this->formBuilder()->getForm(TopicOpeningEditForm::class, $host);
         return [
           '#theme' => 'discussion_reply_composer',
+          '#status' => 'editando',
           '#form' => $form,
           '#mode' => 'editar',
+          '#host_title' => $host->label(),
           '#target_id' => 'discussion-composer-' . $host->getEntityTypeId() . '-' . $host->id(),
         ];
       }

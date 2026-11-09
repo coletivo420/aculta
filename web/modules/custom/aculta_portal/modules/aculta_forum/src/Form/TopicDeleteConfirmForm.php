@@ -7,6 +7,7 @@ namespace Drupal\aculta_forum\Form;
 use Drupal\aculta_forum\Service\TopicDeletionModerationManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -49,8 +50,24 @@ class TopicDeleteConfirmForm extends FormBase {
       return $form;
     }
 
+    $targetUrl = Url::fromRoute('aculta_forum.discussion_composer', [
+      'entity_type' => 'node',
+      'entity_id' => $node->id(),
+    ], [
+      'query' => ['excluir_topico' => 1],
+    ]);
+
+    $form['#action'] = $targetUrl->toString();
     $form['#attributes']['class'][] = 'aculta-topic-delete-confirm';
     $form['#attributes']['id'] = 'aculta-topic-delete-form-' . $node->id();
+
+    $htmx = new Htmx();
+    $htmx->post($targetUrl)
+      ->target('#aculta-reply-dialog-body')
+      ->swap('innerHTML')
+      ->onlyMainContent()
+      ->applyTo($form);
+    $form['#attributes']['data-hx-select'] = '[data-discussion-reply-composer]';
 
     $form['prompt'] = [
       '#markup' => '<div class="discussion-reply-target__warning" style="margin-block: var(--spacing-md); text-align: center;">'
@@ -80,7 +97,6 @@ class TopicDeleteConfirmForm extends FormBase {
       '#attributes' => [
         'data-portal-ui' => 'button-secondary',
         'data-aculta-dialog-close' => '',
-        'onclick' => 'const d = document.getElementById("aculta-reply-dialog"); if (d) d.close(); return false;',
       ],
     ];
 

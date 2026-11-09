@@ -6,6 +6,8 @@ namespace Drupal\aculta_forum\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -36,7 +38,23 @@ class TopicOpeningEditForm extends FormBase {
       return $form;
     }
 
+    $targetUrl = Url::fromRoute('aculta_forum.discussion_composer', [
+      'entity_type' => 'node',
+      'entity_id' => $node->id(),
+    ], [
+      'query' => ['editar_topico' => 1],
+    ]);
+
+    $form['#action'] = $targetUrl->toString();
     $form['#attributes']['id'] = 'aculta-topic-edit-form-' . $node->id();
+
+    $htmx = new Htmx();
+    $htmx->post($targetUrl)
+      ->target('#aculta-reply-dialog-body')
+      ->swap('innerHTML')
+      ->onlyMainContent()
+      ->applyTo($form);
+    $form['#attributes']['data-hx-select'] = '[data-discussion-reply-composer]';
 
     $form['title'] = [
       '#type' => 'textfield',
@@ -47,18 +65,17 @@ class TopicOpeningEditForm extends FormBase {
     ];
 
     $bodyValue = '';
-    $bodyFormat = 'basic_html';
     if ($node->hasField('body') && !$node->get('body')->isEmpty()) {
       $bodyItem = $node->get('body')->first();
       $bodyValue = $bodyItem->get('value')->getValue() ?? '';
-      $bodyFormat = $bodyItem->get('format')->getValue() ?? 'basic_html';
     }
 
     $form['body'] = [
       '#type' => 'text_format',
       '#title' => $this->t('Mensagem de abertura'),
       '#default_value' => $bodyValue,
-      '#format' => $bodyFormat,
+      '#format' => 'forum',
+      '#allowed_formats' => ['forum'],
       '#required' => TRUE,
     ];
 
@@ -78,7 +95,6 @@ class TopicOpeningEditForm extends FormBase {
       '#attributes' => [
         'data-portal-ui' => 'button-secondary',
         'data-aculta-dialog-close' => '',
-        'onclick' => 'const d = document.getElementById("aculta-reply-dialog"); if (d) d.close(); return false;',
       ],
     ];
 
@@ -97,7 +113,7 @@ class TopicOpeningEditForm extends FormBase {
     if (is_array($bodyVal) && isset($bodyVal['value'])) {
       $this->topic->get('body')->setValue([
         'value' => $bodyVal['value'],
-        'format' => $bodyVal['format'] ?? 'basic_html',
+        'format' => $bodyVal['format'] ?? 'forum',
       ]);
     }
     $this->topic->save();

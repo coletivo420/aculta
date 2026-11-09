@@ -21,9 +21,9 @@
   Drupal.behaviors.discussionReactionBar = {
     attach(context) {
       once('discussion-reaction-global', 'html', context).forEach(() => {
-        // Toggle / close when clicking trigger if already open:
+        // Intercepta antes do HTMX (captura) se o picker já estiver aberto para fechar sem nova requisição:
         document.addEventListener('click', (event) => {
-          const trigger = event.target.closest('[data-reaction-picker-trigger]');
+          const trigger = event.target && event.target.closest ? event.target.closest('[data-reaction-picker-trigger]') : null;
           if (trigger) {
             const wrapper = trigger.closest('.discussion-reaction-bar__picker-wrapper');
             const container = wrapper?.querySelector('.discussion-reaction-bar__picker-container');
@@ -35,13 +35,15 @@
               trigger.setAttribute('aria-expanded', 'false');
               return;
             }
+            // Close any other open pickers before opening this one
+            closeAllPickers();
             // Otherwise let HTMX execute data-hx-get
             trigger.setAttribute('aria-expanded', 'true');
             return;
           }
 
           // Close when clicking close button:
-          const closeBtn = event.target.closest('[data-reaction-picker-close]');
+          const closeBtn = event.target && event.target.closest ? event.target.closest('[data-reaction-picker-close]') : null;
           if (closeBtn) {
             event.preventDefault();
             closeAllPickers();
@@ -49,10 +51,10 @@
           }
 
           // Close when clicking outside of any open picker wrapper:
-          if (!event.target.closest('.discussion-reaction-bar__picker-wrapper')) {
+          if (!event.target || !event.target.closest || !event.target.closest('.discussion-reaction-bar__picker-wrapper')) {
             closeAllPickers();
           }
-        });
+        }, true);
 
         // Close on Escape key:
         document.addEventListener('keydown', (event) => {
