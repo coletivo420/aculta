@@ -60,7 +60,7 @@ final class TopicComposerFormHooks {
     TopicPopupLayout::apply($form);
     // A resposta traz a página inteira: o HTMX recorta só o formulário do tópico para o popup.
     $form['#attributes']['data-aculta-topic-composer'] = '';
-    $form['#attributes']['data-hx-select'] = '[data-discussion-topic-composer]';
+    $form['#attributes']['data-hx-select'] = '[data-aculta-topic-composer]';
     $htmx = new Htmx();
     $htmx->post(Url::fromRoute(self::POPUP_ROUTE, [], ['absolute' => FALSE]))
       ->target('#' . self::POPUP_BODY_ID)
