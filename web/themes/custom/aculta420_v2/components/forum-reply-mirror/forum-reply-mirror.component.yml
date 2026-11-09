@@ -1,6 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Resposta espelhada
-description: Resposta de discussão no layout espelhado (par). Desktop: autor, faixa e reações à direita e ações à esquerda. Mobile: autor alinhado à direita e ações invertidas.
+description: "Resposta de discussão no layout espelhado (par). Desktop: autor, faixa e reações à direita e ações à esquerda. Mobile: autor alinhado à direita e ações invertidas."
 status: stable
 group: Comunidade
 props:
