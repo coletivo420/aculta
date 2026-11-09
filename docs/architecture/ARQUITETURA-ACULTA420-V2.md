@@ -50,7 +50,7 @@ O Domain Header compõe o bloco de identidade do Drupal e o menu principal no
 SDC `navigation-bar`. O Portal fornece apenas a chave neutra de uma marca
 específica; o tema resolve o asset `wiki420` no diretório `assets/logos/` e
 mantém a marca ACULTA do sistema como fallback. O SDC `multidomain-bar` contém
-somente a Institution Bar fixa; os links entre portais são um consumer separado
+somente a Institution Bar; o bloco `aculta_institution_bar` (região `institution`) monta os dados dinâmicos. Os links entre portais são um consumer separado
 de `purpose-showcase`, apresentado depois do Domain Header.
 
 ## Templates de integração

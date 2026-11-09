@@ -72,7 +72,7 @@ ao sistema de tema um valor simples ou renderable.
 
 `ACULTA420` atualmente:
 
-- compõe o shell em `page.html.twig`;
+- compõe o shell em `page.html.twig`; a Institution Bar é o bloco `aculta_institution_bar` na região `institution`;
 - move Page Title, breadcrumb, menu de conta e help para posições visuais no
   `ThemeHooks::preprocessPage()`;
 - apresenta o block `system_branding_block`;

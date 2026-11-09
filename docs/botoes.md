@@ -47,7 +47,7 @@ Tokens em `src/styles/tokens.css` (`--button-danger-*`). Mínimos: texto 4,5:1; 
 - Troca `data-theme` em **todas** as pré-visualizações de componente (`.ui_patterns_story__preview` e `.ui_patterns_story__story`), não só nos botões.
 - `:root, [data-theme="light"]` e `:root[data-theme="dark"], [data-theme="dark"]` compartilham os tokens (sem duplicação).
 - Escolha lembrada em `localStorage` com try/catch.
-- A barra institucional não aparece na UI Library (`templates/layout/page.html.twig`).
+- A Institution Bar é o SDC `aculta420_v2:multidomain-bar`, exibido na UI Library pela story padrão; no site, é o bloco `aculta_institution_bar` na região `institution` (`templates/layout/page.html.twig`).
 - A grade "Esquema de botões" não tem modo próprio: herda o modo da página.
 - Captura e checagem: `tests/browser/transversal/aculta420-v2-component-library/library-mode.py` (conta de teste por `drush uli` no host de conta; rota real `/painel-administrativo/aparencia/ui/components`).
 

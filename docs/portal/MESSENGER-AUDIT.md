@@ -79,7 +79,7 @@ Não há `\Drupal::` em `src/` (zero ocorrências). Os serviços são injetados.
 | `js/counters.js` | Contadores da barra (mensagens e avisos). |
 | `src/Hook/PortalUiHooks.php` | Mapa de tokens `data-portal-ui` do Messenger para classes. |
 | `src/Hook/ThemeHooks.php` | Mapeia as rotas do Messenger para SDCs (`presentMessengerPage`, `presentMessengerTrigger`) e lê `aculta_messenger`, `aculta_messenger_outgoing`, `aculta_messenger_sender_avatar`, `aculta_messenger_read_status`. |
-| `templates/page.html.twig` | Imprime o gatilho `aculta_messenger_trigger`. |
+| `components/multidomain-bar/multidomain-bar.twig` | Imprime o gatilho `messenger-trigger`, dentro da Institution Bar (bloco `aculta_institution_bar`). |
 
 Tudo o que o tema usa do Messenger chega como dado neutro (URL, contagem, textos, render arrays). O tema não lê Domain, hostname nem regra funcional. Isso está correto.
 
