@@ -33,6 +33,11 @@ final class DiscussionProgressHooks {
       // Elemento vazio e sem acesso, não removido: o core lê a chave ao montar os itens.
       $build['field_aculta_discussion'][$delta]['comment_form'] = [];
     }
+    \Drupal::logger('aculta_debug')->notice('DBG2 keys=@k deltas=@d cf=@cf', [
+      '@k' => implode(',', array_slice(array_keys($build['field_aculta_discussion']), 0, 12)),
+      '@d' => implode(',', \Drupal\Core\Render\Element::children($build['field_aculta_discussion'])),
+      '@cf' => json_encode(array_map(static fn($d) => array_keys($build['field_aculta_discussion'][$d] ?? []), \Drupal\Core\Render\Element::children($build['field_aculta_discussion']))),
+    ]);
     $build['field_aculta_discussion']['#attributes']['data-aculta-discussion-thread'] = '';
     $build['field_aculta_discussion']['#attached']['library'][] = 'aculta_forum/discussion-progress';
     // Comportamento do popup de Responder/Citar e do botão Comentar (código no módulo; visual no tema).
