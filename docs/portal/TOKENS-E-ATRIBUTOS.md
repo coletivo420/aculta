@@ -387,8 +387,8 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `support-other` | `aculta-support-other` | `web/modules/custom/aculta_portal/src/Support/Form/SupportForm.php` |
 | `domain-brand-image` | `aculta-domain-brand-image` | `web/themes/custom/aculta420/src/Hook/ThemeHooks.php` |
 | `button` | `button` | (montado dinamicamente ou só no tema) |
-| `button-secondary` | `button`, `button--secondary` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AccountBioForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_user/src/Form/SocialLinkForm.php` |
-| `button-primary` | `btn`, `btn-primary` | `web/modules/custom/aculta_portal/src/Controller/AccountCoursesController.php` |
+| `button-secondary` | `button`, `button--secondary` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AccountBioForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_user/src/Form/SocialLinkForm.php`<br>`web/modules/custom/aculta_portal/src/Form/LoginPopupForm.php` |
+| `button-primary` | `btn`, `btn-primary` | `web/modules/custom/aculta_portal/src/Controller/AccountCoursesController.php`<br>`web/modules/custom/aculta_portal/src/Form/LoginPopupForm.php` |
 | `aculta-button-secondary` | `aculta-button`, `aculta-button--secondary` | `web/modules/custom/aculta_portal/src/Hook/PortalHooks.php` |
 | `aculta-button-primary` | `aculta-button`, `aculta-button--primary` | `web/modules/custom/aculta_portal/src/Controller/RegistrationController.php` |
 | `aculta-button-outline` | `aculta-button`, `aculta-button--outline` | `web/modules/custom/aculta_portal/src/Support/Form/SupportForm.php` |

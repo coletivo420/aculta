@@ -210,11 +210,56 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
 
 .aculta-login-dialog__content { min-inline-size: 0; }
 .aculta-login-dialog__content [data-portal-ui="login-popup"] { display: grid; gap: var(--spacing-sm); }
+.aculta-login-dialog__content :is([data-drupal-selector="edit-actions"], #edit-actions) {
+  display: flex;
+  justify-content: center;
+  inline-size: 100%;
+  margin-block-start: var(--spacing-sm);
+}
 .aculta-login-dialog__content [data-portal-ui="login-popup"] label { color: var(--color-auth-dialog-text); font-family: var(--font-family-heading); font-size: var(--font-size-lg); font-weight: 600; }
 .aculta-login-dialog__content .form-item { display: grid; gap: var(--spacing-xs); margin: 0; }
 .aculta-login-dialog__content .form-required::after { content: none; }
 .aculta-login-dialog__content :is(input[type="text"], input[type="email"], input[type="password"]) { padding: var(--spacing-xs) var(--spacing-sm); color: var(--color-auth-control-text); border: 1px solid var(--color-auth-control-text); border-radius: 0; background: var(--color-auth-control-surface); font: inherit; inline-size: 100%; min-block-size: var(--tap-target-min); }
-.aculta-login-dialog__content [data-drupal-selector="edit-submit"] { display: block; box-sizing: border-box; margin: var(--spacing-sm) auto 0; padding: var(--spacing-xs) var(--spacing-base); cursor: pointer; color: var(--color-auth-action-text); border: 0; border-radius: var(--radius-sm); background: var(--color-brand-highlight); font: inherit; font-weight: 700; inline-size: min(100%, 14rem); min-block-size: var(--tap-target-min); }
+.aculta-login-dialog__content [data-drupal-selector="edit-submit"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: var(--spacing-sm) var(--spacing-base);
+  cursor: pointer;
+  transition: background-color var(--motion-fast) ease, color var(--motion-fast) ease, border-color var(--motion-fast) ease;
+  text-align: center;
+  text-decoration: none;
+  border: 2px solid var(--button-primary-bg);
+  border-radius: var(--radius-control-button, var(--radius-base));
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-fg);
+  font: inherit;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-base, 1rem);
+  font-weight: 700;
+  line-height: 1.4;
+  inline-size: min(100%, 14rem);
+  min-block-size: var(--tap-target-min);
+}
+
+.aculta-login-dialog__content [data-drupal-selector="edit-submit"]:hover {
+  color: var(--button-primary-fg);
+  border-color: var(--button-primary-bg-hover);
+  background-color: var(--button-primary-bg-hover);
+}
+
+.aculta-login-dialog__content [data-drupal-selector="edit-submit"]:active {
+  color: var(--button-primary-fg);
+  border-color: var(--button-primary-bg-active);
+  background-color: var(--button-primary-bg-active);
+}
+
+.aculta-login-dialog__content [data-drupal-selector="edit-submit"]:focus-visible {
+  outline: 2px solid var(--button-focus-ring);
+  outline-offset: 2px;
+}
 .aculta-login-dialog__content :is(a, button, input):focus-visible { outline: 3px solid var(--color-auth-control-focus); outline-offset: 2px; }
 .aculta-login-dialog__content [data-portal-ui="login-popup-divider"] { margin: var(--spacing-xs) 0; border: 0; border-block-start: 2px solid var(--color-auth-dialog-divider); inline-size: 100%; }
 .aculta-login-dialog__content form [data-portal-ui="auth-google"] { position: relative; display: flex; align-items: center; justify-content: center; box-sizing: border-box; padding: var(--spacing-sm) var(--spacing-base); text-decoration: none; color: var(--color-auth-provider-text); border: 1px solid var(--color-border); border-radius: 3px; background: var(--color-auth-provider-surface); box-shadow: var(--shadow-sm); gap: var(--spacing-md); inline-size: min(100%, 22rem); margin-inline: auto; min-block-size: 3rem; }
@@ -224,7 +269,45 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
 .aculta-login-dialog__content [data-portal-ui="login-popup-links"] { display: grid; gap: var(--spacing-sm); justify-items: center; margin-block-start: var(--spacing-xs); }
 .aculta-login-dialog__content [data-portal-ui="login-popup-links"] a { text-decoration: none; }
 .aculta-login-dialog__content [data-portal-ui="login-popup-links"] a:first-of-type { display: inline-flex; align-items: center; color: var(--color-auth-dialog-link); font-family: var(--font-family-heading); font-size: var(--font-size-lg); min-block-size: var(--tap-target-min); padding-inline: var(--spacing-sm); }
-.aculta-login-dialog__content [data-portal-ui="login-popup-links"] a:last-of-type { display: flex; align-items: center; justify-content: center; box-sizing: border-box; padding: var(--spacing-sm) var(--spacing-base); text-align: center; color: var(--color-auth-secondary-text); border-radius: var(--radius-sm); background: var(--color-auth-secondary-surface); font-weight: 700; inline-size: min(100%, 14rem); min-block-size: var(--tap-target-min); }
+.aculta-login-dialog__content [data-portal-ui="login-popup-links"] :is(a:last-of-type, [data-portal-ui="button-secondary"], .button--secondary) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: var(--spacing-sm) var(--spacing-base);
+  cursor: pointer;
+  transition: background-color var(--motion-fast) ease, color var(--motion-fast) ease, border-color var(--motion-fast) ease;
+  text-align: center;
+  text-decoration: none;
+  border: 2px solid var(--button-secondary-border);
+  border-radius: var(--radius-control-button, var(--radius-base));
+  background-color: var(--button-secondary-bg);
+  color: var(--button-secondary-fg);
+  font: inherit;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-base, 1rem);
+  font-weight: 700;
+  line-height: 1.4;
+  inline-size: min(100%, 14rem);
+  min-block-size: var(--tap-target-min);
+}
+
+.aculta-login-dialog__content [data-portal-ui="login-popup-links"] :is(a:last-of-type, [data-portal-ui="button-secondary"], .button--secondary):hover {
+  color: var(--button-secondary-fg);
+  border-color: var(--button-secondary-border);
+  background-color: var(--button-secondary-bg-hover);
+}
+
+.aculta-login-dialog__content [data-portal-ui="login-popup-links"] :is(a:last-of-type, [data-portal-ui="button-secondary"], .button--secondary):active {
+  color: var(--button-secondary-fg);
+  border-color: var(--button-secondary-border);
+  background-color: var(--button-secondary-bg-active);
+}
+
+.aculta-login-dialog__content [data-portal-ui="login-popup-links"] :is(a:last-of-type, [data-portal-ui="button-secondary"], .button--secondary):focus-visible {
+  outline: 2px solid var(--button-focus-ring);
+  outline-offset: 2px;
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .aculta-login-dialog[open] { animation: aculta-login-enter var(--motion-base) ease-out both; }
@@ -233,6 +316,13 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
 @keyframes aculta-login-enter {
   from { opacity: 0; translate: 0 .5rem; }
   to { opacity: 1; translate: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aculta-login-dialog__content [data-drupal-selector="edit-submit"],
+  .aculta-login-dialog__content [data-portal-ui="login-popup-links"] :is(a:last-of-type, [data-portal-ui="button-secondary"], .button--secondary) {
+    transition: none;
+  }
 }
 
 .aculta-utility-trigger {

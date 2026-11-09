@@ -112,6 +112,7 @@ final class LoginPopupForm extends UserLoginForm {
     $form['name']['#title'] = $this->t('Nome de usuário, e-mail ou CPF');
     $form['pass']['#title'] = $this->t('Senha');
     $form['actions']['submit']['#value'] = $this->t('Entrar');
+    $form['actions']['submit']['#attributes']['data-portal-ui'] = 'button-primary';
     $form['#prefix'] = '<div id="' . self::WRAPPER_ID . '">';
     $form['#suffix'] = '</div>';
     $form['#attributes']['data-portal-ui'] = 'login-popup';
@@ -134,7 +135,12 @@ final class LoginPopupForm extends UserLoginForm {
         '#tag' => 'hr',
         '#attributes' => ['data-portal-ui' => 'login-popup-divider'],
       ];
-      $links['register'] = ['#type' => 'link', '#title' => $this->t('Cadastre-se'), '#url' => $registerUrl];
+      $links['register'] = [
+        '#type' => 'link',
+        '#title' => $this->t('Cadastre-se'),
+        '#url' => $registerUrl,
+        '#attributes' => ['data-portal-ui' => 'button-secondary'],
+      ];
     }
     $form['links'] = [
       '#type' => 'container',

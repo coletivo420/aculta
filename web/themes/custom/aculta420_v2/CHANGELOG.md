@@ -1,3 +1,11 @@
+## Não versionado — padrões visuais de botões primário e secundário no login da barra institucional (2026-11-09)
+
+- Diálogo de login da barra institucional (`multidomain-bar.css` e `portal-ui-extras.css`): remoção das regras legadas que sobrescreviam o visual com cantos quase retos (`--radius-sm`) e cores fixas de destaque.
+- Botão primário ("Entrar", `[data-drupal-selector="edit-submit"]`): alinhado aos padrões da UI Library/SDC `button` (`--button-primary-*`, `border-radius: var(--radius-control-button)`, borda 2px, tipografia e estados `:hover`, `:active` e `:focus-visible`).
+- Botão secundário ("Cadastre-se", `[data-portal-ui="button-secondary"]` / `a:last-of-type`): alinhado aos padrões da UI Library/SDC `button` (`--button-secondary-*`, borda 2px sólida, `border-radius: var(--radius-control-button)` e estados acessíveis).
+- `LoginPopupForm`: marcação semântica com `data-portal-ui="button-primary"` no envio e `data-portal-ui="button-secondary"` no link de cadastro, respeitando a fronteira módulo x tema.
+- Suporte a `prefers-reduced-motion: reduce` nas transições dos botões do diálogo de login.
+
 ## Não versionado — mapa com altura responsiva (2026-11-07)
 
 - `.aculta-map`: 18rem/24rem/30rem (mobile/768/1024), borda e superfície por tokens; atribuição Leaflet legível e foco visível em controles e marcadores. Antes, `min-block-size: 12rem` do tema reduzia o mapa a 192 px.
