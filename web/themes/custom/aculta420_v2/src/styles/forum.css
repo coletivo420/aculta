@@ -170,6 +170,10 @@
     text-align: end;
   }
 
+  :is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) article.js-comment:nth-of-type(even) > .forum-post-card > .forum-post-card__inner > .forum-post-card__header > .forum-post-card__author {
+    flex-direction: row-reverse;
+  }
+
   :is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) article.js-comment:nth-of-type(even) > .forum-post-card > .forum-post-card__inner > .forum-post-card__footer {
     flex-direction: row-reverse;
   }
