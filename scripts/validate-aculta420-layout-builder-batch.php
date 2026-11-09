@@ -53,6 +53,12 @@ $targets = [
   'block_content.aculta_institution.home',
   'block_content.aculta_institution.institutional',
   'block_content.aculta_institution.registration',
+  'node.activity.default',
+  'node.activity.full',
+  'node.aculta_adm.default',
+  'node.document.default',
+  'node.page.default',
+  'taxonomy_term.editorial_author.default',
 ];
 
 $displayStorage = \Drupal::entityTypeManager()->getStorage('entity_view_display');

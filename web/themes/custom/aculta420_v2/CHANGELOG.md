@@ -1,3 +1,9 @@
+## Não versionado — ADR-054 P4 lote 3 de Layout Builder (2026-11-09)
+
+- Layout Builder habilitado em `node.activity.default/full`, `node.aculta_adm.default`, `node.document.default`, `node.page.default` e `taxonomy_term.editorial_author.default`.
+- Revertidos por alterarem a listagem da Wiki: `aculta_notice.default`, `editorial_highlight.default`, `revista.default` e `wiki_entry.default`.
+- Gate do lote: PASS (138 checks, 18 displays). Cobertura de 18 dos 24 displays compatíveis; os 6 restantes têm causa documentada e backup.
+
 ## Não versionado — ADR-054 P4 lote 2 de Layout Builder (2026-11-09)
 
 - Layout Builder habilitado em oito displays de `block_content` (`aculta_editorial.default` e `aculta_institution.contact/default/footer/full/home/institutional/registration`), com `allow_custom: false`. Ativação um a um, comparando o texto visível da home e de `/institucional`.

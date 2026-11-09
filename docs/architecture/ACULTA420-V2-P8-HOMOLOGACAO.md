@@ -81,7 +81,7 @@ Modo escuro autenticado: a conta de teste tem preferência própria `light`, que
 
 ## 5. DEFERRED (com causa)
 
-- **Layout Builder por display:** lote inicial ativado no desenvolvimento com backup e autorização do responsável: 4 displays de nó (`page.full`, `revista.full`, `wiki_entry.full`, `aculta_faq.default`) e 8 de `block_content` (`allow_custom=false`). Gate 96 checks PASS; comparação HTTP antes/depois da home e de `/institucional`. `node.document.full` e `block_content.basic.default` excluídos por alteração de renderização/plugins ausentes e restaurados do Config Sync. A expansão aos demais displays compatíveis depende de novos lotes.
+- **Layout Builder por display:** 18 dos 24 displays compatíveis com Layout Builder habilitado (`allow_custom=false`): 4 de nó `full`, 8 de `block_content`, 5 de nó `default`/`activity` e 1 de taxonomy. Gate 138 checks PASS; cada ativação comparada em sete páginas (home, institucional, atividades, transparência, membros, Revista e Wiki). Seis displays ficaram de fora com causa documentada: `document.full` e `basic.default` (render alterado/plugins ausentes) e `aculta_notice.default`, `editorial_highlight.default`, `revista.default` e `wiki_entry.default` (alteravam a listagem da Wiki). Backup e Config Sync conferem para o lote ativo.
 - **Landing por purpose (P5):** depende de conteúdo editorial e do mesmo ambiente isolado. Mecanismo e piloto Links documentados em `ACULTA420-V2-P5-LANDING-PAGES.md`.
 - **Visual:** leitura humana das capturas e aceitação do responsável.
 - **Prévia autenticada em navegador:** validada por Drush e HTTP anônimo, não em sessão autenticada real.

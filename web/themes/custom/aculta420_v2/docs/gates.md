@@ -172,3 +172,10 @@ Este registro não autoriza `drush cim`, `updatedb` ou alterações destrutivas;
 - Ativação um display por vez, comparando o texto visível da home e de `/institucional` com a linha de base. Todos os 8 mantiveram `home=OK inst=OK`; `block_content.basic.default` alterou a home e foi restaurado do Config Sync, permanecendo sem Layout Builder.
 - Avisos de `field_block` ausentes em alguns campos institucionais não alteraram a renderização; o gate e a comparação HTTP cobrem os casos exibidos.
 - Durante os testes foi exposto um drift antigo: `aculta_main_menu`, `aculta_page_title`, `aculta_site_branding`, `aculta_help` e `aculta_breadcrumbs` estavam no Config Sync e ausentes da config ativa (cache de página mascarava). Os cinco blocos foram restaurados do Sync; a home voltou a ter 1 H1, e menu e marca estão presentes. Blocos ativos: 37 (36 do Sync + `institution_bar`, ainda só na config ativa).
+
+## Execução Recente — ADR-054 P4 lote 3 (defaults de nó e taxonomy) (2026-11-09)
+
+- `validate-aculta420-layout-builder-batch.php`: PASS (138 checks, 18 displays).
+- Lote 3 ativado: `node.activity.default`, `node.activity.full`, `node.aculta_adm.default`, `node.document.default`, `node.page.default` e `taxonomy_term.editorial_author.default`.
+- Revertidos por alterarem a listagem da Wiki: `node.aculta_notice.default`, `node.editorial_highlight.default`, `node.revista.default` e `node.wiki_entry.default`. Comparação de sete páginas (home, institucional, atividades, transparência, membros, Revista e Wiki); estado final `FINAL OK`.
+- Não habilitados por decisão anterior, com backup e exclusão documentadas: `node.document.full` e `block_content.basic.default`. Cobertura: 18 de 24 displays compatíveis; os 6 restantes têm causa registrada.

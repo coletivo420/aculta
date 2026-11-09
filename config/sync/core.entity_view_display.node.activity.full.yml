@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.activity.field_event_city
     - field.field.node.activity.field_event_country
     - field.field.node.activity.field_event_end
+    - field.field.node.activity.field_event_location
     - field.field.node.activity.field_event_postal
     - field.field.node.activity.field_event_region
     - field.field.node.activity.field_event_start
@@ -26,25 +27,50 @@ dependencies:
     - field.field.node.activity.field_summary
     - node.type.activity
   module:
+    - layout_builder
     - text
     - user
+third_party_settings:
+  layout_builder:
+    enabled: true
+    allow_custom: false
+    sections:
+      -
+        layout_id: layout_onecol
+        layout_settings:
+          label: ''
+        components:
+          84a6c852-5d02-4906-b04a-9a9890c8c75c:
+            uuid: 84a6c852-5d02-4906-b04a-9a9890c8c75c
+            region: content
+            configuration:
+              id: 'field_block:node:activity:body'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: text_default
+                label: hidden
+                settings: {  }
+                third_party_settings: {  }
+            weight: 0
+            additional: {  }
+          d867560b-8b17-42bf-bf44-206b341699a9:
+            uuid: d867560b-8b17-42bf-bf44-206b341699a9
+            region: content
+            configuration:
+              id: 'extra_field_block:node:activity:links'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+            weight: 1
+            additional: {  }
+        third_party_settings: {  }
 id: node.activity.full
 targetEntityType: node
 bundle: activity
 mode: full
-content:
-  body:
-    type: text_default
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 5
-    region: content
-  links:
-    settings: {  }
-    third_party_settings: {  }
-    weight: 100
-    region: content
+content: {  }
 hidden:
   co_authors: true
   entity_print_view_epub: true
@@ -73,3 +99,5 @@ hidden:
   langcode: true
   private_message_link: true
   search_api_excerpt: true
+  body: true
+  links: true
