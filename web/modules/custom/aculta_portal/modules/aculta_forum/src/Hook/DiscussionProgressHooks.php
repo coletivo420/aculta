@@ -33,8 +33,6 @@ final class DiscussionProgressHooks {
       // Elemento vazio e sem acesso, não removido: o core lê a chave ao montar os itens.
       $build['field_aculta_discussion'][$delta]['comment_form'] = ['#access' => FALSE];
     }
-    // O rótulo "Comentar" do campo sai: o botão Comentar do tópico já cumpre essa função.
-    $build['field_aculta_discussion']['#label_display'] = 'hidden';
     $build['field_aculta_discussion']['#attributes']['data-aculta-discussion-thread'] = '';
     $build['field_aculta_discussion']['#attached']['library'][] = 'aculta_forum/discussion-progress';
     // Comportamento do popup de Responder/Citar e do botão Comentar (código no módulo; visual no tema).

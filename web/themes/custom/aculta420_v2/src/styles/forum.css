@@ -910,10 +910,6 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
   min-inline-size: 0;
 }
 
-/* Formulário "Comentar" de fundo do tópico: substituído pelo botão Comentar (SDC de botão). */
-.aculta-forum-topic__main form.comment-comment-form:not(article form) {
-  display: none;
-}
 
 /* Aviso "Aguarde" durante a postagem do comentário (estrutura em discussion-reply-popup.js). */
 #aculta-reply-dialog {
