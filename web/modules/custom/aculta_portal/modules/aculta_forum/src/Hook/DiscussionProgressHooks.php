@@ -27,6 +27,8 @@ final class DiscussionProgressHooks {
       return;
     }
 
+    // O formulário de comentário de topo sai da página: o botão Comentar abre o mesmo compositor no popup.
+    unset($build['field_aculta_discussion']['comment_form']);
     $build['field_aculta_discussion']['#attributes']['data-aculta-discussion-thread'] = '';
     $build['field_aculta_discussion']['#attached']['library'][] = 'aculta_forum/discussion-progress';
   }

@@ -124,16 +124,6 @@
       });
 
       // Comentar (topo do tópico): o compositor de comentário de topo é o mesmo endpoint de Responder, sem "resposta".
-      // Remove da tela o compositor antigo de fundo do tópico e o título "Comentar", que o botão substitui.
-      document.querySelectorAll('.aculta-forum-topic__presentation form.comment-form').forEach((form) => {
-        form.style.display = 'none';
-      });
-      document.querySelectorAll('.aculta-forum-topic__presentation h2').forEach((heading) => {
-        if (heading.textContent.trim() === 'Comentar') {
-          heading.style.display = 'none';
-        }
-      });
-
       const newBtn = document.querySelector('[data-aculta-comment-new]');
       const replyLink = document.querySelector('[data-action="comment-reply"][data-hx-get]');
       if (newBtn && replyLink && !newBtn.dataset.acultaBound) {
