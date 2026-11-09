@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6a9b9d631b1c19824228d4574ed6457d",
+    "content-hash": "49452206d2f5273463d42d65b272a002",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3333,6 +3333,214 @@
             "homepage": "https://www.drupal.org/project/domain",
             "support": {
                 "source": "https://git.drupalcode.org/project/domain"
+            }
+        },
+        {
+            "name": "drupal/domain_config",
+            "version": "4.0.0-alpha2",
+            "require": {
+                "drupal/core": "^11.4 || ^12",
+                "drupal/domain": "*"
+            },
+            "type": "metapackage",
+            "extra": {
+                "drupal": {
+                    "version": "4.0.0-alpha2",
+                    "datestamp": "1792617354",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Alpha releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "agentrickard",
+                    "homepage": "https://www.drupal.org/user/20975"
+                },
+                {
+                    "name": "danrod",
+                    "homepage": "https://www.drupal.org/user/19150"
+                },
+                {
+                    "name": "mably",
+                    "homepage": "https://www.drupal.org/user/3375160"
+                },
+                {
+                    "name": "nonsie",
+                    "homepage": "https://www.drupal.org/user/29899"
+                },
+                {
+                    "name": "webflo",
+                    "homepage": "https://www.drupal.org/user/254778"
+                }
+            ],
+            "description": "Allows domain specific configuration.",
+            "homepage": "https://www.drupal.org/project/domain",
+            "support": {
+                "source": "https://git.drupalcode.org/project/domain"
+            }
+        },
+        {
+            "name": "drupal/domain_config_entity_ui",
+            "version": "4.0.0-alpha1",
+            "require": {
+                "drupal/core": "^11.4 || ^12",
+                "drupal/domain_config_ui": "*",
+                "drupal/domain_extras": "^4"
+            },
+            "type": "metapackage",
+            "extra": {
+                "drupal": {
+                    "version": "4.0.0-alpha1",
+                    "datestamp": "1792620009",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Alpha releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "dpiet",
+                    "homepage": "https://www.drupal.org/user/3626504"
+                },
+                {
+                    "name": "mably",
+                    "homepage": "https://www.drupal.org/user/3375160"
+                },
+                {
+                    "name": "pitop",
+                    "homepage": "https://www.drupal.org/user/3478383"
+                }
+            ],
+            "description": "Adds per-domain support for config-entity admin pages so list builders and other override-free entity reads honor the active domain's registered overrides. Pairs with domain_config_ui, which covers the ConfigFormBase side.",
+            "homepage": "https://www.drupal.org/project/domain_extras",
+            "support": {
+                "source": "https://git.drupalcode.org/project/domain_extras"
+            }
+        },
+        {
+            "name": "drupal/domain_config_ui",
+            "version": "4.0.0-alpha2",
+            "require": {
+                "drupal/core": "^11.4 || ^12",
+                "drupal/domain": "^4",
+                "drupal/domain_config": "*"
+            },
+            "type": "metapackage",
+            "extra": {
+                "drupal": {
+                    "version": "4.0.0-alpha2",
+                    "datestamp": "1792617354",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Alpha releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "agentrickard",
+                    "homepage": "https://www.drupal.org/user/20975"
+                },
+                {
+                    "name": "danrod",
+                    "homepage": "https://www.drupal.org/user/19150"
+                },
+                {
+                    "name": "mably",
+                    "homepage": "https://www.drupal.org/user/3375160"
+                },
+                {
+                    "name": "nonsie",
+                    "homepage": "https://www.drupal.org/user/29899"
+                },
+                {
+                    "name": "webflo",
+                    "homepage": "https://www.drupal.org/user/254778"
+                }
+            ],
+            "description": "Allows saving of domain specific configuration through the administrative interface.",
+            "homepage": "https://www.drupal.org/project/domain",
+            "support": {
+                "source": "https://git.drupalcode.org/project/domain"
+            }
+        },
+        {
+            "name": "drupal/domain_extras",
+            "version": "4.0.0-alpha1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/domain_extras.git",
+                "reference": "4.0.0-alpha1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/domain_extras-4.0.0-alpha1.zip",
+                "reference": "4.0.0-alpha1",
+                "shasum": "df79ecc28b68c7788cdfce87c94d9ecad1eff16b"
+            },
+            "require": {
+                "drupal/core": "^11.4 || ^12"
+            },
+            "require-dev": {
+                "drupal/admin_toolbar": "*",
+                "drupal/domain": "*",
+                "drupal/domain_access-domain_access": "*",
+                "drupal/domain_alias": "*",
+                "drupal/domain_config": "*",
+                "drupal/domain_config_language": "*",
+                "drupal/domain_config_ui": "*",
+                "drupal/domain_content": "*",
+                "drupal/domain_sso": "*",
+                "drupal/linkit": "*",
+                "drupal/page_manager": "*"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "4.0.0-alpha1",
+                    "datestamp": "1792620009",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Alpha releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "dpiet",
+                    "homepage": "https://www.drupal.org/user/3626504"
+                },
+                {
+                    "name": "mably",
+                    "homepage": "https://www.drupal.org/user/3375160"
+                },
+                {
+                    "name": "pitop",
+                    "homepage": "https://www.drupal.org/user/3478383"
+                }
+            ],
+            "homepage": "https://www.drupal.org/project/domain_extras",
+            "support": {
+                "source": "https://git.drupalcode.org/project/domain_extras"
             }
         },
         {
@@ -22452,6 +22660,10 @@
         "drupal/core-recipe-unpack": 10,
         "drupal/core-recommended": 10,
         "drupal/domain": 15,
+        "drupal/domain_config": 15,
+        "drupal/domain_config_entity_ui": 15,
+        "drupal/domain_config_ui": 15,
+        "drupal/domain_extras": 15,
         "drupal/entity_reference_revisions": 20,
         "drupal/gin": 20,
         "drupal/group": 20,

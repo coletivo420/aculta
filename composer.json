@@ -277,8 +277,13 @@
         "drupal/ctools": "^4.1",
         "drupal/diff": "^2.1",
         "drupal/domain": "^4.0@alpha",
+        "drupal/domain_config": "^4.0@alpha",
+        "drupal/domain_config_entity_ui": "^4.0@alpha",
+        "drupal/domain_config_ui": "^4.0@alpha",
+        "drupal/domain_extras": "^4.0@alpha",
         "drupal/entity_embed": "^1.7",
         "drupal/entity_print": "^2.19",
+        "drupal/entity_reference_revisions": "1.x-dev",
         "drupal/entity_usage": "^5.0.1",
         "drupal/flag": "^5.1.1",
         "drupal/flexible_permissions": "^2.0",
@@ -356,8 +361,7 @@
         "rlanvin/php-rrule": "^3.0",
         "signature_pad/signature_pad": "2.3.0",
         "symfony/brevo-mailer": "^7.4",
-        "symfony/http-client": "^7.4",
-        "drupal/entity_reference_revisions": "1.x-dev"
+        "symfony/http-client": "^7.4"
     },
     "conflict": {
         "drupal/drupal": "*"

@@ -1,0 +1,12 @@
+name: 'ACULTA Domain Config (blocos por domínio)'
+type: module
+description: 'Permite escolher e editar overrides de blocos de um domínio a partir do MAIN, sem alterar a negociação do request. Ponte mínima sobre domain_config_ui, domain_config_entity_ui e domain_config_switcher.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.4 || ^12
+version: '0.1.0-dev.1'
+dependencies:
+  - domain:domain
+  - domain:domain_config
+  - domain:domain_config_ui
+  - domain_extras:domain_config_entity_ui
+  - domain_extras:domain_config_switcher

@@ -7,6 +7,7 @@ module:
   aculta_commerce_melhorenvio: 0
   aculta_content_admin: 0
   aculta_document_viewer: 0
+  aculta_domain_config: 0
   aculta_donation: 0
   aculta_editor: 0
   aculta_events: 0
@@ -94,6 +95,9 @@ module:
   domain: 0
   domain_alias: 0
   domain_config: 0
+  domain_config_entity_ui: 0
+  domain_config_switcher: 0
+  domain_config_ui: 0
   dynamic_page_cache: 0
   editor: 0
   embed: 0

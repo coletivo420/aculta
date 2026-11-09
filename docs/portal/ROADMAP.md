@@ -6,6 +6,16 @@
 
 # Roadmap do aculta_portal
 
+## Domain Config e Layout de Blocos por domínio (2026-11-09)
+
+Habilitado no Runtime de desenvolvimento: `domain_config_ui`,
+`domain_config_entity_ui` (cobertura restrita a `block`), `domain_config_switcher`
+e a ponte `aculta_domain_config`. O posicionamento de blocos por domínio é
+editado no MAIN com o seletor `config_domain`; ver
+`docs/portal/domain-config/`. Pendências: importação de configuração em staging
+(TESTES.md, Teste G), desativação de bloco por domínio e criação de entidade de
+bloco exclusiva de domínio (não suportada).
+
 ## ADR-038 — mudança de caminhos das Suites (2026-10-30)
 
 Os caminhos públicos `/studio*` foram removidos; as rotas owner agora estão
