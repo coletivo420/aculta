@@ -101,6 +101,21 @@
           focusComposer(composer);
         });
 
+        // Publicar: copia o conteúdo do CKEditor para o textarea antes do HTMX ler os campos do formulário.
+        // (Em fase de captura: roda antes do clique do HTMX no botão.)
+        document.addEventListener('click', (event) => {
+          const submit = event.target.closest && event.target.closest('#aculta-reply-dialog [type="submit"]');
+          if (!submit || !Drupal.CKEditor5Instances) {
+            return;
+          }
+          const form = submit.closest('form');
+          [...Drupal.CKEditor5Instances.values()].forEach((instance) => {
+            if (form && form.contains(instance.sourceElement)) {
+              instance.updateSourceElement();
+            }
+          });
+        }, true);
+
         // Limpar: esvazia o editor e os campos do formulário, sem depender do reset nativo.
         body.addEventListener('click', (event) => {
           const clear = event.target.closest && event.target.closest('[data-aculta-reply-clear]');
