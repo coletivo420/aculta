@@ -4,6 +4,10 @@ Documento operacional para agentes. Vale para delegar tarefas de leitura, ediç�
 
 ## Quando delegar
 
+**Só por pedido explícito do responsável.** O agente não delega por iniciativa própria: sem pedido, faz a tarefa diretamente.
+
+Quando houver pedido, são tarefas adequadas:
+
 - Edição mecânica em muitos arquivos com regra clara (ex.: trocar um padrão por outro, com critério verificável por grep).
 - Varredura e levantamento (listar ocorrências, classificar, registrar exceções).
 - Escrita de testes e documentação a partir de um critério já decidido.
