@@ -24,7 +24,7 @@ final class EditorialRouteConfigTest extends UnitTestCase {
     }
     $studioRoutes = [
       'studio_list',
-      'studio_add',
+      'studio_add_popup',
       'studio_edit',
       'studio_transition',
       'studio_comment_moderate',

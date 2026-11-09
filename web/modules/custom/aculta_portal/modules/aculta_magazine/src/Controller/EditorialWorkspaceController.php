@@ -154,7 +154,7 @@ final class EditorialWorkspaceController {
   /**
    * Builds the native Node creation form in the Marley purpose.
    */
-  public function create(): array {
+  public function createPopup(): array {
     $node = $this->entityTypeManager->getStorage('node')->create(['type' => 'revista']);
     return $this->entityFormBuilder->getForm($node, 'default');
   }

@@ -36,3 +36,7 @@ services:
   Drupal\aculta_magazine\Hook\RevistaCoverStudioHooks:
     class: Drupal\aculta_magazine\Hook\RevistaCoverStudioHooks
     arguments: ['@entity_type.manager', '@current_user', '@aculta_file_uploader.recent_uploads', '@aculta_file_uploader.consumer_policy']
+
+  Drupal\aculta_magazine\Hook\StudioCreatePopupFormHooks:
+    class: Drupal\aculta_magazine\Hook\StudioCreatePopupFormHooks
+    arguments: ['@current_route_match']

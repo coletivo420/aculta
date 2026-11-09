@@ -162,7 +162,7 @@ final class MarleyController {
       $section_actions[] = PortalLinkElement::build(
         $action['title'],
         $action['url'],
-        ['data-portal-ui' => 'studio-action', 'data-aculta-studio' => 'section-action'],
+        ['data-portal-ui' => 'studio-action', 'data-aculta-studio' => 'section-action'] + ($action['attributes'] ?? []),
       );
     }
     if ($section_actions !== []) {
@@ -173,6 +173,8 @@ final class MarleyController {
       ];
     }
     $build['layout'] = $layout;
+    // Popup de criação de conteúdo (ação Nova publicação): diálogo e HTMX.
+    $build['#attached']['library'][] = 'aculta_studio/studio-create-popup';
 
     // Nível 3: the requested subtab, or the first subtab in its section.
     if ($sub === '') {
@@ -204,7 +206,7 @@ final class MarleyController {
       $actions[] = PortalLinkElement::build(
         $action['title'],
         $action['url'],
-        ['data-portal-ui' => 'studio-action', 'data-aculta-studio' => 'action'],
+        ['data-portal-ui' => 'studio-action', 'data-aculta-studio' => 'action'] + ($action['attributes'] ?? []),
       );
     }
     // Each listing row respects the node's access result.

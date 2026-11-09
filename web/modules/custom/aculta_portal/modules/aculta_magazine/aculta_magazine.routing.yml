@@ -42,14 +42,15 @@ aculta_magazine.studio_list:
     _aculta_domain_purpose: account
     no_cache: true
 
-aculta_magazine.studio_add:
-  path: '/marley/revista/nova'
+aculta_magazine.studio_add_popup:
+  path: '/marley/revista/nova/popup'
   defaults:
-    _controller: 'aculta_magazine.editorial_workspace:create'
+    _controller: 'aculta_magazine.editorial_workspace:createPopup'
     _title: 'Nova publicação'
   requirements:
     _custom_access: 'aculta_magazine.editorial_workspace:accessCreate'
   options:
+    _htmx_route: TRUE
     _aculta_domain_purpose: account
     no_cache: true
 

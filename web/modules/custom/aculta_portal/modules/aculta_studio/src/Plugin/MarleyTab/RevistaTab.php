@@ -7,6 +7,7 @@ namespace Drupal\aculta_studio\Plugin\MarleyTab;
 use Drupal\aculta_studio\Attribute\MarleyTab;
 use Drupal\aculta_studio\MarleyTabBase;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Url;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -138,7 +139,7 @@ final class RevistaTab extends MarleyTabBase {
         // lateral deixa de ser exibido neste contexto.
         'suppress_sidebar' => TRUE,
         'actions' => [
-          $this->routeAction($this->t('Criar'), 'aculta_magazine.studio_add', [], $account),
+          $this->composerAction($this->t('Criar'), $account),
         ],
         'tabs' => $listTabs,
       ],
@@ -152,7 +153,7 @@ final class RevistaTab extends MarleyTabBase {
             'label' => $this->t('Nova publicação'),
             'weight' => 0,
             'actions' => [
-              $this->routeAction($this->t('Nova publicação'), 'aculta_magazine.studio_add', [], $account),
+              $this->composerAction($this->t('Nova publicação'), $account),
             ],
           ],
         ],
@@ -176,6 +177,25 @@ final class RevistaTab extends MarleyTabBase {
       ];
     }
     return $sections;
+  }
+
+  /**
+   * Ação de criar publicação: abre o compositor de conteúdo no popup do Marley (HTMX).
+   *
+   * O formulário de revista carrega no diálogo #aculta-studio-create-dialog; a rota de página
+   * própria não existe mais.
+   */
+  protected function composerAction(\Stringable|string $title, AccountInterface $account): array {
+    $action = $this->routeAction($title, 'aculta_magazine.studio_add_popup', [], $account);
+    $action['attributes'] = [
+      'class' => ['use-htmx'],
+      'data-action' => 'conteudo-criar',
+      'data-hx-get' => Url::fromRoute('aculta_magazine.studio_add_popup')->toString(),
+      'data-hx-target' => '#aculta-studio-create-body',
+      'data-hx-swap' => 'innerHTML',
+      'data-hx-select' => '[data-aculta-content-composer]',
+    ];
+    return $action;
   }
 
 }
