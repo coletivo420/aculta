@@ -1,19 +1,5 @@
 /* Biblioteca de componentes no tema administrativo: os blocos de componentes em colunas, como os
    painéis do GIN (duas colunas a partir de 60rem; uma coluna no mobile). */
-.ui_patterns_component {
-  break-inside: avoid;
-}
-
-:has(> .ui_patterns_component) {
-  column-count: 1;
-  column-gap: var(--spacing-xl);
-}
-
-@media (min-width: 60rem) {
-  :has(> .ui_patterns_component) {
-    column-count: 2;
-  }
-}
 
 /* O bloco "Componentes disponíveis" (atalhos) e a linha que o separa ocupam a largura toda, fora das colunas. */
 .ui_patterns_quicklinks,
@@ -54,3 +40,26 @@
 .aculta-component-library__panel-list .button {
   white-space: nowrap;
 }
+
+/* Biblioteca de componentes: área de conteúdo mais larga. Os cartões ficam em duas colunas só a
+   partir de 120rem; abaixo disso, uma coluna com a largura toda (os componentes respondem ao
+   viewport, inclusive no mobile). */
+body:has(.ui_patterns_quicklinks) {
+  --aculta-container-width: 1440px;
+}
+
+.ui_patterns_component {
+  break-inside: avoid;
+  min-inline-size: 0;
+}
+
+:has(> .ui_patterns_component) {
+  column-gap: var(--spacing-xl);
+}
+
+@media (min-width: 120rem) {
+  :has(> .ui_patterns_component) {
+    column-count: 2;
+  }
+}
+

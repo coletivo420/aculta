@@ -102,7 +102,7 @@ studio-connections-page:
       components/studio-connections-page/studio-connections-page.css: {}
 
 ui-library-admin:
-  version: 1.0.2
+  version: 1.0.3
   css:
     theme:
       src/styles/ui-library-admin.css: {}
