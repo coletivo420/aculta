@@ -1,4 +1,0 @@
-name: Padrão (Popup Criar tópico)
-description: Botão Criar que abre o popup de criação de tópico, com o formulário real do nó aculta_forum_topic (Assunto antes do Comentário).
-component: aculta420_v2:discussion-topic-create-dialog
-class: Drupal\aculta420_v2\Story\DiscussionTopicCreateDialogStory
