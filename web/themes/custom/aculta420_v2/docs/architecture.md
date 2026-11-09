@@ -1,5 +1,7 @@
 # Arquitetura do tema ACULTA420 V2
 
+> **Atualização normativa (2026-11-09):** ADR-054 e `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md` substituem as restrições anteriores ao jQuery e ao Layout Builder e descontinuam o painel administrativo de container. Este documento também descreve o código legado durante a migração paralela. O painel já foi retirado; a leitura dos valores antigos ainda funciona temporariamente.
+
 Este documento descreve como o tema está montado hoje (`1.2.0-dev.2` mais o menu de conta não versionado). Para decisões, veja os ADRs em `docs/decisions/`; para status, veja [roadmap.md](roadmap.md).
 
 ## 1. Camadas
@@ -105,7 +107,7 @@ domínio nem purpose. Instruções operacionais estão em
 
 ## 5. JavaScript
 
-Todo o JavaScript é vanilla, com `Drupal.behaviors` e `core/once`. Não há jQuery.
+O JavaScript legado é predominantemente vanilla com `Drupal.behaviors` e `core/once`. ADR-054 autoriza jQuery 4 via `core/jquery` sob demanda em módulos e SDCs; HTMX permanece padrão para novas requisições conforme ADR-050.
 HTMX por `core/drupal.htmx` é o padrão obrigatório das interações assíncronas;
 Drupal AJAX (`core/drupal.ajax`, `#ajax`, `use-ajax`) é legado e não deve ser
 adicionado ao tema. Migrações preservam links e formulários nativos como
@@ -155,7 +157,7 @@ Templates específicos seguem a tabela de tipos e view modes:
 O override genérico `node--teaser.html.twig` foi removido porque aplicava um
 cartão cultural a bundles sem esse contrato e podia ocultar campos como o
 arquivo de um `document`. Loja (catálogo/produto) permanece aguardando autorização
-por tarefa; Layout Builder permanece desabilitado.
+por tarefa; os módulos Layout Builder e UI Patterns Layouts estão habilitados, mas os displays só passam a usar Layout Builder mediante migração e testes explícitos conforme ADR-054.
 
 A biblioteca `studio-htmx` depende de `core/drupal.htmx`, `core/drupal` e `core/once`. A biblioteca `utility-drawers` depende de `studio-htmx` e carrega os diálogos, gavetas, contadores e dispensa de avisos. Os diálogos nativos usam `data-aculta-utility-drawer` como contrato de comportamento; estilos específicos de cada SDC ficam isolados para que um modal não herde dimensões de gaveta. As gavetas declaram `data-hx-get`, alvo e `data-hx-sync="this:replace"`; os fragmentos mantêm `href` e POST nativos como fallback sem JavaScript. O login e a busca do shell usam os endpoints HTMX do Portal: o gatilho é um link normal, o JS acrescenta `data-hx-get`, alvo, `select` e `hx-sync` antes de abrir o `<dialog>`. A prévia da busca usa `data-hx-get` no campo, com debounce de 300 ms e `hx-sync="this:replace"` no lugar do `AbortController`. Busca e login não usam `core/drupal.dialog.ajax`; a V2 remove essa dependência do utilitário de busca (`PagePresentationHooks::removeSearchDialogDependency`). A matriz visual e o fallback sem JavaScript da busca e do login estão em `tests/browser/aculta-htmx-f1/`.
 
