@@ -17,6 +17,32 @@
 
   const dialogId = 'aculta-reply-dialog';
   const dialogBodyId = 'aculta-reply-dialog-body';
+
+  /**
+   * Overlay "Aguarde / Postando seu comentário" dentro do diálogo. A estrutura é criada aqui;
+   * a aparência (cartão, spinner, animação) é do tema, em forum.css.
+   */
+  function showPostingOverlay(visible) {
+    const dialog = document.getElementById(dialogId);
+    if (!dialog) {
+      return;
+    }
+    let overlay = dialog.querySelector('.aculta-posting-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.className = 'aculta-posting-overlay';
+      overlay.setAttribute('role', 'status');
+      overlay.setAttribute('aria-live', 'polite');
+      overlay.hidden = true;
+      overlay.innerHTML = '<div class="aculta-posting-overlay__card">'
+        + '<span class="aculta-posting-overlay__spinner" aria-hidden="true"></span>'
+        + '<p class="aculta-posting-overlay__title">Aguarde</p>'
+        + '<p class="aculta-posting-overlay__text">Postando seu comentário…</p>'
+        + '</div>';
+      dialog.appendChild(overlay);
+    }
+    overlay.hidden = !visible;
+  }
   const triggerSelector = '[data-action="comment-reply"], [data-action="comment-quote"]';
 
   function getDialog() {
@@ -99,6 +125,21 @@
             dialog.showModal();
           }
           focusComposer(composer);
+        });
+
+        // Aviso "Aguarde" durante a postagem: aparece ao enviar e some se a resposta trouxer erro.
+        body.addEventListener('htmx:beforeRequest', (event) => {
+          const el = event.detail && event.detail.elt;
+          if (el && el.closest && el.closest('#' + dialogId + ' [type="submit"]')) {
+            showPostingOverlay(true);
+          }
+        });
+        body.addEventListener('htmx:responseError', () => showPostingOverlay(false));
+        body.addEventListener('htmx:afterSwap', (event) => {
+          const target = event.detail && event.detail.target;
+          if (target && target.id === dialogBodyId && target.querySelector('[data-discussion-reply-composer]')) {
+            showPostingOverlay(false);
+          }
         });
 
         // Publicar: copia o conteúdo do CKEditor para o textarea antes do HTMX ler os campos do formulário.

@@ -914,3 +914,63 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
 .aculta-forum-topic__main form.comment-comment-form:not(article form) {
   display: none;
 }
+
+/* Aviso "Aguarde" durante a postagem do comentário (estrutura em discussion-reply-popup.js). */
+#aculta-reply-dialog {
+  position: relative;
+}
+
+.aculta-posting-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-base);
+  background: var(--color-surface-raised);
+}
+
+.aculta-posting-overlay[hidden] {
+  display: none;
+}
+
+.aculta-posting-overlay__card {
+  display: grid;
+  justify-items: center;
+  gap: var(--spacing-sm);
+  text-align: center;
+}
+
+.aculta-posting-overlay__spinner {
+  inline-size: 4.5rem;
+  block-size: 4.5rem;
+  border-radius: 50%;
+  border: 0.6rem solid var(--color-border);
+  border-block-start-color: var(--color-text-primary);
+  animation: aculta-posting-spin 1s linear infinite;
+}
+
+.aculta-posting-overlay__title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.aculta-posting-overlay__text {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+@keyframes aculta-posting-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aculta-posting-overlay__spinner {
+    animation-duration: 3s;
+  }
+}
