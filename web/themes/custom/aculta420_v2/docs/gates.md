@@ -94,3 +94,17 @@ Validação dos novos componentes SDC do Fórum (`forum-category-header`, `forum
 - `validate-aculta420-design-foundations.php`: FAIL (599/1368). Exige a família `--aculta-*`; a V2 usa `--color-*`. Decisão pendente.
 - `validate-module-theme-boundary.php`: FAIL (21/7127). Falhas em módulos do Portal. Refatoração pendente.
 - Captura visual Firefox ESR (320/390/1440 px): DEFERRED. Sem `FORUM_BASE_URL` nem `SUITE_OUT` nesta sessão.
+
+## ADR-054 - Gates pendentes da refatoração SDC First (2026-11-09)
+
+Estes são **requisitos de homologação**, não resultados PASS; os gates automatizados específicos ainda devem ser implementados nos pacotes do plano `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md`.
+
+- **UI administrativa de containers:** verificar que `aculta_container_purpose` e seus campos não aparecem em `system_theme_settings`, mas `aculta_purpose_palette` continua funcional; confirmar que configurações legadas não são apagadas. **DEFERRED** até execução no Runtime.
+- **Regiões e blocos:** inventariar instâncias `block.block.*` globais e coleções Domain; antes do corte, nenhuma instância poderá apontar para regiões retiradas. **PENDENTE**.
+- **Layout Builder:** testar displays por bundle/view_mode, overrides de entidade permitidos, fallback e compatibilidade com renderização especial. **PENDENTE**.
+- **UI Library com dados reais:** impedir acesso por não-administrador, exigir também acesso ao bloco/entidade e assegurar cache seguro. **PENDENTE**.
+- **Dez purposes e cache:** snapshots e intercâmbio de domínios em ordem direta/inversa, claro/escuro, 320/390/768/1024/1440, zoom 200%, teclado e perfis de autenticação. **PENDENTE**.
+- **JavaScript e CSS:** jQuery 4 sob demanda por `core/jquery`, HTMX preservado, ausência de listeners duplicados, comparação de bytes e unused CSS entre legado/novo. **PENDENTE**.
+- **Rollback:** backup, ativação controlada e reversão comprovada; testar importação de configuração em staging, não no Runtime com drift. **PENDENTE**.
+
+Este registro não autoriza `drush cim`, `updatedb` ou alterações destrutivas; seguir AGENTS.md. A retirada isolada do formulário de container foi publicada em código, mas o teste de execução permanece DEFERRED.
