@@ -22,6 +22,13 @@
       once('aculta-ui-library-tabs', 'body', context).forEach(() => {
         window.addEventListener('hashchange', syncTabs);
       });
+      // Estado inicial: a primeira aba vem selecionada, com o painel dela aberto.
+      if (!window.location.hash) {
+        const first = document.querySelector('.ui_patterns_quicklinks nav.aculta-tabs a');
+        if (first) {
+          window.history.replaceState(null, '', first.getAttribute('href'));
+        }
+      }
       syncTabs();
     },
   };
