@@ -64,10 +64,10 @@
 
 ## 3. Consequências
 
-- `page.html.twig` passa a renderizar `layout-page` no lugar do `<main>` atual. As regiões do Drupal permanecem as mesmas; nenhum bloco é remapeado.
+- `page.html.twig` passa a renderizar `layout-page` no lugar do `<main>` atual. As regiões do Drupal permanecem as mesmas; nenhum bloco é remapeado. *[Substituído parcialmente pela ADR-053 quanto à barra institucional.]*
 - As classes `page__main--with-sidebar` e `page__sidebar` deixam de existir; a regra vira a variante `aside`.
 - O Portal não precisa de mudança de contrato para layouts. Isso remove a fase P3 do plano anterior.
-- A barra institucional, o menu de conta e as utilidades não mudam.
+- A barra institucional, o menu de conta e as utilidades não mudam. *[Substituído parcialmente pela ADR-053 quanto à barra institucional.]*
 
 ## 4. Fases
 
