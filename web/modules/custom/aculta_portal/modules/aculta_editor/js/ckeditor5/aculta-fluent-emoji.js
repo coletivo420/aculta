@@ -17,6 +17,16 @@
   const { View, createDropdown } = CKEditor5.dll('./src/ui.js');
 
   /**
+   * Ícone do botão na toolbar: rosto sorridente em currentColor.
+   */
+  const EMOJI_ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" aria-hidden="true">'
+    + '<circle cx="10" cy="10" r="7.25" stroke="currentColor" stroke-width="1.5"/>'
+    + '<circle cx="7.25" cy="8.25" r="1.1" fill="currentColor"/>'
+    + '<circle cx="12.75" cy="8.25" r="1.1" fill="currentColor"/>'
+    + '<path d="M6.6 11.4c.9 1.4 2 2.1 3.4 2.1s2.5-.7 3.4-2.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>'
+    + '</svg>';
+
+  /**
    * Painel com busca instantânea e grade de emojis agrupada por categoria.
    */
   class EmojiPanelView extends View {
@@ -192,7 +202,7 @@
         dropdown.buttonView.set({
           label: labels.button || 'Emoji',
           tooltip: true,
-          withText: true,
+          icon: EMOJI_ICON,
         });
 
         const panel = new EmojiPanelView(locale, config, {
