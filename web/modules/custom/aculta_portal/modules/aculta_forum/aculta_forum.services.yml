@@ -74,9 +74,6 @@ services:
     class: Drupal\aculta_forum\Hook\ForumThemeHooks
   Drupal\aculta_forum\Hook\DiscussionModerationHooks:
     class: Drupal\aculta_forum\Hook\DiscussionModerationHooks
-  Drupal\aculta_forum\Hook\CommentRouteHooks:
-    class: Drupal\aculta_forum\Hook\CommentRouteHooks
-
   Drupal\aculta_forum\Hook\DiscussionCommentActionIconHooks:
     class: Drupal\aculta_forum\Hook\DiscussionCommentActionIconHooks
     arguments: ['@extension.list.theme']
@@ -300,3 +297,8 @@ services:
       - '@aculta_forum.discussion_context_resolver'
       - '@aculta_forum.quote_builder'
       - '@current_user'
+
+  aculta_forum.comment_route_subscriber:
+    class: Drupal\aculta_forum\EventSubscriber\CommentRouteSubscriber
+    tags:
+      - { name: event_subscriber }

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_forum\Hook;
+namespace Drupal\aculta_forum\EventSubscriber;
 
-use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Routing\RouteSubscriberBase;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -14,7 +14,7 @@ use Symfony\Component\Routing\RouteCollection;
  * caminho. O comentário avulso (entity.comment.canonical) vira /resposta/{comment} e redireciona
  * para a página do tópico, na paginação e âncora certas.
  */
-final class CommentRouteHooks {
+final class CommentRouteSubscriber extends RouteSubscriberBase {
 
   /**
    * Nome da rota do core => caminho em português.
@@ -29,19 +29,18 @@ final class CommentRouteHooks {
   ];
 
   /**
-   * Implements hook_route_alter().
+   * {@inheritdoc}
    */
-  #[Hook('route_alter')]
-  public function routeAlter(RouteCollection $routes): void {
+  protected function alterRoutes(RouteCollection $collection): void {
     foreach (self::PATHS as $name => $path) {
-      $route = $routes->get($name);
+      $route = $collection->get($name);
       if ($route !== NULL) {
         $route->setPath($path);
       }
     }
 
     // O comentário avulso não é mais uma página: redireciona para o tópico.
-    $canonical = $routes->get('entity.comment.canonical');
+    $canonical = $collection->get('entity.comment.canonical');
     if ($canonical !== NULL) {
       $canonical->setDefaults([
         '_controller' => 'aculta_forum.comment_reply_permalink_controller:redirectToComment',
