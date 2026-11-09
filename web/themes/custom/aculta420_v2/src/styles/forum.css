@@ -979,6 +979,11 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
   display: none;
 }
 
+/* Sem título, o botão de fechar vai para a direita do cabeçalho. */
+#aculta-reply-dialog:has([data-discussion-reply-composer][data-mode="excluir"]) .aculta-dialog__header .aculta-dialog__close {
+  margin-inline-start: auto;
+}
+
 .aculta-reply-dialog__body {
   min-inline-size: 0;
 }
