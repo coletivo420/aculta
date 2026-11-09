@@ -123,6 +123,12 @@
         });
       });
 
+      // Garante o corpo do diálogo: o slot do SDC não o entrega, então o JS cria a div dentro do conteúdo.
+      const dialogContent = getDialog() ? getDialog().querySelector('.aculta-dialog__content') : null;
+      if (dialogContent && !getDialogBody()) {
+        dialogContent.insertAdjacentHTML('beforeend', '<div id="' + dialogBodyId + '" class="aculta-reply-dialog__body"></div>');
+      }
+
       // Ao fechar, esvazia o corpo para o próximo Responder/Citar começar limpo.
       const dialog = getDialog();
       if (dialog && !dialog.dataset.acultaCloseBound) {
