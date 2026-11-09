@@ -2,6 +2,8 @@
 
 Tema Drupal da ACULTA em **Single Directory Components (SDC)**, nativo, sem Bootstrap, sem Vite e sem Node. É o tema padrão e exclusivo do portal, desenvolvido com base no design system autônomo e mobile-first. A versão legada V1 foi purgada.
 
+Planejamento normativo atual: `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md` (na raiz do repositório) e ADR-054. A opção administrativa de container foi removida; a leitura dos valores legados permanece durante a migração paralela.
+
 Para quem vai mexer no tema, leia nesta ordem:
 
 1. [AGENTS.md](AGENTS.md): regras de trabalho, autorização, gates e entrega.
@@ -19,6 +21,7 @@ Decisões que governam o tema estão em `docs/decisions/` na raiz do repositóri
 | ADR-045 | Compatibilidade com Drupal 12 (desenvolvimento em 11.5) |
 | ADR-046 | Desenho do tema V2: UI Styles, shell e fundações primeiro, mobile-first |
 | ADR-047 | Menu de conta fixo na barra institucional |
+| ADR-054 | Arquitetura SDC First, Layout Builder, dez purposes e retirada da administração de container |
 
 ## Estado em uma frase
 
@@ -59,7 +62,7 @@ Vale o mesmo para estilos de UI Styles, bibliotecas, hooks e variáveis do Porta
 
 - Mobile-first: a base de cada seletor atende 320 CSS px. Expansão por `min-width` ou container query. Não converter `max-width` em `min-width` de forma mecânica.
 - Light e dark são o mesmo tema: o modo vem de `data-theme` no `<html>`, definido pelo Portal. Não há `prefers-color-scheme` e nenhum componente conhece o modo.
-- Sem Bootstrap, jQuery, `core/drupal.dialog.ajax`, Vite ou Node no tema. Qualquer exceção exige registro em ADR.
+- Sem Bootstrap, `core/drupal.dialog.ajax`, Vite ou Node no tema. jQuery 4 é permitido sob demanda nos módulos e SDCs por dependência `core/jquery`, sem duplicação nem anexação global obrigatória (ADR-054).
 - Sem hostnames, domínios ou regras de purpose dentro do tema. O tema recebe o contrato neutro preparado pelo Portal.
 - Sem segredos, credenciais ou caminhos de ambiente no repositório.
 - Institution Bar e Domain Header são contratos do shell (ADR-046): não se redesenham sem decisão explícita.
