@@ -6,9 +6,11 @@
   'use strict';
 
   function syncTabs() {
-    const hash = window.location.hash;
-    document.querySelectorAll('.ui_patterns_quicklinks nav.aculta-tabs a').forEach((link) => {
-      if (hash && link.getAttribute('href') === hash) {
+    const links = document.querySelectorAll('.ui_patterns_quicklinks nav.aculta-tabs a');
+    // Sem endereço de painel, a primeira aba fica selecionada.
+    const target = window.location.hash || (links[0] ? links[0].getAttribute('href') : '');
+    links.forEach((link) => {
+      if (target && link.getAttribute('href') === target) {
         link.setAttribute('aria-current', 'page');
       }
       else {
@@ -22,13 +24,6 @@
       once('aculta-ui-library-tabs', 'body', context).forEach(() => {
         window.addEventListener('hashchange', syncTabs);
       });
-      // Estado inicial: a primeira aba vem selecionada, com o painel dela aberto.
-      if (!window.location.hash) {
-        const first = document.querySelector('.ui_patterns_quicklinks nav.aculta-tabs a');
-        if (first) {
-          window.history.replaceState(null, '', first.getAttribute('href'));
-        }
-      }
       syncTabs();
     },
   };

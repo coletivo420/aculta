@@ -9,7 +9,7 @@
     <h2 class="ui_patterns_quicklinks__title">{{ 'Available components'|t }}</h2>
     {% set tab_links %}
       {% for group_name, components in groups %}
-        <a href="#painel-{{ aculta_group_anchors[group_name] }}">{{ group_name }}</a>
+        <a href="#painel-{{ aculta_group_anchors[group_name] }}"{% if loop.first %} aria-current="page"{% endif %}>{{ group_name }}</a>
       {% endfor %}
     {% endset %}
     {{ include('aculta420_v2:tabs', { label: 'Grupos de componentes'|t, items: tab_links|raw }, with_context: false) }}

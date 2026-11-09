@@ -57,3 +57,8 @@
 .aculta-component-library__panel-list .button {
   white-space: nowrap;
 }
+
+/* Sem painel escolhido pelo endereço, o primeiro painel (da primeira aba) fica aberto. */
+.ui_patterns_quicklinks:not(:has(.aculta-component-library__panel:target)) > .aculta-component-library__panel:first-of-type {
+  display: block;
+}
