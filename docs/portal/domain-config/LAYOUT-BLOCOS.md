@@ -42,10 +42,17 @@ No formulário do bloco, com o domínio selecionado, clique em
 
 ## Desativar em um domínio
 
-O `status` do bloco é uma chave do override. Use a operação de ativação/
-desativação do Layout de Blocos com o domínio selecionado, ou grave
-`status: false` no diff do domínio. O bloco global e os outros domínios
-permanecem ativos. Não apague o bloco global para desativá-lo em um domínio.
+**Ordem obrigatória:** registre o bloco para o domínio primeiro (formulário do
+bloco com o domínio selecionado → **Enable domain configuration**). Depois use a
+operação de ativação/desativação do Layout de Blocos com o mesmo domínio
+selecionado. O link Desativar carrega o domínio no `destination`, e a ponte lê
+`config_domain` de lá, mas o registro precisa existir.
+
+- Com registro: o diff `status: false` é gravado na coleção do domínio; o bloco
+  global e os outros domínios permanecem ativos.
+- **Sem registro:** a operação altera o bloco **global**. Se isso acontecer,
+  reative o bloco global imediatamente no formulário sem domínio.
+- Não apague o bloco global para desativá-lo em um domínio.
 
 ## Criar blocos novos
 

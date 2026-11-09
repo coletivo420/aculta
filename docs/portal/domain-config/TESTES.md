@@ -44,9 +44,19 @@ override.
 - `domain_config_ui.settings:overridable_configurations` voltou a `[]`.
 - **Resultado: PASS.**
 
-Desativação por domínio (`status: false` no diff) usa o mesmo caminho de
-override; a operação de ativar/desativar da lista de blocos não foi executada
-nesta rodada e fica registrada como pendente de homologação.
+Desativação por domínio:
+
+- O bloco foi registrado para `conta_aculta_org` (Enable domain configuration).
+- O link **Desativar** da lista de blocos, com `config_domain` no `destination`,
+  gravou `status: false` na coleção `domain.conta_aculta_org`.
+- A base permaneceu `status: true`, `region=navigation`.
+- A Conta deixou de renderizar o bloco de título na navegação (sobrou apenas o
+  H1 do conteúdo); a Wiki manteve o bloco.
+- O override foi removido e o registro voltou a `[]`; a base seguiu intacta.
+- **Resultado: PASS**, com a regra operacional: o domínio precisa estar
+  registrado antes de usar Desativar; sem o registro, a operação altera o
+  bloco global. O assinante lê `config_domain` também do `destination` para
+  que o link de operação atinja o domínio, mas o registro continua obrigatório.
 
 ## E — Cache
 

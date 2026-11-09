@@ -74,15 +74,33 @@ final class DomainConfigEditingSubscriberTest extends UnitTestCase {
   }
 
   /**
+   * Operações da lista preservam a seleção apenas no destination.
+   */
+  public function testDestinationSelectsDomain(): void {
+    $context = $this->createMock(DomainConfigEditContextInterface::class);
+    $context->expects(self::once())
+      ->method('setEditingDomain')
+      ->with('conta_aculta_org', ['block.block.a', 'block.block.b']);
+
+    $subscriber = $this->subscriber(NULL, $context, FALSE);
+    $path = '/painel-administrativo/estrutura/block/manage/a/disable?destination='
+      . rawurlencode('/painel-administrativo/estrutura/block/list/theme?config_domain=conta_aculta_org');
+    $subscriber->onRequest($this->event($path));
+  }
+
+  /**
    * Monta o assinante com um domínio e uma lista de blocos fixos.
    */
   private function subscriber(?string $domainId, DomainConfigEditContextInterface $context, bool $isDefault): DomainConfigEditingSubscriber {
-    $switcher = $this->createMock(DomainConfigSwitcherInterface::class);
-    $switcher->method('getSelectedDomainId')->willReturn($domainId);
-
     $domain = $this->createMock(DomainInterface::class);
     $domain->method('status')->willReturn(TRUE);
     $domain->method('isDefault')->willReturn($isDefault);
+
+    $switcher = $this->createMock(DomainConfigSwitcherInterface::class);
+    $switcher->method('getSelectedDomainId')->willReturn($domainId);
+    $switcher->method('getSelectableDomains')->willReturn([
+      'conta_aculta_org' => $domain,
+    ]);
 
     $domainStorage = $this->createMock(EntityStorageInterface::class);
     $domainStorage->method('load')->willReturn($domain);

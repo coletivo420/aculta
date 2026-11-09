@@ -11,6 +11,7 @@ use Drupal\domain_config_switcher\DomainConfigSwitcherInterface;
 use Drupal\domain_config_ui\DomainConfigEditContextInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -54,7 +55,8 @@ final class DomainConfigEditingSubscriber implements EventSubscriberInterface {
     if (!$event->isMainRequest()) {
       return;
     }
-    $domainId = $this->switcher->getSelectedDomainId();
+    $request = $event->getRequest();
+    $domainId = $this->selectedDomainId($request);
     if ($domainId === NULL || $domainId === '') {
       return;
     }
@@ -63,7 +65,7 @@ final class DomainConfigEditingSubscriber implements EventSubscriberInterface {
     if (!$domain instanceof DomainInterface || !$domain->status() || $domain->isDefault()) {
       return;
     }
-    if (!$this->isBlockAdminPath($event->getRequest()->getPathInfo())) {
+    if (!$this->isBlockAdminPath($request->getPathInfo())) {
       return;
     }
     $configNames = $this->configStorage->listAll('block.block.');
@@ -71,6 +73,34 @@ final class DomainConfigEditingSubscriber implements EventSubscriberInterface {
       return;
     }
     $this->editContext->setEditingDomain($domainId, $configNames);
+  }
+
+  /**
+   * Lê a seleção da URL atual ou do destination de uma operação de bloco.
+   *
+   * Os links Desativar/Ativar da lista de blocos preservam `config_domain`
+   * apenas no `destination`; sem esta leitura a operação atingiria o global.
+   */
+  private function selectedDomainId(Request $request): ?string {
+    $domainId = $this->switcher->getSelectedDomainId();
+    if ($domainId !== NULL) {
+      return $domainId;
+    }
+    $destination = $request->query->get('destination');
+    if (!is_string($destination) || $destination === '') {
+      return NULL;
+    }
+    $query = parse_url($destination, PHP_URL_QUERY);
+    if (!is_string($query) || $query === '') {
+      return NULL;
+    }
+    parse_str($query, $params);
+    $candidate = $params[DomainConfigSwitcherInterface::QUERY_ARG] ?? NULL;
+    if (!is_string($candidate) || $candidate === '') {
+      return NULL;
+    }
+    $selectable = $this->switcher->getSelectableDomains();
+    return isset($selectable[$candidate]) ? $candidate : NULL;
   }
 
   /**
