@@ -155,6 +155,13 @@ final class DiscussionReplyFormHooks {
     // Permalink do comentário: o core leva à página em que ele caiu (a paginação pode mandar a
     // postagem para outra página do tópico) e ao âncora do comentário.
     if (!$comment->isNew()) {
+      $permalink = $comment->toUrl('canonical', ['absolute' => TRUE])->toString();
+      // Envio pelo HTMX (popup): o HX-Redirect leva o navegador ao permalink do comentário novo,
+      // em vez de trocar o fragmento da página atual.
+      if (\Drupal::request()->headers->has('HX-Request')) {
+        $formState->setResponse(new \Symfony\Component\HttpFoundation\Response('', 200, ['HX-Redirect' => $permalink]));
+        return;
+      }
       $formState->setRedirectUrl($comment->toUrl('canonical'));
     }
   }
