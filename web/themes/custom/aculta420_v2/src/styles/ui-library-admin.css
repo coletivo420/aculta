@@ -20,3 +20,8 @@
 .ui_patterns_quicklinks + hr {
   column-span: all;
 }
+
+/* Cabeçalho de cada grupo também fica fora das colunas, e as abas aparecem no topo. */
+.aculta-component-library__group-title {
+  column-span: all;
+}

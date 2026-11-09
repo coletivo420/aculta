@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta420_v2\Hook;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\ui_patterns\ComponentPluginManager;
 use Drupal\ui_patterns_library\StoryDefault;
@@ -34,6 +35,13 @@ final class UiPatternsStoryHooks {
     $this->storyPluginManager->clearCachedDefinitions();
 
     $variables['#attached']['library'][] = 'aculta420_v2/ui-library-admin';
+    // Âncora de cada grupo: as abas de navegação levam ao cabeçalho do grupo.
+    $variables['aculta_group_anchors'] = [];
+    if (is_array($variables['groups'] ?? NULL)) {
+      foreach (array_keys($variables['groups']) as $groupName) {
+        $variables['aculta_group_anchors'][$groupName] = 'grupo-' . Html::cleanCssIdentifier((string) $groupName);
+      }
+    }
     if (!is_array($variables['groups'] ?? NULL)) {
       return;
     }
