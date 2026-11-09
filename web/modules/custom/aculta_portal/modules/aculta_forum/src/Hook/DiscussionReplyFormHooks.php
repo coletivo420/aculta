@@ -152,17 +152,21 @@ final class DiscussionReplyFormHooks {
     if (!$comment instanceof CommentInterface) {
       return;
     }
-    // Permalink do comentário: o core leva à página em que ele caiu (a paginação pode mandar a
-    // postagem para outra página do tópico) e ao âncora do comentário.
+    // Permalink do comentário no próprio tópico: o construtor do módulo calcula a página da
+    // paginação e a âncora do comentário (a rota /comment/ID não existe neste site).
     if (!$comment->isNew()) {
-      $permalink = $comment->toUrl('canonical', ['absolute' => TRUE])->toString();
-      // Envio pelo HTMX (popup): o HX-Redirect leva o navegador ao permalink do comentário novo,
-      // em vez de trocar o fragmento da página atual.
+      $permalinkUrl = \Drupal::service('aculta_forum.discussion_comment_permalink_builder')->build($comment);
+      if ($permalinkUrl === NULL) {
+        return;
+      }
+      $permalinkUrl->setAbsolute(TRUE);
+      $permalink = $permalinkUrl->toString();
+      // Envio pelo HTMX (popup): o HX-Redirect leva o navegador ao permalink do comentário novo.
       if (\Drupal::request()->headers->has('HX-Request')) {
         $formState->setResponse(new \Symfony\Component\HttpFoundation\Response('', 200, ['HX-Redirect' => $permalink]));
         return;
       }
-      $formState->setRedirectUrl($comment->toUrl('canonical'));
+      $formState->setRedirectUrl($permalinkUrl);
     }
   }
 
