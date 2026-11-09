@@ -6,13 +6,14 @@ discussion-progress:
     - core/once
 
 topic-create-popup:
-  version: 1.0.0
+  version: 1.0.1
   js:
     js/topic-create-popup.js: {}
   dependencies:
     - core/drupal
     - core/once
     - history/api
+    - aculta420_v2/topic-dialog
 
 discussion-reply-popup:
   version: 1.0.5

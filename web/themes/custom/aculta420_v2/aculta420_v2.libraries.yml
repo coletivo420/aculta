@@ -1,3 +1,9 @@
+topic-dialog:
+  version: 1.0.0
+  css:
+    component:
+      components/dialog/dialog.css: {}
+
 global-styling:
   version: 1.2.0-dev.3
   css:
