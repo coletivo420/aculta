@@ -1,11 +1,4 @@
 services:
-  aculta_forum.comment_canonical_route_subscriber:
-    class: Drupal\aculta_forum\EventSubscriber\CommentCanonicalRouteSubscriber
-    tags:
-      - { name: event_subscriber }
-  aculta_forum.comment_permalink_access:
-    class: Drupal\aculta_forum\Access\CommentPermalinkAccessCheck
-
   aculta_forum.content_index_provider:
     class: Drupal\aculta_forum\ContentIndex\ForumContentIndexProvider
     tags:
