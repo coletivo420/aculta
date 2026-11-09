@@ -12,10 +12,10 @@ Duas variantes aprovadas para comparação, sempre com uma faixa superior **verd
 | `institutional` | Faixa/cabeçalho verde-limão institucional e corpo branco | Cabeçalho verde profundo e corpo grafite | Variante disponível aos administradores |
 
 Referências aprovadas, para desktop e mobile, nos dois temas:
-- [Comparativo neutro](login-sdc-referencias/comparativo-neutral.png)
-- [Comparativo institucional](login-sdc-referencias/comparativo-institutional.png)
+- [Comparativo neutro](login-sdc-referencias/comparativo-neutral.svg)
+- [Comparativo institucional](login-sdc-referencias/comparativo-institutional.svg)
 
-As referências visuais são **objetivos de aparência**, não contratos de markup, proporções fixas ou autorização para substituir a autenticação Drupal. É preciso ajustar contraste, zoom, reflow e 44 px de alvo de toque. A assinatura tricolor **não** varia conforme `data-purpose`.
+As referências vetoriais versionadas são recriações auxiliares da composição aprovada; os PNGs originais de 1400 x 1220 enviados na conversa são a fonte visual principal e devem ser colocados no repositório pelo agente local antes da implementação. As referências visuais são **objetivos de aparência**, não contratos de markup, proporções fixas ou autorização para substituir a autenticação Drupal. É preciso ajustar contraste, zoom, reflow e 44 px de alvo de toque. A assinatura tricolor **não** varia conforme `data-purpose`.
 
 ## 2. Inventário conferido em origin/dev em 2026-11-09
 
@@ -92,6 +92,6 @@ Implementar stories suficientes para cobrir:
 
 - Este plano: `docs/portal/ACULTA420-V2-LOGIN-SDC-PLANO.md`
 - Prompt: `docs/portal/ACULTA420-V2-LOGIN-SDC-AGENTE.md`
-- Referências: `docs/portal/login-sdc-referencias/comparativo-neutral.png` e `comparativo-institutional.png`
+- Referências: `docs/portal/login-sdc-referencias/comparativo-neutral.svg` e `comparativo-institutional.png`
 
-**Nota:** nenhum arquivo do tema, configuração, módulo ou runtime foi alterado na fase documental.
+**Nota:** este pacote contém o plano, o prompt e dois SVGs complementares. Os PNGs originais não foram enviados ao GitHub por limitação de transporte binário da conexão; precisam ser copiados do pacote entregue na conversa pelo agente local. Nenhum arquivo do tema, configuração, módulo ou runtime foi alterado na fase documental.
