@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\aculta_forum\Hook\DiscussionProgressHooks;
+use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Tests the neutral attachment contract for discussion progress controls.
@@ -32,10 +36,25 @@ final class DiscussionProgressHooksTest extends UnitTestCase {
       'field_aculta_discussion' => ['#type' => 'field'],
     ];
 
+    // O hook cria um comentário de referência para anexar o CKEditor. Sem acesso de criação,
+    // não chama o construtor de formulário nem o renderizador.
+    $comment = $this->createMock(CommentInterface::class);
+    $comment->method('access')->willReturn(FALSE);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('create')->willReturn($comment);
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->method('getStorage')->with('comment')->willReturn($storage);
+    $container = new ContainerBuilder();
+    $container->set('entity_type.manager', $entityTypeManager);
+    \Drupal::setContainer($container);
+
     (new DiscussionProgressHooks())->entityViewAlter($build, $node, $this->createMock(EntityViewDisplayInterface::class));
 
     self::assertSame('', $build['field_aculta_discussion']['#attributes']['data-aculta-discussion-thread']);
-    self::assertSame(['aculta_forum/discussion-progress'], $build['field_aculta_discussion']['#attached']['library']);
+    self::assertSame(
+      ['aculta_forum/discussion-progress', 'aculta_forum/discussion-reply-popup'],
+      $build['field_aculta_discussion']['#attached']['library'],
+    );
   }
 
   /**

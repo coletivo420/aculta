@@ -6,6 +6,8 @@ namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\aculta_forum\Service\DiscussionCommentPermalinkBuilder;
 use Drupal\comment\CommentInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Pager\PagerManagerInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
@@ -19,43 +21,66 @@ use PHPUnit\Framework\TestCase;
 final class DiscussionCommentPermalinkBuilderTest extends TestCase {
 
   /**
-   * Tests permalink points to host canonical with anchor and pager 0.
+   * O link público é /resposta/{cid}, na rota própria do módulo.
    */
-  public function testBuildsHostPermalinkWithAnchorAndPager(): void {
-    $pagerManager = $this->createMock(PagerManagerInterface::class);
-    $pagerManager->method('findPage')->with(0)->willReturn(2);
-    $pagerManager->method('getUpdatedParameters')->willReturnCallback(
-      static fn (array $query, int $element, int $page): array => ['page' => '2'] + $query
-    );
+  public function testBuildsPublicReplyPermalink(): void {
+    $builder = $this->builder();
 
-    $builder = new DiscussionCommentPermalinkBuilder($pagerManager);
-
-    $hostUrl = Url::fromRoute('entity.node.canonical', ['node' => 123]);
     $host = $this->createMock(NodeInterface::class);
-    $host->method('toUrl')->with('canonical')->willReturn($hostUrl);
-
     $comment = $this->createMock(CommentInterface::class);
     $comment->method('getCommentedEntity')->willReturn($host);
     $comment->method('id')->willReturn(456);
 
     $url = $builder->build($comment);
     self::assertNotNull($url);
-    self::assertSame('entity.node.canonical', $url->getRouteName());
-    self::assertSame('comment-456', $url->getOption('fragment'));
-    self::assertSame(['page' => '2'], $url->getOption('query'));
+    self::assertSame('aculta_forum.comment_reply_permalink', $url->getRouteName());
+    self::assertSame(['comment' => 456], $url->getRouteParameters());
   }
 
   /**
-   * Returns NULL if host entity is missing.
+   * Sem entidade hospedeira, não há link.
    */
   public function testReturnsNullWithoutHostEntity(): void {
-    $pagerManager = $this->createMock(PagerManagerInterface::class);
-    $builder = new DiscussionCommentPermalinkBuilder($pagerManager);
-
     $comment = $this->createMock(CommentInterface::class);
     $comment->method('getCommentedEntity')->willReturn(NULL);
 
-    self::assertNull($builder->build($comment));
+    self::assertNull($this->builder()->build($comment));
+    self::assertNull($this->builder()->hostUrl($comment));
+  }
+
+  /**
+   * A URL do tópico leva a âncora do comentário e, sem paginação, nenhuma página.
+   */
+  public function testHostUrlHasAnchorAndNoPageWhenPerPageIsZero(): void {
+    $hostUrl = Url::fromRoute('entity.node.canonical', ['node' => 123]);
+
+    $field = $this->createMock(FieldDefinitionInterface::class);
+    $field->method('getSetting')->with('per_page')->willReturn(0);
+
+    $host = $this->createMock(NodeInterface::class);
+    $host->method('toUrl')->with('canonical')->willReturn($hostUrl);
+    $host->method('getFieldDefinition')->willReturn($field);
+
+    $comment = $this->createMock(CommentInterface::class);
+    $comment->method('getCommentedEntity')->willReturn($host);
+    $comment->method('getFieldName')->willReturn('field_aculta_discussion');
+    $comment->method('id')->willReturn(456);
+
+    $url = $this->builder()->hostUrl($comment);
+    self::assertNotNull($url);
+    self::assertSame('entity.node.canonical', $url->getRouteName());
+    self::assertSame('comment-456', $url->getOption('fragment'));
+    self::assertArrayNotHasKey('query', $url->getOptions());
+  }
+
+  /**
+   * Cria o serviço com um gerenciador de paginação e de entidades simulados.
+   */
+  private function builder(): DiscussionCommentPermalinkBuilder {
+    return new DiscussionCommentPermalinkBuilder(
+      $this->createMock(PagerManagerInterface::class),
+      $this->createMock(EntityTypeManagerInterface::class),
+    );
   }
 
 }

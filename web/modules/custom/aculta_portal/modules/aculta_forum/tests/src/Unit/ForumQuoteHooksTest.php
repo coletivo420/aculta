@@ -111,9 +111,9 @@ final class ForumQuoteHooksTest extends UnitTestCase {
 
     $hooks->commentLinksAlter($links, $comment, $context);
 
-    $quoteLink = $links['#links']['comment-quote'];
+    $quoteLink = $links['#links']['resposta-citar'];
     self::assertSame('Citar', (string) $quoteLink['title']);
-    self::assertSame('comment-quote', $quoteLink['attributes']['data-action']);
+    self::assertSame('resposta-citar', $quoteLink['attributes']['data-action']);
     self::assertSame('42', $quoteLink['attributes']['data-quote-id']);
     $url = $quoteLink['url']->toString();
     self::assertStringContainsString('quote=42', $url);

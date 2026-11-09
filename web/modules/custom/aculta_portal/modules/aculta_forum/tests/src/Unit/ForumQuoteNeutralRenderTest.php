@@ -100,7 +100,7 @@ final class ForumQuoteNeutralRenderTest extends UnitTestCase {
       'comment' => [
         '#theme' => 'links__comment__comment',
         '#links' => [
-          'comment-reply' => [
+          'resposta-responder' => [
             'title' => 'Responder',
             'url' => Url::fromRoute('comment.reply', [
               'entity_type' => 'node',
@@ -118,15 +118,15 @@ final class ForumQuoteNeutralRenderTest extends UnitTestCase {
 
     // Verifies action structure: must not instantiate SDC directly in module
     self::assertArrayNotHasKey('#component', $links);
-    self::assertTrue(isset($links['comment']['#links']['comment-quote']) || isset($links['#links']['comment-quote']));
+    self::assertTrue(isset($links['comment']['#links']['resposta-citar']) || isset($links['#links']['resposta-citar']));
 
     // Call Link::preRenderLinks to verify Core collecting
     $rendered = Link::preRenderLinks($links);
     self::assertArrayHasKey('#links', $rendered);
-    self::assertArrayHasKey('comment-quote', $rendered['#links']);
-    self::assertSame('Citar', (string) $rendered['#links']['comment-quote']['title']);
-    self::assertSame('comment-quote', $rendered['#links']['comment-quote']['attributes']['data-action']);
-    self::assertSame('10', (string) $rendered['#links']['comment-quote']['attributes']['data-quote-id']);
+    self::assertArrayHasKey('resposta-citar', $rendered['#links']);
+    self::assertSame('Citar', (string) $rendered['#links']['resposta-citar']['title']);
+    self::assertSame('resposta-citar', $rendered['#links']['resposta-citar']['attributes']['data-action']);
+    self::assertSame('10', (string) $rendered['#links']['resposta-citar']['attributes']['data-quote-id']);
   }
 
 }
