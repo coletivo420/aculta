@@ -1,0 +1,11 @@
+name: Resposta espelhada (par)
+props:
+  author_name: MarceloSilva
+  author_posts: 342
+  author_reactions: 19
+  timestamp: 'Há 3 horas'
+slots:
+  body:
+    '#markup': '<p>Substrato leve com húmus de minhoca e fibra de coco funciona bem em espaço pequeno.</p>'
+  actions:
+    '#markup': '<span class="aculta-resposta-acao__icon" aria-hidden="true">Ações</span>'

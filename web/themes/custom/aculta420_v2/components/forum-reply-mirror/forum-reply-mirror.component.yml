@@ -1,0 +1,36 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Resposta espelhada
+description: Resposta de discussão no layout espelhado (par). Desktop: autor, faixa e reações à direita e ações à esquerda. Mobile: autor alinhado à direita e ações invertidas.
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [author_name]
+  properties:
+    author_name:
+      type: string
+      title: Nome do autor
+      minLength: 1
+    timestamp:
+      type: [string, 'null']
+      title: Data de publicação formatada
+      default: null
+    author_posts:
+      type: [string, integer, 'null']
+      title: Contagem de posts do autor
+      default: null
+    author_reactions:
+      type: [string, integer, 'null']
+      title: Contagem de reações recebidas pelo autor
+      default: null
+slots:
+  avatar:
+    title: Avatar ou cartão de autor
+  body:
+    title: Corpo da resposta
+  actions:
+    title: Ações (link, editar, citar, responder)
+    description: Markup das ações, à esquerda no layout espelhado.
+  reactions_slot:
+    title: Barra de reações

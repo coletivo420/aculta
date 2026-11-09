@@ -1,0 +1,42 @@
+/* Resposta espelhada (par): as mesmas regras de forum.css para comentários pares, aplicadas
+   pelo wrapper .forum-reply-mirror. Desktop: autor à direita. Mobile: autor alinhado à direita. */
+.forum-reply-mirror > .forum-post-card {
+  position: relative;
+}
+
+.forum-reply-mirror > .forum-post-card > .forum-post-card__stripe {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+  inline-size: .25rem;
+  block-size: auto;
+}
+
+.forum-reply-mirror > .forum-post-card > .forum-post-card__inner > .forum-post-card__footer {
+  flex-direction: row-reverse;
+}
+
+@media (min-width: 48rem) {
+  .forum-reply-mirror > .forum-post-card > .forum-post-card__inner {
+    grid-template-columns: minmax(0, 1fr) 14rem;
+    grid-template-areas:
+      "body author"
+      "body author"
+      "footer author";
+  }
+
+  .forum-reply-mirror > .forum-post-card > .forum-post-card__inner > .forum-post-card__header {
+    border-inline-end: 0;
+    padding-inline-end: 0;
+    border-inline-start: 1px solid var(--color-border-subtle);
+    padding-inline-start: var(--spacing-lg);
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .forum-reply-mirror > .forum-post-card > .forum-post-card__inner > .forum-post-card__header {
+    justify-content: flex-end;
+    text-align: end;
+  }
+}

@@ -162,6 +162,19 @@
   }
 }
 
+/* Mobile (abaixo de 48rem): o comentário par tem autor alinhado à direita, ações à esquerda e
+   reações à direita, espelhando o desktop. A faixa já fica à direita nos pares. */
+@media (max-width: 47.9375rem) {
+  :is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) article.js-comment:nth-of-type(even) > .forum-post-card > .forum-post-card__inner > .forum-post-card__header {
+    justify-content: flex-end;
+    text-align: end;
+  }
+
+  :is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) article.js-comment:nth-of-type(even) > .forum-post-card > .forum-post-card__inner > .forum-post-card__footer {
+    flex-direction: row-reverse;
+  }
+}
+
 :is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) .comment__in-reply-to {
   margin: 0 0 var(--spacing-xs);
   font-size: var(--font-size-sm);

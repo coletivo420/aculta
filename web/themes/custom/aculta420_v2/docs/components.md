@@ -360,6 +360,14 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 - **Regra:** destaque fixado recebe fundo `--color-surface-highlight` e borda lateral verde; dados ausentes (como visualizações) viram placeholder neutro `—`.
 - **Estado:** entregue na Entrega 1 do redesenho visual Growroom420; schema estrito validado.
 
+### forum-reply-mirror — Resposta Espelhada
+- **Papel:** resposta de discussão no layout espelhado, para comentários pares: autor, faixa e reações à direita; ações à esquerda.
+- **Props:** `author_name` (string, obrigatório), `timestamp`, `author_posts`, `author_reactions` (opcionais).
+- **Slots:** `avatar`, `body`, `actions`, `reactions_slot`.
+- **Story:** `forum-reply-mirror.default.story.yml`.
+- **Regra:** desktop (a partir de 48rem) inverte colunas e faixa; mobile (abaixo de 48rem) alinha o autor à direita e inverte as ações. Os comentários pares de `field_aculta_discussion` usam as mesmas regras em `src/styles/forum.css`.
+- **Estado:** novo; story, README e documentação incluídos.
+
 ### forum-opening-post — Postagem de Abertura do Tópico
 - **Papel:** primeiro post do tópico na página completa, com o mesmo destaque da linha de tópico fixado.
 - **Props:** `author_name` (string, obrigatório), `timestamp` (string, opcional).
