@@ -119,19 +119,23 @@
             if (dialog && dialog.open) {
               dialog.close();
             }
+            // O comentário recém-criado é o de maior id na resposta. Seu permalink (/comment/ID)
+            // leva à página em que ele caiu na paginação, com a âncora do comentário.
             const xhr = event.detail.xhr;
-            const finalUrl = xhr && xhr.responseURL ? new URL(xhr.responseURL, window.location.href) : null;
-            // O HTMX acrescenta o formato de fragmento; a navegação precisa da página completa.
-            if (finalUrl) {
-              finalUrl.searchParams.delete('_wrapper_format');
-            }
-            const here = new URL(window.location.href);
-            if (finalUrl && (finalUrl.pathname !== here.pathname || finalUrl.search !== here.search)) {
-              window.location.assign(finalUrl.href);
-            }
-            else if (finalUrl && finalUrl.hash) {
-              window.location.hash = finalUrl.hash;
-              window.location.reload();
+            const doc = new DOMParser().parseFromString((xhr && xhr.responseText) || '', 'text/html');
+            let newest = 0;
+            doc.querySelectorAll('article.js-comment[id^="comment-"]').forEach((article) => {
+              const id = parseInt(article.id.replace('comment-', ''), 10);
+              if (id > newest) {
+                newest = id;
+              }
+            });
+            if (newest) {
+              fetch(new URL('/comment/' + newest, window.location.origin).href, { credentials: 'same-origin' })
+                .then((res) => {
+                  window.location.assign(res.url.split('#')[0] + '#comment-' + newest);
+                })
+                .catch(() => window.location.reload());
             }
             else {
               window.location.reload();
