@@ -1,3 +1,10 @@
+## Não versionado — ADR-054 P7 CSS multidomínio por rota (2026-11-09)
+
+- `portal-account`, `public-profile`, `event-organization`, `events`, `wiki` e `forum` saíram do `global-styling` e passaram a ser bibliotecas contextuais por rota/purpose.
+- `public-profile.css` dividido: `.portal-article-author*` em `article-authors.css` global; o restante só na rota do perfil público.
+- `global-styling` local: 268.036 → 107.609 bytes (−60%). Gate `validate-aculta420-css-scope.php`: PASS (43 checks).
+- Evidência por CSS servido em home, Eventos, Wiki, Fórum, `/conta` autenticado e perfil público; dez frentes com 200/1 H1/1 `<main>`; Playwright 86/86.
+
 ## Não versionado — ADR-054 P4 cobertura final de Layout Builder (2026-11-09)
 
 - Revalidação por multiconjunto de tokens: `wiki_entry.default`, `editorial_highlight.default`, `revista.default` e `aculta_notice.default` não alteram a renderização; os quatro foram mantidos com Layout Builder e `allow_custom=false`.

@@ -4,6 +4,54 @@ topic-dialog:
     component:
       components/dialog/dialog.css: {}
 
+events:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/events.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+forum:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/forum.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+wiki:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/wiki.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+event-organization:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/event-organization.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+portal-account:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/portal-account.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
+public-profile:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/public-profile.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
 studio:
   version: 0.1.0
   css:
@@ -37,17 +85,12 @@ global-styling:
       src/styles/tokens.css: {}
       src/styles/base.css: {}
       src/styles/layout.css: {}
-      src/styles/events.css: {}
-      src/styles/wiki.css: {}
-      src/styles/forum.css: {}
-      src/styles/portal-account.css: {}
       src/styles/messenger-drawer.css: {}
-      src/styles/public-profile.css: {}
       src/styles/utilities.css: {}
-      src/styles/event-organization.css: {}
       src/styles/content.css: {}
       src/styles/search.css: {}
       src/styles/buttons.css: {}
+      src/styles/article-authors.css: {}
       components/button/button.css: {}
       src/styles/portal-ui-extras.css: {}
       src/styles/portal-ui-map.css: {}

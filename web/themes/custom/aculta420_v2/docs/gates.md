@@ -185,3 +185,12 @@ Este registro não autoriza `drush cim`, `updatedb` ou alterações destrutivas;
 - A comparação por sequência de texto acusou falsos positivos causados pela ordem não determinística do bloco "Alterações recentes" da Wiki. A revalidação por multiconjunto de tokens confirmou `wiki IGUAL`, `home IGUAL` e `revista IGUAL`.
 - Recuperados e mantidos com Layout Builder: `node.wiki_entry.default`, `node.editorial_highlight.default`, `node.revista.default` e `node.aculta_notice.default` (`allow_custom=false`).
 - `validate-aculta420-layout-builder-batch.php`: PASS (170 checks, 22 displays). Excluídos apenas `node.document.full` e `block_content.basic.default`, que perdem conteúdo de forma reproduzível.
+
+## Execução Recente — ADR-054 P7 fragmentação ampliada (2026-11-09)
+
+- `validate-aculta420-css-scope.php`: PASS (43 checks).
+- `global-styling` local: 268.036 → **107.609 bytes (−60%)**. Carregamento contextual por rota: `statistics`, `studio`+`studio-identity`, `portal-account`, `public-profile`, `event-organization`, `events`, `wiki`, `forum`.
+- `public-profile.css` foi dividido: regras de autoria de artigo (`.portal-article-author*`) ficaram em `article-authors.css` global, porque aparecem em artigos de qualquer purpose; o restante é carregado só em `aculta_user.perfil_publico`.
+- Verificação por CSS servido: `.aculta-event-organization-*` ausente na home e presente em Eventos; `.aculta-wiki-intro/collaboration/recent-change` ausentes na home e presentes na Wiki; `.forum-category-header/topic-row/tabs` ausentes na home e presentes no Fórum; `.portal-account__header` e `.studio-account-section` presentes em `/conta` autenticado e ausentes na home; `.portal-profile__achievement-highlight` presente no perfil público.
+- Smoke HTTP: dez frentes com 200, 1 H1 e 1 `<main>`. Playwright: 86 checks, 0 falhas; escopo conta/perfil 6/6 OK.
+- Permanecem globais por uso transversal: fontes, `tokens`, `base`, `layout`, `messenger-drawer` (gaveta na barra institucional), `utilities`, `content`, `search` (popup em toda página), `buttons`, `article-authors`, `portal-ui-extras`, `portal-ui-map` e `components/button/button.css` (envios de formulário fora do SDC).

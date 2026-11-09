@@ -56,6 +56,46 @@ $assert(str_contains($hook, "'aculta_statistics.dashboard'") && str_contains($ho
 $assert(str_contains($hook, 'aculta420_v2/studio'), 'O hook não anexa a biblioteca studio.');
 $assert(str_contains($hook, "'aculta_studio.'"), 'O hook não restringe o CSS do Studio às rotas aculta_studio.*.');
 
+$publicProfile = array_keys($libraries['public-profile']['css']['theme'] ?? []);
+$publicProfileCss = (string) file_get_contents($theme . '/src/styles/public-profile.css');
+$articleAuthorsCss = (string) file_get_contents($theme . '/src/styles/article-authors.css');
+$assert(!in_array('src/styles/public-profile.css', $global, TRUE), 'public-profile.css voltou ao global-styling.');
+$assert(in_array('src/styles/public-profile.css', $publicProfile, TRUE), 'A biblioteca public-profile não declara public-profile.css.');
+$assert(in_array('src/styles/article-authors.css', $global, TRUE), 'article-authors.css deve permanecer no global-styling (caixa de autoria em artigos).');
+$assert(!str_contains($publicProfileCss, '.portal-article-author'), 'public-profile.css ainda contém regras de autoria de artigo.');
+$assert(str_contains($articleAuthorsCss, '.portal-article-author'), 'article-authors.css perdeu as regras de autoria de artigo.');
+$assert(str_contains($hook, 'aculta420_v2/public-profile'), 'O hook não anexa a biblioteca public-profile.');
+$assert(str_contains($hook, "'aculta_user.perfil_publico'"), 'O hook não restringe o CSS à rota do perfil público.');
+
+$portalAccount = array_keys($libraries['portal-account']['css']['theme'] ?? []);
+$assert(!in_array('src/styles/portal-account.css', $global, TRUE), 'portal-account.css voltou ao global-styling.');
+$assert(in_array('src/styles/portal-account.css', $portalAccount, TRUE), 'A biblioteca portal-account não declara portal-account.css.');
+$assert(str_contains($hook, 'aculta420_v2/portal-account'), 'O hook não anexa a biblioteca portal-account.');
+$assert(str_contains($hook, 'ACCOUNT_SHELL_ROUTES'), 'O hook não restringe o CSS às rotas do shell de conta.');
+
+$eventOrganization = array_keys($libraries['event-organization']['css']['theme'] ?? []);
+$assert(!in_array('src/styles/event-organization.css', $global, TRUE), 'event-organization.css voltou ao global-styling.');
+$assert(in_array('src/styles/event-organization.css', $eventOrganization, TRUE), 'A biblioteca event-organization não declara o arquivo.');
+$assert(str_contains($hook, 'aculta420_v2/event-organization'), 'O hook não anexa a biblioteca event-organization.');
+$assert(str_contains($hook, "'aculta_events.'"), 'O hook não restringe o CSS às rotas aculta_events.*.');
+
+$wiki = array_keys($libraries['wiki']['css']['theme'] ?? []);
+$assert(!in_array('src/styles/wiki.css', $global, TRUE), 'wiki.css voltou ao global-styling.');
+$assert(in_array('src/styles/wiki.css', $wiki, TRUE), 'A biblioteca wiki não declara wiki.css.');
+$assert(str_contains($hook, 'aculta420_v2/wiki'), 'O hook não anexa a biblioteca wiki.');
+$assert(str_contains($hook, "'view.wiki_entries'"), 'O hook não restringe o CSS às rotas da Wiki.');
+
+$forum = array_keys($libraries['forum']['css']['theme'] ?? []);
+$assert(!in_array('src/styles/forum.css', $global, TRUE), 'forum.css voltou ao global-styling.');
+$assert(in_array('src/styles/forum.css', $forum, TRUE), 'A biblioteca forum não declara forum.css.');
+$assert(str_contains($hook, 'aculta420_v2/forum'), 'O hook não anexa a biblioteca forum.');
+$assert(str_contains($hook, "'view.aculta_forum'"), 'O hook não restringe o CSS às rotas do Fórum.');
+
+$events = array_keys($libraries['events']['css']['theme'] ?? []);
+$assert(!in_array('src/styles/events.css', $global, TRUE), 'events.css voltou ao global-styling.');
+$assert(in_array('src/styles/events.css', $events, TRUE), 'A biblioteca events não declara events.css.');
+$assert(str_contains($hook, 'aculta420_v2/events'), 'O hook não anexa a biblioteca events.');
+
 $layoutCss = (string) file_get_contents($theme . '/src/styles/layout.css');
 $componentLibraryCss = (string) file_get_contents($theme . '/src/styles/component-library-mode.css');
 $assert(!str_contains($layoutCss, '.aculta-studio'), 'layout.css ainda contém regras do Studio; elas pertencem ao CSS contextual.');

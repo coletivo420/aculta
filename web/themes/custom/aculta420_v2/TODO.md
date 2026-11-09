@@ -6,8 +6,8 @@ Estado: em desenvolvimento · versão 1.4.0 (`aculta420_v2.info.yml`) · status:
 
 - **ADR-054 P4 (parcial):** Layout Builder em 22 dos 24 displays compatíveis (`allow_custom=false`, gate 170 checks). Excluídos apenas `document.full` e `basic.default`, com perda de conteúdo reproduzível. Blocos de cabeçalho ausentes na config ativa foram restaurados do Sync.
 - **ADR-054 P5 (parcial):** landing Links composta no tema com `layout-section` (clássico e v2, 1 H1/1 main). Não existe nó de landing Links; criar é decisão editorial.
-- **ADR-054 P6/P7 (feito):** prévias reais de blocos em `aculta_ui_library`; `statistics.css` e `studio.css` fora do global (`global-styling` 268 KB → 180 KB). Playwright autenticado confirmou escopo e 86 checks sem falhas.
-- **ADR-054 P8/P9 (parcial):** Playwright Firefox 2/2 no shell v2; HTTP 200 nos dez purposes; rollback `classic` testado. Cutover não executado: faltam aceitação visual humana, Layout Builder por display, landings e import/export em staging. Relatório: `docs/architecture/ACULTA420-V2-P8-HOMOLOGACAO.md`.
+- **ADR-054 P6/P7 (feito):** prévias reais de blocos em `aculta_ui_library`; oito folhas de aplicação contextuais por rota (`global-styling` 268 → 107 KB, −60%). Playwright 86/86.
+- **ADR-054 P8/P9 (parcial):** shell v2 com 86 checks Playwright; dez purposes com 200/1 H1/1 main; rollback `classic` testado. Cutover DEFERRED: falta aceite visual humano e import/export em staging. Relatório: `docs/architecture/ACULTA420-V2-P8-HOMOLOGACAO.md`.
 - **P3:** shell v2 opt-in com cinco áreas; smoke HTTP com 1 H1 e 1 `main` em nove hosts; capturas Firefox e aceite visual pendentes.
 - **Pendências visuais:** Revista (accent via UI Styles), F2/F3 (aceite visual), editor (suíte PASS), UI Patterns (aceite autenticado), Loja (aguarda autorização).
 
