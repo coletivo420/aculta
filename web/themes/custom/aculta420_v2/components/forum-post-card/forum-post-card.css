@@ -52,8 +52,8 @@
   padding: var(--spacing-sm);
   border-radius: var(--radius-sm);
   background: var(--color-reference-author-panel);
-  /* Borda de destaque amarela: --color-border-highlight (mais escuro no claro, amarelo no escuro). */
-  border: 1px solid var(--color-border-highlight);
+  /* Só a barra superior de destaque: --color-border-highlight (tom escuro no claro, amarelo no escuro). */
+  border-block-start: 4px solid var(--color-border-highlight);
 }
 
 .forum-post-card__avatar {
