@@ -38,7 +38,13 @@ final class DiscussionReplyActionsHooks {
    */
   #[Hook('comment_links_alter')]
   public function commentLinksAlter(array &$links, CommentInterface $comment, array &$context): void {
-    if ($comment->bundle() !== 'aculta_discussion_post' || !$comment->isPublished()) {
+    if ($comment->bundle() !== 'aculta_discussion_post') {
+      return;
+    }
+    // O "Responder" de texto do core aponta para o formulário antigo de resposta (quebrado). A ação
+    // de Responder do fórum é o botão com ícone, que abre o popup.
+    unset($links['#links']['comment-reply'], $links['comment']['#links']['comment-reply']);
+    if (!$comment->isPublished()) {
       return;
     }
     $host = $comment->getCommentedEntity();

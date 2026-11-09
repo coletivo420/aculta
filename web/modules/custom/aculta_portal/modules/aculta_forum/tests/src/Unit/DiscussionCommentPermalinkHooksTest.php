@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_forum\Unit;
 use Drupal\aculta_forum\Hook\DiscussionCommentPermalinkHooks;
 use Drupal\aculta_forum\Service\DiscussionCommentPermalinkBuilderInterface;
 use Drupal\comment\CommentInterface;
+use Drupal\Core\Extension\ThemeExtensionList;
 use Drupal\Core\Url;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
@@ -43,7 +44,7 @@ final class DiscussionCommentPermalinkHooksTest extends UnitTestCase {
     $builder = $this->createMock(DiscussionCommentPermalinkBuilderInterface::class);
     $builder->method('build')->willReturn($url);
 
-    $hooks = new DiscussionCommentPermalinkHooks($builder);
+    $hooks = new DiscussionCommentPermalinkHooks($builder, $this->createMock(ThemeExtensionList::class));
     $hooks->setStringTranslation($this->getStringTranslationStub());
 
     $comment = $this->createMock(CommentInterface::class);
@@ -68,7 +69,7 @@ final class DiscussionCommentPermalinkHooksTest extends UnitTestCase {
     $builder = $this->createMock(DiscussionCommentPermalinkBuilderInterface::class);
     $builder->expects($this->never())->method('build');
 
-    $hooks = new DiscussionCommentPermalinkHooks($builder);
+    $hooks = new DiscussionCommentPermalinkHooks($builder, $this->createMock(ThemeExtensionList::class));
     $comment = $this->createMock(CommentInterface::class);
     $comment->method('bundle')->willReturn('standard_comment');
 
