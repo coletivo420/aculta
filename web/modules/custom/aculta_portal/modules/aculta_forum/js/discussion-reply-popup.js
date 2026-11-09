@@ -50,21 +50,16 @@
     return !document.body.classList.contains('user-logged-in');
   }
 
-  // Entrar em htmx: o formulário de login carrega no diálogo do tópico (sem Drupal AJAX).
+  // Visitante: aciona o link de Entrar do menu de conta. A barra multidomínio o liga ao diálogo de
+  // login existente (mesmo visual e htmx). Sem esse link na página, segue para a página de acesso.
   function openLoginPopup() {
     const destination = window.location.pathname + window.location.search;
-    const url = '/entrar/janela?destination=' + encodeURIComponent(destination);
-    const dialog = getDialog();
-    const bodyEl = getDialogBody();
-    if (!window.htmx || !dialog || !bodyEl) {
-      window.location.href = url;
+    const loginLink = document.querySelector('.aculta-account-menu a[href*="/entrar/janela"]');
+    if (loginLink) {
+      loginLink.click();
       return;
     }
-    bodyEl.innerHTML = '';
-    if (!dialog.open) {
-      dialog.showModal();
-    }
-    window.htmx.ajax('GET', url, { target: '#' + dialogBodyId, select: '#aculta-login-popup', swap: 'innerHTML' });
+    window.location.href = '/entrar/janela?destination=' + encodeURIComponent(destination);
   }
 
   const triggerSelector = '[data-action="resposta-responder"], [data-action="resposta-citar"], [data-action="resposta-editar"], [data-action="resposta-apagar"]';
