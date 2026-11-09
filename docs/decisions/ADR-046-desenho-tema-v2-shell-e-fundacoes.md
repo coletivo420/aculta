@@ -1,5 +1,8 @@
 # ADR-046 — Desenho do tema ACULTA420 V2: base visual V1, UI Styles e revisão a partir do shell
 
+> **Atualização normativa:** ADR-054 (2026-11-09) autoriza jQuery 4 em módulos e SDCs sob demanda, com `core/jquery`; a antiga proibição absoluta não se aplica. Mantêm-se os princípios de SDC, fundações, shell compartilhado e mobile-first. A composição com Layout Builder passa a seguir ADR-054.
+
+
 - **Status:** aceito pelo responsável em 2026-11-04.
 - **Data:** 2026-11-04.
 - **Relaciona-se com:** ADR-044 (CTools e AJAX), ADR-045 (compatibilidade com Drupal 12), `docs/architecture/ARQUITETURA-ACULTA420-V2.md`, `docs/portal/COMPONENT-DESIGN-SYSTEM.md`, `web/themes/custom/aculta420/docs/architecture.md`.
