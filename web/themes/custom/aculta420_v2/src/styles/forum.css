@@ -909,3 +909,8 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
   max-inline-size: 100%;
   min-inline-size: 0;
 }
+
+/* Formulário "Comentar" de fundo do tópico: substituído pelo botão Comentar (SDC de botão). */
+.aculta-forum-topic__main form.comment-comment-form:not(article form) {
+  display: none;
+}

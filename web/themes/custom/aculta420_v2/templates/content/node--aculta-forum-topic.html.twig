@@ -83,6 +83,12 @@
           <div id="aculta-reply-dialog-body" class="aculta-reply-dialog__body"></div>
         {% endblock %}
       {% endembed %}
+      {# Comentar: botão do SDC de botão; o JS preenche a URL do compositor e abre o popup de resposta. #}
+      {{ include('aculta420_v2:button', {
+        text: 'Comentar',
+        variant: 'primary',
+        attributes: { 'data-aculta-comment-new': '', 'hidden': 'hidden' },
+      }, with_context = false) }}
     </div>
     </div>
   {% else %}

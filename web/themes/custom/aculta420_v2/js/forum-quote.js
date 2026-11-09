@@ -123,6 +123,22 @@
         });
       });
 
+      // Comentar (topo do tópico): o compositor de comentário de topo é o mesmo endpoint de Responder, sem "resposta".
+      const newBtn = document.querySelector('[data-aculta-comment-new]');
+      const replyLink = document.querySelector('[data-action="comment-reply"][data-hx-get]');
+      if (newBtn && replyLink && !newBtn.dataset.acultaBound) {
+        newBtn.dataset.acultaBound = '1';
+        const url = new URL(replyLink.getAttribute('data-hx-get'), window.location.href);
+        url.searchParams.delete('resposta');
+        url.searchParams.delete('modo');
+        newBtn.hidden = false;
+        newBtn.addEventListener('click', () => {
+          if (window.htmx && getDialogBody()) {
+            window.htmx.ajax('GET', url.toString(), { target: '#' + dialogBodyId, swap: 'innerHTML' });
+          }
+        });
+      }
+
       // Garante o corpo do diálogo: o slot do SDC não o entrega, então o JS cria a div dentro do conteúdo.
       const dialogContent = getDialog() ? getDialog().querySelector('.aculta-dialog__content') : null;
       if (dialogContent && !getDialogBody()) {
