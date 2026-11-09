@@ -114,11 +114,24 @@
           const dialog = getDialog();
           const composer = target.querySelector('[data-discussion-reply-composer]');
           if (!composer) {
-            // Sem compositor na resposta: a postagem foi publicada. Recarrega para mostrar o comentário.
+            // Sem compositor na resposta: a postagem foi publicada. Vai para a página final do
+            // comentário (URL após o redirecionamento do permalink); se for a mesma, recarrega.
             if (dialog && dialog.open) {
               dialog.close();
             }
-            window.location.reload();
+            const xhr = event.detail.xhr;
+            const finalUrl = xhr && xhr.responseURL ? new URL(xhr.responseURL, window.location.href) : null;
+            const here = new URL(window.location.href);
+            if (finalUrl && (finalUrl.pathname !== here.pathname || finalUrl.search !== here.search)) {
+              window.location.assign(finalUrl.href);
+            }
+            else if (finalUrl && finalUrl.hash) {
+              window.location.hash = finalUrl.hash;
+              window.location.reload();
+            }
+            else {
+              window.location.reload();
+            }
             return;
           }
           if (dialog && !dialog.open) {

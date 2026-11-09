@@ -152,11 +152,10 @@ final class DiscussionReplyFormHooks {
     if (!$comment instanceof CommentInterface) {
       return;
     }
-    $host = $comment->getCommentedEntity();
-    if ($host instanceof EntityInterface) {
-      $url = $host->toUrl('canonical');
-      $url->setOption('fragment', 'comment-' . $comment->id());
-      $formState->setRedirectUrl($url);
+    // Permalink do comentário: o core leva à página em que ele caiu (a paginação pode mandar a
+    // postagem para outra página do tópico) e ao âncora do comentário.
+    if (!$comment->isNew()) {
+      $formState->setRedirectUrl($comment->toUrl('canonical'));
     }
   }
 
