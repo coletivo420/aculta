@@ -34,6 +34,8 @@ final class DiscussionProgressHooks {
     }
     $build['field_aculta_discussion']['#attributes']['data-aculta-discussion-thread'] = '';
     $build['field_aculta_discussion']['#attached']['library'][] = 'aculta_forum/discussion-progress';
+    // O compositor do popup é carregado por HTMX; sem a biblioteca do CKEditor na página o editor não monta.
+    $build['field_aculta_discussion']['#attached']['library'][] = 'ckeditor5/internal.drupal.ckeditor5';
   }
 
 }
