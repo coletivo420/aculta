@@ -8,6 +8,7 @@ base theme: false
 enforce_prop_schemas: true
 logo: assets/logos/aculta420-horizontal-white-900x300.png
 regions:
+  institution: Barra institucional
   header: Cabeçalho
   navigation: Navegação
   highlighted: Destaques
