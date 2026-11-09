@@ -15,6 +15,23 @@ use Drupal\node\NodeInterface;
 final class DiscussionProgressHooks {
 
   /**
+   * DIAGNÓSTICO TEMPORÁRIO.
+   */
+  #[Hook('preprocess_field', order: \Drupal\Core\Hook\Order\Order::Last)]
+  public function diagPreprocessField(array &$variables): void {
+    if (($variables['field_name'] ?? '') !== 'field_aculta_discussion') {
+      return;
+    }
+    $cf = $variables['comment_form'] ?? '__unset__';
+    \Drupal::logger('aculta_diag')->notice('DIAG hidden=@h cf_type=@t cf=@c comments=@m', [
+      '@h' => var_export($variables['label_hidden'] ?? NULL, TRUE),
+      '@t' => get_debug_type($cf),
+      '@c' => is_array($cf) ? json_encode(array_keys($cf)) : var_export($cf, TRUE),
+      '@m' => is_array($variables['comments'] ?? NULL) ? json_encode(array_keys($variables['comments'])) : gettype($variables['comments'] ?? NULL),
+    ]);
+  }
+
+  /**
    * Marks the shared discussion field for its client-side reading controls.
    */
   #[Hook('entity_view_alter')]
