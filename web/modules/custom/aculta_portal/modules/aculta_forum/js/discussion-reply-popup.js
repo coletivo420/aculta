@@ -50,21 +50,21 @@
     return !document.body.classList.contains('user-logged-in');
   }
 
+  // Entrar em htmx: o formulário de login carrega no diálogo do tópico (sem Drupal AJAX).
   function openLoginPopup() {
-    let trigger = document.getElementById('aculta-login-popup-trigger');
-    if (!trigger) {
-      trigger = document.createElement('a');
-      trigger.id = 'aculta-login-popup-trigger';
-      trigger.className = 'use-ajax';
-      trigger.setAttribute('data-dialog-type', 'modal');
-      trigger.setAttribute('data-dialog-options', JSON.stringify({ title: 'Entrar', closeText: 'Fechar' }));
-      trigger.hidden = true;
-      document.body.appendChild(trigger);
-      Drupal.attachBehaviors(trigger);
-    }
     const destination = window.location.pathname + window.location.search;
-    trigger.setAttribute('href', '/entrar/janela?destination=' + encodeURIComponent(destination));
-    trigger.click();
+    const url = '/entrar/janela?destination=' + encodeURIComponent(destination);
+    const dialog = getDialog();
+    const bodyEl = getDialogBody();
+    if (!window.htmx || !dialog || !bodyEl) {
+      window.location.href = url;
+      return;
+    }
+    bodyEl.innerHTML = '';
+    if (!dialog.open) {
+      dialog.showModal();
+    }
+    window.htmx.ajax('GET', url, { target: '#' + dialogBodyId, select: '#aculta-login-popup', swap: 'innerHTML' });
   }
 
   const triggerSelector = '[data-action="resposta-responder"], [data-action="resposta-citar"], [data-action="resposta-editar"], [data-action="resposta-apagar"]';
@@ -174,6 +174,10 @@
         body.addEventListener('htmx:afterSwap', (event) => {
           const target = event.detail && event.detail.target;
           if (!target || target.id !== dialogBodyId) {
+            return;
+          }
+          // Login no mesmo diálogo: não fecha nem recarrega.
+          if (target.querySelector('#aculta-login-popup')) {
             return;
           }
           const dialog = getDialog();
