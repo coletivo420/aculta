@@ -185,10 +185,14 @@ final class MarleyController {
       static fn (string $id, array $tab): array => [
         'id' => $id,
         'label' => $tab['label'],
-        'url' => Url::fromRoute(
-          'aculta_studio.tab',
-          ['aba' => $area->getPluginId(), 'secao' => $secao, 'sub' => $id],
-        ),
+        // Aba com ação de popup (Nova publicação): o link abre o mesmo popup da ação.
+        'url' => ($tab['actions'][0]['attributes'] ?? NULL) !== NULL
+          ? $tab['actions'][0]['url']
+          : Url::fromRoute(
+            'aculta_studio.tab',
+            ['aba' => $area->getPluginId(), 'secao' => $secao, 'sub' => $id],
+          ),
+        'attributes' => $tab['actions'][0]['attributes'] ?? [],
       ],
       array_keys($section['tabs']),
       $section['tabs'],
@@ -305,6 +309,7 @@ final class MarleyController {
         'data-portal-ui' => $behaviour === 'tab' ? 'studio-tab' : 'studio-link',
         'data-aculta-studio' => $behaviour,
       ];
+      $attributes += $item['attributes'] ?? [];
       if ($item['id'] === $activeId) {
         $attributes['aria-current'] = 'page';
       }
