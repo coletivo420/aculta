@@ -152,7 +152,9 @@
   justify-content: space-between;
   gap: var(--spacing-sm);
   padding-block-start: var(--spacing-xs);
-  border-block-start: 1px solid var(--color-border-subtle);
+  /* Barra separadora entre o corpo do post e as reações/ações. */
+  border-block-start: 2px solid var(--color-link-editorial);
+  margin-block-start: var(--spacing-xs);
   min-inline-size: 0;
   flex-wrap: wrap;
 }
