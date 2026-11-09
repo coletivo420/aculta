@@ -7,7 +7,7 @@
   timestamp: node is defined and node ? node.getCreatedTime()|date('d/m/Y H:i') : null,
   body: render_var(content.body),
   permalink_url: url|default(null),
-  edit_url: node is defined and node and node.access('update') ? path('entity.node.edit_form', {'node': node.id()}) : null,
+  edit_url: opening_edit_url|default(null),
   reply_url: node is defined and node ? path('aculta_forum.discussion_composer', {'entity_type': 'node', 'entity_id': node.id()}) : null,
 }, with_context = false)|raw %}
 {# Primeiro item da discussão: peso negativo o coloca antes das categorias e do compositor. #}
