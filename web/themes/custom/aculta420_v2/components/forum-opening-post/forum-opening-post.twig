@@ -1,12 +1,26 @@
-<article class="forum-opening-post">
-  <header class="forum-opening-post__header">
-    <span class="forum-opening-post__badge">{{ 'Abertura'|t }}</span>
-    <span class="forum-opening-post__author">{{ author_name }}</span>
-    {% if timestamp %}
-      <time class="forum-opening-post__time">{{ timestamp }}</time>
+<div class="forum-opening-post">
+  {% set actions_markup %}
+    {% if permalink_url %}
+      <a href="{{ permalink_url }}" class="permalink aculta-resposta-acao aculta-resposta-acao--link" rel="bookmark" aria-label="{{ 'Link permanente'|t }}" title="{{ 'Link permanente'|t }}">{{ include('aculta420_v2:icon', { name: 'link', variant: 'regular', size: 'sm' }, with_context = false) }}</a>
     {% endif %}
-  </header>
-  <div class="forum-opening-post__body">
-    {{ body }}
-  </div>
-</article>
+    {% if edit_url %}
+      <a href="{{ edit_url }}" class="aculta-resposta-acao aculta-resposta-acao--editar" aria-label="{{ 'Editar'|t }}" title="{{ 'Editar'|t }}">{{ include('aculta420_v2:icon', { name: 'pencil-simple', variant: 'regular', size: 'sm' }, with_context = false) }}</a>
+    {% endif %}
+    {% if reply_url %}
+      <a href="{{ reply_url }}" class="use-htmx aculta-resposta-acao aculta-resposta-acao--responder" data-action="resposta-responder" data-hx-get="{{ reply_url }}" aria-label="{{ 'Responder à discussão'|t }}" title="{{ 'Responder à discussão'|t }}">{{ include('aculta420_v2:icon', { name: 'arrow-bend-up-left', variant: 'regular', size: 'sm' }, with_context = false) }}</a>
+    {% endif %}
+  {% endset %}
+  {{ include('aculta420_v2:forum-post-card', {
+    stripe: 'brand',
+    author_name: author_name,
+    author_role: null,
+    author_posts: null,
+    timestamp: timestamp,
+    reactions: null,
+    reply_url: null,
+    avatar: null,
+    body: body,
+    actions: actions_markup,
+    reply: null,
+  }, with_context = false) }}
+</div>

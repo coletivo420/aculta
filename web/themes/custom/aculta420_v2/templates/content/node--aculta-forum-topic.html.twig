@@ -2,13 +2,16 @@
 {% set bookmark_action = content.flag_salvar_topico|default(null) %}
 {% set topic_content = content|without('flag_salvar_topico', 'body') %}
 {# Postagem de abertura: corpo do tópico com o destaque do tópico fixado (SDC forum-opening-post). #}
-{% set opening_body = render_var(content.body) %}
 {% set opening_html = include('aculta420_v2:forum-opening-post', {
   author_name: node is defined and node ? node.getOwner().getDisplayName() : '',
   timestamp: node is defined and node ? node.getCreatedTime()|date('d/m/Y H:i') : null,
-  body: opening_body,
+  body: render_var(content.body),
+  permalink_url: url|default(null),
+  edit_url: node is defined and node and node.access('update') ? path('entity.node.edit_form', {'node': node.id()}) : null,
+  reply_url: node is defined and node ? path('aculta_forum.discussion_composer', {'entity_type': 'node', 'entity_id': node.id()}) : null,
 }, with_context = false)|raw %}
-{% set topic_rest = render_var(topic_content) %}
+{# Primeiro item da discussão: peso negativo o coloca antes das categorias e do compositor. #}
+{% set topic_content = topic_content|merge({'aculta_opening': {'#weight': -100, '#markup': opening_html}}) %}
 {% set title_markup %}
   {% if label and view_mode != 'full' %}
     <h2{{ title_attributes }}><a href="{{ url }}" rel="bookmark">{{ label }}</a></h2>
@@ -45,8 +48,6 @@
   {% if view_mode == 'full' %}
     <div class="aculta-forum-topic__layout">
       <div class="aculta-forum-topic__main">
-        {# Postagem de abertura: impressa direto, sem concatenar com o restante do tópico. #}
-        {{ opening_html }}
         {{ include('aculta420_v2:forum-topic', {
           variant: 'full',
           has_title: false,

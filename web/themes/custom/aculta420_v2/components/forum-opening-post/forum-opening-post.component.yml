@@ -1,6 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Postagem de abertura do tópico
-description: Primeiro post do tópico, com o mesmo destaque da linha de tópico fixado.
+description: Primeiro post do tópico, no mesmo cartão dos comentários, com o destaque do tópico fixado.
 status: stable
 group: Comunidade
 props:
@@ -15,6 +15,18 @@ props:
     timestamp:
       type: [string, 'null']
       title: Data de publicação formatada
+      default: null
+    permalink_url:
+      type: [string, 'null']
+      title: Link permanente do tópico
+      default: null
+    edit_url:
+      type: [string, 'null']
+      title: Link de edição (somente com acesso)
+      default: null
+    reply_url:
+      type: [string, 'null']
+      title: Endereço do compositor de resposta ao tópico
       default: null
 slots:
   body:
