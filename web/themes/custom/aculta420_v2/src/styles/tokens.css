@@ -4,6 +4,8 @@
 :root,
 [data-theme="light"] {
   --color-canvas: #f2f7f0;
+  /* Referência do painel do autor no cartão de post (claro). */
+  --color-reference-author-panel: #f2f7f0;
   /* Transparências semânticas (antes em color-mix inline nos componentes). */
   --color-alpha-border-75: color-mix(in sRGB, var(--color-border) 75%, transparent);
   --color-alpha-brand-primary-76: color-mix(in sRGB, var(--color-brand-primary) 76%, transparent);
@@ -233,6 +235,8 @@
 [data-theme="dark"] {
   --studio-stripe: var(--aculta-studio-dark-sub-2);
   --color-canvas: #171513;
+  /* Referência do painel do autor no cartão de post (escuro). */
+  --color-reference-author-panel: #171513;
   --color-surface: #211e1b;
   --color-surface-raised: #2b2723;
   --color-surface-institution: #2b2723;
