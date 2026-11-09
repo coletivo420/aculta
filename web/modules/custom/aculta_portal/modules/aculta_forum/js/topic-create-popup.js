@@ -95,6 +95,24 @@
 
         // Garante o corpo do diálogo antes de o HTMX processar o link.
         ensureDialog();
+        // Mensagens de erro do envio: o recorte HTMX traz só o formulário, então guarda as
+        // mensagens da resposta e as recoloca no topo do popup depois da troca.
+        let pendingMessages = '';
+        document.body.addEventListener('htmx:beforeSwap', (event) => {
+          const target = event.detail && event.detail.target;
+          if (target && target.id === 'aculta-topic-dialog-body' && event.detail.serverResponse) {
+            const doc = new DOMParser().parseFromString(event.detail.serverResponse, 'text/html');
+            const msgs = doc.querySelector('[data-drupal-messages]');
+            pendingMessages = msgs ? msgs.innerHTML : '';
+          }
+        });
+        document.body.addEventListener('htmx:afterSwap', (event) => {
+          const target = event.detail && event.detail.target;
+          if (target && target.id === 'aculta-topic-dialog-body' && pendingMessages) {
+            target.insertAdjacentHTML('afterbegin', '<div data-drupal-messages>' + pendingMessages + '</div>');
+            pendingMessages = '';
+          }
+        });
 
         // Publicar: copia o conteúdo do CKEditor para o textarea antes do HTMX ler os campos.
         document.addEventListener('click', (event) => {
