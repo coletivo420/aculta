@@ -1,0 +1,32 @@
+<div id="{{ target_id }}" class="discussion-topic-composer discussion-topic-composer--{{ status }} forum-post-card forum-post-card--stripe-brand" data-discussion-topic-composer data-status="{{ status }}">
+  <div class="forum-post-card__stripe"></div>
+  <div class="forum-post-card__inner">
+    <header class="forum-post-card__header discussion-topic-composer__header">
+      <div class="forum-post-card__author">
+        <div class="forum-post-card__author-info">
+          <div class="forum-post-card__author-name-row">
+            <span class="forum-post-card__author-name">{{ 'Criar tópico'|t }}</span>
+            <span class="forum-post-card__author-role">{{ 'Novo tópico'|t }}</span>
+          </div>
+          {% if host_title %}
+            <div class="forum-post-card__author-meta">
+              <span class="discussion-topic-composer__host-title">{{ host_title }}</span>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </header>
+
+    <div class="forum-post-card__body discussion-topic-composer__body">
+      {% if messages %}
+        <div class="discussion-topic-composer__messages" role="status" aria-live="polite">
+          {{ messages }}
+        </div>
+      {% endif %}
+
+      <div class="discussion-topic-composer__form">
+        {{ form }}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,4 @@
+name: Padrão (Criar tópico)
+description: Compositor de criação de tópico com Assunto antes do Comentário, usando o formulário real do nó aculta_forum_topic.
+component: aculta420_v2:discussion-topic-composer
+class: Drupal\aculta420_v2\Story\DiscussionTopicComposerStory

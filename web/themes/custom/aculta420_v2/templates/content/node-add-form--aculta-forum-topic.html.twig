@@ -21,6 +21,14 @@
   community_rules: composer_rules
 }, with_context = false) }}
 
-<div class="aculta-forum-composer-form-wrapper">
-  {{ form }}
-</div>
+{% embed 'aculta420_v2:discussion-topic-composer' with {
+  target_id: 'discussion-topic-composer-new',
+  status: 'editando',
+  host_title: 'Growroom420'
+} %}
+  {% block form %}
+    <div class="aculta-forum-composer-form-wrapper">
+      {{ form }}
+    </div>
+  {% endblock %}
+{% endembed %}

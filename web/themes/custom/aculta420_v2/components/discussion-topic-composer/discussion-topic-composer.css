@@ -1,0 +1,42 @@
+/* Compositor de Criação de Tópico — mesma família visual do Compositor de Resposta. */
+
+.discussion-topic-composer {
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+  margin-block-end: var(--spacing-lg, 1.5rem);
+}
+
+.discussion-topic-composer .forum-post-card__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  inline-size: 100%;
+  min-inline-size: 0;
+  box-sizing: border-box;
+}
+
+.discussion-topic-composer .forum-post-card__header {
+  display: none;
+}
+
+.discussion-topic-composer .forum-post-card__body {
+  inline-size: 100%;
+  min-inline-size: 0;
+  box-sizing: border-box;
+}
+
+.discussion-topic-composer__messages {
+  margin-block-end: var(--spacing-md, 1rem);
+}
+
+.discussion-topic-composer--enviando {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.discussion-topic-composer :is(.form-item, input:not([type="submit"]), textarea, select) {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}

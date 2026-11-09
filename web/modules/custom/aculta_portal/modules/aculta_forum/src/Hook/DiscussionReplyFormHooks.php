@@ -79,6 +79,12 @@ final class DiscussionReplyFormHooks {
       }
     }
 
+    // O compositor de resposta não tem Assunto nem a marca "Rejeitado": o assunto
+    // é do tópico (ver compositor de criação de tópico) e a rejeição é da moderação.
+    if ($comment->isNew()) {
+      unset($form['subject'], $form['field_aculta_rejected']);
+    }
+
     // Expose hidden pid element and entity builder so Drupal form state carries the thread.
     if ($comment->isNew()) {
       $form['pid'] = [
