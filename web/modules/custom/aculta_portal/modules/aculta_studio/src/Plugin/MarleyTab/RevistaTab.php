@@ -193,7 +193,7 @@ final class RevistaTab extends MarleyTabBase {
       'data-hx-get' => Url::fromRoute('aculta_magazine.studio_add_popup')->toString(),
       'data-hx-target' => '#aculta-studio-create-body',
       'data-hx-swap' => 'innerHTML',
-      'data-hx-select' => '[data-aculta-content-composer]',
+      'data-hx-select' => '[data-discussion-content-composer]',
     ];
     return $action;
   }

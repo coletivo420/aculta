@@ -51,7 +51,7 @@ final class StudioCreatePopupFormHooks {
     }
 
     $form['#attributes']['data-aculta-content-composer'] = '';
-    $form['#attributes']['data-hx-select'] = '[data-aculta-content-composer]';
+    $form['#attributes']['data-hx-select'] = '[data-discussion-content-composer]';
     $htmx = new Htmx();
     $htmx->post(Url::fromRoute(self::POPUP_ROUTE))
       ->target('#' . self::POPUP_BODY_ID)
