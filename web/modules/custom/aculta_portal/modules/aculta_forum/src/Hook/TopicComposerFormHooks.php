@@ -53,6 +53,18 @@ final class TopicComposerFormHooks {
     if (!$formObject instanceof EntityFormInterface) {
       return;
     }
+
+    // Popup: só Assunto, Comentário, Categoria e as ações. Menu, autor, revisão e abas do
+    // nó ficam fora do compositor. O resumo do corpo também sai.
+    $keep = ['title', 'body', 'field_aculta_categories', 'actions', 'form_id', 'form_build_id', 'form_token'];
+    foreach (array_keys($form) as $key) {
+      if (!str_starts_with((string) $key, '#') && !in_array($key, $keep, TRUE)) {
+        unset($form[$key]);
+      }
+    }
+    if (isset($form['body']['widget'][0]['summary'])) {
+      unset($form['body']['widget'][0]['summary']);
+    }
     // A resposta traz a página inteira: o HTMX recorta só o formulário do tópico para o popup.
     $form['#attributes']['data-aculta-topic-composer'] = '';
     $form['#attributes']['data-hx-select'] = '[data-aculta-topic-composer]';

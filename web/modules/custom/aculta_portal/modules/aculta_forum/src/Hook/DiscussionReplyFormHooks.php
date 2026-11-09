@@ -94,8 +94,14 @@ final class DiscussionReplyFormHooks {
       $form['#entity_builders'][] = [self::class, 'buildCommentEntityWithPid'];
     }
 
-    // Resposta nova vai ao tópico; edição salva na própria rota de edição do comentário.
-    $targetUrl = $comment->isNew() ? $this->urlBuilder->buildHostReplyUrl($host, $parentId) : $comment->toUrl('edit-form');
+    // Resposta nova vai ao tópico. Edição volta ao endpoint do popup (?editar=CID): a página
+    // de edição do comentário não existe mais (ver ForumPopupOnlyAccess).
+    $targetUrl = $comment->isNew()
+      ? $this->urlBuilder->buildHostReplyUrl($host, $parentId)
+      : Url::fromRoute('aculta_forum.discussion_composer', [
+        'entity_type' => $host->getEntityTypeId(),
+        'entity_id' => $host->id(),
+      ], ['query' => ['editar' => (int) $comment->id()]]);
     $form['#action'] = $targetUrl->toString();
 
     // Attach native HTMX support to form.

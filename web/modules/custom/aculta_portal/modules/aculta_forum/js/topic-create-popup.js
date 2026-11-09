@@ -52,6 +52,21 @@
     return dialog;
   }
 
+  /**
+   * Destrói as instâncias do CKEditor 5 que estão dentro do elemento e as tira do registro do Drupal.
+   */
+  function destroyEditors(element) {
+    if (!Drupal.CKEditor5Instances) {
+      return;
+    }
+    [...Drupal.CKEditor5Instances.entries()].forEach(([id, instance]) => {
+      if (element.contains(instance.sourceElement)) {
+        instance.destroy().catch(() => {});
+        Drupal.CKEditor5Instances.delete(id);
+      }
+    });
+  }
+
   function getBody() {
     ensureDialog();
     return document.getElementById(dialogBodyId);
@@ -88,6 +103,15 @@
           });
         }, true);
 
+        // Antes de trocar o corpo: destrói os editores do formulário anterior, para não sobrar
+        // instância órfã nem duplicar o editor.
+        document.body.addEventListener('htmx:beforeSwap', (event) => {
+          const target = event.detail && event.detail.target;
+          if (target && target.id === dialogBodyId) {
+            destroyEditors(target);
+          }
+        });
+
         // Depois de carregar o formulário no popup: abre o diálogo. Erro de validação reabre o
         // mesmo diálogo (já aberto), sem fechar.
         document.body.addEventListener('htmx:afterSwap', (event) => {
@@ -95,6 +119,8 @@
           if (!target || target.id !== dialogBodyId) {
             return;
           }
+          // Inicializa o CKEditor e os demais comportamentos no formulário novo do popup.
+          Drupal.attachBehaviors(target, drupalSettings);
           const dialog = ensureDialog();
           if (!dialog.open) {
             dialog.showModal();
@@ -112,6 +138,7 @@
           dialog.addEventListener('close', () => {
             const body = getBody();
             if (body) {
+              destroyEditors(body);
               body.innerHTML = '';
             }
           });

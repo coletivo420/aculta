@@ -349,3 +349,5 @@ services:
     class: Drupal\aculta_forum\EventSubscriber\CommentRouteSubscriber
     tags:
       - { name: event_subscriber }
+  aculta_forum.popup_only_access:
+    class: Drupal\aculta_forum\Access\ForumPopupOnlyAccess
