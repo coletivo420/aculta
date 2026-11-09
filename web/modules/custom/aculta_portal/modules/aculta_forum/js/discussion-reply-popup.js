@@ -43,7 +43,7 @@
     }
     overlay.hidden = !visible;
   }
-  const triggerSelector = '[data-action="comment-reply"], [data-action="comment-quote"]';
+  const triggerSelector = '[data-action="resposta-responder"], [data-action="resposta-citar"]';
 
   function getDialog() {
     return document.getElementById(dialogId);
@@ -184,7 +184,7 @@
 
       // Comentar (topo do tópico): o compositor de comentário de topo é o mesmo endpoint de Responder, sem "resposta".
       const newBtn = document.querySelector('[data-aculta-comment-new]');
-      const replyLink = document.querySelector('[data-action="comment-reply"][data-hx-get]');
+      const replyLink = document.querySelector('[data-action="resposta-responder"][data-hx-get]');
       if (newBtn && replyLink && !newBtn.dataset.acultaBound) {
         newBtn.dataset.acultaBound = '1';
         const url = new URL(replyLink.getAttribute('data-hx-get'), window.location.href);

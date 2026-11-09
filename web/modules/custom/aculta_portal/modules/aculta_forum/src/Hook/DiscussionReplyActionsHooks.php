@@ -69,8 +69,8 @@ final class DiscussionReplyActionsHooks {
       'title' => $this->translation->translate('Responder'),
       'url' => $fallbackUrl,
       'attributes' => [
-        'class' => ['comment-action', 'comment-action--reply', 'use-htmx'],
-        'data-action' => 'comment-reply',
+        'class' => ['resposta-acao', 'resposta-acao--responder', 'use-htmx'],
+        'data-action' => 'resposta-responder',
         'data-parent-id' => (string) $comment->id(),
         'data-hx-get' => $endpointUrl->toString(),
         'data-hx-target' => '#' . $composerId,
@@ -84,11 +84,11 @@ final class DiscussionReplyActionsHooks {
       ->addCacheableDependency($access);
 
     if (isset($links['comment'])) {
-      $links['comment']['#links']['comment-reply'] = $replyLink;
+      $links['comment']['#links']['resposta-responder'] = $replyLink;
       $cacheability->applyTo($links['comment']);
     }
     else {
-      $links['#links']['comment-reply'] = $replyLink;
+      $links['#links']['resposta-responder'] = $replyLink;
       $cacheability->applyTo($links);
     }
   }

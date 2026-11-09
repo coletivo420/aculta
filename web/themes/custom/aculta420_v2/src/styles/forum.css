@@ -972,7 +972,7 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
 }
 
 /* Ações de comentário com ícones Phosphor (ícone e texto em aria-label; cor e hover do tema). */
-.aculta-comment-action {
+.aculta-resposta-acao {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -984,44 +984,44 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
   transition: color 150ms ease, transform 150ms ease;
 }
 
-.aculta-comment-action__icon {
+.aculta-resposta-acao__icon {
   display: inline-flex;
   inline-size: 1.25rem;
   block-size: 1.25rem;
 }
 
-.aculta-comment-action__icon svg {
+.aculta-resposta-acao__icon svg {
   inline-size: 100%;
   block-size: 100%;
   fill: currentColor;
 }
 
-.aculta-comment-action:hover,
-.aculta-comment-action:focus-visible {
+.aculta-resposta-acao:hover,
+.aculta-resposta-acao:focus-visible {
   color: var(--color-brand-primary);
   transform: translateY(-1px);
 }
 
-.aculta-comment-action--delete {
+.aculta-resposta-acao--apagar {
   color: var(--button-danger-bg);
 }
 
-.aculta-comment-action--delete:hover,
-.aculta-comment-action--delete:focus-visible {
+.aculta-resposta-acao--apagar:hover,
+.aculta-resposta-acao--apagar:focus-visible {
   color: var(--button-danger-bg-hover);
 }
 
-.aculta-comment-action:focus-visible {
+.aculta-resposta-acao:focus-visible {
   outline: 3px solid var(--color-brand-highlight);
   outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .aculta-comment-action {
+  .aculta-resposta-acao {
     transition: none;
   }
-  .aculta-comment-action:hover,
-  .aculta-comment-action:focus-visible {
+  .aculta-resposta-acao:hover,
+  .aculta-resposta-acao:focus-visible {
     transform: none;
   }
 }

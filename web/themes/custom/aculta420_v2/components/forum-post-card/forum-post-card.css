@@ -285,8 +285,8 @@
   text-decoration: none;
 }
 
-.forum-post-card a[data-action="comment-quote"],
-.forum-post-card a.comment-action--quote,
+.forum-post-card a[data-action="resposta-citar"],
+.forum-post-card a.resposta-acao--citar,
 .forum-post-card a[href*="?quote="] {
   color: var(--color-link-editorial);
   display: inline-flex;
@@ -316,7 +316,7 @@
   text-decoration: none;
 }
 
-.forum-post-card a.comment-action:hover,
+.forum-post-card a.resposta-acao:hover,
 .forum-post-card a.permalink:hover {
   background-color: var(--color-surface-subtle);
   border-radius: var(--border-radius-md);

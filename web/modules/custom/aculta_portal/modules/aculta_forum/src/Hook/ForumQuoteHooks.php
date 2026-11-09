@@ -81,8 +81,8 @@ final class ForumQuoteHooks {
       'title' => $this->translation->translate('Citar'),
       'url' => $fallbackUrl,
       'attributes' => [
-        'class' => ['comment-action', 'comment-action--quote', 'use-htmx'],
-        'data-action' => 'comment-quote',
+        'class' => ['resposta-acao', 'resposta-acao--citar', 'use-htmx'],
+        'data-action' => 'resposta-citar',
         'data-quote-id' => (string) $comment->id(),
         'data-hx-get' => $endpointUrl->toString(),
         'data-hx-target' => '#' . $composerId,
@@ -101,11 +101,11 @@ final class ForumQuoteHooks {
       ->addCacheContexts(['user.permissions']);
 
     if (isset($links['comment'])) {
-      $links['comment']['#links']['comment-quote'] = $quoteLink;
+      $links['comment']['#links']['resposta-citar'] = $quoteLink;
       $cacheability->applyTo($links['comment']);
     }
     else {
-      $links['#links']['comment-quote'] = $quoteLink;
+      $links['#links']['resposta-citar'] = $quoteLink;
       $cacheability->applyTo($links);
     }
   }

@@ -153,7 +153,7 @@ final class DiscussionReplyFormHooks {
       return;
     }
     // Permalink do comentário no próprio tópico: o construtor do módulo calcula a página da
-    // paginação e a âncora do comentário (a rota /comment/ID não existe neste site).
+    // paginação e a âncora do comentário (o link público é /resposta/ID).
     if (!$comment->isNew()) {
       $permalinkUrl = \Drupal::service('aculta_forum.discussion_comment_permalink_builder')->build($comment);
       if ($permalinkUrl === NULL) {

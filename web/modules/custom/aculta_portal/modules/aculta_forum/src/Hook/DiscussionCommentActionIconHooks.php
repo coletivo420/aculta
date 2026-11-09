@@ -24,8 +24,19 @@ final class DiscussionCommentActionIconHooks {
     'comment-permalink' => 'link',
     'comment-edit' => 'pencil-simple',
     'comment-delete' => 'trash-simple',
-    'comment-quote' => 'quotes',
-    'comment-reply' => 'arrow-bend-up-left',
+    'resposta-citar' => 'quotes',
+    'resposta-responder' => 'arrow-bend-up-left',
+  ];
+
+  /**
+   * Chave do link => sufixo da classe de ação (slug em português, igual ao CSS do tema).
+   */
+  private const MODIFIERS = [
+    'comment-permalink' => 'link',
+    'comment-edit' => 'editar',
+    'comment-delete' => 'apagar',
+    'resposta-citar' => 'citar',
+    'resposta-responder' => 'responder',
   ];
 
   public function __construct(
@@ -61,8 +72,8 @@ final class DiscussionCommentActionIconHooks {
       }
       $attributes = $list[$key]['attributes'] ?? [];
       $attributes['class'] = array_merge((array) ($attributes['class'] ?? []), [
-        'aculta-comment-action',
-        'aculta-comment-action--' . substr($key, strlen('comment-')),
+        'aculta-resposta-acao',
+        'aculta-resposta-acao--' . self::MODIFIERS[$key],
       ]);
       $attributes['aria-label'] = $label;
       $attributes['title'] = $label;
@@ -81,7 +92,7 @@ final class DiscussionCommentActionIconHooks {
     }
     $svg = (string) file_get_contents($path);
     $svg = preg_replace('/<\?xml[^>]*\?>\s*/', '', $svg) ?? $svg;
-    return '<span class="aculta-comment-action__icon" aria-hidden="true">' . trim($svg) . '</span>';
+    return '<span class="aculta-resposta-acao__icon" aria-hidden="true">' . trim($svg) . '</span>';
   }
 
 }
