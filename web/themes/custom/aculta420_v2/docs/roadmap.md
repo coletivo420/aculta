@@ -1,5 +1,8 @@
 # Roadmap do fórum Growroom420 (ACULTA420 V2)
 
+> **Plano transversal vigente (2026-11-09):** ADR-054 e `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md`. Este roadmap segue focado no Fórum. O painel administrativo de container foi removido do código, mas o renderizador antigo continua até homologação da nova estrutura.
+
+
 Status espelhado de `TODO.md`. Plano visual: `docs/architecture/GROWROOM420-VISUAL-PLANO.md`.
 
 ## Entregas
