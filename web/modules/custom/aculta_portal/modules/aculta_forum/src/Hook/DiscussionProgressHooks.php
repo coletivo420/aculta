@@ -7,6 +7,7 @@ namespace Drupal\aculta_forum\Hook;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Hook\Order\Order;
 use Drupal\node\NodeInterface;
 
 /**
@@ -15,20 +16,16 @@ use Drupal\node\NodeInterface;
 final class DiscussionProgressHooks {
 
   /**
-   * DIAGNÓSTICO TEMPORÁRIO.
+   * Remove o formulário de comentário do fim do tópico (substituído pelo botão Comentar).
+   *
+   * O formulário do core é um #lazy_builder, reconstruído na renderização; por isso a
+   * remoção é feita no template (variável comment_form), na última etapa do pré-processamento.
    */
-  #[Hook('preprocess_field', order: \Drupal\Core\Hook\Order\Order::Last)]
-  public function diagPreprocessField(array &$variables): void {
-    if (($variables['field_name'] ?? '') !== 'field_aculta_discussion') {
-      return;
+  #[Hook('preprocess_field', order: Order::Last)]
+  public function preprocessDiscussionField(array &$variables): void {
+    if (($variables['field_name'] ?? '') === 'field_aculta_discussion') {
+      $variables['comment_form'] = NULL;
     }
-    $cf = $variables['comment_form'] ?? '__unset__';
-    \Drupal::logger('aculta_diag')->notice('DIAG hidden=@h cf_type=@t cf=@c comments=@m', [
-      '@h' => var_export($variables['label_hidden'] ?? NULL, TRUE),
-      '@t' => get_debug_type($cf),
-      '@c' => is_array($cf) ? json_encode(array_keys($cf)) : var_export($cf, TRUE),
-      '@m' => is_array($variables['comments'] ?? NULL) ? json_encode(array_keys($variables['comments'])) : gettype($variables['comments'] ?? NULL),
-    ]);
   }
 
   /**
@@ -44,13 +41,6 @@ final class DiscussionProgressHooks {
       return;
     }
 
-    // O formulário de comentário de topo sai da página: o botão Comentar abre o mesmo compositor no popup.
-    // O core coloca o formulário em cada item do campo (chave numérica), em 'comment_form'.
-    foreach (\Drupal\Core\Render\Element::children($build['field_aculta_discussion']) as $delta) {
-      // NULL (falso no template): a chave continua existindo para o core, mas nada é impresso.
-      // Um array vazio não serve: o renderer adiciona #cache e o template o trata como verdadeiro.
-      $build['field_aculta_discussion'][$delta]['comment_form'] = NULL;
-    }
     $build['field_aculta_discussion']['#attributes']['data-aculta-discussion-thread'] = '';
     $build['field_aculta_discussion']['#attached']['library'][] = 'aculta_forum/discussion-progress';
     // Comportamento do popup de Responder/Citar e do botão Comentar (código no módulo; visual no tema).
