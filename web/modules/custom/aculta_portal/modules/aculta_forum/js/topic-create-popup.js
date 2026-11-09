@@ -67,6 +67,13 @@
     });
   }
 
+  function hasEditor(element) {
+    if (!Drupal.CKEditor5Instances) {
+      return false;
+    }
+    return [...Drupal.CKEditor5Instances.values()].some((instance) => element.contains(instance.sourceElement));
+  }
+
   function getBody() {
     ensureDialog();
     return document.getElementById(dialogBodyId);
@@ -121,6 +128,13 @@
           }
           // Inicializa o CKEditor e os demais comportamentos no formulário novo do popup.
           Drupal.attachBehaviors(target, drupalSettings);
+          // O script do CKEditor pode chegar depois da troca. Se o editor ainda não existir,
+          // anexa de novo; o once() do Drupal evita duplicar a instância.
+          [250, 700].forEach((delay) => setTimeout(() => {
+            if (target.querySelector('textarea') && !hasEditor(target)) {
+              Drupal.attachBehaviors(target, drupalSettings);
+            }
+          }, delay));
           const dialog = ensureDialog();
           if (!dialog.open) {
             dialog.showModal();

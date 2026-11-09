@@ -7,6 +7,7 @@ namespace Drupal\aculta_forum\Hook;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Hook\Order\Order;
 use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -34,7 +35,7 @@ final class TopicComposerFormHooks {
   /**
    * Alters the aculta_forum_topic node form used by the topic composer.
    */
-  #[Hook('form_node_aculta_forum_topic_form_alter')]
+  #[Hook('form_node_aculta_forum_topic_form_alter', order: Order::Last)]
   public function nodeFormAlter(array &$form, FormStateInterface $formState, string $formId): void {
     if (isset($form['title'])) {
       $form['title']['#weight'] = -10;
