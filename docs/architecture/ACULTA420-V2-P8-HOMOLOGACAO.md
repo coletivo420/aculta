@@ -46,10 +46,24 @@ Correções feitas durante esta homologação: a landing Links tinha `<main>`/`<
 
 ## 3. Evidência de navegador
 
-- **Método 1 (Playwright Firefox)**, `ACULTA_BROWSER_ENV=local`, motor Firefox do Playwright, headless.
-- Comando: `SUITE_OUT=/home/piradopirata/suite-out/aculta-p8-20261109 ACULTA_BROWSER_ENV=local ACULTA_BROWSER_FRONTS=shell-v2 ACULTA_BROWSER_URLS="https://aculta.toca.net.br/,https://links.aculta.toca.net.br/" npm --prefix tests/browser run test:firefox`
-- **Resultado: 2/2 PASS** (19,1 s). Asserções do runner: `body` visível e URL preservada.
-- Capturas full-page: `$SUITE_OUT/shell-v2-main-320.png` e `$SUITE_OUT/shell-v2-main-1440.png` (claro). A leitura visual das imagens não foi feita nesta sessão; a aceitação visual humana permanece pendente.
+**Método 1 (Playwright Firefox)**, headless, `ignoreHTTPSErrors` no modo local.
+
+### 3.1. Runner do projeto
+
+`SUITE_OUT=/home/piradopirata/suite-out/aculta-p8-20261109 ACULTA_BROWSER_ENV=local ACULTA_BROWSER_FRONTS=shell-v2 ACULTA_BROWSER_URLS="https://aculta.toca.net.br/,https://links.aculta.toca.net.br/" npm --prefix tests/browser run test:firefox` → **2/2 PASS**.
+
+Capturas full-page: `$SUITE_OUT/shell-v2-main-320.png` e `shell-v2-main-1440.png`.
+
+### 3.2. Suíte ampliada (script externo, credenciais de `secrets/`, sem impressão de valores)
+
+**86 checks, 0 falhas.** Cobertura:
+
+- Anônimo, shell v2, `main` e `links`, larguras 320/390/768/1024/1440: shell presente, `data-theme=dark` (padrão do site), exatamente 1 H1 e 1 `<main>`, sem rolagem horizontal, CSS do Studio ausente.
+- Teclado a 320 px: foco visível encontrado em até 10 Tabs.
+- Autenticado (`teste_comum`), `/conta`, mesmas cinco larguras: shell v2, no máximo 1 H1, 1 `<main>`, sem rolagem horizontal (medida sem a barra administrativa Gin), CSS do Studio presente.
+- **Nota:** com a barra Gin visível, o administrador tem 16 px de rolagem horizontal a 320 px por causa de `.top-bar__actions` do Gin. É dívida do admin toolbar, fora do tema; não foi alterada.
+
+Modo escuro autenticado: a conta de teste tem preferência própria `light`, que prevalece sobre o padrão do site; o modo escuro foi verificado no estado anônimo, que usa o padrão `dark`. Isso confirma a precedência documentada em `ColorModePreference`.
 
 ## 4. Testes negativos executados
 
@@ -61,12 +75,14 @@ Correções feitas durante esta homologação: a landing Links tinha `<main>`/`<
 | Bloco com contexto obrigatório ausente | "Prévia indisponível" com o nome do contexto |
 | Cache da prévia | `max-age 0` + `user.roles` no catálogo, prévia e indisponibilidade |
 | CSS de estatísticas na home | Ausente do CSS servido após `drush cr` |
+| CSS do Studio na home | Ausente; presente em `/conta` autenticado (verificado por Playwright) |
+| `global-styling` local | Caiu de 268.036 para 180.160 bytes (−88 KB, −33%) |
 
 ## 5. DEFERRED (com causa)
 
 - **Layout Builder habilitado por display:** exige importação de configuração em ambiente isolado. Planejamento pronto (24 compatíveis, 48 adaptador, 23 incompatíveis), nenhuma configuração alterada.
 - **Landing por purpose (P5):** depende de conteúdo editorial e do mesmo ambiente isolado. Mecanismo e piloto Links documentados em `ACULTA420-V2-P5-LANDING-PAGES.md`.
-- **Visual:** modo escuro, zoom 200%, teclado, leitor de telas e aceitação humana das capturas.
+- **Visual:** leitura humana das capturas e aceitação do responsável.
 - **Prévia autenticada em navegador:** validada por Drush e HTTP anônimo, não em sessão autenticada real.
 - **Cache cross-domain em ordem inversa:** feitas requisições sequenciais corretas, sem teste de troca de cache aquecido entre hosts.
 - **Import/export de configuração em staging e rollback de configuração:** não executados.

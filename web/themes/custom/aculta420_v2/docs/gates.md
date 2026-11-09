@@ -146,3 +146,14 @@ Este registro não autoriza `drush cim`, `updatedb` ou alterações destrutivas;
 - `validate-module-theme-boundary.php`: a sugestão `page__shell_v2` saiu de `src/Hook` e foi para `aculta420_v2.theme`. As falhas restantes (64) são pré-existentes em módulos do Portal, fora deste diff.
 - `validate-agent-token-budget.php`: nossos itens passaram (TODO do módulo criado, TODO do tema reduzido). Falhas restantes: `AGENTS.md` 5333 bytes (limite 5000), `aculta_domain_config` sem TODO e `aculta_forum/TODO.md` com versão divergente — pré-existentes.
 - `validate-aculta-portal-drupal12.php`: falha em `AccountCoursesManager` (P5.5) e `InstitutionBarBlock` (service locator), pré-existentes e fora do diff. O item do novo módulo foi resolvido (README + status + versão).
+
+## Execução Recente — ADR-054 P7/P8 CSS do Studio e homologação ampliada (2026-11-09)
+
+- `php scripts/validate-aculta420-css-scope.php`: PASS (17 checks). `statistics.css`, `studio.css` e `studio-identity.css` fora do `global-styling`; bibliotecas contextuais declaradas; `layout.css` sem regras do Studio.
+- `global-styling` local: 268.036 → 180.160 bytes (−88 KB, −33%) por página.
+- Playwright Firefox (method 1), script externo com credenciais de `secrets/`: **86 checks, 0 falhas**.
+  - Anônimo em `main` e `links`, 320/390/768/1024/1440: shell v2, `data-theme=dark`, 1 H1, 1 `<main>`, sem rolagem horizontal, sem CSS do Studio.
+  - Teclado a 320: foco visível.
+  - Autenticado em `/conta`, mesmas larguras: shell v2, ≤1 H1, 1 `<main>`, sem rolagem horizontal (medida sem a barra Gin) e CSS do Studio presente.
+- Dívida fora do tema: a barra Gin tem 16 px de overflow a 320 px (`.top-bar__actions`).
+- Configurações de teste revertidas: `aculta_shell_variant=classic` e `aculta_portal.appearance.default_mode=light`.

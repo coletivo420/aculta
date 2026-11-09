@@ -38,6 +38,13 @@ $assert(in_array('src/styles/statistics.css', $statistics, TRUE), 'A biblioteca 
 $assert(is_file($theme . '/src/styles/statistics.css'), 'O arquivo statistics.css não existe.');
 $assert(($libraries['statistics']['dependencies'] ?? []) === ['aculta420_v2/global-styling'], 'A biblioteca statistics deve depender de global-styling.');
 
+$studio = array_keys($libraries['studio']['css']['theme'] ?? []);
+$assert(!in_array('src/styles/studio.css', $global, TRUE), 'studio.css voltou ao global-styling.');
+$assert(!in_array('src/styles/studio-identity.css', $global, TRUE), 'studio-identity.css voltou ao global-styling.');
+$assert(in_array('src/styles/studio.css', $studio, TRUE), 'A biblioteca studio não declara src/styles/studio.css.');
+$assert(in_array('src/styles/studio-identity.css', $studio, TRUE), 'A biblioteca studio não declara src/styles/studio-identity.css.');
+$assert(($libraries['studio']['dependencies'] ?? []) === ['aculta420_v2/global-styling'], 'A biblioteca studio deve depender de global-styling.');
+
 $statisticsCss = (string) file_get_contents($theme . '/src/styles/statistics.css');
 $portalMapCss = (string) file_get_contents($theme . '/src/styles/portal-ui-map.css');
 $assert(str_contains($statisticsCss, '.aculta-statistics__controls'), 'statistics.css perdeu os seletores movidos do mapa.');
@@ -46,6 +53,13 @@ $assert(!str_contains($portalMapCss, 'aculta-statistics'), 'portal-ui-map.css ai
 $hook = (string) file_get_contents($theme . '/src/Hook/PagePresentationHooks.php');
 $assert(str_contains($hook, 'aculta420_v2/statistics'), 'O hook não anexa a biblioteca statistics.');
 $assert(str_contains($hook, "'aculta_statistics.dashboard'") && str_contains($hook, "'aculta_statistics.area'"), 'O hook não restringe o CSS às rotas do painel de estatísticas.');
+$assert(str_contains($hook, 'aculta420_v2/studio'), 'O hook não anexa a biblioteca studio.');
+$assert(str_contains($hook, "'aculta_studio.'"), 'O hook não restringe o CSS do Studio às rotas aculta_studio.*.');
+
+$layoutCss = (string) file_get_contents($theme . '/src/styles/layout.css');
+$componentLibraryCss = (string) file_get_contents($theme . '/src/styles/component-library-mode.css');
+$assert(!str_contains($layoutCss, '.aculta-studio'), 'layout.css ainda contém regras do Studio; elas pertencem ao CSS contextual.');
+$assert(str_contains($componentLibraryCss, '.aculta-studio-topbar'), 'Regras do Studio na biblioteca de componentes não foram movidas para component-library-mode.css.');
 
 // Evidência: bytes do global que deixaram de ser baixados em toda página.
 $globalBytes = 0;

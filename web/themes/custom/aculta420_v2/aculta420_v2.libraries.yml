@@ -4,6 +4,15 @@ topic-dialog:
     component:
       components/dialog/dialog.css: {}
 
+studio:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/studio.css: {}
+      src/styles/studio-identity.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
 statistics:
   version: 0.1.0
   css:
@@ -35,11 +44,9 @@ global-styling:
       src/styles/messenger-drawer.css: {}
       src/styles/public-profile.css: {}
       src/styles/utilities.css: {}
-      src/styles/studio.css: {}
       src/styles/event-organization.css: {}
       src/styles/content.css: {}
       src/styles/search.css: {}
-      src/styles/studio-identity.css: {}
       src/styles/buttons.css: {}
       components/button/button.css: {}
       src/styles/portal-ui-extras.css: {}

@@ -1,3 +1,11 @@
+## Não versionado — ADR-054 P7 CSS do Studio contextual (2026-11-09)
+
+- `studio.css` (80 KB) e `studio-identity.css` saíram do `global-styling` e formam a biblioteca `studio`, anexada apenas nas rotas `aculta_studio.*`.
+- Regras do Studio na biblioteca de componentes saíram de `layout.css` para `component-library-mode.css`.
+- `global-styling` local caiu de 268.036 para 180.160 bytes (−88 KB, −33%).
+- Verificação Playwright/Firefox autenticada: `/conta` carrega o CSS do Studio; a home não. Suíte ampliada: 86 checks, 0 falhas (anônimo e autenticado, cinco larguras, escuro, foco, sem overflow do tema).
+- Nota: a barra Gin tem 16 px de overflow a 320 px, fora do tema.
+
 ## Não versionado — ADR-054 P7 escopo de CSS (2026-11-09)
 
 - `src/styles/statistics.css` saiu do `global-styling` e virou a biblioteca contextual `statistics`, anexada apenas em `aculta_statistics.dashboard` e `aculta_statistics.area`.

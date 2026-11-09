@@ -63,6 +63,10 @@ final class PagePresentationHooks {
     if (in_array($this->currentRouteMatch?->getRouteName(), self::STATISTICS_ROUTES, TRUE)) {
       $variables['#attached']['library'][] = 'aculta420_v2/statistics';
     }
+    // ADR-054 P7: CSS do Studio carregado só nas rotas do Studio/Conta.
+    if (str_starts_with((string) $this->currentRouteMatch?->getRouteName(), 'aculta_studio.')) {
+      $variables['#attached']['library'][] = 'aculta420_v2/studio';
+    }
     $variables['aculta_component_library_page'] = PurposeContainerLayout::isComponentLibraryRoute($this->currentRouteMatch?->getRouteName());
     $variables['aculta_lms_lesson_route'] = $this->currentRouteMatch?->getRouteName() === 'aculta_lms.lesson_view';
     $variables['aculta_layout_page_sdc_available'] = $this->componentAvailable('layout-page');
