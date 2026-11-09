@@ -29,16 +29,13 @@
 /* Painel de cada aba: lista os subcomponentes do grupo. Fica oculto até a aba ser escolhida. */
 .aculta-component-library__panel {
   column-span: all;
-  display: none;
   margin-block-start: var(--spacing-sm);
   padding: var(--spacing-base);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
 }
 
-.aculta-component-library__panel:target {
-  display: block;
-}
+
 
 .aculta-component-library__panel-title {
   margin: 0 0 var(--spacing-xs);
@@ -56,9 +53,4 @@
 
 .aculta-component-library__panel-list .button {
   white-space: nowrap;
-}
-
-/* Sem painel escolhido pelo endereço, o primeiro painel (da primeira aba) fica aberto. */
-.ui_patterns_quicklinks:not(:has(.aculta-component-library__panel:target)) > .aculta-component-library__panel:first-of-type {
-  display: block;
 }
