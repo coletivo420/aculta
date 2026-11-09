@@ -33,6 +33,7 @@ final class UiPatternsStoryHooks {
     $sdcManager->clearCachedDefinitions();
     $this->storyPluginManager->clearCachedDefinitions();
 
+    $variables['#attached']['library'][] = 'aculta420_v2/ui-library-admin';
     if (!is_array($variables['groups'] ?? NULL)) {
       return;
     }

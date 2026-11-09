@@ -101,3 +101,8 @@ studio-connections-page:
     theme:
       components/studio-connections-page/studio-connections-page.css: {}
 
+ui-library-admin:
+  version: 1.0.0
+  css:
+    theme:
+      src/styles/ui-library-admin.css: {}

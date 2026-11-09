@@ -1,0 +1,16 @@
+/* Biblioteca de componentes no tema administrativo: os blocos de componentes em colunas, como os
+   painéis do GIN (duas colunas a partir de 60rem; uma coluna no mobile). */
+.ui_patterns_component {
+  break-inside: avoid;
+}
+
+:has(> .ui_patterns_component) {
+  column-count: 1;
+  column-gap: var(--spacing-xl);
+}
+
+@media (min-width: 60rem) {
+  :has(> .ui_patterns_component) {
+    column-count: 2;
+  }
+}
