@@ -50,7 +50,7 @@ final class StudioCreatePopupFormHooks {
     }
 
     $form['#attributes']['data-aculta-content-composer'] = '';
-    $form['#attributes']['data-hx-select'] = '[data-aculta-content-composer]';
+    $form['#attributes']['data-hx-select'] = '[data-aculta-content-composer], [data-drupal-messages]';
     $htmx = new Htmx();
     $htmx->post(Url::fromRoute(self::POPUP_ROUTE))
       ->target('#' . self::POPUP_BODY_ID)
