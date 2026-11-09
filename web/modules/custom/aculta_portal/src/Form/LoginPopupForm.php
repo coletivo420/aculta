@@ -166,7 +166,7 @@ final class LoginPopupForm extends UserLoginForm {
     if ($this->isHtmxRequest()) {
       (new Htmx())
         ->post(Url::fromRoute('aculta_portal.login_popup'))
-        ->select('#' . self::WRAPPER_ID)
+        ->select('.status-message, #' . self::WRAPPER_ID)
         ->target('#aculta-login-content')
         ->swap('innerHTML')
         ->onlyMainContent()
