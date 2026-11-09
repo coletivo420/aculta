@@ -1,15 +1,4 @@
 name: Comentário com autoria pública
-description: Conteúdo e identidade já autorizados/renderizados pelo Drupal e Portal.
+description: Conteúdo e identidade já autorizados/renderizados pelo Drupal e Portal. Rodapé com link permanente e ações de resposta (editar, citar, responder, excluir).
 component: aculta420_v2:discussion-comment
-props:
-  has_author: true
-  has_submitted: true
-slots:
-  author:
-    markup: Autoria pública
-  submitted:
-    markup: '<time datetime="2026-11-04">4 de novembro de 2026</time>'
-  body:
-    markup: Contribuição na discussão.
-  footer:
-    markup: '<a href="/topico/exemplo#comentario">Link permanente</a>'
+class: Drupal\aculta420_v2\Story\DiscussionCommentStory
