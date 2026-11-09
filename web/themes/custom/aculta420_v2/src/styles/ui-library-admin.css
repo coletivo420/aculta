@@ -42,7 +42,7 @@
 }
 
 /* Biblioteca de componentes: área de conteúdo mais larga. Os cartões ficam em duas colunas só a
-   partir de 110rem; abaixo disso, uma coluna com a largura toda (os componentes respondem ao
+   com conteúdo de pelo menos 75rem; abaixo disso, uma coluna com a largura toda (os componentes respondem ao
    viewport, inclusive no mobile). */
 body:has(.ui_patterns_quicklinks) {
   --aculta-container-width: 1440px;
@@ -57,7 +57,12 @@ body:has(.ui_patterns_quicklinks) {
   column-gap: var(--spacing-xl);
 }
 
-@media (min-width: 110rem) {
+/* As colunas dependem da largura do conteúdo (não do viewport), então valem igual em qualquer zoom. */
+main:has(.ui_patterns_component) {
+  container-type: inline-size;
+}
+
+@container (min-width: 75rem) {
   :has(> .ui_patterns_component) {
     column-count: 2;
   }
