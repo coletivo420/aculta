@@ -147,7 +147,7 @@
         // Aviso "Aguarde" durante a postagem: aparece ao enviar e some se a resposta trouxer erro.
         body.addEventListener('htmx:beforeRequest', (event) => {
           const el = event.detail && event.detail.elt;
-          if (el && el.closest && el.closest('#' + dialogId + ' [type="submit"]')) {
+          if (el && el.closest && el.closest('#' + dialogId) && (el.matches('[type="submit"]') || el.closest('form'))) {
             showPostingOverlay(true);
           }
         });
