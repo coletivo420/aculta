@@ -4,6 +4,8 @@
 - Botão primário ("Entrar", `[data-drupal-selector="edit-submit"]`): alinhado aos padrões da UI Library/SDC `button` (`--button-primary-*`, `border-radius: var(--radius-control-button)`, borda 2px, tipografia e estados `:hover`, `:active` e `:focus-visible`).
 - Botão secundário ("Cadastre-se", `[data-portal-ui="button-secondary"]` / `a:last-of-type`): alinhado aos padrões da UI Library/SDC `button` (`--button-secondary-*`, borda 2px sólida, `border-radius: var(--radius-control-button)` e estados acessíveis).
 - `LoginPopupForm`: marcação semântica com `data-portal-ui="button-primary"` no envio e `data-portal-ui="button-secondary"` no link de cadastro, respeitando a fronteira módulo x tema.
+- Link "Esqueceu sua senha?": cor ajustada para branco sobre a superfície verde institucional do diálogo de login.
+- Divisores horizontais (`data-portal-ui="login-popup-divider"`): comprimento reduzido e cor ajustada para linhas brancas semitransparentes centralizadas.
 - Suporte a `prefers-reduced-motion: reduce` nas transições dos botões do diálogo de login.
 
 ## Não versionado — mapa com altura responsiva (2026-11-07)
