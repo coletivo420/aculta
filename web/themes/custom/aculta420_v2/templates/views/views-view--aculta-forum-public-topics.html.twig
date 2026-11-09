@@ -6,7 +6,7 @@
 {% set current_display = view.current_display %}
 
 {% set new_topic_markup %}
-  <a href="{{ url('node.add', { node_type: 'aculta_forum_topic' }) }}">{{ '+ Novo tópico'|t }}</a>
+  <a href="{{ url('aculta_forum.topic_composer') }}" class="use-htmx" data-action="topico-criar" data-hx-get="{{ url('aculta_forum.topic_composer') }}" data-hx-target="#aculta-topic-dialog-body" data-hx-swap="innerHTML">{{ '+ Novo tópico'|t }}</a>
 {% endset %}
 
 {% set tab_items = [

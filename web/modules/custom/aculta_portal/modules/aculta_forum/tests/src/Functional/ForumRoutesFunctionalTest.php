@@ -99,8 +99,7 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
     $statuses = [];
     foreach ([
       '/painel-administrativo/forum',
-      '/criar-topico',
-      '/publicacao/nova',
+      '/discussoes/novo-topico',
       '/discussoes/marcar-tudo-como-lido',
       '/painel-administrativo/forum/configuracoes',
       '/painel-administrativo/forum/publicacoes-revisionaveis',
@@ -123,7 +122,7 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
     ]);
     $this->loginAs($editor);
 
-    $this->drupalGet('/criar-topico');
+    $this->drupalGet('/discussoes/novo-topico');
     $this->assertPageOk();
     $this->assertSession()->fieldExists('title[0][value]');
 
@@ -144,7 +143,7 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
       'access content',
     ]);
     $this->loginAs($author);
-    $this->drupalGet('/criar-topico');
+    $this->drupalGet('/discussoes/novo-topico');
     $this->assertPageOk();
     $this->assertSession()->fieldExists('title[0][value]');
     $page = $this->getSession()->getPage();
@@ -200,7 +199,7 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
   public function testAuthenticatedWithoutPermissionIsDenied(): void {
     $user = $this->drupalCreateUser(['access content']);
     $this->loginAs($user);
-    $this->drupalGet('/criar-topico');
+    $this->drupalGet('/discussoes/novo-topico');
     $this->assertSession()->statusCodeEquals(403);
     $this->drupalGet('/painel-administrativo/forum');
     $this->assertSession()->statusCodeEquals(403);

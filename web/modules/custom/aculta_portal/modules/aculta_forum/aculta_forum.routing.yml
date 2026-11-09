@@ -6,8 +6,8 @@ aculta_forum.admin:
   requirements:
     _permission: 'access content overview'
 
-aculta_forum.topic_add:
-  path: '/criar-topico'
+aculta_forum.topic_composer:
+  path: '/discussoes/novo-topico'
   defaults:
     _entity_form: 'node.default'
     _title: 'Criar tópico'
@@ -17,6 +17,7 @@ aculta_forum.topic_add:
   requirements:
     _entity_create_access: 'node:{node_type}'
   options:
+    _htmx_route: TRUE
     parameters:
       node_type:
         type: 'entity:node_type'
@@ -184,24 +185,6 @@ aculta_forum.post_revision_compare:
       aculta_forum_post:
         type: 'entity:aculta_forum_post'
   methods: [GET, HEAD]
-
-aculta_forum.post_create:
-  path: '/publicacao/nova'
-  defaults:
-    _controller: 'aculta_forum.post_submission_controller:form'
-    _title: 'Responder à discussão'
-  requirements:
-    _custom_access: 'aculta_forum.post_submission_access:access'
-  methods: [GET, HEAD, POST]
-
-aculta_forum.post_edit:
-  path: '/publicacao/editar'
-  defaults:
-    _controller: 'aculta_forum.post_edit_controller:edit'
-    _title: 'Editar publicação'
-  requirements:
-    _custom_access: 'aculta_forum.post_public_edit_access:access'
-  methods: [GET, HEAD, POST]
 
 aculta_forum.discussion_composer:
   path: '/discussoes/compositor/{entity_type}/{entity_id}'

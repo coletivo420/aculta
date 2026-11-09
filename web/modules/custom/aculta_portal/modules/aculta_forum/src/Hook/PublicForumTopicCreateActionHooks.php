@@ -38,8 +38,11 @@ final class PublicForumTopicCreateActionHooks {
       return;
     }
 
+    // O popup de criação (e o link "+ Novo tópico" do template) precisam da biblioteca na página.
+    $view->element['#attached']['library'][] = 'aculta_forum/topic-create-popup';
+
     $access = $this->accessManager->checkNamedRoute(
-      'aculta_forum.topic_add',
+      'aculta_forum.topic_composer',
       [],
       NULL,
       TRUE,
@@ -57,13 +60,20 @@ final class PublicForumTopicCreateActionHooks {
       return;
     }
 
+    // Criar tópico abre o popup do compositor (HTMX), no mesmo padrão do popup de resposta.
+    $composerUrl = Url::fromRoute('aculta_forum.topic_composer')->toString();
     $view->attachment_before['aculta_forum_create_topic'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:button',
-      '#props' => [
-        'text' => (string) new TranslatableMarkup('Criar tópico'),
-        'url' => Url::fromRoute('aculta_forum.topic_add')->toString(),
-        'variant' => 'primary',
+      '#type' => 'link',
+      '#title' => new TranslatableMarkup('Criar tópico'),
+      '#url' => Url::fromRoute('aculta_forum.topic_composer'),
+      '#attached' => ['library' => ['aculta_forum/topic-create-popup']],
+      '#attributes' => [
+        'data-portal-ui' => 'button-primary',
+        'class' => ['use-htmx'],
+        'data-action' => 'topico-criar',
+        'data-hx-get' => $composerUrl,
+        'data-hx-target' => '#aculta-topic-dialog-body',
+        'data-hx-swap' => 'innerHTML',
       ],
     ];
     CacheableMetadata::createFromObject($access)
