@@ -43,6 +43,30 @@
     }
     overlay.hidden = !visible;
   }
+  // Visitante (sem sessão): Comentar, Responder e Citar abrem o popup de login já existente.
+  const anonymousTriggerSelector = '[data-aculta-comment-new], [data-action="resposta-responder"], [data-action="resposta-citar"], [data-action="resposta-editar"], [data-action="resposta-apagar"]';
+
+  function isAnonymous() {
+    return !document.body.classList.contains('user-logged-in');
+  }
+
+  function openLoginPopup() {
+    let trigger = document.getElementById('aculta-login-popup-trigger');
+    if (!trigger) {
+      trigger = document.createElement('a');
+      trigger.id = 'aculta-login-popup-trigger';
+      trigger.className = 'use-ajax';
+      trigger.setAttribute('data-dialog-type', 'modal');
+      trigger.setAttribute('data-dialog-options', JSON.stringify({ title: 'Entrar', closeText: 'Fechar' }));
+      trigger.hidden = true;
+      document.body.appendChild(trigger);
+      Drupal.attachBehaviors(trigger);
+    }
+    const destination = window.location.pathname + window.location.search;
+    trigger.setAttribute('href', '/entrar/janela?destination=' + encodeURIComponent(destination));
+    trigger.click();
+  }
+
   const triggerSelector = '[data-action="resposta-responder"], [data-action="resposta-citar"], [data-action="resposta-editar"], [data-action="resposta-apagar"]';
 
   function ensureDialog() {
@@ -99,6 +123,20 @@
   Drupal.behaviors.acultaForumReplyPopup = {
     attach(context) {
       once('aculta-reply-popup', document.body, context).forEach((body) => {
+        // Visitante: os gatilhos abrem o popup de login, sem abrir o compositor.
+        document.addEventListener('click', (event) => {
+          if (!isAnonymous()) {
+            return;
+          }
+          const trigger = event.target && event.target.closest ? event.target.closest(anonymousTriggerSelector) : null;
+          if (!trigger) {
+            return;
+          }
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          openLoginPopup();
+        }, true);
+
         // Garante que o corpo do diálogo exista antes de o HTMX processar os links na página.
         ensureDialog();
 
@@ -212,6 +250,9 @@
       // Comentar (topo do tópico): o compositor de comentário de topo é o mesmo endpoint de Responder, sem "resposta".
       const newBtn = document.querySelector('[data-aculta-comment-new]');
       const replyLink = document.querySelector('[data-action="resposta-responder"][data-hx-get]');
+      if (newBtn && isAnonymous()) {
+        newBtn.hidden = false;
+      }
       if (newBtn && replyLink && !newBtn.dataset.acultaBound) {
         newBtn.dataset.acultaBound = '1';
         const url = new URL(replyLink.getAttribute('data-hx-get'), window.location.href);
