@@ -247,7 +247,7 @@ services:
     arguments: ['@pager.manager', '@entity_type.manager']
 
   Drupal\aculta_forum\Hook\DiscussionCommentPermalinkHooks:
-    arguments: ['@aculta_forum.discussion_comment_permalink_builder']
+    arguments: ['@aculta_forum.discussion_comment_permalink_builder', '@extension.list.theme']
 
 
 

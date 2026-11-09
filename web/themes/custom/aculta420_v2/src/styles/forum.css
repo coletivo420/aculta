@@ -994,6 +994,10 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
   inline-size: 100%;
   block-size: 100%;
   fill: currentColor;
+  /* Peso "negrito": o tema tem só o peso regular; o contorno engrossa o traço. */
+  stroke: currentColor;
+  stroke-width: 12;
+  stroke-linejoin: round;
 }
 
 .aculta-resposta-acao:hover,

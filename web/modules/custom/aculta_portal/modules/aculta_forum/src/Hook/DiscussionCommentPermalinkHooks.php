@@ -7,7 +7,9 @@ namespace Drupal\aculta_forum\Hook;
 use Drupal\aculta_forum\Service\DiscussionCommentPermalinkBuilderInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Extension\ThemeExtensionList;
 use Drupal\Core\Link;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -21,6 +23,8 @@ final class DiscussionCommentPermalinkHooks {
   public function __construct(
     #[Autowire(service: 'aculta_forum.discussion_comment_permalink_builder')]
     private readonly DiscussionCommentPermalinkBuilderInterface $permalinkBuilder,
+    #[Autowire(service: 'extension.list.theme')]
+    private readonly ThemeExtensionList $themes,
   ) {}
 
   /**
@@ -40,13 +44,33 @@ final class DiscussionCommentPermalinkHooks {
 
     $url = $this->permalinkBuilder->build($comment);
     if ($url !== NULL) {
+      // Mesmo padrão das demais ações do comentário: ícone Phosphor e rótulo em aria-label/title.
+      $label = (string) $this->t('Permalink');
       $attributes = $url->getOption('attributes') ?: [];
-      $attributes += ['class' => ['permalink'], 'rel' => 'bookmark'];
+      $attributes += [
+        'class' => ['permalink', 'aculta-resposta-acao', 'aculta-resposta-acao--link'],
+        'rel' => 'bookmark',
+        'aria-label' => $label,
+        'title' => $label,
+      ];
       $url->setOption('attributes', $attributes);
 
-      $variables['permalink'] = Link::fromTextAndUrl($this->t('Permalink'), $url)->toString();
+      $variables['permalink'] = Link::fromTextAndUrl(Markup::create($this->icon('link')), $url)->toString();
       $variables['permalink_url'] = $url->toString();
     }
+  }
+
+  /**
+   * Ícone Phosphor (regular) do tema, em span decorativo.
+   */
+  private function icon(string $name): string {
+    $path = $this->themes->getPath('aculta420_v2') . '/assets/icons/phosphor/regular/' . $name . '.svg';
+    if (!is_file($path)) {
+      return '';
+    }
+    $svg = (string) file_get_contents($path);
+    $svg = preg_replace('/<\?xml[^>]*\?>\s*/', '', $svg) ?? $svg;
+    return '<span class="aculta-resposta-acao__icon" aria-hidden="true">' . trim($svg) . '</span>';
   }
 
 }
