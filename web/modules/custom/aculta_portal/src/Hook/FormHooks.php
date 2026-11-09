@@ -180,7 +180,10 @@ class FormHooks {
   private function accountAjaxSubmit(array &$form, string $formId): void {
     $route = $this->routeMatch->getRouteObject();
     if ($route === NULL || $route->getOption('_aculta_domain_purpose') !== 'account' || $formId === 'aculta_portal_aculta_user_agreement_accept' || $formId === 'aculta_portal_account_password_create'
-      || $formId === 'user_login_form' || $formId === 'user_pass_reset' || $formId === 'aculta_mail_confirmer_response' || $formId === 'aculta_user_account_bio_form' || !empty($form['#aculta_json_save']) || !isset($form['actions']['submit'])) {
+      || $formId === 'user_login_form' || $formId === 'user_pass_reset' || $formId === 'aculta_mail_confirmer_response' || $formId === 'aculta_user_account_bio_form' || !empty($form['#aculta_json_save']) || !isset($form['actions']['submit'])
+      // Rotas de fragmento de popup (criar publicação, comentário) já configuram o envio HTMX do
+      // próprio formulário e do botão; o alvo do wrapper da conta não existe no popup.
+      || $route->getOption('_htmx_route')) {
       return;
     }
     $wrapper = 'portal-account-' . Html::cleanCssIdentifier($formId);
