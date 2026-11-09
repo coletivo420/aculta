@@ -123,6 +123,10 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
       'aculta-accent--' . $this->safeValue((string) $settings('aculta_accent_override', 'mapping'), ['mapping', 'green', 'yellow', 'red'], 'mapping'),
       (bool) $settings('aculta_show_accent_stripe', TRUE) ? 'aculta-accent-stripe-enabled' : 'aculta-accent-stripe-disabled',
     ]);
+    if ($isComponentLibrary) {
+      $bodyAttributes->addClass('aculta-component-library-page');
+      $variables['#attached']['library'][] = 'aculta420_v2/component-library-mode';
+    }
   }
 
   /**

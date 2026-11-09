@@ -14,8 +14,3 @@
     column-count: 2;
   }
 }
-
-/* A área de conteúdo do GIN não tem limite de largura: a biblioteca usa a mesma largura. */
-main.page-content:has(.ui_patterns_component) {
-  max-inline-size: none;
-}

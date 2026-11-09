@@ -156,15 +156,6 @@ final class AdministrativeRouteSubscriber extends RouteSubscriberBase {
         $route->setOption('_admin_route', TRUE);
       }
     }
-
-    // Biblioteca de componentes: o módulo ui_patterns marca essas rotas como não administrativas;
-    // a página da biblioteca usa o tema administrativo (GIN), como as demais do painel.
-    foreach (['ui_patterns_library.overview', 'ui_patterns_library.provider', 'ui_patterns_library.single'] as $nomeBiblioteca) {
-      $rotaBiblioteca = $collection->get($nomeBiblioteca);
-      if ($rotaBiblioteca !== NULL) {
-        $rotaBiblioteca->setOption('_admin_route', TRUE);
-      }
-    }
   }
 
 }
