@@ -5,6 +5,13 @@ discussion-progress:
     - core/drupal
     - core/once
 
+discussion-reply-popup:
+  js:
+    js/discussion-reply-popup.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
 forum-post-history:
   js:
     js/forum-post-history.js: {}
