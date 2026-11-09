@@ -33,15 +33,39 @@ final class TopicOpeningPostHooks {
     if (!$node instanceof NodeInterface || $node->bundle() !== 'aculta_forum_topic' || ($variables['view_mode'] ?? '') !== 'full') {
       return;
     }
+
+    $variables['opening_delete_url'] = NULL;
     $variables['opening_edit_url'] = NULL;
-    if ($node->access('update', $this->currentUser)) {
-      $variables['opening_edit_url'] = Url::fromRoute('entity.node.edit_form', ['node' => $node->id()])->toString();
+    $variables['opening_quote_url'] = NULL;
+    $variables['opening_reply_url'] = NULL;
+
+    /** @var \Drupal\aculta_forum\Service\TopicDeletionModerationManager $moderationManager */
+    $moderationManager = \Drupal::service('aculta_forum.topic_deletion_moderation_manager');
+    if ($moderationManager->canDeleteOrRequest($node, $this->currentUser)) {
+      $variables['opening_delete_url'] = Url::fromRoute('aculta_forum.discussion_composer', ['entity_type' => 'node', 'entity_id' => $node->id()], ['query' => ['excluir_topico' => 1]])->toString();
     }
+
+    if ($node->access('update', $this->currentUser)) {
+      $variables['opening_edit_url'] = Url::fromRoute('aculta_forum.discussion_composer', ['entity_type' => 'node', 'entity_id' => $node->id()], ['query' => ['editar_topico' => 1]])->toString();
+    }
+
+    /** @var \Drupal\aculta_forum\Service\DiscussionReplyAccess $replyAccess */
+    $replyAccess = \Drupal::service('aculta_forum.discussion_reply_access');
+    if ($replyAccess->checkAccess($node, $this->currentUser)->isAllowed()) {
+      $variables['opening_quote_url'] = Url::fromRoute('aculta_forum.discussion_composer', ['entity_type' => 'node', 'entity_id' => $node->id()], ['query' => ['citar_topico' => 1, 'modo' => 'citar']])->toString();
+      $variables['opening_reply_url'] = Url::fromRoute('aculta_forum.discussion_composer', ['entity_type' => 'node', 'entity_id' => $node->id()], ['query' => ['modo' => 'responder']])->toString();
+    }
+
     $variables['opening_icons'] = [
       'link' => $this->icon('link'),
+      'delete' => $this->icon('trash-simple'),
       'edit' => $this->icon('pencil-simple'),
+      'quote' => $this->icon('quotes'),
       'reply' => $this->icon('arrow-bend-up-left'),
     ];
+
+    // Ensure discussion reply popup library is attached even if there are 0 comments yet.
+    $variables['#attached']['library'][] = 'aculta_forum/discussion-reply-popup';
   }
 
   /**

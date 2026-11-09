@@ -8,10 +8,13 @@ use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum\Service\DiscussionReplyAccess;
 use Drupal\aculta_forum\Service\DiscussionReplyFormBuilder;
 use Drupal\aculta_forum\Service\ForumQuoteBuilder;
+use Drupal\aculta_forum\Form\TopicDeleteConfirmForm;
+use Drupal\aculta_forum\Form\TopicOpeningEditForm;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\node\NodeInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -42,6 +45,28 @@ class DiscussionReplyController extends ControllerBase {
       throw new NotFoundHttpException();
     }
 
+    if ($host instanceof NodeInterface && $host->bundle() === 'aculta_forum_topic') {
+      if ($request->query->get('excluir_topico') || $request->request->get('form_id') === 'aculta_forum_topic_delete_confirm_form') {
+        $form = $this->formBuilder()->getForm(TopicDeleteConfirmForm::class, $host);
+        return [
+          '#theme' => 'discussion_reply_composer',
+          '#form' => $form,
+          '#mode' => 'excluir',
+          '#target_id' => 'discussion-composer-' . $host->getEntityTypeId() . '-' . $host->id(),
+        ];
+      }
+
+      if ($request->query->get('editar_topico') || $request->request->get('form_id') === 'aculta_forum_topic_opening_edit_form') {
+        $form = $this->formBuilder()->getForm(TopicOpeningEditForm::class, $host);
+        return [
+          '#theme' => 'discussion_reply_composer',
+          '#form' => $form,
+          '#mode' => 'editar',
+          '#target_id' => 'discussion-composer-' . $host->getEntityTypeId() . '-' . $host->id(),
+        ];
+      }
+    }
+
     $editId = $request->query->get('editar');
     if ($editId !== NULL && ctype_digit((string) $editId)) {
       $editComment = $this->forumEntityTypeManager->getStorage('comment')->load((int) $editId);
@@ -55,6 +80,12 @@ class DiscussionReplyController extends ControllerBase {
     $parentId = ($parentId !== NULL && $parentId !== '' && ctype_digit((string) $parentId)) ? (int) $parentId : NULL;
 
     $quote = NULL;
+    if ($host instanceof NodeInterface && $request->query->get('citar_topico') && $host->hasField('body') && !$host->get('body')->isEmpty()) {
+      $bodyItem = $host->get('body')->first();
+      $rawBody = (string) ($bodyItem->get('value')->getValue() ?? '');
+      $quote = $this->quoteBuilder->build($rawBody, $host->getOwner()->getDisplayName());
+    }
+
     $quoteId = $request->query->get('quote') ?? $request->query->get('citacao');
     if ($quoteId !== NULL && ctype_digit((string) $quoteId)) {
       $quoteComment = $this->forumEntityTypeManager->getStorage('comment')->load((int) $quoteId);

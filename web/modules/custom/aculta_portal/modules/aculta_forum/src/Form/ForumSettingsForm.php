@@ -54,6 +54,44 @@ final class ForumSettingsForm extends ConfigFormBase {
 
     $config = $this->config('aculta_forum.settings');
 
+    $form['threading_fieldset'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Níveis de Resposta e Encadeamento'),
+      '#open' => TRUE,
+    ];
+
+    $form['threading_fieldset']['reply_max_depth'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Quantidade máxima de níveis de resposta com recuo automático'),
+      '#description' => $this->t('Define até que nível as respostas terão recuo visual automático em toda a discussão. Respostas além do limite máximo têm seu nível estrutural normalizado para o nível máximo permitido.'),
+      '#options' => [
+        0 => $this->t('Desligado (linear, sem recuo)'),
+        2 => $this->t('Até 2 níveis de resposta com recuo automático (Padrão)'),
+        3 => $this->t('Até 3 níveis de resposta com recuo automático'),
+      ],
+      '#default_value' => (int) ($config->get('reply_max_depth') ?? 2),
+      '#required' => TRUE,
+    ];
+
+    $form['topic_moderation_fieldset'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Política de Exclusão de Tópicos pelo Autor'),
+      '#open' => TRUE,
+    ];
+
+    $form['topic_moderation_fieldset']['topic_author_delete_policy'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('Regra de exclusão para o autor do tópico'),
+      '#description' => $this->t('Define o comportamento quando o autor do tópico clica no botão Excluir no Cartão de Abertura.'),
+      '#options' => [
+        'moderation_queue' => $this->t('Fila de Moderação (o autor solicita a exclusão e o tópico aguarda decisão da moderação na fila) — Padrão'),
+        'direct_delete' => $this->t('Exclusão direta (o autor pode apagar o próprio tópico imediatamente)'),
+        'disabled' => $this->t('Desativado (o autor não pode apagar o tópico; apenas moderadores/administradores)'),
+      ],
+      '#default_value' => (string) ($config->get('topic_author_delete_policy') ?? 'moderation_queue'),
+      '#required' => TRUE,
+    ];
+
     $form['reactions_fieldset'] = [
       '#type' => 'details',
       '#title' => $this->t('Reações por Emoji (Discourse Reactions)'),
@@ -128,6 +166,8 @@ final class ForumSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $config = $this->config('aculta_forum.settings');
     $config->set('edit_window_minutes', max(0, (int) $form_state->getValue('edit_window_minutes')));
+    $config->set('reply_max_depth', (int) $form_state->getValue('reply_max_depth'));
+    $config->set('topic_author_delete_policy', (string) $form_state->getValue('topic_author_delete_policy'));
     $config->set('reactions_enabled', (bool) $form_state->getValue('reactions_enabled'));
     $config->set('default_reaction', (string) $form_state->getValue('default_reaction'));
 

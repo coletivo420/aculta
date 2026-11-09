@@ -22,4 +22,8 @@ report aculta forum content:
 react to aculta discussions:
   title: 'Reagir a comentários e publicações de discussões'
   description: 'Permite reagir com emojis em comentários e posts de discussões do ecossistema ACULTA.'
+moderate aculta forum topic deletions:
+  title: 'Moderar exclusões de tópicos do Fórum'
+  description: 'Permite aprovar e rejeitar solicitações de exclusão de tópicos na fila de moderação.'
+  restrict access: true
 

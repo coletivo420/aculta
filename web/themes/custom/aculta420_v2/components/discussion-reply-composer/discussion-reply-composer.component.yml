@@ -32,7 +32,7 @@ props:
     mode:
       type: string
       title: Modo do compositor
-      enum: [responder, citar, editar]
+      enum: [responder, citar, editar, excluir]
       default: responder
     host_title:
       type: [string, 'null']

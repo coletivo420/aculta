@@ -28,25 +28,41 @@ props:
       type: [string, 'null']
       title: Link permanente do tópico
       default: null
+    delete_url:
+      type: [string, 'null']
+      title: Link de exclusão do tópico (somente com acesso)
+      default: null
     edit_url:
       type: [string, 'null']
       title: Link de edição (somente com acesso)
+      default: null
+    quote_url:
+      type: [string, 'null']
+      title: Link de citar abertura (somente com acesso)
+      default: null
+    reply_url:
+      type: [string, 'null']
+      title: Endereço do compositor de resposta ao tópico
       default: null
     link_icon:
       type: [string, 'null']
       title: Ícone do link permanente (markup SVG)
       default: null
+    delete_icon:
+      type: [string, 'null']
+      title: Ícone de excluir (markup SVG)
+      default: null
     edit_icon:
       type: [string, 'null']
       title: Ícone de editar (markup SVG)
       default: null
+    quote_icon:
+      type: [string, 'null']
+      title: Ícone de citar (markup SVG)
+      default: null
     reply_icon:
       type: [string, 'null']
       title: Ícone de responder (markup SVG)
-      default: null
-    reply_url:
-      type: [string, 'null']
-      title: Endereço do compositor de resposta ao tópico
       default: null
 slots:
   avatar:

@@ -43,13 +43,33 @@
     }
     overlay.hidden = !visible;
   }
-  const triggerSelector = '[data-action="resposta-responder"], [data-action="resposta-citar"], [data-action="resposta-editar"]';
+  const triggerSelector = '[data-action="resposta-responder"], [data-action="resposta-citar"], [data-action="resposta-editar"], [data-action="resposta-apagar"]';
+
+  function ensureDialog() {
+    let dialog = document.getElementById(dialogId);
+    if (!dialog) {
+      dialog = document.createElement('dialog');
+      dialog.id = dialogId;
+      dialog.className = 'aculta-dialog';
+      dialog.setAttribute('aria-modal', 'true');
+      dialog.innerHTML = '<div class="aculta-dialog__inner">'
+        + '<div class="aculta-dialog__header">'
+        + '<h2 class="aculta-dialog__title">Discussão</h2>'
+        + '<button type="button" class="aculta-dialog__close" data-aculta-dialog-close aria-label="Fechar">✕</button>'
+        + '</div>'
+        + '<div id="' + dialogBodyId + '" class="aculta-reply-dialog__body"></div>'
+        + '</div>';
+      document.body.appendChild(dialog);
+    }
+    return dialog;
+  }
 
   function getDialog() {
-    return document.getElementById(dialogId);
+    return ensureDialog();
   }
 
   function getDialogBody() {
+    ensureDialog();
     return document.getElementById(dialogBodyId);
   }
 

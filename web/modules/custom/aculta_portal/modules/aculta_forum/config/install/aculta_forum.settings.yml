@@ -2,6 +2,8 @@ comment_move_enabled: false
 edit_window_minutes: 10
 restricted_group_type: ''
 reactions_enabled: true
+reply_max_depth: 2
+topic_author_delete_policy: moderation_queue
 default_reaction: heart
 allowed_reactions:
   - id: heart

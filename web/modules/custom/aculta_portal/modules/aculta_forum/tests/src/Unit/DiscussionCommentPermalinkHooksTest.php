@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\aculta_forum\Hook\DiscussionCommentPermalinkHooks;
 use Drupal\aculta_forum\Service\DiscussionCommentPermalinkBuilderInterface;
+use Drupal\aculta_forum\Service\DiscussionThreadDepthResolver;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Extension\ThemeExtensionList;
 use Drupal\Core\Url;
@@ -44,7 +45,10 @@ final class DiscussionCommentPermalinkHooksTest extends UnitTestCase {
     $builder = $this->createMock(DiscussionCommentPermalinkBuilderInterface::class);
     $builder->method('build')->willReturn($url);
 
-    $hooks = new DiscussionCommentPermalinkHooks($builder, $this->createMock(ThemeExtensionList::class));
+    $depthResolver = $this->createMock(DiscussionThreadDepthResolver::class);
+    $depthResolver->method('resolveDepth')->willReturn(0);
+
+    $hooks = new DiscussionCommentPermalinkHooks($builder, $this->createMock(ThemeExtensionList::class), $depthResolver);
     $hooks->setStringTranslation($this->getStringTranslationStub());
 
     $comment = $this->createMock(CommentInterface::class);
@@ -69,7 +73,10 @@ final class DiscussionCommentPermalinkHooksTest extends UnitTestCase {
     $builder = $this->createMock(DiscussionCommentPermalinkBuilderInterface::class);
     $builder->expects($this->never())->method('build');
 
-    $hooks = new DiscussionCommentPermalinkHooks($builder, $this->createMock(ThemeExtensionList::class));
+    $depthResolver = $this->createMock(DiscussionThreadDepthResolver::class);
+    $depthResolver->method('resolveDepth')->willReturn(0);
+
+    $hooks = new DiscussionCommentPermalinkHooks($builder, $this->createMock(ThemeExtensionList::class), $depthResolver);
     $comment = $this->createMock(CommentInterface::class);
     $comment->method('bundle')->willReturn('standard_comment');
 

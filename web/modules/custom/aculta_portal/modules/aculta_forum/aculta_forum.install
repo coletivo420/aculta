@@ -140,6 +140,64 @@ function aculta_forum_schema(): array {
     'primary key' => ['uid'],
   ];
 
+  $schema['aculta_forum_topic_deletion'] = [
+    'description' => 'Stores topic deletion requests awaiting moderation or resolution.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Primary Key: Request ID.',
+      ],
+      'nid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Topic node ID.',
+      ],
+      'uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'User ID who requested deletion.',
+      ],
+      'status' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => 'pending',
+        'description' => 'Status: pending, approved, or rejected.',
+      ],
+      'created' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Timestamp when deletion was requested.',
+      ],
+      'reviewed_by' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'User ID of moderator who reviewed the request.',
+      ],
+      'reviewed_at' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'Timestamp when reviewed.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'nid' => ['nid'],
+      'status' => ['status'],
+      'uid' => ['uid'],
+      'created' => ['created'],
+    ],
+  ];
+
   return $schema;
 }
 
@@ -374,5 +432,26 @@ function aculta_forum_update_9006(): void {
     $role->grantPermission('react to aculta discussions');
     $role->save();
   }
+}
+
+/**
+ * Installs table for topic deletion moderation and default settings for reply depth and deletion policy.
+ */
+function aculta_forum_update_9007(): void {
+  $schema = \Drupal::database()->schema();
+  $tables = aculta_forum_schema();
+
+  if (!$schema->tableExists('aculta_forum_topic_deletion')) {
+    $schema->createTable('aculta_forum_topic_deletion', $tables['aculta_forum_topic_deletion']);
+  }
+
+  $config = \Drupal::configFactory()->getEditable('aculta_forum.settings');
+  if ($config->get('reply_max_depth') === NULL) {
+    $config->set('reply_max_depth', 2);
+  }
+  if ($config->get('topic_author_delete_policy') === NULL) {
+    $config->set('topic_author_delete_policy', 'moderation_queue');
+  }
+  $config->save();
 }
 

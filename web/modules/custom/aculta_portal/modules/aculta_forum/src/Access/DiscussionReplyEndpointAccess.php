@@ -9,6 +9,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\node\NodeInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -32,6 +33,16 @@ class DiscussionReplyEndpointAccess {
     $host = $storage->load($entity_id);
     if ($host === NULL) {
       return AccessResult::forbidden('Host entity not found.');
+    }
+
+    if ($request->query->get('excluir_topico') || $request->request->get('form_id') === 'aculta_forum_topic_delete_confirm_form') {
+      /** @var \Drupal\aculta_forum\Service\TopicDeletionModerationManager $moderationManager */
+      $moderationManager = \Drupal::service('aculta_forum.topic_deletion_moderation_manager');
+      return AccessResult::allowedIf($host instanceof NodeInterface && $moderationManager->canDeleteOrRequest($host, $account));
+    }
+
+    if ($request->query->get('editar_topico') || $request->request->get('form_id') === 'aculta_forum_topic_opening_edit_form') {
+      return AccessResult::allowedIf($host->access('update', $account));
     }
 
     $parentId = $request->query->get('resposta');

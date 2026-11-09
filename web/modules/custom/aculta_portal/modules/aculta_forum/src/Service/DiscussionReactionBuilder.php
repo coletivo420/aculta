@@ -41,6 +41,11 @@ class DiscussionReactionBuilder {
       'entity_id' => $entityId,
     ])->toString();
 
+    $pickerUrl = Url::fromRoute('aculta_forum.reaction_picker', [
+      'entity_type' => $entityType,
+      'entity_id' => $entityId,
+    ])->toString();
+
     $csrfToken = $account->isAuthenticated()
       ? $this->csrfToken->get("aculta_forum:reaction:{$entityType}:{$entityId}")
       : '';
@@ -63,6 +68,7 @@ class DiscussionReactionBuilder {
       '#can_react' => $canReact,
       '#is_own_content' => $isOwnContent,
       '#react_url' => $reactUrl,
+      '#picker_url' => $pickerUrl,
       '#csrf_token' => $csrfToken,
       '#attached' => [
         'library' => [
@@ -76,6 +82,43 @@ class DiscussionReactionBuilder {
           'config:aculta_forum.settings',
         ]),
       ],
+    ];
+  }
+
+  /**
+   * Builds the render array for the extra reactions picker popover.
+   */
+  public function buildPicker(EntityInterface $entity, AccountInterface $account): array {
+    $entityType = $entity->getEntityTypeId();
+    $entityId = (int) $entity->id();
+    $uid = $account->isAuthenticated() ? (int) $account->id() : NULL;
+
+    $reactionsData = $this->reactionManager->loadReactions($entityType, $entityId, $uid);
+    $access = $this->reactionEndpointAccess->access($entityType, (string) $entityId, $account);
+    $canReact = $access->isAllowed();
+
+    $reactUrl = Url::fromRoute('aculta_forum.reaction_react', [
+      'entity_type' => $entityType,
+      'entity_id' => $entityId,
+    ])->toString();
+
+    $csrfToken = $account->isAuthenticated()
+      ? $this->csrfToken->get("aculta_forum:reaction:{$entityType}:{$entityId}")
+      : '';
+
+    $allowedReactions = $this->reactionManager->getAllowedReactions();
+    $targetId = "discussion-reactions-{$entityType}-{$entityId}";
+
+    return [
+      '#theme' => 'discussion_reaction_picker',
+      '#target_id' => $targetId,
+      '#entity_type' => $entityType,
+      '#entity_id' => (string) $entityId,
+      '#allowed_reactions' => $allowedReactions,
+      '#user_reaction' => $reactionsData['user_reaction'],
+      '#can_react' => $canReact,
+      '#react_url' => $reactUrl,
+      '#csrf_token' => $csrfToken,
     ];
   }
 

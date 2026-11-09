@@ -27,6 +27,7 @@ class DiscussionReplyFormBuilder {
     protected readonly EntityFormBuilderInterface $entityFormBuilder,
     protected readonly DiscussionReplyAccess $replyAccess,
     protected readonly ForumQuoteBuilder $quoteBuilder,
+    protected readonly DiscussionThreadDepthResolver $depthResolver,
   ) {}
 
   /**
@@ -63,12 +64,20 @@ class DiscussionReplyFormBuilder {
     $commentField = 'field_aculta_discussion';
 
     $commentStorage = $this->entityTypeManager->getStorage('comment');
+    $effectiveParentId = $parentId;
+    if ($parentId !== NULL && $parentId > 0) {
+      $parentComment = $commentStorage->load($parentId);
+      if ($parentComment instanceof CommentInterface) {
+        $effectiveParentId = $this->depthResolver->resolveEffectiveParentId($parentComment);
+      }
+    }
+
     $commentValues = [
       'entity_type' => $host->getEntityTypeId(),
       'entity_id' => $host->id(),
       'field_name' => $commentField,
       'comment_type' => 'aculta_discussion_post',
-      'pid' => $parentId,
+      'pid' => $effectiveParentId,
     ];
 
     /** @var \Drupal\comment\CommentInterface $comment */

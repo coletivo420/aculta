@@ -172,6 +172,11 @@
   border-block-start-color: var(--color-brand-primary);
 }
 
+:is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) article.js-comment:nth-of-type(even) .discussion-reaction-bar__popup {
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+}
+
 :is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) .comment__in-reply-to {
   margin: 0 0 var(--spacing-xs);
   font-size: var(--font-size-sm);
@@ -329,16 +334,52 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
   min-block-size: 1.75rem;
 }
 
-/* Bloco "Respostas da discussão": caixa com borda e raio da V1 (o wrapper traz só o atributo de dados). */
+/* Bloco "Respostas da discussão": contêiner limpo sem borda ou padding lateral para alinhar com o cartão de abertura. */
 [data-aculta-discussion-thread] {
   display: grid;
   gap: .75rem;
   row-gap: 10px;
-  margin-block: 1.5rem 0;
-  padding: 1.25rem 1.5rem;
-  border: 1px solid var(--color-border);
-  border-radius: .75rem;
-  background: var(--color-surface-raised);
+  margin-block: 10px 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+/* Neutraliza wrappers .indented do Core para preservar o fluxo em Grid da discussão. */
+:is(.field--name-field-aculta-discussion, .field--name-comments, [data-aculta-discussion-thread]) .indented {
+  display: contents;
+}
+
+/* Níveis de resposta com recuo automático em todos os purposes (fórum, revista, wiki, cursos). */
+:is(.field--name-field-aculta-discussion, .field--name-comments, [data-aculta-discussion-thread]) article.js-comment:is([data-comment-depth="0"], .discussion-comment-depth-0) {
+  margin-inline-start: 0;
+}
+
+:is(.field--name-field-aculta-discussion, .field--name-comments, [data-aculta-discussion-thread]) article.js-comment:is([data-comment-depth="1"], .discussion-comment-depth-1) {
+  margin-inline-start: 1rem;
+}
+
+:is(.field--name-field-aculta-discussion, .field--name-comments, [data-aculta-discussion-thread]) article.js-comment:is([data-comment-depth="2"], .discussion-comment-depth-2) {
+  margin-inline-start: 2rem;
+}
+
+:is(.field--name-field-aculta-discussion, .field--name-comments, [data-aculta-discussion-thread]) article.js-comment:is([data-comment-depth="3"], .discussion-comment-depth-3) {
+  margin-inline-start: 3rem;
+}
+
+@media (min-width: 48rem) {
+  :is(.field--name-field-aculta-discussion, .field--name-comments, [data-aculta-discussion-thread]) article.js-comment:is([data-comment-depth="1"], .discussion-comment-depth-1) {
+    margin-inline-start: 2.5rem;
+  }
+
+  :is(.field--name-field-aculta-discussion, .field--name-comments, [data-aculta-discussion-thread]) article.js-comment:is([data-comment-depth="2"], .discussion-comment-depth-2) {
+    margin-inline-start: 5rem;
+  }
+
+  :is(.field--name-field-aculta-discussion, .field--name-comments, [data-aculta-discussion-thread]) article.js-comment:is([data-comment-depth="3"], .discussion-comment-depth-3) {
+    margin-inline-start: 7.5rem;
+  }
 }
 
 /* Categorias do tópico como pílula colada (rótulo e valor dentro da mesma pílula), como na V1.
@@ -890,6 +931,8 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
 .aculta-forum-topic__content > section[data-aculta-discussion-thread] {
   border: 0;
   background: transparent;
+  padding: 0;
+  margin-block: 10px 0;
   row-gap: 10px;
 }
 

@@ -7,6 +7,7 @@ namespace Drupal\aculta_forum\Hook;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum\Service\DiscussionReplyIdempotencyManager;
 use Drupal\aculta_forum\Service\DiscussionReplyUrlBuilder;
+use Drupal\aculta_forum\Service\DiscussionThreadDepthResolver;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityFormInterface;
@@ -34,6 +35,8 @@ final class DiscussionReplyFormHooks {
     private readonly DiscussionReplyIdempotencyManager $idempotencyManager,
     private readonly RequestStack $requestStack,
     private readonly RouteMatchInterface $routeMatch,
+    #[Autowire(service: 'aculta_forum.discussion_thread_depth_resolver')]
+    private readonly DiscussionThreadDepthResolver $depthResolver,
   ) {}
 
   /**
@@ -62,6 +65,29 @@ final class DiscussionReplyFormHooks {
 
     // COM-05: Ensure action points to host page with Portuguese parameters instead of comment.reply.
     $parentId = $comment->hasParentComment() ? (int) $comment->getParentComment()->id() : NULL;
+    if ($parentId === NULL && $comment->isNew()) {
+      $request = $this->requestStack->getCurrentRequest();
+      $requestedPid = $request ? ($request->query->get('resposta') ?? $request->request->get('pid') ?? $request->query->get('pid')) : NULL;
+      if ($requestedPid && is_numeric($requestedPid)) {
+        $parent = \Drupal::entityTypeManager()->getStorage('comment')->load((int) $requestedPid);
+        if ($parent instanceof CommentInterface) {
+          $parentId = $this->depthResolver->resolveEffectiveParentId($parent);
+          if ($parentId) {
+            $comment->set('pid', $parentId);
+          }
+        }
+      }
+    }
+
+    // Expose hidden pid element and entity builder so Drupal form state carries the thread.
+    if ($comment->isNew()) {
+      $form['pid'] = [
+        '#type' => 'hidden',
+        '#value' => $parentId !== NULL ? (string) $parentId : '',
+      ];
+      $form['#entity_builders'][] = [self::class, 'buildCommentEntityWithPid'];
+    }
+
     // Resposta nova vai ao tópico; edição salva na própria rota de edição do comentário.
     $targetUrl = $comment->isNew() ? $this->urlBuilder->buildHostReplyUrl($host, $parentId) : $comment->toUrl('edit-form');
     $form['#action'] = $targetUrl->toString();
@@ -102,6 +128,25 @@ final class DiscussionReplyFormHooks {
     // Add validation and submission handlers for idempotency and safe redirection.
     array_unshift($form['#validate'], [self::class, 'validateIdempotency']);
     $form['actions']['submit']['#submit'][] = [self::class, 'postSubmitRedirect'];
+  }
+
+  /**
+   * Entity builder that assigns normalized parent ID to new comment entities.
+   */
+  public static function buildCommentEntityWithPid(string $entityType, EntityInterface $entity, array &$form, FormStateInterface $formState): void {
+    if (!$entity instanceof CommentInterface || !$entity->isNew()) {
+      return;
+    }
+    $pidVal = $formState->getValue('pid');
+    if ($pidVal !== NULL && $pidVal !== '' && is_numeric($pidVal)) {
+      /** @var \Drupal\aculta_forum\Service\DiscussionThreadDepthResolver $depthResolver */
+      $depthResolver = \Drupal::service('aculta_forum.discussion_thread_depth_resolver');
+      $parent = \Drupal::entityTypeManager()->getStorage('comment')->load((int) $pidVal);
+      if ($parent instanceof CommentInterface) {
+        $effectivePid = $depthResolver->resolveEffectiveParentId($parent);
+        $entity->set('pid', $effectivePid);
+      }
+    }
   }
 
   /**

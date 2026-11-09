@@ -14,6 +14,12 @@ aculta_forum.settings:
     reactions_enabled:
       type: boolean
       label: 'Enable emoji reactions on discussions'
+    reply_max_depth:
+      type: integer
+      label: 'Maximum reply indentation depth for discussion comments (0 = off, 2 = 2 levels, 3 = 3 levels)'
+    topic_author_delete_policy:
+      type: string
+      label: 'Topic deletion policy for topic author (moderation_queue, direct_delete, disabled)'
     default_reaction:
       type: string
       label: 'Default reaction machine name'

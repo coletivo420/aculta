@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Hook;
 
 use Drupal\aculta_forum\Service\DiscussionCommentPermalinkBuilderInterface;
+use Drupal\aculta_forum\Service\DiscussionThreadDepthResolver;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Template\Attribute;
@@ -27,16 +28,37 @@ final class DiscussionCommentPermalinkHooks {
     private readonly DiscussionCommentPermalinkBuilderInterface $permalinkBuilder,
     #[Autowire(service: 'extension.list.theme')]
     private readonly ThemeExtensionList $themes,
+    #[Autowire(service: 'aculta_forum.discussion_thread_depth_resolver')]
+    private readonly DiscussionThreadDepthResolver $depthResolver,
   ) {}
 
   /**
-   * Overrides comment permalink with canonical host link and anchor.
+   * Overrides comment permalink with canonical host link and anchor, and sets depth.
    */
   #[Hook('preprocess_comment')]
   public function preprocessComment(array &$variables): void {
     $comment = $variables['elements']['#comment'] ?? NULL;
     if (!$comment instanceof CommentInterface
-      || $comment->bundle() !== 'aculta_discussion_post'
+      || !in_array($comment->getFieldName(), ['field_aculta_discussion', 'comments'], TRUE)) {
+      return;
+    }
+
+    $depth = $this->depthResolver->resolveDepth($comment);
+    $variables['comment_depth'] = $depth;
+    if (!isset($variables['attributes'])) {
+      $variables['attributes'] = new Attribute();
+    }
+    if ($variables['attributes'] instanceof Attribute) {
+      $variables['attributes']->setAttribute('data-comment-depth', (string) $depth);
+      $variables['attributes']->addClass('discussion-comment-depth-' . $depth);
+    }
+    else {
+      $variables['attributes']['data-comment-depth'] = (string) $depth;
+      $variables['attributes']['class'][] = 'discussion-comment-depth-' . $depth;
+    }
+    $variables['#cache']['tags'][] = 'config:aculta_forum.settings';
+
+    if ($comment->bundle() !== 'aculta_discussion_post'
       || $comment->getFieldName() !== 'field_aculta_discussion') {
       return;
     }

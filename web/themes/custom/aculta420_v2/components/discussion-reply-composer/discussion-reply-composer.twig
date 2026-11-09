@@ -10,8 +10,8 @@
         </div>
         <div class="forum-post-card__author-info">
           <div class="forum-post-card__author-name-row">
-            <span class="forum-post-card__author-name">{{ mode == 'editar' ? 'Editar resposta'|t : 'Sua Resposta'|t }}</span>
-            <span class="forum-post-card__author-role">{{ 'Compositor'|t }}</span>
+            <span class="forum-post-card__author-name">{{ mode == 'editar' ? 'Editar'|t : (mode == 'excluir' ? 'Excluir'|t : 'Sua Resposta'|t) }}</span>
+            <span class="forum-post-card__author-role">{{ mode == 'excluir' ? 'Confirmação'|t : 'Compositor'|t }}</span>
           </div>
           {% if host_title %}
             <div class="forum-post-card__author-meta">

@@ -92,4 +92,26 @@ class DiscussionReactionController extends ControllerBase {
     return $renderArray;
   }
 
+  /**
+   * Returns the extra reactions picker popover markup via HTMX.
+   */
+  public function picker(string $entity_type, string $entity_id, Request $request): Response|array {
+    if (!in_array($entity_type, ['comment', 'aculta_forum_post', 'node'], TRUE)) {
+      throw new NotFoundHttpException('Invalid entity type.');
+    }
+
+    $storage = $this->forumEntityTypeManager->getStorage($entity_type);
+    if ($storage === NULL) {
+      throw new NotFoundHttpException();
+    }
+
+    $entity = $storage->load($entity_id);
+    if ($entity === NULL) {
+      throw new NotFoundHttpException('Entity not found.');
+    }
+
+    $renderArray = $this->reactionBuilder->buildPicker($entity, $this->forumCurrentUser);
+    return $renderArray;
+  }
+
 }

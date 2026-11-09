@@ -66,6 +66,9 @@
           }
           const heading = focusAfterSwap(target);
           announceSwap(target, title, heading);
+          if (target.isConnected) {
+            Drupal.attachBehaviors(target);
+          }
         });
       });
     },

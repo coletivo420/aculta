@@ -54,7 +54,7 @@ services:
     arguments: ['@aculta_forum.discussion_context_resolver', '@current_user', '@aculta_forum.discussion_reply_access', '@aculta_forum.discussion_reply_url_builder', '@string_translation']
   Drupal\aculta_forum\Hook\DiscussionReplyFormHooks:
     class: Drupal\aculta_forum\Hook\DiscussionReplyFormHooks
-    arguments: ['@aculta_forum.discussion_context_resolver', '@current_user', '@aculta_forum.discussion_reply_url_builder', '@aculta_forum.discussion_reply_idempotency_manager', '@request_stack', '@current_route_match']
+    arguments: ['@aculta_forum.discussion_context_resolver', '@current_user', '@aculta_forum.discussion_reply_url_builder', '@aculta_forum.discussion_reply_idempotency_manager', '@request_stack', '@current_route_match', '@aculta_forum.discussion_thread_depth_resolver']
   Drupal\aculta_forum\Hook\ForumCommentMoveHooks:
     class: Drupal\aculta_forum\Hook\ForumCommentMoveHooks
     arguments: ['@aculta_forum.comment_mover', '@current_user']
@@ -247,7 +247,7 @@ services:
     arguments: ['@current_user', '@extension.list.theme']
 
   Drupal\aculta_forum\Hook\DiscussionCommentPermalinkHooks:
-    arguments: ['@aculta_forum.discussion_comment_permalink_builder', '@extension.list.theme']
+    arguments: ['@aculta_forum.discussion_comment_permalink_builder', '@extension.list.theme', '@aculta_forum.discussion_thread_depth_resolver']
 
   Drupal\aculta_forum\Hook\DiscussionReactionEntityViewHooks:
     arguments: ['@aculta_forum.discussion_reaction_builder', '@aculta_forum.discussion_reaction_manager', '@current_user']
@@ -267,6 +267,20 @@ services:
   aculta_forum.discussion_reply_url_builder:
     class: Drupal\aculta_forum\Service\DiscussionReplyUrlBuilder
 
+  aculta_forum.discussion_thread_depth_resolver:
+    class: Drupal\aculta_forum\Service\DiscussionThreadDepthResolver
+    arguments:
+      - '@config.factory'
+
+  aculta_forum.topic_deletion_moderation_manager:
+    class: Drupal\aculta_forum\Service\TopicDeletionModerationManager
+    arguments:
+      - '@database'
+      - '@entity_type.manager'
+      - '@config.factory'
+      - '@current_user'
+      - '@logger.channel.aculta_forum'
+
   aculta_forum.discussion_reply_idempotency_manager:
     class: Drupal\aculta_forum\Service\DiscussionReplyIdempotencyManager
     arguments:
@@ -280,6 +294,7 @@ services:
       - '@entity.form_builder'
       - '@aculta_forum.discussion_reply_access'
       - '@aculta_forum.quote_builder'
+      - '@aculta_forum.discussion_thread_depth_resolver'
 
   aculta_forum.discussion_reply_lazy_builder:
     class: Drupal\aculta_forum\Service\DiscussionReplyLazyBuilder

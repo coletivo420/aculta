@@ -93,6 +93,10 @@
   display: inline-block;
 }
 
+.discussion-reaction-bar__picker-container {
+  position: relative;
+}
+
 .discussion-reaction-bar__popup {
   position: absolute;
   inset-block-end: calc(100% + 0.5rem);

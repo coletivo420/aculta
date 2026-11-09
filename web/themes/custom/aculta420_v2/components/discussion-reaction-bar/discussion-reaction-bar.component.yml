@@ -50,6 +50,10 @@ props:
       type: string
       title: URL para submissão da reação
       default: ''
+    picker_url:
+      type: [string, 'null']
+      title: URL para carregar os emojis extras via HTMX
+      default: null
     csrf_token:
       type: string
       title: Token CSRF para envio seguro

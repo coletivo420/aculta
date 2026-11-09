@@ -1,0 +1,15 @@
+{# Neutral fallback theme template for discussion_reaction_picker #}
+<div class="discussion-reaction-bar__popup" role="dialog" aria-label="{{ 'Escolha uma reação'|t }}" data-reaction-picker-popup>
+  <div class="discussion-reaction-bar__palette">
+    {% for key, emoji in allowed_reactions %}
+      {% set is_selected = (user_reaction == key) %}
+      <form method="post" action="{{ react_url }}" data-hx-post="{{ react_url }}" data-hx-target="#{{ target_id }}" data-hx-swap="outerHTML" class="discussion-reaction-bar__popup-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="hidden" name="reaction" value="{{ key }}">
+        <button type="submit" class="discussion-reaction-bar__palette-btn{% if is_selected %} is-selected{% endif %}" title="{{ emoji.label }}" aria-label="{{ emoji.label }}">
+          <span>{{ emoji.icon }}</span>
+        </button>
+      </form>
+    {% endfor %}
+  </div>
+</div>

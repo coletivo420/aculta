@@ -134,6 +134,39 @@ aculta_forum.post_revision_history:
         type: 'entity:aculta_forum_post'
   methods: [GET, HEAD]
 
+aculta_forum.topic_deletion_queue:
+  path: '/painel-administrativo/forum/exclusoes-topicos'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\TopicDeletionQueueController::queue'
+    _title: 'Exclusões de tópicos aguardando moderação'
+  requirements:
+    _permission: 'moderate aculta forum topic deletions,administer nodes'
+  options:
+    _admin_route: TRUE
+  methods: [GET, HEAD]
+
+aculta_forum.topic_deletion_approve:
+  path: '/painel-administrativo/forum/exclusoes-topicos/{id}/aprovar'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\TopicDeletionQueueController::approve'
+  requirements:
+    _permission: 'moderate aculta forum topic deletions,administer nodes'
+    id: '\d+'
+  options:
+    _admin_route: TRUE
+  methods: [GET, HEAD, POST]
+
+aculta_forum.topic_deletion_reject:
+  path: '/painel-administrativo/forum/exclusoes-topicos/{id}/rejeitar'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\TopicDeletionQueueController::reject'
+  requirements:
+    _permission: 'moderate aculta forum topic deletions,administer nodes'
+    id: '\d+'
+  options:
+    _admin_route: TRUE
+  methods: [GET, HEAD, POST]
+
 aculta_forum.post_revision_compare:
   path: '/painel-administrativo/forum/publicacao/{aculta_forum_post}/revisoes/comparar/{left_revision}/{right_revision}'
   defaults:
@@ -179,7 +212,7 @@ aculta_forum.discussion_composer:
     _custom_access: 'aculta_forum.discussion_reply_endpoint_access:access'
   options:
     _htmx_route: TRUE
-  methods: [GET, HEAD]
+  methods: [GET, HEAD, POST]
 
 aculta_forum.reaction_react:
   path: '/discussoes/reagir/{entity_type}/{entity_id}'
@@ -193,3 +226,16 @@ aculta_forum.reaction_react:
   options:
     _htmx_route: TRUE
   methods: [POST]
+
+aculta_forum.reaction_picker:
+  path: '/discussoes/reagir/{entity_type}/{entity_id}/opcoes'
+  defaults:
+    _controller: 'aculta_forum.discussion_reaction_controller:picker'
+    _title: 'Mais reações'
+  requirements:
+    _custom_access: 'aculta_forum.discussion_reaction_endpoint_access:access'
+    entity_type: 'comment|aculta_forum_post|node'
+    entity_id: '\d+'
+  options:
+    _htmx_route: TRUE
+  methods: [GET, HEAD]
