@@ -1,0 +1,12 @@
+<article class="forum-opening-post">
+  <header class="forum-opening-post__header">
+    <span class="forum-opening-post__badge">{{ 'Abertura'|t }}</span>
+    <span class="forum-opening-post__author">{{ author_name }}</span>
+    {% if timestamp %}
+      <time class="forum-opening-post__time">{{ timestamp }}</time>
+    {% endif %}
+  </header>
+  <div class="forum-opening-post__body">
+    {{ body }}
+  </div>
+</article>

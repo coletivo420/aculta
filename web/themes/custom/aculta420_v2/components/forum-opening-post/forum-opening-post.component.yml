@@ -1,0 +1,22 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Postagem de abertura do tópico
+description: Primeiro post do tópico, com o mesmo destaque da linha de tópico fixado.
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [author_name]
+  properties:
+    author_name:
+      type: string
+      title: Nome do autor
+      minLength: 1
+    timestamp:
+      type: [string, 'null']
+      title: Data de publicação formatada
+      default: null
+slots:
+  body:
+    title: Corpo da postagem
+    description: Corpo do tópico renderizado pelo Drupal.
