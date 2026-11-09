@@ -1,0 +1,16 @@
+/* Compositor de Criação de Conteúdo: o formulário ocupa a largura do popup. */
+.discussion-content-composer {
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.discussion-content-composer__messages {
+  margin-block-end: var(--spacing-md, 1rem);
+}
+
+.discussion-content-composer--enviando {
+  opacity: 0.6;
+  pointer-events: none;
+}

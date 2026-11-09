@@ -6,6 +6,7 @@ namespace Drupal\aculta_forum\Hook;
 
 use Drupal\Core\Hook\Order\Order;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
+use Drupal\aculta_forum\Form\DiscussionReplyPopupLayout;
 use Drupal\aculta_forum\Service\DiscussionReplyIdempotencyManager;
 use Drupal\aculta_forum\Service\DiscussionReplyUrlBuilder;
 use Drupal\aculta_forum\Service\DiscussionThreadDepthResolver;
@@ -80,18 +81,8 @@ final class DiscussionReplyFormHooks {
       }
     }
 
-    // Resposta e edição não têm Assunto nem a marca "Rejeitado": o assunto é do tópico e a
-    // rejeição é da moderação.
-    unset($form['subject'], $form['field_aculta_rejected']);
-
-    // No popup, o formulário do comentário mostra só o texto e as ações. Autoria, nome,
-    // data, hora, status e idioma ficam fora (são campos administrativos do core).
-    $keep = ['comment_body', 'actions', 'form_id', 'form_build_id', 'form_token'];
-    foreach (array_keys($form) as $key) {
-      if (!str_starts_with((string) $key, '#') && !in_array($key, $keep, TRUE)) {
-        unset($form[$key]);
-      }
-    }
+    // Layout do popup (ver DiscussionReplyPopupLayout), também usado pela story do SDC.
+    DiscussionReplyPopupLayout::apply($form, $comment->isNew());
 
     // Expose hidden pid element and entity builder so Drupal form state carries the thread.
     if ($comment->isNew()) {
@@ -119,35 +110,6 @@ final class DiscussionReplyFormHooks {
     // Prevent destination manipulation.
     $formState->setIgnoreDestination(TRUE);
 
-    // Ações do comentário: sem Visualizar; "Limpar" zera o formulário (reset nativo, sem JavaScript).
-    unset($form['actions']['preview']);
-    if (isset($form['actions']['submit'])) {
-      $form['actions']['submit']['#value'] = $comment->isNew() ? t('Publicar comentário') : t('Salvar alterações');
-      $form['actions']['submit']['#button_type'] = 'primary';
-    }
-    $form['actions']['clear'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'button',
-      '#value' => t('Limpar'),
-      '#attributes' => [
-        'type' => 'button',
-        'class' => ['button', 'button--secondary'],
-        'data-aculta-reply-clear' => '',
-      ],
-      '#weight' => 50,
-    ];
-    // "Cancelar" (secundário, como Limpar) fecha o popup de resposta.
-    $form['actions']['cancel'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'button',
-      '#value' => t('Cancelar'),
-      '#attributes' => [
-        'type' => 'button',
-        'class' => ['button', 'button--secondary'],
-        'data-aculta-dialog-close' => '',
-      ],
-      '#weight' => 51,
-    ];
 
     // Apply native HTMX submission to the form element.
     $htmx = new Htmx();

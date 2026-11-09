@@ -12,6 +12,7 @@ use Drupal\Core\Hook\Order\Order;
 use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_magazine\Form\StudioContentPopupLayout;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -58,23 +59,11 @@ final class StudioCreatePopupFormHooks {
       ->onlyMainContent()
       ->applyTo($form);
 
-    if (isset($form['actions']['preview'])) {
-      unset($form['actions']['preview']);
-    }
+    // Layout do popup (ver StudioContentPopupLayout), também usado pela story do SDC.
+    StudioContentPopupLayout::apply($form);
     if (isset($form['actions']['submit'])) {
       $form['actions']['submit']['#submit'][] = [self::class, 'redirectPopupToNode'];
     }
-    $form['actions']['cancel'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'button',
-      '#value' => t('Cancelar'),
-      '#attributes' => [
-        'type' => 'button',
-        'class' => ['button', 'button--secondary'],
-        'data-aculta-dialog-close' => '',
-      ],
-      '#weight' => 50,
-    ];
   }
 
   /**

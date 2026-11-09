@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta420_v2\Story;
 
 use Drupal\Core\Entity\EntityFormBuilderInterface;
+use Drupal\aculta_forum\Form\TopicPopupLayout;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\Markup;
@@ -69,6 +70,8 @@ final class DiscussionTopicComposerStory extends StoryDefault implements Contain
     ]);
 
     $form = $this->entityFormBuilder->getForm($node);
+    // Mesmo layout do popup Criar tópico (fórum).
+    TopicPopupLayout::apply($form);
 
     $renderedHtml = (string) $this->renderer->renderPlain($form);
 

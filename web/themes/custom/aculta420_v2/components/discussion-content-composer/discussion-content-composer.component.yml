@@ -1,0 +1,26 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Compositor de Criação de Conteúdo
+status: stable
+description: Compositor do popup "Nova publicação" do Aculta Studio (Marley), para publicar revistas. Formulário de revista no layout do popup, com Cancelar e sem pré-visualização.
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [target_id]
+  properties:
+    target_id:
+      type: string
+      title: Identificador do container alvo
+      minLength: 1
+    status:
+      type: string
+      title: Estado do compositor
+      enum: [editando, enviando, erro, enviado]
+      default: editando
+slots:
+  messages:
+    title: Mensagens de status ou erro
+    description: Região de alerta acessível (role="status").
+  form:
+    title: Formulário de revista
+    description: Render array do formulário do nó revista, com o layout do popup.

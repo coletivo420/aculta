@@ -11,6 +11,7 @@ use Drupal\Core\Hook\Order\Order;
 use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\aculta_forum\Form\TopicPopupLayout;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -55,38 +56,8 @@ final class TopicComposerFormHooks {
       return;
     }
 
-    // Popup: só Assunto, Comentário, Categoria e as ações. Menu, autor, revisão e abas do
-    // nó ficam fora do compositor. O resumo do corpo também sai.
-    $keep = ['title', 'body', 'field_aculta_categories', 'actions', 'form_id', 'form_build_id', 'form_token'];
-    foreach (array_keys($form) as $key) {
-      if (!str_starts_with((string) $key, '#') && !in_array($key, $keep, TRUE)) {
-        unset($form[$key]);
-      }
-    }
-    if (isset($form['body']['widget'][0]['summary'])) {
-      unset($form['body']['widget'][0]['summary']);
-    }
-    // Popup: sem pré-visualização. "Cancelar" (secundário) fecha o popup.
-    unset($form['actions']['preview']);
-    $form['actions']['cancel'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'button',
-      '#value' => t('Cancelar'),
-      '#attributes' => [
-        'type' => 'button',
-        'class' => ['button', 'button--secondary'],
-        'data-aculta-dialog-close' => '',
-      ],
-      '#weight' => 50,
-    ];
-    // O corpo do tópico só aceita o formato do fórum: o seletor sai do popup e o formato
-    // fica fixo como valor oculto.
-    if (isset($form['body']['widget'][0]['format']['format'])) {
-      $formatElement = &$form['body']['widget'][0]['format'];
-      $formatElement['format']['#type'] = 'hidden';
-      $formatElement['format']['#value'] = 'forum';
-      unset($formatElement['guidelines'], $formatElement['help']);
-    }
+    // Layout do popup (ver TopicPopupLayout), também usado pela story do SDC.
+    TopicPopupLayout::apply($form);
     // A resposta traz a página inteira: o HTMX recorta só o formulário do tópico para o popup.
     $form['#attributes']['data-aculta-topic-composer'] = '';
     $form['#attributes']['data-hx-select'] = '[data-aculta-topic-composer]';

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta420_v2\Story;
 
 use Drupal\Core\Entity\EntityFormBuilderInterface;
+use Drupal\aculta_forum\Form\DiscussionReplyPopupLayout;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\Markup;
@@ -91,6 +92,8 @@ final class DiscussionReplyComposerStory extends StoryDefault implements Contain
     ]);
 
     $form = $this->entityFormBuilder->getForm($comment);
+    // Mesmo layout do popup de resposta (fórum).
+    DiscussionReplyPopupLayout::apply($form, $comment->isNew());
 
     // Ajusta título do botão e action para visualização limpa na story.
     if (isset($form['actions']['submit'])) {

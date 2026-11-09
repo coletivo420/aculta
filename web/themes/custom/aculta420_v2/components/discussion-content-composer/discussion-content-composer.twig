@@ -1,0 +1,10 @@
+<div id="{{ target_id }}" class="discussion-content-composer discussion-content-composer--{{ status|default('editando') }}" data-discussion-content-composer data-status="{{ status|default('editando') }}">
+  {% if messages %}
+    <div class="discussion-content-composer__messages" role="status" aria-live="polite">
+      {{ messages }}
+    </div>
+  {% endif %}
+  <div class="discussion-content-composer__form">
+    {{ form }}
+  </div>
+</div>

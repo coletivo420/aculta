@@ -1,0 +1,4 @@
+name: Padrão (Nova publicação)
+description: Formulário real de revista no layout do popup do Marley (sem pré-visualização; Cancelar fecha o popup).
+component: aculta420_v2:discussion-content-composer
+class: Drupal\aculta420_v2\Story\DiscussionContentComposerStory
