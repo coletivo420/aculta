@@ -88,7 +88,7 @@
      * Monta os botões agrupados pela ordem de categorias do catálogo.
      */
     _buildGrid(doc, grid) {
-      const categories = this._config.labels.categories || {};
+      const categories = (this._config.labels && this._config.labels.categories) || {};
       const baseUrl = (this._config.svgBaseUrl || '').replace(/\/+$/, '');
       const byCategory = new Map();
 
@@ -224,4 +224,4 @@
   window.CKEditor5 = window.CKEditor5 || {};
   window.CKEditor5.acultaFluentEmoji = { FluentEmoji };
 
-})(window.CKEditor5.dll);
+})(window.CKEditor5);

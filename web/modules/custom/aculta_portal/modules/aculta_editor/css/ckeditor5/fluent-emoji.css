@@ -40,8 +40,14 @@
   text-transform: uppercase;
 }
 
-.ck-aculta-fluent-emoji-category[hidden] {
-  display: none;
+/*
+ * O CSS de botões do CKEditor 5 também define display; por isso o hidden do
+ * filtro de busca precisa vencer a cascata.
+ */
+.ck-aculta-fluent-emoji-category[hidden],
+.ck-aculta-fluent-emoji-item[hidden],
+.ck-aculta-fluent-emoji-empty[hidden] {
+  display: none !important;
 }
 
 .ck-aculta-fluent-emoji-item {
@@ -63,10 +69,6 @@
   outline: none;
 }
 
-.ck-aculta-fluent-emoji-item[hidden] {
-  display: none;
-}
-
 .ck-aculta-fluent-emoji-item img {
   display: block;
   inline-size: 1.5rem;
@@ -77,8 +79,4 @@
   margin: 0.5rem 0 0;
   color: var(--ck-color-text, #333);
   font-size: 0.875rem;
-}
-
-.ck-aculta-fluent-emoji-empty[hidden] {
-  display: none;
 }
