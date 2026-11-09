@@ -12,8 +12,6 @@ discussion-reply-popup:
   dependencies:
     - core/drupal
     - core/once
-
-    - core/drupal
     - history/api
 
 ckeditor5.attachment:
