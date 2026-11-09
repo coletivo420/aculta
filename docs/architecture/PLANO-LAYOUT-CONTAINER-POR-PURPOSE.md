@@ -1,3 +1,5 @@
+> **Documento histórico, substituído pela ADR-054 (2026-11-09).** O painel administrativo `Layout de container` foi retirado do tema. Configuração e renderização legadas ainda podem ser lidas durante a migração paralela; não usar este plano para novas implementações. Plano vigente: `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md`.
+
 # Plano: layout de container por purpose (aculta420_v2)
 
 Status: planejado com respostas do responsável em 2026-11-06. Execução pendente.
