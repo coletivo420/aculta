@@ -3,9 +3,10 @@
   <div class="forum-post-card__inner">
     <header class="forum-post-card__header">
       <div class="forum-post-card__author">
-        {% if avatar and ('<img' in avatar or '<svg' in avatar or avatar|striptags|trim != '') %}
+        {% set avatar_markup = avatar is iterable ? render_var(avatar) : avatar %}
+        {% if avatar_markup and ('<img' in avatar_markup or '<svg' in avatar_markup or avatar_markup|striptags|trim != '') %}
           <div class="forum-post-card__avatar">
-            {{ avatar }}
+            {{ avatar_markup }}
           </div>
         {% else %}
           <div class="forum-post-card__avatar-fallback" aria-hidden="true">
