@@ -1,3 +1,9 @@
+## Não versionado — ADR-054 P4 cobertura final de Layout Builder (2026-11-09)
+
+- Revalidação por multiconjunto de tokens: `wiki_entry.default`, `editorial_highlight.default`, `revista.default` e `aculta_notice.default` não alteram a renderização; os quatro foram mantidos com Layout Builder e `allow_custom=false`.
+- Cobertura: **22 dos 24 displays compatíveis**; gate `validate-aculta420-layout-builder-batch.php` PASS (170 checks).
+- Excluídos por perda de conteúdo reproduzível: `node.document.full` e `block_content.basic.default`, restaurados do Config Sync.
+
 ## Não versionado — ADR-054 P4 lote 3 de Layout Builder (2026-11-09)
 
 - Layout Builder habilitado em `node.activity.default/full`, `node.aculta_adm.default`, `node.document.default`, `node.page.default` e `taxonomy_term.editorial_author.default`.

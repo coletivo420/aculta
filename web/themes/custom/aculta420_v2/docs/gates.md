@@ -179,3 +179,9 @@ Este registro não autoriza `drush cim`, `updatedb` ou alterações destrutivas;
 - Lote 3 ativado: `node.activity.default`, `node.activity.full`, `node.aculta_adm.default`, `node.document.default`, `node.page.default` e `taxonomy_term.editorial_author.default`.
 - Revertidos por alterarem a listagem da Wiki: `node.aculta_notice.default`, `node.editorial_highlight.default`, `node.revista.default` e `node.wiki_entry.default`. Comparação de sete páginas (home, institucional, atividades, transparência, membros, Revista e Wiki); estado final `FINAL OK`.
 - Não habilitados por decisão anterior, com backup e exclusão documentadas: `node.document.full` e `block_content.basic.default`. Cobertura: 18 de 24 displays compatíveis; os 6 restantes têm causa registrada.
+
+## Correção — revalidação do lote 3 (2026-11-09)
+
+- A comparação por sequência de texto acusou falsos positivos causados pela ordem não determinística do bloco "Alterações recentes" da Wiki. A revalidação por multiconjunto de tokens confirmou `wiki IGUAL`, `home IGUAL` e `revista IGUAL`.
+- Recuperados e mantidos com Layout Builder: `node.wiki_entry.default`, `node.editorial_highlight.default`, `node.revista.default` e `node.aculta_notice.default` (`allow_custom=false`).
+- `validate-aculta420-layout-builder-batch.php`: PASS (170 checks, 22 displays). Excluídos apenas `node.document.full` e `block_content.basic.default`, que perdem conteúdo de forma reproduzível.

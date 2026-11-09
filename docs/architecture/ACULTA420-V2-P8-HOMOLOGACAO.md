@@ -84,7 +84,7 @@ A suíte de 86 checks foi repetida após a restauração dos blocos de cabeçalh
 
 ## 5. DEFERRED (com causa)
 
-- **Layout Builder por display:** 18 dos 24 displays compatíveis com Layout Builder habilitado (`allow_custom=false`): 4 de nó `full`, 8 de `block_content`, 5 de nó `default`/`activity` e 1 de taxonomy. Gate 138 checks PASS; cada ativação comparada em sete páginas (home, institucional, atividades, transparência, membros, Revista e Wiki). Seis displays ficaram de fora com causa documentada: `document.full` e `basic.default` (render alterado/plugins ausentes) e `aculta_notice.default`, `editorial_highlight.default`, `revista.default` e `wiki_entry.default` (alteravam a listagem da Wiki). Backup e Config Sync conferem para o lote ativo.
+- **Layout Builder por display:** **22 dos 24 displays compatíveis** com Layout Builder (`allow_custom=false`), incluindo nós `full`/`default`, oito `block_content` e `taxonomy_term.editorial_author.default`. Gate 170 checks PASS; ativação comparada em sete páginas e revalidada por multiconjunto de tokens (a ordenação do bloco "Alterações recentes" da Wiki gerava falsos positivos). Excluídos apenas `node.document.full` e `block_content.basic.default`, que perdem conteúdo de forma reproduzível e foram restaurados do Config Sync.
 - **Landing por purpose (P5):** depende de conteúdo editorial e do mesmo ambiente isolado. Mecanismo e piloto Links documentados em `ACULTA420-V2-P5-LANDING-PAGES.md`.
 - **Visual:** leitura humana das capturas e aceitação do responsável.
 - **Prévia autenticada em navegador:** validada por Drush e HTTP anônimo, não em sessão autenticada real.

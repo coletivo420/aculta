@@ -59,6 +59,10 @@ $targets = [
   'node.document.default',
   'node.page.default',
   'taxonomy_term.editorial_author.default',
+  'node.wiki_entry.default',
+  'node.editorial_highlight.default',
+  'node.revista.default',
+  'node.aculta_notice.default',
 ];
 
 $displayStorage = \Drupal::entityTypeManager()->getStorage('entity_view_display');

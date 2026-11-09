@@ -11,48 +11,104 @@ dependencies:
     - field.field.node.editorial_highlight.field_weight
     - node.type.editorial_highlight
   module:
+    - layout_builder
     - link
     - user
+third_party_settings:
+  layout_builder:
+    enabled: true
+    allow_custom: false
+    sections:
+      -
+        layout_id: layout_onecol
+        layout_settings:
+          label: ''
+        components:
+          d4216b76-2dd1-4f12-ad0d-4d9abde4c625:
+            uuid: d4216b76-2dd1-4f12-ad0d-4d9abde4c625
+            region: content
+            configuration:
+              id: 'field_block:node:editorial_highlight:field_category'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: string
+                label: hidden
+                settings:
+                  link_to_entity: false
+                  link_rel: canonical
+                third_party_settings: {  }
+            weight: 0
+            additional: {  }
+          f1d74616-41a3-4a97-af1e-ee15c06b1b90:
+            uuid: f1d74616-41a3-4a97-af1e-ee15c06b1b90
+            region: content
+            configuration:
+              id: 'field_block:node:editorial_highlight:field_summary'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: basic_string
+                label: hidden
+                settings: {  }
+                third_party_settings: {  }
+            weight: 1
+            additional: {  }
+          8c42ec30-09ff-4736-a4e6-d14386d0664b:
+            uuid: 8c42ec30-09ff-4736-a4e6-d14386d0664b
+            region: content
+            configuration:
+              id: 'field_block:node:editorial_highlight:field_complement'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: basic_string
+                label: hidden
+                settings: {  }
+                third_party_settings: {  }
+            weight: 2
+            additional: {  }
+          19fcbc0a-223b-4802-89bc-759f482db408:
+            uuid: 19fcbc0a-223b-4802-89bc-759f482db408
+            region: content
+            configuration:
+              id: 'field_block:node:editorial_highlight:field_link'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: link
+                label: hidden
+                settings:
+                  trim_length: 0
+                  url_only: false
+                  url_plain: false
+                  rel: ''
+                  target: ''
+                third_party_settings: {  }
+            weight: 3
+            additional: {  }
+        third_party_settings: {  }
 id: node.editorial_highlight.default
 targetEntityType: node
 bundle: editorial_highlight
 mode: default
-content:
-  field_category:
-    type: string
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 0
-    region: content
-  field_complement:
-    type: basic_string
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 2
-    region: content
-  field_link:
-    type: link
-    label: hidden
-    settings:
-      trim_length: 0
-      url_only: false
-      url_plain: false
-      rel: ''
-      target: ''
-    third_party_settings: {  }
-    weight: 3
-    region: content
-  field_summary:
-    type: basic_string
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 1
-    region: content
+content: {  }
 hidden:
+  co_authors: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   field_domain_source: true
   field_weight: true
   langcode: true
   links: true
+  private_message_link: true
+  search_api_excerpt: true
+  field_category: true
+  field_summary: true
+  field_complement: true
+  field_link: true

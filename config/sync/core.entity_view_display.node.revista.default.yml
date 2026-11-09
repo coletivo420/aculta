@@ -15,68 +15,131 @@ dependencies:
     - field.field.node.revista.field_published_at
     - field.field.node.revista.field_references
     - field.field.node.revista.field_related_activity
+    - field.field.node.revista.field_revista_accent
     - field.field.node.revista.field_subtitle
     - field.field.node.revista.field_summary
     - field.field.node.revista.field_tags
     - node.type.revista
   module:
+    - layout_builder
     - text
     - user
+third_party_settings:
+  layout_builder:
+    enabled: true
+    allow_custom: false
+    sections:
+      -
+        layout_id: layout_onecol
+        layout_settings:
+          label: ''
+        components:
+          4fdd1fa8-e175-4923-a3cd-632aa4cb38ca:
+            uuid: 4fdd1fa8-e175-4923-a3cd-632aa4cb38ca
+            region: content
+            configuration:
+              id: 'extra_field_block:node:revista:content_moderation_control'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+            weight: 0
+            additional: {  }
+          ee728796-5af2-4c74-a4f0-4dc4840d4d7f:
+            uuid: ee728796-5af2-4c74-a4f0-4dc4840d4d7f
+            region: content
+            configuration:
+              id: 'field_block:node:revista:field_media_image'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: entity_reference_entity_view
+                label: hidden
+                settings:
+                  view_mode: default
+                  link: false
+                third_party_settings: {  }
+            weight: 1
+            additional: {  }
+          f0c6ede4-1e2d-41f2-94fa-b8b97de176b4:
+            uuid: f0c6ede4-1e2d-41f2-94fa-b8b97de176b4
+            region: content
+            configuration:
+              id: 'field_block:node:revista:field_summary'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: basic_string
+                label: hidden
+                settings: {  }
+                third_party_settings: {  }
+            weight: 2
+            additional: {  }
+          cc6c18ea-d7cd-4b04-9798-04b1e6b369d8:
+            uuid: cc6c18ea-d7cd-4b04-9798-04b1e6b369d8
+            region: content
+            configuration:
+              id: 'field_block:node:revista:field_subtitle'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: string
+                label: hidden
+                settings:
+                  link_to_entity: false
+                  link_rel: canonical
+                third_party_settings: {  }
+            weight: 3
+            additional: {  }
+          a77cc688-5036-4c7b-8c47-fff966274498:
+            uuid: a77cc688-5036-4c7b-8c47-fff966274498
+            region: content
+            configuration:
+              id: 'field_block:node:revista:body'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: text_default
+                label: hidden
+                settings: {  }
+                third_party_settings: {  }
+            weight: 4
+            additional: {  }
+          1e018429-fe7f-4cd4-9bc0-285076fd0229:
+            uuid: 1e018429-fe7f-4cd4-9bc0-285076fd0229
+            region: content
+            configuration:
+              id: 'field_block:node:revista:field_editorial_author'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: entity_reference_label
+                label: above
+                settings:
+                  link: false
+                third_party_settings: {  }
+            weight: 5
+            additional: {  }
+          ec354fa3-528b-4e70-8a2d-3c30fdee6ed2:
+            uuid: ec354fa3-528b-4e70-8a2d-3c30fdee6ed2
+            region: content
+            configuration:
+              id: 'extra_field_block:node:revista:links'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+            weight: 6
+            additional: {  }
+        third_party_settings: {  }
 id: node.revista.default
 targetEntityType: node
 bundle: revista
 mode: default
-content:
-  body:
-    type: text_default
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 5
-    region: content
-  content_moderation_control:
-    settings: {  }
-    third_party_settings: {  }
-    weight: -20
-    region: content
-  field_editorial_author:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: false
-    third_party_settings: {  }
-    weight: 25
-    region: content
-  field_media_image:
-    type: entity_reference_entity_view
-    label: hidden
-    settings:
-      view_mode: default
-      link: false
-    third_party_settings: {  }
-    weight: -20
-    region: content
-  field_subtitle:
-    type: string
-    label: hidden
-    settings:
-      link_to_entity: false
-      link_rel: canonical
-    third_party_settings: {  }
-    weight: -5
-    region: content
-  field_summary:
-    type: basic_string
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: -10
-    region: content
-  links:
-    settings: {  }
-    third_party_settings: {  }
-    weight: 100
-    region: content
+content: {  }
 hidden:
   co_authors: true
   entity_print_view_epub: true
@@ -96,3 +159,10 @@ hidden:
   langcode: true
   private_message_link: true
   search_api_excerpt: true
+  content_moderation_control: true
+  field_media_image: true
+  field_summary: true
+  field_subtitle: true
+  body: true
+  field_editorial_author: true
+  links: true
