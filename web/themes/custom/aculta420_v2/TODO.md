@@ -4,34 +4,22 @@ Estado: em desenvolvimento · versão 1.4.0 (`aculta420_v2.info.yml`) · status:
 
 ## Próximo passo
 
-- **ADR-054 P4 (feito):** cinco layouts SDC em `group: Layouts`, descobertos pelo `ui_patterns_layouts` e renderizados (gate 42 checks). Planejador classifica 95 displays (24 compatíveis, 48 adaptador, 23 incompatíveis). Habilitação por display DEFERRED até staging isolado.
-- **ADR-054 P5 (próximo):** fonte explícita da landing page por purpose; piloto Links/LinkWeed com composição própria e teste de cache/domínio.
-- **ADR-054 P3 (feito):** shell v2 opt-in com cinco áreas finais; ponte para navigation/highlighted/help/breadcrumb; smoke HTTP em 9 hosts válidos, 1 H1 e 1 `<main>`; rollback `classic` testado. Capturas Firefox pendentes.
-
-- **Revista:** accent global via UI Styles, precedência no wrapper/SDC. Cinco nós sem accent próprio; node 602 vazio. Campo legado preservado, fora do fluxo.
-- **PHPUnit:** 12 testes/56 assertions PASS; bootstrap cria saída relativa. Foundations, UI Styles, SDC schema/render PASS.
-- **F3:** concluída; Firefox ESR palette/botões 360/360, 10 purposes, claro/escuro, 320/1440, sem overflow. `tests/browser/capturas/purpose-buttons/2026-11-06/`.
-- **F2:** shell intacto; ESR 120/120, 10 purposes, claro/escuro, 320/1440, sem overflow e contraste AA. Aceite visual pendente. `tests/browser/capturas/shell/2026-11-06/`.
-- **Editor:** suíte completa PASS. ULI cria cookie compartilhado; o formulário é administrativo no host principal, não no host Revista. CKEditor editorial e os casos administrativos passaram em 1280/390/320 sem overflow. `tests/browser/capturas/aculta-editor/2026-11-06/`.
-- **Config:** sem diff seguro de tema/módulo. Config local `default_admin`, field legado e chaves sensíveis Turnstile preservados; sem `drush cex`. Ver handoff.
-- **UI Patterns:** stories PHP alimentam props/slots atuais; slots HTML usam render arrays Drupal. Renderer Drupal confirmou Breadcrumb, avatar, links sociais e busca Wiki420, além dos componentes previamente corrigidos. Aceite visual autenticado no Runtime pendente. Loja aguarda autorização.
+- **ADR-054 P5:** fonte explícita da landing por purpose; piloto Links com composição própria, teste de cache e isolamento de domínio.
+- **ADR-054 P4:** Layout Builder por display DEFERRED até staging isolado (24 compatíveis, 48 adaptador, 23 incompatíveis).
+- **ADR-054 P6/P7 (feito):** prévias reais de blocos em `aculta_ui_library` (gate 23 checks, 403/404 por domínio) e `statistics.css` fora do global (gate 8 checks, ausência confirmada na home).
+- **P3:** shell v2 opt-in com cinco áreas; smoke HTTP com 1 H1 e 1 `main` em nove hosts; capturas Firefox e aceite visual pendentes.
+- **Pendências visuais:** Revista (accent via UI Styles), F2/F3 (aceite visual), editor (suíte PASS), UI Patterns (aceite autenticado), Loja (aguarda autorização).
 
 ## Dívidas
 
-- `price` (ADR-046): aguarda contrato/autorização de Loja.
-- Accent de `card-cultural` (D1): aguarda `domain_presentation.accent` do Portal.
+- `price` (ADR-046): aguarda contrato de Loja.
+- Accent de `card-cultural` (D1): aguarda `domain_presentation.accent`.
+- Gates de fundações e classes mapeadas falham por dívidas pré-existentes (caminho de tokens e 5 classes de perfil).
 
 ## Leitura
 
-Leia este arquivo, código alvo e trecho necessário do `CHANGELOG.md`. Roadmap: `web/themes/custom/aculta420_v2/docs/roadmap.md`.
+Este arquivo, código alvo e trecho do `CHANGELOG.md`. Roadmap: `web/themes/custom/aculta420_v2/docs/roadmap.md`.
 
 ## Ao concluir uma fase
 
-Atualize este TODO e `docs/operations/status/aculta420_v2.yml` se existir, no mesmo commit. Remova concluídos; sem histórico.
-
-
-## Fórum Growroom420 — status
-
-- Entrega 1: lista, página de tópico e cabeçalho de categoria aplicados. Captura visual DEFERRED.
-- Entrega 2: painel lateral da lista e diretrizes do `/criar-topico` aplicados. Painéis de destaque e relacionados aguardam o contrato com o Portal.
-- Pendências: decisão sobre o vocabulário de tokens do validador de fundamentos; falhas de fronteira em módulos do Portal.
+Atualize este TODO e `docs/operations/status/aculta420_v2.yml`, no mesmo commit; sem histórico.

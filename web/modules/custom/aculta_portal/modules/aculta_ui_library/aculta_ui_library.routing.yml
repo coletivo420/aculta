@@ -1,0 +1,26 @@
+aculta_ui_library.blocks:
+  path: /painel-administrativo/aculta/ui-library/blocos
+  defaults:
+    _controller: '\Drupal\aculta_ui_library\Controller\UiLibraryPreviewController::listBlocks'
+    _title: 'Biblioteca de blocos'
+  requirements:
+    _permission: 'administer blocks'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+
+aculta_ui_library.block_preview:
+  path: /painel-administrativo/aculta/ui-library/blocos/{block}
+  defaults:
+    _controller: '\Drupal\aculta_ui_library\Controller\UiLibraryPreviewController::preview'
+    _title: 'Prévia do bloco'
+  requirements:
+    _permission: 'administer blocks'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+    parameters:
+      block:
+        type: 'entity:block'

@@ -18,6 +18,7 @@ Regra: rode **somente** os gates do escopo do diff e dos módulos que dependem d
 | --- | --- | --- |
 | Qualquer mudança no Portal (`aculta_portal`) | `php scripts/validate-aculta-portal-drupal12.php` | Obrigatório. Elimine, não expanda, a dívida registrada |
 | Rotas `/painel-administrativo/**` ou `/integracoes/**` | `validate-admin-routes-main-domain.php` | Somente MAIN; subdomínio responde 404 |
+| Catálogo de blocos e prévias da UI Library | `php scripts/validate-aculta-ui-library.php` (delega ao Drush) | Rotas MAIN, acesso por perfil, catálogo real, prévia com `max-age 0` |
 | Domínio, purpose, caminhos de entrada, apresentação | `validate-domain-presentation-contract.php`, `validate-domain-front-paths.php` | |
 | Checkout, pagamento, loja | `validate-payment-domain-policy.php`, `validate-portal-commerce-security.php` | Pagamento só com pedido explícito |
 | Cross-domain, sessão, cookies | `validate-cross-domain-request-policy.php` (com `--uri`, Runtime), `validate-session-cookie-policy.php` | |

@@ -1,0 +1,10 @@
+name: 'ACULTA UI Library'
+description: 'Catálogo administrativo de blocos reais do tema ACULTA420 V2, com prévia condicionada a acesso.'
+type: module
+package: ACULTA
+version: 0.1.0-dev.1
+core_version_requirement: ^11.5 || ^12
+dependencies:
+  - drupal:block
+  - drupal:system
+configure: aculta_ui_library.blocks

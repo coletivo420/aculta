@@ -1,3 +1,18 @@
+## Não versionado — ADR-054 P7 escopo de CSS (2026-11-09)
+
+- `src/styles/statistics.css` saiu do `global-styling` e virou a biblioteca contextual `statistics`, anexada apenas em `aculta_statistics.dashboard` e `aculta_statistics.area`.
+- Os seletores `.aculta-statistics__controls`, `__wiki-ranking` e `__wiki-revisions` saíram de `portal-ui-map.css` e foram para `statistics.css`.
+- Verificação por requisição real na home do MAIN: nenhum CSS servido contém `.aculta-statistics`. Redução de ~2,7 KB por página.
+- Gate novo `validate-aculta420-css-scope.php`: PASS (8 checks).
+
+## Não versionado — ADR-054 P6 prévias reais de blocos (2026-11-09)
+
+- Novo módulo do Portal `aculta_ui_library`: catálogo dos blocos reais do `aculta420_v2` e prévia por plugin original, com `administer blocks`, `_aculta_domain_purpose: main`, `_admin_route`, `max-age 0` e contexto `user.roles`.
+- Visitante no MAIN recebe 403; subdomínios respondem 404. Contexto obrigatório ausente e falha do plugin viram "Prévia indisponível", sem conteúdo fictício.
+- Gate `validate-aculta-ui-library.php`: PASS (23 checks) — rotas MAIN, acesso por perfil, catálogo com 37 blocos e prévia real de `site_branding`.
+- A sugestão `page__shell_v2` foi movida de `src/Hook` para `aculta420_v2.theme`, conforme a fronteira módulo/tema; smoke do shell v2 repetido após a mudança.
+- **RUNTIME STATUS: PARCIAL** — prévia validada via Drush e HTTP anônimo; navegador autenticado pendente.
+
 ## Não versionado — ADR-054 P4 layouts SDC e descoberta pelo Layout Builder (2026-11-09)
 
 - Cinco layouts SDC novos em `group: Layouts`: `layout-section`, `layout-two-columns`, `layout-grid`, `layout-narrow` e `layout-full`, com schema estrito, CSS local e story.

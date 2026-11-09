@@ -4,6 +4,14 @@ topic-dialog:
     component:
       components/dialog/dialog.css: {}
 
+statistics:
+  version: 0.1.0
+  css:
+    theme:
+      src/styles/statistics.css: {}
+  dependencies:
+    - aculta420_v2/global-styling
+
 shell-v2:
   version: 0.1.0
   css:
@@ -31,7 +39,6 @@ global-styling:
       src/styles/event-organization.css: {}
       src/styles/content.css: {}
       src/styles/search.css: {}
-      src/styles/statistics.css: {}
       src/styles/studio-identity.css: {}
       src/styles/buttons.css: {}
       components/button/button.css: {}

@@ -25,6 +25,14 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  */
 final class PagePresentationHooks {
 
+  /**
+   * Routes that render the statistics dashboard UI.
+   */
+  private const STATISTICS_ROUTES = [
+    'aculta_statistics.dashboard',
+    'aculta_statistics.area',
+  ];
+
   public function __construct(
     #[Autowire(service: 'config.factory')]
     private readonly ConfigFactoryInterface $configFactory,
@@ -50,6 +58,10 @@ final class PagePresentationHooks {
     $variables['aculta_shell_variant'] = $this->shellVariant();
     if ($variables['aculta_shell_variant'] === 'v2') {
       $variables['#attached']['library'][] = 'aculta420_v2/shell-v2';
+    }
+    // ADR-054 P7: CSS de estatísticas carregado só nas rotas do painel.
+    if (in_array($this->currentRouteMatch?->getRouteName(), self::STATISTICS_ROUTES, TRUE)) {
+      $variables['#attached']['library'][] = 'aculta420_v2/statistics';
     }
     $variables['aculta_component_library_page'] = PurposeContainerLayout::isComponentLibraryRoute($this->currentRouteMatch?->getRouteName());
     $variables['aculta_lms_lesson_route'] = $this->currentRouteMatch?->getRouteName() === 'aculta_lms.lesson_view';
@@ -93,24 +105,6 @@ final class PagePresentationHooks {
         && is_string($link['url'] ?? NULL)
         && $link['url'] !== '',
     ));
-  }
-
-  /**
-   * Adds the parallel shell template when the opt-in setting selects it.
-   *
-   * Runs before preprocess_page, so it reads the setting from config instead
-   * of relying on a variable that is not set yet.
-   *
-   * @param array $suggestions
-   *   Template suggestions for the page theme hook.
-   * @param array $variables
-   *   Theme variables.
-   */
-  #[Hook('theme_suggestions_page_alter')]
-  public function themeSuggestionsPageAlter(array &$suggestions, array $variables): void {
-    if ($this->shellVariant() === 'v2') {
-      $suggestions[] = 'page__shell_v2';
-    }
   }
 
   /**

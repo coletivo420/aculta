@@ -95,8 +95,9 @@ $assert(substr_count($template, 'id="main-content"') === 1, 'Shell v2 deve ter e
 $assert(preg_match('/\b(hostname|server_name|HTTP_HOST|gethostname)\b/i', $template) !== 1, 'Shell v2 não pode comparar hostname.');
 
 $hookSource = (string) file_get_contents($theme . '/src/Hook/PagePresentationHooks.php');
-$assert(str_contains($hookSource, "theme_suggestions_page_alter"), 'O hook não registra a sugestão do shell v2.');
-$assert(str_contains($hookSource, "page__shell_v2"), 'A sugestão page__shell_v2 não é adicionada.');
+$themeSource = (string) file_get_contents($theme . '/aculta420_v2.theme');
+$assert(str_contains($themeSource, 'theme_suggestions_page_alter'), 'O arquivo do tema não registra a sugestão do shell v2.');
+$assert(str_contains($themeSource, "page__shell_v2"), 'A sugestão page__shell_v2 não é adicionada.');
 $assert(str_contains($hookSource, "aculta_shell_variant"), 'O hook não lê a configuração aculta_shell_variant.');
 $assert(str_contains($hookSource, "aculta420_v2/shell-v2"), 'O CSS do shell v2 não é anexado pelo hook.');
 

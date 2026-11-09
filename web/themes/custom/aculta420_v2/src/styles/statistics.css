@@ -116,3 +116,11 @@
     min-width: 12rem;
   }
 }
+
+/* Regras de layout antes compartilhadas em portal-ui-map.css (ADR-054 P7). */
+.aculta-statistics__controls,
+.aculta-statistics__wiki-ranking,
+.aculta-statistics__wiki-revisions {
+  display: grid;
+  gap: .5rem;
+}

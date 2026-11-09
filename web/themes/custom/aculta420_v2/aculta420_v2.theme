@@ -20,3 +20,15 @@ use Drupal\aculta420_v2\Hook\PortalUiHooks;
 function aculta420_v2_preprocess(array &$variables): void {
   PortalUiHooks::preprocessVariables($variables);
 }
+
+/**
+ * Implements hook_theme_suggestions_page_alter().
+ *
+ * A sugestão do shell paralelo é apresentação: fica no arquivo do tema, não
+ * em src/Hook. O padrão continua page.html.twig quando a opção é classic.
+ */
+function aculta420_v2_theme_suggestions_page_alter(array &$suggestions, array $variables): void {
+  if (theme_get_setting('aculta_shell_variant') === 'v2') {
+    $suggestions[] = 'page__shell_v2';
+  }
+}
