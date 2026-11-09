@@ -970,3 +970,58 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
     animation-duration: 3s;
   }
 }
+
+/* Ações de comentário com ícones Phosphor (ícone e texto em aria-label; cor e hover do tema). */
+.aculta-comment-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: var(--tap-target-min, 2.75rem);
+  min-block-size: var(--tap-target-min, 2.75rem);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition: color 150ms ease, transform 150ms ease;
+}
+
+.aculta-comment-action__icon {
+  display: inline-flex;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}
+
+.aculta-comment-action__icon svg {
+  inline-size: 100%;
+  block-size: 100%;
+  fill: currentColor;
+}
+
+.aculta-comment-action:hover,
+.aculta-comment-action:focus-visible {
+  color: var(--color-brand-primary);
+  transform: translateY(-1px);
+}
+
+.aculta-comment-action--delete {
+  color: var(--button-danger-bg);
+}
+
+.aculta-comment-action--delete:hover,
+.aculta-comment-action--delete:focus-visible {
+  color: var(--button-danger-bg-hover);
+}
+
+.aculta-comment-action:focus-visible {
+  outline: 3px solid var(--color-brand-highlight);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aculta-comment-action {
+    transition: none;
+  }
+  .aculta-comment-action:hover,
+  .aculta-comment-action:focus-visible {
+    transform: none;
+  }
+}
