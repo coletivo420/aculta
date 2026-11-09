@@ -3,7 +3,7 @@
   <div class="forum-post-card__inner">
     <header class="forum-post-card__header">
       <div class="forum-post-card__author">
-        {% if avatar %}
+        {% if avatar and ('<img' in avatar or '<svg' in avatar or avatar|striptags|trim != '') %}
           <div class="forum-post-card__avatar">
             {{ avatar }}
           </div>
