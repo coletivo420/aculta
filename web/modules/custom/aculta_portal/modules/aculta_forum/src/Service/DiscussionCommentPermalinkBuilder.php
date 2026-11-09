@@ -61,8 +61,7 @@ final class DiscussionCommentPermalinkBuilder implements DiscussionCommentPermal
     // (um envio por POST sempre chega à página 0).
     $page = $this->commentPage($comment, $host);
     if ($page > 0) {
-      $currentQuery = $options['query'] ?? [];
-      $options['query'] = $this->pagerManager->getUpdatedParameters($currentQuery, 0, $page);
+      $options['query'] = array_merge($options['query'] ?? [], ['page' => (string) $page]);
     }
 
     $url->setOptions($options);
