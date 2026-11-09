@@ -45,6 +45,8 @@
   {% if view_mode == 'full' %}
     <div class="aculta-forum-topic__layout">
       <div class="aculta-forum-topic__main">
+        {# Postagem de abertura: impressa direto, sem concatenar com o restante do tópico. #}
+        {{ opening_html }}
         {{ include('aculta420_v2:forum-topic', {
           variant: 'full',
           has_title: false,
@@ -53,7 +55,7 @@
           title: title_markup,
           meta: date,
           bookmark: bookmark_action,
-          content: (opening_html ~ topic_rest)|raw
+          content: topic_content
         }, with_context = false) }}
         <aside class="aculta-forum-topic__aside" aria-labelledby="forum-topic-about">
         <section class="aculta-forum-topic__about">
