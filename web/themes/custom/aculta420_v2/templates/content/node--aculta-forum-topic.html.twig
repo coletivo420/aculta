@@ -55,7 +55,7 @@
           title: title_markup,
           meta: date,
           bookmark: bookmark_action,
-          content: opening_html ~ topic_rest
+          content: (opening_html ~ topic_rest)|raw
         }, with_context = false) }}
         <aside class="aculta-forum-topic__aside" aria-labelledby="forum-topic-about">
         <section class="aculta-forum-topic__about">
