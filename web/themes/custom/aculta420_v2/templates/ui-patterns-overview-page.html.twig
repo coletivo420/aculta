@@ -7,13 +7,12 @@
 {% if groups is not empty %}
   <div class="ui_patterns_quicklinks">
     <h2 class="ui_patterns_quicklinks__title">{{ 'Available components'|t }}</h2>
-    {% embed 'aculta420_v2:tabs' with { label: 'Grupos de componentes'|t } only %}
-      {% block items %}
-        {% for group_name, components in groups %}
-          <a href="#{{ aculta_group_anchors[group_name] }}">{{ group_name }}</a>
-        {% endfor %}
-      {% endblock %}
-    {% endembed %}
+    {% set tab_links %}
+      {% for group_name, components in groups %}
+        <a href="#{{ aculta_group_anchors[group_name] }}">{{ group_name }}</a>
+      {% endfor %}
+    {% endset %}
+    {{ include('aculta420_v2:tabs', { label: 'Grupos de componentes'|t, items: tab_links|raw }, with_context: false) }}
   </div>
   <hr>
   {% for group_name, components in groups %}
