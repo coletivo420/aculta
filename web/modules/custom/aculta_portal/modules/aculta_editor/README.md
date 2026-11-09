@@ -46,6 +46,18 @@ Habilitados: `ckeditor5_plugin_pack_auto_image` (exceção do responsável; iner
 Desabilitados: `html_embed`, `free_wproofreader`, `font`, `emoji`, `todo_document_list`, `empty_block`,
 `restricted_editing`. Premium Features está instalado no código, mas não habilitado.
 
+## Emojis Fluent (seletor próprio)
+
+O botão `acultaFluentEmoji` está em `usuario_aculta`, `revista_editorial` e `wiki`. O seletor lê o catálogo curado de
+`data/fluent-emoji-catalog.json` (37 emojis de cultivo, vibe 420, saúde e direitos) e insere apenas o caractere Unicode
+nativo. Mãos e gestos usam o tom pardo (Fitzpatrick Tipo 4, modificador `U+1F3FD`).
+
+O filtro `fluent_emoji` (`TYPE_TRANSFORM_REVERSIBLE`, peso 25) troca o glifo na saída pelo SVG colorido do componente
+`reaction-emoji` do tema `aculta420_v2`, com `role="img"` e `aria-label` em português. O banco, a busca e os feeds
+continuam em Unicode puro. O filtro não converte glifos dentro de atributos HTML, `<pre>` ou `<code>`.
+
+O Plugin Pack `emoji` continua desabilitado: este seletor é código próprio do `aculta_editor`.
+
 ## Contrato com o aculta_mailer
 
 - O editor de modelos de e-mail usa `email_html` (Aculta Email).

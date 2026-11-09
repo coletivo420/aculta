@@ -1,0 +1,4 @@
+services:
+  aculta_editor.fluent_emoji_catalog:
+    class: Drupal\aculta_editor\FluentEmojiCatalog
+    public: true
