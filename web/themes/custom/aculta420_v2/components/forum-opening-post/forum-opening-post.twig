@@ -1,17 +1,13 @@
 <div class="forum-opening-post">
-  {# Ícones em atribuições (não dentro de blocos set): o include dentro de bloco sai vazio. #}
-  {% set link_icon = include('aculta420_v2:icon', { name: 'link', variant: 'regular', size: 'sm' }, with_context = false) %}
-  {% set edit_icon = include('aculta420_v2:icon', { name: 'pencil-simple', variant: 'regular', size: 'sm' }, with_context = false) %}
-  {% set reply_icon = include('aculta420_v2:icon', { name: 'arrow-bend-up-left', variant: 'regular', size: 'sm' }, with_context = false) %}
   {% set actions_markup %}
     {% if permalink_url %}
-      <a href="{{ permalink_url }}" class="permalink aculta-resposta-acao aculta-resposta-acao--link" rel="bookmark" aria-label="{{ 'Link permanente'|t }}" title="{{ 'Link permanente'|t }}">{{ link_icon }}</a>
+      <a href="{{ permalink_url }}" class="permalink aculta-resposta-acao aculta-resposta-acao--link" rel="bookmark" aria-label="{{ 'Link permanente'|t }}" title="{{ 'Link permanente'|t }}">{{ link_icon|raw }}</a>
     {% endif %}
     {% if edit_url %}
-      <a href="{{ edit_url }}" class="aculta-resposta-acao aculta-resposta-acao--editar" aria-label="{{ 'Editar'|t }}" title="{{ 'Editar'|t }}">{{ edit_icon }}</a>
+      <a href="{{ edit_url }}" class="aculta-resposta-acao aculta-resposta-acao--editar" aria-label="{{ 'Editar'|t }}" title="{{ 'Editar'|t }}">{{ edit_icon|raw }}</a>
     {% endif %}
     {% if reply_url %}
-      <a href="{{ reply_url }}" class="use-htmx aculta-resposta-acao aculta-resposta-acao--responder" data-action="resposta-responder" data-hx-get="{{ reply_url }}" aria-label="{{ 'Responder à discussão'|t }}" title="{{ 'Responder à discussão'|t }}">{{ reply_icon }}</a>
+      <a href="{{ reply_url }}" class="use-htmx aculta-resposta-acao aculta-resposta-acao--responder" data-action="resposta-responder" data-hx-get="{{ reply_url }}" aria-label="{{ 'Responder à discussão'|t }}" title="{{ 'Responder à discussão'|t }}">{{ reply_icon|raw }}</a>
     {% endif %}
   {% endset %}
   {{ include('aculta420_v2:forum-post-card', {

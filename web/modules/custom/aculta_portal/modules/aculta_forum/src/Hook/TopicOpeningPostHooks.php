@@ -4,18 +4,24 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Hook;
 
+use Drupal\Core\Extension\ThemeExtensionList;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Link de edição da postagem de abertura do tópico, só quando o usuário pode editar.
+ * Dados da postagem de abertura do tópico: link de edição (só com acesso) e ícones de ação.
+ *
+ * Os ícones saem como SVG do PHP, igual aos ícones das ações dos comentários.
  */
 final class TopicOpeningPostHooks {
 
   public function __construct(
     private readonly AccountProxyInterface $currentUser,
+    #[Autowire(service: 'extension.list.theme')]
+    private readonly ThemeExtensionList $themes,
   ) {}
 
   /**
@@ -31,6 +37,24 @@ final class TopicOpeningPostHooks {
     if ($node->access('update', $this->currentUser)) {
       $variables['opening_edit_url'] = Url::fromRoute('entity.node.edit_form', ['node' => $node->id()])->toString();
     }
+    $variables['opening_icons'] = [
+      'link' => $this->icon('link'),
+      'edit' => $this->icon('pencil-simple'),
+      'reply' => $this->icon('arrow-bend-up-left'),
+    ];
+  }
+
+  /**
+   * Ícone Phosphor (regular) do tema, em span decorativo.
+   */
+  private function icon(string $name): string {
+    $path = $this->themes->getPath('aculta420_v2') . '/assets/icons/phosphor/regular/' . $name . '.svg';
+    if (!is_file($path)) {
+      return '';
+    }
+    $svg = (string) file_get_contents($path);
+    $svg = preg_replace('/<\?xml[^>]*\?>\s*/', '', $svg) ?? $svg;
+    return '<span class="aculta-resposta-acao__icon" aria-hidden="true">' . trim($svg) . '</span>';
   }
 
 }

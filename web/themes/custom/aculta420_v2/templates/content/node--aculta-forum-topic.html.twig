@@ -14,6 +14,9 @@
   reactions_slot: opening_reaction_bar ? render_var(opening_reaction_bar) : null,
   permalink_url: url|default(null),
   edit_url: opening_edit_url|default(null),
+  link_icon: opening_icons.link|default(null),
+  edit_icon: opening_icons.edit|default(null),
+  reply_icon: opening_icons.reply|default(null),
   reply_url: node is defined and node ? path('aculta_forum.discussion_composer', {'entity_type': 'node', 'entity_id': node.id()}) : null,
 }, with_context = false)|raw %}
 {# Primeiro item da discussão: peso negativo o coloca antes das categorias e do compositor. #}

@@ -244,7 +244,7 @@ services:
     arguments: ['@pager.manager', '@entity_type.manager']
 
   Drupal\aculta_forum\Hook\TopicOpeningPostHooks:
-    arguments: ['@current_user']
+    arguments: ['@current_user', '@extension.list.theme']
 
   Drupal\aculta_forum\Hook\DiscussionCommentPermalinkHooks:
     arguments: ['@aculta_forum.discussion_comment_permalink_builder', '@extension.list.theme']
