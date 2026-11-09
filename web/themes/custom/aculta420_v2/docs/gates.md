@@ -16,6 +16,7 @@ Os caminhos são relativos à raiz do repositório. Gates "Drush" rodam com `php
 | `validate-aculta420-v2-sdc.php` | `php vendor/drush/drush/drush.php php:script scripts/validate-aculta420-v2-sdc.php` | descoberta, assets e renderização isolada dos componentes V2; usa descoberta com backend nulo para incluir SDCs novos sem limpar cache persistente | toda mudança em componente |
 | Configurações de superfície | `php vendor/drush/drush/drush.php config:status` e verificação da disponibilidade de `ThemeSettingsProvider` | consistência do Config Sync e serviço usado por `SurfaceSettingsHooks` | alteração das opções administrativas do tema |
 | `validate-aculta420-mapped-classes.php` | `php scripts/validate-aculta420-mapped-classes.php` | toda classe de `PortalUiHooks::TOKENS` tem CSS ou exceção em `docs/classes-sem-css-excecoes.md`; nomes Bootstrap proibidos no mapa | mudança no mapa de tokens ou nos estilos |
+| `validate-aculta420-theme-settings.php` | `php scripts/validate-aculta420-theme-settings.php` | ausência do painel `aculta_container_purpose` e do rótulo "Layout de container"; presença das superfícies, das cores por purpose e do schema de compatibilidade até o corte (ADR-054) | mudança em `theme-settings.php` ou no schema do tema |
 | `validate-aculta420-shell-contract.php` | `php vendor/drush/drush/drush.php php:script scripts/validate-aculta420-shell-contract.php` | contrato do shell: barra, navegação e regiões | mudança em `page.html.twig`, barra ou navegação |
 | `validate-aculta420-foundation.php` | `ACULTA_DRUSH_ROOT=$PWD php scripts/validate-aculta420-foundation.php` (ou via `php:script` do Drush) | fundação da V2: tema público e base-less, sem Bootstrap no Composer e no Runtime, blocos `aculta420_v2_*`, branding nos assets do V2, tokens `--color-*`, Twig, SDCs e cores e durações fora de `tokens.css` | toda mudança em tema, Config Sync ou Composer. Última execução: 410 checks PASS (2026-11-07), com Runtime sem a V1 |
 | `validate-aculta420-studio-identity.php` | ver o cabeçalho do script | identidade do estúdio | não está na lista de gates do ADR-046; confirme o escopo antes de usar |
@@ -108,3 +109,9 @@ Estes são **requisitos de homologação**, não resultados PASS; os gates autom
 - **Rollback:** backup, ativação controlada e reversão comprovada; testar importação de configuração em staging, não no Runtime com drift. **PENDENTE**.
 
 Este registro não autoriza `drush cim`, `updatedb` ou alterações destrutivas; seguir AGENTS.md. A retirada isolada do formulário de container foi publicada em código, mas o teste de execução permanece DEFERRED.
+
+## Execução Recente — ADR-054 P0/P2 (2026-11-09)
+
+- `php scripts/audit-aculta420-v2-inventory.php`: informativo. 36 blocos `block.block.aculta420_v2_*`, 5 fora das cinco regiões finais (todos em `highlighted`); 95 displays, 0 com Layout Builder habilitado; 21 entradas em `global-styling`.
+- `php scripts/validate-aculta420-theme-settings.php`: PASS (14 checks). Formulário sem `aculta_container_purpose` e sem o rótulo "Layout de container"; superfícies, UI Styles da Revista, paleta por purpose e schemas de compatibilidade preservados.
+- Inventário publicado em `docs/architecture/ACULTA420-V2-P0-INVENTARIO.md`.
