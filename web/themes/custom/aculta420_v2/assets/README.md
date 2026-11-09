@@ -56,3 +56,12 @@ esta migração. O manifest é novo; ele usa apenas os assets ACULTA disponívei
 As cores semânticas de marca permanecem nos tokens do tema, reconciliados com
 a paleta institucional existente. O seletor explícito de modo claro/escuro
 permanece o mecanismo de preferência.
+
+## Fluent Emoji (Microsoft)
+
+`icons/fluent-emoji/flat/` e `icons/fluent-emoji/color/` contêm o pacote curado
+de SVGs oficiais do Microsoft Fluent Emoji, obtidos do repositório
+`microsoft/fluentui-emoji`. A licença MIT está em
+`icons/fluent-emoji/LICENSE`. Os arquivos são incorporados inline via SDC com
+`source()` no HTML renderizado, sem requisições externas nem dependências de
+terceiros em tempo de execução.

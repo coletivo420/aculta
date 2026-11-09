@@ -542,6 +542,18 @@ migração ou alteração de Runtime foi executada.
   PASS. Nenhuma escrita Runtime.
 
 
+## [0.2.0-dev.4] - 2026-11-09
+
+### Sistema de Reações por Emojis estilo Discourse
+- Implementado schema de reações (`aculta_discussion_reaction` e tabela de contadores `aculta_discussion_reaction_user_stats`) via `aculta_forum_update_9006()`.
+- Criado catálogo de reações configurável em `aculta_forum.settings` com formulário administrativo (`ForumSettingsForm`).
+- Concedida permissão `react to aculta discussions` para o papel `email_confirmed`.
+- Criado motor de reações backend (`DiscussionReactionAccess`, `DiscussionReactionManager`, `DiscussionReactionBuilder`).
+- Criado endpoint seguro com slug em português `/discussoes/reagir/{entity_type}/{entity_id}` com validação CSRF, suporte a HTMX fragment e fallback para requisições convencionais.
+- Integradas estatísticas públicas de reações recebidas e dadas ao `AuthorIdentity` (`aculta_user`), `author-card` e `/u/{apelido}` (`ForumProfileReactionHooks`).
+- Criados componentes SDC `reaction-emoji` e `discussion-reaction-bar` no tema V2 com SVGs locais da biblioteca Microsoft Fluent Emoji (`web/libraries/fluentui-emoji/`).
+- Integrado o slot de reações `reactions_slot` nos templates `comment--field-aculta-discussion.html.twig`, `comment--comments.html.twig` e no componente `forum-post-card`.
+
 ## [0.2.0-dev.3] - 2026-11-08
 
 ### Conclusão do ciclo de comentários compartilhados inline (C02-03 a C02-08)

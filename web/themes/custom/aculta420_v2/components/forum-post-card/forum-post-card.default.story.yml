@@ -4,6 +4,7 @@ props:
   author_name: MarceloSilva
   author_role: Moderador
   author_posts: 342
+  author_reactions: 19
   timestamp: 'Há 3 horas'
   reactions:
     - label: 👍
@@ -16,3 +17,66 @@ slots:
     '#markup': '<img src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22 viewBox=%220 0 40 40%22%3E%3Ccircle cx=%2220%22 cy=%2220%22 r=%2220%22 fill=%22%230c3c29%22/%3E%3Ctext x=%2220%22 y=%2225%22 font-size=%2216%22 text-anchor=%22middle%22 fill=%22%23fff%22%3EGR%3C/text%3E%3C/svg%3E" alt="Avatar demonstrativo">'
   body:
     '#markup': '<p>Excelente tutorial! Para solos orgânicos vivos (no-till), recomendo também monitorar a umidade com tensiômetro nas primeiras semanas para evitar compactação.</p>'
+  reactions_slot:
+    '#type': component
+    '#component': 'aculta420_v2:discussion-reaction-bar'
+    '#props':
+      target_id: 'discussion-reactions-comment-story'
+      entity_type: 'comment'
+      entity_id: '1'
+      total_count: 19
+      user_reaction: 'thumbs_up'
+      default_reaction: 'heart'
+      can_react: true
+      react_url: '#'
+      csrf_token: 'story-token'
+      reactions:
+        thumbs_up:
+          id: 'thumbs_up'
+          count: 12
+          user_reacted: true
+        seedling:
+          id: 'seedling'
+          count: 7
+          user_reacted: false
+      allowed_reactions:
+        heart:
+          id: 'heart'
+          icon: 'heart'
+          label: 'Curtir'
+          enabled: true
+        thumbs_up:
+          id: 'thumbs_up'
+          icon: 'thumbs-up'
+          label: 'Apoiar'
+          enabled: true
+        seedling:
+          id: 'seedling'
+          icon: 'seedling'
+          label: 'Cultivo'
+          enabled: true
+        herb:
+          id: 'herb'
+          icon: 'herb'
+          label: 'Botânica'
+          enabled: true
+        fire:
+          id: 'fire'
+          icon: 'fire'
+          label: 'Excelente'
+          enabled: true
+        clap:
+          id: 'clap'
+          icon: 'clapping-hands'
+          label: 'Aplausos'
+          enabled: true
+        laugh:
+          id: 'laugh'
+          icon: 'grinning-squinting-face'
+          label: 'Engraçado'
+          enabled: true
+        pray:
+          id: 'pray'
+          icon: 'folded-hands'
+          label: 'Gratidão'
+          enabled: true

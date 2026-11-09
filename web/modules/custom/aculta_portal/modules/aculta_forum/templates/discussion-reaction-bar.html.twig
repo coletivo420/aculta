@@ -1,0 +1,13 @@
+{# Default neutral theme hook for discussion-reaction-bar #}
+<div id="{{ target_id }}" class="discussion-reaction-bar" data-discussion-reaction-bar data-entity-type="{{ entity_type }}" data-entity-id="{{ entity_id }}">
+  {% if reactions is not empty or can_react %}
+    <div class="discussion-reaction-bar__list">
+      {% for item in reactions %}
+        <span class="discussion-reaction-bar__item{% if item.user_reacted %} is-active{% endif %}">
+          <span class="discussion-reaction-bar__icon">{{ item.icon }}</span>
+          <span class="discussion-reaction-bar__count">{{ item.count }}</span>
+        </span>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>

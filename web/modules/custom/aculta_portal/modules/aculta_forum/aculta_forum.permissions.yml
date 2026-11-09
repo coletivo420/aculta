@@ -19,3 +19,7 @@ report aculta forum content:
   title: 'Denunciar conteúdo no Fórum público'
   description: 'Sinalizar tópicos e comentários contemporâneos do Growroom420 para revisão.'
   restrict access: true
+react to aculta discussions:
+  title: 'Reagir a comentários e publicações de discussões'
+  description: 'Permite reagir com emojis em comentários e posts de discussões do ecossistema ACULTA.'
+

@@ -14,13 +14,15 @@
     stripe: 'brand',
     author_name: author_name,
     author_role: null,
-    author_posts: null,
+    author_posts: author_posts|default(null),
+    author_reactions: author_reactions|default(null),
     timestamp: timestamp,
     reactions: null,
     reply_url: null,
-    avatar: null,
+    avatar: avatar|default(null),
     body: body,
     actions: actions_markup,
+    reactions_slot: reactions_slot|default(null),
     reply: null,
   }, with_context = false) }}
 </div>

@@ -1,0 +1,59 @@
+target_id: 'discussion-reactions-comment-123'
+entity_type: 'comment'
+entity_id: '123'
+total_count: 5
+user_reaction: 'heart'
+default_reaction: 'heart'
+can_react: true
+react_url: '/discussoes/reagir/comment/123'
+csrf_token: 'dummy-token'
+reactions:
+  heart:
+    id: 'heart'
+    count: 3
+    user_reacted: true
+  seedling:
+    id: 'seedling'
+    count: 2
+    user_reacted: false
+allowed_reactions:
+  heart:
+    id: 'heart'
+    icon: 'heart'
+    label: 'Curtir'
+    enabled: true
+  thumbs_up:
+    id: 'thumbs_up'
+    icon: 'thumbs-up'
+    label: 'Apoiar'
+    enabled: true
+  seedling:
+    id: 'seedling'
+    icon: 'seedling'
+    label: 'Cultivo'
+    enabled: true
+  herb:
+    id: 'herb'
+    icon: 'herb'
+    label: 'Botânica'
+    enabled: true
+  fire:
+    id: 'fire'
+    icon: 'fire'
+    label: 'Excelente'
+    enabled: true
+  clap:
+    id: 'clap'
+    icon: 'clapping-hands'
+    label: 'Aplausos'
+    enabled: true
+  laugh:
+    id: 'laugh'
+    icon: 'grinning-squinting-face'
+    label: 'Engraçado'
+    enabled: true
+  pray:
+    id: 'pray'
+    icon: 'folded-hands'
+    label: 'Gratidão'
+    enabled: true

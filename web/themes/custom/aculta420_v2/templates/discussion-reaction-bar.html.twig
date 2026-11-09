@@ -1,0 +1,14 @@
+{{ include('aculta420_v2:discussion-reaction-bar', {
+  target_id: target_id,
+  entity_type: entity_type,
+  entity_id: entity_id,
+  reactions: reactions,
+  total_count: total_count,
+  user_reaction: user_reaction,
+  allowed_reactions: allowed_reactions,
+  default_reaction: default_reaction,
+  can_react: can_react,
+  is_own_content: is_own_content|default(false),
+  react_url: react_url,
+  csrf_token: csrf_token,
+}, with_context = false) }}

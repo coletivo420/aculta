@@ -11,6 +11,32 @@ aculta_forum.settings:
     restricted_group_type:
       type: string
       label: 'Group type whose members can read restricted Forum topics (empty disables restricted forums)'
+    reactions_enabled:
+      type: boolean
+      label: 'Enable emoji reactions on discussions'
+    default_reaction:
+      type: string
+      label: 'Default reaction machine name'
+    allowed_reactions:
+      type: sequence
+      label: 'Allowed emoji reactions'
+      sequence:
+        type: mapping
+        label: 'Reaction configuration'
+        mapping:
+          id:
+            type: string
+            label: 'Reaction ID'
+          icon:
+            type: string
+            label: 'Icon name'
+          label:
+            type: label
+            label: 'Reaction label'
+          enabled:
+            type: boolean
+            label: 'Whether this reaction is enabled'
+
 
 # Valor do filtro de tópicos sem respostas (plugin aculta_forum_no_replies). O plugin ignora o valor na consulta;
 # o schema existe para que a configuração da view seja validada na importação.

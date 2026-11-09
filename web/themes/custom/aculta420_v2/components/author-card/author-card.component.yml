@@ -49,6 +49,14 @@ props:
       type: [string, 'null']
       title: Biografia autorizada
       default: null
+    reactions_received:
+      type: integer
+      title: Reações recebidas
+      default: 0
+    reactions_given:
+      type: integer
+      title: Reações dadas
+      default: 0
     social_links:
       type: array
       title: Redes públicas

@@ -46,6 +46,8 @@ final class AuthorIdentityTest extends UnitTestCase {
       'member_since' => '2021',
       'bio' => NULL,
       'social_links' => [],
+      'reactions_received' => 0,
+      'reactions_given' => 0,
     ], $identity->toArray());
     $this->assertSame(['user:42', 'profile:7'], $identity->getCacheTags());
     $this->assertSame(['user.permissions'], $identity->getCacheContexts());
@@ -113,6 +115,8 @@ final class AuthorIdentityTest extends UnitTestCase {
       'member_since' => '2021',
       'bio' => NULL,
       'social_links' => [],
+      'reactions_received' => 0,
+      'reactions_given' => 0,
     ], $identity->toArray());
     $this->assertSame(['user:42', 'profile:7'], $identity->getCacheTags());
   }

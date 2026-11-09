@@ -40,6 +40,24 @@ class ForumThemeHooks {
         'path' => $path . '/templates',
         'template' => 'discussion-reply-composer',
       ],
+      'discussion_reaction_bar' => [
+        'variables' => [
+          'target_id' => '',
+          'entity_type' => '',
+          'entity_id' => '',
+          'reactions' => [],
+          'total_count' => 0,
+          'user_reaction' => NULL,
+          'allowed_reactions' => [],
+          'default_reaction' => 'heart',
+          'can_react' => FALSE,
+          'is_own_content' => FALSE,
+          'react_url' => '',
+          'csrf_token' => '',
+        ],
+        'path' => $path . '/templates',
+        'template' => 'discussion-reaction-bar',
+      ],
     ];
   }
 

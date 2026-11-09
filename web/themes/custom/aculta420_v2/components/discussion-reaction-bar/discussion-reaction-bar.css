@@ -1,0 +1,147 @@
+.discussion-reaction-bar {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs, 0.5rem);
+  font-family: inherit;
+  font-size: var(--font-size-sm, 0.875rem);
+}
+
+.discussion-reaction-bar__list {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs, 0.25rem);
+}
+
+.discussion-reaction-bar__form,
+.discussion-reaction-bar__quick-form,
+.discussion-reaction-bar__popup-form {
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
+.discussion-reaction-bar__badge,
+.discussion-reaction-bar__summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--border-radius-full, 9999px);
+  border: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.1));
+  background-color: var(--color-surface-subtle, #f8f9fa);
+  color: var(--color-text-secondary, #495057);
+  font-size: var(--font-size-xs, 0.8125rem);
+  font-weight: var(--font-weight-medium, 500);
+  line-height: 1;
+}
+
+.discussion-reaction-bar__badge {
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+.discussion-reaction-bar__badge:hover {
+  background-color: var(--color-surface-raised, #e9ecef);
+  border-color: var(--color-brand-primary, #2e7d32);
+}
+
+.discussion-reaction-bar__badge.is-active {
+  background-color: var(--color-surface-subtle, #e8f5e9);
+  border-color: var(--color-brand-primary, #2e7d32);
+  color: var(--color-brand-primary, #2e7d32);
+  font-weight: var(--font-weight-semibold, 600);
+}
+
+.discussion-reaction-bar__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  position: relative;
+}
+
+.discussion-reaction-bar__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
+  padding: 0;
+  border-radius: var(--border-radius-full, 9999px);
+  border: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.08));
+  background-color: var(--color-surface-subtle, transparent);
+  color: var(--color-text-secondary, #6c757d);
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+.discussion-reaction-bar__btn:hover {
+  background-color: var(--color-surface-raised, #f1f3f5);
+  border-color: var(--color-brand-primary, #2e7d32);
+  color: var(--color-brand-primary, #212529);
+}
+
+.discussion-reaction-bar__btn--quick.is-active {
+  color: var(--color-brand-primary, #e53935);
+  border-color: var(--color-brand-primary, #e53935);
+  background-color: var(--color-surface-subtle, rgba(229, 57, 53, 0.1));
+}
+
+.discussion-reaction-bar__picker-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.discussion-reaction-bar__popup {
+  position: absolute;
+  inset-block-end: calc(100% + 0.5rem);
+  inset-inline-start: 0;
+  background-color: var(--color-surface-raised, #ffffff);
+  border: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.12));
+  border-radius: var(--border-radius-lg, 0.75rem);
+  box-shadow: var(--shadow-md, 0 4px 16px rgba(0, 0, 0, 0.15));
+  padding: 0.5rem;
+  z-index: 100;
+  white-space: nowrap;
+}
+
+.discussion-reaction-bar__popup[hidden] {
+  display: none !important;
+}
+
+.discussion-reaction-bar__palette {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.discussion-reaction-bar__palette-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
+  padding: 0;
+  border-radius: var(--border-radius-md, 0.375rem);
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.12s ease-out, background-color 0.12s ease;
+}
+
+.discussion-reaction-bar__palette-btn:hover:not(.is-disabled) {
+  transform: scale(1.2);
+  background-color: var(--color-surface-subtle, #f1f3f5);
+  z-index: 1;
+}
+
+.discussion-reaction-bar__palette-btn.is-selected {
+  background-color: var(--color-surface-subtle, #e8f5e9);
+  border-color: var(--color-brand-primary, #2e7d32);
+}
+
+.discussion-reaction-bar__palette-btn.is-disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}

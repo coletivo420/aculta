@@ -1,3 +1,39 @@
 comment_move_enabled: false
 edit_window_minutes: 10
 restricted_group_type: ''
+reactions_enabled: true
+default_reaction: heart
+allowed_reactions:
+  - id: heart
+    icon: heart
+    label: Curtir
+    enabled: true
+  - id: thumbs_up
+    icon: thumbs-up
+    label: Apoiar
+    enabled: true
+  - id: seedling
+    icon: seedling
+    label: Cultivo
+    enabled: true
+  - id: herb
+    icon: herb
+    label: Botânica
+    enabled: true
+  - id: fire
+    icon: fire
+    label: Excelente
+    enabled: true
+  - id: clap
+    icon: clapping-hands
+    label: Aplausos
+    enabled: true
+  - id: laugh
+    icon: grinning-squinting-face
+    label: Engraçado
+    enabled: true
+  - id: pray
+    icon: folded-hands
+    label: Gratidão
+    enabled: true
+

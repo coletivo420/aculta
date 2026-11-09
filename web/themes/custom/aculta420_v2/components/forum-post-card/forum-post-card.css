@@ -5,7 +5,7 @@
   background-color: var(--color-surface-raised);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--border-radius-lg);
-  overflow: hidden;
+  overflow: visible;
   box-shadow: var(--shadow-sm);
 }
 
@@ -13,6 +13,8 @@
   inline-size: 100%;
   block-size: 4px;
   flex-shrink: 0;
+  border-start-start-radius: var(--border-radius-lg);
+  border-start-end-radius: var(--border-radius-lg);
 }
 
 .forum-post-card--stripe-brand .forum-post-card__stripe {
@@ -115,6 +117,14 @@
   align-items: center;
   gap: var(--spacing-xs);
   font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  flex-wrap: wrap;
+}
+
+.forum-post-card__reaction-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
   color: var(--color-text-secondary);
 }
 

@@ -1,0 +1,56 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Barra de Reações por Emoji
+description: Barra interativa de reações com contador de emojis e seletor popup no estilo Discourse.
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [target_id, entity_type, entity_id]
+  properties:
+    target_id:
+      type: string
+      title: ID do elemento alvo para HTMX
+    entity_type:
+      type: string
+      title: Tipo de entidade
+      enum: [comment, aculta_forum_post, node]
+    entity_id:
+      type: string
+      title: ID da entidade
+    reactions:
+      type: object
+      title: Mapa de reações ativas com contagem
+      default: {}
+    total_count:
+      type: integer
+      title: Total de reações
+      default: 0
+    user_reaction:
+      type: [string, 'null']
+      title: Emoji reagido pelo usuário atual
+      default: null
+    allowed_reactions:
+      type: object
+      title: Catálogo de emojis permitidos
+      default: {}
+    default_reaction:
+      type: string
+      title: Emoji padrão de clique rápido
+      default: heart
+    can_react:
+      type: boolean
+      title: Se o usuário atual pode reagir
+      default: false
+    is_own_content:
+      type: boolean
+      title: Se o post pertence ao usuário atual
+      default: false
+    react_url:
+      type: string
+      title: URL para submissão da reação
+      default: ''
+    csrf_token:
+      type: string
+      title: Token CSRF para envio seguro
+      default: ''

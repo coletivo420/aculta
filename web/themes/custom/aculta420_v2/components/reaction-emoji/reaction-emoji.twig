@@ -1,0 +1,6 @@
+{% set variant = variant|default('flat') %}
+{% set size = size|default('sm') %}
+{% set emoji_file = '@aculta420_v2/assets/icons/fluent-emoji/' ~ variant ~ '/' ~ name ~ '.svg' %}
+<span class="reaction-emoji reaction-emoji--{{ variant }} reaction-emoji--{{ size }}" aria-hidden="{{ label ? 'false' : 'true' }}"{% if label %} role="img" aria-label="{{ label }}"{% endif %}>
+  {{ source(emoji_file, ignore_missing = true) }}
+</span>

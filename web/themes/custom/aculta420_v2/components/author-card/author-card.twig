@@ -20,6 +20,16 @@
     </div>
     {% if context_labels[variant] is defined %}<span class="author-card__context">{{ context_labels[variant] }}</span>{% endif %}
     {% if member_since and variant in ['author_forum', 'author_forum_stacked'] %}<span class="author-card__joined">{{ 'Conta ACULTA desde @year'|t({'@year': member_since}) }}</span>{% endif %}
+    {% if (reactions_received > 0 or reactions_given > 0) and variant in ['author_forum', 'author_forum_stacked', 'profile_full'] %}
+      <div class="author-card__reactions-stats" aria-label="{{ 'Reações da comunidade'|t }}">
+        {% if reactions_received > 0 %}
+          <span class="author-card__reaction-stat" title="{{ 'Reações recebidas'|t }}">
+            {{ include('aculta420_v2:icon', { name: 'heart', variant: 'fill', size: 'sm' }, with_context = false) }}
+            <span>{{ reactions_received }}</span>
+          </span>
+        {% endif %}
+      </div>
+    {% endif %}
     {% if designation %}<span class="author-card__designation">{{ designation }}</span>{% endif %}
     {% if source_label %}<span class="author-card__source">{{ source_label }}</span>{% endif %}
     {% if bio %}<p class="author-card__bio">{{ bio }}</p>{% endif %}

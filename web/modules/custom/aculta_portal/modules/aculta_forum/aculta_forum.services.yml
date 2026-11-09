@@ -249,6 +249,12 @@ services:
   Drupal\aculta_forum\Hook\DiscussionCommentPermalinkHooks:
     arguments: ['@aculta_forum.discussion_comment_permalink_builder', '@extension.list.theme']
 
+  Drupal\aculta_forum\Hook\DiscussionReactionEntityViewHooks:
+    arguments: ['@aculta_forum.discussion_reaction_builder', '@aculta_forum.discussion_reaction_manager', '@current_user']
+
+  Drupal\aculta_forum\Hook\ForumProfileReactionHooks:
+    arguments: ['@aculta_forum.discussion_reaction_manager']
+
 
 
 
@@ -297,6 +303,44 @@ services:
       - '@aculta_forum.discussion_context_resolver'
       - '@aculta_forum.quote_builder'
       - '@current_user'
+
+  aculta_forum.discussion_reaction_access:
+    class: Drupal\aculta_forum\Service\DiscussionReactionAccess
+    arguments:
+      - '@aculta_forum.discussion_context_resolver'
+      - '@entity_type.manager'
+      - '@config.factory'
+
+  aculta_forum.discussion_reaction_manager:
+    class: Drupal\aculta_forum\Service\DiscussionReactionManager
+    arguments:
+      - '@database'
+      - '@entity_type.manager'
+      - '@aculta_forum.discussion_context_resolver'
+      - '@config.factory'
+
+  aculta_forum.discussion_reaction_endpoint_access:
+    class: Drupal\aculta_forum\Access\DiscussionReactionEndpointAccess
+    arguments:
+      - '@entity_type.manager'
+      - '@aculta_forum.discussion_reaction_access'
+
+  aculta_forum.discussion_reaction_builder:
+    class: Drupal\aculta_forum\Service\DiscussionReactionBuilder
+    arguments:
+      - '@aculta_forum.discussion_reaction_manager'
+      - '@aculta_forum.discussion_reaction_endpoint_access'
+      - '@csrf_token'
+
+  aculta_forum.discussion_reaction_controller:
+    class: Drupal\aculta_forum\Controller\DiscussionReactionController
+    arguments:
+      - '@entity_type.manager'
+      - '@aculta_forum.discussion_reaction_manager'
+      - '@aculta_forum.discussion_reaction_builder'
+      - '@aculta_forum.discussion_reaction_endpoint_access'
+      - '@current_user'
+      - '@csrf_token'
 
   aculta_forum.comment_route_subscriber:
     class: Drupal\aculta_forum\EventSubscriber\CommentRouteSubscriber

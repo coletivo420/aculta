@@ -9,6 +9,141 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 
 /**
+ * Implements hook_schema().
+ */
+function aculta_forum_schema(): array {
+  $schema['aculta_discussion_reaction'] = [
+    'description' => 'Stores individual user emoji reactions on discussion comments and forum posts.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique reaction entry ID.',
+      ],
+      'entity_type' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Target entity type (node, comment, or aculta_forum_post).',
+      ],
+      'entity_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Target entity ID.',
+      ],
+      'host_entity_type' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Host entity type (e.g. node).',
+      ],
+      'host_entity_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Host entity ID.',
+      ],
+      'context_id' => [
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Context identifier (e.g. public_forum, publication, lms, wiki).',
+      ],
+      'is_public_context' => [
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 1,
+        'description' => 'Whether the reaction occurred in a public context (1) or restricted/LMS (0).',
+      ],
+      'uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'User ID who reacted.',
+      ],
+      'author_uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Target content author User ID who received the reaction.',
+      ],
+      'reaction' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Reaction machine identifier (e.g. heart, seedling, fire).',
+      ],
+      'created' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Timestamp when created.',
+      ],
+      'changed' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Timestamp when last updated.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'unique keys' => [
+      'user_entity_reaction' => ['entity_type', 'entity_id', 'uid'],
+    ],
+    'indexes' => [
+      'entity_lookup' => ['entity_type', 'entity_id', 'reaction'],
+      'user_given' => ['uid', 'is_public_context'],
+      'author_received' => ['author_uid', 'is_public_context'],
+    ],
+  ];
+
+  $schema['aculta_discussion_reaction_user_stats'] = [
+    'description' => 'Aggregated O(1) user reaction statistics.',
+    'fields' => [
+      'uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Primary Key: User ID.',
+      ],
+      'reactions_received' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Total public reactions received by this user.',
+      ],
+      'reactions_given' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Total public reactions given by this user.',
+      ],
+      'updated' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Timestamp of last update.',
+      ],
+    ],
+    'primary key' => ['uid'],
+  ];
+
+  return $schema;
+}
+
+/**
  * Adds first-publication timestamps to shared discussion comments.
  */
 function aculta_forum_update_9001(array &$sandbox): string {
@@ -201,3 +336,43 @@ function aculta_forum_update_9005(): void {
   $view->set('display.default.display_options.cache.type', 'aculta_forum_post_tag');
   $view->save();
 }
+
+/**
+ * Installs schema tables and default config for discussion emoji reactions and user stats.
+ */
+function aculta_forum_update_9006(): void {
+  $schema = \Drupal::database()->schema();
+  $tables = aculta_forum_schema();
+
+  if (!$schema->tableExists('aculta_discussion_reaction')) {
+    $schema->createTable('aculta_discussion_reaction', $tables['aculta_discussion_reaction']);
+  }
+
+  if (!$schema->tableExists('aculta_discussion_reaction_user_stats')) {
+    $schema->createTable('aculta_discussion_reaction_user_stats', $tables['aculta_discussion_reaction_user_stats']);
+  }
+
+  $config = \Drupal::configFactory()->getEditable('aculta_forum.settings');
+  if ($config->get('reactions_enabled') === NULL) {
+    $config->set('reactions_enabled', TRUE);
+    $config->set('default_reaction', 'heart');
+    $config->set('allowed_reactions', [
+      ['id' => 'heart', 'icon' => 'heart', 'label' => 'Curtir', 'enabled' => TRUE],
+      ['id' => 'thumbs_up', 'icon' => 'thumbs-up', 'label' => 'Apoiar', 'enabled' => TRUE],
+      ['id' => 'seedling', 'icon' => 'seedling', 'label' => 'Cultivo', 'enabled' => TRUE],
+      ['id' => 'herb', 'icon' => 'herb', 'label' => 'Botânica', 'enabled' => TRUE],
+      ['id' => 'fire', 'icon' => 'fire', 'label' => 'Excelente', 'enabled' => TRUE],
+      ['id' => 'clap', 'icon' => 'clapping-hands', 'label' => 'Aplausos', 'enabled' => TRUE],
+      ['id' => 'laugh', 'icon' => 'grinning-squinting-face', 'label' => 'Engraçado', 'enabled' => TRUE],
+      ['id' => 'pray', 'icon' => 'folded-hands', 'label' => 'Gratidão', 'enabled' => TRUE],
+    ]);
+    $config->save();
+  }
+
+  $role = \Drupal\user\Entity\Role::load('email_confirmed');
+  if ($role !== NULL && !$role->hasPermission('react to aculta discussions')) {
+    $role->grantPermission('react to aculta discussions');
+    $role->save();
+  }
+}
+

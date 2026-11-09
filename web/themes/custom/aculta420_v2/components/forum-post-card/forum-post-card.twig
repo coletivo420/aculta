@@ -20,10 +20,16 @@
             {% endif %}
           </div>
           <div class="forum-post-card__author-meta">
-            {% if author_posts is not null and author_posts is not empty %}
+            {% if author_posts is not null and author_posts is not same as('') %}
               <span class="forum-post-card__post-count">{{ author_posts }} {{ 'posts'|t }}</span>
             {% else %}
               <span class="forum-post-card__post-count">—<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span></span>
+            {% endif %}
+            {% if author_reactions is not null and author_reactions is not same as('') %}
+              <span class="forum-post-card__reaction-stat" title="{{ 'Reações recebidas'|t }}">
+                {{ include('aculta420_v2:reaction-emoji', { name: 'heart', variant: 'color', size: 'xs', label: 'Reações recebidas'|t }, with_context = false) }}
+                <span>{{ author_reactions }} {{ 'reações'|t }}</span>
+              </span>
             {% endif %}
             {% if timestamp %}
               <span class="forum-post-card__time">· {{ timestamp }}</span>
@@ -51,7 +57,9 @@
 
     <footer class="forum-post-card__footer">
       <div class="forum-post-card__reactions">
-        {% if reactions and reactions|length > 0 %}
+        {% if reactions_slot %}
+          {{ reactions_slot }}
+        {% elseif reactions and reactions|length > 0 %}
           {% for r in reactions %}
             <span class="forum-post-card__reaction">
               <span class="forum-post-card__reaction-label">{{ r.label }}</span>

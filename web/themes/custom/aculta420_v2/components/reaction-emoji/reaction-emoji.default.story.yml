@@ -1,0 +1,6 @@
+name: Emoji de Reação Fluent
+props:
+  name: heart
+  variant: flat
+  size: sm
+  label: Curtir

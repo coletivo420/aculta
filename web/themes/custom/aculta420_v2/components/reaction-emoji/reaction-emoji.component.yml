@@ -1,0 +1,28 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Emoji de Reação Fluent
+description: Ícone de emoji vetorial do Microsoft Fluent Emoji para reações da comunidade.
+status: stable
+group: ACULTA
+props:
+  type: object
+  additionalProperties: false
+  required: [name]
+  properties:
+    name:
+      type: string
+      title: Nome do emoji
+      pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+    variant:
+      type: string
+      title: Estilo visual
+      enum: [flat, color]
+      default: flat
+    size:
+      type: string
+      title: Tamanho
+      enum: [xs, sm, md, lg]
+      default: sm
+    label:
+      type: [string, 'null']
+      title: Rótulo textual alternativo
+      default: null

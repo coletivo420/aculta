@@ -25,6 +25,10 @@ props:
       type: [string, integer, 'null']
       title: Contagem de posts do autor
       default: null
+    author_reactions:
+      type: [string, integer, 'null']
+      title: Contagem de reações recebidas pelo autor
+      default: null
     timestamp:
       type: [string, 'null']
       title: Data ou horário da publicação
@@ -58,6 +62,9 @@ slots:
   actions:
     title: Ações do post
     description: Botões de curtir, sinalizar ou moderar.
+  reactions_slot:
+    title: Barra de reações interativas
+    description: Barra de reações por emojis renderizada pelo aculta_forum.
   reply:
     title: Botão ou link de resposta
     description: Elemento alternativo para responder.

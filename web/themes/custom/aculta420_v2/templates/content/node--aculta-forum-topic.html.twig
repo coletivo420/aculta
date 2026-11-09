@@ -1,12 +1,17 @@
 {# Topic page presentation using ACULTA420 V2 design tokens and Growroom420 visual guide. #}
 {% set bookmark_action = content.flag_salvar_topico|default(null) %}
-{# Categoria e "Seguir tópico" ficam fora do conteúdo: a categoria aparece no breadcrumb e o seguir não é usado aqui. #}
-{% set topic_content = content|without('flag_salvar_topico', 'flag_seguir_topico', 'field_aculta_categories', 'body') %}
+{% set opening_reaction_bar = reaction_bar|default(content.reaction_bar|default(null)) %}
+{# Categoria, barra de reações e "Seguir tópico" ficam fora do conteúdo corrido: a barra vai no cartão de abertura. #}
+{% set topic_content = content|without('flag_salvar_topico', 'flag_seguir_topico', 'field_aculta_categories', 'body', 'reaction_bar', 'author_card') %}
 {# Postagem de abertura: corpo do tópico com o destaque do tópico fixado (SDC forum-opening-post). #}
 {% set opening_html = include('aculta420_v2:forum-opening-post', {
   author_name: node is defined and node ? node.getOwner().getDisplayName() : '',
+  author_posts: author_posts is defined ? author_posts : null,
+  author_reactions: author_reactions_received is defined ? author_reactions_received : null,
   timestamp: node is defined and node ? node.getCreatedTime()|date('d/m/Y H:i') : null,
+  avatar: content.author_card is defined ? render_var(content.author_card) : null,
   body: render_var(content.body),
+  reactions_slot: opening_reaction_bar ? render_var(opening_reaction_bar) : null,
   permalink_url: url|default(null),
   edit_url: opening_edit_url|default(null),
   reply_url: node is defined and node ? path('aculta_forum.discussion_composer', {'entity_type': 'node', 'entity_id': node.id()}) : null,

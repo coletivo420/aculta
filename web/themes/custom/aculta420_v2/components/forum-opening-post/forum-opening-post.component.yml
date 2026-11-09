@@ -12,6 +12,14 @@ props:
       type: string
       title: Nome do autor
       minLength: 1
+    author_posts:
+      type: [string, integer, 'null']
+      title: Contagem de posts do autor
+      default: null
+    author_reactions:
+      type: [string, integer, 'null']
+      title: Contagem de reações recebidas pelo autor
+      default: null
     timestamp:
       type: [string, 'null']
       title: Data de publicação formatada
@@ -29,6 +37,12 @@ props:
       title: Endereço do compositor de resposta ao tópico
       default: null
 slots:
+  avatar:
+    title: Avatar ou cartão de autor
+    description: Avatar ou bloco de autoria do criador do tópico.
   body:
     title: Corpo da postagem
     description: Corpo do tópico renderizado pelo Drupal.
+  reactions_slot:
+    title: Barra de reações interativas
+    description: Barra de reações por emojis renderizada pelo aculta_forum.

@@ -180,3 +180,16 @@ aculta_forum.discussion_composer:
   options:
     _htmx_route: TRUE
   methods: [GET, HEAD]
+
+aculta_forum.reaction_react:
+  path: '/discussoes/reagir/{entity_type}/{entity_id}'
+  defaults:
+    _controller: 'aculta_forum.discussion_reaction_controller:react'
+    _title: 'Reagir'
+  requirements:
+    _custom_access: 'aculta_forum.discussion_reaction_endpoint_access:access'
+    entity_type: 'comment|aculta_forum_post|node'
+    entity_id: '\d+'
+  options:
+    _htmx_route: TRUE
+  methods: [POST]

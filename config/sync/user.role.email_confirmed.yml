@@ -36,7 +36,9 @@ permissions:
   - 'edit own aculta_forum_topic content'
   - 'edit own wiki_entry content'
   - 'post comments'
+  - 'react to aculta discussions'
   - 'report aculta forum content'
+
   - 'skip CAPTCHA'
   - 'submit wiki proposals'
   - 'update own email_confirmed profile'

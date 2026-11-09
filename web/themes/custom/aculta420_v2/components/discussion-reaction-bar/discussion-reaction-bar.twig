@@ -1,0 +1,91 @@
+{% set default_reaction = default_reaction|default('heart') %}
+{% set user_reaction = user_reaction|default(null) %}
+{% set total_count = total_count|default(0) %}
+{% set can_react = can_react|default(false) %}
+{% set is_own_content = is_own_content|default(false) %}
+
+<div id="{{ target_id }}" class="discussion-reaction-bar" data-discussion-reaction-bar data-entity-type="{{ entity_type }}" data-entity-id="{{ entity_id }}">
+  <div class="discussion-reaction-bar__list">
+    {% for key, item in reactions %}
+      {% set emoji_icon = allowed_reactions[key] is defined ? allowed_reactions[key].icon : key %}
+      {% set emoji_label = allowed_reactions[key] is defined ? allowed_reactions[key].label : key %}
+      {% if can_react %}
+        <form method="post" action="{{ react_url }}" data-hx-post="{{ react_url }}" data-hx-target="#{{ target_id }}" data-hx-swap="outerHTML" class="discussion-reaction-bar__form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <input type="hidden" name="reaction" value="{{ key }}">
+          <button type="submit" class="discussion-reaction-bar__badge{% if item.user_reacted %} is-active{% endif %}" aria-pressed="{{ item.user_reacted ? 'true' : 'false' }}" title="{{ emoji_label }}">
+            {{ include('aculta420_v2:reaction-emoji', { name: emoji_icon, variant: 'color', size: 'sm', label: emoji_label }, with_context = false) }}
+            <span class="discussion-reaction-bar__count">{{ item.count }}</span>
+          </button>
+        </form>
+      {% else %}
+        <span class="discussion-reaction-bar__badge" title="{{ emoji_label }}">
+          {{ include('aculta420_v2:reaction-emoji', { name: emoji_icon, variant: 'color', size: 'sm', label: emoji_label }, with_context = false) }}
+          <span class="discussion-reaction-bar__count">{{ item.count }}</span>
+        </span>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  {% if can_react %}
+    <div class="discussion-reaction-bar__actions">
+      {# Quick reaction button (Default reaction toggle) #}
+      {% set default_icon = allowed_reactions[default_reaction] is defined ? allowed_reactions[default_reaction].icon : default_reaction %}
+      {% set default_label = allowed_reactions[default_reaction] is defined ? allowed_reactions[default_reaction].label : 'Reagir'|t %}
+      {% set is_default_active = (user_reaction == default_reaction) %}
+      <form method="post" action="{{ react_url }}" data-hx-post="{{ react_url }}" data-hx-target="#{{ target_id }}" data-hx-swap="outerHTML" class="discussion-reaction-bar__quick-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="hidden" name="reaction" value="{{ default_reaction }}">
+        <button type="submit" class="discussion-reaction-bar__btn discussion-reaction-bar__btn--quick{% if is_default_active %} is-active{% endif %}" title="{{ default_label }}" aria-label="{{ default_label }}">
+          {{ include('aculta420_v2:reaction-emoji', { name: default_icon, variant: is_default_active ? 'color' : 'flat', size: 'sm' }, with_context = false) }}
+        </button>
+      </form>
+
+      {# Emoji picker popover trigger #}
+      <div class="discussion-reaction-bar__picker-wrapper">
+        <button type="button" class="discussion-reaction-bar__btn discussion-reaction-bar__btn--trigger" aria-haspopup="dialog" aria-expanded="false" title="{{ 'Mais reações'|t }}" aria-label="{{ 'Mais reações'|t }}" data-reaction-picker-trigger>
+          {{ include('aculta420_v2:icon', { name: 'smiley', variant: 'regular', size: 'sm' }, with_context = false) }}
+        </button>
+
+        <div class="discussion-reaction-bar__popup" role="dialog" aria-label="{{ 'Escolha uma reação'|t }}" hidden data-reaction-picker-popup>
+          <div class="discussion-reaction-bar__palette">
+            {% for key, emoji in allowed_reactions %}
+              {% set is_selected = (user_reaction == key) %}
+              <form method="post" action="{{ react_url }}" data-hx-post="{{ react_url }}" data-hx-target="#{{ target_id }}" data-hx-swap="outerHTML" class="discussion-reaction-bar__popup-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="reaction" value="{{ key }}">
+                <button type="submit" class="discussion-reaction-bar__palette-btn{% if is_selected %} is-selected{% endif %}" title="{{ emoji.label }}" aria-label="{{ emoji.label }}">
+                  {{ include('aculta420_v2:reaction-emoji', { name: emoji.icon, variant: 'color', size: 'md' }, with_context = false) }}
+                </button>
+              </form>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% elseif allowed_reactions is not empty %}
+    {% set default_icon = allowed_reactions[default_reaction] is defined ? allowed_reactions[default_reaction].icon : default_reaction %}
+    {% set readonly_label = is_own_content ? 'Suas reações recebidas'|t : 'Reações da publicação'|t %}
+    <div class="discussion-reaction-bar__actions discussion-reaction-bar__actions--readonly" title="{{ readonly_label }}">
+      <span class="discussion-reaction-bar__summary" aria-label="{{ readonly_label }}: {{ total_count }}">
+        {{ include('aculta420_v2:reaction-emoji', { name: default_icon, variant: total_count > 0 ? 'color' : 'flat', size: 'sm', label: readonly_label }, with_context = false) }}
+        <span class="discussion-reaction-bar__count">{{ total_count }}</span>
+      </span>
+      <div class="discussion-reaction-bar__picker-wrapper">
+        <button type="button" class="discussion-reaction-bar__btn discussion-reaction-bar__btn--trigger" aria-haspopup="dialog" aria-expanded="false" title="{{ 'Ver opções de reação'|t }}" aria-label="{{ 'Ver opções de reação'|t }}" data-reaction-picker-trigger>
+          {{ include('aculta420_v2:icon', { name: 'smiley', variant: 'regular', size: 'sm' }, with_context = false) }}
+        </button>
+
+        <div class="discussion-reaction-bar__popup" role="dialog" aria-label="{{ 'Opções de reação'|t }}" hidden data-reaction-picker-popup>
+          <div class="discussion-reaction-bar__palette">
+            {% for key, emoji in allowed_reactions %}
+              <button type="button" class="discussion-reaction-bar__palette-btn is-disabled" disabled aria-disabled="true" title="{{ emoji.label }} — {{ is_own_content ? 'Você não pode reagir à sua própria publicação'|t : 'Faça login para reagir'|t }}">
+                {{ include('aculta420_v2:reaction-emoji', { name: emoji.icon, variant: 'color', size: 'md' }, with_context = false) }}
+              </button>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>

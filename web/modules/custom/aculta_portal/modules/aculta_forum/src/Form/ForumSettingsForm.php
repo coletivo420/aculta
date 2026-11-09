@@ -52,6 +52,73 @@ final class ForumSettingsForm extends ConfigFormBase {
       '#required' => TRUE,
     ];
 
+    $config = $this->config('aculta_forum.settings');
+
+    $form['reactions_fieldset'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Reações por Emoji (Discourse Reactions)'),
+      '#open' => TRUE,
+    ];
+
+    $form['reactions_fieldset']['reactions_enabled'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Habilitar reações por emoji nas discussões'),
+      '#description' => $this->t('Permite que participantes autenticados reajam a comentários e publicações de discussão.'),
+      '#default_value' => (bool) ($config->get('reactions_enabled') ?? TRUE),
+    ];
+
+    $allowedReactions = (array) ($config->get('allowed_reactions') ?? []);
+    $defaultReaction = (string) ($config->get('default_reaction') ?? 'heart');
+
+    $options = [];
+    foreach ($allowedReactions as $reaction) {
+      if (isset($reaction['id'], $reaction['label'])) {
+        $options[$reaction['id']] = $reaction['label'] . ' (' . $reaction['id'] . ')';
+      }
+    }
+
+    $form['reactions_fieldset']['default_reaction'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Reação padrão de clique rápido'),
+      '#options' => $options,
+      '#default_value' => $defaultReaction,
+      '#description' => $this->t('Reação aplicada diretamente ao clicar no botão principal de curtir.'),
+    ];
+
+    $form['reactions_fieldset']['reactions_table'] = [
+      '#type' => 'table',
+      '#header' => [
+        $this->t('ID'),
+        $this->t('Ícone (Fluent Emoji)'),
+        $this->t('Rótulo (Acessibilidade)'),
+        $this->t('Ativo'),
+      ],
+      '#empty' => $this->t('Nenhuma reação configurada.'),
+    ];
+
+    foreach ($allowedReactions as $index => $item) {
+      $id = $item['id'] ?? '';
+      $form['reactions_fieldset']['reactions_table'][$index]['id'] = [
+        '#markup' => '<code>' . htmlspecialchars((string) $id, ENT_QUOTES, 'UTF-8') . '</code>',
+      ];
+      $form['reactions_fieldset']['reactions_table'][$index]['icon'] = [
+        '#type' => 'textfield',
+        '#default_value' => $item['icon'] ?? $id,
+        '#size' => 20,
+        '#required' => TRUE,
+      ];
+      $form['reactions_fieldset']['reactions_table'][$index]['label'] = [
+        '#type' => 'textfield',
+        '#default_value' => $item['label'] ?? '',
+        '#size' => 30,
+        '#required' => TRUE,
+      ];
+      $form['reactions_fieldset']['reactions_table'][$index]['enabled'] = [
+        '#type' => 'checkbox',
+        '#default_value' => (bool) ($item['enabled'] ?? TRUE),
+      ];
+    }
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -59,10 +126,32 @@ final class ForumSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $this->config('aculta_forum.settings')
-      ->set('edit_window_minutes', max(0, (int) $form_state->getValue('edit_window_minutes')))
-      ->save();
+    $config = $this->config('aculta_forum.settings');
+    $config->set('edit_window_minutes', max(0, (int) $form_state->getValue('edit_window_minutes')));
+    $config->set('reactions_enabled', (bool) $form_state->getValue('reactions_enabled'));
+    $config->set('default_reaction', (string) $form_state->getValue('default_reaction'));
+
+    $existing = (array) ($config->get('allowed_reactions') ?? []);
+    $submittedTable = (array) $form_state->getValue('reactions_table');
+    $updatedReactions = [];
+
+    foreach ($existing as $index => $item) {
+      if (isset($submittedTable[$index])) {
+        $updatedReactions[] = [
+          'id' => (string) $item['id'],
+          'icon' => trim((string) ($submittedTable[$index]['icon'] ?? $item['icon'] ?? $item['id'])),
+          'label' => trim((string) ($submittedTable[$index]['label'] ?? $item['label'] ?? '')),
+          'enabled' => (bool) ($submittedTable[$index]['enabled'] ?? FALSE),
+        ];
+      }
+    }
+    if ($updatedReactions !== []) {
+      $config->set('allowed_reactions', $updatedReactions);
+    }
+
+    $config->save();
     parent::submitForm($form, $form_state);
   }
+
 
 }
