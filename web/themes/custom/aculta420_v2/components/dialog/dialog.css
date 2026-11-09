@@ -111,3 +111,8 @@ a.aculta-dialog__trigger:is(a):hover {
     max-inline-size: calc(100vw - 2 * var(--spacing-base));
   }
 }
+
+/* Diálogo fechado fica oculto: sem isso, a regra de display acima o mostra no fluxo da página. */
+.aculta-dialog:not([open]) {
+  display: none;
+}
