@@ -1,4 +1,4 @@
-# discussion-topic-composer — Compositor de Criação de Conteúdo
+# discussion-topic-composer — Compositor de Criação de Tópico
 
 Componente do design system ACULTA para criar um tópico de discussão (Growroom420, Revista, Wiki e LMS). É o único compositor com **Assunto**, que fica antes do **Comentário**.
 
