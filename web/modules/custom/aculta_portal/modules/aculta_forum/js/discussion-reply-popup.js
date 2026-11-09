@@ -117,6 +117,14 @@
 
   Drupal.behaviors.acultaForumReplyPopup = {
     attach(context) {
+      // Visitante: o diálogo de resposta (compositor) não existe nessa página; Comentar, Responder e
+      // Citar abrem só o login da barra.
+      if (isAnonymous()) {
+        const replyDialog = getDialog();
+        if (replyDialog) {
+          replyDialog.remove();
+        }
+      }
       once('aculta-reply-popup', document.body, context).forEach((body) => {
         // Visitante: os gatilhos abrem o popup de login, sem abrir o compositor.
         document.addEventListener('click', (event) => {
