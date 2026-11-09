@@ -31,7 +31,7 @@ final class ForumQuoteNeutralRenderTest extends UnitTestCase {
   protected function setUp(): void {
     parent::setUp();
     $generator = $this->createMock(\Drupal\Core\Routing\UrlGeneratorInterface::class);
-    $generator->method('generateFromRoute')->willReturn('/comment/reply/node/1/field_aculta_discussion/10?quote=10#comment-form');
+    $generator->method('generateFromRoute')->willReturn('/resposta/comentar/node/1/field_aculta_discussion/10?quote=10#comment-form');
     $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
     $container->set('url_generator', $generator);
     $container->set('string_translation', $this->getStringTranslationStub());

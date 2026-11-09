@@ -236,7 +236,7 @@ final class ForumQuoteHooksTest extends UnitTestCase {
     $formState = new FormState();
     $formState->setFormObject($formObject);
 
-    $request = Request::create('/comment/reply/node/17/field_aculta_discussion/42?quote=42');
+    $request = Request::create('/resposta/comentar/node/17/field_aculta_discussion/42?quote=42');
     $request->attributes->set('_route', 'comment.reply');
     $stack = new RequestStack();
     $stack->push($request);

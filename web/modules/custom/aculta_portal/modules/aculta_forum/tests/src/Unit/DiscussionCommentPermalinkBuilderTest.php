@@ -33,7 +33,7 @@ final class DiscussionCommentPermalinkBuilderTest extends TestCase {
 
     $url = $builder->build($comment);
     self::assertNotNull($url);
-    self::assertSame('aculta_forum.comment_reply_permalink', $url->getRouteName());
+    self::assertSame('entity.comment.canonical', $url->getRouteName());
     self::assertSame(['comment' => 456], $url->getRouteParameters());
   }
 

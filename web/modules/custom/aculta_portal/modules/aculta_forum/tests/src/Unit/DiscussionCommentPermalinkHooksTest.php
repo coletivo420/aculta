@@ -52,7 +52,7 @@ final class DiscussionCommentPermalinkHooksTest extends UnitTestCase {
 
     $variables = [
       'elements' => ['#comment' => $comment],
-      'permalink' => '/comment/456',
+      'permalink' => '/resposta/456',
     ];
 
     $hooks->preprocessComment($variables);
@@ -74,11 +74,11 @@ final class DiscussionCommentPermalinkHooksTest extends UnitTestCase {
 
     $variables = [
       'elements' => ['#comment' => $comment],
-      'permalink' => '/comment/456',
+      'permalink' => '/resposta/456',
     ];
 
     $hooks->preprocessComment($variables);
-    self::assertSame('/comment/456', $variables['permalink']);
+    self::assertSame('/resposta/456', $variables['permalink']);
   }
 
 }

@@ -297,7 +297,7 @@
 }
 
 .forum-post-card a[data-action="edit"],
-.forum-post-card a[href$="/edit"] {
+.forum-post-card a[href$="/editar"] {
   color: var(--color-brand-primary);
   display: inline-flex;
   align-items: center;
@@ -307,7 +307,7 @@
 }
 
 .forum-post-card a[data-action="delete"],
-.forum-post-card a[href$="/delete"] {
+.forum-post-card a[href$="/apagar"] {
   color: var(--color-status-error-text);
   display: inline-flex;
   align-items: center;

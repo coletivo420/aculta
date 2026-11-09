@@ -14,7 +14,7 @@ use Drupal\Core\Url;
  * Builds canonical permalink URLs pointing directly to the host entity.
  *
  * Ensures human-facing permalinks never target the retired standalone route
- * (/comment/{cid}, blocked by D-65) while preserving the host's route,
+ * (/resposta/{cid}, redirects to the topic) while preserving the host's route,
  * language, pagination query, and DOM anchor.
  */
 final class DiscussionCommentPermalinkBuilder implements DiscussionCommentPermalinkBuilderInterface {
@@ -52,7 +52,7 @@ final class DiscussionCommentPermalinkBuilder implements DiscussionCommentPermal
       return NULL;
     }
     // Link público do comentário: /resposta/{cid}, que redireciona para o tópico na página certa.
-    return Url::fromRoute('aculta_forum.comment_reply_permalink', ['comment' => $comment->id()]);
+    return Url::fromRoute('entity.comment.canonical', ['comment' => $comment->id()]);
   }
 
   /**
