@@ -6,9 +6,11 @@ discussion-progress:
     - core/once
 
 discussion-reply-popup:
-  version: 1.0.1
+  version: 1.0.2
   js:
     js/discussion-reply-popup.js: {}
+  dependencies:
+    - core/drupal.dialog.ajax
   dependencies:
     - core/drupal
     - core/once
