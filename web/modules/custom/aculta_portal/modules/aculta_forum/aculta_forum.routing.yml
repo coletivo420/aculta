@@ -170,6 +170,14 @@ aculta_forum.post_edit:
     _custom_access: 'aculta_forum.post_public_edit_access:access'
   methods: [GET, HEAD, POST]
 
+aculta_forum.comment_reply_permalink:
+  path: '/resposta/{comment}'
+  defaults:
+    _controller: 'aculta_forum.comment_reply_permalink_controller:redirectToComment'
+  requirements:
+    _entity_access: 'comment.view'
+    comment: '\d+'
+
 aculta_forum.discussion_composer:
   path: '/discussoes/compositor/{entity_type}/{entity_id}'
   defaults:

@@ -17,4 +17,9 @@ interface DiscussionCommentPermalinkBuilderInterface {
    */
   public function build(CommentInterface $comment): ?Url;
 
+  /**
+   * Builds the host topic URL with the comment's page and anchor.
+   */
+  public function hostUrl(CommentInterface $comment): ?Url;
+
 }

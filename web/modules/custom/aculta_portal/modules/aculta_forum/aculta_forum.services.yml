@@ -234,6 +234,10 @@ services:
   Drupal\aculta_forum\Hook\LmsCommentModerationAccessHooks:
     arguments: ['@aculta_forum.discussion_context_resolver']
 
+  aculta_forum.comment_reply_permalink_controller:
+    class: Drupal\aculta_forum\Controller\CommentReplyPermalinkController
+    arguments: ['@aculta_forum.discussion_comment_permalink_builder']
+
   aculta_forum.discussion_comment_permalink_builder:
     class: Drupal\aculta_forum\Service\DiscussionCommentPermalinkBuilder
     arguments: ['@pager.manager', '@entity_type.manager']

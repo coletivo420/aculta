@@ -48,6 +48,17 @@ final class DiscussionCommentPermalinkBuilder implements DiscussionCommentPermal
    * Builds the permalink URL to the commented host entity.
    */
   public function build(CommentInterface $comment): ?Url {
+    if ($comment->getCommentedEntity() === NULL) {
+      return NULL;
+    }
+    // Link público do comentário: /resposta/{cid}, que redireciona para o tópico na página certa.
+    return Url::fromRoute('aculta_forum.comment_reply_permalink', ['comment' => $comment->id()]);
+  }
+
+  /**
+   * URL do tópico com a página da paginação e a âncora do comentário (destino do redirecionamento).
+   */
+  public function hostUrl(CommentInterface $comment): ?Url {
     $host = $comment->getCommentedEntity();
     if (!$host instanceof EntityInterface) {
       return NULL;
