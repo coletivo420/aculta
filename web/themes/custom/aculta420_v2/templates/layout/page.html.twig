@@ -1,31 +1,5 @@
 {# Main page layout. Keep every configured region available to blocks. #}
 <div class="page">
-  {% if not aculta_component_library_page|default(false) %}
-  <div class="page__institution">
-    {{ include('aculta420_v2:multidomain-bar', {
-      brand_home_url: aculta_brand_home|default('/'),
-      logo_base_url: base_path ~ directory ~ '/assets/logos',
-      logo_alt: 'ACULTA - Associação Cultural Antiproibicionista'|t,
-      is_account_domain: domain_presentation.layout.institution_bar_account|default(false),
-      show_utility_bar: (domain_presentation.layout.show_utility_bar|default(true)) and not (aculta_component_library_page|default(false)),
-      account_menu: aculta_component_library_page|default(false) ? null : aculta_account_menu|default(null),
-      cart_url: aculta_cart.url|default(null),
-      cart_count: aculta_cart.count|default(0),
-      cart_empty: aculta_cart.empty|default(true),
-      cart_total: aculta_cart.total|default(''),
-      cart_sites: aculta_cart.sites|default([]),
-      cart_checkout_url: aculta_cart.checkout_url|default(''),
-      messages_url: aculta_messenger.url|default(null),
-      messages_count: aculta_messenger.unread_count|default(0),
-      messages_all_url: aculta_messenger.all_url|default(''),
-      alerts_url: aculta_alerts.url|default(null),
-      alerts_count: aculta_alerts.count|default(0),
-      alerts_count_kind: aculta_alerts.count_kind|default('active'),
-      alerts_all_url: aculta_alerts.all_url|default(''),
-      search: aculta_component_library_page|default(false) ? null : aculta_search_utility|default(null)
-    }, with_context = false) }}
-  </div>
-  {% endif %}
 
   {# |default(true) trata false como ausente e exibiria o cabeçalho; só ausência conta como visível. #}
   {% if domain_presentation.layout.show_site_header is not defined or domain_presentation.layout.show_site_header %}
