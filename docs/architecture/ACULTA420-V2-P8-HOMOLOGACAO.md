@@ -77,10 +77,11 @@ Modo escuro autenticado: a conta de teste tem preferência própria `light`, que
 | CSS de estatísticas na home | Ausente do CSS servido após `drush cr` |
 | CSS do Studio na home | Ausente; presente em `/conta` autenticado (verificado por Playwright) |
 | `global-styling` local | Caiu de 268.036 para 180.160 bytes (−88 KB, −33%) |
+| Drift de blocos de cabeçalho | `main_menu`, `page_title`, `site_branding`, `help` e `breadcrumbs` estavam no Config Sync e ausentes da config ativa (cache mascarava). Restaurados do Sync; home com 1 H1, menu e marca presentes. `institution_bar` segue só na config ativa. |
 
 ## 5. DEFERRED (com causa)
 
-- **Layout Builder por display:** lote inicial ativado no desenvolvimento com backup e autorização do responsável (`node.page.full`, `node.revista.full`, `node.wiki_entry.full`, `node.aculta_faq.default`; `allow_custom=false`). Gate 34 checks PASS; renderização HTTP idêntica. `node.document.full` excluído (plugins de campo ausentes) e restaurado. A expansão aos demais displays compatíveis depende de novos lotes em ambiente isolado.
+- **Layout Builder por display:** lote inicial ativado no desenvolvimento com backup e autorização do responsável: 4 displays de nó (`page.full`, `revista.full`, `wiki_entry.full`, `aculta_faq.default`) e 8 de `block_content` (`allow_custom=false`). Gate 96 checks PASS; comparação HTTP antes/depois da home e de `/institucional`. `node.document.full` e `block_content.basic.default` excluídos por alteração de renderização/plugins ausentes e restaurados do Config Sync. A expansão aos demais displays compatíveis depende de novos lotes.
 - **Landing por purpose (P5):** depende de conteúdo editorial e do mesmo ambiente isolado. Mecanismo e piloto Links documentados em `ACULTA420-V2-P5-LANDING-PAGES.md`.
 - **Visual:** leitura humana das capturas e aceitação do responsável.
 - **Prévia autenticada em navegador:** validada por Drush e HTTP anônimo, não em sessão autenticada real.

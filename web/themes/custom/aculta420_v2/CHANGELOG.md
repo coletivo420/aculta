@@ -1,3 +1,10 @@
+## Não versionado — ADR-054 P4 lote 2 de Layout Builder (2026-11-09)
+
+- Layout Builder habilitado em oito displays de `block_content` (`aculta_editorial.default` e `aculta_institution.contact/default/footer/full/home/institutional/registration`), com `allow_custom: false`. Ativação um a um, comparando o texto visível da home e de `/institucional`.
+- `block_content.basic.default` alterou a home e foi restaurado do Config Sync, permanecendo sem Layout Builder.
+- Gate `validate-aculta420-layout-builder-batch.php` ampliado: PASS (96 checks, 12 displays).
+- Drift antigo exposto: `main_menu`, `page_title`, `site_branding`, `help` e `breadcrumbs` estavam no Config Sync e ausentes da config ativa. Restaurados do Sync; a home voltou a ter 1 H1 com menu e marca.
+
 ## Não versionado — ADR-054 P4 lote inicial de Layout Builder (2026-11-09)
 
 - Layout Builder habilitado com `allow_custom: false` em `node.page.full`, `node.revista.full`, `node.wiki_entry.full` e `node.aculta_faq.default`, com backup em `$SUITE_OUT/aculta-lb-20261109/` e autorização do responsável.

@@ -27,7 +27,7 @@ estilo ou template foi alterado para produzi-lo.
 | Região | Blocos | Situação |
 | --- | --- | --- |
 | `institution` | 0 no Config Sync | **Drift:** `block.block.aculta420_v2_institution_bar` existe só na config ativa (plugin `aculta_institution_bar`, peso -20). Exportação para `config/sync` depende de ambiente isolado (DEFERRED) |
-| `header` | 6 | Final |
+| `header` | 6 | Final. **Drift:** em 2026-11-09 os blocos `main_menu`, `page_title`, `site_branding`, `help` e `breadcrumbs` estavam no Config Sync e ausentes da config ativa; restaurados do Sync durante o P4 |
 | `navigation` | 0 | Sem consumidores; pode sair após o corte |
 | `highlighted` | 5 | **Precisa migrar** |
 | `help` | 0 | Sem consumidores; variável `aculta_help` já compõe no template |

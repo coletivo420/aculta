@@ -6,24 +6,45 @@ dependencies:
     - block_content.type.aculta_editorial
     - field.field.block_content.aculta_editorial.body
   module:
+    - layout_builder
     - text
+third_party_settings:
+  layout_builder:
+    enabled: true
+    allow_custom: false
+    sections:
+      -
+        layout_id: layout_onecol
+        layout_settings:
+          label: ''
+        components:
+          3d361c07-fcce-4a4f-bdd0-1a787c753c4a:
+            uuid: 3d361c07-fcce-4a4f-bdd0-1a787c753c4a
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_editorial:body'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: text_default
+                label: hidden
+                settings: {  }
+                third_party_settings: {  }
+            weight: 0
+            additional: {  }
+        third_party_settings: {  }
 _core:
   default_config_hash: Mr81pzN6ieECKZgSuBHrGH4XEr5VddBT00642IqjeNI
 id: block_content.aculta_editorial.default
 targetEntityType: block_content
 bundle: aculta_editorial
 mode: default
-content:
-  body:
-    type: text_default
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 0
-    region: content
+content: {  }
 hidden:
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
   langcode: true
   search_api_excerpt: true
+  body: true

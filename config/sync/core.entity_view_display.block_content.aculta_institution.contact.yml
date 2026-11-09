@@ -29,57 +29,112 @@ dependencies:
     - field.field.block_content.aculta_institution.field_street_address
     - field.field.block_content.aculta_institution.field_trade_name
   module:
+    - layout_builder
     - link
+third_party_settings:
+  layout_builder:
+    enabled: true
+    allow_custom: false
+    sections:
+      -
+        layout_id: layout_onecol
+        layout_settings:
+          label: ''
+        components:
+          03b1d98e-c637-4f12-8423-2c7ce9a2cb08:
+            uuid: 03b1d98e-c637-4f12-8423-2c7ce9a2cb08
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_org_name'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: string
+                label: hidden
+                settings:
+                  link_to_entity: false
+                  link_rel: canonical
+                third_party_settings: {  }
+            weight: 0
+            additional: {  }
+          0937d7bf-914e-4758-9387-d9bc4e40450a:
+            uuid: 0937d7bf-914e-4758-9387-d9bc4e40450a
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_email'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: email_mailto
+                label: hidden
+                settings: {  }
+                third_party_settings: {  }
+            weight: 1
+            additional: {  }
+          67fedd9c-773f-4633-91e0-2fb43c2d8e9c:
+            uuid: 67fedd9c-773f-4633-91e0-2fb43c2d8e9c
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_phone'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: string
+                label: hidden
+                settings:
+                  link_to_entity: false
+                  link_rel: canonical
+                third_party_settings: {  }
+            weight: 2
+            additional: {  }
+          9304d6c4-847b-4f4c-836b-7c9c1151ce94:
+            uuid: 9304d6c4-847b-4f4c-836b-7c9c1151ce94
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_address'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: basic_string
+                label: hidden
+                settings: {  }
+                third_party_settings: {  }
+            weight: 3
+            additional: {  }
+          67179a05-546b-44ba-b354-27488323e712:
+            uuid: 67179a05-546b-44ba-b354-27488323e712
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_site'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: link
+                label: hidden
+                settings:
+                  trim_length: 80
+                  url_only: false
+                  url_plain: false
+                  rel: ''
+                  target: ''
+                third_party_settings: {  }
+            weight: 4
+            additional: {  }
+        third_party_settings: {  }
 id: block_content.aculta_institution.contact
 targetEntityType: block_content
 bundle: aculta_institution
 mode: contact
-content:
-  field_address:
-    type: basic_string
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 3
-    region: content
-  field_email:
-    type: email_mailto
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 1
-    region: content
-  field_org_name:
-    type: string
-    label: hidden
-    settings:
-      link_to_entity: false
-      link_rel: canonical
-    third_party_settings: {  }
-    weight: 0
-    region: content
-  field_phone:
-    type: string
-    label: hidden
-    settings:
-      link_to_entity: false
-      link_rel: canonical
-    third_party_settings: {  }
-    weight: 2
-    region: content
-  field_site:
-    type: link
-    label: hidden
-    settings:
-      trim_length: 80
-      url_only: false
-      url_plain: false
-      rel: ''
-      target: ''
-    third_party_settings: {  }
-    weight: 4
-    region: content
+content: {  }
 hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   field_address_region: true
   field_cnpj: true
   field_country: true
@@ -99,3 +154,9 @@ hidden:
   field_street_address: true
   field_trade_name: true
   langcode: true
+  search_api_excerpt: true
+  field_org_name: true
+  field_email: true
+  field_phone: true
+  field_address: true
+  field_site: true

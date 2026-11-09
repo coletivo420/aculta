@@ -45,11 +45,17 @@ $targets = [
   'node.revista.full',
   'node.wiki_entry.full',
   'node.aculta_faq.default',
+  'block_content.aculta_editorial.default',
+  'block_content.aculta_institution.contact',
+  'block_content.aculta_institution.default',
+  'block_content.aculta_institution.footer',
+  'block_content.aculta_institution.full',
+  'block_content.aculta_institution.home',
+  'block_content.aculta_institution.institutional',
+  'block_content.aculta_institution.registration',
 ];
 
 $displayStorage = \Drupal::entityTypeManager()->getStorage('entity_view_display');
-$nodeStorage = \Drupal::entityTypeManager()->getStorage('node');
-$viewBuilder = \Drupal::entityTypeManager()->getViewBuilder('node');
 $syncStorage = \Drupal::service('config.storage.sync');
 
 foreach ($targets as $id) {
@@ -80,22 +86,22 @@ foreach ($targets as $id) {
   $sync = $syncStorage->read($configName);
   $assert($sync !== FALSE && $active == $sync, "$id diverge do Config Sync.");
 
-  // Renderização real de um nó publicado do bundle.
-  $nids = \Drupal::entityQuery('node')
-    ->accessCheck(FALSE)
-    ->condition('type', $bundle)
-    ->condition('status', 1)
-    ->range(0, 1)
-    ->execute();
-  if ($nids === []) {
+  // Renderização real de uma entidade publicada do bundle.
+  $entityStorage = \Drupal::entityTypeManager()->getStorage($entity);
+  $query = $entityStorage->getQuery()->accessCheck(FALSE)->condition('status', 1)->range(0, 1);
+  if ($entityStorage->getEntityType()->hasKey('bundle')) {
+    $query->condition($entityStorage->getEntityType()->getKey('bundle'), $bundle);
+  }
+  $ids = $query->execute();
+  if ($ids === []) {
     continue;
   }
-  $node = $nodeStorage->load((int) reset($nids));
-  if ($node === NULL) {
+  $targetEntity = $entityStorage->load((int) reset($ids));
+  if ($targetEntity === NULL) {
     continue;
   }
   try {
-    $build = $viewBuilder->view($node, $mode);
+    $build = \Drupal::entityTypeManager()->getViewBuilder($entity)->view($targetEntity, $mode);
   }
   catch (\Throwable $e) {
     $failures[] = "$id: falha ao construir o render array: " . $e->getMessage();
@@ -103,7 +109,7 @@ foreach ($targets as $id) {
     continue;
   }
   $checks++;
-  $assert(isset($build['#node']) && $build['#node'] === $node, "$id: render array sem o nó.");
+  $assert(is_array($build) && $build !== [], "$id: render array vazio.");
 }
 
 // Acesso às rotas de Layout Builder.

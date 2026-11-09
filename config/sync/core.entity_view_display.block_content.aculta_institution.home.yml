@@ -29,61 +29,116 @@ dependencies:
     - field.field.block_content.aculta_institution.field_street_address
     - field.field.block_content.aculta_institution.field_trade_name
   module:
+    - layout_builder
     - link
+third_party_settings:
+  layout_builder:
+    enabled: true
+    allow_custom: false
+    sections:
+      -
+        layout_id: layout_onecol
+        layout_settings:
+          label: ''
+        components:
+          8563951b-58a1-4f95-8e9c-1c38a4036586:
+            uuid: 8563951b-58a1-4f95-8e9c-1c38a4036586
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_org_name'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: string
+                label: hidden
+                settings:
+                  link_to_entity: false
+                  link_rel: canonical
+                third_party_settings: {  }
+            weight: 0
+            additional: {  }
+          0e133df5-2a9a-41f9-9193-e3eb3d75f1b1:
+            uuid: 0e133df5-2a9a-41f9-9193-e3eb3d75f1b1
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_nonprofit_description'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: string
+                label: hidden
+                settings:
+                  link_to_entity: false
+                  link_rel: canonical
+                third_party_settings: {  }
+            weight: 1
+            additional: {  }
+          79ef4044-6ab0-4c0b-b365-b3f5c991c272:
+            uuid: 79ef4044-6ab0-4c0b-b365-b3f5c991c272
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_cnpj'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: string
+                label: hidden
+                settings:
+                  link_to_entity: false
+                  link_rel: canonical
+                third_party_settings: {  }
+            weight: 2
+            additional: {  }
+          5ed19881-a94e-4280-85e8-c1876a06bc0c:
+            uuid: 5ed19881-a94e-4280-85e8-c1876a06bc0c
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_headquarters'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: string
+                label: hidden
+                settings:
+                  link_to_entity: false
+                  link_rel: canonical
+                third_party_settings: {  }
+            weight: 3
+            additional: {  }
+          d5d059ef-7541-43e1-a4b0-557757c5fc32:
+            uuid: d5d059ef-7541-43e1-a4b0-557757c5fc32
+            region: content
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_site'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: link
+                label: hidden
+                settings:
+                  trim_length: 80
+                  url_only: false
+                  url_plain: false
+                  rel: ''
+                  target: ''
+                third_party_settings: {  }
+            weight: 4
+            additional: {  }
+        third_party_settings: {  }
 id: block_content.aculta_institution.home
 targetEntityType: block_content
 bundle: aculta_institution
 mode: home
-content:
-  field_cnpj:
-    type: string
-    label: hidden
-    settings:
-      link_to_entity: false
-      link_rel: canonical
-    third_party_settings: {  }
-    weight: 2
-    region: content
-  field_headquarters:
-    type: string
-    label: hidden
-    settings:
-      link_to_entity: false
-      link_rel: canonical
-    third_party_settings: {  }
-    weight: 3
-    region: content
-  field_nonprofit_description:
-    type: string
-    label: hidden
-    settings:
-      link_to_entity: false
-      link_rel: canonical
-    third_party_settings: {  }
-    weight: 1
-    region: content
-  field_org_name:
-    type: string
-    label: hidden
-    settings:
-      link_to_entity: false
-      link_rel: canonical
-    third_party_settings: {  }
-    weight: 0
-    region: content
-  field_site:
-    type: link
-    label: hidden
-    settings:
-      trim_length: 80
-      url_only: false
-      url_plain: false
-      rel: ''
-      target: ''
-    third_party_settings: {  }
-    weight: 4
-    region: content
+content: {  }
 hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   field_address: true
   field_address_region: true
   field_country: true
@@ -103,3 +158,9 @@ hidden:
   field_street_address: true
   field_trade_name: true
   langcode: true
+  search_api_excerpt: true
+  field_org_name: true
+  field_nonprofit_description: true
+  field_cnpj: true
+  field_headquarters: true
+  field_site: true

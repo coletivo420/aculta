@@ -165,3 +165,10 @@ Este registro não autoriza `drush cim`, `updatedb` ou alterações destrutivas;
 - Ativação feita na configuração ativa do desenvolvimento com backup em `$SUITE_OUT/aculta-lb-20261109/`; os cinco arquivos do lote foram refletidos em `config/sync` e `config:status` não aponta divergência.
 - `node.document.full` foi excluído: ao habilitar LB, os plugins `field_block:node:document:*` não foram encontrados e as seções ficaram vazias. O display foi restaurado do Config Sync e permanece sem LB (config ativa igual ao arquivo de backup).
 - Renderização HTTP após a ativação: `/institucional`, `/atividades`, Revista, verbete da Wiki, FAQ e documento responderam 200. A Wiki tinha 2 H1 (`page_title` + `wiki-entry`); o componente passou a usar `title_level` (`h2` padrão) e ficou com 1 H1.
+
+## Execução Recente — ADR-054 P4 lote 2 (blocos de conteúdo) (2026-11-09)
+
+- `validate-aculta420-layout-builder-batch.php`: PASS (96 checks) com 12 displays: 4 de nó + 8 de `block_content` (`aculta_editorial.default`, `aculta_institution.contact/default/footer/full/home/institutional/registration`).
+- Ativação um display por vez, comparando o texto visível da home e de `/institucional` com a linha de base. Todos os 8 mantiveram `home=OK inst=OK`; `block_content.basic.default` alterou a home e foi restaurado do Config Sync, permanecendo sem Layout Builder.
+- Avisos de `field_block` ausentes em alguns campos institucionais não alteraram a renderização; o gate e a comparação HTTP cobrem os casos exibidos.
+- Durante os testes foi exposto um drift antigo: `aculta_main_menu`, `aculta_page_title`, `aculta_site_branding`, `aculta_help` e `aculta_breadcrumbs` estavam no Config Sync e ausentes da config ativa (cache de página mascarava). Os cinco blocos foram restaurados do Sync; a home voltou a ter 1 H1, e menu e marca estão presentes. Blocos ativos: 37 (36 do Sync + `institution_bar`, ainda só na config ativa).
