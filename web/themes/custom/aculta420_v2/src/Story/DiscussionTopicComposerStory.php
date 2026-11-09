@@ -14,7 +14,7 @@ use Drupal\ui_patterns_library\StoryDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Story executável para o Compositor de Criação de Tópico.
+ * Story executável para o Compositor de Criação de Conteúdo.
  *
  * Monta o formulário real do nó aculta_forum_topic (Assunto antes do Comentário).
  */

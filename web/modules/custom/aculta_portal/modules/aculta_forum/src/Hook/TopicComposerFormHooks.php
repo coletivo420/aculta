@@ -8,7 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 
 /**
- * Rótulos e ordem do formulário de criação de tópico (Compositor de Criação de Tópico).
+ * Rótulos e ordem do formulário de criação de tópico (Compositor de Criação de Conteúdo).
  *
  * O tópico é o único compositor com Assunto. O Assunto fica antes do Comentário.
  */
