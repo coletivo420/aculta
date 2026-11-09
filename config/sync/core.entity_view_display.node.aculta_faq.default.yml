@@ -7,22 +7,42 @@ dependencies:
     - field.field.node.aculta_faq.field_domain_source
     - node.type.aculta_faq
   module:
+    - layout_builder
     - text
     - user
+third_party_settings:
+  layout_builder:
+    enabled: true
+    allow_custom: false
+    sections:
+      -
+        layout_id: layout_onecol
+        layout_settings:
+          label: ''
+        components:
+          c6f0cc48-92ec-4e21-8a97-85e6f0f26c93:
+            uuid: c6f0cc48-92ec-4e21-8a97-85e6f0f26c93
+            region: content
+            configuration:
+              id: 'field_block:node:aculta_faq:body'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: text_default
+                label: hidden
+                settings: {  }
+                third_party_settings: {  }
+            weight: 0
+            additional: {  }
+        third_party_settings: {  }
 _core:
   default_config_hash: k6hF2cnw-pq64_tsSgWDrms7rnKeCcFJPQrEP8r4-j4
 id: node.aculta_faq.default
 targetEntityType: node
 bundle: aculta_faq
 mode: default
-content:
-  body:
-    type: text_default
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 0
-    region: content
+content: {  }
 hidden:
   co_authors: true
   entity_print_view_epub: true
@@ -33,3 +53,4 @@ hidden:
   links: true
   private_message_link: true
   search_api_excerpt: true
+  body: true

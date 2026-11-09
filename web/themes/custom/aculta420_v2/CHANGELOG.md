@@ -1,3 +1,10 @@
+## Não versionado — ADR-054 P4 lote inicial de Layout Builder (2026-11-09)
+
+- Layout Builder habilitado com `allow_custom: false` em `node.page.full`, `node.revista.full`, `node.wiki_entry.full` e `node.aculta_faq.default`, com backup em `$SUITE_OUT/aculta-lb-20261109/` e autorização do responsável.
+- As seções padrão preservam os campos; a renderização HTTP permaneceu equivalente. Config ativa e Config Sync conferem; gate `validate-aculta420-layout-builder-batch.php` (34 checks).
+- `node.document.full` excluído: os plugins `field_block:node:document:*` não foram encontrados e o display foi restaurado integralmente do Config Sync.
+- `wiki-entry` ganhou `title_level` (`h2` padrão), removendo o H1 duplicado nos verbetes (o H1 pertence ao título da rota).
+
 ## Não versionado — ADR-054 P5 piloto Links com layout SDC (2026-11-09)
 
 - O tema sobrescreve `aculta-links-landing.html.twig` e compõe a landing Links/LinkWeed com `aculta420_v2:layout-section`; dados, acesso e cache permanecem no `aculta_linkweed`.

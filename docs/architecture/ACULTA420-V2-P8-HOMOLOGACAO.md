@@ -80,7 +80,7 @@ Modo escuro autenticado: a conta de teste tem preferência própria `light`, que
 
 ## 5. DEFERRED (com causa)
 
-- **Layout Builder habilitado por display:** exige importação de configuração em ambiente isolado. Planejamento pronto (24 compatíveis, 48 adaptador, 23 incompatíveis), nenhuma configuração alterada.
+- **Layout Builder por display:** lote inicial ativado no desenvolvimento com backup e autorização do responsável (`node.page.full`, `node.revista.full`, `node.wiki_entry.full`, `node.aculta_faq.default`; `allow_custom=false`). Gate 34 checks PASS; renderização HTTP idêntica. `node.document.full` excluído (plugins de campo ausentes) e restaurado. A expansão aos demais displays compatíveis depende de novos lotes em ambiente isolado.
 - **Landing por purpose (P5):** depende de conteúdo editorial e do mesmo ambiente isolado. Mecanismo e piloto Links documentados em `ACULTA420-V2-P5-LANDING-PAGES.md`.
 - **Visual:** leitura humana das capturas e aceitação do responsável.
 - **Prévia autenticada em navegador:** validada por Drush e HTTP anônimo, não em sessão autenticada real.

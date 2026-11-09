@@ -8,6 +8,7 @@
 - Os dados, o acesso e o cache continuam no `aculta_linkweed`; o tema só apresenta.
 - Verificado nos shells clássico e v2: HTTP 200 no host Links, 1 H1, 1 `<main>` e `.layout-section` presente.
 - O `LinksLandingController` não foi alterado; a variante de nó com `field_domain_source` continua funcionando.
+- Layout Builder foi habilitado no lote inicial de conteúdo (`node.page.full`, `node.revista.full`, `node.wiki_entry.full`, `node.aculta_faq.default`) com autorização do responsável. **Não existe nó `page` com `field_domain_source` do Links**, então a landing continua no controller e no layout SDC; criar esse nó é decisão editorial.
 
 ## 1. O que o código faz hoje
 

@@ -16,26 +16,50 @@ dependencies:
     - field.field.node.page.field_social_links
     - node.type.page
   module:
-    - link
+    - layout_builder
     - text
     - user
+third_party_settings:
+  layout_builder:
+    enabled: true
+    allow_custom: false
+    sections:
+      -
+        layout_id: layout_onecol
+        layout_settings:
+          label: ''
+        components:
+          16306729-65f8-4ae9-8090-10a60945ce5d:
+            uuid: 16306729-65f8-4ae9-8090-10a60945ce5d
+            region: content
+            configuration:
+              id: 'field_block:node:page:body'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: text_default
+                label: hidden
+                settings: {  }
+                third_party_settings: {  }
+            weight: 0
+            additional: {  }
+          2a0fd918-0ac9-44ad-9ac7-8853b63ab2a4:
+            uuid: 2a0fd918-0ac9-44ad-9ac7-8853b63ab2a4
+            region: content
+            configuration:
+              id: 'extra_field_block:node:page:links'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+            weight: 1
+            additional: {  }
+        third_party_settings: {  }
 id: node.page.full
 targetEntityType: node
 bundle: page
 mode: full
-content:
-  body:
-    type: text_default
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 5
-    region: content
-  links:
-    settings: {  }
-    third_party_settings: {  }
-    weight: 100
-    region: content
+content: {  }
 hidden:
   co_authors: true
   entity_print_view_epub: true
@@ -53,3 +77,5 @@ hidden:
   langcode: true
   private_message_link: true
   search_api_excerpt: true
+  body: true
+  links: true

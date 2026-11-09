@@ -362,6 +362,7 @@ autorizada.
 
 ### wiki-entry — Verbete da Wiki
 - **Papel:** apresenta verbetes completos e cartões de listagem, portando a hierarquia editorial da V1 para Wiki420.
+- **Props:** `variant`, `title_level` (`h1` ou `h2`, padrão `h2`; o H1 pertence ao título da rota), `has_summary`, `has_image`, `has_categories`, demais flags de apresentação.
 - **Props:** `variant`, `url`, `has_summary`, `has_image`, `has_categories`, `has_related`, `has_references`, `has_discussion`.
 - **Slots:** `title`, `summary`, `image`, `categories`, `body`, `related`, `references`, `discussion`, `actions`.
 - **Stories:** `wiki-entry.default.story.yml` e `wiki-entry.teaser.story.yml`.

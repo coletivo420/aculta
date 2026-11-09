@@ -12,6 +12,12 @@ props:
       type: string
       title: Variante de apresentação
       enum: [article, teaser]
+    title_level:
+      type: string
+      title: Nível do título do verbete
+      description: O H1 pertence ao título da rota; o verbete usa h2 por padrão.
+      enum: [h1, h2]
+      default: h2
     url:
       type: [string, 'null']
       title: URL canônica do verbete
