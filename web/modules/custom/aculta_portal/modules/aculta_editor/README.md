@@ -48,7 +48,7 @@ Desabilitados: `html_embed`, `free_wproofreader`, `font`, `emoji`, `todo_documen
 
 ## Emojis Fluent (seletor próprio)
 
-O botão `acultaFluentEmoji` está em `usuario_aculta`, `revista_editorial` e `wiki`. O seletor lê o catálogo curado de
+O botão `acultaFluentEmoji` está em `usuario_aculta`, `revista_editorial`, `wiki` e `forum`. O seletor lê o catálogo curado de
 `data/fluent-emoji-catalog.json` (37 emojis de cultivo, vibe 420, saúde e direitos) e insere apenas o caractere Unicode
 nativo. Mãos e gestos usam o tom pardo (Fitzpatrick Tipo 4, modificador `U+1F3FD`).
 
