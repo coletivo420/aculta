@@ -31,7 +31,7 @@ final class DiscussionProgressHooks {
     // O core coloca o formulário em cada item do campo (chave numérica), em 'comment_form'.
     foreach (\Drupal\Core\Render\Element::children($build['field_aculta_discussion']) as $delta) {
       // Elemento vazio e sem acesso, não removido: o core lê a chave ao montar os itens.
-      $build['field_aculta_discussion'][$delta]['comment_form'] = ['#access' => FALSE];
+      $build['field_aculta_discussion'][$delta]['comment_form'] = [];
     }
     $build['field_aculta_discussion']['#attributes']['data-aculta-discussion-thread'] = '';
     $build['field_aculta_discussion']['#attached']['library'][] = 'aculta_forum/discussion-progress';
