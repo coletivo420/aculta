@@ -29,7 +29,10 @@ final class ForumPostThreadHooks {
     }
 
     $posts = $this->threadBuilder->build($entity);
-    if ($posts !== []) {
+    // A discussão do tópico é o compositor de Responder do cartão de abertura; o link antigo
+    // "Responder à discussão" do bloco de posts não aparece na página.
+    unset($posts['actions']['create']);
+    if ($posts !== [] && !(array_keys($posts) === ['actions'] && $posts['actions'] === [])) {
       $build['aculta_forum_revisionable_posts'] = $posts;
     }
   }
