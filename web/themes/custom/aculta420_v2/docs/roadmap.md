@@ -1,6 +1,6 @@
 # Roadmap do fórum Growroom420 (ACULTA420 V2)
 
-> **Plano transversal vigente (2026-11-09):** ADR-054 e `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md`. Este roadmap segue focado no Fórum. O painel administrativo de container foi removido do código, mas o renderizador antigo continua até homologação da nova estrutura. O shell v2 (cinco áreas finais) está implementado como opt-in e testado por HTTP no Runtime; os layouts SDC (`layout-section`, `layout-two-columns`, `layout-grid`, `layout-narrow`, `layout-full`) são descobertos pelo Layout Builder. Capturas visuais, habilitação do Layout Builder por display e homologação do piloto Links seguem pendentes.
+> **Plano transversal vigente (2026-11-09):** ADR-054 e `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md`. Este roadmap segue focado no Fórum. O painel administrativo de container foi removido do código, mas o renderizador antigo continua até homologação da nova estrutura. O shell v2 (cinco áreas finais) está implementado como opt-in e testado por HTTP e Playwright Firefox; os layouts SDC são descobertos pelo Layout Builder; a UI Library ganhou prévias reais administrativas. Homologação visual completa, habilitação do Layout Builder por display, landing pages por purpose e cutover seguem pendentes (`docs/architecture/ACULTA420-V2-P8-HOMOLOGACAO.md`).
 
 
 Status espelhado de `TODO.md`. Plano visual: `docs/architecture/GROWROOM420-VISUAL-PLANO.md`.

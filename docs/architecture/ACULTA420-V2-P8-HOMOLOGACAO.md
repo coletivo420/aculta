@@ -1,0 +1,83 @@
+# ACULTA420 V2 — P8: homologação (relatório parcial)
+
+**Data:** 2026-11-09 · **Branch:** `dev` · **Ambiente:** servidor de desenvolvimento (`*.aculta.toca.net.br`, HTTPS em 127.0.0.1) · **Drupal:** 11.5.0-beta1 · **Drush:** local.
+
+Este relatório registra apenas o que foi executado. Item não executado é **DEFERRED**, não PASS.
+
+## 1. Gates executados
+
+| Gate | Resultado | Observação |
+| --- | --- | --- |
+| `validate-aculta420-theme-settings.php` | **PASS** (14) | Painel de container ausente; paletas e schema preservados |
+| `validate-aculta420-shell-regions.php` | **PASS** (30) | Cinco regiões finais; 5 blocos em `highlighted` como ponte |
+| `validate-aculta420-sdc-schemas.php` | **PASS** (69 componentes, 113 includes, 1527 checks) | Inclui os 5 layouts novos |
+| `validate-aculta420-layouts.php` | **PASS** (42) | Descoberta pelo `plugin.manager.core.layout` e render real |
+| `validate-aculta-ui-library.php` | **PASS** (23) | Rotas MAIN, acesso por perfil, `max-age 0`, prévia real |
+| `validate-aculta420-css-scope.php` | **PASS** (8) | `statistics.css` fora do global |
+| `validate-admin-routes-main-domain.php` | **PASS** (175 rotas) | Inclui as duas rotas novas |
+| `validate-project-status-index.php` | **PASS** (43 componentes) | README raiz regenerado |
+| `php -l` nos arquivos alterados | **PASS** | |
+| `git diff --check` | **PASS** | |
+| `validate-aculta420-design-foundations.php` | **FAIL** (38/1057) | Pré-existente: o validador lê `css/tokens.css`, a V2 publica `src/styles/tokens.css` |
+| `validate-aculta420-mapped-classes.php` | **FAIL** (5 classes `portal-profile__reactions*`) | Pré-existente, fora do diff |
+| `validate-module-theme-boundary.php` | **FAIL** (64/7310) | Pré-existente em módulos do Portal; a sugestão de template saiu de `src/Hook` |
+| `validate-aculta-portal-drupal12.php` | **FAIL** | Pré-existente: `AccountCoursesManager` (P5.5) e `InstitutionBarBlock` (service locator) |
+| `validate-agent-token-budget.php` | **FAIL** (3) | Pré-existente: `AGENTS.md` 5333 B, `aculta_domain_config` sem TODO, `aculta_forum` com versão divergente |
+| `npm run lint:css` | **DEFERRED** | `node_modules` sem o binário `stylelint`; falha antes de analisar arquivos |
+
+## 2. Matriz HTTP dos dez purposes (shell clássico e v2)
+
+Método: `curl --resolve` com SNI do host, para preservar o VirtualHost.
+
+| Purpose | Host testado | Clássico | Shell v2 | H1 | `<main>` |
+| --- | --- | --- | --- | --- | --- |
+| main | `aculta.toca.net.br` | 200 | 200 | 1 | 1 |
+| links | `links.aculta.toca.net.br` | 200 | 200 | 1 | 1 |
+| eventos | `eventos.aculta.toca.net.br` | 200 | 200 | 1 | 1 |
+| wiki | `wiki420.aculta.toca.net.br` | 200 | 200 | 1 | 1 |
+| magazine | `revista.aculta.toca.net.br` | 200 | 200 | 1 | 1 |
+| shop | `loja.aculta.toca.net.br` | 200 | 200 | 1 | 1 |
+| courses | `cursos.aculta.toca.net.br` | 200 | 200 | 1 | 1 |
+| support | `apoio.aculta.toca.net.br` | 200 | 200 | 1 | 1 |
+| forum | `growroom420.aculta.toca.net.br` | 200 | 200 | 1 | 1 |
+| account | `conta.aculta.toca.net.br` | 302 (visitante → login) | 302 | — | — |
+
+Correções feitas durante esta homologação: a landing Links tinha `<main>`/`<h1>` próprios dentro do `layout-page`; `revista-listing` e `forum-category-header` tinham `h1` fixo. Agora a landing Links não duplica landmark e os dois componentes usam `title_level` (`h2` por padrão).
+
+## 3. Evidência de navegador
+
+- **Método 1 (Playwright Firefox)**, `ACULTA_BROWSER_ENV=local`, motor Firefox do Playwright, headless.
+- Comando: `SUITE_OUT=/home/piradopirata/suite-out/aculta-p8-20261109 ACULTA_BROWSER_ENV=local ACULTA_BROWSER_FRONTS=shell-v2 ACULTA_BROWSER_URLS="https://aculta.toca.net.br/,https://links.aculta.toca.net.br/" npm --prefix tests/browser run test:firefox`
+- **Resultado: 2/2 PASS** (19,1 s). Asserções do runner: `body` visível e URL preservada.
+- Capturas full-page: `$SUITE_OUT/shell-v2-main-320.png` e `$SUITE_OUT/shell-v2-main-1440.png` (claro). A leitura visual das imagens não foi feita nesta sessão; a aceitação visual humana permanece pendente.
+
+## 4. Testes negativos executados
+
+| Teste | Resultado |
+| --- | --- |
+| Visitante abrindo prévia real no MAIN | **403** |
+| Visitante abrindo prévia em `links` e `wiki420` | **404** |
+| Usuário autenticado sem `administer blocks` | Negado pelo gate de acesso (23 checks) |
+| Bloco com contexto obrigatório ausente | "Prévia indisponível" com o nome do contexto |
+| Cache da prévia | `max-age 0` + `user.roles` no catálogo, prévia e indisponibilidade |
+| CSS de estatísticas na home | Ausente do CSS servido após `drush cr` |
+
+## 5. DEFERRED (com causa)
+
+- **Layout Builder habilitado por display:** exige importação de configuração em ambiente isolado. Planejamento pronto (24 compatíveis, 48 adaptador, 23 incompatíveis), nenhuma configuração alterada.
+- **Landing por purpose (P5):** depende de conteúdo editorial e do mesmo ambiente isolado. Mecanismo e piloto Links documentados em `ACULTA420-V2-P5-LANDING-PAGES.md`.
+- **Visual:** modo escuro, zoom 200%, teclado, leitor de telas e aceitação humana das capturas.
+- **Prévia autenticada em navegador:** validada por Drush e HTTP anônimo, não em sessão autenticada real.
+- **Cache cross-domain em ordem inversa:** feitas requisições sequenciais corretas, sem teste de troca de cache aquecido entre hosts.
+- **Import/export de configuração em staging e rollback de configuração:** não executados.
+- **`npm run lint:css`:** binário ausente.
+
+## 6. P9 — cutover
+
+**Não executado.** Critérios não atendidos: homologação visual, Layout Builder por display, landing pages e import/export em staging.
+
+O que já existe para o cutover:
+
+- **Rollback do shell:** `drush config:set aculta420_v2.settings aculta_shell_variant classic` + `drush cr`; testado duas vezes nesta sessão (v2 → clássico), com HTTP 200 e 1 H1/1 `<main>`.
+- **Código:** o shell v2 é um template adicional; `git revert` do commit `e990a8edc` remove a estrutura sem afetar o clássico. O `info.yml` continua com as nove regiões; nenhuma região foi removida.
+- **Container legado:** painel removido do formulário; `aculta_purpose_container`, `PurposeContainerLayout` e CSS permanecem para leitura até o corte, conforme ADR-054.

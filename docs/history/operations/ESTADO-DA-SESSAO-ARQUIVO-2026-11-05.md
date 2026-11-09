@@ -1704,3 +1704,14 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Verificações:** `npm run lint:css`, `php scripts/validate-aculta420-v2-foundations.php`, `php scripts/validate-agent-token-budget.php` e `git diff --check` PASS. Captura visual não repetida: CSS passou lint e gate de tokens; sem alteração de comportamento pretendida.
 - **Pendências e bloqueios:** nenhuma desta entrega; validação visual de fases anteriores mantém seu status próprio.
 - **Próximo passo:** seguir com o próximo item do roadmap V2.
+# ACULTA CGU e Consolidação Modular Transversal — 2026-11-08
+
+- **Objetivo:** unificar e consolidar módulos intermediários e duplicados no portal, integrando recursos aos seus donos de domínio e criando o módulo transversal `aculta_cgu` para gestão de Conteúdo Gerado por Usuários.
+- **Estado:** funcional e estável. `aculta_cgu` reúne propostas comunitárias privadas (`Contribution`) e moderação de denúncias (`UgcReport`); submódulos `aculta_forum_wiki`, `aculta_lms_resources`, `aculta_lms_agenda`, `aculta_lms_messenger`, `aculta_forum_lms` foram incorporados diretamente nos seus módulos de domínio (`aculta_wiki`, `aculta_lms`, `aculta_forum`, `aculta_calendar`, `aculta_messenger`). Runtime respondendo HTTP 200 OK.
+- **Decisões e alternativas descartadas:** criação de aliases de serviços legados (`aculta_contributions.*` e `aculta_ugc.*`) no `aculta_cgu` para transição transparente; desregistro ordenado dos módulos extintos no banco e em `core.extension.yml` antes da remoção dos arquivos do disco para prevenir erro 500 no autoloader.
+- **Cuidados:** preservação dos esquemas de banco e entidades (`aculta_contribution` e `aculta_ugc_report`) sob o novo provider para manter os dados existentes íntegros; `drush cr` disparado a cada intervenção estrutural.
+- **Commits e arquivos:** `3c16b497c`, `900734aa8`, `c44b8e3c5`, `9a734b0ef`, `a92c31f58`, `8f4e9e534`, `7f05433a2`, `ca1015201`; módulos `aculta_cgu`, `aculta_lms`, `aculta_wiki`, `aculta_forum`, `aculta_events`, `aculta_user`, `aculta_content_admin` e sync `core.extension.yml`.
+- **Verificações:** Unit CGU 3/19 PASS; Unit Wiki/Events 129/545 PASS; `validate-project-status-index.php` PASS (44 componentes); `validate-config-extension-dependencies.php` PASS (1714 checks); smoke test HTTP 200 PASS. Kernels com banco isolado: `UgcReportPolicyKernelTest` 12/162 PASS.
+- **Pendências e bloqueios:** homologação funcional autenticada da fila unificada em `/painel-administrativo/moderacao/denuncias` e submissões com perfis de teste.
+- **Próximo passo:** homologar operacionalmente o painel administrativo de denúncias e o ciclo de revisão de propostas no Runtime.
+

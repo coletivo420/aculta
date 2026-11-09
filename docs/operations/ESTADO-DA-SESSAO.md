@@ -22,13 +22,12 @@
 - **Runtime:** Homelab inacessível localmente para `drush cr`; status registrado como `DEFERRED`.
 - **Próximo passo:** Agente 2 inicia C02-03 (experimento Form API + HTMX para resposta inline na mesma página) e fecha COM-01, COM-05 e COM-12.
 
-# ACULTA CGU e Consolidação Modular Transversal — 2026-11-08
+# ADR-054 — P0/P2/P3/P4/P6/P7 executados; P5/P8/P9 parciais — 2026-11-09
 
-- **Objetivo:** unificar e consolidar módulos intermediários e duplicados no portal, integrando recursos aos seus donos de domínio e criando o módulo transversal `aculta_cgu` para gestão de Conteúdo Gerado por Usuários.
-- **Estado:** funcional e estável. `aculta_cgu` reúne propostas comunitárias privadas (`Contribution`) e moderação de denúncias (`UgcReport`); submódulos `aculta_forum_wiki`, `aculta_lms_resources`, `aculta_lms_agenda`, `aculta_lms_messenger`, `aculta_forum_lms` foram incorporados diretamente nos seus módulos de domínio (`aculta_wiki`, `aculta_lms`, `aculta_forum`, `aculta_calendar`, `aculta_messenger`). Runtime respondendo HTTP 200 OK.
-- **Decisões e alternativas descartadas:** criação de aliases de serviços legados (`aculta_contributions.*` e `aculta_ugc.*`) no `aculta_cgu` para transição transparente; desregistro ordenado dos módulos extintos no banco e em `core.extension.yml` antes da remoção dos arquivos do disco para prevenir erro 500 no autoloader.
-- **Cuidados:** preservação dos esquemas de banco e entidades (`aculta_contribution` e `aculta_ugc_report`) sob o novo provider para manter os dados existentes íntegros; `drush cr` disparado a cada intervenção estrutural.
-- **Commits e arquivos:** `3c16b497c`, `900734aa8`, `c44b8e3c5`, `9a734b0ef`, `a92c31f58`, `8f4e9e534`, `7f05433a2`, `ca1015201`; módulos `aculta_cgu`, `aculta_lms`, `aculta_wiki`, `aculta_forum`, `aculta_events`, `aculta_user`, `aculta_content_admin` e sync `core.extension.yml`.
-- **Verificações:** Unit CGU 3/19 PASS; Unit Wiki/Events 129/545 PASS; `validate-project-status-index.php` PASS (44 componentes); `validate-config-extension-dependencies.php` PASS (1714 checks); smoke test HTTP 200 PASS. Kernels com banco isolado: `UgcReportPolicyKernelTest` 12/162 PASS.
-- **Pendências e bloqueios:** homologação funcional autenticada da fila unificada em `/painel-administrativo/moderacao/denuncias` e submissões com perfis de teste.
-- **Próximo passo:** homologar operacionalmente o painel administrativo de denúncias e o ciclo de revisão de propostas no Runtime.
+- **Objetivo:** executar o plano ADR-054 de refatoração SDC First, Layout Builder, CSS multidomínio e Biblioteca UI.
+- **Estado:** P0 inventário e gate do painel; P3 shell v2 opt-in com cinco áreas e ponte das regiões antigas; P4 cinco layouts SDC descobertos pelo Layout Builder; P6 módulo `aculta_ui_library` com prévias reais administrativas; P7 `statistics.css` fora do global. P5, habilitação do Layout Builder por display, P8 visual e P9 ficaram DEFERRED.
+- **Arquivos/commits:** `66f6e0440` (P0/P2), `e990a8edc` (P3), `0f48b901b` (P4), `9b3d576c6` (P5/P6/P7). Relatórios em `docs/architecture/ACULTA420-V2-P0-INVENTARIO.md`, `ACULTA420-V2-P5-LANDING-PAGES.md` e `ACULTA420-V2-P8-HOMOLOGACAO.md`.
+- **Verificações:** gates do tema e da UI Library PASS; falhas de fundações, classes mapeadas, boundary e Drupal 12 são pré-existentes e estão no relatório P8. Playwright Firefox 2/2 no shell v2; HTTP 200 nos dez purposes; rollback `classic` testado; `drush cr` executado.
+- **Pendências:** conteúdo editorial das landings; importação de Layout Builder em staging; capturas escuras/zoom/teclado/leitor de telas; prévia autenticada em navegador; `lint:css` sem binário.
+- **Próximo passo:** definir as landings com o responsável e preparar o lote de Layout Builder em ambiente isolado.
+
