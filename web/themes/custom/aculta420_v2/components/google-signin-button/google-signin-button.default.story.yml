@@ -1,0 +1,4 @@
+name: Botão Continuar com Google
+props:
+  label: Continuar com Google
+  url: '#continuar-com-google'
