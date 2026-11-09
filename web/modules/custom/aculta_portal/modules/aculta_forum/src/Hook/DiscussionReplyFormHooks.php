@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Hook;
 
+use Drupal\Core\Hook\Order\Order;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum\Service\DiscussionReplyIdempotencyManager;
 use Drupal\aculta_forum\Service\DiscussionReplyUrlBuilder;
@@ -42,7 +43,7 @@ final class DiscussionReplyFormHooks {
   /**
    * Alters comment forms for discussion reply handling.
    */
-  #[Hook('form_comment_form_alter')]
+  #[Hook('form_comment_form_alter', order: Order::Last)]
   public function commentFormAlter(array &$form, FormStateInterface $formState, string $formId): void {
     $formObject = $formState->getFormObject();
     if (!$formObject instanceof EntityFormInterface) {
@@ -82,6 +83,15 @@ final class DiscussionReplyFormHooks {
     // Resposta e edição não têm Assunto nem a marca "Rejeitado": o assunto é do tópico e a
     // rejeição é da moderação.
     unset($form['subject'], $form['field_aculta_rejected']);
+
+    // No popup, o formulário do comentário mostra só o texto e as ações. Autoria, nome,
+    // data, hora, status e idioma ficam fora (são campos administrativos do core).
+    $keep = ['comment_body', 'actions', 'form_id', 'form_build_id', 'form_token'];
+    foreach (array_keys($form) as $key) {
+      if (!str_starts_with((string) $key, '#') && !in_array($key, $keep, TRUE)) {
+        unset($form[$key]);
+      }
+    }
 
     // Expose hidden pid element and entity builder so Drupal form state carries the thread.
     if ($comment->isNew()) {
