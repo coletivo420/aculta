@@ -1,3 +1,10 @@
+## Não versionado - ADR-054 e retirada da opção Layout de container (2026-11-09)
+
+- Decisões das três rodadas consolidadas em ADR-054 e plano executivo SDC First, Layout Builder e dez purposes.
+- Administração: removida a subaba `Layout de container` de `theme-settings.php`, mantendo `aculta_purpose_container` somente como compatibilidade temporária no renderizador; sem migração de dados.
+- Documentação e AGENTS atualizados para jQuery 4 sob demanda em módulos e SDCs e preservação do HTMX.
+- **RUNTIME STATUS: DEFERRED** - ainda não foram executados gates, `drush cr` ou capturas visuais desta alteração. Sem mudança de versão.
+
 ## Não versionado — padrões visuais de botões primário e secundário no login da barra institucional (2026-11-09)
 
 - Diálogo de login da barra institucional (`multidomain-bar.css` e `portal-ui-extras.css`): remoção das regras legadas que sobrescreviam o visual com cantos quase retos (`--radius-sm`) e cores fixas de destaque.
