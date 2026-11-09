@@ -64,6 +64,22 @@
       once('aculta-studio-create-popup', document.body, context).forEach(() => {
         ensureDialog();
 
+        // O clique nunca segue o href (que aponta para o fragmento do popup). Se o HTMX não
+        // processou o link, o popup é carregado aqui mesmo.
+        document.addEventListener('click', (event) => {
+          const trigger = event.target && event.target.closest ? event.target.closest(triggerSelector) : null;
+          if (!trigger) {
+            return;
+          }
+          event.preventDefault();
+          event.stopPropagation();
+          const url = trigger.getAttribute('data-hx-get') || trigger.getAttribute('href');
+          ensureDialog();
+          if (window.htmx) {
+            window.htmx.ajax('GET', url, { target: '#' + dialogBodyId, swap: 'innerHTML', select: '[data-aculta-content-composer]' });
+          }
+        }, true);
+
         // Mensagens de erro do envio: o recorte HTMX traz só o formulário, então guarda as
         // mensagens da resposta e as recoloca no topo do popup depois da troca.
         let pendingMessages = '';
