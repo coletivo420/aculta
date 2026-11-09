@@ -121,6 +121,10 @@
             }
             const xhr = event.detail.xhr;
             const finalUrl = xhr && xhr.responseURL ? new URL(xhr.responseURL, window.location.href) : null;
+            // O HTMX acrescenta o formato de fragmento; a navegação precisa da página completa.
+            if (finalUrl) {
+              finalUrl.searchParams.delete('_wrapper_format');
+            }
             const here = new URL(window.location.href);
             if (finalUrl && (finalUrl.pathname !== here.pathname || finalUrl.search !== here.search)) {
               window.location.assign(finalUrl.href);
