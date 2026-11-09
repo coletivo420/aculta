@@ -4,6 +4,40 @@ Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes d
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
+### layout-section
+
+Seção empilhada com slot `header` (título/antetítulo/ação) e slot `content`.
+Prop `tone` (`default` ou `raised`; `raised` usa `--color-surface-raised`).
+Story: `layout-section.default.story.yml`. Sem JavaScript; CSS local. O
+`ui_patterns_layouts` o descobre como layout de seção do Layout Builder
+(regiões `header` e `content`).
+
+### layout-two-columns
+
+Conteúdo principal (`primary`) e coluna complementar (`secondary`); prop
+`ratio` (`equal` ou `wide`, padrão `equal`). Uma coluna no mobile, duas a
+partir de 60rem. Story: `layout-two-columns.default.story.yml`. Sem JavaScript.
+
+### layout-grid
+
+Grade automática (`auto-fit` + `minmax`) no slot `content`; prop
+`min_item_width` (`12rem`, `16rem` ou `20rem`, padrão `16rem`). Sem estilo
+inline: a largura mínima vira classe. Story: `layout-grid.default.story.yml`.
+
+### layout-narrow
+
+Coluna de leitura de até 68 caracteres no slot `content`. Story:
+`layout-narrow.default.story.yml`.
+
+### layout-full
+
+Conteúdo em largura total no slot `content`, sem limite de largura. Story:
+`layout-full.default.story.yml`.
+
+Os cinco layouts usam `group: Layouts` e são registrados automaticamente pelo
+`ui_patterns_layouts` (categoria `Layouts`, regiões iguais aos slots). O gate
+`validate-aculta420-layouts.php` verifica descoberta e renderização real.
+
 ### layout-page
 
 Estrutura o landmark main nas variantes stack, aside e full; stories:

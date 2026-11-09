@@ -1,0 +1,15 @@
+.layout-grid {
+  --layout-grid-min: 16rem;
+  display: grid;
+  gap: var(--spacing-lg);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--layout-grid-min)), 1fr));
+  min-inline-size: 0;
+}
+
+.layout-grid--min-12 {
+  --layout-grid-min: 12rem;
+}
+
+.layout-grid--min-20 {
+  --layout-grid-min: 20rem;
+}

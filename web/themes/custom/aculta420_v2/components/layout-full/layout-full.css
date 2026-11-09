@@ -1,0 +1,6 @@
+.layout-full {
+  inline-size: 100%;
+  max-inline-size: none;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}

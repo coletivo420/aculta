@@ -1,0 +1,12 @@
+name: Seção com cabeçalho
+description: Seção empilhada com cabeçalho próprio e superfície opcional.
+component: aculta420_v2:layout-section
+props:
+  tone: default
+slots:
+  header:
+    type: inline_template
+    template: '<h2>Agenda</h2>'
+  content:
+    type: inline_template
+    template: '<p>Próximos encontros e atividades.</p>'

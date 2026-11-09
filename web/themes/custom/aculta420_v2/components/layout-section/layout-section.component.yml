@@ -1,0 +1,26 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Seção com cabeçalho
+description: Empilha cabeçalho e conteúdo, com espaçamento entre as partes e largura controlada pelo contêiner.
+status: experimental
+group: Layouts
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    tone:
+      type: string
+      enum: [default, raised]
+      default: default
+      title: Superfície
+      description: '`raised` usa a superfície elevada para destacar a seção.'
+slots:
+  header:
+    title: Cabeçalho da seção
+    description: Título, antetítulo ou ação da seção.
+  content:
+    title: Conteúdo da seção
+    description: Conteúdo principal da seção.
+assets:
+  css:
+    component:
+      layout-section.css: {}

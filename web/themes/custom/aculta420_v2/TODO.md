@@ -4,7 +4,8 @@ Estado: em desenvolvimento · versão 1.4.0 (`aculta420_v2.info.yml`) · status:
 
 ## Próximo passo
 
-- **ADR-054 P4 (próximo):** layouts SDC adicionais (seção, duas colunas, grid, estreito) e habilitação de Layout Builder por lote, display a display, com teste de renderização e rollback do YAML.
+- **ADR-054 P4 (feito):** cinco layouts SDC em `group: Layouts`, descobertos pelo `ui_patterns_layouts` e renderizados (gate 42 checks). Planejador classifica 95 displays (24 compatíveis, 48 adaptador, 23 incompatíveis). Habilitação por display DEFERRED até staging isolado.
+- **ADR-054 P5 (próximo):** fonte explícita da landing page por purpose; piloto Links/LinkWeed com composição própria e teste de cache/domínio.
 - **ADR-054 P3 (feito):** shell v2 opt-in com cinco áreas finais; ponte para navigation/highlighted/help/breadcrumb; smoke HTTP em 9 hosts válidos, 1 H1 e 1 `<main>`; rollback `classic` testado. Capturas Firefox pendentes.
 
 - **Revista:** accent global via UI Styles, precedência no wrapper/SDC. Cinco nós sem accent próprio; node 602 vazio. Campo legado preservado, fora do fluxo.

@@ -1,0 +1,10 @@
+{% set tone = tone|default('default') %}
+{% if tone not in ['default', 'raised'] %}
+  {% set tone = 'default' %}
+{% endif %}
+<section{{ attributes.addClass('layout-section', 'layout-section--' ~ tone) }}>
+  {% if header %}
+    <header class="layout-section__header">{{ header }}</header>
+  {% endif %}
+  <div class="layout-section__content">{{ content }}</div>
+</section>

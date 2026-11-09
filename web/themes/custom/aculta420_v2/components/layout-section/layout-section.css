@@ -1,0 +1,17 @@
+.layout-section {
+  display: grid;
+  gap: var(--spacing-lg);
+  min-inline-size: 0;
+}
+
+.layout-section--raised {
+  background-color: var(--color-surface-raised);
+  border-radius: var(--radius-control-card);
+  padding: var(--spacing-lg);
+}
+
+.layout-section__header,
+.layout-section__content {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}

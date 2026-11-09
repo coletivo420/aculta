@@ -1,0 +1,23 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Grade responsiva
+description: Grade automática que distribui os itens conforme a largura disponível, sem rolagem horizontal.
+status: experimental
+group: Layouts
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    min_item_width:
+      type: string
+      enum: [12rem, 16rem, 20rem]
+      default: 16rem
+      title: Largura mínima do item
+      description: Define quando a grade passa de uma para mais colunas.
+slots:
+  content:
+    title: Itens da grade
+    description: Lista de cartões ou blocos da grade.
+assets:
+  css:
+    component:
+      layout-grid.css: {}

@@ -1,0 +1,7 @@
+{% set min_item_width = min_item_width|default('16rem') %}
+{% if min_item_width not in ['12rem', '16rem', '20rem'] %}
+  {% set min_item_width = '16rem' %}
+{% endif %}
+<div{{ attributes.addClass('layout-grid', 'layout-grid--min-' ~ min_item_width|replace({'rem': ''})) }}>
+  {{ content }}
+</div>

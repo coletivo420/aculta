@@ -1,3 +1,11 @@
+## Não versionado — ADR-054 P4 layouts SDC e descoberta pelo Layout Builder (2026-11-09)
+
+- Cinco layouts SDC novos em `group: Layouts`: `layout-section`, `layout-two-columns`, `layout-grid`, `layout-narrow` e `layout-full`, com schema estrito, CSS local e story.
+- `ui_patterns_layouts` 2.0.23 descobre automaticamente os seis layouts do tema (incluindo `layout-page`) como plugins do Layout Builder, com categoria `Layouts` e regiões iguais aos slots. Gate `validate-aculta420-layouts.php` verifica descoberta e renderização real (42 checks).
+- Planejador `scripts/audit-aculta420-layout-builder.php` classifica os 95 displays: 24 compatíveis, 48 com adaptador, 23 incompatíveis. Nenhuma configuração foi alterada.
+- Habilitação do Layout Builder por display: **DEFERRED** até importação em ambiente isolado com teste e rollback.
+- **RUNTIME STATUS: PARCIAL** — layouts renderizados via Drush; sem captura visual.
+
 ## Não versionado — ADR-054 P3 shell paralelo (2026-11-09)
 
 - Novo shell opt-in `page--shell-v2.html.twig` com as cinco áreas finais (`institution`, `header`, `content`, `sidebar_first`, `footer`). Ativado por `aculta_shell_variant = v2`; o padrão continua `classic`, com rollback pela mesma opção.

@@ -1,0 +1,9 @@
+name: Grade responsiva
+description: Grade automática com cartões de largura mínima de 16rem.
+component: aculta420_v2:layout-grid
+props:
+  min_item_width: 16rem
+slots:
+  content:
+    type: inline_template
+    template: '<article>Cartão 1</article><article>Cartão 2</article><article>Cartão 3</article>'
