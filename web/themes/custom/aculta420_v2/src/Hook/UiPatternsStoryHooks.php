@@ -42,6 +42,23 @@ final class UiPatternsStoryHooks {
       }
     }
     unset($components, $component);
+
+    // Ordem fixa do grupo "Cartões de Post do Fórum": postagem de abertura, cartão, cartão espelhado.
+    $order = [
+      'aculta420_v2:forum-opening-post',
+      'aculta420_v2:forum-post-card',
+      'aculta420_v2:forum-reply-mirror',
+    ];
+    $group = 'Cartões de Post do Fórum';
+    if (isset($variables['groups'][$group]) && is_array($variables['groups'][$group])) {
+      $items = $variables['groups'][$group];
+      uksort($items, static function (string $a, string $b) use ($order): int {
+        $pa = array_search($a, $order, TRUE);
+        $pb = array_search($b, $order, TRUE);
+        return ($pa === FALSE ? PHP_INT_MAX : $pa) <=> ($pb === FALSE ? PHP_INT_MAX : $pb);
+      });
+      $variables['groups'][$group] = $items;
+    }
   }
 
   /**
