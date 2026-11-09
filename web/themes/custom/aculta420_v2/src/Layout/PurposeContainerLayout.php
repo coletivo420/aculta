@@ -86,6 +86,7 @@ final class PurposeContainerLayout {
    */
   public const ALLOWED_PURPOSES = [
     'main',
+    'account',
     'support',
     'magazine',
     'wiki',
@@ -139,6 +140,14 @@ final class PurposeContainerLayout {
   public static function codeSettings(string $purpose): ?array {
     return match ($purpose) {
       'forum' => [
+        'mode' => self::MODE_DEFAULT,
+        'style' => self::STYLE_UNBOXED,
+        'container_width' => self::CONTAINER_WIDTH_DEFAULT,
+        'narrow_width' => self::NARROW_WIDTH_DEFAULT,
+      ],
+      // Conta: todo o domínio usa o container centralizado com largura máxima.
+      // O estilo permanece sem caixa, como antes do layout por purpose.
+      'account' => [
         'mode' => self::MODE_DEFAULT,
         'style' => self::STYLE_UNBOXED,
         'container_width' => self::CONTAINER_WIDTH_DEFAULT,

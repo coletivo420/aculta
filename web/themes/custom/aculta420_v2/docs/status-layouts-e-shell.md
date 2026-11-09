@@ -83,7 +83,13 @@ em `/conta`. O Portal serve a raiz pela rota protegida
 `aculta_studio.dashboard`, bloqueia o path interno quando acessado diretamente
 e redireciona visitantes à entrada de login. `/conta` compõe Dados cadastrais
 privados e navegação contextual; rotas de Conta e Perfil mantêm `noindex` e
-sem cache público. O tema mapeia dashboard e rotas de Conta para `aside`.
+sem cache público. O tema mapeia dashboard e rotas de Conta para `aside`; o
+purpose `account` tem layout de container fixo pelo código (Padrão, sem caixa)
+em todo o domínio, inclusive em `/conta`, que é a front page do Domain e antes
+caía em `full`. O container do purpose usa o mesmo `padding-inline` da barra
+institucional, então o conteúdo alinha exatamente com a marca e as ações em
+todas as páginas; a leitura estreita (`stack`) permanece centralizada dentro
+dele.
 Subnavegação e `aria-current` existentes foram preservados. Gates de rota,
 guardas, layout, noindex, lint e boundary precisam constar no registro da
 entrega; Firefox autenticado, capturas, teclado e zoom permanecem pendentes.

@@ -334,7 +334,8 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
       continue;
     }
 
-    // A Conta (account) não tem seletor de layout: segue o padrão do template, sem caixa.
+    // A Conta (account) tem layout fixo pelo código: container centralizado,
+    // sem caixa. Não aparece no seletor, como os demais purposes fixos.
     if ($purpose === 'account') {
       continue;
     }

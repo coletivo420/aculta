@@ -244,7 +244,10 @@ final class PagePresentationHooks {
       return 'aside';
     }
 
-    if ($this->pathMatcher->isFrontPage()) {
+    // A raiz do domínio da Conta é `/conta` (`system.site.page.front` na
+    // coleção do Domain). A variante, porém, segue a rota: Minha Conta é
+    // `aside` no desktop e o container centralizado vale em todo o domínio.
+    if ($this->pathMatcher->isFrontPage() && !str_starts_with((string) $routeName, 'aculta_studio.')) {
       return 'full';
     }
 

@@ -19,7 +19,7 @@ final class ThemeSettingsContainerFormKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user'];
+  protected static $modules = ['system', 'user', 'ui_patterns', 'ui_patterns_library'];
 
   /**
    * {@inheritdoc}

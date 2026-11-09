@@ -608,3 +608,38 @@ body.aculta-component-library-page {
     max-inline-size: 100% !important;
   }
 }
+
+/* Conta (account): um único container por purpose, para todas as páginas do
+   domínio. O padding lateral acompanha a barra institucional, então marca,
+   ações, título e conteúdo começam e terminam na mesma linha. Nenhuma página
+   declara largura própria: a leitura estreita fica no conteúdo. */
+html[data-purpose="account"] :is(
+  .layout-page,
+  .page__main,
+  .page__navigation,
+  .page__highlighted,
+  .page__help,
+  .page__breadcrumb,
+  .page__footer-inner
+) {
+  inline-size: min(100%, var(--page-content-max, 84rem));
+  margin-inline: auto;
+  padding-inline: clamp(var(--spacing-sm), 2.25vw, var(--spacing-xl));
+}
+
+/* Páginas de leitura (Marley, Perfil, Salvos) mantêm a medida estreita,
+   centralizada dentro do container do purpose. */
+html[data-purpose="account"] .layout-page--stack > :is(.layout-page__title, .layout-page__content) {
+  inline-size: 100%;
+  max-inline-size: var(--aculta-narrow-container-width, 750px);
+  margin-inline: auto;
+}
+
+/* Grades do Studio não estouram o container em telas estreitas. */
+html[data-purpose="account"] :is(.layout-page > *, .aculta-account-entry) {
+  min-inline-size: 0;
+}
+
+html[data-purpose="account"] .aculta-account-entry {
+  grid-template-columns: minmax(0, 1fr);
+}

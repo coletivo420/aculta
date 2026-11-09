@@ -35,10 +35,21 @@ No CSS (`src/styles/layout.css`):
 
 ## Exceções
 
-- **Conta (`account`)**: não aparece no seletor. Não tem entrada em `aculta_purpose_container`, e
-  `PurposeContainerLayout::ALLOWED_PURPOSES` não o inclui. Sem atributo de layout, a Conta segue o
-  padrão do template, que é sem caixa. O Studio continua usando a paleta do purpose `account` para
-  as cores de destaque (`--aculta-studio-*`).
+- **Conta (`account`)**: layout fixo pelo código, igual ao Fórum: modo Padrão (1200 px, estreito de
+  750 px) e estilo sem caixa. Não aparece no seletor e não tem entrada editável em
+  `aculta_purpose_container`; valor salvo é ignorado. O purpose está em
+  `PurposeContainerLayout::ALLOWED_PURPOSES`, então o `<html>` recebe `data-purpose-layout="default"`
+  e as variáveis de largura em todas as páginas do domínio. A raiz do domínio é `/conta`
+  (`system.site.page.front` da coleção do Domain), mas a variante de página segue a rota — Minha
+  Conta usa `aside` no desktop — e nunca cai na variante `full` por ser front page.
+  O CSS centraliza um único container para todas as páginas do purpose (`html[data-purpose="account"]`)
+  e usa o mesmo `padding-inline` da barra institucional, para marca, ações, título e conteúdo
+  começarem e terminarem na mesma linha. Páginas de leitura (`stack`, como Marley e Perfil) mantêm a
+  medida estreita centralizada dentro desse container. O Studio continua usando a paleta do purpose
+  `account` para as cores de destaque (`--aculta-studio-*`).
+- **UI Patterns (biblioteca de componentes)**: rotas `ui_patterns_library.overview`, `.provider` e
+  `.single` continuam fora do layout por purpose: o atributo `data-purpose-layout` não é aplicado e a
+  variante é `full`.
 - **Purposes com paleta mas sem layout**: a lista de paleta de cores (`aculta_purpose_palette`) ainda
   inclui `account`. Isso é independente do layout.
 - **Páginas fora de purpose**: sem atributo de layout; vale o padrão do template e do CSS.

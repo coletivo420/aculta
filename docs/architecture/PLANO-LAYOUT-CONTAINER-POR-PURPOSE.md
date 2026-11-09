@@ -26,6 +26,13 @@ Revisão de 2026-11-07, pedida pelo responsável. Três modos:
 Valores gravados com os modos antigos (boxed, unboxed, contained, max_full_width) são convertidos automaticamente.
 Revista (magazine) e Wiki (wiki) fazem parte da configuração, como os demais purposes.
 
+A Conta (account) tem layout fixo pelo código, como o Fórum: modo Padrão (1200 px, estreito de 750 px)
+e estilo sem caixa, em todas as páginas do domínio. Não aparece no seletor; valor salvo é ignorado.
+A raiz do domínio é `/conta`, mas a variante de página segue a rota (Minha Conta usa `aside` no
+desktop) e não cai em `full` por ser front page. Um único bloco de CSS do purpose centraliza o
+container de todas as páginas e iguala o `padding-inline` ao da barra institucional, para o conteúdo
+alinhar exatamente com a marca e as ações; a leitura estreita continua no conteúdo.
+
 ## Configuração
 
 Subaba "Layout de container" em Aparência > aculta420_v2, com um bloco por purpose:

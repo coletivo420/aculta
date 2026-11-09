@@ -43,6 +43,31 @@ final class PurposeContainerLayoutUnitTest extends UnitTestCase {
   }
 
   /**
+   * A Conta usa container centralizado fixo pelo código em todo o domínio.
+   */
+  public function testAccountLayoutIsFixedByCode(): void {
+    self::assertContains('account', PurposeContainerLayout::ALLOWED_PURPOSES);
+    self::assertTrue(PurposeContainerLayout::isCodeControlled('account'));
+
+    $defaults = PurposeContainerLayout::getDefaultSettings('account');
+    self::assertSame('default', $defaults['mode']);
+    self::assertSame('unboxed', $defaults['style']);
+    self::assertSame(1200, $defaults['container_width']);
+    self::assertSame(750, $defaults['narrow_width']);
+
+    // Valor salvo é ignorado: a Conta não aceita largura total.
+    $saved = ['mode' => 'full', 'style' => 'boxed', 'container_width' => 900, 'narrow_width' => 600];
+    self::assertSame($defaults, PurposeContainerLayout::sanitizeSetting($saved, 'account'));
+
+    $resolved = PurposeContainerLayout::resolveContainerStyle([], 'account');
+    self::assertNotNull($resolved);
+    self::assertSame('default', $resolved['mode']);
+    self::assertSame('unboxed', $resolved['style']);
+    self::assertSame('1200px', $resolved['variables']['--aculta-container-width']);
+    self::assertSame('750px', $resolved['variables']['--aculta-narrow-container-width']);
+  }
+
+  /**
    * UI Patterns documentation does not use purpose container settings.
    */
   public function testComponentLibraryRoutesAreExcludedFromPurposeLayout(): void {
