@@ -15,6 +15,19 @@ use Drupal\node\NodeInterface;
 final class DiscussionProgressHooks {
 
   /**
+   * DEBUG TEMPORÁRIO.
+   */
+  #[Hook('preprocess_field', order: \Drupal\Core\Hook\Order\Order::Last)]
+  public function debugPreprocessField(array &$variables): void {
+    if (($variables['field_name'] ?? '') === 'field_aculta_discussion') {
+      \Drupal::logger('aculta_debug')->notice('DBG3 hidden=@h cf=@cf', [
+        '@h' => var_export($variables['label_hidden'] ?? NULL, TRUE),
+        '@cf' => var_export(!empty($variables['comment_form']), TRUE) . ' ' . json_encode(array_keys((array) ($variables['comment_form'] ?? []))),
+      ]);
+    }
+  }
+
+  /**
    * Marks the shared discussion field for its client-side reading controls.
    */
   #[Hook('entity_view_alter')]
