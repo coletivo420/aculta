@@ -1,0 +1,70 @@
+{% set dialog_classes = [
+  'aculta-auth-dialog',
+  'aculta-auth-dialog--' ~ (header_variant|default('neutral')),
+] %}
+
+<dialog{{ attributes.addClass(dialog_classes) }} id="{{ id }}" aria-labelledby="{{ id }}-title" aria-modal="true" tabindex="-1" data-aculta-auth-dialog data-aculta-login-dialog data-aculta-utility-drawer>
+  <div class="aculta-auth-dialog__surface">
+    <header class="aculta-auth-dialog__header">
+      {% if show_accent_stripes|default(true) %}
+        <div class="aculta-auth-dialog__stripes" aria-hidden="true">
+          <span class="aculta-auth-dialog__stripe aculta-auth-dialog__stripe--green"></span>
+          <span class="aculta-auth-dialog__stripe aculta-auth-dialog__stripe--yellow"></span>
+          <span class="aculta-auth-dialog__stripe aculta-auth-dialog__stripe--red"></span>
+        </div>
+      {% endif %}
+
+      <div class="aculta-auth-dialog__header-main">
+        <div class="aculta-auth-dialog__titles">
+          <h2 class="aculta-auth-dialog__title" id="{{ id }}-title">{{ title }}</h2>
+          {% if subtitle %}
+            <p class="aculta-auth-dialog__subtitle">{{ subtitle }}</p>
+          {% endif %}
+        </div>
+        <button type="button" class="aculta-auth-dialog__close" data-aculta-auth-close data-aculta-login-close data-aculta-dialog-close aria-label="{{ close_label|default('Fechar janela de acesso') }}">
+          {{ include('aculta420_v2:icon', { name: 'x', variant: 'duotone', size: 'md' }, with_context = false) }}
+        </button>
+      </div>
+    </header>
+
+    <div class="aculta-auth-dialog__body">
+      {% if google_auth_url %}
+        <div class="aculta-auth-dialog__social">
+          <a class="aculta-auth-dialog__google-btn" href="{{ google_auth_url }}" data-portal-ui="auth-google">
+            <span class="aculta-auth-dialog__google-icon" aria-hidden="true"></span>
+            <span class="aculta-auth-dialog__google-text">Continuar com <strong>Google</strong></span>
+          </a>
+        </div>
+
+        <div class="aculta-auth-dialog__divider" role="separator" aria-label="{{ 'ou entre com sua conta'|t }}">
+          <span class="aculta-auth-dialog__divider-line"></span>
+          <span class="aculta-auth-dialog__divider-text">{{ 'ou entre com sua conta'|t }}</span>
+          <span class="aculta-auth-dialog__divider-line"></span>
+        </div>
+      {% endif %}
+
+      <div class="aculta-auth-dialog__content">
+        {% block content %}
+          {{ content }}
+        {% endblock %}
+      </div>
+
+      {% if register_url %}
+        <footer class="aculta-auth-dialog__footer">
+          <p class="aculta-auth-dialog__register-prompt">
+            {{ 'Ainda não tem uma conta?'|t }}
+            <a class="aculta-auth-dialog__register-link" href="{{ register_url }}" data-portal-ui="button-secondary">
+              {{ 'Cadastre-se'|t }}
+            </a>
+          </p>
+          <p class="aculta-auth-dialog__trust-badge">
+            <span class="aculta-auth-dialog__trust-lock" aria-hidden="true">
+              {{ include('aculta420_v2:icon', { name: 'lock-simple', variant: 'duotone', size: 'sm' }, with_context = false) }}
+            </span>
+            {{ 'Autenticação segura · ACULTA'|t }}
+          </p>
+        </footer>
+      {% endif %}
+    </div>
+  </div>
+</dialog>

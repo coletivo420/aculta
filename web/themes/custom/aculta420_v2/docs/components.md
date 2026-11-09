@@ -50,6 +50,13 @@ descoberta automática de `dialog.css` e a dependência JS. Firefox visível pas
 em fixture sintética (32 checks); consumer Drupal publicado/autenticado permanece
 sem validação.
 
+### auth-dialog
+
+Diálogo/Modal de autenticação e login completo da UI Library com as listras de acento tricolores (verde, amarelo e vermelho: `--accent-green-stripe`, `--accent-yellow-stripe`, `--accent-red-stripe`).
+Props: `id`, `title` (padrão: "Entrar na ACULTA"), `subtitle` ("Acesse sua conta e continue de onde parou."), `header_variant` (`neutral` ou `institutional`), `show_accent_stripes` (booleano), `close_label`, `google_auth_url`, `password_reset_url` e `register_url`. Slot: `content` (recebe os campos do formulário Form API e o botão de envio).
+Stories: `auth-dialog.default.story.yml` (Superfície Neutra) e `auth-dialog.institutional.story.yml` (Faixa Institucional Verde).
+Inclui botão Google com ícone de marca, divisor centralizado "ou entre com sua conta", rodapé com link para cadastro e selo de autenticação segura. Suporta nativamente modo claro e escuro por tokens semânticos e `prefers-reduced-motion`.
+
 ### accordion
 
 Resposta expansível baseada em details/summary, sem JavaScript e operável por

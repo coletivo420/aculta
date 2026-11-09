@@ -1,0 +1,55 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Diálogo de Autenticação
+status: experimental
+description: Modal de login completo da UI Library com listras tricolores e suporte a temas.
+group: ACULTA
+libraryOverrides:
+  dependencies:
+    - aculta420_v2/utility-drawers
+props:
+  type: object
+  additionalProperties: false
+  required: [id, title]
+  properties:
+    id:
+      type: string
+      title: ID único do diálogo
+      pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
+    title:
+      type: string
+      title: Título principal
+      minLength: 1
+      default: "Entrar na ACULTA"
+    subtitle:
+      type: [string, 'null']
+      title: Subtítulo descritivo
+      default: "Acesse sua conta e continue de onde parou."
+    header_variant:
+      type: string
+      title: Variante visual do cabeçalho
+      enum: [neutral, institutional]
+      default: neutral
+    show_accent_stripes:
+      type: boolean
+      title: Exibir listras de acento tricolores
+      default: true
+    close_label:
+      type: string
+      title: Rótulo do botão fechar
+      default: "Fechar janela de acesso"
+    google_auth_url:
+      type: [string, 'null']
+      title: URL de autenticação com o Google
+      format: uri-reference
+    password_reset_url:
+      type: [string, 'null']
+      title: URL para recuperação de senha
+      format: uri-reference
+    register_url:
+      type: [string, 'null']
+      title: URL de cadastro de nova conta
+      format: uri-reference
+slots:
+  content:
+    title: Conteúdo do Formulário
+    description: Elementos e campos do formulário renderizados pelo Form API ou submódulo.
