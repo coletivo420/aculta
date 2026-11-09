@@ -216,7 +216,12 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
   inline-size: 100%;
   margin-block-start: var(--spacing-sm);
 }
-.aculta-login-dialog__content [data-portal-ui="login-popup"] label { color: var(--color-auth-dialog-text); font-family: var(--font-family-heading); font-size: var(--font-size-lg); font-weight: 600; }
+.aculta-login-dialog__content [data-portal-ui="login-popup"] label {
+  color: #fff;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
 .aculta-login-dialog__content .form-item { display: grid; gap: var(--spacing-xs); margin: 0; }
 .aculta-login-dialog__content .form-required::after { content: none; }
 .aculta-login-dialog__content :is(input[type="text"], input[type="email"], input[type="password"]) { padding: var(--spacing-xs) var(--spacing-sm); color: var(--color-auth-control-text); border: 1px solid var(--color-auth-control-text); border-radius: 0; background: var(--color-auth-control-surface); font: inherit; inline-size: 100%; min-block-size: var(--tap-target-min); }

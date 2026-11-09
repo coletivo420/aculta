@@ -5,6 +5,7 @@
 - Botão secundário ("Cadastre-se", `[data-portal-ui="button-secondary"]` / `a:last-of-type`): alinhado aos padrões da UI Library/SDC `button` (`--button-secondary-*`, borda 2px sólida, `border-radius: var(--radius-control-button)` e estados acessíveis).
 - `LoginPopupForm`: marcação semântica com `data-portal-ui="button-primary"` no envio e `data-portal-ui="button-secondary"` no link de cadastro, respeitando a fronteira módulo x tema.
 - Link "Esqueceu sua senha?": cor ajustada para branco sobre a superfície verde institucional do diálogo de login.
+- Rótulos dos campos ("Nome de usuário, e-mail ou CPF" e "Senha"): cor ajustada para branco sobre o fundo do diálogo.
 - Divisores horizontais (`data-portal-ui="login-popup-divider"`): comprimento reduzido e cor ajustada para linhas brancas semitransparentes centralizadas.
 - Suporte a `prefers-reduced-motion: reduce` nas transições dos botões do diálogo de login.
 
