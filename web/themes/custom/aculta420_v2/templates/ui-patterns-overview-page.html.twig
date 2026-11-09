@@ -9,10 +9,20 @@
     <h2 class="ui_patterns_quicklinks__title">{{ 'Available components'|t }}</h2>
     {% set tab_links %}
       {% for group_name, components in groups %}
-        <a href="#{{ aculta_group_anchors[group_name] }}">{{ group_name }}</a>
+        <a href="#painel-{{ aculta_group_anchors[group_name] }}">{{ group_name }}</a>
       {% endfor %}
     {% endset %}
     {{ include('aculta420_v2:tabs', { label: 'Grupos de componentes'|t, items: tab_links|raw }, with_context: false) }}
+    {% for group_name, components in groups %}
+      <div class="aculta-component-library__panel" id="painel-{{ aculta_group_anchors[group_name] }}">
+        <h3 class="aculta-component-library__panel-title">{{ group_name }}</h3>
+        <ul class="aculta-component-library__panel-list">
+          {% for component in components %}
+            <li><a href="#{{ component.id }}">{{ component.name }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endfor %}
   </div>
   <hr>
   {% for group_name, components in groups %}
