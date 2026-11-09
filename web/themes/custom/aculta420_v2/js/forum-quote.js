@@ -129,58 +129,12 @@
         dialogContent.insertAdjacentHTML('beforeend', '<div id="' + dialogBodyId + '" class="aculta-reply-dialog__body"></div>');
       }
 
-      // Comentar: o formulário do fim do tópico vira um botão; ao clicar, o próprio formulário vai para o popup.
-      const dialogForEntry = getDialog();
-      const bottomForm = [...document.querySelectorAll('form.comment-form, form.comment-comment-form')]
-        .find((f) => !f.closest('article.js-comment') && !f.closest('#' + dialogId));
-      if (dialogForEntry && bottomForm && !bottomForm.dataset.acultaCommentBound) {
-        bottomForm.dataset.acultaCommentBound = '1';
-        const openBtn = document.createElement('button');
-        openBtn.type = 'button';
-        openBtn.className = 'button button--primary aculta-comment-open';
-        openBtn.setAttribute('aria-haspopup', 'dialog');
-        openBtn.textContent = 'Comentar';
-        bottomForm.parentNode.insertBefore(openBtn, bottomForm);
-        bottomForm.hidden = true;
-        openBtn.addEventListener('click', () => {
-          const bodyEl = getDialogBody();
-          if (!bodyEl) {
-            return;
-          }
-          const title = dialogForEntry.querySelector('.aculta-dialog__title');
-          if (title) {
-            title.dataset.acultaPrevTitle = title.textContent;
-            title.textContent = 'Comentar';
-          }
-          bottomForm.hidden = false;
-          bodyEl.appendChild(bottomForm);
-          if (!dialogForEntry.open) {
-            dialogForEntry.showModal();
-          }
-          focusComposer(bottomForm);
-        });
-        dialogForEntry.dataset.acultaCommentHome = '1';
-        dialogForEntry.acultaCommentForm = bottomForm;
-        dialogForEntry.acultaCommentButton = openBtn;
-      }
-
-      // Ao fechar: devolve o formulário do fim do tópico ao lugar, restaura o título e esvazia o corpo.
+      // Ao fechar, esvazia o corpo para o próximo Responder/Citar começar limpo.
       const dialog = getDialog();
       if (dialog && !dialog.dataset.acultaCloseBound) {
         dialog.dataset.acultaCloseBound = '1';
         dialog.addEventListener('close', () => {
           const bodyEl = getDialogBody();
-          const form = dialog.acultaCommentForm;
-          const btn = dialog.acultaCommentButton;
-          if (bodyEl && form && btn && bodyEl.contains(form)) {
-            form.hidden = true;
-            btn.insertAdjacentElement('afterend', form);
-          }
-          const title = dialog.querySelector('.aculta-dialog__title');
-          if (title && title.dataset.acultaPrevTitle) {
-            title.textContent = title.dataset.acultaPrevTitle;
-            delete title.dataset.acultaPrevTitle;
-          }
           if (bodyEl) {
             bodyEl.innerHTML = '';
           }
