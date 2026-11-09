@@ -28,6 +28,7 @@ class ForumThemeHooks {
       'discussion_reply_composer' => [
         'variables' => [
           'status' => 'fechado',
+          'mode' => 'responder',
           'target_id' => '',
           'parent_id' => NULL,
           'parent_author' => NULL,
