@@ -1,0 +1,20 @@
+{#
+/**
+ * @file
+ * Override do tema para a landing Links/LinkWeed (ADR-054 P5, piloto Links).
+ *
+ * O <main> e o H1 pertencem ao shell (layout-page), que envolve este conteúdo.
+ * A composição usa o layout SDC compartilhado; os dados e o acesso continuam
+ * no controller do aculta_linkweed.
+ */
+#}
+<div class="aculta-links-landing">
+  {% set description_render %}
+    {% if description %}<p>{{ description }}</p>{% endif %}
+  {% endset %}
+  {{ include('aculta420_v2:layout-section', {
+    tone: 'default',
+    header: description_render,
+    content: has_links ? links : '',
+  }, with_context = false) }}
+</div>

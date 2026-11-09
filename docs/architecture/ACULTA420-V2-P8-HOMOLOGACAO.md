@@ -42,7 +42,7 @@ Método: `curl --resolve` com SNI do host, para preservar o VirtualHost.
 | forum | `growroom420.aculta.toca.net.br` | 200 | 200 | 1 | 1 |
 | account | `conta.aculta.toca.net.br` | 302 (visitante → login) | 302 | — | — |
 
-Correções feitas durante esta homologação: a landing Links tinha `<main>`/`<h1>` próprios dentro do `layout-page`; `revista-listing` e `forum-category-header` tinham `h1` fixo. Agora a landing Links não duplica landmark e os dois componentes usam `title_level` (`h2` por padrão).
+Correções feitas durante esta homologação: a landing Links tinha `<main>`/`<h1>` próprios dentro do `layout-page`; `revista-listing` e `forum-category-header` tinham `h1` fixo. Agora a landing Links não duplica landmark e os dois componentes usam `title_level` (`h2` por padrão). A landing Links também passou a ser composta no tema com `aculta420_v2:layout-section`; verificado nos shells clássico e v2 (200, `.layout-section`, 1 H1, 1 `<main>`), sem alterar o controller.
 
 ## 3. Evidência de navegador
 

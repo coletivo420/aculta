@@ -1,3 +1,8 @@
+## Não versionado — ADR-054 P5 piloto Links com layout SDC (2026-11-09)
+
+- O tema sobrescreve `aculta-links-landing.html.twig` e compõe a landing Links/LinkWeed com `aculta420_v2:layout-section`; dados, acesso e cache permanecem no `aculta_linkweed`.
+- Verificado com HTTP real no host Links nos shells clássico e v2: 200, `.layout-section`, 1 H1 e 1 `<main>`; o controller não foi alterado.
+
 ## Não versionado — ADR-054 P7 CSS do Studio contextual (2026-11-09)
 
 - `studio.css` (80 KB) e `studio-identity.css` saíram do `global-styling` e formam a biblioteca `studio`, anexada apenas nas rotas `aculta_studio.*`.

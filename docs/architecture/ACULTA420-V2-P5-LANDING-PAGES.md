@@ -1,6 +1,13 @@
 # ACULTA420 V2 — P5: landing pages por purpose (estado e bloqueio)
 
-**Data:** 2026-11-09 · **Estado:** DEFERRED (depende de conteúdo editorial e importação de configuração em ambiente isolado).
+**Data:** 2026-11-09 · **Estado:** PARCIAL — composição SDC da landing Links entregue no tema; Layout Builder por purpose **DEFERRED** (depende de conteúdo editorial e importação de configuração em ambiente isolado).
+
+## 0. Entregue nesta fase
+
+- O tema passou a sobrescrever `aculta-links-landing.html.twig` e compõe a landing com o layout SDC `aculta420_v2:layout-section` (slot `header` para a descrição e slot `content` para os links).
+- Os dados, o acesso e o cache continuam no `aculta_linkweed`; o tema só apresenta.
+- Verificado nos shells clássico e v2: HTTP 200 no host Links, 1 H1, 1 `<main>` e `.layout-section` presente.
+- O `LinksLandingController` não foi alterado; a variante de nó com `field_domain_source` continua funcionando.
 
 ## 1. O que o código faz hoje
 
