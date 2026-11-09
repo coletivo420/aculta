@@ -30,7 +30,8 @@ final class DiscussionProgressHooks {
     // O formulário de comentário de topo sai da página: o botão Comentar abre o mesmo compositor no popup.
     // O core coloca o formulário em cada item do campo (chave numérica), em 'comment_form'.
     foreach (\Drupal\Core\Render\Element::children($build['field_aculta_discussion']) as $delta) {
-      unset($build['field_aculta_discussion'][$delta]['comment_form']);
+      // Elemento vazio e sem acesso, não removido: o core lê a chave ao montar os itens.
+      $build['field_aculta_discussion'][$delta]['comment_form'] = ['#access' => FALSE];
     }
     $build['field_aculta_discussion']['#attributes']['data-aculta-discussion-thread'] = '';
     $build['field_aculta_discussion']['#attached']['library'][] = 'aculta_forum/discussion-progress';
