@@ -72,14 +72,17 @@
         </section>
       </aside>
       {# Popup de Responder/Citar: SDC de diálogo do tema; o compositor é carregado nele pelo JS. #}
-      {{ include('aculta420_v2:dialog', {
+      {% embed 'aculta420_v2:dialog' with {
         id: 'aculta-reply-dialog',
         title: 'Responder à discussão',
         trigger_label: 'Responder',
         trigger_url: '#aculta-reply-dialog',
         close_label: 'Fechar',
-        content: '<div id="aculta-reply-dialog-body" class="aculta-reply-dialog__body"></div>'|raw,
-      }, with_context = false) }}
+      } only %}
+        {% block content %}
+          <div id="aculta-reply-dialog-body" class="aculta-reply-dialog__body"></div>
+        {% endblock %}
+      {% endembed %}
     </div>
     </div>
   {% else %}
