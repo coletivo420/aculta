@@ -1,6 +1,6 @@
 # Prompt para agente local - SDC de login ACULTA420 V2
 
-**Missão:** implementar integralmente o [plano de login SDC](ACULTA420-V2-LOGIN-SDC-PLANO.md) no repositório `coletivo420/aculta`, branch `dev`, usando as referências [neutral](login-sdc-referencias/comparativo-neutral.png) e [institutional](login-sdc-referencias/comparativo-institutional.png).
+**Missão:** implementar integralmente o [plano de login SDC](ACULTA420-V2-LOGIN-SDC-PLANO.md) no repositório `coletivo420/aculta`, branch `dev`, usando as referências vetoriais versionadas e os PNGs originais anexados pelo responsável, cuja cópia binária deve ser adicionada à mesma pasta de referências; as referências SVG não substituem os PNGs. Use as referências [neutral](login-sdc-referencias/comparativo-neutral.svg) e [institutional](login-sdc-referencias/comparativo-institutional.svg).
 
 ## Instruções obrigatórias
 
