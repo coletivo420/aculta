@@ -6,6 +6,7 @@ namespace Drupal\aculta_forum\Service;
 
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Pager\PagerManagerInterface;
 use Drupal\Core\Url;
 
@@ -20,7 +21,28 @@ final class DiscussionCommentPermalinkBuilder implements DiscussionCommentPermal
 
   public function __construct(
     private readonly PagerManagerInterface $pagerManager,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
+
+  /**
+   * Página (0 = primeira) do comentário dentro da lista do campo, pela posição na thread.
+   */
+  private function commentPage(CommentInterface $comment, EntityInterface $host): int {
+    $perPage = (int) $host->getFieldDefinition($comment->getFieldName())->getSetting('per_page');
+    if ($perPage <= 0) {
+      return 0;
+    }
+    $position = (int) $this->entityTypeManager->getStorage('comment')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('entity_type', $host->getEntityTypeId())
+      ->condition('entity_id', $host->id())
+      ->condition('field_name', $comment->getFieldName())
+      ->condition('status', CommentInterface::PUBLISHED)
+      ->condition('thread', $comment->get('thread')->value, '<')
+      ->count()
+      ->execute();
+    return intdiv($position, $perPage);
+  }
 
   /**
    * Builds the permalink URL to the commented host entity.
@@ -35,8 +57,9 @@ final class DiscussionCommentPermalinkBuilder implements DiscussionCommentPermal
     $options = $url->getOptions();
     $options['fragment'] = 'comment-' . $comment->id();
 
-    // Preserve existing query params, and if pager element 0 is present, ensure it's maintained.
-    $page = $this->pagerManager->findPage(0);
+    // A página do comentário vem da posição dele na lista; a página da requisição atual não serve
+    // (um envio por POST sempre chega à página 0).
+    $page = $this->commentPage($comment, $host);
     if ($page > 0) {
       $currentQuery = $options['query'] ?? [];
       $options['query'] = $this->pagerManager->getUpdatedParameters($currentQuery, 0, $page);
