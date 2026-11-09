@@ -1,7 +1,7 @@
 name: Cartão de Post do Fórum
 props:
   stripe: brand
-  author_name: MarceloSilva
+  author_name: PiradoPirata
   author_posts: 342
   author_reactions: 19
   timestamp: 'Há 3 horas'
