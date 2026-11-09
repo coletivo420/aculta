@@ -89,7 +89,8 @@ em todo o domínio, inclusive em `/conta`, que é a front page do Domain e antes
 caía em `full`. O container do purpose usa o mesmo `padding-inline` da barra
 institucional, então o conteúdo alinha exatamente com a marca e as ações em
 todas as páginas; a leitura estreita (`stack`) permanece centralizada dentro
-dele.
+dele. O slot `aside` só é renderizado quando produz markup: a barra lateral
+vazia não reserva coluna.
 Subnavegação e `aria-current` existentes foram preservados. Gates de rota,
 guardas, layout, noindex, lint e boundary precisam constar no registro da
 entrega; Firefox autenticado, capturas, teclado e zoom permanecem pendentes.

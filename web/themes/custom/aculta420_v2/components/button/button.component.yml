@@ -7,6 +7,10 @@ props:
   type: object
   additionalProperties: false
   properties:
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Atributos HTML opcionais
+      default: null
     text:
       type: string
       title: Texto visível. Opcional quando houver aria_label (botão só com ícone).

@@ -16,11 +16,12 @@
     </thead>
     <tbody>
       {% for variant in variants %}
+        {% set focus_attributes = create_attribute({ class: ['is-focus'] }) %}
         <tr>
           <th scope="row"><code>{{ variant }}</code></th>
           <td>{{ include('aculta420_v2:button', { text: 'Ação', url: '#', variant: variant }, with_context = false) }}</td>
           <td>{{ include('aculta420_v2:button', { text: 'Ação', url: '#', variant: variant, disabled: true }, with_context = false) }}</td>
-          <td>{{ include('aculta420_v2:button', { text: 'Ação', url: '#', variant: variant, attributes: create_attribute({ class: ['is-focus'] }) }, with_context = false) }}</td>
+          <td>{{ include('aculta420_v2:button', { text: 'Ação', url: '#', variant: variant, attributes: focus_attributes }, with_context = false) }}</td>
         </tr>
       {% endfor %}
     </tbody>

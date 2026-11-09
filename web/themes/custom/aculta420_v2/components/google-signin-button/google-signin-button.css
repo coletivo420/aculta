@@ -33,9 +33,5 @@
   display: inline-flex;
   inline-size: 18px;
   block-size: 18px;
-}
-
-.google-signin-button__logo svg {
-  inline-size: 100%;
-  block-size: 100%;
+  background: url("../../assets/icons/brand/google.svg") center / contain no-repeat;
 }
