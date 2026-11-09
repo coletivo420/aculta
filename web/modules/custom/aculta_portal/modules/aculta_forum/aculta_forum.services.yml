@@ -74,6 +74,10 @@ services:
     class: Drupal\aculta_forum\Hook\ForumThemeHooks
   Drupal\aculta_forum\Hook\DiscussionModerationHooks:
     class: Drupal\aculta_forum\Hook\DiscussionModerationHooks
+  Drupal\aculta_forum\Hook\DiscussionCommentActionIconHooks:
+    class: Drupal\aculta_forum\Hook\DiscussionCommentActionIconHooks
+    arguments: ['@extension.list.theme']
+
   Drupal\aculta_forum\Hook\DiscussionProgressHooks:
     class: Drupal\aculta_forum\Hook\DiscussionProgressHooks
   Drupal\aculta_forum\Hook\ForumPostBundleHooks:
