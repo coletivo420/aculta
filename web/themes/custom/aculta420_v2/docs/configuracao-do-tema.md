@@ -99,17 +99,13 @@ Relação com o `accent` do Portal (seção 3): a cor da faixa **por tipo de
 conteúdo** continua vindo do Portal. A cor **por purpose** é escolha do
 administrador do tema. As duas coexistem e não se substituem.
 
-### 2.2 Layout de container por purpose (implementado no runtime, F4)
+### 2.2 Layout de container por purpose - administração descontinuada
 
-Decisão do responsável em 2026-11-06 conforme `docs/architecture/PLANO-LAYOUT-CONTAINER-POR-PURPOSE.md`: subaba **Layout de container** em Aparência → ACULTA420 V2 → Configurações.
+Por decisão ADR-054 (2026-11-09), a seção **Layout de container** foi retirada de `theme-settings.php`. Portanto, o administrador não dispõe mais de selects para modo, estilo e largura por purpose.
 
-- **Modos suportados:** Boxed (padrão 1200 px com margens), Unboxed (largura total da tela), Contained (1000 px, contido ao centro) e Max full width (1400 px, máxima largura).
-- **Largura do container:** faixa numérica de 960 a 1600 px (padrão 1200 px).
-- **Largura estreita:** faixa numérica de 600 a 900 px (padrão 750 px), para páginas de leitura (`.layout-page--stack`, `.page__main--stack`).
-- **Celular (abaixo de 60 rem):** largura 100% mandatória, ignorando valores numéricos dos sliders e mantendo zero overflow horizontal.
-- **Armazenamento e segurança:** salvo sob a chave `aculta_purpose_container` em `aculta420_v2.settings`, sanitizado com lista permitida de modos e faixas numéricas de largura por `PurposeContainerLayout`. Nenhum texto livre é injetado no CSS.
-- **Emissão no DOM:** `SurfaceSettingsHooks::preprocessHtml` emite `data-purpose-layout` e as variáveis `--aculta-container-width` e `--aculta-narrow-container-width` no elemento `<html>`.
-- **Validação visual:** 40 cenários (10 purposes x 2 modos x 2 larguras 320/1440) verificados em Firefox ESR (:0), 300/300 checks PASS (`tests/browser/capturas/layout-container/2026-11-06/manifest.json`).
+**Compatibilidade transitória:** a leitura de `aculta_purpose_container` pelo renderizador `SurfaceSettingsHooks` continua somente para não alterar o layout ativo antes da migração paralela para Layout Builder/SDCs. O schema e a classe `PurposeContainerLayout` ainda são necessários nesse período e não devem ser excluídos sem o inventário e o corte homologado. O Config Sync consultado não traz valores exportados para essa chave, mas a configuração ativa do runtime precisa ser verificada.
+
+A implementação e os testes de 2026-11-06 pertencem ao histórico, em `docs/architecture/PLANO-LAYOUT-CONTAINER-POR-PURPOSE.md`. O plano vigente é `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md` na raiz do repositório.
 
 
 ## 3. O que não é do tema
