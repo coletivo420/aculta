@@ -34,8 +34,23 @@ final class DiscussionProgressHooks {
     }
     $build['field_aculta_discussion']['#attributes']['data-aculta-discussion-thread'] = '';
     $build['field_aculta_discussion']['#attached']['library'][] = 'aculta_forum/discussion-progress';
-    // O compositor do popup é carregado por HTMX; sem a biblioteca do CKEditor na página o editor não monta.
-    $build['field_aculta_discussion']['#attached']['library'][] = 'ckeditor5/internal.drupal.ckeditor5';
+    // O compositor do popup é carregado por HTMX, que não leva as configurações do editor.
+    // Os anexos (biblioteca e drupalSettings do CKEditor) vêm do formulário de comentário do nó,
+    // renderizado em isolamento: o HTML do formulário não entra na página.
+    $comment = \Drupal::entityTypeManager()->getStorage('comment')->create([
+      'entity_type' => 'node',
+      'entity_id' => $entity->id(),
+      'field_name' => 'field_aculta_discussion',
+      'comment_type' => 'aculta_discussion_post',
+    ]);
+    if ($comment->access('create')) {
+      $form = \Drupal::service('entity.form_builder')->getForm($comment);
+      \Drupal::service('renderer')->renderInIsolation($form);
+      $build['field_aculta_discussion']['#attached'] = \Drupal\Component\Utility\NestedArray::mergeDeep(
+        $build['field_aculta_discussion']['#attached'] ?? [],
+        $form['#attached'] ?? [],
+      );
+    }
   }
 
 }
