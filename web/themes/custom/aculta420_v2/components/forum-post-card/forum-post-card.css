@@ -48,6 +48,10 @@
   align-items: center;
   gap: var(--spacing-sm);
   min-inline-size: 0;
+  /* Painel do autor com a superfície de canvas (clara e escura pelos tokens do tema). */
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  background: var(--color-canvas);
 }
 
 .forum-post-card__avatar {
