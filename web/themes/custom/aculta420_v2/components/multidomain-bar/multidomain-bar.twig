@@ -45,17 +45,16 @@
 </div>
 
 <template data-aculta-login-dialog-template>
-  <dialog class="aculta-login-dialog" aria-labelledby="aculta-login-dialog-title" data-aculta-login-dialog>
-    <div class="aculta-login-dialog__surface">
-      <header class="aculta-login-dialog__header">
-        <h2 id="aculta-login-dialog-title">{{ 'Entrar'|t }}</h2>
-        <button type="button" class="aculta-login-dialog__close" data-aculta-login-close aria-label="{{ 'Fechar janela de acesso'|t }}">
-          {{ include('aculta420_v2:icon', { name: 'x', variant: 'duotone', size: 'md' }, with_context = false) }}
-        </button>
-      </header>
-      <div class="aculta-login-dialog__content" id="aculta-login-content" data-aculta-login-content aria-live="polite" aria-busy="false"></div>
-    </div>
-  </dialog>
+  {{ include('aculta420_v2:auth-dialog', {
+    id: 'aculta-login-dialog',
+    title: 'Entrar na ACULTA'|t,
+    subtitle: 'Acesse sua conta e continue de onde parou.'|t,
+    header_variant: 'neutral',
+    show_accent_stripes: true,
+    close_label: 'Fechar janela de acesso'|t,
+    google_auth_url: null,
+    register_url: null,
+  }, with_context = false) }}
 </template>
 
 <template data-aculta-search-dialog-template>

@@ -1,28 +1,4 @@
-$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
-title: Diálogo de Autenticação - Faixa Institucional Verde
-props:
-  id: auth-dialog-institutional
-  title: Entrar na ACULTA
-  subtitle: Acesse sua conta e continue de onde parou.
-  header_variant: institutional
-  show_accent_stripes: true
-  close_label: Fechar janela de acesso
-  google_auth_url: /user/login/google
-  password_reset_url: /user/password
-  register_url: /user/register
-slots:
-  content: >-
-    <form class="aculta-login-popup" data-portal-ui="login-popup">
-      <div class="form-item form-type-textfield">
-        <label for="edit-name-inst">Nome de usuário, e-mail ou CPF</label>
-        <input type="text" id="edit-name-inst" name="name" placeholder="Digite seu identificador" />
-      </div>
-      <div class="form-item form-type-password">
-        <label for="edit-pass-inst">Senha</label>
-        <input type="password" id="edit-pass-inst" name="pass" placeholder="••••••••" />
-        <a href="/user/password" id="edit-password-inst">Esqueceu sua senha?</a>
-      </div>
-      <div id="edit-actions-inst" data-drupal-selector="edit-actions">
-        <button type="submit" id="edit-submit-inst" data-drupal-selector="edit-submit" data-portal-ui="button-primary">Entrar</button>
-      </div>
-    </form>
+name: Diálogo de Autenticação - Faixa Institucional Verde
+description: Modal de autenticação SDC na variante institucional com o formulário real do Drupal.
+component: aculta420_v2:auth-dialog
+class: Drupal\aculta420_v2\Story\AuthDialogStory

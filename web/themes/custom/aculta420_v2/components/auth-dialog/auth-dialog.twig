@@ -3,6 +3,12 @@
   'aculta-auth-dialog--' ~ (header_variant|default('neutral')),
 ] %}
 
+{% if trigger_label %}
+  <a class="button button--secondary aculta-dialog__trigger" href="{{ trigger_url|default('#' ~ id) }}" aria-controls="{{ id }}" aria-expanded="false" aria-haspopup="dialog" data-aculta-dialog-trigger data-aculta-auth-trigger>
+    {{ trigger_label }}
+  </a>
+{% endif %}
+
 <dialog{{ attributes.addClass(dialog_classes) }} id="{{ id }}" aria-labelledby="{{ id }}-title" aria-modal="true" tabindex="-1" data-aculta-auth-dialog data-aculta-login-dialog data-aculta-utility-drawer>
   <div class="aculta-auth-dialog__surface">
     <header class="aculta-auth-dialog__header">
@@ -43,7 +49,7 @@
         </div>
       {% endif %}
 
-      <div class="aculta-auth-dialog__content">
+      <div class="aculta-auth-dialog__content" id="aculta-login-content" data-aculta-login-content aria-live="polite" aria-busy="false">
         {% block content %}
           {{ content }}
         {% endblock %}

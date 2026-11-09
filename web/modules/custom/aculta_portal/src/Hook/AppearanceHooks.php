@@ -65,4 +65,23 @@ final class AppearanceHooks {
     }
   }
 
+  /**
+   * Garante pré-requisitos em bibliotecas geradas dinamicamente para componentes.
+   *
+   * @param array<string, mixed> $libraries
+   *   Definições de biblioteca registradas.
+   * @param string $extension
+   *   Extensão que provê as bibliotecas.
+   */
+  #[Hook('library_info_alter')]
+  public function alterLibraries(array &$libraries, string $extension): void {
+    if ($extension === 'core' && isset($libraries['components.commerce--commerce-admin-card'])) {
+      $dependencies = $libraries['components.commerce--commerce-admin-card']['dependencies'] ?? [];
+      if (!in_array('core/drupal', $dependencies, TRUE)) {
+        $dependencies[] = 'core/drupal';
+      }
+      $libraries['components.commerce--commerce-admin-card']['dependencies'] = $dependencies;
+    }
+  }
+
 }

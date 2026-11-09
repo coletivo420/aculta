@@ -273,6 +273,10 @@
           link.addEventListener('click', (event) => {
             event.preventDefault();
             event.stopPropagation();
+            const parentDrawer = link.closest('dialog[data-aculta-utility-drawer]');
+            if (parentDrawer && typeof parentDrawer.close === 'function') {
+              parentDrawer.close();
+            }
             loginDialog.open(link);
           });
         });

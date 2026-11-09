@@ -49,6 +49,12 @@ props:
       type: [string, 'null']
       title: URL de cadastro de nova conta
       format: uri-reference
+    trigger_label:
+      type: [string, 'null']
+      title: Rótulo do disparador (opcional para preview/botão de abertura)
+    trigger_url:
+      type: [string, 'null']
+      title: URL de fallback do disparador
 slots:
   content:
     title: Conteúdo do Formulário

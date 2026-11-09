@@ -8,6 +8,19 @@
 
   Drupal.behaviors.acultaUiLibraryTabs = {
     attach(context) {
+      // Se a URL contém hash com dois-pontos (ex.: #aculta420_v2:auth-dialog),
+      // removemos temporariamente antes de scripts de tabs tentarem usar como seletor jQuery.
+      if (window.location.hash && window.location.hash.includes(':')) {
+        const rawId = window.location.hash.slice(1);
+        const targetElement = document.getElementById(rawId);
+        if (targetElement) {
+          // Mantém a rolagem até o componente sem quebrar seletores do jQuery.
+          setTimeout(() => {
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 100);
+        }
+      }
+
       once('aculta-ui-library-tabs', '.ui_patterns_quicklinks', context).forEach((box) => {
         const links = Array.from(box.querySelectorAll('nav.aculta-tabs a'));
         const panels = Array.from(box.querySelectorAll('.aculta-component-library__panel'));

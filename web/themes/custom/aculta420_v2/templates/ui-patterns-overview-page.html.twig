@@ -18,7 +18,8 @@
         <h3 class="aculta-component-library__panel-title">{{ group_name }}</h3>
         <ul class="aculta-component-library__panel-list">
           {% for component in components %}
-            <li><a class="button button--secondary" href="#{{ component.id }}">{{ component.name }}</a></li>
+            {% set safe_component_id = component.id|replace({':': '--'}) %}
+            <li><a class="button button--secondary" href="#{{ safe_component_id }}">{{ component.name }}</a></li>
           {% endfor %}
         </ul>
       </div>
@@ -30,7 +31,8 @@
       <h2 class="aculta-component-library__group-title" id="{{ aculta_group_anchors[group_name] }}">{{ group_name }}</h2>
     {% endif %}
     {% for component in components %}
-      <section class="ui_patterns_component" id="{{ component.id }}">
+      {% set safe_component_id = component.id|replace({':': '--'}) %}
+      <section class="ui_patterns_component" id="{{ safe_component_id }}" data-component-id="{{ component.id }}">
         <h2 class="ui_patterns_component__title">
           <a href="{{ url('ui_patterns_library.single', {provider: component.provider, machineName: component.machineName}) }}" class="component__link">{{ component.name }}</a>
         </h2>
