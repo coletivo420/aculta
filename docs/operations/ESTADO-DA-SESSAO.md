@@ -25,9 +25,10 @@
 # ADR-054 — P0/P2/P3/P4/P6/P7 executados; P5/P8/P9 parciais — 2026-11-09
 
 - **Objetivo:** executar o plano ADR-054 de refatoração SDC First, Layout Builder, CSS multidomínio e Biblioteca UI.
-- **Estado:** P0 inventário e gate do painel; P3 shell v2 opt-in com cinco áreas e ponte das regiões antigas; P4 cinco layouts SDC descobertos pelo Layout Builder; P6 módulo `aculta_ui_library` com prévias reais administrativas; P7 `statistics.css` fora do global. P5, habilitação do Layout Builder por display, P8 visual e P9 ficaram DEFERRED.
-- **Arquivos/commits:** `66f6e0440` (P0/P2), `e990a8edc` (P3), `0f48b901b` (P4), `9b3d576c6` (P5/P6/P7). Relatórios em `docs/architecture/ACULTA420-V2-P0-INVENTARIO.md`, `ACULTA420-V2-P5-LANDING-PAGES.md` e `ACULTA420-V2-P8-HOMOLOGACAO.md`.
-- **Verificações:** gates do tema e da UI Library PASS; falhas de fundações, classes mapeadas, boundary e Drupal 12 são pré-existentes e estão no relatório P8. Playwright Firefox 2/2 no shell v2; HTTP 200 nos dez purposes; rollback `classic` testado; `drush cr` executado.
-- **Pendências:** conteúdo editorial das landings; importação de Layout Builder em staging; capturas escuras/zoom/teclado/leitor de telas; prévia autenticada em navegador; `lint:css` sem binário.
-- **Próximo passo:** definir as landings com o responsável e preparar o lote de Layout Builder em ambiente isolado.
+- **Estado:** P0 inventário; P2 painel de container; P3 shell v2 opt-in com cinco áreas; P4 cinco layouts SDC e Layout Builder em **18 dos 24 displays compatíveis** (`allow_custom=false`, 138 checks, seis exclusões documentadas); P5 landing Links composta com `layout-section` no tema; P6 `aculta_ui_library` com prévias reais administrativas; P7 `statistics.css`, `studio.css` e `studio-identity.css` fora do global (−88 KB/página, −33%). P9 (cutover) não executado.
+- **Arquivos/commits:** `66f6e0440`, `e990a8edc`, `0f48b901b`, `9b3d576c6`, `2b62e067b`, `cb9e463b2`, `887ff53c3`, `5da6f783d`, `6ad0bb482`. Relatórios em `docs/architecture/ACULTA420-V2-P0-INVENTARIO.md`, `ACULTA420-V2-P5-LANDING-PAGES.md` e `ACULTA420-V2-P8-HOMOLOGACAO.md`.
+- **Verificações:** gates do tema, layouts, UI Library, CSS e lote LB PASS; falhas de fundações, classes mapeadas, boundary, Drupal 12 e token budget são pré-existentes. Playwright Firefox: 86 checks, 0 falhas (anônimo e autenticado, cinco larguras, escuro, foco); home/wiki/revista com 1 H1 e 1 `<main>`; rollback `classic` testado. Config ativa em `classic`/`light`.
+- **Drift corrigido:** `main_menu`, `page_title`, `site_branding`, `help` e `breadcrumbs` estavam no Sync e ausentes da config ativa; restaurados. `institution_bar` segue só na config ativa.
+- **Pendências:** conteúdo editorial da landing Links (não existe nó de landing); seis displays excluídos do LB com causa; aceitação visual humana; import/export em staging; `lint:css` sem binário; cache cross-domain em ordem inversa.
+- **Próximo passo:** definir a landing Links com o responsável e avaliar os seis displays excluídos com adaptador próprio.
 

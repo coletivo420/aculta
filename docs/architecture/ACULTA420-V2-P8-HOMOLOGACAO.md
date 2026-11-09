@@ -12,6 +12,7 @@ Este relatório registra apenas o que foi executado. Item não executado é **DE
 | `validate-aculta420-shell-regions.php` | **PASS** (30) | Cinco regiões finais; 5 blocos em `highlighted` como ponte |
 | `validate-aculta420-sdc-schemas.php` | **PASS** (69 componentes, 113 includes, 1527 checks) | Inclui os 5 layouts novos |
 | `validate-aculta420-layouts.php` | **PASS** (42) | Descoberta pelo `plugin.manager.core.layout` e render real |
+| `validate-aculta420-layout-builder-batch.php` | **PASS** (138) | 18 displays com LB, `allow_custom=false`, config ativa = Sync, render array e acesso às rotas |
 | `validate-aculta-ui-library.php` | **PASS** (23) | Rotas MAIN, acesso por perfil, `max-age 0`, prévia real |
 | `validate-aculta420-css-scope.php` | **PASS** (8) | `statistics.css` fora do global |
 | `validate-admin-routes-main-domain.php` | **PASS** (175 rotas) | Inclui as duas rotas novas |
@@ -64,6 +65,8 @@ Capturas full-page: `$SUITE_OUT/shell-v2-main-320.png` e `shell-v2-main-1440.png
 - **Nota:** com a barra Gin visível, o administrador tem 16 px de rolagem horizontal a 320 px por causa de `.top-bar__actions` do Gin. É dívida do admin toolbar, fora do tema; não foi alterada.
 
 Modo escuro autenticado: a conta de teste tem preferência própria `light`, que prevalece sobre o padrão do site; o modo escuro foi verificado no estado anônimo, que usa o padrão `dark`. Isso confirma a precedência documentada em `ColorModePreference`.
+
+A suíte de 86 checks foi repetida após a restauração dos blocos de cabeçalho e a ativação do Layout Builder em 18 displays: **86 checks, 0 falhas**.
 
 ## 4. Testes negativos executados
 
