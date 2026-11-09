@@ -14,3 +14,9 @@
     column-count: 2;
   }
 }
+
+/* O bloco "Componentes disponíveis" (atalhos) e a linha que o separa ocupam a largura toda, fora das colunas. */
+.ui_patterns_quicklinks,
+.ui_patterns_quicklinks + hr {
+  column-span: all;
+}
