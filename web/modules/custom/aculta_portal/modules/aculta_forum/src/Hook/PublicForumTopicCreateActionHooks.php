@@ -74,6 +74,7 @@ final class PublicForumTopicCreateActionHooks {
         'data-hx-get' => $composerUrl,
         'data-hx-target' => '#aculta-topic-dialog-body',
         'data-hx-swap' => 'innerHTML',
+        'data-hx-select' => '[data-aculta-topic-composer]',
       ],
     ];
     CacheableMetadata::createFromObject($access)
