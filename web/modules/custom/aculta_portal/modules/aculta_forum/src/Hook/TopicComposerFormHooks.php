@@ -66,6 +66,14 @@ final class TopicComposerFormHooks {
     if (isset($form['body']['widget'][0]['summary'])) {
       unset($form['body']['widget'][0]['summary']);
     }
+    // O corpo do tópico só aceita o formato do fórum: o seletor sai do popup e o formato
+    // fica fixo como valor oculto.
+    if (isset($form['body']['widget'][0]['format']['format'])) {
+      $formatElement = &$form['body']['widget'][0]['format'];
+      $formatElement['format']['#type'] = 'hidden';
+      $formatElement['format']['#value'] = 'forum';
+      unset($formatElement['guidelines'], $formatElement['help']);
+    }
     // A resposta traz a página inteira: o HTMX recorta só o formulário do tópico para o popup.
     $form['#attributes']['data-aculta-topic-composer'] = '';
     $form['#attributes']['data-hx-select'] = '[data-aculta-topic-composer]';
