@@ -136,6 +136,18 @@ final class DiscussionReplyFormHooks {
       ],
       '#weight' => 50,
     ];
+    // "Cancelar" (secundário, como Limpar) fecha o popup de resposta.
+    $form['actions']['cancel'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'button',
+      '#value' => t('Cancelar'),
+      '#attributes' => [
+        'type' => 'button',
+        'class' => ['button', 'button--secondary'],
+        'data-aculta-dialog-close' => '',
+      ],
+      '#weight' => 51,
+    ];
 
     // Apply native HTMX submission to the form element.
     $htmx = new Htmx();

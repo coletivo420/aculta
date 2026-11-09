@@ -66,6 +66,19 @@ final class TopicComposerFormHooks {
     if (isset($form['body']['widget'][0]['summary'])) {
       unset($form['body']['widget'][0]['summary']);
     }
+    // Popup: sem pré-visualização. "Cancelar" (secundário) fecha o popup.
+    unset($form['actions']['preview']);
+    $form['actions']['cancel'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'button',
+      '#value' => t('Cancelar'),
+      '#attributes' => [
+        'type' => 'button',
+        'class' => ['button', 'button--secondary'],
+        'data-aculta-dialog-close' => '',
+      ],
+      '#weight' => 50,
+    ];
     // O corpo do tópico só aceita o formato do fórum: o seletor sai do popup e o formato
     // fica fixo como valor oculto.
     if (isset($form['body']['widget'][0]['format']['format'])) {
