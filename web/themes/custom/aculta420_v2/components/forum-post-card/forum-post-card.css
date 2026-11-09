@@ -77,8 +77,20 @@
 }
 
 .forum-post-card__avatar-fallback {
+  flex-shrink: 0;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border-radius: var(--border-radius-full);
+  background-color: var(--color-surface-subtle);
   color: var(--color-text-secondary);
-  display: inline-flex;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.forum-post-card__avatar-fallback .aculta-icon {
+  inline-size: 60%;
+  block-size: 60%;
 }
 
 .forum-post-card__author-info {
@@ -229,6 +241,11 @@
   }
 
   .forum-post-card__avatar {
+    inline-size: 4rem;
+    block-size: 4rem;
+  }
+
+  .forum-post-card__avatar-fallback {
     inline-size: 4rem;
     block-size: 4rem;
   }
