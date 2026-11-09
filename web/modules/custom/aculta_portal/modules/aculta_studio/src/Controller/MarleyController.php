@@ -257,7 +257,7 @@ final class MarleyController {
                 'footer' => PortalLinkElement::build($action['title'], $action['url'], [
                   'data-portal-ui' => 'studio-action',
                   'data-aculta-studio' => 'action',
-                ]),
+                ] + ($action['attributes'] ?? [])),
               ],
             ];
           }
