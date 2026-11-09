@@ -1,5 +1,8 @@
 # ADR-048 — Layouts de página do tema ACULTA420 V2
 
+> **Superado parcialmente pela ADR-054 (2026-11-09):** a proibição do Layout Builder por entidade e a exclusividade do mapeamento de variantes por preprocess deixam de ser decisões vigentes. O shell e as variantes atuais permanecem em uso até o corte homologado para SDC/Layout Builder; não remover sem teste.
+
+
 - **Status:** aceito pelo responsável em 2026-11-04. Atualizado em 2026-11-05: nome confirmado; navegação vertical no dashboard e sub-navegação da conta em coluna dentro do conteúdo (item 5); rota inicial do Studio na raiz do purpose de conta (item 9). Pontos abertos da especificação visual estão na seção 9 de `web/themes/custom/aculta420_v2/docs/studio-visual-spec.md`.
 - **Data:** 2026-11-04.
 - **Relaciona-se com:** ADR-046 (shell, fundações e Fase 4), ADR-047 (menu de conta), ADR-038 (suítes do ACULTA Studio), `web/themes/custom/aculta420_v2/docs/layouts-plan.md` (pesquisa e detalhamento).
