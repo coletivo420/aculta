@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Hook;
 
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\Core\Hook\Order;
+use Drupal\Core\Hook\Order\Order;
 
 /**
  * Remove o título do campo de discussão (o rótulo "Comentar" que restava acima da lista).
