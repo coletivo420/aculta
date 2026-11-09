@@ -202,7 +202,7 @@
         dropdown.buttonView.set({
           label: labels.button || 'Emoji',
           tooltip: true,
-          icon: EMOJI_ICON,
+          icon: config.buttonIcon || EMOJI_ICON,
         });
 
         const panel = new EmojiPanelView(locale, config, {

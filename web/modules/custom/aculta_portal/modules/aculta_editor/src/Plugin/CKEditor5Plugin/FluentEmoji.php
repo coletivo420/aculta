@@ -24,6 +24,21 @@ class FluentEmoji extends CKEditor5PluginDefault implements ContainerFactoryPlug
   use StringTranslationTrait;
 
   /**
+   * Arquivo do emoji usado como ícone do botão na toolbar.
+   */
+  private const BUTTON_ICON_FILE = 'grinning-squinting-face.svg';
+
+  /**
+   * Ícone de reserva, caso o SVG colorido do tema não esteja disponível.
+   */
+  private const FALLBACK_ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" aria-hidden="true">'
+    . '<circle cx="10" cy="10" r="7.25" stroke="currentColor" stroke-width="1.5"/>'
+    . '<circle cx="7.25" cy="8.25" r="1.1" fill="currentColor"/>'
+    . '<circle cx="12.75" cy="8.25" r="1.1" fill="currentColor"/>'
+    . '<path d="M6.6 11.4c.9 1.4 2 2.1 3.4 2.1s2.5-.7 3.4-2.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>'
+    . '</svg>';
+
+  /**
    * Constrói o plugin.
    *
    * @param array $configuration
@@ -86,6 +101,7 @@ class FluentEmoji extends CKEditor5PluginDefault implements ContainerFactoryPlug
     $static_plugin_config['acultaFluentEmoji'] = [
       'catalog' => $catalog,
       'svgBaseUrl' => base_path() . $themePath . '/assets/icons/fluent-emoji/color',
+      'buttonIcon' => $this->buttonIcon($themePath),
       'labels' => [
         'button' => (string) $this->t('Emoji'),
         'search' => (string) $this->t('Buscar emoji'),
@@ -101,6 +117,18 @@ class FluentEmoji extends CKEditor5PluginDefault implements ContainerFactoryPlug
     ];
 
     return $static_plugin_config;
+  }
+
+  /**
+   * Devolve o SVG colorido do emoji usado como ícone do botão.
+   *
+   * Lê o asset do tema para o botão exibir o emoji Fluent real, com cor, em
+   * vez de um ícone monocromático genérico.
+   */
+  private function buttonIcon(string $themePath): string {
+    $path = \Drupal::root() . '/' . $themePath . '/assets/icons/fluent-emoji/color/' . self::BUTTON_ICON_FILE;
+    $icon = is_file($path) ? file_get_contents($path) : FALSE;
+    return is_string($icon) && $icon !== '' ? $icon : self::FALLBACK_ICON;
   }
 
 }
