@@ -7,6 +7,7 @@ namespace Drupal\aculta_forum\Hook;
 use Drupal\aculta_forum\Service\DiscussionCommentPermalinkBuilderInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Hook\Order\Order;
 use Drupal\Core\Extension\ThemeExtensionList;
 use Drupal\Core\Link;
@@ -87,7 +88,12 @@ final class DiscussionCommentPermalinkHooks {
       || $comment->getFieldName() !== 'field_aculta_discussion') {
       return;
     }
-    $variables['attributes']->setAttribute('id', 'resposta-' . $comment->id());
+    if ($variables['attributes'] instanceof Attribute) {
+      $variables['attributes']->setAttribute('id', 'resposta-' . $comment->id());
+    }
+    else {
+      $variables['attributes']['id'] = 'resposta-' . $comment->id();
+    }
   }
 
 }
