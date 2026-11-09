@@ -2,13 +2,13 @@
 {% set bookmark_action = content.flag_salvar_topico|default(null) %}
 {% set topic_content = content|without('flag_salvar_topico', 'body') %}
 {# Postagem de abertura: corpo do tópico com o destaque do tópico fixado (SDC forum-opening-post). #}
-{% set opening_body = render(content.body) %}
+{% set opening_body = render_var(content.body) %}
 {% set opening_html = include('aculta420_v2:forum-opening-post', {
   author_name: node is defined and node ? node.getOwner().getDisplayName() : '',
   timestamp: node is defined and node ? node.getCreatedTime()|date('d/m/Y H:i') : null,
   body: opening_body,
 }, with_context = false)|raw %}
-{% set topic_rest = render(topic_content) %}
+{% set topic_rest = render_var(topic_content) %}
 {% set title_markup %}
   {% if label and view_mode != 'full' %}
     <h2{{ title_attributes }}><a href="{{ url }}" rel="bookmark">{{ label }}</a></h2>
