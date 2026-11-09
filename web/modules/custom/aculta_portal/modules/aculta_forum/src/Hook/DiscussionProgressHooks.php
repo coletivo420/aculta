@@ -15,19 +15,6 @@ use Drupal\node\NodeInterface;
 final class DiscussionProgressHooks {
 
   /**
-   * DEBUG TEMPORÁRIO.
-   */
-  #[Hook('preprocess_field', order: \Drupal\Core\Hook\Order\Order::Last)]
-  public function debugPreprocessField(array &$variables): void {
-    if (($variables['field_name'] ?? '') === 'field_aculta_discussion') {
-      \Drupal::logger('aculta_debug')->notice('DBG3 hidden=@h cf=@cf', [
-        '@h' => var_export($variables['label_hidden'] ?? NULL, TRUE),
-        '@cf' => var_export(!empty($variables['comment_form']), TRUE) . ' ' . json_encode(array_keys((array) ($variables['comment_form'] ?? []))),
-      ]);
-    }
-  }
-
-  /**
    * Marks the shared discussion field for its client-side reading controls.
    */
   #[Hook('entity_view_alter')]
@@ -43,14 +30,10 @@ final class DiscussionProgressHooks {
     // O formulário de comentário de topo sai da página: o botão Comentar abre o mesmo compositor no popup.
     // O core coloca o formulário em cada item do campo (chave numérica), em 'comment_form'.
     foreach (\Drupal\Core\Render\Element::children($build['field_aculta_discussion']) as $delta) {
-      // Elemento vazio e sem acesso, não removido: o core lê a chave ao montar os itens.
-      $build['field_aculta_discussion'][$delta]['comment_form'] = [];
+      // NULL (falso no template): a chave continua existindo para o core, mas nada é impresso.
+      // Um array vazio não serve: o renderer adiciona #cache e o template o trata como verdadeiro.
+      $build['field_aculta_discussion'][$delta]['comment_form'] = NULL;
     }
-    \Drupal::logger('aculta_debug')->notice('DBG2 keys=@k deltas=@d cf=@cf', [
-      '@k' => implode(',', array_slice(array_keys($build['field_aculta_discussion']), 0, 12)),
-      '@d' => implode(',', \Drupal\Core\Render\Element::children($build['field_aculta_discussion'])),
-      '@cf' => json_encode(array_map(static fn($d) => array_keys($build['field_aculta_discussion'][$d] ?? []), \Drupal\Core\Render\Element::children($build['field_aculta_discussion']))),
-    ]);
     $build['field_aculta_discussion']['#attributes']['data-aculta-discussion-thread'] = '';
     $build['field_aculta_discussion']['#attached']['library'][] = 'aculta_forum/discussion-progress';
     // Comportamento do popup de Responder/Citar e do botão Comentar (código no módulo; visual no tema).
