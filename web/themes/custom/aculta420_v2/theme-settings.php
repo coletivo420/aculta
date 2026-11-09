@@ -96,6 +96,25 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
     '#weight' => 80,
   ];
 
+  // ADR-054: shell paralelo com ativação controlada durante a migração.
+  // O padrão é o shell clássico; o shell v2 só é usado quando selecionado.
+  $form['aculta_shell'] = [
+    '#type' => 'details',
+    '#title' => t('Shell da página'),
+    '#description' => t('Estrutura das regiões da página. O shell v2 usa as cinco áreas finais da ADR-054 e mantém as regiões antigas como ponte até o corte homologado.'),
+    '#open' => FALSE,
+  ];
+
+  $form['aculta_shell']['aculta_shell_variant'] = [
+    '#type' => 'select',
+    '#title' => t('Variante do shell'),
+    '#options' => [
+      'classic' => t('Clássico (regiões atuais)'),
+      'v2' => t('V2 (cinco áreas finais, em homologação)'),
+    ],
+    '#default_value' => theme_get_setting('aculta_shell_variant') ?? 'classic',
+  ];
+
   $form['aculta_cores_purpose'] = [
     '#type' => 'details',
     '#title' => t('Cores por purpose'),

@@ -312,10 +312,10 @@ autorizada.
 
 ### revista-listing — Listagem editorial
 - **Papel:** apresenta o H1 editorial e a grade da View `revista_sessoes:page_revista`.
-- **Props:** `eyebrow`, `title`, `has_items`.
+- **Props:** `eyebrow`, `title`, `title_level` (`h1` ou `h2`, padrão `h2`), `has_items`.
 - **Slots:** `items` (saída renderizada da View).
 - **Story:** `revista-listing.default.story.yml`.
-- **Regra:** não reordena o DOM nem consulta conteúdo; substitui o título genérico só na presença da listagem e mantém uma, duas e três colunas conforme o espaço.
+- **Regra:** não reordena o DOM nem consulta conteúdo; substitui o título genérico só na presença da listagem e mantém uma, duas e três colunas conforme o espaço. O H1 da página pertence ao título da rota; a listagem usa `h2` por padrão para não duplicar o título principal.
 - **Estado:** implementação pronta; aguardando gates SDC e verificação de Runtime.
 
 ### revista-publication — Publicação completa
@@ -345,7 +345,7 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 
 ### forum-category-header — Cabeçalho de Categoria do Fórum
 - **Papel:** apresenta o cabeçalho de categoria com eyebrow institucional "GROWROOM420 / COMUNIDADE", título da categoria, descrição explicativa e contadores de estatísticas com faixa superior vermelha editorial.
-- **Props:** `title` (string, obrigatória), `description` (string, opcional), `icon` (string, opcional), `stats` (array de `{label, value}`, opcional).
+- **Props:** `title` (string, obrigatória), `title_level` (`h1` ou `h2`, padrão `h2`), `description` (string, opcional), `icon` (string, opcional), `stats` (array de `{label, value}`, opcional).
 - **Slots:** nenhum.
 - **Story:** `forum-category-header.default.story.yml`.
 - **Regra:** não lê entidade ou regra de domínio; valores nulos/ausentes de estatísticas são renderizados como placeholder acessível `—<span class="visually-hidden">Dado indisponível</span>`.

@@ -55,6 +55,7 @@ salva para exportar e nenhum `cex` foi executado.
 | `aculta_radius_field` | select | `base` | `sm` (4px), `base` (8px) | campos de formulário |
 | `aculta_accent_override` | select | `mapping` | `mapping` (padrão: pelo tipo de conteúdo), `green`, `yellow`, `red` (forçam uma cor para todos) | cor da faixa de acento |
 | `aculta_show_accent_stripe` | boolean | `true` | sim, não | faixa de acento dos cartões de área |
+| `aculta_shell_variant` | select | `classic` | `classic` (shell atual), `v2` (cinco áreas finais, em homologação) | estrutura da página |
 
 `aculta_accent_override` só fica ativo com a faixa visível. Com `mapping`, o tema
 usa o valor `accent` que o Portal envia, por tipo (`docs/superficies.md`, seção 8.3).
@@ -63,6 +64,10 @@ diferença entre níveis vizinhos e deve ser usada só por pedido do responsáve
 Não há opção de "sem faixa" aqui: para isso, use `aculta_show_accent_stripe`.
 
 Os valores seguem `docs/superficies.md`, seção 1.
+
+### 2.0 Shell da página (ADR-054)
+
+A seção **Shell da página** oferece `classic` e `v2`. O padrão é `classic`, que mantém `templates/layout/page.html.twig` e as nove regiões atuais. `v2` ativa `templates/layout/page--shell-v2.html.twig`, que compõe as cinco áreas finais (institution, header, content, sidebar_first, footer) e usa as regiões antigas `navigation`, `highlighted`, `help` e `breadcrumb` como ponte até o corte homologado. A troca é reversível pela mesma opção, sem migração de dados nem alteração do `info.yml` nesta fase.
 
 ### 2.1 Cores por purpose (implementado no runtime, F3)
 

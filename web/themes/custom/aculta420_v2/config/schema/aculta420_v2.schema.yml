@@ -31,6 +31,9 @@ aculta420_v2.settings:
         extra:
           type: string
           label: 'Classes extras'
+    aculta_shell_variant:
+      type: string
+      label: 'Variante do shell da página (classic ou v2)'
     aculta_purpose_palette:
       type: mapping
       label: 'Paleta de destaque por purpose'

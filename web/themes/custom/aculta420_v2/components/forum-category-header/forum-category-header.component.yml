@@ -12,6 +12,12 @@ props:
       type: string
       title: Título da categoria
       minLength: 1
+    title_level:
+      type: string
+      enum: [h1, h2]
+      default: h2
+      title: Nível do título
+      description: O H1 pertence ao título da rota; o cabeçalho da categoria usa h2 por padrão.
     description:
       type: [string, 'null']
       title: Descrição explicativa

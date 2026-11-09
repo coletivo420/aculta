@@ -1,3 +1,13 @@
+## Não versionado — ADR-054 P3 shell paralelo (2026-11-09)
+
+- Novo shell opt-in `page--shell-v2.html.twig` com as cinco áreas finais (`institution`, `header`, `content`, `sidebar_first`, `footer`). Ativado por `aculta_shell_variant = v2`; o padrão continua `classic`, com rollback pela mesma opção.
+- As regiões `navigation`, `highlighted`, `help` e `breadcrumb` seguem renderizadas como ponte no shell v2, para não deixar bloco órfão antes do corte. O `info.yml` não foi alterado.
+- `PagePresentationHooks::themeSuggestionsPageAlter` adiciona a sugestão; `composeShellTitle` move `page_title_block` de regiões antigas para o título do `layout-page`, preservando um único H1.
+- Biblioteca `shell-v2` carrega `src/styles/shell-v2.css` somente no shell v2.
+- Correção de H1 duplicado: `revista-listing` e `forum-category-header` ganharam o prop `title_level` (padrão `h2`); a landing Links/LinkWeed deixou de renderizar `<main>`/`<h1>` próprios, pois o shell já fornece ambos.
+- Smoke no Runtime: 10 requisições HTTPS em `aculta`, `links`, `eventos`, `wiki420`, `revista`, `loja`, `cursos`, `apoio` e `growroom420` com HTTP 200, 1 H1 e 1 `<main>`. Rollback para `classic` testado. Capturas Firefox e demais gates visuais: pendentes.
+- **RUNTIME STATUS: PARCIAL** — código e configuração do tema validados via Drush local; sem captura visual e sem homologação do piloto Links.
+
 ## Não versionado - ADR-054 e retirada da opção Layout de container (2026-11-09)
 
 - Decisões das três rodadas consolidadas em ADR-054 e plano executivo SDC First, Layout Builder e dez purposes.

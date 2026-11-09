@@ -1,0 +1,30 @@
+/*
+ * Shell paralelo da ADR-054.
+ *
+ * Carregado apenas quando aculta_shell_variant = v2. Define as cinco áreas
+ * finais e a área contextual que recebe, como ponte, as regiões antigas
+ * highlighted, help e breadcrumb até o corte homologado.
+ */
+.page--shell-v2 {
+  grid-template-areas:
+    "institution"
+    "header"
+    "navigation"
+    "showcase"
+    "contextual"
+    "main"
+    "footer";
+  grid-template-rows: auto auto auto auto auto 1fr auto;
+}
+
+.page-shell-v2__contextual {
+  display: grid;
+  grid-area: contextual;
+  gap: var(--spacing-sm);
+  min-inline-size: 0;
+}
+
+.page-shell-v2__footer {
+  grid-area: footer;
+  min-inline-size: 0;
+}

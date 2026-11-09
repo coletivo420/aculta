@@ -4,6 +4,9 @@ Estado: em desenvolvimento · versão 1.4.0 (`aculta420_v2.info.yml`) · status:
 
 ## Próximo passo
 
+- **ADR-054 P4 (próximo):** layouts SDC adicionais (seção, duas colunas, grid, estreito) e habilitação de Layout Builder por lote, display a display, com teste de renderização e rollback do YAML.
+- **ADR-054 P3 (feito):** shell v2 opt-in com cinco áreas finais; ponte para navigation/highlighted/help/breadcrumb; smoke HTTP em 9 hosts válidos, 1 H1 e 1 `<main>`; rollback `classic` testado. Capturas Firefox pendentes.
+
 - **Revista:** accent global via UI Styles, precedência no wrapper/SDC. Cinco nós sem accent próprio; node 602 vazio. Campo legado preservado, fora do fluxo.
 - **PHPUnit:** 12 testes/56 assertions PASS; bootstrap cria saída relativa. Foundations, UI Styles, SDC schema/render PASS.
 - **F3:** concluída; Firefox ESR palette/botões 360/360, 10 purposes, claro/escuro, 320/1440, sem overflow. `tests/browser/capturas/purpose-buttons/2026-11-06/`.

@@ -46,6 +46,11 @@ final class PagePresentationHooks {
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
     $variables['aculta_layout_variant'] = $this->getPageLayoutVariant();
+    // ADR-054: shell paralelo, opt-in pela configuração do tema.
+    $variables['aculta_shell_variant'] = $this->shellVariant();
+    if ($variables['aculta_shell_variant'] === 'v2') {
+      $variables['#attached']['library'][] = 'aculta420_v2/shell-v2';
+    }
     $variables['aculta_component_library_page'] = PurposeContainerLayout::isComponentLibraryRoute($this->currentRouteMatch?->getRouteName());
     $variables['aculta_lms_lesson_route'] = $this->currentRouteMatch?->getRouteName() === 'aculta_lms.lesson_view';
     $variables['aculta_layout_page_sdc_available'] = $this->componentAvailable('layout-page');
@@ -58,6 +63,9 @@ final class PagePresentationHooks {
     $variables['aculta_account_avatar'] = $variables['aculta_account_avatar'] ?? NULL;
     $variables['aculta_account_name'] = $variables['aculta_account_name'] ?? NULL;
     $this->composeDomainHeader($variables);
+    if ($variables['aculta_shell_variant'] === 'v2') {
+      $this->composeShellTitle($variables);
+    }
     if ($variables['aculta_lms_lesson_route']) {
       // The LMS render array owns the lesson H1; avoid a second route-title H1.
       $variables['aculta_page_title'] = [];
@@ -85,6 +93,60 @@ final class PagePresentationHooks {
         && is_string($link['url'] ?? NULL)
         && $link['url'] !== '',
     ));
+  }
+
+  /**
+   * Adds the parallel shell template when the opt-in setting selects it.
+   *
+   * Runs before preprocess_page, so it reads the setting from config instead
+   * of relying on a variable that is not set yet.
+   *
+   * @param array $suggestions
+   *   Template suggestions for the page theme hook.
+   * @param array $variables
+   *   Theme variables.
+   */
+  #[Hook('theme_suggestions_page_alter')]
+  public function themeSuggestionsPageAlter(array &$suggestions, array $variables): void {
+    if ($this->shellVariant() === 'v2') {
+      $suggestions[] = 'page__shell_v2';
+    }
+  }
+
+  /**
+   * Returns the configured shell variant, restricted to the supported values.
+   */
+  private function shellVariant(): string {
+    $value = $this->configFactory->get('aculta420_v2.settings')->get('aculta_shell_variant');
+    return $value === 'v2' ? 'v2' : 'classic';
+  }
+
+  /**
+   * Moves a page title block out of legacy regions in the parallel shell.
+   *
+   * Overrides de Domain Config podem colocar page_title_block em navigation.
+   * No shell v2 o H1 pertence à área de conteúdo, junto do layout-page, para
+   * não duplicar título nem deixar o H1 fora do landmark principal.
+   *
+   * @param array<string, mixed> $variables
+   *   Page theme variables.
+   */
+  private function composeShellTitle(array &$variables): void {
+    foreach (['navigation', 'highlighted'] as $region) {
+      if (!isset($variables['page'][$region]) || !is_array($variables['page'][$region])) {
+        continue;
+      }
+      foreach (Element::children($variables['page'][$region]) as $key) {
+        $block = $variables['page'][$region][$key];
+        if (!is_array($block) || $this->getPluginId($block) !== 'page_title_block') {
+          continue;
+        }
+        if (empty($variables['aculta_page_title'])) {
+          $variables['aculta_page_title'][$key] = $block;
+        }
+        unset($variables['page'][$region][$key]);
+      }
+    }
   }
 
   /**
