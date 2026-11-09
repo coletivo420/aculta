@@ -168,34 +168,36 @@
 
 .discussion-reply-composer__form button--primary,
 .discussion-reply-composer__form .button--primary,
-.discussion-reply-composer__form button[type="submit"],
-.discussion-reply-composer__form input[type="submit"] {
-  background-color: var(--color-brand-primary);
-  color: #ffffff;
-  border: 1px solid transparent;
+.discussion-reply-composer__form button[type="submit"]:not(.button--danger):not(.button--secondary):not(.button--outline):not(.button--ghost),
+.discussion-reply-composer__form input[type="submit"]:not(.button--danger):not(.button--secondary):not(.button--outline):not(.button--ghost) {
+  background-color: var(--button-primary-bg, var(--color-brand-primary));
+  color: var(--button-primary-fg, #ffffff);
+  border: 2px solid var(--button-primary-bg, var(--color-brand-primary));
 }
 
 .discussion-reply-composer__form button--primary:hover,
 .discussion-reply-composer__form .button--primary:hover,
-.discussion-reply-composer__form button[type="submit"]:hover,
-.discussion-reply-composer__form input[type="submit"]:hover {
-  filter: brightness(0.92);
+.discussion-reply-composer__form button[type="submit"]:not(.button--danger):not(.button--secondary):not(.button--outline):not(.button--ghost):hover,
+.discussion-reply-composer__form input[type="submit"]:not(.button--danger):not(.button--secondary):not(.button--outline):not(.button--ghost):hover {
+  background-color: var(--button-primary-bg-hover);
+  border-color: var(--button-primary-bg-hover);
 }
 
 .discussion-reply-composer__form button--secondary,
 .discussion-reply-composer__form .button--secondary,
-.discussion-reply-composer__form button[type="button"],
-.discussion-reply-composer__form input[type="button"] {
-  background-color: transparent;
-  color: var(--color-text-primary);
-  border: 1px solid var(--color-border-subtle);
+.discussion-reply-composer__form button[type="button"]:not(.button--danger):not(.button--primary),
+.discussion-reply-composer__form input[type="button"]:not(.button--danger):not(.button--primary) {
+  background-color: var(--button-secondary-bg);
+  color: var(--button-secondary-fg);
+  border: 2px solid var(--button-secondary-border);
 }
 
 .discussion-reply-composer__form button--secondary:hover,
 .discussion-reply-composer__form .button--secondary:hover,
-.discussion-reply-composer__form button[type="button"]:hover,
-.discussion-reply-composer__form input[type="button"]:hover {
-  background-color: var(--color-surface-subtle);
+.discussion-reply-composer__form button[type="button"]:not(.button--danger):not(.button--primary):hover,
+.discussion-reply-composer__form input[type="button"]:not(.button--danger):not(.button--primary):hover {
+  background-color: var(--button-secondary-bg-hover);
+  border-color: var(--button-secondary-border);
 }
 
 @media (prefers-reduced-motion: reduce) {

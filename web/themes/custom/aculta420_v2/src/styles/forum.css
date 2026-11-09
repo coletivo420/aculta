@@ -974,6 +974,11 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
   display: none;
 }
 
+/* No popup de confirmação de exclusão de tópico, não exibe o título "Responder à discussão" no topo do diálogo. */
+#aculta-reply-dialog:has([data-discussion-reply-composer][data-mode="excluir"]) .aculta-dialog__header .aculta-dialog__title {
+  display: none;
+}
+
 .aculta-reply-dialog__body {
   min-inline-size: 0;
 }
