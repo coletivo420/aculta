@@ -69,7 +69,7 @@ final class DiscussionCommentPermalinkBuilderTest extends TestCase {
     $url = $this->builder()->hostUrl($comment);
     self::assertNotNull($url);
     self::assertSame('entity.node.canonical', $url->getRouteName());
-    self::assertSame('comment-456', $url->getOption('fragment'));
+    self::assertSame('resposta-456', $url->getOption('fragment'));
     self::assertArrayNotHasKey('query', $url->getOptions());
   }
 

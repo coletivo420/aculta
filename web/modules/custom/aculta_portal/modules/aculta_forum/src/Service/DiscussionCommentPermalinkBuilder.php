@@ -66,7 +66,7 @@ final class DiscussionCommentPermalinkBuilder implements DiscussionCommentPermal
 
     $url = $host->toUrl('canonical');
     $options = $url->getOptions();
-    $options['fragment'] = 'comment-' . $comment->id();
+    $options['fragment'] = 'resposta-' . $comment->id();
 
     // A página do comentário vem da posição dele na lista; a página da requisição atual não serve
     // (um envio por POST sempre chega à página 0).

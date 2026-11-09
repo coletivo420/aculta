@@ -25,7 +25,7 @@ final class DiscussionCommentPermalinkHooksTest extends UnitTestCase {
       static fn ($text, Url $url): \Drupal\Core\GeneratedLink => (new \Drupal\Core\GeneratedLink())->setGeneratedLink('<a href="' . $url->toString() . '">' . $text . '</a>')
     );
     $generator = $this->createMock(\Drupal\Core\Routing\UrlGeneratorInterface::class);
-    $generator->method('generateFromRoute')->willReturn('/node/123?page=2#comment-456');
+    $generator->method('generateFromRoute')->willReturn('/node/123?page=2#resposta-456');
     $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
     $container->set('url_generator', $generator);
     $container->set('link_generator', $linkGenerator);
@@ -58,8 +58,8 @@ final class DiscussionCommentPermalinkHooksTest extends UnitTestCase {
 
     $hooks->preprocessComment($variables);
 
-    self::assertStringContainsString('/node/123?page=2#comment-456', (string) $variables['permalink']);
-    self::assertSame('/node/123?page=2#comment-456', $variables['permalink_url']);
+    self::assertStringContainsString('/node/123?page=2#resposta-456', (string) $variables['permalink']);
+    self::assertSame('/node/123?page=2#resposta-456', $variables['permalink_url']);
   }
 
   /**

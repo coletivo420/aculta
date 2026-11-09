@@ -7,6 +7,7 @@ namespace Drupal\aculta_forum\Hook;
 use Drupal\aculta_forum\Service\DiscussionCommentPermalinkBuilderInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Hook\Order\Order;
 use Drupal\Core\Extension\ThemeExtensionList;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Markup;
@@ -71,6 +72,22 @@ final class DiscussionCommentPermalinkHooks {
     $svg = (string) file_get_contents($path);
     $svg = preg_replace('/<\?xml[^>]*\?>\s*/', '', $svg) ?? $svg;
     return '<span class="aculta-resposta-acao__icon" aria-hidden="true">' . trim($svg) . '</span>';
+  }
+
+  /**
+   * Id do elemento do comentário: resposta-CID, igual à âncora do permalink.
+   *
+   * Roda depois do core, que define comment-CID no mesmo atributo.
+   */
+  #[Hook('preprocess_comment', order: Order::Last)]
+  public function preprocessCommentDomId(array &$variables): void {
+    $comment = $variables['elements']['#comment'] ?? NULL;
+    if (!$comment instanceof CommentInterface
+      || $comment->bundle() !== 'aculta_discussion_post'
+      || $comment->getFieldName() !== 'field_aculta_discussion') {
+      return;
+    }
+    $variables['attributes']->setAttribute('id', 'resposta-' . $comment->id());
   }
 
 }

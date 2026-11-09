@@ -275,7 +275,7 @@
 /* Ações com atributos semânticos ou seletores acessíveis */
 .forum-post-card a.permalink,
 .forum-post-card a[data-action="permalink"],
-.forum-post-card a[href*="#comment-"] {
+.forum-post-card a[href*="#resposta-"] {
   color: var(--color-brand-primary);
   display: inline-flex;
   align-items: center;
