@@ -9,6 +9,7 @@
 - Verificado nos shells clássico e v2: HTTP 200 no host Links, 1 H1, 1 `<main>` e `.layout-section` presente.
 - O `LinksLandingController` não foi alterado; a variante de nó com `field_domain_source` continua funcionando.
 - Layout Builder foi habilitado no lote inicial de conteúdo (`node.page.full`, `node.revista.full`, `node.wiki_entry.full`, `node.aculta_faq.default`) com autorização do responsável. **Não existe nó `page` com `field_domain_source` do Links**, então a landing continua no controller e no layout SDC; criar esse nó é decisão editorial.
+- O display `node.page.full` tem `allow_custom: true` (exceção justificada: landing pages precisam de composição por nó). O override por nó foi testado no nó 6 (`/institucional`): seção de Layout Builder com o corpo renderizou o texto e o layout `onecol`; o override foi removido em seguida. O `LinksLandingController` continua renderizando o nó no view mode `full`, portanto qualquer nó de landing criado poderá ter sua própria composição no LB.
 
 ## 1. O que o código faz hoje
 

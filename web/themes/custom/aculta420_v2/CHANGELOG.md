@@ -1,3 +1,9 @@
+## Não versionado — ADR-054 P5 mecanismo de landing por nó (2026-11-09)
+
+- `node.page.full` passa a ter `allow_custom: true` (exceção para landing pages), permitindo composição própria por nó no Layout Builder.
+- Override por nó testado no nó 6 (`/institucional`): seção `onecol` com o corpo renderizou o texto e o layout; o override foi removido em seguida. O nó temporário de teste foi excluído.
+- `LinksLandingController` continua no view mode `full`; quando o responsável criar o nó de landing Links, a composição própria já funciona. Gate do lote: 170 checks.
+
 ## Não versionado — ADR-054 P7 CSS multidomínio por rota (2026-11-09)
 
 - `portal-account`, `public-profile`, `event-organization`, `events`, `wiki` e `forum` saíram do `global-styling` e passaram a ser bibliotecas contextuais por rota/purpose.

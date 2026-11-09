@@ -194,3 +194,9 @@ Este registro não autoriza `drush cim`, `updatedb` ou alterações destrutivas;
 - Verificação por CSS servido: `.aculta-event-organization-*` ausente na home e presente em Eventos; `.aculta-wiki-intro/collaboration/recent-change` ausentes na home e presentes na Wiki; `.forum-category-header/topic-row/tabs` ausentes na home e presentes no Fórum; `.portal-account__header` e `.studio-account-section` presentes em `/conta` autenticado e ausentes na home; `.portal-profile__achievement-highlight` presente no perfil público.
 - Smoke HTTP: dez frentes com 200, 1 H1 e 1 `<main>`. Playwright: 86 checks, 0 falhas; escopo conta/perfil 6/6 OK.
 - Permanecem globais por uso transversal: fontes, `tokens`, `base`, `layout`, `messenger-drawer` (gaveta na barra institucional), `utilities`, `content`, `search` (popup em toda página), `buttons`, `article-authors`, `portal-ui-extras`, `portal-ui-map` e `components/button/button.css` (envios de formulário fora do SDC).
+
+## Execução Recente — ADR-054 P5 override de landing por nó (2026-11-09)
+
+- `node.page.full` com `allow_custom: true` (única exceção do lote, para landing pages). `layout_builder.overrides.node.view`: administrador ALLOW, visitante DENY.
+- Override por nó comprovado no nó 6 (`/institucional`) via HTTP autenticado: seção `onecol` com o corpo renderizou o texto e o layout; `config:status` sem divergência após a restauração. Nó temporário de teste removido.
+- `validate-aculta420-layout-builder-batch.php`: PASS (170 checks), com a exceção de `allow_custom` restrita a `node.page.full`.

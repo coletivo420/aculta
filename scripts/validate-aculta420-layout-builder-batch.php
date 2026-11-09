@@ -77,7 +77,9 @@ foreach ($targets as $id) {
   }
 
   $assert($display->isLayoutBuilderEnabled(), "$id não tem Layout Builder habilitado.");
-  $assert($display->getThirdPartySetting('layout_builder', 'allow_custom', TRUE) === FALSE, "$id permite override por entidade (allow_custom).");
+  // Landing pages precisam de override por nó; os demais displays não.
+  $expectedAllowCustom = $id === 'node.page.full';
+  $assert($display->getThirdPartySetting('layout_builder', 'allow_custom', FALSE) === $expectedAllowCustom, "$id: allow_custom diferente do esperado (" . var_export($expectedAllowCustom, TRUE) . ').');
 
   $sections = $display->getThirdPartySetting('layout_builder', 'sections', []);
   $assert(is_array($sections) && $sections !== [], "$id não tem seções de Layout Builder.");
