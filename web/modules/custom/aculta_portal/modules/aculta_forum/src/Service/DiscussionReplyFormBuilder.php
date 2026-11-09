@@ -143,6 +143,49 @@ class DiscussionReplyFormBuilder {
   }
 
   /**
+   * Builds the composer that edits an existing discussion comment inside the popup.
+   *
+   * O formulário salva na rota de edição do próprio comentário; o envio redireciona ao permalink.
+   */
+  public function buildEditForm(CommentInterface $comment, AccountInterface $account): array {
+    $host = $comment->getCommentedEntity();
+    $composerId = 'discussion-composer-' . $comment->getCommentedEntityTypeId() . '-' . $comment->getCommentedEntityId() . '-' . $comment->id();
+    if (!$host instanceof EntityInterface || !$comment->access('update', $account)) {
+      return [
+        '#theme' => 'discussion_reply_composer',
+        '#status' => 'acesso_revogado',
+        '#mode' => 'editar',
+        '#target_id' => $composerId,
+        '#messages' => [
+          '#markup' => '<div class="alert alert--warning">' . $this->t('Você não tem permissão para editar este comentário.') . '</div>',
+        ],
+        '#cache' => [
+          'contexts' => ['user.permissions'],
+        ],
+      ];
+    }
+
+    $form = $this->entityFormBuilder->getForm($comment);
+    // Mesmo destino de envio do compositor de resposta: o popup troca o corpo do diálogo.
+    $form['#attributes']['data-hx-target'] = '#aculta-reply-dialog-body';
+    $form['#attributes']['data-hx-select'] = '[data-discussion-reply-composer]';
+    $form['#attributes']['data-hx-swap'] = 'innerHTML';
+
+    return [
+      '#theme' => 'discussion_reply_composer',
+      '#status' => 'editando',
+      '#mode' => 'editar',
+      '#target_id' => $composerId,
+      '#host_title' => $host->label(),
+      '#form' => $form,
+      '#cache' => [
+        'contexts' => ['user.permissions', 'url.query_args'],
+        'tags' => $comment->getCacheTags(),
+      ],
+    ];
+  }
+
+  /**
    * Builds a short plain-text excerpt of a comment body.
    */
   private function parentBodyExcerpt(CommentInterface $parent): ?string {

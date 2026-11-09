@@ -52,6 +52,8 @@ final class DiscussionReplyActionsHooks {
       return;
     }
 
+    $this->markEditLink($links, $comment, $host);
+
     $access = $this->replyAccess->checkAccess($host, $this->currentUser, (int) $comment->id());
     if (!$access->isAllowed()) {
       return;
@@ -97,6 +99,39 @@ final class DiscussionReplyActionsHooks {
       $links['#links']['resposta-responder'] = $replyLink;
       $cacheability->applyTo($links);
     }
+  }
+
+  /**
+   * Editar abre o popup do compositor (mesmo comportamento de Responder e Citar).
+   *
+   * O link de edição do core continua no href (acesso sem JavaScript); o clique carrega o
+   * formulário de edição no diálogo pelo endpoint do compositor com ?editar=CID.
+   */
+  private function markEditLink(array &$links, CommentInterface $comment, EntityInterface $host): void {
+    $endpoint = Url::fromRoute('aculta_forum.discussion_composer', [
+      'entity_type' => $host->getEntityTypeId(),
+      'entity_id' => $host->id(),
+    ], [
+      'query' => ['editar' => (int) $comment->id()],
+    ])->toString();
+
+    if (isset($links['comment']['#links']['comment-edit'])) {
+      $this->applyEditAttributes($links['comment']['#links']['comment-edit'], $endpoint);
+    }
+    if (isset($links['#links']['comment-edit'])) {
+      $this->applyEditAttributes($links['#links']['comment-edit'], $endpoint);
+    }
+  }
+
+  /**
+   * Acrescenta ao link de edição os atributos do popup.
+   */
+  private function applyEditAttributes(array &$link, string $endpoint): void {
+    $attributes = $link['attributes'] ?? [];
+    $attributes['class'] = array_merge((array) ($attributes['class'] ?? []), ['resposta-acao', 'resposta-acao--editar', 'use-htmx']);
+    $attributes['data-action'] = 'resposta-editar';
+    $attributes['data-hx-get'] = $endpoint;
+    $link['attributes'] = $attributes;
   }
 
 }

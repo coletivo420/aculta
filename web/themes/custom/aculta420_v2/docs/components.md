@@ -402,6 +402,6 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 ### discussion-reply-composer — Compositor de Resposta da Discussão
 
 - **Local:** `components/discussion-reply-composer/`
-- **Schema:** estrito, com props `target_id`, `status`, `parent_id`, `parent_author`, `parent_subject`, `host_title` e slots `messages`, `context`, `form`.
+- **Schema:** estrito, com props `target_id`, `status`, `mode` (`responder`, `citar`, `editar`), `parent_id`, `parent_author`, `parent_subject`, `host_title` e slots `messages`, `context`, `form`.
 - **Story:** `discussion-reply-composer.default.story.yml`.
 - **Consumer:** template de tema `discussion-reply-composer.html.twig` e módulo `aculta_forum`.

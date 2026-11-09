@@ -42,6 +42,15 @@ class DiscussionReplyController extends ControllerBase {
       throw new NotFoundHttpException();
     }
 
+    $editId = $request->query->get('editar');
+    if ($editId !== NULL && ctype_digit((string) $editId)) {
+      $editComment = $this->forumEntityTypeManager->getStorage('comment')->load((int) $editId);
+      if ($editComment instanceof CommentInterface && (string) $editComment->getCommentedEntityId() === (string) $host->id()) {
+        return $this->replyFormBuilder->buildEditForm($editComment, $this->forumCurrentUser);
+      }
+      throw new NotFoundHttpException();
+    }
+
     $parentId = $request->query->get('resposta');
     $parentId = ($parentId !== NULL && $parentId !== '' && ctype_digit((string) $parentId)) ? (int) $parentId : NULL;
 

@@ -1,4 +1,4 @@
-<div id="{{ target_id }}" class="discussion-reply-composer discussion-reply-composer--{{ status }} forum-post-card forum-post-card--stripe-brand" data-discussion-reply-composer data-status="{{ status }}" data-parent-id="{{ parent_id|default('') }}">
+<div id="{{ target_id }}" class="discussion-reply-composer discussion-reply-composer--{{ status }} discussion-reply-composer--{{ mode|default('responder') }} forum-post-card forum-post-card--stripe-brand" data-discussion-reply-composer data-status="{{ status }}" data-mode="{{ mode|default('responder') }}" data-parent-id="{{ parent_id|default('') }}">
   <div class="forum-post-card__stripe"></div>
   <div class="forum-post-card__inner">
     <header class="forum-post-card__header discussion-reply-composer__header">
@@ -10,7 +10,7 @@
         </div>
         <div class="forum-post-card__author-info">
           <div class="forum-post-card__author-name-row">
-            <span class="forum-post-card__author-name">{{ 'Sua Resposta'|t }}</span>
+            <span class="forum-post-card__author-name">{{ mode == 'editar' ? 'Editar resposta'|t : 'Sua Resposta'|t }}</span>
             <span class="forum-post-card__author-role">{{ 'Compositor'|t }}</span>
           </div>
           {% if host_title %}

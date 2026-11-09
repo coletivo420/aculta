@@ -29,6 +29,11 @@ props:
       type: [string, 'null']
       title: Título ou assunto do comentário pai
       default: null
+    mode:
+      type: string
+      title: Modo do compositor
+      enum: [responder, citar, editar]
+      default: responder
     host_title:
       type: [string, 'null']
       title: Título do conteúdo hospedeiro

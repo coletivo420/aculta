@@ -62,7 +62,8 @@ final class DiscussionReplyFormHooks {
 
     // COM-05: Ensure action points to host page with Portuguese parameters instead of comment.reply.
     $parentId = $comment->hasParentComment() ? (int) $comment->getParentComment()->id() : NULL;
-    $targetUrl = $this->urlBuilder->buildHostReplyUrl($host, $parentId);
+    // Resposta nova vai ao tópico; edição salva na própria rota de edição do comentário.
+    $targetUrl = $comment->isNew() ? $this->urlBuilder->buildHostReplyUrl($host, $parentId) : $comment->toUrl('edit-form');
     $form['#action'] = $targetUrl->toString();
 
     // Attach native HTMX support to form.
@@ -75,7 +76,7 @@ final class DiscussionReplyFormHooks {
     // Ações do comentário: sem Visualizar; "Limpar" zera o formulário (reset nativo, sem JavaScript).
     unset($form['actions']['preview']);
     if (isset($form['actions']['submit'])) {
-      $form['actions']['submit']['#value'] = t('Publicar comentário');
+      $form['actions']['submit']['#value'] = $comment->isNew() ? t('Publicar comentário') : t('Salvar alterações');
       $form['actions']['submit']['#button_type'] = 'primary';
     }
     $form['actions']['clear'] = [

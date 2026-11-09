@@ -43,7 +43,7 @@
     }
     overlay.hidden = !visible;
   }
-  const triggerSelector = '[data-action="resposta-responder"], [data-action="resposta-citar"]';
+  const triggerSelector = '[data-action="resposta-responder"], [data-action="resposta-citar"], [data-action="resposta-editar"]';
 
   function getDialog() {
     return document.getElementById(dialogId);
