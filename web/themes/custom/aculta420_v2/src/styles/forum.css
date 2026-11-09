@@ -991,6 +991,29 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
   min-inline-size: 0;
 }
 
+/* Dentro do diálogo de resposta, o compositor não é um cartão dentro de outro cartão: sem borda,
+   sombra, fundo, faixa nem espaçamento extra. Fica só o conteúdo, com a borda do próprio diálogo. */
+#aculta-reply-dialog .discussion-reply-composer {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+#aculta-reply-dialog .discussion-reply-composer > .forum-post-card__stripe {
+  display: none;
+}
+
+#aculta-reply-dialog .discussion-reply-composer .forum-post-card__inner,
+#aculta-reply-dialog .discussion-reply-composer .forum-post-card__body,
+#aculta-reply-dialog .discussion-reply-composer .forum-post-card__footer {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
 
 /* Aviso "Aguarde" durante a postagem do comentário (estrutura em discussion-reply-popup.js). */
 #aculta-reply-dialog {
