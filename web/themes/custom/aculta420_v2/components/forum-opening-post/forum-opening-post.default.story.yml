@@ -1,0 +1,7 @@
+name: Postagem de abertura do tópico
+props:
+  author_name: GrowerExperiente
+  timestamp: '08/11/2026 10:30'
+slots:
+  body:
+    '#markup': '<p>Aprenda o passo a passo seguro para germinar sementes com alta taxa de sucesso usando papel toalha.</p><p>Umedeça o papel, distribua as sementes e mantenha a umidade constante até a emergência da raiz.</p>'

@@ -360,6 +360,15 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 - **Regra:** destaque fixado recebe fundo `--color-surface-highlight` e borda lateral verde; dados ausentes (como visualizações) viram placeholder neutro `—`.
 - **Estado:** entregue na Entrega 1 do redesenho visual Growroom420; schema estrito validado.
 
+### forum-opening-post — Postagem de Abertura do Tópico
+- **Papel:** primeiro post do tópico na página completa, com o mesmo destaque da linha de tópico fixado.
+- **Props:** `author_name` (string, obrigatório), `timestamp` (string, opcional).
+- **Slots:** `body`.
+- **Story:** `forum-opening-post.default.story.yml`.
+- **Regra:** destaque usa barra lateral `--color-brand-primary` e fundo `--color-surface-highlight`; o corpo vem do Drupal, sem leitura de entidade no componente.
+- **Uso:** `node--aculta-forum-topic` (visualização completa), nos purposes Fórum e Fórum LMS.
+- **Estado:** novo; story e documentação incluídas.
+
 ### forum-topic-card — Cartão de Tópico do Fórum
 - **Papel:** formato de cartão com miniatura (imagem do tópico ou ícone neutro da categoria), metadados e contadores, implementando o padrão Discourse Topic Cards.
 - **Props:** `pinned` (bool, obrigatório), `thumbnail_src` (opcional), `thumbnail_alt` (opcional), `category_icon` (opcional), `badges` (opcional), `replies` (opcional), `views` (opcional), `last_activity` (opcional).
