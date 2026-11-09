@@ -47,6 +47,9 @@
   const anonymousTriggerSelector = '[data-aculta-comment-new], [data-action="resposta-responder"], [data-action="resposta-citar"], [data-action="resposta-editar"], [data-action="resposta-apagar"]';
 
   function isAnonymous() {
+    if (window.drupalSettings && window.drupalSettings.user && typeof window.drupalSettings.user.uid !== 'undefined') {
+      return parseInt(window.drupalSettings.user.uid, 10) === 0;
+    }
     return !document.body.classList.contains('user-logged-in');
   }
 
