@@ -45,3 +45,23 @@ purpose_palette:
     vermelho-panama-red: "Panama Red (vermelho fiel)"
     vermelho-red-congolese: "Red Congolese (vermelho suave)"
   previewed_as: hidden
+
+spacing_section:
+  category: "Espaçamento"
+  label: "Espaçamento de seção"
+  description: "Define o padding vertical semântico da seção."
+  options:
+    spacing--section-sm: "Seção compacta"
+    spacing--section-md: "Seção padrão"
+    spacing--section-lg: "Seção ampla"
+  previewed_as: hidden
+
+surface_style:
+  category: "Superfícies"
+  label: "Superfície de fundo"
+  description: "Aplica superfícies semânticas compatíveis com light/dark."
+  options:
+    surface--canvas: "Fundo base (canvas)"
+    surface--raised: "Superfície elevada (raised)"
+    surface--institution: "Superfície institucional"
+  previewed_as: hidden

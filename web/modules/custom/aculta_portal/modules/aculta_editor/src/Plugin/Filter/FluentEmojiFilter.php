@@ -64,19 +64,19 @@ final class FluentEmojiFilter extends FilterBase implements ContainerFactoryPlug
    * Cria o filtro com suas dependências.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
-    try {
-      $themePath = $container->get('extension.list.theme')->getPath('aculta420_v2');
-    }
-    catch (\Throwable) {
-      // O tema pode não estar instalado em ambientes de teste ou em Olivero.
-      $themePath = 'themes/custom/aculta420_v2';
-    }
+    $resolver = $container->has('aculta_editor.fluent_emoji_asset_resolver')
+      ? $container->get('aculta_editor.fluent_emoji_asset_resolver')
+      : null;
+    $assetsUrl = $resolver instanceof \Drupalaculta_editor\Service\FluentEmojiAssetResolverInterface
+      ? $resolver->getAssetsUrl()
+      : base_path() . 'themes/custom/aculta420_v2/assets/icons/fluent-emoji/color';
+
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
       $container->get('aculta_editor.fluent_emoji_catalog'),
-      base_path() . $themePath . '/assets/icons/fluent-emoji/color',
+      $assetsUrl,
     );
   }
 

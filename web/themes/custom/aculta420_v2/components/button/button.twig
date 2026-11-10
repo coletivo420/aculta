@@ -1,8 +1,8 @@
 {% set classes = ['button', 'button--' ~ (variant|default('primary')), (size|default('default')) == 'small' ? 'button--small', disabled ? 'is-disabled'] %}
 {% set attrs = attributes.addClass(classes) %}
 {% if aria_label %}{% set attrs = attrs.setAttribute('aria-label', aria_label) %}{% endif %}
-{% set icon_before_markup = icon_before ? include('aculta420_v2:icon', { name: icon_before, variant: 'duotone', size: 'md' }, with_context = false) : '' %}
-{% set icon_after_markup = icon_after ? include('aculta420_v2:icon', { name: icon_after, variant: 'duotone', size: 'md' }, with_context = false) : '' %}
+{% set icon_before_markup = leading_icon ? leading_icon : (icon_before ? include('aculta420_v2:icon', { name: icon_before, variant: 'duotone', size: 'md' }, with_context = false) : '') %}
+{% set icon_after_markup = trailing_icon ? trailing_icon : (icon_after ? include('aculta420_v2:icon', { name: icon_after, variant: 'duotone', size: 'md' }, with_context = false) : '') %}
 {% if url and not disabled %}
   <a{{ attrs }} href="{{ url }}">{{ icon_before_markup }}{% if text %}<span>{{ text }}</span>{% endif %}{{ icon_after_markup }}</a>
 {% elseif url and disabled %}

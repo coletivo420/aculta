@@ -2,3 +2,7 @@ services:
   aculta_editor.fluent_emoji_catalog:
     class: Drupal\aculta_editor\FluentEmojiCatalog
     public: true
+  aculta_editor.fluent_emoji_asset_resolver:
+    class: Drupal\aculta_editor\Service\FluentEmojiAssetResolver
+    arguments: ['@theme.manager']
+    public: true

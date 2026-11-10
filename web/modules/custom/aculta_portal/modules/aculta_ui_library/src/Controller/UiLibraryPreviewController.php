@@ -75,15 +75,23 @@ final class UiLibraryPreviewController extends ControllerBase {
       'components' => [
         '#type' => 'aculta_portal_button',
         '#props' => [
-          'text' => (string) $this->t('UI Patterns Components'),
+          'text' => (string) $this->t('Componentes SDC'),
           'url' => Url::fromRoute('ui_patterns_library.overview')->toString(),
+          'variant' => 'secondary',
+        ],
+      ],
+      'icons' => [
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('Ícones UI Icons'),
+          'url' => Url::fromRoute('ui_icons_library.index')->toString(),
           'variant' => 'secondary',
         ],
       ],
       'suite' => [
         '#type' => 'aculta_portal_button',
         '#props' => [
-          'text' => (string) $this->t('UI Suite Overview'),
+          'text' => (string) $this->t('Visão Geral UI Suite'),
           'url' => Url::fromRoute('ui_suite.index')->toString(),
           'variant' => 'secondary',
         ],

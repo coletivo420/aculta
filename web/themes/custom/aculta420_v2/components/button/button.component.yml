@@ -46,3 +46,9 @@ props:
       title: Ícone posterior ao texto
       pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
       default: null
+    leading_icon:
+      title: Ícone anterior estruturado (UI Icons)
+      $ref: 'ui-patterns://icon'
+    trailing_icon:
+      title: Ícone posterior estruturado (UI Icons)
+      $ref: 'ui-patterns://icon'

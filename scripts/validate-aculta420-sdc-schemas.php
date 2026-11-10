@@ -73,6 +73,9 @@ foreach ($iterator as $file) {
   $assert(($meta['props']['type'] ?? NULL) === 'object', "$relative: props must be an object schema.");
   $props = is_array($props) ? $props : [];
   foreach ($props as $propName => $prop) {
+    if (isset($prop['$ref']) && str_starts_with($prop['$ref'], 'ui-patterns://')) {
+      continue;
+    }
     $type = $prop['type'] ?? NULL;
     $types = is_array($type) ? $type : [$type];
     $ok = TRUE;
