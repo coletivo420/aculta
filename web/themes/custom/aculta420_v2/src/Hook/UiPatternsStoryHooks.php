@@ -24,16 +24,10 @@ final class UiPatternsStoryHooks {
   ) {}
 
   /**
-   * Refreshes discovery caches and hydrates custom story props on overview.
+   * Hydrates custom story props on overview without clearing discovery caches.
    */
   #[Hook('preprocess_ui_patterns_overview_page')]
   public function preprocessOverview(array &$variables): void {
-    // Invalida cache de descoberta para que qualquer alteração nos SDCs,
-    // templates Twig, CSS ou stories reflita automaticamente no overview.
-    $sdcManager = $this->componentPluginManager;
-    $sdcManager->clearCachedDefinitions();
-    $this->storyPluginManager->clearCachedDefinitions();
-
     $variables['#attached']['library'][] = 'aculta420_v2/ui-library-admin';
     // Âncora de cada grupo: as abas de navegação levam ao cabeçalho do grupo.
     $variables['aculta_group_anchors'] = [];
@@ -71,14 +65,10 @@ final class UiPatternsStoryHooks {
   }
 
   /**
-   * Refreshes discovery caches and hydrates custom story props on detail.
+   * Hydrates custom story props on detail without clearing discovery caches.
    */
   #[Hook('preprocess_ui_patterns_single_page')]
   public function preprocessSingle(array &$variables): void {
-    $sdcManager = $this->componentPluginManager;
-    $sdcManager->clearCachedDefinitions();
-    $this->storyPluginManager->clearCachedDefinitions();
-
     if (isset($variables['component']) && is_array($variables['component'])) {
       $this->hydrateStories($variables['component']);
     }
