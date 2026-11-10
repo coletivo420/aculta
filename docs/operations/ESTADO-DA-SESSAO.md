@@ -1,5 +1,15 @@
 # Skills Drupal e UI Suite — 2026-11-10
 
+# FST-00 a FST-11 — integração analítica Fórum + Statistics — 2026-11-10
+
+- **Objetivo:** executar o plano canônico FST-00 a FST-11 em `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md`.
+- **Estado:** FST-00 a FST-10 implementadas; update 9008 aplicado, reconciliação 15/15 (14 iguais + 1 indisponível), Firefox ESR 54/54 PASS com 640 px (zoom 200%) e estrutura acessível. Moderação passou ao owner `aculta_cgu`; busca ligada só no desenvolvimento. Functional, modo escuro do admin e leitor de tela real pendentes.
+- **Entregas:** escopo público/restrito, ledger de idempotência e update 9008, reconciliações, catálogo tipado com 23 métricas novas, provedor diário do Fórum, provedor de moderação no `aculta_cgu` sobre `aculta_ugc_report`, oito SDCs de estatísticas no tema V2, drilldown por tópico com acesso revalidado e coleta de busca agregada habilitada no desenvolvimento.
+- **Arquivos principais:** `web/modules/custom/aculta_portal/modules/aculta_forum/src/Analytics/`, `modules/aculta_statistics/src/Provider/`, `src/EventSubscriber/`, `src/Controller/StatisticsDashboardController.php`, `web/themes/custom/aculta420_v2/components/statistics-*`, testes Unit/Kernel e documentação de ambos os módulos.
+- **Verificações:** Unit 376/2420, Kernel statistics 56/602, Kernel focal forum 26/505, painel 8/37, moderação CGU 2/11; browser 54/54; SDC schema, classes mapeadas, fronteira, token budget, rotas administrativas e Portal Drupal 12 PASS; PHPStan focal PASS; PHPCS 0 erros.
+- **Runtime:** update 9008 aplicado; ledger presente; `drush cr`; 13 snapshots; reconciliações em dry-run sem divergência. `config:import` não executado. Desempenho: 74 ms no provedor e 116 ms na coleta, 249 queries, máximo 3 ms.
+- **Próximo passo:** Functional em origem isolada, modo escuro do painel administrativo (tema ativo não expõe `data-theme`), leitor de tela real e Config Sync autorizado. Publicar a finalidade da busca na Política de Privacidade antes de produção; manter desligada fora do desenvolvimento.
+
 - **Objetivo:** auditar e modernizar as Skills para SDC, UI Patterns, UI Styles e UI Icons, incorporar o ecossistema opcional e compartilhar uma fonte canônica entre Claude Code e Codex.
 - **Estado:** implementação e documentação concluídas. 18 Skills canônicas em `.agents/skills/`; symlinks relativos em `.claude/skills/` e `.codex/skills/`; alias legado `docs/agent-skills/` preservado.
 - **Arquivos:** Skills existentes e quatro Skills UI Suite, `scripts/validate-agent-skills.py`, `docs/operations/AUDITORIA-SKILLS-DRUPAL-2026-11.md`, `docs/operations/TESTES-SKILLS-UI-SUITE.md`, ponteiros `AGENTS.md`/`CLAUDE.md`.

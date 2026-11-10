@@ -150,7 +150,7 @@ final class StatisticsDashboardController extends ControllerBase {
         '#type' => 'table',
         '#attributes' => ['data-portal-ui' => 'statistics-table'],
         '#caption' => $this->t('Valores por dia'),
-        '#header' => [$this->t('Dia'), $this->t('Total')],
+        '#header' => $this->headerCells([$this->t('Dia'), $this->t('Total')]),
         '#rows' => $table,
       ],
       'exportar' => [
@@ -704,7 +704,7 @@ final class StatisticsDashboardController extends ControllerBase {
       'table' => [
         '#type' => 'table',
         '#caption' => $caption,
-        '#header' => [$this->t('Posição'), $this->t('Tópico'), $this->t('Respostas')],
+        '#header' => $this->headerCells([$this->t('Posição'), $this->t('Tópico'), $this->t('Respostas')]),
         '#rows' => $rows,
         '#empty' => $this->t('Sem dados no período.'),
       ],
@@ -737,7 +737,7 @@ final class StatisticsDashboardController extends ControllerBase {
       'table' => [
         '#type' => 'table',
         '#caption' => (string) $this->t('Evolução diária'),
-        '#header' => [$this->t('Dia'), $this->t('Total')],
+        '#header' => $this->headerCells([$this->t('Dia'), $this->t('Total')]),
         '#rows' => $rows,
       ],
       'caption' => $this->paragraph(
@@ -810,7 +810,8 @@ final class StatisticsDashboardController extends ControllerBase {
       'title' => $this->paragraph('statistics-summary-card__title', $title),
       'table' => [
         '#type' => 'table',
-        '#header' => [$this->t('Indicador'), $this->t('Valor')],
+        '#caption' => $title,
+        '#header' => $this->headerCells([$this->t('Indicador'), $this->t('Valor')]),
         '#rows' => $rows,
       ],
     ]);
@@ -818,6 +819,16 @@ final class StatisticsDashboardController extends ControllerBase {
       $build['note'] = $this->paragraph('statistics-summary-card__note', $note);
     }
     return $build;
+  }
+
+  /**
+   * Cabeçalhos de tabela com escopo de coluna explícito.
+   */
+  private function headerCells(array $labels): array {
+    return array_map(
+      static fn ($label): array => ['data' => $label, 'scope' => 'col'],
+      $labels,
+    );
   }
 
   /**

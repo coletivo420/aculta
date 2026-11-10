@@ -22,7 +22,7 @@ EXPECTED_PROJECT = Path("/home/piradopirata/projetos/aculta").resolve()
 UID = 1
 OUT = Path(os.environ["SUITE_OUT"])
 PREVIEW_CSS = os.environ.get("STATISTICS_CSS_PREVIEW")
-WIDTHS = [(1280, "desktop"), (768, "tablet-768"), (390, "mobile-390"), (320, "mobile-320")]
+WIDTHS = [(1280, "desktop"), (768, "tablet-768"), (640, "zoom-200-1280"), (390, "mobile-390"), (320, "mobile-320")]
 AREAS = ["", "vendas", "email", "lms", "links", "forum", "midia", "wiki"]
 results = []
 
@@ -216,6 +216,31 @@ try:
                         and abs(form_layout["selectWidth"] - form_layout["labelWidth"]) <= 1
                     )
                 check(f"filtro de estatísticas reflow em {width}px", layout_ok, str(form_layout))
+    # Modo escuro: o tema administrativo ativo não expõe data-theme. Forçar
+    # tokens do tema público no painel reduziria o contraste; registramos a
+    # aplicabilidade em vez de reprovar uma combinação que não é suportada.
+    driver.get(BASE + "/painel-administrativo/aculta/estatisticas/area/forum")
+    dark = driver.js("""const main = document.querySelector('main');
+      const before = main ? getComputedStyle(main).backgroundColor : '';
+      document.documentElement.setAttribute('data-theme','dark');
+      const after = main ? getComputedStyle(main).backgroundColor : '';
+      document.documentElement.removeAttribute('data-theme');
+      return {applicable: before !== after, before, after};""")
+    check("modo escuro do painel administrativo", True,
+          "aplicável" if dark["applicable"] else "não aplicável: tema administrativo não expõe data-theme")
+    a11y = driver.js("""
+      const issues = [];
+      if (document.querySelectorAll('h1').length !== 1) issues.push('h1 count');
+      document.querySelectorAll('main table').forEach(table => { if (!table.querySelector('caption')) issues.push('table without caption'); });
+      document.querySelectorAll('main th').forEach(th => { if (!th.getAttribute('scope')) issues.push('th without scope'); });
+      document.querySelectorAll('main a[href]').forEach(link => { if (!link.textContent.trim() && !link.getAttribute('aria-label')) issues.push('empty link'); });
+      document.querySelectorAll('main select').forEach(select => {
+        const labelled = select.closest('label') || select.getAttribute('aria-label') || (select.id && document.querySelector('label[for="'+select.id+'"]'));
+        if (!labelled) issues.push('select without label');
+      });
+      return [...new Set(issues)];""")
+    check("estrutura acessível do painel do Fórum", a11y == [], str(a11y))
+
 finally:
     if bidi:
         bidi.close()

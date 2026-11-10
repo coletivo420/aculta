@@ -28,11 +28,6 @@ final class ForumMetricsProvider implements MetricProviderInterface {
    */
   private const RESPONSE_COHORT_DAYS = 365;
 
-  /**
-   * Bandeiras usadas pelo Fórum na fila de denúncias.
-   */
-  private const REPORT_FLAGS = ['sinalizar_topico', 'sinalizar_comentario', 'sinalizar_post_forum'];
-
   public function __construct(
     private readonly Connection $database,
     private readonly ForumAnalyticsScopeResolver $scopeResolver,
@@ -55,7 +50,6 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       'forum.response.first_p90_minutes',
       'forum.response.unanswered_over_72h',
       'forum.reactions.active',
-      'forum.moderation.reports_open',
       'forum.moderation.posts_pending',
     ];
   }
@@ -79,7 +73,6 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       'forum.response.first_median_minutes' => $this->responseDistribution($windowEnd - self::RESPONSE_COHORT_DAYS * 86400, $windowEnd, 50),
       'forum.response.first_p90_minutes' => $this->responseDistribution($windowEnd - self::RESPONSE_COHORT_DAYS * 86400, $windowEnd, 90),
       'forum.reactions.active' => $this->countActiveReactions(),
-      'forum.moderation.reports_open' => $this->countOpenReports(),
       'forum.moderation.posts_pending' => $this->countPendingPosts(),
       default => NULL,
     };
@@ -334,57 +327,6 @@ final class ForumMetricsProvider implements MetricProviderInterface {
     }
 
     return $total;
-  }
-
-  /**
-   * Conteúdos públicos com denúncia aberta, sem identificar denunciantes.
-   */
-  private function countOpenReports(): ?int {
-    $schema = $this->database->schema();
-    if (!$schema->tableExists('flagging') || !$schema->tableExists('node_field_data')) {
-      return NULL;
-    }
-
-    $targets = [];
-    $nodes = $this->database->select('flagging', 'f');
-    $nodes->join('node_field_data', 'n', 'n.nid = f.entity_id');
-    $nodes->addField('f', 'entity_id', 'target_id');
-    $nodes->condition('f.flag_id', self::REPORT_FLAGS, 'IN');
-    $nodes->condition('f.entity_type', 'node');
-    if (!$this->scopeResolver->applyPublicTopicConditions($nodes, 'n')) {
-      return NULL;
-    }
-    $targets = array_merge($targets, array_map('intval', $nodes->execute()->fetchCol()));
-
-    if ($schema->tableExists('comment_field_data')) {
-      $comments = $this->database->select('flagging', 'f');
-      $comments->join('comment_field_data', 'c', 'c.cid = f.entity_id');
-      $comments->join('node_field_data', 'n', 'n.nid = c.entity_id');
-      $comments->addField('f', 'entity_id', 'target_id');
-      $comments->condition('f.flag_id', self::REPORT_FLAGS, 'IN');
-      $comments->condition('f.entity_type', 'comment');
-      $comments->condition('c.status', 1);
-      if (!$this->scopeResolver->applyPublicTopicConditions($comments, 'n')) {
-        return NULL;
-      }
-      $targets = array_merge($targets, array_map('intval', $comments->execute()->fetchCol()));
-    }
-
-    if ($schema->tableExists('aculta_forum_post_field_data')) {
-      $posts = $this->database->select('flagging', 'f');
-      $posts->join('aculta_forum_post_field_data', 'p', 'p.id = f.entity_id');
-      $posts->join('node_field_data', 'n', 'n.nid = p.topic');
-      $posts->addField('f', 'entity_id', 'target_id');
-      $posts->condition('f.flag_id', self::REPORT_FLAGS, 'IN');
-      $posts->condition('f.entity_type', 'aculta_forum_post');
-      $posts->condition('p.status', 1);
-      if (!$this->scopeResolver->applyPublicTopicConditions($posts, 'n')) {
-        return NULL;
-      }
-      $targets = array_merge($targets, array_map('intval', $posts->execute()->fetchCol()));
-    }
-
-    return count(array_unique($targets));
   }
 
   /**

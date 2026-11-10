@@ -9,6 +9,9 @@
   busca (coleta de busca desligada por padrão).
 - Reconciliação de reações e de retratos com dry-run, lock, lotes e comando
   Drush; painel do Fórum com SDCs de estatísticas.
+- Moderação usa o owner `aculta_cgu` (`aculta_ugc_report`) para abertas,
+  resolvidas e mediana de resolução; busca agregada habilitada apenas no
+  desenvolvimento, com finalidade no inventário LGPD.
 - Unit 124/549, Kernel 55/600 e Kernel do painel 7/35 passaram; PHPStan focal e
   PHPCS sem erros. Runtime: update `aculta_forum_update_9008` pendente de
   autorização e sem homologação.

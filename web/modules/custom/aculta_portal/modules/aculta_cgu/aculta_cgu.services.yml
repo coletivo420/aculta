@@ -85,3 +85,11 @@ services:
 
   aculta_ugc.mail_type.report_notice:
     alias: aculta_cgu.mail_type.report_notice
+
+  # Indicadores internos de moderação do Fórum; descobertos só quando o
+  # Statistics está presente, pela tag opcional.
+  aculta_cgu.forum_moderation_metrics:
+    class: Drupal\aculta_cgu\Statistics\ForumModerationMetricsProvider
+    arguments: ['@database']
+    tags:
+      - { name: aculta_statistics.metric_provider }

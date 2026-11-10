@@ -47,6 +47,14 @@ final class StatisticsDashboardFunctionalTest extends BrowserTestBase {
     }
     parent::setUp();
 
+    // Em host compartilhado, o login canônico é redirecionado para o host de
+    // Conta, que não serve este site de teste. Exigir origem isolada evita
+    // exercitar o Runtime por acidente.
+    $host = (string) parse_url((string) getenv('SIMPLETEST_BASE_URL'), PHP_URL_HOST);
+    if (!in_array($host, ['127.0.0.1', 'localhost'], TRUE)) {
+      $this->markTestSkipped('Functional exige origem HTTP isolada; o host compartilhado redireciona o login para o domínio Conta.');
+    }
+
     // O Domain principal acompanha a origem real do site de teste; fixar
     // 127.0.0.1 quebra a sessão quando a base é servida por outro host.
     $baseUrl = (string) getenv('SIMPLETEST_BASE_URL');
@@ -58,6 +66,26 @@ final class StatisticsDashboardFunctionalTest extends BrowserTestBase {
       'status' => TRUE,
       'is_default' => TRUE,
     ])->save();
+
+    // O login canônico acontece no host de Conta. No site de teste, gravar o
+    // Domain diretamente na configuração permite o mesmo host do MAIN, sem o
+    // redirect para um host que não serve o site de teste.
+    \Drupal::configFactory()->getEditable('domain.record.conta_aculta_org')
+      ->setData([
+        'uuid' => \Drupal::service('uuid')->generate(),
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [],
+        'id' => 'conta_aculta_org',
+        'domain_id' => 1,
+        'hostname' => (string) parse_url($baseUrl, PHP_URL_HOST),
+        'name' => 'ACULTA Conta functional test',
+        'scheme' => (string) (parse_url($baseUrl, PHP_URL_SCHEME) ?: 'http'),
+        'weight' => 2,
+        'is_default' => FALSE,
+        'path_prefix' => '',
+      ])
+      ->save();
   }
 
   /**
