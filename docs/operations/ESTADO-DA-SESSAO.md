@@ -1,11 +1,11 @@
-# SDCs de Superfície e Conteúdo — Molduras Laterais Direitas e Visualização UI Patterns — 2026-11-10
+# SDCs de Superfície e Conteúdo — Moldura Tricolor Lateral Esquerda e Direita — 2026-11-10
 
-- **Objetivo:** implementar as superfícies com destaque na lateral direita (`position: end`) para verde, amarela, vermelha e tricolor contínua com base no novo lote de referências visuais oficiais, e garantir a exibição e validação visual das molduras em `/painel-administrativo/aparencia/ui/components`.
-- **Estado:** implementado suporte a `position: end` no contrato SDC `surface-accent` (schema, Twig e CSS semântico em `surface-accent.css`), com faixas unitárias de 20px à direita e gradiente vertical tricolor (vermelho no topo 16%, amarelo 18% e verde 66%). Criadas 4 novas stories para UI Patterns (`green-right`, `yellow-right`, `red-right`, `tricolor-right`). Corrigida a renderização das molduras e faixas de destaque no UI Patterns Overview através da agregação e validação visual com Playwright autenticado.
-- **Decisões:** uso de CSS Flexbox puro com `flex-direction: row-reverse` para `position: end`, preservando o fluxo semântico do conteúdo e das faixas; gradiente vertical tricolor alinhado com a referência `03_bloco_tricolor_direita.png`. Validação visual automatizada capturando screenshots reais da página de componentes do Drupal.
-- **Arquivos:** `web/themes/custom/aculta420_v2/components/surface-accent/surface-accent.component.yml`, `surface-accent.twig`, `surface-accent.css`, `surface-accent.*-right.story.yml`, `SurfaceSdcComponentsTest.php`, referências visuais em `docs/portal/studio-visual/referencias/sdc-superficies/molduras-direita/`.
-- **Verificações:** SDC Schema PASS (72 componentes, 1623 checks), PHPUnit 18/18 PASS (123 assertions), CSS Scope PASS (43 checks), Playwright live screenshot PASS com confirmação visual das 4 molduras à direita.
-- **Runtime:** caches reconstruídos via `drush cr`; componentes e stories validados na UI Patterns Library.
+- **Objetivo:** implementar a moldura tricolor na lateral esquerda (`position: start`, `accent: tricolor`) com base na imagem de referência oficial (`03_bloco_tricolor_esquerda.png`) e registrar story no UI Patterns, complementando a família de molduras unitárias e tricolores.
+- **Estado:** implementado suporte para `.aculta-surface-accent--tricolor.aculta-surface-accent--pos-start .aculta-surface-accent__stripe` com faixa vertical tricolor idêntica à referência (vermelho no topo 16%, amarelo intermediário 18% e verde predominante 66%), com suporte a modo claro e escuro. Criada a story `surface-accent.tricolor-left.story.yml` na biblioteca UI Patterns. Validação visual real executada via Playwright em `/painel-administrativo/aparencia/ui/components` com captura `live-moldura-tricolor-na-lateral-esquerda.png`.
+- **Decisões:** reutilização da geometria de faixa lateral com `flex: 0 0 1.25rem`, gradiente vertical idêntico nos dois lados (`pos-start` e `pos-end`), alinhando ambas as extremidades ao padrão das referências visuais do projeto.
+- **Arquivos:** `web/themes/custom/aculta420_v2/components/surface-accent/surface-accent.css`, `surface-accent.tricolor-left.story.yml`, `docs/portal/studio-visual/referencias/sdc-superficies/03_bloco_tricolor_esquerda.png`.
+- **Verificações:** SDC Schema PASS (72 components, 1623 checks), PHPUnit 18/18 PASS (123 assertions), CSS Scope PASS (43 checks), validação visual com Playwright PASS.
+- **Runtime:** `drush cr` executado; exibição e renderização da moldura tricolor esquerda confirmadas no UI Patterns.
 - **Próximo passo:** composição editorial nas landing pages do portal utilizando as novas superfícies.
 
 # UI Suite — Integração Completa de UI Icons, UI Patterns e UI Styles — 2026-11-09
