@@ -1,5 +1,12 @@
 # Roadmap do fórum Growroom420 (ACULTA420 V2)
 
+## UI Icons — integração oficial em andamento (2026-11-10)
+
+- UI Icons Menu, Picker, Fields e Patterns estão configurados no Config Sync;
+  seleções de menu são limitadas aos packs Phosphor Regular/Duotone.
+- Importação no Runtime, verificação de permissões/foco e prévia real dos SDCs
+  ainda estão pendentes; Fluent Emoji permanece no catálogo editorial do tema.
+
 > **Marcos P8/P9 implementados (2026-11-09); ADR-054/055 ainda abertas:** o tema tem as cinco regiões finais, o shell v2 é o padrão e o motor de container foi removido. Layout Builder cobre 22 dos 24 displays compatíveis, a landing Links está publicada no LB e a UI Library oferece prévias reais. Pendências: homologação visual, conteúdo editorial das demais landings, migração integral dos visuais para UI Suite e dívida de boundary dos módulos do Portal. Rollback documentado em `docs/architecture/ACULTA420-V2-P9-CUTOVER.md`.
 
 

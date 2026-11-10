@@ -203,6 +203,11 @@ module:
   token: 0
   tool: 0
   turnstile: 0
+  ui_icons: 0
+  ui_icons_field: 0
+  ui_icons_menu: 0
+  ui_icons_patterns: 0
+  ui_icons_picker: 0
   ui_patterns: 0
   ui_patterns_blocks: 0
   ui_patterns_field: 0

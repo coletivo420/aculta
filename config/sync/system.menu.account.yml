@@ -2,6 +2,16 @@ uuid: 581fab20-78bf-48d0-8214-07d7470e593a
 langcode: pt-br
 status: true
 dependencies: {  }
+third_party_settings:
+  ui_icons_menu:
+    icon_selector: icon_picker
+    result_format: grid
+    max_result: 20
+    icon_required: false
+    icon_position: true
+    allowed_icon_pack:
+      - aculta_phosphor_regular
+      - aculta_phosphor_duotone
 _core:
   default_config_hash: M_Bh81osDyUQ4wV0GgU_NdBNqkzM87sLxjaCdFj9mnw
 id: account

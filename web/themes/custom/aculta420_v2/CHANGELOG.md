@@ -945,3 +945,14 @@ State: Dev. No RC, production deployment, or release tag is declared.
 - Todos com schema estrito, story, tokens semânticos e CSS mobile-first; `validate-aculta420-sdc-schemas.php`: PASS (80 componentes, 1707 checks).
 - Consumidor: painel `aculta_statistics` da área Fórum e resumo do painel administrativo do Fórum.
 - Sem validação de navegador nesta entrega; captura visual pendente.
+## Não versionado — UI Icons Menu, Picker e Patterns (2026-11-10)
+
+- Configura UI Icons 2.1 no Sync: Fields, Menu, Patterns e Picker; o SDC
+  `button` já publica props de ícone via UI Patterns.
+- Menus principal e de conta usam Picker e restringem escolha a Phosphor Regular
+  e Duotone. Nenhum ícone é atribuído automaticamente; rótulos e links atuais
+  permanecem sob propriedade editorial.
+- UI Patterns usa Picker como seletor. Popover permanece fora do Sync para não
+  manter seletor paralelo. Runtime/importação, permissões e foco visual pendem
+  de cutover autorizado.
+

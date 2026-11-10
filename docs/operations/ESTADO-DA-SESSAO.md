@@ -1,3 +1,14 @@
+# UI Icons Menu, Picker e Patterns — 2026-11-10
+
+- **Objetivo:** ligar os contratos oficiais UI Icons ao Sync e ao SDC button.
+- **Estado:** Menu, Picker, Fields e Patterns declarados; menus main/account limitam seleção a Phosphor; Picker configurado em UI Patterns. Nenhum link recebeu ícone automaticamente. Runtime/importação e validação administrativa/browser seguem pendentes.
+- **Decisões e alternativas descartadas:** Popover não selecionado para evitar seletor paralelo; Fluent Emoji permanece no catálogo, fora dos menus institucionais.
+- **Cuidados:** preserve acesso e propriedade editorial dos links; UI Icons Menu não torna ícones obrigatórios.
+- **Commits e arquivos:** configuração Drupal em `config/sync/`, inventário UI Suite, teste `UiIconsPackTest`, ADR-055, roadmap, changelog, TODO e status.
+- **Verificações:** PHPUnit focal 2/2 (47), YAML, schema SDC 1721, dependências Sync 1753 e PHPCS PASS. Kernel upstream UI Icons retornou erro por ausência de `SIMPLETEST_DB`; SDC amplo FAIL por `auth-dialog.twig`; token budget FAIL por sete pendências globais. Import Runtime DEFERRED.
+- **Pendências e bloqueios:** testar formulários, permissões, foco e render após cutover autorizado.
+- **Próximo passo:** validar a importação no fluxo autorizado e continuar integração/migração visual por domínio.
+
 # ADR-054 + ADR-055 — UI Suite editorial e Views — 2026-11-10
 
 - **Objetivo/estado:** UI Skins cortou paletas purpose. UI Styles CKEditor está no Sync. O catálogo Eventos migrou do markup do módulo para o SDC `card-cultural` pelo override do tema, com prop de cancelamento; inventário: 386 itens/88 templates Twig.
