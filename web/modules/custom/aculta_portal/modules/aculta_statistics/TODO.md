@@ -4,6 +4,8 @@ Estado: Dev · versão 0.9.0-dev.11 (`aculta_statistics.info.yml`) · status: `d
 
 ## Próximo passo
 
+- **FST (planejado):** executar FST-00 read-only e FST-01 (privacidade e escopo) antes de expandir indicadores; [plano completo](docs/FORUM-ANALYTICS-PLANO-FST-00-11.md). Nenhuma microfase foi implementada nesta consolidação.
+
 Sincronizar a entrega no Runtime de desenvolvimento e seguir auditoria visual/acessível, Functional e integrações GA4/Search Console somente em ambiente autorizado. RC continua bloqueado por itens funcionais/visuais pendentes e pelo gate global módulo–tema (falhas em Events, Calendar e Maps, fora deste módulo). Ver [auditoria](web/modules/custom/aculta_portal/modules/aculta_statistics/docs/AUDITORIA-1.0.md) e [roadmap](web/modules/custom/aculta_portal/modules/aculta_statistics/docs/ROADMAP.md).
 
 ## Leitura

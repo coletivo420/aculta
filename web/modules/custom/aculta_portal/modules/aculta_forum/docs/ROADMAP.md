@@ -2,6 +2,10 @@
 
 # Roadmap — ACULTA Forum
 
+## Frente transversal FST-00 a FST-11 - Forum + Statistics (2026-11-10)
+
+Plano canônico: [auditoria e integração analítica](../../aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md). Estado **PLANEJADO**, sem mudança funcional ou Runtime nesta entrega. Iniciar por FST-00 (inventário) e FST-01 (privacidade do Group/reações e contadores públicos), antes de criar novos dashboards. O Fórum permanece owner de tópicos, Comments, ForumPosts, reações e acesso contextual; Statistics centraliza as métricas globais. Não iniciar migração de Comments nem modificar Group/ACL de Runtime sem autorização.
+
 ## Ciclo vigente 0.2.0-dev - comentários compartilhados (2026-11-08)
 
 O ponto de entrada para trabalho novo é o [plano C02-00 a C02-08](COMENTARIOS-0.2.0-PLANO.md).

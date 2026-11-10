@@ -4,6 +4,8 @@ Estado: Dev · versão 0.2.0-dev.3 (`aculta_forum.info.yml`) · status: docs/ope
 
 ## Próximo passo
 
+- **FST (planejado):** auditar integração de métricas, provar isolamento por Group e corrigir riscos de contadores públicos/reações via FST-00 e FST-01; [plano canônico](../aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md). Sem execução no Runtime.
+
 Concluir homologação integrada no Runtime e validação de navegadores. Fases C02-01 a C02-08 implementadas e testadas com Unit e Kernel tests (38 tests PASS). D-65 HTTP e F-M3/F-M6/F-M7 permanecem pendentes; nenhuma migração de dados autorizada.
 
 ## Leitura

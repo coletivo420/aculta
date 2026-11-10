@@ -45,6 +45,7 @@ ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mai
 - [Catálogo de métricas](docs/METRIC-CATALOG.md) e [integrações](docs/INTEGRATIONS.md)
 - [Matriz de portabilidade](docs/PORTABILITY-MATRIX.md)
 - [Roteiro](docs/ROADMAP.md) e [changelog](docs/CHANGELOG.md)
+- [Plano FST-00 a FST-11: auditoria e integração com o Fórum](docs/FORUM-ANALYTICS-PLANO-FST-00-11.md) (planejado, não homologado).
 - [ADRs](docs/adr/)
 
 ## Código portado

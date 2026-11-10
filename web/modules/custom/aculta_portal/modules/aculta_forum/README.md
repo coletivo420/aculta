@@ -146,6 +146,7 @@ por padrão).
 - [Fóruns restritos para associados ativos](docs/RESTRICTED-FORUMS.md)
 - [Decisões](docs/DECISOES.md)
 - [Roadmap](docs/ROADMAP.md)
+- [Integração analítica Fórum + Statistics (FST-00 a FST-11)](../aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md) - planejamento, sem mudança de Runtime.
 - [Reconstrução histórica](docs/RECONSTRUCAO.md) — histórico de pesquisa/importação, não autorização de exclusão.
 - [Changelog](CHANGELOG.md)
 
