@@ -120,9 +120,22 @@ function audit_file(string $root, string $relative): array {
   if (str_contains($source, 'assertFileExists') && $assertionCount <= (preg_match_all('/assertFileExists\s*\(/', $source) ?: 0)) {
     $flags[] = 'file_exists_only';
   }
-  // Permanently skipped or incomplete.
-  if (preg_match('/markTestSkipped\s*\(\s*[\'"]/', $source) === 1) {
-    $flags[] = 'unconditional_skip';
+  // Environment-guarded skips are expected; only an unguarded skip is a
+  // permanent skip that needs justification.
+  $lines = preg_split('/\R/', $source) ?: [];
+  $hasSkip = FALSE;
+  $guarded = TRUE;
+  foreach ($lines as $index => $line) {
+    if (preg_match('/markTestSkipped\s*\(/', $line) === 1) {
+      $hasSkip = TRUE;
+      $context = implode(' ', array_slice($lines, max(0, $index - 4), 4));
+      if (preg_match('/if\s*\(|getenv\(|extension_loaded|function_exists|class_exists|defined\(|SIMPLETEST|proc_open|posix_/i', $context) !== 1) {
+        $guarded = FALSE;
+      }
+    }
+  }
+  if ($hasSkip) {
+    $flags[] = $guarded ? 'environment_skip' : 'unconditional_skip';
   }
   // Static config/string contracts: reads YAML or PHP source without a Drupal base.
   if (($baseClass === 'UnitTestCase' || $baseClass === 'TestCase')

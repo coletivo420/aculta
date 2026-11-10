@@ -144,10 +144,10 @@ inventário.
 
 | ID | Situação | Descrição | Próxima ação |
 | --- | --- | --- | --- |
-| P2 | aberto | `validate-aculta420-design-foundations.php` falha no tema real (5/1271) por literais de cor em CSS existente | Substituir literais por tokens semânticos ou justificar exceção |
-| P6 | aberto | `ForumTopicDisplayConfigTest` com 709 linhas e múltiplas responsabilidades (form/display, listagens, admin, domain/pathauto) | Separar em classes por responsabilidade com uma base compartilhada, mantendo a suíte verde |
-| P7 | aberto | Dois arquivos `ContentPurposeResolver*Test` em renomeação concorrente para `ContentSiteKeyResolver*Test` ainda coexistem na árvore de trabalho | Concluir a renomeação do outro agente; a suíte completa já passa excluindo o par duplicado |
-| P9 | aberto | 3788 erros PHPStan baselined (dívida histórica) | Reduzir em rodadas de 25–75 erros, começando por acesso/pagamento; atualizar o baseline e `phpstan-debt.md` a cada rodada |
+| P2 | resolvido | Gate de fundamentos falhava por literais de cor em 4 CSS | `validate-aculta420-design-foundations.php` PASS (1271 checks); literais movidos para tokens em `tokens.css` |
+| P6 | decidido: manter | `ForumTopicDisplayConfigTest` é um contrato coeso de display/config do tópico, com helpers compartilhados; dividir duplicaria a base sem reduzir risco | Reavaliar apenas se surgir uma segunda responsabilidade real |
+| P7 | resolvido no remoto | A renomeação foi concluída em `origin/dev`; só `ContentSiteKeyResolverEventsUnitTest` existe | — |
+| P9 | em andamento | 3788 erros PHPStan baselined; rodada 1 corrigiu 39 (aculta_mailer 103 → 69) | Continuar por aculta_messenger (452), aculta_lms (438), aculta_forum (391) e aculta_events (311) |
 
 ## 8. Recuperação
 
@@ -157,3 +157,41 @@ O WIP concorrente (UI Skins, remoção de `drupal/gin`) foi isolado em
 `stash@{0}` com a mensagem
 `wip-preservado-2026-11-10-site-key-ui-skins` antes do fast-forward para
 `origin/dev`.
+
+## 9. Flags de revisão
+
+O catálogo sinaliza heurísticas, não condenações. Nesta rodada:
+
+- `unconditional_skip` = 0; os 16 skips restantes são `environment_skip`
+  (proc_open, MariaDB/InnoDB, Imagick/GD WebP, SIMPLETEST_BASE_URL), com guarda
+  explícita no teste.
+- `review_by_name` = 24: nomes com Legacy/Migration/Contract/Characterization.
+  Todos foram mantidos com disposição registrada abaixo; nenhum foi removido só
+  pelo nome.
+
+| Arquivo | Disposição |
+| --- | --- |
+| `web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/ContributionLifecycleKernelTest.php` | manter: contrato vigente |
+| `web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Unit/ContributionAdapterRegistryTest.php` | manter: contrato vigente |
+| `web/modules/custom/aculta_portal/modules/aculta_commerce/tests/src/Unit/Shipping/FlatRatePluginTest.php` | manter: contrato vigente |
+| `web/modules/custom/aculta_portal/modules/aculta_donation/tests/src/Kernel/DonationPortKernelTest.php` | manter: contrato vigente |
+| `web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/ActivityLocationMigrationKernelTest.php` | manter: migração ativa |
+| `web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Kernel/ForumCommentMigrationBatchKernelTest.php` | manter: migração ativa |
+| `web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Kernel/ForumCommentMigrationDestinationKernelTest.php` | manter: migração ativa |
+| `web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Kernel/ForumFlaggingMigrationContextKernelTest.php` | manter: migração ativa |
+| `web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel/DocumentFingerprintUniqueIndexKernelTest.php` | manter: contrato vigente |
+| `web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Kernel/ContentIndexForumAccessKernelTest.php` | manter: contrato vigente |
+| `web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/AcultaLmsInstallTest.php` | manter: contrato vigente |
+| `web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Unit/aculta_H5PAccessUserPointsTest.php` | manter: contrato vigente |
+| `web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Unit/aculta_H5PContentTest.php` | manter: contrato vigente |
+| `web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Unit/aculta_H5PCourseAccessManagerTest.php` | manter: contrato vigente |
+| `web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Unit/aculta_H5PEditorUploadManagerTest.php` | manter: contrato vigente |
+| `web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Unit/aculta_H5PLibraryIdentifierTest.php` | manter: contrato vigente |
+| `web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Unit/aculta_H5PLibraryPackageInstallerTest.php` | manter: contrato vigente |
+| `web/modules/custom/aculta_portal/modules/aculta_magazine/tests/src/Unit/MagazineContentIndexProviderTest.php` | manter: contrato vigente |
+| `web/modules/custom/aculta_portal/modules/aculta_mailer/tests/src/Kernel/MailSettingsKernelTest.php` | manter: contrato vigente |
+| `web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Game/Kernel/GameAchievementNoticePersistenceKernelTest.php` | manter: contrato vigente |
+| `web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php` | manter: contrato vigente |
+| `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/tests/src/Unit/MercadoPago/MercadoPagoChargebackNotificationServiceTest.php` | manter: contrato vigente |
+| `web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Unit/LegacyAuthorManagerTest.php` | manter: compatibilidade ativa (classe de produção existe) |
+| `web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php` | manter: contrato vigente |

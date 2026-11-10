@@ -1,25 +1,25 @@
 {
-    "generated_at": "2026-11-10T18:08:45+00:00",
+    "generated_at": "2026-11-10T18:36:55+00:00",
     "generator": "scripts/audit-custom-tests.php",
-    "total_files": 929,
+    "total_files": 926,
     "by_type": {
-        "unit": 669,
-        "kernel": 249,
+        "unit": 667,
+        "kernel": 248,
         "functional": 3,
         "performance": 4,
         "unknown": 3,
         "functionaljs": 1
     },
     "by_extension": {
-        "src": 925,
+        "src": 922,
         "processor": 1,
         "fixtures": 3
     },
     "flag_counts": {
-        "mock_isolated": 444,
+        "environment_skip": 16,
+        "mock_isolated": 442,
         "review_by_name": 24,
-        "static_config_contract": 37,
-        "unconditional_skip": 16
+        "static_config_contract": 37
     },
     "files": [
         {
@@ -490,7 +490,7 @@
             "first_import": "Drupal\\aculta_cgu\\Adapter\\ContributionAdapterRegistry",
             "fixture": false,
             "flags": [
-                "unconditional_skip",
+                "environment_skip",
                 "review_by_name"
             ]
         },
@@ -1000,7 +1000,7 @@
             "first_import": "Drupal\\Core\\Entity\\Entity\\EntityFormDisplay",
             "fixture": false,
             "flags": [
-                "unconditional_skip"
+                "environment_skip"
             ]
         },
         {
@@ -2674,7 +2674,7 @@
             "first_import": "Drupal\\taxonomy\\Entity\\Term",
             "fixture": false,
             "flags": [
-                "unconditional_skip"
+                "environment_skip"
             ]
         },
         {
@@ -4532,7 +4532,7 @@
             "first_import": "Drupal\\aculta_image\\Compression\\ImageCompressor",
             "fixture": false,
             "flags": [
-                "unconditional_skip",
+                "environment_skip",
                 "mock_isolated"
             ]
         },
@@ -4612,7 +4612,7 @@
             "first_import": "Drupal\\aculta_image\\PdfThumbnailGenerator",
             "fixture": false,
             "flags": [
-                "unconditional_skip",
+                "environment_skip",
                 "mock_isolated"
             ]
         },
@@ -4630,7 +4630,7 @@
             "first_import": "Drupal\\aculta_index\\Generation\\ContentIndexGenerationManager",
             "fixture": false,
             "flags": [
-                "unconditional_skip"
+                "environment_skip"
             ]
         },
         {
@@ -4916,7 +4916,7 @@
             "first_import": "Drupal\\aculta_portal\\Domain\\DomainPurposeManager",
             "fixture": false,
             "flags": [
-                "unconditional_skip"
+                "environment_skip"
             ]
         },
         {
@@ -4934,7 +4934,7 @@
             "first_import": "Drupal\\Core\\Config\\ConfigFactoryInterface",
             "fixture": false,
             "flags": [
-                "unconditional_skip"
+                "environment_skip"
             ]
         },
         {
@@ -4952,7 +4952,7 @@
             "first_import": "Drupal\\aculta_index\\Query\\ContentIndexAccessFilter",
             "fixture": false,
             "flags": [
-                "unconditional_skip"
+                "environment_skip"
             ]
         },
         {
@@ -4970,7 +4970,7 @@
             "first_import": "Drupal\\Core\\Config\\ConfigFactoryInterface",
             "fixture": false,
             "flags": [
-                "unconditional_skip"
+                "environment_skip"
             ]
         },
         {
@@ -7597,7 +7597,7 @@
             "first_import": "Drupal\\aculta_mailer\\Transport\\BrevoSecretTransportFactory",
             "fixture": false,
             "flags": [
-                "unconditional_skip",
+                "environment_skip",
                 "mock_isolated"
             ]
         },
@@ -8591,7 +8591,7 @@
             "first_import": "Drupal\\aculta_mailer\\Message\\MailStatus",
             "fixture": false,
             "flags": [
-                "unconditional_skip"
+                "environment_skip"
             ]
         },
         {
@@ -8608,7 +8608,7 @@
             "first_import": "Drupal\\aculta_forum\\Entity\\ForumPost",
             "fixture": false,
             "flags": [
-                "unconditional_skip"
+                "environment_skip"
             ]
         },
         {
@@ -10890,7 +10890,7 @@
             "first_import": "Drupal\\Core\\Session\\AccountInterface",
             "fixture": false,
             "flags": [
-                "unconditional_skip"
+                "environment_skip"
             ]
         },
         {
@@ -12134,7 +12134,7 @@
             "first_import": "Drupal\\aculta_user\\Account\\NicknameClaimConflictException",
             "fixture": false,
             "flags": [
-                "unconditional_skip"
+                "environment_skip"
             ]
         },
         {
@@ -12752,7 +12752,7 @@
             "first_import": "Drupal\\Core\\Entity\\EntityFormInterface",
             "fixture": false,
             "flags": [
-                "unconditional_skip",
+                "environment_skip",
                 "review_by_name"
             ]
         },
@@ -13149,21 +13149,6 @@
             "assertions": 11,
             "assertions_per_test": 3.67,
             "first_import": "Drupal\\aculta_mailer\\Template\\MailTemplateRenderer",
-            "fixture": false,
-            "flags": []
-        },
-        {
-            "path": "web/modules/custom/aculta_portal/tests/src/Kernel/ActivePurposesStateKernelTest.php",
-            "extension": "src",
-            "type": "kernel",
-            "base_class": "KernelTestBase",
-            "groups": [
-                "aculta_portal"
-            ],
-            "test_methods": 2,
-            "assertions": 9,
-            "assertions_per_test": 4.5,
-            "first_import": "Drupal\\aculta_portal\\Domain\\ActivePurposesState",
             "fixture": false,
             "flags": []
         },
@@ -13822,40 +13807,6 @@
             "assertions": 8,
             "assertions_per_test": 4,
             "first_import": "Drupal\\aculta_portal\\ContentIndex\\MediaContentIndexProvider",
-            "fixture": false,
-            "flags": [
-                "mock_isolated"
-            ]
-        },
-        {
-            "path": "web/modules/custom/aculta_portal/tests/src/Unit/ContentPurposeResolverEventsUnitTest.php",
-            "extension": "src",
-            "type": "unit",
-            "base_class": "UnitTestCase",
-            "groups": [
-                "aculta_portal"
-            ],
-            "test_methods": 1,
-            "assertions": 1,
-            "assertions_per_test": 1,
-            "first_import": "Drupal\\aculta_portal\\Domain\\ContentSiteKeyResolver",
-            "fixture": false,
-            "flags": [
-                "mock_isolated"
-            ]
-        },
-        {
-            "path": "web/modules/custom/aculta_portal/tests/src/Unit/ContentPurposeResolverTest.php",
-            "extension": "src",
-            "type": "unit",
-            "base_class": "TestCase",
-            "groups": [
-                "aculta_portal"
-            ],
-            "test_methods": 9,
-            "assertions": 9,
-            "assertions_per_test": 1,
-            "first_import": "Drupal\\aculta_portal\\Domain\\SiteKey",
             "fixture": false,
             "flags": [
                 "mock_isolated"
