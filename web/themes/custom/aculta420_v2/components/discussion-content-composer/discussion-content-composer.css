@@ -11,6 +11,6 @@
 }
 
 .discussion-content-composer--enviando {
-  opacity: 0.6;
   pointer-events: none;
+  opacity: .6;
 }

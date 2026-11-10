@@ -169,7 +169,6 @@
   inset-inline-start: auto;
 }
 
-
 /* Autoria sem caixas dentro de caixas: só a faixa da seção; os itens internos não têm borda. */
 .revista-publication__authors :is(.portal-article-authors, .portal-article-authors__list, .portal-article-author, .author-card) {
   border: 0;

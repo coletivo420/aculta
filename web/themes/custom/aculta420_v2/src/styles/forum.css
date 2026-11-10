@@ -143,18 +143,18 @@
    esquerda e reações à direita, como na referência. Nos ímpares, o layout padrão do cartão. */
 @media (min-width: 48rem) {
   :is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) article.js-comment:nth-of-type(even) > .forum-post-card > .forum-post-card__inner {
-    grid-template-columns: minmax(0, 1fr) 14rem;
     grid-template-areas:
       "body author"
       "body author"
       "footer author";
+    grid-template-columns: minmax(0, 1fr) 14rem;
   }
 
   :is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) article.js-comment:nth-of-type(even) > .forum-post-card > .forum-post-card__inner > .forum-post-card__header {
-    border-inline-end: 0;
-    padding-inline-end: 0;
-    border-inline-start: 1px solid var(--color-border-subtle);
     padding-inline-start: var(--spacing-lg);
+    padding-inline-end: 0;
+    border-inline-end: 0;
+    border-inline-start: 1px solid var(--color-border-subtle);
   }
 
   :is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) article.js-comment:nth-of-type(even) > .forum-post-card > .forum-post-card__inner > .forum-post-card__footer {
@@ -179,8 +179,8 @@
 
 :is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) .comment__in-reply-to {
   margin: 0 0 var(--spacing-xs);
-  font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
 }
 
 :is(.field--name-field-aculta-discussion, [data-aculta-discussion-thread]) .comment__in-reply-to-author {
@@ -929,9 +929,9 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
 /* Campo de comentários do tópico: o wrapper não cria uma segunda caixa; cada comentário é o próprio card.
    Este <section> é o contêiner real da lista (pai direto de cada article.js-comment). */
 .aculta-forum-topic__content > section[data-aculta-discussion-thread] {
+  padding: 0;
   border: 0;
   background: transparent;
-  padding: 0;
   margin-block: 10px 0;
   row-gap: 10px;
 }
@@ -999,11 +999,11 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
 /* Dentro do diálogo de resposta, o compositor não é um cartão dentro de outro cartão: sem borda,
    sombra, fundo, faixa nem espaçamento extra. Fica só o conteúdo, com a borda do próprio diálogo. */
 #aculta-reply-dialog .discussion-reply-composer {
+  padding: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
-  padding: 0;
 }
 
 #aculta-reply-dialog .discussion-reply-composer > .forum-post-card__stripe {
@@ -1013,12 +1013,11 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
 #aculta-reply-dialog .discussion-reply-composer .forum-post-card__inner,
 #aculta-reply-dialog .discussion-reply-composer .forum-post-card__body,
 #aculta-reply-dialog .discussion-reply-composer .forum-post-card__footer {
-  background: transparent;
-  border: 0;
-  box-shadow: none;
   padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
-
 
 /* Aviso "Aguarde" durante a postagem do comentário (estrutura em discussion-reply-popup.js). */
 #aculta-reply-dialog {
@@ -1048,19 +1047,19 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
 }
 
 .aculta-posting-overlay__spinner {
+  animation: aculta-posting-spin var(--motion-spin) linear infinite;
+  border: .6rem solid var(--color-border);
+  border-block-start-color: var(--color-text-primary);
+  border-radius: 50%;
   inline-size: 4.5rem;
   block-size: 4.5rem;
-  border-radius: 50%;
-  border: 0.6rem solid var(--color-border);
-  border-block-start-color: var(--color-text-primary);
-  animation: aculta-posting-spin var(--motion-spin) linear infinite;
 }
 
 .aculta-posting-overlay__title {
   margin: 0;
+  color: var(--color-text-primary);
   font-size: var(--font-size-lg);
   font-weight: 700;
-  color: var(--color-text-primary);
 }
 
 .aculta-posting-overlay__text {
@@ -1085,12 +1084,12 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: color var(--motion-fast) ease, transform var(--motion-fast) ease;
+  text-decoration: none;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-sm);
   min-inline-size: var(--tap-target-min, 2.75rem);
   min-block-size: var(--tap-target-min, 2.75rem);
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  border-radius: var(--radius-sm);
-  transition: color var(--motion-fast) ease, transform var(--motion-fast) ease;
 }
 
 .aculta-resposta-acao__icon {
@@ -1111,8 +1110,8 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
 
 .aculta-resposta-acao:hover,
 .aculta-resposta-acao:focus-visible {
-  color: var(--color-brand-primary);
   transform: translateY(-1px);
+  color: var(--color-brand-primary);
 }
 
 .aculta-resposta-acao--apagar {

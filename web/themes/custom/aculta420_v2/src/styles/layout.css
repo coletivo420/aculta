@@ -111,7 +111,6 @@ body.aculta-component-library-page {
   overflow-wrap: anywhere;
 }
 
-
 .aculta-component-library-page .ui_patterns_component__title {
   margin-block: 0 var(--spacing-sm);
   color: var(--color-text-primary);
@@ -458,7 +457,6 @@ body.aculta-component-library-page {
   .page__main--stack {
     inline-size: min(100%, var(--aculta-narrow-container-width, 750px));
   }
-
 }
 
 /* Celular (abaixo de 60 rem): largura sempre 100%, ignorando sliders */
@@ -474,13 +472,13 @@ body.aculta-component-library-page {
    ações, título e conteúdo começam e terminam na mesma linha. Nenhuma página
    declara largura própria: a leitura estreita fica no conteúdo. */
 html[data-purpose="account"] :is(
-  .layout-page,
-  .page__main,
-  .page__navigation,
-  .page__highlighted,
-  .page__help,
-  .page__breadcrumb,
-  .page__footer-inner
+.layout-page,
+.page__main,
+.page__navigation,
+.page__highlighted,
+.page__help,
+.page__breadcrumb,
+.page__footer-inner
 ) {
   inline-size: min(100%, var(--page-content-max, 84rem));
   margin-inline: auto;

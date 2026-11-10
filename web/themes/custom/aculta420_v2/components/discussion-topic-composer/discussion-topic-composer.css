@@ -32,8 +32,8 @@
 }
 
 .discussion-topic-composer--enviando {
-  opacity: 0.6;
   pointer-events: none;
+  opacity: .6;
 }
 
 .discussion-topic-composer :is(.form-item, input:not([type="submit"]), textarea, select) {

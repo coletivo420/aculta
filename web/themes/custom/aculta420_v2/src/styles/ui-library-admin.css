@@ -14,14 +14,12 @@
 
 /* Painel de cada aba: lista os subcomponentes do grupo. Fica oculto até a aba ser escolhida. */
 .aculta-component-library__panel {
-  column-span: all;
   margin-block-start: var(--spacing-sm);
   padding: var(--spacing-base);
+  column-span: all;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
 }
-
-
 
 .aculta-component-library__panel-title {
   margin: 0 0 var(--spacing-xs);
@@ -68,3 +66,8 @@ main:has(.ui_patterns_component) {
   }
 }
 
+.aculta-ui-library-nav {
+  display: flex;
+  gap: var(--spacing-sm, .75rem);
+  margin-block-end: var(--spacing-md, 1.25rem);
+}

@@ -30,12 +30,12 @@
 /* O compositor ocupa uma única coluna em todos os breakpoints: nada de coluna lateral. */
 .discussion-reply-composer .forum-post-card__inner {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
   grid-template-areas: none;
+  grid-template-columns: minmax(0, 1fr);
+  box-sizing: border-box;
   inline-size: 100%;
   max-inline-size: 100%;
   min-inline-size: 0;
-  box-sizing: border-box;
 }
 
 /* A coluna lateral "Sua Resposta" não aparece; o banner "Respondendo a" fica no corpo. */
@@ -54,8 +54,8 @@
 
 @media (min-width: 48rem) {
   .discussion-reply-composer .forum-post-card__inner {
-    grid-template-columns: minmax(0, 1fr);
     grid-template-areas: none;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -64,8 +64,8 @@
 }
 
 .discussion-reply-composer--carregando {
-  opacity: 0.6;
   pointer-events: none;
+  opacity: .6;
 }
 
 .discussion-reply-composer--invalido {
@@ -75,14 +75,14 @@
 .discussion-reply-composer__parent-banner {
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs, 0.5rem);
-  padding-inline: var(--spacing-sm, 0.75rem);
-  padding-block: var(--spacing-xs, 0.5rem);
   margin-block-end: var(--spacing-md, 1rem);
-  background-color: var(--color-surface-subtle);
   border-left: 3px solid var(--color-brand-primary);
   border-radius: var(--border-radius-sm);
+  background-color: var(--color-surface-subtle);
   font-size: var(--font-size-sm);
+  gap: var(--spacing-xs, .5rem);
+  padding-inline: var(--spacing-sm, .75rem);
+  padding-block: var(--spacing-xs, .5rem);
 }
 
 .discussion-reply-composer__parent-label {
@@ -105,40 +105,40 @@
 .discussion-reply-composer__form {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm, 0.75rem);
+  gap: var(--spacing-sm, .75rem);
 }
 
 .discussion-reply-composer__form label,
 .discussion-reply-composer__form .form-item__label {
   display: block;
-  font-size: var(--font-size-sm, 0.875rem);
-  font-weight: var(--font-weight-semibold, 600);
+  margin-block-end: var(--spacing-xs, .25rem);
   color: var(--color-text-primary);
-  margin-block-end: var(--spacing-xs, 0.25rem);
+  font-size: var(--font-size-sm, .875rem);
+  font-weight: var(--font-weight-semibold, 600);
 }
 
 .discussion-reply-composer__form textarea,
 .discussion-reply-composer__form .form-textarea {
   display: block;
+  box-sizing: border-box;
   width: 100%;
   min-height: 8rem;
-  padding: var(--spacing-sm, 0.75rem);
-  border-radius: var(--border-radius-md, 0.375rem);
-  border: 1px solid var(--color-border-subtle);
-  background-color: var(--color-surface-raised);
+  padding: var(--spacing-sm, .75rem);
+  resize: vertical;
   color: var(--color-text-primary);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--border-radius-md, .375rem);
+  background-color: var(--color-surface-raised);
   font-family: inherit;
   font-size: var(--font-size-base, 1rem);
   line-height: var(--line-height-normal, 1.5);
-  resize: vertical;
-  box-sizing: border-box;
 }
 
 .discussion-reply-composer__form textarea:focus,
 .discussion-reply-composer__form .form-textarea:focus {
+  border-color: var(--color-brand-primary);
   outline: 2px solid var(--color-brand-primary);
   outline-offset: -1px;
-  border-color: var(--color-brand-primary);
 }
 
 .discussion-reply-composer__form .form-actions,
@@ -147,8 +147,8 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--spacing-sm, 0.75rem);
-  margin-block-start: var(--spacing-xs, 0.5rem);
+  gap: var(--spacing-sm, .75rem);
+  margin-block-start: var(--spacing-xs, .5rem);
 }
 
 .discussion-reply-composer__form button,
@@ -156,48 +156,44 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding-inline: var(--spacing-md, 1.25rem);
-  padding-block: var(--spacing-xs, 0.5rem);
-  font-size: var(--font-size-sm, 0.875rem);
-  font-weight: var(--font-weight-medium, 500);
-  border-radius: var(--border-radius-md, 0.375rem);
+  min-height: 2.75rem; /* Touch target acessível 44px */
   cursor: pointer;
   text-decoration: none;
-  min-height: 2.75rem; /* Touch target acessível 44px */
+  border-radius: var(--border-radius-md, .375rem);
+  font-size: var(--font-size-sm, .875rem);
+  font-weight: var(--font-weight-medium, 500);
+  padding-inline: var(--spacing-md, 1.25rem);
+  padding-block: var(--spacing-xs, .5rem);
 }
 
-.discussion-reply-composer__form button--primary,
 .discussion-reply-composer__form .button--primary,
 .discussion-reply-composer__form button[type="submit"]:not(.button--danger):not(.button--secondary):not(.button--outline):not(.button--ghost),
 .discussion-reply-composer__form input[type="submit"]:not(.button--danger):not(.button--secondary):not(.button--outline):not(.button--ghost) {
-  background-color: var(--button-primary-bg, var(--color-brand-primary));
   color: var(--button-primary-fg);
   border: 2px solid var(--button-primary-bg, var(--color-brand-primary));
+  background-color: var(--button-primary-bg, var(--color-brand-primary));
 }
 
-.discussion-reply-composer__form button--primary:hover,
 .discussion-reply-composer__form .button--primary:hover,
 .discussion-reply-composer__form button[type="submit"]:not(.button--danger):not(.button--secondary):not(.button--outline):not(.button--ghost):hover,
 .discussion-reply-composer__form input[type="submit"]:not(.button--danger):not(.button--secondary):not(.button--outline):not(.button--ghost):hover {
-  background-color: var(--button-primary-bg-hover);
   border-color: var(--button-primary-bg-hover);
+  background-color: var(--button-primary-bg-hover);
 }
 
-.discussion-reply-composer__form button--secondary,
 .discussion-reply-composer__form .button--secondary,
 .discussion-reply-composer__form button[type="button"]:not(.button--danger):not(.button--primary),
 .discussion-reply-composer__form input[type="button"]:not(.button--danger):not(.button--primary) {
-  background-color: var(--button-secondary-bg);
   color: var(--button-secondary-fg);
   border: 2px solid var(--button-secondary-border);
+  background-color: var(--button-secondary-bg);
 }
 
-.discussion-reply-composer__form button--secondary:hover,
 .discussion-reply-composer__form .button--secondary:hover,
 .discussion-reply-composer__form button[type="button"]:not(.button--danger):not(.button--primary):hover,
 .discussion-reply-composer__form input[type="button"]:not(.button--danger):not(.button--primary):hover {
-  background-color: var(--button-secondary-bg-hover);
   border-color: var(--button-secondary-border);
+  background-color: var(--button-secondary-bg-hover);
 }
 
 @media (prefers-reduced-motion: reduce) {

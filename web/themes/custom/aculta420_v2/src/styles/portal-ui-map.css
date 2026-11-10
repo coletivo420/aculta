@@ -262,7 +262,7 @@
 
 /* Controles de zoom do mapa: superfície e texto dos tokens do modo (o fundo do Leaflet é branco fixo). */
 .aculta-map .leaflet-control-zoom a {
-  background-color: var(--color-surface);
   color: var(--color-text-primary);
   border-color: var(--color-border);
+  background-color: var(--color-surface);
 }

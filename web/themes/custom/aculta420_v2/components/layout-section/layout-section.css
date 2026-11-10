@@ -5,9 +5,9 @@
 }
 
 .layout-section--raised {
-  background-color: var(--color-surface-raised);
-  border-radius: var(--radius-control-card);
   padding: var(--spacing-lg);
+  border-radius: var(--radius-control-card);
+  background-color: var(--color-surface-raised);
 }
 
 .layout-section__header,

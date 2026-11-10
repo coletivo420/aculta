@@ -48,10 +48,10 @@
   transition: background-color var(--motion-fast) ease, color var(--motion-fast) ease, border-color var(--motion-fast) ease;
   text-align: center;
   text-decoration: none;
+  color: var(--button-secondary-fg);
   border: 2px solid var(--button-secondary-border);
   border-radius: var(--radius-control-button, var(--radius-base));
   background-color: var(--button-secondary-bg);
-  color: var(--button-secondary-fg);
   font: inherit;
   font-family: var(--font-family-heading);
   font-size: var(--font-size-base, 1rem);

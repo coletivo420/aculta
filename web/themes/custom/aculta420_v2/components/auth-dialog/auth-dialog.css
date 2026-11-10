@@ -1,14 +1,14 @@
 .aculta-auth-dialog {
   position: fixed;
-  inset: 0;
+  overflow: visible;
   margin: auto;
   padding: 0;
   border: 0;
   background: transparent;
+  inset: 0;
   inline-size: min(28rem, calc(100vw - var(--spacing-base) * 2));
   max-block-size: min(92dvh, 52rem);
   max-inline-size: none;
-  overflow: visible;
 }
 
 .aculta-auth-dialog::backdrop {
@@ -18,25 +18,25 @@
 
 .aculta-auth-dialog__surface {
   position: relative;
-  overflow: hidden;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
-  background: var(--color-surface-raised);
-  color: var(--color-text-primary);
-  box-shadow: var(--shadow-lg);
   display: flex;
+  overflow: hidden;
   flex-direction: column;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-lg);
 }
 
 /* Listras tricolores verde, amarelo e vermelho */
 .aculta-auth-dialog__stripes {
   position: absolute;
+  z-index: 2;
   top: 0;
   right: var(--spacing-3xl, 3.5rem);
   display: flex;
   gap: 3px;
   block-size: 4px;
-  z-index: 2;
 }
 
 .aculta-auth-dialog__stripe {
@@ -53,23 +53,23 @@
 .aculta-auth-dialog--neutral .aculta-auth-dialog__header {
   position: relative;
   padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-sm);
-  background: transparent;
   border-block-end: 1px solid transparent;
+  background: transparent;
 }
 
 .aculta-auth-dialog--neutral .aculta-auth-dialog__title {
+  margin: 0;
   color: var(--color-text-primary);
   font-family: var(--font-family-heading);
   font-size: var(--font-size-2xl, 1.5rem);
   font-weight: 700;
   line-height: 1.2;
-  margin: 0;
 }
 
 .aculta-auth-dialog--neutral .aculta-auth-dialog__subtitle {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm, 0.875rem);
   margin: var(--spacing-xs) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm, .875rem);
 }
 
 .aculta-auth-dialog--neutral .aculta-auth-dialog__close {
@@ -84,24 +84,24 @@
 .aculta-auth-dialog--institutional .aculta-auth-dialog__header {
   position: relative;
   padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
-  background: var(--color-auth-dialog-surface);
   color: var(--color-auth-dialog-text);
   border-block-end: 1px solid var(--color-border);
+  background: var(--color-auth-dialog-surface);
 }
 
 .aculta-auth-dialog--institutional .aculta-auth-dialog__title {
+  margin: 0;
   color: var(--color-on-brand);
   font-family: var(--font-family-heading);
   font-size: var(--font-size-2xl, 1.5rem);
   font-weight: 700;
   line-height: 1.2;
-  margin: 0;
 }
 
 .aculta-auth-dialog--institutional .aculta-auth-dialog__subtitle {
-  color: var(--color-on-brand-muted);
-  font-size: var(--font-size-sm, 0.875rem);
   margin: var(--spacing-xs) 0 0;
+  color: var(--color-on-brand-muted);
+  font-size: var(--font-size-sm, .875rem);
 }
 
 .aculta-auth-dialog--institutional .aculta-auth-dialog__close {
@@ -109,8 +109,8 @@
 }
 
 .aculta-auth-dialog--institutional .aculta-auth-dialog__close:hover {
+  opacity: .8;
   color: var(--color-auth-secondary-surface);
-  opacity: 0.8;
 }
 
 /* Header layout comum */
@@ -130,14 +130,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  background: transparent;
-  border: 0;
   padding: var(--spacing-xs);
+  cursor: pointer;
+  transition: color var(--motion-fast) ease, opacity var(--motion-fast) ease;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
   min-block-size: var(--tap-target-min);
   min-inline-size: var(--tap-target-min);
-  border-radius: var(--radius-sm);
-  transition: color var(--motion-fast) ease, opacity var(--motion-fast) ease;
 }
 
 .aculta-auth-dialog__close:focus-visible {
@@ -147,10 +147,10 @@
 
 /* Corpo do diálogo */
 .aculta-auth-dialog__body {
-  padding: 0 var(--spacing-lg) var(--spacing-lg);
-  overflow-y: auto;
   display: flex;
+  overflow-y: auto;
   flex-direction: column;
+  padding: 0 var(--spacing-lg) var(--spacing-lg);
   gap: var(--spacing-md);
 }
 
@@ -163,23 +163,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-sm);
-  inline-size: 100%;
-  min-block-size: 3rem;
+  box-sizing: border-box;
   padding: var(--spacing-xs) var(--spacing-base);
+  transition: background-color var(--motion-fast) ease, border-color var(--motion-fast) ease;
+  text-decoration: none;
+  color: var(--color-text-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-control-button, var(--radius-base));
   background: var(--color-surface);
-  color: var(--color-text-primary);
-  text-decoration: none;
   font-size: var(--font-size-base, 1rem);
-  box-sizing: border-box;
-  transition: background-color var(--motion-fast) ease, border-color var(--motion-fast) ease;
+  gap: var(--spacing-sm);
+  inline-size: 100%;
+  min-block-size: 3rem;
 }
 
 .aculta-auth-dialog__google-btn:hover {
-  background-color: var(--color-surface-highlight, var(--color-surface-raised));
   border-color: var(--color-border);
+  background-color: var(--color-surface-highlight, var(--color-surface-raised));
 }
 
 .aculta-auth-dialog__google-btn:focus-visible {
@@ -189,21 +189,21 @@
 
 .aculta-auth-dialog__google-icon {
   display: inline-block;
+  flex-shrink: 0;
+  background: url("../../assets/icons/brand/google.svg") center / contain no-repeat;
   inline-size: 1.25rem;
   block-size: 1.25rem;
-  background: url("../../assets/icons/brand/google.svg") center / contain no-repeat;
-  flex-shrink: 0;
 }
 
 /* Divisor com texto centralizado */
 .aculta-auth-dialog__divider {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs, 0.75rem);
-  text-transform: lowercase;
   margin: var(--spacing-xs) 0;
+  text-transform: lowercase;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs, .75rem);
+  gap: var(--spacing-sm);
 }
 
 .aculta-auth-dialog__divider-line {
@@ -224,18 +224,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-sm);
-  inline-size: 100%;
-  min-block-size: 3rem;
+  box-sizing: border-box;
   padding: var(--spacing-xs) var(--spacing-base);
+  transition: background-color var(--motion-fast) ease, border-color var(--motion-fast) ease;
+  text-decoration: none;
+  color: var(--color-text-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-control-button, var(--radius-base));
   background: var(--color-surface);
-  color: var(--color-text-primary);
-  text-decoration: none;
   font-size: var(--font-size-base, 1rem);
-  box-sizing: border-box;
-  transition: background-color var(--motion-fast) ease, border-color var(--motion-fast) ease;
+  gap: var(--spacing-sm);
+  inline-size: 100%;
+  min-block-size: 3rem;
 }
 
 .aculta-auth-dialog__content [data-portal-ui="auth-google"]::before {
@@ -247,9 +247,9 @@
 }
 
 .aculta-auth-dialog__content [data-portal-ui="auth-google"]:is(:hover, :focus-visible) {
-  background-color: var(--color-surface-highlight, var(--color-surface-raised));
-  border-color: var(--color-border);
   color: var(--color-text-primary);
+  border-color: var(--color-border);
+  background-color: var(--color-surface-highlight, var(--color-surface-raised));
 }
 
 .aculta-auth-dialog__content [data-portal-ui="login-popup-divider"] {
@@ -274,36 +274,36 @@
 .aculta-auth-dialog__content [data-portal-ui="login-popup-links"] a:first-of-type {
   align-self: center;
   color: var(--color-text-muted);
-  font-size: var(--font-size-sm, 0.875rem);
+  font-size: var(--font-size-sm, .875rem);
 }
 
 .aculta-auth-dialog__content [data-portal-ui="login-popup-links"] a:first-of-type:hover {
-  color: var(--color-text-primary);
   text-decoration: underline;
+  color: var(--color-text-primary);
 }
 
 .aculta-auth-dialog__content [data-portal-ui="login-popup-links"] :is(a:last-of-type, [data-portal-ui="button-secondary"], .button--secondary) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  inline-size: 100%;
-  min-block-size: var(--tap-target-min);
+  box-sizing: border-box;
   padding: var(--spacing-sm) var(--spacing-base);
+  transition: background-color var(--motion-fast) ease, border-color var(--motion-fast) ease;
+  color: var(--button-secondary-fg, var(--color-text-primary));
   border: 2px solid var(--button-secondary-border, var(--color-border));
   border-radius: var(--radius-control-button, var(--radius-base));
   background-color: var(--button-secondary-bg, var(--color-surface));
-  color: var(--button-secondary-fg, var(--color-text-primary));
   font: inherit;
   font-family: var(--font-family-heading);
   font-size: var(--font-size-base, 1rem);
   font-weight: 700;
-  box-sizing: border-box;
-  transition: background-color var(--motion-fast) ease, border-color var(--motion-fast) ease;
+  inline-size: 100%;
+  min-block-size: var(--tap-target-min);
 }
 
 .aculta-auth-dialog__content [data-portal-ui="login-popup-links"] :is(a:last-of-type, [data-portal-ui="button-secondary"], .button--secondary):hover {
-  background-color: var(--button-secondary-bg-hover, var(--color-surface-highlight));
   color: var(--button-secondary-fg, var(--color-text-primary));
+  background-color: var(--button-secondary-bg-hover, var(--color-surface-highlight));
 }
 
 .aculta-auth-dialog__content [data-portal-ui="login-popup-links"] :is(a:last-of-type, [data-portal-ui="button-secondary"], .button--secondary):focus-visible {
@@ -325,26 +325,26 @@
 .aculta-auth-dialog__content .form-item {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2xs, 0.25rem);
+  gap: var(--spacing-2xs, .25rem);
   margin: 0;
 }
 
 .aculta-auth-dialog__content label {
   color: var(--color-text-primary);
-  font-size: var(--font-size-sm, 0.875rem);
+  font-size: var(--font-size-sm, .875rem);
   font-weight: 600;
 }
 
 .aculta-auth-dialog__content :is(input[type="text"], input[type="email"], input[type="password"]) {
-  inline-size: 100%;
   box-sizing: border-box;
-  min-block-size: var(--tap-target-min);
   padding: var(--spacing-xs) var(--spacing-sm);
+  color: var(--color-text-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
-  color: var(--color-text-primary);
   font: inherit;
+  inline-size: 100%;
+  min-block-size: var(--tap-target-min);
 }
 
 .aculta-auth-dialog__content :is(input[type="text"], input[type="email"], input[type="password"]):focus-visible {
@@ -363,24 +363,24 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  inline-size: 100%;
-  min-block-size: var(--tap-target-min);
   padding: var(--spacing-sm) var(--spacing-base);
+  cursor: pointer;
+  transition: background-color var(--motion-fast) ease, border-color var(--motion-fast) ease;
+  color: var(--button-primary-fg);
   border: 2px solid var(--button-primary-bg);
   border-radius: var(--radius-control-button, var(--radius-base));
   background-color: var(--button-primary-bg);
-  color: var(--button-primary-fg);
   font: inherit;
   font-family: var(--font-family-heading);
   font-size: var(--font-size-base, 1rem);
   font-weight: 700;
-  cursor: pointer;
-  transition: background-color var(--motion-fast) ease, border-color var(--motion-fast) ease;
+  inline-size: 100%;
+  min-block-size: var(--tap-target-min);
 }
 
 .aculta-auth-dialog__content [data-drupal-selector="edit-submit"]:hover {
-  background-color: var(--button-primary-bg-hover);
   border-color: var(--button-primary-bg-hover);
+  background-color: var(--button-primary-bg-hover);
 }
 
 .aculta-auth-dialog__content [data-drupal-selector="edit-submit"]:focus-visible {
@@ -393,16 +393,16 @@
 .aculta-auth-dialog__content a[href*="user/password"],
 .aculta-auth-dialog__content a[href*="esqueci"] {
   align-self: flex-end;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs, 0.75rem);
-  text-decoration: none;
   margin-block-start: calc(-1 * var(--spacing-2xs));
+  text-decoration: none;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs, .75rem);
 }
 
 .aculta-auth-dialog__content [data-drupal-selector="edit-password"]:hover,
 .aculta-auth-dialog__content a[href*="user/password"]:hover {
-  color: var(--color-text-primary);
   text-decoration: underline;
+  color: var(--color-text-primary);
 }
 
 /* Rodapé */
@@ -417,15 +417,15 @@
 
 .aculta-auth-dialog__register-prompt {
   margin: 0;
-  font-size: var(--font-size-sm, 0.875rem);
   color: var(--color-text-muted);
+  font-size: var(--font-size-sm, .875rem);
 }
 
 .aculta-auth-dialog__register-link {
+  margin-inline-start: var(--spacing-2xs);
+  text-decoration: none;
   color: var(--color-text-primary);
   font-weight: 700;
-  text-decoration: none;
-  margin-inline-start: var(--spacing-2xs);
 }
 
 .aculta-auth-dialog__register-link:hover {
@@ -435,10 +435,10 @@
 .aculta-auth-dialog__trust-badge {
   display: inline-flex;
   align-items: center;
-  gap: var(--spacing-2xs);
   margin: 0;
-  font-size: var(--font-size-xs, 0.75rem);
   color: var(--color-text-muted);
+  font-size: var(--font-size-xs, .75rem);
+  gap: var(--spacing-2xs);
 }
 
 .aculta-auth-dialog__trust-lock {

@@ -127,7 +127,7 @@
   /* Tokens semânticos de purpose (Fase 3: Paleta ACULTA Skunk Family). */
   /* Consumidos exclusivamente pela faixa de destaque do purpose. */
   --purpose-accent: #5a8022;
-  --purpose-on-accent: #ffffff;
+  --purpose-on-accent: #fff;
   --purpose-sub-1: #f0c41e;
   --purpose-sub-2: #c03d27;
   --purpose-sub-3: transparent;
@@ -150,7 +150,7 @@
   --button-danger-bg: #b52f22;
   --button-danger-bg-hover: #9a2619;
   --button-danger-bg-active: #7f1f14;
-  --button-danger-fg: #ffffff;
+  --button-danger-fg: #fff;
 
   /* Compatibility aliases for the existing shell until all consumers migrate. */
   --color-primary: var(--color-brand-primary);
@@ -422,7 +422,7 @@
 /* 1. main: Skunk (verde-skunk, profunda) */
 html[data-purpose="main"] {
   --purpose-accent: #5a8022;
-  --purpose-on-accent: #ffffff;
+  --purpose-on-accent: #fff;
   --purpose-sub-1: #f0c41e;
   --purpose-sub-2: #c03d27;
   --purpose-sub-3: transparent;
@@ -482,7 +482,7 @@ html[data-theme="dark"][data-purpose="links"] {
 /* 4. account: Afghan (verde-afghan, profunda, exceção dark) */
 html[data-purpose="account"] {
   --purpose-accent: #08271a;
-  --purpose-on-accent: #ffffff;
+  --purpose-on-accent: #fff;
   --purpose-sub-1: #5a8022;
   --purpose-sub-2: #f0c41e;
   --purpose-sub-3: #c03d27;
@@ -562,7 +562,7 @@ html[data-theme="dark"][data-purpose="eventos"] {
 /* 8. magazine: Red Kush (vermelho-red-kush, profunda) */
 html[data-purpose="magazine"] {
   --purpose-accent: #c03d27;
-  --purpose-on-accent: #ffffff;
+  --purpose-on-accent: #fff;
   --purpose-sub-1: #5a8022;
   --purpose-sub-2: #f0c41e;
   --purpose-sub-3: transparent;
@@ -570,7 +570,7 @@ html[data-purpose="magazine"] {
 
 html[data-theme="dark"][data-purpose="magazine"] {
   --purpose-accent: #dd4329;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #6c9e22;
   --purpose-sub-2: #fbd132;
   --purpose-sub-3: transparent;
@@ -582,7 +582,7 @@ html[data-theme="dark"][data-purpose="magazine"] {
 /* 9. courses: Panama Red (vermelho-panama-red, fiel) */
 html[data-purpose="courses"] {
   --purpose-accent: #d4452d;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #689427;
   --purpose-sub-2: #f2ca36;
   --purpose-sub-3: transparent;
@@ -590,7 +590,7 @@ html[data-purpose="courses"] {
 
 html[data-theme="dark"][data-purpose="courses"] {
   --purpose-accent: #e1563f;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #7ab327;
   --purpose-sub-2: #fcd64b;
   --purpose-sub-3: transparent;
@@ -602,7 +602,7 @@ html[data-theme="dark"][data-purpose="courses"] {
 /* 10. forum: Red Congolese (vermelho-red-congolese, suave) */
 html[data-purpose="forum"] {
   --purpose-accent: #d85842;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #76a82c;
   --purpose-sub-2: #f4d04e;
   --purpose-sub-3: transparent;
@@ -610,7 +610,7 @@ html[data-purpose="forum"] {
 
 html[data-theme="dark"][data-purpose="forum"] {
   --purpose-accent: #e46a55;
-  --purpose-on-accent: #000000;
+  --purpose-on-accent: #000;
   --purpose-sub-1: #89c72c;
   --purpose-sub-2: #fcdc64;
   --purpose-sub-3: transparent;
