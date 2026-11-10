@@ -5,9 +5,9 @@
 - **Entregas documentais:** novo `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md` com RN-00 a RN-05, ADR-054 e ADR-055 atualizadas, planos UI Suite e migração visual conciliados, prompt executor e apontamentos em TODO/README/status e multidomínio.
 - **Evidências:** inspeção de `DomainPurposeManager`, `DomainSurfaceMap`, `ContentPurposeResolver`, `DomainPurposeRequestSubscriber`, `ActivePurposesState`, `DomainPresentationBuilder`, `AppearanceHooks`, `SurfaceConfigReader` e contratos de State/sessão/route options.
 - **Gate:** US-14 depende de RN-05 PASS. Fail-closed em conflito de metadados de rota, zero aliases públicos novos, cross-domain/ACL/cache/login testados e UI Skins como única fonte visual. **Runtime, Unit, Kernel, Browser e migrações: DEFERRED** - documentação apenas.
+- **US-00 inventário:** gerador `scripts/inventory-ui-suite-consumers.php` e CSV `docs/architecture/inventarios/ui-suite-consumidores-iniciais.csv` registram 159 displays em 66 Views, 22 entity displays com Layout Builder e 80 SDCs; nenhuma View com plugin ID UI Patterns row/style/display no Sync. Inventário integral segue DEFERRED.
+- **Verificações do inventário:** PHP lint e PHPStan do gerador, geração + validação estrutural do CSV (261 registros) e `git diff --check` PASS. O Runtime conectado é Drupal 11.5.0-beta1 com drift em `config:status`; não foi alterado. UI Skins padrão usa theme settings e não faz resolução por domínio em request.
 - **Próximo passo:** RN-00/US-00 inventário real, RN-01 API `site_key`, US-02 resolução UI Skins por `domain_id`, RN-02 a RN-05 por consumidores e homologação, antes do fechamento das ADRs.
-
-# Skills Drupal e UI Suite — 2026-11-10
 
 # FST-00 a FST-11 — integração analítica Fórum + Statistics — 2026-11-10
 
