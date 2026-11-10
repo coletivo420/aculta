@@ -11,6 +11,7 @@ use Drupal\aculta_statistics\Storage\DailyAggregateStorage;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Entity\CommentType;
 use Drupal\domain\Entity\Domain;
+use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group as GroupEntity;
@@ -147,6 +148,7 @@ final class ForumActivityIntegrationKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_forum_post');
     $this->installEntitySchema('profile');
     $this->installEntitySchema('path_alias');
+    $this->installEntitySchema('flagging');
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installSchema('node', ['node_access']);
@@ -454,6 +456,44 @@ final class ForumActivityIntegrationKernelTest extends KernelTestBase {
     $manager->toggleReaction($topic, (int) $reactor->id(), 'fire');
     self::assertSame(0, $manager->getUserStats((int) $reactor->id())['reactions_given']);
     self::assertSame(1, $this->storage->total('forum.reactions.added', $day, $day));
+  }
+
+  /**
+   * Denúncias abertas deduplicam por conteúdo e posts pendentes são contados.
+   */
+  public function testModerationMetricsCountDistinctPublicContent(): void {
+    $author = User::create(['name' => 'autora-denuncia', 'status' => 1]);
+    $author->save();
+    $reporter = User::create(['name' => 'denunciante', 'status' => 1]);
+    $reporter->save();
+    $topic = $this->topicAt((int) $author->id(), time());
+    $database = $this->container->get('database');
+    foreach ([$author->id(), $reporter->id()] as $uid) {
+      $database->insert('flagging')
+        ->fields([
+          'uuid' => $this->container->get('uuid')->generate(),
+          'flag_id' => 'sinalizar_topico',
+          'entity_type' => 'node',
+          'entity_id' => (string) $topic->id(),
+          'global' => 0,
+          'uid' => $uid,
+          'session_id' => '',
+          'created' => time(),
+        ])
+        ->execute();
+    }
+
+    $provider = $this->container->get('aculta_forum.metrics_provider');
+    $day = $this->storage->currentDay();
+    self::assertSame(1, $provider->value('forum.moderation.reports_open', $day));
+
+    ForumPost::create([
+      'uid' => (int) $author->id(),
+      'topic' => $topic->id(),
+      'body' => ['value' => 'Pendente', 'format' => 'plain_text'],
+      'status' => 0,
+    ])->save();
+    self::assertSame(1, $provider->value('forum.moderation.posts_pending', $day));
   }
 
   /**
