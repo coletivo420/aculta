@@ -37,7 +37,8 @@ Minhas remoções estão na seção 4; o saldo não é indicador de qualidade.
 Heurísticas no catálogo: `zero_assertions` = 0, `counts_literal_array` = 0,
 `same_value_both_sides` = 0, `file_exists_only` = 0. Continuam sinalizados para
 revisão humana `mock_isolated` (444), `static_config_contract` (37),
-`unconditional_skip` (16), `review_by_name` (24) e `doc_comment_metadata` (15).
+`unconditional_skip` (16) e `review_by_name` (24). `doc_comment_metadata` foi
+zerado ao converter os 15 arquivos para atributos PHPUnit.
 Nenhum desses sinais, isolado, autoriza remoção.
 
 ## 3. Infraestrutura PHPUnit
@@ -101,31 +102,45 @@ sem plano de migração de instalações existentes, então ele permanece.
 - `.github/workflows/php-quality.yml` passa a rodar em `dev` e `main`, com jobs
   `test-discovery` e `phpunit-unit` (JUnit como artefato). O job Unit não usa
   banco.
-- PHPStan continua com `|| true` e um TODO explícito: a fase de análise
-  estática foi adiada por decisão do responsável.
+- PHPStan não usa mais `|| true`. `scripts/phpstan-ratchet.php` lê
+  `phpstan-baseline-count.txt` (3829 erros no snapshot) e falha apenas se a
+  contagem crescer; a dívida existente é reduzida aos poucos, sem baseline de
+  megabytes e sem mascarar regressão.
 
 ## 6. Execução verificável
 
 | Verificação | Resultado |
 | --- | --- |
 | `php scripts/phpunit-suites.php --check` | PASS — unit=669, kernel=249, functional=3, functionaljs=1, performance=4 |
-| `phpunit --testsuite unit` (filtros dos testes alterados) | PASS individual para os 8 arquivos reescritos/corrigidos |
+| Suíte Unit completa (excluindo apenas os dois arquivos em renomeação concorrente) | **PASS — 3271 testes, 17535 asserções, 0 erros, 0 falhas, 0 deprecations** |
 | `phpunit --testsuite kernel --filter AccountOtherDataFormKernelTest` (com `SIMPLETEST_DB`) | PASS — 6 testes, 30 asserções |
+| `phpunit --filter FaqEditorialSafetyKernelTest` (com `SIMPLETEST_DB`) | PASS — 3 testes, 45 asserções |
 | `phpunit -c phpunit.performance.xml` sem banco | PASS — 4 pulados em ~3 s |
+| `phpunit` nos 15 arquivos convertidos de doc-comment | PASS — 48 testes, 269 asserções |
+| `php scripts/phpstan-ratchet.php` | PASS — 3829 erros ≤ baseline 3829 |
 | `php scripts/tests/validate-aculta420-design-foundations-test.php` | PASS — 14 fixtures |
 | `php scripts/validate-module-theme-boundary.php` | PASS — 7884 verificações |
+| `php scripts/audit-browser-scripts.php` | 535 arquivos classificados; 9 entrypoints, 49 contratos de rota, 171 scripts, 225 evidências, 18 candidatos a revisão |
 | `php scripts/validate-aculta420-design-foundations.php` (tema real) | FAIL pré-existente — 5/1271: literais de cor em `ui-library-admin.css`, `surface.css`, `surface-accent.css`, `surface-panel.css` (arquivos não alterados nesta rodada) |
+
+## 6.1. Browser
+
+`docs/operations/testing/browser-inventory.json` classifica cada arquivo de
+`tests/browser/` por purpose/front, papel, consumidores e destino. O executor
+Playwright continua sendo apenas `playwright.routes.spec.mjs` (contratos
+`routes.json`) e `playwright-runner.mjs` (smoke por URL); os scripts Python de
+revisão manual não entram na suíte executável. Os 18 scripts sem consumidor
+referenciado estão marcados como `revisar: candidato a arquivo` no inventário,
+para revisão humana — não foram apagados porque podem ser evidência.
 
 ## 7. Pendências
 
-| ID | Descrição | Causa | Risco | Próxima ação |
-| --- | --- | --- | --- | --- |
-| P1 | Suíte Unit completa não pôde ser executada | Outro agente renomeava `ContentPurposeResolverEventsUnitTest`→`ContentSiteKeyResolverEventsUnitTest` e deixou duas classes com o mesmo nome no diretório | Não é possível afirmar PASS da suíte inteira; os arquivos tocados foram verificados um a um | Reexecutar `--testsuite unit` quando a renomeação concorrente terminar |
-| P2 | `validate-aculta420-design-foundations.php` falha no tema real | 5 literais de cor fora de tokens em CSS existente | Gate não bloqueia mudanças de token hoje | Substituir literais por tokens semânticos ou justificar exceção |
-| P3 | PHPStan com `\|\| true` | 1000+ erros pré-existentes no nível 5 | Análise estática não bloqueia regressão | Estabilizar baseline após a consolidação dos testes |
-| P4 | 15 arquivos com metadados em doc-comment | `@group`/`@covers` em vez de atributos | Depreciação no PHPUnit 12 | Converter para atributos |
-| P5 | Browser: 134 Python, 66 JSON, 38 MJS, 65 MD | Scripts manuais/evidências misturados sob `tests/browser/<purpose>/` | Custo de manutenção e descoberta | Classificar por frente e mover evidências para fora das suítes executáveis |
-| P6 | `ForumTopicDisplayConfigTest` com 709 linhas | Múltiplas responsabilidades num arquivo | Difícil revisar | Separar configuração estática de comportamento em Kernel |
+| ID | Situação | Descrição | Próxima ação |
+| --- | --- | --- | --- |
+| P2 | aberto | `validate-aculta420-design-foundations.php` falha no tema real (5/1271) por literais de cor em CSS existente | Substituir literais por tokens semânticos ou justificar exceção |
+| P6 | aberto | `ForumTopicDisplayConfigTest` com 709 linhas e múltiplas responsabilidades (form/display, listagens, admin, domain/pathauto) | Separar em classes por responsabilidade com uma base compartilhada, mantendo a suíte verde |
+| P7 | aberto | Dois arquivos `ContentPurposeResolver*Test` em renomeação concorrente para `ContentSiteKeyResolver*Test` ainda coexistem na árvore de trabalho | Concluir a renomeação do outro agente; a suíte completa já passa excluindo o par duplicado |
+| P8 | aberto | 18 scripts Python/MJS do browser sem consumidor referenciado | Revisar caso a caso; arquivar ou converter em entrypoint documentado |
 
 ## 8. Recuperação
 
