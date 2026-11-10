@@ -60,7 +60,7 @@ final class GameAchievementNoticeMigration {
       foreach ($pending as $awardId) {
         $award = $this->entityTypeManager->getStorage('aculta_badge_award')->loadUnchanged($awardId);
         if (!$account instanceof UserInterface || !$account->isActive()
-          || !$this->isAward($award) || (int) $award->get('uid')->target_id !== $uid
+          || !$award instanceof ContentEntityInterface || !$this->isAward($award) || (int) $award->get('uid')->target_id !== $uid
           || !$award->get('revogado_em')->isEmpty()) {
           continue;
         }

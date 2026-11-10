@@ -276,7 +276,7 @@ final class GameAchievementNoticeManager implements GameAchievementNoticeManager
     $storage->resetCache($ids);
     $awards = [];
     foreach ($storage->loadMultiple($ids) as $award) {
-      if ($this->isAward($award) && isset($uuids[$award->uuid()])) {
+      if ($award instanceof ContentEntityInterface && $this->isAward($award) && isset($uuids[$award->uuid()])) {
         $awards[$award->uuid()] = $award;
       }
     }
@@ -291,7 +291,8 @@ final class GameAchievementNoticeManager implements GameAchievementNoticeManager
     if (!$this->isAward($award) || $award->id() === NULL) {
       return NULL;
     }
-    return $this->entityTypeManager->getStorage('aculta_badge_award')->loadUnchanged((int) $award->id());
+    $loaded = $this->entityTypeManager->getStorage('aculta_badge_award')->loadUnchanged((int) $award->id());
+    return $loaded instanceof ContentEntityInterface ? $loaded : NULL;
   }
 
   /**

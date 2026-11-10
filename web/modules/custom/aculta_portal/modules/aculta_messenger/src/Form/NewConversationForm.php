@@ -348,8 +348,7 @@ final class NewConversationForm extends FormBase {
       $formState->set('aculta_messenger_new_conversation_privacy_rejected', TRUE);
       return NULL;
     }
-    $thread = $this->privateMessageService->getThreadForMembers($members);
-    return $thread instanceof PrivateMessageThreadInterface ? $thread : NULL;
+    return $this->privateMessageService->getThreadForMembers($members);
   }
 
   /**

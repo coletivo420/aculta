@@ -127,7 +127,7 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
         ? $this->preferences->emailMode($event->recipientUid(), 'doacao')
         : AvisoPreferencias::EMAIL_OFF;
       $direct = $mode === AvisoPreferencias::EMAIL_IMMEDIATE;
-      $message = $storage->create([
+      $created = $storage->create([
         'template' => self::TEMPLATE,
         'uid' => $event->recipientUid(),
         self::EVENT_FIELD => $type,
@@ -138,6 +138,10 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
         self::DELIVERY_FIELD => $direct ? 'pending' : 'sent',
         self::ATTEMPTS_FIELD => 0,
       ]);
+      if (!$created instanceof MessageInterface) {
+        throw new \LogicException('The message storage returned an unexpected entity.');
+      }
+      $message = $created;
       $message->save();
       if ($direct) {
         $this->queueDirectDelivery($message);

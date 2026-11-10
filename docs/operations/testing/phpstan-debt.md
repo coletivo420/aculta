@@ -158,3 +158,18 @@ Escopo: `aculta_lms.module` passou a narrowing `ContentEntityInterface` nos hook
 Escopo: `LearningNoticeManager` (35 -> 1), `EventsContributionNoticeManager` (16 -> 3), `WikiNoticeManager` (14 -> 2), `MagazineNoticeManager` (11 -> 2) e `PrivateMessageNotificationWorker` (14 -> 1). O `EventsContributionNoticeManager` importava `Drupal\aculta_contributions\Entity\Contribution`, classe inexistente; o tipo correto é `Drupal\aculta_cgu\Entity\Contribution`, corrigido. `record()` dos managers passou a validar o retorno de `create()` como `MessageInterface`; `resolveMessages()` aceita `EntityInterface[]` e ignora registros que não são mensagens; parâmetros `$sourceUuid` não usados foram removidos; `resolve*` recebem `ContentEntityInterface`/`OwnerInterface` conforme o método chamado; retornos de digest documentados como `TranslatableMarkup` (ou convertidos para string quando o contrato exige string).
 
 Resíduos conhecidos: mutação de array capturado por referência em closures (PHPStan perde o tipo), `PrivateMessageServiceInterface::getThreadFromMessage()` que pode devolver nulo em runtime apesar da assinatura, e `DrupalDateTime::createFromFormat()` retornando `false` para entrada inválida. Evidência: Unit 403/4378 PASS no módulo.
+
+## Rodada 11 — 2026-11-10 (correções automáticas no aculta_messenger)
+
+| Medida | Valor |
+| --- | ---: |
+| Erros brutos em aculta_messenger/src antes | 59 |
+| Corrigidos | 51 |
+| Erros brutos em aculta_messenger/src ao final | 8 (todos dependentes de contrato externo) |
+| Erros brutos globais antes | 3442 |
+| Erros brutos globais ao final | 3359 |
+| Baseline atual | 3359 |
+
+Escopo: remoção de `instanceof SynchronizableInterface`/`method_exists()` redundantes; `CacheableMetadata::createFromObject()` para cache tags de resultados de acesso; `SiteAlertStorageInterface` explícito para `getCacheMaxAge()`; `loadRevision()` com `RevisionableStorageInterface`; `PrivateMessageInterface` no contador de não lidas; `ArrayObject` substitui arrays capturados por referência nos callbacks de `EligibleNoticePage::collect()`; helpers `record()` validam `MessageInterface`; propriedades de DI não usadas removidas (`AvisosMensagensController`, `MessengerBarHooks`, `PrivateMessageReplyHooks`) com o teste `PersistentNoticeAccessTest` ajustado; `ProfileRelationshipController` deixa de passar argumentos extras ao `FormBuilderInterface::buildForm()` (o alvo e a URL agora viajam no `FormState`), corrigindo um bug funcional real.
+
+Resíduos: docblock de `PrivateMessageThreadInterface::getMessages()` declara `EntityReferenceFieldItemListInterface` mas a implementação retorna array (bug de documentação do contrib, não editado); `FormStateInterface::hasAnyErrors()` mutado por método auxiliar; `DrupalDateTime::createFromFormat()` retornando `false`; `PrivateMessageServiceInterface::getThreadFromMessage()` devolvendo nulo em runtime; e `ConfigFactoryInterface::get()` nulo em mocks de teste. Evidência: Unit 403/4378 PASS.

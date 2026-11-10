@@ -29,7 +29,7 @@ final class NoticePaginationUrlBuilder {
     }
     $offsets = [];
     foreach ($currentOffsets as $key => $offset) {
-      if (is_string($key) && in_array($key, NoticeListFilter::PAGINATED_ORIGINS, TRUE) && is_int($offset) && $offset > 0) {
+      if (in_array($key, NoticeListFilter::PAGINATED_ORIGINS, TRUE) && $offset > 0) {
         $offsets[$key] = $offset;
       }
     }
@@ -40,7 +40,7 @@ final class NoticePaginationUrlBuilder {
       unset($offsets[$origin]);
     }
 
-    $query = array_filter($filters, static fn(mixed $value): bool => is_string($value) && $value !== '');
+    $query = array_filter($filters, static fn(string $value): bool => $value !== '');
     $query['notice_offsets'] = $offsets;
     return Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos'], ['query' => $query]);
   }
@@ -59,7 +59,7 @@ final class NoticePaginationUrlBuilder {
     if (!in_array($origin, NoticeListFilter::PAGINATED_ORIGINS, TRUE)) {
       throw new \InvalidArgumentException('Unsupported notice pagination origin.');
     }
-    $query = array_filter($filters, static fn(mixed $value): bool => is_string($value) && $value !== '');
+    $query = array_filter($filters, static fn(string $value): bool => $value !== '');
     $query[$origin === 'forum' ? 'forum_offset' : 'notice_offset'] = max(0, $targetOffset);
     return Url::fromRoute('aculta_messenger.avisos', ['aba' => 'avisos'], ['query' => $query]);
   }

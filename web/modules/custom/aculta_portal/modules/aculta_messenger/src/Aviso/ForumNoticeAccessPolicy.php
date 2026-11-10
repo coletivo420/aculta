@@ -9,7 +9,6 @@ use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\node\NodeInterface;
 use Drupal\user\UserInterface;
 
@@ -28,7 +27,7 @@ final class ForumNoticeAccessPolicy implements ForumNoticeAccessPolicyInterface 
    */
   public function supportsTopic(EntityInterface $entity): bool {
     if (!$entity instanceof NodeInterface || $entity->bundle() !== 'aculta_forum_topic'
-      || ($entity instanceof SynchronizableInterface && $entity->isSyncing())) {
+      || $entity->isSyncing()) {
       return FALSE;
     }
     return !$entity->hasField('field_autor_legado') || $entity->get('field_autor_legado')->isEmpty();
@@ -83,7 +82,7 @@ final class ForumNoticeAccessPolicy implements ForumNoticeAccessPolicyInterface 
    */
   public function canViewPost(ForumPost $post, int|UserInterface $recipient): bool {
     if (!$post->isPublished() || !$post->isDefaultRevision()
-      || ($post instanceof SynchronizableInterface && $post->isSyncing())
+      || $post->isSyncing()
       || !$post->hasField('topic') || $post->get('topic')->isEmpty()) {
       return FALSE;
     }

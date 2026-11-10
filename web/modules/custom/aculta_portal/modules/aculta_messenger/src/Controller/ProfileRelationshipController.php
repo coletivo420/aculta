@@ -57,7 +57,11 @@ final class ProfileRelationshipController extends ControllerBase {
     $formState->setRequestMethod('POST');
     $formState->setUserInput($request->request->all());
     $formState->set('profile', TRUE);
-    $this->forms->buildForm(ConversationRelationshipForm::class, $formState, (int) $user->id(), $postUrl);
+    // FormBuilderInterface::buildForm() only accepts the form and form state;
+    // the target and action must travel inside the form state.
+    $formState->set('target', (int) $user->id());
+    $formState->set('post_url', $postUrl);
+    $this->forms->buildForm(ConversationRelationshipForm::class, $formState);
     $message = $formState->get('message');
     if ($message !== NULL) {
       $this->statusMessenger->addStatus((string) $message);

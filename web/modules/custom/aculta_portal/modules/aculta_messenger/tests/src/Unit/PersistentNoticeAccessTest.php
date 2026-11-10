@@ -101,11 +101,9 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
     return new MessengerBarHooks(
       $this->createMock(AccountInterface::class),
       new UnreadThreadCounter($this->createMock(AccountInterface::class), $this->createMock(EntityTypeManagerInterface::class)),
-      $this->createMock(GetAlertsInterface::class),
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(RendererInterface::class),
       $time,
-      $this->createMock(FlagServiceInterface::class),
       $this->createMock(FriendshipManagerInterface::class),
       new MessengerCounts(
         $this->createMock(EntityTypeManagerInterface::class),

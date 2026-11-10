@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\FlagInterface;
+use Drupal\flag\FlaggingInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\site_alert\GetAlertsInterface;
 
@@ -117,7 +118,9 @@ final class MessengerCounts {
     if ($readIds !== []) {
       $flagged = [];
       foreach ($this->entityTypeManager->getStorage('flagging')->loadMultiple($readIds) as $flagging) {
-        $flagged[] = (int) $flagging->getFlaggableId();
+        if ($flagging instanceof FlaggingInterface) {
+          $flagged[] = (int) $flagging->getFlaggableId();
+        }
       }
       if ($flagged !== []) {
         $query->condition('nid', $flagged, 'NOT IN');

@@ -6,6 +6,7 @@ namespace Drupal\aculta_messenger\Service;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\private_message\Entity\PrivateMessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 
 /**
@@ -87,6 +88,9 @@ final class UnreadThreadCounter {
     // so a recent incoming message exits quickly and old history is not
     // examined once the member's last-access boundary is reached.
     foreach (array_reverse($thread->getMessages()) as $message) {
+      if (!$message instanceof PrivateMessageInterface) {
+        continue;
+      }
       if ((int) $message->getCreatedTime() <= $lastAccess) {
         break;
       }

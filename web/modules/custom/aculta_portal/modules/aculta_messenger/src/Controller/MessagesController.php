@@ -31,6 +31,9 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
+use Drupal\user\EntityOwnerInterface;
+use Drupal\private_message\Entity\PrivateMessageInterface;
+use Drupal\private_message\Entity\PrivateMessageThread;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\aculta_messenger\Form\PrivateMessageFormValidator;
@@ -50,6 +53,7 @@ use Drupal\aculta_user\Avatar\AvatarResolver;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\user\UserInterface;
 use Drupal\site_alert\GetAlertsInterface;
+use Drupal\site_alert\SiteAlertStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -58,8 +62,6 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Pages for the account communication center. */
 final class MessagesController extends ControllerBase {
-
-  private const PRIVATE_MESSAGE_TEMPLATE = 'aculta_msg_private_notification';
 
   private const PERSONAL_NOTICE_PREVIEW_LIMIT = 5;
 
@@ -274,6 +276,9 @@ final class MessagesController extends ControllerBase {
           'owner' => (int) $this->account->id(),
           'message' => ['value' => $text, 'format' => 'plain_text'],
         ]);
+        if (!$message instanceof PrivateMessageInterface) {
+          throw new \LogicException('The private message storage returned an unexpected entity.');
+        }
         $message->save();
         $private_message_thread->addMessage($message);
         $private_message_thread->save();
@@ -653,8 +658,9 @@ final class MessagesController extends ControllerBase {
         'private_message_thread' => $thread->id(),
       ]);
       $lastMessageTimestamp = (int) $thread->getNewestMessageCreationTimestamp();
+      $updatedTime = $thread instanceof PrivateMessageThread ? (int) $thread->getUpdatedTime() : 0;
       $sentDate = $this->dateFormatter->format(
-        $lastMessageTimestamp > 0 ? $lastMessageTimestamp : (int) $thread->getUpdatedTime(),
+        $lastMessageTimestamp > 0 ? $lastMessageTimestamp : $updatedTime,
         'custom',
         'd/m/Y H:i',
       );
@@ -709,7 +715,7 @@ final class MessagesController extends ControllerBase {
           'options' => $this->lazyOptionsDisclosure($thread),
         ];
         $senderBoxes[$senderKey] = [
-          'updated' => (int) $thread->getUpdatedTime(),
+          'updated' => $thread instanceof PrivateMessageThread ? (int) $thread->getUpdatedTime() : 0,
           'thread_id' => (string) $thread->id(),
           'name' => $senderName,
           'sender' => $sender,
@@ -738,7 +744,7 @@ final class MessagesController extends ControllerBase {
           '#attributes' => ['data-portal-ui' => 'messenger-sender-avatar', 'aria-hidden' => 'true'],
           'image' => $senderBox['avatar'] ?? ['#markup' => ''],
         ],
-        'name' => $senderBox['open'] ?? ['#plain_text' => $senderBox['name']],
+        'name' => $senderBox['open'],
         // Rótulo Lido / Não lido à direita, fora do link: a caixa inteira continua sendo o link.
         'estado' => $this->readLabel($senderBox['unread']),
         'actions' => $senderBox['actions'],
@@ -767,9 +773,9 @@ final class MessagesController extends ControllerBase {
   /**
    * Selects the latest incoming author, or the conversation partner. */
   private function getConversationSender(PrivateMessageThreadInterface $thread): ?UserInterface {
-    $messages = array_values($thread->getMessages());
+    $messages = $thread->getMessages()->referencedEntities();
     $latestMessage = $messages === [] ? NULL : $messages[array_key_last($messages)];
-    $sender = $latestMessage?->getOwner();
+    $sender = $latestMessage instanceof EntityOwnerInterface ? $latestMessage->getOwner() : NULL;
     if ($sender !== NULL && (int) $sender->id() !== (int) $this->account->id()) {
       return $sender;
     }
@@ -816,7 +822,7 @@ final class MessagesController extends ControllerBase {
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['active_site_alerts'])
       ->addCacheTags($this->entityTypes->getDefinition('site_alert')->getListCacheTags())
-      ->setCacheMaxAge($storage->getCacheMaxAge());
+      ->setCacheMaxAge($storage instanceof SiteAlertStorageInterface ? $storage->getCacheMaxAge() : 0);
     if ($this->account->isAuthenticated()) {
       $cacheability->addCacheContexts(['user'])->setCacheMaxAge(0);
     }
@@ -979,7 +985,8 @@ final class MessagesController extends ControllerBase {
     if ($originPageStates !== []) {
       $adapterFilters['page_states'] = $originPageStates;
     }
-    $this->extensionModuleHandler?->alter('aculta_messenger_personal_notices', $items, $this->account, $adapterFilters);
+    $alterContext = $this->account;
+    $this->extensionModuleHandler?->alter('aculta_messenger_personal_notices', $items, $alterContext, $adapterFilters);
 
     $alertPageState = $originPageStates['alerta'] ?? ($originPageState?->origin() === 'alerta' ? $originPageState : NULL);
     if ($alertPageState instanceof PersonalNoticePageState) {
@@ -1326,9 +1333,6 @@ final class MessagesController extends ControllerBase {
         }
       }
       foreach ($nodes as $node) {
-        if (!$node instanceof NodeInterface) {
-          continue;
-        }
         $access = $node->access('view', $this->account, TRUE);
         $cacheability->addCacheableDependency($node)->addCacheableDependency($access);
         if (!$access->isAllowed()) {

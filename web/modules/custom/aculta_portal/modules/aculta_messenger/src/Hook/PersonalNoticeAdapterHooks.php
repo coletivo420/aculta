@@ -66,7 +66,7 @@ final class PersonalNoticeAdapterHooks {
       $selectedOrigin = '';
     }
     foreach (self::ADAPTERS as $id) {
-      $adapterOrigin = self::ORIGINS[$id] ?? NULL;
+      $adapterOrigin = self::ORIGINS[$id];
       $adapterPageState = $pageStates[$adapterOrigin] ?? $pageState;
       if (($pageState instanceof PersonalNoticePageState && $pageState->origin() !== $adapterOrigin)
         || ($selectedOrigin !== '' && $selectedOrigin !== $adapterOrigin)) {

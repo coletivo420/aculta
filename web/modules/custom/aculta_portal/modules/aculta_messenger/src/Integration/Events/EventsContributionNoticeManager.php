@@ -194,7 +194,7 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
       return FALSE;
     }
     $storage = $this->entityTypeManager->getStorage('message');
-    $resolved = [];
+    $resolved = new \ArrayObject();
     $page = EligibleNoticePage::collect(
       function (int $scanOffset, int $batchSize) use ($storage, $account, $filters): array {
         $query = $storage->getQuery()->accessCheck(FALSE)
@@ -202,11 +202,11 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
         NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
         return $query->sort('created', 'DESC')->sort('mid', 'DESC')->range($scanOffset, $batchSize)->execute();
       },
-      function (array $ids) use ($storage, $account, &$resolved): array {
+      function (array $ids) use ($storage, $account, $resolved): array {
         $messages = array_values($storage->loadMultiple($ids));
         foreach ($messages as $message) {
           if ($message instanceof MessageInterface && ($notice = $this->resolve($message, $account)) !== NULL) {
-            $resolved[(int) $message->id()] = $notice;
+            $resolved->offsetSet((int) $message->id(), $notice);
           }
         }
         return $messages;

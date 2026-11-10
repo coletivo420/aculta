@@ -33,9 +33,6 @@ final class PrivateMessagePresentationHooks {
 
     $variables['aculta_messenger_outgoing'] = (int) $message->getOwnerId() === (int) $this->currentUser->id();
     $sender = $message->getOwner();
-    if ($sender === NULL) {
-      return;
-    }
     $access = $sender->access('view', $this->currentUser, TRUE);
     if (!$access->isAllowed()) {
       return;
@@ -47,7 +44,7 @@ final class PrivateMessagePresentationHooks {
     $cacheability = (new CacheableMetadata())
       ->addCacheableDependency($sender)
       ->addCacheContexts(['user'])
-      ->addCacheTags($access->getCacheTags());
+      ->addCacheTags(CacheableMetadata::createFromObject($access)->getCacheTags());
     $avatar = $this->avatars->build($sender, $name, TRUE, $cacheability);
     if ($avatar === NULL) {
       return;

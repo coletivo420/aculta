@@ -169,7 +169,7 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
       return FALSE;
     }
     $storage = $this->entityTypeManager->getStorage('message');
-    $resolved = [];
+    $resolved = new \ArrayObject();
     $page = EligibleNoticePage::collect(
       function (int $scanOffset, int $batchSize) use ($storage, $account, $filters): array {
         $query = $storage->getQuery()->accessCheck(FALSE)
@@ -179,13 +179,13 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
         return $query->sort('created', 'DESC')->sort('mid', 'DESC')
           ->range($scanOffset, $batchSize)->execute();
       },
-      function (array $ids) use ($storage, $account, &$resolved): array {
+      function (array $ids) use ($storage, $account, $resolved): array {
         $messages = array_values($storage->loadMultiple($ids));
-        $resolved = $this->resolveMessages($messages, $account);
+        $resolved->exchangeArray($this->resolveMessages($messages, $account));
         return $messages;
       },
-      function (mixed $message) use (&$resolved): ?array {
-        return $message instanceof MessageInterface ? ($resolved[(int) $message->id()] ?? NULL) : NULL;
+      function (mixed $message) use ($resolved): ?array {
+        return $message instanceof MessageInterface ? ($resolved->offsetExists((int) $message->id()) ? $resolved->offsetGet((int) $message->id()) : NULL) : NULL;
       },
       $limit,
       $offset,
@@ -511,7 +511,7 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
       }
       $rows[] = [
         'tipo' => 'wiki',
-        'titulo' => $notice['email_summary'],
+        'titulo' => (string) $notice['email_summary'],
         'quantidade' => 1,
         'delivery_id' => (int) $message->id(),
       ];

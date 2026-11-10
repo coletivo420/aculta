@@ -265,7 +265,7 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
       return FALSE;
     }
     $storage = $this->entityTypeManager->getStorage('message');
-    $resolved = [];
+    $resolved = new \ArrayObject();
     $page = EligibleNoticePage::collect(
       function (int $scanOffset, int $batchSize) use ($storage, $account, $filters): array {
         $query = $storage->getQuery()->accessCheck(FALSE)
@@ -274,9 +274,11 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
         NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
         return $query->sort('created', 'DESC')->sort('mid', 'DESC')->range($scanOffset, $batchSize)->execute();
       },
-      function (array $ids) use ($storage, $account, &$resolved): array {
+      function (array $ids) use ($storage, $account, $resolved): array {
         $messages = array_values($storage->loadMultiple($ids));
-        $resolved += $this->resolveMessages($messages, $account);
+        foreach ($this->resolveMessages($messages, $account) as $resolvedId => $resolvedNotice) {
+          $resolved->offsetSet($resolvedId, $resolvedNotice);
+        }
         return $messages;
       },
       static fn(mixed $message): ?array => $message instanceof MessageInterface ? ($resolved[(int) $message->id()] ?? NULL) : NULL,

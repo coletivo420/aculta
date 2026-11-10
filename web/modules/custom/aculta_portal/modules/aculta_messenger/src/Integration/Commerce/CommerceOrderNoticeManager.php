@@ -116,7 +116,7 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
         : $this->preferences->emailMode($event->recipientUid(), 'loja');
       $digest = $mode === 'digest' ? 0 : 1;
       $direct = $mode === 'immediate';
-      $message = $storage->create([
+      $created = $storage->create([
         'template' => self::TEMPLATE,
         'uid' => $event->recipientUid(),
         self::EVENT_FIELD => $event->metadata()['notice_type'],
@@ -127,6 +127,10 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
         self::DELIVERY_FIELD => $direct ? 'pending' : 'sent',
         self::ATTEMPTS_FIELD => 0,
       ]);
+      if (!$created instanceof MessageInterface) {
+        throw new \LogicException('The message storage returned an unexpected entity.');
+      }
+      $message = $created;
       $message->save();
       if ($direct) {
         try {
@@ -164,7 +168,8 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
       return FALSE;
     }
     $storage = $this->entityTypeManager->getStorage('message');
-    $resolvedById = [];
+    // A holder keeps the resolved batch visible across collect() callbacks.
+    $resolvedById = new \ArrayObject();
     $page = EligibleNoticePage::collect(
       function (int $scanOffset, int $batchSize) use ($storage, $account, $filters): array {
         $query = $storage->getQuery()->accessCheck(FALSE)
@@ -174,13 +179,13 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
         return $query->sort('created', 'DESC')->sort('mid', 'DESC')
           ->range($scanOffset, $batchSize)->execute();
       },
-      function (array $ids) use ($storage, $account, &$resolvedById): array {
+      function (array $ids) use ($storage, $account, $resolvedById): array {
         $messages = array_values($storage->loadMultiple($ids));
-        $resolvedById = $this->resolveMessages($messages, $account);
+        $resolvedById->exchangeArray($this->resolveMessages($messages, $account));
         return $messages;
       },
       fn(mixed $message): ?array => $message instanceof MessageInterface
-        ? ($resolvedById[(string) $message->id()] ?? NULL)
+        ? ($resolvedById->offsetExists((string) $message->id()) ? $resolvedById->offsetGet((string) $message->id()) : NULL)
         : NULL,
       $limit,
       $offset,

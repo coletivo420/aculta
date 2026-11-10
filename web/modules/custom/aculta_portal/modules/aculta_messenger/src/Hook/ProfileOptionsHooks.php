@@ -54,7 +54,7 @@ final class ProfileOptionsHooks {
       return;
     }
     $owner = $profile->getOwner();
-    if (!$owner instanceof UserInterface || !$owner->isActive() || (int) $owner->id() === (int) $this->currentUser->id()) {
+    if (!$owner->isActive() || (int) $owner->id() === (int) $this->currentUser->id()) {
       return;
     }
     unset($actions['friendship']);

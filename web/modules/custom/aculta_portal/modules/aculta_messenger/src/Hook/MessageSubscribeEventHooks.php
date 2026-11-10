@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Hook;
 
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Queue\QueueFactory;
@@ -25,7 +24,7 @@ final class MessageSubscribeEventHooks {
   #[Hook('entity_insert')]
   public function entityInsert(EntityInterface $entity): void {
     if ($entity instanceof NodeInterface && $entity->bundle() === 'aculta_forum_topic' && $entity->isPublished()
-      && !($entity instanceof SynchronizableInterface && $entity->isSyncing())
+      && !$entity->isSyncing()
       && (!$entity->hasField('field_autor_legado') || $entity->get('field_autor_legado')->isEmpty())) {
       $this->enqueue($entity);
     }
@@ -36,7 +35,7 @@ final class MessageSubscribeEventHooks {
   #[Hook('entity_update')]
   public function entityUpdate(EntityInterface $entity): void {
     if (!$entity instanceof NodeInterface || $entity->bundle() !== 'aculta_forum_topic' || !$entity->isPublished()
-      || ($entity instanceof SynchronizableInterface && $entity->isSyncing())
+      || $entity->isSyncing()
       || ($entity->hasField('field_autor_legado') && !$entity->get('field_autor_legado')->isEmpty())) {
       return;
     }
@@ -45,9 +44,10 @@ final class MessageSubscribeEventHooks {
     if (!$original instanceof NodeInterface) {
       return;
     }
-    $becamePublished = !$original->isPublished() && $entity->isPublished();
+    // The hook only runs for published entities, so the current publication
+    // state does not need to be rechecked here.
+    $becamePublished = !$original->isPublished();
     $newPublishedRevision = $original->isPublished()
-      && $entity->isPublished()
       && $original->getRevisionId() !== $entity->getRevisionId();
     if ($becamePublished || $newPublishedRevision) {
       $this->enqueue($entity);

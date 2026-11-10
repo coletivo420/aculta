@@ -115,12 +115,10 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
       }
       $senderId = (int) $privateMessage->getOwnerId();
       $thread = $this->privateMessageService->getThreadFromMessage($privateMessage);
-      if (!$thread instanceof PrivateMessageThreadInterface
-        || !$thread->access('view', $recipient, TRUE)->isAllowed()
+      if (!$thread->access('view', $recipient, TRUE)->isAllowed()
         || !in_array($uid, array_map('intval', $thread->getMembersId()), TRUE)
         || $this->isBlockedPair($senderId, $uid)
-        || (is_numeric($thread->getLastDeleteTimestamp($recipient))
-          && (int) $thread->getLastDeleteTimestamp($recipient) >= $privateMessage->getCreatedTime())) {
+        || $thread->getLastDeleteTimestamp($recipient) >= $privateMessage->getCreatedTime()) {
         $this->markRecordsDone([$notice]);
         continue;
       }

@@ -317,9 +317,6 @@ final class NewConversationController extends ControllerBase {
     $users = $this->entityTypes->getStorage('user')->loadMultiple(array_values($userIds));
     $found = [];
     foreach ($users as $user) {
-      if (!$user instanceof UserInterface) {
-        continue;
-      }
       $publicName = $this->eligibleRecipientName($user);
       if ($publicName === NULL || mb_stripos($publicName, $term) === FALSE) {
         continue;

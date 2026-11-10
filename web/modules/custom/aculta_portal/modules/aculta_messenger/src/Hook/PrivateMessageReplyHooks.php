@@ -16,7 +16,6 @@ use Drupal\Core\Url;
 use Drupal\aculta_messenger\Form\ConversationRelationshipForm;
 use Drupal\aculta_messenger\Service\ConversationMessagingState;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -32,8 +31,6 @@ final class PrivateMessageReplyHooks {
     private readonly FormBuilderInterface $formBuilder,
     #[Autowire(service: 'current_user')]
     private readonly AccountInterface $currentUser,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurposeManager,
     #[Autowire(service: 'aculta_messenger.conversation_messaging')]
     private readonly ConversationMessagingState $messagingState,
   ) {}

@@ -9,7 +9,6 @@ use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
 
@@ -35,7 +34,7 @@ final class ForumNoticeEventProducer implements ForumNoticeEventProducerInterfac
    */
   public function publishComment(CommentInterface $comment): int {
     if (!$comment->isPublished() || $comment->bundle() !== 'aculta_discussion_post'
-      || ($comment instanceof SynchronizableInterface && $comment->isSyncing())) {
+      || $comment->isSyncing()) {
       return 0;
     }
     $topic = $comment->getCommentedEntity();
@@ -58,7 +57,7 @@ final class ForumNoticeEventProducer implements ForumNoticeEventProducerInterfac
    */
   public function publishPost(ForumPost $post): int {
     if (!$post->isPublished() || !$post->isDefaultRevision()
-      || ($post instanceof SynchronizableInterface && $post->isSyncing())
+      || $post->isSyncing()
       || !$post->hasField('topic') || $post->get('topic')->isEmpty()) {
       return 0;
     }
@@ -89,7 +88,7 @@ final class ForumNoticeEventProducer implements ForumNoticeEventProducerInterfac
       || (int) $topic->getRevisionId() !== $revisionId) {
       return 0;
     }
-    $authorUid = method_exists($topic, 'getRevisionUserId') ? (int) $topic->getRevisionUserId() : 0;
+    $authorUid = (int) $topic->getRevisionUserId();
     return $this->publishToFollowers(
       $topic,
       $topic,
