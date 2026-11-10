@@ -25,6 +25,16 @@ final class RevistaCoverSelectionTest extends UnitTestCase {
   private const FIELD_NAME = 'field_media_image';
 
   /**
+   * Provides the translation service the hook uses through Drupal.
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container->set('string_translation', $this->getStringTranslationStub());
+    \Drupal::setContainer($container);
+  }
+
+  /**
    * Monta o hook com dependências simuladas.
    */
   private function hook(): RevistaCoverStudioHooks {

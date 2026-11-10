@@ -258,6 +258,9 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
     $form->setMessenger($this->createMock(MessengerInterface::class));
     $container = new ContainerBuilder();
     $container->set('current_user', $this->createMock(AccountProxyInterface::class));
+    $generator = $this->createMock(\Drupal\Core\Routing\UrlGeneratorInterface::class);
+    $generator->method('generateFromRoute')->willReturn('/gerado');
+    $container->set('url_generator', $generator);
     \Drupal::setContainer($container);
   }
 

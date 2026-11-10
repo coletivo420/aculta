@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\aculta_lms\Form\ClassActivityDeadlineForm;
 use Drupal\group\Entity\GroupInterface;
@@ -23,6 +24,19 @@ use PHPUnit\Framework\Attributes\Group;
 #[CoversClass(ClassActivityDeadlineForm::class)]
 #[Group('aculta_lms')]
 final class ClassActivityDeadlineFormTest extends UnitTestCase {
+
+  /**
+   * Provides the stateless services the form uses through Drupal.
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container->set('string_translation', $this->getStringTranslationStub());
+    $generator = $this->createMock(UrlGeneratorInterface::class);
+    $generator->method('generateFromRoute')->willReturn('/gerado');
+    $container->set('url_generator', $generator);
+    \Drupal::setContainer($container);
+  }
 
   /**
    * The form interprets the entered deadline in the educator's account zone.

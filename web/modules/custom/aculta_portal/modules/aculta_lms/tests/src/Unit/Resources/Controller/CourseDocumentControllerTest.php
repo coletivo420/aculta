@@ -15,6 +15,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupTypeInterface;
@@ -31,6 +32,21 @@ use PHPUnit\Framework\Attributes\Group;
 #[CoversClass(CourseDocumentController::class)]
 #[Group('aculta_lms')]
 final class CourseDocumentControllerTest extends UnitTestCase {
+
+  /**
+   * Provides the stateless services the controller uses through Drupal.
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container->set('string_translation', $this->getStringTranslationStub());
+    $generator = $this->createMock(UrlGeneratorInterface::class);
+    $generator->method('generateFromRoute')->willReturnCallback(
+      static fn (string $routeName): string => $routeName,
+    );
+    $container->set('url_generator', $generator);
+    \Drupal::setContainer($container);
+  }
 
   /**
    * New Media is created through Group's existing attach-to-course form.
@@ -54,7 +70,8 @@ final class CourseDocumentControllerTest extends UnitTestCase {
       ['::submitForm', '::save'],
       $build['actions']['submit']['#submit'],
     );
-    self::assertSame('aculta_lms.course_materials_edit', $build['contextual_return']['#url']->getRouteName());
+    self::assertSame('aculta_portal_button', $build['contextual_return']['#type']);
+    self::assertSame('aculta_lms.course_materials_edit', $build['contextual_return']['#props']['url']);
   }
 
   /**
@@ -121,7 +138,8 @@ final class CourseDocumentControllerTest extends UnitTestCase {
     $build = $controller->edit($course, $document);
 
     self::assertSame(['#type' => 'container'], $build['media_form']);
-    self::assertSame('aculta_lms.course_materials_edit', $build['contextual_return']['#url']->getRouteName());
+    self::assertSame('aculta_portal_button', $build['contextual_return']['#type']);
+    self::assertSame('aculta_lms.course_materials_edit', $build['contextual_return']['#props']['url']);
   }
 
   /**
