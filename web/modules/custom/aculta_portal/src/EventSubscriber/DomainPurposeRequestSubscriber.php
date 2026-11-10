@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Routing\LocalRedirectResponse;
 use Drupal\aculta_portal\Checkout\CheckoutSlugMap;
-use Drupal\aculta_portal\Domain\ContentPurposeResolver;
+use Drupal\aculta_portal\Domain\ContentSiteKeyResolver;
 use Drupal\aculta_portal\Domain\DomainRoutePolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Domain\DomainSurfaceMap;
@@ -41,7 +41,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     private readonly RequestMatcherInterface $accessFreeMatcher,
     private readonly AccountProxyInterface $currentUser,
     private readonly RouteProviderInterface $routeProvider,
-    private readonly ContentPurposeResolver $contentPurposeResolver,
+    private readonly ContentSiteKeyResolver $contentSiteKeyResolver,
   ) {}
 
   /**
@@ -223,7 +223,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $event->setResponse($this->notFoundResponse());
       return;
     }
-    $requiredPurpose = $this->contentPurposeResolver->requiredPurpose(
+    $requiredPurpose = $this->contentSiteKeyResolver->requiredSiteKey(
       $route,
       $matched['_route'],
       $event->getRequest(),
@@ -331,7 +331,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $this->notFound($event);
       return;
     }
-    $requiredPurpose = $this->contentPurposeResolver->requiredPurpose(
+    $requiredPurpose = $this->contentSiteKeyResolver->requiredSiteKey(
       $route,
       (string) $request->attributes->get('_route'),
       $request,
@@ -367,7 +367,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    $contentPurpose = $this->contentPurposeResolver->canonicalContentPurpose($request);
+    $contentPurpose = $this->contentSiteKeyResolver->canonicalContentSiteKey($request);
     if ($contentPurpose !== NULL
       && !DomainRoutePolicy::allowsSharedSite($route, $contentPurpose, (string) $currentPurpose)) {
       $this->notFound($event);

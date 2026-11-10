@@ -818,14 +818,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'aculta_portal.wiki_search' => '/busca-wiki',
       'aculta_portal.wiki_search_preview' => '/busca-wiki/previa',
     ];
-    $purposeResolver = $this->container->get('aculta_portal.content_purpose_resolver');
+    $purposeResolver = $this->container->get('aculta_portal.content_site_key_resolver');
     foreach ($routePaths as $routeName => $path) {
       $route = $routeProvider->getRouteByName($routeName);
       self::assertSame($path, $route->getPath());
       self::assertCount(1, $routeProvider->getRoutesByPattern($path), 'The Wiki path must have one route owner.');
       self::assertSame('access content', $route->getRequirement('_permission'));
       self::assertSame('wiki', $route->getOption('_aculta_site_key'));
-      self::assertSame('wiki', $purposeResolver->requiredPurpose($route, $routeName, Request::create($path)));
+      self::assertSame('wiki', $purposeResolver->requiredSiteKey($route, $routeName, Request::create($path)));
       self::assertTrue($accessManager->checkNamedRoute($routeName, [], new AnonymousUserSession()));
     }
 
@@ -895,7 +895,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('submit wiki proposals', $proposalRoute->getRequirement('_permission'));
     self::assertSame('node.view', $proposalRoute->getRequirement('_entity_access'));
     self::assertSame('wiki', $proposalRoute->getOption('_aculta_site_key'));
-    self::assertSame('wiki', $purposeResolver->requiredPurpose(
+    self::assertSame('wiki', $purposeResolver->requiredSiteKey(
       $proposalRoute,
       'aculta_wiki.proposal_submit',
       Request::create('/verbetes/1/contribuir'),

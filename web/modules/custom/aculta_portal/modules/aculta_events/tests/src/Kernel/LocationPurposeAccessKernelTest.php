@@ -8,8 +8,9 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\aculta_portal\Domain\ContentPurposeResolver;
+use Drupal\aculta_portal\Domain\ContentSiteKeyResolver;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
 use Drupal\aculta_portal\EventSubscriber\DomainPurposeRequestSubscriber;
 use Drupal\domain\DomainNegotiatorInterface;
 use PHPUnit\Framework\Attributes\Group;
@@ -71,7 +72,7 @@ final class LocationPurposeAccessKernelTest extends KernelTestBase {
     $routes->method('getRouteByName')->with($routeName)->willReturn($route);
     $currentUser = $this->createMock(AccountProxyInterface::class);
     $currentUser->method('isAuthenticated')->willReturn(FALSE);
-    $resolver = new ContentPurposeResolver($this->container->get('entity_type.manager'), $purpose);
+    $resolver = new ContentSiteKeyResolver($this->container->get('entity_type.manager'), $this->createMock(DomainSiteManagerInterface::class));
     $subscriber = new DomainPurposeRequestSubscriber(
       $purpose,
       $matcher,

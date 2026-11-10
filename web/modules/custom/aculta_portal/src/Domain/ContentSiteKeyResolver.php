@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Route;
  * site key, with platform administration taking precedence over content
  * ownership.
  */
-final class ContentPurposeResolver {
+final class ContentSiteKeyResolver {
 
   private const WIKI_NODE_ROUTES = [
     'entity.node.edit_form',
@@ -31,13 +31,13 @@ final class ContentPurposeResolver {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
-    private readonly DomainPurposeManager $domainPurpose,
+    private readonly DomainSiteManagerInterface $sites,
   ) {}
 
   /**
    * Resolves site-key metadata for an incoming route.
    */
-  public function requiredPurpose(
+  public function requiredSiteKey(
     Route $route,
     string $routeName,
     Request $request,
@@ -86,7 +86,7 @@ final class ContentPurposeResolver {
   /**
    * Returns the canonical site key of a direct public content request.
    */
-  public function canonicalContentPurpose(Request $request): ?string {
+  public function canonicalContentSiteKey(Request $request): ?string {
     $routeName = (string) $request->attributes->get('_route');
     $raw = $request->attributes->get('_raw_variables');
 
@@ -105,9 +105,7 @@ final class ContentPurposeResolver {
       }
 
       if ($node && $node->hasField('field_domain_source') && !$node->get('field_domain_source')->isEmpty()) {
-        return $this->domainPurpose->getPurposeForDomainId(
-          (string) $node->get('field_domain_source')->target_id
-        );
+        return $this->sites->getSiteKeyForDomainId((string) $node->get('field_domain_source')->target_id)?->value;
       }
     }
 

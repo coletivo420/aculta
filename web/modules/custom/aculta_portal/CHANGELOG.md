@@ -1,3 +1,9 @@
+## Não versionado — resolução de ownership `site_key`
+
+- Substitui `ContentPurposeResolver`/`content_purpose_resolver` por `ContentSiteKeyResolver`/`content_site_key_resolver`, com métodos `requiredSiteKey` e `canonicalContentSiteKey`.
+- A resolução por `field_domain_source` consome `DomainSiteManagerInterface`; migrações em Portal, Events e Wiki atualizam testes e referências de serviço.
+- O subscriber HTTP e outros consumidores funcionais ainda serão migrados em slices seguintes.
+
 ## Não versionado — resolvedor funcional tipado
 
 - `DomainSiteManager` agora implementa resolução Domain, troca/restauração de contexto e URLs canônicas, de ambiente e alias diretamente com `SiteKey`; deixou de delegar no manager baseado em purpose.
