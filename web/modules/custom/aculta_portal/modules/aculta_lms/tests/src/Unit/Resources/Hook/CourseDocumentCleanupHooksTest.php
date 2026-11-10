@@ -8,17 +8,19 @@ use Drupal\aculta_lms\Resources\Cleanup\CourseDocumentCleanupInterface;
 use Drupal\aculta_lms\Hook\CourseDocumentCleanupHooks;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
- * @coversDefaultClass \Drupal\aculta_lms\Resources\Hook\CourseDocumentCleanupHooks
- * @group aculta_lms_resources
+
  */
+#[Group('aculta_lms_resources')]
+#[CoversClass(\Drupal\aculta_lms\Resources\Hook\CourseDocumentCleanupHooks::class)]
 final class CourseDocumentCleanupHooksTest extends UnitTestCase {
 
   /**
    * Course document relationships submit their Media ID for cleanup.
    *
-   * @covers ::relationshipDeleted
    */
   public function testCourseDocumentRelationshipIsSubmitted(): void {
     $cleanup = $this->createMock(CourseDocumentCleanupInterface::class);
@@ -33,7 +35,6 @@ final class CourseDocumentCleanupHooksTest extends UnitTestCase {
   /**
    * Other Group relationships do not trigger document cleanup.
    *
-   * @covers ::relationshipDeleted
    */
   public function testOtherRelationshipIsIgnored(): void {
     $cleanup = $this->createMock(CourseDocumentCleanupInterface::class);

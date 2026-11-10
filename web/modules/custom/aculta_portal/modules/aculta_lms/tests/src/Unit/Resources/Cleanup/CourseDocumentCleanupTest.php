@@ -22,17 +22,20 @@ use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
- * @coversDefaultClass \Drupal\aculta_lms\Resources\Cleanup\CourseDocumentCleanup
- * @group aculta_lms_resources
+
  */
+#[Group('aculta_lms_resources')]
+#[CoversClass(\Drupal\aculta_lms\Resources\Cleanup\CourseDocumentCleanup::class)]
 final class CourseDocumentCleanupTest extends UnitTestCase {
 
   /**
    * A shared Media reference prevents both Media and File removal.
    *
-   * @covers ::removeDetachedDocument
    */
   public function testReferencedMediaIsRetained(): void {
     [$cleanup, $media, , $inspector, $deletionOwner] = $this->cleanup(FileReferenceStatus::Referenced);
@@ -45,10 +48,8 @@ final class CourseDocumentCleanupTest extends UnitTestCase {
 
   /**
    * Published or unrelated Media is never submitted to the shared cleaner.
-   *
-   * @covers ::removeDetachedDocument
-   * @dataProvider protectedMediaProvider
    */
+  #[DataProvider('protectedMediaProvider')]
   public function testPublishedOrUnrelatedMediaIsRetained(bool $published, string $bundle): void {
     [$cleanup, $media, , $inspector, $deletionOwner] = $this->cleanup(
       FileReferenceStatus::Clear,
@@ -78,7 +79,6 @@ final class CourseDocumentCleanupTest extends UnitTestCase {
   /**
    * Group may invoke relationship hooks after the target Media is deleted.
    *
-   * @covers ::removeDetachedDocument
    */
   public function testAlreadyDeletedMediaIsIgnored(): void {
     [$cleanup, , , $inspector, $deletionOwner] = $this->cleanup(
@@ -94,7 +94,6 @@ final class CourseDocumentCleanupTest extends UnitTestCase {
   /**
    * A shared File is retained even after its now-orphan Media is removed.
    *
-   * @covers ::removeDetachedDocument
    */
   public function testFileCleanerRechecksAndRetainsSharedFile(): void {
     [$cleanup, $media, , , $deletionOwner] = $this->cleanup(
@@ -110,7 +109,6 @@ final class CourseDocumentCleanupTest extends UnitTestCase {
   /**
    * The File owner is called only after Portal removes an orphan Media.
    *
-   * @covers ::removeDetachedDocument
    */
   public function testOrphanMediaAndFileUseTheirOwners(): void {
     [$cleanup, $media, $file, , $deletionOwner] = $this->cleanup(

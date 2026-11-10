@@ -9,13 +9,17 @@ use Drupal\comment\CommentInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Tests DiscussionThreadDepthResolver for depth calculation and normalization.
  *
- * @coversDefaultClass \Drupal\aculta_forum\Service\DiscussionThreadDepthResolver
- * @group aculta_forum
+
+
  */
+#[Group('aculta_forum')]
+#[CoversClass(\Drupal\aculta_forum\Service\DiscussionThreadDepthResolver::class)]
 class DiscussionThreadDepthResolverTest extends UnitTestCase {
 
   protected function createResolver(int $maxDepth): DiscussionThreadDepthResolver {

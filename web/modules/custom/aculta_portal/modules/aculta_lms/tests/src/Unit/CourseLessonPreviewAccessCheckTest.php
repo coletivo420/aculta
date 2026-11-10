@@ -18,13 +18,11 @@ use PHPUnit\Framework\Attributes\CoversClass;
 /**
  * Tests private lesson preview authorization.
  *
- * @coversDefaultClass \Drupal\aculta_lms\Access\CourseLessonPreviewAccessCheck
  */
 #[CoversClass(CourseLessonPreviewAccessCheck::class)]
 final class CourseLessonPreviewAccessCheckTest extends UnitTestCase {
 
   /**
-   * @covers ::access
    */
   public function testAllowsMatchingLessonThroughEducatorPolicy(): void {
     $course = $this->createMock(GroupInterface::class);
@@ -50,7 +48,6 @@ final class CourseLessonPreviewAccessCheckTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::access
    */
   public function testDeniesUserWithoutEducatorPermission(): void {
     $account = $this->createMock(AccountProxyInterface::class);

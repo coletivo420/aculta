@@ -13,13 +13,17 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use Psr\Log\LoggerInterface;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Tests TopicDeletionModerationManager permissions and policies.
  *
- * @coversDefaultClass \Drupal\aculta_forum\Service\TopicDeletionModerationManager
- * @group aculta_forum
+
+
  */
+#[Group('aculta_forum')]
+#[CoversClass(\Drupal\aculta_forum\Service\TopicDeletionModerationManager::class)]
 class TopicDeletionModerationManagerTest extends UnitTestCase {
 
   protected function createManager(string $policy, ?AccountInterface $currentUser = NULL): TopicDeletionModerationManager {

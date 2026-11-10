@@ -17,14 +17,14 @@ use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
- * @coversDefaultClass \Drupal\aculta_lms\Notice\LearningEligibility
  */
+#[CoversClass(\Drupal\aculta_lms\Notice\LearningEligibility::class)]
 final class LearningEligibilityTest extends UnitTestCase {
 
   /**
-   * @covers ::courseEnrollmentCacheTags
    */
   public function testCourseEnrollmentCacheTagsIncludeLinkedClassMemberships(): void {
     $class = $this->createMock(GroupInterface::class);
@@ -62,7 +62,6 @@ final class LearningEligibilityTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::hasCurrentEnrollment
    */
   public function testEnrollmentFollowsCourseClassRelationships(): void {
     $previousContainer = \Drupal::hasContainer() ? \Drupal::getContainer() : NULL;

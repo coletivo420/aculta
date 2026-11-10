@@ -21,8 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Tests the educator course structure page.
- *
- * @coversDefaultClass \Drupal\aculta_lms\Controller\CourseStructureController */
+ */
 #[CoversClass(CourseStructureController::class)]
 final class CourseStructureControllerTest extends UnitTestCase {
 
@@ -44,7 +43,6 @@ final class CourseStructureControllerTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::structure
    */
   public function testCourseStructureListsLessonsAndActivitiesFromOwnedEntities(): void {
     $course = $this->createMock(GroupInterface::class);
