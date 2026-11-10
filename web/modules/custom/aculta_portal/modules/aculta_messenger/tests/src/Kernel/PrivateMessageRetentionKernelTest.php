@@ -49,6 +49,11 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
     'private_message_notify',
     'aculta_messenger_retention_test',
     'aculta_file_uploader',
+    'file',
+    'token',
+    'image',
+    'crop',
+    'image_widget_crop',
   ];
 
   /**

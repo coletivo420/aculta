@@ -31,6 +31,11 @@ final class ActiveSiteKeysStateKernelTest extends KernelTestBase {
     'user',
     'domain',
     'aculta_file_uploader',
+    'file',
+    'token',
+    'image',
+    'crop',
+    'image_widget_crop',
   ];
 
   /**

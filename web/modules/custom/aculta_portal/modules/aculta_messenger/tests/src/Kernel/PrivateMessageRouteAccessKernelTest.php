@@ -36,6 +36,11 @@ final class PrivateMessageRouteAccessKernelTest extends KernelTestBase {
     'filter',
     'private_message',
     'aculta_file_uploader',
+    'file',
+    'token',
+    'image',
+    'crop',
+    'image_widget_crop',
   ];
 
   /**

@@ -40,6 +40,11 @@ final class DomainPurposeManagerKernelTest extends KernelTestBase {
     'forum' => 'forum_aculta_org',
     'eventos' => 'eventos_aculta_org',
     'aculta_file_uploader',
+    'file',
+    'token',
+    'image',
+    'crop',
+    'image_widget_crop',
   ];
 
   /**
