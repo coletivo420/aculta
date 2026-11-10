@@ -30,7 +30,7 @@ Beneficios tangiveis:
 | `aculta420_v2.icons.yml` | Packs Phosphor Regular, Duotone e Fluent Emoji declarados | Confirmado no Git |
 | `config/sync/core.extension.yml` | `ui_patterns`, blocks, field, field_formatters, layouts, library, views, `ui_styles`, block, layout_builder, ui_patterns, views habilitados no Sync | Confirmado no Git |
 | `composer.json` (após atualização da US-00) | `ui_patterns` 2.0.x-dev, `ui_patterns_layouts` ^2.0, `ui_patterns_field_group` 2.0.x-dev@dev, `ui_styles` ^1.22, `ui_skins` ^1.2 e `ui_icons` ^2.1 | Confirmado no Git; lock Field Group SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1` |
-| `config/sync/core.extension.yml` | `ui_skins`, `ui_patterns_field_group`, `ui_styles_page`, `ui_styles_ckeditor5` e `ui_patterns_ckeditor5` ausentes do Sync | Confirmado; difere do Runtime |
+| `config/sync/core.extension.yml` | `ui_skins`, `ui_patterns_field_group`, `ui_styles_ckeditor5` e `ui_patterns_ckeditor5` ausentes do Sync | Confirmado; difere do Runtime. `ui_styles_page` foi alinhado ao Runtime em 2026-11-10; Entity Status segue desabilitado |
 | `docs/architecture/inventarios/ui-suite-runtime-2026-11-10.json` | `drush pml` registrou 36 módulos UI Suite; UI Skins Disabled; UI Patterns CKEditor 5 e Field Group Enabled; UI Styles Page Enabled | Captura Runtime versionada; nenhum módulo foi habilitado/desinstalado nesta execução |
 | `drush config:status` | Drift inclui `core.extension` e `ui_icons_patterns.settings`, além de configurações de Fórum, LMS e admin | Não executar `cim`; divergência preservada e listada no snapshot |
 | Composer install | Lock sincronizado com `composer install --no-scripts`; Gin ausente foi instalado. Scaffold de `.htaccess` restaurado ao HEAD | Código de dependências sincronizado; `drush cr` PASS; nenhum script de projeto executado |
@@ -79,17 +79,18 @@ Beneficios tangiveis:
 - As responsabilidades de `DomainPurposeManager` migram para **`DomainSiteManager` + registro `site_key`** no Portal; o resolvedor visual separado mapeia **`domain_id -> skin_id`**, com fallback. O nome `DomainPurposeManager` é apenas compatibilidade temporária até RN-05. Tema não consulta hostname e não muda configuração global do tema por request.
 - UI Skins oferece temas e CSS variables nas configurações do tema, mas **não oferece, por si só, domínio -> skin por request**. Testar API e construir ponte de escopo de resposta sem mutação global e com `cache:contexts:domain`; não criar segunda paleta proprietária.
 - `ColorModePreference` ainda resolve a preferência do usuário; UI Skins passa a ser o motor visual que entrega light/dark. Conferir precedência `usuário > default do site` e caches `domain`/`user`.
-- Fazer migração sombra/dual-read, piloto Links, rollout dos dez domínios, remoção de leitores e formulário de purposes visuais só após zero consumidores. Manter rollback e snapshots de CSS computado (20 combinações mínimas).
+- A configuração/leitura visual por purpose foi removida diretamente. Concluir o piloto Links com capturas aprovadas como referência; depois validar os dez domínios e corrigir somente a implementação UI Skins, sem sombra, dual-read, alias ou restauração de configuração legada.
 - **Gate:** UI Skins é única fonte para aparência, nenhuma contaminação entre domínios, contraste/foco/320 px preservados, configuração exportável e rollback validado.
 - Plano técnico e matriz de classes/consumidores: `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md`.
 
 ### 5.2 UI Styles - composicao contextual
 
-- Habilitar onde justificado: `ui_styles_block`, `ui_styles_layout_builder`, `ui_styles_views`, `ui_styles_ui_patterns` (ja no Sync), e avaliar `ui_styles_page`, `ui_styles_ckeditor5`, `ui_styles_entity_status`.
+- `ui_styles_page` está habilitado no Runtime e alinhado ao Sync. Confirmar estilos de regiões em tela autenticada; `ui_styles_entity_status` segue desabilitado até definir e validar a apresentação de rascunhos sem confundir estado visual com acesso/publicação.
+- Manter `ui_styles_block`, `ui_styles_layout_builder`, `ui_styles_views` e `ui_styles_ui_patterns` (já no Sync) e validar as escolhas disponíveis em cada formulário consumidor.
 - Distinguir estilos de *bloco*, *secao/regiao* e *conteudo*: border, elevation, radius, accent, spacing e tipografia nunca podem quebrar o contrato de 320 px.
 - Para CKEditor 5, oferecer **conjunto editorial restrito**: nota institucional, citacao, destaque, aviso, olho editorial, titulo auxiliar e micro-legenda; sincronizar CSS da area editavel com render no tema. Validar save, reopen, filtro e Drupal CKEditor 5, sem `full_html` para usuarios comuns.
 - `ui_styles_entity_status` oferece estilos para entidades **nao publicadas**, nao e API de workflow, moderacao ou visibilidade. Testar anonimato, usuario sem acesso, revisoes, cache e previews sem expor rascunhos.
-- Em `ui_styles_page`, confirmar que regioes personalizadas recebem `attributes` em Twig; revisar o risco de colidir com o shell institucional antes de permitir edicao.
+- Em `ui_styles_page`, o template customizado da região footer preserva `attributes`; as demais regiões usam wrapper padrão. O shell envolve o conteúdo regional, então revisar visualmente antes de permitir estilos em institution/header/content/footer.
 
 ### 5.3 UI Patterns - blocos, displays, layouts, Field Group e Views
 
@@ -149,7 +150,7 @@ Em todos os casos: layout claro e escuro, breakpoint 320/390/768/1024/1440 px, z
 
 ### US-02 - UI Skins substitui o motor de paletas por purpose
 - Inventariar `PurposePaletteSchemes`, `SurfaceSettingsHooks::purposePaletteStyle`, `aculta_purpose_palette`, `data-purpose-scheme`, selectors CSS, theme-settings e contrato `AppearanceHooks`.
-- Implementar definitions e serviço neutro `Domain ID -> skin_id`, demonstrar modo sombra, integração da preferência light/dark, fallback, cache e rollback.
+- Resolver `Domain ID -> skin_id` diretamente pela configuração Portal (já implementado); homologar modo do usuário, skin default e cache e executar o piloto Links. Não implementar modo sombra, dual-read ou configuração visual anterior.
 - Testar piloto Links antes de migrar cada domínio; depois retirar paleta/formulário visual antiga e aliases após zero consumidores. Não remover `DomainPurposeManager` nem roteamento/ACL.
 - **Gate:** 10 domínios × 2 modos, CSS computado/contraste, independência A/B e B/A de caches e Config Sync sem divergências.
 

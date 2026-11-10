@@ -4,9 +4,9 @@ Estado: Dev · versão 1.5.0 (`aculta420_v2.info.yml`) · status em `docs/operat
 
 ## Próximo passo
 
-- **ADR-054/055, US-00–14 e RN-00–05 em andamento:** motor por purpose removido do tema; UI Skins declara cinco tokens/scopes para dez skins × modos. Portal resolve Domain ID → skin ID. Runtime/render/aceite pendentes; `site_key` segue funcional, sem aliases nem config visual antiga.
-- Composer: UI Skins ^1.2, UI Icons ^2.1, Field Group dev SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1`, **BLOCKED_UPSTREAM** (Core 12/advisories). Runtime Skins Disabled; Patterns CKEditor e Field Group enabled fora do Sync. Patterns CKEditor proibido; Styles CKEditor autorizado.
-- Gates estáticos/fundações PASS; Runtime/browser, responsividade, inventário e migração visual pendentes.
+- **ADR-054/055 e US-00–14/RN-00–05 em andamento:** UI Skins substitui paletas purpose (dez domínios, cinco tokens e modos claro/escuro); sem aliases/config antiga. Runtime Skins Disabled. UI Styles Page alinhado no Sync; regiões e piloto Links aguardam capturas/aceite.
+- Composer: Skins ^1.2, Icons ^2.1; Field Group dev SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1`, **BLOCKED_UPSTREAM** (Core 12/advisories). Patterns CKEditor proibido; Styles CKEditor autorizado.
+- Gates estáticos/fundações PASS; navegador, responsividade, inventário e migração visual pendentes. Entity Status desativado até revisão dos rascunhos.
 - Planos: `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md`, `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md` e `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`.
 
 ## Marcos e pendências

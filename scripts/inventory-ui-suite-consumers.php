@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Generates an auditable inventory of UI Suite integrations and consumers.
+ */
+
 declare(strict_types=1);
 
 use Symfony\Component\Yaml\Yaml;
@@ -48,7 +53,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
     $rows[] = [
       'id' => $viewId,
       'owner_module' => 'unresolved_from_config',
-      'config_path' => relativePath($root, $path),
+      'config_path' => relative_path($root, $path),
       'consumer_type' => 'view_display',
       'consumer_id' => (string) $displayId,
       'display_plugin' => (string) ($display['display_plugin'] ?? ''),
@@ -75,7 +80,7 @@ foreach (glob($sync . '/core.entity_view_display.*.yml') ?: [] as $path) {
   $rows[] = [
     'id' => $id,
     'owner_module' => 'Drupal entity display',
-    'config_path' => relativePath($root, $path),
+    'config_path' => relative_path($root, $path),
     'consumer_type' => 'entity_view_display',
     'consumer_id' => (string) ($display['mode'] ?? ''),
     'display_plugin' => 'layout_builder',
@@ -93,7 +98,7 @@ foreach (glob($sync . '/core.entity_view_display.*.yml') ?: [] as $path) {
 
 $componentIds = [];
 foreach (glob($theme . '/components/*/*.component.yml') ?: [] as $manifest) {
-  $componentIds[basename(dirname($manifest))] = relativePath($root, $manifest);
+  $componentIds[basename(dirname($manifest))] = relative_path($root, $manifest);
 }
 $references = array_fill_keys(array_keys($componentIds), []);
 $scanRoots = [
@@ -117,7 +122,7 @@ foreach ($scanRoots as $scanRoot) {
     }
     foreach ($componentIds as $componentId => $_manifest) {
       if (preg_match('/aculta420_v2:' . preg_quote($componentId, '/') . '\b/', $contents) === 1) {
-        $references[$componentId][] = relativePath($root, $file->getPathname());
+        $references[$componentId][] = relative_path($root, $file->getPathname());
       }
     }
   }
@@ -207,8 +212,8 @@ $moduleInventory = [
   ],
   'drupal/ui_styles_page' => [
     'module' => 'ui_styles_page', 'status' => 'MIGRATION_IN_PROGRESS',
-    'replacement' => 'Integrate page-level style selection with semantic theme tokens and domain skin scopes.',
-    'risk' => 'Absent from Sync; Runtime state unavailable for fresh verification.',
+    'replacement' => 'Use UI Styles on page regions with available region attributes; keep institutional shell ownership in the theme.',
+    'risk' => 'Runtime and Sync now both enable the module; region style assignments and visual effects still need authenticated output review.',
   ],
   'drupal/ui_styles_ckeditor5' => [
     'module' => 'ui_styles_ckeditor5', 'status' => 'MIGRATION_IN_PROGRESS',
@@ -358,7 +363,7 @@ foreach ($moduleInventory as $packageName => $metadata) {
   $rows[] = [
     'id' => $metadata['module'],
     'owner_module' => 'Composer / ' . $metadata['module'],
-    'config_path' => 'composer.json; composer.lock; config/sync/core.extension.yml; ' . relativePath($root, $runtimeSnapshotPath),
+    'config_path' => 'composer.json; composer.lock; config/sync/core.extension.yml; ' . relative_path($root, $runtimeSnapshotPath),
     'consumer_type' => 'ui_suite_integration',
     'consumer_id' => $metadata['module'] . ' (package ' . $packageOwner . ' ' . $ownerVersion . ' @ ' . $ownerReference . '; lock=' . $moduleVersion . ' @ ' . $moduleReference . ')',
     'display_plugin' => $metadata['module'],
@@ -392,7 +397,11 @@ $rows[] = [
   'runtime_status' => 'not_applicable',
 ];
 
-usort($rows, static fn (array $a, array $b): int => [$a['consumer_type'], $a['id'], $a['consumer_id']] <=> [$b['consumer_type'], $b['id'], $b['consumer_id']]);
+usort(
+  $rows,
+  static fn (array $a, array $b): int => [$a['consumer_type'], $a['id'], $a['consumer_id']]
+    <=> [$b['consumer_type'], $b['id'], $b['consumer_id']],
+);
 $directory = dirname($output);
 if (!is_dir($directory) && !mkdir($directory, 0775, TRUE) && !is_dir($directory)) {
   throw new RuntimeException('Unable to create inventory output directory.');
@@ -406,11 +415,11 @@ foreach ($rows as $row) {
   fputcsv($handle, array_map(static fn (string $column): string => (string) $row[$column], $columns), ';');
 }
 fclose($handle);
-printf("Wrote %d inventory rows to %s\n", count($rows), relativePath($root, $output));
+printf("Wrote %d inventory rows to %s\n", count($rows), relative_path($root, $output));
 
 /**
  * Returns a repository-relative path for an inventory record.
  */
-function relativePath(string $root, string $path): string {
+function relative_path(string $root, string $path): string {
   return ltrim(str_replace($root, '', $path), DIRECTORY_SEPARATOR);
 }

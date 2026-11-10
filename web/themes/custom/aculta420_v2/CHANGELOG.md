@@ -4,6 +4,7 @@
 - Declara cinco variáveis CSS no plugin oficial UI Skins e scopes `data-skin` × `data-theme` para dez skins nos modos claro/escuro.
 - Tema aplica `data-skin` e `data-site-key` entregues pelo Portal; a opção de skin é resolvida por Domain ID, sem mutação de configuração global.
 - UI Skins está desativado no Runtime atual; enable, render real, contraste/capturas e aceite visual seguem pendentes. ADRs continuam abertas.
+- Sincroniza `ui_styles_page` no `core.extension.yml`, refletindo sua ativação já existente no Runtime; estilos regionais e captura autenticada permanecem pendentes.
 
 ## Não versionado — dependências reproduzíveis da UI Suite (2026-11-10)
 

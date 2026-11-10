@@ -47,10 +47,10 @@ Opção A: a escolha global do administrador `revista_accent` tem precedência s
 
 - Cada opção de UI Styles aponta para uma classe que já existe no mapa de
   `PortalUiHooks::TOKENS` e no CSS do tema.
-- UI Styles não altera a barra institucional, o foco, os neutros nem a lógica de
-  purpose. `validate-module-theme-boundary.php` continua obrigatório.
-- Botões usam só os tokens `--button-*`. Nunca `--purpose-*` nem
-  `--color-brand-highlight`.
+- UI Styles não altera a barra institucional, o foco, os neutros nem a resolução
+  Domain ID → skin ID. `validate-module-theme-boundary.php` continua obrigatório.
+- Botões usam somente tokens semânticos `--button-*`; identidade visual vem de UI
+  Skins e não há tokens de cor legados por purpose.
 - As opções ficam disponíveis apenas para o papel de administrador Drupal.
 
 ## 5. Validação e Capturas Visuais
@@ -61,8 +61,8 @@ Opção A: a escolha global do administrador `revista_accent` tem precedência s
   - `ui_styles_light_amarelo-lemon-haze_320px.png` e `1440px.png`
   - `ui_styles_dark_amarelo-lemon-haze_320px.png` e `1440px.png`
 - **Evidência histórica:** Firefox ESR validou a paleta anterior em 2026-11-06. Essa rodada antecede o corte para UI Skins e não aprova o comportamento atual. O novo render aguarda UI Skins ativo, capturas e homologação nos dez domínios.
-- **Gates:** `scripts/validate-aculta420-ui-styles.php` PASS nesta rodada; foundations PASS. O gate de render SDC e validação browser de runtime ainda não foram executados nesta retomada.
-- **Teste Unitário:** `PurposePaletteResolutionUnitTest.php` cobrindo resolução de tokens e html_attributes nos dois modos.
+- **Gates:** `scripts/validate-aculta420-ui-styles.php` PASS na migração UI Skins; foundations PASS. Render SDC e validação browser de Runtime ainda não executados nesta retomada.
+- **Teste Unitário:** `DomainSkinResolverTest.php` cobre resolução do mapeamento por Domain ID; comparação CSS em navegador segue pendente.
 
 ## 6. Pendências
 

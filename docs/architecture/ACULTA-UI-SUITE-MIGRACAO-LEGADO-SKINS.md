@@ -45,12 +45,12 @@ Os itens de paleta acima foram removidos do código/configuração versionados; 
 
 ### 2.3 Ordem tecnica
 
-1. Fotografar matriz visual atual dos dez dominios (ambos os modos), variaveis computadas, contraste e bytes de assets.
-2. Implementar UI Skins e contrato em **modo sombra**: calcular nova skin sem mudar pagina; comparar tokens vs legado e registrar diffs.
-3. Habilitar ponte opt-in para **Links / LinkWeed**; manter shell, estrutura e URL. Testar atraves de hosts e cache aquecido.
-4. Migrar dominios em lotes, com mapa por ID e fallback por skin. Evitar alteracao perceptivel nao aprovada; preservacao visual e default.
-5. Remover diretamente `aculta_cores_purpose`, `aculta_purpose_palette`, `data-purpose-scheme` e seletores CSS junto com a substituição de seus consumidores; sem período de aliases, dual-read ou configuração visual legada.
-6. Remover classe `PurposePaletteSchemes` e logica `purposePaletteStyle` no mesmo corte em que todos os chamadores forem migrados, com validação de color mode, Studio e temas. Atualizar configs, schemas, testes e documentação; rollback por revert do commit, sem restaurar comportamento de purpose.
+1. Fotografar, com evidências de navegador, a matriz aprovada dos dez dominios (ambos os modos), variaveis computadas, contraste e bytes de assets.
+2. Ativar diretamente a resolução UI Skins em **Links / LinkWeed**, sem modo sombra, leitura dupla ou configuração visual por purpose; comparar renderizações com as capturas aprovadas.
+3. Corrigir contraste, cache e fidelidade do piloto; testar hosts e cache aquecido nos dois sentidos A/B e B/A.
+4. Migrar os demais dominios em lotes, com mapa determinístico por ID e skin default. Nenhum domínio lê nem conserva configuração visual anterior.
+5. Remover configuração, formulário, seletores CSS e tokens por purpose no mesmo corte dos consumidores. A remoção já foi publicada; não recriar aliases ou leitores para dados ausentes.
+6. Validar modo pessoal, Studio, temas e configurações UI Skins. Rollback de falha visual é correção direta da nova implementação; não restaurar configuração ou comportamento visual por purpose.
 7. Demonstrar que mudar uma skin de um domínio não altera outro e que o Portal continua correto sem o sistema visual de purpose.
 8. Executar RN-00 a RN-05 para substituir também a **nomenclatura funcional** `purpose` por `site_key` (rotas, serviços, render arrays, State, sessões e consumidores), sem alterar comportamento de Domain. Plano: `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`.
 
