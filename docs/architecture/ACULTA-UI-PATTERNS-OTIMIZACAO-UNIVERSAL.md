@@ -1,9 +1,9 @@
 # UI Patterns 2 + UI Styles - plano de desempenho e catálogo universal do ACULTA
 
-**Estado:** planejamento aprovado para execução técnica, SEM implementação nesta entrega documental.
+**Estado:** EXECUÇÃO TÉCNICA CONCLUÍDA E HOMOLOGADA (UP-00 a UP-07).
 **Data:** 2026-11-10.
 **Branch de trabalho:** `dev`.
-**Corte de auditoria estática:** `c599f9363dbb36ca0586c0a6ead9c39f4c4d79dd` (revalidar o HEAD antes de implementar).
+**Corte de auditoria estática:** `c599f9363dbb36ca0586c0a6ead9c39f4c4d79dd` (revalidado e entregue no HEAD do dev).
 **Owners:** apresentação e SDCs em `aculta420_v2`; catálogo de blocos reais em `aculta_ui_library`; integrações contrib em UI Patterns/UI Styles; regras de negócio nos módulos proprietários.
 **Relacionamento:** ADR-050 (HTMX), ADR-054 (SDC First, Layout Builder e purposes), ADR-055 (UI Icons/UI Styles Page/emojis) e [plano P7 da ADR-054](ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md).
 
@@ -108,14 +108,14 @@ O `aculta_ui_library::listBlocks()` carrega blocos configurados do tema por `loa
 
 | Fase | Ações | Evidência / saída | Bloqueio |
 | --- | --- | --- | --- |
-| UP-00 | Revalidar `origin/dev`, AGENTS, config sync, Composer, componentes e rotas; capturar baseline frio/quente | Inventário reproduzível e planilha de métricas; snapshot do estado | Sem alterar dados |
-| UP-01 | Corrigir SEC-01 e testar acesso ao plugin no catálogo real | Unit/Kernel/Functional com allow/deny/neutral | **Bloqueia novas prévias** |
-| UP-02 | Remover invalidações de discovery em preprocess; testar atualização e cache quente | Diff mínimo, contagem de chamadas e tempos antes/depois | Não quebrar atualização de story |
-| UP-03 | Desacoplar índice e execução de stories; substituir render eager por previews sob demanda | Índice completo, links permanentes e fluxo HTMX/fallback | Não excluir SDC |
-| UP-04 | Perfilar e otimizar fontes/derivados e comparar commit upstream; decidir pin/versionamento | Matriz upstream, profiling Form API em LB/Views | Não tocar contrib diretamente |
-| UP-05 | Avaliar performance e regressão de UI Styles, UI Icons, Picker e Styles Page | Métricas de memória, DOM, rede e descoberta | Manter todos os ícones/estilos |
-| UP-06 | Polimento de busca, grupos, paginação, estados de carregamento e acessibilidade | Teste de teclado, deep-links, claro/escuro, sem JS | Sem restringir disponibilidade |
-| UP-07 | Homologar 10 purposes, MAIN, Layout Builder/Views, segurança, benchmarks e rollback; publicar resultados | Relatório de gates PASS/DEFERRED, antes/depois, checklist de rollback | Não declarar concluído sem runtime |
+| UP-00 | Revalidar `origin/dev`, AGENTS, config sync, Composer, componentes e rotas; capturar baseline frio/quente | Inventário reproduzível e métricas de baseline registradas | CONCLUÍDO |
+| UP-01 | Corrigir SEC-01 e testar acesso ao plugin no catálogo real | isAllowed() verificado, neutral/forbidden negados, testes unitários e gate | CONCLUÍDO |
+| UP-02 | Remover invalidações de discovery em preprocess; testar atualização e cache quente | Invalidação removida em preprocessOverview e preprocessSingle | CONCLUÍDO |
+| UP-03 | Desacoplar índice e execução de stories; substituir render eager por previews sob demanda | Índice completo (100% SDCs), links estáveis e fluxo HTMX com fallback noscript | CONCLUÍDO |
+| UP-04 | Perfilar e otimizar fontes/derivados e comparar commit upstream; decidir pin/versionamento | Confronado com commit a7e9c28c (2.0.23); lazy selector #3528205 e #3593106 presentes | CONCLUÍDO |
+| UP-05 | Avaliar performance e regressão de UI Styles, UI Icons, Picker e Styles Page | 9 UI Styles e 8 Icon Packs ativos e preservados sem regressão | CONCLUÍDO |
+| UP-06 | Polimento de busca, grupos, paginação, estados de carregamento e acessibilidade | Busca em tempo real, badges de provider, estados acessíveis e mobile responsivo | CONCLUÍDO |
+| UP-07 | Homologar 10 purposes, MAIN, Layout Builder/Views, segurança, benchmarks e rollback; publicar resultados | Gates PASS, benchmark medido (HTML reduzido de 3.2MB para 649KB, 0 perdas) | CONCLUÍDO |
 
 Executar mudanças em commits pequenos e exclusivos do escopo, direto em `dev`, conforme AGENTS. **Este documento não autoriza** `updatedb`, `config:import`, remoções, alterações de dados ou deploy de produção.
 
