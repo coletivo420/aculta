@@ -4,7 +4,7 @@ Regra: rode **somente** os gates do escopo do diff e dos módulos que dependem d
 
 ## CI
 
-`.github/workflows/php-quality.yml` roda só lint PHP e PHPStan em push e PR para `main`. Nenhum validador de `scripts/validate-*.php` roda em CI. Os gates abaixo são executados pelo agente ou pelo responsável.
+`.github/workflows/php-quality.yml` roda lint PHP, descoberta PHPUnit e a suíte Unit em push e PR para `main` e `dev`. O PHPStan ainda tolera falhas (`|| true`) até a estabilização do baseline. Nenhum validador de `scripts/validate-*.php` roda em CI. Os gates abaixo são executados pelo agente ou pelo responsável.
 
 ## Como rodar
 
@@ -38,7 +38,8 @@ Regra: rode **somente** os gates do escopo do diff e dos módulos que dependem d
 | Aceite único de termos | `validate-single-acceptance.php` | |
 | Wiki | Unit do `aculta_wiki` (comando em `web/modules/custom/aculta_portal/modules/aculta_wiki/AGENTS.md`) | |
 | Tema ACULTA420 V2 | Gates listados em `web/themes/custom/aculta420_v2/docs/gates.md` | Regras do tema ficam lá |
-| Tema ACULTA420 V1 (somente referência) | `validate-aculta420-sdc-schemas.php`, `validate-aculta420-design-foundations.php`, `validate-browser-validators.php`; foundation e shell via `php:script` | Só se a tarefa tocar o tema V1, que é somente leitura |
+| Tema ACULTA420 (V1 removido) | `validate-aculta420-sdc-schemas.php`, `validate-aculta420-design-foundations.php`, `validate-browser-validators.php`; foundation via `php:script` | O V1 não existe mais no checkout: o design-foundations valida o `aculta420_v2`. O antigo `validate-aculta420-shell-contract.php` foi aposentado |
+| Qualquer teste PHPUnit, `phpunit.xml`, `phpunit.performance.xml` ou `scripts/phpunit-suites.php` | `php scripts/phpunit-suites.php --check` e `vendor/bin/phpunit --testsuite unit` | A guarda falha se um `*Test.php` ficar fora das suítes ou se uma suíte obrigatória esvaziar. Benchmarks: `vendor/bin/phpunit -c phpunit.performance.xml` (opt-in) |
 | Qualquer arquivo PHP alterado | `php -l` nos arquivos alterados | Projeto inteiro: via `agent-output.py` |
 | Documentos de leitura de partida (`AGENTS.md`, `CLAUDE.md`, `TODO.md`, TODO de componente, handoff) | `php scripts/validate-agent-token-budget.php` | Limites de bytes, versão do TODO igual ao `info.yml`, roadmap citado existe, handoff com até 3 entradas, cada skill com link em `.claude/skills/`, trechos exigidos por gates no AGENTS |
 | Tabela "Não ler por padrão" (`AGENT-TOKEN-ECONOMY.md`) | `php scripts/validate-agent-economy-paths.php` | Caminhos existem e tamanhos declarados batem com o real (±2x); `vendor/` ausente é aceito |
