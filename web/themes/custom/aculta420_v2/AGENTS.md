@@ -85,7 +85,7 @@ Antes de abrir a entrega, o agente responde a este checklist no relatório:
 ## 7. Não faça
 
 - Não crie componente só para substituir uma classe utilitária simples sem contrato reutilizável.
-- Não adote UI Suite, `drupal/bootstrap_components` ou outra suíte concorrente sem nova decisão arquitetural.
+- Não adote outra suíte concorrente (como `drupal/bootstrap_components` ou design systems externos) sem nova decisão arquitetural; a integração da UI Suite oficial (`drupal/ui_patterns`, `drupal/ui_styles`, `drupal/ui_icons`) foi decidida nas ADR-054 e ADR-055 como infraestrutura do tema e de seus SDCs, sem concorrer com a arquitetura visual nem substituir o tema ACULTA420 V2.
 - Não grave segredo, token, caminho de Homelab ou hostname de produção no tema.
 - Não apague conteúdo, não altere configuração exportada sem pedido e não escreva no Runtime sem autorização.
 - Não declare o tema "12 ready" sem a validação do ADR-045.

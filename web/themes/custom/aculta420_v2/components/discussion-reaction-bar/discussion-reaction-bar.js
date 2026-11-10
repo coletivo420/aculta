@@ -5,6 +5,8 @@
 ((Drupal, once) => {
   'use strict';
 
+  let activeTrigger = null;
+
   function closeAllPickers() {
     document.querySelectorAll('.discussion-reaction-bar__picker-container').forEach((container) => {
       if (container.children.length > 0) {
@@ -16,6 +18,10 @@
         }
       }
     });
+    if (activeTrigger) {
+      activeTrigger.focus();
+      activeTrigger = null;
+    }
   }
 
   Drupal.behaviors.discussionReactionBar = {
@@ -33,11 +39,12 @@
               event.stopPropagation();
               container.innerHTML = '';
               trigger.setAttribute('aria-expanded', 'false');
+              activeTrigger = null;
               return;
             }
             // Close any other open pickers before opening this one
             closeAllPickers();
-            // Otherwise let HTMX execute data-hx-get
+            activeTrigger = trigger;
             trigger.setAttribute('aria-expanded', 'true');
             return;
           }
@@ -60,6 +67,55 @@
         document.addEventListener('keydown', (event) => {
           if (event.key === 'Escape') {
             closeAllPickers();
+          }
+        });
+
+        // Instant search and keyboard navigation in emoji popover:
+        document.addEventListener('input', (event) => {
+          const searchInput = event.target && event.target.matches ? (event.target.matches('[data-reaction-picker-search]') ? event.target : null) : null;
+          if (!searchInput) {
+            return;
+          }
+          const popup = searchInput.closest('[data-reaction-picker-popup]');
+          if (!popup) {
+            return;
+          }
+          const query = searchInput.value.trim().toLowerCase();
+          const categories = popup.querySelectorAll('[data-reaction-category]');
+          let totalVisible = 0;
+
+          categories.forEach((cat) => {
+            const buttons = cat.querySelectorAll('.discussion-reaction-bar__palette-btn');
+            let catVisible = 0;
+            buttons.forEach((btn) => {
+              const name = btn.getAttribute('data-emoji-name') || '';
+              const keywords = btn.getAttribute('data-emoji-keywords') || '';
+              const match = !query || name.includes(query) || keywords.includes(query);
+              const form = btn.closest('.discussion-reaction-bar__popup-form');
+              if (form) {
+                form.style.display = match ? 'inline' : 'none';
+              }
+              if (match) {
+                catVisible++;
+              }
+            });
+            cat.style.display = catVisible > 0 ? '' : 'none';
+            totalVisible += catVisible;
+          });
+
+          const emptyEl = popup.querySelector('.discussion-reaction-bar__empty');
+          if (emptyEl) {
+            emptyEl.hidden = totalVisible > 0;
+          }
+        });
+
+        // Set focus on search input when HTMX populates container:
+        document.addEventListener('htmx:afterSwap', (event) => {
+          if (event.target && event.target.classList && event.target.classList.contains('discussion-reaction-bar__picker-container')) {
+            const search = event.target.querySelector('[data-reaction-picker-search]');
+            if (search) {
+              search.focus();
+            }
           }
         });
       });

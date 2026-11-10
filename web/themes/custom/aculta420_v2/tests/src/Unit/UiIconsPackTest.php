@@ -36,6 +36,19 @@ final class UiIconsPackTest extends UnitTestCase {
       self::assertNotEmpty($pack['config']['sources'] ?? []);
       self::assertNotEmpty($pack['template'] ?? '');
     }
+
+    // Valida que os arquivos SVG dos 3 packs existem nos caminhos configurados
+    $regularFiles = glob($themeDir . '/assets/icons/phosphor/regular/*.svg');
+    self::assertNotEmpty($regularFiles, 'SVG regular do Phosphor não encontrados.');
+    self::assertGreaterThanOrEqual(1000, count($regularFiles));
+
+    $duotoneFiles = glob($themeDir . '/assets/icons/phosphor/duotone/*-duotone.svg');
+    self::assertNotEmpty($duotoneFiles, 'SVG duotone do Phosphor não encontrados.');
+    self::assertGreaterThanOrEqual(1000, count($duotoneFiles));
+
+    $fluentFiles = glob($themeDir . '/assets/icons/fluent-emoji/color/*.svg');
+    self::assertNotEmpty($fluentFiles, 'SVG do Fluent Emoji não encontrados.');
+    self::assertGreaterThanOrEqual(48, count($fluentFiles));
   }
 
 }

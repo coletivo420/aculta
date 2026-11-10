@@ -101,14 +101,85 @@
 .discussion-reaction-bar__popup {
   position: absolute;
   z-index: 100;
-  padding: .5rem;
-  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: .75rem;
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-lg, .75rem);
   background-color: var(--color-surface-raised);
   box-shadow: var(--shadow-md);
+  inline-size: min(18rem, 90vw);
+  max-block-size: 22rem;
+  gap: .5rem;
   inset-block-end: calc(100% + .5rem);
   inset-inline-start: 0;
+}
+
+.discussion-reaction-bar__picker-header {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.discussion-reaction-bar__search {
+  flex: 1;
+  box-sizing: border-box;
+  padding: .35rem .625rem;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-full, 9999px);
+  outline: none;
+  background-color: var(--color-surface-subtle);
+  font-size: var(--font-size-xs, .8125rem);
+}
+
+.discussion-reaction-bar__search:focus {
+  border-color: var(--color-brand-primary);
+}
+
+.discussion-reaction-bar__picker-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  border: none;
+  border-radius: var(--border-radius-full, 9999px);
+  background: transparent;
+  font-size: 1.25rem;
+  line-height: 1;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+}
+
+.discussion-reaction-bar__picker-close:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-subtle);
+}
+
+.discussion-reaction-bar__categories {
+  display: flex;
+  overflow-y: auto;
+  flex-direction: column;
+  gap: .625rem;
+}
+
+.discussion-reaction-bar__category-title {
+  margin-block-end: .25rem;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs, .75rem);
+  font-weight: var(--font-weight-semibold, 600);
+}
+
+.discussion-reaction-bar__empty {
+  padding: .5rem 0;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs, .8125rem);
 }
 
 .discussion-reaction-bar__popup[hidden] {
@@ -117,6 +188,7 @@
 
 .discussion-reaction-bar__palette {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: .35rem;
 }

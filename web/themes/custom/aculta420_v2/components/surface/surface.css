@@ -8,30 +8,31 @@
   inline-size: 100%;
   max-inline-size: 100%;
   overflow-wrap: break-word;
-  transition: background-color var(--motion-base, 180ms) ease,
-              border-color var(--motion-base, 180ms) ease,
-              box-shadow var(--motion-base, 180ms) ease;
+  transition:
+    background-color var(--motion-base, 180ms) ease,
+    border-color var(--motion-base, 180ms) ease,
+    box-shadow var(--motion-base, 180ms) ease;
 }
 
 /* Fundo semântico */
 .aculta-surface--tone-canvas {
-  background-color: var(--color-canvas);
   color: var(--color-text-primary);
+  background-color: var(--color-canvas);
 }
 
 .aculta-surface--tone-raised {
-  background-color: var(--color-surface-raised);
   color: var(--color-text-primary);
+  background-color: var(--color-surface-raised);
 }
 
 .aculta-surface--tone-subtle {
-  background-color: var(--color-surface-subtle);
   color: var(--color-text-primary);
+  background-color: var(--color-surface-subtle);
 }
 
 .aculta-surface--tone-institution {
-  background-color: var(--color-surface-institution);
   color: var(--color-text-primary);
+  background-color: var(--color-surface-institution);
 }
 
 /* Raio dos cantos */
@@ -40,11 +41,11 @@
 }
 
 .aculta-surface--radius-sm {
-  border-radius: var(--radius-sm, 0.25rem);
+  border-radius: var(--radius-sm, .25rem);
 }
 
 .aculta-surface--radius-md {
-  border-radius: var(--radius-base, 0.5rem);
+  border-radius: var(--radius-base, .5rem);
 }
 
 .aculta-surface--radius-lg {
@@ -65,7 +66,7 @@
 }
 
 .aculta-surface--spacing-compact {
-  padding: var(--spacing-sm, 0.5rem);
+  padding: var(--spacing-sm, .5rem);
 }
 
 .aculta-surface--spacing-normal {

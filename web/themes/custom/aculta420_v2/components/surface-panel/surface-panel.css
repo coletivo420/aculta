@@ -6,45 +6,46 @@
 .aculta-surface-panel {
   position: relative;
   display: flex;
+  overflow: hidden;
   flex-direction: column;
   box-sizing: border-box;
+  transition:
+    background-color var(--motion-base, 180ms) ease,
+    border-color var(--motion-base, 180ms) ease,
+    box-shadow var(--motion-base, 180ms) ease;
+  border: 1px solid var(--color-alpha-border-75, var(--color-border));
   inline-size: 100%;
   max-inline-size: 100%;
-  overflow: hidden;
-  border: 1px solid var(--color-alpha-border-75, var(--color-border));
-  transition: background-color var(--motion-base, 180ms) ease,
-              border-color var(--motion-base, 180ms) ease,
-              box-shadow var(--motion-base, 180ms) ease;
 }
 
 /* Fundo semântico do corpo */
 .aculta-surface-panel--tone-canvas {
-  background-color: var(--color-canvas);
   color: var(--color-text-primary);
+  background-color: var(--color-canvas);
 }
 
 .aculta-surface-panel--tone-raised {
-  background-color: var(--color-surface-raised);
   color: var(--color-text-primary);
+  background-color: var(--color-surface-raised);
 }
 
 .aculta-surface-panel--tone-subtle {
-  background-color: var(--color-surface-subtle);
   color: var(--color-text-primary);
+  background-color: var(--color-surface-subtle);
 }
 
 .aculta-surface-panel--tone-institution {
-  background-color: var(--color-surface-institution);
   color: var(--color-text-primary);
+  background-color: var(--color-surface-institution);
 }
 
 /* Raio dos cantos */
 .aculta-surface-panel--radius-sm {
-  border-radius: var(--radius-sm, 0.25rem);
+  border-radius: var(--radius-sm, .25rem);
 }
 
 .aculta-surface-panel--radius-md {
-  border-radius: var(--radius-base, 0.5rem);
+  border-radius: var(--radius-base, .5rem);
 }
 
 .aculta-surface-panel--radius-lg {
@@ -91,65 +92,65 @@
    CABEÇALHO INSTITUCIONAL (REFERÊNCIAS 05, 06, 07, 08)
    ======================================================== */
 .aculta-surface-panel__header {
-  box-sizing: border-box;
-  inline-size: 100%;
-  min-block-size: 3.5rem; /* Altura do bloco verde superior */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--spacing-sm, 0.5rem);
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: 3.5rem; /* Altura do bloco verde superior */
+  gap: var(--spacing-sm, .5rem);
 }
 
 .aculta-surface-panel--header-institutional .aculta-surface-panel__header {
-  background-color: var(--palette-green, #689427);
   color: var(--color-on-brand, #fff);
   border-block-end: 1px solid var(--color-border);
+  background-color: var(--palette-green, #689427);
 }
 
 [data-theme="dark"] .aculta-surface-panel--header-institutional .aculta-surface-panel__header,
 :root[data-theme="dark"] .aculta-surface-panel--header-institutional .aculta-surface-panel__header {
-  /* No modo escuro das referências 07 e 08, o verde do cabeçalho é mais escuro e fechado */
-  background-color: #2e4d22;
   color: var(--color-text-primary, #f4efe8);
   border-block-end: 1px solid var(--color-border);
+  /* No modo escuro das referências 07 e 08, o verde do cabeçalho é mais escuro e fechado */
+  background-color: #2e4d22;
 }
 
 .aculta-surface-panel--header-subtle .aculta-surface-panel__header {
-  background-color: var(--color-surface-subtle);
   color: var(--color-text-primary);
   border-block-end: 1px solid var(--color-border);
+  background-color: var(--color-surface-subtle);
 }
 
 .aculta-surface-panel--header-transparent .aculta-surface-panel__header {
-  background-color: transparent;
   color: var(--color-text-primary);
   border-block-end: 1px solid var(--color-border);
+  background-color: transparent;
 }
 
 /* ========================================================
    CORPO DE CONTEÚDO, RODAPÉ E AÇÕES
    ======================================================== */
 .aculta-surface-panel__content {
-  box-sizing: border-box;
   flex: 1 1 auto;
+  box-sizing: border-box;
   inline-size: 100%;
   overflow-wrap: break-word;
 }
 
 .aculta-surface-panel__footer {
   box-sizing: border-box;
-  inline-size: 100%;
-  border-block-start: 1px solid var(--color-border);
   color: var(--color-text-secondary);
+  border-block-start: 1px solid var(--color-border);
+  inline-size: 100%;
 }
 
 .aculta-surface-panel__actions {
-  box-sizing: border-box;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--spacing-sm, 0.5rem);
+  box-sizing: border-box;
   border-block-start: 1px solid var(--color-border);
+  gap: var(--spacing-sm, .5rem);
 }
 
 /* Espaçamento interno (padding) */
@@ -164,7 +165,7 @@
 .aculta-surface-panel--spacing-compact .aculta-surface-panel__content,
 .aculta-surface-panel--spacing-compact .aculta-surface-panel__footer,
 .aculta-surface-panel--spacing-compact .aculta-surface-panel__actions {
-  padding: var(--spacing-sm, 0.5rem);
+  padding: var(--spacing-sm, .5rem);
 }
 
 .aculta-surface-panel--spacing-normal .aculta-surface-panel__header,
