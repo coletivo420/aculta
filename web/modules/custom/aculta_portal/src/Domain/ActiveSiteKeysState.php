@@ -18,7 +18,7 @@ final class ActiveSiteKeysState {
 
   public function __construct(
     private readonly StateInterface $state,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManagerInterface $sites,
   ) {}
 
   /**
@@ -31,8 +31,8 @@ final class ActiveSiteKeysState {
     $active = [];
     foreach (SiteKey::cases() as $siteKey) {
       $key = $siteKey->value;
-      $domain = $this->domainPurposeManager->getDomain($key);
-      $url = $this->domainPurposeManager->pathUrl($key, '/');
+      $domain = $this->sites->getDomain($siteKey);
+      $url = $this->sites->pathUrl($siteKey, '/');
       if ($domain !== NULL && $domain->status() && $url !== NULL) {
         $active[] = $key;
       }

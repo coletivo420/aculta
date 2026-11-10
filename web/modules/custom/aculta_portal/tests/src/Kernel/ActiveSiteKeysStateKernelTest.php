@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_portal\Kernel;
 
 use Drupal\aculta_portal\Domain\ActiveSiteKeysState;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKeyRegistry;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Drupal\aculta_portal\Hook\DomainLifecycleHooks;
@@ -71,11 +72,12 @@ final class ActiveSiteKeysStateKernelTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('domain');
 
-    $manager = new DomainPurposeManager(
+    $manager = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get(DomainNegotiatorInterface::class),
       $this->container->get('config.factory'),
       $this->container->get('request_stack'),
+      new SiteKeyRegistry(),
     );
     $this->activeSiteKeysState = new ActiveSiteKeysState(
       $this->container->get('state'),

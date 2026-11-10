@@ -1,3 +1,8 @@
+## Não versionado — resolvedor funcional tipado
+
+- `DomainSiteManager` agora implementa resolução Domain, troca/restauração de contexto e URLs canônicas, de ambiente e alias diretamente com `SiteKey`; deixou de delegar no manager baseado em purpose.
+- `ActiveSiteKeysState` usa somente a API tipada. O serviço `DomainPurposeManager` continua preservado durante a migração funcional dos seus consumidores.
+
 ## Não versionado — State funcional `site_key`
 
 - Substitui o serviço e a chave de State `active_purposes` por `active_site_keys`; não lê nem mantém fallback da chave removida.

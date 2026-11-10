@@ -4,89 +4,246 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Domain;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_portal\Environment\DeployerEnvironment;
 use Drupal\domain\DomainInterface;
+use Drupal\domain\DomainNegotiatorInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Site-key API that delegates to the existing, behavior-preserving resolver.
+ * Resolves ACULTA sites to their configured domain entities.
  */
 final class DomainSiteManager implements DomainSiteManagerInterface {
 
+  /**
+   * Canonical Domain IDs generated from production hosts.
+   */
   public function __construct(
-    private readonly DomainPurposeManagerInterface $legacyResolver,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly DomainNegotiatorInterface $domainNegotiator,
+    private readonly ConfigFactoryInterface $configFactory,
+    private readonly RequestStack $requestStack,
     private readonly SiteKeyRegistry $siteKeys,
+    private readonly ?string $appRoot = NULL,
   ) {}
 
   /**
-   * Resolves the active site key from the existing domain resolver.
+   * Returns the current request.
+   */
+  private function getCurrentRequest(): ?Request {
+    return $this->requestStack->getCurrentRequest();
+  }
+
+  /**
+   * Returns the site key associated with the active Domain entity.
    */
   public function getCurrentSiteKey(): ?SiteKey {
-    $value = $this->legacyResolver->getCurrentPurpose();
-    return $value === NULL ? NULL : $this->siteKeys->fromValue($value);
+    $domain = $this->domainNegotiator->getActiveDomain();
+    return $domain instanceof DomainInterface ? $this->getSiteKeyForDomainId($domain->id()) : NULL;
   }
 
   /**
-   * Resolves a site key from a Drupal Domain ID.
+   * Resolves a site key from a configured Domain ID.
    */
   public function getSiteKeyForDomainId(string $domainId): ?SiteKey {
-    $value = $this->legacyResolver->getPurposeForDomainId($domainId);
-    return $value === NULL ? NULL : $this->siteKeys->fromValue($value);
+    return $this->siteKeys->forDomainId($domainId);
   }
 
   /**
-   * Runs a callback with the selected site's Domain active.
+   * Executes a callback with the site's domain active, then restores it.
+   *
+   * Avalia acesso no site de origem, como verbetes da WIKI no sitemap.
+   *
+   * Não altera a regra de acesso; muda apenas o contexto da avaliação.
    */
   public function runInSite(SiteKey $siteKey, callable $callback): mixed {
-    return $this->legacyResolver->runInPurpose($siteKey->value, $callback);
+    $domain = $this->getDomain($siteKey);
+    if ($domain === NULL) {
+      return NULL;
+    }
+    $previous = $this->domainNegotiator->getActiveDomain();
+    $context = $this->domainNegotiator->getContext();
+    $context->setDomain($domain);
+    $context->setNegotiated(TRUE);
+    try {
+      return $callback();
+    }
+    finally {
+      // Without a previous domain, restore negotiation to its initial state.
+      if ($previous instanceof DomainInterface) {
+        $context->setDomain($previous);
+        $context->setNegotiated(TRUE);
+      }
+      else {
+        $this->domainNegotiator->getActiveDomain(TRUE);
+      }
+    }
   }
 
   /**
-   * Loads the Domain associated with a site key.
+   * Returns a domain entity for a site key.
    */
   public function getDomain(SiteKey $siteKey): ?DomainInterface {
-    return $this->legacyResolver->getDomain($siteKey->value);
+    $id = $this->siteKeys->domainId($siteKey);
+    $domain = $this->entityTypeManager->getStorage('domain')->load($id);
+    return $domain instanceof DomainInterface ? $domain : NULL;
   }
 
   /**
-   * Builds an absolute route URL for a site key.
+   * Generates an absolute route URL using the active Domain Alias context.
    */
   public function routeUrl(SiteKey $siteKey, string $routeName, array $parameters = []): ?Url {
-    return $this->legacyResolver->routeUrl($siteKey->value, $routeName, $parameters);
+    $domain = $this->getDomain($siteKey);
+    if (!$domain) {
+      return NULL;
+    }
+    $activeDomain = $this->domainNegotiator->getActiveDomain();
+    // Do not mutate the loaded entity when adapting a non-default alias URL.
+    $domain = clone $domain;
+    if ($activeDomain && isset($activeDomain->alias)
+      && $activeDomain->alias->getEnvironment() !== 'default') {
+      $request = $this->getCurrentRequest();
+      if ($request) {
+        $domain->set('scheme', $request->getScheme());
+        $domain->setPath();
+      }
+    }
+    return Url::fromRoute($routeName, $parameters, [
+      'absolute' => TRUE,
+      'domain' => $domain,
+      'https' => $domain->isHttps(),
+    ]);
   }
 
   /**
-   * Builds an absolute canonical route URL.
+   * Generates an absolute route URL on the configured canonical domain.
    */
   public function canonicalRouteUrl(SiteKey $siteKey, string $routeName, array $parameters = []): ?Url {
-    return $this->legacyResolver->canonicalRouteUrl($siteKey->value, $routeName, $parameters);
+    $domainId = $this->siteKeys->domainId($siteKey);
+    $domain = $this->getDomain($siteKey);
+    if (!$domain) {
+      return NULL;
+    }
+    $config = $this->configFactory->get('domain.record.' . $domainId);
+    $hostname = $config->get('hostname');
+    if (!is_string($hostname) || $hostname === '') {
+      return NULL;
+    }
+    // Domain Alias rewrites loaded Domain entities for the current environment.
+    // Restore the configured hostname before creating production URLs.
+    $domain = clone $domain;
+    $domain->setHostname($hostname);
+    $domain->set('scheme', $config->get('scheme') ?: 'https');
+    $domain->setPath();
+    return Url::fromRoute($routeName, $parameters, [
+      'absolute' => TRUE,
+      'domain' => $domain,
+      'https' => $domain->isHttps(),
+    ]);
   }
 
   /**
-   * Builds an absolute path URL on the configured canonical domain.
+   * Generates an absolute path URL on the canonical domain.
+   *
+   * Uses the production hostname from the domain record, never an alias.
    */
   public function canonicalPathUrl(SiteKey $siteKey, string $path): ?Url {
-    return $this->legacyResolver->canonicalPathUrl($siteKey->value, $path);
+    if (!str_starts_with($path, '/') || str_starts_with($path, '//')) {
+      return NULL;
+    }
+    $domainId = $this->siteKeys->domainId($siteKey);
+    $domain = $this->getDomain($siteKey);
+    if (!$domain) {
+      return NULL;
+    }
+    $config = $this->configFactory->get('domain.record.' . $domainId);
+    $hostname = $config->get('hostname');
+    if (!is_string($hostname) || $hostname === '') {
+      return NULL;
+    }
+    $domain = clone $domain;
+    $domain->setHostname($hostname);
+    $domain->set('scheme', $config->get('scheme') ?: 'https');
+    $domain->setPath();
+    return Url::fromUri(rtrim($domain->getPath(), '/') . $path);
   }
 
   /**
-   * Builds an absolute route URL for the active deployment environment.
+   * Generates an absolute route URL on the active Deployer environment's host.
+   *
+   * Use this for environment-specific artifacts such as test sitemaps. Public
+   * production URLs continue to use canonicalRouteUrl().
    */
   public function environmentRouteUrl(SiteKey $siteKey, string $routeName, array $parameters = []): ?Url {
-    return $this->legacyResolver->environmentRouteUrl($siteKey->value, $routeName, $parameters);
+    $domainId = $this->siteKeys->domainId($siteKey);
+    $domain = $this->getDomain($siteKey);
+    $host = $this->deployerHost($domainId);
+    if ($domain === NULL || $host === NULL) {
+      return NULL;
+    }
+    $domain = clone $domain;
+    $domain->setHostname($host);
+    $domain->set('scheme', 'https');
+    $domain->setPath();
+    return Url::fromRoute($routeName, $parameters, [
+      'absolute' => TRUE,
+      'domain' => $domain,
+      'https' => TRUE,
+    ]);
   }
 
   /**
-   * Builds an absolute path URL for the active deployment environment.
+   * Generates an absolute path URL on the active Deployer environment's host.
    */
   public function environmentPathUrl(SiteKey $siteKey, string $path): ?Url {
-    return $this->legacyResolver->environmentPathUrl($siteKey->value, $path);
+    if (!str_starts_with($path, '/') || str_starts_with($path, '//')) {
+      return NULL;
+    }
+    $domainId = $this->siteKeys->domainId($siteKey);
+    $host = $this->deployerHost($domainId);
+    return $host === NULL ? NULL : Url::fromUri('https://' . $host . $path);
   }
 
   /**
-   * Builds an absolute path URL using the active Domain alias.
+   * Resolves a domain ID through the Deployer environment mapping.
+   */
+  private function deployerHost(string $domainId): ?string {
+    $root = $this->appRoot ?? (defined('DRUPAL_ROOT') ? DRUPAL_ROOT : NULL);
+    return is_string($root) && $root !== ''
+      ? DeployerEnvironment::domainHost(dirname($root), $domainId)
+      : NULL;
+  }
+
+  /**
+   * Generates an absolute path URL using the current site alias.
    */
   public function pathUrl(SiteKey $siteKey, string $path): ?Url {
-    return $this->legacyResolver->pathUrl($siteKey->value, $path);
+    if (!str_starts_with($path, '/') || str_starts_with($path, '//')) {
+      return NULL;
+    }
+    $domain = $this->getDomain($siteKey);
+    if (!$domain) {
+      return NULL;
+    }
+    $activeDomain = $this->domainNegotiator->getActiveDomain();
+    // Do not mutate the loaded entity when adapting a non-default alias URL.
+    $domain = clone $domain;
+    if ($activeDomain && isset($activeDomain->alias)
+      && $activeDomain->alias->getEnvironment() !== 'default') {
+      $request = $this->getCurrentRequest();
+      if ($request) {
+        $domain->set('scheme', $request->getScheme());
+        $domain->setPath();
+      }
+    }
+    // fromUserInput() assembles an internal path against the active request
+    // host and does not apply Domain's outbound path processor. Build the
+    // absolute URI from the cloned site Domain so cross-domain paths keep
+    // the requested site and alias environment.
+    return Url::fromUri(rtrim($domain->getPath(), '/') . $path);
   }
 
 }

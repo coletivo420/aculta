@@ -216,7 +216,7 @@ services:
     class: Drupal\aculta_portal\Domain\SiteKeyRegistry
   aculta_portal.domain_site:
     class: Drupal\aculta_portal\Domain\DomainSiteManager
-    arguments: ['@aculta_portal.domain_purpose', '@aculta_portal.site_key_registry']
+    arguments: ['@entity_type.manager', '@domain.negotiator', '@config.factory', '@request_stack', '@aculta_portal.site_key_registry', '%app.root%']
   aculta_portal.domain_purpose:
     class: Drupal\aculta_portal\Domain\DomainPurposeManager
     arguments: ['@entity_type.manager', '@domain.negotiator', '@config.factory', '@request_stack', '%app.root%']
@@ -225,7 +225,7 @@ services:
   Drupal\aculta_portal\Domain\ActiveSiteKeysState: '@aculta_portal.active_site_keys_state'
   aculta_portal.active_site_keys_state:
     class: Drupal\aculta_portal\Domain\ActiveSiteKeysState
-    arguments: ['@state', '@aculta_portal.domain_purpose']
+    arguments: ['@state', '@aculta_portal.domain_site']
   aculta_portal.checkout_step_resolver:
     class: Drupal\aculta_portal\Checkout\CheckoutStepResolver
     arguments: ['@commerce_checkout.chain_checkout_flow_resolver']
