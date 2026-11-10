@@ -93,7 +93,6 @@ final class EventCatalogueController extends ControllerBase {
     foreach ($resultados as $item) {
       $evento = $item['evento'];
       $cancelado = $evento->get('field_status')->value === 'cancelado';
-      $card_tokens = $cancelado ? 'event-card event-card-cancelled' : 'event-card';
       $local = $item['data']->get('field_local')->entity;
       $resumo = (string) ($evento->get('field_subtitulo')->value ?: $evento->get('body')->value);
       $resumo = Unicode::truncate(Html::decodeEntities(strip_tags($resumo)), 240, TRUE, TRUE);
@@ -107,7 +106,6 @@ final class EventCatalogueController extends ControllerBase {
         'cancelled' => $cancelado,
       ];
       $cards[(string) $evento->id()] = $props + [
-        'tokens' => $card_tokens,
         'cancel_label' => (string) $this->t('Evento cancelado'),
       ];
     }

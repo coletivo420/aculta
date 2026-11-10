@@ -1,17 +1,10 @@
-<div data-portal-ui="{{ item.tokens }}">
-  {% embed 'aculta420_v2:card-cultural' with {
-    title: item.title,
-    url: item.url,
-    category: item.category ?: null,
-    date: item.date ?: null,
-    location: item.location ?: null,
-    summary: item.summary ?: null,
-    cancelled: item.cancelled
-  } only %}
-    {% block actions %}
-      {% if cancelled %}
-        <p role="status" data-portal-ui="event-card-cancel-status">{{ 'Evento cancelado'|t }}</p>
-      {% endif %}
-    {% endblock %}
-  {% endembed %}
-</div>
+{{ include('aculta420_v2:card-cultural', {
+  title: item.title,
+  url: item.url,
+  category: item.category,
+  date: item.date,
+  location: item.location,
+  summary: item.summary,
+  cancelled: item.cancelled,
+  cancel_label: item.cancel_label,
+}, with_context = false) }}

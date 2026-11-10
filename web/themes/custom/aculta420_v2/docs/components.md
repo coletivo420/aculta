@@ -254,9 +254,9 @@ autorizada.
 
 ### card-cultural — Cartão cultural
 - **Papel:** cartão para eventos e pontos culturais.
-- **Props:** `title`, `url`, `category`, `date`, `location`, `summary`, `variant` (`default` ou `compact`), `accent` (`green`, `yellow`, `red` ou ausente). Stories DRAFT: `card-cultural.accent-draft.story.yml`, `card-cultural.accent-yellow-draft.story.yml` e `card-cultural.accent-red-draft.story.yml`. O tema recebe o valor resolvido pelo Portal; stories não são selecionadas pelo tema.
+- **Props:** `title`, `url`, `category`, `date`, `location`, `summary`, `variant` (`default` ou `compact`), `accent` (`green`, `yellow`, `red` ou ausente), `cancelled` e `cancel_label`. Stories DRAFT de acento: `card-cultural.accent-draft.story.yml`, `card-cultural.accent-yellow-draft.story.yml` e `card-cultural.accent-red-draft.story.yml`; story de cancelamento: `card-cultural.event-cancelled.story.yml`. O tema recebe dados resolvidos pelo Portal; stories não são selecionadas pelo tema.
 - **Slots:** `image`, `actions`.
-- **Estado:** apresentação base entregue. Faixa de acento implementada para valores neutros explícitos; stories são DRAFT até D1 (`domain_presentation.accent`). Uso em Loja aguarda autorização específica; não há consumer real validado.
+- **Estado:** apresentação consumida pelo catálogo público de Eventos via override fino no tema; dados, ACL, filtro e cache continuam no módulo owner. Faixa de acento permanece separada e DRAFT até D1 (`domain_presentation.accent`). Render do SDC no tema ativo e browser visual aguardam cutover/runtime.
 
 ### forum-topic — Tópico do Fórum
 - **Papel:** teaser e conteúdo completo do tópico, preservando autoria, categorias, favoritos e discussão nos render arrays Drupal.

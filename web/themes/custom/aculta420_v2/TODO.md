@@ -6,7 +6,7 @@ Estado: Dev · versão 1.5.0 (`aculta420_v2.info.yml`) · status em `docs/operat
 
 - **ADR-054/055 US-00–14/RN-00–05 em andamento:** UI Skins corta paletas purpose. Sync Views de categorias usa SDC `forum-category`; Runtime aguarda import autorizado. Skins Disabled; UI Styles Page/regiões e Links aguardam homologação.
 - Composer: Skins ^1.2, Icons ^2.1; Field Group dev SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1`, **BLOCKED_UPSTREAM** (Core 12/advisories). Styles CKEditor em `revista_editorial`; Patterns CKEditor sem uso.
-- Inventário reproduzível contém 387 itens, incluindo os 89 templates Twig do tema e dos módulos customizados; 38 templates compõem SDC diretamente e 51 seguem mapeados para migração. Três overrides da View de categorias têm SDC substituto e critério de retirada pós-cutover. Navegador/responsividade e migração dos demais modelos pendentes. Entity Status desativado até revisão dos rascunhos.
+- Inventário: 386 itens/88 Twig; demais modelos seguem em migração. Os três overrides da View de categorias têm SDC substituto e retirada condicionada ao cutover. Visual dos demais domínios pendente. Entity Status aguarda revisão dos rascunhos.
 - Planos: `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md`, `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md` e `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`.
 
 ## Marcos e pendências

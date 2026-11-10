@@ -39,6 +39,14 @@ props:
       title: Apresentação
       enum: [default, compact]
       default: default
+    cancelled:
+      type: boolean
+      title: Evento cancelado
+      default: false
+    cancel_label:
+      type: string
+      title: Texto acessível do estado cancelado
+      default: Evento cancelado
 slots:
   image:
     title: Imagem

@@ -134,8 +134,8 @@ final class EventCatalogueKernelTest extends KernelTestBase {
   /**
    * A View pública usa os IDs do catálogo e ordena os cartões.
    */
-  public function testCatalogoRenderizaViewComDadosFiltrados(): void {
-    $this->cenario();
+  public function testCatalogoViewUsesFilteredDataAndCulturalCardSdc(): void {
+    $cenario = $this->cenario();
     $request = Request::create('/eventos');
     $request->setSession(new Session(new MockArraySessionStorage()));
     $requestStack = $this->container->get('request_stack');
@@ -153,14 +153,17 @@ final class EventCatalogueKernelTest extends KernelTestBase {
       $view = Views::getView('eventos_publicos');
       $this->assertNotFalse($view);
       $view->setDisplay('block_1');
-      $view->executeDisplay('block_1', $page['catalogue']['#arguments']);
+      $view->setArguments($page['catalogue']['#arguments']);
+      $view->execute();
       $this->assertCount(3, $view->result, 'A View recebe as três Datas selecionadas pelo catálogo.');
-      $markup = (string) $this->container->get('renderer')->renderRoot($page);
-      $this->assertStringContainsString('Oficina de cerâmica', $markup);
-      $this->assertStringContainsString('Feira do livro', $markup);
-      $this->assertStringContainsString('Próxima data:', $markup);
-      $this->assertStringContainsString('views-row', $markup);
-      $this->assertLessThan(strpos($markup, 'Feira do livro'), strpos($markup, 'Roda cancelada'));
+      $cards = $request->attributes->get('_aculta_events_catalogue_cards');
+      $this->assertIsArray($cards);
+      $this->assertCount(3, $cards, 'O conjunto mantém somente os eventos públicos selecionados pelo catálogo.');
+      $this->assertSame('Roda cancelada', $cards[(string) $cenario['cancelado']->id()]['title']);
+      $this->assertTrue($cards[(string) $cenario['cancelado']->id()]['cancelled']);
+      $this->assertSame('Evento cancelado', $cards[(string) $cenario['cancelado']->id()]['cancel_label']);
+      $this->assertNotContains('Rascunho secreto', array_column($cards, 'title'));
+
     }
     finally {
       $requestStack->pop();

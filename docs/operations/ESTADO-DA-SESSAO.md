@@ -1,10 +1,10 @@
 # ADR-054 + ADR-055 — UI Suite editorial e Views — 2026-11-10
 
-- **Objetivo/estado:** Skins remove paletas purpose em código; UI Styles CKEditor está em Sync para `revista_editorial`; piloto `forum-category` está em Sync/install. Inventário reproduzível tem 387 itens, incluindo os 89 templates Twig customizados; três overrides da View de categorias ficam `LEGACY_DEPRECATED` até cutover comprovado.
-- **Decisões/cuidados:** sem config antiga/dual-read; `DomainPurposeManager` permanece funcional. UI Patterns CKEditor 5 está `LEGACY_OBSOLETE`; Enabled é fotografia histórica de 2026-11-10, sem retenção/fallback. Desinstalação no Runtime requer autorização.
-- **Commits:** `99d8bcc62`; inventário e registro Portal nesta fase.
-- **Verificações:** ForumTopicDisplayConfig 20/20 (312 assertions); inventário 387 itens/89 templates; status, PHPCS, UI Styles 38, SDC 1710, UI Library 25, fronteira 7872 PASS. Token budget FAIL em 7 limites globais preexistentes. Gate Drupal 12 1243, UI Styles 38, fronteira 7872, Kernel editor 9/9 (176) e SDC schema 1710 PASS na fase anterior. Runtime/cutover DEFERRED por post-update e drift; gate amplo SDC falha em `auth-dialog.twig` preexistente.
-- **Pendências/próximo passo:** obter cutover autorizado para validar render/acesso/cache/markup da View e remover os três overrides somente após prova de bypass. Prosseguir inventário visual integral e migração dos demais domínios.
+- **Objetivo/estado:** UI Skins cortou paletas purpose. UI Styles CKEditor está no Sync. O catálogo Eventos migrou do markup do módulo para o SDC `card-cultural` pelo override do tema, com prop de cancelamento; inventário: 386 itens/88 templates Twig.
+- **Decisões/cuidados:** sem fallback legado. `DomainPurposeManager` mantém função. UI Patterns CKEditor 5 obsoleto; ativação é snapshot histórico e uninstall Runtime aguarda autorização.
+- **Commits/arquivos:** `99d8bcc62`, `36b0a977c`, `2c6b356c7`; Events, `card-cultural`, inventário e status nesta fase.
+- **Verificações:** Kernel Eventos 7/7 (130), ForumTopicDisplayConfig 20/20 (312), SDC 1721, fronteira 7871, classes mapeadas 483, foundations 83 pares, UI Library 25, PHPCS e status PASS. Token budget FAIL em 7 limites globais. Render visual/runtime DEFERRED.
+- **Pendências/próximo passo:** browser com tema ativo, homologar acesso/cache e contraste do cartão; concluir cutovers UI Skins/Styles e migrar demais templates/domínios. Gate amplo SDC falha em `auth-dialog.twig` preexistente.
 
 # FST-00 a FST-11 — integração analítica Fórum + Statistics — 2026-11-10
 

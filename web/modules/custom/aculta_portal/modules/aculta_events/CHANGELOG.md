@@ -9,6 +9,15 @@
   corrigido (OSM/Leaflet sem chave é o padrão).
 - Kernel `MapControllerKernelTest`: 4 testes/77 assertions PASS, com geocodificador falso.
 
+## Não versionado — migração do cartão de catálogo para SDC (2026-11-10)
+
+- O cartão público usa o SDC existente `card-cultural` por template override
+  pertencente ao tema; o módulo Events deixou de manter markup visual próprio.
+- Props de cancelamento tipadas preservam texto de status acessível. A View,
+  seleção por ACL, dados, filtros e cache permanecem no módulo owner.
+- Kernel focal 7/7 passou; render real no tema ativo e browser seguem DEFERRED
+  até o cutover autorizado.
+
 ## 0.2.0-dev.10 — listagem pública com card-cultural (2026-11-06)
 
 - Criada a View `eventos_publicos` para a raiz do purpose Eventos. O catálogo

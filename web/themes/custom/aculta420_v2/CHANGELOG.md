@@ -1,8 +1,15 @@
+## Não versionado — SDC `card-cultural` no catálogo público (2026-11-10)
+
+- Reutiliza `card-cultural` no template adapter do catálogo público de Eventos.
+- Acrescenta props estritas para estado cancelado e texto de status acessível;
+  stories editoriais cobrem essa combinação.
+- A renderização real no Runtime e visual responsivo aguardam cutover autorizado.
+
 ## Não versionado — inventário de consumidores Twig da View (2026-11-10)
 
-- O gerador audita os 89 templates Twig do tema e módulos customizados;
-  classifica os 38 adaptadores com inclusão direta de SDC como nativos e mantém
-  os outros 51 como migração em andamento para mapeamento e revisão funcional.
+- O gerador audita individualmente os templates Twig presentes;
+  classifica os adaptadores com inclusão direta de SDC como nativos e mantém os
+  demais como migração em andamento para mapeamento e revisão funcional.
 - Os field/unformatted overrides de categorias têm owner, display, SDC
   substituto e critério de retirada pós-cutover.
 - UI Patterns CKEditor 5 consta como obsoleto sem fallback; estado Enabled é

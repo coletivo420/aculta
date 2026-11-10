@@ -143,9 +143,15 @@ foreach ($templateRoots as $owner => $templateRoot) {
     $isSdcAdapter = $components !== [];
     preg_match('/views-view(?:-fields|-unformatted)?--([a-z0-9_-]+)--([a-z0-9_-]+)/', $file->getFilename(), $viewMatches);
     $viewConsumer = isset($viewMatches[1], $viewMatches[2])
-      ? $viewMatches[1] . ':' . $viewMatches[2]
+      ? str_replace('-', '_', $viewMatches[1]) . ':' . $viewMatches[2]
       : 'template suggestion; exact route/runtime consumers require review';
-    $viewConfig = isset($viewMatches[1]) ? 'config/sync/views.view.' . $viewMatches[1] . '.yml' : '';
+    $viewConfig = isset($viewMatches[1])
+      ? 'config/sync/views.view.' . str_replace('-', '_', $viewMatches[1]) . '.yml'
+      : '';
+    if ($file->getFilename() === 'aculta-event-catalogue-card.html.twig') {
+      $viewConsumer = 'aculta_events:aculta_event_catalogue_card; eventos_publicos:block_1';
+      $viewConfig = 'config/sync/views.view.eventos_publicos.yml; web/modules/custom/aculta_portal/modules/aculta_events/aculta_events.module';
+    }
     $rows[] = [
       'id' => 'template:' . $relativePath,
       'owner_module' => $owner,

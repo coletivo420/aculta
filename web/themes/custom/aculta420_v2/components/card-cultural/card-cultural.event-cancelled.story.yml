@@ -1,0 +1,15 @@
+name: Evento cancelado
+description: Cartão do catálogo público com estado de cancelamento acessível.
+component: aculta420_v2:card-cultural
+props:
+  title: Oficina de cerâmica
+  url: /eventos/oficina-de-ceramica
+  category: Oficina
+  date: 'Próxima data: 18/11/2026 19:00'
+  location: Centro cultural
+  summary: Encontro aberto para participantes da comunidade.
+  cancelled: true
+  cancel_label: Evento cancelado
+slots:
+  image: ''
+  actions: ''
