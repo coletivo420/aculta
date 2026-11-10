@@ -2,7 +2,7 @@
 
 Tema Drupal da ACULTA em **Single Directory Components (SDC)**, nativo, sem Bootstrap, sem Vite e sem Node. É o tema padrão e exclusivo do portal, desenvolvido com base no design system autônomo e mobile-first. A versão legada V1 foi purgada.
 
-Planejamento normativo atual: `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md` (na raiz do repositório) e ADR-054. A opção administrativa de container foi removida; a leitura dos valores legados permanece durante a migração paralela.
+Planejamento normativo: `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md` (ADR-054), acrescido de `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md` (ADR-055 integral, US-00 a US-11 planejado). A opção administrativa de container foi removida; a leitura dos valores legados permanece durante a migração paralela.
 
 Para quem vai mexer no tema, leia nesta ordem:
 
@@ -22,10 +22,11 @@ Decisões que governam o tema estão em `docs/decisions/` na raiz do repositóri
 | ADR-046 | Desenho do tema V2: UI Styles, shell e fundações primeiro, mobile-first |
 | ADR-047 | Menu de conta fixo na barra institucional |
 | ADR-054 | Arquitetura SDC First, Layout Builder, dez purposes e retirada da administração de container |
+| ADR-055 | Integração integral UI Suite: UI Patterns, UI Styles, UI Icons, UI Skins e Fluent Emoji; novas microfases planejadas |
 
 ## Estado em uma frase
 
-Fundações (tokens, tipografia, foco, movimento e reflow), shell SDC, componentes do Fórum, Revista, Wiki, Eventos e UI Patterns estão implementados no código (`1.4.0` em `info.yml`). O tema opera com CSS nativo e paleta Skunk Family em tokens semânticos por purpose.
+Fundações (tokens, tipografia, foco, movimento e reflow), shell SDC, componentes do Fórum, Revista, Wiki, Eventos e UI Patterns estão implementados no código (`1.5.0` em `info.yml`). O tema opera com CSS nativo e paleta Skunk Family em tokens semânticos por purpose.
 
 ## Estrutura
 

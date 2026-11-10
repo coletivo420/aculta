@@ -1,7 +1,8 @@
-# ADR-055 - Integração UI Icons, UI Styles Page e Sistema Unificado de Emojis
+# ADR-055 - Integração integral UI Suite e sistema unificado de emojis
 
-Status: aprovado e implementado em 2026-11-10; continuidade da ADR-054 no tema `aculta420_v2` e módulos `aculta_editor`, `aculta_forum` e ecossistema UI Suite.
+Status: decisão ampliada pelo responsável em 2026-11-10. Eixo Fluent Emoji / UI Icons no tema implementado em código; integração integral da UI Suite ainda em planejamento e homologação (US-00 a US-11). NÃO considerar a ADR integralmente concluída.
 Preserva: ADR-050 (HTMX antes de AJAX), ADR-053 (Barra Institucional), ADR-054 (SDC First e Layout Builder) e contratos do Portal.
+Plano de pesquisa, matriz visual e microfases: `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md`.
 
 ---
 
@@ -54,12 +55,12 @@ Anteriormente:
    - `aculta_phosphor_regular` (1512 ícones).
    - `aculta_phosphor_duotone` (1512 ícones).
    - `aculta_fluent_emoji` (48 ícones oficiais em formato SVG).
-   - Teste unitário `UiIconsPackTest` valida a integridade física de todos os arquivos referenciados.
+   - Teste unitário `UiIconsPackTest` valida registro e quantidades mínimas dos três packs; correspondência exaustiva ID -> SVG ainda precisa de gate próprio.
 2. **UI Icons Menu e UI Patterns:**
-   - Menus `main`, `account` e `admin` configurados para suporte nativo a ícones via `ui_icons_menu`.
+   - Alvo: menus `main`, `account` e `admin` configuráveis via integração de ícones. O Config Sync consultado não confirma ativação de `ui_icons_menu`; conferir Runtime, dependências e exportação na US-00/US-08.
    - Propriedades de ícones integradas aos SDCs do tema (ex: `button` via `$ref: 'ui-patterns://icon'`).
 3. **UI Styles Page e UI Library:**
-   - Módulo `ui_styles_page` ativo com suporte a estilos semânticos de regiões por tema (`/admin/appearance/ui-styles/page/theme/{theme}`).
+   - Alvo: `ui_styles_page` para estilos de regiões por tema (`/admin/appearance/ui-styles/page/theme/{theme}`). A configuração sincronizada não registra ativação; conferir Runtime e atributos Twig na US-03.
    - Rota da UI Library (`/painel-administrativo/aparencia/ui/patterns`, `/icons`, `/styles`) com links dinâmicos e controle de acesso exclusivo para administradores.
 
 ---
@@ -68,4 +69,52 @@ Anteriormente:
 
 - **Manutenibilidade:** Eliminação de tabelas divergentes de emojis entre módulos; qualquer novo consumidor (Messenger, Wiki, Marley) utiliza o serviço `FluentEmojiIconAdapter`.
 - **Acessibilidade:** Navegação por teclado, atributos `aria-*` dinâmicos e isolamento de foco no seletor de reações.
-- **Conformidade de Gates:** 0 violações em `validate-module-theme-boundary.php`, 0 violações em `validate-aculta420-sdc-schemas.php`, 0 erros em `npm run lint:css`.
+- **Conformidade registrada na entrega original:** 0 violações em `validate-module-theme-boundary.php`, 0 violações em `validate-aculta420-sdc-schemas.php`, 0 erros em `npm run lint:css`. Isso NÃO equivale a testes dos novos submódulos da ampliação US-00 a US-11.
+
+
+---
+
+## 4. Adendo de escopo aprovado - UI Suite integral (2026-11-10)
+
+A ADR-055 passa a cobrir o ecossistema **UI Patterns + UI Styles + UI Icons + UI Skins** como camada visual do `aculta420_v2`. O objetivo não é habilitar todos os submódulos indiscriminadamente: é permitir que todos os pontos de integração **tecnicamente compatíveis, necessários e seguros** reutilizem o design system do ACULTA. Todo SDC continua presente no catálogo universal; exposição a editores, escrita, dados reais e permissões são decisões separadas e estritas.
+
+| Pilar | Integrações normativas | Visual ampliado |
+| --- | --- | --- |
+| UI Patterns | Blocks, Field/Field Formatters, Layouts, Views, Library; estudo de Field Group e CKEditor 5 | SDC aplicado a cartões de resultados, estrutura da View, display completo, regiões de Layout Builder e grupos de campos |
+| UI Styles | Block, Layout Builder, UI Patterns, Views, Page, CKEditor 5, Entity Status | Faixa de acento, sombra, raio, espaçamento, tipografia e estilos de conteúdos não publicados sem novos templates |
+| UI Icons | Packs da Icon API, integração de menus, seletor Picker/Popover, propriedades SDC, campos/links e CKEditor sob aprovação | Iconografia consistente e selecionável; Fluent Emoji mantém os donos de catálogo e regras de reação |
+| UI Skins | CSS variables e themes/modes/schemes | Administração governada de tokens e paletas por purpose, sem duplicar a regra de seleção do DomainPurposeManager |
+
+**Benefícios por frente:** Revista (teasers, grid, citações, destaques editoriais); Fórum (cards, reações, rankings e estados); Wiki (infobox e organização de campos); GanjaLab (jornadas, progresso e cards); Culturas (agenda, eventos e locais); Loja (grades e cartões); Conta (painéis privados); Apoio, MAIN e Links (landings e superfícies). A aparência continua móvel, coerente em claro/escuro, com molduras tricolores e tokens semânticos.
+
+### Limitações confirmadas que mudam a execução
+
+1. **UI Skins 1.2.1**, compatível com Drupal 11.4+ e 12, deve mapear os tokens existentes. Não substitui automaticamente os contratos multidomínio nem o `data-theme`.
+2. **UI Styles CKEditor 5** oferece estilos inline e em blocos, mas os formatos de texto e filtros devem autorizar só classes seguras; editores comuns continuam sem `full_html`.
+3. **UI Styles Entity Status** estiliza entidades não publicadas; não concede acesso nem substitui workflow/moderação.
+4. **UI Patterns Views 2** pode configurar row, style e display. Preservar Views, pagers, filtros, access/cache, engines VVJB/VVJS.
+5. **UI Patterns Layouts** usa slots como regiões e props como opções; manter 22/24 displays compatíveis e as duas exclusões até que sejam corrigidas.
+6. **UI Patterns Field Group 2.0.0-beta2** não está coberto pela política de segurança do Drupal e não anuncia Drupal 12. Apenas prova de conceito isolada até parecer de risco e compatibilidade.
+7. **UI Patterns CKEditor 5** é candidato complementar, mas upstream documenta que a prévia não carrega CSS/JS dos componentes e que não há lista autorizada por formato. Não habilitar para editores comuns sem solução testada para isolamento de componentes.
+8. **UI Icons 2.1** (Drupal 11.3+/12) é referência preferencial; `.icons.yml` do Core sozinho não comprova que UI Icons Menu, Picker, Popover ou Patterns estejam habilitados.
+9. **UI Examples** pode demonstrar páginas sintéticas, mas não é um catálogo concorrente. Display Builder/Canvas não substituem Layout Builder nesta ADR sem nova decisão.
+
+### Estado de implementação e requisitos de aceite
+
+- Entregue: ícones declarados pelo tema, adaptador Fluent Emoji, frontend do seletor do Fórum, superfícies SDC, integração de UI Patterns Layouts e Views registrada no Config Sync, biblioteca progressiva.
+- Pendente de constatação Runtime/Sync: UI Icons contrib e integrações, UI Styles Page, Skins, CKEditor 5 e Entity Status; Field Group não habilitado no Sync; inventário de Views consumidoras e critérios de segurança.
+- Nova execução: **US-00 a US-11** no plano técnico canônico. Não avançar sem baseline versionado, testes e rollback, incluindo configuração, 10 purposes, light/dark, 320 a 1440px, zoom 200%, access/cache entre hosts e avaliação editorial humana.
+- Documento de planejamento **não equivale** a autorização para `drush cim`, `updatedb`, alterações de dados ou instalação cega. Branch `dev`, commits atômicos, preservar trabalho paralelo e não alterar Core/contrib.
+- Estado de conclusão: **ADR-054: cutover implementado, homologação residual**; **ADR-055: implementação parcial comprovada em Git, integração integral planejada, homologação DEFERRED**.
+
+### Fontes primárias
+
+- https://www.drupal.org/project/ui_suite
+- https://www.drupal.org/project/ui_skins
+- https://www.drupal.org/project/ui_styles
+- https://www.drupal.org/project/ui_icons
+- https://www.drupal.org/project/ui_patterns
+- https://www.drupal.org/project/ui_patterns_field_group
+- https://project.pages.drupalcode.org/ui_patterns/
+- https://project.pages.drupalcode.org/ui_patterns/1-users/4-with-views/
+- https://project.pages.drupalcode.org/ui_patterns/1-users/7-in-ckeditor/
