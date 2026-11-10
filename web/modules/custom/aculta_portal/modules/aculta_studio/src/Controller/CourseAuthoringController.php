@@ -88,8 +88,7 @@ final class CourseAuthoringController {
         '#weight' => -90,
       ],
       'create' => [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => (string) $this->t('Novo curso'),
           'url' => Url::fromRoute('aculta_lms.course_create')->toString(),

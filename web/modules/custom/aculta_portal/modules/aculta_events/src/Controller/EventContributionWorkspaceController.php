@@ -106,8 +106,7 @@ final class EventContributionWorkspaceController extends ControllerBase {
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'event-contribution-status'],
       'back' => [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => (string) $this->t('Voltar às minhas propostas'),
           'url' => Url::fromRoute('aculta_events.organizer_contributions')->toString(),
@@ -140,8 +139,7 @@ final class EventContributionWorkspaceController extends ControllerBase {
     ];
     if ($proposal->get('state')->value === 'needs_changes') {
       $build['revise'] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => (string) $this->t('Revisar e reenviar proposta'),
           'url' => Url::fromRoute('aculta_events.organizer_contribution_revise', [

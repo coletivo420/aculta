@@ -106,8 +106,7 @@ final class LocationPageController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'event-location-actions'],
         'edit_link' => [
-          '#type' => 'component',
-          '#component' => 'aculta420_v2:button',
+          '#type' => 'aculta_portal_button',
           '#props' => [
             'text' => (string) $this->t('Editar este local'),
             'url' => Url::fromRoute('aculta_events.location_edit', [
@@ -173,8 +172,7 @@ final class LocationPageController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'event-location-admin-actions'],
         'edit' => [
-          '#type' => 'component',
-          '#component' => 'aculta420_v2:button',
+          '#type' => 'aculta_portal_button',
           '#props' => [
             'text' => (string) $this->t('Editar local'),
             'url' => Url::fromRoute('aculta_events.location_edit', ['aculta_event_location' => $aculta_event_location->id()])->toString(),

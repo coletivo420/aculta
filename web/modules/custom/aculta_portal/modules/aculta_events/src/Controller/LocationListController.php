@@ -94,8 +94,7 @@ final class LocationListController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'event-location-actions-bar'],
         'add_btn' => [
-          '#type' => 'component',
-          '#component' => 'aculta420_v2:button',
+          '#type' => 'aculta_portal_button',
           '#props' => [
             'text' => (string) $this->t('+ Cadastrar local'),
             'url' => Url::fromRoute('aculta_events.location_add')->toString(),

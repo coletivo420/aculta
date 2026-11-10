@@ -23,8 +23,7 @@ final class RegistrationController extends ControllerBase {
         '#value' => $this->t('O cadastro de novas contas está temporariamente fechado. Ele será disponibilizado quando a confirmação de e-mail estiver pronta.'),
       ],
       'login' => [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => (string) $this->t('Já tenho uma conta — entrar'),
           'url' => Url::fromRoute('user.login')->toString(),

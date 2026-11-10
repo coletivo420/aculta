@@ -148,8 +148,7 @@ final class AvatarCropForm extends FormBase {
       '#value' => $this->t('Aplicar recorte'),
     ];
     $form['actions']['cancelar'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:button',
+      '#type' => 'aculta_portal_button',
       '#props' => [
         'text' => (string) $this->t('Cancelar'),
         'url' => Url::fromRoute('aculta_portal.dashboard')->toString(),

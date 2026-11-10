@@ -406,8 +406,7 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
     self::assertStringContainsString('Sandbox (testes)', $html);
     self::assertStringContainsString('Não conectada', $html);
     $connect = $build['connect'];
-    self::assertSame('component', $connect['#type']);
-    self::assertSame('aculta420_v2:button', $connect['#component']);
+    self::assertSame('aculta_portal_button', $connect['#type']);
     self::assertSame('primary', $connect['#props']['variant']);
     self::assertSame('melhorenvio_autorizacao', $connect['#attributes']['data-aculta-popup']);
     self::assertStringContainsString('/integracoes/melhorenvio/autorizar', $connect['#props']['url']);

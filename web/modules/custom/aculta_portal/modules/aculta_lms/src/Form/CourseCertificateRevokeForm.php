@@ -90,8 +90,7 @@ final class CourseCertificateRevokeForm extends FormBase {
       '#value' => $this->t('Revogar certificado'),
     ];
     $form['cancel'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:button',
+      '#type' => 'aculta_portal_button',
       '#props' => [
         'text' => (string) $this->t('Cancelar'),
         'url' => Url::fromRoute('aculta_lms.certificate_issue', ['group' => $this->certificateRouteMatch->getParameter('group')->id()])->toString(),

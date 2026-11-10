@@ -316,8 +316,7 @@ final class EventPageController extends ControllerBase {
       $editUrl = $adminUrl?->toString()
         ?? Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $evento->id()])->toString();
       $adminButton = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => (string) $this->t('Editar evento e datas'),
           'url' => $editUrl,

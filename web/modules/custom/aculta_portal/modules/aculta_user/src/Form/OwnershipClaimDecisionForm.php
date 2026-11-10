@@ -119,8 +119,7 @@ final class OwnershipClaimDecisionForm extends FormBase {
       $form['actions'] = [
         '#type' => 'actions',
         'back' => [
-          '#type' => 'component',
-          '#component' => 'aculta420_v2:button',
+          '#type' => 'aculta_portal_button',
           '#props' => [
             'text' => $this->t('Voltar para a lista'),
             'url' => Url::fromRoute('aculta_user.ownership_claims')->toString(),
@@ -158,8 +157,7 @@ final class OwnershipClaimDecisionForm extends FormBase {
         '#button_type' => 'primary',
       ],
       'cancel' => [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => $this->t('Cancelar'),
           'url' => Url::fromRoute('aculta_user.ownership_claims')->toString(),

@@ -89,8 +89,7 @@ final class ForumCommentMoveForm extends FormBase {
       '#button_type' => 'primary',
     ];
     $form['actions']['cancel'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:button',
+      '#type' => 'aculta_portal_button',
       '#props' => [
         'text' => (string) $this->t('Cancelar'),
         'url' => Url::fromRoute('aculta_forum.admin')->toString(),

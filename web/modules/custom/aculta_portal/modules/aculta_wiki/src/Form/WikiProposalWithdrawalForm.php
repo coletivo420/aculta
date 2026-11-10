@@ -81,8 +81,7 @@ final class WikiProposalWithdrawalForm extends FormBase {
       '#value' => $this->t('Retirar proposta'),
     ];
     $form['actions']['cancel'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:button',
+      '#type' => 'aculta_portal_button',
       '#props' => [
         'text' => (string) $this->t('Voltar ao status da proposta'),
         'url' => Url::fromRoute('aculta_wiki.proposal_status', ['proposal' => $proposal->id()])->toString(),

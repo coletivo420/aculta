@@ -586,8 +586,7 @@ final class MessagesController extends ControllerBase {
   private function newConversationAction(): array {
     return [
       'new_conversation' => [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => (string) $this->translation->translate('Iniciar nova conversa'),
           'url' => Url::fromRoute('aculta_messenger.new_conversation')->toString(),

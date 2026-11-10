@@ -89,8 +89,7 @@ final class SocialLinkForm extends FormBase {
     if (!$studio) {
       // SDC com is_submit: o envio é capturado pelo JS (data-aculta-clear).
       $form['actions']['clear'] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => (string) $this->t('Limpar'),
           'variant' => 'secondary',

@@ -108,8 +108,7 @@ final class EventDateOrderForm extends FormBase {
       ->onlyMainContent()
       ->applyTo($form['actions']['submit']);
     $form['actions']['cancel'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:button',
+      '#type' => 'aculta_portal_button',
       '#props' => [
         'text' => $this->t('Cancelar'),
         'url' => Url::fromRoute(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $aculta_event->id()])->toString(),

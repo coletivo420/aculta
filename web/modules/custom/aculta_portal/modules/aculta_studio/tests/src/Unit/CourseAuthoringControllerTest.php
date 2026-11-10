@@ -79,8 +79,7 @@ final class CourseAuthoringControllerTest extends UnitTestCase {
       $this->getStringTranslationStub(),
     ))->dashboard();
 
-    self::assertSame('component', $build['create']['#type']);
-    self::assertSame('aculta420_v2:button', $build['create']['#component']);
+    self::assertSame('aculta_portal_button', $build['create']['#type']);
     self::assertSame('primary', $build['create']['#props']['variant']);
     self::assertSame(
       'course-create',

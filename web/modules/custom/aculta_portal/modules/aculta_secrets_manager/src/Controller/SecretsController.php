@@ -57,8 +57,7 @@ final class SecretsController {
       $is_active = $environment === $active;
       $tab_id = 'credenciais-tab-' . $environment;
       $buttons[$environment] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => (string) $this->tabLabel($environment),
           'variant' => 'ghost',

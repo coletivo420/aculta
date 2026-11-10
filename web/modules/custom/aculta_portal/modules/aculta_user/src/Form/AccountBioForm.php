@@ -97,8 +97,7 @@ final class AccountBioForm extends FormBase {
     // Limpar antes de Salvar bio. É do tipo botão: o JS só esvazia o campo, sem enviar.
     if (!$studio) {
       $form['actions']['clear'] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => (string) $this->t('Limpar'),
           'variant' => 'secondary',

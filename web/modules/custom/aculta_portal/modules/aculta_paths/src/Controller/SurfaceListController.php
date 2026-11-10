@@ -100,8 +100,7 @@ final class SurfaceListController extends ControllerBase {
         continue;
       }
       $editar = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => (string) $this->t('Editar'),
           'url' => Url::fromRoute('aculta_paths.editar', ['purpose' => $purpose])->toString(),

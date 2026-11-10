@@ -59,8 +59,7 @@ final class EventOrganizerDashboardController extends ControllerBase {
     $items = [];
     if ($canCreateEvent->isAllowed()) {
       $items[] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => (string) $this->t('Criar evento'),
           'url' => Url::fromRoute('aculta_events.organizer_event_add')->toString(),
@@ -68,8 +67,7 @@ final class EventOrganizerDashboardController extends ControllerBase {
         ],
       ];
       $items[] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => (string) $this->t('Propor novo Evento para revisão'),
           'url' => Url::fromRoute('aculta_events.organizer_event_contribution_add')->toString(),
@@ -78,8 +76,7 @@ final class EventOrganizerDashboardController extends ControllerBase {
       ];
     }
     $items[] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:button',
+      '#type' => 'aculta_portal_button',
       '#props' => [
         'text' => (string) $this->t('Minhas propostas'),
         'url' => Url::fromRoute('aculta_events.organizer_contributions')->toString(),
@@ -88,8 +85,7 @@ final class EventOrganizerDashboardController extends ControllerBase {
     ];
     if ($canCreateLocation->isAllowed()) {
       $items[] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => (string) $this->t('Cadastrar local'),
           'url' => Url::fromRoute('aculta_events.organizer_location_add')->toString(),
@@ -99,8 +95,7 @@ final class EventOrganizerDashboardController extends ControllerBase {
     }
     if ($canCreateEvent->isAllowed()) {
       $items[] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => (string) $this->t('Cadastrar organização'),
           'url' => Url::fromRoute('aculta_events.organizer_organization_add')->toString(),
@@ -374,8 +369,7 @@ final class EventOrganizerDashboardController extends ControllerBase {
             '#default_value' => $statusFilter,
           ],
           'submit' => [
-            '#type' => 'component',
-            '#component' => 'aculta420_v2:button',
+            '#type' => 'aculta_portal_button',
             '#props' => [
               'text' => (string) $this->t('Filtrar'),
               'variant' => 'secondary',
@@ -405,8 +399,7 @@ final class EventOrganizerDashboardController extends ControllerBase {
 
     if ($hasFilters) {
       $build['filters']['form']['reset'] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => (string) $this->t('Limpar filtros'),
           'url' => Url::fromRoute('aculta_events.organizer_dashboard')->toString(),

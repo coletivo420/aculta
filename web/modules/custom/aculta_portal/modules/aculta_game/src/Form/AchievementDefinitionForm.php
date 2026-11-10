@@ -108,8 +108,7 @@ final class AchievementDefinitionForm extends FormBase {
       ];
       if ($conquista !== NULL) {
         $form['image_section']['remove_link'] = [
-          '#type' => 'component',
-          '#component' => 'aculta420_v2:button',
+          '#type' => 'aculta_portal_button',
           '#props' => [
             'text' => (string) $this->t('Remover imagem atual'),
             'url' => Url::fromRoute('aculta_game.achievement_image_remove_confirm', ['conquista' => $conquista])->toString(),

@@ -240,8 +240,7 @@ final class EventOrganizationAdminController extends ControllerBase {
       'header_actions' => [
         '#type' => 'actions',
         'add' => [
-          '#type' => 'component',
-          '#component' => 'aculta420_v2:button',
+          '#type' => 'aculta_portal_button',
           '#props' => [
             'text' => (string) $this->t('+ Cadastrar organização'),
             'url' => Url::fromRoute('aculta_events.admin_organization_add')->toString(),
@@ -304,8 +303,7 @@ final class EventOrganizationAdminController extends ControllerBase {
               '#attributes' => ['data-portal-ui' => 'button'],
             ],
             'reset' => [
-              '#type' => 'component',
-              '#component' => 'aculta420_v2:button',
+              '#type' => 'aculta_portal_button',
               '#props' => [
                 'text' => (string) $this->t('Limpar'),
                 'url' => Url::fromRoute('aculta_events.admin_organizations')->toString(),

@@ -67,8 +67,7 @@ final class EventLocationDeleteForm extends ContentEntityConfirmFormBase {
         'actions' => [
           '#type' => 'actions',
           'cancel' => [
-            '#type' => 'component',
-            '#component' => 'aculta420_v2:button',
+            '#type' => 'aculta_portal_button',
             '#props' => [
               'text' => (string) $this->t('Voltar'),
               'url' => $this->getCancelUrl()->toString(),

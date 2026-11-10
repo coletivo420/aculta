@@ -358,8 +358,7 @@ final class PortalController extends ControllerBase {
           '#attributes' => ['data-portal-ui' => 'google-account'],
           'text' => ['#plain_text' => $this->t('O endereço da conta Google ainda não está disponível nesta conexão.')],
           'reconnect' => [
-            '#type' => 'component',
-            '#component' => 'aculta420_v2:button',
+            '#type' => 'aculta_portal_button',
             '#props' => [
               'text' => (string) $this->t('Atualizar conexão Google'),
               'url' => Url::fromRoute('social_auth.network.redirect', ['network' => 'google'])->toString(),
@@ -370,8 +369,7 @@ final class PortalController extends ControllerBase {
       }
       if ($this->hasUserChosenPassword($account)) {
         $items['disconnect'] = [
-          '#type' => 'component',
-          '#component' => 'aculta420_v2:button',
+          '#type' => 'aculta_portal_button',
           '#props' => [
             'text' => (string) $this->t('Desconectar Google'),
             'url' => Url::fromRoute('entity.social_auth.delete_form', ['social_auth' => $social_auth->id()])->toString(),

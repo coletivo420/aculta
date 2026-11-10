@@ -93,8 +93,7 @@ final class SupportForm extends FormBase {
         '#value' => $this->t('Parcerias institucionais, apoio cultural e patrocínio de projetos também fortalecem nossas iniciativas.'),
       ],
       'contact' => [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => (string) $this->t('Fale com a Associação'),
           'url' => Url::fromUri('internal:/contato')->toString(),

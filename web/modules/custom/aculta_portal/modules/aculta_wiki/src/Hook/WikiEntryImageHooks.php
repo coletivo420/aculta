@@ -408,8 +408,7 @@ final class WikiEntryImageHooks {
     }
 
     $form['wiki_workspace_return'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:button',
+      '#type' => 'aculta_portal_button',
       '#props' => [
         'text' => (string) $this->t('Voltar para Meu Trabalho WE SATIVA'),
         'url' => $url->toString(),

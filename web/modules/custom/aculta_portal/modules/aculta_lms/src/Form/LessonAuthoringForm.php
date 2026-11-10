@@ -98,8 +98,7 @@ final class LessonAuthoringForm extends FormBase {
       '#button_type' => 'primary',
     ];
     $form['actions']['cancel'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:button',
+      '#type' => 'aculta_portal_button',
       '#props' => [
         'text' => (string) $this->t('Voltar à estrutura do curso'),
         'url' => Url::fromRoute('aculta_lms.course_structure', ['course' => $course->id()])->toString(),

@@ -56,8 +56,7 @@ final class CourseDocumentController {
     // rebuilds must serialize the form while an UploadedFile is in the request.
     $build = $this->entityFormBuilder->getForm($document, 'add');
     $build['contextual_return'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:button',
+      '#type' => 'aculta_portal_button',
       '#props' => [
         'text' => (string) $this->t('Voltar aos materiais do curso'),
         'url' => Url::fromRoute('aculta_lms.course_materials_edit', ['course' => $course->id()])->toString(),
@@ -119,8 +118,7 @@ final class CourseDocumentController {
 
     $build = $this->entityFormBuilder->getForm($media, 'edit');
     $build['contextual_return'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:button',
+      '#type' => 'aculta_portal_button',
       '#props' => [
         'text' => (string) $this->t('Voltar aos materiais do curso'),
         'url' => Url::fromRoute('aculta_lms.course_materials_edit', ['course' => $course->id()])->toString(),

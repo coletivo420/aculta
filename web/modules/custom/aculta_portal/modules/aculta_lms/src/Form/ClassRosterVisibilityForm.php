@@ -70,8 +70,7 @@ final class ClassRosterVisibilityForm extends FormBase {
       '#button_type' => 'primary',
     ];
     $form['actions']['cancel'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:button',
+      '#type' => 'aculta_portal_button',
       '#props' => [
         'text' => (string) $this->t('Voltar ao painel da turma'),
         'url' => Url::fromRoute('aculta_lms.class_dashboard', [

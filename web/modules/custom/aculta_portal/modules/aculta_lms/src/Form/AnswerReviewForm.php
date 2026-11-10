@@ -123,8 +123,7 @@ final class AnswerReviewForm extends FormBase {
       '#button_type' => 'primary',
     ];
     $form['actions']['cancel'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:button',
+      '#type' => 'aculta_portal_button',
       '#props' => [
         'text' => (string) $this->t('Voltar às respostas'),
         'url' => Url::fromRoute('aculta_lms.answer_reviews', ['course' => $course->id(), 'group' => $group->id()])->toString(),

@@ -101,8 +101,7 @@ final class WikiProposalStatusController extends ControllerBase {
     if ((int) $proposal->getOwnerId() === (int) $account->id()
       && in_array($state, ['submitted', 'needs_changes'], TRUE)) {
       $build['header']['#slots']['actions'] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => (string) $this->t('Retirar proposta'),
           'url' => Url::fromRoute('aculta_wiki.proposal_withdraw', ['proposal' => $proposal->id()])->toString(),

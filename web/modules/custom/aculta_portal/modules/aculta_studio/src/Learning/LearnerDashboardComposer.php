@@ -234,22 +234,21 @@ final class LearnerDashboardComposer {
   }
 
   /**
-   * Builds a link as the aculta420_v2:button SDC.
+   * Builds a link as the neutral aculta_portal_button element.
    *
    * @param mixed $label
    *   Visible label.
    * @param \Drupal\Core\Url $url
    *   Destination URL.
    * @param string $variant
-   *   SDC variant (primary, secondary, outline, ghost or danger).
+   *   Button variant (primary, secondary, outline, ghost or danger).
    *
    * @return array
-   *   Component render array.
+   *   Neutral element render array.
    */
   private function button(mixed $label, Url $url, string $variant): array {
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:button',
+      '#type' => 'aculta_portal_button',
       '#props' => [
         'text' => (string) $label,
         'url' => $url->toString(),

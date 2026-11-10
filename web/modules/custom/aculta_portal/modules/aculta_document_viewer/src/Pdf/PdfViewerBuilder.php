@@ -245,8 +245,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
       '#type' => 'container',
       '#attributes' => ['data-aculta-pdf-control' => 'toolbar'],
       'previous' => [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => new TranslatableMarkup('Página anterior'),
           'variant' => 'ghost',
@@ -264,8 +263,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         ],
       ],
       'next' => [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => new TranslatableMarkup('Próxima página'),
           'variant' => 'ghost',
@@ -287,8 +285,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         '#type' => 'container',
         '#attributes' => ['data-aculta-pdf-control' => 'zoom-controls'],
         'zoom_out' => [
-          '#type' => 'component',
-          '#component' => 'aculta420_v2:button',
+          '#type' => 'aculta_portal_button',
           '#props' => [
             'text' => new TranslatableMarkup('Reduzir zoom'),
             'variant' => 'ghost',
@@ -302,8 +299,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
           '#attributes' => ['data-aculta-pdf-control' => 'zoom-status', 'aria-live' => 'polite'],
         ],
         'zoom_in' => [
-          '#type' => 'component',
-          '#component' => 'aculta420_v2:button',
+          '#type' => 'aculta_portal_button',
           '#props' => [
             'text' => new TranslatableMarkup('Aumentar zoom'),
             'variant' => 'ghost',
@@ -311,8 +307,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
           '#attributes' => ['data-aculta-pdf-control' => 'zoom-in'],
         ],
         'zoom_reset' => [
-          '#type' => 'component',
-          '#component' => 'aculta420_v2:button',
+          '#type' => 'aculta_portal_button',
           '#props' => [
             'text' => new TranslatableMarkup('Restaurar zoom'),
             'variant' => 'ghost',
@@ -321,8 +316,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         ],
       ],
       'rotate' => [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => new TranslatableMarkup('Girar página 90 graus'),
           'variant' => 'ghost',
@@ -330,8 +324,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         '#attributes' => ['data-aculta-pdf-control' => 'rotate'],
       ],
       'fullscreen' => [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => new TranslatableMarkup('Tela cheia'),
           'aria_label' => new TranslatableMarkup('Abrir leitor em tela cheia'),
@@ -362,8 +355,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         ],
       ],
       'submit' => [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => new TranslatableMarkup('Buscar'),
           'variant' => 'secondary',
@@ -371,8 +363,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         '#attributes' => ['data-aculta-pdf-control' => 'search-submit'],
       ],
       'previous' => [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => new TranslatableMarkup('Resultado anterior'),
           'variant' => 'ghost',
@@ -381,8 +372,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         '#attributes' => ['data-aculta-pdf-control' => 'search-previous'],
       ],
       'next' => [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => new TranslatableMarkup('Próximo resultado'),
           'variant' => 'ghost',
