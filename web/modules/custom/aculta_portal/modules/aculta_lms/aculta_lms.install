@@ -7,6 +7,7 @@ declare(strict_types=1);
  * Install and update hooks for ACULTA LMS.
  */
 
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Extension\Requirement\RequirementSeverity;
 use Drupal\Core\Url;
 use Drupal\Core\Site\Settings;
@@ -45,6 +46,9 @@ function aculta_lms_update_10003(): void {
  */
 #[\Drupal\Core\Hook\Attribute\LegacyRequirementsHook]
 function aculta_lms_requirements(string $phase): array {
+  if (!in_array($phase, ['install', 'runtime'], TRUE)) {
+    return [];
+  }
   $requirements = [];
   if (Settings::get('file_private_path') === NULL) {
     $requirements['aculta_lms_file_upload'] = [
@@ -148,7 +152,11 @@ function aculta_lms_update_10008(): void {
     return;
   }
   $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_lms_answer');
-  $manager->installFieldStorageDefinition('answer_data', 'aculta_lms_answer', 'aculta_lms', $fields['answer_data']);
+  $definition = $fields['answer_data'] ?? NULL;
+  if (!$definition instanceof FieldStorageDefinitionInterface) {
+    return;
+  }
+  $manager->installFieldStorageDefinition('answer_data', 'aculta_lms_answer', 'aculta_lms', $definition);
 }
 
 /**
@@ -244,7 +252,11 @@ function aculta_lms_update_10011(): void {
   }
   $definitions = \Drupal::service('entity_field.manager')
     ->getBaseFieldDefinitions('aculta_lms_attempt_archive');
-  $manager->installFieldStorageDefinition('score_precise', 'aculta_lms_attempt_archive', 'aculta_lms', $definitions['score_precise']);
+  $definition = $definitions['score_precise'] ?? NULL;
+  if (!$definition instanceof FieldStorageDefinitionInterface) {
+    return;
+  }
+  $manager->installFieldStorageDefinition('score_precise', 'aculta_lms_attempt_archive', 'aculta_lms', $definition);
 }
 
 /**
@@ -265,7 +277,11 @@ function aculta_lms_update_10013(): void {
     return;
   }
   $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_lms_activity');
-  $manager->installFieldStorageDefinition('answer_config', 'aculta_lms_activity', 'aculta_lms', $fields['answer_config']);
+  $definition = $fields['answer_config'] ?? NULL;
+  if (!$definition instanceof FieldStorageDefinitionInterface) {
+    return;
+  }
+  $manager->installFieldStorageDefinition('answer_config', 'aculta_lms_activity', 'aculta_lms', $definition);
 }
 
 /**
@@ -277,7 +293,11 @@ function aculta_lms_update_10014(): void {
   }
   $fields = \Drupal::service('entity_field.manager')
     ->getBaseFieldDefinitions('aculta_lms_answer');
-  $manager->installFieldStorageDefinition('feedback', 'aculta_lms_answer', 'aculta_lms', $fields['feedback']);
+  $definition = $fields['feedback'] ?? NULL;
+  if (!$definition instanceof FieldStorageDefinitionInterface) {
+    return;
+  }
+  $manager->installFieldStorageDefinition('feedback', 'aculta_lms_answer', 'aculta_lms', $definition);
 }
 
 /**
@@ -289,5 +309,9 @@ function aculta_lms_update_10015(): void {
   }
   $fields = \Drupal::service('entity_field.manager')
     ->getBaseFieldDefinitions('aculta_lms_lesson');
-  $manager->installFieldStorageDefinition('body', 'aculta_lms_lesson', 'aculta_lms', $fields['body']);
+  $definition = $fields['body'] ?? NULL;
+  if (!$definition instanceof FieldStorageDefinitionInterface) {
+    return;
+  }
+  $manager->installFieldStorageDefinition('body', 'aculta_lms_lesson', 'aculta_lms', $definition);
 }

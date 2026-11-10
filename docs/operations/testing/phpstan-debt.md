@@ -130,3 +130,16 @@ Escopo: os quatro `EntityCourse*Reader` passaram a narrowing `ContentEntityInter
 Escopo: remoção de `instanceof` redundantes em `LmsForumModerationManager`, `AnswerReviewController`, `CourseLessonController`, `ClassActivityDeadlineManager`, `EducatorFeedbackPolicy`, `CourseCompletionPublisher`, `CourseOrderHooks`, `EducatorFeedbackAuthorCardHooks`, `EnrollmentFormHooks`, `CourseEnrollmentEventHooks`, `EventAccessHooks`, `LmsCommentModerationForm`, `CourseEnrollmentPurchaseForm`, `CourseResourceBuilder` e `LearningEligibility`; narrowing real em `EventoTurmaNotificationWorker`, `AnswerLifecycleEventHooks`, `CourseOrderEnrollmentManager` e readers; `accessForReorder` recebe `ContentEntityInterface`; `PaymentStorageInterface` usado explicitamente em `CourseOrderEnrollmentManager` e `EnrollmentFormHooks` (helpers `paymentsForOrder()` com `array<mixed>` preservam o fail-closed comprovado por teste); `EventRouteAccess::access()` retorna `AccessResultInterface`; `AccountUserLoader` trata ID anônimo como `(int) < 1`; `LearningDashboardController` filtra `LessonEntity`/`ActivityEntity` antes do `usort` e passa `''` como formato de data.
 
 Resíduos conhecidos (dependentes do ambiente, comprovados por teste): o retorno booleano de `Group::access(..., TRUE)`; `$entityTypeManager` injetado em `ClassActivityDeadlineManager` para manter o contrato do serviço e dos testes; e `DrupalDateTime::createFromFormat()` retornando `false` para entrada inválida. Evidência: Unit 320/1367 PASS.
+
+## Rodada 9 — 2026-11-10
+
+| Medida | Valor |
+| --- | ---: |
+| Erros brutos em aculta_lms (module+install) antes | 16 |
+| Corrigidos | 16 |
+| Erros brutos em aculta_lms (module+install) ao final | 0 |
+| Erros brutos globais antes | 3542 |
+| Erros brutos globais ao final | 3526 |
+| Baseline atual | 3526 |
+
+Escopo: `aculta_lms.module` passou a narrowing `ContentEntityInterface` nos hooks de evento e no alter do sitemap; `aculta_lms.install` valida `FieldStorageDefinitionInterface` antes de `installFieldStorageDefinition()` (5 updates) e usa `$phase` de forma significativa em `hook_requirements()`. Evidência: Unit 320/1367 PASS; `php -l` sem erros nos dois arquivos.

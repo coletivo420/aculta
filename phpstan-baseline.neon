@@ -6187,48 +6187,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_linkweed/tests/src/Unit/LinkDestinationResolverTest.php
 
 		-
-			rawMessage: 'Function aculta_lms_requirements() has an unused parameter $phase.'
-			identifier: function.unusedParameter
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/aculta_lms.install
-
-		-
-			rawMessage: 'Parameter #4 $storage_definition of method Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface::installFieldStorageDefinition() expects Drupal\Core\Field\FieldStorageDefinitionInterface, Drupal\Core\Field\FieldDefinitionInterface given.'
-			identifier: argument.type
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/aculta_lms.install
-
-		-
-			rawMessage: Access to an undefined property Drupal\Core\Entity\EntityInterface::$original.
-			identifier: property.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/aculta_lms.module
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/aculta_lms.module
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::hasField().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/aculta_lms.module
-
-		-
-			rawMessage: Coalesce operator ?? is unnecessary because the left side is always set and the right side is null.
-			identifier: nullCoalesce.unnecessary
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/aculta_lms.module
-
-		-
-			rawMessage: 'Function aculta_lms_simple_sitemap_links_alter() has an unused parameter $sitemap.'
-			identifier: function.unusedParameter
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/aculta_lms.module
-
-		-
 			rawMessage: 'Method Drupal\aculta_lms\Account\AccountCoursesReader::viewAccess() never returns bool so it can be removed from the return type.'
 			identifier: return.unusedType
 			count: 1

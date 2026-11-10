@@ -8,6 +8,7 @@
 declare(strict_types=1);
 
 use Drupal\Component\Utility\DeprecationHelper;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
@@ -36,6 +37,8 @@ function aculta_lms_entity_base_field_info(EntityTypeInterface $entity_type): ar
  * The public sitemap must not advertise events that the public cannot view.
  */
 function aculta_lms_simple_sitemap_links_alter(array &$links, SimpleSitemapInterface $sitemap): void {
+  // The hook contract requires the sitemap argument even when unused here.
+  unset($sitemap);
   $slugsByKey = [];
   foreach ($links as $key => $link) {
     $path = $link['meta']['path'] ?? NULL;
@@ -57,6 +60,9 @@ function aculta_lms_simple_sitemap_links_alter(array &$links, SimpleSitemapInter
     ->execute();
   $restrictedSlugs = [];
   foreach (\Drupal::entityTypeManager()->getStorage('aculta_event')->loadMultiple($ids) as $event) {
+    if (!$event instanceof ContentEntityInterface) {
+      continue;
+    }
     if ($event->hasField('field_turma') && !$event->get('field_turma')->isEmpty()) {
       $restrictedSlugs[(string) $event->get('field_slug')->value] = TRUE;
     }
@@ -73,6 +79,9 @@ function aculta_lms_simple_sitemap_links_alter(array &$links, SimpleSitemapInter
  * Implements hook_ENTITY_TYPE_insert() for aculta_event.
  */
 function aculta_lms_aculta_event_insert(EntityInterface $evento): void {
+  if (!$evento instanceof ContentEntityInterface) {
+    return;
+  }
   _aculta_lms_avisa_turma($evento, NULL);
 }
 
@@ -80,13 +89,17 @@ function aculta_lms_aculta_event_insert(EntityInterface $evento): void {
  * Implements hook_ENTITY_TYPE_update() for aculta_event.
  */
 function aculta_lms_aculta_event_update(EntityInterface $evento): void {
-  _aculta_lms_avisa_turma($evento, DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $evento->getOriginal(), fn() => $evento->original) ?? NULL);
+  if (!$evento instanceof ContentEntityInterface) {
+    return;
+  }
+  $original = DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $evento->getOriginal(), fn() => $evento->original);
+  _aculta_lms_avisa_turma($evento, $original instanceof ContentEntityInterface ? $original : NULL);
 }
 
 /**
  * Enfileira o aviso quando o evento de turma passa a publicado.
  */
-function _aculta_lms_avisa_turma(EntityInterface $evento, ?EntityInterface $anterior): void {
+function _aculta_lms_avisa_turma(ContentEntityInterface $evento, ?ContentEntityInterface $anterior): void {
   if (!$evento->hasField('field_turma') || $evento->get('field_turma')->isEmpty() || (string) $evento->get('field_status')->value !== 'publicado') {
     return;
   }
