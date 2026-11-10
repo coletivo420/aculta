@@ -9130,25 +9130,19 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Aviso/AvisoPreferencias.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 13
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Aviso/AvisoService.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getChangedTime().'
+			rawMessage: 'Call to an undefined method Drupal\Core\Entity\ContentEntityInterface::getChangedTime().'
 			identifier: method.notFound
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Aviso/AvisoService.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::set().'
+			rawMessage: 'Call to an undefined method Drupal\Core\Entity\ContentEntityInterface::setChangedTime().'
 			identifier: method.notFound
-			count: 8
+			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Aviso/AvisoService.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::setChangedTime().'
+			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
 			identifier: method.notFound
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Aviso/AvisoService.php
@@ -9882,13 +9876,13 @@ parameters:
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
 			identifier: method.notFound
-			count: 3
+			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::set().'
 			identifier: method.notFound
-			count: 17
+			count: 9
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
 
 		-
@@ -14271,17 +14265,6 @@ parameters:
 			path: web/themes/custom/aculta420_v2/src/Hook/PagePresentationHooks.php
 
 		-
-			rawMessage: '''
-				Call to deprecated function theme_get_setting():
-				in drupal:11.3.0 and is removed from drupal:13.0.0. Use
-				  \Drupal::service('Drupal\Core\Extension\ThemeSettingsProvider')->getSetting()
-				  instead.
-			'''
-			identifier: function.deprecated
-			count: 1
-			path: web/themes/custom/aculta420_v2/src/Hook/SurfaceSettingsHooks.php
-
-		-
 			rawMessage: 'Property Drupal\aculta420_v2\Hook\UiPatternsStoryHooks::$componentPluginManager is never read, only written.'
 			identifier: property.onlyWritten
 			count: 1
@@ -14401,29 +14384,11 @@ parameters:
 				  instead.
 			'''
 			identifier: function.deprecated
-			count: 8
-			path: web/themes/custom/aculta420_v2/theme-settings.php
-
-		-
-			rawMessage: 'Call to function is_string() with ''account''|''courses''|''eventos''|''forum''|''links''|''magazine''|''main''|''shop''|''support''|''wiki'' will always evaluate to true.'
-			identifier: function.alreadyNarrowedType
-			count: 1
+			count: 7
 			path: web/themes/custom/aculta420_v2/theme-settings.php
 
 		-
 			rawMessage: 'Function aculta420_v2_form_system_theme_settings_alter() has an unused parameter $form_state.'
 			identifier: function.unusedParameter
-			count: 1
-			path: web/themes/custom/aculta420_v2/theme-settings.php
-
-		-
-			rawMessage: 'Offset ''account''|''courses''|''eventos''|''forum''|''links''|''magazine''|''main''|''shop''|''support''|''wiki'' on array{main: Drupal\Core\StringTranslation\TranslatableMarkup, account: Drupal\Core\StringTranslation\TranslatableMarkup, support: Drupal\Core\StringTranslation\TranslatableMarkup, magazine: Drupal\Core\StringTranslation\TranslatableMarkup, wiki: Drupal\Core\StringTranslation\TranslatableMarkup, shop: Drupal\Core\StringTranslation\TranslatableMarkup, courses: Drupal\Core\StringTranslation\TranslatableMarkup, forum: Drupal\Core\StringTranslation\TranslatableMarkup, ...} on left side of ?? always exists and is not nullable.'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: web/themes/custom/aculta420_v2/theme-settings.php
-
-		-
-			rawMessage: 'Strict comparison using === between array{''main'', ''account'', ''support'', ''magazine'', ''wiki'', ''shop'', ''courses'', ''links'', ...} and array{} will always evaluate to false.'
-			identifier: identical.alwaysFalse
 			count: 1
 			path: web/themes/custom/aculta420_v2/theme-settings.php

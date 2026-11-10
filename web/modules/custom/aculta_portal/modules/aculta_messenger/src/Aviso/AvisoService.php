@@ -6,6 +6,7 @@ namespace Drupal\aculta_messenger\Aviso;
 
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -250,6 +251,7 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
       ->execute();
     $topicIds = [];
     foreach ($this->entityTypeManager->getStorage('aculta_aviso')->loadMultiple($ids) as $aviso) {
+      assert($aviso instanceof ContentEntityInterface);
       $topicIds[(int) $aviso->get('assunto_nid')->value] = TRUE;
     }
     $topics = $this->entityTypeManager->getStorage('node')->loadMultiple(array_keys($topicIds));
@@ -384,6 +386,7 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
     $moved = 0;
     $movedUids = [];
     foreach ($storage->loadMultiple($ids) as $source) {
+      assert($source instanceof ContentEntityInterface);
       $uid = (int) $source->get('uid')->target_id;
       if ($uid <= 0 || !$this->accessPolicy->canViewTopic($destination, $uid)) {
         continue;
@@ -391,6 +394,9 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
       $target_ids = $this->query($uid, $destinationNid, Aviso::TIPO_RESPOSTA);
       if ($target_ids !== []) {
         $target = $storage->load(reset($target_ids));
+        if (!$target instanceof ContentEntityInterface) {
+          continue;
+        }
         $target->set('contador_site', (int) $target->get('contador_site')->value
           + (int) $source->get('contador_site')->value);
         $target->set('contador_email', (int) $target->get('contador_email')->value
@@ -468,6 +474,7 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
       ->condition('assunto_nid', $nid)
       ->execute();
     foreach ($this->entityTypeManager->getStorage('aculta_aviso')->loadMultiple($ids) as $aviso) {
+      assert($aviso instanceof ContentEntityInterface);
       if ((int) $aviso->get('contador_site')->value > 0) {
         // Reading changes delivery state, not the activity's recency. Keep
         // older notices from jumping ahead of newer activity in the list.

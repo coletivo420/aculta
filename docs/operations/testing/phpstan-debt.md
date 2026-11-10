@@ -1,26 +1,26 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-10T18:31:09+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-10T19:40:23+00:00 por `scripts/phpstan-debt-report.php`.
 
-**Total de erros: 3788**
+**Total de erros: 3750**
 
 ## Por criticidade
 
 | Criticidade | Erros |
 | --- | ---: |
 | alta | 432 |
-| media | 3356 |
+| media | 3318 |
 | baixa | 0 |
 
 ## Dez identificadores mais frequentes
 
 | Identificador | Erros |
 | --- | ---: |
-| `method.notFound` | 1598 |
+| `method.notFound` | 1566 |
 | `argument.type` | 330 |
 | `instanceof.alwaysTrue` | 196 |
 | `class.notFound` | 129 |
-| `nullCoalesce.offset` | 120 |
+| `nullCoalesce.offset` | 119 |
 | `staticMethod.alreadyNarrowedType` | 113 |
 | `return.type` | 102 |
 | `method.alreadyNarrowedType` | 97 |
@@ -31,14 +31,14 @@ Gerado em 2026-11-10T18:31:09+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Módulo | Erros |
 | --- | ---: |
-| aculta_messenger | 452 |
 | aculta_lms | 438 |
+| aculta_messenger | 422 |
 | aculta_forum | 391 |
 | aculta_events | 311 |
 | aculta_user | 251 |
 | aculta_portal | 248 |
 | aculta_wiki | 192 |
-| scripts | 159 |
+| scripts | 156 |
 | aculta_lms_h5p | 149 |
 | aculta_pagamentos_mercadopago | 139 |
 | aculta_commerce | 133 |
@@ -48,28 +48,22 @@ Gerado em 2026-11-10T18:31:09+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_mailer | 69 |
 | aculta_mail_confirmer | 47 |
 | aculta_donation | 46 |
-| aculta420_v2 | 43 |
 | aculta_magazine | 39 |
 | aculta_calendar | 38 |
+| aculta420_v2 | 38 |
 
 
-## Rodada 1 — 2026-11-10
+## Rodada 2 — 2026-11-10
 
 | Medida | Valor |
 | --- | ---: |
-| Erros brutos no início | 3827 |
-| Corrigidos antes do baseline (strict_types + ignores obsoletos) | 4 |
-| Baseline inicial revisado | 3823 |
-| Corrigidos nesta rodada (aculta_mailer) | 34 |
-| Erros brutos ao final | 3788 |
-| Baseline atual | 3788 |
+| Erros brutos antes da rodada | 3788 |
+| Corrigidos em aculta_messenger | 38 |
+| Erros brutos ao final | 3750 |
+| Baseline atual | 3750 |
 
-Escopo da rodada: `aculta_mailer` caiu de 103 para 69 erros. Todos os
-`EntityInterface::get()`/`set()` foram resolvidos com narrowing explícito
-(`assert($log instanceof ContentEntityInterface)`) em controllers, formulário,
-política e relatório; nenhuma regra de negócio ou permissão foi alterada.
-Evidência: Unit 167 testes/351 asserções PASS; Kernel 46 testes/214 asserções
-PASS com `SIMPLETEST_DB`.
-
-Próximos alvos por volume: `aculta_messenger` (452), `aculta_lms` (438),
-`aculta_forum` (391), `aculta_events` (311).
+Escopo: `AvisoService` e `PrivateMessageNotificationWorker` passaram a narrowing
+`ContentEntityInterface` (assert) e `MessageInterface` (@var) em vez de operar
+sobre `EntityInterface`. Testes Kernel do messenger ganharam as dependências
+ausentes (`file`, `token`, `image`, `crop`, `image_widget_crop`), o que levou a
+suíte de 56 erros para 0: 97 testes, 1940 asserções PASS. Unit: 495/5327 PASS.

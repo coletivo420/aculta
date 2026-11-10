@@ -178,6 +178,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       ->condition(self::SOURCE_FIELD, $messageId)
       ->range(0, 1)
       ->execute();
+    /** @var \Drupal\message\MessageInterface|null $notification */
     $notification = $ids === []
       ? NULL
       : $this->entityTypeManager->getStorage('message')->loadUnchanged(reset($ids));
@@ -220,7 +221,9 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
         $directIdempotencyKey,
       )) {
         if ($notification === NULL) {
-          $notification = $this->entityTypeManager->getStorage('message')->create([
+          /** @var \Drupal\message\MessageInterface $notification */
+          /** @var \Drupal\message\MessageInterface $notification */
+        $notification = $this->entityTypeManager->getStorage('message')->create([
             'template' => self::TEMPLATE,
             'uid' => $recipientId,
             self::SOURCE_FIELD => $messageId,
@@ -238,6 +241,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
         return;
       }
       if ($notification === NULL) {
+        /** @var \Drupal\message\MessageInterface $notification */
         $notification = $this->entityTypeManager->getStorage('message')->create([
           'template' => self::TEMPLATE,
           'uid' => $recipientId,
@@ -261,6 +265,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     $url = $this->domainPurposeManager->routeUrl('account', 'aculta_portal.dashboard');
     if ($url === NULL) {
       if ($notification === NULL) {
+        /** @var \Drupal\message\MessageInterface $notification */
         $notification = $this->entityTypeManager->getStorage('message')->create([
           'template' => self::TEMPLATE,
           'uid' => $recipientId,
