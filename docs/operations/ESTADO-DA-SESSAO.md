@@ -1,11 +1,12 @@
 # ADR-054 + ADR-055 — UI Skins/site_key — 2026-11-10
 
-- **Objetivo:** cortar o motor visual por purpose e adotar UI Skins sem dual-read nem config legada.
-- **Estado:** dez Domain IDs mapeados a skins; cinco variáveis e vinte scopes claro/escuro. Removidos formulário/config, esquemas, tokens/seletores e testes antigos. `DomainPurposeManager` mantém funções de domínio.
-- **Commit/arquivos:** `693d5e173` publicado; resolver Portal, hooks/tokens/settings do tema, Config Sync, inventário e docs.
-- **Verificações:** UI Skins 126, theme-settings 16, UI Styles 38, foundations 83+6, Unit 11/31, PHPStan/PHPCS, YAML, boundary/diff e `drush cr`: PASS; push confirmado.
-- **Limites:** Runtime tem UI Skins Disabled e Config Sync apresenta drift; sem `cim`/enable. Render real, cache visual, capturas e aceite por domínio DEFERRED. Stylelint indisponível. Token-budget gate registra dívida preexistente.
-- **Próximo passo:** validar versão instalada/API UI Skins no Runtime após procedimento de Sync autorizado; completar piloto Links com capturas/modos/cache e seguir migração UI Suite/legado.
+- **Objetivo:** cortar visual por purpose e avançar UI Styles sem configuração legada.
+- **Estado:** UI Skins mapeia dez Domains a dez skins, com cinco tokens em claro/escuro. `ui_styles_page` alinhado no Sync e ativo no Runtime; assignments de região não homologados.
+- **Decisões/cuidados:** sem dual-read/aliases; `DomainPurposeManager` só funcional. Sem `cim` ou ativação runtime; Entity Status segue desativado até revisão de acesso/rascunhos.
+- **Commits/arquivos:** `693d5e173` (corte Skins); `c5b560132` (UI Styles Page/Sync, inventário e planos).
+- **Verificações:** UI Skins 126, UI Styles 38, theme-settings 16, Unit 11/31, PHPStan/PHPCS, YAML, boundary/status index e `drush cr` PASS. Foundation geral falha por `system.theme` Sync gin vs Runtime default_admin. Token-budget falha por sete dívidas anteriores.
+- **Pendências:** Skins Disabled; Config Sync divergente; piloto Links, contraste/cache/capturas e Entity Status DEFERRED. Stylelint indisponível. Messenger tem alterações paralelas não staged.
+- **Próximo passo:** homologar Links e estilos de regiões em navegador; resolver Sync por autorização, então migrar Consumers UI Suite/visuais restantes.
 # FST-00 a FST-11 — integração analítica Fórum + Statistics — 2026-11-10
 
 - **Objetivo:** executar o plano canônico FST-00 a FST-11 em `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md`.
