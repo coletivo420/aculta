@@ -39,6 +39,9 @@ services:
   aculta_forum.analytics_ledger_hooks:
     class: Drupal\aculta_forum\Hook\ForumAnalyticsLedgerHooks
     arguments: ['@aculta_forum.activity_ledger']
+  Drupal\aculta_forum\Hook\ForumDiscoveryHooks:
+    class: Drupal\aculta_forum\Hook\ForumDiscoveryHooks
+    arguments: ['@event_dispatcher']
   Drupal\aculta_forum\Hook\ForumAttachmentCleanupHooks:
     class: Drupal\aculta_forum\Hook\ForumAttachmentCleanupHooks
     arguments: ['@aculta_forum.attachment_cleanup', '@aculta_forum.gallery_publication', '@datetime.time']

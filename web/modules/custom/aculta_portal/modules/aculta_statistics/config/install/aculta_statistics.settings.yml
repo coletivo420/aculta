@@ -103,3 +103,6 @@ retention:
     days: 90
 consent_banner:
   enabled: false
+
+forum_discovery:
+  enabled: false
