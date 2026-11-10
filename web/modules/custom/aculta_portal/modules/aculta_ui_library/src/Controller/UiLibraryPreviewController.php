@@ -189,8 +189,9 @@ final class UiLibraryPreviewController extends ControllerBase {
       return $this->unavailable($build, $this->t('O plugin do bloco não está disponível.'));
     }
 
-    if (!$plugin->access($account, TRUE)) {
-      return $this->unavailable($build, $this->t('Prévia indisponível: o usuário atual não tem acesso a este bloco.'));
+    $accessResult = $plugin->access($account, TRUE);
+    if (!$accessResult->isAllowed()) {
+      return $this->unavailable($build, $this->t('Prévia indisponível: o usuário atual não tem acesso a este bloco.'), $accessResult);
     }
 
     $missing = $this->missingRequiredContexts($plugin, $account);
@@ -273,7 +274,7 @@ final class UiLibraryPreviewController extends ControllerBase {
   /**
    * Builds a safe unavailable state without leaking block data.
    */
-  private function unavailable(array $build, mixed $message): array {
+  private function unavailable(array $build, mixed $message, ?\Drupal\Core\Access\AccessResultInterface $accessResult = NULL): array {
     $build['unavailable'] = [
       '#type' => 'container',
       '#attributes' => ['class' => ['messages', 'messages--warning']],
@@ -282,6 +283,10 @@ final class UiLibraryPreviewController extends ControllerBase {
     $metadata = (new CacheableMetadata())
       ->addCacheContexts(['user.roles'])
       ->setCacheMaxAge(0);
+    if ($accessResult instanceof CacheableMetadata) {
+      $metadata->addCacheableDependency($accessResult);
+      $metadata->setCacheMaxAge(0);
+    }
     $metadata->applyTo($build);
     return $build;
   }

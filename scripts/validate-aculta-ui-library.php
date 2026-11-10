@@ -111,10 +111,12 @@ finally {
   $switcher->switchBack();
 }
 
-// 6. Estática: sem \Drupal:: no controlador e com max-age 0 explícito.
+// 6. Estática: sem \Drupal:: no controlador, com max-age 0 explícito e com verificação isAllowed().
 $source = (string) file_get_contents($module . '/src/Controller/UiLibraryPreviewController.php');
 $assert(!preg_match('/\\\\Drupal::/', $source), 'O controlador usa \\Drupal:: (viola a injeção de dependência do projeto).');
 $assert(substr_count($source, 'setCacheMaxAge(0)') >= 3, 'O controlador não marca max-age 0 em catálogo, prévia e estado indisponível.');
+$assert(str_contains($source, 'isAllowed()'), 'O controlador não verifica explicitamente isAllowed() na decisão de acesso do plugin (vulnerabilidade SEC-01).');
+$assert(!preg_match('/!\s*\$plugin->access\(/', $source), 'O controlador ainda nega diretamente o retorno de $plugin->access() sem checar isAllowed().');
 
 if ($failures !== []) {
   fwrite(STDERR, "FAIL — validate-aculta-ui-library\n");
