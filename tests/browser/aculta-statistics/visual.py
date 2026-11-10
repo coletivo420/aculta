@@ -216,18 +216,31 @@ try:
                         and abs(form_layout["selectWidth"] - form_layout["labelWidth"]) <= 1
                     )
                 check(f"filtro de estatísticas reflow em {width}px", layout_ok, str(form_layout))
-    # Modo escuro: o tema administrativo ativo não expõe data-theme. Forçar
-    # tokens do tema público no painel reduziria o contraste; registramos a
-    # aplicabilidade em vez de reprovar uma combinação que não é suportada.
+    # Modo escuro dos componentes de estatísticas: os tokens do tema são
+    # ativados por data-theme no html; medimos contraste dentro do cartão,
+    # não o chrome do tema administrativo.
     driver.get(BASE + "/painel-administrativo/aculta/estatisticas/area/forum")
-    dark = driver.js("""const main = document.querySelector('main');
-      const before = main ? getComputedStyle(main).backgroundColor : '';
+    dark = driver.js("""const parse = value => value.match(/\\d+/g)?.map(Number) || [0,0,0];
+      const lum = rgb => { const c = rgb.map(v => { v/=255; return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4); }); return 0.2126*c[0]+0.7152*c[1]+0.0722*c[2]; };
+      const ratio = (a,b) => { const l1=lum(parse(a)), l2=lum(parse(b)); return (Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05); };
+      const card = document.querySelector('[data-portal-ui="statistics-metric-card"]');
+      const label = card?.querySelector('[data-portal-ui="statistics-metric-card__label"]');
+      const value = card?.querySelector('[data-portal-ui="statistics-metric-card__number"]');
+      const before = card ? getComputedStyle(card).backgroundColor : '';
       document.documentElement.setAttribute('data-theme','dark');
-      const after = main ? getComputedStyle(main).backgroundColor : '';
+      const after = card ? getComputedStyle(card).backgroundColor : '';
+      const bg = after;
+      const result = {
+        applicable: before !== after,
+        overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+        card: !!card,
+        labelContrast: label ? ratio(getComputedStyle(label).color, bg) : 0,
+        valueContrast: value ? ratio(getComputedStyle(value).color, bg) : 0,
+      };
       document.documentElement.removeAttribute('data-theme');
-      return {applicable: before !== after, before, after};""")
-    check("modo escuro do painel administrativo", True,
-          "aplicável" if dark["applicable"] else "não aplicável: tema administrativo não expõe data-theme")
+      return result;""")
+    check("componentes de estatísticas em modo escuro", dark["card"] and (not dark["applicable"] or (not dark["overflow"] and dark["labelContrast"] >= 4.5 and dark["valueContrast"] >= 4.5)),
+          str(dark))
     a11y = driver.js("""
       const issues = [];
       if (document.querySelectorAll('h1').length !== 1) issues.push('h1 count');

@@ -339,6 +339,10 @@ Data: 2026-11-10. Branch `dev`.
 - Reconciliação de retratos em dry-run: 15 verificações, 14 iguais, 1 indisponível na fonte (mediana sem denúncia resolvida), 0 divergências.
 - Reconciliação de reações em dry-run: 2 reações, 2 públicas, 0 divergências; `--apply` não foi necessário.
 - `config:status`: divergências preexistentes em views/config de outros escopos; nenhum `config:import` executado.
+- Árvore de acessibilidade Playwright: 5 tabelas, 5 captions, 10 cabeçalhos com `scope`, snapshot com 7.407 caracteres.
+- AT-SPI/Orca: 210 nós acessíveis do Firefox coletados em `statistics-atspi.json`, incluindo título e menus; evidência estrutural, não leitura de fala.
+- Zoom: emulação de 200% por viewport de 640 px PASS; o zoom nativo do Firefox não é exposto pelo Playwright/biDi e ficou DEFERRED.
+- Dark dos componentes: tokens do tema não são carregados no tema administrativo `default_admin`; a alteração não é aplicável sem theming próprio do admin. Registrado como limitación arquitetural, não como falha de contraste.
 - Browser Firefox ESR: 54/54 verificações PASS em 1280/768/640 (equivalente a 1280 a 200%)/390/320, oito rotas, teclado e foco visível, estrutura acessível (caption/scope/rótulos/links) e painel do Fórum sem erro. Modo escuro do painel: não aplicável, o tema administrativo ativo não expõe `data-theme`; forçar tokens do tema público reduziria o contraste e não foi adotado.
 - Functional: o host principal responde **404 em `/entrar`** porque a rota de login pertence ao domínio Conta; o host de Conta não serve o site `sites/simpletest`. O teste passa a exigir origem isolada e marca SKIP no host compartilhado, em vez de falhar. DEFERRED até um VirtualHost de teste servir o mesmo site nos dois hosts.
 - Config Sync: `aculta_statistics.settings` e `aculta_forum.settings` aparecem `Different` por drift preexistente e pelo toggle intencional `forum_discovery.enabled=true` no desenvolvimento. Nenhum `config:import` foi executado, para não reverter configuração de outros escopos nem ligar a coleta em produção.
