@@ -64,7 +64,7 @@ final class ContentPurposeResolverTest extends TestCase {
   public function testAdminRouteRequiresMainPurposeBeforeContentOwnership(): void {
     $route = new Route('/node/{node}/edit', [], [], [
       '_admin_route' => TRUE,
-      '_aculta_domain_purpose' => 'magazine',
+      '_aculta_site_key' => 'magazine',
     ]);
     $request = Request::create('/node/90/edit');
     $request->attributes->set('node', $this->node('wiki_entry'));
@@ -80,7 +80,7 @@ final class ContentPurposeResolverTest extends TestCase {
    */
   public function testExplicitMainPurposeRequiresMainHost(): void {
     $route = new Route('/node/{node}', [], [], [
-      '_aculta_domain_purpose' => 'main',
+      '_aculta_site_key' => 'main',
     ]);
     $request = Request::create('/node/90');
 
@@ -99,7 +99,7 @@ final class ContentPurposeResolverTest extends TestCase {
    */
   public function testDeclaredPurposeIsUsedWhenNoPrecedenceApplies(): void {
     $route = new Route('/node/{node}', [], [], [
-      '_aculta_domain_purpose' => 'magazine',
+      '_aculta_site_key' => 'magazine',
     ]);
     $request = Request::create('/node/90');
 
@@ -166,7 +166,7 @@ final class ContentPurposeResolverTest extends TestCase {
    */
   public function testNodeOperationRouteOfOtherBundleFallsBack(): void {
     $route = new Route('/node/{node}/edit', [], [], [
-      '_aculta_domain_purpose' => 'magazine',
+      '_aculta_site_key' => 'magazine',
     ]);
     $request = Request::create('/node/90/edit');
     $request->attributes->set('node', $this->node('revista'));

@@ -35,7 +35,7 @@ final class PrivateMessageAccountRouteSubscriber implements EventSubscriberInter
       if (($path === '/private-messages' || str_starts_with($path, '/private-messages/'))
         || ($path === '/private-message' || str_starts_with($path, '/private-message/'))) {
         if (!$route->getOption('_admin_route')) {
-          $route->setOption('_aculta_domain_purpose', 'account');
+          $route->setOption('_aculta_site_key', 'account');
         }
       }
     }

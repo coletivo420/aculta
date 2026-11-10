@@ -86,7 +86,7 @@ aculta_portal.account_courses:
     _permission: access aculta portal
   options:
     no_cache: true
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 aculta_portal.support_form:
   path: /apoio
@@ -214,7 +214,7 @@ aculta_portal.courses_home:
   requirements:
     _access: 'TRUE'
   options:
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
 aculta_portal.shop_home:
   path: /loja
   defaults:
@@ -223,7 +223,7 @@ aculta_portal.shop_home:
   requirements:
     _access: 'TRUE'
   options:
-    _aculta_domain_purpose: shop
+    _aculta_site_key: shop
 aculta_portal.deployer_status:
   path: /painel-administrativo/aculta/deployer
   defaults:

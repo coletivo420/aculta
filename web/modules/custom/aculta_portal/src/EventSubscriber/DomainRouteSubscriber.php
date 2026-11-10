@@ -26,19 +26,19 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc} */
   protected function alterRoutes(RouteCollection $collection): void {
-    // A flag _aculta_domain_purpose_authoritative é definida antes deste
+    // A flag _aculta_site_key_authoritative é definida antes deste
     // subscriber (aculta_mcp, -2048). O purpose dessas rotas é preservado.
     $autoritativas = [];
     foreach ($collection as $name => $route) {
-      if ($route->getOption('_aculta_domain_purpose_authoritative') === TRUE) {
-        $autoritativas[$name] = $route->getOption('_aculta_domain_purpose');
+      if ($route->getOption('_aculta_site_key_authoritative') === TRUE) {
+        $autoritativas[$name] = $route->getOption('_aculta_site_key');
       }
     }
     $this->aplicarRegrasDeFamilia($collection);
     foreach ($autoritativas as $name => $purpose) {
       $route = $collection->get($name);
       if ($route !== NULL && is_string($purpose)) {
-        $route->setOption('_aculta_domain_purpose', $purpose);
+        $route->setOption('_aculta_site_key', $purpose);
       }
     }
   }
@@ -143,13 +143,13 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       if ($route = $collection->get($name)) {
         $route->setPath($path);
         if (isset($accountRoutes[$name])) {
-          $route->setOption('_aculta_domain_purpose', 'account');
+          $route->setOption('_aculta_site_key', 'account');
         }
         elseif (isset($courseRoutes[$name])) {
-          $route->setOption('_aculta_domain_purpose', 'courses');
+          $route->setOption('_aculta_site_key', 'courses');
         }
         elseif ($name === 'commerce_payment.notify') {
-          $route->setOption('_aculta_domain_purpose', 'main');
+          $route->setOption('_aculta_site_key', 'main');
           // Provider notifications are machine-to-machine POST requests.
           // Do not expose a GET variant through Commerce's generic route.
           $route->setMethods(['POST']);
@@ -157,7 +157,7 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
         elseif ($name === 'entity.user.edit_form') {
           // Core's one-time password reset uses this same route. The request
           // policy permits it on ACCOUNT only with Core's session token.
-          $route->setOption('_aculta_domain_purpose', 'main');
+          $route->setOption('_aculta_site_key', 'main');
         }
       }
     }
@@ -189,7 +189,7 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       if ($route = $collection->get($name)) {
         $route->setPath($path);
         $route->setOption('parameters', array_diff_key((array) $route->getOption('parameters'), ['user' => TRUE]));
-        $route->setOption('_aculta_domain_purpose', 'account');
+        $route->setOption('_aculta_site_key', 'account');
       }
     }
     // Meios de pagamento não são guardados nem exibidos pelo Portal: o
@@ -231,7 +231,7 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
         ]);
         $route->setRequirements(['_user_is_logged_in' => 'TRUE']);
         $route->setOption('parameters', []);
-        $route->setOption('_aculta_domain_purpose', 'account');
+        $route->setOption('_aculta_site_key', 'account');
       }
     }
     // There is no separate payment-methods screen: remove its old list
@@ -251,14 +251,14 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       'aculta_portal.account_settings',
     ] as $name) {
       if ($route = $collection->get($name)) {
-        $route->setOption('_aculta_domain_purpose', 'account');
+        $route->setOption('_aculta_site_key', 'account');
       }
     }
     if ($route = $collection->get('aculta_portal.search')) {
-      $route->setOption('_aculta_domain_purpose', 'main');
+      $route->setOption('_aculta_site_key', 'main');
     }
     if ($route = $collection->get('aculta_portal.support_form')) {
-      $route->setOption('_aculta_domain_purpose', 'support');
+      $route->setOption('_aculta_site_key', 'support');
     }
     foreach ([
       'aculta_portal.wiki_home',
@@ -267,23 +267,23 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       'view.wiki_entries.page_1',
     ] as $name) {
       if ($route = $collection->get($name)) {
-        $route->setOption('_aculta_domain_purpose', 'wiki');
+        $route->setOption('_aculta_site_key', 'wiki');
       }
     }
     // Páginas de produto pertencem a SHOP (host conforme o ambiente).
     // Carrinho e checkout continuam no MAIN (DomainRoutePolicy).
     if ($route = $collection->get('entity.commerce_product.canonical')) {
-      $route->setOption('_aculta_domain_purpose', 'shop');
+      $route->setOption('_aculta_site_key', 'shop');
     }
     // O catálogo público também pertence ao purpose SHOP.
     if ($route = $collection->get('view.aculta_shop_catalog.page_catalog')) {
-      $route->setOption('_aculta_domain_purpose', 'shop');
+      $route->setOption('_aculta_site_key', 'shop');
     }
 
     // Listagens por sessão da Revista pertencem ao purpose MAGAZINE.
     foreach ($collection as $name => $route) {
       if (str_starts_with((string) $name, 'view.revista_sessoes.')) {
-        $route->setOption('_aculta_domain_purpose', 'magazine');
+        $route->setOption('_aculta_site_key', 'magazine');
       }
     }
 
@@ -295,27 +295,27 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
         || str_starts_with((string) $name, 'entity.taxonomy_term.forum_')
         || str_starts_with((string) $name, 'view.aculta_forum_public_topics.')
         || str_starts_with((string) $name, 'view.aculta_forum_search.')) {
-        $route->setOption('_aculta_domain_purpose', 'forum');
+        $route->setOption('_aculta_site_key', 'forum');
       }
     }
 
     foreach ($collection as $name => $route) {
       // Toda rota administrativa pertence a MAIN.
       if ($route->getOption('_admin_route')) {
-        $route->setOption('_aculta_domain_purpose', 'main');
+        $route->setOption('_aculta_site_key', 'main');
       }
       if (DomainRoutePolicy::isDonationFlowRouteName((string) $name)) {
         // Escolha do valor fica em SUPPORT; o checkout Commerce fica em MAIN.
         $siteKey = DomainRoutePolicy::siteKeyForDonationRoute((string) $name);
-        $route->setOption('_aculta_domain_purpose', $siteKey);
-        $route->setOption('_aculta_cross_domain_canonical_purpose', $siteKey);
+        $route->setOption('_aculta_site_key', $siteKey);
+        $route->setOption('_aculta_cross_domain_canonical_site_key', $siteKey);
       }
       if (DomainRoutePolicy::isCentralTransactionRouteName((string) $name)) {
-        $route->setOption('_aculta_domain_purpose', 'main');
+        $route->setOption('_aculta_site_key', 'main');
         if ($name !== 'commerce_payment.notify') {
           // Browser navigation may canonicalize to MAIN. Machine-to-machine
           // notification POSTs must never be redirected between hosts.
-          $route->setOption('_aculta_cross_domain_canonical_purpose', 'main');
+          $route->setOption('_aculta_cross_domain_canonical_site_key', 'main');
         }
       }
     }
@@ -335,11 +335,11 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     foreach ($collection as $route) {
       $path = $route->getPath();
       if ($path === '/painel-administrativo' || str_starts_with($path, '/painel-administrativo/')) {
-        $route->setOption('_aculta_domain_purpose', 'main');
+        $route->setOption('_aculta_site_key', 'main');
       }
       // Integrações externas existem somente no MAIN.
       if ($path === '/integracoes' || str_starts_with($path, '/integracoes/')) {
-        $route->setOption('_aculta_domain_purpose', 'main');
+        $route->setOption('_aculta_site_key', 'main');
       }
       foreach ($adminSegments as $source => $target) {
         if (preg_match('~^/painel-administrativo/' . preg_quote($source, '~') . '(?:/|$)~', $path)) {

@@ -55,7 +55,7 @@ final class LocationPurposeAccessKernelTest extends KernelTestBase {
    */
   private function assertRouteIsConfinedToEventsPurpose(string $routeName, string $path): void {
     $route = $this->container->get('router.route_provider')->getRouteByName($routeName);
-    $this->assertSame('eventos', $route->getOption('_aculta_domain_purpose'));
+    $this->assertSame('eventos', $route->getOption('_aculta_site_key'));
 
     $domainNegotiator = $this->createMock(DomainNegotiatorInterface::class);
     $domainNegotiator->method('getActiveDomain')->willReturn(NULL);

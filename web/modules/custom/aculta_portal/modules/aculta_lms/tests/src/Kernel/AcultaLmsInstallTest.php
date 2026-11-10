@@ -84,7 +84,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('comment');
     $this->installSchema('comment', ['comment_entity_statistics']);
-    // media já está habilitado no boot; a config do fórum cria storages nele.
+    // Media já está habilitado no boot; a config do fórum cria storages nele.
     $this->installEntitySchema('media');
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
@@ -191,7 +191,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     );
     $submissionRoute = $container->get('router.route_provider')->getRouteByName('aculta_lms.answer_submission');
     $this->assertSame('/curso/{group}/{lesson_delta}/{activity_delta}', $submissionRoute->getPath());
-    $this->assertSame('courses', $submissionRoute->getOption('_aculta_domain_purpose'));
+    $this->assertSame('courses', $submissionRoute->getOption('_aculta_site_key'));
     $this->assertInstanceOf(FreeTextReviewFeedback::class, $container->get(FreeTextReviewFeedback::class));
     $this->assertInstanceOf(
       CourseCompletionPublisherInterface::class,

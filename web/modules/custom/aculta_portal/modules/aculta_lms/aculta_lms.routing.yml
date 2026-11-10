@@ -23,7 +23,7 @@ aculta_lms.xapi_attempt_token:
     _user_is_logged_in: 'TRUE'
     _csrf_request_header_token: 'TRUE'
   options:
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
 
 aculta_lms.xapi_statements:
   path: '/xapi/statements'
@@ -33,7 +33,7 @@ aculta_lms.xapi_statements:
   requirements:
     _access: 'TRUE'
   options:
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
 
 aculta_lms.lesson_view:
   path: '/curso/{group}/{lesson_delta}'
@@ -49,7 +49,7 @@ aculta_lms.lesson_view:
         type: aculta_portal.lms_course_slug
       lesson_delta:
         type: aculta_portal.lms_lesson_slug
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
 
 aculta_lms.class_activity_deadline:
   path: '/painel-administrativo/lms/curso/{course}/turma/{group}/atividade/{activity}/prazo'
@@ -200,7 +200,7 @@ aculta_lms.answer_submission:
         type: aculta_portal.lms_lesson_slug
       activity_delta:
         type: aculta_portal.lms_activity_slug
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
 
 aculta_lms.xapi_token_settings:
   path: '/painel-administrativo/aculta/lms/xapi/validade-token'
@@ -237,7 +237,7 @@ aculta_lms.student_tour_wizard:
   requirements:
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
     parameters:
       step:
         type: string
@@ -336,7 +336,7 @@ aculta_lms.calendario_pessoal:
   requirements:
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 aculta_lms.calendario_pessoal_gerar:
   path: '/calendario/pessoal/gerar'
@@ -347,7 +347,7 @@ aculta_lms.calendario_pessoal_gerar:
     _user_is_logged_in: 'TRUE'
     _csrf_token: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 aculta_lms.calendario_pessoal_revogar:
   path: '/calendario/pessoal/revogar'
@@ -358,7 +358,7 @@ aculta_lms.calendario_pessoal_revogar:
     _user_is_logged_in: 'TRUE'
     _csrf_token: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 aculta_lms.calendario_pessoal_exportar:
   path: '/calendario/pessoal/{token}.ics'
@@ -369,7 +369,7 @@ aculta_lms.calendario_pessoal_exportar:
     _access: 'TRUE'
     token: '[A-Za-z0-9_-]{20,}'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 aculta_lms_agenda.calendario_pessoal:
   path: '/calendario/pessoal'
@@ -379,7 +379,7 @@ aculta_lms_agenda.calendario_pessoal:
   requirements:
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 aculta_lms_agenda.gerar:
   path: '/calendario/pessoal/gerar'
@@ -390,7 +390,7 @@ aculta_lms_agenda.gerar:
     _user_is_logged_in: 'TRUE'
     _csrf_token: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 aculta_lms_agenda.revogar:
   path: '/calendario/pessoal/revogar'
@@ -401,7 +401,7 @@ aculta_lms_agenda.revogar:
     _user_is_logged_in: 'TRUE'
     _csrf_token: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 aculta_lms_agenda.exportar:
   path: '/calendario/pessoal/{token}.ics'
@@ -412,6 +412,6 @@ aculta_lms_agenda.exportar:
     _access: 'TRUE'
     token: '[A-Za-z0-9_-]{20,}'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 

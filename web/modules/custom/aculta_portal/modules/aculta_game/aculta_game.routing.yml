@@ -7,7 +7,7 @@ aculta_game.admin:
     _permission: 'administer aculta game'
   options:
     _admin_route: true
-    _aculta_domain_purpose: main
+    _aculta_site_key: main
 
 aculta_game.achievements:
   path: '/painel-administrativo/game/conquistas'
@@ -18,7 +18,7 @@ aculta_game.achievements:
     _permission: 'administer aculta game'
   options:
     _admin_route: true
-    _aculta_domain_purpose: main
+    _aculta_site_key: main
 
 aculta_game.achievement_add:
   path: '/painel-administrativo/game/conquistas/criar'
@@ -29,7 +29,7 @@ aculta_game.achievement_add:
     _permission: 'administer aculta game'
   options:
     _admin_route: true
-    _aculta_domain_purpose: main
+    _aculta_site_key: main
 
 aculta_game.achievement_edit:
   path: '/painel-administrativo/game/conquistas/{conquista}/editar'
@@ -41,7 +41,7 @@ aculta_game.achievement_edit:
     conquista: '[a-z][a-z0-9_]{2,63}'
   options:
     _admin_route: true
-    _aculta_domain_purpose: main
+    _aculta_site_key: main
 
 aculta_game.achievement_image_remove_confirm:
   path: '/painel-administrativo/game/conquistas/{conquista}/imagem/remover'
@@ -53,7 +53,7 @@ aculta_game.achievement_image_remove_confirm:
     conquista: '[a-z][a-z0-9_]{2,63}'
   options:
     _admin_route: true
-    _aculta_domain_purpose: main
+    _aculta_site_key: main
 
 aculta_game.achievement_grant:
   path: '/painel-administrativo/game/conquistas/conceder'
@@ -64,7 +64,7 @@ aculta_game.achievement_grant:
     _permission: 'administer aculta game'
   options:
     _admin_route: true
-    _aculta_domain_purpose: main
+    _aculta_site_key: main
 
 aculta_game.achievement_history:
   path: '/painel-administrativo/game/historico'
@@ -75,4 +75,4 @@ aculta_game.achievement_history:
     _permission: 'administer aculta game'
   options:
     _admin_route: true
-    _aculta_domain_purpose: main
+    _aculta_site_key: main

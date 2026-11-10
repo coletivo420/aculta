@@ -7,7 +7,7 @@ aculta_paths.form:
     _permission: 'administrar superficies'
   options:
     _admin_route: TRUE
-    _aculta_domain_purpose: main
+    _aculta_site_key: main
 
 aculta_paths.editar:
   path: '/painel-administrativo/aculta/caminhos/{purpose}/editar'
@@ -19,4 +19,4 @@ aculta_paths.editar:
     purpose: 'main|account|support|magazine|wiki|shop|courses|forum|links|eventos'
   options:
     _admin_route: TRUE
-    _aculta_domain_purpose: main
+    _aculta_site_key: main

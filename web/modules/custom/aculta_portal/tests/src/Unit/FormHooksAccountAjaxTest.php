@@ -14,17 +14,19 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\Core\Url;
+use Drupal\Core\GeneratedUrl;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\InputBag;
-use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Route;
 
 /**
- * Formulários da conta viram HTMX no botão; exclusões e rotas fora da conta ficam como estão.
+ * Formulários da conta usam HTMX com exclusões preservadas.
+ *
+ * As rotas fora da conta mantêm o comportamento próprio.
  */
 #[Group('aculta_portal')]
 class FormHooksAccountAjaxTest extends UnitTestCase {
@@ -35,7 +37,7 @@ class FormHooksAccountAjaxTest extends UnitTestCase {
   private function hooks(?string $purpose, string $routeName = 'aculta_portal.account'): FormHooks {
     $route = new Route('/conta');
     if ($purpose !== NULL) {
-      $route->setOption('_aculta_domain_purpose', $purpose);
+      $route->setOption('_aculta_site_key', $purpose);
     }
 
     $routeMatch = $this->createMock(CurrentRouteMatch::class);
@@ -47,8 +49,8 @@ class FormHooksAccountAjaxTest extends UnitTestCase {
     $translation = $this->createMock(TranslationInterface::class);
     $translation->method('translate')->willReturnCallback(static fn (string $t, array $a = []): string => strtr($t, $a));
 
-    $urlGenerator = $this->createMock(\Drupal\Core\Routing\UrlGeneratorInterface::class);
-    $generated = new \Drupal\Core\GeneratedUrl();
+    $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+    $generated = new GeneratedUrl();
     $generated->setGeneratedUrl('/conta/fake');
     $urlGenerator->method('generateFromRoute')->willReturn($generated);
     $container = new ContainerBuilder();
@@ -85,7 +87,7 @@ class FormHooksAccountAjaxTest extends UnitTestCase {
   }
 
   /**
-   * Formulário da conta: o botão ganha HTMX, o wrapper e o callback sem redirecionamento.
+   * Formulário da conta: botão HTMX, wrapper e callback sem redirecionamento.
    */
   public function testFormularioDeContaGanhaHtmx(): void {
     $formState = $this->createMock(FormStateInterface::class);

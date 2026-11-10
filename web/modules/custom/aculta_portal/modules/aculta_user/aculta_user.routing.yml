@@ -8,7 +8,7 @@ aculta_user.perfil_publico:
     apelido: '[a-z0-9][a-z0-9-]{2,39}'
   options:
     # Perfil público existe só no purpose MAIN; em outro host responde 404 (DomainPurposeRequestSubscriber).
-    _aculta_domain_purpose: 'main'
+    _aculta_site_key: 'main'
 
 aculta_user.configuracoes_privacidade:
   path: '/configuracoes/privacidade'
@@ -130,7 +130,7 @@ aculta_user.bio_form:
   requirements:
     _custom_access: 'aculta_user.account_modal_access:access'
   options:
-    _aculta_domain_purpose: 'account'
+    _aculta_site_key: 'account'
 
 aculta_user.bio_save:
   path: '/bio/salvar'
@@ -141,7 +141,7 @@ aculta_user.bio_save:
     _permission: 'access aculta portal'
     _csrf_token: 'TRUE'
   options:
-    _aculta_domain_purpose: 'account'
+    _aculta_site_key: 'account'
 
 aculta_user.redes_form:
   path: '/redes/editar/{rede}'
@@ -152,7 +152,7 @@ aculta_user.redes_form:
     _custom_access: 'aculta_user.account_modal_access:access'
     rede: 'instagram|facebook|reddit'
   options:
-    _aculta_domain_purpose: 'account'
+    _aculta_site_key: 'account'
 
 aculta_user.redes_save:
   path: '/redes/salvar'
@@ -163,7 +163,7 @@ aculta_user.redes_save:
     _permission: 'access aculta portal'
     _csrf_token: 'TRUE'
   options:
-    _aculta_domain_purpose: 'account'
+    _aculta_site_key: 'account'
 
 # Memorial coletivo do Fórum (ACULTA Fórum, F2). Apelido reservado em AccountNames::RESERVED.
 # Conteúdo pendente: lista de autores e texto aprovado; ver CHANGELOG do aculta_forum.
@@ -175,7 +175,7 @@ aculta_user.memorial_legados:
   requirements:
     _access: 'TRUE'
   options:
-    _aculta_domain_purpose: 'main'
+    _aculta_site_key: 'main'
 
 aculta_user.denuncias_forum:
   path: '/painel-administrativo/forum/denuncias'
@@ -210,6 +210,6 @@ aculta_user.associado_pedido:
   requirements:
     _permission: 'access aculta portal'
   options:
-    _aculta_domain_purpose: 'account'
+    _aculta_site_key: 'account'
 
 # Caminhos legados da troca de e-mail (antes do contrib change_mail_page): levam à aba E-mail da Segurança.

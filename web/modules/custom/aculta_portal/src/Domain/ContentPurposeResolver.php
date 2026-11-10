@@ -14,7 +14,8 @@ use Symfony\Component\Routing\Route;
  *
  * DomainPurposeRequestSubscriber owns HTTP enforcement/canonicalization. This
  * service only translates Drupal route/content state into a stable ACULTA
- * purpose, with platform administration taking precedence over content purpose.
+ * site key, with platform administration taking precedence over content
+ * ownership.
  */
 final class ContentPurposeResolver {
 
@@ -34,7 +35,7 @@ final class ContentPurposeResolver {
   ) {}
 
   /**
-   * Resolves purpose metadata for an incoming route.
+   * Resolves site-key metadata for an incoming route.
    */
   public function requiredPurpose(
     Route $route,
@@ -43,9 +44,10 @@ final class ContentPurposeResolver {
     array $matched = [],
   ): ?string {
     // Platform-level route metadata is authoritative and precedes content
-    // ownership (Wiki, Courses, etc.). Toda rota administrativa pertence a MAIN.
+    // ownership (Wiki, Courses, etc.). Toda rota administrativa pertence a
+    // MAIN.
     if ($route->getOption('_admin_route')
-      || $route->getOption('_aculta_domain_purpose') === 'main') {
+      || DomainRoutePolicy::declaredSiteKey($route) === 'main') {
       return 'main';
     }
 
@@ -78,11 +80,11 @@ final class ContentPurposeResolver {
       }
     }
 
-    return $route->getOption('_aculta_domain_purpose');
+    return DomainRoutePolicy::declaredSiteKey($route);
   }
 
   /**
-   * Returns the canonical purpose of a direct public content request.
+   * Returns the canonical site key of a direct public content request.
    */
   public function canonicalContentPurpose(Request $request): ?string {
     $routeName = (string) $request->attributes->get('_route');
@@ -123,7 +125,8 @@ final class ContentPurposeResolver {
       }
     }
 
-    // Tipos do módulo de eventos (aculta_events) pertencem ao purpose eventos (MODELO-DE-DADOS.md).
+    // Tipos do módulo de eventos (aculta_events) pertencem ao purpose eventos
+    // (MODELO-DE-DADOS.md).
     $eventRoutes = [
       'entity.aculta_event.canonical',
       'entity.aculta_event_date.canonical',

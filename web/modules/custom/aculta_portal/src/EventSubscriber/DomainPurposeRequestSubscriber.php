@@ -179,15 +179,17 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       // this request. Inspect Drupal's path candidates and their metadata so
       // wrong-purpose mutations fail closed without duplicating route families.
       $request = $event->getRequest();
-      if ($this->domainPurposeManager->getCurrentPurpose() !== DomainSurfaceMap::MAIN
-        && !in_array($request->getMethod(), ['GET', 'HEAD'], TRUE)) {
-        foreach ($this->routeProvider->getRouteCollectionForRequest($request) as $candidate) {
-          if ($candidate->getOption('_admin_route')
-            || $candidate->getOption('_aculta_domain_purpose') === DomainSurfaceMap::MAIN
-            || $candidate->getOption('_aculta_cross_domain_canonical_purpose') === DomainSurfaceMap::MAIN) {
-            $event->setResponse($this->notFoundResponse());
-            return;
-          }
+      $mustRejectWrongHostMutation = $this->domainPurposeManager->getCurrentPurpose() !== DomainSurfaceMap::MAIN
+        && !in_array($request->getMethod(), ['GET', 'HEAD'], TRUE);
+      foreach ($this->routeProvider->getRouteCollectionForRequest($request) as $candidate) {
+        $invalidMetadata = DomainRoutePolicy::hasInvalidSiteKeyOptions($candidate);
+        $wrongHostMainMutation = $mustRejectWrongHostMutation
+          && ($candidate->getOption('_admin_route')
+            || DomainRoutePolicy::declaredSiteKey($candidate) === DomainSurfaceMap::MAIN
+            || DomainRoutePolicy::canonicalSiteKey($candidate) === DomainSurfaceMap::MAIN);
+        if ($invalidMetadata || $wrongHostMainMutation) {
+          $event->setResponse($this->notFoundResponse());
+          return;
         }
       }
       return;
@@ -217,6 +219,10 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       }
     }
     $route = $this->routeProvider->getRouteByName($matched['_route']);
+    if (DomainRoutePolicy::hasInvalidSiteKeyOptions($route)) {
+      $event->setResponse($this->notFoundResponse());
+      return;
+    }
     $requiredPurpose = $this->contentPurposeResolver->requiredPurpose(
       $route,
       $matched['_route'],
@@ -226,7 +232,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     $currentPurpose = $this->domainPurposeManager->getCurrentPurpose();
     // Test-only seam for single-host Functional installs. Production always
     // negotiates one Domain per purpose, and this setting stays unset.
-    if (Settings::get('aculta_domain_purpose_test_relaxed', FALSE)) {
+    if (Settings::get('aculta_site_key_test_relaxed', FALSE)) {
       return;
     }
     if (is_string($requiredPurpose)
@@ -241,7 +247,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       }
       if ($requiredPurpose === DomainSurfaceMap::MAIN
         && ($this->isAdministrativeRoute($route)
-          || $route->getOption('_aculta_cross_domain_canonical_purpose') === DomainSurfaceMap::MAIN)) {
+          || DomainRoutePolicy::canonicalSiteKey($route) === DomainSurfaceMap::MAIN)) {
         // Toda a interface administrativa responde somente no MAIN. Em
         // subdomínios, a rota administrativa é negada (404), sem redirect.
         if ($this->isAdministrativeRoute($route)) {
@@ -321,6 +327,10 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     if (!$route || !method_exists($route, 'getOption')) {
       return;
     }
+    if (DomainRoutePolicy::hasInvalidSiteKeyOptions($route)) {
+      $this->notFound($event);
+      return;
+    }
     $requiredPurpose = $this->contentPurposeResolver->requiredPurpose(
       $route,
       (string) $request->attributes->get('_route'),
@@ -329,7 +339,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     $currentPurpose = $this->domainPurposeManager->getCurrentPurpose();
 
     // Same test-only seam used before routing.
-    if (Settings::get('aculta_domain_purpose_test_relaxed', FALSE)) {
+    if (Settings::get('aculta_site_key_test_relaxed', FALSE)) {
       return;
     }
 
@@ -343,7 +353,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       && !$resetEditException) {
       if ($requiredPurpose === DomainSurfaceMap::MAIN
         && ($this->isAdministrativeRoute($route)
-          || $route->getOption('_aculta_cross_domain_canonical_purpose') === DomainSurfaceMap::MAIN)) {
+          || DomainRoutePolicy::canonicalSiteKey($route) === DomainSurfaceMap::MAIN)) {
         // Toda a interface administrativa responde somente no MAIN. Em
         // subdomínios, a rota administrativa é negada (404), sem redirect.
         if ($this->isAdministrativeRoute($route)) {

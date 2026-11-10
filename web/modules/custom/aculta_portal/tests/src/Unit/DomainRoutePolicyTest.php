@@ -64,7 +64,6 @@ final class DomainRoutePolicyTest extends UnitTestCase {
     $this->assertSame('support', DomainRoutePolicy::siteKeyForDonationRoute('aculta_donation.donation.default'));
     $this->assertSame('support', DomainRoutePolicy::siteKeyForDonationRoute('aculta_donation.donation.quick'));
     $this->assertSame('main', DomainRoutePolicy::siteKeyForDonationRoute('aculta_donation.donation_controller_formPage'));
-    $this->assertSame('support', DomainRoutePolicy::purposeForDonationRoute('aculta_donation.donation.default'));
   }
 
   /**
@@ -101,8 +100,8 @@ final class DomainRoutePolicyTest extends UnitTestCase {
    */
   public function testOnlyExplicitlySharedPurposesAreAllowed(): void {
     $route = new Route('/calendario', [], [], [
-      '_aculta_domain_purpose' => 'eventos',
-      '_aculta_domain_purposes' => ['eventos', 'main'],
+      '_aculta_site_key' => 'eventos',
+      '_aculta_site_keys' => ['eventos', 'main'],
     ]);
     self::assertTrue(DomainRoutePolicy::allowsSharedSite($route, 'eventos', 'main'));
     self::assertTrue(DomainRoutePolicy::allowsSharedSite($route, 'eventos', 'eventos'));
@@ -110,11 +109,61 @@ final class DomainRoutePolicyTest extends UnitTestCase {
 
     $adminRoute = new Route('/admin/example', [], [], [
       '_admin_route' => TRUE,
-      '_aculta_domain_purpose' => 'eventos',
-      '_aculta_domain_purposes' => ['eventos', 'main'],
+      '_aculta_site_key' => 'eventos',
+      '_aculta_site_keys' => ['eventos', 'main'],
     ]);
     self::assertFalse(DomainRoutePolicy::allowsSharedSite($adminRoute, 'eventos', 'main'));
-    self::assertTrue(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'main'));
+  }
+
+  /**
+   * Ensures only the canonical route option is accepted.
+   */
+  public function testRemovedPurposeOptionsFailClosed(): void {
+    $legacyPurposeOption = implode('', ['_aculta_domain_', 'purpose']);
+    $legacyPurposeListOption = implode('', ['_aculta_domain_', 'purposes']);
+    $legacy = new Route('/legacy', [], [], [$legacyPurposeOption => 'links']);
+    self::assertNull(DomainRoutePolicy::declaredSiteKey($legacy));
+    self::assertTrue(DomainRoutePolicy::hasInvalidSiteKeyOptions($legacy));
+
+    $legacyShared = new Route('/legacy-shared', [], [], [
+      $legacyPurposeListOption => ['eventos', 'main'],
+    ]);
+    self::assertFalse(DomainRoutePolicy::allowsSharedSite($legacyShared, 'eventos', 'main'));
+    self::assertTrue(DomainRoutePolicy::hasInvalidSiteKeyOptions($legacyShared));
+
+    $current = new Route('/current', [], [], ['_aculta_site_key' => 'links']);
+    self::assertSame('links', DomainRoutePolicy::declaredSiteKey($current));
+    self::assertFalse(DomainRoutePolicy::hasInvalidSiteKeyOptions($current));
+
+    $invalid = new Route('/invalid', [], [], ['_aculta_site_key' => 'unknown']);
+    self::assertNull(DomainRoutePolicy::declaredSiteKey($invalid));
+    self::assertTrue(DomainRoutePolicy::hasInvalidSiteKeyOptions($invalid));
+
+    $conflict = new Route('/conflict', [], [], [
+      '_aculta_site_key' => 'links',
+      $legacyPurposeOption => 'main',
+    ]);
+    self::assertNull(DomainRoutePolicy::declaredSiteKey($conflict));
+    self::assertTrue(DomainRoutePolicy::hasInvalidSiteKeyOptions($conflict));
+    self::assertFalse(DomainRoutePolicy::allowsSharedSite($conflict, 'links', 'links'));
+  }
+
+  /**
+   * Ensures canonical and shared site options support the new names.
+   */
+  public function testCanonicalAndSharedSiteOptionsUseNewNames(): void {
+    $legacyCanonicalOption = implode('', ['_aculta_cross_domain_canonical_', 'purpose']);
+    $route = new Route('/shared', [], [], [
+      '_aculta_site_key' => 'eventos',
+      '_aculta_site_keys' => ['eventos', 'main'],
+      '_aculta_cross_domain_canonical_site_key' => 'main',
+    ]);
+    self::assertSame('main', DomainRoutePolicy::canonicalSiteKey($route));
+    self::assertTrue(DomainRoutePolicy::allowsSharedSite($route, 'eventos', 'main'));
+
+    $route->setOption($legacyCanonicalOption, 'eventos');
+    self::assertNull(DomainRoutePolicy::canonicalSiteKey($route));
+    self::assertTrue(DomainRoutePolicy::hasInvalidSiteKeyOptions($route));
   }
 
 }

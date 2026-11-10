@@ -17,7 +17,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 /**
  * Rotas do Fórum por HTTP: negação anônima, telas e formulário autenticados.
  *
- * A costura `aculta_domain_purpose_test_relaxed` permite exercitar todos os
+ * A costura `aculta_site_key_test_relaxed` permite exercitar todos os
  * propósitos em um único host de teste; ela nunca é definida em produção.
  */
 #[Group('aculta_forum')]
@@ -89,7 +89,7 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
   protected function prepareSettings() {
     parent::prepareSettings();
     $file = DRUPAL_ROOT . '/' . $this->siteDirectory . '/settings.php';
-    file_put_contents($file, "\n\$settings['aculta_domain_purpose_test_relaxed'] = TRUE;\n", FILE_APPEND);
+    file_put_contents($file, "\n\$settings['aculta_site_key_test_relaxed'] = TRUE;\n", FILE_APPEND);
   }
 
   /**

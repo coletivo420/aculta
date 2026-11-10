@@ -11,12 +11,14 @@
  * 4. O catálogo lista os blocos reais do tema e não é cacheável.
  * 5. A prévia de um bloco real renderiza conteúdo, com max-age 0.
  *
- * Uso:
- *   php vendor/drush/drush/drush.php php:script scripts/validate-aculta-ui-library.php
- * ou apenas `php scripts/validate-aculta-ui-library.php` (delega ao Drush).
+ * Uso: `php scripts/validate-aculta-ui-library.php` (delega ao Drush) ou via
+ * Drush `php:script`.
  */
 
 declare(strict_types=1);
+
+use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\aculta_ui_library\Controller\UiLibraryPreviewController;
 
 if (!class_exists(\Drupal::class) || !\Drupal::hasContainer()) {
   $root = dirname(__DIR__);
@@ -53,7 +55,7 @@ foreach (['aculta_ui_library.blocks', 'aculta_ui_library.block_preview'] as $nam
     continue;
   }
   $assert(str_starts_with($route->getPath(), '/painel-administrativo/'), "$name não está sob /painel-administrativo.");
-  $assert($route->getOption('_aculta_domain_purpose') === 'main', "$name não declara _aculta_domain_purpose=main.");
+  $assert($route->getOption('_aculta_site_key') === 'main', "$name não declara _aculta_site_key=main.");
   $assert($route->getOption('_admin_route') === TRUE, "$name não é marcada como rota administrativa.");
   $assert($route->getRequirement('_permission') === 'administer blocks', "$name não exige administer blocks.");
 }
@@ -61,7 +63,7 @@ foreach (['aculta_ui_library.blocks', 'aculta_ui_library.block_preview'] as $nam
 // 2 e 3. Acesso por perfil.
 $access = \Drupal::service('access_manager');
 $storage = \Drupal::entityTypeManager()->getStorage('user');
-$anonymous = new \Drupal\Core\Session\AnonymousUserSession();
+$anonymous = new AnonymousUserSession();
 $admin = $storage->load(1);
 $nonAdmin = NULL;
 foreach ([5, 15, 33, 34, 80] as $uid) {
@@ -89,7 +91,10 @@ foreach (['aculta_ui_library.blocks', 'aculta_ui_library.block_preview'] as $nam
 $switcher = \Drupal::service('account_switcher');
 $switcher->switchTo($admin);
 try {
-  $controller = new \Drupal\aculta_ui_library\Controller\UiLibraryPreviewController(\Drupal::service('context.repository'), \Drupal::service('router.route_provider'));
+  $controller = new UiLibraryPreviewController(
+    \Drupal::service('context.repository'),
+    \Drupal::service('router.route_provider'),
+  );
   $renderer = \Drupal::service('renderer');
 
   $catalog = $controller->listBlocks();
@@ -111,7 +116,7 @@ finally {
   $switcher->switchBack();
 }
 
-// 6. Estática: sem \Drupal:: no controlador, com max-age 0 explícito e com verificação isAllowed().
+// 6. Estática: sem \Drupal::, com max-age 0 e verificação de isAllowed().
 $source = (string) file_get_contents($module . '/src/Controller/UiLibraryPreviewController.php');
 $assert(!preg_match('/\\\\Drupal::/', $source), 'O controlador usa \\Drupal:: (viola a injeção de dependência do projeto).');
 $assert(substr_count($source, 'setCacheMaxAge(0)') >= 3, 'O controlador não marca max-age 0 em catálogo, prévia e estado indisponível.');

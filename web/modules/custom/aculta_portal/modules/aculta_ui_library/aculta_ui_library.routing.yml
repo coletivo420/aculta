@@ -8,7 +8,7 @@ aculta_ui_library.blocks:
     _aculta_ui_library_access: 'TRUE'
   options:
     _admin_route: true
-    _aculta_domain_purpose: main
+    _aculta_site_key: main
     no_cache: true
 
 aculta_ui_library.block_preview:
@@ -21,7 +21,7 @@ aculta_ui_library.block_preview:
     _aculta_ui_library_access: 'TRUE'
   options:
     _admin_route: true
-    _aculta_domain_purpose: main
+    _aculta_site_key: main
     no_cache: true
     parameters:
       block:

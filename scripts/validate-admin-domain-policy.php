@@ -2,6 +2,7 @@
 
 /**
  * @file
+ * Validates centralized ACULTA administrator Domain ownership.
  */
 
 declare(strict_types=1);
@@ -32,7 +33,7 @@ foreach ($routes as $name => $route) {
   if ($isAdmin) {
     $adminRoutes++;
     $assert(
-      $route->getOption('_aculta_domain_purpose') === 'main',
+      $route->getOption('_aculta_site_key') === 'main',
       'Admin route belongs to MAIN: ' . $name,
     );
   }
@@ -40,7 +41,7 @@ foreach ($routes as $name => $route) {
   if ($isAdminPrefix) {
     $adminPrefixRoutes++;
     $assert(
-      $route->getOption('_aculta_domain_purpose') === 'main',
+      $route->getOption('_aculta_site_key') === 'main',
       'Admin-prefix route belongs to MAIN: ' . $name,
     );
   }
@@ -51,7 +52,7 @@ $assert($adminPrefixRoutes > 0, 'At least one /painel-administrativo route was i
 
 $userEdit = $routeProvider->getRouteByName('entity.user.edit_form');
 $assert(
-  $userEdit->getOption('_aculta_domain_purpose') === 'main',
+  $userEdit->getOption('_aculta_site_key') === 'main',
   'entity.user.edit_form is canonically classified as MAIN.',
 );
 $assert(
@@ -124,7 +125,7 @@ $assert(
 );
 $assert(
   str_contains($routeSource, "\$accountRoutes['entity.user.edit_form']")
-    && str_contains($routeSource, "\$route->setOption('_aculta_domain_purpose', 'main')"),
+    && str_contains($routeSource, "\$route->setOption('_aculta_site_key', 'main')"),
   'User edit is excluded from generic ACCOUNT classification and classified as MAIN.',
 );
 $adminPrecedence = strpos($resolverSource, "if (\$route->getOption('_admin_route')");

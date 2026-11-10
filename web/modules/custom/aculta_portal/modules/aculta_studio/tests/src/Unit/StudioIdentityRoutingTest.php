@@ -91,13 +91,13 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     ];
     foreach ($accountRoutes as $id) {
       $route = $routes[$id];
-      self::assertSame('account', $route['options']['_aculta_domain_purpose']);
+      self::assertSame('account', $route['options']['_aculta_site_key']);
       self::assertSame('access aculta portal', $route['requirements']['_permission']);
       self::assertSame('TRUE', $route['requirements']['_user_is_logged_in']);
     }
     self::assertTrue($routes['aculta_studio.account']['defaults']['_disable_route_normalizer']);
     $dashboard = $routes['aculta_studio.dashboard'];
-    self::assertSame('account', $dashboard['options']['_aculta_domain_purpose']);
+    self::assertSame('account', $dashboard['options']['_aculta_site_key']);
     self::assertSame('access aculta portal', $dashboard['requirements']['_permission']);
     self::assertSame('TRUE', $dashboard['requirements']['_user_is_logged_in']);
     $profileRoutes = [
@@ -109,14 +109,14 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     ];
     foreach ($profileRoutes as $id) {
       $route = $routes[$id];
-      self::assertSame('account', $route['options']['_aculta_domain_purpose']);
+      self::assertSame('account', $route['options']['_aculta_site_key']);
       self::assertSame('aculta_studio.profile_access:access', $route['requirements']['_custom_access']);
     }
-    self::assertSame('account', $routes['aculta_studio.home']['options']['_aculta_domain_purpose']);
-    self::assertSame('wiki', $routes['aculta_studio.we_sativa']['options']['_aculta_domain_purpose']);
-    self::assertSame('wiki', $routes['aculta_studio.we_sativa_start']['options']['_aculta_domain_purpose']);
-    self::assertSame('courses', $routes['aculta_lms.student_dashboard']['options']['_aculta_domain_purpose']);
-    self::assertSame('courses', $routes['aculta_lms.course_create']['options']['_aculta_domain_purpose']);
+    self::assertSame('account', $routes['aculta_studio.home']['options']['_aculta_site_key']);
+    self::assertSame('wiki', $routes['aculta_studio.we_sativa']['options']['_aculta_site_key']);
+    self::assertSame('wiki', $routes['aculta_studio.we_sativa_start']['options']['_aculta_site_key']);
+    self::assertSame('courses', $routes['aculta_lms.student_dashboard']['options']['_aculta_site_key']);
+    self::assertSame('courses', $routes['aculta_lms.course_create']['options']['_aculta_site_key']);
     self::assertSame('create lms_course group', $routes['aculta_lms.course_create']['requirements']['_permission']);
     self::assertTrue($routes['aculta_lms.course_create']['options']['no_cache']);
     self::assertSame('aculta_studio.course_authoring_controller:create', $routes['aculta_lms.course_create']['defaults']['_controller']);
@@ -128,7 +128,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       'aculta_lms.activity_add',
       'aculta_lms.activity_edit',
     ] as $id) {
-      self::assertSame('courses', $routes[$id]['options']['_aculta_domain_purpose']);
+      self::assertSame('courses', $routes[$id]['options']['_aculta_site_key']);
       self::assertSame('aculta_lms.course_authoring_access:access', $routes[$id]['requirements']['_custom_access']);
       self::assertTrue($routes[$id]['options']['no_cache']);
     }
@@ -136,15 +136,15 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     self::assertSame('\\Drupal\\aculta_lms\\Resources\\Form\\CourseMaterialsForm', $routes['aculta_lms.course_materials_edit']['defaults']['_form']);
     self::assertSame('aculta_lms.course_document_controller:add', $routes['aculta_lms.course_document_add']['defaults']['_controller']);
     self::assertSame('aculta_lms.course_document_access:createAccess', $routes['aculta_lms.course_document_add']['requirements']['_custom_access']);
-    self::assertSame('courses', $routes['aculta_lms.course_document_add']['options']['_aculta_domain_purpose']);
+    self::assertSame('courses', $routes['aculta_lms.course_document_add']['options']['_aculta_site_key']);
     self::assertTrue($routes['aculta_lms.course_document_add']['options']['no_cache']);
     self::assertSame('aculta_lms.course_document_controller:edit', $routes['aculta_lms.course_document_edit']['defaults']['_controller']);
     self::assertSame('aculta_lms.course_document_access:updateAccess', $routes['aculta_lms.course_document_edit']['requirements']['_custom_access']);
-    self::assertSame('courses', $routes['aculta_lms.course_document_edit']['options']['_aculta_domain_purpose']);
+    self::assertSame('courses', $routes['aculta_lms.course_document_edit']['options']['_aculta_site_key']);
     self::assertTrue($routes['aculta_lms.course_document_edit']['options']['no_cache']);
     self::assertSame('\\Drupal\\aculta_lms\\Form\\LessonAuthoringForm', $routes['aculta_lms.lesson_add']['defaults']['_form']);
     self::assertSame('\\Drupal\\aculta_lms\\Form\\ActivityAuthoringForm', $routes['aculta_lms.activity_add']['defaults']['_form']);
-    self::assertSame('wiki', $routes['aculta_wiki.proposal_decide']['options']['_aculta_domain_purpose']);
+    self::assertSame('wiki', $routes['aculta_wiki.proposal_decide']['options']['_aculta_site_key']);
     foreach ([
       'aculta_commerce.green_stash',
       'aculta_commerce.green_stash_area',
@@ -152,9 +152,9 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       'aculta_commerce.green_stash_product_detail',
       'aculta_commerce.green_stash_shipment_transition',
     ] as $id) {
-      self::assertSame('shop', $routes[$id]['options']['_aculta_domain_purpose']);
+      self::assertSame('shop', $routes[$id]['options']['_aculta_site_key']);
     }
-    self::assertSame('account', $routes['aculta_studio.salvos']['options']['_aculta_domain_purpose']);
+    self::assertSame('account', $routes['aculta_studio.salvos']['options']['_aculta_site_key']);
     self::assertSame('/conta/mercado-pago/planos', $routes['aculta_pagamentos_mercadopago.studio_plans']['path']);
     $noCacheRoutes = array_slice($accountRoutes, 2);
     foreach ($noCacheRoutes as $id) {

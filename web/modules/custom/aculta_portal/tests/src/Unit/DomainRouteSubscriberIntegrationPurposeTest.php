@@ -31,8 +31,8 @@ final class DomainRouteSubscriberIntegrationPurposeTest extends UnitTestCase {
     $method = new \ReflectionMethod($subscriber, 'alterRoutes');
     $method->invoke($subscriber, $routes);
 
-    self::assertSame('main', $integration->getOption('_aculta_domain_purpose'));
-    self::assertNull($public->getOption('_aculta_domain_purpose'));
+    self::assertSame('main', $integration->getOption('_aculta_site_key'));
+    self::assertNull($public->getOption('_aculta_site_key'));
   }
 
 }

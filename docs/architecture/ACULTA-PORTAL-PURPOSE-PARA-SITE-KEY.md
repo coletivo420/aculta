@@ -56,7 +56,7 @@ O responsável aprovou **renomear os identificadores internos funcionais de 'pur
 
 - **Não renomear as dez chaves em si**, entidades de Domain, `field_domain_source`, os aliases públicos, rotas públicas (nome/path), view modes, configurações de terceiros, IDs de conteúdo ou identificadores de pagamento. Renomear somente os contratos internos necessários, preservando estabilidade para URLs, dados e integrações.
 - Serviços internos antigos podem ser aliases de compatibilidade **temporários e rastreados**, sem criar **aliases públicos de rota** (proibidos pelo gate `validate-no-temporary-route-aliases.php`). Não manter compatibilidade indefinida nem dar novo comportamento aos aliases.
-- Durante migração, leitor de opções de rota aceita novo `_aculta_site_key` e formato legado **apenas temporariamente**. Se ambos estiverem presentes e divergirem: **deny/404, log técnico sem dados sensíveis, nunca escolher o mais permissivo**. Nenhuma rota sem metadados válidos deve cair automaticamente em MAIN ou tornar-se compartilhada.
+- **Decisão atualizada pelo responsável em 2026-11-10:** o projeto não possui configurações de rota persistidas que exijam compatibilidade. Fazer corte direto para `_aculta_site_key`, `_aculta_site_keys` e `_aculta_cross_domain_canonical_site_key`; não ler, espelhar ou reter opções antigas. Se uma opção removida ou um valor novo inválido aparecer em uma rota, responder 404 (falha fechada). Nenhuma rota sem metadados válidos deve cair automaticamente em MAIN ou tornar-se compartilhada.
 - Transição do `active_purposes` do State: gerar/validar `active_site_keys`, manter fallback de leitura apenas no prazo de migração, registrar integridade 10/10 e garantir reconstrução/restauração; não apagar estado antes do rollback.
 - Sessões que já possuem `login_destination['purpose']` continuam legíveis apenas durante janela de transição; escrever somente `site_key` novo após corte e verificar domínio/path/método antes de redirecionar. Não reintroduzir open redirect.
 - `domain_presentation` e barra multidomínio: fase dual-read curta com contrato tipado, tags e contexts; remover campos duplicados após migração de consumidores e integração visual UI Skins. Não duplicar H1, <main>, links ou barras.
@@ -87,7 +87,7 @@ O responsável aprovou **renomear os identificadores internos funcionais de 'pur
 ### RN-02 - Roteamento, segurança, ownership e destinos
 
 1. Renomear o Content resolver, Subscriber, RoutePolicy, PathProcessor, parâmetros de métodos, opções de rota e serviços; migrar os `*.routing.yml` **por lotes** (MAIN, conteúdo, Fórum, Wiki, Eventos, Studio, loja, compras, apoio e rotas transversais).
-2. Adicionar adaptador de leitura de route options temporário que fail-close em divergência; testar prioridade de `_admin_route` e ausência de compartilhamento por default.
+2. Remover options de rota `purpose` diretamente em todos os módulos customizados e usar somente os nomes `site_key`; validar fail-closed para qualquer option removida/valor inválido, a prioridade de `_admin_route` e ausência de compartilhamento por default.
 3. Migrar `login_destination` na sessão; testar login/logout, destino válido, open redirects, método POST bloqueado fora do host e regeneração de URLs.
 4. Revisar sitemap, Domain Alias, Domain Config, busca, Index, Messenger e callbacks que resolvem destino.
 

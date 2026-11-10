@@ -65,15 +65,15 @@ foreach ($files as $file) {
     }
     $checkedAdmin++;
 
-    if (preg_match('/^\s*_aculta_domain_purpose:\s*[\'"]?([^\r\n\'"]+)/m', $block['block'], $purpose)) {
-      $value = trim($purpose[1]);
+    if (preg_match('/^\s*_aculta_site_key:\s*[\'"]?([^\r\n\'"]+)/m', $block['block'], $siteKey)) {
+      $value = trim($siteKey[1]);
       if ($value !== 'main') {
-        $failures[] = "$path route $id declares _aculta_domain_purpose=$value; expected main";
+        $failures[] = "$path route $id declares _aculta_site_key=$value; expected main";
       }
     }
 
-    if (preg_match('/^\s*_aculta_domain_purpose_authoritative:\s*true\b/im', $block['block'])) {
-      $failures[] = "$path route $id declares _aculta_domain_purpose_authoritative; administrative routes have no purpose exception";
+    if (preg_match('/^\s*_aculta_site_key_authoritative:\s*true\b/im', $block['block'])) {
+      $failures[] = "$path route $id declares _aculta_site_key_authoritative; administrative routes have no purpose exception";
     }
   }
 }

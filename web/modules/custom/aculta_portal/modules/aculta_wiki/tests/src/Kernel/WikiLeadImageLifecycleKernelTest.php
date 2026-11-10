@@ -824,7 +824,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       self::assertSame($path, $route->getPath());
       self::assertCount(1, $routeProvider->getRoutesByPattern($path), 'The Wiki path must have one route owner.');
       self::assertSame('access content', $route->getRequirement('_permission'));
-      self::assertSame('wiki', $route->getOption('_aculta_domain_purpose'));
+      self::assertSame('wiki', $route->getOption('_aculta_site_key'));
       self::assertSame('wiki', $purposeResolver->requiredPurpose($route, $routeName, Request::create($path)));
       self::assertTrue($accessManager->checkNamedRoute($routeName, [], new AnonymousUserSession()));
     }
@@ -894,7 +894,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('/verbetes/{node}/contribuir', $proposalRoute->getPath());
     self::assertSame('submit wiki proposals', $proposalRoute->getRequirement('_permission'));
     self::assertSame('node.view', $proposalRoute->getRequirement('_entity_access'));
-    self::assertSame('wiki', $proposalRoute->getOption('_aculta_domain_purpose'));
+    self::assertSame('wiki', $proposalRoute->getOption('_aculta_site_key'));
     self::assertSame('wiki', $purposeResolver->requiredPurpose(
       $proposalRoute,
       'aculta_wiki.proposal_submit',
@@ -924,7 +924,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $domainNegotiator->getContext()->setDomain(Domain::load('wiki420_aculta_org'));
     $intentRoute = $routeProvider->getRouteByName('aculta_wiki.contribution_intent');
     self::assertSame('/verbetes/{node}/contribuir/como', $intentRoute->getPath());
-    self::assertSame('wiki', $intentRoute->getOption('_aculta_domain_purpose'));
+    self::assertSame('wiki', $intentRoute->getOption('_aculta_site_key'));
     self::assertSame('node.view', $intentRoute->getRequirement('_entity_access'));
     $withdrawRoute = $routeProvider->getRouteByName('aculta_wiki.proposal_withdraw');
     self::assertSame('/propostas/{proposal}/retirar', $withdrawRoute->getPath());
@@ -1032,7 +1032,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     // The wiki_entries view declares wiki/verbetes in config/sync.
     self::assertSame('/wiki/verbetes', $listingRoute->getPath());
     self::assertCount(1, $routeProvider->getRoutesByPattern('/wiki/verbetes'));
-    self::assertSame('wiki', $listingRoute->getOption('_aculta_domain_purpose'));
+    self::assertSame('wiki', $listingRoute->getOption('_aculta_site_key'));
     self::assertTrue($accessManager->checkNamedRoute(
       'view.wiki_entries.page_1',
       [],
@@ -1298,13 +1298,13 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $routes = $this->container->get('router.route_provider');
     $route = $routes->getRouteByName('aculta_studio.we_sativa');
     self::assertSame('/we-sativa', $route->getPath());
-    self::assertSame('wiki', $route->getOption('_aculta_domain_purpose'));
+    self::assertSame('wiki', $route->getOption('_aculta_site_key'));
     $startRoute = $routes->getRouteByName('aculta_studio.we_sativa_start');
     self::assertSame('/we-sativa/inicio', $startRoute->getPath());
-    self::assertSame('wiki', $startRoute->getOption('_aculta_domain_purpose'));
+    self::assertSame('wiki', $startRoute->getOption('_aculta_site_key'));
     $createRoute = $routes->getRouteByName('aculta_wiki.studio_entry_create');
     self::assertSame('/we-sativa/verbetes/novo', $createRoute->getPath());
-    self::assertSame('wiki', $createRoute->getOption('_aculta_domain_purpose'));
+    self::assertSame('wiki', $createRoute->getOption('_aculta_site_key'));
     self::assertSame('node:wiki_entry', $createRoute->getRequirement('_entity_create_access'));
     self::assertTrue($this->container->get('access_manager')->checkNamedRoute(
       'aculta_wiki.studio_entry_create',

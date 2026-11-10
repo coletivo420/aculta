@@ -133,7 +133,7 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     $routeProvider = $this->container->get('router.route_provider');
     foreach (self::EDITORIAL_ROUTES as $name) {
       $route = $routeProvider->getRouteByName($name);
-      self::assertSame('main', $route->getOption('_aculta_domain_purpose'), $name);
+      self::assertSame('main', $route->getOption('_aculta_site_key'), $name);
       self::assertTrue((bool) $route->getOption('_admin_route'), $name);
       self::assertFalse(DomainRoutePolicy::allowsSharedSite($route, 'main', 'eventos'), $name);
       self::assertTrue(DomainRoutePolicy::allowsSharedSite($route, 'main', 'main'), $name);
@@ -147,7 +147,7 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     $routeProvider = $this->container->get('router.route_provider');
     foreach (self::ORGANIZER_ROUTES as $name) {
       $route = $routeProvider->getRouteByName($name);
-      self::assertSame('eventos', $route->getOption('_aculta_domain_purpose'), $name);
+      self::assertSame('eventos', $route->getOption('_aculta_site_key'), $name);
       self::assertFalse((bool) $route->getOption('_admin_route'), $name);
       self::assertTrue(DomainRoutePolicy::allowsSharedSite($route, 'eventos', 'eventos'), $name);
       self::assertFalse(DomainRoutePolicy::allowsSharedSite($route, 'eventos', 'main'), $name);
@@ -351,14 +351,14 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
 
     foreach (['aculta_events_openstreetmap.status', 'aculta_events_openstreetmap.import'] as $name) {
       $route = $routeProvider->getRouteByName($name);
-      self::assertSame('main', $route->getOption('_aculta_domain_purpose'), $name);
+      self::assertSame('main', $route->getOption('_aculta_site_key'), $name);
       self::assertFalse(DomainRoutePolicy::allowsSharedSite($route, 'main', 'eventos'), $name);
       self::assertTrue(DomainRoutePolicy::allowsSharedSite($route, 'main', 'main'), $name);
     }
 
     foreach (['aculta_events_openstreetmap.oauth_authorize', 'aculta_events_openstreetmap.oauth_callback'] as $name) {
       $route = $routeProvider->getRouteByName($name);
-      self::assertSame('main', $route->getOption('_aculta_domain_purpose'), $name);
+      self::assertSame('main', $route->getOption('_aculta_site_key'), $name);
       self::assertFalse(DomainRoutePolicy::allowsSharedSite($route, 'main', 'eventos'), $name);
       self::assertTrue(DomainRoutePolicy::allowsSharedSite($route, 'main', 'main'), $name);
     }

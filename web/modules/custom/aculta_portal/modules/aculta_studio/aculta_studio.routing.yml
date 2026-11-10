@@ -9,7 +9,7 @@ aculta_studio.dashboard:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 aculta_studio.account:
   path: /conta
@@ -23,7 +23,7 @@ aculta_studio.account:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 # S-R3-B2: Portal Profile Form API narrowed by route to private account fields.
 aculta_studio.account_data:
@@ -35,7 +35,7 @@ aculta_studio.account_data:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 # Only the community profile is edited here; private account data is separate.
@@ -50,7 +50,7 @@ aculta_studio.account_address:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 # S-R3-B1: CPF/CNPJ remains owned by Portal + optional aculta_id_cpf.
@@ -64,7 +64,7 @@ aculta_studio.account_documents:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 aculta_studio.account_security:
@@ -76,7 +76,7 @@ aculta_studio.account_security:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 aculta_studio.account_password:
@@ -88,7 +88,7 @@ aculta_studio.account_password:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 aculta_studio.account_connections:
@@ -100,7 +100,7 @@ aculta_studio.account_connections:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 # S-R3-B3: keep Commerce orders, support history and appearance Form API
@@ -114,7 +114,7 @@ aculta_studio.account_orders:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 aculta_studio.account_support:
@@ -126,7 +126,7 @@ aculta_studio.account_support:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 aculta_studio.account_preferences:
@@ -138,7 +138,7 @@ aculta_studio.account_preferences:
     _permission: 'access aculta portal'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 aculta_studio.profile:
@@ -149,7 +149,7 @@ aculta_studio.profile:
   requirements:
     _custom_access: 'aculta_studio.profile_access:access'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 # ACULTA User owns the standalone public-nickname Form API.
@@ -161,7 +161,7 @@ aculta_studio.profile_nickname:
   requirements:
     _custom_access: 'aculta_studio.profile_access:access'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 aculta_studio.profile_privacy:
@@ -172,7 +172,7 @@ aculta_studio.profile_privacy:
   requirements:
     _custom_access: 'aculta_studio.profile_access:access'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 aculta_studio.profile_bio:
@@ -183,7 +183,7 @@ aculta_studio.profile_bio:
   requirements:
     _custom_access: 'aculta_studio.profile_access:access'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 aculta_studio.profile_social:
@@ -195,7 +195,7 @@ aculta_studio.profile_social:
     _custom_access: 'aculta_studio.profile_access:access'
     rede: 'instagram|facebook|reddit'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 aculta_studio.we_sativa:
@@ -206,7 +206,7 @@ aculta_studio.we_sativa:
   requirements:
     _permission: access aculta portal
   options:
-    _aculta_domain_purpose: wiki
+    _aculta_site_key: wiki
 
 aculta_studio.we_sativa_start:
   path: /we-sativa/inicio
@@ -216,7 +216,7 @@ aculta_studio.we_sativa_start:
   requirements:
     _permission: access aculta portal
   options:
-    _aculta_domain_purpose: wiki
+    _aculta_site_key: wiki
 
 aculta_studio.home:
   path: /marley
@@ -229,7 +229,7 @@ aculta_studio.home:
   requirements:
     _permission: access aculta portal
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 aculta_studio.area:
   path: /marley/{aba}
@@ -242,7 +242,7 @@ aculta_studio.area:
     _permission: access aculta portal
     aba: '[a-z0-9-]+'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 aculta_studio.section:
   path: /marley/{aba}/{secao}
@@ -255,7 +255,7 @@ aculta_studio.section:
     aba: '[a-z0-9-]+'
     secao: '[a-z0-9-]+'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 aculta_studio.tab:
   path: /marley/{aba}/{secao}/{sub}
@@ -268,7 +268,7 @@ aculta_studio.tab:
     secao: '[a-z0-9-]+'
     sub: '[a-z0-9-]+'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 aculta_studio.salvos:
   path: /salvos
@@ -279,7 +279,7 @@ aculta_studio.salvos:
     _permission: access aculta portal
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 # Ganjalab learner and educator experiences are owned by Studio. Route IDs remain stable during migration.
 aculta_lms.student_dashboard:
@@ -292,7 +292,7 @@ aculta_lms.student_dashboard:
     _user_is_logged_in: 'TRUE'
   options:
     no_cache: true
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
 
 # Keep the Group owner's add Form API inside the educator workspace, purpose
 # and theme. The generated entity.group.add_form is an admin route on purpose
@@ -307,7 +307,7 @@ aculta_lms.course_create:
     _user_is_logged_in: 'TRUE'
   options:
     no_cache: true
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
 
 aculta_lms.educator_dashboard:
   path: '/ganjalab/educador'
@@ -319,7 +319,7 @@ aculta_lms.educator_dashboard:
     _user_is_logged_in: 'TRUE'
   options:
     no_cache: true
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
 
 # The LMS owns curriculum data and Form API; Studio owns the educator routes.
 aculta_lms.course_structure:
@@ -331,7 +331,7 @@ aculta_lms.course_structure:
     _custom_access: 'aculta_lms.course_authoring_access:access'
   options:
     no_cache: true
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
     parameters:
       course:
         type: entity:group
@@ -345,7 +345,7 @@ aculta_lms.course_materials_edit:
     _custom_access: 'aculta_lms.course_authoring_access:access'
   options:
     no_cache: true
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
     parameters:
       course:
         type: entity:group
@@ -359,7 +359,7 @@ aculta_lms.course_document_add:
     _custom_access: 'aculta_lms.course_document_access:createAccess'
   options:
     no_cache: true
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
     parameters:
       course:
         type: entity:group
@@ -373,7 +373,7 @@ aculta_lms.course_document_edit:
     _custom_access: 'aculta_lms.course_document_access:updateAccess'
   options:
     no_cache: true
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
     parameters:
       course:
         type: entity:group
@@ -389,7 +389,7 @@ aculta_lms.lesson_add:
     _custom_access: 'aculta_lms.course_authoring_access:access'
   options:
     no_cache: true
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
     parameters:
       course:
         type: entity:group
@@ -403,7 +403,7 @@ aculta_lms.lesson_edit:
     _custom_access: 'aculta_lms.course_authoring_access:access'
   options:
     no_cache: true
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
     parameters:
       course:
         type: entity:group
@@ -419,7 +419,7 @@ aculta_lms.lesson_preview:
     _custom_access: 'aculta_lms.course_lesson_preview_access:access'
   options:
     no_cache: true
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
     parameters:
       course:
         type: entity:group
@@ -435,7 +435,7 @@ aculta_lms.lesson_delete:
     _custom_access: 'aculta_lms.course_authoring_access:access'
   options:
     no_cache: true
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
     parameters:
       course:
         type: entity:group
@@ -452,7 +452,7 @@ aculta_lms.lesson_move:
     direcao: 'acima|abaixo'
   options:
     no_cache: true
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
     parameters:
       course:
         type: entity:group
@@ -468,7 +468,7 @@ aculta_lms.activity_add:
     _custom_access: 'aculta_lms.course_authoring_access:access'
   options:
     no_cache: true
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
     parameters:
       course:
         type: entity:group
@@ -484,7 +484,7 @@ aculta_lms.activity_edit:
     _custom_access: 'aculta_lms.course_authoring_access:access'
   options:
     no_cache: true
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
     parameters:
       course:
         type: entity:group
@@ -502,7 +502,7 @@ aculta_lms.activity_delete:
     _custom_access: 'aculta_lms.course_authoring_access:access'
   options:
     no_cache: true
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
     parameters:
       course:
         type: entity:group
@@ -521,7 +521,7 @@ aculta_lms.activity_move:
     direcao: 'acima|abaixo'
   options:
     no_cache: true
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
     parameters:
       course:
         type: entity:group
@@ -543,7 +543,7 @@ aculta_studio.upload_embed:
     _user_is_logged_in: 'TRUE'
     integracao: 'wiki|forum|galeria|revista|lms'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true
 
 aculta_studio.calendar_fragment:
@@ -554,5 +554,5 @@ aculta_studio.calendar_fragment:
   requirements:
     _permission: 'access aculta portal'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: true

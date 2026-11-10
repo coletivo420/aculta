@@ -19,7 +19,7 @@ final class EditorialRouteConfigTest extends UnitTestCase {
     $routes = Yaml::decode(file_get_contents($module . '/aculta_magazine.routing.yml'));
     self::assertSame('/painel-administrativo/revista', $routes['aculta_magazine.admin']['path']);
     foreach (['admin', 'capabilities', 'admin_comments'] as $route) {
-      self::assertSame('main', $routes['aculta_magazine.' . $route]['options']['_aculta_domain_purpose']);
+      self::assertSame('main', $routes['aculta_magazine.' . $route]['options']['_aculta_site_key']);
       self::assertTrue($routes['aculta_magazine.' . $route]['options']['_admin_route']);
     }
     $studioRoutes = [
@@ -31,7 +31,7 @@ final class EditorialRouteConfigTest extends UnitTestCase {
       'studio_discussion',
     ];
     foreach ($studioRoutes as $route) {
-      self::assertSame('account', $routes['aculta_magazine.' . $route]['options']['_aculta_domain_purpose']);
+      self::assertSame('account', $routes['aculta_magazine.' . $route]['options']['_aculta_site_key']);
     }
     self::assertStringNotContainsString('/studio/marley', file_get_contents($module . '/aculta_magazine.routing.yml'));
   }

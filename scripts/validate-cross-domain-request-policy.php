@@ -2,6 +2,7 @@
 
 /**
  * @file
+ * Validates cross-domain request and redirect policy.
  */
 
 declare(strict_types=1);
@@ -50,7 +51,7 @@ $assert(
 $paymentNotification = \Drupal::service('router.route_provider')->getRouteByName('commerce_payment.notify');
 $assert(
   $paymentNotification->getMethods() === ['POST']
-    && $paymentNotification->getOption('_aculta_domain_purpose') === 'main',
+    && $paymentNotification->getOption('_aculta_site_key') === 'main',
   'Commerce payment notification remains POST-only and belongs to MAIN.',
 );
 $assert(

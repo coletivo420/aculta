@@ -19,6 +19,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\user\AccountForm;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -179,10 +180,18 @@ class FormHooks {
    */
   private function accountAjaxSubmit(array &$form, string $formId): void {
     $route = $this->routeMatch->getRouteObject();
-    if ($route === NULL || $route->getOption('_aculta_domain_purpose') !== 'account' || $formId === 'aculta_portal_aculta_user_agreement_accept' || $formId === 'aculta_portal_account_password_create'
-      || $formId === 'user_login_form' || $formId === 'user_pass_reset' || $formId === 'aculta_mail_confirmer_response' || $formId === 'aculta_user_account_bio_form' || !empty($form['#aculta_json_save']) || !isset($form['actions']['submit'])
-      // Rotas de fragmento de popup (criar publicação, comentário) já configuram o envio HTMX do
-      // próprio formulário e do botão; o alvo do wrapper da conta não existe no popup.
+    if ($route === NULL
+      || $route->getOption('_aculta_site_key') !== 'account'
+      || $formId === 'aculta_portal_aculta_user_agreement_accept'
+      || $formId === 'aculta_portal_account_password_create'
+      || $formId === 'user_login_form'
+      || $formId === 'user_pass_reset'
+      || $formId === 'aculta_mail_confirmer_response'
+      || $formId === 'aculta_user_account_bio_form'
+      || !empty($form['#aculta_json_save'])
+      || !isset($form['actions']['submit'])
+      // Popup fragment routes already configure HTMX on their own form/button;
+      // the Account wrapper does not exist in those dialogs.
       || $route->getOption('_htmx_route')) {
       return;
     }
@@ -218,8 +227,9 @@ class FormHooks {
   /**
    * Recuperação de senha em modal sem fechar, só com a nova senha.
    *
-   * O link do e-mail leva ao formulário de conta com o token do Core. Só o campo de senha aparece, em modal sem botão
-   * de fechar (js/account-password-modal.js), como na criação de senha do cadastro simplificado.
+   * O link do e-mail leva ao formulário de conta com o token do Core. Só o
+   * campo de senha aparece em modal sem botão de fechar
+   * (js/account-password-modal.js), como na criação de senha do cadastro.
    */
   private function recoveryPasswordModal(array &$form, FormStateInterface $formState, string $formId): void {
     $formObject = $formState->getFormObject();
@@ -228,7 +238,12 @@ class FormHooks {
       return;
     }
     $account = $formObject->getEntity();
-    if (!AccountRouteSubscriber::isValidCorePasswordResetRequest($request, (int) $account->id(), (int) $this->currentUser->id())) {
+    if (!$account instanceof UserInterface
+      || !AccountRouteSubscriber::isValidCorePasswordResetRequest(
+        $request,
+        (int) $account->id(),
+        (int) $this->currentUser->id(),
+      )) {
       return;
     }
     $manter = ['account', 'actions', 'form_build_id', 'form_token', 'form_id'];
@@ -242,7 +257,8 @@ class FormHooks {
         unset($form['account'][$key]);
       }
     }
-    // O Core espera o campo de papéis no buildEntity: mantém os papéis atuais, sem exibir o campo.
+    // O Core espera o campo de papéis no buildEntity: mantém os papéis atuais,
+    // sem exibir o campo.
     $papeis = array_values(array_diff($account->getRoles(), ['authenticated']));
     $form['account']['roles'] = ['#type' => 'value', '#value' => array_combine($papeis, $papeis) ?: []];
     $form['actions']['submit']['#value'] = $this->translation->translate('Salvar nova senha');

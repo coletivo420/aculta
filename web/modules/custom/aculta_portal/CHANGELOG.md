@@ -4,16 +4,18 @@
 - Adiciona `DomainSiteManagerInterface` e `DomainSiteManager`, API tipada que delega ao `DomainPurposeManagerInterface` compatível; os consumidores antigos, rotas, URLs e regras permanecem no serviço atual.
 - Unit focais: 7 testes / 84 assertions PASS; Domain/ContentPurposeResolver: 54 testes / 161 assertions PASS. PHPCS, PHPStan, YAML e gate Drupal 12 (1.238 checks) PASS. Sem mudança de Runtime, State, sessão ou configuração.
 
-## Não versionado — RN-02, contrato de política de rota
+## Não versionado — RN-02, corte de options de rota para `site_key`
 
-- `DomainRoutePolicy` expõe os métodos `allowsSharedSite()` e
-  `siteKeyForDonationRoute()`. Os subscribers do Portal e testes de unidade e
-  Kernel usam a API nova; as regras de compartilhamento, prioridade admin e
-  owners `main`/`support` permanecem inalterados.
-- Os métodos antigos seguem como wrappers de compatibilidade rastreados para
-  consumidores não migrados. Options `_aculta_domain_purpose(s)` seguem inalteradas, aguardando
-  inventário/migração de configuração reversível. Gate Kernel/HTTP ainda
-  pendente.
+- `DomainRoutePolicy` usa apenas `allowsSharedSite()` e
+  `siteKeyForDonationRoute()`. As opções de rota foram migradas para
+  `_aculta_site_key(s)` e `_aculta_cross_domain_canonical_site_key` em todos os
+  módulos customizados, subscribers e testes. Não há fallback ou wrappers.
+- Options removidas e valores inválidos falham fechados. Regras de
+  compartilhamento, prioridade administrativa e owners `main`/`support`
+  permanecem. Kernel/HTTP ainda pendentes.
+- A costura de teste passou para `aculta_site_key_test_relaxed`; o gate
+  `NoLegacyRoutePurposeOptionsTest` varre código customizado, rotas, testes,
+  Config Sync e scripts para impedir reintrodução das opções/APIs removidas.
 - Após o push, dez arquivos PHP/YAML de produção foram sincronizados no
   Runtime e `drush cr` PASS; sem importação de configuração ou `updatedb`.
 

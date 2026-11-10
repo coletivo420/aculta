@@ -14,10 +14,11 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Decorador do renderizador AJAX de conteúdo principal, para rotas da Minha conta.
+ * Decora o renderizador AJAX nas rotas da Minha conta.
  *
- * O título e o breadcrumb são calculados pelo servidor (os mesmos da página direta) e entram no próprio conteúdo
- * como bloco oculto, à frente. A navegação os lê depois da troca: o cliente não tira título do conteúdo.
+ * O título e o breadcrumb são calculados pelo servidor (os mesmos da página
+ * direta) e entram no próprio conteúdo como bloco oculto. A navegação os lê
+ * depois da troca: o cliente não tira título do conteúdo.
  */
 final class AccountAjaxMainContentRenderer implements MainContentRendererInterface {
 
@@ -31,18 +32,21 @@ final class AccountAjaxMainContentRenderer implements MainContentRendererInterfa
    * {@inheritdoc} */
   public function renderResponse(array $main_content, Request $request, RouteMatchInterface $route_match) {
     $route = $route_match->getRouteObject();
-    if ($route !== NULL && $route->getOption('_aculta_domain_purpose') === 'account') {
+    if ($route !== NULL && $route->getOption('_aculta_site_key') === 'account') {
       $title = (string) $this->titleResolver->getTitle($request, $route);
       $items = [];
       $links = $this->breadcrumbManager->build($route_match)->getLinks();
-      // Como na página direta: o título da página entra como último nível (quando não repete o último link).
+      // Como na página direta: o título entra como último nível quando não
+      // repete o último link.
       $lastText = $links !== [] ? (string) end($links)->getText() : '';
       if ($title !== '' && $title !== $lastText) {
         $links[] = new Link($title, new Url('<nolink>'));
       }
       $last = count($links) - 1;
       foreach ($links as $index => $link) {
-        if ($index === $last || !$link->getUrl() || $link->getUrl()->isExternal() || $link->getUrl()->getRouteName() === '<nolink>') {
+        if ($index === $last
+          || $link->getUrl()->isExternal()
+          || $link->getUrl()->getRouteName() === '<nolink>') {
           $items[] = [
             '#markup' => Html::escape((string) $link->getText()),
             '#wrapper_attributes' => [
@@ -60,7 +64,8 @@ final class AccountAjaxMainContentRenderer implements MainContentRendererInterfa
           ];
         }
       }
-      // Fragmento oculto que o account-navigation.js copia para a barra de navegação (título e breadcrumb do servidor).
+      // Fragmento oculto que account-navigation.js copia para a barra de
+      // navegação (título e breadcrumb do servidor).
       $main_content['portal_account_chrome'] = [
         '#type' => 'container',
         '#attributes' => ['hidden' => 'hidden', 'data-portal-chrome' => '', 'data-portal-page-title' => $title],

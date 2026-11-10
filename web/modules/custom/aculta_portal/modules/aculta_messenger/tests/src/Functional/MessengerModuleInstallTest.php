@@ -66,7 +66,7 @@ final class MessengerModuleInstallTest extends BrowserTestBase {
   protected function prepareSettings() {
     parent::prepareSettings();
     $file = DRUPAL_ROOT . '/' . $this->siteDirectory . '/settings.php';
-    file_put_contents($file, "\n\$settings['aculta_domain_purpose_test_relaxed'] = TRUE;\n", FILE_APPEND);
+    file_put_contents($file, "\n\$settings['aculta_site_key_test_relaxed'] = TRUE;\n", FILE_APPEND);
   }
 
   /**

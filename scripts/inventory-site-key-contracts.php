@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Generates the Portal site-key contract inventory.
+ */
+
 declare(strict_types=1);
 
 $root = dirname(__DIR__);
@@ -15,11 +20,11 @@ $extensions = ['php', 'yml', 'yaml', 'twig', 'css', 'js', 'module', 'install', '
 $columns = ['path', 'line', 'owner', 'category', 'matched_contract', 'status', 'target', 'risk'];
 $patterns = [
   'visual_legacy' => '/PurposePaletteSchemes|purposePaletteStyle|aculta_purpose_palette|data-purpose-scheme|--aculta-purpose-/i',
-  'route_metadata' => '/_aculta_(?:domain_)?purposes?\b|_aculta_cross_domain_canonical_purpose/i',
+  'route_metadata' => '/_aculta_(?:site_keys?|cross_domain_canonical_site_key)\b/i',
   'state_persistence' => '/active_purposes|active_purposes/i',
   'session_persistence' => '/login_destination.{0,120}purpose|purpose.{0,120}login_destination/i',
   'presentation_contract' => '/domain_presentation.{0,160}purpose|identity.{0,80}purpose|aculta_purpose\b/i',
-  'functional_api' => '/DomainPurposeManager|DomainSurfaceMap|ContentPurposeResolver|DomainPurposeRequestSubscriber|ActivePurposesState|PurposeFrontPathProcessor|purposeForDonationRoute|allowsSharedPurpose|getCurrentPurpose|getPurposeForDomainId|runInPurpose/',
+  'functional_api' => '/DomainPurposeManager|DomainSurfaceMap|ContentPurposeResolver|DomainPurposeRequestSubscriber|ActivePurposesState|PurposeFrontPathProcessor|siteKeyForDonationRoute|allowsSharedSite|getCurrentPurpose|getPurposeForDomainId|runInPurpose/',
   'generic_purpose_symbol' => '/\bpurpose(?:s)?\b/i',
 ];
 $rows = [];
@@ -33,7 +38,7 @@ foreach ($roots as $scanRoot) {
     if (!$file->isFile() || !in_array($file->getExtension(), $extensions, TRUE)) {
       continue;
     }
-    $path = relativePath($root, $file->getPathname());
+    $path = relative_path($root, $file->getPathname());
     if (str_contains($path, '/vendor/') || str_contains($path, '/.git/')) {
       continue;
     }
@@ -55,7 +60,7 @@ foreach ($roots as $scanRoot) {
       $rows[] = [
         'path' => $path,
         'line' => (string) ($index + 1),
-        'owner' => ownerFromPath($path),
+        'owner' => owner_from_path($path),
         'category' => $category,
         'matched_contract' => $category === 'generic_purpose_symbol' ? 'purpose' : $category,
         'status' => 'MIGRATION_IN_PROGRESS',
@@ -80,19 +85,19 @@ foreach ($rows as $row) {
   fputcsv($handle, array_values($row), ';', '"', '');
 }
 fclose($handle);
-printf("Wrote %d purpose contract references to %s\n", count($rows), relativePath($root, $output));
+printf("Wrote %d site-key contract references to %s\n", count($rows), relative_path($root, $output));
 
 /**
  * Returns a repository-relative path for an inventory record.
  */
-function relativePath(string $root, string $path): string {
+function relative_path(string $root, string $path): string {
   return ltrim(str_replace($root, '', $path), DIRECTORY_SEPARATOR);
 }
 
 /**
  * Resolves a module owner from a custom module path when possible.
  */
-function ownerFromPath(string $path): string {
+function owner_from_path(string $path): string {
   if (preg_match('#^web/modules/custom/([^/]+)#', $path, $matches) === 1) {
     return $matches[1];
   }

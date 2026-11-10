@@ -93,7 +93,7 @@ final class AcultaH5PHookDiscoveryTest extends KernelTestBase {
       NULL,
       $this->container->get('router.route_provider')
         ->getRouteByName('aculta_lms_h5p.editor_ajax')
-        ->getOption('_aculta_domain_purpose'),
+        ->getOption('_aculta_site_key'),
       'The H5P editor submits same-origin requests from the Group edit form, which belongs to the main purpose.',
     );
   }
