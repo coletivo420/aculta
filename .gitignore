@@ -95,3 +95,7 @@ __pycache__/
 # Grafo local do Graphify (gerado; fora do Git)
 /graphify-out/
 /node_modules/
+
+# PHPUnit 11 cache directories
+.phpunit.cache/
+.phpunit.performance.cache/
