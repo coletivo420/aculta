@@ -1,5 +1,6 @@
 # Skills Drupal e UI Suite — 2026-11-10
 
+
 # FST-00 a FST-11 — integração analítica Fórum + Statistics — 2026-11-10
 
 - **Objetivo:** executar o plano canônico FST-00 a FST-11 em `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md`.
@@ -17,6 +18,7 @@
 - **Limites:** `core.extension.yml` e lock não comprovam runtime. SEC-01 tem guard `isAllowed()` e teste-fonte; sessão anterior registra PHPUnit 9/9, mas README do módulo está desatualizado. Não houve alteração de runtime, Composer, configuração ou implementação funcional.
 - **Publicação:** commit `c3385e86d` publicado em `origin/dev` e confirmado por `git ls-remote`.
 - **Próximo passo:** em outra rodada, corrigir a nota obsoleta SEC-01 no README do módulo e executar avaliação individual das 18 Skills nos dois CLIs.
+
 # UI Patterns 2 — Bloco Isolado de Prévia em Lote e Carregamento Sequencial Completo — 2026-11-10
 
 - **Objetivo:** corrigir layout do botão "Exibir todas as prévias" para ocupar linha inteira isolada (`column-span: all`), sem sobreposição com a barra de busca ou colunas de cartões, e implementar encadeamento sequencial automático contínuo via HTMX até o último componente.
@@ -26,14 +28,3 @@
 - **Verificações:** gates do escopo PASS: `validate-aculta-ui-library.php` (25 checks), `validate-aculta420-sdc-schemas.php` (80 componentes, 1707 checks), `validate-aculta420-v2-foundations.php` (83 contrastes, a11y), `npm run lint:css` (0 erros), teste Playwright em runtime real (90/90 carregadas com sucesso).
 - **Runtime:** `drush cr` executado; catálogo e lote sequencial operacionais.
 - **Próximo passo:** monitorar novas inclusões de componentes no catálogo.
-
-
-# UI Patterns 2 + UI Styles — Otimização Universal, Catálogo sob Demanda e Botão Global — 2026-11-10
-
-- **Objetivo:** executar integralmente as microfases UP-00 a UP-07 e a extensão pós-UP-07 com o botão global "Exibir todas as prévias". Correção P0 de segurança em aculta_ui_library (SEC-01), eliminação da invalidação de descoberta em preprocess (PERF-01), catálogo progressivo universal com HTMX (PERF-02), desacoplamento de stories executáveis (PERF-03), confronto upstream com UI Patterns 2.0.23, preservação de UI Styles/Icons e fila controlada de carregamento global com concorrência limitada (máximo 2 conexões).
-- **Estado:** implementação concluída e publicada em `dev`. 100% dos SDCs (83 totais, 72 do tema V2) e 115 stories permanecem disponíveis. Botão global implementado via SDC `aculta420_v2:button` com ícone `eye`, fila client-side em `ui-library-bulk-preview.js`, cancelamento/pausa dinâmico, retry de itens com erro e indicador de progresso com `aria-live="polite"`. Zero formulários reais construídos desnecessariamente na listagem inicial.
-- **Decisões:** UI Patterns universal mantido (proibição absoluta de excluir ou ocultar componentes). Verificação estrita de `isAllowed()` no plugin de bloco, negando `forbidden` e `neutral`. Carregamento progressivo de prévias via HTMX (`data-hx-get` apontando para a rota single com `data-hx-select="#component-stories-wrapper"`), preservando fallback noscript e links permanentes por componente. Busca em tempo real por nome/ID via `ui-library-tabs.js` e fila concorrente limitada a 2 requisições.
-- **Arquivos:** `web/modules/custom/aculta_portal/modules/aculta_ui_library/src/Controller/UiLibraryPreviewController.php`, `web/modules/custom/aculta_portal/modules/aculta_ui_library/tests/src/Unit/UiLibraryPreviewControllerTest.php`, `scripts/validate-aculta-ui-library.php`, `web/themes/custom/aculta420_v2/src/Hook/UiPatternsStoryHooks.php`, `web/themes/custom/aculta420_v2/templates/ui-patterns-overview-page.html.twig`, `web/themes/custom/aculta420_v2/templates/ui-patterns-single-page.html.twig`, `web/themes/custom/aculta420_v2/js/ui-library-tabs.js`, `web/themes/custom/aculta420_v2/js/ui-library-bulk-preview.js`, `web/themes/custom/aculta420_v2/src/styles/ui-library-admin.css`, `docs/architecture/ACULTA-UI-PATTERNS-OTIMIZACAO-UNIVERSAL.md`.
-- **Verificações:** todos os gates do escopo PASS: `validate-aculta-ui-library.php` (25 checks), `validate-aculta420-sdc-schemas.php` (1628 checks), `validate-aculta420-v2-foundations.php` (contrastes e a11y PASS), `validate-admin-routes-main-domain.php` (175 rotas MAIN PASS), `npm run lint:css` (PASS sem erros), PHPUnit Unit aculta_ui_library (9/9 PASS, 30 assertions), benchmark medido antes/depois.
-- **Runtime:** `drush cr` executado; botão global e catálogo progressivo plenamente operacionais.
-- **Próximo passo:** homologação visual contínua dos próximos SDCs integrados ao Layout Builder e Views.
