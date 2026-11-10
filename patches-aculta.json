@@ -38,7 +38,7 @@
         ],
         "drupal/ui_patterns": [
             {
-                "description": "UI Patterns: substituir drupal_static() depreciado pelo cache de memória do Drupal",
+                "description": "UI Patterns: substituir drupal_static() depreciado pelo cache de mem\u00f3ria do Drupal",
                 "url": "patches/aculta_patcher/ui_patterns_drupal_static_deprecation.patch",
                 "sha256": "b5445a47f3c729631110384e6e908c775a175af1d8a0b4ab9755fe8efbe8d54d",
                 "depth": 1
@@ -46,7 +46,7 @@
         ],
         "h5p/h5p-editor": [
             {
-                "description": "H5P: bloquear tipos de conteúdo restritos no upload",
+                "description": "H5P: bloquear tipos de conte\u00fado restritos no upload",
                 "url": "patches/aculta_patcher/h5p_restricted_upload.patch",
                 "sha256": "656137ed2c0ab27992305adc3785328c2f7e20646638f84da14efc8bb01c5e95",
                 "depth": 1
@@ -101,6 +101,14 @@
                 "description": "Remove ERR legacy .views.inc bridge; OOP hook is active on supported Drupal 11/12",
                 "url": "patches/entity-reference-revisions-remove-views-bridge.patch",
                 "sha256": "97e529bd59a0414e265322488783179ed0d0752f7de8c0b5f1b0ec97a6a63b4d",
+                "depth": 1
+            }
+        ],
+        "drupal/flag": [
+            {
+                "description": "PHP 8.5: null array offset in FlaggingStorage::loadIsFlaggedMultiple()",
+                "url": "patches/flag-php85-null-offset.patch",
+                "sha256": "ed3ca42a6435379ede9b703a9eb91ef89d0b13a99edefefcf690c501d9d9f4a7",
                 "depth": 1
             }
         ]

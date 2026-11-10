@@ -218,7 +218,7 @@ fabricado; os erros abaixo são achados reais para a próxima rodada.
 
 | Suíte | Resultado | Achado |
 | --- | --- | --- |
-| ForumRoutesFunctionalTest | **4 de 6 PASS** (26–28 asserções) | Causa raiz do 403: `testing.services.yml` define `cookie_domain: .aculta.toca.net.br`, e o teste usava `127.0.0.1`; a sessão não persistia. O teste agora usa o host de `SIMPLETEST_BASE_URL`. Restam 2 erros por deprecation de contrib (`flag` `loadIsFlaggedMultiple`, PHP 8.5 `null` array offset), convertida em exceção pelo handler de teste; não ocorre em PHP 8.3 do CI |
+| ForumRoutesFunctionalTest | **4 de 6 PASS** (26 asserções) | `text_with_summary` era dependência ausente (corrigida) e o cookie domain `.aculta.toca.net.br` exigia o host de `SIMPLETEST_BASE_URL` (corrigido). Restam 2 erros por deprecation do contrib `flag` (null array offset, PHP 8.5). Patch de compatibilidade registrado em `patches-aculta.json` (guarda de entidade sem ID + cast de `entity_type_id`); no PHP 8.3 do CI a deprecation não ocorre |
 | StatisticsDashboardFunctionalTest | executou — 2 falhas de asserção, 13 asserções | Com `--url http://aculta.toca.net.br/` o DNS resolve e a suíte executa; o login canônico em `conta.<host>/entrar` falha porque o site simpletest local não mapeia o subdomínio `conta.` para a instância de teste. É limitação de mapeamento de domínio do simpletest, não da asserção de estatísticas |
 | MessengerModuleInstallTest | executada | verificar o resultado detalhado na próxima rodada |
 
