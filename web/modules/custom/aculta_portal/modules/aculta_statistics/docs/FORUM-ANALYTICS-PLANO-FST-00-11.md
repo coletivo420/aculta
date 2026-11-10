@@ -290,9 +290,80 @@ Estados possíveis: PLANEJADA, EM EXECUÇÃO, IMPLEMENTADA NO CÓDIGO, TESTADA, 
 | FST-05 | TESTADA | Provedor calcula pessoas distintas em 7/30 dias, novos contribuidores, mediana e p90 da primeira resposta de outro autor e sem resposta após 72h. Kernel com quatro autores reais, respostas, mesmo autor e tópico antigo valida os números; UIDs não são persistidos. |
 | FST-06 | TESTADA | Reação nova e pública emite `aculta_forum.reaction_added` com dimensão do tipo; troca de emoji e remoção não somam `added`. `forum.reactions.active` recalcula estoque por escopo. Kernel prova inclusão, troca, remoção e contadores de perfil; tabela operacional preservada. |
 | FST-07 | IMPLEMENTADA NO CÓDIGO; BLOQUEIO PARCIAL | Owner localizado: `aculta_user\Moderation\ReportQueue` sobre Flag. Implementados `forum.moderation.reports_open` (conteúdos distintos com denúncia) e `posts_pending` (ForumPosts não publicados), sem denunciante ou alvo nominal. `reports_resolved` e `resolution_median_minutes` ficam BLOQUEADOS: o Flag não guarda estado/timestamp de resolução; inventar a métrica violaria a fonte. Kernel cobre deduplicação. |
-| FST-08 | IMPLEMENTADA NO CÓDIGO; BROWSER DEFERRED | Área Fórum do painel central com cartões, série acessível, filtro de período sem JavaScript, atividade, saúde das respostas e moderação; resumo e link no painel `/painel-administrativo/forum`. Oito SDCs em `aculta420_v2` com schema estrito, story e tokens. `validate-aculta420-sdc-schemas.php`: PASS (80 componentes, 1707 checks); Stylelint PASS nos componentes; Kernel do painel: 7 testes OK. Captura visual e leitor de tela DEFERRED. |
+| FST-08 | IMPLEMENTADA NO CÓDIGO; BROWSER DEFERRED | Área Fórum do painel central com cartões, série acessível, filtro de período sem JavaScript, atividade, saúde das respostas e moderação; resumo e link no painel `/painel-administrativo/forum`. Oito SDCs em `aculta420_v2` com schema estrito, story e tokens; o controlador usa apenas `data-portal-ui` neutro e o tema carrega o CSS dos componentes, sem dependência módulo-tema. `validate-aculta420-sdc-schemas.php`: PASS (80 componentes, 1707 checks); Stylelint PASS nos componentes; Kernel do painel: 7 testes OK. Captura visual e leitor de tela DEFERRED. |
 | FST-09 | TESTADA | `forum.replies.created` grava a resposta na dimensão do tópico; o agregador aceita somente nó `aculta_forum_topic` e exige `view content-level statistics`. O painel do Fórum lista até 10 tópicos após carregar no máximo 100 IDs e revalidar `view` por entidade. Unit cobre dimensão autorizada e bundle incompatível; Kernel confirma a dimensão. O Index continua responsável por selecionar e autorizar candidatos. |
 | FST-10 | IMPLEMENTADA NO CÓDIGO; COLETA DESLIGADA | Auditoria: Search API (`aculta_forum`), View `aculta_forum_search`, cache de Views, GA4 e Search Console existentes; sem beacon próprio, sem política de consentimento específica aprovada. Instrumentação de busca implementada sem termo, sessão, IP ou user-agent, com `aculta_statistics.settings.forum_discovery.enabled` desligado por padrão e schema de config. Visualizações e clique de resultado permanecem BLOQUEADOS até decisão de privacidade e medição de bots/cache. Unit cobre desligado, zero resultado e busca com resultado. |
-| FST-11 | PLANEJADA | Pendente. |
+| FST-11 | TESTADA; RUNTIME NÃO HOMOLOGADO | Unit e Kernel executados; Functional e Browser DEFERRED por ambiente. Gates do escopo executados. Runtime com `aculta_forum_update_9008` pendente e ledger ausente; nenhuma homologação no Runtime. Ver seção 14. |
 
 Nenhuma fase está HOMOLOGADA NO RUNTIME. A sincronização do Runtime depende de `updatedb:status` e `config:status` sem pendências e não autoriza escrita de dados.
+
+
+## 14. Relatório de homologação FST-11
+
+Data: 2026-11-10. Branch `dev`.
+
+### Testes executados
+
+| Suíte | Resultado |
+| --- | --- |
+| Unit `aculta_forum` | 250 testes, 1857 asserções, OK (2 depreciações do PHPUnit) |
+| Unit `aculta_statistics` | 124 testes, 549 asserções, OK |
+| Kernel `aculta_statistics` completo | 55 testes, 600 asserções, OK (108 depreciações de Core/contrib) |
+| Kernel focal `aculta_forum` (Group ACL, estatísticas públicas, categoria, listagem pública, atividade de ForumPost, workflow) | 26 testes, 505 asserções, OK |
+| Kernel do painel central | 7 testes, 35 asserções, OK |
+| Functional `StatisticsDashboardFunctionalTest` | 2 testes SKIPPED por falta de ambiente HTTP/base URL; DEFERRED |
+| Browser Firefox ESR (320/390/768/1280, claro/escuro, teclado) | DEFERRED: não executado nesta rodada |
+
+### Gates
+
+- `validate-aculta420-sdc-schemas.php`: PASS (80 componentes, 116 includes, 1707 checks).
+- `validate-aculta420-mapped-classes.php`: PASS (483 classes).
+- `validate-module-theme-boundary.php`: PASS (7385 verificações; módulo sem token ou classe de design).
+- `validate-agent-token-budget.php`: PASS (handoff 3/3; entrada total 8963/10000).
+- `npm run lint:css` nos componentes e no CSS de estatísticas: PASS.
+- `validate-admin-routes-main-domain.php`: PASS (40 arquivos, 175 rotas).
+- `validate-aculta-portal-drupal12.php`: PASS (1218 checks), após regenerar o índice do README raiz.
+- PHPStan focal nos arquivos novos: PASS.
+- PHPCS nos arquivos novos e controllers: 0 erros (somente avisos de comprimento de linha preexistentes).
+- `php -l` em todos os arquivos PHP alterados: PASS.
+- `validate-aculta420-v2-sdc.php`: FAIL preexistente em `components/auth-dialog/auth-dialog.twig`, fora do escopo desta alteração; DEFERRED.
+- `validate-aculta420-design-foundations.php`: FAIL preexistente de literais de cor em `ui-library-admin.css` e componentes `surface*`, fora deste diff; DEFERRED.
+
+### Runtime
+
+- `drush status`: bootstrap OK, banco `aculta_runtime`, tema `aculta420_v2`.
+- `updatedb:status`: `aculta_forum_update_9008` pendente. Não executado sem autorização.
+- Tabela `aculta_forum_analytics_ledger` ausente no Runtime; com o ledger indisponível os hooks falham fechados e não contam atividade até o update.
+- `config:status`: divergências preexistentes em views/config de outros escopos; nenhum `config:import` executado.
+- Sem homologação no Runtime, sem captura visual e sem validação de leitor de tela.
+
+### Segurança por perfil (evidência parcial)
+
+| Usuário | Evidência |
+| --- | --- |
+| Anônimo | Unit do resolvedor: sem conta, classificação não depende de identidade; painel exige `administer aculta_statistics` |
+| Autenticado comum | Contadores públicos filtram Group por SQL; agregador exige `view content-level statistics` |
+| Associado ativo/suspenso | Política de acesso existente preservada; Unit e Kernel do Fórum para Group permanecem PASS |
+| Moderador | Métricas de moderação sem denunciante/alvo nominal; acesso ao painel segue permissão administrativa |
+| Administrador | Não recebe classificação pública automática; escopo vem do conteúdo |
+
+A matriz completa de navegador e HTTP permanece DEFERRED.
+
+### Contagens do projeto
+
+- Métricas novas no catálogo: 23 (total verificado no código).
+- Métricas operacionais pelo provedor: 13 por dia, quando a coleta roda.
+- SDCs criados: 8. Componentes reutilizados: 0 novos includes; `empty-state` do tema preservado.
+- Reconciliação de reações: dry-run e `--apply` implementados, não executados no Runtime.
+- Painel central do Fórum: implementado; captura pendente.
+- Painel `/painel-administrativo/forum`: retratos e link analítico adicionados.
+- Compatibilidade: eventos e tabelas do Fórum preservados; Wiki, Revista e LMS não entram nas métricas `forum.*`; `aculta_user` mantém perfis e cartões; `aculta_index` revalida acesso antes do detalhamento.
+
+### Pendências que exigem autorização
+
+1. Executar `updatedb` do update 9008 no Runtime (cria apenas a tabela do ledger).
+2. Reconciliar `aculta_forum.settings` e `aculta_statistics.settings` no Config Sync, se o responsável autorizar.
+3. Homologação Firefox ESR, teclado, leitor de tela e captura em 320/390/768/1280.
+4. Habilitar coleta de buscas somente com política de privacidade e consentimento aprovados.
+5. Instrumentar estado de resolução de denúncias no owner antes de `reports_resolved` e `resolution_median_minutes`.
+6. Medir carga real (p50/p95, queries, memória) antes de declarar qualquer SLO.

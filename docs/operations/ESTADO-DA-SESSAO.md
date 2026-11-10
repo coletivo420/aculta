@@ -1,3 +1,14 @@
+# FST-00 a FST-11 — integração analítica Fórum + Statistics — 2026-11-10
+
+- **Objetivo:** executar o plano canônico FST-00 a FST-11 em `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md`.
+- **Estado:** FST-00 a FST-10 implementadas e testadas em Unit/Kernel; FST-11 com Functional e Browser DEFERRED e Runtime não homologado. Nenhuma fase está HOMOLOGADA NO RUNTIME.
+- **Entregas:** `ForumAnalyticsScopeResolver` e escopo público/restrito, ledger `aculta_forum_analytics_ledger` e update 9008, reconciliação de reações e retratos, catálogo tipado com 23 métricas novas, provedor diário do Fórum, métricas de participação/resposta/reações/moderação, oito SDCs de estatísticas no tema V2, drilldown por tópico com acesso revalidado e coleta de busca desligada por padrão.
+- **Arquivos principais:** `web/modules/custom/aculta_portal/modules/aculta_forum/src/Analytics/`, `modules/aculta_statistics/src/Provider/`, `src/EventSubscriber/`, `src/Controller/StatisticsDashboardController.php`, `web/themes/custom/aculta420_v2/components/statistics-*`, testes Unit/Kernel e documentação de ambos os módulos.
+- **Verificações:** Unit forum 250/1857, Unit statistics 124/549, Kernel statistics 55/600, Kernel focal forum 26/505, painel 7/35; SDC schema PASS (80 componentes, 1707 checks), Stylelint PASS, rotas administrativas PASS, PHPStan focal PASS, PHPCS 0 erros. Gate do Portal FAIL apenas por README de status desatualizado.
+- **Runtime:** `updatedb:status` pendente em `aculta_forum_update_9008`; tabela do ledger ausente. Nenhum `updatedb`, `config:import` ou escrita de dados executado.
+- **Próximo passo:** com autorização, aplicar o update 9008 e o Config Sync pertinente, executar Firefox ESR (320/390/768/1280, claro/escuro, teclado), Functional em ambiente autorizado e revisar LGPD antes de habilitar coleta de busca.
+
+
 # UI Patterns 2 — Bloco Isolado de Prévia em Lote e Carregamento Sequencial Completo — 2026-11-10
 
 - **Objetivo:** corrigir layout do botão "Exibir todas as prévias" para ocupar linha inteira isolada (`column-span: all`), sem sobreposição com a barra de busca ou colunas de cartões, e implementar encadeamento sequencial automático contínuo via HTMX até o último componente.
@@ -8,6 +19,7 @@
 - **Runtime:** `drush cr` executado; catálogo e lote sequencial operacionais.
 - **Próximo passo:** monitorar novas inclusões de componentes no catálogo.
 
+
 # UI Patterns 2 + UI Styles — Otimização Universal, Catálogo sob Demanda e Botão Global — 2026-11-10
 
 - **Objetivo:** executar integralmente as microfases UP-00 a UP-07 e a extensão pós-UP-07 com o botão global "Exibir todas as prévias". Correção P0 de segurança em aculta_ui_library (SEC-01), eliminação da invalidação de descoberta em preprocess (PERF-01), catálogo progressivo universal com HTMX (PERF-02), desacoplamento de stories executáveis (PERF-03), confronto upstream com UI Patterns 2.0.23, preservação de UI Styles/Icons e fila controlada de carregamento global com concorrência limitada (máximo 2 conexões).
@@ -17,31 +29,3 @@
 - **Verificações:** todos os gates do escopo PASS: `validate-aculta-ui-library.php` (25 checks), `validate-aculta420-sdc-schemas.php` (1628 checks), `validate-aculta420-v2-foundations.php` (contrastes e a11y PASS), `validate-admin-routes-main-domain.php` (175 rotas MAIN PASS), `npm run lint:css` (PASS sem erros), PHPUnit Unit aculta_ui_library (9/9 PASS, 30 assertions), benchmark medido antes/depois.
 - **Runtime:** `drush cr` executado; botão global e catálogo progressivo plenamente operacionais.
 - **Próximo passo:** homologação visual contínua dos próximos SDCs integrados ao Layout Builder e Views.
-
-# ADR-055 — Integração UI Icons, UI Styles Page e Sistema Unificado de Emojis — 2026-11-10
-
-- **Objetivo:** executar integralmente os pacotes P0 a P7 da ADR-055: unificação do catálogo Fluent Emoji, integração com UI Icons, seletor de reações com busca e acessibilidade, UI Styles Page e verificação dos icon packs.
-- **Estado:** P0 a P7 concluídos e publicados. Filtro `fluent_emoji` refatorado para parsing seguro de nós de texto DOMXPath; serviço `FluentEmojiIconAdapter` implementado com mapeamento bidirecional e categorias; seletor de reações do fórum expandido com busca instantânea, seções e a11y por teclado; 3 icon packs validados com presença física dos SVGs; rotas de UI Styles Page e UI Library protegidas e funcionais.
-- **Decisões:** ADR-055 aprovada e registrada em `docs/decisions/ADR-055-integracao-ui-icons-ui-styles-page-e-sistema-unificado-de-emojis.md`. Preservada separação estrita de camadas: módulo neutro em templates, tema conectando os SDCs.
-- **Arquivos:** `web/modules/custom/aculta_portal/modules/aculta_editor/`, `web/modules/custom/aculta_portal/modules/aculta_forum/`, `web/themes/custom/aculta420_v2/`, `docs/decisions/ADR-055-integracao-ui-icons-ui-styles-page-e-sistema-unificado-de-emojis.md`.
-- **Verificações:** 100% dos gates do escopo PASS: `validate-module-theme-boundary.php` (7339 checks), `validate-aculta420-sdc-schemas.php` (1623 checks), `validate-aculta-ui-library.php` (23 checks), `npm run lint:css` (0 erros), PHPUnit Unit/Kernel `aculta_editor` (43/43 PASS), PHPUnit Unit `aculta_forum` (241/241 PASS), PHPUnit Unit `aculta420_v2` (18/18 PASS).
-- **Runtime:** `drush cr` executado; catálogo e adaptador operacionais.
-- **Próximo passo:** homologação contínua de novos displays editoriais e adoção do Fluent Emoji em novos formatos de texto sob demanda.
-
-# FST - Plano consolidado Forum + Statistics - 2026-11-10
-
-- **Objetivo:** consolidar auditoria estática e pesquisa Discourse/Flarum/XenForo em um plano executável FST-00 a FST-11.
-- **Estado:** planejamento documentado; nenhum arquivo PHP, configuração, banco ou Runtime foi modificado. Prioridade: proteger reações e contagens públicas com Group, depois idempotência e reconciliação.
-- **Arquivos:** `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md`, documentação de integração/roadmaps/README/TODO/status de ambos os módulos e este handoff.
-- **Verificações:** inspeção por GitHub connector, checagem de correspondência dos três eventos com catálogo/serviços e leitura das referências externas; PHPUnit, Drupal e Runtime **não executados**.
-- **Próximo passo:** revalidar HEAD/AGENTS e iniciar FST-00 (inventário read-only); executar FST-01 somente com testes isolados e plano de correção/rollback de agregados.
-
-# SDCs de Superfície e Conteúdo — Moldura Tricolor Lateral Esquerda e Direita — 2026-11-10
-
-- **Objetivo:** implementar a moldura tricolor na lateral esquerda (`position: start`, `accent: tricolor`) com base na imagem de referência oficial (`03_bloco_tricolor_esquerda.png`) e registrar story no UI Patterns, complementando a família de molduras unitárias e tricolores.
-- **Estado:** implementado suporte para `.aculta-surface-accent--tricolor.aculta-surface-accent--pos-start .aculta-surface-accent__stripe` com faixa vertical tricolor idêntica à referência (vermelho no topo 16%, amarelo intermediário 18% e verde predominante 66%), com suporte a modo claro e escuro. Criada a story `surface-accent.tricolor-left.story.yml` na biblioteca UI Patterns. Validação visual real executada via Playwright em `/painel-administrativo/aparencia/ui/components` com captura `live-moldura-tricolor-na-lateral-esquerda.png`.
-- **Decisões:** reutilização da geometria de faixa lateral com `flex: 0 0 1.25rem`, gradiente vertical idêntico nos dois lados (`pos-start` e `pos-end`), alinhando ambas as extremidades ao padrão das referências visuais do projeto.
-- **Arquivos:** `web/themes/custom/aculta420_v2/components/surface-accent/surface-accent.css`, `surface-accent.tricolor-left.story.yml`, `docs/portal/studio-visual/referencias/sdc-superficies/03_bloco_tricolor_esquerda.png`.
-- **Verificações:** SDC Schema PASS (72 components, 1623 checks), PHPUnit 18/18 PASS (123 assertions), CSS Scope PASS (43 checks), validação visual com Playwright PASS.
-- **Runtime:** `drush cr` executado; exibição e renderização da moldura tricolor esquerda confirmadas no UI Patterns.
-- **Próximo passo:** composição editorial nas landing pages do portal utilizando as novas superfícies.

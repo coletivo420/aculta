@@ -73,10 +73,8 @@ final class AuthorizedEntityMetricAggregator implements ContentEntityMetricAggre
 
     $dimensions = [];
     foreach ($entities as $entity) {
-      if (!is_array($entity)
-        || ($entity['entity_type'] ?? NULL) !== $expected['entity_type']
-        || ($entity['bundle'] ?? NULL) !== $expected['bundle']
-        || !is_string($entity['entity_id'] ?? NULL)
+      if ($entity['entity_type'] !== $expected['entity_type']
+        || $entity['bundle'] !== $expected['bundle']
         || $entity['entity_id'] === ''
         || strlen($entity['entity_id']) > 128) {
         throw new \InvalidArgumentException('Authorized entity identities do not match this Statistics metric.');

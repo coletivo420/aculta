@@ -1,6 +1,6 @@
 # ACULTA Statistics
 
-**Versão:** `0.9.0-dev.11` — consulta diária de dimensões para o painel LMS.
+**Versão:** `0.9.0-dev.12` — integração analítica do Fórum (FST-00 a FST-11).
 
 Central de métricas da plataforma ACULTA: catálogo, agregados diários, retenção
 configurável por métrica e consulta. Não substitui os dados de origem. Pedidos

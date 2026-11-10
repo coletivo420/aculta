@@ -35,3 +35,7 @@
 .statistics-metric-card--warning .statistics-metric-card__value {
   color: var(--color-warning, var(--color-text-primary));
 }
+
+.statistics-metric-card__number {
+  font-variant-numeric: tabular-nums;
+}

@@ -1,6 +1,6 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-**Ciclo atual: 0.2.0-dev.1 - abertura documental.** O novo ciclo consolida
+**Ciclo atual: 0.2.0-dev.4 - integração analítica FST.** O novo ciclo consolida
 comentários e respostas na página atual para Revista, Wiki, LMS e Growroom420.
 Inclui registro central dos providers pelo aculta_forum (também o da Wiki),
 Form API/HTMX, SDC de resposta, citação, acesso/cache e URLs em português.

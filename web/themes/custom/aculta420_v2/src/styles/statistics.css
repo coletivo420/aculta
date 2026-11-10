@@ -124,3 +124,21 @@
   display: grid;
   gap: .5rem;
 }
+
+.aculta-statistics__forum {
+  display: grid;
+  gap: var(--spacing-base);
+  margin-block-start: var(--spacing-base);
+}
+
+.aculta-statistics__forum-kpis {
+  display: grid;
+  gap: var(--spacing-sm);
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+}
+
+@media (max-width: 30rem) {
+  .aculta-statistics__forum-kpis {
+    grid-template-columns: 1fr;
+  }
+}

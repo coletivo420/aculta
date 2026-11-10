@@ -1,3 +1,18 @@
+# 0.9.0-dev.12 — integração analítica do Fórum (FST-00 a FST-11) (2026-11-10)
+
+- Escopo analítico centralizado no Fórum (`public_forum`, `restricted_forum`,
+  `publication`, `wiki`, `lms`, `unknown`) e reações públicas sem Group vazado.
+- Ledger de idempotência `aculta_forum_analytics_ledger`, catálogo com tipos
+  `counter`, `snapshot`, `distinct-window`, `ratio`, `distribution` e
+  `operational`, provedor do Fórum por tag opcional e coleta diária de retratos.
+- Indicadores de estoque, participação, primeira resposta, reações, moderação e
+  busca (coleta de busca desligada por padrão).
+- Reconciliação de reações e de retratos com dry-run, lock, lotes e comando
+  Drush; painel do Fórum com SDCs de estatísticas.
+- Unit 124/549, Kernel 55/600 e Kernel do painel 7/35 passaram; PHPStan focal e
+  PHPCS sem erros. Runtime: update `aculta_forum_update_9008` pendente de
+  autorização e sem homologação.
+
 # 0.9.0-dev.11 — consulta séries diárias de dimensões selecionadas (2026-11-04)
 
 - `AggregateStorageInterface` e `DailyAggregateStorage` oferecem uma consulta

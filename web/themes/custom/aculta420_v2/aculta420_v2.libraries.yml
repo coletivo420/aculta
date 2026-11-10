@@ -62,10 +62,17 @@ studio:
     - aculta420_v2/global-styling
 
 statistics:
-  version: 0.1.0
+  version: 0.2.0
   css:
     theme:
       src/styles/statistics.css: {}
+      components/statistics-metric-card/statistics-metric-card.css: {}
+      components/statistics-trend-chart/statistics-trend-chart.css: {}
+      components/statistics-category-ranking/statistics-category-ranking.css: {}
+      components/statistics-activity-summary/statistics-activity-summary.css: {}
+      components/statistics-response-health/statistics-response-health.css: {}
+      components/statistics-moderation-summary/statistics-moderation-summary.css: {}
+      components/statistics-empty-state/statistics-empty-state.css: {}
   dependencies:
     - aculta420_v2/global-styling
 

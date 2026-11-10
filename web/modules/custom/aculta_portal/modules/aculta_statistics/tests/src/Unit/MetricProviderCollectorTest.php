@@ -8,7 +8,6 @@ use Drupal\aculta_portal\Statistics\MetricProviderInterface;
 use Drupal\aculta_statistics\Catalog\MetricCatalog;
 use Drupal\aculta_statistics\Provider\MetricProviderCollector;
 use Drupal\aculta_statistics\Storage\AggregateStorageInterface;
-use Drupal\Component\Datetime\TimeInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -49,7 +48,6 @@ final class MetricProviderCollectorTest extends TestCase {
       [$provider],
       new MetricCatalog(),
       $storage,
-      $this->createMock(TimeInterface::class),
       $this->createMock(LoggerInterface::class),
     );
 
@@ -80,7 +78,6 @@ final class MetricProviderCollectorTest extends TestCase {
       [$provider],
       new MetricCatalog(),
       $storage,
-      $this->createMock(TimeInterface::class),
       $this->createMock(LoggerInterface::class),
     );
 

@@ -34,3 +34,8 @@
     overflow-x: auto;
   }
 }
+
+.statistics-category-ranking__empty {
+  margin: 0;
+  color: var(--color-text-secondary);
+}

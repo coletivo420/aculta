@@ -1,5 +1,5 @@
 # Fonte do índice de status do README raiz.
-version: 0.2.0-dev.3
+version: 0.2.0-dev.4
 state: Dev
-next_phase: "Planejamento FST-00 e FST-01 documentado em web/modules/custom/aculta_portal/modules/aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md; sem implementacao. Homologação integrada no Runtime e validação de navegadores. Fases C02-01 a C02-08 implementadas no código com suite de testes."
-progress_note: "0.2.0-dev.3: Ciclo C02-03 a C02-08 implementado. Prova técnica Form API + HTMX nativo integrada em DiscussionReplyController, DiscussionReplyAccess, DiscussionReplyFormBuilder e DiscussionReplyLazyBuilder. Compositor inline discussion-reply-composer em SDC com tokens e schema estrito no tema V2. Idempotência implementada em DiscussionReplyIdempotencyManager. Ações inline e links unificados sem redirect externo."
+next_phase: "FST implementado no código: escopo analítico, ledger, reconciliação e métricas. Falta aplicar updatedb 9008 no Runtime e homologar navegadores. Plano: web/modules/custom/aculta_portal/modules/aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md."
+progress_note: "0.2.0-dev.4: FST-00 a FST-10. ForumAnalyticsScopeResolver, ledger de idempotência, reconciliação de reações, contadores públicos sem Group e evento de busca sem termos. Unit 250 e Kernel focal 26 passaram; update 9008 pendente no Runtime."

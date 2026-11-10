@@ -190,3 +190,13 @@ o painel de turma do LMS), com as mesmas permissões.
   (contrib), por não ter recorte por domínio e registrar IP no access log se ligado.
   Como o dado é agregado e sem identificação, a base legal fica a confirmar com o
   responsável no inventário.
+
+## Fórum -> Statistics (FST-00 a FST-11)
+
+- Produtor: `aculta_forum` emite `aculta_forum.topic_created`, `.comment_created`, `.post_created`, `.reaction_added` e `.search_executed`. O evento carrega IDs e contagem, sem autoria, termo ou texto.
+- Idempotência: `aculta_forum_analytics_ledger` reivindica a primeira emissão por entidade e evento; replay, concorrência e republicação não duplicam.
+- Escopo: `ForumAnalyticsScopeResolver` decide `public_forum`, `restricted_forum`, `publication`, `wiki`, `lms` ou `unknown` pelo conteúdo e Group, nunca pela conta. `unknown` e falha fecham a inclusão pública.
+- Consumo: `ForumActivitySubscriber`, `ForumReactionSubscriber` e `ForumSearchSubscriber` gravam apenas no catálogo central. `ForumMetricsProvider` é opcional por tag `aculta_statistics.metric_provider`.
+- Retratos: `MetricProviderCollector` substitui o dia; `SnapshotReconciliation` compara e corrige com dry-run. `aculta-forum:reconcile-reactions` reclassifica reações antigas.
+- Detalhamento: `forum.replies.created` usa o ID do tópico como dimensão; `AuthorizedEntityMetricAggregator` aceita somente `node:aculta_forum_topic` e exige `view content-level statistics`. O Index revalida acesso antes de enviar candidatos.
+- Privacidade: sem UID, IP, e-mail, termo de busca ou texto em dimensões. Coleta de busca desligada por padrão.

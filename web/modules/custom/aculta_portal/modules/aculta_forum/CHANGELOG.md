@@ -1,3 +1,17 @@
+## 0.2.0-dev.4 — escopo analítico e idempotência do Fórum (2026-11-10)
+
+- `ForumAnalyticsScopeResolver` classifica tópico público, restrito por Group
+  direto ou herdado da categoria, Revista, Wiki, LMS e desconhecido; falha
+  fechada e não depende da conta.
+- Reações gravam `is_public_context` pelo escopo real e decrementam pelo escopo
+  gravado; contadores públicos de autor e painel excluem Group.
+- Ledger `aculta_forum_analytics_ledger` garante um evento por publicação
+  lógica, sobrevivendo a replay, concorrência e republicação; update 9008.
+- Reconciliação `aculta-forum:reconcile-reactions` com dry-run padrão.
+- Busca emite apenas a contagem de resultados; coleta no Statistics desligada
+  por padrão.
+- Unit 250/1857 e Kernel focal 26/505 passaram.
+
 ## 0.2.0-dev.2 — saneamento da base de comentários e desacoplamento (2026-11-08)
 
 - C02-01: WikiDiscussionContextProvider movido para aculta_forum/src/Context/Provider e registrado centralmente em aculta_forum.services.yml. Isolamento e contratos provados sem dependência da Wiki.

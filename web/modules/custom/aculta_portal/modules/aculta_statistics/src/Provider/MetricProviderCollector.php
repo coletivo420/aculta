@@ -8,7 +8,6 @@ use Drupal\aculta_portal\Statistics\MetricProviderInterface;
 use Drupal\aculta_statistics\Catalog\MetricCatalog;
 use Drupal\aculta_statistics\Catalog\MetricDefinition;
 use Drupal\aculta_statistics\Storage\AggregateStorageInterface;
-use Drupal\Component\Datetime\TimeInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -36,15 +35,9 @@ final class MetricProviderCollector {
     iterable $providers,
     private readonly MetricCatalog $catalog,
     private readonly AggregateStorageInterface $storage,
-    private readonly TimeInterface $time,
     private readonly LoggerInterface $logger,
   ) {
     $this->providers = is_array($providers) ? array_values($providers) : iterator_to_array($providers, FALSE);
-    foreach ($this->providers as $provider) {
-      if (!$provider instanceof MetricProviderInterface) {
-        throw new \LogicException('Todo provedor de métricas deve implementar MetricProviderInterface.');
-      }
-    }
   }
 
   /**
