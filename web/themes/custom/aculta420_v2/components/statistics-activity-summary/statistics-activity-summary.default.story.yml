@@ -1,7 +1,7 @@
 name: Resumo de atividade
 props:
   title: Resumo de atividade
-  note: Fonte: ACULTA Statistics.
+  note: 'Fonte: ACULTA Statistics.'
   rows:
     - label: Tópicos criados
       value: '128'

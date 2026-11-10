@@ -19,24 +19,24 @@
           <label for="aculta-ui-search" class="visually-hidden">{{ 'Filtrar componentes'|t }}</label>
           <input type="search" id="aculta-ui-search" class="form-element form-element--type-search" placeholder="{{ 'Pesquisar por nome ou ID...'|t }}" aria-controls="aculta-components-container" autocomplete="off">
         </div>
-
-        <div class="aculta-component-library__bulk-actions">
-          {{ include('aculta420_v2:button', {
-            text: 'Exibir todas as prévias'|t,
-            variant: 'secondary',
-            icon_before: 'eye',
-            attributes: create_attribute({
-              'id': 'aculta-btn-bulk-preview',
-              'class': ['aculta-btn-bulk-preview'],
-              'type': 'button',
-              'aria-controls': 'aculta-components-container',
-              'aria-describedby': 'aculta-bulk-preview-status',
-              'data-state': 'idle'
-            })
-          }, with_context: false) }}
-          <div id="aculta-bulk-preview-status" class="aculta-bulk-preview-status" aria-live="polite" role="status"></div>
-        </div>
       </div>
+    </div>
+
+    <div class="aculta-component-library__bulk-bar">
+      {{ include('aculta420_v2:button', {
+        text: 'Exibir todas as prévias'|t,
+        variant: 'secondary',
+        icon_before: 'eye',
+        attributes: create_attribute({
+          'id': 'aculta-btn-bulk-preview',
+          'class': ['aculta-btn-bulk-preview'],
+          'type': 'button',
+          'aria-controls': 'aculta-components-container',
+          'aria-describedby': 'aculta-bulk-preview-status',
+          'data-state': 'idle'
+        })
+      }, with_context: false) }}
+      <div id="aculta-bulk-preview-status" class="aculta-bulk-preview-status" aria-live="polite" role="status"></div>
     </div>
 
     {% set tab_links %}

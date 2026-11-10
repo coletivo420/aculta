@@ -161,7 +161,12 @@
       indicatorEl.classList.add('htmx-request');
     }
 
+    let settled = false;
     const onComplete = (success) => {
+      if (settled) {
+        return;
+      }
+      settled = true;
       state.activeRequests--;
       if (indicatorEl) {
         indicatorEl.classList.remove('htmx-request');
@@ -176,33 +181,55 @@
       }
 
       updateUI();
-      // Prossegue a fila
+      // Prossegue a fila sequencialmente
       processQueue();
     };
 
-    if (window.htmx) {
-      window.htmx.ajax('GET', url, {
-        target: targetSelector,
-        swap: 'outerHTML',
-        select: selectSelector,
-      })
-      .then(() => {
-        // Verifica se o target original foi substituído e o wrapper foi injetado
-        const loadedContainer = document.querySelector(`#preview-container-${componentId}`);
-        const storiesWrapper = loadedContainer ? loadedContainer.querySelector(selectSelector) : null;
-        if (storiesWrapper || !document.querySelector(targetSelector)) {
+    // Procura o botão HTMX nativo para disparo padrão ou usa fetch sob fallback
+    const singleBtn = targetEl.querySelector('.aculta-load-preview-btn');
+    if (singleBtn && window.htmx && window.htmx.trigger) {
+      // Escuta o término do ciclo HTMX especificamente neste target
+      const onAfterSwap = (evt) => {
+        const swapTarget = evt.detail ? evt.detail.target : evt.target;
+        if (swapTarget && (swapTarget === targetEl || targetEl.contains(swapTarget) || swapTarget.closest(`#preview-container-${componentId}`))) {
+          document.body.removeEventListener('htmx:afterSwap', onAfterSwap);
+          document.body.removeEventListener('htmx:responseError', onError);
+          document.body.removeEventListener('htmx:sendError', onError);
           onComplete(true);
         }
-        else {
+      };
+
+      const onError = (evt) => {
+        const errElt = evt.detail ? (evt.detail.elt || evt.detail.target) : evt.target;
+        if (errElt && (errElt === singleBtn || singleBtn.contains(errElt))) {
+          document.body.removeEventListener('htmx:afterSwap', onAfterSwap);
+          document.body.removeEventListener('htmx:responseError', onError);
+          document.body.removeEventListener('htmx:sendError', onError);
           onComplete(false);
         }
-      })
-      .catch(() => {
-        onComplete(false);
-      });
+      };
+
+      document.body.addEventListener('htmx:afterSwap', onAfterSwap);
+      document.body.addEventListener('htmx:responseError', onError);
+      document.body.addEventListener('htmx:sendError', onError);
+
+      // Timeout de segurança caso o evento htmx não dispare
+      setTimeout(() => {
+        if (!settled) {
+          document.body.removeEventListener('htmx:afterSwap', onAfterSwap);
+          document.body.removeEventListener('htmx:responseError', onError);
+          document.body.removeEventListener('htmx:sendError', onError);
+          const loadedContainer = document.querySelector(`#preview-container-${componentId}`);
+          const storiesWrapper = loadedContainer ? loadedContainer.querySelector(selectSelector) : null;
+          onComplete(storiesWrapper !== null || !document.querySelector(targetSelector));
+        }
+      }, 10000);
+
+      // Dispara o clique no botão HTMX para acionar o ciclo completo do framework
+      singleBtn.click();
     }
     else {
-      // Fallback nativo fetch caso htmx ainda não esteja disponível
+      // Fallback com fetch direto
       fetch(url, {
         headers: {
           'HX-Request': 'true',

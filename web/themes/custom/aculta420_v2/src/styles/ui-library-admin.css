@@ -35,11 +35,18 @@
   inline-size: 100%;
 }
 
-.aculta-component-library__bulk-actions {
-  display: inline-flex;
+/* Linha própria para as ações em lote ("Exibir todas as prévias"), ocupando toda a largura fora das colunas */
+.aculta-component-library__bulk-bar {
+  display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--spacing-xs, .5rem);
+  margin-block-end: var(--spacing-md, 1rem);
+  padding: var(--spacing-xs, .5rem) var(--spacing-sm, .75rem);
+  column-span: all;
+  border: 1px solid var(--color-border, #ccc);
+  border-radius: var(--radius-md, .5rem);
+  background: var(--color-surface, #fff);
+  gap: var(--spacing-sm, .75rem);
 }
 
 .aculta-btn-bulk-preview {

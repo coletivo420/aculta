@@ -2,7 +2,7 @@ name: Série temporal
 props:
   title: Tópicos nos últimos 7 dias
   summary: Atividade diária em UTC.
-  caption: Fonte: ACULTA Statistics. Não somar retratos entre dias.
+  caption: 'Fonte: ACULTA Statistics. Não somar retratos entre dias.'
   bars:
     - label: '2026-11-04'
       value: '3'
