@@ -69,9 +69,31 @@ final class UiLibraryPreviewController extends ControllerBase {
       ];
     }
 
+    $nav = [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'ui-library-nav'],
+      'components' => [
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('UI Patterns Components'),
+          'url' => Url::fromRoute('ui_patterns_library.overview')->toString(),
+          'variant' => 'secondary',
+        ],
+      ],
+      'suite' => [
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('UI Suite Overview'),
+          'url' => Url::fromRoute('ui_suite.index')->toString(),
+          'variant' => 'secondary',
+        ],
+      ],
+    ];
+
     $build = [
       '#type' => 'container',
       '#attributes' => ['class' => ['aculta-ui-library-blocks']],
+      'navigation' => $nav,
       'intro' => [
         '#markup' => '<p>' . $this->t('Prévias com dados reais do domínio principal. Cada bloco é resolvido pelo plugin original, com verificação de acesso do usuário atual. Se o contexto ou o acesso não estiverem disponíveis, a prévia informa a indisponibilidade em vez de exibir conteúdo.') . '</p>',
       ],

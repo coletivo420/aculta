@@ -151,6 +151,7 @@ final class PortalUiHooks {
     'revista-teaser-accent-yellow' => ['revista-teaser--accent-yellow'],
     'revista-teaser-accent-red' => ['revista-teaser--accent-red'],
     'button-secondary' => ['button', 'button--secondary'],
+    'ui-library-nav' => ['aculta-ui-library-nav'],
     'calendar-embed-hosts' => ['aculta-calendar-embed-hosts'],
     'calendar-interactive' => ['aculta-calendar-interactive'],
     'calendar-interactive-agenda' => ['aculta-calendar-interactive__agenda'],
