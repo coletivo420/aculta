@@ -50,11 +50,14 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
       $this->markTestSkipped('Sem SIMPLETEST_BASE_URL: teste funcional pulado.');
     }
     parent::setUp();
+    $base = (string) getenv('SIMPLETEST_BASE_URL');
+    $host = parse_url($base, PHP_URL_HOST) ?: '127.0.0.1';
+    $scheme = parse_url($base, PHP_URL_SCHEME) ?: 'http';
     Domain::create([
       'id' => 'forum_aculta_org',
-      'hostname' => '127.0.0.1',
+      'hostname' => $host,
       'name' => 'Fórum',
-      'scheme' => 'http',
+      'scheme' => $scheme,
       'status' => TRUE,
       'weight' => 0,
       'is_default' => TRUE,
