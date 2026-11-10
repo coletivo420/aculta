@@ -956,3 +956,13 @@ State: Dev. No RC, production deployment, or release tag is declared.
   manter seletor paralelo. Runtime/importação, permissões e foco visual pendem
   de cutover autorizado.
 
+## Não versionado — UI Skins no Config Sync e remoção da chave antiga (2026-11-10)
+
+- Habilita `ui_skins` no Config Sync e amplia o gate para falhar se o módulo
+  não estiver incluído, além de validar scopes e contraste.
+- No Runtime, remove apenas `aculta_purpose_palette` depois de confirmar que
+  nenhum código ativo a lê. Não fica cópia, dual-read ou fallback antigo.
+- A importação do mapa de domínios e dos scopes UI Skins ainda não foi feita;
+  `ui_skins` continua Disabled no Runtime. Piloto Links, render e cache ficam
+  pendentes até o cutover autorizado.
+

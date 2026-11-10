@@ -17,6 +17,7 @@ $definitions = Yaml::parseFile($theme . '/aculta420_v2.ui_skins.css_variables.ym
 $settings = Yaml::parseFile($root . '/config/sync/aculta420_v2.settings.yml');
 $mapping = Yaml::parseFile($root . '/config/sync/aculta_portal.visual_skins.yml');
 $installMapping = Yaml::parseFile($root . '/web/modules/custom/aculta_portal/config/install/aculta_portal.visual_skins.yml');
+$extensions = Yaml::parseFile($root . '/config/sync/core.extension.yml');
 $fail = static function (string $message): never {
   fwrite(STDERR, "ACULTA420 UI SKINS: FAIL — $message\n");
   exit(1);
@@ -45,6 +46,10 @@ $expectedSkins = [
   'skunk', 'sativa', 'ruderalis', 'afghan', 'acapulco-gold',
   'lemon-haze', 'golden-goat', 'red-kush', 'panama-red', 'red-congolese',
 ];
+if (($extensions['module']['ui_skins'] ?? NULL) !== 0) {
+  $fail('ui_skins deve estar habilitado no Config Sync para ser a fonte visual única.');
+}
+$checks++;
 if (!is_array($definitions) || count($definitions) !== 5) {
   $fail('Esperadas cinco definições CSS variables UI Skins.');
 }

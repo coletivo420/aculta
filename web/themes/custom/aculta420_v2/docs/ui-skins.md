@@ -10,6 +10,6 @@
 
 ## Estado e gates
 
-O domínio e as dez skins estão mapeados. Testes estáticos cobrem definições e scopes. O snapshot de Runtime de 2026-11-10 registrou `ui_skins` Disabled; descoberta real, ativação no Runtime, render CSS, cache entre domínios, contraste, preferência de modo, browser captures e aceite visual continuam DEFERRED.
+O domínio e as dez skins estão mapeados. Testes estáticos cobrem definições e scopes; `ui_skins` está habilitado no Config Sync. Em 2026-11-10, o Runtime foi verificado: o módulo segue Disabled, o mapa `aculta_portal.visual_skins` não existe e os scopes `third_party_settings.ui_skins.css_variables` não estão instalados. Descoberta real, render CSS, cache entre domínios, preferência de modo, capturas e aceite visual aguardam import autorizado.
 
-A configuração, formulário, classe, tokens e seletores antigos por purpose foram removidos diretamente. Não há aliases, dual-read ou fallback de dados visuais antigos. A reversão é feita por revert do commit.
+A configuração `aculta_purpose_palette` foi removida do Runtime em 2026-11-10, após confirmar ausência de leitores no código. O código e o Config Sync não têm aliases, dual-read ou fallback de dados visuais antigos. Não há cópia runtime da paleta removida; o cutover ainda precisa importar UI Skins e o mapa atual antes do aceite visual.

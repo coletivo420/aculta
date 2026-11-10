@@ -1,5 +1,13 @@
 # Roadmap do fórum Growroom420 (ACULTA420 V2)
 
+## UI Skins — configuração versionada, cutover Runtime pendente (2026-11-10)
+
+- `ui_skins` está habilitado no Config Sync; o gate exige o módulo, mapa de dez
+  domínios, cinco variáveis, vinte scopes por variável e contraste ≥4,5:1.
+- A chave visual antiga foi removida do Runtime sem cópia. O Runtime ainda está
+  sem UI Skins, mapa de Domain IDs e scopes importados. A comparação do piloto
+  Links e o aceite visual dependem do cutover autorizado.
+
 ## UI Icons — integração oficial em andamento (2026-11-10)
 
 - UI Icons Menu, Picker, Fields e Patterns estão configurados no Config Sync;

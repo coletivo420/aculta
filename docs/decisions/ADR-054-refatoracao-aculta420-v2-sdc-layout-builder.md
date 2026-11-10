@@ -80,3 +80,10 @@ Inventario de blocos e regioes sem orfaos; dez purposes, shell, claro/escuro, mo
 O responsável determinou a renomeação gradual dos identificadores internos `purpose` para **`site_key`**, além da retirada das configurações visuais baseadas em purposes. As dez chaves e Domain IDs permanecem imutáveis; `site_key` identifica a frente funcional, `domain_id` identifica a entidade Drupal Domain e `skin_id` define a aparência via UI Skins. A classe antiga e as rotas de segurança são substituídas por implementações equivalentes, não removidas sem sucessores.
 
 A sequência normativa RN-00 a RN-05 consta de `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`. Gate RN-05 passa a integrar o encerramento conjunto US-14, com testes de HTTP 403/404, redirecionamentos, sessões e cache por domínio. Aliases de serviços podem ser transitórios e inventariados, mas novas rotas públicas de compatibilidade são proibidas.
+### Progresso UI Skins — cutover em preparação (2026-11-10)
+
+- `ui_skins` agora é exigido pelo Config Sync; o gate valida a ativação exportada, cinco variáveis, dez skins em claro/escuro, contraste e os dez Domain IDs.
+- No Runtime, confirmou-se que o módulo continua Disabled e que o mapa/scopes não foram importados. A chave `aculta_purpose_palette` foi removida após confirmar zero consumidores de código. Não há alias nem cópia antiga para fallback.
+- A resolução de skin continua por Domain ID, sem mutação de configuração global. O piloto Links e os demais domínios aguardam importação autorizada e comparação visual/cache no tema V2.
+- ADR-054 permanece aberta até homologação integral P8/P9, revisões visuais e gates de todos os domínios.
+
