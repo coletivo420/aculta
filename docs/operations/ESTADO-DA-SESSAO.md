@@ -1,11 +1,11 @@
 # ADR-054/055 — inventário, UI Skins e migração SDC — 2026-11-10
 
 - **Objetivo/estado:** inventário 381 itens; adapters de seções, pagamento e carrinho usam SDCs; cinco overrides Twig de categorias retirados. Runtime: UI Skins ativo, mapa/scopes ausentes; View em `fields`; UI Styles CKEditor desativado; UI Patterns CKEditor e Field Group ativos fora do Sync. Field Group `BLOCKED_UPSTREAM` (sem cobertura de segurança e sem Core 12); UI Patterns CKEditor `LEGACY_OBSOLETE`.
-- **Decisões/cuidados:** removidos valores e fallbacks literais da paleta purpose. Preview global mostrou 65 diferenças, inclusive módulos, blocos, campos, permissões e filtros; importar só seis configs revisadas, preservando módulos ativos.
-- **Commit/arquivos:** `afaf75c3c` publicado em `origin/dev`; inventário, snapshot Runtime, ADRs/plano, tema, Portal e Fórum. Backup externo pré-import SHA-256 `05e0fd0358db79fb4d22657666ec320307d91adb7e91bd5cfc585d338553f517`.
+- **Decisões/cuidados:** removidos valores locais redundantes do motor de purpose; sem compatibilidade visual legada. Import total tem 65 diferenças; tentativa parcial autorizada abortou antes de gravar por dependências órfãs e diferença de extensão/UI Styles.
+- **Commit/arquivos:** `afaf75c3c` e `5996afa30` publicados em `origin/dev`; código tema/Portal/Fórum, inventário e snapshot Runtime. Este registro atualiza estado pós-tentativa. Backup externo pré-import SHA-256 `05e0fd0358db79fb4d22657666ec320307d91adb7e91bd5cfc585d338553f517`.
 - **Verificações:** PHPUnit 4/26; SDC 80/119/1747; Skins 132; UI Styles 38; UI Library 25; layouts 42; classes 483; boundary 7858; PHPStan focal/PHPCS PASS; `drush cr` PASS. Composer válido com avisos de constraints exatas; token budget FAIL (7 dívidas globais).
-- **Pendências:** `drush cim` parcial foi autorizado e preview revisado; aguarda autorização específica para post-update `active_site_keys_state` via `updatedb`. Após import: render/cache/acesso, browser e CSS calculado. Alterações locais de LMS foram preservadas fora do commit.
-- **Próximo passo:** executar post-update autorizado, importar as seis configs, validar Views/Skins/CKEditor e confirmar retirada de templates no Runtime.
+- **Pendências:** tentativa de import parcial autorizada abortou antes de gravar: o ConfigImporter detectou dependências no Sync para `aculta_contributions`, `aculta_mail_confirmer_user` e `aculta_forum_lms` ausentes do `core.extension.yml`; sem `core.extension`, também recusa `editor.editor.revista_editorial` por UI Styles CKEditor 5 não estar instalado. Sync contém oito configs LMS órfãs. `updatedb` segue sem autorização específica. Browser/CSS calculado DEFERRED até reconciliar a base. Alterações locais LMS foram preservadas.
+- **Próximo passo:** reconciliar dependências de módulos e configurações com responsável/runtime; então reapresentar import parcial isolado, sem atualizar/desinstalar módulos no escuro.
 # UI Skins — extensão Sync e limpeza da chave antiga — 2026-11-10
 
 - **Objetivo:** tornar UI Skins obrigatório no Config Sync e retirar a última chave de paleta antiga do Runtime.
