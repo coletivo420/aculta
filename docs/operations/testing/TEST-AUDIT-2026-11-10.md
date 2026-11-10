@@ -121,6 +121,7 @@ sem plano de migração de instalações existentes, então ele permanece.
 | `phpunit` nos 15 arquivos convertidos de doc-comment | PASS — 48 testes, 269 asserções |
 | `vendor/bin/phpstan analyse` (com baseline) | PASS — 0 erros não baselined; baseline de 3788 |
 | `aculta_mailer` Unit + Kernel após narrowing | PASS — 167/351 e 46/214 asserções; módulo 103 → 69 erros PHPStan |
+| Suíte Kernel completa no CI | Job `phpunit-kernel` com MariaDB 10.11 e `SIMPLETEST_DB`; execução local completa interrompida por teste bloqueante, sem resultado fabricado |
 | `php scripts/tests/validate-aculta420-design-foundations-test.php` | PASS — 14 fixtures |
 | `php scripts/validate-module-theme-boundary.php` | PASS — 7884 verificações |
 | `php scripts/audit-browser-scripts.php` | 294 arquivos rastreados classificados; 9 entrypoints, 49 contratos de rota, 153 scripts, 18 scripts sem consumidor removidos |

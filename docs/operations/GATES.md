@@ -4,7 +4,7 @@ Regra: rode **somente** os gates do escopo do diff e dos módulos que dependem d
 
 ## CI
 
-`.github/workflows/php-quality.yml` roda lint PHP, descoberta PHPUnit e a suíte Unit em push e PR para `main` e `dev`. O PHPStan roda `analyse` com `phpstan-baseline.neon`: novos erros e entradas de baseline resolvidas falham o job. Nenhum validador de `scripts/validate-*.php` roda em CI. Os gates abaixo são executados pelo agente ou pelo responsável.
+`.github/workflows/php-quality.yml` roda lint PHP, descoberta PHPUnit e as suítes Unit e Kernel (Kernel com MariaDB de serviço) em push e PR para `main` e `dev`. O PHPStan roda `analyse` com `phpstan-baseline.neon`: novos erros e entradas de baseline resolvidas falham o job. Nenhum validador de `scripts/validate-*.php` roda em CI. Os gates abaixo são executados pelo agente ou pelo responsável.
 
 ## Como rodar
 

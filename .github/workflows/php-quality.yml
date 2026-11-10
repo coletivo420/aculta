@@ -103,6 +103,54 @@ jobs:
         path: artifacts/unit-junit.xml
         retention-days: 14
 
+  phpunit-kernel:
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: aculta_simpletest
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        tools: composer
+        extensions: pdo_mysql
+        coverage: none
+
+    - name: Install dependencies
+      run: |
+        composer install --prefer-dist --no-interaction
+
+    - name: Run Kernel suite
+      env:
+        SIMPLETEST_DB: mysql://root:root@127.0.0.1:3306/aculta_simpletest
+      run: |
+        mkdir -p artifacts
+        vendor/bin/phpunit --testsuite kernel --no-progress \
+          --log-junit artifacts/kernel-junit.xml
+
+    - name: Upload Kernel report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: phpunit-kernel
+        path: artifacts/kernel-junit.xml
+        retention-days: 14
+
   phpstan:
     runs-on: ubuntu-latest
 
