@@ -1,3 +1,10 @@
+## Não versionado — inventário de consumidores Twig da View (2026-11-10)
+
+- O gerador audita individualmente os field/unformatted overrides de categorias,
+  owner, display, SDC substituto e critério de retirada pós-cutover.
+- UI Patterns CKEditor 5 consta como obsoleto sem fallback; estado Enabled é
+  apenas fotografia de 2026-11-10, e uninstall Runtime fica DEFERRED.
+
 ## Não versionado — superfícies UI Styles e integração editorial (2026-11-10)
 
 - Corrige opções de superfície/espaçamento para classes reais do SDC `surface`.

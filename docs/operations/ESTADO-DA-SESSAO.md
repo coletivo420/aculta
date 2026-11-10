@@ -1,10 +1,10 @@
 # ADR-054 + ADR-055 — UI Suite editorial e Views — 2026-11-10
 
-- **Objetivo/estado:** Skins remove paletas purpose em código; piloto `forum-category` está no Sync/install. UI Styles CKEditor 5 de bloco configurado apenas em `revista_editorial`, com superfícies SDC e filtro alinhado.
-- **Decisões/cuidados:** sem config antiga/dual-read; `DomainPurposeManager` permanece funcional. UI Patterns CKEditor 5 não configurado. Não importar Sync nem remover Twig antes do cutover.
-- **Commits:** `693d5e173`, `d49304e57`, `853c9875f`, `eb7f0bc11`, `6cbaf3bbe`; integração editorial neste commit.
-- **Verificações:** Kernel Editor 9/9 (175 assertions), PHPCS, UI Styles 38, fronteira módulo/tema 7872, suítes e índice status PASS. Baseline `/categorias` 9/9 (1024/500px). Editor/Views Runtime DEFERRED: `updatedb:status` e Config Sync têm drift; post-update pendente.
-- **Pendências/próximo passo:** Skins e UI Styles CKEditor plugin Disabled no Runtime. Aguardar autorização de importação para homologar toolbar, filtro, render/cache/acesso e comparar Views; depois ampliar migração. Gate amplo SDC falha em `auth-dialog.twig` preexistente.
+- **Objetivo/estado:** Skins remove paletas purpose em código; UI Styles CKEditor está em Sync para `revista_editorial`; piloto `forum-category` está em Sync/install. Inventário reproduzível ampliado a 301 consumidores e classifica três templates da View de categorias como `LEGACY_DEPRECATED`.
+- **Decisões/cuidados:** sem config antiga/dual-read; `DomainPurposeManager` permanece funcional. UI Patterns CKEditor 5 está `LEGACY_OBSOLETE`; Enabled é fotografia histórica de 2026-11-10, sem retenção/fallback. Desinstalação no Runtime requer autorização.
+- **Commits:** `99d8bcc62`; inventário e registro Portal nesta fase.
+- **Verificações:** ForumTopicDisplayConfig 20/20 (312 assertions); inventário 301 itens; status, PHPCS, UI Styles 38, SDC 1710, UI Library 25, fronteira 7872 PASS. Token budget FAIL em 7 limites globais preexistentes. Gate Drupal 12 1243, UI Styles 38, fronteira 7872, Kernel editor 9/9 (176) e SDC schema 1710 PASS na fase anterior. Runtime/cutover DEFERRED por post-update e drift; gate amplo SDC falha em `auth-dialog.twig` preexistente.
+- **Pendências/próximo passo:** obter cutover autorizado para validar render/acesso/cache/markup da View e remover os três overrides somente após prova de bypass. Prosseguir inventário visual integral e migração dos demais domínios.
 
 # FST-00 a FST-11 — integração analítica Fórum + Statistics — 2026-11-10
 

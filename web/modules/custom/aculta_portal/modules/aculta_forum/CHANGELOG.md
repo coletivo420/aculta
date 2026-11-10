@@ -1,3 +1,9 @@
+## Não versionado — inventário dos templates da View de categorias (2026-11-10)
+
+- Os dois field overrides e o wrapper unformatted estão registrados por display
+  como `LEGACY_DEPRECATED`; sua retirada exige prova de bypass pelo row plugin e
+  equivalência de saída, acesso e cache após cutover autorizado.
+
 ## Não versionado — piloto UI Patterns Views em categorias (2026-11-10)
 
 - A página pública e o bloco de categorias passam a mapear campos da View ao

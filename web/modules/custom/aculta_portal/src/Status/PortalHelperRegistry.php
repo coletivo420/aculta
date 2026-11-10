@@ -102,7 +102,7 @@ final class PortalHelperRegistry {
     'aculta_portal.domain_skin_resolver' => [
       'label' => 'Resolução visual de Skin por domínio',
       'summary' => 'Resolve a skin visual do Domain atual sem alterar a configuração global do tema por requisição.',
-      'docs' => 'web/themes/custom/aculta420_v2/docs/ui-skins.md',
+      'docs' => 'docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md',
     ],
     'aculta_portal.content_cleanup_preview' => [
       'label' => 'Prévia de limpeza de anexos',

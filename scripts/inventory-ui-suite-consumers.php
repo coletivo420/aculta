@@ -103,6 +103,49 @@ foreach (glob($sync . '/core.entity_view_display.*.yml') ?: [] as $path) {
   ];
 }
 
+// Track active theme template overrides as individual visual consumers so
+// migration and retirement decisions have named evidence instead of inference.
+$templateConsumers = [
+  'views-view-fields--aculta-forum-categories--page-categories.html.twig' => [
+    'view' => 'aculta_forum_categories',
+    'display' => 'page_categories',
+    'replacement' => 'aculta420_v2:forum-category via UI Patterns Views row',
+  ],
+  'views-view-fields--aculta-forum-categories--block-landing.html.twig' => [
+    'view' => 'aculta_forum_categories',
+    'display' => 'block_landing',
+    'replacement' => 'aculta420_v2:forum-category via UI Patterns Views row',
+  ],
+  'views-view-unformatted--aculta-forum-categories--page-categories.html.twig' => [
+    'view' => 'aculta_forum_categories',
+    'display' => 'page_categories',
+    'replacement' => 'UI Patterns Views style/row composition with the existing forum-category-list SDC CSS',
+  ],
+];
+foreach ($templateConsumers as $filename => $consumer) {
+  $path = $theme . '/templates/views/' . $filename;
+  if (!is_file($path)) {
+    continue;
+  }
+  $rows[] = [
+    'id' => 'template:' . $filename,
+    'owner_module' => 'aculta420_v2',
+    'config_path' => relative_path($root, $path) . '; config/sync/views.view.' . $consumer['view'] . '.yml',
+    'consumer_type' => 'theme_template_override',
+    'consumer_id' => $consumer['view'] . ':' . $consumer['display'],
+    'display_plugin' => 'views-field-row-template',
+    'row_plugin' => 'ui_patterns',
+    'style_plugin' => 'default',
+    'ui_patterns_configured' => 'aculta420_v2:forum-category',
+    'status' => 'LEGACY_DEPRECATED',
+    'replacement_or_action' => $consumer['replacement'] . '; remove this override after Runtime output proves it is bypassed and access/cache/markup match the baseline',
+    'risk_or_evidence_gap' => 'Template is currently selected by Views suggestions; row-plugin execution and browser output after authorized Runtime cutover are unverified',
+    'rollback' => 'Restore this template file from the immediately preceding commit; no entity data changes',
+    'detected_consumers' => $consumer['view'] . ':' . $consumer['display'],
+    'runtime_status' => 'not_observed',
+  ];
+}
+
 $componentIds = [];
 foreach (glob($theme . '/components/*/*.component.yml') ?: [] as $manifest) {
   $componentIds[basename(dirname($manifest))] = relative_path($root, $manifest);
@@ -275,7 +318,7 @@ $moduleInventory = [
     'module' => 'ui_patterns_ckeditor5',
     'status' => 'LEGACY_OBSOLETE',
     'replacement' => 'Prohibited integration with no repository consumers, no compatibility path and no replacement required. Runtime uninstall is an administrative operation and remains DEFERRED pending explicit authorization.',
-    'risk' => 'Last Runtime snapshot recorded Enabled while Sync was absent. Current Runtime state must be rechecked before authorized uninstall.',
+    'risk' => 'Runtime snapshot observed at 2026-11-10T18:17:49Z recorded Enabled while Sync was absent. This is historical evidence; current Runtime state is unknown and must be rechecked before authorized uninstall.',
   ],
   'drupal/ui_icons_menu' => [
     'module' => 'ui_icons_menu', 'status' => 'MIGRATION_IN_PROGRESS',
@@ -388,7 +431,9 @@ foreach ($moduleInventory as $packageName => $metadata) {
     'risk_or_evidence_gap' => 'Direct Composer requirement: ' . ($required ? 'yes' : 'no') . '. ' . $metadata['risk'],
     'rollback' => 'Revert scoped code/config changes; no entity data migration',
     'detected_consumers' => '',
-    'runtime_status' => (string) ($runtimeStatuses[$metadata['module']] ?? 'not_found_in_runtime_snapshot'),
+    'runtime_status' => array_key_exists($metadata['module'], $runtimeStatuses)
+      ? 'snapshot_2026-11-10:' . $runtimeStatuses[$metadata['module']]
+      : 'not_found_in_runtime_snapshot',
   ];
 }
 

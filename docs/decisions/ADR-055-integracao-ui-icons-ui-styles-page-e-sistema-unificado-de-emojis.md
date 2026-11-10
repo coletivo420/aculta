@@ -104,6 +104,7 @@ A ADR-055 passa a cobrir o ecossistema **UI Patterns + UI Styles + UI Icons + UI
 ### Estado de implementação e requisitos de aceite
 
 - Entregue: ícones declarados pelo tema, adaptador Fluent Emoji, frontend do seletor do Fórum, superfícies SDC, integração de UI Patterns Layouts e Views registrada no Config Sync, biblioteca progressiva.
+- O snapshot Runtime de 2026-11-10 registrou `ui_patterns_ckeditor5` ativo, embora ausente do Config Sync e sem consumidores no repositório. A integração é `LEGACY_OBSOLETE`, sem substituto ou compatibilidade; confirmar o estado Runtime atual e remover mediante operação autorizada. Não criar configuração para preservá-la.
 - Pendente de constatação Runtime/Sync: UI Icons contrib e integrações, UI Styles Page, Skins, CKEditor 5 e Entity Status; Field Group não habilitado no Sync; inventário de Views consumidoras e critérios de segurança.
 - Nova execução: **US-00 a US-14** no plano técnico canônico, incluindo substituição integral do legado visual e fechamento conjunto das ADRs. Não avançar sem baseline versionado, testes e rollback, incluindo configuração, 10 purposes, light/dark, 320 a 1440px, zoom 200%, access/cache entre hosts e avaliação editorial humana.
 - Documento de planejamento **não equivale** a autorização para `drush cim`, `updatedb`, alterações de dados ou instalação cega. Branch `dev`, commits atômicos, preservar trabalho paralelo e não alterar Core/contrib.

@@ -138,6 +138,7 @@ E. Zero consumidores e limpeza dos legados, sem remover um fallback antes do gat
 ### UI Patterns CKEditor 5 - FORA DO ESCOPO
 
 - `ui_patterns_ckeditor5`: nao instalar, nao habilitar, nao usar widget, nao criar prova de conceito neste ciclo, nao registrar como pendencia bloqueante da ADR.
+- Se uma fotografia de Runtime mostrar ativacao preexistente sem consumidor no codigo/Sync, classificar a integracao como `LEGACY_OBSOLETE` e removivel; nao adicionar fallback nem configuracao para retencao. A fotografia e historica, nao confirma o estado atual. Desinstalar no Runtime requer autorizacao operacional explicita e fica `DEFERRED` ate la.
 - `ui_styles_ckeditor5`: sim, com classes editoriais restritas e validacao da renderizacao ao salvar.
 - `ckeditor5_plugin_pack`, aculta_editor e botao Fluent Emoji existente continuam conforme seus contratos, sem insercao arbitraria de componentes SDC no HTML editorial.
 
