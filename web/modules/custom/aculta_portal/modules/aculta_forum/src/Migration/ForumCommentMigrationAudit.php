@@ -7,10 +7,12 @@ namespace Drupal\aculta_forum\Migration;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\flag\FlagInterface;
+use Drupal\flag\FlaggingInterface;
 use Drupal\node\NodeInterface;
 
 /**
@@ -118,9 +120,6 @@ final class ForumCommentMigrationAudit {
       $anonymous_comment_ids = [];
       $anonymous_comment_lookup = [];
       foreach ($storage->loadMultiple($batch) as $comment) {
-        if (!$comment instanceof CommentInterface) {
-          continue;
-        }
         $topic = $comment->getCommentedEntity();
         if (!$topic instanceof NodeInterface || $topic->bundle() !== self::TOPIC_BUNDLE) {
           $report['invalid_topic']++;
@@ -161,8 +160,8 @@ final class ForumCommentMigrationAudit {
           $body = $translation->hasField('comment_body') && !$translation->get('comment_body')->isEmpty()
             ? $translation->get('comment_body')
             : NULL;
-          $body_value = (string) ($body?->value ?? '');
-          $format = (string) ($body?->format ?? '');
+          $body_value = $body === NULL ? '' : (string) $body->value;
+          $format = $body === NULL ? '' : (string) $body->format;
           if (trim($body_value) === '') {
             $has_empty_body = TRUE;
           }
@@ -269,7 +268,10 @@ final class ForumCommentMigrationAudit {
         $flaggings = $flagging_storage->loadMultiple($flagging_ids);
         $flagging_owner_ids = [];
         foreach ($flaggings as $flagging) {
-          $owner_id = (int) ($flagging->getOwnerId() ?? 0);
+          if (!$flagging instanceof FlaggingInterface) {
+            continue;
+          }
+          $owner_id = (int) $flagging->getOwnerId();
           if ($owner_id > 0) {
             $flagging_owner_ids[] = (string) $owner_id;
           }
@@ -278,10 +280,13 @@ final class ForumCommentMigrationAudit {
           ->getStorage('user')
           ->loadMultiple(array_unique($flagging_owner_ids));
         foreach ($flaggings as $flagging) {
+          if (!$flagging instanceof FlaggingInterface) {
+            continue;
+          }
           $flag_id = (string) $flagging->getFlagId();
           $report['flaggings']++;
           $report['flaggings_by_flag'][$flag_id] = ($report['flaggings_by_flag'][$flag_id] ?? 0) + 1;
-          $owner_id = (int) ($flagging->getOwnerId() ?? 0);
+          $owner_id = (int) $flagging->getOwnerId();
           if ($owner_id > 0 && !isset($flagging_owners[$owner_id])) {
             $report['flaggings_with_missing_owner']++;
           }
@@ -428,6 +433,9 @@ final class ForumCommentMigrationAudit {
         $marker_comment_ids = [];
         $marker_post_ids = [];
         foreach ($notice_storage->loadMultiple($notice_ids) as $notice) {
+          if (!$notice instanceof ContentEntityInterface) {
+            continue;
+          }
           $result['records']++;
           $comment_id = (int) $notice->get('ultimo_comentario')->value;
           if ($comment_id > 0) {
@@ -455,25 +463,23 @@ final class ForumCommentMigrationAudit {
         $existing_comment_ids = [];
         foreach (array_chunk(array_values($marker_comment_ids), $batch_size) as $comment_batch) {
           foreach ($comment_storage->loadMultiple($comment_batch) as $comment) {
-            if ($comment instanceof CommentInterface) {
-              $comment_id = (string) $comment->id();
-              $existing_comment_ids[$comment_id] = TRUE;
-              $topic_id = $this->eligibleTopicId($comment);
-              if ($topic_id !== NULL) {
-                $eligible_topic_by_comment[$comment_id] = $topic_id;
-              }
+            $comment_id = (string) $comment->id();
+            $existing_comment_ids[$comment_id] = TRUE;
+            $topic_id = $this->eligibleTopicId($comment);
+            if ($topic_id !== NULL) {
+              $eligible_topic_by_comment[$comment_id] = $topic_id;
             }
           }
         }
         foreach ($markers as $marker) {
           $comment_id = $marker['comment_id'];
-          if (isset($eligible_topic_by_comment[$comment_id])) {
+          if (array_key_exists($comment_id, $eligible_topic_by_comment)) {
             $result['markers_in_scope']++;
             if ($eligible_topic_by_comment[$comment_id] !== $marker['topic_id']) {
               $result['markers_for_other_topic']++;
             }
           }
-          elseif (isset($existing_comment_ids[$comment_id])) {
+          elseif (array_key_exists($comment_id, $existing_comment_ids)) {
             $result['markers_outside_scope']++;
           }
           else {
@@ -486,6 +492,9 @@ final class ForumCommentMigrationAudit {
         $post_storage = $this->entityTypeManager->getStorage('aculta_forum_post');
         foreach (array_chunk(array_values($marker_post_ids), $batch_size) as $post_batch) {
           foreach ($post_storage->loadMultiple($post_batch) as $post) {
+            if (!$post instanceof ContentEntityInterface) {
+              continue;
+            }
             $post_id = (string) $post->id();
             $existing_posts[$post_id] = TRUE;
             $topic = $post->get('topic')->entity;
@@ -498,13 +507,13 @@ final class ForumCommentMigrationAudit {
         }
         foreach ($post_markers as $marker) {
           $post_id = $marker['post_id'];
-          if (isset($post_topic_by_id[$post_id])) {
+          if (array_key_exists($post_id, $post_topic_by_id)) {
             $result['post_markers_in_scope']++;
             if ($post_topic_by_id[$post_id] !== $marker['topic_id']) {
               $result['post_markers_for_other_topic']++;
             }
           }
-          elseif (isset($existing_posts[$post_id])) {
+          elseif (array_key_exists($post_id, $existing_posts)) {
             $result['post_markers_outside_scope']++;
           }
           else {

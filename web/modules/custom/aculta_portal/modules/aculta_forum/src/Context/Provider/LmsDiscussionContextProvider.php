@@ -8,6 +8,7 @@ use Drupal\aculta_forum\Context\DiscussionContext;
 use Drupal\aculta_forum\Context\DiscussionContextInterface;
 use Drupal\aculta_forum\Context\DiscussionContextProviderInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -52,10 +53,12 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
       return AccessResult::forbidden()->addCacheableDependency($group);
     }
 
+    // andIf() merges cacheable metadata, so the group dependency travels with
+    // the membership result without changing the access decision.
+    $groupDependency = AccessResult::neutral()->addCacheableDependency($group);
     return $group->access('view', $account, TRUE)
-      ->andIf($this->contextMembershipAccess($group, $account))
-      ->andIf($this->educatorAccess($group, $account))
-      ->addCacheableDependency($group);
+      ->andIf($this->contextMembershipAccess($group, $account)->andIf($groupDependency))
+      ->andIf($this->educatorAccess($group, $account));
   }
 
   /**
@@ -81,8 +84,7 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
 
     $relationship = reset($relationships);
     $group = $relationship->getGroup();
-    if (!$group instanceof GroupInterface
-      || !in_array($group->bundle(), ['lms_course', 'lms_class'], TRUE)) {
+    if (!in_array($group->bundle(), ['lms_course', 'lms_class'], TRUE)) {
       return AccessResult::forbidden()
         ->addCacheableDependency($entity)
         ->addCacheableDependency($relationship);
@@ -119,7 +121,7 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
    * {@inheritdoc}
    */
   public function getContext(EntityInterface $entity, AccountInterface $account): DiscussionContextInterface {
-    if (!$this->supports($entity) || $entity->isNew() || !$entity->uuid()) {
+    if (!$entity instanceof ContentEntityInterface || !$this->supports($entity) || $entity->isNew() || !$entity->uuid()) {
       throw new \LogicException('LMS discussion context requires a persisted aculta_lms_topic node with a UUID.');
     }
 
@@ -197,7 +199,7 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
         ->addCacheTags(['group_relationship_list:plugin:lms_classes:entity:' . $group->id()]);
     }
     $course = reset($parents)->getGroup();
-    if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course') {
+    if ($course->bundle() !== 'lms_course') {
       return AccessResult::forbidden()->addCacheableDependency($group);
     }
 
@@ -212,7 +214,7 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
   /**
    * Allows membership or contextual Educator access, denying if neither fits.
    */
-  private function membershipOrEducatorAccess(AccessResultInterface $membershipAccess, AccessResultInterface $educatorAccess): AccessResultInterface {
+  private function membershipOrEducatorAccess(AccessResultInterface $membershipAccess, AccessResultInterface $educatorAccess): AccessResult {
     $access = $membershipAccess->isAllowed() || $educatorAccess->isAllowed()
       ? AccessResult::allowed()
       : AccessResult::forbidden();
@@ -225,8 +227,8 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
    * Checks the account's real Group membership without legacy wrappers.
    */
   private function membershipAccess(GroupInterface $group, AccountInterface $account): AccessResultInterface {
-    $uid = $account->id();
-    if ($uid === NULL) {
+    $uid = (int) $account->id();
+    if ($uid < 1) {
       return AccessResult::forbidden()
         ->addCacheContexts(['user'])
         ->addCacheTags(['group_relationship_list:plugin:group_membership:group:' . $group->id()]);
@@ -270,10 +272,6 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
           ->addCacheTags(['group_relationship_list:plugin:lms_classes:entity:' . $group->id()]);
       }
       $course = reset($parents)->getGroup();
-    }
-
-    if (!$course instanceof GroupInterface) {
-      return AccessResult::forbidden()->addCacheableDependency($group);
     }
 
     $access = $course->hasPermission('grade students', $account)

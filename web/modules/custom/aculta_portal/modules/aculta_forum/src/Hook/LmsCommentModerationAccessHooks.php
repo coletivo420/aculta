@@ -44,18 +44,21 @@ final class LmsCommentModerationAccessHooks {
       return AccessResult::neutral()->addCacheableDependency($entity);
     }
 
-    $moderation = $context->getModerationAccess()
-      ->addCacheableDependency($entity)
-      ->addCacheableDependency($context);
+    $moderation = $context->getModerationAccess();
 
     // Educators may see pending/rejected items and use Drupal's approve
     // operation. This does not grant edit/delete access or affect other
     // discussion contexts. Non-Educators keep Core's normal access result.
-    return $moderation->isAllowed()
-      ? $moderation
-      : AccessResult::neutral()
+    if ($moderation->isAllowed()) {
+      return AccessResult::allowedIf(TRUE)
+        ->addCacheableDependency($moderation)
         ->addCacheableDependency($entity)
         ->addCacheableDependency($context);
+    }
+    return AccessResult::neutral()
+      ->addCacheableDependency($moderation)
+      ->addCacheableDependency($entity)
+      ->addCacheableDependency($context);
   }
 
 }

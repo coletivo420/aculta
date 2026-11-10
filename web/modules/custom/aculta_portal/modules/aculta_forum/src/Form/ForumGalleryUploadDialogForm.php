@@ -131,7 +131,7 @@ final class ForumGalleryUploadDialogForm extends FormBase {
     }
     $form_state->setValue('title', $title);
     foreach ($files as $file) {
-      if (!$file instanceof FileInterface || !$this->uploadPolicy->isValidImage($file, 'forum') || !$this->studioPickOk($form_state, $file)) {
+      if (!$this->uploadPolicy->isValidImage($file, 'forum') || !$this->studioPickOk($form_state, $file)) {
         $form_state->setErrorByName('images', $this->t('Uma das imagens não atende às extensões ou ao tamanho permitidos.'));
         return;
       }
@@ -195,7 +195,7 @@ final class ForumGalleryUploadDialogForm extends FormBase {
       return $response;
     }
     foreach ($files as $file) {
-      if (!$file instanceof FileInterface || !$this->uploadPolicy->isValidImage($file, 'forum') || !$this->studioPickOk($form_state, $file)) {
+      if (!$this->uploadPolicy->isValidImage($file, 'forum') || !$this->studioPickOk($form_state, $file)) {
         $form_state->setErrorByName('images', $this->t('Uma das imagens não atende às extensões ou ao tamanho permitidos.'));
         $response->addCommand(new HtmlCommand('#aculta-forum-gallery-dialog', $form));
         return $response;
@@ -215,9 +215,6 @@ final class ForumGalleryUploadDialogForm extends FormBase {
           'alt' => trim($alt_lines[$position]),
         ],
       ]);
-      if (!$media instanceof MediaInterface) {
-        throw new \UnexpectedValueException('The Forum attachment Media bundle could not be created.');
-      }
       $media->save();
       $media_ids[] = ['target_id' => $media->id()];
       if ($file->isTemporary()) {

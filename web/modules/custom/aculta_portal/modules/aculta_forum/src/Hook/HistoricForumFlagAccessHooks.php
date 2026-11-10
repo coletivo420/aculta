@@ -177,7 +177,7 @@ final class HistoricForumFlagAccessHooks {
     if ($this->hasHistoricAuthor($entity)) {
       return TRUE;
     }
-    $host = $entity->getCommentedEntity();
+    $host = $entity instanceof CommentInterface ? $entity->getCommentedEntity() : NULL;
     return $host instanceof NodeInterface
       && $host->bundle() === 'aculta_forum_topic'
       && $this->hasHistoricAuthor($host);
@@ -215,7 +215,7 @@ final class HistoricForumFlagAccessHooks {
     if (!$this->isForumComment($entity)) {
       return FALSE;
     }
-    $host = $entity->getCommentedEntity();
+    $host = $entity instanceof CommentInterface ? $entity->getCommentedEntity() : NULL;
     return $host instanceof NodeInterface && $host->isPublished();
   }
 
@@ -245,14 +245,20 @@ final class HistoricForumFlagAccessHooks {
         ->addCacheableDependency($entity)
         ->addCacheContexts(['domain']);
     }
-    assert($entity instanceof ForumPost);
+    if (!$entity instanceof ForumPost) {
+      return AccessResult::forbidden()->addCacheContexts(['domain']);
+    }
     $topic = $entity->get('topic')->entity;
-    assert($topic instanceof NodeInterface);
-    return $entity->access('view', $account, TRUE)
-      ->andIf($topic->access('view', $account, TRUE))
+    if (!$topic instanceof NodeInterface) {
+      return AccessResult::forbidden()->addCacheContexts(['domain']);
+    }
+    $dependency = AccessResult::neutral()
       ->addCacheableDependency($entity)
       ->addCacheableDependency($topic)
       ->addCacheContexts(['domain']);
+    return $entity->access('view', $account, TRUE)
+      ->andIf($topic->access('view', $account, TRUE))
+      ->andIf($dependency);
   }
 
   /**

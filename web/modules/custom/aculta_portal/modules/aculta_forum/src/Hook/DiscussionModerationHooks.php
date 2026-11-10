@@ -46,7 +46,9 @@ final class DiscussionModerationHooks {
       if ($host !== NULL) {
         $context = $this->contextResolver->resolve($host, $account);
         if ($context !== NULL && $context->getModerationAccess()->isAllowed()) {
-          return $context->getModerationAccess()->addCacheableDependency($comment);
+          return AccessResult::allowedIf(TRUE)
+            ->addCacheableDependency($context->getModerationAccess())
+            ->addCacheableDependency($comment);
         }
       }
     }

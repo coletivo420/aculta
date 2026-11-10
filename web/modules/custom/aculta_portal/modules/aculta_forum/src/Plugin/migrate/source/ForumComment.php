@@ -95,11 +95,8 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
       $last_comment_id = (int) end($comment_ids);
 
       foreach ($storage->loadMultiple($comment_ids) as $comment) {
-        if (!$comment instanceof CommentInterface) {
-          continue;
-        }
         $topic = $comment->getCommentedEntity();
-        if (!$this->isEligibleTopic($topic)) {
+        if (!$topic instanceof NodeInterface || !$this->isEligibleTopic($topic)) {
           continue;
         }
         yield $this->toSourceRow($comment, $topic);
@@ -185,11 +182,10 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
     $translations = [];
     foreach ($comment->getTranslationLanguages() as $language) {
       $translation = $comment->getTranslation($language->getId());
-      $body = $translation->get('comment_body')->first();
       $translations[$language->getId()] = [
-        'subject' => (string) ($translation->get('subject')->value ?? ''),
-        'body_value' => (string) ($body?->value ?? ''),
-        'body_format' => (string) ($body?->format ?? ''),
+        'subject' => (string) $translation->get('subject')->value,
+        'body_value' => (string) $translation->get('comment_body')->value,
+        'body_format' => (string) $translation->get('comment_body')->format,
         'published' => (int) $translation->isPublished(),
       ];
     }

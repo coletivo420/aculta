@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\flag\FlaggingInterface;
 use Drupal\migrate\Attribute\MigrateSource;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\Plugin\MigrateSourceInterface;
@@ -79,6 +80,9 @@ final class ForumCommentFlagging extends SourcePluginBase implements ContainerFa
       $last_id = (int) end($ids);
 
       foreach ($storage->loadMultiple($ids) as $flagging) {
+        if (!$flagging instanceof FlaggingInterface) {
+          continue;
+        }
         $comment = $this->entityTypeManager->getStorage('comment')->load($flagging->getFlaggableId());
         $topic = $comment instanceof CommentInterface ? $comment->getCommentedEntity() : NULL;
         if (!$this->isEligibleComment($comment, $topic)) {
@@ -87,8 +91,8 @@ final class ForumCommentFlagging extends SourcePluginBase implements ContainerFa
         yield [
           'fid' => (int) $flagging->id(),
           'cid' => (int) $comment->id(),
-          'uid' => (int) ($flagging->getOwnerId() ?? 0),
-          'session_id' => (string) ($flagging->get('session_id')->value ?? ''),
+          'uid' => (int) $flagging->getOwnerId(),
+          'session_id' => (string) $flagging->get('session_id')->value,
           'global' => (int) $flagging->get('global')->value,
           'created' => (int) $flagging->getCreatedTime(),
         ];

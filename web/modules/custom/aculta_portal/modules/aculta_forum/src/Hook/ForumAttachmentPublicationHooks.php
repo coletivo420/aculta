@@ -106,9 +106,7 @@ final class ForumAttachmentPublicationHooks {
    * Avoids attachment publication side effects while importing Forum posts.
    */
   private function isSynchronizingForumPost(EntityInterface $entity): bool {
-    return $entity instanceof ForumPost
-      && $entity instanceof SynchronizableInterface
-      && $entity->isSyncing();
+    return $entity instanceof ForumPost && $entity->isSyncing();
   }
 
 }

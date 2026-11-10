@@ -27,9 +27,6 @@ class DiscussionReplyEndpointAccess {
    */
   public function access(string $entity_type, string $entity_id, Request $request, AccountInterface $account): AccessResultInterface {
     $storage = $this->entityTypeManager->getStorage($entity_type);
-    if ($storage === NULL) {
-      return AccessResult::forbidden('Invalid entity type.');
-    }
     $host = $storage->load($entity_id);
     if ($host === NULL) {
       return AccessResult::forbidden('Host entity not found.');

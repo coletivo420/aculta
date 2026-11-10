@@ -28,11 +28,6 @@ final class DiscussionContextResolver {
    */
   public function __construct(iterable $providers) {
     $this->providers = is_array($providers) ? array_values($providers) : iterator_to_array($providers, FALSE);
-    foreach ($this->providers as $provider) {
-      if (!$provider instanceof DiscussionContextProviderInterface) {
-        throw new \LogicException('Every discussion context provider must implement DiscussionContextProviderInterface.');
-      }
-    }
   }
 
   /**

@@ -37,9 +37,6 @@ class DiscussionReplyController extends ControllerBase {
    */
   public function composer(string $entity_type, string $entity_id, Request $request): array {
     $storage = $this->forumEntityTypeManager->getStorage($entity_type);
-    if ($storage === NULL) {
-      throw new NotFoundHttpException();
-    }
     $host = $storage->load($entity_id);
     if ($host === NULL) {
       throw new NotFoundHttpException();

@@ -382,6 +382,24 @@ parameters:
 			path: scripts/validate-aculta420-theme-settings.php
 
 		-
+			rawMessage: 'Call to function in_array() with arguments ''links_aculta_org'', array{''aculta_org'', ''conta_aculta_org'', ''apoio_aculta_org'', ''revista420_aculta…'', ''wiki420_aculta_org'', ''loja_aculta_org'', ''cursos_aculta_org'', ''forum_aculta_org'', ...} and true will always evaluate to true.'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: scripts/validate-aculta420-ui-skins.php
+
+		-
+			rawMessage: Result of || is always false.
+			identifier: booleanOr.alwaysFalse
+			count: 1
+			path: scripts/validate-aculta420-ui-skins.php
+
+		-
+			rawMessage: 'Strict comparison using !== between 10 and 10 will always evaluate to false.'
+			identifier: notIdentical.alwaysFalse
+			count: 1
+			path: scripts/validate-aculta420-ui-skins.php
+
+		-
 			rawMessage: 'Avoid calling Symfony\Component\Yaml\Yaml::parse() directly. Use \Drupal\Component\Serialization\Yaml::decode() instead, which handles exceptions consistently and applies the correct parse flags.'
 			identifier: drupal.symfonyYamlParse
 			count: 1
@@ -3421,70 +3439,22 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_file_uploader/src/RecentUploads.php
 
 		-
-			rawMessage: 'Strict comparison using === between Drupal\Core\Entity\EntityStorageInterface and null will always evaluate to false.'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Access/DiscussionReactionEndpointAccess.php
-
-		-
-			rawMessage: 'Strict comparison using === between Drupal\Core\Entity\EntityStorageInterface and null will always evaluate to false.'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Access/DiscussionReplyEndpointAccess.php
-
-		-
 			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
 			identifier: globalDrupalDependencyInjection.useDependencyInjection
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Access/DiscussionReplyEndpointAccess.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityStorageInterface::loadRevision().'
+			rawMessage: 'Call to an undefined method Drupal\Core\Entity\RevisionableInterface::get().'
 			identifier: method.notFound
 			count: 3
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Access/ForumPostModerationAccess.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityStorageInterface::loadMultipleRevisions().'
+			rawMessage: 'Call to an undefined method Drupal\Core\Entity\RevisionableInterface::hasField().'
 			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumAttachmentCleanup.php
-
-		-
-			rawMessage: If condition is always false.
-			identifier: if.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumAttachmentCleanup.php
-
-		-
-			rawMessage: Instanceof between Drupal\comment\Entity\Comment and Drupal\comment\CommentInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumAttachmentCleanup.php
-
-		-
-			rawMessage: Instanceof between Drupal\file\Entity\File and Drupal\file\FileInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumAttachmentCleanup.php
-
-		-
-			rawMessage: Instanceof between Drupal\media\Entity\Media and Drupal\media\MediaInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumAttachmentCleanup.php
-
-		-
-			rawMessage: 'Offset ''source_id'' on array{source_type: string, source_id: string, source_langcode: string, source_vid: string, method: string, field_name: string, count: string} on left side of ?? always exists and is not nullable.'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumAttachmentCleanup.php
-
-		-
-			rawMessage: 'Offset ''source_type'' on array{source_type: string, source_id: string, source_langcode: string, source_vid: string, method: string, field_name: string, count: string} on left side of ?? always exists and is not nullable.'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumAttachmentCleanup.php
+			count: 2
+			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Access/ForumPostModerationAccess.php
 
 		-
 			rawMessage: Right side of || is always false.
@@ -3493,76 +3463,10 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumAttachmentCleanup.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityStorageInterface::loadMultipleRevisions().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumAttachmentPublication.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\media_gallery\MediaGalleryInterface::isPublished().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumAttachmentPublication.php
-
-		-
-			rawMessage: Instanceof between Drupal\aculta_forum\Entity\ForumPost and Drupal\aculta_forum\Entity\ForumPost will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumAttachmentPublication.php
-
-		-
-			rawMessage: Instanceof between Drupal\comment\CommentInterface and Drupal\comment\CommentInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumAttachmentPublication.php
-
-		-
-			rawMessage: Instanceof between Drupal\comment\Entity\Comment and Drupal\comment\CommentInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumAttachmentPublication.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\media_gallery\MediaGalleryInterface::isPublished().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumGalleryPublication.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\media_gallery\MediaGalleryInterface::setPublished().'
-			identifier: method.notFound
+			rawMessage: Right side of || is always false.
+			identifier: booleanOr.rightAlwaysFalse
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumGalleryPublication.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\media_gallery\MediaGalleryInterface::setUnpublished().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumGalleryPublication.php
-
-		-
-			rawMessage: Instanceof between Drupal\aculta_forum\Entity\ForumPost and Drupal\aculta_forum\Entity\ForumPost will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumGalleryPublication.php
-
-		-
-			rawMessage: Instanceof between Drupal\comment\CommentInterface and Drupal\comment\CommentInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumGalleryPublication.php
-
-		-
-			rawMessage: Instanceof between Drupal\comment\Entity\Comment and Drupal\comment\CommentInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumGalleryPublication.php
-
-		-
-			rawMessage: Instanceof between Drupal\node\NodeInterface and Drupal\Core\Entity\RevisionableInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/ContentIndex/ForumContentIndexProvider.php
 
 		-
 			rawMessage: 'Parameter #1 $topic of method Drupal\aculta_forum\ContentIndex\ForumContentIndexProvider::domainId() expects Drupal\node\NodeInterface|null, Drupal\Core\Entity\EntityInterface|null given.'
@@ -3577,76 +3481,10 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/ContentIndex/ForumContentIndexProvider.php
 
 		-
-			rawMessage: Instanceof between Drupal\aculta_forum\Context\DiscussionContextProviderInterface and Drupal\aculta_forum\Context\DiscussionContextProviderInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Context/DiscussionContextResolver.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::addCacheableDependency().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Context/Provider/LmsDiscussionContextProvider.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Context/Provider/LmsDiscussionContextProvider.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::hasField().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Context/Provider/LmsDiscussionContextProvider.php
-
-		-
-			rawMessage: Instanceof between Drupal\group\Entity\GroupInterface and Drupal\group\Entity\GroupInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Context/Provider/LmsDiscussionContextProvider.php
-
-		-
-			rawMessage: 'Strict comparison using === between int and null will always evaluate to false.'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Context/Provider/LmsDiscussionContextProvider.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Context/Provider/PublicationContextProvider.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Context/Provider/WikiDiscussionContextProvider.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::getReason().'
+			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResult::getReason().'
 			identifier: method.notFound
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Controller/DiscussionReactionController.php
-
-		-
-			rawMessage: 'Strict comparison using === between Drupal\Core\Entity\EntityStorageInterface and null will always evaluate to false.'
-			identifier: identical.alwaysFalse
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Controller/DiscussionReactionController.php
-
-		-
-			rawMessage: 'Strict comparison using === between Drupal\Core\Entity\EntityStorageInterface and null will always evaluate to false.'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Controller/DiscussionReplyController.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityStorageInterface::loadRevision().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Controller/ForumPostModerationFormController.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityStorageInterface::loadMultipleRevisions().'
@@ -3673,32 +3511,8 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Controller/ForumPostModerationQueueController.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\RevisionableInterface::get().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Controller/ForumPostRevisionHistoryController.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\RevisionableInterface::getRevisionCreationTime().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Controller/ForumPostRevisionHistoryController.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\RevisionableInterface::getRevisionLogMessage().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Controller/ForumPostRevisionHistoryController.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\RevisionableInterface::getRevisionUser().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Controller/ForumPostRevisionHistoryController.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_forum\Controller\TopicDeletionQueueController::create() should return static(Drupal\aculta_forum\Controller\TopicDeletionQueueController) but returns Drupal\aculta_forum\Controller\TopicDeletionQueueController.'
-			identifier: return.type
+			rawMessage: 'Unsafe usage of new static().'
+			identifier: new.static
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Controller/TopicDeletionQueueController.php
 
@@ -3715,94 +3529,10 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Entity/ForumPost.php
 
 		-
-			rawMessage: Instanceof between Drupal\media\Entity\Media and Drupal\media\MediaInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/ForumAttachmentUploadDialogForm.php
-
-		-
-			rawMessage: Instanceof between Drupal\file\Entity\File and Drupal\file\FileInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/ForumGalleryUploadDialogForm.php
-
-		-
-			rawMessage: Instanceof between Drupal\media\Entity\Media and Drupal\media\MediaInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/ForumGalleryUploadDialogForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_forum\Form\ForumMarkAllReadForm::getConfirmText() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormBase::getConfirmText()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/ForumMarkAllReadForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_forum\Form\ForumMarkAllReadForm::getConfirmText() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormInterface::getConfirmText()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/ForumMarkAllReadForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_forum\Form\ForumMarkAllReadForm::getDescription() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormBase::getDescription()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/ForumMarkAllReadForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_forum\Form\ForumMarkAllReadForm::getDescription() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormInterface::getDescription()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/ForumMarkAllReadForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_forum\Form\ForumMarkAllReadForm::getQuestion() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormInterface::getQuestion()'
-			identifier: method.childReturnType
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/ForumMarkAllReadForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\ContentEntityInterface|Drupal\Core\Entity\RevisionLogInterface::isPublished().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/ForumPostSubmissionForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/ForumPostSubmissionForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::isDefaultRevision().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/ForumPostSubmissionForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::isPublished().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/ForumPostSubmissionForm.php
-
-		-
-			rawMessage: 'Parameter #1 $revision_log_message of method Drupal\Core\Entity\RevisionLogInterface::setRevisionLogMessage() expects string, Drupal\Core\StringTranslation\TranslatableMarkup given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/ForumPostSubmissionForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_forum\Form\TopicDeleteConfirmForm::create() should return static(Drupal\aculta_forum\Form\TopicDeleteConfirmForm) but returns Drupal\aculta_forum\Form\TopicDeleteConfirmForm.'
-			identifier: return.type
+			rawMessage: 'Unsafe usage of new static().'
+			identifier: new.static
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/TopicDeleteConfirmForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::addCacheableDependency().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/DiscussionModerationHooks.php
 
 		-
 			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
@@ -3841,88 +3571,10 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumActivityEventHooks.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\media_gallery\MediaGalleryInterface::isPublished().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumAttachmentAccessHooks.php
-
-		-
-			rawMessage: Instanceof between Drupal\aculta_forum\Entity\ForumPost and Drupal\Core\Entity\SynchronizableInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumAttachmentPublicationHooks.php
-
-		-
 			rawMessage: 'Parameter #1 $group of method Drupal\views\Plugin\views\query\Sql::addWhereExpression() expects string, int given.'
 			identifier: argument.type
 			count: 3
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumHistoricModerationQueueHooks.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\FieldableEntityInterface::isPublished().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumPostAccessHooks.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface&Drupal\user\EntityOwnerInterface::hasField().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumPublicationTimeHooks.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface&Drupal\user\EntityOwnerInterface::set().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumPublicationTimeHooks.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumPublicationTimeHooks.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::hasField().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumPublicationTimeHooks.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::isPublished().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumPublicationTimeHooks.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::set().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumPublicationTimeHooks.php
-
-		-
-			rawMessage: 'Strict comparison using !== between Drupal\user\UserInterface and null will always evaluate to true.'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumPublicationTimeHooks.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::addCacheableDependency().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/HistoricForumFlagAccessHooks.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getCommentedEntity().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/HistoricForumFlagAccessHooks.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::addCacheableDependency().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/LmsCommentModerationAccessHooks.php
 
 		-
 			rawMessage: 'Call to function assert() with true will always evaluate to true.'
@@ -3979,90 +3631,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/TopicOpeningPostHooks.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 7
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Migration/ForumCommentMigrationAudit.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getCreatedTime().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Migration/ForumCommentMigrationAudit.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getFlagId().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Migration/ForumCommentMigrationAudit.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getOwnerId().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Migration/ForumCommentMigrationAudit.php
-
-		-
-			rawMessage: Instanceof between Drupal\comment\Entity\Comment and Drupal\comment\CommentInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Migration/ForumCommentMigrationAudit.php
-
-		-
-			rawMessage: 'Offset decimal-int-string&non-falsy-string on array<string, string> in isset() does not exist.'
-			identifier: isset.offset
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Migration/ForumCommentMigrationAudit.php
-
-		-
-			rawMessage: 'Offset decimal-int-string&non-falsy-string on array<string, true> in isset() does not exist.'
-			identifier: isset.offset
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Migration/ForumCommentMigrationAudit.php
-
-		-
-			rawMessage: Using nullsafe property access "?->format" on left side of ?? is unnecessary. Use -> instead.
-			identifier: nullsafe.neverNull
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Migration/ForumCommentMigrationAudit.php
-
-		-
-			rawMessage: Using nullsafe property access "?->value" on left side of ?? is unnecessary. Use -> instead.
-			identifier: nullsafe.neverNull
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Migration/ForumCommentMigrationAudit.php
-
-		-
-			rawMessage: PHPDoc tag @param for parameter $flagging with type Drupal\Core\Entity\ContentEntityInterface is not subtype of native type Drupal\flag\FlaggingInterface.
-			identifier: parameter.phpDocType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Migration/ForumFlaggingMigrationContext.php
-
-		-
-			rawMessage: Result of || is always false.
-			identifier: booleanOr.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Migration/ForumFlaggingMigrationContext.php
-
-		-
-			rawMessage: Right side of || is always false.
-			identifier: booleanOr.rightAlwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Migration/ForumFlaggingMigrationContext.php
-
-		-
-			rawMessage: 'Strict comparison using !== between ''aculta_forum_post'' and ''aculta_forum_post'' will always evaluate to false.'
-			identifier: notIdentical.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Migration/ForumFlaggingMigrationContext.php
-
-		-
-			rawMessage: 'Strict comparison using !== between ''sinalizar_post_forum'' and ''sinalizar_post_forum'' will always evaluate to false.'
-			identifier: notIdentical.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Migration/ForumFlaggingMigrationContext.php
-
-		-
 			rawMessage: Cannot cast Drupal\Core\Field\FieldItemListInterface to int.
 			identifier: cast.int
 			count: 1
@@ -4085,66 +3653,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/Field/FieldFormatter/ForumPostSearchTopicLinkFormatter.php
-
-		-
-			rawMessage: Access to an undefined property Drupal\Core\Field\FieldItemInterface::$format.
-			identifier: property.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/migrate/source/ForumComment.php
-
-		-
-			rawMessage: Access to an undefined property Drupal\Core\Field\FieldItemInterface::$value.
-			identifier: property.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/migrate/source/ForumComment.php
-
-		-
-			rawMessage: Instanceof between Drupal\comment\Entity\Comment and Drupal\comment\CommentInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/migrate/source/ForumComment.php
-
-		-
-			rawMessage: 'Parameter #2 $topic of method Drupal\aculta_forum\Plugin\migrate\source\ForumComment::toSourceRow() expects Drupal\node\NodeInterface, Drupal\Core\Entity\FieldableEntityInterface|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/migrate/source/ForumComment.php
-
-		-
-			rawMessage: Using nullsafe property access "?->format" on left side of ?? is unnecessary. Use -> instead.
-			identifier: nullsafe.neverNull
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/migrate/source/ForumComment.php
-
-		-
-			rawMessage: Using nullsafe property access "?->value" on left side of ?? is unnecessary. Use -> instead.
-			identifier: nullsafe.neverNull
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/migrate/source/ForumComment.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/migrate/source/ForumCommentFlagging.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getCreatedTime().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/migrate/source/ForumCommentFlagging.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getFlaggableId().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/migrate/source/ForumCommentFlagging.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getOwnerId().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/migrate/source/ForumCommentFlagging.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_forum\Plugin\views\field\ForumCategoryTopicCount::render() never returns Drupal\Component\Render\MarkupInterface so it can be removed from the return type.'

@@ -24,8 +24,8 @@ class TopicDeleteConfirmForm extends FormBase {
     protected readonly TopicDeletionModerationManager $moderationManager,
   ) {}
 
-  public static function create(ContainerInterface $container): self {
-    return new self(
+  public static function create(ContainerInterface $container): static {
+    return new static(
       $container->get('aculta_forum.topic_deletion_moderation_manager')
     );
   }

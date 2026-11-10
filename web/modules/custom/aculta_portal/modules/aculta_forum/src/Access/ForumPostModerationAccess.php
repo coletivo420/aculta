@@ -9,6 +9,7 @@ use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
@@ -34,7 +35,11 @@ final class ForumPostModerationAccess {
    * Checks access to one exact pending review revision on the main purpose.
    */
   public function reviewRevision(AccountInterface $account, string $revision_id): AccessResultInterface {
-    $post = $this->entityTypeManager->getStorage('aculta_forum_post')->loadRevision($revision_id);
+    $storage = $this->entityTypeManager->getStorage('aculta_forum_post');
+    if (!$storage instanceof RevisionableStorageInterface) {
+      return AccessResult::forbidden()->addCacheContexts(['domain', 'user.permissions']);
+    }
+    $post = $storage->loadRevision($revision_id);
     if ($post === NULL) {
       return AccessResult::forbidden()->addCacheContexts(['domain', 'user.permissions']);
     }
@@ -116,6 +121,10 @@ final class ForumPostModerationAccess {
     }
 
     $storage = $this->entityTypeManager->getStorage('aculta_forum_post');
+    if (!$storage instanceof RevisionableStorageInterface) {
+      return AccessResult::forbidden()
+        ->addCacheContexts(['domain', 'user', 'user.permissions', 'url.path']);
+    }
     $left = $storage->loadRevision($left_revision);
     $right = $storage->loadRevision($right_revision);
     if ($left === NULL || $right === NULL) {

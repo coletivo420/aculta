@@ -63,7 +63,7 @@ final class ForumContentIndexProvider implements ContentIndexProviderInterface, 
    */
   public function isIndexable(ContentEntityInterface $entity): bool {
     if ($entity instanceof NodeInterface && $entity->bundle() === 'aculta_forum_topic') {
-      return !($entity instanceof RevisionableInterface) || $entity->isDefaultRevision();
+      return $entity->isDefaultRevision();
     }
     if ($entity instanceof ForumPost) {
       return $entity->isDefaultRevision();

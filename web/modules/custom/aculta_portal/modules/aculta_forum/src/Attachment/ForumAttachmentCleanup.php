@@ -12,7 +12,9 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\entity_usage\EntityUsageInterface;
 use Drupal\file\FileInterface;
@@ -86,8 +88,7 @@ final class ForumAttachmentCleanup {
       ->execute();
     $removed = 0;
     foreach ($storage->loadMultiple($ids) as $media) {
-      if (!$media instanceof MediaInterface
-        || !$media->hasField('field_media_forum_attachment')
+      if (!$media->hasField('field_media_forum_attachment')
         || $media->get('field_media_forum_attachment')->isEmpty()
         || $this->hasLiveReference($media)) {
         continue;
@@ -129,9 +130,6 @@ final class ForumAttachmentCleanup {
       ->execute();
     $removed = 0;
     foreach ($storage->loadMultiple($ids) as $file) {
-      if (!$file instanceof FileInterface) {
-        continue;
-      }
       if ($this->unusedFileCleaner->removeIfUnused($file, TRUE) === FileCleanupStatus::Deleted) {
         $removed++;
       }
@@ -163,7 +161,7 @@ final class ForumAttachmentCleanup {
       ->condition('comment_body.value', '%' . $this->database->escapeLike($media->uuid()) . '%', 'LIKE')
       ->execute();
     foreach ($this->entityTypeManager->getStorage('comment')->loadMultiple($comment_ids) as $comment) {
-      if ($comment instanceof CommentInterface && $this->commentEmbeds($comment, $media->uuid())) {
+      if ($this->commentEmbeds($comment, $media->uuid())) {
         return TRUE;
       }
     }
@@ -172,16 +170,14 @@ final class ForumAttachmentCleanup {
     }
 
     foreach ($this->entityUsage->listSources($media, FALSE) as $source) {
-      $type = (string) ($source['source_type'] ?? '');
-      $id = $source['source_id'] ?? NULL;
+      $type = (string) $source['source_type'];
+      $id = $source['source_id'];
       if (!$id) {
         // Unknown source types fail closed to prevent deleting live media.
         return TRUE;
       }
       if ($type === 'aculta_forum_post') {
-        if ($this->hasForumPostMediaReference($media->uuid())) {
-          return TRUE;
-        }
+        // A live post reference was already ruled out above.
         continue;
       }
       if ($type !== 'comment') {
@@ -204,13 +200,16 @@ final class ForumAttachmentCleanup {
    */
   private function hasForumPostMediaReference(string $uuid): bool {
     $storage = $this->entityTypeManager->getStorage('aculta_forum_post');
+    if (!$storage instanceof RevisionableStorageInterface) {
+      return FALSE;
+    }
     $revision_ids = $storage->getQuery()
       ->accessCheck(FALSE)
       ->allRevisions()
       ->condition('body.value', '%' . $this->database->escapeLike($uuid) . '%', 'LIKE')
       ->execute();
     foreach ($storage->loadMultipleRevisions($revision_ids) as $post) {
-      if (!$post->hasField('body') || $post->get('body')->isEmpty()) {
+      if (!$post instanceof ContentEntityInterface || !$post->hasField('body') || $post->get('body')->isEmpty()) {
         continue;
       }
       $document = Html::load((string) $post->get('body')->value);

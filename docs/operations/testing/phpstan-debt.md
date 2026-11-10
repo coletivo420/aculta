@@ -173,3 +173,19 @@ Resíduos conhecidos: mutação de array capturado por referência em closures (
 Escopo: remoção de `instanceof SynchronizableInterface`/`method_exists()` redundantes; `CacheableMetadata::createFromObject()` para cache tags de resultados de acesso; `SiteAlertStorageInterface` explícito para `getCacheMaxAge()`; `loadRevision()` com `RevisionableStorageInterface`; `PrivateMessageInterface` no contador de não lidas; `ArrayObject` substitui arrays capturados por referência nos callbacks de `EligibleNoticePage::collect()`; helpers `record()` validam `MessageInterface`; propriedades de DI não usadas removidas (`AvisosMensagensController`, `MessengerBarHooks`, `PrivateMessageReplyHooks`) com o teste `PersistentNoticeAccessTest` ajustado; `ProfileRelationshipController` deixa de passar argumentos extras ao `FormBuilderInterface::buildForm()` (o alvo e a URL agora viajam no `FormState`), corrigindo um bug funcional real.
 
 Resíduos: docblock de `PrivateMessageThreadInterface::getMessages()` declara `EntityReferenceFieldItemListInterface` mas a implementação retorna array (bug de documentação do contrib, não editado); `FormStateInterface::hasAnyErrors()` mutado por método auxiliar; `DrupalDateTime::createFromFormat()` retornando `false`; `PrivateMessageServiceInterface::getThreadFromMessage()` devolvendo nulo em runtime; e `ConfigFactoryInterface::get()` nulo em mocks de teste. Evidência: Unit 403/4378 PASS.
+
+## Rodada 12 — 2026-11-10 (aculta_forum, produção)
+
+| Medida | Valor |
+| --- | ---: |
+| Erros brutos em aculta_forum antes | 391 |
+| Erros brutos em aculta_forum/src antes | ~250 |
+| Erros brutos em aculta_forum/src ao final | 95 |
+| Erros brutos em aculta_forum (módulo) ao final | 282 |
+| Erros brutos globais antes | 3359 |
+| Erros brutos globais ao final | 3253 |
+| Baseline atual | 3253 |
+
+Escopo (somente `src/`, testes fora desta rodada): `ForumCommentMigrationAudit` (19 -> 0) com narrowing de `FlaggingInterface`/`ContentEntityInterface` e `array_key_exists` nos mapas de marcadores; `ForumAttachmentPublication` (9 -> 0) e `ForumGalleryPublication` (8 -> 1) com remoção de `instanceof` redundante, `EntityPublishedInterface` para galerias e `RevisionableStorageInterface` para revisões; `ForumAttachmentCleanup` (8 -> 1); `LmsDiscussionContextProvider` (8 -> 0) com dependência de grupo anexada via `andIf()`; `ForumPublicationTimeHooks` (7 -> 0); `ForumMarkAllReadForm` (6 -> 0) com retorno `TranslatableMarkup`; `ForumPostRevisionHistoryController` (5 -> 0), `ForumPostSubmissionForm` (5 -> 0), `ForumFlaggingMigrationContext` (5 -> 0) e sources de migração `ForumComment`/`ForumCommentFlagging`; remoção de guards `getStorage() === NULL`; `create(): static` nos controllers/formulários; narrowing de `MediaInterface`/`FileInterface`; `AccessResult` explícito onde a interface não expõe `addCacheableDependency()`/`getReason()`.
+
+Resíduos na produção: rechecagens defensivas deduplicadas pelo PHPStan (`hasContentReference()`/`hasLiveReference()`), tipagem de `getAggregateQuery()->execute()`, chamadas `\Drupal::` em classes de hook (exigem refatoração de DI), plugins de Views com `QueryPluginBase` genérico e acessos a propriedades mágicas de FieldItem. Evidência: Unit 250/1876 PASS.

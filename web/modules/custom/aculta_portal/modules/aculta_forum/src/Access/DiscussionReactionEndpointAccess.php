@@ -29,10 +29,6 @@ class DiscussionReactionEndpointAccess {
     }
 
     $storage = $this->entityTypeManager->getStorage($entity_type);
-    if ($storage === NULL) {
-      return AccessResult::forbidden('Entity storage not found.');
-    }
-
     $entity = $storage->load($entity_id);
     if ($entity === NULL) {
       return AccessResult::forbidden('Target entity not found.');

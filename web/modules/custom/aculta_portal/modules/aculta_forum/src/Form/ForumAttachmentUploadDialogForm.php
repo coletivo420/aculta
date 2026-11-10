@@ -233,9 +233,6 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
       'status' => FALSE,
       'field_media_forum_attachment' => ['target_id' => $file->id()],
     ]);
-    if (!$media instanceof MediaInterface) {
-      throw new \UnexpectedValueException('The Forum attachment Media bundle could not be created.');
-    }
     if ($is_image_upload) {
       $media->set('field_media_forum_image', [
         'target_id' => $file->id(),

@@ -7,6 +7,7 @@ namespace Drupal\aculta_forum\Controller;
 use Drupal\aculta_forum\Access\DiscussionReactionEndpointAccess;
 use Drupal\aculta_forum\Service\DiscussionReactionBuilder;
 use Drupal\aculta_forum\Service\DiscussionReactionManager;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -41,9 +42,6 @@ class DiscussionReactionController extends ControllerBase {
     }
 
     $storage = $this->forumEntityTypeManager->getStorage($entity_type);
-    if ($storage === NULL) {
-      throw new NotFoundHttpException();
-    }
 
     $entity = $storage->load($entity_id);
     if ($entity === NULL) {
@@ -59,7 +57,8 @@ class DiscussionReactionController extends ControllerBase {
     // Access check.
     $access = $this->reactionEndpointAccess->access($entity_type, $entity_id, $this->forumCurrentUser);
     if (!$access->isAllowed()) {
-      throw new AccessDeniedHttpException($access->getReason() ?: 'Access denied.');
+      $reason = $access instanceof AccessResult ? $access->getReason() : NULL;
+      throw new AccessDeniedHttpException($reason ?: 'Access denied.');
     }
 
     // Reaction identifier from payload.
@@ -101,9 +100,6 @@ class DiscussionReactionController extends ControllerBase {
     }
 
     $storage = $this->forumEntityTypeManager->getStorage($entity_type);
-    if ($storage === NULL) {
-      throw new NotFoundHttpException();
-    }
 
     $entity = $storage->load($entity_id);
     if ($entity === NULL) {

@@ -9,6 +9,7 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -41,20 +42,20 @@ final class ForumMarkAllReadForm extends ConfirmFormBase {
 
   /**
    * {@inheritdoc} */
-  public function getQuestion(): string {
-    return (string) $this->t('Marcar todas as discussões públicas acessíveis como lidas?');
+  public function getQuestion(): TranslatableMarkup {
+    return $this->t('Marcar todas as discussões públicas acessíveis como lidas?');
   }
 
   /**
    * {@inheritdoc} */
-  public function getDescription(): string {
-    return (string) $this->t('Esta ação atualiza somente seu histórico de leitura. Tópicos e comentários não serão alterados.');
+  public function getDescription(): TranslatableMarkup {
+    return $this->t('Esta ação atualiza somente seu histórico de leitura. Tópicos e comentários não serão alterados.');
   }
 
   /**
    * {@inheritdoc} */
-  public function getConfirmText(): string {
-    return (string) $this->t('Marcar tudo como lido');
+  public function getConfirmText(): TranslatableMarkup {
+    return $this->t('Marcar tudo como lido');
   }
 
   /**

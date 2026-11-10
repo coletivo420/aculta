@@ -7,7 +7,9 @@ namespace Drupal\aculta_forum\Hook;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
@@ -97,7 +99,7 @@ final class ForumPostAccessHooks {
     }
 
     if ($operation === 'view') {
-      if ($entity->isPublished()) {
+      if ($entity instanceof EntityPublishedInterface && $entity->isPublished()) {
         return $contextAccess;
       }
 

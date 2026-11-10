@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Attachment;
 
 use Drupal\comment\CommentInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\media\MediaInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
@@ -98,9 +99,6 @@ final class ForumGalleryPublication {
         break;
       }
       foreach ($comment_storage->loadMultiple($comment_ids) as $comment) {
-        if (!$comment instanceof CommentInterface) {
-          continue;
-        }
         foreach ($this->attachmentPublication->galleryUuids($comment) as $uuid) {
           $gallery = $this->loadForumGallery($uuid);
           if ($gallery instanceof MediaGalleryInterface) {
@@ -196,7 +194,8 @@ final class ForumGalleryPublication {
         continue;
       }
       // Recheck publication and comments immediately before deleting.
-      if ($gallery->isPublished() || $this->hasContentReference($gallery)) {
+      if (($gallery instanceof EntityPublishedInterface && $gallery->isPublished())
+        || $this->hasContentReference($gallery)) {
         continue;
       }
       $gallery->delete();
@@ -215,7 +214,7 @@ final class ForumGalleryPublication {
     ?ForumPost $current_post = NULL,
     ?int $excluded_post_id = NULL,
   ): void {
-    if (!$this->isForumGallery($gallery)) {
+    if (!$this->isForumGallery($gallery) || !$gallery instanceof EntityPublishedInterface) {
       return;
     }
     $is_public = FALSE;
@@ -232,8 +231,7 @@ final class ForumGalleryPublication {
       $comments[$current_comment->id()] = $current_comment;
     }
     foreach ($comments as $comment) {
-      if ($comment instanceof CommentInterface
-        && in_array($gallery->uuid(), $this->attachmentPublication->galleryUuids($comment), TRUE)
+      if (in_array($gallery->uuid(), $this->attachmentPublication->galleryUuids($comment), TRUE)
         && $this->attachmentPublication->isPublicForumComment($comment, $current_topic, check_access: FALSE)) {
         $is_public = TRUE;
         break;
@@ -250,7 +248,7 @@ final class ForumGalleryPublication {
       }
     }
     foreach ($posts as $post) {
-      if ($post instanceof ForumPost && $this->attachmentPublication->isPublicPost($post, $current_topic, check_access: FALSE)) {
+      if ($this->attachmentPublication->isPublicPost($post, $current_topic, check_access: FALSE)) {
         $is_public = TRUE;
         break;
       }
@@ -285,8 +283,7 @@ final class ForumGalleryPublication {
       ->condition('comment_body.value', '%' . $gallery->uuid() . '%', 'LIKE')
       ->execute();
     foreach ($this->entityTypeManager->getStorage('comment')->loadMultiple($comment_ids) as $comment) {
-      if ($comment instanceof CommentInterface
-        && $this->isForumComment($comment)
+      if ($this->isForumComment($comment)
         && in_array($gallery->uuid(), $this->attachmentPublication->galleryUuids($comment), TRUE)) {
         return TRUE;
       }
