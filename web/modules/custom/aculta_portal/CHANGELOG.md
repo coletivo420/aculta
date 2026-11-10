@@ -12,8 +12,10 @@
   owners `main`/`support` permanecem inalterados.
 - Os métodos antigos seguem como wrappers de compatibilidade rastreados para
   consumidores não migrados. Options `_aculta_domain_purpose(s)` seguem inalteradas, aguardando
-  inventário/migração de configuração reversível. Gate de rota e runtime ainda
-  pendentes.
+  inventário/migração de configuração reversível. Gate Kernel/HTTP ainda
+  pendente.
+- Após o push, dez arquivos PHP/YAML de produção foram sincronizados no
+  Runtime e `drush cr` PASS; sem importação de configuração ou `updatedb`.
 
 ## 0.5.0-dev.1 — estado neutro de purposes ativos e hooks de ciclo de vida (F3)
 
