@@ -9,6 +9,7 @@ $output = $root . '/docs/architecture/inventarios/ui-suite-consumidores-iniciais
 $sync = $root . '/config/sync';
 $theme = $root . '/web/themes/custom/aculta420_v2';
 $customModules = $root . '/web/modules/custom';
+$runtimeSnapshotPath = $root . '/docs/architecture/inventarios/ui-suite-runtime-2026-11-10.json';
 
 require $root . '/vendor/autoload.php';
 
@@ -27,8 +28,15 @@ $columns = [
   'risk_or_evidence_gap',
   'rollback',
   'detected_consumers',
+  'runtime_status',
 ];
 $rows = [];
+$runtimeSnapshot = is_file($runtimeSnapshotPath)
+  ? json_decode((string) file_get_contents($runtimeSnapshotPath), TRUE, flags: JSON_THROW_ON_ERROR)
+  : [];
+$runtimeStatuses = is_array($runtimeSnapshot['ui_suite_modules'] ?? NULL)
+  ? $runtimeSnapshot['ui_suite_modules']
+  : [];
 
 foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
   $view = Yaml::parseFile($path);
@@ -52,6 +60,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'risk_or_evidence_gap' => 'No UI Patterns row/style/display plugin ID detected in Sync; Runtime output, access and cache still unverified',
       'rollback' => 'Revert only display config after before/after result comparison',
       'detected_consumers' => '',
+      'runtime_status' => 'not_observed',
     ];
   }
 }
@@ -78,6 +87,7 @@ foreach (glob($sync . '/core.entity_view_display.*.yml') ?: [] as $path) {
     'risk_or_evidence_gap' => 'Entity access, field order, render cache and known 2 exclusions; Runtime not compared',
     'rollback' => 'Restore captured display configuration; no entity/data changes',
     'detected_consumers' => '',
+    'runtime_status' => 'not_observed',
   ];
 }
 
@@ -131,6 +141,7 @@ foreach ($componentIds as $componentId => $manifest) {
     'risk_or_evidence_gap' => count($consumers) . ' explicit component-ID reference files; Runtime discovery/catalog not verified',
     'rollback' => 'No removal; revert consumer integration independently',
     'detected_consumers' => implode(', ', $consumers),
+    'runtime_status' => 'not_applicable',
   ];
 }
 
@@ -189,6 +200,11 @@ $moduleInventory = [
     'replacement' => 'Use registered UI Styles for reusable SDC, block, Layout Builder and Views visual choices.',
     'risk' => 'Existing UI Styles config is present but this run did not exhaustively compare plugin registrations and consumer forms.',
   ],
+  'drupal/ui_styles_library' => [
+    'module' => 'ui_styles_library', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Expose the approved UI Styles catalog to authorized administrators.',
+    'risk' => 'Enabled in Runtime but absent from Config Sync; library access and registered style inventory need review.',
+  ],
   'drupal/ui_styles_page' => [
     'module' => 'ui_styles_page', 'status' => 'MIGRATION_IN_PROGRESS',
     'replacement' => 'Integrate page-level style selection with semantic theme tokens and domain skin scopes.',
@@ -244,8 +260,8 @@ $moduleInventory = [
   ],
   'drupal/ui_patterns_ckeditor5' => [
     'module' => 'ui_patterns_ckeditor5',
-    'status' => 'BLOCKED_UPSTREAM',
-    'replacement' => 'No replacement; this CKEditor integration is explicitly prohibited and cannot be newly configured. Existing Runtime activation requires authorized uninstall to reconcile.',
+    'status' => 'LEGACY_DEPRECATED',
+    'replacement' => 'Retire this prohibited integration; remove its preexisting Runtime activation through an authorized uninstall, with no replacement or new configuration.',
     'risk' => 'User explicitly excluded UI Patterns CKEditor 5. Last successful Runtime observation was Enabled while absent from Config Sync; current state is not freshly verified.',
   ],
   'drupal/ui_icons_menu' => [
@@ -273,6 +289,56 @@ $moduleInventory = [
     'replacement' => 'Expose only approved icon packs through the administrative UI Icons library.',
     'risk' => 'Access policy and pack ownership need Runtime validation.',
   ],
+  'drupal/ui_icons_canvas' => [
+    'module' => 'ui_icons_canvas', 'status' => 'FUNCTIONAL_NATIVE_EXCEPTION',
+    'replacement' => 'Keep disabled unless Canvas becomes an approved editor; use existing CKEditor and SDC workflows.',
+    'risk' => 'Optional integration, currently disabled in Runtime; no Canvas integration is in scope.',
+  ],
+  'drupal/ui_icons_ckeditor5' => [
+    'module' => 'ui_icons_ckeditor5', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Use only the approved UI Icons editor integration if it is required; UI Patterns CKEditor integration stays prohibited.',
+    'risk' => 'Enabled in Runtime but absent from Sync; editor formats and pack access need review.',
+  ],
+  'drupal/ui_icons_field_link_attributes' => [
+    'module' => 'ui_icons_field_link_attributes', 'status' => 'FUNCTIONAL_NATIVE_EXCEPTION',
+    'replacement' => 'Keep disabled unless a compatible Field Link Attributes use case is approved.',
+    'risk' => 'Optional integration, disabled in Runtime; no consumer identified.',
+  ],
+  'drupal/ui_icons_field_linkit' => [
+    'module' => 'ui_icons_field_linkit', 'status' => 'FUNCTIONAL_NATIVE_EXCEPTION',
+    'replacement' => 'Keep disabled unless Linkit icon selection is explicitly required.',
+    'risk' => 'Optional integration, disabled in Runtime; no consumer identified.',
+  ],
+  'drupal/ui_icons_field_linkit_attributes' => [
+    'module' => 'ui_icons_field_linkit_attributes', 'status' => 'FUNCTIONAL_NATIVE_EXCEPTION',
+    'replacement' => 'Keep disabled unless Linkit attribute integration is explicitly required.',
+    'risk' => 'Optional integration, disabled in Runtime; no consumer identified.',
+  ],
+  'drupal/ui_icons_font' => [
+    'module' => 'ui_icons_font', 'status' => 'FUNCTIONAL_NATIVE_EXCEPTION',
+    'replacement' => 'Keep disabled; current project uses official Phosphor/Fluent packs and does not need generated icon fonts.',
+    'risk' => 'Optional integration, disabled in Runtime; font generation would duplicate pack delivery.',
+  ],
+  'drupal/ui_icons_media' => [
+    'module' => 'ui_icons_media', 'status' => 'FUNCTIONAL_NATIVE_EXCEPTION',
+    'replacement' => 'Keep disabled unless media entities own icon selections.',
+    'risk' => 'Optional integration, disabled in Runtime; no media icon field consumer identified.',
+  ],
+  'drupal/ui_icons_popover' => [
+    'module' => 'ui_icons_popover', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Use the official popover integration for existing icon selection forms where access permits.',
+    'risk' => 'Enabled in Runtime but absent from Sync; picker usage and pack permissions need review.',
+  ],
+  'drupal/ui_icons_text' => [
+    'module' => 'ui_icons_text', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Use official text formatter where existing icon text fields require rendering.',
+    'risk' => 'Enabled in Runtime; field assignments and data ownership need inventory.',
+  ],
+  'drupal/ui_patterns_legacy' => [
+    'module' => 'ui_patterns_legacy', 'status' => 'LEGACY_OBSOLETE',
+    'replacement' => 'No consumer; remain disabled and remove package-level legacy integration only if upstream API permits safe removal.',
+    'risk' => 'Disabled in Runtime; confirm zero dependent config before a later package cleanup.',
+  ],
 ];
 foreach ($moduleInventory as $packageName => $metadata) {
   $package = $lockedPackages[$packageName] ?? NULL;
@@ -292,7 +358,7 @@ foreach ($moduleInventory as $packageName => $metadata) {
   $rows[] = [
     'id' => $metadata['module'],
     'owner_module' => 'Composer / ' . $metadata['module'],
-    'config_path' => 'composer.json; composer.lock; config/sync/core.extension.yml',
+    'config_path' => 'composer.json; composer.lock; config/sync/core.extension.yml; ' . relativePath($root, $runtimeSnapshotPath),
     'consumer_type' => 'ui_suite_integration',
     'consumer_id' => $metadata['module'] . ' (package ' . $packageOwner . ' ' . $ownerVersion . ' @ ' . $ownerReference . '; lock=' . $moduleVersion . ' @ ' . $moduleReference . ')',
     'display_plugin' => $metadata['module'],
@@ -304,6 +370,7 @@ foreach ($moduleInventory as $packageName => $metadata) {
     'risk_or_evidence_gap' => 'Direct Composer requirement: ' . ($required ? 'yes' : 'no') . '. ' . $metadata['risk'],
     'rollback' => 'Revert the scoped composer.json/lock/config changes; no entity data migration',
     'detected_consumers' => '',
+    'runtime_status' => (string) ($runtimeStatuses[$metadata['module']] ?? 'not_found_in_runtime_snapshot'),
   ];
 }
 
@@ -322,6 +389,7 @@ $rows[] = [
   'risk_or_evidence_gap' => 'Still consumed by SurfaceSettingsHooks and tokens.css; no UI Skins runtime integration or visual parity evidence yet',
   'rollback' => 'Revert the scoped theme/Portal code and configuration change before any settings cleanup; preserve the previous config export in version control',
   'detected_consumers' => 'theme-settings.php, SurfaceSettingsHooks.php, PurposePaletteSchemes.php, tokens.css, SurfaceSettingsHooks tests',
+  'runtime_status' => 'not_applicable',
 ];
 
 usort($rows, static fn (array $a, array $b): int => [$a['consumer_type'], $a['id'], $a['consumer_id']] <=> [$b['consumer_type'], $b['id'], $b['consumer_id']]);

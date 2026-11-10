@@ -5,7 +5,7 @@ Estado: Dev · versão 1.5.0 (`aculta420_v2.info.yml`) · status em `docs/operat
 ## Próximo passo
 
 - **ADR-054/055, US-00–14 e RN-00–05 em andamento:** migrar o visual legado integralmente para UI Suite/UI Skins; `site_key` é funcional, `domain_id` identifica Domain e `skin_id` é visual. Valores dos dez sites e contratos de domínio/acesso devem permanecer. Não manter fallback ou configuração visual de purpose após cada corte.
-- Composer declara UI Skins ^1.2 e UI Icons ^2.1; Field Group dev está travado no SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1`, **BLOCKED_UPSTREAM** (Core 12 e advisories). Última consulta Runtime: UI Skins Disabled e `ui_patterns_ckeditor5` Enabled fora do Sync; consulta atual ao DB DEFERRED. Não usar UI Patterns CKEditor 5; UI Styles CKEditor 5 autorizado.
+- Composer declara UI Skins ^1.2 e UI Icons ^2.1; Field Group dev está travado no SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1`, **BLOCKED_UPSTREAM** (Core 12 e advisories). Runtime verificado: UI Skins Disabled; `ui_patterns_ckeditor5` e Field Group Enabled fora do Sync; drift `core.extension` e `ui_icons_patterns.settings`. Não usar UI Patterns CKEditor 5; UI Styles CKEditor 5 autorizado.
 - Planos: `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md`, `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md` e `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`.
 
 ## Marcos e pendências

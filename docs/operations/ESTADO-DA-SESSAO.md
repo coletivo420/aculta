@@ -1,13 +1,11 @@
-# ADR-054 + ADR-055 — UI Skins e site_key — 2026-11-10
+# ADR-054 + ADR-055 — UI Skins/site_key — 2026-11-10
 
-- **Objetivo/decisão:** concluir UI Suite e corte `purpose`→`site_key`; sem fallback, leitura dupla ou configuração visual antiga. `DomainPurposeManager` fica somente pelas responsabilidades funcionais ainda não migradas.
-- **RN-01/02/03:** `SiteKey`, `DomainSiteManager`, `ActiveSiteKeysState` e `ContentSiteKeyResolver` implementados; route options e State antigos removidos sem dual-read. Subscriber HTTP e destinos de login/sessão ainda usam purpose.
-- **Evidência funcional:** Kernel manager/state 5 testes/34 assertions; Unit site-key/domain 35/65; PHPStan focal e gate Drupal 12 (1.246 checks) PASS. Runtime não atualizado.
-- **US-00:** inventário gerado em `docs/architecture/inventarios/ui-suite-consumidores-iniciais.csv`: 287 registros (159 View displays/66 Views, 22 Layout Builder, 80 SDCs, 25 integrações). PHP lint/PHPStan do gerador, validação estrutural, Composer validate/platform e diff check PASS. Token budget FAIL em 8 itens preexistentes. Composer audit: 14 advisories/8 pacotes.
-- **Dependências/UI:** Composer declara UI Skins 1.2.1, UI Icons 2.1.0 e Field Group dev SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1`. Field Group BLOCKED_UPSTREAM (Core 12/advisories). UI Skins API não seleciona skin por Domain; requer adaptador Portal com cache context `domain`. CKEditor Patterns proibido; observação anterior registrou módulo Enabled fora do Sync.
-- **Runtime:** Drush detecta Core 11.5.0-beta1, mas não conecta ao DB; `pml` DEFERRED. Sem `cim`, `updatedb`, uninstall ou alteração de configuração. `origin/dev` foi integrado por merge normal e push `11299ea5e15d`; stash do trabalho pendente foi reaplicado e preservado.
-- **Próximo passo:** revisar/restaurar o estado do stash, migrar subscriber + destino de login para `site_key`, implementar ponte `domain_id`→`skin_id`, depois remover diretamente o motor visual purpose e continuar migração/homologação. ADRs abertas.
-
+- **Corte:** sem fallback, dual-read ou config visual antiga. RN-01/02/03 têm `SiteKey`, `DomainSiteManager`, `ActiveSiteKeysState`, `ContentSiteKeyResolver`, route options e State novos; subscriber e login/sessão ainda usam purpose.
+- **US-00:** CSV com 298 linhas: 159 Views/66 displays, 22 Layout Builder, 80 SDCs e 36 integrações; snapshot Runtime em `ui-suite-runtime-2026-11-10.json`.
+- **Runtime:** Drupal 11.5.0-beta1; `drush cr` PASS. Skins Disabled; Patterns CKEditor e Field Group Enabled; drift em `core.extension`/`ui_icons_patterns.settings`. Sem import, update ou uninstall.
+- **Gates:** Kernel 5/34; Unit 35/65; PHPStan, Drupal 12 (1.246), Composer validate/platform e inventário PASS. Token budget FAIL (8 preexistentes); audit Composer: 14 advisories/8 pacotes. Field Group BLOCKED_UPSTREAM; CKEditor Patterns proibido.
+- **Publicação:** merge `11299ea5e`, inventário `d6f958be9`; Composer install sem scripts sincronizou Gin; `.htaccess` restaurado.
+- **Próximo:** migrar subscriber/sessão para `site_key`; implementar ponte `domain_id`→`skin_id`; remover motor de paletas sem retenção; concluir US-12–14. ADRs abertas.
 # FST-00 a FST-11 — integração analítica Fórum + Statistics — 2026-11-10
 
 - **Objetivo:** executar o plano canônico FST-00 a FST-11 em `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md`.

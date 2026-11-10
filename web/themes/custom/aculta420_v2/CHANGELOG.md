@@ -2,7 +2,8 @@
 
 - Adiciona `drupal/ui_skins:^1.2` e `drupal/ui_icons:^2.1` como dependências diretas do Composer após `composer install` limpo demonstrar que ambos não estavam no lock.
 - Trava `drupal/ui_patterns_field_group:2.0.x-dev@dev` em `4403e7b0e27679f47113e96fcdc5349c95e164d1`; atualização foi avaliada como `BLOCKED_UPSTREAM` para Drupal 12 e risco de segurança, sem ativação/configuração nova.
-- O inventário agora inclui dependências UI Suite e o motor visual legado para acompanhar substitutos e riscos.
+- O inventário registra 298 itens (159 View displays, 22 displays Layout Builder, 80 SDCs e 36 integrações), mais snapshot de 36 módulos ativos/desativados e drift Config Sync.
+- Runtime atualizado por `composer install --no-scripts`; `drush cr` PASS. UI Skins Disabled; UI Patterns CKEditor 5 e Field Group estavam Enabled antes desta entrega. Nenhuma configuração foi importada ou desinstalada.
 
 ## 1.5.0 — marcos do shell e Layout Builder no desenvolvimento (2026-11-09)
 
