@@ -222,7 +222,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     self::assertSame('/conta-legada', $portal['aculta_portal.dashboard']['path']);
     // The technical /minha-conta path is blocked before routing, and the
     // Account purpose root is internally resolved to /conta, never /studio.
-    $subscriber = file_get_contents($root . '/../../src/EventSubscriber/DomainPurposeRequestSubscriber.php');
+    $subscriber = file_get_contents($root . '/../../src/EventSubscriber/DomainSiteRequestSubscriber.php');
     self::assertStringContainsString("\$accountPath === '/minha-conta'", $subscriber);
     self::assertStringContainsString('Response::HTTP_NOT_FOUND', $subscriber);
     self::assertStringNotContainsString('aculta_studio.hub', $subscriber);

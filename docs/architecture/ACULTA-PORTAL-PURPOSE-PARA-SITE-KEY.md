@@ -55,12 +55,12 @@ O responsável aprovou **renomear os identificadores internos funcionais de 'pur
 ## 3. Critérios de compatibilidade e não-regressão
 
 - **Não renomear as dez chaves em si**, entidades de Domain, `field_domain_source`, os aliases públicos, rotas públicas (nome/path), view modes, configurações de terceiros, IDs de conteúdo ou identificadores de pagamento. Renomear somente os contratos internos necessários, preservando estabilidade para URLs, dados e integrações.
-- Serviços internos antigos podem ser aliases de compatibilidade **temporários e rastreados**, sem criar **aliases públicos de rota** (proibidos pelo gate `validate-no-temporary-route-aliases.php`). Não manter compatibilidade indefinida nem dar novo comportamento aos aliases.
+- **Decisão do responsável:** sem aliases de serviço, wrappers, leitura dupla ou compatibilidade transitória. Cada lote corta diretamente o nome antigo quando seus consumidores mudam; comportamento funcional de Domain/acesso continua coberto por testes.
 - **Decisão atualizada pelo responsável em 2026-11-10:** o projeto não possui configurações de rota persistidas que exijam compatibilidade. Fazer corte direto para `_aculta_site_key`, `_aculta_site_keys` e `_aculta_cross_domain_canonical_site_key`; não ler, espelhar ou reter opções antigas. Se uma opção removida ou um valor novo inválido aparecer em uma rota, responder 404 (falha fechada). Nenhuma rota sem metadados válidos deve cair automaticamente em MAIN ou tornar-se compartilhada.
-- Transição do `active_purposes` do State: gerar/validar `active_site_keys`, manter fallback de leitura apenas no prazo de migração, registrar integridade 10/10 e garantir reconstrução/restauração; não apagar estado antes do rollback.
-- Sessões que já possuem `login_destination['purpose']` continuam legíveis apenas durante janela de transição; escrever somente `site_key` novo após corte e verificar domínio/path/método antes de redirecionar. Não reintroduzir open redirect.
-- `domain_presentation` e barra multidomínio: fase dual-read curta com contrato tipado, tags e contexts; remover campos duplicados após migração de consumidores e integração visual UI Skins. Não duplicar H1, <main>, links ou barras.
-- Em config `aculta_portal.superficies` as chaves `main/account/...` continuam iguais, mesmo que o nome da configuração seja antigo. Se houver troca de nome de config, fornecer migração idempotente, ensaio de import/export, backup e downgrade. **Não fazer migração destrutiva de config ou state só para satisfazer a renomeação.**
+- `active_purposes` foi substituído diretamente por `active_site_keys`, sem leitura nem espelhamento do nome removido. Rebuild/reversão usa o commit, não mantém State legado.
+- Sessão aceita somente `login_destination['site_key']`; o campo antigo `purpose` é ignorado e removido. Validar domínio, path e método antes de redirecionar; não reintroduzir open redirect.
+- `domain_presentation` e barra multidomínio: atualizar todos os consumidores em corte direto para contrato tipado, cache tags e contexts; não manter campos duplicados/dual-read. Não duplicar H1, `<main>`, links ou barras.
+- Configurações visuais por purpose são removidas ao substituir seus consumidores. Configurações funcionais de Domain continuam sob API `site_key`; sem retenção de chaves visuais antigas, aliases ou schemas apenas para rollback.
 - A troca de símbolos PHP não altera FQCN de plugins de contrib nem arquivos no `web/core`; inspecionar dependências, container, route rebuild, implementações de interfaces, indexadores, sitemap e event subscribers.
 - Não esconder código antigo pela troca de nome: preservar a classificação `LEGACY_DEPRECATED`/`LEGACY_OBSOLETE` do visual, e registrar APIs antigas como `API_DEPRECATED`/`API_REMOVED` em inventário de refatoração próprio; não misturar depreciação de API com status SDC.
 
@@ -79,16 +79,16 @@ O responsável aprovou **renomear os identificadores internos funcionais de 'pur
 
 1. Introduzir registro tipado de `site_key` no Portal, com mapa para Domain IDs, paths frontais e configurações existentes. Reutilizar dados/métodos atuais, sem inventar hosts.
 2. Introduzir `DomainSiteManager` com interface e métodos de nome claro, cobrindo URL canônica, aliases, resolução atual, Domain temporário em contexto e restauro.
-3. Manter ponte de compatibilidade nas classes/serviços internos até migrar consumidores, preservando `DomainPurposeManager` enquanto necessário; evitar duplicação de dois resolvedores com lógicas diferentes.
+3. Migrar consumidores diretamente para `DomainSiteManager`; não criar ponte de compatibilidade. `DomainPurposeManager` permanece somente pelas responsabilidades funcionais que ainda não tenham sido migradas, sem seleção visual.
 4. Mapear testes Unit/Kernel existentes para a nova API; verificar o mesmo resultado para cada site.
 
-**Gate RN-01:** respostas e Domain IDs bit a bit equivalentes, chamadas antigas ainda corretas durante transição, zero mutação de config.
+**Gate RN-01:** respostas e Domain IDs equivalentes sob a API tipada, consumidores migrados sem aliases, zero mutação de config global por request.
 
 ### RN-02 - Roteamento, segurança, ownership e destinos
 
 1. Renomear o Content resolver, Subscriber, RoutePolicy, PathProcessor, parâmetros de métodos, opções de rota e serviços; migrar os `*.routing.yml` **por lotes** (MAIN, conteúdo, Fórum, Wiki, Eventos, Studio, loja, compras, apoio e rotas transversais).
 2. Remover options de rota `purpose` diretamente em todos os módulos customizados e usar somente os nomes `site_key`; validar fail-closed para qualquer option removida/valor inválido, a prioridade de `_admin_route` e ausência de compartilhamento por default.
-3. Migrar `login_destination` na sessão; testar login/logout, destino válido, open redirects, método POST bloqueado fora do host e regeneração de URLs.
+3. Migrar `login_destination` na sessão e todos os emissores OAuth para `site_key`; ignorar/remover `purpose` antigo. Testar login/logout, destino válido, open redirects, método POST bloqueado fora do host e regeneração de URLs.
 4. Revisar sitemap, Domain Alias, Domain Config, busca, Index, Messenger e callbacks que resolvem destino.
 
 **Gate RN-02:** matriz HTTP de hosts/rotas e controles de acesso idêntica ao baseline; 403/404/canonical e pagamentos preservados.
@@ -96,7 +96,7 @@ O responsável aprovou **renomear os identificadores internos funcionais de 'pur
 ### RN-03 - Contratos e persistência (migração reversível)
 
 1. Atualizar `DomainPresentationBuilder`, `domain_presentation.identity.site_key`, entradas de `domain_sites` e `regions.showcase`, estruturas de blocos e variáveis `aculta_site_key`.
-2. Atualizar `ActiveSiteKeysState`, mantendo leitura temporária e segura de `aculta_portal.active_purposes`; preservar `aculta_portal.superficies` e IDs canônicos até haver atualização de configuração aprovada e testada.
+2. Atualizar `ActiveSiteKeysState` por corte direto, sem ler `aculta_portal.active_purposes`; preservar IDs canônicos de Domain e migrar configuração funcional para `site_key` sem dual-read.
 3. Transferir validação de chaves canônicas do tema `Purposes` para o contrato funcional do Portal; tema não resolve site_key pelo hostname. Integração com a ponte UI Skins recebe `domain_id`, `skin_id` e modo.
 4. Gerar configuração de schema, testes Kernel e contratos para Twig/SDC/JS, sem qualquer acesso a dados que não estava autorizado.
 
@@ -123,7 +123,7 @@ O responsável aprovou **renomear os identificadores internos funcionais de 'pur
 ## 5. Dependências com US-00 a US-14 (ADR-055)
 
 - `US-00` e `RN-00` compartilham baseline, mas possuem inventários separados (componentes visuais × identificadores/contratos funcionais).
-- `RN-01` precede a introdução definitiva de `site_key` na ponte `domain_id -> skin_id` de `US-02`. O piloto Links pode usar a ponte provisória só enquanto RN-01 não completar, sem criar nova dívida permanente.
+- `RN-01` precede a ponte `domain_id -> skin_id` de `US-02`; o piloto Links usa o contrato tipado final, sem API ou configuração visual provisória por purpose.
 - `US-02` migra tokens, paletas e atributos para UI Skins; `RN-03` migra contratos de site e Twig. Coordenar as duas branches de código na mesma `dev` por commits atômicos, evitando alterações concorrentes nos mesmos arquivos.
 - `RN-02` e `RN-03` podem ser realizados em lotes por owner, preservando comportamento entre microfases. Os submódulos consumidores não precisam de alteração global e instantânea.
 - `US-12/US-13` classificam e substituem visuais legados; `RN-04` trata nomes funcionais e descontinuação das APIs, sem usar o status SDC para arquivos PHP.

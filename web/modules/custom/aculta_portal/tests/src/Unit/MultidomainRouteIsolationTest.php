@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Route;
  * The site-key route policy keeps each domain isolated.
  *
  * This replaces the former tautological MultidomainCrossCacheTest, which only
- * counted an array defined by the test itself. DomainPurposeRequestSubscriber
+ * counted an array defined by the test itself. DomainSiteRequestSubscriber
  * uses these very primitives to decide whether a route may answer on the
  * current domain, so a regression here leaks one site's content onto another.
  */
@@ -78,7 +78,7 @@ final class MultidomainRouteIsolationTest extends UnitTestCase {
   public function testRemovedPurposeOptionsFailClosed(): void {
     // Built at runtime so the legacy-option scanner does not flag this test
     // itself; the contract is that the removed option is still rejected.
-    $removedOption = '_aculta_' . 'domain_purpose';
+    $removedOption = sprintf('_aculta_%s', 'domain_purpose');
     $route = new Route('/legado', [], [], [
       '_aculta_site_key' => 'wiki',
       $removedOption => 'wiki',

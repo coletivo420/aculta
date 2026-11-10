@@ -1,3 +1,10 @@
+## Não versionado — destinos de login em site_key
+
+- `DomainSiteRequestSubscriber`, PortalHooks, login popup e checkout usam `DomainSiteManagerInterface`/`SiteKey`; remove dependências visuais/URLs desses consumers em `DomainPurposeManager` e troca o service/class subscriber.
+- Login popup, checkout e menu emitem `aculta_destination_site_key`; a sessão grava/aceita apenas `site_key`. Chaves/query `purpose` antigas não são lidas.
+- URLs de MAIN/ACCOUNT/SUPPORT/MAGAZINE usam enum `SiteKey`; guardas de rota, 403/404 e validação de destino permanecem.
+- Testes focais: 3 subscriber (17 assertions), rota/front-path e site manager (20/64); PHPCS e PHPStan subscriber PASS.
+
 ## Não versionado — resolução de ownership `site_key`
 
 - Substitui `ContentPurposeResolver`/`content_purpose_resolver` por `ContentSiteKeyResolver`/`content_site_key_resolver`, com métodos `requiredSiteKey` e `canonicalContentSiteKey`.

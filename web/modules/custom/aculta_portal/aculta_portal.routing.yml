@@ -1,5 +1,5 @@
 # Visão geral da conta. Caminho interno: o público é a raiz / do Domain ACCOUNT, cujo front aponta para cá
-# (o Core reserva / para a rota <front>). Requisição direta a este caminho responde 404 (DomainPurposeRequestSubscriber).
+# (o Core reserva / para a rota <front>). Requisição direta a este caminho responde 404 (DomainSiteRequestSubscriber).
 # Aceite dos termos (popup e retorno sem JavaScript). Ver docs/integrations/AUTHENTICATION.md.
 aculta_portal.aculta_user_agreement.accept:
   path: /termos/aceitar

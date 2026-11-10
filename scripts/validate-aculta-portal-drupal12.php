@@ -857,7 +857,7 @@ $check(
 foreach ([
   'src/EventSubscriber/AccountRouteSubscriber.php',
   'modules/aculta_portal_cep/src/EventSubscriber/CepLookupRateLimitSubscriber.php',
-  'src/EventSubscriber/DomainPurposeRequestSubscriber.php',
+  'src/EventSubscriber/DomainSiteRequestSubscriber.php',
   'modules/aculta_pagamentos_mercadopago/src/Commerce/MercadoPago/WebhookEventSubscriber.php',
 ] as $requestListener) {
   $check(

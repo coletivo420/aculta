@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Unit;
 
-use Drupal\aculta_portal\EventSubscriber\DomainPurposeRequestSubscriber;
+use Drupal\aculta_portal\EventSubscriber\DomainSiteRequestSubscriber;
 use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -65,7 +65,7 @@ final class PurposeFrontPathProcessorTest extends UnitTestCase {
    * Tests the request subscriber's priority relative to Redirect.
    */
   public function testSubscriberRunsBeforeRedirectNormalizer(): void {
-    $events = DomainPurposeRequestSubscriber::getSubscribedEvents();
+    $events = DomainSiteRequestSubscriber::getSubscribedEvents();
 
     $this->assertSame('onRequestDisableFrontNormalizer', $events[KernelEvents::REQUEST][0][0]);
     $this->assertGreaterThan(30, $events[KernelEvents::REQUEST][0][1]);

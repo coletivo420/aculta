@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
  * Reescrita de caminho de ENTRADA (InboundPathProcessorInterface, tag path_processor_inbound), o mecanismo oficial
  * do Core para alterar o caminho antes do roteamento. A URL do navegador continua sendo `/`.
  * Decisão do responsável (2026-10-11): a raiz de cada host serve conteúdo; a exceção única (visitante da Conta vai
- * ao login) é tratada em DomainPurposeRequestSubscriber e não passa por aqui.
+ * ao login) é tratada em DomainSiteRequestSubscriber e não passa por aqui.
  *
  * Mapa único de páginas iniciais: acrescentar um purpose aqui é a única forma de definir a raiz dele.
  */

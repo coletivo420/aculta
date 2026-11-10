@@ -441,7 +441,7 @@ A conclusão técnica de E4 não fecha esta experiência editorial. O gate de co
 
 **Decisão do responsável:** todo `/painel-administrativo/` responde somente no MAIN. O purpose `eventos` serve as páginas públicas e o calendário; os demais domínios exibem o bloco somente leitura.
 
-- [x] Todo `/painel-administrativo/` (Eventos, Datas, Locais) declara purpose `main` e é negado no host de Eventos com **404** (nunca 302), inclusive POST. (`_admin_route` + `_aculta_domain_purpose: main`; `DomainPurposeRequestSubscriber`.)
+- [x] Todo `/painel-administrativo/` (Eventos, Datas, Locais) declara purpose `main` e é negado no host de Eventos com **404** (nunca 302), inclusive POST. (`_admin_route` + `_aculta_domain_purpose: main`; `DomainSiteRequestSubscriber`.)
 - [x] Subdomínios não renderizam o toolbar do Navigation nem ações editoriais. (`AppearanceHooks` remove `navigation`/`top_bar`; catálogo e página do Evento não expõem criar/editar.)
 - [x] A integração OpenStreetMap também pertence ao MAIN, junto da área administrativa. (Rotas OSM com purpose `main`.)
 - [x] Datas e Locais seguem o Evento proprietário; `EventDateRouteAccess` valida o vínculo e o acesso ao Evento.

@@ -1,11 +1,13 @@
 # ADR-054 + ADR-055 — UI Skins/site_key — 2026-11-10
 
-- **Corte:** sem fallback, dual-read ou config visual antiga. RN-01/02/03 têm `SiteKey`, `DomainSiteManager`, `ActiveSiteKeysState`, `ContentSiteKeyResolver`, route options e State novos; subscriber e login/sessão ainda usam purpose.
-- **US-00:** CSV com 298 linhas: 159 Views/66 displays, 22 Layout Builder, 80 SDCs e 36 integrações; snapshot Runtime em `ui-suite-runtime-2026-11-10.json`.
-- **Runtime:** Drupal 11.5.0-beta1; `drush cr` PASS. Skins Disabled; Patterns CKEditor e Field Group Enabled; drift em `core.extension`/`ui_icons_patterns.settings`. Sem import, update ou uninstall.
-- **Gates:** Kernel 5/34; Unit 35/65; PHPStan, Drupal 12 (1.246), Composer validate/platform e inventário PASS. Token budget FAIL (8 preexistentes); audit Composer: 14 advisories/8 pacotes. Field Group BLOCKED_UPSTREAM; CKEditor Patterns proibido.
-- **Publicação:** merge `11299ea5e`, inventário `d6f958be9`; Composer install sem scripts sincronizou Gin; `.htaccess` restaurado.
-- **Próximo:** migrar subscriber/sessão para `site_key`; implementar ponte `domain_id`→`skin_id`; remover motor de paletas sem retenção; concluir US-12–14. ADRs abertas.
+- **Objetivo:** cortar subscriber e destinos de login/sessão de purpose para `site_key`, sem fallback nem dual-read.
+- **Estado:** `DomainSiteRequestSubscriber`, `PortalHooks`, login popup e checkout usam `DomainSiteManager`/`SiteKey`; sessão aceita apenas `site_key`. `DomainPurposeManager` ainda tem consumidores funcionais; UI Skins/migração visual pendentes.
+- **Decisão:** dados antigos de purpose não são interpretados. IDs Domain ficam para regras funcionais; nenhuma configuração visual legada será mantida.
+- **Cuidados:** preservados access/cache/redirects; sem import de config, update de banco ou uninstall.
+- **Commits e arquivos:** inventários em `d6f958be9` e `1ed4d7197`; esta entrega local altera subscriber, emissores de login, testes e docs Portal.
+- **Verificações:** gate Drupal 12 PASS (1.238); Unit PASS (28/86); PHPCS/PHPStan focal e diff check PASS. Wiki Kernel DEFERRED: tabela Group ausente. Runtime pós-push/cache pendente.
+- **Pendências:** outros consumidores funcionais de `DomainPurposeManager`; Skins disabled; risco Field Group/upstream sem suporte Core 12; Patterns CKEditor ativo exige autorização para remover.
+- **Próximo passo:** publicar corte Portal, limpar cache dev e migrar consumidores restantes antes da ponte `domain_id`→`skin_id`.
 # FST-00 a FST-11 — integração analítica Fórum + Statistics — 2026-11-10
 
 - **Objetivo:** executar o plano canônico FST-00 a FST-11 em `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md`.

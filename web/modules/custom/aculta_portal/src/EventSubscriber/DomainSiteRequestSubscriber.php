@@ -10,9 +10,10 @@ use Drupal\Core\Routing\LocalRedirectResponse;
 use Drupal\aculta_portal\Checkout\CheckoutSlugMap;
 use Drupal\aculta_portal\Domain\ContentSiteKeyResolver;
 use Drupal\aculta_portal\Domain\DomainRoutePolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
 use Drupal\aculta_portal\Domain\DomainSurfaceMap;
 use Drupal\aculta_portal\Domain\FrontPathPolicy;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
@@ -30,14 +31,14 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 
 /**
- * Enforces route purpose and canonicalizes admin navigation to MAIN.
+ * Enforces route site-key policy and canonicalizes admin navigation to MAIN.
  */
-final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
+final class DomainSiteRequestSubscriber implements EventSubscriberInterface {
 
   private const LOGIN_DESTINATION_SESSION_KEY = 'aculta_portal.login_destination';
 
   public function __construct(
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManagerInterface $domainSiteManager,
     private readonly RequestMatcherInterface $accessFreeMatcher,
     private readonly AccountProxyInterface $currentUser,
     private readonly RouteProviderInterface $routeProvider,
@@ -65,7 +66,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Prevents Redirect from canonicalizing a purpose root to its internal path.
+   * Prevents Redirect from canonicalizing a site root to its internal path.
    */
   public function onRequestDisableFrontNormalizer(RequestEvent $event): void {
     if (!$event->isMainRequest()) {
@@ -74,7 +75,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
 
     PurposeFrontPathProcessor::markRootRequest(
       $event->getRequest(),
-      $this->domainPurposeManager->getCurrentPurpose(),
+      $this->domainSiteManager->getCurrentSiteKey()?->value,
     );
   }
 
@@ -93,11 +94,12 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $destination = $request->getSession()->get(self::LOGIN_DESTINATION_SESSION_KEY);
       $request->getSession()->remove(self::LOGIN_DESTINATION_SESSION_KEY);
       if (is_array($destination)
-        && isset($destination['purpose'], $destination['path'])
-        && is_string($destination['purpose'])
+        && isset($destination['site_key'], $destination['path'])
+        && is_string($destination['site_key'])
         && is_string($destination['path'])
         && $this->isSafeLoginDestinationPath($destination['path'])) {
-        $url = $this->domainPurposeManager->pathUrl($destination['purpose'], $destination['path']);
+        $siteKey = SiteKey::tryFrom($destination['site_key']);
+        $url = $siteKey === NULL ? NULL : $this->domainSiteManager->pathUrl($siteKey, $destination['path']);
         if ($url !== NULL) {
           $query = $destination['query'] ?? [];
           if (is_array($query) && $query !== []) {
@@ -110,7 +112,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
 
       // ACCOUNT's Domain root is the public landing URL. Its domain-specific
       // front page resolves the overview route internally.
-      $accountRoot = $this->domainPurposeManager->pathUrl(DomainSurfaceMap::ACCOUNT, '/');
+      $accountRoot = $this->domainSiteManager->pathUrl(SiteKey::Account, '/');
       if ($accountRoot !== NULL) {
         $this->retargetRedirect($event, $accountRoot->toString());
         return;
@@ -121,7 +123,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    $login = $this->domainPurposeManager->routeUrl(DomainSurfaceMap::ACCOUNT, 'user.login');
+    $login = $this->domainSiteManager->routeUrl(SiteKey::Account, 'user.login');
     if ($login) {
       // Keep Core's status, cookies, and headers after a successful logout.
       $this->retargetRedirect($event, $login->toString());
@@ -177,9 +179,9 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     catch (MethodNotAllowedException) {
       // The path may still resolve to a route whose method requirements reject
       // this request. Inspect Drupal's path candidates and their metadata so
-      // wrong-purpose mutations fail closed without duplicating route families.
+      // Wrong-site mutations fail closed without duplicating route families.
       $request = $event->getRequest();
-      $mustRejectWrongHostMutation = $this->domainPurposeManager->getCurrentPurpose() !== DomainSurfaceMap::MAIN
+      $mustRejectWrongHostMutation = $this->domainSiteManager->getCurrentSiteKey()?->value !== DomainSurfaceMap::MAIN
         && !in_array($request->getMethod(), ['GET', 'HEAD'], TRUE);
       foreach ($this->routeProvider->getRouteCollectionForRequest($request) as $candidate) {
         $invalidMetadata = DomainRoutePolicy::hasInvalidSiteKeyOptions($candidate);
@@ -197,7 +199,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     // Redirect anonymous visitors at the Account root to its login page.
     // This runs before access-aware routing would return 403.
     if ($matched['_route'] === 'aculta_portal.dashboard' && !$this->currentUser->isAuthenticated()) {
-      $login = $this->domainPurposeManager->routeUrl(DomainSurfaceMap::ACCOUNT, 'user.login');
+      $login = $this->domainSiteManager->routeUrl(SiteKey::Account, 'user.login');
       if ($login !== NULL) {
         $event->setResponse(new TrustedRedirectResponse($login->toString(), Response::HTTP_FOUND));
         return;
@@ -206,13 +208,13 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     // The Account root serves the private Studio dashboard; anonymous visitors
     // go to the account login page. The dashboard has no public standalone URL.
     $accountAction = FrontPathPolicy::acaoDaContaNaRaiz(
-      $this->domainPurposeManager->getCurrentPurpose(),
+      $this->domainSiteManager->getCurrentSiteKey()?->value,
       $event->getRequest()->getPathInfo(),
       (string) $matched['_route'],
       $this->currentUser->isAuthenticated(),
     );
     if ($accountAction === FrontPathPolicy::ACAO_LOGIN) {
-      $login = $this->domainPurposeManager->routeUrl(DomainSurfaceMap::ACCOUNT, 'user.login');
+      $login = $this->domainSiteManager->routeUrl(SiteKey::Account, 'user.login');
       if ($login !== NULL) {
         $event->setResponse(new TrustedRedirectResponse($login->toString(), Response::HTTP_FOUND));
         return;
@@ -223,29 +225,29 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $event->setResponse($this->notFoundResponse());
       return;
     }
-    $requiredPurpose = $this->contentSiteKeyResolver->requiredSiteKey(
+    $requiredSiteKey = $this->contentSiteKeyResolver->requiredSiteKey(
       $route,
       $matched['_route'],
       $event->getRequest(),
       $matched,
     );
-    $currentPurpose = $this->domainPurposeManager->getCurrentPurpose();
+    $currentSiteKey = $this->domainSiteManager->getCurrentSiteKey()?->value;
     // Test-only seam for single-host Functional installs. Production always
-    // negotiates one Domain per purpose, and this setting stays unset.
+    // negotiates one Domain per site key, and this setting stays unset.
     if (Settings::get('aculta_site_key_test_relaxed', FALSE)) {
       return;
     }
-    if (is_string($requiredPurpose)
-      && !DomainRoutePolicy::allowsSharedSite($route, $requiredPurpose, (string) $currentPurpose)) {
+    if (is_string($requiredSiteKey)
+      && !DomainRoutePolicy::allowsSharedSite($route, $requiredSiteKey, (string) $currentSiteKey)) {
       if ($this->isPasswordResetEditException(
         $event->getRequest(),
         (string) $matched['_route'],
-        $currentPurpose,
+        $currentSiteKey,
         $matched,
       )) {
         return;
       }
-      if ($requiredPurpose === DomainSurfaceMap::MAIN
+      if ($requiredSiteKey === DomainSurfaceMap::MAIN
         && ($this->isAdministrativeRoute($route)
           || DomainRoutePolicy::canonicalSiteKey($route) === DomainSurfaceMap::MAIN)) {
         // Toda a interface administrativa responde somente no MAIN. Em
@@ -262,7 +264,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Enforces the purpose policy after the route has been matched.
+   * Enforces the site-key policy after the route has been matched.
    */
   public function onRequest(RequestEvent $event): void {
     if (!$event->isMainRequest()) {
@@ -270,10 +272,10 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     }
     $request = $event->getRequest();
     $routeName = (string) $request->attributes->get('_route');
-    // Internal paths for purpose roots are not public. Direct requests return
+    // Internal paths for site roots are not public. Direct requests return
     // 404 before Redirect can normalize them.
     if (FrontPathPolicy::bloqueiaCaminhoInterno(
-      $this->domainPurposeManager->getCurrentPurpose(),
+      $this->domainSiteManager->getCurrentSiteKey()?->value,
       $request->getPathInfo(),
       (bool) $request->attributes->get(PurposeFrontPathProcessor::FRONT_ATTRIBUTE),
     )) {
@@ -284,7 +286,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       && $request->hasSession()) {
       $session = $request->getSession();
       $destination = $this->parseLoginDestination($request->query->get('destination'));
-      $requestedPurpose = $request->query->get('aculta_destination_purpose');
+      $requestedSiteKey = $request->query->get('aculta_destination_site_key');
 
       // A direct/fresh login must not inherit a destination abandoned earlier
       // in the same anonymous session.
@@ -294,28 +296,29 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
 
       if ($destination !== NULL) {
         $storedDestination = $session->get(self::LOGIN_DESTINATION_SESSION_KEY);
-        $destinationPurpose = is_string($requestedPurpose)
-          && $this->domainPurposeManager->getDomain($requestedPurpose)
-            ? $requestedPurpose
-            : NULL;
+        $destinationSiteKey = is_string($requestedSiteKey) ? SiteKey::tryFrom($requestedSiteKey) : NULL;
+        if ($destinationSiteKey !== NULL && $this->domainSiteManager->getDomain($destinationSiteKey) === NULL) {
+          $destinationSiteKey = NULL;
+        }
 
         // Social Auth forwards Drupal's standard destination but not the
-        // ACULTA-specific purpose. Preserve the purpose captured on /entrar
+        // ACULTA-specific site key. Preserve the site key captured on /entrar
         // when the OAuth request refers to the same path and query.
-        if ($destinationPurpose === NULL
+        if ($destinationSiteKey === NULL
           && $routeName === 'social_auth.network.redirect'
           && is_array($storedDestination)
           && ($storedDestination['path'] ?? NULL) === $destination['path']
           && ($storedDestination['query'] ?? []) === $destination['query']
-          && is_string($storedDestination['purpose'] ?? NULL)
-          && $this->domainPurposeManager->getDomain($storedDestination['purpose']) !== NULL) {
-          $destinationPurpose = $storedDestination['purpose'];
+          && is_string($storedDestination['site_key'] ?? NULL)
+          && ($storedSiteKey = SiteKey::tryFrom($storedDestination['site_key'])) !== NULL
+          && $this->domainSiteManager->getDomain($storedSiteKey) !== NULL) {
+          $destinationSiteKey = $storedSiteKey;
         }
 
-        $destinationPurpose ??= $this->domainPurposeManager->getCurrentPurpose();
-        if ($destinationPurpose !== NULL) {
+        $destinationSiteKey ??= $this->domainSiteManager->getCurrentSiteKey();
+        if ($destinationSiteKey !== NULL) {
           $session->set(self::LOGIN_DESTINATION_SESSION_KEY, [
-            'purpose' => $destinationPurpose,
+            'site_key' => $destinationSiteKey->value,
             'path' => $destination['path'],
             'query' => $destination['query'],
           ]);
@@ -331,12 +334,12 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $this->notFound($event);
       return;
     }
-    $requiredPurpose = $this->contentSiteKeyResolver->requiredSiteKey(
+    $requiredSiteKey = $this->contentSiteKeyResolver->requiredSiteKey(
       $route,
       (string) $request->attributes->get('_route'),
       $request,
     );
-    $currentPurpose = $this->domainPurposeManager->getCurrentPurpose();
+    $currentSiteKey = $this->domainSiteManager->getCurrentSiteKey()?->value;
 
     // Same test-only seam used before routing.
     if (Settings::get('aculta_site_key_test_relaxed', FALSE)) {
@@ -346,12 +349,12 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     $resetEditException = $this->isPasswordResetEditException(
       $request,
       (string) $request->attributes->get('_route'),
-      $currentPurpose,
+      $currentSiteKey,
     );
-    if (is_string($requiredPurpose)
-      && !DomainRoutePolicy::allowsSharedSite($route, $requiredPurpose, (string) $currentPurpose)
+    if (is_string($requiredSiteKey)
+      && !DomainRoutePolicy::allowsSharedSite($route, $requiredSiteKey, (string) $currentSiteKey)
       && !$resetEditException) {
-      if ($requiredPurpose === DomainSurfaceMap::MAIN
+      if ($requiredSiteKey === DomainSurfaceMap::MAIN
         && ($this->isAdministrativeRoute($route)
           || DomainRoutePolicy::canonicalSiteKey($route) === DomainSurfaceMap::MAIN)) {
         // Toda a interface administrativa responde somente no MAIN. Em
@@ -367,9 +370,9 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    $contentPurpose = $this->contentSiteKeyResolver->canonicalContentSiteKey($request);
-    if ($contentPurpose !== NULL
-      && !DomainRoutePolicy::allowsSharedSite($route, $contentPurpose, (string) $currentPurpose)) {
+    $contentSiteKey = $this->contentSiteKeyResolver->canonicalContentSiteKey($request);
+    if ($contentSiteKey !== NULL
+      && !DomainRoutePolicy::allowsSharedSite($route, $contentSiteKey, (string) $currentSiteKey)) {
       $this->notFound($event);
     }
   }
@@ -400,7 +403,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       return $this->notFoundResponse();
     }
 
-    $url = $this->domainPurposeManager->pathUrl(DomainSurfaceMap::MAIN, $request->getPathInfo());
+    $url = $this->domainSiteManager->pathUrl(SiteKey::Main, $request->getPathInfo());
     if ($url === NULL) {
       return $this->notFoundResponse();
     }
@@ -439,7 +442,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     if ($parts === FALSE || !isset($parts['path'])) {
       return NULL;
     }
-    $url = $this->domainPurposeManager->pathUrl(DomainSurfaceMap::MAIN, $parts['path']);
+    $url = $this->domainSiteManager->pathUrl(SiteKey::Main, $parts['path']);
     if ($url === NULL) {
       return NULL;
     }
@@ -476,18 +479,18 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
    *   Current request.
    * @param string $routeName
    *   Matched route name.
-   * @param string|null $currentPurpose
-   *   Purpose of the current domain.
+   * @param string|null $currentSiteKey
+   *   Site key of the current domain.
    * @param array<string, mixed> $matched
    *   Access-free router parameters when called before RouterListener.
    */
   private function isPasswordResetEditException(
     Request $request,
     string $routeName,
-    ?string $currentPurpose,
+    ?string $currentSiteKey,
     array $matched = [],
   ): bool {
-    if ($routeName !== 'entity.user.edit_form' || $currentPurpose !== DomainSurfaceMap::ACCOUNT) {
+    if ($routeName !== 'entity.user.edit_form' || $currentSiteKey !== DomainSurfaceMap::ACCOUNT) {
       return FALSE;
     }
 
@@ -552,7 +555,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Returns a private 404 response for a request outside its purpose.
+   * Returns a private 404 response for a request outside its site key.
    */
   private function notFound(RequestEvent $event): void {
     $event->setResponse($this->notFoundResponse());

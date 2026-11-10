@@ -284,9 +284,9 @@ services:
     tags:
       - { name: event_subscriber }
 
-  aculta_portal.domain_purpose_subscriber:
-    class: Drupal\aculta_portal\EventSubscriber\DomainPurposeRequestSubscriber
-    arguments: ['@aculta_portal.domain_purpose', '@router.no_access_checks', '@current_user', '@router.route_provider', '@aculta_portal.content_site_key_resolver']
+  aculta_portal.domain_site_subscriber:
+    class: Drupal\aculta_portal\EventSubscriber\DomainSiteRequestSubscriber
+    arguments: ['@aculta_portal.domain_site', '@router.no_access_checks', '@current_user', '@router.route_provider', '@aculta_portal.content_site_key_resolver']
     tags:
       - { name: event_subscriber }
       - { name: aculta_portal.implementation }

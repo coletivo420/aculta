@@ -6,7 +6,8 @@ namespace Drupal\aculta_portal\Plugin\Commerce\CheckoutPane;
 
 use Drupal\Component\Utility\Html;
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutFlow\CheckoutFlowInterface;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutPane\Login;
 use Drupal\Core\Ajax\AjaxResponse;
@@ -30,7 +31,7 @@ final class AcultaCheckoutLogin extends Login {
 
   /**
    * Domain-purpose URL resolver. */
-  protected ?DomainPurposeManager $domainPurpose = NULL;
+  protected ?DomainSiteManagerInterface $domainSiteManager = NULL;
 
   /**
    * Configured Social Auth integrations. */
@@ -49,7 +50,7 @@ final class AcultaCheckoutLogin extends Login {
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?CheckoutFlowInterface $checkout_flow = NULL): static {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition, $checkout_flow);
-    $instance->domainPurpose = $container->get('aculta_portal.domain_purpose');
+    $instance->domainSiteManager = $container->get('aculta_portal.domain_site');
     $instance->authIntegration = $container->get('aculta_portal.auth_integration');
     $instance->portalModuleHandler = $container->get('module_handler');
     $instance->flood = $container->get('flood');
@@ -232,15 +233,19 @@ final class AcultaCheckoutLogin extends Login {
     if (!$this->portalModuleHandler?->moduleExists('social_auth') || !$this->authIntegration?->isGoogleConfigured()) {
       return [];
     }
-    $url = $this->domainPurpose?->routeUrl('account', 'social_auth.network.redirect', ['network' => 'google']);
+    $siteManager = $this->domainSiteManager;
+    if ($siteManager === NULL) {
+      return [];
+    }
+    $url = $siteManager->routeUrl(SiteKey::Account, 'social_auth.network.redirect', ['network' => 'google']);
     if (!$url instanceof Url) {
       return [];
     }
     $destination = '/checkout/' . $this->order->id() . '/' . $this->getStepId();
     $query = ['destination' => $destination];
-    $purpose = $this->domainPurpose->getCurrentPurpose();
-    if ($purpose !== NULL) {
-      $query['aculta_destination_purpose'] = $purpose;
+    $siteKey = $siteManager->getCurrentSiteKey();
+    if ($siteKey !== NULL) {
+      $query['aculta_destination_site_key'] = $siteKey->value;
     }
     $url->setOption('query', $query);
     $link = sprintf('<a href="%s" data-portal-ui="auth-google">%s <strong>Google</strong></a>', Html::escape($url->toString()), Html::escape((string) $this->t('Continuar com')));

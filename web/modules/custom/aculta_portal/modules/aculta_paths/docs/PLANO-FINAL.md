@@ -26,7 +26,7 @@ Esta fotografia antecede a atualização do contrib Domain e não descreve a ver
 - 161 declarações YAML de `_aculta_domain_purpose`.
 - Atribuição em código por `RoutingEvents::ALTER`: `aculta_mcp` (-2048), `aculta_portal` (-2049), `aculta_messenger` (-2050), `aculta_calendar` (-2050).
 - Cinco mapas por purpose em código: `DOMAIN_IDS`, `FRONT_PATHS`, `CANONICAL_STUDIO_PATHS`, `NO_DA_RAIZ`, `CAMINHOS_LEGADOS`.
-- 12 literais de decisão `'main'` e `'account'` no `DomainPurposeRequestSubscriber`.
+- 12 literais de decisão `'main'` e `'account'` no `DomainSiteRequestSubscriber`.
 - Rota MCP `/integracoes/mcp`: sem sobrescrita hoje, por coincidência de valor com a regra de `/integracoes`.
 - Flag `_aculta_domain_purpose_authoritative`: sem leitor no código atual.
 

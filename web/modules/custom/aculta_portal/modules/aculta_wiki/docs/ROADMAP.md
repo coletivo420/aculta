@@ -754,7 +754,7 @@ PHP lint passaram. Concorrência multiprocesso permanece pendente.
 As rotas `/wiki`, `/wiki/busca` e `/wiki/busca/previa` agora declaram purpose
 `wiki`. A omissão anterior permitia que o subscriber compartilhado não
 rejeitasse esses caminhos no domínio principal. Kernel chama o
-`DomainPurposeRequestSubscriber` real e confirma resposta 404 para busca Wiki
+`DomainSiteRequestSubscriber` real e confirma resposta 404 para busca Wiki
 em `main`, mantendo a raiz pública e o caminho interno da Wiki (1 teste / 73
 asserções). PHPCS/lint passaram; Portal e Runtime não mudaram.
 

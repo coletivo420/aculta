@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Form;
 
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -49,7 +50,7 @@ final class LoginPopupForm extends UserLoginForm {
     RendererInterface $renderer,
     BareHtmlPageRendererInterface $bare_html_renderer,
     LoginFinalizer $login_finalizer,
-    protected readonly DomainPurposeManager $domainPurpose,
+    protected readonly DomainSiteManagerInterface $domainSiteManager,
     protected readonly AuthIntegrationManager $authIntegration,
     protected readonly ModuleHandlerInterface $moduleHandler,
   ) {
@@ -67,7 +68,7 @@ final class LoginPopupForm extends UserLoginForm {
       $container->get('renderer'),
       $container->get('bare_html_page_renderer'),
       $container->get(LoginFinalizer::class),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('aculta_portal.auth_integration'),
       $container->get('module_handler'),
     );
@@ -123,11 +124,11 @@ final class LoginPopupForm extends UserLoginForm {
     ];
 
     $links = [];
-    $passwordUrl = $this->domainPurpose->routeUrl('account', 'user.pass');
+    $passwordUrl = $this->domainSiteManager->routeUrl(SiteKey::Account, 'user.pass');
     if ($passwordUrl !== NULL) {
       $links['password'] = ['#type' => 'link', '#title' => $this->t('Esqueceu sua senha?'), '#url' => $passwordUrl];
     }
-    $registerUrl = $this->domainPurpose->routeUrl('account', 'user.register');
+    $registerUrl = $this->domainSiteManager->routeUrl(SiteKey::Account, 'user.register');
     if ($registerUrl !== NULL) {
       // Divisor entre "Esqueceu sua senha?" e "Cadastre-se", como no anexo.
       $links['divider'] = [
@@ -149,7 +150,7 @@ final class LoginPopupForm extends UserLoginForm {
 
     // Google (Social Auth, mesmo fluxo do /entrar). A rota OAuth é a do host
     // da conta, onde as URIs de retorno estão cadastradas; o retorno volta ao
-    // host de origem pelo destino (aculta_destination_purpose).
+    // host de origem pelo site_key capturado no destino.
     if ($this->moduleHandler->moduleExists('social_auth') && $this->authIntegration->isGoogleConfigured()) {
       $google = $this->googleButton($form['destination']['#value']);
       if ($google !== NULL) {
@@ -193,14 +194,14 @@ final class LoginPopupForm extends UserLoginForm {
    * Returns the popup's Google sign-in link when its route exists.
    */
   private function googleButton(string $destination): ?array {
-    $url = $this->domainPurpose->routeUrl('account', 'social_auth.network.redirect', ['network' => 'google']);
+    $url = $this->domainSiteManager->routeUrl(SiteKey::Account, 'social_auth.network.redirect', ['network' => 'google']);
     if ($url === NULL) {
       return NULL;
     }
     $query = ['destination' => $destination];
-    $purpose = $this->domainPurpose->getCurrentPurpose();
-    if ($purpose !== NULL) {
-      $query['aculta_destination_purpose'] = $purpose;
+    $siteKey = $this->domainSiteManager->getCurrentSiteKey();
+    if ($siteKey !== NULL) {
+      $query['aculta_destination_site_key'] = $siteKey->value;
     }
     $url->setOption('query', $query);
     $markup = sprintf(
@@ -229,7 +230,7 @@ final class LoginPopupForm extends UserLoginForm {
     if ($identifier = $form_state->get('flood_control_user_identifier')) {
       $this->userFloodControl->register('user.failed_login_user', $flood_config->get('user_window'), $identifier);
     }
-    $passwordUrl = $this->domainPurpose->routeUrl('account', 'user.pass')?->toString() ?? '#';
+    $passwordUrl = $this->domainSiteManager->routeUrl(SiteKey::Account, 'user.pass')?->toString() ?? '#';
     $triggered = $form_state->get('flood_control_triggered');
     if ($triggered === 'user') {
       $form_state->setErrorByName('name', $this->formatPlural(

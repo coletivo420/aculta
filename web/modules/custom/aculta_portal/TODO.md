@@ -4,7 +4,7 @@ Estado: Dev · versão 0.5.0-dev.1 (`aculta_portal.info.yml`) · status: `docs/o
 
 ## Próximo passo
 
-- **RN-01/02 em andamento:** `SiteKey`, `DomainSiteManagerInterface/DomainSiteManager` e `ContentSiteKeyResolver` implementados; options de rota antigas removidas, sem fallback. Migrar `DomainPurposeRequestSubscriber`, destinos de login/sessão e consumidores restantes; provar paridade de URLs/alias, ACL e cache.
+- **RN-01/02 em andamento:** `SiteKey`, `DomainSiteManagerInterface/DomainSiteManager` e `ContentSiteKeyResolver` implementados; options de rota antigas removidas, sem fallback. `DomainSiteRequestSubscriber` e destinos de login/sessão já usam `site_key` direto; migrar consumidores restantes e provar paridade de URLs/alias, ACL e cache.
 - **RN-03 State concluído:** `active_site_keys` substitui diretamente o State antigo. Kernel isolado 2/17; PHPCS PASS. Post-update está versionado, mas não executado no Runtime por exigir `updatedb`.
 - **RN-00 parcial:** `scripts/inventory-site-key-contracts.php` registra 1.610 referências ainda sem triagem semântica; completar matriz HTTP, State, sessão e consumidores por owner.
 - **US-02 UI Skins:** Composer e API 1.2.1 confirmados. Runtime `ui_skins` Disabled; snapshot `docs/architecture/inventarios/ui-suite-runtime-2026-11-10.json` registra drift Sync/Runtime. Implementar resolver `domain_id -> skin_id`, CSS variable scopes e modo claro/escuro; fotografar baseline Links e migrar sem manter config visual/fallback purpose.

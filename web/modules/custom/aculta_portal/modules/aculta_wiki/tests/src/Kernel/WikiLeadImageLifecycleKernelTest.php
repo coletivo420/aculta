@@ -818,14 +818,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'aculta_portal.wiki_search' => '/busca-wiki',
       'aculta_portal.wiki_search_preview' => '/busca-wiki/previa',
     ];
-    $purposeResolver = $this->container->get('aculta_portal.content_site_key_resolver');
+    $siteKeyResolver = $this->container->get('aculta_portal.content_site_key_resolver');
     foreach ($routePaths as $routeName => $path) {
       $route = $routeProvider->getRouteByName($routeName);
       self::assertSame($path, $route->getPath());
       self::assertCount(1, $routeProvider->getRoutesByPattern($path), 'The Wiki path must have one route owner.');
       self::assertSame('access content', $route->getRequirement('_permission'));
       self::assertSame('wiki', $route->getOption('_aculta_site_key'));
-      self::assertSame('wiki', $purposeResolver->requiredSiteKey($route, $routeName, Request::create($path)));
+      self::assertSame('wiki', $siteKeyResolver->requiredSiteKey($route, $routeName, Request::create($path)));
       self::assertTrue($accessManager->checkNamedRoute($routeName, [], new AnonymousUserSession()));
     }
 
@@ -845,8 +845,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertTrue(FrontPathPolicy::bloqueiaCaminhoInterno('wiki', '/wiki', FALSE));
 
     // The internal Wiki home is served from the Wiki root, but not from the
-    // main Portal host. Exercise the real purpose subscriber for both cases.
-    $purposeSubscriber = $this->container->get('aculta_portal.domain_purpose_subscriber');
+    // main Portal host. Exercise the real site-key subscriber for both cases.
+    $siteSubscriber = $this->container->get('aculta_portal.domain_site_subscriber');
     $wikiHomeRequest = Request::create('/wiki');
     $wikiHomeRequest->attributes->set(PurposeFrontPathProcessor::FRONT_ATTRIBUTE, TRUE);
     $wikiHomeRequest->attributes->set('_route', 'aculta_portal.wiki_home');
@@ -856,7 +856,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       $wikiHomeRequest,
       HttpKernelInterface::MAIN_REQUEST,
     );
-    $purposeSubscriber->onRequest($wikiHomeEvent);
+    $siteSubscriber->onRequest($wikiHomeEvent);
     self::assertNull($wikiHomeEvent->getResponse(), 'The Wiki home is accepted when the Wiki root serves it.');
 
     $domainNegotiator = $this->container->get(DomainNegotiatorInterface::class);
@@ -869,7 +869,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       $mainHomeRequest,
       HttpKernelInterface::MAIN_REQUEST,
     );
-    $purposeSubscriber->onRequest($mainHomeEvent);
+    $siteSubscriber->onRequest($mainHomeEvent);
     self::assertNotNull($mainHomeEvent->getResponse());
     self::assertSame(404, $mainHomeEvent->getResponse()->getStatusCode());
     $domainNegotiator->getContext()->setDomain(Domain::load('wiki420_aculta_org'));
@@ -877,17 +877,17 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     // Public Wiki routes must not be served from the main Portal domain.
     $domainNegotiator->getContext()->setDomain(Domain::load('aculta_org'));
     $searchRoute = $routeProvider->getRouteByName('aculta_portal.wiki_search');
-    $wrongPurposeRequest = Request::create('https://main.example.invalid/busca-wiki');
-    $wrongPurposeRequest->attributes->set('_route', 'aculta_portal.wiki_search');
-    $wrongPurposeRequest->attributes->set('_route_object', $searchRoute);
-    $wrongPurposeEvent = new RequestEvent(
+    $wrongSiteRequest = Request::create('https://main.example.invalid/busca-wiki');
+    $wrongSiteRequest->attributes->set('_route', 'aculta_portal.wiki_search');
+    $wrongSiteRequest->attributes->set('_route_object', $searchRoute);
+    $wrongSiteEvent = new RequestEvent(
       $this->container->get('kernel'),
-      $wrongPurposeRequest,
+      $wrongSiteRequest,
       HttpKernelInterface::MAIN_REQUEST,
     );
-    $this->container->get('aculta_portal.domain_purpose_subscriber')->onRequest($wrongPurposeEvent);
-    self::assertNotNull($wrongPurposeEvent->getResponse());
-    self::assertSame(404, $wrongPurposeEvent->getResponse()->getStatusCode());
+    $this->container->get('aculta_portal.domain_site_subscriber')->onRequest($wrongSiteEvent);
+    self::assertNotNull($wrongSiteEvent->getResponse());
+    self::assertSame(404, $wrongSiteEvent->getResponse()->getStatusCode());
     $domainNegotiator->getContext()->setDomain(Domain::load('wiki420_aculta_org'));
 
     $proposalRoute = $routeProvider->getRouteByName('aculta_wiki.proposal_submit');
@@ -895,7 +895,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('submit wiki proposals', $proposalRoute->getRequirement('_permission'));
     self::assertSame('node.view', $proposalRoute->getRequirement('_entity_access'));
     self::assertSame('wiki', $proposalRoute->getOption('_aculta_site_key'));
-    self::assertSame('wiki', $purposeResolver->requiredSiteKey(
+    self::assertSame('wiki', $siteKeyResolver->requiredSiteKey(
       $proposalRoute,
       'aculta_wiki.proposal_submit',
       Request::create('/verbetes/1/contribuir'),
@@ -913,14 +913,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $wrongProposalRequest = Request::create('https://main.example.invalid/verbetes/' . $proposalTarget->id() . '/contribuir');
     $wrongProposalRequest->attributes->set('_route', 'aculta_wiki.proposal_submit');
     $wrongProposalRequest->attributes->set('_route_object', $proposalRoute);
-    $wrongProposalEvent = new RequestEvent(
+    $wrongSiteProposalEvent = new RequestEvent(
       $this->container->get('kernel'),
       $wrongProposalRequest,
       HttpKernelInterface::MAIN_REQUEST,
     );
-    $this->container->get('aculta_portal.domain_purpose_subscriber')->onRequestBeforeRouter($wrongProposalEvent);
-    self::assertNotNull($wrongProposalEvent->getResponse());
-    self::assertSame(404, $wrongProposalEvent->getResponse()->getStatusCode());
+    $this->container->get('aculta_portal.domain_site_subscriber')->onRequestBeforeRouter($wrongSiteProposalEvent);
+    self::assertNotNull($wrongSiteProposalEvent->getResponse());
+    self::assertSame(404, $wrongSiteProposalEvent->getResponse()->getStatusCode());
     $domainNegotiator->getContext()->setDomain(Domain::load('wiki420_aculta_org'));
     $intentRoute = $routeProvider->getRouteByName('aculta_wiki.contribution_intent');
     self::assertSame('/verbetes/{node}/contribuir/como', $intentRoute->getPath());

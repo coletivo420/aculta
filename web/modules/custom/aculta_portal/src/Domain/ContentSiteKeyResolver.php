@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Route;
 /**
  * Resolves route/content ownership without enforcing the HTTP response.
  *
- * DomainPurposeRequestSubscriber owns HTTP enforcement/canonicalization. This
+ * DomainSiteRequestSubscriber owns HTTP enforcement/canonicalization. This
  * service only translates Drupal route/content state into a stable ACULTA
  * site key, with platform administration taking precedence over content
  * ownership.
