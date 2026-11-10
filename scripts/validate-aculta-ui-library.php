@@ -89,7 +89,7 @@ foreach (['aculta_ui_library.blocks', 'aculta_ui_library.block_preview'] as $nam
 $switcher = \Drupal::service('account_switcher');
 $switcher->switchTo($admin);
 try {
-  $controller = new \Drupal\aculta_ui_library\Controller\UiLibraryPreviewController(\Drupal::service('context.repository'));
+  $controller = new \Drupal\aculta_ui_library\Controller\UiLibraryPreviewController(\Drupal::service('context.repository'), \Drupal::service('router.route_provider'));
   $renderer = \Drupal::service('renderer');
 
   $catalog = $controller->listBlocks();

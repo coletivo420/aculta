@@ -135,4 +135,28 @@ class FluentEmojiFilterTest extends UnitTestCase {
     $this->assertStringNotContainsString('herb.svg', $output);
   }
 
+  /**
+   * Tags de script, style, svg e nós já convertidos preservam o glifo literal.
+   */
+  public function testScriptStyleAndSvgAreUntouched(): void {
+    $html = '<script>console.log("🌿");</script><style>.a{content:"🌿"}</style><svg viewBox="0 0 10 10"><text>🌿</text></svg><pre><code>🌿</code></pre><p>Texto 🌿</p>';
+    $output = $this->process($html);
+
+    $this->assertStringContainsString('<script>console.log("🌿");</script>', $output);
+    $this->assertStringContainsString('<style>.a{content:"🌿"}</style>', $output);
+    $this->assertStringContainsString('<svg viewBox="0 0 10 10"><text>🌿</text></svg>', $output);
+    $this->assertStringContainsString('<pre><code>🌿</code></pre>', $output);
+    $this->assertStringContainsString('herb.svg', $output);
+  }
+
+  /**
+   * Conversão dupla é prevenida quando o HTML já contém marcação reaction-emoji.
+   */
+  public function testDoubleConversionIsPrevented(): void {
+    $html = '<span class="reaction-emoji reaction-emoji--color reaction-emoji--sm" role="img" aria-label="Erva"><img src="/base/color/herb.svg" alt="" width="20" height="20"></span>';
+    $output = $this->process($html);
+
+    $this->assertSame($html, $output);
+  }
+
 }

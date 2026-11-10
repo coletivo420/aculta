@@ -67,7 +67,7 @@ final class FluentEmojiFilter extends FilterBase implements ContainerFactoryPlug
     $resolver = $container->has('aculta_editor.fluent_emoji_asset_resolver')
       ? $container->get('aculta_editor.fluent_emoji_asset_resolver')
       : null;
-    $assetsUrl = $resolver instanceof \Drupalaculta_editor\Service\FluentEmojiAssetResolverInterface
+    $assetsUrl = $resolver instanceof \Drupal\aculta_editor\Service\FluentEmojiAssetResolverInterface
       ? $resolver->getAssetsUrl()
       : base_path() . 'themes/custom/aculta420_v2/assets/icons/fluent-emoji/color';
 
@@ -90,65 +90,87 @@ final class FluentEmojiFilter extends FilterBase implements ContainerFactoryPlug
   /**
    * Troca os glifos do catálogo pela marcação do SVG colorido.
    *
-   * Ignora o conteúdo de atributos HTML e de blocos <pre> e <code>, onde o
-   * glifo deve permanecer literal.
+   * Ignora o conteúdo de atributos HTML e de nós textuais dentro de <script>,
+   * <style>, <pre>, <code>, <svg>, <textarea> e nós já convertidos.
    */
   public function transform(string $text): string {
     if ($text === '' || !preg_match('/[\x{2600}-\x{27BF}\x{1F000}-\x{1FAFF}]/u', $text)) {
       return $text;
     }
 
-    $replacements = $this->replacements();
-    if ($replacements === []) {
+    $byGlyph = $this->catalog->byGlyph();
+    if ($byGlyph === []) {
       return $text;
     }
 
-    $parts = preg_split('/(<[^>]+>)/u', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
-    if ($parts === FALSE) {
-      return $text;
-    }
+    $keys = array_keys($byGlyph);
+    usort($keys, static fn(string $a, string $b): int => mb_strlen($b, 'UTF-8') <=> mb_strlen($a, 'UTF-8'));
+    $pattern = '/(' . implode('|', array_map('preg_quote', $keys)) . ')/u';
 
-    $output = '';
-    $preOrCode = 0;
-    foreach ($parts as $index => $part) {
-      // Índices ímpares são as tags capturadas pelo preg_split.
-      if ($index % 2 === 1) {
-        if (preg_match('/^<\s*(pre|code)\b/i', $part) === 1) {
-          $preOrCode++;
-        }
-        elseif (preg_match('/^<\s*\/\s*(pre|code)\b/i', $part) === 1 && $preOrCode > 0) {
-          $preOrCode--;
-        }
-        $output .= $part;
+    $document = Html::load($text);
+    $xpath = new \DOMXPath($document);
+
+    $excluded = ['script', 'style', 'code', 'pre', 'svg', 'textarea', 'kbd', 'samp', 'var'];
+    $tagExclusions = implode(' and ', array_map(static fn(string $tag): string => 'not(ancestor::' . $tag . ')', $excluded));
+    $query = '//text()[' . $tagExclusions . ' and not(ancestor::*[contains(concat(" ", normalize-space(@class), " "), " reaction-emoji ")])]';
+
+    /** @var \DOMText[] $nodes */
+    $nodes = iterator_to_array($xpath->query($query));
+
+    $modified = FALSE;
+    foreach ($nodes as $node) {
+      $val = $node->nodeValue;
+      if ($val === NULL || !preg_match($pattern, $val)) {
         continue;
       }
 
-      if ($part === '') {
+      $parts = preg_split($pattern, $val, -1, PREG_SPLIT_DELIM_CAPTURE);
+      if ($parts === FALSE || count($parts) <= 1) {
         continue;
       }
-      $output .= $preOrCode > 0 ? $part : strtr($part, $replacements);
+
+      $parent = $node->parentNode;
+      if ($parent === NULL) {
+        continue;
+      }
+
+      foreach ($parts as $part) {
+        if ($part === '') {
+          continue;
+        }
+
+        if (isset($byGlyph[$part])) {
+          $entry = $byGlyph[$part];
+          $name = (string) ($entry['name'] ?? $entry['id']);
+          $file = (string) ($entry['svg'] ?? $entry['id'] . '.svg');
+          $url = $this->assetsUrl . '/' . $file;
+
+          $span = $document->createElement('span');
+          $span->setAttribute('class', 'reaction-emoji reaction-emoji--color reaction-emoji--sm');
+          $span->setAttribute('role', 'img');
+          $span->setAttribute('aria-label', $name);
+
+          $img = $document->createElement('img');
+          $img->setAttribute('src', $url);
+          $img->setAttribute('alt', '');
+          $img->setAttribute('width', (string) self::SIZE);
+          $img->setAttribute('height', (string) self::SIZE);
+          $img->setAttribute('loading', 'lazy');
+          $img->setAttribute('decoding', 'async');
+
+          $span->appendChild($img);
+          $parent->insertBefore($span, $node);
+          $modified = TRUE;
+        }
+        else {
+          $parent->insertBefore($document->createTextNode($part), $node);
+        }
+      }
+
+      $parent->removeChild($node);
     }
 
-    return $output;
-  }
-
-  /**
-   * Monta o mapa glifo => marcação do SVG.
-   *
-   * @return array<string, string>
-   *   Substituições prontas para strtr().
-   */
-  private function replacements(): array {
-    $replacements = [];
-    foreach ($this->catalog->byGlyph() as $glyph => $entry) {
-      $name = Html::escape((string) ($entry['name'] ?? $entry['id']));
-      $file = Html::escape((string) ($entry['svg'] ?? $entry['id'] . '.svg'));
-      $url = Html::escape($this->assetsUrl . '/' . $file);
-      $replacements[$glyph] = '<span class="reaction-emoji reaction-emoji--color reaction-emoji--sm" role="img" aria-label="' . $name . '">'
-        . '<img src="' . $url . '" alt="" width="' . self::SIZE . '" height="' . self::SIZE . '" loading="lazy" decoding="async">'
-        . '</span>';
-    }
-    return $replacements;
+    return $modified ? Html::serialize($document) : $text;
   }
 
 }

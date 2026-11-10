@@ -11,6 +11,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Plugin\Context\ContextInterface;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
 use Drupal\Core\Plugin\Context\ContextRepositoryInterface;
+use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -31,6 +32,7 @@ final class UiLibraryPreviewController extends ControllerBase {
 
   public function __construct(
     private readonly ContextRepositoryInterface $contextRepository,
+    private readonly RouteProviderInterface $routeProvider,
   ) {}
 
   /**
@@ -39,6 +41,7 @@ final class UiLibraryPreviewController extends ControllerBase {
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('context.repository'),
+      $container->get('router.route_provider'),
     );
   }
 
@@ -72,31 +75,44 @@ final class UiLibraryPreviewController extends ControllerBase {
     $nav = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'ui-library-nav'],
+    ];
+
+    $routes = [
       'components' => [
-        '#type' => 'aculta_portal_button',
-        '#props' => [
-          'text' => (string) $this->t('Componentes SDC'),
-          'url' => Url::fromRoute('ui_patterns_library.overview')->toString(),
-          'variant' => 'secondary',
-        ],
+        'route' => 'ui_patterns_library.overview',
+        'title' => $this->t('Componentes SDC'),
       ],
       'icons' => [
-        '#type' => 'aculta_portal_button',
-        '#props' => [
-          'text' => (string) $this->t('Ícones UI Icons'),
-          'url' => Url::fromRoute('ui_icons_library.index')->toString(),
-          'variant' => 'secondary',
-        ],
+        'route' => 'ui_icons_library.index',
+        'title' => $this->t('Ícones UI Icons'),
+      ],
+      'styles' => [
+        'route' => 'ui_styles_library.overview',
+        'title' => $this->t('Estilos UI Styles'),
       ],
       'suite' => [
-        '#type' => 'aculta_portal_button',
-        '#props' => [
-          'text' => (string) $this->t('Visão Geral UI Suite'),
-          'url' => Url::fromRoute('ui_suite.index')->toString(),
-          'variant' => 'secondary',
-        ],
+        'route' => 'ui_suite.index',
+        'title' => $this->t('Visão Geral UI Suite'),
       ],
     ];
+
+    foreach ($routes as $key => $info) {
+      try {
+        if ($this->routeProvider->getRoutesByNames([$info['route']])) {
+          $nav[$key] = [
+            '#type' => 'aculta_portal_button',
+            '#props' => [
+              'text' => (string) $info['title'],
+              'url' => Url::fromRoute($info['route'])->toString(),
+              'variant' => 'secondary',
+            ],
+          ];
+        }
+      }
+      catch (\Throwable) {
+        // Ignora rota ausente ou não habilitada.
+      }
+    }
 
     $build = [
       '#type' => 'container',
