@@ -2,6 +2,10 @@
 
 Só o específico do Claude. Regras gerais: `AGENTS.md`. Ambientes: `docs/operations/AGENT-OPERATIONS.md`.
 
+## Skills do projeto
+
+As Skills compartilhadas ficam em `.agents/skills/` como fonte canônica e são expostas em `.claude/skills/` por symlinks relativos. Para tarefas de componentes e UI Suite, consulte `sdc`, `ui-patterns`, `ui-styles`, `ui-icons` e `ui-suite-integrations` conforme o escopo.
+
 ## Antes de começar
 
 1. Leia `AGENTS.md`. Git: push direto em `origin/dev` a cada entrega; PR só com pedido explícito. A instrução de "PR por fase" do claude.ai está desatualizada; não a siga.

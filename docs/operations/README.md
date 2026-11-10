@@ -13,5 +13,7 @@ Documentação operacional durável do ACULTA.
 - [RELEASE-LIFECYCLE.md](RELEASE-LIFECYCLE.md) — fluxo vigente Dev → RC → deploy/validação Alpha e decisão CSP.
 - [Homelab](../../scripts/homelab/README.md) — ambiente de desenvolvimento.
 - Estados — snapshots/estados de desenvolvimento, mantidos fora do Git (pasta `estados/`, ignorada).
+- [AUDITORIA-SKILLS-DRUPAL-2026-11.md](AUDITORIA-SKILLS-DRUPAL-2026-11.md) — inventário de Skills e integrações UI Suite, com limites entre Composer, export e runtime.
+- [TESTES-SKILLS-UI-SUITE.md](TESTES-SKILLS-UI-SUITE.md) — cenários de comportamento e limites das avaliações de Skills.
 
 Histórico de rodadas, SHAs e PRs fica no GitHub/Git, não nesta pasta.

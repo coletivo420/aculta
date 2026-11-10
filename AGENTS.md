@@ -54,4 +54,4 @@ Regras de todos os agentes. Em conflito, vale a instrução explícita mais rece
 - Detalhes: `AGENT-REGRAS-DETALHADAS.md`, `AGENT-OPERATIONS.md`, `AGENT-POLICY-INDEX.md`, `MAPA-PARA-AGENTES.md`.
 - Testes de navegador: `docs/operations/NAVEGADOR-TESTES.md`.
 - Capturas de evidência: `tests/browser/capturas/<frente>/<AAAA-MM-DD>/`; PNG fora do Git; `manifest.json` versionado.
-- Decisões: `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`. Skills: `docs/agent-skills/<nome>/SKILL.md`. Gates e economia: `docs/operations/GATES.md`, `docs/portal/AGENT-TOKEN-ECONOMY.md`.
+- Decisões: `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`. Skills canônicas: `.agents/skills/<nome>/SKILL.md` (Codex e Claude); `docs/agent-skills/` é alias compatível. Gates e economia: `docs/operations/GATES.md`, `docs/portal/AGENT-TOKEN-ECONOMY.md`.

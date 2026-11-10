@@ -5,6 +5,8 @@ description: Use para escrever ou revisar CSS do tema aculta420_v2 (tokens semâ
 
 # CSS no ACULTA (aculta420_v2)
 
+Use para escrever ou revisar CSS do tema V2. Para definir escolhas editoriais de classe reutilizável, consulte também `ui-styles`; para mudar componentes, consulte `sdc`.
+
 Tokens em `web/themes/custom/aculta420_v2/src/styles/tokens.css`. Bloco claro em `:root, [data-theme="light"]`; bloco escuro em `:root[data-theme="dark"], [data-theme="dark"]`. Não crie um terceiro sistema de cor.
 
 ## Regras
@@ -61,3 +63,11 @@ Fonte: skill `design-tokens` (laurigates/claude-plugins), revisada e adaptada. N
 - Modo de contraste forçado (`forced-colors`): não remova o foco nem a borda de controle. Teste também esse caso.
 - Critérios de referência (WCAG 2.2): texto normal 4,5:1 (SC 1.4.3); texto grande 3:1; componente de interface e gráfico 3:1 (SC 1.4.11). O critério de aparência de foco (2.4.13) tem nível que deve ser conferido no texto oficial do W3C antes de citar: não declarar nível sem conferir.
 - Fontes para conferir antes de citar: https://www.w3.org/TR/WCAG22/ e https://developer.mozilla.org (páginas de `color-scheme` e `light-dark()`).
+
+## UI Styles e assets
+
+- Os estilos configuráveis vivem em `web/themes/custom/aculta420_v2/aculta420_v2.ui_styles.yml`; CSS e tokens continuam pertencendo ao tema. A skill `ui-styles` define quando declarar escolha editorial nesse arquivo.
+- CSS que só serve um SDC fica no diretório do SDC. Estilo de componente ou página não deve duplicar opção já mapeada em UI Styles nem carregar bibliotecas globais.
+- Antes de anexar ou ampliar biblioteca, confira `aculta420_v2.libraries.yml`, o carregamento no hook/template e os gates do tema. Prefira assets condicionais do componente.
+- O V2 não usa Bootstrap como framework visual. Não copie classes ou CSS da base ACULTA420 V1. Reuse `data-portal-ui` somente conforme `aculta-data-portal-ui`.
+- Detalhes de escolha entre componente, variante, UI Style e utilitário: `../ui-styles/references/decisao-de-abstracao.md`.
