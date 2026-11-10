@@ -65,6 +65,7 @@ class ForumThemeHooks {
           'entity_type' => '',
           'entity_id' => '',
           'allowed_reactions' => [],
+          'emoji_categories' => [],
           'user_reaction' => NULL,
           'can_react' => FALSE,
           'react_url' => '',

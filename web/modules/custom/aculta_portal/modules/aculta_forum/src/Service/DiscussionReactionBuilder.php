@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Service;
 
+use Drupal\aculta_editor\Service\FluentEmojiIconAdapterInterface;
 use Drupal\aculta_forum\Access\DiscussionReactionEndpointAccess;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\user\EntityOwnerInterface;
 
@@ -16,10 +18,13 @@ use Drupal\user\EntityOwnerInterface;
  */
 class DiscussionReactionBuilder {
 
+  use StringTranslationTrait;
+
   public function __construct(
     protected readonly DiscussionReactionManager $reactionManager,
     protected readonly DiscussionReactionEndpointAccess $reactionEndpointAccess,
     protected readonly CsrfTokenGenerator $csrfToken,
+    protected readonly ?FluentEmojiIconAdapterInterface $emojiAdapter = NULL,
   ) {}
 
   /**
@@ -109,12 +114,58 @@ class DiscussionReactionBuilder {
     $allowedReactions = $this->reactionManager->getAllowedReactions();
     $targetId = "discussion-reactions-{$entityType}-{$entityId}";
 
+    $categoryLabels = [
+      'cultivo' => (string) $this->t('Cultivo e Botânica'),
+      'vibe' => (string) $this->t('Expressões e Comunidade'),
+      'saude' => (string) $this->t('Ciência e Saúde'),
+      'direitos' => (string) $this->t('Direitos e Sociedade'),
+    ];
+
+    $emojiCategories = [];
+    if ($this->emojiAdapter !== NULL) {
+      $rawCategories = $this->emojiAdapter->getCategories();
+      foreach ($rawCategories as $catKey => $items) {
+        $filteredItems = [];
+        foreach ($allowedReactions as $reactionKey => $reactionInfo) {
+          $emojiIcon = $reactionInfo['icon'] ?? $reactionKey;
+          // Se o ícone do emoji existir nesta categoria do catálogo
+          if (isset($items[$emojiIcon])) {
+            $catItem = $items[$emojiIcon];
+            $filteredItems[$reactionKey] = [
+              'id' => $reactionKey,
+              'name' => $reactionInfo['label'] ?? $catItem['name'],
+              'icon' => $emojiIcon,
+              'keywords' => array_merge([$reactionInfo['label']], $catItem['keywords'] ?? []),
+            ];
+          }
+        }
+        if (!empty($filteredItems)) {
+          $emojiCategories[$catKey] = [
+            'label' => $categoryLabels[$catKey] ?? ucfirst($catKey),
+            'items' => $filteredItems,
+          ];
+        }
+      }
+    }
+
+    if (empty($emojiCategories)) {
+      $emojiCategories['geral'] = [
+        'label' => (string) $this->t('Reações'),
+        'items' => array_map(static fn(array $item): array => [
+          'id' => $item['id'],
+          'name' => $item['label'],
+          'keywords' => [$item['label']],
+        ], $allowedReactions),
+      ];
+    }
+
     return [
       '#theme' => 'discussion_reaction_picker',
       '#target_id' => $targetId,
       '#entity_type' => $entityType,
       '#entity_id' => (string) $entityId,
       '#allowed_reactions' => $allowedReactions,
+      '#emoji_categories' => $emojiCategories,
       '#user_reaction' => $reactionsData['user_reaction'],
       '#can_react' => $canReact,
       '#react_url' => $reactUrl,

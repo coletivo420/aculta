@@ -334,6 +334,7 @@ services:
       - '@aculta_forum.discussion_reaction_manager'
       - '@aculta_forum.discussion_reaction_endpoint_access'
       - '@csrf_token'
+      - '@?aculta_editor.fluent_emoji_icon_adapter'
 
   aculta_forum.discussion_reaction_controller:
     class: Drupal\aculta_forum\Controller\DiscussionReactionController
