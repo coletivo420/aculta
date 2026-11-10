@@ -27,3 +27,9 @@ description: Testes de navegador do ACULTA: ordem de motores, artefatos em SUITE
 - Formulário de configuração: teste permissões, valores salvos e retorno do preview; nunca use dados reais ou conteúdo persistente sem autorização.
 - Testes de preview sob demanda devem provar estado inicial, carregamento, erro/fallback e acessibilidade da região de status quando esses comportamentos forem parte do diff.
 - Regressão visual sem captura ou execução do browser fica DEFERRED, com viewport e ambiente pendentes explicitados.
+
+
+
+## Functional (BrowserTestBase)
+
+`SUITE_OUT=... scripts/test-functional.sh <caminho-do-teste>`. Usa `aculta_simpletest`, site selecionado por User-Agent e login no host Conta (`/entrar`); depende de `web/sites/default/testing.services.yml` e de `SIMPLETEST_BASE_URL=https://aculta.toca.net.br`. Nunca aponte para produção. Guia: `docs/operations/BANCO-DE-TESTE.md`.

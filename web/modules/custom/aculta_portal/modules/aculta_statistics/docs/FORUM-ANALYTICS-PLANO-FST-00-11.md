@@ -293,7 +293,7 @@ Estados possíveis: PLANEJADA, EM EXECUÇÃO, IMPLEMENTADA NO CÓDIGO, TESTADA, 
 | FST-08 | IMPLEMENTADA NO CÓDIGO; BROWSER DEFERRED | Área Fórum do painel central com cartões, série acessível, filtro de período sem JavaScript, atividade, saúde das respostas e moderação; resumo e link no painel `/painel-administrativo/forum`. Oito SDCs em `aculta420_v2` com schema estrito, story e tokens; o controlador usa apenas `data-portal-ui` neutro e o tema carrega o CSS dos componentes, sem dependência módulo-tema. `validate-aculta420-sdc-schemas.php`: PASS (80 componentes, 1707 checks); Stylelint PASS nos componentes; Kernel do painel: 7 testes OK. Captura visual e leitor de tela DEFERRED. |
 | FST-09 | TESTADA | `forum.replies.created` grava a resposta na dimensão do tópico; o agregador aceita somente nó `aculta_forum_topic` e exige `view content-level statistics`. O painel do Fórum lista até 10 tópicos após carregar no máximo 100 IDs e revalidar `view` por entidade. Unit cobre dimensão autorizada e bundle incompatível; Kernel confirma a dimensão. O Index continua responsável por selecionar e autorizar candidatos. |
 | FST-10 | TESTADA; COLETA LIGADA NO DEV | Auditoria: Search API (`aculta_forum`), View `aculta_forum_search`, cache de Views, GA4 e Search Console existentes; sem beacon próprio, sem política de consentimento específica aprovada. Instrumentação de busca implementada sem termo, sessão, IP ou user-agent, com `aculta_statistics.settings.forum_discovery.enabled` desligado por padrão e schema de config. Visualizações e clique de resultado permanecem BLOQUEADOS até decisão de privacidade e medição de bots/cache. Coleta habilitada apenas no Runtime de desenvolvimento por decisão de 2026-11-10, com finalidade publicada no inventário LGPD; produção permanece desligada até a Política de Privacidade. Unit cobre desligado, zero resultado e busca com resultado. |
-| FST-11 | TESTADA; RUNTIME PARCIALMENTE HOMOLOGADO | Unit, Kernel, Browser Firefox ESR e gates executados. Update 9008 aplicado, ledger presente, 13 retratos coletados e reconciliação 13/13. Functional bloqueado por login no site de teste compartilhado. Dark mode/zoom e leitor de tela pendentes. Ver seção 14. |
+| FST-11 | TESTADA; RUNTIME PARCIALMENTE HOMOLOGADO | Unit, Kernel, Functional, Browser Firefox ESR e gates executados. Update 9008 aplicado, ledger presente, retratos coletados e reconciliação sem divergências. Dark mode do admin e leitor de tela real documentados como limites do tema/ferramenta. Ver seção 14. |
 
 Nenhuma fase está HOMOLOGADA NO RUNTIME. A sincronização do Runtime depende de `updatedb:status` e `config:status` sem pendências e não autoriza escrita de dados.
 
@@ -344,7 +344,7 @@ Data: 2026-11-10. Branch `dev`.
 - Zoom: emulação de 200% por viewport de 640 px PASS; o zoom nativo do Firefox não é exposto pelo Playwright/biDi e ficou DEFERRED.
 - Dark dos componentes: tokens do tema não são carregados no tema administrativo `default_admin`; a alteração não é aplicável sem theming próprio do admin. Registrado como limitación arquitetural, não como falha de contraste.
 - Browser Firefox ESR: 54/54 verificações PASS em 1280/768/640 (equivalente a 1280 a 200%)/390/320, oito rotas, teclado e foco visível, estrutura acessível (caption/scope/rótulos/links) e painel do Fórum sem erro. Modo escuro do painel: não aplicável, o tema administrativo ativo não expõe `data-theme`; forçar tokens do tema público reduziria o contraste e não foi adotado.
-- Functional: o host principal responde **404 em `/entrar`** porque a rota de login pertence ao domínio Conta; o host de Conta não serve o site `sites/simpletest`. O teste passa a exigir origem isolada e marca SKIP no host compartilhado, em vez de falhar. DEFERRED até um VirtualHost de teste servir o mesmo site nos dois hosts.
+- Functional: **PASS** com 2 testes e 20 asserções usando `web/sites/default/testing.services.yml` (`cookie_domain=.aculta.toca.net.br`), Domains principal e Conta no site isolado e login por `https://conta.aculta.toca.net.br/entrar`. Execução por `scripts/test-functional.sh`; o site de teste é selecionado pelo User-Agent do PHPUnit e não usa dados do Runtime.
 - Config Sync: `aculta_statistics.settings` e `aculta_forum.settings` aparecem `Different` por drift preexistente e pelo toggle intencional `forum_discovery.enabled=true` no desenvolvimento. Nenhum `config:import` foi executado, para não reverter configuração de outros escopos nem ligar a coleta em produção.
 
 ### Segurança por perfil (evidência parcial)
@@ -378,8 +378,7 @@ A matriz completa de navegador e HTTP permanece DEFERRED.
 ### Pendências que exigem autorização
 
 1. Reconciliar `aculta_forum.settings` e `aculta_statistics.settings` no Config Sync, se o responsável autorizar.
-2. Functional em origem HTTP isolada; o site de teste compartilhado não mantém a sessão de login.
-3. Dark mode, zoom de 200% e leitor de tela.
+2. Dark mode do painel administrativo exige theming próprio do admin; zoom nativo e leitor de tela real permanecem dependentes de ferramenta/Tema.
 4. Habilitar coleta de buscas somente com política de privacidade e consentimento aprovados.
 5. Instrumentar estado de resolução de denúncias no owner antes de `reports_resolved` e `resolution_median_minutes`.
 6. Medir carga representativa (100k/1M) e memória antes de declarar qualquer SLO.

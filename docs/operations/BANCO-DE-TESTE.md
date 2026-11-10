@@ -262,3 +262,25 @@ definição de campo do H5P pode ser descoberta junto ao resolver de discussões
 - Agentes e humanos que rodam Kernel de `aculta_portal` e submódulos.
 - O procedimento de CI ou de Hostinger não está definido aqui. Ele pertence ao contrato de segredos
   (`docs/operations/SECRETS.md`) e precisa de decisão própria.
+
+## Testes Functional (BrowserTestBase)
+
+Testes `Functional` também usam `aculta_simpletest`, mas o Drupal cria um site de teste em `web/sites/simpletest/<prefixo>` e o seleciona pelo User-Agent gerado pelo PHPUnit. Nunca apontam para dados do Runtime.
+
+Pré-requisitos já versionados:
+
+- `web/sites/default/testing.services.yml` define `session.storage.options.cookie_domain` como `.aculta.toca.net.br`, para compartilhar a sessão entre o host principal e o host de Conta.
+- O teste cria os Domains principal e `conta.<host>` no site isolado e faz login por `https://conta.aculta.toca.net.br/entrar`. A rota de login pertence ao host de Conta; no host principal ela responde 404 por política.
+- `SIMPLETEST_BASE_URL` aponta para o host de desenvolvimento documentado (`https://aculta.toca.net.br`). Não use `*.aculta.org`, produção ou um host sem os Domains do teste.
+
+Execução:
+
+```sh
+SUITE_OUT=/caminho/fora-do-repositorio/aculta-functional \
+scripts/test-functional.sh \
+  web/modules/custom/aculta_portal/modules/aculta_statistics/tests/src/Functional/StatisticsDashboardFunctionalTest.php
+```
+
+O wrapper carrega `secrets/simpletest-db.env`, define `SIMPLETEST_BASE_URL` e `BROWSERTEST_OUTPUT_DIRECTORY` e recusa host de produção. Saída esperada: `OK` ou `OK, but there were issues!` com depreciações de Core/contrib. Não deixe HTMLs de diagnóstico em `web/sites/simpletest/browser_output/`; use `BROWSERTEST_OUTPUT_DIRECTORY` fora do docroot e limpe os arquivos gerados.
+
+Limpeza: os diretórios `web/sites/simpletest/<prefixo>` são descartáveis. Não remova `aculta_runtime` nem `aculta_simpletest` inteiro durante a execução de outros testes.

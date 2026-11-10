@@ -16,7 +16,7 @@ Scripts com `routes.json` têm cobertura de rotas públicas no runner comum.
 | [`tests/browser/aculta-portal-cep/`](./aculta-portal-cep/README.md) | Testes do Portal CEP | 2 | sim |
 | [`tests/browser/aculta-qrcode/`](./aculta-qrcode/README.md) | Validação visual do ACULTA QR Code | 3 | sim |
 | [`tests/browser/aculta-secrets-manager/`](./aculta-secrets-manager/README.md) | Painel de credenciais (aculta_secrets_manager) | 4 | sim |
-| [`tests/browser/aculta-statistics/`](./aculta-statistics/README.md) | Revisão visual do painel de estatísticas | 1 | sim |
+| [`tests/browser/aculta-statistics/`](./aculta-statistics/README.md) | Revisão visual do painel de estatísticas | 3 | sim |
 | [`tests/browser/courses/aculta-forum-lms/`](./courses/aculta-forum-lms/README.md) | ACULTA Forum LMS — diálogo sob conteúdo H5P | 1 | sim |
 | [`tests/browser/courses/aculta-lms/`](./courses/aculta-lms/README.md) | Revisão visual do formulário de resposta com arquivo (LMS) | 2 | sim |
 | [`tests/browser/courses/aculta-lms-resources/`](./courses/aculta-lms-resources/README.md) | Revisão visual do campo de vídeos do curso | 1 | sim |
@@ -42,6 +42,7 @@ Scripts com `routes.json` têm cobertura de rotas públicas no runner comum.
 | [`tests/browser/studio/marley/`](./studio/marley/README.md) | Studio · Marley | 1 | sim |
 | [`tests/browser/studio/we-sativa/`](./studio/we-sativa/README.md) | Studio · WE SATIVA | 1 | sim |
 | [`tests/browser/support/aculta-faq/`](./support/aculta-faq/README.md) | Revisão visual do ACULTA FAQ | 1 | sim |
+| [`tests/browser/transversal/aculta-botoes-a11y/`](./transversal/aculta-botoes-a11y/README.md) | Leitor de tela (Orca) — botões em estados autenticados | 1 | não |
 | [`tests/browser/transversal/aculta-content-admin/`](./transversal/aculta-content-admin/README.md) | Revisão visual do Painel de conteúdo | 1 | sim |
 | [`tests/browser/transversal/aculta-document-viewer/`](./transversal/aculta-document-viewer/README.md) | Revisão visual do ACULTA Document Viewer | 3 | sim |
 | [`tests/browser/transversal/aculta-editor/`](./transversal/aculta-editor/README.md) | ACULTA Editor — acesso anônimo, editor e administrador | 1 | sim |
