@@ -8,7 +8,6 @@ use Drupal\aculta_forum\Service\DiscussionReactionManager;
 use Drupal\aculta_portal\Statistics\MetricProviderInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
-use Drupal\Core\Database\Query\SelectInterface;
 
 /**
  * Calcula indicadores do Fórum público diretamente nas entidades oficiais.
@@ -172,21 +171,21 @@ final class ForumMetricsProvider implements MetricProviderInterface {
 
     $schema = $this->database->schema();
     if ($schema->tableExists('comment_field_data')) {
-      $comments = $this->database->select('comment_field_data', 'c');
-      $comments->fields('c', ['cid']);
-      $comments->where('c.entity_id = n.nid');
-      $comments->condition('c.status', 1);
-      $comments->condition('c.comment_type', 'aculta_discussion_post');
-      $comments->where('c.uid <> n.uid');
-      $query->notExists($comments);
+      $replied = $this->database->select('comment_field_data', 'c');
+      $replied->join('node_field_data', 'cn', 'cn.nid = c.entity_id');
+      $replied->fields('c', ['entity_id']);
+      $replied->condition('c.status', 1);
+      $replied->condition('c.comment_type', 'aculta_discussion_post');
+      $replied->where('c.uid <> cn.uid');
+      $query->condition('n.nid', $replied, 'NOT IN');
     }
     if ($schema->tableExists('aculta_forum_post_field_data')) {
-      $posts = $this->database->select('aculta_forum_post_field_data', 'p');
-      $posts->fields('p', ['id']);
-      $posts->where('p.topic = n.nid');
-      $posts->condition('p.status', 1);
-      $posts->where('p.uid <> n.uid');
-      $query->notExists($posts);
+      $replied = $this->database->select('aculta_forum_post_field_data', 'p');
+      $replied->join('node_field_data', 'pn', 'pn.nid = p.topic');
+      $replied->fields('p', ['topic']);
+      $replied->condition('p.status', 1);
+      $replied->where('p.uid <> pn.uid');
+      $query->condition('n.nid', $replied, 'NOT IN');
     }
 
     return (int) $query->countQuery()->execute()->fetchField();
@@ -248,7 +247,10 @@ final class ForumMetricsProvider implements MetricProviderInterface {
     if (!$this->scopeResolver->applyPublicTopicConditions($topics, 'n')) {
       return NULL;
     }
-    $topicRows = $topics->execute()->fetchAllKeyed();
+    $topicRows = [];
+    foreach ($topics->execute() as $row) {
+      $topicRows[(int) $row->nid] = $row;
+    }
 
     $firstReplies = [];
     foreach ($this->firstReplyQueries($from, $to) as $query) {

@@ -287,7 +287,7 @@ Estados possíveis: PLANEJADA, EM EXECUÇÃO, IMPLEMENTADA NO CÓDIGO, TESTADA, 
 | FST-02 | TESTADA | `MetricDefinition` com tipos `counter`, `snapshot`, `distinct-window`, `ratio`, `distribution` e `operational`; contrato neutro `MetricProviderInterface` no Portal; `MetricProviderCollector` e cron de retratos; `ForumMetricsProvider` publicado por tag opcional. Unit dos dois módulos passam. |
 | FST-03 | TESTADA | Ledger `aculta_forum_analytics_ledger` com chave SHA-256 única, claim atômico e retenção de 400 dias; hooks de tópico, Comment e ForumPost reivindicam antes de emitir. Kernel integrado com os dois módulos reais, EventDispatcher, subscriber e agregado: 3 testes, 61 asserções, replay e republicação não duplicam. |
 | FST-04 | TESTADA | Retratos por provedor (`replaceDay`), `SnapshotReconciliation` com dry-run, lock, limite de 90 dias, relatório e comando Drush; Kernel prova tópicos públicos, rascunho e Group direto excluídos. Corrigida a tabela `groups_field_data` usada pelo resolvedor SQL. |
-| FST-05 | PLANEJADA | Pendente. |
+| FST-05 | TESTADA | Provedor calcula pessoas distintas em 7/30 dias, novos contribuidores, mediana e p90 da primeira resposta de outro autor e sem resposta após 72h. Kernel com quatro autores reais, respostas, mesmo autor e tópico antigo valida os números; UIDs não são persistidos. |
 | FST-06 | PLANEJADA | Pendente. |
 | FST-07 | PLANEJADA | Pendente. |
 | FST-08 | PLANEJADA | Pendente. |

@@ -8,12 +8,16 @@ use Drupal\aculta_forum\Analytics\ForumActivityLedger;
 use Drupal\aculta_forum\Hook\ForumActivityEventHooks;
 use Drupal\aculta_statistics\Storage\AggregateStorageInterface;
 use Drupal\aculta_statistics\Storage\DailyAggregateStorage;
+use Drupal\comment\Entity\Comment;
+use Drupal\comment\Entity\CommentType;
 use Drupal\domain\Entity\Domain;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group as GroupEntity;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
+use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -146,8 +150,10 @@ final class ForumActivityIntegrationKernelTest extends KernelTestBase {
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installSchema('node', ['node_access']);
+    $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installSchema('aculta_forum', [ForumActivityLedger::TABLE]);
     $this->installSchema('aculta_user', ['aculta_user_nickname', 'aculta_user_agreement']);
+    $this->installSchema('user', ['users_data']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installSchema('aculta_statistics', [DailyAggregateStorage::TABLE]);
     $this->installConfig([
@@ -181,6 +187,29 @@ final class ForumActivityIntegrationKernelTest extends KernelTestBase {
       'type' => 'aculta_forum_topic',
       'name' => 'Tópico do Fórum',
     ])->save();
+    CommentType::create([
+      'id' => 'aculta_discussion_post',
+      'label' => 'Resposta do Fórum',
+      'target_entity_type_id' => 'node',
+    ])->save();
+    FieldStorageConfig::create([
+      'field_name' => 'field_aculta_discussion',
+      'entity_type' => 'node',
+      'type' => 'comment',
+      'settings' => ['comment_type' => 'aculta_discussion_post'],
+    ])->save();
+    FieldConfig::create([
+      'field_name' => 'field_aculta_discussion',
+      'entity_type' => 'node',
+      'bundle' => 'aculta_forum_topic',
+      'label' => 'Discussão',
+    ])->save();
+    FieldStorageConfig::create([
+      'field_name' => 'field_nickname',
+      'entity_type' => 'profile',
+      'type' => 'string',
+    ])->save();
+    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
 
     Domain::create([
       'id' => 'forum_aculta_org',
@@ -190,6 +219,11 @@ final class ForumActivityIntegrationKernelTest extends KernelTestBase {
       'status' => TRUE,
       'weight' => 0,
     ])->save();
+
+    // Contas novas não entram em moderação prévia neste cenário de métricas.
+    $this->container->get('config.factory')->getEditable('aculta_user.settings')
+      ->set('primeiro_comentario_discussao_moderado', FALSE)
+      ->save();
 
     $this->storage = $this->container->get('aculta_statistics.storage');
   }
@@ -298,6 +332,90 @@ final class ForumActivityIntegrationKernelTest extends KernelTestBase {
   }
 
   /**
+   * Participação, primeira resposta e tópicos sem resposta.
+   */
+  public function testParticipationAndResponseMetrics(): void {
+    $now = $this->container->get('datetime.time')->getRequestTime();
+    $participants = [];
+    for ($i = 1; $i <= 4; $i++) {
+      $user = User::create(['name' => 'participante-' . $i, 'status' => 1]);
+      $user->save();
+      $participants[] = (int) $user->id();
+    }
+    [$u1, $u2, $u3, $u4] = $participants;
+
+    $topicA = $this->topicAt($u1, $now - 5000);
+    self::assertSame($u1, $topicA->getOwnerId());
+    self::assertSame($now - 5000, $topicA->getCreatedTime());
+    $topicB = $this->topicAt($u2, $now - 2 * 86400);
+    $topicC = $this->topicAt($u3, $now - 86400);
+    $this->topicAt($u4, $now - 80 * 3600);
+
+    $this->comment($topicA, $u2, $now - 200);
+    $this->comment($topicB, $u2, $now - 86400);
+    $this->comment($topicC, $u1, $now - 86400 + 600);
+
+    $provider = $this->container->get('aculta_forum.metrics_provider');
+    $day = $this->storage->currentDay();
+
+    $comments = $this->container->get('database')->select('comment_field_data', 'c')
+      ->fields('c', ['cid', 'entity_id', 'uid', 'status', 'comment_type', 'default_langcode', 'created'])
+      ->execute()
+      ->fetchAll();
+    self::assertCount(3, $comments);
+    $comment_uids = array_map(static fn ($row): int => (int) $row->uid, $comments);
+    sort($comment_uids);
+    $expected_comment_uids = [$u1, $u2, $u2];
+    sort($expected_comment_uids);
+    self::assertSame($expected_comment_uids, $comment_uids);
+    $comment_topics = array_map(static fn ($row): int => (int) $row->entity_id, $comments);
+    sort($comment_topics);
+    $expected_topics = [(int) $topicA->id(), (int) $topicB->id(), (int) $topicC->id()];
+    sort($expected_topics);
+    self::assertSame($expected_topics, $comment_topics);
+    self::assertSame([1, 1, 1], array_map(static fn ($row): int => (int) $row->status, $comments));
+    self::assertSame(
+      ['aculta_discussion_post', 'aculta_discussion_post', 'aculta_discussion_post'],
+      array_map(static fn ($row): string => (string) $row->comment_type, $comments),
+    );
+    $comment_created = array_map(static fn ($row): int => (int) $row->created, $comments);
+    sort($comment_created);
+    $expected_created = [(int) ($now - 86400), (int) ($now - 85800), (int) ($now - 200)];
+    sort($expected_created);
+    self::assertSame($expected_created, $comment_created);
+    $repliedQ = $this->container->get('database')->select('comment_field_data', 'c');
+    $repliedQ->join('node_field_data', 'cn', 'cn.nid = c.entity_id');
+    $repliedQ->fields('c', ['entity_id']);
+    $repliedQ->condition('c.status', 1);
+    $repliedQ->condition('c.comment_type', 'aculta_discussion_post');
+    $repliedQ->where('c.uid <> cn.uid');
+    $repliedIds = array_map('intval', $repliedQ->execute()->fetchCol());
+    sort($repliedIds);
+    $expectedReplied = [(int) $topicA->id(), (int) $topicC->id()];
+    sort($expectedReplied);
+    self::assertSame($expectedReplied, $repliedIds);
+
+    $rows = $this->container->get('database')->select('node_field_data', 'n')
+      ->fields('n', ['nid', 'uid', 'created', 'status'])
+      ->execute()
+      ->fetchAll();
+    self::assertCount(4, $rows);
+    $uids = array_map(static fn ($row): int => (int) $row->uid, $rows);
+    sort($uids);
+    self::assertSame($participants, $uids);
+    $dates = array_map(static fn ($row): int => (int) $row->created, $rows);
+    self::assertCount(4, $dates);
+
+    self::assertSame(4, $provider->value('forum.participants.engaged_7d', $day));
+    self::assertSame(4, $provider->value('forum.participants.engaged_30d', $day));
+    self::assertSame(0, $provider->value('forum.participants.new_contributors', $day));
+    self::assertSame(2, $provider->value('forum.topics.unanswered', $day));
+    self::assertSame(1, $provider->value('forum.response.unanswered_over_72h', $day));
+    self::assertSame(10, $provider->value('forum.response.first_median_minutes', $day));
+    self::assertSame(80, $provider->value('forum.response.first_p90_minutes', $day));
+  }
+
+  /**
    * O ledger guarda só impressão digital e instante.
    */
   public function testLedgerNeverStoresPersonalData(): void {
@@ -311,6 +429,44 @@ final class ForumActivityIntegrationKernelTest extends KernelTestBase {
     self::assertIsArray($row);
     self::assertSame(['fingerprint', 'created'], array_keys($row));
     self::assertMatchesRegularExpression('/^[a-f0-9]{64}$/', $row['fingerprint']);
+  }
+
+  /**
+   * Cria um tópico com autor e instante controlados.
+   */
+  private function topicAt(int $uid, int $created): Node {
+    $topic = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Tópico ' . $uid . '-' . $created,
+      'status' => 1,
+      'uid' => $uid,
+      'created' => $created,
+      'field_domain_source' => ['target_id' => 'forum_aculta_org'],
+    ]);
+    $topic->setOwnerId($uid);
+    $topic->setCreatedTime($created);
+    $topic->save();
+    return $topic;
+  }
+
+  /**
+   * Cria uma resposta publicada no tópico.
+   */
+  private function comment(Node $topic, int $uid, int $created): Comment {
+    $comment = Comment::create([
+      'comment_type' => 'aculta_discussion_post',
+      'entity_type' => 'node',
+      'entity_id' => $topic->id(),
+      'field_name' => 'field_aculta_discussion',
+      'uid' => $uid,
+      'status' => 1,
+      'created' => $created,
+      'subject' => 'Resposta',
+    ]);
+    $comment->setOwnerId($uid);
+    $comment->setCreatedTime($created);
+    $comment->save();
+    return $comment;
   }
 
   /**
