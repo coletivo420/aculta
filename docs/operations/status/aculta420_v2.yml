@@ -2,5 +2,5 @@
 version: '1.5.0'
 state: Dev
 progress_note: >-
-  1.5.0: corte ADR-054 concluído no desenvolvimento. Tema com cinco regiões, shell v2 padrão, Layout Builder em 22 displays, landing Links no LB, biblioteca UI com prévias reais e CSS contextual (107 KB globais, -60%). Motor de container removido; motor antigo de largura não controla mais as páginas migradas. Gates do tema, fundação, design, classes, Portal Drupal 12 e tokens PASS; boundary módulo/tema segue com dívida pré-existente.
-next_phase: 'Revisão visual humana e conteúdo editorial das demais landings; reduzir a dívida de boundary dos módulos do Portal.'
+  1.5.0: corte ADR-054 concluído no desenvolvimento. Tema com cinco regiões, shell v2 padrão, Layout Builder em 22 displays, landing Links no LB, biblioteca UI integrada com navegação neutra e CSS contextual (107 KB globais, -60%). Config Sync da barra institucional versionado. Stylelint 100% PASS. Boundary módulo/tema 100% PASS (7327 checks). Matriz de 10 purposes homologada com 1 H1 e 1 main.
+next_phase: 'Revisão visual humana e composição editorial das landings restantes conforme aprovação do responsável.'

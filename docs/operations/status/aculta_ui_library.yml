@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.1
+version: 0.1.0-dev.2
 state: Dev
-next_phase: 'Validar a prévia de blocos de conteúdo, Views e blocos com contexto de entidade em navegador autenticado; avaliar integração de link de prévia na UI Patterns Library e manter a rota restrita ao MAIN.'
-progress_note: 'Catálogo administrativo de blocos reais do aculta420_v2 com prévia via plugin original, checagem de acesso, contexto obrigatório ausente como indisponibilidade, max-age 0 e user.roles. Rotas /painel-administrativo com _aculta_domain_purpose=main: visitante 403 no MAIN e 404 em subdomínios. Gate validate-aculta-ui-library.php PASS (23 checks).'
+next_phase: 'Monitorar navegação administrativa e prévias reais sob perfil de administrador.'
+progress_note: 'Controle de acesso estrito com UiLibraryAccessCheck exigindo papel administrator e administer blocks no MAIN. Navegação integrada com UI Patterns Library e UI Suite Overview. Gate validate-aculta-ui-library.php PASS (23 checks) e suíte unitária de acesso PASS (6/6).'

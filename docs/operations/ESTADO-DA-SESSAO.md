@@ -2,6 +2,16 @@
 
 > **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
 
+# ADR-054 — Conclusão das Pendências e Homologação Multidomínio — 2026-11-09
+
+- **Objetivo:** auditar, corrigir, complementar e concluir todas as frentes pendentes da refatoração ACULTA420 V2 (R0 a R9).
+- **Estado:** R0 (auditoria e diagnóstico pós-corte), R1 (Config Sync da barra institucional), R2 (fronteira módulo/tema com criação de `aculta_portal_button` e 100% PASS), R3 (fortalecimento de segurança da UI Library com `UiLibraryAccessCheck` e 6 testes unitários), R4 (navegação integrada com UI Patterns e UI Suite), R7 (Stylelint 100% PASS com 0 violações) e R8 (homologação multidomínio dos 10 purposes com 1 H1 e 1 `<main>`, teste de cache cruzado direto e inverso) CONCLUÍDOS.
+- **Decisões:** isolamento total de dependências visuais através de `aculta_portal_button` neutro, versionamento de `block.block.aculta420_v2_institution_bar.yml` em `config/sync`, exigência estrita de papel `administrator` para a UI Library e resolução de todas as violações de formatação CSS com Stylelint nativo.
+- **Arquivos:** `ACULTA420-V2-POST-CUTOVER-AUDITORIA.md`, `block.block.aculta420_v2_institution_bar.yml`, `PortalButton.php`, `PortalButtonThemeHooks.php`, `UiLibraryAccessCheck.php`, `UiLibraryPreviewController.php`, `PortalUiHooks.php`, estilos CSS corrigidos, testes unitários e arquivos de status.
+- **Verificações:** todos os gates executados com PASS: `validate-module-theme-boundary.php` (7327/7327), `npm run lint:css` (0 erros), `validate-aculta420-shell-regions.php` (28), `validate-aculta420-theme-settings.php` (14), `validate-aculta420-sdc-schemas.php` (1545), `validate-aculta420-design-foundations.php` (1113), `validate-aculta420-v2-foundations.php` (83 contrastes), `validate-aculta420-mapped-classes.php` (463), `validate-aculta420-layouts.php` (42), `validate-aculta420-css-scope.php` (43), `validate-aculta-ui-library.php` (23), `validate-aculta420-layout-builder-batch.php` (170), `validate-aculta-portal-drupal12.php` (1214) e `validate-agent-token-budget.php` (PASS).
+- **Runtime:** `drush cr` executado com sucesso; 10 purposes testados com HTTP 200/302, exatamente 1 H1 e 1 `<main>` por página.
+- **Próximo passo:** aprovação editorial humana para o conteúdo das 9 landing pages restantes.
+
 # Fórum — Comentários Compartilhados 0.2.0-dev.3 (Conclusão e Homologação Runtime) — 2026-11-08
 
 - **Objetivo:** implementar o novo compositor inline Form API + HTMX (C02-03 a C02-08), unificar fluxos de resposta e citação na mesma página, fechar achados COM-01 a COM-12 e validar no Runtime Homelab.
@@ -21,14 +31,3 @@
 - **Verificações:** PHPUnit isolado 32/32 PASS (123 assertions); `validate-project-status-index.php --write` PASS (41 componentes); SDC schemas e classes mapeadas validadas.
 - **Runtime:** Homelab inacessível localmente para `drush cr`; status registrado como `DEFERRED`.
 - **Próximo passo:** Agente 2 inicia C02-03 (experimento Form API + HTMX para resposta inline na mesma página) e fecha COM-01, COM-05 e COM-12.
-
-# ADR-054 — P0/P2/P3/P4/P6/P7 executados; P5/P8/P9 parciais — 2026-11-09
-
-- **Objetivo:** executar o plano ADR-054 de refatoração SDC First, Layout Builder, CSS multidomínio e Biblioteca UI.
-- **Estado:** P0 inventário; P2 painel de container; P3 shell v2 opt-in com cinco áreas; P4 cinco layouts SDC e Layout Builder em **22 dos 24 displays compatíveis** (`allow_custom=false`, 170 checks, duas exclusões documentadas); P5 landing Links composta com `layout-section` e mecanismo de override por nó pronto (`page.full` com `allow_custom`); P6 `aculta_ui_library` com prévias reais administrativas; P7 oito folhas de aplicação contextuais por rota (`global-styling` 268 → 107 KB, −60%). P9 executado em 2026-11-09: cinco regiões, shell v2 padrão, container removido, versão 1.5.0.
-- **Arquivos/commits:** `66f6e0440`, `e990a8edc`, `0f48b901b`, `9b3d576c6`, `2b62e067b`, `cb9e463b2`, `887ff53c3`, `5da6f783d`, `6ad0bb482`, `f534cfbbe`, `030e92abe`, `ac6e99e67`, `975d56e72`, `747fc4235`, `37afc9b72`. Relatórios em `docs/architecture/ACULTA420-V2-P0-INVENTARIO.md`, `ACULTA420-V2-P5-LANDING-PAGES.md` e `ACULTA420-V2-P8-HOMOLOGACAO.md`.
-- **Verificações:** gates do tema, layouts, UI Library, CSS e lote LB PASS; fundações, classes mapeadas, Drupal 12 e token budget corrigidos; resta apenas a dívida de boundary (64). Playwright Firefox: 86 checks, 0 falhas (anônimo e autenticado, cinco larguras, escuro, foco); home/wiki/revista com 1 H1 e 1 `<main>`; rollback `classic` testado. Config ativa em `classic`/`light`.
-- **Drift corrigido:** `main_menu`, `page_title`, `site_branding`, `help` e `breadcrumbs` estavam no Sync e ausentes da config ativa; restaurados. `institution_bar` segue só na config ativa.
-- **Pendências:** conteúdo editorial da landing Links (não existe nó de landing); dois displays excluídos do LB (`document.full` e `basic.default`); falta o nó editorial da landing Links; aceitação visual humana; import/export em staging; `lint:css` sem binário; cache cross-domain em ordem inversa.
-- **Próximo passo:** definir a landing Links com o responsável e avaliar os seis displays excluídos com adaptador próprio.
-
