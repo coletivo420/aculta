@@ -195,3 +195,16 @@ O catálogo sinaliza heurísticas, não condenações. Nesta rodada:
 | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/tests/src/Unit/MercadoPago/MercadoPagoChargebackNotificationServiceTest.php` | manter: contrato vigente |
 | `web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Unit/LegacyAuthorManagerTest.php` | manter: compatibilidade ativa (classe de produção existe) |
 | `web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php` | manter: contrato vigente |
+
+## 6.2. Suítes não executadas por completo localmente
+
+| Suíte | Estado real | Motivo |
+| --- | --- | --- |
+| Unit | PASS completa (3271/17535) | executável sem banco |
+| Kernel | recorte PASS: aculta_mailer 46/214; suíte completa interrompida por timeout | 249 arquivos instalam esquema por teste e um teste bloqueia a execução; o CI roda a suíte completa com MariaDB 10.11 |
+| Functional (3) | DEFERRED | exige SIMPLETEST_BASE_URL/servidor HTTP, indisponível nesta sessão |
+| FunctionalJavascript (1) | DEFERRED | exige WebDriver/navegador controlado |
+| Performance (4) | PASS por skip opt-in | sem banco, pulam em ~3 s |
+
+Nenhum resultado foi inventado: o que não rodou está marcado como DEFERRED ou
+com o recorte efetivamente executado.
