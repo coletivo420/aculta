@@ -68,6 +68,9 @@ Catalogar plugins nativos system_main_block, page_title_block, system_breadcrumb
 
 ### P7 - Otimizacao de CSS, JS e biblioteca de componentes
 
+**Extensão específica (2026-11-10):** consultar [plano de desempenho e catálogo universal do UI Patterns](ACULTA-UI-PATTERNS-OTIMIZACAO-UNIVERSAL.md) (UP-00 a UP-07). Preservar todos os SDCs no UI Patterns, inclusive internos, reutilizáveis e editoriais; resolver SEC-01 (acesso a prévias reais) e PERF-01 (invalidação de discovery em preprocess) antes de implementar o preview progressivo. Esta extensão está planejada, não homologada.
+
+
 Reduzir global-styling a tokens/base/shell necessarios. Fragmentar studio.css, forum.css, messenger-drawer.css, wiki.css e afins por componentes e bibliotecas contextuais. Nao mover CSS para um dominio se ele serve componentes usados em varios dominios; os CSS de purpose devem sobretudo definir identidade e variaveis semanticas. Preservar paletas Skunk Family e data-theme. Auditar @layer somente com teste de precedencia; medir duplicacao, cascade e JS listeners HTMX/jQuery. Fontes/imagens/icons com medicao de rede, nao inferir performance so pelo tamanho do repositorio.
 
 ### P8 - Homologacao paralela

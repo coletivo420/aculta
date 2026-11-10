@@ -29,6 +29,20 @@ domínio principal (`_aculta_domain_purpose: main`) e não são cacheadas
 - Falhas do plugin são convertidas em estado seguro de indisponibilidade, sem
   expor detalhes internos.
 
+
+## Auditoria pendente de segurança - 2026-11-10
+
+**Atenção:** o código atual de `UiLibraryPreviewController::preview()` usa
+`if (!$plugin->access($account, TRUE))`. A API retorna `AccessResultInterface`
+quando o segundo argumento é TRUE; essa condição não verifica `isAllowed()`
+e pode permitir o `build()` mesmo com acesso do plugin negado. A rota permanece
+restrita a administradores no domínio MAIN, mas esse controle externo não
+substitui a verificação do plugin. **SEC-01/P0 está pendente de correção e
+testes**; o gate atual não comprova a autorização individual do plugin.
+
+Plano e critérios: [UI Patterns - otimização universal](../../../../../../docs/architecture/ACULTA-UI-PATTERNS-OTIMIZACAO-UNIVERSAL.md).
+Esta nota não representa correção implementada nem homologação.
+
 ## Gate
 
 `php scripts/validate-aculta-ui-library.php` verifica rotas, acesso por perfil

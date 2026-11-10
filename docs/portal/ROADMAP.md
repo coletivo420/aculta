@@ -6,6 +6,12 @@
 
 # Roadmap do aculta_portal
 
+## UI Patterns 2 - otimização do catálogo universal (2026-11-10)
+
+[Plano consolidado UP-00 a UP-07](../architecture/ACULTA-UI-PATTERNS-OTIMIZACAO-UNIVERSAL.md).
+**Decisão obrigatória:** manter 100% dos SDCs internos, reutilizáveis e editoriais registrados no UI Patterns; otimizar descoberta, cache, execução de stories e prévias sob demanda, sem ocultar componentes. Auditoria estática detectou invalidação de cache de descoberta em preprocess, renderização antecipada de stories e verificação incorreta de AccessResult em prévias reais (SEC-01/P0). **Estado: planejamento, sem correção de código ou benchmark de Runtime nesta atualização.** A segurança da prévia é bloqueante antes de ampliar endpoints.
+
+
 ## Domain Config e Layout de Blocos por domínio (2026-11-09)
 
 Habilitado no Runtime de desenvolvimento: `domain_config_ui`,
