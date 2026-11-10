@@ -1,9 +1,14 @@
 includes:
     - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+    # Dívida histórica revisada. Novos erros não entram aqui: o CI roda sem
+    # regenerar o baseline e bloqueia qualquer erro não listado.
+    - phpstan-baseline.neon
 
 # A extensão mglaman/phpstan-drupal é carregada automaticamente pelo phpstan/extension-installer.
 parameters:
     level: 5
+    # Dívida resolvida em ignores revisados precisa aparecer, não ficar oculta.
+    reportUnmatchedIgnoredErrors: true
     paths:
         - web/modules/custom
         - web/themes/custom

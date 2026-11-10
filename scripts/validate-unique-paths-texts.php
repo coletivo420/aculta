@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @file
  */
 
 use Symfony\Component\Yaml\Yaml;
-
-declare(strict_types=1);
 
 /**
  * Barreira até a versão 1.0: sem caminho de rota duplicado, sem título de menu duplicado e sem texto aposentado

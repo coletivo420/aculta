@@ -1,12 +1,5 @@
 <?php
 
-/**
- * @file
- */
-
-use Drupal\Core\DrupalKernel;
-use Symfony\Component\HttpFoundation\Request;
-
 declare(strict_types=1);
 
 /**
@@ -20,6 +13,8 @@ declare(strict_types=1);
  *   drush scr scripts/migrate-activity-locations.php -- --rollback.
  */
 
+use Drupal\Core\DrupalKernel;
+use Symfony\Component\HttpFoundation\Request;
 
 if (!class_exists('\Drupal')) {
   $autoloader = require_once dirname(__DIR__) . '/vendor/autoload.php';

@@ -120,8 +120,8 @@ jobs:
       run: |
         composer install --prefer-dist
 
-    - name: Run PHPStan ratchet
+    - name: Run PHPStan
       run: |
-        # Fails only when the error count grows beyond phpstan-baseline-count.txt.
-        # The pre-existing debt is burned down incrementally, never masked.
-        php scripts/phpstan-ratchet.php
+        # phpstan.neon inclui phpstan-baseline.neon. Novos erros e entradas de
+        # baseline resolvidas (reportUnmatchedIgnoredErrors) falham o job.
+        vendor/bin/phpstan analyse --no-progress --memory-limit=2G
