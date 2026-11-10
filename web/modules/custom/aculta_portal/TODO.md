@@ -5,7 +5,7 @@ Estado: Dev · versão 0.5.0-dev.1 (`aculta_portal.info.yml`) · status: `docs/o
 ## Próximo passo
 
 - **RN-00 (parcial):** gerador `scripts/inventory-site-key-contracts.php` e CSV de ocorrências criado; 1.610 referências genéricas ainda precisam triagem semântica, e a matriz HTTP/State/sessão não foi fotografada.
-- **RN-02 (em andamento):** options de rota e a costura de teste usam somente `site_key`; `DomainRoutePolicy` rejeita nomes removidos e valores inválidos, sem fallback nem wrappers. O gate estático impede regressões. Falta validar rotas/ACL/canonical HTTP no Kernel e Runtime, além de migrar contratos de serviço, State/sessão e métodos consumidores.
+- **RN-02 (em andamento):** options de rota e a costura de teste usam somente `site_key`; `DomainRoutePolicy` rejeita nomes removidos e valores inválidos, sem fallback nem wrappers. Unit/Kernel e gates HTTP no Runtime passaram. Falta migrar contratos `ContentPurposeResolver`/subscriber/services, State/sessão e consumidores funcionais, depois provar cache/ACL completos.
 - **RN-01 (em andamento):** enum `SiteKey`, `SiteKeyRegistry`, `DomainSiteManagerInterface` e `DomainSiteManager` existem como adaptador ao resolver legado. Falta provar paridade HTTP/alias/rotas e migrar consumidores; preservar valores e manter `DomainPurposeManager` até zero chamadas.
 - **US-02 UI Skins:** dependente de Composer/Sync/Runtime reconciliados e baseline visual Links. Não habilitar ou alterar configuração ativa nesta etapa.
 

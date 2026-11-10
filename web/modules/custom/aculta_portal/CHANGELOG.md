@@ -12,12 +12,18 @@
   módulos customizados, subscribers e testes. Não há fallback ou wrappers.
 - Options removidas e valores inválidos falham fechados. Regras de
   compartilhamento, prioridade administrativa e owners `main`/`support`
-  permanecem. Kernel/HTTP ainda pendentes.
+  permanecem.
 - A costura de teste passou para `aculta_site_key_test_relaxed`; o gate
   `NoLegacyRoutePurposeOptionsTest` varre código customizado, rotas, testes,
   Config Sync e scripts para impedir reintrodução das opções/APIs removidas.
-- Após o push, dez arquivos PHP/YAML de produção foram sincronizados no
-  Runtime e `drush cr` PASS; sem importação de configuração ou `updatedb`.
+- Kernel EventDomainBoundary + LinkEntities PASS (17 testes/614 assertions) em
+  SQLite temporário. PHPCS, PHPStan, PHPUnit de rota, gates de configuração e
+  de admin PASS.
+- Após o push, 34 arquivos PHP/YAML de produção foram sincronizados no Runtime;
+  `drush cr` PASS. O route provider validou 2.633 rotas (2.406 com owner,
+  10 canonicals, 6 compartilhadas), sem options antigas/inválidas. Admin
+  Domain 4.456 checks, cross-domain 18 e pagamento 44 PASS com URI de
+  desenvolvimento. Sem importação de configuração ou `updatedb`.
 
 ## 0.5.0-dev.1 — estado neutro de purposes ativos e hooks de ciclo de vida (F3)
 
