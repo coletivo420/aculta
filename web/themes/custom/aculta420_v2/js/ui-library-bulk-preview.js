@@ -29,14 +29,36 @@
   };
 
   /**
+   * Obtém o elemento de texto dentro do botão (garantindo que não seja o ícone).
+   */
+  function getButtonTextElement(btn) {
+    if (!btn) {
+      return null;
+    }
+    // Procura por classe específica ou por span não-ícone
+    const explicitText = btn.querySelector('.aculta-bulk-preview-btn-text');
+    if (explicitText) {
+      return explicitText;
+    }
+    const spans = Array.from(btn.querySelectorAll('span'));
+    const textSpan = spans.find((s) => !s.classList.contains('aculta-icon') && !s.closest('.aculta-icon'));
+    if (textSpan) {
+      return textSpan;
+    }
+    // Se o próprio botão não tem spans separados, retorna o botão
+    return btn;
+  }
+
+  /**
    * Atualiza a interface (rótulo do botão e texto de status acessível).
    */
   function updateUI() {
-    const { btnText, status, btn } = state.domElements;
+    const { status, btn } = state.domElements;
     if (!btn || !status) {
       return;
     }
 
+    const btnText = getButtonTextElement(btn);
     const total = state.totalCount;
     const loaded = state.loadedSet.size;
     const errors = state.errorSet.size;
@@ -322,9 +344,7 @@
       // 2. Inicializa o botão global "Exibir todas as prévias"
       once('aculta-bulk-preview-init', '#aculta-btn-bulk-preview', context).forEach((btn) => {
         state.domElements.btn = btn;
-        // O SDC aculta420_v2:button pode conter um span do ícone (com .aculta-icon) e o span do texto
-        const textSpan = Array.from(btn.querySelectorAll('span')).find(s => !s.classList.contains('aculta-icon') && !s.closest('.aculta-icon'));
-        state.domElements.btnText = textSpan || btn.querySelector('.aculta-bulk-preview-btn-text') || btn;
+        state.domElements.btnText = getButtonTextElement(btn);
         state.domElements.status = document.getElementById('aculta-bulk-preview-status');
 
         // Contagem inicial de componentes

@@ -183,7 +183,7 @@ studio-connections-page:
       components/studio-connections-page/studio-connections-page.css: {}
 
 ui-library-admin:
-  version: 1.0.7
+  version: 1.1.0
   css:
     theme:
       src/styles/ui-library-admin.css: {}
