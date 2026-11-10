@@ -1,5 +1,5 @@
 {
-    "generated_at": "2026-11-10T17:52:32+00:00",
+    "generated_at": "2026-11-10T18:08:45+00:00",
     "generator": "scripts/audit-custom-tests.php",
     "total_files": 929,
     "by_type": {
@@ -16,7 +16,6 @@
         "fixtures": 3
     },
     "flag_counts": {
-        "doc_comment_metadata": 15,
         "mock_isolated": 444,
         "review_by_name": 24,
         "static_config_contract": 37,
@@ -1330,8 +1329,7 @@
             "first_import": "Drupal\\aculta_content_admin\\Moderation\\ModeratableCollectionRegistry",
             "fixture": false,
             "flags": [
-                "mock_isolated",
-                "doc_comment_metadata"
+                "mock_isolated"
             ]
         },
         {
@@ -2470,9 +2468,7 @@
             "assertions_per_test": 4,
             "first_import": "Drupal\\KernelTests\\KernelTestBase",
             "fixture": false,
-            "flags": [
-                "doc_comment_metadata"
-            ]
+            "flags": []
         },
         {
             "path": "web/modules/custom/aculta_portal/modules/aculta_file_uploader/tests/src/Unit/ConsumerUploadPolicyTest.php",
@@ -2537,8 +2533,7 @@
             "first_import": "Drupal\\aculta_file_uploader\\FocalPointRecorder",
             "fixture": false,
             "flags": [
-                "mock_isolated",
-                "doc_comment_metadata"
+                "mock_isolated"
             ]
         },
         {
@@ -3429,8 +3424,7 @@
             "first_import": "Drupal\\aculta_forum\\Service\\DiscussionThreadDepthResolver",
             "fixture": false,
             "flags": [
-                "mock_isolated",
-                "doc_comment_metadata"
+                "mock_isolated"
             ]
         },
         {
@@ -4186,8 +4180,7 @@
             "first_import": "Drupal\\aculta_forum\\Service\\TopicDeletionModerationManager",
             "fixture": false,
             "flags": [
-                "mock_isolated",
-                "doc_comment_metadata"
+                "mock_isolated"
             ]
         },
         {
@@ -5641,9 +5634,7 @@
             "assertions_per_test": 1,
             "first_import": "Drupal\\aculta_lms\\Learning\\ActivityConfiguration",
             "fixture": false,
-            "flags": [
-                "doc_comment_metadata"
-            ]
+            "flags": []
         },
         {
             "path": "web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/ActivityDeadlineAssignedEventTest.php",
@@ -5893,9 +5884,7 @@
             "assertions_per_test": 2.5,
             "first_import": "Drupal\\aculta_lms\\Hook\\CoreEditorAssetOrderingHooks",
             "fixture": false,
-            "flags": [
-                "doc_comment_metadata"
-            ]
+            "flags": []
         },
         {
             "path": "web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/CourseActivityAnswerTest.php",
@@ -5922,8 +5911,7 @@
             "first_import": "Drupal\\aculta_lms\\Access\\CourseAuthoringAccessCheck",
             "fixture": false,
             "flags": [
-                "mock_isolated",
-                "doc_comment_metadata"
+                "mock_isolated"
             ]
         },
         {
@@ -5938,8 +5926,7 @@
             "first_import": "Drupal\\aculta_lms\\Access\\CourseAuthoringAccessCheck",
             "fixture": false,
             "flags": [
-                "mock_isolated",
-                "doc_comment_metadata"
+                "mock_isolated"
             ]
         },
         {
@@ -6078,8 +6065,7 @@
             "first_import": "Drupal\\aculta_lms\\Access\\CourseAuthoringAccessCheck",
             "fixture": false,
             "flags": [
-                "mock_isolated",
-                "doc_comment_metadata"
+                "mock_isolated"
             ]
         },
         {
@@ -6137,8 +6123,7 @@
             "first_import": "Drupal\\aculta_lms\\Controller\\CourseStructureController",
             "fixture": false,
             "flags": [
-                "mock_isolated",
-                "doc_comment_metadata"
+                "mock_isolated"
             ]
         },
         {
@@ -6349,8 +6334,7 @@
             "first_import": "Drupal\\Core\\Cache\\CacheBackendInterface",
             "fixture": false,
             "flags": [
-                "mock_isolated",
-                "doc_comment_metadata"
+                "mock_isolated"
             ]
         },
         {
@@ -6604,8 +6588,7 @@
             "first_import": "Drupal\\aculta_file_uploader\\Cleanup\\FileDeletionOwnerInterface",
             "fixture": false,
             "flags": [
-                "mock_isolated",
-                "doc_comment_metadata"
+                "mock_isolated"
             ]
         },
         {
@@ -6690,8 +6673,7 @@
             "first_import": "Drupal\\aculta_lms\\Resources\\Cleanup\\CourseDocumentCleanupInterface",
             "fixture": false,
             "flags": [
-                "mock_isolated",
-                "doc_comment_metadata"
+                "mock_isolated"
             ]
         },
         {
@@ -9023,8 +9005,7 @@
             "first_import": "Drupal\\Core\\Config\\ConfigManagerInterface",
             "fixture": false,
             "flags": [
-                "mock_isolated",
-                "doc_comment_metadata"
+                "mock_isolated"
             ]
         },
         {
@@ -13967,10 +13948,10 @@
             "groups": [
                 "aculta_portal"
             ],
-            "test_methods": 4,
-            "assertions": 18,
-            "assertions_per_test": 4.5,
-            "first_import": "Drupal\\aculta_portal\\Domain\\DomainPurposeManagerInterface",
+            "test_methods": 7,
+            "assertions": 15,
+            "assertions_per_test": 2.14,
+            "first_import": "Drupal\\aculta_portal\\Domain\\DomainSiteManager",
             "fixture": false,
             "flags": [
                 "mock_isolated"
