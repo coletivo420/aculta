@@ -293,7 +293,7 @@ Estados possíveis: PLANEJADA, EM EXECUÇÃO, IMPLEMENTADA NO CÓDIGO, TESTADA, 
 | FST-08 | IMPLEMENTADA NO CÓDIGO; BROWSER DEFERRED | Área Fórum do painel central com cartões, série acessível, filtro de período sem JavaScript, atividade, saúde das respostas e moderação; resumo e link no painel `/painel-administrativo/forum`. Oito SDCs em `aculta420_v2` com schema estrito, story e tokens; o controlador usa apenas `data-portal-ui` neutro e o tema carrega o CSS dos componentes, sem dependência módulo-tema. `validate-aculta420-sdc-schemas.php`: PASS (80 componentes, 1707 checks); Stylelint PASS nos componentes; Kernel do painel: 7 testes OK. Captura visual e leitor de tela DEFERRED. |
 | FST-09 | TESTADA | `forum.replies.created` grava a resposta na dimensão do tópico; o agregador aceita somente nó `aculta_forum_topic` e exige `view content-level statistics`. O painel do Fórum lista até 10 tópicos após carregar no máximo 100 IDs e revalidar `view` por entidade. Unit cobre dimensão autorizada e bundle incompatível; Kernel confirma a dimensão. O Index continua responsável por selecionar e autorizar candidatos. |
 | FST-10 | IMPLEMENTADA NO CÓDIGO; COLETA DESLIGADA | Auditoria: Search API (`aculta_forum`), View `aculta_forum_search`, cache de Views, GA4 e Search Console existentes; sem beacon próprio, sem política de consentimento específica aprovada. Instrumentação de busca implementada sem termo, sessão, IP ou user-agent, com `aculta_statistics.settings.forum_discovery.enabled` desligado por padrão e schema de config. Visualizações e clique de resultado permanecem BLOQUEADOS até decisão de privacidade e medição de bots/cache. Unit cobre desligado, zero resultado e busca com resultado. |
-| FST-11 | TESTADA; RUNTIME NÃO HOMOLOGADO | Unit e Kernel executados; Functional e Browser DEFERRED por ambiente. Gates do escopo executados. Runtime com `aculta_forum_update_9008` pendente e ledger ausente; nenhuma homologação no Runtime. Ver seção 14. |
+| FST-11 | TESTADA; RUNTIME PARCIALMENTE HOMOLOGADO | Unit, Kernel, Browser Firefox ESR e gates executados. Update 9008 aplicado, ledger presente, 13 retratos coletados e reconciliação 13/13. Functional bloqueado por login no site de teste compartilhado. Dark mode/zoom e leitor de tela pendentes. Ver seção 14. |
 
 Nenhuma fase está HOMOLOGADA NO RUNTIME. A sincronização do Runtime depende de `updatedb:status` e `config:status` sem pendências e não autoriza escrita de dados.
 
@@ -332,10 +332,14 @@ Data: 2026-11-10. Branch `dev`.
 ### Runtime
 
 - `drush status`: bootstrap OK, banco `aculta_runtime`, tema `aculta420_v2`.
-- `updatedb:status`: `aculta_forum_update_9008` pendente. Não executado sem autorização.
-- Tabela `aculta_forum_analytics_ledger` ausente no Runtime; com o ledger indisponível os hooks falham fechados e não contam atividade até o update.
+- `updatedb` autorizado e aplicado: `aculta_forum_update_9008` concluído; tabela `aculta_forum_analytics_ledger` presente. `drush cr` concluído.
+- Serviços verificados no container: resolvedor, ledger, provedor, coletor, reconciliação e subscribers.
+- Coleta real do dia: 13 retratos gravados (10 tópicos publicados, 44 respostas, 2 categorias ativas, 7 sem resposta, 3 pessoas em 7/30 dias, mediana 28 min, p90 46 min, 5 sem resposta após 72h, 2 reações ativas, 0 denúncias abertas, 2 posts pendentes).
+- Reconciliação de retratos em dry-run: 13 verificações, 13 iguais, 0 divergências.
+- Reconciliação de reações em dry-run: 2 reações, 2 públicas, 0 divergências; `--apply` não foi necessário.
 - `config:status`: divergências preexistentes em views/config de outros escopos; nenhum `config:import` executado.
-- Sem homologação no Runtime, sem captura visual e sem validação de leitor de tela.
+- Browser Firefox ESR: 44/44 verificações PASS em 1280/768/390/320, oito rotas, teclado e foco visível; painel do Fórum abre sem erro. Dark mode, zoom de 200% e leitor de tela não cobertos.
+- Functional: login do site de teste não estabelece sessão no host compartilhado; 2 testes falham na autenticação, antes de exercitar o painel. DEFERRED até origem HTTP isolada.
 
 ### Segurança por perfil (evidência parcial)
 
@@ -349,6 +353,12 @@ Data: 2026-11-10. Branch `dev`.
 
 A matriz completa de navegador e HTTP permanece DEFERRED.
 
+### Desempenho medido no Runtime (dados reais pequenos, sem SLO)
+
+- 13 métricas calculadas diretamente: **74,3 ms**; coleta e gravação: **116,5 ms**.
+- 249 consultas no total do lote; maior consulta **3 ms**; p95 aproximado **1 ms**.
+- Não há N+1 por linha; cada métrica executa agregações próprias. Carga maior (100k/1M) não medida.
+
 ### Contagens do projeto
 
 - Métricas novas no catálogo: 23 (total verificado no código).
@@ -361,9 +371,9 @@ A matriz completa de navegador e HTTP permanece DEFERRED.
 
 ### Pendências que exigem autorização
 
-1. Executar `updatedb` do update 9008 no Runtime (cria apenas a tabela do ledger).
-2. Reconciliar `aculta_forum.settings` e `aculta_statistics.settings` no Config Sync, se o responsável autorizar.
-3. Homologação Firefox ESR, teclado, leitor de tela e captura em 320/390/768/1280.
+1. Reconciliar `aculta_forum.settings` e `aculta_statistics.settings` no Config Sync, se o responsável autorizar.
+2. Functional em origem HTTP isolada; o site de teste compartilhado não mantém a sessão de login.
+3. Dark mode, zoom de 200% e leitor de tela.
 4. Habilitar coleta de buscas somente com política de privacidade e consentimento aprovados.
 5. Instrumentar estado de resolução de denúncias no owner antes de `reports_resolved` e `resolution_median_minutes`.
-6. Medir carga real (p50/p95, queries, memória) antes de declarar qualquer SLO.
+6. Medir carga representativa (100k/1M) e memória antes de declarar qualquer SLO.

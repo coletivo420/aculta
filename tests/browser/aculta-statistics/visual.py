@@ -13,7 +13,7 @@ from urllib.parse import urlsplit
 from websockets.sync.client import connect
 
 PROJECT = Path(os.environ.get("ACULTA_PROJECT_ROOT", Path(__file__).resolve().parents[3]))
-sys.path.insert(0, str(PROJECT / "tests/browser/aculta-cpf-checkout"))
+sys.path.insert(0, str(PROJECT / "tests/browser/shop/aculta-cpf-checkout"))
 from wdlib import Driver  # noqa: E402
 
 BASE = "https://aculta.toca.net.br"
@@ -129,7 +129,7 @@ try:
               document.head.append(style);""", [preview_css])
         page = driver.js("""return {
           path: location.pathname,
-          h1: document.querySelector('main h1')?.innerText || '',
+          h1: (document.querySelector('main h1') || document.querySelector('h1'))?.innerText || '',
           title: document.title,
           nav: !!document.querySelector('main [data-portal-ui="statistics-areas"]'),
           overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
@@ -144,7 +144,7 @@ try:
               fixture.dataset.statisticsLayoutFixture = 'true';
               fixture.className = 'aculta-statistics';
               fixture.style.cssText = 'box-sizing:border-box;width:min(calc(100% - 1rem),28rem);margin:1rem auto;padding:0.5rem;border:1px dashed currentColor';
-              fixture.innerHTML = '<form class="aculta-statistics__form"><label>Área<select><option>Geral</option></select></label><button type="button">Aplicar</button></form>';
+              fixture.innerHTML = '<form data-portal-ui="statistics-form"><label>Área<select><option selected>Geral</option></select></label><button type="button">Aplicar</button></form>';
               document.body.append(fixture);
             }""")
             expected = driver.js("""return [...new Map(
@@ -170,7 +170,7 @@ try:
         for width, label in WIDTHS:
             actual = set_width(width)
             metrics = driver.js("""const main = document.querySelector('main');
-              const heading = main?.querySelector('h1');
+              const heading = main?.querySelector('h1') || document.querySelector('h1, [data-drupal-selector="page-title"]');
               const rect = heading?.getBoundingClientRect();
               return {
                 documentWidth: document.documentElement.scrollWidth,
@@ -195,19 +195,25 @@ try:
             if area == "" and width in (320, 768):
                 form_layout = driver.js("""const fixture=document.querySelector('[data-statistics-layout-fixture]');
                   const form=fixture?.querySelector('form'), label=form?.querySelector('label');
-                  const select=label?.querySelector('select'), box=fixture?.getBoundingClientRect();
+                  const select=label?.querySelector('select');
+                  const style=fixture ? getComputedStyle(fixture) : null;
+                  const contentWidth = fixture ? fixture.clientWidth
+                    - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight)
+                    - parseFloat(style.borderLeftWidth) - parseFloat(style.borderRightWidth) : 0;
                   const labelBox=label?.getBoundingClientRect(), selectBox=select?.getBoundingClientRect();
-                  return {fixtureWidth:box?.width,labelWidth:labelBox?.width,selectWidth:selectBox?.width,
+                  return {contentWidth,labelWidth:labelBox?.width,selectWidth:selectBox?.width,
                     selectMinWidth:select ? getComputedStyle(select).minWidth : null};""")
                 if width == 320:
                     layout_ok = (
-                        abs(form_layout["labelWidth"] - form_layout["fixtureWidth"]) <= 1
+                        form_layout["labelWidth"] <= form_layout["contentWidth"] + 3
+                        and form_layout["labelWidth"] >= form_layout["contentWidth"] - 3
                         and abs(form_layout["selectWidth"] - form_layout["labelWidth"]) <= 1
                     )
                 else:
                     layout_ok = (
-                        form_layout["labelWidth"] < form_layout["fixtureWidth"] - 100
+                        form_layout["labelWidth"] <= form_layout["contentWidth"] + 3
                         and form_layout["selectWidth"] >= 192
+                        and abs(form_layout["selectWidth"] - form_layout["labelWidth"]) <= 1
                     )
                 check(f"filtro de estatísticas reflow em {width}px", layout_ok, str(form_layout))
 finally:

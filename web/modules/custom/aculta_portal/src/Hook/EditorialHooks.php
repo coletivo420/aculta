@@ -84,7 +84,9 @@ final class EditorialHooks {
 
     // Página que é a raiz do host (caminho interno de FRONT_PATHS, ex.: /loja-da-aculta): o canonical é a raiz do host.
     $purpose = $this->domainPurposeManager->getCurrentPurpose();
-    $frontPath = PurposeFrontPathProcessor::FRONT_PATHS[$purpose] ?? NULL;
+    $frontPath = $purpose === NULL
+      ? NULL
+      : (PurposeFrontPathProcessor::FRONT_PATHS[$purpose] ?? NULL);
     $paginaRaiz = $frontPath !== NULL && ($node === NULL
       ? $this->currentPath->getPath() === $frontPath
       : $node->toUrl()->setAbsolute(FALSE)->toString() === $frontPath);

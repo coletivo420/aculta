@@ -47,11 +47,14 @@ final class StatisticsDashboardFunctionalTest extends BrowserTestBase {
     }
     parent::setUp();
 
+    // O Domain principal acompanha a origem real do site de teste; fixar
+    // 127.0.0.1 quebra a sessão quando a base é servida por outro host.
+    $baseUrl = (string) getenv('SIMPLETEST_BASE_URL');
     Domain::create([
       'id' => 'aculta_org',
-      'hostname' => '127.0.0.1',
+      'hostname' => (string) parse_url($baseUrl, PHP_URL_HOST),
       'name' => 'ACULTA MAIN functional test',
-      'scheme' => 'http',
+      'scheme' => (string) (parse_url($baseUrl, PHP_URL_SCHEME) ?: 'http'),
       'status' => TRUE,
       'is_default' => TRUE,
     ])->save();

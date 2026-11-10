@@ -86,8 +86,9 @@ final class MetricProviderCollector {
    * Indica métrica calculada na fonte e gravável como retrato do dia.
    */
   private function isCollectable(MetricDefinition $definition): bool {
-    return $definition->isDerivedFromSource()
-      && $definition->type !== MetricDefinition::TYPE_RATIO;
+    // O provedor é a fonte do valor; contadores derivados de coorte também
+    // são coletados. Razões não têm valor inteiro gravável.
+    return $definition->type !== MetricDefinition::TYPE_RATIO;
   }
 
 }

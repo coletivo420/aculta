@@ -38,6 +38,20 @@ final class StatisticsDashboardKernelTest extends KernelTestBase {
   }
 
   /**
+   * O container instancia coleta e reconciliação com o contrato de provedores.
+   */
+  public function testProviderServicesInstantiate(): void {
+    self::assertInstanceOf(
+      \Drupal\aculta_statistics\Provider\MetricProviderCollector::class,
+      $this->container->get('aculta_statistics.provider_collector'),
+    );
+    self::assertInstanceOf(
+      \Drupal\aculta_statistics\Provider\SnapshotReconciliation::class,
+      $this->container->get('aculta_statistics.snapshot_reconciliation'),
+    );
+  }
+
+  /**
    * A página mostra o período escolhido e o total; o CSV tem uma linha por dia e dimensão.
    */
   public function testPageAndExportFollowTheSelection(): void {

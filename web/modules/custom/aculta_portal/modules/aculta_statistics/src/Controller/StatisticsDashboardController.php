@@ -847,6 +847,40 @@ final class StatisticsDashboardController extends ControllerBase {
   }
 
   /**
+   * Valor do retrato do dia, ou N/D quando não houve coleta.
+   */
+  private function forumValue(string $metric, int $today): string {
+    if (!$this->storage->hasDay($metric, $today)) {
+      return (string) $this->t('N/D');
+    }
+    return $this->formatNumber($this->storage->total($metric, $today, $today));
+  }
+
+  /**
+   * Minutos formatados para a saúde das respostas.
+   */
+  private function minutesValue(string $metric, int $today): string {
+    if (!$this->storage->hasDay($metric, $today)) {
+      return (string) $this->t('N/D');
+    }
+    return $this->formatNumber($this->storage->total($metric, $today, $today)) . ' ' . $this->t('min');
+  }
+
+  /**
+   * Soma de um contador no período.
+   */
+  private function periodSum(string $metric, int $today, int $days): string {
+    return $this->formatNumber($this->storage->total($metric, $today - $days + 1, $today));
+  }
+
+  /**
+   * Número inteiro com separador de milhar.
+   */
+  private function formatNumber(int $value): string {
+    return number_format($value, 0, ',', '.');
+  }
+
+  /**
    * Mensagem de estado vazio reutilizável.
    */
   private function emptyState(string $message, string $hint = ''): array {

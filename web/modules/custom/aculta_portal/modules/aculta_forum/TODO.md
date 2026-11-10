@@ -4,7 +4,7 @@ Estado: Dev · versão 0.2.0-dev.4 (`aculta_forum.info.yml`) · status: docs/ope
 
 ## Próximo passo
 
-- **FST (implementado no código):** escopo analítico, ledger de idempotência, reconciliação de reações e métricas do Fórum entregues; falta aplicar o update 9008 no Runtime e homologar. [Plano canônico](../aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md).
+- **FST (implementado e homologado em parte):** escopo, ledger, reconciliação e métricas entregues; update 9008 aplicado e browser 44/44. Faltam Functional isolado, dark mode/zoom e leitor de tela. [Plano canônico](../aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md).
 
 Concluir homologação integrada no Runtime e validação de navegadores. Fases C02-01 a C02-08 implementadas e testadas com Unit e Kernel tests (38 tests PASS). D-65 HTTP e F-M3/F-M6/F-M7 permanecem pendentes; nenhuma migração de dados autorizada.
 

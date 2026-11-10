@@ -26,7 +26,7 @@ services:
 
   aculta_statistics.provider_collector:
     class: Drupal\aculta_statistics\Provider\MetricProviderCollector
-    arguments: ['!tagged_iterator aculta_statistics.metric_provider', '@aculta_statistics.catalog', '@aculta_statistics.storage', '@logger.channel.aculta_statistics']
+    arguments: [!tagged_iterator aculta_statistics.metric_provider, '@aculta_statistics.catalog', '@aculta_statistics.storage', '@logger.channel.aculta_statistics']
 
   Drupal\aculta_statistics\Provider\MetricProviderCollector: '@aculta_statistics.provider_collector'
 
@@ -36,7 +36,7 @@ services:
 
   aculta_statistics.snapshot_reconciliation:
     class: Drupal\aculta_statistics\Provider\SnapshotReconciliation
-    arguments: ['!tagged_iterator aculta_statistics.metric_provider', '@aculta_statistics.catalog', '@aculta_statistics.storage', '@lock', '@logger.channel.aculta_statistics']
+    arguments: [!tagged_iterator aculta_statistics.metric_provider, '@aculta_statistics.catalog', '@aculta_statistics.storage', '@lock', '@logger.channel.aculta_statistics']
   Drupal\aculta_statistics\Provider\SnapshotReconciliation: '@aculta_statistics.snapshot_reconciliation'
 
   aculta_statistics.summary_lines:

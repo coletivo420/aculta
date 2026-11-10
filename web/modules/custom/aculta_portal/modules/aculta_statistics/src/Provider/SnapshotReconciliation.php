@@ -97,7 +97,7 @@ final class SnapshotReconciliation {
             continue;
           }
           $definition = $this->catalog->get($metric);
-          if (!$definition->isDerivedFromSource() || $definition->isAdditive()) {
+          if ($definition->type === \Drupal\aculta_statistics\Catalog\MetricDefinition::TYPE_RATIO) {
             continue;
           }
           for ($day = $fromDay; $day <= $toDay; $day++) {
@@ -124,7 +124,12 @@ final class SnapshotReconciliation {
 
             $hasStored = $this->storage->hasDay($metric, $day);
             $stored = $hasStored ? $this->storage->total($metric, $day, $day) : NULL;
-            if (!$hasStored) {
+            if (!$hasStored && $computed === 0) {
+              // Zero é representado pela ausência de linha no armazenamento.
+              $report['matched']++;
+              $status = 'match';
+            }
+            elseif (!$hasStored) {
               $report['missing']++;
               $status = 'missing';
             }

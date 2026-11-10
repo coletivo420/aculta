@@ -1,12 +1,12 @@
 # FST-00 a FST-11 — integração analítica Fórum + Statistics — 2026-11-10
 
 - **Objetivo:** executar o plano canônico FST-00 a FST-11 em `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md`.
-- **Estado:** FST-00 a FST-10 implementadas e testadas em Unit/Kernel; FST-11 com Functional e Browser DEFERRED e Runtime não homologado. Nenhuma fase está HOMOLOGADA NO RUNTIME.
+- **Estado:** FST-00 a FST-10 implementadas; update 9008 aplicado no Runtime, 13 retratos coletados, reconciliação 13/13 e Firefox ESR 44/44 PASS. Functional, dark mode, zoom e leitor de tela pendentes.
 - **Entregas:** `ForumAnalyticsScopeResolver` e escopo público/restrito, ledger `aculta_forum_analytics_ledger` e update 9008, reconciliação de reações e retratos, catálogo tipado com 23 métricas novas, provedor diário do Fórum, métricas de participação/resposta/reações/moderação, oito SDCs de estatísticas no tema V2, drilldown por tópico com acesso revalidado e coleta de busca desligada por padrão.
 - **Arquivos principais:** `web/modules/custom/aculta_portal/modules/aculta_forum/src/Analytics/`, `modules/aculta_statistics/src/Provider/`, `src/EventSubscriber/`, `src/Controller/StatisticsDashboardController.php`, `web/themes/custom/aculta420_v2/components/statistics-*`, testes Unit/Kernel e documentação de ambos os módulos.
-- **Verificações:** Unit forum 250/1857, Unit statistics 124/549, Kernel statistics 55/600, Kernel focal forum 26/505, painel 7/35; SDC schema PASS (80 componentes, 1707 checks), Stylelint PASS, rotas administrativas PASS, PHPStan focal PASS, PHPCS 0 erros. Gate do Portal FAIL apenas por README de status desatualizado.
-- **Runtime:** `updatedb:status` pendente em `aculta_forum_update_9008`; tabela do ledger ausente. Nenhum `updatedb`, `config:import` ou escrita de dados executado.
-- **Próximo passo:** com autorização, aplicar o update 9008 e o Config Sync pertinente, executar Firefox ESR (320/390/768/1280, claro/escuro, teclado), Functional em ambiente autorizado e revisar LGPD antes de habilitar coleta de busca.
+- **Verificações:** Unit forum 250/1857, Unit statistics 126/557, Kernel statistics 56/602, Kernel focal forum 26/505, painel 8/37; browser 44/44; SDC schema, classes mapeadas, fronteira, token budget, rotas administrativas e Portal Drupal 12 PASS; PHPStan focal PASS; PHPCS 0 erros.
+- **Runtime:** update 9008 aplicado; ledger presente; `drush cr`; 13 snapshots; reconciliações em dry-run sem divergência. `config:import` não executado. Desempenho: 74 ms no provedor e 116 ms na coleta, 249 queries, máximo 3 ms.
+- **Próximo passo:** Functional em origem HTTP isolada, dark mode/zoom/leitor de tela, Config Sync autorizado, instrumentação de resolução de denúncias e revisão LGPD antes de habilitar busca.
 
 
 # UI Patterns 2 — Bloco Isolado de Prévia em Lote e Carregamento Sequencial Completo — 2026-11-10

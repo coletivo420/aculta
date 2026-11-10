@@ -60,10 +60,24 @@ final class SnapshotReconciliationTest extends TestCase {
     $storage = $this->createMock(AggregateStorageInterface::class);
     $storage->expects(self::never())->method('replaceDay');
 
-    $report = $this->reconciliation($storage, NULL, TRUE)->run(100, 100);
+    $report = $this->reconciliation($storage, NULL)->run(100, 100, TRUE);
 
     self::assertSame(1, $report['unavailable']);
     self::assertSame(0, $report['updated']);
+  }
+
+  /**
+   * Zero sem linha é igual a zero; não força gravação vazia.
+   */
+  public function testZeroWithoutRowIsMatch(): void {
+    $storage = $this->createMock(AggregateStorageInterface::class);
+    $storage->method('hasDay')->willReturn(FALSE);
+    $storage->expects(self::never())->method('replaceDay');
+
+    $report = $this->reconciliation($storage, 0, 'forum.participants.new_contributors')->run(100, 100);
+
+    self::assertSame(1, $report['matched']);
+    self::assertSame(0, $report['missing']);
   }
 
   /**
@@ -77,13 +91,13 @@ final class SnapshotReconciliationTest extends TestCase {
   /**
    * Cria a reconciliação com um provedor stub.
    */
-  private function reconciliation(AggregateStorageInterface $storage, ?int $value): SnapshotReconciliation {
-    $provider = new class($value) implements MetricProviderInterface {
+  private function reconciliation(AggregateStorageInterface $storage, ?int $value, string $metric = 'forum.topics.published_current'): SnapshotReconciliation {
+    $provider = new class($value, $metric) implements MetricProviderInterface {
 
-      public function __construct(private readonly ?int $value) {}
+      public function __construct(private readonly ?int $value, private readonly string $metric) {}
 
       public function provides(): array {
-        return ['forum.topics.published_current'];
+        return [$this->metric];
       }
 
       public function value(string $metric, int $day): ?int {

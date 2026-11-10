@@ -27,7 +27,6 @@ final class MetricProviderCollectorTest extends TestCase {
       public function provides(): array {
         return [
           'forum.topics.published_current',
-          'forum.topics.created',
           'fora.do.catalogo',
         ];
       }
@@ -52,6 +51,38 @@ final class MetricProviderCollectorTest extends TestCase {
     );
 
     self::assertSame(['forum.topics.published_current' => 12], $collector->collect());
+  }
+
+  /**
+   * Contador de coorte derivado da fonte também é coletado.
+   */
+  public function testDerivedCounterIsCollected(): void {
+    $provider = new class implements MetricProviderInterface {
+
+      public function provides(): array {
+        return ['forum.participants.new_contributors'];
+      }
+
+      public function value(string $metric, int $day): ?int {
+        return 3;
+      }
+
+    };
+
+    $storage = $this->createMock(AggregateStorageInterface::class);
+    $storage->method('currentDay')->willReturn(100);
+    $storage->expects(self::once())
+      ->method('replaceDay')
+      ->with('forum.participants.new_contributors', 100, ['' => 3]);
+
+    $collector = new MetricProviderCollector(
+      [$provider],
+      new MetricCatalog(),
+      $storage,
+      $this->createMock(LoggerInterface::class),
+    );
+
+    self::assertSame(['forum.participants.new_contributors' => 3], $collector->collect());
   }
 
   /**
