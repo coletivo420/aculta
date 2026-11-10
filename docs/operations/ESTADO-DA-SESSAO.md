@@ -4,7 +4,7 @@
 - **Estado:** Sync registra `ui_skins`; gate também exige extensão ativa no export. Runtime confirmou `ui_skins` Disabled, mapa e scopes ausentes; `aculta_purpose_palette` foi removida sem cópia após busca sem consumidores. CSS, mapa e preferências ainda não foram cortados no Runtime.
 - **Decisões e alternativas descartadas:** sem dual-read, alias ou backup da configuração antiga, conforme instrução do responsável. Sem `config:import`/atualização não autorizados.
 - **Cuidados:** preservar preferência individual de modo; cache varia por domínio/usuário e marca config do mapa.
-- **Commits e arquivos:** pendente; Sync, gate UI Skins, ADR-054/055, plano, docs de gate/skins, roadmap, TODO e status.
+- **Commits e arquivos:** `d4142969f`; Sync, gate UI Skins, ADR-054/055, plano, docs de gate/skins, roadmap, TODO e status.
 - **Verificações:** UI Skins 127, extensões Sync 1753, resolver Unit 2/6 e PHPCS PASS; token budget FAIL por sete pendências preexistentes. Runtime confirmou remoção; browser DEFERRED sem UI Skins ativo.
 - **Pendências e bloqueios:** import autorizado para instalar módulo, map e scopes; comparar Links em cache, modo claro/escuro e visual antes dos demais domínios.
 - **Próximo passo:** executar cutover de configuração no fluxo autorizado e validar o piloto Links no tema V2.
