@@ -47,12 +47,23 @@ final class StatisticsDashboardFunctionalTest extends BrowserTestBase {
     }
     parent::setUp();
 
-    // Em host compartilhado, o login canônico é redirecionado para o host de
-    // Conta, que não serve este site de teste. Exigir origem isolada evita
-    // exercitar o Runtime por acidente.
+    // O login canônico só existe no host de Conta, que não serve o site de
+    // teste compartilhado. Exigir origem isolada evita exercitar o Runtime.
     $host = (string) parse_url((string) getenv('SIMPLETEST_BASE_URL'), PHP_URL_HOST);
     if (!in_array($host, ['127.0.0.1', 'localhost'], TRUE)) {
-      $this->markTestSkipped('Functional exige origem HTTP isolada; o host compartilhado redireciona o login para o domínio Conta.');
+      $this->markTestSkipped('Functional exige origem HTTP isolada; /entrar responde 404 no host principal do site de teste.');
+    }
+
+
+    // Isola o painel do redirecionamento de login para o host de Conta. O
+    // objetivo deste teste é o acesso e o CSV, não a política de host.
+    try {
+      $this->container->get('event_dispatcher')->removeSubscriber(
+        $this->container->get('aculta_portal.domain_purpose_subscriber'),
+      );
+    }
+    catch (\Throwable) {
+      // Serviço privado/ausente: o teste segue e pode marcar SKIP adiante.
     }
 
     // O Domain principal acompanha a origem real do site de teste; fixar
