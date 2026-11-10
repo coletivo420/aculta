@@ -32,5 +32,6 @@ dependencies:
   - search_api:search_api_db
   - drupal:taxonomy
   - drupal:text
+  - drupal:text_with_summary
   - drupal:workflows
   - views_bulk_operations:views_bulk_operations

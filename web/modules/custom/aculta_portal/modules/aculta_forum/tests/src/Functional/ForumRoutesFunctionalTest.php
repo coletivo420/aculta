@@ -35,7 +35,7 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
    * The standard profile ships the body field as text_with_summary, matching
    * the site configuration; the testing profile's text_long conflicts with it.
    */
-  protected $profile = 'standard';
+  protected $profile = 'aculta_forum_functional_test';
 
   /**
    * {@inheritdoc}
@@ -57,6 +57,7 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
       'scheme' => 'http',
       'status' => TRUE,
       'weight' => 0,
+      'is_default' => TRUE,
     ])->save();
     // Topic creation is gated by published-comment rules on the real site;
     // this suite exercises the routes and the form itself.

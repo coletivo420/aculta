@@ -12,6 +12,8 @@ dependencies:
   - aculta_portal:aculta_mailer
   - profile:profile
   - drupal:views
+  - drupal:text
+  - drupal:text_with_summary
   - vvjs:vvjs
   - domain:domain
   - domain_alias:domain_alias
