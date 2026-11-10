@@ -2,7 +2,21 @@
 {% if tone not in ['default', 'raised'] %}
   {% set tone = 'default' %}
 {% endif %}
-<section{{ attributes.addClass('layout-section', 'layout-section--' ~ tone) }}>
+{% set section_variant = section_variant|default('default') %}
+{% if section_variant not in ['default', 'city', 'transparency'] %}
+  {% set section_variant = 'default' %}
+{% endif %}
+{% set section_color = section_color|default('default') %}
+{% if section_color not in ['default', 'red', 'green', 'yellow', 'green-dark'] %}
+  {% set section_color = 'default' %}
+{% endif %}
+<section{{ attributes.addClass(
+  'layout-section',
+  'layout-section--' ~ tone,
+  'aculta-section',
+  'aculta-section--' ~ section_variant,
+  'aculta-section--color-' ~ section_color,
+) }}>
   {% if header %}
     <header class="layout-section__header">{{ header }}</header>
   {% endif %}

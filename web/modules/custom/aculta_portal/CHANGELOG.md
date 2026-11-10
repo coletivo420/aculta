@@ -1,3 +1,16 @@
+## Não versionado — status do carrinho via SDC do tema (2026-11-10)
+
+- O tema ativo apresenta o status do carrinho pelo SDC `status-messages`, sem
+  alterar o fallback neutro do módulo, o render array, o link ou os atributos
+  funcionais consumidos pelo JavaScript de dispensa.
+
+## Não versionado — SDC `layout-section` no adapter editorial (2026-11-10)
+
+- O template de tema `aculta_section` agora compõe o SDC compartilhado
+  `layout-section`; o Portal continua dono dos dados, campos e render array.
+- O contrato estrito do SDC mantém variante e cor editorial e preserva as
+  classes usadas pelo tema.
+
 ## Não versionado — resolvedor visual por Domain ID
 
 - Adiciona `DomainSkinResolver` com mapeamento exportável `aculta_portal.visual_skins`, lista estrita de skins UI Skins e skin ACULTA padrão para IDs ausentes/inválidos.

@@ -1,14 +1,15 @@
-{#
-  Caixa de status do carrinho (aculta_portal), apresentação ACULTA420.
-
-  O JS do módulo fecha a caixa pelo botão [data-portal-cart-status-close].
-#}
-<div class="messages {{ status_type == 'error' ? 'messages--error' : 'messages--status' }}" role="{{ status_role }}" data-portal-cart-status>
+{# The SDC owns status visuals; Portal JS retains the dismissal data contract. #}
+{% set status_message %}
   <p>
     <span>{{ message }}</span>
-    {% if url %}
-      <a href="{{ url }}">{{ link_label }}</a>
-    {% endif %}
+    {% if url %}<a href="{{ url }}">{{ link_label }}</a>{% endif %}
   </p>
-  <button type="button" class="messages__close" data-portal-cart-status-close aria-label="{{ close_label }}">&times;</button>
-</div>
+{% endset %}
+{{ include('aculta420_v2:status-messages', {
+  type: status_type == 'error' ? 'error' : 'status',
+  role: status_role,
+  messages: [status_message],
+  dismissible: true,
+  close_label: close_label|default('Fechar aviso'|t),
+  attributes: create_attribute({'data-portal-cart-status': ''}),
+}, with_context = false) }}

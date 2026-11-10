@@ -116,5 +116,12 @@ if (!str_contains($hookSource, "setAttribute('data-skin'")
   || !str_contains($hookSource, "setAttribute('data-theme'")) {
   $fail('O hook do tema não aplica skin, site key e modo visual.');
 }
+$tokensSource = (string) file_get_contents($theme . '/src/styles/tokens.css');
+foreach (['color-accent', 'color-on-accent', 'color-accent-sub-1', 'color-accent-sub-2', 'color-accent-sub-3'] as $variable) {
+  if (preg_match('/^\s*--' . preg_quote($variable, '/') . '\s*:/m', $tokensSource) === 1) {
+    $fail("$variable não pode ter um valor local concorrente; UI Skins é a fonte única.");
+  }
+  $checks++;
+}
 $checks++;
 echo "ACULTA420 UI SKINS: PASS ($checks verificações; 10 skins, 2 modos, contraste ≥4.5:1)\n";

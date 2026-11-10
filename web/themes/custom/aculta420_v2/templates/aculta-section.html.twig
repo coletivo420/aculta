@@ -1,15 +1,12 @@
-{#
-  Seção editorial (aculta_section), apresentação ACULTA420.
-
-  O módulo entrega título, subtítulo, variante, cor e corpo; o tema decide a
-  apresentação.
-#}
-<section class="aculta-section aculta-section--{{ section_variant|default('default') }} aculta-section--color-{{ section_color|default('default') }}">
-  {% if section_title %}
-    <h2 class="aculta-section-title">{{ section_title }}</h2>
-  {% endif %}
-  {% if section_heading %}
-    <h3 class="aculta-section-heading">{{ section_heading }}</h3>
-  {% endif %}
-  {{ section_body }}
-</section>
+{# The Portal owns editorial values; the shared SDC owns the visual section. #}
+{% set section_header %}
+  {% if section_title %}<h2 class="aculta-section-title">{{ section_title }}</h2>{% endif %}
+  {% if section_heading %}<h3 class="aculta-section-heading">{{ section_heading }}</h3>{% endif %}
+{% endset %}
+{{ include('aculta420_v2:layout-section', {
+  tone: 'default',
+  section_variant: section_variant|default('default'),
+  section_color: section_color|default('default'),
+  header: section_header,
+  content: section_body,
+}, with_context = false) }}

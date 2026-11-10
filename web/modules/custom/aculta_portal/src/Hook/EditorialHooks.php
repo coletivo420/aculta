@@ -32,8 +32,8 @@ final class EditorialHooks {
    * Hands editorial basic blocks to the section theme hook.
    *
    * The Portal prepares neutral section data (title, sub-heading, variant and
-   * body render array). The theme decides the markup in its aculta-section
-   * template.
+   * body render array). The theme adapter composes the shared layout-section
+   * SDC without moving editorial data or access rules into the presentation.
    */
   #[Hook('entity_view_alter')]
   public function entityViewAlter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
@@ -82,7 +82,8 @@ final class EditorialHooks {
       }
     }
 
-    // Página que é a raiz do host (caminho interno de FRONT_PATHS, ex.: /loja-da-aculta): o canonical é a raiz do host.
+    // A página raiz do host usa um caminho interno em FRONT_PATHS. O canonical
+    // ainda aponta para a raiz pública, não para esse caminho interno.
     $purpose = $this->domainPurposeManager->getCurrentPurpose();
     $frontPath = $purpose === NULL
       ? NULL

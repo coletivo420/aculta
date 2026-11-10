@@ -1,6 +1,0 @@
-{# Preserve Views render arrays while reusing the category SDC on the forum home. #}
-{{ include('aculta420_v2:forum-category', {
-  parent: fields.parent_name.content,
-  title: fields.name.content,
-  description: fields.description__value.content,
-}, with_context = false) }}

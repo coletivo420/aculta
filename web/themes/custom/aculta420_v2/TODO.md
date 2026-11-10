@@ -4,19 +4,18 @@ Estado: Dev · versão 1.5.0 (`aculta420_v2.info.yml`) · status em `docs/operat
 
 ## Próximo passo
 
-- **ADR-054/055 US-00–14/RN-00–05:** UI Skins instalado/no Sync; chave antiga removida. Mapa/scopes aguardam import autorizado. Views categorias usa `forum-category`; Links e estilos aguardam homologação.
-- Composer: Skins ^1.2, Icons ^2.1; Field Group dev SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1`, **BLOCKED_UPSTREAM** (Core 12/advisories). Styles CKEditor em `revista_editorial`; Patterns CKEditor sem uso.
-- Inventário: 386 itens/88 Twig; fallback neutro `aculta_portal_button` classificado como exceção funcional e ligado ao adapter SDC `button`. Demais modelos seguem em migração. UI Icons Menu/Picker/Patterns/Fields no Sync; validação Runtime pendente. Os três overrides da View de categorias têm SDC substituto e retirada condicionada ao cutover. Visual dos demais domínios pendente. Entity Status aguarda revisão dos rascunhos.
-- Planos: `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md`, `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md` e `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`.
+- **ADR-054/055 US-00–14/RN-00–05:** UI Skins ativo no Runtime; mapa/scopes seguem ausentes. Import parcial de seis itens foi autorizado e revisado, aguarda autorização para executar o post-update Portal prévio. Views categorias usa `forum-category`; Links e estilos aguardam homologação.
+- Composer: Skins ^1.2, Icons ^2.1; Field Group dev SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1`, **BLOCKED_UPSTREAM** (sem cobertura de segurança e Core 12). UI Styles CKEditor está no Sync/editor Revista, mas desativado no Runtime; Patterns CKEditor está ativo preexistente e `LEGACY_OBSOLETE`, sem uso no código.
+- Inventário: 381 itens/83 Twig; 16 fallbacks mapeados a adapters SDC. `aculta_section` usa `layout-section`; pagamento usa `surface`; botão usa `button`; status do carrinho usa `status-messages`. UI Icons estão no Sync, validação Runtime pendente. Cinco overrides de categorias retirados do código; cutover autorizado, aguardando post-update autorizado. Entity Status e demais domínios pendentes.
+- Planos e critérios: plano UI Suite, migração Skins e contrato SiteKey em `docs/architecture/`.
 
 ## Marcos e pendências
 
-- Superfícies SDC (`surface`, `surface-accent`, `surface-panel`) integradas a UI Styles, UI Patterns e UI Library; gate SDC PASS.
-- FST-08: oito SDCs de estatísticas; schema PASS, captura visual pendente.
-- ADR-054: P4 em 22/24 displays; piloto Links publicado; P6/P7 entregues; P8/P9 cortados em 1.5.0. Homologação integral, gates ADR e revisão visual humana pendentes.
-- Faltam capturas Firefox/P3, Revista, F2/F3, editor, UI Patterns autenticado e Loja; boundary módulo/tema com 64 itens.
+- Superfícies SDC integradas a UI Styles/Patterns/Library; FST-08 tem oito SDCs. Gates SDC PASS; captura visual pendente.
+- ADR-054: P4 em 22/24 displays; piloto Links publicado; P6/P7 entregues; P8/P9 cortados em 1.5.0. Homologação e revisão visual pendentes.
+- Faltam capturas Firefox/P3, Revista, F2/F3, editor, UI Patterns autenticado e Loja; fronteira módulo/tema ainda tem 64 itens.
 - Dívidas: `price` aguarda contrato Loja; `card-cultural` aguarda `domain_presentation.accent`.
 
 ## Leitura e entrega
 
-Leia este TODO, código alvo e trecho do `CHANGELOG.md`. Roadmap: `web/themes/custom/aculta420_v2/docs/roadmap.md`. Ao concluir fase, atualize este TODO e `docs/operations/status/aculta420_v2.yml` no mesmo commit, sem histórico.
+Consulte `CHANGELOG.md` e roadmap; ao concluir fase, atualize este TODO e o status YAML no mesmo commit, sem histórico.

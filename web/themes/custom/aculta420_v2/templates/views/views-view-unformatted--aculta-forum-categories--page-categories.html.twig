@@ -1,7 +1,0 @@
-{# Preserve row attributes and use the category SDC supplied by the field template. #}
-{% if title %}<h2>{{ title }}</h2>{% endif %}
-<div class="aculta-forum-category-list">
-  {% for row in rows %}
-    <div{{ row.attributes.addClass(default_row_class ? 'views-row') }}>{{ row.content }}</div>
-  {% endfor %}
-</div>

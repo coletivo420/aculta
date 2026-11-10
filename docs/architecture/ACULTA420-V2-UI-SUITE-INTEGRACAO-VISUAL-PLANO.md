@@ -1,6 +1,6 @@
 # ACULTA420 V2 - Plano de integracao visual integral da UI Suite
 
-**Estado:** PLANEJAMENTO REVISADO; IMPLEMENTAÇÃO PENDENTE (US-00 a US-14 + RN-00 a RN-05). Inclui migração integral de visual legado, UI Skins como motor visual e renomeação funcional do Portal de `purpose` para `site_key`.
+**Estado:** IMPLEMENTAÇÃO EM ANDAMENTO; homologação integral e cutovers pendentes (US-00 a US-14 + RN-00 a RN-05). UI Skins substitui o motor visual por purpose no código; o Portal migra gradualmente a API funcional para `site_key`.
 **Data de referencia:** 2026-11-10. **Branch alvo:** dev. **Decisoes:** ADR-054 e ADR-055. **Planos obrigatórios:** `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md` e `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`.
 **Owners:** SDC, tokens, variacoes e CSS no tema `aculta420_v2`; regras, dados, acesso, cache e dominio nos modulos proprietarios; registro e configuracao de integracoes no Drupal Core e UI Suite. **Nao e um relatorio de teste do Runtime.**
 
@@ -31,14 +31,14 @@ Beneficios tangiveis:
 | `config/sync/core.extension.yml` | `ui_patterns`, `ui_icons`, `ui_icons_field`, `ui_icons_menu`, `ui_icons_patterns`, `ui_icons_picker`, UI Patterns Blocks/Fields/Formatters/Layouts/Library/Views e UI Styles habilitados no Sync | Confirmado no Git após US-08 |
 | `composer.json` (após atualização da US-00) | `ui_patterns` 2.0.x-dev, `ui_patterns_layouts` ^2.0, `ui_patterns_field_group` 2.0.x-dev@dev, `ui_styles` ^1.22, `ui_skins` ^1.2 e `ui_icons` ^2.1 | Confirmado no Git; lock Field Group SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1` |
 | `config/sync/core.extension.yml` | `ui_skins`, UI Styles CKEditor 5 e integrações UI Icons presentes; `ui_patterns_field_group` e `ui_patterns_ckeditor5` ausentes | Confirmado no Git em 2026-11-10. UI Skins 1.2.1 foi instalado no Runtime sem importar mapa/scopes; Styles Page está alinhado ao Runtime; Entity Status segue desabilitado |
-| `docs/architecture/inventarios/ui-suite-runtime-2026-11-10.json` | `drush pml` registrou 36 módulos UI Suite; UI Skins Disabled; UI Patterns CKEditor 5 e Field Group Enabled; UI Styles Page Enabled | Fotografia anterior à instalação dirigida de UI Skins 1.2.1 nesta fase; ver estado atual abaixo |
-| `drush config:status` | Drift inclui `core.extension` e `ui_icons_patterns.settings`, além de configurações de Fórum, LMS e admin | Não executar `cim`; divergência preservada e listada no snapshot |
+| `docs/architecture/inventarios/ui-suite-runtime-2026-11-10.json` | Rechecagem `drush pml`: 36 módulos UI Suite; UI Skins Enabled; UI Patterns CKEditor 5 e Field Group Enabled; UI Styles CKEditor 5 Disabled | Estado atual observado em 2026-11-10 21:58 UTC; versão e configuração ativa constam no snapshot |
+| `drush config:status` | 65 diferenças globais; há remoção de módulos, blocos admin, campos e mudanças de filtros/permissões fora desta ADR | Importação integral não é segura para este cutover. O responsável autorizou import; será parcial, limitada aos seis itens de Views, Skins e Styles CKEditor 5, após `updatedb` autorizado |
 | Composer install | Lock sincronizado com `composer install --no-scripts`; Gin ausente foi instalado. Scaffold de `.htaccess` restaurado ao HEAD | Código de dependências sincronizado; `drush cr` PASS; nenhum script de projeto executado |
 | `docs/architecture/ACULTA420-V2-P8-HOMOLOGACAO.md` | Layout Builder 22/24 displays compativeis; duas exclusoes por perda de conteudo | Evidencia de relatorio, nao teste reexecutado |
 | `docs/operations/ESTADO-DA-SESSAO.md` | UI Patterns em lote com previas sequenciais 90/90 no Runtime; estado da sessao mudou depois | Evidencia registrada por outro agente |
 | `aculta_editor` e `aculta_forum` | Adaptador FluentEmojiIconAdapter, filtro DOM, seletor HTMX e template SDC | Confirmado no Git |
 
-**Estado observado depois da inspeção:** Composer install limpo instala `ui_skins` 1.2.1 e `ui_icons` 2.1.0 do lock. Runtime tem UI Skins Enabled após instalação dirigida, mas não tem o mapa de Domain IDs nem os scopes CSS; UI Patterns CKEditor 5 consta Enabled no snapshot anterior e está fora do Sync. Não atribuir PASS de integração de configuração sem reconciliar Sync/Runtime. Igualmente, a existencia de plugin em um pacote nao prova uso de suas configuracoes por displays e Views.
+**Estado observado depois da inspeção:** Runtime tem UI Skins 1.2.1 ativo e descobre cinco variáveis CSS, mas não tem o mapa Domain→skin nem os valores UI Skins em `aculta420_v2.settings`; ambos existem no Sync. A View do Fórum ainda usa `fields`. UI Patterns CKEditor 5 está ativo sem configuração Sync/consumidores e é `LEGACY_OBSOLETE`; UI Styles CKEditor 5 está no Sync/editor Revista, mas desativado no Runtime. O preview global identificou 65 diferenças, por isso o cutover usa importação parcial e preserva as demais configurações. A autorização do `drush cim` foi recebida; há post-update Portal pendente e a execução aguarda autorização específica de `drush updatedb`.
 
 ## 3. Verificacao upstream de versoes e lacunas
 
@@ -48,7 +48,7 @@ Beneficios tangiveis:
 | UI Styles | 1.22 estavel, Drupal ^10.3 / ^11 / ^12 | Integracoes podem ser ativadas em lotes com testes |
 | UI Skins | 1.2.1 estavel, Drupal ^11.4 / ^12 | Candidato preferencial para gestao de variaveis/esquemas do tema |
 | UI Icons | 2.1.0 estavel, Drupal ^11.3 / ^12; 2.0.x nao e mais suportado | Preferir 2.1.x, validar Composer/lock e nomes reais dos submodulos |
-| UI Patterns Field Group | **Preferência aprovada e lockada: 2.0.x-dev@dev**, SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1`; upstream sem cobertura da política de advisories; `.info.yml` declara apenas ^9/^10/^11 | Inspecionados formatter e sources; sem ativação. **BLOCKED_UPSTREAM** para Drupal 12 e sem aceite de risco de segurança; Field Group instalado 4.0.0 |
+| UI Patterns Field Group | **Preferência aprovada e lockada: 2.0.x-dev@dev**, SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1`; upstream sem cobertura da política de advisories; `.info.yml` e lock declaram apenas ^9/^10/^11 | `BLOCKED_UPSTREAM`: o projeto [não está coberto pela Security Advisory Policy](https://www.drupal.org/project/ui_patterns_field_group), não declara Drupal 12 e o Runtime é Drupal 11.5.0-beta1; o módulo já estava ativo no Runtime, ausente do Sync. Não adicionar consumidores nem desinstalar sem autorização |
 | UI Patterns em CKEditor 5 | **EXCLUÍDO por decisão do responsável** | Não instalar, habilitar, prototipar ou criar filtros/botões; UI Styles CKEditor 5 permanece no escopo |
 
 **Nao instalar ou atualizar por suposicao:** resolver primeiro as versoes compativeis do `composer.lock`, verificar os arquivos `*.info.yml` dos modulos baixados e as dependencias. UI Icons base do Core e a camada UI Icons contrib nao sao a mesma coisa. Nao presumir que `ui_patterns_field_group` passa no Drupal 12 so porque `ui_patterns` passa.
@@ -134,6 +134,13 @@ Beneficios tangiveis:
 Em todos os casos: layout claro e escuro, breakpoint 320/390/768/1024/1440 px, zoom 200%, sem duplicar H1/main e sem expor contexto privado no HTML/cache.
 
 ## 7. Microfases executaveis (planejamento, NAO concluido)
+
+### Evidências de implementação — 2026-11-10
+- Inventário reproduzível em `docs/architecture/inventarios/ui-suite-consumidores-iniciais.csv`: 381 registros, 83 templates Twig e adapters/fallbacks identificados por consumer.
+- `layout-section` compõe o hook editorial `aculta_section` com props estritas para variantes/cor; o aviso de pagamento compõe o SDC `surface`. O Portal continua dono dos dados, render arrays e links.
+- A View de categorias do Fórum usa `forum-category` no Sync/install. Cinco Twig overrides foram removidos no checkout e os contratos de row/query foram verificados por testes; Runtime permanece em `row: fields`, então o corte está DEFERRED até autorização de importação.
+- Gates executados nesta rodada: PHPUnit focal 30/393; SDC schema 80 componentes/117 includes/1731 checks; layouts 42; classes mapeadas 483; inventário e índice de status PASS. A renderização Drupal do adapter `aculta_section` e do aviso de pagamento passou.
+- Isso não homologa os dez domínios, os perfis de acesso/cache, a matriz visual ou a consistência Runtime/Sync; manter US-14 aberto.
 
 ### US-00 - Inventario e baseline (bloqueante)
 - Ler AGENTS.md, ADR-054/055, status, lock, Core e contrib instalados; `drush pm:list --status=enabled`, `drush cget core.extension`, Composer e Config Sync.

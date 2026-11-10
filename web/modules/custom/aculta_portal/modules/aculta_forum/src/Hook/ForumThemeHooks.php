@@ -20,11 +20,6 @@ class ForumThemeHooks {
   #[Hook('theme')]
   public function theme(mixed $existing, string $type, string $theme, string $path): array {
     return [
-      'views_view_unformatted__aculta_forum_categories__page_categories' => [
-        'template' => 'views-view-unformatted--aculta-forum-categories--page-categories',
-        'path' => $path . '/templates',
-        'base hook' => 'views_view_unformatted',
-      ],
       'discussion_reply_composer' => [
         'variables' => [
           'status' => 'fechado',

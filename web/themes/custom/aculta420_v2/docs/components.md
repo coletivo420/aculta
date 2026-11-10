@@ -8,6 +8,9 @@ Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context 
 
 Seção empilhada com slot `header` (título/antetítulo/ação) e slot `content`.
 Prop `tone` (`default` ou `raised`; `raised` usa `--color-surface-raised`).
+O SDC também aceita `section_variant` (`default`, `city`, `transparency`) e
+`section_color` (`default`, `red`, `green`, `yellow`, `green-dark`) para os
+blocos editoriais do Portal.
 Story: `layout-section.default.story.yml`. Sem JavaScript; CSS local. O
 `ui_patterns_layouts` o descobre como layout de seção do Layout Builder
 (regiões `header` e `content`).
@@ -302,8 +305,9 @@ autorizada.
 - **Estado:** entregue.
 
 ### status-messages — Mensagens de estado
-- **Papel:** mensagem anunciada a tecnologias assistivas.
-- **Props:** `type` (`status`, `warning` ou `error`), `messages`.
+- **Papel:** mensagem anunciada a tecnologias assistivas, incluindo estados do carrinho.
+- **Props:** `type` (`status`, `warning` ou `error`), `messages`, `role` opcional (`status`/`alert`), `dismissible` e `close_label`.
+- **Integração:** `portal-cart-status.html.twig` converte sucesso do Portal para `status`, preserva erro/role, link e atributos consumidos pelo JS; o fallback do módulo continua sem estilos.
 - **Estado:** entregue.
 
 ### social-links-page — Micropágina de links

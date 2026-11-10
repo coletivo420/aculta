@@ -15,16 +15,14 @@ use PHPUnit\Framework\Attributes\Group;
 final class ForumThemeHooksTest extends UnitTestCase {
 
   /**
-   * O caminho do template é derivado do caminho do módulo recebido pelo hook.
+   * A apresentação de categorias é delegada ao row plugin UI Patterns.
    */
-  public function testCategoriesTemplateUsesModulePath(): void {
+  public function testCategoriesDoNotRegisterLegacyUnformattedTemplate(): void {
     $theme = (new ForumThemeHooks())->theme([], 'module', 'aculta_forum', '/modules/custom/aculta_forum');
 
     $key = 'views_view_unformatted__aculta_forum_categories__page_categories';
-    $this->assertArrayHasKey($key, $theme);
-    $this->assertSame('/modules/custom/aculta_forum/templates', $theme[$key]['path']);
-    $this->assertSame('views-view-unformatted--aculta-forum-categories--page-categories', $theme[$key]['template']);
-    $this->assertSame('views_view_unformatted', $theme[$key]['base hook']);
+    $this->assertArrayNotHasKey($key, $theme);
+    $this->assertArrayHasKey('discussion_reply_composer', $theme);
   }
 
 }

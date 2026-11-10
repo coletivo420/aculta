@@ -184,6 +184,8 @@ Com JavaScript desligado, os links dos gatilhos continuam válidos: o login e a 
 - A região `footer` é apresentada pelo SDC `site-footer`; quando o Portal fornece `social_links_page_footer`, usa a variação `social-links` (C4).
 - `templates/aculta-links-page.html.twig` adapta o hook de apresentação do submódulo Links ao SDC `social-links-page`, sem resolver dados ou regras de domínio.
 - `templates/aculta-links-landing.html.twig` sobrescreve a landing de LinkWeed e a compõe com `layout-section`; os links, a descrição e o acesso continuam no módulo. Verificado nos shells clássico e v2 (1 H1 e 1 `<main>`).
+- `templates/aculta-section.html.twig` adapta os blocos editoriais `aculta_section` ao SDC `layout-section`; título, variante, cor e render array continuam fornecidos pelo Portal.
+- `templates/portal-payment-notice.html.twig` compõe `surface`; o módulo continua dono da mensagem, da URL e do marcador do aviso.
 - A barra institucional é fixa. A altura medida dela vira `--aculta-institution-bar-height`, e um espaçador (`.aculta-institution-bar-placeholder`) mantém o conteúdo abaixo dela.
 - O bloco `system_menu_block:main` é envolvido pelo SDC `navigation-bar` no mesmo peso e posição do cabeçalho. O render array original fica como slot, com access e cache preservados.
 - O menu de conta (`account-menu`) fica dentro da barra. Visitante vê "Entrar"; autenticado vê o disclosure com avatar e as ações de conta (ver [components.md](components.md)).

@@ -83,7 +83,7 @@ A sequência normativa RN-00 a RN-05 consta de `docs/architecture/ACULTA-PORTAL-
 ### Progresso UI Skins — cutover em preparação (2026-11-10)
 
 - `ui_skins` agora é exigido pelo Config Sync; o gate valida a ativação exportada, cinco variáveis, dez skins em claro/escuro, contraste e os dez Domain IDs.
-- No Runtime, UI Skins 1.2.1 está instalado, mas o mapa/scopes não foram importados. A chave `aculta_purpose_palette` foi removida após confirmar zero consumidores de código. Não há alias nem cópia antiga para fallback.
+- Rechecagem Runtime em 2026-11-10: UI Skins 1.2.1 está ativo e descobre cinco variáveis, mas `aculta_portal.visual_skins` e `third_party_settings.ui_skins.css_variables` ainda não estão na configuração ativa; a View do Fórum permanece em `fields`. O responsável autorizou importação parcial dos seis itens de Views, Skins e UI Styles CKEditor 5. Há post-update Portal pendente e `updatedb` aguarda autorização específica. A chave `aculta_purpose_palette` foi removida sem alias, cópia ou fallback antigo.
 - A resolução de skin continua por Domain ID, sem mutação de configuração global. O piloto Links e os demais domínios aguardam importação autorizada e comparação visual/cache no tema V2.
 - ADR-054 permanece aberta até homologação integral P8/P9, revisões visuais e gates de todos os domínios.
 

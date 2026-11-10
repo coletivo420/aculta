@@ -13,6 +13,18 @@ props:
       default: default
       title: Superfície
       description: '`raised` usa a superfície elevada para destacar a seção.'
+    section_variant:
+      type: string
+      enum: [default, city, transparency]
+      default: default
+      title: Variante editorial
+      description: Variante selecionada no bloco editorial do Portal.
+    section_color:
+      type: string
+      enum: [default, red, green, yellow, green-dark]
+      default: default
+      title: Cor editorial
+      description: Cor selecionada no bloco editorial do Portal.
 slots:
   header:
     title: Cabeçalho da seção

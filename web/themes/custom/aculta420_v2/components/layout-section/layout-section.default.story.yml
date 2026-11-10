@@ -3,6 +3,8 @@ description: Seção empilhada com cabeçalho próprio e superfície opcional.
 component: aculta420_v2:layout-section
 props:
   tone: default
+  section_variant: city
+  section_color: yellow
 slots:
   header:
     type: inline_template

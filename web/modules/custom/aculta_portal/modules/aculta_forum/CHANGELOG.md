@@ -1,16 +1,14 @@
-## Não versionado — inventário dos templates da View de categorias (2026-11-10)
-
-- Os dois field overrides e o wrapper unformatted estão registrados por display
-  como `LEGACY_DEPRECATED`; sua retirada exige prova de bypass pelo row plugin e
-  equivalência de saída, acesso e cache após cutover autorizado.
-
-## Não versionado — piloto UI Patterns Views em categorias (2026-11-10)
+## Não versionado — migração SDC da View de categorias (2026-11-10)
 
 - A página pública e o bloco de categorias passam a mapear campos da View ao
   SDC `forum-category`, mantendo wrappers, filtros, agrupamento, ordenação,
   acesso, cache e paginação.
-- Config Sync e defaults de instalação estão alinhados. Cutover no Runtime e
-  comparação visual permanecem pendentes de importação autorizada.
+- Removidos os dois templates de campos e os wrappers específicos de página e
+  bloco: o row plugin UI Patterns entrega o SDC e o renderer padrão mantém as
+  regiões de View, cabeçalho, paginação e elementos auxiliares.
+- Sync e defaults de instalação já declaram esses row plugins. A configuração
+  ativa e a comparação visual no Runtime permanecem DEFERRED até importação
+  autorizada.
 
 ## 0.2.0-dev.4 — escopo analítico e idempotência do Fórum (2026-11-10)
 

@@ -78,7 +78,7 @@ A classificacao deve ser aplicada a **cada superficie visual efetivamente usada*
 Campos do inventario:
 `id`, `owner_module`, `path`, `type` (twig/php/render_array/css/js/Views/field_group/layout/block/form/ckeditor), `purpose_or_route_consumers`, `visual_responsibility`, `ui_suite_target`, `replacement_component_id`, `status`, `risk`, `access_cache`, `impact_data`, `test_before`, `test_after`, `release_commit`, `rollback`, `reviewer`.
 
-O inventário executável atual é `docs/architecture/inventarios/ui-suite-consumidores-iniciais.csv`, gerado por `scripts/inventory-ui-suite-consumers.php`. Ele separa templates funcionais neutros de adapters visuais: `aculta_portal_button` permanece como `FUNCTIONAL_NATIVE_EXCEPTION` por ser fallback sem classes de design do Render Element, enquanto o override do tema que compõe `aculta420_v2:button` é `UI_SUITE_NATIVE`. Consumidores do elemento e o caminho até o SDC são registrados no CSV; a saída Runtime continua pendente de validação.
+O inventário executável atual é `docs/architecture/inventarios/ui-suite-consumidores-iniciais.csv`, gerado por `scripts/inventory-ui-suite-consumers.php`. Ele separa templates de fallback de adapters visuais quando o mesmo template é sobrescrito pelo tema ativo e compõe SDC: o fallback registra o hook funcional e aponta ao adapter; o override é `UI_SUITE_NATIVE`. Templates de Views bypassados por row UI Patterns são elegíveis a `LEGACY_OBSOLETE` após confirmação do Config Sync, mantendo Runtime explicitamente não observado. A saída Runtime continua pendente de validação.
 
 Regras de progresso:
 - **100%** das superficies visuais ativas identificadas, incluindo rotas anonimas, autenticadas e administrativas ACULTA.
@@ -133,14 +133,14 @@ E. Zero consumidores e limpeza dos legados, sem remover um fallback antes do gat
 ### UI Patterns Field Group 2.0.x-dev
 
 - Registrar no Composer com versao dev **preferida pelo responsavel**, respeitando `minimum-stability` e demais constraints; travar SHA em `composer.lock` para reproducibilidade.
-- Upstream informa integracao temporaria com Field Group, sem cobertura da politica de seguranca e sem requisito Drupal ^12 na beta2. A dev pode ter mudado. Verificar `.info.yml`, CI upstream, testes PHP/Core, issues abertas e parecer de risco **antes** de habilitar a um site compartilhado.
+- Rechecagem do SHA travado `4403e7b0e27679f47113e96fcdc5349c95e164d1`: o `composer.lock` exige Core `^9 || ^10 || ^11`, e o `ui_patterns_field_group.info.yml` limita `core_version_requirement` a `^9 || ^10 || ^11`; não há compatibilidade declarada com Drupal 12. O projeto [não está coberto pela política de avisos de segurança do Drupal](https://www.drupal.org/project/ui_patterns_field_group). Runtime Drupal 11.5.0-beta1 pode provar apenas a execução nessa versão, não em Drupal 12. A decisão é `BLOCKED_UPSTREAM`: não ampliar consumidores enquanto persistirem estes limites.
 - Testar Field Group 4.x e formulários, labels, erros, campos ocultos, validacao, ordem/weight, access e Render API. Se nao houver compatibilidade viavel, marcar `BLOCKED_UPSTREAM`, manter fallback com Field Formatters e SDC, sem dar "PASS" artificial.
 - Nao aplicar patch a contrib sem revisao/approval e testes rastreaveis.
 
 ### UI Patterns CKEditor 5 - FORA DO ESCOPO
 
-- `ui_patterns_ckeditor5`: nao instalar, nao habilitar, nao usar widget, nao criar prova de conceito neste ciclo, nao registrar como pendencia bloqueante da ADR.
-- Se uma fotografia de Runtime mostrar ativacao preexistente sem consumidor no codigo/Sync, classificar a integracao como `LEGACY_OBSOLETE` e removivel; nao adicionar fallback nem configuracao para retencao. A fotografia e historica, nao confirma o estado atual. Desinstalar no Runtime requer autorizacao operacional explicita e fica `DEFERRED` ate la.
+- `ui_patterns_ckeditor5`: nao instalar, nao habilitar, nao usar widget, nao criar prova de conceito neste ciclo, nao registrar como requisito de implementação da ADR.
+- A rechecagem Runtime atual encontrou o módulo ativo, ausente do Sync e sem consumidores do repositório. Classificação `LEGACY_OBSOLETE`; não adicionar fallback nem configuração para retenção. A retirada exige autorização explícita de desinstalação e permanece `DEFERRED` até essa operação.
 - `ui_styles_ckeditor5`: sim, com classes editoriais restritas e validacao da renderizacao ao salvar.
 - `ckeditor5_plugin_pack`, aculta_editor e botao Fluent Emoji existente continuam conforme seus contratos, sem insercao arbitraria de componentes SDC no HTML editorial.
 

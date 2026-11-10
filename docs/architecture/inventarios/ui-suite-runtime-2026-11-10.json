@@ -1,62 +1,175 @@
 {
-  "observed_at_utc": "2026-11-10T18:17:49+00:00",
-  "drupal_version": "11.5.0-beta1",
-  "evidence_command": "drush pml --type=module --format=json; drush config:status --format=list",
-  "ui_suite_modules": {
-    "ui_icons": "Enabled",
-    "ui_icons_canvas": "Disabled",
-    "ui_icons_ckeditor5": "Enabled",
-    "ui_icons_field": "Enabled",
-    "ui_icons_field_link_attributes": "Disabled",
-    "ui_icons_field_linkit": "Disabled",
-    "ui_icons_field_linkit_attributes": "Disabled",
-    "ui_icons_font": "Disabled",
-    "ui_icons_library": "Enabled",
-    "ui_icons_media": "Disabled",
-    "ui_icons_menu": "Enabled",
-    "ui_icons_patterns": "Enabled",
-    "ui_icons_picker": "Enabled",
-    "ui_icons_popover": "Enabled",
-    "ui_icons_text": "Enabled",
-    "ui_patterns": "Enabled",
-    "ui_patterns_blocks": "Enabled",
-    "ui_patterns_ckeditor5": "Enabled",
-    "ui_patterns_field": "Enabled",
-    "ui_patterns_field_formatters": "Enabled",
-    "ui_patterns_field_group": "Enabled",
-    "ui_patterns_layouts": "Enabled",
-    "ui_patterns_legacy": "Disabled",
-    "ui_patterns_library": "Enabled",
-    "ui_patterns_ui": "Enabled",
-    "ui_patterns_views": "Enabled",
-    "ui_skins": "Disabled",
-    "ui_styles": "Enabled",
-    "ui_styles_block": "Enabled",
-    "ui_styles_ckeditor5": "Disabled",
-    "ui_styles_entity_status": "Disabled",
-    "ui_styles_layout_builder": "Enabled",
-    "ui_styles_library": "Enabled",
-    "ui_styles_page": "Enabled",
-    "ui_styles_ui_patterns": "Enabled",
-    "ui_styles_views": "Enabled"
-  },
-  "config_sync_drift_relevant": [
-    "core.entity_view_display.aculta_forum_post.aculta_forum_post.default",
-    "core.entity_view_display.aculta_forum_post.aculta_forum_post.forum_search_result",
-    "core.entity_view_display.group.lms_course.default",
-    "core.entity_view_display.node.aculta_forum_topic.full",
-    "core.entity_view_display.node.aculta_forum_topic.teaser",
-    "core.extension",
-    "ui_icons_patterns.settings",
-    "views.view.aculta_forum_admin_topics",
-    "views.view.aculta_forum_categories",
-    "views.view.aculta_forum_lms_admin_comments",
-    "views.view.aculta_forum_public_topics"
-  ],
-  "notes": [
-    "Snapshot records active database state; it is not represented by Config Sync alone.",
-    "ui_patterns_ckeditor5 is enabled but explicitly excluded from new integration; no config/import/uninstall was run.",
-    "ui_patterns_field_group is enabled preexisting but BLOCKED_UPSTREAM pending Drupal 12/security review; no new activation was made.",
-    "ui_skins is installed/available but disabled; no activation or configuration import was run."
-  ]
+    "observed_at_utc": "2026-11-10T21:58:37+00:00",
+    "drupal_version": "11.5.0-beta1",
+    "evidence_command": "drush pml --type=module --format=json; drush config:status --format=json; targeted config:get and Render API inspection",
+    "ui_suite_modules": {
+        "ui_icons": {
+            "status": "Enabled",
+            "version": "2.1.0"
+        },
+        "ui_icons_canvas": {
+            "status": "Disabled",
+            "version": "2.1.0"
+        },
+        "ui_icons_ckeditor5": {
+            "status": "Enabled",
+            "version": "2.1.0"
+        },
+        "ui_icons_field": {
+            "status": "Enabled",
+            "version": "2.1.0"
+        },
+        "ui_icons_field_link_attributes": {
+            "status": "Disabled",
+            "version": "2.1.0"
+        },
+        "ui_icons_field_linkit": {
+            "status": "Disabled",
+            "version": "2.1.0"
+        },
+        "ui_icons_field_linkit_attributes": {
+            "status": "Disabled",
+            "version": "2.1.0"
+        },
+        "ui_icons_font": {
+            "status": "Disabled",
+            "version": "2.1.0"
+        },
+        "ui_icons_library": {
+            "status": "Enabled",
+            "version": "2.1.0"
+        },
+        "ui_icons_media": {
+            "status": "Disabled",
+            "version": "2.1.0"
+        },
+        "ui_icons_menu": {
+            "status": "Enabled",
+            "version": "2.1.0"
+        },
+        "ui_icons_patterns": {
+            "status": "Enabled",
+            "version": "2.1.0"
+        },
+        "ui_icons_picker": {
+            "status": "Enabled",
+            "version": "2.1.0"
+        },
+        "ui_icons_popover": {
+            "status": "Enabled",
+            "version": "2.1.0"
+        },
+        "ui_icons_text": {
+            "status": "Enabled",
+            "version": "2.1.0"
+        },
+        "ui_patterns": {
+            "status": "Enabled",
+            "version": null
+        },
+        "ui_patterns_blocks": {
+            "status": "Enabled",
+            "version": null
+        },
+        "ui_patterns_ckeditor5": {
+            "status": "Enabled",
+            "version": null
+        },
+        "ui_patterns_field": {
+            "status": "Enabled",
+            "version": null
+        },
+        "ui_patterns_field_formatters": {
+            "status": "Enabled",
+            "version": null
+        },
+        "ui_patterns_field_group": {
+            "status": "Enabled",
+            "version": null
+        },
+        "ui_patterns_layouts": {
+            "status": "Enabled",
+            "version": null
+        },
+        "ui_patterns_legacy": {
+            "status": "Disabled",
+            "version": null
+        },
+        "ui_patterns_library": {
+            "status": "Enabled",
+            "version": null
+        },
+        "ui_patterns_ui": {
+            "status": "Enabled",
+            "version": null
+        },
+        "ui_patterns_views": {
+            "status": "Enabled",
+            "version": null
+        },
+        "ui_skins": {
+            "status": "Enabled",
+            "version": "1.2.1"
+        },
+        "ui_styles": {
+            "status": "Enabled",
+            "version": "8.x-1.22"
+        },
+        "ui_styles_block": {
+            "status": "Enabled",
+            "version": "8.x-1.22"
+        },
+        "ui_styles_ckeditor5": {
+            "status": "Disabled",
+            "version": "8.x-1.22"
+        },
+        "ui_styles_entity_status": {
+            "status": "Disabled",
+            "version": "8.x-1.22"
+        },
+        "ui_styles_layout_builder": {
+            "status": "Enabled",
+            "version": "8.x-1.22"
+        },
+        "ui_styles_library": {
+            "status": "Enabled",
+            "version": "8.x-1.22"
+        },
+        "ui_styles_page": {
+            "status": "Enabled",
+            "version": "8.x-1.22"
+        },
+        "ui_styles_ui_patterns": {
+            "status": "Enabled",
+            "version": "8.x-1.22"
+        },
+        "ui_styles_views": {
+            "status": "Enabled",
+            "version": "8.x-1.22"
+        }
+    },
+    "config_sync_drift_relevant": [
+        "aculta420_v2.settings",
+        "aculta_portal.visual_skins",
+        "core.extension",
+        "taxonomy.vocabulary.aculta_forum_categories",
+        "ui_icons_patterns.settings",
+        "views.view.aculta_forum_categories"
+    ],
+    "runtime_config": {
+        "ui_skins_module": "enabled",
+        "ui_skins_theme_css_variables": "absent from active aculta420_v2.settings; present in Config Sync",
+        "aculta_portal.visual_skins": "absent from active config; present in Config Sync",
+        "views.view.aculta_forum_categories.default.row": "fields (page_categories and block_landing inherit)",
+        "ui_patterns_ckeditor5": "enabled; forbidden for this implementation per ADR-055",
+        "ui_patterns_field_group": "enabled; upstream does not receive Drupal security coverage and current info.yml excludes Drupal 12",
+        "ui_styles_ckeditor5": "disabled in active Runtime; enabled in Config Sync and editor config for revista_editorial"
+    },
+    "notes": [
+        "Runtime differs materially from the prior snapshot: UI Skins is enabled, but skin map and UI Skins CSS variables are not active; Config Sync drift includes core.extension and Forum categories.",
+        "Do not run config import or module uninstall without explicit authorization. The pending import authorization is required to activate the existing map, CSS variables, Views row, and UI Styles CKEditor integration.",
+        "UI Patterns Field Group is blocked for new use: Drupal.org states the project is not covered by the Security Advisory Policy; installed info.yml allows only Core 9/10/11; Field Group integration remains preexisting and must not be expanded until secure Drupal 12 support is accepted.",
+        "UI Patterns CKEditor 5 is currently enabled despite the ADR prohibition; disabling it requires an authorized config operation and is recorded DEFERRED.",
+        "The Runtime is Drupal 11.5.0-beta1; Drupal 12 compatibility cannot be inferred from a Drupal 11 runtime test."
+    ]
 }

@@ -15,6 +15,22 @@ props:
     type:
       type: string
       enum: [status, warning, error]
+    role:
+      type: [string, 'null']
+      enum: [status, alert, null]
+      default: null
+      title: Papel acessível
+      description: Sobrescreve o papel anunciado quando um consumer precisa preservar um contrato específico.
+    dismissible:
+      type: boolean
+      default: false
+      title: Dispensável
+      description: Exibe o controle de fechamento quando o consumer fornece um comportamento de dispensa.
+    close_label:
+      type: string
+      default: Fechar aviso
+      title: Rótulo do controle de fechamento
+      minLength: 1
     messages:
       type: array
       minItems: 1

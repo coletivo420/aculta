@@ -1,11 +1,19 @@
-{#
-  Caixa "pagamentos pelo Mercado Pago" (aculta_portal), apresentação ACULTA420.
-#}
-<section class="aculta-panel aculta-panel--default aculta-panel__body" data-portal-payment-notice>
-  <p>
-    {{ intro }}
-    {% if url %}
-      <a class="link-primary" href="{{ url }}" target="_blank" rel="noopener">{{ link_label }} ({{ 'abre em nova aba'|t }})</a>
-    {% endif %}
-  </p>
-</section>
+{# The surface SDC owns the card; the Portal still owns text and destination. #}
+{% set notice_content %}
+  <section data-portal-payment-notice>
+    <p>
+      {{ intro }}
+      {% if url %}
+        <a class="link-primary" href="{{ url }}" target="_blank" rel="noopener">{{ link_label }} ({{ 'abre em nova aba'|t }})</a>
+      {% endif %}
+    </p>
+  </section>
+{% endset %}
+{{ include('aculta420_v2:surface', {
+  tone: 'raised',
+  radius: 'lg',
+  spacing: 'normal',
+  elevation: 'subtle',
+  border: 'subtle',
+  content: notice_content,
+}, with_context = false) }}

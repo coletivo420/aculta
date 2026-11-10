@@ -1,3 +1,17 @@
+## Não versionado — status do carrinho no SDC compartilhado (2026-11-10)
+
+- O adapter visual do Portal compõe `status-messages`, converte `success` para
+  `status` e preserva `alert`, link e o contrato de dispensa usado pelo JS.
+- Acrescenta props estritas, story acessível e controle com alvo mínimo de 44px.
+- Render Runtime, PHPUnit focal, schema SDC e Stylelint focal passaram.
+
+## Não versionado — SDCs nos adapters editoriais e de pagamento (2026-11-10)
+
+- O adapter `aculta_section` compõe `layout-section`, mantendo variante, cor,
+  títulos e corpo fornecidos pelo Portal.
+- O aviso de pagamento usa `surface`; texto, URL, marcador e abertura segura em
+  nova aba continuam sob contrato do Portal.
+
 ## Não versionado — SDC `card-cultural` no catálogo público (2026-11-10)
 
 - Reutiliza `card-cultural` no template adapter do catálogo público de Eventos.

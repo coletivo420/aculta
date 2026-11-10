@@ -57,6 +57,10 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
     $isForumCategoryPilot = $viewId === 'aculta_forum_categories'
       && in_array((string) $displayId, ['page_categories', 'block_landing'], TRUE)
       && $patternsConfigured;
+    $forumCategoryLegacyTemplatesRemoved = $isForumCategoryPilot
+      && !is_file($theme . '/templates/views/views-view-fields--aculta-forum-categories--' . $displayId . '.html.twig')
+      && !is_file($theme . '/templates/views/views-view-unformatted--aculta-forum-categories--' . $displayId . '.html.twig')
+      && !is_file($theme . '/templates/views/views-view--aculta-forum-categories--' . $displayId . '.html.twig');
     $rows[] = [
       'id' => $viewId,
       'owner_module' => 'unresolved_from_config',
@@ -68,8 +72,16 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'style_plugin' => $stylePlugin,
       'ui_patterns_configured' => $patternsConfigured ? (string) $patternsConfig['component_id'] : 'not_detected_by_plugin_id_scan',
       'status' => 'MIGRATION_IN_PROGRESS',
-      'replacement_or_action' => $isForumCategoryPilot ? 'Pilot: replace duplicated row field templates with the forum-category SDC; keep list/display wrappers and Views query behavior' : 'Inventory candidate only; inspect row, style and display independently before migration',
-      'risk_or_evidence_gap' => $isForumCategoryPilot ? 'Config Sync and install defaults use UI Patterns row; Runtime cutover, rendered output, access/cache comparison and browser evidence are pending' : 'No UI Patterns row/style/display plugin ID detected in Sync; Runtime output, access and cache still unverified',
+      'replacement_or_action' => $isForumCategoryPilot
+        ? ($forumCategoryLegacyTemplatesRemoved
+          ? 'UI Patterns row SDC cutover is defined in Sync/install; source field/wrapper templates removed; retain Views query, grouping, pager and access contracts'
+          : 'Pilot: replace duplicated row field templates with the forum-category SDC; retain Views query, grouping, pager and access contracts')
+        : 'Inventory candidate only; inspect row, style and display independently before migration',
+      'risk_or_evidence_gap' => $isForumCategoryPilot
+        ? ($forumCategoryLegacyTemplatesRemoved
+          ? 'Sync/install declare the UI Patterns row, but Runtime still has row: fields; authorized import and before/after rendered output, access/cache and browser evidence are pending'
+          : 'Config Sync and install defaults use UI Patterns row; Runtime cutover, rendered output, access/cache comparison and browser evidence are pending')
+        : 'No UI Patterns row/style/display plugin ID detected in Sync; Runtime output, access and cache still unverified',
       'rollback' => 'Revert only display config after before/after result comparison',
       'detected_consumers' => '',
       'runtime_status' => 'not_observed',
@@ -109,6 +121,24 @@ foreach (glob($sync . '/core.entity_view_display.*.yml') ?: [] as $path) {
 $templateRoots = [
   'aculta420_v2' => $theme . '/templates',
 ];
+$themeSdcAdapters = [];
+$themeTemplateIterator = new RecursiveIteratorIterator(
+  new RecursiveDirectoryIterator($theme . '/templates', FilesystemIterator::SKIP_DOTS),
+);
+foreach ($themeTemplateIterator as $themeTemplate) {
+  if (!$themeTemplate->isFile() || !str_ends_with($themeTemplate->getFilename(), '.html.twig')) {
+    continue;
+  }
+  $themeContents = (string) file_get_contents($themeTemplate->getPathname());
+  preg_match_all("/aculta420_v2:([a-z0-9_-]+)/", $themeContents, $themeComponentMatches);
+  $themeComponents = array_values(array_unique($themeComponentMatches[1]));
+  if ($themeComponents !== []) {
+    $themeSdcAdapters[$themeTemplate->getFilename()][] = [
+      'path' => relative_path($root, $themeTemplate->getPathname()),
+      'components' => $themeComponents,
+    ];
+  }
+}
 $moduleIterator = new RecursiveIteratorIterator(
   new RecursiveDirectoryIterator($customModules, FilesystemIterator::SKIP_DOTS),
   RecursiveIteratorIterator::SELF_FIRST,
@@ -139,13 +169,30 @@ foreach ($templateRoots as $owner => $templateRoot) {
     $relativePath = relative_path($root, $path);
     $contents = (string) file_get_contents($path);
     preg_match_all("/aculta420_v2:([a-z0-9_-]+)/", $contents, $componentMatches);
-    $components = array_values(array_unique($componentMatches[1] ?? []));
+    $components = array_values(array_unique($componentMatches[1]));
     $isSdcAdapter = $components !== [];
     $isNeutralPortalButtonFallback = $relativePath === 'web/modules/custom/aculta_portal/templates/aculta-portal-button.html.twig'
       && !$isSdcAdapter;
+    $moduleThemeAdapters = str_starts_with($relativePath, 'web/modules/')
+      ? ($themeSdcAdapters[$file->getFilename()] ?? [])
+      : [];
+    $isThemeAdaptedModuleFallback = $moduleThemeAdapters !== [] && !$isSdcAdapter;
     preg_match('/views-view(?:-fields|-unformatted)?--([a-z0-9_-]+)--([a-z0-9_-]+)/', $file->getFilename(), $viewMatches);
+    $viewId = isset($viewMatches[1]) ? str_replace('-', '_', $viewMatches[1]) : '';
+    $displayId = $viewMatches[2] ?? '';
+    $viewDisplayUsesPatternsRow = FALSE;
+    if (isset($viewMatches[1], $viewMatches[2])) {
+      $viewPath = $sync . '/views.view.' . $viewId . '.yml';
+      if (is_file($viewPath)) {
+        $viewDefinition = Yaml::parseFile($viewPath);
+        $viewDisplayUsesPatternsRow = ($viewDefinition['display'][$displayId]['display_options']['row']['type'] ?? '') === 'ui_patterns';
+      }
+    }
+    $isBypassedViewTemplate = $viewDisplayUsesPatternsRow
+      && preg_match('/^views-view-(?:fields|unformatted)--/', $file->getFilename()) === 1
+      && !$isSdcAdapter;
     $viewConsumer = isset($viewMatches[1], $viewMatches[2])
-      ? str_replace('-', '_', $viewMatches[1]) . ':' . $viewMatches[2]
+      ? $viewId . ':' . $displayId
       : 'template suggestion; exact route/runtime consumers require review';
     $viewConfig = isset($viewMatches[1])
       ? 'config/sync/views.view.' . str_replace('-', '_', $viewMatches[1]) . '.yml'
@@ -163,24 +210,42 @@ foreach ($templateRoots as $owner => $templateRoot) {
       'display_plugin' => 'twig-template-suggestion',
       'row_plugin' => '',
       'style_plugin' => '',
-      'ui_patterns_configured' => $components !== [] ? implode(',', $components) : 'not_detected_in_template',
+      'ui_patterns_configured' => $components !== []
+        ? implode(',', $components)
+        : ($isThemeAdaptedModuleFallback
+          ? 'theme_adapter:' . implode(',', array_unique(array_merge(...array_column($moduleThemeAdapters, 'components'))))
+          : 'not_detected_in_template'),
       'status' => $isSdcAdapter
         ? 'UI_SUITE_NATIVE'
-        : ($isNeutralPortalButtonFallback ? 'FUNCTIONAL_NATIVE_EXCEPTION' : 'MIGRATION_IN_PROGRESS'),
+        : ($isNeutralPortalButtonFallback
+          ? 'FUNCTIONAL_NATIVE_EXCEPTION'
+          : ($isThemeAdaptedModuleFallback
+            ? 'FUNCTIONAL_NATIVE_EXCEPTION'
+            : ($isBypassedViewTemplate ? 'LEGACY_OBSOLETE' : 'MIGRATION_IN_PROGRESS'))),
       'replacement_or_action' => $isSdcAdapter
         ? 'Keep as thin adapter; directly composes ' . implode(', ', $components) . ' and preserves Drupal render contract'
         : ($isNeutralPortalButtonFallback
           ? 'Keep only as the theme-independent functional fallback for aculta_portal_button; visual rendering is owned by the ACULTA420 SDC adapter'
-          : 'Map this template suggestion and its data/access/cache contract to an existing SDC plus the appropriate UI Suite integration; do not remove before replacement proof'),
+          : ($isThemeAdaptedModuleFallback
+            ? 'Keep as the theme-independent Drupal render fallback; matching ACULTA420 theme adapter owns presentation through ' . implode(', ', array_unique(array_merge(...array_column($moduleThemeAdapters, 'components')))) . ' SDC'
+            : ($isBypassedViewTemplate
+              ? 'Obsolete: the configured UI Patterns row renders this display through its SDC and bypasses this Views field/unformatted template; remove after authorized Runtime cutover confirms the matching Sync display'
+              : 'Map this template suggestion and its data/access/cache contract to an existing SDC plus the appropriate UI Suite integration; do not remove before replacement proof'))),
       'risk_or_evidence_gap' => $isSdcAdapter
         ? 'SDC inclusion is source-verified; Runtime output, access and cache equivalence remain unverified'
         : ($isNeutralPortalButtonFallback
           ? 'PortalButton render element and theme hook are source-verified; fallback preserves semantic link/button behavior without design classes; active-theme rendering still needs Runtime output verification'
-          : 'Template is an active custom presentation candidate; exact consumers, functional responsibilities and SDC mapping need file/API review'),
+          : ($isThemeAdaptedModuleFallback
+            ? 'Module fallback and matching V2 theme SDC adapter are source-verified; Runtime output is not reobserved in this inventory run'
+            : ($isBypassedViewTemplate
+              ? 'Config Sync declares ui_patterns row and SDC component for this display; current Runtime config and rendered output are not observed'
+              : 'Template is an active custom presentation candidate; exact consumers, functional responsibilities and SDC mapping need file/API review'))),
       'rollback' => 'Restore this template from the immediately preceding commit; no entity data changes',
       'detected_consumers' => $isNeutralPortalButtonFallback
         ? 'PortalButton render element; ' . $viewConsumer . '; web/themes/custom/aculta420_v2/templates/aculta-portal-button.html.twig -> aculta420_v2:button'
-        : $viewConsumer,
+        : ($isThemeAdaptedModuleFallback
+          ? 'Module theme hook; ' . implode(', ', array_column($moduleThemeAdapters, 'path')) . ' -> ' . implode(',', array_unique(array_merge(...array_column($moduleThemeAdapters, 'components'))))
+          : $viewConsumer),
       'runtime_status' => 'not_observed',
     ];
   }
@@ -308,7 +373,7 @@ $moduleInventory = [
   'drupal/ui_styles_ckeditor5' => [
     'module' => 'ui_styles_ckeditor5', 'status' => 'MIGRATION_IN_PROGRESS',
     'replacement' => 'Provide SDC surface, spacing, elevation and radius choices in revista_editorial through the official block plugin; UI Patterns CKEditor remains excluded.',
-    'risk' => 'Enabled in Sync only for revista_editorial; Runtime plugin is Disabled and visual/editor/browser validation awaits authorized config import.',
+    'risk' => 'Enabled in Sync only for revista_editorial; Runtime plugin is Disabled. Config import and editor/browser validation await explicit operational authorization.',
     'configs' => ['config/sync/editor.editor.revista_editorial.yml', 'config/sync/filter.format.revista_editorial.yml'],
   ],
   'drupal/ui_styles_entity_status' => [
@@ -340,7 +405,7 @@ $moduleInventory = [
     'module' => 'ui_skins',
     'status' => 'MIGRATION_IN_PROGRESS',
     'replacement' => 'Portal DomainSkinResolver + five UI Skins CSS-variable plugins/scopes selected by Drupal Domain ID; theme consumes data-skin and data-theme',
-    'risk' => 'Code/Sync now declare the integration, but module is disabled in Runtime; plugin discovery, real CSS output, cache separation and visual acceptance remain unverified',
+    'risk' => 'Module is enabled and plugin discovery is source/runtime verified; active Runtime lacks aculta_portal.visual_skins and theme third-party CSS-variable settings, although both exist in Sync. Config import, CSS output, cache separation and visual acceptance remain pending.',
   ],
   'drupal/ui_icons' => [
     'module' => 'ui_icons',
@@ -352,13 +417,13 @@ $moduleInventory = [
     'module' => 'ui_patterns_field_group',
     'status' => 'BLOCKED_UPSTREAM',
     'replacement' => 'Use only after Drupal 12 metadata/API compatibility and security acceptance; then map compatible field groups to existing SDCs',
-    'risk' => '2.0.x-dev is not covered by Drupal security advisories and its info.yml declares Core ^9/^10/^11 only; Runtime/Sync activation differs',
+    'risk' => '2.0.x-dev SHA is locked and the module is pre-enabled in Runtime, but Drupal.org explicitly says it is outside the Security Advisory Policy; installed info.yml/lock require Core ^9/^10/^11 (no Drupal 12), and Field Group compatibility is unverified. Do not add consumers; removal requires authorized operation.',
   ],
   'drupal/ui_patterns_ckeditor5' => [
     'module' => 'ui_patterns_ckeditor5',
     'status' => 'LEGACY_OBSOLETE',
     'replacement' => 'Prohibited integration with no repository consumers, no compatibility path and no replacement required. Runtime uninstall is an administrative operation and remains DEFERRED pending explicit authorization.',
-    'risk' => 'Runtime snapshot observed at 2026-11-10T18:17:49Z recorded Enabled while Sync was absent. This is historical evidence; current Runtime state is unknown and must be rechecked before authorized uninstall.',
+    'risk' => 'Current Runtime recheck confirms Enabled while Sync and repository consumers are absent. ADR-055 prohibits this integration; disable/uninstall remains DEFERRED pending explicit operational authorization.',
   ],
   'drupal/ui_icons_menu' => [
     'module' => 'ui_icons_menu', 'status' => 'MIGRATION_IN_PROGRESS',
@@ -451,8 +516,20 @@ foreach ($moduleInventory as $packageName => $metadata) {
     $risk = str_replace('module is enabled in Sync', 'module is absent from Sync', $risk);
   }
   $risk = str_replace(
-    ['Runtime enablement differs from Sync', 'Enabled in Runtime but absent from Config Sync', 'Runtime plugin is Disabled', 'disabled in Runtime', 'module is disabled in Runtime'],
-    ['historical Runtime snapshot differs from Sync; current Runtime is not observed', 'historical Runtime snapshot was Enabled while absent from Config Sync; current Runtime is not observed', 'historical Runtime snapshot recorded Disabled; current Runtime is not observed', 'historical Runtime snapshot recorded Disabled; current Runtime is not observed', 'historical Runtime snapshot recorded Disabled; current Runtime is not observed'],
+    [
+      'Runtime enablement differs from Sync',
+      'Enabled in Runtime but absent from Config Sync',
+      'Runtime plugin is Disabled',
+      'disabled in Runtime',
+      'module is disabled in Runtime',
+    ],
+    [
+      'historical Runtime snapshot differs from Sync; current Runtime is not observed',
+      'historical Runtime snapshot was Enabled while absent from Config Sync; current Runtime is not observed',
+      'historical Runtime snapshot recorded Disabled; current Runtime is not observed',
+      'historical Runtime snapshot recorded Disabled; current Runtime is not observed',
+      'historical Runtime snapshot recorded Disabled; current Runtime is not observed',
+    ],
     $risk,
   );
   $packageOwner = match (TRUE) {
@@ -485,7 +562,9 @@ foreach ($moduleInventory as $packageName => $metadata) {
     'rollback' => 'Revert scoped code/config changes; no entity data migration',
     'detected_consumers' => '',
     'runtime_status' => array_key_exists($metadata['module'], $runtimeStatuses)
-      ? 'historical_snapshot_2026-11-10:' . $runtimeStatuses[$metadata['module']] . '; current_runtime=not_observed'
+      ? (is_array($runtimeStatuses[$metadata['module']])
+        ? 'observed_2026-11-10:' . ($runtimeStatuses[$metadata['module']]['status'] ?? 'unknown') . '; version=' . ($runtimeStatuses[$metadata['module']]['version'] ?? 'unknown')
+        : 'observed_2026-11-10:' . $runtimeStatuses[$metadata['module']])
       : 'current_runtime=not_observed',
   ];
 }
@@ -502,10 +581,10 @@ $rows[] = [
   'ui_patterns_configured' => 'ui_skins_code_and_sync_declared',
   'status' => 'MIGRATION_IN_PROGRESS',
   'replacement_or_action' => 'Portal maps ten Drupal Domain IDs to skin IDs; UI Skins declares light/dark CSS variables; purpose palette form, config key, class, selectors and tokens removed',
-  'risk_or_evidence_gap' => 'UI Skins is disabled in Runtime snapshot; real plugin discovery/output, warmed cache isolation, contrast and browser acceptance remain deferred',
+  'risk_or_evidence_gap' => 'Runtime confirms UI Skins enabled and five CSS variables discovered, but active theme settings and Domain-to-skin map are absent; both are only in Sync. Authorized import, warmed cache isolation, contrast and browser acceptance remain deferred',
   'rollback' => 'Revert the scoped code/config commit; do not restore purpose palette behavior or aliases',
   'detected_consumers' => 'DomainSkinResolver, AppearanceHooks, SurfaceSettingsHooks, UI Skins PageTop scopes',
-  'runtime_status' => 'not_applicable',
+  'runtime_status' => 'ui_skins=Enabled 1.2.1; map and theme CSS-variable settings absent from active config',
 ];
 
 usort(

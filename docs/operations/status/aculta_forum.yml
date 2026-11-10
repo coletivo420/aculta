@@ -1,5 +1,5 @@
 # Fonte do índice de status do README raiz.
 version: 0.2.0-dev.4
 state: Dev
-next_phase: "FST implementado e update 9008 aplicado no Runtime. Browser Firefox ESR PASS; restam Functional em origem isolada, dark mode/zoom/leitor de tela. Plano: web/modules/custom/aculta_portal/modules/aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md."
-progress_note: "0.2.0-dev.4: FST-00 a FST-10; update 9008, ledger e reconciliação 2/0. Piloto de categorias usa UI Patterns row no Sync e install defaults; três Twig overrides estão individualmente inventariados como LEGACY_DEPRECATED. Config do Fórum 20/20 (312 assertions) PASS. Cutover Runtime, retirada segura dos overrides, render/cache/acesso e browser DEFERRED até importação autorizada."
+next_phase: "FST implementado e update 9008 aplicado no Runtime. Browser Firefox ESR PASS; restam Functional em origem isolada, dark mode/zoom/leitor de tela. ADR-054: cutover parcial Views autorizado, aguarda autorização específica do post-update Portal. Validar /categorias e bloco da home em claro/escuro, filtros/paginação/acesso/cache."
+progress_note: "0.2.0-dev.4: FST-00 a FST-10; update 9008, ledger e reconciliação 2/0. SDC forum-category substitui dois field overrides e wrappers específicos; Config Sync/import install usam UI Patterns row. Config do Fórum 20/20 (312 assertions) PASS. Runtime ainda em row: fields; importação parcial autorizada, mas pendente do post-update Portal."

@@ -26,6 +26,13 @@ Status espelhado de `TODO.md`. Plano visual: `docs/architecture/GROWROOM420-VISU
 - Configuração/formulário por purpose removidos do tema. O Portal resolve skin por Domain ID e entrega `aculta_skin_id`; UI Skins declara cinco variáveis e vinte scopes.
 - UI Skins 1.2.1 instalado e cinco definições descobertas; scopes ativos, capturas e aceite visual estão pendentes; esta etapa não fecha ADR-054/055.
 
+## ADR-054/055 — SDCs transversais e Views (2026-11-10)
+
+- `aculta_section` e o aviso de pagamento foram ligados aos SDCs `layout-section` e `surface`; dados, render arrays e destino externo continuam no Portal.
+- Inventário gerado: 381 registros/83 templates Twig; 15 templates fallback de módulos relacionados a adapters SDC do tema.
+- Categorias do Fórum: Sync/install usam `forum-category` em row UI Patterns; cinco templates de Views retirados no checkout. Runtime ainda usa `row: fields`; importação autorizada, render/cache/acesso e browser permanecem DEFERRED.
+- Stylelint focal, PHPUnit, SDC schemas, Layouts e classes mapeadas passaram. Gate Stylelint global segue com falhas preexistentes em `surface.css`, `surface-accent.css` e `surface-panel.css`.
+
 ## Entregas
 
 | Entrega | Escopo | Estado |

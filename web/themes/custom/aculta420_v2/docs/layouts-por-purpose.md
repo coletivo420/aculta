@@ -75,7 +75,7 @@ Componentes com consumo: `accordion`, `alerts-trigger`, `author-card`, `avatar`,
 | `wiki` | `content/node--wiki-entry--full`, `content/node--wiki-entry--teaser` | `wiki-entry`, `breadcrumb` | Aguarda confirmação da F2 para faixa de acento da Wiki |
 | `shop` (Loja) | Não localizado no repositório do tema | Nenhum | Aguarda autorização da Loja (ver `price`) |
 | `courses` (Cursos/LMS) | `lms-lesson-page` (SDC); `aculta_lms` sem templates próprios localizados | `lms-lesson-page`, `progress` (sem consumo) | Falta `progress` e `tabs` |
-| `forum` | `content/node--aculta-forum-topic`, `views/views-view-fields--aculta-forum-*`, `views-view-unformatted--aculta-forum-categories--page-categories` (módulo `aculta_forum`) | `forum-topic`, `forum-category`, `pagination` | Falta `empty-state` e `data-table` |
+| `forum` | `content/node--aculta-forum-topic`; displays de categorias usam row UI Patterns e wrappers padrão de Views | `forum-topic`, `forum-category`, `pagination` | Falta `empty-state` e `data-table` |
 | `eventos` | View `eventos_publicos` na raiz; `aculta-event-page.html.twig` para detalhe | `card-cultural` na listagem; `event-page-layout` no detalhe | Listagem pública validada; estado vazio ainda sem consumer real |
 | `links` (LinkWeed) | `aculta-links-page.html.twig` (tema e módulo), `aculta-links-landing.html.twig`, `social-links-page` | `social-links-page` | Candidato a `hero-banner` na landing |
 

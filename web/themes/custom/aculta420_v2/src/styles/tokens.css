@@ -124,13 +124,6 @@
   --radius-control-field: var(--radius-base);
   --shadow-sm: 0 1px 3px rgb(0 0 0 / 12%);
 
-  /* Tokens semânticos da skin ativa. UI Skins substitui os valores por escopo. */
-  --color-accent: #5a8022;
-  --color-on-accent: #fff;
-  --color-accent-sub-1: #f0c41e;
-  --color-accent-sub-2: #c03d27;
-  --color-accent-sub-3: transparent;
-
   /* Tokens de botões ACULTA (docs/botoes.md) - Modo claro */
   --button-primary-bg: #0c3c29;
   --button-primary-bg-hover: #092b1d;
@@ -151,7 +144,6 @@
   /* Compatibility aliases for the existing shell until all consumers migrate. */
   --color-primary: var(--color-brand-primary);
   --color-secondary: #4b77a8;
-  --color-accent: var(--color-brand-highlight);
   --color-success: var(--color-status);
   --color-danger: var(--color-error);
   --color-light: var(--color-canvas);
@@ -313,13 +305,6 @@
   --button-danger-bg-active: #e27b66;
   --button-danger-fg: #171513;
 
-  /* Fallback semântico escuro; UI Skins fornece os valores da skin ativa. */
-  --color-accent: #6c9e22;
-  --color-on-accent: #000;
-  --color-accent-sub-1: #fbd132;
-  --color-accent-sub-2: #dd4329;
-  --color-accent-sub-3: transparent;
-
   /* Tokens semânticos --aculta-* no modo escuro. Valores literais; não há
      consumidor ainda, portanto não alteram a aparência do site. */
   --aculta-surface-page: #171513; /* --color-canvas */
@@ -390,7 +375,6 @@
   --color-focus-ring: var(--color-brand-primary);
   --color-footer-surface: var(--color-brand-secondary);
   --color-primary: var(--color-brand-primary);
-  --color-accent: var(--color-brand-highlight);
   --color-success: var(--color-status);
   --color-danger: var(--color-error);
   --color-light: var(--color-canvas);
