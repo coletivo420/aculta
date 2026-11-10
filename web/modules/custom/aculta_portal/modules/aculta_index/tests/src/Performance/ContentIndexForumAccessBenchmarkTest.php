@@ -18,10 +18,18 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
  */
 #[Group('aculta_index')]
 #[Group('performance')]
-#[Group('aculta_index')]
-#[Group('performance')]
 #[RunTestsInSeparateProcesses]
 final class ContentIndexForumAccessBenchmarkTest extends ForumAccessKernelTestBase {
+
+  /**
+   * Skips before the parent installs the kernel and the database.
+   */
+  protected function setUp(): void {
+    if (getenv('ACULTA_INDEX_FORUM_ACCESS_BENCHMARK') !== '1') {
+      self::markTestSkipped('Set ACULTA_INDEX_FORUM_ACCESS_BENCHMARK=1 to measure Forum Entity Access.');
+    }
+    parent::setUp();
+  }
 
   /**
    * Measures authorized and denied Forum pages at fixed candidate sizes.

@@ -26,8 +26,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 #[Group('aculta_index')]
 #[Group('performance')]
-#[Group('aculta_index')]
-#[Group('performance')]
 #[RunTestsInSeparateProcesses]
 final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
 
@@ -86,6 +84,11 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected function setUp(): void {
+    // Opt-in guard runs before the database check and parent::setUp() so a
+    // normal run never boots the kernel or touches the database.
+    if (getenv('ACULTA_INDEX_MAINTENANCE_BENCHMARK') !== '1') {
+      self::markTestSkipped('Set ACULTA_INDEX_MAINTENANCE_BENCHMARK=1 to run the rebuild and audit benchmark.');
+    }
     $databaseUrl = getenv('SIMPLETEST_DB') ?: '';
     $databaseParts = parse_url($databaseUrl);
     if (!is_array($databaseParts)
