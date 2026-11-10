@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_events\Kernel;
 
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventLocation;
@@ -15,8 +16,9 @@ use Drupal\user\Entity\Role;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Drupal\aculta_events\Plugin\Block\UpcomingEventsBlock;
-use Drupal\aculta_portal\Domain\ContentPurposeResolver;
+use Drupal\aculta_portal\Domain\ContentSiteKeyResolver;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
 use Drupal\aculta_portal\Domain\DomainRoutePolicy;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\Url;
@@ -104,6 +106,7 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     parent::register($container);
     // Keep this domain-boundary test isolated from the complete user module
     // graph while preserving entity-specific editor scoping for its fixture.
+    $container->register(DomainSiteManagerInterface::class)->setSynthetic(TRUE)->setPublic(TRUE);
     $container->setDefinition(
       'aculta_user.organization_access_service',
       (new Definition(EventDomainBoundaryTestOrganizationAccessService::class))->setPublic(TRUE),
@@ -123,6 +126,9 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_event_location');
     $this->installEntitySchema('aculta_event_organization');
     $this->installEntitySchema('domain');
+    $siteManager = $this->createMock(DomainSiteManagerInterface::class);
+    $siteManager->method('getSiteKeyForDomainId')->willReturn(SiteKey::Eventos);
+    $this->container->set(DomainSiteManagerInterface::class, $siteManager);
     $this->container->get('current_user')->setAccount(new AnonymousUserSession());
   }
 
@@ -368,20 +374,20 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
    * Administrative routes resolve to MAIN; public event routes to eventos.
    */
   public function testResolverKeepsAdministrativeRoutesOnMain(): void {
-    $resolver = new ContentPurposeResolver(
+    $resolver = new ContentSiteKeyResolver(
       $this->container->get('entity_type.manager'),
-      $this->purposes(),
+      $this->container->get(DomainSiteManagerInterface::class),
     );
     $routeProvider = $this->container->get('router.route_provider');
 
     $admin = $routeProvider->getRouteByName('aculta_events.event_add');
-    self::assertSame('main', $resolver->requiredPurpose($admin, 'aculta_events.event_add', new Request()));
+    self::assertSame('main', $resolver->requiredSiteKey($admin, 'aculta_events.event_add', new Request()));
 
     $public = $routeProvider->getRouteByName('aculta_events.page');
-    self::assertSame('eventos', $resolver->requiredPurpose($public, 'aculta_events.page', new Request()));
+    self::assertSame('eventos', $resolver->requiredSiteKey($public, 'aculta_events.page', new Request()));
 
     $plainAdmin = new Route('/painel-administrativo/exemplo', [], [], ['_admin_route' => TRUE]);
-    self::assertSame('main', $resolver->requiredPurpose($plainAdmin, 'exemplo', new Request()));
+    self::assertSame('main', $resolver->requiredSiteKey($plainAdmin, 'exemplo', new Request()));
   }
 
   /**

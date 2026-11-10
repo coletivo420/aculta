@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Unit;
 
-use Drupal\aculta_portal\Domain\ContentPurposeResolver;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\ContentSiteKeyResolver;
+use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -13,10 +13,10 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Tipos do módulo de eventos resolvem para o purpose "eventos" (MODELO-DE-DADOS.md).
+ * Canonical event routes resolve to the eventos site key.
  */
 #[Group('aculta_portal')]
-class ContentPurposeResolverEventsUnitTest extends UnitTestCase {
+class ContentSiteKeyResolverEventsUnitTest extends UnitTestCase {
 
   /**
    * Rotas canônicas de evento, data e local.
@@ -37,14 +37,14 @@ class ContentPurposeResolverEventsUnitTest extends UnitTestCase {
    */
   #[DataProvider('rotasDeEvento')]
   public function testRotaDeEventoResolveParaEventos(string $rota): void {
-    $resolver = new ContentPurposeResolver(
+    $resolver = new ContentSiteKeyResolver(
       $this->createMock(EntityTypeManagerInterface::class),
-      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      $this->createMock(DomainSiteManagerInterface::class),
     );
     $request = Request::create('/');
     $request->attributes->set('_route', $rota);
 
-    $this->assertSame('eventos', $resolver->canonicalContentPurpose($request));
+    $this->assertSame('eventos', $resolver->canonicalContentSiteKey($request));
   }
 
 }

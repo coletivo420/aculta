@@ -216,16 +216,16 @@ services:
     class: Drupal\aculta_portal\Domain\SiteKeyRegistry
   aculta_portal.domain_site:
     class: Drupal\aculta_portal\Domain\DomainSiteManager
-    arguments: ['@aculta_portal.domain_purpose', '@aculta_portal.site_key_registry']
+    arguments: ['@entity_type.manager', '@domain.negotiator', '@config.factory', '@request_stack', '@aculta_portal.site_key_registry', '%app.root%']
   aculta_portal.domain_purpose:
     class: Drupal\aculta_portal\Domain\DomainPurposeManager
     arguments: ['@entity_type.manager', '@domain.negotiator', '@config.factory', '@request_stack', '%app.root%']
     tags:
       - { name: aculta_portal.helper }
-  Drupal\aculta_portal\Domain\ActivePurposesState: '@aculta_portal.active_purposes_state'
-  aculta_portal.active_purposes_state:
-    class: Drupal\aculta_portal\Domain\ActivePurposesState
-    arguments: ['@state', '@aculta_portal.domain_purpose']
+  Drupal\aculta_portal\Domain\ActiveSiteKeysState: '@aculta_portal.active_site_keys_state'
+  aculta_portal.active_site_keys_state:
+    class: Drupal\aculta_portal\Domain\ActiveSiteKeysState
+    arguments: ['@state', '@aculta_portal.domain_site']
   aculta_portal.checkout_step_resolver:
     class: Drupal\aculta_portal\Checkout\CheckoutStepResolver
     arguments: ['@commerce_checkout.chain_checkout_flow_resolver']
@@ -250,9 +250,9 @@ services:
   aculta_portal.presentation.domain:
     class: Drupal\aculta_portal\Presentation\DomainPresentationBuilder
     arguments: ['@aculta_portal.domain_purpose', '@string_translation', '@?aculta_wiki.presentation.wiki_search_form', '@path.matcher']
-  aculta_portal.content_purpose_resolver:
-    class: Drupal\aculta_portal\Domain\ContentPurposeResolver
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+  aculta_portal.content_site_key_resolver:
+    class: Drupal\aculta_portal\Domain\ContentSiteKeyResolver
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.account_shell_builder:
@@ -286,7 +286,7 @@ services:
 
   aculta_portal.domain_purpose_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\DomainPurposeRequestSubscriber
-    arguments: ['@aculta_portal.domain_purpose', '@router.no_access_checks', '@current_user', '@router.route_provider', '@aculta_portal.content_purpose_resolver']
+    arguments: ['@aculta_portal.domain_purpose', '@router.no_access_checks', '@current_user', '@router.route_provider', '@aculta_portal.content_site_key_resolver']
     tags:
       - { name: event_subscriber }
       - { name: aculta_portal.implementation }

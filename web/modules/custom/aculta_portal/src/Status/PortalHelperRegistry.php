@@ -175,9 +175,9 @@ final class PortalHelperRegistry {
       'summary' => 'Lê e grava a preferência individual de modo de cor usando User Data.',
       'docs' => 'docs/portal/IMPLEMENTATIONS.md',
     ],
-    'aculta_portal.content_purpose_resolver' => [
+    'aculta_portal.content_site_key_resolver' => [
       'label' => 'Propósito do conteúdo',
-      'summary' => 'Resolve o Domain purpose responsável por apresentar uma entidade de conteúdo.',
+      'summary' => 'Resolve o site-key responsável por apresentar uma entidade de conteúdo.',
       'docs' => 'docs/portal/DOMAIN-PRESENTATION-CONTRACT.md',
     ],
     'aculta_portal.deployer_status_reader' => [
@@ -242,7 +242,7 @@ final class PortalHelperRegistry {
     ],
     'aculta_portal.search_utility' => [
       'label' => 'Utilitários de busca',
-      'summary' => 'Prepara links e rótulos da busca respeitando o Domain purpose.',
+      'summary' => 'Prepara links e rótulos da busca respeitando o site-key.',
       'docs' => 'web/modules/custom/aculta_portal/README.md',
     ],
     'aculta_portal.secrets_manager' => [

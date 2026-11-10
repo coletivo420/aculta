@@ -76,13 +76,13 @@ $routeSource = file_get_contents(
   $portalRoot . '/src/EventSubscriber/DomainRouteSubscriber.php'
 );
 $resolverSource = file_get_contents(
-  $portalRoot . '/src/Domain/ContentPurposeResolver.php'
+  $portalRoot . '/src/Domain/ContentSiteKeyResolver.php'
 );
-$themeRoot = DRUPAL_ROOT . '/themes/custom/aculta420';
+$themeRoot = DRUPAL_ROOT . '/themes/custom/aculta420_v2';
 
 $assert(
   str_contains($subscriberSource, 'canonicalMainNavigationResponse')
-    && str_contains($subscriberSource, "pathUrl('main', \$request->getPathInfo())"),
+    && str_contains($subscriberSource, 'pathUrl(DomainSurfaceMap::MAIN, $request->getPathInfo())'),
   'Admin canonicalization uses DomainPurposeManager instead of a hardcoded host.',
 );
 $assert(
@@ -92,7 +92,7 @@ $assert(
 );
 $assert(
   str_contains($subscriberSource, 'catch (MethodNotAllowedException)')
-    && str_contains($subscriberSource, "\$this->domainPurposeManager->getCurrentPurpose() !== 'main'")
+    && str_contains($subscriberSource, '$this->domainPurposeManager->getCurrentPurpose() !== DomainSurfaceMap::MAIN')
     && str_contains($subscriberSource, "\$event->setResponse(\$this->notFoundResponse())"),
   'Wrong-method requests to existing admin routes also fail closed on secondary purposes.',
 );
@@ -111,7 +111,7 @@ $assert(
 );
 $assert(
   str_contains($subscriberSource, 'notFoundResponse')
-    && str_contains($subscriberSource, 'canonicalContentPurpose'),
+    && str_contains($subscriberSource, 'canonicalContentSiteKey'),
   'Public wrong-purpose enforcement remains fail-closed.',
 );
 $assert(

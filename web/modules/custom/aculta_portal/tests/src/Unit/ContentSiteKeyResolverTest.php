@@ -4,25 +4,22 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Unit;
 
-use Drupal\aculta_portal\Domain\ContentPurposeResolver;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\aculta_portal\Domain\SiteKey;
+use Drupal\aculta_portal\Domain\ContentSiteKeyResolver;
+use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\domain\DomainInterface;
-use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\node\NodeInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Route;
 
 /**
  * Testa a resolução de purpose de rota e de conteúdo do Portal.
  */
 #[Group('aculta_portal')]
-final class ContentPurposeResolverTest extends TestCase {
+final class ContentSiteKeyResolverTest extends TestCase {
 
   /**
    * Bundles de tópico público do ACULTA Forum.
@@ -47,12 +44,12 @@ final class ContentPurposeResolverTest extends TestCase {
     $request = Request::create('/node/123');
     $request->attributes->set('_route', 'entity.node.canonical');
     $request->attributes->set('node', $node);
-    $resolver = new ContentPurposeResolver(
+    $resolver = new ContentSiteKeyResolver(
       $this->createMock(EntityTypeManagerInterface::class),
-      $this->domainPurposeManager(),
+      $this->domainSiteManager(),
     );
 
-    $this->assertSame('forum', $resolver->canonicalContentPurpose($request));
+    $this->assertSame('forum', $resolver->canonicalContentSiteKey($request));
   }
 
   /**
@@ -71,7 +68,7 @@ final class ContentPurposeResolverTest extends TestCase {
 
     $this->assertSame(
       'main',
-      $this->resolver()->requiredPurpose($route, 'entity.node.edit_form', $request),
+      $this->resolver()->requiredSiteKey($route, 'entity.node.edit_form', $request),
     );
   }
 
@@ -86,7 +83,7 @@ final class ContentPurposeResolverTest extends TestCase {
 
     $this->assertSame(
       'main',
-      $this->resolver()->requiredPurpose(
+      $this->resolver()->requiredSiteKey(
         $route,
         'entity.node.canonical',
         $request,
@@ -105,7 +102,7 @@ final class ContentPurposeResolverTest extends TestCase {
 
     $this->assertSame(
       'magazine',
-      $this->resolver()->requiredPurpose(
+      $this->resolver()->requiredSiteKey(
         $route,
         'entity.node.canonical',
         $request,
@@ -121,7 +118,7 @@ final class ContentPurposeResolverTest extends TestCase {
     $request = Request::create('/node/90/latest');
 
     $this->assertNull(
-      $this->resolver()->requiredPurpose(
+      $this->resolver()->requiredSiteKey(
         $route,
         'entity.node.latest_version',
         $request,
@@ -139,7 +136,7 @@ final class ContentPurposeResolverTest extends TestCase {
 
     $this->assertSame(
       'wiki',
-      $this->resolver()->requiredPurpose($route, 'node.add', $request),
+      $this->resolver()->requiredSiteKey($route, 'node.add', $request),
     );
   }
 
@@ -153,7 +150,7 @@ final class ContentPurposeResolverTest extends TestCase {
 
     $this->assertSame(
       'wiki',
-      $this->resolver()->requiredPurpose(
+      $this->resolver()->requiredSiteKey(
         $route,
         'entity.node.edit_form',
         $request,
@@ -173,7 +170,7 @@ final class ContentPurposeResolverTest extends TestCase {
 
     $this->assertSame(
       'magazine',
-      $this->resolver()->requiredPurpose(
+      $this->resolver()->requiredSiteKey(
         $route,
         'entity.node.edit_form',
         $request,
@@ -200,7 +197,7 @@ final class ContentPurposeResolverTest extends TestCase {
 
     $this->assertSame(
       'courses',
-      $this->resolver()->requiredPurpose(
+      $this->resolver()->requiredSiteKey(
         $route,
         'aculta_courses.group_content',
         $request,
@@ -211,10 +208,10 @@ final class ContentPurposeResolverTest extends TestCase {
   /**
    * Resolver com dependências mínimas.
    */
-  private function resolver(): ContentPurposeResolver {
-    return new ContentPurposeResolver(
+  private function resolver(): ContentSiteKeyResolver {
+    return new ContentSiteKeyResolver(
       $this->createMock(EntityTypeManagerInterface::class),
-      $this->domainPurposeManager(),
+      $this->domainSiteManager(),
     );
   }
 
@@ -230,17 +227,10 @@ final class ContentPurposeResolverTest extends TestCase {
   /**
    * DomainPurposeManager com negociação simulada.
    */
-  private function domainPurposeManager(): DomainPurposeManager {
-    $domain = $this->createMock(DomainInterface::class);
-    $domain->method('id')->willReturn('forum_aculta_org');
-    $negotiator = $this->createMock(DomainNegotiatorInterface::class);
-    $negotiator->method('getActiveDomain')->willReturn($domain);
-    return new DomainPurposeManager(
-      $this->createMock(EntityTypeManagerInterface::class),
-      $negotiator,
-      $this->createMock(ConfigFactoryInterface::class),
-      new RequestStack(),
-    );
+  private function domainSiteManager(): DomainSiteManagerInterface {
+    $sites = $this->createMock(DomainSiteManagerInterface::class);
+    $sites->method('getSiteKeyForDomainId')->willReturn(SiteKey::Forum);
+    return $sites;
   }
 
 }
