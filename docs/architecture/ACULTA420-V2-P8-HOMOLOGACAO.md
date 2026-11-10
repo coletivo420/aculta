@@ -96,7 +96,7 @@ A suíte de 86 checks foi repetida após a restauração dos blocos de cabeçalh
 
 ## 6. P9 — cutover
 
-**Não executado.** Critérios não atendidos: homologação visual, Layout Builder por display, landing pages e import/export em staging.
+**Não executado.** Runbook completo em `ACULTA420-V2-P9-CUTOVER.md`; `validate-aculta420-shell-regions.php --strict` bloqueia enquanto houver bloco em região antiga. Critérios não atendidos: homologação visual, Layout Builder por display, landing pages e import/export em staging.
 
 O que já existe para o cutover:
 

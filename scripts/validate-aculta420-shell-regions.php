@@ -23,6 +23,7 @@ use Symfony\Component\Yaml\Yaml;
 
 $root = dirname(__DIR__);
 $theme = $root . '/web/themes/custom/aculta420_v2';
+$strict = in_array('--strict', $argv, TRUE);
 $failures = [];
 $checks = 0;
 
@@ -63,12 +64,13 @@ foreach (glob($root . '/config/sync/block.block.aculta420_v2_*.yml') ?: [] as $f
 }
 $assert($orphans === [], 'Blocos apontando para região inexistente: ' . implode(' | ', $orphans));
 if ($legacy !== []) {
-  // Informativo: o corte só pode remover as regiões quando esta lista zerar.
+  // Informativo no modo normal; no modo --strict bloqueia o cutover.
   echo 'Blocos ainda em regiões antigas (ponte ativa): ' . count($legacy) . "\n";
   foreach ($legacy as $item) {
     echo "  - $item\n";
   }
 }
+$assert(!$strict || $legacy === [], 'Corte bloqueado: ' . count($legacy) . ' bloco(s) ainda em regiões antigas. Migre-os antes de remover as regiões do info.yml.');
 
 $templatePath = $theme . '/templates/layout/page--shell-v2.html.twig';
 $assert(is_file($templatePath), 'Template do shell v2 ausente.');
