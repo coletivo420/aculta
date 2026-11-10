@@ -1,3 +1,10 @@
+## Não versionado — piloto UI Patterns Views Fórum (2026-11-10)
+
+- `forum-category` aceita nível semântico `h2`/`h3` e recebe títulos linkados,
+  pai, descrição e contagem por sources do UI Patterns Views nos displays de
+  categorias. Sync e defaults do Fórum estão alinhados; render isolado Drupal
+  passou. Runtime/browser aguardam cutover autorizado.
+
 ## Não versionado — corte do motor visual para UI Skins (2026-11-10)
 
 - Remove do tema `aculta_purpose_palette`, schema, formulário administrativo, preview JS/CSS, `PurposePaletteSchemes`, seletores `data-purpose` e tokens CSS por purpose.

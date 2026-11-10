@@ -4,7 +4,7 @@ Estado: Dev · versão 1.5.0 (`aculta420_v2.info.yml`) · status em `docs/operat
 
 ## Próximo passo
 
-- **ADR-054/055 e US-00–14/RN-00–05 em andamento:** UI Skins substitui paletas purpose (dez domínios, cinco tokens e modos claro/escuro); sem aliases/config antiga. Runtime Skins Disabled. UI Styles Page alinhado no Sync; regiões e piloto Links aguardam capturas/aceite.
+- **ADR-054/055 US-00–14/RN-00–05 em andamento:** UI Skins corta paletas purpose. Sync Views de categorias usa SDC `forum-category`; Runtime aguarda import autorizado. Skins Disabled; UI Styles Page/regiões e Links aguardam homologação.
 - Composer: Skins ^1.2, Icons ^2.1; Field Group dev SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1`, **BLOCKED_UPSTREAM** (Core 12/advisories). Patterns CKEditor proibido; Styles CKEditor autorizado.
 - Gates estáticos/fundações PASS; navegador, responsividade, inventário e migração visual pendentes. Entity Status desativado até revisão dos rascunhos.
 - Planos: `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md`, `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md` e `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`.
