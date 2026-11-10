@@ -1,12 +1,11 @@
-# ADR-054 + ADR-055 — UI Skins/site_key — 2026-11-10
+# ADR-054 + ADR-055 — UI Skins e Views — 2026-11-10
 
-- **Objetivo:** eliminar paletas visuais por purpose e avançar UI Suite sem retenção de configuração visual antiga.
-- **Estado:** corte UI Skins em código cobre dez Domains/dez skins e cinco tokens claro/escuro; `ui_styles_page` está alinhado no Sync. Piloto Views de categorias usa `forum-category` em Sync e defaults, mantendo filtros, agrupamento, sort, acesso, cache e pager.
-- **Decisões/cuidados:** sem dual-read/aliases; `DomainPurposeManager` permanece funcional. Sem `cim` ou ativação de módulos; nenhuma mutação destrutiva. Não retirar Twig de categorias até Runtime consumir novo row.
-- **Commits/arquivos:** `693d5e173` corte Skins; `c5b560132` UI Styles Page; piloto Views (neste commit): View install/Sync, SDC, teste focal e inventário.
-- **Verificações:** SDC schema 80 componentes/1710 checks PASS; render isolado Drupal do SDC com h3/link PASS; Unit 3276/17547 e focal 20/312 PASS; suítes PHPUnit, YAML/paridade, inventário e diff check PASS. Gate V2 SDC falha antes do alvo por classe vedada preexistente em auth-dialog.twig; token-budget FAIL por sete violações anteriores. Browser/Views Runtime DEFERRED sem importação autorizada.
-- **Pendências:** UI Skins ainda Disabled; cutover Views, comparação de render/acesso/cache, capturas e aceite visual pendentes. `system.theme` diverge no Sync/Runtime; preservar alterações paralelas do Messenger.
-- **Próximo passo:** após autorização de importação, cutover de categorias e validar a saída antes de avançar row/style/display em outras Views e domínios.
+- **Objetivo/estado:** Skins substitui paletas purpose em código (10 Domains, 5 tokens claro/escuro); piloto `forum-category` está em Sync/install. `ui_styles_page` alinhado no Sync.
+- **Decisões/cuidados:** sem config antiga/dual-read; DomainPurposeManager permanece funcional. Não importar Sync nem remover Twig enquanto Runtime consumir a View atual.
+- **Commits:** `693d5e173`, `c5b560132`, `d49304e57`, `853c9875f`; baseline browser/script neste commit.
+- **Verificações:** schema SDC 1710 checks; render isolado h3/link; Unit 3276 e focal 20/312; baseline local `/categorias` 9/9, 1024/500px, sem overflow. Runtime cutover DEFERRED por drift config/updatedb; gate V2 falha por `auth-dialog.twig` preexistente; token budget 7 falhas anteriores.
+- **Pendências/próximo passo:** Skins Disabled; importação autorizada necessária para comparar Views, cache/acesso e browser após cutover; então ampliar migração. `origin/dev` integrado por fast-forward; alterações paralelas preservadas.
+
 # FST-00 a FST-11 — integração analítica Fórum + Statistics — 2026-11-10
 
 - **Objetivo:** executar o plano canônico FST-00 a FST-11 em `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md`.

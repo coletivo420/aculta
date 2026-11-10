@@ -15,7 +15,7 @@ import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(os.path.dirname(HERE), "aculta-cpf-checkout"))
+sys.path.insert(0, os.path.realpath(os.path.join(HERE, "..", "..", "shop", "aculta-cpf-checkout")))
 from wdlib import Driver, WDError  # noqa: E402
 
 PAGE = "https://growroom420.aculta.toca.net.br/categorias"
@@ -61,12 +61,12 @@ try:
         .map(e => e.innerText.trim()).filter(Boolean).slice(0, 5),
       overflow: document.documentElement.scrollWidth - innerWidth,
     }""")
-    markers = {"aculta420_assets": source.count("/themes/custom/aculta420/")}
+    markers = {"aculta420_v2_assets": source.count("/themes/custom/aculta420_v2/")}
     detail = json.dumps({**state, **markers}, ensure_ascii=False)
 
     check("Página /categorias abriu no host local simulado", state["host"] == "growroom420.aculta.toca.net.br" and state["path"] == "/categorias", detail)
     check("Título principal e região de conteúdo presentes", state["h1"] == ["Categorias"] and state["main"], detail)
-    check("Tema ACULTA carregado", markers["aculta420_assets"] > 0, detail)
+    check("Tema ACULTA V2 carregado", markers["aculta420_v2_assets"] > 0, detail)
     check("Categorias renderizadas", state["links"] > 0 and (state["categories"] + state["rows"]) > 0, detail)
     check("Contagem de tópicos renderiza", state["counters"] == state["links"], detail)
     check("Nenhum erro visível na página", not state["errors"] and "The website encountered an unexpected error" not in driver.source(), detail)
