@@ -120,13 +120,8 @@ jobs:
       run: |
         composer install --prefer-dist
 
-    - name: Run PHPStan
+    - name: Run PHPStan ratchet
       run: |
-        vendor/bin/phpstan analyse \
-          web/modules/custom \
-          web/themes/custom \
-          scripts \
-          --level=5 \
-          --no-progress \
-          --error-format=checkstyle \
-          || true  # TODO: remover quando o baseline do PHPStan for estabilizado.
+        # Fails only when the error count grows beyond phpstan-baseline-count.txt.
+        # The pre-existing debt is burned down incrementally, never masked.
+        php scripts/phpstan-ratchet.php
