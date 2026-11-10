@@ -319,7 +319,7 @@ Data: 2026-11-10. Branch `dev`.
 - `validate-aculta420-sdc-schemas.php`: PASS (80 componentes, 116 includes, 1707 checks).
 - `validate-aculta420-mapped-classes.php`: PASS (483 classes).
 - `validate-module-theme-boundary.php`: PASS (7385 verificações; módulo sem token ou classe de design).
-- `validate-agent-token-budget.php`: PASS (handoff 3/3; entrada total 8963/10000).
+- `validate-agent-token-budget.php`: FAIL por Skills recém-adicionadas no remoto (18 Skills, máximo 10; quatro arquivos acima de 4000 bytes). O handoff está em 3/3. Fora deste diff; DEFERRED.
 - `npm run lint:css` nos componentes e no CSS de estatísticas: PASS.
 - `validate-admin-routes-main-domain.php`: PASS (40 arquivos, 175 rotas).
 - `validate-aculta-portal-drupal12.php`: PASS (1218 checks), após regenerar o índice do README raiz.
@@ -327,6 +327,7 @@ Data: 2026-11-10. Branch `dev`.
 - PHPCS nos arquivos novos e controllers: 0 erros (somente avisos de comprimento de linha preexistentes).
 - `php -l` em todos os arquivos PHP alterados: PASS.
 - `validate-aculta420-v2-sdc.php`: FAIL preexistente em `components/auth-dialog/auth-dialog.twig`, fora do escopo desta alteração; DEFERRED.
+- `validate-browser-index.php`: FAIL por documentos de worktrees paralelos (`.claude/worktrees/...`) que citam pastas antigas. O índice da frente foi regenerado; a falha é do scanner em worktrees, não deste teste.
 - `validate-aculta420-design-foundations.php`: FAIL preexistente de literais de cor em `ui-library-admin.css` e componentes `surface*`, fora deste diff; DEFERRED.
 
 ### Runtime
