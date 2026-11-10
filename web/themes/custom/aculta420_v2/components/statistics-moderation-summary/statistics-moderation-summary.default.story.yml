@@ -8,4 +8,4 @@ props:
       description: Sem expor denunciantes.
     - label: Posts aguardando moderação
       value: '7'
-      description: 
+      description: ''
