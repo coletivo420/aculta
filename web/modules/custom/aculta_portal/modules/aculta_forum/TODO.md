@@ -1,6 +1,6 @@
 # TODO — aculta_forum
 
-Estado: Dev · versão 0.2.0-dev.3 · status: docs/operations/status/aculta_forum.yml.
+Estado: Dev · versão 0.2.0-dev.3 (`aculta_forum.info.yml`) · status: docs/operations/status/aculta_forum.yml.
 
 ## Próximo passo
 

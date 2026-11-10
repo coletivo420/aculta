@@ -2,13 +2,13 @@
 
 PROJECT-STATUS-INDEX-GUARD: 2026-10-21
 
-Regras de todos os agentes. Em conflito, vale a instrução explícita mais recente do responsável e as regras de segurança abaixo. Texto integral: `docs/operations/AGENT-REGRAS-DETALHADAS.md` (não ler por padrão).
+Regras de todos os agentes. Em conflito, vale a instrução explícita mais recente do responsável e as regras de segurança abaixo. Texto integral: `docs/operations/AGENT-REGRAS-DETALHADAS.md`.
 
 ## Sessão
 
-- **Leitura de partida:** `TODO.md` do projeto e do componente que você vai alterar. Para continuar uma fase, leia `docs/operations/ESTADO-DA-SESSAO.md` (até 3 entradas).
+- Leitura de partida: `TODO.md` do projeto e do componente. Para continuar fase, leia `docs/operations/ESTADO-DA-SESSAO.md` (até 3 entradas).
 - **Ao concluir uma fase:** atualize o `TODO.md` do componente e o status YAML no mesmo commit, sem acrescentar histórico ao TODO.
-- **Handoff:** ao encerrar uma fase ou o trabalho (não a cada microfase), registre em `docs/operations/ESTADO-DA-SESSAO.md` objetivo, arquivos, verificações, pendências e próximos passos. Máximo de 3 entradas; as antigas vão para `docs/history/operations/`. Sem segredos.
+- Handoff: ao encerrar fase/trabalho, registre em `docs/operations/ESTADO-DA-SESSAO.md` objetivo, arquivos, verificações, pendências e próximos passos. Máximo de 3 entradas; antigas vão para `docs/history/operations/`. Sem segredos.
 
 ## Git e Runtime
 
@@ -26,9 +26,9 @@ Regras de todos os agentes. Em conflito, vale a instrução explícita mais rece
 
 ## Ambientes e URLs
 
-- O servidor de desenvolvimento (`*.aculta.toca.net.br`, Homelab) é o único ambiente em uso. Não há host de produção ainda; `*.aculta.org` é destino futuro, sem data. Não sugerir deploy nem produção. Referência: `docs/architecture/environments.md`.
+- O servidor de desenvolvimento (`*.aculta.toca.net.br`) é o único ambiente. Não há produção; `*.aculta.org` é futuro sem data. Não sugerir deploy. Ver `docs/architecture/environments.md`.
 - O bypass `skip CAPTCHA` é permitido nos testes autenticados do servidor de desenvolvimento (runtime `test`). Antes da rodada, confirme `captcha.settings:enable_globally=0`. Não conceda bypass em produção.
-- URL pública de conteúdo ou ação humana usa slug em português, minúsculas, hífen e sem acento (`docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`; gate `scripts/validate-public-slugs.php`).
+- URL pública usa slug em português, minúsculo, com hífen e sem acento (`docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md`; gate `validate-public-slugs.php`).
 
 ## Interações no front-end: HTMX antes de AJAX
 
@@ -43,15 +43,15 @@ Regras de todos os agentes. Em conflito, vale a instrução explícita mais rece
 
 - Endereço centralizado em `aculta_portal_cep` e país exclusivo Brasil (BR), ADR-034 (`docs/decisions/ADR-034-pais-unico-brasil-endereco-central.md`). Padrão Drupal 11+ e 12: `docs/portal/DRUPAL-12-STANDARDS.md`.
 - **Tema de validação:** só o tema ACULTA ativo. Não alterne `system.theme`. **Olivero:** não habilite, selecione, teste nem exija em gates, suítes ou aceite.
-- Rotas administrativas e de integração existem só no domínio principal. Rotas `/studio` ficam nas regras do `aculta_studio`.
+- Rotas administrativas e de integração só no domínio principal; `/studio` segue as regras do `aculta_studio`.
 - Aceite único de Termos e Política: `docs/portal/ACEITE-UNICO.md`.
 - **Gates por escopo:** só os do diff e dos módulos dependentes (`docs/operations/GATES.md`). Gate fora do escopo: N/A com motivo. Gate que não roda no ambiente: DEFERRED com motivo.
-- **Saída verbosa:** `python3 scripts/agent-output.py --lines 60 -- COMANDO`.
+- Saída verbosa: `python3 scripts/agent-output.py --lines 60 -- COMANDO`.
 - **Não ler por padrão:** `data/`, `references/`, `vendor/`, `handoff/`, `docs/history/`, logs, `web/core/` e `web/modules/contrib/` (`docs/portal/AGENT-TOKEN-ECONOMY.md`).
 
 ## Referências
 
-- Detalhes e ambientes: `docs/operations/AGENT-REGRAS-DETALHADAS.md`, `AGENT-OPERATIONS.md`, `AGENT-POLICY-INDEX.md`, `MAPA-PARA-AGENTES.md`.
-- Testes de navegador (Playwright Firefox, Chromium e WebKit; X11 com Firefox ESR): `docs/operations/NAVEGADOR-TESTES.md`.
+- Detalhes: `AGENT-REGRAS-DETALHADAS.md`, `AGENT-OPERATIONS.md`, `AGENT-POLICY-INDEX.md`, `MAPA-PARA-AGENTES.md`.
+- Testes de navegador: `docs/operations/NAVEGADOR-TESTES.md`.
 - Capturas de evidência: `tests/browser/capturas/<frente>/<AAAA-MM-DD>/`; PNG fora do Git; `manifest.json` versionado.
-- Decisões: `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`. Procedimentos: `docs/agent-skills/<nome>/SKILL.md`. Gates, saída e economia: `docs/operations/GATES.md`, `AGENT-OUTPUT.md`, `docs/portal/AGENT-TOKEN-ECONOMY.md`.
+- Decisões: `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`. Skills: `docs/agent-skills/<nome>/SKILL.md`. Gates e economia: `docs/operations/GATES.md`, `docs/portal/AGENT-TOKEN-ECONOMY.md`.
