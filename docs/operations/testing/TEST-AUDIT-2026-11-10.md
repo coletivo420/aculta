@@ -219,7 +219,7 @@ fabricado; os erros abaixo são achados reais para a próxima rodada.
 | Suíte | Resultado | Achado |
 | --- | --- | --- |
 | ForumRoutesFunctionalTest | 6 testes, 6 erros | Cadeia de conflitos de configuração, não asserção: (1) `filter.format.forum` exige o submódulo opcional `aculta_editor` e a ordem de `sort` instala o forum antes do editor; (2) instalando o editor primeiro, os tipos de mídia do `aculta_portal` colidem com o perfil `standard` (`PreExistingConfigException`); (3) removendo a sobreposição, `views.view.aculta_forum_categories` exige `ui_patterns_views`; (4) instalando as deps, `field.field.node.aculta_forum_topic.body` falha schema porque o storage é `text_long`, não `text_with_summary`; com `minimal`, o schema do body falha de imediato. Exige perfil/estratégia de config dedicada |
-| StatisticsDashboardFunctionalTest | 2 erros | detalhar na próxima rodada (a saída do runner não expôs a exceção completa) |
+| StatisticsDashboardFunctionalTest | executou — 2 falhas de asserção, 13 asserções | Com `--url http://aculta.toca.net.br/` o DNS resolve e a suíte executa; o login canônico em `conta.<host>/entrar` falha porque o site simpletest local não mapeia o subdomínio `conta.` para a instância de teste. É limitação de mapeamento de domínio do simpletest, não da asserção de estatísticas |
 | MessengerModuleInstallTest | executada | verificar o resultado detalhado na próxima rodada |
 
 O job de CI `phpunit-kernel` cobre a suíte Kernel completa com MariaDB; as
