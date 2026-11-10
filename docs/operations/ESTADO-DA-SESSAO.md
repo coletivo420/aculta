@@ -1,3 +1,13 @@
+# UI Patterns 2 — Bloco Isolado de Prévia em Lote e Carregamento Sequencial Completo — 2026-11-10
+
+- **Objetivo:** corrigir layout do botão "Exibir todas as prévias" para ocupar linha inteira isolada (`column-span: all`), sem sobreposição com a barra de busca ou colunas de cartões, e implementar encadeamento sequencial automático contínuo via HTMX até o último componente.
+- **Estado:** concluído e homologado. O botão e a região de status ficam em `.aculta-component-library__bulk-bar` em linha inteira. O gerenciador de fila assíncrona (`ui-library-bulk-preview.js`) dispara o ciclo nativo do HTMX encadeando as requisições até carregar 100% dos componentes. Testado via Playwright headless no Runtime local com sucesso de ponta a ponta (todas as 90 prévias carregadas).
+- **Decisões:** isolamento do bloco de ações em lote em container próprio fora das colunas (`column-span: all`). Encadeamento sequencial no cliente respeitando o HTMX nativo através dos botões individuais (`.click()`), aguardando o evento `htmx:afterSwap` antes de despachar o próximo item da fila. Adição de `core/drupal.htmx` como dependência de `ui-library-admin`.
+- **Arquivos:** `web/themes/custom/aculta420_v2/templates/ui-patterns-overview-page.html.twig`, `web/themes/custom/aculta420_v2/src/styles/ui-library-admin.css`, `web/themes/custom/aculta420_v2/js/ui-library-bulk-preview.js`, `web/themes/custom/aculta420_v2/aculta420_v2.libraries.yml`, `docs/operations/ESTADO-DA-SESSAO.md`.
+- **Verificações:** gates do escopo PASS: `validate-aculta-ui-library.php` (25 checks), `validate-aculta420-sdc-schemas.php` (80 componentes, 1707 checks), `validate-aculta420-v2-foundations.php` (83 contrastes, a11y), `npm run lint:css` (0 erros), teste Playwright em runtime real (90/90 carregadas com sucesso).
+- **Runtime:** `drush cr` executado; catálogo e lote sequencial operacionais.
+- **Próximo passo:** monitorar novas inclusões de componentes no catálogo.
+
 # UI Patterns 2 + UI Styles — Otimização Universal, Catálogo sob Demanda e Botão Global — 2026-11-10
 
 - **Objetivo:** executar integralmente as microfases UP-00 a UP-07 e a extensão pós-UP-07 com o botão global "Exibir todas as prévias". Correção P0 de segurança em aculta_ui_library (SEC-01), eliminação da invalidação de descoberta em preprocess (PERF-01), catálogo progressivo universal com HTMX (PERF-02), desacoplamento de stories executáveis (PERF-03), confronto upstream com UI Patterns 2.0.23, preservação de UI Styles/Icons e fila controlada de carregamento global com concorrência limitada (máximo 2 conexões).
