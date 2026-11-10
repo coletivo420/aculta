@@ -141,6 +141,8 @@ foreach ($templateRoots as $owner => $templateRoot) {
     preg_match_all("/aculta420_v2:([a-z0-9_-]+)/", $contents, $componentMatches);
     $components = array_values(array_unique($componentMatches[1] ?? []));
     $isSdcAdapter = $components !== [];
+    $isNeutralPortalButtonFallback = $relativePath === 'web/modules/custom/aculta_portal/templates/aculta-portal-button.html.twig'
+      && !$isSdcAdapter;
     preg_match('/views-view(?:-fields|-unformatted)?--([a-z0-9_-]+)--([a-z0-9_-]+)/', $file->getFilename(), $viewMatches);
     $viewConsumer = isset($viewMatches[1], $viewMatches[2])
       ? str_replace('-', '_', $viewMatches[1]) . ':' . $viewMatches[2]
@@ -162,15 +164,23 @@ foreach ($templateRoots as $owner => $templateRoot) {
       'row_plugin' => '',
       'style_plugin' => '',
       'ui_patterns_configured' => $components !== [] ? implode(',', $components) : 'not_detected_in_template',
-      'status' => $isSdcAdapter ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS',
+      'status' => $isSdcAdapter
+        ? 'UI_SUITE_NATIVE'
+        : ($isNeutralPortalButtonFallback ? 'FUNCTIONAL_NATIVE_EXCEPTION' : 'MIGRATION_IN_PROGRESS'),
       'replacement_or_action' => $isSdcAdapter
         ? 'Keep as thin adapter; directly composes ' . implode(', ', $components) . ' and preserves Drupal render contract'
-        : 'Map this template suggestion and its data/access/cache contract to an existing SDC plus the appropriate UI Suite integration; do not remove before replacement proof',
+        : ($isNeutralPortalButtonFallback
+          ? 'Keep only as the theme-independent functional fallback for aculta_portal_button; visual rendering is owned by the ACULTA420 SDC adapter'
+          : 'Map this template suggestion and its data/access/cache contract to an existing SDC plus the appropriate UI Suite integration; do not remove before replacement proof'),
       'risk_or_evidence_gap' => $isSdcAdapter
         ? 'SDC inclusion is source-verified; Runtime output, access and cache equivalence remain unverified'
-        : 'Template is an active custom presentation candidate; exact consumers, functional responsibilities and SDC mapping need file/API review',
+        : ($isNeutralPortalButtonFallback
+          ? 'PortalButton render element and theme hook are source-verified; fallback preserves semantic link/button behavior without design classes; active-theme rendering still needs Runtime output verification'
+          : 'Template is an active custom presentation candidate; exact consumers, functional responsibilities and SDC mapping need file/API review'),
       'rollback' => 'Restore this template from the immediately preceding commit; no entity data changes',
-      'detected_consumers' => $viewConsumer,
+      'detected_consumers' => $isNeutralPortalButtonFallback
+        ? 'PortalButton render element; ' . $viewConsumer . '; web/themes/custom/aculta420_v2/templates/aculta-portal-button.html.twig -> aculta420_v2:button'
+        : $viewConsumer,
       'runtime_status' => 'not_observed',
     ];
   }
@@ -432,6 +442,19 @@ foreach ($moduleInventory as $packageName => $metadata) {
   $moduleVersion = is_array($package) ? (string) ($package['version'] ?? 'not locked') : 'not locked';
   $moduleReference = is_array($package) ? (string) ($package['source']['reference'] ?? $package['dist']['reference'] ?? 'no reference') : 'no lock reference';
   $enabledInSync = isset($syncExtensions['module'][$metadata['module']]);
+  $risk = $metadata['risk'];
+  if ($enabledInSync && str_contains($risk, 'absent from Sync')) {
+    $risk = str_replace('module is absent from Sync', 'module is enabled in Sync', $risk);
+    $risk = str_replace('Enabled in Sync only', 'Enabled in Sync', $risk);
+  }
+  elseif (!$enabledInSync && str_contains($risk, 'enabled in Sync')) {
+    $risk = str_replace('module is enabled in Sync', 'module is absent from Sync', $risk);
+  }
+  $risk = str_replace(
+    ['Runtime enablement differs from Sync', 'Enabled in Runtime but absent from Config Sync', 'Runtime plugin is Disabled', 'disabled in Runtime', 'module is disabled in Runtime'],
+    ['historical Runtime snapshot differs from Sync; current Runtime is not observed', 'historical Runtime snapshot was Enabled while absent from Config Sync; current Runtime is not observed', 'historical Runtime snapshot recorded Disabled; current Runtime is not observed', 'historical Runtime snapshot recorded Disabled; current Runtime is not observed', 'historical Runtime snapshot recorded Disabled; current Runtime is not observed'],
+    $risk,
+  );
   $packageOwner = match (TRUE) {
     str_starts_with($packageName, 'drupal/ui_patterns') => 'drupal/ui_patterns',
     str_starts_with($packageName, 'drupal/ui_styles') => 'drupal/ui_styles',
@@ -458,12 +481,12 @@ foreach ($moduleInventory as $packageName => $metadata) {
     'ui_patterns_configured' => $enabledInSync ? 'enabled_in_sync' : 'absent_from_sync',
     'status' => $metadata['status'],
     'replacement_or_action' => $metadata['replacement'],
-    'risk_or_evidence_gap' => 'Direct Composer requirement: ' . ($required ? 'yes' : 'no') . '. ' . $metadata['risk'],
+    'risk_or_evidence_gap' => 'Direct Composer requirement: ' . ($required ? 'yes' : 'no') . '. ' . $risk,
     'rollback' => 'Revert scoped code/config changes; no entity data migration',
     'detected_consumers' => '',
     'runtime_status' => array_key_exists($metadata['module'], $runtimeStatuses)
-      ? 'snapshot_2026-11-10:' . $runtimeStatuses[$metadata['module']]
-      : 'not_found_in_runtime_snapshot',
+      ? 'historical_snapshot_2026-11-10:' . $runtimeStatuses[$metadata['module']] . '; current_runtime=not_observed'
+      : 'current_runtime=not_observed',
   ];
 }
 

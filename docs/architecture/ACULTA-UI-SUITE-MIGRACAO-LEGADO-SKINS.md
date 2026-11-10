@@ -78,6 +78,8 @@ A classificacao deve ser aplicada a **cada superficie visual efetivamente usada*
 Campos do inventario:
 `id`, `owner_module`, `path`, `type` (twig/php/render_array/css/js/Views/field_group/layout/block/form/ckeditor), `purpose_or_route_consumers`, `visual_responsibility`, `ui_suite_target`, `replacement_component_id`, `status`, `risk`, `access_cache`, `impact_data`, `test_before`, `test_after`, `release_commit`, `rollback`, `reviewer`.
 
+O inventário executável atual é `docs/architecture/inventarios/ui-suite-consumidores-iniciais.csv`, gerado por `scripts/inventory-ui-suite-consumers.php`. Ele separa templates funcionais neutros de adapters visuais: `aculta_portal_button` permanece como `FUNCTIONAL_NATIVE_EXCEPTION` por ser fallback sem classes de design do Render Element, enquanto o override do tema que compõe `aculta420_v2:button` é `UI_SUITE_NATIVE`. Consumidores do elemento e o caminho até o SDC são registrados no CSV; a saída Runtime continua pendente de validação.
+
 Regras de progresso:
 - **100%** das superficies visuais ativas identificadas, incluindo rotas anonimas, autenticadas e administrativas ACULTA.
 - **100%** dos casos `LEGACY_DEPRECATED` com substituto, owner, gate e prazo/criterio de remocao.
