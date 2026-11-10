@@ -218,7 +218,7 @@ fabricado; os erros abaixo são achados reais para a próxima rodada.
 
 | Suíte | Resultado | Achado |
 | --- | --- | --- |
-| ForumRoutesFunctionalTest | 6 testes, 6 erros | `filter.format.forum` (aculta_forum) declara dependência do submódulo opcional `aculta_editor`, que o teste não habilita ao instalar o perfil standard. Adicionar `aculta_editor` a `$modules` não resolveu; investigar descoberta/ordem de instalação do submódulo |
+| ForumRoutesFunctionalTest | 6 testes, 6 erros | Cadeia de conflitos de configuração, não asserção: (1) `filter.format.forum` exige o submódulo opcional `aculta_editor` e a ordem de `sort` instala o forum antes do editor; (2) instalando o editor primeiro, os tipos de mídia do `aculta_portal` colidem com o perfil `standard` (`PreExistingConfigException`); (3) removendo a sobreposição, `views.view.aculta_forum_categories` exige `ui_patterns_views`; (4) instalando as deps, `field.field.node.aculta_forum_topic.body` falha schema porque o storage é `text_long`, não `text_with_summary`; com `minimal`, o schema do body falha de imediato. Exige perfil/estratégia de config dedicada |
 | StatisticsDashboardFunctionalTest | 2 erros | detalhar na próxima rodada (a saída do runner não expôs a exceção completa) |
 | MessengerModuleInstallTest | executada | verificar o resultado detalhado na próxima rodada |
 
