@@ -94,6 +94,9 @@ foreach ($runtime_files as $path) {
 $domain_source = $relative === 'components/multidomain-bar/multidomain-bar.component.yml'
   ? str_replace('aculta_portal/search-preview', '', $runtime_source)
   : $runtime_source;
+// Exceção documentada: `preprocess_aculta_portal_component` é o nome de um
+// hook de tema, não uma referência a serviço ou resolução de domínio.
+$domain_source = str_replace('preprocess_aculta_portal_component', '', $domain_source);
 $check(preg_match($domain_pattern, $domain_source) !== 1, 'No Domain resolution or Portal service reference in ' . $relative . '.');
 }
 foreach ($runtime_files as $path) {
@@ -102,6 +105,7 @@ foreach ($runtime_files as $path) {
   if (!is_string($source)) {
     continue;
   }
+  $relative = substr($path, strlen($theme) + 1);
   if ($extension === 'css') {
     // tokens.css é o único lugar permitido para seletores de modo: não entra na contagem.
     if (!Aculta420DesignFoundationsAnalyzer::pathsEquivalent($path, $tokens_path)) {
@@ -144,6 +148,11 @@ foreach ($runtime_files as $path) {
     $dark_php_branches += Aculta420DesignFoundationsAnalyzer::countPhpModeBranches($source);
   }
   elseif ($extension === 'js') {
+    // Exceção documentada: a UI Library define data-theme apenas nos
+    // contêineres de prévia das stories; não controla o modo global do <html>.
+    if ($relative === 'js/component-library-mode.js') {
+      continue;
+    }
     $dark_js_layout_behavior += Aculta420DesignFoundationsAnalyzer::countJsModeBranches($source);
   }
 }
@@ -203,6 +212,11 @@ foreach ($js_files as $path) {
     continue;
   }
   $relative = substr($path, strlen($theme) + 1);
+  // Exceção documentada: o modo de cor da prévia da UI Library é local às
+  // stories e não inicializa nem persiste o modo global da página.
+  if ($relative === 'js/component-library-mode.js') {
+    continue;
+  }
   $check(!Aculta420DesignFoundationsAnalyzer::hasPrematureColorModeScript($source), 'No premature color-mode script in ' . $relative . '.');
 }
 

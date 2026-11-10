@@ -1,3 +1,11 @@
+## Não versionado — ADR-054 P8 gates e tokens (2026-11-09)
+
+- `validate-aculta420-design-foundations.php`: PASS (1112 checks). Analisador reconhece listas de seletor e blocos base com tokens `--color-*`; literais de seis componentes substituídos por tokens (cores de marca do Google centralizadas em `tokens.css`).
+- `validate-aculta420-mapped-classes.php`: PASS (462 classes), com CSS semântico para as reações do perfil público.
+- `validate-aculta-portal-drupal12.php`: PASS (1205 checks), com o contrato neutro `aculta_learning_contracts` e injeção de `class_resolver` na barra institucional.
+- CSS da conta e da Wiki passou a ser anexado pelo purpose neutro (`account`, `wiki`), removendo nomes de rotas do Portal do hook do tema.
+- `validate-module-theme-boundary.php` segue FAIL por dívida pré-existente dos módulos do Portal (64 itens).
+
 ## Não versionado — ADR-054 P5 landing Links publicada no dev (2026-11-09)
 
 - Nó 635 "Links da ACULTA" publicado no host Links, alias `/redes-sociais`, com duas seções SDC no Layout Builder: apresentação + links sociais; apoio + documentos institucionais + menu institucional com URLs absolutas para o MAIN.

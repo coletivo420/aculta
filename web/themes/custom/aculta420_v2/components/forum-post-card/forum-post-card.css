@@ -265,11 +265,6 @@
   }
 }
 
-/* Dark mode adjustments (via token semantics). */
-[data-theme="dark"] .forum-post-card {
-  box-shadow: var(--shadow-sm);
-}
-
 /* Modos de contraste / reduced motion. */
 @media (prefers-reduced-motion: reduce) {
   .forum-post-card,

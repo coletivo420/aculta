@@ -187,3 +187,26 @@
     padding: 1.5rem 2rem 2rem;
   }
 }
+
+/* Reações do perfil público (classes mapeadas de data-portal-ui). */
+.portal-profile__reactions {
+  display: grid;
+  gap: var(--spacing-sm);
+  margin-block-start: var(--spacing-base);
+}
+
+.portal-profile__reactions-title {
+  margin: 0;
+  color: var(--color-text-primary);
+  font: 600 1rem/1.3 var(--font-family-heading);
+}
+
+.portal-profile__reactions-given,
+.portal-profile__reactions-received,
+.portal-profile__reactions-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}

@@ -84,13 +84,13 @@
 .aculta-auth-dialog--institutional .aculta-auth-dialog__header {
   position: relative;
   padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
-  background: var(--color-auth-dialog-surface, #6b9a2c);
-  color: var(--color-auth-dialog-text, #171513);
+  background: var(--color-auth-dialog-surface);
+  color: var(--color-auth-dialog-text);
   border-block-end: 1px solid var(--color-border);
 }
 
 .aculta-auth-dialog--institutional .aculta-auth-dialog__title {
-  color: #fff;
+  color: var(--color-on-brand);
   font-family: var(--font-family-heading);
   font-size: var(--font-size-2xl, 1.5rem);
   font-weight: 700;
@@ -99,17 +99,17 @@
 }
 
 .aculta-auth-dialog--institutional .aculta-auth-dialog__subtitle {
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--color-on-brand-muted);
   font-size: var(--font-size-sm, 0.875rem);
   margin: var(--spacing-xs) 0 0;
 }
 
 .aculta-auth-dialog--institutional .aculta-auth-dialog__close {
-  color: #fff;
+  color: var(--color-on-brand);
 }
 
 .aculta-auth-dialog--institutional .aculta-auth-dialog__close:hover {
-  color: #fdf8ea;
+  color: var(--color-auth-secondary-surface);
   opacity: 0.8;
 }
 

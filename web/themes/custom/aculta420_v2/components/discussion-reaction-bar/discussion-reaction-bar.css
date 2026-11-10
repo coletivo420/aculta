@@ -29,9 +29,9 @@
   gap: 0.35rem;
   padding: 0.25rem 0.625rem;
   border-radius: var(--border-radius-full, 9999px);
-  border: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.1));
-  background-color: var(--color-surface-subtle, #f8f9fa);
-  color: var(--color-text-secondary, #495057);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface-subtle);
+  color: var(--color-text-secondary);
   font-size: var(--font-size-xs, 0.8125rem);
   font-weight: var(--font-weight-medium, 500);
   line-height: 1;
@@ -43,14 +43,14 @@
 }
 
 .discussion-reaction-bar__badge:hover {
-  background-color: var(--color-surface-raised, #e9ecef);
-  border-color: var(--color-brand-primary, #2e7d32);
+  background-color: var(--color-surface-raised);
+  border-color: var(--color-brand-primary);
 }
 
 .discussion-reaction-bar__badge.is-active {
-  background-color: var(--color-surface-subtle, #e8f5e9);
-  border-color: var(--color-brand-primary, #2e7d32);
-  color: var(--color-brand-primary, #2e7d32);
+  background-color: var(--color-surface-subtle);
+  border-color: var(--color-brand-primary);
+  color: var(--color-brand-primary);
   font-weight: var(--font-weight-semibold, 600);
 }
 
@@ -69,23 +69,23 @@
   block-size: 2.25rem;
   padding: 0;
   border-radius: var(--border-radius-full, 9999px);
-  border: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.08));
+  border: 1px solid var(--color-border);
   background-color: var(--color-surface-subtle, transparent);
-  color: var(--color-text-secondary, #6c757d);
+  color: var(--color-text-secondary);
   cursor: pointer;
   transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out, border-color 0.15s ease-in-out;
 }
 
 .discussion-reaction-bar__btn:hover {
-  background-color: var(--color-surface-raised, #f1f3f5);
-  border-color: var(--color-brand-primary, #2e7d32);
-  color: var(--color-brand-primary, #212529);
+  background-color: var(--color-surface-raised);
+  border-color: var(--color-brand-primary);
+  color: var(--color-brand-primary);
 }
 
 .discussion-reaction-bar__btn--quick.is-active {
-  color: var(--color-brand-primary, #e53935);
-  border-color: var(--color-brand-primary, #e53935);
-  background-color: var(--color-surface-subtle, rgba(229, 57, 53, 0.1));
+  color: var(--color-brand-primary);
+  border-color: var(--color-brand-primary);
+  background-color: var(--color-status-error-surface);
 }
 
 .discussion-reaction-bar__picker-wrapper {
@@ -102,10 +102,10 @@
   position: absolute;
   inset-block-end: calc(100% + 0.5rem);
   inset-inline-start: 0;
-  background-color: var(--color-surface-raised, #ffffff);
-  border: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.12));
+  background-color: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
   border-radius: var(--border-radius-lg, 0.75rem);
-  box-shadow: var(--shadow-md, 0 4px 16px rgba(0, 0, 0, 0.15));
+  box-shadow: var(--shadow-md);
   padding: 0.5rem;
   z-index: 100;
   white-space: nowrap;
@@ -137,13 +137,13 @@
 
 .discussion-reaction-bar__palette-btn:hover:not(.is-disabled) {
   transform: scale(1.2);
-  background-color: var(--color-surface-subtle, #f1f3f5);
+  background-color: var(--color-surface-subtle);
   z-index: 1;
 }
 
 .discussion-reaction-bar__palette-btn.is-selected {
-  background-color: var(--color-surface-subtle, #e8f5e9);
-  border-color: var(--color-brand-primary, #2e7d32);
+  background-color: var(--color-surface-subtle);
+  border-color: var(--color-brand-primary);
 }
 
 .discussion-reaction-bar__palette-btn.is-disabled {

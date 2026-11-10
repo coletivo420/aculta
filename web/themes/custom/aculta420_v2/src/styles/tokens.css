@@ -46,6 +46,13 @@
   --color-auth-secondary-text: #163d2a;
   --color-auth-action-text: #1a1a1a;
   --color-auth-dialog-link: #171513;
+  /* Botão oficial do Google: cores de marca fixas, iguais nos dois modos. */
+  --color-google-button-bg: #fff;
+  --color-google-button-text: #1f1f1f;
+  --color-google-button-border: #747775;
+  --color-google-button-hover-bg: #f8faff;
+  --color-google-button-shadow: rgba(60, 64, 67, .3);
+  --color-on-brand-muted: color-mix(in sRGB, var(--color-on-brand) 85%, transparent);
   --color-on-footer: #171513;
   --color-status: #176b3a;
   --color-warning: #ffc107;

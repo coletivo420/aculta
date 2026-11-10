@@ -33,22 +33,6 @@ final class PagePresentationHooks {
     'aculta_statistics.area',
   ];
 
-  /**
-   * Legacy account routes that render the account shell.
-   */
-  private const ACCOUNT_SHELL_ROUTES = [
-    'aculta_portal.dashboard',
-    'aculta_portal.my_data',
-    'aculta_portal.my_data_address',
-    'aculta_portal.my_data_other',
-    'aculta_portal.connections',
-    'aculta_portal.security',
-    'aculta_portal.security_password',
-    'aculta_portal.support_my',
-    'aculta_portal.account_courses',
-    'aculta_portal.account_settings',
-  ];
-
   public function __construct(
     #[Autowire(service: 'config.factory')]
     private readonly ConfigFactoryInterface $configFactory,
@@ -84,24 +68,12 @@ final class PagePresentationHooks {
     if (str_starts_with($routeName, 'aculta_studio.')) {
       $variables['#attached']['library'][] = 'aculta420_v2/studio';
     }
-    // ADR-054 P7: CSS da conta carregado só nas rotas do shell de conta/Studio.
-    if (str_starts_with($routeName, 'aculta_studio.') || in_array($routeName, self::ACCOUNT_SHELL_ROUTES, TRUE)) {
-      $variables['#attached']['library'][] = 'aculta420_v2/portal-account';
-    }
     // ADR-054 P7: CSS do Fórum só em rotas e tópicos do Fórum/LMS.
     $wikiNode = $this->currentRouteMatch?->getParameter('node');
     if (str_starts_with($routeName, 'aculta_forum.')
       || str_starts_with($routeName, 'view.aculta_forum')
       || ($wikiNode instanceof NodeInterface && in_array($wikiNode->bundle(), ['aculta_forum_topic', 'aculta_lms_topic'], TRUE))) {
       $variables['#attached']['library'][] = 'aculta420_v2/forum';
-    }
-    // ADR-054 P7: CSS da Wiki só em rotas/verbetes da Wiki.
-    $wikiNode = $this->currentRouteMatch?->getParameter('node');
-    if (str_starts_with($routeName, 'aculta_wiki.')
-      || str_starts_with($routeName, 'view.wiki_entries')
-      || in_array($routeName, ['aculta_portal.wiki_home', 'aculta_portal.wiki_search', 'aculta_portal.wiki_search_preview'], TRUE)
-      || ($wikiNode instanceof NodeInterface && $wikiNode->bundle() === 'wiki_entry')) {
-      $variables['#attached']['library'][] = 'aculta420_v2/wiki';
     }
     // ADR-054 P7: CSS de eventos só nas rotas do aculta_events.
     if (str_starts_with($routeName, 'aculta_events.')) {

@@ -19,11 +19,11 @@ Este relatório registra apenas o que foi executado. Item não executado é **DE
 | `validate-project-status-index.php` | **PASS** (43 componentes) | README raiz regenerado |
 | `php -l` nos arquivos alterados | **PASS** | |
 | `git diff --check` | **PASS** | |
-| `validate-aculta420-design-foundations.php` | **FAIL** (38/1057) | Pré-existente: o validador lê `css/tokens.css`, a V2 publica `src/styles/tokens.css` |
-| `validate-aculta420-mapped-classes.php` | **FAIL** (5 classes `portal-profile__reactions*`) | Pré-existente, fora do diff |
-| `validate-module-theme-boundary.php` | **FAIL** (64/7310) | Pré-existente em módulos do Portal; a sugestão de template saiu de `src/Hook` |
-| `validate-aculta-portal-drupal12.php` | **FAIL** | Pré-existente: `AccountCoursesManager` (P5.5) e `InstitutionBarBlock` (service locator) |
-| `validate-agent-token-budget.php` | **FAIL** (3) | Pré-existente: `AGENTS.md` 5333 B, `aculta_domain_config` sem TODO, `aculta_forum` com versão divergente |
+| `validate-aculta420-design-foundations.php` | **PASS** (1112) | Analisador passou a entender listas de seletor; literais dos componentes substituídos por tokens; exceção documentada só para a prévia da UI Library |
+| `validate-aculta420-mapped-classes.php` | **PASS** (462 classes) | CSS adicionado para as reações do perfil público |
+| `validate-module-theme-boundary.php` | **FAIL** (64/7314) | Dívida pré-existente de módulos do Portal que citam o tema; fora do diff |
+| `validate-aculta-portal-drupal12.php` | **PASS** (1205) | Contrato `aculta_learning_contracts` (P5.5) e injeção do `class_resolver` no `InstitutionBarBlock` |
+| `validate-agent-token-budget.php` | **PASS** | `AGENTS.md` 5000/5000, TODO do `aculta_domain_config`, versão do TODO do Fórum |
 | `npm run lint:css` | **DEFERRED** | `node_modules` sem o binário `stylelint`; falha antes de analisar arquivos |
 
 ## 2. Matriz HTTP dos dez purposes (shell clássico e v2)

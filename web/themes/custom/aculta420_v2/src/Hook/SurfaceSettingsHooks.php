@@ -127,6 +127,14 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
       $bodyAttributes->addClass('aculta-component-library-page');
       $variables['#attached']['library'][] = 'aculta420_v2/component-library-mode';
     }
+    // ADR-054 P7: CSS da conta só no purpose account, pelo contrato neutro.
+    if ($purpose === 'account') {
+      $variables['#attached']['library'][] = 'aculta420_v2/portal-account';
+    }
+    // ADR-054 P7: CSS da Wiki só no purpose wiki, pelo contrato neutro.
+    if ($purpose === 'wiki') {
+      $variables['#attached']['library'][] = 'aculta420_v2/wiki';
+    }
   }
 
   /**

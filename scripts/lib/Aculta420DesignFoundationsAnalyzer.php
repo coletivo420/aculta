@@ -211,25 +211,40 @@ final class Aculta420DesignFoundationsAnalyzer {
     $dark_blocks = 0;
     $light = [];
     $dark = [];
+    $darkSelectors = [':root[data-theme="dark"]', 'html[data-theme="dark"]', '[data-theme="dark"]'];
+    $lightSelectors = [':root', ':root:not([data-theme="dark"])', '[data-theme="light"]', ':root[data-theme="light"]'];
     foreach ($rules as $rule) {
-      $selector = self::normalizeSelector((string) $rule['selector']);
+      // O tokens.css usa listas de seletores (":root, [data-theme=light]")
+      // para cobrir o <html> e contêineres de prévia. Cada seletor da lista
+      // é avaliado individualmente.
+      $selectors = array_map(
+        static fn (string $part): string => self::normalizeSelector($part),
+        explode(',', (string) $rule['selector']),
+      );
       // Só o bloco base conta: variações por purpose (html[data-purpose=...]) são validadas à parte.
-      $is_dark = in_array($selector, [':root[data-theme="dark"]', 'html[data-theme="dark"]'], TRUE);
-      $is_light = !$is_dark && in_array($selector, [':root', ':root:not([data-theme="dark"])'], TRUE);
+      $is_dark = array_intersect($selectors, $darkSelectors) !== [];
+      $is_light = !$is_dark && array_intersect($selectors, $lightSelectors) !== [];
       if (!$is_dark && !$is_light) {
         continue;
       }
-      $is_dark ? $dark_blocks++ : $light_blocks++;
-      foreach (self::parseDeclarations((string) $rule['body']) as $declaration) {
+      $declarations = self::parseDeclarations((string) $rule['body']);
+      $has_color_token = FALSE;
+      foreach ($declarations as $declaration) {
         if (!str_starts_with($declaration['name'], '--color-')) {
           continue;
         }
+        $has_color_token = TRUE;
         if ($is_dark) {
           $dark[$declaration['name']] = $declaration['value'];
         }
         else {
           $light[$declaration['name']] = $declaration['value'];
         }
+      }
+      // Regras como ":root[data-theme=light] { color-scheme }" não são o
+      // bloco base e não devem contar como segundo bloco.
+      if ($has_color_token) {
+        $is_dark ? $dark_blocks++ : $light_blocks++;
       }
     }
 

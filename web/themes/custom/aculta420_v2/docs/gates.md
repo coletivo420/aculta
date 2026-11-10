@@ -200,3 +200,11 @@ Este registro não autoriza `drush cim`, `updatedb` ou alterações destrutivas;
 - `node.page.full` com `allow_custom: true` (única exceção do lote, para landing pages). `layout_builder.overrides.node.view`: administrador ALLOW, visitante DENY.
 - Override por nó comprovado no nó 6 (`/institucional`) via HTTP autenticado: seção `onecol` com o corpo renderizou o texto e o layout; `config:status` sem divergência após a restauração. Nó temporário de teste removido.
 - `validate-aculta420-layout-builder-batch.php`: PASS (170 checks), com a exceção de `allow_custom` restrita a `node.page.full`.
+
+## Execução Recente — ADR-054 P8 correções de gates (2026-11-09)
+
+- `validate-aculta420-design-foundations.php`: **PASS (1112 checks)**. O analisador passou a reconhecer listas de seletor (`:root, [data-theme="light"]`) e a contar o bloco base só quando há tokens `--color-*`. Literais de `multidomain-bar`, `discussion-reaction-bar`, `google-signin-button`, `discussion-reply-composer`, `auth-dialog` e `forum-post-card` foram substituídos por tokens; as cores de marca do Google ficaram em `tokens.css`. Exceção documentada: `component-library-mode.js` só define `data-theme` nos contêineres de prévia.
+- `validate-aculta420-mapped-classes.php`: **PASS (462 classes)** com CSS semântico para `.portal-profile__reactions*`.
+- `validate-aculta-portal-drupal12.php`: **PASS (1205 checks)**. Novo módulo `aculta_learning_contracts` (interface + DTO neutros, alias do provedor LMS) e `InstitutionBarBlock` com `ClassResolverInterface` injetado.
+- `validate-project-status-index.php`: **PASS (44 componentes)**. `validate-agent-token-budget.php`: **PASS** (AGENTS 5000/5000).
+- `validate-module-theme-boundary.php`: permanece **FAIL (64/7314)** por dívida pré-existente de módulos do Portal que citam o tema (wiki, forum, lms, user, calendar, donation, game, support); fora do diff desta refatoração.
