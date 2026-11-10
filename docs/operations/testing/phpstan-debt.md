@@ -1,26 +1,26 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-10T19:40:23+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-10T22:11:37+00:00 por `scripts/phpstan-debt-report.php`.
 
-**Total de erros: 3750**
+**Total de erros: 3743**
 
 ## Por criticidade
 
 | Criticidade | Erros |
 | --- | ---: |
 | alta | 432 |
-| media | 3318 |
+| media | 3311 |
 | baixa | 0 |
 
 ## Dez identificadores mais frequentes
 
 | Identificador | Erros |
 | --- | ---: |
-| `method.notFound` | 1566 |
+| `method.notFound` | 1558 |
 | `argument.type` | 330 |
 | `instanceof.alwaysTrue` | 196 |
 | `class.notFound` | 129 |
-| `nullCoalesce.offset` | 119 |
+| `nullCoalesce.offset` | 120 |
 | `staticMethod.alreadyNarrowedType` | 113 |
 | `return.type` | 102 |
 | `method.alreadyNarrowedType` | 97 |
@@ -31,14 +31,14 @@ Gerado em 2026-11-10T19:40:23+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Módulo | Erros |
 | --- | ---: |
-| aculta_lms | 438 |
+| aculta_lms | 430 |
 | aculta_messenger | 422 |
 | aculta_forum | 391 |
 | aculta_events | 311 |
 | aculta_user | 251 |
 | aculta_portal | 248 |
 | aculta_wiki | 192 |
-| scripts | 156 |
+| scripts | 157 |
 | aculta_lms_h5p | 149 |
 | aculta_pagamentos_mercadopago | 139 |
 | aculta_commerce | 133 |
@@ -53,17 +53,13 @@ Gerado em 2026-11-10T19:40:23+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta420_v2 | 38 |
 
 
-## Rodada 2 — 2026-11-10
+## Rodada 3 — 2026-11-10
 
 | Medida | Valor |
 | --- | ---: |
-| Erros brutos antes da rodada | 3788 |
-| Corrigidos em aculta_messenger | 38 |
-| Erros brutos ao final | 3750 |
-| Baseline atual | 3750 |
+| Erros brutos antes | 3750 |
+| Corrigidos em aculta_lms (LearningEligibility) | 7 |
+| Erros brutos ao final | 3743 |
+| Baseline atual | 3743 |
 
-Escopo: `AvisoService` e `PrivateMessageNotificationWorker` passaram a narrowing
-`ContentEntityInterface` (assert) e `MessageInterface` (@var) em vez de operar
-sobre `EntityInterface`. Testes Kernel do messenger ganharam as dependências
-ausentes (`file`, `token`, `image`, `crop`, `image_widget_crop`), o que levou a
-suíte de 56 erros para 0: 97 testes, 1940 asserções PASS. Unit: 495/5327 PASS.
+Escopo: `LearningEligibility` passou a narrowing `ContentEntityInterface` nos parâmetros e checagens; aculta_lms 440 -> 430. Evidência: Unit 320/1367 PASS.
