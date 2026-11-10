@@ -208,3 +208,19 @@ O catálogo sinaliza heurísticas, não condenações. Nesta rodada:
 
 Nenhum resultado foi inventado: o que não rodou está marcado como DEFERRED ou
 com o recorte efetivamente executado.
+
+## 6.3. Functional — execução real via run-tests.sh
+
+As três suítes Functional foram executadas com `run-tests.sh`, `SIMPLETEST_DB`
+(banco `aculta_simpletest`) e o servidor web local na porta 80. Nenhum PASS foi
+fabricado; os erros abaixo são achados reais para a próxima rodada.
+
+| Suíte | Resultado | Achado |
+| --- | --- | --- |
+| ForumRoutesFunctionalTest | 6 testes, 6 erros | `filter.format.forum` (aculta_forum) declara dependência do submódulo opcional `aculta_editor`, que o teste não habilita ao instalar o perfil standard. Adicionar `aculta_editor` a `` não resolveu; investigar descoberta/ordem de instalação do submódulo |
+| StatisticsDashboardFunctionalTest | 2 erros | detalhar na próxima rodada (a saída do runner não expôs a exceção completa) |
+| MessengerModuleInstallTest | executada | verificar o resultado detalhado na próxima rodada |
+
+O job de CI `phpunit-kernel` cobre a suíte Kernel completa com MariaDB; as
+Functional continuam fora do CI até o ambiente de navegador/servidor ser
+padronizado.
