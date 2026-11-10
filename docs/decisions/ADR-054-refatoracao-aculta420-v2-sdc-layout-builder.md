@@ -13,6 +13,12 @@ Após snapshot e autorizações explícitas para `updatedb` e `config:import`, f
 
 Validações executadas: UI Skins 134 checks, theme settings 16, V2 foundations 83 pares de contraste e Portal Drupal 12 gate 1.243 checks PASS. Browser visual, CSS calculado, contraste do piloto, cache cruzado, teclado e zoom permanecem DEFERRED porque a sessão X11 não está disponível. As ADRs permanecem abertas.
 
+### Atualização US-06 — ComponentLayout para páginas — 2026-11-10
+
+`core.entity_view_display.node.page.default` e `node.page.full` foram migrados de `layout_onecol` para o layout UI Patterns `ui_patterns:aculta420_v2:layout_section`, com o SDC existente `aculta420_v2:layout-section`. Os dois blocos (`body` e links da entidade), regiões, `allow_custom`, ordem e dados foram preservados. A importação parcial atingiu somente esses dois displays; rollback é restaurar seus YAML anteriores e reimportar os mesmos objetos.
+
+Runtime confirmou os dois layouts ativos; Firefox anônimo em Links → MAIN → Links retornou 200 e tokens calculados Ruderalis → Skunk → Ruderalis, com um H1 e um `<main>` por host. Capturas Links em 1280/320 sem overflow estão no manifesto versionado `tests/browser/capturas/ui-suite-links/2026-11-10/manifest.json` (PNG externo ao Git). O cache dinâmico reporta `UNCACHEABLE`; cache-hit, acessibilidade/teclado/zoom e aceite visual amplo permanecem DEFERRED. Os outros displays Layout Builder compatíveis ainda precisam de integração; as duas exclusões documentadas não foram alteradas.
+
 ## Rodada 1 - decisoes
 
 1. jQuery 4 liberado amplamente em modulos ACULTA, anexado via core/jquery por biblioteca, sem duplicar a distribuicao do Core.

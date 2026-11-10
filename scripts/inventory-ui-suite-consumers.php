@@ -96,6 +96,19 @@ foreach (glob($sync . '/core.entity_view_display.*.yml') ?: [] as $path) {
     continue;
   }
   $id = (string) ($display['id'] ?? basename($path));
+  $sections = $display['third_party_settings']['layout_builder']['sections'] ?? [];
+  $layoutIds = array_values(array_map(
+    static fn (array $section): string => (string) ($section['layout_id'] ?? ''),
+    array_filter($sections, 'is_array'),
+  ));
+  $componentLayoutIds = array_values(array_filter(
+    $layoutIds,
+    static fn (string $layoutId): bool => str_starts_with($layoutId, 'ui_patterns:'),
+  ));
+  $allSectionsUseComponentLayout = $layoutIds !== [] && count($componentLayoutIds) === count($layoutIds);
+  $runtimeConfigId = 'core.entity_view_display.' . $id;
+  $runtimeLayout = $runtimeSnapshot['layout_builder_displays'][$runtimeConfigId] ?? NULL;
+  $legacyLayoutIds = array_values(array_diff($layoutIds, $componentLayoutIds));
   $rows[] = [
     'id' => $id,
     'owner_module' => 'Drupal entity display',
@@ -105,13 +118,26 @@ foreach (glob($sync . '/core.entity_view_display.*.yml') ?: [] as $path) {
     'display_plugin' => 'layout_builder',
     'row_plugin' => '',
     'style_plugin' => '',
-    'ui_patterns_configured' => 'layout_builder',
-    'status' => 'UI_SUITE_NATIVE',
-    'replacement_or_action' => 'Retain ComponentLayout and check component/slot configuration',
-    'risk_or_evidence_gap' => 'Entity access, field order, render cache and known 2 exclusions; Runtime not compared',
+    'ui_patterns_configured' => $allSectionsUseComponentLayout
+      ? implode(',', array_unique(array_map(
+        static fn (array $section): string => (string) ($section['layout_settings']['ui_patterns']['component_id'] ?? 'component_id_unset'),
+        array_filter($sections, 'is_array'),
+      )))
+      : 'layout_builder_core_layout',
+    'status' => $allSectionsUseComponentLayout ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS',
+    'replacement_or_action' => $allSectionsUseComponentLayout
+      ? 'Retain UI Patterns ComponentLayout SDC and preserve section regions, field blocks, access and cache contracts'
+      : 'Migrate compatible Core Layout Builder sections to existing UI Patterns ComponentLayout SDCs; keep excluded displays documented',
+    'risk_or_evidence_gap' => $allSectionsUseComponentLayout
+      ? (is_array($runtimeLayout)
+        ? 'Runtime ComponentLayout render verified; browser/cache and access coverage remains scoped per display'
+        : 'ComponentLayout configured in Sync; Runtime render, access and cache not observed')
+      : 'Core layout IDs still configured: ' . implode(', ', $legacyLayoutIds) . '; assess compatible SDC layout and the two documented exclusions',
     'rollback' => 'Restore captured display configuration; no entity/data changes',
     'detected_consumers' => '',
-    'runtime_status' => 'not_observed',
+    'runtime_status' => is_array($runtimeLayout)
+      ? (string) ($runtimeLayout['runtime_status'] ?? 'observed')
+      : 'not_observed',
   ];
 }
 

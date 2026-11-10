@@ -38,14 +38,26 @@ foreach ($source_files as $source_file) {
   $source = file_get_contents($source_file->getPathname());
   if ($source_file->getExtension() === 'twig'
     && !str_ends_with($source_file->getPathname(), '/components/icon/icon.twig')
-    && preg_match('/<svg\b/i', $source)) {
+    && preg_match('/(?<!["\'])<svg\b/i', $source)) {
     throw new RuntimeException(sprintf('Interface SVGs must use the icon SDC: %s', $source_file->getPathname()));
   }
   $framework_class = '(?:row|col-(?:xs|sm|md|lg|xl|xxl)-\d+|d-flex|container-fluid|mb-\d+|form-control|form-select)';
   $has_framework_class = preg_match('/class\s*=\s*[\"\'][^\"\']*(?<![a-z0-9_-])' . $framework_class . '(?![a-z0-9_-])[^\"\']*[\"\']/i', $source)
     || preg_match('/(?:^|[\s,{])\.' . $framework_class . '(?=[\s:{,#]|$)/im', $source);
+  $has_framework_btn_class = FALSE;
+  if (preg_match_all('/class\s*=\s*([\"\'])(.*?)\1/is', $source, $class_attributes)) {
+    foreach ($class_attributes[2] as $class_attribute) {
+      $class_tokens = preg_split('/\s+/', trim($class_attribute), -1, PREG_SPLIT_NO_EMPTY);
+      if (in_array('btn', $class_tokens, TRUE)) {
+        $has_framework_btn_class = TRUE;
+        break;
+      }
+    }
+  }
+  $has_framework_btn_selector = preg_match('/(?:^|[\s,{])\.btn(?=[\s:{,#]|$)/im', $source);
   if (preg_match('/bootstrap5|bootstrap\.bundle|popper|data-bs-|core\/jquery|core\/drupal\.dialog|\bjQuery\b/i', $source)
-    || preg_match('/(?:class\s*=\s*[\"\'][^\"\']*|(?:^|[\s,{])\.)\bbtn\b/i', $source)
+    || $has_framework_btn_class
+    || $has_framework_btn_selector
     || $has_framework_class) {
     throw new RuntimeException(sprintf('Framework-owned classes or attributes are forbidden in %s.', $source_file->getPathname()));
   }

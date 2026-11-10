@@ -181,6 +181,8 @@ Em todos os casos: layout claro e escuro, breakpoint 320/390/768/1024/1440 px, z
 - Mapear Field Formatters a componentes antes de criar Twig exclusivo; respeitar os dois displays excluidos.
 - **Gate:** render de campos e layout, export/import, fallback, 1 H1 e 1 main.
 
+**Evidência parcial em 2026-11-10:** `node.page.default` e `node.page.full` agora usam o SDC existente `layout-section` pelo ComponentLayout do UI Patterns; blocos `body` e `links` preservados. Importação parcial dos dois objetos aplicada no Runtime. Layouts resolvidos e gate SDC 41/41; Views Links/MAIN/Links retornaram 200, com skins calculadas corretas, um H1/main e sem overflow em 1280/320. Ver manifesto `tests/browser/capturas/ui-suite-links/2026-11-10/manifest.json`. Cache do Dynamic Page é `UNCACHEABLE`; cache-hit, perfis, teclado, zoom e aceite visual continuam DEFERRED. Migrar os outros displays compatíveis; manter excluídos `node.document.full` e `block_content.basic.default`.
+
 ### US-07 - Field Group dev, risco e migração por bundle
 - Preferir `drupal/ui_patterns_field_group:2.0.x-dev@dev`, verificar versão real e SHA, upstream, Field Group 4.x, Drupal 11.5/12 e vulnerabilidades.
 - Planejar displays existentes e pilotos não críticos com migração e rollback sem alterar campos nem dados.

@@ -2,7 +2,7 @@
   'use strict';
 
   /**
-   * Fecha o diálogo aberto (nativo ou jQuery UI), sem jQuery novo.
+   * Fecha o diálogo nativo ou a interface de diálogo do Core ainda presente.
    */
   function closeTopDialog() {
     const nativeDialogs = [...document.querySelectorAll('dialog[open]')];

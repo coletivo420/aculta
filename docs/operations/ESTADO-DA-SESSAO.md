@@ -1,12 +1,12 @@
-# ADR-054/055 — cutover UI Suite e piloto Links — 2026-11-10
+# ADR-054/055 — ComponentLayout SDC e piloto Links — 2026-11-10
 
-- **Objetivo:** concluir o cutover visual e recuperar `/painel-administrativo/aparencia/ui/components` após 500/erro de agregado JS.
-- **Estado:** página autenticada abre após `drush cr` (container compilado estava obsoleto em meio a alterações paralelas no Messenger). O asset dinâmico `locale/translations` foi excluído do preprocess agregado via `AppearanceHooks`; Firefox autenticado verificou 11 scripts com HTTP 200 e MIME `text/javascript`, sem falhas. Avisos inline CSP são `Report-Only`, sem bloqueio. Mapa UI Skins segue só `links_aculta_org: ruderalis`; os outros domínios ficam em `skunk` até aceite.
-- **Decisões/cuidados:** não afrouxar CSP; sem fallback visual legado conforme instrução do responsável; não tocar nos diffs paralelos do Messenger nem `web/tmp`.
-- **Commits/arquivos:** cutover anterior `992be479a`; correção atual inclui hook Portal, teste Unit, ajuste de raiz do browser runner, TODO/CHANGELOG e handoff.
-- **Verificações:** Unit `AppearanceHooksTest` 1/1, PHP lint, PHPCS e `git diff --check` PASS; script visual autenticado passou (1280 e 320 sem overflow); rede 11/11 scripts 200/MIME correto. Validador global `validate-browser-index.php` FAIL por índice desatualizado, READMEs ausentes e referências inválidas sob `.claude/worktrees`; falha fora do escopo.
-- **Pendências:** homologar visual/cache/contraste do piloto Links e modos antes de expandir domínios; resolver gate de comércio no rótulo público do login; completar migração integral US/RN.
-- **Próximo passo:** publicar correção isolada, limpar cache após push e retomar piloto Links com dimensões, modos e cache por domínio.
+- **Objetivo:** migrar displays de página compatíveis para UI Patterns Layouts, validar a ponte UI Skins Links/MAIN e continuar a substituição visual SDC First.
+- **Estado:** `node.page.default/full` usam `ui_patterns:aculta420_v2:layout_section`; Runtime confirma ambas as configurações e mantém os blocos body/links. UI Skins ativo: Links Ruderalis, MAIN Skunk. A/B/A anônimo confirmou HTTP 200 e tokens claros/escuros corretos sem mistura. Cache de página permanece `UNCACHEABLE`, então cache-hit não foi homologado.
+- **Decisões/cuidados:** rollback por import parcial dos dois YAML anteriores; sem alterações em dados. Preservar as duas exclusões Layout Builder (`node.document.full`, `block_content.basic.default`). Não tocar nas alterações paralelas do Fórum nem em `web/tmp`.
+- **Arquivos:** dois displays Config Sync, gerador/CSV do inventário, snapshot Runtime, gate SDC, teste Unit `LayoutSectionComponentTest`, TODO/status/changelog, ADR/plano e manifesto de capturas.
+- **Verificações:** PHPUnit 2 testes/20 assertions; PHPCS; gate UI Skins 134, UI Styles 38, SDC 41 componentes; Firefox Links 1280/320 sem overflow, uma main/H1, capturas com hashes no manifesto. Cache-hit, contraste de página total, teclado, zoom e demais displays seguem pendentes.
+- **Pendências:** migrar os demais displays compatíveis; investigar `X-Drupal-Dynamic-Cache: UNCACHEABLE`; concluir aceite visual Links e expandir somente após validação; executar US/RN restantes.
+- **Próximo passo:** seguir o inventário para migrar o próximo display Layout Builder compatível e validar acesso/render/cache, mantendo os dois casos excluídos.
 
 # UI Skins — extensão Sync e limpeza da chave antiga — 2026-11-10
 

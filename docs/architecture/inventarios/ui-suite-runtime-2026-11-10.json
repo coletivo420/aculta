@@ -1,7 +1,7 @@
 {
-    "observed_at_utc": "2026-11-10T21:58:37+00:00",
+    "observed_at_utc": "2026-11-10T23:44:32+00:00",
     "drupal_version": "11.5.0-beta1",
-    "evidence_command": "drush pml --type=module --format=json; drush config:status --format=json; targeted config:get and Render API inspection",
+    "evidence_command": "Drush module/config reads, Layout plugin discovery, targeted partial import, anonymous Firefox A/B/A computed-style check, targeted PHP gates",
     "ui_suite_modules": {
         "ui_icons": {
             "status": "Enabled",
@@ -157,19 +157,84 @@
         "views.view.aculta_forum_categories"
     ],
     "runtime_config": {
-        "ui_skins_module": "enabled",
-        "ui_skins_theme_css_variables": "absent from active aculta420_v2.settings; present in Config Sync",
-        "aculta_portal.visual_skins": "absent from active config; present in Config Sync",
-        "views.view.aculta_forum_categories.default.row": "fields (page_categories and block_landing inherit)",
-        "ui_patterns_ckeditor5": "enabled; forbidden for this implementation per ADR-055",
-        "ui_patterns_field_group": "enabled; upstream does not receive Drupal security coverage and current info.yml excludes Drupal 12",
-        "ui_styles_ckeditor5": "disabled in active Runtime; enabled in Config Sync and editor config for revista_editorial"
+        "ui_skins_module": "enabled 1.2.1",
+        "ui_skins_theme_css_variables": "active on aculta420_v2.settings; Ruderalis light color_accent=#76a82c, dark=#89c72c",
+        "aculta_portal.visual_skins": "active; links_aculta_org= ruderalis; other domains use skunk default",
+        "views.view.aculta_forum_categories.page_categories.row": "ui_patterns",
+        "views.view.aculta_forum_categories.block_landing.row": "ui_patterns",
+        "core.entity_view_display.node.page.full": "ui_patterns:aculta420_v2:layout_section; Render API/browser confirmed",
+        "core.entity_view_display.node.page.default": "ui_patterns:aculta420_v2:layout_section; Render API/browser confirmed",
+        "ui_patterns_ckeditor5": "enabled preexisting; prohibited for this implementation; removal requires separate authorization",
+        "ui_patterns_field_group": "enabled preexisting 2.0.x-dev; blocked upstream pending security and Drupal 12 support assessment",
+        "ui_styles_ckeditor5": "enabled; authorized Config Sync cutover applied"
     },
     "notes": [
-        "Runtime differs materially from the prior snapshot: UI Skins is enabled, but skin map and UI Skins CSS variables are not active; Config Sync drift includes core.extension and Forum categories.",
-        "Do not run config import or module uninstall without explicit authorization. The pending import authorization is required to activate the existing map, CSS variables, Views row, and UI Styles CKEditor integration.",
-        "UI Patterns Field Group is blocked for new use: Drupal.org states the project is not covered by the Security Advisory Policy; installed info.yml allows only Core 9/10/11; Field Group integration remains preexisting and must not be expanded until secure Drupal 12 support is accepted.",
-        "UI Patterns CKEditor 5 is currently enabled despite the ADR prohibition; disabling it requires an authorized config operation and is recorded DEFERRED.",
+        "Runtime now has the Links skin map and UI Skins CSS variables active; anonymous A/B/A requests returned distinct Ruderalis/Skunk values without cross-host carryover.",
+        "The two node.page Layout Builder displays now use the existing layout-section SDC through UI Patterns Layouts. Only selected config objects were partially imported; no entity data changed.",
+        "Dynamic page cache reports UNCACHEABLE for tested pages, so cache-hit variation remains DEFERRED even though sequential host rendering did not leak skins.",
+        "UI Patterns Field Group remains preexisting and BLOCKED_UPSTREAM for security/Drupal 12 assessment. UI Patterns CKEditor 5 remains preexisting but unused in this implementation; removal requires a separately authorized config operation.",
         "The Runtime is Drupal 11.5.0-beta1; Drupal 12 compatibility cannot be inferred from a Drupal 11 runtime test."
-    ]
+    ],
+    "layout_builder_displays": {
+        "core.entity_view_display.node.page.full": {
+            "layout_id": "ui_patterns:aculta420_v2:layout_section",
+            "component_id": "aculta420_v2:layout-section",
+            "runtime_status": "active; exact UI Patterns Layout plugin resolved",
+            "regions": [
+                "content"
+            ],
+            "components_preserved": [
+                "field_block:node:page:body",
+                "extra_field_block:node:page:links"
+            ],
+            "allow_custom": true,
+            "rollback": "restore prior node.page.full config from Git and targeted partial import"
+        },
+        "core.entity_view_display.node.page.default": {
+            "layout_id": "ui_patterns:aculta420_v2:layout_section",
+            "component_id": "aculta420_v2:layout-section",
+            "runtime_status": "active; exact UI Patterns Layout plugin resolved",
+            "regions": [
+                "content"
+            ],
+            "components_preserved": [
+                "field_block:node:page:body",
+                "extra_field_block:node:page:links"
+            ],
+            "allow_custom": false,
+            "rollback": "restore prior node.page.default config from Git and targeted partial import"
+        }
+    },
+    "browser_validation": {
+        "environment": "development",
+        "method": "Firefox ESR visible for responsive capture; anonymous Firefox for A/B/A host check",
+        "links_skin_sequence": [
+            "ruderalis",
+            "skunk",
+            "ruderalis"
+        ],
+        "http_status_sequence": [
+            200,
+            200,
+            200
+        ],
+        "computed_accent_light": [
+            "#76a82c",
+            "#5a8022",
+            "#76a82c"
+        ],
+        "computed_accent_dark": [
+            "#89c72c",
+            "#6c9e22",
+            "#89c72c"
+        ],
+        "one_h1_and_main_each_page": true,
+        "links_viewports_css_px": [
+            1280,
+            320
+        ],
+        "links_horizontal_overflow": false,
+        "dynamic_page_cache": "UNCACHEABLE on tested anonymous pages; host skin isolation observed, cache-hit variation not proven",
+        "screenshots": "SUITE_OUT/links-layout-sdc-final-2026-11-10; filenames and hashes in tests/browser/capturas/ui-suite-links/2026-11-10/manifest.json"
+    }
 }

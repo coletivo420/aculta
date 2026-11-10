@@ -18,17 +18,27 @@ dependencies:
     - node.type.page
   module:
     - layout_builder
-    - layout_discovery
+    - ui_patterns
+    - ui_patterns_layouts
     - user
+  theme:
+    - aculta420_v2
 third_party_settings:
   layout_builder:
     enabled: true
     allow_custom: true
     sections:
       -
-        layout_id: layout_onecol
+        layout_id: 'ui_patterns:aculta420_v2:layout_section'
         layout_settings:
           label: ''
+          context_mapping:
+            entity: layout_builder.entity
+          ui_patterns:
+            component_id: 'aculta420_v2:layout-section'
+            variant_id: null
+            props: {  }
+            slots: {  }
         components:
           16306729-65f8-4ae9-8090-10a60945ce5d:
             uuid: 16306729-65f8-4ae9-8090-10a60945ce5d

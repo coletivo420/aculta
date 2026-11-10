@@ -1,3 +1,16 @@
+## Não versionado — Layout Builder usa ComponentLayout SDC em páginas (2026-11-10)
+
+- `node.page.default` e `node.page.full` usam `layout-section` pelo UI Patterns
+  Layouts; body e links mantêm região, ordem, acesso e dados. Import parcial
+  aplicado somente a esses displays, sem alterar conteúdo.
+- O snapshot Runtime registra UI Skins e o mapa Links ativos. Firefox anônimo
+  conferiu Links → MAIN → Links: skins/tokens não se misturam, H1/main únicos,
+  HTTP 200; Links 1280/320 sem overflow. Cache dinâmico está `UNCACHEABLE`,
+  portanto cache-hit e aceite visual completo continuam pendentes.
+- O inventário agora distingue ComponentLayout UI Suite de layouts Core ainda
+  em migração. Gate SDC corrigido para reconhecer tokens `.btn` exatos e não
+  strings/comentários como SVG/jQuery; 41 componentes passaram.
+
 ## Não versionado — status do carrinho no SDC compartilhado (2026-11-10)
 
 - O adapter visual do Portal compõe `status-messages`, converte `success` para

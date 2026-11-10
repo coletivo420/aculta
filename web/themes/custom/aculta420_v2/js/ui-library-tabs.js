@@ -9,12 +9,12 @@
   Drupal.behaviors.acultaUiLibraryTabs = {
     attach(context) {
       // Se a URL contém hash com dois-pontos (ex.: #aculta420_v2:auth-dialog),
-      // removemos temporariamente antes de scripts de tabs tentarem usar como seletor jQuery.
+      // resolve pelo ID para evitar tratar os dois-pontos como seletor CSS.
       if (window.location.hash && window.location.hash.includes(':')) {
         const rawId = window.location.hash.slice(1);
         const targetElement = document.getElementById(rawId);
         if (targetElement) {
-          // Mantém a rolagem até o componente sem quebrar seletores do jQuery.
+          // Mantém a rolagem até o componente sem depender de seletor CSS escapado.
           setTimeout(() => {
             targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }, 100);
