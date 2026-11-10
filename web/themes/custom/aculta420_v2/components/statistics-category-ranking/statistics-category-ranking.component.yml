@@ -1,0 +1,32 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Ranking de categorias
+description: Tabela acessível de categorias públicas por valor.
+status: experimental
+group: Estatísticas
+props:
+  type: object
+  additionalProperties: false
+  required: [caption, rows]
+  properties:
+    caption:
+      type: string
+      minLength: 1
+    empty:
+      type: string
+      default: Sem dados no período.
+    rows:
+      type: array
+      items:
+        type: object
+        additionalProperties: false
+        required: [position, label, value]
+        properties:
+          position:
+            type: integer
+          label:
+            type: string
+          url:
+            type: string
+            default: ''
+          value:
+            type: string

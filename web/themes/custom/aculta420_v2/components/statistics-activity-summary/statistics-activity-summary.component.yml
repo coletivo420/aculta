@@ -1,0 +1,30 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Resumo de atividade
+description: Resumo analítico em lista de definição, sem dados pessoais.
+status: experimental
+group: Estatísticas
+props:
+  type: object
+  additionalProperties: false
+  required: [title, rows]
+  properties:
+    title:
+      type: string
+      minLength: 1
+    note:
+      type: string
+      default: ''
+    rows:
+      type: array
+      items:
+        type: object
+        additionalProperties: false
+        required: [label, value]
+        properties:
+          label:
+            type: string
+          value:
+            type: string
+          description:
+            type: string
+            default: ''

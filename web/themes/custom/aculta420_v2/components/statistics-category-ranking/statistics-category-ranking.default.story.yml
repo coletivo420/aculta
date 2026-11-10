@@ -1,0 +1,11 @@
+name: Ranking de categorias
+props:
+  caption: Categorias públicas com mais tópicos
+  empty: Sem dados no período.
+  rows:
+    - position: 1
+      label: Cultivo
+      value: '18'
+    - position: 2
+      label: Genética
+      value: '11'

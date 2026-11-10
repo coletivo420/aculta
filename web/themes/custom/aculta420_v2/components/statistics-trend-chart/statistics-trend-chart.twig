@@ -1,0 +1,14 @@
+<figure{{ attributes.addClass('statistics-trend-chart') }}>
+  <figcaption class="statistics-trend-chart__title">{{ title }}</figcaption>
+  {% if summary %}<p class="statistics-trend-chart__summary">{{ summary }}</p>{% endif %}
+  <ol class="statistics-trend-chart__bars" aria-label="{{ title }}">
+    {% for bar in bars %}
+      <li class="statistics-trend-chart__item">
+        <span class="statistics-trend-chart__bar" style="--statistics-bar: {{ bar.percent }}%" aria-hidden="true"></span>
+        <span class="statistics-trend-chart__label">{{ bar.label }}</span>
+        <span class="statistics-trend-chart__value">{{ bar.value }}</span>
+      </li>
+    {% endfor %}
+  </ol>
+  {% if caption %}<p class="statistics-trend-chart__caption">{{ caption }}</p>{% endif %}
+</figure>

@@ -1,0 +1,32 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Série temporal
+description: Série diária acessível com barras e valores textuais.
+status: experimental
+group: Estatísticas
+props:
+  type: object
+  additionalProperties: false
+  required: [title, bars]
+  properties:
+    title:
+      type: string
+      minLength: 1
+    caption:
+      type: string
+      default: ''
+    summary:
+      type: string
+      default: ''
+    bars:
+      type: array
+      items:
+        type: object
+        additionalProperties: false
+        required: [label, value, percent]
+        properties:
+          label:
+            type: string
+          value:
+            type: string
+          percent:
+            type: number

@@ -1,0 +1,14 @@
+name: Saúde das respostas
+props:
+  title: Saúde das respostas
+  note: Coorte de tópicos criados nos últimos 365 dias.
+  rows:
+    - label: Mediana até a primeira resposta
+      value: '86 min'
+      description: Primeira resposta de outra pessoa.
+    - label: Percentil 90
+      value: '1.440 min'
+      description: 
+    - label: Tópicos sem resposta
+      value: '23'
+      description: Sem resposta pública de outra pessoa.

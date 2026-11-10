@@ -1,0 +1,11 @@
+name: Moderação
+props:
+  title: Moderação
+  note: Denúncias resolvidas e tempo de resolução dependem de instrumentação do owner.
+  rows:
+    - label: Conteúdos com denúncia aberta
+      value: '4'
+      description: Sem expor denunciantes.
+    - label: Posts aguardando moderação
+      value: '7'
+      description: 

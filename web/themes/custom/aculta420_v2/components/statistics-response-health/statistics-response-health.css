@@ -1,0 +1,51 @@
+.statistics-summary-card {
+  padding: var(--spacing-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control-card);
+  background: var(--color-surface-raised);
+}
+
+.statistics-summary-card__title {
+  margin-block: 0 var(--spacing-sm);
+  color: var(--color-text-primary);
+  font-size: 1.125rem;
+}
+
+.statistics-summary-card__rows {
+  display: grid;
+  gap: var(--spacing-sm);
+  margin: 0;
+}
+
+.statistics-summary-card__row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--spacing-xs);
+  padding-block-end: var(--spacing-xs);
+  border-block-end: 1px solid var(--color-border);
+}
+
+.statistics-summary-card__rows dt {
+  color: var(--color-text-secondary);
+}
+
+.statistics-summary-card__rows dd {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.statistics-summary-card__description {
+  display: block;
+  color: var(--color-text-secondary);
+  font-size: .875rem;
+  font-weight: 400;
+}
+
+.statistics-summary-card__note {
+  margin-block: var(--spacing-sm) 0;
+  color: var(--color-text-secondary);
+  font-size: .875rem;
+}

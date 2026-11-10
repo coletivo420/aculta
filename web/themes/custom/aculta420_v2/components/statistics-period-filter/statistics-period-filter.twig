@@ -1,0 +1,14 @@
+<form{{ attributes.addClass('statistics-period-filter') }} method="get" action="{{ action }}">
+  {% for field in hidden %}
+    <input type="hidden" name="{{ field.name }}" value="{{ field.value }}">
+  {% endfor %}
+  <label class="statistics-period-filter__label">
+    <span>{{ label }}</span>
+    <select name="dias">
+      {% for option in options %}
+        <option value="{{ option.value }}"{{ option.value == selected ? ' selected' : '' }}>{{ option.label }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <button type="submit" class="statistics-period-filter__submit">{{ submit_label }}</button>
+</form>

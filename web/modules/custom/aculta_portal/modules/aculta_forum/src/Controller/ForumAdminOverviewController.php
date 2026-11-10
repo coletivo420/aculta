@@ -122,6 +122,13 @@ final class ForumAdminOverviewController extends ControllerBase implements Conta
         '#url' => $this->domainPurposeManager->pathUrl('forum', '/categorias'),
       ];
       $account = $this->currentUser();
+      if ($account->hasPermission('administer aculta_statistics')) {
+        $build['public_links']['#items'][] = [
+          '#type' => 'link',
+          '#title' => $this->t('Relatório analítico do Fórum'),
+          '#url' => Url::fromRoute('aculta_statistics.area', ['area' => 'forum']),
+        ];
+      }
       if ($account->hasPermission('moderar denuncias do forum')
         || $account->hasPermission('moderar denuncias ugc')
         || $account->hasPermission('moderar denuncias ugc: forum')) {
@@ -186,7 +193,7 @@ final class ForumAdminOverviewController extends ControllerBase implements Conta
       return [];
     }
 
-    return [
+    $rows = [
       [
         'data' => [
           $this->t('Categorias públicas'),
@@ -200,6 +207,29 @@ final class ForumAdminOverviewController extends ControllerBase implements Conta
         ],
       ],
     ];
+
+    // Retratos do Statistics, quando a coleta já gravou o dia. São estoque
+    // atual, não soma histórica.
+    if ($this->statisticsStorage !== NULL) {
+      $today = $this->statisticsStorage->currentDay();
+      $snapshots = [
+        'forum.replies.published_current' => $this->t('Respostas públicas publicadas'),
+        'forum.topics.unanswered' => $this->t('Tópicos sem resposta'),
+        'forum.reactions.active' => $this->t('Reações vigentes'),
+      ];
+      foreach ($snapshots as $metric => $label) {
+        if ($this->statisticsStorage->hasDay($metric, $today)) {
+          $rows[] = [
+            'data' => [
+              $label,
+              ['data' => ['#plain_text' => (string) $this->statisticsStorage->total($metric, $today, $today)]],
+            ],
+          ];
+        }
+      }
+    }
+
+    return $rows;
   }
 
 }

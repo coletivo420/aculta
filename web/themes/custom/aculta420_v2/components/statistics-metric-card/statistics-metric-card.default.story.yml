@@ -1,0 +1,7 @@
+name: Cartão de indicador
+props:
+  label: Tópicos publicados
+  value: '42'
+  unit: tópicos
+  hint: Estoque atual do Fórum público.
+  tone: neutral

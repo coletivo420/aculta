@@ -1,0 +1,31 @@
+<div{{ attributes.addClass('statistics-category-ranking') }}>
+  {% if rows %}
+    <table class="statistics-category-ranking__table">
+      <caption>{{ caption }}</caption>
+      <thead>
+        <tr>
+          <th scope="col">Posição</th>
+          <th scope="col">Categoria</th>
+          <th scope="col">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+          <tr>
+            <td>{{ row.position }}</td>
+            <td>
+              {% if row.url %}
+                <a href="{{ row.url }}">{{ row.label }}</a>
+              {% else %}
+                {{ row.label }}
+              {% endif %}
+            </td>
+            <td>{{ row.value }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="statistics-category-ranking__empty">{{ empty }}</p>
+  {% endif %}
+</div>

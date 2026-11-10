@@ -1,0 +1,4 @@
+name: Estado vazio de estatísticas
+props:
+  message: Ainda não há dados neste período.
+  hint: A coleta começa no primeiro cron após a instalação.

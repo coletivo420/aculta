@@ -891,3 +891,10 @@ State: Dev. No RC, production deployment, or release tag is declared.
 ## [1.4.1] - 2026-11-08
 - Adicionado componente SDC `discussion-reply-composer` para renderização acessível e integrada de respostas inline no fórum e discussões compartilhadas.
 - Atualizado `forum-quote.js` para focar suavemente no editor ou textarea após o swap HTMX, respeitando `prefers-reduced-motion`.
+
+## Não versionado — FST-08 estatísticas do Fórum (2026-11-10)
+
+- Oito SDCs de estatísticas: cartão de indicador, série temporal acessível, filtro de período sem JavaScript, ranking de categorias, resumo de atividade, saúde das respostas, moderação e estado vazio.
+- Todos com schema estrito, story, tokens semânticos e CSS mobile-first; `validate-aculta420-sdc-schemas.php`: PASS (80 componentes, 1707 checks).
+- Consumidor: painel `aculta_statistics` da área Fórum e resumo do painel administrativo do Fórum.
+- Sem validação de navegador nesta entrega; captura visual pendente.

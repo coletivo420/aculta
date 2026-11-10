@@ -1,0 +1,37 @@
+.statistics-period-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control-card);
+  background: var(--color-surface-raised);
+}
+
+.statistics-period-filter__label {
+  display: grid;
+  gap: var(--spacing-xs);
+  color: var(--color-text-secondary);
+}
+
+.statistics-period-filter select,
+.statistics-period-filter__submit {
+  min-height: 44px;
+  padding: .35rem .75rem;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  background: var(--color-surface);
+}
+
+.statistics-period-filter__submit {
+  cursor: pointer;
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+}
+
+.statistics-period-filter :focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 3px;
+}

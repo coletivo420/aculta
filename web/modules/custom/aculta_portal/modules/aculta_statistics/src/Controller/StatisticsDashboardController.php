@@ -127,7 +127,9 @@ final class StatisticsDashboardController extends ControllerBase {
       'controles' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'statistics-controls'],
-        'form' => $this->controls($metric, $days, $domain, $today, $area),
+        'form' => $area === 'forum'
+          ? $this->periodFilter($days, $metric->id, $area)
+          : $this->controls($metric, $days, $domain, $today, $area),
       ],
       'resumo' => [
         '#type' => 'container',
@@ -176,6 +178,11 @@ final class StatisticsDashboardController extends ControllerBase {
       ],
       '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
     ];
+
+    // Relatórios do Fórum: cartões, saúde das respostas e moderação.
+    if ($area === 'forum') {
+      $build['forum'] = $this->forumPanels($today, $days, $series, $metric, $periodValue);
+    }
 
     // O ranking é por verbete e só faz sentido na área Wiki.
     if ($area === 'wiki') {
@@ -544,6 +551,265 @@ final class StatisticsDashboardController extends ControllerBase {
     );
     ksort($metrics);
     return $metrics;
+  }
+
+  /**
+   * Filtro de período em SDC para a área do Fórum.
+   */
+  private function periodFilter(int $days, string $metric, string $area): array {
+    $options = [];
+    foreach (MetricSeries::PERIODS as $option) {
+      $options[] = [
+        'value' => (string) $option,
+        'label' => (string) $this->t('Últimos @days dias', ['@days' => $option]),
+      ];
+    }
+    return $this->component('statistics-period-filter', [
+      'action' => Url::fromRoute('aculta_statistics.area', ['area' => $area])->toString(),
+      'label' => (string) $this->t('Período'),
+      'options' => $options,
+      'selected' => (string) $days,
+      'submit_label' => (string) $this->t('Aplicar'),
+      'hidden' => [['name' => 'metrica', 'value' => $metric]],
+    ]);
+  }
+
+  /**
+   * Relatórios do Fórum: indicadores, tendência, atividade, respostas e moderação.
+   */
+  private function forumPanels(int $today, int $days, array $series, MetricDefinition $metric, ?int $periodValue): array {
+    $panels = [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'statistics-forum'],
+    ];
+
+    $cards = [
+      [
+        'label' => $this->t('Tópicos publicados'),
+        'value' => $this->forumValue('forum.topics.published_current', $today),
+        'unit' => $this->t('tópicos'),
+        'hint' => $this->t('Estoque atual do Fórum público.'),
+      ],
+      [
+        'label' => $this->t('Respostas publicadas'),
+        'value' => $this->forumValue('forum.replies.published_current', $today),
+        'unit' => $this->t('respostas'),
+        'hint' => $this->t('Comments legados e ForumPosts publicados.'),
+      ],
+      [
+        'label' => $this->t('Pessoas ativas em 30 dias'),
+        'value' => $this->forumValue('forum.participants.engaged_30d', $today),
+        'unit' => $this->t('pessoas'),
+        'hint' => $this->t('Autoria distinta, não visitas.'),
+      ],
+      [
+        'label' => $this->t('Tópicos sem resposta'),
+        'value' => $this->forumValue('forum.topics.unanswered', $today),
+        'unit' => $this->t('tópicos'),
+        'hint' => $this->t('Sem resposta pública de outra pessoa.'),
+        'tone' => 'warning',
+      ],
+      [
+        'label' => $this->t('Reações vigentes'),
+        'value' => $this->forumValue('forum.reactions.active', $today),
+        'unit' => $this->t('reações'),
+        'hint' => $this->t('Somente conteúdo público.'),
+      ],
+    ];
+    $cards_build = [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'statistics-forum-kpis'],
+    ];
+    foreach ($cards as $index => $card) {
+      $cards_build['card_' . $index] = $this->component('statistics-metric-card', [
+        'label' => (string) $card['label'],
+        'value' => (string) $card['value'],
+        'unit' => (string) $card['unit'],
+        'hint' => (string) $card['hint'],
+        'tone' => $card['tone'] ?? 'neutral',
+      ]);
+    }
+    $panels['indicadores'] = $cards_build;
+
+    $panels['tendencia'] = $this->trendChart($series, $metric, $days, $periodValue);
+    $panels['atividade'] = $this->activitySummary($today, $days);
+    $panels['respostas'] = $this->responseHealth($today);
+    $panels['moderacao'] = $this->moderationSummary($today);
+    return $panels;
+  }
+
+  /**
+   * Série escolhida como gráfico acessível de barras.
+   */
+  private function trendChart(array $series, MetricDefinition $metric, int $days, ?int $periodValue): array {
+    if ($periodValue === NULL && array_sum($series['values']) === 0) {
+      return $this->component('statistics-empty-state', [
+        'message' => (string) $this->t('Ainda não há coleta deste indicador no período.'),
+        'hint' => (string) $this->t('A coleta começa no primeiro cron após a instalação.'),
+      ]);
+    }
+    $max = max(1, max($series['values']));
+    $bars = [];
+    foreach ($series['labels'] as $index => $label) {
+      $bars[] = [
+        'label' => (string) $label,
+        'value' => (string) $series['values'][$index],
+        'percent' => round($series['values'][$index] / $max * 100, 1),
+      ];
+    }
+    return $this->component('statistics-trend-chart', [
+      'title' => (string) $this->t('@label nos últimos @days dias', ['@label' => $metric->label, '@days' => $days]),
+      'summary' => (string) $this->t('Atividade diária em UTC. Retratos não são somados.'),
+      'bars' => $bars,
+      'caption' => (string) $this->t('Fonte: ACULTA Statistics.'),
+    ]);
+  }
+
+  /**
+   * Resumo de criação no período.
+   */
+  private function activitySummary(int $today, int $days): array {
+    return $this->component('statistics-activity-summary', [
+      'title' => (string) $this->t('Atividade do Fórum no período'),
+      'rows' => [
+        $this->summaryRow(
+          (string) $this->t('Tópicos criados'),
+          $this->periodSum('forum.topics.created', $today, $days),
+          (string) $this->t('Eventos somáveis do período.'),
+        ),
+        $this->summaryRow(
+          (string) $this->t('Comments legados criados'),
+          $this->periodSum('forum.comments.created', $today, $days),
+        ),
+        $this->summaryRow(
+          (string) $this->t('ForumPosts criados'),
+          $this->periodSum('forum.posts.created', $today, $days),
+        ),
+        $this->summaryRow(
+          (string) $this->t('Respostas por tópico'),
+          $this->periodSum('forum.replies.created', $today, $days),
+          (string) $this->t('Dimensão por tópico público.'),
+        ),
+      ],
+      'note' => (string) $this->t('Somente conteúdo público do Fórum; Revista, Wiki e LMS não entram nestes totais.'),
+    ]);
+  }
+
+  /**
+   * Saúde das respostas: mediana, p90, sem resposta e taxa.
+   */
+  private function responseHealth(int $today): array {
+    $current = $this->storage->hasDay('forum.topics.published_current', $today)
+      ? $this->storage->total('forum.topics.published_current', $today, $today)
+      : NULL;
+    $unanswered = $this->storage->hasDay('forum.topics.unanswered', $today)
+      ? $this->storage->total('forum.topics.unanswered', $today, $today)
+      : NULL;
+    $rate = $current !== NULL && $current > 0 && $unanswered !== NULL
+      ? round(($current - $unanswered) / $current * 100) . '%'
+      : (string) $this->t('N/D');
+    return $this->component('statistics-response-health', [
+      'title' => (string) $this->t('Saúde das respostas'),
+      'rows' => [
+        $this->summaryRow(
+          (string) $this->t('Mediana até a primeira resposta'),
+          $this->minutesValue('forum.response.first_median_minutes', $today),
+          (string) $this->t('Primeira resposta pública de outra pessoa.'),
+        ),
+        $this->summaryRow(
+          (string) $this->t('Percentil 90'),
+          $this->minutesValue('forum.response.first_p90_minutes', $today),
+          (string) $this->t('Mesma população da mediana.'),
+        ),
+        $this->summaryRow(
+          (string) $this->t('Sem resposta após 72 horas'),
+          $this->forumValue('forum.response.unanswered_over_72h', $today),
+        ),
+        $this->summaryRow(
+          (string) $this->t('Taxa de tópicos respondidos'),
+          $rate,
+          (string) $this->t('Calculada com estoque atual, não somando percentuais diários.'),
+        ),
+      ],
+      'note' => (string) $this->t('Coorte de tópicos criados nos últimos 365 dias.'),
+    ]);
+  }
+
+  /**
+   * Moderação: estado corrente sem identificar denunciantes ou alvos.
+   */
+  private function moderationSummary(int $today): array {
+    return $this->component('statistics-moderation-summary', [
+      'title' => (string) $this->t('Moderação do Fórum'),
+      'rows' => [
+        $this->summaryRow(
+          (string) $this->t('Conteúdos com denúncia aberta'),
+          $this->forumValue('forum.moderation.reports_open', $today),
+          (string) $this->t('Conteúdo distinto; denunciantes não são expostos.'),
+        ),
+        $this->summaryRow(
+          (string) $this->t('Posts aguardando moderação'),
+          $this->forumValue('forum.moderation.posts_pending', $today),
+        ),
+      ],
+      'note' => (string) $this->t('Denúncias resolvidas e tempo de resolução dependem de instrumentação do owner de moderação.'),
+    ]);
+  }
+
+  /**
+   * Valor do retrato do dia, ou N/D quando não houve coleta.
+   */
+  private function forumValue(string $metric, int $today): string {
+    if (!$this->storage->hasDay($metric, $today)) {
+      return (string) $this->t('N/D');
+    }
+    return $this->formatNumber($this->storage->total($metric, $today, $today));
+  }
+
+  /**
+   * Minutos formatados para a saúde das respostas.
+   */
+  private function minutesValue(string $metric, int $today): string {
+    if (!$this->storage->hasDay($metric, $today)) {
+      return (string) $this->t('N/D');
+    }
+    return $this->formatNumber($this->storage->total($metric, $today, $today)) . ' ' . $this->t('min');
+  }
+
+  /**
+   * Soma de um contador no período.
+   */
+  private function periodSum(string $metric, int $today, int $days): string {
+    return $this->formatNumber($this->storage->total($metric, $today - $days + 1, $today));
+  }
+
+  /**
+   * Linha de lista de definição para os SDCs de resumo.
+   */
+  private function summaryRow(string $label, string $value, string $description = ''): array {
+    return [
+      'label' => $label,
+      'value' => $value,
+      'description' => $description,
+    ];
+  }
+
+  /**
+   * Número inteiro com separador de milhar.
+   */
+  private function formatNumber(int $value): string {
+    return number_format($value, 0, ',', '.');
+  }
+
+  /**
+   * Render array de um componente do tema.
+   */
+  private function component(string $name, array $props): array {
+    return [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:' . $name,
+      '#props' => $props,
+    ];
   }
 
   /**

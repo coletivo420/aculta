@@ -1,0 +1,37 @@
+.statistics-metric-card {
+  display: grid;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control-card);
+  background: var(--color-surface-raised);
+}
+
+.statistics-metric-card__label,
+.statistics-metric-card__hint {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.statistics-metric-card__value {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.statistics-metric-card__unit {
+  margin-inline-start: .25rem;
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.statistics-metric-card--positive .statistics-metric-card__value {
+  color: var(--color-success, var(--color-text-primary));
+}
+
+.statistics-metric-card--warning .statistics-metric-card__value {
+  color: var(--color-warning, var(--color-text-primary));
+}

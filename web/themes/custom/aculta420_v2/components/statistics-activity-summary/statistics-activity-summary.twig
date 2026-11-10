@@ -1,0 +1,12 @@
+<section{{ attributes.addClass('statistics-summary-card') }}>
+  <h3 class="statistics-summary-card__title">{{ title }}</h3>
+  <dl class="statistics-summary-card__rows">
+    {% for row in rows %}
+      <div class="statistics-summary-card__row">
+        <dt>{{ row.label }}</dt>
+        <dd>{{ row.value }}{% if row.description %}<span class="statistics-summary-card__description">{{ row.description }}</span>{% endif %}</dd>
+      </div>
+    {% endfor %}
+  </dl>
+  {% if note %}<p class="statistics-summary-card__note">{{ note }}</p>{% endif %}
+</section>

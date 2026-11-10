@@ -1,0 +1,43 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Filtro de período
+description: Formulário GET funcional sem JavaScript para período e métrica.
+status: experimental
+group: Estatísticas
+props:
+  type: object
+  additionalProperties: false
+  required: [action, options, selected, submit_label]
+  properties:
+    action:
+      type: string
+      minLength: 1
+    label:
+      type: string
+      default: Período
+    options:
+      type: array
+      items:
+        type: object
+        additionalProperties: false
+        required: [value, label]
+        properties:
+          value:
+            type: string
+          label:
+            type: string
+    selected:
+      type: string
+    submit_label:
+      type: string
+      minLength: 1
+    hidden:
+      type: array
+      items:
+        type: object
+        additionalProperties: false
+        required: [name, value]
+        properties:
+          name:
+            type: string
+          value:
+            type: string

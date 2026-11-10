@@ -464,3 +464,16 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 - **Schema:** estrito, com props `target_id`, `status`, `mode` (`responder`, `citar`, `editar`), `parent_id`, `parent_author`, `parent_subject`, `host_title` e slots `messages`, `context`, `form`.
 - **Story:** `discussion-reply-composer.default.story.yml`.
 - **Consumer:** template de tema `discussion-reply-composer.html.twig` e módulo `aculta_forum`.
+
+## Estatísticas do Fórum (FST-08)
+
+Componentes neutros de apresentação consumidos por `aculta_statistics`; não consultam banco, acesso ou privacidade.
+
+- `statistics-metric-card`: props `label`, `value`, `unit`, `hint`, `tone` (`neutral|positive|warning`). Story: `statistics-metric-card.default.story.yml`.
+- `statistics-trend-chart`: props `title`, `summary`, `caption`, `bars` (`{label, value, percent}`). Barras com valores textuais acessíveis. Story: `statistics-trend-chart.default.story.yml`.
+- `statistics-period-filter`: formulário GET sem JavaScript; props `action`, `label`, `options`, `selected`, `submit_label`, `hidden`. Story: `statistics-period-filter.default.story.yml`.
+- `statistics-category-ranking`: tabela semântica; props `caption`, `rows`, `empty`. Story: `statistics-category-ranking.default.story.yml`.
+- `statistics-activity-summary`, `statistics-response-health`, `statistics-moderation-summary`: listas de definição; props `title`, `rows` (`{label, value, description}`), `note`. Stories homônimas.
+- `statistics-empty-state`: props `message`, `hint`. Story: `statistics-empty-state.default.story.yml`.
+
+Estado: implementados para a FST-08; schema validado. Renderização no Runtime e captura visual: pendente.
