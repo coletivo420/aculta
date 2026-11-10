@@ -383,6 +383,29 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
       $install['display']['default']['display_options']['filters']['vid']['value'],
     );
     self::assertSame('fields', $install['display']['default']['display_options']['row']['type']);
+    self::assertSame('ui_patterns', $install['display']['page_categories']['display_options']['row']['type']);
+    self::assertSame('ui_patterns', $install['display']['block_landing']['display_options']['row']['type']);
+    foreach (['page_categories' => 'h3', 'block_landing' => 'h2'] as $display_id => $title_level) {
+      $display = $install['display'][$display_id]['display_options'];
+      self::assertSame(
+        'aculta420_v2:forum-category',
+        $display['row']['options']['ui_patterns']['component_id'],
+      );
+      self::assertSame(
+        $title_level,
+        $display['row']['options']['ui_patterns']['props']['title_level']['source']['value'],
+      );
+      self::assertSame('view_field', $display['row']['options']['ui_patterns']['slots']['title']['sources'][0]['source_id']);
+      self::assertSame('name', $display['row']['options']['ui_patterns']['slots']['title']['sources'][0]['source']['ui_patterns_views_field']);
+    }
+    self::assertTrue($install['display']['page_categories']['display_options']['fields']['parent_name']['exclude']);
+    self::assertFalse($install['display']['page_categories']['display_options']['fields']['parent_card']['exclude']);
+    self::assertSame(
+      'aculta_forum_category_topic_count',
+      $install['display']['page_categories']['display_options']['row']['options']['ui_patterns']['slots']['count']['sources'][0]['source']['ui_patterns_views_field'],
+    );
+    self::assertSame('some', $install['display']['default']['display_options']['pager']['type']);
+    self::assertSame('perm', $install['display']['default']['display_options']['access']['type']);
     $category_fields = $install['display']['default']['display_options']['fields'];
     self::assertTrue($category_fields['tid']['exclude']);
     self::assertSame('tid', $category_fields['tid']['field']);

@@ -6,7 +6,15 @@ group: Comunidade
 props:
   type: object
   additionalProperties: false
-  properties: {}
+  properties:
+    title_level:
+      type: string
+      title: Nível do título
+      description: Nível semântico do título conforme a posição do cartão.
+      enum:
+        - h2
+        - h3
+      default: h2
 slots:
   parent:
     title: Categoria principal

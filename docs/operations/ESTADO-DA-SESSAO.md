@@ -1,12 +1,12 @@
 # ADR-054 + ADR-055 — UI Skins/site_key — 2026-11-10
 
-- **Objetivo:** cortar visual por purpose e avançar UI Styles sem configuração legada.
-- **Estado:** UI Skins mapeia dez Domains a dez skins, com cinco tokens em claro/escuro. `ui_styles_page` alinhado no Sync e ativo no Runtime; assignments de região não homologados.
-- **Decisões/cuidados:** sem dual-read/aliases; `DomainPurposeManager` só funcional. Sem `cim` ou ativação runtime; Entity Status segue desativado até revisão de acesso/rascunhos.
-- **Commits/arquivos:** `693d5e173` (corte Skins); `c5b560132` (UI Styles Page/Sync, inventário e planos).
-- **Verificações:** UI Skins 126, UI Styles 38, theme-settings 16, Unit 11/31, PHPStan/PHPCS, YAML, boundary/status index e `drush cr` PASS. Foundation geral falha por `system.theme` Sync gin vs Runtime default_admin. Token-budget falha por sete dívidas anteriores.
-- **Pendências:** Skins Disabled; Config Sync divergente; piloto Links, contraste/cache/capturas e Entity Status DEFERRED. Stylelint indisponível. Messenger tem alterações paralelas não staged.
-- **Próximo passo:** homologar Links e estilos de regiões em navegador; resolver Sync por autorização, então migrar Consumers UI Suite/visuais restantes.
+- **Objetivo:** eliminar paletas visuais por purpose e avançar UI Suite sem retenção de configuração visual antiga.
+- **Estado:** corte UI Skins em código cobre dez Domains/dez skins e cinco tokens claro/escuro; `ui_styles_page` está alinhado no Sync. Piloto Views de categorias usa `forum-category` em Sync e defaults, mantendo filtros, agrupamento, sort, acesso, cache e pager.
+- **Decisões/cuidados:** sem dual-read/aliases; `DomainPurposeManager` permanece funcional. Sem `cim` ou ativação de módulos; nenhuma mutação destrutiva. Não retirar Twig de categorias até Runtime consumir novo row.
+- **Commits/arquivos:** `693d5e173` corte Skins; `c5b560132` UI Styles Page; piloto Views (neste commit): View install/Sync, SDC, teste focal e inventário.
+- **Verificações:** SDC schema 80 componentes/1710 checks PASS; Unit 3276/17547 e focal 20/312 PASS; suítes PHPUnit, YAML/paridade, inventário e diff check PASS. Gate V2 SDC DEFERRED (Drush indisponível); token-budget FAIL por sete violações preexistentes. Browser/render Runtime DEFERRED sem importação autorizada.
+- **Pendências:** UI Skins ainda Disabled; cutover Views, comparação de render/acesso/cache, capturas e aceite visual pendentes. `system.theme` diverge no Sync/Runtime; preservar alterações paralelas do Messenger.
+- **Próximo passo:** após autorização de importação, cutover de categorias e validar a saída antes de avançar row/style/display em outras Views e domínios.
 # FST-00 a FST-11 — integração analítica Fórum + Statistics — 2026-11-10
 
 - **Objetivo:** executar o plano canônico FST-00 a FST-11 em `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md`.

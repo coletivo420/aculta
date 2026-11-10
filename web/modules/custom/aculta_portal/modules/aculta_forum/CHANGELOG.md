@@ -1,3 +1,11 @@
+## Não versionado — piloto UI Patterns Views em categorias (2026-11-10)
+
+- A página pública e o bloco de categorias passam a mapear campos da View ao
+  SDC `forum-category`, mantendo wrappers, filtros, agrupamento, ordenação,
+  acesso, cache e paginação.
+- Config Sync e defaults de instalação estão alinhados. Cutover no Runtime e
+  comparação visual permanecem pendentes de importação autorizada.
+
 ## 0.2.0-dev.4 — escopo analítico e idempotência do Fórum (2026-11-10)
 
 - `ForumAnalyticsScopeResolver` classifica tópico público, restrito por Group

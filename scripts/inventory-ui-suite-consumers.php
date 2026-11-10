@@ -50,6 +50,13 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
     $options = $display['display_options'] ?? [];
     $rowPlugin = (string) ($options['row']['type'] ?? '');
     $stylePlugin = (string) ($options['style']['type'] ?? '');
+    $patternsConfig = $options['row']['options']['ui_patterns'] ?? NULL;
+    $patternsConfigured = $rowPlugin === 'ui_patterns'
+      && is_array($patternsConfig)
+      && !empty($patternsConfig['component_id']);
+    $isForumCategoryPilot = $viewId === 'aculta_forum_categories'
+      && in_array((string) $displayId, ['page_categories', 'block_landing'], TRUE)
+      && $patternsConfigured;
     $rows[] = [
       'id' => $viewId,
       'owner_module' => 'unresolved_from_config',
@@ -59,10 +66,10 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'display_plugin' => (string) ($display['display_plugin'] ?? ''),
       'row_plugin' => $rowPlugin,
       'style_plugin' => $stylePlugin,
-      'ui_patterns_configured' => 'not_detected_by_plugin_id_scan',
+      'ui_patterns_configured' => $patternsConfigured ? (string) $patternsConfig['component_id'] : 'not_detected_by_plugin_id_scan',
       'status' => 'MIGRATION_IN_PROGRESS',
-      'replacement_or_action' => 'Inventory candidate only; inspect row, style and display independently before migration',
-      'risk_or_evidence_gap' => 'No UI Patterns row/style/display plugin ID detected in Sync; Runtime output, access and cache still unverified',
+      'replacement_or_action' => $isForumCategoryPilot ? 'Pilot: replace duplicated row field templates with the forum-category SDC; keep list/display wrappers and Views query behavior' : 'Inventory candidate only; inspect row, style and display independently before migration',
+      'risk_or_evidence_gap' => $isForumCategoryPilot ? 'Config Sync and install defaults use UI Patterns row; Runtime cutover, rendered output, access/cache comparison and browser evidence are pending' : 'No UI Patterns row/style/display plugin ID detected in Sync; Runtime output, access and cache still unverified',
       'rollback' => 'Revert only display config after before/after result comparison',
       'detected_consumers' => '',
       'runtime_status' => 'not_observed',

@@ -2,4 +2,4 @@
 version: 0.2.0-dev.4
 state: Dev
 next_phase: "FST implementado e update 9008 aplicado no Runtime. Browser Firefox ESR PASS; restam Functional em origem isolada, dark mode/zoom/leitor de tela. Plano: web/modules/custom/aculta_portal/modules/aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md."
-progress_note: "0.2.0-dev.4: FST-00 a FST-10. Update 9008 aplicado; ledger presente; reconciliação de reações 2/0 divergências. Unit 250, Kernel focal 26 e browser 44/44 passaram."
+progress_note: "0.2.0-dev.4: FST-00 a FST-10; update 9008, ledger e reconciliação 2/0. Piloto de categorias usa UI Patterns row no Sync e install defaults; Unit geral 3276 PASS. Cutover Runtime, render/cache/acesso e browser DEFERRED até importação autorizada."
