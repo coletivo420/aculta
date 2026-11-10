@@ -23,7 +23,7 @@ final class CourseCompletionPublisher implements CourseCompletionPublisherInterf
   public function publish(ContentEntityInterface $progress): ?CourseCompletedEvent {
     $finishedAt = (int) (self::fieldValue($progress, 'changed') ?? 0);
     if (
-      ($progress instanceof SynchronizableInterface && $progress->isSyncing())
+      $progress->isSyncing()
       || $progress->isNew()
       || !(bool) self::fieldValue($progress, 'finished')
       || $finishedAt < 1

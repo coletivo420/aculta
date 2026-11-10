@@ -54,7 +54,7 @@ final class AnswerReviewController extends ControllerBase {
     $studentIds = [];
     $students = [];
     foreach ($this->memberships->loadByGroup($group) as $membership) {
-      if (!$membership instanceof GroupRelationshipInterface || $membership->getPluginId() !== 'group_membership') {
+      if ($membership->getPluginId() !== 'group_membership') {
         continue;
       }
       $student = $membership->getEntity();

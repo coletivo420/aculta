@@ -80,7 +80,7 @@ final class LmsForumModerationManager {
         continue;
       }
       $course = $relationship->getGroup();
-      if ($course instanceof GroupInterface && $course->bundle() === 'lms_course') {
+      if ($course->bundle() === 'lms_course') {
         return (string) $course->id();
       }
     }
@@ -112,10 +112,7 @@ final class LmsForumModerationManager {
     }
 
     $group = reset($relationships)->getGroup();
-    return $group instanceof GroupInterface
-      && in_array($group->bundle(), ['lms_course', 'lms_class'], TRUE)
-      ? $group
-      : NULL;
+    return in_array($group->bundle(), ['lms_course', 'lms_class'], TRUE) ? $group : NULL;
   }
 
   /**

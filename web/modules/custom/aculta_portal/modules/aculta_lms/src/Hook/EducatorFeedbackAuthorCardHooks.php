@@ -41,9 +41,6 @@ final class EducatorFeedbackAuthorCardHooks {
       return;
     }
     $author = $entity->getOwner();
-    if (!$author instanceof UserInterface) {
-      return;
-    }
     $isEducator = $this->policy->isEducator($entity);
     $designation = $isEducator ? (string) new TranslatableMarkup('Educador(a)') : NULL;
     $card = $this->cardBuilder->build($author, 'profile_compact', [], $designation, 'sm')

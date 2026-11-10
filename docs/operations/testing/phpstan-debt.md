@@ -115,3 +115,18 @@ Escopo: `LmsActivityDiscussionResolver`, `AnswerReviewAccessCheck`, `AccountCour
 | Baseline atual | 3595 |
 
 Escopo: os quatro `EntityCourse*Reader` passaram a narrowing `ContentEntityInterface` antes de `fieldValue()`; `AgendaEntriesProvider` remove nullsafe/`instanceof` redundantes e filtra retornos por `Event`/`EventDate`; `ClassRosterManager` constrói a lista com narrowing real; `AttemptArchiveManager` remove `instanceof` sempre verdadeiro, narrowing `AttemptArchive` e usa `getOwner()->label()`. Evidência: Unit 320/1367 PASS.
+
+## Rodada 8 — 2026-11-10
+
+| Medida | Valor |
+| --- | ---: |
+| Erros brutos em aculta_lms/src antes | 57 |
+| Corrigidos em aculta_lms/src | 53 |
+| Erros brutos em aculta_lms/src ao final | 4 |
+| Erros brutos globais antes | 3595 |
+| Erros brutos globais ao final | 3542 |
+| Baseline atual | 3542 |
+
+Escopo: remoção de `instanceof` redundantes em `LmsForumModerationManager`, `AnswerReviewController`, `CourseLessonController`, `ClassActivityDeadlineManager`, `EducatorFeedbackPolicy`, `CourseCompletionPublisher`, `CourseOrderHooks`, `EducatorFeedbackAuthorCardHooks`, `EnrollmentFormHooks`, `CourseEnrollmentEventHooks`, `EventAccessHooks`, `LmsCommentModerationForm`, `CourseEnrollmentPurchaseForm`, `CourseResourceBuilder` e `LearningEligibility`; narrowing real em `EventoTurmaNotificationWorker`, `AnswerLifecycleEventHooks`, `CourseOrderEnrollmentManager` e readers; `accessForReorder` recebe `ContentEntityInterface`; `PaymentStorageInterface` usado explicitamente em `CourseOrderEnrollmentManager` e `EnrollmentFormHooks` (helpers `paymentsForOrder()` com `array<mixed>` preservam o fail-closed comprovado por teste); `EventRouteAccess::access()` retorna `AccessResultInterface`; `AccountUserLoader` trata ID anônimo como `(int) < 1`; `LearningDashboardController` filtra `LessonEntity`/`ActivityEntity` antes do `usort` e passa `''` como formato de data.
+
+Resíduos conhecidos (dependentes do ambiente, comprovados por teste): o retorno booleano de `Group::access(..., TRUE)`; `$entityTypeManager` injetado em `ClassActivityDeadlineManager` para manter o contrato do serviço e dos testes; e `DrupalDateTime::createFromFormat()` retornando `false` para entrada inválida. Evidência: Unit 320/1367 PASS.

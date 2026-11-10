@@ -13,6 +13,7 @@ use Drupal\aculta_lms\Plugin\ActivityAnswer\ObjectiveAnswerPluginResolver;
 use Drupal\aculta_lms\Routing\LmsFriendlySlugs;
 use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 use Drupal\file\FileInterface;
@@ -76,7 +77,7 @@ final class AnswerSubmissionForm extends FormBase {
       'activity_id' => (int) $activity->id(),
       'uid' => (int) $this->currentUser->id(),
     ]);
-    usort($ownAnswers, static fn(ContentEntityInterface $a, ContentEntityInterface $b): int => (int) $b->id() <=> (int) $a->id());
+    usort($ownAnswers, static fn(EntityInterface $a, EntityInterface $b): int => (int) $b->id() <=> (int) $a->id());
     $latest = $ownAnswers[0] ?? NULL;
     if ($latest instanceof ContentEntityInterface && (string) $latest->get('state')->value === CourseAnswer::STATE_GRADED) {
       $form['evaluation'] = [

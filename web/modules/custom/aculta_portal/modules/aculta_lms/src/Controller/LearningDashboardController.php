@@ -56,24 +56,26 @@ final class LearningDashboardController {
       'course_id' => (int) $course->id(),
       'published' => TRUE,
     ]);
+    $lessons = array_values(array_filter(
+      $lessons,
+      static fn($lesson): bool => $lesson instanceof LessonEntity,
+    ));
     usort($lessons, static fn(LessonEntity $a, LessonEntity $b): int =>
       [(int) $a->get('weight')->value, (int) $a->id()] <=> [(int) $b->get('weight')->value, (int) $b->id()]
     );
     foreach ($lessons as $lesson) {
-      if (!$lesson instanceof LessonEntity) {
-        continue;
-      }
       $cacheability->addCacheableDependency($lesson);
       $activities = $this->entityTypeManager->getStorage('aculta_lms_activity')->loadByProperties([
         'lesson_id' => (int) $lesson->id(),
       ]);
+      $activities = array_values(array_filter(
+        $activities,
+        static fn($activity): bool => $activity instanceof ActivityEntity,
+      ));
       usort($activities, static fn(ActivityEntity $a, ActivityEntity $b): int =>
         [(int) $a->get('weight')->value, (int) $a->id()] <=> [(int) $b->get('weight')->value, (int) $b->id()]
       );
       foreach ($activities as $activity) {
-        if (!$activity instanceof ActivityEntity) {
-          continue;
-        }
         $activityId = (string) $activity->id();
         if (isset($seenActivities[$activityId])) {
           continue;
@@ -92,7 +94,7 @@ final class LearningDashboardController {
             'data' => [
               '#plain_text' => $timestamp === NULL
                 ? $this->t('Sem prazo')
-                : $this->dateFormatter->format($timestamp, 'long', NULL, $this->educatorTimezone()),
+                : $this->dateFormatter->format($timestamp, 'long', '', $this->educatorTimezone()),
             ],
           ],
           [

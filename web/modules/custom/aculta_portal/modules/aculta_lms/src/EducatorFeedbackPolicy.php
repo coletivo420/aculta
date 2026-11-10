@@ -34,7 +34,7 @@ final class EducatorFeedbackPolicy {
   public function isEducator(CommentInterface $comment): bool {
     $answer = $comment->getCommentedEntity();
     $author = $comment->getOwner();
-    if (!$answer instanceof EntityInterface || $answer->getEntityTypeId() !== 'aculta_lms_answer' || !$author instanceof UserInterface) {
+    if (!$answer instanceof EntityInterface || $answer->getEntityTypeId() !== 'aculta_lms_answer') {
       return FALSE;
     }
     if ((string) $answer->get('uid')->value === (string) $author->id()) {

@@ -54,8 +54,7 @@ final class LmsCommentModerationForm extends FormBase {
     if (!$course instanceof GroupInterface || !$group instanceof GroupInterface || (string) $this->moderationManager->courseIdForGroup($group) !== (string) $course->id()) {
       throw new AccessDeniedHttpException();
     }
-    if (!$group instanceof GroupInterface
-      || !$comment instanceof CommentInterface
+    if (!$comment instanceof CommentInterface
       || !$this->moderationManager->commentModerationAccess($group, $comment, $decision, $this->account)->isAllowed()) {
       throw new AccessDeniedHttpException();
     }

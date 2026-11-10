@@ -84,7 +84,7 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
 
     $options = [];
     foreach ($course->getRelationships('lms_classes') as $relationship) {
-      $class = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
+      $class = $relationship->getEntity();
       if (!$class instanceof GroupInterface || $class->bundle() !== 'lms_class') {
         continue;
       }
@@ -201,7 +201,7 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
       return FALSE;
     }
     foreach ($course->getRelationships('lms_classes') as $relationship) {
-      $courseClass = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
+      $courseClass = $relationship->getEntity();
       if ($courseClass instanceof GroupInterface && (string) $courseClass->id() === $class_id) {
         return TRUE;
       }
@@ -224,11 +224,8 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
       return NULL;
     }
     foreach ($product->getVariations() as $variation) {
-      if ($variation instanceof ProductVariationInterface) {
-        $cacheability?->addCacheableDependency($variation);
-      }
-      if ($variation instanceof ProductVariationInterface
-        && $variation->bundle() === 'curso'
+      $cacheability?->addCacheableDependency($variation);
+      if ($variation->bundle() === 'curso'
         && $variation->isPublished()
         && $variation->getPrice() !== NULL) {
         return $variation;

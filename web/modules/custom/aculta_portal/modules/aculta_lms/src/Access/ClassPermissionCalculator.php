@@ -60,7 +60,7 @@ final class ClassPermissionCalculator extends PermissionCalculatorBase {
         continue;
       }
       $group = $membership->getGroup();
-      if (!$group instanceof GroupInterface || !in_array($group->bundle(), ['lms_course', 'lms_class'], TRUE)) {
+      if (!in_array($group->bundle(), ['lms_course', 'lms_class'], TRUE)) {
         continue;
       }
       $permissions->addCacheableDependency($membership)
@@ -124,7 +124,7 @@ final class ClassPermissionCalculator extends PermissionCalculatorBase {
   /**
    * Maps role permissions on a membership to inherited target permissions.
    *
-   * @param \Drupal\group\Entity\GroupRelationshipInterface $membership
+   * @param \Drupal\group\Entity\GroupMembershipInterface $membership
    *   Group membership relationship.
    * @param array<string, string> $mapping
    *   Target permission to required source permission mappings.

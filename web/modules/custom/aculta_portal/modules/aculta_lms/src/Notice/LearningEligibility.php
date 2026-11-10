@@ -11,7 +11,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupMembership;
-use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -91,8 +90,8 @@ final class LearningEligibility implements LearningEligibilityInterface {
       return FALSE;
     }
     foreach ($course->getRelationships('lms_classes') as $relationship) {
-      $class = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
-      if ($class === NULL || $class->bundle() !== 'lms_class') {
+      $class = $relationship->getEntity();
+      if (!$class instanceof GroupInterface || $class->bundle() !== 'lms_class') {
         continue;
       }
       foreach (GroupMembership::loadByGroup($class) as $membership) {
@@ -111,8 +110,8 @@ final class LearningEligibility implements LearningEligibilityInterface {
    * {@inheritdoc} */
   public function courseEnrollmentCacheTags(GroupInterface $course): array {
     $tags = ['group_relationship_list:plugin:lms_classes:group:' . $course->id()];
-    foreach ($course->getRelationships('lms_classes') ?? [] as $relationship) {
-      $class = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
+    foreach ($course->getRelationships('lms_classes') as $relationship) {
+      $class = $relationship->getEntity();
       if ($class instanceof GroupInterface && $class->bundle() === 'lms_class') {
         $tags[] = 'group_relationship_list:plugin:group_membership:group:' . $class->id();
       }

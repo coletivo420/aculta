@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\Agenda;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 
@@ -24,7 +25,7 @@ final class EventRouteAccess {
   /**
    * Checks access to an event route without revealing hidden event existence.
    */
-  public function access(string $slug, ?string $id = NULL): AccessResult {
+  public function access(string $slug, ?string $id = NULL): AccessResultInterface {
     $events = $this->entityTypeManager->getStorage('aculta_event')->loadByProperties([
       'field_slug' => $slug,
     ]);

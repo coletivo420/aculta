@@ -238,7 +238,10 @@ final class ActivityAuthoringForm extends FormBase {
    * Finds the next activity position in a lesson.
    */
   private function nextWeight(int $lessonId): int {
-    $activities = $this->entityTypeManager->getStorage('aculta_lms_activity')->loadByProperties(['lesson_id' => $lessonId]);
+    $activities = array_values(array_filter(
+      $this->entityTypeManager->getStorage('aculta_lms_activity')->loadByProperties(['lesson_id' => $lessonId]),
+      static fn($activity): bool => $activity instanceof ContentEntityInterface,
+    ));
     $weights = array_map(static fn(ContentEntityInterface $activity): int => (int) $activity->get('weight')->value, $activities);
     return $weights === [] ? 0 : max($weights) + 1;
   }

@@ -32,7 +32,7 @@ final class CourseEnrollmentEventHooks {
     }
     $class = $entity->getGroup();
     $student = $entity->getEntity();
-    if ($class === NULL || $class->bundle() !== 'lms_class' || $student === NULL || !$student->id()) {
+    if ($class->bundle() !== 'lms_class' || !$student->id()) {
       return;
     }
 

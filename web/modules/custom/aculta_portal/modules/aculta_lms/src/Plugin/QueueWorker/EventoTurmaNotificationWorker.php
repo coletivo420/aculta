@@ -9,6 +9,7 @@ use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Component\Uuid\UuidInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\Attribute\QueueWorker;
@@ -68,8 +69,11 @@ final class EventoTurmaNotificationWorker extends QueueWorkerBase implements Con
    */
   public function processItem($data): void {
     $evento = $this->entidades->getStorage('aculta_event')->load((int) ($data['event_id'] ?? 0));
-    $turma = $evento?->get('field_turma')->entity;
-    if ($evento === NULL || $turma === NULL || (string) $evento->get('field_status')->value !== 'publicado') {
+    if (!$evento instanceof ContentEntityInterface) {
+      return;
+    }
+    $turma = $evento->get('field_turma')->entity;
+    if ($turma === NULL || (string) $evento->get('field_status')->value !== 'publicado') {
       return;
     }
     $url = $this->purpose->pathUrl('eventos', '/eventos/' . (string) $evento->get('field_slug')->value);

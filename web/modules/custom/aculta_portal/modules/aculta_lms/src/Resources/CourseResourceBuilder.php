@@ -210,7 +210,7 @@ final class CourseResourceBuilder {
    */
   private function videoSourceUrl(MediaInterface $video): ?Url {
     $source = $video->getSource();
-    if (!$source instanceof MediaSourceInterface || $source->getPluginId() !== 'oembed:video') {
+    if ($source->getPluginId() !== 'oembed:video') {
       return NULL;
     }
 

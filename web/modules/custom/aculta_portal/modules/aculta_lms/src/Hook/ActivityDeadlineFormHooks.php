@@ -63,14 +63,14 @@ final class ActivityDeadlineFormHooks {
       (string) $deadline->get('field_activity_due_at')->value,
       new \DateTimeZone('UTC'),
     );
-    if (!$date instanceof DrupalDateTime || $date->hasErrors()) {
+    if ($date === FALSE || $date->hasErrors()) {
       return;
     }
     $form['aculta_lms_activity_deadline'] = [
       '#type' => 'item',
       '#title' => $this->t('Prazo desta atividade'),
       '#markup' => $this->t('Envie sua resposta até @date.', [
-        '@date' => $this->dateFormatter->format($date->getTimestamp(), 'long', NULL, $learner->getTimeZone()),
+        '@date' => $this->dateFormatter->format($date->getTimestamp(), 'long', '', $learner->getTimeZone()),
       ]),
       '#weight' => -100,
     ];

@@ -61,7 +61,7 @@ final class ClassActivityDeadlineForm extends FormBase {
         (string) $relationship->get('field_activity_due_at')->value,
         new \DateTimeZone('UTC'),
       );
-      if ($parsed instanceof DrupalDateTime) {
+      if ($parsed !== FALSE) {
         $default = $parsed->setTimezone(new \DateTimeZone($timezone));
       }
     }

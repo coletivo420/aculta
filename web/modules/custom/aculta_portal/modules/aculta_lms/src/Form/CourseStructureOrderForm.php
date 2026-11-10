@@ -7,6 +7,7 @@ namespace Drupal\aculta_lms\Form;
 use Drupal\aculta_lms\Access\CourseAuthoringAccessCheck;
 use Drupal\aculta_lms\Order\CourseStructureOrderManager;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -127,7 +128,7 @@ final class CourseStructureOrderForm extends FormBase implements ContainerInject
     }
     elseif ($collection === 'activities' && $parentId > 0) {
       $lesson = $this->entityTypeManager->getStorage('aculta_lms_lesson')->load($parentId);
-      $access = $lesson ? $this->accessCheck->accessForReorder($course, $lesson) : NULL;
+      $access = $lesson instanceof ContentEntityInterface ? $this->accessCheck->accessForReorder($course, $lesson) : NULL;
     }
     else {
       $access = NULL;

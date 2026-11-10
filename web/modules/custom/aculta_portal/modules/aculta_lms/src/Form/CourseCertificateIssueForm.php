@@ -86,7 +86,7 @@ final class CourseCertificateIssueForm extends FormBase {
         ]);
       }
     }
-    if ($can_manage && $course instanceof GroupInterface) {
+    if ($can_manage) {
       $certificates = $this->entityTypeManager->getStorage('aculta_lms_certificate')
         ->loadByProperties(['course_id' => (int) $course->id()]);
     }

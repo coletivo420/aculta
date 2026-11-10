@@ -62,8 +62,8 @@ final class CourseLessonController {
         LmsFriendlySlugs::LESSON_LIST_CACHE_TAG,
         LmsFriendlySlugs::ACTIVITY_LIST_CACHE_TAG,
       ]);
-    foreach ($group->getRelationships('lms_classes') ?? [] as $relationship) {
-      $class = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
+    foreach ($group->getRelationships('lms_classes') as $relationship) {
+      $class = $relationship->getEntity();
       if ($class instanceof GroupInterface) {
         $cache->addCacheableDependency($class);
         $cache->addCacheTags(['group_relationship_list:plugin:group_membership:group:' . $class->id()]);

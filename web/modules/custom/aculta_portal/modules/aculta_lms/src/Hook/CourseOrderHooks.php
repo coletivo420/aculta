@@ -31,7 +31,7 @@ final class CourseOrderHooks {
   public function orderSaved(EntityInterface $entity): void {
     if (!$entity instanceof OrderInterface
       || !$this->enrollments->isCourseOrder($entity)
-      || ($entity instanceof SynchronizableInterface && $entity->isSyncing())) {
+      || $entity->isSyncing()) {
       return;
     }
     $this->enrollments->synchronize($entity);

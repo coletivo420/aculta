@@ -24,8 +24,9 @@ final class AccountUserLoader implements AccountUserLoaderInterface {
     if ($account instanceof UserInterface) {
       return $account;
     }
-    $id = $account->id();
-    if ($id === NULL) {
+    $id = (int) $account->id();
+    if ($id < 1) {
+      // Anonymous sessions and accounts without a persisted ID have no row.
       return NULL;
     }
     $user = $this->entityTypeManager->getStorage('user')->load($id);

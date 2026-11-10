@@ -474,7 +474,7 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
         continue;
       }
       $course = $relationship->getGroup();
-      if ($course instanceof GroupInterface && $course->bundle() === 'lms_course') {
+      if ($course->bundle() === 'lms_course') {
         return $course;
       }
     }

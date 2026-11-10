@@ -64,8 +64,8 @@ final class LessonAuthoringForm extends FormBase {
     ];
     $bodyItem = $lesson?->get('body');
     $body = self::prepareBodyForEditor(
-      (string) ($bodyItem?->value ?? ''),
-      (string) ($bodyItem?->format ?? 'plain_text'),
+      (string) ($bodyItem->value ?? ''),
+      (string) ($bodyItem->format ?? 'plain_text'),
     );
     // Existing plain-text values can contain strings that resemble HTML. Make
     // them literal source before the editor interprets them as rich text.
@@ -180,8 +180,11 @@ final class LessonAuthoringForm extends FormBase {
    * Finds the next lesson position in the course.
    */
   private function nextWeight(int $courseId): int {
-    $lessons = $this->entityTypeManager->getStorage('aculta_lms_lesson')->loadByProperties(['course_id' => $courseId]);
-    $weights = array_map(static fn($lesson): int => (int) $lesson->get('weight')->value, $lessons);
+    $lessons = array_values(array_filter(
+      $this->entityTypeManager->getStorage('aculta_lms_lesson')->loadByProperties(['course_id' => $courseId]),
+      static fn($lesson): bool => $lesson instanceof ContentEntityInterface,
+    ));
+    $weights = array_map(static fn(ContentEntityInterface $lesson): int => (int) $lesson->get('weight')->value, $lessons);
     return $weights === [] ? 0 : max($weights) + 1;
   }
 
