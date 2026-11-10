@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Form;
 
+use Drupal\aculta_lms\Entity\AnswerEntity;
 use Drupal\aculta_lms\Learning\AnswerPayload;
 use Drupal\aculta_lms\Learning\CourseActivity;
 use Drupal\aculta_lms\Learning\CourseAnswer;
@@ -178,6 +179,7 @@ final class AnswerSubmissionForm extends FormBase {
     $type = (string) $activity->get('type')->value;
     $configuration = $this->configuration($activity);
     $value = $form_state->getValue($type === 'file_upload' ? 'file_upload' : 'answer');
+    $file = NULL;
     if ($type === 'free_text') {
       $answerData = ['answer' => trim((string) $value)];
       $state = CourseAnswer::STATE_SUBMITTED;
@@ -207,12 +209,16 @@ final class AnswerSubmissionForm extends FormBase {
     ]);
     $payload = new AnswerPayload($answerData);
     if ($type === 'file_upload') {
-      $file = $this->submittedFile($value);
+      // validateForm() rejects a missing or inaccessible upload.
+      assert($file instanceof FileInterface);
       $payload = $payload->withFileId((int) $file->id());
+    }
+    if (!$answer instanceof AnswerEntity) {
+      throw new \LogicException('The answer storage returned an unexpected entity.');
     }
     $answer->setAnswerPayload($payload);
     $answer->save();
-    if ($type === 'file_upload') {
+    if ($file instanceof FileInterface) {
       $file->setPermanent();
       $file->save();
       $this->fileUsage->add($file, 'aculta_lms', 'aculta_lms_answer', (string) $answer->id());
@@ -322,7 +328,7 @@ final class AnswerSubmissionForm extends FormBase {
     if (count($ids) !== 1) {
       return NULL;
     }
-    $id = (int) ($ids[0] ?? 0);
+    $id = (int) $ids[0];
     $file = $id > 0 ? $this->entityTypeManager->getStorage('file')->load($id) : NULL;
     return $file instanceof FileInterface ? $file : NULL;
   }

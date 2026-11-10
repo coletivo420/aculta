@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\Controller;
 
 use Drupal\aculta_lms\Form\CourseStructureOrderForm;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Link;
@@ -39,7 +40,13 @@ final class CourseStructureController {
       ->sort('id')
       ->execute();
     $loadedLessons = $lessonStorage->loadMultiple($lessonIds);
-    $lessons = array_map(static fn($id) => $loadedLessons[$id], $lessonIds);
+    $lessons = [];
+    foreach ($lessonIds as $lessonId) {
+      $lesson = $loadedLessons[$lessonId] ?? NULL;
+      if ($lesson instanceof ContentEntityInterface) {
+        $lessons[] = $lesson;
+      }
+    }
     $activityStorage = $this->entityTypeManager->getStorage('aculta_lms_activity');
     $lessonCards = [];
     $activityCount = 0;
@@ -52,7 +59,13 @@ final class CourseStructureController {
         ->sort('id')
         ->execute();
       $loadedActivities = $activityStorage->loadMultiple($activityIds);
-      $activities = array_map(static fn($id) => $loadedActivities[$id], $activityIds);
+      $activities = [];
+      foreach ($activityIds as $activityId) {
+        $activity = $loadedActivities[$activityId] ?? NULL;
+        if ($activity instanceof ContentEntityInterface) {
+          $activities[] = $activity;
+        }
+      }
       $activityCards = [];
       foreach ($activities as $activityIndex => $activity) {
         $activityCount++;

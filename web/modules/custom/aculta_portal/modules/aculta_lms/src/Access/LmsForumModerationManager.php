@@ -12,6 +12,7 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipStorageInterface;
 use Drupal\node\NodeInterface;
 
@@ -75,6 +76,9 @@ final class LmsForumModerationManager {
       'plugin_id' => 'lms_classes',
     ]);
     foreach ($relationships as $relationship) {
+      if (!$relationship instanceof GroupRelationshipInterface) {
+        continue;
+      }
       $course = $relationship->getGroup();
       if ($course instanceof GroupInterface && $course->bundle() === 'lms_course') {
         return (string) $course->id();

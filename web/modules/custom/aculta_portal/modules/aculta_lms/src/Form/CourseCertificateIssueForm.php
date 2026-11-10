@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\Form;
 
 use Drupal\aculta_lms\Certificate\CourseCertificateManagerInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -85,16 +86,19 @@ final class CourseCertificateIssueForm extends FormBase {
         ]);
       }
     }
-    if ($can_manage) {
+    if ($can_manage && $course instanceof GroupInterface) {
       $certificates = $this->entityTypeManager->getStorage('aculta_lms_certificate')
         ->loadByProperties(['course_id' => (int) $course->id()]);
     }
     else {
       $certificates = [];
     }
-    if ($certificates !== [] && $course !== NULL) {
+    if ($certificates !== []) {
       $rows = [];
       foreach ($certificates as $certificate) {
+        if (!$certificate instanceof ContentEntityInterface) {
+          continue;
+        }
         $rows[] = [
           'student' => ['data' => ['#plain_text' => (string) $certificate->get('certificate_name')->value]],
           'course' => ['data' => ['#plain_text' => (string) $certificate->get('course_title')->value]],

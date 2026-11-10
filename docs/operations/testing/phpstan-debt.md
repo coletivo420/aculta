@@ -63,3 +63,16 @@ Gerado em 2026-11-10T22:11:37+00:00 por `scripts/phpstan-debt-report.php`.
 | Baseline atual | 3743 |
 
 Escopo: `LearningEligibility` passou a narrowing `ContentEntityInterface` nos parâmetros e checagens; aculta_lms 440 -> 430. Evidência: Unit 320/1367 PASS.
+
+## Rodada 4 — 2026-11-10
+
+| Medida | Valor |
+| --- | ---: |
+| Erros brutos em aculta_lms/src antes | 209 |
+| Corrigidos em aculta_lms/src | 32 |
+| Erros brutos em aculta_lms/src ao final | 177 |
+| Erros brutos globais antes | 3743 |
+| Erros brutos globais ao final | 3711 |
+| Baseline atual | 3711 |
+
+Escopo: narrowing real (instanceof/guard clauses) em `AnswerAttachmentAccessCheck`, `AnswerReviewForm`, `AnswerSubmissionForm`, `CourseCertificateManager`, `CourseCertificateIssueForm`, `CourseStructureController`, `XapiStatementsController`, `LmsForumModerationManager` e `EventClassAccess`. Nenhum `@phpstan-ignore`, nenhum cast forçado, nenhuma regra de negócio alterada. `AnswerSubmissionForm` passou a declarar `$file` antes dos ramos e a falhar explicitamente se o storage devolver entidade inesperada. Evidência: Unit 320/1367 PASS.

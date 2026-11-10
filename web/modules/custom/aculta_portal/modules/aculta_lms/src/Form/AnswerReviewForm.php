@@ -10,6 +10,7 @@ use Drupal\aculta_lms\EducatorFeedbackPolicy;
 use Drupal\Component\Serialization\Json;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -56,7 +57,7 @@ final class AnswerReviewForm extends FormBase {
 
     $user = $this->entityTypeManager->getStorage('user')->load((int) $answer->get('uid')->value);
     $activity = $this->entityTypeManager->getStorage('aculta_lms_activity')->load((int) $answer->get('activity_id')->value);
-    $lesson = $activity ? $this->entityTypeManager->getStorage('aculta_lms_lesson')->load((int) $activity->get('lesson_id')->value) : NULL;
+    $lesson = $activity instanceof ContentEntityInterface ? $this->entityTypeManager->getStorage('aculta_lms_lesson')->load((int) $activity->get('lesson_id')->value) : NULL;
     $payload = Json::encode($answer->getAnswerPayload()->toArray());
 
     $form['attempt'] = [
@@ -72,12 +73,12 @@ final class AnswerReviewForm extends FormBase {
     $form['attempt']['lesson'] = [
       '#type' => 'item',
       '#title' => $this->t('Aula'),
-      '#plain_text' => $lesson ? (string) $lesson->get('title')->value : (string) $this->t('Aula removida'),
+      '#plain_text' => $lesson instanceof ContentEntityInterface ? (string) $lesson->get('title')->value : (string) $this->t('Aula removida'),
     ];
     $form['attempt']['activity'] = [
       '#type' => 'item',
       '#title' => $this->t('Tipo de atividade'),
-      '#plain_text' => $activity ? str_replace('_', ' ', (string) $activity->get('type')->value) : (string) $this->t('Atividade removida'),
+      '#plain_text' => $activity instanceof ContentEntityInterface ? str_replace('_', ' ', (string) $activity->get('type')->value) : (string) $this->t('Atividade removida'),
     ];
     $form['attempt']['payload'] = [
       '#type' => 'item',

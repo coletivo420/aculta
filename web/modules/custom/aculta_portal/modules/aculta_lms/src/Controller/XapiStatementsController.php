@@ -9,6 +9,7 @@ use Drupal\aculta_lms\Xapi\XapiBatchIngestor;
 use Drupal\aculta_lms\Xapi\XapiProgressAccess;
 use Drupal\Core\Database\Connection;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Lock\LockBackendInterface;
@@ -105,6 +106,9 @@ final class XapiStatementsController {
           ->condition('statement_id', array_values(array_unique($statementIds)), 'IN')
           ->execute();
         foreach ($storage->loadMultiple($existing) as $record) {
+          if (!$record instanceof ContentEntityInterface) {
+            continue;
+          }
           $knownIds[] = (string) $record->get('statement_id')->value;
         }
       }

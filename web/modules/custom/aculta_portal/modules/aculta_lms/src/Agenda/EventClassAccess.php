@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\Agenda;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_lms\Access\ClassActivityDeadlineAccessCheck;
@@ -28,6 +29,9 @@ final class EventClassAccess {
    * Checks membership and delegates course access to the ACULTA checker.
    */
   public function access(EntityInterface $event, AccountInterface $account): AccessResult {
+    if (!$event instanceof ContentEntityInterface) {
+      return $this->result(FALSE, $event, NULL);
+    }
     $class = $event->get('field_turma')->entity;
     if (!$class instanceof GroupInterface || $class->bundle() !== 'lms_class' || !$class->isPublished()) {
       return $this->result(FALSE, $event, $class instanceof GroupInterface ? $class : NULL);

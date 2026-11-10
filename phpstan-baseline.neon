@@ -6237,12 +6237,6 @@ parameters:
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
 			identifier: method.notFound
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Access/AnswerAttachmentAccessCheck.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Access/AnswerReviewAccessCheck.php
 
@@ -6271,15 +6265,9 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Access/ClassPermissionCalculator.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getGroup().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Access/LmsForumModerationManager.php
-
-		-
 			rawMessage: Instanceof between Drupal\group\Entity\GroupInterface and Drupal\group\Entity\GroupInterface will always evaluate to true.
 			identifier: instanceof.alwaysTrue
-			count: 1
+			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Access/LmsForumModerationManager.php
 
 		-
@@ -6355,12 +6343,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Agenda/AgendaEntriesProvider.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Agenda/EventClassAccess.php
-
-		-
 			rawMessage: 'Method Drupal\aculta_lms\Agenda\EventRouteAccess::access() should return Drupal\Core\Access\AccessResult but returns Drupal\Core\Access\AccessResultInterface.'
 			identifier: return.type
 			count: 1
@@ -6389,30 +6371,6 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/AttemptArchiveManager.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Certificate/CourseCertificateManager.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::set().'
-			identifier: method.notFound
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Certificate/CourseCertificateManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Certificate\CourseCertificateManager::issue() should return Drupal\aculta_lms\Entity\CourseCertificate but returns Drupal\Core\Entity\EntityInterface.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Certificate/CourseCertificateManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Certificate\CourseCertificateManager::loadForStudent() should return array<Drupal\aculta_lms\Entity\CourseCertificate> but returns array<Drupal\Core\Entity\EntityInterface>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Certificate/CourseCertificateManager.php
 
 		-
 			rawMessage: 'Method Drupal\aculta_lms\ClassRosterManager::membershipsForClass() should return array<Drupal\group\Entity\GroupRelationshipInterface> but returns list<Drupal\Core\Entity\EntityInterface>.'
@@ -6457,12 +6415,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Controller/CourseLessonController.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Controller/CourseStructureController.php
-
-		-
 			rawMessage: 'Parameter #2 $callback of function usort expects callable(Drupal\Core\Entity\EntityInterface, Drupal\Core\Entity\EntityInterface): int, Closure(Drupal\aculta_lms\Entity\ActivityEntity, Drupal\aculta_lms\Entity\ActivityEntity): int<-1, 1> given.'
 			identifier: argument.type
 			count: 1
@@ -6479,12 +6431,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Controller/LearningDashboardController.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Controller/XapiStatementsController.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityStorageInterface::loadMultipleByOrder().'
@@ -6583,33 +6529,9 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/ActivityDeleteForm.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/AnswerReviewForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::setAnswerPayload().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/AnswerSubmissionForm.php
-
-		-
-			rawMessage: 'Offset 0 on array{mixed} on left side of ?? always exists and is not nullable.'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/AnswerSubmissionForm.php
-
-		-
 			rawMessage: 'Parameter #2 $callback of function usort expects callable(Drupal\Core\Entity\EntityInterface, Drupal\Core\Entity\EntityInterface): int, Closure(Drupal\Core\Entity\ContentEntityInterface, Drupal\Core\Entity\ContentEntityInterface): int<-1, 1> given.'
 			identifier: argument.type
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/AnswerSubmissionForm.php
-
-		-
-			rawMessage: Variable $file might not be defined.
-			identifier: variable.undefined
-			count: 3
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/AnswerSubmissionForm.php
 
 		-
@@ -6619,14 +6541,8 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/ClassActivityDeadlineForm.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 6
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/CourseCertificateIssueForm.php
-
-		-
-			rawMessage: 'Strict comparison using !== between Drupal\group\Entity\GroupInterface and null will always evaluate to true.'
-			identifier: notIdentical.alwaysTrue
+			rawMessage: Instanceof between Drupal\group\Entity\GroupInterface and Drupal\group\Entity\GroupInterface will always evaluate to true.
+			identifier: instanceof.alwaysTrue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/CourseCertificateIssueForm.php
 
