@@ -1,11 +1,11 @@
 # ADR-054/055 — inventário, UI Skins e migração SDC — 2026-11-10
 
-- **Objetivo/estado:** inventário em 381 itens; adapters editoriais, pagamento e carrinho usam SDCs; cinco templates duplicados das categorias foram retirados localmente. Runtime rechecado: UI Skins ativo, mapa/scopes ausentes; View ainda em `fields`; CKEditor Styles desativado; UI Patterns CKEditor e Field Group já ativos, sem Sync. Field Group `BLOCKED_UPSTREAM` (sem cobertura de security advisory e sem Core 12 no SHA/info.yml); CKEditor Patterns `LEGACY_OBSOLETE`.
-- **Decisões/cuidados:** removidos valores de paleta purpose e fallback literal dos cinco tokens UI Skins. O preview global mostrou 65 diferenças, inclusive módulos, blocos admin, campos, permissões e filtros; restringir import ao conjunto parcial de seis configs já revisado.
-- **Arquivos/backup:** inventário/gerador/runtime JSON, ADRs, plano, tema, Portal e Fórum. Snapshot externo pré-import SHA-256 `05e0fd0358db79fb4d22657666ec320307d91adb7e91bd5cfc585d338553f517`.
-- **Verificações:** PHPUnit focal 4/26; SDC 80/119/1747; Skins 132; UI Styles 38; UI Library 25; layouts 42; classes 483; boundary 7858; PHPStan focal e PHPCS PASS. Composer válido com avisos de constraints exatas; token budget FAIL (7 dívidas globais).
-- **Pendências:** responsável autorizou importação parcial de Views/Skins/Styles CKEditor. `updatedb:status` aponta post-update `active_site_keys_state`; atualização aguarda autorização específica. Após import: comparar render/cache/acesso e browser nos domínios. Commit/push e import ainda não executados.
-- **Próximo passo:** obter autorização para `updatedb`, publicar a entrega em `origin/dev`, executar atualização/import parcial e validar os displays antes de retirar os templates no Runtime.
+- **Objetivo/estado:** inventário 381 itens; adapters de seções, pagamento e carrinho usam SDCs; cinco overrides Twig de categorias retirados. Runtime: UI Skins ativo, mapa/scopes ausentes; View em `fields`; UI Styles CKEditor desativado; UI Patterns CKEditor e Field Group ativos fora do Sync. Field Group `BLOCKED_UPSTREAM` (sem cobertura de segurança e sem Core 12); UI Patterns CKEditor `LEGACY_OBSOLETE`.
+- **Decisões/cuidados:** removidos valores e fallbacks literais da paleta purpose. Preview global mostrou 65 diferenças, inclusive módulos, blocos, campos, permissões e filtros; importar só seis configs revisadas, preservando módulos ativos.
+- **Commit/arquivos:** `afaf75c3c` publicado em `origin/dev`; inventário, snapshot Runtime, ADRs/plano, tema, Portal e Fórum. Backup externo pré-import SHA-256 `05e0fd0358db79fb4d22657666ec320307d91adb7e91bd5cfc585d338553f517`.
+- **Verificações:** PHPUnit 4/26; SDC 80/119/1747; Skins 132; UI Styles 38; UI Library 25; layouts 42; classes 483; boundary 7858; PHPStan focal/PHPCS PASS; `drush cr` PASS. Composer válido com avisos de constraints exatas; token budget FAIL (7 dívidas globais).
+- **Pendências:** `drush cim` parcial foi autorizado e preview revisado; aguarda autorização específica para post-update `active_site_keys_state` via `updatedb`. Após import: render/cache/acesso, browser e CSS calculado. Alterações locais de LMS foram preservadas fora do commit.
+- **Próximo passo:** executar post-update autorizado, importar as seis configs, validar Views/Skins/CKEditor e confirmar retirada de templates no Runtime.
 # UI Skins — extensão Sync e limpeza da chave antiga — 2026-11-10
 
 - **Objetivo:** tornar UI Skins obrigatório no Config Sync e retirar a última chave de paleta antiga do Runtime.
