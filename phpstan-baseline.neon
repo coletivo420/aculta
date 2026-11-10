@@ -6259,64 +6259,10 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Account/AccountUserLoader.php
 
 		-
-			rawMessage: Instanceof between Drupal\group\Entity\GroupInterface and Drupal\group\Entity\GroupInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Agenda/AgendaEntriesProvider.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Agenda\AgendaEntriesProvider::datasDoEvento() should return array<Drupal\aculta_events\Entity\EventDate> but returns list<Drupal\Core\Entity\EntityInterface>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Agenda/AgendaEntriesProvider.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Agenda\AgendaEntriesProvider::eventosDaTurma() should return array<Drupal\aculta_events\Entity\Event> but returns list<Drupal\Core\Entity\EntityInterface>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Agenda/AgendaEntriesProvider.php
-
-		-
-			rawMessage: Using nullsafe method call on non-nullable type Drupal\Core\Entity\EntityInterface. Use -> instead.
-			identifier: nullsafe.neverNull
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Agenda/AgendaEntriesProvider.php
-
-		-
 			rawMessage: 'Method Drupal\aculta_lms\Agenda\EventRouteAccess::access() should return Drupal\Core\Access\AccessResult but returns Drupal\Core\Access\AccessResultInterface.'
 			identifier: return.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Agenda/EventRouteAccess.php
-
-		-
-			rawMessage: Instanceof between Drupal\Core\Field\FieldItemListInterface<Drupal\Core\Field\FieldItemInterface> and Drupal\Core\Field\FieldItemListInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/AttemptArchiveManager.php
-
-		-
-			rawMessage: Instanceof between Drupal\comment\Entity\Comment and Drupal\comment\CommentInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/AttemptArchiveManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\AttemptArchiveManager::loadPreviousAttempts() should return array<Drupal\aculta_lms\Entity\AttemptArchive> but returns list<Drupal\Core\Entity\EntityInterface>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/AttemptArchiveManager.php
-
-		-
-			rawMessage: Using nullsafe method call on non-nullable type Drupal\user\UserInterface. Use -> instead.
-			identifier: nullsafe.neverNull
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/AttemptArchiveManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\ClassRosterManager::membershipsForClass() should return array<Drupal\group\Entity\GroupRelationshipInterface> but returns list<Drupal\Core\Entity\EntityInterface>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/ClassRosterManager.php
 
 		-
 			rawMessage: Instanceof between Drupal\group\Entity\GroupRelationshipInterface and Drupal\group\Entity\GroupRelationshipInterface will always evaluate to true.
@@ -6527,30 +6473,6 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/EventAccessHooks.php
-
-		-
-			rawMessage: 'Parameter #1 $entity of static method Drupal\aculta_lms\Learning\EntityCourseActivityReader::fieldValue() expects Drupal\Core\Entity\ContentEntityInterface, Drupal\Core\Entity\EntityInterface given.'
-			identifier: argument.type
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Learning/EntityCourseActivityReader.php
-
-		-
-			rawMessage: 'Parameter #1 $entity of static method Drupal\aculta_lms\Learning\EntityCourseAnswerReader::fieldValue() expects Drupal\Core\Entity\ContentEntityInterface, Drupal\Core\Entity\EntityInterface given.'
-			identifier: argument.type
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Learning/EntityCourseAnswerReader.php
-
-		-
-			rawMessage: 'Parameter #1 $entity of static method Drupal\aculta_lms\Learning\EntityCourseLessonReader::fieldValue() expects Drupal\Core\Entity\ContentEntityInterface, Drupal\Core\Entity\EntityInterface given.'
-			identifier: argument.type
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Learning/EntityCourseLessonReader.php
-
-		-
-			rawMessage: 'Parameter #1 $entity of static method Drupal\aculta_lms\Learning\EntityCourseProgressReader::fieldValue() expects Drupal\Core\Entity\ContentEntityInterface, Drupal\Core\Entity\EntityInterface given.'
-			identifier: argument.type
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Learning/EntityCourseProgressReader.php
 
 		-
 			rawMessage: Instanceof between Drupal\group\Entity\GroupInterface and Drupal\group\Entity\GroupInterface will always evaluate to true.

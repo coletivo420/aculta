@@ -102,3 +102,16 @@ Escopo: `ActivityDeleteForm`, `LessonDeleteForm` e `CourseStructureMoveForm` pas
 | Baseline atual | 3621 |
 
 Escopo: `LmsActivityDiscussionResolver`, `AnswerReviewAccessCheck`, `AccountCoursesReader`, `ActivityDeadlineEventHooks` e `CourseContentEventHooks` tiveram checagens `instanceof` redundantes removidas e narrowing real aplicado nos pontos que usavam `get()`. `AnswerReviewAccessCheck::access()` passa a aceitar `?FieldableEntityInterface`. `AccountCoursesReader` mantém o tratamento de resultado booleano de hooks de acesso do Group (coberto por teste) e lê tags via `CacheableMetadata::createFromObject()`. Resíduo conhecido: PHPStan considera que `Group::access(..., TRUE)` nunca retorna bool; o teste `testBooleanAccessGrantDoesNotBreakDashboard` prova que retorna em ambiente real, então a linha fica no baseline como dependente do ambiente. Evidência: Unit 320/1367 PASS.
+
+## Rodada 7 — 2026-11-10
+
+| Medida | Valor |
+| --- | ---: |
+| Erros brutos em aculta_lms/src antes | 83 |
+| Corrigidos em aculta_lms/src | 26 |
+| Erros brutos em aculta_lms/src ao final | 57 |
+| Erros brutos globais antes | 3621 |
+| Erros brutos globais ao final | 3595 |
+| Baseline atual | 3595 |
+
+Escopo: os quatro `EntityCourse*Reader` passaram a narrowing `ContentEntityInterface` antes de `fieldValue()`; `AgendaEntriesProvider` remove nullsafe/`instanceof` redundantes e filtra retornos por `Event`/`EventDate`; `ClassRosterManager` constrói a lista com narrowing real; `AttemptArchiveManager` remove `instanceof` sempre verdadeiro, narrowing `AttemptArchive` e usa `getOwner()->label()`. Evidência: Unit 320/1367 PASS.

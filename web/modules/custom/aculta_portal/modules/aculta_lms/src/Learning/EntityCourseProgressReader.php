@@ -28,7 +28,7 @@ final class EntityCourseProgressReader implements CourseProgressReaderInterface 
         'uid' => (int) $account->id(),
       ]);
     $progress = reset($matches);
-    if ($progress === FALSE) {
+    if (!$progress instanceof ContentEntityInterface) {
       return NULL;
     }
 

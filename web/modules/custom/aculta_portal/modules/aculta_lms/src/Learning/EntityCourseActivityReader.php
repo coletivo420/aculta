@@ -23,6 +23,9 @@ final class EntityCourseActivityReader implements CourseActivityReaderInterface 
       ->loadByProperties(['lesson_id' => $lessonId]);
     $activities = [];
     foreach ($entities as $entity) {
+      if (!$entity instanceof ContentEntityInterface) {
+        continue;
+      }
       $activities[] = [
         'activity' => new CourseActivity(
           id: (int) $entity->id(),

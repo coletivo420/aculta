@@ -126,13 +126,17 @@ class ClassRosterManager {
       'gid' => $class->id(),
       'plugin_id' => 'group_membership',
     ]);
-    return array_values(array_filter($memberships, static function ($membership): bool {
+    $students = [];
+    foreach ($memberships as $membership) {
       if (!$membership instanceof GroupRelationshipInterface || !$membership->hasField('group_roles')) {
-        return FALSE;
+        continue;
       }
       $roles = array_column($membership->get('group_roles')->getValue(), 'target_id');
-      return in_array('lms_class-member', $roles, TRUE);
-    }));
+      if (in_array('lms_class-member', $roles, TRUE)) {
+        $students[] = $membership;
+      }
+    }
+    return $students;
   }
 
   /**

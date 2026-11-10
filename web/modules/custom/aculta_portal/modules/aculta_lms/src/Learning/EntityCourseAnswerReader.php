@@ -26,6 +26,9 @@ final class EntityCourseAnswerReader implements CourseAnswerReaderInterface {
       ]);
     $answers = [];
     foreach ($entities as $entity) {
+      if (!$entity instanceof ContentEntityInterface) {
+        continue;
+      }
       $score = self::fieldValue($entity, 'score');
       $answers[] = new CourseAnswer(
         id: (int) $entity->id(),

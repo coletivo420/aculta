@@ -10,8 +10,8 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
-use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\aculta_lms\Entity\AttemptArchive;
 use Drupal\aculta_lms\Learning\CourseAnswer;
 use Drupal\comment\CommentInterface;
 use Drupal\group\Entity\GroupInterface;
@@ -122,6 +122,9 @@ final class AttemptArchiveManager {
     $records = $storage->loadMultiple($query->execute());
     $visible_records = [];
     foreach ($records as $record) {
+      if (!$record instanceof AttemptArchive) {
+        continue;
+      }
       $access = $record->access('view', $this->currentUser, TRUE);
       $cacheability->addCacheableDependency($access);
       if ($access->isAllowed()) {
@@ -163,9 +166,7 @@ final class AttemptArchiveManager {
       return NULL;
     }
     $field = $entity->get($field_name);
-    return $field instanceof FieldItemListInterface && !$field->isEmpty()
-      ? $field->value
-      : NULL;
+    return !$field->isEmpty() ? $field->value : NULL;
   }
 
   /**
@@ -204,11 +205,8 @@ final class AttemptArchiveManager {
       ->sort('created', 'ASC')
       ->execute();
     foreach ($comment_storage->loadMultiple($comment_ids) as $comment) {
-      if (!$comment instanceof CommentInterface) {
-        continue;
-      }
       $author = $comment->getOwner();
-      $author_name = $author?->label() ?? $comment->getAuthorName();
+      $author_name = $author->label();
       $comments[] = [
         'author' => $author_name !== '' ? $author_name : 'Conta removida',
         'author_type' => (string) $comment->getOwnerId() === (string) $this->fieldValue($answer, 'uid') ? 'student' : 'educator',

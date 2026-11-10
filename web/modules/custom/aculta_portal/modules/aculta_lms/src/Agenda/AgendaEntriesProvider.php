@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\Agenda;
 
 use Drupal\aculta_events\Entity\Event;
+use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Occurrence\EventDateOccurrences;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\Component\Datetime\TimeInterface;
@@ -79,7 +80,7 @@ final class AgendaEntriesProvider {
         $tipoAtividade = $atividade instanceof ContentEntityInterface && $atividade->hasField('type')
           ? (string) $atividade->get('type')->value
           : '';
-        $tituloAtividade = $atividade?->label();
+        $tituloAtividade = $atividade->label();
         if (!is_string($tituloAtividade) || $tituloAtividade === '') {
           $tituloAtividade = $tipoAtividade === '' ? 'atividade' : ucfirst(str_replace('_', ' ', $tipoAtividade));
         }
@@ -128,7 +129,7 @@ final class AgendaEntriesProvider {
     $turmas = [];
     foreach (GroupMembership::loadByUser($account) as $membro) {
       $grupo = $membro->getGroup();
-      if ($grupo instanceof GroupInterface && $grupo->bundle() === 'lms_class' && $grupo->isPublished()) {
+      if ($grupo->bundle() === 'lms_class' && $grupo->isPublished()) {
         $turmas[$grupo->id()] = $grupo;
       }
     }
@@ -148,7 +149,10 @@ final class AgendaEntriesProvider {
       ->condition('field_status', ['publicado', 'cancelado'], 'IN')
       ->accessCheck(FALSE)
       ->execute();
-    return array_values($storage->loadMultiple($ids));
+    return array_values(array_filter(
+      $storage->loadMultiple($ids),
+      static fn ($event): bool => $event instanceof Event,
+    ));
   }
 
   /**
@@ -163,7 +167,10 @@ final class AgendaEntriesProvider {
       ->condition('field_evento.target_id', $evento->id())
       ->accessCheck(FALSE)
       ->execute();
-    return array_values($storage->loadMultiple($ids));
+    return array_values(array_filter(
+      $storage->loadMultiple($ids),
+      static fn ($date): bool => $date instanceof EventDate,
+    ));
   }
 
 }
