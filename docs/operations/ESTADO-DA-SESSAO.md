@@ -2,7 +2,7 @@
 
 - **Objetivo/estado:** UI Skins cortou paletas purpose. UI Styles CKEditor está no Sync. O catálogo Eventos migrou do markup do módulo para o SDC `card-cultural` pelo override do tema, com prop de cancelamento; inventário: 386 itens/88 templates Twig.
 - **Decisões/cuidados:** sem fallback legado. `DomainPurposeManager` mantém função. UI Patterns CKEditor 5 obsoleto; ativação é snapshot histórico e uninstall Runtime aguarda autorização.
-- **Commits/arquivos:** `99d8bcc62`, `36b0a977c`, `2c6b356c7`; Events, `card-cultural`, inventário e status nesta fase.
+- **Commits/arquivos:** `99d8bcc62`, `36b0a977c`, `2c6b356c7`, `869c1a3dd`; Events, `card-cultural`, inventário e status.
 - **Verificações:** Kernel Eventos 7/7 (130), ForumTopicDisplayConfig 20/20 (312), SDC 1721, fronteira 7871, classes mapeadas 483, foundations 83 pares, UI Library 25, PHPCS e status PASS. Token budget FAIL em 7 limites globais. Render visual/runtime DEFERRED.
 - **Pendências/próximo passo:** browser com tema ativo, homologar acesso/cache e contraste do cartão; concluir cutovers UI Skins/Styles e migrar demais templates/domínios. Gate amplo SDC falha em `auth-dialog.twig` preexistente.
 
