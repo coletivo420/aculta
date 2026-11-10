@@ -1,6 +1,12 @@
-# Estado da sessão
+# UI Suite — Integração Completa de UI Icons, UI Patterns e UI Styles — 2026-11-09
 
-> **Limite de registro:** no máximo 3 entradas. Registrar só ao encerrar uma fase ou o trabalho, não a cada microfase. Entradas mais antigas ficam em `docs/history/operations/ESTADO-DA-SESSAO-ARQUIVO-2026-11-05.md`, sem alteração de texto.
+- **Objetivo:** integrar a suíte oficial da UI Suite (`drupal/ui_icons`, `drupal/ui_patterns`, `drupal/ui_styles`) ao tema `aculta420_v2` e módulos de suporte (`aculta_portal`, `aculta_editor`, `aculta_ui_library`), respeitando a ADR-054.
+- **Estado:** Icon packs `aculta_phosphor_regular`, `aculta_phosphor_duotone` e `aculta_fluent_emoji` registrados nativamente via `aculta420_v2.icons.yml`; suporte estruturado a `$ref: 'ui-patterns://icon'` implementado no SDC `button` e template `aculta-portal-button`; `FluentEmojiAssetResolver` implementado em `aculta_editor` desacoplando regras de caminhos físicos; novas coleções de estilos semânticos de espaçamento e superfície adicionadas a `aculta420_v2.ui_styles.yml`; link de catálogo de ícones adicionado à `aculta_ui_library`.
+- **Decisões:** uso do subsistema nativo de Icon Packs do Drupal Core 11.5 + UI Icons 2.1.0; render arrays nativos do tipo `#type => 'icon'` e suporte a render array em props de SDCs; preservação estrita de zero classes de apresentação em módulos (`validate-module-theme-boundary.php` 100% PASS).
+- **Arquivos:** `aculta420_v2.icons.yml`, `aculta420_v2.ui_styles.yml`, `button.component.yml`, `button.twig`, `aculta-portal-button.html.twig`, `FluentEmojiAssetResolver.php`, `FluentEmojiAssetResolverInterface.php`, `FluentEmojiFilter.php`, `UiLibraryPreviewController.php`, `validate-aculta420-sdc-schemas.php`, `UiIconsPackTest.php`.
+- **Verificações:** 100% dos gates e testes aprovados: `UiIconsPackTest` (20 assertions), `FluentEmojiFilterTest` (24 assertions), `validate-aculta420-sdc-schemas.php` (1547 checks), `validate-module-theme-boundary.php` (7329 checks), `validate-aculta-ui-library.php` (23 checks), `npm run lint:css` (0 erros), renderização runtime testada via Drush (`aculta_phosphor_regular`, `aculta_fluent_emoji`, `aculta_portal_button`).
+- **Runtime:** caches reconstruídos via `drush cr`; icon packs e componentes renderizando com sucesso em runtime.
+- **Próximo passo:** monitorar novas implementações de SDC e expansões de templates pelo time editorial.
 
 # ADR-054 — Conclusão das Pendências e Homologação Multidomínio — 2026-11-09
 
@@ -21,13 +27,3 @@
 - **Verificações:** PHPUnit isolado 38/38 PASS (154 assertions); Kernel `ForumPostThreadHooksKernelTest` PASS (2/2); `validate-project-status-index.php --write` PASS (41 componentes); `validate-public-slugs.php` PASS (415 rotas); `drush cr` PASS no Homelab; renderização funcional no Runtime PASS (`discussion-reply-composer`, `data-hx-post`, biblioteca `core/drupal.htmx`).
 - **Runtime:** Homelab ativo e validado; caches reconstruídos com sucesso via `drush cr`.
 - **Próximo passo:** monitorar primeiras interações da comunidade e seguir roadmap de componentes.
-
-# Fórum — Comentários Compartilhados 0.2.0-dev.2 (Saneamento Agente 1) — 2026-11-08
-
-- **Objetivo:** executar saneamento da base de comentários antes do novo compositor inline (C02-01 e C02-02, achados COM-02/03/07/08/09/10/11) e preparar entrega para o Agente 2.
-- **Estado:** C02-01 e C02-02 concluídos. `WikiDiscussionContextProvider` migrado e registrado em `aculta_forum` sem dependência reversa; contrato neutro de ações `#links['comment-quote']` em conformidade com o Drupal Core; atributos `id`, classes, autoria SDC sem leitura do User no Twig; permalinks sob D-65 apontando ao host canônico com pager 0 e `#comment-{cid}`; remoção de injeção insegura no cliente e escopo global em `forum-quote.js`.
-- **Decisões:** COM-01, COM-05 e eliminação de redirects em COM-12 dependem da criação do compositor inline e foram atribuídos explicitamente ao Agente 2 (C02-03 a C02-08). Idempotência auditada no fluxo nativo (não possui deduplicação; recomendada inclusão de token no compositor inline em C02-07).
-- **Arquivos:** `WikiDiscussionContextProvider.php`, `DiscussionCommentPermalinkBuilder.php`, `DiscussionCommentPermalinkHooks.php`, `ForumQuoteHooks.php`, templates `comment--field-aculta-discussion` e `comment--comments`, `forum-quote.js`, `forum-post-card.css`, planos e testes unitários.
-- **Verificações:** PHPUnit isolado 32/32 PASS (123 assertions); `validate-project-status-index.php --write` PASS (41 componentes); SDC schemas e classes mapeadas validadas.
-- **Runtime:** Homelab inacessível localmente para `drush cr`; status registrado como `DEFERRED`.
-- **Próximo passo:** Agente 2 inicia C02-03 (experimento Form API + HTMX para resposta inline na mesma página) e fecha COM-01, COM-05 e COM-12.
