@@ -69,4 +69,5 @@ As regiões `navigation`, `help` e `breadcrumb` não têm blocos globais; ainda 
 - Motor de container removido (`aculta_purpose_container`, schema, `PurposeContainerLayout`, `data-purpose-layout/style`, CSS legado); `Purposes` e `ComponentLibraryRoutes` preservam as responsabilidades restantes.
 - Layout Builder: 22 dos 24 displays compatíveis; 2 exclusões documentadas.
 - Validação: gates do tema, fundação 454, Portal Drupal 12 1.205, Playwright 86/86 e landing 35/35 PASS. Backup em `$SUITE_OUT/aculta-cutover-20261109/`.
+- Rollback testado após o corte: `aculta_shell_variant=classic` + `drush cr` respondeu 200 com 1 H1 e 1 `<main>` em `/` e `/institucional`; o runtime foi restaurado para `v2`.
 - Pendências: revisão visual humana registrada e dívida de boundary dos módulos do Portal (64 itens pré-existentes).
