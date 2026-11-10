@@ -6,6 +6,7 @@ namespace Drupal\aculta_portal\Plugin\Block;
 
 use Drupal\Core\Block\Attribute\Block;
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\Extension\ThemeExtensionList;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -40,6 +41,7 @@ final class InstitutionBarBlock extends BlockBase implements ContainerFactoryPlu
     $plugin_id,
     $plugin_definition,
     private readonly ThemeExtensionList $themes,
+    private readonly ClassResolverInterface $classResolver,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -53,6 +55,7 @@ final class InstitutionBarBlock extends BlockBase implements ContainerFactoryPlu
       $plugin_id,
       $plugin_definition,
       $container->get('extension.list.theme'),
+      $container->get('class_resolver'),
     );
   }
 
@@ -61,12 +64,11 @@ final class InstitutionBarBlock extends BlockBase implements ContainerFactoryPlu
    */
   public function build(): array {
     $variables = [];
-    $resolver = \Drupal::service('class_resolver');
     foreach (self::PREPROCESS_HOOKS as $class) {
       if (!class_exists($class) || !method_exists($class, 'preprocessPage')) {
         continue;
       }
-      $resolver->getInstanceFromDefinition($class)->preprocessPage($variables);
+      $this->classResolver->getInstanceFromDefinition($class)->preprocessPage($variables);
     }
 
     $library = $this->get($variables, 'aculta_component_library_page', FALSE) === TRUE;

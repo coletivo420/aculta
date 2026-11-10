@@ -4,23 +4,13 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Learning;
 
-use Drupal\Core\Session\AccountInterface;
+use Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface as ContractAccountCoursesReaderInterface;
 
 /**
  * Reads the authorized course summaries visible to one account.
+ *
+ * Extende o contrato neutro do Portal; implementações continuam devolvendo
+ * DTOs neutros, sem expor entidades ou render arrays do provedor.
  */
-interface AccountCoursesReaderInterface {
-
-  /**
-   * Returns account-visible course summaries.
-   *
-   * The provider enforces Group/LMS access before returning any course
-   * metadata. Implementations return neutral DTOs rather than provider
-   * entities or render arrays.
-   *
-   * @return list<\Drupal\aculta_lms\Learning\AccountCourseSummary>
-   *   The account's authorized courses.
-   */
-  public function getAccountCourses(AccountInterface $account): array;
-
+interface AccountCoursesReaderInterface extends ContractAccountCoursesReaderInterface {
 }

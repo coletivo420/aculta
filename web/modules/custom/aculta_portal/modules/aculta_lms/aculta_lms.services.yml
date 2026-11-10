@@ -78,6 +78,7 @@ services:
     arguments: ['@entity_type.manager']
   Drupal\aculta_lms\Group\GroupMembershipReaderInterface: '@aculta_lms.group_membership_reader'
   Drupal\aculta_lms\Learning\AccountCoursesReaderInterface: '@aculta_lms.account_courses_reader'
+  Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface: '@aculta_lms.account_courses_reader'
   aculta_portal.lms_friendly_slugs:
     class: Drupal\aculta_lms\Routing\LmsFriendlySlugs
     arguments: ['@entity_type.manager', '@transliteration']

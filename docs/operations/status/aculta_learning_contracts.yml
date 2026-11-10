@@ -1,0 +1,5 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.1
+state: Dev
+next_phase: 'Cobrir o contrato com Unit e Kernel e avaliar a migração do DTO de progresso.'
+progress_note: 'Contrato AccountCoursesReaderInterface e DTO AccountCourseSummary neutros; aculta_lms registra o alias do provedor e o Portal consome somente o contrato. Gate validate-aculta-portal-drupal12.php (P5.5) passa a aceitar a implementação.'
