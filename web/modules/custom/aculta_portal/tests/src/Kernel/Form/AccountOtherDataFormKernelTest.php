@@ -108,7 +108,6 @@ final class AccountOtherDataFormKernelTest extends KernelTestBase {
       'fora do checkout' => ['/admin/config'],
       'sem destino' => [NULL],
       'vazio' => [''],
-    'aculta_file_uploader',
     ];
   }
 

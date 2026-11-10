@@ -66,8 +66,10 @@ class PersonalCalendarTokensTest extends UnitTestCase {
    * O hash é determinístico e diferente do token.
    */
   public function testHashDiffersFromToken(): void {
-    $this->assertSame(PersonalCalendarTokens::hash('abc'), PersonalCalendarTokens::hash('abc'));
-    $this->assertNotSame('abc', PersonalCalendarTokens::hash('abc'));
+    $hash = PersonalCalendarTokens::hash('abc');
+    $this->assertMatchesRegularExpression('/^[a-f0-9]{64}$/', $hash, 'hash sha256 em hexadecimal');
+    $this->assertNotSame('abc', $hash, 'o armazenamento não guarda o token em claro');
+    $this->assertNotSame($hash, PersonalCalendarTokens::hash('abd'), 'tokens distintos geram hashes distintos');
   }
 
 }
