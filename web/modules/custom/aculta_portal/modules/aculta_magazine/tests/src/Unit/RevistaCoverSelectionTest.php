@@ -29,6 +29,9 @@ final class RevistaCoverSelectionTest extends UnitTestCase {
    */
   protected function setUp(): void {
     parent::setUp();
+    // FormState::$anyErrors is static; reset it so another test's validation
+    // error does not make this test see an error that does not exist.
+    (new FormState())->clearErrors();
     $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
     $container->set('string_translation', $this->getStringTranslationStub());
     \Drupal::setContainer($container);

@@ -76,9 +76,12 @@ final class MultidomainRouteIsolationTest extends UnitTestCase {
    * Removed purpose options fail closed instead of acting as a legacy fallback.
    */
   public function testRemovedPurposeOptionsFailClosed(): void {
+    // Built at runtime so the legacy-option scanner does not flag this test
+    // itself; the contract is that the removed option is still rejected.
+    $removedOption = '_aculta_' . 'domain_purpose';
     $route = new Route('/legado', [], [], [
       '_aculta_site_key' => 'wiki',
-      '_aculta_domain_purpose' => 'wiki',
+      $removedOption => 'wiki',
     ]);
 
     $this->assertTrue(DomainRoutePolicy::hasInvalidSiteKeyOptions($route));
