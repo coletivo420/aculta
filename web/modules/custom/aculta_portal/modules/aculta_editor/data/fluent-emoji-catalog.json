@@ -4,258 +4,853 @@
     "name": "Erva",
     "glyph": "🌿",
     "category": "cultivo",
-    "keywords": ["erva", "maconha", "cannabis", "canabis", "folha", "planta", "herb", "weed", "cultivo", "natural"]
+    "keywords": [
+      "erva",
+      "maconha",
+      "cannabis",
+      "canabis",
+      "folha",
+      "planta",
+      "herb",
+      "weed",
+      "cultivo",
+      "natural"
+    ]
   },
   {
     "id": "seedling",
     "name": "Muda",
     "glyph": "🌱",
     "category": "cultivo",
-    "keywords": ["muda", "semente", "germinacao", "germinação", "plantio", "cultivo", "seedling", "sprout", "crescimento"]
+    "keywords": [
+      "muda",
+      "semente",
+      "germinacao",
+      "germinação",
+      "plantio",
+      "cultivo",
+      "seedling",
+      "sprout",
+      "crescimento"
+    ]
   },
   {
     "id": "potted-plant",
     "name": "Planta no Vaso",
     "glyph": "🪴",
     "category": "cultivo",
-    "keywords": ["vaso", "planta", "cultivo", "cultivo indoor", "potted plant", "jardim", "casa", "grow"]
+    "keywords": [
+      "vaso",
+      "planta",
+      "cultivo",
+      "cultivo indoor",
+      "potted plant",
+      "jardim",
+      "casa",
+      "grow"
+    ]
   },
   {
     "id": "leaf-fluttering-in-wind",
     "name": "Folha ao Vento",
     "glyph": "🍃",
     "category": "cultivo",
-    "keywords": ["folha", "vento", "brisa", "leveza", "natural", "leaf", "wind", "outono", "soprar"]
+    "keywords": [
+      "folha",
+      "vento",
+      "brisa",
+      "leveza",
+      "natural",
+      "leaf",
+      "wind",
+      "outono",
+      "soprar"
+    ]
   },
   {
     "id": "fallen-leaf",
     "name": "Folha Caída",
     "glyph": "🍂",
     "category": "cultivo",
-    "keywords": ["folha", "caida", "caída", "outono", "colheita", "seca", "fallen leaf", "autumn", "cura"]
+    "keywords": [
+      "folha",
+      "caida",
+      "caída",
+      "outono",
+      "colheita",
+      "seca",
+      "fallen leaf",
+      "autumn",
+      "cura"
+    ]
   },
   {
     "id": "four-leaf-clover",
     "name": "Trevo de Quatro Folhas",
     "glyph": "🍀",
     "category": "cultivo",
-    "keywords": ["trevo", "sorte", "quatro folhas", "clover", "luck", "acaso", "cultivo", "esperanca", "esperança"]
+    "keywords": [
+      "trevo",
+      "sorte",
+      "quatro folhas",
+      "clover",
+      "luck",
+      "acaso",
+      "cultivo",
+      "esperanca",
+      "esperança"
+    ]
   },
   {
     "id": "sun",
     "name": "Sol",
     "glyph": "☀️",
     "category": "cultivo",
-    "keywords": ["sol", "luz", "dia", "calor", "fotossintese", "fotossíntese", "sun", "light", "verao", "verão"]
+    "keywords": [
+      "sol",
+      "luz",
+      "dia",
+      "calor",
+      "fotossintese",
+      "fotossíntese",
+      "sun",
+      "light",
+      "verao",
+      "verão"
+    ]
   },
   {
     "id": "droplet",
     "name": "Gota",
     "glyph": "💧",
     "category": "cultivo",
-    "keywords": ["gota", "agua", "água", "rega", "irrigacao", "irrigação", "droplet", "water", "hidratacao", "hidratação"]
+    "keywords": [
+      "gota",
+      "agua",
+      "água",
+      "rega",
+      "irrigacao",
+      "irrigação",
+      "droplet",
+      "water",
+      "hidratacao",
+      "hidratação"
+    ]
   },
   {
     "id": "fire",
     "name": "Fogo",
     "glyph": "🔥",
     "category": "vibe",
-    "keywords": ["fogo", "chama", "quente", "brasa", "fire", "hot", "lit", "sessao", "sessão", "fumaca", "fumaça"]
+    "keywords": [
+      "fogo",
+      "chama",
+      "quente",
+      "brasa",
+      "fire",
+      "hot",
+      "lit",
+      "sessao",
+      "sessão",
+      "fumaca",
+      "fumaça"
+    ]
   },
   {
     "id": "heart-on-fire",
     "name": "Coração em Chamas",
     "glyph": "❤️‍🔥",
     "category": "vibe",
-    "keywords": ["coracao", "coração", "amor", "paixao", "paixão", "chama", "fogo", "heart on fire", "love", "ardor"]
+    "keywords": [
+      "coracao",
+      "coração",
+      "amor",
+      "paixao",
+      "paixão",
+      "chama",
+      "fogo",
+      "heart on fire",
+      "love",
+      "ardor"
+    ]
   },
   {
     "id": "face-exhaling",
     "name": "Rosto Exalando",
     "glyph": "😮‍💨",
     "category": "vibe",
-    "keywords": ["exalar", "soltar", "fumaca", "fumaça", "vapor", "alivio", "alívio", "brisa", "face exhaling", "suspiro", "tragar"]
+    "keywords": [
+      "exalar",
+      "soltar",
+      "fumaca",
+      "fumaça",
+      "vapor",
+      "alivio",
+      "alívio",
+      "brisa",
+      "face exhaling",
+      "suspiro",
+      "tragar"
+    ]
   },
   {
     "id": "face-in-clouds",
     "name": "Rosto nas Nuvens",
     "glyph": "😶‍🌫️",
     "category": "vibe",
-    "keywords": ["nuvem", "nuvens", "fumaca", "fumaça", "nevoa", "névoa", "onda", "chapado", "face in clouds", "cloud", "brisa"]
+    "keywords": [
+      "nuvem",
+      "nuvens",
+      "fumaca",
+      "fumaça",
+      "nevoa",
+      "névoa",
+      "onda",
+      "chapado",
+      "face in clouds",
+      "cloud",
+      "brisa"
+    ]
   },
   {
     "id": "dashing-away",
     "name": "Rajada",
     "glyph": "💨",
     "category": "vibe",
-    "keywords": ["rajada", "vento", "rapido", "rápido", "sopro", "dashing away", "dash", "fugir", "corrida", "vapor"]
+    "keywords": [
+      "rajada",
+      "vento",
+      "rapido",
+      "rápido",
+      "sopro",
+      "dashing away",
+      "dash",
+      "fugir",
+      "corrida",
+      "vapor"
+    ]
   },
   {
     "id": "melting-face",
     "name": "Rosto Derretendo",
     "glyph": "🫠",
     "category": "vibe",
-    "keywords": ["derretendo", "derreter", "relaxado", "derretido", "melting face", "melt", "calor", "brisa", "descanso"]
+    "keywords": [
+      "derretendo",
+      "derreter",
+      "relaxado",
+      "derretido",
+      "melting face",
+      "melt",
+      "calor",
+      "brisa",
+      "descanso"
+    ]
   },
   {
     "id": "relieved-face",
     "name": "Rosto Aliviado",
     "glyph": "😌",
     "category": "vibe",
-    "keywords": ["aliviado", "alivio", "alívio", "relaxado", "paz", "calma", "relieved", "relief", "zen", "tranquilo"]
+    "keywords": [
+      "aliviado",
+      "alivio",
+      "alívio",
+      "relaxado",
+      "paz",
+      "calma",
+      "relieved",
+      "relief",
+      "zen",
+      "tranquilo"
+    ]
   },
   {
     "id": "smiling-face-with-sunglasses",
     "name": "Rosto de Óculos Escuros",
     "glyph": "😎",
     "category": "vibe",
-    "keywords": ["oculos", "óculos", "escuri", "estiloso", "cool", "de boa", "tranquilo", "sunglasses", "chill", "sorriso"]
+    "keywords": [
+      "oculos",
+      "óculos",
+      "escuri",
+      "estiloso",
+      "cool",
+      "de boa",
+      "tranquilo",
+      "sunglasses",
+      "chill",
+      "sorriso"
+    ]
   },
   {
     "id": "zany-face",
     "name": "Rosto Maluco",
     "glyph": "🤪",
     "category": "vibe",
-    "keywords": ["maluco", "doido", "zoeira", "brincadeira", "zany", "crazy", "piada", "humor", "brisa"]
+    "keywords": [
+      "maluco",
+      "doido",
+      "zoeira",
+      "brincadeira",
+      "zany",
+      "crazy",
+      "piada",
+      "humor",
+      "brisa"
+    ]
   },
   {
     "id": "sparkles",
     "name": "Brilhos",
     "glyph": "✨",
     "category": "vibe",
-    "keywords": ["brilho", "brilhos", "magia", "especial", "sparkles", "shine", "estrela", "luz", "brilhante"]
+    "keywords": [
+      "brilho",
+      "brilhos",
+      "magia",
+      "especial",
+      "sparkles",
+      "shine",
+      "estrela",
+      "luz",
+      "brilhante"
+    ]
   },
   {
     "id": "pill",
     "name": "Comprimido",
     "glyph": "💊",
     "category": "saude",
-    "keywords": ["comprimido", "remedio", "remédio", "medicamento", "pill", "medicine", "saude", "saúde", "tratamento", "dosagem"]
+    "keywords": [
+      "comprimido",
+      "remedio",
+      "remédio",
+      "medicamento",
+      "pill",
+      "medicine",
+      "saude",
+      "saúde",
+      "tratamento",
+      "dosagem"
+    ]
   },
   {
     "id": "adhesive-bandage",
     "name": "Curativo",
     "glyph": "🩹",
     "category": "saude",
-    "keywords": ["curativo", "band-aid", "ferida", "cuidado", "adhesive bandage", "bandage", "saude", "saúde", "recuperacao", "recuperação"]
+    "keywords": [
+      "curativo",
+      "band-aid",
+      "ferida",
+      "cuidado",
+      "adhesive bandage",
+      "bandage",
+      "saude",
+      "saúde",
+      "recuperacao",
+      "recuperação"
+    ]
   },
   {
     "id": "stethoscope",
     "name": "Estetoscópio",
     "glyph": "🩺",
     "category": "saude",
-    "keywords": ["estetoscopio", "estetoscópio", "medico", "médico", "consulta", "stethoscope", "doctor", "saude", "saúde", "clinica", "clínica"]
+    "keywords": [
+      "estetoscopio",
+      "estetoscópio",
+      "medico",
+      "médico",
+      "consulta",
+      "stethoscope",
+      "doctor",
+      "saude",
+      "saúde",
+      "clinica",
+      "clínica"
+    ]
   },
   {
     "id": "microscope",
     "name": "Microscópio",
     "glyph": "🔬",
     "category": "saude",
-    "keywords": ["microscopio", "microscópio", "pesquisa", "ciencia", "ciência", "laboratorio", "laboratório", "microscope", "science", "estudo"]
+    "keywords": [
+      "microscopio",
+      "microscópio",
+      "pesquisa",
+      "ciencia",
+      "ciência",
+      "laboratorio",
+      "laboratório",
+      "microscope",
+      "science",
+      "estudo"
+    ]
   },
   {
     "id": "test-tube",
     "name": "Tubo de Ensaio",
     "glyph": "🧪",
     "category": "saude",
-    "keywords": ["tubo", "ensaio", "laboratorio", "laboratório", "experimento", "test tube", "lab", "ciencia", "ciência", "analise", "análise"]
+    "keywords": [
+      "tubo",
+      "ensaio",
+      "laboratorio",
+      "laboratório",
+      "experimento",
+      "test tube",
+      "lab",
+      "ciencia",
+      "ciência",
+      "analise",
+      "análise"
+    ]
   },
   {
     "id": "brain",
     "name": "Cérebro",
     "glyph": "🧠",
     "category": "saude",
-    "keywords": ["cerebro", "cérebro", "mente", "ideia", "memoria", "memória", "brain", "mind", "saude mental", "saúde mental", "consciencia", "consciência"]
+    "keywords": [
+      "cerebro",
+      "cérebro",
+      "mente",
+      "ideia",
+      "memoria",
+      "memória",
+      "brain",
+      "mind",
+      "saude mental",
+      "saúde mental",
+      "consciencia",
+      "consciência"
+    ]
   },
   {
     "id": "green-heart",
     "name": "Coração Verde",
     "glyph": "💚",
     "category": "saude",
-    "keywords": ["coracao", "coração", "verde", "amor", "saude", "saúde", "cura", "green heart", "natureza", "esperanca", "esperança"]
+    "keywords": [
+      "coracao",
+      "coração",
+      "verde",
+      "amor",
+      "saude",
+      "saúde",
+      "cura",
+      "green heart",
+      "natureza",
+      "esperanca",
+      "esperança"
+    ]
   },
   {
     "id": "balance-scale",
     "name": "Balança da Justiça",
     "glyph": "⚖️",
     "category": "direitos",
-    "keywords": ["balanca", "balança", "justica", "justiça", "direito", "lei", "tribunal", "balance scale", "justice", "igualdade", "julgamento"]
+    "keywords": [
+      "balanca",
+      "balança",
+      "justica",
+      "justiça",
+      "direito",
+      "lei",
+      "tribunal",
+      "balance scale",
+      "justice",
+      "igualdade",
+      "julgamento"
+    ]
   },
   {
     "id": "peace-symbol",
     "name": "Símbolo da Paz",
     "glyph": "☮️",
     "category": "direitos",
-    "keywords": ["paz", "simbolo", "símbolo", "peace", "antiproibicionista", "anti-proibicao", "anti-proibição", "nao a guerra", "não à guerra", "resistencia", "resistência"]
+    "keywords": [
+      "paz",
+      "simbolo",
+      "símbolo",
+      "peace",
+      "antiproibicionista",
+      "anti-proibicao",
+      "anti-proibição",
+      "nao a guerra",
+      "não à guerra",
+      "resistencia",
+      "resistência"
+    ]
   },
   {
     "id": "raised-fist-medium",
     "name": "Punho Erguido (Pardo)",
     "glyph": "✊🏽",
     "category": "direitos",
-    "keywords": ["punho", "erguido", "resistencia", "resistência", "luta", "forca", "força", "raised fist", "power", "negro", "pardo", "antiproibicionista"]
+    "keywords": [
+      "punho",
+      "erguido",
+      "resistencia",
+      "resistência",
+      "luta",
+      "forca",
+      "força",
+      "raised fist",
+      "power",
+      "negro",
+      "pardo",
+      "antiproibicionista"
+    ]
   },
   {
     "id": "victory-hand-medium",
     "name": "Mão da Vitória (Pardo)",
     "glyph": "✌🏽",
     "category": "direitos",
-    "keywords": ["vitoria", "vitória", "paz", "victory", "peace", "dois dedos", "pardo", "resistencia", "resistência", "conquista"]
+    "keywords": [
+      "vitoria",
+      "vitória",
+      "paz",
+      "victory",
+      "peace",
+      "dois dedos",
+      "pardo",
+      "resistencia",
+      "resistência",
+      "conquista"
+    ]
   },
   {
     "id": "folded-hands-medium",
     "name": "Mãos Juntas (Pardo)",
     "glyph": "🙏🏽",
     "category": "direitos",
-    "keywords": ["maos", "mãos", "juntas", "gratidao", "gratidão", "pedido", "fe", "fé", "folded hands", "obrigado", "pardo", "solidariedade"]
+    "keywords": [
+      "maos",
+      "mãos",
+      "juntas",
+      "gratidao",
+      "gratidão",
+      "pedido",
+      "fe",
+      "fé",
+      "folded hands",
+      "obrigado",
+      "pardo",
+      "solidariedade"
+    ]
   },
   {
     "id": "thumbs-up-medium",
     "name": "Joinha (Pardo)",
     "glyph": "👍🏽",
     "category": "direitos",
-    "keywords": ["joinha", "positivo", "concordo", "apoio", "thumbs up", "like", "curtida", "sim", "pardo", "aprovado"]
+    "keywords": [
+      "joinha",
+      "positivo",
+      "concordo",
+      "apoio",
+      "thumbs up",
+      "like",
+      "curtida",
+      "sim",
+      "pardo",
+      "aprovado"
+    ]
   },
   {
     "id": "clapping-hands-medium",
     "name": "Palmas (Pardo)",
     "glyph": "👏🏽",
     "category": "direitos",
-    "keywords": ["palmas", "aplauso", "parabens", "parabéns", "clapping hands", "applause", "apoio", "pardo", "celebracao", "celebração"]
+    "keywords": [
+      "palmas",
+      "aplauso",
+      "parabens",
+      "parabéns",
+      "clapping hands",
+      "applause",
+      "apoio",
+      "pardo",
+      "celebracao",
+      "celebração"
+    ]
   },
   {
     "id": "handshake",
     "name": "Aperto de Mão",
     "glyph": "🤝",
     "category": "direitos",
-    "keywords": ["aperto de mao", "aperto de mão", "acordo", "parceria", "alianca", "aliança", "handshake", "deal", "colaboracao", "colaboração", "comunidade"]
+    "keywords": [
+      "aperto de mao",
+      "aperto de mão",
+      "acordo",
+      "parceria",
+      "alianca",
+      "aliança",
+      "handshake",
+      "deal",
+      "colaboracao",
+      "colaboração",
+      "comunidade"
+    ]
   },
   {
     "id": "speaking-head",
     "name": "Cabeça Falando",
     "glyph": "🗣️",
     "category": "direitos",
-    "keywords": ["falar", "voz", "discurso", "speaking head", "speak", "denuncia", "denúncia", "comunidade", "dialogo", "diálogo", "reivindicacao", "reivindicação"]
+    "keywords": [
+      "falar",
+      "voz",
+      "discurso",
+      "speaking head",
+      "speak",
+      "denuncia",
+      "denúncia",
+      "comunidade",
+      "dialogo",
+      "diálogo",
+      "reivindicacao",
+      "reivindicação"
+    ]
   },
   {
     "id": "loudspeaker",
     "name": "Megafone",
     "glyph": "📢",
     "category": "direitos",
-    "keywords": ["megafone", "anuncio", "anúncio", "aviso", "loudspeaker", "announcement", "protesto", "mobilizacao", "mobilização", "convite", "comunidade"]
+    "keywords": [
+      "megafone",
+      "anuncio",
+      "anúncio",
+      "aviso",
+      "loudspeaker",
+      "announcement",
+      "protesto",
+      "mobilizacao",
+      "mobilização",
+      "convite",
+      "comunidade"
+    ]
   },
   {
     "id": "light-bulb",
     "name": "Lâmpada",
     "glyph": "💡",
     "category": "direitos",
-    "keywords": ["lampada", "lâmpada", "ideia", "insight", "light bulb", "idea", "dica", "conhecimento", "informacao", "informação", "reducao de danos", "redução de danos"]
+    "keywords": [
+      "lampada",
+      "lâmpada",
+      "ideia",
+      "insight",
+      "light bulb",
+      "idea",
+      "dica",
+      "conhecimento",
+      "informacao",
+      "informação",
+      "reducao de danos",
+      "redução de danos"
+    ]
   },
   {
     "id": "hundred-points",
     "name": "Cem Pontos",
     "glyph": "💯",
     "category": "direitos",
-    "keywords": ["cem", "pontos", "exato", "perfeito", "concordo", "hundred points", "100", "certeza", "apoio", "top"]
+    "keywords": [
+      "cem",
+      "pontos",
+      "exato",
+      "perfeito",
+      "concordo",
+      "hundred points",
+      "100",
+      "certeza",
+      "apoio",
+      "top"
+    ]
+  },
+  {
+    "id": "heart",
+    "name": "Coração Vermelho",
+    "glyph": "❤️",
+    "category": "vibe",
+    "keywords": [
+      "coracao",
+      "coração",
+      "amor",
+      "curtida",
+      "love",
+      "heart",
+      "vermelho"
+    ],
+    "svg": "heart.svg"
+  },
+  {
+    "id": "thumbs-up",
+    "name": "Joinha",
+    "glyph": "👍",
+    "category": "direitos",
+    "keywords": [
+      "joinha",
+      "positivo",
+      "concordo",
+      "apoio",
+      "thumbs up",
+      "like",
+      "curtida",
+      "sim"
+    ],
+    "svg": "thumbs-up.svg"
+  },
+  {
+    "id": "clapping-hands",
+    "name": "Palmas",
+    "glyph": "👏",
+    "category": "direitos",
+    "keywords": [
+      "palmas",
+      "aplauso",
+      "parabens",
+      "parabéns",
+      "clapping hands",
+      "applause",
+      "apoio"
+    ],
+    "svg": "clapping-hands.svg"
+  },
+  {
+    "id": "grinning-squinting-face",
+    "name": "Rosto Sorridente",
+    "glyph": "😆",
+    "category": "vibe",
+    "keywords": [
+      "riso",
+      "engracado",
+      "engraçado",
+      "gargalhada",
+      "haha",
+      "alegria",
+      "sorriso"
+    ],
+    "svg": "grinning-squinting-face.svg"
+  },
+  {
+    "id": "folded-hands",
+    "name": "Mãos Juntas",
+    "glyph": "🙏",
+    "category": "direitos",
+    "keywords": [
+      "gratidao",
+      "gratidão",
+      "por favor",
+      "agradecimento",
+      "fe",
+      "fé",
+      "rezar",
+      "oracao",
+      "oração"
+    ],
+    "svg": "folded-hands.svg"
+  },
+  {
+    "id": "astonished-face",
+    "name": "Rosto Espantado",
+    "glyph": "😲",
+    "category": "vibe",
+    "keywords": [
+      "espanto",
+      "surpreso",
+      "chocado",
+      "uau",
+      "wow"
+    ],
+    "svg": "astonished-face.svg"
+  },
+  {
+    "id": "eyes",
+    "name": "Olhos",
+    "glyph": "👀",
+    "category": "vibe",
+    "keywords": [
+      "olhos",
+      "olhando",
+      "atencao",
+      "atenção",
+      "observando",
+      "curioso"
+    ],
+    "svg": "eyes.svg"
+  },
+  {
+    "id": "trophy",
+    "name": "Troféu",
+    "glyph": "🏆",
+    "category": "direitos",
+    "keywords": [
+      "trofeu",
+      "troféu",
+      "vitoria",
+      "vitória",
+      "campeao",
+      "campeão",
+      "premio",
+      "prêmio"
+    ],
+    "svg": "trophy.svg"
+  },
+  {
+    "id": "rocket",
+    "name": "Foguete",
+    "glyph": "🚀",
+    "category": "vibe",
+    "keywords": [
+      "foguete",
+      "voar",
+      "subir",
+      "rapido",
+      "rápido",
+      "lancamento",
+      "lançamento",
+      "moon"
+    ],
+    "svg": "rocket.svg"
+  },
+  {
+    "id": "thinking-face",
+    "name": "Pensativo",
+    "glyph": "🤔",
+    "category": "vibe",
+    "keywords": [
+      "pensando",
+      "duvida",
+      "dúvida",
+      "curioso",
+      "hum",
+      "pensativo"
+    ],
+    "svg": "thinking-face.svg"
+  },
+  {
+    "id": "party-popper",
+    "name": "Cone de Festa",
+    "glyph": "🎉",
+    "category": "vibe",
+    "keywords": [
+      "festa",
+      "comemoracao",
+      "comemoração",
+      "parabens",
+      "parabéns",
+      "celebracao",
+      "celebração"
+    ],
+    "svg": "party-popper.svg"
   }
 ]

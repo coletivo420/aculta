@@ -64,6 +64,19 @@ final class FluentEmojiCatalog {
   }
 
   /**
+   * Obtém uma entrada pelo id.
+   *
+   * @param string $id
+   *   ID do emoji.
+   *
+   * @return array{id: string, name: string, glyph: string, category: string, keywords: list<string>, svg: string}|null
+   *   A entrada encontrada ou nulo.
+   */
+  public function get(string $id): ?array {
+    return $this->all()[$id] ?? null;
+  }
+
+  /**
    * Mapeia glifos para entradas, incluindo variantes sem U+FE0F.
    *
    * O seletor de emojis do sistema operacional e o copiar/colar nem sempre

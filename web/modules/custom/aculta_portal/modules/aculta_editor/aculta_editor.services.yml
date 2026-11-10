@@ -6,3 +6,7 @@ services:
     class: Drupal\aculta_editor\Service\FluentEmojiAssetResolver
     arguments: ['@theme.manager']
     public: true
+  aculta_editor.fluent_emoji_icon_adapter:
+    class: Drupal\aculta_editor\Service\FluentEmojiIconAdapter
+    arguments: ['@aculta_editor.fluent_emoji_catalog', '@plugin.manager.icon_pack']
+    public: true
