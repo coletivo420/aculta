@@ -76,7 +76,7 @@ $routeSource = file_get_contents(
   $portalRoot . '/src/EventSubscriber/DomainRouteSubscriber.php'
 );
 $resolverSource = file_get_contents(
-  $portalRoot . '/src/Domain/ContentPurposeResolver.php'
+  $portalRoot . '/src/Domain/ContentSiteKeyResolver.php'
 );
 $themeRoot = DRUPAL_ROOT . '/themes/custom/aculta420_v2';
 
@@ -111,7 +111,7 @@ $assert(
 );
 $assert(
   str_contains($subscriberSource, 'notFoundResponse')
-    && str_contains($subscriberSource, 'canonicalContentPurpose'),
+    && str_contains($subscriberSource, 'canonicalContentSiteKey'),
   'Public wrong-purpose enforcement remains fail-closed.',
 );
 $assert(
