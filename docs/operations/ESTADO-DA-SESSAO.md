@@ -1,9 +1,9 @@
 # ADR-054 + ADR-055 — UI Skins/site_key — 2026-11-10
 
-- **Objetivo:** concluir o corte visual por purpose e declarar UI Skins como fonte de tokens/paletas, sem dual-read nem retenção de configuração legada.
-- **Estado:** mapa dos dez Domain IDs para skin IDs via config própria; tema declara cinco variáveis e vinte scopes UI Skins (dez skins × claro/escuro). Removidos formulário/config de paleta, esquemas PHP, tokens/seletoras purpose e seus testes/gate. `DomainPurposeManager` permanece para responsabilidades funcionais.
-- **Arquivos:** Portal `DomainSkinResolver`, serviço/schema/config, `AppearanceHooks`; tema `SurfaceSettingsHooks`, tokens e settings/UI Styles; gate `validate-aculta420-ui-skins.php`; inventário e docs/todos/status atualizados.
-- **Verificações:** gate UI Skins PASS (126 checks; contraste >=4.5:1), theme-settings PASS (16), UI Styles PASS (38), foundations PASS (83 pares + 6 faixas), Unit Domain PASS (11/31), PHPStan e PHPCS focais PASS; diffs/YAML em validação final.
+- **Objetivo:** cortar o motor visual por purpose e adotar UI Skins sem dual-read nem config legada.
+- **Estado:** dez Domain IDs mapeados a skins; cinco variáveis e vinte scopes claro/escuro. Removidos formulário/config, esquemas, tokens/seletores e testes antigos. `DomainPurposeManager` mantém funções de domínio.
+- **Commit/arquivos:** `693d5e173` publicado; resolver Portal, hooks/tokens/settings do tema, Config Sync, inventário e docs.
+- **Verificações:** UI Skins 126, theme-settings 16, UI Styles 38, foundations 83+6, Unit 11/31, PHPStan/PHPCS, YAML, boundary/diff e `drush cr`: PASS; push confirmado.
 - **Limites:** Runtime tem UI Skins Disabled e Config Sync apresenta drift; sem `cim`/enable. Render real, cache visual, capturas e aceite por domínio DEFERRED. Stylelint indisponível. Token-budget gate registra dívida preexistente.
 - **Próximo passo:** validar versão instalada/API UI Skins no Runtime após procedimento de Sync autorizado; completar piloto Links com capturas/modos/cache e seguir migração UI Suite/legado.
 # FST-00 a FST-11 — integração analítica Fórum + Statistics — 2026-11-10
