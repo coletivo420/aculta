@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * O editor e o banco guardam o caractere Unicode nativo. Este filtro troca,
  * apenas na saída, cada glifo conhecido por uma marcação com o SVG colorido da
- * biblioteca Fluent do tema aculta420_v2 e nome acessível em português.
+ * biblioteca Fluent do tema e nome acessível em português.
  *
  * É do tipo reversível: o texto armazenado continua em Unicode puro, leve,
  * pesquisável e compatível com feeds, leitores de tela e cópia em texto plano.

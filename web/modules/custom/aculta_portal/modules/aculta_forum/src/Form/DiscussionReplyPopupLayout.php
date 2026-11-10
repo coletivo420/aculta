@@ -41,7 +41,7 @@ final class DiscussionReplyPopupLayout {
       '#value' => t('Limpar'),
       '#attributes' => [
         'type' => 'button',
-        'class' => ['button', 'button--secondary'],
+        'data-portal-ui' => 'button-secondary',
         'data-aculta-reply-clear' => '',
       ],
       '#weight' => 50,
@@ -53,7 +53,7 @@ final class DiscussionReplyPopupLayout {
       '#value' => t('Cancelar'),
       '#attributes' => [
         'type' => 'button',
-        'class' => ['button', 'button--secondary'],
+        'data-portal-ui' => 'button-secondary',
         'data-aculta-dialog-close' => '',
       ],
       '#weight' => 51,

@@ -1,5 +1,5 @@
 /**
- * Responder e Citar em popup (SDC aculta420_v2:dialog) na discussão do fórum.
+ * Responder e Citar em popup na discussão do fórum.
  *
  * Responder e Citar carregam o compositor por HTMX dentro do diálogo modal da página do
  * tópico (id aculta-reply-dialog). O diálogo usa o mesmo comportamento dos outros popups

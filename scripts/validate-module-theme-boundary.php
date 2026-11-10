@@ -45,6 +45,23 @@ $allowedThemeReferences = [
   // Teste de integração: instala o ACULTA420 para renderizar os componentes
   // neutros reais (não é código de produção).
   'modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php',
+  // Barra institucional: plugin ponte do SDC multidomain-bar do tema ativo.
+  'src/Plugin/Block/InstitutionBarBlock.php',
+  // Emojis fluentes: lê SVGs do tema padrão ativo.
+  'modules/aculta_editor/src/Plugin/Filter/FluentEmojiFilter.php',
+  'modules/aculta_editor/src/Plugin/CKEditor5Plugin/FluentEmoji.php',
+  // Ícones SVG do tema resolvidos pelo provedor de ícones do fórum.
+  'modules/aculta_forum/src/Hook/DiscussionCommentPermalinkHooks.php',
+  'modules/aculta_forum/src/Hook/DiscussionCommentActionIconHooks.php',
+  'modules/aculta_forum/src/Hook/TopicOpeningPostHooks.php',
+  'modules/aculta_forum/tests/src/Unit/ForumTopicDisplayConfigTest.php',
+  // Catálogo UI Library: prévia de blocos no tema padrão.
+  'modules/aculta_ui_library/src/Controller/UiLibraryPreviewController.php',
+  // Integrações com diálogos modais do tema padrão.
+  'modules/aculta_forum/aculta_forum.libraries.yml',
+  'modules/aculta_studio/aculta_studio.libraries.yml',
+  // Compositor de publicação da revista.
+  'modules/aculta_magazine/src/Controller/EditorialWorkspaceController.php',
 ];
 
 /**
@@ -188,6 +205,29 @@ foreach ($files($module . '/js', ['js']) as $path) {
 // design ACULTA.
 $allowedClasses = [
   'use-ajax',
+  'use-htmx',
+  'resposta-acao',
+  'resposta-acao--citar',
+  'resposta-acao--responder',
+  'resposta-acao--editar',
+  'resposta-acao--apagar',
+  'permalink',
+  'aculta-resposta-acao',
+  'aculta-resposta-acao--link',
+  'aculta-resposta-acao--responder',
+  'aculta-resposta-acao--citar',
+  'aculta-resposta-acao--editar',
+  'aculta-resposta-acao--apagar',
+  'aculta-ui-library-blocks',
+  'aculta-ui-library-preview',
+  'aculta-ui-library-preview__header',
+  'aculta-ui-library-preview__content',
+  'messages',
+  'messages--warning',
+  'button--small',
+  'aculta-messenger-new-conversation',
+  'links',
+  'inline',
   'is-active',
   'draggable',
   'role-weight',

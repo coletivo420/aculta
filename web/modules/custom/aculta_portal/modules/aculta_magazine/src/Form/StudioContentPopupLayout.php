@@ -34,7 +34,7 @@ final class StudioContentPopupLayout {
       '#value' => t('Cancelar'),
       '#attributes' => [
         'type' => 'button',
-        'class' => ['button', 'button--secondary'],
+        'data-portal-ui' => 'button-secondary',
         'data-aculta-dialog-close' => '',
       ],
       '#weight' => 50,
