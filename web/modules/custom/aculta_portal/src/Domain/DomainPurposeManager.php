@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Resolves ACULTA purposes to their configured domain entities.
  */
-final class DomainPurposeManager {
+final class DomainPurposeManager implements DomainPurposeManagerInterface {
 
   /**
    * Canonical Domain IDs generated from production hosts.

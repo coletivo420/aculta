@@ -1,5 +1,18 @@
 # ACULTA Portal (`aculta_portal`)
 
+## RN-01 — API tipada de `site_key` (em andamento)
+
+`SiteKey` e `SiteKeyRegistry` representam as dez chaves funcionais sem copiar
+Domain IDs ou paths. `DomainSiteManagerInterface` define métodos tipados e
+`DomainSiteManager` os implementa para resolução, contexto e URLs, delegando ao
+`DomainPurposeManagerInterface` temporário para
+preservar resultados existentes. O serviço e os consumidores antigos continuam
+disponíveis durante os lotes RN-02/RN-03; nenhuma rota, configuração, State,
+sessão ou dado persistido foi migrado nesta fase.
+
+Evidência inicial: Unit focal 7/84 PASS. Paridade integral e execução Runtime
+permanecem pendentes; veja `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`.
+
 Módulo de integração do site institucional ACULTA. Conecta capacidades do Drupal
 Core e de módulos contrib para as experiências de conta, conteúdo, Commerce,
 aprendizagem e domínios. Core/contrib continuam donos das entidades e regras que

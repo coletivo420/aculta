@@ -210,6 +210,13 @@ services:
     tags:
       - { name: aculta_portal.helper }
   Drupal\aculta_portal\Domain\DomainPurposeManager: '@aculta_portal.domain_purpose'
+  Drupal\aculta_portal\Domain\DomainPurposeManagerInterface: '@aculta_portal.domain_purpose'
+  Drupal\aculta_portal\Domain\DomainSiteManagerInterface: '@aculta_portal.domain_site'
+  aculta_portal.site_key_registry:
+    class: Drupal\aculta_portal\Domain\SiteKeyRegistry
+  aculta_portal.domain_site:
+    class: Drupal\aculta_portal\Domain\DomainSiteManager
+    arguments: ['@aculta_portal.domain_purpose', '@aculta_portal.site_key_registry']
   aculta_portal.domain_purpose:
     class: Drupal\aculta_portal\Domain\DomainPurposeManager
     arguments: ['@entity_type.manager', '@domain.negotiator', '@config.factory', '@request_stack', '%app.root%']

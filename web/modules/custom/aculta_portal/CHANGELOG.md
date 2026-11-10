@@ -1,3 +1,9 @@
+## Não versionado — API funcional tipada `site_key` (RN-01 inicial)
+
+- Introduz `SiteKey` e `SiteKeyRegistry`, mantendo como fonte dos Domain IDs e paths os valores já definidos em `DomainSurfaceMap`.
+- Adiciona `DomainSiteManagerInterface` e `DomainSiteManager`, API tipada que delega ao `DomainPurposeManagerInterface` compatível; os consumidores antigos, rotas, URLs e regras permanecem no serviço atual.
+- Unit focais: 7 testes / 84 assertions PASS; Domain/ContentPurposeResolver: 54 testes / 161 assertions PASS. PHPCS, PHPStan, YAML e gate Drupal 12 (1.238 checks) PASS. Sem mudança de Runtime, State, sessão ou configuração.
+
 ## 0.5.0-dev.1 — estado neutro de purposes ativos e hooks de ciclo de vida (F3)
 
 - Cria o serviço `ActivePurposesState` (`aculta_portal.active_purposes_state`) que expõe o estado neutro `aculta_portal.active_purposes` via Core State API.

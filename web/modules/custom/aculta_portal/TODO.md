@@ -4,7 +4,9 @@ Estado: Dev · versão 0.5.0-dev.1 (`aculta_portal.info.yml`) · status: `docs/o
 
 ## Próximo passo
 
-- **RN-00 a RN-05 (ADR-054/055, planejamento aprovado):** inventariar e renomear contratos funcionais `purpose` para `site_key` no Portal, preservando IDs Domain, regras de acesso, URLs e dados. Coordenar com UI Skins como motor visual. Documento: `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`. Nenhum código ou Runtime alterado nesta entrega.
+- **RN-00 (parcial):** gerador `scripts/inventory-site-key-contracts.php` e CSV de ocorrências criado; 1.610 referências genéricas ainda precisam triagem semântica, e a matriz HTTP/State/sessão não foi fotografada.
+- **RN-01 (em andamento):** introduzidos enum `SiteKey`, `SiteKeyRegistry`, `DomainSiteManagerInterface` e `DomainSiteManager` como adaptador para o resolver legado. Testes Unit de domínio e ContentPurposeResolver PASS; ainda falta validar paridade HTTP/alias/rotas e migrar consumidores em lotes. Preservar valores e não remover `DomainPurposeManager`.
+- **US-02 UI Skins:** dependente de Composer/Sync/Runtime reconciliados e baseline visual Links. Não habilitar ou alterar configuração ativa nesta etapa.
 
 Implementar adapters de inventário por módulo owner para posts, revisões e anexos; depois desenhar o executor explícito com confirmação, backup restaurável, trilha auditável e revalidação em cada lote. Homologar somente em banco isolado; não executar limpeza nem rebuild no Runtime.
 
