@@ -20,6 +20,20 @@ services:
     class: Drupal\aculta_statistics\Recorder\StatisticsRecorder
     arguments: ['@aculta_statistics.catalog', '@aculta_statistics.storage']
 
+  logger.channel.aculta_statistics:
+    parent: logger.channel_base
+    arguments: ['aculta_statistics']
+
+  aculta_statistics.provider_collector:
+    class: Drupal\aculta_statistics\Provider\MetricProviderCollector
+    arguments: ['!tagged_iterator aculta_statistics.metric_provider', '@aculta_statistics.catalog', '@aculta_statistics.storage', '@datetime.time', '@logger.channel.aculta_statistics']
+
+  Drupal\aculta_statistics\Provider\MetricProviderCollector: '@aculta_statistics.provider_collector'
+
+  aculta_statistics.provider_cron_hooks:
+    class: Drupal\aculta_statistics\Hook\ProviderCronHooks
+    arguments: ['@aculta_statistics.provider_collector']
+
   aculta_statistics.summary_lines:
     class: Drupal\aculta_statistics\Report\StatisticsSummaryLines
     arguments: ['@aculta_statistics.storage']

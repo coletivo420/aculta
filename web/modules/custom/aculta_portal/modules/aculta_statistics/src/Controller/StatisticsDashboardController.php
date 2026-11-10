@@ -87,10 +87,25 @@ final class StatisticsDashboardController extends ControllerBase {
     $today = $this->today();
     $domain = $this->selectedDomain($request, $metric, $today, $days);
     $series = MetricSeries::build($today, $days, fn (int $day): int => $this->dailyTotal($metric->id, $day, $domain));
-    $previous = 0;
-    for ($day = $today - 2 * $days + 1; $day <= $today - $days; $day++) {
-      $previous += $this->dailyTotal($metric->id, $day, $domain);
-    }
+    $periodValue = $this->periodValue($metric, $today, $days, $domain);
+    $previous = $this->previousPeriodValue($metric, $today, $days, $domain);
+    $summaryLabel = $metric->isAdditive()
+      ? $this->t('@total @unidade no período (@days dias)', [
+        '@total' => $periodValue ?? $this->t('N/D'),
+        '@unidade' => $metric->unit,
+        '@days' => $days,
+      ])
+      : $this->t('Último valor: @total @unidade (retrato do dia; não somar no período)', [
+        '@total' => $periodValue ?? $this->t('N/D'),
+        '@unidade' => $metric->unit,
+      ]);
+    $comparisonMarkup = $previous === NULL || $periodValue === NULL
+      ? (string) $this->t('Comparação indisponível: coleta insuficiente para o período anterior.')
+      : (string) $this->t('Período anterior (mesmo tamanho): @anterior @unidade. Variação: @variacao. A variação mostra só a diferença entre períodos, não sua causa.', [
+        '@anterior' => $previous,
+        '@unidade' => $metric->unit,
+        '@variacao' => $this->variation($periodValue, $previous),
+      ]);
 
     $table = [];
     foreach ($series['labels'] as $index => $label) {
@@ -117,20 +132,12 @@ final class StatisticsDashboardController extends ControllerBase {
       'resumo' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'statistics-summary'],
-        '#markup' => '<p><strong>' . $this->t('@total @unidade no período (@days dias)', [
-          '@total' => $series['total'],
-          '@unidade' => $metric->unit,
-          '@days' => $days,
-        ]) . '</strong></p>',
+        '#markup' => '<p><strong>' . $summaryLabel . '</strong></p>',
       ],
       'comparacao' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'statistics-comparison'],
-        '#markup' => '<p>' . $this->t('Período anterior (mesmo tamanho): @anterior @unidade. Variação: @variacao. A variação mostra só a diferença entre períodos, não sua causa.', [
-          '@anterior' => $previous,
-          '@unidade' => $metric->unit,
-          '@variacao' => $this->variation($series['total'], $previous),
-        ]) . '</p>',
+        '#markup' => '<p>' . $comparisonMarkup . '</p>',
       ],
       'grafico' => [
         '#type' => 'container',
@@ -466,6 +473,44 @@ final class StatisticsDashboardController extends ControllerBase {
     $list = array_keys($purposes);
     sort($list);
     return $list;
+  }
+
+  /**
+   * Valor do período: soma para contadores, último retrato para as demais.
+   */
+  private function periodValue(MetricDefinition $metric, int $today, int $days, ?string $domain): ?int {
+    if ($metric->isAdditive()) {
+      $total = 0;
+      for ($day = $today - $days + 1; $day <= $today; $day++) {
+        $total += $this->dailyTotal($metric->id, $day, $domain);
+      }
+      return $total;
+    }
+    return $this->derivedValueAt($metric, $today, $domain);
+  }
+
+  /**
+   * Valor comparável do período anterior, sem somar retratos.
+   */
+  private function previousPeriodValue(MetricDefinition $metric, int $today, int $days, ?string $domain): ?int {
+    if ($metric->isAdditive()) {
+      $total = 0;
+      for ($day = $today - 2 * $days + 1; $day <= $today - $days; $day++) {
+        $total += $this->dailyTotal($metric->id, $day, $domain);
+      }
+      return $total;
+    }
+    return $this->derivedValueAt($metric, $today - $days, $domain);
+  }
+
+  /**
+   * Valor de métrica de estado no dia; NULL quando não houve coleta.
+   */
+  private function derivedValueAt(MetricDefinition $metric, int $day, ?string $domain): ?int {
+    if (!$this->storage->hasDay($metric->id, $day)) {
+      return NULL;
+    }
+    return $this->dailyTotal($metric->id, $day, $domain);
   }
 
   /**

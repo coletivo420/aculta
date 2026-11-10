@@ -13,6 +13,52 @@ retention:
     days: 90
   - metric: forum.posts.created
     days: 90
+  - metric: forum.replies.created
+    days: 90
+  - metric: forum.topics.published_current
+    days: 90
+  - metric: forum.replies.published_current
+    days: 90
+  - metric: forum.categories.active
+    days: 90
+  - metric: forum.topics.unanswered
+    days: 90
+  - metric: forum.participants.engaged_7d
+    days: 90
+  - metric: forum.participants.engaged_30d
+    days: 90
+  - metric: forum.participants.new_contributors
+    days: 90
+  - metric: forum.response.first_median_minutes
+    days: 90
+  - metric: forum.response.first_p90_minutes
+    days: 90
+  - metric: forum.response.unanswered_over_72h
+    days: 90
+  - metric: forum.response.rate
+    days: 90
+  - metric: forum.reactions.added
+    days: 90
+  - metric: forum.reactions.active
+    days: 90
+  - metric: forum.moderation.reports_open
+    days: 90
+  - metric: forum.moderation.reports_resolved
+    days: 90
+  - metric: forum.moderation.resolution_median_minutes
+    days: 90
+  - metric: forum.moderation.posts_pending
+    days: 90
+  - metric: forum.topics.views
+    days: 90
+  - metric: forum.categories.views
+    days: 90
+  - metric: forum.search.queries
+    days: 90
+  - metric: forum.search.zero_results
+    days: 90
+  - metric: forum.search.clickthrough
+    days: 90
   - metric: email.messages.queued
     days: 90
   - metric: email.messages.accepted

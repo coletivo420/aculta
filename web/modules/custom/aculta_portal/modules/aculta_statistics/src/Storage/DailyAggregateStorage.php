@@ -264,6 +264,19 @@ final class DailyAggregateStorage implements AggregateStorageInterface {
   /**
    * {@inheritdoc}
    */
+  public function hasDay(string $metric, int $day): bool {
+    $this->assertMetric($metric);
+    $query = $this->database->select(self::TABLE, 'stats')
+      ->fields('stats', ['day'])
+      ->condition('metric', $metric)
+      ->condition('day', $day)
+      ->range(0, 1);
+    return (bool) $query->execute()->fetchField();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function currentDay(): int {
     return intdiv($this->time->getRequestTime(), self::DAY_SECONDS);
   }

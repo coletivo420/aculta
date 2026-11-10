@@ -144,6 +144,13 @@ interface AggregateStorageInterface {
   ): array;
 
   /**
+   * Indica se há linha coletada da métrica no dia.
+   *
+   * Usado para distinguir "sem coleta" de "valor zero" em métricas de estado.
+   */
+  public function hasDay(string $metric, int $day): bool;
+
+  /**
    * Número do dia UTC atual, usado como chave de agregação.
    */
   public function currentDay(): int;

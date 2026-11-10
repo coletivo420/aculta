@@ -283,8 +283,8 @@ Estados possíveis: PLANEJADA, EM EXECUÇÃO, IMPLEMENTADA NO CÓDIGO, TESTADA, 
 | Fase | Estado | Evidência |
 | --- | --- | --- |
 | FST-00 | TESTADA | Baseline Unit: `aculta_forum` 241 testes OK; `aculta_statistics` 108 testes OK; Kernel `DailyAggregateStorageKernelTest` 16 testes OK em `aculta_simpletest`. Inventário de produtores, consumidores e tabelas registrado neste documento. |
-| FST-01 | IMPLEMENTADA NO CÓDIGO | `ForumAnalyticsScopeResolver`, `ForumAnalyticsScope` e `ForumReactionReconciliation`; `DiscussionReactionManager`, `PublicForumContextProvider` e painel do Fórum corrigidos. Unit focais executados; Kernel integrado pendente. |
-| FST-02 | PLANEJADA | Pendente: tipos de métrica e provider do Fórum. |
+| FST-01 | TESTADA | `ForumAnalyticsScopeResolver`, `ForumAnalyticsScope` e `ForumReactionReconciliation`; `DiscussionReactionManager`, `PublicForumContextProvider` e painel do Fórum corrigidos. Unit focais e suíte completa do Fórum passam; Kernel integrado de Group pendente em FST-11. |
+| FST-02 | TESTADA | `MetricDefinition` com tipos `counter`, `snapshot`, `distinct-window`, `ratio`, `distribution` e `operational`; contrato neutro `MetricProviderInterface` no Portal; `MetricProviderCollector` e cron de retratos; `ForumMetricsProvider` publicado por tag opcional. Unit dos dois módulos passam. |
 | FST-03 | PLANEJADA | Pendente: idempotência persistente e prova Kernel dos dois módulos. |
 | FST-04 | PLANEJADA | Pendente. |
 | FST-05 | PLANEJADA | Pendente. |
