@@ -1,7 +1,10 @@
 ## Não versionado — inventário de consumidores Twig da View (2026-11-10)
 
-- O gerador audita individualmente os field/unformatted overrides de categorias,
-  owner, display, SDC substituto e critério de retirada pós-cutover.
+- O gerador audita os 89 templates Twig do tema e módulos customizados;
+  classifica os 38 adaptadores com inclusão direta de SDC como nativos e mantém
+  os outros 51 como migração em andamento para mapeamento e revisão funcional.
+- Os field/unformatted overrides de categorias têm owner, display, SDC
+  substituto e critério de retirada pós-cutover.
 - UI Patterns CKEditor 5 consta como obsoleto sem fallback; estado Enabled é
   apenas fotografia de 2026-11-10, e uninstall Runtime fica DEFERRED.
 

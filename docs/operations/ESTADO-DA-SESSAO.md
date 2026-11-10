@@ -1,9 +1,9 @@
 # ADR-054 + ADR-055 — UI Suite editorial e Views — 2026-11-10
 
-- **Objetivo/estado:** Skins remove paletas purpose em código; UI Styles CKEditor está em Sync para `revista_editorial`; piloto `forum-category` está em Sync/install. Inventário reproduzível ampliado a 301 consumidores e classifica três templates da View de categorias como `LEGACY_DEPRECATED`.
+- **Objetivo/estado:** Skins remove paletas purpose em código; UI Styles CKEditor está em Sync para `revista_editorial`; piloto `forum-category` está em Sync/install. Inventário reproduzível tem 387 itens, incluindo os 89 templates Twig customizados; três overrides da View de categorias ficam `LEGACY_DEPRECATED` até cutover comprovado.
 - **Decisões/cuidados:** sem config antiga/dual-read; `DomainPurposeManager` permanece funcional. UI Patterns CKEditor 5 está `LEGACY_OBSOLETE`; Enabled é fotografia histórica de 2026-11-10, sem retenção/fallback. Desinstalação no Runtime requer autorização.
 - **Commits:** `99d8bcc62`; inventário e registro Portal nesta fase.
-- **Verificações:** ForumTopicDisplayConfig 20/20 (312 assertions); inventário 301 itens; status, PHPCS, UI Styles 38, SDC 1710, UI Library 25, fronteira 7872 PASS. Token budget FAIL em 7 limites globais preexistentes. Gate Drupal 12 1243, UI Styles 38, fronteira 7872, Kernel editor 9/9 (176) e SDC schema 1710 PASS na fase anterior. Runtime/cutover DEFERRED por post-update e drift; gate amplo SDC falha em `auth-dialog.twig` preexistente.
+- **Verificações:** ForumTopicDisplayConfig 20/20 (312 assertions); inventário 387 itens/89 templates; status, PHPCS, UI Styles 38, SDC 1710, UI Library 25, fronteira 7872 PASS. Token budget FAIL em 7 limites globais preexistentes. Gate Drupal 12 1243, UI Styles 38, fronteira 7872, Kernel editor 9/9 (176) e SDC schema 1710 PASS na fase anterior. Runtime/cutover DEFERRED por post-update e drift; gate amplo SDC falha em `auth-dialog.twig` preexistente.
 - **Pendências/próximo passo:** obter cutover autorizado para validar render/acesso/cache/markup da View e remover os três overrides somente após prova de bypass. Prosseguir inventário visual integral e migração dos demais domínios.
 
 # FST-00 a FST-11 — integração analítica Fórum + Statistics — 2026-11-10

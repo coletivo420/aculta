@@ -103,47 +103,71 @@ foreach (glob($sync . '/core.entity_view_display.*.yml') ?: [] as $path) {
   ];
 }
 
-// Track active theme template overrides as individual visual consumers so
-// migration and retirement decisions have named evidence instead of inference.
-$templateConsumers = [
-  'views-view-fields--aculta-forum-categories--page-categories.html.twig' => [
-    'view' => 'aculta_forum_categories',
-    'display' => 'page_categories',
-    'replacement' => 'aculta420_v2:forum-category via UI Patterns Views row',
-  ],
-  'views-view-fields--aculta-forum-categories--block-landing.html.twig' => [
-    'view' => 'aculta_forum_categories',
-    'display' => 'block_landing',
-    'replacement' => 'aculta420_v2:forum-category via UI Patterns Views row',
-  ],
-  'views-view-unformatted--aculta-forum-categories--page-categories.html.twig' => [
-    'view' => 'aculta_forum_categories',
-    'display' => 'page_categories',
-    'replacement' => 'UI Patterns Views style/row composition with the existing forum-category-list SDC CSS',
-  ],
+// Inventory every custom Twig template individually. Templates that compose an
+// SDC directly are native; other templates remain explicit migration work until
+// their visual and functional contracts have a reviewed SDC/UI Suite mapping.
+$templateRoots = [
+  'aculta420_v2' => $theme . '/templates',
 ];
-foreach ($templateConsumers as $filename => $consumer) {
-  $path = $theme . '/templates/views/' . $filename;
-  if (!is_file($path)) {
+$moduleIterator = new RecursiveIteratorIterator(
+  new RecursiveDirectoryIterator($customModules, FilesystemIterator::SKIP_DOTS),
+  RecursiveIteratorIterator::SELF_FIRST,
+);
+foreach ($moduleIterator as $directory) {
+  if (!$directory->isDir() || $directory->getFilename() !== 'templates') {
     continue;
   }
-  $rows[] = [
-    'id' => 'template:' . $filename,
-    'owner_module' => 'aculta420_v2',
-    'config_path' => relative_path($root, $path) . '; config/sync/views.view.' . $consumer['view'] . '.yml',
-    'consumer_type' => 'theme_template_override',
-    'consumer_id' => $consumer['view'] . ':' . $consumer['display'],
-    'display_plugin' => 'views-field-row-template',
-    'row_plugin' => 'ui_patterns',
-    'style_plugin' => 'default',
-    'ui_patterns_configured' => 'aculta420_v2:forum-category',
-    'status' => 'LEGACY_DEPRECATED',
-    'replacement_or_action' => $consumer['replacement'] . '; remove this override after Runtime output proves it is bypassed and access/cache/markup match the baseline',
-    'risk_or_evidence_gap' => 'Template is currently selected by Views suggestions; row-plugin execution and browser output after authorized Runtime cutover are unverified',
-    'rollback' => 'Restore this template file from the immediately preceding commit; no entity data changes',
-    'detected_consumers' => $consumer['view'] . ':' . $consumer['display'],
-    'runtime_status' => 'not_observed',
-  ];
+  $templateRoot = $directory->getPathname();
+  $relative = relative_path($root, $templateRoot);
+  if (preg_match('#web/modules/custom/([^/]+)(?:/modules/([^/]+))?#', $relative, $matches) === 1) {
+    $owner = $matches[2] ?? $matches[1];
+    preg_match('#^web/modules/custom/[^/]+#', $relative, $moduleRootMatch);
+    $nestedModulePath = substr($relative, strlen($moduleRootMatch[0] ?? ''));
+    if (preg_match_all('#/modules/([^/]+)#', $nestedModulePath, $moduleMatches) > 0) {
+      $owner = end($moduleMatches[1]);
+    }
+    $templateRoots[$owner] = $templateRoot;
+  }
+}
+foreach ($templateRoots as $owner => $templateRoot) {
+  $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($templateRoot, FilesystemIterator::SKIP_DOTS));
+  foreach ($iterator as $file) {
+    if (!$file->isFile() || !str_ends_with($file->getFilename(), '.html.twig')) {
+      continue;
+    }
+    $path = $file->getPathname();
+    $relativePath = relative_path($root, $path);
+    $contents = (string) file_get_contents($path);
+    preg_match_all("/aculta420_v2:([a-z0-9_-]+)/", $contents, $componentMatches);
+    $components = array_values(array_unique($componentMatches[1] ?? []));
+    $isSdcAdapter = $components !== [];
+    preg_match('/views-view(?:-fields|-unformatted)?--([a-z0-9_-]+)--([a-z0-9_-]+)/', $file->getFilename(), $viewMatches);
+    $viewConsumer = isset($viewMatches[1], $viewMatches[2])
+      ? $viewMatches[1] . ':' . $viewMatches[2]
+      : 'template suggestion; exact route/runtime consumers require review';
+    $viewConfig = isset($viewMatches[1]) ? 'config/sync/views.view.' . $viewMatches[1] . '.yml' : '';
+    $rows[] = [
+      'id' => 'template:' . $relativePath,
+      'owner_module' => $owner,
+      'config_path' => $relativePath . ($viewConfig !== '' ? '; ' . $viewConfig : ''),
+      'consumer_type' => str_starts_with($relativePath, 'web/themes/') ? 'theme_template_override' : 'custom_module_template',
+      'consumer_id' => $viewConsumer,
+      'display_plugin' => 'twig-template-suggestion',
+      'row_plugin' => '',
+      'style_plugin' => '',
+      'ui_patterns_configured' => $components !== [] ? implode(',', $components) : 'not_detected_in_template',
+      'status' => $isSdcAdapter ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS',
+      'replacement_or_action' => $isSdcAdapter
+        ? 'Keep as thin adapter; directly composes ' . implode(', ', $components) . ' and preserves Drupal render contract'
+        : 'Map this template suggestion and its data/access/cache contract to an existing SDC plus the appropriate UI Suite integration; do not remove before replacement proof',
+      'risk_or_evidence_gap' => $isSdcAdapter
+        ? 'SDC inclusion is source-verified; Runtime output, access and cache equivalence remain unverified'
+        : 'Template is an active custom presentation candidate; exact consumers, functional responsibilities and SDC mapping need file/API review',
+      'rollback' => 'Restore this template from the immediately preceding commit; no entity data changes',
+      'detected_consumers' => $viewConsumer,
+      'runtime_status' => 'not_observed',
+    ];
+  }
 }
 
 $componentIds = [];
