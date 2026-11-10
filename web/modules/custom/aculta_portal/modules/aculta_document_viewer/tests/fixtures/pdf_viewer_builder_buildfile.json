@@ -25,8 +25,7 @@
                 "data-aculta-pdf-control": "toolbar"
             },
             "previous": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Página anterior"
@@ -50,8 +49,7 @@
                 }
             },
             "next": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Próxima página"
@@ -75,8 +73,7 @@
                     "data-aculta-pdf-control": "zoom-controls"
                 },
                 "zoom_out": {
-                    "#type": "component",
-                    "#component": "aculta420_v2:button",
+                    "#type": "aculta_portal_button",
                     "#props": {
                         "text": {
                             "__translatable": "Reduzir zoom"
@@ -97,8 +94,7 @@
                     }
                 },
                 "zoom_in": {
-                    "#type": "component",
-                    "#component": "aculta420_v2:button",
+                    "#type": "aculta_portal_button",
                     "#props": {
                         "text": {
                             "__translatable": "Aumentar zoom"
@@ -110,8 +106,7 @@
                     }
                 },
                 "zoom_reset": {
-                    "#type": "component",
-                    "#component": "aculta420_v2:button",
+                    "#type": "aculta_portal_button",
                     "#props": {
                         "text": {
                             "__translatable": "Restaurar zoom"
@@ -124,8 +119,7 @@
                 }
             },
             "rotate": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Girar página 90 graus"
@@ -137,8 +131,7 @@
                 }
             },
             "fullscreen": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Tela cheia"
@@ -171,8 +164,7 @@
                 }
             },
             "submit": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Buscar"
@@ -184,8 +176,7 @@
                 }
             },
             "previous": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Resultado anterior"
@@ -198,8 +189,7 @@
                 }
             },
             "next": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Próximo resultado"
@@ -383,8 +373,7 @@
                 "data-aculta-pdf-control": "toolbar"
             },
             "previous": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Página anterior"
@@ -408,8 +397,7 @@
                 }
             },
             "next": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Próxima página"
@@ -433,8 +421,7 @@
                     "data-aculta-pdf-control": "zoom-controls"
                 },
                 "zoom_out": {
-                    "#type": "component",
-                    "#component": "aculta420_v2:button",
+                    "#type": "aculta_portal_button",
                     "#props": {
                         "text": {
                             "__translatable": "Reduzir zoom"
@@ -455,8 +442,7 @@
                     }
                 },
                 "zoom_in": {
-                    "#type": "component",
-                    "#component": "aculta420_v2:button",
+                    "#type": "aculta_portal_button",
                     "#props": {
                         "text": {
                             "__translatable": "Aumentar zoom"
@@ -468,8 +454,7 @@
                     }
                 },
                 "zoom_reset": {
-                    "#type": "component",
-                    "#component": "aculta420_v2:button",
+                    "#type": "aculta_portal_button",
                     "#props": {
                         "text": {
                             "__translatable": "Restaurar zoom"
@@ -482,8 +467,7 @@
                 }
             },
             "rotate": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Girar página 90 graus"
@@ -495,8 +479,7 @@
                 }
             },
             "fullscreen": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Tela cheia"
@@ -529,8 +512,7 @@
                 }
             },
             "submit": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Buscar"
@@ -542,8 +524,7 @@
                 }
             },
             "previous": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Resultado anterior"
@@ -556,8 +537,7 @@
                 }
             },
             "next": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Próximo resultado"
@@ -752,8 +732,7 @@
                 "data-aculta-pdf-control": "toolbar"
             },
             "previous": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Página anterior"
@@ -778,8 +757,7 @@
                 }
             },
             "next": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Próxima página"
@@ -804,8 +782,7 @@
                     "data-aculta-pdf-control": "zoom-controls"
                 },
                 "zoom_out": {
-                    "#type": "component",
-                    "#component": "aculta420_v2:button",
+                    "#type": "aculta_portal_button",
                     "#props": {
                         "text": {
                             "__translatable": "Reduzir zoom"
@@ -826,8 +803,7 @@
                     }
                 },
                 "zoom_in": {
-                    "#type": "component",
-                    "#component": "aculta420_v2:button",
+                    "#type": "aculta_portal_button",
                     "#props": {
                         "text": {
                             "__translatable": "Aumentar zoom"
@@ -839,8 +815,7 @@
                     }
                 },
                 "zoom_reset": {
-                    "#type": "component",
-                    "#component": "aculta420_v2:button",
+                    "#type": "aculta_portal_button",
                     "#props": {
                         "text": {
                             "__translatable": "Restaurar zoom"
@@ -854,8 +829,7 @@
                 "#access": false
             },
             "rotate": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Girar página 90 graus"
@@ -868,8 +842,7 @@
                 "#access": false
             },
             "fullscreen": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Tela cheia"
@@ -903,8 +876,7 @@
                 }
             },
             "submit": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Buscar"
@@ -916,8 +888,7 @@
                 }
             },
             "previous": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Resultado anterior"
@@ -930,8 +901,7 @@
                 }
             },
             "next": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Próximo resultado"
@@ -1119,8 +1089,7 @@
                 "data-aculta-pdf-control": "toolbar"
             },
             "previous": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Página anterior"
@@ -1144,8 +1113,7 @@
                 }
             },
             "next": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Próxima página"
@@ -1169,8 +1137,7 @@
                     "data-aculta-pdf-control": "zoom-controls"
                 },
                 "zoom_out": {
-                    "#type": "component",
-                    "#component": "aculta420_v2:button",
+                    "#type": "aculta_portal_button",
                     "#props": {
                         "text": {
                             "__translatable": "Reduzir zoom"
@@ -1191,8 +1158,7 @@
                     }
                 },
                 "zoom_in": {
-                    "#type": "component",
-                    "#component": "aculta420_v2:button",
+                    "#type": "aculta_portal_button",
                     "#props": {
                         "text": {
                             "__translatable": "Aumentar zoom"
@@ -1204,8 +1170,7 @@
                     }
                 },
                 "zoom_reset": {
-                    "#type": "component",
-                    "#component": "aculta420_v2:button",
+                    "#type": "aculta_portal_button",
                     "#props": {
                         "text": {
                             "__translatable": "Restaurar zoom"
@@ -1218,8 +1183,7 @@
                 }
             },
             "rotate": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Girar página 90 graus"
@@ -1231,8 +1195,7 @@
                 }
             },
             "fullscreen": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Tela cheia"
@@ -1265,8 +1228,7 @@
                 }
             },
             "submit": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Buscar"
@@ -1278,8 +1240,7 @@
                 }
             },
             "previous": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Resultado anterior"
@@ -1292,8 +1253,7 @@
                 }
             },
             "next": {
-                "#type": "component",
-                "#component": "aculta420_v2:button",
+                "#type": "aculta_portal_button",
                 "#props": {
                     "text": {
                         "__translatable": "Próximo resultado"

@@ -71,6 +71,7 @@ final class LoginValidatorSwapTest extends UnitTestCase {
         $translation,
         $this->createMock(RendererInterface::class),
         $this->createMock(MessengerInterface::class),
+        new RequestStack(),
       ),
       new RequestStack(),
     );
