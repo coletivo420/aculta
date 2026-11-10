@@ -304,12 +304,6 @@ parameters:
 			path: scripts/migrate-activity-locations.php
 
 		-
-			rawMessage: Variable $argv might not be defined.
-			identifier: variable.undefined
-			count: 1
-			path: scripts/phpstan-ratchet.php
-
-		-
 			rawMessage: Offset 0 on non-empty-list<string> on left side of ?? always exists and is not nullable.
 			identifier: nullCoalesce.offset
 			count: 1
@@ -8830,46 +8824,16 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Controller/MailDashboardController.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 7
-			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Controller/MailLogListController.php
-
-		-
 			rawMessage: 'Strict comparison using !== between int|non-empty-string and null will always evaluate to true.'
 			identifier: notIdentical.alwaysTrue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Controller/MailLogListController.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 8
-			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Controller/MailStatusController.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Controller/MailTrackingController.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::set().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Controller/MailTrackingController.php
-
-		-
 			rawMessage: 'Parameter #1 $array of function reset is passed by reference, so it expects variables only.'
 			identifier: argument.byRef
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Controller/MailTrackingController.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 8
-			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Dashboard/MailDashboard.php
 
 		-
 			rawMessage: Coalesce operator ?? is unnecessary because the left side is always set and the right side is null.
@@ -8944,12 +8908,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Form/MailPolicyForm.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Form/MailResendForm.php
-
-		-
 			rawMessage: 'Return type (string) of method Drupal\aculta_mailer\Form\MailResendForm::getConfirmText() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormBase::getConfirmText()'
 			identifier: method.childReturnType
 			count: 1
@@ -9016,12 +8974,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Plugin/Mail/AcultaMailerMail.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Policy/QuotaSignal.php
-
-		-
 			rawMessage: 'Call to function is_array() with array will always evaluate to true.'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -9032,12 +8984,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Provider/BrevoEventStatus.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_mailer/src/Report/MailSummary.php
 
 		-
 			rawMessage: 'Call to method setStreamOptions() of internal class Symfony\Component\Mailer\Transport\Smtp\Stream\SocketStream from outside its root namespace Symfony.'

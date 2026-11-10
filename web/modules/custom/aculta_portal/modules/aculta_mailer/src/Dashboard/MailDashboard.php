@@ -7,6 +7,7 @@ namespace Drupal\aculta_mailer\Dashboard;
 use Drupal\aculta_mailer\Log\MailLogRecorder;
 use Drupal\aculta_mailer\Message\MailStatus;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
@@ -90,6 +91,7 @@ final class MailDashboard {
       ->execute();
     $rows = [];
     foreach ($this->entityTypeManager->getStorage(MailLogRecorder::ENTITY_TYPE)->loadMultiple($ids) as $log) {
+      assert($log instanceof ContentEntityInterface);
       $rows[] = [
         'id' => (string) $log->id(),
         'created' => (int) $log->get('created')->value,

@@ -103,7 +103,7 @@ sem plano de migração de instalações existentes, então ele permanece.
   `test-discovery` e `phpunit-unit` (JUnit como artefato). O job Unit não usa
   banco.
 - PHPStan não usa mais `|| true` nem ratchet de contagem. `phpstan.neon` inclui
-  `phpstan-baseline.neon` (3823 erros históricos revisados) e mantém
+  `phpstan-baseline.neon` (3788 erros históricos revisados) e mantém
   `reportUnmatchedIgnoredErrors: true`. O CI roda `phpstan analyse` sem
   regenerar o baseline: erro novo ou entrada de baseline resolvida falha o job.
   A dívida por módulo, identificador e criticidade fica em
@@ -119,7 +119,8 @@ sem plano de migração de instalações existentes, então ele permanece.
 | `phpunit --filter FaqEditorialSafetyKernelTest` (com `SIMPLETEST_DB`) | PASS — 3 testes, 45 asserções |
 | `phpunit -c phpunit.performance.xml` sem banco | PASS — 4 pulados em ~3 s |
 | `phpunit` nos 15 arquivos convertidos de doc-comment | PASS — 48 testes, 269 asserções |
-| `vendor/bin/phpstan analyse` (com baseline) | PASS — 0 erros não baselined; baseline de 3823 |
+| `vendor/bin/phpstan analyse` (com baseline) | PASS — 0 erros não baselined; baseline de 3788 |
+| `aculta_mailer` Unit + Kernel após narrowing | PASS — 167/351 e 46/214 asserções; módulo 103 → 69 erros PHPStan |
 | `php scripts/tests/validate-aculta420-design-foundations-test.php` | PASS — 14 fixtures |
 | `php scripts/validate-module-theme-boundary.php` | PASS — 7884 verificações |
 | `php scripts/audit-browser-scripts.php` | 294 arquivos rastreados classificados; 9 entrypoints, 49 contratos de rota, 153 scripts, 18 scripts sem consumidor removidos |
@@ -145,7 +146,7 @@ inventário.
 | P2 | aberto | `validate-aculta420-design-foundations.php` falha no tema real (5/1271) por literais de cor em CSS existente | Substituir literais por tokens semânticos ou justificar exceção |
 | P6 | aberto | `ForumTopicDisplayConfigTest` com 709 linhas e múltiplas responsabilidades (form/display, listagens, admin, domain/pathauto) | Separar em classes por responsabilidade com uma base compartilhada, mantendo a suíte verde |
 | P7 | aberto | Dois arquivos `ContentPurposeResolver*Test` em renomeação concorrente para `ContentSiteKeyResolver*Test` ainda coexistem na árvore de trabalho | Concluir a renomeação do outro agente; a suíte completa já passa excluindo o par duplicado |
-| P9 | aberto | 3823 erros PHPStan baselined (dívida histórica) | Reduzir em rodadas de 25–75 erros, começando por acesso/pagamento; atualizar o baseline e `phpstan-debt.md` a cada rodada |
+| P9 | aberto | 3788 erros PHPStan baselined (dívida histórica) | Reduzir em rodadas de 25–75 erros, começando por acesso/pagamento; atualizar o baseline e `phpstan-debt.md` a cada rodada |
 
 ## 8. Recuperação
 

@@ -10,6 +10,7 @@ use Drupal\aculta_mailer\Message\MailStatus;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -72,6 +73,7 @@ final class MailLogListController extends ControllerBase {
 
     $rows = [];
     foreach ($storage->loadMultiple($ids) as $log) {
+      assert($log instanceof ContentEntityInterface);
       $rows[] = [
         date('Y-m-d H:i', (int) $log->get('created')->value),
         (string) $log->get('type')->value,

@@ -7,6 +7,7 @@ namespace Drupal\aculta_mailer\Policy;
 use Drupal\aculta_mailer\Alert\MailAlerts;
 use Drupal\aculta_mailer\Log\MailLogRecorder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 
 /**
  * Liga o texto de erro ou de bounce ao transporte e ao alerta.
@@ -43,7 +44,9 @@ class QuotaSignal {
     if ($found === []) {
       return;
     }
-    $this->failure((string) reset($found)->get('transport')->value, $diagnostic);
+    $log = reset($found);
+    assert($log instanceof ContentEntityInterface);
+    $this->failure((string) $log->get('transport')->value, $diagnostic);
   }
 
 }

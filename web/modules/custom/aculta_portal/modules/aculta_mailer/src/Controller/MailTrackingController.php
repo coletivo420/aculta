@@ -9,6 +9,7 @@ use Drupal\aculta_mailer\Tracking\MailTracker;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -78,6 +79,7 @@ final class MailTrackingController extends ControllerBase {
     if (!$log) {
       return;
     }
+    assert($log instanceof ContentEntityInterface);
     $log->set($counter, (int) $log->get($counter)->value + 1);
     if ((int) $log->get($first)->value === 0) {
       $log->set($first, $this->time->getRequestTime());

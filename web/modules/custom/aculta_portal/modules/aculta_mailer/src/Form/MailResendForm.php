@@ -8,6 +8,7 @@ use Drupal\aculta_mailer\Delivery\MailResend;
 use Drupal\aculta_mailer\Log\MailLogRecorder;
 use Drupal\aculta_mailer\Log\SingleUseLinkMail;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -84,6 +85,7 @@ final class MailResendForm extends ConfirmFormBase {
       $form_state->setRedirect('aculta_mailer.failures');
       return [];
     }
+    assert($log instanceof ContentEntityInterface);
     $form['log_id'] = ['#type' => 'value', '#value' => $log_id];
     $form['summary'] = [
       '#markup' => '<p>' . $this->t('Tipo: @type. Data: @date. Tentativas até agora: @n.', [

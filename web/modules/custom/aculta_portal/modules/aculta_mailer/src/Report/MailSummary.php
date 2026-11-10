@@ -15,6 +15,7 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\State\StateInterface;
 
 /**
@@ -140,6 +141,7 @@ final class MailSummary {
       ->execute();
     $codes = [];
     foreach ($storage->loadMultiple($ids) as $log) {
+      assert($log instanceof ContentEntityInterface);
       $code = (string) $log->get('error_code')->value;
       $codes[$code === '' ? '(sem código)' : $code] = ($codes[$code === '' ? '(sem código)' : $code] ?? 0) + 1;
     }
