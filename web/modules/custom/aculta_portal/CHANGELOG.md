@@ -18,6 +18,15 @@
 - Preferência de modo continua com `ColorModePreference`; anexos variam por usuário/domínio e dependem da config de skins.
 - UI Skins ainda não foi habilitado no Runtime. Ativação e renderização continuam pendentes.
 
+## Não versionado — bundle Locale e biblioteca UI Patterns (2026-11-10)
+
+- Mantém o arquivo JavaScript dinâmico `locale/translations` fora dos agregados,
+  pois o asset controller não consegue reconstruí-lo a partir do grupo isolado.
+- A biblioteca de componentes autenticada voltou a abrir após rebuild; Firefox
+  confirmou 11 scripts com HTTP 200 e MIME `text/javascript`, sem página de erro.
+- Avisos CSP de scripts/estilos inline seguem em `Report-Only`; o navegador
+  informa que não houve bloqueio. A homologação visual completa segue pendente.
+
 ## Não versionado — destinos de login em site_key
 
 - `DomainSiteRequestSubscriber`, PortalHooks, login popup e checkout usam `DomainSiteManagerInterface`/`SiteKey`; remove dependências visuais/URLs desses consumers em `DomainPurposeManager` e troca o service/class subscriber.

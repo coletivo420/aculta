@@ -79,6 +79,19 @@ final class AppearanceHooks {
    */
   #[Hook('library_info_alter')]
   public function alterLibraries(array &$libraries, string $extension): void {
+    if ($extension === 'locale' && isset($libraries['translations']['js'])) {
+      // Locale replaces this placeholder with a request-specific JS file.
+      // Keeping it in a JS aggregate makes the asset route unable to rebuild
+      // that file from the isolated locale/translations library group.
+      foreach ($libraries['translations']['js'] as $source => &$asset) {
+        if (($asset['data'] ?? $source) === 'locale.translation.js'
+          || ($asset['data'] ?? $source) === 'core/modules/locale/locale.translation.js') {
+          $asset['preprocess'] = FALSE;
+        }
+      }
+      unset($asset);
+    }
+
     if ($extension === 'core' && isset($libraries['components.commerce--commerce-admin-card'])) {
       $dependencies = $libraries['components.commerce--commerce-admin-card']['dependencies'] ?? [];
       if (!in_array('core/drupal', $dependencies, TRUE)) {

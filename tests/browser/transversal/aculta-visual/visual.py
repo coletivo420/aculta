@@ -12,7 +12,7 @@ import unicodedata
 from pathlib import Path
 from websockets.sync.client import connect
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "tests/browser/shop/aculta-cpf-checkout"))
 from wdlib import Driver  # noqa: E402
 

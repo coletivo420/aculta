@@ -7,10 +7,10 @@ Estado: Dev · versão 0.5.0-dev.1 (`aculta_portal.info.yml`) · status: `docs/o
 ## Próximo passo
 
 - **RN-01/02:** SiteKey, DomainSiteManager e ContentSiteKeyResolver implementados; options antigas removidas sem fallback. Migrar consumidores restantes e provar paridade de URLs, ACL e cache.
-- **RN-03 State concluído:** `active_site_keys` substitui diretamente o State antigo. Kernel isolado 2/17; PHPCS PASS. Post-update está versionado, mas não executado no Runtime por exigir `updatedb`.
+- **RN-03 State concluído:** `active_site_keys` substitui diretamente o State antigo. Kernel isolado 2/17; PHPCS PASS. Post-update executado no Runtime após snapshot autorizado.
 - **RN-00:** inventário reproduzível registra 1.610 referências sem triagem; completar matriz HTTP, State, sessão e owners.
-- **US-02 UI Skins:** `DomainSkinResolver` mapeia dez Domain IDs a skin IDs e `AppearanceHooks` entrega `aculta_skin_id`/`aculta_site_key`; tema declara scopes oficiais UI Skins para dez × light/dark e remove config/form/tokens antigos. Runtime `ui_skins` está ativo; mapa/scopes ainda não chegaram à configuração ativa. Import parcial autorizado aguarda execução do post-update Portal; render real, baseline Links e captura visual pendentes.
-- **ADR-054/055 visual:** Portal mantém dados; tema compõe `layout-section` e `surface`. UI Skins ativo; mapa/import e baseline Links pendentes.
+- **US-02 UI Skins:** `DomainSkinResolver` entrega `aculta_skin_id`/`aculta_site_key`; tema declara scopes oficiais para dez skins × dois modos e remove o motor visual antigo. Runtime ativo; mapa limitado ao piloto `links_aculta_org: ruderalis`, demais domínios usam `skunk` até aceite visual.
+- **ADR-054/055 visual:** Portal mantém dados; tema compõe `layout-section` e `surface`. UI Patterns Library autenticada voltou a abrir após rebuild do container; `locale/translations` sai do agregado quebrado, 11/11 scripts responderam 200 e `text/javascript`. CSP inline segue com violações report-only que não bloqueiam execução. Piloto Links, cache por domínio e aceitação visual ainda pendentes.
 - Depois, criar adapters de inventário para conteúdo, revisões e anexos e executor com backup/restauração, auditoria e revalidação por lote. Homologar em banco isolado; não executar limpeza nem `updatedb` sem autorização.
 
 ## Leitura e entrega

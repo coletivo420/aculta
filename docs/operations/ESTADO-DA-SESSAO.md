@@ -1,12 +1,12 @@
 # ADR-054/055 — cutover UI Suite e piloto Links — 2026-11-10
 
-- **Objetivo:** migrar ownership de configurações e iniciar UI Skins no Runtime com rollout Links.
-- **Estado:** snapshot íntegro validado; `updatedb` executou três updates e import parcial aplicou 12 objetos, seguido de import apenas do mapa Links. UI Styles CKEditor 5 ativo; Forum categories usa `forum-category`; mapa é só `links_aculta_org: ruderalis`, os outros domínios usam `skunk` provisório. Valores migrados preservados e IDs antigos ausentes.
-- **Decisões/cuidados:** sem fallback visual legado conforme instrução do responsável; não tocar nos diffs paralelos do Messenger nem `web/tmp`.
-- **Commits/arquivos:** código de migração `d3e5c32d0`; esta entrega altera mapa Sync/default, gate UI Skins, ADRs, status e changelog.
-- **Verificações:** UI Skins 134, theme settings 16, foundations 83 pares e Portal Drupal 12 1.243 PASS; `drush cr` PASS. Browser/contraste/cache DEFERRED sem DISPLAY X11. Gate de comércio FAIL no rótulo público de login.
-- **Pendências:** corrigir/confirmar o rótulo de login; executar piloto Links no Firefox com modos, dimensões e cache antes de expandir domínios; completar migração integral US/RN.
-- **Próximo passo:** preparar sessão X11/browser e medir `data-skin`, tokens calculados e cache por domínio em Links; então decidir expansão do mapa.
+- **Objetivo:** concluir o cutover visual e recuperar `/painel-administrativo/aparencia/ui/components` após 500/erro de agregado JS.
+- **Estado:** página autenticada abre após `drush cr` (container compilado estava obsoleto em meio a alterações paralelas no Messenger). O asset dinâmico `locale/translations` foi excluído do preprocess agregado via `AppearanceHooks`; Firefox autenticado verificou 11 scripts com HTTP 200 e MIME `text/javascript`, sem falhas. Avisos inline CSP são `Report-Only`, sem bloqueio. Mapa UI Skins segue só `links_aculta_org: ruderalis`; os outros domínios ficam em `skunk` até aceite.
+- **Decisões/cuidados:** não afrouxar CSP; sem fallback visual legado conforme instrução do responsável; não tocar nos diffs paralelos do Messenger nem `web/tmp`.
+- **Commits/arquivos:** cutover anterior `992be479a`; correção atual inclui hook Portal, teste Unit, ajuste de raiz do browser runner, TODO/CHANGELOG e handoff.
+- **Verificações:** Unit `AppearanceHooksTest` 1/1, PHP lint, PHPCS e `git diff --check` PASS; script visual autenticado passou (1280 e 320 sem overflow); rede 11/11 scripts 200/MIME correto. Validador global `validate-browser-index.php` FAIL por índice desatualizado, READMEs ausentes e referências inválidas sob `.claude/worktrees`; falha fora do escopo.
+- **Pendências:** homologar visual/cache/contraste do piloto Links e modos antes de expandir domínios; resolver gate de comércio no rótulo público do login; completar migração integral US/RN.
+- **Próximo passo:** publicar correção isolada, limpar cache após push e retomar piloto Links com dimensões, modos e cache por domínio.
 
 # UI Skins — extensão Sync e limpeza da chave antiga — 2026-11-10
 
