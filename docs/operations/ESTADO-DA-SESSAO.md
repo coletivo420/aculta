@@ -3,7 +3,7 @@
 - **Objetivo/estado:** Skins substitui paletas purpose em código (10 Domains, 5 tokens claro/escuro); piloto `forum-category` está em Sync/install. `ui_styles_page` alinhado no Sync.
 - **Decisões/cuidados:** sem config antiga/dual-read; DomainPurposeManager permanece funcional. Não importar Sync nem remover Twig enquanto Runtime consumir a View atual.
 - **Commits:** `693d5e173`, `c5b560132`, `d49304e57`, `853c9875f`; baseline browser/script neste commit.
-- **Verificações:** schema SDC 1710 checks; render isolado h3/link; Unit 3276 e focal 20/312; baseline local `/categorias` 9/9, 1024/500px, sem overflow. Runtime cutover DEFERRED por drift config/updatedb; gate V2 falha por `auth-dialog.twig` preexistente; token budget 7 falhas anteriores.
+- **Verificações:** schema SDC 1710 checks; render isolado h3/link; Unit 3276 e focal 20/312; baseline local `/categorias` 9/9, 1024/500px, sem overflow; manifest versionado e PNG ignorados. Runtime cutover DEFERRED por drift config/updatedb; gate V2 falha por `auth-dialog.twig` preexistente; token budget 7 falhas anteriores.
 - **Pendências/próximo passo:** Skins Disabled; importação autorizada necessária para comparar Views, cache/acesso e browser após cutover; então ampliar migração. `origin/dev` integrado por fast-forward; alterações paralelas preservadas.
 
 # FST-00 a FST-11 — integração analítica Fórum + Statistics — 2026-11-10
