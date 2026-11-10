@@ -1,0 +1,5 @@
+services:
+  access_check.aculta_ui_library:
+    class: Drupal\aculta_ui_library\Access\UiLibraryAccessCheck
+    tags:
+      - { name: access_check, applies_to: _aculta_ui_library_access }

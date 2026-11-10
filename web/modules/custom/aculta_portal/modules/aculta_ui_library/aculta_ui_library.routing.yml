@@ -5,6 +5,7 @@ aculta_ui_library.blocks:
     _title: 'Biblioteca de blocos'
   requirements:
     _permission: 'administer blocks'
+    _aculta_ui_library_access: 'TRUE'
   options:
     _admin_route: true
     _aculta_domain_purpose: main
@@ -17,6 +18,7 @@ aculta_ui_library.block_preview:
     _title: 'Prévia do bloco'
   requirements:
     _permission: 'administer blocks'
+    _aculta_ui_library_access: 'TRUE'
   options:
     _admin_route: true
     _aculta_domain_purpose: main
