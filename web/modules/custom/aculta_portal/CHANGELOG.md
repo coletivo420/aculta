@@ -1,3 +1,9 @@
+## Não versionado — State funcional `site_key`
+
+- Substitui o serviço e a chave de State `active_purposes` por `active_site_keys`; não lê nem mantém fallback da chave removida.
+- A lista é reconstruída pelos dez `SiteKey` tipados em eventos do ciclo de vida de Domain e o getter filtra valores não registrados.
+- O post-update cria/reconstrói a nova chave, mas não foi executado no Runtime; exige autorização para `updatedb`.
+
 ## Não versionado — API funcional tipada `site_key` (RN-01 inicial)
 
 - Introduz `SiteKey` e `SiteKeyRegistry`, mantendo como fonte dos Domain IDs e paths os valores já definidos em `DomainSurfaceMap`.

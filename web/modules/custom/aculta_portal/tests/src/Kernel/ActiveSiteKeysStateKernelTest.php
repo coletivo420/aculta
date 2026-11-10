@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Kernel;
 
-use Drupal\aculta_portal\Domain\ActivePurposesState;
+use Drupal\aculta_portal\Domain\ActiveSiteKeysState;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Drupal\aculta_portal\Hook\DomainLifecycleHooks;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
@@ -14,11 +16,11 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Tests the neutral active purposes state management and Domain lifecycle hooks.
+ * Tests active site-key state and Domain lifecycle hooks.
  */
 #[Group('aculta_portal')]
 #[RunTestsInSeparateProcesses]
-final class ActivePurposesStateKernelTest extends KernelTestBase {
+final class ActiveSiteKeysStateKernelTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}
@@ -31,17 +33,35 @@ final class ActivePurposesStateKernelTest extends KernelTestBase {
   ];
 
   /**
-   * Estado dos propósitos ativos.
+   * Active site keys state.
    *
-   * @var \Drupal\aculta_portal\Domain\ActivePurposesState
+   * @var \Drupal\aculta_portal\Domain\ActiveSiteKeysState
    */
-  private ActivePurposesState $activePurposesState;
+  private ActiveSiteKeysState $activeSiteKeysState;
   /**
    * Hooks do ciclo de vida de domínio.
    *
    * @var \Drupal\aculta_portal\Hook\DomainLifecycleHooks
    */
   private DomainLifecycleHooks $lifecycleHooks;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $container->setDefinition(
+      'aculta_file_uploader.ingestor',
+      (new Definition(\stdClass::class))->setPublic(TRUE),
+    );
+    foreach ([
+      'aculta_file_uploader.unused_file_cleaner',
+      'aculta_file_uploader.quarantine',
+      'aculta_file_uploader.cleanup',
+    ] as $serviceId) {
+      $container->setDefinition($serviceId, (new Definition(\stdClass::class))->setPublic(TRUE));
+    }
+  }
 
   /**
    * {@inheritdoc}
@@ -57,17 +77,17 @@ final class ActivePurposesStateKernelTest extends KernelTestBase {
       $this->container->get('config.factory'),
       $this->container->get('request_stack'),
     );
-    $this->activePurposesState = new ActivePurposesState(
+    $this->activeSiteKeysState = new ActiveSiteKeysState(
       $this->container->get('state'),
       $manager,
     );
-    $this->lifecycleHooks = new DomainLifecycleHooks($this->activePurposesState);
+    $this->lifecycleHooks = new DomainLifecycleHooks($this->activeSiteKeysState);
   }
 
   /**
-   * Tests that active purposes state includes only active Domain entities with valid paths.
+   * Tests active Domain entities with valid paths only.
    */
-  public function testActivePurposesIncludesOnlyActiveDomains(): void {
+  public function testActiveSiteKeysIncludesOnlyActiveDomains(): void {
     // Create an active domain (main -> aculta_org).
     $mainDomain = Domain::create([
       'id' => 'aculta_org',
@@ -92,31 +112,31 @@ final class ActivePurposesStateKernelTest extends KernelTestBase {
     $wikiDomain->save();
     $this->lifecycleHooks->onDomainInsert($wikiDomain);
 
-    $active = $this->activePurposesState->get();
+    $active = $this->activeSiteKeysState->get();
     $this->assertContains('main', $active);
     $this->assertNotContains('wiki', $active);
 
     // Verifica também diretamente pela State API do core.
-    $this->assertSame($active, $this->container->get('state')->get(ActivePurposesState::STATE_KEY));
+    $this->assertSame($active, $this->container->get('state')->get(ActiveSiteKeysState::STATE_KEY));
 
     // Activate the inactive domain: onDomainUpdate rebuilds the state.
     $wikiDomain->set('status', TRUE);
     $wikiDomain->save();
     $this->lifecycleHooks->onDomainUpdate($wikiDomain);
 
-    $active = $this->activePurposesState->get();
+    $active = $this->activeSiteKeysState->get();
     $this->assertContains('main', $active);
     $this->assertContains('wiki', $active);
 
     // Delete the domain: onDomainDelete rebuilds the state.
     $wikiDomain->delete();
     $this->lifecycleHooks->onDomainDelete($wikiDomain);
-    $active = $this->activePurposesState->get();
+    $active = $this->activeSiteKeysState->get();
     $this->assertNotContains('wiki', $active);
   }
 
   /**
-   * Tests post_update populates the active purposes state.
+   * Tests post_update populates the active site keys state.
    */
   public function testPostUpdatePopulatesState(): void {
     require_once dirname(__DIR__, 3) . '/aculta_portal.post_update.php';
@@ -131,17 +151,22 @@ final class ActivePurposesStateKernelTest extends KernelTestBase {
     ]);
     $shopDomain->save();
 
-    // Register active_purposes_state in container for post_update to resolve \Drupal::service()
-    $this->container->set('aculta_portal.active_purposes_state', $this->activePurposesState);
+    // Register the state service for the post-update callback.
+    $this->container->set('aculta_portal.active_site_keys_state', $this->activeSiteKeysState);
 
     // Clear state directly.
-    $this->container->get('state')->delete(ActivePurposesState::STATE_KEY);
-    $this->assertSame([], $this->activePurposesState->get());
+    $this->container->get('state')->delete(ActiveSiteKeysState::STATE_KEY);
+    $this->assertSame([], $this->activeSiteKeysState->get());
+
+    $this->container->get('state')->set(ActiveSiteKeysState::STATE_KEY, ['main', 'invalid', 42]);
+    $this->assertSame(['main'], $this->activeSiteKeysState->get());
+    $this->container->get('state')->delete(ActiveSiteKeysState::STATE_KEY);
 
     $sandbox = [];
-    $message = aculta_portal_post_update_active_purposes_state($sandbox);
+    $message = aculta_portal_post_update_active_site_keys_state($sandbox);
     $this->assertStringContainsString('shop', (string) $message);
-    $this->assertContains('shop', $this->activePurposesState->get());
+    $this->assertContains('shop', $this->activeSiteKeysState->get());
+    self::assertSame(['shop'], $this->activeSiteKeysState->get());
   }
 
 }
