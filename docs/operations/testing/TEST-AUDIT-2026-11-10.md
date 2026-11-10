@@ -217,7 +217,7 @@ fabricado; os erros abaixo são achados reais para a próxima rodada.
 
 | Suíte | Resultado | Achado |
 | --- | --- | --- |
-| ForumRoutesFunctionalTest | 6 testes, 6 erros | `filter.format.forum` (aculta_forum) declara dependência do submódulo opcional `aculta_editor`, que o teste não habilita ao instalar o perfil standard. Adicionar `aculta_editor` a `` não resolveu; investigar descoberta/ordem de instalação do submódulo |
+| ForumRoutesFunctionalTest | 6 testes, 6 erros | `filter.format.forum` (aculta_forum) declara dependência do submódulo opcional `aculta_editor`, que o teste não habilita ao instalar o perfil standard. Adicionar `aculta_editor` a `$modules` não resolveu; investigar descoberta/ordem de instalação do submódulo |
 | StatisticsDashboardFunctionalTest | 2 erros | detalhar na próxima rodada (a saída do runner não expôs a exceção completa) |
 | MessengerModuleInstallTest | executada | verificar o resultado detalhado na próxima rodada |
 
