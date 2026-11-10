@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  bootstrap="tests/phpunit-bootstrap.php"
+  colors="true"
+  failOnWarning="true"
+  cacheDirectory=".phpunit.performance.cache"
+  xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.5/phpunit.xsd">
+  <php>
+    <ini name="error_reporting" value="32767"/>
+    <ini name="memory_limit" value="-1"/>
+  </php>
+  <testsuites>
+    <testsuite name="performance">
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Performance</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>
