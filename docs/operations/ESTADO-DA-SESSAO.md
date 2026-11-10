@@ -1,13 +1,13 @@
 # UI Skins — extensão Sync e limpeza da chave antiga — 2026-11-10
 
 - **Objetivo:** tornar UI Skins obrigatório no Config Sync e retirar a última chave de paleta antiga do Runtime.
-- **Estado:** Sync registra `ui_skins`; gate também exige extensão ativa no export. Runtime confirmou `ui_skins` Disabled, mapa e scopes ausentes; `aculta_purpose_palette` foi removida sem cópia após busca sem consumidores. CSS, mapa e preferências ainda não foram cortados no Runtime.
+- **Estado:** Sync registra `ui_skins`; gate exige extensão ativa no export. Runtime tem UI Skins 1.2.1 e descobriu cinco plugins, cada um com 20 scopes. Mapa e scopes ativos seguem ausentes; `aculta_purpose_palette` foi removida sem cópia após busca sem consumidores.
 - **Decisões e alternativas descartadas:** sem dual-read, alias ou backup da configuração antiga, conforme instrução do responsável. Sem `config:import`/atualização não autorizados.
 - **Cuidados:** preservar preferência individual de modo; cache varia por domínio/usuário e marca config do mapa.
 - **Commits e arquivos:** `d4142969f`; Sync, gate UI Skins, ADR-054/055, plano, docs de gate/skins, roadmap, TODO e status.
-- **Verificações:** UI Skins 127, extensões Sync 1753, resolver Unit 2/6 e PHPCS PASS; token budget FAIL por sete pendências preexistentes. Runtime confirmou remoção; browser DEFERRED sem UI Skins ativo.
-- **Pendências e bloqueios:** import autorizado para instalar módulo, map e scopes; comparar Links em cache, modo claro/escuro e visual antes dos demais domínios.
-- **Próximo passo:** executar cutover de configuração no fluxo autorizado e validar o piloto Links no tema V2.
+- **Verificações:** UI Skins 127, extensões Sync 1753, resolver Unit 2/6 e PHPCS PASS; runtime descobriu 5×20 scopes; `drush cr` PASS. Token budget FAIL por sete pendências preexistentes. Browser DEFERRED sem mapa/scopes ativos; tradução pt-br falhou porque `translations://` não está configurado.
+- **Pendências e bloqueios:** importar o mapa e os scopes UI Skins pelo fluxo autorizado; comparar Links em cache, modos e visual antes dos demais domínios.
+- **Próximo passo:** executar o cutover de configuração autorizado e validar o piloto Links no tema V2.
 
 # UI Icons Menu, Picker e Patterns — 2026-11-10
 

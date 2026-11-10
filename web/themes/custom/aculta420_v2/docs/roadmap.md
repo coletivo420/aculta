@@ -4,9 +4,10 @@
 
 - `ui_skins` está habilitado no Config Sync; o gate exige o módulo, mapa de dez
   domínios, cinco variáveis, vinte scopes por variável e contraste ≥4,5:1.
-- A chave visual antiga foi removida do Runtime sem cópia. O Runtime ainda está
-  sem UI Skins, mapa de Domain IDs e scopes importados. A comparação do piloto
-  Links e o aceite visual dependem do cutover autorizado.
+- A chave visual antiga foi removida do Runtime sem cópia. UI Skins 1.2.1 está
+  instalado e suas cinco definições foram descobertas; o mapa de Domain IDs e
+  os scopes ainda não foram importados.
+  A comparação do piloto Links e o aceite visual dependem do cutover autorizado.
 
 ## UI Icons — integração oficial em andamento (2026-11-10)
 
@@ -23,7 +24,7 @@ Status espelhado de `TODO.md`. Plano visual: `docs/architecture/GROWROOM420-VISU
 ## UI Skins — corte de código iniciado (2026-11-10)
 
 - Configuração/formulário por purpose removidos do tema. O Portal resolve skin por Domain ID e entrega `aculta_skin_id`; UI Skins declara cinco variáveis e vinte scopes.
-- Runtime UI Skins Disabled neste snapshot. Ativação, descoberta real, capturas, contraste e aceite visual estão pendentes; esta etapa não fecha ADR-054/055.
+- UI Skins 1.2.1 instalado e cinco definições descobertas; scopes ativos, capturas e aceite visual estão pendentes; esta etapa não fecha ADR-054/055.
 
 ## Entregas
 

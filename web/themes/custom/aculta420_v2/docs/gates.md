@@ -104,7 +104,7 @@ Validação dos novos componentes SDC do Fórum (`forum-category-header`, `forum
 
 Estes são **requisitos de homologação**, não resultados PASS; os gates automatizados específicos ainda devem ser implementados nos pacotes do plano `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md`.
 
-- **UI Skins Runtime:** `ui_skins` segue Disabled e `aculta_portal.visual_skins`/scopes ainda não existem no Runtime. A chave `aculta_purpose_palette` foi removida do Runtime sem backup, após busca de zero consumidores. Importar a configuração UI Skins exige autorização; então verificar descoberta, render CSS, `data-skin`, cache e modo nos domínios Links e MAIN. **DEFERRED** até o cutover e browser acceptance.
+- **UI Skins Runtime:** módulo 1.2.1 instalado e cinco definições descobertas (20 scopes cada); `aculta_portal.visual_skins`/scopes ativos ainda não existem. A chave `aculta_purpose_palette` foi removida do Runtime sem backup, após busca de zero consumidores. Importar mapa e configuração exige autorização; então verificar render CSS, `data-skin`, cache e modo nos domínios Links e MAIN. **DEFERRED** até o cutover e browser acceptance. A tradução `pt-br` não baixou porque `translations://` não está configurado.
 - **Regiões e blocos:** inventariar instâncias `block.block.*` globais e coleções Domain; antes do corte, nenhuma instância poderá apontar para regiões retiradas. **PENDENTE**.
 - **Layout Builder:** testar displays por bundle/view_mode, overrides de entidade permitidos, fallback e compatibilidade com renderização especial. **PENDENTE**.
 - **UI Library com dados reais:** impedir acesso por não-administrador, exigir também acesso ao bloco/entidade e assegurar cache seguro. **PENDENTE**.

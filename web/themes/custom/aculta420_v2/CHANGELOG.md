@@ -33,7 +33,9 @@
 - Remove do tema `aculta_purpose_palette`, schema, formulário administrativo, preview JS/CSS, `PurposePaletteSchemes`, seletores `data-purpose` e tokens CSS por purpose.
 - Declara cinco variáveis CSS no plugin oficial UI Skins e scopes `data-skin` × `data-theme` para dez skins nos modos claro/escuro.
 - Tema aplica `data-skin` e `data-site-key` entregues pelo Portal; a opção de skin é resolvida por Domain ID, sem mutação de configuração global.
-- UI Skins está desativado no Runtime atual; enable, render real, contraste/capturas e aceite visual seguem pendentes. ADRs continuam abertas.
+- UI Skins 1.2.1 foi instalado no Runtime após a captura inicial; plugins foram
+  descobertos, mas mapa/scopes não foram importados. Render real, cache,
+  contraste/capturas e aceite visual seguem pendentes. ADRs continuam abertas.
 - Sincroniza `ui_styles_page` no `core.extension.yml`, refletindo sua ativação já existente no Runtime; estilos regionais e captura autenticada permanecem pendentes.
 
 ## Não versionado — dependências reproduzíveis da UI Suite (2026-11-10)
@@ -41,7 +43,7 @@
 - Adiciona `drupal/ui_skins:^1.2` e `drupal/ui_icons:^2.1` como dependências diretas do Composer após `composer install` limpo demonstrar que ambos não estavam no lock.
 - Trava `drupal/ui_patterns_field_group:2.0.x-dev@dev` em `4403e7b0e27679f47113e96fcdc5349c95e164d1`; atualização foi avaliada como `BLOCKED_UPSTREAM` para Drupal 12 e risco de segurança, sem ativação/configuração nova.
 - O inventário registra 298 itens (159 View displays, 22 displays Layout Builder, 80 SDCs e 36 integrações), mais snapshot de 36 módulos ativos/desativados e drift Config Sync.
-- Runtime atualizado por `composer install --no-scripts`; `drush cr` PASS. UI Skins Disabled; UI Patterns CKEditor 5 e Field Group estavam Enabled antes desta entrega. Nenhuma configuração foi importada ou desinstalada.
+- Runtime atualizado por `composer install --no-scripts`; `drush cr` PASS. UI Skins estava Disabled nesta captura histórica; foi instalado depois, sem importar mapa/scopes. UI Patterns CKEditor 5 e Field Group estavam Enabled na captura; nenhuma configuração foi importada ou desinstalada.
 
 ## 1.5.0 — marcos do shell e Layout Builder no desenvolvimento (2026-11-09)
 
@@ -962,7 +964,7 @@ State: Dev. No RC, production deployment, or release tag is declared.
   não estiver incluído, além de validar scopes e contraste.
 - No Runtime, remove apenas `aculta_purpose_palette` depois de confirmar que
   nenhum código ativo a lê. Não fica cópia, dual-read ou fallback antigo.
-- A importação do mapa de domínios e dos scopes UI Skins ainda não foi feita;
-  `ui_skins` continua Disabled no Runtime. Piloto Links, render e cache ficam
-  pendentes até o cutover autorizado.
+- UI Skins 1.2.1 foi instalado no Runtime, sem importar mapa ou scopes. O
+  download da tradução `pt-br` falhou por `translations://` não configurado.
+  Piloto Links, render e cache ficam pendentes até o cutover autorizado.
 
