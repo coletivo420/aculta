@@ -322,7 +322,9 @@
       // 2. Inicializa o botão global "Exibir todas as prévias"
       once('aculta-bulk-preview-init', '#aculta-btn-bulk-preview', context).forEach((btn) => {
         state.domElements.btn = btn;
-        state.domElements.btnText = btn.querySelector('.aculta-bulk-preview-btn-text') || btn.querySelector('span') || btn;
+        // O SDC aculta420_v2:button pode conter um span do ícone (com .aculta-icon) e o span do texto
+        const textSpan = Array.from(btn.querySelectorAll('span')).find(s => !s.classList.contains('aculta-icon') && !s.closest('.aculta-icon'));
+        state.domElements.btnText = textSpan || btn.querySelector('.aculta-bulk-preview-btn-text') || btn;
         state.domElements.status = document.getElementById('aculta-bulk-preview-status');
 
         // Contagem inicial de componentes
