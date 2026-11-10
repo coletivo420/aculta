@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -46,20 +47,20 @@ final class ActivityDeleteForm extends ConfirmFormBase {
 
   /**
    * {@inheritdoc} */
-  public function getQuestion(): string {
+  public function getQuestion(): TranslatableMarkup {
     $this->routeEntities();
     return $this->t('Excluir esta atividade?');
   }
 
   /**
    * {@inheritdoc} */
-  public function getDescription(): string {
+  public function getDescription(): TranslatableMarkup {
     return $this->t('A exclusão é permanente. Uma atividade com respostas não pode ser removida para preservar as avaliações e o histórico dos estudantes.');
   }
 
   /**
    * {@inheritdoc} */
-  public function getConfirmText(): string {
+  public function getConfirmText(): TranslatableMarkup {
     return $this->t('Excluir atividade');
   }
 

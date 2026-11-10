@@ -11,6 +11,7 @@ use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Lock\LockAcquiringException;
 use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -47,7 +48,7 @@ final class CourseStructureMoveForm extends ConfirmFormBase {
 
   /**
    * {@inheritdoc} */
-  public function getQuestion(): string {
+  public function getQuestion(): TranslatableMarkup {
     [, $lesson, $activity, $direction] = $this->routeEntities();
     $label = $activity ? $this->t('Atividade @id', ['@id' => $activity->id()]) : $lesson->get('title')->value;
     return $this->t('Mover “@item” @direction?', [
@@ -58,13 +59,13 @@ final class CourseStructureMoveForm extends ConfirmFormBase {
 
   /**
    * {@inheritdoc} */
-  public function getDescription(): string {
+  public function getDescription(): TranslatableMarkup {
     return $this->t('A nova ordem será aplicada imediatamente às turmas vinculadas ao curso. O conteúdo, as respostas e as notas não serão alterados.');
   }
 
   /**
    * {@inheritdoc} */
-  public function getConfirmText(): string {
+  public function getConfirmText(): TranslatableMarkup {
     return $this->t('Alterar ordem');
   }
 

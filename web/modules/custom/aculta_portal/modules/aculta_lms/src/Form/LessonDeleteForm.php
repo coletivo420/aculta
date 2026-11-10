@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -46,20 +47,20 @@ final class LessonDeleteForm extends ConfirmFormBase {
 
   /**
    * {@inheritdoc} */
-  public function getQuestion(): string {
+  public function getQuestion(): TranslatableMarkup {
     [, $lesson] = $this->routeEntities();
     return $this->t('Excluir a aula “@title”?', ['@title' => $lesson->get('title')->value]);
   }
 
   /**
    * {@inheritdoc} */
-  public function getDescription(): string {
+  public function getDescription(): TranslatableMarkup {
     return $this->t('A exclusão é permanente. Remova as atividades desta aula primeiro; atividades com respostas não podem ser excluídas para preservar o histórico.');
   }
 
   /**
    * {@inheritdoc} */
-  public function getConfirmText(): string {
+  public function getConfirmText(): TranslatableMarkup {
     return $this->t('Excluir aula');
   }
 

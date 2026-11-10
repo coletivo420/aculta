@@ -21,11 +21,13 @@ use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
 use Drupal\aculta_lms\Learning\CourseLesson;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupMembership;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -73,19 +75,19 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
       }
       $available_lessons = array_values(array_filter(
         $this->lessonReader->forCourse((int) $course->id()),
-        static fn($lesson): bool => $lesson instanceof CourseLesson && $lesson->published,
+        static fn($lesson): bool => $lesson->published,
       ));
       foreach ($available_lessons as $lesson) {
         $metadata->addCacheTags(['aculta_lms_lesson:' . $lesson->id]);
       }
       $progress = $this->progressReader->current($course, $account);
-      $metadata->addCacheTags($progress?->cacheTags ?? []);
+      $metadata->addCacheTags($progress === NULL ? [] : $progress->cacheTags);
       $total = count($available_lessons);
       // P2 stores course-level completion only. It has no lesson-status rows
       // or current-lesson pointer, so a detailed lesson count cannot be read.
       $completed = $progress?->finished ? $total : 0;
       $current_lesson = NULL;
-      $last_activity = $progress?->changedTime ?? 0;
+      $last_activity = $progress === NULL ? 0 : $progress->changedTime;
       $courses[] = [
         'id' => $course_data->id,
         'label' => $course_data->label,
@@ -121,7 +123,7 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
       if (empty($course['started']) || $course['finished'] || !$course['url'] instanceof Url) {
         continue;
       }
-      if ((int) ($course['last_activity'] ?? 0) <= 0) {
+      if ((int) $course['last_activity'] <= 0) {
         continue;
       }
       if ($continue === NULL || (int) $course['last_activity'] > (int) $continue['last_activity']) {
@@ -256,7 +258,7 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
     }
 
     $progress = $this->progressReader->current($course, $account);
-    $metadata->addCacheTags($progress?->cacheTags ?? []);
+    $metadata->addCacheTags($progress === NULL ? [] : $progress->cacheTags);
     $lessons = [];
     $total = 0;
     $lesson_delta = 0;
@@ -293,7 +295,7 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
       courseLabel: (string) $course->label(),
       description: $description,
       started: $progress !== NULL,
-      finished: $progress?->finished ?? FALSE,
+      finished: $progress !== NULL && $progress->finished,
       pendingEvaluation: $pending_evaluation,
       currentLessonId: NULL,
       currentLessonLabel: NULL,
@@ -422,6 +424,9 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
     }
     $statuses_by_student = [];
     foreach ($statuses as $status) {
+      if (!$status instanceof ContentEntityInterface) {
+        continue;
+      }
       $uid = (int) $status->get('uid')->value;
       if (isset($members[$uid])) {
         $statuses_by_student[$uid] = $status;
@@ -465,6 +470,9 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
       'plugin_id' => 'lms_classes',
     ]);
     foreach ($relationships as $relationship) {
+      if (!$relationship instanceof GroupRelationshipInterface) {
+        continue;
+      }
       $course = $relationship->getGroup();
       if ($course instanceof GroupInterface && $course->bundle() === 'lms_course') {
         return $course;

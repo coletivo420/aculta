@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\Order;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockAcquiringException;
 use Drupal\Core\Lock\LockBackendInterface;
@@ -71,7 +72,7 @@ final class CourseStructureOrderManager {
       $transaction = $this->database->startTransaction();
       foreach ($orderedIds as $weight => $id) {
         $entity = $entities[$id] ?? NULL;
-        if ($entity === NULL || (int) $entity->get($parentField)->value !== $parentId) {
+        if (!$entity instanceof ContentEntityInterface || (int) $entity->get($parentField)->value !== $parentId) {
           throw new \InvalidArgumentException('The course structure changed while the move was being prepared.');
         }
         if ((int) $entity->get('weight')->value !== $weight) {
@@ -94,8 +95,10 @@ final class CourseStructureOrderManager {
    *   Tipo de entidade dos filhos reordenados.
    * @param int $parentId
    *   ID da entidade pai da coleção.
-   * @param list<int> $orderedIds
-   *   Complete ordered list of child entity IDs supplied by the editor.
+   * @param array<int|string> $orderedIds
+   *   Complete ordered list of child entity IDs supplied by the editor; form
+   *   submissions arrive as numeric strings and are validated and normalized
+   *   below.
    *
    * @return bool
    *   TRUE when the collection order changed.
@@ -143,7 +146,7 @@ final class CourseStructureOrderManager {
       $transaction = $this->database->startTransaction();
       foreach ($orderedIds as $weight => $id) {
         $entity = $entities[$id] ?? NULL;
-        if ($entity === NULL || (int) $entity->get($parentField)->value !== $parentId) {
+        if (!$entity instanceof ContentEntityInterface || (int) $entity->get($parentField)->value !== $parentId) {
           throw new \InvalidArgumentException('The course structure changed while the new order was being prepared.');
         }
         if ((int) $entity->get('weight')->value !== $weight) {

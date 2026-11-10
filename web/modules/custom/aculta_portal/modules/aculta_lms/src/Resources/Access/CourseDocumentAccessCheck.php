@@ -6,7 +6,6 @@ namespace Drupal\aculta_lms\Resources\Access;
 
 use Drupal\aculta_lms\Access\CourseAuthoringAccessCheck;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
@@ -36,7 +35,7 @@ final class CourseDocumentAccessCheck {
   /**
    * Checks whether the educator may create a private document in this course.
    */
-  public function createAccess(GroupInterface $course): AccessResultInterface {
+  public function createAccess(GroupInterface $course): AccessResult {
     $pluginId = $this->relationPluginId($course);
     if ($pluginId === NULL || $course->bundle() !== 'lms_course') {
       return AccessResult::forbidden()->addCacheableDependency($course);
@@ -52,7 +51,7 @@ final class CourseDocumentAccessCheck {
   /**
    * Checks update access for a document attached to this exact course.
    */
-  public function updateAccess(GroupInterface $course, MediaInterface $document): AccessResultInterface {
+  public function updateAccess(GroupInterface $course, MediaInterface $document): AccessResult {
     $pluginId = $this->relationPluginId($course);
     if ($pluginId === NULL || $course->bundle() !== 'lms_course'
       || $document->bundle() !== 'course_document'

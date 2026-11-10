@@ -220,12 +220,6 @@ parameters:
 			path: scripts/institution/provision-commerce-store.php
 
 		-
-			rawMessage: 'Offset 1 on array{list<string>, list<non-empty-string>} on left side of ?? always exists and is not nullable.'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: scripts/inventory-ui-suite-consumers.php
-
-		-
 			rawMessage: Left side of && is always false.
 			identifier: booleanAnd.leftAlwaysFalse
 			count: 3
@@ -6481,54 +6475,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/ActivityAuthoringForm.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_lms\Form\ActivityDeleteForm::getConfirmText() should return string but returns Drupal\Core\StringTranslation\TranslatableMarkup.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/ActivityDeleteForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Form\ActivityDeleteForm::getDescription() should return string but returns Drupal\Core\StringTranslation\TranslatableMarkup.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/ActivityDeleteForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Form\ActivityDeleteForm::getQuestion() should return string but returns Drupal\Core\StringTranslation\TranslatableMarkup.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/ActivityDeleteForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_lms\Form\ActivityDeleteForm::getConfirmText() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormBase::getConfirmText()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/ActivityDeleteForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_lms\Form\ActivityDeleteForm::getConfirmText() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormInterface::getConfirmText()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/ActivityDeleteForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_lms\Form\ActivityDeleteForm::getDescription() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormBase::getDescription()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/ActivityDeleteForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_lms\Form\ActivityDeleteForm::getDescription() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormInterface::getDescription()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/ActivityDeleteForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_lms\Form\ActivityDeleteForm::getQuestion() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormInterface::getQuestion()'
-			identifier: method.childReturnType
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/ActivityDeleteForm.php
-
-		-
 			rawMessage: 'Parameter #2 $callback of function usort expects callable(Drupal\Core\Entity\EntityInterface, Drupal\Core\Entity\EntityInterface): int, Closure(Drupal\Core\Entity\ContentEntityInterface, Drupal\Core\Entity\ContentEntityInterface): int<-1, 1> given.'
 			identifier: argument.type
 			count: 1
@@ -6559,54 +6505,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/CourseEnrollmentPurchaseForm.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_lms\Form\CourseStructureMoveForm::getConfirmText() should return string but returns Drupal\Core\StringTranslation\TranslatableMarkup.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/CourseStructureMoveForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Form\CourseStructureMoveForm::getDescription() should return string but returns Drupal\Core\StringTranslation\TranslatableMarkup.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/CourseStructureMoveForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Form\CourseStructureMoveForm::getQuestion() should return string but returns Drupal\Core\StringTranslation\TranslatableMarkup.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/CourseStructureMoveForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_lms\Form\CourseStructureMoveForm::getConfirmText() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormBase::getConfirmText()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/CourseStructureMoveForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_lms\Form\CourseStructureMoveForm::getConfirmText() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormInterface::getConfirmText()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/CourseStructureMoveForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_lms\Form\CourseStructureMoveForm::getDescription() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormBase::getDescription()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/CourseStructureMoveForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_lms\Form\CourseStructureMoveForm::getDescription() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormInterface::getDescription()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/CourseStructureMoveForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_lms\Form\CourseStructureMoveForm::getQuestion() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormInterface::getQuestion()'
-			identifier: method.childReturnType
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/CourseStructureMoveForm.php
-
-		-
 			rawMessage: 'Parameter #2 $lesson of method Drupal\aculta_lms\Access\CourseAuthoringAccessCheck::accessForReorder() expects Drupal\Core\Entity\ContentEntityInterface|null, Drupal\Core\Entity\EntityInterface given.'
 			identifier: argument.type
 			count: 1
@@ -6629,54 +6527,6 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/LessonAuthoringForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Form\LessonDeleteForm::getConfirmText() should return string but returns Drupal\Core\StringTranslation\TranslatableMarkup.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/LessonDeleteForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Form\LessonDeleteForm::getDescription() should return string but returns Drupal\Core\StringTranslation\TranslatableMarkup.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/LessonDeleteForm.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_lms\Form\LessonDeleteForm::getQuestion() should return string but returns Drupal\Core\StringTranslation\TranslatableMarkup.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/LessonDeleteForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_lms\Form\LessonDeleteForm::getConfirmText() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormBase::getConfirmText()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/LessonDeleteForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_lms\Form\LessonDeleteForm::getConfirmText() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormInterface::getConfirmText()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/LessonDeleteForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_lms\Form\LessonDeleteForm::getDescription() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormBase::getDescription()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/LessonDeleteForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_lms\Form\LessonDeleteForm::getDescription() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormInterface::getDescription()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/LessonDeleteForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_lms\Form\LessonDeleteForm::getQuestion() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormInterface::getQuestion()'
-			identifier: method.childReturnType
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/LessonDeleteForm.php
 
 		-
 			rawMessage: Instanceof between Drupal\group\Entity\GroupInterface and Drupal\group\Entity\GroupInterface will always evaluate to true.
@@ -6799,44 +6649,8 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Learning/EntityCourseProgressReader.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/LearningDashboardManager.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getGroup().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/LearningDashboardManager.php
-
-		-
-			rawMessage: Instanceof between Drupal\aculta_lms\Learning\CourseLesson and Drupal\aculta_lms\Learning\CourseLesson will always evaluate to true.
+			rawMessage: Instanceof between Drupal\group\Entity\GroupInterface and Drupal\group\Entity\GroupInterface will always evaluate to true.
 			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/LearningDashboardManager.php
-
-		-
-			rawMessage: 'Offset ''last_activity'' on array{id: string, label: string, description: array{}|array{''#type'': ''processed_text'', ''#text'': non-empty-string, ''#format'': non-empty-string}, status: string, score: float|int|null, finished: false, url: Drupal\Core\Url, cache_tags: array, ...} on left side of ?? always exists and is not nullable.'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/LearningDashboardManager.php
-
-		-
-			rawMessage: Using nullsafe property access "?->cacheTags" on left side of ?? is unnecessary. Use -> instead.
-			identifier: nullsafe.neverNull
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/LearningDashboardManager.php
-
-		-
-			rawMessage: Using nullsafe property access "?->changedTime" on left side of ?? is unnecessary. Use -> instead.
-			identifier: nullsafe.neverNull
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/LearningDashboardManager.php
-
-		-
-			rawMessage: Using nullsafe property access "?->finished" on left side of ?? is unnecessary. Use -> instead.
-			identifier: nullsafe.neverNull
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/LearningDashboardManager.php
 
@@ -6868,66 +6682,6 @@ parameters:
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
 			identifier: method.notFound
 			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Notice/LearningNoticeRecipients.php
-
-		-
-			rawMessage: Instanceof between Drupal\Core\Entity\EntityInterface and Drupal\Core\Entity\EntityInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Notice/LearningNoticeRecipients.php
-
-		-
-			rawMessage: Instanceof between Drupal\group\Entity\GroupInterface and Drupal\group\Entity\GroupInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Notice/LearningNoticeRecipients.php
-
-		-
-			rawMessage: Instanceof between Drupal\group\Entity\GroupRelationshipInterface and Drupal\group\Entity\GroupRelationshipInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Notice/LearningNoticeRecipients.php
-
-		-
-			rawMessage: Negated boolean expression is always false.
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Notice/LearningNoticeRecipients.php
-
-		-
-			rawMessage: 'Parameter #1 $activity of method Drupal\aculta_lms\Notice\LearningEligibilityInterface::activityBelongsToCourse() expects Drupal\Core\Entity\ContentEntityInterface, Drupal\Core\Entity\EntityInterface given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Notice/LearningNoticeRecipients.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Order/CourseStructureOrderManager.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::set().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Order/CourseStructureOrderManager.php
-
-		-
-			rawMessage: 'Call to function is_int() with int will always evaluate to true.'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Order/CourseStructureOrderManager.php
-
-		-
-			rawMessage: 'Parameter #1 $array (non-empty-list<int>) of array_values is already a list, call has no effect.'
-			identifier: arrayValues.list
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Order/CourseStructureOrderManager.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 3
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/QueueWorker/EventoTurmaNotificationWorker.php
 
 		-
@@ -6935,30 +6689,6 @@ parameters:
 			identifier: instanceof.alwaysTrue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Resources/CourseResourceBuilder.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::getCacheContexts().'
-			identifier: method.notFound
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Resources/Form/CourseMaterialsForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::getCacheMaxAge().'
-			identifier: method.notFound
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Resources/Form/CourseMaterialsForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::getCacheTags().'
-			identifier: method.notFound
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Resources/Form/CourseMaterialsForm.php
-
-		-
-			rawMessage: Drupal\Core\DependencyInjection\DependencySerializationTrait does not support private properties.
-			identifier: dependencySerializationTraitProperty.unsupportedPrivateProperty
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Resources/Form/CourseMaterialsForm.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
@@ -14279,6 +14009,18 @@ parameters:
 			identifier: dependencySerializationTraitProperty.unsupportedPrivateProperty
 			count: 1
 			path: web/themes/custom/aculta420_v2/src/Story/StudioMenuStory.php
+
+		-
+			rawMessage: 'Avoid calling Symfony\Component\Yaml\Yaml::parse() directly. Use \Drupal\Component\Serialization\Yaml::decode() instead, which handles exceptions consistently and applies the correct parse flags.'
+			identifier: drupal.symfonyYamlParse
+			count: 2
+			path: web/themes/custom/aculta420_v2/tests/src/Unit/LayoutSectionComponentTest.php
+
+		-
+			rawMessage: 'Avoid calling Symfony\Component\Yaml\Yaml::parse() directly. Use \Drupal\Component\Serialization\Yaml::decode() instead, which handles exceptions consistently and applies the correct parse flags.'
+			identifier: drupal.symfonyYamlParse
+			count: 2
+			path: web/themes/custom/aculta420_v2/tests/src/Unit/StatusMessagesComponentTest.php
 
 		-
 			rawMessage: 'Avoid calling Symfony\Component\Yaml\Yaml::parse() directly. Use \Drupal\Component\Serialization\Yaml::decode() instead, which handles exceptions consistently and applies the correct parse flags.'

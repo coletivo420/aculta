@@ -7,6 +7,7 @@ namespace Drupal\aculta_lms\Resources\Form;
 use Drupal\aculta_lms\Access\CourseAuthoringAccessCheck;
 use Drupal\aculta_lms\Resources\Access\CourseDocumentAccessCheck;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -41,11 +42,11 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
   ];
 
   public function __construct(
-    private readonly CurrentRouteMatch $routeMatcher,
-    private readonly CourseAuthoringAccessCheck $authoringAccess,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly CourseDocumentAccessCheck $documentAccess,
-    private readonly ModuleHandlerInterface $moduleHandler,
+    protected readonly CurrentRouteMatch $routeMatcher,
+    protected readonly CourseAuthoringAccessCheck $authoringAccess,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly CourseDocumentAccessCheck $documentAccess,
+    protected readonly ModuleHandlerInterface $moduleHandler,
   ) {}
 
   /**
@@ -222,6 +223,7 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
       if (!$viewAccess->isAllowed()) {
         continue;
       }
+      $viewMetadata = CacheableMetadata::createFromObject($viewAccess);
       $row = [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'aculta-lms-course-materials--document'],
@@ -231,10 +233,10 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
       $row['#cache'] = [
         'contexts' => array_values(array_unique(array_merge(
           $updateAccess->getCacheContexts(),
-          $viewAccess->getCacheContexts(),
+          $viewMetadata->getCacheContexts(),
         ))),
-        'tags' => array_values(array_unique(array_merge($updateAccess->getCacheTags(), $viewAccess->getCacheTags()))),
-        'max-age' => Cache::mergeMaxAges($updateAccess->getCacheMaxAge(), $viewAccess->getCacheMaxAge()),
+        'tags' => array_values(array_unique(array_merge($updateAccess->getCacheTags(), $viewMetadata->getCacheTags()))),
+        'max-age' => Cache::mergeMaxAges($updateAccess->getCacheMaxAge(), $viewMetadata->getCacheMaxAge()),
       ];
       if ($updateAccess->isAllowed()) {
         $row['edit'] = Link::fromTextAndUrl(

@@ -76,3 +76,16 @@ Escopo: `LearningEligibility` passou a narrowing `ContentEntityInterface` nos pa
 | Baseline atual | 3711 |
 
 Escopo: narrowing real (instanceof/guard clauses) em `AnswerAttachmentAccessCheck`, `AnswerReviewForm`, `AnswerSubmissionForm`, `CourseCertificateManager`, `CourseCertificateIssueForm`, `CourseStructureController`, `XapiStatementsController`, `LmsForumModerationManager` e `EventClassAccess`. Nenhum `@phpstan-ignore`, nenhum cast forçado, nenhuma regra de negócio alterada. `AnswerSubmissionForm` passou a declarar `$file` antes dos ramos e a falhar explicitamente se o storage devolver entidade inesperada. Evidência: Unit 320/1367 PASS.
+
+## Rodada 5 — 2026-11-10
+
+| Medida | Valor |
+| --- | ---: |
+| Erros brutos em aculta_lms/src antes | 177 |
+| Corrigidos em aculta_lms/src | 67 |
+| Erros brutos em aculta_lms/src ao final | 110 |
+| Erros brutos globais antes | 3711 |
+| Erros brutos globais ao final | 3647 |
+| Baseline atual | 3647 |
+
+Escopo: `ActivityDeleteForm`, `LessonDeleteForm` e `CourseStructureMoveForm` passaram a declarar `TranslatableMarkup` (contrato real do `ConfirmFormInterface`); `CourseMaterialsForm` passou a usar `CacheableMetadata::createFromObject()` para dependências de resultado de acesso e serializa propriedades protegidas; `CourseDocumentAccessCheck` retorna `AccessResult`; `CourseStructureOrderManager` narrowing `ContentEntityInterface` e PHPDoc de entrada `array<int|string>`; `LearningNoticeRecipients` e `LearningDashboardManager` narrowing real (`FieldableEntityInterface`/`ContentEntityInterface`/`GroupRelationshipInterface`) e ternários explícitos onde `?->` era redundante. Evidência: Unit 320/1367 PASS.
