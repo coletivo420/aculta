@@ -340,6 +340,7 @@ services:
       - '@database'
       - '@config.factory'
       - '@aculta_forum.analytics_scope_resolver'
+      - '@event_dispatcher'
 
   aculta_forum.discussion_reaction_endpoint_access:
     class: Drupal\aculta_forum\Access\DiscussionReactionEndpointAccess

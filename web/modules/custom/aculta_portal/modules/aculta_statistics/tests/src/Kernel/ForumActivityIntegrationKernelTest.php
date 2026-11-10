@@ -151,7 +151,7 @@ final class ForumActivityIntegrationKernelTest extends KernelTestBase {
     $this->installEntitySchema('group_relationship');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
-    $this->installSchema('aculta_forum', [ForumActivityLedger::TABLE]);
+    $this->installSchema('aculta_forum', [ForumActivityLedger::TABLE, 'aculta_discussion_reaction', 'aculta_discussion_reaction_user_stats']);
     $this->installSchema('aculta_user', ['aculta_user_nickname', 'aculta_user_agreement']);
     $this->installSchema('user', ['users_data']);
     $this->installSchema('entity_usage', ['entity_usage']);
@@ -413,6 +413,47 @@ final class ForumActivityIntegrationKernelTest extends KernelTestBase {
     self::assertSame(1, $provider->value('forum.response.unanswered_over_72h', $day));
     self::assertSame(10, $provider->value('forum.response.first_median_minutes', $day));
     self::assertSame(80, $provider->value('forum.response.first_p90_minutes', $day));
+  }
+
+  /**
+   * Reações públicas contam uma vez, trocam sem somar e restritas ficam fora.
+   */
+  public function testReactionsAreScopedAndCountedOnce(): void {
+    $this->container->get('config.factory')->getEditable('aculta_forum.settings')
+      ->set('reactions_enabled', TRUE)
+      ->set('default_reaction', 'heart')
+      ->set('allowed_reactions', [
+        ['id' => 'heart', 'icon' => 'heart', 'label' => 'Curtir', 'enabled' => TRUE],
+        ['id' => 'fire', 'icon' => 'fire', 'label' => 'Excelente', 'enabled' => TRUE],
+      ])
+      ->save();
+
+    $author = User::create(['name' => 'autora-reacao', 'status' => 1]);
+    $author->save();
+    $reactor = User::create(['name' => 'reagente', 'status' => 1]);
+    $reactor->save();
+    $topic = $this->topicAt((int) $author->id(), time());
+    $manager = $this->container->get('aculta_forum.discussion_reaction_manager');
+    $day = $this->storage->currentDay();
+
+    $manager->toggleReaction($topic, (int) $reactor->id(), 'heart');
+    $row = $this->container->get('database')->select('aculta_discussion_reaction', 'r')
+      ->fields('r', ['reaction', 'is_public_context'])
+      ->execute()
+      ->fetchAssoc();
+    self::assertSame('heart', $row['reaction']);
+    self::assertSame(1, (int) $row['is_public_context']);
+    self::assertSame(1, $this->storage->total('forum.reactions.added', $day, $day, 'heart'));
+    self::assertSame(1, $manager->getUserStats((int) $reactor->id())['reactions_given']);
+
+    // Trocar o emoji não soma `added`.
+    $manager->toggleReaction($topic, (int) $reactor->id(), 'fire');
+    self::assertSame(1, $this->storage->total('forum.reactions.added', $day, $day));
+
+    // Remover zera o estoque e preserva o histórico de adição.
+    $manager->toggleReaction($topic, (int) $reactor->id(), 'fire');
+    self::assertSame(0, $manager->getUserStats((int) $reactor->id())['reactions_given']);
+    self::assertSame(1, $this->storage->total('forum.reactions.added', $day, $day));
   }
 
   /**

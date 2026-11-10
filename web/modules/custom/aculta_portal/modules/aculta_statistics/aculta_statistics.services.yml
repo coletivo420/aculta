@@ -108,6 +108,12 @@ services:
     tags:
       - { name: event_subscriber }
 
+  aculta_statistics.forum_reaction_subscriber:
+    class: Drupal\aculta_statistics\EventSubscriber\ForumReactionSubscriber
+    arguments: ['@aculta_statistics.recorder']
+    tags:
+      - { name: event_subscriber }
+
   aculta_statistics.lms_student_status_subscriber:
     class: Drupal\aculta_statistics\EventSubscriber\LmsStudentStatusSubscriber
     arguments: ['@aculta_statistics.storage']

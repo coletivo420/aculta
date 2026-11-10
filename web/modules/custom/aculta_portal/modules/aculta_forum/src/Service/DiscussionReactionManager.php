@@ -6,6 +6,7 @@ namespace Drupal\aculta_forum\Service;
 
 use Drupal\aculta_forum\Analytics\ForumAnalyticsScopeResolver;
 use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_forum\Event\ForumReactionEvent;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -13,6 +14,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\node\NodeInterface;
 use Drupal\user\EntityOwnerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Manages discussion reactions, aggregations, and user reaction counters.
@@ -26,6 +28,7 @@ class DiscussionReactionManager {
     protected readonly Connection $database,
     protected readonly ConfigFactoryInterface $configFactory,
     protected readonly ForumAnalyticsScopeResolver $scopeResolver,
+    protected readonly EventDispatcherInterface $dispatcher,
   ) {}
 
   /**
@@ -242,6 +245,8 @@ class DiscussionReactionManager {
 
       if ($isPublic) {
         $this->incrementStats($uid, $authorUid);
+        // Só a inclusão nova e pública gera `added`; troca e remoção não.
+        $this->dispatcher->dispatch(new ForumReactionEvent($reactionId), ForumReactionEvent::ADDED);
       }
       $this->invalidateEntityCache($entity, $uid, $authorUid);
 
