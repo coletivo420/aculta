@@ -230,7 +230,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       return;
     }
     if (is_string($requiredPurpose)
-      && !DomainRoutePolicy::allowsSharedPurpose($route, $requiredPurpose, (string) $currentPurpose)) {
+      && !DomainRoutePolicy::allowsSharedSite($route, $requiredPurpose, (string) $currentPurpose)) {
       if ($this->isPasswordResetEditException(
         $event->getRequest(),
         (string) $matched['_route'],
@@ -339,7 +339,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $currentPurpose,
     );
     if (is_string($requiredPurpose)
-      && !DomainRoutePolicy::allowsSharedPurpose($route, $requiredPurpose, (string) $currentPurpose)
+      && !DomainRoutePolicy::allowsSharedSite($route, $requiredPurpose, (string) $currentPurpose)
       && !$resetEditException) {
       if ($requiredPurpose === DomainSurfaceMap::MAIN
         && ($this->isAdministrativeRoute($route)
@@ -359,7 +359,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
 
     $contentPurpose = $this->contentPurposeResolver->canonicalContentPurpose($request);
     if ($contentPurpose !== NULL
-      && !DomainRoutePolicy::allowsSharedPurpose($route, $contentPurpose, (string) $currentPurpose)) {
+      && !DomainRoutePolicy::allowsSharedSite($route, $contentPurpose, (string) $currentPurpose)) {
       $this->notFound($event);
     }
   }

@@ -12,26 +12,36 @@ use Symfony\Component\Routing\Route;
 final class DomainRoutePolicy {
 
   /**
-   * Checks an explicitly shared route's allowed purposes.
+   * Checks an explicitly shared route's allowed site keys.
    *
-   * A shared route must list both its declared owner and the current purpose.
+   * A shared route must list both its declared owner and the current site key.
    * This keeps the exception narrow and prevents a route from becoming public
    * on arbitrary domains by setting only a boolean option.
    */
-  public static function allowsSharedPurpose(Route $route, string $declaredPurpose, string $currentPurpose): bool {
-    if ($declaredPurpose === $currentPurpose) {
+  public static function allowsSharedSite(Route $route, string $declaredSiteKey, string $currentSiteKey): bool {
+    if ($declaredSiteKey === $currentSiteKey) {
       return TRUE;
     }
     if ($route->getOption('_admin_route')) {
       return FALSE;
     }
-    $purposes = $route->getOption('_aculta_domain_purposes');
-    if (!is_array($purposes)) {
+    $siteKeys = $route->getOption('_aculta_domain_purposes');
+    if (!is_array($siteKeys)) {
       return FALSE;
     }
-    $purposes = array_values(array_unique(array_filter($purposes, 'is_string')));
-    return in_array($declaredPurpose, $purposes, TRUE)
-      && in_array($currentPurpose, $purposes, TRUE);
+    $siteKeys = array_values(array_unique(array_filter($siteKeys, 'is_string')));
+    return in_array($declaredSiteKey, $siteKeys, TRUE)
+      && in_array($currentSiteKey, $siteKeys, TRUE);
+  }
+
+  /**
+   * Compatibility wrapper for callers using the legacy API name.
+   *
+   * Remove after RN-04 confirms zero callers. Route options remain persisted
+   * until the reversible config migration.
+   */
+  public static function allowsSharedPurpose(Route $route, string $declaredPurpose, string $currentPurpose): bool {
+    return self::allowsSharedSite($route, $declaredPurpose, $currentPurpose);
   }
 
   /**
@@ -58,13 +68,22 @@ final class DomainRoutePolicy {
   }
 
   /**
-   * Returns the owning purpose for a donation route.
+   * Returns the owning site key for a donation route.
    *
    * Donation selection routes belong to SUPPORT. The Commerce checkout
    * portion belongs to MAIN.
    */
-  public static function purposeForDonationRoute(string $routeName): string {
+  public static function siteKeyForDonationRoute(string $routeName): string {
     return $routeName === 'aculta_donation.donation_controller_formPage' ? 'main' : 'support';
+  }
+
+  /**
+   * Compatibility wrapper for callers using the legacy API name.
+   *
+   * Remove after RN-04 confirms zero callers.
+   */
+  public static function purposeForDonationRoute(string $routeName): string {
+    return self::siteKeyForDonationRoute($routeName);
   }
 
   /**

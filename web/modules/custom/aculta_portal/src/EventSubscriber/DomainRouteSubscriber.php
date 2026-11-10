@@ -183,9 +183,9 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     // AccountRouteSubscriber usa o usuário da sessão para verificar acesso.
     // Rotas antigas /user/{uid}/... deixam de existir.
     $account_paths = [
-      'entity.commerce_order.user_view' => ['/pedidos/{commerce_order}', []],
+      'entity.commerce_order.user_view' => '/pedidos/{commerce_order}',
     ];
-    foreach ($account_paths as $name => [$path, $unused]) {
+    foreach ($account_paths as $name => $path) {
       if ($route = $collection->get($name)) {
         $route->setPath($path);
         $route->setOption('parameters', array_diff_key((array) $route->getOption('parameters'), ['user' => TRUE]));
@@ -306,9 +306,9 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       }
       if (DomainRoutePolicy::isDonationFlowRouteName((string) $name)) {
         // Escolha do valor fica em SUPPORT; o checkout Commerce fica em MAIN.
-        $purpose = DomainRoutePolicy::purposeForDonationRoute((string) $name);
-        $route->setOption('_aculta_domain_purpose', $purpose);
-        $route->setOption('_aculta_cross_domain_canonical_purpose', $purpose);
+        $siteKey = DomainRoutePolicy::siteKeyForDonationRoute((string) $name);
+        $route->setOption('_aculta_domain_purpose', $siteKey);
+        $route->setOption('_aculta_cross_domain_canonical_purpose', $siteKey);
       }
       if (DomainRoutePolicy::isCentralTransactionRouteName((string) $name)) {
         $route->setOption('_aculta_domain_purpose', 'main');

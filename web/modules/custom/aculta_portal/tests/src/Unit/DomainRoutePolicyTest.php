@@ -61,9 +61,10 @@ final class DomainRoutePolicyTest extends UnitTestCase {
    * Checks donation and Commerce checkout purposes.
    */
   public function testDonationStepBelongsToMainAndValueChoiceToSupport(): void {
+    $this->assertSame('support', DomainRoutePolicy::siteKeyForDonationRoute('aculta_donation.donation.default'));
+    $this->assertSame('support', DomainRoutePolicy::siteKeyForDonationRoute('aculta_donation.donation.quick'));
+    $this->assertSame('main', DomainRoutePolicy::siteKeyForDonationRoute('aculta_donation.donation_controller_formPage'));
     $this->assertSame('support', DomainRoutePolicy::purposeForDonationRoute('aculta_donation.donation.default'));
-    $this->assertSame('support', DomainRoutePolicy::purposeForDonationRoute('aculta_donation.donation.quick'));
-    $this->assertSame('main', DomainRoutePolicy::purposeForDonationRoute('aculta_donation.donation_controller_formPage'));
   }
 
   /**
@@ -103,16 +104,17 @@ final class DomainRoutePolicyTest extends UnitTestCase {
       '_aculta_domain_purpose' => 'eventos',
       '_aculta_domain_purposes' => ['eventos', 'main'],
     ]);
-    self::assertTrue(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'main'));
-    self::assertTrue(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'eventos'));
-    self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'forum'));
+    self::assertTrue(DomainRoutePolicy::allowsSharedSite($route, 'eventos', 'main'));
+    self::assertTrue(DomainRoutePolicy::allowsSharedSite($route, 'eventos', 'eventos'));
+    self::assertFalse(DomainRoutePolicy::allowsSharedSite($route, 'eventos', 'forum'));
 
     $adminRoute = new Route('/admin/example', [], [], [
       '_admin_route' => TRUE,
       '_aculta_domain_purpose' => 'eventos',
       '_aculta_domain_purposes' => ['eventos', 'main'],
     ]);
-    self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($adminRoute, 'eventos', 'main'));
+    self::assertFalse(DomainRoutePolicy::allowsSharedSite($adminRoute, 'eventos', 'main'));
+    self::assertTrue(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'main'));
   }
 
 }

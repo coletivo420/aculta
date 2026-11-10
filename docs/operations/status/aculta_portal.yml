@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.5.0-dev.1
 state: Dev
-next_phase: 'Concluir RN-01 testando paridade integral do DomainSiteManager; depois migrar consumers e route options por lotes (RN-02/RN-03), com Runtime e homologação DEFERRED até reconciliação autorizada.'
-progress_note: "2026-11-10: RN-00 gerou CSV reproduzível com 3.059 ocorrências; semântica ainda parcial. RN-01 adiciona SiteKey, SiteKeyRegistry, DomainSiteManagerInterface e DomainSiteManager adaptador. Unit focal 7/84 e domínio/ContentPurposeResolver 54/161 PASS; PHPCS, PHPStan, YAML e gate Drupal 12 (1238) PASS. Runtime sem alteração.
+next_phase: 'Migrar options de rota e os demais consumidores funcionais para site_key em lotes reversíveis; depois provar paridade HTTP/ACL/cache e concluir RN-01 a RN-05. UI Skins e Runtime continuam pendentes.'
+progress_note: "2026-11-10: RN-00 gerou CSV reproduzível com 3.059 ocorrências; semântica ainda parcial. RN-01 introduz SiteKey, SiteKeyRegistry e DomainSiteManager adapter. RN-02 parcial migra DomainRoutePolicy e subscribers do Portal para allowsSharedSite/siteKeyForDonationRoute, preservando wrappers e route options antigas até migração reversível. Testes focais e gates nesta fatia registrados no handoff. Runtime sem alteração.
 2026-11-04 dev.76: schema de `aculta_portal.user_upload` incluído no owner; Kernel real instala configuração Portal. Integração de owners do Index + política de upload: 8 testes/162 assertions PASS (216 depreciações Core/contrib). Runtime após push/cache ainda pendente.
 2026-11-03 dev.74: Ganjalab Educador recebe estrutura de curso no aculta_lms; autorização contextual e preservação do histórico. Suítes LMS 247/880 e Studio 67/679 PASS; Runtime `49cc9757a4` sincronizado; `updatedb:status` e `config:status` limpos. Aviso de post-updates removidos do Group reconciliado após auditoria dos efeitos atuais; snapshot/hash no handoff.
 2026-11-03 dev.69: preparação Drupal 12; manifests customizados ^11 || ^12, APIs removidas ajustadas e Upgrade Status instalado/ativado."

@@ -8,7 +8,7 @@ use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Controller\EventOrganizerDashboardController;
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\Entity\User;
 use Drupal\user\Entity\Role;
@@ -135,8 +135,8 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
       $route = $routeProvider->getRouteByName($name);
       self::assertSame('main', $route->getOption('_aculta_domain_purpose'), $name);
       self::assertTrue((bool) $route->getOption('_admin_route'), $name);
-      self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'eventos'), $name);
-      self::assertTrue(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'main'), $name);
+      self::assertFalse(DomainRoutePolicy::allowsSharedSite($route, 'main', 'eventos'), $name);
+      self::assertTrue(DomainRoutePolicy::allowsSharedSite($route, 'main', 'main'), $name);
     }
   }
 
@@ -149,8 +149,8 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
       $route = $routeProvider->getRouteByName($name);
       self::assertSame('eventos', $route->getOption('_aculta_domain_purpose'), $name);
       self::assertFalse((bool) $route->getOption('_admin_route'), $name);
-      self::assertTrue(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'eventos'), $name);
-      self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'main'), $name);
+      self::assertTrue(DomainRoutePolicy::allowsSharedSite($route, 'eventos', 'eventos'), $name);
+      self::assertFalse(DomainRoutePolicy::allowsSharedSite($route, 'eventos', 'main'), $name);
       self::assertTrue((bool) $route->getOption('no_cache'), $name);
     }
     self::assertSame('/culturas', $routeProvider->getRouteByName('aculta_events.organizer_dashboard')->getPath());
@@ -352,15 +352,15 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     foreach (['aculta_events_openstreetmap.status', 'aculta_events_openstreetmap.import'] as $name) {
       $route = $routeProvider->getRouteByName($name);
       self::assertSame('main', $route->getOption('_aculta_domain_purpose'), $name);
-      self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'eventos'), $name);
-      self::assertTrue(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'main'), $name);
+      self::assertFalse(DomainRoutePolicy::allowsSharedSite($route, 'main', 'eventos'), $name);
+      self::assertTrue(DomainRoutePolicy::allowsSharedSite($route, 'main', 'main'), $name);
     }
 
     foreach (['aculta_events_openstreetmap.oauth_authorize', 'aculta_events_openstreetmap.oauth_callback'] as $name) {
       $route = $routeProvider->getRouteByName($name);
       self::assertSame('main', $route->getOption('_aculta_domain_purpose'), $name);
-      self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'eventos'), $name);
-      self::assertTrue(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'main'), $name);
+      self::assertFalse(DomainRoutePolicy::allowsSharedSite($route, 'main', 'eventos'), $name);
+      self::assertTrue(DomainRoutePolicy::allowsSharedSite($route, 'main', 'main'), $name);
     }
   }
 
@@ -514,7 +514,7 @@ final class EventDomainBoundaryTestOrganizationAccessService {
   /**
    * Limits fixture edit access to an Event owned by the test editor.
    */
-  public function isContentEditorScoped(EntityInterface $entity, AccountInterface $account): bool {
+  public function isContentEditorScoped(FieldableEntityInterface $entity, AccountInterface $account): bool {
     return $entity->getEntityTypeId() === 'aculta_event'
       && $entity->hasField('field_organizador')
       && (int) $entity->get('field_organizador')->target_id === (int) $account->id();

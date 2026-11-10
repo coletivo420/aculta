@@ -4,6 +4,17 @@
 - Adiciona `DomainSiteManagerInterface` e `DomainSiteManager`, API tipada que delega ao `DomainPurposeManagerInterface` compatível; os consumidores antigos, rotas, URLs e regras permanecem no serviço atual.
 - Unit focais: 7 testes / 84 assertions PASS; Domain/ContentPurposeResolver: 54 testes / 161 assertions PASS. PHPCS, PHPStan, YAML e gate Drupal 12 (1.238 checks) PASS. Sem mudança de Runtime, State, sessão ou configuração.
 
+## Não versionado — RN-02, contrato de política de rota
+
+- `DomainRoutePolicy` expõe os métodos `allowsSharedSite()` e
+  `siteKeyForDonationRoute()`. Os subscribers do Portal e testes de unidade e
+  Kernel usam a API nova; as regras de compartilhamento, prioridade admin e
+  owners `main`/`support` permanecem inalterados.
+- Os métodos antigos seguem como wrappers de compatibilidade rastreados para
+  consumidores não migrados. Options `_aculta_domain_purpose(s)` seguem inalteradas, aguardando
+  inventário/migração de configuração reversível. Gate de rota e runtime ainda
+  pendentes.
+
 ## 0.5.0-dev.1 — estado neutro de purposes ativos e hooks de ciclo de vida (F3)
 
 - Cria o serviço `ActivePurposesState` (`aculta_portal.active_purposes_state`) que expõe o estado neutro `aculta_portal.active_purposes` via Core State API.
