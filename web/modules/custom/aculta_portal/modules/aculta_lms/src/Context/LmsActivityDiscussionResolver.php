@@ -11,9 +11,7 @@ use Drupal\Core\Link;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipStorageInterface;
-use Drupal\node\NodeInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -48,9 +46,6 @@ final class LmsActivityDiscussionResolver {
         'group_relationship_list:plugin:lms_classes:group:' . $course->id(),
       ]);
     foreach ($course->getRelationships('lms_classes') as $classRelationship) {
-      if (!$classRelationship instanceof GroupRelationshipInterface) {
-        continue;
-      }
       $class = $classRelationship->getEntity();
       $cache->addCacheableDependency($classRelationship);
       if ($class instanceof GroupInterface) {
@@ -73,7 +68,7 @@ final class LmsActivityDiscussionResolver {
     $items = [];
     $relationshipStorage = $this->relationshipStorage();
     foreach ($this->entityTypeManager->getStorage('node')->loadMultiple($ids) as $topic) {
-      if (!$topic instanceof NodeInterface || $topic->bundle() !== self::NODE_BUNDLE) {
+      if ($topic->bundle() !== self::NODE_BUNDLE) {
         continue;
       }
       $relationships = $relationshipStorage->loadByEntity($topic, self::TOPIC_RELATIONSHIP);
@@ -81,8 +76,8 @@ final class LmsActivityDiscussionResolver {
         continue;
       }
       $relationship = reset($relationships);
-      $group = $relationship instanceof GroupRelationshipInterface ? $relationship->getGroup() : NULL;
-      if (!$group instanceof GroupInterface || !$this->belongsToCourse($group, $course, $relationshipStorage, $cache)) {
+      $group = $relationship->getGroup();
+      if (!$this->belongsToCourse($group, $course, $relationshipStorage, $cache)) {
         continue;
       }
       $access = $topic->access('view', $account, TRUE);
@@ -136,15 +131,10 @@ final class LmsActivityDiscussionResolver {
       return FALSE;
     }
     $parent = reset($parents);
-    if ($parent instanceof GroupRelationshipInterface) {
-      $cache->addCacheableDependency($parent);
-    }
-    $parentCourse = $parent instanceof GroupRelationshipInterface ? $parent->getGroup() : NULL;
-    if ($parentCourse instanceof GroupInterface) {
-      $cache->addCacheableDependency($parentCourse);
-    }
-    return $parentCourse instanceof GroupInterface
-      && (string) $parentCourse->id() === (string) $course->id();
+    $cache->addCacheableDependency($parent);
+    $parentCourse = $parent->getGroup();
+    $cache->addCacheableDependency($parentCourse);
+    return (string) $parentCourse->id() === (string) $course->id();
   }
 
   /**

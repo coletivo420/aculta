@@ -6,10 +6,9 @@ namespace Drupal\aculta_lms\Access;
 
 use Drupal\aculta_lms\Notice\LearningEligibilityInterface;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\aculta_lms\Group\GroupMembershipReaderInterface;
 use Drupal\user\UserInterface;
 
@@ -25,7 +24,7 @@ final class AnswerReviewAccessCheck {
 
   /**
    * Checks course, class, grader, and answer membership access. */
-  public function access(GroupInterface $course, GroupInterface $group, ?EntityInterface $answer = NULL): AccessResult {
+  public function access(GroupInterface $course, GroupInterface $group, ?FieldableEntityInterface $answer = NULL): AccessResult {
     $allowed = $course->bundle() === 'lms_course'
       && $group->bundle() === 'lms_class'
       && $course->hasPermission('grade students', $this->currentUser);
@@ -35,10 +34,7 @@ final class AnswerReviewAccessCheck {
       'group_relationship_list:plugin:group_membership:group:' . $group->id(),
     ];
     if ($allowed) {
-      foreach ($course->getRelationships('lms_classes') ?? [] as $relationship) {
-        if (!$relationship instanceof GroupRelationshipInterface) {
-          continue;
-        }
+      foreach ($course->getRelationships('lms_classes') as $relationship) {
         $class = $relationship->getEntity();
         if ($class instanceof GroupInterface && (string) $class->id() === (string) $group->id()) {
           $courseHasClass = TRUE;
@@ -55,7 +51,7 @@ final class AnswerReviewAccessCheck {
         $studentId = (int) $answer->get('uid')->value;
         $allowed = FALSE;
         foreach ($this->memberships->loadByGroup($group) as $membership) {
-          if (!$membership instanceof GroupRelationshipInterface || $membership->getPluginId() !== 'group_membership') {
+          if ($membership->getPluginId() !== 'group_membership') {
             continue;
           }
           $member = $membership->getEntity();

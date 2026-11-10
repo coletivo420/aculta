@@ -22,7 +22,10 @@ final class ActivityDeadlineEventHooks {
  * Publishes a newly assigned deadline. */
   #[Hook('entity_insert')]
   public function entityInsert(EntityInterface $entity): void {
-    if ($this->isDeadline($entity) && !$entity->get('field_activity_due_at')->isEmpty()) {
+    if (!$entity instanceof GroupRelationshipInterface || $entity->getPluginId() !== 'lms_class_activity_due') {
+      return;
+    }
+    if (!$entity->get('field_activity_due_at')->isEmpty()) {
       $this->publish($entity);
     }
   }
@@ -31,7 +34,10 @@ final class ActivityDeadlineEventHooks {
  * Publishes a deadline only when its persisted date changes. */
   #[Hook('entity_update')]
   public function entityUpdate(EntityInterface $entity): void {
-    if (!$this->isDeadline($entity) || $entity->get('field_activity_due_at')->isEmpty()) {
+    if (!$entity instanceof GroupRelationshipInterface || $entity->getPluginId() !== 'lms_class_activity_due') {
+      return;
+    }
+    if ($entity->get('field_activity_due_at')->isEmpty()) {
       return;
     }
     $original = $entity->getOriginal();
@@ -39,13 +45,6 @@ final class ActivityDeadlineEventHooks {
       || $original->get('field_activity_due_at')->value !== $entity->get('field_activity_due_at')->value) {
       $this->publish($entity);
     }
-  }
-
-  /**
-   * Checks for the class-to-activity deadline relation. */
-  private function isDeadline(EntityInterface $entity): bool {
-    return $entity instanceof GroupRelationshipInterface
-      && $entity->getPluginId() === 'lms_class_activity_due';
   }
 
   /**

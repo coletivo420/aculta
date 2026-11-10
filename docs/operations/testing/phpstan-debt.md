@@ -89,3 +89,16 @@ Escopo: narrowing real (instanceof/guard clauses) em `AnswerAttachmentAccessChec
 | Baseline atual | 3647 |
 
 Escopo: `ActivityDeleteForm`, `LessonDeleteForm` e `CourseStructureMoveForm` passaram a declarar `TranslatableMarkup` (contrato real do `ConfirmFormInterface`); `CourseMaterialsForm` passou a usar `CacheableMetadata::createFromObject()` para dependências de resultado de acesso e serializa propriedades protegidas; `CourseDocumentAccessCheck` retorna `AccessResult`; `CourseStructureOrderManager` narrowing `ContentEntityInterface` e PHPDoc de entrada `array<int|string>`; `LearningNoticeRecipients` e `LearningDashboardManager` narrowing real (`FieldableEntityInterface`/`ContentEntityInterface`/`GroupRelationshipInterface`) e ternários explícitos onde `?->` era redundante. Evidência: Unit 320/1367 PASS.
+
+## Rodada 6 — 2026-11-10
+
+| Medida | Valor |
+| --- | ---: |
+| Erros brutos em aculta_lms/src antes | 110 |
+| Corrigidos em aculta_lms/src | 27 |
+| Erros brutos em aculta_lms/src ao final | 83 |
+| Erros brutos globais antes | 3647 |
+| Erros brutos globais ao final | 3621 |
+| Baseline atual | 3621 |
+
+Escopo: `LmsActivityDiscussionResolver`, `AnswerReviewAccessCheck`, `AccountCoursesReader`, `ActivityDeadlineEventHooks` e `CourseContentEventHooks` tiveram checagens `instanceof` redundantes removidas e narrowing real aplicado nos pontos que usavam `get()`. `AnswerReviewAccessCheck::access()` passa a aceitar `?FieldableEntityInterface`. `AccountCoursesReader` mantém o tratamento de resultado booleano de hooks de acesso do Group (coberto por teste) e lê tags via `CacheableMetadata::createFromObject()`. Resíduo conhecido: PHPStan considera que `Group::access(..., TRUE)` nunca retorna bool; o teste `testBooleanAccessGrantDoesNotBreakDashboard` prova que retorna em ambiente real, então a linha fica no baseline como dependente do ambiente. Evidência: Unit 320/1367 PASS.

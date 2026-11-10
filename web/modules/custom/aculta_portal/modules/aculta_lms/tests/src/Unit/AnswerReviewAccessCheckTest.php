@@ -66,6 +66,7 @@ final class AnswerReviewAccessCheckTest extends UnitTestCase {
   public function testCannotReviewAnswerFromAnotherCourse(): void {
     [$check, $course, $class, $answer, $memberships] = $this->scenario();
     $otherCourse = $this->group('lms_course', '99');
+    $otherCourse->method('getRelationships')->willReturn([]);
     $answerCourse = $this->group('lms_course', '100');
     $eligibility = $this->createMock(LearningEligibilityInterface::class);
     $eligibility->method('courseForAnswer')->with($answer)->willReturn($answerCourse);

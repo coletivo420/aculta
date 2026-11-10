@@ -6229,24 +6229,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/aculta_lms.module
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Access/AnswerReviewAccessCheck.php
-
-		-
-			rawMessage: Expression on left side of ?? is not nullable.
-			identifier: nullCoalesce.expr
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Access/AnswerReviewAccessCheck.php
-
-		-
-			rawMessage: Instanceof between Drupal\group\Entity\GroupRelationshipInterface and Drupal\group\Entity\GroupRelationshipInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Access/AnswerReviewAccessCheck.php
-
-		-
 			rawMessage: Instanceof between Drupal\group\Entity\GroupInterface and Drupal\group\Entity\GroupInterface will always evaluate to true.
 			identifier: instanceof.alwaysTrue
 			count: 1
@@ -6265,44 +6247,8 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Access/LmsForumModerationManager.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::getCacheTags().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Account/AccountCoursesReader.php
-
-		-
-			rawMessage: Instanceof between Drupal\Core\Access\AccessResultInterface and Drupal\Core\Access\AccessResultInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Account/AccountCoursesReader.php
-
-		-
-			rawMessage: Instanceof between Drupal\group\Entity\GroupInterface and Drupal\group\Entity\GroupInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Account/AccountCoursesReader.php
-
-		-
-			rawMessage: 'Strict comparison using === between *NEVER* and true will always evaluate to false.'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Account/AccountCoursesReader.php
-
-		-
-			rawMessage: Using nullsafe property access "?->cacheTags" on left side of ?? is unnecessary. Use -> instead.
-			identifier: nullsafe.neverNull
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Account/AccountCoursesReader.php
-
-		-
-			rawMessage: Using nullsafe property access "?->finished" on left side of ?? is unnecessary. Use -> instead.
-			identifier: nullsafe.neverNull
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Account/AccountCoursesReader.php
-
-		-
-			rawMessage: Using nullsafe property access "?->status" on left side of ?? is unnecessary. Use -> instead.
-			identifier: nullsafe.neverNull
+			rawMessage: 'Method Drupal\aculta_lms\Account\AccountCoursesReader::viewAccess() never returns bool so it can be removed from the return type.'
+			identifier: return.unusedType
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Account/AccountCoursesReader.php
 
@@ -6371,24 +6317,6 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/ClassRosterManager.php
-
-		-
-			rawMessage: Instanceof between Drupal\group\Entity\GroupInterface and Drupal\group\Entity\GroupInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Context/LmsActivityDiscussionResolver.php
-
-		-
-			rawMessage: Instanceof between Drupal\group\Entity\GroupRelationshipInterface and Drupal\group\Entity\GroupRelationshipInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Context/LmsActivityDiscussionResolver.php
-
-		-
-			rawMessage: Instanceof between Drupal\node\Entity\Node and Drupal\node\NodeInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Context/LmsActivityDiscussionResolver.php
 
 		-
 			rawMessage: Instanceof between Drupal\group\Entity\GroupRelationshipInterface and Drupal\group\Entity\GroupRelationshipInterface will always evaluate to true.
@@ -6535,18 +6463,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Form/LmsCommentModerationForm.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/ActivityDeadlineEventHooks.php
-
-		-
-			rawMessage: 'Parameter #1 $relationship of method Drupal\aculta_lms\Hook\ActivityDeadlineEventHooks::publish() expects Drupal\group\Entity\GroupRelationshipInterface, Drupal\Core\Entity\EntityInterface given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/ActivityDeadlineEventHooks.php
-
-		-
 			rawMessage: Instanceof between Drupal\Core\Datetime\DrupalDateTime and Drupal\Core\Datetime\DrupalDateTime will always evaluate to true.
 			identifier: instanceof.alwaysTrue
 			count: 1
@@ -6563,18 +6479,6 @@ parameters:
 			identifier: method.notFound
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/AnswerLifecycleEventHooks.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/CourseContentEventHooks.php
-
-		-
-			rawMessage: Instanceof between Drupal\group\Entity\GroupInterface and Drupal\Core\Entity\EntityPublishedInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/CourseContentEventHooks.php
 
 		-
 			rawMessage: 'Strict comparison using === between Drupal\Core\Entity\EntityInterface and null will always evaluate to false.'
@@ -7083,7 +6987,7 @@ parameters:
 		-
 			rawMessage: 'Call to an undefined method Drupal\group\Entity\GroupInterface::method().'
 			identifier: method.notFound
-			count: 2
+			count: 3
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/AnswerReviewAccessCheckTest.php
 
 		-
