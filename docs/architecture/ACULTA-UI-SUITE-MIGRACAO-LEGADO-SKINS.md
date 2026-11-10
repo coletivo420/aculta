@@ -1,6 +1,6 @@
 # ADR-054 + ADR-055 - Programa de substituicao integral de visual legado e migracao Purpose Visual -> UI Skins
 
-**Estado:** PLANO EXECUTIVO, implementacao DEFERRED. **Data:** 2026-11-10. **Branch:** `dev`.
+**Estado:** plano executivo; corte do motor visual por purpose implementado em código, homologação Runtime/visual DEFERRED. **Data:** 2026-11-10. **Branch:** `dev`.
 **Referencias:** `docs/decisions/ADR-054-refatoracao-aculta420-v2-sdc-layout-builder.md`, `docs/decisions/ADR-055-integracao-ui-icons-ui-styles-page-e-sistema-unificado-de-emojis.md`, `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md`.
 
 ## 1. Decisoes do responsavel
@@ -16,7 +16,7 @@
 
 ## 2. Arquitetura final - UI Skins como unica fonte visual
 
-### 2.1 Antes (a remover do visual)
+### 2.1 Antes (removido do visual nesta entrega)
 
 `DomainPurposeManager -> aculta_purpose -> aculta_purpose_palette / PurposePaletteSchemes -> SurfaceSettingsHooks::purposePaletteStyle -> data-purpose-scheme / --aculta-purpose-light-* / --aculta-purpose-dark-* -> CSS de componentes`
 
@@ -28,9 +28,9 @@ Consumidores conhecidos do codigo:
 - `web/modules/custom/aculta_portal/src/Domain/DomainPurposeManager.php`: resolve domínio, aliases e URLs; substituir por `DomainSiteManager` (mesmo comportamento), com compatibilidade limitada e testada até RN-05.
 - `web/themes/custom/aculta420_v2/src/styles/tokens.css` e styles, `aculta420_v2.ui_styles.yml`, `config/sync/aculta420_v2.settings.yml` e quaisquer atributos/caches descobertos pelo inventario.
 
-**Estes caminhos sao evidencias de alvos, nao um inventario exaustivo.** Executar rastreamento de chamadas e seletores antes do corte.
+Os itens de paleta acima foram removidos do código/configuração versionados; busca focal não encontrou consumidores ativos no tema ou Portal. `DomainPurposeManager` mantém usos funcionais fora do contrato visual. O inventário integral de Views, módulos consumidores, Runtime e áreas editoriais continua obrigatório; esta remoção de código não equivale a aceite visual.
 
-### 2.2 Depois (a implementar)
+### 2.2 Depois (contrato implementado; Runtime pendente)
 
 `Domain/Portal (identidade funcional de dominio) -> resolvedor de skin por dominio + preferencia visual efetiva (Portal) -> API/definicoes UI Skins (themes/schemes + CSS variables) -> atributo/escopo de skin e tokens semanticos publicados por requisicao -> UI Styles -> SDC/UI Patterns -> pagina`
 

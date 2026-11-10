@@ -1,13 +1,11 @@
 # ADR-054 + ADR-055 — UI Skins/site_key — 2026-11-10
 
-- **Objetivo:** cortar subscriber e destinos de login/sessão de purpose para `site_key`, sem fallback nem dual-read.
-- **Estado:** `DomainSiteRequestSubscriber`, `PortalHooks`, login popup e checkout usam `DomainSiteManager`/`SiteKey`; sessão aceita apenas `site_key`. `DomainPurposeManager` ainda tem consumidores funcionais; UI Skins/migração visual pendentes.
-- **Decisão:** dados antigos de purpose não são interpretados. IDs Domain ficam para regras funcionais; nenhuma configuração visual legada será mantida.
-- **Cuidados:** preservados access/cache/redirects; sem import de config, update de banco ou uninstall.
-- **Commits e arquivos:** inventários em `d6f958be9` e `1ed4d7197`; esta entrega local altera subscriber, emissores de login, testes e docs Portal.
-- **Verificações:** gate Drupal 12 PASS (1.238); Unit PASS (28/86); PHPCS/PHPStan focal e diff check PASS. Wiki Kernel DEFERRED: tabela Group ausente. Runtime pós-push/cache pendente.
-- **Pendências:** outros consumidores funcionais de `DomainPurposeManager`; Skins disabled; risco Field Group/upstream sem suporte Core 12; Patterns CKEditor ativo exige autorização para remover.
-- **Próximo passo:** publicar corte Portal, limpar cache dev e migrar consumidores restantes antes da ponte `domain_id`→`skin_id`.
+- **Objetivo:** concluir o corte visual por purpose e declarar UI Skins como fonte de tokens/paletas, sem dual-read nem retenção de configuração legada.
+- **Estado:** mapa dos dez Domain IDs para skin IDs via config própria; tema declara cinco variáveis e vinte scopes UI Skins (dez skins × claro/escuro). Removidos formulário/config de paleta, esquemas PHP, tokens/seletoras purpose e seus testes/gate. `DomainPurposeManager` permanece para responsabilidades funcionais.
+- **Arquivos:** Portal `DomainSkinResolver`, serviço/schema/config, `AppearanceHooks`; tema `SurfaceSettingsHooks`, tokens e settings/UI Styles; gate `validate-aculta420-ui-skins.php`; inventário e docs/todos/status atualizados.
+- **Verificações:** gate UI Skins PASS (126 checks; contraste >=4.5:1), theme-settings PASS (16), UI Styles PASS (38), foundations PASS (83 pares + 6 faixas), Unit Domain PASS (11/31), PHPStan e PHPCS focais PASS; diffs/YAML em validação final.
+- **Limites:** Runtime tem UI Skins Disabled e Config Sync apresenta drift; sem `cim`/enable. Render real, cache visual, capturas e aceite por domínio DEFERRED. Stylelint indisponível. Token-budget gate registra dívida preexistente.
+- **Próximo passo:** validar versão instalada/API UI Skins no Runtime após procedimento de Sync autorizado; completar piloto Links com capturas/modos/cache e seguir migração UI Suite/legado.
 # FST-00 a FST-11 — integração analítica Fórum + Statistics — 2026-11-10
 
 - **Objetivo:** executar o plano canônico FST-00 a FST-11 em `web/modules/custom/aculta_portal/modules/aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md`.

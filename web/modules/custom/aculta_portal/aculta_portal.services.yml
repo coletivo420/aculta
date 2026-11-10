@@ -59,6 +59,11 @@ services:
     arguments: ['@config.factory', '@user.data']
     tags:
       - { name: aculta_portal.helper }
+  aculta_portal.domain_skin_resolver:
+    class: Drupal\aculta_portal\Appearance\DomainSkinResolver
+    arguments: ['@config.factory', '@aculta_portal.domain_site']
+    tags:
+      - { name: aculta_portal.helper }
   aculta_portal.aculta_user_agreement_registration:
     class: Drupal\aculta_portal\Account\AcultaUserAgreementRegistration
     arguments: ['@aculta_user.aculta_user_agreement_ledger']

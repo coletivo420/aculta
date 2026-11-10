@@ -2396,13 +2396,13 @@ body.path-ganjalab .aculta-main :is(h1, h2, h3, h4, h5, h6) {
   flex: 1 1 auto;
 }
 
-/* Caixas do painel de conta: faixa superior na cor de faixa do purpose (--purpose-sub-2) e cantos arredondados,
-   como na referência. --purpose-accent fica para botões. */
+/* Caixas do painel de conta: faixa superior na cor de faixa do skin (--color-accent-sub-2) e cantos arredondados,
+   como na referência. --color-accent fica para botões. */
 .aculta-account-entry .aculta-xp-hero,
 .aculta-account-entry .aculta-xp-card,
 .aculta-account-entry .aculta-xp-strip,
 .aculta-account-entry .aculta-xp-row {
-  border-block-start: 4px solid var(--purpose-sub-2);
+  border-block-start: 4px solid var(--color-accent-sub-2);
   border-radius: var(--radius-lg);
 }
 

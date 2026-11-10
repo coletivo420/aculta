@@ -1,11 +1,11 @@
-/* Componente SDC studio-calendar: Caixa com faixa superior --purpose-sub-2 e raio --radius-lg */
+/* Componente SDC studio-calendar: Caixa com faixa superior --color-accent-sub-2 e raio --radius-lg */
 .aculta-studio-calendar {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   padding: var(--spacing-md);
   border: 1px solid var(--color-border);
-  border-block-start: 4px solid var(--purpose-sub-2);
+  border-block-start: 4px solid var(--color-accent-sub-2);
   border-radius: var(--radius-lg);
   background: var(--color-surface);
   gap: var(--spacing-sm);
@@ -180,11 +180,11 @@
   font-weight: 700;
 }
 
-/* Dia selecionado com --purpose-accent */
+/* Dia selecionado com --color-accent */
 .aculta-studio-calendar__day.is-selected .aculta-studio-calendar__day-link,
 .aculta-studio-calendar__day.is-selected span.aculta-studio-calendar__day-num {
   color: var(--color-on-brand);
-  background: var(--purpose-accent);
+  background: var(--color-accent);
   font-weight: 700;
 }
 
@@ -228,7 +228,7 @@
 
 .aculta-studio-calendar__event-item {
   padding: var(--spacing-xs) var(--spacing-sm);
-  border-left: 3px solid var(--purpose-sub-2);
+  border-left: 3px solid var(--color-accent-sub-2);
   border-radius: var(--radius-xs, 2px);
   background: var(--color-surface-raised);
 }

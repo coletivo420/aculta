@@ -29,7 +29,7 @@ Tokens em `web/themes/custom/aculta420_v2/src/styles/tokens.css`. Bloco claro em
 ## Ordem de verificação
 1. `php scripts/validate-aculta420-ui-styles.php`
 2. `php scripts/validate-aculta420-v2-foundations.php`
-3. `php scripts/validate-aculta420-palette-schemes.php`
+3. `php scripts/validate-aculta420-ui-skins.php`
 4. Auditoria de contraste no modo escuro, sem falha nova.
 5. Remoção de regra de área só depois de `grep` confirmar que nenhum markup ativo usa o seletor. Nunca remova regra global de elemento (`button`, `input[type=submit]`, `.form-submit`).
 

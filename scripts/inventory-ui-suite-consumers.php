@@ -243,8 +243,8 @@ $moduleInventory = [
   'drupal/ui_skins' => [
     'module' => 'ui_skins',
     'status' => 'MIGRATION_IN_PROGRESS',
-    'replacement' => 'Portal DomainSkinResolver + UI Skins CSS-variable plugins/scopes, then remove PurposePaletteSchemes and purpose palette form',
-    'risk' => 'Package is directly locked but module is absent from Sync and disabled in Runtime; API settings are global so per-domain resolver must be request-safe and carry domain cache context',
+    'replacement' => 'Portal DomainSkinResolver + five UI Skins CSS-variable plugins/scopes selected by Drupal Domain ID; theme consumes data-skin and data-theme',
+    'risk' => 'Code/Sync now declare the integration, but module is disabled in Runtime; plugin discovery, real CSS output, cache separation and visual acceptance remain unverified',
   ],
   'drupal/ui_icons' => [
     'module' => 'ui_icons',
@@ -375,20 +375,20 @@ foreach ($moduleInventory as $packageName => $metadata) {
 }
 
 $rows[] = [
-  'id' => 'aculta420_v2:purpose_palette_visual_engine',
+  'id' => 'aculta420_v2:ui_skins_domain_visual_engine',
   'owner_module' => 'aculta420_v2',
-  'config_path' => 'config/sync/aculta420_v2.settings.yml; web/themes/custom/aculta420_v2/theme-settings.php; src/Hook/SurfaceSettingsHooks.php; src/Palette/PurposePaletteSchemes.php; src/styles/tokens.css',
+  'config_path' => 'config/sync/aculta_portal.visual_skins.yml; config/sync/aculta420_v2.settings.yml; web/themes/custom/aculta420_v2/aculta420_v2.ui_skins.css_variables.yml; web/modules/custom/aculta_portal/src/Appearance/DomainSkinResolver.php; web/themes/custom/aculta420_v2/src/Hook/SurfaceSettingsHooks.php',
   'consumer_type' => 'theme_settings_visual_engine',
-  'consumer_id' => 'aculta_purpose_palette',
-  'display_plugin' => 'PurposePaletteSchemes',
+  'consumer_id' => 'aculta_portal.visual_skins',
+  'display_plugin' => 'ui_skins_css_variables',
   'row_plugin' => '',
   'style_plugin' => '',
-  'ui_patterns_configured' => 'legacy_visual_settings',
-  'status' => 'LEGACY_DEPRECATED',
-  'replacement_or_action' => 'UI Skins CSS-variable definitions/scopes selected by Portal domain_id-to-skin_id bridge; migrate light/dark values and remove old selectors/settings after visual gates',
-  'risk_or_evidence_gap' => 'Still consumed by SurfaceSettingsHooks and tokens.css; no UI Skins runtime integration or visual parity evidence yet',
-  'rollback' => 'Revert the scoped theme/Portal code and configuration change before any settings cleanup; preserve the previous config export in version control',
-  'detected_consumers' => 'theme-settings.php, SurfaceSettingsHooks.php, PurposePaletteSchemes.php, tokens.css, SurfaceSettingsHooks tests',
+  'ui_patterns_configured' => 'ui_skins_code_and_sync_declared',
+  'status' => 'MIGRATION_IN_PROGRESS',
+  'replacement_or_action' => 'Portal maps ten Drupal Domain IDs to skin IDs; UI Skins declares light/dark CSS variables; purpose palette form, config key, class, selectors and tokens removed',
+  'risk_or_evidence_gap' => 'UI Skins is disabled in Runtime snapshot; real plugin discovery/output, warmed cache isolation, contrast and browser acceptance remain deferred',
+  'rollback' => 'Revert the scoped code/config commit; do not restore purpose palette behavior or aliases',
+  'detected_consumers' => 'DomainSkinResolver, AppearanceHooks, SurfaceSettingsHooks, UI Skins PageTop scopes',
   'runtime_status' => 'not_applicable',
 ];
 

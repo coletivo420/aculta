@@ -471,7 +471,7 @@ body.aculta-component-library-page {
    domínio. O padding lateral acompanha a barra institucional, então marca,
    ações, título e conteúdo começam e terminam na mesma linha. Nenhuma página
    declara largura própria: a leitura estreita fica no conteúdo. */
-html[data-purpose="account"] :is(
+html[data-site-key="account"] :is(
 .layout-page,
 .page__main,
 .page__navigation,
@@ -487,17 +487,17 @@ html[data-purpose="account"] :is(
 
 /* Páginas de leitura (Marley, Perfil, Salvos) mantêm a medida estreita,
    centralizada dentro do container do purpose. */
-html[data-purpose="account"] .layout-page--stack > :is(.layout-page__title, .layout-page__content) {
+html[data-site-key="account"] .layout-page--stack > :is(.layout-page__title, .layout-page__content) {
   inline-size: 100%;
   max-inline-size: var(--aculta-narrow-container-width, 750px);
   margin-inline: auto;
 }
 
 /* Grades do Studio não estouram o container em telas estreitas. */
-html[data-purpose="account"] :is(.layout-page > *, .aculta-account-entry) {
+html[data-site-key="account"] :is(.layout-page > *, .aculta-account-entry) {
   min-inline-size: 0;
 }
 
-html[data-purpose="account"] .aculta-account-entry {
+html[data-site-key="account"] .aculta-account-entry {
   grid-template-columns: minmax(0, 1fr);
 }

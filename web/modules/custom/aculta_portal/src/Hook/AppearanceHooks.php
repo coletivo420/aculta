@@ -6,7 +6,8 @@ namespace Drupal\aculta_portal\Hook;
 
 use Drupal\aculta_portal\Account\AccountPageTitle;
 use Drupal\aculta_portal\Appearance\ColorModePreference;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Appearance\DomainSkinResolver;
+use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -23,28 +24,29 @@ final class AppearanceHooks {
     private readonly AccountProxyInterface $currentUser,
     #[Autowire(service: 'aculta_portal.account_page_title')]
     private readonly AccountPageTitle $accountTitle,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurpose,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManagerInterface $domainSiteManager,
+    #[Autowire(service: 'aculta_portal.domain_skin_resolver')]
+    private readonly DomainSkinResolver $skinResolver,
   ) {}
 
   /**
-   * Contrato neutro: aculta_color_mode = light|dark|auto. O tema aplica o atributo.
+   * Contrato neutro de visual: modo e skin resolvidos pelo Portal.
    */
   #[Hook('preprocess_html')]
   public function preprocessHtml(array &$variables): void {
     $variables['aculta_color_mode'] = $this->preference->resolve((int) $this->currentUser->id());
     $this->accountTitle->applyHeadTitle($variables);
 
-    // Chave neutra do purpose atual (Fase 3): o tema aplica data-purpose e
-    // decide destaque sem conhecer hostname, domínio ou regra de acesso.
-    $purpose = $this->domainPurpose->getCurrentPurpose();
-    if (is_string($purpose) && $purpose !== '') {
-      $variables['aculta_purpose'] = $purpose;
+    $siteKey = $this->domainSiteManager->getCurrentSiteKey();
+    if ($siteKey !== NULL) {
+      $variables['aculta_site_key'] = $siteKey->value;
     }
+    $variables['aculta_skin_id'] = $this->skinResolver->resolveCurrent();
 
     // Toda a interface administrativa vive no MAIN. Nos subdomínios, remove o
     // toolbar do Navigation para não exibir links administrativos que dão 404.
-    if ($this->domainPurpose->getCurrentPurpose() !== 'main') {
+    if ($siteKey?->value !== 'main') {
       unset($variables['page_top']['navigation'], $variables['page_top']['top_bar']);
     }
   }
@@ -58,6 +60,8 @@ final class AppearanceHooks {
   public function pageAttachments(array &$attachments): void {
     $attachments['#cache']['contexts'][] = 'user';
     $attachments['#cache']['contexts'][] = 'domain';
+    $attachments['#cache']['tags'][] =
+      'config:aculta_portal.visual_skins';
     $attachments['#cache']['tags'][] = 'config:aculta_portal.appearance';
     $uid = (int) $this->currentUser->id();
     if ($uid > 0) {
@@ -66,7 +70,7 @@ final class AppearanceHooks {
   }
 
   /**
-   * Garante pré-requisitos em bibliotecas geradas dinamicamente para componentes.
+   * Garante pré-requisitos em bibliotecas dinâmicas de componentes.
    *
    * @param array<string, mixed> $libraries
    *   Definições de biblioteca registradas.

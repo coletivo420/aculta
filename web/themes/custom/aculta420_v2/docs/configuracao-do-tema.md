@@ -69,40 +69,11 @@ Os valores seguem `docs/superficies.md`, seção 1.
 
 A seção **Shell da página** oferece `classic` e `v2`. O padrão é `classic`, que mantém `templates/layout/page.html.twig` e as nove regiões atuais. `v2` ativa `templates/layout/page--shell-v2.html.twig`, que compõe as cinco áreas finais (institution, header, content, sidebar_first, footer) e usa as regiões antigas `navigation`, `highlighted`, `help` e `breadcrumb` como ponte até o corte homologado. A troca é reversível pela mesma opção, sem migração de dados nem alteração do `info.yml` nesta fase.
 
-### 2.1 Cores por purpose (implementado no runtime, F3)
+### 2.1 Skin visual por domínio (UI Skins)
 
-Decisão do responsável em 2026-11-05: o administrador escolhe a cor de destaque
-de cada purpose em uma seção nova, **Cores por purpose**, separada de
-Superfícies. Estado: **implementado** com a **Paleta ACULTA Skunk Family** (esquemas completos com destaque, texto sobre destaque, subelementos e elevações para modos claro e escuro, detalhados em [paletas-por-purpose.md](paletas-por-purpose.md)). A partir deste commit, `SurfaceSettingsHooks::preprocessHtml` lê a escolha salva, valida a chave em `PurposePaletteSchemes::SCHEMES` e aplica os tokens selecionados nos dois modos.
-Escopo: **só destaque** (tokens `--purpose-*` consumidos exclusivamente pela faixa de destaque). Fundo, botões, foco, abas, links e barra institucional **não mudam**. Versão: **MINOR** (`1.3.0`), conforme `docs/versioning.md`. O controle usa a tela nativa do tema (Aparência → ACULTA420 V2 → Configurações) em `theme-settings.php` e salva em `aculta420_v2.settings`; a exportação para `config/sync` segue o passo de `drush cex` descrito na seção 1.
+A seleção de aparência não pertence às configurações próprias do tema. `ui_skins` publica as variáveis `--color-accent`, `--color-on-accent` e `--color-accent-sub-1..3` pelos scopes de `aculta420_v2.ui_skins.css_variables.yml`; os valores exportados ficam em `third_party_settings.ui_skins.css_variables` no Config Sync. O Portal resolve `domain_id -> skin_id` e entrega `aculta_skin_id`; o tema aplica `data-skin` e `data-theme` sem conhecer host nem resolver acesso.
 
-O tema obtém a lista de purposes ativos exclusivamente pelo estado neutro `aculta_portal.active_purposes` da Core State API (`\Drupal::state()->get('aculta_portal.active_purposes', [])`). Não consulta Domain, DomainNegotiator nem serviços do Portal. Se o estado estiver vazio, exibe a mensagem de aviso e não renderiza selects.
-
-| Chave | Tipo | Padrão | Opções | Aplica a |
-| --- | --- | --- | --- | --- |
-| `aculta_purpose_palette.main` | select | `verde-skunk` | 10 esquemas oficiais | destaque do purpose `main` (Skunk) |
-| `aculta_purpose_palette.wiki` | select | `verde-sativa` | 10 esquemas oficiais | destaque do purpose `wiki` (Sativa) |
-| `aculta_purpose_palette.links` | select | `verde-ruderalis` | 10 esquemas oficiais | destaque do purpose `links` (Ruderalis) |
-| `aculta_purpose_palette.account` | select | `verde-afghan` | 10 esquemas oficiais | destaque do purpose `account` (Afghan) |
-| `aculta_purpose_palette.support` | select | `amarelo-acapulco-gold` | 10 esquemas oficiais | destaque do purpose `support` (Acapulco Gold) |
-| `aculta_purpose_palette.shop` | select | `amarelo-lemon-haze` | 10 esquemas oficiais | destaque do purpose `shop` (Lemon Haze) |
-| `aculta_purpose_palette.eventos` | select | `amarelo-golden-goat` | 10 esquemas oficiais | destaque do purpose `eventos` (Golden Goat) |
-| `aculta_purpose_palette.magazine` | select | `vermelho-red-kush` | 10 esquemas oficiais | destaque do purpose `magazine` (Red Kush) |
-| `aculta_purpose_palette.courses` | select | `vermelho-panama-red` | 10 esquemas oficiais | destaque do purpose `courses` (Panama Red) |
-| `aculta_purpose_palette.forum` | select | `vermelho-red-congolese` | 10 esquemas oficiais | destaque do purpose `forum` (Red Congolese) |
-
-Regras:
-
-- **Só lista aprovada.** O administrador não digita hexadecimal. Cada esquema oficial
-  (Skunk, Sativa, Ruderalis, Afghan, Acapulco Gold, Lemon Haze, Golden Goat, Red Kush, Panama Red, Red Congolese)
-  já passou no contraste (3:1 para destaque de interface sobre o fundo correspondente, 4,5:1 para texto sobre o destaque).
-- **Chave neutra.** O tema aplica `data-purpose` no `<html>` a partir da variável neutra `aculta_purpose` (fornecida pelo Portal em `AppearanceHooks`). Seletores em `tokens.css` ajustam os tokens de destaque `--purpose-*` (`--purpose-accent`, `--purpose-on-accent`, `--purpose-sub-1..3`, `--purpose-surface-1..3`). Não há lógica de domínio no tema.
-- Padrão de cada purpose igual ao mapeamento aceito; alterar exige salvar
-  pelo formulário e exportar com `drush cex`.
-
-Relação com o `accent` do Portal (seção 3): a cor da faixa **por tipo de
-conteúdo** continua vindo do Portal. A cor **por purpose** é escolha do
-administrador do tema. As duas coexistem e não se substituem.
+O campo `aculta_purpose_palette`, seu formulário e seus schemas foram removidos diretamente. Não existe leitura de configuração anterior nem alias. O código e o Config Sync estão preparados, mas o módulo UI Skins ainda está desativado no Runtime desta validação; ativação, inspeção dos plugins em runtime e aceite visual permanecem pendentes.
 
 ### 2.2 Layout de container por purpose - administração descontinuada
 

@@ -1,3 +1,10 @@
+## Não versionado — corte do motor visual para UI Skins (2026-11-10)
+
+- Remove do tema `aculta_purpose_palette`, schema, formulário administrativo, preview JS/CSS, `PurposePaletteSchemes`, seletores `data-purpose` e tokens CSS por purpose.
+- Declara cinco variáveis CSS no plugin oficial UI Skins e scopes `data-skin` × `data-theme` para dez skins nos modos claro/escuro.
+- Tema aplica `data-skin` e `data-site-key` entregues pelo Portal; a opção de skin é resolvida por Domain ID, sem mutação de configuração global.
+- UI Skins está desativado no Runtime atual; enable, render real, contraste/capturas e aceite visual seguem pendentes. ADRs continuam abertas.
+
 ## Não versionado — dependências reproduzíveis da UI Suite (2026-11-10)
 
 - Adiciona `drupal/ui_skins:^1.2` e `drupal/ui_icons:^2.1` como dependências diretas do Composer após `composer install` limpo demonstrar que ambos não estavam no lock.

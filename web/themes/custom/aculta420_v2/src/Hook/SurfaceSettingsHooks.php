@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta420_v2\Hook;
 
-use Drupal\aculta420_v2\Purpose\Purposes;
 use Drupal\aculta420_v2\Support\ComponentLibraryRoutes;
-use Drupal\aculta420_v2\Palette\PurposePaletteSchemes;
 use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -57,36 +55,17 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
     // A theme may provide only one preprocess_html implementation. Keep the
     // Portal's explicit color mode and surface settings in this hook.
     $mode = ($variables['aculta_color_mode'] ?? NULL) === 'dark' ? 'dark' : 'light';
-    $purpose = $variables['aculta_purpose'] ?? NULL;
+    $siteKey = $variables['aculta_site_key'] ?? NULL;
+    $skinId = $variables['aculta_skin_id'] ?? NULL;
     $isComponentLibrary = ComponentLibraryRoutes::isComponentLibraryRoute($this->currentRouteMatch->getRouteName());
-    $palette = theme_get_setting('aculta_purpose_palette');
-    $paletteStyle = self::purposePaletteStyle($palette, $purpose);
     $htmlAttributes = $variables['html_attributes'] ?? NULL;
     if ($htmlAttributes instanceof Attribute) {
       $htmlAttributes->setAttribute('data-theme', $mode);
-      // Chave neutra fornecida pelo Portal; não é hostname nem regra de domínio.
-      // Aceita apenas purposes canônicos aprovados (F3).
-      if (is_string($purpose) && in_array($purpose, Purposes::ALLOWED_PURPOSES, TRUE)) {
-        $htmlAttributes->setAttribute('data-purpose', $purpose);
+      if (is_string($siteKey) && preg_match('/^[a-z][a-z0-9_]*$/', $siteKey)) {
+        $htmlAttributes->setAttribute('data-site-key', $siteKey);
       }
-      $styles = [];
-      if ($paletteStyle !== NULL) {
-        $htmlAttributes->setAttribute('data-purpose-scheme', $paletteStyle['scheme']);
-        foreach ($paletteStyle['variables'] as $name => $value) {
-          $styles[] = $name . ': ' . $value . ';';
-        }
-      }
-      // Cor de faixa do Studio (purpose account), disponível em qualquer página para as caixas que a acompanham.
-      $studioStyle = self::purposePaletteStyle($palette, 'account');
-      if ($studioStyle !== NULL) {
-        foreach ($studioStyle['variables'] as $name => $value) {
-          if (str_contains($name, '-sub-2')) {
-            $styles[] = str_replace('--aculta-purpose-', '--aculta-studio-', $name) . ': ' . $value . ';';
-          }
-        }
-      }
-      if (!empty($styles)) {
-        $htmlAttributes->setAttribute('style', implode(' ', $styles));
+      if (is_string($skinId) && preg_match('/^[a-z][a-z0-9-]*$/', $skinId)) {
+        $htmlAttributes->setAttribute('data-skin', $skinId);
       }
     }
 
@@ -102,50 +81,38 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
       return $value ?? $default;
     };
     $bodyAttributes->addClass([
-      'aculta-radius--button-' . $this->safeValue((string) $settings('aculta_radius_button', 'lg'), ['base', 'lg', 'full'], 'lg'),
-      'aculta-radius--card-' . $this->safeValue((string) $settings('aculta_radius_card', 'lg'), ['base', 'lg'], 'lg'),
-      'aculta-radius--field-' . $this->safeValue((string) $settings('aculta_radius_field', 'base'), ['sm', 'base'], 'base'),
-      'aculta-accent--' . $this->safeValue((string) $settings('aculta_accent_override', 'mapping'), ['mapping', 'green', 'yellow', 'red'], 'mapping'),
+      'aculta-radius--button-' . $this->safeValue(
+        (string) $settings('aculta_radius_button', 'lg'),
+        ['base', 'lg', 'full'],
+        'lg',
+      ),
+      'aculta-radius--card-' . $this->safeValue(
+        (string) $settings('aculta_radius_card', 'lg'),
+        ['base', 'lg'],
+        'lg',
+      ),
+      'aculta-radius--field-' . $this->safeValue(
+        (string) $settings('aculta_radius_field', 'base'),
+        ['sm', 'base'],
+        'base',
+      ),
+      'aculta-accent--' . $this->safeValue(
+        (string) $settings('aculta_accent_override', 'mapping'),
+        ['mapping', 'green', 'yellow', 'red'],
+        'mapping',
+      ),
       (bool) $settings('aculta_show_accent_stripe', TRUE) ? 'aculta-accent-stripe-enabled' : 'aculta-accent-stripe-disabled',
     ]);
     if ($isComponentLibrary) {
       $bodyAttributes->addClass('aculta-component-library-page');
       $variables['#attached']['library'][] = 'aculta420_v2/component-library-mode';
     }
-    // ADR-054 P7: CSS da conta só no purpose account, pelo contrato neutro.
-    if ($purpose === 'account') {
+    if ($siteKey === 'account') {
       $variables['#attached']['library'][] = 'aculta420_v2/portal-account';
     }
-    // ADR-054 P7: CSS da Wiki só no purpose wiki, pelo contrato neutro.
-    if ($purpose === 'wiki') {
+    if ($siteKey === 'wiki') {
       $variables['#attached']['library'][] = 'aculta420_v2/wiki';
     }
-  }
-
-  /**
-   * Resolves the selected palette into CSS variables for both color modes.
-   *
-   * @return array{scheme: string, variables: array<string, string>}|null
-   */
-  public static function purposePaletteStyle(mixed $palette, mixed $purpose): ?array {
-    if (!is_array($palette) || !is_string($purpose) || !in_array($purpose, Purposes::ALLOWED_PURPOSES, TRUE)) {
-      return NULL;
-    }
-    $schemeKey = $palette[$purpose] ?? NULL;
-    if (!is_string($schemeKey) || !isset(PurposePaletteSchemes::SCHEMES[$schemeKey])) {
-      return NULL;
-    }
-    $scheme = PurposePaletteSchemes::SCHEMES[$schemeKey];
-    $variables = [];
-    foreach (['light', 'dark'] as $mode) {
-      $prefix = '--aculta-purpose-' . $mode . '-';
-      $variables[$prefix . 'accent'] = $scheme[$mode]['accent'];
-      $variables[$prefix . 'on-accent'] = $scheme[$mode]['on_accent'];
-      foreach ($scheme[$mode]['sub'] as $index => $value) {
-        $variables[$prefix . 'sub-' . ($index + 1)] = $value;
-      }
-    }
-    return ['scheme' => $schemeKey, 'variables' => $variables];
   }
 
   /**

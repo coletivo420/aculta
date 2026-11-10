@@ -7,7 +7,7 @@ Estado: Dev · versão 0.5.0-dev.1 (`aculta_portal.info.yml`) · status: `docs/o
 - **RN-01/02 em andamento:** `SiteKey`, `DomainSiteManagerInterface/DomainSiteManager` e `ContentSiteKeyResolver` implementados; options de rota antigas removidas, sem fallback. `DomainSiteRequestSubscriber` e destinos de login/sessão já usam `site_key` direto; migrar consumidores restantes e provar paridade de URLs/alias, ACL e cache.
 - **RN-03 State concluído:** `active_site_keys` substitui diretamente o State antigo. Kernel isolado 2/17; PHPCS PASS. Post-update está versionado, mas não executado no Runtime por exigir `updatedb`.
 - **RN-00 parcial:** `scripts/inventory-site-key-contracts.php` registra 1.610 referências ainda sem triagem semântica; completar matriz HTTP, State, sessão e consumidores por owner.
-- **US-02 UI Skins:** Composer e API 1.2.1 confirmados. Runtime `ui_skins` Disabled; snapshot `docs/architecture/inventarios/ui-suite-runtime-2026-11-10.json` registra drift Sync/Runtime. Implementar resolver `domain_id -> skin_id`, CSS variable scopes e modo claro/escuro; fotografar baseline Links e migrar sem manter config visual/fallback purpose.
+- **US-02 UI Skins:** `DomainSkinResolver` mapeia dez Domain IDs a skin IDs e `AppearanceHooks` entrega `aculta_skin_id`/`aculta_site_key`; tema declara scopes oficiais UI Skins para dez × light/dark e remove config/form/tokens antigos. Runtime `ui_skins` continua Disabled; ativação, render real, baseline Links, contraste e captura visual pendentes.
 - Depois, criar adapters de inventário para conteúdo, revisões e anexos e executor com backup/restauração, auditoria e revalidação por lote. Homologar em banco isolado; não executar limpeza nem `updatedb` sem autorização.
 
 ## Leitura e entrega

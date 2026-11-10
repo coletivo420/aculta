@@ -18,6 +18,11 @@ interface DomainSiteManagerInterface {
   public function getCurrentSiteKey(): ?SiteKey;
 
   /**
+   * Resolves the active Drupal Domain ID.
+   */
+  public function getCurrentDomainId(): ?string;
+
+  /**
    * Resolves a site key from a Drupal Domain ID.
    */
   public function getSiteKeyForDomainId(string $domainId): ?SiteKey;

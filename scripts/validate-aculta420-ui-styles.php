@@ -14,10 +14,11 @@
 
 declare(strict_types=1);
 
+use Symfony\Component\Yaml\Yaml;
+
 $root = dirname(__DIR__);
 $theme = $root . '/web/themes/custom/aculta420_v2';
 $uiStylesFile = $theme . '/aculta420_v2.ui_styles.yml';
-$schemesFile = $theme . '/src/Palette/PurposePaletteSchemes.php';
 $buttonCssFile = $theme . '/components/button/button.css';
 $cardCssFile = $theme . '/components/card-cultural/card-cultural.css';
 $revistaCssFile = $theme . '/components/revista-teaser/revista-teaser.css';
@@ -44,16 +45,12 @@ if (function_exists('yaml_parse')) {
   $definitions = yaml_parse($yamlContent);
 }
 else {
-  $definitions = \Symfony\Component\Yaml\Yaml::parse($yamlContent);
+  $definitions = Yaml::parse($yamlContent);
 }
 
 if (!is_array($definitions) || empty($definitions)) {
   $fail("Definições vazias ou inválidas em aculta420_v2.ui_styles.yml.");
 }
-
-require_once $schemesFile;
-use Symfony\Component\Yaml\Yaml;
-use Drupal\aculta420_v2\Palette\PurposePaletteSchemes;
 
 // Lê TOKENS sem eval: cada entrada é 'chave' => ['classe', ...].
 // Qualquer outra forma é recusada.
@@ -137,12 +134,6 @@ foreach ($definitions as $id => $definition) {
       $token = 'revista-teaser-accent-' . substr($classOrKey, strlen('revista-teaser--accent-'));
       if (!isset($mappedClasses[$classOrKey]) || !isset($portalTokens[$token])) {
         $fail("Classe da Revista '$classOrKey' não está mapeada no PortalUiHooks::TOKENS.");
-      }
-    }
-    elseif ($id === 'purpose_palette') {
-      // Must exist in PurposePaletteSchemes::SCHEMES.
-      if (!isset(PurposePaletteSchemes::SCHEMES[$classOrKey])) {
-        $fail("Opção de paleta '$classOrKey' não existe em PurposePaletteSchemes::SCHEMES.");
       }
     }
   }

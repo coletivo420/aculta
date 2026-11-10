@@ -50,6 +50,22 @@ final class DomainSiteManagerTest extends UnitTestCase {
   }
 
   /**
+   * The visual resolver receives the active Drupal Domain ID.
+   */
+  public function testCurrentDomainIdUsesActiveDomain(): void {
+    $domain = $this->createMock(DomainInterface::class);
+    $domain->method('id')->willReturn(self::FORUM_DOMAIN);
+    $this->assertSame(self::FORUM_DOMAIN, $this->manager(activeDomain: $domain)->getCurrentDomainId());
+  }
+
+  /**
+   * There is no current Domain ID when negotiation has not selected one.
+   */
+  public function testCurrentDomainIdIsNullWithoutActiveDomain(): void {
+    $this->assertNull($this->manager(activeDomain: NULL)->getCurrentDomainId());
+  }
+
+  /**
    * Without an active Domain there is no current site key.
    */
   public function testCurrentSiteKeyIsNullWithoutActiveDomain(): void {
@@ -57,7 +73,7 @@ final class DomainSiteManagerTest extends UnitTestCase {
   }
 
   /**
-   * getDomain() loads the Domain entity and rejects a non-Domain result.
+   * Loads the Domain entity and rejects a non-Domain result.
    */
   public function testGetDomainLoadsConfiguredEntity(): void {
     $domain = $this->createMock(DomainInterface::class);
@@ -70,7 +86,7 @@ final class DomainSiteManagerTest extends UnitTestCase {
   }
 
   /**
-   * runInSite() is a no-op when the site has no configured Domain.
+   * Leaves the context unchanged when the site has no Domain.
    */
   public function testRunInSiteReturnsNullWhenDomainIsMissing(): void {
     $manager = $this->manager(loadedDomain: NULL);
@@ -84,7 +100,7 @@ final class DomainSiteManagerTest extends UnitTestCase {
   }
 
   /**
-   * runInSite() activates the target Domain and restores the previous one.
+   * Activates the target Domain and restores the previous one.
    */
   public function testRunInSiteSwapsAndRestoresDomainContext(): void {
     $previous = $this->createMock(DomainInterface::class);

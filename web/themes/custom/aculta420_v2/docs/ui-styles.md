@@ -6,8 +6,7 @@ tokens e contraste medidos. Nenhum estilo novo é criado nesta fase.
 
 ## 1. Decisões do responsável (2026-11-05)
 
-- **Escopo:** botões (4 variantes), faixa de acento de cartão e cores por
-  purpose.
+- **Escopo:** botões (4 variantes), faixa de acento de cartão e estilos editoriais da Revista.
 - **Quem aplica:** somente o administrador Drupal. Editores comuns não
   escolhem estilo.
 - **Momento:** a F4 entra antes da RC. A RC depende dela.
@@ -19,9 +18,7 @@ Todos são bloqueantes para a RC:
 1. Botões sincronizados no servidor de testes, com o CSS legado de
    `src/styles/buttons.css` removido (botão com `--color-brand-highlight` ainda
    existe ali).
-2. Escolha de esquema por purpose ligada ao runtime. Hoje
-   `aculta_purpose_palette` é salva, mas não é lida por nenhum código de
-   renderização. Sem isso, a opção "cores por purpose" não tem efeito.
+2. UI Skins publica as variáveis de identidade visual por Domain ID; aceite visual em claro/escuro e nos dez domínios permanece pendente.
 3. Servidor de testes na versão atual de `origin/dev`, confirmada por hash.
 
 ## 3. Inventário das opções
@@ -35,7 +32,6 @@ Todos são bloqueantes para a RC:
 | Faixa de acento verde | `card-cultural` | `accent: green` | Implementado em `aculta420_v2.ui_styles.yml` (.card-cultural--accent-green) |
 | Faixa de acento amarela | `card-cultural` | `accent: yellow` | Implementado em `aculta420_v2.ui_styles.yml` (.card-cultural--accent-yellow) |
 | Faixa de acento vermelha | `card-cultural` | `accent: red` | Implementado em `aculta420_v2.ui_styles.yml` (.card-cultural--accent-red) |
-| Cores por purpose | tema (faixa `--purpose-*`) | 10 esquemas | Implementado em `aculta420_v2.ui_styles.yml` (esquemas oficiais Skunk Family) |
 
 `revista_accent` é aplicado uma única vez nas configurações do ACULTA420 V2 e
 é consumido por todos os teasers da Revista; o preprocess aplica a classe ao
@@ -64,7 +60,7 @@ Opção A: a escolha global do administrador `revista_accent` tem precedência s
   - `ui_styles_dark_verde-skunk_320px.png` e `1440px.png`
   - `ui_styles_light_amarelo-lemon-haze_320px.png` e `1440px.png`
   - `ui_styles_dark_amarelo-lemon-haze_320px.png` e `1440px.png`
-- **Invariância e responsividade:** gate de catálogo PASS (24 verificações). Runtime Firefox ESR verificou `data-purpose-scheme` e `--purpose-accent` nos dez purposes, claro/escuro e 320/1440; 358/360 checks passaram. Overflow do Fórum a 320 px mantém F3 pendente; capturas em `tests/browser/capturas/purpose-buttons/2026-11-06/`.
+- **Evidência histórica:** Firefox ESR validou a paleta anterior em 2026-11-06. Essa rodada antecede o corte para UI Skins e não aprova o comportamento atual. O novo render aguarda UI Skins ativo, capturas e homologação nos dez domínios.
 - **Gates:** `scripts/validate-aculta420-ui-styles.php` PASS nesta rodada; foundations PASS. O gate de render SDC e validação browser de runtime ainda não foram executados nesta retomada.
 - **Teste Unitário:** `PurposePaletteResolutionUnitTest.php` cobrindo resolução de tokens e html_attributes nos dois modos.
 

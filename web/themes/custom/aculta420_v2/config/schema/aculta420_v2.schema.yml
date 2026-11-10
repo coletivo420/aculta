@@ -34,37 +34,3 @@ aculta420_v2.settings:
     aculta_shell_variant:
       type: string
       label: 'Variante do shell da página (classic ou v2)'
-    aculta_purpose_palette:
-      type: mapping
-      label: 'Paleta de destaque por purpose'
-      mapping:
-        main:
-          type: string
-          label: 'Variante de destaque do purpose main'
-        wiki:
-          type: string
-          label: 'Variante de destaque do purpose wiki'
-        account:
-          type: string
-          label: 'Variante de destaque do purpose account'
-        support:
-          type: string
-          label: 'Variante de destaque do purpose support'
-        shop:
-          type: string
-          label: 'Variante de destaque do purpose shop'
-        magazine:
-          type: string
-          label: 'Variante de destaque do purpose magazine'
-        courses:
-          type: string
-          label: 'Variante de destaque do purpose courses'
-        forum:
-          type: string
-          label: 'Variante de destaque do purpose forum'
-        eventos:
-          type: string
-          label: 'Variante de destaque do purpose eventos'
-        links:
-          type: string
-          label: 'Variante de destaque do purpose links'

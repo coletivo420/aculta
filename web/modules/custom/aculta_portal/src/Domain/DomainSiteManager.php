@@ -46,6 +46,14 @@ final class DomainSiteManager implements DomainSiteManagerInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function getCurrentDomainId(): ?string {
+    $domain = $this->domainNegotiator->getActiveDomain();
+    return $domain instanceof DomainInterface ? $domain->id() : NULL;
+  }
+
+  /**
    * Resolves a site key from a configured Domain ID.
    */
   public function getSiteKeyForDomainId(string $domainId): ?SiteKey {

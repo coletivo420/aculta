@@ -21,17 +21,17 @@ Hoje estão entregues as três primeiras camadas, os componentes do shell e a na
 
 ## 2. Fronteira com o Portal
 
-O tema não conhece hostnames, domínios, purposes ou regras de acesso. Ele recebe variáveis de página preparadas pelo `aculta_portal`.
+O tema não conhece hostnames, domínio Drupal ou regras de acesso. Ele recebe variáveis de página preparadas pelo `aculta_portal`.
 
 | Variável | Origem | Uso no tema |
 | --- | --- | --- |
 | `domain_presentation.layout.institution_bar_account` | Portal | marca a barra como barra de conta |
 | `domain_presentation.layout.show_utility_bar` | Portal | exibe ou oculta as utilidades da barra |
 | `domain_presentation.regions.showcase` | Portal | links da vitrine de portais (`multidomain_network_links`) |
-| `domain_presentation.identity.purpose` | Portal | chave neutra do purpose atual |
-| `aculta_purpose` | Portal (`AppearanceHooks::preprocessHtml`) | chave neutra aplicada como `data-purpose` no `<html>` (com base em `domain_presentation.identity.purpose`); sem hostname nem regra de domínio |
+| `aculta_site_key` | Portal (`AppearanceHooks::preprocessHtml`) | identidade funcional neutra aplicada como `data-site-key`; não determina cores |
+| `aculta_skin_id` | Portal (`DomainSkinResolver`) | identidade visual resolvida por Domain ID e aplicada como `data-skin` |
 | `domain_presentation.accent` | Portal; **pendente (D1)** | valor neutro `green`, `yellow` ou `red` para o SDC `card-cultural`; ausente no contrato atual, então consumers não devem enviar/mapeamento permanece DRAFT |
-| `aculta_domain_sites` | Portal (`DomainPresentationBuilder`) | links dos sites publicados, com purpose, nome, URL e sinalização do atual |
+| `aculta_domain_sites` | Portal (`DomainPresentationBuilder`) | links dos sites publicados, com site key, nome, URL e sinalização do atual |
 | `aculta_account_name` | Portal (`aculta_user`) | apelido aparado da pessoa autenticada; `NULL` sem apelido |
 | `aculta_account_menu` | Portal (render array de `system_menu_block:account`) | slot de itens do menu de conta; o PHP do tema o encaixa no SDC |
 | `aculta_account_authenticated` | tema (`PagePresentationHooks`, via `current_user`) | escolhe o estado visitante ou autenticado do menu |
@@ -47,8 +47,8 @@ O tema não conhece hostnames, domínios, purposes ou regras de acesso. Ele rece
 Regras:
 
 - O Portal não instancia componentes do tema. O tema não resolve regra de domínio.
-- Links que atravessam purpose chegam como URL absoluta, gerada pelo `DomainPurposeManager` no Portal.
-- A chave neutra de purpose (Fase 3) existe como `aculta_purpose` (derivada de `domain_presentation.identity.purpose`) e o tema aplica `data-purpose` no `<html>` após validar a lista permitida. O ajuste de tokens de destaque por purpose aplica a Paleta ACULTA Skunk Family oficial em `tokens.css` através dos tokens `--purpose-*` (`--purpose-accent`, `--purpose-on-accent`, `--purpose-sub-1..3`, `--purpose-surface-1..3`), mantendo botões, foco, anéis e elementos institucionais perfeitamente isolados e consistentes; o tema não lê hostname, domínio nem regra de acesso.
+- Links que atravessam sites chegam como URL absoluta, gerada pela API funcional `DomainSiteManager` no Portal.
+- O modo de cor vem da preferência do usuário e vira `data-theme`. UI Skins publica cores por `data-skin` e `data-theme`; `site_key` permanece funcional e não escolhe cores. As configurações e os tokens visuais antigos de purpose foram removidos do tema.
 
 ### Placeholders e Pedidos ao Portal (Fórum Growroom420)
 
@@ -80,14 +80,15 @@ Na entrega 2 foram incorporados:
 - Não há detecção automática do sistema. Um valor legado `auto` resolve para claro até o contrato mudar.
 - Componentes não conhecem o modo. Eles usam tokens.
 
-`src/Hook/SurfaceSettingsHooks.php` é a implementação única de `preprocess_html`
-do tema: aplica `data-theme` no `<html>` e classes neutras no `<body>` derivadas
+`src/Hook/SurfaceSettingsHooks.php` aplica `data-theme`, `data-site-key` e
+`data-skin` no `<html>` e classes neutras no `<body>` derivadas
 das configurações de raio, sobrescrita de acento e visibilidade da faixa. No
 hook, o Core fornece o atributo do `<body>` como `attributes`; os valores vêm de
 `ThemeSettingsProvider`, com fallback aos defaults e validação dos enums. O hook
 implementa `ContainerInjectionInterface` para resolver dependências mesmo quando
-o mapa de hooks armazenado antecede uma compilação do container. Não consulta
-domínio nem purpose. Instruções operacionais estão em
+o mapa de hooks armazenado antecede uma compilação do container. O Portal fornece
+o Domain ID convertido em skin; UI Skins publica os valores CSS por scopes. O
+tema não resolve domínio nem acesso. Instruções operacionais estão em
 [`configuracao-do-tema.md`](configuracao-do-tema.md).
 
 ## 4. Tokens e fundações

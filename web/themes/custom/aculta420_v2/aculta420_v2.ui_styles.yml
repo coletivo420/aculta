@@ -29,23 +29,6 @@ revista_accent:
     revista-teaser--accent-red: "Vermelha"
   previewed_as: hidden
 
-purpose_palette:
-  category: "Cores por purpose"
-  label: "Esquema da paleta por purpose"
-  description: "Aplica o esquema oficial da Paleta ACULTA Skunk Family para a faixa de destaque do purpose."
-  options:
-    verde-skunk: "Skunk (verde profundo)"
-    verde-sativa: "Sativa (verde fiel)"
-    verde-ruderalis: "Ruderalis (verde suave)"
-    verde-afghan: "Afghan (verde profundo)"
-    amarelo-acapulco-gold: "Acapulco Gold (amarelo profundo)"
-    amarelo-lemon-haze: "Lemon Haze (amarelo fiel)"
-    amarelo-golden-goat: "Golden Goat (amarelo suave)"
-    vermelho-red-kush: "Red Kush (vermelho profundo)"
-    vermelho-panama-red: "Panama Red (vermelho fiel)"
-    vermelho-red-congolese: "Red Congolese (vermelho suave)"
-  previewed_as: hidden
-
 spacing_section:
   category: "Espaçamento"
   label: "Espaçamento de seção"

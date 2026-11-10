@@ -1,3 +1,10 @@
+## Não versionado — resolvedor visual por Domain ID
+
+- Adiciona `DomainSkinResolver` com mapeamento exportável `aculta_portal.visual_skins`, lista estrita de skins UI Skins e skin ACULTA padrão para IDs ausentes/inválidos.
+- `DomainSiteManager` expõe o Domain ID atual; `AppearanceHooks` entrega `aculta_site_key` e `aculta_skin_id`, sem chamar `DomainPurposeManager` para aparência.
+- Preferência de modo continua com `ColorModePreference`; anexos variam por usuário/domínio e dependem da config de skins.
+- UI Skins ainda não foi habilitado no Runtime. Ativação e renderização continuam pendentes.
+
 ## Não versionado — destinos de login em site_key
 
 - `DomainSiteRequestSubscriber`, PortalHooks, login popup e checkout usam `DomainSiteManagerInterface`/`SiteKey`; remove dependências visuais/URLs desses consumers em `DomainPurposeManager` e troca o service/class subscriber.

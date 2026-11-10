@@ -358,18 +358,6 @@ parameters:
 			path: scripts/validate-aculta420-layout-builder-batch.php
 
 		-
-			rawMessage: 'Call to an undefined method DOMNameSpaceNode|DOMNode::getAttribute().'
-			identifier: method.notFound
-			count: 2
-			path: scripts/validate-aculta420-palette-schemes.php
-
-		-
-			rawMessage: 'Strict comparison using !== between 10 and 10 will always evaluate to false.'
-			identifier: notIdentical.alwaysFalse
-			count: 1
-			path: scripts/validate-aculta420-palette-schemes.php
-
-		-
 			rawMessage: Variable $argv might not be defined.
 			identifier: variable.undefined
 			count: 1
