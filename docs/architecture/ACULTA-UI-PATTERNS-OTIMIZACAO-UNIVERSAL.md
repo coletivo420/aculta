@@ -146,9 +146,27 @@ Indicadores de comparação: TTFB, tempo até a página utilizável, memória pi
 - **Risco de HTMX/JS:** links de prévia reais funcionam sem JS; teste de substituição e foco.
 - **Risco de documentação desatualizada:** o HEAD e a contagem podem evoluir em paralelo; sempre repetir inventário antes da execução.
 
-**Pronto** apenas quando: SEC-01 comprovadamente corrigido, PERF-01 sem invalidação em request, renderização eager eliminada no overview sem sumiço de SDC, histórias/forms existentes acessíveis, benchmarks comparáveis publicados, integrações preservadas, gates pertinentes executados e rollback testado. Situação atual: **planejamento documentado; execução, benchmarks e Runtime DEFERRED**.
+**Pronto** apenas quando: SEC-01 comprovadamente corrigido, PERF-01 sem invalidação em request, renderização eager eliminada no overview sem sumiço de SDC, histórias/forms existentes acessíveis, benchmarks comparáveis publicados, integrações preservadas, gates pertinentes executados e rollback testado. Situação atual: **execução concluída com sucesso; adicionado botão global "Exibir todas as prévias" com controle de concorrência**.
 
-## 9. Arquivos de referência
+## 9. Extensão pós-UP-07: Botão global "Exibir todas as prévias"
+
+Para permitir ao administrador visualizar todas as histórias de forma controlada sem abrir mão da performance inicial, foi adicionado um controle global na barra de ferramentas da biblioteca:
+
+1. **Localização e Aparência:**
+   - Adicionado à barra de ferramentas superior (`.aculta-component-library__toolbar-actions`), alinhado ao campo de busca.
+   - Implementado utilizando o SDC nativo `aculta420_v2:button`, com variante `secondary` e ícone Phosphor `eye`.
+   - Inclui região de status acessível com `aria-live="polite"` e atributos de acessibilidade `aria-controls` e `aria-describedby`.
+2. **Arquitetura da Fila e Limite de Concorrência:**
+   - Implementado em `web/themes/custom/aculta420_v2/js/ui-library-bulk-preview.js` como um `Drupal.behavior` isolado.
+   - Limite de concorrência estrito configurado em **2 requisições simultâneas** (`CONCURRENCY_LIMIT = 2`), evitando sobrecarga no servidor.
+   - Detecta dinamicamente todos os componentes com prévias pendentes e coordena as requisições via `htmx.ajax()` ou fetch compatível.
+   - Componentes já carregados individualmente são automaticamente ignorados e contabilizados.
+3. **Controle de Ciclo de Vida:**
+   - Suporta cancelamento em tempo real (o botão alterna para "Cancelar carregamento" e pausa a fila imediatamente).
+   - Permite continuar de onde parou ou realizar retry específico de componentes que retornaram erro.
+   - Preserva o catálogo universal, filtros de pesquisa por nome/ID e abas de navegação.
+
+## 10. Arquivos de referência
 
 - `web/themes/custom/aculta420_v2/src/Hook/UiPatternsStoryHooks.php`
 - `web/themes/custom/aculta420_v2/templates/ui-patterns-overview-page.html.twig`
