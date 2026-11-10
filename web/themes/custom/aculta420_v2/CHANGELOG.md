@@ -1,4 +1,12 @@
-## 1.5.0 — ADR-054 corte concluído no desenvolvimento (2026-11-09)
+## Não versionado — dependências reproduzíveis da UI Suite (2026-11-10)
+
+- Adiciona `drupal/ui_skins:^1.2` e `drupal/ui_icons:^2.1` como dependências diretas do Composer após `composer install` limpo demonstrar que ambos não estavam no lock.
+- Trava `drupal/ui_patterns_field_group:2.0.x-dev@dev` em `4403e7b0e27679f47113e96fcdc5349c95e164d1`; atualização foi avaliada como `BLOCKED_UPSTREAM` para Drupal 12 e risco de segurança, sem ativação/configuração nova.
+- O inventário agora inclui dependências UI Suite e o motor visual legado para acompanhar substitutos e riscos.
+
+## 1.5.0 — marcos do shell e Layout Builder no desenvolvimento (2026-11-09)
+
+> Esta entrega não encerra ADR-054/055; a homologação integral continua pendente.
 
 - Tema com as cinco regiões finais (`institution`, `header`, `content`, `sidebar_first`, `footer`); `navigation`, `highlighted`, `help` e `breadcrumb` removidas do `info.yml`.
 - Shell v2 é o padrão (`aculta_shell_variant: v2`), com ajuda e breadcrumb contextuais; o shell clássico permanece como rollback até o aceite final.

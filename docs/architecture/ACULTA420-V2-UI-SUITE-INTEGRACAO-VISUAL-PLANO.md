@@ -29,14 +29,14 @@ Beneficios tangiveis:
 | `aculta420_v2.ui_styles.yml` | Estilos de botoes, cartoes, paletas, spacing, superficie, acento, sombra e raio | Confirmado no Git |
 | `aculta420_v2.icons.yml` | Packs Phosphor Regular, Duotone e Fluent Emoji declarados | Confirmado no Git |
 | `config/sync/core.extension.yml` | `ui_patterns`, blocks, field, field_formatters, layouts, library, views, `ui_styles`, block, layout_builder, ui_patterns, views habilitados no Sync | Confirmado no Git |
-| `composer.json` | `drupal/ui_patterns` 2.0.x-dev, `drupal/ui_patterns_layouts` ^2.0, `drupal/ui_patterns_field_group` ^2.0@beta, `drupal/ui_styles` ^1.22 | Confirmado no Git |
-| `core.extension.yml` | Sem entradas observadas para `ui_skins`, `ui_styles_ckeditor5`, `ui_styles_entity_status`, `ui_styles_page`, `ui_patterns_field_group`, `ui_patterns_ckeditor5` e `ui_icons_*` | Ausente no Sync consultado; nao prova Runtime |
-| `composer.json` | Sem `drupal/ui_skins` e `drupal/ui_icons` declarados diretamente | Confirmado como ausencia explicita; conferir dependencias transitivas e lock |
+| `composer.json` (após atualização da US-00) | `ui_patterns` 2.0.x-dev, `ui_patterns_layouts` ^2.0, `ui_patterns_field_group` 2.0.x-dev@dev, `ui_styles` ^1.22, `ui_skins` ^1.2 e `ui_icons` ^2.1 | Confirmado no Git; lock Field Group SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1` |
+| `config/sync/core.extension.yml` | `ui_skins`, `ui_patterns_field_group`, `ui_styles_page`, `ui_styles_ckeditor5` e `ui_patterns_ckeditor5` ausentes do Sync | Confirmado; difere do Runtime |
+| Composer install limpo | Removeu `ui_skins` e `ui_icons` enquanto ausentes do lock; ambos foram adicionados como dependências diretas em `699b1edce` junto ao Field Group dev lock | Reprodutibilidade Composer restaurada; Runtime requer sincronização de dependências autorizada |
 | `docs/architecture/ACULTA420-V2-P8-HOMOLOGACAO.md` | Layout Builder 22/24 displays compativeis; duas exclusoes por perda de conteudo | Evidencia de relatorio, nao teste reexecutado |
 | `docs/operations/ESTADO-DA-SESSAO.md` | UI Patterns em lote com previas sequenciais 90/90 no Runtime; estado da sessao mudou depois | Evidencia registrada por outro agente |
 | `aculta_editor` e `aculta_forum` | Adaptador FluentEmojiIconAdapter, filtro DOM, seletor HTMX e template SDC | Confirmado no Git |
 
-**Cuidado com claims antigos:** o corpo historico da ADR-055 declara UI Icons Menu e UI Styles Page 'ativos'. Sem reflexo no Config Sync, classificar **NAO COMPROVADO EM CONFIG**, e nao PASS, ate testar Runtime + Composer + Sync. Igualmente, a existencia de plugin em um pacote nao prova uso de suas configuracoes por displays e Views.
+**Estado observado depois da inspeção:** Composer install limpo instala `ui_skins` 1.2.1 e `ui_icons` 2.1.0 do lock. Runtime drush reporta UI Skins Disabled e UI Patterns CKEditor 5 Enabled; Sync não registra estas ativações. Não atribuir PASS de integração de configuração sem reconciliar Sync/Runtime. Igualmente, a existencia de plugin em um pacote nao prova uso de suas configuracoes por displays e Views.
 
 ## 3. Verificacao upstream de versoes e lacunas
 
@@ -46,7 +46,7 @@ Beneficios tangiveis:
 | UI Styles | 1.22 estavel, Drupal ^10.3 / ^11 / ^12 | Integracoes podem ser ativadas em lotes com testes |
 | UI Skins | 1.2.1 estavel, Drupal ^11.4 / ^12 | Candidato preferencial para gestao de variaveis/esquemas do tema |
 | UI Icons | 2.1.0 estavel, Drupal ^11.3 / ^12; 2.0.x nao e mais suportado | Preferir 2.1.x, validar Composer/lock e nomes reais dos submodulos |
-| UI Patterns Field Group | **Preferência aprovada: 2.0.x-dev@dev**; beta2 é referência do risco, Drupal ^9/^10/^11, sem cobertura da política de segurança | Validar HEAD dev, compatibilidade com Drupal 12, Field Group instalado e segurança; só depois habilitar no Runtime |
+| UI Patterns Field Group | **Preferência aprovada e lockada: 2.0.x-dev@dev**, SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1`; upstream sem cobertura da política de advisories; `.info.yml` declara apenas ^9/^10/^11 | Inspecionados formatter e sources; sem ativação. **BLOCKED_UPSTREAM** para Drupal 12 e sem aceite de risco de segurança; Field Group instalado 4.0.0 |
 | UI Patterns em CKEditor 5 | **EXCLUÍDO por decisão do responsável** | Não instalar, habilitar, prototipar ou criar filtros/botões; UI Styles CKEditor 5 permanece no escopo |
 
 **Nao instalar ou atualizar por suposicao:** resolver primeiro as versoes compativeis do `composer.lock`, verificar os arquivos `*.info.yml` dos modulos baixados e as dependencias. UI Icons base do Core e a camada UI Icons contrib nao sao a mesma coisa. Nao presumir que `ui_patterns_field_group` passa no Drupal 12 so porque `ui_patterns` passa.

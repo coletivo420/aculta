@@ -134,6 +134,196 @@ foreach ($componentIds as $componentId => $manifest) {
   ];
 }
 
+$composer = json_decode((string) file_get_contents($root . '/composer.json'), TRUE, flags: JSON_THROW_ON_ERROR);
+$lock = json_decode((string) file_get_contents($root . '/composer.lock'), TRUE, flags: JSON_THROW_ON_ERROR);
+$syncExtensions = Yaml::parseFile($sync . '/core.extension.yml');
+$lockedPackages = [];
+foreach (array_merge($lock['packages'] ?? [], $lock['packages-dev'] ?? []) as $package) {
+  if (is_array($package) && isset($package['name'])) {
+    $lockedPackages[$package['name']] = $package;
+  }
+}
+$moduleInventory = [
+  'drupal/ui_patterns' => [
+    'module' => 'ui_patterns', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Expose all internal/editorial SDCs through UI Patterns Library and compose compatible Blocks, Views and Layout Builder displays.',
+    'risk' => 'Runtime discovery, actual display assignments, access and cache behavior have not been rechecked in the current database.',
+  ],
+  'drupal/ui_patterns_ui' => [
+    'module' => 'ui_patterns_ui', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Provide administrative UI for mapping existing SDCs to compatible Drupal consumers.',
+    'risk' => 'Form access and discovered component catalog require Runtime verification.',
+  ],
+  'drupal/ui_patterns_blocks' => [
+    'module' => 'ui_patterns_blocks', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Use SDC-backed UI Patterns block plugins for compatible visual blocks; preserve native functional Drupal blocks.',
+    'risk' => 'Sync enablement does not prove Runtime assignments or per-domain visibility.',
+  ],
+  'drupal/ui_patterns_field' => [
+    'module' => 'ui_patterns_field', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Map compatible field output to existing SDCs through UI Patterns field formatters.',
+    'risk' => 'Field formatter assignments and access/cache metadata have not been exhaustively inventoried.',
+  ],
+  'drupal/ui_patterns_field_formatters' => [
+    'module' => 'ui_patterns_field_formatters', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Replace duplicated field markup with compatible existing SDC formatters.',
+    'risk' => 'Per-field configuration and unsupported field types need runtime comparison.',
+  ],
+  'drupal/ui_patterns_layouts' => [
+    'module' => 'ui_patterns_layouts', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Compose compatible Layout Builder regions from existing SDCs and keep the two documented exclusions.',
+    'risk' => 'Twenty-two Sync displays are inventoried; override layouts and Runtime parity remain unverified.',
+  ],
+  'drupal/ui_patterns_library' => [
+    'module' => 'ui_patterns_library', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Catalog every internal, reusable and editorial SDC with real previews restricted to administrators.',
+    'risk' => 'Runtime catalog and real preview access matrix have not been revalidated.',
+  ],
+  'drupal/ui_patterns_views' => [
+    'module' => 'ui_patterns_views', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Adopt UI Patterns independently at row, style and display levels after preserving filters, pager, sorting and access.',
+    'risk' => '159 displays in Sync; none use UI Patterns row/style/display plugin IDs; Runtime and output comparisons are pending.',
+  ],
+  'drupal/ui_styles' => [
+    'module' => 'ui_styles', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Use registered UI Styles for reusable SDC, block, Layout Builder and Views visual choices.',
+    'risk' => 'Existing UI Styles config is present but this run did not exhaustively compare plugin registrations and consumer forms.',
+  ],
+  'drupal/ui_styles_page' => [
+    'module' => 'ui_styles_page', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Integrate page-level style selection with semantic theme tokens and domain skin scopes.',
+    'risk' => 'Absent from Sync; Runtime state unavailable for fresh verification.',
+  ],
+  'drupal/ui_styles_ckeditor5' => [
+    'module' => 'ui_styles_ckeditor5', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Provide approved editorial styles in CKEditor 5; UI Patterns CKEditor remains explicitly excluded.',
+    'risk' => 'Absent from Sync; editor formats and Runtime activation were not reverified in this continuation.',
+  ],
+  'drupal/ui_styles_entity_status' => [
+    'module' => 'ui_styles_entity_status', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Apply visual status styles through UI Styles while preserving moderation and entity access behavior.',
+    'risk' => 'Assignments across entity displays and moderation forms need inventory and output comparison.',
+  ],
+  'drupal/ui_styles_block' => [
+    'module' => 'ui_styles_block', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Use UI Styles on compatible block instances and templates.',
+    'risk' => 'Runtime block assignments and domain overrides are not represented by Sync alone.',
+  ],
+  'drupal/ui_styles_layout_builder' => [
+    'module' => 'ui_styles_layout_builder', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Use UI Styles for compatible Layout Builder sections/components.',
+    'risk' => 'Per-display and per-override assignments require runtime audit.',
+  ],
+  'drupal/ui_styles_ui_patterns' => [
+    'module' => 'ui_styles_ui_patterns', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Expose approved style choices on UI Patterns components without duplicating component classes.',
+    'risk' => 'Plugin registry and editor form behavior require integration tests.',
+  ],
+  'drupal/ui_styles_views' => [
+    'module' => 'ui_styles_views', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Apply registered UI Styles to compatible Views displays.',
+    'risk' => 'Views style assignments and resulting output have not been compared in Runtime.',
+  ],
+  'drupal/ui_skins' => [
+    'module' => 'ui_skins',
+    'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Portal DomainSkinResolver + UI Skins CSS-variable plugins/scopes, then remove PurposePaletteSchemes and purpose palette form',
+    'risk' => 'Package is directly locked but module is absent from Sync and disabled in Runtime; API settings are global so per-domain resolver must be request-safe and carry domain cache context',
+  ],
+  'drupal/ui_icons' => [
+    'module' => 'ui_icons',
+    'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Keep the current Phosphor and Fluent Emoji packs and validate UI Icons menu/picker/pattern adapters against the locked 2.1.x API',
+    'risk' => 'Package is directly locked but module is absent from Sync; Runtime enablement differs from Sync and pack data ownership must remain with each pack owner',
+  ],
+  'drupal/ui_patterns_field_group' => [
+    'module' => 'ui_patterns_field_group',
+    'status' => 'BLOCKED_UPSTREAM',
+    'replacement' => 'Use only after Drupal 12 metadata/API compatibility and security acceptance; then map compatible field groups to existing SDCs',
+    'risk' => '2.0.x-dev is not covered by Drupal security advisories and its info.yml declares Core ^9/^10/^11 only; Runtime/Sync activation differs',
+  ],
+  'drupal/ui_patterns_ckeditor5' => [
+    'module' => 'ui_patterns_ckeditor5',
+    'status' => 'BLOCKED_UPSTREAM',
+    'replacement' => 'No replacement; this CKEditor integration is explicitly prohibited and cannot be newly configured. Existing Runtime activation requires authorized uninstall to reconcile.',
+    'risk' => 'User explicitly excluded UI Patterns CKEditor 5. Last successful Runtime observation was Enabled while absent from Config Sync; current state is not freshly verified.',
+  ],
+  'drupal/ui_icons_menu' => [
+    'module' => 'ui_icons_menu', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Render menu icons through the official UI Icons formatter/adapters and existing icon packs.',
+    'risk' => 'Pack ownership, menu assignments and Runtime enablement need direct verification.',
+  ],
+  'drupal/ui_icons_picker' => [
+    'module' => 'ui_icons_picker', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Use the official picker for editorial/admin selection while preserving pack ownership and access.',
+    'risk' => 'Picker forms and allowed pack inventory have not been verified in Runtime.',
+  ],
+  'drupal/ui_icons_patterns' => [
+    'module' => 'ui_icons_patterns', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Expose UI Icons through UI Patterns props on compatible SDCs.',
+    'risk' => 'UI Icons and UI Patterns integration API/assignments require focal validation.',
+  ],
+  'drupal/ui_icons_field' => [
+    'module' => 'ui_icons_field', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Use the official icon field formatter for compatible data-owned icon fields.',
+    'risk' => 'Field ownership and formatter assignments need inventory before migration.',
+  ],
+  'drupal/ui_icons_library' => [
+    'module' => 'ui_icons_library', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Expose only approved icon packs through the administrative UI Icons library.',
+    'risk' => 'Access policy and pack ownership need Runtime validation.',
+  ],
+];
+foreach ($moduleInventory as $packageName => $metadata) {
+  $package = $lockedPackages[$packageName] ?? NULL;
+  $required = isset($composer['require'][$packageName]) || isset($composer['require-dev'][$packageName]);
+  $moduleVersion = is_array($package) ? (string) ($package['version'] ?? 'not locked') : 'not locked';
+  $moduleReference = is_array($package) ? (string) ($package['source']['reference'] ?? $package['dist']['reference'] ?? 'no reference') : 'no lock reference';
+  $enabledInSync = isset($syncExtensions['module'][$metadata['module']]);
+  $packageOwner = match (TRUE) {
+    str_starts_with($packageName, 'drupal/ui_patterns') => 'drupal/ui_patterns',
+    str_starts_with($packageName, 'drupal/ui_styles') => 'drupal/ui_styles',
+    str_starts_with($packageName, 'drupal/ui_icons') => 'drupal/ui_icons',
+    default => $packageName,
+  };
+  $ownerPackage = $lockedPackages[$packageOwner] ?? NULL;
+  $ownerVersion = is_array($ownerPackage) ? (string) ($ownerPackage['version'] ?? $moduleVersion) : $moduleVersion;
+  $ownerReference = is_array($ownerPackage) ? (string) ($ownerPackage['source']['reference'] ?? $ownerPackage['dist']['reference'] ?? $moduleReference) : $moduleReference;
+  $rows[] = [
+    'id' => $metadata['module'],
+    'owner_module' => 'Composer / ' . $metadata['module'],
+    'config_path' => 'composer.json; composer.lock; config/sync/core.extension.yml',
+    'consumer_type' => 'ui_suite_integration',
+    'consumer_id' => $metadata['module'] . ' (package ' . $packageOwner . ' ' . $ownerVersion . ' @ ' . $ownerReference . '; lock=' . $moduleVersion . ' @ ' . $moduleReference . ')',
+    'display_plugin' => $metadata['module'],
+    'row_plugin' => '',
+    'style_plugin' => '',
+    'ui_patterns_configured' => $enabledInSync ? 'enabled_in_sync' : 'absent_from_sync',
+    'status' => $metadata['status'],
+    'replacement_or_action' => $metadata['replacement'],
+    'risk_or_evidence_gap' => 'Direct Composer requirement: ' . ($required ? 'yes' : 'no') . '. ' . $metadata['risk'],
+    'rollback' => 'Revert the scoped composer.json/lock/config changes; no entity data migration',
+    'detected_consumers' => '',
+  ];
+}
+
+$rows[] = [
+  'id' => 'aculta420_v2:purpose_palette_visual_engine',
+  'owner_module' => 'aculta420_v2',
+  'config_path' => 'config/sync/aculta420_v2.settings.yml; web/themes/custom/aculta420_v2/theme-settings.php; src/Hook/SurfaceSettingsHooks.php; src/Palette/PurposePaletteSchemes.php; src/styles/tokens.css',
+  'consumer_type' => 'theme_settings_visual_engine',
+  'consumer_id' => 'aculta_purpose_palette',
+  'display_plugin' => 'PurposePaletteSchemes',
+  'row_plugin' => '',
+  'style_plugin' => '',
+  'ui_patterns_configured' => 'legacy_visual_settings',
+  'status' => 'LEGACY_DEPRECATED',
+  'replacement_or_action' => 'UI Skins CSS-variable definitions/scopes selected by Portal domain_id-to-skin_id bridge; migrate light/dark values and remove old selectors/settings after visual gates',
+  'risk_or_evidence_gap' => 'Still consumed by SurfaceSettingsHooks and tokens.css; no UI Skins runtime integration or visual parity evidence yet',
+  'rollback' => 'Revert the scoped theme/Portal code and configuration change before any settings cleanup; preserve the previous config export in version control',
+  'detected_consumers' => 'theme-settings.php, SurfaceSettingsHooks.php, PurposePaletteSchemes.php, tokens.css, SurfaceSettingsHooks tests',
+];
+
 usort($rows, static fn (array $a, array $b): int => [$a['consumer_type'], $a['id'], $a['consumer_id']] <=> [$b['consumer_type'], $b['id'], $b['consumer_id']]);
 $directory = dirname($output);
 if (!is_dir($directory) && !mkdir($directory, 0775, TRUE) && !is_dir($directory)) {

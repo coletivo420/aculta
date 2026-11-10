@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "49452206d2f5273463d42d65b272a002",
+    "content-hash": "9608ca7ba54d9d84758760f3ecf689e7",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -7684,6 +7684,67 @@
             }
         },
         {
+            "name": "drupal/ui_icons",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/ui_icons.git",
+                "reference": "2.1.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/ui_icons-2.1.0.zip",
+                "reference": "2.1.0",
+                "shasum": "3f203d72b1bd3efd3a009fe534174fa80e5ff1f1"
+            },
+            "require": {
+                "drupal/core": "^11.3 || ^12.0"
+            },
+            "require-dev": {
+                "drupal/canvas": "^1.11",
+                "drupal/field_sample_value": "^1.1",
+                "drupal/link_attributes": "^2.0",
+                "drupal/linkit": "^7.0",
+                "drupal/linkit_attributes": "*",
+                "drupal/ui_icons_field": "*",
+                "drupal/ui_icons_field_linkit": "*",
+                "drupal/ui_icons_text": "*",
+                "drupal/ui_patterns": "^2",
+                "drupal/ui_patterns_settings": "^3.0.0-alpha1",
+                "weitzman/drupal-test-traits": "^2.6"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "2.1.0",
+                    "datestamp": "1792656083",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "mogtofu33",
+                    "homepage": "https://www.drupal.org/user/278510"
+                },
+                {
+                    "name": "pdureau",
+                    "homepage": "https://www.drupal.org/user/1903334"
+                }
+            ],
+            "description": "The UI Icons module is a generic icon manager for Drupal.",
+            "homepage": "https://www.drupal.org/project/ui_icons",
+            "support": {
+                "source": "https://git.drupalcode.org/project/ui_icons"
+            }
+        },
+        {
             "name": "drupal/ui_patterns",
             "version": "dev-2.0.x",
             "source": {
@@ -7768,17 +7829,11 @@
         },
         {
             "name": "drupal/ui_patterns_field_group",
-            "version": "2.0.0-beta2",
+            "version": "dev-2.0.x",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/ui_patterns_field_group.git",
-                "reference": "2.0.0-beta2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/ui_patterns_field_group-2.0.0-beta2.zip",
-                "reference": "2.0.0-beta2",
-                "shasum": "597a4fa49c836fa693a6720530a5d8f72b38cf72"
+                "reference": "4403e7b0e27679f47113e96fcdc5349c95e164d1"
             },
             "require": {
                 "drupal/core": "^9 || ^10 || ^11",
@@ -7787,9 +7842,12 @@
             },
             "type": "drupal-module",
             "extra": {
+                "branch-alias": {
+                    "dev-2.0.x": "2.0.x-dev"
+                },
                 "drupal": {
-                    "version": "2.0.0-beta2",
-                    "datestamp": "1790699544",
+                    "version": "2.0.0-beta1+3-dev",
+                    "datestamp": "1790698625",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "Project has not opted into security advisory coverage!"
@@ -7888,6 +7946,55 @@
             "homepage": "https://www.drupal.org/project/ui_patterns",
             "support": {
                 "source": "https://git.drupalcode.org/project/ui_patterns"
+            }
+        },
+        {
+            "name": "drupal/ui_skins",
+            "version": "1.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/ui_skins.git",
+                "reference": "1.2.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/ui_skins-1.2.1.zip",
+                "reference": "1.2.1",
+                "shasum": "99bbc1165afbb5b813c835e83b63eaef288cad38"
+            },
+            "require": {
+                "drupal/core": "^11.4 || ^12",
+                "php": ">=8.3"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "1.2.1",
+                    "datestamp": "1785164803",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "grimreaper",
+                    "homepage": "https://www.drupal.org/user/2388214"
+                },
+                {
+                    "name": "pdureau",
+                    "homepage": "https://www.drupal.org/user/1903334"
+                }
+            ],
+            "description": "Allow handle some theme settings like CSS variables.",
+            "homepage": "https://www.drupal.org/project/ui_skins",
+            "support": {
+                "source": "https://git.drupalcode.org/project/ui_skins"
             }
         },
         {
@@ -22679,7 +22786,7 @@
         "drupal/text_with_summary": 20,
         "drupal/tool": 10,
         "drupal/ui_patterns": 20,
-        "drupal/ui_patterns_field_group": 10,
+        "drupal/ui_patterns_field_group": 20,
         "drupal/upgrade_status": 15,
         "drupal/webform": 20
     },

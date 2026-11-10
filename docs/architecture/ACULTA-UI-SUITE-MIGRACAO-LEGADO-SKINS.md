@@ -36,9 +36,9 @@ Consumidores conhecidos do codigo:
 
 - UI Skins e **source of truth** de temas/esquemas e variaveis visuais. Declarar schemas segundo a API instalada (`{provider}.ui_skins.themes.yml` e `{provider}.ui_skins.css_variables.yml`; verificar versao antes de criar definicoes).
 - O mapeamento `domain_id -> skin_id` e `skin_id x light/dark` pertence a configuração neutra do Portal, exportável e reversível; `site_key` é a chave funcional de domínio e **não dirige CSS**. Nenhum hostname hardcoded no tema. Os dez valores das chaves funcionais continuam estáveis.
-- UI Skins documenta configuracao de tema nas configuracoes do tema **globalmente**. Nao presumir aplicacao automatica distinta por host. Se API nao oferecer selecao por requisicao, criar adaptador **no Portal, sem fork**, que consome definicoes UI Skins e seleciona valores CSS em escopo da resposta. NUNCA alterar config global do tema durante um request, nem `$config->set()` para trocar de dominio.
+- Na API instalada 1.2.1, as definições `*.ui_skins.css_variables.yml` e `*.ui_skins.themes.yml` são lidas a partir das configurações globais do tema; `PreprocessHtml` resolve somente um theme plugin configurado, e `PageTop` imprime valores CSS por scopes armazenados na configuração. Não existe seletor por Domain na API. Criar adaptador **no Portal, sem fork**, que resolve `domain_id -> skin_id` por request e emite somente `data-skin` com cache context `domain`; declarar os valores de cada skin como CSS variable definitions/scopes UI Skins estáticos, sem mutar configuração global. NUNCA alterar config global do tema durante um request, nem `$config->set()` para trocar de dominio.
 - `ColorModePreference` permanece dono de preferencia pessoal e modo default, mas a realizacao visual light/dark fica **vinculada a UI Skins**. Definir contrato unico para `user preference > site default`, com escopo de skin do dominio. Verificar preferencias de usuario entre dominios e logs de acesso.
-- Preservar nomes semanticamente genericos em SDCs (`--color-*`, `--button-*`, `--surface-*`) e refatorar seus valores para as declaracoes UI Skins. Variaveis legadas podem ser aliases temporarios SOMENTE durante migracao e entram no inventario de divida.
+- Preservar nomes semanticamente genericos em SDCs (`--color-*`, `--button-*`, `--surface-*`) e refatorar seus valores para as declaracoes UI Skins. Variaveis antigas de purpose não serão mantidas como aliases ou fallback: remover no mesmo corte dos consumidores.
 - Manter fallback deterministico para skin padrao do ACULTA quando a selecao esta ausente ou invalida. Nao mover dados/sessao/access, nem URLs por skin.
 - Cache: contextos `domain` e `user`/`user.permissions` onde aplicaveis, tags da config de skins e mapeamento, respostas anonimas segregadas por dominio; variar asset/content apenas se necessario.
 - Config Sync + rollback devem reproduzir exatamente a selecao em ambiente limpo. Mudancas globais de tema e token so apos piloto e aceite.
@@ -49,10 +49,12 @@ Consumidores conhecidos do codigo:
 2. Implementar UI Skins e contrato em **modo sombra**: calcular nova skin sem mudar pagina; comparar tokens vs legado e registrar diffs.
 3. Habilitar ponte opt-in para **Links / LinkWeed**; manter shell, estrutura e URL. Testar atraves de hosts e cache aquecido.
 4. Migrar dominios em lotes, com mapa por ID e fallback por skin. Evitar alteracao perceptivel nao aprovada; preservacao visual e default.
-5. Depois de todos os dominios aprovados, remover `aculta_cores_purpose`, `aculta_purpose_palette`, `data-purpose-scheme` e seletores CSS somente quando `rg` confirmar zero consumidores. Avaliar remover `data-purpose` **apenas do CSS**, preservando uso eventual semantico por testes/JS ate auditoria.
-6. Remover classe `PurposePaletteSchemes` e logica `purposePaletteStyle` somente depois de zero chamadas e validacao de color mode, Studio e temas. Atualizar configs, schemas, testes, documentacao e procedimentos de rollback.
+5. Remover diretamente `aculta_cores_purpose`, `aculta_purpose_palette`, `data-purpose-scheme` e seletores CSS junto com a substituição de seus consumidores; sem período de aliases, dual-read ou configuração visual legada.
+6. Remover classe `PurposePaletteSchemes` e logica `purposePaletteStyle` no mesmo corte em que todos os chamadores forem migrados, com validação de color mode, Studio e temas. Atualizar configs, schemas, testes e documentação; rollback por revert do commit, sem restaurar comportamento de purpose.
 7. Demonstrar que mudar uma skin de um domínio não altera outro e que o Portal continua correto sem o sistema visual de purpose.
 8. Executar RN-00 a RN-05 para substituir também a **nomenclatura funcional** `purpose` por `site_key` (rotas, serviços, render arrays, State, sessões e consumidores), sem alterar comportamento de Domain. Plano: `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`.
+
+**Decisão do responsável (2026-11-10):** o projeto não exige retenção de comportamento legado. `LEGACY_DEPRECATED` identifica apenas código ainda consumido durante a implementação do corte; não autoriza fallback, leitura dupla, aliases ou preservação de configuração visual antiga.
 
 ## 3. Classificacao obrigatoria e estados
 

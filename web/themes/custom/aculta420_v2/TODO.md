@@ -1,28 +1,21 @@
 # TODO — aculta420_v2
 
-Estado: em desenvolvimento · versão 1.5.0 (`aculta420_v2.info.yml`) · status: `docs/operations/status/aculta420_v2.yml`.
+Estado: Dev · versão 1.5.0 (`aculta420_v2.info.yml`) · status em `docs/operations/status/aculta420_v2.yml`.
 
 ## Próximo passo
 
-- **ADR-054/055 - nomenclatura interna (RN-00 a RN-05, PLANEJADO):** Portal adota `site_key` no lugar de `purpose`, mantendo `domain_id` para Domain e `skin_id` para UI Skins, sem alterar rotas, acesso ou valores dos dez sites. Plano: `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`. RN-05 é gate de US-14.
-- **ADR-055 / UI Suite integral (US-00 a US-14, PLANEJADO):** substituir **todo visual legado** por UI Suite, classificar `LEGACY_DEPRECATED`/`LEGACY_OBSOLETE`, migrar **motor visual de purposes para UI Skins** sem alterar roteamento/ACL e inventariar Composer/lock + Runtime/Sync. Preferir UI Patterns Field Group `2.0.x-dev@dev` após gates de segurança/Drupal 12. **Não usar UI Patterns CKEditor 5**; UI Styles CKEditor 5 permanece. Planos: `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md` e `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md`.
+- **ADR-054/055, US-00–14 e RN-00–05 em andamento:** migrar o visual legado integralmente para UI Suite/UI Skins; `site_key` é funcional, `domain_id` identifica Domain e `skin_id` é visual. Valores dos dez sites e contratos de domínio/acesso devem permanecer. Não manter fallback ou configuração visual de purpose após cada corte.
+- Composer declara UI Skins ^1.2 e UI Icons ^2.1; Field Group dev está travado no SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1`, **BLOCKED_UPSTREAM** (Core 12 e advisories). Última consulta Runtime: UI Skins Disabled e `ui_patterns_ckeditor5` Enabled fora do Sync; consulta atual ao DB DEFERRED. Não usar UI Patterns CKEditor 5; UI Styles CKEditor 5 autorizado.
+- Planos: `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md`, `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md` e `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`.
 
-- **SDCs de superfície (concluído):** `surface`, `surface-accent` e `surface-panel`, integrados a UI Styles, UI Patterns e UI Library; gate SDC PASS.
-- **FST-08 (entregue):** oito SDCs de estatísticas do Fórum, schema PASS; captura visual pendente.
-- **ADR-054:** P4 em 22/24 displays; P5 piloto Links publicado; P6/P7 prévias e CSS contextual; P8/P9 corte 1.5.0. Restam boundary dos módulos do Portal (64) e revisão visual humana.
-- **P3:** shell v2 opt-in; smoke HTTP em nove hosts; captura Firefox pendente.
-- **Pendências visuais:** Revista, F2/F3, editor, UI Patterns autenticado e Loja.
+## Marcos e pendências
 
-## Dívidas
+- Superfícies SDC (`surface`, `surface-accent`, `surface-panel`) integradas a UI Styles, UI Patterns e UI Library; gate SDC PASS.
+- FST-08: oito SDCs de estatísticas; schema PASS, captura visual pendente.
+- ADR-054: P4 em 22/24 displays; piloto Links publicado; P6/P7 entregues; P8/P9 cortados em 1.5.0. Homologação integral, gates ADR e revisão visual humana pendentes.
+- Faltam capturas Firefox/P3, Revista, F2/F3, editor, UI Patterns autenticado e Loja; boundary módulo/tema com 64 itens.
+- Dívidas: `price` aguarda contrato Loja; `card-cultural` aguarda `domain_presentation.accent`.
 
-- `price` (ADR-046): aguarda contrato de Loja.
-- Accent de `card-cultural` (D1): aguarda `domain_presentation.accent`.
-- Boundary módulo/tema com 64 itens pré-existentes; revisão visual humana pendente.
+## Leitura e entrega
 
-## Leitura
-
-Este arquivo, código alvo e trecho do `CHANGELOG.md`. Roadmap: `web/themes/custom/aculta420_v2/docs/roadmap.md`.
-
-## Ao concluir uma fase
-
-Atualize este TODO e `docs/operations/status/aculta420_v2.yml`, no mesmo commit; sem histórico.
+Leia este TODO, código alvo e trecho do `CHANGELOG.md`. Roadmap: `web/themes/custom/aculta420_v2/docs/roadmap.md`. Ao concluir fase, atualize este TODO e `docs/operations/status/aculta420_v2.yml` no mesmo commit, sem histórico.
