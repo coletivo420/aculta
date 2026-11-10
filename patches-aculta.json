@@ -106,9 +106,9 @@
         ],
         "drupal/flag": [
             {
-                "description": "PHP 8.5: null array offset in FlaggingStorage::loadIsFlaggedMultiple()",
+                "description": "PHP 8.5: null array offset in FlaggingStorage (skip entities without ID in loadIsFlagged/loadIsFlaggedMultiple)",
                 "url": "patches/flag-php85-null-offset.patch",
-                "sha256": "ed3ca42a6435379ede9b703a9eb91ef89d0b13a99edefefcf690c501d9d9f4a7",
+                "sha256": "41ddcfb11ed4b959e9eec2f8d46ff80418ed99f8da148641f7c668c4ebd0c27d",
                 "depth": 1
             }
         ]
