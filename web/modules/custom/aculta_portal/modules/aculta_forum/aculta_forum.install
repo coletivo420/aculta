@@ -198,6 +198,30 @@ function aculta_forum_schema(): array {
     ],
   ];
 
+  // Idempotência da atividade analítica: uma publicação lógica, um evento.
+  // Sem autor, texto, e-mail ou IP; a chave única é a própria garantia.
+  $schema['aculta_forum_analytics_ledger'] = [
+    'description' => 'Chaves de idempotência da atividade emitida pelo Fórum.',
+    'fields' => [
+      'fingerprint' => [
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => 'SHA-256 de tipo de entidade, ID e nome do evento.',
+      ],
+      'created' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Timestamp da primeira emissão.',
+      ],
+    ],
+    'primary key' => ['fingerprint'],
+    'indexes' => [
+      'created' => ['created'],
+    ],
+  ];
+
   return $schema;
 }
 
@@ -455,3 +479,15 @@ function aculta_forum_update_9007(): void {
   $config->save();
 }
 
+
+/**
+ * Installs the analytics idempotency ledger.
+ */
+function aculta_forum_update_9008(): void {
+  $schema = \Drupal::database()->schema();
+  $tables = aculta_forum_schema();
+
+  if (!$schema->tableExists('aculta_forum_analytics_ledger')) {
+    $schema->createTable('aculta_forum_analytics_ledger', $tables['aculta_forum_analytics_ledger']);
+  }
+}

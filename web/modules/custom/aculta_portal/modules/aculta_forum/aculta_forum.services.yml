@@ -31,7 +31,14 @@ services:
     arguments: ['@entity_type.manager', '@date.formatter', '@form_builder']
   Drupal\aculta_forum\Hook\ForumActivityEventHooks:
     class: Drupal\aculta_forum\Hook\ForumActivityEventHooks
-    arguments: ['@event_dispatcher', '@datetime.time']
+    arguments: ['@event_dispatcher', '@datetime.time', '@aculta_forum.activity_ledger']
+  aculta_forum.activity_ledger:
+    class: Drupal\aculta_forum\Analytics\ForumActivityLedger
+    arguments: ['@database', '@datetime.time']
+  Drupal\aculta_forum\Analytics\ForumActivityLedger: '@aculta_forum.activity_ledger'
+  aculta_forum.analytics_ledger_hooks:
+    class: Drupal\aculta_forum\Hook\ForumAnalyticsLedgerHooks
+    arguments: ['@aculta_forum.activity_ledger']
   Drupal\aculta_forum\Hook\ForumAttachmentCleanupHooks:
     class: Drupal\aculta_forum\Hook\ForumAttachmentCleanupHooks
     arguments: ['@aculta_forum.attachment_cleanup', '@aculta_forum.gallery_publication', '@datetime.time']

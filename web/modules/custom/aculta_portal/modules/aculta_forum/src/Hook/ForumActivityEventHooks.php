@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Hook;
 
+use Drupal\aculta_forum\Analytics\ForumActivityLedger;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Event\ForumActivityEvent;
 use Drupal\comment\CommentInterface;
@@ -28,6 +29,7 @@ final class ForumActivityEventHooks {
   public function __construct(
     private readonly EventDispatcherInterface $dispatcher,
     private readonly TimeInterface $time,
+    private readonly ?ForumActivityLedger $ledger = NULL,
   ) {}
 
   /**
@@ -112,6 +114,9 @@ final class ForumActivityEventHooks {
    * Dispatches topic creation activity once.
    */
   private function dispatchTopic(NodeInterface $node): void {
+    if (!$this->claim($node, ForumActivityEvent::TOPIC_CREATED)) {
+      return;
+    }
     $this->dispatcher->dispatch(
       new ForumActivityEvent((int) $node->id(), $this->time->getRequestTime()),
       ForumActivityEvent::TOPIC_CREATED,
@@ -122,6 +127,9 @@ final class ForumActivityEventHooks {
    * Dispatches comment creation activity once.
    */
   private function dispatchComment(CommentInterface $comment): void {
+    if (!$this->claim($comment, ForumActivityEvent::COMMENT_CREATED)) {
+      return;
+    }
     $this->dispatcher->dispatch(
       new ForumActivityEvent((int) $comment->id(), $this->time->getRequestTime()),
       ForumActivityEvent::COMMENT_CREATED,
@@ -132,10 +140,23 @@ final class ForumActivityEventHooks {
    * Dispatches post creation activity once.
    */
   private function dispatchPost(ForumPost $post): void {
+    if (!$this->claim($post, ForumActivityEvent::POST_CREATED)) {
+      return;
+    }
     $this->dispatcher->dispatch(
       new ForumActivityEvent((int) $post->id(), $this->time->getRequestTime()),
       ForumActivityEvent::POST_CREATED,
     );
+  }
+
+  /**
+   * Reivindica a emissão única de uma atividade.
+   */
+  private function claim(EntityInterface $entity, string $eventName): bool {
+    if ($this->ledger === NULL) {
+      return TRUE;
+    }
+    return $this->ledger->claim($entity->getEntityTypeId(), (int) $entity->id(), $eventName);
   }
 
   /**

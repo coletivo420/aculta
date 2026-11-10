@@ -285,7 +285,7 @@ Estados possíveis: PLANEJADA, EM EXECUÇÃO, IMPLEMENTADA NO CÓDIGO, TESTADA, 
 | FST-00 | TESTADA | Baseline Unit: `aculta_forum` 241 testes OK; `aculta_statistics` 108 testes OK; Kernel `DailyAggregateStorageKernelTest` 16 testes OK em `aculta_simpletest`. Inventário de produtores, consumidores e tabelas registrado neste documento. |
 | FST-01 | TESTADA | `ForumAnalyticsScopeResolver`, `ForumAnalyticsScope` e `ForumReactionReconciliation`; `DiscussionReactionManager`, `PublicForumContextProvider` e painel do Fórum corrigidos. Unit focais e suíte completa do Fórum passam; Kernel integrado de Group pendente em FST-11. |
 | FST-02 | TESTADA | `MetricDefinition` com tipos `counter`, `snapshot`, `distinct-window`, `ratio`, `distribution` e `operational`; contrato neutro `MetricProviderInterface` no Portal; `MetricProviderCollector` e cron de retratos; `ForumMetricsProvider` publicado por tag opcional. Unit dos dois módulos passam. |
-| FST-03 | PLANEJADA | Pendente: idempotência persistente e prova Kernel dos dois módulos. |
+| FST-03 | TESTADA | Ledger `aculta_forum_analytics_ledger` com chave SHA-256 única, claim atômico e retenção de 400 dias; hooks de tópico, Comment e ForumPost reivindicam antes de emitir. Kernel integrado com os dois módulos reais, EventDispatcher, subscriber e agregado: 3 testes, 61 asserções, replay e republicação não duplicam. |
 | FST-04 | PLANEJADA | Pendente. |
 | FST-05 | PLANEJADA | Pendente. |
 | FST-06 | PLANEJADA | Pendente. |
