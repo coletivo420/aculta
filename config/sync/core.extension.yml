@@ -212,6 +212,7 @@ module:
   ui_patterns_views: 0
   ui_styles: 0
   ui_styles_block: 0
+  ui_styles_ckeditor5: 0
   ui_styles_layout_builder: 0
   ui_styles_page: 0
   ui_styles_ui_patterns: 0

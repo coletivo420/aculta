@@ -55,6 +55,12 @@ $allowedThemeReferences = [
   'modules/aculta_forum/src/Hook/DiscussionCommentActionIconHooks.php',
   'modules/aculta_forum/src/Hook/TopicOpeningPostHooks.php',
   'modules/aculta_forum/tests/src/Unit/ForumTopicDisplayConfigTest.php',
+  // UI Patterns Views composes the active theme's SDC while the Forum module
+  // continues to own View data, access, filtering, sorting and cache config.
+  'modules/aculta_forum/config/install/views.view.aculta_forum_categories.yml',
+  // Config contract test checks that the editorial format uses the theme's
+  // UI Styles class catalog; production module code remains theme independent.
+  'modules/aculta_editor/tests/src/Kernel/AcultaEditorFormatsKernelTest.php',
   // Catálogo UI Library: prévia de blocos no tema padrão.
   'modules/aculta_ui_library/src/Controller/UiLibraryPreviewController.php',
   // Integrações com diálogos modais do tema padrão.
@@ -99,7 +105,8 @@ foreach ($moduleCode as $path) {
 
 // 2. Biblioteca do módulo não declara CSS: estilo é do tema.
 $libraries = (string) file_get_contents($module . '/aculta_portal.libraries.yml');
-// Exceção documentada (ADR-051): o CSS do CAPTCHA pertence ao módulo que é dono da integração anti-bot.
+// Exceção documentada (ADR-051): o CSS do CAPTCHA pertence ao módulo que é
+// dono da integração anti-bot.
 $libraries_without_captcha = preg_replace('/^captcha-presentation:\n(?:[ \t]+.*\n|\n)*/m', '', $libraries) ?? $libraries;
 $assert(!preg_match('/^\s+css:\s*$/m', $libraries_without_captcha), 'aculta_portal.libraries.yml declara CSS fora da exceção do CAPTCHA (ADR-051): o estilo deve ficar no tema aculta420.');
 

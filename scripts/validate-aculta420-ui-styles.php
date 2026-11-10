@@ -22,6 +22,7 @@ $uiStylesFile = $theme . '/aculta420_v2.ui_styles.yml';
 $buttonCssFile = $theme . '/components/button/button.css';
 $cardCssFile = $theme . '/components/card-cultural/card-cultural.css';
 $revistaCssFile = $theme . '/components/revista-teaser/revista-teaser.css';
+$surfaceCssFile = $theme . '/components/surface/surface.css';
 
 $fail = static function (string $message): never {
   fwrite(STDERR, "FAIL: $message\n");
@@ -81,6 +82,7 @@ foreach ($portalTokens as $classes) {
 $buttonCss = (string) file_get_contents($buttonCssFile);
 $cardCss = (string) file_get_contents($cardCssFile);
 $revistaCss = (string) file_get_contents($revistaCssFile);
+$surfaceCss = (string) file_get_contents($surfaceCssFile);
 
 $checks = 0;
 
@@ -134,6 +136,16 @@ foreach ($definitions as $id => $definition) {
       $token = 'revista-teaser-accent-' . substr($classOrKey, strlen('revista-teaser--accent-'));
       if (!isset($mappedClasses[$classOrKey]) || !isset($portalTokens[$token])) {
         $fail("Classe da Revista '$classOrKey' não está mapeada no PortalUiHooks::TOKENS.");
+      }
+    }
+    elseif (in_array($id, ['spacing_section', 'surface_style', 'surface_elevation_style', 'surface_radius_style'], TRUE)) {
+      if (preg_match('/(?:^|\s)(?:spacing--section|surface--)/', $classOrKey) === 1) {
+        $fail("Opção '$classOrKey' conserva um identificador de superfície substituído.");
+      }
+      foreach (explode(' ', $classOrKey) as $class) {
+        if ($class === '' || !str_contains($surfaceCss, '.' . $class)) {
+          $fail("Opção '$classOrKey' não possui regra correspondente em $surfaceCssFile.");
+        }
       }
     }
   }

@@ -7,8 +7,8 @@ tokens e contraste medidos. Nenhum estilo novo é criado nesta fase.
 ## 1. Decisões do responsável (2026-11-05)
 
 - **Escopo:** botões (4 variantes), faixa de acento de cartão e estilos editoriais da Revista.
-- **Quem aplica:** somente o administrador Drupal. Editores comuns não
-  escolhem estilo.
+- **Quem aplica:** por padrão, somente o administrador Drupal. A exceção
+  editorial aprovada pela ADR-055 está detalhada na seção 4.
 - **Momento:** a F4 entra antes da RC. A RC depende dela.
 
 ## 2. Pré-requisitos
@@ -52,6 +52,13 @@ Opção A: a escolha global do administrador `revista_accent` tem precedência s
 - Botões usam somente tokens semânticos `--button-*`; identidade visual vem de UI
   Skins e não há tokens de cor legados por purpose.
 - As opções ficam disponíveis apenas para o papel de administrador Drupal.
+- **Ajuste ADR-055 (2026-11-10):** o plugin oficial UI Styles CKEditor 5 de
+  bloco fica disponível ao `content_editor` apenas no formato `revista_editorial`.
+  Ele expõe as escolhas de superfície do SDC `surface` (tom, espaçamento,
+  elevação e raio); o filtro editorial preserva somente os elementos com classe
+  permitidos. As demais integrações de UI Styles continuam administrativas.
+  Homologação no Runtime aguarda o cutover autorizado. UI Patterns CKEditor 5
+  permanece sem configuração.
 
 ## 5. Validação e Capturas Visuais
 

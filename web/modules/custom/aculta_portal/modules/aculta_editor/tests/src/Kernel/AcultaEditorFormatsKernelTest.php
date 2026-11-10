@@ -194,6 +194,52 @@ final class AcultaEditorFormatsKernelTest extends KernelTestBase {
     $this->assertStringNotContainsString('<script', $output);
     $this->assertStringNotContainsString('onclick', $output);
     $this->assertStringContainsString('<p>Texto</p>', $output);
+
+    $surface = '<section class="aculta-surface aculta-surface--tone-raised aculta-surface--spacing-compact">'
+      . '<p class="aculta-surface--radius-md">Bloco editorial</p></section>';
+    $surface_output = $this->filter('revista_editorial', $surface);
+    $this->assertStringContainsString('class="aculta-surface aculta-surface--tone-raised aculta-surface--spacing-compact"', $surface_output);
+    $this->assertStringContainsString('class="aculta-surface--radius-md"', $surface_output);
+  }
+
+  /**
+   * Revista editorial exposes only supported block surface styles.
+   */
+  public function testEditorialEditorUsesUiStylesBlockPlugin(): void {
+    $repository_path = dirname(__DIR__, 9);
+    $editor = Yaml::parseFile($repository_path . '/config/sync/editor.editor.revista_editorial.yml');
+    $extension = Yaml::parseFile($repository_path . '/config/sync/core.extension.yml');
+    $format = Yaml::parseFile($repository_path . '/config/sync/filter.format.revista_editorial.yml');
+    $styles = Yaml::parseFile($repository_path . '/web/themes/custom/aculta420_v2/aculta420_v2.ui_styles.yml');
+    $ckeditor_plugins = Yaml::parseFile($repository_path . '/web/modules/contrib/ui_styles/modules/ui_styles_ckeditor5/ui_styles_ckeditor5.ckeditor5.yml');
+    $theme_libraries = (string) file_get_contents($repository_path . '/web/themes/custom/aculta420_v2/aculta420_v2.libraries.yml');
+
+    $style_groups = ['surface_style', 'spacing_section', 'surface_elevation_style', 'surface_radius_style'];
+    $plugin_id = 'ui_styles_ckeditor5_uiStylesBlock';
+    $this->assertContains('ui_styles_ckeditor5', $editor['dependencies']['module']);
+    $this->assertSame(0, $extension['module']['ui_styles_ckeditor5']);
+    $this->assertContains('UiStylesBlock', $editor['settings']['toolbar']['items']);
+    $this->assertSame($style_groups, $editor['settings']['plugins'][$plugin_id]['enabled_styles']);
+    $this->assertArrayNotHasKey('ui_patterns_ckeditor5', $editor['settings']['plugins']);
+    $this->assertArrayNotHasKey('ckeditor5_sourceEditing', $editor['settings']['plugins']);
+    $this->assertContains('uiStylesBlock.UiStylesBlock', $ckeditor_plugins[$plugin_id]['ckeditor5']['plugins']);
+    $this->assertArrayHasKey('UiStylesBlock', $ckeditor_plugins[$plugin_id]['drupal']['toolbar_items']);
+    $this->assertContains('<$any-html5-element class>', $ckeditor_plugins[$plugin_id]['drupal']['elements']);
+    $this->assertStringContainsString('components/surface/surface.css', $theme_libraries);
+
+    $surface_css = (string) file_get_contents($repository_path . '/web/themes/custom/aculta420_v2/components/surface/surface.css');
+    foreach ($style_groups as $style_group) {
+      foreach (array_keys($styles[$style_group]['options']) as $class_list) {
+        foreach (explode(' ', $class_list) as $class) {
+          $this->assertStringContainsString('.' . $class, $surface_css, "$class has a real SDC surface rule.");
+        }
+      }
+    }
+    $allowed_html = $format['filters']['filter_html']['settings']['allowed_html'];
+    foreach (['<div class>', '<section class>', '<p class>', '<h2 id class>', '<blockquote cite class>'] as $element) {
+      $this->assertStringContainsString($element, $allowed_html, "$element survives editorial HTML filtering.");
+    }
+
   }
 
   /**

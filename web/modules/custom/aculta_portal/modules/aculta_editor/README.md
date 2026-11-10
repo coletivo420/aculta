@@ -20,6 +20,11 @@ Os formatos antigos recebem as funções do ACULTA; os excedentes foram removido
 | `wiki` | **Aculta Wiki (somente Wiki)** | CKEditor 5 |
 | `webform_default` | formato do sistema do Webform (não alterar) | CKEditor 5 |
 
+O formato `revista_editorial` integra o plugin oficial UI Styles CKEditor 5 de
+bloco, com opções de superfície, espaçamento, elevação e raio do SDC `surface`.
+As classes são restritas ao catálogo do tema e preservadas pelo filtro HTML.
+UI Patterns CKEditor 5 não é configurado.
+
 Removidos: `aculta_basico`, `aculta_editorial`, `aculta_institucional`, `aculta_email` (sem conteúdo) e
 `restricted_html` (o único conteúdo, a página 372, foi migrado para `usuario_aculta` sem perda: só `<p>` e `<a>`).
 

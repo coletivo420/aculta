@@ -224,8 +224,9 @@ $moduleInventory = [
   ],
   'drupal/ui_styles_ckeditor5' => [
     'module' => 'ui_styles_ckeditor5', 'status' => 'MIGRATION_IN_PROGRESS',
-    'replacement' => 'Provide approved editorial styles in CKEditor 5; UI Patterns CKEditor remains explicitly excluded.',
-    'risk' => 'Absent from Sync; editor formats and Runtime activation were not reverified in this continuation.',
+    'replacement' => 'Provide SDC surface, spacing, elevation and radius choices in revista_editorial through the official block plugin; UI Patterns CKEditor remains excluded.',
+    'risk' => 'Enabled in Sync only for revista_editorial; Runtime plugin is Disabled and visual/editor/browser validation awaits authorized config import.',
+    'configs' => ['config/sync/editor.editor.revista_editorial.yml', 'config/sync/filter.format.revista_editorial.yml'],
   ],
   'drupal/ui_styles_entity_status' => [
     'module' => 'ui_styles_entity_status', 'status' => 'MIGRATION_IN_PROGRESS',
@@ -272,9 +273,9 @@ $moduleInventory = [
   ],
   'drupal/ui_patterns_ckeditor5' => [
     'module' => 'ui_patterns_ckeditor5',
-    'status' => 'LEGACY_DEPRECATED',
-    'replacement' => 'Retire this prohibited integration; remove its preexisting Runtime activation through an authorized uninstall, with no replacement or new configuration.',
-    'risk' => 'User explicitly excluded UI Patterns CKEditor 5. Last successful Runtime observation was Enabled while absent from Config Sync; current state is not freshly verified.',
+    'status' => 'LEGACY_OBSOLETE',
+    'replacement' => 'Prohibited integration with no repository consumers, no compatibility path and no replacement required. Runtime uninstall is an administrative operation and remains DEFERRED pending explicit authorization.',
+    'risk' => 'Last Runtime snapshot recorded Enabled while Sync was absent. Current Runtime state must be rechecked before authorized uninstall.',
   ],
   'drupal/ui_icons_menu' => [
     'module' => 'ui_icons_menu', 'status' => 'MIGRATION_IN_PROGRESS',
@@ -367,10 +368,15 @@ foreach ($moduleInventory as $packageName => $metadata) {
   $ownerPackage = $lockedPackages[$packageOwner] ?? NULL;
   $ownerVersion = is_array($ownerPackage) ? (string) ($ownerPackage['version'] ?? $moduleVersion) : $moduleVersion;
   $ownerReference = is_array($ownerPackage) ? (string) ($ownerPackage['source']['reference'] ?? $ownerPackage['dist']['reference'] ?? $moduleReference) : $moduleReference;
+  $configPaths = array_merge(
+    ['composer.json', 'composer.lock', 'config/sync/core.extension.yml'],
+    $metadata['configs'] ?? [],
+    [relative_path($root, $runtimeSnapshotPath)],
+  );
   $rows[] = [
     'id' => $metadata['module'],
     'owner_module' => 'Composer / ' . $metadata['module'],
-    'config_path' => 'composer.json; composer.lock; config/sync/core.extension.yml; ' . relative_path($root, $runtimeSnapshotPath),
+    'config_path' => implode('; ', $configPaths),
     'consumer_type' => 'ui_suite_integration',
     'consumer_id' => $metadata['module'] . ' (package ' . $packageOwner . ' ' . $ownerVersion . ' @ ' . $ownerReference . '; lock=' . $moduleVersion . ' @ ' . $moduleReference . ')',
     'display_plugin' => $metadata['module'],
@@ -380,7 +386,7 @@ foreach ($moduleInventory as $packageName => $metadata) {
     'status' => $metadata['status'],
     'replacement_or_action' => $metadata['replacement'],
     'risk_or_evidence_gap' => 'Direct Composer requirement: ' . ($required ? 'yes' : 'no') . '. ' . $metadata['risk'],
-    'rollback' => 'Revert the scoped composer.json/lock/config changes; no entity data migration',
+    'rollback' => 'Revert scoped code/config changes; no entity data migration',
     'detected_consumers' => '',
     'runtime_status' => (string) ($runtimeStatuses[$metadata['module']] ?? 'not_found_in_runtime_snapshot'),
   ];

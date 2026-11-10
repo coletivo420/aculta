@@ -9,6 +9,7 @@ dependencies:
   - drupal:filter
   - drupal:media
   - drupal:media_library
+  - ui_styles:ui_styles_ckeditor5
   - ckeditor5_plugin_pack:ckeditor5_plugin_pack
   - ckeditor5_plugin_pack:ckeditor5_plugin_pack_auto_image
   - ckeditor5_plugin_pack:ckeditor5_plugin_pack_bookmark

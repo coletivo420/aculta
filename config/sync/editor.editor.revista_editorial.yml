@@ -6,6 +6,7 @@ dependencies:
     - filter.format.revista_editorial
   module:
     - ckeditor5
+    - ui_styles_ckeditor5
 format: revista_editorial
 editor: ckeditor5
 settings:
@@ -29,6 +30,7 @@ settings:
       - insertTable
       - horizontalLine
       - heading
+      - UiStylesBlock
       - codeBlock
       - drupalMedia
       - '-'
@@ -94,16 +96,12 @@ settings:
         startIndex: true
         styles: true
       multiBlock: true
-    ckeditor5_sourceEditing:
-      allowed_tags:
-        - '<section class>'
-        - '<div class>'
-        - '<p class>'
-        - '<h1>'
-        - '<h2 class>'
-        - '<h3 class>'
-        - '<a class>'
-        - '<ol class>'
+    ui_styles_ckeditor5_uiStylesBlock:
+      enabled_styles:
+        - surface_style
+        - spacing_section
+        - surface_elevation_style
+        - surface_radius_style
 image_upload:
   status: true
   scheme: public

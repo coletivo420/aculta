@@ -1,10 +1,10 @@
-# ADR-054 + ADR-055 — UI Skins e Views — 2026-11-10
+# ADR-054 + ADR-055 — UI Suite editorial e Views — 2026-11-10
 
-- **Objetivo/estado:** Skins substitui paletas purpose em código (10 Domains, 5 tokens claro/escuro); piloto `forum-category` está em Sync/install. `ui_styles_page` alinhado no Sync.
-- **Decisões/cuidados:** sem config antiga/dual-read; DomainPurposeManager permanece funcional. Não importar Sync nem remover Twig enquanto Runtime consumir a View atual.
-- **Commits:** `693d5e173`, `c5b560132`, `d49304e57`, `853c9875f`; baseline browser/script neste commit.
-- **Verificações:** schema SDC 1710 checks; render isolado h3/link; Unit 3276 e focal 20/312; baseline local `/categorias` 9/9, 1024/500px, sem overflow; manifest versionado e PNG ignorados. Runtime cutover DEFERRED por drift config/updatedb; gate V2 falha por `auth-dialog.twig` preexistente; token budget 7 falhas anteriores.
-- **Pendências/próximo passo:** Skins Disabled; importação autorizada necessária para comparar Views, cache/acesso e browser após cutover; então ampliar migração. `origin/dev` integrado por fast-forward; alterações paralelas preservadas.
+- **Objetivo/estado:** Skins remove paletas purpose em código; piloto `forum-category` está no Sync/install. UI Styles CKEditor 5 de bloco configurado apenas em `revista_editorial`, com superfícies SDC e filtro alinhado.
+- **Decisões/cuidados:** sem config antiga/dual-read; `DomainPurposeManager` permanece funcional. UI Patterns CKEditor 5 não configurado. Não importar Sync nem remover Twig antes do cutover.
+- **Commits:** `693d5e173`, `d49304e57`, `853c9875f`, `eb7f0bc11`, `6cbaf3bbe`; integração editorial neste commit.
+- **Verificações:** Kernel Editor 9/9 (175 assertions), PHPCS, UI Styles 38, fronteira módulo/tema 7872, suítes e índice status PASS. Baseline `/categorias` 9/9 (1024/500px). Editor/Views Runtime DEFERRED: `updatedb:status` e Config Sync têm drift; post-update pendente.
+- **Pendências/próximo passo:** Skins e UI Styles CKEditor plugin Disabled no Runtime. Aguardar autorização de importação para homologar toolbar, filtro, render/cache/acesso e comparar Views; depois ampliar migração. Gate amplo SDC falha em `auth-dialog.twig` preexistente.
 
 # FST-00 a FST-11 — integração analítica Fórum + Statistics — 2026-11-10
 

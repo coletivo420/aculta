@@ -1,3 +1,9 @@
+## Não versionado — superfícies UI Styles e integração editorial (2026-11-10)
+
+- Corrige opções de superfície/espaçamento para classes reais do SDC `surface`.
+- UI Styles CKEditor 5 usa esses grupos no formato `revista_editorial`; CSS do
+  SDC já está no `global-styling`. Runtime/browser dependem de cutover autorizado.
+
 ## Não versionado — piloto UI Patterns Views Fórum (2026-11-10)
 
 - `forum-category` aceita nível semântico `h2`/`h3` e recebe títulos linkados,
