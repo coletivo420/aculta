@@ -155,8 +155,9 @@ domain_presentation
 a partir do contexto funcional; `show_site_header` é verdadeiro em todos os
 purposes que tenham um Domain configurado. O `path.matcher` continua sendo usado
 somente para a vitrine da página inicial MAIN (cache `url.path.is_front`). O tema
-só desenha o que as flags permitem. O gate
-`validate-aculta420-shell-contract.php` proíbe comparar `identity.purpose` no tema. Os valores
+só desenha o que as flags permitem. O tema não deve comparar `identity.purpose`:
+o vazamento de `aculta_portal` e a decisão por hostname são barrados por
+`validate-module-theme-boundary.php`. Os valores
 ausentes do `layout` valem como falso, exceto `show_utility_bar`, que vale verdadeiro para
 manter a barra visível quando não há apresentação de domínio.
 

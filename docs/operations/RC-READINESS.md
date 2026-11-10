@@ -22,7 +22,7 @@ Não cobre: tema ACULTA420 como release, Commerce/LMS como release, nem produç�
 | 2 | Slugs públicos | `php scripts/validate-public-slugs.php` | PASS (266 rotas; 20 violações de contrib na linha de base DT-P20) |
 | 2b | Raiz da conta (sem `/conta-interna`; `/minha-conta` só interno, 404 direto) | `php scripts/validate-aculta-portal-conta-root.php` | PASS (1211 checks) |
 | 3 | Fundação do tema | `drush scr scripts/validate-aculta420-foundation.php` | PASS (310 checks) |
-| 4 | Contrato de shell do tema | `drush scr scripts/validate-aculta420-shell-contract.php` | PASS (9 checks). Corrigido o validador: passava 2 argumentos a `ThemeHooks`, que exige 3 (`entity_type.manager`). O tema não foi alterado |
+| 4 | Contrato de shell do tema | `php scripts/validate-module-theme-boundary.php` + `php scripts/validate-aculta420-shell-regions.php` | Shell V1 aposentado: o gate `validate-aculta420-shell-contract.php` checava `ThemeHooks.php`/`templates/page.html.twig` do V1. Os invariantes de vazamento foram portados ao gate de fronteira; a estrutura do shell V2 é coberta por shell-regions/foundation |
 | 5 | Foundations de design (contraste) | `php scripts/validate-aculta420-design-foundations.php` | PASS |
 | 6 | Schemas SDC | `php scripts/validate-aculta420-sdc-schemas.php` | PASS (7 componentes, 98 checks) |
 | 7 | PHPUnit do Portal | `vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/tests` | PASS (48 testes, 76 asserções) |
