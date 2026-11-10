@@ -7069,43 +7069,43 @@ parameters:
 			rawMessage: Access to an undefined property Drupal\Core\Field\FieldItemInterface::$h5p_content_id.
 			identifier: property.notFound
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/Courseaculta_H5PContentSelection.php
+			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/CourseH5PContentSelection.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
 			identifier: method.notFound
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/Courseaculta_H5PContentSelection.php
+			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/CourseH5PContentSelection.php
 
 		-
 			rawMessage: 'Cannot call method isAllowed() on bool.'
 			identifier: method.nonObject
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/Courseaculta_H5PContentSelection.php
+			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/CourseH5PContentSelection.php
 
 		-
 			rawMessage: Instanceof between Drupal\group\Entity\GroupInterface and Drupal\group\Entity\GroupInterface will always evaluate to true.
 			identifier: instanceof.alwaysTrue
 			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/Courseaculta_H5PContentSelection.php
+			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/CourseH5PContentSelection.php
 
 		-
 			rawMessage: Instanceof between Drupal\group\Entity\GroupRelationshipInterface and Drupal\group\Entity\GroupRelationshipInterface will always evaluate to true.
 			identifier: instanceof.alwaysTrue
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/Courseaculta_H5PContentSelection.php
+			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/CourseH5PContentSelection.php
 
 		-
-			rawMessage: 'Parameter #11 $h5pAccess of class Drupal\aculta_lms_h5p\Plugin\EntityReferenceSelection\Courseaculta_H5PContentSelection constructor expects Drupal\aculta_lms_h5p\Access\aculta_H5PCourseAccessManager, Drupal\aculta_forum_lms_test\UnusedService given.'
+			rawMessage: 'Parameter #11 $h5pAccess of class Drupal\aculta_lms_h5p\Plugin\EntityReferenceSelection\CourseH5PContentSelection constructor expects Drupal\aculta_lms_h5p\Access\aculta_H5PCourseAccessManager, Drupal\aculta_forum_lms_test\UnusedService given.'
 			identifier: argument.type
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/Courseaculta_H5PContentSelection.php
+			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/CourseH5PContentSelection.php
 
 		-
 			rawMessage: Unreachable statement - code above always terminates.
 			identifier: deadCode.unreachable
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/Courseaculta_H5PContentSelection.php
+			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/EntityReferenceSelection/CourseH5PContentSelection.php
 
 		-
 			rawMessage: 'Unsafe usage of new static().'

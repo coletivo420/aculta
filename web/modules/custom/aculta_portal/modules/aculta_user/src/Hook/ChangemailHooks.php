@@ -43,7 +43,7 @@ final class ChangemailHooks {
   public function changemailAlter(array &$section, UserInterface $account, bool $emailReady): void {
     if (!$emailReady
       || !$this->moduleHandler->moduleExists('aculta_mail_confirmer')
-      || !$this->configFactory->get('aculta_mail_confirmer_user.settings')->get('user_email_change.enabled')) {
+      || !$this->configFactory->get('aculta_mail_confirmer.settings')->get('user_email_change.enabled')) {
       return;
     }
     $section['change_form'] = $this->formBuilder->getForm(ChangemailForm::class, $account);

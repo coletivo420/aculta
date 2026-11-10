@@ -110,9 +110,6 @@ final class ContributionLifecycle {
       }
 
       $settings = $this->configFactory->get('aculta_cgu.settings');
-      if ($settings->isNew()) {
-        $settings = $this->configFactory->get('aculta_contributions.settings');
-      }
       $floodLimit = max(1, (int) ($settings->get('flood_limit') ?? self::FLOOD_LIMIT));
       $floodWindow = max(1, (int) ($settings->get('flood_window') ?? self::FLOOD_WINDOW));
       if (!$this->flood->isAllowed(self::FLOOD_EVENT, $floodLimit, $floodWindow, (string) $accountId)) {

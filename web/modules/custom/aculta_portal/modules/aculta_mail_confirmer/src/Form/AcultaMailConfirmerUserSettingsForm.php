@@ -24,7 +24,7 @@ class AcultaMailConfirmerUserSettingsForm extends ConfigFormBase {
    */
   protected function getEditableConfigNames() {
     return [
-      'aculta_mail_confirmer_user.settings',
+      'aculta_mail_confirmer.settings',
     ];
   }
 
@@ -35,7 +35,7 @@ class AcultaMailConfirmerUserSettingsForm extends ConfigFormBase {
     $form = parent::buildForm($form, $form_state);
 
     /** @var \Drupal\Core\Config\ImmutableConfig $config */
-    $config = $this->config('aculta_mail_confirmer_user.settings');
+    $config = $this->config('aculta_mail_confirmer.settings');
 
     // User email address confirmation on change options.
     $subconfig = $config->get('user_email_change');
@@ -123,7 +123,7 @@ class AcultaMailConfirmerUserSettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     /** @var \Drupal\Core\Config\ImmutableConfig $config */
-    $config = $this->config('aculta_mail_confirmer_user.settings');
+    $config = $this->config('aculta_mail_confirmer.settings');
 
     $config->set('user_email_change', [
       'enabled' => $form_state->getValue('user_email_change_confirm') && TRUE,

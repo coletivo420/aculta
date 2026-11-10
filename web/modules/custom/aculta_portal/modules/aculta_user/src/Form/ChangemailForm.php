@@ -39,7 +39,7 @@ final class ChangemailForm extends FormBase {
 
   /**
    * Ajuste do aculta_mail_confirmer_user que liga a confirmação da troca. */
-  private const CONFIRMER_SETTING = 'aculta_mail_confirmer_user.settings';
+  private const CONFIRMER_SETTING = 'aculta_mail_confirmer.settings';
 
   public function __construct(
     protected readonly ConfigFactoryInterface $confirmerConfig,

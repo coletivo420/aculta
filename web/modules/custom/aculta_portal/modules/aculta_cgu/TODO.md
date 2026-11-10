@@ -4,7 +4,7 @@ Estado: Dev · versão 0.1.0-dev.1 (`aculta_cgu.info.yml`) · status: `docs/oper
 
 ## Próximo passo
 
-Homologação operacional dos fluxos unificados de CGU (submissões Wiki/Eventos e denúncias/moderação).
+Aplicar e homologar o post-update de propriedade de configuração; depois continuar a homologação dos fluxos unificados de CGU.
 
 ## Ao concluir uma fase
 

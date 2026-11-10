@@ -1,11 +1,12 @@
-# ADR-054/055 — inventário, UI Skins e migração SDC — 2026-11-10
+# ADR-054/055 — migração de ownership para desbloquear UI Suite — 2026-11-10
 
-- **Objetivo/estado:** inventário 381 itens; adapters de seções, pagamento e carrinho usam SDCs; cinco overrides Twig de categorias retirados. Runtime: UI Skins ativo, mapa/scopes ausentes; View em `fields`; UI Styles CKEditor desativado; UI Patterns CKEditor e Field Group ativos fora do Sync. Field Group `BLOCKED_UPSTREAM` (sem cobertura de segurança e sem Core 12); UI Patterns CKEditor `LEGACY_OBSOLETE`.
-- **Decisões/cuidados:** removidos valores locais redundantes do motor de purpose; sem compatibilidade visual legada. Import total tem 65 diferenças; tentativa parcial autorizada abortou antes de gravar por dependências órfãs e diferença de extensão/UI Styles.
-- **Commit/arquivos:** `afaf75c3c` e `5996afa30` publicados em `origin/dev`; código tema/Portal/Fórum, inventário e snapshot Runtime. Este registro atualiza estado pós-tentativa. Backup externo pré-import SHA-256 `05e0fd0358db79fb4d22657666ec320307d91adb7e91bd5cfc585d338553f517`.
-- **Verificações:** PHPUnit 4/26; SDC 80/119/1747; Skins 132; UI Styles 38; UI Library 25; layouts 42; classes 483; boundary 7858; PHPStan focal/PHPCS PASS; `drush cr` PASS. Composer válido com avisos de constraints exatas; token budget FAIL (7 dívidas globais).
-- **Pendências:** tentativa de import parcial autorizada abortou antes de gravar: a validação do ConfigImporter detectou no DB ativo dependências antigas de `aculta_forum_lms` em seis configs cujas cópias Sync já apontam para `aculta_lms`/`aculta_lms_h5p`; também rejeita configs simples com IDs legados `aculta_contributions.settings` e `aculta_mail_confirmer_user.settings`, ainda consumidos pelo código após consolidação dos módulos. O editor exige UI Styles CKEditor 5 instalado. Histórico confirma consolidações anteriores em `aculta_cgu`, `aculta_forum`/`aculta_lms` e `aculta_mail_confirmer`. `updatedb` segue sem autorização específica. Browser/CSS calculado DEFERRED até reconciliar a base. Alterações locais LMS foram preservadas.
-- **Próximo passo:** planejar migração de ownership/IDs das configs simples preservando valores funcionais, aplicar via fluxo autorizado e reimportar as seis entidades LMS atualizadas; então reapresentar cutover UI Suite. Não reativar módulos removidos.
+- **Objetivo/estado:** rechecagem apontou dependências de `aculta_forum_lms` antigas no DB e configs simples com IDs de módulos consolidados. Código agora tem post-updates que movem `aculta_contributions.settings` → `aculta_cgu.settings` e `aculta_mail_confirmer_user.settings` → `aculta_mail_confirmer.settings`, removendo os IDs antigos. Plug-in H5P usa o namespace proprietário atual.
+- **Decisões/cuidados:** valores antigos são copiados para os destinos sem fallback; rollback é restauração do snapshot pré-update. Não reativar módulos removidos nem tocar nos diffs paralelos de LMS.
+- **Arquivos:** post-updates, schemas, Sync, consumidores, testes Kernel, TODO/status, ADRs/plano e inventário CGU; staged revisado, sem arquivos LMS paralelos.
+- **Verificações:** Kernel focal 2 testes/9 assertions PASS; PHPStan e gate Portal Drupal 1.243 PASS; suites/index PASS; PHPCS zero erros (warnings preexistentes); token budget FAIL (7 globais); comércio Runtime aguarda migration.
+- **Pendências:** autorização `updatedb` recebida; gerar snapshot integral atualizado, publicar código, rodar post-updates, conferir valores/remoção e revisar import parcial das configurações UI Suite/Views.
+- **Próximo passo:** concluir gates, commit/push, snapshot, `updatedb`, depois preview e import parcial autorizado; validar Views/skins/CKEditor no Runtime.
+
 # UI Skins — extensão Sync e limpeza da chave antiga — 2026-11-10
 
 - **Objetivo:** tornar UI Skins obrigatório no Config Sync e retirar a última chave de paleta antiga do Runtime.

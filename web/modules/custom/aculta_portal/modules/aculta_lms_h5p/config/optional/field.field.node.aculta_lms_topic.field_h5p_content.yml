@@ -20,7 +20,7 @@ translatable: false
 default_value: { }
 default_value_callback: ''
 settings:
-  handler: 'aculta_forum_lms:course_h5p_content'
+  handler: 'aculta_lms_h5p:course_h5p_content'
   handler_settings:
     target_bundles: null
     sort:

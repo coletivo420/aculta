@@ -39,3 +39,6 @@ Resulta da fusão e consolidação dos antigos módulos `aculta_contributions` e
 ## Arquitetura e Segurança
 - O módulo é transversal e neutro: não depende de lógicas específicas de apresentação dos módulos clientes.
 - Segue a regra de isolamento: não vaza identidades de denúncias e garante controle de acesso rigoroso em propostas de conteúdo privado.
+
+
+A configuração de limites é propriedade de `aculta_cgu.settings`. Um post-update move os valores ativos do ID anterior, remove o objeto antigo e mantém rollback por snapshot pré-update.

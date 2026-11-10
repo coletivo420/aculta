@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.0-dev.5
 state: Dev
-next_phase: Validar no navegador confirmação, troca de e-mail e capacidades restritas pela política; conta ativa não confirmada deve continuar com login permitido
+next_phase: Aplicar e homologar o post-update de ownership de configuração; depois homologar confirmação e troca de e-mail no navegador
 progress_note: "Dev.5: submódulo aculta_mail_confirmer_user fundido diretamente no aculta_mail_confirmer como funcionalidade nativa. Suíte Confirmador 8/60 PASS no MariaDB dedicado. Dev.4: reenvio exige acesso update da confirmação privada e CSRF; Kernel titular/terceiro, suíte Confirmador 6/45 e User Change 2/15 PASS no MariaDB dedicado. Uma depreciação Core/contrib; sem SMTP externo ou Runtime write. Browser autenticado permanece pendente."

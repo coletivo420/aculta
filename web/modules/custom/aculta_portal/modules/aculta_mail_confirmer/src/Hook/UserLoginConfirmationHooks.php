@@ -42,7 +42,7 @@ final class UserLoginConfirmationHooks {
    */
   #[Hook('user_login')]
   public function userLogin(AccountInterface $account): void {
-    $config = $this->configFactory->get('aculta_mail_confirmer_user.settings')->get('user_login');
+    $config = $this->configFactory->get('aculta_mail_confirmer.settings')->get('user_login');
 
     // Register a confirmed email confirmation for new created accounts on their
     // first access or when a user logins through a one time login link.

@@ -50,8 +50,9 @@ $assert($modules->moduleExists('aculta_pagamentos_mercadopago'), 'The project-ow
 $assert(!$modules->moduleExists('aculta_apoio'), 'Former standalone aculta_apoio is not enabled.');
 $assert(!$modules->moduleExists('aculta_editorial'), 'Consolidated aculta_editorial is not enabled.');
 $assert(!is_dir(DRUPAL_ROOT . '/modules/custom/aculta_editorial'), 'Consolidated aculta_editorial directory has been removed.');
-$assert(!\Drupal::entityTypeManager()->hasDefinition('aculta_contribution'), 'Legacy aculta_contribution entity definition is absent.');
-$assert(!\Drupal::database()->schema()->tableExists('aculta_contribution'), 'Legacy contribution storage table is absent.');
+$contribution_definition = \Drupal::entityTypeManager()->getDefinition('aculta_contribution', FALSE);
+$assert($modules->moduleExists('aculta_cgu') && $contribution_definition !== NULL && $contribution_definition->getProvider() === 'aculta_cgu', 'The consolidated CGU module owns the contribution entity.');
+$assert($contribution_definition !== NULL && $contribution_definition->isRevisionable() && \Drupal::database()->schema()->tableExists($contribution_definition->getBaseTable()) && \Drupal::database()->schema()->tableExists($contribution_definition->getRevisionTable()), 'The consolidated contribution entity keeps its revisionable storage.');
 $assert(!\Drupal::database()->schema()->tableExists('aculta_apoio_webhook'), 'Legacy webhook receipt table is absent.');
 $assert(!is_dir(DRUPAL_ROOT . '/modules/custom/aculta_apoio'), 'No duplicate standalone support module remains in custom code.');
 $assert(!is_dir(DRUPAL_ROOT . '/modules/custom/aculta_mercadopago'), 'No custom Mercado Pago gateway module exists.');
@@ -66,7 +67,7 @@ $assert(!$modules->moduleExists('honeypot'), 'Honeypot is not enabled.');
 $assert($modules->moduleExists('login_emailusername'), 'The existing Login Email or Username module is enabled.');
 $assert($modules->moduleExists('aculta_mail_confirmer'), 'ACULTA Mail Confirmer is enabled.');
 $assert($modules->moduleExists('aculta_user') && !$modules->moduleExists('change_mail_page'), 'ACULTA User supplies the canonical new-address form; the contrib Change Mail Page is retired.');
-$assert(\Drupal::config('aculta_mail_confirmer_user.settings')->get('user_email_change.enabled') === TRUE, 'ACULTA Mail Confirmer intercepts user email changes.');
+$assert(\Drupal::config('aculta_mail_confirmer.settings')->get('user_email_change.enabled') === TRUE, 'ACULTA Mail Confirmer intercepts user email changes.');
 // A camada de envio E-Mails ACULTA controla o envio: o transporte padrão
 // (smtp_hostinger) precisa de usuário e de
 // senha, e a senha tem de estar no arquivo de segredos (nenhuma Key, nenhuma

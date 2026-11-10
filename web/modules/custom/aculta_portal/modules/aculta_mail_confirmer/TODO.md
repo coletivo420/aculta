@@ -4,7 +4,7 @@ Estado: Dev · versão 0.1.0-dev.5 (`aculta_mail_confirmer.info.yml`) · status:
 
 ## Próximo passo
 
-Validar no navegador confirmação, troca de e-mail e capacidades restritas pela política; conta ativa não confirmada deve continuar com login permitido
+Aplicar e homologar o post-update de ownership de configuração; depois validar no navegador os fluxos de confirmação e troca de e-mail
 
 ## Leitura
 

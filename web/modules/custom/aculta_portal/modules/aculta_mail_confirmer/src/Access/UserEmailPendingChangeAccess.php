@@ -59,7 +59,7 @@ class UserEmailPendingChangeAccess implements AccessInterface {
     }
 
     // Email change confirmation has to be enabled.
-    $module_config = $this->configFactory->get('aculta_mail_confirmer_user.settings');
+    $module_config = $this->configFactory->get('aculta_mail_confirmer.settings');
     $change_config = $module_config->get('user_email_change');
     if (empty($change_config['enabled'])) {
       return AccessResult::forbidden()->addCacheableDependency($module_config);

@@ -10,7 +10,7 @@ Substitui o contrib `change_mail_page`, retirado do Runtime e do `composer.lock`
   guarda o pedido e envia o link de confirmação de uso único de 24 horas (regra em
   [LINKS-DE-USO-UNICO](../../../../../../../docs/portal/LINKS-DE-USO-UNICO.md)).
 - O e-mail só muda depois da confirmação. Enquanto isso, a conta mantém o e-mail atual.
-- Sem a confirmação ligada (`aculta_mail_confirmer_user.settings` → `user_email_change.enabled`), o formulário **não
+- Sem a confirmação ligada (`aculta_mail_confirmer.settings` → `user_email_change.enabled`), o formulário **não
   aparece** e, se for enviado mesmo assim, recusa o envio. Nunca grava direto.
 
 ## Peças

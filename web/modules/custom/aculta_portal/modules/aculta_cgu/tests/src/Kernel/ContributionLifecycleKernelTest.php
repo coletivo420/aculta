@@ -344,7 +344,7 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
       ->set('flood_limit', 1)
       ->set('flood_window', 3600)
       ->save();
-    $this->container->get('config.factory')->getEditable('aculta_contributions.settings')
+    $this->container->get('config.factory')->getEditable('aculta_cgu.settings')
       ->set('flood_limit', 1)
       ->set('flood_window', 3600)
       ->save();

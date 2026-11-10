@@ -2,6 +2,9 @@
 
 ## 0.1.0-dev.5 — fusão do aculta_mail_confirmer_user ao módulo principal — 2026-11-08
 
+- Consolida `user_email_change` e `user_login` em `aculta_mail_confirmer.settings`; post-update copia valores ativos e remove o objeto de configuração anterior. O rollback usa o snapshot pré-update.
+
+
 - O submódulo `aculta_mail_confirmer_user` foi fundido diretamente ao `aculta_mail_confirmer` como funcionalidade nativa.
 - Hooks de troca de e-mail de usuário, login, form alter e access checker migrados para o namespace `Drupal\aculta_mail_confirmer`.
 - Suíte Kernel do módulo combinada: 8 testes / 60 assertions PASS em `aculta_simpletest`.

@@ -70,7 +70,7 @@ final class UserEmailChangeHooks {
     if (!$original
       || $this->isConfirmationGuardActive((int) $entity->id())
       || ($new_email = $entity->getEmail()) == ($old_email = $original->getEmail())
-      || !($config = $this->configFactory->get('aculta_mail_confirmer_user.settings')->get('user_email_change'))
+      || !($config = $this->configFactory->get('aculta_mail_confirmer.settings')->get('user_email_change'))
       || !$config['enabled']) {
       return;
     }
@@ -127,7 +127,7 @@ final class UserEmailChangeHooks {
   public function confirmationOperation(string $op, AcultaMailConfirmationInterface $confirmation): void {
     $user_storage = $this->entityTypeManager->getStorage('user');
     if ($confirmation->getRealm() == 'aculta_mail_confirmer_user'
-      && ($config = $this->configFactory->get('aculta_mail_confirmer_user.settings')->get('user_email_change'))
+      && ($config = $this->configFactory->get('aculta_mail_confirmer.settings')->get('user_email_change'))
       && $config['enabled']
       && ($user_id = $confirmation->getProperty('user'))
       && ($new_email = $this->userData->get('aculta_mail_confirmer_user', $user_id, 'email_change_new_address'))

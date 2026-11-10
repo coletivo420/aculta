@@ -30,8 +30,8 @@ final class ContributionModuleInstallKernelTest extends KernelTestBase {
     $container = \Drupal::getContainer();
     self::assertTrue($container->get('module_handler')->moduleExists('aculta_cgu'));
     self::assertInstanceOf(ContributionAdapterRegistry::class, $container->get('aculta_contributions.adapter_registry'));
-    self::assertSame(10, $container->get('config.factory')->get('aculta_contributions.settings')->get('flood_limit'));
-    self::assertSame(3600, $container->get('config.factory')->get('aculta_contributions.settings')->get('flood_window'));
+    self::assertSame(10, $container->get('config.factory')->get('aculta_cgu.settings')->get('flood_limit'));
+    self::assertSame(3600, $container->get('config.factory')->get('aculta_cgu.settings')->get('flood_window'));
 
     $definition = $container->get('entity_type.manager')->getDefinition('aculta_contribution');
     self::assertTrue($definition->isRevisionable());

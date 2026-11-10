@@ -44,7 +44,7 @@ final class UserEmailChangeFormHooks {
    */
   #[Hook('form_user_form_alter')]
   public function userFormAlter(array &$form, FormStateInterface $form_state, string $form_id): void {
-    $config = $this->configFactory->get('aculta_mail_confirmer_user.settings')->get('user_email_change');
+    $config = $this->configFactory->get('aculta_mail_confirmer.settings')->get('user_email_change');
     /** @var \Drupal\user\UserInterface $user */
     $user = $form_state->getFormObject()->getEntity();
 

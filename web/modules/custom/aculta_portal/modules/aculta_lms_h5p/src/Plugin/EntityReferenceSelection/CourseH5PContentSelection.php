@@ -25,13 +25,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Selects only H5P content editable in the current course Group context.
  */
 #[EntityReferenceSelection(
-  id: 'aculta_forum_lms:course_h5p_content',
+  id: 'aculta_lms_h5p:course_h5p_content',
   label: new TranslatableMarkup('Conteúdos H5P deste curso/turma'),
   group: 'aculta_forum_lms',
   weight: 10,
   entity_types: ['aculta_h5p_content'],
 )]
-final class Courseaculta_H5PContentSelection extends DefaultSelection {
+final class CourseH5PContentSelection extends DefaultSelection {
 
   public function __construct(
     array $configuration,
