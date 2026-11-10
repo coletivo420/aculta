@@ -5,8 +5,8 @@
 - **Arquivos:** Skills existentes e quatro Skills UI Suite, `scripts/validate-agent-skills.py`, `docs/operations/AUDITORIA-SKILLS-DRUPAL-2026-11.md`, `docs/operations/TESTES-SKILLS-UI-SUITE.md`, ponteiros `AGENTS.md`/`CLAUDE.md`.
 - **Verificações:** validador de Skills PASS (18 skills, links e 18 avaliações); `git diff --check` PASS; Claude Code 2.1.322 invocou `/ui-patterns` e respondeu regra exclusiva; Codex 0.167.0 incluiu a Skill UI Patterns no diagnóstico de contexto. Invocação completa de todas as Skills em ambos os agentes não executada. Core/contrib/vendor ausentes neste worktree; testes Drupal/runtime não repetidos.
 - **Limites:** `core.extension.yml` e lock não comprovam runtime. SEC-01 tem guard `isAllowed()` e teste-fonte; sessão anterior registra PHPUnit 9/9, mas README do módulo está desatualizado. Não houve alteração de runtime, Composer, configuração ou implementação funcional.
-- **Publicação:** commit da entrega e push para `origin/dev` ainda pendentes.
-- **Próximo passo:** publicar em `origin/dev`; em outra rodada, corrigir a nota obsoleta SEC-01 no README do módulo e executar avaliação individual das 18 Skills nos dois CLIs.
+- **Publicação:** commit `c3385e86d` publicado em `origin/dev` e confirmado por `git ls-remote`.
+- **Próximo passo:** em outra rodada, corrigir a nota obsoleta SEC-01 no README do módulo e executar avaliação individual das 18 Skills nos dois CLIs.
 # UI Patterns 2 — Bloco Isolado de Prévia em Lote e Carregamento Sequencial Completo — 2026-11-10
 
 - **Objetivo:** corrigir layout do botão "Exibir todas as prévias" para ocupar linha inteira isolada (`column-span: all`), sem sobreposição com a barra de busca ou colunas de cartões, e implementar encadeamento sequencial automático contínuo via HTMX até o último componente.
