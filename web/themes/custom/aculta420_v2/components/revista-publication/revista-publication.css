@@ -169,15 +169,6 @@
   inset-inline-start: auto;
 }
 
-/* Largura total (data-purpose-layout="full"): tudo ocupa a página inteira, inclusive o corpo do texto. */
-html[data-purpose-layout="full"] .revista-publication {
-  inline-size: 100%;
-  max-inline-size: none;
-}
-html[data-purpose-layout="full"] .revista-publication__body {
-  inline-size: 100%;
-  max-inline-size: none;
-}
 
 /* Autoria sem caixas dentro de caixas: só a faixa da seção; os itens internos não têm borda. */
 .revista-publication__authors :is(.portal-article-authors, .portal-article-authors__list, .portal-article-author, .author-card) {

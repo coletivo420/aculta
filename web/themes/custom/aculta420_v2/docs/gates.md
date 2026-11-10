@@ -213,3 +213,16 @@ Este registro não autoriza `drush cim`, `updatedb` ou alterações destrutivas;
 
 - `php scripts/validate-aculta420-shell-regions.php`: PASS normal (31 checks). `--strict`: **FAIL** com 5 blocos em `highlighted` (`messages`, `primary_admin_actions`, `primary_local_tasks`, `secondary_local_tasks`, `donation_quick_apoio`), que é o bloqueio esperado do cutover.
 - Runbook de cutover e rollback publicado em `docs/architecture/ACULTA420-V2-P9-CUTOVER.md`; nenhuma região removida e nenhuma configuração de corte aplicada.
+
+## Execução Recente — ADR-054 P9 corte concluído (2026-11-09)
+
+- `validate-aculta420-shell-regions.php`: PASS (28 checks) e `--strict` PASS. Cinco regiões finais; nenhum bloco em região antiga.
+- Blocos migrados para `content` (pesos -50 a -42); `config/sync` atualizado.
+- `validate-aculta420-theme-settings.php`: PASS (14). Container, schema e `PurposeContainerLayout` ausentes; paletas preservadas.
+- `validate-aculta420-foundation.php`: PASS (454 checks). Regiões finais, sem Bootstrap, sem referências a Social Auth/CAPTCHA, durações e cores centralizadas.
+- `validate-aculta420-design-foundations.php`: PASS (1.110). `validate-aculta420-mapped-classes.php`: PASS (462).
+- `validate-aculta420-layout-builder-batch.php`: PASS (170); `validate-aculta420-sdc-schemas.php`: PASS (69/1.534); `validate-aculta420-css-scope.php`: PASS (43).
+- `validate-aculta-portal-drupal12.php`: PASS (1.205); `validate-project-status-index.php`: PASS (44); `validate-agent-token-budget.php`: PASS.
+- Playwright Firefox: 86/86 no shell v2 e 35/35 na landing Links (cinco larguras, claro/escuro). Smoke dos dez purposes com 200/1 H1/1 `<main>` (conta redireciona visitante para login).
+- Versão do tema: **1.5.0**. Backup e rollback em `$SUITE_OUT/aculta-cutover-20261109/` e `docs/architecture/ACULTA420-V2-P9-CUTOVER.md`.
+- `validate-module-theme-boundary.php` permanece FAIL (64/7.314) por dívida pré-existente dos módulos do Portal.

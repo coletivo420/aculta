@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta420_v2\Hook;
 
-use Drupal\aculta420_v2\Layout\PurposeContainerLayout;
+use Drupal\aculta420_v2\Support\ComponentLibraryRoutes;
 use Drupal\aculta420_v2\Presentation\WikiBrandMediaProps;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -84,7 +84,7 @@ final class PagePresentationHooks {
     if ($this->currentRouteMatch?->getRouteName() === 'aculta_user.perfil_publico') {
       $variables['#attached']['library'][] = 'aculta420_v2/public-profile';
     }
-    $variables['aculta_component_library_page'] = PurposeContainerLayout::isComponentLibraryRoute($this->currentRouteMatch?->getRouteName());
+    $variables['aculta_component_library_page'] = ComponentLibraryRoutes::isComponentLibraryRoute($this->currentRouteMatch?->getRouteName());
     $variables['aculta_lms_lesson_route'] = $this->currentRouteMatch?->getRouteName() === 'aculta_lms.lesson_view';
     $variables['aculta_layout_page_sdc_available'] = $this->componentAvailable('layout-page');
     $variables['aculta_lms_lesson_sdc_available'] = $this->componentAvailable('lms-lesson-page');
@@ -314,7 +314,7 @@ final class PagePresentationHooks {
     }
 
     $routeName = $this->currentRouteMatch->getRouteName();
-    if (PurposeContainerLayout::isComponentLibraryRoute($routeName)) {
+    if (ComponentLibraryRoutes::isComponentLibraryRoute($routeName)) {
       return 'full';
     }
     if ($routeName === 'aculta_studio.dashboard') {

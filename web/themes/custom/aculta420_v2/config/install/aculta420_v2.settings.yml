@@ -4,7 +4,7 @@ aculta_radius_card: lg
 aculta_radius_field: base
 aculta_accent_override: mapping
 aculta_show_accent_stripe: true
-aculta_shell_variant: classic
+aculta_shell_variant: v2
 aculta_revista_accent:
   selected: {}
   extra: ''
@@ -19,41 +19,3 @@ aculta_purpose_palette:
   magazine: vermelho-red-kush
   courses: vermelho-panama-red
   forum: vermelho-red-congolese
-aculta_purpose_container:
-  main:
-    mode: boxed
-    container_width: 1200
-    narrow_width: 750
-  wiki:
-    mode: boxed
-    container_width: 1200
-    narrow_width: 750
-  links:
-    mode: boxed
-    container_width: 1200
-    narrow_width: 750
-  account:
-    mode: boxed
-    container_width: 1200
-    narrow_width: 750
-  support:
-    mode: boxed
-    container_width: 1200
-    narrow_width: 750
-  shop:
-    mode: boxed
-    container_width: 1200
-    narrow_width: 750
-  eventos:
-    mode: boxed
-    container_width: 1200
-    narrow_width: 750
-  magazine:
-    mode: boxed
-    container_width: 1200
-    narrow_width: 750
-  courses:
-    mode: boxed
-    container_width: 1200
-    narrow_width: 750
-

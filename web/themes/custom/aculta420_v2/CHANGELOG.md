@@ -1,3 +1,14 @@
+## 1.5.0 — ADR-054 corte concluído no desenvolvimento (2026-11-09)
+
+- Tema com as cinco regiões finais (`institution`, `header`, `content`, `sidebar_first`, `footer`); `navigation`, `highlighted`, `help` e `breadcrumb` removidas do `info.yml`.
+- Shell v2 é o padrão (`aculta_shell_variant: v2`), com ajuda e breadcrumb contextuais; o shell clássico permanece como rollback até o aceite final.
+- Layout Builder em 22 dos 24 displays compatíveis, com `allow_custom` apenas em `page.full`; landing Links publicada no LB.
+- Biblioteca UI com prévias reais administrativas e `max-age 0`.
+- CSS contextual por rota: `global-styling` em 107 KB (−60%). `statistics`, `studio`, `portal-account`, `public-profile`, `events`, `event-organization`, `wiki` e `forum` saem do global.
+- Motor de container removido: `aculta_purpose_container`, schema, `PurposeContainerLayout`, `data-purpose-layout`, `data-purpose-style` e CSS legado. `Purposes` e `ComponentLibraryRoutes` preservam as responsabilidades restantes.
+- Fundações de design voltaram a PASS (1.110 checks), com literais substituídos por tokens e durações centralizadas.
+- Validado com gates do tema, fundação (454), Portal Drupal 12 (1.205), Playwright 86/86 e landing 35/35. Dívida restante: boundary módulo/tema (64 itens pré-existentes).
+
 ## Não versionado — ADR-054 P8 gates e tokens (2026-11-09)
 
 - `validate-aculta420-design-foundations.php`: PASS (1112 checks). Analisador reconhece listas de seletor e blocos base com tokens `--color-*`; literais de seis componentes substituídos por tokens (cores de marca do Google centralizadas em `tokens.css`).

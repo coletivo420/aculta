@@ -2,19 +2,19 @@
 
 /**
  * @file
- * Gate ADR-054: painel "Layout de container" removido e paletas preservadas.
+ * Gate ADR-054/P9: painel de container removido e paletas preservadas.
  *
  * Verifica a estrutura do formulário administrativo do tema e o schema de
- * configuração. Não altera nada.
+ * configuração após o corte do motor de container.
  *
  * Regras:
  * 1. O formulário não pode oferecer `aculta_container_purpose`.
  * 2. O formulário não pode conter o rótulo "Layout de container".
  * 3. O formulário deve manter as superfícies e as cores por purpose.
- * 4. O schema deve preservar `aculta_purpose_container`, porque os valores
- *    gravados continuam sendo lidos pelo renderizador até o corte homologado.
- * 5. A classe PurposeContainerLayout deve manter as duas responsabilidades
- *    separáveis: resolução de largura e identificação de rota da biblioteca.
+ * 4. O schema não deve mais conter `aculta_purpose_container` nem
+ *    `aculta420_v2.purpose_container_layout`.
+ * 5. A classe PurposeContainerLayout não existe; as responsabilidades
+ *    restantes vivem em Purposes e ComponentLibraryRoutes.
  *
  * Uso: php scripts/validate-aculta420-theme-settings.php
  */
@@ -36,7 +36,6 @@ $read = static function (string $path) use ($failures): ?string {
 
 $source = $read($theme . '/theme-settings.php');
 $schema = $read($theme . '/config/schema/aculta420_v2.schema.yml');
-$container = $read($theme . '/src/Layout/PurposeContainerLayout.php');
 
 $assert = static function (bool $condition, string $message) use (&$failures, &$checks): void {
   $checks++;
@@ -46,8 +45,6 @@ $assert = static function (bool $condition, string $message) use (&$failures, &$
 };
 
 if ($source !== NULL) {
-  // Chaves de primeiro nível do formulário: $form['chave'] e
-  // $form['grupo']['chave'].
   preg_match_all("/\\\$form\\['([a-z0-9_]+)'\\]/i", $source, $matches);
   $formKeys = array_values(array_unique($matches[1] ?? []));
 
@@ -58,20 +55,18 @@ if ($source !== NULL) {
   $assert(in_array('aculta_cores_purpose', $formKeys, TRUE), 'O grupo de cores por purpose não está declarado.');
   $assert(str_contains($source, "'#type' => 'ui_styles_styles'"), 'O controle UI Styles da Revista não está declarado.');
   $assert(str_contains($source, 'aculta_purpose_palette'), 'O seletor de paleta por purpose não está declarado.');
-  $assert(str_contains($source, 'PurposePaletteSchemes::getOptions()'), 'As opções de paleta não vêm de PurposePaletteSchemes.');
+  $assert(str_contains($source, 'Purposes::ALLOWED_PURPOSES'), 'As opções de purpose não vêm de Purposes.');
 }
 
 if ($schema !== NULL) {
-  $assert(str_contains($schema, 'aculta_purpose_container:'), 'O schema de compatibilidade aculta_purpose_container foi removido antes do corte.');
-  $assert(str_contains($schema, 'aculta420_v2.purpose_container_layout:'), 'O schema aculta420_v2.purpose_container_layout foi removido antes do corte.');
+  $assert(!str_contains($schema, 'aculta_purpose_container:'), 'O schema aculta_purpose_container ainda existe após o corte.');
+  $assert(!str_contains($schema, 'aculta420_v2.purpose_container_layout:'), 'O schema purpose_container_layout ainda existe após o corte.');
   $assert(str_contains($schema, 'aculta_purpose_palette:'), 'O schema da paleta por purpose foi removido.');
 }
 
-if ($container !== NULL) {
-  $assert(str_contains($container, 'function isComponentLibraryRoute'), 'PurposeContainerLayout perdeu isComponentLibraryRoute.');
-  $assert(str_contains($container, 'function resolveContainerStyle'), 'PurposeContainerLayout perdeu resolveContainerStyle antes do corte.');
-  $assert(str_contains($container, 'ALLOWED_PURPOSES'), 'PurposeContainerLayout perdeu a lista canônica de purposes.');
-}
+$assert(!is_file($theme . '/src/Layout/PurposeContainerLayout.php'), 'PurposeContainerLayout ainda existe após o corte.');
+$assert(is_file($theme . '/src/Purpose/Purposes.php'), 'Purposes não existe.');
+$assert(is_file($theme . '/src/Support/ComponentLibraryRoutes.php'), 'ComponentLibraryRoutes não existe.');
 
 if ($failures !== []) {
   fwrite(STDERR, "FAIL — validate-aculta420-theme-settings\n");

@@ -39,7 +39,7 @@
 
 .discussion-reaction-bar__badge {
   cursor: pointer;
-  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  transition: background-color var(--motion-fast) ease-in-out, border-color var(--motion-fast) ease-in-out;
 }
 
 .discussion-reaction-bar__badge:hover {
@@ -73,7 +73,7 @@
   background-color: var(--color-surface-subtle, transparent);
   color: var(--color-text-secondary);
   cursor: pointer;
-  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  transition: background-color var(--motion-fast) ease-in-out, color var(--motion-fast) ease-in-out, border-color var(--motion-fast) ease-in-out;
 }
 
 .discussion-reaction-bar__btn:hover {
@@ -132,7 +132,7 @@
   border: 1px solid transparent;
   background: transparent;
   cursor: pointer;
-  transition: transform 0.12s ease-out, background-color 0.12s ease;
+  transition: transform var(--motion-fast) ease-out, background-color var(--motion-fast) ease;
 }
 
 .discussion-reaction-bar__palette-btn:hover:not(.is-disabled) {

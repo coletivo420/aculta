@@ -96,7 +96,7 @@ A suíte de 86 checks foi repetida após a restauração dos blocos de cabeçalh
 
 ## 6. P9 — cutover
 
-**Não executado.** Runbook completo em `ACULTA420-V2-P9-CUTOVER.md`; `validate-aculta420-shell-regions.php --strict` bloqueia enquanto houver bloco em região antiga. Critérios não atendidos: homologação visual, Layout Builder por display, landing pages e import/export em staging.
+**Executado no desenvolvimento em 2026-11-09** com autorização do responsável. As cinco regiões finais estão no `info.yml`, o shell v2 é o padrão, os cinco blocos foram migrados para `content` e o motor de container foi removido. Backup em `$SUITE_OUT/aculta-cutover-20261109/`; rollback em `ACULTA420-V2-P9-CUTOVER.md`. Validação final: gates do tema, fundação 454, Portal Drupal 12 1.205, Playwright 86/86 e landing 35/35 PASS. Critérios não atendidos: homologação visual, Layout Builder por display, landing pages e import/export em staging.
 
 O que já existe para o cutover:
 

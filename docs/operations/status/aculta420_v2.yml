@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: '1.4.0'
+version: '1.5.0'
 state: Dev
 progress_note: >-
-  1.4.0: tema ACULTA420 V2 totalmente autônomo baseado em SDC, CSS nativo e tokens semânticos, sem dependência do Bootstrap. Entrega 2 do redesign visual do Fórum; componentes events-upcoming-block e map-widget integrados ao UI Patterns; suíte de testes de fundações, modo de cor e contratos de layout ativos. V1 purgada da base.
-next_phase: 'Concluir homologação visual autenticada no servidor de desenvolvimento e seguir roadmap de componentes.'
+  1.5.0: corte ADR-054 concluído no desenvolvimento. Tema com cinco regiões, shell v2 padrão, Layout Builder em 22 displays, landing Links no LB, biblioteca UI com prévias reais e CSS contextual (107 KB globais, -60%). Motor de container removido; motor antigo de largura não controla mais as páginas migradas. Gates do tema, fundação, design, classes, Portal Drupal 12 e tokens PASS; boundary módulo/tema segue com dívida pré-existente.
+next_phase: 'Revisão visual humana e conteúdo editorial das demais landings; reduzir a dívida de boundary dos módulos do Portal.'

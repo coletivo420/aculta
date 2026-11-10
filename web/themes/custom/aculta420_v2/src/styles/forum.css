@@ -1053,7 +1053,7 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
   border-radius: 50%;
   border: 0.6rem solid var(--color-border);
   border-block-start-color: var(--color-text-primary);
-  animation: aculta-posting-spin 1s linear infinite;
+  animation: aculta-posting-spin var(--motion-spin) linear infinite;
 }
 
 .aculta-posting-overlay__title {
@@ -1076,7 +1076,7 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
 
 @media (prefers-reduced-motion: reduce) {
   .aculta-posting-overlay__spinner {
-    animation-duration: 3s;
+    animation-duration: var(--motion-loop);
   }
 }
 
@@ -1090,7 +1090,7 @@ body:has(.aculta-forum-list) #block-aculta420-v2-aculta-forum-categories-home {
   color: var(--color-text-secondary);
   text-decoration: none;
   border-radius: var(--radius-sm);
-  transition: color 150ms ease, transform 150ms ease;
+  transition: color var(--motion-fast) ease, transform var(--motion-fast) ease;
 }
 
 .aculta-resposta-acao__icon {

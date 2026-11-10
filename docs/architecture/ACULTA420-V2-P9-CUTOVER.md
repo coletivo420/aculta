@@ -1,6 +1,6 @@
 # ACULTA420 V2 — P9: runbook de cutover e rollback
 
-**Estado:** cutover **não executado**. Este documento prepara a execução e o rollback. O corte depende de aceite visual humano e da migração dos blocos das regiões antigas.
+**Estado:** cutover **executado no desenvolvimento em 2026-11-09**, com autorização do responsável. Versão do tema: 1.5.0. Rollback documentado abaixo.
 
 ## 1. Pré-requisitos bloqueantes
 
@@ -62,8 +62,11 @@ As regiões `navigation`, `help` e `breadcrumb` não têm blocos globais; ainda 
 - Não remover `PurposeContainerLayout::isComponentLibraryRoute` sem separar seu uso na UI Patterns Library.
 - Não declarar cutover concluído sem aceite visual registrado.
 
-## 6. Situação atual dos gates
+## 6. Situação após a execução (2026-11-09)
 
-- `validate-aculta420-shell-regions.php`: PASS normal (31 checks); **FAIL em `--strict`** com 5 blocos em `highlighted` — exatamente o bloqueio do item 2.
+- Os cinco blocos migraram para `content` com pesos -50 a -42; `shell-regions --strict` PASS.
+- Regiões `navigation`, `highlighted`, `help` e `breadcrumb` removidas do `info.yml`; shell v2 é o padrão.
+- Motor de container removido (`aculta_purpose_container`, schema, `PurposeContainerLayout`, `data-purpose-layout/style`, CSS legado); `Purposes` e `ComponentLibraryRoutes` preservam as responsabilidades restantes.
 - Layout Builder: 22 dos 24 displays compatíveis; 2 exclusões documentadas.
-- P8 automatizado: PASS; aceite humano pendente.
+- Validação: gates do tema, fundação 454, Portal Drupal 12 1.205, Playwright 86/86 e landing 35/35 PASS. Backup em `$SUITE_OUT/aculta-cutover-20261109/`.
+- Pendências: revisão visual humana registrada e dívida de boundary dos módulos do Portal (64 itens pré-existentes).

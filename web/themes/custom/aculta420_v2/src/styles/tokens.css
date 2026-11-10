@@ -20,6 +20,8 @@
   --motion-fast: 150ms;
   --motion-base: 180ms;
   --motion-slow: 200ms;
+  --motion-spin: 1s;
+  --motion-loop: 3s;
   --color-surface-subtle: #f3f4f6;
   --color-surface: #fff;
   --color-surface-raised: #fff;

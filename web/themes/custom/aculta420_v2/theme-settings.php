@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-use Drupal\aculta420_v2\Layout\PurposeContainerLayout;
+use Drupal\aculta420_v2\Purpose\Purposes;
 use Drupal\aculta420_v2\Palette\PurposePaletteSchemes;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -123,7 +123,7 @@ function aculta420_v2_form_system_theme_settings_alter(array &$form, FormStateIn
   ];
 
   // O tema usa a lista canônica de purposes que ele próprio define; não lê state do Portal.
-  $activePurposes = PurposeContainerLayout::ALLOWED_PURPOSES;
+  $activePurposes = Purposes::ALLOWED_PURPOSES;
   if ($activePurposes === []) {
     $form['aculta_cores_purpose']['empty_message'] = [
       '#markup' => '<p>' . t('Nenhum purpose ativo informado pelo Portal.') . '</p>',

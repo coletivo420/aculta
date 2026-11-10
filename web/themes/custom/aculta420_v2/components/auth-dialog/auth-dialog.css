@@ -214,7 +214,7 @@
 
 /* Suporte ao formulário injetado via HTMX (/entrar/janela) */
 .aculta-auth-dialog__content [data-portal-ui="auth-provider"],
-.aculta-auth-dialog__content [data-drupal-selector="edit-social-auth"] {
+.aculta-auth-dialog__content [data-drupal-selector^="edit-social"] {
   display: flex;
   justify-content: center;
   inline-size: 100%;

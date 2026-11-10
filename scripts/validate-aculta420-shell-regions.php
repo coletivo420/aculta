@@ -79,9 +79,6 @@ $template = is_file($templatePath) ? (string) file_get_contents($templatePath) :
 foreach ([
   'page.institution' => 'área institution',
   'page.header' => 'área header',
-  'page.navigation' => 'ponte navigation',
-  'page.highlighted' => 'ponte highlighted',
-  'page.help' => 'ponte help',
   'aculta_help' => 'variável help do Portal',
   'aculta_breadcrumb' => 'variável breadcrumb do Portal',
   'page.content' => 'área content',
@@ -108,7 +105,7 @@ $assert(str_contains($settingsSource, 'aculta_shell_variant'), 'A configuração
 $assert(str_contains($settingsSource, "'classic'") && str_contains($settingsSource, "'v2'"), 'O formulário não oferece as duas variantes de shell.');
 
 $install = Yaml::parseFile($theme . '/config/install/aculta420_v2.settings.yml');
-$assert(($install['aculta_shell_variant'] ?? NULL) === 'classic', 'O padrão do shell deve ser classic.');
+$assert(($install['aculta_shell_variant'] ?? NULL) === 'v2', 'O padrão do shell deve ser v2 após o cutover.');
 
 $libraries = Yaml::parseFile($theme . '/aculta420_v2.libraries.yml');
 $shellCss = $libraries['shell-v2']['css']['theme'] ?? [];

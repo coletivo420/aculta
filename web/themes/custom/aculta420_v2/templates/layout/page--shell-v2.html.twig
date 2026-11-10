@@ -20,11 +20,6 @@
     <header class="page__header" role="banner">{{ page.header }}</header>
   {% endif %}
 
-  {# Ponte: navigation ainda não tem consumidores em block.block, mas segue renderizada. #}
-  {% if page.navigation %}
-    <div class="page__navigation">{{ page.navigation }}</div>
-  {% endif %}
-
   {% if multidomain_network_links is not empty %}
     <div class="page__showcase">
       {{ include('aculta420_v2:purpose-showcase', {
@@ -34,19 +29,14 @@
     </div>
   {% endif %}
 
-  {# Ponte: highlighted, help e breadcrumb compõem a área contextual do conteúdo. #}
-  {% if page.highlighted or page.help or aculta_help or page.breadcrumb or aculta_breadcrumb %}
+  {# Ajuda e breadcrumb vêm do Portal e de blocos da região header. #}
+  {% if aculta_help or aculta_breadcrumb %}
     <div class="page-shell-v2__contextual">
-      {% if page.highlighted %}
-        <div class="page__highlighted">{{ page.highlighted }}</div>
-      {% endif %}
-      {% if page.help %}
-        <div class="page__help">{{ page.help }}</div>
-      {% elseif aculta_help %}
+      {% if aculta_help %}
         <div class="page__help">{{ aculta_help }}</div>
       {% endif %}
-      {% if page.breadcrumb or aculta_breadcrumb %}
-        <div class="page__breadcrumb">{{ page.breadcrumb }}{{ aculta_breadcrumb }}</div>
+      {% if aculta_breadcrumb %}
+        <div class="page__breadcrumb">{{ aculta_breadcrumb }}</div>
       {% endif %}
     </div>
   {% endif %}

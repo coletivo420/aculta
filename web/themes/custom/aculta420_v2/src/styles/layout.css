@@ -453,59 +453,12 @@ body.aculta-component-library-page {
     grid-template-columns: minmax(0, 2fr) minmax(14rem, 1fr);
   }
 
-  /* Estilo do container (aculta420_v2): Caixa vale para Padrão e Estreito; sem caixa é o padrão do CSS. */
-  html[data-purpose-style="boxed"] .layout-page__content {
-    padding: var(--spacing-md);
-    border: 1px solid var(--color-border);
-    border-block-start: 4px solid var(--purpose-sub-2);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-  }
-
-  /* Faixa do Studio: segue a cor de destaque (sub-2) do purpose account configurada no tema. */
-
-  /* Modos de layout de container por purpose (aculta420_v2). O atributo do purpose manda na largura,
-     qualquer que seja a variante do template (--full ou --aside). */
-  html[data-purpose-layout="default"] .layout-page,
-  html[data-purpose-layout="narrow"] .layout-page {
-    max-inline-size: var(--aculta-container-width, 1200px);
-    margin-inline: auto;
-  }
-
-  html[data-purpose-layout="narrow"] .layout-page__content {
-    max-inline-size: var(--aculta-narrow-container-width, 750px);
-    margin-inline: auto;
-  }
-
-  /* Largura total: a página e o conteúdo ocupam a tela inteira, sem o espaçamento lateral do layout. */
-  html[data-purpose-layout="full"] .layout-page {
-    max-inline-size: none;
-    padding-inline: var(--spacing-md);
-  }
-
-  html[data-purpose-layout="full"] .layout-page__content {
-    padding-inline: 0;
-  }
-
-  /* Largura total: os tipos de conteúdo de cada purpose (publicação, verbete, evento, aula, nó completo)
-     deixam de ter largura máxima própria e ocupam a página inteira. */
-  html[data-purpose-layout="full"] :is(.node--view-mode-full, .aculta-wiki-article, .aculta-wiki-home, .aculta-wiki-search-results, .aculta-event-page-layout, .lms-lesson-page, .social-links-page) {
-    inline-size: 100%;
-    max-inline-size: none;
-    margin-inline: 0;
-  }
-
   /* Páginas de leitura e conteúdo estreito */
   .layout-page--stack,
   .page__main--stack {
     inline-size: min(100%, var(--aculta-narrow-container-width, 750px));
   }
 
-  /* Purpose com layout de largura total (forum, por exemplo): a lista ocupa a tela, sem o teto de leitura. */
-  html[data-purpose-layout="full"] .layout-page--stack,
-  html[data-purpose-layout="full"] .page__main--stack {
-    inline-size: 100%;
-  }
 }
 
 /* Celular (abaixo de 60 rem): largura sempre 100%, ignorando sliders */

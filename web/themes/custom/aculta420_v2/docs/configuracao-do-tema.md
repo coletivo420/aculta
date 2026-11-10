@@ -108,7 +108,7 @@ administrador do tema. As duas coexistem e não se substituem.
 
 Por decisão ADR-054 (2026-11-09), a seção **Layout de container** foi retirada de `theme-settings.php`. Portanto, o administrador não dispõe mais de selects para modo, estilo e largura por purpose.
 
-**Compatibilidade transitória:** a leitura de `aculta_purpose_container` pelo renderizador `SurfaceSettingsHooks` continua somente para não alterar o layout ativo antes da migração paralela para Layout Builder/SDCs. O schema e a classe `PurposeContainerLayout` ainda são necessários nesse período e não devem ser excluídos sem o inventário e o corte homologado. O Config Sync consultado não traz valores exportados para essa chave, mas a configuração ativa do runtime precisa ser verificada.
+**Descontinuado no corte P9 (2026-11-09):** a leitura de `aculta_purpose_container`, o schema e a classe `PurposeContainerLayout` foram removidos. Larguras e estilos vêm dos layouts SDC, do Layout Builder e do shell v2, que é o padrão.
 
 A implementação e os testes de 2026-11-06 pertencem ao histórico, em `docs/architecture/PLANO-LAYOUT-CONTAINER-POR-PURPOSE.md`. O plano vigente é `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md` na raiz do repositório.
 
