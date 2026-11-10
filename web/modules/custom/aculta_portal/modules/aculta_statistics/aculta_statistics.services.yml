@@ -34,6 +34,11 @@ services:
     class: Drupal\aculta_statistics\Hook\ProviderCronHooks
     arguments: ['@aculta_statistics.provider_collector']
 
+  aculta_statistics.snapshot_reconciliation:
+    class: Drupal\aculta_statistics\Provider\SnapshotReconciliation
+    arguments: ['!tagged_iterator aculta_statistics.metric_provider', '@aculta_statistics.catalog', '@aculta_statistics.storage', '@lock', '@logger.channel.aculta_statistics']
+  Drupal\aculta_statistics\Provider\SnapshotReconciliation: '@aculta_statistics.snapshot_reconciliation'
+
   aculta_statistics.summary_lines:
     class: Drupal\aculta_statistics\Report\StatisticsSummaryLines
     arguments: ['@aculta_statistics.storage']

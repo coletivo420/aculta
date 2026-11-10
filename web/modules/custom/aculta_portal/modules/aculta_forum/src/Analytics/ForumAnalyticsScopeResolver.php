@@ -136,13 +136,13 @@ class ForumAnalyticsScopeResolver {
     }
     $schema = $this->database->schema();
     if (!$schema->tableExists('group_relationship_field_data')
-      || !$schema->tableExists('group_field_data')) {
+      || !$schema->tableExists('groups_field_data')) {
       return NULL;
     }
 
     $topicIds = [];
     $topicRelationships = $this->database->select('group_relationship_field_data', 'gr');
-    $topicRelationships->join('group_field_data', 'g', 'g.id = gr.gid');
+    $topicRelationships->join('groups_field_data', 'g', 'g.id = gr.gid');
     $topicRelationships->fields('gr', ['entity_id']);
     $topicRelationships->condition('gr.plugin_id', RestrictedForumGroupResolver::TOPIC_PLUGIN);
     $topicRelationships->condition('g.type', $groupType);
@@ -179,11 +179,11 @@ class ForumAnalyticsScopeResolver {
     }
     $schema = $this->database->schema();
     if (!$schema->tableExists('group_relationship_field_data')
-      || !$schema->tableExists('group_field_data')) {
+      || !$schema->tableExists('groups_field_data')) {
       return NULL;
     }
     $query = $this->database->select('group_relationship_field_data', 'cgr');
-    $query->join('group_field_data', 'cg', 'cg.id = cgr.gid');
+    $query->join('groups_field_data', 'cg', 'cg.id = cgr.gid');
     $query->fields('cgr', ['entity_id']);
     $query->condition('cgr.plugin_id', RestrictedForumGroupResolver::CATEGORY_PLUGIN);
     $query->condition('cg.type', $groupType);
@@ -216,12 +216,12 @@ class ForumAnalyticsScopeResolver {
       return TRUE;
     }
     if (!$schema->tableExists('group_relationship_field_data')
-      || !$schema->tableExists('group_field_data')) {
+      || !$schema->tableExists('groups_field_data')) {
       return FALSE;
     }
 
     $restrictedCategories = $this->database->select('group_relationship_field_data', 'cgr');
-    $restrictedCategories->join('group_field_data', 'cg', 'cg.id = cgr.gid');
+    $restrictedCategories->join('groups_field_data', 'cg', 'cg.id = cgr.gid');
     $restrictedCategories->fields('cgr', ['entity_id']);
     $restrictedCategories->condition('cgr.plugin_id', RestrictedForumGroupResolver::CATEGORY_PLUGIN);
     $restrictedCategories->condition('cg.type', $groupType);
@@ -317,13 +317,13 @@ class ForumAnalyticsScopeResolver {
       return TRUE;
     }
     if (!$schema->tableExists('group_relationship_field_data')
-      || !$schema->tableExists('group_field_data')) {
+      || !$schema->tableExists('groups_field_data')) {
       return FALSE;
     }
 
     // Group restrito ligado diretamente ao tópico.
     $topicRelationships = $this->database->select('group_relationship_field_data', 'gr');
-    $topicRelationships->join('group_field_data', 'g', 'g.id = gr.gid');
+    $topicRelationships->join('groups_field_data', 'g', 'g.id = gr.gid');
     $topicRelationships->fields('gr', ['entity_id']);
     $topicRelationships->condition('gr.plugin_id', RestrictedForumGroupResolver::TOPIC_PLUGIN);
     $topicRelationships->condition('g.type', $groupType);
@@ -335,7 +335,7 @@ class ForumAnalyticsScopeResolver {
 
     // Group restrito herdado da categoria do tópico.
     $categoryRelationships = $this->database->select('group_relationship_field_data', 'cgr');
-    $categoryRelationships->join('group_field_data', 'cg', 'cg.id = cgr.gid');
+    $categoryRelationships->join('groups_field_data', 'cg', 'cg.id = cgr.gid');
     $categoryRelationships->fields('cgr', ['entity_id']);
     $categoryRelationships->condition('cgr.plugin_id', RestrictedForumGroupResolver::CATEGORY_PLUGIN);
     $categoryRelationships->condition('cg.type', $groupType);

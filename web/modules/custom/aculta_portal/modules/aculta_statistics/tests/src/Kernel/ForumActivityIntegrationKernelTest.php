@@ -9,8 +9,8 @@ use Drupal\aculta_forum\Hook\ForumActivityEventHooks;
 use Drupal\aculta_statistics\Storage\AggregateStorageInterface;
 use Drupal\aculta_statistics\Storage\DailyAggregateStorage;
 use Drupal\domain\Entity\Domain;
-use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\group\Entity\Group as GroupEntity;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
@@ -143,6 +143,8 @@ final class ForumActivityIntegrationKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_forum_post');
     $this->installEntitySchema('profile');
     $this->installEntitySchema('path_alias');
+    $this->installEntitySchema('group');
+    $this->installEntitySchema('group_relationship');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('aculta_forum', [ForumActivityLedger::TABLE]);
     $this->installSchema('aculta_user', ['aculta_user_nickname', 'aculta_user_agreement']);
@@ -161,6 +163,13 @@ final class ForumActivityIntegrationKernelTest extends KernelTestBase {
 
     // domain_source cria a instância do campo em cada novo bundle; o storage
     // precisa existir antes do tipo de conteúdo.
+    FieldStorageConfig::create([
+      'field_name' => 'field_aculta_categories',
+      'entity_type' => 'node',
+      'type' => 'entity_reference',
+      'cardinality' => -1,
+      'settings' => ['target_type' => 'taxonomy_term'],
+    ])->save();
     FieldStorageConfig::create([
       'field_name' => 'field_domain_source',
       'entity_type' => 'node',
@@ -222,6 +231,70 @@ final class ForumActivityIntegrationKernelTest extends KernelTestBase {
 
     self::assertSame(1, $this->storage->total('forum.topics.created', $today, $today));
     self::assertSame(1, $this->ledgerCount());
+  }
+
+  /**
+   * Retratos contam apenas tópicos públicos e excluem Group restrito.
+   */
+  public function testSnapshotExcludesRestrictedGroupAndDraft(): void {
+    $this->topic(published: TRUE);
+    $this->topic(published: TRUE);
+    $this->topic(published: FALSE);
+
+    $this->config('aculta_forum.settings')
+      ->set('restricted_group_type', 'restricted_forum')
+      ->save();
+    // Evita o post-install de membership do GroupType no ambiente mínimo:
+    // a configuração do tipo é o que o resolvedor consulta.
+    $this->container->get('config.factory')->getEditable('group.type.restricted_forum')->setData([
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [],
+      'id' => 'restricted_forum',
+      'label' => 'Fórum restrito',
+      'description' => '',
+      'new_revision' => FALSE,
+      'creator_membership' => FALSE,
+      'creator_roles' => [],
+    ])->save();
+    $group = GroupEntity::create([
+      'type' => 'restricted_forum',
+      'label' => 'Associados',
+    ]);
+    $group->save();
+    $restricted = $this->topic(published: TRUE);
+    // Relação gravada diretamente: o package de Group no ambiente mínimo
+    // não instala o tipo de relação, mas o resolvedor consulta as mesmas
+    // tabelas group_relationship(_field_data) em produção.
+    $database = $this->container->get('database');
+    $database->insert('group_relationship')
+      ->fields([
+        'uuid' => $this->container->get('uuid')->generate(),
+        'type' => 'group_node:aculta_forum_topic',
+        'langcode' => 'en',
+      ])
+      ->execute();
+    $rid = (int) $database->lastInsertId();
+    $database->insert('group_relationship_field_data')
+      ->fields([
+        'id' => $rid,
+        'type' => 'group_node:aculta_forum_topic',
+        'langcode' => 'en',
+        'default_langcode' => 1,
+        'gid' => $group->id(),
+        'entity_id' => $restricted->id(),
+        'plugin_id' => 'group_node:aculta_forum_topic',
+        'label' => '',
+        'uid' => 0,
+        'created' => $this->container->get('datetime.time')->getRequestTime(),
+        'changed' => $this->container->get('datetime.time')->getRequestTime(),
+      ])
+      ->execute();
+
+    $day = $this->storage->currentDay();
+    $provider = $this->container->get('aculta_forum.metrics_provider');
+    self::assertSame(2, $provider->value('forum.topics.published_current', $day));
+    self::assertSame(2, $provider->value('forum.topics.unanswered', $day));
   }
 
   /**
