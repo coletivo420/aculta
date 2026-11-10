@@ -153,7 +153,7 @@ services:
 
   aculta_forum.discussion_context_provider.public_forum:
     class: Drupal\aculta_forum\Context\Provider\PublicForumContextProvider
-    arguments: ['@aculta_portal.domain_purpose']
+    arguments: ['@aculta_portal.domain_purpose', '@aculta_forum.analytics_scope_resolver']
     tags:
       - { name: aculta_forum.discussion_context_provider }
 
@@ -171,6 +171,14 @@ services:
     class: Drupal\aculta_forum\Access\ForumReadAccess
     arguments: ['@aculta_portal.domain_purpose']
 
+  aculta_forum.analytics_scope_resolver:
+    class: Drupal\aculta_forum\Analytics\ForumAnalyticsScopeResolver
+    arguments: ['@aculta_forum.restricted_group_resolver', '@aculta_portal.domain_purpose', '@database', '@logger.channel.aculta_forum']
+  Drupal\aculta_forum\Analytics\ForumAnalyticsScopeResolver: '@aculta_forum.analytics_scope_resolver'
+  aculta_forum.reaction_reconciliation:
+    class: Drupal\aculta_forum\Analytics\ForumReactionReconciliation
+    arguments: ['@database', '@entity_type.manager', '@aculta_forum.analytics_scope_resolver', '@lock', '@datetime.time', '@logger.channel.aculta_forum']
+  Drupal\aculta_forum\Analytics\ForumReactionReconciliation: '@aculta_forum.reaction_reconciliation'
   aculta_forum.restricted_group_resolver:
     class: Drupal\aculta_forum\RestrictedForum\RestrictedForumGroupResolver
     arguments: ['@config.factory', '@entity_type.manager', '@logger.channel.aculta_forum']
@@ -318,9 +326,8 @@ services:
     class: Drupal\aculta_forum\Service\DiscussionReactionManager
     arguments:
       - '@database'
-      - '@entity_type.manager'
-      - '@aculta_forum.discussion_context_resolver'
       - '@config.factory'
+      - '@aculta_forum.analytics_scope_resolver'
 
   aculta_forum.discussion_reaction_endpoint_access:
     class: Drupal\aculta_forum\Access\DiscussionReactionEndpointAccess

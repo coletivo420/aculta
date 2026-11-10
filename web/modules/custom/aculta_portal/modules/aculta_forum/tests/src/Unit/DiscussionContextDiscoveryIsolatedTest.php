@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_forum\Unit;
 
+use Drupal\aculta_forum\Analytics\ForumAnalyticsScope;
+use Drupal\aculta_forum\Analytics\ForumAnalyticsScopeResolver;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum\Context\Provider\LmsDiscussionContextProvider;
 use Drupal\aculta_forum\Context\Provider\PublicationContextProvider;
@@ -42,7 +44,7 @@ final class DiscussionContextDiscoveryIsolatedTest extends TestCase {
 
     $wikiProvider = new WikiDiscussionContextProvider();
     $publicationProvider = new PublicationContextProvider();
-    $publicForumProvider = new PublicForumContextProvider($domainPurpose);
+    $publicForumProvider = new PublicForumContextProvider($domainPurpose, $this->scopeResolver());
     $lmsProvider = new LmsDiscussionContextProvider($entityTypeManager);
 
     $allProviders = [
@@ -132,7 +134,7 @@ final class DiscussionContextDiscoveryIsolatedTest extends TestCase {
 
     $providersWithoutWiki = [
       new PublicationContextProvider(),
-      new PublicForumContextProvider($domainPurpose),
+      new PublicForumContextProvider($domainPurpose, $this->scopeResolver()),
       new LmsDiscussionContextProvider($entityTypeManager),
     ];
 
@@ -156,7 +158,7 @@ final class DiscussionContextDiscoveryIsolatedTest extends TestCase {
     $providers = [
       'wiki' => new WikiDiscussionContextProvider(),
       'publication' => new PublicationContextProvider(),
-      'public_forum' => new PublicForumContextProvider($domainPurpose),
+      'public_forum' => new PublicForumContextProvider($domainPurpose, $this->scopeResolver()),
       'lms' => new LmsDiscussionContextProvider($entityTypeManager),
     ];
 
@@ -213,6 +215,16 @@ final class DiscussionContextDiscoveryIsolatedTest extends TestCase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     );
+  }
+
+
+  /**
+   * Creates a scope resolver returning a public forum classification.
+   */
+  private function scopeResolver(): ForumAnalyticsScopeResolver {
+    $resolver = $this->createMock(ForumAnalyticsScopeResolver::class);
+    $resolver->method('resolveHost')->willReturn(new ForumAnalyticsScope(ForumAnalyticsScope::PUBLIC_FORUM));
+    return $resolver;
   }
 
 }

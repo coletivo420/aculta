@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Context\Provider;
 
+use Drupal\aculta_forum\Analytics\ForumAnalyticsScope;
+use Drupal\aculta_forum\Analytics\ForumAnalyticsScopeResolver;
 use Drupal\aculta_forum\Context\DiscussionContext;
 use Drupal\aculta_forum\Context\DiscussionContextInterface;
 use Drupal\aculta_forum\Context\DiscussionContextProviderInterface;
@@ -18,7 +20,10 @@ use Drupal\node\NodeInterface;
  */
 final class PublicForumContextProvider implements DiscussionContextProviderInterface {
 
-  public function __construct(private readonly DomainPurposeManager $domainPurposeManager) {}
+  public function __construct(
+    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly ForumAnalyticsScopeResolver $scopeResolver,
+  ) {}
 
   /**
    * Checks whether an entity is an independent public Forum topic.
@@ -50,6 +55,13 @@ final class PublicForumContextProvider implements DiscussionContextProviderInter
         ->cachePerPermissions()
         ->addCacheContexts(['user']));
     $neutralModeration = AccessResult::neutral()->addCacheableDependency($entity);
+    // A política de visibilidade reflete o escopo real do conteúdo, não a
+    // capacidade da conta atual de vê-lo. Tópico restrito por Group direto ou
+    // herdado da categoria continua restrito mesmo para administradores.
+    $scope = $this->scopeResolver->resolveHost($entity);
+    $visibilityPolicy = $scope->scope === ForumAnalyticsScope::RESTRICTED_FORUM
+      ? 'group_members_only'
+      : 'public_if_entity_accessible';
     return new DiscussionContext(
       $entity,
       'public_forum',
@@ -58,7 +70,7 @@ final class PublicForumContextProvider implements DiscussionContextProviderInter
       $writeAccess,
       $neutralModeration,
       $entity->toUrl('canonical'),
-      'public_if_entity_accessible',
+      $visibilityPolicy,
       'public_if_entity_accessible',
       'public_if_entity_accessible',
     );

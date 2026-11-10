@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Service;
 
-use Drupal\aculta_forum\Context\DiscussionContextResolver;
+use Drupal\aculta_forum\Analytics\ForumAnalyticsScopeResolver;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\node\NodeInterface;
 use Drupal\user\EntityOwnerInterface;
 
@@ -25,9 +24,8 @@ class DiscussionReactionManager {
 
   public function __construct(
     protected readonly Connection $database,
-    protected readonly EntityTypeManagerInterface $entityTypeManager,
-    protected readonly DiscussionContextResolver $contextResolver,
     protected readonly ConfigFactoryInterface $configFactory,
+    protected readonly ForumAnalyticsScopeResolver $scopeResolver,
   ) {}
 
   /**
@@ -147,24 +145,15 @@ class DiscussionReactionManager {
     $entityId = (int) $entity->id();
     $authorUid = $entity instanceof EntityOwnerInterface ? (int) $entity->getOwnerId() : 0;
 
-    // Resolve context & public status.
-    $host = $this->resolveHost($entity);
-    $contextId = 'unknown';
-    $isPublic = 1;
-
-    if ($host !== NULL) {
-      $account = $this->entityTypeManager->getStorage('user')->load($uid);
-      if ($account) {
-        $context = $this->contextResolver->resolve($host, $account);
-        if ($context !== NULL) {
-          $contextId = $context->getType();
-          $isPublic = ($context->getVisibilityPolicy() === 'group_members_only') ? 0 : 1;
-        }
-      }
-    }
+    // O escopo é propriedade do conteúdo, não da conta que reage. Um
+    // administrador lendo um tópico restrito não torna a reação pública.
+    $scope = $this->scopeResolver->resolve($entity);
+    $host = $scope->host ?? $this->resolveHost($entity);
+    $contextId = $scope->scope;
+    $isPublic = $scope->isPublicForum();
 
     $existing = $this->database->select(self::TABLE_REACTIONS, 'r')
-      ->fields('r', ['id', 'reaction'])
+      ->fields('r', ['id', 'reaction', 'is_public_context'])
       ->condition('entity_type', $entityType)
       ->condition('entity_id', $entityId)
       ->condition('uid', $uid)
@@ -178,13 +167,17 @@ class DiscussionReactionManager {
     try {
       if ($existing) {
         $prevReaction = (string) $existing['reaction'];
+        // O decremento usa o escopo gravado no momento da reação. Recalcular
+        // a visibilidade atual e subtrair de um contador antigo desalinharia
+        // agregados quando o conteúdo mudou de escopo.
+        $wasPublic = (int) $existing['is_public_context'] === 1;
         if ($prevReaction === $reactionId) {
           // Same emoji: remove reaction.
           $this->database->delete(self::TABLE_REACTIONS)
             ->condition('id', $existing['id'])
             ->execute();
 
-          if ($isPublic) {
+          if ($wasPublic) {
             $this->decrementStats($uid, $authorUid);
           }
           $this->invalidateEntityCache($entity, $uid, $authorUid);
@@ -196,14 +189,27 @@ class DiscussionReactionManager {
           ];
         }
 
-        // Different emoji: update reaction.
+        // Different emoji: update reaction and reconcile the stored scope.
         $this->database->update(self::TABLE_REACTIONS)
           ->fields([
             'reaction' => $reactionId,
             'changed' => $now,
+            'context_id' => $contextId,
+            'is_public_context' => $isPublic ? 1 : 0,
+            'host_entity_type' => $host ? $host->getEntityTypeId() : '',
+            'host_entity_id' => $host ? (int) $host->id() : 0,
           ])
           ->condition('id', $existing['id'])
           ->execute();
+
+        if ($wasPublic !== $isPublic) {
+          if ($wasPublic) {
+            $this->decrementStats($uid, $authorUid);
+          }
+          else {
+            $this->incrementStats($uid, $authorUid);
+          }
+        }
 
         $this->invalidateEntityCache($entity, $uid, $authorUid);
 
@@ -225,7 +231,7 @@ class DiscussionReactionManager {
           'host_entity_type' => $hostEntityType,
           'host_entity_id' => $hostEntityId,
           'context_id' => $contextId,
-          'is_public_context' => $isPublic,
+          'is_public_context' => $isPublic ? 1 : 0,
           'uid' => $uid,
           'author_uid' => $authorUid,
           'reaction' => $reactionId,
@@ -287,32 +293,46 @@ class DiscussionReactionManager {
 
     $count = 0;
     try {
-      if ($this->database->schema()->tableExists('comment_field_data')) {
+      // Tópicos independentes públicos, sem Group restrito direto ou herdado.
+      if ($this->database->schema()->tableExists('node_field_data')) {
+        $topicQuery = $this->database->select('node_field_data', 'n');
+        $topicQuery->condition('n.uid', $uid);
+        if ($this->scopeResolver->applyPublicTopicConditions($topicQuery, 'n')) {
+          $count += (int) $topicQuery->countQuery()->execute()->fetchField();
+        }
+      }
+
+      // Comments legados em tópicos públicos do Fórum.
+      if ($this->database->schema()->tableExists('comment_field_data')
+        && $this->database->schema()->tableExists('node_field_data')) {
         $commentQuery = $this->database->select('comment_field_data', 'c');
+        $commentQuery->join('node_field_data', 'n', 'n.nid = c.entity_id');
         $commentQuery->condition('c.uid', $uid);
         $commentQuery->condition('c.status', 1);
         $commentQuery->condition('c.comment_type', 'aculta_discussion_post');
         $commentQuery->condition('c.default_langcode', 1);
-        $count += (int) $commentQuery->countQuery()->execute()->fetchField();
+        if ($this->scopeResolver->applyPublicTopicConditions($commentQuery, 'n')) {
+          $count += (int) $commentQuery->countQuery()->execute()->fetchField();
+        }
       }
-      if ($this->database->schema()->tableExists('aculta_forum_post_field_data')) {
+
+      // Posts revisionáveis em tópicos públicos do Fórum.
+      if ($this->database->schema()->tableExists('aculta_forum_post_field_data')
+        && $this->database->schema()->tableExists('node_field_data')) {
         $postQuery = $this->database->select('aculta_forum_post_field_data', 'p');
+        $postQuery->join('node_field_data', 'n', 'n.nid = p.topic');
         $postQuery->condition('p.uid', $uid);
         $postQuery->condition('p.status', 1);
         $postQuery->condition('p.default_langcode', 1);
-        $count += (int) $postQuery->countQuery()->execute()->fetchField();
-      }
-      if ($this->database->schema()->tableExists('node_field_data')) {
-        $topicQuery = $this->database->select('node_field_data', 'n');
-        $topicQuery->condition('n.uid', $uid);
-        $topicQuery->condition('n.status', 1);
-        $topicQuery->condition('n.type', 'aculta_forum_topic');
-        $topicQuery->condition('n.default_langcode', 1);
-        $count += (int) $topicQuery->countQuery()->execute()->fetchField();
+        if ($this->scopeResolver->applyPublicTopicConditions($postQuery, 'n')) {
+          $count += (int) $postQuery->countQuery()->execute()->fetchField();
+        }
       }
     }
     catch (\Throwable) {
-      // Fallback safely if tables do not exist in minimal test environments.
+      // Fail closed: ambiente mínimo ou falha de consulta não produz contagem
+      // pública a partir de dados que não puderam ser validados.
+      $count = 0;
     }
 
     $this->authorPostCounts[$uid] = $count;

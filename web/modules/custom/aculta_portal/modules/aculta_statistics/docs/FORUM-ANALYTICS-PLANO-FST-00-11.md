@@ -275,3 +275,24 @@ Primeiro teste de integração prioritário: fixture Kernel em `aculta_simpletes
 ## 12. Próxima ação autorizada
 
 Iniciar **FST-00 de auditoria read-only** e então **FST-01 de correção dos riscos P0**, com testes em `aculta_simpletest`. Não iniciar design visual nem captura de dados novos antes do gate de segurança. Exigir nova inspeção do HEAD antes de editar e resolver conflitos com trabalho paralelo.
+
+## 13. Estado de execução
+
+Estados possíveis: PLANEJADA, EM EXECUÇÃO, IMPLEMENTADA NO CÓDIGO, TESTADA, HOMOLOGADA NO RUNTIME, BLOQUEADA.
+
+| Fase | Estado | Evidência |
+| --- | --- | --- |
+| FST-00 | TESTADA | Baseline Unit: `aculta_forum` 241 testes OK; `aculta_statistics` 108 testes OK; Kernel `DailyAggregateStorageKernelTest` 16 testes OK em `aculta_simpletest`. Inventário de produtores, consumidores e tabelas registrado neste documento. |
+| FST-01 | IMPLEMENTADA NO CÓDIGO | `ForumAnalyticsScopeResolver`, `ForumAnalyticsScope` e `ForumReactionReconciliation`; `DiscussionReactionManager`, `PublicForumContextProvider` e painel do Fórum corrigidos. Unit focais executados; Kernel integrado pendente. |
+| FST-02 | PLANEJADA | Pendente: tipos de métrica e provider do Fórum. |
+| FST-03 | PLANEJADA | Pendente: idempotência persistente e prova Kernel dos dois módulos. |
+| FST-04 | PLANEJADA | Pendente. |
+| FST-05 | PLANEJADA | Pendente. |
+| FST-06 | PLANEJADA | Pendente. |
+| FST-07 | PLANEJADA | Pendente. |
+| FST-08 | PLANEJADA | Pendente. |
+| FST-09 | PLANEJADA | Pendente. |
+| FST-10 | PLANEJADA | Pendente. |
+| FST-11 | PLANEJADA | Pendente. |
+
+Nenhuma fase está HOMOLOGADA NO RUNTIME. A sincronização do Runtime depende de `updatedb:status` e `config:status` sem pendências e não autoriza escrita de dados.
