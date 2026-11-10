@@ -1,0 +1,13 @@
+name: Superfície com texto e tipografia
+description: Composição de superfície com cabeçalho de seção, parágrafo e metadados.
+component: aculta420_v2:surface
+props:
+  tone: raised
+  radius: lg
+  spacing: normal
+  elevation: subtle
+  border: subtle
+slots:
+  content:
+    type: inline_template
+    template: '<div class="surface-composition-text"><h3 style="margin-block-start:0;font-family:var(--font-family-heading);font-size:var(--font-size-xl);">Título Editorial da Seção</h3><p style="color:var(--color-text-secondary);font-size:var(--font-size-base);line-height:1.5;">Texto introdutório composto sobre a nova superfície semântica do tema aculta420_v2.</p><small style="color:var(--color-text-muted);">Metadado • Publicado em 2026-11-10</small></div>'

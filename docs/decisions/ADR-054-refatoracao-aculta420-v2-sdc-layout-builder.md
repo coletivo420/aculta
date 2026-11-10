@@ -36,6 +36,19 @@ Remover a funcao administrativa 'Layout de container' do formulario de configura
 
 Durante a implementacao paralela, **nao** apagar configuracao aculta_purpose_container, schema, classe PurposeContainerLayout ou estilos de compatibilidade antes da homologacao do novo renderizador. A classe tambem possui utilidade de identificacao de rotas da UI Patterns Library; separar esses usos antes de removela. No corte homologado, descontinuar data-purpose-layout, data-purpose-style e variaveis CSS antigas. Documentar rollback.
 
+## Adendo - Sistema de SDCs de Superfície e Conteúdo
+
+1. Criação da família de superfícies SDC no tema `aculta420_v2`:
+   - `aculta420_v2:surface`: Superfície base estrutural configurável por propriedades estritas (`tone`, `radius`, `spacing`, `elevation`, `border`) e slot `content`.
+   - `aculta420_v2:surface-accent`: Superfície e moldura de destaque implementando fielmente as 4 referências visuais de blocos unitários e tricolor (`green`, `yellow`, `red`, `tricolor`) e a faixa tricolor superior fina das referências neutras institucionais (`neutral`). Geometria semântica em CSS puro, sem assets estáticos rasterizados em produção.
+   - `aculta420_v2:surface-panel`: Painel institucional de superfície com bloco superior verde de destaque contínuo (modo claro e escuro) e slots para `header`, `content`, `footer` e `actions`.
+2. Integração com UI Styles:
+   - Registro de `surface_accent_style`, `surface_elevation_style` e `surface_radius_style` combináveis com `surface_style` em `aculta420_v2.ui_styles.yml`.
+3. Integração com Layout Builder:
+   - Os componentes de superfície com slots são automaticamente reconhecidos e disponibilizados como Layouts no Layout Builder através do derivador nativo `ComponentLayout` do módulo `ui_patterns_layouts`.
+4. Composição com SDCs de conteúdo:
+   - Tipografia, botões, formulários, abas, cartões culturais e layouts do ACULTA420 V2 são integrados por composição via slots sem duplicar HTML ou estilos específicos.
+
 ## Contratos e limites
 
 - O Portal conhece os dez purposes e as regras de rota, dominio, acesso e cache; o tema recebe contrato neutro sem ler hostname.

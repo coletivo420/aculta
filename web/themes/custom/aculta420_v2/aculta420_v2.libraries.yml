@@ -92,6 +92,9 @@ global-styling:
       src/styles/buttons.css: {}
       src/styles/article-authors.css: {}
       components/button/button.css: {}
+      components/surface/surface.css: {}
+      components/surface-accent/surface-accent.css: {}
+      components/surface-panel/surface-panel.css: {}
       src/styles/portal-ui-extras.css: {}
       src/styles/portal-ui-map.css: {}
   dependencies:

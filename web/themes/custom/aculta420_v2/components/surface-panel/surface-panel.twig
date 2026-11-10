@@ -1,0 +1,67 @@
+{#
+/**
+ * @file
+ * Template para o SDC Painel institucional (aculta420_v2:surface-panel).
+ */
+#}
+{% set header_variant = header_variant|default('institutional') %}
+{% if header_variant not in ['institutional', 'subtle', 'transparent'] %}
+  {% set header_variant = 'institutional' %}
+{% endif %}
+
+{% set tone = tone|default('raised') %}
+{% if tone not in ['canvas', 'raised', 'subtle', 'institution'] %}
+  {% set tone = 'raised' %}
+{% endif %}
+
+{% set radius = radius|default('lg') %}
+{% if radius not in ['sm', 'md', 'lg', 'xl'] %}
+  {% set radius = 'lg' %}
+{% endif %}
+
+{% set spacing = spacing|default('normal') %}
+{% if spacing not in ['none', 'compact', 'normal', 'spacious'] %}
+  {% set spacing = 'normal' %}
+{% endif %}
+
+{% set elevation = elevation|default('subtle') %}
+{% if elevation not in ['none', 'subtle', 'raised', 'floating'] %}
+  {% set elevation = 'subtle' %}
+{% endif %}
+
+{% set show_header_placeholder = show_header_placeholder|default(false) %}
+
+{% set classes = [
+  'aculta-surface-panel',
+  'aculta-surface-panel--header-' ~ header_variant,
+  'aculta-surface-panel--tone-' ~ tone,
+  'aculta-surface-panel--radius-' ~ radius,
+  'aculta-surface-panel--spacing-' ~ spacing,
+  'aculta-surface-panel--elevation-' ~ elevation,
+] %}
+
+<div{{ attributes.addClass(classes) }}>
+  {% if header or show_header_placeholder %}
+    <header class="aculta-surface-panel__header">
+      {{ header }}
+    </header>
+  {% endif %}
+
+  {% if content %}
+    <div class="aculta-surface-panel__content">
+      {{ content }}
+    </div>
+  {% endif %}
+
+  {% if footer %}
+    <footer class="aculta-surface-panel__footer">
+      {{ footer }}
+    </footer>
+  {% endif %}
+
+  {% if actions %}
+    <div class="aculta-surface-panel__actions">
+      {{ actions }}
+    </div>
+  {% endif %}
+</div>

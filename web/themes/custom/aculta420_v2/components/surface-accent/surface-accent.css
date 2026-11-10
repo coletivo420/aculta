@@ -1,0 +1,251 @@
+/**
+ * SDC: Superfície com destaque (aculta420_v2:surface-accent)
+ * Fiel às referências das 4 molduras (verde, vermelha, amarela, tricolor)
+ * e superfícies neutras claras/escuras.
+ */
+.aculta-surface-accent {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  overflow: hidden;
+  border: 1px solid var(--color-alpha-border-75, var(--color-border));
+  transition: background-color var(--motion-base, 180ms) ease,
+              border-color var(--motion-base, 180ms) ease,
+              box-shadow var(--motion-base, 180ms) ease;
+}
+
+/* Fundo semântico */
+.aculta-surface-accent--tone-canvas {
+  background-color: var(--color-canvas);
+  color: var(--color-text-primary);
+}
+
+.aculta-surface-accent--tone-raised {
+  background-color: var(--color-surface-raised);
+  color: var(--color-text-primary);
+}
+
+.aculta-surface-accent--tone-subtle {
+  background-color: var(--color-surface-subtle);
+  color: var(--color-text-primary);
+}
+
+.aculta-surface-accent--tone-institution {
+  background-color: var(--color-surface-institution);
+  color: var(--color-text-primary);
+}
+
+/* Raio dos cantos */
+.aculta-surface-accent--radius-sm {
+  border-radius: var(--radius-sm, 0.25rem);
+}
+
+.aculta-surface-accent--radius-md {
+  border-radius: var(--radius-base, 0.5rem);
+}
+
+.aculta-surface-accent--radius-lg {
+  border-radius: var(--radius-lg, 1rem);
+}
+
+.aculta-surface-accent--radius-xl {
+  border-radius: var(--border-radius-xl, 1.5rem);
+}
+
+/* Elevação e sombra */
+.aculta-surface-accent--elevation-none {
+  box-shadow: none;
+}
+
+.aculta-surface-accent--elevation-subtle {
+  box-shadow: 0 2px 8px rgb(0 0 0 / 6%), 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.aculta-surface-accent--elevation-raised {
+  box-shadow: var(--shadow-raised, 0 4px 12px rgb(0 0 0 / 10%));
+}
+
+.aculta-surface-accent--elevation-floating {
+  box-shadow: var(--shadow-lg, 0 10px 24px rgb(0 0 0 / 14%));
+}
+
+[data-theme="dark"] .aculta-surface-accent--elevation-subtle,
+:root[data-theme="dark"] .aculta-surface-accent--elevation-subtle {
+  box-shadow: 0 2px 8px rgb(0 0 0 / 30%), 0 1px 2px rgb(0 0 0 / 20%);
+}
+
+[data-theme="dark"] .aculta-surface-accent--elevation-raised,
+:root[data-theme="dark"] .aculta-surface-accent--elevation-raised {
+  box-shadow: 0 4px 14px rgb(0 0 0 / 45%);
+}
+
+[data-theme="dark"] .aculta-surface-accent--elevation-floating,
+:root[data-theme="dark"] .aculta-surface-accent--elevation-floating {
+  box-shadow: 0 10px 28px rgb(0 0 0 / 60%);
+}
+
+/* Área de conteúdo e padding */
+.aculta-surface-accent__content {
+  box-sizing: border-box;
+  inline-size: 100%;
+  overflow-wrap: break-word;
+}
+
+.aculta-surface-accent--spacing-none .aculta-surface-accent__content {
+  padding: 0;
+}
+
+.aculta-surface-accent--spacing-compact .aculta-surface-accent__content {
+  padding: var(--spacing-sm, 0.5rem);
+}
+
+.aculta-surface-accent--spacing-normal .aculta-surface-accent__content {
+  padding: var(--spacing-base, 1rem);
+}
+
+.aculta-surface-accent--spacing-spacious .aculta-surface-accent__content {
+  padding: var(--spacing-lg, 1.5rem);
+}
+
+@media (min-width: 48rem) {
+  .aculta-surface-accent--spacing-normal .aculta-surface-accent__content {
+    padding: var(--spacing-lg, 1.5rem);
+  }
+  .aculta-surface-accent--spacing-spacious .aculta-surface-accent__content {
+    padding: var(--spacing-xl, 2rem);
+  }
+}
+
+/* ========================================================
+   GEOMETRIA DAS FAIXAS E DESTAQUES CONFORME MODELOS VISUAIS
+   ======================================================== */
+
+.aculta-surface-accent__stripe {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 1. Molduras unitárias com ênfase na lateral esquerda (start) */
+.aculta-surface-accent--pos-start {
+  display: flex;
+}
+
+.aculta-surface-accent--pos-start .aculta-surface-accent__stripe {
+  position: static;
+  flex: 0 0 1.25rem; /* ~20px de faixa destacada conforme referências */
+  inline-size: 1.25rem;
+  align-self: stretch;
+}
+
+/* Cores das molduras unitárias */
+.aculta-surface-accent--green .aculta-surface-accent__stripe {
+  background-color: var(--palette-green, #689427);
+}
+
+.aculta-surface-accent--yellow .aculta-surface-accent__stripe {
+  background-color: var(--color-brand-highlight, #f2ca36);
+}
+
+.aculta-surface-accent--red .aculta-surface-accent__stripe {
+  background-color: var(--palette-red, #d4452d);
+}
+
+/* Modo escuro para molduras unitárias */
+[data-theme="dark"] .aculta-surface-accent--green .aculta-surface-accent__stripe,
+:root[data-theme="dark"] .aculta-surface-accent--green .aculta-surface-accent__stripe {
+  background-color: var(--accent-green-stripe, #689427);
+}
+
+[data-theme="dark"] .aculta-surface-accent--yellow .aculta-surface-accent__stripe,
+:root[data-theme="dark"] .aculta-surface-accent--yellow .aculta-surface-accent__stripe {
+  background-color: var(--accent-yellow-stripe, #f2ca36);
+}
+
+[data-theme="dark"] .aculta-surface-accent--red .aculta-surface-accent__stripe,
+:root[data-theme="dark"] .aculta-surface-accent--red .aculta-surface-accent__stripe {
+  background-color: var(--accent-red-stripe, #e7bcb8);
+}
+
+/* 2. Moldura tricolor contínua (03_bloco_tricolor.png) */
+/* Topo com faixa verde predominante, seguida de amarelo e vermelho,
+   e contorno lateral esquerdo com continuidade verde */
+.aculta-surface-accent--tricolor.aculta-surface-accent--pos-top,
+.aculta-surface-accent--tricolor.aculta-surface-accent--pos-full {
+  border-inline-start-width: 0.75rem; /* Continuidade da borda esquerda verde */
+  border-inline-start-color: var(--palette-green, #689427);
+}
+
+[data-theme="dark"] .aculta-surface-accent--tricolor.aculta-surface-accent--pos-top,
+[data-theme="dark"] .aculta-surface-accent--tricolor.aculta-surface-accent--pos-full,
+:root[data-theme="dark"] .aculta-surface-accent--tricolor.aculta-surface-accent--pos-top,
+:root[data-theme="dark"] .aculta-surface-accent--tricolor.aculta-surface-accent--pos-full {
+  border-inline-start-color: var(--accent-green-stripe, #689427);
+}
+
+.aculta-surface-accent--tricolor .aculta-surface-accent__stripe {
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
+  block-size: 0.5rem; /* ~8px de altura no topo */
+  background: linear-gradient(
+    to right,
+    var(--palette-green, #689427) 0%,
+    var(--palette-green, #689427) 64%,
+    var(--color-brand-highlight, #f2ca36) 64%,
+    var(--color-brand-highlight, #f2ca36) 82%,
+    var(--palette-red, #d4452d) 82%,
+    var(--palette-red, #d4452d) 100%
+  );
+}
+
+[data-theme="dark"] .aculta-surface-accent--tricolor .aculta-surface-accent__stripe,
+:root[data-theme="dark"] .aculta-surface-accent--tricolor .aculta-surface-accent__stripe {
+  background: linear-gradient(
+    to right,
+    var(--accent-green-stripe, #689427) 0%,
+    var(--accent-green-stripe, #689427) 64%,
+    var(--accent-yellow-stripe, #f2ca36) 64%,
+    var(--accent-yellow-stripe, #f2ca36) 82%,
+    var(--accent-red-stripe, #e7bcb8) 82%,
+    var(--accent-red-stripe, #e7bcb8) 100%
+  );
+}
+
+/* 3. Superfície neutra institucional (01 a 04 neutra claro/escuro) */
+/* Fina faixa superior de 4px verde, amarela e vermelha */
+.aculta-surface-accent--neutral .aculta-surface-accent__stripe {
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
+  block-size: 4px;
+  background: linear-gradient(
+    to right,
+    var(--palette-green, #689427) 0%,
+    var(--palette-green, #689427) 68%,
+    var(--color-brand-highlight, #f2ca36) 68%,
+    var(--color-brand-highlight, #f2ca36) 84%,
+    var(--palette-red, #d4452d) 84%,
+    var(--palette-red, #d4452d) 100%
+  );
+}
+
+[data-theme="dark"] .aculta-surface-accent--neutral .aculta-surface-accent__stripe,
+:root[data-theme="dark"] .aculta-surface-accent--neutral .aculta-surface-accent__stripe {
+  background: linear-gradient(
+    to right,
+    var(--accent-green-stripe, #689427) 0%,
+    var(--accent-green-stripe, #689427) 68%,
+    var(--accent-yellow-stripe, #f2ca36) 68%,
+    var(--accent-yellow-stripe, #f2ca36) 84%,
+    var(--accent-red-stripe, #e7bcb8) 84%,
+    var(--accent-red-stripe, #e7bcb8) 100%
+  );
+}
+
+/* Se position for top em neutra ou tricolor, garantir que o conteúdo não cole na faixa */
+.aculta-surface-accent--pos-top .aculta-surface-accent__content {
+  padding-block-start: calc(var(--spacing-base, 1rem) + 4px);
+}

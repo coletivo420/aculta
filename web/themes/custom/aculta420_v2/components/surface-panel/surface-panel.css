@@ -1,0 +1,197 @@
+/**
+ * SDC: Painel institucional (aculta420_v2:surface-panel)
+ * Fiel às referências 05 a 08: cabeçalho verde ocupando toda a largura superior,
+ * corpo neutro, cantos arredondados e sombra discreta.
+ */
+.aculta-surface-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  overflow: hidden;
+  border: 1px solid var(--color-alpha-border-75, var(--color-border));
+  transition: background-color var(--motion-base, 180ms) ease,
+              border-color var(--motion-base, 180ms) ease,
+              box-shadow var(--motion-base, 180ms) ease;
+}
+
+/* Fundo semântico do corpo */
+.aculta-surface-panel--tone-canvas {
+  background-color: var(--color-canvas);
+  color: var(--color-text-primary);
+}
+
+.aculta-surface-panel--tone-raised {
+  background-color: var(--color-surface-raised);
+  color: var(--color-text-primary);
+}
+
+.aculta-surface-panel--tone-subtle {
+  background-color: var(--color-surface-subtle);
+  color: var(--color-text-primary);
+}
+
+.aculta-surface-panel--tone-institution {
+  background-color: var(--color-surface-institution);
+  color: var(--color-text-primary);
+}
+
+/* Raio dos cantos */
+.aculta-surface-panel--radius-sm {
+  border-radius: var(--radius-sm, 0.25rem);
+}
+
+.aculta-surface-panel--radius-md {
+  border-radius: var(--radius-base, 0.5rem);
+}
+
+.aculta-surface-panel--radius-lg {
+  border-radius: var(--radius-lg, 1rem);
+}
+
+.aculta-surface-panel--radius-xl {
+  border-radius: var(--border-radius-xl, 1.5rem);
+}
+
+/* Elevação e sombra */
+.aculta-surface-panel--elevation-none {
+  box-shadow: none;
+}
+
+.aculta-surface-panel--elevation-subtle {
+  box-shadow: 0 2px 8px rgb(0 0 0 / 6%), 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.aculta-surface-panel--elevation-raised {
+  box-shadow: var(--shadow-raised, 0 4px 12px rgb(0 0 0 / 10%));
+}
+
+.aculta-surface-panel--elevation-floating {
+  box-shadow: var(--shadow-lg, 0 10px 24px rgb(0 0 0 / 14%));
+}
+
+[data-theme="dark"] .aculta-surface-panel--elevation-subtle,
+:root[data-theme="dark"] .aculta-surface-panel--elevation-subtle {
+  box-shadow: 0 2px 8px rgb(0 0 0 / 30%), 0 1px 2px rgb(0 0 0 / 20%);
+}
+
+[data-theme="dark"] .aculta-surface-panel--elevation-raised,
+:root[data-theme="dark"] .aculta-surface-panel--elevation-raised {
+  box-shadow: 0 4px 14px rgb(0 0 0 / 45%);
+}
+
+[data-theme="dark"] .aculta-surface-panel--elevation-floating,
+:root[data-theme="dark"] .aculta-surface-panel--elevation-floating {
+  box-shadow: 0 10px 28px rgb(0 0 0 / 60%);
+}
+
+/* ========================================================
+   CABEÇALHO INSTITUCIONAL (REFERÊNCIAS 05, 06, 07, 08)
+   ======================================================== */
+.aculta-surface-panel__header {
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: 3.5rem; /* Altura do bloco verde superior */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm, 0.5rem);
+}
+
+.aculta-surface-panel--header-institutional .aculta-surface-panel__header {
+  background-color: var(--palette-green, #689427);
+  color: var(--color-on-brand, #fff);
+  border-block-end: 1px solid var(--color-border);
+}
+
+[data-theme="dark"] .aculta-surface-panel--header-institutional .aculta-surface-panel__header,
+:root[data-theme="dark"] .aculta-surface-panel--header-institutional .aculta-surface-panel__header {
+  /* No modo escuro das referências 07 e 08, o verde do cabeçalho é mais escuro e fechado */
+  background-color: #2e4d22;
+  color: var(--color-text-primary, #f4efe8);
+  border-block-end: 1px solid var(--color-border);
+}
+
+.aculta-surface-panel--header-subtle .aculta-surface-panel__header {
+  background-color: var(--color-surface-subtle);
+  color: var(--color-text-primary);
+  border-block-end: 1px solid var(--color-border);
+}
+
+.aculta-surface-panel--header-transparent .aculta-surface-panel__header {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border-block-end: 1px solid var(--color-border);
+}
+
+/* ========================================================
+   CORPO DE CONTEÚDO, RODAPÉ E AÇÕES
+   ======================================================== */
+.aculta-surface-panel__content {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  inline-size: 100%;
+  overflow-wrap: break-word;
+}
+
+.aculta-surface-panel__footer {
+  box-sizing: border-box;
+  inline-size: 100%;
+  border-block-start: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+.aculta-surface-panel__actions {
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm, 0.5rem);
+  border-block-start: 1px solid var(--color-border);
+}
+
+/* Espaçamento interno (padding) */
+.aculta-surface-panel--spacing-none .aculta-surface-panel__header,
+.aculta-surface-panel--spacing-none .aculta-surface-panel__content,
+.aculta-surface-panel--spacing-none .aculta-surface-panel__footer,
+.aculta-surface-panel--spacing-none .aculta-surface-panel__actions {
+  padding: 0;
+}
+
+.aculta-surface-panel--spacing-compact .aculta-surface-panel__header,
+.aculta-surface-panel--spacing-compact .aculta-surface-panel__content,
+.aculta-surface-panel--spacing-compact .aculta-surface-panel__footer,
+.aculta-surface-panel--spacing-compact .aculta-surface-panel__actions {
+  padding: var(--spacing-sm, 0.5rem);
+}
+
+.aculta-surface-panel--spacing-normal .aculta-surface-panel__header,
+.aculta-surface-panel--spacing-normal .aculta-surface-panel__content,
+.aculta-surface-panel--spacing-normal .aculta-surface-panel__footer,
+.aculta-surface-panel--spacing-normal .aculta-surface-panel__actions {
+  padding: var(--spacing-base, 1rem);
+}
+
+.aculta-surface-panel--spacing-spacious .aculta-surface-panel__header,
+.aculta-surface-panel--spacing-spacious .aculta-surface-panel__content,
+.aculta-surface-panel--spacing-spacious .aculta-surface-panel__footer,
+.aculta-surface-panel--spacing-spacious .aculta-surface-panel__actions {
+  padding: var(--spacing-lg, 1.5rem);
+}
+
+@media (min-width: 48rem) {
+  .aculta-surface-panel--spacing-normal .aculta-surface-panel__header,
+  .aculta-surface-panel--spacing-normal .aculta-surface-panel__content,
+  .aculta-surface-panel--spacing-normal .aculta-surface-panel__footer,
+  .aculta-surface-panel--spacing-normal .aculta-surface-panel__actions {
+    padding: var(--spacing-lg, 1.5rem);
+  }
+  .aculta-surface-panel--spacing-spacious .aculta-surface-panel__header,
+  .aculta-surface-panel--spacing-spacious .aculta-surface-panel__content,
+  .aculta-surface-panel--spacing-spacious .aculta-surface-panel__footer,
+  .aculta-surface-panel--spacing-spacious .aculta-surface-panel__actions {
+    padding: var(--spacing-xl, 2rem);
+  }
+}

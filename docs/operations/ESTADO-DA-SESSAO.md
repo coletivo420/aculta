@@ -1,3 +1,13 @@
+# SDCs de Superfície e Conteúdo — Implementação e Integração UI Suite — 2026-11-10
+
+- **Objetivo:** implementar o sistema de componentes SDC de superfície e conteúdo para o tema `aculta420_v2` com base nas referências visuais oficiais e integrá-lo a UI Styles, UI Patterns e Layout Builder, complementando a ADR-054.
+- **Estado:** implementados `surface` (base estrutural neutra com fundo semântico, borda, raio, elevação e espaçamento), `surface-accent` (com as 4 molduras verde, vermelha, amarela e tricolor das referências visuais + moldura neutra institucional com faixa tricolor fina superior) e `surface-panel` (painel institucional com bloco verde contínuo no topo, adaptado para light/dark). Novos estilos registrados em `aculta420_v2.ui_styles.yml`. Matriz completa de stories cobrindo molduras vazias e composições com texto, botões, formulário, cartão cultural, abas, grade e coluna lateral. Testes unitários implementados e aprovados.
+- **Decisões:** construção 100% em Twig semântico, tokens do tema e CSS puro (sem backgrounds rasterizados). Variantes de destaque suportam geometria lateral e de topo conforme referências. Disponibilização automática para Layout Builder via `ComponentLayout` do UI Patterns Layouts.
+- **Arquivos:** `components/surface/` (component, twig, css, stories), `components/surface-accent/` (component, twig, css, stories), `components/surface-panel/` (component, twig, css, stories), `aculta420_v2.ui_styles.yml`, `aculta420_v2.libraries.yml`, `SurfaceSdcComponentsTest.php`, `ADR-054-refatoracao-aculta420-v2-sdc-layout-builder.md`, `TODO.md`, `aculta420_v2.yml`.
+- **Verificações:** PHPUnit unitário 18/18 PASS (123 assertions), `SurfaceSdcComponentsTest` 4/4 PASS (46 assertions), `validate-aculta420-sdc-schemas.php` PASS (72 components, 1623 checks).
+- **Runtime:** caches reconstruídos via `drush cr`; componentes registrados na UI Patterns Library.
+- **Próximo passo:** composição editorial nas landing pages do portal utilizando as novas superfícies.
+
 # UI Suite — Integração Completa de UI Icons, UI Patterns e UI Styles — 2026-11-09
 
 - **Objetivo:** integrar a suíte oficial da UI Suite (`drupal/ui_icons`, `drupal/ui_patterns`, `drupal/ui_styles`) ao tema `aculta420_v2` e módulos de suporte (`aculta_portal`, `aculta_editor`, `aculta_ui_library`), respeitando a ADR-054.
@@ -18,12 +28,3 @@
 - **Runtime:** `drush cr` executado com sucesso; 10 purposes testados com HTTP 200/302, exatamente 1 H1 e 1 `<main>` por página.
 - **Próximo passo:** aprovação editorial humana para o conteúdo das 9 landing pages restantes.
 
-# Fórum — Comentários Compartilhados 0.2.0-dev.3 (Conclusão e Homologação Runtime) — 2026-11-08
-
-- **Objetivo:** implementar o novo compositor inline Form API + HTMX (C02-03 a C02-08), unificar fluxos de resposta e citação na mesma página, fechar achados COM-01 a COM-12 e validar no Runtime Homelab.
-- **Estado:** C02-03 a C02-08 concluídos e validados no Runtime com autorização do responsável. Implementados `DiscussionReplyAccess`, `DiscussionReplyUrlBuilder`, `DiscussionReplyFormBuilder`, `DiscussionReplyLazyBuilder`, `DiscussionReplyIdempotencyManager`, rota interna em português `/discussoes/compositor/{entity_type}/{entity_id}`, componente SDC `discussion-reply-composer` no tema V2 e hooks para supressão de redirects externos.
-- **Decisões:** fechados COM-01, COM-05 e COM-12 mantendo navegação in-place via HTMX nativo do Core com fallback seguro na mesma página via parâmetros em português. Idempotência por hash de intenção com janela de 30 segundos no FormState.
-- **Arquivos:** `DiscussionReplyAccess.php`, `DiscussionReplyUrlBuilder.php`, `DiscussionReplyFormBuilder.php`, `DiscussionReplyLazyBuilder.php`, `DiscussionReplyIdempotencyManager.php`, `DiscussionReplyController.php`, `DiscussionReplyEndpointAccess.php`, `DiscussionReplyFormHooks.php`, `DiscussionReplyActionsHooks.php`, `discussion-reply-composer` (SDC component, CSS, Twig, story), templates de comentário e testes unitários.
-- **Verificações:** PHPUnit isolado 38/38 PASS (154 assertions); Kernel `ForumPostThreadHooksKernelTest` PASS (2/2); `validate-project-status-index.php --write` PASS (41 componentes); `validate-public-slugs.php` PASS (415 rotas); `drush cr` PASS no Homelab; renderização funcional no Runtime PASS (`discussion-reply-composer`, `data-hx-post`, biblioteca `core/drupal.htmx`).
-- **Runtime:** Homelab ativo e validado; caches reconstruídos com sucesso via `drush cr`.
-- **Próximo passo:** monitorar primeiras interações da comunidade e seguir roadmap de componentes.

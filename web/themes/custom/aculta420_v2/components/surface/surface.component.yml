@@ -1,0 +1,47 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Superfície
+description: Componente estrutural base para contêineres e cartões, com fundo semântico, cantos arredondados, elevação e espaçamento configuráveis.
+status: stable
+group: Superfícies
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    tone:
+      type: string
+      enum: [canvas, raised, subtle, institution]
+      default: raised
+      title: Fundo semântico
+      description: Tom semântico da superfície compatível com light/dark.
+    radius:
+      type: string
+      enum: [none, sm, md, lg, xl, full]
+      default: lg
+      title: Raio da borda
+      description: Raio de curvatura dos cantos da caixa.
+    spacing:
+      type: string
+      enum: [none, compact, normal, spacious]
+      default: normal
+      title: Espaçamento interno
+      description: Padding interno semântico.
+    elevation:
+      type: string
+      enum: [none, subtle, raised, floating]
+      default: subtle
+      title: Sombra e elevação
+      description: Elevação semântica e sombra suave da superfície.
+    border:
+      type: string
+      enum: [none, subtle, strong]
+      default: subtle
+      title: Contorno de borda
+      description: Borda perimetral semântica.
+slots:
+  content:
+    title: Conteúdo da superfície
+    description: Conteúdo principal inserido na superfície.
+assets:
+  css:
+    component:
+      surface.css: {}

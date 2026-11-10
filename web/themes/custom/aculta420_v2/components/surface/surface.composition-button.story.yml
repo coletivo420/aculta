@@ -1,0 +1,13 @@
+name: Superfície com botões de navegação
+description: Composição de superfície com ações e botões SDC integrados.
+component: aculta420_v2:surface
+props:
+  tone: raised
+  radius: lg
+  spacing: normal
+  elevation: subtle
+  border: subtle
+slots:
+  content:
+    type: inline_template
+    template: '<div style="display:flex;flex-direction:column;gap:1rem;"><h4 style="margin:0;">Ações de Navegação</h4><div style="display:flex;gap:0.75rem;flex-wrap:wrap;">{{ include("aculta420_v2:button", { text: "Ação Primária", variant: "primary", url: "#" }, with_context = false) }}{{ include("aculta420_v2:button", { text: "Ação Secundária", variant: "secondary", url: "#" }, with_context = false) }}</div></div>'

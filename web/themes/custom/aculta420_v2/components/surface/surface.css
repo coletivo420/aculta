@@ -1,0 +1,131 @@
+/**
+ * SDC: Superfície (aculta420_v2:surface)
+ * Geometria semântica, responsiva e compatível com light/dark.
+ */
+.aculta-surface {
+  display: block;
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  overflow-wrap: break-word;
+  transition: background-color var(--motion-base, 180ms) ease,
+              border-color var(--motion-base, 180ms) ease,
+              box-shadow var(--motion-base, 180ms) ease;
+}
+
+/* Fundo semântico */
+.aculta-surface--tone-canvas {
+  background-color: var(--color-canvas);
+  color: var(--color-text-primary);
+}
+
+.aculta-surface--tone-raised {
+  background-color: var(--color-surface-raised);
+  color: var(--color-text-primary);
+}
+
+.aculta-surface--tone-subtle {
+  background-color: var(--color-surface-subtle);
+  color: var(--color-text-primary);
+}
+
+.aculta-surface--tone-institution {
+  background-color: var(--color-surface-institution);
+  color: var(--color-text-primary);
+}
+
+/* Raio dos cantos */
+.aculta-surface--radius-none {
+  border-radius: 0;
+}
+
+.aculta-surface--radius-sm {
+  border-radius: var(--radius-sm, 0.25rem);
+}
+
+.aculta-surface--radius-md {
+  border-radius: var(--radius-base, 0.5rem);
+}
+
+.aculta-surface--radius-lg {
+  border-radius: var(--radius-lg, 1rem);
+}
+
+.aculta-surface--radius-xl {
+  border-radius: var(--border-radius-xl, 1.5rem);
+}
+
+.aculta-surface--radius-full {
+  border-radius: var(--radius-full, 9999px);
+}
+
+/* Espaçamento interno (padding) */
+.aculta-surface--spacing-none {
+  padding: 0;
+}
+
+.aculta-surface--spacing-compact {
+  padding: var(--spacing-sm, 0.5rem);
+}
+
+.aculta-surface--spacing-normal {
+  padding: var(--spacing-base, 1rem);
+}
+
+.aculta-surface--spacing-spacious {
+  padding: var(--spacing-lg, 1.5rem);
+}
+
+@media (min-width: 48rem) {
+  .aculta-surface--spacing-normal {
+    padding: var(--spacing-lg, 1.5rem);
+  }
+  .aculta-surface--spacing-spacious {
+    padding: var(--spacing-xl, 2rem);
+  }
+}
+
+/* Elevação e sombra */
+.aculta-surface--elevation-none {
+  box-shadow: none;
+}
+
+.aculta-surface--elevation-subtle {
+  box-shadow: 0 2px 8px rgb(0 0 0 / 6%), 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.aculta-surface--elevation-raised {
+  box-shadow: var(--shadow-raised, 0 4px 12px rgb(0 0 0 / 10%));
+}
+
+.aculta-surface--elevation-floating {
+  box-shadow: var(--shadow-lg, 0 10px 24px rgb(0 0 0 / 14%));
+}
+
+[data-theme="dark"] .aculta-surface--elevation-subtle,
+:root[data-theme="dark"] .aculta-surface--elevation-subtle {
+  box-shadow: 0 2px 8px rgb(0 0 0 / 30%), 0 1px 2px rgb(0 0 0 / 20%);
+}
+
+[data-theme="dark"] .aculta-surface--elevation-raised,
+:root[data-theme="dark"] .aculta-surface--elevation-raised {
+  box-shadow: 0 4px 14px rgb(0 0 0 / 45%);
+}
+
+[data-theme="dark"] .aculta-surface--elevation-floating,
+:root[data-theme="dark"] .aculta-surface--elevation-floating {
+  box-shadow: 0 10px 28px rgb(0 0 0 / 60%);
+}
+
+/* Contorno de borda */
+.aculta-surface--border-none {
+  border: 0;
+}
+
+.aculta-surface--border-subtle {
+  border: 1px solid var(--color-alpha-border-75, var(--color-border));
+}
+
+.aculta-surface--border-strong {
+  border: 2px solid var(--color-border);
+}

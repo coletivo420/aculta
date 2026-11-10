@@ -1,0 +1,57 @@
+{#
+/**
+ * @file
+ * Template para o SDC Superfície com destaque (aculta420_v2:surface-accent).
+ */
+#}
+{% set accent = accent|default('tricolor') %}
+{% if accent not in ['green', 'yellow', 'red', 'tricolor', 'neutral'] %}
+  {% set accent = 'tricolor' %}
+{% endif %}
+
+{% set position = position|default('top') %}
+{% if position not in ['start', 'top', 'full'] %}
+  {% set position = 'top' %}
+{% endif %}
+
+{# Para as variantes unitárias verde, amarela e vermelha, a referência visual clássica é na lateral esquerda (start) #}
+{% if accent in ['green', 'yellow', 'red'] and position == 'top' %}
+  {% set position = 'start' %}
+{% endif %}
+
+{% set tone = tone|default('raised') %}
+{% if tone not in ['canvas', 'raised', 'subtle', 'institution'] %}
+  {% set tone = 'raised' %}
+{% endif %}
+
+{% set radius = radius|default('lg') %}
+{% if radius not in ['sm', 'md', 'lg', 'xl'] %}
+  {% set radius = 'lg' %}
+{% endif %}
+
+{% set spacing = spacing|default('normal') %}
+{% if spacing not in ['none', 'compact', 'normal', 'spacious'] %}
+  {% set spacing = 'normal' %}
+{% endif %}
+
+{% set elevation = elevation|default('subtle') %}
+{% if elevation not in ['none', 'subtle', 'raised', 'floating'] %}
+  {% set elevation = 'subtle' %}
+{% endif %}
+
+{% set classes = [
+  'aculta-surface-accent',
+  'aculta-surface-accent--' ~ accent,
+  'aculta-surface-accent--pos-' ~ position,
+  'aculta-surface-accent--tone-' ~ tone,
+  'aculta-surface-accent--radius-' ~ radius,
+  'aculta-surface-accent--spacing-' ~ spacing,
+  'aculta-surface-accent--elevation-' ~ elevation,
+] %}
+
+<div{{ attributes.addClass(classes) }}>
+  <div class="aculta-surface-accent__stripe" aria-hidden="true"></div>
+  <div class="aculta-surface-accent__content">
+    {{ content }}
+  </div>
+</div>

@@ -4,6 +4,7 @@ Estado: em desenvolvimento · versão 1.5.0 (`aculta420_v2.info.yml`) · status:
 
 ## Próximo passo
 
+- **SDCs de Superfície e Conteúdo (concluído):** Implementados `surface`, `surface-accent` (com as 4 molduras verde, vermelha, amarela e tricolor + neutra institucional) e `surface-panel` (com cabeçalho institucional contínuo). Integração ao UI Styles, UI Patterns Layouts e UI Library com matriz completa de stories vazias e composições. Testes unitários e gate SDC PASS.
 - **ADR-054 P4 (parcial):** Layout Builder em 22 dos 24 displays compatíveis (`allow_custom` só em `page.full`, para landing; gate 170 checks). Excluídos `document.full` e `basic.default` por perda de conteúdo reproduzível. Blocos de cabeçalho restaurados do Sync.
 - **ADR-054 P5 (piloto entregue):** nó 635 publicado no host Links com alias `/redes-sociais` e duas seções LB (apresentação+links, apoio+institucional); 35 checks Playwright em cinco larguras e dois shells. Expansão aos demais purposes depende de conteúdo editorial.
 - **ADR-054 P6/P7 (feito):** prévias reais de blocos em `aculta_ui_library`; oito folhas de aplicação contextuais por rota (`global-styling` 268 → 107 KB, −60%). Playwright 86/86.

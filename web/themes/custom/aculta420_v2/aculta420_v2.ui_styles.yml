@@ -65,3 +65,38 @@ surface_style:
     surface--raised: "Superfície elevada (raised)"
     surface--institution: "Superfície institucional"
   previewed_as: hidden
+
+surface_accent_style:
+  category: "Superfícies"
+  label: "Moldura de destaque da superfície"
+  description: "Aplica molduras unitárias e tricolor das referências oficiais do ACULTA."
+  options:
+    aculta-surface-accent--green: "Moldura verde lateral"
+    aculta-surface-accent--yellow: "Moldura amarela lateral"
+    aculta-surface-accent--red: "Moldura vermelha lateral"
+    aculta-surface-accent--tricolor: "Moldura tricolor contínua"
+    aculta-surface-accent--neutral: "Moldura neutra institucional"
+  previewed_as: hidden
+
+surface_elevation_style:
+  category: "Superfícies"
+  label: "Elevação e sombra"
+  description: "Controla a profundidade e sombra da superfície."
+  options:
+    aculta-surface--elevation-none: "Sem sombra"
+    aculta-surface--elevation-subtle: "Sombra sutil"
+    aculta-surface--elevation-raised: "Sombra elevada"
+    aculta-surface--elevation-floating: "Sombra flutuante"
+  previewed_as: hidden
+
+surface_radius_style:
+  category: "Superfícies"
+  label: "Raio dos cantos"
+  description: "Curvatura dos cantos da caixa."
+  options:
+    aculta-surface--radius-none: "Cantos retos"
+    aculta-surface--radius-sm: "Arredondado pequeno (sm)"
+    aculta-surface--radius-md: "Arredondado médio (md)"
+    aculta-surface--radius-lg: "Arredondado padrão (lg)"
+    aculta-surface--radius-xl: "Arredondado amplo (xl)"
+  previewed_as: hidden
