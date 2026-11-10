@@ -18,6 +18,7 @@
 | Tema | 80 diretórios SDC, 80 manifests `.component.yml`, 123 stories; 66 Views em `config/sync`; 216 arquivos de view display/form display/field group/layout/block candidatos no Sync | Contagem bruta, não cobertura funcional ou inventário por consumidor |
 | Busca inicial | 44 arquivos correspondem à cadeia antiga de purpose no tema/Portal/Sync; 251 arquivos customizados contêm indicadores de renderização visual | Indicador bruto da busca documentada no plano. Cada ocorrência precisa triagem de uso e consumidor |
 | Extração por consumidor | `docs/architecture/inventarios/ui-suite-consumidores-iniciais.csv`: 159 displays de 66 Views + 22 entity displays com Layout Builder + 80 SDCs com caminhos de referências literais detectadas; plugin ID scan não detectou Views com UI Patterns row/style/display | Candidatos; owners das Views ainda não resolvidos por extensão/implementação. CSV não prova render Runtime, acesso/cache ou adequação da substituição |
+| Contratos funcionais RN-00 | `docs/architecture/inventarios/site-key-purpose-contracts.csv`, gerado por `php scripts/inventory-site-key-contracts.php`: 3.059 linhas com path/linha/owner e categoria | Indicador textual; 1.610 ocorrências genéricas de `purpose` precisam triagem semântica. Não equivale a migração RN-00 concluída |
 
 ### Matriz de integrações observadas
 
@@ -63,3 +64,5 @@ O plano vinculante exige uma linha para cada superfície ativa com owner, rota/c
 ## Resultado US-00
 
 **Parcial; critério bloqueante ainda DEFERRED.** Pacotes, versões locais, extensões Sync/Runtime, 159 displays de Views, 22 entity displays com Layout Builder, 80 definições SDC e referências literais iniciais foram confrontados. Regenerar com `php scripts/inventory-ui-suite-consumers.php`. Owners e saídas das Views, validade semântica de cada referência SDC, inventário integral por cada uma das dez frentes, interfaces administrativas e todos os modelos visuais ainda não estão concluídos. Não declarar ADR-054/055 concluídas com este artefato.
+
+O inventário funcional separado RN-00 pode ser regenerado com `php scripts/inventory-site-key-contracts.php`. O CSV agrega ocorrências por linha e categoria; menções genéricas requerem revisão semântica e os nomes propostos devem seguir o plano `ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`.
