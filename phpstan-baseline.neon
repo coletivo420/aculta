@@ -8668,62 +8668,8 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Donation/DonationNoticeManager.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::set().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Events/EventsContributionNoticeManager.php
-
-		-
-			rawMessage: 'Call to method access() on an unknown class Drupal\aculta_contributions\Entity\Contribution.'
-			identifier: class.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Events/EventsContributionNoticeManager.php
-
-		-
-			rawMessage: 'Call to method get() on an unknown class Drupal\aculta_contributions\Entity\Contribution.'
-			identifier: class.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Events/EventsContributionNoticeManager.php
-
-		-
-			rawMessage: 'Call to method getOwnerId() on an unknown class Drupal\aculta_contributions\Entity\Contribution.'
-			identifier: class.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Events/EventsContributionNoticeManager.php
-
-		-
-			rawMessage: 'Call to method getRevisionId() on an unknown class Drupal\aculta_contributions\Entity\Contribution.'
-			identifier: class.notFound
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Events/EventsContributionNoticeManager.php
-
-		-
-			rawMessage: 'Call to method uuid() on an unknown class Drupal\aculta_contributions\Entity\Contribution.'
-			identifier: class.notFound
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Events/EventsContributionNoticeManager.php
-
-		-
-			rawMessage: Class Drupal\aculta_contributions\Entity\Contribution not found.
-			identifier: class.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Events/EventsContributionNoticeManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Events\EventsContributionNoticeManager::loadAuthorizedProposal() has invalid return type Drupal\aculta_contributions\Entity\Contribution.'
-			identifier: class.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Events/EventsContributionNoticeManager.php
-
-		-
 			rawMessage: 'Offset int on array{} on left side of ?? does not exist.'
 			identifier: nullCoalesce.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Events/EventsContributionNoticeManager.php
-
-		-
-			rawMessage: 'Parameter #1 $message of method Drupal\aculta_messenger\Integration\Events\EventsContributionNoticeManager::queueDirectDelivery() expects Drupal\message\MessageInterface, Drupal\Core\Entity\EntityInterface given.'
-			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Events/EventsContributionNoticeManager.php
 
@@ -8746,195 +8692,15 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Game/GameAchievementNoticeMigration.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 8
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::set().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: 'Call to function in_array() with arguments ''activity_release''|''certificate''|''completion''|''course_release''|''deadline''|''deadline_reminder''|''enrollment''|''evaluation''|''feedback''|''lesson_release''|''submission'', array{''enrollment'', ''certificate'', ''completion'', ''evaluation'', ''submission'', ''course_release'', ''lesson_release'', ''activity_release'', ...} and true will always evaluate to true.'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
 			rawMessage: Instanceof between Drupal\Core\Datetime\DrupalDateTime and Drupal\Core\Datetime\DrupalDateTime will always evaluate to true.
 			identifier: instanceof.alwaysTrue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
 
 		-
-			rawMessage: Instanceof between Drupal\Core\Entity\EntityInterface and Drupal\Core\Entity\EntityInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: Instanceof between Drupal\aculta_lms\Entity\CourseCertificate and Drupal\aculta_lms\Entity\CourseCertificate will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: Instanceof between Drupal\comment\CommentInterface and Drupal\comment\CommentInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: Instanceof between Drupal\group\Entity\GroupInterface and Drupal\group\Entity\GroupInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: Instanceof between Drupal\group\Entity\GroupRelationshipInterface and Drupal\group\Entity\GroupRelationshipInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: Instanceof between Drupal\message\MessageInterface and Drupal\message\MessageInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager::record() should return Drupal\message\MessageInterface|null but returns Drupal\Core\Entity\EntityInterface.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager::resolveActivityDeadline() has an unused parameter $deadlineUuid.'
-			identifier: method.unusedParameter
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager::resolveCertificate() has an unused parameter $sourceUuid.'
-			identifier: method.unusedParameter
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager::resolveCompletion() has an unused parameter $sourceUuid.'
-			identifier: method.unusedParameter
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager::resolveContentRelease() has an unused parameter $sourceUuid.'
-			identifier: method.unusedParameter
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager::resolveEducatorFeedback() has an unused parameter $commentUuid.'
-			identifier: method.unusedParameter
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager::resolveEnrollment() has an unused parameter $sourceUuid.'
-			identifier: method.unusedParameter
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager::resolveEvaluation() has an unused parameter $sourceUuid.'
-			identifier: method.unusedParameter
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager::resolveSubmission() has an unused parameter $sourceUuid.'
-			identifier: method.unusedParameter
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: Negated boolean expression is always false.
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: 'Parameter #1 $messages of method Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager::loadSourcesForMessages() expects array<Drupal\message\MessageInterface>, array<Drupal\Core\Entity\EntityInterface> given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: 'Parameter #1 $messages of method Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager::loadSourcesForMessages() expects array<Drupal\message\MessageInterface>, list<Drupal\Core\Entity\EntityInterface> given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: 'Parameter #3 $format of method Drupal\Core\Datetime\DateFormatterInterface::format() expects string, null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: 'Strict comparison using === between Drupal\group\Entity\GroupInterface and null will always evaluate to false.'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::set().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Magazine/MagazineNoticeManager.php
-
-		-
-			rawMessage: Instanceof between Drupal\message\MessageInterface and Drupal\message\MessageInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Magazine/MagazineNoticeManager.php
-
-		-
-			rawMessage: Instanceof between Drupal\node\NodeStorage and Drupal\Core\Entity\RevisionableStorageInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Magazine/MagazineNoticeManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Magazine\MagazineNoticeManager::record() should return Drupal\message\MessageInterface|null but returns Drupal\Core\Entity\EntityInterface.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Magazine/MagazineNoticeManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Magazine\MagazineNoticeManager::resolveMessages() should return array<int, array{title: string, summary: string, email_summary: string, url: string}> but returns array<int, array{title: Drupal\Core\StringTranslation\TranslatableMarkup, summary: Drupal\Core\StringTranslation\TranslatableMarkup, email_summary: Drupal\Core\StringTranslation\TranslatableMarkup, url: Drupal\Core\Url}>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Magazine/MagazineNoticeManager.php
-
-		-
 			rawMessage: 'Offset int on array{} on left side of ?? does not exist.'
 			identifier: nullCoalesce.offset
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Magazine/MagazineNoticeManager.php
-
-		-
-			rawMessage: 'Parameter #1 $message of method Drupal\aculta_messenger\Integration\Magazine\MagazineNoticeManager::queueDirectDelivery() expects Drupal\message\MessageInterface, Drupal\Core\Entity\EntityInterface given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Magazine/MagazineNoticeManager.php
-
-		-
-			rawMessage: 'Parameter #1 $messages of method Drupal\aculta_messenger\Integration\Magazine\MagazineNoticeManager::resolveMessages() expects array<Drupal\message\MessageInterface>, list<Drupal\Core\Entity\EntityInterface> given.'
-			identifier: argument.type
-			count: 3
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Magazine/MagazineNoticeManager.php
 
 		-
@@ -8944,49 +8710,7 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Wiki/EventSubscriber/WikiNoticeEventSubscriber.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::set().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Wiki/WikiNoticeManager.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\RevisionableInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Wiki/WikiNoticeManager.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\RevisionableInterface::getOwnerId().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Wiki/WikiNoticeManager.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\RevisionableInterface::hasField().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Wiki/WikiNoticeManager.php
-
-		-
-			rawMessage: Instanceof between Drupal\message\MessageInterface and Drupal\message\MessageInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Wiki/WikiNoticeManager.php
-
-		-
-			rawMessage: Instanceof between Drupal\node\NodeStorage and Drupal\Core\Entity\RevisionableStorageInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Wiki/WikiNoticeManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManager::record() should return Drupal\message\MessageInterface|null but returns Drupal\Core\Entity\EntityInterface.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Wiki/WikiNoticeManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManager::resolveProposalTargets() should return array<string, array{title: string, summary: string, email_summary: string, url: Drupal\Core\Url}> but returns array<string, array{title: Drupal\Core\StringTranslation\TranslatableMarkup, summary: Drupal\Core\StringTranslation\TranslatableMarkup, email_summary: Drupal\Core\StringTranslation\TranslatableMarkup, url: Drupal\Core\Url}>.'
+			rawMessage: 'Method Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManager::digestRowsFor() should return array<int, array{tipo: string, titulo: string, quantidade: int, delivery_id: int, delivery_ids?: list<int>}> but returns list<array{tipo: ''wiki'', titulo: Drupal\Core\StringTranslation\TranslatableMarkup, quantidade: 1, delivery_id: int}>.'
 			identifier: return.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Wiki/WikiNoticeManager.php
@@ -8994,36 +8718,6 @@ parameters:
 		-
 			rawMessage: 'Offset int on array{} on left side of ?? does not exist.'
 			identifier: nullCoalesce.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Wiki/WikiNoticeManager.php
-
-		-
-			rawMessage: 'Parameter #1 $message of method Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManager::queueDirectDelivery() expects Drupal\message\MessageInterface, Drupal\Core\Entity\EntityInterface given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Wiki/WikiNoticeManager.php
-
-		-
-			rawMessage: 'Parameter #1 $messages of method Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManager::resolveMessages() expects array<Drupal\message\MessageInterface>, array<Drupal\Core\Entity\EntityInterface> given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Wiki/WikiNoticeManager.php
-
-		-
-			rawMessage: 'Parameter #1 $messages of method Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManager::resolveMessages() expects array<Drupal\message\MessageInterface>, list<Drupal\Core\Entity\EntityInterface> given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Wiki/WikiNoticeManager.php
-
-		-
-			rawMessage: 'Parameter #2 $account of method Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManager::resolveProposalTargets() expects Drupal\user\UserInterface, Drupal\Core\Session\AccountInterface given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Wiki/WikiNoticeManager.php
-
-		-
-			rawMessage: 'Parameter #2 $account of method Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManager::resolveReviewTargets() expects Drupal\user\UserInterface, Drupal\Core\Session\AccountInterface given.'
-			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Wiki/WikiNoticeManager.php
 
@@ -9040,38 +8734,8 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/ForumNoticeEmailWorker.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::set().'
-			identifier: method.notFound
-			count: 9
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::setArguments().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
-
-		-
-			rawMessage: 'Call to function is_numeric() with int will always evaluate to true.'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
-
-		-
 			rawMessage: Instanceof between Drupal\private_message\Entity\PrivateMessageThread and Drupal\private_message\Entity\PrivateMessageThreadInterface will always evaluate to true.
 			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
-
-		-
-			rawMessage: 'Parameter #1 $message of method Drupal\message_notify\MessageNotifyInterface::send() expects Drupal\message\MessageInterface, Drupal\Core\Entity\EntityInterface given.'
-			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
 

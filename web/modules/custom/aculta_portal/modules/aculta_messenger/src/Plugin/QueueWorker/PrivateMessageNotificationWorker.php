@@ -11,6 +11,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\Attribute\QueueWorker;
 use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\message\MessageInterface;
 use Drupal\private_message\Entity\PrivateMessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
@@ -165,9 +166,8 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     // cleared their history. Do not notify about an older message that the
     // Private Message module's per-member history filter still hides.
     $lastDeleteTimestamp = $thread->getLastDeleteTimestamp($recipient);
-    if (is_numeric($lastDeleteTimestamp)
-      && (int) $lastDeleteTimestamp > 0
-      && $privateMessage->getCreatedTime() <= (int) $lastDeleteTimestamp) {
+    if ($lastDeleteTimestamp > 0
+      && $privateMessage->getCreatedTime() <= $lastDeleteTimestamp) {
       return;
     }
 
@@ -178,10 +178,10 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       ->condition(self::SOURCE_FIELD, $messageId)
       ->range(0, 1)
       ->execute();
-    /** @var \Drupal\message\MessageInterface|null $notification */
-    $notification = $ids === []
+    $loaded = $ids === []
       ? NULL
       : $this->entityTypeManager->getStorage('message')->loadUnchanged(reset($ids));
+    $notification = $loaded instanceof MessageInterface ? $loaded : NULL;
 
     if ($notification !== NULL
       && !in_array((string) $notification->get(self::STATUS_FIELD)->value, ['pending', 'failed'], TRUE)) {
@@ -221,12 +221,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
         $directIdempotencyKey,
       )) {
         if ($notification === NULL) {
-          /** @var \Drupal\message\MessageInterface $notification */
-          /** @var \Drupal\message\MessageInterface $notification */
-        $notification = $this->entityTypeManager->getStorage('message')->create([
-            'template' => self::TEMPLATE,
-            'uid' => $recipientId,
-            self::SOURCE_FIELD => $messageId,
+          $notification = $this->newNotification($recipientId, $messageId, [
             self::STATUS_FIELD => 'sent',
             self::ATTEMPTS_FIELD => 1,
             self::MAILER_MANAGED_FIELD => TRUE,
@@ -241,11 +236,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
         return;
       }
       if ($notification === NULL) {
-        /** @var \Drupal\message\MessageInterface $notification */
-        $notification = $this->entityTypeManager->getStorage('message')->create([
-          'template' => self::TEMPLATE,
-          'uid' => $recipientId,
-          self::SOURCE_FIELD => $messageId,
+        $notification = $this->newNotification($recipientId, $messageId, [
           self::STATUS_FIELD => 'pending',
           self::ATTEMPTS_FIELD => 0,
           self::MAILER_MANAGED_FIELD => $mailerManaged,
@@ -265,11 +256,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     $url = $this->domainPurposeManager->routeUrl('account', 'aculta_portal.dashboard');
     if ($url === NULL) {
       if ($notification === NULL) {
-        /** @var \Drupal\message\MessageInterface $notification */
-        $notification = $this->entityTypeManager->getStorage('message')->create([
-          'template' => self::TEMPLATE,
-          'uid' => $recipientId,
-          self::SOURCE_FIELD => $messageId,
+        $notification = $this->newNotification($recipientId, $messageId, [
           self::STATUS_FIELD => 'failed_permanent',
           self::ATTEMPTS_FIELD => self::MAX_ATTEMPTS,
           self::MAILER_MANAGED_FIELD => $mailerManaged,
@@ -284,10 +271,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     }
 
     if ($notification === NULL) {
-      $notification = $this->entityTypeManager->getStorage('message')->create([
-        'template' => self::TEMPLATE,
-        'uid' => $recipientId,
-        self::SOURCE_FIELD => $messageId,
+      $notification = $this->newNotification($recipientId, $messageId, [
         self::STATUS_FIELD => 'pending',
         self::ATTEMPTS_FIELD => 0,
         self::MAILER_MANAGED_FIELD => $mailerManaged,
@@ -361,6 +345,24 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     $notification->set(self::STATUS_FIELD, 'sent');
     $notification->set(self::DIGEST_FIELD, 1);
     $notification->save();
+  }
+
+  /**
+   * Creates a notice message of the private-message template.
+   *
+   * @param array<string, mixed> $values
+   *   Template-specific values appended to the identity fields.
+   */
+  private function newNotification(int $recipientId, int $messageId, array $values): MessageInterface {
+    $notification = $this->entityTypeManager->getStorage('message')->create($values + [
+      'template' => self::TEMPLATE,
+      'uid' => $recipientId,
+      self::SOURCE_FIELD => $messageId,
+    ]);
+    if (!$notification instanceof MessageInterface) {
+      throw new \LogicException('The message storage returned an unexpected entity.');
+    }
+    return $notification;
   }
 
   /**

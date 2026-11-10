@@ -143,3 +143,18 @@ Resíduos conhecidos (dependentes do ambiente, comprovados por teste): o retorno
 | Baseline atual | 3526 |
 
 Escopo: `aculta_lms.module` passou a narrowing `ContentEntityInterface` nos hooks de evento e no alter do sitemap; `aculta_lms.install` valida `FieldStorageDefinitionInterface` antes de `installFieldStorageDefinition()` (5 updates) e usa `$phase` de forma significativa em `hook_requirements()`. Evidência: Unit 320/1367 PASS; `php -l` sem erros nos dois arquivos.
+
+## Rodada 10 — 2026-11-10 (aculta_messenger)
+
+| Medida | Valor |
+| --- | ---: |
+| Erros brutos em aculta_messenger antes | 422 |
+| Corrigidos | 84 |
+| Erros brutos em aculta_messenger ao final | 338 |
+| Erros brutos globais antes | 3526 |
+| Erros brutos globais ao final | 3442 |
+| Baseline atual | 3442 |
+
+Escopo: `LearningNoticeManager` (35 -> 1), `EventsContributionNoticeManager` (16 -> 3), `WikiNoticeManager` (14 -> 2), `MagazineNoticeManager` (11 -> 2) e `PrivateMessageNotificationWorker` (14 -> 1). O `EventsContributionNoticeManager` importava `Drupal\aculta_contributions\Entity\Contribution`, classe inexistente; o tipo correto é `Drupal\aculta_cgu\Entity\Contribution`, corrigido. `record()` dos managers passou a validar o retorno de `create()` como `MessageInterface`; `resolveMessages()` aceita `EntityInterface[]` e ignora registros que não são mensagens; parâmetros `$sourceUuid` não usados foram removidos; `resolve*` recebem `ContentEntityInterface`/`OwnerInterface` conforme o método chamado; retornos de digest documentados como `TranslatableMarkup` (ou convertidos para string quando o contrato exige string).
+
+Resíduos conhecidos: mutação de array capturado por referência em closures (PHPStan perde o tipo), `PrivateMessageServiceInterface::getThreadFromMessage()` que pode devolver nulo em runtime apesar da assinatura, e `DrupalDateTime::createFromFormat()` retornando `false` para entrada inválida. Evidência: Unit 403/4378 PASS no módulo.

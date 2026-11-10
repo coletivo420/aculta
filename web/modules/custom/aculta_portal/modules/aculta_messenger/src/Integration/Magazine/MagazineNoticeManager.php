@@ -14,7 +14,6 @@ use Drupal\aculta_messenger\Service\NoticeRelatedGrouper;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Session\AccountInterface;
@@ -126,7 +125,7 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
       }
 
       $mode = $this->preferences->emailMode($event->recipientUid(), 'revista');
-      $message = $storage->create([
+      $created = $storage->create([
         'template' => self::TEMPLATE,
         'uid' => $event->recipientUid(),
         self::EVENT_FIELD => $event->metadata()['notice_type'],
@@ -137,6 +136,10 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
         self::DELIVERY_FIELD => $mode === AvisoPreferencias::EMAIL_IMMEDIATE ? 'pending' : 'sent',
         self::ATTEMPTS_FIELD => 0,
       ]);
+      if (!$created instanceof MessageInterface) {
+        throw new \LogicException('The message storage returned an unexpected entity.');
+      }
+      $message = $created;
       $message->save();
       if ($mode === AvisoPreferencias::EMAIL_IMMEDIATE) {
         try {
@@ -167,12 +170,12 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
   /**
    * Resolves a batch of notices while loading source nodes in one query.
    *
-   * @param \Drupal\message\MessageInterface[] $messages
-   *   Messages to resolve.
+   * @param \Drupal\Core\Entity\EntityInterface[] $messages
+   *   Messages to resolve; non-message records are ignored.
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Current recipient.
    *
-   * @return array<int, array{title: string, summary: string, email_summary: string, url: string}>
+   * @return array<int, array{title: \Drupal\Core\StringTranslation\TranslatableMarkup, summary: \Drupal\Core\StringTranslation\TranslatableMarkup, email_summary: \Drupal\Core\StringTranslation\TranslatableMarkup, url: \Drupal\Core\Url}>
    *   Resolved notices keyed by Message ID.
    */
   private function resolveMessages(array $messages, AccountInterface $account): array {
@@ -199,9 +202,6 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
       return [];
     }
     $storage = $this->entityTypeManager->getStorage('node');
-    if (!$storage instanceof RevisionableStorageInterface) {
-      return [];
-    }
     $latest = $storage->getQuery()->latestRevision()->accessCheck(FALSE)
       ->condition('uuid', array_values($uuids), 'IN')->condition('type', 'revista')->execute();
     $nodes = $latest === [] ? [] : $storage->loadMultipleRevisions(array_keys($latest));
@@ -385,7 +385,7 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
       }
       $rows[] = [
         'tipo' => 'revista',
-        'titulo' => $notice['email_summary'],
+        'titulo' => (string) $notice['email_summary'],
         'quantidade' => 1,
         'delivery_id' => (int) $message->id(),
       ];
@@ -419,9 +419,6 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
       return NULL;
     }
     $storage = $this->entityTypeManager->getStorage('node');
-    if (!$storage instanceof RevisionableStorageInterface) {
-      return NULL;
-    }
     $latest = $storage->getQuery()->latestRevision()->accessCheck(FALSE)
       ->condition('uuid', $uuid)->condition('type', 'revista')->execute();
     if (!isset($latest[$revisionId])) {

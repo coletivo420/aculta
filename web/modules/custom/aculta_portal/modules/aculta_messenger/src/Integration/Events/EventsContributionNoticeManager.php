@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Integration\Events;
 
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_messenger\Aviso\EligibleNoticePage;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
@@ -129,7 +129,11 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
         $values[self::DELIVERY_FIELD] = $mode === AvisoPreferencias::EMAIL_IMMEDIATE ? 'pending' : 'sent';
         $values[self::ATTEMPTS_FIELD] = 0;
       }
-      $message = $storage->create($values);
+      $created = $storage->create($values);
+      if (!$created instanceof MessageInterface) {
+        throw new \LogicException('The message storage returned an unexpected entity.');
+      }
+      $message = $created;
       $message->save();
       if ($mode === AvisoPreferencias::EMAIL_IMMEDIATE) {
         try {
@@ -140,7 +144,7 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
           throw $exception;
         }
       }
-      return $message instanceof MessageInterface ? $message : NULL;
+      return $message;
     }
     finally {
       $this->lock->release($lockName);
