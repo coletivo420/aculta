@@ -1,7 +1,7 @@
 /**
- * Abas da biblioteca de componentes. Clicar numa aba mostra só o painel do grupo (subcomponentes),
- * sem navegar pelo endereço, para a página não rolar. A aba escolhida recebe aria-current, com o
- * mesmo destaque do componente de navegação de suíte.
+ * Abas da biblioteca de componentes e filtro em tempo real de componentes.
+ * Clicar numa aba mostra só o painel do grupo (subcomponentes), sem navegar pelo endereço.
+ * O campo de busca filtra componentes por nome, ID ou grupo.
  */
 (function (Drupal, once) {
   'use strict';
@@ -48,6 +48,36 @@
         if (initial) {
           select(initial);
         }
+      });
+
+      // Busca e filtragem em tempo real de componentes (UP-06)
+      once('aculta-ui-library-search', '#aculta-ui-search', context).forEach((searchInput) => {
+        const components = Array.from(document.querySelectorAll('.ui_patterns_component'));
+        const groups = Array.from(document.querySelectorAll('.aculta-component-library__group-wrapper'));
+
+        searchInput.addEventListener('input', () => {
+          const query = searchInput.value.trim().toLowerCase();
+          if (!query) {
+            components.forEach((comp) => { comp.hidden = false; });
+            groups.forEach((grp) => { grp.hidden = false; });
+            return;
+          }
+
+          groups.forEach((grp) => {
+            let hasVisible = false;
+            const groupComponents = grp.querySelectorAll('.ui_patterns_component');
+            groupComponents.forEach((comp) => {
+              const name = comp.getAttribute('data-component-name') || '';
+              const id = comp.getAttribute('data-component-id') || '';
+              const matches = name.includes(query) || id.toLowerCase().includes(query);
+              comp.hidden = !matches;
+              if (matches) {
+                hasVisible = true;
+              }
+            });
+            grp.hidden = !hasVisible;
+          });
+        });
       });
     },
   };

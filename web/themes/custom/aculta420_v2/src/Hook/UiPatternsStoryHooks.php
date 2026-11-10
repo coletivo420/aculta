@@ -24,7 +24,7 @@ final class UiPatternsStoryHooks {
   ) {}
 
   /**
-   * Hydrates custom story props on overview without clearing discovery caches.
+   * Prepares overview page metadata and navigation anchors without eager story execution.
    */
   #[Hook('preprocess_ui_patterns_overview_page')]
   public function preprocessOverview(array &$variables): void {
@@ -39,12 +39,6 @@ final class UiPatternsStoryHooks {
     if (!is_array($variables['groups'] ?? NULL)) {
       return;
     }
-    foreach ($variables['groups'] as &$components) {
-      foreach ($components as &$component) {
-        $this->hydrateStories($component);
-      }
-    }
-    unset($components, $component);
 
     // Ordem fixa do grupo "Cartões de Post do Fórum": postagem de abertura, cartão, cartão espelhado.
     $order = [

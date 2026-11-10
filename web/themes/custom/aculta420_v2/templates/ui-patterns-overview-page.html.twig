@@ -1,18 +1,32 @@
 {#
 /**
  * @file
- * ACULTA UI Patterns overview: component previews first, technical details after.
+ * ACULTA UI Patterns overview: metadata catalogue first, progressive on-demand previews via HTMX.
+ *
+ * Implements UP-03:
+ * - Separates metadata discovery/catalogue from heavy preview rendering.
+ * - 100% of SDCs and stories are indexed and available.
+ * - On initial load, component previews are loaded on-demand via HTMX (hx-get) or directly via single component link.
+ * - Preserves functional noscript fallback linking to the single component view.
  */
 #}
 {% if groups is not empty %}
   <div class="ui_patterns_quicklinks">
-    <h2 class="ui_patterns_quicklinks__title">{{ 'Available components'|t }}</h2>
+    <div class="aculta-component-library__toolbar">
+      <h2 class="ui_patterns_quicklinks__title">{{ 'Available components'|t }}</h2>
+      <div class="aculta-component-library__search-box">
+        <label for="aculta-ui-search" class="visually-hidden">{{ 'Filtrar componentes'|t }}</label>
+        <input type="search" id="aculta-ui-search" class="form-element form-element--type-search" placeholder="{{ 'Pesquisar por nome ou ID...'|t }}" aria-controls="aculta-components-container" autocomplete="off">
+      </div>
+    </div>
+
     {% set tab_links %}
       {% for group_name, components in groups %}
-        <a href="#painel-{{ aculta_group_anchors[group_name] }}"{% if loop.first %} aria-current="page"{% endif %}>{{ group_name }}</a>
+        <a href="#painel-{{ aculta_group_anchors[group_name] }}"{% if loop.first %} aria-current="page"{% endif %}>{{ group_name }} ({{ components|length }})</a>
       {% endfor %}
     {% endset %}
     {{ include('aculta420_v2:tabs', { label: 'Grupos de componentes'|t, items: tab_links|raw }, with_context: false) }}
+
     {% for group_name, components in groups %}
       <div class="aculta-component-library__panel" id="painel-{{ aculta_group_anchors[group_name] }}"{% if not loop.first %} hidden{% endif %}>
         <h3 class="aculta-component-library__panel-title">{{ group_name }}</h3>
@@ -26,27 +40,55 @@
     {% endfor %}
   </div>
   <hr>
-  {% for group_name, components in groups %}
-    {% if groups|length > 1 %}
-      <h2 class="aculta-component-library__group-title" id="{{ aculta_group_anchors[group_name] }}">{{ group_name }}</h2>
-    {% endif %}
-    {% for component in components %}
-      {% set safe_component_id = component.id|replace({':': '--'}) %}
-      <section class="ui_patterns_component" id="{{ safe_component_id }}" data-component-id="{{ component.id }}">
-        <h2 class="ui_patterns_component__title">
-          <a href="{{ url('ui_patterns_library.single', {provider: component.provider, machineName: component.machineName}) }}" class="component__link">{{ component.name }}</a>
-        </h2>
-        {% if component.stories %}
-          {{ include('ui-patterns-stories-compact.html.twig', {component: component}, with_context: false) }}
+
+  <div id="aculta-components-container">
+    {% for group_name, components in groups %}
+      <div class="aculta-component-library__group-wrapper" data-group-name="{{ group_name }}">
+        {% if groups|length > 1 %}
+          <h2 class="aculta-component-library__group-title" id="{{ aculta_group_anchors[group_name] }}">{{ group_name }}</h2>
         {% endif %}
-        <details class="aculta-component-library__details">
-          <summary>{{ 'Descrição, propriedades e slots'|t }}</summary>
-          <div class="aculta-component-library__details-content">
-            {{ include('ui-patterns-component-metadata.html.twig', {component: component}, with_context: false) }}
-            {{ include('ui-patterns-component-table.html.twig', {component: component}, with_context: false) }}
-          </div>
-        </details>
-      </section>
+
+        {% for component in components %}
+          {% set safe_component_id = component.id|replace({':': '--'}) %}
+          {% set single_url = url('ui_patterns_library.single', {provider: component.provider, machineName: component.machineName}) %}
+          <section class="ui_patterns_component" id="{{ safe_component_id }}" data-component-id="{{ component.id }}" data-component-name="{{ component.name|lower }}">
+            <div class="ui_patterns_component__header">
+              <h2 class="ui_patterns_component__title">
+                <a href="{{ single_url }}" class="component__link">{{ component.name }}</a>
+              </h2>
+              <span class="ui_patterns_component__badge badge">{{ component.provider }}</span>
+            </div>
+
+            {% if component.stories %}
+              <div class="ui_patterns_component__stories-container" id="preview-container-{{ safe_component_id }}">
+                <div class="aculta-preview-placeholder" id="placeholder-{{ safe_component_id }}">
+                  <a href="{{ single_url }}"
+                     class="button button--secondary aculta-load-preview-btn use-htmx"
+                     data-hx-get="{{ single_url }}"
+                     data-hx-target="#placeholder-{{ safe_component_id }}"
+                     data-hx-swap="outerHTML"
+                     data-hx-select="#component-stories-wrapper"
+                     data-hx-indicator="#indicator-{{ safe_component_id }}">
+                    {{ 'Carregar prévia sob demanda'|t }} ({{ component.stories|length }} {{ 'histórias'|t }})
+                  </a>
+                  <span id="indicator-{{ safe_component_id }}" class="htmx-indicator" aria-hidden="true">{{ 'Carregando prévia...'|t }}</span>
+                  <noscript>
+                    <p><a href="{{ single_url }}">{{ 'Visualizar prévia na página dedicada'|t }}</a></p>
+                  </noscript>
+                </div>
+              </div>
+            {% endif %}
+
+            <details class="aculta-component-library__details">
+              <summary>{{ 'Descrição, propriedades e slots'|t }}</summary>
+              <div class="aculta-component-library__details-content">
+                {{ include('ui-patterns-component-metadata.html.twig', {component: component}, with_context: false) }}
+                {{ include('ui-patterns-component-table.html.twig', {component: component}, with_context: false) }}
+              </div>
+            </details>
+          </section>
+        {% endfor %}
+      </div>
     {% endfor %}
-  {% endfor %}
+  </div>
 {% endif %}
