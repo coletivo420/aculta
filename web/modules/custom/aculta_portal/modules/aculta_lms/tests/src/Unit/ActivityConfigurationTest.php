@@ -6,16 +6,17 @@ namespace Drupal\Tests\aculta_lms\Unit;
 
 use Drupal\aculta_lms\Learning\ActivityConfiguration;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Tests activity configuration normalization.
  *
- * @coversDefaultClass \Drupal\aculta_lms\Learning\ActivityConfiguration
+
  */
+#[CoversClass(\Drupal\aculta_lms\Learning\ActivityConfiguration::class)]
 final class ActivityConfigurationTest extends UnitTestCase {
 
   /**
-   * @covers ::fromFormValues
    */
   public function testTrueFalseConfigurationUsesBooleanCorrectAnswer(): void {
     self::assertSame(
@@ -28,7 +29,6 @@ final class ActivityConfigurationTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::fromFormValues
    */
   public function testSelectConfigurationPreservesChoicesAndCorrectSet(): void {
     self::assertSame(
@@ -42,7 +42,6 @@ final class ActivityConfigurationTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::fromFormValues
    */
   public function testFillBlanksSupportsAlternativeAcceptedAnswers(): void {
     self::assertSame(
@@ -55,7 +54,6 @@ final class ActivityConfigurationTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::fromFormValues
    */
   public function testFreeTextConfigurationValidatesCharacterLimit(): void {
     self::assertSame(
@@ -65,7 +63,6 @@ final class ActivityConfigurationTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::fromFormValues
    */
   public function testFileUploadStoresOnlyTheQuestion(): void {
     self::assertSame(
@@ -75,7 +72,6 @@ final class ActivityConfigurationTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::fromFormValues
    */
   public function testInvalidConfigurationIsRejected(): void {
     $this->expectException(\InvalidArgumentException::class);

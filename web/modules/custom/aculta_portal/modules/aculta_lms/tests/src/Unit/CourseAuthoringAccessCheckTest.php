@@ -12,16 +12,17 @@ use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Tests educator authorization for course authoring.
  *
- * @coversDefaultClass \Drupal\aculta_lms\Access\CourseAuthoringAccessCheck
+
  */
+#[CoversClass(\Drupal\aculta_lms\Access\CourseAuthoringAccessCheck::class)]
 final class CourseAuthoringAccessCheckTest extends UnitTestCase {
 
   /**
-   * @covers ::access
    */
   public function testCourseEducatorCanManageItsCurriculum(): void {
     $account = $this->createMock(AccountProxyInterface::class);
@@ -36,7 +37,6 @@ final class CourseAuthoringAccessCheckTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::access
    */
   public function testEducatorCannotManageAnotherCoursesLesson(): void {
     $account = $this->createMock(AccountProxyInterface::class);
@@ -55,7 +55,6 @@ final class CourseAuthoringAccessCheckTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::access
    */
   public function testNonCourseGroupIsDenied(): void {
     $account = $this->createMock(AccountProxyInterface::class);
@@ -67,7 +66,6 @@ final class CourseAuthoringAccessCheckTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::access
    */
   public function testActivityWithAnswersCannotBeEditedInPlace(): void {
     $account = $this->createMock(AccountProxyInterface::class);
@@ -105,7 +103,6 @@ final class CourseAuthoringAccessCheckTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::accessForReorder
    */
   public function testAnsweredActivityCanMoveWithinItsAuthorizedLesson(): void {
     $account = $this->createMock(AccountProxyInterface::class);

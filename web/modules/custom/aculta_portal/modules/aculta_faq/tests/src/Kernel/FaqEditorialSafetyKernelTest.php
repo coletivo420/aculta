@@ -9,14 +9,15 @@ use Drupal\block_content\Entity\BlockContent;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Routing\RouteObjectInterface;
 use Drupal\user\Entity\User;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Covers safe markup formats and administrative route access.
  *
- * @group aculta_faq
  */
+#[Group('aculta_faq')]
 #[RunTestsInSeparateProcesses]
 final class FaqEditorialSafetyKernelTest extends KernelTestBase {
 

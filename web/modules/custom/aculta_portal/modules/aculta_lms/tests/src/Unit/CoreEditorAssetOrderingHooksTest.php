@@ -11,13 +11,11 @@ use PHPUnit\Framework\Attributes\CoversClass;
 /**
  * Tests safe ordering for Core editor prerequisites and dependent assets.
  *
- * @coversDefaultClass \Drupal\aculta_lms\Hook\CoreEditorAssetOrderingHooks
  */
 #[CoversClass(CoreEditorAssetOrderingHooks::class)]
 final class CoreEditorAssetOrderingHooksTest extends UnitTestCase {
 
   /**
-   * @covers ::placeCoreEditorPrerequisites
    */
   public function testCorePrerequisitesAreOrderedBeforeDependentAggregates(): void {
     $libraries = [
@@ -40,7 +38,6 @@ final class CoreEditorAssetOrderingHooksTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::placeCoreEditorPrerequisites
    */
   public function testOtherExtensionsAreNotAltered(): void {
     $libraries = ['jquery' => ['js' => ['jquery.min.js' => ['preprocess' => FALSE]]]];

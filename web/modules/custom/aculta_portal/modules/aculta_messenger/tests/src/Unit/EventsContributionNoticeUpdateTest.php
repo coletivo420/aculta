@@ -10,12 +10,14 @@ use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Atualização de notificação de Events para sites já instalados.
  *
- * @group aculta_messenger
+
  */
+#[Group('aculta_messenger')]
 final class EventsContributionNoticeUpdateTest extends UnitTestCase {
 
   /**

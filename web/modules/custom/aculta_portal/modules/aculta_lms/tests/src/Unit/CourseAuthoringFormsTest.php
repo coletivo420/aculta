@@ -24,15 +24,13 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Tests course lesson and activity authoring forms.
- *
- * @coversDefaultClass \Drupal\aculta_lms\Form\LessonAuthoringForm */
+ */
 #[CoversClass(LessonAuthoringForm::class)]
 #[CoversClass(ActivityAuthoringForm::class)]
 #[CoversClass(LessonEntity::class)]
 final class CourseAuthoringFormsTest extends UnitTestCase {
 
   /**
-   * @covers ::buildForm
    */
   public function testLessonAuthoringFormAttachesUnsavedChangeGuard(): void {
     $course = $this->course();
@@ -54,7 +52,6 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::buildForm
    */
   public function testActivityAuthoringFormAttachesUnsavedChangeGuard(): void {
     $course = $this->course();
@@ -77,7 +74,6 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::submitForm
    */
   public function testLessonCreateStoresRichTextInDedicatedFormat(): void {
     $course = $this->course();
@@ -112,7 +108,6 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::validateForm
    */
   public function testPublishedLessonRequiresReadableContent(): void {
     $course = $this->course();
@@ -137,7 +132,6 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::prepareBodyForEditor
    */
   public function testLegacyTextIsEscapedAndRichTextIsPreservedForEditor(): void {
     self::assertSame(
@@ -168,7 +162,6 @@ final class CourseAuthoringFormsTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::submitForm
    */
   public function testActivityCreatePersistsConfigurationConsumedByLearnerForm(): void {
     $course = $this->course();
