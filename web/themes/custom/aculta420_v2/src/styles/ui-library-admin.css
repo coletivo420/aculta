@@ -7,23 +7,53 @@
   column-span: all;
 }
 
-/* Barra de ferramentas com título e busca */
+/* Barra de ferramentas com título, busca e ações em lote */
 .aculta-component-library__toolbar {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   align-items: center;
-  gap: var(--spacing-sm, 0.75rem);
-  margin-block-end: var(--spacing-sm, 0.75rem);
+  justify-content: space-between;
+  margin-block-end: var(--spacing-sm, .75rem);
+  gap: var(--spacing-sm, .75rem);
+}
+
+.aculta-component-library__toolbar-actions {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-sm, .75rem);
 }
 
 .aculta-component-library__search-box {
-  flex: 1 1 20rem;
-  max-inline-size: 25rem;
+  flex: 1 1 16rem;
+  max-inline-size: 22rem;
 }
 
 .aculta-component-library__search-box input {
   inline-size: 100%;
+}
+
+.aculta-component-library__bulk-actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-xs, .5rem);
+}
+
+.aculta-btn-bulk-preview {
+  white-space: nowrap;
+}
+
+.aculta-bulk-preview-status {
+  color: var(--color-text-secondary, #666);
+  font-size: var(--font-size-xs, .8125rem);
+  min-inline-size: 6rem;
+}
+
+[data-theme="dark"] .aculta-bulk-preview-status {
+  color: var(--color-text-secondary, #aaa);
 }
 
 /* Cabeçalho de cada grupo também fica fora das colunas, e as abas aparecem no topo. */
@@ -71,41 +101,41 @@ body:has(.ui_patterns_quicklinks) {
   margin-block-end: var(--spacing-lg, 1.5rem);
   padding: var(--spacing-md, 1rem);
   border: 1px solid var(--color-border, #ccc);
-  border-radius: var(--radius-md, 0.5rem);
+  border-radius: var(--radius-md, .5rem);
   background: var(--color-surface, #fff);
 }
 
 .ui_patterns_component__header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: var(--spacing-sm, 0.5rem);
+  justify-content: space-between;
+  gap: var(--spacing-sm, .5rem);
 }
 
 .ui_patterns_component__badge {
-  font-size: var(--font-size-xs, 0.75rem);
-  padding: 0.2rem 0.5rem;
-  border-radius: var(--radius-sm, 0.25rem);
-  background: var(--color-surface-raised, #eee);
+  padding: .2rem .5rem;
   color: var(--color-text-secondary, #666);
+  border-radius: var(--radius-sm, .25rem);
+  background: var(--color-surface-raised, #eee);
+  font-size: var(--font-size-xs, .75rem);
 }
 
 .aculta-preview-placeholder {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--spacing-xs, 0.5rem);
+  gap: var(--spacing-xs, .5rem);
   padding: var(--spacing-md, 1rem);
-  margin-block: var(--spacing-sm, 0.75rem);
+  margin-block: var(--spacing-sm, .75rem);
   border: 1px dashed var(--color-border, #ccc);
-  border-radius: var(--radius-sm, 0.25rem);
-  background: var(--color-surface-subtle, rgba(0, 0, 0, 0.02));
+  border-radius: var(--radius-sm, .25rem);
+  background: var(--color-surface-subtle, rgba(0, 0, 0, .02));
 }
 
 .aculta-load-preview-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: .5rem;
 }
 
 :has(> .ui_patterns_component) {

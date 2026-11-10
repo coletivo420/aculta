@@ -176,12 +176,13 @@ studio-connections-page:
       components/studio-connections-page/studio-connections-page.css: {}
 
 ui-library-admin:
-  version: 1.0.5
+  version: 1.0.6
   css:
     theme:
       src/styles/ui-library-admin.css: {}
   js:
     js/ui-library-tabs.js: { attributes: { defer: true } }
+    js/ui-library-bulk-preview.js: { attributes: { defer: true } }
   dependencies:
     - core/drupal
     - core/once
