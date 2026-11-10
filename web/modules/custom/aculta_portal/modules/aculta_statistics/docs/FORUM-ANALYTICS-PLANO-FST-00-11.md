@@ -340,7 +340,8 @@ Data: 2026-11-10. Branch `dev`.
 - Reconciliação de reações em dry-run: 2 reações, 2 públicas, 0 divergências; `--apply` não foi necessário.
 - `config:status`: divergências preexistentes em views/config de outros escopos; nenhum `config:import` executado.
 - Browser Firefox ESR: 54/54 verificações PASS em 1280/768/640 (equivalente a 1280 a 200%)/390/320, oito rotas, teclado e foco visível, estrutura acessível (caption/scope/rótulos/links) e painel do Fórum sem erro. Modo escuro do painel: não aplicável, o tema administrativo ativo não expõe `data-theme`; forçar tokens do tema público reduziria o contraste e não foi adotado.
-- Functional: logins canônicos são redirecionados ao host de Conta, que não serve o site de teste. O teste passa a exigir origem isolada (`127.0.0.1`/`localhost`) e marca SKIP no host compartilhado, em vez de falhar. DEFERRED até origem HTTP isolada.
+- Functional: o host principal responde **404 em `/entrar`** porque a rota de login pertence ao domínio Conta; o host de Conta não serve o site `sites/simpletest`. O teste passa a exigir origem isolada e marca SKIP no host compartilhado, em vez de falhar. DEFERRED até um VirtualHost de teste servir o mesmo site nos dois hosts.
+- Config Sync: `aculta_statistics.settings` e `aculta_forum.settings` aparecem `Different` por drift preexistente e pelo toggle intencional `forum_discovery.enabled=true` no desenvolvimento. Nenhum `config:import` foi executado, para não reverter configuração de outros escopos nem ligar a coleta em produção.
 
 ### Segurança por perfil (evidência parcial)
 
