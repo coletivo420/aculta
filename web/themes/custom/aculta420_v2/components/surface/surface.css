@@ -92,31 +92,19 @@
 }
 
 .aculta-surface--elevation-subtle {
-  box-shadow: 0 2px 8px rgb(0 0 0 / 6%), 0 1px 2px rgb(0 0 0 / 4%);
+  box-shadow: var(--surface-shadow-subtle);
 }
 
 .aculta-surface--elevation-raised {
-  box-shadow: var(--shadow-raised, 0 4px 12px rgb(0 0 0 / 10%));
+  box-shadow: var(--surface-shadow-raised);
 }
 
 .aculta-surface--elevation-floating {
-  box-shadow: var(--shadow-lg, 0 10px 24px rgb(0 0 0 / 14%));
+  box-shadow: var(--surface-shadow-floating);
 }
 
-[data-theme="dark"] .aculta-surface--elevation-subtle,
-:root[data-theme="dark"] .aculta-surface--elevation-subtle {
-  box-shadow: 0 2px 8px rgb(0 0 0 / 30%), 0 1px 2px rgb(0 0 0 / 20%);
-}
 
-[data-theme="dark"] .aculta-surface--elevation-raised,
-:root[data-theme="dark"] .aculta-surface--elevation-raised {
-  box-shadow: 0 4px 14px rgb(0 0 0 / 45%);
-}
 
-[data-theme="dark"] .aculta-surface--elevation-floating,
-:root[data-theme="dark"] .aculta-surface--elevation-floating {
-  box-shadow: 0 10px 28px rgb(0 0 0 / 60%);
-}
 
 /* Contorno de borda */
 .aculta-surface--border-none {

@@ -175,6 +175,14 @@
   --shadow-base: 0 4px 6px rgb(0 0 0 / 10%);
   --shadow-md: 0 4px 8px rgb(0 0 0 / 24%);
   --shadow-lg: 0 10px 15px rgb(0 0 0 / 10%);
+  --surface-shadow-subtle: 0 2px 8px rgb(0 0 0 / 6%), 0 1px 2px rgb(0 0 0 / 4%);
+  --surface-shadow-raised: 0 .125rem .5rem rgb(12 60 41 / 8%);
+  --surface-shadow-floating: 0 10px 15px rgb(0 0 0 / 10%);
+  --surface-panel-institutional-bg: var(--palette-green);
+  --surface-panel-institutional-text: var(--color-on-brand);
+  --surface-accent-red: var(--palette-red);
+  --surface-accent-yellow: var(--color-brand-highlight);
+  --surface-accent-green: var(--palette-green);
 
   /* Tokens semânticos --aculta-* exigidos pelo contrato de fundamentos de
      design. Os valores são literais e espelham os --color-* equivalentes;
@@ -283,6 +291,14 @@
   --color-status-warning-text: #ffd27a;
   --color-status-warning-surface: #3a3115;
   --shadow-raised: 0 .125rem .5rem rgb(0 0 0 / 40%);
+  --surface-shadow-subtle: 0 2px 8px rgb(0 0 0 / 30%), 0 1px 2px rgb(0 0 0 / 20%);
+  --surface-shadow-raised: 0 4px 14px rgb(0 0 0 / 45%);
+  --surface-shadow-floating: 0 10px 28px rgb(0 0 0 / 60%);
+  --surface-panel-institutional-bg: #2e4d22;
+  --surface-panel-institutional-text: var(--color-text-primary);
+  --surface-accent-red: var(--accent-red-stripe);
+  --surface-accent-yellow: var(--accent-yellow-stripe);
+  --surface-accent-green: var(--accent-green-stripe);
 
   /* Tokens de botões ACULTA (docs/botoes.md) - Modo escuro */
   --button-primary-bg: #9ac15a;
