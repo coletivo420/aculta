@@ -6,6 +6,7 @@ namespace Drupal\aculta_image\Quarantine;
 
 use Drupal\Core\Database\Statement\FetchAs;
 use Drupal\Component\Utility\DeprecationHelper;
+use Drupal\aculta_file_uploader\Quarantine\QuarantineRules;
 use Drupal\aculta_portal\Cleanup\FileCleanupStatus;
 use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
 use Drupal\Component\Datetime\TimeInterface;
