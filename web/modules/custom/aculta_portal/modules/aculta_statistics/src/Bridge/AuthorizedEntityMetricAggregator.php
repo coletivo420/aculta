@@ -28,6 +28,10 @@ final class AuthorizedEntityMetricAggregator implements ContentEntityMetricAggre
     'wiki.entries.published' => ['entity_type' => 'node', 'bundle' => 'wiki_entry'],
     'wiki.entries.updated' => ['entity_type' => 'node', 'bundle' => 'wiki_entry'],
     'media.files.requests' => ['entity_type' => 'file', 'bundle' => 'file'],
+    'forum.replies.created' => [
+      'entity_type' => 'node',
+      'bundle' => 'aculta_forum_topic',
+    ],
   ];
 
   public function __construct(

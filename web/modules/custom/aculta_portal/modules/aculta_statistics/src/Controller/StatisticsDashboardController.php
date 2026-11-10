@@ -631,11 +631,72 @@ final class StatisticsDashboardController extends ControllerBase {
     }
     $panels['indicadores'] = $cards_build;
 
+    $contentRanking = $this->forumContentRanking($today, $days);
+    if ($contentRanking !== NULL) {
+      $panels['conteudos'] = $contentRanking;
+    }
     $panels['tendencia'] = $this->trendChart($series, $metric, $days, $periodValue);
     $panels['atividade'] = $this->activitySummary($today, $days);
     $panels['respostas'] = $this->responseHealth($today);
     $panels['moderacao'] = $this->moderationSummary($today);
     return $panels;
+  }
+
+  /**
+   * Detalhamento por tópico público, com acesso revalidado antes da consulta.
+   *
+   * A dimensão guardada é o ID do nó. Carregamos no máximo 100 IDs do período,
+   * revalidamos `view` para cada entidade e só então exibimos o ranking.
+   */
+  private function forumContentRanking(int $today, int $days): ?array {
+    if (!$this->currentUser()->hasPermission('view content-level statistics')
+      && !$this->currentUser()->hasPermission('administer aculta_statistics')) {
+      return NULL;
+    }
+    $totals = $this->storage->dimensionTotals(
+      'forum.replies.created',
+      $today - $days + 1,
+      $today,
+    );
+    $ids = [];
+    foreach ($totals as $dimension => $value) {
+      if (preg_match('/^[1-9][0-9]*$/', (string) $dimension) === 1) {
+        $ids[(int) $dimension] = (int) $value;
+      }
+    }
+    if ($ids === []) {
+      return $this->component('statistics-category-ranking', [
+        'caption' => (string) $this->t('Tópicos públicos com mais respostas no período'),
+        'rows' => [],
+      ]);
+    }
+    arsort($ids);
+    $ids = array_slice($ids, 0, 100, TRUE);
+    $nodes = $this->entityTypeManager()->getStorage('node')->loadMultiple(array_keys($ids));
+    $rows = [];
+    $position = 0;
+    foreach ($ids as $nid => $value) {
+      $node = $nodes[$nid] ?? NULL;
+      if ($node === NULL
+        || $node->bundle() !== 'aculta_forum_topic'
+        || !$node->access('view', $this->currentUser(), TRUE)->isAllowed()) {
+        continue;
+      }
+      $position++;
+      $rows[] = [
+        'position' => $position,
+        'label' => (string) $node->label(),
+        'url' => $node->toUrl()->toString(),
+        'value' => $this->formatNumber($value),
+      ];
+      if ($position >= 10) {
+        break;
+      }
+    }
+    return $this->component('statistics-category-ranking', [
+      'caption' => (string) $this->t('Tópicos públicos com mais respostas no período'),
+      'rows' => $rows,
+    ]);
   }
 
   /**

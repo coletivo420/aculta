@@ -359,6 +359,10 @@ final class ForumActivityIntegrationKernelTest extends KernelTestBase {
 
     $provider = $this->container->get('aculta_forum.metrics_provider');
     $day = $this->storage->currentDay();
+    self::assertSame(
+      1,
+      $this->storage->total('forum.replies.created', $day, $day, (string) $topicA->id()),
+    );
 
     $comments = $this->container->get('database')->select('comment_field_data', 'c')
       ->fields('c', ['cid', 'entity_id', 'uid', 'status', 'comment_type', 'default_langcode', 'created'])

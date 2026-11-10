@@ -117,8 +117,9 @@ final class ForumActivityEventHooks {
     if (!$this->claim($node, ForumActivityEvent::TOPIC_CREATED)) {
       return;
     }
+    $nodeId = (int) $node->id();
     $this->dispatcher->dispatch(
-      new ForumActivityEvent((int) $node->id(), $this->time->getRequestTime()),
+      new ForumActivityEvent($nodeId, $this->time->getRequestTime(), $nodeId),
       ForumActivityEvent::TOPIC_CREATED,
     );
   }
@@ -131,7 +132,11 @@ final class ForumActivityEventHooks {
       return;
     }
     $this->dispatcher->dispatch(
-      new ForumActivityEvent((int) $comment->id(), $this->time->getRequestTime()),
+      new ForumActivityEvent(
+        (int) $comment->id(),
+        $this->time->getRequestTime(),
+        (int) $comment->getCommentedEntityId(),
+      ),
       ForumActivityEvent::COMMENT_CREATED,
     );
   }
@@ -144,7 +149,11 @@ final class ForumActivityEventHooks {
       return;
     }
     $this->dispatcher->dispatch(
-      new ForumActivityEvent((int) $post->id(), $this->time->getRequestTime()),
+      new ForumActivityEvent(
+        (int) $post->id(),
+        $this->time->getRequestTime(),
+        (int) $post->get('topic')->target_id,
+      ),
       ForumActivityEvent::POST_CREATED,
     );
   }
