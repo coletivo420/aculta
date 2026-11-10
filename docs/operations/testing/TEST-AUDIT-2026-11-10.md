@@ -102,10 +102,12 @@ sem plano de migração de instalações existentes, então ele permanece.
 - `.github/workflows/php-quality.yml` passa a rodar em `dev` e `main`, com jobs
   `test-discovery` e `phpunit-unit` (JUnit como artefato). O job Unit não usa
   banco.
-- PHPStan não usa mais `|| true`. `scripts/phpstan-ratchet.php` lê
-  `phpstan-baseline-count.txt` (3829 erros no snapshot) e falha apenas se a
-  contagem crescer; a dívida existente é reduzida aos poucos, sem baseline de
-  megabytes e sem mascarar regressão.
+- PHPStan não usa mais `|| true` nem ratchet de contagem. `phpstan.neon` inclui
+  `phpstan-baseline.neon` (3823 erros históricos revisados) e mantém
+  `reportUnmatchedIgnoredErrors: true`. O CI roda `phpstan analyse` sem
+  regenerar o baseline: erro novo ou entrada de baseline resolvida falha o job.
+  A dívida por módulo, identificador e criticidade fica em
+  `docs/operations/testing/phpstan-debt.md`; a correção é progressiva.
 
 ## 6. Execução verificável
 
@@ -117,10 +119,10 @@ sem plano de migração de instalações existentes, então ele permanece.
 | `phpunit --filter FaqEditorialSafetyKernelTest` (com `SIMPLETEST_DB`) | PASS — 3 testes, 45 asserções |
 | `phpunit -c phpunit.performance.xml` sem banco | PASS — 4 pulados em ~3 s |
 | `phpunit` nos 15 arquivos convertidos de doc-comment | PASS — 48 testes, 269 asserções |
-| `php scripts/phpstan-ratchet.php` | PASS — 3829 erros ≤ baseline 3829 |
+| `vendor/bin/phpstan analyse` (com baseline) | PASS — 0 erros não baselined; baseline de 3823 |
 | `php scripts/tests/validate-aculta420-design-foundations-test.php` | PASS — 14 fixtures |
 | `php scripts/validate-module-theme-boundary.php` | PASS — 7884 verificações |
-| `php scripts/audit-browser-scripts.php` | 535 arquivos classificados; 9 entrypoints, 49 contratos de rota, 171 scripts, 225 evidências, 18 candidatos a revisão |
+| `php scripts/audit-browser-scripts.php` | 294 arquivos rastreados classificados; 9 entrypoints, 49 contratos de rota, 153 scripts, 18 scripts sem consumidor removidos |
 | `php scripts/validate-aculta420-design-foundations.php` (tema real) | FAIL pré-existente — 5/1271: literais de cor em `ui-library-admin.css`, `surface.css`, `surface-accent.css`, `surface-panel.css` (arquivos não alterados nesta rodada) |
 
 ## 6.1. Browser
@@ -129,9 +131,12 @@ sem plano de migração de instalações existentes, então ele permanece.
 `tests/browser/` por purpose/front, papel, consumidores e destino. O executor
 Playwright continua sendo apenas `playwright.routes.spec.mjs` (contratos
 `routes.json`) e `playwright-runner.mjs` (smoke por URL); os scripts Python de
-revisão manual não entram na suíte executável. Os 18 scripts sem consumidor
-referenciado estão marcados como `revisar: candidato a arquivo` no inventário,
-para revisão humana — não foram apagados porque podem ser evidência.
+revisão manual não entram na suíte executável. Os **18 scripts sem consumidor
+referenciado foram removidos** nesta rodada, conforme decisão do responsável.
+Restam dois utilitários mantidos explicitamente como evidência de acessibilidade
+e contraste (`aculta-statistics/atspi_dump.py`,
+`aculta420-v2-component-library/audit-contraste.js`), documentados no
+inventário.
 
 ## 7. Pendências
 
@@ -140,7 +145,7 @@ para revisão humana — não foram apagados porque podem ser evidência.
 | P2 | aberto | `validate-aculta420-design-foundations.php` falha no tema real (5/1271) por literais de cor em CSS existente | Substituir literais por tokens semânticos ou justificar exceção |
 | P6 | aberto | `ForumTopicDisplayConfigTest` com 709 linhas e múltiplas responsabilidades (form/display, listagens, admin, domain/pathauto) | Separar em classes por responsabilidade com uma base compartilhada, mantendo a suíte verde |
 | P7 | aberto | Dois arquivos `ContentPurposeResolver*Test` em renomeação concorrente para `ContentSiteKeyResolver*Test` ainda coexistem na árvore de trabalho | Concluir a renomeação do outro agente; a suíte completa já passa excluindo o par duplicado |
-| P8 | aberto | 18 scripts Python/MJS do browser sem consumidor referenciado | Revisar caso a caso; arquivar ou converter em entrypoint documentado |
+| P9 | aberto | 3823 erros PHPStan baselined (dívida histórica) | Reduzir em rodadas de 25–75 erros, começando por acesso/pagamento; atualizar o baseline e `phpstan-debt.md` a cada rodada |
 
 ## 8. Recuperação
 
