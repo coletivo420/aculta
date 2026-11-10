@@ -7,7 +7,7 @@
 
 1. UI Suite sera a **arquitetura visual canonica de TODO o site**, incluindo paginas publicas, dashboards privados, UI administrativa ACULTA, Revista, Forum, Wiki, GanjaLab, Culturas, Green Stash, Links, Apoio e integracoes transversais.
 2. **UI Skins substitui o antigo sistema de purposes COMO MOTOR DE IDENTIDADE VISUAL**, suas paletas, seletores e configuracoes; a selecao visual por `aculta_purpose_palette`, `data-purpose-scheme`, `--aculta-purpose-*` e similares deve ser migrada e descontinuada. Nao introduzir duas fontes de verdade.
-3. Purpose **nao e eliminavel como contrato de dominio/negocio** por UI Skins: `DomainPurposeManager`, `DomainSurfaceMap` e policies ainda sao necessarios para host, rota, URL canonica, acesso, localidade, sessao, conteudo e cache. O identificador interno pode permanecer no Portal, mas **nao pode continuar sendo seletor de estilo** apos o corte. UI Skins nao faz roteamento/ACL.
+3. As **responsabilidades funcionais** de domínio/negócio não são eliminadas por UI Skins: `DomainPurposeManager`, `DomainSurfaceMap` e policies atuais terão equivalentes renomeados com o contrato **`site_key`** (`DomainSiteManager`, `DomainSiteMap`, etc.), preservando host, rota, URL, acesso, sessão, conteúdo e cache. A **nomenclatura `purpose` não permanece ativa após a migração RN-00 a RN-05**. UI Skins não faz roteamento/ACL.
 4. Todos os **modelos, wrappers, componentes e renderizacoes visuais** que ainda nao usam UI Suite devem ser inventariados, receber status de migracao e ter substituto explicitado. Prever adaptadores seguros para render de Core/contrib, sem reimplementar comportamento.
 5. UI Patterns Field Group: **preferir `2.0.x-dev@dev`**, com lock em commit e gates obrigatorios de seguranca, compatibilidade Drupal 11.5/12 e Field Group instalado. O projeto upstream nao e coberto pela politica de seguranca do Drupal; a preferencia pela dev nao e dispensa de homologacao.
 6. **NAO USAR UI PATTERNS CKEDITOR 5 NESTE CICLO.** Nao instalar, habilitar, prototipar, adicionar toolbar, filtro, botao, dependencias nem implementar widget via `ui_patterns_ckeditor5`. Esta regra nao impede `ui_styles_ckeditor5` (estilos textuais) nem o CKEditor 5 e plugins existentes; mantem o catalogo Fluent Emoji que ja existe.
@@ -25,7 +25,7 @@ Consumidores conhecidos do codigo:
 - `web/themes/custom/aculta420_v2/src/Hook/SurfaceSettingsHooks.php`: `purposePaletteStyle()`, `data-purpose` / `data-purpose-scheme`, estilos inline no <html> e variaveis derivadas do Studio.
 - `web/themes/custom/aculta420_v2/src/Palette/PurposePaletteSchemes.php` e testes associados.
 - `web/modules/custom/aculta_portal/src/Hook/AppearanceHooks.php` e `src/Appearance/ColorModePreference.php`: `aculta_color_mode`, `aculta_purpose`, cache por usuario e dominio.
-- `web/modules/custom/aculta_portal/src/Domain/DomainPurposeManager.php`: tambem resolve dominios e URLs, portanto **nao remover** sem substituto funcional.
+- `web/modules/custom/aculta_portal/src/Domain/DomainPurposeManager.php`: resolve domínio, aliases e URLs; substituir por `DomainSiteManager` (mesmo comportamento), com compatibilidade limitada e testada até RN-05.
 - `web/themes/custom/aculta420_v2/src/styles/tokens.css` e styles, `aculta420_v2.ui_styles.yml`, `config/sync/aculta420_v2.settings.yml` e quaisquer atributos/caches descobertos pelo inventario.
 
 **Estes caminhos sao evidencias de alvos, nao um inventario exaustivo.** Executar rastreamento de chamadas e seletores antes do corte.
@@ -35,7 +35,7 @@ Consumidores conhecidos do codigo:
 `Domain/Portal (identidade funcional de dominio) -> resolvedor de skin por dominio + preferencia visual efetiva (Portal) -> API/definicoes UI Skins (themes/schemes + CSS variables) -> atributo/escopo de skin e tokens semanticos publicados por requisicao -> UI Styles -> SDC/UI Patterns -> pagina`
 
 - UI Skins e **source of truth** de temas/esquemas e variaveis visuais. Declarar schemas segundo a API instalada (`{provider}.ui_skins.themes.yml` e `{provider}.ui_skins.css_variables.yml`; verificar versao antes de criar definicoes).
-- O mapeamento `Domain ID -> skin_id` e `skin_id x light/dark` pertence a uma configuracao neutra do Portal, exportavel e revogavel; **nenhum hostname hardcoded no tema**. As dez identidades visuais podem preservar seus nomes, mas nao dirigir CSS por `purpose`.
+- O mapeamento `domain_id -> skin_id` e `skin_id x light/dark` pertence a configuração neutra do Portal, exportável e reversível; `site_key` é a chave funcional de domínio e **não dirige CSS**. Nenhum hostname hardcoded no tema. Os dez valores das chaves funcionais continuam estáveis.
 - UI Skins documenta configuracao de tema nas configuracoes do tema **globalmente**. Nao presumir aplicacao automatica distinta por host. Se API nao oferecer selecao por requisicao, criar adaptador **no Portal, sem fork**, que consome definicoes UI Skins e seleciona valores CSS em escopo da resposta. NUNCA alterar config global do tema durante um request, nem `$config->set()` para trocar de dominio.
 - `ColorModePreference` permanece dono de preferencia pessoal e modo default, mas a realizacao visual light/dark fica **vinculada a UI Skins**. Definir contrato unico para `user preference > site default`, com escopo de skin do dominio. Verificar preferencias de usuario entre dominios e logs de acesso.
 - Preservar nomes semanticamente genericos em SDCs (`--color-*`, `--button-*`, `--surface-*`) e refatorar seus valores para as declaracoes UI Skins. Variaveis legadas podem ser aliases temporarios SOMENTE durante migracao e entram no inventario de divida.
@@ -51,7 +51,8 @@ Consumidores conhecidos do codigo:
 4. Migrar dominios em lotes, com mapa por ID e fallback por skin. Evitar alteracao perceptivel nao aprovada; preservacao visual e default.
 5. Depois de todos os dominios aprovados, remover `aculta_cores_purpose`, `aculta_purpose_palette`, `data-purpose-scheme` e seletores CSS somente quando `rg` confirmar zero consumidores. Avaliar remover `data-purpose` **apenas do CSS**, preservando uso eventual semantico por testes/JS ate auditoria.
 6. Remover classe `PurposePaletteSchemes` e logica `purposePaletteStyle` somente depois de zero chamadas e validacao de color mode, Studio e temas. Atualizar configs, schemas, testes, documentacao e procedimentos de rollback.
-7. Demonstrar que mudar uma skin de um dominio nao altera outro e que o Portal continua correto sem o sistema visual de purpose.
+7. Demonstrar que mudar uma skin de um domínio não altera outro e que o Portal continua correto sem o sistema visual de purpose.
+8. Executar RN-00 a RN-05 para substituir também a **nomenclatura funcional** `purpose` por `site_key` (rotas, serviços, render arrays, State, sessões e consumidores), sem alterar comportamento de Domain. Plano: `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`.
 
 ## 3. Classificacao obrigatoria e estados
 
@@ -141,7 +142,7 @@ E. Zero consumidores e limpeza dos legados, sem remover um fallback antes do gat
 ## 6. Gates e criterio para fechar as duas ADRs
 
 1. Inventario completo, classificacao rastreavel e mapa de consumidores de todo modelo visual ACULTA. Nenhuma ausencia de catalogo ou omissao de shell privado.
-2. UI Skins governa **exclusivamente a aparencia** e substitui o motor visual por purpose; mapeamento e cor por dominio seguros. `rg` mostra zero consumidores de paleta antiga ou excecoes explicitamente provisórias com owner e prazo. Nao apagar DomainPurposeManager por ser infraestrutura.
+2. UI Skins governa **exclusivamente a aparência** e substitui o motor visual por purpose; o Portal migra funcionalmente para `site_key` sem perder infraestrutura. `rg` mostra zero consumidores de paleta antiga e, após RN-05, zero contratos antigos `purpose` ativos fora das exceções históricas registradas. A função antiga de `DomainPurposeManager` deve sobreviver em `DomainSiteManager`, não o nome da API.
 3. 10 dominios × light/dark × resolucoes 320/390/768/1024/1440 × zoom 200% e teste de teclado. Comparar CSS computed, contraste, foco, mobile, H1/main e layout.
 4. Areas: Portal, account/Marley, magazine, forum, wiki, cursos, shop, eventos, maps e apoio, incluindo atividades transversais e admin MAIN; testar anonimato, editor, admin e acesso cruzado.
 5. Para cada migracao visual, snapshot antes/depois, mesmo conteudo/dados, tags/contexts/max-age, sem vazamento por dominio/user; hashes ou logs relevantes de runtime.
@@ -162,3 +163,9 @@ E. Zero consumidores e limpeza dos legados, sem remover um fallback antes do gat
 - Mudancas de runtime que exigem autorizacao explicita (config import, updatedb, uninstall, remocao de dados) nao devem ser feitas sem ela. Gate correspondente fica DEFERRED se nao autorizado.
 - Em migracao sem possibilidade de reproducao segura, documentar bloqueio e fallback, nao sacrificar dados, dominio, seguranca ou estabilidade.
 - **Nao declarar 100% migrado com base so em lista de arquivos ou em 100% dos SDCs**: o alvo e todo visual ativo do site.
+
+## 8. Renomeação funcional coordenada (RN-00 a RN-05)
+
+O novo plano `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md` é parte vinculante deste programa. A arquitetura final usa `site_key` para identidade funcional, `domain_id` para Drupal Domain e `skin_id` para UI Skins, eliminando a nomenclatura interna `purpose` após uma migração segura. Inclui inventário de callers, serviços, rotas, opções `_aculta_domain_purpose(s)`, campos do contrato de apresentação, State `active_purposes`, sessão de login e metadados de cache.
+
+**Regra de precedência:** RN-01 introduz a API `site_key`; US-02 conecta UI Skins via `domain_id`; RN-02/RN-03 migram consumidores; RN-04 retira aliases internos quando houver zero chamadas; RN-05 bloqueia US-14 até verificar segurança, roteamento, cache, sessão, dados e rollback. Rotas públicas e Domain IDs permanecem intactos. O inventário de APIs `API_DEPRECATED`/`API_REMOVED` é distinto do inventário de componentes `LEGACY_DEPRECATED`/`LEGACY_OBSOLETE`.

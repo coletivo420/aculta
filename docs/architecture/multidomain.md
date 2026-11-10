@@ -1,3 +1,5 @@
+> **Evolução planejada em 2026-11-10 (não implementada):** a nomenclatura funcional `purpose` deste documento será substituída por **`site_key`** no Portal (RN-00 a RN-05). Drupal Domain mantém `domain_id`, UI Skins assume `skin_id` e a identidade visual. Os valores `main`, `forum`, etc., URLs e Domain IDs não mudam. O texto abaixo descreve o código atual e permanece histórico até o corte. Consulte [plano de renomeação](ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md).
+
 # Multidomínio
 
 Purposes estáveis ativos: `main`, `account`, `support`, `magazine`, `wiki`,

@@ -4,6 +4,7 @@ Estado: em desenvolvimento · versão 1.5.0 (`aculta420_v2.info.yml`) · status:
 
 ## Próximo passo
 
+- **ADR-054/055 - nomenclatura interna (RN-00 a RN-05, PLANEJADO):** Portal adota `site_key` no lugar de `purpose`, mantendo `domain_id` para Domain e `skin_id` para UI Skins, sem alterar rotas, acesso ou valores dos dez sites. Plano: `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`. RN-05 é gate de US-14.
 - **ADR-055 / UI Suite integral (US-00 a US-14, PLANEJADO):** substituir **todo visual legado** por UI Suite, classificar `LEGACY_DEPRECATED`/`LEGACY_OBSOLETE`, migrar **motor visual de purposes para UI Skins** sem alterar roteamento/ACL e inventariar Composer/lock + Runtime/Sync. Preferir UI Patterns Field Group `2.0.x-dev@dev` após gates de segurança/Drupal 12. **Não usar UI Patterns CKEditor 5**; UI Styles CKEditor 5 permanece. Planos: `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md` e `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md`.
 
 - **SDCs de superfície (concluído):** `surface`, `surface-accent` e `surface-panel`, integrados a UI Styles, UI Patterns e UI Library; gate SDC PASS.

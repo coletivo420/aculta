@@ -1,9 +1,10 @@
 # ADR-055 - Integração integral UI Suite e sistema unificado de emojis
 
-Status: decisão ampliada pelo responsável em 2026-11-10. Eixo Fluent Emoji / UI Icons parcialmente implementado em código; UI Suite integral + MIGRAÇÃO DO LEGADO + UI Skins substituindo a camada visual de purpose permanecem em execução futura (US-00 a US-14). NÃO considerar encerrada.
+Status: decisão ampliada pelo responsável em 2026-11-10. Eixo Fluent Emoji / UI Icons parcialmente implementado em código; UI Suite integral, MIGRAÇÃO DO LEGADO, UI Skins substituindo purposes visuais e RENOMEAÇÃO FUNCIONAL purpose -> site_key no Portal permanecem em planejamento (US-00 a US-14 + RN-00 a RN-05). NÃO considerar encerrada.
 Preserva: ADR-050 (HTMX antes de AJAX), ADR-053 (Barra Institucional), ADR-054 (SDC First e Layout Builder) e contratos do Portal.
 Plano de pesquisa e fases: `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md`.
 Plano vinculante de substituição visual e classificação: `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md`.
+Plano vinculante de renomeação do Portal: `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`.
 
 ---
 
@@ -124,9 +125,17 @@ A ADR-055 passa a cobrir o ecossistema **UI Patterns + UI Styles + UI Icons + UI
 ## 5. Decisões complementares vinculantes - migração integral (2026-11-10)
 
 1. **Escopo total:** migrar todo modelo de apresentação que ainda não consome UI Suite, em todos os dez domínios e na administração ACULTA. SDCs, Views, Field Group, Layout Builder, formulários, blocos e templates precisam ter mapeamento de consumidores. Não substituir motores funcionais Core/contrib por marcação estática.
-2. **UI Skins como motor visual único:** depois do cutover, paletas e valores de aparência deixam de ser selecionados por `aculta_purpose_palette`, `data-purpose-scheme` e `--aculta-purpose-*`. O Portal conserva o identificador funcional de domínio, mas entrega um `skin_id` e modo de cor por contrato neutro; UI Skins passa a fornecer definições de temas/variáveis. Nenhuma config global do tema é mutada por requisição.
+2. **UI Skins como motor visual único:** depois do cutover, paletas e valores de aparência deixam de ser selecionados por `aculta_purpose_palette`, `data-purpose-scheme` e `--aculta-purpose-*`. O Portal renomeia o identificador funcional de `purpose` para `site_key`, entrega um `skin_id` e modo de cor por contrato neutro, e preserva a resolução de `domain_id`, URL, acesso e cache. UI Skins fornece definições visuais; nenhuma config global do tema é mutada por requisição.
 3. **Depreciação vs obsolescência:** `LEGACY_DEPRECATED` = visual ainda consumido, substituto e prazo de migração rastreados; `LEGACY_OBSOLETE` = visual já substituído, sem consumidores, pronto para limpeza comprovada. `FUNCTIONAL_NATIVE_EXCEPTION` protege Form API, Views, Commerce, VVJ etc. Não esconder SDCs do catálogo.
 4. **UI Patterns Field Group:** preferir `2.0.x-dev@dev`, com pin, auditoria de segurança, compatibilidade Drupal 11.5/12, Field Group e rollback.
 5. **UI Patterns CKEditor 5:** expressamente NÃO usar por agora; não criar piloto nem tarefa bloqueante de implementação. UI Styles CKEditor 5 continua.
-6. **Aceite:** ADR-054 e ADR-055 apenas encerradas após US-14, inventário integral, 10 domínios em 2 modos, testes de cache/permissão/configuração, revisão visual humana e rollback verificável.
+6. **Aceite:** ADR-054 e ADR-055 apenas encerradas após US-14 **e RN-05**, inventário integral, 10 domínios em 2 modos, testes de cache/permissão/configuração, revisão visual humana e rollback verificável.
 7. **Documento normativo da execução:** `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md`. Este adendo prevalece sobre qualquer menção anterior a protótipo UI Patterns CKEditor 5 ou preservação do motor de paletas por purpose.
+
+## 6. Adendo aprovado - Renomeação interna `purpose` para `site_key`
+
+A distinção entre identidade funcional e identidade visual passa a ser obrigatória em todo o ACULTA: **`site_key` é a chave funcional canônica**, **`domain_id` é a entidade Drupal Domain** e **`skin_id` é a identidade visual UI Skins**. Não preservar `purpose` como nomenclatura permanente do Portal. Os valores estáveis `main`, `account`, `support`, `magazine`, `wiki`, `shop`, `courses`, `forum`, `links` e `eventos` não mudam.
+
+A renomeação cobre classes, serviços, métodos, route options, subscribers, form builders, listas de sites ativos, contratos de apresentação e Twig, metadata de cross-domain, retorno ao login em sessão, State e testes. **Não modificar** Domain IDs, slugs/URLs públicas, `field_domain_source`, entidades, conteúdo, regras de acesso ou fluxos de pagamento. Os nomes antigos recebem aliases *internos* temporários e fail-closed quando metadados de rota novo e antigo conflitam; não criar aliases de rota públicos.
+
+Execução em RN-00 a RN-05 conforme `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`. Integrar RN-01 com a ponte visual UI Skins (US-02), migrar todos os consumidores antes de remover APIs obsoletas e exigir RN-05 PASS antes de encerrar US-14. A exclusão de UI Patterns CKEditor 5 e a preferência pelo Field Group `2.0.x-dev@dev` permanecem inalteradas.

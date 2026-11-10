@@ -1,6 +1,6 @@
 # PROMPT DE EXECUCAO - CONCLUIR ADR-054 E ADR-055
 
-Voce e o agente local executor do projeto ACULTA no servidor de desenvolvimento, branch `dev` (origin/dev, repositorio `coletivo420/aculta`). Sua missao e **CONCLUIR TODAS as fases remanescentes da ADR-054 e implementar/encerrar a ADR-055 ampliada**, incorporando UI Suite como arquitetura visual canonica de TODO o site e migrando o sistema visual baseado em purposes para UI Skins.
+Voce e o agente local executor do projeto ACULTA no servidor de desenvolvimento, branch `dev` (origin/dev, repositorio `coletivo420/aculta`). Sua missao e **CONCLUIR TODAS as fases remanescentes da ADR-054 e implementar/encerrar a ADR-055 ampliada**, incorporando UI Suite como arquitetura visual canonica de TODO o site e migrando o sistema visual baseado em purposes para UI Skins **E renomeando os contratos funcionais internos do Portal de `purpose` para `site_key`** (RN-00 a RN-05).
 
 ## 0. Leitura obrigatoria e politica operacional
 
@@ -8,13 +8,13 @@ Antes de agir, faca `git fetch origin`, `git status --short --branch`, registre 
 1. `AGENTS.md` e `web/themes/custom/aculta420_v2/AGENTS.md`, depois `TODO.md` do tema e `docs/operations/ESTADO-DA-SESSAO.md`.
 2. `docs/decisions/ADR-054-refatoracao-aculta420-v2-sdc-layout-builder.md` e `docs/decisions/ADR-055-integracao-ui-icons-ui-styles-page-e-sistema-unificado-de-emojis.md`.
 3. `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md` e relatorios `ACULTA420-V2-P8-HOMOLOGACAO.md`, `ACULTA420-V2-P9-CUTOVER.md`.
-4. `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md` e **`docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md`**.
+4. `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md`, **`docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md`** e **`docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`**.
 5. `docs/architecture/ACULTA-UI-PATTERNS-OTIMIZACAO-UNIVERSAL.md`, `docs/operations/GATES.md`, roadmap e docs de componentes.
 
 Trabalhe DIRETO na `dev`, sem novas PRs/branches, sem force push. Preserve worktrees/commits/trabalho de outros agentes; nunca `reset --hard`, `checkout --` ou `git clean` sobre alteracoes alheias. Use commits atomicos por microfase, push verificado e trailer `Claude-Session` conforme AGENTS. Nao edite Core/contrib diretamente. Edite modulo owner, tema ou adaptadores suportados. Todo codigo em Drupal 11.5 e pronto para 12 quando contratualmente exigido.
 
 **Restricoes irrevogaveis:**
-- **UI SKINS SUBSTITUI A CAMADA VISUAL DE PURPOSES**, seus settings, seletores CSS e paletas. Nao remover `DomainPurposeManager`/`DomainSurfaceMap`/Domain por serem infraestrutura de roteamento/ACL/URLs. O dominio continua identificavel no Portal; o tema deixa de definir aparencia por purpose.
+- **UI SKINS SUBSTITUI A CAMADA VISUAL DE PURPOSES**, seus settings, seletores CSS e paletas. **ALÉM DISSO, o Portal deve renomear integralmente a API funcional `purpose` para `site_key`: `DomainPurposeManager` -> `DomainSiteManager`, `ContentPurposeResolver` -> `ContentSiteResolver`, subscribers, route options, estado, serviços, sessão e contrato com Twig.** Nunca remover suas responsabilidades de roteamento/ACL/URLs nem reimplementar tais responsabilidades em UI Skins. `domain_id` é Drupal Domain, `site_key` é chave funcional, `skin_id` é visual.
 - **PREFERIR UI PATTERNS FIELD GROUP `2.0.x-dev@dev`** e travar o commit no Composer lock. Nao usar beta2 por padrao, e nao ativar sem superar gaps de seguranca/compatibilidade Drupal 12/Field Group instalado. Se a versao dev falhar em gate, registrar BLOCKED_UPSTREAM e fallback sem mascarar a pendencia.
 - **NAO USAR `ui_patterns_ckeditor5` POR AGORA**. Nao instalar, habilitar, configurar, prototipar, embutir SDC em rich text ou declarar como gate de aceite. **`ui_styles_ckeditor5` ESTA NO ESCOPO**, com whitelist de classes e formatos de texto.
 - Manter **100% dos SDCs** descobraveis na UI Patterns Library (internos, reutilizaveis, editoriais e substituidos enquanto existirem). Nao marcar os SDCs atuais como deprecated para esconder a biblioteca.
@@ -23,7 +23,7 @@ Trabalhe DIRETO na `dev`, sem novas PRs/branches, sem force push. Preserve workt
 
 ## 1. US-00 - Estado real do Runtime, dependencias e inventario
 
-Confronte Composer + lock + `core.extension` no Sync + `drush pm:list` + config ativa, para todas as integracoes UI Suite, distinguindo Core Icon API de UI Icons contrib. Registre versoes, APIs, rotas, plugins e estado de instalacao. Valide em runtime o que ja existe, sem confiar em README desatualizado.
+Confronte Composer + lock + `core.extension` no Sync + `drush pm:list` + config ativa, para todas as integracoes UI Suite, distinguindo Core Icon API de UI Icons contrib. **Execute em paralelo RN-00 para inventariar toda a API `purpose`**, inclusive `_aculta_domain_purpose(s)`, `_aculta_cross_domain_canonical_purpose`, state `active_purposes`, sessão `login_destination.purpose`, serviço `aculta_portal.domain_purpose`, render arrays e contratos `domain_presentation`. Registre versoes, APIs, rotas, plugins e estado de instalacao. Valide em runtime o que ja existe, sem confiar em README desatualizado.
 
 Faca inventario de **todos os modelos visuais ativos do site**: `web/themes/custom/aculta420_v2/components/` e `templates/`, CSS/JS, formularios, controllers e render arrays dos modulos, blocos nativos e custom, `views.view.*` (row/style/display), `core.entity_view_display`, `core.entity_form_display`, Field Group, Layout Builder, menus, ckeditor, temas e dez entradas de dominio. Nao confundir API funcional Drupal com apresentacao visual substituivel.
 
@@ -41,9 +41,9 @@ Nao invente contagem ou percentuais. Produza mapa por dominio e cross-domain e r
 
 Estude upstream da versao realmente instalada e mantenha o tema `aculta420_v2` autossuficiente; declarar themes/schemes e CSS variables por API UI Skins oficial. Inventarie `PurposePaletteSchemes`, `SurfaceSettingsHooks::purposePaletteStyle`, `theme-settings.php`, `AppearanceHooks`, `ColorModePreference`, CSS `--aculta-purpose-*`, `data-purpose-scheme`, `aculta_purpose_palette`, `data-theme` e referencias em cada modulo.
 
-Implemente um **resolver no Portal** para mapear Domain ID -> skin_id. O Portal resolve identificador de dominio/skin e preferencia de usuario; UI Skins oferece definicoes e valores visuais; o tema consome tokens sem consultar hostname, entidade ou conta. **UI Skins nativamente aplica configuracao de tema global:** caso nao haja suporte seguro a esquemas por request, crie ponte suportada de escopo de resposta que leia definicoes oficiais; **NUNCA** modifique config global da skin por requisicao.
+**Execute RN-01 antes do contrato final do UI Skins:** introduza `site_key`, o registro de sites e os equivalentes funcionais do Portal, preservando valores e URL. Implemente então um **resolver no Portal** para mapear Domain ID -> skin_id. O Portal resolve identificador de dominio/skin e preferencia de usuario; UI Skins oferece definicoes e valores visuais; o tema consome tokens sem consultar hostname, entidade ou conta. **UI Skins nativamente aplica configuracao de tema global:** caso nao haja suporte seguro a esquemas por request, crie ponte suportada de escopo de resposta que leia definicoes oficiais; **NUNCA** modifique config global da skin por requisicao.
 
-A compatibilidade deve ser migração sombra/double-read: snapshot de paletas e contraste atuais -> Nova UI Skins sem alterar pagina -> piloto Links/LinkWeed com flag reversivel -> 10 dominios, claro/escuro e preferencia de usuario. Fazer teste de cache aquecido A/B e B/A e fallback por skin. Somente apos todos os consumidores migrados, remover seletores, settings, classes e aliases do motor visual antigo. **Nao apagar o proposito de negocio/domínios**. Revalidar CSS calculado, foco e paletas originais.
+A compatibilidade deve ser migração sombra/double-read: snapshot de paletas e contraste atuais -> Nova UI Skins sem alterar pagina -> piloto Links/LinkWeed com flag reversivel -> 10 dominios, claro/escuro e preferencia de usuario. Fazer teste de cache aquecido A/B e B/A e fallback por skin. Somente apos todos os consumidores migrados, remover seletores, settings, classes e aliases do motor visual antigo. **Não apagar as responsabilidades de domínio/negócio: renomeá-las para `site_key` em RN-00 a RN-05.** Revalidar CSS calculado, foco e paletas originais.
 
 ## 3. US-03 a US-08 - Integrações UI Suite completas
 
@@ -62,15 +62,28 @@ Use o inventario para marcar legados `LEGACY_DEPRECATED` enquanto em uso e `LEGA
 
 Nao alterar regra de entidade, access, cacheability, mensagens, Form API, Views, Commerce ou HTMX para "simplificar visual". Nao desligar protecoes. Priorizar reutilizacao de SDC `surface`, `surface-accent`, `surface-panel`, layouts, button, cards, badges, tabs e componentes ja documentados.
 
-## 5. US-14 e P8/P9 - Fechamento completo das duas ADRs
+## 5. US-14, RN-05 e P8/P9 - Fechamento completo das duas ADRs
 
-Revalidar shell de 5 regioes, institution bar, os 10 dominios, Layout Builder 22/24 e exclusoes, Config Sync de blocos/dominios, landing pages (conteudo editorial depende de aceite), cache cross-domain, acesso e rollback; concluir o que for viavel das pendencias da ADR-054. Relacionar cada gate à evidencia (SHA, arquivo, teste, screenshot) e marcar PASS/FAIL/DEFERRED sem inventar.
+Revalidar shell de 5 regiões, institution bar, os 10 domínios, Layout Builder 22/24 e exclusões, Config Sync de blocos/domínios, landing pages (conteúdo editorial depende de aceite), cache cross-domain, acesso e rollback; concluir as pendências executáveis da ADR-054. **A ADR-055 e o fechamento conjunto US-14 exigem RN-05 PASS, inclusive ausência de API `purpose` ativa fora de exceções históricas.** Relacionar cada gate à evidencia (SHA, arquivo, teste, screenshot) e marcar PASS/FAIL/DEFERRED sem inventar.
 
 Gates obrigatorios: PHP lint, PHPCS, PHPStan focal, SDC schema, fronteira tema/modulo, UI Library permissionamento e preview admin-only, Stylelint, Unit/Kernel/Functional/Firefox/Playwright, teste de templates, acessibilidade e compatibilidade. Em navegador: 320, 390, 768, 1024 e 1440 CSS px, zoom 200%, light/dark, teclado/foco, anonimo/editor/admin, 10 dominios, pagina inicial, telas internas e modais, nenhum overflow, vazamento, H1/main duplicado, CSS global desnecessario ou regressao de performance.
 
 Testar export/import e rollback de configuracao **apenas onde houver autorizacao e ambiente isolado**. O pedido de execucao nao autoriza implicitamente `drush cim`, `updatedb`, `pm:uninstall`, `DROP` ou apagamento de dados. Sincronizacao de codigo e `drush cr` no desenvolvimento seguem AGENTS.md. Se um gate nao puder ser executado, registar DEFERRED e impedimento, sem declarar fechamento falso.
 
-## 6. Entrega e comunicacao
+## 6. Renomeação funcional RN-00 a RN-05 (contrato canônico)
+
+**Não se limite a trocar o nome de classes.** Execute as seis microfases do plano `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`, sem alterar Domain IDs, valores das dez chaves, URLs, slugs, entidades ou `field_domain_source`.
+
+- **RN-00:** inventário completo dos callers de `purpose` (código, YAML de rotas/serviços, options, session, State, forms, Twig, cache e testes), baseline HTTP e plano de rollback.
+- **RN-01:** API funcional `site_key`/`DomainSiteManager`/registro de sites, usando fontes atuais, com adaptadores internos temporários sem segunda lógica. Serviços novos e testes com paridade.
+- **RN-02:** `ContentSiteResolver`, `DomainSiteRequestSubscriber`, `SiteFrontPathProcessor`, `DomainRoutePolicy`, opções `_aculta_site_key(s)` e canonical; leitura transitória de chaves antigas **fail-closed em divergência**. Teste de 403/404, privilégios MAIN, alias/URL, login/logout, checkout, redirects e permissões.
+- **RN-03:** `DomainPresentation` e itens `domain_sites`/`showcase` passam a `site_key`; `ActiveSiteKeysState` substitui state antigo com transição idempotente; atualizar variáveis `aculta_site_key` e integração da skin; preservar sessões anteriores e configs até migração autorizada.
+- **RN-04:** migrar todos os consumidores dos submódulos e do tema, proibir novos contratos antigos, remover aliases internos **somente após zero consumidores comprovados**; não criar aliases públicos de rota.
+- **RN-05:** homologar paridade dos 10 sites em acesso, URL, Domain Alias, sessão, State, Cache API, sitemap/index, renderização e fail-closed; rollback em staging isolado e autorizado. Publicar inventário final de APIs legadas e evidências antes de US-14.
+
+**Coordenar US-02 e RN-01/RN-03**: `site_key` representa apenas identidade funcional; `skin_id` representa apenas aparência. UI Skins substitui totalmente as paletas por purpose sem incorporar rotas, acesso ou negócio. Não renomear `domain_id`, `field_domain_source` ou os valores `main/account/...`.
+
+## 7. Entrega e comunicacao
 
 Nao pare em diagnostico: execute as microfases de codigo e testes que puder, em sequencia, sem abrir PR. Commits atomicos e push para origin/dev apos cada microfase; verificar SHA remoto. Atualizar, no mesmo commit pertinente, TODO do componente, `docs/operations/status/aculta420_v2.yml`, ADRs, ROADMAP, changelog, matriz de inventario, rollback e handoff (maximo tres entradas, antigas em docs/history).
 

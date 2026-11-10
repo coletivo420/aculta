@@ -5,6 +5,7 @@ Substitui parcialmente ADR-046 (restricao jQuery), ADR-048 (Layout Builder exclu
 Preserva ADR-047, ADR-050, ADR-053, seguranca, mobile-first, tokens e contratos do Portal.
 Plano original: docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md.
 Plano complementar vinculante: docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md.
+Renomeação dos contratos internos do Portal: docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md (RN-00 a RN-05).
 
 ## Rodada 1 - decisoes
 
@@ -68,8 +69,14 @@ Inventario de blocos e regioes sem orfaos; dez purposes, shell, claro/escuro, mo
 ## Adendo 2026-11-10 - Conclusao vinculada a UI Suite
 
 - A arquitetura SDC First e o Layout Builder das 5 regioes continuam validos. Integrar a migracao UI Suite em todos os consumidores do site, nao so no shell.
-- **UI Skins substitui a identidade visual por purpose**: os antigos controles de paletas, variaveis `--aculta-purpose-*` e estilos por purpose sao depreciados durante a transicao e removidos quando tiverem zero consumidores. Nao apagar `DomainPurposeManager`, que faz identificacao funcional de dominios, rotas, acesso e URL.
+- **UI Skins substitui a identidade visual por purpose**: os antigos controles de paletas, variaveis `--aculta-purpose-*` e estilos por purpose são depreciados e removidos após zero consumidores. **O serviço antigo `DomainPurposeManager` também será renomeado/refatorado para `DomainSiteManager`**, mas todas as suas funções de roteamento, acesso e URL serão preservadas no Portal (RN-00 a RN-05), sem transferência para UI Skins.
 - Para os componentes visuais ainda fora da UI Suite, inventariar e marcar `LEGACY_DEPRECATED` / depreciado ate a substituicao e `LEGACY_OBSOLETE` / obsoleto depois da comprovacao de zero consumidores; evitar esconder SDCs do catalogo universal.
 - Prioridade `2.0.x-dev@dev` para UI Patterns Field Group com verificacao de seguranca/Drupal 12; UI Patterns CKEditor 5 **excluido** da ADR atual. UI Styles CKEditor 5 segue no escopo.
 - Gates finais ADR-054 (homologacao visual, 10 dominios, cache, Config Sync, rollback, landings e displays) compoem a US-14 de fechamento conjunto, com `PASS/FAIL/DEFERRED` explicitamente comprovados.
 - Detalhamento completo em `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md` e `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md`.
+
+## Adendo 2026-11-10 - Identificadores funcionais do Portal
+
+O responsável determinou a renomeação gradual dos identificadores internos `purpose` para **`site_key`**, além da retirada das configurações visuais baseadas em purposes. As dez chaves e Domain IDs permanecem imutáveis; `site_key` identifica a frente funcional, `domain_id` identifica a entidade Drupal Domain e `skin_id` define a aparência via UI Skins. A classe antiga e as rotas de segurança são substituídas por implementações equivalentes, não removidas sem sucessores.
+
+A sequência normativa RN-00 a RN-05 consta de `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`. Gate RN-05 passa a integrar o encerramento conjunto US-14, com testes de HTTP 403/404, redirecionamentos, sessões e cache por domínio. Aliases de serviços podem ser transitórios e inventariados, mas novas rotas públicas de compatibilidade são proibidas.

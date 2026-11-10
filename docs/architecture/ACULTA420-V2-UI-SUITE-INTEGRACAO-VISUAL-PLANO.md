@@ -1,7 +1,7 @@
 # ACULTA420 V2 - Plano de integracao visual integral da UI Suite
 
-**Estado:** PLANEJAMENTO REVISADO; IMPLEMENTAÇÃO PENDENTE (US-00 a US-14). Inclui MIGRAÇÃO INTEGRAL DE LEGADO e substituição do motor visual por purpose por UI Skins.
-**Data de referencia:** 2026-11-10. **Branch alvo:** dev. **Decisoes:** ADR-054 e ADR-055. **Plano de migração obrigatório:** `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md`.
+**Estado:** PLANEJAMENTO REVISADO; IMPLEMENTAÇÃO PENDENTE (US-00 a US-14 + RN-00 a RN-05). Inclui migração integral de visual legado, UI Skins como motor visual e renomeação funcional do Portal de `purpose` para `site_key`.
+**Data de referencia:** 2026-11-10. **Branch alvo:** dev. **Decisoes:** ADR-054 e ADR-055. **Planos obrigatórios:** `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md` e `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`.
 **Owners:** SDC, tokens, variacoes e CSS no tema `aculta420_v2`; regras, dados, acesso, cache e dominio nos modulos proprietarios; registro e configuracao de integracoes no Drupal Core e UI Suite. **Nao e um relatorio de teste do Runtime.**
 
 ## 1. Objetivo e beneficio visual
@@ -53,7 +53,7 @@ Beneficios tangiveis:
 
 ## 4. Modelo de responsabilidades e fronteiras
 
-`Domain / DomainPurposeManager (somente negócio, roteamento, identidade funcional e cache)`
+`Drupal Domain / Portal SiteKeyRegistry + DomainSiteManager (site_key: negócio, roteamento, acesso, URL e cache)`
   -> `resolvedor Portal de skin por domínio + modo pessoal (contrato neutro)`
   -> `UI Skins: themes/schemes e CSS variables como motor visual único`
   -> `UI Styles: opcoes finitas de classes para wrappers e elementos`
@@ -62,7 +62,7 @@ Beneficios tangiveis:
   -> `UI Icons: packs, seletores, menu e componentes`
 
 - O tema não consulta hostname, entidade ou usuário. Contexto, access checks, cache tags e contexts são fornecidos pela origem. UI Skins substitui `--aculta-purpose-*` e `data-purpose-scheme` após migração; `domain_presentation` continua contrato de dados, não de cores. O modo do usuário permanece no Portal mas sua realização visual usa UI Skins.
-- UI Skins NÃO fornece identificação de domínio por host. Implementar uma ponte Portal `domain_id -> skin_id` que consome definições UI Skins sem alterar configurações globais do tema por requisição; preservar acesso, URL, contexto `domain` e preferências pessoais. O antigo sistema visual de purpose deve ser efetivamente retirado após corte seguro.
+- UI Skins NÃO fornece identificação de domínio por host. Implementar uma ponte Portal `domain_id -> skin_id` que consome definições UI Skins sem alterar configurações globais do tema por requisição; preservar acesso, URL, contexto `domain` e preferências pessoais. Paralelamente, renomear o contrato funcional de `purpose` para `site_key` em RN-00 a RN-05, sem alterar valores nem políticas.
 - As cinco regioes do shell e a barra institucional sao imutaveis neste escopo; Layout Builder altera somente composicao de conteudos e displays elegiveis.
 - UI Styles nunca habilita edicao livre de CSS nem substitui classes semanticas. Classes do editor sao apenas as permitidas pelo formato de texto.
 - Componentes SDC permanecem descobraveis; autorizacao para **editar** uma instancia, visualizar dados reais ou inserir um widget editorial depende do consumidor e do perfil, nao do catalogo.
@@ -74,7 +74,7 @@ Beneficios tangiveis:
 ### 5.1 UI Skins - substituição do motor visual por purpose
 
 - Fonte visual canônica: `{provider}.ui_skins.themes.yml` e `{provider}.ui_skins.css_variables.yml`, depois de confirmar o schema/API instalados. Converter `PurposePaletteSchemes`, `aculta_purpose_palette`, `data-purpose-scheme` e `--aculta-purpose-*` para skins e CSS vars sem duplicar a lógica.
-- `DomainPurposeManager` continua apenas como domínio/negócio/URLs; o novo resolvedor Portal mapeia **Domain ID -> skin_id**, com fallback. Tema não consulta hostname e não muda configuração global do tema por request.
+- As responsabilidades de `DomainPurposeManager` migram para **`DomainSiteManager` + registro `site_key`** no Portal; o resolvedor visual separado mapeia **`domain_id -> skin_id`**, com fallback. O nome `DomainPurposeManager` é apenas compatibilidade temporária até RN-05. Tema não consulta hostname e não muda configuração global do tema por request.
 - UI Skins oferece temas e CSS variables nas configurações do tema, mas **não oferece, por si só, domínio -> skin por request**. Testar API e construir ponte de escopo de resposta sem mutação global e com `cache:contexts:domain`; não criar segunda paleta proprietária.
 - `ColorModePreference` ainda resolve a preferência do usuário; UI Skins passa a ser o motor visual que entrega light/dark. Conferir precedência `usuário > default do site` e caches `domain`/`user`.
 - Fazer migração sombra/dual-read, piloto Links, rollout dos dez domínios, remoção de leitores e formulário de purposes visuais só após zero consumidores. Manter rollback e snapshots de CSS computado (20 combinações mínimas).
@@ -213,10 +213,11 @@ Em todos os casos: layout claro e escuro, breakpoint 320/390/768/1024/1440 px, z
 - Comprovar cada equivalência visual, permitir rollback; marcar legado `deprecated` enquanto consumido e `obsolete` depois do último consumidor. Só limpar após zero uso e testes.
 - **Gate:** ausência de wrappers/caixas/cartões visuais proprietários ainda ativos sem classificação; matriz antes/depois e CSS/JS não carregados inutilmente.
 
-### US-14 - Fechamento conjunto das ADR-054 e ADR-055
+### US-14 - Fechamento conjunto das ADR-054 e ADR-055 (dependente de RN-05)
 - Reexecutar os gates pendentes P8/P9 da ADR-054, incluindo revisão visual humana, Config Sync/staging, cache cruzado, landings por domínio, dois displays excluídos e integridade das cinco regiões.
 - Validar UI Skins como motor visual único, UI Suite em toda superfície visual viável, inventário deprecado/obsoleto e versão dev Field Group avaliada.
 - Auditoria final: 10 domínios x light/dark, 320/390/768/1024/1440, zoom 200%, teclado, autenticação, Form API, WCAG, acessos, cache, Config Sync/Composer lock, rollback e performance.
+- **Obrigatório RN-05 PASS:** 100% dos consumidores de `purpose` funcionais migrados a `site_key`; Domain IDs, URLs, regras de rotas, sessão de login e site list preservados, sem aliases antigos ativos nem vazamento cross-domain.
 - Não incluir UI Patterns CKEditor 5 como bloqueio. Marcar `DEFERRED` caso qualquer gate não seja executado, atualizar status/roadmaps/ADRs apenas com evidência.
 - **Gate:** aceite documentado do responsável, zero regressão crítica, nenhuma duplicidade de fonte visual, e matriz de pendências efetivamente encerrada.
 
@@ -240,3 +241,11 @@ Cada microfase tem: diff isolado, IDs de config alterados, teste/resultado com P
 - https://www.drupal.org/project/ui_patterns_field_group
 
 **Nota:** documentos de UI Patterns 1.x no Drupal.org nao sao referencia normativa para a API 2.x; usar a documentacao dedicada 2.x acima.
+
+## 10. Nova trilha RN-00 a RN-05: nomes internos funcionais do Portal
+
+O responsável aprovou também substituir a nomenclatura `purpose` em todo o Portal. O destino canônico passa a ser **`site_key`**, distinto de **`domain_id`** (entidade Drupal Domain) e **`skin_id`** (UI Skins). Preservar os dez valores de chave e todos os Domain IDs, URLs e conteúdos.
+
+O plano detalhado encontra-se em `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`: RN-00 inventário, RN-01 API/compatibilidade, RN-02 rotas e segurança, RN-03 apresentação/state/sessão, RN-04 retirada segura de APIs legadas, RN-05 homologação. A RN-01 deve anteceder a integração final da US-02; **a US-14 não encerra ADR-054/055 sem RN-05 PASS**.
+
+Tratar transições de `_aculta_domain_purpose`, `_aculta_domain_purposes`, `DomainPurposeManager`, `ContentPurposeResolver`, `DomainPurposeRequestSubscriber`, `ActivePurposesState`, `domain_presentation.identity.purpose`, `domain_sites[*].purpose` e sessão `login_destination['purpose']` como possíveis breaking changes; manter adaptadores internos temporários, negar conflitos de metadados de rota e testar cache/ACL. Não alterar nomes de rotas públicas nem transferir roteamento para UI Skins.
