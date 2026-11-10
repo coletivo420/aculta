@@ -204,7 +204,7 @@ O catálogo sinaliza heurísticas, não condenações. Nesta rodada:
 | Unit | PASS completa (3271/17535) | executável sem banco |
 | Kernel | recorte PASS: aculta_mailer 46/214; suíte completa interrompida por timeout | 249 arquivos instalam esquema por teste e um teste bloqueia a execução; o CI roda a suíte completa com MariaDB 10.11 |
 | Functional (3) | DEFERRED | exige SIMPLETEST_BASE_URL/servidor HTTP, indisponível nesta sessão |
-| FunctionalJavascript (1) | DEFERRED | exige WebDriver/navegador controlado |
+| FunctionalJavascript (1) | executou | HtmxF0DialogTest rodou com Firefox ESR + geckodriver (DISPLAY=:0); a falha do runner é ruído de deprecations de contrib (role_hierarchy, webform_score, 52 Symfony), não asserção |
 | Performance (4) | PASS por skip opt-in | sem banco, pulam em ~3 s |
 
 Nenhum resultado foi inventado: o que não rodou está marcado como DEFERRED ou
