@@ -1,31 +1,34 @@
 # ACULTA420 V2 — P5: landing pages por purpose (estado e bloqueio)
 
-**Data:** 2026-11-09 · **Estado:** PARCIAL — composição SDC da landing Links entregue no tema; Layout Builder por purpose **DEFERRED** (depende de conteúdo editorial e importação de configuração em ambiente isolado).
+**Data:** 2026-11-09 · **Estado:** piloto Links **entregue e validado** nos shells clássico e v2. As dez landings por purpose dependem de conteúdo editorial para cada purpose.
 
 ## 0. Entregue nesta fase
 
-- O tema passou a sobrescrever `aculta-links-landing.html.twig` e compõe a landing com o layout SDC `aculta420_v2:layout-section` (slot `header` para a descrição e slot `content` para os links).
-- Os dados, o acesso e o cache continuam no `aculta_linkweed`; o tema só apresenta.
-- Verificado nos shells clássico e v2: HTTP 200 no host Links, 1 H1, 1 `<main>` e `.layout-section` presente.
-- O `LinksLandingController` não foi alterado; a variante de nó com `field_domain_source` continua funcionando.
-- Layout Builder foi habilitado no lote inicial de conteúdo (`node.page.full`, `node.revista.full`, `node.wiki_entry.full`, `node.aculta_faq.default`) com autorização do responsável. **Não existe nó `page` com `field_domain_source` do Links**, então a landing continua no controller e no layout SDC; criar esse nó é decisão editorial.
-- O display `node.page.full` tem `allow_custom: true` (exceção justificada: landing pages precisam de composição por nó). O override por nó foi testado no nó 6 (`/institucional`): seção de Layout Builder com o corpo renderizou o texto e o layout `onecol`; o override foi removido em seguida. O `LinksLandingController` continua renderizando o nó no view mode `full`, portanto qualquer nó de landing criado poderá ter sua própria composição no LB.
+- O tema sobrescreve `aculta-links-landing.html.twig` e compõe a variante gerada com `aculta420_v2:layout-section`.
+- A landing editorial do Links foi criada no desenvolvimento: nó `page` **635**, título **Links da ACULTA**, `field_domain_source = links_aculta_org`, alias `/redes-sociais`, publicado.
+- Composição no Layout Builder em duas seções SDC (`ui_patterns:aculta420_v2:layout_section`):
+  1. apresentação e chamada (campo `body`, formato `aculta_editorial`) + links sociais (campo `field_social_links`, Instagram real);
+  2. apoio (`aculta_donation_quick`) + documentos institucionais (`views_block:aculta_documents-block_1`) + menu institucional (`system_menu_block:aculta-footer-institution`, com URLs absolutas para o MAIN).
+- `node.page.full` tem `allow_custom: true`; o override por nó foi testado e comprovado via HTTP autenticado.
+- Validação: 35 checks Playwright em 320/390/768/1024/1440 px, claro e escuro, shells clássico e v2; 1 H1, 1 `<main>`, sem rolagem horizontal, duas seções, Instagram, apoio e links absolutos para o MAIN.
+- **Os dados editoriais (nó 635 e alias) vivem no banco do desenvolvimento, não no Git.** O conteúdo deve ser revisado pelo responsável antes de qualquer promoção.
 
 ## 1. O que o código faz hoje
 
 - Cada purpose tem um host e um caminho de entrada em `DomainSurfaceMap::FRONT_PATHS` (`/apoio`, `/wiki`, `/cursos`, `/loja`, `/discussoes`, `/redes-sociais`, `/eventos`); `main` e `magazine` servem a raiz.
 - A raiz do host é resolvida pelo Portal (Domain + `aculta_domain_config`), não pelo tema. O tema recebe `aculta_purpose` e `domain_presentation` e não compara hostname.
 - O piloto Links usa `LinksLandingController`: se houver um nó `page` com `field_domain_source` do domínio, renderiza esse nó no view mode `full`; caso contrário, monta a landing gerada a partir dos links sociais (`aculta_linkweed.social_links`).
-- Nenhum dos 95 displays do Config Sync tem Layout Builder habilitado (`scripts/audit-aculta420-v2-inventory.php`). O `ui_patterns_layouts` 2.0.23 descobre os seis layouts SDC do tema, mas a composição por display ainda não foi habilitada.
-- A ponte `aculta_domain_config` aplica overrides de configuração de `block.block.*` por domínio. Ela **não** aplica overrides de `core.entity_view_display` nem de `layout_builder__layout`; essa compatibilidade não está demonstrada.
+- O lote inicial do P4 habilitou Layout Builder em 22 displays. O `ui_patterns_layouts` 2.0.23 descobre os seis layouts SDC do tema.
+- A ponte `aculta_domain_config` aplica overrides de configuração de `block.block.*` por domínio. Ela **não** aplica overrides de `core.entity_view_display` nem de `layout_builder__layout`; por isso a composição por landing usa um nó por purpose com override nativo no Layout Builder.
 
-## 2. Por que não foi executado agora
+## 2. O que foi executado
 
-1. A composição de cada landing é decisão editorial (quais seções, em que ordem, com quais blocos e conteúdo real). Criar conteúdo fictício violaria a regra das prévias e do projeto.
-2. Habilitar Layout Builder em um display altera `core.entity_view_display.*` no Config Sync. A importação exige ambiente isolado, teste de renderização e rollback; não se executa `drush cim` no Runtime de desenvolvimento com drift.
-3. No caso do Links, a rota atual é atendida por controller. Layout Builder só se aplica a um display de entidade; é preciso antes definir se a landing Links será um nó `page` com `field_domain_source` (composição por display) ou uma composição própria do controller.
+1. O responsável aprovou as seções da landing Links: apresentação e chamada, links sociais, apoio e institucional/transparência.
+2. O nó 635 foi criado publicado no host Links, com alias `/redes-sociais`, corpo no formato `aculta_editorial`, Instagram real no campo de links sociais e duas seções SDC no Layout Builder.
+3. O `node.page.full` recebeu `allow_custom: true` e o override por nó foi comprovado por HTTP autenticado.
+4. A landing foi validada nos shells clássico e v2, claro e escuro, em cinco larguras, sem overflow e com 1 H1/1 `<main>`.
 
-## 3. Mecanismo recomendado (quando o bloqueio for removido)
+## 3. Mecanismo para os demais purposes
 
 **Fonte explícita:** um nó `page` por purpose, com `field_domain_source` apontando para o domínio e `layout_builder` habilitado no display `full` desse bundle. O Portal já usa esse padrão no `LinksLandingController` para a variante de nó.
 
@@ -51,6 +54,6 @@ Fluxo por purpose:
 
 ## 5. Próximos passos concretos
 
-1. Definir com o responsável o conteúdo de cada landing (especialmente Links).
-2. Preparar o view mode/display e a configuração de Layout Builder em ambiente isolado.
-3. Importar, testar e só então avaliar a expansão para os outros nove purposes.
+1. Revisar o conteúdo editorial da landing Links (nó 635) com o responsável e publicar a redação final.
+2. Repetir a mesma composição para os demais purposes, um por vez, com nó `page` + `field_domain_source` e override próprio no Layout Builder.
+3. Manter o fallback do controller para purposes sem landing editorial.

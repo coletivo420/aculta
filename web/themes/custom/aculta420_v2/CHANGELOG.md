@@ -1,3 +1,10 @@
+## Não versionado — ADR-054 P5 landing Links publicada no dev (2026-11-09)
+
+- Nó 635 "Links da ACULTA" publicado no host Links, alias `/redes-sociais`, com duas seções SDC no Layout Builder: apresentação + links sociais; apoio + documentos institucionais + menu institucional com URLs absolutas para o MAIN.
+- `node.page.full` com `allow_custom: true` e override por nó comprovado.
+- Playwright: 35 checks em 320/390/768/1024/1440, claro/escuro, shells clássico e v2, 0 falhas (1 H1, 1 `<main>`, sem overflow).
+- Conteúdo editorial vive no banco do desenvolvimento, não no Git; revisão de redação pendente.
+
 ## Não versionado — ADR-054 P5 mecanismo de landing por nó (2026-11-09)
 
 - `node.page.full` passa a ter `allow_custom: true` (exceção para landing pages), permitindo composição própria por nó no Layout Builder.

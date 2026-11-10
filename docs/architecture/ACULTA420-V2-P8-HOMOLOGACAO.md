@@ -82,6 +82,7 @@ A suíte de 86 checks foi repetida após a restauração dos blocos de cabeçalh
 | `global-styling` local | Caiu de 268.036 para **107.609 bytes (−60%)**; `statistics`, `studio`, `portal-account`, `public-profile`, `event-organization`, `events`, `wiki` e `forum` são contextuais por rota |
 | Escopo por CSS servido | `event-organization` ausente na home e presente em Eventos; `wiki` ausente na home e presente na Wiki; `forum` ausente na home e presente no Fórum; `portal-account`/`studio` presentes em `/conta` autenticado; `public-profile` presente no perfil público |
 | Drift de blocos de cabeçalho | `main_menu`, `page_title`, `site_branding`, `help` e `breadcrumbs` estavam no Config Sync e ausentes da config ativa (cache mascarava). Restaurados do Sync; home com 1 H1, menu e marca presentes. `institution_bar` segue só na config ativa. |
+| Landing Links no Layout Builder | Nó 635 publicado com alias `/redes-sociais`, duas seções SDC, links sociais reais, apoio, documentos e menu institucional com URLs absolutas para o MAIN. Playwright: 35 checks em cinco larguras, claro/escuro, shells clássico e v2, 0 falhas. |
 
 ## 5. DEFERRED (com causa)
 
