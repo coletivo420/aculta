@@ -70,7 +70,7 @@ final class SurfaceSdcComponentsTest extends UnitTestCase {
 
     self::assertArrayHasKey('position', $props);
     self::assertEqualsCanonicalizing(
-      ['start', 'top', 'full'],
+      ['start', 'end', 'top', 'full'],
       $props['position']['enum']
     );
 

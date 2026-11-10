@@ -10,11 +10,11 @@
 {% endif %}
 
 {% set position = position|default('top') %}
-{% if position not in ['start', 'top', 'full'] %}
+{% if position not in ['start', 'end', 'top', 'full'] %}
   {% set position = 'top' %}
 {% endif %}
 
-{# Para as variantes unitárias verde, amarela e vermelha, a referência visual clássica é na lateral esquerda (start) #}
+{# Para as variantes unitárias verde, amarela e vermelha, a referência padrão é na lateral esquerda (start), a menos que explicitamente configurada como 'end' #}
 {% if accent in ['green', 'yellow', 'red'] and position == 'top' %}
   {% set position = 'start' %}
 {% endif %}

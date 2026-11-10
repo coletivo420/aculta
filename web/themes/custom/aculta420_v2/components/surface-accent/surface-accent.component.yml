@@ -15,10 +15,10 @@ props:
       description: '`green`, `yellow`, `red` aplicam faixa lateral; `tricolor` aplica faixa contínua verde/amarela/vermelha; `neutral` aplica a faixa tricolor superior fina.'
     position:
       type: string
-      enum: [start, top, full]
+      enum: [start, end, top, full]
       default: top
       title: Posição do destaque
-      description: Posição geométrica do destaque (lateral início ou faixa superior).
+      description: Posição geométrica do destaque (lateral início/esquerda, lateral fim/direita ou faixa superior).
     tone:
       type: string
       enum: [canvas, raised, subtle, institution]

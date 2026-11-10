@@ -128,7 +128,7 @@
   z-index: 1;
 }
 
-/* 1. Molduras unitárias com ênfase na lateral esquerda (start) */
+/* 1. Molduras unitárias com ênfase na lateral esquerda (start) ou direita (end) */
 .aculta-surface-accent--pos-start {
   display: flex;
 }
@@ -138,6 +138,48 @@
   flex: 0 0 1.25rem; /* ~20px de faixa destacada conforme referências */
   inline-size: 1.25rem;
   align-self: stretch;
+}
+
+.aculta-surface-accent--pos-end {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.aculta-surface-accent--pos-end .aculta-surface-accent__stripe {
+  position: static;
+  flex: 0 0 1.25rem; /* ~20px de faixa destacada na lateral direita */
+  inline-size: 1.25rem;
+  align-self: stretch;
+}
+
+/* Moldura tricolor na lateral direita (03_bloco_tricolor_direita.png) */
+.aculta-surface-accent--tricolor.aculta-surface-accent--pos-end .aculta-surface-accent__stripe {
+  position: static;
+  flex: 0 0 1.25rem;
+  inline-size: 1.25rem;
+  align-self: stretch;
+  background: linear-gradient(
+    to bottom,
+    var(--palette-red, #d4452d) 0%,
+    var(--palette-red, #d4452d) 16%,
+    var(--color-brand-highlight, #f2ca36) 16%,
+    var(--color-brand-highlight, #f2ca36) 34%,
+    var(--palette-green, #689427) 34%,
+    var(--palette-green, #689427) 100%
+  );
+}
+
+[data-theme="dark"] .aculta-surface-accent--tricolor.aculta-surface-accent--pos-end .aculta-surface-accent__stripe,
+:root[data-theme="dark"] .aculta-surface-accent--tricolor.aculta-surface-accent--pos-end .aculta-surface-accent__stripe {
+  background: linear-gradient(
+    to bottom,
+    var(--accent-red-stripe, #e7bcb8) 0%,
+    var(--accent-red-stripe, #e7bcb8) 16%,
+    var(--accent-yellow-stripe, #f2ca36) 16%,
+    var(--accent-yellow-stripe, #f2ca36) 34%,
+    var(--accent-green-stripe, #689427) 34%,
+    var(--accent-green-stripe, #689427) 100%
+  );
 }
 
 /* Cores das molduras unitárias */
@@ -169,7 +211,7 @@
   background-color: var(--accent-red-stripe, #e7bcb8);
 }
 
-/* 2. Moldura tricolor contínua (03_bloco_tricolor.png) */
+/* 2. Moldura tricolor contínua no topo (03_bloco_tricolor.png) */
 /* Topo com faixa verde predominante, seguida de amarelo e vermelho,
    e contorno lateral esquerdo com continuidade verde */
 .aculta-surface-accent--tricolor.aculta-surface-accent--pos-top,
@@ -185,7 +227,8 @@
   border-inline-start-color: var(--accent-green-stripe, #689427);
 }
 
-.aculta-surface-accent--tricolor .aculta-surface-accent__stripe {
+.aculta-surface-accent--tricolor.aculta-surface-accent--pos-top .aculta-surface-accent__stripe,
+.aculta-surface-accent--tricolor.aculta-surface-accent--pos-full .aculta-surface-accent__stripe {
   inset-block-start: 0;
   inset-inline-start: 0;
   inset-inline-end: 0;
@@ -201,8 +244,10 @@
   );
 }
 
-[data-theme="dark"] .aculta-surface-accent--tricolor .aculta-surface-accent__stripe,
-:root[data-theme="dark"] .aculta-surface-accent--tricolor .aculta-surface-accent__stripe {
+[data-theme="dark"] .aculta-surface-accent--tricolor.aculta-surface-accent--pos-top .aculta-surface-accent__stripe,
+[data-theme="dark"] .aculta-surface-accent--tricolor.aculta-surface-accent--pos-full .aculta-surface-accent__stripe,
+:root[data-theme="dark"] .aculta-surface-accent--tricolor.aculta-surface-accent--pos-top .aculta-surface-accent__stripe,
+:root[data-theme="dark"] .aculta-surface-accent--tricolor.aculta-surface-accent--pos-full .aculta-surface-accent__stripe {
   background: linear-gradient(
     to right,
     var(--accent-green-stripe, #689427) 0%,
