@@ -7,6 +7,12 @@ Plano original: docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md
 Plano complementar vinculante: docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md.
 Renomeação dos contratos internos do Portal: docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md (RN-00 a RN-05).
 
+## Cutover UI Suite e estado do piloto — 2026-11-10
+
+Após snapshot e autorizações explícitas para `updatedb` e `config:import`, foram migrados flood e settings de confirmação para os módulos proprietários; UI Styles CKEditor 5 foi ativado e a View de categorias do Fórum passou a usar `forum-category`. O mapa UI Skins ativo está deliberadamente limitado a `links_aculta_org: ruderalis`; demais domínios resolvem `skunk` provisório. Não há configuração visual antiga como fallback.
+
+Validações executadas: UI Skins 134 checks, theme settings 16, V2 foundations 83 pares de contraste e Portal Drupal 12 gate 1.243 checks PASS. Browser visual, CSS calculado, contraste do piloto, cache cruzado, teclado e zoom permanecem DEFERRED porque a sessão X11 não está disponível. As ADRs permanecem abertas.
+
 ## Rodada 1 - decisoes
 
 1. jQuery 4 liberado amplamente em modulos ACULTA, anexado via core/jquery por biblioteca, sem duplicar a distribuicao do Core.

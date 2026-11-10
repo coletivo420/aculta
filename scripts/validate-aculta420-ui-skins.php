@@ -87,9 +87,20 @@ foreach ($definitions as $id => $definition) {
 if (($mapping['domains'] ?? NULL) !== ($installMapping['domains'] ?? NULL)) {
   $fail('Config Sync e configuração default do Portal divergem.');
 }
-if (count($mapping['domains'] ?? []) !== 10 || count(array_diff($mapping['domains'], $expectedSkins)) !== 0) {
-  $fail('Mapeamento deve cobrir os dez Domain IDs com skin IDs permitidos.');
+$plannedDomains = [
+  'aculta_org', 'conta_aculta_org', 'apoio_aculta_org', 'revista420_aculta_org',
+  'wiki420_aculta_org', 'loja_aculta_org', 'cursos_aculta_org',
+  'forum_aculta_org', 'links_aculta_org', 'eventos_aculta_org',
+];
+$activeDomains = array_keys($mapping['domains'] ?? []);
+if ($activeDomains !== ['links_aculta_org'] || count(array_diff($mapping['domains'], $expectedSkins)) !== 0) {
+  $fail('O rollout ativo deve limitar-se ao piloto Links; os demais domínios avançam após homologação.');
 }
+$checks++;
+if (count($plannedDomains) !== 10 || !in_array('links_aculta_org', $plannedDomains, TRUE)) {
+  $fail('A matriz planejada de Domain IDs deve conter os dez domínios e o piloto Links.');
+}
+$checks++;
 $legacy = [
   'aculta_purpose_palette',
   'data-purpose-scheme',

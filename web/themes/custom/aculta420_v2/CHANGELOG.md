@@ -52,6 +52,18 @@
   contraste/capturas e aceite visual seguem pendentes. ADRs continuam abertas.
 - Sincroniza `ui_styles_page` no `core.extension.yml`, refletindo sua ativação já existente no Runtime; estilos regionais e captura autenticada permanecem pendentes.
 
+## Não versionado — cutover de configuração UI Suite e rollout Links (2026-11-10)
+
+- Migra settings de flood e confirmação de e-mail para os módulos proprietários,
+  habilita UI Styles CKEditor 5 e integra `forum-category` na View de categorias.
+- Import parcial aplicado após snapshot e autorizações para `updatedb`/`cim`;
+  valores migrados foram verificados e as chaves antigas não existem mais.
+- Mapa UI Skins ativo apenas para Links → Ruderalis; os demais domínios usam o
+  default Skunk até comparação visual do piloto. Gates UI Skins (134), painel do
+  tema (16), foundations (83 contrastes) e Portal (1.243) PASS.
+- Aceite no navegador, CSS calculado e isolamento de cache DEFERRED: sessão X11
+  não estava disponível. Gate de comércio falha no rótulo público do login.
+
 ## Não versionado — dependências reproduzíveis da UI Suite (2026-11-10)
 
 - Adiciona `drupal/ui_skins:^1.2` e `drupal/ui_icons:^2.1` como dependências diretas do Composer após `composer install` limpo demonstrar que ambos não estavam no lock.

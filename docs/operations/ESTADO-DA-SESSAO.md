@@ -1,11 +1,12 @@
-# ADR-054/055 — migração de ownership para desbloquear UI Suite — 2026-11-10
+# ADR-054/055 — cutover UI Suite e piloto Links — 2026-11-10
 
-- **Objetivo/estado:** rechecagem apontou dependências de `aculta_forum_lms` antigas no DB e configs simples com IDs de módulos consolidados. Código agora tem post-updates que movem `aculta_contributions.settings` → `aculta_cgu.settings` e `aculta_mail_confirmer_user.settings` → `aculta_mail_confirmer.settings`, removendo os IDs antigos. Plug-in H5P usa o namespace proprietário atual.
-- **Decisões/cuidados:** valores antigos são copiados para os destinos sem fallback; rollback é restauração do snapshot pré-update. Não reativar módulos removidos nem tocar nos diffs paralelos de LMS.
-- **Arquivos:** post-updates, schemas, Sync, consumidores, testes Kernel, TODO/status, ADRs/plano e inventário CGU; staged revisado, sem arquivos LMS paralelos.
-- **Verificações:** Kernel focal 2 testes/9 assertions PASS; PHPStan e gate Portal Drupal 1.243 PASS; suites/index PASS; PHPCS zero erros (warnings preexistentes); token budget FAIL (7 globais); comércio Runtime aguarda migration.
-- **Pendências:** autorização `updatedb` recebida; gerar snapshot integral atualizado, publicar código, rodar post-updates, conferir valores/remoção e revisar import parcial das configurações UI Suite/Views.
-- **Próximo passo:** concluir gates, commit/push, snapshot, `updatedb`, depois preview e import parcial autorizado; validar Views/skins/CKEditor no Runtime.
+- **Objetivo:** migrar ownership de configurações e iniciar UI Skins no Runtime com rollout Links.
+- **Estado:** snapshot íntegro validado; `updatedb` executou três updates e import parcial aplicou 12 objetos, seguido de import apenas do mapa Links. UI Styles CKEditor 5 ativo; Forum categories usa `forum-category`; mapa é só `links_aculta_org: ruderalis`, os outros domínios usam `skunk` provisório. Valores migrados preservados e IDs antigos ausentes.
+- **Decisões/cuidados:** sem fallback visual legado conforme instrução do responsável; não tocar nos diffs paralelos do Messenger nem `web/tmp`.
+- **Commits/arquivos:** código de migração `d3e5c32d0`; esta entrega altera mapa Sync/default, gate UI Skins, ADRs, status e changelog.
+- **Verificações:** UI Skins 134, theme settings 16, foundations 83 pares e Portal Drupal 12 1.243 PASS; `drush cr` PASS. Browser/contraste/cache DEFERRED sem DISPLAY X11. Gate de comércio FAIL no rótulo público de login.
+- **Pendências:** corrigir/confirmar o rótulo de login; executar piloto Links no Firefox com modos, dimensões e cache antes de expandir domínios; completar migração integral US/RN.
+- **Próximo passo:** preparar sessão X11/browser e medir `data-skin`, tokens calculados e cache por domínio em Links; então decidir expansão do mapa.
 
 # UI Skins — extensão Sync e limpeza da chave antiga — 2026-11-10
 
