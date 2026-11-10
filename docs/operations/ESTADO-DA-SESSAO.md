@@ -1,11 +1,11 @@
-# ADR-055 - Pesquisa de integracao integral UI Suite (US-00 a US-11) - 2026-11-10
+# ADR-054 + ADR-055 - Migracao integral visual e UI Skins - 2026-11-10
 
-- **Objetivo:** ampliar a ADR-055 para incorporar UI Skins; UI Styles CKEditor 5, Entity Status e Page; UI Patterns Views, Layouts, Field Group e proposta CKEditor 5; UI Icons Menu/Picker/Popover e catalogo Fluent Emoji, preservando ADR-054.
-- **Estado:** PESQUISA E PLANEJAMENTO PUBLICADOS, sem nova implantacao. Plano: `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md`. ADR-055 atualizada; README, TODO e status YAML do tema conciliados.
-- **Evidencias:** revisao direta de `composer.json`, `config/sync/core.extension.yml`, manifestos do tema e componentes do Git; pesquisa upstream UI Suite, UI Patterns 2, UI Styles 1.22, UI Skins 1.2.1, UI Icons 2.1 e Field Group 2.0.0-beta2.
-- **Achados:** Layouts/Views ja presentes no Sync; UI Skins, UI Icons contrib, UI Styles CKEditor 5/Entity Status/Page, Field Group e UI Patterns CKEditor 5 sem habilitacao comprovada pelo Sync. Field Group beta sem cobertura de seguranca/Drupal 12; widgets CKEditor 5 sem allowlist por formato e preview sem assets, segundo upstream.
-- **Verificacoes:** auditoria documental e fontes publicas somente. **Nenhum** Composer install, Drush, configuracao ativa, browser, Unit ou staging executados nesta tarefa. Runtime STATUS: DEFERRED.
-- **Proximo passo:** US-00 inventario reproduzivel e matriz de risco; US-01 decisao de versoes; executar cada pacote isoladamente com gates, preservando dados e trabalho paralelo.
+- **Objetivo:** complementar as ADR-054 e ADR-055 para substituir a camada visual antiga por UI Skins e migrar TODO o visual legado para UI Suite, com classificacao obrigatoria deprecado/obsoleto.
+- **Decisoes:** UI Skins passa a ser fonte visual unica por dominio; `DomainPurposeManager` continua apenas para roteamento, acesso, URLs, dados e cache. Preferir `ui_patterns_field_group:2.0.x-dev@dev` com gates de seguranca/Drupal 12. `ui_patterns_ckeditor5` expressamente fora desta rodada; `ui_styles_ckeditor5` permanece.
+- **Entregas documentais:** `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md`, plano US-00 a US-14 revisto, ADR-054/055 reconciliadas, politica de catalogo/deprecacao e prompt `docs/architecture/ACULTA-ADR054-055-PROMPT-AGENTE-EXECUCAO.md`; TODO, README e status do tema sincronizados.
+- **Evidencias:** leitura do codigo de `DomainPurposeManager`, `SurfaceSettingsHooks`, `AppearanceHooks`, `theme-settings.php`, manifestos e Config Sync, mais pesquisas upstream UI Skins e Field Group. Nao houve instalacao, mudanca de configuracao ativa ou alteracao de codigo funcional.
+- **Gates:** auditoria documental apenas, testes Runtime/Drupal/Browser **DEFERRED**, nao PASS.
+- **Proximo passo:** executar US-00 inventario real, US-02 ponte UI Skins/domínio e US-12 classificacao integral, depois migracoes por area e encerramento US-14 com aceite visual e validações.
 
 # Skills Drupal e UI Suite — 2026-11-10
 

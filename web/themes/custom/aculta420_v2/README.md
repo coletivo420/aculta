@@ -2,7 +2,7 @@
 
 Tema Drupal da ACULTA em **Single Directory Components (SDC)**, nativo, sem Bootstrap, sem Vite e sem Node. É o tema padrão e exclusivo do portal, desenvolvido com base no design system autônomo e mobile-first. A versão legada V1 foi purgada.
 
-Planejamento normativo: `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md` (ADR-054), acrescido de `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md` (ADR-055 integral, US-00 a US-11 planejado). A opção administrativa de container foi removida; a leitura dos valores legados permanece durante a migração paralela.
+Planejamento normativo: `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md` (ADR-054), acrescido de `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md` (ADR-055 integral, US-00 a US-14 planejado; migração visual integral em `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md`). A opção administrativa de container foi removida; a leitura dos valores legados permanece durante a migração paralela.
 
 Para quem vai mexer no tema, leia nesta ordem:
 
@@ -22,7 +22,7 @@ Decisões que governam o tema estão em `docs/decisions/` na raiz do repositóri
 | ADR-046 | Desenho do tema V2: UI Styles, shell e fundações primeiro, mobile-first |
 | ADR-047 | Menu de conta fixo na barra institucional |
 | ADR-054 | Arquitetura SDC First, Layout Builder, dez purposes e retirada da administração de container |
-| ADR-055 | Integração integral UI Suite: UI Patterns, UI Styles, UI Icons, UI Skins e Fluent Emoji; novas microfases planejadas |
+| ADR-055 | Integração integral UI Suite: UI Skins substitui o visual por purpose; migração site-wide e classificação depreciado/obsoleto; Field Group dev; UI Patterns CKEditor 5 excluído |
 
 ## Estado em uma frase
 

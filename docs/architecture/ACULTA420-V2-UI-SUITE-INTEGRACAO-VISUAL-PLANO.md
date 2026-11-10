@@ -1,21 +1,22 @@
 # ACULTA420 V2 - Plano de integracao visual integral da UI Suite
 
-**Estado:** PESQUISA E PLANEJAMENTO CONCLUIDOS; IMPLEMENTACAO NOVA PENDENTE (US-00 a US-11).
-**Data de referencia:** 2026-11-10. **Branch alvo:** dev. **Decisoes:** ADR-054 e ADR-055 (adendo da integracao integral).
+**Estado:** PLANEJAMENTO REVISADO; IMPLEMENTAÇÃO PENDENTE (US-00 a US-14). Inclui MIGRAÇÃO INTEGRAL DE LEGADO e substituição do motor visual por purpose por UI Skins.
+**Data de referencia:** 2026-11-10. **Branch alvo:** dev. **Decisoes:** ADR-054 e ADR-055. **Plano de migração obrigatório:** `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md`.
 **Owners:** SDC, tokens, variacoes e CSS no tema `aculta420_v2`; regras, dados, acesso, cache e dominio nos modulos proprietarios; registro e configuracao de integracoes no Drupal Core e UI Suite. **Nao e um relatorio de teste do Runtime.**
 
 ## 1. Objetivo e beneficio visual
 
-A UI Suite sera a camada de *site building* do design system proprio ACULTA420 V2, e nao um tema pronto, um segundo framework CSS ou um substituto do Portal. Preservar todos os SDCs internos, editoriais e reutilizaveis no catalogo universal (plano UP-00 a UP-07), sem tornar todos automaticamente editaveis por qualquer papel.
+A UI Suite sera a camada de *site building* do design system proprio ACULTA420 V2, e nao um tema pronto ou um segundo framework CSS. **UI Skins substitui o sistema visual de purposes** (paletas, classes e tokens associados); o Portal preserva somente a identificação funcional de domínio, URL, acesso, sessão e cache, que UI Skins não resolve. Preservar todos os SDCs internos, editoriais e reutilizaveis no catalogo universal (plano UP-00 a UP-07), sem tornar todos automaticamente editaveis por qualquer papel.
 
 Beneficios tangiveis:
 1. Uma mesma superficie, card, moldura tricolor, CTA, tabela ou estado vazio aparece em Views, blocos, displays e Layout Builder sem HTML duplicado.
 2. Administradores escolhem variantes e composicao pela UI, com opcoes fechadas, contraste e responsividade previstos nos SDCs, sem CSS arbitrario.
-3. Layouts por purpose e por pagina aproveitam os mesmos componentes, enquanto identidade visual, menus e dados continuam governados pelos contratos existentes.
-4. CKEditor 5 recebe estilos editoriais coerentes com a publicacao; widgets SDC ricos sao recurso adicional **condicionado** a seguranca e fidelidade de renderizacao.
+3. Layouts de cada domínio e página aproveitam os mesmos componentes; a **identidade visual** passa a ser governada por UI Skins e os **dados, menus, rotas e acesso** seguem os contratos funcionais do Portal.
+4. CKEditor 5 recebe estilos editoriais por **UI Styles CKEditor 5**; **UI Patterns CKEditor 5 está fora do escopo e não deve ser instalado, ativado ou prototipado** neste ciclo.
 5. Icons Phosphor e Fluent Emoji tornam-se catalogos pesquisaveis e reutilizaveis em menus, campos e componentes, sem duplicar a semantica das reacoes.
-6. Light/dark e paletas se tornam mais governaveis por controles de skins, sem criar configuracao concorrente ou trocar a identidade em runtime de forma insegura.
+6. Light/dark, paletas e variáveis passam a ter **UI Skins como fonte visual única**, migrando o controle antigo baseado em purpose por domínio, com fallback e sem alterar configuração global por requisição.
 7. A biblioteca administrativa mostra tanto catalogos quanto composicoes reais, com previsualizacoes progressivas para conter custo de descoberta e renderizacao.
+8. Toda saída visual legada do site entra em inventário, é classificada como **depreciada** enquanto utilizada, **obsoleta** após substituição validada ou **exceção funcional nativa**, até completar a migração para UI Suite.
 
 **Regra visual:** SDC = estrutura/apresentacao; UI Styles = classes de variacao; UI Skins = CSS variables e esquemas; UI Icons = origem/selecao de icones; UI Patterns = conectores de SDC com APIs Drupal. Nao atribuir a qualquer um deles acesso a dados, permissao de entidade ou isolamento multidominio.
 
@@ -45,23 +46,23 @@ Beneficios tangiveis:
 | UI Styles | 1.22 estavel, Drupal ^10.3 / ^11 / ^12 | Integracoes podem ser ativadas em lotes com testes |
 | UI Skins | 1.2.1 estavel, Drupal ^11.4 / ^12 | Candidato preferencial para gestao de variaveis/esquemas do tema |
 | UI Icons | 2.1.0 estavel, Drupal ^11.3 / ^12; 2.0.x nao e mais suportado | Preferir 2.1.x, validar Composer/lock e nomes reais dos submodulos |
-| UI Patterns Field Group | 2.0.0-beta2, Drupal ^9/^10/^11, sem cobertura da politica de seguranca do Drupal | **GATE DE RISCO:** prototipo isolado; sem ativacao ampla se nao houver estrategia formal de seguranca e Drupal 12 |
-| UI Patterns em CKEditor 5 | Documentacao atual mostra `ui_patterns_ckeditor5` e filtro 'Embed components' | Avaliar com restricao por formato: upstream informa que TODOS os SDCs aparecem e que previa nao carrega assets |
+| UI Patterns Field Group | **Preferência aprovada: 2.0.x-dev@dev**; beta2 é referência do risco, Drupal ^9/^10/^11, sem cobertura da política de segurança | Validar HEAD dev, compatibilidade com Drupal 12, Field Group instalado e segurança; só depois habilitar no Runtime |
+| UI Patterns em CKEditor 5 | **EXCLUÍDO por decisão do responsável** | Não instalar, habilitar, prototipar ou criar filtros/botões; UI Styles CKEditor 5 permanece no escopo |
 
 **Nao instalar ou atualizar por suposicao:** resolver primeiro as versoes compativeis do `composer.lock`, verificar os arquivos `*.info.yml` dos modulos baixados e as dependencias. UI Icons base do Core e a camada UI Icons contrib nao sao a mesma coisa. Nao presumir que `ui_patterns_field_group` passa no Drupal 12 so porque `ui_patterns` passa.
 
 ## 4. Modelo de responsabilidades e fronteiras
 
-`DomainPurposeManager / Portal / contratos neutros e cache`
-  -> `HTML root: data-theme, data-purpose e tokens aprovados`
-  -> `UI Skins: variaveis/configuracao governada`
+`Domain / DomainPurposeManager (somente negócio, roteamento, identidade funcional e cache)`
+  -> `resolvedor Portal de skin por domínio + modo pessoal (contrato neutro)`
+  -> `UI Skins: themes/schemes e CSS variables como motor visual único`
   -> `UI Styles: opcoes finitas de classes para wrappers e elementos`
   -> `SDC: markup, slots/props e comportamento`
   -> `UI Patterns: adaptadores para Block, Layout, Field, Views, CKEditor (se aprovado)`
   -> `UI Icons: packs, seletores, menu e componentes`
 
-- O tema nao consulta hostname, entidade ou usuario. Contexto, access checks, cache tags e contexts sao fornecidos pela origem. Sem duplicar `--purpose-*`, `data-theme`, ou `domain_presentation` em uma segunda engine.
-- UI Skins altera preferencias visuais *configuradas*, mas nao resolve automaticamente o purpose por host. Estudar compatibilidade com o pipeline atual e evitar mudar a configuracao global do tema quando um dominio muda.
+- O tema não consulta hostname, entidade ou usuário. Contexto, access checks, cache tags e contexts são fornecidos pela origem. UI Skins substitui `--aculta-purpose-*` e `data-purpose-scheme` após migração; `domain_presentation` continua contrato de dados, não de cores. O modo do usuário permanece no Portal mas sua realização visual usa UI Skins.
+- UI Skins NÃO fornece identificação de domínio por host. Implementar uma ponte Portal `domain_id -> skin_id` que consome definições UI Skins sem alterar configurações globais do tema por requisição; preservar acesso, URL, contexto `domain` e preferências pessoais. O antigo sistema visual de purpose deve ser efetivamente retirado após corte seguro.
 - As cinco regioes do shell e a barra institucional sao imutaveis neste escopo; Layout Builder altera somente composicao de conteudos e displays elegiveis.
 - UI Styles nunca habilita edicao livre de CSS nem substitui classes semanticas. Classes do editor sao apenas as permitidas pelo formato de texto.
 - Componentes SDC permanecem descobraveis; autorizacao para **editar** uma instancia, visualizar dados reais ou inserir um widget editorial depende do consumidor e do perfil, nao do catalogo.
@@ -70,13 +71,15 @@ Beneficios tangiveis:
 
 ## 5. Recursos e impacto visual especifico
 
-### 5.1 UI Skins - modos, paletas e propriedades
+### 5.1 UI Skins - substituição do motor visual por purpose
 
-- Mapear tokens existentes (`src/styles/tokens.css`) e `aculta420_v2.ui_styles.yml` antes de declarar `aculta420_v2.ui_skins.css_variables.yml` e `aculta420_v2.ui_skins.themes.yml`.
-- Definir quais variaveis sao realmente editaveis pelo admin: cores semanticas de acento, superficies, sombra, radius e tipografia controlada; preservar limites de contraste.
-- Preservar as dez paletas Skunk Family por purpose e a preferencia light/dark baseada em `data-theme`. UI Skins nao e um segundo seletor de dominio; qualquer ponte de variaveis depende de contrato explicito, render e cache multidominio.
-- Proibir CSS inline livre ou mudanca de cores que reduza contraste, inclusive focus-visible; oferecer fallback seguro se UI Skins estiver indisponivel.
-- Previsualizar combinacoes em uma matriz light/dark × 10 purposes, com diff de tokens computados.
+- Fonte visual canônica: `{provider}.ui_skins.themes.yml` e `{provider}.ui_skins.css_variables.yml`, depois de confirmar o schema/API instalados. Converter `PurposePaletteSchemes`, `aculta_purpose_palette`, `data-purpose-scheme` e `--aculta-purpose-*` para skins e CSS vars sem duplicar a lógica.
+- `DomainPurposeManager` continua apenas como domínio/negócio/URLs; o novo resolvedor Portal mapeia **Domain ID -> skin_id**, com fallback. Tema não consulta hostname e não muda configuração global do tema por request.
+- UI Skins oferece temas e CSS variables nas configurações do tema, mas **não oferece, por si só, domínio -> skin por request**. Testar API e construir ponte de escopo de resposta sem mutação global e com `cache:contexts:domain`; não criar segunda paleta proprietária.
+- `ColorModePreference` ainda resolve a preferência do usuário; UI Skins passa a ser o motor visual que entrega light/dark. Conferir precedência `usuário > default do site` e caches `domain`/`user`.
+- Fazer migração sombra/dual-read, piloto Links, rollout dos dez domínios, remoção de leitores e formulário de purposes visuais só após zero consumidores. Manter rollback e snapshots de CSS computado (20 combinações mínimas).
+- **Gate:** UI Skins é única fonte para aparência, nenhuma contaminação entre domínios, contraste/foco/320 px preservados, configuração exportável e rollback validado.
+- Plano técnico e matriz de classes/consumidores: `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md`.
 
 ### 5.2 UI Styles - composicao contextual
 
@@ -92,8 +95,8 @@ Beneficios tangiveis:
 - `ui_patterns_field_formatters` e `ui_patterns_field`: tratar campos no Manage Display sem copiar logica do modulo; documentar diferenca formatter vs render de entidade.
 - `ui_patterns_layouts`: slots representam regioes, props sao configuracoes; `thumbnail.webp` auxilia a escolha. Continuar com Layout Builder nos 22 displays ja habilitados, sem forcar os dois casos excluidos.
 - `ui_patterns_views` possui tres niveis DISTINTOS: **row** (cartao por resultado), **style** (recipiente de todos os resultados) e **display** (composicao de cabecalho, filtros, resultados, empty, pager, links e footer). Mapear uso real antes de substituir template ou estilo de View.
-- `ui_patterns_field_group`: permite apresentar grupos de campos como componentes SDC; prototipar em bundle nao critico com controle de valores, labels, form display vs view display, cache e fallback. Nao substituir o `field_group` contrib nem assumir que o modulo estara compativel com Drupal 12.
-- `ui_patterns_ckeditor5`: widget de SDC inserido no texto e renderizado pelo filtro. **GATE P0**: upstream oferece todos os componentes no seletor (sem allowlist por formato), e nao carrega CSS/JS dos componentes na previa do editor. Nao habilitar para contas editoriais comuns sem mecanismo seguro e verificavel de limitacao de componentes e equivalencia de preview. Em formato administrativo de teste, usar apenas SDCs puros e sem dados privados; checar parser, sanitizacao, acesso e serializacao.
+- `ui_patterns_field_group`: **usar preferencialmente `2.0.x-dev@dev`**, travar commit em `composer.lock`, verificar Field Group 4.x, segurança e compatibilidade Drupal 12, antes de configurar displays. Prototipar e migrar por bundle; manter plugin funcional `field_group` e fallback.
+- **UI Patterns CKEditor 5 EXCLUÍDO:** não instalar, ativar, prototipar ou adicionar novos filtros/widgets do módulo neste ciclo. Não é gate de encerramento da ADR-055; manter UI Styles CKEditor 5 para estilos textuais.
 
 ### 5.4 UI Icons - icones, menus, campos, CKEditor e Fluent Emoji
 
@@ -110,7 +113,7 @@ Beneficios tangiveis:
 - UI Examples pode fornecer demonstracoes completas de paginas compostas, mas e **opcional** e nao autoriza a exposicao de dados reais.
 - Display Builder e Drupal Canvas sao opcoes para estudo futuro, **fora deste cutover**; nao substituir Layout Builder sem ADR e benchmark.
 
-## 6. Matriz visual por purpose (alvos, nao telas prontas)
+## 6. Matriz visual por dominio/area (nomes de purpose aqui sao apenas IDs funcionais, NAO classes ou tokens visuais)
 
 | Purpose / frente | UI Patterns + Views | UI Styles + Skins | Icons / conteudo |
 | --- | --- | --- | --- |
@@ -136,16 +139,17 @@ Em todos os casos: layout claro e escuro, breakpoint 320/390/768/1024/1440 px, z
 - Gerar matriz antes/depois e rollback de config (somente staging isolado). Sem mudar configuracao ativa nesta fase.
 - **Gate:** inventario rastreavel e divergencias de Runtime vs Git registradas, inclusive UI Icons Menu/Picker, Styles Page e Field Group.
 
-### US-01 - Contratos e versoes
-- Revisar compatibilidade Drupal 11.5 beta / Drupal 12, estabilizar UI Icons 2.1 e UI Skins 1.2 em plano de dependencias, sem instalar inadvertidamente.
-- Resolver politica de Field Group beta sem cobertura de seguranca; registrar alternativa via Field Formatters/Layout Builder se inviavel.
-- Confirmar compatibilidade de `ui_patterns_ckeditor5` e `ui_styles_ckeditor5` com formatos existentes.
-- **Gate:** lock reproduzivel em ensaio, sem edicao de contrib; lista de extensoes aprovadas.
+### US-01 - Contratos e versões
+- Revisar compatibilidade Core 11.5/12, versões do UI Suite, contratos Portal/tema e dependências existentes, mantendo UI Patterns 2.x atualmente usado.
+- Para Field Group, **preferir `2.0.x-dev@dev`** com pin no lock, avaliar segurança, suporte a Field Group 4.x e Drupal 12; não usar beta2 por inércia.
+- `ui_patterns_ckeditor5` explicitamente excluído; validar apenas `ui_styles_ckeditor5` com formatos atuais.
+- **Gate:** lock reproduzível, nenhuma desativação indevida ou dependência transitiva escondida, decisão de risco registrada.
 
-### US-02 - UI Skins e tokens
-- Prototipar arquivos de CSS variables e themes seguindo exemplos upstream; escopo restrito a opcoes semanticas.
-- Definir precedencia Portal/purpose/data-theme/UI Skins, heranca de valores e invalidacao de cache. Preferir opt-in e fallback para tokens atuais.
-- **Gate:** 10 purposes × 2 modos, CSS computado, contraste, zero vazamento de paleta entre hosts.
+### US-02 - UI Skins substitui o motor de paletas por purpose
+- Inventariar `PurposePaletteSchemes`, `SurfaceSettingsHooks::purposePaletteStyle`, `aculta_purpose_palette`, `data-purpose-scheme`, selectors CSS, theme-settings e contrato `AppearanceHooks`.
+- Implementar definitions e serviço neutro `Domain ID -> skin_id`, demonstrar modo sombra, integração da preferência light/dark, fallback, cache e rollback.
+- Testar piloto Links antes de migrar cada domínio; depois retirar paleta/formulário visual antiga e aliases após zero consumidores. Não remover `DomainPurposeManager` nem roteamento/ACL.
+- **Gate:** 10 domínios × 2 modos, CSS computado/contraste, independência A/B e B/A de caches e Config Sync sem divergências.
 
 ### US-03 - UI Styles em regioes e entidades
 - Mapear render Twig com atributos de regioes, blocos e Layout Builder; corrigir apenas pontos com perda de attributes.
@@ -167,20 +171,21 @@ Em todos os casos: layout claro e escuro, breakpoint 320/390/768/1024/1440 px, z
 - Mapear Field Formatters a componentes antes de criar Twig exclusivo; respeitar os dois displays excluidos.
 - **Gate:** render de campos e layout, export/import, fallback, 1 H1 e 1 main.
 
-### US-07 - Field Group (experimental, risco elevado)
-- Conferir `field_group` e beta, compativel com Core e seguranca. Testar somente fixture nao critica isolada.
-- Se qualquer gate Drupal 12 ou seguranca falhar, suspender ativacao em ambiente compartilhado e documentar alternativa.
-- **Gate:** acesso, agrupamento de labels/erros, view/edit, reversibilidade e parecer de risco.
+### US-07 - Field Group dev, risco e migração por bundle
+- Preferir `drupal/ui_patterns_field_group:2.0.x-dev@dev`, verificar versão real e SHA, upstream, Field Group 4.x, Drupal 11.5/12 e vulnerabilidades.
+- Planejar displays existentes e pilotos não críticos com migração e rollback sem alterar campos nem dados.
+- Se risco de segurança/compatibilidade continuar, registrar BLOCKED_UPSTREAM e preservar alternativa nativa Field Formatters/SDCs, sem habilitação indiscriminada.
+- **Gate:** labels/erros/ordem, segurança, acesso, cache e exportação; **não** considerar ausência de suporte upstream como PASS.
 
 ### US-08 - Icon packs e UI Icons
 - Avaliar UI Icons 2.1 + Menu, Picker/Popover, UI Patterns, CKEditor, Fields e Library conforme necessidade; registrar submodulos exatos.
 - Migrar de modo incremental seletores de icones de menu e SDC com acessibilidade; preservar adaptador Fluent.
 - **Gate:** todos os IDs resolvem, nenhum SVG ausente, ARIA/teclado/HTMX, formatos de texto seguros.
 
-### US-09 - UI Patterns CKEditor 5 (experimental, condicionado)
-- Prototipo admin-only; estudar mecanismo de restricao por formato/role antes de permitir SDCs arbitrarios.
-- Medir diferencas da previa (upstream sem CSS/JS no editor), simular dados e bloquear componentes privados/ativos.
-- **Gate:** sem allowlist segura ou preview suficiente, DEFERRED; nenhuma publicacao/editor comum recebe a funcionalidade.
+### US-09 - Política de exclusão do UI Patterns CKEditor 5
+- Registrar na auditoria de Composer/Config Sync que `ui_patterns_ckeditor5` não deve ser usado nesta rodada. Não instalar, habilitar, prototipar ou construir widgets do módulo.
+- Revalidar que formatos CKEditor 5 mantêm os recursos atuais (Plugin Pack, filtro Fluent Emoji) e recebem apenas estilos editoriais via `ui_styles_ckeditor5`.
+- **Gate:** zero novas dependências, filtros ou integrações `ui_patterns_ckeditor5`, sem regressão editorial.
 
 ### US-10 - Governanca da biblioteca e demonstracoes
 - Vincular navegacao de padroes, stories, blocos, estilos, skins e icones, sem expandir acesso a previas reais.
@@ -193,6 +198,28 @@ Em todos os casos: layout claro e escuro, breakpoint 320/390/768/1024/1440 px, z
 - Medir tamanho CSS/JS por pagina, tempo e memoria da biblioteca, Layout Builder e Views; desempenho deve permanecer dentro da linha-base, registrar regressao e causa.
 - Import/export em staging, rollback de tema/config e acesso; revisar com responsavel mosaico de capturas antes de declarar PASS.
 - **Gate:** sem vazamento de acesso, sem drift de configuracao, sem CSS global obrigatorio desnecessario, e aceite visual humano. Nao marcar ADR encerrada por instalacao apenas.
+
+
+### US-12 - Inventário integral e classificação de legado visual (obrigatório)
+- Varredura de TODOS os módulos, temas, templates Twig, controllers, render arrays, Views, blocos, Field Group, formulários, layouts, CSS/JS, modais e áreas administrativas ACULTA.
+- Classificar cada visual como `UI_SUITE_NATIVE`, `LEGACY_DEPRECATED` (**depreciado**, ainda consumido), `LEGACY_OBSOLETE` (**obsoleto**, sem consumidores após migração), `MIGRATION_IN_PROGRESS`, `BLOCKED_UPSTREAM` ou `FUNCTIONAL_NATIVE_EXCEPTION`; sem marcar as APIs funcionais Core/Form/Views/VVJ como obsoletas.
+- Documentar por elemento o owner, consumidores, substituto UI Suite, estratégia de fallback, acesso/cache, testes, evidência visual e commit de retirada.
+- Todos os SDCs permanecem descobertos na UI Patterns Library, inclusive internos e legados com status depreciado, sem conversão indevida para `status: deprecated` que esconda componentes.
+- **Gate:** inventário revisável e completo por rotas, zero telas sem proprietário ou substituição planejada.
+
+### US-13 - Substituição visual site-wide, por consumidores
+- Iniciar com contratos transversais: UI Skins, botões, surfaces, cartões, formulários, menus, filtros, avisos, modais, iconografia e layout. Continuar por dez domínios e backoffice MAIN.
+- Migrar View row/style/display, layouts, Field Group (após gate), campos, blokcs e templates para SDC + UI Patterns/Styles/Skins/Icons quando aplicável; preservar API nativa funcional do Drupal, acesso/cache, HTMX e VVJB/VVJS.
+- Comprovar cada equivalência visual, permitir rollback; marcar legado `deprecated` enquanto consumido e `obsolete` depois do último consumidor. Só limpar após zero uso e testes.
+- **Gate:** ausência de wrappers/caixas/cartões visuais proprietários ainda ativos sem classificação; matriz antes/depois e CSS/JS não carregados inutilmente.
+
+### US-14 - Fechamento conjunto das ADR-054 e ADR-055
+- Reexecutar os gates pendentes P8/P9 da ADR-054, incluindo revisão visual humana, Config Sync/staging, cache cruzado, landings por domínio, dois displays excluídos e integridade das cinco regiões.
+- Validar UI Skins como motor visual único, UI Suite em toda superfície visual viável, inventário deprecado/obsoleto e versão dev Field Group avaliada.
+- Auditoria final: 10 domínios x light/dark, 320/390/768/1024/1440, zoom 200%, teclado, autenticação, Form API, WCAG, acessos, cache, Config Sync/Composer lock, rollback e performance.
+- Não incluir UI Patterns CKEditor 5 como bloqueio. Marcar `DEFERRED` caso qualquer gate não seja executado, atualizar status/roadmaps/ADRs apenas com evidência.
+- **Gate:** aceite documentado do responsável, zero regressão crítica, nenhuma duplicidade de fonte visual, e matriz de pendências efetivamente encerrada.
+
 
 ## 8. Entregaveis esperados e governanca
 

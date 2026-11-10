@@ -4,7 +4,7 @@ Estado: em desenvolvimento · versão 1.5.0 (`aculta420_v2.info.yml`) · status:
 
 ## Próximo passo
 
-- **ADR-055 / UI Suite integral (US-00 a US-11, PLANEJADO):** executar inventário Composer/lock + Runtime/Config Sync de UI Skins, UI Styles CKEditor 5 / Entity Status / Page, UI Patterns Views / Layouts / Field Group / CKEditor 5 e UI Icons Picker/Menu; não declarar habilitação sem evidência. Plano: `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md`. Gate de risco para Field Group beta sem política de segurança e para embeds SDC no CKEditor.
+- **ADR-055 / UI Suite integral (US-00 a US-14, PLANEJADO):** substituir **todo visual legado** por UI Suite, classificar `LEGACY_DEPRECATED`/`LEGACY_OBSOLETE`, migrar **motor visual de purposes para UI Skins** sem alterar roteamento/ACL e inventariar Composer/lock + Runtime/Sync. Preferir UI Patterns Field Group `2.0.x-dev@dev` após gates de segurança/Drupal 12. **Não usar UI Patterns CKEditor 5**; UI Styles CKEditor 5 permanece. Planos: `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md` e `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md`.
 
 - **SDCs de superfície (concluído):** `surface`, `surface-accent` e `surface-panel`, integrados a UI Styles, UI Patterns e UI Library; gate SDC PASS.
 - **FST-08 (entregue):** oito SDCs de estatísticas do Fórum, schema PASS; captura visual pendente.

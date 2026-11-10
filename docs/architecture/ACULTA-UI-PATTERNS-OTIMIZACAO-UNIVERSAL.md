@@ -11,6 +11,7 @@
 
 1. **100% dos SDCs internos, reutilizáveis e editoriais permanecem registrados no UI Patterns**, pesquisáveis, documentados e acessíveis nas integrações tecnicamente compatíveis.
 2. Não remover, ocultar por categoria, desregistrar, desabilitar descoberta, converter em componente privado ou aplicar `status: deprecated` para forçar a redução do catálogo. Categorias/tags/famílias/purpose são metadados de navegação, **não ACL nem filtro excludente**.
+   **Adendo ADR-055 (2026-11-10):** isso proíbe usar depreciação como artifício para esconder SDCs. A classificação `LEGACY_DEPRECATED` e `LEGACY_OBSOLETE` agora é obrigatória para apresentações legadas fora da UI Suite. `status: deprecated` em SDC só é cabível quando for um SDC efetivamente substituído e ainda descobrível; nenhum componente pode sumir da biblioteca por essa classificação. Ver `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md`.
 3. UI Patterns Library permanece catálogo de SDCs/stories; `aculta_ui_library` permanece catálogo de **blocos configurados reais** e prévias administrativas. Não criar catálogo concorrente.
 4. UI Styles, UI Icons (Phosphor e Fluent Emoji), UI Styles Page, UI Patterns Blocks, Field, Field Formatters, Layouts, Views e Layout Builder mantêm seus contratos. Não apagar fontes ou opções existentes para melhorar benchmark.
 5. Otimização atua em **trabalho desnecessário**, cache válido, resolução de fontes, apresentação paginada, pesquisa e **prévia sob demanda**. A página pode exibir todos os metadados sem materializar todas as stories.

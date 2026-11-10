@@ -1,9 +1,10 @@
 # ADR-054 - ACULTA420 V2 SDC First e Layout Builder multidominio
 
-Status: aprovado pelo responsavel em 2026-11-09; implementacao por fases, homologacao pendente.
+Status: aprovado em 2026-11-09; corte P9 do shell executado no desenvolvimento, homologacao final residual pendente. Complemento 2026-11-10: finalizar em conjunto com a ADR-055 e a substituicao integral do visual legado por UI Suite/UI Skins.
 Substitui parcialmente ADR-046 (restricao jQuery), ADR-048 (Layout Builder excluido) e o painel Layout de container.
 Preserva ADR-047, ADR-050, ADR-053, seguranca, mobile-first, tokens e contratos do Portal.
-Plano: docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md.
+Plano original: docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md.
+Plano complementar vinculante: docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md.
 
 ## Rodada 1 - decisoes
 
@@ -61,4 +62,14 @@ Durante a implementacao paralela, **nao** apagar configuracao aculta_purpose_con
 
 ## Homologacao bloqueante
 
-Inventario de blocos e regioes sem orfaos; dez purposes, shell, claro/escuro, mobile-first e zoom; testes de Layout Builder, SDC/UI Patterns, permissao de previa, cache cruzado, acesso, import/export de configuracoes em staging, rollback. Teste nao executado = DEFERRED, nao PASS. Sem corte antes do aceite.
+Inventario de blocos e regioes sem orfaos; dez purposes, shell, claro/escuro, mobile-first e zoom; testes de Layout Builder, SDC/UI Patterns, permissao de previa, cache cruzado, acesso, import/export de configuracoes em staging, rollback. Teste nao executado = DEFERRED, nao PASS. O corte de desenvolvimento P9 ja ocorreu; NAO declarar fechamento final da ADR sem concluir criterios residuais P8/P9, integrar a migracao total de visual legado e registrar aceite.
+
+
+## Adendo 2026-11-10 - Conclusao vinculada a UI Suite
+
+- A arquitetura SDC First e o Layout Builder das 5 regioes continuam validos. Integrar a migracao UI Suite em todos os consumidores do site, nao so no shell.
+- **UI Skins substitui a identidade visual por purpose**: os antigos controles de paletas, variaveis `--aculta-purpose-*` e estilos por purpose sao depreciados durante a transicao e removidos quando tiverem zero consumidores. Nao apagar `DomainPurposeManager`, que faz identificacao funcional de dominios, rotas, acesso e URL.
+- Para os componentes visuais ainda fora da UI Suite, inventariar e marcar `LEGACY_DEPRECATED` / depreciado ate a substituicao e `LEGACY_OBSOLETE` / obsoleto depois da comprovacao de zero consumidores; evitar esconder SDCs do catalogo universal.
+- Prioridade `2.0.x-dev@dev` para UI Patterns Field Group com verificacao de seguranca/Drupal 12; UI Patterns CKEditor 5 **excluido** da ADR atual. UI Styles CKEditor 5 segue no escopo.
+- Gates finais ADR-054 (homologacao visual, 10 dominios, cache, Config Sync, rollback, landings e displays) compoem a US-14 de fechamento conjunto, com `PASS/FAIL/DEFERRED` explicitamente comprovados.
+- Detalhamento completo em `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md` e `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md`.
