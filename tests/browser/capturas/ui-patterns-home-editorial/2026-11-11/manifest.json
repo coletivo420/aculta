@@ -106,5 +106,5 @@
     "broad authenticated/editor/admin and assistive technology acceptance"
   ],
   "rollback": "Restore only config/sync/views.view.home_editorial_highlights.yml from the parent commit and partial-import that single YAML, then rebuild caches. No content entities were modified.",
-  "tested_commit": "pending commit"
+  "tested_commit": "a67f665a26f9f9901e9f16d6da7a028f91461d32"
 }
