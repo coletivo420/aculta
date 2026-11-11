@@ -7,6 +7,7 @@ dependencies:
   module:
     - media
     - media_gallery
+    - ui_patterns_views
     - user
 _core:
   default_config_hash: nmYC1d83HwAYPW4z2naP2k-Rbl7AqLRok9nSovnJAIU
@@ -200,14 +201,41 @@ display:
       arguments: {  }
       filters: {  }
       style:
-        type: default
-      row:
-        type: fields
+        type: ui_patterns
         options:
-          default_field_elements: true
-          inline: {  }
-          separator: ''
+          ui_patterns:
+            ui_patterns:
+              component_id: 'aculta420_v2:layout-grid'
+              variant_id: null
+              slots:
+                content:
+                  sources:
+                    - source: {  }
+                      source_id: view_rows
+              props: {  }
+      row:
+        type: ui_patterns
+        options:
           hide_empty: false
+          ui_patterns:
+            component_id: 'aculta420_v2:revista-album-card'
+            variant_id: null
+            slots:
+              cover:
+                sources:
+                  - source:
+                      ui_patterns_views_field: images_target_id
+                    source_id: view_field
+              title:
+                sources:
+                  - source:
+                      ui_patterns_views_field: title
+                    source_id: view_field
+              published_at:
+                sources: {  }
+              credits:
+                sources: {  }
+            props: {  }
       query:
         type: views_query
         options:
