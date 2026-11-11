@@ -40,8 +40,9 @@ partir de 60rem. Story: `layout-two-columns.default.story.yml`. Sem JavaScript.
 ### layout-grid
 
 Grade automática (`auto-fit` + `minmax`) no slot `content`; prop
-`min_item_width` (`12rem`, `16rem` ou `20rem`, padrão `16rem`). Sem estilo
-inline: a largura mínima vira classe. Story: `layout-grid.default.story.yml`.
+`min_item_width` (`12rem`, `16rem` ou `20rem`, padrão `16rem`) e `max_columns`
+(`0` automático sem limite, `2`, `3` ou `4`). Sem estilo inline: largura mínima
+e limite viram classes. Story: `layout-grid.default.story.yml`.
 
 ### layout-narrow
 

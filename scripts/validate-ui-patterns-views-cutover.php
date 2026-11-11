@@ -65,6 +65,23 @@ foreach (['block_catalog', 'page_catalog'] as $shopDisplay) {
   $assert(($options['defaults']['style'] ?? TRUE) === TRUE, "$shopDisplay deve herdar o grid único do catálogo.");
 }
 
+$wiki = Yaml::parseFile($root . '/config/sync/views.view.wiki_entries.yml');
+$wikiDefault = $wiki['display']['default']['display_options'];
+$assert(in_array('ui_patterns_views', $wiki['dependencies']['module'] ?? [], TRUE), 'A Wiki deve declarar UI Patterns Views.');
+$assert(($wikiDefault['style']['type'] ?? NULL) === 'ui_patterns', 'A listagem da Wiki deve usar o plugin UI Patterns Style.');
+$assert(($wikiDefault['style']['options']['ui_patterns']['ui_patterns']['component_id'] ?? NULL) === 'aculta420_v2:layout-grid', 'A Wiki deve reutilizar o SDC layout-grid.');
+$assert(($wikiDefault['style']['options']['ui_patterns']['ui_patterns']['props']['max_columns']['source']['value'] ?? NULL) === '2', 'A grade da Wiki deve manter o limite de duas colunas via source number do UI Patterns.');
+$assert(($wikiDefault['style']['options']['ui_patterns']['ui_patterns']['slots']['content']['sources'][0]['source_id'] ?? NULL) === 'view_rows', 'A grade da Wiki deve compor as rows renderizadas pela View.');
+$assert(($wikiDefault['row']['type'] ?? NULL) === 'entity:node' && ($wikiDefault['row']['options']['view_mode'] ?? NULL) === 'teaser', 'A Wiki deve preservar o row de node/teaser e o adapter SDC do tema.');
+$assert(($wikiDefault['access']['options']['perm'] ?? NULL) === 'access content', 'A Wiki deve preservar a permissão nativa de leitura.');
+$assert(($wikiDefault['pager']['options']['items_per_page'] ?? NULL) === 12, 'O pager da Wiki deve preservar os 12 itens por página.');
+$assert(isset($wikiDefault['filters']['status'], $wikiDefault['filters']['type'], $wikiDefault['filters']['field_domain_source_target_id']), 'Publicação, bundle e Domain ativo devem continuar filtrados pela View.');
+$assert(($wikiDefault['sorts']['created']['order'] ?? NULL) === 'DESC', 'A Wiki deve preservar a ordem de publicação decrescente.');
+foreach (['block_changes', 'block_recent', 'page_1'] as $wikiDisplay) {
+  $options = $wiki['display'][$wikiDisplay]['display_options'];
+  $assert(($options['defaults']['style'] ?? TRUE) === TRUE, "$wikiDisplay deve herdar a composição SDC única da View.");
+}
+
 $displaySlots = $page['ui_patterns']['slots'] ?? [];
 $requiredSources = [
   'attachment_before' => 'view_attachment_before',

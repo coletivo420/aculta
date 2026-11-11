@@ -13,6 +13,12 @@ props:
       default: 16rem
       title: Largura mínima do item
       description: Define quando a grade passa de uma para mais colunas.
+    max_columns:
+      type: integer
+      enum: [0, 2, 3, 4]
+      default: 0
+      title: Máximo de colunas
+      description: Limita o número de colunas; zero mantém o ajuste automático sem limite.
 slots:
   content:
     title: Itens da grade

@@ -1327,6 +1327,305 @@
       ],
       "status": "UI_SUITE_NATIVE",
       "card_component": "aculta420_v2:product-card"
+    },
+    "wiki_entries": {
+      "owner_module": "aculta_wiki",
+      "config_path": "config/sync/views.view.wiki_entries.yml",
+      "row_plugin": "entity:node; teaser",
+      "status": "runtime_verified",
+      "displays": {
+        "page_1": {
+          "status": "runtime_verified",
+          "path": "/wiki/verbetes",
+          "style_plugin": "ui_patterns",
+          "style_component": "aculta420_v2:layout-grid",
+          "row_component": "aculta420_v2:wiki-entry via node teaser adapter"
+        },
+        "block_recent": {
+          "status": "runtime_verified",
+          "consumer": "Wiki home recent entries",
+          "inherits_style": true
+        },
+        "block_changes": {
+          "status": "runtime_verified",
+          "consumer": "Wiki home recent changes",
+          "inherits_style": true
+        }
+      },
+      "configuration": {
+        "before_runtime_yaml_sha256": "6677f19294e627a6cb3e7c2ba834fb85354d238b489e9e82185b069cf3fb1891",
+        "config_sync_yaml_sha256": "b487feec308225c70105d17214b980f9eb751b5c871fdb7c6dd072a504627b32",
+        "after_runtime_yaml_sha256": "605ca58a5092d94879849682b4942df166d4272b2924c7434e5e7e7c1ff4d540",
+        "sync_runtime_parsed_yaml_equal": true,
+        "import": "authorized targeted partial import of only views.view.wiki_entries after external Runtime snapshot",
+        "preserved": "published=1, bundle=wiki_entry, active Domain source filter, access content, created DESC, full pager 12; home block limits and View row teaser retained",
+        "style": "UI Patterns style uses layout-grid; max_columns=2; one column below 768px",
+        "before_runtime_snapshot": "$TMPDIR/aculta-wiki-views-before/views.view.wiki_entries.yml"
+      },
+      "anonymous_render": {
+        "domain": "wiki",
+        "path": "/wiki/verbetes",
+        "http_status": 200,
+        "result_count_before_after": 6,
+        "node_ids_before_after": [
+          72,
+          73,
+          42,
+          43,
+          44,
+          45
+        ],
+        "one_h1": true,
+        "one_main": true,
+        "cache_control": "must-revalidate, no-cache, private",
+        "dynamic_cache": "UNCACHEABLE (poor cacheability)",
+        "cross_domain": "same path on MAIN returned 404"
+      },
+      "browser": {
+        "engine": "Firefox ESR via WebDriver BiDi under Xvfb",
+        "scenarios": 30,
+        "checks_passed": 215,
+        "checks_failed": 0,
+        "viewports_css_px": [
+          320,
+          390,
+          767,
+          768,
+          1440
+        ],
+        "modes": [
+          "light",
+          "dark"
+        ],
+        "pages": [
+          "home",
+          "listing",
+          "article"
+        ],
+        "overflow_px_max": 0,
+        "keyboard_focus": "listing keyboard check passed; article reflow and focus checks passed",
+        "listing_columns": {
+          "320_to_767": 1,
+          "768_and_above": 2
+        },
+        "captures": [
+          {
+            "page": "article",
+            "viewport_css_px": 1440,
+            "mode": "dark",
+            "file": "article-1440-dark.png",
+            "sha256": "56cf6c8fcea0576c534f3fda00240964f2b04cbc6b8a83d5403186a219933651"
+          },
+          {
+            "page": "article",
+            "viewport_css_px": 1440,
+            "mode": "light",
+            "file": "article-1440-light.png",
+            "sha256": "ec821780e9390a647073c85775255f807b09798609ed490949519f654fcfadc5"
+          },
+          {
+            "page": "article",
+            "viewport_css_px": 320,
+            "mode": "dark",
+            "file": "article-320-dark.png",
+            "sha256": "6182c5cd6748505fd5fb852fd91680cdd47a6f5d6dcb9a4efeb98b7aaf018274"
+          },
+          {
+            "page": "article",
+            "viewport_css_px": 320,
+            "mode": "light",
+            "file": "article-320-light.png",
+            "sha256": "bc7d278c0c2dab1137ef2697355736ca88ff5bc2e9fe433797bac80d4ebee3cd"
+          },
+          {
+            "page": "article",
+            "viewport_css_px": 390,
+            "mode": "dark",
+            "file": "article-390-dark.png",
+            "sha256": "b3ee6448660db1f03c66ea49834daed50773c98944fc88b909d7a60d118a7763"
+          },
+          {
+            "page": "article",
+            "viewport_css_px": 390,
+            "mode": "light",
+            "file": "article-390-light.png",
+            "sha256": "10e4462a04f0e4b9b01652c551af19b05564f5c3d5f8fc9b15ef50b16f5eafee"
+          },
+          {
+            "page": "article",
+            "viewport_css_px": 767,
+            "mode": "dark",
+            "file": "article-767-dark.png",
+            "sha256": "e9bffdde33b7f87accf759b057d0b1f578e8bdd4bf8c197041a8869df9b28e45"
+          },
+          {
+            "page": "article",
+            "viewport_css_px": 767,
+            "mode": "light",
+            "file": "article-767-light.png",
+            "sha256": "a8b89fa0fddc382bfeece4446835041b9371921a93fb86e4652445938f766461"
+          },
+          {
+            "page": "article",
+            "viewport_css_px": 768,
+            "mode": "dark",
+            "file": "article-768-dark.png",
+            "sha256": "e1d7ca3b5fe47c212b548467e9c8ed9148dd7084a24b2986617345ca19d4b207"
+          },
+          {
+            "page": "article",
+            "viewport_css_px": 768,
+            "mode": "light",
+            "file": "article-768-light.png",
+            "sha256": "d3c03511f5d5fac38de5bfaa62835b6ddc96de4b251636e6f9313f9722b6f465"
+          },
+          {
+            "page": "home",
+            "viewport_css_px": 1440,
+            "mode": "dark",
+            "file": "home-1440-dark.png",
+            "sha256": "28a09665e9c077c0c59c7199c9db67a0af0bbb7058872c8206e12927a157ab7c"
+          },
+          {
+            "page": "home",
+            "viewport_css_px": 1440,
+            "mode": "light",
+            "file": "home-1440-light.png",
+            "sha256": "2e3cb165488c2aaea088418850fb9e7ecef8326e5c498262f2bf1663d0df3f02"
+          },
+          {
+            "page": "home",
+            "viewport_css_px": 320,
+            "mode": "dark",
+            "file": "home-320-dark.png",
+            "sha256": "c35dfdad591e66628005b9d1c6a6624acc36ecaeebd275f62475cc34161cf6c7"
+          },
+          {
+            "page": "home",
+            "viewport_css_px": 320,
+            "mode": "light",
+            "file": "home-320-light.png",
+            "sha256": "ac5996360b55b62afaad7c6df9bbdd853747fd2d04cd1f5267022d5a919ed738"
+          },
+          {
+            "page": "home",
+            "viewport_css_px": 390,
+            "mode": "dark",
+            "file": "home-390-dark.png",
+            "sha256": "6dc44705dacaeea40fd79d04e99694fe2903879956ea315bef5996b40b199a2f"
+          },
+          {
+            "page": "home",
+            "viewport_css_px": 390,
+            "mode": "light",
+            "file": "home-390-light.png",
+            "sha256": "1a57ce9fb2abf2b454db67c34c28d567c61be542419c2aed76f4f039450edd1e"
+          },
+          {
+            "page": "home",
+            "viewport_css_px": 767,
+            "mode": "dark",
+            "file": "home-767-dark.png",
+            "sha256": "3d07c73dba7ac4ff02d9ee1fd9a8e243d17ed710caf512dfbc48ee5591009ca7"
+          },
+          {
+            "page": "home",
+            "viewport_css_px": 767,
+            "mode": "light",
+            "file": "home-767-light.png",
+            "sha256": "7c0698eea1699d637b7e75fc0c8c367b9a0ab3faf4a051eedbeee0db433ac23f"
+          },
+          {
+            "page": "home",
+            "viewport_css_px": 768,
+            "mode": "dark",
+            "file": "home-768-dark.png",
+            "sha256": "c8d8972bb58888374de174df2edc90fa665db5572ddc55c04dbe352c1e982cdd"
+          },
+          {
+            "page": "home",
+            "viewport_css_px": 768,
+            "mode": "light",
+            "file": "home-768-light.png",
+            "sha256": "d9c524bec184f3d4f637e07e1d5e4a3167102b2008b0adc688108708d7fed7ac"
+          },
+          {
+            "page": "listing",
+            "viewport_css_px": 1440,
+            "mode": "dark",
+            "file": "listing-1440-dark.png",
+            "sha256": "18d27521e166cc3be8e9475fd17164e26039e0dbb7db5f6b72ede2a10cccfcc3"
+          },
+          {
+            "page": "listing",
+            "viewport_css_px": 1440,
+            "mode": "light",
+            "file": "listing-1440-light.png",
+            "sha256": "d9def56611d8976df93609135ead4f3b1960ee921f3fa31792b4c1a58dcc26fc"
+          },
+          {
+            "page": "listing",
+            "viewport_css_px": 320,
+            "mode": "dark",
+            "file": "listing-320-dark.png",
+            "sha256": "a96ca89631be001b572dd338fa074fb68cfb87eeba014f8a098f092988839e4f"
+          },
+          {
+            "page": "listing",
+            "viewport_css_px": 320,
+            "mode": "light",
+            "file": "listing-320-light.png",
+            "sha256": "b471f7f16f4218be82cafb1be2ffcbc427f970252214e8fbfceee2aa726bdb1b"
+          },
+          {
+            "page": "listing",
+            "viewport_css_px": 390,
+            "mode": "dark",
+            "file": "listing-390-dark.png",
+            "sha256": "345c2f3196e32ba204370c3790f20f98497eae6754f1d63e96e3bead581c6e0c"
+          },
+          {
+            "page": "listing",
+            "viewport_css_px": 390,
+            "mode": "light",
+            "file": "listing-390-light.png",
+            "sha256": "59ba10d5e98b5d84b2a99cd2c875f267f61e6e75c28693538cad244bf81aaad9"
+          },
+          {
+            "page": "listing",
+            "viewport_css_px": 767,
+            "mode": "dark",
+            "file": "listing-767-dark.png",
+            "sha256": "bb545b8c99aac35d07fac92ad563eb3cf0d2e2185220b0b826aa3c502a69a60e"
+          },
+          {
+            "page": "listing",
+            "viewport_css_px": 767,
+            "mode": "light",
+            "file": "listing-767-light.png",
+            "sha256": "06003391fbb6f76e7d583bdcd1ad25dce5fa538adf5c4c5fd69ed33e66d09978"
+          },
+          {
+            "page": "listing",
+            "viewport_css_px": 768,
+            "mode": "dark",
+            "file": "listing-768-dark.png",
+            "sha256": "15f436db3051c4f86366475232fc2ba431591021abb00a4f6d6250ba4f9f46d6"
+          },
+          {
+            "page": "listing",
+            "viewport_css_px": 768,
+            "mode": "light",
+            "file": "listing-768-light.png",
+            "sha256": "e6b5adca3a9e5ea720fa9a570acdbb508e4184fdf8ff9ef170ebb8688d05a10d"
+          }
+        ],
+        "evidence_manifest": "tests/browser/capturas/ui-patterns-wiki-entries/2026-11-11/manifest.json",
+        "human_visual_review": "agent inspected listing 320 light and listing 1440 light/dark; owner acceptance pending"
+      },
+      "limitations": [
+        "Zoom 200%, editor/admin profiles, assistive technology and cache-hit variation remain unverified."
+      ]
     }
   },
   "ui_icons_config": {

@@ -135,3 +135,7 @@ Status espelhado de `TODO.md`. Plano visual: `docs/architecture/GROWROOM420-VISU
   e dois modos, foco e contraste mínimo 12,4:1. Zoom, cache-hit, outros perfis e
   aceite humano pendentes.
 
+
+### Atualização US-12 — Wiki pública (2026-11-11)
+
+`wiki_entries` usa UI Patterns Views + `layout-grid`; `wiki-entry` continua no teaser SDC e os dados/acesso/order/pager da View permanecem. Runtime/Sync coincidem, seis IDs preservados e Firefox passou 215/215 em cinco larguras e dois modos. Zoom 200%, cache-hit, editor/admin, tecnologia assistiva e aceite visual permanecem DEFERRED.

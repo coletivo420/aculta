@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 from websockets.sync.client import connect
 
 HERE = Path(__file__).resolve().parent
-PROJECT = HERE.parents[2]
+PROJECT = HERE.parents[3]
 sys.path.insert(0, str(PROJECT / "tests/browser/shop/aculta-cpf-checkout"))
 from wdlib import Driver, WDError  # noqa: E402
 
@@ -125,8 +125,11 @@ def inspect_page(name, path, width, width_name, mode):
         titleBlock: (() => { const e = document.querySelector('.page__title'); return e ? getComputedStyle(e).display : null; })(),
         articleOrder: (() => { const a = document.querySelector('.aculta-wiki-article__main'); const b = document.querySelector('.aculta-wiki-article__aside'); if (!a || !b) return null; const ar = a.getBoundingClientRect(); const br = b.getBoundingClientRect(); return {dom: !!(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING), mainTop: ar.top, asideTop: br.top, mainLeft: ar.left, asideLeft: br.left}; })(),
         formColumns: (() => { const e = document.querySelector('.aculta-wiki-search, .aculta-wiki-search-results form'); return e ? getComputedStyle(e).gridTemplateColumns.trim().split(/\\s+/).length : null; })(),
-        listingColumns: (() => { const e = document.querySelector('.aculta-wiki-list'); return e ? getComputedStyle(e).gridTemplateColumns.trim().split(/\\s+/).length : null; })(),
-        listingHeaderSpans: (() => { const e = document.querySelector('.aculta-wiki-list > header'); return e ? getComputedStyle(e).gridColumnEnd === 'span 2' || getComputedStyle(e).gridColumnEnd === '-1' : null; })(),
+        listingGrid: !!document.querySelector('.aculta-wiki-list > .layout-grid'),
+        listingColumns: (() => { const e = document.querySelector('.aculta-wiki-list > .layout-grid') || document.querySelector('.aculta-wiki-list'); return e ? getComputedStyle(e).gridTemplateColumns.trim().split(/\\s+/).length : null; })(),
+        listingHeaderBeforeGrid: (() => { const h = document.querySelector('.aculta-wiki-list > header'); const g = document.querySelector('.aculta-wiki-list > .layout-grid'); return h && g ? !!(h.compareDocumentPosition(g) & Node.DOCUMENT_POSITION_FOLLOWING) : null; })(),
+        listingRows: document.querySelectorAll('.aculta-wiki-list .aculta-wiki-card').length,
+        listingCount: document.querySelector('.aculta-wiki-list > header')?.innerText.trim() || '',
         errors
       };
     })();""")
@@ -146,20 +149,22 @@ def inspect_page(name, path, width, width_name, mode):
         check(f"{prefix}: formulário reflow", metrics["formColumns"] == (1 if width < 768 else 2), metrics["formColumns"])
     if metrics["listingColumns"] is not None:
         check(f"{prefix}: grade reflow", metrics["listingColumns"] == (1 if width < 768 else 2), metrics["listingColumns"])
-        if width >= 768 and metrics["listingHeaderSpans"] is not None:
-            check(f"{prefix}: contagem ocupa a linha antes da grade", metrics["listingHeaderSpans"], metrics["listingHeaderSpans"])
+        if name == "listing":
+            check(f"{prefix}: linhas usam layout-grid", bool(metrics["listingGrid"]), metrics["listingGrid"])
+            check(f"{prefix}: contagem precede a grade", metrics["listingHeaderBeforeGrid"], metrics["listingHeaderBeforeGrid"])
+            check(f"{prefix}: seis verbetes SDC", metrics["listingRows"] == 6 and "6 verbetes publicados" in metrics["listingCount"], metrics)
     if name == "article" and mode == "light" and width in (320, 1440):
         press_key("\ue004")
         focus = driver.js("""const el = document.activeElement; const rect = el.getBoundingClientRect();
           return {tag: el.tagName, text: (el.innerText || el.value || '').trim(), focusVisible: el.matches(':focus-visible'),
             visible: rect.width > 0 && rect.height > 0, withinViewport: rect.left >= 0 && rect.right <= innerWidth};""")
         check(f"{prefix}: Tab alcança foco visível", focus["focusVisible"] and focus["visible"] and focus["withinViewport"], focus)
-        driver.js("document.querySelectorAll('.aculta-wiki-article a[href]')[1]?.focus()")
+        driver.js("document.querySelector('.aculta-wiki-article a[href]')?.focus()")
         press_shift_tab()
         reverse_focus = driver.js("""const el = document.activeElement; const rect = el.getBoundingClientRect();
-          return {insideArticle: !!el.closest('.aculta-wiki-article'), focusVisible: el.matches(':focus-visible'),
+          return {articleLink: !!el.closest('.aculta-wiki-article'), focusVisible: el.matches(':focus-visible'),
             visible: rect.width > 0 && rect.height > 0, withinViewport: rect.left >= 0 && rect.right <= innerWidth};""")
-        check(f"{prefix}: Shift+Tab retorna ao controle anterior", reverse_focus["insideArticle"] and reverse_focus["focusVisible"] and reverse_focus["visible"] and reverse_focus["withinViewport"], reverse_focus)
+        check(f"{prefix}: Shift+Tab retorna ao controle anterior", not reverse_focus["articleLink"] and reverse_focus["focusVisible"] and reverse_focus["visible"] and reverse_focus["withinViewport"], reverse_focus)
     screenshot = driver.req("GET", session + "/screenshot")
     (OUT / f"{name}-{width_name}-{mode}.png").write_bytes(base64.b64decode(screenshot))
     metrics["url"] = driver.url()

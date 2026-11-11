@@ -144,3 +144,8 @@ A View pública `aculta_news:block_1` agora compõe o SDC existente `revista-lis
 ## Atualização — View pública de tópicos do Fórum (2026-11-11)
 
 A View `aculta_forum_public_topics` já compõe suas rows com o SDC existente `forum-topic-row` por um adaptador Twig do tema, sem duplicar o markup visual. Runtime/Sync coincidem; os cinco displays ativos retornam 10 resultados cada. Render anônimo no host Fórum produziu dez rows e manteve cache contexts de domain/query/node grants. O UI Patterns Views row plugin permanece pendente porque o source `view_field` instalado só fornece slots, enquanto o componente exige props de estado do tópico; sua adoção sem ampliar o mapeamento perderia pinned/badges. Isto é classificado `UI_SUITE_NATIVE` e requer revisão de browser/perfis antes do aceite, não uma migração visual de markup.
+
+
+## Atualização US-12 — Wiki pública em UI Patterns (2026-11-11)
+
+`wiki_entries` usa `layout-grid` no style UI Patterns para page e blocos da Wiki. O teaser `entity:node` existente continua compondo `wiki-entry`; consulta, filtros published/type/Domain, acesso, ordenação, pager 12 e os seis resultados permaneceram. Importação parcial isolada após snapshot; Runtime e Sync parseados coincidem. Firefox ESR passou 215/215 para home, listagem e artigo em 320/390/767/768/1440 e claro/escuro, sem overflow e com grade 1 coluna abaixo de 768px, 2 colunas acima. Main continua sem acesso à listagem Wiki (404). Zoom 200%, cache-hit, perfis editor/admin, tecnologia assistiva e aceite visual do responsável ficam DEFERRED; a ADR permanece aberta.

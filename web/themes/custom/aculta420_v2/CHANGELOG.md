@@ -1105,3 +1105,8 @@ State: Dev. No RC, production deployment, or release tag is declared.
   foco visível e contraste do título ≥12,4:1. Cache segue `UNCACHEABLE`.
 - Zoom 200%, demais perfis, cache-hit e revisão visual humana pendem.
 
+
+## Não versionado — Wiki em UI Patterns Views (2026-11-11)
+
+- `wiki_entries` migrou o style de listagem para `layout-grid`; page e blocos compartilham a grade. O teaser `wiki-entry` e a consulta nativa da View foram mantidos.
+- `layout-grid` agora declara `max_columns` no schema e limita 2/3/4 colunas; a Wiki usa duas colunas a partir de 768px. Firefox ESR: 215/215 em três páginas, cinco larguras e dois modos. Zoom, cache-hit e perfis seguem pendentes.

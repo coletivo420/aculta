@@ -1,17 +1,17 @@
 # TODO — aculta420_v2
 
-Estado: Dev · versão 1.5.0 (`aculta420_v2.info.yml`) · status: `docs/operations/status/aculta420_v2.yml`.
+Estado: Dev · versão 1.5.0 (`aculta420_v2.info.yml`) · status: `docs/operations/status/aculta420_v2.yml`. ADR-054/055 seguem abertas.
 
 ## Próximo passo
 
-- **ADR-054/055 US-00–14/RN-00–05:** 22 configs usam ComponentLayout; gate 276 PASS, duas exclusões. UI Styles Block ativo em Documentos; UI Patterns Documents e Commerce usam SDC/grid, Commerce usa `product-card` e passou Browser 10/10 em cinco larguras/dois modos; zoom 200%, perfis e cache-hit pendentes. UI Styles Page não suporta seleção por Domain ID.
-- Composer: Skins ^1.2, Icons ^2.1. Field Group dev SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1` é `BLOCKED_UPSTREAM` (segurança/Core 12). UI Styles CKEditor 5 e Entity Status ativos; preview unpublished configurado, teste upstream 1/7, saída/perfis/cache pendentes. UI Patterns CKEditor 5 preexistente sem consumidores, `LEGACY_OBSOLETE`. UI Icons Picker Sync/Runtime; submódulos divergem e aceite visual pende.
-- Inventário: 441 itens (54 blocos), 84 SDC e 83 Twig. Notícias, Home, Álbuns, Fórum/Eventos, Transparência e Loja migraram parcialmente para UI Patterns, com dados e ACL nativos. Loja usa `product-card` e passou Firefox 10/10 em cinco larguras/modos, foco e contraste 12,4:1. Cache-hit, zoom, perfis e homologação ampla pendentes.
+- **US-00–14/RN-00–05:** layouts 22 configs, gate 276 PASS. UI Skins sem carryover A/B/A; contraste e aceite dos dez domínios pendentes. UI Styles Block em Documentos; UI Patterns Views migradas parcialmente (Notícias, Home, galeria, Fórum, Eventos, Transparência, Loja e Wiki), preservando consulta, rows, ACL e render arrays nativos. Wiki 215/215 em 5 larguras/2 modos; Loja 10/10. Cache-hit, zoom 200%, perfis editor/admin, tecnologia assistiva e aceite visual humano pendentes.
+- Composer: Skins ^1.2, Icons ^2.1. Field Group dev SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1` `BLOCKED_UPSTREAM` (segurança/Core 12). UI Styles CKEditor 5 e Entity Status ativos, validação parcial. UI Patterns CKEditor 5 sem consumidores, `LEGACY_OBSOLETE`; Picker ativo, aceite visual pendente.
+- Inventário: atualizar gerador após cada microfase; SDC `layout-grid` inclui `max_columns`. Manter componentes descobertos por UI Patterns Library.
 
 ## Marcos e pendências
 
-- SDC/Library: 82 componentes PASS (schema 1774 checks); FST-08 tem oito SDCs. Links 1280/320 claro/escuro e A/B/A sem overflow; manifesto em `tests/browser/capturas/ui-suite-links/2026-11-10/manifest.json`.
-- Pendentes: aceite visual e cache-hit; capturas P3/Revista/F2/F3/editor/Loja; sessão autenticada, perfis, teclado e zoom; 64 itens de fronteira módulo/tema. `price` aguarda contrato Loja; `card-cultural` aguarda `domain_presentation.accent`.
+- SDC/Library: gate atual no inventário versionado; Links A/B/A e capturas em `tests/browser/capturas/ui-suite-links/2026-11-10/manifest.json`.
+- Pendentes: completar inventário das dez áreas e interfaces administrativas; P8/P9, cache isolation/hit, contraste, zoom, teclado/perfis, rollback e aceite amplo.
 
 ## Leitura e entrega
 

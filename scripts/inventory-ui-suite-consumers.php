@@ -132,6 +132,14 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && $rowPlugin === 'entity:commerce_product'
       && ($rowOptions['options']['view_mode'] ?? '') === 'catalog'
       && $isProductCardAdapter;
+    $wikiTeaserTemplate = $theme . '/templates/content/node--wiki-entry--teaser.html.twig';
+    $isWikiEntriesPilot = $viewId === 'wiki_entries'
+      && $stylePlugin === 'ui_patterns'
+      && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid'
+      && $rowPlugin === 'entity:node'
+      && ($rowOptions['options']['view_mode'] ?? '') === 'teaser'
+      && is_file($wikiTeaserTemplate)
+      && str_contains((string) file_get_contents($wikiTeaserTemplate), "aculta420_v2:wiki-entry");
     $isEventsBase = $viewId === 'eventos_publicos' && (string) $displayId === 'default';
     $revistaTeaserTemplate = $theme . '/templates/content/node--revista--teaser.html.twig';
     $isRevistaTeaserSdc = $viewId === 'revista_sessoes'
@@ -142,6 +150,9 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
     $isViewsDefaultBase = (string) $displayId === 'default';
     $isViewsFunctionalBase = $isViewsDefaultBase;
     $runtimeView = $runtimeViewDisplays[$viewId] ?? NULL;
+    $wikiRuntimeVerified = $isWikiEntriesPilot
+      && is_array($runtimeView)
+      && ($runtimeView['status'] ?? '') === 'runtime_verified';
     $albumsRuntimeVerified = $isAlbumsViewsPilot
       && is_array($runtimeView)
       && ($runtimeView['status'] ?? '') === 'runtime_verified';
@@ -213,6 +224,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         'galeria_produto' => 'aculta_portal:commerce',
         'aculta_documents' => 'aculta_portal:transparency',
         'aculta_shop_catalog' => 'aculta_portal:commerce',
+        'wiki_entries' => 'aculta_wiki',
         'vvjs_example' => 'vvjs:upstream_demo',
         'home_editorial_highlights' => 'views:home_editorial_highlights',
         'eventos_publicos' => 'aculta_events',
@@ -227,15 +239,19 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'ui_patterns_configured' => $components !== [] ? implode(',', $components) : 'not_detected_by_plugin_id_scan',
       'status' => $isUpstreamVvjsExample
         ? 'BLOCKED_UPSTREAM'
-        : ($isForumTopicsSdc || $documentRuntimeVerified || $shopRuntimeVerified
+        : ($isWikiEntriesPilot && $displayId === 'default'
+        ? 'FUNCTIONAL_NATIVE_EXCEPTION'
+        : ($isForumTopicsSdc || $documentRuntimeVerified || $shopRuntimeVerified || $wikiRuntimeVerified
         ? 'UI_SUITE_NATIVE'
         : ((($isViewsFunctionalBase && !$isProductGalleryPilot) || $isEventsBase)
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
-        : (($albumsRuntimeVerified || $forumRuntimeVerified || $eventsRuntimeVerified || $revistaRuntimeVerified || $revistaNewsRuntimeVerified || $homeEditorialRuntimeVerified || $albumPhotosRuntimeVerified) ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS'))),
+        : (($albumsRuntimeVerified || $forumRuntimeVerified || $eventsRuntimeVerified || $revistaRuntimeVerified || $revistaNewsRuntimeVerified || $homeEditorialRuntimeVerified || $albumPhotosRuntimeVerified) ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS')))),
       'replacement_or_action' => match (TRUE) {
         $isUpstreamVvjsExample => 'Upstream demonstration View, not an ACULTA feature; do not edit contrib. Any removal or replacement must be handled as a separately authorized upstream-example lifecycle change',
+        $isWikiEntriesPilot && $displayId === 'default' => 'Functional inherited Views base; keep query/access/filter/sort and inherited UI Patterns style, with no independent route output',
         $isDocumentsPilot => 'The document teaser SDC owns card markup; UI Patterns layout-grid composes the native published-node teaser rows while preserving Field API file rendering',
         $isShopCatalogPilot => 'UI Patterns layout-grid composes the product-card SDC for native Commerce catalog rows; keep price/variation/add-to-cart render arrays, published/type filters, access, ordering and pager in Commerce',
+        $isWikiEntriesPilot => 'UI Patterns layout-grid composes native node teaser render arrays through the wiki-entry SDC adapter; keep publication, bundle, active Domain, access, order and pager in Views',
         $isDocumentCardSdc => 'The document teaser row uses the existing document-card SDC; finish its UI Patterns layout composition and Runtime validation',
         $isForumTopicsSdc => 'The Fields row adapter already composes the reusable forum-topic-row SDC; preserve it and migrate to the UI Patterns row plugin only when dynamic entity props and rendered slots can be mapped without losing topic state',
         $isProductGalleryPilot => 'UI Patterns layout-grid composes the native Commerce product media View; preserve product Media IDs, ordering, published/image filters and produto_galeria view mode',
@@ -256,6 +272,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isUpstreamVvjsExample => 'Example View remains in Config Sync and its Runtime status was not changed in this microphase; it is not counted as a product consumer',
         $isDocumentsPilot && $documentRuntimeVerified => 'Runtime View retained 3 published nodes; SDC output, anonymous access and field render arrays verified; browser visual, editor/admin profiles and cache-hit remain pending',
         $isShopCatalogPilot && $shopRuntimeVerified => 'Anonymous Runtime returned product-card SDC with price, summary and add-to-cart; Firefox passed 10/10 viewports/modes with focus and contrast; zoom 200%, other roles, cache-hit and human visual acceptance remain pending',
+        $isWikiEntriesPilot && $wikiRuntimeVerified => 'Anonymous Runtime returned six published wiki-entry teaser rows through the SDC adapter; Firefox browser comparison passed for the page and canonical article; zoom, cache-hit, other roles and assistive technology remain pending',
         $isDocumentsPilot => 'Runtime returned three published document teasers inside the UI Patterns grid; the current fixture has empty body/file descriptions, so field links are not evidenced; browser visual, editor/admin profiles and cache-hit remain pending',
         $isDocumentCardSdc => 'Document SDC adapter is present; Runtime row rendering and grid integration are pending',
         $isForumTopicsSdc && is_array($runtimeView) && is_array($runtimeView['displays'][$displayId] ?? NULL) => 'Runtime config matches Sync; executable View returns 10 rows; access-profile and browser visual evidence not re-run in this inventory pass',
@@ -292,6 +309,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isUpstreamVvjsExample => 'upstream contributed demonstration; Runtime status not changed or claimed',
         $isDocumentsPilot && $documentRuntimeVerified => 'active; UI Patterns layout-grid; 3 published document rows; anonymous View output with Field API slots; visual browser acceptance pending',
         $isShopCatalogPilot && $shopRuntimeVerified => sprintf('active; UI Patterns layout-grid; %d product rows; Commerce catalog view mode and native add-to-cart retained', $shopRuntimeDisplay['result_count']),
+        $isWikiEntriesPilot && $wikiRuntimeVerified => sprintf('active; UI Patterns layout-grid; %d published node teaser rows; wiki-entry SDC adapter and native access retained', $runtimeView['anonymous_render']['result_count_before_after'] ?? 0),
         $isDocumentsPilot => 'configured; Runtime/browser evidence not recorded',
         $isDocumentCardSdc => 'document teaser SDC adapter is confirmed in source; View style migration and Runtime output remain pending',
         $isForumTopicsSdc && is_array($runtimeView) && is_array($runtimeView['displays'][$displayId] ?? NULL) => 'active; native Views fields row uses forum-topic-row SDC adapter; 10 results; browser/access acceptance not re-run',

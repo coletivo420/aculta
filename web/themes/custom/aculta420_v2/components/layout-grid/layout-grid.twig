@@ -2,6 +2,14 @@
 {% if min_item_width not in ['12rem', '16rem', '20rem'] %}
   {% set min_item_width = '16rem' %}
 {% endif %}
-<div{{ attributes.addClass('layout-grid', 'layout-grid--min-' ~ min_item_width|replace({'rem': ''})) }}>
+{% set max_columns = max_columns|default(0) + 0 %}
+{% if max_columns not in [0, 2, 3, 4] %}
+  {% set max_columns = 0 %}
+{% endif %}
+{% set classes = ['layout-grid', 'layout-grid--min-' ~ min_item_width|replace({'rem': ''})] %}
+{% if max_columns > 0 %}
+  {% set classes = classes|merge(['layout-grid--max-' ~ max_columns]) %}
+{% endif %}
+<div{{ attributes.addClass(classes) }}>
   {{ content }}
 </div>

@@ -230,3 +230,5 @@ Este registro não autoriza `drush cim`, `updatedb` ou alterações destrutivas;
 - Playwright Firefox: 86/86 no shell v2 e 35/35 na landing Links (cinco larguras, claro/escuro). Smoke dos dez purposes com 200/1 H1/1 `<main>` (conta redireciona visitante para login).
 - Versão do tema: **1.5.0**. Backup e rollback em `$SUITE_OUT/aculta-cutover-20261109/` e `docs/architecture/ACULTA420-V2-P9-CUTOVER.md`.
 - `validate-module-theme-boundary.php` permanece FAIL (64/7.314) por dívida pré-existente dos módulos do Portal.
+
+- `validate-ui-patterns-views-cutover.php`: PASS (85 checks) incluindo Wiki page e blocos. `validate-aculta420-sdc-schemas.php`: PASS (84 componentes, 1801 checks); Drupal SDC render: PASS (42). Firefox Wiki: PASS 215/215 em home/listagem/artigo, cinco larguras e dois modos. Runtime/Sync YAML parseado coincide. Zoom 200%, cache-hit, perfis e revisão assistiva DEFERRED. Stylelint indisponível nesta máquina.

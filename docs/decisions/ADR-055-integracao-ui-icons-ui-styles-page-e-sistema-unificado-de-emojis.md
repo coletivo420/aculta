@@ -179,3 +179,8 @@ Execução em RN-00 a RN-05 conforme `docs/architecture/ACULTA-PORTAL-PURPOSE-PA
 ## Atualização — View pública de tópicos do Fórum (2026-11-11)
 
 A View `aculta_forum_public_topics` já compõe suas rows com o SDC existente `forum-topic-row` por um adaptador Twig do tema, sem duplicar o markup visual. Runtime/Sync coincidem; os cinco displays ativos retornam 10 resultados cada. Render anônimo no host Fórum produziu dez rows e manteve cache contexts de domain/query/node grants. O UI Patterns Views row plugin permanece pendente porque o source `view_field` instalado só fornece slots, enquanto o componente exige props de estado do tópico; sua adoção sem ampliar o mapeamento perderia pinned/badges. Isto é classificado `UI_SUITE_NATIVE` e requer revisão de browser/perfis antes do aceite, não uma migração visual de markup.
+
+
+## Atualização — UI Patterns Views na Wiki (2026-11-11)
+
+O style da View `wiki_entries` consome `aculta420_v2:layout-grid` via UI Patterns Views, com `max_columns=2` como source numérico e `view_rows` no slot. O componente SDC existente ganhou prop `max_columns` estrita para limites 2/3/4 sem criar outro grid. O wrapper herdado preserva o template teaser/SCD `wiki-entry`; a regra responsiva Wiki mantém uma coluna até 767px. Runtime/Sync coincidem e browser passou 215/215; cache-hit, zoom e aceite amplo seguem DEFERRED.
