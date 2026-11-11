@@ -30,3 +30,14 @@
 - **Verificações:** acceptance 70/70; browser index 148 PASS; UI Patterns Views cutover 95 PASS; SDC 1801, UI Skins 134, UI Styles 40, boundary 7888 PASS; Playwright login PASS; py_compile e JSON OK.
 - **Pendências e bloqueios:** aceite visual humano; sessão autenticada (configuração `SSESS`/`SESS`); cache-hit enquanto a política for private/uncacheable; RN-00–05 e demais consumidores do inventário.
 - **Próximo passo:** corrigir a configuração de sessão do ambiente de desenvolvimento, concluir RN-05 com a sessão de renomeação e seguir ao próximo consumidor público.
+# Dependências contrib — atualização com compatibilidade — 2026-11-11
+
+- **Objetivo:** atualizar os oito projetos Composer solicitados dentro das compatibilidades do Drupal Core atual.
+- **Estado:** field_group 4.1.0-beta1, freelinking 5.0.0-alpha3, media_duplicates 3.0.0-alpha1, photoswipe 5.0.14, private_message 4.0.0-alpha5, social_api 4.1.0-beta1 e social_auth 4.2.0-beta2 resolvidos no lockfile. CKEditor Plugin Pack permanece 1.5.6: 2.0.0-beta1 exige Core 12, incompatível com o Core 11.5.0-beta1 exigido pelo projeto.
+- **Decisões e alternativas descartadas:** constraints permitem evolução sem travar patch/minor; pré-releases explicitamente habilitados quando necessários. Não atualizar Core para satisfazer CKEditor.
+- **Cuidados:** composer update também atualizou dependências transitivas Symfony/Doctrine e reaplicou patch de social_api. Nenhuma atualização de banco ou Runtime.
+- **Commits e arquivos:** sem commit; `composer.json` e `composer.lock`.
+- **Verificações:** `composer validate --no-check-publish` válido com avisos de constraints exatas preexistentes. Composer update dos sete pacotes bem-sucedido. Gate Runtime e testes funcionais não executados; sem ordem para escrita no Runtime. Composer apontou advisories de segurança em um pacote, sem detalhamento nesta rodada.
+- **Pendências e bloqueios:** CKEditor Plugin Pack 2.x aguarda atualização do Core para 12. Workspace possui alterações preexistentes extensas e branch divergente do origin; publicação não realizada para evitar misturar ou reescrever trabalho alheio.
+- **Próximo passo:** revisar e integrar este diff em branch sincronizada; repetir CKEditor quando Core 12 passar a ser requisito do projeto.
+
