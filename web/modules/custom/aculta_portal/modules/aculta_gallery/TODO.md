@@ -1,10 +1,10 @@
 # TODO — aculta_gallery
 
-Estado: Dev · versão 0.1.0-dev.22 (`aculta_gallery.info.yml`) · status: `docs/operations/status/aculta_gallery.yml`.
+Estado: Dev · versão 0.1.0-dev.23 (`aculta_gallery.info.yml`) · status: `docs/operations/status/aculta_gallery.yml`.
 
 ## Próximo passo
 
-Após servir o commit 0b3643f32 do tema no checkout de teste, repetir Firefox ESR sem CSS injetado e cache rebuild; então revisar auditoria final e critérios restantes de RC ([arquitetura](web/modules/custom/aculta_portal/modules/aculta_gallery/docs/ARQUITETURA.md)).
+Ampliar homologação de galerias para perfis autenticado/editor/admin, zoom 200%, cache-hit e leitor de tela; validar separadamente o ramo Gallery do Fórum e demais consumidores de VVJS ([arquitetura](web/modules/custom/aculta_portal/modules/aculta_gallery/docs/ARQUITETURA.md)).
 
 ## Leitura
 

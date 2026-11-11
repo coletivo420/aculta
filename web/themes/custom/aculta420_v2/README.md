@@ -26,7 +26,7 @@ Decisões que governam o tema estão em `docs/decisions/` na raiz do repositóri
 
 ## Estado em uma frase
 
-Fundações, shell SDC, UI Skins, UI Patterns Views/Layouts e UI Styles Block estão ativos. Álbuns usa row/style/display; Notícias usa `revista-listing` sobre quatro teasers nativos; a Home usa `layout-grid` no lugar do style VVJB e mantém os três destaques via Layout Builder; Documentos aplica superfície e espaçamento oficiais. As ADRs 054/055 seguem abertas: faltam migração site-wide e aceites de acessibilidade/cache, além da trilha RN-00 a RN-05.
+Fundações, shell SDC, UI Skins, UI Patterns Views/Layouts e UI Styles Block estão ativos. Álbuns usa row/style/display; a galeria editorial migrou de VVJS para `layout-grid` com PhotoSwipe; Notícias usa `revista-listing` sobre quatro teasers nativos; a Home usa `layout-grid` no lugar do style VVJB e mantém os três destaques via Layout Builder; Documentos aplica superfície e espaçamento oficiais. As ADRs 054/055 seguem abertas: faltam migração site-wide e aceites de acessibilidade/cache, além da trilha RN-00 a RN-05.
 
 ## Estrutura
 

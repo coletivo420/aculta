@@ -15,11 +15,14 @@ use Drupal\views\ViewExecutableFactory;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Página do álbum: as fotos aparecem numa sequência VVJS, uma por slide.
+ * Página do álbum.
  *
- * A view aculta_album_fotos traz as imagens do álbum com paginação real. O tema
- * apresenta o VVJS e a navegação por miniaturas. Aqui só entra o contexto do
- * álbum (argumento da view).
+ * A galeria editorial usa grade SDC.
+ *
+ * O Fórum mantém sua sequência enquanto a view própria aguarda migração.
+ *
+ * A view aculta_album_fotos traz as imagens do álbum e PhotoSwipe. A view de
+ * slides do Fórum permanece isolada. Aqui entra apenas o contexto do álbum.
  */
 final class GalleryViewHooks {
 
@@ -45,10 +48,9 @@ final class GalleryViewHooks {
     if (!in_array($view_mode, ['default', 'full'], TRUE)) {
       return;
     }
-    $view_id = $entity->hasField('field_gallery_purpose')
-      && $entity->get('field_gallery_purpose')->value === 'forum'
-      ? 'aculta_forum_gallery_slides'
-      : self::VIEW_ID;
+    $is_forum_gallery = $entity->hasField('field_gallery_purpose')
+      && $entity->get('field_gallery_purpose')->value === 'forum';
+    $view_id = $is_forum_gallery ? 'aculta_forum_gallery_slides' : self::VIEW_ID;
     $view = $this->entityTypeManager->getStorage('view')->load($view_id);
     if ($view === NULL) {
       return;
@@ -58,12 +60,16 @@ final class GalleryViewHooks {
     $build['album_stage'] = [
       '#type' => 'container',
       '#weight' => -10,
-      // Comportamento e ligação com VVJS usam data-*; aparência é do tema.
-      // photoswipe-gallery agrupa as fotos para o PhotoSwipe.
-      '#attributes' => ['data-aculta-album-stage' => 'true', 'class' => ['photoswipe-gallery']],
+      // PhotoSwipe agrupa as imagens editoriais neste wrapper. A galeria do
+      // Fórum mantém o contrato VVJS de palco e miniaturas por enquanto.
+      '#attributes' => $is_forum_gallery
+        ? ['data-aculta-album-stage' => 'true', 'class' => ['photoswipe-gallery']]
+        : ['class' => ['photoswipe-gallery']],
       'slideshow' => $slideshow,
-      'thumbs' => $this->thumbs($entity),
     ];
+    if ($is_forum_gallery) {
+      $build['album_stage']['thumbs'] = $this->thumbs($entity);
+    }
     // Access decisions affect both the VVJS result and the thumbnail index.
     // Bubble every dependency at the shared parent, including denied results.
     $cacheability = CacheableMetadata::createFromObject($entity);

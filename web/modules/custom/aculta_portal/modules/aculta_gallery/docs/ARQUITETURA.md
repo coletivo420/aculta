@@ -62,19 +62,22 @@ Inventário em `config/sync/` e no Runtime (sem alterar nada):
 
 ## 3. Avaliação dos módulos escolhidos
 
-### Integração VVJS do álbum: acesso e cache (2026-10-18)
+### Integração UI Patterns do álbum: acesso e cache (2026-11-11)
 
-O palco usa a View `aculta_album_fotos` com estilo VVJS, uma linha por item de mídia. As miniaturas e os slides devem
-representar exatamente o mesmo conjunto de Media com acesso `view` e arquivo de imagem presente, na ordem do campo
-`images`. A checagem ocorre em `AlbumSlidesAccessHooks::filterAlbumSlides()` durante `views_query_alter`; consulta
-indisponível ou sem itens permitidos falha fechada. A consulta ordena pela coluna `delta` da referência do álbum. Isso evita que o índice enviado por
-`data-aculta-album-thumb` navegue para outra imagem ou revele um item que o painel de miniaturas omitiu.
+A View `aculta_album_fotos` usa o style UI Patterns com o SDC `layout-grid`; cada row continua sendo Fields e o
+formatter PhotoSwipe produz links e imagens lazy-loaded. O slideshow editorial e suas miniaturas VVJS foram removidos.
+`AlbumSlidesAccessHooks::filterAlbumSlides()` continua checando Media com acesso `view` e File de imagem presente e
+ordena os resultados pela coluna `delta` da referência do álbum. A View não é tratada como fronteira de autorização:
+o filtro explícito é necessário porque a relação de campo, por si só, não garante acesso à entidade Media relacionada.
 
-`GalleryViewHooks` também agrega no render array do palco a entidade álbum, cada Media referenciada, o `AccessResult`
-(inclusive quando negado) e o File da imagem. Esses metadados invalidam o HTML ao mudar publicação, arquivo ou
-permissão e variam o cache conforme a decisão de acesso. A View não é tratada como fronteira de autorização isolada:
-o filtro explícito é necessário porque o estilo de linha é Fields e a relação de campo, por si só, não garante a
-verificação de acesso à entidade Media relacionada.
+`GalleryViewHooks` agrega no render array pai a entidade álbum, cada Media referenciada, o `AccessResult` (inclusive
+quando negado) e o File da imagem. Esses metadados continuam invalidando o HTML ao mudar publicação, arquivo ou
+permissão e variam o cache conforme o resultado de acesso. O ramo da galeria contextual do Fórum usa outra View e
+permanece VVJS; não é consumidor de `aculta_album_fotos`.
+
+Firefox ESR antes/depois validou 63 imagens acessíveis, PhotoSwipe, lazy loading, foco, H1/main e ausência de overflow
+em 320/390/768/1024/1440 px claro/escuro. PhotoSwipe abre e fecha por Escape após o corte. Cache-hit, zoom e perfis
+autenticados seguem pendentes; evidências e rollback estão no manifesto do piloto.
 
 O gate `scripts/validate-aculta-image.php` agora lê IDs `image_style` e estilos do PhotoSwipe em Views e modos de
 exibição exportados, exigindo que cada ID pertença ao catálogo do `aculta_image`. Core/contrib recebem o ID de estilo

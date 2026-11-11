@@ -1,7 +1,7 @@
 {
-  "observed_at_utc": "2026-11-11T05:25:48Z",
+  "observed_at_utc": "2026-11-11T05:59:44Z",
   "drupal_version": "11.5.0-beta1",
-  "evidence_command": "Drush Runtime export and targeted partial imports after snapshots; ComponentLayout discovery; 276-check Layout Builder batch validator; render-array/access parity checks; anonymous Firefox A/B/A pilot; Forum categories and UI Styles Entity Status targeted imports; UI Styles Entity Status isolated functional test",
+  "evidence_command": "Drush Runtime export and targeted partial imports after snapshots; ComponentLayout discovery; 276-check Layout Builder batch validator; render-array/access parity checks; anonymous Firefox A/B/A pilot; Forum categories and UI Styles Entity Status targeted imports; UI Styles Entity Status isolated functional test; UI Patterns album gallery before/after Runtime snapshot comparison and Firefox ESR A/B in five viewports/modes",
   "ui_suite_modules": {
     "ui_icons": {
       "status": "Enabled",
@@ -188,7 +188,8 @@
     "UI Styles Block now applies the registered raised-surface and normal-spacing choices to the MAIN-only transparency block aculta420_v2_aculta_documents. The isolated block config import followed a Runtime snapshot (SHA-256 stored in the capture manifest); anonymous Runtime retained three View rows, and Firefox verified computed light/dark background, 16/24 px responsive padding, keyboard focus, one H1/main and no overflow at 320/390/768/1024/1440. UI Styles Page still uses theme-global region settings with no domain-aware assignment, so it is not used for domain-specific skins.",
     "The public Revista news View aculta_news:block_1 now uses UI Patterns style revista-listing around the native node teaser render arrays. Four published teaser nodes, anonymous access, filter/sort/pager/query/cache contracts and visible H1/main were compared before/after. The legacy aculta-editorial-list class was removed from this View only; its CSS remains for other active consumers.",
     "Repeated anonymous requests to the Revista News route returned 200 and X-Drupal-Cache MISS; the response is no-cache/private and X-Drupal-Dynamic-Cache reports UNCACHEABLE (poor cacheability). The response differed only in per-request View DOM ID and CSP nonce; the four result IDs were stable. This does not constitute a cache-hit test.",
-    "Home editorial highlights: targeted Runtime cutover from views_vvjb to the existing UI Patterns layout-grid SDC. The View keeps its native node rows, Layout Builder entity output, access, filters, sort, pager, query and cache settings. The VVJB extension remains installed; no active View style uses it in Sync. The old carousel-specific diagnostics/tests were retired or replaced; module uninstall was not performed."
+    "Home editorial highlights: targeted Runtime cutover from views_vvjb to the existing UI Patterns layout-grid SDC. The View keeps its native node rows, Layout Builder entity output, access, filters, sort, pager, query and cache settings. The VVJB extension remains installed; no active View style uses it in Sync. The old carousel-specific diagnostics/tests were retired or replaced; module uninstall was not performed.",
+    "Editorial Gallery album 11: targeted Views UI Patterns cutover replaced VVJS with layout-grid. Runtime kept 63 accessible PhotoSwipe images/order, pager 150 and cache/access metadata; before/after Firefox ESR passed 10 scenarios each, and after PhotoSwipe opens/closes on keyboard Escape. Forum gallery remains separately configured on VVJS. Zoom, cache-hit and profile coverage remain pending."
   ],
   "block_styles": {
     "aculta420_v2_aculta_documents": {
@@ -995,6 +996,55 @@
           "rollback": "Import the captured Runtime YAML snapshot (SHA-256 above) as the only partial-import source, then rebuild caches; no entity data was modified."
         }
       }
+    },
+    "aculta_album_fotos": {
+      "owner_module": "aculta_gallery",
+      "config_path": "config/sync/views.view.aculta_album_fotos.yml",
+      "displays": {
+        "block_1": {
+          "consumer_id": "block_1",
+          "status": "runtime_verified",
+          "configuration_import": "targeted partial import with only views.view.aculta_album_fotos after exact Runtime snapshot",
+          "before_runtime_snapshot_sha256_json": "acbfc69ee7a4c0e40ab7a2e6f0823b2e98c49e5b1f907db3c346094f569f8934",
+          "before_runtime_rollback_yaml_sha256": "80b75b9c3ce2dd15c3a2713ea967cef66fcf8168b36da5cd9d95ba0357e2b659",
+          "after_runtime_snapshot_sha256_json": "4736e2f35d3a06478ed7412b9400d1a5361b5269222d33069d1f8b59a2df427e",
+          "config_sync_sha256": "0e8b2dc94f51170195345537a8a2f53168f6d01bc3e5dde8dda9fb5e92ea3b59",
+          "before_http_status": 200,
+          "after_http_status": 200,
+          "result_count_before": 63,
+          "result_count_after": 63,
+          "row_plugin": "fields with photoswipe_field_formatter",
+          "style_plugin_before": "views_vvjs",
+          "style_plugin": "ui_patterns",
+          "style_component": "aculta420_v2:layout-grid",
+          "slot_source": "view_rows",
+          "pager": "some; 150 items per page; unchanged",
+          "anonymous_access": "allowed for published album; custom media view-access filtering preserved",
+          "ordering_and_data": "63 image media results and order unchanged",
+          "cache_metadata": "View metadata and entity/media/file/access dependencies preserved; cache-hit variation not measured",
+          "photoswipe": "63 links and images before/after; opens and closes with Escape after cutover",
+          "browser_viewports_css_px": [
+            320,
+            390,
+            768,
+            1024,
+            1440
+          ],
+          "browser_modes": [
+            "light",
+            "dark"
+          ],
+          "cards_per_capture": 63,
+          "horizontal_scroll": false,
+          "keyboard_focus": "visible",
+          "evidence_manifest": "tests/browser/capturas/ui-patterns-gallery/2026-11-11/manifest.json",
+          "limitations": [
+            "Zoom 200%, cache-hit, authenticated/editor/admin profiles and assistive technology acceptance remain DEFERRED.",
+            "Separate Forum gallery output was not tested; it remains on its own VVJS View."
+          ]
+        }
+      },
+      "legacy_style_status": "views_vvjs removed from this editorial view; still consumed by separate Forum and Commerce views"
     }
   },
   "ui_icons_config": {

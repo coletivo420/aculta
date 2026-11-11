@@ -1081,3 +1081,8 @@ State: Dev. No RC, production deployment, or release tag is declared.
 - `home_editorial_highlights:block_1` substitui o style VVJB pelo SDC `layout-grid`. Os três destaques curados continuam sob Views e seus campos/layout continuam renderizados pelo Layout Builder.
 - Runtime anônimo manteve HTTP 200, IDs 14–16 e acesso/query/filtros/ordenação/pager/cache. Firefox ESR: A/B 10/10 em 320/390/768/1024/1440, claro/escuro, foco visível, contraste mínimo 8.80:1 e zero overflow.
 - O cache de página permanece private/no-cache/UNCACHEABLE; cache-hit, zoom 200% e homologação ampliada pendem. VVJB não possui View consumidora; sua extensão não foi desinstalada.
+
+## Não versionado — galeria editorial em UI Patterns (2026-11-11)
+
+- A View `aculta_album_fotos:block_1` compõe o SDC `layout-grid` com UI Patterns, removendo a apresentação VVJS dessa galeria e preservando PhotoSwipe, acesso, ordenação e cache.
+- O álbum público passou pela comparação Firefox A/B em cinco larguras e claro/escuro; a extensão VVJS permanece para outros consumidores.

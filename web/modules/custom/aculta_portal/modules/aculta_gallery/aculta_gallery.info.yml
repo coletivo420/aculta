@@ -1,9 +1,9 @@
 name: 'ACULTA Gallery (Galerias)'
 type: module
-description: 'Álbuns fotográficos e galerias incorporadas do Portal ACULTA, sobre Media Gallery, PhotoSwipe e VVJS. Submódulo opcional do aculta_portal: desabilitado, o Portal não depende dele.'
+description: 'Álbuns fotográficos e galerias incorporadas do Portal ACULTA, com PhotoSwipe e visual VVJS isolado para galerias do Fórum. Submódulo opcional do aculta_portal: desabilitado, o Portal não depende dele.'
 package: 'ACULTA Portal'
 core_version_requirement: ^11 || ^12
-version: '0.1.0-dev.22'
+version: '0.1.0-dev.23'
 dependencies:
   - aculta_portal:aculta_file_uploader
   - aculta_portal:aculta_image

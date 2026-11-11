@@ -98,6 +98,10 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && (string) $displayId === 'block_1'
       && $stylePlugin === 'ui_patterns'
       && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid';
+    $isAlbumPhotosPilot = $viewId === 'aculta_album_fotos'
+      && (string) $displayId === 'block_1'
+      && $stylePlugin === 'ui_patterns'
+      && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid';
     $isEventsBase = $viewId === 'eventos_publicos' && (string) $displayId === 'default';
     $revistaTeaserTemplate = $theme . '/templates/content/node--revista--teaser.html.twig';
     $isRevistaTeaserSdc = $viewId === 'revista_sessoes'
@@ -135,6 +139,12 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
     $homeEditorialRuntimeVerified = is_array($homeEditorialRuntimeDisplay)
       && ($homeEditorialRuntimeDisplay['status'] ?? '') === 'runtime_verified'
       && ($homeEditorialRuntimeDisplay['style_component'] ?? '') === 'aculta420_v2:layout-grid';
+    $albumPhotosRuntimeDisplay = $isAlbumPhotosPilot && is_array($runtimeView)
+      ? ($runtimeView['displays'][$displayId] ?? NULL)
+      : NULL;
+    $albumPhotosRuntimeVerified = is_array($albumPhotosRuntimeDisplay)
+      && ($albumPhotosRuntimeDisplay['status'] ?? '') === 'runtime_verified'
+      && ($albumPhotosRuntimeDisplay['style_component'] ?? '') === 'aculta420_v2:layout-grid';
     $revistaRuntimeView = $runtimeViewDisplays[$viewId] ?? NULL;
     $revistaRuntimeVerified = $isRevistaTeaserSdc
       && is_array($revistaRuntimeView)
@@ -150,6 +160,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         'aculta_forum_categories' => 'aculta_forum',
         'revista_sessoes' => 'aculta_magazine',
         'aculta_news' => 'aculta_magazine',
+        'aculta_album_fotos' => 'aculta_gallery',
         'home_editorial_highlights' => 'views:home_editorial_highlights',
         'eventos_publicos' => 'aculta_events',
         default => 'unresolved_from_config',
@@ -163,7 +174,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'ui_patterns_configured' => $components !== [] ? implode(',', $components) : 'not_detected_by_plugin_id_scan',
       'status' => ($isViewsFunctionalBase || $isEventsBase)
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
-        : (($albumsRuntimeVerified || $forumRuntimeVerified || $eventsRuntimeVerified || $revistaRuntimeVerified || $revistaNewsRuntimeVerified || $homeEditorialRuntimeVerified) ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS'),
+        : (($albumsRuntimeVerified || $forumRuntimeVerified || $eventsRuntimeVerified || $revistaRuntimeVerified || $revistaNewsRuntimeVerified || $homeEditorialRuntimeVerified || $albumPhotosRuntimeVerified) ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS'),
       'replacement_or_action' => match (TRUE) {
         $isViewsFunctionalBase || $isEventsBase => 'Native Views base display supplies inherited query, access, filters, sorting and configured style to concrete displays; it has no independent route output',
         $isAlbumsViewsPilot => 'Compose this inherited View level with UI Patterns SDCs; preserve native row fields, filters, sort, pager and access',
@@ -173,6 +184,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isEventsCataloguePilot => 'UI Patterns layout-grid wraps the native View rows; aculta_events_catalogue_card keeps access-checked IDs, labels and ordering',
         $isRevistaNewsPilot => 'UI Patterns style composes the existing revista-listing SDC around native teaser render arrays; published filter, sort, access and cache remain Views-owned',
         $isHomeEditorialPilot => 'UI Patterns layout-grid composes the existing editorial highlight Layout Builder render arrays; preserve native query, ordering, pager, access and cache',
+        $isAlbumPhotosPilot => 'UI Patterns layout-grid composes native PhotoSwipe image render arrays; preserve media access filtering, album order, pager and cache metadata',
         $isRevistaTeaserSdc => 'Keep the native entity teaser row; the ACULTA theme adapter renders fields as render-array slots through the existing revista-teaser SDC',
         default => 'Inventory candidate only; inspect row, style and display independently before migration',
       },
@@ -191,6 +203,8 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isRevistaNewsPilot => 'UI Patterns SDC style configured; targeted Runtime output, access/cache comparison and browser evidence remain pending',
         $isHomeEditorialPilot && $homeEditorialRuntimeVerified => 'Firefox ESR verified nodes 14/15/16, H1/main, keyboard focus, contrast ≥8.80:1 and reflow at 320/390/768/1024/1440 light/dark; cache-hit and 200% zoom remain open',
         $isHomeEditorialPilot => 'UI Patterns layout-grid configured; targeted Runtime output, access/cache comparison and browser evidence remain pending',
+        $isAlbumPhotosPilot && $albumPhotosRuntimeVerified => 'Runtime HTTP 200 and 63 PhotoSwipe images before/after; Firefox ESR 320/390/768/1024/1440 light/dark, H1/main, alt, lazy loading, focus, no overflow and PhotoSwipe Escape verified; cache-hit and 200% zoom remain open',
+        $isAlbumPhotosPilot => 'UI Patterns grid configured; Runtime output, media access/cache comparison and browser evidence remain pending',
         $isRevistaTeaserSdc && $revistaRuntimeVerified => 'Theme adapter composes revista-teaser; homepage smoke is not attributable to this View; route, access, pager/cache remain pending',
         $isRevistaTeaserSdc => 'Sync source confirms node teaser row and SDC adapter; Runtime output, access, pager/cache and browser acceptance remain pending',
         default => 'No UI Patterns row/style/display plugin ID detected in Sync; Runtime output, access and cache still unverified',
@@ -208,6 +222,8 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isRevistaNewsPilot => 'configured; Runtime/browser evidence not recorded',
         $homeEditorialRuntimeVerified => sprintf('active; HTTP %d; three curated native editorial rows; UI Patterns layout-grid; anonymous access allowed; Firefox 320/390/768/1024/1440 light/dark', $homeEditorialRuntimeDisplay['after_http_status']),
         $isHomeEditorialPilot => 'configured; Runtime/browser evidence not recorded',
+        $albumPhotosRuntimeVerified => sprintf('active; HTTP %d; %d PhotoSwipe media images; UI Patterns layout-grid; anonymous published album', $albumPhotosRuntimeDisplay['after_http_status'], $albumPhotosRuntimeDisplay['result_count_after']),
+        $isAlbumPhotosPilot => 'configured; Runtime/browser evidence not recorded',
         $isRevistaTeaserSdc => 'Theme adapter verified in source; route output not attributable to this display',
         default => 'not_observed',
       },

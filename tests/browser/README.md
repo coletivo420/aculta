@@ -106,6 +106,7 @@ Estão listadas abaixo as pastas reais, com o caminho completo. A convenção é
 | `tests/browser/forum/aculta420-v2-forum/` | Firefox ESR visual smoke — Fórum V2 |
 | `tests/browser/gallery/aculta-gallery/` | Galeria ACULTA |
 | `tests/browser/links/aculta-links/` | Micropágina pública: layout mobile no navegador |
+| `tests/browser/magazine/aculta-gallery-ui-patterns/` | Galeria editorial — UI Patterns Views |
 | `tests/browser/magazine/aculta-news-ui-patterns/` | UI Patterns Views — listagem da Revista |
 | `tests/browser/magazine/revista-color/` | Revista — rótulos de categoria |
 | `tests/browser/magazine/revista-editorial/` | Revista — fluxo editorial (ARQ-08) |

@@ -112,3 +112,9 @@ Status espelhado de `TODO.md`. Plano visual: `docs/architecture/GROWROOM420-VISU
 - `home_editorial_highlights:block_1` troca `views_vvjb` pelo SDC existente `layout-grid`; os três destaques, sua ordem, Layout Builder, acesso e query nativos seguem intactos.
 - Runtime HTTP 200 e três rows antes/depois. Firefox ESR A/B 10/10 em cinco larguras e claro/escuro; foco, contraste ≥8.80:1, H1/main e overflow passaram.
 - Cache-hit não é mensurável enquanto a home responder private/no-cache/UNCACHEABLE; zoom 200% e revisão ampliada pendem. ADR-054/055 seguem abertas.
+
+## ADR-054/055 — Galeria editorial em UI Patterns (2026-11-11)
+
+- `aculta_album_fotos:block_1` substitui o style VVJS pelo SDC `layout-grid`, preservando os 63 resultados PhotoSwipe, ordenação, acesso e metadados de cache. A galeria do Fórum continua separada.
+- Firefox ESR passou 10/10 antes e 11/11 depois em 320/390/768/1024/1440 e claro/escuro; foco, alt, H1/main, reflow e abertura/fechamento PhotoSwipe por Escape passaram. Cache-hit, zoom 200%, outros perfis e aceite visual humano pendem; a extensão VVJS ainda tem consumidores.
+- Snapshot/rollback e hashes de captura estão em `tests/browser/capturas/ui-patterns-gallery/2026-11-11/manifest.json`.

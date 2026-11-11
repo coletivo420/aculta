@@ -1,5 +1,14 @@
 # Changelog — ACULTA Gallery
 
+## 0.1.0-dev.23 — Álbum editorial em UI Patterns Views
+
+- `aculta_album_fotos:block_1` troca `views_vvjs` pelo SDC existente `layout-grid`; PhotoSwipe continua como lightbox.
+- `GalleryViewHooks` não emite miniaturas/atributos de palco VVJS para álbuns editoriais; a View do Fórum permanece isolada.
+- Runtime: import parcial do único YAML após snapshot e rollback exato; HTTP 200 e 63 imagens antes/depois. Firefox ESR 10/10 antes/depois em 320/390/768/1024/1440 claro/escuro; PhotoSwipe abre e fecha por Escape.
+- Gate de contrato SDC/PhotoSwipe, Portal Drupal 12 e PHP lint passaram. Zoom 200%, cache-hit, perfis e aceite assistivo DEFERRED.
+
+RUNTIME STATUS: PARTIAL.
+
 ## 0.1.0-dev.22 — embed de galeria aceita imagens recentes do Studio
 
 - `GalleryEmbedDialogForm` lista imagens recentes do Studio (integração `galeria`) e as soma às fotos novas.
