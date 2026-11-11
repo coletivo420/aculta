@@ -41,13 +41,19 @@ export function loadAccount(name) {
   return { user, pass };
 }
 
-// Entra pelo formulário padrão do Drupal (/entrar) no host informado.
+// Entra pela janela de login do portal (/entrar/janela, formulário aculta-login-popup).
+// /entrar responde 404 neste portal. O envio é AJAX: a URL não muda. Por isso o helper só
+// confirma que o envio não gerou erro visível; o efeito da sessão é verificado pelos testes
+// funcionais (conta administrativa recebe 200 em /painel-administrativo; conta comum não recebe).
 export async function login(page, host, accountName) {
   const { user, pass } = loadAccount(accountName);
-  await page.goto(new URL('/entrar', host).toString(), { waitUntil: 'domcontentloaded' });
+  await page.goto(new URL('/entrar/janela', host).toString(), { waitUntil: 'domcontentloaded' });
   await page.fill('input[name="name"]', user);
   await page.fill('input[name="pass"]', pass);
-  await page.locator('input[type="submit"], button[type="submit"]').first().click();
-  await page.waitForLoadState('domcontentloaded');
-  expect(page.url(), 'login deve sair de /entrar').not.toContain('/entrar');
+  await Promise.all([
+    page.waitForLoadState('networkidle'),
+    page.locator('input[type="submit"], button[type="submit"]').first().click(),
+  ]);
+  const errors = await page.locator('[role="alert"], .messages--error, .form-item--error-message').count();
+  expect(errors, `envio do login de ${accountName} mostrou erro visível`).toBe(0);
 }
