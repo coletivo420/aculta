@@ -1,5 +1,15 @@
 # Roadmap do fórum Growroom420 (ACULTA420 V2)
 
+## ADR-055 — UI Styles Block (2026-11-11)
+
+- `/transparencia` no MAIN usa UI Styles `surface_style` raised e
+  `spacing_section` normal na instância de bloco de Documentos.
+- Import Runtime isolado após snapshot; três rows, acesso anônimo, foco e
+  landmarks preservados. Firefox validou computed CSS e reflow em cinco larguras
+  claras/escuras. Cache-hit e zoom 200% seguem pendentes.
+- UI Styles Page permanece sem atribuição: a API 1.22 configura regiões
+  globalmente por tema, sem seletor por Domain ID.
+
 ## ADR-054/055 — ComponentLayout SDC nos displays elegíveis (2026-11-10)
 
 - As 22 configs elegíveis usam `layout-section` via UI Patterns Layouts; 21

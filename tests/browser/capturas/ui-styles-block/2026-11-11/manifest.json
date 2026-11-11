@@ -1,0 +1,49 @@
+{
+  "purpose": "UI Styles Block integration pilot on the public transparency page",
+  "date": "2026-11-11",
+  "environment": "development Runtime",
+  "route": "/transparencia",
+  "owner": "Views view aculta_documents / block instance aculta420_v2_aculta_documents",
+  "block_plugin": "views_block:aculta_documents-block_1",
+  "visibility": {"domain_purpose": "main", "request_path": "/transparencia"},
+  "configuration": {
+    "api": "UI Styles Block third-party settings",
+    "block.surface_style": "aculta-surface aculta-surface--tone-raised",
+    "block.spacing_section": "aculta-surface aculta-surface--spacing-normal",
+    "runtime_snapshot_sha256": "5760883484d6b9c30031ea5cfb427d8de09d1f1a1760a26e34c65e8b0e0b7745"
+  },
+  "method": "Visible Firefox ESR via WebDriver BiDi",
+  "matrix": {
+    "viewports_css_px": [320, 390, 768, 1024, 1440],
+    "modes": ["light", "dark"],
+    "assertions": [
+      "UI Styles classes appear on the block wrapper",
+      "computed background adapts to light/dark",
+      "computed padding is 16px below 768px and 24px from 768px",
+      "three View rows remain present",
+      "one H1 and one main landmark",
+      "keyboard focus is visible inside main",
+      "document has no horizontal overflow"
+    ],
+    "result": "10/10 PASS; computed text contrast 12.39:1–12.96:1"
+  },
+  "before": {
+    "source": "before/",
+    "block_classes": "none",
+    "computed_background": "transparent",
+    "computed_padding": "0px",
+    "rows": 3,
+    "horizontal_scroll": false
+  },
+  "after": {
+    "source": "after/",
+    "computed_background": {"light": "near-white; luminance > 0.8", "dark": "near-black; luminance < 0.2"},
+    "computed_text_contrast_ratio": {"minimum": 12.39, "maximum": 12.96},
+    "computed_padding_css_px": {"320": 16, "390": 16, "768": 24, "1024": 24, "1440": 24},
+    "rows": 3,
+    "horizontal_scroll": false,
+    "keyboard_focus": "visible"
+  },
+  "deferred": ["real browser zoom 200%", "cache-hit variation", "human visual review"],
+  "tested_commit": "pending commit"
+}

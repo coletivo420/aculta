@@ -17,3 +17,4 @@ Cada frente tem o próprio `README.md` com URLs, pré-requisitos e critérios.
 - [`aculta420-v2-empty-state/`](./aculta420-v2-empty-state/README.md) — ACULTA420 V2 — Empty state
 - [`aculta420-v2-footer/`](./aculta420-v2-footer/README.md) — ACULTA420 V2 — rodapé e regions do shell
 - [`aculta420-v2-navigation/`](./aculta420-v2-navigation/README.md) — Navegação SDC do ACULTA420 V2
+- [`ui-styles-block/`](./ui-styles-block/README.md) — UI Styles Block — bloco de Documentos institucionais

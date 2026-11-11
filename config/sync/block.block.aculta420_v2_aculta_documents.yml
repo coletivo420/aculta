@@ -10,6 +10,13 @@ dependencies:
     - views
   theme:
     - aculta420_v2
+third_party_settings:
+  ui_styles:
+    block:
+      selected:
+        surface_style: 'aculta-surface aculta-surface--tone-raised'
+        spacing_section: 'aculta-surface aculta-surface--spacing-normal'
+      extra: ''
 id: aculta420_v2_aculta_documents
 theme: aculta420_v2
 region: content

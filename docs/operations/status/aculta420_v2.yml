@@ -2,5 +2,5 @@
 version: '1.5.0'
 state: Dev
 progress_note: >-
-  1.5.0: ADR-054/055 abertas. Layouts: 22 configs, gate 276 PASS, duas exclusões preservadas. Skins ativa; A/B/A sem carryover. Styles CKEditor 5 e Entity Status ativos; preview unpublished 1/7, visual/perfis/cache pendentes. Views Álbuns, Fórum e Eventos usam UI Patterns, acesso/browser focal PASS; Revista usa adapter SDC (Runtime pendente). Inventário 383/83 Twig; Field Group BLOCKED_UPSTREAM; UI Icons Picker alinhado, submódulos divergem. SDC 82, Library 25; cache-hit, zoom e homologação integral pendentes.
-next_phase: 'Migrar Views restantes; validar Entity Status, cache-hit/zoom, Icons e perfis; homologar dez domínios e RN-00–05.'
+  1.5.0: ADR-054/055 abertas. Layouts: 22 configs, gate 276 PASS, duas exclusões. Skins A/B/A sem carryover. UI Styles Block Documentos: três rows, cinco larguras/2 modos/foco PASS; Page global por região sem selector Domain ID. CKEditor5/Entity Status ativos, preview 1/7. Views Álbuns/Fórum/Eventos integradas; Revista usa adapter. Inventário 437/83 Twig; Field Group BLOCKED_UPSTREAM; Icons Picker alinhado. Cache-hit, zoom e homologação ampla pendentes.
+next_phase: 'Migrar Views e blocos restantes; validar Entity Status, cache-hit/zoom, Icons e perfis; homologar dez domínios e RN-00–05.'

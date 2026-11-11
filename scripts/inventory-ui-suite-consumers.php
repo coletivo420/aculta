@@ -253,6 +253,62 @@ foreach (glob($sync . '/core.entity_view_display.*.yml') ?: [] as $path) {
   ];
 }
 
+foreach (glob($sync . '/block.block.*.yml') ?: [] as $path) {
+  $block = Yaml::parseFile($path);
+  $id = (string) ($block['id'] ?? basename($path));
+  $pluginId = (string) ($block['plugin'] ?? 'unknown');
+  $styles = $block['third_party_settings']['ui_styles'] ?? [];
+  $selectedStyles = [];
+  foreach ($styles as $part => $settings) {
+    foreach (($settings['selected'] ?? []) as $styleId => $classes) {
+      $selectedStyles[] = $part . ':' . $styleId . '=' . $classes;
+    }
+  }
+  $runtimeBlock = $runtimeSnapshot['block_styles'][$id] ?? NULL;
+  $runtimeVerified = is_array($runtimeBlock)
+    && ($runtimeBlock['status'] ?? '') === 'runtime_verified'
+    && $selectedStyles !== [];
+  $viewId = preg_match('/^views_block:([^:]+)-/', $pluginId, $matches) ? $matches[1] : NULL;
+  $owner = match (TRUE) {
+    $viewId === 'aculta_events' => 'aculta_events',
+    $viewId === 'aculta_gallery' => 'aculta_gallery',
+    $viewId === 'aculta_forum_categories' => 'aculta_forum',
+    $viewId === 'aculta_forum_public_topics' => 'aculta_forum',
+    $viewId !== NULL => 'views:' . $viewId,
+    str_starts_with($pluginId, 'system_menu_block:') => 'system',
+    str_starts_with($pluginId, 'block_content:') => 'block_content',
+    default => (string) ($block['provider'] ?? 'unresolved_from_config'),
+  };
+  $visibility = implode(',', array_map(
+    static fn (string $key, array $condition): string => $key . '=' . json_encode($condition, JSON_UNESCAPED_SLASHES),
+    array_keys($block['visibility'] ?? []),
+    array_values($block['visibility'] ?? []),
+  ));
+  $rows[] = [
+    'id' => $id,
+    'owner_module' => $owner,
+    'config_path' => relative_path($root, $path),
+    'consumer_type' => 'block_instance',
+    'consumer_id' => $pluginId,
+    'display_plugin' => 'block',
+    'row_plugin' => '',
+    'style_plugin' => $selectedStyles !== [] ? 'ui_styles_block' : '',
+    'ui_patterns_configured' => $selectedStyles !== [] ? implode(',', $selectedStyles) : 'no_ui_styles_selection',
+    'status' => $runtimeVerified ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS',
+    'replacement_or_action' => $runtimeVerified
+      ? 'UI Styles Block applies existing ACULTA surface and spacing styles on the MAIN transparency block; preserve native Views output and block visibility'
+      : 'Inspect rendered output and map the block to existing SDC/UI Styles integrations; preserve plugin data, visibility, access and cache',
+    'risk_or_evidence_gap' => $runtimeVerified
+      ? 'Anonymous Runtime and Firefox verified at 320/390/768/1024/1440 in light/dark with keyboard focus; cache-hit and zoom 200% remain open'
+      : 'Runtime output, domain/path visibility, cache and visual replacement remain unverified; config visibility: ' . $visibility,
+    'rollback' => 'Restore only this block configuration; no content data changes',
+    'detected_consumers' => $pluginId,
+    'runtime_status' => $runtimeVerified
+      ? 'active; ' . ($runtimeBlock['region'] ?? 'region unknown') . '; ' . ($runtimeBlock['row_count'] ?? 'unknown') . ' rows; anonymous access; ' . ($runtimeBlock['evidence_manifest'] ?? 'browser evidence recorded')
+      : 'not_observed',
+  ];
+}
+
 // Inventory every custom Twig template individually. Templates that compose an
 // SDC directly are native; other templates remain explicit migration work until
 // their visual and functional contracts have a reviewed SDC/UI Suite mapping.
@@ -497,6 +553,11 @@ $moduleInventory = [
     'module' => 'ui_styles', 'status' => 'MIGRATION_IN_PROGRESS',
     'replacement' => 'Use registered UI Styles for reusable SDC, block, Layout Builder and Views visual choices.',
     'risk' => 'Existing UI Styles config is present but this run did not exhaustively compare plugin registrations and consumer forms.',
+  ],
+  'drupal/ui_styles_block' => [
+    'module' => 'ui_styles_block', 'status' => 'MIGRATION_IN_PROGRESS',
+    'replacement' => 'Apply registered UI Styles to block, title and content parts; keep domain visibility and functional block plugins unchanged.',
+    'risk' => 'One MAIN transparency block has a verified raised-surface/spacing selection. Remaining block placements need output mapping and risk review. Zoom 200% and cache-hit are not yet tested.',
   ],
   'drupal/ui_styles_library' => [
     'module' => 'ui_styles_library', 'status' => 'MIGRATION_IN_PROGRESS',

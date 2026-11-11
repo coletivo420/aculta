@@ -7,6 +7,14 @@
   confirmou grid, dois `card-cultural`, foco visível e sem overflow a 320/1440
   px claro/escuro; zoom, cache-hit e revisão visual seguem pendentes.
 
+## Não versionado — UI Styles Block na transparência (2026-11-11)
+
+- A instância `aculta420_v2_aculta_documents`, visível em `/transparencia` no
+  MAIN, recebeu `surface_style` raised e `spacing_section` normal pelo UI Styles.
+- Runtime anônimo preservou três rows. Firefox ESR passou em cinco larguras e
+  dois modos, com foco visível, H1/main únicos e zero overflow. Zoom 200%,
+  cache-hit e revisão visual humana permanecem pendentes.
+
 ## Não versionado — UI Styles Entity Status (2026-11-11)
 
 - Habilita Entity Status no Sync/Runtime e aplica `unpublished_preview` como

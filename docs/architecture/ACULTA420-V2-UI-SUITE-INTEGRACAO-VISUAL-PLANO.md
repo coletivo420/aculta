@@ -168,6 +168,8 @@ Em todos os casos: layout claro e escuro, breakpoint 320/390/768/1024/1440 px, z
 - Homologar em saída real `ui_styles_page` e `ui_styles_entity_status`; verificar perfis e cache sem confundir estado visual de publicação com acesso.
 - **Gate:** estilos sem duplicacao, rascunho invisivel para usuario nao autorizado, config exportavel.
 
+**Piloto UI Styles Block (2026-11-11):** `aculta420_v2_aculta_documents` usa `surface_style=raised` e `spacing_section=normal` por third-party settings. O bloco é visível somente em `/transparencia` no MAIN. Import isolado após snapshot; três rows anônimas preservadas. Firefox ESR confirmou classes e computed CSS em cinco viewports, light/dark, foco visível, H1/main únicos e zero overflow. Zoom 200%, cache-hit e revisão visual humana permanecem DEFERRED. O módulo Page ativo injeta classes globais por região do tema; não usar essa API para estilos diferenciados por Domain ID.
+
 ### US-04 - UI Styles CKEditor 5
 - Selecionar estilos por formato existente (`revista_editorial`, `wiki`, `usuario_aculta`, `forum`), com acessos diferentes e minimo privilegio.
 - Testar estilos inline/block, preview no editor e render publico, sanitizacao e continuidade dos modelos CKEditor Plugin Pack.

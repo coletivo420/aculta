@@ -132,6 +132,7 @@ Estão listadas abaixo as pastas reais, com o caminho completo. A convenção é
 | `tests/browser/transversal/aculta420-v2-empty-state/` | ACULTA420 V2 — Empty state |
 | `tests/browser/transversal/aculta420-v2-footer/` | ACULTA420 V2 — rodapé e regions do shell |
 | `tests/browser/transversal/aculta420-v2-navigation/` | Navegação SDC do ACULTA420 V2 |
+| `tests/browser/transversal/ui-styles-block/` | UI Styles Block — bloco de Documentos institucionais |
 | `tests/browser/wiki/aculta-wiki/` | ACULTA Wiki — visual smoke test |
 | `tests/browser/wiki/aculta420-v2-wiki/` | ACULTA420 V2 — visual Wiki |
 <!-- INDICE:FIM -->

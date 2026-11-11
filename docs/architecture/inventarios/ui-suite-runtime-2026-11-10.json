@@ -1,5 +1,5 @@
 {
-    "observed_at_utc": "2026-11-11T15:00:00+00:00",
+    "observed_at_utc": "2026-11-11T04:34:37+00:00",
     "drupal_version": "11.5.0-beta1",
     "evidence_command": "Drush Runtime export and targeted partial imports after snapshots; ComponentLayout discovery; 276-check Layout Builder batch validator; render-array/access parity checks; anonymous Firefox A/B/A pilot; Forum categories and UI Styles Entity Status targeted imports; UI Styles Entity Status isolated functional test",
     "ui_suite_modules": {
@@ -184,8 +184,48 @@
         "node.wiki_entry.full has a purpose-built Twig adapter that renders the wiki-entry SDC directly from access-checked fields; it bypasses the configured Layout Builder wrapper and is validated as a UI_SUITE_NATIVE adapter.",
         "Wiki full browser acceptance is DEFERRED: anonymous GET returned 403 and the authenticated Firefox runner produced a blank document without title/main; the artifact was not counted as a pass.",
         "The public Forum categories page now wraps its native grouped View output with views-display while retaining the forum-category row and native style. Runtime partial import changed only views.view.aculta_forum_categories after a config snapshot; anonymous HTTP 200 and 12 category cards remained, with one H1/main, zero horizontal scroll at five light widths and two dark widths, and keyboard-visible focus.",
-        "The Events catalogue style pilot wraps the existing aculta_events_catalogue_card rows in the UI Patterns layout-grid. A targeted partial import changed only views.view.eventos_publicos after a Runtime snapshot (SHA-256 37a007b412a411f33d6b39c130ee98083aa3dbe8f836a3f9dd284dcc1c139d23); effective Views handler, anonymous access, two cards and Firefox ESR 320/1440 light/dark with visible keyboard focus and no horizontal scroll were verified. The detail-route smoke is separate. Cache-hit and zoom 200% remain unverified. An earlier broad-source partial import briefly disabled ui_styles_library, ui_patterns_field_group and ui_patterns_ui; these modules were immediately re-enabled, with no content data changes. Do not repeat broad-source partial imports; isolate target YAML in a temporary source directory."
+        "The Events catalogue style pilot wraps the existing aculta_events_catalogue_card rows in the UI Patterns layout-grid. A targeted partial import changed only views.view.eventos_publicos after a Runtime snapshot (SHA-256 37a007b412a411f33d6b39c130ee98083aa3dbe8f836a3f9dd284dcc1c139d23); effective Views handler, anonymous access, two cards and Firefox ESR 320/1440 light/dark with visible keyboard focus and no horizontal scroll were verified. The detail-route smoke is separate. Cache-hit and zoom 200% remain unverified. An earlier broad-source partial import briefly disabled ui_styles_library, ui_patterns_field_group and ui_patterns_ui; these modules were immediately re-enabled, with no content data changes. Do not repeat broad-source partial imports; isolate target YAML in a temporary source directory.",
+        "UI Styles Block now applies the registered raised-surface and normal-spacing choices to the MAIN-only transparency block aculta420_v2_aculta_documents. The isolated block config import followed a Runtime snapshot (SHA-256 stored in the capture manifest); anonymous Runtime retained three View rows, and Firefox verified computed light/dark background, 16/24 px responsive padding, keyboard focus, one H1/main and no overflow at 320/390/768/1024/1440. UI Styles Page still uses theme-global region settings with no domain-aware assignment, so it is not used for domain-specific skins."
     ],
+    "block_styles": {
+        "aculta420_v2_aculta_documents": {
+            "status": "runtime_verified",
+            "owner_module": "views:aculta_documents",
+            "plugin": "views_block:aculta_documents-block_1",
+            "region": "content",
+            "visibility": {
+                "path": "/transparencia",
+                "domain_purpose": "main"
+            },
+            "ui_styles": {
+                "block.surface_style": "aculta-surface aculta-surface--tone-raised",
+                "block.spacing_section": "aculta-surface aculta-surface--spacing-normal"
+            },
+            "row_count": 3,
+            "anonymous_access": "allowed",
+            "computed_background": {
+                "light": "luminance > 0.8",
+                "dark": "luminance < 0.2"
+            },
+            "computed_text_contrast_ratio": {
+                "minimum": 12.39,
+                "maximum": 12.96
+            },
+            "computed_padding_css_px": {
+                "320": 16,
+                "390": 16,
+                "768": 24,
+                "1024": 24,
+                "1440": 24
+            },
+            "keyboard_focus": "visible",
+            "horizontal_scroll": false,
+            "evidence_manifest": "tests/browser/capturas/ui-styles-block/2026-11-11/manifest.json",
+            "limitations": [
+                "Zoom 200% and cache-hit variation not tested."
+            ]
+        }
+    },
     "layout_builder_displays": {
         "core.entity_view_display.block_content.aculta_editorial.default": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
@@ -675,14 +715,23 @@
                     "anonymous_access": "allowed; access-checked event IDs are supplied by the native catalogue controller",
                     "ordering_and_data": "native custom field retains controller-selected IDs, labels and ordering",
                     "cache_metadata": "native View/render metadata retained; cache-hit variation not measured",
-                    "browser_viewports_css_px": [320, 1440],
-                    "browser_modes": ["light", "dark"],
+                    "browser_viewports_css_px": [
+                        320,
+                        1440
+                    ],
+                    "browser_modes": [
+                        "light",
+                        "dark"
+                    ],
                     "card_sdc": "aculta420_v2:card-cultural",
                     "cards_per_capture": 2,
                     "horizontal_scroll": false,
                     "keyboard_focus": "visible solid outline inside main",
                     "evidence_manifest": "tests/browser/capturas/ui-patterns-eventos/2026-11-11/manifest.json",
-                    "limitations": ["Zoom 200% and cache-hit variation remain unverified.", "Event detail smoke was run independently and is not evidence for this display."]
+                    "limitations": [
+                        "Zoom 200% and cache-hit variation remain unverified.",
+                        "Event detail smoke was run independently and is not evidence for this display."
+                    ]
                 }
             }
         },
