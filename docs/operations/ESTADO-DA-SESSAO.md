@@ -1,3 +1,14 @@
+# ADR-054/055 — UI Icons — 2026-11-11
+
+- **Objetivo:** conferir UI Icons 2.1 e inventário Sync/Runtime.
+- **Estado:** menus principal/conta usam `icon_picker`, restritos a Phosphor; UI Patterns Sync usa Picker e Runtime Popover. Packs Fluent Emoji continuam no fluxo editorial do tema. Sem aceite visual/SDC.
+- **Decisões:** não importar ainda; snapshot mostra submódulos Runtime adicionais ausentes da Sync, e `cim` amplo poderia desativá-los.
+- **Cuidados:** runtime/sync selector drift; alinhar extensões/config num delta revisado. Snapshot: três configs exportadas; recriar antes do import.
+- **Commits e arquivos:** pendente; inventário, ADR-055, snapshot Runtime, CSV e handoff.
+- **Verificações:** `UiIconsPackTest` 2/47 PASS; SDC 82/1774 PASS; UI Skins 134 PASS; php -l, inventário e `git diff --check` PASS. Token-budget gate global tem 7 falhas preexistentes.
+- **Pendências:** revisar delta de `core.extension`, alinhar Picker/Popover e validar formulários/acessibilidade.
+- **Próximo passo:** revisar delta antes de novo `drush cim`.
+
 # ADR-054/055 — Piloto Views row/style/display — 2026-11-10
 
 - **Objetivo:** integrar row/style/display na View Álbuns sem perder funções nativas.
@@ -9,21 +20,12 @@
 - **Pendências:** demais Views/domínios, P8/P9, Page/Entity Status, Icons e RN-00–05.
 - **Próximo passo:** migrar a próxima View com comparação de render, acesso e cache.
 
-# UI Skins — extensão Sync e limpeza da chave antiga — 2026-11-10
 
-- **Objetivo:** tornar UI Skins obrigatório no Config Sync e retirar a última chave de paleta antiga do Runtime.
-- **Estado:** Sync registra `ui_skins`; gate exige extensão ativa no export. Runtime tem UI Skins 1.2.1 e descobriu cinco plugins, cada um com 20 scopes. Mapa e scopes ativos seguem ausentes; `aculta_purpose_palette` foi removida sem cópia após busca sem consumidores.
-- **Decisões e alternativas descartadas:** sem dual-read, alias ou backup da configuração antiga, conforme instrução do responsável. Sem `config:import`/atualização não autorizados.
-- **Cuidados:** preservar preferência individual de modo; cache varia por domínio/usuário e marca config do mapa.
-- **Commits e arquivos:** `d4142969f`, `420141139`; Sync, gate UI Skins, ADR-054/055, plano, docs de gate/skins, roadmap, TODO e status.
-- **Verificações:** UI Skins 127, extensões Sync 1753, resolver Unit 2/6 e PHPCS PASS; runtime descobriu 5×20 scopes; `drush cr` PASS. Token budget FAIL por sete pendências preexistentes. Browser DEFERRED sem mapa/scopes ativos; tradução pt-br falhou porque `translations://` não está configurado.
-- **Pendências e bloqueios:** importar o mapa e os scopes UI Skins pelo fluxo autorizado; comparar Links em cache, modos e visual antes dos demais domínios.
-- **Próximo passo:** executar o cutover de configuração autorizado e validar o piloto Links no tema V2.
 
-# Inventário UI Suite — fallback funcional do Portal Button — 2026-11-10
+# UI Skins — configuração e piloto Runtime — 2026-11-11
 
-- **Objetivo/estado:** corrigir classificação auditável de `aculta_portal_button`: o Render Element e seu template sem classes visuais são `FUNCTIONAL_NATIVE_EXCEPTION`; o override do tema compõe `aculta420_v2:button` e é `UI_SUITE_NATIVE`.
-- **Decisões/cuidados:** sem comportamento visual legado ou configuração de fallback antiga. Preservar somente o fallback semântico funcional do Render API; não remover o contrato neutro do módulo.
-- **Arquivos:** gerador `scripts/inventory-ui-suite-consumers.php`, CSV `docs/architecture/inventarios/ui-suite-consumidores-iniciais.csv`, plano vinculante e TODO do tema.
-- **Verificações:** gerador executado (386 registros); classificação/consumidores das duas linhas inspecionados; `php -l` e `git diff --check` PASS. Browser/runtime do adapter não revalidado nesta microfase.
-- **Pendências/próximo passo:** continuar migração dos demais templates e validar SDC/Render API em Runtime; mapa/scopes UI Skins ainda aguardam fluxo de import autorizado.
+- **Estado:** UI Skins 1.2.1, mapa Domain ID → skin e cinco grupos de CSS variables estão ativos; `aculta_purpose_palette` permanece removida sem alias/cópia.
+- **Evidência:** A/B/A anônimo confirmou Links=Ruderalis e outros domínios testados=Skunk, sem carryover. `ui_styles_ckeditor5` e `ui_patterns_views` também ativos no Runtime.
+- **Arquivos/verificações:** `config/sync`, Portal/tema, ADRs, gate UI Skins; A/B/A documentado no inventário Runtime. Cutover autorizado e importado após snapshot.
+- **Pendências:** contraste e aceite visual dos dez domínios, breakpoints, zoom, cache-hit; ADRs continuam abertas. Próximo: completar Views e homologação ampla.
+

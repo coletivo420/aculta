@@ -11,14 +11,14 @@
   Runtime/Sync e autorização das rotas de defaults. Homologação visual ampla,
   teclado, zoom e cache-hit continuam pendentes.
 
-## UI Skins — configuração versionada, cutover Runtime pendente (2026-11-10)
+## UI Skins — cutover Runtime e piloto Links (2026-11-11)
 
 - `ui_skins` está habilitado no Config Sync; o gate exige o módulo, mapa de dez
   domínios, cinco variáveis, vinte scopes por variável e contraste ≥4,5:1.
-- A chave visual antiga foi removida do Runtime sem cópia. UI Skins 1.2.1 está
-  instalado e suas cinco definições foram descobertas; o mapa de Domain IDs e
-  os scopes ainda não foram importados.
-  A comparação do piloto Links e o aceite visual dependem do cutover autorizado.
+- UI Skins 1.2.1, mapa Domain ID → skin e scopes das cinco variáveis estão
+  ativos no Runtime. Links resolve Ruderalis e os outros domínios testados
+  resolvem o padrão Skunk; A/B/A anônimo não mostrou reaproveitamento entre
+  hosts. Contraste e aceite visual dos dez domínios permanecem pendentes.
 
 ## UI Icons — integração oficial em andamento (2026-11-10)
 
@@ -36,21 +36,29 @@
 - Paginação multi-página, cache-hit, teclado, zoom, demais Views e homologação
   dos dez domínios seguem pendentes; ADR-054/055 permanecem abertas.
 
+## Views — categorias do Fórum (2026-11-11)
+
+- `/categorias` usa row `forum-category`, mantém o agrupamento Views nativo e
+  compõe o display com `views-display`. Os 12 resultados e o acesso anônimo
+  permaneceram; Firefox validou cinco larguras claras, duas escuras, foco e
+  alvos ≥44 px. O bloco `block_landing` continua sem aceite porque seu placement
+  está oculto na home. Cache-hit e zoom 200% seguem pendentes.
+
 > **Marcos P8/P9 implementados (2026-11-09); ADR-054/055 ainda abertas:** o tema tem as cinco regiões finais, o shell v2 é o padrão e o motor de container foi removido. Layout Builder cobre 22 dos 24 displays compatíveis, a landing Links está publicada no LB e a UI Library oferece prévias reais. Pendências: homologação visual, conteúdo editorial das demais landings, migração integral dos visuais para UI Suite e dívida de boundary dos módulos do Portal. Rollback documentado em `docs/architecture/ACULTA420-V2-P9-CUTOVER.md`.
 
 
 Status espelhado de `TODO.md`. Plano visual: `docs/architecture/GROWROOM420-VISUAL-PLANO.md`.
 
-## UI Skins — corte de código iniciado (2026-11-10)
+## UI Skins — fonte visual ativa (2026-11-11)
 
 - Configuração/formulário por purpose removidos do tema. O Portal resolve skin por Domain ID e entrega `aculta_skin_id`; UI Skins declara cinco variáveis e vinte scopes.
-- UI Skins 1.2.1 instalado e cinco definições descobertas; scopes ativos, capturas e aceite visual estão pendentes; esta etapa não fecha ADR-054/055.
+- Mapa, CSS variables e scopes ativos; A/B/A validado para Links/Skunk sem vazamento entre hosts. Capturas e aceite visual amplo ainda pendem; esta etapa não fecha ADR-054/055.
 
 ## ADR-054/055 — SDCs transversais e Views (2026-11-10)
 
 - `aculta_section` e o aviso de pagamento foram ligados aos SDCs `layout-section` e `surface`; dados, render arrays e destino externo continuam no Portal.
 - Inventário gerado: 381 registros/83 templates Twig; 15 templates fallback de módulos relacionados a adapters SDC do tema.
-- Categorias do Fórum: Sync/install usam `forum-category` em row UI Patterns; cinco templates de Views retirados no checkout. Runtime ainda usa `row: fields`; importação autorizada, render/cache/acesso e browser permanecem DEFERRED.
+- Categorias do Fórum: página `/categorias` usa `forum-category` + `views-display`; agrupamento nativo mantido, Runtime 200/12 resultados e browser cinco larguras claros + duas escuras PASS. O block landing tem row SDC, mas placement está oculto na home e não recebeu aceite visual.
 - Stylelint focal, PHPUnit, SDC schemas, Layouts e classes mapeadas passaram. Gate Stylelint global segue com falhas preexistentes em `surface.css`, `surface-accent.css` e `surface-panel.css`.
 
 ## Entregas

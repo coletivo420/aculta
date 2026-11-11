@@ -42,6 +42,9 @@ $runtimeSnapshot = is_file($runtimeSnapshotPath)
 $runtimeStatuses = is_array($runtimeSnapshot['ui_suite_modules'] ?? NULL)
   ? $runtimeSnapshot['ui_suite_modules']
   : [];
+$runtimeObservedDate = is_string($runtimeSnapshot['observed_at_utc'] ?? NULL)
+  ? substr($runtimeSnapshot['observed_at_utc'], 0, 10)
+  : 'unknown-date';
 $runtimeViewDisplays = is_array($runtimeSnapshot['view_displays'] ?? NULL)
   ? $runtimeSnapshot['view_displays']
   : [];
@@ -83,17 +86,28 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && in_array((string) $displayId, ['default', 'page_1'], TRUE)
       && ((is_array($stylePatterns) && !empty($stylePatterns['component_id']))
         || (is_array($displayPatterns) && !empty($displayPatterns['component_id'])));
+    $isViewsDefaultBase = (string) $displayId === 'default';
+    $isViewsFunctionalBase = $isViewsDefaultBase && !$patternsConfigured;
     $runtimeView = $runtimeViewDisplays[$viewId] ?? NULL;
     $albumsRuntimeVerified = $isAlbumsViewsPilot
       && is_array($runtimeView)
       && ($runtimeView['status'] ?? '') === 'runtime_verified';
+    $forumRuntimeDisplay = $isForumCategoryPilot && is_array($runtimeView)
+      ? ($runtimeView['displays'][$displayId] ?? NULL)
+      : NULL;
+    $forumRuntimeVerified = is_array($forumRuntimeDisplay)
+      && ($forumRuntimeDisplay['status'] ?? '') === 'runtime_verified';
     $forumCategoryLegacyTemplatesRemoved = $isForumCategoryPilot
       && !is_file($theme . '/templates/views/views-view-fields--aculta-forum-categories--' . $displayId . '.html.twig')
       && !is_file($theme . '/templates/views/views-view-unformatted--aculta-forum-categories--' . $displayId . '.html.twig')
       && !is_file($theme . '/templates/views/views-view--aculta-forum-categories--' . $displayId . '.html.twig');
     $rows[] = [
       'id' => $viewId,
-      'owner_module' => $viewId === 'aculta_albuns' ? 'aculta_gallery' : 'unresolved_from_config',
+      'owner_module' => match ($viewId) {
+        'aculta_albuns' => 'aculta_gallery',
+        'aculta_forum_categories' => 'aculta_forum',
+        default => 'unresolved_from_config',
+      },
       'config_path' => relative_path($root, $path),
       'consumer_type' => 'view_display',
       'consumer_id' => (string) $displayId,
@@ -101,28 +115,44 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'row_plugin' => $rowPlugin,
       'style_plugin' => $stylePlugin,
       'ui_patterns_configured' => $components !== [] ? implode(',', $components) : 'not_detected_by_plugin_id_scan',
-      'status' => $albumsRuntimeVerified ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS',
-      'replacement_or_action' => $isAlbumsViewsPilot
+      'status' => $isViewsFunctionalBase
+        ? 'FUNCTIONAL_NATIVE_EXCEPTION'
+        : (($albumsRuntimeVerified || $forumRuntimeVerified) ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS'),
+      'replacement_or_action' => $isViewsFunctionalBase
+        ? 'Native Views base display supplies inherited query, access, filters and sorting; it is not an independently rendered visual consumer'
+        : ($isAlbumsViewsPilot
         ? 'Compose this inherited View level with UI Patterns SDCs; preserve native row fields, filters, sort, pager and access'
         : ($isForumCategoryPilot
         ? ($forumCategoryLegacyTemplatesRemoved
           ? 'UI Patterns row SDC cutover is defined in Sync/install; source field/wrapper templates removed; retain Views query, grouping, pager and access contracts'
           : 'Pilot: replace duplicated row field templates with the forum-category SDC; retain Views query, grouping, pager and access contracts')
-        : 'Inventory candidate only; inspect row, style and display independently before migration'),
-      'risk_or_evidence_gap' => $isAlbumsViewsPilot
+        : 'Inventory candidate only; inspect row, style and display independently before migration')),
+      'risk_or_evidence_gap' => $isViewsFunctionalBase
+        ? 'Inherited functional query, access, filters and sorting are consumed by explicit displays; no independent visual output'
+        : ($isAlbumsViewsPilot
         ? ($albumsRuntimeVerified
           ? 'Runtime/render/browser verified at 1280/320 light/dark; pager navigation, keyboard, zoom 200% and cache-hit variation remain open'
           : 'Sync defines row/style/display composition; targeted Runtime import and output, permission, pager/cache and browser comparison remain pending')
         : ($isForumCategoryPilot
-        ? ($forumCategoryLegacyTemplatesRemoved
-          ? 'Sync/install declare the UI Patterns row, but Runtime still has row: fields; authorized import and before/after rendered output, access/cache and browser evidence are pending'
-          : 'Config Sync and install defaults use UI Patterns row; Runtime cutover, rendered output, access/cache comparison and browser evidence are pending')
-        : 'No UI Patterns row/style/display plugin ID detected in Sync; Runtime output, access and cache still unverified'),
+        ? ($forumRuntimeVerified
+          ? 'Runtime/browser verified at five light viewports, two dark viewports and keyboard focus; cache-hit and zoom 200% remain open; native grouping and pager retained'
+          : ($displayId === 'block_landing'
+            ? 'UI Patterns row is configured, but its block placement is hidden on the public home; style/display composition and visible-consumer evidence remain pending'
+            : ($forumCategoryLegacyTemplatesRemoved
+              ? 'Sync/install declare the UI Patterns row, but Runtime/render/browser evidence remains pending'
+              : 'Config Sync and install defaults use UI Patterns row; Runtime cutover and output/access/cache comparison remain pending')))
+        : 'No UI Patterns row/style/display plugin ID detected in Sync; Runtime output, access and cache still unverified')),
       'rollback' => 'Revert only display config after before/after result comparison',
       'detected_consumers' => '',
-      'runtime_status' => $albumsRuntimeVerified
+      'runtime_status' => $isViewsFunctionalBase
+        ? 'functional native base; no direct route/display consumer'
+        : ($albumsRuntimeVerified
         ? sprintf('active; HTTP %d; %d results before/after; anonymous access allowed; browser 1280/320 light/dark', $runtimeView['after_http_status'], $runtimeView['result_count_after'])
-        : 'not_observed',
+        : ($forumRuntimeVerified
+          ? sprintf('active; HTTP %d; %d taxonomy cards; anonymous access allowed; browser 320/390/768/1024/1440 light and 320/1440 dark', $forumRuntimeDisplay['after_http_status'], $forumRuntimeDisplay['result_count_after'])
+          : ($isForumCategoryPilot && $displayId === 'block_landing'
+            ? 'active row plugin; block placement hidden on public home; no visible output claimed'
+            : 'not_observed'))),
     ];
   }
 }
@@ -419,7 +449,7 @@ $moduleInventory = [
   'drupal/ui_patterns_views' => [
     'module' => 'ui_patterns_views', 'status' => 'MIGRATION_IN_PROGRESS',
     'replacement' => 'Adopt UI Patterns independently at row, style and display levels after preserving filters, pager, sorting and access.',
-    'risk' => '159 displays in Sync; none use UI Patterns row/style/display plugin IDs; Runtime and output comparisons are pending.',
+    'risk' => '159 displays in Sync; four UI Patterns row/style/display levels are configured across the Albums and Forum Categories views. Most displays, cache-hit behavior and multi-page navigation still need review.',
   ],
   'drupal/ui_styles' => [
     'module' => 'ui_styles', 'status' => 'MIGRATION_IN_PROGRESS',
@@ -439,7 +469,7 @@ $moduleInventory = [
   'drupal/ui_styles_ckeditor5' => [
     'module' => 'ui_styles_ckeditor5', 'status' => 'MIGRATION_IN_PROGRESS',
     'replacement' => 'Provide SDC surface, spacing, elevation and radius choices in revista_editorial through the official block plugin; UI Patterns CKEditor remains excluded.',
-    'risk' => 'Enabled in Sync only for revista_editorial; Runtime plugin is Disabled. Config import and editor/browser validation await explicit operational authorization.',
+    'risk' => 'Enabled in Sync and Runtime for revista_editorial; editor output, stored markup and browser validation remain pending.',
     'configs' => ['config/sync/editor.editor.revista_editorial.yml', 'config/sync/filter.format.revista_editorial.yml'],
   ],
   'drupal/ui_styles_entity_status' => [
@@ -471,13 +501,13 @@ $moduleInventory = [
     'module' => 'ui_skins',
     'status' => 'MIGRATION_IN_PROGRESS',
     'replacement' => 'Portal DomainSkinResolver + five UI Skins CSS-variable plugins/scopes selected by Drupal Domain ID; theme consumes data-skin and data-theme',
-    'risk' => 'Module is enabled and plugin discovery is source/runtime verified; active Runtime lacks aculta_portal.visual_skins and theme third-party CSS-variable settings, although both exist in Sync. Config import, CSS output, cache separation and visual acceptance remain pending.',
+    'risk' => 'Runtime has the Domain-to-skin map and five UI Skins CSS-variable settings; A/B/A verified Links Ruderalis against other-domain Skunk values. Contrast and visual acceptance across ten domains, modes and breakpoints remain pending.',
   ],
   'drupal/ui_icons' => [
     'module' => 'ui_icons',
     'status' => 'MIGRATION_IN_PROGRESS',
-    'replacement' => 'Keep the current Phosphor and Fluent Emoji packs and validate UI Icons menu/picker/pattern adapters against the locked 2.1.x API',
-    'risk' => 'Package is directly locked but module is absent from Sync; Runtime enablement differs from Sync and pack data ownership must remain with each pack owner',
+    'replacement' => 'Keep the three existing local Phosphor Regular, Phosphor Duotone, and Fluent Emoji packs; preserve pack ownership and use UI Icons adapters only where configured',
+    'risk' => 'UI Icons 2.1.0 is enabled in Sync and Runtime. Menus restrict selection to Phosphor; editorial emoji remains in CKEditor. Full picker and menu visual/accessibility acceptance remains pending.',
   ],
   'drupal/ui_patterns_field_group' => [
     'module' => 'ui_patterns_field_group',
@@ -493,18 +523,18 @@ $moduleInventory = [
   ],
   'drupal/ui_icons_menu' => [
     'module' => 'ui_icons_menu', 'status' => 'MIGRATION_IN_PROGRESS',
-    'replacement' => 'Render menu icons through the official UI Icons formatter/adapters and existing icon packs.',
-    'risk' => 'Pack ownership, menu assignments and Runtime enablement need direct verification.',
+    'replacement' => 'Use the official menu adapter with existing Phosphor packs and menu-owned assignments.',
+    'risk' => 'Main and account menus configure icon_picker and permit only Phosphor Regular/Duotone. Runtime and Sync menu config must be reconciled before visual acceptance.',
   ],
   'drupal/ui_icons_picker' => [
     'module' => 'ui_icons_picker', 'status' => 'MIGRATION_IN_PROGRESS',
-    'replacement' => 'Use the official picker for editorial/admin selection while preserving pack ownership and access.',
-    'risk' => 'Picker forms and allowed pack inventory have not been verified in Runtime.',
+    'replacement' => 'Use Picker on menu-owned settings and UI Patterns sources where configured.',
+    'risk' => 'Picker 2.1.0 is enabled in Sync/Runtime; menu configs use icon_picker. UI Patterns Sync selects icon_picker, while Runtime currently selects icon_popover.',
   ],
   'drupal/ui_icons_patterns' => [
     'module' => 'ui_icons_patterns', 'status' => 'MIGRATION_IN_PROGRESS',
-    'replacement' => 'Expose UI Icons through UI Patterns props on compatible SDCs.',
-    'risk' => 'UI Icons and UI Patterns integration API/assignments require focal validation.',
+    'replacement' => 'Expose UI Icons through the native UI Patterns icon source on compatible SDC props.',
+    'risk' => 'Module/API verified in UI Icons 2.1.0; Sync selects icon_picker and Runtime selects icon_popover. No SDC icon-prop consumer or visual/accessibility acceptance is recorded yet.',
   ],
   'drupal/ui_icons_field' => [
     'module' => 'ui_icons_field', 'status' => 'MIGRATION_IN_PROGRESS',
@@ -553,8 +583,8 @@ $moduleInventory = [
   ],
   'drupal/ui_icons_popover' => [
     'module' => 'ui_icons_popover', 'status' => 'MIGRATION_IN_PROGRESS',
-    'replacement' => 'Use the official popover integration for existing icon selection forms where access permits.',
-    'risk' => 'Enabled in Runtime but absent from Sync; picker usage and pack permissions need review.',
+    'replacement' => 'Use only where the Runtime configuration explicitly selects icon_popover; keep Sync selection intentional and consistent.',
+    'risk' => 'Enabled in Runtime but absent from Sync. The UI Patterns module installs icon_popover by default; Sync intentionally changes this to icon_picker. Runtime/Sync drift is unresolved.',
   ],
   'drupal/ui_icons_text' => [
     'module' => 'ui_icons_text', 'status' => 'MIGRATION_IN_PROGRESS',
@@ -629,8 +659,8 @@ foreach ($moduleInventory as $packageName => $metadata) {
     'detected_consumers' => '',
     'runtime_status' => array_key_exists($metadata['module'], $runtimeStatuses)
       ? (is_array($runtimeStatuses[$metadata['module']])
-        ? 'observed_2026-11-10:' . ($runtimeStatuses[$metadata['module']]['status'] ?? 'unknown') . '; version=' . ($runtimeStatuses[$metadata['module']]['version'] ?? 'unknown')
-        : 'observed_2026-11-10:' . $runtimeStatuses[$metadata['module']])
+        ? 'observed_' . $runtimeObservedDate . ':' . ($runtimeStatuses[$metadata['module']]['status'] ?? 'unknown') . '; version=' . ($runtimeStatuses[$metadata['module']]['version'] ?? 'unknown')
+        : 'observed_' . $runtimeObservedDate . ':' . $runtimeStatuses[$metadata['module']])
       : 'current_runtime=not_observed',
   ];
 }
@@ -647,10 +677,10 @@ $rows[] = [
   'ui_patterns_configured' => 'ui_skins_code_and_sync_declared',
   'status' => 'MIGRATION_IN_PROGRESS',
   'replacement_or_action' => 'Portal maps ten Drupal Domain IDs to skin IDs; UI Skins declares light/dark CSS variables; purpose palette form, config key, class, selectors and tokens removed',
-  'risk_or_evidence_gap' => 'Runtime confirms UI Skins enabled and five CSS variables discovered, but active theme settings and Domain-to-skin map are absent; both are only in Sync. Authorized import, warmed cache isolation, contrast and browser acceptance remain deferred',
+  'risk_or_evidence_gap' => 'Runtime has the active Domain-to-skin map and five CSS-variable settings; Links A/B/A values are verified. Full contrast, cache-hit isolation and visual acceptance across ten domains remain deferred',
   'rollback' => 'Revert the scoped code/config commit; do not restore purpose palette behavior or aliases',
   'detected_consumers' => 'DomainSkinResolver, AppearanceHooks, SurfaceSettingsHooks, UI Skins PageTop scopes',
-  'runtime_status' => 'ui_skins=Enabled 1.2.1; map and theme CSS-variable settings absent from active config',
+  'runtime_status' => 'ui_skins=Enabled 1.2.1; map active (Links=Ruderalis, default=Skunk); five UI Skins CSS-variable definitions/scopes active',
 ];
 
 usort(

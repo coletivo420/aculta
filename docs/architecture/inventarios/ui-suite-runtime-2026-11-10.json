@@ -1,7 +1,7 @@
 {
-    "observed_at_utc": "2026-11-11T01:38:04+00:00",
+    "observed_at_utc": "2026-11-11T03:13:29+00:00",
     "drupal_version": "11.5.0-beta1",
-    "evidence_command": "Drush Runtime export and targeted partial import after snapshot; ComponentLayout discovery; 276-check Layout Builder batch validator; render-array/access parity checks; anonymous Firefox A/B/A pilot",
+    "evidence_command": "Drush Runtime export and targeted partial import after snapshot; ComponentLayout discovery; 276-check Layout Builder batch validator; render-array/access parity checks; anonymous Firefox A/B/A pilot; forum categories targeted partial import after Runtime snapshot; anonymous Firefox five-viewport and keyboard check",
     "ui_suite_modules": {
         "ui_icons": {
             "status": "Enabled",
@@ -120,7 +120,7 @@
             "version": "8.x-1.22"
         },
         "ui_styles_ckeditor5": {
-            "status": "Disabled",
+            "status": "Enabled",
             "version": "8.x-1.22"
         },
         "ui_styles_entity_status": {
@@ -166,8 +166,11 @@
         "core.entity_view_display.node.page.default": "ui_patterns:aculta420_v2:layout_section; Render API/browser confirmed",
         "ui_patterns_ckeditor5": "enabled preexisting; prohibited for this implementation; removal requires separate authorization",
         "ui_patterns_field_group": "enabled preexisting 2.0.x-dev; blocked upstream pending security and Drupal 12 support assessment",
-        "ui_styles_ckeditor5": "enabled; authorized Config Sync cutover applied",
-        "layout_builder_component_displays": "22 eligible configs use ui_patterns:aculta420_v2:layout_section; 21 render ComponentLayout wrappers; node.wiki_entry.full renders via direct wiki-entry SDC template"
+        "ui_styles_ckeditor5": "enabled 8.x-1.22; Config Sync and Runtime active for editorial styles",
+        "layout_builder_component_displays": "22 eligible configs use ui_patterns:aculta420_v2:layout_section; 21 render ComponentLayout wrappers; node.wiki_entry.full renders via direct wiki-entry SDC template",
+        "views.view.aculta_forum_categories.page_categories.display": "ui_patterns:aculta420_v2:views-display; row SDC forum-category; native grouped style, access and pager preserved",
+        "views.view.aculta_forum_categories.block_landing": "row UI Patterns; default style and display; placement hidden on public home, no visible-output acceptance claimed",
+        "ui_patterns_views": "enabled; four row/style/display plugin assignments across Albums and Forum Categories"
     },
     "notes": [
         "UI Skins map and CSS variables are active; anonymous A/B/A requests returned distinct Ruderalis/Skunk values without cross-host carryover.",
@@ -178,7 +181,8 @@
         "The Runtime is Drupal 11.5.0-beta1; Drupal 12 compatibility cannot be inferred from a Drupal 11 runtime test.",
         "Global config:status still reports unrelated drift; the 22 migrated Layout Builder display configurations match Sync after Runtime serialization normalization.",
         "node.wiki_entry.full has a purpose-built Twig adapter that renders the wiki-entry SDC directly from access-checked fields; it bypasses the configured Layout Builder wrapper and is validated as a UI_SUITE_NATIVE adapter.",
-        "Wiki full browser acceptance is DEFERRED: anonymous GET returned 403 and the authenticated Firefox runner produced a blank document without title/main; the artifact was not counted as a pass."
+        "Wiki full browser acceptance is DEFERRED: anonymous GET returned 403 and the authenticated Firefox runner produced a blank document without title/main; the artifact was not counted as a pass.",
+        "The public Forum categories page now wraps its native grouped View output with views-display while retaining the forum-category row and native style. Runtime partial import changed only views.view.aculta_forum_categories after a config snapshot; anonymous HTTP 200 and 12 category cards remained, with one H1/main, zero horizontal scroll at five light widths and two dark widths, and keyboard-visible focus."
     ],
     "layout_builder_displays": {
         "core.entity_view_display.block_content.aculta_editorial.default": {
@@ -686,6 +690,105 @@
                 "Exposed filters are absent from this display.",
                 "Zoom 200% and keyboard focus remain in the broad ADR acceptance matrix."
             ]
+        },
+        "aculta_forum_categories": {
+            "owner_module": "aculta_forum",
+            "config_path": "config/sync/views.view.aculta_forum_categories.yml",
+            "displays": {
+                "page_categories": {
+                    "consumer_id": "page_categories",
+                    "status": "runtime_verified",
+                    "configuration_import": "targeted partial import of only views.view.aculta_forum_categories after exporting its Runtime configuration",
+                    "before_runtime_snapshot": "$SUITE_OUT/forum-categories-views-20261110/runtime-before/views.view.aculta_forum_categories.yml",
+                    "before_runtime_snapshot_sha256": "d2d93d70fee7d207ca01ea6a889d3ae7f51440bcd22eb59f4a272ee323cf7cea",
+                    "before_http_status": 200,
+                    "after_http_status": 200,
+                    "result_count_before": 12,
+                    "result_count_after": 12,
+                    "row_plugin": "ui_patterns",
+                    "row_component": "aculta420_v2:forum-category",
+                    "style_plugin": "default",
+                    "native_grouping": "parent_name retained",
+                    "display_component": "aculta420_v2:views-display",
+                    "native_pager": "some, 50 items per page; no pager links because only 12 categories are present",
+                    "native_access": "access content inherited from the default display",
+                    "anonymous_access": "allowed; HTTP 200",
+                    "filters": "no exposed filters on this display; vocabulary filter retained",
+                    "cache_metadata": "Drupal Views/render metadata retained; cache-hit variation not measured",
+                    "browser_light_viewports_css_px": [
+                        320,
+                        390,
+                        768,
+                        1024,
+                        1440
+                    ],
+                    "browser_dark_viewports_css_px": [
+                        320,
+                        1440
+                    ],
+                    "categories_per_capture": 12,
+                    "one_h1_and_main": true,
+                    "horizontal_scroll": false,
+                    "minimum_interactive_target_height_px": 44,
+                    "unnamed_links": 0,
+                    "keyboard_focus": "visible after 11 Tab presses; 3px solid outline",
+                    "duplicate_view_title": false,
+                    "evidence_manifest": "tests/browser/capturas/ui-patterns-views/2026-11-10/manifest.json",
+                    "limitations": [
+                        "No multi-page navigation exists with the current 12 results and 50-item pager.",
+                        "Zoom 200% and cache-hit variation remain open for broad ADR acceptance.",
+                        "Dark mode was captured at 320 and 1440 CSS pixels only."
+                    ]
+                },
+                "block_landing": {
+                    "consumer_id": "block_landing",
+                    "status": "migration_in_progress",
+                    "row_plugin": "ui_patterns",
+                    "row_component": "aculta420_v2:forum-category",
+                    "style_plugin": "default",
+                    "display_component": null,
+                    "runtime_status": "active row config; parent block placement is display:none on public home; no visible-output acceptance claimed"
+                }
+            }
         }
+    },
+    "ui_icons_config": {
+        "sync": {
+            "modules_enabled": [
+                "ui_icons",
+                "ui_icons_field",
+                "ui_icons_menu",
+                "ui_icons_patterns",
+                "ui_icons_picker"
+            ],
+            "ui_icons_patterns.settings.icon_selector": "icon_picker",
+            "system.menu.main.icon_selector": "icon_picker",
+            "system.menu.account.icon_selector": "icon_picker",
+            "menu_allowed_packs": [
+                "aculta_phosphor_regular",
+                "aculta_phosphor_duotone"
+            ]
+        },
+        "runtime": {
+            "modules_enabled": [
+                "ui_icons",
+                "ui_icons_ckeditor5",
+                "ui_icons_field",
+                "ui_icons_library",
+                "ui_icons_menu",
+                "ui_icons_patterns",
+                "ui_icons_picker",
+                "ui_icons_popover",
+                "ui_icons_text"
+            ],
+            "ui_icons_patterns.settings.icon_selector": "icon_popover"
+        },
+        "packs_owned_by_theme": [
+            "aculta_phosphor_regular",
+            "aculta_phosphor_duotone",
+            "aculta_fluent_emoji"
+        ],
+        "evidence": "UI Icons 2.1.0 module contracts and config inspected; menus have adapter settings but no icon assignments identified; no visual or accessibility acceptance claimed.",
+        "status": "MIGRATION_IN_PROGRESS; Runtime/Sync selector drift is unresolved."
     }
 }

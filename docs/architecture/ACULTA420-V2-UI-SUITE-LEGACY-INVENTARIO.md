@@ -4,6 +4,22 @@
 
 **Estado: PARCIAL / DEFERRED para aceite US-00.** Este registro é uma fotografia inicial auditável, não afirma inventário integral de todas as superfícies visuais. Contagens abaixo foram obtidas no worktree local, cujos documentos e Composer diferem de `origin/dev`; conferir `git status` antes de usá-las como baseline remoto. Nenhuma configuração ou dado foi alterado.
 
+> **Adendo de estado atual — 2026-11-11:** as afirmações abaixo sobre Runtime/Sync, ausência de imports e ausência de integrações são históricas da fotografia inicial. A execução autorizada desde então habilitou UI Skins no Runtime, importou seu mapa/scopes e atualizou Views de forma parcial. O registro corrente é `docs/architecture/inventarios/ui-suite-runtime-2026-11-10.json` e o inventário de consumidores é `ui-suite-consumidores-iniciais.csv` (383 linhas). Este adendo prevalece em caso de divergência.
+
+> **Adendo UI Icons — 2026-11-11:** UI Icons 2.1.0 está habilitado em Sync e Runtime. Os menus principal e de conta usam o adaptador oficial, `icon_picker` e apenas os packs Phosphor Regular/Duotone; não têm atribuições de ícone identificadas. O pack Fluent Emoji permanece propriedade do tema/editorial, usado pela toolbar CKEditor, e não foi incluído nos menus. UI Patterns Icons usa o source nativo. Sync configura `icon_picker`, mas Runtime conserva `icon_popover` (padrão upstream). O snapshot de Runtime/Sync mostrou divergência adicional de submódulos habilitados; o import foi adiado para evitar reconciliação não revisada desses módulos. O inventário classifica isso `MIGRATION_IN_PROGRESS`. Não há consumidor de prop de ícone SDC comprovado nesta fase.
+
+| Superfície atual | Owner / consumidores | Contrato e substituto | Status e evidência |
+|---|---|---|---|
+| Motor visual de paletas por purpose (`aculta_purpose_palette`, `PurposePaletteSchemes`, `purposePaletteStyle()`, `data-purpose-scheme`, `--aculta-purpose-*`) | tema V2; superfícies em domínios | Removido; UI Skins publica CSS variables por `data-skin`/modo, selecionadas pelo Portal via Domain ID | `LEGACY_OBSOLETE`; busca focal sem consumidores. Não manter alias, fallback nem cópia de configuração antiga, conforme instrução do responsável |
+| `DomainPurposeManager` e `DomainSurfaceMap` | Portal; roteamento, URLs, ACL, sessão, conteúdo e cache | Mantidos por funções de domínio; UI Skins não assume essas responsabilidades | `FUNCTIONAL_NATIVE_EXCEPTION`; migração de nomenclatura para `site_key` segue RN-00–05 |
+| UI Skins | Portal/tema; dez Domain IDs | 1.2.1 ativo; mapa `links_aculta_org: ruderalis`, demais usam Skunk default; cinco grupos de variables/scopes; A/B/A anônimo sem carryover entre hosts | `MIGRATION_IN_PROGRESS` até contraste e aceite visual nos dez domínios; gate 134 PASS |
+| `aculta_albuns:page_1` | `aculta_gallery`; Revista | UI Patterns row `revista-album-card`, style `layout-grid`, display `views-display` | `UI_SUITE_NATIVE`; três resultados, anônimo/HTTP 200 e Firefox 1280/320 claro/escuro. Cache-hit, teclado, zoom e multi-page pendentes |
+| `aculta_forum_categories:page_categories` | `aculta_forum`; Fórum | UI Patterns row `forum-category`, style nativo mantém agrupamento, display `views-display` | `UI_SUITE_NATIVE`; 12 resultados, anônimo/HTTP 200; Firefox cinco larguras claras, duas escuras, teclado e alvos ≥44 px |
+| `aculta_forum_categories:block_landing` | `aculta_forum`; bloco de entrada | UI Patterns row `forum-category`; style/display nativos | `MIGRATION_IN_PROGRESS`; placement pai está oculto na home, sem aceite de saída visual |
+| Displays `default` sem output próprio | Views/Drupal | Base funcional herdada por displays explícitos | `FUNCTIONAL_NATIVE_EXCEPTION`; não depreciar consultas, acesso, filtros ou ordenação nativos |
+
+UI Patterns Field Group 2.0.x-dev permanece `BLOCKED_UPSTREAM` para novos consumidores: SHA travado sem cobertura Drupal Security Advisory Policy, metadata sem Drupal 12 e compatibilidade com Field Group 4.x ainda não demonstrada. UI Patterns CKEditor 5 segue `LEGACY_OBSOLETE`, sem consumidores no repositório e proibido pela ADR-055; remoção do módulo preexistente do Runtime aguarda operação autorizada.
+
 ## Evidências de baseline
 
 | Item | Evidência coletada | Estado / limite |

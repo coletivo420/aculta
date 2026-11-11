@@ -1,3 +1,13 @@
+## Não versionado — View de categorias do Fórum na UI Suite (2026-11-11)
+
+- `/categorias` agora compõe o display pelo SDC `views-display`, mantendo o row
+  `forum-category`, agrupamento nativo, acesso e pager da View.
+- A comparação Runtime antes/depois preservou HTTP 200 e 12 resultados. Firefox
+  ESR: cinco larguras claras, duas escuras, um H1/main, sem overflow, foco visível
+  e alvos mínimos de 44 px. Um título duplicado foi removido antes da captura.
+- `block_landing` continua com UI Patterns row, mas seu placement está oculto;
+  não há aceite visual desse bloco. Zoom 200% e cache-hit ainda pendem.
+
 ## Não versionado — Views row/style/display com UI Patterns (2026-11-10)
 
 - A View `aculta_albuns:page_1` agora usa o SDC `revista-album-card` por row,
