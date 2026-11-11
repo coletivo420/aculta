@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Service;
 
-use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
-use Drupal\Core\Pager\PagerManagerInterface;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
@@ -35,10 +32,7 @@ final class ForumPostThreadBuilder {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountInterface $currentUser,
     private readonly DomainSiteManager $siteManager,
-    private readonly DiscussionContextResolver $discussionContextResolver,
-    private readonly PagerManagerInterface $pagerManager,
   ) {}
 
   /**

@@ -199,7 +199,7 @@ final class ForumPostUnreadManagerKernelTest extends KernelTestBase {
     $plugin = $this->unreadField();
     $values = [new ResultRow(['nid' => (int) $this->topic->id()])];
     $plugin->preRender($values);
-    self::assertSame([], $plugin->render($values[0]));
+    self::assertSame('', $plugin->render($values[0]));
   }
 
   /**
@@ -209,15 +209,12 @@ final class ForumPostUnreadManagerKernelTest extends KernelTestBase {
     $manager = new ForumPostUnreadManager($this->container->get('database'), $this->member);
     $builder = new ForumPostThreadBuilder(
       $this->container->get('entity_type.manager'),
-      $this->member,
       new DomainSiteManager(
         $this->container->get('entity_type.manager'),
         $this->container->get('domain.negotiator'),
         $this->container->get('config.factory'),
         new RequestStack(),
       ),
-      new DiscussionContextResolver([]),
-      $this->container->get('pager.manager'),
     );
     $plugin = new ForumUnreadPosts([], 'aculta_forum_unread_posts', [], $manager, $builder);
     $plugin->aliases['nid'] = 'nid';

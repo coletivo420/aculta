@@ -62,12 +62,12 @@ final class ForumHistoricModerationQueueHooks {
       || !$this->database->schema()->tableExists('node__field_autor_legado')
       || !$this->database->schema()->tableExists('comment__field_autor_legado')) {
       // A changed View must fail closed rather than expose archive comments.
-      $query->addWhereExpression(0, '1 = 0');
+      $query->addWhereExpression('0', '1 = 0');
       return;
     }
 
-    $query->addWhereExpression(0, 'NOT EXISTS (SELECT 1 FROM {node__field_autor_legado} historical_topic WHERE historical_topic.entity_id = ' . $hostAlias . '.nid AND historical_topic.deleted = 0 AND historical_topic.field_autor_legado_target_id IS NOT NULL)');
-    $query->addWhereExpression(0, 'NOT EXISTS (SELECT 1 FROM {comment__field_autor_legado} historical_comment WHERE historical_comment.entity_id = ' . $commentAlias . '.cid AND historical_comment.deleted = 0 AND historical_comment.field_autor_legado_target_id IS NOT NULL)');
+    $query->addWhereExpression('0', 'NOT EXISTS (SELECT 1 FROM {node__field_autor_legado} historical_topic WHERE historical_topic.entity_id = ' . $hostAlias . '.nid AND historical_topic.deleted = 0 AND historical_topic.field_autor_legado_target_id IS NOT NULL)');
+    $query->addWhereExpression('0', 'NOT EXISTS (SELECT 1 FROM {comment__field_autor_legado} historical_comment WHERE historical_comment.entity_id = ' . $commentAlias . '.cid AND historical_comment.deleted = 0 AND historical_comment.field_autor_legado_target_id IS NOT NULL)');
   }
 
 }

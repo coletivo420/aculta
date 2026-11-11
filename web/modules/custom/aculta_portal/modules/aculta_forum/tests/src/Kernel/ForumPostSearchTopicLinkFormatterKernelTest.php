@@ -153,10 +153,7 @@ final class ForumPostSearchTopicLinkFormatterKernelTest extends KernelTestBase {
   private function renderLink(ForumPost $post): array {
     $builder = new ForumPostThreadBuilder(
       $this->container->get('entity_type.manager'),
-      $this->member,
       $this->purpose,
-      new DiscussionContextResolver([new PublicForumContextProvider($this->purpose)]),
-      $this->container->get('pager.manager'),
     );
     $formatter = new ForumPostSearchTopicLinkFormatter(
       'forum_post_search_topic_link',

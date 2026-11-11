@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Hook;
 
-use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum\Service\DiscussionReplyAccess;
 use Drupal\aculta_forum\Service\DiscussionReplyUrlBuilder;
 use Drupal\comment\CommentInterface;
@@ -23,8 +22,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class DiscussionReplyActionsHooks {
 
   public function __construct(
-    #[Autowire(service: 'aculta_forum.discussion_context_resolver')]
-    private readonly DiscussionContextResolver $contextResolver,
     private readonly AccountProxyInterface $currentUser,
     #[Autowire(service: 'aculta_forum.discussion_reply_access')]
     private readonly DiscussionReplyAccess $replyAccess,

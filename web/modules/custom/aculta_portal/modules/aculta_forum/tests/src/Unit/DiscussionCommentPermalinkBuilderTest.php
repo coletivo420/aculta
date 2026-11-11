@@ -78,7 +78,6 @@ final class DiscussionCommentPermalinkBuilderTest extends TestCase {
    */
   private function builder(): DiscussionCommentPermalinkBuilder {
     return new DiscussionCommentPermalinkBuilder(
-      $this->createMock(PagerManagerInterface::class),
       $this->createMock(EntityTypeManagerInterface::class),
     );
   }

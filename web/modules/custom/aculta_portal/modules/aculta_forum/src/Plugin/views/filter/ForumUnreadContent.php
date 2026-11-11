@@ -8,6 +8,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\views\Attribute\ViewsFilter;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
+use Drupal\views\Plugin\views\query\Sql;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -41,6 +42,9 @@ final class ForumUnreadContent extends FilterPluginBase implements ContainerFact
    * {@inheritdoc}
    */
   public function query(): void {
+    if (!$this->query instanceof Sql) {
+      throw new \LogicException('Forum unread content filter requires a SQL Views query.');
+    }
     if ($this->currentUser->isAnonymous()) {
       $this->query->addWhereExpression($this->options['group'], '1 = 0');
       return;

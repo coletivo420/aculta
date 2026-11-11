@@ -6,6 +6,7 @@ namespace Drupal\aculta_forum\Plugin\views\sort;
 
 use Drupal\views\Attribute\ViewsSort;
 use Drupal\views\Plugin\views\sort\Date;
+use Drupal\views\Plugin\views\query\Sql;
 
 /**
  * Sorts public forum topics by the most recent node, Comment, or ForumPost.
@@ -24,6 +25,9 @@ final class PublicForumLastActivity extends Date {
    * {@inheritdoc}
    */
   public function query(): void {
+    if (!$this->query instanceof Sql) {
+      throw new \LogicException('Public Forum activity sort requires a SQL Views query.');
+    }
     $this->ensureMyTable();
     $node_table = $this->query->ensureTable('node_field_data', $this->relationship);
     $formula = 'GREATEST(' . $node_table . '.changed, COALESCE(' . $this->tableAlias . '.last_comment_timestamp, 0), '

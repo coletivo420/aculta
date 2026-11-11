@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Confirmation form for deleting a forum topic within the reply popup modal.
  */
-class TopicDeleteConfirmForm extends FormBase {
+final class TopicDeleteConfirmForm extends FormBase {
 
   protected ?NodeInterface $topic = NULL;
 

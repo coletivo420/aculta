@@ -7,7 +7,7 @@ namespace Drupal\aculta_forum\Service;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Pager\PagerManagerInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Url;
 
 /**
@@ -20,7 +20,6 @@ use Drupal\Core\Url;
 final class DiscussionCommentPermalinkBuilder implements DiscussionCommentPermalinkBuilderInterface {
 
   public function __construct(
-    private readonly PagerManagerInterface $pagerManager,
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
@@ -28,6 +27,9 @@ final class DiscussionCommentPermalinkBuilder implements DiscussionCommentPermal
    * Página (0 = primeira) do comentário dentro da lista do campo, pela posição na thread.
    */
   private function commentPage(CommentInterface $comment, EntityInterface $host): int {
+    if (!$host instanceof FieldableEntityInterface) {
+      return 0;
+    }
     $perPage = (int) $host->getFieldDefinition($comment->getFieldName())->getSetting('per_page');
     if ($perPage <= 0) {
       return 0;

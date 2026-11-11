@@ -98,18 +98,24 @@ final class ForumContentIndexProvider implements ContentIndexProviderInterface, 
     if ($entity instanceof ForumPost) {
       $relations = [];
       $topic = $entity->get('topic')->entity;
-      if ($topic instanceof NodeInterface && $topic->bundle() === 'aculta_forum_topic') {
-        $relations[] = new ContentIndexRelation('forum_topic', 'node', (string) $topic->id());
+      $topicNode = $topic instanceof NodeInterface && $topic->bundle() === 'aculta_forum_topic'
+        ? $topic
+        : NULL;
+      if ($topicNode instanceof NodeInterface) {
+        $relations[] = new ContentIndexRelation('forum_topic', 'node', (string) $topicNode->id());
       }
       $parent = $entity->get('parent')->entity;
       if ($parent instanceof ForumPost) {
         $relations[] = new ContentIndexRelation('forum_parent_post', 'aculta_forum_post', (string) $parent->id());
       }
-      return $this->projection($entity, (string) $entity->get('subject')->value, $entity->isPublished(), $this->domainId($topic), $relations, (int) ($entity->get('first_published')->value ?? 0));
+      return $this->projection($entity, (string) $entity->get('subject')->value, $entity->isPublished(), $this->domainId($topicNode), $relations, (int) ($entity->get('first_published')->value ?? 0));
     }
 
     if ($entity instanceof CommentInterface && $entity->bundle() === 'aculta_discussion_post') {
       $topic = $entity->getCommentedEntity();
+      if (!$topic instanceof NodeInterface || $topic->bundle() !== 'aculta_forum_topic') {
+        return NULL;
+      }
       $relations = [new ContentIndexRelation('forum_topic', 'node', (string) $topic->id())];
       $parent = $entity->getParentComment();
       if ($parent instanceof CommentInterface && $parent->bundle() === 'aculta_discussion_post') {

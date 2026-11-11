@@ -6,6 +6,7 @@ namespace Drupal\aculta_forum\Plugin\views\sort;
 
 use Drupal\views\Attribute\ViewsSort;
 use Drupal\views\Plugin\views\sort\SortPluginBase;
+use Drupal\views\Plugin\views\query\Sql;
 
 /**
  * Sorts topics by published Comments and ForumPosts together.
@@ -17,6 +18,9 @@ final class PublicForumReplyCount extends SortPluginBase {
    * {@inheritdoc}
    */
   public function query(): void {
+    if (!$this->query instanceof Sql) {
+      throw new \LogicException('Public Forum reply count sort requires a SQL Views query.');
+    }
     $this->ensureMyTable();
     $nodeAlias = $this->query->ensureTable('node_field_data', $this->relationship);
     if (!is_string($nodeAlias) || !preg_match('/^[A-Za-z0-9_]+$/', $nodeAlias)) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Service;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -22,6 +23,7 @@ class TopicDeletionModerationManager {
     protected readonly ConfigFactoryInterface $configFactory,
     protected readonly AccountInterface $currentUser,
     protected readonly LoggerInterface $logger,
+    protected readonly TimeInterface $time,
   ) {}
 
   /**
@@ -92,7 +94,7 @@ class TopicDeletionModerationManager {
         'nid' => (int) $topic->id(),
         'uid' => (int) $user->id(),
         'status' => 'pending',
-        'created' => \Drupal::time()->getRequestTime(),
+        'created' => $this->time->getRequestTime(),
       ])
       ->execute();
 
@@ -170,7 +172,7 @@ class TopicDeletionModerationManager {
       ->fields([
         'status' => 'approved',
         'reviewed_by' => (int) $moderator->id(),
-        'reviewed_at' => \Drupal::time()->getRequestTime(),
+        'reviewed_at' => $this->time->getRequestTime(),
       ])
       ->condition('id', $id)
       ->execute();
@@ -210,7 +212,7 @@ class TopicDeletionModerationManager {
       ->fields([
         'status' => 'rejected',
         'reviewed_by' => (int) $moderator->id(),
-        'reviewed_at' => \Drupal::time()->getRequestTime(),
+        'reviewed_at' => $this->time->getRequestTime(),
       ])
       ->condition('id', $id)
       ->execute();

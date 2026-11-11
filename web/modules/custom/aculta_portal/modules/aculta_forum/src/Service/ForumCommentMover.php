@@ -132,7 +132,7 @@ final class ForumCommentMover {
 
     $destinations = [];
     foreach ($this->entityTypeManager->getStorage('node')->loadMultiple($ids) as $node) {
-      if ($node instanceof NodeInterface && $this->isOpenTopic($node)) {
+      if ($this->isOpenTopic($node)) {
         $access = $this->siteManager->runInSite(
           'forum',
           fn () => $node->access('view', $account, TRUE),
@@ -161,9 +161,6 @@ final class ForumCommentMover {
     $destination_id = (int) $destination->id();
     $this->assertMoveEndpoints($comment, $destination, $account);
     $comment_storage = $this->entityTypeManager->getStorage('comment');
-    if (!$comment_storage instanceof CommentStorageInterface) {
-      throw new \LogicException('Drupal Comment storage does not support thread allocation.');
-    }
 
     // Comment::preSave() acquires its thread lock before comment_presave. Keep
     // the same order: reserve the destination root before discussion locks so
@@ -316,8 +313,7 @@ final class ForumCommentMover {
       $child_ids = $storage->getChildCids($parents);
       $frontier = [];
       foreach ($storage->loadMultiple($child_ids) as $child) {
-        if (!$child instanceof CommentInterface
-          || (int) $child->getCommentedEntityId() !== $source_id
+        if ((int) $child->getCommentedEntityId() !== $source_id
           || $child->getCommentedEntityTypeId() !== 'node'
           || $child->getFieldName() !== self::FIELD_NAME
           || $child->bundle() !== self::COMMENT_TYPE) {

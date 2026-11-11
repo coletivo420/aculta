@@ -10,6 +10,7 @@ use Drupal\comment\CommentingStatus;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 
@@ -40,6 +41,11 @@ class DiscussionReplyAccess {
     $writeAccess = $context->getWriteAccess();
     if (!$writeAccess->isAllowed()) {
       return AccessResult::forbidden('Write access denied to discussion.')->addCacheableDependency($writeAccess);
+    }
+
+    if (!$host instanceof FieldableEntityInterface) {
+      return AccessResult::forbidden('Host discussion entity cannot carry discussion fields.')
+        ->addCacheableDependency($host);
     }
 
     // Check if discussion field is open if present.

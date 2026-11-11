@@ -10,6 +10,7 @@ use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -66,13 +67,14 @@ final class ForumPostSearchTopicLinkFormatter extends FormatterBase implements C
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
     $post = $items->getEntity();
-    if (!$post instanceof ForumPost || $this->siteManager->getCurrentSiteKey()?->value !== 'forum') {
+    if (!$post instanceof ForumPost
+      || !$items instanceof EntityReferenceFieldItemListInterface
+      || $this->siteManager->getCurrentSiteKey()?->value !== 'forum') {
       return [];
     }
 
     $elements = [];
-    foreach ($items as $delta => $item) {
-      $topic = $item->entity;
+    foreach ($items->referencedEntities() as $delta => $topic) {
       if (!$topic instanceof NodeInterface || $topic->bundle() !== 'aculta_forum_topic') {
         continue;
       }

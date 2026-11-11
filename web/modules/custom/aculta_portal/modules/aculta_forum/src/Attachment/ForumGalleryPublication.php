@@ -273,7 +273,12 @@ final class ForumGalleryPublication {
   }
 
   /**
-   * Checks for any current comment reference, including drafts and pending posts. */
+   * Checks for any current comment reference, including drafts and pending posts.
+   *
+   * @phpstan-impure
+   *   The query results can change between the initial check and the final
+   *   deletion recheck, so repeated calls must not be treated as identical.
+   */
   private function hasContentReference(MediaGalleryInterface $gallery): bool {
     $comment_ids = $this->entityTypeManager->getStorage('comment')->getQuery()
       ->accessCheck(FALSE)

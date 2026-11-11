@@ -48,6 +48,7 @@ final class PublicForumFrontNavigationHooks {
     // link as the active root item.
     $cacheability = new CacheableMetadata();
     $tasks = $this->localTaskManager->getTasksBuild(self::TASKS_ROUTE, $cacheability);
+    $cacheability = CacheableMetadata::createFromObject($cacheability);
     $primary = $tasks[0] ?? [];
     foreach ($primary as &$task) {
       $task['#active'] = FALSE;

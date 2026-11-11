@@ -19,7 +19,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 /**
  * Controller for the topic deletion moderation queue.
  */
-class TopicDeletionQueueController extends ControllerBase {
+final class TopicDeletionQueueController extends ControllerBase {
 
   public function __construct(
     protected readonly TopicDeletionModerationManager $moderationManager,

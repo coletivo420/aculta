@@ -285,3 +285,17 @@ Escopo: substituição de `assertSame(TRUE/FALSE/NULL, ...)` pelas asserções P
 
 Evidências: Unit dos três módulos, 31 testes/374 assertions PASS; PHP lint dos 6 arquivos PHP PASS; análise global posterior `[OK] No errors`. Dois arquivos Kernel com apenas equivalência de asserção não foram executados para evitar acesso a banco nesta rodada.
 
+
+## Rodada 20 — 2026-11-11 (aculta_forum, produção)
+
+| Medida | Antes | Depois |
+| --- | ---: | ---: |
+| Baseline global (ocorrências) | 2688 | 2592 |
+| `aculta_forum` (ocorrências) | 281 | 185 |
+| `aculta_forum/src` (ocorrências) | 95 | 0 |
+
+Escopo: `aculta_forum/src`, definições de serviço e testes Unit afetados por contratos de construção. Narrowing de entidades e storages, injeção de dependências de tempo e hooks, remoção de dependências não utilizadas, correção de assinaturas Views e preservação explícita da cacheabilidade. O atributo do Drupal CKEditor documenta `plugins` como `class-string[]`, embora o valor exigido em runtime seja o identificador global JavaScript; foi mantida uma supressão PHPStan pontual, com justificativa no argumento.
+
+Resíduos: 185 ocorrências da baseline no módulo, todas em testes; nenhuma em produção. A análise bruta confirmou que o único erro de teste no `ForumHistoricModerationQueueHooksTest` (atribuição do relacionamento da View) já existia antes desta rodada. Não houve novas entradas de baseline para erros de produção.
+
+Evidências: Unit do Fórum 250 testes/1888 assertions PASS; Unit global 3287 testes/17654 assertions PASS (3 deprecações PHPUnit no PHP 8.5); descoberta de suítes PASS (unit=674); lint dos arquivos PHP alterados PASS; gate Portal Drupal 12 PASS (1234 verificações); PHPStan global após regenerar baseline `[OK] No errors`. Kernel não executado, para não conectar testes a banco operacional.

@@ -127,13 +127,13 @@ class DiscussionReactionBuilder {
       foreach ($rawCategories as $catKey => $items) {
         $filteredItems = [];
         foreach ($allowedReactions as $reactionKey => $reactionInfo) {
-          $emojiIcon = $reactionInfo['icon'] ?? $reactionKey;
+          $emojiIcon = $reactionInfo['icon'];
           // Se o ícone do emoji existir nesta categoria do catálogo
           if (isset($items[$emojiIcon])) {
             $catItem = $items[$emojiIcon];
             $filteredItems[$reactionKey] = [
               'id' => $reactionKey,
-              'name' => $reactionInfo['label'] ?? $catItem['name'],
+              'name' => $reactionInfo['label'],
               'icon' => $emojiIcon,
               'keywords' => array_merge([$reactionInfo['label']], $catItem['keywords'] ?? []),
             ];

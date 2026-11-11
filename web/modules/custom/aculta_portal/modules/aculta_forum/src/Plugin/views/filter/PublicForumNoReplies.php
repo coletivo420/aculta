@@ -6,6 +6,7 @@ namespace Drupal\aculta_forum\Plugin\views\filter;
 
 use Drupal\views\Attribute\ViewsFilter;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
+use Drupal\views\Plugin\views\query\Sql;
 
 /**
  * Filters topics with no published Comment or ForumPost replies.
@@ -17,6 +18,9 @@ final class PublicForumNoReplies extends FilterPluginBase {
    * {@inheritdoc}
    */
   public function query(): void {
+    if (!$this->query instanceof Sql) {
+      throw new \LogicException('Public Forum no-replies filter requires a SQL Views query.');
+    }
     $statisticsAlias = $this->ensureMyTable();
     $nodeAlias = $this->query->ensureTable('node_field_data', $this->relationship);
     if (!is_string($statisticsAlias) || !preg_match('/^[A-Za-z0-9_]+$/', $statisticsAlias)

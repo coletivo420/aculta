@@ -53,12 +53,13 @@ services:
     arguments: ['@aculta_forum.attachment_publication', '@aculta_forum.gallery_publication']
   Drupal\aculta_forum\Hook\DiscussionReplyActionsHooks:
     class: Drupal\aculta_forum\Hook\DiscussionReplyActionsHooks
-    arguments: ['@aculta_forum.discussion_context_resolver', '@current_user', '@aculta_forum.discussion_reply_access', '@aculta_forum.discussion_reply_url_builder', '@string_translation']
+    arguments: ['@current_user', '@aculta_forum.discussion_reply_access', '@aculta_forum.discussion_reply_url_builder', '@string_translation']
   Drupal\aculta_forum\Hook\TopicComposerFormHooks:
     class: Drupal\aculta_forum\Hook\TopicComposerFormHooks
+    arguments: ['@current_route_match']
   Drupal\aculta_forum\Hook\DiscussionReplyFormHooks:
     class: Drupal\aculta_forum\Hook\DiscussionReplyFormHooks
-    arguments: ['@aculta_forum.discussion_context_resolver', '@current_user', '@aculta_forum.discussion_reply_url_builder', '@aculta_forum.discussion_reply_idempotency_manager', '@request_stack', '@current_route_match', '@aculta_forum.discussion_thread_depth_resolver']
+    arguments: ['@aculta_forum.discussion_context_resolver', '@current_user', '@aculta_forum.discussion_reply_url_builder', '@request_stack', '@aculta_forum.discussion_thread_depth_resolver', '@entity_type.manager']
   Drupal\aculta_forum\Hook\ForumCommentMoveHooks:
     class: Drupal\aculta_forum\Hook\ForumCommentMoveHooks
     arguments: ['@aculta_forum.comment_mover', '@current_user']
@@ -84,6 +85,7 @@ services:
 
   Drupal\aculta_forum\Hook\DiscussionProgressHooks:
     class: Drupal\aculta_forum\Hook\DiscussionProgressHooks
+    arguments: ['@entity_type.manager', '@entity.form_builder', '@renderer']
   Drupal\aculta_forum\Hook\ForumPostBundleHooks:
     class: Drupal\aculta_forum\Hook\ForumPostBundleHooks
   Drupal\aculta_forum\Hook\PublicForumViewsDataHooks:
@@ -153,7 +155,7 @@ services:
     arguments: ['@database', '@current_user']
   aculta_forum.post_thread_builder:
     class: Drupal\aculta_forum\Service\ForumPostThreadBuilder
-    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_site', '@aculta_forum.discussion_context_resolver', '@pager.manager']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site']
   logger.channel.aculta_forum:
     parent: logger.channel_base
     arguments: ['aculta_forum']
@@ -252,10 +254,10 @@ services:
 
   aculta_forum.discussion_comment_permalink_builder:
     class: Drupal\aculta_forum\Service\DiscussionCommentPermalinkBuilder
-    arguments: ['@pager.manager', '@entity_type.manager']
+    arguments: ['@entity_type.manager']
 
   Drupal\aculta_forum\Hook\TopicOpeningPostHooks:
-    arguments: ['@current_user', '@extension.list.theme']
+    arguments: ['@current_user', '@extension.list.theme', '@aculta_forum.topic_deletion_moderation_manager', '@aculta_forum.discussion_reply_access']
 
   Drupal\aculta_forum\Hook\DiscussionCommentPermalinkHooks:
     arguments: ['@aculta_forum.discussion_comment_permalink_builder', '@extension.list.theme', '@aculta_forum.discussion_thread_depth_resolver']
@@ -291,11 +293,13 @@ services:
       - '@config.factory'
       - '@current_user'
       - '@logger.channel.aculta_forum'
+      - '@datetime.time'
 
   aculta_forum.discussion_reply_idempotency_manager:
     class: Drupal\aculta_forum\Service\DiscussionReplyIdempotencyManager
     arguments:
       - '@database'
+      - '@datetime.time'
 
   aculta_forum.discussion_reply_form_builder:
     class: Drupal\aculta_forum\Service\DiscussionReplyFormBuilder
@@ -319,6 +323,7 @@ services:
     arguments:
       - '@entity_type.manager'
       - '@aculta_forum.discussion_reply_access'
+      - '@aculta_forum.topic_deletion_moderation_manager'
 
   aculta_forum.discussion_reply_controller:
     class: Drupal\aculta_forum\Controller\DiscussionReplyController
@@ -344,6 +349,7 @@ services:
       - '@config.factory'
       - '@aculta_forum.analytics_scope_resolver'
       - '@event_dispatcher'
+      - '@datetime.time'
 
   aculta_forum.discussion_reaction_endpoint_access:
     class: Drupal\aculta_forum\Access\DiscussionReactionEndpointAccess

@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\aculta_forum\Service\TopicDeletionModerationManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -48,7 +49,8 @@ class TopicDeletionModerationManagerTest extends UnitTestCase {
       $entityTypeManager,
       $configFactory,
       $user,
-      $logger
+      $logger,
+      $this->createMock(TimeInterface::class),
     );
   }
 

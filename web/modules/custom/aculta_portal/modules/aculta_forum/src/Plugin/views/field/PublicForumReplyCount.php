@@ -7,6 +7,7 @@ namespace Drupal\aculta_forum\Plugin\views\field;
 use Drupal\aculta_forum\Service\ForumPublicPostStatistics;
 use Drupal\views\Attribute\ViewsField;
 use Drupal\views\Plugin\views\field\NumericField;
+use Drupal\views\Plugin\views\query\Sql;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 
@@ -41,6 +42,9 @@ final class PublicForumReplyCount extends NumericField implements ContainerFacto
    * {@inheritdoc}
    */
   public function query(): void {
+    if (!$this->query instanceof Sql) {
+      throw new \LogicException('Public Forum reply count field requires a SQL Views query.');
+    }
     $this->ensureMyTable();
     $this->field_alias = $this->query->addField($this->tableAlias, 'comment_count');
     $this->aliases['comment_count'] = $this->field_alias;

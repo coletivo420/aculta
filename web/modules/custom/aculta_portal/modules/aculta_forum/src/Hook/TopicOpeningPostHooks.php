@@ -8,6 +8,8 @@ use Drupal\Core\Extension\ThemeExtensionList;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_forum\Service\DiscussionReplyAccess;
+use Drupal\aculta_forum\Service\TopicDeletionModerationManager;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -22,6 +24,8 @@ final class TopicOpeningPostHooks {
     private readonly AccountProxyInterface $currentUser,
     #[Autowire(service: 'extension.list.theme')]
     private readonly ThemeExtensionList $themes,
+    private readonly TopicDeletionModerationManager $moderationManager,
+    private readonly DiscussionReplyAccess $replyAccess,
   ) {}
 
   /**
@@ -39,9 +43,7 @@ final class TopicOpeningPostHooks {
     $variables['opening_quote_url'] = NULL;
     $variables['opening_reply_url'] = NULL;
 
-    /** @var \Drupal\aculta_forum\Service\TopicDeletionModerationManager $moderationManager */
-    $moderationManager = \Drupal::service('aculta_forum.topic_deletion_moderation_manager');
-    if ($moderationManager->canDeleteOrRequest($node, $this->currentUser)) {
+    if ($this->moderationManager->canDeleteOrRequest($node, $this->currentUser)) {
       $variables['opening_delete_url'] = Url::fromRoute('aculta_forum.discussion_composer', ['entity_type' => 'node', 'entity_id' => $node->id()], ['query' => ['excluir_topico' => 1]])->toString();
     }
 
@@ -49,9 +51,7 @@ final class TopicOpeningPostHooks {
       $variables['opening_edit_url'] = Url::fromRoute('aculta_forum.discussion_composer', ['entity_type' => 'node', 'entity_id' => $node->id()], ['query' => ['editar_topico' => 1]])->toString();
     }
 
-    /** @var \Drupal\aculta_forum\Service\DiscussionReplyAccess $replyAccess */
-    $replyAccess = \Drupal::service('aculta_forum.discussion_reply_access');
-    if ($replyAccess->checkAccess($node, $this->currentUser)->isAllowed()) {
+    if ($this->replyAccess->checkAccess($node, $this->currentUser)->isAllowed()) {
       $variables['opening_quote_url'] = Url::fromRoute('aculta_forum.discussion_composer', ['entity_type' => 'node', 'entity_id' => $node->id()], ['query' => ['citar_topico' => 1, 'modo' => 'citar']])->toString();
       $variables['opening_reply_url'] = Url::fromRoute('aculta_forum.discussion_composer', ['entity_type' => 'node', 'entity_id' => $node->id()], ['query' => ['modo' => 'responder']])->toString();
     }

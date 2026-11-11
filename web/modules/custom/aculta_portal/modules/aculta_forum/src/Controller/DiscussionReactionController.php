@@ -57,8 +57,7 @@ class DiscussionReactionController extends ControllerBase {
     // Access check.
     $access = $this->reactionEndpointAccess->access($entity_type, $entity_id, $this->forumCurrentUser);
     if (!$access->isAllowed()) {
-      $reason = $access instanceof AccessResult ? $access->getReason() : NULL;
-      throw new AccessDeniedHttpException($reason ?: 'Access denied.');
+      throw new AccessDeniedHttpException('Access denied.');
     }
 
     // Reaction identifier from payload.

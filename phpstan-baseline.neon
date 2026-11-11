@@ -2992,444 +2992,6 @@ parameters:
 			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
 			identifier: globalDrupalDependencyInjection.useDependencyInjection
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Access/DiscussionReplyEndpointAccess.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\RevisionableInterface::get().'
-			identifier: method.notFound
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Access/ForumPostModerationAccess.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\RevisionableInterface::hasField().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Access/ForumPostModerationAccess.php
-
-		-
-			rawMessage: Right side of || is always false.
-			identifier: booleanOr.rightAlwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumAttachmentCleanup.php
-
-		-
-			rawMessage: Right side of || is always false.
-			identifier: booleanOr.rightAlwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Attachment/ForumGalleryPublication.php
-
-		-
-			rawMessage: 'Parameter #1 $topic of method Drupal\aculta_forum\ContentIndex\ForumContentIndexProvider::domainId() expects Drupal\node\NodeInterface|null, Drupal\Core\Entity\EntityInterface|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/ContentIndex/ForumContentIndexProvider.php
-
-		-
-			rawMessage: 'Parameter #1 $topic of method Drupal\aculta_forum\ContentIndex\ForumContentIndexProvider::domainId() expects Drupal\node\NodeInterface|null, Drupal\Core\Entity\FieldableEntityInterface|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/ContentIndex/ForumContentIndexProvider.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResult::getReason().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Controller/DiscussionReactionController.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityStorageInterface::loadMultipleRevisions().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Controller/ForumPostModerationQueueController.php
-
-		-
-			rawMessage: Empty array passed to foreach.
-			identifier: foreach.emptyArray
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Controller/ForumPostModerationQueueController.php
-
-		-
-			rawMessage: 'Strict comparison using === between array{} and array{} will always evaluate to true.'
-			identifier: identical.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Controller/ForumPostModerationQueueController.php
-
-		-
-			rawMessage: Using nullsafe method call on non-nullable type Drupal\node\NodeInterface. Use -> instead.
-			identifier: nullsafe.neverNull
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Controller/ForumPostModerationQueueController.php
-
-		-
-			rawMessage: 'Unsafe usage of new static().'
-			identifier: new.static
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Controller/TopicDeletionQueueController.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Field\FieldDefinitionInterface::setDefaultValue().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Entity/ForumPost.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Field\FieldDefinitionInterface::setRevisionable().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Entity/ForumPost.php
-
-		-
-			rawMessage: 'Unsafe usage of new static().'
-			identifier: new.static
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Form/TopicDeleteConfirmForm.php
-
-		-
-			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
-			identifier: globalDrupalDependencyInjection.useDependencyInjection
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/DiscussionProgressHooks.php
-
-		-
-			rawMessage: 'Property Drupal\aculta_forum\Hook\DiscussionReplyActionsHooks::$contextResolver is never read, only written.'
-			identifier: property.onlyWritten
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/DiscussionReplyActionsHooks.php
-
-		-
-			rawMessage: 'Property Drupal\aculta_forum\Hook\DiscussionReplyFormHooks::$idempotencyManager is never read, only written.'
-			identifier: property.onlyWritten
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/DiscussionReplyFormHooks.php
-
-		-
-			rawMessage: 'Property Drupal\aculta_forum\Hook\DiscussionReplyFormHooks::$routeMatch is never read, only written.'
-			identifier: property.onlyWritten
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/DiscussionReplyFormHooks.php
-
-		-
-			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
-			identifier: globalDrupalDependencyInjection.useDependencyInjection
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/DiscussionReplyFormHooks.php
-
-		-
-			rawMessage: 'Parameter #1 $post of method Drupal\aculta_forum\Hook\ForumActivityEventHooks::dispatchPost() expects Drupal\aculta_forum\Entity\ForumPost, Drupal\Core\Entity\EntityInterface given.'
-			identifier: argument.type
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumActivityEventHooks.php
-
-		-
-			rawMessage: 'Parameter #1 $group of method Drupal\views\Plugin\views\query\Sql::addWhereExpression() expects string, int given.'
-			identifier: argument.type
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/ForumHistoricModerationQueueHooks.php
-
-		-
-			rawMessage: 'Call to function assert() with true will always evaluate to true.'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/PublicForumExposedFormHooks.php
-
-		-
-			rawMessage: Instanceof between Drupal\taxonomy\TermStorage and Drupal\taxonomy\TermStorageInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/PublicForumExposedFormHooks.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Cache\RefinableCacheableDependencyInterface::applyTo().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/PublicForumFrontNavigationHooks.php
-
-		-
-			rawMessage: Instanceof between Drupal\views\ResultRow and Drupal\views\ResultRow will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/PublicForumLastActivityAuthorHooks.php
-
-		-
-			rawMessage: 'Property Drupal\aculta_forum\Hook\PublicForumLastActivityAuthorHooks::$forumPosts (array<Drupal\aculta_forum\Entity\ForumPost>) does not accept array<Drupal\Core\Entity\EntityInterface>.'
-			identifier: assign.propertyType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/PublicForumLastActivityAuthorHooks.php
-
-		-
-			rawMessage: 'Property Drupal\aculta_forum\Hook\PublicForumLastActivityAuthorHooks::$legacyAuthors (array<Drupal\aculta_user\Entity\LegacyAuthor>) does not accept array<Drupal\Core\Entity\EntityInterface>.'
-			identifier: assign.propertyType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/PublicForumLastActivityAuthorHooks.php
-
-		-
-			rawMessage: Instanceof between Drupal\Core\Access\AccessResultInterface and Drupal\Core\Access\AccessResultInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/PublicForumTopicCreateActionHooks.php
-
-		-
-			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
-			identifier: globalDrupalDependencyInjection.useDependencyInjection
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/TopicComposerFormHooks.php
-
-		-
-			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
-			identifier: globalDrupalDependencyInjection.useDependencyInjection
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/TopicOpeningPostHooks.php
-
-		-
-			rawMessage: Cannot cast Drupal\Core\Field\FieldItemListInterface to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/Action/MoveForumTopicsAction.php
-
-		-
-			rawMessage: 'Parameter $plugins of class Drupal\ckeditor5\Attribute\CKEditor5AspectsOfCKEditor5Plugin constructor expects array<class-string>, array<int, string> given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/CKEditor5Plugin/ForumAttachment.php
-
-		-
-			rawMessage: Access to an undefined property Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem<Drupal\Core\Entity\EntityInterface>::$description.
-			identifier: property.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/Field/FieldFormatter/ForumAttachmentFormatter.php
-
-		-
-			rawMessage: Access to an undefined property Drupal\Core\Field\FieldItemInterface::$entity.
-			identifier: property.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/Field/FieldFormatter/ForumPostSearchTopicLinkFormatter.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_forum\Plugin\views\field\ForumCategoryTopicCount::render() never returns Drupal\Component\Render\MarkupInterface so it can be removed from the return type.'
-			identifier: return.unusedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/field/ForumCategoryTopicCount.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_forum\Plugin\views\field\ForumCategoryTopicCount::render() never returns string so it can be removed from the return type.'
-			identifier: return.unusedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/field/ForumCategoryTopicCount.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_forum\Plugin\views\field\ForumCategoryTopicCount::render() should return Drupal\Component\Render\MarkupInterface|string but returns array<string, array<string, list<string>|string>|Drupal\Core\StringTranslation\TranslatableMarkup|string>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/field/ForumCategoryTopicCount.php
-
-		-
-			rawMessage: 'Return type (array) of method Drupal\aculta_forum\Plugin\views\field\ForumUnreadPosts::render() should be compatible with return type (Drupal\Component\Render\MarkupInterface|string) of method Drupal\views\Plugin\views\field\FieldHandlerInterface::render()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/field/ForumUnreadPosts.php
-
-		-
-			rawMessage: 'Return type (array) of method Drupal\aculta_forum\Plugin\views\field\ForumUnreadPosts::render() should be compatible with return type (Drupal\Component\Render\MarkupInterface|string) of method Drupal\views\Plugin\views\field\FieldPluginBase::render()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/field/ForumUnreadPosts.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\views\Plugin\views\query\QueryPluginBase::addField().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/field/PublicForumLastActivity.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\views\Plugin\views\query\QueryPluginBase::ensureTable().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/field/PublicForumLastActivity.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\views\Plugin\views\query\QueryPluginBase::addField().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/field/PublicForumReplyCount.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\views\Plugin\views\query\QueryPluginBase::addWhereExpression().'
-			identifier: method.notFound
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/filter/ForumUnreadContent.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\views\Plugin\views\query\QueryPluginBase::ensureTable().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/filter/ForumUnreadContent.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\views\Plugin\views\query\QueryPluginBase::addWhereExpression().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/filter/PublicForumNoReplies.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\views\Plugin\views\query\QueryPluginBase::ensureTable().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/filter/PublicForumNoReplies.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\views\Plugin\views\query\QueryPluginBase::addOrderBy().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/sort/PublicForumLastActivity.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\views\Plugin\views\query\QueryPluginBase::ensureTable().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/sort/PublicForumLastActivity.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\views\Plugin\views\query\QueryPluginBase::addOrderBy().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/sort/PublicForumReplyCount.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\views\Plugin\views\query\QueryPluginBase::ensureTable().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/sort/PublicForumReplyCount.php
-
-		-
-			rawMessage: Value assigned to variable $allowed is never read before being overwritten.
-			identifier: assign.overwritten
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/RestrictedForum/RestrictedForumAccessPolicy.php
-
-		-
-			rawMessage: Using nullsafe method call on non-nullable type Drupal\search_api\Datasource\DatasourceInterface. Use -> instead.
-			identifier: nullsafe.neverNull
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/RestrictedForum/RestrictedForumGrantRebuilder.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getFieldDefinition().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionCommentPermalinkBuilder.php
-
-		-
-			rawMessage: 'Property Drupal\aculta_forum\Service\DiscussionCommentPermalinkBuilder::$pagerManager is never read, only written.'
-			identifier: property.onlyWritten
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionCommentPermalinkBuilder.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionReactionAccess.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::hasField().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionReactionAccess.php
-
-		-
-			rawMessage: Value assigned to variable $host is never read before being overwritten.
-			identifier: assign.overwritten
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionReactionAccess.php
-
-		-
-			rawMessage: 'Offset ''icon'' on array{id: string, icon: string, label: string, enabled: bool} on left side of ?? always exists and is not nullable.'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionReactionBuilder.php
-
-		-
-			rawMessage: 'Offset ''label'' on array{id: string, icon: string, label: string, enabled: bool} on left side of ?? always exists and is not nullable.'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionReactionBuilder.php
-
-		-
-			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
-			identifier: globalDrupalDependencyInjection.useDependencyInjection
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionReactionManager.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionReplyAccess.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::hasField().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionReplyAccess.php
-
-		-
-			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
-			identifier: globalDrupalDependencyInjection.useDependencyInjection
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/DiscussionReplyIdempotencyManager.php
-
-		-
-			rawMessage: Instanceof between Drupal\comment\CommentStorage and Drupal\comment\CommentStorageInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/ForumCommentMover.php
-
-		-
-			rawMessage: Instanceof between Drupal\comment\Entity\Comment and Drupal\comment\CommentInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/ForumCommentMover.php
-
-		-
-			rawMessage: Instanceof between Drupal\node\Entity\Node and Drupal\node\NodeInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/ForumCommentMover.php
-
-		-
-			rawMessage: 'WeakMap<Drupal\comment\CommentInterface, array<string>> does not accept list.'
-			identifier: offsetAssign.valueType
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/ForumDiscussionWriteGuard.php
-
-		-
-			rawMessage: 'Property Drupal\aculta_forum\Service\ForumPostThreadBuilder::$currentUser is never read, only written.'
-			identifier: property.onlyWritten
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/ForumPostThreadBuilder.php
-
-		-
-			rawMessage: 'Property Drupal\aculta_forum\Service\ForumPostThreadBuilder::$discussionContextResolver is never read, only written.'
-			identifier: property.onlyWritten
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/ForumPostThreadBuilder.php
-
-		-
-			rawMessage: 'Property Drupal\aculta_forum\Service\ForumPostThreadBuilder::$pagerManager is never read, only written.'
-			identifier: property.onlyWritten
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/ForumPostThreadBuilder.php
-
-		-
-			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
-			identifier: globalDrupalDependencyInjection.useDependencyInjection
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/TopicDeletionModerationManager.php
-
-		-
-			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
-			identifier: globalDrupalDependencyInjection.useDependencyInjection
-			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/modules/aculta_forum_cleanup_test/src/Hook/CleanupFailureTestHooks.php
 
 		-
@@ -3677,12 +3239,6 @@ parameters:
 			identifier: staticMethod.alreadyNarrowedType
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Kernel/ForumPostParticipationPolicyKernelTest.php
-
-		-
-			rawMessage: 'Class Drupal\aculta_forum\Context\Provider\PublicForumContextProvider constructor invoked with 1 parameter, 2 required.'
-			identifier: arguments.count
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Kernel/ForumPostSearchTopicLinkFormatterKernelTest.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\RevisionableInterface::get().'
@@ -6976,10 +6532,134 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/aculta_messenger.post_update.php
 
 		-
+			rawMessage: '''
+				Call to deprecated method getMembersId() of class Drupal\private_message\Entity\PrivateMessageThread:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. Use self::getMemberIds() instead.
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Aviso/PrivateMessageDigestProvider.php
+
+		-
 			rawMessage: Using nullsafe method call on non-nullable type Drupal\Core\Config\ImmutableConfig. Use -> instead.
 			identifier: nullsafe.neverNull
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Aviso/PrivateMessageDigestProvider.php
+
+		-
+			rawMessage: 'Cannot call method referencedEntities() on array<Drupal\private_message\Entity\PrivateMessageInterface>.'
+			identifier: method.nonObject
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
+
+		-
+			rawMessage: Instanceof between Drupal\private_message\Entity\PrivateMessageThreadInterface and Drupal\private_message\Entity\PrivateMessageThreadInterface will always evaluate to true.
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
+
+		-
+			rawMessage: '''
+				Call to deprecated method isCurrentUserBannedByUser() of interface Drupal\private_message\Service\PrivateMessageBanManagerInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
+
+		-
+			rawMessage: '''
+				Call to method getThreadIdForMembers() of deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: method.deprecatedInterface
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
+
+		-
+			rawMessage: '''
+				Parameter $privateMessageMapper of method Drupal\aculta_messenger\Controller\NewConversationController::__construct() has typehint with deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: parameter.deprecatedInterface
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
+
+		-
+			rawMessage: '''
+				Property $privateMessageMapper references deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface in its type:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: property.deprecatedInterface
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
+
+		-
+			rawMessage: The "private_message.mapper" service is deprecated in private_message:4.0.0 and is removed from private_message:5.0.0. No replacement is provided. See https://www.drupal.org/node/3490530
+			identifier: getDeprecatedService.deprecated
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
+
+		-
+			rawMessage: '''
+				Call to method getThreadIdForMembers() of deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: method.deprecatedInterface
+			count: 2
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
+
+		-
+			rawMessage: '''
+				Parameter $privateMessageMapper of method Drupal\aculta_messenger\Form\NewConversationForm::__construct() has typehint with deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: parameter.deprecatedInterface
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
+
+		-
+			rawMessage: '''
+				Property $privateMessageMapper references deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface in its type:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: property.deprecatedInterface
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
+
+		-
+			rawMessage: The "private_message.mapper" service is deprecated in private_message:4.0.0 and is removed from private_message:5.0.0. No replacement is provided. See https://www.drupal.org/node/3490530
+			identifier: getDeprecatedService.deprecated
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
+
+		-
+			rawMessage: '''
+				Call to deprecated method getMembersId() of interface Drupal\private_message\Entity\PrivateMessageThreadInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. Use self::getMemberIds() instead.
+			'''
+			identifier: method.deprecated
+			count: 2
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
+
+		-
+			rawMessage: '''
+				Call to deprecated method isCurrentUserBannedByUser() of interface Drupal\private_message\Service\PrivateMessageBanManagerInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
 
 		-
 			rawMessage: Negated boolean expression is always true.
@@ -6994,14 +6674,60 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
 
 		-
+			rawMessage: '''
+				Access to property $database of deprecated class Drupal\private_message\Mapper\PrivateMessageMapper:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: property.deprecatedClass
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Mapper/MessengerPrivateMessageMapper.php
+
+		-
+			rawMessage: '''
+				Class Drupal\aculta_messenger\Mapper\MessengerPrivateMessageMapper extends deprecated class Drupal\private_message\Mapper\PrivateMessageMapper:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: class.extendsDeprecatedClass
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Mapper/MessengerPrivateMessageMapper.php
+
+		-
+			rawMessage: '''
+				Call to deprecated method getMembersId() of interface Drupal\private_message\Entity\PrivateMessageThreadInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. Use self::getMemberIds() instead.
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
+
+		-
 			rawMessage: Instanceof between Drupal\private_message\Entity\PrivateMessageThread and Drupal\private_message\Entity\PrivateMessageThreadInterface will always evaluate to true.
 			identifier: instanceof.alwaysTrue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
 
+		-
+			rawMessage: '''
+				Call to deprecated method getMembersId() of interface Drupal\private_message\Entity\PrivateMessageThreadInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. Use self::getMemberIds() instead.
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/ConversationMessagingState.php
 
-
-
+		-
+			rawMessage: '''
+				Call to deprecated method isCurrentUserBannedByUser() of interface Drupal\private_message\Service\PrivateMessageBanManagerInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/ConversationMessagingState.php
 
 		-
 			rawMessage: 'Call to an undefined method Behat\Mink\Driver\DriverInterface::getClient().'
@@ -7327,7 +7053,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/FriendshipNoticePipelineKernelTest.php
 
-
 		-
 			rawMessage: 'Parameter #2 $module_list of class Drupal\Core\Extension\ModuleHandler constructor expects array<string, array{type: string, pathname: string, filename: string}>, array{aculta_messenger: array{type: ''module'', pathname: non-falsy-string, filename: null}} given.'
 			identifier: argument.type
@@ -7465,6 +7190,26 @@ parameters:
 			identifier: staticMethod.alreadyNarrowedType
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/MessengerNoticePublisherTest.php
+
+		-
+			rawMessage: '''
+				Access to constant on deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: classConstant.deprecatedInterface
+			count: 5
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/NewConversationControllerTest.php
+
+		-
+			rawMessage: '''
+				Access to constant on deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: classConstant.deprecatedInterface
+			count: 6
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/NewConversationRecipientIdsTest.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\user\UserInterface::method().'
@@ -8835,6 +8580,16 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_ui_library/src/Controller/UiLibraryPreviewController.php
 
 		-
+			rawMessage: '''
+				Call to deprecated method isCurrentUserBannedByUser() of interface Drupal\private_message\Service\PrivateMessageBanManagerInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: method.deprecated
+			count: 2
+			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Social/ConnectionQueryService.php
+
+		-
 			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_user\\Account\\NicknameRegistry'' and Drupal\aculta_user\Account\NicknameRegistry will always evaluate to true.'
 			identifier: method.alreadyNarrowedType
 			count: 1
@@ -10035,207 +9790,3 @@ parameters:
 			identifier: function.unusedParameter
 			count: 1
 			path: web/themes/custom/aculta420_v2/theme-settings.php
-		-
-			rawMessage: '''
-				Call to deprecated method getMembersId() of class Drupal\private_message\Entity\PrivateMessageThread:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. Use self::getMemberIds() instead.
-			'''
-			identifier: method.deprecated
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Aviso/PrivateMessageDigestProvider.php
-
-		-
-			rawMessage: 'Cannot call method referencedEntities() on array<Drupal\private_message\Entity\PrivateMessageInterface>.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
-
-		-
-			rawMessage: Instanceof between Drupal\private_message\Entity\PrivateMessageThreadInterface and Drupal\private_message\Entity\PrivateMessageThreadInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
-
-		-
-			rawMessage: '''
-				Call to deprecated method isCurrentUserBannedByUser() of interface Drupal\private_message\Service\PrivateMessageBanManagerInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: method.deprecated
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
-
-		-
-			rawMessage: '''
-				Call to method getThreadIdForMembers() of deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: method.deprecatedInterface
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
-
-		-
-			rawMessage: '''
-				Parameter $privateMessageMapper of method Drupal\aculta_messenger\Controller\NewConversationController::__construct() has typehint with deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: parameter.deprecatedInterface
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
-
-		-
-			rawMessage: '''
-				Property $privateMessageMapper references deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface in its type:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: property.deprecatedInterface
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
-
-		-
-			rawMessage: The "private_message.mapper" service is deprecated in private_message:4.0.0 and is removed from private_message:5.0.0. No replacement is provided. See https://www.drupal.org/node/3490530
-			identifier: getDeprecatedService.deprecated
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
-
-		-
-			rawMessage: '''
-				Call to method getThreadIdForMembers() of deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: method.deprecatedInterface
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
-
-		-
-			rawMessage: '''
-				Parameter $privateMessageMapper of method Drupal\aculta_messenger\Form\NewConversationForm::__construct() has typehint with deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: parameter.deprecatedInterface
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
-
-		-
-			rawMessage: '''
-				Property $privateMessageMapper references deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface in its type:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: property.deprecatedInterface
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
-
-		-
-			rawMessage: The "private_message.mapper" service is deprecated in private_message:4.0.0 and is removed from private_message:5.0.0. No replacement is provided. See https://www.drupal.org/node/3490530
-			identifier: getDeprecatedService.deprecated
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
-
-		-
-			rawMessage: '''
-				Call to deprecated method getMembersId() of interface Drupal\private_message\Entity\PrivateMessageThreadInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. Use self::getMemberIds() instead.
-			'''
-			identifier: method.deprecated
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
-
-		-
-			rawMessage: '''
-				Call to deprecated method isCurrentUserBannedByUser() of interface Drupal\private_message\Service\PrivateMessageBanManagerInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: method.deprecated
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
-
-		-
-			rawMessage: '''
-				Access to property $database of deprecated class Drupal\private_message\Mapper\PrivateMessageMapper:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: property.deprecatedClass
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Mapper/MessengerPrivateMessageMapper.php
-
-		-
-			rawMessage: '''
-				Class Drupal\aculta_messenger\Mapper\MessengerPrivateMessageMapper extends deprecated class Drupal\private_message\Mapper\PrivateMessageMapper:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: class.extendsDeprecatedClass
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Mapper/MessengerPrivateMessageMapper.php
-
-		-
-			rawMessage: '''
-				Call to deprecated method getMembersId() of interface Drupal\private_message\Entity\PrivateMessageThreadInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. Use self::getMemberIds() instead.
-			'''
-			identifier: method.deprecated
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
-
-		-
-			rawMessage: '''
-				Call to deprecated method getMembersId() of interface Drupal\private_message\Entity\PrivateMessageThreadInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. Use self::getMemberIds() instead.
-			'''
-			identifier: method.deprecated
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/ConversationMessagingState.php
-
-		-
-			rawMessage: '''
-				Call to deprecated method isCurrentUserBannedByUser() of interface Drupal\private_message\Service\PrivateMessageBanManagerInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: method.deprecated
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/ConversationMessagingState.php
-
-
-		-
-			rawMessage: '''
-				Access to constant on deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: classConstant.deprecatedInterface
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/NewConversationControllerTest.php
-
-		-
-			rawMessage: '''
-				Access to constant on deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: classConstant.deprecatedInterface
-			count: 6
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/NewConversationRecipientIdsTest.php
-
-		-
-			rawMessage: '''
-				Call to deprecated method isCurrentUserBannedByUser() of interface Drupal\private_message\Service\PrivateMessageBanManagerInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. No replacement is provided.
-			'''
-			identifier: method.deprecated
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Social/ConnectionQueryService.php

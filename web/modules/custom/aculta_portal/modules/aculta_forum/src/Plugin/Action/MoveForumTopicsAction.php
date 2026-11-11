@@ -200,7 +200,10 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
       if ($term instanceof TermInterface
         && $term->bundle() === 'aculta_forum_categories'
         && $term->access('view', $this->currentUser)) {
-        $options[(int) $term->id()] = str_repeat('— ', (int) $term->depth) . $term->label();
+        $treeProperties = get_object_vars($term);
+        $depth = $treeProperties['depth'] ?? 0;
+        $depth = is_int($depth) ? $depth : 0;
+        $options[(int) $term->id()] = str_repeat('— ', $depth) . $term->label();
       }
     }
     return $options;

@@ -7,16 +7,15 @@ namespace Drupal\aculta_forum\Hook;
 use Drupal\Core\Hook\Order\Order;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum\Form\DiscussionReplyPopupLayout;
-use Drupal\aculta_forum\Service\DiscussionReplyIdempotencyManager;
 use Drupal\aculta_forum\Service\DiscussionReplyUrlBuilder;
 use Drupal\aculta_forum\Service\DiscussionThreadDepthResolver;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Htmx\Htmx;
-use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -33,12 +32,11 @@ final class DiscussionReplyFormHooks {
     private readonly AccountProxyInterface $currentUser,
     #[Autowire(service: 'aculta_forum.discussion_reply_url_builder')]
     private readonly DiscussionReplyUrlBuilder $urlBuilder,
-    #[Autowire(service: 'aculta_forum.discussion_reply_idempotency_manager')]
-    private readonly DiscussionReplyIdempotencyManager $idempotencyManager,
     private readonly RequestStack $requestStack,
-    private readonly RouteMatchInterface $routeMatch,
     #[Autowire(service: 'aculta_forum.discussion_thread_depth_resolver')]
     private readonly DiscussionThreadDepthResolver $depthResolver,
+    #[Autowire(service: 'entity_type.manager')]
+    private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   /**
@@ -71,7 +69,7 @@ final class DiscussionReplyFormHooks {
       $request = $this->requestStack->getCurrentRequest();
       $requestedPid = $request ? ($request->query->get('resposta') ?? $request->request->get('pid') ?? $request->query->get('pid')) : NULL;
       if ($requestedPid && is_numeric($requestedPid)) {
-        $parent = \Drupal::entityTypeManager()->getStorage('comment')->load((int) $requestedPid);
+        $parent = $this->entityTypeManager->getStorage('comment')->load((int) $requestedPid);
         if ($parent instanceof CommentInterface) {
           $parentId = $this->depthResolver->resolveEffectiveParentId($parent);
           if ($parentId) {

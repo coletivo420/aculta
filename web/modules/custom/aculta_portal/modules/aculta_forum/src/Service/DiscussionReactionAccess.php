@@ -12,6 +12,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
@@ -51,7 +52,6 @@ class DiscussionReactionAccess {
     }
 
     // Resolve host entity and check status.
-    $host = NULL;
     if ($entity instanceof CommentInterface) {
       if (!$entity->isPublished()) {
         return AccessResult::forbidden('Comment is not published.')->addCacheableDependency($entity);
@@ -77,6 +77,11 @@ class DiscussionReactionAccess {
 
     if ($host === NULL) {
       return AccessResult::forbidden('Host discussion entity not found.')->addCacheableDependency($entity);
+    }
+    if (!$host instanceof FieldableEntityInterface) {
+      return AccessResult::forbidden('Host discussion entity cannot carry discussion fields.')
+        ->addCacheableDependency($entity)
+        ->addCacheableDependency($host);
     }
 
     $context = $this->contextResolver->resolve($host, $account);

@@ -40,7 +40,7 @@ final class ForumPostModerationAccess {
       return AccessResult::forbidden()->addCacheContexts(['domain', 'user.permissions']);
     }
     $post = $storage->loadRevision($revision_id);
-    if ($post === NULL) {
+    if (!$post instanceof ForumPost) {
       return AccessResult::forbidden()->addCacheContexts(['domain', 'user.permissions']);
     }
 

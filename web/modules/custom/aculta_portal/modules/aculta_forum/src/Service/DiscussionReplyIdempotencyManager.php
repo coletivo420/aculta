@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Service;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
@@ -14,6 +15,7 @@ class DiscussionReplyIdempotencyManager {
 
   public function __construct(
     protected readonly Connection $database,
+    protected readonly TimeInterface $time,
   ) {}
 
   /**
@@ -50,7 +52,7 @@ class DiscussionReplyIdempotencyManager {
    *   The comment ID if duplicate detected in window, or NULL.
    */
   public function findRecentDuplicate(AccountInterface $account, string $entityTypeId, string|int $entityId, ?int $parentId, string $body, int $windowSeconds = 30): ?int {
-    $now = \Drupal::time()->getRequestTime();
+    $now = $this->time->getRequestTime();
     $cutoff = $now - $windowSeconds;
 
     $query = $this->database->select('comment_field_data', 'c');

@@ -13,7 +13,6 @@ use Drupal\Core\Hook\Order\Order;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\taxonomy\TermStorageInterface;
 use Drupal\views\ViewExecutable;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -97,7 +96,6 @@ final class PublicForumExposedFormHooks {
    */
   private function categoryOptions(): array {
     $storage = $this->entityTypeManager->getStorage('taxonomy_term');
-    assert($storage instanceof TermStorageInterface);
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['user.permissions'])
       ->addCacheTags($this->entityTypeManager->getDefinition('taxonomy_term')->getListCacheTags());

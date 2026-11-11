@@ -94,7 +94,11 @@ final class PublicForumLastActivityAuthorHooks {
       ))));
       $missingPostIds = array_values(array_diff($postIds, array_keys($this->forumPosts)));
       if ($missingPostIds !== []) {
-        $this->forumPosts += $this->entityTypeManager->getStorage('aculta_forum_post')->loadMultiple($missingPostIds);
+        foreach ($this->entityTypeManager->getStorage('aculta_forum_post')->loadMultiple($missingPostIds) as $postId => $post) {
+          if ($post instanceof ForumPost) {
+            $this->forumPosts[$postId] = $post;
+          }
+        }
       }
       $this->preloadAuthors($view, $statistics);
       $this->preparedViews[$view] = $statistics;
@@ -166,9 +170,6 @@ final class PublicForumLastActivityAuthorHooks {
     $accountIds = [];
     $legacyAuthorIds = [];
     foreach ($view->result as $resultRow) {
-      if (!$resultRow instanceof ResultRow) {
-        continue;
-      }
       $topicId = (int) $view->field['nid']->getValue($resultRow);
       $commentCount = (int) $view->field['last_comment_count']->getValue($resultRow);
       $commentTimestamp = $commentCount > 0 ? (int) $view->field['last_comment_timestamp']->getValue($resultRow) : 0;
@@ -206,7 +207,11 @@ final class PublicForumLastActivityAuthorHooks {
     }
     $legacyAuthorIds = array_values(array_diff(array_unique($legacyAuthorIds), array_keys($this->legacyAuthors)));
     if ($legacyAuthorIds !== []) {
-      $this->legacyAuthors += $this->entityTypeManager->getStorage('aculta_legado_autor')->loadMultiple($legacyAuthorIds);
+      foreach ($this->entityTypeManager->getStorage('aculta_legado_autor')->loadMultiple($legacyAuthorIds) as $authorId => $author) {
+        if ($author instanceof LegacyAuthor) {
+          $this->legacyAuthors[$authorId] = $author;
+        }
+      }
     }
   }
 

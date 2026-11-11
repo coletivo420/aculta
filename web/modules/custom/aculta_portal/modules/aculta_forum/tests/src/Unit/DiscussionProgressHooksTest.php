@@ -10,7 +10,9 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
@@ -48,7 +50,12 @@ final class DiscussionProgressHooksTest extends UnitTestCase {
     $container->set('entity_type.manager', $entityTypeManager);
     \Drupal::setContainer($container);
 
-    (new DiscussionProgressHooks())->entityViewAlter($build, $node, $this->createMock(EntityViewDisplayInterface::class));
+    $hooks = new DiscussionProgressHooks(
+      $entityTypeManager,
+      $this->createMock(EntityFormBuilderInterface::class),
+      $this->createMock(RendererInterface::class),
+    );
+    $hooks->entityViewAlter($build, $node, $this->createMock(EntityViewDisplayInterface::class));
 
     self::assertSame('', $build['field_aculta_discussion']['#attributes']['data-aculta-discussion-thread']);
     self::assertSame(
@@ -75,14 +82,14 @@ final class DiscussionProgressHooksTest extends UnitTestCase {
 
     foreach ($builds as $build) {
       $original = $build;
-      (new DiscussionProgressHooks())->entityViewAlter($build, $node, $display);
+      $this->hooks()->entityViewAlter($build, $node, $display);
       self::assertSame($original, $build);
     }
 
     $nonNode = $this->createMock(EntityInterface::class);
     $build = ['#view_mode' => 'full', 'field_aculta_discussion' => []];
     $original = $build;
-    (new DiscussionProgressHooks())->entityViewAlter($build, $nonNode, $display);
+    $this->hooks()->entityViewAlter($build, $nonNode, $display);
     self::assertSame($original, $build);
   }
 
@@ -95,6 +102,14 @@ final class DiscussionProgressHooksTest extends UnitTestCase {
 
     self::assertCount(1, $attributes);
     self::assertSame('entity_view_alter', $attributes[0]->newInstance()->hook);
+  }
+
+  private function hooks(): DiscussionProgressHooks {
+    return new DiscussionProgressHooks(
+      $this->createMock(EntityTypeManagerInterface::class),
+      $this->createMock(EntityFormBuilderInterface::class),
+      $this->createMock(RendererInterface::class),
+    );
   }
 
 }

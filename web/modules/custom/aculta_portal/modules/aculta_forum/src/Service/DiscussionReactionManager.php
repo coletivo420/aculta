@@ -9,6 +9,7 @@ use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Event\ForumReactionEvent;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Cache\Cache;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
@@ -29,6 +30,7 @@ class DiscussionReactionManager {
     protected readonly ConfigFactoryInterface $configFactory,
     protected readonly ForumAnalyticsScopeResolver $scopeResolver,
     protected readonly EventDispatcherInterface $dispatcher,
+    protected readonly TimeInterface $time,
   ) {}
 
   /**
@@ -164,7 +166,7 @@ class DiscussionReactionManager {
       ->execute()
       ->fetchAssoc();
 
-    $now = \Drupal::time()->getRequestTime();
+    $now = $this->time->getRequestTime();
     $transaction = $this->database->startTransaction();
 
     try {
@@ -378,7 +380,7 @@ class DiscussionReactionManager {
    * Increments stats for giver and receiver.
    */
   protected function incrementStats(int $giverUid, int $authorUid): void {
-    $now = \Drupal::time()->getRequestTime();
+    $now = $this->time->getRequestTime();
     if ($giverUid > 0) {
       $this->database->merge(self::TABLE_STATS)
         ->key('uid', $giverUid)
@@ -411,7 +413,7 @@ class DiscussionReactionManager {
    * Decrements stats for giver and receiver.
    */
   protected function decrementStats(int $giverUid, int $authorUid): void {
-    $now = \Drupal::time()->getRequestTime();
+    $now = $this->time->getRequestTime();
     if ($giverUid > 0) {
       $this->database->update(self::TABLE_STATS)
         ->expression('reactions_given', 'GREATEST(0, CAST(reactions_given AS SIGNED) - 1)')

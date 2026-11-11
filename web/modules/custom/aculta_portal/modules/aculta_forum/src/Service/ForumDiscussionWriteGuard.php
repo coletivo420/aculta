@@ -23,7 +23,7 @@ final class ForumDiscussionWriteGuard {
   /**
    * Locks held for Comment saves until their transaction ends.
    *
-   * @var \WeakMap<\Drupal\comment\CommentInterface, string[]> */
+   * @var \WeakMap<\Drupal\comment\CommentInterface, array<string, bool>> */
   private \WeakMap $pendingCommentLocks;
 
   /**
@@ -115,8 +115,8 @@ final class ForumDiscussionWriteGuard {
       if (!$this->isIntentionalMove($comment)) {
         $this->assertCurrentRelations($comment);
       }
-      $existing = $this->pendingCommentLocks[$comment] ?? [];
-      $this->pendingCommentLocks[$comment] = array_values(array_unique([...$existing, ...$acquired]));
+      $existing = array_keys($this->pendingCommentLocks[$comment] ?? []);
+      $this->pendingCommentLocks[$comment] = $this->lockMap([...$existing, ...$acquired]);
     }
     catch (\Throwable $exception) {
       $this->release($acquired);
@@ -142,8 +142,8 @@ final class ForumDiscussionWriteGuard {
         || (string) $persisted->getThread() !== (string) $comment->getThread()) {
         throw new \InvalidArgumentException('This comment moved while the delete form was open. Reload the discussion and retry.');
       }
-      $existing = $this->pendingCommentLocks[$comment] ?? [];
-      $this->pendingCommentLocks[$comment] = array_values(array_unique([...$existing, ...$acquired]));
+      $existing = array_keys($this->pendingCommentLocks[$comment] ?? []);
+      $this->pendingCommentLocks[$comment] = $this->lockMap([...$existing, ...$acquired]);
     }
     catch (\Throwable $exception) {
       $this->release($acquired);
@@ -154,7 +154,7 @@ final class ForumDiscussionWriteGuard {
   /**
    * Releases write locks only after the outer database transaction ends. */
   public function afterCommentSave(CommentInterface $comment): void {
-    $lock_names = $this->pendingCommentLocks[$comment] ?? [];
+    $lock_names = array_keys($this->pendingCommentLocks[$comment] ?? []);
     if ($lock_names === []) {
       return;
     }
@@ -234,6 +234,23 @@ final class ForumDiscussionWriteGuard {
     return $topic instanceof NodeInterface
       && $topic->bundle() === 'aculta_forum_topic'
       && $topic->hasField(ForumCommentMover::FIELD_NAME);
+  }
+
+  /**
+   * Indexes lock names to maintain the WeakMap's declared value shape.
+   *
+   * @param list<string> $lockNames
+   *   Acquired lock names.
+   *
+   * @return array<string, bool>
+   *   Lock names keyed by themselves.
+   */
+  private function lockMap(array $lockNames): array {
+    $locks = [];
+    foreach ($lockNames as $lockName) {
+      $locks[$lockName] = (bool) TRUE;
+    }
+    return $locks;
   }
 
 }

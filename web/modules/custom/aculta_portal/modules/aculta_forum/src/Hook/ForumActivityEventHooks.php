@@ -93,6 +93,9 @@ final class ForumActivityEventHooks {
     if (!$this->isPublishedForumPost($entity)) {
       return;
     }
+    if (!$entity instanceof ForumPost) {
+      return;
+    }
     $this->dispatchPost($entity);
   }
 
@@ -102,6 +105,9 @@ final class ForumActivityEventHooks {
   #[Hook('entity_update')]
   public function entityPublished(EntityInterface $entity): void {
     if (!$this->isPublishedForumPost($entity)) {
+      return;
+    }
+    if (!$entity instanceof ForumPost) {
       return;
     }
     $original = $entity->getOriginal();

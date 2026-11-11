@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\aculta_forum\Service\DiscussionReplyIdempotencyManager;
 use Drupal\Core\Database\Connection;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -17,7 +18,7 @@ final class DiscussionReplyIdempotencyManagerTest extends UnitTestCase {
 
   public function testGenerateIntentionKeyIsDeterministic(): void {
     $database = $this->createMock(Connection::class);
-    $manager = new DiscussionReplyIdempotencyManager($database);
+    $manager = new DiscussionReplyIdempotencyManager($database, $this->createMock(TimeInterface::class));
 
     $account = $this->createMock(AccountInterface::class);
     $account->method('id')->willReturn(7);

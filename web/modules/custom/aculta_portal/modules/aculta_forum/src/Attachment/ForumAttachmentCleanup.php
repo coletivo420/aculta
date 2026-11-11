@@ -139,6 +139,10 @@ final class ForumAttachmentCleanup {
 
   /**
    * Checks Entity Usage sources against current content and post revisions.
+   *
+   * @phpstan-impure
+   *   The query results can change between the initial check and the final
+   *   deletion recheck, so repeated calls must not be treated as identical.
    */
   private function hasLiveReference(MediaInterface $media): bool {
     $gallery_ids = $this->entityTypeManager->getStorage('media_gallery')->getQuery()
@@ -147,7 +151,7 @@ final class ForumAttachmentCleanup {
       ->condition('images.target_id', $media->id())
       ->range(0, 1)
       ->execute();
-    if ($gallery_ids !== []) {
+    if ($this->hasResults($gallery_ids)) {
       return TRUE;
     }
 
@@ -193,6 +197,16 @@ final class ForumAttachmentCleanup {
       }
     }
     return FALSE;
+  }
+
+  /**
+   * Keeps the runtime result check explicit across the entity query API boundary.
+   *
+   * @param array<array-key, mixed> $ids
+   *   Entity IDs returned by an access-disabled entity query.
+   */
+  private function hasResults(array $ids): bool {
+    return $ids !== [];
   }
 
   /**

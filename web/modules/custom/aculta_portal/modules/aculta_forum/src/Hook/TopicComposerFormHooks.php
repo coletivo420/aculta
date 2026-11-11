@@ -11,8 +11,10 @@ use Drupal\Core\Hook\Order\Order;
 use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\aculta_forum\Form\TopicPopupLayout;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Formulário de criação de tópico (Compositor de Criação de Tópico), no popup do fórum.
@@ -22,6 +24,11 @@ use Symfony\Component\HttpFoundation\Response;
  * formulário no popup; sucesso redireciona o navegador para o tópico criado.
  */
 final class TopicComposerFormHooks {
+
+  public function __construct(
+    #[Autowire(service: 'current_route_match')]
+    private readonly RouteMatchInterface $routeMatch,
+  ) {}
 
   /**
    * Nome da rota de fragmento usada pelo popup de criação de tópico.
@@ -48,7 +55,7 @@ final class TopicComposerFormHooks {
     }
 
     // Popup: o formulário envia por HTMX para o próprio endpoint e troca o corpo do diálogo.
-    if (\Drupal::routeMatch()->getRouteName() !== self::POPUP_ROUTE) {
+    if ($this->routeMatch->getRouteName() !== self::POPUP_ROUTE) {
       return;
     }
     $formObject = $formState->getFormObject();

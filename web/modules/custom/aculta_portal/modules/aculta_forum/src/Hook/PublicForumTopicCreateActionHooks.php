@@ -6,7 +6,6 @@ namespace Drupal\aculta_forum\Hook;
 
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessManagerInterface;
-use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -47,7 +46,7 @@ final class PublicForumTopicCreateActionHooks {
       NULL,
       TRUE,
     );
-    if (!$access instanceof AccessResultInterface || !$access instanceof CacheableDependencyInterface) {
+    if (!$access instanceof CacheableDependencyInterface) {
       return;
     }
     // Carry allowed and denied access metadata onto the View. In particular,
