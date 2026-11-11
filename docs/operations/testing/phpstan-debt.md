@@ -354,3 +354,15 @@ Resíduos: zero erro bruto em `src`; permanecem 112 erros, todos em testes. A re
 Escopo: `OrganizationContributionEventQueueTest` passou a manter o estado do outbox em `ArrayObject`, cuja API de coleção preserva o contrato dinâmico dos callbacks do mock; a asserção ainda verifica o payload armazenado e a remoção após recuperação da fila. O teste protege a recuperação durável quando `QueueInterface::createItem()` falha na primeira tentativa. Os 111 erros brutos restantes estão todos em testes Kernel.
 
 Evidências: Unit do módulo 30 testes/62 assertions PASS; PHP lint do teste PASS; análise bruta de Eventos 112 -> 111; análise global estrita `[OK] No errors`; gate Portal Drupal 12 PASS (1234 checks); `git diff --check` PASS. Kernel não executado: conexão isolada de banco não comprovada nesta rodada.
+
+## Microfase 22d — 2026-11-11 (`aculta_events`, Kernel de ciclo de vida)
+
+| Medida | Antes | Depois |
+| --- | ---: | ---: |
+| Erros brutos em `aculta_events` | 111 | 35 |
+| Erros em `EventOrganizationLifecycleKernelTest.php` | 76 | 0 |
+| Baseline global (ocorrências) | 2499 | 2423 |
+
+Escopo: os retornos genéricos de storage no Kernel de ciclo de vida são validados por classe concreta em `requireEntity()`, preservando erro explícito quando fixture/entidade esperada não existe. Os itens de fila são estreitados com `assertIsObject()`, a asserção sobre o campo de transferência usa `isEmpty()`, e os `assertTrue(TRUE)` nos catches foram removidos porque `fail()` já faz a ausência da exceção falhar.
+
+Resíduos: 35 erros brutos em outros testes Kernel de Eventos; nenhum erro em `src` ou Unit. Evidências: arquivo focal (76 -> 0), módulo bruto (111 -> 35), baseline global (2499 -> 2423), análise global estrita `[OK] No errors`, Unit do módulo 30 testes/62 assertions PASS, descoberta PHPUnit PASS (kernel=250, unit=674), lint PHP e gate Portal Drupal 12 (1234 checks) PASS. Kernel focal DEFERRED: `SIMPLETEST_DB` está unset e o bootstrap Drupal recusa executar Kernel sem uma URL de teste; não configurei conexão por inferência.
