@@ -106,7 +106,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       return;
     }
 
-    $thread = $this->privateMessageService->getThreadFromMessage($privateMessage);
+    $thread = $this->getThreadFromMessage($privateMessage);
     if (!$thread instanceof PrivateMessageThreadInterface) {
       // The hook fires before a new thread is saved; allow the queue backend to
       // retry when a concurrent cron process claimed the item too early.
@@ -121,13 +121,13 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     // and delivery so a dormant thread cannot be deleted after access was
     // checked but before its queued email is sent.
     $freshThread = $this->conversationWriteLock->acquire($thread);
-    if (!$freshThread instanceof PrivateMessageThreadInterface) {
+    if ($freshThread === NULL) {
       throw new \RuntimeException('Private message conversation is being updated.');
     }
     try {
       $senderId = (int) $privateMessage->getOwnerId();
       $mailerManaged = ($data['mailer_managed'] ?? FALSE) === TRUE;
-      foreach ($freshThread->getMembersId() as $recipientId) {
+      foreach ($freshThread->getMemberIds() as $recipientId) {
         $recipientId = (int) $recipientId;
         if ($recipientId === $senderId) {
           continue;
@@ -149,6 +149,17 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     finally {
       $this->conversationWriteLock->release($threadId);
     }
+  }
+
+  /**
+   * Reads the thread despite a mismatch in the contrib service contract.
+   *
+   * The Private Message implementation returns FALSE when a message has not
+   * been attached to a thread yet, although its interface documents an entity.
+   * Preserve the queue retry path for that transient state.
+   */
+  private function getThreadFromMessage(PrivateMessageInterface $privateMessage): mixed {
+    return $this->privateMessageService->getThreadFromMessage($privateMessage);
   }
 
   /**

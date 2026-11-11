@@ -116,7 +116,7 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
       $senderId = (int) $privateMessage->getOwnerId();
       $thread = $this->privateMessageService->getThreadFromMessage($privateMessage);
       if (!$thread->access('view', $recipient, TRUE)->isAllowed()
-        || !in_array($uid, array_map('intval', $thread->getMembersId()), TRUE)
+        || !in_array($uid, array_map('intval', $thread->getMemberIds()), TRUE)
         || $this->isBlockedPair($senderId, $uid)
         || $thread->getLastDeleteTimestamp($recipient) >= $privateMessage->getCreatedTime()) {
         $this->markRecordsDone([$notice]);
@@ -213,7 +213,7 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
    */
   private function digestIsDue(int $uid): bool {
     $anchor = (string) $this->configFactory->get('aculta_messenger.settings')->get('private_message_digest_anchor');
-    $timezone = (string) ($this->configFactory->get('system.date')?->get('timezone.default') ?: 'UTC');
+    $timezone = (string) ($this->configFactory->get('system.date')->get('timezone.default') ?: 'UTC');
     try {
       $date = \DateTimeImmutable::createFromFormat('!Y-m-d', $anchor, new \DateTimeZone($timezone));
     }

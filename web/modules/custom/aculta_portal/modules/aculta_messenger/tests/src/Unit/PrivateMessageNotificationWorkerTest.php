@@ -106,7 +106,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
 
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->method('id')->willReturn('123');
-    $thread->method('getMembersId')->willReturn([1, 2]);
+    $thread->method('getMemberIds')->willReturn([1, 2]);
     $thread->method('access')->with('view', $recipient, TRUE)->willReturn(AccessResult::allowed());
     $messageService = $this->createMock(PrivateMessageServiceInterface::class);
     $messageService->method('getThreadFromMessage')->with($privateMessage)->willReturn($thread);
@@ -206,7 +206,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $userStorage->method('loadUnchanged')->willReturnCallback(fn(int $uid): UserInterface => $uid === 2 ? $recipient : $sender);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->method('id')->willReturn('123');
-    $thread->method('getMembersId')->willReturn([1, 2]);
+    $thread->method('getMemberIds')->willReturn([1, 2]);
     $thread->method('access')->with('view', $recipient, TRUE)->willReturn(AccessResult::allowed());
     $thread->method('getLastDeleteTimestamp')->with($recipient)->willReturn(100);
     $messageService = $this->createMock(PrivateMessageServiceInterface::class);
@@ -407,7 +407,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $userStorage->method('loadUnchanged')->with(2)->willReturn($recipient);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->method('id')->willReturn('123');
-    $thread->method('getMembersId')->willReturn([1, 2]);
+    $thread->method('getMemberIds')->willReturn([1, 2]);
     $recipientEligible = $recipientActive && $canUsePrivateMessages && $canAccessProfiles;
     $thread->expects($recipientEligible ? self::once() : self::never())
       ->method('access')->with('view', $recipient, TRUE)->willReturn(

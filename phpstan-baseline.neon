@@ -6490,18 +6490,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_mail_confirmer/tests/src/Kernel/UserEmailChangeKernelTest.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityStorageInterface::createFromStorageRecord().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/aculta_messenger.install
-
-		-
-			rawMessage: 'Call to method getPath() of internal class Drupal\Core\Extension\ExtensionList from outside its root namespace Drupal.'
-			identifier: method.internalClass
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/aculta_messenger.install
-
-		-
 			rawMessage: 'Function aculta_messenger_post_update_forum_comment_notice_ledger() has an unused parameter $sandbox.'
 			identifier: function.unusedParameter
 			count: 1
@@ -6524,40 +6512,6 @@ parameters:
 			identifier: function.unusedParameter
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/aculta_messenger.post_update.php
-
-		-
-			rawMessage: 'Parameter #4 $storage_definition of method Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface::installFieldStorageDefinition() expects Drupal\Core\Field\FieldStorageDefinitionInterface, Drupal\Core\Field\FieldDefinitionInterface given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/aculta_messenger.post_update.php
-
-		-
-			rawMessage: '''
-				Call to deprecated method getMembersId() of class Drupal\private_message\Entity\PrivateMessageThread:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. Use self::getMemberIds() instead.
-			'''
-			identifier: method.deprecated
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Aviso/PrivateMessageDigestProvider.php
-
-		-
-			rawMessage: Using nullsafe method call on non-nullable type Drupal\Core\Config\ImmutableConfig. Use -> instead.
-			identifier: nullsafe.neverNull
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Aviso/PrivateMessageDigestProvider.php
-
-		-
-			rawMessage: 'Cannot call method referencedEntities() on array<Drupal\private_message\Entity\PrivateMessageInterface>.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
-
-		-
-			rawMessage: Instanceof between Drupal\private_message\Entity\PrivateMessageThreadInterface and Drupal\private_message\Entity\PrivateMessageThreadInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
 
 		-
 			rawMessage: '''
@@ -6643,16 +6597,6 @@ parameters:
 
 		-
 			rawMessage: '''
-				Call to deprecated method getMembersId() of interface Drupal\private_message\Entity\PrivateMessageThreadInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. Use self::getMemberIds() instead.
-			'''
-			identifier: method.deprecated
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
-
-		-
-			rawMessage: '''
 				Call to deprecated method isCurrentUserBannedByUser() of interface Drupal\private_message\Service\PrivateMessageBanManagerInterface:
 				in private_message:4.0.0 and is removed from
 				  private_message:5.0.0. No replacement is provided.
@@ -6660,18 +6604,6 @@ parameters:
 			identifier: method.deprecated
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
-
-		-
-			rawMessage: Negated boolean expression is always true.
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
-
-		-
-			rawMessage: Instanceof between Drupal\Core\Datetime\DrupalDateTime and Drupal\Core\Datetime\DrupalDateTime will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/LearningNoticeManager.php
 
 		-
 			rawMessage: '''
@@ -6692,32 +6624,6 @@ parameters:
 			identifier: class.extendsDeprecatedClass
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Mapper/MessengerPrivateMessageMapper.php
-
-		-
-			rawMessage: '''
-				Call to deprecated method getMembersId() of interface Drupal\private_message\Entity\PrivateMessageThreadInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. Use self::getMemberIds() instead.
-			'''
-			identifier: method.deprecated
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
-
-		-
-			rawMessage: Instanceof between Drupal\private_message\Entity\PrivateMessageThread and Drupal\private_message\Entity\PrivateMessageThreadInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
-
-		-
-			rawMessage: '''
-				Call to deprecated method getMembersId() of interface Drupal\private_message\Entity\PrivateMessageThreadInterface:
-				in private_message:4.0.0 and is removed from
-				  private_message:5.0.0. Use self::getMemberIds() instead.
-			'''
-			identifier: method.deprecated
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/ConversationMessagingState.php
 
 		-
 			rawMessage: '''
@@ -7166,6 +7072,12 @@ parameters:
 			identifier: staticMethod.alreadyNarrowedType
 			count: 4
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/MessagesControllerMemberAccessTest.php
+
+		-
+			rawMessage: 'Call to an undefined method PHPUnit\Framework\MockObject\Builder\InvocationStubber::with().'
+			identifier: method.notFound
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/MessengerDefaultConfigUpdateTest.php
 
 		-
 			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertCount() with 2 and array{submitted: ''Enviar para revisão'', needs_changes: ''Pedir ajustes''} will always evaluate to true.'

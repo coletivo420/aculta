@@ -322,7 +322,7 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
     $sender = $this->user(42);
     $recipient = $this->user(84);
     $candidateThread = $this->createMock(PrivateMessageThreadInterface::class);
-    $candidateThread->method('getMembersId')->willReturn([42, 84]);
+    $candidateThread->method('getMemberIds')->willReturn([42, 84]);
     $state = (object) ['privacy' => NULL];
     $userData = $this->createMock(UserDataInterface::class);
     $userData->expects(self::exactly(2))->method('get')
@@ -393,7 +393,7 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
     $identity = $this->createMock(PublicMemberIdentityInterface::class);
     $identity->method('publicDisplayName')->willReturn('membro');
     $candidateThread = $this->createMock(PrivateMessageThreadInterface::class);
-    $candidateThread->method('getMembersId')->willReturn([42, 84]);
+    $candidateThread->method('getMemberIds')->willReturn([42, 84]);
     $state = (object) ['blocked' => FALSE];
     $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
     $banManager->method('isBanned')->willReturn(FALSE);

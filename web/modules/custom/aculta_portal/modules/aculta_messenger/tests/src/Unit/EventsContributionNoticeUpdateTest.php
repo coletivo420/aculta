@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\Core\Config\ConfigManagerInterface;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
-use Drupal\Core\Extension\ModuleExtensionList;
+use Drupal\Core\Extension\ExtensionPathResolver;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -27,8 +27,8 @@ final class EventsContributionNoticeUpdateTest extends UnitTestCase {
     require_once DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_messenger/aculta_messenger.install';
 
     $modulePath = DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_messenger';
-    $extensionList = $this->createStub(ModuleExtensionList::class);
-    $extensionList->method('getPath')->with('aculta_messenger')->willReturn($modulePath);
+    $pathResolver = $this->createStub(ExtensionPathResolver::class);
+    $pathResolver->method('getPath')->with('module', 'aculta_messenger')->willReturn($modulePath);
 
     $configManager = $this->createMock(ConfigManagerInterface::class);
     $configManager->method('loadConfigEntityByName')
@@ -40,7 +40,7 @@ final class EventsContributionNoticeUpdateTest extends UnitTestCase {
     $entityTypeManager->expects(self::never())->method('getStorage');
 
     $container = new ContainerBuilder();
-    $container->set('extension.list.module', $extensionList);
+    $container->set('extension.path.resolver', $pathResolver);
     $container->set('config.manager', $configManager);
     $container->set('entity_type.manager', $entityTypeManager);
 

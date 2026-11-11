@@ -633,9 +633,6 @@ final class MessagesController extends ControllerBase {
     $senderBoxes = [];
 
     foreach ($threads as $thread) {
-      if (!$thread instanceof PrivateMessageThreadInterface) {
-        continue;
-      }
       $access = $thread->access('view', $this->account, TRUE);
       $cacheability->addCacheableDependency($access);
       if (!$access->isAllowed()) {
@@ -774,7 +771,7 @@ final class MessagesController extends ControllerBase {
   /**
    * Selects the latest incoming author, or the conversation partner. */
   private function getConversationSender(PrivateMessageThreadInterface $thread): ?UserInterface {
-    $messages = $thread->getMessages()->referencedEntities();
+    $messages = $thread->getMessages();
     $latestMessage = $messages === [] ? NULL : $messages[array_key_last($messages)];
     $sender = $latestMessage instanceof EntityOwnerInterface ? $latestMessage->getOwner() : NULL;
     if ($sender !== NULL && (int) $sender->id() !== (int) $this->account->id()) {

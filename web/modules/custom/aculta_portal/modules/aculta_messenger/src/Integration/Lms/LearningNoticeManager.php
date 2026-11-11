@@ -790,7 +790,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       (string) $deadline->get('field_activity_due_at')->value,
       new \DateTimeZone('UTC'),
     );
-    if (!$date instanceof DrupalDateTime || $date->hasErrors()) {
+    if ($date->hasErrors()) {
       return NULL;
     }
     $user = $account instanceof UserInterface ? $account : NULL;

@@ -45,6 +45,7 @@ final class PrivateMessageDigestProviderTest extends UnitTestCase {
       ->willReturn(AvisoPreferencias::EMAIL_DIGEST);
     $configFactory = $this->getConfigFactoryStub([
       'aculta_messenger.settings' => ['private_message_digest_anchor' => '2026-10-26'],
+      'system.date' => ['timezone' => ['default' => 'UTC']],
     ]);
     $userData = $this->createMock(UserDataInterface::class);
     $userData->method('get')->with('aculta_messenger', 9, 'private_message_digest_last_sent')
@@ -225,7 +226,7 @@ final class PrivateMessageDigestProviderTest extends UnitTestCase {
     $recipient->method('hasPermission')->willReturn(TRUE);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->method('access')->with('view', $recipient, TRUE)->willReturn(AccessResult::allowed());
-    $thread->method('getMembersId')->willReturn([9, 33]);
+    $thread->method('getMemberIds')->willReturn([9, 33]);
     $thread->method('getLastDeleteTimestamp')->willReturn(0);
     $hiddenThread = $this->createMock(PrivateMessageThreadInterface::class);
     $hiddenThread->method('access')->with('view', $recipient, TRUE)->willReturn(AccessResult::forbidden());
@@ -309,7 +310,10 @@ final class PrivateMessageDigestProviderTest extends UnitTestCase {
       $entities,
       $privateMessageService,
       $preferences,
-      $this->getConfigFactoryStub(['aculta_messenger.settings' => ['private_message_digest_anchor' => '2020-01-01']]),
+      $this->getConfigFactoryStub([
+        'aculta_messenger.settings' => ['private_message_digest_anchor' => '2020-01-01'],
+        'system.date' => ['timezone' => ['default' => 'UTC']],
+      ]),
       $this->createMock(UserDataInterface::class),
       $time,
     );

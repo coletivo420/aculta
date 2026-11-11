@@ -299,3 +299,18 @@ Escopo: `aculta_forum/src`, definições de serviço e testes Unit afetados por 
 Resíduos: 185 ocorrências da baseline no módulo, todas em testes; nenhuma em produção. A análise bruta confirmou que o único erro de teste no `ForumHistoricModerationQueueHooksTest` (atribuição do relacionamento da View) já existia antes desta rodada. Não houve novas entradas de baseline para erros de produção.
 
 Evidências: Unit do Fórum 250 testes/1888 assertions PASS; Unit global 3287 testes/17654 assertions PASS (3 deprecações PHPUnit no PHP 8.5); descoberta de suítes PASS (unit=674); lint dos arquivos PHP alterados PASS; gate Portal Drupal 12 PASS (1234 verificações); PHPStan global após regenerar baseline `[OK] No errors`. Kernel não executado, para não conectar testes a banco operacional.
+
+## Rodada 21 — 2026-11-11 (aculta_messenger, produção)
+
+| Medida | Antes | Depois |
+| --- | ---: | ---: |
+| Baseline global (ocorrências) | 2592 | 2576 |
+| Erros brutos em `aculta_messenger` | 276 | 260 |
+| Erros brutos em produção (`src`, `.install`, post-update) | 35 | 18 |
+| Erros em `aculta_messenger/.install` | 5 | 0 |
+
+Escopo: APIs de thread migradas para `getMemberIds()`, array de mensagens consumido conforme o retorno de `getMessages()`, caminho de módulo resolvido por `extension.path.resolver` e narrowing de `ConfigEntityStorageInterface` nos updates de configuração. A checagem do worker mantém o retry quando a implementação contrib retorna `FALSE` apesar do PHPDoc declarar entidade. Fixtures Unit atualizados para as APIs atuais.
+
+Resíduos de produção: 14 avisos de APIs `private_message` obsoletas sem substituto publicado (mapper, identificação de thread e verificação de bloqueio) e 4 parâmetros `$sandbox` mantidos no contrato de post-update. O autofix global solicitado (`--fix --fix-ignored`) foi executado no worktree e não encontrou erros corrigíveis.
+
+Evidências: Unit do Messenger 403 testes/4387 assertions PASS; descoberta de suítes PASS (unit=674); PHP lint e `git diff --check` PASS; análise PHPStan estrita global `[OK] No errors`. Sem testes Kernel/Functional, para evitar banco operacional.

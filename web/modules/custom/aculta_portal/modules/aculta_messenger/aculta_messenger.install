@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Config\Entity\ConfigDependencyManager;
+use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
 use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
 use Drupal\Core\Config\FileStorage;
 
@@ -168,7 +169,7 @@ function aculta_messenger_update_10012(): void {
  * Installs only missing unread-count fields without replacing active config.
  */
 function aculta_messenger_update_10013(): void {
-  $module_path = \Drupal::service('extension.list.module')->getPath('aculta_messenger');
+  $module_path = \Drupal::service('extension.path.resolver')->getPath('module', 'aculta_messenger');
   $defaults = new FileStorage($module_path . '/config/install');
   $entity_type_manager = \Drupal::entityTypeManager();
   $field_storage = $entity_type_manager->getStorage('field_storage_config');
@@ -267,7 +268,7 @@ function aculta_messenger_update_10014(): void {
  * Installs the private Message bundle used for Events contribution outcomes.
  */
 function aculta_messenger_update_10015(): void {
-  $module_path = \Drupal::service('extension.list.module')->getPath('aculta_messenger');
+  $module_path = \Drupal::service('extension.path.resolver')->getPath('module', 'aculta_messenger');
   $source = new FileStorage($module_path . '/config/install');
   $names = [
     'message.template.aculta_msg_events_contrib_notice',
@@ -294,6 +295,9 @@ function aculta_messenger_update_10015(): void {
       throw new \LogicException(sprintf('Events notice configuration %s is missing or is not an entity.', $name));
     }
     $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+    if (!$storage instanceof ConfigEntityStorageInterface) {
+      throw new \LogicException(sprintf('Events notice configuration %s does not use config entity storage.', $name));
+    }
     $entity = $storage->createFromStorageRecord($config[$name]);
     if (!$entity->isInstallable()) {
       throw new \LogicException(sprintf('Events notice configuration %s has unmet dependencies.', $name));
@@ -338,7 +342,7 @@ function aculta_messenger_update_10016(): void {
  * Adds digest and direct-email delivery fields to Events proposal notices.
  */
 function aculta_messenger_update_10017(): void {
-  $module_path = \Drupal::service('extension.list.module')->getPath('aculta_messenger');
+  $module_path = \Drupal::service('extension.path.resolver')->getPath('module', 'aculta_messenger');
   $source = new FileStorage($module_path . '/config/install');
   $names = [
     'field.storage.message.field_aculta_msg_delivery',
@@ -360,6 +364,9 @@ function aculta_messenger_update_10017(): void {
       throw new \LogicException(sprintf('Events notice delivery configuration %s is missing or is not an entity.', $name));
     }
     $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+    if (!$storage instanceof ConfigEntityStorageInterface) {
+      throw new \LogicException(sprintf('Events notice delivery configuration %s does not use config entity storage.', $name));
+    }
     $entity = $storage->createFromStorageRecord($config[$name]);
     if (!$entity->isInstallable()) {
       throw new \LogicException(sprintf('Events notice delivery configuration %s has unmet dependencies.', $name));
