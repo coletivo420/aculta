@@ -113,7 +113,8 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid'
       && $rowPlugin === 'ui_patterns'
       && ($rowPatterns['component_id'] ?? NULL) === 'aculta420_v2:revista-album-card';
-    $isUpstreamVvjsExample = $viewId === 'vvjs_example';
+    $isUpstreamVvjsExample = preg_match('/^vvj[a-z]_example$/', $viewId) === 1;
+    $isWebformSubmissions = $viewId === 'webform_submissions';
     $forumTopicFieldsTemplate = $theme . '/templates/views/views-view-fields--aculta-forum-public-topics.html.twig';
     $isForumTopicsSdc = $viewId === 'aculta_forum_public_topics'
       && (string) $displayId !== 'default'
@@ -264,9 +265,9 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         ? 'BLOCKED_UPSTREAM'
         : (($isWikiEntriesPilot || $isWikiCategoriesPilot) && $displayId === 'default'
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
-        : ($isForumTopicsSdc || $documentRuntimeVerified || $shopRuntimeVerified || $wikiRuntimeVerified || $wikiCategoriesRuntimeVerified
+        : ($isForumTopicsSdc || $isRevistaTeaserSdc || $documentRuntimeVerified || $shopRuntimeVerified || $wikiRuntimeVerified || $wikiCategoriesRuntimeVerified
         ? 'UI_SUITE_NATIVE'
-        : ((($isViewsFunctionalBase && !$isProductGalleryPilot) || $isEventsBase || $isAdminViewNative)
+        : ((($isViewsFunctionalBase && !$isProductGalleryPilot) || $isEventsBase || $isAdminViewNative || $isWebformSubmissions)
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
         : (($albumsRuntimeVerified || $forumRuntimeVerified || $eventsRuntimeVerified || $revistaRuntimeVerified || $revistaNewsRuntimeVerified || $homeEditorialRuntimeVerified || $albumPhotosRuntimeVerified || $mediaGalleriesRuntimeVerified) ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS')))),
       'replacement_or_action' => match (TRUE) {
@@ -280,6 +281,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isDocumentCardSdc => 'The document teaser row uses the existing document-card SDC; finish its UI Patterns layout composition and Runtime validation',
         $isForumTopicsSdc => 'The Fields row adapter already composes the reusable forum-topic-row SDC; preserve it and migrate to the UI Patterns row plugin only when dynamic entity props and rendered slots can be mapped without losing topic state',
         $isProductGalleryPilot => 'UI Patterns layout-grid composes the native Commerce product media View; preserve product Media IDs, ordering, published/image filters and produto_galeria view mode',
+        $isWebformSubmissions => 'Webform submission administration is a functional native Views table; keep Webform query/access/filters and Drupal table presentation',
         $isAdminViewNative => 'Native administrative Views table; keep query, access, filters, sorting, pager and Drupal table presentation',
         $isViewsFunctionalBase || $isEventsBase => 'Native Views base display supplies inherited query, access, filters, sorting and configured style to concrete displays; it has no independent route output',
         $isAlbumsViewsPilot => 'Compose this inherited View level with UI Patterns SDCs; preserve native row fields, filters, sort, pager and access',
@@ -308,6 +310,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isProductGalleryPilot => $productGalleryRuntimeConfigured
           ? 'Runtime View returned seven Media rows for the published Commerce product; browser visual, access and cache acceptance remain DEFERRED'
           : 'Commerce product View has a programmatic consumer; Runtime execution and browser acceptance remain pending',
+        $isWebformSubmissions => 'Native Webform submission table; presentation stays in Drupal Views',
         $isAdminViewNative => 'Administrative table consumes the inherited query/access/filter/sort; presentation stays in Drupal Views',
         $isViewsFunctionalBase || $isEventsBase => 'Inherited query/access/filter/sort and any base style are consumed by explicit displays; no independent route output',
         $isAlbumsViewsPilot => $albumsRuntimeVerified
@@ -351,6 +354,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isForumGalleryPilot && $forumGalleryRuntimeConfigured => 'active; UI Patterns View executable; zero published Forum galleries; visual acceptance deferred',
         $isMediaGalleriesPilot && $mediaGalleriesRuntimeVerified => sprintf('active; HTTP 200; %d cards after; anonymous access allowed; Firefox 320/390/768/1024/1440 light/dark', $runtimeView['displays'][$displayId]['result_count_before_after'] ?? 0),
         $isMediaGalleriesPilot => 'configured; Runtime/browser evidence not recorded',
+        $isWebformSubmissions => 'functional native Webform submission View; Drupal table presentation',
         $isAdminViewNative => 'functional native administrative View; Drupal table presentation',
         $isViewsFunctionalBase || $isEventsBase => 'functional native base; no direct route/display consumer',
         $albumsRuntimeVerified => sprintf('active; HTTP %d; %d results before/after; anonymous access allowed; browser 1280/320 light/dark', $runtimeView['after_http_status'], $runtimeView['result_count_after']),
