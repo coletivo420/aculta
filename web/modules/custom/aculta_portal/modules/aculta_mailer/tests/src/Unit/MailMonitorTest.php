@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_mailer\Unit;
 
-use Drupal\aculta_file_uploader\IngestionLimits;
 use Drupal\aculta_mailer\Alert\MailAlerts;
 use Drupal\aculta_mailer\Delivery\AdministratorRecipients;
 use Drupal\aculta_mailer\Delivery\MailSuppression;
@@ -110,7 +109,7 @@ MAIL;
       $this->createMock(LoggerInterface::class),
       $applier,
       new BounceParser(),
-      new DmarcReportParser(IngestionLimits::defaults()),
+      new DmarcReportParser(),
       NULL,
       new MailAlerts(
         $configFactory,
@@ -121,7 +120,6 @@ MAIL;
         $this->createMock(AdministratorRecipients::class),
       ),
       $this->createMock(QuotaSignal::class),
-      IngestionLimits::defaults(),
     );
   }
 
@@ -254,7 +252,7 @@ MAIL;
       $logger,
       new DeliveryEventApplier($this->createMock(EntityTypeManagerInterface::class), $suppression),
       new BounceParser(),
-      new DmarcReportParser(IngestionLimits::defaults()),
+      new DmarcReportParser(),
       $secrets,
       new MailAlerts(
         $configFactory,
@@ -265,7 +263,6 @@ MAIL;
         $this->createMock(AdministratorRecipients::class),
       ),
       $this->createMock(QuotaSignal::class),
-      IngestionLimits::defaults(),
     );
 
     $monitor->cron();
