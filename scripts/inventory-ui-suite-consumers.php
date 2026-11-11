@@ -268,7 +268,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
         : ($isForumTopicsSdc || $isRevistaTeaserSdc || $isForumGalleryPilot || $isProductGalleryPilot || ($isForumCategoryPilot && (string) $displayId === 'block_landing') || $documentRuntimeVerified || $shopRuntimeVerified || $wikiRuntimeVerified || $wikiCategoriesRuntimeVerified
         ? 'UI_SUITE_NATIVE'
-        : ((($isViewsFunctionalBase && !$isProductGalleryPilot) || $isEventsBase || $isAdminViewNative || $isWebformSubmissions || $isNativeCoreView)
+        : (($isViewsFunctionalBase || $isEventsBase || $isAdminViewNative || $isWebformSubmissions || $isNativeCoreView)
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
         : (($albumsRuntimeVerified || $forumRuntimeVerified || $eventsRuntimeVerified || $revistaRuntimeVerified || $revistaNewsRuntimeVerified || $homeEditorialRuntimeVerified || $albumPhotosRuntimeVerified || $mediaGalleriesRuntimeVerified) ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS')))),
       'replacement_or_action' => match (TRUE) {

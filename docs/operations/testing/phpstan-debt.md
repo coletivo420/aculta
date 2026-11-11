@@ -314,3 +314,7 @@ Escopo: APIs de thread migradas para `getMemberIds()`, array de mensagens consum
 Resíduos de produção: 14 avisos de APIs `private_message` obsoletas sem substituto publicado (mapper, identificação de thread e verificação de bloqueio) e 4 parâmetros `$sandbox` mantidos no contrato de post-update. O autofix global solicitado (`--fix --fix-ignored`) foi executado no worktree e não encontrou erros corrigíveis.
 
 Evidências: Unit do Messenger 403 testes/4387 assertions PASS; descoberta de suítes PASS (unit=674); PHP lint e `git diff --check` PASS; análise PHPStan estrita global `[OK] No errors`. Sem testes Kernel/Functional, para evitar banco operacional.
+
+Pós-push: no topo `ca4246fb6`, `--fix --fix-ignored` global novamente não encontrou erros corrigíveis. A análise estrita detectou uma negação redundante em `scripts/inventory-ui-suite-consumers.php`; a condição foi simplificada preservando a precedência dos estados, e a análise direcionada e global voltaram a `[OK] No errors`. A baseline permaneceu em 2576 ocorrências.
+
+Runtime de desenvolvimento: gate DEFERRED. O `plan` read-only encontrou `HEAD` igual a `origin/dev` (`ca4246fb6`), mas o checkout principal continua sujo; `sync-code` foi bloqueado pelo guard. O delta desta rodada inclui `.install`/post-update (R3) e faltam as variáveis operacionais explícitas; não rodei Drush nem limpei caches. SHA/cache validado permanece UNKNOWN.
