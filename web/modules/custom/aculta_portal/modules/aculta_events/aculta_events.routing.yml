@@ -591,7 +591,7 @@ aculta_events.organizer_organization_members:
     _form: '\Drupal\aculta_events\Form\EventOrganizationMembersForm'
     _title: 'Gestão de membros e acessos'
   requirements:
-    _custom_access: '\Drupal\aculta_events\Access\EventOrganizationAccessControlHandler::membersAccess'
+    _custom_access: 'aculta_events.organization_members_access:access'
     aculta_event_organization: '\d+'
   options:
     _aculta_site_key: eventos

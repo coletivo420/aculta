@@ -189,3 +189,17 @@ Resíduos: docblock de `PrivateMessageThreadInterface::getMessages()` declara `E
 Escopo (somente `src/`, testes fora desta rodada): `ForumCommentMigrationAudit` (19 -> 0) com narrowing de `FlaggingInterface`/`ContentEntityInterface` e `array_key_exists` nos mapas de marcadores; `ForumAttachmentPublication` (9 -> 0) e `ForumGalleryPublication` (8 -> 1) com remoção de `instanceof` redundante, `EntityPublishedInterface` para galerias e `RevisionableStorageInterface` para revisões; `ForumAttachmentCleanup` (8 -> 1); `LmsDiscussionContextProvider` (8 -> 0) com dependência de grupo anexada via `andIf()`; `ForumPublicationTimeHooks` (7 -> 0); `ForumMarkAllReadForm` (6 -> 0) com retorno `TranslatableMarkup`; `ForumPostRevisionHistoryController` (5 -> 0), `ForumPostSubmissionForm` (5 -> 0), `ForumFlaggingMigrationContext` (5 -> 0) e sources de migração `ForumComment`/`ForumCommentFlagging`; remoção de guards `getStorage() === NULL`; `create(): static` nos controllers/formulários; narrowing de `MediaInterface`/`FileInterface`; `AccessResult` explícito onde a interface não expõe `addCacheableDependency()`/`getReason()`.
 
 Resíduos na produção: rechecagens defensivas deduplicadas pelo PHPStan (`hasContentReference()`/`hasLiveReference()`), tipagem de `getAggregateQuery()->execute()`, chamadas `\Drupal::` em classes de hook (exigem refatoração de DI), plugins de Views com `QueryPluginBase` genérico e acessos a propriedades mágicas de FieldItem. Evidência: Unit 250/1876 PASS.
+
+## Rodada 13 — 2026-11-10 (aculta_events, produção)
+
+| Medida | Valor |
+| --- | ---: |
+| Erros brutos em aculta_events antes | 311 |
+| Erros brutos em aculta_events/src ao final | 70 |
+| Erros brutos globais antes | 3253 |
+| Erros brutos globais ao final | 3124 |
+| Baseline atual | 3124 |
+
+Escopo (somente `src/` e `aculta_events.install`): `aculta_events.install` 11 -> 0 com helper `_aculta_events_install_storage_definition()` validando `FieldStorageDefinitionInterface`; `EventLocationAccessControlHandler` (14 -> 0) e `EventOrganizationAccessControlHandler` (8 -> 0) e `EventAccessControlHandler` (5 -> 0) passaram a implementar `EntityHandlerInterface` com DI real (`OrganizationAccessService`, `EventPermissionPolicy`), retorno `AccessResultInterface` e propriedades protegidas; `EventCalendarItemProvider` 12 -> 0; `EventPageController` 10 -> 0 (AuthorIdentityResolver com `UserInterface`, endereços via `AddressInterface`, VirtualLocation simplificado); `EventOrganizerDashboardController` 9 -> 0 e `EventOrganizationSuggestionAdminController` 7 -> 0 com narrowing de `ContentEntityInterface`/`EntityOwnerInterface`; `EventDateOccurrenceForm`, `EventLocationModalWidget`, `EventContributionAdapter`, `LocationContributionAdapter`, `LocationPageController`, `EventDateListBuilder`, `EventDateOccurrences`, `EventContributionAdminController` e `EventEditorialPresenter` zerados; entidades `Event`/`EventOrganization` com `getOwner()`/`getOwnerId()` tipados e `getCoOrganizerIds()` via `referencedEntities()`; nova rota de membros usa o serviço `aculta_events.organization_members_access`.
+
+Resíduos: plugins de Views com `QueryPluginBase` genérico, formulários com `$this->entity` tipado como `EntityInterface`, acessos a propriedades mágicas de FieldItem restantes e chamadas `\Drupal::` em hooks. Evidência: Unit 30/62 PASS; YAML de serviços e rotas validado.

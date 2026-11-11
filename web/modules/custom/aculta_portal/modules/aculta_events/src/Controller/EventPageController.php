@@ -14,11 +14,13 @@ use Drupal\aculta_maps\MapRenderer;
 use Drupal\aculta_maps\RouteLinkBuilder;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_user\Identity\AuthorIdentityResolver;
+use Drupal\address\AddressInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
+use Drupal\user\UserInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Component\Utility\Html;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -144,7 +146,7 @@ final class EventPageController extends ControllerBase {
     $descricao = mb_substr(trim(strip_tags((string) $evento->get('body')->value)), 0, 500);
     $organizador = $evento->get('field_organizador')->entity;
     $organizadorIdentidade = NULL;
-    if ($organizador !== NULL) {
+    if ($organizador instanceof UserInterface) {
       $cacheability->addCacheableDependency($organizador);
       if ($this->identities !== NULL) {
         $organizadorIdentidade = $this->identities->resolvePublic($organizador);
@@ -210,9 +212,9 @@ final class EventPageController extends ControllerBase {
           ], ['absolute' => TRUE])->toString();
 
           $addressItem = $local->get('field_endereco')->first();
-          if ($addressItem !== NULL) {
-            $locality = (string) $addressItem->locality;
-            $adminArea = (string) $addressItem->administrative_area;
+          if ($addressItem instanceof AddressInterface) {
+            $locality = (string) $addressItem->getLocality();
+            $adminArea = (string) $addressItem->getAdministrativeArea();
             if ($locality !== '' || $adminArea !== '') {
               $postalAddress = [
                 '@type' => 'PostalAddress',
@@ -226,8 +228,8 @@ final class EventPageController extends ControllerBase {
               }
               $precisao = (string) ($local->get('field_precisao')->value ?? 'exato');
               if ($precisao !== 'aproximado') {
-                $street = (string) $addressItem->address_line1;
-                $postalCode = (string) $addressItem->postal_code;
+                $street = (string) $addressItem->getAddressLine1();
+                $postalCode = (string) $addressItem->getPostalCode();
                 if ($street !== '') {
                   $postalAddress['streetAddress'] = $street;
                 }
@@ -239,12 +241,8 @@ final class EventPageController extends ControllerBase {
             }
           }
 
-          if (isset($entrada['location']) && is_array($entrada['location']) && ($entrada['location']['@type'] ?? '') === 'VirtualLocation') {
-            $entrada['location'] = [$entrada['location'], $placeData];
-          }
-          else {
-            $entrada['location'] = $placeData;
-          }
+          // Neste caminho a ocorrência já traz um VirtualLocation.
+          $entrada['location'] = [$entrada['location'], $placeData];
         }
       }
 
@@ -312,7 +310,7 @@ final class EventPageController extends ControllerBase {
     if ($this->purposes?->getCurrentPurpose() === 'main' && $evento->access('update')) {
       // A administração vive no MAIN; a página pública no purpose eventos.
       $adminPath = '/painel-administrativo/eventos/' . $evento->id() . '/editar';
-      $adminUrl = $this->purposes?->environmentPathUrl('main', $adminPath);
+      $adminUrl = $this->purposes->environmentPathUrl('main', $adminPath);
       $editUrl = $adminUrl?->toString()
         ?? Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $evento->id()])->toString();
       $adminButton = [

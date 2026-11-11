@@ -6,6 +6,7 @@ namespace Drupal\aculta_events\Entity;
 
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -55,15 +56,16 @@ final class Event extends ContentEntityBase implements EntityOwnerInterface {
    * {@inheritdoc}
    */
   public function getOwner(): ?UserInterface {
-    return $this->get('field_organizador')->entity;
+    $owner = $this->get('field_organizador')->entity;
+    return $owner instanceof UserInterface ? $owner : NULL;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getOwnerId(): ?int {
-    $targetId = $this->get('field_organizador')->target_id;
-    return $targetId !== NULL && $targetId !== '' ? (int) $targetId : NULL;
+    $ownerId = $this->getOwner()?->id();
+    return $ownerId !== NULL ? (int) $ownerId : NULL;
   }
 
   /**
@@ -94,8 +96,9 @@ final class Event extends ContentEntityBase implements EntityOwnerInterface {
    * Retorna o ID da organização principal.
    */
   public function getOrganizationId(): ?int {
-    $targetId = $this->get('field_organizacao')->target_id;
-    return $targetId !== NULL && $targetId !== '' ? (int) $targetId : NULL;
+    $organization = $this->get('field_organizacao')->entity;
+    $organizationId = $organization instanceof EntityInterface ? $organization->id() : NULL;
+    return $organizationId !== NULL ? (int) $organizationId : NULL;
   }
 
   /**
@@ -114,9 +117,9 @@ final class Event extends ContentEntityBase implements EntityOwnerInterface {
    */
   public function getCoOrganizerIds(): array {
     $ids = [];
-    foreach ($this->get('field_coorganizadores') as $item) {
-      if ($item->target_id !== NULL && $item->target_id !== '') {
-        $ids[] = (int) $item->target_id;
+    foreach ($this->get('field_coorganizadores')->referencedEntities() as $organization) {
+      if ($organization instanceof EntityInterface && $organization->id() !== NULL) {
+        $ids[] = (int) $organization->id();
       }
     }
     return $ids;

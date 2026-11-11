@@ -9,6 +9,7 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Field\Attribute\FieldWidget;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\address\AddressInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -86,14 +87,15 @@ final class EventLocationModalWidget extends WidgetBase {
         $enderecoStr = '';
         if ($location->hasField('field_endereco') && !$location->get('field_endereco')->isEmpty()) {
           $addr = $location->get('field_endereco')->first();
-          if ($addr) {
-            $cidadeUf = array_filter([$addr->locality, $addr->administrative_area]);
+          if ($addr instanceof AddressInterface) {
+            $cidadeUf = array_filter([$addr->getLocality(), $addr->getAdministrativeArea()]);
+            $postalCode = (string) $addr->getPostalCode();
             $parts = array_filter([
-              $addr->address_line1,
-              $addr->address_line2,
-              $addr->dependent_locality,
+              $addr->getAddressLine1(),
+              $addr->getAddressLine2(),
+              $addr->getDependentLocality(),
               implode(' - ', $cidadeUf),
-              $addr->postal_code ? 'CEP ' . $addr->postal_code : '',
+              $postalCode !== '' ? 'CEP ' . $postalCode : '',
             ]);
             $enderecoStr = implode(', ', $parts);
           }

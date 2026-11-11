@@ -6,7 +6,9 @@ namespace Drupal\aculta_events\Controller;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\user\EntityOwnerInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -35,6 +37,9 @@ final class EventContributionAdminController extends ControllerBase {
       ->execute();
     $rows = [];
     foreach ($storage->loadMultiple($ids) as $proposal) {
+      if (!$proposal instanceof ContentEntityInterface || !$proposal instanceof EntityOwnerInterface) {
+        continue;
+      }
       if (!$proposal->access('view', $this->currentUser())) {
         continue;
       }

@@ -12,6 +12,7 @@ use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\address\AddressInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
@@ -215,9 +216,9 @@ final class LocationPageController extends ControllerBase {
     }
 
     $addressItem = $aculta_event_location->get('field_endereco')->first();
-    if ($addressItem !== NULL) {
-      $locality = (string) $addressItem->locality;
-      $adminArea = (string) $addressItem->administrative_area;
+    if ($addressItem instanceof AddressInterface) {
+      $locality = (string) $addressItem->getLocality();
+      $adminArea = (string) $addressItem->getAdministrativeArea();
       if ($locality !== '' || $adminArea !== '') {
         $postalAddress = [
           '@type' => 'PostalAddress',
@@ -231,8 +232,8 @@ final class LocationPageController extends ControllerBase {
         }
         $precisao = (string) ($aculta_event_location->get('field_precisao')->value ?? 'exato');
         if ($precisao !== 'aproximado') {
-          $street = (string) $addressItem->address_line1;
-          $postalCode = (string) $addressItem->postal_code;
+          $street = (string) $addressItem->getAddressLine1();
+          $postalCode = (string) $addressItem->getPostalCode();
           if ($street !== '') {
             $postalAddress['streetAddress'] = $street;
           }

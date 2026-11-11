@@ -268,8 +268,9 @@ final class LocationContributionAdapter implements ContributionAdapterInterface 
     $transaction = NULL;
     try {
       $transaction = $this->database->startTransaction();
-      $this->database->select('aculta_event_location', 'location')->fields('location', ['id'])
-        ->condition('id', $locationId)->forUpdate()->execute()->fetchField();
+      $select = $this->database->select('aculta_event_location', 'location');
+      $select->fields('location', ['id'])->condition('id', $locationId)->forUpdate();
+      $select->execute()->fetchField();
       $fresh = $this->entityTypeManager->getStorage('aculta_event_location')->loadUnchanged($locationId);
       if (!$fresh instanceof EventLocation || !hash_equals($expectedVersion, $this->currentVersion($intent, $fresh))) {
         throw new ConflictHttpException('O Local mudou desde o envio da proposta.');
@@ -329,12 +330,16 @@ final class LocationContributionAdapter implements ContributionAdapterInterface 
     try {
       $transaction = $this->database->startTransaction();
       $this->assertNoDuplicate($normalized);
-      $location = $this->entityTypeManager->getStorage('aculta_event_location')->create([
+      $created = $this->entityTypeManager->getStorage('aculta_event_location')->create([
         'title' => $normalized['title'],
         'field_organizador' => $proponentUid,
         'field_status' => 'rascunho',
         'field_allow_claiming' => FALSE,
       ]);
+      if (!$created instanceof EventLocation) {
+        throw new \LogicException('The location storage returned an unexpected entity.');
+      }
+      $location = $created;
       $this->applyFields($location, $normalized);
       $location->set('field_status', 'rascunho');
       $location->save();

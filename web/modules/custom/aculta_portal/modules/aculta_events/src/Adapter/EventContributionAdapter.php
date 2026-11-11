@@ -280,7 +280,9 @@ final class EventContributionAdapter implements ContributionAdapterInterface {
     $transaction = NULL;
     try {
       $transaction = $this->database->startTransaction();
-      $this->database->select('aculta_event', 'event')->fields('event', ['id'])->condition('id', $eventId)->forUpdate()->execute()->fetchField();
+      $select = $this->database->select('aculta_event', 'event');
+      $select->fields('event', ['id'])->condition('id', $eventId)->forUpdate();
+      $select->execute()->fetchField();
       $fresh = $this->entityTypeManager->getStorage('aculta_event')->loadUnchanged($eventId);
       if (!$fresh instanceof Event || !hash_equals($expectedVersion, $this->currentVersion($intent, $fresh))) {
         throw new ConflictHttpException('O Evento ou suas Datas mudaram desde o envio da proposta.');
@@ -321,11 +323,15 @@ final class EventContributionAdapter implements ContributionAdapterInterface {
       $transaction = $this->database->startTransaction();
       $this->assertReferences($values, $uid);
       $this->assertNoDuplicate($values);
-      $event = $this->entityTypeManager->getStorage('aculta_event')->create([
+      $created = $this->entityTypeManager->getStorage('aculta_event')->create([
         'title' => $values['title'],
         'field_organizador' => $uid,
         'field_status' => 'rascunho',
       ]);
+      if (!$created instanceof Event) {
+        throw new \LogicException('The event storage returned an unexpected entity.');
+      }
+      $event = $created;
       $this->applyEventFields($event, $values);
       $event->set('field_status', 'rascunho');
       $event->save();
@@ -349,9 +355,15 @@ final class EventContributionAdapter implements ContributionAdapterInterface {
     if ($account === NULL || !$account->isActive()) {
       throw new ConflictHttpException('O organizador do Evento não está mais ativo.');
     }
+    $eventReferences = $event instanceof Event
+      ? array_map(
+        static fn ($entity): string => $entity instanceof EntityInterface ? (string) $entity->uuid() : '',
+        $event->get('field_coorganizadores')->referencedEntities(),
+      )
+      : [];
     $references = [
       'field_organizacao' => $values['field_organizacao'] ?? ($event instanceof Event && !$event->get('field_organizacao')->isEmpty() ? [(string) $event->get('field_organizacao')->entity?->uuid()] : []),
-      'field_coorganizadores' => $values['field_coorganizadores'] ?? ($event instanceof Event ? array_map(static fn ($item): string => (string) $item->entity?->uuid(), iterator_to_array($event->get('field_coorganizadores'))) : []),
+      'field_coorganizadores' => $values['field_coorganizadores'] ?? $eventReferences,
     ];
     foreach (['field_organizacao' => FALSE, 'field_coorganizadores' => TRUE] as $field => $multiple) {
       $ids = $references[$field];

@@ -62,22 +62,19 @@ final class EventOrganization extends ContentEntityBase implements EntityOwnerIn
    */
   public function getOwner(): ?UserInterface {
     $titular = $this->get('titular')->entity;
-    if ($titular !== NULL) {
+    if ($titular instanceof UserInterface) {
       return $titular;
     }
-    return $this->get('field_organizador')->entity;
+    $organizer = $this->get('field_organizador')->entity;
+    return $organizer instanceof UserInterface ? $organizer : NULL;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getOwnerId(): ?int {
-    $titularId = $this->get('titular')->target_id;
-    if ($titularId !== NULL && $titularId !== '') {
-      return (int) $titularId;
-    }
-    $orgId = $this->get('field_organizador')->target_id;
-    return $orgId !== NULL && $orgId !== '' ? (int) $orgId : NULL;
+    $ownerId = $this->getOwner()?->id();
+    return $ownerId !== NULL ? (int) $ownerId : NULL;
   }
 
   /**

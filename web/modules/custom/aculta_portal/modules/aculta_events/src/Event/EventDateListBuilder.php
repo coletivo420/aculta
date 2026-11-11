@@ -42,11 +42,12 @@ final class EventDateListBuilder {
     $rows = [];
     foreach ($dates as $date) {
       $quando = $date->get('field_quando')->first();
+      $quandoValues = $quando?->getValue() ?? [];
       $local = $date->get('field_local')->entity;
       $rows[] = [
         (string) $date->label(),
-        $this->formatDate($quando?->value),
-        $this->formatDate($quando?->end_value),
+        $this->formatDate(isset($quandoValues['value']) ? (string) $quandoValues['value'] : NULL),
+        $this->formatDate(isset($quandoValues['end_value']) ? (string) $quandoValues['end_value'] : NULL),
         $local instanceof EventLocation ? (string) $local->label() : '',
         ['data' => $this->buildActions($event, $date)],
       ];
@@ -103,7 +104,10 @@ final class EventDateListBuilder {
       ->accessCheck(FALSE)
       ->condition('field_evento', (int) $event->id())
       ->execute();
-    $dates = $storage->loadMultiple($ids);
+    $dates = array_values(array_filter(
+      $storage->loadMultiple($ids),
+      static fn ($date): bool => $date instanceof EventDate,
+    ));
     usort($dates, static function (EventDate $a, EventDate $b): int {
       $pa = (int) ($a->get('field_peso')->value ?? 0);
       $pb = (int) ($b->get('field_peso')->value ?? 0);
@@ -112,7 +116,7 @@ final class EventDateListBuilder {
       }
       return (string) $a->get('field_quando')->value <=> (string) $b->get('field_quando')->value;
     });
-    return array_values($dates);
+    return $dates;
   }
 
   /**
