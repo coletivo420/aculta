@@ -1,5 +1,15 @@
 # Roadmap do fórum Growroom420 (ACULTA420 V2)
 
+## ADR-054/055 — ComponentLayout SDC nos displays elegíveis (2026-11-10)
+
+- Os 22 displays Layout Builder elegíveis usam o SDC `layout-section` via UI
+  Patterns Layouts; as duas exclusões por perda de conteúdo seguem intactas.
+- Importação parcial no Runtime foi precedida por snapshot; nenhuma entidade
+  ou dado editorial foi alterado.
+- Gate Layout Builder: 258 checks PASS, com renderização real, paridade
+  Runtime/Sync e autorização das rotas de defaults. Homologação visual ampla,
+  teclado, zoom e cache-hit continuam pendentes.
+
 ## UI Skins — configuração versionada, cutover Runtime pendente (2026-11-10)
 
 - `ui_skins` está habilitado no Config Sync; o gate exige o módulo, mapa de dez

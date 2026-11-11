@@ -5,7 +5,7 @@
  * Gate ADR-054 P4: lote inicial de Layout Builder nos displays de conteúdo.
  *
  * Verifica, com bootstrap Drupal somente leitura:
- * 1. Os cinco displays do lote têm Layout Builder habilitado.
+ * 1. Os 22 displays elegíveis do lote têm Layout Builder habilitado.
  * 2. `allow_custom` é FALSE (sem override por entidade).
  * 3. Cada display tem seções configuradas e o conteúdo migrado continua
  *    renderizando um nó publicado do bundle.
@@ -14,11 +14,15 @@
  * 5. A configuração ativa é idêntica à do Config Sync para esses displays.
  *
  * Uso:
- *   php vendor/drush/drush/drush.php php:script scripts/validate-aculta420-layout-builder-batch.php
+ *   php vendor/drush/drush/drush.php php:script \
+ *     scripts/validate-aculta420-layout-builder-batch.php
  * ou apenas `php scripts/validate-aculta420-layout-builder-batch.php`.
  */
 
 declare(strict_types=1);
+
+use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\layout_builder\Section;
 
 if (!class_exists(\Drupal::class) || !\Drupal::hasContainer()) {
   $root = dirname(__DIR__);
@@ -86,7 +90,7 @@ foreach ($targets as $id) {
 
   $componentCount = 0;
   foreach ($sections as $section) {
-    if ($section instanceof \Drupal\layout_builder\Section) {
+    if ($section instanceof Section) {
       $componentCount += count($section->getComponents());
     }
   }
@@ -97,6 +101,26 @@ foreach ($targets as $id) {
   $active = \Drupal::config($configName)->getRawData();
   $sync = $syncStorage->read($configName);
   $assert($sync !== FALSE && $active == $sync, "$id diverge do Config Sync.");
+
+  // Cada display elegível compõe o layout SDC existente pelo UI Patterns.
+  $rawSections = $active['third_party_settings']['layout_builder']['sections'] ?? [];
+  $assert($rawSections !== [], "$id não tem configuração de seção legível.");
+  foreach ($rawSections as $delta => $rawSection) {
+    $layoutSettings = $rawSection['layout_settings'] ?? [];
+    $patternSettings = $layoutSettings['ui_patterns'] ?? [];
+    $assert(
+      ($rawSection['layout_id'] ?? NULL) === 'ui_patterns:aculta420_v2:layout_section',
+      "$id seção $delta não usa o ComponentLayout UI Patterns."
+    );
+    $assert(
+      ($patternSettings['component_id'] ?? NULL) === 'aculta420_v2:layout-section',
+      "$id seção $delta não referencia o SDC layout-section."
+    );
+    $assert(
+      ($patternSettings['props'] ?? NULL) === [] && ($patternSettings['slots'] ?? NULL) === [],
+      "$id seção $delta contém props/slots inesperados."
+    );
+  }
 
   // Renderização real de uma entidade publicada do bundle.
   $entityStorage = \Drupal::entityTypeManager()->getStorage($entity);
@@ -127,7 +151,7 @@ foreach ($targets as $id) {
 // Acesso às rotas de Layout Builder.
 $access = \Drupal::service('access_manager');
 $admin = \Drupal::entityTypeManager()->getStorage('user')->load(1);
-$anonymous = new \Drupal\Core\Session\AnonymousUserSession();
+$anonymous = new AnonymousUserSession();
 $routeParams = ['node_type' => 'page', 'view_mode_name' => 'full'];
 $assert($access->checkNamedRoute('layout_builder.defaults.node.view', $routeParams, $admin, TRUE)->isAllowed(), 'O administrador não acessa os defaults do Layout Builder.');
 $assert($access->checkNamedRoute('layout_builder.defaults.node.view', $routeParams, $anonymous, TRUE)->isAllowed() === FALSE, 'Visitante acessa os defaults do Layout Builder.');

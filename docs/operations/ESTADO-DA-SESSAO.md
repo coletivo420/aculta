@@ -1,12 +1,12 @@
-# ADR-054/055 — ComponentLayout SDC e piloto Links — 2026-11-10
+# ADR-054/055 — ComponentLayout nos displays elegíveis — 2026-11-10
 
-- **Objetivo:** migrar displays de página compatíveis para UI Patterns Layouts, validar a ponte UI Skins Links/MAIN e continuar a substituição visual SDC First.
-- **Estado:** `node.page.default/full` usam `ui_patterns:aculta420_v2:layout_section`; Runtime confirma ambas as configurações e mantém os blocos body/links. UI Skins ativo: Links Ruderalis, MAIN Skunk. A/B/A anônimo confirmou HTTP 200 e tokens claros/escuros corretos sem mistura. Cache de página permanece `UNCACHEABLE`, então cache-hit não foi homologado.
-- **Decisões/cuidados:** rollback por import parcial dos dois YAML anteriores; sem alterações em dados. Preservar as duas exclusões Layout Builder (`node.document.full`, `block_content.basic.default`). Não tocar nas alterações paralelas do Fórum nem em `web/tmp`.
-- **Arquivos:** dois displays Config Sync, gerador/CSV do inventário, snapshot Runtime, gate SDC, teste Unit `LayoutSectionComponentTest`, TODO/status/changelog, ADR/plano e manifesto de capturas.
-- **Verificações:** PHPUnit 2 testes/20 assertions; PHPCS; gate UI Skins 134, UI Styles 38, SDC 41 componentes; Firefox Links 1280/320 sem overflow, uma main/H1, capturas com hashes no manifesto. Cache-hit, contraste de página total, teclado, zoom e demais displays seguem pendentes.
-- **Pendências:** migrar os demais displays compatíveis; investigar `X-Drupal-Dynamic-Cache: UNCACHEABLE`; concluir aceite visual Links e expandir somente após validação; executar US/RN restantes.
-- **Próximo passo:** seguir o inventário para migrar o próximo display Layout Builder compatível e validar acesso/render/cache, mantendo os dois casos excluídos.
+- **Objetivo:** migrar todos os displays Layout Builder compatíveis para UI Patterns ComponentLayout SDC.
+- **Estado:** 22 displays usam `layout-section` em Sync e Runtime. Import parcial precedido por snapshot. Componentes, UUIDs, seção `content`, `allow_custom` e dados foram preservados; as exclusões `node.document.full` e `block_content.basic.default` continuam inalteradas.
+- **Verificações:** Layouts 42 checks; batch Layout Builder 258 checks (configuração, construção de render arrays de entidades publicadas, paridade Runtime/Sync e acesso); SDC 41 componentes; PHPCS/lint do gate. Sem alterações em entidades. Token-budget gate segue FAIL por regras/catálogo global preexistentes; TODO V2 foi reduzido abaixo de 2.000 bytes.
+- **Arquivos:** 20 displays Sync, CSV/JSON de inventário, gate batch, TODO/status/changelog/roadmap, ADR-054, P8 e plano técnico.
+- **Pendências:** cache-hit continua `UNCACHEABLE`; aceite visual amplo, teclado, zoom, perfis e contraste seguem pendentes. Continuar Views, UI Styles Page/CKEditor 5, Icons, migração visual e RN-00–05.
+- **Trabalho compartilhado:** preservar alterações locais em Eventos, Conta, Perfil e `web/tmp/`; não incluídas nesta entrega.
+- **Próximo passo:** validar cache/perfis e avançar os pilotos UI Patterns Views e UI Styles Page sem importar drift global.
 
 # UI Skins — extensão Sync e limpeza da chave antiga — 2026-11-10
 

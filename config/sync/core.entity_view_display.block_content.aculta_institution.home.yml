@@ -37,9 +37,16 @@ third_party_settings:
     allow_custom: false
     sections:
       -
-        layout_id: layout_onecol
+        layout_id: 'ui_patterns:aculta420_v2:layout_section'
         layout_settings:
           label: ''
+          context_mapping:
+            entity: layout_builder.entity
+          ui_patterns:
+            component_id: 'aculta420_v2:layout-section'
+            variant_id: null
+            props: {  }
+            slots: {  }
         components:
           8563951b-58a1-4f95-8e9c-1c38a4036586:
             uuid: 8563951b-58a1-4f95-8e9c-1c38a4036586
@@ -141,26 +148,26 @@ hidden:
   entity_print_view_word_docx: true
   field_address: true
   field_address_region: true
+  field_cnpj: true
   field_country: true
   field_email: true
   field_governance: true
+  field_headquarters: true
   field_legal_code: true
   field_legal_nature: true
   field_locality: true
   field_main_activity: true
+  field_nonprofit_description: true
   field_opening_date: true
   field_org_description: true
+  field_org_name: true
   field_phone: true
   field_postal_code: true
   field_registration_status: true
   field_schema_phone: true
   field_secondary_activity: true
+  field_site: true
   field_street_address: true
   field_trade_name: true
   langcode: true
   search_api_excerpt: true
-  field_org_name: true
-  field_nonprofit_description: true
-  field_cnpj: true
-  field_headquarters: true
-  field_site: true

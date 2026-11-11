@@ -92,6 +92,13 @@ Inventario de blocos e regioes sem orfaos; dez purposes, shell, claro/escuro, mo
 O responsável determinou a renomeação gradual dos identificadores internos `purpose` para **`site_key`**, além da retirada das configurações visuais baseadas em purposes. As dez chaves e Domain IDs permanecem imutáveis; `site_key` identifica a frente funcional, `domain_id` identifica a entidade Drupal Domain e `skin_id` define a aparência via UI Skins. A classe antiga e as rotas de segurança são substituídas por implementações equivalentes, não removidas sem sucessores.
 
 A sequência normativa RN-00 a RN-05 consta de `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`. Gate RN-05 passa a integrar o encerramento conjunto US-14, com testes de HTTP 403/404, redirecionamentos, sessões e cache por domínio. Aliases de serviços podem ser transitórios e inventariados, mas novas rotas públicas de compatibilidade são proibidas.
+
+## Atualização US-06 — ComponentLayout para os displays elegíveis — 2026-11-10
+
+- Os 22 displays habilitados e elegíveis usam agora o SDC existente `layout-section` via UI Patterns ComponentLayout. Os 20 displays restantes foram migrados depois do piloto de páginas; seções, componentes, UUIDs, região `content` e flags `allow_custom` foram preservados.
+- As exclusões `node.document.full` e `block_content.basic.default` continuam sem Layout Builder. Snapshot do Runtime precedeu o import parcial; rollback reproduzível restaurando os YAMLs do commit pai e reimportando apenas esses objetos. Nenhuma entidade ou dado foi alterado.
+- Gates: UI Patterns Layouts 42 checks; Layout Builder 258 checks para 22 displays (construção de render arrays de entidades publicadas, paridade Runtime/Sync e acesso); SDC 41 componentes. As capturas amplas, cache-hit, perfis autenticados e revisão visual permanecem pendentes.
+- Drift global de Config Sync continua em outros objetos, incluindo Views/Forum e `system.theme`; não foi importado nesta entrega.
 ### Progresso UI Skins — cutover em preparação (2026-11-10)
 
 - `ui_skins` agora é exigido pelo Config Sync; o gate valida a ativação exportada, cinco variáveis, dez skins em claro/escuro, contraste e os dez Domain IDs.

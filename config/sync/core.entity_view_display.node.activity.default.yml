@@ -38,9 +38,16 @@ third_party_settings:
     allow_custom: false
     sections:
       -
-        layout_id: layout_onecol
+        layout_id: 'ui_patterns:aculta420_v2:layout_section'
         layout_settings:
           label: ''
+          context_mapping:
+            entity: layout_builder.entity
+          ui_patterns:
+            component_id: 'aculta420_v2:layout-section'
+            variant_id: null
+            props: {  }
+            slots: {  }
         components:
           75b8a6dc-e872-4124-83c1-98c62a0b0f23:
             uuid: 75b8a6dc-e872-4124-83c1-98c62a0b0f23
@@ -262,32 +269,32 @@ bundle: activity
 mode: default
 content: {  }
 hidden:
+  body: true
   co_authors: true
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
   field_activity_date: true
   field_domain_source: true
+  field_event_city: true
   field_event_country: true
-  field_event_postal: true
-  field_event_region: true
-  field_free: true
-  field_meta_tags: true
-  field_modality: true
-  field_organizer: true
-  langcode: true
-  private_message_link: true
-  search_api_excerpt: true
-  field_media_image: true
-  field_summary: true
-  field_event_start: true
   field_event_end: true
   field_event_location: true
-  field_place_name: true
-  field_event_street: true
-  body: true
-  field_event_city: true
-  field_online_url: true
-  field_registration_url: true
+  field_event_postal: true
+  field_event_region: true
+  field_event_start: true
   field_event_status: true
+  field_event_street: true
+  field_free: true
+  field_media_image: true
+  field_meta_tags: true
+  field_modality: true
+  field_online_url: true
+  field_organizer: true
+  field_place_name: true
+  field_registration_url: true
+  field_summary: true
+  langcode: true
   links: true
+  private_message_link: true
+  search_api_excerpt: true

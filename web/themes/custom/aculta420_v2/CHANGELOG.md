@@ -1,3 +1,13 @@
+## Não versionado — ComponentLayout SDC nos 22 displays elegíveis (2026-11-10)
+
+- Substitui `layout_onecol` pelo SDC `layout-section` via UI Patterns Layouts
+  nos 20 displays restantes; 2 displays de página já estavam migrados.
+- Importação parcial aplicada após snapshot do Runtime. Preserva seções,
+  componentes, UUIDs, `allow_custom`, campos e dados; as duas exclusões
+  documentadas permanecem fora do lote.
+- Gate Layout Builder reforçado e aprovado com 258 checks, incluindo
+  configuração Runtime/Sync, renderização de entidades publicadas e acesso.
+
 ## Não versionado — Layout Builder usa ComponentLayout SDC em páginas (2026-11-10)
 
 - `node.page.default` e `node.page.full` usam `layout-section` pelo UI Patterns

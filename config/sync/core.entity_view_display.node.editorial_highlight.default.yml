@@ -20,9 +20,16 @@ third_party_settings:
     allow_custom: false
     sections:
       -
-        layout_id: layout_onecol
+        layout_id: 'ui_patterns:aculta420_v2:layout_section'
         layout_settings:
           label: ''
+          context_mapping:
+            entity: layout_builder.entity
+          ui_patterns:
+            component_id: 'aculta420_v2:layout-section'
+            variant_id: null
+            props: {  }
+            slots: {  }
         components:
           d4216b76-2dd1-4f12-ad0d-4d9abde4c625:
             uuid: d4216b76-2dd1-4f12-ad0d-4d9abde4c625
@@ -102,13 +109,13 @@ hidden:
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
+  field_category: true
+  field_complement: true
   field_domain_source: true
+  field_link: true
+  field_summary: true
   field_weight: true
   langcode: true
   links: true
   private_message_link: true
   search_api_excerpt: true
-  field_category: true
-  field_summary: true
-  field_complement: true
-  field_link: true

@@ -86,7 +86,7 @@ A suíte de 86 checks foi repetida após a restauração dos blocos de cabeçalh
 
 ## 5. DEFERRED (com causa)
 
-- **Layout Builder por display:** **22 dos 24 displays compatíveis** com Layout Builder, incluindo nós `full`/`default`, oito `block_content` e `taxonomy_term.editorial_author.default`. Gate 170 checks PASS; ativação comparada em sete páginas e revalidada por multiconjunto de tokens (a ordenação do bloco "Alterações recentes" da Wiki gerava falsos positivos). Excluídos `node.document.full` e `block_content.basic.default`, que perdem conteúdo de forma reproduzível. `node.page.full` tem `allow_custom: true` para landing pages; override por nó testado em `/institucional` (texto e layout renderizados) e removido em seguida.
+- **Layout Builder por display:** os **22 displays elegíveis** usam o ComponentLayout UI Patterns existente `layout-section`, incluindo nós `full`/`default`, oito `block_content` e `taxonomy_term.editorial_author.default`. Gate reforçado: 258 checks PASS, cobrindo configuração ativa/Sync, preservação de componentes, construção de render arrays para entidades publicadas e acesso às rotas. `node.page.full` mantém `allow_custom: true`; demais displays não permitem overrides. Excluídos `node.document.full` e `block_content.basic.default`, que perdem conteúdo de forma reproduzível. Snapshot do Runtime e rollback seletivo registrados na ADR-054; nenhum dado editorial foi alterado.
 - **Landing por purpose (P5):** depende de conteúdo editorial e do mesmo ambiente isolado. Mecanismo e piloto Links documentados em `ACULTA420-V2-P5-LANDING-PAGES.md`.
 - **Visual:** leitura humana das capturas e aceitação do responsável.
 - **Prévia autenticada em navegador:** validada por Drush e HTTP anônimo, não em sessão autenticada real.

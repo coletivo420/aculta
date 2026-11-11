@@ -23,9 +23,16 @@ third_party_settings:
     allow_custom: false
     sections:
       -
-        layout_id: layout_onecol
+        layout_id: 'ui_patterns:aculta420_v2:layout_section'
         layout_settings:
           label: ''
+          context_mapping:
+            entity: layout_builder.entity
+          ui_patterns:
+            component_id: 'aculta420_v2:layout-section'
+            variant_id: null
+            props: {  }
+            slots: {  }
         components:
           f1028463-4394-4c38-8c61-c64837b9e91e:
             uuid: f1028463-4394-4c38-8c61-c64837b9e91e
@@ -153,20 +160,20 @@ bundle: wiki_entry
 mode: default
 content: {  }
 hidden:
+  body: true
   co_authors: true
+  content_moderation_control: true
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
   field_aculta_discussion: true
   field_domain_source: true
-  langcode: true
-  private_message_link: true
-  search_api_excerpt: true
-  content_moderation_control: true
-  field_wiki_summary: true
-  body: true
   field_wiki_categories: true
   field_wiki_image: true
   field_wiki_references: true
   field_wiki_related: true
+  field_wiki_summary: true
+  langcode: true
   links: true
+  private_message_link: true
+  search_api_excerpt: true
