@@ -591,16 +591,18 @@ foreach ($templateRoots as $owner => $templateRoot) {
     $isThemeAdaptedModuleFallback = $moduleThemeAdapters !== [] && !$isSdcAdapter;
     preg_match('/views-view(?:-fields|-unformatted)?--([a-z0-9_-]+)--([a-z0-9_-]+)/', $file->getFilename(), $viewMatches);
     $viewId = isset($viewMatches[1]) ? str_replace('-', '_', $viewMatches[1]) : '';
-    $displayId = $viewMatches[2] ?? '';
+    $displayId = isset($viewMatches[2]) ? str_replace('-', '_', $viewMatches[2]) : '';
     $viewDisplayUsesPatternsRow = FALSE;
+    $viewDisplayUsesPatternsStyle = FALSE;
     if (isset($viewMatches[1], $viewMatches[2])) {
       $viewPath = $sync . '/views.view.' . $viewId . '.yml';
       if (is_file($viewPath)) {
         $viewDefinition = Yaml::parseFile($viewPath);
         $viewDisplayUsesPatternsRow = ($viewDefinition['display'][$displayId]['display_options']['row']['type'] ?? '') === 'ui_patterns';
+        $viewDisplayUsesPatternsStyle = ($viewDefinition['display'][$displayId]['display_options']['style']['type'] ?? '') === 'ui_patterns';
       }
     }
-    $isBypassedViewTemplate = $viewDisplayUsesPatternsRow
+    $isBypassedViewTemplate = ($viewDisplayUsesPatternsRow || $viewDisplayUsesPatternsStyle)
       && preg_match('/^views-view-(?:fields|unformatted)--/', $file->getFilename()) === 1
       && !$isSdcAdapter;
     $viewConsumer = isset($viewMatches[1], $viewMatches[2])
