@@ -8,7 +8,7 @@ Status: referência vigente da linha 0.1.x. Complementa `ARQUITETURA.md` (decis�
 | --- | --- | --- |
 | — | — | Visualização e listagem não têm hooks de restrição por purpose; permissões e status publicados do Media Gallery controlam o acesso. |
 | — | — | A listagem `/albuns` não aplica filtro de purpose; entidades publicadas ficam disponíveis em todos os purposes. |
-| `media_gallery_view` (OOP `#[Hook]`) | `Hook/GalleryViewHooks` | Monta render arrays por finalidade: álbum editorial com View UI Patterns/PhotoSwipe; galeria do Fórum com View VVJS própria e miniaturas condicionais. Roda em `default` e `full`. |
+| `media_gallery_view` (OOP `#[Hook]`) | `Hook/GalleryViewHooks` | Monta a View UI Patterns/PhotoSwipe apropriada à finalidade editorial ou Fórum. Roda em `default` e `full`. |
 | `entity_type_alter` (OOP `#[Hook]`) | `Hook/GalleryListBuilderHooks` | Troca o list builder de `media_gallery` pela classe do submódulo. |
 | Classe `ListBuilder/AcultaGalleryListBuilder` (estende `MediaGalleryListBuilder`) | `ListBuilder/AcultaGalleryListBuilder` | Coleção administrativa: o título usa o alias local em português. Edição e exclusão seguem no MAIN. |
 | `media_gallery_presave` (OOP `#[Hook]`) | `Hook/GalleryCoverHooks` | Mantém a capa entre as imagens da própria galeria. Sem imagens, a capa fica vazia. |
@@ -22,9 +22,7 @@ Classes de marcação do palco (contrato `data-*` completo em [FRONTEIRA-MODULO-
 | --- | --- | --- |
 | `photoswipe-gallery` | módulo (`GalleryViewHooks`) | Agrupa as imagens PhotoSwipe do álbum editorial; classe funcional exigida pelo contrib. |
 | `layout-grid` | UI Patterns Views | SDC editorial `aculta420_v2:layout-grid`; recebe rows sem entidades em props. |
-| `data-aculta-album-stage` | módulo (`GalleryViewHooks`, apenas Fórum) | Contêiner da sequência VVJS contextual do Fórum. |
-| `data-aculta-album-thumbs` / `data-aculta-album-thumb="N"` | módulo (`GalleryViewHooks::thumbs`, apenas Fórum) | Índices das miniaturas no conjunto de Media com acesso view permitido. |
-| `vvjs-slideshow`, `.vvjs-item`, `.vvjs-inner` | contrib (`views_vvjs`) | Permanece na View isolada do Fórum e em consumidores de Commerce; não é o visual do álbum editorial. |
+
 | `photoswipe`, `photoswipe-gallery` | contrib (`photoswipe`) | Lightbox das fotos. |
 
 Regras:
@@ -36,14 +34,13 @@ Regras:
 
 **Álbum editorial (página `/albuns/...`):** `GalleryViewHooks` monta wrapper `photoswipe-gallery`; a View `aculta_album_fotos` compõe suas rows com o SDC `layout-grid`, e o formatter PhotoSwipe fornece a imagem e o lightbox. Não há slideshow nem miniaturas VVJS nesse caminho.
 
-**Galeria contextual do Fórum:** o ramo separado mantém a View `aculta_forum_gallery_slides`, palco e miniaturas VVJS. Ainda requer migração e aceite próprios. Contrato completo: [FRONTEIRA-MODULO-TEMA.md](FRONTEIRA-MODULO-TEMA.md).
+**Galeria contextual do Fórum:** `aculta_forum_gallery_slides` agora compõe `layout-grid` com PhotoSwipe. O Runtime não tem galeria Fórum publicada; aceite visual com conteúdo real segue pendente. Contrato: [FRONTEIRA-MODULO-TEMA.md](FRONTEIRA-MODULO-TEMA.md).
 
 Nas listagens e no corpo das notícias, a galeria usa o markup do PhotoSwipe (contrib) e as classes do Bootstrap que o tema já carrega:
 
-No álbum editorial, `AlbumSlidesAccessHooks` filtra a View pelos IDs de Media com acesso `view` permitido e File de imagem
+Nas duas galerias, `AlbumSlidesAccessHooks` filtra a View pelos IDs de Media com acesso `view` permitido e File de imagem
 presente, ordenados pela ordem `delta` do campo `images`. `GalleryViewHooks` agrega metadados de cache do álbum, Media,
-File e resultado de acesso no contêiner pai. A View de slides do Fórum e a View de produto (`galeria_produto`) continuam
-consumidores VVJS separados e devem ser homologados individualmente.
+File e resultado de acesso no contêiner pai. A View `galeria_produto` usa UI Patterns `layout-grid`; o hook de produto continua entregando o render array.
 
 | Classe | Onde aparece | Uso |
 | --- | --- | --- |

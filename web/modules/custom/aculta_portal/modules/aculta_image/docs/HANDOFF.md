@@ -2,7 +2,7 @@
 
 Data da passagem: 2026-10-20. Versão registrada nesta passagem: 0.1.0-dev.27. Classificação: **Dev**; pendências operacionais e de integração continuam abertas. `preRC` foi aposentado. O ciclo vigente é Dev → RC (tudo pronto, inclusive revisão visual pré-deploy) → deploy/validação Alpha no servidor de desenvolvimento → produção. Leia este documento antes de qualquer alteração no submódulo.
 
-Atualização: o gate R9 agora valida `image_style` e estilos PhotoSwipe nas configurações exportadas de Views e modos de exibição. O `aculta_gallery` também usa VVJS no álbum e na galeria de produto; a sequência do álbum filtra mídia pela permissão `view` e agrega cacheabilidade do álbum, Media, File e `AccessResult`. Ver [arquitetura da Gallery](../../aculta_gallery/docs/ARQUITETURA.md) e o changelog do submódulo.
+Atualização: o gate R9 agora valida `image_style` e estilos PhotoSwipe nas configurações exportadas de Views e modos de exibição. O `aculta_gallery` migrou as Views editorial, Fórum e produto para UI Patterns `layout-grid`; a sequência editorial filtra mídia pela permissão `view` e agrega cacheabilidade do álbum, Media, File e `AccessResult`. O exemplo upstream `vvjs_example` continua separado no inventário. Ver [arquitetura da Gallery](../../aculta_gallery/docs/ARQUITETURA.md) e o changelog do submódulo.
 
 ## 1. Resumo em cinco linhas
 

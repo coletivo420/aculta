@@ -32,9 +32,6 @@ Atributos: não há wildcard. Todo nome usado no código aparece na tabela acima
 | `data-aculta-account-list` | exato | sim | 2 |
 | `data-aculta-add-member` | exato | sim | 2 |
 | `data-aculta-album-open` | exato | sim | 2 |
-| `data-aculta-album-stage` | exato | sim | 3 |
-| `data-aculta-album-thumb` | exato | sim | 3 |
-| `data-aculta-album-thumbs` | exato | sim | 2 |
 | `data-aculta-album-toggle` | exato | sim | 2 |
 | `data-aculta-alert-dismiss` | exato | sim | 1 |
 | `data-aculta-alerts-count` | exato | sim | 2 |

@@ -20,11 +20,7 @@ existentes no Runtime; o teste não altera Fórum, Revista ou galerias.
 
 O teste também valida que a barra administrativa top-bar mantém suas ações
 visíveis em cada viewport; essa parte é regressão da integração mobile-first do
-tema ACULTA420 no contexto de uma galeria. Nas páginas de álbum, confere que a
-galeria começa em uma coluna, com miniaturas recolhidas e botão de alternância
-em 320/390/479px; em 480px ou mais, volta à grade com miniaturas visíveis.
-Com `SUITE_NO_JS=1`, espera a grade de miniaturas disponível sem depender do
-toggle criado por JavaScript.
+tema ACULTA420 no contexto de uma galeria. Nas páginas de álbum, confere que a galeria usa o SDC `layout-grid` com links PhotoSwipe e não emite marcadores do slideshow VVJS em 320/390/479/480/600/1280px. Com `SUITE_NO_JS=1`, a grade continua presente e os links PhotoSwipe conservam o fallback de navegação nativa.
 
 Para avaliar uma regra CSS ainda não publicada no Runtime, SUITE_THEME_CSS pode
 apontar para a folha local. O script injeta o conteúdo somente no documento

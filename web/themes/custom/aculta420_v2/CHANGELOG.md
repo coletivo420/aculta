@@ -1084,5 +1084,5 @@ State: Dev. No RC, production deployment, or release tag is declared.
 
 ## Não versionado — galeria editorial em UI Patterns (2026-11-11)
 
-- A View `aculta_album_fotos:block_1` compõe o SDC `layout-grid` com UI Patterns, removendo a apresentação VVJS dessa galeria e preservando PhotoSwipe, acesso, ordenação e cache.
-- O álbum público passou pela comparação Firefox A/B em cinco larguras e claro/escuro; a extensão VVJS permanece para outros consumidores.
+- As Views `aculta_album_fotos:block_1`, `aculta_forum_gallery_slides:block_1` e `galeria_produto:default` compõem o SDC `layout-grid` com UI Patterns, removendo os visuais VVJS das features ACULTA.
+- PhotoSwipe, filtros/ordem/acesso/cache e render arrays Commerce permanecem; Fórum sem galeria publicada e aceite visual de produto pendente. O único consumidor VVJS restante é exemplo upstream classificado `BLOCKED_UPSTREAM`.

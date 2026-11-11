@@ -101,3 +101,12 @@ O estilo de View `views_vvjb` fica `LEGACY_OBSOLETE`: zero configurações de Vi
 ## Atualização de consumidores — Álbum editorial em UI Patterns (2026-11-11)
 
 `aculta_album_fotos:block_1` foi reclassificada `UI_SUITE_NATIVE`: UI Patterns style usa `aculta420_v2:layout-grid` sobre as rows `fields` existentes; formatter PhotoSwipe, 63 imagens, ordem, pager de 150, filtro de acesso e cache foram mantidos. A importação parcial alterou somente `views.view.aculta_album_fotos`, após snapshot cujo YAML de rollback parseado coincidiu exatamente com a configuração Runtime. Firefox ESR passou 10/10 antes e 10/10 depois em 320/390/768/1024/1440 px claro/escuro, com foco, 63 imagens com alt/lazy loading, H1/main e sem overflow. PhotoSwipe abre e fecha por Escape. Zoom 200%, cache-hit, perfis e revisão assistiva seguem pendentes; o ramo VVJS da galeria do Fórum continua separado.
+
+## Atualização — Views de galeria do Fórum e Commerce (2026-11-11)
+
+`aculta_forum_gallery_slides:block_1` e `galeria_produto:default` agora usam UI Patterns `layout-grid`. Cada import parcial foi restrito a um YAML e precedido por snapshot Runtime; os documentos Runtime/Sync parseados coincidem. Fórum não tem galeria publicada (0 rows), portanto revisão visual com conteúdo real, access e cache ficam `DEFERRED`. A View de produto é consumida pelo hook `ProductGalleryHooks`; no produto Commerce publicado há sete mídias e a View UI Patterns retornou sete rows. Revisão visual/access/cache no navegador segue `DEFERRED`. O submódulo Gallery deixa de depender de VVJS; a extensão permanece habilitada pelo exemplo upstream `vvjs_example`, ainda classificado como candidato separado. Inventário CSV e JSON registram owner, consumidor, configuração e evidências.
+
+
+## Bloqueio upstream — barra administrativa Gin (2026-11-11)
+
+A regressão Firefox da galeria verificou que `.top-bar__actions` do Gin extrapola a viewport MAIN em 480/479/390/320 px; no host Fórum as seis larguras passaram. Owner: módulo upstream Gin; consumidor: toolbar administrativa autenticada; fonte: ações “Editar/Mais ações”. Classificação `BLOCKED_UPSTREAM`; não alterar contrib nesta migração. A grade da galeria continua dentro da viewport, sem overflow e com os 63 links PhotoSwipe. Revisão/ajuste do toolbar requer issue/upstream ou extensão proprietária isolada.

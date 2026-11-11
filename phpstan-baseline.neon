@@ -4119,7 +4119,7 @@ parameters:
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
 			identifier: method.notFound
-			count: 3
+			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_gallery/src/Hook/GalleryViewHooks.php
 
 		-

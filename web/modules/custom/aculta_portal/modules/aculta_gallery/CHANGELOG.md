@@ -1,3 +1,11 @@
+## 0.1.0-dev.24 — galerias do Fórum em UI Patterns
+
+- `aculta_forum_gallery_slides:block_1` e `galeria_produto:default` trocam VVJS pelo SDC existente `layout-grid`; PhotoSwipe, query, pager, acesso e cache continuam nas APIs Drupal e Gallery.
+- `GalleryViewHooks` remove o palco e as miniaturas VVJS; `ProductGalleryHooks` continua entregando o render array Commerce. O módulo deixa de depender de `vvjs`.
+- Runtime `aculta_runtime`: imports parciais isolados após snapshots; YAML parseado Sync/Runtime coincide. Fórum retorna zero rows e não tem galeria publicada; produto publicado retorna sete mídias no style `ui_patterns`. Aceite visual/access/cache do Fórum e visual do produto permanecem DEFERRED.
+
+RUNTIME STATUS: PARTIAL.
+
 # Changelog — ACULTA Gallery
 
 ## 0.1.0-dev.23 — Álbum editorial em UI Patterns Views

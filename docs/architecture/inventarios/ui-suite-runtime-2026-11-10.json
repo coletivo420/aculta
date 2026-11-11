@@ -1,7 +1,7 @@
 {
-  "observed_at_utc": "2026-11-11T05:59:44Z",
+  "observed_at_utc": "2026-11-11T06:33:49Z",
   "drupal_version": "11.5.0-beta1",
-  "evidence_command": "Drush Runtime export and targeted partial imports after snapshots; ComponentLayout discovery; 276-check Layout Builder batch validator; render-array/access parity checks; anonymous Firefox A/B/A pilot; Forum categories and UI Styles Entity Status targeted imports; UI Styles Entity Status isolated functional test; UI Patterns album gallery before/after Runtime snapshot comparison and Firefox ESR A/B in five viewports/modes",
+  "evidence_command": "Drush Runtime export and targeted partial imports after snapshots; ComponentLayout discovery; 276-check Layout Builder batch validator; render-array/access parity checks; anonymous Firefox A/B/A pilot; Forum categories and UI Styles Entity Status targeted imports; UI Styles Entity Status isolated functional test; UI Patterns album gallery before/after Runtime snapshot comparison and Firefox ESR A/B in five viewports/modes; Forum gallery View targeted partial import after exact before snapshot, Runtime/Sync parsed YAML equality, executable UI Patterns style and zero published Forum galleries; product Commerce gallery targeted partial import and execution with seven published product Media references",
   "ui_suite_modules": {
     "ui_icons": {
       "status": "Enabled",
@@ -695,6 +695,10 @@
       "responsive_acceptance": "DEFERRED: admin list elements extend past 320px viewport despite documentWidth=320 and maxScrollX=0",
       "evidence_manifest": "tests/browser/capturas/ui-suite-library/2026-11-10/manifest.json",
       "capture_manifest": "tests/browser/capturas/ui-suite-library/2026-11-10/manifest.json"
+    },
+    "gallery_product_view": {
+      "status": "DEFERRED",
+      "reason": "No product-specific browser route test is defined; Runtime View execution returned all seven media rows, but visual/access/cache browser review was not performed."
     }
   },
   "view_displays": {
@@ -1045,6 +1049,62 @@
         }
       },
       "legacy_style_status": "views_vvjs removed from this editorial view; still consumed by separate Forum and Commerce views"
+    },
+    "aculta_forum_gallery_slides": {
+      "owner_module": "aculta_gallery",
+      "config_path": "config/sync/views.view.aculta_forum_gallery_slides.yml",
+      "displays": {
+        "block_1": {
+          "consumer_id": "block_1",
+          "status": "runtime_configured_no_fixture",
+          "configuration_import": "targeted partial import with only views.view.aculta_forum_gallery_slides after Runtime YAML snapshot",
+          "before_runtime_yaml_sha256": "9ed8d5fe059d3ec75aa199f60368d2143efca9f2074535adfc5f74e5e6cb83c0",
+          "after_runtime_yaml_sha256": "b33e8fd4c33381348393a4a815beb9cdaa899c9a1148e9954697f0226ab169e7",
+          "config_sync_yaml_sha256": "4d71200ee1089a5962f7c00d307b43f493a505d5604e993aad85838928657de8",
+          "sync_runtime_parsed_yaml_equal": true,
+          "result_count_before": 0,
+          "result_count_after": 0,
+          "row_plugin": "fields with photoswipe_field_formatter",
+          "style_plugin_before": "views_vvjs",
+          "style_plugin": "ui_patterns",
+          "style_component": "aculta420_v2:layout-grid",
+          "slot_source": "view_rows",
+          "pager": "some; 150 items per page; unchanged",
+          "access_and_cache": "View access, contextual argument, AlbumSlidesAccessHooks media filtering and render cache bubbling retained in source; fixture-specific Runtime comparison not possible",
+          "photoswipe": "formatter remains configured; no public Forum gallery fixture to render",
+          "published_forum_gallery_count": 0,
+          "visual_acceptance": "DEFERRED: no published Forum gallery exists in Runtime",
+          "limitations": [
+            "Browser visual, anonymous/editor access and cache variation acceptance require a published Forum gallery fixture."
+          ]
+        }
+      }
+    },
+    "galeria_produto": {
+      "owner_module": "aculta_portal (Commerce integration)",
+      "config_path": "config/sync/views.view.galeria_produto.yml",
+      "consumer": "ProductGalleryHooks::preprocessCommerceProduct on commerce_product.produto_loja",
+      "displays": {
+        "default": {
+          "consumer_id": "default (programmatic render by Portal hook)",
+          "status": "runtime_configured_visual_deferred",
+          "configuration_import": "targeted partial import with only views.view.galeria_produto after Runtime YAML snapshot",
+          "before_runtime_yaml_sha256": "7fba168a6e3fbfb316eb60ff8ba55aaa91cf4c6951fc4a0f62ea45bce9fd6e6b",
+          "config_sync_yaml_sha256": "a163a6915d8568c6374429326f134b86023951d204870089c64bcc50f2d46a38",
+          "sync_runtime_parsed_yaml_equal": true,
+          "row_plugin": "entity:media; view mode produto_galeria",
+          "style_plugin_before": "views_vvjs",
+          "style_plugin": "ui_patterns",
+          "style_component": "aculta420_v2:layout-grid",
+          "slot_source": "view_rows",
+          "published_product_count": 1,
+          "sample_product_gallery_media_ids": 7,
+          "result_count_after": 7,
+          "filters_and_order": "published media status, image bundle, mid ascending, phrase argument retained",
+          "visual_acceptance": "DEFERRED: Browser Firefox did not run on the product route; the existing gallery route test is not a product fixture",
+          "after_runtime_yaml_sha256": "3096f1f7e9864edf00883d7c8d7d39eb20740ac40e40f48cb74a6d69eb76bf48"
+        }
+      }
     }
   },
   "ui_icons_config": {
@@ -1095,5 +1155,6 @@
     "homepage": "4 revista-teaser cards, one H1/main, no horizontal overflow at 320/390/768/1024/1440 CSS px",
     "method": "anonymous read-only Firefox ESR X11 with WebDriver BiDi; DOM metrics; no screenshots",
     "limitation": "homepage cards cannot be attributed to revista_sessoes page display; access/pager/cache/keyboard/dark/zoom remain unverified"
-  }
+  },
+  "legacy_style_status": "views_vvjs removed from editorial, Forum and Commerce product gallery Views; contrib vvjs_example remains as an upstream demonstration consumer"
 }

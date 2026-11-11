@@ -1,10 +1,10 @@
 # TODO — aculta_gallery
 
-Estado: Dev · versão 0.1.0-dev.23 (`aculta_gallery.info.yml`) · status: `docs/operations/status/aculta_gallery.yml`.
+Estado: Dev · versão 0.1.0-dev.24 (`aculta_gallery.info.yml`) · status: `docs/operations/status/aculta_gallery.yml`.
 
 ## Próximo passo
 
-Ampliar homologação de galerias para perfis autenticado/editor/admin, zoom 200%, cache-hit e leitor de tela; validar separadamente o ramo Gallery do Fórum e demais consumidores de VVJS ([arquitetura](web/modules/custom/aculta_portal/modules/aculta_gallery/docs/ARQUITETURA.md)).
+Homologar galeria do Fórum com fixture publicada: perfis, saída visual, zoom 200%, cache-hit e leitor de tela; mapear consumidores VVJS restantes fora do módulo Gallery ([arquitetura](web/modules/custom/aculta_portal/modules/aculta_gallery/docs/ARQUITETURA.md)).
 
 ## Leitura
 

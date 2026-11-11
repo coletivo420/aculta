@@ -72,8 +72,8 @@ o filtro explícito é necessário porque a relação de campo, por si só, não
 
 `GalleryViewHooks` agrega no render array pai a entidade álbum, cada Media referenciada, o `AccessResult` (inclusive
 quando negado) e o File da imagem. Esses metadados continuam invalidando o HTML ao mudar publicação, arquivo ou
-permissão e variam o cache conforme o resultado de acesso. O ramo da galeria contextual do Fórum usa outra View e
-permanece VVJS; não é consumidor de `aculta_album_fotos`.
+permissão e variam o cache conforme o resultado de acesso. A View contextual do Fórum também usa UI Patterns + `layout-grid`;
+o Runtime não tem galeria publicada com finalidade Fórum, então falta validação visual de conteúdo real.
 
 Firefox ESR antes/depois validou 63 imagens acessíveis, PhotoSwipe, lazy loading, foco, H1/main e ausência de overflow
 em 320/390/768/1024/1440 px claro/escuro. PhotoSwipe abre e fecha por Escape após o corte. Cache-hit, zoom e perfis
@@ -83,14 +83,12 @@ O gate `scripts/validate-aculta-image.php` agora lê IDs `image_style` e estilos
 exibição exportados, exigindo que cada ID pertença ao catálogo do `aculta_image`. Core/contrib recebem o ID de estilo
 que suas APIs exigem; o gate impede que a configuração exportada escape do catálogo controlado.
 
-### Integração VVJS da galeria de produto
+### Galeria de produto em UI Patterns
 
-`galeria_produto` usa VVJS para apresentar as entidades Media uma por slide e mantém o modo de exibição
-`produto_galeria`, o paginador sem limite, o CSS class `aculta-galeria-produto` e a finalidade de imagem existente.
-Os slides têm autoplay desligado, navegação por setas, teclado e gesto de toque; VVJS é usado como formato de View,
-sem duplicar a apresentação de imagem no tema. Os carrosséis editoriais e de projetos permanecem em VVJB; a lista
-`aculta_albuns` continua grade paginada, pois é uma coleção, não uma sequência de slides. PhotoSwipe continua sendo o
-lightbox; VVJL não o substitui.
+`galeria_produto` usa o SDC `layout-grid` via UI Patterns Views para compor as entidades Media no view mode
+`produto_galeria`. O argumento de IDs, ordenação, filtro de publicação e bundle `image`, renderização de entidade e
+image style permanecem na View/Commerce/Field API. O produto não tinha consumidor de slideshow no tema; agora a saída
+é uma grade responsiva. O hook do Portal apenas prepara o render array da View e o tema apenas imprime.
 
 ### 3.1 Media Gallery 3.3.0 — atende, com limitações comprovadas
 

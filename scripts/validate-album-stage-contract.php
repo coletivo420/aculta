@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Gate: contrato SDC/PhotoSwipe do álbum editorial e isolamento do Fórum.
+ * Gate: contrato SDC/PhotoSwipe das galerias editoriais e do Fórum.
  *
  * Só lê arquivos versionados do projeto e usa a biblioteca YAML do Composer.
  * Não consulta Runtime nem abre os diretórios de Core/contrib.
@@ -36,7 +36,9 @@ if ($errors === []) {
   $display = $view['display']['default']['display_options'] ?? [];
   $style = $display['style'] ?? [];
   $pattern = $style['options']['ui_patterns']['ui_patterns'] ?? [];
-  $forumStyle = $forumView['display']['default']['display_options']['style']['type'] ?? NULL;
+  $forumDisplay = $forumView['display']['default']['display_options'] ?? [];
+  $forumStyle = $forumDisplay['style'] ?? [];
+  $forumPattern = $forumStyle['options']['ui_patterns']['ui_patterns'] ?? [];
 
   if (($style['type'] ?? NULL) !== 'ui_patterns') {
     $errors[] = 'álbum editorial não usa UI Patterns Views style';
@@ -69,12 +71,21 @@ if ($errors === []) {
   if (($component['slots']['content']['title'] ?? NULL) === NULL) {
     $errors[] = 'layout-grid não declara o slot content';
   }
-  if ($forumStyle !== 'views_vvjs' || !in_array('vvjs', $forumView['dependencies']['module'] ?? [], TRUE)) {
-    $errors[] = 'View de slides do Fórum deixou de manter sua configuração isolada';
+  if (($forumStyle['type'] ?? NULL) !== 'ui_patterns'
+    || ($forumPattern['component_id'] ?? NULL) !== 'aculta420_v2:layout-grid'
+    || ($forumPattern['slots']['content']['sources'][0]['source_id'] ?? NULL) !== 'view_rows') {
+    $errors[] = 'View do Fórum não compõe view_rows com layout-grid';
+  }
+  if (!in_array('ui_patterns_views', $forumView['dependencies']['module'] ?? [], TRUE)
+    || in_array('vvjs', $forumView['dependencies']['module'] ?? [], TRUE)) {
+    $errors[] = 'View do Fórum não declara UI Patterns ou ainda declara VVJS';
+  }
+  if (($forumDisplay['fields']['field_media_forum_image']['type'] ?? NULL) !== 'photoswipe_field_formatter'
+    || ($forumDisplay['row']['type'] ?? NULL) !== 'fields') {
+    $errors[] = 'formatter PhotoSwipe ou row Fields do Fórum foi alterado';
   }
   $requiredHookContracts = [
     "'aculta_forum_gallery_slides'",
-    "'data-aculta-album-thumbs'",
     "'photoswipe-gallery'",
     "\$media->access('view', NULL, TRUE)",
   ];
@@ -83,8 +94,10 @@ if ($errors === []) {
       $errors[] = 'GalleryViewHooks perdeu contrato necessário: ' . $contract;
     }
   }
-  if (!str_contains($hooks, 'if ($is_forum_gallery)')) {
-    $errors[] = 'miniaturas VVJS não estão restritas ao ramo do Fórum';
+  if (str_contains($hooks, 'data-aculta-album-stage')
+    || str_contains($hooks, 'data-aculta-album-thumbs')
+    || str_contains($hooks, 'function thumbs(')) {
+    $errors[] = 'marcação/miniaturas VVJS ainda são geradas pelo módulo';
   }
   if (!str_contains($hooks, '$cacheability->applyTo($build[\'album_stage\'])')) {
     $errors[] = 'cache metadata de álbum/Media/File/access não é aplicada ao palco';
@@ -99,4 +112,4 @@ if ($errors !== []) {
   exit(1);
 }
 
-echo "ALBUM UI PATTERNS CONTRACT: PASS (grid SDC, PhotoSwipe, pager/access/cache e Fórum isolado)\n";
+echo "GALLERY UI PATTERNS CONTRACT: PASS (duas grades SDC, PhotoSwipe, pager/access/cache)\n";

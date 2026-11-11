@@ -63,9 +63,6 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
     $rowPatterns = $rowOptions['options']['ui_patterns'] ?? NULL;
     $stylePatterns = $styleOptions['options']['ui_patterns']['ui_patterns'] ?? NULL;
     $displayPatterns = $options['ui_patterns'] ?? NULL;
-    $patternsConfig = is_array($rowPatterns) && !empty($rowPatterns['component_id'])
-      ? $rowPatterns
-      : NULL;
     $patternsConfigured = ($rowPlugin === 'ui_patterns' && is_array($rowPatterns) && !empty($rowPatterns['component_id']))
       || (is_array($stylePatterns) && !empty($stylePatterns['component_id']))
       || (is_array($displayPatterns) && !empty($displayPatterns['component_id']));
@@ -102,6 +99,15 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && (string) $displayId === 'block_1'
       && $stylePlugin === 'ui_patterns'
       && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid';
+    $isForumGalleryPilot = $viewId === 'aculta_forum_gallery_slides'
+      && (string) $displayId === 'block_1'
+      && $stylePlugin === 'ui_patterns'
+      && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid';
+    $isProductGalleryPilot = $viewId === 'galeria_produto'
+      && (string) $displayId === 'default'
+      && $stylePlugin === 'ui_patterns'
+      && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid';
+    $isUpstreamVvjsExample = $viewId === 'vvjs_example';
     $isEventsBase = $viewId === 'eventos_publicos' && (string) $displayId === 'default';
     $revistaTeaserTemplate = $theme . '/templates/content/node--revista--teaser.html.twig';
     $isRevistaTeaserSdc = $viewId === 'revista_sessoes'
@@ -145,6 +151,14 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
     $albumPhotosRuntimeVerified = is_array($albumPhotosRuntimeDisplay)
       && ($albumPhotosRuntimeDisplay['status'] ?? '') === 'runtime_verified'
       && ($albumPhotosRuntimeDisplay['style_component'] ?? '') === 'aculta420_v2:layout-grid';
+    $forumGalleryRuntimeConfigured = $isForumGalleryPilot
+      && is_array($runtimeView)
+      && is_array($runtimeView['displays'][$displayId] ?? NULL)
+      && ($runtimeView['displays'][$displayId]['status'] ?? '') === 'runtime_configured_no_fixture';
+    $productGalleryRuntimeConfigured = $isProductGalleryPilot
+      && is_array($runtimeView)
+      && is_array($runtimeView['displays'][$displayId] ?? NULL)
+      && ($runtimeView['displays'][$displayId]['status'] ?? '') === 'runtime_configured_visual_deferred';
     $revistaRuntimeView = $runtimeViewDisplays[$viewId] ?? NULL;
     $revistaRuntimeVerified = $isRevistaTeaserSdc
       && is_array($revistaRuntimeView)
@@ -160,7 +174,9 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         'aculta_forum_categories' => 'aculta_forum',
         'revista_sessoes' => 'aculta_magazine',
         'aculta_news' => 'aculta_magazine',
-        'aculta_album_fotos' => 'aculta_gallery',
+        'aculta_album_fotos', 'aculta_forum_gallery_slides' => 'aculta_gallery',
+        'galeria_produto' => 'aculta_portal:commerce',
+        'vvjs_example' => 'vvjs:upstream_demo',
         'home_editorial_highlights' => 'views:home_editorial_highlights',
         'eventos_publicos' => 'aculta_events',
         default => 'unresolved_from_config',
@@ -172,10 +188,14 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'row_plugin' => $rowPlugin,
       'style_plugin' => $stylePlugin,
       'ui_patterns_configured' => $components !== [] ? implode(',', $components) : 'not_detected_by_plugin_id_scan',
-      'status' => ($isViewsFunctionalBase || $isEventsBase)
+      'status' => $isUpstreamVvjsExample
+        ? 'BLOCKED_UPSTREAM'
+        : ((($isViewsFunctionalBase && !$isProductGalleryPilot) || $isEventsBase)
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
-        : (($albumsRuntimeVerified || $forumRuntimeVerified || $eventsRuntimeVerified || $revistaRuntimeVerified || $revistaNewsRuntimeVerified || $homeEditorialRuntimeVerified || $albumPhotosRuntimeVerified) ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS'),
+        : (($albumsRuntimeVerified || $forumRuntimeVerified || $eventsRuntimeVerified || $revistaRuntimeVerified || $revistaNewsRuntimeVerified || $homeEditorialRuntimeVerified || $albumPhotosRuntimeVerified) ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS')),
       'replacement_or_action' => match (TRUE) {
+        $isUpstreamVvjsExample => 'Upstream demonstration View, not an ACULTA feature; do not edit contrib. Any removal or replacement must be handled as a separately authorized upstream-example lifecycle change',
+        $isProductGalleryPilot => 'UI Patterns layout-grid composes the native Commerce product media View; preserve product Media IDs, ordering, published/image filters and produto_galeria view mode',
         $isViewsFunctionalBase || $isEventsBase => 'Native Views base display supplies inherited query, access, filters, sorting and configured style to concrete displays; it has no independent route output',
         $isAlbumsViewsPilot => 'Compose this inherited View level with UI Patterns SDCs; preserve native row fields, filters, sort, pager and access',
         $isForumCategoryPilot => $forumCategoryLegacyTemplatesRemoved
@@ -185,10 +205,15 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isRevistaNewsPilot => 'UI Patterns style composes the existing revista-listing SDC around native teaser render arrays; published filter, sort, access and cache remain Views-owned',
         $isHomeEditorialPilot => 'UI Patterns layout-grid composes the existing editorial highlight Layout Builder render arrays; preserve native query, ordering, pager, access and cache',
         $isAlbumPhotosPilot => 'UI Patterns layout-grid composes native PhotoSwipe image render arrays; preserve media access filtering, album order, pager and cache metadata',
+        $isForumGalleryPilot => 'UI Patterns layout-grid composes Forum gallery View rows; preserve contextual gallery selection, Media access, PhotoSwipe and cache metadata',
         $isRevistaTeaserSdc => 'Keep the native entity teaser row; the ACULTA theme adapter renders fields as render-array slots through the existing revista-teaser SDC',
         default => 'Inventory candidate only; inspect row, style and display independently before migration',
       },
       'risk_or_evidence_gap' => match (TRUE) {
+        $isUpstreamVvjsExample => 'Example View remains in Config Sync and its Runtime status was not changed in this microphase; it is not counted as a product consumer',
+        $isProductGalleryPilot => $productGalleryRuntimeConfigured
+          ? 'Runtime View returned seven Media rows for the published Commerce product; browser visual, access and cache acceptance remain DEFERRED'
+          : 'Commerce product View has a programmatic consumer; Runtime execution and browser acceptance remain pending',
         $isViewsFunctionalBase || $isEventsBase => 'Inherited query/access/filter/sort and any base style are consumed by explicit displays; no independent route output',
         $isAlbumsViewsPilot => $albumsRuntimeVerified
           ? 'Runtime/render/browser verified at 1280/320 light/dark; pager navigation, keyboard, zoom 200% and cache-hit variation remain open'
@@ -205,6 +230,9 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isHomeEditorialPilot => 'UI Patterns layout-grid configured; targeted Runtime output, access/cache comparison and browser evidence remain pending',
         $isAlbumPhotosPilot && $albumPhotosRuntimeVerified => 'Runtime HTTP 200 and 63 PhotoSwipe images before/after; Firefox ESR 320/390/768/1024/1440 light/dark, H1/main, alt, lazy loading, focus, no overflow and PhotoSwipe Escape verified; cache-hit and 200% zoom remain open',
         $isAlbumPhotosPilot => 'UI Patterns grid configured; Runtime output, media access/cache comparison and browser evidence remain pending',
+        $isForumGalleryPilot => $forumGalleryRuntimeConfigured
+          ? 'Runtime View configuration imported and executable with zero published Forum galleries; visual acceptance is DEFERRED until a published fixture exists'
+          : 'Forum has no published gallery fixture; Runtime import and executable configuration comparison remain pending',
         $isRevistaTeaserSdc && $revistaRuntimeVerified => 'Theme adapter composes revista-teaser; homepage smoke is not attributable to this View; route, access, pager/cache remain pending',
         $isRevistaTeaserSdc => 'Sync source confirms node teaser row and SDC adapter; Runtime output, access, pager/cache and browser acceptance remain pending',
         default => 'No UI Patterns row/style/display plugin ID detected in Sync; Runtime output, access and cache still unverified',
@@ -212,6 +240,10 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'rollback' => 'Revert only display config after before/after result comparison',
       'detected_consumers' => '',
       'runtime_status' => match (TRUE) {
+        $isUpstreamVvjsExample => 'upstream contributed demonstration; Runtime status not changed or claimed',
+        $isProductGalleryPilot && $productGalleryRuntimeConfigured => 'active; Commerce product 1 supplies seven media IDs; UI Patterns style returns seven rows; visual acceptance deferred',
+        $isProductGalleryPilot => 'configured; Commerce product View has a programmatic consumer; Runtime evidence not recorded',
+        $isForumGalleryPilot && $forumGalleryRuntimeConfigured => 'active; UI Patterns View executable; zero published Forum galleries; visual acceptance deferred',
         $isViewsFunctionalBase || $isEventsBase => 'functional native base; no direct route/display consumer',
         $albumsRuntimeVerified => sprintf('active; HTTP %d; %d results before/after; anonymous access allowed; browser 1280/320 light/dark', $runtimeView['after_http_status'], $runtimeView['result_count_after']),
         $forumRuntimeVerified => sprintf('active; HTTP %d; %d taxonomy cards; anonymous access allowed; browser 320/390/768/1024/1440 light and 320/1440 dark', $forumRuntimeDisplay['after_http_status'], $forumRuntimeDisplay['result_count_after']),
