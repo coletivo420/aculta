@@ -89,8 +89,7 @@ final class AcultaH5PHookDiscoveryTest extends KernelTestBase {
       self::assertNotNull($routes->get($expectedRoute), $path);
     }
 
-    self::assertSame(
-      NULL,
+    self::assertNull(
       $this->container->get('router.route_provider')
         ->getRouteByName('aculta_lms_h5p.editor_ajax')
         ->getOption('_aculta_site_key'),

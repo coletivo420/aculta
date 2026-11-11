@@ -272,3 +272,16 @@ Escopo: `WikiEditorialQueue` e `WikiContributorWorkspace` com narrowing dos resu
 
 Resíduos: 112 erros PHPStan permanecem no módulo completo, todos em testes/.install já baselineados; Kernel de imagem contém 92 chamadas sobre `RevisionableInterface`, fora do escopo. Evidências: PHPStan em `src` (42 arquivos) e global estrito `[OK] No errors`; Unit 94 testes/455 assertions PASS. Baseline global caiu 3564 -> 3451; a redução de 113 ocorrências ficou restrita à Wiki.
 
+## Rodada 19 — autofixes PHPStan globais — 2026-11-11
+
+| Medida | Valor |
+| --- | ---: |
+| Autofixes de `--fix` | 0 (nenhum erro corrigível encontrado) |
+| Autofixes de `--fix --fix-ignored` | 16 em 6 arquivos PHP |
+| Ocorrências na baseline antes/depois | 2675 -> 2665 |
+| Erros PHPStan globais após os autofixes | 0 (`[OK] No errors`) |
+
+Escopo: substituição de `assertSame(TRUE/FALSE/NULL, ...)` pelas asserções PHPUnit correspondentes em testes existentes do `aculta_forum`, `aculta_lms_h5p` e `aculta_magazine`; removidas 6 entradas obsoletas (10 ocorrências) da baseline. Nenhum arquivo de produção foi alterado. As asserções permanecem estritas para os valores booleanos/nulos retornados.
+
+Evidências: Unit dos três módulos, 31 testes/374 assertions PASS; PHP lint dos 6 arquivos PHP PASS; análise global posterior `[OK] No errors`. Dois arquivos Kernel com apenas equivalência de asserção não foram executados para evitar acesso a banco nesta rodada.
+

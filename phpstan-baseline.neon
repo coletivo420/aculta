@@ -3907,12 +3907,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumTopicDisplayConfigTest.php
 
 		-
-			rawMessage: 'You should use assertFalse() instead of assertSame() when expecting "false"'
-			identifier: phpunit.assertFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ForumTopicDisplayConfigTest.php
-
-		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::getCacheContexts().'
 			identifier: method.notFound
 			count: 1
@@ -6352,12 +6346,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Kernel/AcultaH5PHookDiscoveryTest.php
 
 		-
-			rawMessage: 'You should use assertNull() instead of assertSame(null, $actual).'
-			identifier: phpunit.assertNull
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Kernel/AcultaH5PHookDiscoveryTest.php
-
-		-
 			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_lms_h5p\\Controller\\aculta_H5PContentUpgrade'' and Drupal\aculta_lms_h5p\Controller\aculta_H5PContentUpgrade will always evaluate to true.'
 			identifier: staticMethod.alreadyNarrowedType
 			count: 1
@@ -6409,12 +6397,6 @@ parameters:
 			rawMessage: Value assigned to variable $form is never read before being overwritten.
 			identifier: assign.overwritten
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Kernel/AcultaH5PLibraryPackageInstallerTest.php
-
-		-
-			rawMessage: 'You should use assertTrue() instead of assertSame() when expecting "true"'
-			identifier: phpunit.assertTrue
-			count: 4
 			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Kernel/AcultaH5PLibraryPackageInstallerTest.php
 
 		-
@@ -6514,12 +6496,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Unit/AcultaH5PArchiveResourceLimitsTest.php
 
 		-
-			rawMessage: 'You should use assertTrue() instead of assertSame() when expecting "true"'
-			identifier: phpunit.assertTrue
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Unit/AcultaH5PArchiveResourceLimitsTest.php
-
-		-
 			rawMessage: 'Call to an undefined method Drupal\group\Entity\GroupInterface::method().'
 			identifier: method.notFound
 			count: 5
@@ -6542,12 +6518,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Unit/aculta_H5PEditorUploadManagerTest.php
-
-		-
-			rawMessage: 'You should use assertTrue() instead of assertSame() when expecting "true"'
-			identifier: phpunit.assertTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms_h5p/tests/src/Unit/aculta_H5PLibraryPackageInstallerTest.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\ContentEntityInterface::getChangedTime().'
@@ -6740,12 +6710,6 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_magazine/tests/src/Unit/EditorialCapabilityTest.php
-
-		-
-			rawMessage: 'You should use assertTrue() instead of assertSame() when expecting "true"'
-			identifier: phpunit.assertTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_magazine/tests/src/Unit/EditorialCategoryColorFormatterTest.php
 
 		-
 			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertSame() with ''revista'' and ''revista'' will always evaluate to true.'

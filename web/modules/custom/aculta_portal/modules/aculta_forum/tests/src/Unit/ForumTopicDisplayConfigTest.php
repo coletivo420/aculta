@@ -141,7 +141,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame(['GET', 'HEAD', 'POST'], $routes['aculta_forum.settings']['methods']);
     self::assertTrue($permissions['administer aculta forum settings']['restrict access']);
     self::assertSame('aculta_forum.admin', $menu['aculta_forum.admin_settings']['parent']);
-    self::assertSame(FALSE, $install['comment_move_enabled']);
+    self::assertFalse($install['comment_move_enabled']);
     self::assertConfigSame($install, $sync);
     self::assertNotContains('administer aculta forum settings', $editor['permissions']);
     self::assertStringContainsString("'#config_target' => 'aculta_forum.settings:comment_move_enabled'", $form);

@@ -128,12 +128,12 @@ final class AcultaH5PArchiveResourceLimitsTest extends UnitTestCase {
     $path = sys_get_temp_dir() . '/aculta-h5p-limits-' . bin2hex(random_bytes(6)) . '.h5p';
     $this->archives[] = $path;
     $zip = new \ZipArchive();
-    self::assertSame(TRUE, $zip->open($path, \ZipArchive::CREATE | \ZipArchive::OVERWRITE));
+    self::assertTrue($zip->open($path, \ZipArchive::CREATE | \ZipArchive::OVERWRITE));
     foreach ($entries as $name => $contents) {
       self::assertTrue($zip->addFromString($name, $contents));
     }
     self::assertTrue($zip->close());
-    self::assertSame(TRUE, $zip->open($path));
+    self::assertTrue($zip->open($path));
     return $zip;
   }
 

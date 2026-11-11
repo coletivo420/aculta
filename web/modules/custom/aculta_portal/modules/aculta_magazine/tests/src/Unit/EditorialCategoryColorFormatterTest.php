@@ -67,7 +67,7 @@ final class EditorialCategoryColorFormatterTest extends UnitTestCase {
     self::assertSame(['red', 'green', 'yellow', 'green-dark'], array_column($storage['settings']['allowed_values'], 'value'));
     self::assertSame('options_select', $form['content']['field_section_color']['type']);
     self::assertSame('aculta_editorial_category_color', $display['content']['field_editorial_category']['type']);
-    self::assertSame(TRUE, $display['content']['field_editorial_category']['settings']['link']);
+    self::assertTrue($display['content']['field_editorial_category']['settings']['link']);
   }
 
 }

@@ -237,11 +237,11 @@ final class AcultaH5PLibraryPackageInstallerTest extends KernelTestBase {
     }
 
     $zip = new \ZipArchive();
-    self::assertSame(TRUE, $zip->open($package, \ZipArchive::CREATE | \ZipArchive::EXCL));
+    self::assertTrue($zip->open($package, \ZipArchive::CREATE | \ZipArchive::EXCL));
     self::assertTrue($zip->addFile($payload, 'large-random.bin'));
     self::assertTrue($zip->close());
     $zip = new \ZipArchive();
-    self::assertSame(TRUE, $zip->open($package, \ZipArchive::RDONLY));
+    self::assertTrue($zip->open($package, \ZipArchive::RDONLY));
     $entry = $zip->statName('large-random.bin');
     $zip->close();
     self::assertGreaterThan(32 * 1024 * 1024, $entry['size']);
@@ -267,7 +267,7 @@ final class AcultaH5PLibraryPackageInstallerTest extends KernelTestBase {
       'high-ratio.txt' => str_repeat('A', 2 * 1024 * 1024),
     ]);
     $zip = new \ZipArchive();
-    self::assertSame(TRUE, $zip->open($package, \ZipArchive::RDONLY));
+    self::assertTrue($zip->open($package, \ZipArchive::RDONLY));
     $entry = $zip->statName('high-ratio.txt');
     $zip->close();
     self::assertGreaterThan(1024 * 1024, $entry['size']);
@@ -471,7 +471,7 @@ final class AcultaH5PLibraryPackageInstallerTest extends KernelTestBase {
   private function createPackage(array $entries): string {
     $path = $this->siteDirectory . '/library-' . bin2hex(random_bytes(6)) . '.h5p';
     $zip = new \ZipArchive();
-    self::assertSame(TRUE, $zip->open($path, \ZipArchive::CREATE | \ZipArchive::EXCL));
+    self::assertTrue($zip->open($path, \ZipArchive::CREATE | \ZipArchive::EXCL));
     foreach ($entries as $name => $contents) {
       self::assertTrue($zip->addFromString($name, $contents));
     }
