@@ -12,7 +12,7 @@ Relatórios brutos (JSON do Semgrep, saída do `composer audit`, gitleaks) ficam
 | Regra | Achados | Classe |
 |---|---:|---|
 | `aculta-php-static-drupal-service` (`\Drupal::` estático) | 432 | dívida de arquitetura, não de segurança |
-| `aculta-php-markup-raw-output` | 31 | triados: 15 FALSO POSITIVO, 16 PENDENTE |
+| `aculta-php-markup-raw-output` | 31 | triados: 17 FALSO POSITIVO, 14 PENDENTE |
 | `aculta-php-eval-or-dynamic-exec` | 10 | 9 ACEITO COM JUSTIFICATIVA, 1 PENDENTE |
 | `aculta-php-unserialize-untrusted` | 1 | FALSO POSITIVO (com mitigação) |
 | `aculta-php-raw-sql-concat` | 0 | sem achado; coberta por fixture |
@@ -38,7 +38,7 @@ Não há comparação direta com a baseline de 127 achados de 2026-11-05: o conj
 
 ### 1.2 `#markup` sem escape (31, triados todos)
 
-**FALSO POSITIVO (15):** o valor passa por `$this->t()`, `translate()`, `formatPlural()`, `htmlspecialchars` (`plainText`), formatação numérica/de data, ou é ternário de `t()`.
+**FALSO POSITIVO (17):** o valor passa por `$this->t()`, `translate()`, `formatPlural()`, `htmlspecialchars` (`plainText`), formatação numérica/de data, ou é ternário de `t()`.
 
 | Arquivo:linha | Motivo |
 |---|---|
@@ -52,14 +52,14 @@ Não há comparação direta com a baseline de 127 achados de 2026-11-05: o conj
 | `aculta_portal/src/Form/EmailResendForm.php:56` | `translate()` com texto fixo |
 | `aculta_portal/src/Plugin/Commerce/CheckoutPane/FiscalIdentityPane.php:103,108` | `unavailableMessage()` retorna `$this->t()` |
 | `aculta_studio/.../SavedContentController.php:220` | `$this->t()` para data; `purpose` com `htmlspecialchars` |
+| `aculta_lms/.../FreeTextAnswerPluginBase.php:98` | `Html::escape()` aplicado a cada mensagem antes do `#markup` |
+| `aculta_mailer/.../MailImapSettingsForm.php:131` | `errorText()` passa `error_class` pelo placeholder `@error` de `$this->t()`, que escapa |
 
-**PENDENTE (16):** a origem da variável ou o tipo do campo não foram provados nesta triagem. Risco de XSS só se o dado tiver origem não confiável ou HTML permitido.
+**PENDENTE (14):** a origem da variável ou o tipo do campo não foram provados nesta triagem. Risco de XSS só se o dado tiver origem não confiável ou HTML permitido.
 
 | Arquivo:linha | O que falta provar | Prioridade |
 |---|---|---|
-| `aculta_messenger/.../MessagesController.php:1528` | `$site_alert->getMessage()` é renderizado como markup. Confirmar se o campo aceita HTML e quem edita. Se aceitar HTML, é risco de XSS por administrador | alta |
-| `aculta_lms/.../FreeTextAnswerPluginBase.php:98` | `$messages` podem conter texto digitado por aluno | alta |
-| `aculta_mailer/.../MailImapSettingsForm.php:131` | `errorText()` pode incluir texto de erro do servidor IMAP (origem externa) | alta |
+| `aculta_messenger/.../MessagesController.php:1528` | `$site_alert->getMessage()` é renderizado como markup. A entidade vem do módulo contrib `site_alert`, ausente desta worktree; confirmar se o campo `message` aceita HTML e quem edita. Se aceitar, é risco de XSS por administrador | alta |
 | `aculta_mailer/.../MailTemplateForm.php:136` | `$preview['body']` é corpo de template de e-mail editado por administrador | média |
 | `aculta_events/.../EventPageController.php:137` | `$texto` / `$linha`: origem a confirmar | média |
 | `aculta_events/.../LocationListController.php:78` | `$linha`: origem a confirmar | média |
@@ -117,7 +117,12 @@ Atualização feita com `composer update drupal/entity_print symfony/http-client
   - `web/libraries/photoswipe/demo-docs-website/src/theme/Navbar/index.js:263` (biblioteca de terceiros)
   - `web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/XapiAttemptTokenTest.php:17` (fixture de teste)
   - `web/modules/custom/aculta_portal/modules/aculta_secrets_manager/tests/src/Unit/SecretsRevealTest.php:50` (fixture de teste)
-- Classificação: **PENDENTE de triagem**. Os dois testes parecem fixture, mas não confirmei; não os tratei como incidente real. Valores não impressos.
+- Classificação:
+  - `docs/portal/STUDIO-MAGAZINE-ROADMAP.md:171`: FALSO POSITIVO. Texto de roadmap em prosa, sem atribuição de credencial.
+  - `web/libraries/photoswipe/...`: FALSO POSITIVO de escopo. Biblioteca de terceiros, fora do código do projeto.
+  - `SecretsRevealTest.php:50`: FALSO POSITIVO. Constante `FAKE` de fixture de teste.
+  - `XapiAttemptTokenTest.php:17`: PENDENTE. Duas constantes de teste com forma de fixture (32 caracteres minúsculos e dígitos; um UUID). Não comparei com segredos reais do cofre do Runtime, o que não faço. Se algum valor estiver em uso real, é incidente e exige rotação, decisão do responsável.
+  Valores não impressos.
 - O scan de histórico Git (`gitleaks git`) foi recusado pelo guarda de worktree e **não foi executado**.
 
 ## 4. Drupal Security Review (`drupal/security_review`)
@@ -133,12 +138,12 @@ Atualização feita com `composer update drupal/entity_print symfony/http-client
 | Fixtures das regras | PASS: 17/17 |
 | `composer audit --locked` | antes: 3 advisories; depois: 0 (após atualização autorizada) |
 | `npm audit` | 0 vulnerabilidades |
-| gitleaks (arquivos da entrega) | executado: 4 achados fora da entrega, PENDENTE de triagem; histórico não executado |
+| gitleaks (arquivos da entrega) | executado: 4 achados classificados (3 FP, 1 PENDENTE); histórico não executado |
 | Drupal Security Review | DEFERRED (sem Drush/Runtime) |
 
 ## 6. Próximas ações
 
-1. Triar os 16 `#markup` PENDENTE, começando pelas prioridades alta (`MessagesController:1528`, `FreeTextAnswerPluginBase:98`, `MailImapSettingsForm:131`).
-2. Confirmar `Cli.php:1539` (origem de `$cmd`) e os quatro achados do gitleaks.
+1. Triar os 14 `#markup` PENDENTE, começando por `MessagesController:1528` (depende do módulo contrib `site_alert`).
+2. Confirmar `Cli.php:1539` (origem de `$cmd`) e os valores de `XapiAttemptTokenTest.php:17` (fixture ou segredo real).
 3. Aplicar `entity_print` 2.20.0 e `symfony/http-client` 7.4.23 no Runtime por fluxo controlado, e registrar o resultado.
 4. Executar `drupal/security_review` com Drush em modo somente leitura quando houver acesso ao Runtime.

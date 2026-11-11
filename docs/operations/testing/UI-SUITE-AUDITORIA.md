@@ -34,7 +34,7 @@ Estados: INSTALLED, CONFIGURED, EXECUTABLE, CI, DEFERRED, MISSING. Ferramenta s�
 | Fixtures de regra | CONFIGURED, EXECUTABLE | `.agents/skills/aculta-seguranca-estatica/tests/` | idem | bloqueante | idem | PASS 17/17 |
 | composer audit | EXECUTABLE (`--locked`) | repositório | idem | informativo (`continue-on-error`) | idem | PASS após atualização autorizada de `entity_print` 2.20.0 e `symfony/http-client` v7.4.23 |
 | npm audit | EXECUTABLE | `tests/browser` | idem | informativo | não integrado | PASS: 0 vulnerabilidades |
-| gitleaks 8.30.1 | INSTALLED, EXECUTABLE (release oficial, SHA256 verificado) | `$SUITE_OUT`/ferramentas | `aculta-seguranca-estatica` | triagem de achado | não integrado | executado em arquivos da entrega: 0 achados nela; 4 achados fora dela, PENDENTE; histórico Git não executado (guarda de worktree) |
+| gitleaks 8.30.1 | INSTALLED, EXECUTABLE (release oficial, SHA256 verificado) | `$SUITE_OUT`/ferramentas | `aculta-seguranca-estatica` | triagem de achado | não integrado | executado em arquivos da entrega: 0 achados nela; 4 achados classificados: 3 FP, 1 PENDENTE; histórico Git não executado (guarda de worktree) |
 | drupal/security_review | DEFERRED | Runtime (Drush) | idem | somente leitura | não | não executado (sem Drush/Runtime) |
 | ShellCheck | INSTALLED, EXECUTABLE | `/usr/bin/shellcheck` | `aculta-shell-qualidade` | `-S warning` em arquivos alterados | `quality-static.yml` | legado: 27 avisos (dívida) |
 | shfmt | INSTALLED, EXECUTABLE | `/usr/bin/shfmt` | idem | `-d` em arquivos alterados | idem | legado sem formatação (dívida); arquivo novo `.bats` formatado |
@@ -110,7 +110,7 @@ Escopo funcional restante (login/logout, sessões multidomínio, modais HTMX, fo
 
 1. Reexecutar o axe após sincronização controlada do Runtime e confirmar que os 14 `color-contrast` desaparecem.
 2. Revisar as candidatas visuais e decidir o local versionado das referências.
-3. Triar os 16 `#markup` PENDENTE e os 4 achados gitleaks fora da entrega.
+3. Triar os 14 `#markup` PENDENTE e o achado gitleaks `XapiAttemptTokenTest.php:17`.
 4. Aplicar `entity_print` 2.20.0 e `symfony/http-client` v7.4.23 no Runtime por fluxo controlado.
 5. Integrar Bats, Stylelint e ESLint ao `quality-static.yml` depois do primeiro run verde no GitHub.
 6. Pinar ações do GitHub por SHA verificado.
