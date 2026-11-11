@@ -109,5 +109,5 @@
     "separate Forum gallery end-to-end output"
   ],
   "rollback": "Restore only views.view.aculta_album_fotos from the parent commit and partial-import that single YAML, then rebuild caches. No entity data changed.",
-  "tested_commit": "pending commit"
+  "tested_commit": "06c2769c67b49326774f05a8b8f7368db1a6910b"
 }
