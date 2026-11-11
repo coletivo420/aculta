@@ -1,3 +1,8 @@
+## Não versionado — Runtime Sync v2 e leitura no painel do Deployer (2026-11-11)
+
+- `scripts/runtime-sync.sh` v2, `scripts/runtime-sync/helper.py`, `scripts/runtime-sync/risk-rules.yml` e `scripts/test-runtime-sync.sh`: estado persistente atômico 0600 em `var/runtime-sync/` (`state.json` e `latest.json`, schema 2), correção do bug em que `HEAD == origin/dev` saía sem reconstruir caches pendentes, classificador cumulativo `R0..R4`/`RX`, CLI com `plan [--refresh]`, `doctor`, `status`, `sync-code [--adopt-baseline]`, `verify`, `structural-plan` e `isolation-plan`.
+- `DeployerStatusReader::readRuntimeSync()` e `DeployerStatusController`: adaptador somente leitura exibe SHAs, situação de cache, risco, pendências, gates e histórico do Runtime Sync v2 no painel `/painel-administrativo/aculta/deployer` sem alterar `var/deployer/status.json` (schema 1) nem introduzir dependências no submódulo standalone `aculta_deployer`.
+
 ## Não versionado - catálogo de skills Runtime Sync (2026-11-11)
 
 - Duas skills canônicas para Codex/Claude: sincronização pós-push e migrações estruturais supervisionadas; matriz documental de avaliações RS-01 a RS-12.

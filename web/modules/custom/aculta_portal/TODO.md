@@ -1,5 +1,6 @@
 # TODO — aculta_portal
 
+- **Runtime Sync v2 (F0-F6):** sincronizador v2, classificador `R0-R4`/`RX`, `structural-plan`, `isolation-plan` e leitura somente leitura no painel do Deployer implementados; suíte isolada 24/24 PASS.
 - **ADR-054/055:** status do carrinho compõe `status-messages`; preserva Render API, papéis, link e contrato JS. Fallback do módulo é neutro.
 
 Estado: Dev · versão 0.5.0-dev.1 (`aculta_portal.info.yml`) · status: `docs/operations/status/aculta_portal.yml`.

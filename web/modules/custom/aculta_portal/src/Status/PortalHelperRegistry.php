@@ -186,8 +186,8 @@ final class PortalHelperRegistry {
       'docs' => 'docs/portal/DOMAIN-PRESENTATION-CONTRACT.md',
     ],
     'aculta_portal.deployer_status_reader' => [
-      'label' => 'Leitura do estado do Deployer',
-      'summary' => 'Lê o relatório neutro publicado pelo ACULTA Deployer sem executar sua CLI.',
+      'label' => 'Leitura do estado do Deployer e Runtime Sync',
+      'summary' => 'Lê os relatórios neutros publicados pelo ACULTA Deployer e pelo Runtime Sync v2 sem executar CLI.',
       'docs' => 'docs/architecture/environments.md',
     ],
     'aculta_portal.domain_site' => [

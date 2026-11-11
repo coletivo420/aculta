@@ -102,8 +102,175 @@ final class DeployerStatusController extends ControllerBase {
         '#url' => Url::fromRoute('aculta_portal.secrets_import'),
       ],
     ];
+    $build['runtime_sync'] = $this->buildRuntimeSyncSection();
     $build['not_included'] = ['#plain_text' => $this->t('Não incluído neste relatório: verificações de rede (sitemap e robots), que são comandos próprios da ferramenta.')];
     return $build;
+  }
+
+  /**
+   * Monta a seção somente leitura de estado do Runtime Sync v2.
+   *
+   * @return array<string, mixed>
+   *   Render array com SHAs, estado do cache, risco, gates e histórico.
+   */
+  private function buildRuntimeSyncSection(): array {
+    $sync = $this->reader->readRuntimeSync();
+    if ($sync === NULL) {
+      return [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'notice-warning'],
+        'text' => [
+          '#plain_text' => $this->t('⚠ Atenção: relatório do Runtime Sync v2 indisponível (var/runtime-sync/state.json). Execute a sincronização cotidiana ou o diagnóstico na raiz do checkout de desenvolvimento.'),
+        ],
+      ];
+    }
+
+    $checkoutSha = (string) ($sync['checkout_sha'] ?? 'UNKNOWN');
+    $remoteSha = (string) ($sync['remote_sha'] ?? 'UNKNOWN');
+    $validatedSha = (string) ($sync['last_validated_sha'] ?? 'UNKNOWN');
+    $cacheSha = (string) ($sync['last_cache_success_sha'] ?? 'UNKNOWN');
+    $pendingSha = (string) ($sync['pending_structural_sha'] ?? '—');
+    $pendingRisk = (string) ($sync['pending_structural_risk'] ?? '—');
+
+    $lastOp = is_array($sync['last_operation'] ?? NULL) ? $sync['last_operation'] : [];
+    $outcome = (string) ($lastOp['outcome'] ?? 'UNKNOWN');
+    $risk = (string) ($lastOp['risk'] ?? 'RX');
+    $mode = (string) ($lastOp['mode'] ?? '—');
+    $timestamp = (string) ($lastOp['timestamp'] ?? ($sync['updated_at'] ?? '—'));
+    $summary = (string) ($lastOp['summary'] ?? '—');
+
+    $cacheValidated = $validatedSha !== 'UNKNOWN' && $validatedSha === $checkoutSha && $cacheSha === $checkoutSha;
+    $cacheState = $cacheValidated ? 'ok' : ($cacheSha !== 'UNKNOWN' ? 'attention' : 'error');
+    $cacheLabel = $cacheValidated ? $this->t('Validado (@sha)', ['@sha' => substr($cacheSha, 0, 12)]) : $this->t('Pendente / desconhecido (@sha)', ['@sha' => $cacheSha === 'UNKNOWN' ? 'UNKNOWN' : substr($cacheSha, 0, 12)]);
+
+    $outcomeState = match ($outcome) {
+      'VALIDATED', 'NOOP', 'READY' => 'ok',
+      'PLANNED', 'INDETERMINATE' => 'attention',
+      default => 'error',
+    };
+    $riskState = match ($risk) {
+      'R0', 'R1' => 'ok',
+      'R2', 'R3' => 'attention',
+      default => 'error',
+    };
+
+    $section = [
+      '#type' => 'container',
+    ];
+    $section['summary_table'] = [
+      '#type' => 'table',
+      '#caption' => $this->t('Runtime Sync v2 — estado de sincronização e cache'),
+      '#header' => [
+        $this->t('Indicador'),
+        $this->t('Valor'),
+        $this->t('Status'),
+      ],
+      '#rows' => [
+        [
+          ['data' => ['#plain_text' => $this->t('SHA do checkout local')]],
+          ['data' => ['#plain_text' => $checkoutSha]],
+          $this->statusCell($checkoutSha !== 'UNKNOWN' ? 'ok' : 'attention'),
+        ],
+        [
+          ['data' => ['#plain_text' => $this->t('SHA remoto (origin/dev)')]],
+          ['data' => ['#plain_text' => $remoteSha]],
+          $this->statusCell($remoteSha === $checkoutSha && $remoteSha !== 'UNKNOWN' ? 'ok' : 'attention'),
+        ],
+        [
+          ['data' => ['#plain_text' => $this->t('Último SHA validado por completo')]],
+          ['data' => ['#plain_text' => $validatedSha]],
+          $this->statusCell($validatedSha === $checkoutSha && $validatedSha !== 'UNKNOWN' ? 'ok' : 'error'),
+        ],
+        [
+          ['data' => ['#plain_text' => $this->t('Situação do cache Drupal')]],
+          ['data' => ['#plain_text' => $cacheLabel]],
+          $this->statusCell($cacheState),
+        ],
+        [
+          ['data' => ['#plain_text' => $this->t('Risco classificado')]],
+          ['data' => ['#plain_text' => $risk]],
+          $this->statusCell($riskState, $risk),
+        ],
+        [
+          ['data' => ['#plain_text' => $this->t('Pendência estrutural')]],
+          ['data' => ['#plain_text' => $pendingSha !== '' && $pendingSha !== '—' ? $pendingSha . ' (' . $pendingRisk . ')' : $this->t('Nenhuma pendência bloqueante registrada')]],
+          $this->statusCell($pendingSha !== '' && $pendingSha !== '—' ? 'error' : 'ok'),
+        ],
+        [
+          ['data' => ['#plain_text' => $this->t('Última execução (@mode em @ts)', ['@mode' => $mode, '@ts' => $timestamp])]],
+          ['data' => ['#plain_text' => $summary]],
+          $this->statusCell($outcomeState, $outcome),
+        ],
+      ],
+      '#attributes' => ['data-portal-ui' => 'requirements'],
+    ];
+
+    $latest = is_array($sync['latest_report'] ?? NULL) ? $sync['latest_report'] : [];
+    $gates = is_array($latest['gates'] ?? NULL) ? $latest['gates'] : [];
+    $gateRows = [];
+    foreach ($gates as $gate) {
+      if (!is_array($gate)) {
+        continue;
+      }
+      $res = (string) ($gate['result'] ?? 'FAIL');
+      $gState = match ($res) {
+        'PASS' => 'ok',
+        'SKIP', 'DEFERRED', 'N/A' => 'attention',
+        default => 'error',
+      };
+      $gateRows[] = [
+        ['data' => ['#plain_text' => (string) ($gate['id'] ?? '')]],
+        ['data' => ['#plain_text' => (string) ($gate['reason'] ?? '')]],
+        $this->statusCell($gState, $res),
+      ];
+    }
+    $section['gates'] = [
+      '#type' => 'table',
+      '#caption' => $this->t('Gates da última execução do Runtime Sync'),
+      '#header' => [$this->t('Gate'), $this->t('Motivo / evidência'), $this->t('Resultado')],
+      '#rows' => $gateRows,
+      '#empty' => $this->t('Nenhum gate registrado no último relatório.'),
+      '#attributes' => ['data-portal-ui' => 'requirements'],
+    ];
+
+    $history = is_array($sync['history'] ?? NULL) ? array_slice($sync['history'], 0, 10) : [];
+    $historyRows = [];
+    foreach ($history as $item) {
+      if (!is_array($item)) {
+        continue;
+      }
+      $hOutcome = (string) ($item['outcome'] ?? 'UNKNOWN');
+      $hState = match ($hOutcome) {
+        'VALIDATED', 'NOOP', 'READY' => 'ok',
+        'PLANNED', 'INDETERMINATE' => 'attention',
+        default => 'error',
+      };
+      $historyRows[] = [
+        ['data' => ['#plain_text' => (string) ($item['timestamp'] ?? '—')]],
+        ['data' => ['#plain_text' => (string) ($item['mode'] ?? '—')]],
+        ['data' => ['#plain_text' => substr((string) ($item['checkout_sha'] ?? '—'), 0, 12)]],
+        ['data' => ['#plain_text' => (string) ($item['risk'] ?? '—')]],
+        ['data' => ['#plain_text' => (string) ($item['summary'] ?? '—')]],
+        $this->statusCell($hState, $hOutcome),
+      ];
+    }
+    $section['history'] = [
+      '#type' => 'table',
+      '#caption' => $this->t('Histórico resumido de operações do Runtime Sync'),
+      '#header' => [
+        $this->t('Instante'),
+        $this->t('Modo'),
+        $this->t('SHA local'),
+        $this->t('Risco'),
+        $this->t('Resumo'),
+        $this->t('Resultado'),
+      ],
+      '#rows' => $historyRows,
+      '#empty' => $this->t('Nenhuma operação registrada no histórico.'),
+      '#attributes' => ['data-portal-ui' => 'requirements'],
+    ];
+
+    return $section;
   }
 
   /**
