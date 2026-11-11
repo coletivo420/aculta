@@ -60,11 +60,12 @@ function aculta_lms_h5p_requirements($phase) {
     'severity' => extension_loaded('mbstring') ? DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => RequirementSeverity::OK, fn() => REQUIREMENT_OK) : DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => RequirementSeverity::Error, fn() => REQUIREMENT_ERROR),
   ];
 
-  $supported_php = version_compare(PHP_VERSION, '8.3.0', '>=');
+  // composer.json exige PHP >= 8.4: o Composer já impede instalação em versão anterior,
+  // então esta verificação só registra o estado atual. Ramo de erro removido (era inalcançável).
   $requirements['h5p_php_version'] = [
     'title' => t('PHP version'),
-    'description' => t('PHP 8.3 or later is required by the Drupal 11 integration.'),
-    'severity' => $supported_php ? DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => RequirementSeverity::OK, fn() => REQUIREMENT_OK) : DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => RequirementSeverity::Error, fn() => REQUIREMENT_ERROR),
+    'description' => t('PHP 8.4 or later is required by the Drupal 11 integration.'),
+    'severity' => DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => RequirementSeverity::OK, fn() => REQUIREMENT_OK),
   ];
 
   return $requirements;

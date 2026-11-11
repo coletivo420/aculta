@@ -39,3 +39,10 @@ Itens detalhados em [references/checklist-por-tela.md](references/checklist-por-
 ## Relação com outras skills
 
 Tokens e contraste: `css`. Markup de SDC: `sdc`. Classes editoriais: `ui-styles`. Ícones: `ui-icons`. Fragmentos e DOM: `htmx`. Motores: `aculta-navegador-testes`.
+
+## Contas de teste (uso)
+
+- As credenciais ficam em `secrets/` na raiz do checkout principal, ignorada pelo Git. O helper `tests/browser/auth-login.mjs` as lê em tempo de execução. Nunca abra, copie ou imprima esses arquivos; cite apenas o nome da conta.
+- Contas declaradas pelo helper: `teste_comum` e `teste_administrativo`, cada uma com um `.env` próprio. Se o `.env` não existir, o login falha com erro de conta desconhecida ou de credencial ausente: registre DEFERRED, não PASS.
+- Para testes autenticados de acessibilidade, use `login(page, host, 'teste_comum')` e, antes, confirme que o ambiente é `test` e que `captcha.settings:enable_globally=0` (ver `tests/browser/README.md`, seção "Login de teste por frente").
+- Conta administrativa só para verificar acesso negado e permissões; não use para alterar conteúdo.

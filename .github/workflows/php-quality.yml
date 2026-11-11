@@ -88,6 +88,9 @@ jobs:
       run: |
         composer install --prefer-dist --no-interaction
 
+    - name: Install Ghostscript (PdfThumbnailGeneratorTest depende de gs)
+      run: sudo apt-get update && sudo apt-get install -y ghostscript
+
     - name: Run Unit suite
       run: |
         mkdir -p artifacts

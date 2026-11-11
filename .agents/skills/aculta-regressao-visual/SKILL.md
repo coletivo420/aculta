@@ -50,3 +50,8 @@ Para cada tela, o teste deve afirmar além do pixel: ausência de overflow horiz
 
 - `aculta-acessibilidade` cuida de contraste e reflow funcionais; regressão visual cuida de aparência e alinhamento.
 - `css` define tokens e modos; `sdc` define o contrato do componente que será fotografado.
+
+## Contas de teste (uso)
+
+- Capturas autenticadas usam o helper `tests/browser/auth-login.mjs`, com as mesmas regras de `aculta-acessibilidade` (credenciais em `secrets/`, nunca impressas, DEFERRED se a conta faltar).
+- Capturas autenticadas exigem máscara de dados pessoais do usuário logado (nome, e-mail, avatar) e nunca devem ser versionadas sem revisão.
