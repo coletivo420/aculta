@@ -59,7 +59,7 @@ final class WikiCategoryContentIndexProvider implements ContentIndexProviderInte
    * {@inheritdoc}
    */
   public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
-    if (!$this->isIndexable($entity)) {
+    if (!$entity instanceof TermInterface || !$this->isIndexable($entity)) {
       return NULL;
     }
 

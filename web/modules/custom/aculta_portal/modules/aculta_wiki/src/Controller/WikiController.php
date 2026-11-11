@@ -58,9 +58,9 @@ final class WikiController extends ControllerBase {
       ->createAccess('wiki_entry', $this->account, [], TRUE);
     $collaborationUrl = Url::fromRoute('node.add', ['node_type' => 'wiki_entry']);
     $startUrl = $this->domainPurposeManager->routeUrl('wiki', 'aculta_studio.we_sativa_start');
-    if ($collaborationAccess instanceof AccessResultInterface && $collaborationAccess->isAllowed() && $startUrl !== NULL) {
+    if ($collaborationAccess->isAllowed() && $startUrl !== NULL) {
       $startAccess = $this->domainPurposeManager->runInPurpose('wiki', fn () => $startUrl->access($this->account, TRUE));
-      if ($startAccess instanceof AccessResultInterface && $startAccess->isAllowed()) {
+      if ($startAccess->isAllowed()) {
         $collaborationUrl = $startUrl;
         $collaborationAccess = $collaborationAccess->andIf($startAccess);
       }
@@ -288,7 +288,7 @@ final class WikiController extends ControllerBase {
     $ids = $query->condition($matches)->execute();
     $nodes = [];
     foreach ($nodeStorage->loadMultiple($ids) as $node) {
-      if ($node instanceof NodeInterface && $node->access('view')) {
+      if ($node->access('view')) {
         $nodes[] = $node;
       }
     }

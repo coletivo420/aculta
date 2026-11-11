@@ -9412,90 +9412,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/aculta_wiki.install
 
 		-
-			rawMessage: Instanceof between Drupal\file\Entity\File and Drupal\file\FileInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Cleanup/WikiLeadImageCleanup.php
-
-		-
-			rawMessage: Instanceof between Drupal\media\Entity\Media and Drupal\media\MediaInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Cleanup/WikiLeadImageCleanup.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\ContentEntityInterface::getChangedTime().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/ContentIndex/WikiCategoryContentIndexProvider.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\ContentEntityInterface::getName().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/ContentIndex/WikiCategoryContentIndexProvider.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\ContentEntityInterface::getRevisionCreationTime().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/ContentIndex/WikiCategoryContentIndexProvider.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\ContentEntityInterface::isPublished().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/ContentIndex/WikiCategoryContentIndexProvider.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\ContentEntityInterface::getChangedTime().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/ContentIndex/WikiContentIndexProvider.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\ContentEntityInterface::getCreatedTime().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/ContentIndex/WikiContentIndexProvider.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\ContentEntityInterface::isPublished().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/ContentIndex/WikiContentIndexProvider.php
-
-		-
-			rawMessage: Instanceof between Drupal\Core\Access\AccessResultInterface and Drupal\Core\Access\AccessResultInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Controller/WikiController.php
-
-		-
-			rawMessage: Instanceof between Drupal\node\Entity\Node and Drupal\node\NodeInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Controller/WikiController.php
-
-		-
-			rawMessage: Instanceof between Drupal\Core\Access\AccessResultInterface and Drupal\Core\Access\AccessResultInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Controller/WikiEntryCreateController.php
-
-		-
-			rawMessage: Access to an undefined property Drupal\Core\Field\FieldItemInterface::$value.
-			identifier: property.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Controller/WikiProposalStatusController.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityStorageInterface::loadMultipleRevisions().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Controller/WikiProposalStatusController.php
-
-		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Field\FieldDefinitionInterface::setRequired().'
 			identifier: method.notFound
 			count: 1
@@ -9506,36 +9422,6 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Entity/WikiProposalAccessControlHandler.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityStorageInterface::loadRevision().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/EventSubscriber/WikiEditorialNoticePublisher.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\RevisionableInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/EventSubscriber/WikiEditorialNoticePublisher.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\RevisionableInterface::getOwnerId().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/EventSubscriber/WikiEditorialNoticePublisher.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\RevisionableInterface::hasField().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/EventSubscriber/WikiEditorialNoticePublisher.php
-
-		-
-			rawMessage: Instanceof between Drupal\user\Entity\User and Drupal\user\UserInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/EventSubscriber/WikiEditorialNoticePublisher.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::set().'
@@ -9586,94 +9472,10 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Form/WikiProposalSubmissionForm.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::getCacheContexts().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiEntryImageHooks.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::getCacheTags().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiEntryImageHooks.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getFileUri().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiEntryImageHooks.php
-
-		-
-			rawMessage: 'Parameter #2 $node of method Drupal\aculta_wiki\Hook\WikiEntryImageHooks::addReviewAction() expects Drupal\node\NodeInterface, Drupal\Core\Entity\EntityInterface|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiEntryImageHooks.php
-
-		-
-			rawMessage: 'Strict comparison using === between string and null will always evaluate to false.'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiEntryImageHooks.php
-
-		-
-			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
-			identifier: globalDrupalDependencyInjection.useDependencyInjection
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiEntryImageHooks.php
-
-		-
 			rawMessage: Instanceof between Drupal\node\Entity\Node and Drupal\node\NodeInterface will always evaluate to true.
 			identifier: instanceof.alwaysTrue
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiEntryTitleSuggestions.php
-
-		-
-			rawMessage: Instanceof between Drupal\node\NodeInterface and Drupal\Core\Entity\SynchronizableInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiReviewHooks.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getRevisionId().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiContributionMigration.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::isDefaultRevision().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiContributionMigration.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::set().'
-			identifier: method.notFound
-			count: 22
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiContributionMigration.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::setRevisionCreationTime().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiContributionMigration.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::setRevisionLogMessage().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiContributionMigration.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::setRevisionUserId().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiContributionMigration.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityStorageInterface::loadMultipleRevisions().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiContributionMigration.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::addCacheContexts().'
@@ -9796,12 +9598,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiEditorialQueue.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Database\Query\ConditionInterface::execute().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiProposalDecision.php
-
-		-
 			rawMessage: 'Call to function is_string() with string will always evaluate to true.'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -9812,12 +9608,6 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiProposalWithdrawal.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Database\Query\ConditionInterface::execute().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/src/Upload/WikiLeadImageUploader.php
 
 		-
 			rawMessage: Instanceof between Drupal\media\Entity\Media and Drupal\media\MediaInterface will always evaluate to true.

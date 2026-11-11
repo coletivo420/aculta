@@ -13,7 +13,10 @@ use Drupal\aculta_wiki\Form\WikiEntryFormActions;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\File\FileUrlGeneratorInterface;
+use Drupal\file\FileInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\ContentEntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -48,6 +51,7 @@ final class WikiEntryImageHooks {
     private readonly AccountProxyInterface $currentUser,
     private readonly RouteProviderInterface $routeProvider,
     private readonly ?RecentUploads $recentUploads = NULL,
+    private readonly ?FileUrlGeneratorInterface $fileUrlGenerator = NULL,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
@@ -213,7 +217,9 @@ final class WikiEntryImageHooks {
       }
       $form['actions']['submit']['#submit'] = $submitHandlers;
     }
-    $this->addReviewAction($form, $node);
+    if ($node instanceof NodeInterface) {
+      $this->addReviewAction($form, $node);
+    }
   }
 
   /**
@@ -228,7 +234,7 @@ final class WikiEntryImageHooks {
    */
   private function previewMarkup(MediaInterface $media, string $alt): array {
     $file = $media->get('field_media_image')->entity;
-    if ($file === NULL) {
+    if (!$file instanceof FileInterface) {
       return ['#markup' => ''];
     }
     $uri = $file->getFileUri();
@@ -237,7 +243,7 @@ final class WikiEntryImageHooks {
       $src = Url::fromRoute('system.files', ['scheme' => 'private'], ['query' => ['file' => $relative]])->toString();
     }
     else {
-      $src = \Drupal::service('file_url_generator')->generateString($uri);
+      $src = $this->fileUrlGenerator?->generateString($uri) ?? '';
     }
     return ['#markup' => '<img src="' . Html::escape($src) . '" alt="' . Html::escape($alt) . '" class="img-fluid">'];
   }
@@ -387,7 +393,7 @@ final class WikiEntryImageHooks {
       return NULL;
     }
     $targetId = $node->get(WikiLeadImageUploader::FIELD)->target_id;
-    return $targetId === NULL || $targetId === '' ? NULL : (int) $targetId;
+    return $targetId === '' ? NULL : (int) $targetId;
   }
 
   /**
@@ -418,8 +424,9 @@ final class WikiEntryImageHooks {
       '#access' => $access,
       '#attributes' => ['data-portal-ui' => 'wiki-workspace-return'],
     ];
-    $form['#cache']['contexts'] = Cache::mergeContexts($form['#cache']['contexts'] ?? [], $access->getCacheContexts());
-    $form['#cache']['tags'] = Cache::mergeTags($form['#cache']['tags'] ?? [], $access->getCacheTags());
+    $accessMetadata = CacheableMetadata::createFromObject($access);
+    $form['#cache']['contexts'] = Cache::mergeContexts($form['#cache']['contexts'] ?? [], $accessMetadata->getCacheContexts());
+    $form['#cache']['tags'] = Cache::mergeTags($form['#cache']['tags'] ?? [], $accessMetadata->getCacheTags());
   }
 
 }

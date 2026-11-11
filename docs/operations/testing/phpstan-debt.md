@@ -231,3 +231,17 @@ Mudança transversal: `PerfilDoPapel::principal()/obter()` passaram a aceitar `E
 Escopo: `BillingAddressPane` 16 -> 0 (ProfileStorageInterface/ProfileInterface), `AccountAddressForm` 13 -> 0, `PortalController` 11 -> 0 (OrderInterface, SocialAuth, transporte, DI morta), `SupportController` 9 -> 0, `SubscriptionActionForm` 8 -> 0 (`TranslatableMarkup`, `PaymentGatewayInterface`), `PortalFormCallbacks` 7 -> 0 (`EntityFormInterface`), além de `TurnstileToggle`, `MediaContentIndexProvider`, `AdminEmailConfirmForm`, `SalesPaymentCancelForm`, `PortalHooks`, `TokenHooks`, `ContentCleanupPreview`, `EmailConfirmationRequester`, `SocialAuthProfileSubscriber`, `ContentIndexOwnerResolver`, `ContentIndexProjection`, `CheckoutStepResolver`, `FiscalIdentityPolicy`, `AccountCoursesManager`, `ShopController`, `SurfaceConfigReader` e `PortalRequirementsController`.
 
 Evidência: Unit 390/1361 PASS; `phpstan analyse` em `[OK] No errors`.
+
+## Rodada 16 — 2026-11-11 (aculta_wiki, produção — parcial)
+
+| Medida | Valor |
+| --- | ---: |
+| Erros brutos em aculta_wiki/src antes | ~110 |
+| Erros brutos em aculta_wiki/src ao final | 36 |
+| Erros brutos globais antes | 2857 |
+| Erros brutos globais ao final | 2797 |
+| Baseline atual | 2797 |
+
+Escopo: `WikiContributionMigration` 29 -> 0 (`RevisionableStorageInterface`, `Contribution`), `WikiEditorialNoticePublisher` 6 -> 0, `WikiEntryImageHooks` 6 -> 0 (DI de `file_url_generator`, `CacheableMetadata`), providers de Content Index, `WikiLeadImageCleanup`, `WikiController`, `WikiProposalStatusController`, `WikiReviewHooks`, `WikiProposalDecision` e `WikiLeadImageUploader` (selects com lock divididos em etapas). Evidência: Unit 94/455 PASS; YAML de serviços validado.
+
+Restante no módulo: `WikiEditorialQueue` (13), `WikiContributorWorkspace` (8), `WikiProposalSubmissionForm` (7) e avulsos — exigem narrowing de uniões `Contribution|WikiProposal` e reescrita de laços de paginação.

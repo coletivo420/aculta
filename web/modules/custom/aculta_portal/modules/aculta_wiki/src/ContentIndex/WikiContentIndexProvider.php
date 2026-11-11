@@ -58,6 +58,9 @@ final class WikiContentIndexProvider implements ContentIndexProviderInterface, C
    * {@inheritdoc}
    */
   public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
+    if (!$entity instanceof NodeInterface) {
+      return NULL;
+    }
     if (!$this->isIndexable($entity)) {
       return NULL;
     }

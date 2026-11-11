@@ -91,6 +91,7 @@ services:
       - '@current_user'
       - '@router.route_provider'
       - '@?aculta_file_uploader.recent_uploads'
+      - '@file_url_generator'
   Drupal\aculta_wiki\Hook\WikiLeadImageDownloadAccess:
     class: Drupal\aculta_wiki\Hook\WikiLeadImageDownloadAccess
     arguments: ['@file.repository', '@entity_type.manager', '@current_user']

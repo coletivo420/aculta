@@ -12,7 +12,10 @@ use Drupal\aculta_wiki\Event\WikiEntryReviewRequestedEvent;
 use Drupal\aculta_wiki\Event\WikiProposalOutcomeRecordedEvent;
 use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
+use Drupal\user\EntityOwnerInterface;
 use Drupal\user\UserInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -44,7 +47,8 @@ final class WikiEditorialNoticePublisher implements EventSubscriberInterface {
   public function reviewRequested(WikiEntryReviewRequestedEvent $event): void {
     $storage = $this->entityTypeManager->getStorage('node');
     $revision = $storage->loadRevision($event->entryRevisionId);
-    if (!$revision || $revision->uuid() !== $event->entryUuid || $revision->bundle() !== 'wiki_entry'
+    if (!$revision instanceof ContentEntityInterface || !$revision instanceof EntityOwnerInterface
+      || $revision->uuid() !== $event->entryUuid || $revision->bundle() !== 'wiki_entry'
       || !$revision->isDefaultRevision() || !$revision->hasField('moderation_state')
       || $revision->get('moderation_state')->value !== 'review') {
       return;
@@ -55,7 +59,7 @@ final class WikiEditorialNoticePublisher implements EventSubscriberInterface {
       'roles' => 'content_editor',
     ]);
     foreach ($editors as $editor) {
-      if (!$editor instanceof UserInterface || !$editor->isActive()
+      if (!$editor->isActive()
         || (int) $editor->id() === $authorUid
         || !$editor->hasPermission('edit any wiki_entry content')
         || (!$editor->hasPermission('use wiki_editorial transition review_to_draft')
@@ -87,8 +91,11 @@ final class WikiEditorialNoticePublisher implements EventSubscriberInterface {
   /**
    * Publishes a private outcome only to its active, authorized proposal author. */
   public function proposalOutcome(WikiProposalOutcomeRecordedEvent $event): void {
-    $contribution = $this->entityTypeManager->getStorage('aculta_contribution')
-      ->loadRevision($event->proposalRevisionId);
+    $contributionStorage = $this->entityTypeManager->getStorage('aculta_contribution');
+    if (!$contributionStorage instanceof RevisionableStorageInterface) {
+      return;
+    }
+    $contribution = $contributionStorage->loadRevision($event->proposalRevisionId);
     $recipient = $this->entityTypeManager->getStorage('user')->load($event->recipientUid);
     if (!$recipient instanceof UserInterface || !$recipient->isActive()) {
       return;
@@ -112,9 +119,13 @@ final class WikiEditorialNoticePublisher implements EventSubscriberInterface {
       return;
     }
 
-    $proposal = $this->entityTypeManager->getStorage('aculta_wiki_proposal')
-      ->loadRevision($event->proposalRevisionId);
-    if (!$proposal || $proposal->uuid() !== $event->proposalUuid
+    $proposalStorage = $this->entityTypeManager->getStorage('aculta_wiki_proposal');
+    if (!$proposalStorage instanceof RevisionableStorageInterface) {
+      return;
+    }
+    $proposal = $proposalStorage->loadRevision($event->proposalRevisionId);
+    if (!$proposal instanceof ContentEntityInterface || !$proposal instanceof EntityOwnerInterface
+      || $proposal->uuid() !== $event->proposalUuid
       || (int) $proposal->getRevisionId() !== $event->proposalRevisionId
       || (int) $proposal->getOwnerId() !== $event->recipientUid
       || $proposal->get('state')->value !== $event->outcome
