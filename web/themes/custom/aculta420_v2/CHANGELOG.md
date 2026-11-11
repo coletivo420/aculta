@@ -1,3 +1,19 @@
+## Não versionado — cascata, tokens e layouts da auditoria (2026-11-11)
+
+- `layout.css` volta a ser base do shell: as regras exclusivas da UI Patterns
+  Library foram para `component-library-mode.css` (carregada em toda rota da
+  biblioteca) e o container do `site_key` account para `portal-account.css`.
+  `ui-library-admin.css` deixa de repetir a moldura de `.ui_patterns_component`.
+- Removida a declaração duplicada de `--button-primary-bg-hover`; o token
+  `--aculta-surface-raised` segue como alias por `var()` nos dois modos.
+- `layout-page--stack` adota o container estreito configurável
+  (`--aculta-narrow-container-width`) e deixa a medida de leitura (68–70 ch)
+  para o conteúdo textual, alinhado ao fallback `.page__main--stack`.
+- Novas stories `aside-no-title`, `stack-no-title` e `full-no-title` cobrem
+  containers sem título e sem barra lateral.
+- Stylelint passou a zero erros nos CSS do tema; o gate de escopo foi
+  atualizado ao contrato `site_key` (RN-00..RN-05).
+
 ## Não versionado - auditoria de consistência CSS e layouts (2026-11-11)
 
 - Corrigido o contraste do cabeçalho institucional no SDC `surface-panel`

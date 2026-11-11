@@ -186,7 +186,7 @@ variante em `preprocess_page`; o Portal não envia chave de layout.
 
 | Variante | Abaixo de 60rem | A partir de 60rem |
 | --- | --- | --- |
-| `stack` | Uma coluna | Uma coluna, com largura de leitura |
+| `stack` | Uma coluna | Uma coluna, com container estreito configurável |
 | `aside` | Conteúdo; barra lateral depois do conteúdo, em coluna única | Duas colunas: barra lateral de 16rem à esquerda, conteúdo à direita |
 | `full` | Uma coluna, largura total | Uma coluna, sem limite de largura de leitura |
 
@@ -200,6 +200,13 @@ Observações:
 - **Medida da coluna de conteúdo:** leitura de 36rem para texto corrido. Somando
   36rem de leitura, 16rem de barra lateral, espaço entre elas e margens, dá
   cerca de 56rem. O breakpoint de 60rem deixa essa folga.
+- **Container externo × medida de leitura:** `stack` usa o container estreito
+  do tema (`--aculta-narrow-container-width`, 750 px por padrão, ajustável pelo
+  slider de largura estreita) e o mesmo valor do fallback
+  `.page__main--stack`. A medida de leitura (68–70 ch) fica no conteúdo
+  textual, não no container, para não estrangular formulários e tabelas. O
+  SDC `layout-narrow` continua sendo a ferramenta específica de medida de
+  leitura (68 ch).
 - **`full`:** para grades de cartões, catálogos e listas de evento. Cada cartão
   tem sua largura; a página não limita o texto.
 

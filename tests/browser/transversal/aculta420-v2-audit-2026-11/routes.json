@@ -1,0 +1,10 @@
+{
+  "front": "aculta420-v2-audit-2026-11",
+  "purpose": "transversal",
+  "origin_env": "ACULTA_SITE_ORIGIN",
+  "source": "tests/browser/transversal/aculta420-v2-audit-2026-11/README.md",
+  "public_routes": [
+    { "path": "/" }
+  ],
+  "notes": "A cobertura por largura, modo de cor, contraste e aside está em audit.mjs."
+}

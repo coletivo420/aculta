@@ -12,9 +12,16 @@
 - Removida a trilha vazia `navigation` do grid do shell v2; comentários
   alinham-se às cinco regiões finais. Alias `--aculta-surface-raised` agora
   acompanha `--color-surface-raised` em claro/escuro.
-- Estado: alterações estáticas publicadas, **validação no Runtime DEFERRED**.
-  Faltam Stylelint, gates PHP/Drush, inspeção de visual/teclado/zoom,
-  inventário de CSS global e migração de aliases não equivalentes.
+- Cascata: CSS exclusivo da UI Patterns Library saiu de `layout.css` para
+  `component-library-mode.css`; o container do `site_key` account foi para
+  `portal-account.css`; `ui-library-admin.css` não repete a moldura dos
+  cartões. `layout-page--stack` usa `--aculta-narrow-container-width` e a
+  leitura de 68–70 ch fica no conteúdo. Stories sem título e sem sidebar
+  foram adicionadas.
+- Estado: gates estáticos, Stylelint e PHPUnit aprovados. A homologação de
+  navegador (10 domínios públicos — incluindo o Fórum em `growroom420` —,
+  7 larguras, claro/escuro, conta autenticada e UI Library) está registrada em
+  `tests/browser/capturas/aculta420-v2-audit/2026-11-11/manifest.json`.
   Ver `docs/architecture/ACULTA420-V2-AUDITORIA-CSS-LAYOUT-2026-11-11.md`.
 
 ## CSP — remoção das violações de estilo inline (2026-11-11)

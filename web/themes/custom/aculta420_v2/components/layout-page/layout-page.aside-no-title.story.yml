@@ -1,0 +1,12 @@
+name: Barra lateral sem título
+description: Duas colunas a partir de 60rem sem região de título; a barra fica à esquerda no desktop.
+component: aculta420_v2:layout-page
+props:
+  variant: aside
+slots:
+  content:
+    type: inline_template
+    template: '<p>Conteúdo principal sem título de página.</p>'
+  aside:
+    type: inline_template
+    template: '<h2>Relacionados</h2><p>Links e informações complementares.</p>'

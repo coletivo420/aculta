@@ -61,7 +61,9 @@ Os cinco layouts usam `group: Layouts` e são registrados automaticamente pelo
 ### layout-page
 
 Estrutura o landmark main nas variantes stack, aside e full; stories:
-layout-page.default (aside), layout-page.stack e layout-page.full. Slots: title, content
+layout-page.default (aside), layout-page.aside-no-title, layout-page.stack,
+layout-page.stack-no-title, layout-page.full e layout-page.full-no-title.
+Slots: title, content
 e aside. O conteúdo principal precede o complementar no DOM; a partir de 60rem,
 aside com conteúdo forma duas colunas, com a área complementar à esquerda
 apenas no visual (CSS Grid). Sem aside, a página permanece em uma coluna.
