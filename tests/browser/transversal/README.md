@@ -7,6 +7,7 @@ Cada frente tem o próprio `README.md` com URLs, pré-requisitos e critérios.
 - [`aculta-content-admin/`](./aculta-content-admin/README.md) — Revisão visual do Painel de conteúdo
 - [`aculta-document-viewer/`](./aculta-document-viewer/README.md) — Revisão visual do ACULTA Document Viewer
 - [`aculta-editor/`](./aculta-editor/README.md) — ACULTA Editor — acesso anônimo, editor e administrador
+- [`aculta-home-editorial-ui-patterns/`](./aculta-home-editorial-ui-patterns/README.md) — Home editorial — UI Patterns Views
 - [`aculta-htmx-f1/`](./aculta-htmx-f1/README.md) — ACULTA420 V2 — HTMX F1 (busca e login)
 - [`aculta-image-admin/`](./aculta-image-admin/README.md) — Revisão visual das opções administrativas do ACULTA Image
 - [`aculta-theme-mobile-first/`](./aculta-theme-mobile-first/README.md) — ACULTA420 — SDC responsivos do tema

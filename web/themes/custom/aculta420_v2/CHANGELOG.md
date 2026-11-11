@@ -1075,3 +1075,9 @@ State: Dev. No RC, production deployment, or release tag is declared.
 
 - `aculta_news:block_1` passa a compor o SDC `revista-listing` sobre quatro nodes teaser, preservando acesso, filtros, ordenação e cache da View. O SDC aceita wrappers Views e nodes diretos retornados pelo style UI Patterns.
 - Removida dessa View a classe genérica `aculta-editorial-list`; o script de instalação deixa de recriá-la para `aculta_news`. Browser Firefox ESR: A/B 10/10 em cinco larguras, claro/escuro; zoom/cache-hit seguem pendentes.
+
+## Não versionado — Home editorial em UI Patterns Views (2026-11-11)
+
+- `home_editorial_highlights:block_1` substitui o style VVJB pelo SDC `layout-grid`. Os três destaques curados continuam sob Views e seus campos/layout continuam renderizados pelo Layout Builder.
+- Runtime anônimo manteve HTTP 200, IDs 14–16 e acesso/query/filtros/ordenação/pager/cache. Firefox ESR: A/B 10/10 em 320/390/768/1024/1440, claro/escuro, foco visível, contraste mínimo 8.80:1 e zero overflow.
+- O cache de página permanece private/no-cache/UNCACHEABLE; cache-hit, zoom 200% e homologação ampliada pendem. VVJB não possui View consumidora; sua extensão não foi desinstalada.

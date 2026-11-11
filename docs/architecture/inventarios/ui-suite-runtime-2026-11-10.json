@@ -1,975 +1,1049 @@
 {
-    "observed_at_utc": "2026-11-11T05:02:19+00:00",
-    "drupal_version": "11.5.0-beta1",
-    "evidence_command": "Drush Runtime export and targeted partial imports after snapshots; ComponentLayout discovery; 276-check Layout Builder batch validator; render-array/access parity checks; anonymous Firefox A/B/A pilot; Forum categories and UI Styles Entity Status targeted imports; UI Styles Entity Status isolated functional test",
-    "ui_suite_modules": {
-        "ui_icons": {
-            "status": "Enabled",
-            "version": "2.1.0"
-        },
-        "ui_icons_canvas": {
-            "status": "Disabled",
-            "version": "2.1.0"
-        },
-        "ui_icons_ckeditor5": {
-            "status": "Enabled",
-            "version": "2.1.0"
-        },
-        "ui_icons_field": {
-            "status": "Enabled",
-            "version": "2.1.0"
-        },
-        "ui_icons_field_link_attributes": {
-            "status": "Disabled",
-            "version": "2.1.0"
-        },
-        "ui_icons_field_linkit": {
-            "status": "Disabled",
-            "version": "2.1.0"
-        },
-        "ui_icons_field_linkit_attributes": {
-            "status": "Disabled",
-            "version": "2.1.0"
-        },
-        "ui_icons_font": {
-            "status": "Disabled",
-            "version": "2.1.0"
-        },
-        "ui_icons_library": {
-            "status": "Enabled",
-            "version": "2.1.0"
-        },
-        "ui_icons_media": {
-            "status": "Disabled",
-            "version": "2.1.0"
-        },
-        "ui_icons_menu": {
-            "status": "Enabled",
-            "version": "2.1.0"
-        },
-        "ui_icons_patterns": {
-            "status": "Enabled",
-            "version": "2.1.0"
-        },
-        "ui_icons_picker": {
-            "status": "Enabled",
-            "version": "2.1.0"
-        },
-        "ui_icons_popover": {
-            "status": "Enabled",
-            "version": "2.1.0"
-        },
-        "ui_icons_text": {
-            "status": "Enabled",
-            "version": "2.1.0"
-        },
-        "ui_patterns": {
-            "status": "Enabled",
-            "version": null
-        },
-        "ui_patterns_blocks": {
-            "status": "Enabled",
-            "version": null
-        },
-        "ui_patterns_ckeditor5": {
-            "status": "Enabled",
-            "version": null
-        },
-        "ui_patterns_field": {
-            "status": "Enabled",
-            "version": null
-        },
-        "ui_patterns_field_formatters": {
-            "status": "Enabled",
-            "version": null
-        },
-        "ui_patterns_field_group": {
-            "status": "Enabled",
-            "version": null
-        },
-        "ui_patterns_layouts": {
-            "status": "Enabled",
-            "version": null
-        },
-        "ui_patterns_legacy": {
-            "status": "Disabled",
-            "version": null
-        },
-        "ui_patterns_library": {
-            "status": "Enabled",
-            "version": null
-        },
-        "ui_patterns_ui": {
-            "status": "Enabled",
-            "version": null
-        },
-        "ui_patterns_views": {
-            "status": "Enabled",
-            "version": null
-        },
-        "ui_skins": {
-            "status": "Enabled",
-            "version": "1.2.1"
-        },
-        "ui_styles": {
-            "status": "Enabled",
-            "version": "8.x-1.22"
-        },
-        "ui_styles_block": {
-            "status": "Enabled",
-            "version": "8.x-1.22"
-        },
-        "ui_styles_ckeditor5": {
-            "status": "Enabled",
-            "version": "8.x-1.22"
-        },
-        "ui_styles_entity_status": {
-            "status": "Enabled",
-            "version": "8.x-1.22"
-        },
-        "ui_styles_layout_builder": {
-            "status": "Enabled",
-            "version": "8.x-1.22"
-        },
-        "ui_styles_library": {
-            "status": "Enabled",
-            "version": "8.x-1.22"
-        },
-        "ui_styles_page": {
-            "status": "Enabled",
-            "version": "8.x-1.22"
-        },
-        "ui_styles_ui_patterns": {
-            "status": "Enabled",
-            "version": "8.x-1.22"
-        },
-        "ui_styles_views": {
-            "status": "Enabled",
-            "version": "8.x-1.22"
-        }
+  "observed_at_utc": "2026-11-11T05:25:48Z",
+  "drupal_version": "11.5.0-beta1",
+  "evidence_command": "Drush Runtime export and targeted partial imports after snapshots; ComponentLayout discovery; 276-check Layout Builder batch validator; render-array/access parity checks; anonymous Firefox A/B/A pilot; Forum categories and UI Styles Entity Status targeted imports; UI Styles Entity Status isolated functional test",
+  "ui_suite_modules": {
+    "ui_icons": {
+      "status": "Enabled",
+      "version": "2.1.0"
     },
-    "config_sync_drift_relevant": [
-        "aculta420_v2.settings",
-        "aculta_portal.visual_skins",
-        "core.extension",
-        "taxonomy.vocabulary.aculta_forum_categories",
-        "ui_icons_patterns.settings",
-        "views.view.aculta_forum_categories"
-    ],
-    "runtime_config": {
-        "ui_skins_module": "enabled 1.2.1",
-        "ui_skins_theme_css_variables": "active on aculta420_v2.settings; Ruderalis light color_accent=#76a82c, dark=#89c72c",
-        "aculta_portal.visual_skins": "active; links_aculta_org= ruderalis; other domains use skunk default",
-        "views.view.aculta_forum_categories.page_categories.row": "ui_patterns",
-        "views.view.aculta_forum_categories.block_landing.row": "ui_patterns",
-        "core.entity_view_display.node.page.full": "ui_patterns:aculta420_v2:layout_section; Render API/browser confirmed",
-        "core.entity_view_display.node.page.default": "ui_patterns:aculta420_v2:layout_section; Render API/browser confirmed",
-        "ui_patterns_ckeditor5": "enabled preexisting; prohibited for this implementation; removal requires separate authorization",
-        "ui_patterns_field_group": "enabled preexisting 2.0.x-dev; blocked upstream pending security and Drupal 12 support assessment",
-        "ui_styles_ckeditor5": "enabled 8.x-1.22; Config Sync and Runtime active for editorial styles",
-        "ui_styles_entity_status": "enabled 8.x-1.22; unpublished_preview => aculta-content-status--unpublished; class resolution and upstream isolated functional test passed; Runtime visual/access/cache acceptance pending; pre-change snapshots recorded before module enable and targeted theme config import",
-        "layout_builder_component_displays": "22 eligible configs use ui_patterns:aculta420_v2:layout_section; 21 render ComponentLayout wrappers; node.wiki_entry.full renders via direct wiki-entry SDC template",
-        "views.view.aculta_forum_categories.page_categories.display": "ui_patterns:aculta420_v2:views-display; row SDC forum-category; native grouped style, access and pager preserved",
-        "views.view.aculta_forum_categories.block_landing": "row UI Patterns; default style and display; placement hidden on public home, no visible-output acceptance claimed",
-        "ui_patterns_views": "enabled; four row/style/display plugin assignments across Albums and Forum Categories"
+    "ui_icons_canvas": {
+      "status": "Disabled",
+      "version": "2.1.0"
     },
-    "notes": [
-        "UI Skins map and CSS variables are active; anonymous A/B/A requests returned distinct Ruderalis/Skunk values without cross-host carryover.",
-        "All 22 eligible configs reference layout-section and match Runtime/Sync. The 276-check validator confirms 21 rendered ComponentLayout wrappers and the direct wiki-entry SDC template for node.wiki_entry.full, plus published-entity render arrays and default-layout access. Import was targeted after a Runtime snapshot; no entity data changed.",
-        "node.document.full and block_content.basic.default remain the two documented exclusions because their Layout Builder configuration loses content.",
-        "Dynamic page cache reports UNCACHEABLE for tested pages, so cache-hit variation remains DEFERRED even though sequential host rendering did not leak skins.",
-        "UI Patterns Field Group remains preexisting and BLOCKED_UPSTREAM for security/Drupal 12 assessment. UI Patterns CKEditor 5 remains preexisting but unused in this implementation; removal requires a separately authorized config operation.",
-        "The Runtime is Drupal 11.5.0-beta1; Drupal 12 compatibility cannot be inferred from a Drupal 11 runtime test.",
-        "Global config:status still reports unrelated drift; the 22 migrated Layout Builder display configurations match Sync after Runtime serialization normalization.",
-        "node.wiki_entry.full has a purpose-built Twig adapter that renders the wiki-entry SDC directly from access-checked fields; it bypasses the configured Layout Builder wrapper and is validated as a UI_SUITE_NATIVE adapter.",
-        "Wiki full browser acceptance is DEFERRED: anonymous GET returned 403 and the authenticated Firefox runner produced a blank document without title/main; the artifact was not counted as a pass.",
-        "The public Forum categories page now wraps its native grouped View output with views-display while retaining the forum-category row and native style. Runtime partial import changed only views.view.aculta_forum_categories after a config snapshot; anonymous HTTP 200 and 12 category cards remained, with one H1/main, zero horizontal scroll at five light widths and two dark widths, and keyboard-visible focus.",
-        "The Events catalogue style pilot wraps the existing aculta_events_catalogue_card rows in the UI Patterns layout-grid. A targeted partial import changed only views.view.eventos_publicos after a Runtime snapshot (SHA-256 37a007b412a411f33d6b39c130ee98083aa3dbe8f836a3f9dd284dcc1c139d23); effective Views handler, anonymous access, two cards and Firefox ESR 320/1440 light/dark with visible keyboard focus and no horizontal scroll were verified. The detail-route smoke is separate. Cache-hit and zoom 200% remain unverified. An earlier broad-source partial import briefly disabled ui_styles_library, ui_patterns_field_group and ui_patterns_ui; these modules were immediately re-enabled, with no content data changes. Do not repeat broad-source partial imports; isolate target YAML in a temporary source directory.",
-        "UI Styles Block now applies the registered raised-surface and normal-spacing choices to the MAIN-only transparency block aculta420_v2_aculta_documents. The isolated block config import followed a Runtime snapshot (SHA-256 stored in the capture manifest); anonymous Runtime retained three View rows, and Firefox verified computed light/dark background, 16/24 px responsive padding, keyboard focus, one H1/main and no overflow at 320/390/768/1024/1440. UI Styles Page still uses theme-global region settings with no domain-aware assignment, so it is not used for domain-specific skins.",
-        "The public Revista news View aculta_news:block_1 now uses UI Patterns style revista-listing around the native node teaser render arrays. Four published teaser nodes, anonymous access, filter/sort/pager/query/cache contracts and visible H1/main were compared before/after. The legacy aculta-editorial-list class was removed from this View only; its CSS remains for other active consumers.",
-        "Repeated anonymous requests to the Revista News route returned 200 and X-Drupal-Cache MISS; the response is no-cache/private and X-Drupal-Dynamic-Cache reports UNCACHEABLE (poor cacheability). The response differed only in per-request View DOM ID and CSP nonce; the four result IDs were stable. This does not constitute a cache-hit test."
-    ],
-    "block_styles": {
-        "aculta420_v2_aculta_documents": {
-            "status": "runtime_verified",
-            "owner_module": "views:aculta_documents",
-            "plugin": "views_block:aculta_documents-block_1",
-            "region": "content",
-            "visibility": {
-                "path": "/transparencia",
-                "domain_purpose": "main"
-            },
-            "ui_styles": {
-                "block.surface_style": "aculta-surface aculta-surface--tone-raised",
-                "block.spacing_section": "aculta-surface aculta-surface--spacing-normal"
-            },
-            "row_count": 3,
-            "anonymous_access": "allowed",
-            "computed_background": {
-                "light": "luminance > 0.8",
-                "dark": "luminance < 0.2"
-            },
-            "computed_text_contrast_ratio": {
-                "minimum": 12.39,
-                "maximum": 12.96
-            },
-            "computed_padding_css_px": {
-                "320": 16,
-                "390": 16,
-                "768": 24,
-                "1024": 24,
-                "1440": 24
-            },
-            "keyboard_focus": "visible",
-            "horizontal_scroll": false,
-            "evidence_manifest": "tests/browser/capturas/ui-styles-block/2026-11-11/manifest.json",
-            "limitations": [
-                "Zoom 200% and cache-hit variation not tested."
-            ]
-        }
+    "ui_icons_ckeditor5": {
+      "status": "Enabled",
+      "version": "2.1.0"
     },
-    "layout_builder_displays": {
-        "core.entity_view_display.block_content.aculta_editorial.default": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "field_block:block_content:aculta_editorial:body"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.block_content.aculta_institution.contact": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "field_block:block_content:aculta_institution:field_address",
-                "field_block:block_content:aculta_institution:field_email",
-                "field_block:block_content:aculta_institution:field_org_name",
-                "field_block:block_content:aculta_institution:field_phone",
-                "field_block:block_content:aculta_institution:field_site"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.block_content.aculta_institution.default": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "field_block:block_content:aculta_institution:field_address",
-                "field_block:block_content:aculta_institution:field_cnpj",
-                "field_block:block_content:aculta_institution:field_email",
-                "field_block:block_content:aculta_institution:field_governance",
-                "field_block:block_content:aculta_institution:field_headquarters",
-                "field_block:block_content:aculta_institution:field_legal_nature",
-                "field_block:block_content:aculta_institution:field_org_name",
-                "field_block:block_content:aculta_institution:field_phone",
-                "field_block:block_content:aculta_institution:field_site"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.block_content.aculta_institution.footer": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "field_block:block_content:aculta_institution:field_cnpj",
-                "field_block:block_content:aculta_institution:field_headquarters",
-                "field_block:block_content:aculta_institution:field_org_description",
-                "field_block:block_content:aculta_institution:field_org_name",
-                "field_block:block_content:aculta_institution:field_site"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.block_content.aculta_institution.full": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "field_block:block_content:aculta_institution:field_address",
-                "field_block:block_content:aculta_institution:field_cnpj",
-                "field_block:block_content:aculta_institution:field_email",
-                "field_block:block_content:aculta_institution:field_governance",
-                "field_block:block_content:aculta_institution:field_headquarters",
-                "field_block:block_content:aculta_institution:field_legal_nature",
-                "field_block:block_content:aculta_institution:field_org_name",
-                "field_block:block_content:aculta_institution:field_phone",
-                "field_block:block_content:aculta_institution:field_site"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.block_content.aculta_institution.home": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "field_block:block_content:aculta_institution:field_cnpj",
-                "field_block:block_content:aculta_institution:field_headquarters",
-                "field_block:block_content:aculta_institution:field_nonprofit_description",
-                "field_block:block_content:aculta_institution:field_org_name",
-                "field_block:block_content:aculta_institution:field_site"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.block_content.aculta_institution.institutional": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "field_block:block_content:aculta_institution:field_address",
-                "field_block:block_content:aculta_institution:field_cnpj",
-                "field_block:block_content:aculta_institution:field_email",
-                "field_block:block_content:aculta_institution:field_headquarters",
-                "field_block:block_content:aculta_institution:field_legal_nature",
-                "field_block:block_content:aculta_institution:field_opening_date",
-                "field_block:block_content:aculta_institution:field_org_name",
-                "field_block:block_content:aculta_institution:field_phone",
-                "field_block:block_content:aculta_institution:field_site"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.block_content.aculta_institution.registration": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "field_block:block_content:aculta_institution:field_address",
-                "field_block:block_content:aculta_institution:field_cnpj",
-                "field_block:block_content:aculta_institution:field_email",
-                "field_block:block_content:aculta_institution:field_governance",
-                "field_block:block_content:aculta_institution:field_legal_code",
-                "field_block:block_content:aculta_institution:field_legal_nature",
-                "field_block:block_content:aculta_institution:field_main_activity",
-                "field_block:block_content:aculta_institution:field_opening_date",
-                "field_block:block_content:aculta_institution:field_org_name",
-                "field_block:block_content:aculta_institution:field_phone",
-                "field_block:block_content:aculta_institution:field_registration_status",
-                "field_block:block_content:aculta_institution:field_secondary_activity",
-                "field_block:block_content:aculta_institution:field_site",
-                "field_block:block_content:aculta_institution:field_trade_name"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.node.activity.default": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "extra_field_block:node:activity:links",
-                "field_block:node:activity:body",
-                "field_block:node:activity:field_event_city",
-                "field_block:node:activity:field_event_end",
-                "field_block:node:activity:field_event_location",
-                "field_block:node:activity:field_event_start",
-                "field_block:node:activity:field_event_status",
-                "field_block:node:activity:field_event_street",
-                "field_block:node:activity:field_media_image",
-                "field_block:node:activity:field_online_url",
-                "field_block:node:activity:field_place_name",
-                "field_block:node:activity:field_registration_url",
-                "field_block:node:activity:field_summary"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.node.activity.full": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "extra_field_block:node:activity:links",
-                "field_block:node:activity:body"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.node.aculta_adm.default": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "extra_field_block:node:aculta_adm:links",
-                "field_block:node:aculta_adm:body"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.node.aculta_faq.default": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "field_block:node:aculta_faq:body"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.node.aculta_notice.default": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "extra_field_block:node:aculta_notice:content_moderation_control",
-                "extra_field_block:node:aculta_notice:flag_aculta_notice_read",
-                "field_block:node:aculta_notice:body"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.node.document.default": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "extra_field_block:node:document:links",
-                "field_block:node:document:body",
-                "field_block:node:document:field_category",
-                "field_block:node:document:field_document"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.node.editorial_highlight.default": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "field_block:node:editorial_highlight:field_category",
-                "field_block:node:editorial_highlight:field_complement",
-                "field_block:node:editorial_highlight:field_link",
-                "field_block:node:editorial_highlight:field_summary"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.node.page.default": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "extra_field_block:node:page:links",
-                "field_block:node:page:body"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.node.page.full": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "extra_field_block:node:page:links",
-                "field_block:node:page:body"
-            ],
-            "allow_custom": true,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.node.revista.default": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "extra_field_block:node:revista:content_moderation_control",
-                "extra_field_block:node:revista:links",
-                "field_block:node:revista:body",
-                "field_block:node:revista:field_editorial_author",
-                "field_block:node:revista:field_media_image",
-                "field_block:node:revista:field_subtitle",
-                "field_block:node:revista:field_summary"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.node.revista.full": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "extra_field_block:node:revista:content_moderation_control",
-                "field_block:node:revista:body",
-                "field_block:node:revista:field_aculta_discussion",
-                "field_block:node:revista:field_credits",
-                "field_block:node:revista:field_editorial_category",
-                "field_block:node:revista:field_media_image",
-                "field_block:node:revista:field_references",
-                "field_block:node:revista:field_subtitle",
-                "field_block:node:revista:field_summary",
-                "field_block:node:revista:field_tags"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.node.wiki_entry.default": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "extra_field_block:node:wiki_entry:content_moderation_control",
-                "extra_field_block:node:wiki_entry:links",
-                "field_block:node:wiki_entry:body",
-                "field_block:node:wiki_entry:field_wiki_categories",
-                "field_block:node:wiki_entry:field_wiki_image",
-                "field_block:node:wiki_entry:field_wiki_references",
-                "field_block:node:wiki_entry:field_wiki_related",
-                "field_block:node:wiki_entry:field_wiki_summary"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        },
-        "core.entity_view_display.node.wiki_entry.full": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; direct wiki-entry SDC template rendered; Layout Builder wrapper is bypassed by the view-mode adapter",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "extra_field_block:node:wiki_entry:content_moderation_control",
-                "extra_field_block:node:wiki_entry:links",
-                "field_block:node:wiki_entry:body",
-                "field_block:node:wiki_entry:field_aculta_discussion",
-                "field_block:node:wiki_entry:field_wiki_categories",
-                "field_block:node:wiki_entry:field_wiki_image",
-                "field_block:node:wiki_entry:field_wiki_references",
-                "field_block:node:wiki_entry:field_wiki_related",
-                "field_block:node:wiki_entry:field_wiki_summary"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "direct_sdc_template"
-        },
-        "core.entity_view_display.taxonomy_term.editorial_author.default": {
-            "layout_id": "ui_patterns:aculta420_v2:layout_section",
-            "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 276-check batch validator",
-            "regions": [
-                "content"
-            ],
-            "components_preserved": [
-                "field_block:taxonomy_term:editorial_author:description"
-            ],
-            "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
-            "render_strategy": "layout_builder_component_layout"
-        }
+    "ui_icons_field": {
+      "status": "Enabled",
+      "version": "2.1.0"
     },
-    "browser_validation": {
-        "environment": "development",
-        "method": "Firefox ESR visible for responsive capture; anonymous Firefox for A/B/A host check",
-        "links_skin_sequence": [
-            "ruderalis",
-            "skunk",
-            "ruderalis"
-        ],
-        "http_status_sequence": [
-            200,
-            200,
-            200
-        ],
-        "computed_accent_light": [
-            "#76a82c",
-            "#5a8022",
-            "#76a82c"
-        ],
-        "computed_accent_dark": [
-            "#89c72c",
-            "#6c9e22",
-            "#89c72c"
-        ],
-        "one_h1_and_main_each_page": true,
-        "links_viewports_css_px": [
-            1280,
-            320
-        ],
-        "links_horizontal_overflow": false,
-        "dynamic_page_cache": "UNCACHEABLE on tested anonymous pages; host skin isolation observed, cache-hit variation not proven",
-        "screenshots": "SUITE_OUT/links-layout-sdc-final-2026-11-10; filenames and hashes in tests/browser/capturas/ui-suite-links/2026-11-10/manifest.json",
-        "wiki_full_view": {
-            "path": "/verbete/proibicionismo",
-            "anonymous_http_status": 403,
-            "authenticated_browser_status": "DEFERRED",
-            "reason": "The existing Firefox runner received a blank document without title/main after its one-time-login flow; screenshot is not accepted as evidence. The direct SDC output is verified by the Runtime render gate only."
-        },
-        "ui_patterns_library": {
-            "path": "/painel-administrativo/aparencia/ui/components/aculta420_v2",
-            "provider_groups": 16,
-            "components": 82,
-            "preview_links": 82,
-            "loaded_sdc_stories": 1,
-            "http_status": 200,
-            "viewports_css_px": [
-                1280,
-                320
-            ],
-            "horizontal_scroll": false,
-            "responsive_acceptance": "DEFERRED: admin list elements extend past 320px viewport despite documentWidth=320 and maxScrollX=0",
-            "evidence_manifest": "tests/browser/capturas/ui-suite-library/2026-11-10/manifest.json",
-            "capture_manifest": "tests/browser/capturas/ui-suite-library/2026-11-10/manifest.json"
-        }
+    "ui_icons_field_link_attributes": {
+      "status": "Disabled",
+      "version": "2.1.0"
     },
-    "view_displays": {
-        "eventos_publicos": {
-            "owner_module": "aculta_events",
-            "config_path": "config/sync/views.view.eventos_publicos.yml",
-            "displays": {
-                "block_1": {
-                    "consumer_id": "block_1",
-                    "status": "runtime_verified",
-                    "configuration_import": "targeted partial import with only views.view.eventos_publicos after Runtime snapshot",
-                    "before_runtime_snapshot": "external snapshot; SHA-256 37a007b412a411f33d6b39c130ee98083aa3dbe8f836a3f9dd284dcc1c139d23",
-                    "before_http_status": 200,
-                    "after_http_status": 200,
-                    "result_count_before": 2,
-                    "result_count": 2,
-                    "row_plugin": "fields",
-                    "row_field": "aculta_events_catalogue_card",
-                    "style_plugin": "ui_patterns",
-                    "style_component": "aculta420_v2:layout-grid",
-                    "display_component": null,
-                    "anonymous_access": "allowed; access-checked event IDs are supplied by the native catalogue controller",
-                    "ordering_and_data": "native custom field retains controller-selected IDs, labels and ordering",
-                    "cache_metadata": "native View/render metadata retained; cache-hit variation not measured",
-                    "browser_viewports_css_px": [
-                        320,
-                        1440
-                    ],
-                    "browser_modes": [
-                        "light",
-                        "dark"
-                    ],
-                    "card_sdc": "aculta420_v2:card-cultural",
-                    "cards_per_capture": 2,
-                    "horizontal_scroll": false,
-                    "keyboard_focus": "visible solid outline inside main",
-                    "evidence_manifest": "tests/browser/capturas/ui-patterns-eventos/2026-11-11/manifest.json",
-                    "limitations": [
-                        "Zoom 200% and cache-hit variation remain unverified.",
-                        "Event detail smoke was run independently and is not evidence for this display."
-                    ]
-                }
-            }
-        },
-        "aculta_albuns": {
-            "owner_module": "aculta_gallery",
-            "config_path": "config/sync/views.view.aculta_albuns.yml",
-            "consumer_id": "page_1",
-            "status": "runtime_verified",
-            "configuration_import": "targeted partial import of only views.view.aculta_albuns after exporting its Runtime configuration",
-            "before_runtime_snapshot": "$SUITE_OUT/before/views.view.aculta_albuns.yml",
-            "before_http_status": 200,
-            "after_http_status": 200,
-            "result_count_before": 3,
-            "result_count_after": 3,
-            "row_plugin": "ui_patterns",
-            "row_component": "aculta420_v2:revista-album-card",
-            "style_plugin": "ui_patterns",
-            "style_component": "aculta420_v2:layout-grid",
-            "display_component": "aculta420_v2:views-display",
-            "native_pager": "mini, 12 items per page",
-            "anonymous_access": "allowed by native access content permission",
-            "cache_metadata": "Drupal render arrays preserved; cache-hit variation not measured",
-            "browser_viewports_css_px": [
-                1280,
-                320
-            ],
-            "browser_modes": [
-                "light",
-                "dark"
-            ],
-            "browser_album_cards_per_capture": 3,
-            "horizontal_scroll": false,
-            "small_targets_under_44px": 0,
-            "unnamed_links": 0,
-            "placeholder_links": 0,
-            "evidence_manifest": "tests/browser/capturas/ui-patterns-views/2026-11-10/manifest.json",
-            "limitations": [
-                "Pager navigation across multiple pages not exercised because the View currently has three results.",
-                "Exposed filters are absent from this display.",
-                "Zoom 200% and keyboard focus remain in the broad ADR acceptance matrix."
-            ]
-        },
-        "aculta_forum_categories": {
-            "owner_module": "aculta_forum",
-            "config_path": "config/sync/views.view.aculta_forum_categories.yml",
-            "displays": {
-                "page_categories": {
-                    "consumer_id": "page_categories",
-                    "status": "runtime_verified",
-                    "configuration_import": "targeted partial import of only views.view.aculta_forum_categories after exporting its Runtime configuration",
-                    "before_runtime_snapshot": "$SUITE_OUT/forum-categories-views-20261110/runtime-before/views.view.aculta_forum_categories.yml",
-                    "before_runtime_snapshot_sha256": "d2d93d70fee7d207ca01ea6a889d3ae7f51440bcd22eb59f4a272ee323cf7cea",
-                    "before_http_status": 200,
-                    "after_http_status": 200,
-                    "result_count_before": 12,
-                    "result_count_after": 12,
-                    "row_plugin": "ui_patterns",
-                    "row_component": "aculta420_v2:forum-category",
-                    "style_plugin": "default",
-                    "native_grouping": "parent_name retained",
-                    "display_component": "aculta420_v2:views-display",
-                    "native_pager": "some, 50 items per page; no pager links because only 12 categories are present",
-                    "native_access": "access content inherited from the default display",
-                    "anonymous_access": "allowed; HTTP 200",
-                    "filters": "no exposed filters on this display; vocabulary filter retained",
-                    "cache_metadata": "Drupal Views/render metadata retained; cache-hit variation not measured",
-                    "browser_light_viewports_css_px": [
-                        320,
-                        390,
-                        768,
-                        1024,
-                        1440
-                    ],
-                    "browser_dark_viewports_css_px": [
-                        320,
-                        1440
-                    ],
-                    "categories_per_capture": 12,
-                    "one_h1_and_main": true,
-                    "horizontal_scroll": false,
-                    "minimum_interactive_target_height_px": 44,
-                    "unnamed_links": 0,
-                    "keyboard_focus": "visible after 11 Tab presses; 3px solid outline",
-                    "duplicate_view_title": false,
-                    "evidence_manifest": "tests/browser/capturas/ui-patterns-views/2026-11-10/manifest.json",
-                    "limitations": [
-                        "No multi-page navigation exists with the current 12 results and 50-item pager.",
-                        "Zoom 200% and cache-hit variation remain open for broad ADR acceptance.",
-                        "Dark mode was captured at 320 and 1440 CSS pixels only."
-                    ]
-                },
-                "block_landing": {
-                    "consumer_id": "block_landing",
-                    "status": "migration_in_progress",
-                    "row_plugin": "ui_patterns",
-                    "row_component": "aculta420_v2:forum-category",
-                    "style_plugin": "default",
-                    "display_component": null,
-                    "runtime_status": "active row config; parent block placement is display:none on public home; no visible-output acceptance claimed"
-                }
-            }
-        },
-        "aculta_news": {
-            "owner_module": "aculta_magazine",
-            "config_path": "config/sync/views.view.aculta_news.yml",
-            "displays": {
-                "block_1": {
-                    "consumer_id": "block_1",
-                    "status": "runtime_verified",
-                    "configuration_import": "targeted partial import of only views.view.aculta_news; baseline restored for A/B comparison and final config reapplied",
-                    "before_runtime_snapshot": "external JSON SHA-256 291eb04a25c7dcbd54290fe9b7b55cf287db55129715b8269e00391665fc03d6",
-                    "after_runtime_snapshot": "external JSON SHA-256 2d5d01b8b851df019c43d7e7b43eb15d2a43e71de250760894c30976a230fac6",
-                    "before_http_status": 200,
-                    "after_http_status": 200,
-                    "result_count_before": 4,
-                    "result_count_after": 4,
-                    "result_node_ids_before_after": [
-                        599,
-                        600,
-                        601,
-                        602
-                    ],
-                    "row_plugin": "entity:node",
-                    "row_view_mode": "teaser",
-                    "row_component": "aculta420_v2:revista-teaser via existing node Twig adapter",
-                    "style_plugin": "ui_patterns",
-                    "style_component": "aculta420_v2:revista-listing",
-                    "style_slot_source": "view_rows",
-                    "display_component": null,
-                    "anonymous_access": "allowed by native access content permission",
-                    "filters_sorts_pager_row_query_relationships": "unchanged from Runtime baseline",
-                    "cache_metadata": "tag cache; languages:language_interface, user.node_grants:view, user.permissions unchanged from pre-import Runtime config",
-                    "browser_viewports_css_px": [
-                        320,
-                        390,
-                        768,
-                        1024,
-                        1440
-                    ],
-                    "browser_modes": [
-                        "light",
-                        "dark"
-                    ],
-                    "browser_results_before_after": "10/10 PASS each phase",
-                    "rendered_teaser_nodes": 4,
-                    "responsive_columns": {
-                        "320": 1,
-                        "390": 1,
-                        "768": 2,
-                        "1024": 3,
-                        "1440": 3
-                    },
-                    "featured_first_card": "spans all columns from 992 CSS px",
-                    "visible_h1_count": 1,
-                    "main_landmark_count": 1,
-                    "keyboard_focus": "visible inside View block",
-                    "contrast_ratio": {
-                        "minimum": 7.1617,
-                        "maximum": 12.3968
-                    },
-                    "horizontal_scroll": false,
-                    "legacy_css_class_removed": "aculta-editorial-list",
-                    "evidence_manifest": "tests/browser/capturas/ui-patterns-revista-news/2026-11-11/manifest.json",
-                    "limitations": [
-                        "Cache-hit variation is not testable while Drupal marks the full page uncacheable; no-cache/private response observed.",
-                        "Real browser zoom 200% and human visual review remain deferred."
-                    ],
-                    "dynamic_cache_http_header": "UNCACHEABLE (poor cacheability); HTTP Cache-Control must-revalidate, no-cache, private",
-                    "repeated_anonymous_http_requests": {
-                        "status": [
-                            200,
-                            200
-                        ],
-                        "x_drupal_cache": [
-                            "MISS",
-                            "MISS"
-                        ],
-                        "html_content_ids_stable": [
-                            599,
-                            600,
-                            601,
-                            602
-                        ],
-                        "html_diff": "per-request View DOM ID and CSP nonce; no content result change"
-                    }
-                }
-            }
-        }
+    "ui_icons_field_linkit": {
+      "status": "Disabled",
+      "version": "2.1.0"
     },
-    "ui_icons_config": {
-        "sync": {
-            "modules_enabled": [
-                "ui_icons",
-                "ui_icons_field",
-                "ui_icons_menu",
-                "ui_icons_patterns",
-                "ui_icons_picker"
-            ],
-            "ui_icons_patterns.settings.icon_selector": "icon_picker",
-            "system.menu.main.icon_selector": "icon_picker",
-            "system.menu.account.icon_selector": "icon_picker",
-            "menu_allowed_packs": [
-                "aculta_phosphor_regular",
-                "aculta_phosphor_duotone"
-            ]
-        },
-        "runtime": {
-            "modules_enabled": [
-                "ui_icons",
-                "ui_icons_ckeditor5",
-                "ui_icons_field",
-                "ui_icons_library",
-                "ui_icons_menu",
-                "ui_icons_patterns",
-                "ui_icons_picker",
-                "ui_icons_popover",
-                "ui_icons_text"
-            ],
-            "ui_icons_patterns.settings.icon_selector": "icon_picker",
-            "ui_icons_patterns.settings.before_snapshot_sha256": "63c2503c7e86e95a1c3f47a63ecb26fca524cee5583171b30050efd682b5fa26",
-            "ui_icons_patterns.settings.after_targeted_partial_import": true,
-            "icon_picker_element_available": true
-        },
-        "packs_owned_by_theme": [
-            "aculta_phosphor_regular",
-            "aculta_phosphor_duotone",
-            "aculta_fluent_emoji"
-        ],
-        "evidence": "UI Icons 2.1.0 contracts inspected; targeted partial import of ui_icons_patterns.settings only after config snapshot; Drush confirmed icon_picker available and menu pack restrictions intact; no visual or accessibility acceptance claimed.",
-        "status": "MIGRATION_IN_PROGRESS; selector aligned, optional Runtime submodules still differ from Sync."
+    "ui_icons_field_linkit_attributes": {
+      "status": "Disabled",
+      "version": "2.1.0"
     },
-    "revista_browser_smoke": {
-        "requested_route": "/revista on magazine Domain",
-        "result": "HTTP 301 normalized to /; View page not reached",
-        "homepage": "4 revista-teaser cards, one H1/main, no horizontal overflow at 320/390/768/1024/1440 CSS px",
-        "method": "anonymous read-only Firefox ESR X11 with WebDriver BiDi; DOM metrics; no screenshots",
-        "limitation": "homepage cards cannot be attributed to revista_sessoes page display; access/pager/cache/keyboard/dark/zoom remain unverified"
+    "ui_icons_font": {
+      "status": "Disabled",
+      "version": "2.1.0"
+    },
+    "ui_icons_library": {
+      "status": "Enabled",
+      "version": "2.1.0"
+    },
+    "ui_icons_media": {
+      "status": "Disabled",
+      "version": "2.1.0"
+    },
+    "ui_icons_menu": {
+      "status": "Enabled",
+      "version": "2.1.0"
+    },
+    "ui_icons_patterns": {
+      "status": "Enabled",
+      "version": "2.1.0"
+    },
+    "ui_icons_picker": {
+      "status": "Enabled",
+      "version": "2.1.0"
+    },
+    "ui_icons_popover": {
+      "status": "Enabled",
+      "version": "2.1.0"
+    },
+    "ui_icons_text": {
+      "status": "Enabled",
+      "version": "2.1.0"
+    },
+    "ui_patterns": {
+      "status": "Enabled",
+      "version": null
+    },
+    "ui_patterns_blocks": {
+      "status": "Enabled",
+      "version": null
+    },
+    "ui_patterns_ckeditor5": {
+      "status": "Enabled",
+      "version": null
+    },
+    "ui_patterns_field": {
+      "status": "Enabled",
+      "version": null
+    },
+    "ui_patterns_field_formatters": {
+      "status": "Enabled",
+      "version": null
+    },
+    "ui_patterns_field_group": {
+      "status": "Enabled",
+      "version": null
+    },
+    "ui_patterns_layouts": {
+      "status": "Enabled",
+      "version": null
+    },
+    "ui_patterns_legacy": {
+      "status": "Disabled",
+      "version": null
+    },
+    "ui_patterns_library": {
+      "status": "Enabled",
+      "version": null
+    },
+    "ui_patterns_ui": {
+      "status": "Enabled",
+      "version": null
+    },
+    "ui_patterns_views": {
+      "status": "Enabled",
+      "version": null
+    },
+    "ui_skins": {
+      "status": "Enabled",
+      "version": "1.2.1"
+    },
+    "ui_styles": {
+      "status": "Enabled",
+      "version": "8.x-1.22"
+    },
+    "ui_styles_block": {
+      "status": "Enabled",
+      "version": "8.x-1.22"
+    },
+    "ui_styles_ckeditor5": {
+      "status": "Enabled",
+      "version": "8.x-1.22"
+    },
+    "ui_styles_entity_status": {
+      "status": "Enabled",
+      "version": "8.x-1.22"
+    },
+    "ui_styles_layout_builder": {
+      "status": "Enabled",
+      "version": "8.x-1.22"
+    },
+    "ui_styles_library": {
+      "status": "Enabled",
+      "version": "8.x-1.22"
+    },
+    "ui_styles_page": {
+      "status": "Enabled",
+      "version": "8.x-1.22"
+    },
+    "ui_styles_ui_patterns": {
+      "status": "Enabled",
+      "version": "8.x-1.22"
+    },
+    "ui_styles_views": {
+      "status": "Enabled",
+      "version": "8.x-1.22"
     }
+  },
+  "config_sync_drift_relevant": [
+    "aculta420_v2.settings",
+    "aculta_portal.visual_skins",
+    "core.extension",
+    "taxonomy.vocabulary.aculta_forum_categories",
+    "ui_icons_patterns.settings",
+    "views.view.aculta_forum_categories"
+  ],
+  "runtime_config": {
+    "ui_skins_module": "enabled 1.2.1",
+    "ui_skins_theme_css_variables": "active on aculta420_v2.settings; Ruderalis light color_accent=#76a82c, dark=#89c72c",
+    "aculta_portal.visual_skins": "active; links_aculta_org= ruderalis; other domains use skunk default",
+    "views.view.aculta_forum_categories.page_categories.row": "ui_patterns",
+    "views.view.aculta_forum_categories.block_landing.row": "ui_patterns",
+    "core.entity_view_display.node.page.full": "ui_patterns:aculta420_v2:layout_section; Render API/browser confirmed",
+    "core.entity_view_display.node.page.default": "ui_patterns:aculta420_v2:layout_section; Render API/browser confirmed",
+    "ui_patterns_ckeditor5": "enabled preexisting; prohibited for this implementation; removal requires separate authorization",
+    "ui_patterns_field_group": "enabled preexisting 2.0.x-dev; blocked upstream pending security and Drupal 12 support assessment",
+    "ui_styles_ckeditor5": "enabled 8.x-1.22; Config Sync and Runtime active for editorial styles",
+    "ui_styles_entity_status": "enabled 8.x-1.22; unpublished_preview => aculta-content-status--unpublished; class resolution and upstream isolated functional test passed; Runtime visual/access/cache acceptance pending; pre-change snapshots recorded before module enable and targeted theme config import",
+    "layout_builder_component_displays": "22 eligible configs use ui_patterns:aculta420_v2:layout_section; 21 render ComponentLayout wrappers; node.wiki_entry.full renders via direct wiki-entry SDC template",
+    "views.view.aculta_forum_categories.page_categories.display": "ui_patterns:aculta420_v2:views-display; row SDC forum-category; native grouped style, access and pager preserved",
+    "views.view.aculta_forum_categories.block_landing": "row UI Patterns; default style and display; placement hidden on public home, no visible-output acceptance claimed",
+    "ui_patterns_views": "enabled; four row/style/display plugin assignments across Albums and Forum Categories"
+  },
+  "notes": [
+    "UI Skins map and CSS variables are active; anonymous A/B/A requests returned distinct Ruderalis/Skunk values without cross-host carryover.",
+    "All 22 eligible configs reference layout-section and match Runtime/Sync. The 276-check validator confirms 21 rendered ComponentLayout wrappers and the direct wiki-entry SDC template for node.wiki_entry.full, plus published-entity render arrays and default-layout access. Import was targeted after a Runtime snapshot; no entity data changed.",
+    "node.document.full and block_content.basic.default remain the two documented exclusions because their Layout Builder configuration loses content.",
+    "Dynamic page cache reports UNCACHEABLE for tested pages, so cache-hit variation remains DEFERRED even though sequential host rendering did not leak skins.",
+    "UI Patterns Field Group remains preexisting and BLOCKED_UPSTREAM for security/Drupal 12 assessment. UI Patterns CKEditor 5 remains preexisting but unused in this implementation; removal requires a separately authorized config operation.",
+    "The Runtime is Drupal 11.5.0-beta1; Drupal 12 compatibility cannot be inferred from a Drupal 11 runtime test.",
+    "Global config:status still reports unrelated drift; the 22 migrated Layout Builder display configurations match Sync after Runtime serialization normalization.",
+    "node.wiki_entry.full has a purpose-built Twig adapter that renders the wiki-entry SDC directly from access-checked fields; it bypasses the configured Layout Builder wrapper and is validated as a UI_SUITE_NATIVE adapter.",
+    "Wiki full browser acceptance is DEFERRED: anonymous GET returned 403 and the authenticated Firefox runner produced a blank document without title/main; the artifact was not counted as a pass.",
+    "The public Forum categories page now wraps its native grouped View output with views-display while retaining the forum-category row and native style. Runtime partial import changed only views.view.aculta_forum_categories after a config snapshot; anonymous HTTP 200 and 12 category cards remained, with one H1/main, zero horizontal scroll at five light widths and two dark widths, and keyboard-visible focus.",
+    "The Events catalogue style pilot wraps the existing aculta_events_catalogue_card rows in the UI Patterns layout-grid. A targeted partial import changed only views.view.eventos_publicos after a Runtime snapshot (SHA-256 37a007b412a411f33d6b39c130ee98083aa3dbe8f836a3f9dd284dcc1c139d23); effective Views handler, anonymous access, two cards and Firefox ESR 320/1440 light/dark with visible keyboard focus and no horizontal scroll were verified. The detail-route smoke is separate. Cache-hit and zoom 200% remain unverified. An earlier broad-source partial import briefly disabled ui_styles_library, ui_patterns_field_group and ui_patterns_ui; these modules were immediately re-enabled, with no content data changes. Do not repeat broad-source partial imports; isolate target YAML in a temporary source directory.",
+    "UI Styles Block now applies the registered raised-surface and normal-spacing choices to the MAIN-only transparency block aculta420_v2_aculta_documents. The isolated block config import followed a Runtime snapshot (SHA-256 stored in the capture manifest); anonymous Runtime retained three View rows, and Firefox verified computed light/dark background, 16/24 px responsive padding, keyboard focus, one H1/main and no overflow at 320/390/768/1024/1440. UI Styles Page still uses theme-global region settings with no domain-aware assignment, so it is not used for domain-specific skins.",
+    "The public Revista news View aculta_news:block_1 now uses UI Patterns style revista-listing around the native node teaser render arrays. Four published teaser nodes, anonymous access, filter/sort/pager/query/cache contracts and visible H1/main were compared before/after. The legacy aculta-editorial-list class was removed from this View only; its CSS remains for other active consumers.",
+    "Repeated anonymous requests to the Revista News route returned 200 and X-Drupal-Cache MISS; the response is no-cache/private and X-Drupal-Dynamic-Cache reports UNCACHEABLE (poor cacheability). The response differed only in per-request View DOM ID and CSP nonce; the four result IDs were stable. This does not constitute a cache-hit test.",
+    "Home editorial highlights: targeted Runtime cutover from views_vvjb to the existing UI Patterns layout-grid SDC. The View keeps its native node rows, Layout Builder entity output, access, filters, sort, pager, query and cache settings. The VVJB extension remains installed; no active View style uses it in Sync. The old carousel-specific diagnostics/tests were retired or replaced; module uninstall was not performed."
+  ],
+  "block_styles": {
+    "aculta420_v2_aculta_documents": {
+      "status": "runtime_verified",
+      "owner_module": "views:aculta_documents",
+      "plugin": "views_block:aculta_documents-block_1",
+      "region": "content",
+      "visibility": {
+        "path": "/transparencia",
+        "domain_purpose": "main"
+      },
+      "ui_styles": {
+        "block.surface_style": "aculta-surface aculta-surface--tone-raised",
+        "block.spacing_section": "aculta-surface aculta-surface--spacing-normal"
+      },
+      "row_count": 3,
+      "anonymous_access": "allowed",
+      "computed_background": {
+        "light": "luminance > 0.8",
+        "dark": "luminance < 0.2"
+      },
+      "computed_text_contrast_ratio": {
+        "minimum": 12.39,
+        "maximum": 12.96
+      },
+      "computed_padding_css_px": {
+        "320": 16,
+        "390": 16,
+        "768": 24,
+        "1024": 24,
+        "1440": 24
+      },
+      "keyboard_focus": "visible",
+      "horizontal_scroll": false,
+      "evidence_manifest": "tests/browser/capturas/ui-styles-block/2026-11-11/manifest.json",
+      "limitations": [
+        "Zoom 200% and cache-hit variation not tested."
+      ]
+    }
+  },
+  "layout_builder_displays": {
+    "core.entity_view_display.block_content.aculta_editorial.default": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "field_block:block_content:aculta_editorial:body"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.block_content.aculta_institution.contact": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "field_block:block_content:aculta_institution:field_address",
+        "field_block:block_content:aculta_institution:field_email",
+        "field_block:block_content:aculta_institution:field_org_name",
+        "field_block:block_content:aculta_institution:field_phone",
+        "field_block:block_content:aculta_institution:field_site"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.block_content.aculta_institution.default": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "field_block:block_content:aculta_institution:field_address",
+        "field_block:block_content:aculta_institution:field_cnpj",
+        "field_block:block_content:aculta_institution:field_email",
+        "field_block:block_content:aculta_institution:field_governance",
+        "field_block:block_content:aculta_institution:field_headquarters",
+        "field_block:block_content:aculta_institution:field_legal_nature",
+        "field_block:block_content:aculta_institution:field_org_name",
+        "field_block:block_content:aculta_institution:field_phone",
+        "field_block:block_content:aculta_institution:field_site"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.block_content.aculta_institution.footer": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "field_block:block_content:aculta_institution:field_cnpj",
+        "field_block:block_content:aculta_institution:field_headquarters",
+        "field_block:block_content:aculta_institution:field_org_description",
+        "field_block:block_content:aculta_institution:field_org_name",
+        "field_block:block_content:aculta_institution:field_site"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.block_content.aculta_institution.full": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "field_block:block_content:aculta_institution:field_address",
+        "field_block:block_content:aculta_institution:field_cnpj",
+        "field_block:block_content:aculta_institution:field_email",
+        "field_block:block_content:aculta_institution:field_governance",
+        "field_block:block_content:aculta_institution:field_headquarters",
+        "field_block:block_content:aculta_institution:field_legal_nature",
+        "field_block:block_content:aculta_institution:field_org_name",
+        "field_block:block_content:aculta_institution:field_phone",
+        "field_block:block_content:aculta_institution:field_site"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.block_content.aculta_institution.home": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "field_block:block_content:aculta_institution:field_cnpj",
+        "field_block:block_content:aculta_institution:field_headquarters",
+        "field_block:block_content:aculta_institution:field_nonprofit_description",
+        "field_block:block_content:aculta_institution:field_org_name",
+        "field_block:block_content:aculta_institution:field_site"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.block_content.aculta_institution.institutional": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "field_block:block_content:aculta_institution:field_address",
+        "field_block:block_content:aculta_institution:field_cnpj",
+        "field_block:block_content:aculta_institution:field_email",
+        "field_block:block_content:aculta_institution:field_headquarters",
+        "field_block:block_content:aculta_institution:field_legal_nature",
+        "field_block:block_content:aculta_institution:field_opening_date",
+        "field_block:block_content:aculta_institution:field_org_name",
+        "field_block:block_content:aculta_institution:field_phone",
+        "field_block:block_content:aculta_institution:field_site"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.block_content.aculta_institution.registration": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "field_block:block_content:aculta_institution:field_address",
+        "field_block:block_content:aculta_institution:field_cnpj",
+        "field_block:block_content:aculta_institution:field_email",
+        "field_block:block_content:aculta_institution:field_governance",
+        "field_block:block_content:aculta_institution:field_legal_code",
+        "field_block:block_content:aculta_institution:field_legal_nature",
+        "field_block:block_content:aculta_institution:field_main_activity",
+        "field_block:block_content:aculta_institution:field_opening_date",
+        "field_block:block_content:aculta_institution:field_org_name",
+        "field_block:block_content:aculta_institution:field_phone",
+        "field_block:block_content:aculta_institution:field_registration_status",
+        "field_block:block_content:aculta_institution:field_secondary_activity",
+        "field_block:block_content:aculta_institution:field_site",
+        "field_block:block_content:aculta_institution:field_trade_name"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.node.activity.default": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "extra_field_block:node:activity:links",
+        "field_block:node:activity:body",
+        "field_block:node:activity:field_event_city",
+        "field_block:node:activity:field_event_end",
+        "field_block:node:activity:field_event_location",
+        "field_block:node:activity:field_event_start",
+        "field_block:node:activity:field_event_status",
+        "field_block:node:activity:field_event_street",
+        "field_block:node:activity:field_media_image",
+        "field_block:node:activity:field_online_url",
+        "field_block:node:activity:field_place_name",
+        "field_block:node:activity:field_registration_url",
+        "field_block:node:activity:field_summary"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.node.activity.full": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "extra_field_block:node:activity:links",
+        "field_block:node:activity:body"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.node.aculta_adm.default": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "extra_field_block:node:aculta_adm:links",
+        "field_block:node:aculta_adm:body"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.node.aculta_faq.default": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "field_block:node:aculta_faq:body"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.node.aculta_notice.default": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "extra_field_block:node:aculta_notice:content_moderation_control",
+        "extra_field_block:node:aculta_notice:flag_aculta_notice_read",
+        "field_block:node:aculta_notice:body"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.node.document.default": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "extra_field_block:node:document:links",
+        "field_block:node:document:body",
+        "field_block:node:document:field_category",
+        "field_block:node:document:field_document"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.node.editorial_highlight.default": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "field_block:node:editorial_highlight:field_category",
+        "field_block:node:editorial_highlight:field_complement",
+        "field_block:node:editorial_highlight:field_link",
+        "field_block:node:editorial_highlight:field_summary"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.node.page.default": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "extra_field_block:node:page:links",
+        "field_block:node:page:body"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.node.page.full": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "extra_field_block:node:page:links",
+        "field_block:node:page:body"
+      ],
+      "allow_custom": true,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.node.revista.default": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "extra_field_block:node:revista:content_moderation_control",
+        "extra_field_block:node:revista:links",
+        "field_block:node:revista:body",
+        "field_block:node:revista:field_editorial_author",
+        "field_block:node:revista:field_media_image",
+        "field_block:node:revista:field_subtitle",
+        "field_block:node:revista:field_summary"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.node.revista.full": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "extra_field_block:node:revista:content_moderation_control",
+        "field_block:node:revista:body",
+        "field_block:node:revista:field_aculta_discussion",
+        "field_block:node:revista:field_credits",
+        "field_block:node:revista:field_editorial_category",
+        "field_block:node:revista:field_media_image",
+        "field_block:node:revista:field_references",
+        "field_block:node:revista:field_subtitle",
+        "field_block:node:revista:field_summary",
+        "field_block:node:revista:field_tags"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.node.wiki_entry.default": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "extra_field_block:node:wiki_entry:content_moderation_control",
+        "extra_field_block:node:wiki_entry:links",
+        "field_block:node:wiki_entry:body",
+        "field_block:node:wiki_entry:field_wiki_categories",
+        "field_block:node:wiki_entry:field_wiki_image",
+        "field_block:node:wiki_entry:field_wiki_references",
+        "field_block:node:wiki_entry:field_wiki_related",
+        "field_block:node:wiki_entry:field_wiki_summary"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    },
+    "core.entity_view_display.node.wiki_entry.full": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; direct wiki-entry SDC template rendered; Layout Builder wrapper is bypassed by the view-mode adapter",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "extra_field_block:node:wiki_entry:content_moderation_control",
+        "extra_field_block:node:wiki_entry:links",
+        "field_block:node:wiki_entry:body",
+        "field_block:node:wiki_entry:field_aculta_discussion",
+        "field_block:node:wiki_entry:field_wiki_categories",
+        "field_block:node:wiki_entry:field_wiki_image",
+        "field_block:node:wiki_entry:field_wiki_references",
+        "field_block:node:wiki_entry:field_wiki_related",
+        "field_block:node:wiki_entry:field_wiki_summary"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "direct_sdc_template"
+    },
+    "core.entity_view_display.taxonomy_term.editorial_author.default": {
+      "layout_id": "ui_patterns:aculta420_v2:layout_section",
+      "component_id": "aculta420_v2:layout-section",
+      "runtime_status": "active; partial import applied; included in 276-check batch validator",
+      "regions": [
+        "content"
+      ],
+      "components_preserved": [
+        "field_block:taxonomy_term:editorial_author:description"
+      ],
+      "allow_custom": false,
+      "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+      "render_strategy": "layout_builder_component_layout"
+    }
+  },
+  "browser_validation": {
+    "environment": "development",
+    "method": "Firefox ESR visible for responsive capture; anonymous Firefox for A/B/A host check",
+    "links_skin_sequence": [
+      "ruderalis",
+      "skunk",
+      "ruderalis"
+    ],
+    "http_status_sequence": [
+      200,
+      200,
+      200
+    ],
+    "computed_accent_light": [
+      "#76a82c",
+      "#5a8022",
+      "#76a82c"
+    ],
+    "computed_accent_dark": [
+      "#89c72c",
+      "#6c9e22",
+      "#89c72c"
+    ],
+    "one_h1_and_main_each_page": true,
+    "links_viewports_css_px": [
+      1280,
+      320
+    ],
+    "links_horizontal_overflow": false,
+    "dynamic_page_cache": "UNCACHEABLE on tested anonymous pages; host skin isolation observed, cache-hit variation not proven",
+    "screenshots": "SUITE_OUT/links-layout-sdc-final-2026-11-10; filenames and hashes in tests/browser/capturas/ui-suite-links/2026-11-10/manifest.json",
+    "wiki_full_view": {
+      "path": "/verbete/proibicionismo",
+      "anonymous_http_status": 403,
+      "authenticated_browser_status": "DEFERRED",
+      "reason": "The existing Firefox runner received a blank document without title/main after its one-time-login flow; screenshot is not accepted as evidence. The direct SDC output is verified by the Runtime render gate only."
+    },
+    "ui_patterns_library": {
+      "path": "/painel-administrativo/aparencia/ui/components/aculta420_v2",
+      "provider_groups": 16,
+      "components": 82,
+      "preview_links": 82,
+      "loaded_sdc_stories": 1,
+      "http_status": 200,
+      "viewports_css_px": [
+        1280,
+        320
+      ],
+      "horizontal_scroll": false,
+      "responsive_acceptance": "DEFERRED: admin list elements extend past 320px viewport despite documentWidth=320 and maxScrollX=0",
+      "evidence_manifest": "tests/browser/capturas/ui-suite-library/2026-11-10/manifest.json",
+      "capture_manifest": "tests/browser/capturas/ui-suite-library/2026-11-10/manifest.json"
+    }
+  },
+  "view_displays": {
+    "eventos_publicos": {
+      "owner_module": "aculta_events",
+      "config_path": "config/sync/views.view.eventos_publicos.yml",
+      "displays": {
+        "block_1": {
+          "consumer_id": "block_1",
+          "status": "runtime_verified",
+          "configuration_import": "targeted partial import with only views.view.eventos_publicos after Runtime snapshot",
+          "before_runtime_snapshot": "external snapshot; SHA-256 37a007b412a411f33d6b39c130ee98083aa3dbe8f836a3f9dd284dcc1c139d23",
+          "before_http_status": 200,
+          "after_http_status": 200,
+          "result_count_before": 2,
+          "result_count": 2,
+          "row_plugin": "fields",
+          "row_field": "aculta_events_catalogue_card",
+          "style_plugin": "ui_patterns",
+          "style_component": "aculta420_v2:layout-grid",
+          "display_component": null,
+          "anonymous_access": "allowed; access-checked event IDs are supplied by the native catalogue controller",
+          "ordering_and_data": "native custom field retains controller-selected IDs, labels and ordering",
+          "cache_metadata": "native View/render metadata retained; cache-hit variation not measured",
+          "browser_viewports_css_px": [
+            320,
+            1440
+          ],
+          "browser_modes": [
+            "light",
+            "dark"
+          ],
+          "card_sdc": "aculta420_v2:card-cultural",
+          "cards_per_capture": 2,
+          "horizontal_scroll": false,
+          "keyboard_focus": "visible solid outline inside main",
+          "evidence_manifest": "tests/browser/capturas/ui-patterns-eventos/2026-11-11/manifest.json",
+          "limitations": [
+            "Zoom 200% and cache-hit variation remain unverified.",
+            "Event detail smoke was run independently and is not evidence for this display."
+          ]
+        }
+      }
+    },
+    "aculta_albuns": {
+      "owner_module": "aculta_gallery",
+      "config_path": "config/sync/views.view.aculta_albuns.yml",
+      "consumer_id": "page_1",
+      "status": "runtime_verified",
+      "configuration_import": "targeted partial import of only views.view.aculta_albuns after exporting its Runtime configuration",
+      "before_runtime_snapshot": "$SUITE_OUT/before/views.view.aculta_albuns.yml",
+      "before_http_status": 200,
+      "after_http_status": 200,
+      "result_count_before": 3,
+      "result_count_after": 3,
+      "row_plugin": "ui_patterns",
+      "row_component": "aculta420_v2:revista-album-card",
+      "style_plugin": "ui_patterns",
+      "style_component": "aculta420_v2:layout-grid",
+      "display_component": "aculta420_v2:views-display",
+      "native_pager": "mini, 12 items per page",
+      "anonymous_access": "allowed by native access content permission",
+      "cache_metadata": "Drupal render arrays preserved; cache-hit variation not measured",
+      "browser_viewports_css_px": [
+        1280,
+        320
+      ],
+      "browser_modes": [
+        "light",
+        "dark"
+      ],
+      "browser_album_cards_per_capture": 3,
+      "horizontal_scroll": false,
+      "small_targets_under_44px": 0,
+      "unnamed_links": 0,
+      "placeholder_links": 0,
+      "evidence_manifest": "tests/browser/capturas/ui-patterns-views/2026-11-10/manifest.json",
+      "limitations": [
+        "Pager navigation across multiple pages not exercised because the View currently has three results.",
+        "Exposed filters are absent from this display.",
+        "Zoom 200% and keyboard focus remain in the broad ADR acceptance matrix."
+      ]
+    },
+    "aculta_forum_categories": {
+      "owner_module": "aculta_forum",
+      "config_path": "config/sync/views.view.aculta_forum_categories.yml",
+      "displays": {
+        "page_categories": {
+          "consumer_id": "page_categories",
+          "status": "runtime_verified",
+          "configuration_import": "targeted partial import of only views.view.aculta_forum_categories after exporting its Runtime configuration",
+          "before_runtime_snapshot": "$SUITE_OUT/forum-categories-views-20261110/runtime-before/views.view.aculta_forum_categories.yml",
+          "before_runtime_snapshot_sha256": "d2d93d70fee7d207ca01ea6a889d3ae7f51440bcd22eb59f4a272ee323cf7cea",
+          "before_http_status": 200,
+          "after_http_status": 200,
+          "result_count_before": 12,
+          "result_count_after": 12,
+          "row_plugin": "ui_patterns",
+          "row_component": "aculta420_v2:forum-category",
+          "style_plugin": "default",
+          "native_grouping": "parent_name retained",
+          "display_component": "aculta420_v2:views-display",
+          "native_pager": "some, 50 items per page; no pager links because only 12 categories are present",
+          "native_access": "access content inherited from the default display",
+          "anonymous_access": "allowed; HTTP 200",
+          "filters": "no exposed filters on this display; vocabulary filter retained",
+          "cache_metadata": "Drupal Views/render metadata retained; cache-hit variation not measured",
+          "browser_light_viewports_css_px": [
+            320,
+            390,
+            768,
+            1024,
+            1440
+          ],
+          "browser_dark_viewports_css_px": [
+            320,
+            1440
+          ],
+          "categories_per_capture": 12,
+          "one_h1_and_main": true,
+          "horizontal_scroll": false,
+          "minimum_interactive_target_height_px": 44,
+          "unnamed_links": 0,
+          "keyboard_focus": "visible after 11 Tab presses; 3px solid outline",
+          "duplicate_view_title": false,
+          "evidence_manifest": "tests/browser/capturas/ui-patterns-views/2026-11-10/manifest.json",
+          "limitations": [
+            "No multi-page navigation exists with the current 12 results and 50-item pager.",
+            "Zoom 200% and cache-hit variation remain open for broad ADR acceptance.",
+            "Dark mode was captured at 320 and 1440 CSS pixels only."
+          ]
+        },
+        "block_landing": {
+          "consumer_id": "block_landing",
+          "status": "migration_in_progress",
+          "row_plugin": "ui_patterns",
+          "row_component": "aculta420_v2:forum-category",
+          "style_plugin": "default",
+          "display_component": null,
+          "runtime_status": "active row config; parent block placement is display:none on public home; no visible-output acceptance claimed"
+        }
+      }
+    },
+    "aculta_news": {
+      "owner_module": "aculta_magazine",
+      "config_path": "config/sync/views.view.aculta_news.yml",
+      "displays": {
+        "block_1": {
+          "consumer_id": "block_1",
+          "status": "runtime_verified",
+          "configuration_import": "targeted partial import of only views.view.aculta_news; baseline restored for A/B comparison and final config reapplied",
+          "before_runtime_snapshot": "external JSON SHA-256 291eb04a25c7dcbd54290fe9b7b55cf287db55129715b8269e00391665fc03d6",
+          "after_runtime_snapshot": "external JSON SHA-256 2d5d01b8b851df019c43d7e7b43eb15d2a43e71de250760894c30976a230fac6",
+          "before_http_status": 200,
+          "after_http_status": 200,
+          "result_count_before": 4,
+          "result_count_after": 4,
+          "result_node_ids_before_after": [
+            599,
+            600,
+            601,
+            602
+          ],
+          "row_plugin": "entity:node",
+          "row_view_mode": "teaser",
+          "row_component": "aculta420_v2:revista-teaser via existing node Twig adapter",
+          "style_plugin": "ui_patterns",
+          "style_component": "aculta420_v2:revista-listing",
+          "style_slot_source": "view_rows",
+          "display_component": null,
+          "anonymous_access": "allowed by native access content permission",
+          "filters_sorts_pager_row_query_relationships": "unchanged from Runtime baseline",
+          "cache_metadata": "tag cache; languages:language_interface, user.node_grants:view, user.permissions unchanged from pre-import Runtime config",
+          "browser_viewports_css_px": [
+            320,
+            390,
+            768,
+            1024,
+            1440
+          ],
+          "browser_modes": [
+            "light",
+            "dark"
+          ],
+          "browser_results_before_after": "10/10 PASS each phase",
+          "rendered_teaser_nodes": 4,
+          "responsive_columns": {
+            "320": 1,
+            "390": 1,
+            "768": 2,
+            "1024": 3,
+            "1440": 3
+          },
+          "featured_first_card": "spans all columns from 992 CSS px",
+          "visible_h1_count": 1,
+          "main_landmark_count": 1,
+          "keyboard_focus": "visible inside View block",
+          "contrast_ratio": {
+            "minimum": 7.1617,
+            "maximum": 12.3968
+          },
+          "horizontal_scroll": false,
+          "legacy_css_class_removed": "aculta-editorial-list",
+          "evidence_manifest": "tests/browser/capturas/ui-patterns-revista-news/2026-11-11/manifest.json",
+          "limitations": [
+            "Cache-hit variation is not testable while Drupal marks the full page uncacheable; no-cache/private response observed.",
+            "Real browser zoom 200% and human visual review remain deferred."
+          ],
+          "dynamic_cache_http_header": "UNCACHEABLE (poor cacheability); HTTP Cache-Control must-revalidate, no-cache, private",
+          "repeated_anonymous_http_requests": {
+            "status": [
+              200,
+              200
+            ],
+            "x_drupal_cache": [
+              "MISS",
+              "MISS"
+            ],
+            "html_content_ids_stable": [
+              599,
+              600,
+              601,
+              602
+            ],
+            "html_diff": "per-request View DOM ID and CSP nonce; no content result change"
+          }
+        }
+      }
+    },
+    "home_editorial_highlights": {
+      "owner_module": "views:home_editorial_highlights",
+      "config_path": "config/sync/views.view.home_editorial_highlights.yml",
+      "displays": {
+        "block_1": {
+          "consumer_id": "block_1",
+          "status": "runtime_verified",
+          "configuration_import": "targeted partial import with only views.view.home_editorial_highlights after Runtime snapshot",
+          "before_runtime_snapshot_sha256_json": "f951b0ab6ff5bde629872bd78ef47cb2513b5b9a0f5e3671566e28633eca15fc",
+          "before_runtime_rollback_yaml_sha256": "99427e58670c83d865d6f46ea68ccccd24fee971aced2807baaeab0011f46367",
+          "after_runtime_snapshot_sha256_json": "ab2653fe3800c7c471cd1617ef66dd4d3f7f90b02c633583942ea111e067c01f",
+          "config_sync_sha256": "cd8abd0cafb71efd683c37038c9e538077d0ea6d8928397f9a01147fa45f091b",
+          "before_http_status": 200,
+          "after_http_status": 200,
+          "result_count_before": 3,
+          "result_count_after": 3,
+          "node_ids_before_after": [
+            14,
+            15,
+            16
+          ],
+          "row_plugin": "entity:node, view_mode default; existing UI Patterns Layout Builder entity display retained",
+          "style_plugin_before": "views_vvjb",
+          "style_plugin": "ui_patterns",
+          "style_component": "aculta420_v2:layout-grid",
+          "display_component": null,
+          "anonymous_access": "allowed by native access content permission",
+          "ordering_and_data": "IDs 14/15/16 and their editorial order, labels, links and body fields unchanged",
+          "functional_parity": [
+            "access",
+            "cache",
+            "pager",
+            "filters",
+            "sorts",
+            "row",
+            "query",
+            "header",
+            "block display options"
+          ],
+          "cache_metadata": "View tag cache, contexts languages:language_interface/user.node_grants:view/user.permissions, max-age -1 unchanged; page itself remains private/no-cache and X-Drupal-Dynamic-Cache UNCACHEABLE",
+          "cache_hit_variation": "DEFERRED: two anonymous requests returned HTTP 200 and identical node IDs but both X-Drupal-Cache MISS while page is UNCACHEABLE",
+          "browser_viewports_css_px": [
+            320,
+            390,
+            768,
+            1024,
+            1440
+          ],
+          "browser_modes": [
+            "light",
+            "dark"
+          ],
+          "browser_result": "10/10 PASS before and 10/10 PASS after",
+          "browser_assertions": [
+            "three editorial nodes remain in order",
+            "one H1 and one main",
+            "visible keyboard focus",
+            "contrast at least 8.80:1",
+            "no horizontal overflow",
+            "grid reflows to one, two and three columns as available width permits",
+            "VVJB carousel output absent after cutover"
+          ],
+          "browser_minimum_contrast_ratio": 8.802026166506959,
+          "evidence_manifest": "tests/browser/capturas/ui-patterns-home-editorial/2026-11-11/manifest.json",
+          "limitations": [
+            "Real browser zoom 200% remains unverified.",
+            "Screen-reader and broad profile acceptance remain in the ADR-wide matrix.",
+            "Cache-hit variation is unavailable while the page remains private and uncacheable."
+          ],
+          "rollback": "Import the captured Runtime YAML snapshot (SHA-256 above) as the only partial-import source, then rebuild caches; no entity data was modified."
+        }
+      }
+    }
+  },
+  "ui_icons_config": {
+    "sync": {
+      "modules_enabled": [
+        "ui_icons",
+        "ui_icons_field",
+        "ui_icons_menu",
+        "ui_icons_patterns",
+        "ui_icons_picker"
+      ],
+      "ui_icons_patterns.settings.icon_selector": "icon_picker",
+      "system.menu.main.icon_selector": "icon_picker",
+      "system.menu.account.icon_selector": "icon_picker",
+      "menu_allowed_packs": [
+        "aculta_phosphor_regular",
+        "aculta_phosphor_duotone"
+      ]
+    },
+    "runtime": {
+      "modules_enabled": [
+        "ui_icons",
+        "ui_icons_ckeditor5",
+        "ui_icons_field",
+        "ui_icons_library",
+        "ui_icons_menu",
+        "ui_icons_patterns",
+        "ui_icons_picker",
+        "ui_icons_popover",
+        "ui_icons_text"
+      ],
+      "ui_icons_patterns.settings.icon_selector": "icon_picker",
+      "ui_icons_patterns.settings.before_snapshot_sha256": "63c2503c7e86e95a1c3f47a63ecb26fca524cee5583171b30050efd682b5fa26",
+      "ui_icons_patterns.settings.after_targeted_partial_import": true,
+      "icon_picker_element_available": true
+    },
+    "packs_owned_by_theme": [
+      "aculta_phosphor_regular",
+      "aculta_phosphor_duotone",
+      "aculta_fluent_emoji"
+    ],
+    "evidence": "UI Icons 2.1.0 contracts inspected; targeted partial import of ui_icons_patterns.settings only after config snapshot; Drush confirmed icon_picker available and menu pack restrictions intact; no visual or accessibility acceptance claimed.",
+    "status": "MIGRATION_IN_PROGRESS; selector aligned, optional Runtime submodules still differ from Sync."
+  },
+  "revista_browser_smoke": {
+    "requested_route": "/revista on magazine Domain",
+    "result": "HTTP 301 normalized to /; View page not reached",
+    "homepage": "4 revista-teaser cards, one H1/main, no horizontal overflow at 320/390/768/1024/1440 CSS px",
+    "method": "anonymous read-only Firefox ESR X11 with WebDriver BiDi; DOM metrics; no screenshots",
+    "limitation": "homepage cards cannot be attributed to revista_sessoes page display; access/pager/cache/keyboard/dark/zoom remain unverified"
+  }
 }

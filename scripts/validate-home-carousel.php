@@ -25,10 +25,16 @@ $run = static function (int $expected): void {
   $build = $view->render();
   $html = (string) \Drupal::service('renderer')->renderInIsolation($build);
   if ($expected === 0 && str_contains($html, '<vvjb-carousel')) {
-    throw new RuntimeException('Empty carousel rendered.');
+    throw new RuntimeException('Empty View rendered editorial highlight rows.');
   }
-  if ($expected === 1 && (str_contains($html, 'class="vvjb-button') || !str_contains($html, 'data-slide-time="0"'))) {
-    throw new RuntimeException('Solitary carousel controls/timing.');
+  if (str_contains($html, 'vvjb-carousel')) {
+    throw new RuntimeException('Legacy VVJB presentation is still rendered.');
+  }
+  if ($expected > 0 && !str_contains($html, 'class="layout-grid')) {
+    throw new RuntimeException('UI Patterns layout-grid was not rendered.');
+  }
+  if (substr_count($html, 'data-history-node-id=') !== $expected) {
+    throw new RuntimeException('Rendered editorial row count differs from the View result count.');
   }
   echo "View/render: $expected items OK\n";
 };

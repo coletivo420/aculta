@@ -6,12 +6,12 @@ dependencies:
     - node.type.editorial_highlight
   module:
     - node
+    - ui_patterns_views
     - user
-    - vvjb
 id: home_editorial_highlights
 label: 'Destaques editoriais da Home'
 module: views
-description: 'Carrossel VVJB de destaques publicados. Ordenação crescente por Ordem e, em caso de empate, identificador do conteúdo. Não depende de três IDs fixos.'
+description: 'Grade de destaques publicados. Ordenação crescente por Ordem e, em caso de empate, identificador do conteúdo. Não depende de três IDs fixos.'
 tag: ''
 base_table: node_field_data
 base_field: nid
@@ -69,26 +69,18 @@ display:
           value:
             editorial_highlight: editorial_highlight
       style:
-        type: views_vvjb
+        type: ui_patterns
         options:
-          orientation: horizontal
-          items_small: 1
-          items_big: 2
-          gap: 24
-          item_width: 0
-          looping: true
-          slide_time: 3000
-          navigation: both
-          dot_style: circle
-          breakpoints: '768'
-          show_play_pause: true
-          show_progress_bar: false
-          show_page_counter: false
-          enable_keyboard_nav: true
-          enable_touch_swipe: true
-          enable_pause_on_hover: true
-          pause_on_reduced_motion: true
-          enable_deeplink: false
+          ui_patterns:
+            ui_patterns:
+              component_id: 'aculta420_v2:layout-grid'
+              variant_id: null
+              props: {  }
+              slots:
+                content:
+                  sources:
+                    - source_id: view_rows
+                      source: {  }
       row:
         type: 'entity:node'
         options:
