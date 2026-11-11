@@ -342,3 +342,15 @@ Resíduos: a microfase não finaliza `aculta_events`; permanecem 45 erros de pro
 Escopo: estreitamento de entidades de Evento/Local/Organização/Contribution/UgcReport, storage revisionável e tipo da consulta Views SQL; retorno de validação dos formulários de entidade conforme `ContentEntityFormInterface`; renderização do card Views pela API do renderer; campos de endereço lidos via `getValue()`; dependências não usadas removidas do migrador; `SELECT ... FOR UPDATE` mantido e executado no objeto da consulta. Os formulários modais recebem `RendererInterface` por DI, e fixtures Kernel foram ajustadas aos construtores.
 
 Resíduos: zero erro bruto em `src`; permanecem 112 erros, todos em testes. A regeneração global retirou 45 ocorrências de Eventos e seis entradas antigas de scripts que já não aparecem na análise atual; nenhum script foi alterado. Evidências: análise bruta do módulo (157 -> 112, produção 45 -> 0), análise global estrita `[OK] No errors`, Unit do módulo 30 testes/62 assertions PASS, descoberta de suítes PASS (unit=674), lint de 19 arquivos PHP PASS, YAML de serviços PASS, gate Portal Drupal 12 PASS (1234 verificações). A suíte Unit global foi executada, mas terminou com fatal aos 1708/3286 testes porque `aculta_messenger_schema()` foi declarada pelos dois checkouts (`round19` e principal); nenhum Kernel foi executado para evitar banco.
+
+## Microfase 22c — 2026-11-11 (`aculta_events`, Unit)
+
+| Medida | Antes | Depois |
+| --- | ---: | ---: |
+| Erros brutos em `aculta_events` | 112 | 111 |
+| Erros brutos nos testes Unit de Eventos | 1 | 0 |
+| Baseline global (ocorrências) | 2500 | 2499 |
+
+Escopo: `OrganizationContributionEventQueueTest` passou a manter o estado do outbox em `ArrayObject`, cuja API de coleção preserva o contrato dinâmico dos callbacks do mock; a asserção ainda verifica o payload armazenado e a remoção após recuperação da fila. O teste protege a recuperação durável quando `QueueInterface::createItem()` falha na primeira tentativa. Os 111 erros brutos restantes estão todos em testes Kernel.
+
+Evidências: Unit do módulo 30 testes/62 assertions PASS; PHP lint do teste PASS; análise bruta de Eventos 112 -> 111; análise global estrita `[OK] No errors`; gate Portal Drupal 12 PASS (1234 checks); `git diff --check` PASS. Kernel não executado: conexão isolada de banco não comprovada nesta rodada.

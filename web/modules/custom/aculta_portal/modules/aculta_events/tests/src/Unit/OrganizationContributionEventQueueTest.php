@@ -19,19 +19,19 @@ final class OrganizationContributionEventQueueTest extends UnitTestCase {
   /**
    * A failed Queue API write remains recoverable from the minimal outbox. */
   public function testFailedQueueWriteIsRecovered(): void {
-    $values = [];
+    $values = new \ArrayObject();
     $store = $this->createMock(KeyValueStoreInterface::class);
     $store->method('set')->willReturnCallback(static function (string $key, mixed $value) use (&$values): void {
-      $values[$key] = $value;
+      $values->offsetSet($key, $value);
     });
     $store->method('getAllKeys')->willReturnCallback(static function () use (&$values): array {
-      return array_keys($values);
+      return array_keys($values->getArrayCopy());
     });
     $store->method('getMultiple')->willReturnCallback(static function (array $keys) use (&$values): array {
-      return array_intersect_key($values, array_flip($keys));
+      return array_intersect_key($values->getArrayCopy(), array_flip($keys));
     });
     $store->method('delete')->willReturnCallback(static function (string $key) use (&$values): void {
-      unset($values[$key]);
+      $values->offsetUnset($key);
     });
     $keyValueFactory = $this->createMock(KeyValueFactoryInterface::class);
     $keyValueFactory->method('get')->with('aculta_events_contribution_outbox')->willReturn($store);
@@ -56,12 +56,13 @@ final class OrganizationContributionEventQueueTest extends UnitTestCase {
       self::fail('The first Queue API write should fail.');
     }
     catch (\RuntimeException) {
-      self::assertCount(1, $values);
-      self::assertSame($event->toQueuePayload(), reset($values));
+      $outbox = $values->getArrayCopy();
+      self::assertCount(1, $outbox);
+      self::assertSame($event->toQueuePayload(), reset($outbox));
     }
 
     self::assertSame(1, $service->recoverUndelivered());
-    self::assertSame([], $values);
+    self::assertSame([], $values->getArrayCopy());
   }
 
 }
