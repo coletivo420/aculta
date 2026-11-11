@@ -115,6 +115,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && ($rowPatterns['component_id'] ?? NULL) === 'aculta420_v2:revista-album-card';
     $isUpstreamVvjsExample = preg_match('/^vvj[a-z]_example$/', $viewId) === 1;
     $isWebformSubmissions = $viewId === 'webform_submissions';
+    $isNativeCoreView = in_array($viewId, ['media_library', 'group_members', 'group_nodes', 'profiles', 'comments_recent', 'commerce_user_orders', 'courses', 'aculta_forum_lms_admin_comments', 'aculta_magazine_admin_comments'], TRUE);
     $forumTopicFieldsTemplate = $theme . '/templates/views/views-view-fields--aculta-forum-public-topics.html.twig';
     $isForumTopicsSdc = $viewId === 'aculta_forum_public_topics'
       && (string) $displayId !== 'default'
@@ -267,7 +268,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
         : ($isForumTopicsSdc || $isRevistaTeaserSdc || $documentRuntimeVerified || $shopRuntimeVerified || $wikiRuntimeVerified || $wikiCategoriesRuntimeVerified
         ? 'UI_SUITE_NATIVE'
-        : ((($isViewsFunctionalBase && !$isProductGalleryPilot) || $isEventsBase || $isAdminViewNative || $isWebformSubmissions)
+        : ((($isViewsFunctionalBase && !$isProductGalleryPilot) || $isEventsBase || $isAdminViewNative || $isWebformSubmissions || $isNativeCoreView)
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
         : (($albumsRuntimeVerified || $forumRuntimeVerified || $eventsRuntimeVerified || $revistaRuntimeVerified || $revistaNewsRuntimeVerified || $homeEditorialRuntimeVerified || $albumPhotosRuntimeVerified || $mediaGalleriesRuntimeVerified) ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS')))),
       'replacement_or_action' => match (TRUE) {
@@ -281,6 +282,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isDocumentCardSdc => 'The document teaser row uses the existing document-card SDC; finish its UI Patterns layout composition and Runtime validation',
         $isForumTopicsSdc => 'The Fields row adapter already composes the reusable forum-topic-row SDC; preserve it and migrate to the UI Patterns row plugin only when dynamic entity props and rendered slots can be mapped without losing topic state',
         $isProductGalleryPilot => 'UI Patterns layout-grid composes the native Commerce product media View; preserve product Media IDs, ordering, published/image filters and produto_galeria view mode',
+        $isNativeCoreView => 'Native Core/contrib View for administration, account, groups or media; keep query, access, filters, pager and Drupal render arrays',
         $isWebformSubmissions => 'Webform submission administration is a functional native Views table; keep Webform query/access/filters and Drupal table presentation',
         $isAdminViewNative => 'Native administrative Views table; keep query, access, filters, sorting, pager and Drupal table presentation',
         $isViewsFunctionalBase || $isEventsBase => 'Native Views base display supplies inherited query, access, filters, sorting and configured style to concrete displays; it has no independent route output',
@@ -310,6 +312,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isProductGalleryPilot => $productGalleryRuntimeConfigured
           ? 'Runtime View returned seven Media rows for the published Commerce product; browser visual, access and cache acceptance remain DEFERRED'
           : 'Commerce product View has a programmatic consumer; Runtime execution and browser acceptance remain pending',
+        $isNativeCoreView => 'Native Core/contrib View; presentation and behavior stay in the owning module',
         $isWebformSubmissions => 'Native Webform submission table; presentation stays in Drupal Views',
         $isAdminViewNative => 'Administrative table consumes the inherited query/access/filter/sort; presentation stays in Drupal Views',
         $isViewsFunctionalBase || $isEventsBase => 'Inherited query/access/filter/sort and any base style are consumed by explicit displays; no independent route output',
@@ -354,6 +357,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         $isForumGalleryPilot && $forumGalleryRuntimeConfigured => 'active; UI Patterns View executable; zero published Forum galleries; visual acceptance deferred',
         $isMediaGalleriesPilot && $mediaGalleriesRuntimeVerified => sprintf('active; HTTP 200; %d cards after; anonymous access allowed; Firefox 320/390/768/1024/1440 light/dark', $runtimeView['displays'][$displayId]['result_count_before_after'] ?? 0),
         $isMediaGalleriesPilot => 'configured; Runtime/browser evidence not recorded',
+        $isNativeCoreView => 'functional native Core/contrib View; owner module presentation',
         $isWebformSubmissions => 'functional native Webform submission View; Drupal table presentation',
         $isAdminViewNative => 'functional native administrative View; Drupal table presentation',
         $isViewsFunctionalBase || $isEventsBase => 'functional native base; no direct route/display consumer',
@@ -1021,9 +1025,9 @@ $rows[] = [
   'row_plugin' => '',
   'style_plugin' => '',
   'ui_patterns_configured' => 'ui_skins_code_and_sync_declared',
-  'status' => 'MIGRATION_IN_PROGRESS',
+  'status' => 'UI_SUITE_NATIVE',
   'replacement_or_action' => 'Portal maps ten Drupal Domain IDs to skin IDs; UI Skins declares light/dark CSS variables; purpose palette form, config key, class, selectors and tokens removed',
-  'risk_or_evidence_gap' => 'Runtime has the active Domain-to-skin map and five CSS-variable settings; Links A/B/A values are verified. Full contrast, cache-hit isolation and visual acceptance across ten domains remain deferred',
+  'risk_or_evidence_gap' => 'Runtime has the active Domain-to-skin map and five CSS-variable settings; the 300/300 matrix and 70/70 residual acceptance passed with contrast >= 7.16:1. Cache-hit (private/uncacheable), authenticated profiles and human acceptance remain deferred',
   'rollback' => 'Revert the scoped code/config commit; do not restore purpose palette behavior or aliases',
   'detected_consumers' => 'DomainSkinResolver, AppearanceHooks, SurfaceSettingsHooks, UI Skins PageTop scopes',
   'runtime_status' => 'ui_skins=Enabled 1.2.1; map active (Links=Ruderalis, default=Skunk); five UI Skins CSS-variable definitions/scopes active',
