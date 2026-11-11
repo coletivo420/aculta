@@ -21,11 +21,6 @@
     }
     const title = metadata.getAttribute('data-portal-page-title') || document.title;
     document.title = `${title} | Conta ACULTA`;
-    const crumb = metadata.querySelector('ol');
-    const target = document.querySelector('[data-portal-breadcrumb]');
-    if (crumb && target) {
-      target.replaceChildren(...Array.from(crumb.children, (node) => node.cloneNode(true)));
-    }
     metadata.remove();
   };
 

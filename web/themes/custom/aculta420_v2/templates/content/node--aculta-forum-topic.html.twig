@@ -43,13 +43,6 @@
   {{ title_suffix }}
   {% if view_mode == 'full' %}
     {% set topic_category = node is defined and node and node.hasField('field_aculta_categories') and not node.field_aculta_categories.isEmpty() ? node.field_aculta_categories.entity : null %}
-    <nav class="aculta-forum-topic__breadcrumb" aria-label="{{ 'Caminho'|t }}">
-      <a href="{{ url('<front>') }}">{{ 'Growroom420 / Comunidade'|t }}</a>
-      {% if topic_category %}
-        <span aria-hidden="true">/</span>
-        <span class="aculta-forum-topic__category-pill">{{ topic_category.label() }}</span>
-      {% endif %}
-    </nav>
     <header class="aculta-forum-topic__full-header">
       <div class="aculta-forum-topic__header-actions">
         <button type="button" class="aculta-forum-action-btn" disabled aria-disabled="true">

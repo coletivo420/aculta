@@ -575,24 +575,6 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
   }
 }
 
-/* Página de tópico: breadcrumb e pílula de categoria (referência 3). */
-.aculta-forum-topic__breadcrumb {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  margin-block-end: var(--spacing-sm);
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-  gap: var(--spacing-xs);
-}
-
-.aculta-forum-topic__breadcrumb a {
-  min-block-size: 44px;
-  display: inline-flex;
-  align-items: center;
-  color: var(--color-link-editorial);
-}
-
 .aculta-forum-topic__category-pill {
   display: inline-flex;
   align-items: center;

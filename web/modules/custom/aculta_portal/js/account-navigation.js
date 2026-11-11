@@ -87,9 +87,6 @@
     // O fragmento pode estar no corpo (desktop) ou no painel aberto (mobile): procura no documento.
     const chrome = document.querySelector('[data-portal-chrome]');
     const pageTitle = chrome ? chrome.getAttribute('data-portal-page-title') : '';
-    const crumbList = chrome?.querySelector('ol');
-    const currentCrumbs = document.querySelector('[data-portal-breadcrumb]');
-    if (crumbList && currentCrumbs) currentCrumbs.replaceChildren(...crumbList.children);
     chrome?.remove();
     const sectionTitle = active ? active.textContent.trim() : pageTitle;
     const sectionHeading = document.getElementById('portal-account-section-title');

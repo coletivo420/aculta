@@ -183,7 +183,7 @@ services:
   aculta_portal.account_ajax_main_content_renderer:
     class: Drupal\aculta_portal\Render\AccountAjaxMainContentRenderer
     decorates: main_content_renderer.ajax
-    arguments: ['@aculta_portal.account_ajax_main_content_renderer.inner', '@title_resolver', '@breadcrumb']
+    arguments: ['@aculta_portal.account_ajax_main_content_renderer.inner', '@title_resolver']
     tags:
       - { name: render.main_content_renderer, format: drupal_ajax }
       - { name: aculta_portal.implementation }
