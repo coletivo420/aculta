@@ -5,8 +5,12 @@
 - Importação parcial aplicada após snapshot do Runtime. Preserva seções,
   componentes, UUIDs, `allow_custom`, campos e dados; as duas exclusões
   documentadas permanecem fora do lote.
-- Gate Layout Builder reforçado e aprovado com 258 checks, incluindo
-  configuração Runtime/Sync, renderização de entidades publicadas e acesso.
+- Gate Layout Builder aprovado com 276 checks: configuração Runtime/Sync,
+  saídas ComponentLayout e adapter SDC Wiki, render arrays e acesso.
+- O runner Firefox falha se a rota não apresentar título, `main` e corpo;
+  o provider V2 exibiu 15 grupos/80 componentes e carregou uma story real. A
+  listagem ultrapassa a viewport a 320 px (DEFERRED); a rota Wiki retornou 403
+  e segue sem captura visual aceita.
 
 ## Não versionado — Layout Builder usa ComponentLayout SDC em páginas (2026-11-10)
 

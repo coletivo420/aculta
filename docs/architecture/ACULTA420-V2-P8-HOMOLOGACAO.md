@@ -86,17 +86,18 @@ A suíte de 86 checks foi repetida após a restauração dos blocos de cabeçalh
 
 ## 5. DEFERRED (com causa)
 
-- **Layout Builder por display:** os **22 displays elegíveis** usam o ComponentLayout UI Patterns existente `layout-section`, incluindo nós `full`/`default`, oito `block_content` e `taxonomy_term.editorial_author.default`. Gate reforçado: 258 checks PASS, cobrindo configuração ativa/Sync, preservação de componentes, construção de render arrays para entidades publicadas e acesso às rotas. `node.page.full` mantém `allow_custom: true`; demais displays não permitem overrides. Excluídos `node.document.full` e `block_content.basic.default`, que perdem conteúdo de forma reproduzível. Snapshot do Runtime e rollback seletivo registrados na ADR-054; nenhum dado editorial foi alterado.
+- **Layout Builder por display:** as **22 configs elegíveis** apontam para o ComponentLayout UI Patterns `layout-section`. Gate reforçado: 276 checks PASS, cobrindo paridade, render arrays publicados, acesso e saída visual; 21 saídas usam o wrapper ComponentLayout, enquanto `node.wiki_entry.full` usa o adapter SDC `wiki-entry`, que consome os campos diretamente. `node.page.full` mantém `allow_custom: true`; demais displays não permitem overrides. Excluídos `node.document.full` e `block_content.basic.default`, que perdem conteúdo de forma reproduzível. Snapshot e rollback seletivo registrados na ADR-054; nenhum dado foi alterado.
 - **Landing por purpose (P5):** depende de conteúdo editorial e do mesmo ambiente isolado. Mecanismo e piloto Links documentados em `ACULTA420-V2-P5-LANDING-PAGES.md`.
+- **Wiki full browser:** DEFERRED. `/verbete/proibicionismo` retornou 403 anônimo; Firefox após o fluxo de login não recebeu título nem landmark `main`, então a captura em branco foi descartada. O adapter SDC direto passou no gate de renderização Drupal; isso não substitui a homologação visual.
 - **Visual:** leitura humana das capturas e aceitação do responsável.
-- **Prévia autenticada em navegador:** validada por Drush e HTTP anônimo, não em sessão autenticada real.
+- **UI Components autenticado:** provider `/painel-administrativo/aparencia/ui/components/aculta420_v2` renderizou 15 grupos e 80 componentes; uma story SDC sob demanda carregou (HTTP 200), com Firefox ESR em 1280/320 e dark DOM. A 320 px, itens da listagem administrativa ficam fora da viewport, embora `documentWidth=320` e `maxScrollX=0`; aceite responsivo permanece DEFERRED. A rota antiga `aculta420` não contém grupos e não é evidência do catálogo. Acesso por perfil não-admin permanece DEFERRED.
 - **Cache cross-domain em ordem inversa:** feitas requisições sequenciais corretas, sem teste de troca de cache aquecido entre hosts.
 - **Import/export de configuração em staging e rollback de configuração:** não executados.
 - **`npm run lint:css`:** binário ausente.
 
 ## 6. P9 — cutover
 
-**Executado no desenvolvimento em 2026-11-09** com autorização do responsável. As cinco regiões finais estão no `info.yml`, o shell v2 é o padrão, os cinco blocos foram migrados para `content` e o motor de container foi removido. Backup em `$SUITE_OUT/aculta-cutover-20261109/`; rollback em `ACULTA420-V2-P9-CUTOVER.md`. Validação final: gates do tema, fundação 454, Portal Drupal 12 1.205, Playwright 86/86 e landing 35/35 PASS. Critérios não atendidos: homologação visual, Layout Builder por display, landing pages e import/export em staging.
+**Executado no desenvolvimento em 2026-11-09** com autorização do responsável. As cinco regiões finais estão no `info.yml`, o shell v2 é o padrão, os cinco blocos foram migrados para `content` e o motor de container foi removido. Backup em `$SUITE_OUT/aculta-cutover-20261109/`; rollback em `ACULTA420-V2-P9-CUTOVER.md`. Validação final: gates do tema, fundação 454, Portal Drupal 12 1.205, Playwright 86/86 e landing 35/35 PASS. Restam homologação visual ampla, conteúdo de landing pages e import/export em staging.
 
 O que já existe para o cutover:
 

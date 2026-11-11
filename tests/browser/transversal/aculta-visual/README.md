@@ -5,10 +5,12 @@
 modo escuro com `prefers-color-scheme: dark`, `data-theme="dark"` e o atributo
 de tema Bootstrap usado pelo site. Registra rolagem horizontal real, largura
 documental, cartões compactos, alvos de interação menores que 44 px e links
-vazios sem nome.
+vazios sem nome. A captura falha se a rota não produzir título, landmark `main`
+e conteúdo visível, para não considerar páginas em branco como PASS.
 O script também usa a conta administrativa de teste documentada (UID 205 por
 padrão), via link único do Drush mantido somente em memória, verifica a rota
-protegida da UI Patterns Library e captura os estados salvo/não salvo da Flag
+protegida da UI Patterns Library; no provider `aculta420_v2`, conta grupos,
+componentes e links de prévia e carrega uma story SDC real. Também captura os estados salvo/não salvo da Flag
 nativa no tópico do Fórum. A Flag é restaurada ao estado inicial no `finally`.
 
 ## Ambiente e execução

@@ -1,7 +1,7 @@
 {
     "observed_at_utc": "2026-11-11T01:38:04+00:00",
     "drupal_version": "11.5.0-beta1",
-    "evidence_command": "Drush Runtime export and targeted partial import after snapshot; ComponentLayout discovery; 258-check Layout Builder batch validator; render-array/access parity checks; anonymous Firefox A/B/A pilot",
+    "evidence_command": "Drush Runtime export and targeted partial import after snapshot; ComponentLayout discovery; 276-check Layout Builder batch validator; render-array/access parity checks; anonymous Firefox A/B/A pilot",
     "ui_suite_modules": {
         "ui_icons": {
             "status": "Enabled",
@@ -167,22 +167,24 @@
         "ui_patterns_ckeditor5": "enabled preexisting; prohibited for this implementation; removal requires separate authorization",
         "ui_patterns_field_group": "enabled preexisting 2.0.x-dev; blocked upstream pending security and Drupal 12 support assessment",
         "ui_styles_ckeditor5": "enabled; authorized Config Sync cutover applied",
-        "layout_builder_component_displays": "22 eligible displays active via ui_patterns:aculta420_v2:layout_section; two excluded displays remain unchanged"
+        "layout_builder_component_displays": "22 eligible configs use ui_patterns:aculta420_v2:layout_section; 21 render ComponentLayout wrappers; node.wiki_entry.full renders via direct wiki-entry SDC template"
     },
     "notes": [
         "UI Skins map and CSS variables are active; anonymous A/B/A requests returned distinct Ruderalis/Skunk values without cross-host carryover.",
-        "All 22 eligible Layout Builder displays now use the existing layout-section SDC through UI Patterns Layouts. Targeted partial import followed a Runtime export snapshot; the 258-check batch validator confirmed active/Sync parity, preserved components, published-entity render-array construction, and default-layout access behavior. No entity data was changed.",
+        "All 22 eligible configs reference layout-section and match Runtime/Sync. The 276-check validator confirms 21 rendered ComponentLayout wrappers and the direct wiki-entry SDC template for node.wiki_entry.full, plus published-entity render arrays and default-layout access. Import was targeted after a Runtime snapshot; no entity data changed.",
         "node.document.full and block_content.basic.default remain the two documented exclusions because their Layout Builder configuration loses content.",
         "Dynamic page cache reports UNCACHEABLE for tested pages, so cache-hit variation remains DEFERRED even though sequential host rendering did not leak skins.",
         "UI Patterns Field Group remains preexisting and BLOCKED_UPSTREAM for security/Drupal 12 assessment. UI Patterns CKEditor 5 remains preexisting but unused in this implementation; removal requires a separately authorized config operation.",
         "The Runtime is Drupal 11.5.0-beta1; Drupal 12 compatibility cannot be inferred from a Drupal 11 runtime test.",
-        "Global config:status still reports unrelated drift; the 22 migrated Layout Builder display configurations match Sync after Runtime serialization normalization."
+        "Global config:status still reports unrelated drift; the 22 migrated Layout Builder display configurations match Sync after Runtime serialization normalization.",
+        "node.wiki_entry.full has a purpose-built Twig adapter that renders the wiki-entry SDC directly from access-checked fields; it bypasses the configured Layout Builder wrapper and is validated as a UI_SUITE_NATIVE adapter.",
+        "Wiki full browser acceptance is DEFERRED: anonymous GET returned 403 and the authenticated Firefox runner produced a blank document without title/main; the artifact was not counted as a pass."
     ],
     "layout_builder_displays": {
         "core.entity_view_display.block_content.aculta_editorial.default": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -190,12 +192,13 @@
                 "field_block:block_content:aculta_editorial:body"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.block_content.aculta_institution.contact": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -207,12 +210,13 @@
                 "field_block:block_content:aculta_institution:field_site"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.block_content.aculta_institution.default": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -228,12 +232,13 @@
                 "field_block:block_content:aculta_institution:field_site"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.block_content.aculta_institution.footer": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -245,12 +250,13 @@
                 "field_block:block_content:aculta_institution:field_site"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.block_content.aculta_institution.full": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -266,12 +272,13 @@
                 "field_block:block_content:aculta_institution:field_site"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.block_content.aculta_institution.home": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -283,12 +290,13 @@
                 "field_block:block_content:aculta_institution:field_site"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.block_content.aculta_institution.institutional": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -304,12 +312,13 @@
                 "field_block:block_content:aculta_institution:field_site"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.block_content.aculta_institution.registration": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -330,12 +339,13 @@
                 "field_block:block_content:aculta_institution:field_trade_name"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.node.activity.default": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -355,12 +365,13 @@
                 "field_block:node:activity:field_summary"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.node.activity.full": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -369,12 +380,13 @@
                 "field_block:node:activity:body"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.node.aculta_adm.default": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -383,12 +395,13 @@
                 "field_block:node:aculta_adm:body"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.node.aculta_faq.default": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -396,12 +409,13 @@
                 "field_block:node:aculta_faq:body"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.node.aculta_notice.default": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -411,12 +425,13 @@
                 "field_block:node:aculta_notice:body"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.node.document.default": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -427,12 +442,13 @@
                 "field_block:node:document:field_document"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.node.editorial_highlight.default": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -443,12 +459,13 @@
                 "field_block:node:editorial_highlight:field_summary"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.node.page.default": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -457,12 +474,13 @@
                 "field_block:node:page:body"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.node.page.full": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -471,12 +489,13 @@
                 "field_block:node:page:body"
             ],
             "allow_custom": true,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.node.revista.default": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -490,12 +509,13 @@
                 "field_block:node:revista:field_summary"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.node.revista.full": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -512,12 +532,13 @@
                 "field_block:node:revista:field_tags"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.node.wiki_entry.default": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -532,12 +553,13 @@
                 "field_block:node:wiki_entry:field_wiki_summary"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         },
         "core.entity_view_display.node.wiki_entry.full": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; direct wiki-entry SDC template rendered; Layout Builder wrapper is bypassed by the view-mode adapter",
             "regions": [
                 "content"
             ],
@@ -553,12 +575,13 @@
                 "field_block:node:wiki_entry:field_wiki_summary"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "direct_sdc_template"
         },
         "core.entity_view_display.taxonomy_term.editorial_author.default": {
             "layout_id": "ui_patterns:aculta420_v2:layout_section",
             "component_id": "aculta420_v2:layout-section",
-            "runtime_status": "active; partial import applied; included in 258-check batch validator",
+            "runtime_status": "active; partial import applied; included in 276-check batch validator",
             "regions": [
                 "content"
             ],
@@ -566,7 +589,8 @@
                 "field_block:taxonomy_term:editorial_author:description"
             ],
             "allow_custom": false,
-            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import."
+            "rollback": "Restore this display YAML from parent commit d72b98c1c and apply a targeted partial config import.",
+            "render_strategy": "layout_builder_component_layout"
         }
     },
     "browser_validation": {
@@ -599,6 +623,24 @@
         ],
         "links_horizontal_overflow": false,
         "dynamic_page_cache": "UNCACHEABLE on tested anonymous pages; host skin isolation observed, cache-hit variation not proven",
-        "screenshots": "SUITE_OUT/links-layout-sdc-final-2026-11-10; filenames and hashes in tests/browser/capturas/ui-suite-links/2026-11-10/manifest.json"
+        "screenshots": "SUITE_OUT/links-layout-sdc-final-2026-11-10; filenames and hashes in tests/browser/capturas/ui-suite-links/2026-11-10/manifest.json",
+        "wiki_full_view": {
+            "path": "/verbete/proibicionismo",
+            "anonymous_http_status": 403,
+            "authenticated_browser_status": "DEFERRED",
+            "reason": "The existing Firefox runner received a blank document without title/main after its one-time-login flow; screenshot is not accepted as evidence. The direct SDC output is verified by the Runtime render gate only."
+        },
+        "ui_patterns_library": {
+            "path": "/painel-administrativo/aparencia/ui/components/aculta420_v2",
+            "provider_groups": 15,
+            "components": 80,
+            "preview_links": 80,
+            "loaded_sdc_stories": 1,
+            "http_status": 200,
+            "viewports_css_px": [1280, 320],
+            "horizontal_scroll": false,
+            "responsive_acceptance": "DEFERRED: admin list elements extend past 320px viewport despite documentWidth=320 and maxScrollX=0",
+            "evidence_manifest": "tests/browser/capturas/ui-suite-library/2026-11-10/manifest.json"
+        }
     }
 }

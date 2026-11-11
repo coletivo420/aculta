@@ -1,12 +1,13 @@
 # ADR-054/055 — ComponentLayout nos displays elegíveis — 2026-11-10
 
-- **Objetivo:** migrar todos os displays Layout Builder compatíveis para UI Patterns ComponentLayout SDC.
-- **Estado:** 22 displays usam `layout-section` em Sync e Runtime. Import parcial precedido por snapshot. Componentes, UUIDs, seção `content`, `allow_custom` e dados foram preservados; as exclusões `node.document.full` e `block_content.basic.default` continuam inalteradas.
-- **Verificações:** Layouts 42 checks; batch Layout Builder 258 checks (configuração, construção de render arrays de entidades publicadas, paridade Runtime/Sync e acesso); SDC 41 componentes; PHPCS/lint do gate. Sem alterações em entidades. Token-budget gate segue FAIL por regras/catálogo global preexistentes; TODO V2 foi reduzido abaixo de 2.000 bytes.
-- **Arquivos:** 20 displays Sync, CSV/JSON de inventário, gate batch, TODO/status/changelog/roadmap, ADR-054, P8 e plano técnico.
-- **Pendências:** cache-hit continua `UNCACHEABLE`; aceite visual amplo, teclado, zoom, perfis e contraste seguem pendentes. Continuar Views, UI Styles Page/CKEditor 5, Icons, migração visual e RN-00–05.
-- **Trabalho compartilhado:** preservar alterações locais em Eventos, Conta, Perfil e `web/tmp/`; não incluídas nesta entrega.
-- **Próximo passo:** validar cache/perfis e avançar os pilotos UI Patterns Views e UI Styles Page sem importar drift global.
+- **Objetivo:** migrar displays Layout Builder elegíveis para ComponentLayout SDC.
+- **Estado:** 22 configs usam `layout-section`; 21 saídas exibem o wrapper e Wiki full renderiza via adapter SDC `wiki-entry`. Import parcial após snapshot; sem alteração de conteúdo. Duas exclusões inalteradas.
+- **Decisões e alternativas descartadas:** manter o template Wiki especializado, que compõe SDC diretamente; o gate verifica essa saída, não exige wrapper Layout Builder fictício.
+- **Cuidados:** o caminho Wiki full devolve 403 anônimo; browser autenticado ficou em branco e não conta como aceite. Cache de página continua `UNCACHEABLE`.
+- **Commits e arquivos:** base publicada `ed81948f7`; correção inclui gate batch, proteção do runner Firefox, inventário CSV/JSON, manifesto UI Components, ADRs, P8/plano, TODO/status/changelog/roadmap.
+- **Verificações:** Layouts 42; batch 276; SDC 41; UI Skins 134; UI Styles 38. UI Library `aculta420_v2`: 15 grupos/80 componentes, uma story carregada; itens fora da viewport em 320 px, responsividade DEFERRED. Token-budget FAIL por sete itens globais; TODO V2 abaixo de 2.000 bytes.
+- **Pendências:** cache-hit, visual amplo, teclado/zoom, perfis e contraste; avançar Views, UI Styles Page/CKEditor 5, Icons, migração visual e RN-00–05.
+- **Próximo passo:** retomar um piloto UI Patterns Views com gate de render/controle de acesso, sem importar drift global.
 
 # UI Skins — extensão Sync e limpeza da chave antiga — 2026-11-10
 

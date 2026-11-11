@@ -24,7 +24,7 @@ ALBUM_URL = os.environ.get(
 )
 STORY_URL = os.environ.get(
     "STORY_URL",
-    "https://aculta.toca.net.br/painel-administrativo/aparencia/ui/components/aculta420",
+    "https://aculta.toca.net.br/painel-administrativo/aparencia/ui/components/aculta420_v2",
 )
 ACCOUNT_URL = "https://conta.aculta.toca.net.br"
 
@@ -222,6 +222,27 @@ def inspect_story_gate():
             driver.click(".admin-toolbar__close-button")
             time.sleep(0.3)
         result = {"url": driver.url().split("?")[0], "title": driver.title()}
+        if not result["title"].strip() or not driver.exists("main"):
+            raise RuntimeError("A rota da captura não renderizou título e landmark main.")
+        if result["url"].endswith("/painel-administrativo/aparencia/ui/components/aculta420_v2"):
+            catalog = driver.js("""return {
+              components: document.querySelectorAll('.ui_patterns_component').length,
+              groups: document.querySelectorAll('.aculta-component-library__group-wrapper').length,
+              previewLinks: document.querySelectorAll('.aculta-load-preview-btn').length
+            };""")
+            if catalog["components"] < 1 or catalog["groups"] < 1 or catalog["previewLinks"] < 1:
+                raise RuntimeError("O catálogo V2 não apresentou componentes, grupos e prévias sob demanda.")
+            driver.click(".aculta-load-preview-btn")
+            for _ in range(40):
+                if driver.js("return !!document.querySelector('.ui_patterns_story__story')"):
+                    break
+                time.sleep(0.25)
+            catalog["loadedStories"] = driver.js(
+                "return document.querySelectorAll('.ui_patterns_story__story').length"
+            )
+            if catalog["loadedStories"] < 1:
+                raise RuntimeError("A prévia SDC sob demanda não foi carregada na UI Library.")
+            result["catalog"] = catalog
         for width, label in ((1280, "desktop"), (320, "320")):
             actual = viewport.set(width)
             driver.js("window.scrollTo(0, 0)")
@@ -243,6 +264,8 @@ def inspect_story_gate():
                 .filter(element => element.right > innerWidth + 1)
                 .slice(0, 8),
               body: (document.body?.innerText || '').slice(0, 180)};""")
+            if not result[label]["body"].strip():
+                raise RuntimeError(f"A rota da captura está sem conteúdo em {label}.")
             result[label]["requestedViewport"] = width
             save_screenshot(driver, f"ui-patterns-{label}.png")
             result[label]["storyCaptures"] = capture_story_headings(driver, "light", label)

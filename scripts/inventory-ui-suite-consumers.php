@@ -130,7 +130,9 @@ foreach (glob($sync . '/core.entity_view_display.*.yml') ?: [] as $path) {
       : 'Migrate compatible Core Layout Builder sections to existing UI Patterns ComponentLayout SDCs; keep excluded displays documented',
     'risk_or_evidence_gap' => $allSectionsUseComponentLayout
       ? (is_array($runtimeLayout)
-        ? 'Runtime ComponentLayout render verified; browser/cache and access coverage remains scoped per display'
+        ? (($runtimeLayout['render_strategy'] ?? '') === 'direct_sdc_template'
+          ? 'Runtime rendered through the direct SDC template adapter; Layout Builder wrapper is bypassed; browser/cache and per-display access coverage remain scoped'
+          : 'Runtime ComponentLayout output verified; browser/cache and per-display access coverage remain scoped')
         : 'ComponentLayout configured in Sync; Runtime render, access and cache not observed')
       : 'Core layout IDs still configured: ' . implode(', ', $legacyLayoutIds) . '; assess compatible SDC layout and the two documented exclusions',
     'rollback' => 'Restore captured display configuration; no entity/data changes',

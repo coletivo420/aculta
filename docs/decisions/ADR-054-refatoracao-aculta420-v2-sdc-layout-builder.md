@@ -95,9 +95,9 @@ A sequência normativa RN-00 a RN-05 consta de `docs/architecture/ACULTA-PORTAL-
 
 ## Atualização US-06 — ComponentLayout para os displays elegíveis — 2026-11-10
 
-- Os 22 displays habilitados e elegíveis usam agora o SDC existente `layout-section` via UI Patterns ComponentLayout. Os 20 displays restantes foram migrados depois do piloto de páginas; seções, componentes, UUIDs, região `content` e flags `allow_custom` foram preservados.
+- As 22 configs habilitadas e elegíveis usam agora `layout-section` via UI Patterns ComponentLayout. As 20 restantes foram migradas após o piloto; componentes, UUIDs, região `content` e flags `allow_custom` foram preservados. O render mostrou que `node.wiki_entry.full` usa template SDC próprio que consome campos diretamente; sua saída usa o adapter `wiki-entry` sem o wrapper Layout Builder. As outras 21 saídas exibem o wrapper ComponentLayout.
 - As exclusões `node.document.full` e `block_content.basic.default` continuam sem Layout Builder. Snapshot do Runtime precedeu o import parcial; rollback reproduzível restaurando os YAMLs do commit pai e reimportando apenas esses objetos. Nenhuma entidade ou dado foi alterado.
-- Gates: UI Patterns Layouts 42 checks; Layout Builder 258 checks para 22 displays (construção de render arrays de entidades publicadas, paridade Runtime/Sync e acesso); SDC 41 componentes. As capturas amplas, cache-hit, perfis autenticados e revisão visual permanecem pendentes.
+- Gates: UI Patterns Layouts 42 checks; Layout Builder 276 checks para 22 displays (render arrays, saída ComponentLayout ou adapter SDC Wiki, paridade Runtime/Sync e acesso); SDC 41 componentes. Capturas amplas, cache-hit, perfis autenticados e revisão visual pendentes.
 - Drift global de Config Sync continua em outros objetos, incluindo Views/Forum e `system.theme`; não foi importado nesta entrega.
 ### Progresso UI Skins — cutover em preparação (2026-11-10)
 

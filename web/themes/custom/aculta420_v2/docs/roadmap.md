@@ -2,11 +2,12 @@
 
 ## ADR-054/055 — ComponentLayout SDC nos displays elegíveis (2026-11-10)
 
-- Os 22 displays Layout Builder elegíveis usam o SDC `layout-section` via UI
-  Patterns Layouts; as duas exclusões por perda de conteúdo seguem intactas.
+- As 22 configs elegíveis usam `layout-section` via UI Patterns Layouts; 21
+  saídas exibem o wrapper e Wiki full usa seu adapter SDC direto. As duas
+  exclusões por perda de conteúdo seguem intactas.
 - Importação parcial no Runtime foi precedida por snapshot; nenhuma entidade
   ou dado editorial foi alterado.
-- Gate Layout Builder: 258 checks PASS, com renderização real, paridade
+- Gate Layout Builder: 276 checks PASS, com renderização de entidades, paridade
   Runtime/Sync e autorização das rotas de defaults. Homologação visual ampla,
   teclado, zoom e cache-hit continuam pendentes.
 

@@ -69,8 +69,16 @@ $targets = [
   'node.aculta_notice.default',
 ];
 
+// The Wiki full display has a purpose-built Twig adapter that composes the
+// existing wiki-entry SDC directly instead of rendering Layout Builder's
+// content wrapper. Preserve and verify that established UI Suite contract.
+$directSdcDisplays = [
+  'node.wiki_entry.full' => 'aculta-wiki-article',
+];
+
 $displayStorage = \Drupal::entityTypeManager()->getStorage('entity_view_display');
 $syncStorage = \Drupal::service('config.storage.sync');
+$renderer = \Drupal::service('renderer');
 
 foreach ($targets as $id) {
   [$entity, $bundle, $mode] = explode('.', $id);
@@ -138,14 +146,32 @@ foreach ($targets as $id) {
   }
   try {
     $build = \Drupal::entityTypeManager()->getViewBuilder($entity)->view($targetEntity, $mode);
+    $output = (string) $renderer->renderInIsolation($build);
   }
   catch (\Throwable $e) {
-    $failures[] = "$id: falha ao construir o render array: " . $e->getMessage();
+    $failures[] = "$id: falha ao renderizar a entidade publicada: " . $e->getMessage();
     $checks++;
     continue;
   }
   $checks++;
   $assert(is_array($build) && $build !== [], "$id: render array vazio.");
+  $classes = [];
+  preg_match_all('/class="([^"]*)"/', $output, $classMatches);
+  foreach ($classMatches[1] as $classList) {
+    $classes = [...$classes, ...preg_split('/\s+/', $classList, -1, PREG_SPLIT_NO_EMPTY)];
+  }
+  if (isset($directSdcDisplays[$id])) {
+    $assert(
+      in_array($directSdcDisplays[$id], $classes, TRUE),
+      "$id: saída renderizada sem o adapter SDC direto."
+    );
+  }
+  else {
+    $assert(
+      in_array('layout-section', $classes, TRUE),
+      "$id: saída renderizada sem o wrapper SDC layout-section."
+    );
+  }
 }
 
 // Acesso às rotas de Layout Builder.
