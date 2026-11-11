@@ -88,18 +88,15 @@ final class UpcomingEventsBlock extends BlockBase implements ContainerFactoryPlu
         ? $this->purposes->environmentPathUrl(SiteKey::Eventos, '/eventos/' . $slug)
         : NULL;
       $itens[] = [
-        '#type' => 'link',
-        '#title' => $rotulo,
-        '#url' => $url ?? $evento->toUrl('canonical'),
-        '#attributes' => ['data-portal-ui' => 'events-upcoming-link'],
+        'title' => $rotulo,
+        'url' => ($url ?? $evento->toUrl('canonical'))->toString(),
       ];
     }
 
     return [
-      '#theme' => 'item_list',
+      '#theme' => 'aculta_events_upcoming_block',
       '#items' => $itens,
-      '#empty' => $this->t('Nenhum evento publicado no momento.'),
-      '#attributes' => ['data-portal-ui' => 'events-upcoming-block'],
+      '#empty_text' => (string) $this->t('Nenhum evento publicado no momento.'),
       '#cache' => [
         // A visibilidade de eventos de turma do LMS depende da conta.
         'contexts' => ['user', 'url.site'],

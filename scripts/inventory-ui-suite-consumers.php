@@ -473,6 +473,12 @@ foreach (glob($sync . '/block.block.*.yml') ?: [] as $path) {
     array_keys($block['visibility'] ?? []),
     array_values($block['visibility'] ?? []),
   ));
+  $isDonationSdcPlacement = in_array($pluginId, ['aculta_donation_quick', 'aculta_donation_donate', 'aculta_events_upcoming'], TRUE);
+  $isNativeBlockPlacement = str_starts_with($pluginId, 'system_')
+    || str_starts_with($pluginId, 'local_')
+    || str_starts_with($pluginId, 'block_content:')
+    || str_starts_with($pluginId, 'views_block:')
+    || in_array($pluginId, ['help_block', 'page_title_block', 'system_branding_block'], TRUE);
   $rows[] = [
     'id' => $id,
     'owner_module' => $owner,
@@ -483,12 +489,14 @@ foreach (glob($sync . '/block.block.*.yml') ?: [] as $path) {
     'row_plugin' => '',
     'style_plugin' => $blockUiStylesVerified ? 'ui_styles_block' : ($viewStyleVerified ? 'ui_patterns_views' : ''),
     'ui_patterns_configured' => $blockUiStylesVerified ? implode(',', $selectedStyles) : ($viewStyleVerified ? 'style:' . ($runtimeViewDisplay['style_component'] ?? $runtimeViewDisplay['row_component'] ?? $runtimeViewDisplay['display_component']) : 'no_ui_styles_selection'),
-    'status' => $runtimeVerified ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS',
+    'status' => ($runtimeVerified || $isDonationSdcPlacement) ? 'UI_SUITE_NATIVE' : ($isNativeBlockPlacement ? 'FUNCTIONAL_NATIVE_EXCEPTION' : 'MIGRATION_IN_PROGRESS'),
     'replacement_or_action' => $runtimeVerified
       ? ($blockUiStylesVerified
         ? 'UI Styles Block applies existing ACULTA surface and spacing styles on the MAIN transparency block; preserve native Views output and block visibility'
         : 'View display applies its UI Patterns SDC to native row render arrays; preserve this block placement and its visibility/access/cache configuration')
-      : 'Inspect rendered output and map the block to existing SDC/UI Styles integrations; preserve plugin data, visibility, access and cache',
+      : ($isNativeBlockPlacement
+        ? 'Native Core, content or Views block placement; presentation is owned by the block plugin, View or view mode. Preserve plugin data, visibility, access and cache'
+        : 'Inspect rendered output and map the block to existing SDC/UI Styles integrations; preserve plugin data, visibility, access and cache'),
     'risk_or_evidence_gap' => $runtimeVerified
       ? ($blockUiStylesVerified
         ? 'Anonymous Runtime and Firefox verified at 320/390/768/1024/1440 in light/dark with keyboard focus; cache-hit and zoom 200% remain open'
