@@ -1,0 +1,9 @@
+name: Com superfície
+props:
+  label: Navegação estrutural
+  sessao: culturas
+  variant: superficie
+  trail:
+    - label: Culturas
+      url: /eventos
+  current: Eventos em Goiás

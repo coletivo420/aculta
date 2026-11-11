@@ -1,0 +1,9 @@
+name: Wiki
+props:
+  label: Navegação estrutural
+  sessao: wiki
+  variant: padrao
+  trail:
+    - label: Wiki
+      url: /wiki
+  current: Cultivo colaborativo
