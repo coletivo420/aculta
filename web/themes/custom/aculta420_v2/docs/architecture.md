@@ -1,5 +1,12 @@
 # Arquitetura do tema ACULTA420 V2
 
+> **Revisão focal (2026-11-11):** correções de contraste institucional,
+> orientação da sidebar em `layout-page--aside`, variantes de fallback
+> dos shells e token `--aculta-surface-raised`. Detalhes, limites
+> e pendências em
+> `docs/architecture/ACULTA420-V2-AUDITORIA-CSS-LAYOUT-2026-11-11.md`.
+> A validação em Runtime ainda está pendente.
+
 > **Atualização normativa (2026-11-09):** ADR-054 e `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md` substituem as restrições anteriores ao jQuery e ao Layout Builder e descontinuam o painel administrativo de container. Este documento também descreve o código legado durante a migração paralela. O painel já foi retirado; a leitura dos valores antigos ainda funciona temporariamente.
 
 Este documento descreve como o tema está montado hoje (`1.2.0-dev.2` mais o menu de conta não versionado). Para decisões, veja os ADRs em `docs/decisions/`; para status, veja [roadmap.md](roadmap.md).

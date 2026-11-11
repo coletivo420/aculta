@@ -62,9 +62,12 @@ Os cinco layouts usam `group: Layouts` e são registrados automaticamente pelo
 
 Estrutura o landmark main nas variantes stack, aside e full; stories:
 layout-page.default (aside), layout-page.stack e layout-page.full. Slots: title, content
-e aside. O conteúdo principal precede o complementar no DOM; aside só forma
-duas colunas a partir de 60rem quando tem conteúdo. Não escolhe tipo nem
-domínio, responsabilidade reservada ao preprocess da fase P2. Sem JavaScript.
+e aside. O conteúdo principal precede o complementar no DOM; a partir de 60rem,
+aside com conteúdo forma duas colunas, com a área complementar à esquerda
+apenas no visual (CSS Grid). Sem aside, a página permanece em uma coluna.
+O fallback do shell espelha a geometria; validar foco, landmarks e zoom no
+Runtime. O preprocess escolhe a variante por rota/conteúdo, sem resolver
+identidade visual de domínio no SDC. Sem JavaScript.
 
 ### avatar
 
