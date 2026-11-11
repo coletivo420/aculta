@@ -38,12 +38,12 @@ Estados: INSTALLED, CONFIGURED, EXECUTABLE, CI, DEFERRED, MISSING. Ferramenta s�
 | drupal/security_review | DEFERRED | Runtime (Drush) | idem | somente leitura | não | não executado (sem Drush/Runtime) |
 | ShellCheck | INSTALLED, EXECUTABLE | `/usr/bin/shellcheck` | `aculta-shell-qualidade` | `-S warning` em arquivos alterados | `quality-static.yml` | legado: 27 avisos (dívida) |
 | shfmt | INSTALLED, EXECUTABLE | `/usr/bin/shfmt` | idem | `-d` em arquivos alterados | idem | legado sem formatação (dívida); arquivo novo `.bats` formatado |
-| actionlint 1.7.12 | INSTALLED, EXECUTABLE (wheel `actionlint-py==1.7.12.25`, venv de teste) | fora do repositório | `aculta-shell-qualidade` | sintaxe dos workflows | não integrado no CI ainda | PASS nos 2 workflows (`php-quality.yml`, `quality-static.yml`) |
-| Bats-core | INSTALLED, EXECUTABLE | `/usr/bin/bats` | `aculta-shell-qualidade` | `bats tests/shell/` | `quality-static.yml` ainda não chama Bats | PASS 5/5 em `tests/shell/runtime-sync.bats` |
+| actionlint 1.7.12 | INSTALLED, EXECUTABLE (wheel `actionlint-py==1.7.12.25`, venv de teste) | fora do repositório | `aculta-shell-qualidade` | sintaxe dos workflows | `quality-static.yml` (workflow-lint): SUCCESS em fb7e3e87c | PASS nos 2 workflows (`php-quality.yml`, `quality-static.yml`) |
+| Bats-core | INSTALLED, EXECUTABLE | `/usr/bin/bats` | `aculta-shell-qualidade` | `bats tests/shell/` | `quality-static.yml` (bats-runtime-sync): SUCCESS em fb7e3e87c | PASS 5/5 em `tests/shell/runtime-sync.bats` |
 | `bash -n` + `runtime-sync` | EXECUTABLE | `scripts/` | `aculta-runtime-sync` | obrigatório | não | PASS |
 | `scripts/test-runtime-sync.sh` | EXECUTABLE | `scripts/` | `aculta-runtime-sync` | obrigatório | não | PASS 24/24 (simulado) |
-| Stylelint 13 (`npm run lint:css`) | EXECUTABLE | `node_modules` da raiz | `css` | `lint:css` | não integrado | PASS (exit 0) |
-| ESLint 9.39.1 (`npm run lint:js`) | INSTALLED, CONFIGURED (`eslint.config.mjs`), EXECUTABLE | raiz | `css`, `ui-suite-integrations` | `lint:js` (tema) | não integrado | PASS no tema (`js` e `components`); legado de módulos fora do gate (ver seção 5) |
+| Stylelint 13 (`npm run lint:css`) | EXECUTABLE | `node_modules` da raiz | `css` | `lint:css` | `quality-static.yml` (frontend-quality): SUCCESS em fb7e3e87c | PASS (exit 0) |
+| ESLint 9.39.1 (`npm run lint:js`) | INSTALLED, CONFIGURED (`eslint.config.mjs`), EXECUTABLE | raiz | `css`, `ui-suite-integrations` | `lint:js` (tema) | `quality-static.yml` (frontend-quality): SUCCESS em fb7e3e87c | PASS no tema (`js` e `components`); legado de módulos fora do gate (ver seção 5) |
 | `validate-aculta420-v2-foundations.php` | EXECUTABLE (estático) | `scripts/` | `css` | contraste de tokens | não | PASS: 85 pares de texto, 6 de faixa |
 | `@axe-core/playwright` 4.14.0 | INSTALLED (devDependency fixa) | `tests/browser` | `aculta-acessibilidade` | `test:a11y` | `browser-discovery` só lista | ver seção 3 |
 | Playwright 1.56.1 | INSTALLED | `tests/browser` | `aculta-navegador-testes` | runner existente | discovery | `test:list`: 130 testes; navegadores em cache |
@@ -114,4 +114,5 @@ Escopo funcional restante (login/logout, sessões multidomínio, modais HTMX, fo
 4. Aplicar `entity_print` 2.20.0 e `symfony/http-client` v7.4.23 no Runtime por fluxo controlado.
 5. Integrar Bats, Stylelint e ESLint ao `quality-static.yml` depois do primeiro run verde no GitHub.
 6. Pinar ações do GitHub por SHA verificado.
-7. Reduzir `css`, `htmx`, `sdc`, `ui-patterns` para o orçamento de token.
+7. **PHP Quality Assurance (`php-quality.yml`) está VERMELHO desde antes desta sessão** em `origin/dev`: o lock exige PHP ≥ 8.4 (`doctrine/collections 3.1.0`, `symfony/uid v8.1.9`), e o job fixa PHP 8.3. O `composer.json` declara `>=8.3`. Decisão necessária: subir CI para 8.4 ou declarar `php >=8.4` no `composer.json`.
+8. Reduzir `css`, `htmx`, `sdc`, `ui-patterns` para o orçamento de token.
