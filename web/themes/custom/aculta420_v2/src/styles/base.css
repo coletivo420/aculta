@@ -24,6 +24,24 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Placeholder fixo para os diálogos Drupal, sem style attribute criado pelo JS do Core. */
+#drupal-modal {
+  display: none;
+}
+
+/* Indicadores HTMX são estilizados aqui porque a folha inline padrão foi desativada por CSP. */
+.htmx-indicator {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+  visibility: visible;
+  transition: opacity 200ms ease-in;
+  opacity: 1;
+}
+
 /* Typography */
 h1,
 h2,

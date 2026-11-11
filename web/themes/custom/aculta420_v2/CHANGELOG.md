@@ -1132,3 +1132,14 @@ State: Dev. No RC, production deployment, or release tag is declared.
 
 - `wiki_categories:block_1` usa o SDC existente `layout-grid` via UI Patterns; renderização de termos e links continuam sob Taxonomy/Views. Reflow validado de 1 para 2 colunas com 15 termos preservados.
 - Firefox ESR passou 247/247 verificações em cinco larguras, três páginas e temas claro/escuro.
+## Não versionado — violação CSP de estilos inline (2026-11-11)
+
+- UI Skins recebe nonce por resposta no seu `<style>` gerado. HTMX usa estilos
+  dos indicadores na folha CSS externa do tema. O placeholder do modal Drupal
+  é estático e ocultado por CSS, sem `style` inline criado pelo Core.
+- Sem `unsafe-inline` novo. Playwright observou zero eventos `style-src` em
+  rotas públicas válidas de Portal, Eventos, Loja e Conta. O componente admin
+  anônimo respondeu 403; a cobertura autenticada desta rodada fica pendente.
+- Stylelint `base.css`, fundações (83 pares), PHPUnit focal (27 testes), PHP
+  lint, `drush cr` e `git diff --check` passaram.
+
