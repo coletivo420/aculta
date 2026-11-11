@@ -309,7 +309,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
           ? 'Runtime/render/browser verified at 1280/320 light/dark; pager navigation, keyboard, zoom 200% and cache-hit variation remain open'
           : 'Sync defines row/style/display composition; targeted Runtime import and output, permission, pager/cache and browser comparison remain pending',
         $isForumCategoryPilot && $forumRuntimeVerified => 'Runtime/browser verified at five light viewports, two dark viewports and keyboard focus; cache-hit and zoom 200% remain open; native grouping and pager retained',
-        $isForumCategoryPilot && $displayId === 'block_landing' => 'UI Patterns row is configured, but its block placement is hidden on the public home; style/display composition and visible-consumer evidence remain pending',
+        $isForumCategoryPilot && $displayId === 'block_landing' => 'UI Patterns row, views-display and style are configured in Sync/install; the block placement is hidden on the public home, so visible-consumer evidence remains DEFERRED',
         $isForumCategoryPilot && $forumCategoryLegacyTemplatesRemoved => 'Sync/install declare the UI Patterns row, but Runtime/render/browser evidence remains pending',
         $isForumCategoryPilot => 'Config Sync and install defaults use UI Patterns row; Runtime cutover and output/access/cache comparison remain pending',
         $isEventsCataloguePilot && $eventsRuntimeVerified => 'Firefox ESR: 2 card-cultural SDCs inside layout-grid; 320/1440 light/dark, visible keyboard focus, no horizontal scroll; detail routes separately smoke-tested',

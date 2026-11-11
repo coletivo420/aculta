@@ -168,7 +168,7 @@ Execução em RN-00 a RN-05 conforme `docs/architecture/ACULTA-PORTAL-PURPOSE-PA
 
 ## Atualização — galeria editorial em UI Patterns Views (2026-11-11)
 
-`aculta_album_fotos:block_1` usa o style UI Patterns com `layout-grid`, substituindo VVJS somente na galeria editorial. A View mantém o row `fields`, PhotoSwipe, 63 imagens em ordem, pager, acesso de mídia e cache. O ramo separado `aculta_forum_gallery_slides` ainda usa VVJS; por isso a extensão tem consumidores e permanece instalada. Firefox ESR passou 10/10 antes e 11/11 depois em cinco larguras e dois modos, com teclado no PhotoSwipe. Zoom 200%, cache-hit, revisão humana e demais perfis seguem DEFERRED. Snapshot, rollback e capturas estão no manifesto `tests/browser/capturas/ui-patterns-gallery/2026-11-11/manifest.json`; a ADR permanece aberta.
+`aculta_album_fotos:block_1` usa o style UI Patterns com `layout-grid`, substituindo VVJS somente na galeria editorial. A View mantém o row `fields`, PhotoSwipe, 63 imagens em ordem, pager, acesso de mídia e cache. O ramo separado `aculta_forum_gallery_slides` ainda usa VVJS; por isso a extensão tem consumidores e permanece instalada. Firefox ESR passou 10/10 antes e 11/11 depois em cinco larguras e dois modos, com teclado no PhotoSwipe. Zoom 200%, cache-hit, revisão humana e demais perfis seguem DEFERRED. Snapshot, rollback e capturas estão no manifesto `tests/browser/capturas/ui-patterns-gallery/2026-11-11/manifest.json`; a ADR permanece aberta. Também foi configurado o `views-display` do `aculta_forum_categories:block_landing` (row já migrada); o placement segue oculto na home, portanto a evidência visual permanece DEFERRED.
 
 
 ## Atualização — galerias do Fórum em UI Patterns (2026-11-11)
