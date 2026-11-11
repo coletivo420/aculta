@@ -101,6 +101,16 @@ $layoutCss = (string) file_get_contents($theme . '/src/styles/layout.css');
 $componentLibraryCss = (string) file_get_contents($theme . '/src/styles/component-library-mode.css');
 $assert(!str_contains($layoutCss, '.aculta-studio'), 'layout.css ainda contém regras do Studio; elas pertencem ao CSS contextual.');
 $assert(str_contains($componentLibraryCss, '.aculta-studio-topbar'), 'Regras do Studio na biblioteca de componentes não foram movidas para component-library-mode.css.');
+// A UI Patterns Library não pode voltar a estilos globais em layout.css.
+$assert(!str_contains($layoutCss, '.aculta-component-library-page'), 'layout.css voltou a conter regras exclusivas da UI Patterns Library.');
+$assert(!str_contains($layoutCss, '.ui_patterns_component'), 'layout.css voltou a conter regras da UI Patterns Library.');
+$assert(str_contains($componentLibraryCss, '.aculta-component-library-page'), 'component-library-mode.css perdeu o escopo da UI Patterns Library.');
+$assert(str_contains($componentLibraryCss, '.ui_patterns_component'), 'component-library-mode.css perdeu as regras de cartão da UI Patterns Library.');
+
+// O container do site_key account pertence à biblioteca contextual da conta.
+$portalAccountCss = (string) file_get_contents($theme . '/src/styles/portal-account.css');
+$assert(!str_contains($layoutCss, 'data-site-key="account"'), 'layout.css voltou a conter o container do site_key account.');
+$assert(str_contains($portalAccountCss, 'html[data-site-key="account"]'), 'portal-account.css perdeu o container do site_key account.');
 
 // Evidência: bytes do global que deixaram de ser baixados em toda página.
 $globalBytes = 0;

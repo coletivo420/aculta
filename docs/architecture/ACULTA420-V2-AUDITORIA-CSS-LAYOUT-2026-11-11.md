@@ -99,8 +99,10 @@ aceite visual humano; nenhum deles foi declarado PASS.
 P2 — **CONCLUÍDO.** Regras exclusivas da UI Patterns Library saíram de
 `layout.css` para `component-library-mode.css`; container da conta foi para
 `portal-account.css`; sobreposição de `.ui_patterns_component` removida.
-`global-styling` ficou com 16 entradas; bytes medidos pelo gate de escopo
-(116.177 bytes de CSS local).
+`global-styling` ficou com 16 entradas e 106.888 bytes de CSS local, contra
+116.177 bytes antes da extração (−9.289 bytes por página). O gate de escopo
+ganhou cinco asserções de regressão para impedir que as regras da UI Patterns
+Library e o container da conta voltem a `layout.css`.
 
 P3 — **PARCIAL.** Aliases revisados; uma duplicata real removida e os
 `--aculta-*` sem consumidor mantidos como contrato. Classificação
