@@ -87,6 +87,11 @@ foreach ($docsIt as $file) {
 }
 $skillsIt = is_dir($root . '/.claude') ? new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/.claude', FilesystemIterator::SKIP_DOTS)) : [];
 foreach ($skillsIt as $file) {
+  // Worktrees de outros agentes ficam sob .claude/worktrees e contêm
+  // cópias antigas de docs; não são documentação deste checkout.
+  if (str_contains($file->getPathname(), '/.claude/worktrees/')) {
+    continue;
+  }
   if (str_ends_with($file->getPathname(), '.md')) {
     $sources[] = substr($file->getPathname(), strlen($root) + 1);
   }

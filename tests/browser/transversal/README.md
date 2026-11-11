@@ -4,6 +4,7 @@ Gerado por `tests/browser/gerar-indice.py`. Não edite à mão.
 
 Cada frente tem o próprio `README.md` com URLs, pré-requisitos e critérios.
 
+- [`aculta-botoes-a11y/`](./aculta-botoes-a11y/README.md) — Leitor de tela (Orca) — botões em estados autenticados
 - [`aculta-content-admin/`](./aculta-content-admin/README.md) — Revisão visual do Painel de conteúdo
 - [`aculta-document-viewer/`](./aculta-document-viewer/README.md) — Revisão visual do ACULTA Document Viewer
 - [`aculta-editor/`](./aculta-editor/README.md) — ACULTA Editor — acesso anônimo, editor e administrador

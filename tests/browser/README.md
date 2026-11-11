@@ -122,6 +122,7 @@ Estão listadas abaixo as pastas reais, com o caminho completo. A convenção é
 | `tests/browser/studio/marley/` | Studio · Marley |
 | `tests/browser/studio/we-sativa/` | Studio · WE SATIVA |
 | `tests/browser/support/aculta-faq/` | Revisão visual do ACULTA FAQ |
+| `tests/browser/transversal/aculta-botoes-a11y/` | Leitor de tela (Orca) — botões em estados autenticados |
 | `tests/browser/transversal/aculta-content-admin/` | Revisão visual do Painel de conteúdo |
 | `tests/browser/transversal/aculta-document-viewer/` | Revisão visual do ACULTA Document Viewer |
 | `tests/browser/transversal/aculta-editor/` | ACULTA Editor — acesso anônimo, editor e administrador |
