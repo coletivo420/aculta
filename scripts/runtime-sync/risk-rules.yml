@@ -12,6 +12,7 @@ levels:
     requires_cache_rebuild: false
     patterns:
       - '^docs/'
+      - '^\.github/workflows/'
       - '^\.agents/'
       - '^\.claude/'
       - '^\.codex/'

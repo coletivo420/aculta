@@ -374,6 +374,8 @@ def classify_single_path(path: str) -> tuple[str, str]:
     # R0: exclusivamente documental ou testes automatizados (fora do runtime de producao/dev)
     if (
         path.startswith("docs/")
+        # Workflows do GitHub Actions rodam no CI, nunca no servidor: sem efeito no Runtime.
+        or path.startswith(".github/workflows/")
         or path.startswith(".agents/")
         or path.startswith(".claude/")
         or path.startswith(".codex/")
