@@ -1,5 +1,5 @@
 {
-    "observed_at_utc": "2026-11-11T03:24:00+00:00",
+    "observed_at_utc": "2026-11-11T03:25:00+00:00",
     "drupal_version": "11.5.0-beta1",
     "evidence_command": "Drush Runtime export and targeted partial import after snapshot; ComponentLayout discovery; 276-check Layout Builder batch validator; render-array/access parity checks; anonymous Firefox A/B/A pilot; forum categories targeted partial import after Runtime snapshot; anonymous Firefox five-viewport and keyboard check",
     "ui_suite_modules": {
@@ -781,15 +781,18 @@
                 "ui_icons_popover",
                 "ui_icons_text"
             ],
-            "ui_icons_patterns.settings.icon_selector": "icon_popover"
+            "ui_icons_patterns.settings.icon_selector": "icon_picker",
+            "ui_icons_patterns.settings.before_snapshot_sha256": "63c2503c7e86e95a1c3f47a63ecb26fca524cee5583171b30050efd682b5fa26",
+            "ui_icons_patterns.settings.after_targeted_partial_import": true,
+            "icon_picker_element_available": true
         },
         "packs_owned_by_theme": [
             "aculta_phosphor_regular",
             "aculta_phosphor_duotone",
             "aculta_fluent_emoji"
         ],
-        "evidence": "UI Icons 2.1.0 module contracts and config inspected; menus have adapter settings but no icon assignments identified; no visual or accessibility acceptance claimed.",
-        "status": "MIGRATION_IN_PROGRESS; Runtime/Sync selector drift is unresolved."
+        "evidence": "UI Icons 2.1.0 contracts inspected; targeted partial import of ui_icons_patterns.settings only after config snapshot; Drush confirmed icon_picker available and menu pack restrictions intact; no visual or accessibility acceptance claimed.",
+        "status": "MIGRATION_IN_PROGRESS; selector aligned, optional Runtime submodules still differ from Sync."
     },
     "revista_browser_smoke": {
         "requested_route": "/revista on magazine Domain",

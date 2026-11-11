@@ -1,3 +1,14 @@
+# ADR-054/055 — Cutover focal UI Icons — 2026-11-11
+
+- **Objetivo:** alinhar seletor UI Patterns ao Picker da Sync sem desativar submódulos Runtime.
+- **Estado:** import parcial só de `ui_icons_patterns.settings` concluído; Runtime/Sync usam `icon_picker`, Drush confirma o element. Menus main/account mantêm packs Phosphor. Submódulos opcionais ainda divergem.
+- **Decisões:** snapshot antes do import; não importar `core.extension` nem remover módulos. Hash anterior `63c2503c7e86e95a1c3f47a63ecb26fca524cee5583171b30050efd682b5fa26`.
+- **Cuidados:** não alegar aceite visual/acessibilidade; sem consumidores SDC de prop identificados.
+- **Commits e arquivos:** pendente; ADR-055, inventário Runtime/CSV, status e script.
+- **Verificações:** import parcial e cache rebuild PASS; element Picker disponível; `UiIconsPackTest` 2/47, SDC 82/1774, UI Skins 134 PASS. Token-budget global FAIL (7 itens preexistentes).
+- **Pendências:** validar formulário/menu com browser e reconciliar submódulos por delta revisado.
+- **Próximo passo:** homologar Picker em interface administrativa real sem criar atribuições de ícone.
+
 # ADR-054/055 — Views editoriais da Revista — 2026-11-11
 
 - **Objetivo:** identificar visuais de Views que já compõem SDCs e evitar migração duplicada.

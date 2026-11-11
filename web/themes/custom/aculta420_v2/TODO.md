@@ -5,7 +5,7 @@ Estado: Dev · versão 1.5.0 (`aculta420_v2.info.yml`) · status: `docs/operatio
 ## Próximo passo
 
 - **ADR-054/055 US-00–14/RN-00–05:** 22 configs usam ComponentLayout no Sync/Runtime; 21 saídas renderizam `layout-section`, Wiki full compõe direto `wiki-entry`. Gate 276 checks PASS; duas exclusões preservadas. Cache `UNCACHEABLE`; cache-hit e aceite amplo pendentes.
-- Composer: Skins ^1.2, Icons ^2.1. Field Group dev SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1` é `BLOCKED_UPSTREAM` (segurança/Core 12). UI Styles CKEditor 5 ativo; UI Patterns CKEditor 5 preexistente, sem consumidores e `LEGACY_OBSOLETE`. UI Icons: menus usam Picker e packs Phosphor; Sync/Runtime divergem entre Picker/Popover e submódulos, import DEFERRED para revisão.
+- Composer: Skins ^1.2, Icons ^2.1. Field Group dev SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1` é `BLOCKED_UPSTREAM` (segurança/Core 12). UI Styles CKEditor 5 ativo; UI Patterns CKEditor 5 preexistente, sem consumidores e `LEGACY_OBSOLETE`. UI Icons usa Picker em Sync/Runtime após import parcial só do settings; submódulos ainda divergem, aceite visual pendente.
 - Inventário: 383 itens/83 Twig; 16 fallbacks mapeados a SDCs. `aculta_albuns` usa row/style/display; `/categorias` usa `forum-category` + `views-display`, agrupamento nativo, 12 resultados e acesso anônimo; Firefox cinco larguras claras, duas escuras, foco e alvos ≥44 px PASS. Seis páginas `revista_sessoes` usam row entidade/teaser com adapter SDC `revista-teaser` (Sync confirmado; Runtime/browser pendentes). O bloco da home está oculto e sem aceite visual. UI Icons, Entity Status, demais Views/domínios, cache-hit, zoom e perfis pendentes. Planos em `docs/architecture/`.
 
 ## Marcos e pendências

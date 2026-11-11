@@ -520,7 +520,7 @@ $moduleInventory = [
     'module' => 'ui_icons',
     'status' => 'MIGRATION_IN_PROGRESS',
     'replacement' => 'Keep the three existing local Phosphor Regular, Phosphor Duotone, and Fluent Emoji packs; preserve pack ownership and use UI Icons adapters only where configured',
-    'risk' => 'UI Icons 2.1.0 is enabled in Sync and Runtime. Menus restrict selection to Phosphor; editorial emoji remains in CKEditor. Full picker and menu visual/accessibility acceptance remains pending.',
+    'risk' => 'UI Icons 2.1.0 is enabled in Sync and Runtime. Menus restrict selection to Phosphor; editorial emoji remains in CKEditor. Runtime selector now matches Sync; optional Runtime submodules still differ from Sync. Picker/menu visual and accessibility acceptance remains pending.',
   ],
   'drupal/ui_patterns_field_group' => [
     'module' => 'ui_patterns_field_group',
@@ -537,17 +537,17 @@ $moduleInventory = [
   'drupal/ui_icons_menu' => [
     'module' => 'ui_icons_menu', 'status' => 'MIGRATION_IN_PROGRESS',
     'replacement' => 'Use the official menu adapter with existing Phosphor packs and menu-owned assignments.',
-    'risk' => 'Main and account menus configure icon_picker and permit only Phosphor Regular/Duotone. Runtime and Sync menu config must be reconciled before visual acceptance.',
+    'risk' => 'Main and account menus configure icon_picker and permit only Phosphor Regular/Duotone. Picker form is available in Runtime; visual/accessibility acceptance remains pending.',
   ],
   'drupal/ui_icons_picker' => [
     'module' => 'ui_icons_picker', 'status' => 'MIGRATION_IN_PROGRESS',
     'replacement' => 'Use Picker on menu-owned settings and UI Patterns sources where configured.',
-    'risk' => 'Picker 2.1.0 is enabled in Sync/Runtime; menu configs use icon_picker. UI Patterns Sync selects icon_picker, while Runtime currently selects icon_popover.',
+    'risk' => 'Picker 2.1.0 is enabled in Sync/Runtime; menu configs and UI Patterns source select icon_picker. Runtime selector was aligned through targeted partial import; visual/accessibility acceptance remains pending.',
   ],
   'drupal/ui_icons_patterns' => [
     'module' => 'ui_icons_patterns', 'status' => 'MIGRATION_IN_PROGRESS',
     'replacement' => 'Expose UI Icons through the native UI Patterns icon source on compatible SDC props.',
-    'risk' => 'Module/API verified in UI Icons 2.1.0; Sync selects icon_picker and Runtime selects icon_popover. No SDC icon-prop consumer or visual/accessibility acceptance is recorded yet.',
+    'risk' => 'Module/API verified in UI Icons 2.1.0; Sync and Runtime select icon_picker. No SDC icon-prop consumer or visual/accessibility acceptance is recorded yet.',
   ],
   'drupal/ui_icons_field' => [
     'module' => 'ui_icons_field', 'status' => 'MIGRATION_IN_PROGRESS',
@@ -597,7 +597,7 @@ $moduleInventory = [
   'drupal/ui_icons_popover' => [
     'module' => 'ui_icons_popover', 'status' => 'MIGRATION_IN_PROGRESS',
     'replacement' => 'Use only where the Runtime configuration explicitly selects icon_popover; keep Sync selection intentional and consistent.',
-    'risk' => 'Enabled in Runtime but absent from Sync. The UI Patterns module installs icon_popover by default; Sync intentionally changes this to icon_picker. Runtime/Sync drift is unresolved.',
+    'risk' => 'Enabled in Runtime but absent from Sync and unused by the current UI Patterns selector. Removing it requires a reviewed module/config delta; no integration removal was performed.',
   ],
   'drupal/ui_icons_text' => [
     'module' => 'ui_icons_text', 'status' => 'MIGRATION_IN_PROGRESS',
