@@ -1,0 +1,101 @@
+# Versionamento de regras de risco do ACULTA Runtime Sync v2.
+# Fonte normativa para classificacao cumulativa entre last_validated_sha (ou base)
+# e o commit alvo. Em qualquer duvida ou estado ausente, o classificador eleva
+# o nivel e falha fechado (RX => BLOCK).
+schema_version: 2
+default_unknown_level: RX
+levels:
+  R0:
+    order: 0
+    label: Documental e testes offline sem efeito no runtime
+    allow_sync_code: true
+    requires_cache_rebuild: false
+    patterns:
+      - '^docs/'
+      - '^\.agents/'
+      - '^\.claude/'
+      - '^\.codex/'
+      - '^README\.md$'
+      - '^TODO\.md$'
+      - '^AGENTS\.md$'
+      - '^CLAUDE\.md$'
+      - '^tests/'
+      - '.*/tests/'
+      - '.*/README\.md$'
+      - '.*/TODO\.md$'
+      - '.*/CHANGELOG\.md$'
+      - '.*/docs/'
+  R1:
+    order: 1
+    label: Codigo de aplicacao, templates, estilos e componentes
+    allow_sync_code: true
+    requires_cache_rebuild: true
+    patterns:
+      - '^web/modules/custom/.*\.(php|twig|js|css|yml|json|svg)$'
+      - '^web/themes/custom/.*\.(php|theme|twig|js|css|yml|json|svg)$'
+      - '^scripts/'
+  R2:
+    order: 2
+    label: Dependencias, lockfiles, patches e artefatos de build
+    allow_sync_code: false
+    requires_structural_plan: true
+    patterns:
+      - '^composer\.json$'
+      - '^composer\.lock$'
+      - '^patches-aculta\.json$'
+      - '^patches\.lock\.json$'
+      - '^patches/'
+      - '(^|/)package\.json$'
+      - '(^|/)package-lock\.json$'
+      - '(^|/)yarn\.lock$'
+      - '(^|/)pnpm-lock\.yaml$'
+      - '^web/libraries/'
+  R3:
+    order: 3
+    label: Drupal estrutural, configuracao, hooks de instalacao/update/deploy e schemas
+    allow_sync_code: false
+    requires_structural_plan: true
+    patterns:
+      - '^config/sync/'
+      - '^drush/'
+      - '\.install$'
+      - '\.post_update\.php$'
+      - '\.deploy\.php$'
+      - '\.info\.yml$'
+      - '(^|/)config/(install|schema|optional)/'
+      - '\.permissions\.yml$'
+  R4:
+    order: 4
+    label: Operacoes destrutivas, infraestrutura, segredos, settings e servidor web
+    allow_sync_code: false
+    requires_structural_plan: true
+    patterns:
+      - '^web/sites/'
+      - '^secrets/'
+      - '^private/'
+      - '^web/\.htaccess$'
+      - '^\.htaccess$'
+      - '^config/secrets-contract\.json$'
+    content_indicators:
+      - 'pm:uninstall'
+      - 'module_installer.*uninstall'
+      - 'DROP\s+(TABLE|DATABASE)'
+      - 'TRUNCATE\s+TABLE'
+      - 'entity_delete_multiple'
+      - 'field_storage_config.*delete'
+  RX:
+    order: 5
+    label: Indeterminado, baseline desconhecido, diff ausente ou rename estrutural
+    allow_sync_code: false
+    requires_structural_plan: true
+special_runbooks:
+  commerce_shipping_cutover:
+    trigger_packages:
+      - 'drupal/commerce_shipping'
+    trigger_paths:
+      - 'commerce_shipping'
+      - 'aculta_commerce_update_8001'
+      - 'migrate_shipping_methods'
+      - 'retarget_shipments'
+    runbook: 'docs/operations/RUNTIME-UPDATE-WINDOW.md'
+    summary: 'Ordem obrigatoria: (1) drush updatedb com vendor antigo contendo commerce_shipping; (2) conferir migracao e blockersForUninstall() vazio; (3) drush pm:uninstall commerce_shipping com aprovacao explicita; (4) so entao composer install com novo composer.lock.'
