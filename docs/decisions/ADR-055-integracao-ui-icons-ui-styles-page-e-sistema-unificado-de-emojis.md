@@ -209,7 +209,7 @@ Firefox ESR visível nos dez domínios, em 320/768/1440, fechou 70/70 verificaç
 
 Nota de bloqueio (2026-11-11): rotas públicas sondadas respondem `Cache-Control: private, no-cache` e `X-Drupal-Dynamic-Cache: UNCACHEABLE`, então cache-hit não é mensurável no estado atual. `drush uli` responde 404 e `/entrar` só existe no host de conta; a verificação autenticada deve reutilizar `tests/browser/auth-login.mjs`.
 
-Fechamento parcial de 2026-11-11 — login autenticado: a autenticação de `teste_administrativo` é aceita (`users.login` atualizado, cookie `SSESS…` emitido), mas a sessão não persiste na requisição seguinte — o Runtime espera `SESS…` e o cliente recebe `SSESS…` —, bloqueando o aceite de perfis. O teste também revelou H1 duplicado no dashboard do Studio, corrigido no componente `studio-menu` (topbar sem `<h1>`), com schema 1801 checks e boundary PASS.
+Fechamento parcial de 2026-11-11 — login autenticado: a autenticação de `teste_administrativo` é aceita e a sessão é gravada, mas a requisição seguinte com o cookie emitido responde anônima; a causa não foi isolada, bloqueando o aceite de perfis. O teste também revelou H1 duplicado no dashboard do Studio, corrigido no componente `studio-menu` (topbar sem `<h1>`), com schema 1801 checks e boundary PASS.
 
 ## Atualização — UI Patterns na listagem de galerias públicas (2026-11-11)
 
