@@ -1,0 +1,30 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Cartão de documento institucional
+description: Documento oficial com categoria, resumo e link de arquivo renderizado pela Field API.
+status: stable
+group: Conteúdo
+props:
+  type: object
+  additionalProperties: false
+  required: [title, url]
+  properties:
+    title:
+      type: string
+      title: Título do documento
+    url:
+      type: string
+      title: URL do documento
+slots:
+  category:
+    title: Categoria
+    description: Categoria renderizada pelo campo do node.
+  summary:
+    title: Resumo
+    description: Resumo renderizado pelo campo body.
+  attachment:
+    title: Arquivo
+    description: Campo de arquivo com acesso, label e cache da Field API.
+assets:
+  css:
+    component:
+      document-card.css: {}

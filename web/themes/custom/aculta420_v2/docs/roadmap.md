@@ -118,3 +118,11 @@ Status espelhado de `TODO.md`. Plano visual: `docs/architecture/GROWROOM420-VISU
 - `aculta_album_fotos:block_1` substitui o style VVJS pelo SDC `layout-grid`, preservando os 63 resultados PhotoSwipe, ordenação, acesso e metadados de cache. A View do Fórum e a galeria do Commerce também usam `layout-grid`; o Fórum não tem fixture publicada e a galeria de produto ainda aguarda aceite visual.
 - Firefox ESR passou 10/10 antes e 11/11 depois em 320/390/768/1024/1440 e claro/escuro; foco, alt, H1/main, reflow e abertura/fechamento PhotoSwipe por Escape passaram. Cache-hit, zoom 200%, outros perfis e aceite visual humano pendem; a extensão VVJS permanece apenas por demonstração upstream `vvjs_example`, classificada `BLOCKED_UPSTREAM` no inventário.
 - Snapshot/rollback e hashes de captura estão em `tests/browser/capturas/ui-patterns-gallery/2026-11-11/manifest.json`.
+## ADR-054/055 — Documentos em UI Patterns Views (2026-11-11)
+
+- `/transparencia` usa UI Patterns `layout-grid` e o SDC `document-card` para
+  as rows nativas de node, preservando consulta e Field API.
+- Runtime anônimo retornou três rows com cache contextual. Fixtures atuais não
+  expõem descrição de arquivo no teaser; browser visual, outros perfis, zoom e
+  cache-hit permanecem pendentes.
+

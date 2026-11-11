@@ -108,6 +108,21 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && $stylePlugin === 'ui_patterns'
       && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid';
     $isUpstreamVvjsExample = $viewId === 'vvjs_example';
+    $forumTopicFieldsTemplate = $theme . '/templates/views/views-view-fields--aculta-forum-public-topics.html.twig';
+    $isForumTopicsSdc = $viewId === 'aculta_forum_public_topics'
+      && (string) $displayId !== 'default'
+      && is_file($forumTopicFieldsTemplate)
+      && str_contains((string) file_get_contents($forumTopicFieldsTemplate), "aculta420_v2:forum-topic-row");
+    $documentTeaserTemplate = $theme . '/templates/content/node--document--teaser.html.twig';
+    $documentCardSdc = $theme . '/components/document-card/document-card.component.yml';
+    $isDocumentCardSdc = $viewId === 'aculta_documents'
+      && (string) $displayId === 'block_1'
+      && is_file($documentTeaserTemplate)
+      && is_file($documentCardSdc)
+      && str_contains((string) file_get_contents($documentTeaserTemplate), "aculta420_v2:document-card");
+    $isDocumentsPilot = $isDocumentCardSdc
+      && $stylePlugin === 'ui_patterns'
+      && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid';
     $isEventsBase = $viewId === 'eventos_publicos' && (string) $displayId === 'default';
     $revistaTeaserTemplate = $theme . '/templates/content/node--revista--teaser.html.twig';
     $isRevistaTeaserSdc = $viewId === 'revista_sessoes'
@@ -155,6 +170,10 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && is_array($runtimeView)
       && is_array($runtimeView['displays'][$displayId] ?? NULL)
       && ($runtimeView['displays'][$displayId]['status'] ?? '') === 'runtime_configured_no_fixture';
+    $documentRuntimeVerified = $isDocumentsPilot
+      && is_array($runtimeView)
+      && is_array($runtimeView['displays'][$displayId] ?? NULL)
+      && ($runtimeView['displays'][$displayId]['status'] ?? '') === 'runtime_verified_sdc_grid';
     $productGalleryRuntimeConfigured = $isProductGalleryPilot
       && is_array($runtimeView)
       && is_array($runtimeView['displays'][$displayId] ?? NULL)
@@ -172,10 +191,12 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'owner_module' => match ($viewId) {
         'aculta_albuns' => 'aculta_gallery',
         'aculta_forum_categories' => 'aculta_forum',
+        'aculta_forum_public_topics' => 'aculta_forum',
         'revista_sessoes' => 'aculta_magazine',
         'aculta_news' => 'aculta_magazine',
         'aculta_album_fotos', 'aculta_forum_gallery_slides' => 'aculta_gallery',
         'galeria_produto' => 'aculta_portal:commerce',
+        'aculta_documents' => 'aculta_portal:transparency',
         'vvjs_example' => 'vvjs:upstream_demo',
         'home_editorial_highlights' => 'views:home_editorial_highlights',
         'eventos_publicos' => 'aculta_events',
@@ -190,11 +211,16 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'ui_patterns_configured' => $components !== [] ? implode(',', $components) : 'not_detected_by_plugin_id_scan',
       'status' => $isUpstreamVvjsExample
         ? 'BLOCKED_UPSTREAM'
+        : ($isForumTopicsSdc || $documentRuntimeVerified
+        ? 'UI_SUITE_NATIVE'
         : ((($isViewsFunctionalBase && !$isProductGalleryPilot) || $isEventsBase)
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
-        : (($albumsRuntimeVerified || $forumRuntimeVerified || $eventsRuntimeVerified || $revistaRuntimeVerified || $revistaNewsRuntimeVerified || $homeEditorialRuntimeVerified || $albumPhotosRuntimeVerified) ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS')),
+        : (($albumsRuntimeVerified || $forumRuntimeVerified || $eventsRuntimeVerified || $revistaRuntimeVerified || $revistaNewsRuntimeVerified || $homeEditorialRuntimeVerified || $albumPhotosRuntimeVerified) ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS'))),
       'replacement_or_action' => match (TRUE) {
         $isUpstreamVvjsExample => 'Upstream demonstration View, not an ACULTA feature; do not edit contrib. Any removal or replacement must be handled as a separately authorized upstream-example lifecycle change',
+        $isDocumentsPilot => 'The document teaser SDC owns card markup; UI Patterns layout-grid composes the native published-node teaser rows while preserving Field API file rendering',
+        $isDocumentCardSdc => 'The document teaser row uses the existing document-card SDC; finish its UI Patterns layout composition and Runtime validation',
+        $isForumTopicsSdc => 'The Fields row adapter already composes the reusable forum-topic-row SDC; preserve it and migrate to the UI Patterns row plugin only when dynamic entity props and rendered slots can be mapped without losing topic state',
         $isProductGalleryPilot => 'UI Patterns layout-grid composes the native Commerce product media View; preserve product Media IDs, ordering, published/image filters and produto_galeria view mode',
         $isViewsFunctionalBase || $isEventsBase => 'Native Views base display supplies inherited query, access, filters, sorting and configured style to concrete displays; it has no independent route output',
         $isAlbumsViewsPilot => 'Compose this inherited View level with UI Patterns SDCs; preserve native row fields, filters, sort, pager and access',
@@ -211,6 +237,11 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       },
       'risk_or_evidence_gap' => match (TRUE) {
         $isUpstreamVvjsExample => 'Example View remains in Config Sync and its Runtime status was not changed in this microphase; it is not counted as a product consumer',
+        $isDocumentsPilot && $documentRuntimeVerified => 'Runtime View retained 3 published nodes; SDC output, anonymous access and field render arrays verified; browser visual, editor/admin profiles and cache-hit remain pending',
+        $isDocumentsPilot => 'Runtime returned three published document teasers inside the UI Patterns grid; the current fixture has empty body/file descriptions, so field links are not evidenced; browser visual, editor/admin profiles and cache-hit remain pending',
+        $isDocumentCardSdc => 'Document SDC adapter is present; Runtime row rendering and grid integration are pending',
+        $isForumTopicsSdc && is_array($runtimeView) && is_array($runtimeView['displays'][$displayId] ?? NULL) => 'Runtime config matches Sync; executable View returns 10 rows; access-profile and browser visual evidence not re-run in this inventory pass',
+        $isForumTopicsSdc => 'Existing SDC row adapter is confirmed in source; Runtime output, access profiles and browser evidence need verification',
         $isProductGalleryPilot => $productGalleryRuntimeConfigured
           ? 'Runtime View returned seven Media rows for the published Commerce product; browser visual, access and cache acceptance remain DEFERRED'
           : 'Commerce product View has a programmatic consumer; Runtime execution and browser acceptance remain pending',
@@ -241,6 +272,11 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'detected_consumers' => '',
       'runtime_status' => match (TRUE) {
         $isUpstreamVvjsExample => 'upstream contributed demonstration; Runtime status not changed or claimed',
+        $isDocumentsPilot && $documentRuntimeVerified => 'active; UI Patterns layout-grid; 3 published document rows; anonymous View output with Field API slots; visual browser acceptance pending',
+        $isDocumentsPilot => 'configured; Runtime/browser evidence not recorded',
+        $isDocumentCardSdc => 'document teaser SDC adapter is confirmed in source; View style migration and Runtime output remain pending',
+        $isForumTopicsSdc && is_array($runtimeView) && is_array($runtimeView['displays'][$displayId] ?? NULL) => 'active; native Views fields row uses forum-topic-row SDC adapter; 10 results; browser/access acceptance not re-run',
+        $isForumTopicsSdc => 'existing SDC row adapter confirmed in source; Runtime output not recorded',
         $isProductGalleryPilot && $productGalleryRuntimeConfigured => 'active; Commerce product 1 supplies seven media IDs; UI Patterns style returns seven rows; visual acceptance deferred',
         $isProductGalleryPilot => 'configured; Commerce product View has a programmatic consumer; Runtime evidence not recorded',
         $isForumGalleryPilot && $forumGalleryRuntimeConfigured => 'active; UI Patterns View executable; zero published Forum galleries; visual acceptance deferred',

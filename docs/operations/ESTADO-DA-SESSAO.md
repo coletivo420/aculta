@@ -18,3 +18,14 @@
 - **Catálogo:** URL de agregado `locale/translations` antiga ainda responde 400 quando chamada diretamente; HTML recém-gerado no acesso administrativo carrega somente URLs válidas. Avisos CSP inline são `report-only` e vêm de script de navegação/estilos administrativos e markup; nenhuma diretiva foi enfraquecida.
 - **Pendências:** zoom 200%, cache-hit, perfis editor/admin no álbum e revisão por tecnologia assistiva/aceite humano. VVJS permanece por consumidores fora do álbum; sem desinstalação. ADRs 054/055 continuam abertas.
 - **Próximo passo:** conferir manifesto/SHA, publicar o registro da evidência e migrar a próxima View/superfície com uso real.
+
+# ADR-054/055 — lista de transparência em UI Patterns — 2026-11-11
+
+- **Objetivo:** substituir o teaser visual genérico da View pública de documentos pelo SDC `document-card` e UI Patterns `layout-grid`.
+- **Estado:** `aculta_documents:block_1` importada no Runtime após snapshot; 3 rows anônimas, H1/main únicos e cache contexts presentes. Sync/Runtime parseada coincide. Links de arquivo não comprovados: fixtures têm descrições vazias. Captura visual/teclado, escuro, zoom 200%, perfis editor/admin e cache-hit pendentes.
+- **Decisões e alternativas descartadas:** preservar row nativa `entity:node` teaser e passar slots como render arrays; não reproduzir marcação da Field API em Twig.
+- **Cuidados:** browser `aculta-document-viewer` testa mídia incorporada, não esta lista. Import alterou apenas a config da View.
+- **Commits e arquivos:** ainda não commitado; componente `document-card`, template teaser, View Sync, inventário, ADRs e docs do tema.
+- **Verificações:** schema SDC PASS (83/1786); render SDC Drupal PASS; Views PASS (60); PHPUnit 3/19 PASS com depreciação PHPUnit; PHPStan/PHPCS PASS; índice status PASS; `git diff --check` PASS. Stylelint DEFERRED (binário ausente). Token budget FAIL por 7 violações globais preexistentes.
+- **Pendências e bloqueios:** browser, link com dados reais, perfis, zoom/cache e homologação ampla; ADRs permanecem abertas.
+- **Próximo passo:** executar captura focal de `/transparencia` com browser disponível, revisar e publicar esta entrega isolada.

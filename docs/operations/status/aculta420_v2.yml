@@ -2,5 +2,5 @@
 version: '1.5.0'
 state: Dev
 progress_note: >-
-  1.5.0: ADR-054/055 abertas. Layouts 22 configs, gate 276 PASS. Skins A/B/A sem carryover. UI Styles Block Documentos; UI Patterns `aculta_news` usa `revista-listing`, Home substitui VVJB e galeria editorial substitui VVJS por `layout-grid`, preservando rows/ordem/LB/PhotoSwipe. Home e Revista News Firefox A/B 10/10; galeria 10/10 antes e 11/11 depois. Page continua global por região. CKEditor5/Entity Status ativos; Field Group BLOCKED_UPSTREAM. Inventário 437/83 Twig; cache-hit, zoom 200%, perfis e aceite amplo pendentes.
+  1.5.0: ADR-054/055 abertas. Layouts 22 configs, gate 276 PASS. Skins A/B/A sem carryover. UI Styles Block Documentos; UI Patterns `aculta_news` usa `revista-listing`, Home e galerias e Transparência usam `layout-grid` com SDCs locais, preservando rows/ordem/LB/PhotoSwipe/Field API. Home e Revista News Firefox A/B 10/10; galeria 10/10 antes e 11/11 depois. Page continua global por região. CKEditor5/Entity Status ativos; Field Group BLOCKED_UPSTREAM. Inventário 437/83 Twig; cache-hit, zoom 200%, perfis e aceite amplo pendentes.
 next_phase: 'Migrar Views, blocos e formulários restantes; validar Entity Status, cache-hit/zoom, Icons e perfis; homologar dez domínios e RN-00–05.'

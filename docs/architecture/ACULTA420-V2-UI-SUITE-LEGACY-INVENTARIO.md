@@ -110,3 +110,12 @@ O estilo de View `views_vvjb` fica `LEGACY_OBSOLETE`: zero configurações de Vi
 ## Bloqueio upstream — barra administrativa Gin (2026-11-11)
 
 A regressão Firefox da galeria verificou que `.top-bar__actions` do Gin extrapola a viewport MAIN em 480/479/390/320 px; no host Fórum as seis larguras passaram. Owner: módulo upstream Gin; consumidor: toolbar administrativa autenticada; fonte: ações “Editar/Mais ações”. Classificação `BLOCKED_UPSTREAM`; não alterar contrib nesta migração. A grade da galeria continua dentro da viewport, sem overflow e com os 63 links PhotoSwipe. Revisão/ajuste do toolbar requer issue/upstream ou extensão proprietária isolada.
+
+
+## Fórum público — row SDC nativa e source mapping (2026-11-11)
+
+As cinco saídas (`block_recent` e quatro páginas) de `aculta_forum_public_topics` usam Fields/Views nativos e o adaptador `views-view-fields--aculta-forum-public-topics.html.twig`, que compõe o SDC reutilizável `forum-topic-row`. Runtime/Sync parseados coincidem; os cinco displays executam com 10 resultados cada. Uma renderização como anônimo no host Fórum produziu dez `<article class="forum-topic-row">` e preservou cache contexts de domain, query e node grants. Classificação `UI_SUITE_NATIVE`: o markup da row não duplica SDC. O row plugin UI Patterns não foi aplicado porque o source `view_field` instalado só mapeia slots, enquanto o SDC necessita props dinâmicas de sticky/badges; forçar o plugin hoje perderia esses dados. A composição da página (header, tabs, categorias, regras e pager) é um template ACULTA intencional composto por SDCs, não uma cópia do componente de row. Browser visual/teclado/perfis ainda pendentes.
+
+## Transparência — cartão de documento (2026-11-11)
+
+`aculta_documents:block_1` usa `layout-grid` e `document-card` no teaser nativo de node. O adapter envia categoria, corpo e arquivo como slots renderizados pela Field API, sem duplicar consulta ou contornar access/cache. Runtime anônimo preservou três rows e cache contexts. Classificação `UI_SUITE_NATIVE`; a lista não tem teste de browser focal e os fixtures atuais não demonstram link de arquivo, editor/admin, modo escuro, teclado, zoom 200% ou cache-hit. O SDC tem schema estrito, CSS local e story no catálogo.

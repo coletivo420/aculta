@@ -1086,3 +1086,12 @@ State: Dev. No RC, production deployment, or release tag is declared.
 
 - As Views `aculta_album_fotos:block_1`, `aculta_forum_gallery_slides:block_1` e `galeria_produto:default` compõem o SDC `layout-grid` com UI Patterns, removendo os visuais VVJS das features ACULTA.
 - PhotoSwipe, filtros/ordem/acesso/cache e render arrays Commerce permanecem; Fórum sem galeria publicada e aceite visual de produto pendente. O único consumidor VVJS restante é exemplo upstream classificado `BLOCKED_UPSTREAM`.
+## Não versionado — Documentos públicos em UI Patterns (2026-11-11)
+
+- A View `aculta_documents:block_1` usa `layout-grid` e o teaser SDC
+  `document-card`, mantendo rows de node, Field API e regras nativas da View.
+- Runtime anônimo preservou três resultados, H1/main e cache contextual. Os
+  fixtures publicados têm campos de arquivo sem descrição, portanto a presença
+  visual de links de arquivo não foi comprovada. Captura, perfis e cache-hit
+  continuam pendentes.
+

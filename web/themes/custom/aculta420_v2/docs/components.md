@@ -4,6 +4,14 @@ Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes d
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
+### document-card
+
+Cartão editorial de documento institucional com props estritas `title` e
+`url`; slots `category`, `summary` e `attachment` recebem render arrays dos
+campos do node. Story: `document-card.default.story.yml`. Sem JavaScript; CSS
+local. O adapter preserva renderização, acesso e cache da Field API e não lê
+entidade nem usuário diretamente.
+
 ### layout-section
 
 Seção empilhada com slot `header` (título/antetítulo/ação) e slot `content`.

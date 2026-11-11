@@ -1,0 +1,15 @@
+name: Documento institucional
+component: aculta420_v2:document-card
+props:
+  title: Relatório anual de atividades
+  url: /transparencia/relatorio-anual
+slots:
+  category:
+    type: inline_template
+    template: '<span>Prestação de contas</span>'
+  summary:
+    type: inline_template
+    template: '<p>Resumo das ações e dos resultados do período.</p>'
+  attachment:
+    type: inline_template
+    template: '<a href="/sites/default/files/relatorio-anual.pdf">Baixar relatório em PDF</a>'
