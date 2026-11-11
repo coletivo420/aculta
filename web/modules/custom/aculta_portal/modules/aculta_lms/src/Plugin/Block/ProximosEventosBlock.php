@@ -76,7 +76,8 @@ final class ProximosEventosBlock extends BlockBase implements ContainerFactoryPl
     $entradas = array_slice($this->agenda->forAccount($this->usuario, $agora, $ate), 0, self::LIMITE);
     $itens = [];
     foreach ($entradas as $entrada) {
-      $texto = $entrada['inicio']->format('d/m/Y H:i') . ' — ' . $entrada['titulo'];
+      // Título é texto livre: escapado antes do #markup (triagem 2026-11-11, achado REAL).
+      $texto = $entrada['inicio']->format('d/m/Y H:i') . ' — ' . htmlspecialchars((string) $entrada['titulo'], ENT_QUOTES, 'UTF-8');
       if ($entrada['cancelada']) {
         $texto .= ' (cancelado)';
       }

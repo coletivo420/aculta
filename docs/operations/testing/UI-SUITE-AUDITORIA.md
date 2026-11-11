@@ -110,7 +110,7 @@ Escopo funcional restante (login/logout, sessões multidomínio, modais HTMX, fo
 
 1. Reexecutar o axe após sincronização controlada do Runtime e confirmar que os 14 `color-contrast` desaparecem.
 2. Revisar as candidatas visuais e decidir o local versionado das referências.
-3. Triar os 14 `#markup` PENDENTE e o achado gitleaks `XapiAttemptTokenTest.php:17`.
+3. Triar os 4 `#markup` PENDENTE e o achado gitleaks `XapiAttemptTokenTest.php:17`.
 4. Aplicar `entity_print` 2.20.0 e `symfony/http-client` v7.4.23 no Runtime por fluxo controlado.
 5. Integrar Bats, Stylelint e ESLint ao `quality-static.yml` depois do primeiro run verde no GitHub.
 6. Pinar ações do GitHub por SHA verificado.

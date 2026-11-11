@@ -12,7 +12,7 @@ Relatórios brutos (JSON do Semgrep, saída do `composer audit`, gitleaks) ficam
 | Regra | Achados | Classe |
 |---|---:|---|
 | `aculta-php-static-drupal-service` (`\Drupal::` estático) | 432 | dívida de arquitetura, não de segurança |
-| `aculta-php-markup-raw-output` | 31 | triados: 17 FALSO POSITIVO, 14 PENDENTE |
+| `aculta-php-markup-raw-output` | 31 | triados: 26 FALSO POSITIVO, 1 REAL (corrigido), 4 PENDENTE |
 | `aculta-php-eval-or-dynamic-exec` | 10 | 9 ACEITO COM JUSTIFICATIVA, 1 PENDENTE |
 | `aculta-php-unserialize-untrusted` | 1 | FALSO POSITIVO (com mitigação) |
 | `aculta-php-raw-sql-concat` | 0 | sem achado; coberta por fixture |
@@ -55,24 +55,18 @@ Não há comparação direta com a baseline de 127 achados de 2026-11-05: o conj
 | `aculta_lms/.../FreeTextAnswerPluginBase.php:98` | `Html::escape()` aplicado a cada mensagem antes do `#markup` |
 | `aculta_mailer/.../MailImapSettingsForm.php:131` | `errorText()` passa `error_class` pelo placeholder `@error` de `$this->t()`, que escapa |
 
-**PENDENTE (14):** a origem da variável ou o tipo do campo não foram provados nesta triagem. Risco de XSS só se o dado tiver origem não confiável ou HTML permitido.
+**PENDENTE (4) após a rodada final:** a origem da variável ou o tipo do campo não foram provados nesta triagem. Risco de XSS só se o dado tiver origem não confiável ou HTML permitido.
 
 | Arquivo:linha | O que falta provar | Prioridade |
 |---|---|---|
 | `aculta_messenger/.../MessagesController.php:1528` | `$site_alert->getMessage()` é renderizado como markup. A entidade vem do módulo contrib `site_alert`, ausente desta worktree; confirmar se o campo `message` aceita HTML e quem edita. Se aceitar, é risco de XSS por administrador | alta |
 | `aculta_mailer/.../MailTemplateForm.php:136` | `$preview['body']` é corpo de template de e-mail editado por administrador | média |
-| `aculta_events/.../EventPageController.php:137` | `$texto` / `$linha`: origem a confirmar | média |
-| `aculta_events/.../LocationListController.php:78` | `$linha`: origem a confirmar | média |
-| `aculta_events/.../LocationPageController.php:352` | `$line`: origem a confirmar | média |
-| `aculta_events/.../EventEditorialPresenter.php:68` | `$itemMarkup` montado no presenter; confirmar escape | média |
-| `aculta_events_openstreetmap/.../OpenStreetMapStatusController.php:37` | ramo `$environment` do ternário | baixa |
 | `aculta_events_openstreetmap/.../OpenStreetMapImportWizard.php:189` | `lat`/`lon` do formulário; confirmar validação numérica | baixa |
-| `aculta_forum/.../TopicDeletionQueueController.php:80` | `$topicLink`: confirmar que é `Link` renderizado ou título escapado | média |
-| `aculta_image/.../ImageSettingsForm.php:85` | `implode` de formatos suportados (lista de código) | baixa |
-| `aculta_lms/.../ProximosEventosBlock.php:83` | `$texto`: origem a confirmar | média |
-| `aculta_paths/.../SurfaceEditForm.php:131` | `$hostAtual`: domínio configurado; confirmar origem | baixa |
 | `aculta_wiki/.../WikiEntryImageHooks.php:147` | ramo com `$current['alt']`: texto de alt de imagem, possivelmente editado por usuário | média |
-| `aculta_portal/.../PaymentInformationWithoutAddress.php:25` | `getDisplayLabel()` do gateway (configuração administrativa) | baixa |
+
+Reclassificados na rodada final (2026-11-11, após leitura das origens):
+- FALSO POSITIVO: `EventPageController.php:137` (base escapada com `Html::escape`); `LocationListController.php:78` (rótulo por `Link`, endereço escapado); `LocationPageController.php:352` (`Link` e `Html::escape`); `EventEditorialPresenter.php:68` (`htmlspecialchars` em nome e cota); `OpenStreetMapStatusController.php:37` (ramo é `$this->t()`); `ImageSettingsForm.php:85` (rótulos vêm de mapa de código); `SurfaceEditForm.php:131` (hostname de entidade Domain); `PaymentInformationWithoutAddress.php:25` (rótulo de plugin de código); `TopicDeletionQueueController.php:80` (ramo com nó usa `Link`; sem nó usa `t()`).
+- REAL, corrigido: `aculta_lms/.../ProximosEventosBlock.php:83`. O título do evento era concatenado sem escape no `#markup`. Corrigido com `htmlspecialchars(..., ENT_QUOTES, 'UTF-8')`.
 
 ### 1.3 Correção de regra quebrada
 
@@ -134,7 +128,7 @@ Atualização feita com `composer update drupal/entity_print symfony/http-client
 
 | Item | Resultado |
 |---|---|
-| Semgrep local (474 achados) | triagem: `#markup` 31/31 (15 FP, 16 PENDENTE); dinâmicos 10/10 (9 ACEITO, 1 PENDENTE); unserialize 1/1 FP |
+| Semgrep local (474 achados) | triagem: `#markup` 31/31 (26 FP, 1 REAL corrigido, 4 PENDENTE); dinâmicos 10/10 (9 ACEITO, 1 PENDENTE); unserialize 1/1 FP |
 | Fixtures das regras | PASS: 17/17 |
 | `composer audit --locked` | antes: 3 advisories; depois: 0 (após atualização autorizada) |
 | `npm audit` | 0 vulnerabilidades |
@@ -143,7 +137,7 @@ Atualização feita com `composer update drupal/entity_print symfony/http-client
 
 ## 6. Próximas ações
 
-1. Triar os 14 `#markup` PENDENTE, começando por `MessagesController:1528` (depende do módulo contrib `site_alert`).
+1. Triar os 4 `#markup` PENDENTE: `MessagesController:1528` (depende do módulo contrib `site_alert`), `OpenStreetMapImportWizard:189` (dado de API externa), `MailTemplateForm:136` (corpo de template de administrador) e `WikiEntryImageHooks:147` (texto de alt).
 2. Confirmar `Cli.php:1539` (origem de `$cmd`) e os valores de `XapiAttemptTokenTest.php:17` (fixture ou segredo real).
 3. Aplicar `entity_print` 2.20.0 e `symfony/http-client` 7.4.23 no Runtime por fluxo controlado, e registrar o resultado.
 4. Executar `drupal/security_review` com Drush em modo somente leitura quando houver acesso ao Runtime.
