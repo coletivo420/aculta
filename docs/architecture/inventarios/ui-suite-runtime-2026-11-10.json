@@ -1,6 +1,33 @@
 {
   "observed_at_utc": "2026-11-11T06:49:04Z",
   "drupal_version": "11.5.0-beta1",
+  "composer_lock_evidence": {
+    "drupal/field_group": {
+      "version": "4.0.0",
+      "reference": "4.0.0",
+      "requires": {
+        "drupal/core": "^10.3 || ^11"
+      }
+    },
+    "drupal/ui_patterns": {
+      "version": "dev-2.0.x",
+      "reference": "a7e9c28c522a5b0c8b71c731cab5482d60164e1e",
+      "requires": {
+        "drupal/core": "^10.6 || ^11.3 || ^12",
+        "php": ">=8.3.0"
+      }
+    },
+    "drupal/ui_patterns_field_group": {
+      "version": "dev-2.0.x",
+      "reference": "4403e7b0e27679f47113e96fcdc5349c95e164d1",
+      "requires": {
+        "drupal/core": "^9 || ^10 || ^11",
+        "drupal/field_group": "*",
+        "drupal/ui_patterns": "^2"
+      },
+      "drupal_security_advisory_policy_coverage": false
+    }
+  },
   "evidence_command": "Drush Runtime export and targeted partial imports after snapshots; ComponentLayout discovery; 276-check Layout Builder batch validator; render-array/access parity checks; anonymous Firefox A/B/A pilot; Forum categories and UI Styles Entity Status targeted imports; UI Styles Entity Status isolated functional test; UI Patterns album gallery before/after Runtime snapshot comparison and Firefox ESR A/B in five viewports/modes; Forum gallery View targeted partial import after exact before snapshot, Runtime/Sync parsed YAML equality, executable UI Patterns style and zero published Forum galleries; product Commerce gallery targeted partial import and execution with seven published product Media references; forum public topics View Sync/Runtime parsed YAML equality, five executable display queries and anonymous rendered SDC row with cache metadata",
   "ui_suite_modules": {
     "ui_icons": {
@@ -165,7 +192,7 @@
     "core.entity_view_display.node.page.full": "ui_patterns:aculta420_v2:layout_section; Render API/browser confirmed",
     "core.entity_view_display.node.page.default": "ui_patterns:aculta420_v2:layout_section; Render API/browser confirmed",
     "ui_patterns_ckeditor5": "enabled preexisting; prohibited for this implementation; removal requires separate authorization",
-    "ui_patterns_field_group": "enabled preexisting 2.0.x-dev; blocked upstream pending security and Drupal 12 support assessment",
+    "ui_patterns_field_group": "enabled preexisting; BLOCKED_UPSTREAM for new consumers; dev-2.0.x SHA 4403e7b0e27679f47113e96fcdc5349c95e164d1; requires core ^9 || ^10 || ^11, field_group *, ui_patterns ^2; Drupal.org project is outside Security Advisory Policy; Drupal 12 unsupported/unproven; composer audit --locked found no Drupal advisory for these packages, which is not security coverage",
     "ui_styles_ckeditor5": "enabled 8.x-1.22; Config Sync and Runtime active for editorial styles",
     "ui_styles_entity_status": "enabled 8.x-1.22; unpublished_preview => aculta-content-status--unpublished; class resolution and upstream isolated functional test passed; Runtime visual/access/cache acceptance pending; pre-change snapshots recorded before module enable and targeted theme config import",
     "layout_builder_component_displays": "22 eligible configs use ui_patterns:aculta420_v2:layout_section; 21 render ComponentLayout wrappers; node.wiki_entry.full renders via direct wiki-entry SDC template",
@@ -178,7 +205,7 @@
     "All 22 eligible configs reference layout-section and match Runtime/Sync. The 276-check validator confirms 21 rendered ComponentLayout wrappers and the direct wiki-entry SDC template for node.wiki_entry.full, plus published-entity render arrays and default-layout access. Import was targeted after a Runtime snapshot; no entity data changed.",
     "node.document.full and block_content.basic.default remain the two documented exclusions because their Layout Builder configuration loses content.",
     "Dynamic page cache reports UNCACHEABLE for tested pages, so cache-hit variation remains DEFERRED even though sequential host rendering did not leak skins.",
-    "UI Patterns Field Group remains preexisting and BLOCKED_UPSTREAM for security/Drupal 12 assessment. UI Patterns CKEditor 5 remains preexisting but unused in this implementation; removal requires a separately authorized config operation.",
+    "UI Patterns Field Group lock evidence: dev-2.0.x SHA 4403e7b0e27679f47113e96fcdc5349c95e164d1 requires Drupal Core ^9 || ^10 || ^11, Field Group * and UI Patterns ^2; installed field_group is 4.0.0 with Core ^10.3 || ^11. Drupal.org states the integration project is outside the Security Advisory Policy. composer audit --locked listed no Drupal advisories for these packages; absence of an advisory is not coverage. Runtime is Drupal 11.5.0-beta1; Drupal 12 compatibility is not declared or demonstrated. Keep enabled preexisting module, add no consumers, and do not remove absent separate authorization. UI Patterns CKEditor 5 remains preexisting but unused in this implementation; removal requires a separately authorized config operation.",
     "The Runtime is Drupal 11.5.0-beta1; Drupal 12 compatibility cannot be inferred from a Drupal 11 runtime test.",
     "Global config:status still reports unrelated drift; the 22 migrated Layout Builder display configurations match Sync after Runtime serialization normalization.",
     "node.wiki_entry.full has a purpose-built Twig adapter that renders the wiki-entry SDC directly from access-checked fields; it bypasses the configured Layout Builder wrapper and is validated as a UI_SUITE_NATIVE adapter.",
