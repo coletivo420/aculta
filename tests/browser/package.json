@@ -6,9 +6,12 @@
     "test:firefox": "node run-playwright.mjs",
     "test:chromium": "ACULTA_BROWSER_ENGINE=chromium node run-playwright.mjs",
     "test:webkit": "ACULTA_BROWSER_ENGINE=webkit node run-playwright.mjs",
-    "test:front": "node run-playwright.mjs"
+    "test:front": "node run-playwright.mjs",
+    "test:a11y": "playwright test --config playwright.config.mjs playwright.a11y.spec.mjs",
+    "test:list": "playwright test --config playwright.config.mjs --list"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
     "@playwright/test": "1.56.1"
   }
 }

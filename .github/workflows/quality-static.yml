@@ -1,0 +1,157 @@
+name: Quality Static (shell, security, browser discovery)
+
+# Complementa php-quality.yml. Não substitui nenhum job existente.
+# Regras: sem segredos em PR; sem Runtime compartilhado; sem || true para esconder falha.
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-static-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  shell-quality:
+    name: Shell quality (ShellCheck, shfmt, bash -n)
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Install shfmt and bats
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y shfmt bats
+
+    - name: Syntax check of Runtime Sync entrypoint
+      run: bash -n scripts/runtime-sync.sh
+
+    - name: ShellCheck on changed shell files
+      run: |
+        base="${{ github.event.pull_request.base.sha || github.event.before }}"
+        if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
+          base="$(git rev-parse HEAD~1 2>/dev/null || git rev-list --max-parents=0 HEAD)"
+        fi
+        git diff --name-only --diff-filter=ACMR "$base" HEAD -- '*.sh' > changed-sh.txt
+        if [ ! -s changed-sh.txt ]; then
+          echo "Nenhum script .sh alterado: N/A"
+          exit 0
+        fi
+        xargs -a changed-sh.txt shellcheck -S warning
+
+    - name: shfmt diff on changed shell files
+      run: |
+        if [ ! -s changed-sh.txt ]; then
+          echo "Nenhum script .sh alterado: N/A"
+          exit 0
+        fi
+        xargs -a changed-sh.txt shfmt -d -i 2 -ci
+
+  security-static:
+    name: Security static (Semgrep local rules, fixtures, composer audit)
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install Semgrep (versão fixada)
+      run: python -m pip install --disable-pip-version-check semgrep==1.183.0
+
+    - name: Rule fixtures (gate bloqueante)
+      run: |
+        python3 -I .agents/skills/aculta-seguranca-estatica/tests/check-rule-fixtures.py \
+          "$(command -v semgrep)" \
+          .agents/skills/aculta-seguranca-estatica/rules/aculta-php.yml \
+          .agents/skills/aculta-seguranca-estatica/tests/rules/aculta-php.php
+
+    - name: Semgrep local rules, apenas achado novo (baseline)
+      env:
+        SEMGREP_RULES: .agents/skills/aculta-seguranca-estatica/rules/aculta-php.yml
+      run: |
+        # Achados históricos não bloqueiam. Só achado novo em relação ao commit base falha.
+        base="${{ github.event.pull_request.base.sha || github.event.before }}"
+        if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
+          echo "Sem commit base confiável para baseline: execução completa sem baseline."
+          semgrep scan --metrics=off --config "$SEMGREP_RULES" --error \
+            --exclude vendor --exclude web/core --exclude web/modules/contrib \
+            --exclude web/libraries --exclude node_modules \
+            --sarif -o semgrep.sarif web/modules/custom web/themes/custom scripts
+        else
+          semgrep scan --metrics=off --config "$SEMGREP_RULES" --error \
+            --baseline-commit "$base" \
+            --exclude vendor --exclude web/core --exclude web/modules/contrib \
+            --exclude web/libraries --exclude node_modules \
+            --sarif -o semgrep.sarif web/modules/custom web/themes/custom scripts
+        fi
+
+    - name: Upload SARIF
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: semgrep-sarif
+        path: semgrep.sarif
+        retention-days: 14
+        if-no-files-found: ignore
+
+    - name: Setup PHP for composer audit
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        tools: composer
+
+    - name: Composer audit (informativo, sem vendor)
+      # Informativo: há advisories conhecidos registrados em
+      # docs/operations/testing/SEGURANCA-ESTATICA-2026-11-11.md. Bloqueio exige
+      # decisão do responsável sobre correção do lock.
+      continue-on-error: true
+      run: composer audit --locked --no-interaction --format=plain | tee composer-audit.txt
+
+    - name: Upload composer audit report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: composer-audit
+        path: composer-audit.txt
+        retention-days: 14
+        if-no-files-found: ignore
+
+  browser-discovery:
+    name: Browser suites discovery (sem execução contra ambiente)
+    # Execução de acessibilidade e regressão visual exige ACULTA_SITE_ORIGIN de
+    # ambiente descartável ou autorizado. Sem isso, o job só valida a descoberta.
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: npm
+        cache-dependency-path: tests/browser/package-lock.json
+
+    - name: Install browser test dependencies
+      working-directory: tests/browser
+      run: npm ci --no-audit --no-fund
+
+    - name: Discovery of Playwright suites
+      working-directory: tests/browser
+      run: npm run test:list

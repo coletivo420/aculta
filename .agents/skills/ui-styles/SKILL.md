@@ -23,11 +23,11 @@ Não converta todos os SDCs em styles nem todos os styles em SDCs. Se a classe e
 3. Agrupe opções alternativas no mesmo style plugin; se combinações podem coexistir, separe em grupos com responsabilidade diferente. Marque somente opções válidas para cada alvo.
 4. Preserve `data-theme`, `data-purpose`, light/dark e responsividade do token CSS. UI Styles escolhe uma classe, mas quem define aparência é o tema.
 5. Considere `previewed_as: hidden` quando o catálogo não puder representar a aparência no formulário; siga convenção local.
-6. O export deste checkout habilita `ui_styles`, `ui_styles_block`, `ui_styles_layout_builder`, `ui_styles_ui_patterns` e `ui_styles_views`. Isso não prova estado no runtime: confirme plugin e alvo no código instalado.
+6. O export deste checkout habilita `ui_styles`, `ui_styles_block`, `ui_styles_layout_builder`, `ui_styles_page`, `ui_styles_ckeditor5`, `ui_styles_entity_status`, `ui_styles_ui_patterns` e `ui_styles_views`. Isso não prova estado no runtime: confirme plugin e alvo no código instalado.
 7. Evite duplicar classes do SDC, classes de módulo ou CSS já incluído em biblioteca condicional.
 8. O YAML atual contém `button`, `card_accent`, `revista_accent`, `purpose_palette`, `spacing_section`, `surface_style`, `surface_accent_style`, `surface_elevation_style` e `surface_radius_style`. Confira essas opções e o CSS antes de propor outra classe.
 9. Mapeie superfície, espaçamento, borda/raio, elevação/sombra e cor por purpose ao CSS existente. Verifique claro/escuro, estados, alvos de bloco/layout/Views/Patterns e consistência das previews.
-10. `ui_styles_page` e `ui_styles_library` não aparecem habilitados no export. `ui_styles_page` é o nome técnico documentado para integração global/page; confirme módulo, origem e comportamento no release instalado antes de usar.
+10. O Config Sync habilita `ui_styles_page` (e `ui_styles_entity_status`, `ui_styles_ckeditor5`), e `drupal/ui_styles` 1.22.0 está travado em `composer.lock`. `ui_styles_library` não consta no export. Confirme comportamento no release instalado e no Runtime antes de usar `ui_styles_page` em produção de conteúdo.
 11. Respeite permissões administrativas e evite opções de classes arbitrárias ou CSS livre.
 
 ## Validação

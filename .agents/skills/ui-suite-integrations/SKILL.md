@@ -24,12 +24,12 @@ Preserve Layout Builder, Views, os layouts existentes, ADR-054, as cinco regiõe
 
 ## Tecnologias opcionais
 
-- **UI Patterns Field Group:** pacote `2.0.0-beta2` no lock, não habilitado no export. O projeto não está coberto pela política de avisos de segurança Drupal; não habilite nesta tarefa.
-- **UI Styles Page/Library:** extensões opcionais não habilitadas no export. Confirme machine name e versão no código instalado.
-- **UI Icons:** packs Core do tema existem, módulo contrib e integrações não foram comprovados. Preserve Phosphor/Fluent e não crie seletor paralelo.
-- **UI Skins:** não instalado. Pode sobrepor modos e variáveis CSS ao `data-theme`, purposes e tokens ACULTA. Não migrar o tema.
-- **UI Examples:** não instalado. Exemplos declarativos/YAML e páginas demonstrativas não são a mesma coisa que stories de componente ou preview real.
-- **Display Builder:** não instalado. Projeto em beta no momento da pesquisa, com potencial de substituir/migrar Layout Builder, displays de Views e entity displays. Não instalar nem migrar; avaliar maturidade, compatibilidade e ADR-054 antes de qualquer proposta.
+- **UI Patterns Field Group:** declarado como `2.0.x-dev@dev` em `composer.json`, travado em `dev-2.0.x` no lock, e **não habilitado** no Config Sync. Dependência de desenvolvimento: não habilite nesta tarefa.
+- **UI Styles Page e demais submódulos:** `drupal/ui_styles` 1.22.0 no lock; `ui_styles_page`, `ui_styles_ckeditor5` e `ui_styles_entity_status` habilitados no Config Sync. `ui_styles_library` não consta. Confirme comportamento no código instalado.
+- **UI Icons:** `drupal/ui_icons` 2.1.0 no lock e submódulos habilitados no Config Sync. Preserve Phosphor/Fluent e não crie seletor paralelo. Detalhes em `ui-icons`.
+- **UI Skins:** `drupal/ui_skins` 1.2.1 no lock e habilitado no Config Sync. Pode sobrepor modos e variáveis CSS ao `data-theme`, purposes e tokens ACULTA. Não migrar o tema sem decisão.
+- **UI Examples:** não consta em `composer.json`, lock ou Config Sync. Exemplos declarativos/YAML não são stories de componente nem preview real.
+- **Display Builder:** não consta em `composer.json`, lock ou Config Sync. Projeto em beta no momento da pesquisa, com potencial de substituir/migrar Layout Builder, displays de Views e entity displays. Não instalar nem migrar; avaliar maturidade, compatibilidade e ADR-054 antes de qualquer proposta.
 - **SDC Devel:** habilitado no export; confirme runtime e uso de previews conforme a instalação.
 
 ## Bibliotecas e segurança

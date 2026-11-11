@@ -47,7 +47,9 @@ rules:
     languages: [php]
     severity: ERROR
     message: "RedirectResponse cru para destino externo. Use TrustedRedirectResponse e a política de purpose (docs/portal/CROSS-DOMAIN-REQUEST-POLICY.md)."
-    pattern: new \Symfony\Component\HttpFoundation\RedirectResponse(...)
+    # pattern: com nome totalmente qualificado não casa no parser PHP do Semgrep
+    # (verificado com fixture); pattern-regex cobre o caso com e sem barra inicial.
+    pattern-regex: 'new\s+\\?Symfony\\Component\\HttpFoundation\\RedirectResponse\('
 
   - id: aculta-php-markup-raw-output
     languages: [php]
