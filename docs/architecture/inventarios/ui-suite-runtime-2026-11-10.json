@@ -1,5 +1,5 @@
 {
-    "observed_at_utc": "2026-11-11T03:13:29+00:00",
+    "observed_at_utc": "2026-11-11T03:24:00+00:00",
     "drupal_version": "11.5.0-beta1",
     "evidence_command": "Drush Runtime export and targeted partial import after snapshot; ComponentLayout discovery; 276-check Layout Builder batch validator; render-array/access parity checks; anonymous Firefox A/B/A pilot; forum categories targeted partial import after Runtime snapshot; anonymous Firefox five-viewport and keyboard check",
     "ui_suite_modules": {
@@ -790,5 +790,12 @@
         ],
         "evidence": "UI Icons 2.1.0 module contracts and config inspected; menus have adapter settings but no icon assignments identified; no visual or accessibility acceptance claimed.",
         "status": "MIGRATION_IN_PROGRESS; Runtime/Sync selector drift is unresolved."
+    },
+    "revista_browser_smoke": {
+        "requested_route": "/revista on magazine Domain",
+        "result": "HTTP 301 normalized to /; View page not reached",
+        "homepage": "4 revista-teaser cards, one H1/main, no horizontal overflow at 320/390/768/1024/1440 CSS px",
+        "method": "anonymous read-only Firefox ESR X11 with WebDriver BiDi; DOM metrics; no screenshots",
+        "limitation": "homepage cards cannot be attributed to revista_sessoes page display; access/pager/cache/keyboard/dark/zoom remain unverified"
     }
 }

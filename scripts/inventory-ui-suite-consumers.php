@@ -164,7 +164,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
           : ($isForumCategoryPilot && $displayId === 'block_landing'
             ? 'active row plugin; block placement hidden on public home; no visible output claimed'
             : ($isRevistaTeaserSdc
-              ? 'Sync node teaser row uses revista-teaser SDC adapter; Runtime not observed'
+              ? 'Magazine Domain /revista redirects to /; homepage smoke saw four revista-teaser cards, but could not attribute them to this View display'
               : 'not_observed')))),
     ];
   }
