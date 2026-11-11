@@ -119,3 +119,7 @@ As cinco saídas (`block_recent` e quatro páginas) de `aculta_forum_public_topi
 ## Transparência — cartão de documento (2026-11-11)
 
 `aculta_documents:block_1` usa `layout-grid` e `document-card` no teaser nativo de node. O adapter envia categoria, corpo e arquivo como slots renderizados pela Field API, sem duplicar consulta ou contornar access/cache. Runtime anônimo preservou três rows e cache contexts. Classificação `UI_SUITE_NATIVE`; a lista não tem teste de browser focal e os fixtures atuais não demonstram link de arquivo, editor/admin, modo escuro, teclado, zoom 200% ou cache-hit. O SDC tem schema estrito, CSS local e story no catálogo.
+
+## Loja — catálogo Commerce (2026-11-11)
+
+`aculta_shop_catalog` tem duas saídas consumidoras (block/page) no domínio shop. Ambas usam `layout-grid`; o view mode `catalog` compõe o SDC `product-card` pelo adapter Twig com render arrays nativos de preço, variações e formulário de compra. Runtime anônimo manteve HTTP 200 e produto 1 antes/depois; filtros, ordenação, pager e acesso foram verificados na configuração executável. Classificação `UI_SUITE_NATIVE`. Firefox headless validou cinco larguras, dois modos, foco e contraste mínimo 12,4:1; zoom 200%, perfis, cache-hit e aceite visual humano permanecem pendentes. Dynamic Cache segue `UNCACHEABLE` por baixa cacheabilidade do Commerce.

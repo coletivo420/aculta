@@ -1203,6 +1203,130 @@
           ]
         }
       }
+    },
+    "aculta_shop_catalog": {
+      "owner_module": "aculta_portal:commerce",
+      "config_path": "config/sync/views.view.aculta_shop_catalog.yml",
+      "row_plugin": "entity:commerce_product; catalog",
+      "displays": {
+        "block_catalog": {
+          "consumer_id": "block_catalog",
+          "status": "runtime_verified_sdc_grid",
+          "result_count_before": 1,
+          "result_count_after": 1,
+          "result_product_ids_before_after": [
+            1
+          ],
+          "style_plugin_before": "grid",
+          "style_plugin": "ui_patterns",
+          "style_component": "aculta420_v2:layout-grid",
+          "result_count": 1
+        },
+        "page_catalog": {
+          "consumer_id": "page_catalog",
+          "status": "runtime_verified_sdc_grid",
+          "http_status_before": 200,
+          "http_status_after": 200,
+          "result_count_before": 1,
+          "result_count_after": 1,
+          "result_product_ids_before_after": [
+            1
+          ],
+          "style_plugin_before": "grid",
+          "style_plugin": "ui_patterns",
+          "style_component": "aculta420_v2:layout-grid",
+          "anonymous_access": "allowed",
+          "result_count": 1
+        }
+      },
+      "configuration": {
+        "before_runtime_yaml_sha256": "f0f24cc4e937a02e565379f8273661926d45c2027410a854ce5fe2ead082f214",
+        "config_sync_yaml_sha256": "3d0f9ac0bc1d285dfc1151b4ee709524d0ccc52d1f3288c6dedf6451d8cf5a69",
+        "after_runtime_yaml_sha256": "4d00b9e8cc181957dc917f0c003a447542bff460e98d37c096a7b51e876794e0",
+        "sync_runtime_parsed_yaml_equal": true,
+        "import": "authorized partial import of only views.view.aculta_shop_catalog after Runtime snapshot",
+        "preserved": "Commerce catalog entity view mode, title ascending, product type and published filters, access content permission, full pager 12 items"
+      },
+      "anonymous_render": {
+        "domain": "shop",
+        "path": "/produtos",
+        "product_ids": [
+          1
+        ],
+        "one_h1": true,
+        "one_main": true,
+        "add_to_cart_form_present_before_after": true,
+        "cache_control": "private, no-cache",
+        "dynamic_cache": "UNCACHEABLE (poor cacheability)",
+        "x_drupal_cache_after": "MISS"
+      },
+      "browser": {
+        "engine": "Firefox ESR headless via WebDriver BiDi",
+        "scenarios": 10,
+        "keyboard_product_focus": true,
+        "viewports_css_px": [
+          320,
+          390,
+          768,
+          1024,
+          1440
+        ],
+        "modes": [
+          "light",
+          "dark"
+        ],
+        "overflow_px_max": 0,
+        "title_contrast_min": 12.396730319685656,
+        "captures": [
+          {
+            "file": "light-320.png",
+            "sha256": "206784e5a734972543648a3956520c97d5e7ffaafe881873ac2c300b15cd36b2"
+          },
+          {
+            "file": "light-390.png",
+            "sha256": "8b24c4cfe9808ff041e7e73fbe472fed6ca1cd04b65091fd8f8f83334226cef9"
+          },
+          {
+            "file": "light-768.png",
+            "sha256": "06a0a11deeab21e698e0b4570a5052e0be67d8b80d62a243e8fdc0dd7f25dc0e"
+          },
+          {
+            "file": "light-1024.png",
+            "sha256": "dcb9bb4dfd8f453a60936ea6ea6be31a87bcfb70ddbe4f8ba889ac414a05dcc3"
+          },
+          {
+            "file": "light-1440.png",
+            "sha256": "45ca48c107342f8f12d40b8cd377b26c045e42116377143e457f9b43ac25bde0"
+          },
+          {
+            "file": "dark-320.png",
+            "sha256": "cd15df809b2dd106b9034587c40d10e4228d193327a6268b9f5e1c2c27c7c1e2"
+          },
+          {
+            "file": "dark-390.png",
+            "sha256": "2cabcf485a4cb382a2040f03e196b896b05dd008a9049a0feb328b0bbc44db63"
+          },
+          {
+            "file": "dark-768.png",
+            "sha256": "b9e2311c22be726ccd5bb36128d10097f95292bb3111edd78f03308f8b399117"
+          },
+          {
+            "file": "dark-1024.png",
+            "sha256": "668e9d9043fdf740f81727c9b4c38e81af40182c7ebac24f22ca60efe78428c1"
+          },
+          {
+            "file": "dark-1440.png",
+            "sha256": "b897825de5047f41b287d0e23b51a06c41e14a8ed10100f56c07df52f04102c2"
+          }
+        ],
+        "manifest": "tests/browser/capturas/ui-patterns-shop-catalog/2026-11-11/manifest.json",
+        "human_visual_acceptance": "DEFERRED; headless geometry/contrast/focus validated, but no visible X11 review"
+      },
+      "limitations": [
+        "Zoom 200%, editor/admin profiles, assistive technology, cache-hit and human visual acceptance remain pending."
+      ],
+      "status": "UI_SUITE_NATIVE",
+      "card_component": "aculta420_v2:product-card"
     }
   },
   "ui_icons_config": {

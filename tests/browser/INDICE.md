@@ -36,6 +36,7 @@ Scripts com `routes.json` têm cobertura de rotas públicas no runner comum.
 | [`tests/browser/shop/aculta-cpf-checkout/`](./shop/aculta-cpf-checkout/README.md) | Navegador — CPF/checkout compartilhado Loja/LMS | 4 | sim |
 | [`tests/browser/shop/aculta-frete/`](./shop/aculta-frete/README.md) | Navegador — simulador de frete na página do produto | 2 | sim |
 | [`tests/browser/shop/aculta-mercadopago/`](./shop/aculta-mercadopago/README.md) | Mercado Pago — login sandbox do comprador | 5 | sim |
+| [`tests/browser/shop/aculta-shop-catalog-ui-patterns/`](./shop/aculta-shop-catalog-ui-patterns/README.md) | Catálogo da Loja — UI Patterns Views | 1 | não |
 | [`tests/browser/studio/`](./studio/README.md) | Testes do ACULTA Studio, por subcategoria | 0 | não |
 | [`tests/browser/studio/culturas/`](./studio/culturas/README.md) | Studio · Culturas | 5 | sim |
 | [`tests/browser/studio/ganjalab/`](./studio/ganjalab/README.md) | Experiência educacional ACULTA Studio Ganjalab | 1 | sim |

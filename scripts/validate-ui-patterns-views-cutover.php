@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Checks that the Albums View uses UI Patterns row/style/display safely.
+ * Checks that Views cutovers use UI Patterns while preserving native behavior.
  */
 
 declare(strict_types=1);
@@ -47,6 +47,23 @@ $assert(($default['access']['type'] ?? NULL) === 'perm' && ($default['access']['
 $assert(isset($default['filters']['status'], $default['sorts']['field_published_at_value']), 'Filtro de publicação e ordenação editorial devem permanecer.');
 $assert(($page['ui_patterns']['component_id'] ?? NULL) === 'aculta420_v2:views-display', 'Display deve reutilizar o SDC views-display no options da View.');
 $assert(($page['defaults']['ui_patterns'] ?? NULL) === FALSE, 'O display deve selecionar explicitamente seu próprio componente em vez de herdar o valor vazio do default.');
+
+$shop = Yaml::parseFile($root . '/config/sync/views.view.aculta_shop_catalog.yml');
+$shopDefault = $shop['display']['default']['display_options'];
+$assert(in_array('ui_patterns_views', $shop['dependencies']['module'] ?? [], TRUE), 'O catálogo Commerce deve declarar a dependência UI Patterns Views.');
+$assert(($shopDefault['style']['type'] ?? NULL) === 'ui_patterns', 'O catálogo Commerce deve usar UI Patterns Style.');
+$assert(($shopDefault['style']['options']['ui_patterns']['ui_patterns']['component_id'] ?? NULL) === 'aculta420_v2:layout-grid', 'O catálogo Commerce deve reutilizar o layout-grid existente.');
+$assert(($shopDefault['style']['options']['ui_patterns']['ui_patterns']['props']['min_item_width']['source']['value'] ?? NULL) === '16rem', 'A grade Commerce deve usar a largura mínima editorial suportada.');
+$assert(($shopDefault['style']['options']['ui_patterns']['ui_patterns']['slots']['content']['sources'][0]['source_id'] ?? NULL) === 'view_rows', 'O grid Commerce deve compor as rows renderizadas nativamente.');
+$assert(($shopDefault['row']['type'] ?? NULL) === 'entity:commerce_product' && ($shopDefault['row']['options']['view_mode'] ?? NULL) === 'catalog', 'O row nativo Commerce e seu display catalog devem permanecer.');
+$assert(($shopDefault['pager']['type'] ?? NULL) === 'full' && ($shopDefault['pager']['options']['items_per_page'] ?? NULL) === 12, 'O pager Commerce deve continuar completo com 12 itens por página.');
+$assert(($shopDefault['access']['type'] ?? NULL) === 'perm' && ($shopDefault['access']['options']['perm'] ?? NULL) === 'access content', 'O acesso nativo do catálogo Commerce deve permanecer.');
+$assert(isset($shopDefault['filters']['status'], $shopDefault['filters']['type']), 'Status publicado e tipo Produto da loja devem permanecer como filtros.');
+$assert(($shopDefault['sorts']['title']['order'] ?? NULL) === 'ASC', 'O catálogo Commerce deve preservar a ordenação ascendente por título.');
+foreach (['block_catalog', 'page_catalog'] as $shopDisplay) {
+  $options = $shop['display'][$shopDisplay]['display_options'];
+  $assert(($options['defaults']['style'] ?? TRUE) === TRUE, "$shopDisplay deve herdar o grid único do catálogo.");
+}
 
 $displaySlots = $page['ui_patterns']['slots'] ?? [];
 $requiredSources = [

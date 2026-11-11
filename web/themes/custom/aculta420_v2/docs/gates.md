@@ -203,7 +203,7 @@ Este registro não autoriza `drush cim`, `updatedb` ou alterações destrutivas;
 - Override por nó comprovado no nó 6 (`/institucional`) via HTTP autenticado: seção `onecol` com o corpo renderizou o texto e o layout; `config:status` sem divergência após a restauração. Nó temporário de teste removido.
 - `validate-aculta420-layout-builder-batch.php`: PASS (170 checks), com a exceção de `allow_custom` restrita a `node.page.full`.
 - `validate-aculta420-layout-builder-batch.php`: PASS (276 checks, 22 displays); 21 saídas incluem `layout-section`; `node.wiki_entry.full` usa diretamente o adapter SDC `wiki-entry`. Componentes e paridade Runtime/Sync preservados. As duas exclusões documentadas seguem fora do lote (2026-11-10).
-- `validate-ui-patterns-views-cutover.php`: PASS (40 checks); View `aculta_albuns` mapeia row/style/display a SDCs, mantendo sources dos campos, access `access content`, filtro publicado, ordenação e pager mini (2026-11-10).
+- `validate-ui-patterns-views-cutover.php`: PASS (72 checks); catálogo Commerce mantém view mode, acesso, filtros, ordenação e pager com `layout-grid` + SDC `product-card`. SDC schema 84/1798, Drupal render 42 componentes, PHPUnit focal 3/17, PHPCS, PHPStan, foundations 83 pares e UI Styles 40 verificações PASS (2026-11-11). Stylelint DEFERRED: binário ausente.
 
 ## Execução Recente — ADR-054 P8 correções de gates (2026-11-09)
 

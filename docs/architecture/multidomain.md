@@ -30,7 +30,7 @@ hostname e não recebe entidade `Domain` em Twig/SDC. Ver o contrato planejado e
 | support | apoio.aculta.org | apoio.aculta.toca.net.br | ativo |
 | magazine | revista.aculta.org | revista.aculta.toca.net.br | ativo |
 | wiki | wiki420.aculta.org | wiki420.aculta.toca.net.br | ativo |
-| shop | loja.aculta.org | loja.aculta.toca.net.br | Domain ativo; catálogo futuro |
+| shop | loja.aculta.org | loja.aculta.toca.net.br | Domain ativo; catálogo público `/produtos` verificado no Runtime (2026-11-11) |
 | courses | cursos.aculta.org | cursos.aculta.toca.net.br | ativo |
 | forum | growroom420.aculta.org | growroom420.aculta.toca.net.br | ativo (0.2.0-dev.57) |
 | links | links.aculta.org | links.aculta.toca.net.br | Domain/purpose ativo; landing preservadora em `aculta_linkweed`; Runtime HTTP 200/404 confirmado após alinhar os nomes dos templates Twig; DNS de produção não provisionado |

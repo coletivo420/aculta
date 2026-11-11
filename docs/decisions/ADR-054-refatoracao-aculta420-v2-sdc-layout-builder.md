@@ -131,6 +131,10 @@ A View pública `aculta_news:block_1` agora compõe o SDC existente `revista-lis
 
 `aculta_documents:block_1` usa `layout-grid` e o novo SDC `document-card` no template de teaser de node, preservando Views, Field API e render arrays de categoria, corpo e arquivo. Import parcial autorizado e isolado após snapshot; Sync e Runtime parseados coincidem. Render anônimo manteve três rows, um H1/main e cache contexts de domínio, permissões, node grants e rota. Os fixtures têm descrição de arquivo vazia, então link de anexo não foi comprovado visualmente. Browser dedicado, perfis editor/admin, tema escuro, zoom 200%, cache-hit e revisão humana permanecem DEFERRED; ADR-054/055 seguem abertas.
 
+### Atualização US-12 — catálogo público Commerce (2026-11-11)
+
+`aculta_shop_catalog` aplica `layout-grid` nos displays públicos block/page e o view mode `catalog` compõe o novo SDC `product-card` por adapter Twig, passando os campos e formulário Commerce nativos no slot. Filtros de publicado/tipo, ordenação ASC, acesso `access content` e pager full de 12 foram preservados. Import parcial isolado após snapshot; Sync/Runtime parseados coincidem; HTTP 200 e produto 1 antes/depois. Firefox ESR headless passou 10/10 em 320/390/768/1024/1440 claro/escuro, sem overflow, foco por teclado e contraste do título de 12,4:1. O cache permanece `private/no-cache` e Dynamic Cache `UNCACHEABLE`. Zoom 200%, perfis editor/admin, cache-hit e aceite visual humano seguem DEFERRED; ADR-054 permanece aberta.
+
 
 ## Atualização — galerias do Fórum em UI Patterns (2026-11-11)
 

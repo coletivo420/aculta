@@ -126,3 +126,12 @@ Status espelhado de `TODO.md`. Plano visual: `docs/architecture/GROWROOM420-VISU
   expõem descrição de arquivo no teaser; browser visual, outros perfis, zoom e
   cache-hit permanecem pendentes.
 
+## ADR-054/055 — catálogo Commerce em UI Patterns (2026-11-11)
+
+- `aculta_shop_catalog` aplica `layout-grid` às saídas pública block/page sem
+  mudar o display nativo do produto, formulário de compra, filtros, ordenação,
+  ACL e pager; adapter Twig compõe o SDC `product-card`. Sync/Runtime parseados
+  coincidem; HTTP 200 e produto 1 antes e depois. Firefox 10/10 em cinco larguras
+  e dois modos, foco e contraste mínimo 12,4:1. Zoom, cache-hit, outros perfis e
+  aceite humano pendentes.
+

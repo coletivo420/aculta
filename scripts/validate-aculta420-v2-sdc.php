@@ -93,6 +93,7 @@ $component_ids = [
   'multidomain-bar',
   'navigation-bar',
   'pagination',
+  'product-card',
   'purpose-showcase',
   'profile-details',
   'progress',
@@ -417,6 +418,12 @@ $samples = [
     ],
   ],
   'status-messages' => ['#props' => ['type' => 'status', 'messages' => ['Validação concluída.']]],
+  'product-card' => [
+    '#props' => [],
+    '#slots' => [
+      'content' => Markup::create('<div><a href="/produtos">Produto de teste</a><p>Resumo do produto.</p><form><label for="test-size">Tamanho</label><select id="test-size"><option>P</option></select><button type="button">Adicionar ao carrinho</button></form></div>'),
+    ],
+  ],
   'tabs' => [
     '#props' => ['label' => 'Suítes ACULTA'],
     '#slots' => [

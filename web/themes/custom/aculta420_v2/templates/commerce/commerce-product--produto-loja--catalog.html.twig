@@ -1,0 +1,6 @@
+{{ title_prefix }}
+{{ include('aculta420_v2:product-card', {
+  attributes: attributes,
+  content: product|without('variation_attributes')
+}, with_context = false) }}
+{{ title_suffix }}

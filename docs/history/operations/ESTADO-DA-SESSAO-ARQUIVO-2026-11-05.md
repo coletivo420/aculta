@@ -1772,3 +1772,14 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Verificações:** Views 60, UI Styles 40, SDC schema 1774, render SDC 41, foundations 83 pares, Stylelint, PHP lint e cache rebuild PASS. Browser-index global e token-budget FAIL por pendências preexistentes/worktrees aninhadas.
 - **Pendências e bloqueios:** executar zoom e revisão visual; resolver as falhas globais fora do escopo; migrar demais Views e domínios.
 - **Próximo passo:** selecionar a próxima View com saída real e repetir snapshot, paridade funcional e A/B visual no Runtime.
+
+# ADR-054/055 — Views de galeria em UI Patterns — 2026-11-11
+
+- **Objetivo:** remover VVJS das galerias Forum/Commerce e concluir a correção da rota de catálogo UI Components.
+- **Estado:** Fórum e produto usam `layout-grid`; Runtime/Synchronização parseada coincide; Forum 0 rows, produto 7 rows. Catálogo abre com 82 componentes/16 grupos e JS 200. Navegador da galeria: 11/15; 4 falhas da toolbar Gin no MAIN; Fórum passa todas as larguras.
+- **Decisões e alternativas descartadas:** sem retenção dos visuais VVJS nas features; manter PhotoSwipe, View/Commerce APIs e exemplo upstream `vvjs_example` como `BLOCKED_UPSTREAM`.
+- **Cuidados:** imports parciais isolados após snapshots; nenhum uninstall. Fórum sem fixture; produto sem revisão visual/cache no browser.
+- **Commits e arquivos:** `2d49a9fdc`; Views Forum/Commerce, Gallery hooks, inventário, ADRs, tema, status e gates.
+- **Verificações:** Views 60, Gallery contract, Portal Drupal 12 1243, PHPCS/PHPStan, status index, diff-check e cache rebuild PASS. Token-budget global FAIL preexistente (7 itens).
+- **Pendências e bloqueios:** fixture Forum e aceites; browser product; toolbar Gin mobile `BLOCKED_UPSTREAM`; migração site-wide/US-14 continuam.
+- **Próximo passo:** avançar para a próxima View/interface com dados reais e homologar as pendências de UI Skins.

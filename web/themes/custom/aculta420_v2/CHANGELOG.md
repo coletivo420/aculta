@@ -1095,3 +1095,13 @@ State: Dev. No RC, production deployment, or release tag is declared.
   visual de links de arquivo não foi comprovada. Captura, perfis e cache-hit
   continuam pendentes.
 
+## Não versionado — Catálogo da Loja em UI Patterns (2026-11-11)
+
+- `aculta_shop_catalog` usa UI Patterns `layout-grid` nas saídas block/page; o
+  adapter do view mode `catalog` compõe o SDC `product-card` com preço,
+  variações e submit de compra pelos render arrays Commerce.
+- Runtime anônimo: HTTP 200 e o mesmo produto/submit antes e depois. Firefox
+  headless passou 10/10 em 320/390/768/1024/1440, claro/escuro, sem overflow,
+  foco visível e contraste do título ≥12,4:1. Cache segue `UNCACHEABLE`.
+- Zoom 200%, demais perfis, cache-hit e revisão visual humana pendem.
+

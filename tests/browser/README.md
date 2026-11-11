@@ -113,6 +113,7 @@ Estão listadas abaixo as pastas reais, com o caminho completo. A convenção é
 | `tests/browser/shop/aculta-cpf-checkout/` | Navegador — CPF/checkout compartilhado Loja/LMS |
 | `tests/browser/shop/aculta-frete/` | Navegador — simulador de frete na página do produto |
 | `tests/browser/shop/aculta-mercadopago/` | Mercado Pago — login sandbox do comprador |
+| `tests/browser/shop/aculta-shop-catalog-ui-patterns/` | Catálogo da Loja — UI Patterns Views |
 | `tests/browser/studio/` | Testes do ACULTA Studio, por subcategoria |
 | `tests/browser/studio/culturas/` | Studio · Culturas |
 | `tests/browser/studio/ganjalab/` | Experiência educacional ACULTA Studio Ganjalab |

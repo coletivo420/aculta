@@ -117,6 +117,10 @@ A ADR-055 passa a cobrir o ecossistema **UI Patterns + UI Styles + UI Icons + UI
 ### UI Patterns Views — lista pública de documentos (2026-11-11)
 
 `aculta_documents:block_1` passou a compor o SDC `document-card` em `layout-grid`, mantendo teaser nativo de node e os render arrays da Field API. A importação focal autorizada após snapshot manteve três resultados no Runtime anônimo. A validação visual da listagem, demais perfis, zoom/cache e presença de links de arquivo nos fixtures atuais continuam pendentes; ADR-055 permanece aberta.
+
+### Catálogo Commerce — UI Patterns Views (2026-11-11)
+
+`aculta_shop_catalog` usa UI Patterns `layout-grid`; o adapter Twig do view mode Commerce compõe o SDC `product-card` com render arrays nativos de preço e compra. Firefox ESR validou 10/10 cenários anônimos em cinco larguras e claro/escuro, sem overflow, com foco, formulário Commerce e contraste mínimo 12,4:1. Cache-hit, zoom, outros perfis e aceite humano permanecem pendentes.
 - UI Styles Page usa `third_party_settings.ui_styles_page.regions` em `aculta420_v2.settings`, aplicado por nome de região a todas as páginas do tema; a API 1.22 inspecionada não oferece seleção por Domain ID. Não usar para skins específicas por domínio nem inferir config por requisição; integração Page ainda requer solução que respeite a fronteira multidomínio.
 - Nova execução: **US-00 a US-14** no plano técnico canônico, incluindo substituição integral do legado visual e fechamento conjunto das ADRs. Não avançar sem baseline versionado, testes e rollback, incluindo configuração, 10 purposes, light/dark, 320 a 1440px, zoom 200%, access/cache entre hosts e avaliação editorial humana.
 - Documento de planejamento **não equivale** a autorização para `drush cim`, `updatedb`, alterações de dados ou instalação cega. Branch `dev`, commits atômicos, preservar trabalho paralelo e não alterar Core/contrib.

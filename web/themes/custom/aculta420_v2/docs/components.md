@@ -12,6 +12,14 @@ campos do node. Story: `document-card.default.story.yml`. Sem JavaScript; CSS
 local. O adapter preserva renderização, acesso e cache da Field API e não lê
 entidade nem usuário diretamente.
 
+### product-card
+
+Cartão de produto da vitrine Commerce, prop opcional `attributes` e slot
+`content`. O adapter do view mode `catalog` passa, sem filtragem, todos os
+campos e o formulário de compra do Commerce como render array; o Twig remove
+somente `variation_attributes`, conforme o template upstream padrão. Story:
+`product-card.default.story.yml`. Sem JavaScript; CSS local.
+
 ### layout-section
 
 Seção empilhada com slot `header` (título/antetítulo/ação) e slot `content`.

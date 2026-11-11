@@ -1,0 +1,21 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Cartão de produto Commerce
+description: Apresenta produto, resumo e formulário de compra por render arrays nativos do Commerce.
+status: stable
+group: Conteúdo
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Atributos HTML fornecidos pelo render array do Commerce.
+      default: null
+slots:
+  content:
+    title: Conteúdo do produto
+    description: Campos, variações, preços e formulário do view mode Commerce como render arrays originais.
+assets:
+  css:
+    component:
+      product-card.css: {}
