@@ -1,13 +1,13 @@
-# PHPStan — rodada 17 aculta_wiki — 2026-11-11
+# ADR-054/055 — RN-04 publicado e RN-05 parcial — 2026-11-11
 
-- **Objetivo:** zerar os erros PHPStan de produção em `aculta_wiki/src`.
-- **Estado:** 42 arquivos de produção sem erros; Unit 94/455 PASS; baseline global 3451 e gate estrito verde.
-- **Decisões e alternativas descartadas:** usar `DomainSiteManager`/`SiteKey::Wiki` já publicado; manter `getAccessPurpose()` do contrato `origin/dev`; filtro removido era redundante após `array_filter()`. Sem ignores e sem mudança de permissões.
-- **Cuidados:** o autoload padrão do worktree pode resolver classes no checkout principal; medições foram feitas com autoload temporário priorizando as fontes do worktree. 112 erros em testes/.install permanecem baselineados.
-- **Commits e arquivos:** rodada 17; Wiki, baseline, relatório, TODO/status, README e handoff. Commit `31686d586` publicado em `origin/dev`.
-- **Verificações:** PHPStan Wiki src/global `[OK] No errors`; Unit 94/455, descoberta de suítes, lint PHP, YAML e índice status PASS. Gate Portal FAIL por P5.4 preexistente em `PortalController`; token budget FAIL por 7 violações globais preexistentes.
-- **Pendências e bloqueios:** 112 erros PHPStan em testes/.install; sem alteração nesta rodada. Validação Runtime da Wiki continua pendente.
-- **Próximo passo:** retomar saneamento pelo próximo módulo após autorização para continuar.
+- **Objetivo:** concluir a renomeação funcional `purpose` → `site_key` e revalidar o Runtime.
+- **Estado:** classes, serviços, rotas, opções, State, sessão e a condição de bloco (`aculta_domain_site`/`site_key`) migrados sem aliases internos; 23 configs de bloco migradas no Sync e no install. PHPStan 0; unit 3287 PASS; Portal 1234 PASS; boundary 7888 PASS; browser index 151; admin routes e aliases PASS; Firefox ESR 70/70 nos dez domínios após `drush cr`.
+- **Decisões e alternativas descartadas:** aceitar as versões do remoto nos conflitos do wiki e reaplicar a renomeação; manter o guard de relations com `@phpstan-ignore`; mesclar as entradas novas do baseline em vez de regenerá-lo.
+- **Cuidados:** a condição de bloco antiga deixa de resolver no Runtime até um `cim` autorizado; o login autenticado segue bloqueado (DT-S01); rotas públicas são `private/no-cache` e `UNCACHEABLE`.
+- **Commits e arquivos:** `0c34d22cc`, `164608d1d`, `8e4816826` publicados; Portal, gates, baseline, inventário de contratos e ADRs.
+- **Verificações:** PHPStan 0, unit 3287, Portal 1234, boundary 7888, browser index 151, admin routes, aliases, root policy e status index PASS.
+- **Pendências e bloqueios:** `cim` da configuração de blocos, Kernel/Functional, sessão autenticada, cache-hit e aceite humano.
+- **Próximo passo:** importar a configuração autorizada, rodar Kernel/Functional e concluir RN-05.
 
 # PHPStan — rodada 18 aculta_mailer — 2026-11-11
 
@@ -20,16 +20,6 @@
 - **Pendências e bloqueios:** migração de consumidores `DomainPurposeManager` para `DomainSiteManager` ausente de `origin/dev`; browser/SMTP externo seguem como próximos passos do componente.
 - **Próximo passo:** retomar rodada PHPStan 17 da aculta_wiki após a migração chegar a origin/dev.
 
-# ADR-054/055 — homologação residual, galerias e correções — 2026-11-11
-
-- **Objetivo:** corrigir inconsistências das ADRs, publicar a migração de `/galleries` e fechar as pendências de zoom, teclado e cache.
-- **Estado:** `media_galleries:page_1` usa row `revista-album-card` e style `layout-grid`, marcada `UI_SUITE_NATIVE` no inventário. Homologação residual 70/70 em 320/768/1440 nos dez domínios (teclado com `:focus-visible`, zoom 200% sem overflow, cache observado). Teste autenticado pelo `auth-login.mjs` confirmou login de administrador e corrigiu H1 duplicado no dashboard do Studio (`studio-menu`). ADRs corrigidas: `ui_patterns_ckeditor5` fora do projeto, Fluent Emoji tem 66 SVGs (mínimo 48 no teste) e UI Styles Page está habilitado sem mapeamento de regiões.
-- **Decisões e alternativas descartadas:** zoom emulado por `layout.css.devPixelsPerPx=2` (atalhos de teclado não chegam ao chrome via WebDriver); não duplicar o `auth-login.mjs` em Python; corrigir o gate de índice para ignorar `.claude/worktrees`.
-- **Cuidados:** rotas públicas respondem `private/no-cache` e `UNCACHEABLE`, portanto cache-hit não é mensurável. O login autentica e grava a sessão, mas a requisição seguinte com o cookie emitido responde anônima; a causa não foi isolada e bloqueia perfis autenticados.
-- **Commits e arquivos:** `28509465b`, `e8b7efc09`, `eea9b4129`, `0f8ae8f2d`, `2f0b198f2`, `1c6f98d0c`, `0210e5c86` publicados; runner de aceitação, manifest, ADRs, inventários, status, READMEs, gate de índice e SDC `studio-menu`.
-- **Verificações:** acceptance 70/70; browser index 148 PASS; UI Patterns Views cutover 95 PASS; SDC 1801, UI Skins 134, UI Styles 40, boundary 7888 PASS; Playwright login PASS; py_compile e JSON OK.
-- **Pendências e bloqueios:** aceite visual humano; sessão autenticada (configuração `SSESS`/`SESS`); cache-hit enquanto a política for private/uncacheable; RN-00–05 e demais consumidores do inventário.
-- **Próximo passo:** corrigir a configuração de sessão do ambiente de desenvolvimento, concluir RN-05 com a sessão de renomeação e seguir ao próximo consumidor público.
 # Dependências contrib — atualização com compatibilidade — 2026-11-11
 
 - **Objetivo:** atualizar os oito projetos Composer solicitados dentro das compatibilidades do Drupal Core atual.
@@ -40,4 +30,3 @@
 - **Verificações:** `composer validate --no-check-publish` válido com avisos de constraints exatas preexistentes. Composer update dos sete pacotes bem-sucedido. Gate Runtime e testes funcionais não executados; sem ordem para escrita no Runtime. Composer apontou advisories de segurança em um pacote, sem detalhamento nesta rodada.
 - **Pendências e bloqueios:** CKEditor Plugin Pack 2.x aguarda atualização do Core para 12. Workspace possui alterações preexistentes extensas e branch divergente do origin; publicação não realizada para evitar misturar ou reescrever trabalho alheio.
 - **Próximo passo:** revisar e integrar este diff em branch sincronizada; repetir CKEditor quando Core 12 passar a ser requisito do projeto.
-

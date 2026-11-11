@@ -214,3 +214,7 @@ Fechamento parcial de 2026-11-11 — login autenticado: a autenticação de `tes
 ## Atualização — UI Patterns na listagem de galerias públicas (2026-11-11)
 
 A View `media_galleries:page_1` (`/galleries`, MAIN) foi migrada com o SDC existente `revista-album-card` para a row, mapeando o formatter nativo da miniatura e o título; UI Patterns Views `layout-grid` compõe `view_rows`. A importação parcial foi isolada somente em `views.view.media_galleries`, após snapshot do Runtime. Antes/depois a View entregou três resultados; depois são três cards, três títulos e duas imagens. Firefox ESR confirmou HTTP 200, um H1/main e grade sem overflow em 320/390/768/1024/1440, claro/escuro. Config de pager full preservada, porém não há volume suficiente para exercitar navegação. Cache-hit, zoom 200%, teclado, perfis e revisão visual humana seguem DEFERRED. Evidência: `tests/browser/capturas/ui-patterns-media-galleries/2026-11-11/manifest.json`.
+
+## Atualização RN-04/RN-05 — renomeação publicada (2026-11-11)
+
+O Portal substituiu `purpose` por `site_key` em classes, serviços, rotas, opções, State, sessão e no plugin de condição de bloco (`aculta_domain_site`/`site_key`), sem aliases internos; 23 configs de bloco foram migradas no Sync e no install. PHPStan 0; unit 3287 PASS; Portal 1234 PASS; boundary 7888 PASS; browser index 151; Firefox ESR 70/70 nos dez domínios após `drush cr`. Seguem DEFERRED o `cim` autorizado para a nova condição de bloco, Kernel/Functional, cache-hit, sessão autenticada (DT-S01) e aceite humano; a ADR permanece aberta.
