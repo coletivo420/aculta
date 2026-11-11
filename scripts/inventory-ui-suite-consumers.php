@@ -115,7 +115,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && ($rowPatterns['component_id'] ?? NULL) === 'aculta420_v2:revista-album-card';
     $isUpstreamVvjsExample = preg_match('/^vvj[a-z]_example$/', $viewId) === 1;
     $isWebformSubmissions = $viewId === 'webform_submissions';
-    $isNativeCoreView = in_array($viewId, ['media_library', 'group_members', 'group_nodes', 'profiles', 'comments_recent', 'commerce_user_orders', 'courses', 'aculta_forum_lms_admin_comments', 'aculta_magazine_admin_comments'], TRUE);
+    $isNativeCoreView = in_array($viewId, ['media_library', 'group_members', 'group_nodes', 'profiles', 'comments_recent', 'commerce_user_orders', 'courses', 'aculta_forum_lms_admin_comments', 'aculta_magazine_admin_comments', 'aculta_activities', 'aculta_forum_search', 'aculta_forum_unread_topics', 'courses_catalog', 'perfis_publicos'], TRUE);
     $forumTopicFieldsTemplate = $theme . '/templates/views/views-view-fields--aculta-forum-public-topics.html.twig';
     $isForumTopicsSdc = $viewId === 'aculta_forum_public_topics'
       && (string) $displayId !== 'default'
