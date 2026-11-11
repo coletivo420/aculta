@@ -108,6 +108,8 @@ jobs:
 
   phpunit-kernel:
     runs-on: ubuntu-latest
+    # Limite explícito: sem ele, uma suíte travada fica in_progress por horas e não gera log.
+    timeout-minutes: 45
     services:
       mariadb:
         image: mariadb:10.11
