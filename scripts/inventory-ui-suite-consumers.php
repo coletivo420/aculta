@@ -555,6 +555,7 @@ foreach ($templateRoots as $owner => $templateRoot) {
     $isPortalComponentAdapter = $file->getFilename() === 'portal-component.html.twig';
     $isPortalComponentThemeAdapter = $isPortalComponentAdapter && str_starts_with($relativePath, 'web/themes/');
     $isNeutralPortalElement = $file->getFilename() === 'portal-element.html.twig';
+    $isNeutralDonationWrapper = in_array($file->getFilename(), ['aculta-donation-summary.html.twig', 'aculta-donation-summary-container.html.twig'], TRUE);
     $moduleThemeAdapters = str_starts_with($relativePath, 'web/modules/')
       ? ($themeSdcAdapters[$file->getFilename()] ?? [])
       : [];
@@ -596,16 +597,18 @@ foreach ($templateRoots as $owner => $templateRoot) {
         ? implode(',', $components)
         : ($isPortalComponentAdapter
           ? 'theme_adapter:empty-state,tabs,author-card,profile-details'
-          : ($isNeutralPortalElement
+          : ($isNeutralDonationWrapper
+            ? 'neutral_wrapper:content'
+            : ($isNeutralPortalElement
             ? 'neutral_element:data-portal-ui'
             : ($isThemeAdaptedModuleFallback
               ? 'theme_adapter:' . implode(',', array_unique(array_merge(...array_column($moduleThemeAdapters, 'components'))))
-              : 'not_detected_in_template'))),
+              : 'not_detected_in_template')))),
       'status' => $isSdcAdapter
         ? 'UI_SUITE_NATIVE'
         : ($isPortalComponentThemeAdapter
           ? 'UI_SUITE_NATIVE'
-          : (($isPortalComponentAdapter || $isNeutralPortalElement || $isNeutralPortalButtonFallback)
+          : (($isPortalComponentAdapter || $isNeutralPortalElement || $isNeutralDonationWrapper || $isNeutralPortalButtonFallback)
           ? 'FUNCTIONAL_NATIVE_EXCEPTION'
           : ($isThemeAdaptedModuleFallback
             ? 'FUNCTIONAL_NATIVE_EXCEPTION'
