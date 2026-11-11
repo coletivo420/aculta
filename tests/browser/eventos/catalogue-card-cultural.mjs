@@ -119,12 +119,20 @@ try {
 
         const visual = await execute(`return JSON.stringify((() => {
           const card = document.querySelector('article[data-component-id="aculta420_v2:card-cultural"]');
+          const grid = document.querySelector('[data-component-id="aculta420_v2:layout-grid"]');
           const target = document.activeElement;
           const style = card ? getComputedStyle(card) : null;
+          const gridStyle = grid ? getComputedStyle(grid) : null;
           return {
             viewport: innerWidth,
             overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
             cardCount: document.querySelectorAll('article[data-component-id="aculta420_v2:card-cultural"]').length,
+            mainHeading: document.querySelector('main h1')?.innerText.trim() || '',
+            mainTextLength: (document.querySelector('main')?.innerText || '').trim().length,
+            layoutGrid: Boolean(grid),
+            gridCardCount: grid?.querySelectorAll('article[data-component-id="aculta420_v2:card-cultural"]').length || 0,
+            gridDisplay: gridStyle?.display || '',
+            gridColumns: gridStyle?.gridTemplateColumns || '',
             background: style?.backgroundColor || '',
             borderColor: style?.borderColor || '',
             focusedInMain: Boolean(target && target.closest('main')),
@@ -133,10 +141,12 @@ try {
           };
         })());`);
         const info = JSON.parse(visual);
-        const ok = info.viewport === width && info.overflow <= 0 && (page !== 'listagem' || info.cardCount > 0) && focused && info.focusedInMain;
+        const listingOk = page !== 'listagem' || (info.cardCount > 0 && info.layoutGrid && info.gridDisplay === 'grid' && info.gridCardCount === info.cardCount && focused && info.focusedInMain);
+        const detailOk = page !== 'evento' || (info.mainHeading.length > 0 && info.mainTextLength > 0);
+        const ok = info.viewport === width && info.overflow <= 0 && listingOk && detailOk;
         results.push({ page, mode, width, ok, ...info });
         writeFileSync(join(OUT, `${page}-${mode}-${width}.png`), Buffer.from(await request('GET', `${sessionPath}/screenshot`), 'base64'));
-        console.log(`${ok ? 'PASS' : 'FAIL'} ${page} ${mode} ${width}px; overflow=${info.overflow}; SDC=${info.cardCount}; foco=${info.focusOutline}`);
+        console.log(`${ok ? 'PASS' : 'FAIL'} ${page} ${mode} ${width}px; overflow=${info.overflow}; card-SDC=${info.cardCount}; grid=${info.gridDisplay || 'none'} (${info.gridCardCount}); foco=${info.focusOutline}`);
       }
     }
   }

@@ -1,3 +1,12 @@
+## Não versionado — UI Patterns style no catálogo público de Eventos (2026-11-11)
+
+- Envolve as rows nativas da View `eventos_publicos:block_1` com o SDC
+  `layout-grid`, mantendo o plugin `aculta_events_catalogue_card`, ids com
+  acesso validado e ordenação do catálogo.
+- Runtime anônimo manteve HTTP 200 e dois resultados antes/depois. Firefox ESR
+  confirmou grid, dois `card-cultural`, foco visível e sem overflow a 320/1440
+  px claro/escuro; zoom, cache-hit e revisão visual seguem pendentes.
+
 ## Não versionado — UI Styles Entity Status (2026-11-11)
 
 - Habilita Entity Status no Sync/Runtime e aplica `unpublished_preview` como

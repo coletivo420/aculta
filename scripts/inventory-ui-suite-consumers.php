@@ -86,6 +86,11 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && in_array((string) $displayId, ['default', 'page_1'], TRUE)
       && ((is_array($stylePatterns) && !empty($stylePatterns['component_id']))
         || (is_array($displayPatterns) && !empty($displayPatterns['component_id'])));
+    $isEventsCataloguePilot = $viewId === 'eventos_publicos'
+      && (string) $displayId === 'block_1'
+      && $stylePlugin === 'ui_patterns'
+      && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid';
+    $isEventsBase = $viewId === 'eventos_publicos' && (string) $displayId === 'default';
     $revistaTeaserTemplate = $theme . '/templates/content/node--revista--teaser.html.twig';
     $isRevistaTeaserSdc = $viewId === 'revista_sessoes'
       && str_starts_with($rowPlugin, 'entity:node')
@@ -103,6 +108,17 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       : NULL;
     $forumRuntimeVerified = is_array($forumRuntimeDisplay)
       && ($forumRuntimeDisplay['status'] ?? '') === 'runtime_verified';
+    $eventsRuntimeDisplay = $isEventsCataloguePilot && is_array($runtimeView)
+      ? ($runtimeView['displays'][$displayId] ?? NULL)
+      : NULL;
+    $eventsRuntimeVerified = is_array($eventsRuntimeDisplay)
+      && ($eventsRuntimeDisplay['status'] ?? '') === 'runtime_verified'
+      && ($eventsRuntimeDisplay['style_plugin'] ?? '') === 'ui_patterns'
+      && ($eventsRuntimeDisplay['style_component'] ?? '') === 'aculta420_v2:layout-grid';
+    $revistaRuntimeView = $runtimeViewDisplays[$viewId] ?? NULL;
+    $revistaRuntimeVerified = $isRevistaTeaserSdc
+      && is_array($revistaRuntimeView)
+      && ($revistaRuntimeView['status'] ?? '') === 'runtime_verified';
     $forumCategoryLegacyTemplatesRemoved = $isForumCategoryPilot
       && !is_file($theme . '/templates/views/views-view-fields--aculta-forum-categories--' . $displayId . '.html.twig')
       && !is_file($theme . '/templates/views/views-view-unformatted--aculta-forum-categories--' . $displayId . '.html.twig')
@@ -113,6 +129,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         'aculta_albuns' => 'aculta_gallery',
         'aculta_forum_categories' => 'aculta_forum',
         'revista_sessoes' => 'aculta_magazine',
+        'eventos_publicos' => 'aculta_events',
         default => 'unresolved_from_config',
       },
       'config_path' => relative_path($root, $path),
@@ -122,50 +139,62 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'row_plugin' => $rowPlugin,
       'style_plugin' => $stylePlugin,
       'ui_patterns_configured' => $components !== [] ? implode(',', $components) : 'not_detected_by_plugin_id_scan',
-      'status' => $isViewsFunctionalBase
+      'status' => ($isViewsFunctionalBase || $isEventsBase)
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
-        : (($albumsRuntimeVerified || $forumRuntimeVerified || $isRevistaTeaserSdc) ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS'),
-      'replacement_or_action' => $isViewsFunctionalBase
+        : (($albumsRuntimeVerified || $forumRuntimeVerified || $eventsRuntimeVerified || $revistaRuntimeVerified) ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS'),
+      'replacement_or_action' => $isViewsFunctionalBase || $isEventsBase
         ? 'Native Views base display supplies inherited query, access, filters and sorting; it is not an independently rendered visual consumer'
         : ($isAlbumsViewsPilot
-        ? 'Compose this inherited View level with UI Patterns SDCs; preserve native row fields, filters, sort, pager and access'
-        : ($isForumCategoryPilot
-        ? ($forumCategoryLegacyTemplatesRemoved
-          ? 'UI Patterns row SDC cutover is defined in Sync/install; source field/wrapper templates removed; retain Views query, grouping, pager and access contracts'
-          : 'Pilot: replace duplicated row field templates with the forum-category SDC; retain Views query, grouping, pager and access contracts')
-        : ($isRevistaTeaserSdc
-          ? 'Keep the native entity teaser row; the ACULTA theme adapter renders fields as render-array slots through the existing revista-teaser SDC'
-          : 'Inventory candidate only; inspect row, style and display independently before migration'))),
-      'risk_or_evidence_gap' => $isViewsFunctionalBase
+          ? 'Compose this inherited View level with UI Patterns SDCs; preserve native row fields, filters, sort, pager and access'
+          : ($isForumCategoryPilot
+            ? ($forumCategoryLegacyTemplatesRemoved
+              ? 'UI Patterns row SDC cutover is defined in Sync/install; source field/wrapper templates removed; retain Views query, grouping, pager and access contracts'
+              : 'Pilot: replace duplicated row field templates with the forum-category SDC; retain Views query, grouping, pager and access contracts')
+            : ($isEventsCataloguePilot
+              ? 'UI Patterns layout-grid wraps the native View rows; aculta_events_catalogue_card keeps access-checked IDs, labels and ordering'
+              : ($isRevistaTeaserSdc
+                ? 'Keep the native entity teaser row; the ACULTA theme adapter renders fields as render-array slots through the existing revista-teaser SDC'
+                : 'Inventory candidate only; inspect row, style and display independently before migration')))),
+      'risk_or_evidence_gap' => $isViewsFunctionalBase || $isEventsBase
         ? 'Inherited functional query, access, filters and sorting are consumed by explicit displays; no independent visual output'
         : ($isAlbumsViewsPilot
-        ? ($albumsRuntimeVerified
-          ? 'Runtime/render/browser verified at 1280/320 light/dark; pager navigation, keyboard, zoom 200% and cache-hit variation remain open'
-          : 'Sync defines row/style/display composition; targeted Runtime import and output, permission, pager/cache and browser comparison remain pending')
-        : ($isForumCategoryPilot
-        ? ($forumRuntimeVerified
-          ? 'Runtime/browser verified at five light viewports, two dark viewports and keyboard focus; cache-hit and zoom 200% remain open; native grouping and pager retained'
-          : ($displayId === 'block_landing'
-            ? 'UI Patterns row is configured, but its block placement is hidden on the public home; style/display composition and visible-consumer evidence remain pending'
-            : ($forumCategoryLegacyTemplatesRemoved
-              ? 'Sync/install declare the UI Patterns row, but Runtime/render/browser evidence remains pending'
-              : 'Config Sync and install defaults use UI Patterns row; Runtime cutover and output/access/cache comparison remain pending')))
-        : ($isRevistaTeaserSdc
-          ? 'Sync source confirms node teaser row and SDC adapter; Runtime output, access, pager/cache and browser acceptance remain pending'
-          : 'No UI Patterns row/style/display plugin ID detected in Sync; Runtime output, access and cache still unverified'))),
+          ? ($albumsRuntimeVerified
+            ? 'Runtime/render/browser verified at 1280/320 light/dark; pager navigation, keyboard, zoom 200% and cache-hit variation remain open'
+            : 'Sync defines row/style/display composition; targeted Runtime import and output, permission, pager/cache and browser comparison remain pending')
+          : ($isForumCategoryPilot
+            ? ($forumRuntimeVerified
+              ? 'Runtime/browser verified at five light viewports, two dark viewports and keyboard focus; cache-hit and zoom 200% remain open; native grouping and pager retained'
+              : ($displayId === 'block_landing'
+                ? 'UI Patterns row is configured, but its block placement is hidden on the public home; style/display composition and visible-consumer evidence remain pending'
+                : ($forumCategoryLegacyTemplatesRemoved
+                  ? 'Sync/install declare the UI Patterns row, but Runtime/render/browser evidence remains pending'
+                  : 'Config Sync and install defaults use UI Patterns row; Runtime cutover and output/access/cache comparison remain pending')))
+            : ($isEventsCataloguePilot
+              ? ($eventsRuntimeVerified
+                ? 'Firefox ESR: 2 card-cultural SDCs inside layout-grid; 320/1440 light/dark, visible keyboard focus, no horizontal scroll; detail routes separately smoke-tested'
+                : 'UI Patterns layout-grid is configured; Runtime style output and browser comparison remain pending')
+              : ($isRevistaTeaserSdc
+                ? ($revistaRuntimeVerified
+                  ? 'Theme adapter composes revista-teaser; homepage smoke is not attributable to this View; route, access, pager/cache remain pending'
+                  : 'Sync source confirms node teaser row and SDC adapter; Runtime output, access, pager/cache and browser acceptance remain pending')
+                : 'No UI Patterns row/style/display plugin ID detected in Sync; Runtime output, access and cache still unverified')))),
       'rollback' => 'Revert only display config after before/after result comparison',
       'detected_consumers' => '',
-      'runtime_status' => $isViewsFunctionalBase
+      'runtime_status' => $isViewsFunctionalBase || $isEventsBase
         ? 'functional native base; no direct route/display consumer'
         : ($albumsRuntimeVerified
-        ? sprintf('active; HTTP %d; %d results before/after; anonymous access allowed; browser 1280/320 light/dark', $runtimeView['after_http_status'], $runtimeView['result_count_after'])
-        : ($forumRuntimeVerified
-          ? sprintf('active; HTTP %d; %d taxonomy cards; anonymous access allowed; browser 320/390/768/1024/1440 light and 320/1440 dark', $forumRuntimeDisplay['after_http_status'], $forumRuntimeDisplay['result_count_after'])
-          : ($isForumCategoryPilot && $displayId === 'block_landing'
-            ? 'active row plugin; block placement hidden on public home; no visible output claimed'
-            : ($isRevistaTeaserSdc
-              ? 'Magazine Domain /revista redirects to /; homepage smoke saw four revista-teaser cards, but could not attribute them to this View display'
-              : 'not_observed')))),
+          ? sprintf('active; HTTP %d; %d results before/after; anonymous access allowed; browser 1280/320 light/dark', $runtimeView['after_http_status'], $runtimeView['result_count_after'])
+          : ($forumRuntimeVerified
+            ? sprintf('active; HTTP %d; %d taxonomy cards; anonymous access allowed; browser 320/390/768/1024/1440 light and 320/1440 dark', $forumRuntimeDisplay['after_http_status'], $forumRuntimeDisplay['result_count_after'])
+            : ($isForumCategoryPilot && $displayId === 'block_landing'
+              ? 'active row plugin; block placement hidden on public home; no visible output claimed'
+              : ($eventsRuntimeVerified
+                ? sprintf('active; HTTP %d; %d native rows; UI Patterns layout-grid; anonymous access allowed; Firefox 320/1440 light/dark', $eventsRuntimeDisplay['after_http_status'], $eventsRuntimeDisplay['result_count'])
+                : ($isEventsCataloguePilot
+                  ? 'configured; Runtime/browser evidence not recorded'
+                  : ($isRevistaTeaserSdc
+                    ? 'Theme adapter verified in source; route output not attributable to this display'
+                    : 'not_observed')))))),
     ];
   }
 }

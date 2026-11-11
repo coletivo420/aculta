@@ -51,6 +51,15 @@
   alvos ≥44 px. O bloco `block_landing` continua sem aceite porque seu placement
   está oculto na home. Cache-hit e zoom 200% seguem pendentes.
 
+## Views — catálogo público de Eventos (2026-11-11)
+
+- `eventos_publicos:block_1` usa o style UI Patterns `layout-grid` sobre as
+  rows nativas `aculta_events_catalogue_card`; ids filtrados, labels, ordem,
+  acesso e dados continuam sob o módulo Eventos e a View.
+- Importação Runtime isolada após snapshot; HTTP 200 e dois resultados antes e
+  depois. Firefox ESR validou grid, dois SDCs, foco visível e sem overflow em
+  320/1440 px claro/escuro. Zoom 200%, cache-hit e revisão visual humana pendem.
+
 > **Marcos P8/P9 implementados (2026-11-09); ADR-054/055 ainda abertas:** o tema tem as cinco regiões finais, o shell v2 é o padrão e o motor de container foi removido. Layout Builder cobre 22 dos 24 displays compatíveis, a landing Links está publicada no LB e a UI Library oferece prévias reais. Pendências: homologação visual, conteúdo editorial das demais landings, migração integral dos visuais para UI Suite e dívida de boundary dos módulos do Portal. Rollback documentado em `docs/architecture/ACULTA420-V2-P9-CUTOVER.md`.
 
 

@@ -4,7 +4,7 @@ Estado: Dev · versão 0.2.0-dev.10 (`aculta_events.info.yml`) · status: `docs/
 
 ## Próximo passo
 
-Completar P2 com contrato do item pago Commerce e gestão autorizada das ofertas; depois implementar serviço transacional de capacidade/RSVP e testes com fixtures fictícias sem ativação pública. Não coletar dados reais antes da revisão LGPD nem vender antes do parecer fiscal/jurídico. A View pública usa `card-cultural` pelo adapter do tema; Kernel focado 7/7 (130 assertions) valida dados filtrados e estado cancelado. Render do SDC no tema ativo e browser visual ficam pendentes do cutover autorizado. Homologação de Local, Culturas e A/B no Runtime permanece separada e somente leitura.
+Completar P2 com contrato do item pago Commerce e gestão autorizada das ofertas; depois implementar serviço transacional de capacidade/RSVP com fixtures fictícias. Não coletar dados reais antes da revisão LGPD nem vender antes do parecer fiscal/jurídico. A View pública agora envolve rows `card-cultural` no style UI Patterns `layout-grid`; Runtime manteve 2 resultados e acesso anônimo, browser 320/1440 claro/escuro, foco e zero overflow PASS. Cache-hit/zoom e homologação de Local/Culturas/A/B permanecem pendentes.
 
 ## Leitura
 

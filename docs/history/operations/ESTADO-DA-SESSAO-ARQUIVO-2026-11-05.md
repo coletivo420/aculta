@@ -1715,3 +1715,26 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Pendências e bloqueios:** homologação funcional autenticada da fila unificada em `/painel-administrativo/moderacao/denuncias` e submissões com perfis de teste.
 - **Próximo passo:** homologar operacionalmente o painel administrativo de denúncias e o ciclo de revisão de propostas no Runtime.
 
+
+
+# ADR-054/055 — Piloto Views row/style/display — 2026-11-10
+
+- **Objetivo:** integrar row/style/display na View Álbuns sem perder funções nativas.
+- **Estado:** `aculta_albuns:page_1` usa `revista-album-card`, `layout-grid`, `views-display`; 3 resultados, 200 e acesso anônimo antes/depois. Firefox 1280/320 claro/escuro: 3 cartões, sem overflow ou alvo <44 px.
+- **Decisão:** sources preservam field handlers; display SDC declara header, filtros, rows, empty, pager, more, footer e anexos.
+- **Cuidados:** pager multi-página (só 3 resultados), cache-hit, teclado e zoom DEFERRED. Suíte transversal parou no probe independente da Flag; checks focados de View passaram.
+- **Commits/arquivos:** base `9ef4ad36e`; config View, dois SDCs, gate, runner, inventário, ADRs, P8/plano, TODO/status e capturas.
+- **Verificações:** contrato 40; SDC 82/1774; UI Library 25; Foundations 83 pares; browser/Runtime PASS no escopo focal.
+- **Pendências:** demais Views/domínios, P8/P9, Page/Entity Status, Icons e RN-00–05.
+- **Próximo passo:** migrar a próxima View com comparação de render, acesso e cache.
+
+
+# ADR-054/055 — UI Styles Entity Status — 2026-11-11
+
+- **Objetivo:** integrar UI Styles Entity Status e retomar a falha reportada no catálogo de SDCs.
+- **Estado:** Entity Status Sync/Runtime habilitados; classe `aculta-content-status--unpublished`. UI Patterns Library abriu em Firefox autenticado: 82 componentes, 16 grupos, 82 prévias, uma story carregada; sem 500, `maxScrollX=0` em 320/1280. Console: o HTML atual emite 11 agregados e não inclui o hash antigo `js_oPF...`; URL antiga retorna 400 `text/plain: Invalid filename` porque `locale/translations` resolve a zero grupos. Um agregado atual responde 200 `text/javascript`. CSP permanece report-only.
+- **Decisões/cuidados:** import parcial do settings após snapshot; o plugin apenas marca visualmente conteúdo não publicado e seções LB.
+- **Commits/arquivos:** `109f0b903` (Entity Status), `a24250c1a` (Library); tema, Sync, inventário e ADR-055.
+- **Verificações:** UI Styles 40, foundations 83 pares, Skins 134, boundary 7872, Stylelint, índice e browser Library PASS. PHPUnit 1/7 com 54 depreciações. Token-budget DEFERRED: script tem SyntaxError na linha 40.
+- **Pendências:** Entity Status visual/perfis/cache; CSP report-only de estilos/scripts inline não causa bloqueio e não deve ser afrouxada sem nova evidência. 320 tem elementos de navegação administrativa excedentes, embora sem scroll efetivo.
+- **Próximo passo:** hard reload da rota para descartar HTML agregado obsoleto e seguir homologação visual da saída Entity Status e demais Views.
