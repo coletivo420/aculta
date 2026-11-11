@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "front": "ui-skins-final-acceptance",
+  "date": "2026-11-11",
+  "environment": "development",
+  "runner": "tests/browser/transversal/aculta-theme-mobile-first/ui-skins-final-acceptance.py",
+  "method": "Firefox ESR visible X11 via geckodriver/BiDi; anonymous requests on the ten development domains.",
+  "domains": [
+    "main",
+    "account",
+    "support",
+    "magazine",
+    "wiki",
+    "shop",
+    "courses",
+    "forum",
+    "links",
+    "eventos"
+  ],
+  "viewports_css_px": [
+    320,
+    768,
+    1440
+  ],
+  "checks": {
+    "passed": 70,
+    "failed": 0,
+    "by_kind": {
+      "cache-hit observável": {
+        "passed": 10,
+        "failed": 0
+      },
+      "teclado com foco visível": {
+        "passed": 30,
+        "failed": 0
+      },
+      "zoom 200% sem overflow": {
+        "passed": 30,
+        "failed": 0
+      }
+    }
+  },
+  "assertions": [
+    "cache headers observed on three sequential anonymous requests per domain (HIT/MISS or explicit uncacheable private/no-cache)",
+    "keyboard-only Tab traversal reaches focusable elements with :focus-visible, computed outline/box-shadow and inside-viewport bounds",
+    "page zoom emulated at 200% via layout.css.devPixelsPerPx=2 keeps one institution bar, one main and one H1 with zero horizontal overflow"
+  ],
+  "limitations": [
+    "Human visual sign-off remains pending",
+    "Authenticated editor/admin profiles not covered",
+    "Home routes are private/no-cache, so cache-hit is observable as MISS/UNCACHEABLE, not HIT"
+  ]
+}
