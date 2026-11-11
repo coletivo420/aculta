@@ -1738,3 +1738,15 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Verificações:** UI Styles 40, foundations 83 pares, Skins 134, boundary 7872, Stylelint, índice e browser Library PASS. PHPUnit 1/7 com 54 depreciações. Token-budget DEFERRED: script tem SyntaxError na linha 40.
 - **Pendências:** Entity Status visual/perfis/cache; CSP report-only de estilos/scripts inline não causa bloqueio e não deve ser afrouxada sem nova evidência. 320 tem elementos de navegação administrativa excedentes, embora sem scroll efetivo.
 - **Próximo passo:** hard reload da rota para descartar HTML agregado obsoleto e seguir homologação visual da saída Entity Status e demais Views.
+
+
+# ADR-054/055 — Cutover focal UI Icons — 2026-11-11
+
+- **Objetivo:** alinhar seletor UI Patterns ao Picker da Sync sem desativar submódulos Runtime.
+- **Estado:** import parcial só de `ui_icons_patterns.settings` concluído; Runtime/Sync usam `icon_picker`, Drush confirma o element. Menus main/account mantêm packs Phosphor. Submódulos opcionais ainda divergem.
+- **Decisões:** snapshot antes do import; não importar `core.extension` nem remover módulos. Hash anterior `63c2503c7e86e95a1c3f47a63ecb26fca524cee5583171b30050efd682b5fa26`.
+- **Cuidados:** não alegar aceite visual/acessibilidade; sem consumidores SDC de prop identificados.
+- **Commits e arquivos:** pendente; ADR-055, inventário Runtime/CSV, status e script.
+- **Verificações:** import parcial e cache rebuild PASS; element Picker disponível; `UiIconsPackTest` 2/47, SDC 82/1774, UI Skins 134 PASS. Token-budget global FAIL (7 itens preexistentes).
+- **Pendências:** validar formulário/menu com browser e reconciliar submódulos por delta revisado.
+- **Próximo passo:** homologar Picker em interface administrativa real sem criar atribuições de ícone.
