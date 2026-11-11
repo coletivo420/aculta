@@ -117,6 +117,7 @@ foreach ([
   ['--color-auth-secondary-text', '--color-auth-secondary-surface'],
   ['--color-footer-text', '--color-footer-surface'],
   ['--color-footer-link-text', '--color-footer-link-surface'],
+  ['--surface-panel-institutional-text', '--surface-panel-institutional-bg'],
 ] as [$foreground, $background]) {
   $lightRatio = check_contrast($foreground, $background, $rootTokens, []);
   $assert($lightRatio >= 4.5, sprintf('light %s on %s is %.2f:1 (minimum 4.5:1)', $foreground, $background, $lightRatio));

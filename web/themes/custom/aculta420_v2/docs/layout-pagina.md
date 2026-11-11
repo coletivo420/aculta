@@ -193,8 +193,10 @@ variante em `preprocess_page`; o Portal não envia chave de layout.
 Observações:
 
 - **`aside`:** a barra lateral fica à esquerda a partir de 60rem. Abaixo disso,
-  vem depois do conteúdo. Se a barra lateral não tiver conteúdo, o layout é o
-  de `stack`, sem coluna vazia.
+  vem depois do conteúdo. O DOM preserva a leitura conteúdo → aside; o CSS
+  coloca o aside visualmente à esquerda no desktop. Se a barra lateral não tiver
+  conteúdo, o layout é o de `stack`, sem coluna vazia. O fallback do shell
+  preserva a mesma geometria quando a descoberta SDC estiver indisponível.
 - **Medida da coluna de conteúdo:** leitura de 36rem para texto corrido. Somando
   36rem de leitura, 16rem de barra lateral, espaço entre elas e margens, dá
   cerca de 56rem. O breakpoint de 60rem deixa essa folga.

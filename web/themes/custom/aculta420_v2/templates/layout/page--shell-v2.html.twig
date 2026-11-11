@@ -4,10 +4,9 @@
  * Shell paralelo da ADR-054.
  *
  * Ativado pela opção aculta_shell_variant = v2. Compõe as cinco áreas finais
- * (institution, header, content, sidebar_first, footer). As regiões antigas
- * navigation, highlighted, help e breadcrumb continuam renderizadas como
- * ponte, dentro das áreas finais, para não deixar bloco órfão nem exigir
- * importação de configuração antes da homologação.
+ * (institution, header, content, sidebar_first, footer). Ajuda e breadcrumb
+ * são extraídos dos blocos no header pelo preprocess, sem depender de
+ * regiões antigas que já foram retiradas do info.yml.
  */
 #}
 <div class="page page--shell-v2">
@@ -57,7 +56,8 @@
     }, with_context = false) }}
   {% else %}
     {# Fallback para cache de descoberta SDC aquecido, como no shell clássico. #}
-    <main id="main-content" class="page__main" tabindex="-1">
+    {% set fallback_variant = aculta_layout_variant|default('stack') %}
+    <main id="main-content" class="page__main{% if fallback_variant == 'stack' %} page__main--stack{% elseif fallback_variant == 'aside' and page.sidebar_first %} page__main--with-sidebar{% endif %}" tabindex="-1">
       {% if aculta_page_title %}<div class="page__title">{{ aculta_page_title }}</div>{% endif %}
       <div class="page__content">{{ main_content }}</div>
       {% if page.sidebar_first %}

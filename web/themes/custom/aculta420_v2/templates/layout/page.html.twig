@@ -53,7 +53,8 @@
     }, with_context = false) }}
   {% else %}
     {# Keep a warm Drupal SDC discovery cache from breaking the page. #}
-    <main id="main-content" class="page__main" tabindex="-1">
+    {% set fallback_variant = aculta_layout_variant|default('stack') %}
+    <main id="main-content" class="page__main{% if fallback_variant == 'stack' %} page__main--stack{% elseif fallback_variant == 'aside' and page.sidebar_first %} page__main--with-sidebar{% endif %}" tabindex="-1">
       {% if aculta_page_title %}<div class="page__title">{{ aculta_page_title }}</div>{% endif %}
       <div class="page__content">{{ main_content }}</div>
       {% if page.sidebar_first %}

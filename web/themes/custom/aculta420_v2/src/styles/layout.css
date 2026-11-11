@@ -448,8 +448,28 @@ body.aculta-component-library-page {
 }
 
 @media (min-width: 60rem) {
+  /* Fallback com a mesma geometria do layout-page--aside. */
   .page__main--with-sidebar {
-    grid-template-columns: minmax(0, 2fr) minmax(14rem, 1fr);
+    grid-template-columns: minmax(14rem, 1fr) minmax(0, 2fr);
+    grid-template-areas:
+      "title title"
+      "aside content";
+  }
+
+  .page__main--with-sidebar:not(:has(.page__title)) {
+    grid-template-areas: "aside content";
+  }
+
+  .page__main--with-sidebar .page__title {
+    grid-area: title;
+  }
+
+  .page__main--with-sidebar .page__content {
+    grid-area: content;
+  }
+
+  .page__main--with-sidebar .page__sidebar {
+    grid-area: aside;
   }
 
   /* Páginas de leitura e conteúdo estreito */
