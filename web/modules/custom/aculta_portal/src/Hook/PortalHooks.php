@@ -175,6 +175,12 @@ final class PortalHooks {
       $this->removeHeaderBlockByPlugin($variables['page']['header'], 'page_title_block');
     }
 
+    // Breadcrumb do bloco de layout: todos os subdomínios e módulos, exceto LinkWeed.
+    if (isset($variables['page']['header']) && is_array($variables['page']['header'])
+      && $this->breadcrumbExcluido()) {
+      $this->removeHeaderBlockByPlugin($variables['page']['header'], 'system_breadcrumb_block');
+    }
+
     // Aviso de e-mail não confirmado em "Minha conta" (não descartável):
     // acima do conteúdo da página.
     if (($notice = $this->emailConfirmationNotice->build()) !== NULL && isset($variables['page']['content'])) {
@@ -184,6 +190,16 @@ final class PortalHooks {
         'body' => $variables['page']['content'],
       ];
     }
+  }
+
+  /**
+   * Indica se o breadcrumb fica fora da página: LinkWeed (subdomínio links e rotas aculta_linkweed.*).
+   */
+  private function breadcrumbExcluido(): bool {
+    if ($this->domainSiteManager->getCurrentSiteKey() === SiteKey::Links) {
+      return TRUE;
+    }
+    return str_starts_with((string) $this->routeMatch->getRouteName(), 'aculta_linkweed.');
   }
 
   /**
@@ -254,6 +270,7 @@ final class PortalHooks {
   public function preprocessBreadcrumb(array &$variables): void {
     $variables['aculta_current_breadcrumb'] = $this->breadcrumbBuilder
       ->currentTitle($this->routeMatch);
+    $variables['aculta_breadcrumb_sessao'] = $this->breadcrumbBuilder->sessao();
   }
 
   /**

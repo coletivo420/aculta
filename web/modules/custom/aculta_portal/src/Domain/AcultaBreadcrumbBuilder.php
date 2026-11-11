@@ -182,6 +182,13 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
   }
 
   /**
+   * Sessão visual do breadcrumb para o subdomínio atual.
+   */
+  public function sessao(): string {
+    return $this->siteManager->getCurrentSiteKey()?->breadcrumbSessao() ?? 'portal';
+  }
+
+  /**
    * Informa se a rota atual é a página inicial.
    *
    * @return bool

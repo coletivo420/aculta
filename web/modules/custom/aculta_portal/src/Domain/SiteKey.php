@@ -22,4 +22,22 @@ enum SiteKey: string {
   case Links = 'links';
   case Eventos = 'eventos';
 
+  /**
+   * Sessão do breadcrumb, usada pelo SDC aculta420_v2:breadcrumb.
+   *
+   * Cada subdomínio público tem o seu ícone de primeiro nível. Main, Account,
+   * Support e Links usam a sessão "portal".
+   */
+  public function breadcrumbSessao(): string {
+    return match ($this) {
+      self::Magazine => 'revista',
+      self::Wiki => 'wiki',
+      self::Shop => 'green_stash',
+      self::Courses => 'ganjalab',
+      self::Forum => 'forum',
+      self::Eventos => 'culturas',
+      self::Main, self::Account, self::Support, self::Links => 'portal',
+    };
+  }
+
 }
