@@ -7,7 +7,7 @@ services:
 
   aculta_wiki.published_participation_lookup:
     class: Drupal\aculta_wiki\Participation\WikiPublishedParticipationLookup
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@current_user']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site', '@current_user']
     tags:
       - { name: aculta_user.published_participation_lookup }
 
@@ -27,7 +27,7 @@ services:
 
   aculta_wiki.contributor_workspace:
     class: Drupal\aculta_wiki\Service\WikiContributorWorkspace
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@string_translation', '@request_stack', '@aculta_wiki.editorial_queue']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site', '@string_translation', '@request_stack', '@aculta_wiki.editorial_queue']
 
   aculta_wiki.content_index_provider:
     class: Drupal\aculta_wiki\ContentIndex\WikiContentIndexProvider
@@ -41,19 +41,19 @@ services:
 
   aculta_wiki.proposal_submission:
     class: Drupal\aculta_wiki\Service\WikiProposalSubmission
-    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose', '@aculta_portal.email_confirmation_policy', '@flood', '@lock', '@keyvalue.expirable', '@database']
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_site', '@aculta_portal.email_confirmation_policy', '@flood', '@lock', '@keyvalue.expirable', '@database']
 
   aculta_wiki.editorial_queue:
     class: Drupal\aculta_wiki\Service\WikiEditorialQueue
-    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose', '@content_moderation.state_transition_validation']
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_site', '@content_moderation.state_transition_validation']
 
   aculta_wiki.proposal_decision:
     class: Drupal\aculta_wiki\Service\WikiProposalDecision
-    arguments: ['@entity_type.manager', '@current_user', '@database', '@aculta_wiki.editorial_event_queue', '@aculta_portal.domain_purpose', '@content_moderation.state_transition_validation', '@content_moderation.moderation_information']
+    arguments: ['@entity_type.manager', '@current_user', '@database', '@aculta_wiki.editorial_event_queue', '@aculta_portal.domain_site', '@content_moderation.state_transition_validation', '@content_moderation.moderation_information']
 
   aculta_wiki.contribution_adapter:
     class: Drupal\aculta_wiki\Adapter\WikiContributionAdapter
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@aculta_portal.email_confirmation_policy', '@aculta_wiki.proposal_submission', '@aculta_wiki.proposal_decision', '@aculta_wiki.contribution_migration_gate']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site', '@aculta_portal.email_confirmation_policy', '@aculta_wiki.proposal_submission', '@aculta_wiki.proposal_decision', '@aculta_wiki.contribution_migration_gate']
     tags:
       - { name: aculta_cgu.contribution_adapter }
 
@@ -87,7 +87,7 @@ services:
       - '@aculta_portal.user_upload_dialog_builder'
       - '@aculta_wiki.wiki_lead_image_uploader'
       - '@aculta_wiki.contributor_workspace'
-      - '@aculta_portal.domain_purpose'
+      - '@aculta_portal.domain_site'
       - '@current_user'
       - '@router.route_provider'
       - '@?aculta_file_uploader.recent_uploads'
@@ -101,12 +101,12 @@ services:
       - '@aculta_wiki.editorial_event_queue'
   Drupal\aculta_wiki\Hook\WikiProposalLinkHooks:
     class: Drupal\aculta_wiki\Hook\WikiProposalLinkHooks
-    arguments: ['@current_user', '@aculta_portal.domain_purpose', '@aculta_portal.email_confirmation_policy']
+    arguments: ['@current_user', '@aculta_portal.domain_site', '@aculta_portal.email_confirmation_policy']
 
 
   aculta_wiki.notice_event_publisher:
     class: Drupal\aculta_wiki\EventSubscriber\WikiEditorialNoticePublisher
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@aculta_messenger.notice_event_publisher', '@Drupal\aculta_messenger\Integration\Wiki\EditorialReviewNoticeInterface', '@datetime.time', '@logger.channel.aculta_messenger']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site', '@aculta_messenger.notice_event_publisher', '@Drupal\aculta_messenger\Integration\Wiki\EditorialReviewNoticeInterface', '@datetime.time', '@logger.channel.aculta_messenger']
     tags:
       - { name: event_subscriber }
 

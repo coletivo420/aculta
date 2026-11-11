@@ -1,3 +1,14 @@
+# PHPStan — rodada 17 aculta_wiki — 2026-11-11
+
+- **Objetivo:** zerar os erros PHPStan de produção em `aculta_wiki/src`.
+- **Estado:** 42 arquivos de produção sem erros; Unit 94/455 PASS; baseline global 3451 e gate estrito verde.
+- **Decisões e alternativas descartadas:** usar `DomainSiteManager`/`SiteKey::Wiki` já publicado; manter `getAccessPurpose()` do contrato `origin/dev`; filtro removido era redundante após `array_filter()`. Sem ignores e sem mudança de permissões.
+- **Cuidados:** o autoload padrão do worktree pode resolver classes no checkout principal; medições foram feitas com autoload temporário priorizando as fontes do worktree. 112 erros em testes/.install permanecem baselineados.
+- **Commits e arquivos:** rodada 17; Wiki, baseline, relatório, TODO/status, README e handoff. Hash final será registrado após push.
+- **Verificações:** PHPStan Wiki src/global `[OK] No errors`; Unit 94/455, descoberta de suítes, lint PHP, YAML e índice status PASS. Gate Portal FAIL por P5.4 preexistente em `PortalController`; token budget FAIL por 7 violações globais preexistentes.
+- **Pendências e bloqueios:** 112 erros PHPStan em testes/.install; sem alteração nesta rodada. Validação Runtime da Wiki continua pendente.
+- **Próximo passo:** retomar saneamento pelo próximo módulo após autorização para continuar.
+
 # PHPStan — rodada 18 aculta_mailer — 2026-11-11
 
 - **Objetivo:** zerar a dívida PHPStan de todo o módulo aculta_mailer.
@@ -19,14 +30,3 @@
 - **Verificações:** acceptance 70/70; browser index 148 PASS; UI Patterns Views cutover 95 PASS; SDC 1801, UI Skins 134, UI Styles 40, boundary 7888 PASS; Playwright login PASS; py_compile e JSON OK.
 - **Pendências e bloqueios:** aceite visual humano; sessão autenticada (configuração `SSESS`/`SESS`); cache-hit enquanto a política for private/uncacheable; RN-00–05 e demais consumidores do inventário.
 - **Próximo passo:** corrigir a configuração de sessão do ambiente de desenvolvimento, concluir RN-05 com a sessão de renomeação e seguir ao próximo consumidor público.
-
-# ADR-054/055 — revalidação UI Skins e catálogo de componentes — 2026-11-11
-
-- **Objetivo:** homologar UI Skins nos dez domínios e revalidar o catálogo administrativo reportado.
-- **Estado:** UI Skins passou Firefox ESR 300/300 nos dez domínios, cinco larguras e dois modos, contraste ≥7,16:1 e sem overflow. Catálogo autenticado: 16 grupos, 84 componentes e story carregada; visitante anônimo recebe 403 esperado. Drawer Claro reportado separadamente. Busca de código/Sync/Portal confirma zero motor visual legado; cinco itens são `LEGACY_OBSOLETE`, sem fallback. 40 capturas e hashes estão no manifest versionado.
-- **Decisões e alternativas descartadas:** não alterar CSP por mensagens `report-only`; preservar shell Links sem `.page__header`, conforme contrato do módulo.
-- **Cuidados:** 320 px pode mostrar itens do drawer Claro fora da viewport sem rolagem documental; sem evidência de falha do conteúdo SDC. Console JS 400 não reapareceu nesta captura.
-- **Commits e arquivos:** `ed60f6a36`, `e1a5b4ffb`, `9e9549b29` publicados; runners, ADRs, inventário, TODO/status e manifests de biblioteca e skins.
-- **Verificações:** UI Skins 134, Layouts 42, Layout Builder 276, UI Library 25, foundations 83 pares, UI Styles 40, status index, py_compile, busca zero consumidores e git diff check PASS. Browser index FAIL em worktrees existentes/scripts ausentes; token budget FAIL por 7 violações globais. Zoom/teclado admin DEFERRED.
-- **Pendências e bloqueios:** cache-hit, zoom 200%, teclado, perfis editor/admin, tecnologia assistiva e aceite visual humano.
-- **Próximo passo:** migrar o próximo consumidor elegível do inventário, começando por Views públicas que preservem acesso e query.

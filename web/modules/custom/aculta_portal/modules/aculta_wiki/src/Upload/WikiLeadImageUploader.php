@@ -208,9 +208,6 @@ final class WikiLeadImageUploader {
           'uid' => $this->currentUser->id(),
           'status' => FALSE,
         ]);
-        if (!$media instanceof MediaInterface) {
-          throw new \UnexpectedValueException('A mídia da imagem de destaque da Wiki não pôde ser criada.');
-        }
         $media->set('field_media_image', [
           'target_id' => $fid,
           'alt' => $this->altValue($form_state),

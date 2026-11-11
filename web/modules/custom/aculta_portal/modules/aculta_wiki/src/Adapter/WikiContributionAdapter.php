@@ -7,7 +7,8 @@ namespace Drupal\aculta_wiki\Adapter;
 use Drupal\aculta_cgu\Contract\ContributionAdapterInterface;
 use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_wiki\Service\WikiProposalDecision;
 use Drupal\aculta_wiki\Service\WikiProposalSubmission;
 use Drupal\aculta_wiki\Service\WikiContributionMigrationGate;
@@ -28,7 +29,7 @@ final class WikiContributionAdapter implements ContributionAdapterInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly EmailConfirmationPolicy $emailConfirmationPolicy,
     private readonly WikiProposalSubmission $proposalSubmission,
     private readonly WikiProposalDecision $proposalDecision,
@@ -90,7 +91,7 @@ final class WikiContributionAdapter implements ContributionAdapterInterface {
     return $intent === 'update'
       && $account->isAuthenticated()
       && (int) $account->id() > 0
-      && $this->domainPurposes->getCurrentPurpose() === 'wiki'
+      && $this->siteManagers->getCurrentSiteKey()?->value === 'wiki'
       && ($account->hasPermission('submit wiki proposals')
         || $account->hasPermission('administer wiki proposals'))
       && $this->emailConfirmationPolicy->isConfirmed($account)
@@ -102,7 +103,7 @@ final class WikiContributionAdapter implements ContributionAdapterInterface {
    * {@inheritdoc} */
   public function reviewAccess(AccountInterface $reviewer, string $intent, ?EntityInterface $target): bool {
     return $intent === 'update'
-      && $this->domainPurposes->getCurrentPurpose() === 'wiki'
+      && $this->siteManagers->getCurrentSiteKey()?->value === 'wiki'
       && $reviewer->hasPermission('moderate wiki proposals');
   }
 
@@ -217,7 +218,7 @@ final class WikiContributionAdapter implements ContributionAdapterInterface {
   /**
    * Resolves the trusted Wiki domain from server-side purpose configuration. */
   private function wikiDomain(): ?DomainInterface {
-    $domain = $this->domainPurposes->getDomain('wiki');
+    $domain = $this->siteManagers->getDomain(SiteKey::Wiki);
     return $domain instanceof DomainInterface ? $domain : NULL;
   }
 

@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_wiki\Hook;
 
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
@@ -22,7 +23,7 @@ final class WikiProposalLinkHooks {
 
   public function __construct(
     private readonly AccountInterface $currentUser,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly EmailConfirmationPolicy $emailConfirmationPolicy,
   ) {}
 
@@ -38,7 +39,7 @@ final class WikiProposalLinkHooks {
     $permission = AccessResult::allowedIfHasPermission($this->currentUser, 'submit wiki proposals');
     $confirmed = AccessResult::allowedIf($this->emailConfirmationPolicy->isConfirmed($this->currentUser))
       ->cachePerUser();
-    $domain = AccessResult::allowedIf($this->domainPurposes->getCurrentPurpose() === 'wiki')
+    $domain = AccessResult::allowedIf($this->siteManagers->getCurrentSiteKey()?->value === 'wiki')
       ->addCacheContexts(['domain']);
     $view = $entity->access('view', $this->currentUser, TRUE);
     $updateResult = $entity->access('update', $this->currentUser, TRUE);
@@ -67,7 +68,7 @@ final class WikiProposalLinkHooks {
       return;
     }
 
-    $url = $this->domainPurposes->routeUrl('wiki', 'aculta_wiki.contribution_intent', ['node' => $entity->id()]);
+    $url = $this->siteManagers->routeUrl(SiteKey::Wiki, 'aculta_wiki.contribution_intent', ['node' => $entity->id()]);
     if ($url === NULL) {
       return;
     }

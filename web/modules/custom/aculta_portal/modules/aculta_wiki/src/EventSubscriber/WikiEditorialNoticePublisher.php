@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\EventSubscriber;
 
+use Drupal\aculta_portal\Domain\SiteKey;
+
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Integration\Wiki\EditorialReviewNoticeInterface;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_wiki\Event\WikiEntryReviewRequestedEvent;
 use Drupal\aculta_wiki\Event\WikiProposalOutcomeRecordedEvent;
 use Drupal\aculta_cgu\Entity\Contribution;
@@ -26,7 +28,7 @@ final class WikiEditorialNoticePublisher implements EventSubscriberInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly MessengerNoticePublisherInterface $publisher,
     private readonly EditorialReviewNoticeInterface $editorialReviewNotices,
     private readonly TimeInterface $time,
@@ -66,7 +68,7 @@ final class WikiEditorialNoticePublisher implements EventSubscriberInterface {
           && !$editor->hasPermission('use wiki_editorial transition review_to_published'))) {
         continue;
       }
-      $allowed = $this->domainPurposes->runInPurpose('wiki', static fn(): bool =>
+      $allowed = $this->siteManagers->runInSite(SiteKey::Wiki, static fn(): bool =>
         $revision->access('view', $editor, TRUE)->isAllowed()
         && $revision->access('view revision', $editor, TRUE)->isAllowed()
       );

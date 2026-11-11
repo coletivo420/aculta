@@ -7,7 +7,8 @@ namespace Drupal\aculta_wiki\Service;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\content_moderation\ModerationInformationInterface;
 use Drupal\content_moderation\StateTransitionValidationInterface;
 use Drupal\domain\DomainInterface;
@@ -36,7 +37,7 @@ final class WikiProposalDecision {
     private readonly AccountInterface $currentUser,
     private readonly Connection $database,
     private readonly WikiEditorialEventQueue $editorialEvents,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly StateTransitionValidationInterface $transitionValidation,
     private readonly ModerationInformationInterface $moderationInformation,
   ) {}
@@ -197,8 +198,8 @@ final class WikiProposalDecision {
     $decisionData = $this->validateListModes($approvedFields, $decisionData);
 
     $targetId = (int) $target->id();
-    $result = $this->domainPurposes->runInPurpose('wiki', function () use ($expectedVersion, $targetId, $approvedFields, $decisionData, $proposedFields): NodeInterface {
-      $wikiDomain = $this->domainPurposes->getDomain('wiki');
+    $result = $this->siteManagers->runInSite(SiteKey::Wiki, function () use ($expectedVersion, $targetId, $approvedFields, $decisionData, $proposedFields): NodeInterface {
+      $wikiDomain = $this->siteManagers->getDomain(SiteKey::Wiki);
       $storage = $this->entityTypeManager->getStorage('node');
       $select = $this->database->select('node', 'node');
       $select->fields('node', ['nid'])->condition('nid', $targetId)->forUpdate();

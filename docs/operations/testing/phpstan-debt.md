@@ -257,3 +257,18 @@ Restante no módulo: `WikiEditorialQueue` (13), `WikiContributorWorkspace` (8), 
 Escopo: narrowing de entidades MailLog/MailTransport, assinatura correta dos ConfirmForm, validação das FieldStorageDefinition no .install, remoção de guards redundantes, filtros/callbacks alinhados aos tipos inferidos e retorno tipado do MailTemplateRenderer. MailTransportFactory agora cria SMTP via EsmtpTransportFactory/Dsn pública do Symfony, mantendo smtps na porta 465, credenciais resolvidas por segredo e configuração verify_peer. Testes existentes tiveram narrowing dos itens de fila/entidades; removido o teste tautológico que comparava o TTL à própria constante.
 
 Resíduos no módulo: nenhum. O baseline global passou de 2797 (registro da rodada 16) para 3564 após regeneração na base atual; esse delta global inclui dívida fora do escopo e não é atribuído ao aculta_mailer. O baseline recém-gerado registra erros reais `class.notFound` dos consumidores de `DomainPurposeManager`, cuja migração para `DomainSiteManager` ainda não chegou a `origin/dev`; ficam explicitamente pendentes, sem editar esses arquivos paralelos. Evidências: PHPStan no módulo e global `[OK] No errors`; Unit 166 testes/348 assertions PASS; PHP lint dos 29 arquivos PHP alterados, YAML de serviços e índice de status PASS. A suíte Unit global 3287/17594 encontrou 4 falhas fora do escopo (ForumTopicDisplayConfigTest, BadgeEvaluationHooksTest e dois testes de aculta_index), além de 3 deprecações; o gate token budget falhou por sete violações globais preexistentes em AGENTS/skills fora do escopo.
+
+## Rodada 17 — 2026-11-11 (aculta_wiki, src)
+
+| Medida | Valor |
+| --- | ---: |
+| Erros brutos em aculta_wiki/src antes | 36 |
+| Erros brutos em aculta_wiki/src ao final | 0 |
+| Erros brutos globais antes | 3564 |
+| Erros brutos globais ao final | 3451 |
+| Baseline da Wiki (módulo completo) | 225 -> 112 |
+
+Escopo: `WikiEditorialQueue` e `WikiContributorWorkspace` com narrowing dos resultados de storage e união `WikiProposal|Contribution`; `WikiProposalSubmissionForm` com remoção de comparações já eliminadas por `array_filter()` e retorno numérico tipado para ID de mídia. Os serviços, controllers e hooks migraram de `DomainPurposeManager` para `DomainSiteManager` e `SiteKey::Wiki`; chamadas de acesso preservam o contexto editorial e a política existente. Fixtures Unit receberam o `SiteKeyRegistry` exigido pelo contrato publicado. Nenhuma regra de negócio ou permissão foi alterada.
+
+Resíduos: 112 erros PHPStan permanecem no módulo completo, todos em testes/.install já baselineados; Kernel de imagem contém 92 chamadas sobre `RevisionableInterface`, fora do escopo. Evidências: PHPStan em `src` (42 arquivos) e global estrito `[OK] No errors`; Unit 94 testes/455 assertions PASS. Baseline global caiu 3564 -> 3451; a redução de 113 ocorrências ficou restrita à Wiki.
+

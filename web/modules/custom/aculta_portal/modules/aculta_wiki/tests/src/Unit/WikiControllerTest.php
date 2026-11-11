@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_wiki\Unit;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKeyRegistry;
 use Drupal\aculta_portal\Presentation\WikiSearchFormBuilderInterface;
 use Drupal\aculta_portal\Search\SearchPageController;
 use Drupal\aculta_wiki\Controller\WikiController;
@@ -99,12 +100,13 @@ final class WikiControllerTest extends UnitTestCase {
   /**
    * Real purpose manager with the Domain entity loaded through the storage.
    */
-  private function domainPurpose(?DomainInterface $domain): DomainPurposeManager {
-    return new DomainPurposeManager(
+  private function siteManager(?DomainInterface $domain): DomainSiteManager {
+    return new DomainSiteManager(
       $this->entityManager($domain),
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
+      new SiteKeyRegistry(),
     );
   }
 
@@ -127,7 +129,7 @@ final class WikiControllerTest extends UnitTestCase {
     $controller = new WikiController(
       $this->entityManager($domain, $nodeStorage, $nodeAccess),
       $this->createMock(ViewExecutableFactory::class),
-      $this->domainPurpose($domain),
+      $this->siteManager($domain),
       $database ?? $this->createMock(Connection::class),
       $this->createMock(DateFormatterInterface::class),
       $account ?? $this->createMock(AccountInterface::class),

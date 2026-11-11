@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Controller;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\aculta_wiki\Service\WikiProposalSubmission;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -21,7 +22,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class WikiContributionIntentController extends ControllerBase {
 
   public function __construct(
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly WikiProposalSubmission $proposalSubmission,
     private readonly AccountInterface $account,
   ) {}
@@ -31,7 +32,7 @@ final class WikiContributionIntentController extends ControllerBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('aculta_wiki.proposal_submission'),
       $container->get('current_user'),
     );
@@ -47,8 +48,8 @@ final class WikiContributionIntentController extends ControllerBase {
    *   Cacheable WE SATIVA intent page.
    */
   public function page(NodeInterface $node): array {
-    $result = $this->domainPurposes->runInPurpose('wiki', function () use ($node): array {
-      $wikiDomain = $this->domainPurposes->getDomain('wiki');
+    $result = $this->siteManagers->runInSite(SiteKey::Wiki, function () use ($node): array {
+      $wikiDomain = $this->siteManagers->getDomain(SiteKey::Wiki);
       $node = $this->entityTypeManager()->getStorage('node')->loadUnchanged($node->id());
       if (!$node instanceof NodeInterface
         || $node->bundle() !== 'wiki_entry'
@@ -89,7 +90,7 @@ final class WikiContributionIntentController extends ControllerBase {
 
     /** @var \Drupal\Core\Cache\CacheableMetadata $cacheability */
     $cacheability = $result['cacheability'];
-    $backUrl = $this->domainPurposes->routeUrl('wiki', 'entity.node.canonical', ['node' => $target->id()]);
+    $backUrl = $this->siteManagers->routeUrl(SiteKey::Wiki, 'entity.node.canonical', ['node' => $target->id()]);
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'we-sativa-intent'],
@@ -116,7 +117,7 @@ final class WikiContributionIntentController extends ControllerBase {
 
     $cards = [];
     if ($result['can_edit']) {
-      $editUrl = $this->domainPurposes->routeUrl('wiki', 'entity.node.edit_form', ['node' => $target->id()]);
+      $editUrl = $this->siteManagers->routeUrl(SiteKey::Wiki, 'entity.node.edit_form', ['node' => $target->id()]);
       if ($editUrl !== NULL) {
         $cards[] = $this->intentCard(
           $this->t('Editar verbete completo'),
@@ -133,7 +134,7 @@ final class WikiContributionIntentController extends ControllerBase {
         'image' => $this->t('Sugira uma imagem já disponível e publicada.'),
       ];
       foreach (array_keys(WikiProposal::INTENTS) as $intent) {
-        $url = $this->domainPurposes->routeUrl('wiki', 'aculta_wiki.proposal_submit', ['node' => $target->id()]);
+        $url = $this->siteManagers->routeUrl(SiteKey::Wiki, 'aculta_wiki.proposal_submit', ['node' => $target->id()]);
         if ($url === NULL) {
           continue;
         }

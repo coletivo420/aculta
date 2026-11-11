@@ -7,7 +7,8 @@ namespace Drupal\aculta_wiki\Hook;
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
 use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
 use Drupal\aculta_file_uploader\RecentUploads;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_wiki\Service\WikiContributorWorkspace;
 use Drupal\aculta_wiki\Form\WikiEntryFormActions;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
@@ -47,7 +48,7 @@ final class WikiEntryImageHooks {
     private readonly UserUploadDialogBuilder $dialogBuilder,
     private readonly WikiLeadImageUploader $uploader,
     private readonly WikiContributorWorkspace $workspace,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly AccountProxyInterface $currentUser,
     private readonly RouteProviderInterface $routeProvider,
     private readonly ?RecentUploads $recentUploads = NULL,
@@ -408,7 +409,7 @@ final class WikiEntryImageHooks {
     }
 
     $access = $this->workspace->access($this->currentUser);
-    $url = $this->domainPurposes->routeUrl('wiki', 'aculta_studio.we_sativa');
+    $url = $this->siteManagers->routeUrl(SiteKey::Wiki, 'aculta_studio.we_sativa');
     if ($url === NULL) {
       return;
     }
