@@ -10,6 +10,6 @@
 
 ## Estado e gates
 
-O domínio e as dez skins estão mapeados. Testes estáticos cobrem definições e scopes; `ui_skins` está habilitado no Config Sync e instalado no Runtime como 1.2.1. O plugin manager descobriu as cinco definições, cada uma com vinte scopes. O Runtime ainda não tem o mapa `aculta_portal.visual_skins` nem valores ativos em `third_party_settings.ui_skins.css_variables`; render CSS, cache entre domínios, preferência de modo, capturas e aceite visual aguardam a configuração importada.
+O domínio e as dez skins estão mapeados. Testes estáticos cobrem definições e scopes; `ui_skins` está habilitado no Config Sync e Runtime como 1.2.1. Links resolve para Ruderalis; Firefox ESR passou 30/30 em cinco larguras e claro/escuro, sem overflow, com H1/main únicos e contraste mínimo 7,16:1. Nove domínios restantes, cache-hit, zoom e aceite visual humano aguardam homologação.
 
-A configuração `aculta_purpose_palette` foi removida do Runtime em 2026-11-10, após confirmar ausência de leitores no código. O código e o Config Sync não têm aliases, dual-read ou fallback de dados visuais antigos. Não há cópia runtime da paleta removida; o cutover ainda precisa importar UI Skins e o mapa atual antes do aceite visual.
+A configuração `aculta_purpose_palette`, os controles/schema, `PurposePaletteSchemes`, `purposePaletteStyle()`, os seletores `data-purpose-scheme` e tokens `--aculta-purpose-*` foram removidos. Busca em tema, Portal e Config Sync não encontra consumidores nem aliases/dual-read/fallback. A preferência de modo do usuário e `DomainPurposeManager` funcional permanecem preservados.

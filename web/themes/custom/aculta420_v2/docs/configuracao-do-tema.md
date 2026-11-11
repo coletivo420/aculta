@@ -73,7 +73,7 @@ A seção **Shell da página** oferece `classic` e `v2`. O padrão é `classic`,
 
 A seleção de aparência não pertence às configurações próprias do tema. `ui_skins` publica as variáveis `--color-accent`, `--color-on-accent` e `--color-accent-sub-1..3` pelos scopes de `aculta420_v2.ui_skins.css_variables.yml`; os valores exportados ficam em `third_party_settings.ui_skins.css_variables` no Config Sync. O Portal resolve `domain_id -> skin_id` e entrega `aculta_skin_id`; o tema aplica `data-skin` e `data-theme` sem conhecer host nem resolver acesso.
 
-O campo `aculta_purpose_palette`, seu formulário e seus schemas foram removidos diretamente. Não existe leitura de configuração anterior nem alias. O código e o Config Sync estão preparados, mas o módulo UI Skins ainda está desativado no Runtime desta validação; ativação, inspeção dos plugins em runtime e aceite visual permanecem pendentes.
+O campo `aculta_purpose_palette`, seu formulário e schemas foram removidos, sem leitura/alias de configuração anterior. UI Skins 1.2.1 está ativo em Sync e Runtime; o mapa de skin é resolvido por Domain ID sem mutação de configuração global. Links foi homologado em cinco larguras e dois modos; os demais domínios e cache-hit permanecem pendentes.
 
 ### 2.2 Layout de container por purpose - administração descontinuada
 
