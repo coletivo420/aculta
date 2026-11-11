@@ -132,7 +132,9 @@ Estão listadas abaixo as pastas reais, com o caminho completo. A convenção é
 | `tests/browser/transversal/aculta-theme-mobile-first/` | ACULTA420 — SDC responsivos do tema |
 | `tests/browser/transversal/aculta-uploader/` | Smoke do aculta_file_uploader (navegador) |
 | `tests/browser/transversal/aculta-visual/` | Revisão visual da Frente B |
+| `tests/browser/transversal/aculta420-v2-account-menu/` | ACULTA420 V2 — account menu |
 | `tests/browser/transversal/aculta420-v2-card-accent/` | ACULTA420 V2 — faixa de acento do cartão (DRAFT) |
+| `tests/browser/transversal/aculta420-v2-component-library/` | ACULTA420 V2 — biblioteca de componentes |
 | `tests/browser/transversal/aculta420-v2-data-table/` | ACULTA420 V2 — Data table |
 | `tests/browser/transversal/aculta420-v2-empty-state/` | ACULTA420 V2 — Empty state |
 | `tests/browser/transversal/aculta420-v2-footer/` | ACULTA420 V2 — rodapé e regions do shell |

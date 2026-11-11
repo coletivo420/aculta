@@ -49,7 +49,7 @@ Tokens em `src/styles/tokens.css` (`--button-danger-*`). Mínimos: texto 4,5:1; 
 - Escolha lembrada em `localStorage` com try/catch.
 - A Institution Bar é o SDC `aculta420_v2:multidomain-bar`, exibido na UI Library pela story padrão; no site, é o bloco `aculta_institution_bar` na região `institution` (`templates/layout/page.html.twig`).
 - A grade "Esquema de botões" não tem modo próprio: herda o modo da página.
-- Captura e checagem: `tests/browser/transversal/aculta420-v2-component-library/library-mode.py` (conta de teste por `drush uli` no host de conta; rota real `/painel-administrativo/aparencia/ui/components`).
+- Captura e checagem: auditoria do catálogo com sessão autenticada (`tests/browser/transversal/aculta420-v2-component-library/audit-contraste.js`; conta de teste por `drush uli` no host de conta; rota real `/painel-administrativo/aparencia/ui/components`).
 
 ## Migração por variação da tabela
 
@@ -111,7 +111,7 @@ Migram para o SDC em entregas anteriores: Portal, Fórum, Studio (calendário, c
 
 ## Modo escuro da UI Library: auditoria de contraste
 
-- Medição: `tests/browser/transversal/aculta420-v2-component-library/library-mode.py` (auditoria no modo escuro, razão mínima 4,5:1).
+- Medição: auditoria de contraste do catálogo (`tests/browser/transversal/aculta420-v2-component-library/audit-contraste.js`, injetado com sessão autenticada no modo escuro, razão mínima 4,5:1).
 - Resultado em 2026-11-08: 1 falha, `rfc-matrix` do módulo contrib `simple_oauth_21` ("No RFC data available.", texto cinza fixo `#6b7280`, 3,77:1). Fora do tema; exceção registrada.
 - Causas corrigidas em entregas anteriores: cor de texto resolvida no `body`; tokens derivados por `var()` sem par escuro; seletor global `.page a`; controles do mapa com fundo branco fixo; variante neutra do rodapé.
 
