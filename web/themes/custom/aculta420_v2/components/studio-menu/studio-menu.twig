@@ -5,7 +5,9 @@
     <span class="aculta-account-menu__icon" aria-hidden="true"><span></span><span></span><span></span></span>
     <span class="visually-hidden">{{ 'Abrir menu do Studio'|t }}</span>
   </button>
-  <h1 class="aculta-studio-topbar__title">{{ title }}</h1>
+  {# O título da página já é o H1; o topbar repete o nome e não pode duplicar o
+     heading principal do documento. #}
+  <p class="aculta-studio-topbar__title">{{ title }}</p>
 </div>
 
 <aside class="aculta-studio-sidebar" aria-label="{{ 'Menu do Studio'|t }}">

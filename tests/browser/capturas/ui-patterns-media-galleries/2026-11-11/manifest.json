@@ -1,0 +1,35 @@
+{
+  "front": "ui-patterns-media-galleries",
+  "environment": "development",
+  "route": "/galleries",
+  "view": "media_galleries:page_1",
+  "config_before_sha256": "d179d8c76fbd033852390e73609b252a182dd16ac7af2f5b3256becea64c602b",
+  "config_sync_sha256": "6313cbdd1a81bc44a1a635a726ba7190b9ed10fc011831b43b3242db785f86b0",
+  "browser": "Playwright Firefox headless",
+  "http_status": 200,
+  "checks": {
+    "view_rows_before": 3,
+    "sdc_cards_after": 3,
+    "card_titles_after": 3,
+    "card_images_after": 2,
+    "grid_display": "grid",
+    "one_h1": true,
+    "one_main": true,
+    "horizontal_overflow": false,
+    "viewports_css_px": [320, 390, 768, 1024, 1440],
+    "themes": ["light", "dark"],
+    "pager_config_preserved": true,
+    "pager_navigation_exercised": false,
+    "zoom_200_exercised": false,
+    "keyboard_exercised": false,
+    "cache_hit_exercised": false,
+    "visual_human_review": false
+  },
+  "screenshots": {
+    "storage": "PNG files are git-ignored; retain under the matching tests/browser/capturas path on the test runner",
+    "light-320.png": "703a1b46981bb6b85f60d63db6a104b650a4089a2dd879db188152d45049fde3",
+    "light-1440.png": "79c2c2ff98393abbd256b7afc8216c086b8624d0530dab2edef9c20f8f0e6feda",
+    "dark-320.png": "f9d1246c0c591f4128a291a13ff743c3c8bbfcf24961ba25b31480fe5a0d1745",
+    "dark-1440.png": "a9b7bca5e0e43cd71db48a4c3890e649daecaf1e750d3fe6c06e0de08ee80b66"
+  }
+}

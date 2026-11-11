@@ -164,7 +164,7 @@ final class WikiEditorialQueue {
       ->addCacheTags(['node_list:wiki_entry', 'content_moderation_state_list']);
 
     $transitionValidation = $this->transitionValidation;
-    $result = $this->siteManagers->runInSite('wiki', function () use ($cursor, $cacheability, $transitionValidation): WikiEditorialQueuePage {
+    $result = $this->siteManagers->runInSite(SiteKey::Wiki, function () use ($cursor, $cacheability, $transitionValidation): WikiEditorialQueuePage {
       $wikiDomain = $this->siteManagers->getDomain(SiteKey::Wiki);
       if ($wikiDomain === NULL) {
         return new WikiEditorialQueuePage([], NULL, $cacheability);

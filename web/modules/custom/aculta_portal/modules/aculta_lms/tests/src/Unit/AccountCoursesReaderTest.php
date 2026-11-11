@@ -59,14 +59,14 @@ final class AccountCoursesReaderTest extends UnitTestCase {
     $entity_type_manager->method('getStorage')->with('domain')->willReturn($domain_storage);
     $domain_negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $domain_negotiator->method('getActiveDomain')->willReturn(NULL);
-    $domain_purposes = new DomainSiteManager(
+    $domain_sites = new DomainSiteManager(
       $entity_type_manager,
       $domain_negotiator,
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     );
 
-    $summaries = (new AccountCoursesReader($progress, $membership_loader, $domain_purposes))
+    $summaries = (new AccountCoursesReader($progress, $membership_loader, $domain_sites))
       ->getAccountCourses($account);
 
     self::assertCount(1, $summaries);
@@ -96,9 +96,9 @@ final class AccountCoursesReaderTest extends UnitTestCase {
     $progress->method('current')->with($course, $account)->willReturn(
       new CourseProgress(CourseProgress::STATUS_NEEDS_EVALUATION, FALSE, NULL, []),
     );
-    $domain_purposes = (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor();
+    $domain_sites = (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor();
 
-    $summaries = (new AccountCoursesReader($progress, $membership_loader, $domain_purposes))
+    $summaries = (new AccountCoursesReader($progress, $membership_loader, $domain_sites))
       ->getAccountCourses($account);
 
     self::assertCount(1, $summaries);
@@ -121,9 +121,9 @@ final class AccountCoursesReaderTest extends UnitTestCase {
     $membership_loader->method('loadByUser')->with($account)->willReturn([$membership]);
     $progress = $this->createMock(CourseProgressReaderInterface::class);
     $progress->expects(self::never())->method('current');
-    $domain_purposes = (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor();
+    $domain_sites = (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor();
 
-    self::assertSame([], (new AccountCoursesReader($progress, $membership_loader, $domain_purposes))
+    self::assertSame([], (new AccountCoursesReader($progress, $membership_loader, $domain_sites))
       ->getAccountCourses($account));
   }
 

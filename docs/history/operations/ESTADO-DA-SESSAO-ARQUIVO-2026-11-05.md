@@ -1812,3 +1812,11 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Verificações:** Runtime 200 antes/depois, 1 row, cache private; paridade Sync/Runtime; Views 72; Firefox 10/10; schema SDC 84/1798, render Drupal SDC 42, PHPUnit 3/17 (1 depreciação), PHPCS, PHPStan, foundations 83 pares, UI Styles 40 e status index PASS. Stylelint DEFERRED (binário ausente); browser-index global FAIL preexistente; token-budget FAIL por 7 violações globais. Zoom 200%, cache-hit, perfis e aceite visual humano DEFERRED.
 - **Pendências e bloqueios:** migrações site-wide, outros papéis/tecnologia assistiva, zoom/cache e homologação ampla; ADRs continuam abertas.
 - **Próximo passo:** migrar outra superfície pública/admin do inventário e manter testes por domínio/owner.
+
+# ADR-054/055 — categorias Wiki em UI Patterns Views — 2026-11-11
+
+- **Objetivo:** migrar o wrapper visual de `wiki_categories:block_1` para o SDC reutilizável `layout-grid`.
+- **Estado:** 15 termos e links preservados; consulta, vocabulário, acesso, peso e pager permanecem nativos. Sync/Runtime parseados coincidem; import parcial só da View após snapshot.
+- **Verificações:** Firefox ESR 247/247 em home/listagem/artigo, 320/390/767/768/1440, claro/escuro; 15 categorias, grid 1/2 colunas, overflow e foco visível PASS. Views gate 95; Stylelint focal PASS. Manifesto e hashes em `tests/browser/capturas/ui-patterns-wiki-categories/2026-11-11/manifest.json`.
+- **Visual:** amostras home 320 claro e 1440 escuro comparadas antes/depois sem mudança aparente. Zoom 200%, cache-hit, editor/admin, tecnologia assistiva e aceite do responsável DEFERRED. ADRs abertas.
+- **Próximo passo:** validar gates documentais/status, publicar a microfase e seguir ao próximo consumidor com SDC existente.

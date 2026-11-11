@@ -10,6 +10,7 @@ use Drupal\aculta_messenger\Integration\Wiki\EventSubscriber\WikiNoticeEventSubs
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManagerInterface;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisher;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKeyRegistry;
 use Drupal\aculta_wiki\Event\WikiEntryReviewRequestedEvent;
 use Drupal\aculta_wiki\EventSubscriber\WikiEditorialNoticePublisher as WikiNoticeProducer;
 use Drupal\aculta_wiki\Plugin\QueueWorker\WikiEditorialEventWorker;
@@ -118,6 +119,7 @@ final class WikiEditorialNoticePipelineTest extends TestCase {
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
+      new SiteKeyRegistry(),
     );
   }
 

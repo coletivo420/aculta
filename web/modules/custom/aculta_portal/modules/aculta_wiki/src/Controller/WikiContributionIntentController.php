@@ -48,7 +48,7 @@ final class WikiContributionIntentController extends ControllerBase {
    *   Cacheable WE SATIVA intent page.
    */
   public function page(NodeInterface $node): array {
-    $result = $this->siteManagers->runInSite('wiki', function () use ($node): array {
+    $result = $this->siteManagers->runInSite(SiteKey::Wiki, function () use ($node): array {
       $wikiDomain = $this->siteManagers->getDomain(SiteKey::Wiki);
       $node = $this->entityTypeManager()->getStorage('node')->loadUnchanged($node->id());
       if (!$node instanceof NodeInterface

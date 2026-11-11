@@ -2,6 +2,10 @@
 
 Estado: Dev · versão 0.1.0-dev.79 (`aculta_mailer.info.yml`) · status: `docs/operations/status/aculta_mailer.yml`.
 
+## Estado atual
+
+PHPStan Rodada 18: módulo completo em 0 erros; Unit 166/348 PASS. SMTP externo continua sem teste.
+
 ## Próximo passo
 
 Validar o confirmador incorporado e fluxos de conta em navegador; depois revisão visual para RC. Runtime e SMTP externo continuam pendentes.

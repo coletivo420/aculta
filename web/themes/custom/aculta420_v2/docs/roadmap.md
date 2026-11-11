@@ -1,5 +1,22 @@
 # Roadmap do fórum Growroom420 (ACULTA420 V2)
 
+## Auditoria de consistência CSS e layouts (2026-11-11)
+
+- Corrigido o par institucional do SDC `surface-panel`: texto escuro sobre
+  verde `#689427` no modo claro, preservando texto claro sobre a superfície
+  escura. O gate `validate-aculta420-v2-foundations.php` passa a medir o par
+  nos dois modos.
+- `layout-page--aside` e o fallback `page__main--with-sidebar` colocam a
+  coluna lateral à esquerda no desktop, conservando conteúdo antes de aside
+  no DOM. O layout mobile permanece em coluna única.
+- Removida a trilha vazia `navigation` do grid do shell v2; comentários
+  alinham-se às cinco regiões finais. Alias `--aculta-surface-raised` agora
+  acompanha `--color-surface-raised` em claro/escuro.
+- Estado: alterações estáticas publicadas, **validação no Runtime DEFERRED**.
+  Faltam Stylelint, gates PHP/Drush, inspeção de visual/teclado/zoom,
+  inventário de CSS global e migração de aliases não equivalentes.
+  Ver `docs/architecture/ACULTA420-V2-AUDITORIA-CSS-LAYOUT-2026-11-11.md`.
+
 ## CSP — remoção das violações de estilo inline (2026-11-11)
 
 - HTMX passou a usar a folha de estilos externa do tema para indicadores; UI Skins recebe nonce por resposta; o placeholder Drupal dialog é estático e não precisa do atributo inline. Nenhuma fonte global `unsafe-inline` foi adicionada.

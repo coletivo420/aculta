@@ -8,6 +8,7 @@ use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Integration\Wiki\EditorialReviewNoticeInterface;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKeyRegistry;
 use Drupal\aculta_wiki\Event\WikiEntryReviewRequestedEvent;
 use Drupal\aculta_wiki\EventSubscriber\WikiEditorialNoticePublisher;
 use Drupal\Component\Datetime\TimeInterface;
@@ -58,6 +59,7 @@ final class WikiEditorialNoticePublisherTest extends TestCase {
         $this->createMock(DomainNegotiatorInterface::class),
         $this->createMock(ConfigFactoryInterface::class),
         new RequestStack(),
+        new SiteKeyRegistry(),
       ),
       $publisher,
       $editorial,
@@ -183,6 +185,7 @@ final class WikiEditorialNoticePublisherTest extends TestCase {
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
+      new SiteKeyRegistry(),
     );
     $time = $this->createMock(TimeInterface::class);
     $time->method('getRequestTime')->willReturn(1_793_520_000);

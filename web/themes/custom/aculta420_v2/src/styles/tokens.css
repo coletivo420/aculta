@@ -167,7 +167,7 @@
   --surface-shadow-raised: 0 .125rem .5rem rgb(12 60 41 / 8%);
   --surface-shadow-floating: 0 10px 15px rgb(0 0 0 / 10%);
   --surface-panel-institutional-bg: var(--palette-green);
-  --surface-panel-institutional-text: var(--color-on-brand);
+  --surface-panel-institutional-text: var(--color-footer-text);
   --surface-accent-red: var(--palette-red);
   --surface-accent-yellow: var(--color-brand-highlight);
   --surface-accent-green: var(--palette-green);
@@ -176,7 +176,7 @@
      design. Os valores são literais e espelham os --color-* equivalentes;
      ainda não há consumidor, portanto não alteram a aparência do site. */
   --aculta-surface-page: #f2f7f0; /* --color-canvas */
-  --aculta-surface-raised: #fff; /* --color-surface-raised */
+  --aculta-surface-raised: var(--color-surface-raised); /* alias semântico */
   --aculta-surface-muted: #f3f4f6; /* --color-surface-subtle */
   --aculta-surface-header: #fff; /* --color-surface */
   --aculta-surface-interactive: #f2f7f0; /* --button-secondary-bg-hover (equivalente mais próximo) */
@@ -308,7 +308,7 @@
   /* Tokens semânticos --aculta-* no modo escuro. Valores literais; não há
      consumidor ainda, portanto não alteram a aparência do site. */
   --aculta-surface-page: #171513; /* --color-canvas */
-  --aculta-surface-raised: #211e1b; /* --color-surface (superfície neutra escura aprovada) */
+  --aculta-surface-raised: var(--color-surface-raised); /* alias semântico */
   --aculta-surface-muted: #2b2723; /* --color-surface-raised */
   --aculta-surface-header: #211e1b; /* --color-surface */
   --aculta-surface-interactive: #302b27; /* superfície neutra escura aprovada */

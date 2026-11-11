@@ -38,7 +38,7 @@ final class WikiPublishedParticipationLookup implements PublishedParticipationLo
     }
 
     try {
-      $found = $this->siteManager->runInSite('wiki', function () use ($accountId, $wikiDomain): bool {
+      $found = $this->siteManager->runInSite(SiteKey::Wiki, function () use ($accountId, $wikiDomain): bool {
         $ids = $this->entityTypeManager->getStorage('node')->getQuery()
           ->accessCheck(FALSE)
           ->condition('type', 'wiki_entry')

@@ -75,14 +75,14 @@ final class LinkDestinationResolverTest extends UnitTestCase {
     );
     $domain_negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $domain_negotiator->method('getActiveDomain')->willReturn(NULL);
-    $domain_purpose = new DomainSiteManager(
+    $domain_site = new DomainSiteManager(
       $entity_type_manager,
       $domain_negotiator,
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     );
 
-    $resolver = new LinkDestinationResolver($entity_type_manager, $domain_purpose);
+    $resolver = new LinkDestinationResolver($entity_type_manager, $domain_site);
     $resolution = $resolver->resolve($uri_field, $this->createMock(AccountInterface::class), TRUE);
 
     self::assertInstanceOf(Url::class, $resolution->url);

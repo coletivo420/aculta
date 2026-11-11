@@ -99,8 +99,8 @@ final class PublicForumTopicHooksTest extends UnitTestCase {
    */
   public function testExistingExplicitDomainSourceIsPreserved(): void {
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
-    $domain_purpose = $this->siteManager($entity_type_manager);
-    $hooks = new PublicForumTopicHooks($domain_purpose);
+    $domain_site = $this->siteManager($entity_type_manager);
+    $hooks = new PublicForumTopicHooks($domain_site);
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('isEmpty')->willReturn(FALSE);
     $node = $this->createMock(NodeInterface::class);

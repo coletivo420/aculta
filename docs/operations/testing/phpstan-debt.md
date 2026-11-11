@@ -217,3 +217,58 @@ Resíduos: plugins de Views com `QueryPluginBase` genérico, formulários com `$
 Escopo: `OwnershipClaimService` 42 -> 0 com helper `requireContentEntity()` e narrowing em `canClaim`/`decideClaim`; `OrganizationAccessService` 15 -> 0; `ReportQueue` 10 -> 0 (`FlaggingInterface`); `ForumModerationHooks` 7 -> 0; `aculta_user.install` 6 -> 0 (`_aculta_user_install_storage_definition()`); `ParticipationEditWindow` 6 -> 0; `PhotoEditorHooks` 5 -> 0 (DI morta removida, `EntityFormInterface`); `UserPictureForm`, `AccountCreationHooks`, `DiscussionCommentAuthorHooks`, `AvatarAssetCleanup`, `AvatarResolver`, `BadgeService`, `ActivityController`, `LegacyMemorialController`, `PeopleListController`, `PublicProfileController`, handlers de acesso, `AvatarCropForm`, `RoleInheritanceHooks`, `UsernameLinkHooks`, `AuthorCard` (render agora retorna markup), `AuthorCardBuilder`, `LegacyAuthorManager`, `PublicProfilePolicy`, `ConnectionQueryService`, `FriendshipManager`, `SocialNetworks`, `AccountNames` e `NicknameRegistry` (docblock do `rebuild()`).
 
 Mudança transversal: `PerfilDoPapel::principal()/obter()` passaram a aceitar `EntityStorageInterface` e validar `ProfileStorageInterface`, eliminando ~15 erros em aculta_user, aculta_portal e aculta_events. Evidência: Unit 160/618 PASS; `aculta_user/src` e `.install` em zero.
+
+## Rodada 15 — 2026-11-11 (aculta_portal, produção)
+
+| Medida | Valor |
+| --- | ---: |
+| Erros brutos em aculta_portal/src antes | 149 |
+| Erros brutos em aculta_portal/src ao final | 44 |
+| Erros brutos globais antes | 2963 |
+| Erros brutos globais ao final | 2857 |
+| Baseline atual | 2857 |
+
+Escopo: `BillingAddressPane` 16 -> 0 (ProfileStorageInterface/ProfileInterface), `AccountAddressForm` 13 -> 0, `PortalController` 11 -> 0 (OrderInterface, SocialAuth, transporte, DI morta), `SupportController` 9 -> 0, `SubscriptionActionForm` 8 -> 0 (`TranslatableMarkup`, `PaymentGatewayInterface`), `PortalFormCallbacks` 7 -> 0 (`EntityFormInterface`), além de `TurnstileToggle`, `MediaContentIndexProvider`, `AdminEmailConfirmForm`, `SalesPaymentCancelForm`, `PortalHooks`, `TokenHooks`, `ContentCleanupPreview`, `EmailConfirmationRequester`, `SocialAuthProfileSubscriber`, `ContentIndexOwnerResolver`, `ContentIndexProjection`, `CheckoutStepResolver`, `FiscalIdentityPolicy`, `AccountCoursesManager`, `ShopController`, `SurfaceConfigReader` e `PortalRequirementsController`.
+
+Evidência: Unit 390/1361 PASS; `phpstan analyse` em `[OK] No errors`.
+
+## Rodada 16 — 2026-11-11 (aculta_wiki, produção — parcial)
+
+| Medida | Valor |
+| --- | ---: |
+| Erros brutos em aculta_wiki/src antes | ~110 |
+| Erros brutos em aculta_wiki/src ao final | 36 |
+| Erros brutos globais antes | 2857 |
+| Erros brutos globais ao final | 2797 |
+| Baseline atual | 2797 |
+
+Escopo: `WikiContributionMigration` 29 -> 0 (`RevisionableStorageInterface`, `Contribution`), `WikiEditorialNoticePublisher` 6 -> 0, `WikiEntryImageHooks` 6 -> 0 (DI de `file_url_generator`, `CacheableMetadata`), providers de Content Index, `WikiLeadImageCleanup`, `WikiController`, `WikiProposalStatusController`, `WikiReviewHooks`, `WikiProposalDecision` e `WikiLeadImageUploader` (selects com lock divididos em etapas). Evidência: Unit 94/455 PASS; YAML de serviços validado.
+
+Restante no módulo: `WikiEditorialQueue` (13), `WikiContributorWorkspace` (8), `WikiProposalSubmissionForm` (7) e avulsos — exigem narrowing de uniões `Contribution|WikiProposal` e reescrita de laços de paginação.
+## Rodada 18 — 2026-11-11 (aculta_mailer, módulo completo)
+
+| Medida | Valor |
+| --- | ---: |
+| Erros brutos em aculta_mailer antes | 69 (45 em src; 5 em .install; 19 em testes) |
+| Erros brutos em aculta_mailer ao final | 0 |
+| Entradas de aculta_mailer no baseline ao final | 0 |
+| Baseline global regenerado | 3564 erros |
+
+Escopo: narrowing de entidades MailLog/MailTransport, assinatura correta dos ConfirmForm, validação das FieldStorageDefinition no .install, remoção de guards redundantes, filtros/callbacks alinhados aos tipos inferidos e retorno tipado do MailTemplateRenderer. MailTransportFactory agora cria SMTP via EsmtpTransportFactory/Dsn pública do Symfony, mantendo smtps na porta 465, credenciais resolvidas por segredo e configuração verify_peer. Testes existentes tiveram narrowing dos itens de fila/entidades; removido o teste tautológico que comparava o TTL à própria constante.
+
+Resíduos no módulo: nenhum. O baseline global passou de 2797 (registro da rodada 16) para 3564 após regeneração na base atual; esse delta global inclui dívida fora do escopo e não é atribuído ao aculta_mailer. O baseline recém-gerado registra erros reais `class.notFound` dos consumidores de `DomainPurposeManager`, cuja migração para `DomainSiteManager` ainda não chegou a `origin/dev`; ficam explicitamente pendentes, sem editar esses arquivos paralelos. Evidências: PHPStan no módulo e global `[OK] No errors`; Unit 166 testes/348 assertions PASS; PHP lint dos 29 arquivos PHP alterados, YAML de serviços e índice de status PASS. A suíte Unit global 3287/17594 encontrou 4 falhas fora do escopo (ForumTopicDisplayConfigTest, BadgeEvaluationHooksTest e dois testes de aculta_index), além de 3 deprecações; o gate token budget falhou por sete violações globais preexistentes em AGENTS/skills fora do escopo.
+
+## Rodada 17 — 2026-11-11 (aculta_wiki, src)
+
+| Medida | Valor |
+| --- | ---: |
+| Erros brutos em aculta_wiki/src antes | 36 |
+| Erros brutos em aculta_wiki/src ao final | 0 |
+| Erros brutos globais antes | 3564 |
+| Erros brutos globais ao final | 3451 |
+| Baseline da Wiki (módulo completo) | 225 -> 112 |
+
+Escopo: `WikiEditorialQueue` e `WikiContributorWorkspace` com narrowing dos resultados de storage e união `WikiProposal|Contribution`; `WikiProposalSubmissionForm` com remoção de comparações já eliminadas por `array_filter()` e retorno numérico tipado para ID de mídia. Os serviços, controllers e hooks migraram de `DomainPurposeManager` para `DomainSiteManager` e `SiteKey::Wiki`; chamadas de acesso preservam o contexto editorial e a política existente. Fixtures Unit receberam o `SiteKeyRegistry` exigido pelo contrato publicado. Nenhuma regra de negócio ou permissão foi alterada.
+
+Resíduos: 112 erros PHPStan permanecem no módulo completo, todos em testes/.install já baselineados; Kernel de imagem contém 92 chamadas sobre `RevisionableInterface`, fora do escopo. Evidências: PHPStan em `src` (42 arquivos) e global estrito `[OK] No errors`; Unit 94 testes/455 assertions PASS. Baseline global caiu 3564 -> 3451; a redução de 113 ocorrências ficou restrita à Wiki.
+

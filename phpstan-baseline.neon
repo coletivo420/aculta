@@ -9490,12 +9490,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/src/Cleanup/ContentCleanupPreview.php
 
 		-
-			rawMessage: Instanceof between Drupal\aculta_portal\ContentIndex\ContentIndexRelation and Drupal\aculta_portal\ContentIndex\ContentIndexRelation will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/src/ContentIndex/ContentIndexProjection.php
-
-		-
 			rawMessage: 'Parameter #2 $label of method Drupal\aculta_portal\Deployer\DeployerStatusController::statusCell() expects string|null, Drupal\Core\StringTranslation\TranslatableMarkup given.'
 			identifier: argument.type
 			count: 1

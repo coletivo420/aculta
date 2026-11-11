@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_wiki\Unit;
 
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKeyRegistry;
 use Drupal\aculta_wiki\Adapter\WikiContributionAdapter;
 use Drupal\aculta_wiki\Service\WikiEditorialEventQueue;
 use Drupal\aculta_wiki\Service\WikiProposalDecision;
@@ -92,6 +93,7 @@ final class WikiContributionAdapterTest extends UnitTestCase {
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
+      new SiteKeyRegistry(),
     );
     $emailPolicy = new EmailConfirmationPolicy(
       $this->createMock(UserDataInterface::class),

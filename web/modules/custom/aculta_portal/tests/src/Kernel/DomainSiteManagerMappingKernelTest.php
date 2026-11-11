@@ -17,7 +17,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
  * Tests purpose-to-domain mapping and active Domain restoration.
  *
  * Restoring the previous domain keeps the rest of the request in the right
- * context after runInPurpose() evaluates access for another purpose.
+ * context after runInSite() evaluates access for another purpose.
  */
 #[Group('aculta_portal')]
 #[RunTestsInSeparateProcesses]
@@ -129,7 +129,7 @@ final class DomainSiteManagerMappingKernelTest extends KernelTestBase {
   }
 
   /**
-   * Tests that runInPurpose restores the prior domain after the callback.
+   * Tests that runInSite restores the prior domain after the callback.
    */
   public function testRunInPurposeSwitchesToThePurposeDomainAndRestoresThePrevious(): void {
     $this->createDomains();
@@ -175,7 +175,7 @@ final class DomainSiteManagerMappingKernelTest extends KernelTestBase {
       $this->fail('A exceção do callback deve ser propagada.');
     }
     catch (\RuntimeException) {
-      // Esperado: a exceção sai do runInPurpose().
+      // Esperado: a exceção sai do runInSite().
     }
     $this->assertSame(
       'conta_aculta_org',

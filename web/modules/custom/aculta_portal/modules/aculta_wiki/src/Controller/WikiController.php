@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Controller;
 
-use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
@@ -20,7 +19,6 @@ use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Presentation\WikiSearchFormBuilderInterface;
 use Drupal\aculta_portal\Search\SearchPageController;
 use Drupal\domain\DomainInterface;
-use Drupal\node\NodeInterface;
 use Drupal\views\ViewExecutableFactory;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
@@ -60,7 +58,7 @@ final class WikiController extends ControllerBase {
     $collaborationUrl = Url::fromRoute('node.add', ['node_type' => 'wiki_entry']);
     $startUrl = $this->siteManager->routeUrl(SiteKey::Wiki, 'aculta_studio.we_sativa_start');
     if ($collaborationAccess->isAllowed() && $startUrl !== NULL) {
-      $startAccess = $this->siteManager->runInSite('wiki', fn () => $startUrl->access($this->account, TRUE));
+      $startAccess = $this->siteManager->runInSite(SiteKey::Wiki, fn () => $startUrl->access($this->account, TRUE));
       if ($startAccess->isAllowed()) {
         $collaborationUrl = $startUrl;
         $collaborationAccess = $collaborationAccess->andIf($startAccess);

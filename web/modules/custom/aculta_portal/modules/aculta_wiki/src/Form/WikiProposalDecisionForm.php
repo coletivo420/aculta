@@ -93,7 +93,7 @@ final class WikiProposalDecisionForm extends FormBase {
       : $this->loadWikiTarget($proposal);
     if ($target !== NULL) {
       $targetUrl = $this->siteManagers->routeUrl(SiteKey::Wiki, 'entity.node.canonical', ['node' => $target->id()]);
-      if ($targetUrl !== NULL && $this->siteManagers->runInSite('wiki', static fn (): bool => $targetUrl->access())) {
+      if ($targetUrl !== NULL && $this->siteManagers->runInSite(SiteKey::Wiki, static fn (): bool => $targetUrl->access())) {
         $form['proposal_header']['#slots']['actions']['target'] = [
           '#type' => 'link',
           '#title' => $this->t('Abrir verbete publicado'),
@@ -106,7 +106,7 @@ final class WikiProposalDecisionForm extends FormBase {
           ? $proposal->get('target_revision_id')->value
           : $proposal->get('base_revision')->value,
       ]);
-      if ($revisionUrl !== NULL && $this->siteManagers->runInSite('wiki', static fn (): bool => $revisionUrl->access())) {
+      if ($revisionUrl !== NULL && $this->siteManagers->runInSite(SiteKey::Wiki, static fn (): bool => $revisionUrl->access())) {
         $form['proposal_header']['#slots']['actions']['base_revision'] = [
           '#type' => 'link',
           '#title' => $this->t('Abrir revisão-base da proposta'),

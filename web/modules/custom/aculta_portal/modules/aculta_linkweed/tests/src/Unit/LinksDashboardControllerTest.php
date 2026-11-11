@@ -36,14 +36,14 @@ final class LinksDashboardControllerTest extends UnitTestCase {
     ]);
     $request_stack = new RequestStack();
     $request_stack->push($request);
-    $domain_purpose = (new \ReflectionClass(DomainSiteManager::class))
+    $domain_site = (new \ReflectionClass(DomainSiteManager::class))
       ->newInstanceWithoutConstructor();
     $analytics = (new \ReflectionClass(LinkAnalytics::class))
       ->newInstanceWithoutConstructor();
     $controller = new LinksDashboardController(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(AccountProxyInterface::class),
-      $domain_purpose,
+      $domain_site,
       $analytics,
       $request_stack,
     );

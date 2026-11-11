@@ -1,3 +1,17 @@
+## Não versionado - auditoria de consistência CSS e layouts (2026-11-11)
+
+- Corrigido o contraste do cabeçalho institucional no SDC `surface-panel`
+  nos dois modos. O validador de fundações passa a cobrir explicitamente
+  texto sobre superfície do painel.
+- `layout-page--aside` e o fallback `page__main--with-sidebar` exibem
+  a barra lateral à esquerda no desktop, sem inverter a ordem do DOM.
+  `page.html.twig` e `page--shell-v2.html.twig` adotam variantes no fallback.
+- Shell v2 sem área fantasma de navegação e comentários alinhados às cinco
+  regiões. Alias `--aculta-surface-raised` unificado com o token semântico.
+- Alterações verificadas estaticamente; Stylelint, PHPUnit/Drush e browser
+  ainda dependem de homologação. Referência:
+  `docs/architecture/ACULTA420-V2-AUDITORIA-CSS-LAYOUT-2026-11-11.md`.
+
 ## Não versionado — matriz UI Skins e catálogo administrativo (2026-11-11)
 
 - Os dez domínios passaram 300/300 checks em cinco larguras e claro/escuro; Links resolve `ruderalis`, os outros nove `skunk`, H1/main únicos, sem overflow e contraste mínimo 7,16:1.

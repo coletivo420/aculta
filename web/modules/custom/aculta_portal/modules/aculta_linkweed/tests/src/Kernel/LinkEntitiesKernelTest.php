@@ -72,9 +72,9 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $domain_purpose = (new \ReflectionClass(DomainSiteManager::class))
+    $domain_site = (new \ReflectionClass(DomainSiteManager::class))
       ->newInstanceWithoutConstructor();
-    $this->container->set('aculta_portal.domain_site', $domain_purpose);
+    $this->container->set('aculta_portal.domain_site', $domain_site);
     $identity_resolver = (new \ReflectionClass(AuthorIdentityResolver::class))
       ->newInstanceWithoutConstructor();
     $this->container->set('aculta_user.author_identity_resolver', $identity_resolver);

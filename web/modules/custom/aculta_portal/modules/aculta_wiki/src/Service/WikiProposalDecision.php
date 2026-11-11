@@ -198,7 +198,7 @@ final class WikiProposalDecision {
     $decisionData = $this->validateListModes($approvedFields, $decisionData);
 
     $targetId = (int) $target->id();
-    $result = $this->siteManagers->runInSite('wiki', function () use ($expectedVersion, $targetId, $approvedFields, $decisionData, $proposedFields): NodeInterface {
+    $result = $this->siteManagers->runInSite(SiteKey::Wiki, function () use ($expectedVersion, $targetId, $approvedFields, $decisionData, $proposedFields): NodeInterface {
       $wikiDomain = $this->siteManagers->getDomain(SiteKey::Wiki);
       $storage = $this->entityTypeManager->getStorage('node');
       $select = $this->database->select('node', 'node');

@@ -123,7 +123,7 @@ final class WikiEntryTitleSuggestions {
       return;
     }
 
-    $ids = $this->siteManagers->runInSite('wiki', function () use ($title): array {
+    $ids = $this->siteManagers->runInSite(SiteKey::Wiki, function () use ($title): array {
       $domain = $this->siteManagers->getDomain(SiteKey::Wiki);
       if ($domain === NULL) {
         return [];
@@ -158,7 +158,7 @@ final class WikiEntryTitleSuggestions {
    *   Renderable, access-checked title links.
    */
   private function loadVisibleSuggestions(array $ids): array {
-    return $this->siteManagers->runInSite('wiki', function () use ($ids): array {
+    return $this->siteManagers->runInSite(SiteKey::Wiki, function () use ($ids): array {
       $storage = $this->entityTypeManager->getStorage('node');
       $items = [];
       foreach ($storage->loadMultiple($ids) as $node) {

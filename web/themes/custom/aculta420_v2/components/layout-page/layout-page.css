@@ -36,7 +36,27 @@
 }
 
 @media (min-width: 60rem) {
+  /* A barra fica à esquerda no desktop, mantendo conteúdo antes de aside no DOM. */
   .layout-page--aside:has(.layout-page__aside) {
-    grid-template-columns: minmax(0, 2fr) minmax(14rem, 1fr);
+    grid-template-columns: minmax(14rem, 1fr) minmax(0, 2fr);
+    grid-template-areas:
+      "title title"
+      "aside content";
+  }
+
+  .layout-page--aside:has(.layout-page__aside):not(:has(.layout-page__title)) {
+    grid-template-areas: "aside content";
+  }
+
+  .layout-page--aside:has(.layout-page__aside) .layout-page__title {
+    grid-area: title;
+  }
+
+  .layout-page--aside:has(.layout-page__aside) .layout-page__content {
+    grid-area: content;
+  }
+
+  .layout-page--aside:has(.layout-page__aside) .layout-page__aside {
+    grid-area: aside;
   }
 }
