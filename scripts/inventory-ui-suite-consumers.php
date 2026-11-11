@@ -266,7 +266,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         ? 'BLOCKED_UPSTREAM'
         : (($isWikiEntriesPilot || $isWikiCategoriesPilot) && $displayId === 'default'
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
-        : ($isForumTopicsSdc || $isRevistaTeaserSdc || $documentRuntimeVerified || $shopRuntimeVerified || $wikiRuntimeVerified || $wikiCategoriesRuntimeVerified
+        : ($isForumTopicsSdc || $isRevistaTeaserSdc || $isForumGalleryPilot || $isProductGalleryPilot || ($isForumCategoryPilot && (string) $displayId === 'block_landing') || $documentRuntimeVerified || $shopRuntimeVerified || $wikiRuntimeVerified || $wikiCategoriesRuntimeVerified
         ? 'UI_SUITE_NATIVE'
         : ((($isViewsFunctionalBase && !$isProductGalleryPilot) || $isEventsBase || $isAdminViewNative || $isWebformSubmissions || $isNativeCoreView)
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
