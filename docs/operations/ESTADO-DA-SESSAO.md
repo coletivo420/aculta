@@ -6,7 +6,7 @@
 - **Cuidados:** o import parcial autorizado das 22 configs de bloco foi executado após snapshot; o site responde 200 e o smoke 70/70 foi repetido. O login autenticado segue bloqueado (DT-S01); rotas públicas são `private/no-cache` e `UNCACHEABLE`.
 - **Commits e arquivos:** `0c34d22cc`, `164608d1d`, `8e4816826` publicados; Portal, gates, baseline, inventário de contratos e ADRs.
 - **Verificações:** PHPStan 0, unit 3287, Portal 1234, boundary 7888, browser index 151, admin routes, aliases, root policy e status index PASS; smoke Firefox 70/70 pós-import.
-- **Pendências e bloqueios:** Kernel/Functional, sessão autenticada (DT-S01), cache-hit e aceite humano.
+- **Pendências e bloqueios:** Kernel/Functional (sem `SIMPLETEST_DB` isolado no servidor; o CI cobre), sessão autenticada (DT-S01), cache-hit e aceite humano.
 - **Próximo passo:** importar a configuração autorizada, rodar Kernel/Functional e concluir RN-05.
 
 # PHPStan — rodada 18 aculta_mailer — 2026-11-11
