@@ -56,13 +56,13 @@ Anteriormente:
 1. **Icon Packs Verificados:**
    - `aculta_phosphor_regular` (1512 ícones).
    - `aculta_phosphor_duotone` (1512 ícones).
-   - `aculta_fluent_emoji` (48 ícones oficiais em formato SVG).
+   - `aculta_fluent_emoji` (66 SVGs em `assets/icons/fluent-emoji/color`; o catálogo editorial consome 48 deles e o teste exige mínimo de 48).
    - Teste unitário `UiIconsPackTest` valida registro e quantidades mínimas dos três packs; correspondência exaustiva ID -> SVG ainda precisa de gate próprio.
 2. **UI Icons Menu e UI Patterns:**
    - Alvo: menus `main`, `account` e `admin` configuráveis via integração de ícones. O Config Sync consultado não confirma ativação de `ui_icons_menu`; conferir Runtime, dependências e exportação na US-00/US-08.
    - Propriedades de ícones integradas aos SDCs do tema (ex: `button` via `$ref: 'ui-patterns://icon'`).
 3. **UI Styles Page e UI Library:**
-   - Alvo: `ui_styles_page` para estilos de regiões por tema (`/admin/appearance/ui-styles/page/theme/{theme}`). A configuração sincronizada não registra ativação; conferir Runtime e atributos Twig na US-03.
+   - Alvo: `ui_styles_page` para estilos de regiões por tema (`/admin/appearance/ui-styles/page/theme/{theme}`). O módulo está habilitado no Runtime e no Config Sync, mas `aculta420_v2.settings` não registra mapeamento `ui_styles_page.regions`; atributos Twig seguem pendentes na US-03.
    - Rota da UI Library (`/painel-administrativo/aparencia/ui/patterns`, `/icons`, `/styles`) com links dinâmicos e controle de acesso exclusivo para administradores.
 
 ---
@@ -104,7 +104,7 @@ A ADR-055 passa a cobrir o ecossistema **UI Patterns + UI Styles + UI Icons + UI
 ### Estado de implementação e requisitos de aceite
 
 - Entregue: ícones declarados pelo tema, adaptador Fluent Emoji, frontend do seletor do Fórum, superfícies SDC, integração de UI Patterns Layouts e Views registrada no Config Sync, biblioteca progressiva. UI Icons Menu, Picker, Fields e Patterns estão em Config Sync; menus principal/conta limitam seleções aos packs Phosphor. Import parcial isolado de `ui_icons_patterns.settings` alinhou Runtime ao Picker após snapshot; Drush confirma o element registrado e menus sem mudanças. Submódulos opcionais seguem diferentes entre Runtime e Sync. Sem aceite visual/accessibilidade dos controles.
-- Rechecagem Runtime de 2026-11-10 confirmou `ui_patterns_ckeditor5` ativo, embora ausente do Config Sync e sem consumidores. A integração permanece `LEGACY_OBSOLETE`, proibida nesta implementação e sem substituto; desinstalação é operação separada e requer autorização explícita. Não criar configuração para preservá-la.
+- `ui_patterns_ckeditor5` está fora do projeto: desabilitado no Runtime e ausente do Config Sync (`core.extension`), sem consumidores. O diretório permanece apenas como submódulo do pacote `ui_patterns` no vendor tree; não instalar, habilitar, prototipar nem criar configuração. A integração permanece `LEGACY_OBSOLETE`, proibida nesta implementação e sem substituto; remoção física do tree é operação de Composer separada e requer autorização explícita.
 - Cutover Runtime executado após snapshot e autorizações explícitas: post-updates migraram settings de flood e confirmação para módulos proprietários; import parcial ativou `ui_styles_ckeditor5`, scopes UI Skins e Views. Mapa ativo usa `links_aculta_org: ruderalis`; os outros domínios resolvem `skunk` por default. Gates UI Skins 134, theme settings 16, foundations 83 pares de contraste e Portal 1.243 PASS. A/B/A anônimo confirmou valores distintos sem carryover entre hosts; contraste e aceite visual amplo/cache-hit continuam DEFERRED. O gate de comércio ainda falhou no rótulo público de login, independente do cutover.
 - Atualização US-06 (2026-11-10): 22 configs elegíveis usam UI Patterns ComponentLayout no Runtime/Sync; 21 saídas exibem `layout-section`, e Wiki full usa seu adapter SDC `wiki-entry`. Gate 276 checks PASS; duas exclusões preservadas.
 - Atualização Views (2026-11-10): piloto `aculta_albuns:page_1` migrou row/style/display para UI Patterns e SDCs `revista-album-card`, `layout-grid` e `views-display`. Gates de contrato (40 checks), SDC schema (82 componentes/1774 checks) e render/runtime confirmam 3 resultados, pager mini, acesso anônimo e HTTP 200 antes/depois. Firefox ESR 1280/320 claro/escuro confirmou 3 cartões e alvos de 44 px. O plugin de display compõe title, header, exposed form, rows, empty, pager, more, footer e anexos; sources usam handlers nativos da View. Manifesto de capturas: `tests/browser/capturas/ui-patterns-views/2026-11-10/manifest.json`. Navegação de múltiplas páginas, zoom, teclado e cache-hit seguem DEFERRED; restante das Views ainda requer migração.
@@ -121,7 +121,7 @@ A ADR-055 passa a cobrir o ecossistema **UI Patterns + UI Styles + UI Icons + UI
 ### Catálogo Commerce — UI Patterns Views (2026-11-11)
 
 `aculta_shop_catalog` usa UI Patterns `layout-grid`; o adapter Twig do view mode Commerce compõe o SDC `product-card` com render arrays nativos de preço e compra. Firefox ESR validou 10/10 cenários anônimos em cinco larguras e claro/escuro, sem overflow, com foco, formulário Commerce e contraste mínimo 12,4:1. Cache-hit, zoom, outros perfis e aceite humano permanecem pendentes.
-- UI Styles Page usa `third_party_settings.ui_styles_page.regions` em `aculta420_v2.settings`, aplicado por nome de região a todas as páginas do tema; a API 1.22 inspecionada não oferece seleção por Domain ID. Não usar para skins específicas por domínio nem inferir config por requisição; integração Page ainda requer solução que respeite a fronteira multidomínio.
+- UI Styles Page está habilitado no Runtime e no Config Sync e oferece `third_party_settings.ui_styles_page.regions` em `aculta420_v2.settings`, aplicável por nome de região a todas as páginas do tema; hoje não há mapeamento de regiões configurado. A API 1.22 inspecionada não oferece seleção por Domain ID. Não usar para skins específicas por domínio nem inferir config por requisição; integração Page ainda requer solução que respeite a fronteira multidomínio.
 - Nova execução: **US-00 a US-14** no plano técnico canônico, incluindo substituição integral do legado visual e fechamento conjunto das ADRs. Não avançar sem baseline versionado, testes e rollback, incluindo configuração, 10 purposes, light/dark, 320 a 1440px, zoom 200%, access/cache entre hosts e avaliação editorial humana.
 - Documento de planejamento **não equivale** a autorização para `drush cim`, `updatedb`, alterações de dados ou instalação cega. Branch `dev`, commits atômicos, preservar trabalho paralelo e não alterar Core/contrib.
 - Estado de conclusão: **ADR-054: cutover implementado, homologação residual**; **ADR-055: implementação parcial comprovada em Git, integração integral planejada, homologação DEFERRED**.
@@ -201,3 +201,8 @@ A matriz UI Skins passou 300/300 nos dez domínios em cinco larguras e claro/esc
 ## Estado do motor visual por purpose — 2026-11-11
 
 A busca focal em tema, Portal e Config Sync não encontra `aculta_purpose_palette`, `data-purpose-scheme`, `--aculta-purpose-*`, `PurposePaletteSchemes`, `purposePaletteStyle()`, `aculta_cores_purpose` nem `purpose_palette`. Formulário/schema, código, seletores e valores sincronizados antigos foram removidos; não há alias, dual-read, fallback ou cópia preservada. Estes itens passam a `LEGACY_OBSOLETE`. A preferência de modo do usuário e `DomainPurposeManager` permanecem funcionais.
+
+
+## Atualização — UI Patterns na listagem de galerias públicas (2026-11-11)
+
+A View `media_galleries:page_1` (`/galleries`, MAIN) foi migrada com o SDC existente `revista-album-card` para a row, mapeando o formatter nativo da miniatura e o título; UI Patterns Views `layout-grid` compõe `view_rows`. A importação parcial foi isolada somente em `views.view.media_galleries`, após snapshot do Runtime. Antes/depois a View entregou três resultados; depois são três cards, três títulos e duas imagens. Firefox ESR confirmou HTTP 200, um H1/main e grade sem overflow em 320/390/768/1024/1440, claro/escuro. Config de pager full preservada, porém não há volume suficiente para exercitar navegação. Cache-hit, zoom 200%, teclado, perfis e revisão visual humana seguem DEFERRED. Evidência: `tests/browser/capturas/ui-patterns-media-galleries/2026-11-11/manifest.json`.
