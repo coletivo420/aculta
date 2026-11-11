@@ -1,3 +1,10 @@
+## Não versionado — UI Styles Entity Status (2026-11-11)
+
+- Habilita Entity Status no Sync/Runtime e aplica `unpublished_preview` como
+  sinal visual de conteúdo não publicado com token semântico de aviso.
+- A configuração não altera acesso/moderação. Teste funcional upstream 1/7
+  passou; saída visual real, revisão de perfis e cache permanecem pendentes.
+
 ## Não versionado — Inventário Views da Revista (2026-11-11)
 
 - Classifica os seis displays de página de `revista_sessoes` como `UI_SUITE_NATIVE`: a row nativa `entity:node`/`teaser` é composta pelo SDC `revista-teaser` através do adapter Twig existente, sem alterar dados ou configuração Views.

@@ -115,3 +115,8 @@ third_party_settings:
         'html[data-skin="panama-red"][data-theme="dark"]': transparent
         'html[data-skin="red-congolese"][data-theme="light"]': transparent
         'html[data-skin="red-congolese"][data-theme="dark"]': transparent
+  ui_styles_entity_status:
+    unpublished:
+      selected:
+        unpublished_preview: aculta-content-status--unpublished
+      extra: ''

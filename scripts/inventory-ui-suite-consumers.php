@@ -488,7 +488,7 @@ $moduleInventory = [
   'drupal/ui_styles_entity_status' => [
     'module' => 'ui_styles_entity_status', 'status' => 'MIGRATION_IN_PROGRESS',
     'replacement' => 'Apply visual status styles through UI Styles while preserving moderation and entity access behavior.',
-    'risk' => 'Assignments across entity displays and moderation forms need inventory and output comparison.',
+    'risk' => 'Enabled in Sync and Runtime with a global unpublished preview cue; upstream only adds classes to unpublished content entities and Layout Builder sections. Functional test passed, but real Runtime visual/access/cache review remains pending.',
   ],
   'drupal/ui_styles_block' => [
     'module' => 'ui_styles_block', 'status' => 'MIGRATION_IN_PROGRESS',

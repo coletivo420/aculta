@@ -30,7 +30,7 @@ Beneficios tangiveis:
 | `aculta420_v2.icons.yml` | Packs Phosphor Regular, Duotone e Fluent Emoji declarados | Confirmado no Git |
 | `config/sync/core.extension.yml` | `ui_patterns`, `ui_icons`, `ui_icons_field`, `ui_icons_menu`, `ui_icons_patterns`, `ui_icons_picker`, UI Patterns Blocks/Fields/Formatters/Layouts/Library/Views e UI Styles habilitados no Sync | Confirmado no Git após US-08 |
 | `composer.json` (após atualização da US-00) | `ui_patterns` 2.0.x-dev, `ui_patterns_layouts` ^2.0, `ui_patterns_field_group` 2.0.x-dev@dev, `ui_styles` ^1.22, `ui_skins` ^1.2 e `ui_icons` ^2.1 | Confirmado no Git; lock Field Group SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1` |
-| `config/sync/core.extension.yml` | `ui_skins`, UI Styles CKEditor 5 e integrações UI Icons presentes; `ui_patterns_field_group` e `ui_patterns_ckeditor5` ausentes | Confirmado no Git em 2026-11-10. UI Skins 1.2.1 foi instalado no Runtime sem importar mapa/scopes; Styles Page está alinhado ao Runtime; Entity Status segue desabilitado |
+| `config/sync/core.extension.yml` | `ui_skins`, UI Styles CKEditor 5, Entity Status e integrações UI Icons presentes; `ui_patterns_field_group` e `ui_patterns_ckeditor5` ausentes | Estado atualizado em 2026-11-11; veja snapshot Runtime e adendo de implementação desta microfase |
 | `docs/architecture/inventarios/ui-suite-runtime-2026-11-10.json` | Rechecagem `drush pml`: 36 módulos UI Suite; UI Skins Enabled; UI Patterns CKEditor 5 e Field Group Enabled; UI Styles CKEditor 5 Disabled | Estado atual observado em 2026-11-10 21:58 UTC; versão e configuração ativa constam no snapshot |
 | `drush config:status` | 65 diferenças globais; há remoção de módulos, blocos admin, campos e mudanças de filtros/permissões fora desta ADR | Importação integral não é segura. Import parcial autorizada foi tentada, mas abortou antes de gravar: a validação encontrou dependências antigas no DB ativo: seis configs LMS ainda apontam para `aculta_forum_lms`, embora o Sync já aponte para `aculta_lms`/`aculta_lms_h5p`; as configs simples `aculta_contributions.settings` e `aculta_mail_confirmer_user.settings` continuam com IDs dos módulos consolidados e são lidas pelo código atual. O editor Revista depende de UI Styles CKEditor 5 ainda não instalado. Código agora migra os IDs simples para `aculta_cgu.settings` e `aculta_mail_confirmer.settings` com post-updates que preservam os valores e removem os IDs antigos; autorização de `updatedb` recebida. Snapshot, execução e novo preview/import parcial pendentes |
 | Composer install | Lock sincronizado com `composer install --no-scripts`; Gin ausente foi instalado. Scaffold de `.htaccess` restaurado ao HEAD | Código de dependências sincronizado; `drush cr` PASS; nenhum script de projeto executado |
@@ -85,7 +85,7 @@ Beneficios tangiveis:
 
 ### 5.2 UI Styles - composicao contextual
 
-- `ui_styles_page` está habilitado no Runtime e alinhado ao Sync. Confirmar estilos de regiões em tela autenticada; `ui_styles_entity_status` segue desabilitado até definir e validar a apresentação de rascunhos sem confundir estado visual com acesso/publicação.
+- `ui_styles_page` está habilitado no Runtime e alinhado ao Sync. Confirmar estilos de regiões em tela autenticada. `ui_styles_entity_status` está habilitado no Runtime/Sync com a classe `aculta-content-status--unpublished`; a integração apenas sinaliza visualmente entidades não publicadas, sem alterar acesso ou moderação. Saída visual, acesso, revisão e cache ainda precisam de homologação.
 - Manter `ui_styles_block`, `ui_styles_layout_builder`, `ui_styles_views` e `ui_styles_ui_patterns` (já no Sync) e validar as escolhas disponíveis em cada formulário consumidor.
 - Distinguir estilos de *bloco*, *secao/regiao* e *conteudo*: border, elevation, radius, accent, spacing e tipografia nunca podem quebrar o contrato de 320 px.
 - Para CKEditor 5, oferecer **conjunto editorial restrito**: nota institucional, citacao, destaque, aviso, olho editorial, titulo auxiliar e micro-legenda; sincronizar CSS da area editavel com render no tema. Validar save, reopen, filtro e Drupal CKEditor 5, sem `full_html` para usuarios comuns.
@@ -135,7 +135,9 @@ Em todos os casos: layout claro e escuro, breakpoint 320/390/768/1024/1440 px, z
 
 ## 7. Microfases executaveis (planejamento, NAO concluido)
 
-### Evidências de implementação — 2026-11-10
+### Evidências de implementação — 2026-11-10/11
+
+- **UI Styles Entity Status (2026-11-11):** habilitado em Sync e Runtime após snapshot; import parcial restrito a `aculta420_v2.settings`. `unpublished_preview` usa contorno tracejado com token semântico de aviso. Validator UI Styles (40), foundations (83 pares), UI Skins (134), fronteira módulo/tema (7.872) e Stylelint passaram. Teste funcional upstream isolado: 1 teste/7 assertions, sem falha; 54 deprecações preexistentes. O teste visual real da saída Runtime, acesso por perfil, revisões e cache está DEFERRED. Snapshot pré-alteração: core.extension `8d22cbf125259658d2ae4dc67118562935a220e9848df996dedb3c8d52941ba1`; settings `779bb27e8b71ad5f1dc7a7ebdb5781b38930f6dc7a837f90d5e36d70df883cc9`.
 - Inventário reproduzível em `docs/architecture/inventarios/ui-suite-consumidores-iniciais.csv`: 381 registros, 83 templates Twig e adapters/fallbacks identificados por consumer.
 - `layout-section` compõe o hook editorial `aculta_section` com props estritas para variantes/cor; o aviso de pagamento compõe o SDC `surface`. O Portal continua dono dos dados, render arrays e links.
 - A View de categorias do Fórum usa `forum-category` no Sync/install. Cinco Twig overrides foram removidos no checkout e os contratos de row/query foram verificados por testes; Runtime permanece em `row: fields`, então o corte está DEFERRED até autorização de importação.
@@ -163,7 +165,7 @@ Em todos os casos: layout claro e escuro, breakpoint 320/390/768/1024/1440 px, z
 
 ### US-03 - UI Styles em regioes e entidades
 - Mapear render Twig com atributos de regioes, blocos e Layout Builder; corrigir apenas pontos com perda de attributes.
-- Prototipar `ui_styles_page` e `ui_styles_entity_status`; distinguir admin/status de publicacao de estado de acesso.
+- Homologar em saída real `ui_styles_page` e `ui_styles_entity_status`; verificar perfis e cache sem confundir estado visual de publicação com acesso.
 - **Gate:** estilos sem duplicacao, rascunho invisivel para usuario nao autorizado, config exportavel.
 
 ### US-04 - UI Styles CKEditor 5

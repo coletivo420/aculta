@@ -8,6 +8,11 @@ aculta_revista_accent:
   selected: {  }
   extra: ''
 third_party_settings:
+  ui_styles_entity_status:
+    unpublished:
+      selected:
+        unpublished_preview: aculta-content-status--unpublished
+      extra: ''
   ui_skins:
     css_variables:
       color_accent:

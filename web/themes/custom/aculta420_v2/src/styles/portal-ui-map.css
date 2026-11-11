@@ -151,6 +151,13 @@
 .is-draft { color: var(--color-status-warning-text); background: var(--color-status-warning-surface); }
 .is-published { color: var(--color-status-ok-text); background: var(--color-status-ok-surface); }
 
+/* UI Styles Entity Status: preview cue only; never used for access decisions. */
+.aculta-content-status--unpublished {
+  outline: .125rem dashed var(--color-status-warning-text);
+  outline-offset: .125rem;
+}
+.aculta-content-status--unpublished .aculta-content-status--unpublished { outline: none; }
+
 /* Mensagens e conversas. */
 .aculta-messenger-conversation,
 .aculta-messenger-fallback-search,

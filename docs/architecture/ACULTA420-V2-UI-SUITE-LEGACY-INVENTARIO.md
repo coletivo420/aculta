@@ -8,6 +8,8 @@
 
 > **Adendo UI Icons — 2026-11-11:** UI Icons 2.1.0 está habilitado em Sync e Runtime. Menus principal/conta usam o adaptador oficial, `icon_picker` e apenas os packs Phosphor Regular/Duotone; não têm atribuições de ícone identificadas. Fluent Emoji permanece no fluxo editorial/CKEditor do tema. UI Patterns Icons usa o source nativo; `icon_picker` foi importado em operação parcial limitada a `ui_icons_patterns.settings`, após snapshot, e Drush confirma o element disponível. Submódulos opcionais ainda diferem entre Runtime e Sync; nenhum módulo foi removido. Classificação `MIGRATION_IN_PROGRESS`: sem consumidor de prop SDC nem aceite visual/acessibilidade nesta fase.
 
+> **Adendo UI Styles Entity Status — 2026-11-11:** habilitado em Sync/Runtime após snapshot e import parcial de `aculta420_v2.settings`. O tema fornece `unpublished_preview` → `aculta-content-status--unpublished`, usado pelo módulo apenas para sinal visual em conteúdo não publicado e seções Layout Builder. A API não altera acesso/moderação. Teste funcional upstream 1/7 passou; visual real, perfis, revisão e cache seguem DEFERRED. Classificação `MIGRATION_IN_PROGRESS`.
+
 | Superfície atual | Owner / consumidores | Contrato e substituto | Status e evidência |
 |---|---|---|---|
 | Motor visual de paletas por purpose (`aculta_purpose_palette`, `PurposePaletteSchemes`, `purposePaletteStyle()`, `data-purpose-scheme`, `--aculta-purpose-*`) | tema V2; superfícies em domínios | Removido; UI Skins publica CSS variables por `data-skin`/modo, selecionadas pelo Portal via Domain ID | `LEGACY_OBSOLETE`; busca focal sem consumidores. Não manter alias, fallback nem cópia de configuração antiga, conforme instrução do responsável |
@@ -46,7 +48,7 @@ UI Patterns Field Group 2.0.x-dev permanece `BLOCKED_UPSTREAM` para novos consum
 | UI Patterns Field Group | beta2 no lock local | habilitado | habilitado | `BLOCKED_UPSTREAM` para nova adoção até avaliação de segurança, Field Group 4.x e Drupal 12; uso Runtime existente precisa inventário |
 | UI Patterns CKEditor 5 | módulo aparece no filesystem | ausente | habilitado segundo Drush | `BLOCKED_UPSTREAM`/fora do escopo aprovado; discrepância precisa reconciliação operacional. Não criar integrações novas nem alterar Runtime sem procedimento autorizado |
 | UI Styles base e submódulos | 1.22.0 presente | base e Block/Layout Builder/Library/UI Patterns/Views habilitados | habilitados | `UI_SUITE_NATIVE` onde configurado |
-| UI Styles Page / Entity Status / CKEditor 5 | pacotes/submódulos disponíveis a confirmar por módulo | ausentes | Page/Entity Status/CKEditor 5 não confirmados habilitados | `MIGRATION_IN_PROGRESS` (planejamento); sem consumidor validado |
+| UI Styles Page / Entity Status / CKEditor 5 | UI Styles 8.x-1.22, confirmados no runtime | Page/CKEditor 5 ativos; Entity Status habilitado nesta fase | Entity Status aplica classe de pré-visualização não publicada configurada no tema; teste upstream 1/7; avaliação visual, acesso e cache pendem | `MIGRATION_IN_PROGRESS`; sem alteração de regras funcionais |
 | UI Icons e Menu/Picker/Popover/Patterns | 2.1.0 e módulos presentes no filesystem local | ausentes | base e submódulos correspondentes listados como habilitados | `UI_SUITE_NATIVE` apenas nos consumidores verificados; configuração efetiva e mapeamento de ícones pendentes |
 | UI Skins | 1.2.1 presente no filesystem local | ausente | disponível no filesystem, mas não listado como habilitado | `MIGRATION_IN_PROGRESS`; sem ponte Domain ID → skin |
 

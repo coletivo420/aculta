@@ -29,6 +29,14 @@ revista_accent:
     revista-teaser--accent-red: "Vermelha"
   previewed_as: hidden
 
+unpublished_preview:
+  category: "Conteúdo"
+  label: "Pré-visualização de conteúdo não publicado"
+  description: "Marca visualmente entidades não publicadas para revisão editorial; não altera acesso nem moderação."
+  options:
+    aculta-content-status--unpublished: "Conteúdo não publicado"
+  previewed_as: hidden
+
 spacing_section:
   category: "Espaçamento"
   label: "Espaçamento interno de superfície"

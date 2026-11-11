@@ -52,6 +52,13 @@ Opção A: a escolha global do administrador `revista_accent` tem precedência s
 - Botões usam somente tokens semânticos `--button-*`; identidade visual vem de UI
   Skins e não há tokens de cor legados por purpose.
 - As opções ficam disponíveis apenas para o papel de administrador Drupal.
+- **Entity Status (2026-11-11):** `unpublished_preview` aplica a classe
+  `aculta-content-status--unpublished` ao conteúdo não publicado e às seções
+  correspondentes do Layout Builder. O tema usa contorno tracejado com token
+  semântico de aviso. É somente um sinal editorial: não concede/remove acesso,
+  não publica conteúdo e não altera moderação. UI Styles 8.x-1.22 está ativo em
+  Runtime/Sync e o teste funcional upstream passou; validação visual real, por
+  perfil e cache segue pendente.
 - **Ajuste ADR-055 (2026-11-10):** o plugin oficial UI Styles CKEditor 5 de
   bloco fica disponível ao `content_editor` apenas no formato `revista_editorial`.
   Ele expõe as escolhas de superfície do SDC `surface` (tom, espaçamento,

@@ -1,7 +1,7 @@
 {
     "observed_at_utc": "2026-11-11T03:25:00+00:00",
     "drupal_version": "11.5.0-beta1",
-    "evidence_command": "Drush Runtime export and targeted partial import after snapshot; ComponentLayout discovery; 276-check Layout Builder batch validator; render-array/access parity checks; anonymous Firefox A/B/A pilot; forum categories targeted partial import after Runtime snapshot; anonymous Firefox five-viewport and keyboard check",
+    "evidence_command": "Drush Runtime export and targeted partial imports after snapshots; ComponentLayout discovery; 276-check Layout Builder batch validator; render-array/access parity checks; anonymous Firefox A/B/A pilot; Forum categories and UI Styles Entity Status targeted imports; UI Styles Entity Status isolated functional test",
     "ui_suite_modules": {
         "ui_icons": {
             "status": "Enabled",
@@ -124,7 +124,7 @@
             "version": "8.x-1.22"
         },
         "ui_styles_entity_status": {
-            "status": "Disabled",
+            "status": "Enabled",
             "version": "8.x-1.22"
         },
         "ui_styles_layout_builder": {
@@ -167,6 +167,7 @@
         "ui_patterns_ckeditor5": "enabled preexisting; prohibited for this implementation; removal requires separate authorization",
         "ui_patterns_field_group": "enabled preexisting 2.0.x-dev; blocked upstream pending security and Drupal 12 support assessment",
         "ui_styles_ckeditor5": "enabled 8.x-1.22; Config Sync and Runtime active for editorial styles",
+        "ui_styles_entity_status": "enabled 8.x-1.22; unpublished_preview => aculta-content-status--unpublished; class resolution and upstream isolated functional test passed; Runtime visual/access/cache acceptance pending; pre-change snapshots recorded before module enable and targeted theme config import",
         "layout_builder_component_displays": "22 eligible configs use ui_patterns:aculta420_v2:layout_section; 21 render ComponentLayout wrappers; node.wiki_entry.full renders via direct wiki-entry SDC template",
         "views.view.aculta_forum_categories.page_categories.display": "ui_patterns:aculta420_v2:views-display; row SDC forum-category; native grouped style, access and pager preserved",
         "views.view.aculta_forum_categories.block_landing": "row UI Patterns; default style and display; placement hidden on public home, no visible-output acceptance claimed",

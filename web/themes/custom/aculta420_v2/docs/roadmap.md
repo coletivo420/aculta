@@ -27,6 +27,13 @@
 - Importação no Runtime, verificação de permissões/foco e prévia real dos SDCs
   ainda estão pendentes; Fluent Emoji permanece no catálogo editorial do tema.
 
+## UI Styles Entity Status — sinal visual editorial (2026-11-11)
+
+- Runtime/Sync habilitados após snapshot; import parcial aplicou somente o
+  settings do tema. `unpublished_preview` usa contorno tracejado sem alterar
+  permissões ou moderação. Teste upstream isolado 1/7 passou; saída visual
+  real, revisão por perfis e cache seguem DEFERRED.
+
 ## ADR-054/055 — Views row/style/display (2026-11-10)
 
 - A View Álbuns usa `revista-album-card`, `layout-grid` e `views-display` nos

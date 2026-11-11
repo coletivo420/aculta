@@ -1,3 +1,13 @@
+# ADR-054/055 — UI Styles Entity Status — 2026-11-11
+
+- **Objetivo:** ativar o estilo oficial de pré-visualização não publicada sem alterar acesso/moderação.
+- **Estado:** Sync/Runtime habilitados; classe `aculta-content-status--unpublished`. Teste upstream 1/7; saída visual, perfis e cache DEFERRED.
+- **Decisões/cuidados:** import parcial do settings após snapshot; o plugin apenas marca visualmente conteúdo não publicado e seções LB.
+- **Commits/arquivos:** pendente; configuração, tema, inventário e ADR-055.
+- **Verificações:** UI Styles 40, foundations 83 pares, Skins 134, boundary 7872, Stylelint e índice de status PASS. PHPUnit 1/7 com 54 deprecações. Token-budget DEFERRED: script tem SyntaxError na linha 40.
+- **Pendências:** teste visual real, revisão por perfis, cache. 54 deprecações são avisos do ambiente upstream.
+- **Próximo passo:** homologar entidade não publicada renderizada no Runtime com sessão editorial e confirmar que não muda controle de acesso.
+
 # ADR-054/055 — Cutover focal UI Icons — 2026-11-11
 
 - **Objetivo:** alinhar seletor UI Patterns ao Picker da Sync sem desativar submódulos Runtime.
