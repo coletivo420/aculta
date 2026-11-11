@@ -85,6 +85,12 @@ final class DomainSiteManagerMappingKernelTest extends KernelTestBase {
    * Tests that every configured Domain ID resolves to its purpose. */
   public function testEveryCanonicalDomainIdMapsToItsPurpose(): void {
     foreach (self::DOMAINS as $purpose => $id) {
+      if (is_int($purpose)) {
+        // Auxiliary module domains (uploader, file, token, image, crop) are
+        // not ACULTA sites and must fail closed instead of inheriting MAIN.
+        $this->assertNull($this->manager->getSiteKeyValueForDomainId($id), "Domain $id não pode herdar um site key.");
+        continue;
+      }
       $this->assertSame(
         $purpose,
         $this->manager->getSiteKeyValueForDomainId($id),
