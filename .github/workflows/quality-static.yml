@@ -56,6 +56,62 @@ jobs:
         fi
         xargs -a changed-sh.txt shfmt -d -i 2 -ci
 
+  workflow-lint:
+    name: actionlint (versão fixada)
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install actionlint (versão fixada)
+      run: python -m pip install --disable-pip-version-check actionlint-py==1.7.12.25
+
+    - name: Lint workflows
+      run: actionlint .github/workflows/*.yml
+
+  bats-runtime-sync:
+    name: Bats (isolamento do Runtime Sync, sem Runtime)
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install bats
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y bats
+
+    - name: Run Bats suite
+      run: bats tests/shell/
+
+  frontend-quality:
+    name: Frontend quality (Stylelint, ESLint do tema)
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: npm
+        cache-dependency-path: package-lock.json
+
+    - name: Install declared dependencies (sem scripts)
+      run: npm ci --ignore-scripts --no-audit --no-fund
+
+    - name: Stylelint
+      run: npm run lint:css
+
+    - name: ESLint (tema)
+      run: npm run lint:js
+
   security-static:
     name: Security static (Semgrep local rules, fixtures, composer audit)
     runs-on: ubuntu-latest

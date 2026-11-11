@@ -61,7 +61,7 @@
       const url = new URL(value, window.location.href);
       return url.origin === window.location.origin && /\/entrar\/janela\/?$/.test(url.pathname);
     }
-    catch (error) {
+    catch {
       return false;
     }
   }
@@ -71,7 +71,7 @@
       const url = new URL(value, window.location.href);
       return url.origin === window.location.origin && /\/busca\/popup\/?$/.test(url.pathname);
     }
-    catch (error) {
+    catch {
       return false;
     }
   }

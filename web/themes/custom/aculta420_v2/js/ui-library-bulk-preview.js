@@ -142,7 +142,6 @@
     }
 
     // Verifica se terminou
-    const completed = state.loadedSet.size + state.errorSet.size;
     if (state.queue.length === 0 && state.activeRequests === 0) {
       state.isRunning = false;
       updateUI();

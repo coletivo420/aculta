@@ -1,103 +1,144 @@
 # Segurança estática: triagem e resultados (2026-11-11)
 
-Skill responsável: `aculta-seguranca-estatica`. Base: `origin/dev` em `9d06d2167`.
+Skill responsável: `aculta-seguranca-estatica`. Base: `origin/dev` em `9d06d2167`, com entregas `87bec2be4` e `257adfb03`.
 
-Os relatórios brutos (JSON do Semgrep e saída do `composer audit`) ficam em `SUITE_OUT`, fora do repositório. Nenhum segredo foi impresso nem versionado.
+Relatórios brutos (JSON do Semgrep, saída do `composer audit`, gitleaks) ficam em `SUITE_OUT`, fora do repositório. Nenhum valor de segredo foi impresso nem versionado.
 
 ## 1. Semgrep com regras locais
 
-- Comando: `semgrep --metrics=off --config .agents/skills/aculta-seguranca-estatica/rules/aculta-php.yml --exclude vendor --exclude web/core --exclude web/modules/contrib --exclude web/libraries --exclude node_modules` sobre `web/modules/custom`, `web/themes/custom` e `scripts`.
-- Resultado: **474 achados** em 118 arquivos. A baseline anterior de 127 achados não tinha triagem, e a comparação direta não é válida porque o conjunto de regras mudou.
+- Comando: `semgrep --metrics=off --config .agents/skills/aculta-seguranca-estatica/rules/aculta-php.yml` com exclusões de `vendor`, `web/core`, `web/modules/contrib`, `web/libraries` e `node_modules`, sobre `web/modules/custom`, `web/themes/custom` e `scripts`.
+- Resultado: **474 achados** em 118 arquivos.
 
 | Regra | Achados | Classe |
 |---|---:|---|
 | `aculta-php-static-drupal-service` (`\Drupal::` estático) | 432 | dívida de arquitetura, não de segurança |
-| `aculta-php-markup-raw-output` | 31 | triagem parcial (ver seção 1.2) |
-| `aculta-php-eval-or-dynamic-exec` | 10 | triados (seção 1.1) |
-| `aculta-php-unserialize-untrusted` | 1 | FALSO POSITIVO com mitigação |
+| `aculta-php-markup-raw-output` | 31 | triados: 15 FALSO POSITIVO, 16 PENDENTE |
+| `aculta-php-eval-or-dynamic-exec` | 10 | 9 ACEITO COM JUSTIFICATIVA, 1 PENDENTE |
+| `aculta-php-unserialize-untrusted` | 1 | FALSO POSITIVO (com mitigação) |
 | `aculta-php-raw-sql-concat` | 0 | sem achado; coberta por fixture |
-| `aculta-php-raw-redirect-cross-host` | 0 | sem achado após correção da regra (ver 1.3) |
 | `aculta-php-superglobal-input` | 0 | sem achado; coberta por fixture |
+| `aculta-php-raw-redirect-cross-host` | 0 | sem achado após correção da regra (ver 1.3) |
+
+Não há comparação direta com a baseline de 127 achados de 2026-11-05: o conjunto de regras mudou e a baseline não tinha triagem.
 
 ### 1.1 Execução dinâmica (10)
 
-| Arquivo | Sink | Classe | Justificativa |
+| Arquivo:linha | Sink | Classe | Justificativa |
 |---|---|---|---|
-| `scripts/validate-aculta420-layouts.php:29` | `passthru` | ACEITO COM JUSTIFICATIVA | script de validação de dev; caminhos com `escapeshellarg`; comando fixo |
+| `scripts/validate-aculta420-layouts.php:29` | `passthru` | ACEITO COM JUSTIFICATIVA | script de validação de dev; `escapeshellarg`; comando fixo |
 | `scripts/validate-aculta420-layout-builder-batch.php:34` | `passthru` | ACEITO COM JUSTIFICATIVA | mesmo padrão |
 | `scripts/validate-aculta-ui-library.php:30` | `passthru` | ACEITO COM JUSTIFICATIVA | mesmo padrão |
 | `scripts/validate-aculta420-foundation.php:31` | `passthru` | ACEITO COM JUSTIFICATIVA | mesmo padrão |
-| `scripts/validate-browser-index.php:34` | `exec` | ACEITO COM JUSTIFICATIVA | caminho com `escapeshellarg`; comando fixo `python3 gerar-indice.py --check` |
-| `scripts/validate-domain-front-paths.php:62` | `shell_exec` | ACEITO COM JUSTIFICATIVA | `host` e `caminho` passam por `escapeshellarg`; origem dos valores é lista interna de domínios |
-| `scripts/validate-agent-economy-paths.php:57` | `shell_exec` | ACEITO COM JUSTIFICATIVA | caminho com `escapeshellarg`; leitura de tamanho |
-| `scripts/validate-aculta-portal-drupal12.php:950` | `exec` | ACEITO COM JUSTIFICATIVA | `escapeshellarg` em PHP_BINARY e no caminho do validador |
+| `scripts/validate-browser-index.php:34` | `exec` | ACEITO COM JUSTIFICATIVA | comando fixo, caminho com `escapeshellarg` |
+| `scripts/validate-domain-front-paths.php:62` | `shell_exec` | ACEITO COM JUSTIFICATIVA | `escapeshellarg`; lista interna de domínios |
+| `scripts/validate-agent-economy-paths.php:57` | `shell_exec` | ACEITO COM JUSTIFICATIVA | `escapeshellarg`; leitura de tamanho |
+| `scripts/validate-aculta-portal-drupal12.php:950` | `exec` | ACEITO COM JUSTIFICATIVA | `escapeshellarg` em `PHP_BINARY` e caminho do validador |
 | `scripts/validate-session-cookie-policy.php:29` | `exec` | ACEITO COM JUSTIFICATIVA | comando fixo com `escapeshellarg` |
-| `web/modules/custom/aculta_portal/modules/aculta_deployer/src/Cli.php:1539` | `proc_open` (array, sem shell) | PENDENTE | não há shell; falta confirmar que `$cmd` vem só de configuração do operador (parâmetro de CLI), e não de dado de domínio |
+| `aculta_deployer/src/Cli.php:1539` | `proc_open` (array, sem shell) | PENDENTE | falta provar que `$cmd` vem só de configuração do operador da CLI |
 
-### 1.2 `#markup` sem escape (31; triagem parcial)
+### 1.2 `#markup` sem escape (31, triados todos)
 
-Triados:
+**FALSO POSITIVO (15):** o valor passa por `$this->t()`, `translate()`, `formatPlural()`, `htmlspecialchars` (`plainText`), formatação numérica/de data, ou é ternário de `t()`.
 
-| Arquivo:linha | Classe | Motivo |
+| Arquivo:linha | Motivo |
+|---|---|
+| `aculta_donation/.../DonationSummaryFormatter.php:74` | valor monetário formatado a partir de `PriceItem` (conferir retorno de `viewValue` se houver mudança) |
+| `aculta_events/.../EventContributionWorkspaceController.php:124,129,156` | `plainText()` = `htmlspecialchars(ENT_QUOTES)` |
+| `aculta_events/.../EventOrganizationRecoveryForm.php:95` | ternário de `$this->t()` |
+| `aculta_events/.../DateRangeUpcomingFormatter.php:93` | datas formatadas pelo próprio `texto()` |
+| `aculta_events_openstreetmap/.../OpenStreetMapStatusController.php:44,49` | ternário de `$this->t()` |
+| `aculta_forum/.../MoveForumTopicsAction.php:98` | `formatPlural()` |
+| `aculta_lms/.../EnrollmentFormHooks.php:173,190` | `translate()` com texto fixo |
+| `aculta_portal/src/Form/EmailResendForm.php:56` | `translate()` com texto fixo |
+| `aculta_portal/src/Plugin/Commerce/CheckoutPane/FiscalIdentityPane.php:103,108` | `unavailableMessage()` retorna `$this->t()` |
+| `aculta_studio/.../SavedContentController.php:220` | `$this->t()` para data; `purpose` com `htmlspecialchars` |
+
+**PENDENTE (16):** a origem da variável ou o tipo do campo não foram provados nesta triagem. Risco de XSS só se o dado tiver origem não confiável ou HTML permitido.
+
+| Arquivo:linha | O que falta provar | Prioridade |
 |---|---|---|
-| `aculta_portal/src/Plugin/Commerce/CheckoutPane/FiscalIdentityPane.php:72` | FALSO POSITIVO | `$this->t()` escapa `@masked` |
-| `aculta_studio/src/Controller/SavedContentController.php:220` | FALSO POSITIVO | `$this->t()` escapa a data; `purpose` passa por `htmlspecialchars` |
-| `aculta_portal/src/Form/EmailResendForm.php:56` | FALSO POSITIVO | texto fixo traduzido |
-| `aculta_mailer/src/Form/MailImapSettingsForm.php:126` | FALSO POSITIVO | `$this->t()` com `@state` (estado calculado internamente) |
-| `aculta_messenger/src/Controller/MessagesController.php:1528` | PENDENTE | `$site_alert->getMessage()` é renderizado como markup. Confirmar se o campo aceita HTML e quem tem permissão de editar. Se aceitar HTML, é risco de XSS por administrador, a classificar como ACEITO ou corrigir com filtro de formato |
-
-Pendentes: os demais 24 achados desta regra. Não foram triados nesta entrega; ficam como dívida até a próxima passagem.
+| `aculta_messenger/.../MessagesController.php:1528` | `$site_alert->getMessage()` é renderizado como markup. Confirmar se o campo aceita HTML e quem edita. Se aceitar HTML, é risco de XSS por administrador | alta |
+| `aculta_lms/.../FreeTextAnswerPluginBase.php:98` | `$messages` podem conter texto digitado por aluno | alta |
+| `aculta_mailer/.../MailImapSettingsForm.php:131` | `errorText()` pode incluir texto de erro do servidor IMAP (origem externa) | alta |
+| `aculta_mailer/.../MailTemplateForm.php:136` | `$preview['body']` é corpo de template de e-mail editado por administrador | média |
+| `aculta_events/.../EventPageController.php:137` | `$texto` / `$linha`: origem a confirmar | média |
+| `aculta_events/.../LocationListController.php:78` | `$linha`: origem a confirmar | média |
+| `aculta_events/.../LocationPageController.php:352` | `$line`: origem a confirmar | média |
+| `aculta_events/.../EventEditorialPresenter.php:68` | `$itemMarkup` montado no presenter; confirmar escape | média |
+| `aculta_events_openstreetmap/.../OpenStreetMapStatusController.php:37` | ramo `$environment` do ternário | baixa |
+| `aculta_events_openstreetmap/.../OpenStreetMapImportWizard.php:189` | `lat`/`lon` do formulário; confirmar validação numérica | baixa |
+| `aculta_forum/.../TopicDeletionQueueController.php:80` | `$topicLink`: confirmar que é `Link` renderizado ou título escapado | média |
+| `aculta_image/.../ImageSettingsForm.php:85` | `implode` de formatos suportados (lista de código) | baixa |
+| `aculta_lms/.../ProximosEventosBlock.php:83` | `$texto`: origem a confirmar | média |
+| `aculta_paths/.../SurfaceEditForm.php:131` | `$hostAtual`: domínio configurado; confirmar origem | baixa |
+| `aculta_wiki/.../WikiEntryImageHooks.php:147` | ramo com `$current['alt']`: texto de alt de imagem, possivelmente editado por usuário | média |
+| `aculta_portal/.../PaymentInformationWithoutAddress.php:25` | `getDisplayLabel()` do gateway (configuração administrativa) | baixa |
 
 ### 1.3 Correção de regra quebrada
 
-- `aculta-php-raw-redirect-cross-host` usava `pattern:` com `new \Symfony\...\RedirectResponse(...)`. No parser PHP do Semgrep essa forma **não casava**, mesmo com a barra inicial. Verificado com fixture isolada.
-- A regra foi trocada para `pattern-regex` e agora tem caso positivo e negativo em `tests/rules/aculta-php.php`.
-- O zero achado anterior dessa regra não era prova de ausência de problema.
+- `aculta-php-raw-redirect-cross-host` usava `pattern:` com o nome totalmente qualificado de `RedirectResponse`. Esse padrão não casa no parser PHP do Semgrep. Verificado com fixture isolada.
+- Trocado por `pattern-regex`, com caso positivo e negativo em `tests/rules/aculta-php.php`. O zero achado anterior não provava ausência do problema.
 
 ### 1.4 Fixtures das regras
 
-- Arquivo: `.agents/skills/aculta-seguranca-estatica/tests/rules/aculta-php.php`.
-- Verificador: `tests/check-rule-fixtures.py`.
-- Resultado: **17 expectativas, 0 falhas** após a correção da regra de redirect.
-- `semgrep --test` foi tentado e falhou com erro interno do harness (`IndexError` em `semgrep/test.py`). Por isso o verificador próprio é o gate.
+- Arquivo: `.agents/skills/aculta-seguranca-estatica/tests/rules/aculta-php.php`. Verificador: `tests/check-rule-fixtures.py`.
+- Resultado: **17 expectativas, 0 falhas**.
+- `semgrep --test` nativo falhou com `IndexError` interno do harness; o verificador próprio é o gate.
+- O mesmo verificador roda no CI (`quality-static.yml`, job `security-static`).
 
-## 2. Dependências (`composer audit --locked`)
+## 2. Dependências
 
-Resultado: **3 advisories** em 2 pacotes. Execução real.
+### 2.1 `composer audit --locked` (antes da correção)
 
-| Pacote | Versão travada | Advisory | Severidade | Afetados | Correção |
+3 advisories em 2 pacotes:
+
+| Pacote | Versão travada | Advisory | Severidade | Consumidores | Correção aplicada |
 |---|---|---|---|---|---|
-| `drupal/entity_print` | 2.19.0 | CVE-2026-126736 (informação sensível inserida em ...) | moderada (segundo o título do advisory) | módulos que usam Entity Print (ver `composer.json` e `config/sync`) | atualizar para `>= 2.20.0` no mesmo minor 2.x; **PENDENTE de autorização** (altera lock) |
-| `symfony/http-client` | v7.4.22 | CVE-2026-121971 (credenciais do escopo padrão enviadas a outras origens por referência de rede) | não informada pelo advisory no texto obtido | dependência transitiva de Drupal core/componentes; confirmar com `composer why` | atualizar para `>= 7.4.23` (mesmo minor); **PENDENTE de autorização** |
-| `symfony/http-client` | v7.4.22 | CVE-2026-123119 (NoPrivateNetworkHttpClient, DNS rebinding) | não informada | mesmo | mesma correção: `>= 7.4.23` |
+| `drupal/entity_print` | 2.19.0 | CVE-2026-126736 (inserção de informação sensível). Título: "Moderately critical" | moderada | módulos que usam Entity Print (`composer.json`, `config/sync`) | **2.20.0** |
+| `symfony/http-client` | v7.4.22 | CVE-2026-121971 (credenciais do escopo padrão enviadas a outras origens) | não informada no texto obtido | transitiva (Drupal core e componentes) | **v7.4.23** |
+| `symfony/http-client` | v7.4.22 | CVE-2026-123119 (NoPrivateNetworkHttpClient, DNS rebinding) | não informada | mesmo | **v7.4.23** |
 
-Nenhuma correção foi aplicada: a tarefa proíbe atualização global e alteração não autorizada do lock. Registro para decisão do responsável.
+Atualização feita com `composer update drupal/entity_print symfony/http-client --minimal-changes --no-install`, autorizada pelo responsável. Diff do lock: 2 pacotes atualizados, nenhum removido. `composer.json` não foi alterado.
 
-## 3. Segredos
+**Após a correção:** `composer audit --locked` → "No security vulnerability advisories found." (exit 0).
 
-- **gitleaks: MISSING.** Não instalado neste ambiente. Gate de segredos **DEFERRED**.
-- Não foi feita varredura por padrão de segredo nesta entrega. Não afirme "sem segredos" por esta sessão.
+**Pendente de verificação:** o lock foi alterado, mas a aplicação em Runtime (`composer install` + `updatedb` se houver mudança de schema) segue a regra de migrações; não rodei nada no Runtime.
+
+### 2.2 `npm audit` (`tests/browser`, dev e prod)
+
+0 vulnerabilidades.
+
+## 3. Segredos (gitleaks 8.30.1)
+
+- Instalado do release oficial `gitleaks_8.30.1_linux_x64.tar.gz`, com SHA256 verificado contra o `checksums.txt` publicado.
+- Escaneado: arquivos desta entrega (`.agents`, `docs/operations/testing`, `.github/workflows`, `tests/browser`, `web/themes/custom/aculta420_v2/src/styles/content.css`, `docs/operations/GATES.md`).
+- Resultado: **4 achados `generic-api-key`** fora dos arquivos desta entrega:
+  - `docs/portal/STUDIO-MAGAZINE-ROADMAP.md:171`
+  - `web/libraries/photoswipe/demo-docs-website/src/theme/Navbar/index.js:263` (biblioteca de terceiros)
+  - `web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Unit/XapiAttemptTokenTest.php:17` (fixture de teste)
+  - `web/modules/custom/aculta_portal/modules/aculta_secrets_manager/tests/src/Unit/SecretsRevealTest.php:50` (fixture de teste)
+- Classificação: **PENDENTE de triagem**. Os dois testes parecem fixture, mas não confirmei; não os tratei como incidente real. Valores não impressos.
+- O scan de histórico Git (`gitleaks git`) foi recusado pelo guarda de worktree e **não foi executado**.
 
 ## 4. Drupal Security Review (`drupal/security_review`)
 
-- Estado declarado: `composer.json` `^3.1`, `composer.lock` 3.1.3, Config Sync habilita `security_review`.
-- Execução: **DEFERRED**. Não há `vendor/` nem Drush consultável nesta worktree. Não se declara PASS sem consultar o Runtime.
+- Declarado em `composer.json` (`^3.1`), travado em 3.1.3, habilitado no Config Sync.
+- Execução: **DEFERRED**. Não há `vendor/` nem Drush consultável nesta worktree.
 
 ## 5. Resumo
 
 | Item | Resultado |
 |---|---|
-| Semgrep local | executado: 474 achados, triagem parcial (10/10 dinâmicos, 5/31 markup, 1/1 unserialize) |
+| Semgrep local (474 achados) | triagem: `#markup` 31/31 (15 FP, 16 PENDENTE); dinâmicos 10/10 (9 ACEITO, 1 PENDENTE); unserialize 1/1 FP |
 | Fixtures das regras | PASS: 17/17 |
-| `semgrep --test` nativo | FAIL por erro interno do harness; substituído pelo verificador próprio |
-| composer audit | executado: 3 advisories, PENDENTE de correção autorizada |
-| npm audit (`tests/browser`, dev e prod) | executado: 0 vulnerabilidades |
-| gitleaks | DEFERRED (MISSING) |
-| drupal/security_review | DEFERRED (sem Runtime/Drush consultável) |
+| `composer audit --locked` | antes: 3 advisories; depois: 0 (após atualização autorizada) |
+| `npm audit` | 0 vulnerabilidades |
+| gitleaks (arquivos da entrega) | executado: 4 achados fora da entrega, PENDENTE de triagem; histórico não executado |
+| Drupal Security Review | DEFERRED (sem Drush/Runtime) |
 
 ## 6. Próximas ações
 
-1. Triar os 24 `#markup` restantes e confirmar `MessagesController:1528` e `Cli.php:1539`.
-2. Decidir sobre a correção de `entity_print` e `symfony/http-client` (lock).
-3. Instalar gitleaks em versão fixada e integrá-lo ao workflow de segurança.
-4. Executar `drupal/security_review` com Drush em ambiente descartável ou no Runtime, em modo somente leitura.
+1. Triar os 16 `#markup` PENDENTE, começando pelas prioridades alta (`MessagesController:1528`, `FreeTextAnswerPluginBase:98`, `MailImapSettingsForm:131`).
+2. Confirmar `Cli.php:1539` (origem de `$cmd`) e os quatro achados do gitleaks.
+3. Aplicar `entity_print` 2.20.0 e `symfony/http-client` 7.4.23 no Runtime por fluxo controlado, e registrar o resultado.
+4. Executar `drupal/security_review` com Drush em modo somente leitura quando houver acesso ao Runtime.

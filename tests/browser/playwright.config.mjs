@@ -4,7 +4,7 @@ const output = process.env.SUITE_OUT;
 
 export default defineConfig({
   testDir: '.',
-  testMatch: /playwright(\.routes|\.a11y)?\.spec\.mjs$/,
+  testMatch: /playwright(\.routes|\.a11y|\.functional)?\.spec\.mjs$/,
   outputDir: output ? `${output}/test-results` : undefined,
   reporter: [['line'], ['json', { outputFile: output ? `${output}/playwright.json` : 'playwright.json' }]],
   use: {

@@ -25,7 +25,7 @@ Use junto com `aculta-navegador-testes`, `css`, `sdc`, `ui-styles`, `ui-patterns
 
 ## Onde guardar
 
-- Código da suíte: `tests/browser/playwright.visual.spec.mjs` (a criar; descoberta pelo `testMatch` do `playwright.config.mjs` ao incluir `.visual`).
+- Código da suíte: `tests/browser/playwright.visual.spec.mjs`, com config próprio `tests/browser/playwright.visual.config.mjs`. Fica fora do `testMatch` do config base, então a execução padrão não gera nem compara screenshot.
 - Referências aprovadas: diretório próprio de snapshots versionado, revisado.
 - Saídas temporárias (diff, trace, resultado bruto): sempre em `SUITE_OUT`, fora do repositório.
 

@@ -1,12 +1,12 @@
 # Auditoria UI Suite, ferramentas e resultados (2026-11-11)
 
-Skills responsáveis: `ui-suite-integrations`, `ui-icons`, `ui-patterns`, `ui-styles`, `aculta-acessibilidade`, `aculta-regressao-visual`, `aculta-seguranca-estatica`, `aculta-shell-qualidade`, `aculta-navegador-testes`.
+Skills responsáveis: `ui-suite-integrations`, `ui-icons`, `ui-patterns`, `ui-styles`, `aculta-acessibilidade`, `aculta-regressao-visual`, `aculta-seguranca-estatica`, `aculta-shell-qualidade`, `aculta-navegador-testes`, `aculta-gates-por-escopo`.
 
-Base: `origin/dev` em `9d06d2167`, na worktree `skills-seguranca-a11y-visual`. O checkout principal tem 50 alterações de outros agentes, preservadas e não incluídas nesta entrega.
+Base: `origin/dev` em `9d06d2167`. Entregas: `87bec2be4`, `257adfb03` e a terceira publicada ao final desta sessão (ver histórico do branch). O checkout principal tem 50 alterações de outros agentes, preservadas e fora desta entrega.
 
 ## 1. Evidência UI Suite (quatro fontes)
 
-Regra: declaração não prova runtime. Cada módulo é classificado pelas fontes **disponíveis**.
+Declaração não prova runtime. Cada módulo é classificado pelas fontes disponíveis.
 
 | Módulo | `composer.json` | `composer.lock` | Config Sync | Filesystem / Runtime | Situação |
 |---|---|---|---|---|---|
@@ -20,82 +20,98 @@ Regra: declaração não prova runtime. Cada módulo é classificado pelas fonte
 | UI Examples | ausente | ausente | ausente | — | não instalado |
 | Display Builder | ausente | ausente | ausente | — | não instalado |
 
-**Correções feitas nas skills:** `ui-icons` afirmava que `drupal/ui_icons` não constava no projeto; `ui-styles` tratava `ui_styles_page` como não habilitado; `ui-suite-integrations` dizia que UI Skins não estava instalado e que UI Patterns Field Group estava em `2.0.0-beta2`. Todas as afirmações foram corrigidas com a evidência acima.
+**Correções feitas nas skills:** `ui-icons` afirmava que `drupal/ui_icons` não constava; `ui-styles` tratava `ui_styles_page` como não habilitado; `ui-suite-integrations` dizia que UI Skins não estava instalado e que UI Patterns Field Group estava em `2.0.0-beta2`. Corrigidas com a evidência acima.
 
-**Não verificado:** estado efetivo no Runtime (`drush pm:list`, filesystem contrib). Este checkout não tem `web/modules/contrib` nem `vendor/`. Sem essa consulta, o estado é "habilitado no código", não "ativo no Runtime".
+**Não verificado:** estado efetivo no Runtime (`drush pm:list`, filesystem contrib). Esta worktree não tem `web/modules/contrib` nem `vendor/`. "Habilitado" significa "habilitado no código", não "ativo no Runtime".
 
 ## 2. Matriz de ferramentas
 
-Estados: INSTALLED, CONFIGURED, EXECUTABLE, CI, DEFERRED, MISSING.
+Estados: INSTALLED, CONFIGURED, EXECUTABLE, CI, DEFERRED, MISSING. Ferramenta só é PASS quando executada.
 
 | Ferramenta | Estado | Local | Skill | Gate | CI | Resultado real |
 |---|---|---|---|---|---|---|
-| Semgrep 1.183.0 | INSTALLED, EXECUTABLE | `~/.local/bin/semgrep` | `aculta-seguranca-estatica` | regras locais + fixtures | `quality-static.yml` (job security-static, baseline) | 474 achados; fixtures 17/17 PASS |
-| Fixtures de regra | CONFIGURED, EXECUTABLE | `.agents/skills/aculta-seguranca-estatica/tests/` | idem | bloqueante no CI | idem | PASS |
-| composer audit | EXECUTABLE (`--locked`) | repositório | idem | informativo | idem (`continue-on-error`) | 3 advisories em 2 pacotes |
-| npm audit | EXECUTABLE | `tests/browser` | idem | informativo | não integrado | 0 vulnerabilidades |
-| gitleaks | MISSING | — | `aculta-seguranca-estatica` | DEFERRED | não | não executado |
-| drupal/security_review | DEFERRED | Runtime (Drush) | idem | somente leitura | não | não executado (sem Drush/Runtime consultável) |
+| Semgrep 1.183.0 | INSTALLED, EXECUTABLE | `~/.local/bin/semgrep` | `aculta-seguranca-estatica` | regras locais | `quality-static.yml` (security-static, baseline) | 474 achados, triagem em `SEGURANCA-ESTATICA-2026-11-11.md` |
+| Fixtures de regra | CONFIGURED, EXECUTABLE | `.agents/skills/aculta-seguranca-estatica/tests/` | idem | bloqueante | idem | PASS 17/17 |
+| composer audit | EXECUTABLE (`--locked`) | repositório | idem | informativo (`continue-on-error`) | idem | PASS após atualização autorizada de `entity_print` 2.20.0 e `symfony/http-client` v7.4.23 |
+| npm audit | EXECUTABLE | `tests/browser` | idem | informativo | não integrado | PASS: 0 vulnerabilidades |
+| gitleaks 8.30.1 | INSTALLED, EXECUTABLE (release oficial, SHA256 verificado) | `$SUITE_OUT`/ferramentas | `aculta-seguranca-estatica` | triagem de achado | não integrado | executado em arquivos da entrega: 0 achados nela; 4 achados fora dela, PENDENTE; histórico Git não executado (guarda de worktree) |
+| drupal/security_review | DEFERRED | Runtime (Drush) | idem | somente leitura | não | não executado (sem Drush/Runtime) |
 | ShellCheck | INSTALLED, EXECUTABLE | `/usr/bin/shellcheck` | `aculta-shell-qualidade` | `-S warning` em arquivos alterados | `quality-static.yml` | legado: 27 avisos (dívida) |
-| shfmt | INSTALLED, EXECUTABLE | `/usr/bin/shfmt` | idem | `-d` em arquivos alterados | idem | legado sem formatação: dívida |
-| Bats-core | INSTALLED | `/usr/bin/bats` | idem | suíte futura em `tests/shell/` | DEFERRED (sem suíte ainda) | não há teste Bats novo nesta entrega |
-| actionlint | MISSING | — | `aculta-shell-qualidade` | gate no CI pretendido | não | DEFERRED: instalação de binário via pip foi negada pelo classificador de ações; nenhum PASS registrado |
+| shfmt | INSTALLED, EXECUTABLE | `/usr/bin/shfmt` | idem | `-d` em arquivos alterados | idem | legado sem formatação (dívida); arquivo novo `.bats` formatado |
+| actionlint 1.7.12 | INSTALLED, EXECUTABLE (wheel `actionlint-py==1.7.12.25`, venv de teste) | fora do repositório | `aculta-shell-qualidade` | sintaxe dos workflows | não integrado no CI ainda | PASS nos 2 workflows (`php-quality.yml`, `quality-static.yml`) |
+| Bats-core | INSTALLED, EXECUTABLE | `/usr/bin/bats` | `aculta-shell-qualidade` | `bats tests/shell/` | `quality-static.yml` ainda não chama Bats | PASS 5/5 em `tests/shell/runtime-sync.bats` |
 | `bash -n` + `runtime-sync` | EXECUTABLE | `scripts/` | `aculta-runtime-sync` | obrigatório | não | PASS |
-| `scripts/test-runtime-sync.sh` | EXECUTABLE | `scripts/` | `aculta-runtime-sync` | obrigatório | não | 24 PASS, 0 FAIL |
+| `scripts/test-runtime-sync.sh` | EXECUTABLE | `scripts/` | `aculta-runtime-sync` | obrigatório | não | PASS 24/24 (simulado) |
+| Stylelint 13 (`npm run lint:css`) | EXECUTABLE | `node_modules` da raiz | `css` | `lint:css` | não integrado | PASS (exit 0) |
+| ESLint 9.39.1 (`npm run lint:js`) | INSTALLED, CONFIGURED (`eslint.config.mjs`), EXECUTABLE | raiz | `css`, `ui-suite-integrations` | `lint:js` (tema) | não integrado | PASS no tema (`js` e `components`); legado de módulos fora do gate (ver seção 5) |
+| `validate-aculta420-v2-foundations.php` | EXECUTABLE (estático) | `scripts/` | `css` | contraste de tokens | não | PASS: 85 pares de texto, 6 de faixa |
 | `@axe-core/playwright` 4.14.0 | INSTALLED (devDependency fixa) | `tests/browser` | `aculta-acessibilidade` | `test:a11y` | `browser-discovery` só lista | ver seção 3 |
-| Playwright `@playwright/test` 1.56.1 | INSTALLED | `tests/browser` | `aculta-navegador-testes` | runner existente | discovery | 130 testes descobertos |
-| Regressão visual | DEFERRED | — | `aculta-regressao-visual` | — | não | suíte não criada |
-| ESLint | MISSING | — | — | — | não | DEFERRED |
-| Stylelint 13 (`npm run lint:css`) | EXECUTABLE, declarado em `package.json` | `node_modules` da raiz (`npm ci --ignore-scripts`) | `css` | `lint:css` | não integrado ainda | PASS (exit 0) |
-| `validate-aculta420-v2-foundations.php` | EXECUTABLE (estático) | `scripts/` | `css` | contraste de tokens | não | PASS: 85 pares de texto, 6 pares de faixa |
-| PHPUnit / PHPStan / PHPCS / Rector | não executados nesta entrega | `vendor/` ausente | `aculta-gates-por-escopo` | — | `php-quality.yml` (PHPUnit, PHPStan) | não reexecutado |
+| Playwright 1.56.1 | INSTALLED | `tests/browser` | `aculta-navegador-testes` | runner existente | discovery | `test:list`: 130 testes; navegadores em cache |
+| Suíte visual | CONFIGURED, EXECUTED (1 frente) | `tests/browser/playwright.visual.config.mjs` | `aculta-regressao-visual` | 10 capturas (2 temas × 5 viewports) | não | ver seção 4 |
+| Suíte funcional de acesso | CONFIGURED, EXECUTED | `tests/browser/playwright.functional.spec.mjs` | `aculta-navegador-testes` | anônimo em rota admin: PASS 2/2 | não | ver seção 4 |
 | k6 | INSTALLED | `/usr/bin/k6` | — | fora de escopo | não | não executado |
+| PHPUnit / PHPStan / PHPCS / Rector | não executados nesta entrega | `vendor/` ausente | `aculta-gates-por-escopo` | — | `php-quality.yml` | DEFERRED |
 
 ## 3. Acessibilidade executada (origem `https://aculta.toca.net.br/`, Firefox headless)
 
-Comando: `ACULTA_SITE_ORIGIN=https://aculta.toca.net.br/ SUITE_OUT=<fora-do-repo> npx playwright test playwright.a11y.spec.mjs`.
-
 | Teste | Resultado |
 |---|---|
-| axe WCAG 2.0/2.1/2.2 A e AA (impacto serious/critical bloqueia) | **14 FAIL**, todos pela regra `color-contrast` |
-| reflow 320 CSS px sem rolagem horizontal | **14 PASS** |
+| axe WCAG 2.0/2.1/2.2 A e AA (serious/critical bloqueia) | **14 FAIL**, todos `color-contrast` |
+| reflow 320 CSS px | **14 PASS** |
 | rotas sem origem configurada | 32 SKIPPED (não contam como PASS) |
 
-Os 14 FAIL estão em `main/aculta-patcher`, `main/aculta-portal-cep`, `main/aculta-qrcode`, `gallery/aculta-gallery`, `shop/aculta-frete`, `support/aculta-faq`, `transversal/aculta-document-viewer`, `transversal/aculta-editor`, `transversal/aculta-visual`, `transversal/aculta420-v2-audit-2026-11`, `transversal/aculta420-v2-card-accent`, `transversal/aculta420-v2-data-table`, `transversal/aculta420-v2-empty-state` e `transversal/aculta420-v2-navigation`.
+**Causa-raiz e correção:** texto `#0c3c29` sobre `#689427` (razão 3.46:1; axe 3.45:1) em `.aculta-category--green` (`web/themes/custom/aculta420_v2/src/styles/content.css`). Trocado para `--color-black` (5.85:1). Stylelint e validador de fundações passam.
 
-**Causa-raiz confirmada (par único, 84 nós):** texto `#0c3c29` (`--color-dark` → `--color-text-primary`) sobre fundo `#689427` (`--palette-green`), razão medida pelo axe 3.45:1; recalculada pela fórmula WCAG: 3.46:1. Origem: a classe `.aculta-category--green` em `web/themes/custom/aculta420_v2/src/styles/content.css`. A variante vermelha do mesmo bloco já usa `--color-black`.
+**Pendente:** a reexecução do axe contra `aculta.toca.net.br` **não foi feita após a correção**, porque esse host serve o checkout do Runtime, ainda sem a alteração. Sem essa reexecução, a correção está provada por cálculo e não por teste de browser. Também não confirmei que todas as 14 páginas contêm a categoria verde.
 
-**Correção aplicada nesta entrega:** `.aculta-category--green` passa a usar `color: var(--color-black)`. Razão calculada: 5.85:1 (≥ 4.5:1). `lint:css` PASS; `validate-aculta420-v2-foundations.php` PASS.
+## 4. Regressão visual e funcional
 
-**Verificação pendente:** o axe contra `aculta.toca.net.br` não prova a correção, porque esse host serve o checkout do Runtime, ainda sem esta alteração. Confirmar que os 14 FAIL somem exige deploy/sincronização controlada e nova execução. Também não confirmei, rota a rota, que todas as 14 páginas contêm a categoria verde; a causa-raiz está provada pelo par de cores, não pela presença do elemento em cada página.
+**Visual (`playwright.visual.config.mjs`):** frente `aculta420-v2-navigation`, tema claro e escuro, viewports 320/390/768/1024/1440, `maxDiffPixelRatio: 0`, animações desligadas, dados voláteis mascarados.
 
-Relatórios brutos (JSON, trace, screenshot) ficaram em `SUITE_OUT`, fora do repositório.
+- Rodada 1 (`ACULTA_VISUAL_BASELINE=1`, saída em `SUITE_OUT`): gerou 10 candidatas. Falhou por design, porque snapshot novo exige revisão.
+- Rodada 2 (sem baseline): **10 esperados, 0 inesperados, 0 flaky**. Prova de determinismo nesse ambiente (duas execuções idênticas pixel a pixel).
+- Candidatas em `SUITE_OUT`, **não versionadas**: falta revisão humana de conteúdo e de dados pessoais antes de qualquer commit de imagem.
+- Cobertura restante (demais frentes, UI Skins, Layout Builder, Views, Fórum, Conta, Studio, barra multidomínio): **DEFERRED**.
 
-## 4. Gates e validadores desta entrega
+**Funcional (`playwright.functional.spec.mjs`):** anônimo em `/painel-administrativo` e `/painel-administrativo/` deve receber redirecionamento ou negação (301/302/303/307/308/401/403/404), nunca 200. Resultado: **2 PASS**.
+
+Escopo funcional restante (login/logout, sessões multidomínio, modais HTMX, formulários com erro, seleção de ícones, troca de tema e preferências, previews reais): **DEFERRED**, exige contas de teste e origem de ambiente.
+
+## 5. Gates e validadores
 
 | Comando | Resultado |
 |---|---|
-| `python3 scripts/validate-agent-skills.py` | PASS: 23 skills, 2 índices de agente, 18 casos |
-| `php scripts/validate-agent-token-budget.php` | FAIL (6): `TODO.md`, `css`, `htmx`, `sdc`, `ui-patterns`. **Pré-existente**, arquivos não tocados nesta entrega, exceto as descrições de `css` e `htmx` que não foram alteradas. As skills novas foram ajustadas e passam. |
-| `php scripts/validate-browser-index.php` | FAIL: `docs/architecture/GROWROOM420-VISUAL-PLANO.md` cita `tests/browser/aculta-forum/`, que não existe em `origin/dev`. **Pré-existente**, fora do escopo. |
+| `python3 scripts/validate-agent-skills.py` | PASS: 23 skills, 2 índices, 18 casos |
+| `php scripts/validate-agent-token-budget.php` | FAIL pré-existente: `TODO.md`, `css`, `htmx`, `sdc`, `ui-patterns`. Skills novas dentro do limite |
+| `php scripts/validate-browser-index.php` | FAIL pré-existente: `GROWROOM420-VISUAL-PLANO.md` cita `tests/browser/aculta-forum/`, inexistente em `origin/dev` |
 | `php scripts/validate-browser-validators.php` | PASS (9 checks) |
 | `php scripts/phpunit-suites.php --check` | PASS (unit 674, kernel 250) |
 | `bash -n scripts/runtime-sync.sh` | PASS |
-| `bash scripts/test-runtime-sync.sh` | PASS: 24 PASS, 0 FAIL |
+| `bash scripts/test-runtime-sync.sh` | PASS 24/24 |
+| `bats tests/shell/` | PASS 5/5 |
+| `npm run lint:css` | PASS |
+| `npm run lint:js` | PASS (tema) |
+| `actionlint` (workflows) | PASS |
+| `composer audit --locked` | PASS (0 advisories) |
+| `npm audit` (`tests/browser`) | PASS (0) |
 | `git diff --check` | PASS |
-| `shellcheck -S warning` (legado) | 27 avisos em `runtime-sync.sh` e `test-runtime-sync.sh` (dívida; não reformatado) |
-| `shfmt -d` (legado) | diferença de formatação (dívida; não reformatado) |
-| `npm audit` (`tests/browser`) | 0 vulnerabilidades |
-| `composer audit --locked` | 3 advisories (ver `SEGURANCA-ESTATICA-2026-11-11.md`) |
-| `npm run test:list` | PASS: 130 testes descobertos |
 
-## 5. Dívida e próximas ações
+**Dívida de JavaScript fora do gate:** 2440 dos 2559 erros ESLint vinham de bibliotecas de terceiros embutidas (`dhtmlxscheduler.js`, editor H5P). Excluídas por caminho, com motivo no `eslint.config.mjs`. Dívida real restante em módulos próprios (`no-var`, `eqeqeq`, `no-unused-vars`, `prefer-const`) em `aculta_portal/**/js`: não corrigida nesta entrega, por ser legado fora do escopo tocado.
 
-1. Após sincronização controlada do Runtime, reexecutar o axe e confirmar que os 14 `color-contrast` desaparecem; se restar qualquer um, investigar a rota pelo seletor.
-2. Confirmar estado efetivo dos módulos UI Suite no Runtime (`drush pm:list`) em modo somente leitura.
-3. Triar os 24 `#markup` restantes e os itens PENDENTE de segurança.
-4. Decidir sobre a atualização de `entity_print` (2.19.0 → 2.20.0) e `symfony/http-client` (7.4.22 → 7.4.23), que alteram o lock.
-5. Instalar gitleaks e actionlint em versão fixada; pinar ações por SHA verificado.
-6. Criar a suíte `playwright.visual.spec.mjs` com screenshots revisados, e a suíte Bats de `tests/shell/`.
-7. Instalar ESLint com configuração própria e confirmar a configuração do Stylelint do projeto.
-8. Reduzir o tamanho das skills `css`, `htmx`, `sdc` e `ui-patterns` (orçamento de token).
+**Dívida de shell:** 27 avisos ShellCheck e diferença de `shfmt` nos scripts Runtime Sync legados, não reformatados.
+
+## 6. Ferramentas faltantes ou bloqueadas
+
+- **Runtime (Fase 14):** DEFERRED. `runtime-sync.sh plan` recusa a worktree (não está em `dev`). Rodar no checkout compartilhado foi bloqueado pelo isolamento da sessão. Próximo passo: `plan` a partir do checkout servido, fora da worktree, sem `sync-code` até revisar o delta.
+- **gitleaks no histórico:** não executado (guarda de worktree recusou `git` com `-C`). Rodar a partir da worktree com `gitleaks git`.
+- **Security Review (Fase 3):** DEFERRED (sem Drush).
+
+## 7. Próximas ações
+
+1. Reexecutar o axe após sincronização controlada do Runtime e confirmar que os 14 `color-contrast` desaparecem.
+2. Revisar as candidatas visuais e decidir o local versionado das referências.
+3. Triar os 16 `#markup` PENDENTE e os 4 achados gitleaks fora da entrega.
+4. Aplicar `entity_print` 2.20.0 e `symfony/http-client` v7.4.23 no Runtime por fluxo controlado.
+5. Integrar Bats, Stylelint e ESLint ao `quality-static.yml` depois do primeiro run verde no GitHub.
+6. Pinar ações do GitHub por SHA verificado.
+7. Reduzir `css`, `htmx`, `sdc`, `ui-patterns` para o orçamento de token.
