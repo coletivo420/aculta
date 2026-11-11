@@ -25,11 +25,12 @@ use Drupal\Tests\UnitTestCase;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\user\UserInterface;
 use Drupal\user\UserDataInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
-use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -514,11 +515,12 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
   /**
    * Creates a member account stub.
    */
-  private function user(int $uid): UserInterface {
+  private function user(int $uid): UserInterface&MockObject {
     $user = $this->createMock(UserInterface::class);
     $user->method('id')->willReturn((string) $uid);
     return $user;
   }
+
 
   /**
    * Creates an account with controllable eligibility for private messages.

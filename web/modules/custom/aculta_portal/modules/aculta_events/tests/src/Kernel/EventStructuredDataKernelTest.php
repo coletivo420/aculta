@@ -258,9 +258,9 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
   public function testUpdate10005Idempotence(): void {
     \Drupal::moduleHandler()->loadInclude('aculta_events', 'install');
     $resultado = aculta_events_update_10005();
-    $this->assertIsString($resultado);
     // Em execução subsequente, informa que já existiam sem lançar exceção.
     $resultado2 = aculta_events_update_10005();
+    $this->assertSame($resultado, $resultado2);
     $this->assertSame('Campos estruturados de ARQ-04 já existiam.', $resultado2);
   }
 

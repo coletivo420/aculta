@@ -6,6 +6,8 @@ namespace Drupal\Tests\aculta_events\Kernel;
 
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
+use Drupal\aculta_events\Form\EventForm;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormState;
 use Drupal\KernelTests\KernelTestBase;
@@ -67,6 +69,7 @@ final class EventFormDatesKernelTest extends KernelTestBase {
   public function testNewEventFormOffersMultipleDates(): void {
     $event = Event::create(['title' => 'Mostra de cinema', 'field_status' => 'publicado']);
     $formObject = $this->container->get('entity_type.manager')->getFormObject('aculta_event', 'default');
+    self::assertInstanceOf(EventForm::class, $formObject);
     $formObject->setEntity($event);
     $state = new FormState();
     $form = $this->container->get('form_builder')->buildForm($formObject, $state);
@@ -126,6 +129,7 @@ final class EventFormDatesKernelTest extends KernelTestBase {
     $dates = $this->container->get('entity_type.manager')
       ->getStorage('aculta_event_date')
       ->loadByProperties(['field_evento' => $event->id()]);
+    $dates = array_filter($dates, static fn (EntityInterface $date): bool => $date instanceof EventDate);
     self::assertCount(2, $dates);
     $titles = array_map(static fn (EventDate $date): string => (string) $date->label(), $dates);
     sort($titles);

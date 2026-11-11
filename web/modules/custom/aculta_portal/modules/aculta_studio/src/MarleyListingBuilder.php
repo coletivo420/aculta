@@ -11,6 +11,8 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\aculta_wiki\Service\WikiEditorialQueue;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -47,7 +49,7 @@ final class MarleyListingBuilder {
   /**
    * Table of nodes of a bundle in a moderation state (or any state when $state is NULL).
    *
-   * @param array{bundle: string, state?: string|null, purpose?: string} $listing
+   * @param array{bundle: string, entity?: 'node', scope?: 'mine', state?: string|null, purpose?: string, editable?: bool}|array{entity: 'comment', bundle: string, status: int, host_bundle: string}|array{entity: 'revision', bundle: string}|array{entity: 'group', bundle: string, course?: int}|array{entity: 'wiki_proposal_queue'}|array{entity: 'wiki_entry_review_queue'} $listing
    *   Listing definition selected by the area owner.
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Account that receives the rendered listing.
@@ -63,7 +65,7 @@ final class MarleyListingBuilder {
       return $this->buildGroups($listing);
     }
     if (($listing['entity'] ?? '') === 'wiki_proposal_queue') {
-      return $this->buildWikiProposalQueue($account);
+      return $this->buildWikiProposalQueue();
     }
     if (($listing['entity'] ?? '') === 'wiki_entry_review_queue') {
       return $this->buildWikiEntryReviewQueue($account);
@@ -173,13 +175,13 @@ final class MarleyListingBuilder {
       $row = [
         'title' => ['data' => ['#type' => 'link', '#title' => $node->label(), '#url' => $node->toUrl()]],
         'state' => $currentState,
-        'author' => $node->getOwner()?->getDisplayName() ?? '',
+        'author' => $node->getOwner()->getDisplayName(),
         'changed' => $this->dateFormatter->format($node->getChangedTime(), 'short'),
       ];
       if (!empty($listing['editable'])) {
         $row['edit'] = $this->editLink($node, $listing['purpose'] ?? 'main');
       }
-      if ($node instanceof NodeInterface && $node->bundle() === 'revista') {
+      if ($node->bundle() === 'revista') {
         $transition = Url::fromRoute('aculta_magazine.studio_transition', ['node' => $node->id()]);
         if ($transition->access($account)) {
           $row['review'] = [
@@ -237,7 +239,7 @@ final class MarleyListingBuilder {
   /**
    * Renders the Wiki owner's access-checked pending proposal page.
    */
-  private function buildWikiProposalQueue(AccountInterface $account): array {
+  private function buildWikiProposalQueue(): array {
     if (!$this->wikiEditorialQueue) {
       return $this->emptyWikiQueue();
     }
@@ -401,8 +403,8 @@ final class MarleyListingBuilder {
    * Status 0 means not published, for example awaiting moderation. Each row
    * belongs to a node, and comment access is checked with accessCheck(TRUE).
    *
-   * @param array{entity: string, bundle: string, status: int} $listing
-   *   The listing definition: entity type, bundle and comment status.
+   * @param array{entity: 'comment', bundle: string, status: int, host_bundle: string} $listing
+   *   Comment listing definition with host bundle and moderation status.
    *
    * @return array<string, mixed>
    *   A render array with the comments table.
@@ -425,7 +427,7 @@ final class MarleyListingBuilder {
       $discussionContext = $node && $this->discussionContexts
         ? $this->discussionContexts->resolve($node, $this->account)
         : NULL;
-      if (!$node instanceof NodeInterface || $node->bundle() !== ($listing['host_bundle'] ?? '')
+      if (!$node instanceof NodeInterface || $node->bundle() !== $listing['host_bundle']
         || $discussionContext === NULL || $discussionContext->getType() !== 'publication'
         || !$discussionContext->getReadAccess()->isAllowed()
         || !$comment->access('view', $this->account)) {
@@ -442,7 +444,7 @@ final class MarleyListingBuilder {
           ],
         ],
         'state' => $this->t('Aguardando moderação'),
-        'author' => $comment->getOwner()?->getDisplayName() ?? '',
+        'author' => $comment->getOwner()->getDisplayName(),
         'changed' => $this->dateFormatter->format($comment->getChangedTime(), 'short'),
         'node' => [
           'data' => [
@@ -492,8 +494,8 @@ final class MarleyListingBuilder {
    *
    * Each row is checked by the Group access.
    *
-   * @param array{entity: string, bundle: string} $listing
-   *   The listing definition: entity type and group bundle.
+   * @param array{entity: 'group', bundle: string, course?: int} $listing
+   *   Group listing definition, optionally scoped to a course.
    *
    * @return array<string, mixed>
    *   A render array with the groups table.
@@ -514,6 +516,9 @@ final class MarleyListingBuilder {
         ->execute();
       $linked = [];
       foreach ($this->entityTypeManager->getStorage('group_relationship')->loadMultiple($classIds) as $rel) {
+        if (!$rel instanceof GroupRelationshipInterface) {
+          continue;
+        }
         $linked[] = (int) $rel->get('entity_id')->target_id;
       }
       $query->condition('id', $linked ?: [0], 'IN');
@@ -521,10 +526,13 @@ final class MarleyListingBuilder {
     $ids = $query->execute();
     $rows = [];
     foreach ($storage->loadMultiple($ids) as $group) {
+      if (!$group instanceof GroupInterface) {
+        continue;
+      }
       $rows[] = [
         'title' => ['data' => ['#type' => 'link', '#title' => $group->label(), '#url' => $group->toUrl()]],
         'state' => '',
-        'author' => $group->getOwner()?->getDisplayName() ?? '',
+        'author' => $group->getOwner()->getDisplayName(),
         'changed' => $this->dateFormatter->format($group->getChangedTime(), 'short'),
       ];
     }
@@ -553,8 +561,8 @@ final class MarleyListingBuilder {
    * This is the Wiki history. Each revision row is checked by the node access
    * of its node through the revision query, with accessCheck(TRUE).
    *
-   * @param array{entity: string, bundle: string} $listing
-   *   The listing definition: entity type and node bundle.
+   * @param array{entity: 'revision', bundle: string} $listing
+   *   Revision listing definition with node bundle.
    *
    * @return array<string, mixed>
    *   A render array with the revisions table.

@@ -25,6 +25,7 @@ use Drupal\message\MessageInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use Drupal\user\UserDataInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\DependencyInjection\Container;
@@ -391,8 +392,10 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
     ?AvisoPreferenciasInterface $preferences = NULL,
     ?EmailConfirmationPolicy $emailPolicy = NULL,
   ): CommerceOrderNoticeEmailWorker|WikiNoticeEmailWorker {
-    $preferences ??= $this->createMock(AvisoPreferenciasInterface::class);
-    $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
+    if ($preferences === NULL) {
+      $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+      $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
+    }
     $emailPolicy ??= $this->emailPolicy(TRUE);
     return $adapter === 'commerce'
       ? new CommerceOrderNoticeEmailWorker([], 'test', [], $entities, $manager, $preferences, $emailPolicy, $mailer, $lock)
@@ -419,7 +422,7 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
   /**
    * Creates the matching typed adapter manager mock.
    */
-  private function createAdapterManager(string $adapter): CommerceOrderNoticeManagerInterface|WikiNoticeManagerInterface {
+  private function createAdapterManager(string $adapter): (CommerceOrderNoticeManagerInterface&MockObject)|(WikiNoticeManagerInterface&MockObject) {
     return $adapter === 'commerce'
       ? $this->createMock(CommerceOrderNoticeManagerInterface::class)
       : $this->createMock(WikiNoticeManagerInterface::class);
@@ -428,7 +431,7 @@ final class CommerceWikiNoticeEmailWorkerSafetyTest extends UnitTestCase {
   /**
    * Creates a Message fixture with delivery state and attempts.
    */
-  private function message(string $bundle, string $delivery, int $attempts): MessageInterface {
+  private function message(string $bundle, string $delivery, int $attempts): MessageInterface&MockObject {
     $message = $this->createMock(MessageInterface::class);
     $message->method('bundle')->willReturn($bundle);
     $message->method('id')->willReturn('101');

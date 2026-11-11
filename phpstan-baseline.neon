@@ -2191,138 +2191,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_editor/tests/src/Unit/TextFormatPolicyTest.php
 
 		-
-			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_calendar\\Item\\CalendarItem'' and Drupal\aculta_calendar\Item\CalendarItem will always evaluate to true.'
-			identifier: method.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventCalendarItemProviderKernelTest.php
-
-		-
-			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_events\\Entity\\EventDate'' and Drupal\aculta_events\Entity\EventDate will always evaluate to true.'
-			identifier: method.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventCatalogueKernelTest.php
-
-		-
-			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertNotFalse() with Drupal\views\ViewExecutable|null will always evaluate to true.'
-			identifier: method.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventCatalogueKernelTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::set().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventContentIndexProviderKernelTest.php
-
-		-
-			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertTrue() with true will always evaluate to true.'
-			identifier: method.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventContentIndexProviderKernelTest.php
-
-		-
-			rawMessage: 'Call to method processNextBatch() on an unknown class Drupal\aculta_index\Maintenance\ContentIndexRebuilder.'
-			identifier: class.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventContentIndexProviderKernelTest.php
-
-		-
-			rawMessage: 'Call to method start() on an unknown class Drupal\aculta_index\Maintenance\ContentIndexRebuilder.'
-			identifier: class.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventContentIndexProviderKernelTest.php
-
-		-
-			rawMessage: 'Call to method validate() on an unknown class Drupal\aculta_index\Maintenance\ContentIndexRebuilder.'
-			identifier: class.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventContentIndexProviderKernelTest.php
-
-		-
-			rawMessage: PHPDoc tag @var for variable $rebuilder contains unknown class Drupal\aculta_index\Maintenance\ContentIndexRebuilder.
-			identifier: class.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventContentIndexProviderKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $callback of function array_map expects (callable(Drupal\Core\Entity\ContentEntityInterface): mixed)|null, Closure(Drupal\aculta_events\Entity\Event): string given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventContentIndexProviderKernelTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 6
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventDateManagementKernelTest.php
-
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_events\Kernel\EventDateManagementKernelTest::ajaxCommands() is unused.'
-			identifier: method.unused
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventDateManagementKernelTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityFormInterface::addDateRow().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventFormDatesKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $callback of function array_map expects (callable(Drupal\Core\Entity\EntityInterface): mixed)|null, Closure(Drupal\aculta_events\Entity\EventDate): int given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventFormDatesKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $callback of function array_map expects (callable(Drupal\Core\Entity\EntityInterface): mixed)|null, Closure(Drupal\aculta_events\Entity\EventDate): string given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventFormDatesKernelTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventLocationManagementKernelTest.php
-
-		-
-			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertIsArray() with array will always evaluate to true.'
-			identifier: method.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventLocationManagementKernelTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventOrganizationAdminAndModalKernelTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getPayload().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventOrganizationAdminAndModalKernelTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventProposalEditorialApprovalKernelTest.php
-
-		-
-			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertIsString() with string will always evaluate to true.'
-			identifier: method.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/EventStructuredDataKernelTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/RecurrenceManagementKernelTest.php
-
-		-
 			rawMessage: 'Parameter #4 $storage_definition of method Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface::installFieldStorageDefinition() expects Drupal\Core\Field\FieldStorageDefinitionInterface, Drupal\Core\Field\FieldDefinitionInterface given.'
 			identifier: argument.type
 			count: 1
@@ -2999,12 +2867,6 @@ parameters:
 			identifier: classConstant.unused
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/LmsEditWindowExemptionTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::getCacheMaxAge().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/ParticipationEditWindowTest.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::getCacheContexts().'
@@ -6140,48 +6002,6 @@ parameters:
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
 			identifier: method.notFound
-			count: 7
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Commerce/Kernel/CommerceOrderNoticePersistenceKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $array of function reset is passed by reference, so it expects variables only.'
-			identifier: argument.byRef
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Commerce/Kernel/CommerceOrderNoticePersistenceKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $message of method Drupal\aculta_messenger\Integration\Commerce\CommerceOrderNoticeManager::setRead() expects Drupal\message\MessageInterface, Drupal\Core\Entity\EntityInterface|null given.'
-			identifier: argument.type
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Commerce/Kernel/CommerceOrderNoticePersistenceKernelTest.php
-
-		-
-			rawMessage: 'You should use assertCount($expectedCount, $variable) instead of assertSame($expectedCount, count($variable)).'
-			identifier: phpunit.assertCount
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Commerce/Kernel/CommerceOrderNoticePersistenceKernelTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface::method().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Commerce/Unit/CommerceWikiNoticeEmailWorkerSafetyTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\aculta_messenger\Integration\Commerce\CommerceOrderNoticeManagerInterface|Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManagerInterface::expects().'
-			identifier: method.notFound
-			count: 6
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Commerce/Unit/CommerceWikiNoticeEmailWorkerSafetyTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\message\MessageInterface::expects().'
-			identifier: method.notFound
-			count: 10
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Commerce/Unit/CommerceWikiNoticeEmailWorkerSafetyTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
 			count: 6
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Donation/Kernel/DonationNoticePersistenceKernelTest.php
 
@@ -6196,12 +6016,6 @@ parameters:
 			identifier: argument.type
 			count: 3
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Donation/Kernel/DonationNoticePersistenceKernelTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\message\MessageInterface::expects().'
-			identifier: method.notFound
-			count: 13
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Donation/Unit/DonationNoticeEmailWorkerTest.php
 
 		-
 			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\Core\\Entity\\EntityTypeManagerInterface'' and Drupal\Core\Entity\EntityTypeManager will always evaluate to true.'
@@ -6270,12 +6084,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LearningNoticeDigestIntegrationTest.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\message\MessageInterface::expects().'
-			identifier: method.notFound
-			count: 13
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Lms/Unit/LmsNotificationEmailWorkerTest.php
-
-		-
 			rawMessage: 'Call to an undefined method Drupal\workflows\WorkflowTypeInterface::addEntityTypeAndBundle().'
 			identifier: method.notFound
 			count: 1
@@ -6310,24 +6118,6 @@ parameters:
 			identifier: property.nonObject
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Wiki/Kernel/WikiNoticeEmailQueueKernelTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 13
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Wiki/Kernel/WikiNoticePersistenceKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $array of function reset is passed by reference, so it expects variables only.'
-			identifier: argument.byRef
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Wiki/Kernel/WikiNoticePersistenceKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $message of method Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManager::setRead() expects Drupal\message\MessageInterface, Drupal\Core\Entity\EntityInterface|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Integration/Wiki/Kernel/WikiNoticePersistenceKernelTest.php
 
 		-
 			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_mailer\\Type\\MailTypeInterface'' and Drupal\aculta_messenger\Integration\Wiki\Mail\WikiEditorialReviewMailType will always evaluate to true.'
@@ -6482,42 +6272,6 @@ parameters:
 		-
 			rawMessage: 'Call to an undefined method Drupal\message\MessageInterface::expects().'
 			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/FriendshipNoticeEmailWorkerTest.php
-
-		-
-			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertSame() with array{''summary'', ''url''} and array{''summary'', ''url''} will always evaluate to true.'
-			identifier: staticMethod.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/FriendshipNoticeEmailWorkerTest.php
-
-		-
-			rawMessage: 'Method PHPUnit\Framework\MockObject\Builder\InvocationMocker::willReturn() invoked with unpacked array with possibly string key, but it''s not allowed because of @no-named-arguments.'
-			identifier: argument.named
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/FriendshipNoticeEmailWorkerTest.php
-
-		-
-			rawMessage: 'Offset ''mailer_managed'' on array{status: string, attempts: int} on left side of ?? does not exist.'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/FriendshipNoticeEmailWorkerTest.php
-
-		-
-			rawMessage: 'Parameter #1 $state of method Drupal\Tests\aculta_messenger\Unit\FriendshipNoticeEmailWorkerTest::deliveryWorker() expects array{status: string, attempts: int}, array{status: ''cancelled''|''failed_permanent''|''sent'', attempts: 1, mailer_managed: true} given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/FriendshipNoticeEmailWorkerTest.php
-
-		-
-			rawMessage: 'Parameter #1 $state of method Drupal\Tests\aculta_messenger\Unit\FriendshipNoticeEmailWorkerTest::deliveryWorker() expects array{status: string, attempts: int}, array{status: ''pending'', attempts: 0, mailer_managed: true} given.'
-			identifier: argument.type
-			count: 6
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/FriendshipNoticeEmailWorkerTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\message\MessageInterface::expects().'
-			identifier: method.notFound
 			count: 4
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/FriendshipNoticeManagerTest.php
 
@@ -6599,18 +6353,6 @@ parameters:
 			'''
 			identifier: classConstant.deprecatedInterface
 			count: 6
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/NewConversationRecipientIdsTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\user\UserInterface::method().'
-			identifier: method.notFound
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/NewConversationRecipientIdsTest.php
-
-		-
-			rawMessage: 'Parameter #1 $container of static method Drupal::setContainer() expects Symfony\Component\DependencyInjection\ContainerInterface, Psr\Container\ContainerInterface given.'
-			identifier: argument.type
-			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/NewConversationRecipientIdsTest.php
 
 		-
@@ -7646,138 +7388,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Learning/LearnerDashboardComposer.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getChangedTime().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getOwner().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: Expression on left side of ?? is not nullable.
-			identifier: nullCoalesce.expr
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: If condition is always false.
-			identifier: if.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: Instanceof between Drupal\node\Entity\Node and Drupal\node\NodeInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: Left side of && is always false.
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_studio\MarleyListingBuilder::buildWikiProposalQueue() has an unused parameter $account.'
-			identifier: method.unusedParameter
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: 'Offset ''bundle'' on array{bundle: string, state?: string|null, purpose?: string} on left side of ?? always exists and is not nullable.'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: 'Offset ''course'' on array{entity: string, bundle: string} in isset() does not exist.'
-			identifier: isset.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: 'Offset ''editable'' on array{bundle: string, state?: string|null, purpose?: string} in empty() does not exist.'
-			identifier: empty.offset
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: 'Offset ''entity'' on array{bundle: string, state?: string|null, purpose?: string} on left side of ?? does not exist.'
-			identifier: nullCoalesce.offset
-			count: 5
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: 'Offset ''host_bundle'' on array{entity: string, bundle: string, status: int} on left side of ?? does not exist.'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: 'Offset ''scope'' on array{bundle: string, state?: string|null, purpose?: string} on left side of ?? does not exist.'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: 'Strict comparison using !== between null and null will always evaluate to false.'
-			identifier: notIdentical.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: 'Strict comparison using === between '''' and ''mine'' will always evaluate to false.'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: 'Strict comparison using === between '''' and ''wiki_entry_review…'' will always evaluate to false.'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: 'Strict comparison using === between '''' and ''wiki_proposal_queue'' will always evaluate to false.'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: 'Strict comparison using === between ''node'' and ''comment'' will always evaluate to false.'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: 'Strict comparison using === between ''node'' and ''group'' will always evaluate to false.'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: 'Strict comparison using === between ''node'' and ''revision'' will always evaluate to false.'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
-			rawMessage: Using nullsafe method call on non-nullable type Drupal\user\UserInterface. Use -> instead.
-			identifier: nullsafe.neverNull
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php
-
-		-
 			rawMessage: 'Call to function array_key_exists() with ''sidebar'' and array{label: string|Stringable, weight?: int, tabs: non-empty-array<string, array{label: string|Stringable, weight?: int, actions: array<int, array{title: string|Stringable, url: Drupal\Core\Url, access: bool}>}>} will always evaluate to false.'
 			identifier: function.impossibleType
 			count: 1
@@ -8042,19 +7652,13 @@ parameters:
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::getCacheContexts().'
 			identifier: method.notFound
-			count: 7
-			path: web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Kernel/SharedParticipationIsolationKernelTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::getCacheMaxAge().'
-			identifier: method.notFound
-			count: 10
+			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Kernel/SharedParticipationIsolationKernelTest.php
 
 		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::getCacheTags().'
 			identifier: method.notFound
-			count: 11
+			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Kernel/SharedParticipationIsolationKernelTest.php
 
 		-
@@ -8080,36 +7684,6 @@ parameters:
 			identifier: method.notFound
 			count: 4
 			path: web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Unit/ParticipationEditWindowHooksTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::addCacheContexts().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Unit/ParticipationEditWindowTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::getCacheContexts().'
-			identifier: method.notFound
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Unit/ParticipationEditWindowTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::getCacheMaxAge().'
-			identifier: method.notFound
-			count: 7
-			path: web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Unit/ParticipationEditWindowTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Access\AccessResultInterface::getCacheTags().'
-			identifier: method.notFound
-			count: 7
-			path: web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Unit/ParticipationEditWindowTest.php
-
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_user\Unit\ParticipationEditWindowTest::comment() invoked with 6 parameters, 3-5 required.'
-			identifier: arguments.count
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Unit/ParticipationEditWindowTest.php
 
 		-
 			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertTrue() with true will always evaluate to true.'
@@ -8377,12 +7951,6 @@ parameters:
 
 		-
 			rawMessage: 'Parameter #1 $entity of method Drupal\content_moderation\StateTransitionValidation::getValidTransitions() expects Drupal\Core\Entity\ContentEntityInterface, Drupal\Core\Entity\RevisionableInterface|null given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php
-
-		-
-			rawMessage: 'Parameter #1 $listing of method Drupal\aculta_studio\MarleyListingBuilder::build() expects array{bundle: string, state?: string|null, purpose?: string}, array{entity: ''wiki_entry_review…''} given.'
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php

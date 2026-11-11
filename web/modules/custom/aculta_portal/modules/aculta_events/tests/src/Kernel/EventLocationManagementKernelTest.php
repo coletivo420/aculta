@@ -242,6 +242,7 @@ final class EventLocationManagementKernelTest extends KernelTestBase {
     $dates1 = $dateStorage->loadByProperties(['field_evento' => $event1->id()]);
     $this->assertCount(1, $dates1);
     $d1 = reset($dates1);
+    self::assertInstanceOf(EventDate::class, $d1);
     $this->assertSame((int) $newLoc->id(), (int) $d1->get('field_local')->target_id);
 
     // 2. Evento 2 reutiliza o mesmo local sem duplicá-lo.
@@ -261,6 +262,7 @@ final class EventLocationManagementKernelTest extends KernelTestBase {
     $dates2 = $dateStorage->loadByProperties(['field_evento' => $event2->id()]);
     $this->assertCount(1, $dates2);
     $d2 = reset($dates2);
+    self::assertInstanceOf(EventDate::class, $d2);
     $this->assertSame((int) $newLoc->id(), (int) $d2->get('field_local')->target_id);
 
     // Confirma que não duplicou: segue existindo 1 Parque das Flores.
@@ -303,7 +305,6 @@ final class EventLocationManagementKernelTest extends KernelTestBase {
     );
 
     $build = $controller->page($location);
-    $this->assertIsArray($build);
     $this->assertSame('Centro Cultural ACULTA', (string) $build['header']['title']['#value']);
     $this->assertNotEmpty($build['agenda']);
 
@@ -553,6 +554,7 @@ final class EventLocationManagementKernelTest extends KernelTestBase {
     $dates = $dateStorage->loadByProperties(['field_evento' => $savedEvent->id()]);
     $this->assertCount(1, $dates);
     $newDate = reset($dates);
+    self::assertInstanceOf(EventDate::class, $newDate);
     $this->assertSame((int) $loc->id(), (int) $newDate->get('field_local')->target_id);
   }
 

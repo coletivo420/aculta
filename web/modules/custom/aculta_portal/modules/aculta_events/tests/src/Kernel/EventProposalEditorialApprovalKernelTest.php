@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_events\Kernel;
 
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_events\Entity\Event;
+use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Form\EventContributionSubmissionForm;
 use Drupal\aculta_image\FileRemover;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
@@ -225,6 +227,7 @@ final class EventProposalEditorialApprovalKernelTest extends KernelTestBase {
       ]);
     self::assertCount(1, $contributions);
     $proposal = reset($contributions);
+    self::assertInstanceOf(Contribution::class, $proposal);
     self::assertSame('submitted', $proposal->get('state')->value);
 
     // Comprova que NENHUM evento publicado (nem qualquer aculta_event) foi criado.
@@ -238,6 +241,9 @@ final class EventProposalEditorialApprovalKernelTest extends KernelTestBase {
     $eventDates = $this->container->get('entity_type.manager')
       ->getStorage('aculta_event_date')->loadMultiple();
     foreach ($eventDates as $eventDate) {
+      if (!$eventDate instanceof EventDate) {
+        continue;
+      }
       $ev = $eventDate->get('field_evento')->entity;
       if ($ev instanceof Event && $ev->label() === 'Festival Comunitário sem Aprovação Editorial') {
         self::fail('Nenhuma data de evento pode existir para uma proposta ainda não aprovada.');

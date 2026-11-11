@@ -126,9 +126,6 @@ final class EventCatalogueKernelTest extends KernelTestBase {
     $resultados = $this->container->get('aculta_events.catalogue')->busca(NULL, NULL, NULL, $this->agora);
     $titulos = array_map(static fn (array $r): string => (string) $r['evento']->label(), $resultados);
     $this->assertSame(['Roda cancelada', 'Oficina de cerâmica', 'Feira do livro'], $titulos);
-    foreach ($resultados as $resultado) {
-      $this->assertInstanceOf(EventDate::class, $resultado['data']);
-    }
   }
 
   /**
@@ -151,7 +148,7 @@ final class EventCatalogueKernelTest extends KernelTestBase {
       $this->assertSame('eventos_publicos', $page['catalogue']['#name']);
       $this->assertSame('block_1', $page['catalogue']['#display_id']);
       $view = Views::getView('eventos_publicos');
-      $this->assertNotFalse($view);
+      $this->assertNotNull($view);
       $view->setDisplay('block_1');
       $view->setArguments($page['catalogue']['#arguments']);
       $view->execute();

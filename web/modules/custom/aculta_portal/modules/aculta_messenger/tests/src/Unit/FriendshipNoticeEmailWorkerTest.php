@@ -29,6 +29,7 @@ use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use Drupal\user\UserDataInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\RequestStack;
 use PHPUnit\Framework\Attributes\Group;
@@ -190,7 +191,6 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
           'summary' => 'Seu pedido de amizade foi aceito.',
           'url' => 'https://account.example.invalid/minha-conta',
         ], $mail->context);
-        self::assertSame(['summary', 'url'], array_keys($mail->context));
         return TRUE;
       }))
       ->willReturn(SendResult::sent());
@@ -421,20 +421,20 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
   /**
    * Creates a worker fixture with a current account, Domain, and Message.
    *
-   * @param array{status: string, attempts: int} $state
+   * @param array{status: string, attempts: int, mailer_managed?: bool} $state
    *   Mutable persisted field values used to simulate repeated queue loads.
    * @param \Drupal\message_notify\MessageNotifyInterface|null $notifier
    *   Optional mocked delivery service.
    * @param \Drupal\aculta_mailer\Api\AcultaMailerInterface|null $mailer
    *   Optional mocked ACULTA Mailer.
-   * @param string $emailMode
+   * @param string|list<string> $emailMode
    *   Current friendship email mode.
    * @param bool $emailConfirmed
    *   Whether the recipient email is confirmed.
    * @param string $friendshipEvent
    *   Persisted transition used by the Mailer message.
    *
-   * @return array{0: FriendshipNoticeEmailWorker, 1: MessageInterface}
+   * @return array{0: FriendshipNoticeEmailWorker, 1: MessageInterface&MockObject}
    *   The worker and persisted message mock.
    */
   private function deliveryWorker(array &$state, ?MessageNotifyInterface $notifier = NULL, ?AcultaMailerInterface $mailer = NULL, string|array $emailMode = AvisoPreferencias::EMAIL_IMMEDIATE, bool $emailConfirmed = TRUE, string $friendshipEvent = 'requested'): array {

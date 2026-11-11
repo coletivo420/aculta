@@ -24,6 +24,7 @@ use Drupal\message\MessageInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use Drupal\user\UserDataInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\DependencyInjection\Container;
@@ -279,10 +280,10 @@ final class LmsNotificationEmailWorkerTest extends UnitTestCase {
    * @param int $attempts
    *   Persisted delivery attempts.
    *
-   * @return \Drupal\message\MessageInterface
+   * @return \Drupal\message\MessageInterface&\PHPUnit\Framework\MockObject\MockObject
    *   The configured message mock.
    */
-  private function message(string $delivery, int $attempts = 0): MessageInterface {
+  private function message(string $delivery, int $attempts = 0): MessageInterface&MockObject {
     $message = $this->createMock(MessageInterface::class);
     $message->method('bundle')->willReturn('aculta_msg_lms_notice');
     $message->method('getOwnerId')->willReturn(27);

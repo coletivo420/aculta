@@ -1,57 +1,56 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-10T22:11:37+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-11T19:17:30+00:00 por `scripts/phpstan-debt-report.php`.
 
-**Total de erros: 3743**
+**Total de erros: 2223**
 
 ## Por criticidade
 
 | Criticidade | Erros |
 | --- | ---: |
-| alta | 432 |
-| media | 3311 |
+| alta | 224 |
+| media | 1999 |
 | baixa | 0 |
 
 ## Dez identificadores mais frequentes
 
 | Identificador | Erros |
 | --- | ---: |
-| `method.notFound` | 1558 |
-| `argument.type` | 330 |
-| `instanceof.alwaysTrue` | 196 |
-| `class.notFound` | 129 |
-| `nullCoalesce.offset` | 120 |
-| `staticMethod.alreadyNarrowedType` | 113 |
-| `return.type` | 102 |
-| `method.alreadyNarrowedType` | 97 |
-| `property.notFound` | 90 |
-| `method.childReturnType` | 81 |
+| `method.notFound` | 856 |
+| `argument.type` | 178 |
+| `class.notFound` | 112 |
+| `staticMethod.alreadyNarrowedType` | 103 |
+| `method.alreadyNarrowedType` | 86 |
+| `nullCoalesce.offset` | 77 |
+| `instanceof.alwaysTrue` | 57 |
+| `property.notFound` | 54 |
+| `return.type` | 46 |
+| `staticMethod.internalClass` | 30 |
 
 ## Módulos mais problemáticos
 
 | Módulo | Erros |
 | --- | ---: |
-| aculta_lms | 430 |
-| aculta_messenger | 422 |
-| aculta_forum | 391 |
-| aculta_events | 311 |
-| aculta_user | 251 |
-| aculta_portal | 248 |
-| aculta_wiki | 192 |
-| scripts | 157 |
-| aculta_lms_h5p | 149 |
+| aculta_lms | 210 |
+| aculta_forum | 184 |
+| aculta_messenger | 170 |
+| scripts | 152 |
+| aculta_lms_h5p | 141 |
 | aculta_pagamentos_mercadopago | 139 |
+| aculta_portal | 138 |
 | aculta_commerce | 133 |
-| aculta_index | 128 |
-| aculta_studio | 110 |
+| aculta_index | 115 |
+| aculta_wiki | 95 |
+| aculta_studio | 80 |
 | aculta_linkweed | 71 |
-| aculta_mailer | 69 |
+| aculta_user | 52 |
 | aculta_mail_confirmer | 47 |
 | aculta_donation | 46 |
-| aculta_magazine | 39 |
+| aculta420_v2 | 43 |
 | aculta_calendar | 38 |
-| aculta420_v2 | 38 |
-
+| aculta_magazine | 38 |
+| aculta_cgu | 36 |
+| aculta_image | 32 |
 
 ## Rodada 3 — 2026-11-10
 
@@ -319,6 +318,114 @@ Pós-push: no topo `ca4246fb6`, `--fix --fix-ignored` global novamente não enco
 
 Runtime de desenvolvimento: gate DEFERRED. O `plan` read-only encontrou `HEAD` igual a `origin/dev` (`ca4246fb6`), mas o checkout principal continua sujo; `sync-code` foi bloqueado pelo guard. O delta desta rodada inclui `.install`/post-update (R3) e faltam as variáveis operacionais explícitas; não rodei Drush nem limpei caches. SHA/cache validado permanece UNKNOWN.
 
+## Microfase 23a — 2026-11-11 (`aculta_messenger`, testes)
+
+| Medida | Antes | Depois |
+| --- | ---: | ---: |
+| Erros brutos globais | 2388 | 2371 |
+| Erros brutos em `aculta_messenger` | 260 | 243 |
+| Erros no arquivo focal | 17 | 0 |
+
+Escopo: `CommerceWikiNoticeEmailWorkerSafetyTest` tipa os doubles de PHPUnit com `MockObject` nas interseções com as interfaces Drupal. `worker()` configura o mock de preferências somente quando cria o mock; objetos concretos recebidos pelo método não são tratados como mocks. Removidas da baseline as 17 ocorrências resolvidas.
+
+Evidências: PHPStan focal sem baseline e análise estrita global `[OK] No errors`; PHPStan bruto global (2388 -> 2371) e do módulo (260 -> 243); teste focal 13 testes/194 assertions PASS; Unit global 3286 testes/17662 assertions PASS (3 deprecações); descoberta de suítes PASS (unit=674); gate Portal Drupal 12 PASS (1234 verificações); lint e `git diff --check` PASS. Teste Kernel fora desta microfase.
+
+## Microfase 23b — 2026-11-11 (`aculta_messenger`, testes Kernel)
+
+| Medida | Antes | Depois |
+| --- | ---: | ---: |
+| Erros brutos globais | 2371 | 2354 |
+| Erros no arquivo focal | 17 | 0 |
+| Entradas de baseline removidas | 3 agrupamentos (17 ocorrências) | 0 |
+
+Escopo: `WikiNoticePersistenceKernelTest` armazena os IDs da consulta antes de `reset()` e estreita resultados de `EntityStorageInterface::load()` para `MessageInterface` com assertions de runtime antes de ler campos ou chamar `WikiNoticeManager::setRead()`. Removidos apenas os três agrupamentos obsoletos desse caminho na baseline.
+
+Evidências: PHPStan bruto global (2371 -> 2354) e do arquivo (17 -> 0); análise PHPStan estrita global `[OK] No errors`; Unit global 3286 testes/17662 assertions PASS (3 deprecações); descoberta de suítes PASS (unit=674); gate Portal Drupal 12 PASS (1234 verificações); `php -l` e `git diff --check` PASS. O teste Kernel foi tentado e ficou DEFERRED: ambiente sem `SIMPLETEST_DB`, PHPUnit encerrou os 8 casos antes do setup e com zero assertions. Nenhum acesso ao banco foi tentado.
+
+## Microfase 23c — 2026-11-11 (`aculta_messenger`, testes Kernel)
+
+| Medida | Antes | Depois |
+| --- | ---: | ---: |
+| Erros brutos globais | 2354 | 2340 |
+| Erros brutos em `aculta_messenger` | 243 | 229 |
+| Erros no arquivo focal | 14 | 0 |
+
+Escopo: `CommerceOrderNoticePersistenceKernelTest` estreita resultados de `EntityStorageInterface::load()` para `MessageInterface` antes de acessar campos ou chamar `setRead()`, armazena os IDs antes de `reset()` e usa `assertCount()` no lugar de `assertSame(count(...))`. A baseline foi atualizada a partir da análise bruta atual (2340 erros), removendo apenas diagnósticos não mais presentes.
+
+Evidências: PHPStan bruto global (2354 -> 2340) e do arquivo (14 -> 0); análise estrita global `[OK] No errors`; Unit global 3286 testes/17662 assertions PASS (3 deprecações); descoberta de suítes PASS (unit=674); gate Portal Drupal 12 PASS (1234 verificações); PHP lint e `git diff --check` PASS. Teste Kernel não executado: ambiente sem `SIMPLETEST_DB`.
+
+## Microfase 23d — 2026-11-11 (`aculta_messenger`, testes Unit)
+
+| Medida | Antes | Depois |
+| --- | ---: | ---: |
+| Erros brutos globais | 2340 | 2327 |
+| Erros brutos em `aculta_messenger` | 212 | 199 |
+| Erros no arquivo focal | 13 | 0 |
+
+Escopo: `LmsNotificationEmailWorkerTest::message()` agora declara a interseção `MessageInterface&MockObject`, pois os cenários configuram expectativas PHPUnit no objeto retornado.
+
+Evidências: PHPStan focal sem baseline e análise bruta global (2340 -> 2327; arquivo 13 -> 0); teste focal 9 testes/113 assertions PASS; análise PHPStan estrita global `[OK] No errors`; Unit global 3286 testes/17662 assertions PASS (3 deprecações); descoberta de suítes PASS (unit=674); gate Portal Drupal 12 PASS (1234 verificações); PHP lint e `git diff --check` PASS.
+
+## Microfase 23e — 2026-11-11 (`aculta_messenger`, testes Unit)
+
+| Medida | Antes | Depois |
+| --- | ---: | ---: |
+| Erros brutos globais | 2327 | 2314 |
+| Erros brutos em `aculta_messenger` | 199 | 186 |
+| Erros no arquivo focal | 13 | 0 |
+
+Escopo: `DonationNoticeEmailWorkerTest::message()` agora declara `MessageInterface&MockObject`, preservando a interface Drupal e deixando explícito que os cenários configuram expectativas PHPUnit no mock.
+
+Evidências: PHPStan focal sem baseline e análise bruta global (2327 -> 2314; arquivo 13 -> 0); teste focal 8 testes/103 assertions PASS; análise PHPStan estrita global `[OK] No errors`; Unit global 3286 testes/17662 assertions PASS (3 deprecações); descoberta de suítes PASS (unit=674); gate Portal Drupal 12 PASS (1234 verificações); PHP lint e `git diff --check` PASS.
+
+## Microfase 23f — 2026-11-11 (`aculta_messenger`, formulário de conversa)
+
+| Medida | Antes | Depois |
+| --- | ---: | ---: |
+| Erros brutos globais | 2314 | 2309 |
+| Erros brutos em `aculta_messenger` | 186 | 181 |
+| Erros corrigidos no arquivo | 5 | 0 |
+
+Escopo: `NewConversationRecipientIdsTest` preserva o container restaurado apenas quando ele satisfaz a interface Symfony exigida por `Drupal::setContainer()` e tipa o helper de usuário como `UserInterface&MockObject`. Permanecem seis diagnósticos de acesso à constante `::class` da `PrivateMessageMapperInterface`, marcada deprecated pelo contrib sem substituto publicado; o teste mantém o contrato atual sem supressões.
+
+Evidências: PHPStan bruto global (2314 -> 2309; arquivo 11 -> 6, todos ligados à interface deprecated); teste focal 10 testes/68 assertions PASS; análise PHPStan estrita global `[OK] No errors`; Unit global 3286 testes/17662 assertions PASS (3 deprecações); descoberta de suítes PASS (unit=674); gate Portal Drupal 12 PASS (1234 verificações); PHP lint e `git diff --check` PASS.
+
+## Microfase 23g — 2026-11-11 (`aculta_messenger`, Friendship Unit)
+
+| Medida | Antes | Depois |
+| --- | ---: | ---: |
+| Erros brutos globais | 2309 | 2298 |
+| Erros brutos em `aculta_messenger` | 181 | 170 |
+| Erros no arquivo focal | 11 | 0 |
+
+Escopo: `FriendshipNoticeEmailWorkerTest` declara o campo opcional `mailer_managed` no shape do estado e limita modos múltiplos a `list<string>`; a fixture retorna a interseção `MessageInterface&MockObject`. Removida uma assertion de chaves já coberta pela comparação estrita do contexto completo.
+
+Evidências: PHPStan focal bruto e global (2309 -> 2298; arquivo 11 -> 0); teste focal 12 testes/231 assertions PASS; análise PHPStan estrita global `[OK] No errors`; Unit global 3286 testes/17661 assertions PASS (3 deprecações); descoberta de suítes PASS (unit=674); gate Portal Drupal 12 PASS (1234 verificações); PHP lint e `git diff --check` PASS.
+
+## Microfase 24a — 2026-11-11 (`aculta_user`, ParticipationEditWindow)
+
+| Medida | Antes | Depois |
+| --- | ---: | ---: |
+| Erros brutos globais | 2298 | 2254 |
+| Erros brutos em `aculta_user` | 95 | 52 |
+| Erros em `ParticipationEditWindowTest` | 19 | 0 |
+
+Escopo: `ParticipationEditWindow::access()` agora declara `AccessResult`, tipo concreto retornado em todos os ramos; isso expõe corretamente os métodos de cache usados pelos consumidores e removeu 24 diagnósticos em outros chamadores. Os stubs da fixture também usam o tipo concreto, e a chamada de comment fixture que excedia a aridade foi corrigida. `AccessResultInterface` permanece no contrato de exemptions, como prevê o padrão do projeto para resultados de access (seção 9 de `DRUPAL-12-STANDARDS.md`).
+
+Evidências: PHPStan bruto global (2298 -> 2254); arquivos de política e teste sem erros; testes de ParticipationEditWindow em `aculta_user` 23 testes/95 assertions e `aculta_forum` 4 testes/40 assertions PASS; Unit global 3286 testes/17661 assertions PASS (3 deprecações); PHPStan estrito global `[OK] No errors`; descoberta de suítes PASS (unit=674); gate Portal Drupal 12 PASS (1234 verificações); PHP lint e `git diff --check` PASS.
+
+## Microfase 24b — 2026-11-11 (`aculta_studio`, MarleyListingBuilder)
+
+| Medida | Antes | Depois |
+| --- | ---: | ---: |
+| Erros brutos globais | 2254 | 2223 |
+| Erros brutos em `aculta_studio` | 110 | 80 |
+| Erros no arquivo focal | 30 | 0 |
+
+Escopo: o contrato PHPDoc de `build()` agora documenta as seis formas reais de listing (node, comentários, revisões, grupos e filas Wiki); os helpers internos tipam suas próprias chaves. `GroupRelationshipInterface` e `GroupInterface` estreitam os resultados de storages genéricos; removidos nullsafe desnecessários para owners não nulos e o parâmetro não usado da fila de propostas.
+
+Evidências: PHPStan bruto global (2254 -> 2223; arquivo 30 -> 0); testes focais Marley/Revista 7 testes/49 assertions PASS; Unit global 3286 testes/17661 assertions PASS (3 deprecações); PHPStan estrito global `[OK] No errors`; descoberta de suítes PASS (unit=674); gate Portal Drupal 12 PASS (1234 verificações); PHP lint e `git diff --check` PASS. Nenhum teste de navegador foi necessário: não houve mudança visual ou de interação.
+
 ## Microfase 22a — 2026-11-11 (`aculta_events`, produção)
 
 | Medida | Antes | Depois |
@@ -343,26 +450,26 @@ Escopo: estreitamento de entidades de Evento/Local/Organização/Contribution/Ug
 
 Resíduos: zero erro bruto em `src`; permanecem 112 erros, todos em testes. A regeneração global retirou 45 ocorrências de Eventos e seis entradas antigas de scripts que já não aparecem na análise atual; nenhum script foi alterado. Evidências: análise bruta do módulo (157 -> 112, produção 45 -> 0), análise global estrita `[OK] No errors`, Unit do módulo 30 testes/62 assertions PASS, descoberta de suítes PASS (unit=674), lint de 19 arquivos PHP PASS, YAML de serviços PASS, gate Portal Drupal 12 PASS (1234 verificações). A suíte Unit global foi executada, mas terminou com fatal aos 1708/3286 testes porque `aculta_messenger_schema()` foi declarada pelos dois checkouts (`round19` e principal); nenhum Kernel foi executado para evitar banco.
 
-## Microfase 22c — 2026-11-11 (`aculta_events`, Unit)
+## Microfase 22c — 2026-11-11 (`aculta_events`, testes)
 
 | Medida | Antes | Depois |
 | --- | ---: | ---: |
-| Erros brutos em `aculta_events` | 112 | 111 |
-| Erros brutos nos testes Unit de Eventos | 1 | 0 |
-| Baseline global (ocorrências) | 2500 | 2499 |
+| Erros brutos em `aculta_events` | 112 | 95 |
+| Erros brutos em `aculta_events/src` | 0 | 0 |
 
-Escopo: `OrganizationContributionEventQueueTest` passou a manter o estado do outbox em `ArrayObject`, cuja API de coleção preserva o contrato dinâmico dos callbacks do mock; a asserção ainda verifica o payload armazenado e a remoção após recuperação da fila. O teste protege a recuperação durável quando `QueueInterface::createItem()` falha na primeira tentativa. Os 111 erros brutos restantes estão todos em testes Kernel.
+Escopo: recarga tipada das Datas nos testes de gestão, remoção de um helper privado AJAX sem chamadas, substituição de `assertNotFalse()` por `assertNotNull()` para a View e remoção de assertions literais redundantes após `fail()` nos casos de exceção. As cinco entradas de baseline correspondentes foram retiradas; nenhum erro foi ignorado.
 
-Evidências: Unit do módulo 30 testes/62 assertions PASS; PHP lint do teste PASS; análise bruta de Eventos 112 -> 111; análise global estrita `[OK] No errors`; gate Portal Drupal 12 PASS (1234 checks); `git diff --check` PASS. Kernel não executado: conexão isolada de banco não comprovada nesta rodada.
+Resíduos: 95 erros brutos permanecem em testes do módulo, principalmente em `EventOrganizationLifecycleKernelTest`; produção segue em zero. Evidências: PHPStan bruto do módulo (112 -> 95); PHPStan global estrito `[OK] No errors`; Unit global 3286 testes/17661 assertions PASS, com 3 deprecações PHPUnit; descoberta de suítes PASS (unit=674); lint dos três arquivos alterados PASS; gate Portal Drupal 12 PASS (1234 verificações); `git diff --check` PASS.
 
-## Microfase 22d — 2026-11-11 (`aculta_events`, Kernel de ciclo de vida)
+
+## Microfase 22d — 2026-11-11 (`aculta_events`, testes)
 
 | Medida | Antes | Depois |
 | --- | ---: | ---: |
-| Erros brutos em `aculta_events` | 111 | 35 |
-| Erros em `EventOrganizationLifecycleKernelTest.php` | 76 | 0 |
-| Baseline global (ocorrências) | 2499 | 2423 |
+| Erros brutos em `aculta_events` | 95 | 0 |
+| Entradas de `aculta_events` no baseline | 95 | 0 |
 
-Escopo: os retornos genéricos de storage no Kernel de ciclo de vida são validados por classe concreta em `requireEntity()`, preservando erro explícito quando fixture/entidade esperada não existe. Os itens de fila são estreitados com `assertIsObject()`, a asserção sobre o campo de transferência usa `isEmpty()`, e os `assertTrue(TRUE)` nos catches foram removidos porque `fail()` já faz a ausência da exceção falhar.
+Escopo: correção de tipos retornados por storages genéricos em testes Kernel, validação dos objetos de fila antes de ler `data`, remoção de assertions de tipo redundantes e substituição da verificação de `target_id` nulo por `FieldItem::isEmpty()`. O teste de recuperação da outbox verifica a exclusão pela chave correta (revisão antes do destinatário).
 
-Resíduos: 35 erros brutos em outros testes Kernel de Eventos; nenhum erro em `src` ou Unit. Evidências: arquivo focal (76 -> 0), módulo bruto (111 -> 35), baseline global (2499 -> 2423), análise global estrita `[OK] No errors`, Unit do módulo 30 testes/62 assertions PASS, descoberta PHPUnit PASS (kernel=250, unit=674), lint PHP e gate Portal Drupal 12 (1234 checks) PASS. Kernel focal DEFERRED: `SIMPLETEST_DB` está unset e o bootstrap Drupal recusa executar Kernel sem uma URL de teste; não configurei conexão por inferência.
+Resíduos no módulo: nenhum em `src`, instalação ou testes. Evidências: PHPStan bruto do módulo e análise global estrita `[OK] No errors`; Unit global 3286 testes/17662 assertions PASS, com 3 depreciações PHPUnit; descoberta de suítes PASS (unit=674); lint dos arquivos PHP alterados PASS; gate Portal Drupal 12 PASS (1234 verificações); baseline sem caminhos de `aculta_events`. Gate token budget FAIL por 5 violações preexistentes em CSS, HTMX e SDC nas skills espelhadas de `docs/agent-skills/`.
+

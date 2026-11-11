@@ -6,7 +6,6 @@ namespace Drupal\aculta_user;
 
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
@@ -44,7 +43,7 @@ final class ParticipationEditWindow {
   /**
    * Returns the access restriction for an author update, or neutral otherwise.
    */
-  public function access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResultInterface {
+  public function access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResult {
     if ($operation !== 'update' || !$entity instanceof EntityOwnerInterface || (string) $entity->getOwnerId() !== (string) $account->id()) {
       return AccessResult::neutral();
     }

@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_events\Kernel;
 use Drupal\aculta_cgu\Service\ContributionStateMachine;
 use Drupal\aculta_cgu\Service\ContributionLifecycle;
 use Drupal\aculta_cgu\Adapter\ContributionAdapterRegistry;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_events\Service\OrganizationContributionEventQueue;
 use Drupal\aculta_events\Adapter\OrganizationContributionAdapter;
 use Drupal\aculta_events\Controller\EventAdminOverviewController;
@@ -570,6 +571,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
       ->loadByProperties(['intent' => 'organization_create']);
     $this->assertCount(1, $proposals);
     $proposal = reset($proposals);
+    self::assertInstanceOf(Contribution::class, $proposal);
     $this->assertSame('submitted', $proposal->get('state')->value);
     $this->assertSame('Este coletivo precisa de um perfil para ser encontrado.', $proposal->get('rationale')->value);
     $this->assertSame('https://autonomo.org', $proposal->getPayload()['links']);
@@ -702,6 +704,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $proposals = $proposalStorage->loadByProperties(['intent' => 'organization_create']);
     $this->assertCount(1, $proposals);
     $proposal = reset($proposals);
+    self::assertInstanceOf(Contribution::class, $proposal);
     $this->assertSame('submitted', $proposal->get('state')->value);
     $this->assertSame('O coletivo precisa de um perfil público.', $proposal->get('rationale')->value);
 

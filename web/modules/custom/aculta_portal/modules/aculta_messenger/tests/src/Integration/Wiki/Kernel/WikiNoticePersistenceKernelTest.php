@@ -26,6 +26,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\message\Entity\MessageTemplate;
+use Drupal\message\MessageInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\user\Entity\Role;
@@ -113,7 +114,9 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
 
     $storage = $this->container->get('entity_type.manager')->getStorage('message');
     self::assertSame(1, (int) $storage->getQuery()->accessCheck(FALSE)->count()->execute());
-    $message = $storage->load(reset($storage->getQuery()->accessCheck(FALSE)->execute()));
+    $ids = $storage->getQuery()->accessCheck(FALSE)->execute();
+    $message = $storage->load(reset($ids));
+    self::assertInstanceOf(MessageInterface::class, $message);
     self::assertSame(1, (int) $message->get('field_aculta_wiki_digest_sent')->value);
     self::assertSame('sent', $message->get('field_aculta_msg_delivery')->value);
   }
@@ -137,7 +140,9 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
 
     $storage = $this->container->get('entity_type.manager')->getStorage('message');
     self::assertSame(1, (int) $storage->getQuery()->accessCheck(FALSE)->count()->execute());
-    $message = $storage->load(reset($storage->getQuery()->accessCheck(FALSE)->execute()));
+    $ids = $storage->getQuery()->accessCheck(FALSE)->execute();
+    $message = $storage->load(reset($ids));
+    self::assertInstanceOf(MessageInterface::class, $message);
     self::assertSame(1, (int) $message->get('field_aculta_wiki_digest_sent')->value);
     self::assertSame('pending', $message->get('field_aculta_msg_delivery')->value);
   }
@@ -159,10 +164,14 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
     (new WikiNoticeEventSubscriber($manager))->consume($this->event((int) $owner->id()));
 
     $storage = $this->container->get('entity_type.manager')->getStorage('message');
-    $message = $storage->load(reset($storage->getQuery()->accessCheck(FALSE)->execute()));
+    $ids = $storage->getQuery()->accessCheck(FALSE)->execute();
+    $message = $storage->load(reset($ids));
+    self::assertInstanceOf(MessageInterface::class, $message);
     self::assertSame(0, (int) $message->get('field_aculta_wiki_read')->value);
     self::assertFalse($manager->setRead($message, $other, TRUE));
-    self::assertSame(0, (int) $storage->load($message->id())->get('field_aculta_wiki_read')->value);
+    $storedMessage = $storage->load($message->id());
+    self::assertInstanceOf(MessageInterface::class, $storedMessage);
+    self::assertSame(0, (int) $storedMessage->get('field_aculta_wiki_read')->value);
   }
 
   /**
@@ -217,13 +226,17 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
     );
     self::assertTrue($central->setRead((int) $message->id(), $reviewer, TRUE));
     $storage = $this->container->get('entity_type.manager')->getStorage('message');
-    self::assertSame(1, (int) $storage->load($message->id())->get('field_aculta_wiki_read')->value);
+    $storedMessage = $storage->load($message->id());
+    self::assertInstanceOf(MessageInterface::class, $storedMessage);
+    self::assertSame(1, (int) $storedMessage->get('field_aculta_wiki_read')->value);
 
     $entry->set('moderation_state', 'published');
     $entry->setNewRevision(TRUE);
     $entry->save();
     self::assertFalse($central->setRead((int) $message->id(), $reviewer, FALSE));
-    self::assertSame(1, (int) $storage->load($message->id())->get('field_aculta_wiki_read')->value);
+    $storedMessage = $storage->load($message->id());
+    self::assertInstanceOf(MessageInterface::class, $storedMessage);
+    self::assertSame(1, (int) $storedMessage->get('field_aculta_wiki_read')->value);
   }
 
   /**
@@ -274,8 +287,10 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
     self::assertEqualsCanonicalizing([(int) $message->id(), (int) $secondMessage->id()], array_column($rows, 'delivery_id'));
     $manager->markDigestSent($uid, array_column($rows, 'delivery_id'));
     $stored = $this->container->get('entity_type.manager')->getStorage('message')->load($message->id());
+    self::assertInstanceOf(MessageInterface::class, $stored);
     self::assertSame(1, (int) $stored->get('field_aculta_wiki_digest_sent')->value);
     $storedSecond = $this->container->get('entity_type.manager')->getStorage('message')->load($secondMessage->id());
+    self::assertInstanceOf(MessageInterface::class, $storedSecond);
     self::assertSame(1, (int) $storedSecond->get('field_aculta_wiki_digest_sent')->value);
   }
 
@@ -299,6 +314,7 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
 
     self::assertSame([], $manager->digestRowsFor($uid));
     $stored = $this->container->get('entity_type.manager')->getStorage('message')->load($message->id());
+    self::assertInstanceOf(MessageInterface::class, $stored);
     self::assertSame(1, (int) $stored->get('field_aculta_wiki_digest_sent')->value, 'A revoked review is discarded from email and is not retried later.');
   }
 
@@ -349,6 +365,7 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
     $worker->processItem(['message_id' => (int) $message->id()]);
 
     $stored = $this->container->get('entity_type.manager')->getStorage('message')->load($message->id());
+    self::assertInstanceOf(MessageInterface::class, $stored);
     self::assertSame('cancelled', $stored->get('field_aculta_msg_delivery')->value);
     self::assertSame(0, (int) $stored->get('field_aculta_wiki_read')->value, 'The required site notice remains available after its email is cancelled.');
   }
