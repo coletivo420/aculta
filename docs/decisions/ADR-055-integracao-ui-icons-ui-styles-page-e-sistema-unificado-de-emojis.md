@@ -209,6 +209,8 @@ Firefox ESR visível nos dez domínios, em 320/768/1440, fechou 70/70 verificaç
 
 Nota de bloqueio (2026-11-11): rotas públicas sondadas respondem `Cache-Control: private, no-cache` e `X-Drupal-Dynamic-Cache: UNCACHEABLE`, então cache-hit não é mensurável no estado atual. `drush uli` responde 404 e `/entrar` só existe no host de conta; a verificação autenticada deve reutilizar `tests/browser/auth-login.mjs`.
 
+Fechamento parcial de 2026-11-11 — login autenticado: a autenticação de `teste_administrativo` é aceita (`users.login` atualizado, cookie `SSESS…` emitido), mas a sessão não persiste na requisição seguinte — o Runtime espera `SESS…` e o cliente recebe `SSESS…` —, bloqueando o aceite de perfis. O teste também revelou H1 duplicado no dashboard do Studio, corrigido no componente `studio-menu` (topbar sem `<h1>`), com schema 1801 checks e boundary PASS.
+
 ## Atualização — UI Patterns na listagem de galerias públicas (2026-11-11)
 
 A View `media_galleries:page_1` (`/galleries`, MAIN) foi migrada com o SDC existente `revista-album-card` para a row, mapeando o formatter nativo da miniatura e o título; UI Patterns Views `layout-grid` compõe `view_rows`. A importação parcial foi isolada somente em `views.view.media_galleries`, após snapshot do Runtime. Antes/depois a View entregou três resultados; depois são três cards, três títulos e duas imagens. Firefox ESR confirmou HTTP 200, um H1/main e grade sem overflow em 320/390/768/1024/1440, claro/escuro. Config de pager full preservada, porém não há volume suficiente para exercitar navegação. Cache-hit, zoom 200%, teclado, perfis e revisão visual humana seguem DEFERRED. Evidência: `tests/browser/capturas/ui-patterns-media-galleries/2026-11-11/manifest.json`.
