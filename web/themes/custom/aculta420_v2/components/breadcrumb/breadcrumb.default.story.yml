@@ -1,6 +1,9 @@
-name: Trilha de navegação
+name: Trilha por sessão
 props:
   label: Navegação estrutural
-slots:
-  items:
-    '#markup': '<li class="aculta-breadcrumb__item"><a class="aculta-breadcrumb__link" href="/">Início</a></li><li class="aculta-breadcrumb__item"><a class="aculta-breadcrumb__link" href="/culturas">Culturas</a></li><li class="aculta-breadcrumb__item aculta-breadcrumb__current" aria-current="page">Agenda cultural</li>'
+  sessao: revista
+  variant: padrao
+  trail:
+    - label: Revista
+      url: /revista
+  current: Cultura e território

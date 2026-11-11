@@ -1,5 +1,43 @@
-{% if items %}
-  <nav class="aculta-breadcrumb" aria-label="{{ label|default('Navegação estrutural'|t) }}">
-    <ol class="aculta-breadcrumb__list">{{ items }}</ol>
+{#
+  Ícone do primeiro nível por sessão (UI Icons / Phosphor regular).
+  "wiki" usa "books" porque o pack não tem um "W" próprio.
+#}
+{% set icones_sessao = {
+  portal: 'squares-four',
+  revista: 'book-open',
+  forum: 'chat-circle',
+  wiki: 'books',
+  ganjalab: 'graduation-cap',
+  green_stash: 'shopping-cart',
+  culturas: 'calendar-blank',
+} %}
+{% set sessao = sessao|default('portal') %}
+{% set variant = variant|default('padrao') %}
+{% if trail or current %}
+  <nav class="aculta-breadcrumb aculta-breadcrumb--{{ sessao|replace({'_': '-'}) }} aculta-breadcrumb--{{ variant }}" aria-label="{{ label|default('Navegação estrutural'|t) }}">
+    <ol class="aculta-breadcrumb__list">
+      <li class="aculta-breadcrumb__item">
+        <a class="aculta-breadcrumb__link aculta-breadcrumb__link--home" href="/">
+          {{ include('aculta420_v2:icon', { name: 'house', variant: 'regular', size: 'sm' }, with_context = false) }}
+          <span>{{ 'Início'|t }}</span>
+        </a>
+      </li>
+      {% for item in trail %}
+        {% set icone = item.icon ?: (loop.first ? icones_sessao[sessao] : null) %}
+        <li class="aculta-breadcrumb__item">
+          <a class="aculta-breadcrumb__link" href="{{ item.url }}">
+            {% if icone %}
+              {{ include('aculta420_v2:icon', { name: icone, variant: 'regular', size: 'sm' }, with_context = false) }}
+            {% endif %}
+            <span>{{ item.label }}</span>
+          </a>
+        </li>
+      {% endfor %}
+      {% if current %}
+        <li class="aculta-breadcrumb__item aculta-breadcrumb__current" aria-current="page">
+          <span>{{ current }}</span>
+        </li>
+      {% endif %}
+    </ol>
   </nav>
 {% endif %}

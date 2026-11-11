@@ -1,11 +1,16 @@
-{% if breadcrumb %}
-  {% set items %}
-    {% for item in breadcrumb %}
-      <li class="aculta-breadcrumb__item"><a class="aculta-breadcrumb__link" href="{{ item.url }}">{{ item.text }}</a></li>
-    {% endfor %}
-    {% if aculta_current_breadcrumb %}
-      <li class="aculta-breadcrumb__item aculta-breadcrumb__current" aria-current="page">{{ aculta_current_breadcrumb }}</li>
-    {% endif %}
-  {% endset %}
-  {{ include('aculta420_v2:breadcrumb', { label: 'Breadcrumb'|t, items: items }, with_context = false) }}
+{#
+  Breadcrumb do sistema: monta os dados do SDC breadcrumb.
+  O início já é renderizado pelo componente, então o link para "/" sai da trilha.
+#}
+{% if breadcrumb or aculta_current_breadcrumb %}
+  {% set trail = breadcrumb|filter(item => item.url != '/' and item.url != '<front>')|map(item => {
+    label: item.text,
+    url: item.url,
+  }) %}
+  {{ include('aculta420_v2:breadcrumb', {
+    label: 'Breadcrumb'|t,
+    sessao: 'portal',
+    trail: trail,
+    current: aculta_current_breadcrumb,
+  }, with_context = false) }}
 {% endif %}

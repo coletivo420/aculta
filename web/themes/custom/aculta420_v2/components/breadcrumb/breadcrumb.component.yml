@@ -1,7 +1,7 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Breadcrumb
-description: Trilha de navegação do site com indicação da página atual.
-status: experimental
+description: Trilha de navegação por sessão, com ícone da seção e página atual sem link.
+status: stable
 group: ACULTA
 props:
   type: object
@@ -12,7 +12,39 @@ props:
       title: Nome acessível da navegação
       minLength: 1
       default: Navegação estrutural
-slots:
-  items:
-    title: Itens da trilha
-    description: Itens HTML de navegação já preparados pelo template Drupal.
+    sessao:
+      type: string
+      title: Sessão do portal
+      description: Define o ícone do primeiro nível da trilha quando o item não informa um ícone próprio.
+      enum: [portal, revista, forum, wiki, ganjalab, green_stash, culturas]
+      default: portal
+    variant:
+      type: string
+      title: Superfície
+      enum: [padrao, superficie, contextual]
+      default: padrao
+    trail:
+      type: array
+      title: Níveis da trilha
+      description: Níveis acima da página atual, sem o início, que o componente já mostra.
+      items:
+        type: object
+        additionalProperties: false
+        required: [label, url]
+        properties:
+          label:
+            type: string
+            title: Texto do link
+            minLength: 1
+          url:
+            type: string
+            title: Endereço
+            minLength: 1
+          icon:
+            type: string
+            title: Ícone Phosphor opcional
+            pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+    current:
+      type: string
+      title: Página atual
+      description: Texto do último nível, sem link.
