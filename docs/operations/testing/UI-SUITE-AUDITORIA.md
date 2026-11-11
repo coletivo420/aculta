@@ -127,3 +127,13 @@ Escopo funcional restante (login/logout, sessões multidomínio, modais HTMX, fo
   - 13 + 13: tabela `aculta_simpletest.…group_relationship_field_data` ausente.
 - Tratamento decidido pelo responsável: **dívida com baseline**. O job `phpunit-kernel` tem `continue-on-error: true` com comentário no workflow. A falha continua no log. Não reduzir asserções.
 - Correção: habilitar os módulos e o schema necessários no teste, por módulo, com teste verde antes de remover `continue-on-error`.
+
+## 9. Achados HTMX e modais (2026-11-11)
+
+- `/entrar/janela` (login): devolve documento completo com e sem `HX-Request`. Sem fragmento. O envio é AJAX; a URL não muda.
+- `/painel-administrativo/eventos/locais/modal` (admin, 200 com `HX-Request`): devolve documento completo (226 KB) com o formulário. Anônimo: 403.
+- `growroom420.../discussoes/reagir/node/545/opcoes` (gatilho `data-hx-get` com `data-hx-target="#discussion-reaction-picker-discussion-reactions-node-545"` e `innerHTML`):
+  - anônimo: 403 com documento completo (39 KB);
+  - autenticado (conta comum, `HX-Request: true`): 200 com documento completo (63.941 bytes), contendo `<head>` e `<body>`, e **sem** o id do alvo.
+  - **Defeito candidato (não corrigido):** o alvo do `innerHTML` não recebe o fragmento esperado. Confirmar se o endpoint deveria devolver só o fragmento do picker e por que não o faz para `HX-Request`.
+- Teste funcional de HTMX: não implementado nesta rodada, porque o contrato dos endpoints ainda não é fragmento. Um teste de fragmento hoje falharia.
