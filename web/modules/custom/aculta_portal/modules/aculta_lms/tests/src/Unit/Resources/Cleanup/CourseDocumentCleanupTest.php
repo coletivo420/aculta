@@ -29,7 +29,7 @@ use PHPUnit\Framework\Attributes\Group;
 /**
 
  */
-#[Group('aculta_lms_resources')]
+#[Group('aculta_lms')]
 #[CoversClass(\Drupal\aculta_lms\Resources\Cleanup\CourseDocumentCleanup::class)]
 final class CourseDocumentCleanupTest extends UnitTestCase {
 

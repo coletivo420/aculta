@@ -34,7 +34,14 @@ final class DmarcReportParser {
    * Anexos vêm de remetentes externos. O tamanho declarado em ZIP ou GZIP pode
    * ser forjado, então o limite é medido ao ler, e não pelo cabeçalho.
    */
-  public function __construct(private readonly IngestionLimits $limits) {}
+  public function __construct(private readonly ?IngestionLimits $limits = NULL) {}
+
+  /**
+   * Returns the configured DMARC report limit, with a conservative fallback.
+   */
+  private function maxBytes(): int {
+    return $this->limits?->bytes(IngestionLimits::DMARC_MAX_REPORT_MB) ?? 10 * 1024 * 1024;
+  }
 
   /**
    * Tamanho de leitura ao descompactar um anexo.
@@ -91,7 +98,7 @@ final class DmarcReportParser {
         return NULL;
       }
       $xml .= $piece;
-      if (strlen($xml) > $this->limits->bytes(IngestionLimits::DMARC_MAX_REPORT_MB)) {
+      if (strlen($xml) > $this->maxBytes()) {
         return NULL;
       }
     }
@@ -126,7 +133,7 @@ final class DmarcReportParser {
             return NULL;
           }
           $xml .= $chunk;
-          if (strlen($xml) > $this->limits->bytes(IngestionLimits::DMARC_MAX_REPORT_MB)) {
+          if (strlen($xml) > $this->maxBytes()) {
             return NULL;
           }
         }

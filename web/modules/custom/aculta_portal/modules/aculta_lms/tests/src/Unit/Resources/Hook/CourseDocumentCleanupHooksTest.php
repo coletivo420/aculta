@@ -14,7 +14,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 /**
 
  */
-#[Group('aculta_lms_resources')]
+#[Group('aculta_lms')]
 #[CoversClass(\Drupal\aculta_lms\Resources\Hook\CourseDocumentCleanupHooks::class)]
 final class CourseDocumentCleanupHooksTest extends UnitTestCase {
 

@@ -56,7 +56,6 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
     static::$modules = $this->resolveModuleDependencyClosure([
       'aculta_portal',
       'aculta_lms',
-      'aculta_lms_resources',
       'aculta_document_viewer',
       'aculta_forum',
       'aculta_wiki',
@@ -64,6 +63,7 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
       'schema_web_page',
       'schema_organization',
       'aculta_index',
+      'aculta_magazine',
     ]);
     parent::bootKernel();
   }

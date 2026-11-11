@@ -50,7 +50,6 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     'aculta_commerce_shipping_test',
     'aculta_document_viewer',
     'aculta_lms',
-    'aculta_lms_resources',
     'aculta_calendar',
     'aculta_file_uploader',
     'aculta_forum',
