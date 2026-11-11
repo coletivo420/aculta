@@ -575,6 +575,10 @@ foreach ($templateRoots as $owner => $templateRoot) {
     $isNeutralPortalElement = $file->getFilename() === 'portal-element.html.twig';
     $isNeutralDonationWrapper = in_array($file->getFilename(), ['aculta-donation-summary.html.twig', 'aculta-donation-summary-container.html.twig'], TRUE);
     $isTermsModalAdapter = $file->getFilename() === 'aculta-portal-account-terms-modal.html.twig';
+    $isThemeDocument = $file->getFilename() === 'html.html.twig' && str_starts_with($relativePath, 'web/themes/');
+    $isRegionWrapper = $file->getFilename() === 'region--footer.html.twig';
+    $isUiPatternsLibraryTemplate = str_starts_with($file->getFilename(), 'ui-patterns-');
+    $isMapsPopupWrapper = $file->getFilename() === 'aculta-maps-popup-template.html.twig';
     $moduleThemeAdapters = str_starts_with($relativePath, 'web/modules/')
       ? ($themeSdcAdapters[$file->getFilename()] ?? [])
       : [];
@@ -603,6 +607,34 @@ foreach ($templateRoots as $owner => $templateRoot) {
       $viewConsumer = 'aculta_events:aculta_event_catalogue_card; eventos_publicos:block_1';
       $viewConfig = 'config/sync/views.view.eventos_publicos.yml; web/modules/custom/aculta_portal/modules/aculta_events/aculta_events.module';
     }
+    $templateUiPatterns = 'not_detected_in_template';
+    if ($isUiPatternsLibraryTemplate) {
+      $templateUiPatterns = 'ui_patterns_library_template';
+    }
+    elseif ($isThemeDocument) {
+      $templateUiPatterns = 'theme_document';
+    }
+    elseif ($isRegionWrapper) {
+      $templateUiPatterns = 'theme_region_wrapper';
+    }
+    elseif ($isMapsPopupWrapper) {
+      $templateUiPatterns = 'neutral_template_wrapper';
+    }
+    elseif ($isPortalComponentAdapter) {
+      $templateUiPatterns = 'theme_adapter:empty-state,tabs,author-card,profile-details';
+    }
+    elseif ($isTermsModalAdapter) {
+      $templateUiPatterns = 'behavior_contract:data-dialog-title';
+    }
+    elseif ($isNeutralDonationWrapper) {
+      $templateUiPatterns = 'neutral_wrapper:content';
+    }
+    elseif ($isNeutralPortalElement) {
+      $templateUiPatterns = 'neutral_element:data-portal-ui';
+    }
+    elseif ($isThemeAdaptedModuleFallback) {
+      $templateUiPatterns = 'theme_adapter:' . implode(',', array_unique(array_merge(...array_column($moduleThemeAdapters, 'components'))));
+    }
     $rows[] = [
       'id' => 'template:' . $relativePath,
       'owner_module' => $owner,
@@ -612,24 +644,12 @@ foreach ($templateRoots as $owner => $templateRoot) {
       'display_plugin' => 'twig-template-suggestion',
       'row_plugin' => '',
       'style_plugin' => '',
-      'ui_patterns_configured' => $components !== []
-        ? implode(',', $components)
-        : ($isPortalComponentAdapter
-          ? 'theme_adapter:empty-state,tabs,author-card,profile-details'
-          : ($isTermsModalAdapter
-            ? 'behavior_contract:data-dialog-title'
-            : ($isNeutralDonationWrapper
-            ? 'neutral_wrapper:content'
-            : ($isNeutralPortalElement
-            ? 'neutral_element:data-portal-ui'
-            : ($isThemeAdaptedModuleFallback
-              ? 'theme_adapter:' . implode(',', array_unique(array_merge(...array_column($moduleThemeAdapters, 'components'))))
-              : 'not_detected_in_template'))))),
+      'ui_patterns_configured' => $components !== [] ? implode(',', $components) : $templateUiPatterns,
       'status' => $isSdcAdapter
         ? 'UI_SUITE_NATIVE'
-        : ($isPortalComponentThemeAdapter
+        : (($isPortalComponentThemeAdapter || $isUiPatternsLibraryTemplate)
           ? 'UI_SUITE_NATIVE'
-          : (($isPortalComponentAdapter || $isNeutralPortalElement || $isNeutralDonationWrapper || $isTermsModalAdapter || $isNeutralPortalButtonFallback)
+          : (($isPortalComponentAdapter || $isNeutralPortalElement || $isNeutralDonationWrapper || $isTermsModalAdapter || $isThemeDocument || $isRegionWrapper || $isMapsPopupWrapper || $isNeutralPortalButtonFallback)
           ? 'FUNCTIONAL_NATIVE_EXCEPTION'
           : ($isThemeAdaptedModuleFallback
             ? 'FUNCTIONAL_NATIVE_EXCEPTION'
