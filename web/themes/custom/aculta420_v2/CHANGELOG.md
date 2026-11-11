@@ -1070,3 +1070,8 @@ State: Dev. No RC, production deployment, or release tag is declared.
   download da tradução `pt-br` falhou por `translations://` não configurado.
   Piloto Links, render e cache ficam pendentes até o cutover autorizado.
 
+
+## Não versionado — UI Patterns style na listagem pública da Revista (2026-11-11)
+
+- `aculta_news:block_1` passa a compor o SDC `revista-listing` sobre quatro nodes teaser, preservando acesso, filtros, ordenação e cache da View. O SDC aceita wrappers Views e nodes diretos retornados pelo style UI Patterns.
+- Removida dessa View a classe genérica `aculta-editorial-list`; o script de instalação deixa de recriá-la para `aculta_news`. Browser Firefox ESR: A/B 10/10 em cinco larguras, claro/escuro; zoom/cache-hit seguem pendentes.

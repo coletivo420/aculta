@@ -90,6 +90,10 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && (string) $displayId === 'block_1'
       && $stylePlugin === 'ui_patterns'
       && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:layout-grid';
+    $isRevistaNewsPilot = $viewId === 'aculta_news'
+      && (string) $displayId === 'block_1'
+      && $stylePlugin === 'ui_patterns'
+      && ($stylePatterns['component_id'] ?? NULL) === 'aculta420_v2:revista-listing';
     $isEventsBase = $viewId === 'eventos_publicos' && (string) $displayId === 'default';
     $revistaTeaserTemplate = $theme . '/templates/content/node--revista--teaser.html.twig';
     $isRevistaTeaserSdc = $viewId === 'revista_sessoes'
@@ -98,7 +102,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && is_file($revistaTeaserTemplate)
       && str_contains((string) file_get_contents($revistaTeaserTemplate), "aculta420_v2:revista-teaser");
     $isViewsDefaultBase = (string) $displayId === 'default';
-    $isViewsFunctionalBase = $isViewsDefaultBase && !$patternsConfigured;
+    $isViewsFunctionalBase = $isViewsDefaultBase;
     $runtimeView = $runtimeViewDisplays[$viewId] ?? NULL;
     $albumsRuntimeVerified = $isAlbumsViewsPilot
       && is_array($runtimeView)
@@ -115,6 +119,12 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && ($eventsRuntimeDisplay['status'] ?? '') === 'runtime_verified'
       && ($eventsRuntimeDisplay['style_plugin'] ?? '') === 'ui_patterns'
       && ($eventsRuntimeDisplay['style_component'] ?? '') === 'aculta420_v2:layout-grid';
+    $revistaNewsRuntimeDisplay = $isRevistaNewsPilot && is_array($runtimeView)
+      ? ($runtimeView['displays'][$displayId] ?? NULL)
+      : NULL;
+    $revistaNewsRuntimeVerified = is_array($revistaNewsRuntimeDisplay)
+      && ($revistaNewsRuntimeDisplay['status'] ?? '') === 'runtime_verified'
+      && ($revistaNewsRuntimeDisplay['style_component'] ?? '') === 'aculta420_v2:revista-listing';
     $revistaRuntimeView = $runtimeViewDisplays[$viewId] ?? NULL;
     $revistaRuntimeVerified = $isRevistaTeaserSdc
       && is_array($revistaRuntimeView)
@@ -129,6 +139,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         'aculta_albuns' => 'aculta_gallery',
         'aculta_forum_categories' => 'aculta_forum',
         'revista_sessoes' => 'aculta_magazine',
+        'aculta_news' => 'aculta_magazine',
         'eventos_publicos' => 'aculta_events',
         default => 'unresolved_from_config',
       },
@@ -141,9 +152,9 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'ui_patterns_configured' => $components !== [] ? implode(',', $components) : 'not_detected_by_plugin_id_scan',
       'status' => ($isViewsFunctionalBase || $isEventsBase)
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
-        : (($albumsRuntimeVerified || $forumRuntimeVerified || $eventsRuntimeVerified || $revistaRuntimeVerified) ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS'),
+        : (($albumsRuntimeVerified || $forumRuntimeVerified || $eventsRuntimeVerified || $revistaRuntimeVerified || $revistaNewsRuntimeVerified) ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS'),
       'replacement_or_action' => $isViewsFunctionalBase || $isEventsBase
-        ? 'Native Views base display supplies inherited query, access, filters and sorting; it is not an independently rendered visual consumer'
+        ? 'Native Views base display supplies inherited query, access, filters, sorting and configured style to concrete displays; it has no independent route output'
         : ($isAlbumsViewsPilot
           ? 'Compose this inherited View level with UI Patterns SDCs; preserve native row fields, filters, sort, pager and access'
           : ($isForumCategoryPilot
@@ -152,11 +163,13 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
               : 'Pilot: replace duplicated row field templates with the forum-category SDC; retain Views query, grouping, pager and access contracts')
             : ($isEventsCataloguePilot
               ? 'UI Patterns layout-grid wraps the native View rows; aculta_events_catalogue_card keeps access-checked IDs, labels and ordering'
+              : ($isRevistaNewsPilot
+                ? 'UI Patterns style composes the existing revista-listing SDC around native teaser render arrays; published filter, sort, access and cache remain Views-owned'
               : ($isRevistaTeaserSdc
                 ? 'Keep the native entity teaser row; the ACULTA theme adapter renders fields as render-array slots through the existing revista-teaser SDC'
-                : 'Inventory candidate only; inspect row, style and display independently before migration')))),
+                : 'Inventory candidate only; inspect row, style and display independently before migration'))))),
       'risk_or_evidence_gap' => $isViewsFunctionalBase || $isEventsBase
-        ? 'Inherited functional query, access, filters and sorting are consumed by explicit displays; no independent visual output'
+        ? 'Inherited query/access/filter/sort and any base style are consumed by explicit displays; no independent route output'
         : ($isAlbumsViewsPilot
           ? ($albumsRuntimeVerified
             ? 'Runtime/render/browser verified at 1280/320 light/dark; pager navigation, keyboard, zoom 200% and cache-hit variation remain open'
@@ -173,11 +186,15 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
               ? ($eventsRuntimeVerified
                 ? 'Firefox ESR: 2 card-cultural SDCs inside layout-grid; 320/1440 light/dark, visible keyboard focus, no horizontal scroll; detail routes separately smoke-tested'
                 : 'UI Patterns layout-grid is configured; Runtime style output and browser comparison remain pending')
+              : ($isRevistaNewsPilot
+                ? ($revistaNewsRuntimeVerified
+                  ? 'Firefox ESR verified 4 native teaser nodes, visible H1, contrast ≥7.16:1, keyboard focus and 1/2/3-column reflow at 320/390/768/1024/1440 in light/dark; cache-hit and 200% zoom remain open'
+                  : 'UI Patterns SDC style configured; targeted Runtime output, access/cache comparison and browser evidence remain pending')
               : ($isRevistaTeaserSdc
                 ? ($revistaRuntimeVerified
                   ? 'Theme adapter composes revista-teaser; homepage smoke is not attributable to this View; route, access, pager/cache remain pending'
                   : 'Sync source confirms node teaser row and SDC adapter; Runtime output, access, pager/cache and browser acceptance remain pending')
-                : 'No UI Patterns row/style/display plugin ID detected in Sync; Runtime output, access and cache still unverified')))),
+                : 'No UI Patterns row/style/display plugin ID detected in Sync; Runtime output, access and cache still unverified'))))),
       'rollback' => 'Revert only display config after before/after result comparison',
       'detected_consumers' => '',
       'runtime_status' => $isViewsFunctionalBase || $isEventsBase
@@ -192,9 +209,13 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
                 ? sprintf('active; HTTP %d; %d native rows; UI Patterns layout-grid; anonymous access allowed; Firefox 320/1440 light/dark', $eventsRuntimeDisplay['after_http_status'], $eventsRuntimeDisplay['result_count'])
                 : ($isEventsCataloguePilot
                   ? 'configured; Runtime/browser evidence not recorded'
+                  : ($revistaNewsRuntimeVerified
+                    ? sprintf('active; HTTP %d; %d native teaser nodes before/after; anonymous access; UI Patterns revista-listing style; Firefox 320/390/768/1024/1440 light/dark', $revistaNewsRuntimeDisplay['after_http_status'], $revistaNewsRuntimeDisplay['result_count_after'])
+                    : ($isRevistaNewsPilot
+                      ? 'configured; Runtime/browser evidence not recorded'
                   : ($isRevistaTeaserSdc
                     ? 'Theme adapter verified in source; route output not attributable to this display'
-                    : 'not_observed')))))),
+                    : 'not_observed')))))))),
     ];
   }
 }
@@ -265,11 +286,20 @@ foreach (glob($sync . '/block.block.*.yml') ?: [] as $path) {
     }
   }
   $runtimeBlock = $runtimeSnapshot['block_styles'][$id] ?? NULL;
-  $runtimeVerified = is_array($runtimeBlock)
+  $viewId = preg_match('/^views_block:([^:]+)-/', $pluginId, $matches) ? $matches[1] : NULL;
+  $viewDisplayId = preg_match('/^views_block:[^:]+-(.+)$/', $pluginId, $matches) ? $matches[1] : NULL;
+  $runtimeView = $viewId !== NULL ? ($runtimeViewDisplays[$viewId] ?? NULL) : NULL;
+  $runtimeViewDisplay = is_array($runtimeView) && is_array($runtimeView['displays'] ?? NULL)
+    && $viewDisplayId !== NULL ? ($runtimeView['displays'][$viewDisplayId] ?? NULL) : NULL;
+  $viewStyleVerified = is_array($runtimeViewDisplay)
+    && ($runtimeViewDisplay['status'] ?? '') === 'runtime_verified'
+    && (is_string($runtimeViewDisplay['style_component'] ?? NULL) || is_string($runtimeViewDisplay['row_component'] ?? NULL) || is_string($runtimeViewDisplay['display_component'] ?? NULL));
+  $blockStyleVerified = is_array($runtimeBlock)
     && ($runtimeBlock['status'] ?? '') === 'runtime_verified'
     && $selectedStyles !== [];
-  $viewId = preg_match('/^views_block:([^:]+)-/', $pluginId, $matches) ? $matches[1] : NULL;
+  $runtimeVerified = $blockStyleVerified || $viewStyleVerified;
   $owner = match (TRUE) {
+    $viewId === 'aculta_news' => 'aculta_magazine',
     $viewId === 'aculta_events' => 'aculta_events',
     $viewId === 'aculta_gallery' => 'aculta_gallery',
     $viewId === 'aculta_forum_categories' => 'aculta_forum',
@@ -279,6 +309,10 @@ foreach (glob($sync . '/block.block.*.yml') ?: [] as $path) {
     str_starts_with($pluginId, 'block_content:') => 'block_content',
     default => (string) ($block['provider'] ?? 'unresolved_from_config'),
   };
+  /* Keep the block-placement evidence separate from View-owned visual evidence. */
+  $blockUiStylesVerified = is_array($runtimeBlock)
+    && ($runtimeBlock['status'] ?? '') === 'runtime_verified'
+    && $selectedStyles !== [];
   $visibility = implode(',', array_map(
     static fn (string $key, array $condition): string => $key . '=' . json_encode($condition, JSON_UNESCAPED_SLASHES),
     array_keys($block['visibility'] ?? []),
@@ -292,19 +326,25 @@ foreach (glob($sync . '/block.block.*.yml') ?: [] as $path) {
     'consumer_id' => $pluginId,
     'display_plugin' => 'block',
     'row_plugin' => '',
-    'style_plugin' => $selectedStyles !== [] ? 'ui_styles_block' : '',
-    'ui_patterns_configured' => $selectedStyles !== [] ? implode(',', $selectedStyles) : 'no_ui_styles_selection',
+    'style_plugin' => $blockUiStylesVerified ? 'ui_styles_block' : ($viewStyleVerified ? 'ui_patterns_views' : ''),
+    'ui_patterns_configured' => $blockUiStylesVerified ? implode(',', $selectedStyles) : ($viewStyleVerified ? 'style:' . ($runtimeViewDisplay['style_component'] ?? $runtimeViewDisplay['row_component'] ?? $runtimeViewDisplay['display_component']) : 'no_ui_styles_selection'),
     'status' => $runtimeVerified ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS',
     'replacement_or_action' => $runtimeVerified
-      ? 'UI Styles Block applies existing ACULTA surface and spacing styles on the MAIN transparency block; preserve native Views output and block visibility'
+      ? ($blockUiStylesVerified
+        ? 'UI Styles Block applies existing ACULTA surface and spacing styles on the MAIN transparency block; preserve native Views output and block visibility'
+        : 'View display applies its UI Patterns SDC to native row render arrays; preserve this block placement and its visibility/access/cache configuration')
       : 'Inspect rendered output and map the block to existing SDC/UI Styles integrations; preserve plugin data, visibility, access and cache',
     'risk_or_evidence_gap' => $runtimeVerified
-      ? 'Anonymous Runtime and Firefox verified at 320/390/768/1024/1440 in light/dark with keyboard focus; cache-hit and zoom 200% remain open'
+      ? ($blockUiStylesVerified
+        ? 'Anonymous Runtime and Firefox verified at 320/390/768/1024/1440 in light/dark with keyboard focus; cache-hit and zoom 200% remain open'
+        : 'Anonymous View output and Firefox verified at 320/390/768/1024/1440 in light/dark with visible H1/main and focus; cache-hit and zoom 200% remain open')
       : 'Runtime output, domain/path visibility, cache and visual replacement remain unverified; config visibility: ' . $visibility,
     'rollback' => 'Restore only this block configuration; no content data changes',
     'detected_consumers' => $pluginId,
     'runtime_status' => $runtimeVerified
-      ? 'active; ' . ($runtimeBlock['region'] ?? 'region unknown') . '; ' . ($runtimeBlock['row_count'] ?? 'unknown') . ' rows; anonymous access; ' . ($runtimeBlock['evidence_manifest'] ?? 'browser evidence recorded')
+      ? ($blockUiStylesVerified
+        ? 'active; ' . ($runtimeBlock['region'] ?? 'region unknown') . '; ' . ($runtimeBlock['row_count'] ?? 'unknown') . ' rows; anonymous access; ' . ($runtimeBlock['evidence_manifest'] ?? 'browser evidence recorded')
+        : 'active; View display ' . $viewId . ':' . $viewDisplayId . '; ' . ($runtimeViewDisplay['result_count_after'] ?? $runtimeViewDisplay['result_count'] ?? 'unknown') . ' results; anonymous access; UI Patterns output evidenced in runtime inventory')
       : 'not_observed',
   ];
 }

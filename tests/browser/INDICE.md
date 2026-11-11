@@ -29,6 +29,7 @@ Scripts com `routes.json` têm cobertura de rotas públicas no runner comum.
 | [`tests/browser/forum/aculta420-v2-forum/`](./forum/aculta420-v2-forum/README.md) | Firefox ESR visual smoke — Fórum V2 | 1 | sim |
 | [`tests/browser/gallery/aculta-gallery/`](./gallery/aculta-gallery/README.md) | Galeria ACULTA | 1 | sim |
 | [`tests/browser/links/aculta-links/`](./links/aculta-links/README.md) | Micropágina pública: layout mobile no navegador | 1 | sim |
+| [`tests/browser/magazine/aculta-news-ui-patterns/`](./magazine/aculta-news-ui-patterns/README.md) | UI Patterns Views — listagem da Revista | 1 | não |
 | [`tests/browser/magazine/revista-color/`](./magazine/revista-color/README.md) | Revista — rótulos de categoria | 1 | sim |
 | [`tests/browser/magazine/revista-editorial/`](./magazine/revista-editorial/README.md) | Revista — fluxo editorial (ARQ-08) | 1 | sim |
 | [`tests/browser/shop/aculta-cpf-checkout/`](./shop/aculta-cpf-checkout/README.md) | Navegador — CPF/checkout compartilhado Loja/LMS | 4 | sim |

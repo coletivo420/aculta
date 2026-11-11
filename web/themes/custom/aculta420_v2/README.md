@@ -26,7 +26,7 @@ Decisões que governam o tema estão em `docs/decisions/` na raiz do repositóri
 
 ## Estado em uma frase
 
-Fundações, shell SDC, UI Skins, UI Patterns Views/Layouts e UI Styles Block estão ativos. Álbuns usa SDCs row/style/display; Documentos aplica superfície e espaçamento oficiais com três rows preservadas. As ADRs 054/055 seguem abertas: faltam migração site-wide e aceites de acessibilidade/cache, além da trilha RN-00 a RN-05.
+Fundações, shell SDC, UI Skins, UI Patterns Views/Layouts e UI Styles Block estão ativos. Álbuns usa row/style/display; Notícias usa `revista-listing` sobre quatro teasers nativos; Documentos aplica superfície e espaçamento oficiais. As ADRs 054/055 seguem abertas: faltam migração site-wide e aceites de acessibilidade/cache, além da trilha RN-00 a RN-05.
 
 ## Estrutura
 

@@ -8,4 +8,4 @@ props:
 slots:
   items:
     type: inline_template
-    template: '<div class="views-row"><article class="revista-teaser"><h2>Publicação de exemplo</h2></article></div>'
+    template: '<article class="node node--view-mode-teaser"><div class="revista-teaser"><h2>Publicação de exemplo</h2></div></article>'

@@ -492,8 +492,13 @@ function institution_view(string $id, string $label, array $bundles, string $pat
       'row' => ['type' => 'entity:node', 'options' => ['view_mode' => $row_mode]],
       'filters' => $filters,
       'sorts' => $sorting,
-      'css_class' => $id === 'aculta_projects' ? 'aculta-project-list' : 'aculta-editorial-list',
     ];
+    if ($id === 'aculta_projects') {
+      $options['css_class'] = 'aculta-project-list';
+    }
+    elseif ($id !== 'aculta_news') {
+      $options['css_class'] = 'aculta-editorial-list';
+    }
     if ($header) {
       $options['header'] = [
         'area' => [

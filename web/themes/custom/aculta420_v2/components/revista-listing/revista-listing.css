@@ -4,8 +4,8 @@
 .revista-listing__eyebrow { margin: 0; letter-spacing: .08em; text-transform: uppercase; color: var(--color-text-secondary); font-size: var(--font-size-sm); font-weight: 600; }
 .revista-listing__title { margin: 0; color: var(--color-text-primary); font-family: var(--font-family-heading); font-size: clamp(var(--font-size-xxl), 5vw, 3rem); line-height: 1.12; overflow-wrap: anywhere; }
 .revista-listing__items { display: grid; gap: var(--spacing-lg); grid-template-columns: minmax(0, 1fr); min-inline-size: 0; }
-.revista-listing__items > .views-row { margin: 0; min-inline-size: 0; }
-.revista-listing__items > .views-row :where(.revista-teaser, .node) { block-size: 100%; min-inline-size: 0; }
+.revista-listing__items > :is(.views-row, .node--view-mode-teaser) { margin: 0; min-inline-size: 0; }
+.revista-listing__items > :is(.views-row, .node--view-mode-teaser) :where(.revista-teaser, .node) { block-size: 100%; min-inline-size: 0; }
 
 @media (min-width: 37.5rem) {
   .revista-listing__items { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -13,5 +13,5 @@
 
 @media (min-width: 62rem) {
   .revista-listing__items { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .revista-listing__items > .views-row:first-child { grid-column: 1 / -1; }
+  .revista-listing__items > :is(.views-row, .node--view-mode-teaser):first-child { grid-column: 1 / -1; }
 }

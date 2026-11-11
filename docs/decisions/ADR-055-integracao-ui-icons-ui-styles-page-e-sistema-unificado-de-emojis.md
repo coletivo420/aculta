@@ -148,3 +148,8 @@ A distinção entre identidade funcional e identidade visual passa a ser obrigat
 A renomeação cobre classes, serviços, métodos, route options, subscribers, form builders, listas de sites ativos, contratos de apresentação e Twig, metadata de cross-domain, retorno ao login em sessão, State e testes. **Não modificar** Domain IDs, slugs/URLs públicas, `field_domain_source`, entidades, conteúdo, regras de acesso ou fluxos de pagamento. Os nomes antigos recebem aliases *internos* temporários e fail-closed quando metadados de rota novo e antigo conflitam; não criar aliases de rota públicos.
 
 Execução em RN-00 a RN-05 conforme `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`. Integrar RN-01 com a ponte visual UI Skins (US-02), migrar todos os consumidores antes de remover APIs obsoletas e exigir RN-05 PASS antes de encerrar US-14. A exclusão de UI Patterns CKEditor 5 e a preferência pelo Field Group `2.0.x-dev@dev` permanecem inalteradas.
+
+
+## Atualização — UI Patterns Views na Revista (2026-11-11)
+
+`aculta_news:block_1` usa o SDC editorial existente `revista-listing` como style UI Patterns, com `view_rows` no slot `items`; quatro rows `node:revista`/teaser permanecem sob Views e UI Patterns wrapper não altera consulta. A/B/A importou apenas `views.view.aculta_news`; HTTP 200, IDs 599–602, acesso anônimo, filtros/ordenação/pager/cache invariantes. Firefox ESR passou 10/10 antes e depois em cinco larguras e dois modos, com H1/main visíveis, foco, contraste ≥7.16:1 e sem overflow. Config Sync foi alinhada ao Runtime, inclusive source boolean `checkbox`. Zoom 200%, cache-hit e revisão humana DEFERRED. Evidências versionadas no manifesto `tests/browser/capturas/ui-patterns-revista-news/2026-11-11/manifest.json`.

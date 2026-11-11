@@ -113,3 +113,8 @@ Também foi classificada `revista_sessoes` sem cutover redundante: os seis displ
 - O conflito anterior do ConfigImporter foi resolvido pela migração das dependências/configurações proprietárias; o import parcial autorizado foi concluído após snapshot. A/B/A anônimo confirmou Links=Ruderalis e os outros domínios testados=Skunk, sem reaproveitamento cruzado entre hosts. Preferência de modo do usuário permanece preservada.
 - Ainda pendem contraste medido e aceitação visual dos dez domínios em claro/escuro, cinco larguras e zoom 200%, mais cache-hit em ordem inversa. Isso não fecha P8/P9 nem RN-00–05; `DomainPurposeManager` continua somente pelas responsabilidades funcionais enquanto a renomeação para `site_key` permanece aberta.
 
+
+
+### Atualização US-12 — SDC editorial em Views da Revista (2026-11-11)
+
+A View pública `aculta_news:block_1` agora compõe o SDC existente `revista-listing` pelo style UI Patterns Views; seus quatro render arrays de `node:revista` continuam no view mode `teaser` e adapter `revista-teaser`. Filtro published, ordem created DESC, access `access content`, cache tag/contexts e H1/main foram comparados antes/depois. Firefox ESR: 10/10 cenários por fase em cinco larguras claro/escuro, foco visível e contraste mínimo 7.16:1. O inventário e rollback estão no manifesto UI Patterns Revista News. Cache-hit, zoom 200% e aceite humano seguem DEFERRED; a ADR permanece aberta.

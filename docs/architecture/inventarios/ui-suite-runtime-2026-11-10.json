@@ -1,5 +1,5 @@
 {
-    "observed_at_utc": "2026-11-11T04:34:37+00:00",
+    "observed_at_utc": "2026-11-11T05:02:19+00:00",
     "drupal_version": "11.5.0-beta1",
     "evidence_command": "Drush Runtime export and targeted partial imports after snapshots; ComponentLayout discovery; 276-check Layout Builder batch validator; render-array/access parity checks; anonymous Firefox A/B/A pilot; Forum categories and UI Styles Entity Status targeted imports; UI Styles Entity Status isolated functional test",
     "ui_suite_modules": {
@@ -185,7 +185,9 @@
         "Wiki full browser acceptance is DEFERRED: anonymous GET returned 403 and the authenticated Firefox runner produced a blank document without title/main; the artifact was not counted as a pass.",
         "The public Forum categories page now wraps its native grouped View output with views-display while retaining the forum-category row and native style. Runtime partial import changed only views.view.aculta_forum_categories after a config snapshot; anonymous HTTP 200 and 12 category cards remained, with one H1/main, zero horizontal scroll at five light widths and two dark widths, and keyboard-visible focus.",
         "The Events catalogue style pilot wraps the existing aculta_events_catalogue_card rows in the UI Patterns layout-grid. A targeted partial import changed only views.view.eventos_publicos after a Runtime snapshot (SHA-256 37a007b412a411f33d6b39c130ee98083aa3dbe8f836a3f9dd284dcc1c139d23); effective Views handler, anonymous access, two cards and Firefox ESR 320/1440 light/dark with visible keyboard focus and no horizontal scroll were verified. The detail-route smoke is separate. Cache-hit and zoom 200% remain unverified. An earlier broad-source partial import briefly disabled ui_styles_library, ui_patterns_field_group and ui_patterns_ui; these modules were immediately re-enabled, with no content data changes. Do not repeat broad-source partial imports; isolate target YAML in a temporary source directory.",
-        "UI Styles Block now applies the registered raised-surface and normal-spacing choices to the MAIN-only transparency block aculta420_v2_aculta_documents. The isolated block config import followed a Runtime snapshot (SHA-256 stored in the capture manifest); anonymous Runtime retained three View rows, and Firefox verified computed light/dark background, 16/24 px responsive padding, keyboard focus, one H1/main and no overflow at 320/390/768/1024/1440. UI Styles Page still uses theme-global region settings with no domain-aware assignment, so it is not used for domain-specific skins."
+        "UI Styles Block now applies the registered raised-surface and normal-spacing choices to the MAIN-only transparency block aculta420_v2_aculta_documents. The isolated block config import followed a Runtime snapshot (SHA-256 stored in the capture manifest); anonymous Runtime retained three View rows, and Firefox verified computed light/dark background, 16/24 px responsive padding, keyboard focus, one H1/main and no overflow at 320/390/768/1024/1440. UI Styles Page still uses theme-global region settings with no domain-aware assignment, so it is not used for domain-specific skins.",
+        "The public Revista news View aculta_news:block_1 now uses UI Patterns style revista-listing around the native node teaser render arrays. Four published teaser nodes, anonymous access, filter/sort/pager/query/cache contracts and visible H1/main were compared before/after. The legacy aculta-editorial-list class was removed from this View only; its CSS remains for other active consumers.",
+        "Repeated anonymous requests to the Revista News route returned 200 and X-Drupal-Cache MISS; the response is no-cache/private and X-Drupal-Dynamic-Cache reports UNCACHEABLE (poor cacheability). The response differed only in per-request View DOM ID and CSP nonce; the four result IDs were stable. This does not constitute a cache-hit test."
     ],
     "block_styles": {
         "aculta420_v2_aculta_documents": {
@@ -831,6 +833,92 @@
                     "style_plugin": "default",
                     "display_component": null,
                     "runtime_status": "active row config; parent block placement is display:none on public home; no visible-output acceptance claimed"
+                }
+            }
+        },
+        "aculta_news": {
+            "owner_module": "aculta_magazine",
+            "config_path": "config/sync/views.view.aculta_news.yml",
+            "displays": {
+                "block_1": {
+                    "consumer_id": "block_1",
+                    "status": "runtime_verified",
+                    "configuration_import": "targeted partial import of only views.view.aculta_news; baseline restored for A/B comparison and final config reapplied",
+                    "before_runtime_snapshot": "external JSON SHA-256 291eb04a25c7dcbd54290fe9b7b55cf287db55129715b8269e00391665fc03d6",
+                    "after_runtime_snapshot": "external JSON SHA-256 2d5d01b8b851df019c43d7e7b43eb15d2a43e71de250760894c30976a230fac6",
+                    "before_http_status": 200,
+                    "after_http_status": 200,
+                    "result_count_before": 4,
+                    "result_count_after": 4,
+                    "result_node_ids_before_after": [
+                        599,
+                        600,
+                        601,
+                        602
+                    ],
+                    "row_plugin": "entity:node",
+                    "row_view_mode": "teaser",
+                    "row_component": "aculta420_v2:revista-teaser via existing node Twig adapter",
+                    "style_plugin": "ui_patterns",
+                    "style_component": "aculta420_v2:revista-listing",
+                    "style_slot_source": "view_rows",
+                    "display_component": null,
+                    "anonymous_access": "allowed by native access content permission",
+                    "filters_sorts_pager_row_query_relationships": "unchanged from Runtime baseline",
+                    "cache_metadata": "tag cache; languages:language_interface, user.node_grants:view, user.permissions unchanged from pre-import Runtime config",
+                    "browser_viewports_css_px": [
+                        320,
+                        390,
+                        768,
+                        1024,
+                        1440
+                    ],
+                    "browser_modes": [
+                        "light",
+                        "dark"
+                    ],
+                    "browser_results_before_after": "10/10 PASS each phase",
+                    "rendered_teaser_nodes": 4,
+                    "responsive_columns": {
+                        "320": 1,
+                        "390": 1,
+                        "768": 2,
+                        "1024": 3,
+                        "1440": 3
+                    },
+                    "featured_first_card": "spans all columns from 992 CSS px",
+                    "visible_h1_count": 1,
+                    "main_landmark_count": 1,
+                    "keyboard_focus": "visible inside View block",
+                    "contrast_ratio": {
+                        "minimum": 7.1617,
+                        "maximum": 12.3968
+                    },
+                    "horizontal_scroll": false,
+                    "legacy_css_class_removed": "aculta-editorial-list",
+                    "evidence_manifest": "tests/browser/capturas/ui-patterns-revista-news/2026-11-11/manifest.json",
+                    "limitations": [
+                        "Cache-hit variation is not testable while Drupal marks the full page uncacheable; no-cache/private response observed.",
+                        "Real browser zoom 200% and human visual review remain deferred."
+                    ],
+                    "dynamic_cache_http_header": "UNCACHEABLE (poor cacheability); HTTP Cache-Control must-revalidate, no-cache, private",
+                    "repeated_anonymous_http_requests": {
+                        "status": [
+                            200,
+                            200
+                        ],
+                        "x_drupal_cache": [
+                            "MISS",
+                            "MISS"
+                        ],
+                        "html_content_ids_stable": [
+                            599,
+                            600,
+                            601,
+                            602
+                        ],
+                        "html_diff": "per-request View DOM ID and CSP nonce; no content result change"
+                    }
                 }
             }
         }

@@ -100,3 +100,9 @@ Status espelhado de `TODO.md`. Plano visual: `docs/architecture/GROWROOM420-VISU
 - Migração do vocabulário de tokens para `--aculta-*`, conforme decidido. Pendente, em etapas.
 - Painéis de destaque, moderadores e relacionados: aguardam o contrato com o Portal.
 - Refatoração de fronteira do `aculta_studio`: não commitada, aguarda renderização e testes Kernel/Unit.
+
+
+## ADR-054/055 — Revista News em UI Patterns Views (2026-11-11)
+
+- `aculta_news:block_1` usa `revista-listing` no style, mantém teaser SDC e a consulta nativa. Quatro conteúdos, acesso anônimo e contratos de filtro/ordem/cache mantidos; browser 10/10 claro/escuro, 320–1440.
+- Pendentes neste piloto: cache-hit, zoom 200% e revisão visual humana. A fila das demais Views permanece aberta.

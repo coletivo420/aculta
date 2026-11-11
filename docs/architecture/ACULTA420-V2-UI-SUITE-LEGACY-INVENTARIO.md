@@ -85,3 +85,8 @@ O plano vinculante exige uma linha para cada superfície ativa com owner, rota/c
 **Parcial; critério bloqueante ainda DEFERRED.** Pacotes, versões locais, extensões Sync/Runtime, 159 displays de Views, 22 entity displays com Layout Builder, 80 definições SDC e referências literais iniciais foram confrontados. Regenerar com `php scripts/inventory-ui-suite-consumers.php`. Owners e saídas das Views, validade semântica de cada referência SDC, inventário integral por cada uma das dez frentes, interfaces administrativas e todos os modelos visuais ainda não estão concluídos. Não declarar ADR-054/055 concluídas com este artefato.
 
 O inventário funcional separado RN-00 pode ser regenerado com `php scripts/inventory-site-key-contracts.php`. O CSV agrega ocorrências por linha e categoria; menções genéricas requerem revisão semântica e os nomes propostos devem seguir o plano `ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`.
+
+
+## Atualização de consumidores — Revista News View (2026-11-11)
+
+`aculta_news:block_1` foi reclassificada `UI_SUITE_NATIVE`: UI Patterns style consome o SDC `revista-listing`; row entity teaser e `revista-teaser` permanecem nativos e reutilizados. O block placement também é `UI_SUITE_NATIVE` por delegar apresentação ao display validado. O display `default` foi classificado `FUNCTIONAL_NATIVE_EXCEPTION` por ser base herdada sem rota própria. O inventário gerado contém owners `aculta_magazine`, domínio magazine, source de dados, riscos, substituto e evidência Runtime/browser. Rollback parcial validado; zoom, cache-hit e aceite humano pendentes.
