@@ -69,6 +69,27 @@ $rowComponent = Yaml::parseFile($root . '/web/themes/custom/aculta420_v2/compone
 foreach (['cover', 'title', 'published_at', 'credits'] as $slot) {
   $assert(isset($rowComponent['slots'][$slot]), "O SDC revista-album-card precisa expor o slot $slot.");
 }
+
+$forumView = Yaml::parseFile($root . '/config/sync/views.view.aculta_forum_categories.yml');
+$forumPage = $forumView['display']['page_categories']['display_options'];
+$forumDefault = $forumView['display']['default']['display_options'];
+$forumStyle = $forumPage['style'] ?? [];
+$assert(($forumPage['defaults']['ui_patterns'] ?? NULL) === FALSE, 'Categorias deve selecionar explicitamente o componente de display sem herdar config vazia.');
+$assert(($forumPage['row']['type'] ?? NULL) === 'ui_patterns', 'A View de categorias deve manter UI Patterns no nível row.');
+$assert(($forumPage['row']['options']['ui_patterns']['component_id'] ?? NULL) === 'aculta420_v2:forum-category', 'A View de categorias deve reutilizar forum-category.');
+$assert(($forumStyle['type'] ?? NULL) === 'default', 'O estilo nativo de categorias deve permanecer para preservar agrupamento.');
+$assert(isset($forumStyle['options']['grouping'][0]), 'O agrupamento nativo por categoria principal deve permanecer.');
+$assert(($forumDefault['pager']['type'] ?? NULL) === 'some', 'O pager nativo herdado pela página de categorias deve permanecer.');
+$assert(($forumDefault['access']['type'] ?? NULL) === 'perm' && ($forumDefault['access']['options']['perm'] ?? NULL) === 'access content', 'A página de categorias deve manter controle de acesso nativo herdado.');
+$assert(isset($forumDefault['filters']['vid'], $forumDefault['sorts']['weight']), 'Vocabulário e ordenação editorial herdados da View de categorias devem permanecer.');
+$assert(($forumPage['ui_patterns']['component_id'] ?? NULL) === 'aculta420_v2:views-display', 'O display de categorias deve reutilizar o SDC views-display.');
+$assert(!isset($forumPage['ui_patterns']['props']['title']), 'A página de categorias não deve duplicar seu título visual nativo.');
+$forumDisplaySlots = $forumPage['ui_patterns']['slots'] ?? [];
+foreach ($requiredSources as $slot => $source) {
+  $assert(($forumDisplaySlots[$slot]['sources'][0]['source_id'] ?? NULL) === $source, "Categorias/$slot deve usar a fonte $source.");
+}
+$assert(($forumPage['header']['area_text_custom']['content'] ?? NULL) === '<p><a href="/">Discussões recentes</a></p>', 'O link Discussões recentes deve permanecer no header nativo da View.');
+
 $slots = $component['slots'] ?? [];
 foreach (['attachment_before', 'header', 'exposed', 'rows', 'empty', 'pager', 'more', 'footer', 'attachment_after'] as $slot) {
   $assert(isset($slots[$slot]), "O SDC views-display precisa expor o slot $slot.");
