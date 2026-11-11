@@ -153,6 +153,17 @@
 - O inventário registra 298 itens (159 View displays, 22 displays Layout Builder, 80 SDCs e 36 integrações), mais snapshot de 36 módulos ativos/desativados e drift Config Sync.
 - Runtime atualizado por `composer install --no-scripts`; `drush cr` PASS. UI Skins estava Disabled nesta captura histórica; foi instalado depois, sem importar mapa/scopes. UI Patterns CKEditor 5 e Field Group estavam Enabled na captura; nenhuma configuração foi importada ou desinstalada.
 
+## Não versionado — correção da UI Patterns Library (2026-11-11)
+
+- Registra a biblioteca administrativa que o hook da overview já anexava; abas
+  agora filtram cards pelo grupo correto usando atributos no DOM, e busca inclui
+  o nome do grupo. Prévia em lote permanece com duas requisições concorrentes.
+- CSS oferece duas colunas a partir de 60rem de largura útil e uma coluna em
+  telas menores. O gate `validate-aculta-ui-library.php` passou (25 checks);
+  browser autenticado carregou 84 componentes e uma story. A rodada do lote via
+  WebDriver terminou sem saída conclusiva. CSP permanece report-only; nenhuma
+  permissão `unsafe-inline` foi acrescentada.
+
 ## 1.5.0 — marcos do shell e Layout Builder no desenvolvimento (2026-11-09)
 
 > Esta entrega não encerra ADR-054/055; a homologação integral continua pendente.

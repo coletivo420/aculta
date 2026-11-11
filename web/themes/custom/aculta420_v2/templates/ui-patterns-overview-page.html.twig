@@ -64,7 +64,7 @@
 
   <div id="aculta-components-container">
     {% for group_name, components in groups %}
-      <div class="aculta-component-library__group-wrapper" data-group-name="{{ group_name }}">
+      <div class="aculta-component-library__group-wrapper" data-group-name="{{ group_name }}" data-group-id="grupo-{{ group_name|clean_class }}">
         {% if groups|length > 1 %}
           <h2 class="aculta-component-library__group-title" id="{{ aculta_group_anchors[group_name] }}">{{ group_name }}</h2>
         {% endif %}
@@ -72,7 +72,7 @@
         {% for component in components %}
           {% set safe_component_id = component.id|replace({':': '--'}) %}
           {% set single_url = url('ui_patterns_library.single', {provider: component.provider, machineName: component.machineName}) %}
-          <section class="ui_patterns_component" id="{{ safe_component_id }}" data-component-id="{{ component.id }}" data-component-name="{{ component.name|lower }}">
+          <section class="ui_patterns_component" id="{{ safe_component_id }}" data-component-id="{{ component.id }}" data-component-name="{{ component.name|lower }}" data-group-name="{{ group_name|lower }}">
             <div class="ui_patterns_component__header">
               <h2 class="ui_patterns_component__title">
                 <a href="{{ single_url }}" class="component__link">{{ component.name }}</a>

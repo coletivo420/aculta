@@ -33,7 +33,7 @@ final class UiPatternsStoryHooks {
     $variables['aculta_group_anchors'] = [];
     if (is_array($variables['groups'] ?? NULL)) {
       foreach (array_keys($variables['groups']) as $groupName) {
-        $variables['aculta_group_anchors'][$groupName] = 'grupo-' . Html::cleanCssIdentifier((string) $groupName);
+        $variables['aculta_group_anchors'][$groupName] = 'grupo-' . Html::getClass((string) $groupName);
       }
     }
     if (!is_array($variables['groups'] ?? NULL)) {

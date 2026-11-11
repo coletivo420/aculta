@@ -1,5 +1,17 @@
 # Roadmap do fórum Growroom420 (ACULTA420 V2)
 
+## UI Patterns Library: abas e erro de script (2026-11-11)
+
+- Overview agora registra a biblioteca `ui-library-admin` que já era anexada
+  pelo hook. As abas relacionam painel e grupo por `data-group-id`, e o filtro
+  também considera o grupo. CSS mantém duas colunas em desktop (60rem úteis) e
+  uma coluna em telas menores.
+- Gate UI Library: 25 checks PASS; Firefox ESR autenticado abriu o catálogo com
+  84 SDCs e carregou uma story. Erros JS agregados antigos não foram reproduzidos
+  após cache rebuild. A rodada completa do lote via WebDriver ficou inconclusiva;
+  teclado e zoom 200% permanecem pendentes. Avisos CSP são report-only; não foi
+  necessário habilitar `unsafe-inline`.
+
 ## ADR-055 — UI Styles Block (2026-11-11)
 
 - `/transparencia` no MAIN usa UI Styles `surface_style` raised e

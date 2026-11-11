@@ -1,5 +1,4 @@
-/* Biblioteca de componentes no tema administrativo: os blocos de componentes em colunas, como os
-   painéis do GIN (duas colunas a partir de 60rem; uma coluna no mobile). */
+/* Biblioteca de componentes no tema administrativo: duas colunas no desktop e uma no mobile. */
 
 /* O bloco "Componentes disponíveis" (atalhos) e a linha que o separa ocupam a largura toda, fora das colunas. */
 .ui_patterns_quicklinks,
@@ -105,9 +104,7 @@
   white-space: nowrap;
 }
 
-/* Biblioteca de componentes: área de conteúdo mais larga. Os cartões ficam em duas colunas só a
-   com conteúdo de pelo menos 75rem; abaixo disso, uma coluna com a largura toda (os componentes respondem ao
-   viewport, inclusive no mobile). */
+/* Biblioteca de componentes: cartões em duas colunas quando há 60rem de largura útil. */
 body:has(.ui_patterns_quicklinks) {
   --aculta-container-width: 1440px;
 }
@@ -159,12 +156,12 @@ body:has(.ui_patterns_quicklinks) {
   column-gap: var(--spacing-xl);
 }
 
-/* As colunas dependem da largura do conteúdo (não do viewport), então valem igual em qualquer zoom. */
+/* As colunas dependem da largura do conteúdo, não do viewport. */
 main:has(.ui_patterns_component) {
   container-type: inline-size;
 }
 
-@container (min-width: 75rem) {
+@container (min-width: 60rem) {
   :has(> .ui_patterns_component) {
     column-count: 2;
   }

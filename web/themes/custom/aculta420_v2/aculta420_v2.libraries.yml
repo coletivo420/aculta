@@ -132,6 +132,19 @@ component-library-mode:
   dependencies:
     - core/drupal
 
+ui-library-admin:
+  css:
+    theme:
+      src/styles/ui-library-admin.css: {}
+  js:
+    js/ui-library-tabs.js: { attributes: { defer: true } }
+    js/ui-library-bulk-preview.js: { attributes: { defer: true } }
+  dependencies:
+    - aculta420_v2/global-styling
+    - core/drupal
+    - core/once
+    - core/drupal.htmx
+
 utility-drawers:
   js:
     js/utility-dialogs.js: { attributes: { defer: true } }
