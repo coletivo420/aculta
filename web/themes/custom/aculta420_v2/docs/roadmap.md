@@ -26,9 +26,9 @@
 - `ui_skins` está habilitado no Config Sync; o gate exige o módulo, mapa de dez
   domínios, cinco variáveis, vinte scopes por variável e contraste ≥4,5:1.
 - UI Skins 1.2.1, mapa Domain ID → skin e scopes das cinco variáveis estão
-  ativos no Runtime. Links resolve Ruderalis; Firefox ESR 30/30 em cinco larguras e modos, sem
-  overflow, H1/main únicos e contraste mínimo 7,16:1. Os demais domínios,
-  cache-hit, zoom e aceite visual amplo permanecem pendentes.
+  ativos no Runtime. Firefox ESR passou 300/300 nos dez domínios em cinco larguras e modos, sem
+  overflow, H1/main únicos e contraste mínimo 7,16:1. Links resolve Ruderalis;
+  os demais Skunk. Cache-hit, zoom, teclado e aceite visual amplo pendem.
 
 ## UI Library administrativa (2026-11-11)
 

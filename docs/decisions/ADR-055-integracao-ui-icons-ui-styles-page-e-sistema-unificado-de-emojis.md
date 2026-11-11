@@ -195,7 +195,7 @@ O style da View `wiki_entries` consome `aculta420_v2:layout-grid` via UI Pattern
 
 Firefox ESR autenticado confirmou o catálogo protegido de UI Patterns com 16 grupos, 84 SDCs e uma story carregada sob demanda em 320/1280; o acesso anônimo retorna 403. O diagnóstico de largura do catálogo agora mede somente `#aculta-components-container`, deixando separado o menu lateral do tema administrativo Claro. O viewport 320 ainda registra elementos da navegação Claro fora da viewport sem rolagem de documento; zoom 200% e teclado administrativo seguem DEFERRED. Captura: `tests/browser/capturas/ui-suite-library/2026-11-11/manifest.json`.
 
-O piloto UI Skins Links passou 30/30 em cinco larguras e claro/escuro, com `data-skin=ruderalis`, `data-site-key=links`, H1/main únicos, contraste mínimo 7,16:1 e sem overflow. A apresentação LinkWeed é standalone por contrato e não possui `.page__header`; detalhes em `tests/browser/capturas/ui-skins-links/2026-11-11/manifest.json`. Homologação dos demais domínios/cache/zoom/aceite amplo permanece pendente; as ADRs não estão concluídas.
+A matriz UI Skins passou 300/300 nos dez domínios em cinco larguras e claro/escuro. Links resolve `data-skin=ruderalis`; os outros nove `skunk`. H1/main/barra únicos, contraste ≥7,16:1 e sem overflow. Links mantém a apresentação standalone prevista em seu SDC. Manifesto com 40 capturas: `tests/browser/capturas/ui-skins-ten-domains/2026-11-11/manifest.json`. Cache-hit, zoom, teclado, perfis e aceite visual humano seguem pendentes; as ADRs não estão concluídas.
 
 
 ## Estado do motor visual por purpose — 2026-11-11

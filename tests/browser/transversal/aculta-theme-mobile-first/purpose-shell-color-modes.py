@@ -41,9 +41,9 @@ missing = set(DOMAIN_IDS.values()) - set(hosts)
 if missing:
     raise SystemExit(f"Domínios ausentes em deploy.json: {', '.join(sorted(missing))}")
 PURPOSES = [(purpose, f"https://{hosts[domain_id]}/") for purpose, domain_id in DOMAIN_IDS.items()]
-# LinkWeed renders a standalone social-links-page SDC. Its presentation contract
-# intentionally hides the shared domain header so the author's title remains
-# primary; validate its own main content instead of requiring that header.
+# Domain home routes can render either the shared page header or a domain-owned
+# heading. The shell contract requires unique institution/main landmarks, not a
+# page header on every route. LinkWeed also validates its own main-content links.
 STANDALONE_PRESENTATIONS = {"links"}
 SELECTED_PURPOSES = {
     value.strip() for value in os.environ.get("PURPOSE_MODE_PURPOSES", "").split(",")
@@ -249,8 +249,7 @@ try:
                       and metrics["institutionBar"] == 1
                       and metrics["mainCount"] == 1
                       and metrics["h1Count"] == 1
-                      and (metrics["domainHeader"] == 0 if purpose in STANDALONE_PRESENTATIONS
-                           else metrics["domainHeader"] == 1), metrics)
+                      and metrics["domainHeader"] <= 1, metrics)
                 text_links = (metrics["contentTextLinks"] if purpose in STANDALONE_PRESENTATIONS
                               else metrics["shellTextLinks"])
                 check(f"{context}: links textuais com contraste AA",

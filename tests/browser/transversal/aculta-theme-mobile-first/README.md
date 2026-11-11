@@ -945,9 +945,11 @@ alterna `data-bs-theme` somente no DOM da sessão para conferir os tokens claros
 e escuros do tema. Também ativa a preferência `prefers-reduced-motion` do
 Firefox, verifica shell único e overflow em 320/360/390/599/600/768/1024/1280/
 1440px e salva capturas de 320 e 1440px para cada purpose/modo. Não grava
-preferências ou configuração no Drupal. A verificação confirma tokens e o
-estado da media query e calcula contraste dos links textuais da Institution Bar
-e Domain Header sobre suas superfícies compostas; não avalia contraste de todos
+preferências ou configuração no Drupal. O shell exige Institution Bar, um
+`<main>` e um H1; Domain Header é opcional na home e duplicidade é falha. Para
+Links/LinkWeed, calcula contraste dos links da apresentação SDC standalone; nos
+outros domínios mede links da Institution Bar e Domain Header quando presente.
+A rodada 2026-11-11 passou 300/300 nos dez domínios. Não avalia contraste de todos
 os componentes, assistive technology nem funcionamento de cada animação. No
 formulário público de Conta, mede também o contraste do botão Google nos estados
 normal e hover. Para Conta a 320px, o JSON inclui os primeiros descendentes não

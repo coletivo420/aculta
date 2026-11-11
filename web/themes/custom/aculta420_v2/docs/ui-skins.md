@@ -10,6 +10,6 @@
 
 ## Estado e gates
 
-O domínio e as dez skins estão mapeados. Testes estáticos cobrem definições e scopes; `ui_skins` está habilitado no Config Sync e Runtime como 1.2.1. Links resolve para Ruderalis; Firefox ESR passou 30/30 em cinco larguras e claro/escuro, sem overflow, com H1/main únicos e contraste mínimo 7,16:1. Nove domínios restantes, cache-hit, zoom e aceite visual humano aguardam homologação.
+O domínio e as dez skins estão mapeados. Testes estáticos cobrem definições e scopes; `ui_skins` está habilitado no Config Sync e Runtime como 1.2.1. A matriz Firefox ESR passou 300/300 nos dez domínios em cinco larguras e claro/escuro, sem overflow, com H1/main únicos e contraste mínimo 7,16:1. Links resolve Ruderalis; os outros nove Skunk. Cache-hit, zoom 200%, teclado, perfis e aceite visual humano aguardam homologação. Evidências: `tests/browser/capturas/ui-skins-ten-domains/2026-11-11/manifest.json`.
 
 A configuração `aculta_purpose_palette`, os controles/schema, `PurposePaletteSchemes`, `purposePaletteStyle()`, os seletores `data-purpose-scheme` e tokens `--aculta-purpose-*` foram removidos. Busca em tema, Portal e Config Sync não encontra consumidores nem aliases/dual-read/fallback. A preferência de modo do usuário e `DomainPurposeManager` funcional permanecem preservados.
