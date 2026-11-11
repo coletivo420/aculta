@@ -579,6 +579,8 @@ foreach ($templateRoots as $owner => $templateRoot) {
     $isRegionWrapper = $file->getFilename() === 'region--footer.html.twig';
     $isUiPatternsLibraryTemplate = str_starts_with($file->getFilename(), 'ui-patterns-');
     $isMapsPopupWrapper = $file->getFilename() === 'aculta-maps-popup-template.html.twig';
+    $isMailEnvelope = $file->getFilename() === 'aculta-mailer-wrap.html.twig';
+    $isFormFragment = in_array($file->getFilename(), ['aculta-portal-photo-editor.html.twig', 'portal-cart-panel.html.twig'], TRUE);
     $moduleThemeAdapters = str_starts_with($relativePath, 'web/modules/')
       ? ($themeSdcAdapters[$file->getFilename()] ?? [])
       : [];
@@ -620,6 +622,12 @@ foreach ($templateRoots as $owner => $templateRoot) {
     elseif ($isMapsPopupWrapper) {
       $templateUiPatterns = 'neutral_template_wrapper';
     }
+    elseif ($isMailEnvelope) {
+      $templateUiPatterns = 'behavior_contract:email_html';
+    }
+    elseif ($isFormFragment) {
+      $templateUiPatterns = 'behavior_contract:form_fragment';
+    }
     elseif ($isPortalComponentAdapter) {
       $templateUiPatterns = 'theme_adapter:empty-state,tabs,author-card,profile-details';
     }
@@ -649,7 +657,7 @@ foreach ($templateRoots as $owner => $templateRoot) {
         ? 'UI_SUITE_NATIVE'
         : (($isPortalComponentThemeAdapter || $isUiPatternsLibraryTemplate)
           ? 'UI_SUITE_NATIVE'
-          : (($isPortalComponentAdapter || $isNeutralPortalElement || $isNeutralDonationWrapper || $isTermsModalAdapter || $isThemeDocument || $isRegionWrapper || $isMapsPopupWrapper || $isNeutralPortalButtonFallback)
+          : (($isPortalComponentAdapter || $isNeutralPortalElement || $isNeutralDonationWrapper || $isTermsModalAdapter || $isThemeDocument || $isRegionWrapper || $isMapsPopupWrapper || $isMailEnvelope || $isFormFragment || $isNeutralPortalButtonFallback)
           ? 'FUNCTIONAL_NATIVE_EXCEPTION'
           : ($isThemeAdaptedModuleFallback
             ? 'FUNCTIONAL_NATIVE_EXCEPTION'
