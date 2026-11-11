@@ -55,7 +55,7 @@ Não há comparação direta com a baseline de 127 achados de 2026-11-05: o conj
 | `aculta_lms/.../FreeTextAnswerPluginBase.php:98` | `Html::escape()` aplicado a cada mensagem antes do `#markup` |
 | `aculta_mailer/.../MailImapSettingsForm.php:131` | `errorText()` passa `error_class` pelo placeholder `@error` de `$this->t()`, que escapa |
 
-**PENDENTE (2) após a rodada final:** a origem da variável ou o tipo do campo não foram provados nesta triagem. Risco de XSS só se o dado tiver origem não confiável ou HTML permitido.
+**PENDENTE (2) aceito como dívida pelo responsável (2026-11-11):** a origem da variável ou o tipo do campo não foram provados nesta triagem. Risco de XSS só se o dado tiver origem não confiável ou HTML permitido.
 
 | Arquivo:linha | O que falta provar | Prioridade |
 |---|---|---|
@@ -121,7 +121,7 @@ Atualização feita com `composer update drupal/entity_print symfony/http-client
   - `docs/portal/STUDIO-MAGAZINE-ROADMAP.md:171`: FALSO POSITIVO. Texto de roadmap em prosa, sem atribuição de credencial.
   - `web/libraries/photoswipe/...`: FALSO POSITIVO de escopo. Biblioteca de terceiros, fora do código do projeto.
   - `SecretsRevealTest.php:50`: FALSO POSITIVO. Constante `FAKE` de fixture de teste.
-  - `XapiAttemptTokenTest.php:17`: PENDENTE. Duas constantes de teste com forma de fixture (32 caracteres minúsculos e dígitos; um UUID). Não comparei com segredos reais do cofre do Runtime, o que não faço. Se algum valor estiver em uso real, é incidente e exige rotação, decisão do responsável.
+  - `XapiAttemptTokenTest.php:17`: FALSO POSITIVO CONFIRMADO pelo responsável (2026-11-11): constantes de fixture de teste. Duas constantes de teste com forma de fixture (32 caracteres minúsculos e dígitos; um UUID). Não comparei com segredos reais do cofre do Runtime, o que não faço. Se algum valor estiver em uso real, é incidente e exige rotação, decisão do responsável.
   Valores não impressos.
 - O scan de histórico Git (`gitleaks git`) foi recusado pelo guarda de worktree e **não foi executado**.
 
@@ -138,7 +138,7 @@ Atualização feita com `composer update drupal/entity_print symfony/http-client
 | Fixtures das regras | PASS: 17/17 |
 | `composer audit --locked` | antes: 3 advisories; depois: 0 (após atualização autorizada) |
 | `npm audit` | 0 vulnerabilidades |
-| gitleaks (arquivos da entrega) | executado: 4 achados classificados (3 FP, 1 PENDENTE); histórico não executado |
+| gitleaks (arquivos da entrega) | executado: 4 achados classificados, todos falsos positivos (XapiAttemptTokenTest confirmado pelo responsável); histórico não executado |
 | Drupal Security Review | DEFERRED (sem Drush/Runtime) |
 
 ## 6. Próximas ações
