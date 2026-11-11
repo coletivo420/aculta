@@ -256,7 +256,7 @@
         }
     ],
     "require": {
-        "php": ">=8.3",
+        "php": ">=8.4",
         "codemirror/codemirror": "5.65.12",
         "composer/installers": "^2.3",
         "composer/semver": "^3.4",
