@@ -1,166 +1,67 @@
 # ACULTA - Runtime Sync v2: plano de arquitetura e implementacao
 
 **Data:** 2026-11-11  
-**Status:** planejamento; nenhuma mudanca no Runtime autorizada por este documento.  
+**Status:** implementado em F0-F6 (`scripts/runtime-sync.sh`, `scripts/runtime-sync/helper.py`, `scripts/runtime-sync/risk-rules.yml`, `scripts/test-runtime-sync.sh` e adaptador somente leitura do `aculta_deployer`); cutover real da worktree F4 e aplicacao de mudancas estruturais pendentes no Runtime real seguem sob autorizacao explicita do responsavel.  
 **Escopo:** somente desenvolvimento `*.aculta.toca.net.br`, branch `origin/dev`. Nao e deploy de producao.  
 **Base:** `scripts/runtime-sync.sh`, `docs/operations/RUNTIME-SYNC.md`, `AGENTS.md`, `docs/architecture/environments.md`, `docs/architecture/multidomain.md` e contratos do `aculta_deployer`.
 
-## 0. Diagnostico fundamentado no codigo existente
+## 0. Diagnostico fundamentado e Auditoria F0 (2026-11-11)
 
-1. **Bug de cache em SHA coincidente:** hoje, se o agente ja fez commit/push no checkout servido e `HEAD == origin/dev`, `sync-code` retorna sem `drush cr`. Precisamos comparar com o **ultimo SHA validado/aplicado**, nao apenas com o remoto.
-2. **Checkout compartilhado nao e barreira de deploy:** edicoes de agentes ja atingem o docroot do Apache antes de qualquer comando de sync. A negacao de `sync-code` nao retira o codigo da area servida. A separacao de worktree de trabalho e runtime e objetivo arquitetural obrigatorio, nao mera otimizacao.
-3. **Lock cooperativo insuficiente:** `flock` bloqueia duas instancias do script, mas nao editores, `git commit`, `composer`, scripts concorrentes ou outros agentes.
-4. **Preflight interpreta mal sucesso:** `updatedb:status` e `config:status` devem ser capturados, normalizados, classificados e confrontados com baseline. `exit 0` significa apenas comando executado, nao necessariamente ausencia de pendencias. Conferir tambem `deploy:hook-status`.
-5. **Classificacao por nome e insuficiente:** caminhos indicativos nao garantem risco zero, em especial dependencias transitivas, hooks, configuracao removida/renomeada, artefatos compilados, instalacao de modulos, schemas de entidades, services e permissions.
-6. **Plano limitado:** `git ls-remote` observa SHA mas, sem objetos, nem sempre permite diff. Nao afirmar inventario completo com diff indisponivel.
-7. **Risco documental:** `docs/architecture/environments.md` e `docs/operations/AGENT-OPERATIONS.md` ainda mencionam remoto `aculta-site`. O repositorio solicitado e `coletivo420/aculta`. Resolver em auditoria de contratos e checar `git remote -v` local antes de alterar qualquer URL. Documentos historicos de restauracao apresentam excecoes de janela especifica, que nao se convertem em permissao permanente.
-8. **Multi-purpose:** validar DB/URI em pelo menos um host real e executar smoke por hosts/purposes impactados conforme `docs/architecture/multidomain.md`; `--uri` nao deve ser host arbitrario.
+1. **Bug de cache em SHA coincidente (corrigido em F1):** quando o agente fazia commit/push no checkout servido e `HEAD == origin/dev`, o script v1 saia cedo sem `drush cr`. O v2 separa `checkout_sha`, `last_code_sync_sha`, `last_cache_success_sha` e `last_validated_sha`, reconstruindo o cache quando `last_cache_success_sha != target` e retornando `NOOP` quando ja validado.
+2. **Fotografia tecnica do Runtime real (F0 auditado em `toca`):**
+   - **Checkout e symlinks:** `/home/aculta` aponta para `/home/piradopirata/projetos/aculta`; `public_html -> web`; `private -> /home/aculta-system-data/private`. Portanto, o checkout compartilhado de edicao dos agentes ainda e o `DocumentRoot` servido pelo Apache ate que o cutover F4 (`isolation-plan`) seja aprovado e executado.
+   - **Remoto Git:** `origin` aponta para `git@github.com:coletivo420/aculta.git` (`fetch`/`push`). `TODO.md` raiz ainda mencionava pendencia historica de `coletivo420/aculta-site`, reconciliada na documentacao.
+   - **Stack e banco:** PHP 8.5.12 CLI, Composer 2.8.8, Drush 13.8.0.0, Drupal 11.5.0-beta1, tema padrao `aculta420_v2`, tema admin `gin`, banco `aculta_runtime` conectado (`Drupal bootstrap: Successful`). Nota: em Drush 13.8 o campo se chama `bootstrap` (e nao `drupal-bootstrap`).
+   - **Pendencias estruturais e drift medidos:** `updatedb:status` reporta 1 update pendente (`media_duplicates_update_11001`); `deploy:hook-status` reporta `[]` (0 pendentes); `config:status` reporta drift preexistente (`aculta420_v2.settings`, `aculta_forum.settings`, blocos `default_admin_*`, etc.) e avisos de entradas orfas em `system.schema` (`aculta_contributions`, `aculta_forum_lms`, `aculta_forum_wiki`, `aculta_lms_agenda`, `aculta_lms_resources`, `aculta_mail_confirmer_user`, `aculta_ugc`, `jquery_ui*`).
+   - **Concorrencia observada:** multiplas sessoes paralelas de agentes e 24 worktrees listadas pelo Git; o checkout compartilhado continha arquivos modificados e diretórios `tests/browser/*` nao rastreados de outros agentes, preservados integralmente e que bloqueiam legitimamente `sync-code` no checkout compartilhado.
 
-## 1. Contratos e invariantes
+## 1. Contratos e invariantes implementados
 
-- **Fonte de codigo:** `origin/dev` autenticado e allowlistado, SHA imutavel por operacao; nao aceitar refs arbitrarias de usuario. Verificar a identidade do remoto configurado, sem alterar automaticamente remotes.
+- **Fonte de codigo:** `origin/dev` autenticado e validado por regex allowlist (`coletivo420/aculta`), SHA imutavel por operacao; nao aceita refs arbitrarias.
 - **Integridade:** sem `reset --hard`, `clean`, `stash`, `checkout -f`, force push, sobrescrita de arquivos alheios, escrita em settings ou segredos.
-- **Fail-closed:** falha/indisponibilidade de host, URI, banco, Drush, Git, Composer, detecao de risco, coordenacao ou checks bloqueia a escrita. Em `plan`, registrar `INDETERMINATE` e nao apresentar `READY`.
-- **Ambiente:** testar `hostname`, branch/ref esperada para o modo atual, symlinks canonicos, document root, banco `aculta_runtime`, URL HTTPS de desenvolvimento e site path. Nao imprimir credenciais, cookies, DSN ou valores de configuracao sensiveis.
-- **Mudancas persistentes:** `drush cr` escreve caches no banco e requer lock e log; `updatedb`, `cim`, desinstalacoes, delecoes e migracoes nao pertencem ao modo cotidiano.
-- **Declaracao de sucesso:** somente com SHA aplicado, Drush funcional, resultado de rebuild ou justificativa documentada de skip, validacao posterior, e registro atomico persistido.
-- **Estado nao equivale a Git:** separar `remote_sha`, `checkout_sha`, `last_code_sync_sha`, `last_cache_success_sha`, `last_validated_sha`, `drift_baseline`, `pending_structural_sha` e ultimo erro; ausente/ilegivel = UNKNOWN, nunca SUCCESS.
-- **Concorrencia:** negar afirmacoes de atomicidade enquanto checkout servido e checkout de edicao forem o mesmo. Gates do tipo snapshot/checksum/lock reduzem risco, nao criam isolamento.
+- **Fail-closed:** falha/indisponibilidade de host, URI, banco, Drush, Git, deteccao de risco, estado corrompido ou symlink inesperado bloqueia a escrita (`BLOCKED` / `INDETERMINATE`). Dominios de producao (`*.aculta.org`) sao estritamente recusados.
+- **Estado persistente v2 (`var/runtime-sync/`):** fora do Git e fora do `DocumentRoot` (`web/`), diretorio `0700`, arquivos `0600` (`state.json`, `latest.json` e `runs/<run_id>.json`), escrita em temporario + `os.replace` + `fsync`, verificacao anti-symlink e redacao automatica de credenciais/DSNs/e-mails.
 
-## 2. Interface CLI prevista (compatibilidade incremental)
+## 2. Interface CLI implementada (F1-F5)
 
 | Comando | Escrita | Contrato |
 | --- | --- | --- |
-| `plan` | Nenhuma | remoto, local, estado aplicado, divergencia e risco; desconhecido explicitamente |
-| `plan --refresh` | Apenas metadados temporarios, fora do checkout servido | busca objetos remotos em area de staging descartavel; nao altera HEAD, index ou worktree |
-| `doctor` | Nenhuma | confere ambiente, dependencias, host, DB, URI, locks e contratos |
-| `status [--format=json]` | Nenhuma | le o ultimo relatorio, indica stale/unknown; nao equivale a novo exame |
-| `sync-code` | Git FF quando aplicavel, rebuild de cache, relatorio | executa codigo e cache com gates e sem operacoes estruturais |
-| `verify` | Logs/relatorios apenas (nao mutacoes Drupal explicitas) | confere SHA, bootstrap, pendencias e smokes nao destrutivos |
-| `structural-plan` | Nenhuma no Runtime | gera checklist/ordem de implantacao, backup e autorizacoes concretas |
-| `structural-apply` | Futuro; somente manual e aprovado | nao construir executor automatico ate prova de rollback, autorizacao e testes de cenarios excepcionais |
+| `plan [--format=json]` | Nenhuma | Remoto, local, `last_validated_sha`, `last_cache_success_sha`, divergencia e risco cumulativo; desconhecido explicitamente (`INDETERMINATE`) |
+| `plan --refresh [--format=json]` | Apenas staging temporario `0700` fora do checkout, removido ao sair | Busca objetos remotos com `objects/info/alternates` sem alterar HEAD, refs locais, index ou worktree |
+| `doctor [--format=json]` | Nenhuma | Confere ambiente, branch, worktree, lock cooperativo, baseline, Drush, `updatedb:status`, `config:status`, `deploy:hook-status` e isolamento F4 |
+| `status [--format=json]` | Nenhuma | Le `var/runtime-sync/state.json` sem rede e sem Drush; indica `VALIDATED`, `PARTIAL`, `INDETERMINATE` ou `UNKNOWN` |
+| `sync-code [--adopt-baseline] [--format=json]` | Git FF quando aplicavel, `drush cr`, relatorio v2 | Executa codigo e cache com lock cooperativo e gates; reconstrói cache mesmo quando `HEAD == origin/dev` se pendente; retorna `NOOP` se ja validado |
+| `verify [--format=json]` | Relatorio em `var/runtime-sync/` | Confere SHA, cache validado e Drush pos-operacao |
+| `structural-plan [--refresh] [--format=json]` | Nenhuma no Runtime | Gera plano verificavel por etapas para mudancas R2-R4, incluindo caso especial do `commerce_shipping` |
+| `isolation-plan [--target-dir=<dir>] [--format=json]` | Nenhuma no Runtime | Inventaria mounts persistentes e estrategia de worktree detached para separar checkout de agentes do Apache (F4) |
 
-**Importante:** `plan` segue estritamente somente leitura. Se `--refresh` usar outra estrategia que `staging`, documentar as escritas exatas antes de expor a opcao.
+## 3. Classificador cumulativo de risco (F2)
 
-**Correcao imediata obrigatoria:** `sync-code` deve reconstruir cache quando HEAD remoto e local forem iguais **e** o ultimo SHA com rebuild validado for anterior ou desconhecido, desde que o delta entre SHA aplicado e atual seja analisavel e seguro. Em estado desconhecido ou estrutural, bloquear e orientar `doctor`/`structural-plan`. Nao simplesmente executar `cr` em codigo com updates pendentes. Se nenhum arquivo com impacto de runtime mudou, permitir skip de cache somente com razao/evidencia.
+Regras declaradas em `scripts/runtime-sync/risk-rules.yml` e avaliadas por `scripts/runtime-sync/helper.py` usando `git diff --raw -z --find-renames` e inspecao semantica dos patches:
 
-## 3. Classificador de risco baseado em manifestos
-
-Manter contrato versionado `scripts/runtime-sync/risk-rules.yml` (ou JSON com parser ja disponivel), com teste por versao e default **UNKNOWN => BLOCK**. Separar alteracoes cumulativas desde ultimo estado validado, e nao somente `HEAD..remote`.
-
-| Nivel | Exemplos | Acao |
+| Nivel | Escopo e deteccao | Acao em `sync-code` |
 | --- | --- | --- |
-| R0 - documental | `docs/**`, exemplos/testes que nao sao executados no runtime | registro; sem Drush se comprovadamente nao altera runtime |
-| R1 - codigo/cache | PHP/Twig/CSS/JS/SDC do app sem alteracoes adicionais detectadas | validar e `drush cr`; smoke afetado |
-| R2 - artefatos/dependencias | `composer.*`, patches, bibliotecas, lock de npm, assets compilados, comandos/entrypoints, instalacao de arquivos dependentes | bloquear `sync-code` e exigir plano do build/Composer |
-| R3 - Drupal estrutural | `config/sync/**`, `*.install`, `*.post_update.php`, `*.deploy.php`, `*.info.yml`, schemas, extensoes, campos, recipes, servicos com requisito de setup | plano e avaliacao de updates/cim/deploy hooks; bloqueio da rotina simples |
-| R4 - destrutivo/infra | remoções de entidades/dados, uninstall, SQL, secrets/settings, webserver, DNS, armazenamento e permissoes | revisao/ordem humana especifica, snapshot e rollback comprovados |
-| RX - indeterminado | diff ausente/truncado, rename nao resolvido, estado baseline inexistente, classificador desatualizado | bloquear e investigar |
+| R0 - documental | `docs/**`, `.agents/**`, `.claude/**`, `.codex/**`, `tests/**`, `README.md`, `TODO.md`, `CHANGELOG.md` | Permite sync; dispensa `drush cr` se o baseline de cache anterior ja estava validado |
+| R1 - codigo/cache | PHP, Twig, CSS, JS, SDC e scripts sem hooks estruturais novos | Permite sync; exige `drush cr` e smoke dos `site_keys` afetados |
+| R2 - dependencias | `composer.json`, `composer.lock`, patches, `package*.json`, `web/libraries/**`, mudanca de modo | Bloqueia (`BLOCKED`); requer `structural-plan` |
+| R3 - Drupal estrutural | `config/sync/**`, `*.install`, `*.post_update.php`, `*.deploy.php`, `*.info.yml`, `.permissions.yml`, schemas, hooks de schema/update em `.php`/`.module`, remocao de `.services.yml`/`.routing.yml` | Bloqueia (`BLOCKED`); requer `structural-plan` |
+| R4 - destrutivo/infra | `web/sites/**`, `secrets/**`, `private/**`, `.htaccess`, `core.extension.yml`, remocao em `config/sync/`, `dropTable`/`uninstall` em hooks, cutover `commerce_shipping` | Bloqueia (`BLOCKED`); requer janela supervisionada, snapshot e restore testado |
+| RX - indeterminado | Baseline `UNKNOWN` nao adotado, diff ausente, gitlink/submodulo, newline em caminho ou arquivo fora das regras | Bloqueia (`BLOCKED` / `INDETERMINATE`) |
 
-**Detalhes de implementacao:** usar `git diff --name-status -z` e `--find-renames`, registrar origem/destino de renomeacoes, suportar nomes com newline, arquivos excluidos, mudancas de modo e gitlinks; nao extrair caminhos com `read` separado por quebra de linha. Classificacao por arquivo e pacote; elevar risco em vez de rebaixar quando houver duvida. Para PHP `.module`, `.php`, `.services.yml`, `.routing.yml` e `.permissions.yml`, distinguir alteracao de codigo de migracao exigida; nao inferir automaticamente que toda alteracao requer DB. Criar detector conservador de hooks e de `core.extension`, nao apenas glob.
+## 4. Coordenacao entre agentes (F3) e Isolamento (F4)
 
-**Excecoes estruturais:** o runbook de frete documenta sequencia que faz `updatedb` com vendor antigo antes de remover o pacote. Logo `composer install -> updatedb` nao pode ser ordem universal. `drush deploy` e conveniente para casos compativeis, mas nao serve para migracoes com ordem especial/etapas humanas. Nenhum auto-`composer update` no servidor.
+- **Ordem unica de locks:** `var/deployer/runtime-sync.lock` via `flock -n` antes de qualquer preflight Drush ou escrita Git, seguido da escrita atomica em `var/runtime-sync/`.
+- **Idempotencia e debounce:** `git fetch` dentro da secao critica captura o SHA mais recente de `origin/dev`; se outro processo ja tiver atualizado e validado o cache para o mesmo SHA, a releitura de `state.json` apos o lock resulta em `NOOP` sem segundo `drush cr`.
+- **Auditoria antes e depois da escrita:** compara `HEAD` e `git status --porcelain=v1` antes do fast-forward e imediatamente apos `drush cr`. Modificacao concorrente durante a execucao registra `PARTIAL` e falha fechado.
+- **Separacao F4 (`isolation-plan`):** documenta e prepara a criacao de worktree destacada (`git worktree add --detach <runtime_dir> <validated_sha>`) com preservacao de `vendor`, `settings.php`, `settings.local.php`, `files`, `private`, `secrets`, `var/deployer` e `var/runtime-sync`, sem manter `dev` checada em dois lugares. O cutover real do symlink `/home/aculta` ou do Apache depende de aprovacao especifica.
 
-## 4. Operacao e coordenacao
+## 5. Integracao somente leitura com ACULTA Deployer (F6)
 
-**Etapa transitória - checkout compartilhado atual:**
-- Fazer `doctor` e inventario de processos/edicoes simultaneas; padronizar lock **cooperativo** comum ao sincronizador e aos agentes/scripts que mexem com Git, cache e vendor. A ordem de locks deve ser unica e documentada para evitar deadlock.
-- Debounce de pushes: agregar varias solicitacoes em um SHA alvo; idempotencia por SHA e conteudo/impacto, sem reexecutar rebuild desnecessariamente. Nao iniciar jobs por evento remoto sem fila e exclusao mutua.
-- Sempre comparar `HEAD`, `index`, worktree, `origin/dev` e SHA do ultimo estado aplicado imediatamente antes e depois do passo de escrita. Alteracao concorrente => FAIL/QUARANTINED; sem rollback automatico.
-- Nao permitir que o mesmo executor opere simultaneamente com Composer, `updatedb`, `cim`, cron/queue de janela ou migracoes estruturais. Fluxo de codigo isolado nao deve bloquear a recuperacao/analise.
+- `var/deployer/status.json` permanece no `schema: 1`, exclusivo da CLI standalone do Deployer.
+- `DeployerStatusReader::readRuntimeSync()` le `var/runtime-sync/state.json` e `latest.json` (`schema_version: 2`), recusando symlinks ou schemas invalidos, sem executar comandos nem introduzir dependencia de Drupal/Drush/vendor em `modules/aculta_deployer`.
+- `DeployerStatusController` exibe no painel administrativo (`/painel-administrativo/aculta/deployer`, restrito ao dominio `main` e a permissao `administer aculta deployer`) os SHAs local/remoto/validado, situacao do cache, risco classificado, pendencias estruturais, gates da ultima execucao e historico resumido.
 
-**Estado alvo - isolamento de verdade:**
-- Separar checkout de agentes (branch `dev`, commits/push) e checkout servido exclusivamente pelo sincronizador, usando outra worktree/ref destacada em SHA validado ou releases imutaveis. Git worktrees nao podem manter a mesma branch `dev` checada em dois lugares: usar HEAD detached na worktree runtime ou desenho de refs proprias, sem forcar branches.
-- Arquivos persistentes, secrets, settings, public/private files, logs, vendor e symlinks exigem inventario especifico e politica de montagem/ownership antes de migrar. Sem copiar paths absolutos do servidor para codigo.
-- Preparar migracao do DocumentRoot somente em janela aprovada e reversivel, testando todos os dominios. Ate la nao chamar a sincronizacao de deploy atomico.
-- Nao expor na UI comandos de escrita Drupal ou CLI do Deployer. O painel pode ler status neutro/seguro via adaptador, respeitando os boundaries existentes.
+## 6. Suite automatizada e avaliacao das skills (F1-F6)
 
-## 5. Relatorios versionados e sem segredos
-
-Estado operacional fora do Git e fora da area publica, por exemplo `var/runtime-sync/`; arquivos modo 0600, diretorio restrito, escrita em temporario + `rename` atomico, validacao de symlinks. Registro por execucao e indicador latest, com schema e migracao explicita.
-
-Exemplo **ilustrativo**, nao evidência de execucao:
-```json
-{
-  "schema_version": 2,
-  "run_id": "2026-11-11T14:00:00Z-example",
-  "mode": "sync-code",
-  "outcome": "BLOCKED",
-  "phase": "risk-classification",
-  "remote_sha": "EXAMPLE",
-  "checkout_sha": "EXAMPLE",
-  "last_validated_sha": null,
-  "risk": "RX",
-  "gates": [{"id": "diff-available", "result": "FAIL"}],
-  "writes": [],
-  "secrets_redacted": true
-}
-```
-
-Status possiveis: `PLANNED`, `READY`, `NOOP`, `BLOCKED`, `PARTIAL`, `FAILED`, `VALIDATED`, `INDETERMINATE`. Cada gate usa `PASS`, `FAIL`, `SKIP`, `DEFERRED` ou `N/A` com motivo. Nao persistir hostname completo, DSN, IP, credenciais, stdout integral de Drush nem dados pessoais. Registrar comandos/exit code e hashes, com saida resumida sanitizada.
-
-Nao sobrescrever `var/deployer/status.json` (schema 1 e consumidor proprio do Deployer). Criar adaptador/leitor que traduzo o estado do runtime ao contrato neutro existente, somente se fronteiras aprovarem. Retencao rotativa e limite de tamanho configuraveis.
-
-## 6. Mudancas estruturais supervisionadas
-
-Precondicoes: diff semanticamente inspecionado; ordem de hooks, Composer e config estabelecida; `doctor` com banco/host correto; matriz de impacto por purpose; janela sem agentes concorrentes, cron e filas relevantes; backup consistente + checksum + ensaio de restauracao, incluindo arquivos persistentes e dependencias quando aplicavel; autorizacao nominal de comandos persistentes.
-
-Ordens possiveis:
-- Caso comum: codigo preparado em ambiente isolado, dependencias instaladas a partir do lock, updates DB, importacao completa de config, caches, deploy hooks e smoke, respeitando a versao do Drush.
-- Caso excepcional: como frete/Commerce, migrar com vendor antigo e aplicar uninstall autorizado antes de `composer install` com remocao do pacote. A ordem vem de runbook especifico, nao de inferencia por glob.
-- `drush deploy` apenas quando a sequencia padrao inteira e os hooks forem aprovados, sem etapas intercaladas de migracao/uninstall.
-
-No erro, parar e registrar estado `PARTIAL` ou `FAILED`. Nunca considerar um rollback de Git suficiente depois de alteracao de banco/config/arquivos; restaurar um conjunto consistente somente com runbook e snapshot comprovado.
-
-## 7. Testes e gates antes da adocao
-
-Teste shell automatizado com repo bare remoto, checkout(s) temporarios e Drush fake instrumentado; incluir:
-1. HEAD igual ao remoto + cache ainda pendente (correcao da falha atual);
-2. HEAD igual ao remoto + cache validado (NOOP);
-3. fast-forward seguro com arquivos de codigo e rebuild unico;
-4. docs only sem rebuild quando permitido pela politica;
-5. arquivo `config/sync`, `*.install`, post update, `*.deploy.php`, `composer.lock`, patch e rename -> BLOCK;
-6. worktree/index sujos, untracked, branch/ref errada, remote trocado, heads divergentes -> BLOCK;
-7. host, URI ou DB errados; Drush indisponivel ou saida malformada -> BLOCK;
-8. drift existente e drift surgindo; updatedb pendente e deploy hooks pendentes -> reportar corretamente;
-9. falha `cr` apos Git atualizado -> PARTIAL sem carimbar sucesso;
-10. duas instancias simultaneas e agente escritor cooperativo -> serializar;
-11. arquivo renomeado/newline, diff incompleto, symlink e interrupcao SIGINT/SIGTERM -> nao corromper estado;
-12. estado persistente ausente ou invalido, schema antigo, erro de escrita atomica e recuperacao;
-13. runbook especial de Composer/Commerce -> nao propor ordem padrao universal;
-14. multi-purpose: smoke por host afetado, nenhum acesso a dominio de producao.
-
-Gates minimos: `bash -n`, ShellCheck (se disponivel; `DEFERRED` se nao), suite isolada, validadores de escopo, `aculta_deployer` boundaries/tests se consumidor alterado. Runtime real e smoke HTTPS so apos janela com preflight e evidencias; testes fake nao equivalem a validacao real.
-
-## 8. Microfases e criterios de aceite
-
-| Fase | Entrega | Gate para fechar |
-| --- | --- | --- |
-| F0 | auditoria de realidade: refs remotas, document root, owners, processos, baseline de DB/config/deploy hooks e remotos em documentos | inventario com divergencias, sem alterar Runtime |
-| F1 | corrigir caso SHA igual, estados persistentes, parser confiavel de status Drush, fail-closed e testes de regressao | testes deterministas PASS; nenhuma operacao estrutural |
-| F2 | classificador versionado R0-R4/RX, diff robusto, `plan --refresh`, formato JSON e `doctor` | matriz de fixtures e traces; nenhuma classificacao desconhecida como R1 |
-| F3 | lock cooperativo com agentes, fila/debounce de pushes, idempotencia por SHA e auditoria POSIX | testes de concorrencia; no checkout compartilhado, declarar risco residual |
-| F4 | separar checkout servido do checkout de agentes; preparar assets/vendor e politica de dados persistentes | janela aprovada, plano de retorno e validacao multidominio; sem migracao automatica |
-| F5 | `structural-plan`, runbooks por tipo e provas de backup/restore (sem executor autonomo) | aprovacao por operacao e validacao de ordem; nada destrutivo automatico |
-| F6 | painel read-only por adaptador Deployer + indicadores de drift, SHA e historico | testes de boundary, ACL, schema e logs sem segredos |
-
-**Ordem recomendada:** iniciar F0-F2; iniciar F3 antes de qualquer trigger automatico; F4 e prerequisito para afirmar isolamento, deploy controlado e sincronizacao segura sem observacao da edicao de agentes. F5 e F6 so apos contratos estaveis.
-
-## 9. Decisoes operacionais pendentes
-
-- A politica dos agentes permitira migrar o desenvolvimento para worktrees separados do DocumentRoot? Recomenda-se **sim**, em janela planejada.
-- Quem e dono de disparar `sync-code`: agente apos push, coordenador da fila ou operador? Recomenda-se agente solicitar, coordenador executar; sem webhook direto inicialmente.
-- Qual baseline autoritativo do Runtime sera semeado? Exigir inspecao presencial de SHA, banco/config/hooks e cache antes de declarar primeira sincronizacao validada.
-- Como o painel vai ler o status sem quebrar o schema 1 e os boundaries do `aculta_deployer`? Preferir adaptador read-only, sem invocar CLI.
-- O remoto registrado em documentos antigos e diferente do repositorio indicado nesta tarefa; confirmar `git remote -v` do servidor e normalizar docs de operacao sem supor que todos os casos historicos sejam erro.
-
-## 10. Nao executado / nao autorizado aqui
-
-Nenhum `composer`, Drush, update DB, `config:import`, alteracao em Apache, symlink, permissao, host, Runtime, backup, restauracao ou teste no servidor de desenvolvimento. Este documento estabelece plano e gates, nao comprovacao de execucao.
-
-## 11. Integração às skills de agentes (2026-11-11)
-
-- `.agents/skills/aculta-runtime-sync/SKILL.md` e `references/CLASSIFICACAO-E-TESTES.md`: fluxo pós-push, risco R0-R4/RX, bug de cache com HEAD coincidente, concorrência e provas de validação.
-- `.agents/skills/aculta-runtime-migracoes/SKILL.md` e `references/ORDEM-E-RECUPERACAO.md`: migrações supervisionadas, restore, Composer, Drush, rollback e fronteira com Deployer.
-- Aliases sob `.claude/skills/` e `.codex/skills/`. As skills de commit e gates direcionam para as novas. `docs/operations/TESTES-SKILLS-RUNTIME-SYNC.md` cobre RS-01 a RS-12.
-- **Escopo:** publicação dessas skills não implementa F1-F6 do sincronizador, não corrige seu bug de cache nem atesta execução do Runtime. As fases de código, integração e homologação continuam pendentes.
+- `bash scripts/test-runtime-sync.sh` executa 24 assercoes cobrindo os cenarios T01 a T14 com repositorios Git ficticios, remoto bare e Drush simulado.
+- `docs/operations/TESTES-SKILLS-RUNTIME-SYNC.md` registra a avaliacao completa dos 12 cenarios RS-01 a RS-12 confrontada com os comandos v2 implementados.

@@ -1,3 +1,14 @@
+# Runtime Sync v2 — fases F0 a F6, classificador, skills e Deployer — 2026-11-11
+
+- **Objetivo:** concluir a implementação técnica do Runtime Sync v2 (`F0` a `F6`) e sua integração às skills e ao painel do ACULTA Deployer.
+- **Estado:** `scripts/runtime-sync.sh` v2 e `scripts/runtime-sync/helper.py` implementados com estado persistente atômico (`0600`, anti-symlink, `var/runtime-sync/`), correção do bug `HEAD == origin/dev` com cache pendente, classificador cumulativo `R0`–`R4`/`RX`, coordenação cooperativa (`flock`), `structural-plan`, `isolation-plan`, leitura no `DeployerStatusReader`/`DeployerStatusController` e suíte `scripts/test-runtime-sync.sh`.
+- **Decisões e alternativas descartadas:** worktree isolada em `/tmp` para não tocar alterações de outros agentes no checkout compartilhado; staging isolado em `plan --refresh`; schema 1 de `var/deployer/status.json` intacto; cutover do Apache (`F4`) e `media_duplicates_update_11001` mantidos pendentes de autorização explícita.
+- **Cuidados:** nenhuma operação destrutiva (`updatedb`, `config:import`, `pm:uninstall`, `git reset/clean`) foi executada; redação automática de segredos em JSON/logs.
+- **Commits e arquivos:** `scripts/runtime-sync.sh`, `scripts/runtime-sync/*`, `scripts/test-runtime-sync.sh`, `DeployerStatusReader.php`, `DeployerStatusController.php`, `DeployerStatusReaderTest.php`, skills de Runtime/entrega/gates, runbooks e status YAML.
+- **Verificações:** `test-runtime-sync.sh` 24/24 PASS; `DeployerStatusReaderTest` 3/10 PASS; `aculta_deployer/tests/run.php` PASS; `validate-agent-skills.py` PASS (12 cenários RS); `validate-project-status-index.php`, `validate-aculta-portal-drupal12.php`, `validate-admin-routes-main-domain.php` e `validate-module-theme-boundary.php` PASS.
+- **Pendências e bloqueios:** checkout servido (`/home/piradopirata/projetos/aculta`) possui arquivos modificados/untracked de outros agentes e 1 `updatedb` pendente (`media_duplicates_update_11001`), bloqueando `sync-code` no Runtime até limpeza/janela autorizada; cutover F4 aguarda aprovação.
+- **Próximo passo:** quando o checkout compartilhado estiver limpo e a janela de `media_duplicates_update_11001` for autorizada, adotar baseline (`--adopt-baseline`) e avaliar cutover F4.
+
 # PHPStan — microfase 22b aculta_events — 2026-11-11
 
 - **Objetivo:** zerar erros PHPStan de produção em `aculta_events`.
@@ -19,14 +30,3 @@
 - **Verificações:** `pm:list`/`cget core.extension` confirmaram Enabled/0; `drush cr` PASS; `updatedb:status` mostra pendência preexistente de media_duplicates.
 - **Pendências e bloqueios:** revisão visual no Firefox/Runtime; update de banco e drift de config não tratados.
 - **Próximo passo:** validar formulário e Schema.org no navegador e encaminhar a pendência de banco em janela autorizada.
-
-# ADR-054/055 — RN-04 publicado e RN-05 parcial — 2026-11-11
-
-- **Objetivo:** concluir a renomeação funcional `purpose` → `site_key` e revalidar o Runtime.
-- **Estado:** classes, serviços, rotas, opções, State, sessão e a condição de bloco (`aculta_domain_site`/`site_key`) migrados sem aliases internos; 23 configs de bloco migradas no Sync e no install. PHPStan 0; unit 3287 PASS; Portal 1234 PASS; boundary 7888 PASS; browser index 151; admin routes e aliases PASS; Firefox ESR 70/70 nos dez domínios após `drush cr`.
-- **Decisões e alternativas descartadas:** aceitar as versões do remoto nos conflitos do wiki e reaplicar a renomeação; manter o guard de relations com `@phpstan-ignore`; mesclar as entradas novas do baseline em vez de regenerá-lo.
-- **Cuidados:** o import parcial autorizado das 22 configs de bloco foi executado após snapshot; o site responde 200 e o smoke 70/70 foi repetido. O login autenticado segue bloqueado (DT-S01); rotas públicas são `private/no-cache` e `UNCACHEABLE`.
-- **Commits e arquivos:** `0c34d22cc`, `164608d1d`, `8e4816826` publicados; Portal, gates, baseline, inventário de contratos e ADRs.
-- **Verificações:** PHPStan 0, unit 3287, Portal 1234, boundary 7888, browser index 151, admin routes, aliases, root policy e status index PASS; smoke Firefox 70/70 pós-import.
-- **Pendências e bloqueios:** Kernel focal do domínio PASS com SQLite isolado; suíte Kernel completa DEFERRED por dependências de ambiente (`aculta_file_uploader`, `aculta_lms_resources`, schema do Commerce), sessão autenticada (DT-S01), cache-hit e aceite humano.
-- **Próximo passo:** importar a configuração autorizada, rodar Kernel/Functional e concluir RN-05.

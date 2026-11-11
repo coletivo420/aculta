@@ -12,6 +12,6 @@ description: Faz commit atômico e publica em origin/dev, no padrão do ACULTA (
 5. Commit atômico. Se a tarefa virou entregas independentes, faça um commit por entrega.
 6. Publique: `git push origin dev`. Confirme com `git ls-remote origin dev`.
 7. Nunca force push, nem reescreva commit já publicado. Se um commit saiu misturado, corrija em commit novo e informe no relatório.
-8. Após confirmar o push, carregue `aculta-runtime-sync` para planejar código/cache no Runtime. Se houver R2-R4 ou RX, carregue `aculta-runtime-migracoes` e registre o bloqueio sem executar updates/config por inferência.
-9. Não confunda `HEAD == origin/dev` com cache validado: o script v1 pode sair sem `drush cr` nesse caso. Registre o último SHA e evidências reais; sem elas, reporte UNKNOWN/DEFERRED.
+8. Após confirmar o push, carregue `aculta-runtime-sync` (`plan` -> `sync-code` -> `verify`) para atualizar código/cache no Runtime quando o checkout estiver limpo e o delta for R0/R1. Se houver R2-R4 ou RX, rode `structural-plan`, carregue `aculta-runtime-migracoes` e registre o bloqueio sem executar updates/config por inferência.
+9. O `runtime-sync.sh` v2 distingue `checkout_sha`, `last_cache_success_sha` e `last_validated_sha`: se `HEAD == origin/dev` mas o cache da revisão ainda não foi validado, `sync-code` reconstrói o cache; se o checkout estiver sujo por outros agentes, reporte `BLOCKED`/`DEFERRED` com evidência.
 10. Não diga que publicou sem confirmar o push.

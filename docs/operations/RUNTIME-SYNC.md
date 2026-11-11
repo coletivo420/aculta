@@ -1,69 +1,65 @@
-# Sincronizacao do Runtime de desenvolvimento - ACULTA
-> **Evolucao planejada (2026-11-11):** ver [Runtime Sync v2 - plano de arquitetura e implementacao](RUNTIME-SYNC-PLANO-V2.md). Este documento descreve a primeira implementacao efetiva; o v2 ainda nao foi executado. **Falha conhecida:** quando o HEAD ja coincide com origin/dev, o script atual pode sair sem reconstruir caches. No checkout compartilhado, um bloqueio do script tambem nao impede que codigo de agentes ja esteja no DocumentRoot. Nao automatizar triggers antes de corrigir esses pontos e implementar os gates de concorrencia.
+# Sincronizacao do Runtime de desenvolvimento - ACULTA (v2)
 
+> **Estado (2026-11-11):** Runtime Sync v2 implementado em `scripts/runtime-sync.sh`, `scripts/runtime-sync/helper.py`, `scripts/runtime-sync/risk-rules.yml` e `scripts/test-runtime-sync.sh`, com leitura neutra integrada ao painel do `aculta_deployer`. Veja a arquitetura detalhada em [Runtime Sync v2 - plano de arquitetura e implementacao](RUNTIME-SYNC-PLANO-V2.md). **Aviso de isolamento (F4):** enquanto o cutover da worktree servida nao for aprovado e executado pelo responsavel, o checkout editado pelos agentes (`/home/aculta -> /home/piradopirata/projetos/aculta`) continua sendo o `DocumentRoot` do Apache.
 
-**Skills de agentes (2026-11-11):** `aculta-runtime-sync` para pós-push e código/cache; `aculta-runtime-migracoes` para Composer, banco, config, restauração e ordem de updates. Ambas são canônicas em `.agents/skills` e acessíveis por Codex/Claude.
-
-**Estado:** primeira implementacao conservadora, em `scripts/runtime-sync.sh`. Nao e deploy de producao nem substitui o `aculta_deployer`.
+**Skills de agentes:** `aculta-runtime-sync` para pós-push, diagnóstico e código/cache; `aculta-runtime-migracoes` para Composer, banco, config, restauração, ordem de updates e isolamento de worktree. Ambas são canônicas em `.agents/skills` e acessíveis por Claude e Codex.
 
 ## Contratos verificados no projeto
 
-- `AGENTS.md`: apos push para `origin/dev`, a rotina cotidiana so atualiza codigo e limpa cache. `updatedb`, `config:import`, `pm:uninstall`, `DROP` e exclusao de dados exigem autorizacao especifica.
-- `docs/architecture/environments.md`: o servidor de desenvolvimento compartilha o checkout servido pelo Apache com os agentes, em Debian/PHP-FPM/MariaDB. Confirme host, branch e banco em cada rodada. O banco esperado e `aculta_runtime`.
-- `config/sync`: fonte completa da configuracao desejada. Drift nao e resolvido por exportacao massiva ou importacao parcial automatica.
-- `web/modules/custom/aculta_portal/modules/aculta_deployer/`: CLI standalone para builds, perfis, DOMAINS, robots e verificacoes; suas fronteiras proíbem dependencias diretas de Drupal, Drush e vendor. A rotina de checkout fica em `scripts/`, fora do modulo.
-- `docs/operations/RUNTIME-UPDATE-WINDOW.md`: snapshots e restauracoes possuem riscos reais, inclusive privilegios de banco e existencia de dados sensiveis. Nunca presumir que o teste de restore passou.
+- `AGENTS.md`: após push para `origin/dev`, a rotina cotidiana só atualiza código e reconstrói cache (`R0`/`R1`). `updatedb`, `config:import`, `pm:uninstall`, `DROP` e exclusão de dados exigem autorização específica.
+- `docs/architecture/environments.md`: o servidor de desenvolvimento (`toca`) compartilha o checkout servido pelo Apache com os agentes, em Debian/PHP-FPM/MariaDB. O banco esperado é `aculta_runtime` e o remoto canônico é `coletivo420/aculta`.
+- `config/sync`: fonte completa da configuração desejada. Drift não é resolvido por exportação massiva ou importação parcial automática.
+- `web/modules/custom/aculta_portal/modules/aculta_deployer/`: CLI standalone sem dependências de Drupal, Drush ou `vendor/`. O painel administrativo em `aculta_portal` lê `var/deployer/status.json` (schema 1) e `var/runtime-sync/state.json` + `latest.json` (schema 2) de forma estritamente somente leitura.
+- `docs/operations/RUNTIME-UPDATE-WINDOW.md`: snapshots e restaurações exigem banco descartável autorizado (como `aculta_runtime_copia`, nunca `aculta_simpletest`) e ordem revisada por janela (como o cutover do `commerce_shipping`).
 
-## Operacoes e politica
+## Comandos da CLI (`scripts/runtime-sync.sh`)
 
-| Acao | Comando | Gravacao | Autorizacao |
+| Acao | Comando | Gravacao | Quando usar |
 | --- | --- | --- | --- |
-| Inventario | `bash scripts/runtime-sync.sh plan` | Nenhuma; consulta Git remoto | Livre |
-| Codigo e cache | `bash scripts/runtime-sync.sh sync-code` | `git fetch`, fast-forward e `drush cr` | Segue regra de sincronizacao cotidiana apos push no desenvolvimento |
-| Dependencias e esquema | Procedimento supervisionado abaixo | Composer, schema/config, possivelmente dados | Ordem explicita, snapshot verificado |
-| Dominio/producao | `aculta_deployer` e runbooks de release | Build e possivel deploy | Decisao separada do responsavel |
+| Status local | `bash scripts/runtime-sync.sh status [--format=json]` | Nenhuma (sem rede/Drush) | Consultar último SHA validado, estado do cache (`VALIDATED`/`STALE`/`UNKNOWN`), falhas parciais e histórico |
+| Planejamento | `bash scripts/runtime-sync.sh plan [--refresh] [--format=json]` | Nenhuma no checkout (`--refresh` usa staging temporário `0700` descartável) | Comparar `HEAD`, `origin/dev` e `last_validated_sha`, e classificar risco cumulativo `R0..R4`/`RX` |
+| Diagnóstico | `bash scripts/runtime-sync.sh doctor [--format=json]` | Nenhuma | Auditar branch, limpeza do worktree, lock cooperativo, Drush, `updatedb:status`, `config:status`, `deploy:hook-status` e isolamento F4 |
+| Código e cache | `bash scripts/runtime-sync.sh sync-code [--adopt-baseline] [--format=json]` | `git fetch`, `merge --ff-only`, `drush cr` e estado em `var/runtime-sync/` | Sincronização cotidiana pós-push quando o checkout estiver limpo e o delta for `R0`/`R1` |
+| Verificação | `bash scripts/runtime-sync.sh verify [--format=json]` | Relatório em `var/runtime-sync/` | Confirmar SHA, cache validado e saúde Drush após sincronização ou janela estrutural |
+| Plano estrutural | `bash scripts/runtime-sync.sh structural-plan [--refresh] [--format=json]` | Nenhuma no Runtime | Gerar checklist ordenado de backup/restore, Composer, `updatedb`, `config:import` e exceções (`commerce_shipping`) para deltas `R2..R4` |
+| Plano de isolamento | `bash scripts/runtime-sync.sh isolation-plan [--format=json]` | Nenhuma no Runtime | Inspecionar mounts persistentes e comando `git worktree add --detach` para separar checkout de agentes do Apache (F4) |
 
-O script **nunca** executa `composer install`, `composer update`, `updatedb`, `config:import`, `config:export`, `pm:uninstall`, `DROP`, `git reset`, `git stash` ou `git clean`. Mudanca no lockfile, config, settings, `.install`, `.post_update.php`, `.deploy.php` ou `.info.yml` bloqueia o fluxo simples e exige revisao. Esse classificador e deliberadamente conservador, mas nao substitui a revisao semantica do diff.
+O script **nunca** executa `composer install`, `composer update`, `updatedb`, `config:import`, `config:export`, `pm:uninstall`, `DROP`, `git reset`, `git stash` ou `git clean`.
 
-## Uso no checkout do servidor de desenvolvimento
+## Procedimento diário para agentes no servidor de desenvolvimento
 
-A partir da raiz Git (nao de um worktree temporario), execute:
+1. **Inspecionar estado e planejar (somente leitura):**
 
 ```bash
-bash scripts/runtime-sync.sh plan
+bash scripts/runtime-sync.sh status
+bash scripts/runtime-sync.sh plan --refresh
 ```
 
-O `plan` usa `git ls-remote`, nao troca HEAD e nao escreve o checkout. Se o commit remoto nao existir no armazenamento Git local, o resumo do diff ficara indisponivel ate `git fetch` feito em uma janela autorizada.
-
-Para a sincronizacao de **codigo e cache**, depois de conferir o `hostname -s`, o nome do banco real e uma URI de teste descrita na matriz de dominios, configure explicitamente:
+2. **Sincronizar código e cache (apenas para `R0`/`R1` com checkout limpo):**
 
 ```bash
 export ACULTA_SYNC_ENV=test
 export ACULTA_SYNC_EXPECTED_HOST="toca"
 export ACULTA_SYNC_EXPECTED_DB="aculta_runtime"
-export ACULTA_SYNC_URI="${DRUPAL_URI_TEST:?defina DRUPAL_URI_TEST com HTTPS de um purpose valido}"
+export ACULTA_SYNC_URI="${DRUPAL_URI_TEST:?defina DRUPAL_URI_TEST com HTTPS de um site_key de desenvolvimento}"
 bash scripts/runtime-sync.sh sync-code
 ```
 
-A URI nao e gravada no codigo. O script verifica o banco com `drush status --field=db-name`, executa `updatedb:status` e `config:status` **somente leitura**, atualiza apenas por fast-forward e roda `drush cr`. Usa `flock` em `var/deployer/runtime-sync.lock` (diretorio ignorado no Git). O script para se houver branch diferente de `dev`, mudancas locais, remoto indisponivel, host/DB divergente, commit divergente, ou arquivos com indicio estrutural.
+- Se `HEAD == origin/dev` mas `last_cache_success_sha` ainda não coincidir com `HEAD`, o v2 executa `drush cr` e atualiza `last_validated_sha` (corrigindo o falso positivo do v1).
+- Se `HEAD == origin/dev` e o cache já estiver validado para esse SHA, o comando retorna `NOOP` sem reconstruir o cache novamente.
+- Se `drush cr` falhar após o fast-forward, o estado persistido fica como `PARTIAL` (`last_code_sync_sha` atualizado, `last_validated_sha` preservado no valor anterior); corrigida a causa, basta repetir `sync-code`.
+- Para adotar o baseline inicial de forma supervisionada quando `last_validated_sha` for `UNKNOWN`, o operador autorizado pode executar `ACULTA_SYNC_ADOPT_BASELINE=1 bash scripts/runtime-sync.sh sync-code --adopt-baseline`.
 
-**Aviso operacional:** `git fetch` e `git merge --ff-only` atuam sobre o mesmo checkout usado por agentes. Uma arvore limpa no momento do preflight nao bloqueia outros processos que editam arquivos durante a operacao. Coordenar pausa de escritas simultaneas e um gate externo obrigatorio; `flock` so impede duas instancias desse mesmo script. O `drush cr` pode atualizar tabelas de cache, nunca deve ser descrito como operacao absolutamente sem escrita no banco.
+## Procedimento supervisionado para mudanças estruturais (`R2`, `R3`, `R4`, `RX`)
 
-## Procedimento supervisionado para mudancas estruturais
+1. **Gerar o plano estrutural e o diagnóstico:**
 
-1. **Congelar a janela.** Pausar agentes, cron e workers afetados, preservar trabalho alheio e registrar SHA local/remoto, `git status`, host, URI e banco. Comparar `composer.lock`, `config/sync`, `.install`, post-updates e hooks de deploy com a versao anterior. Nao executar o script simples para contornar bloqueios.
-2. **Preflight.** Executar Drush `status`, `updatedb:status` e `config:status` no Runtime certo. Revisar `core.extension`, exclusoes de entidades/campos, dependencias, credenciais (somente nomes/estado), dominios, migracoes e alteracoes potencialmente destrutivas. Conferir perfil de ambiente do `aculta_deployer` quando aplicavel.
-3. **Backup integral.** Criar dump consistente de `aculta_runtime` e snapshot dos arquivos publicos/privados, settings e chaves indispensaveis, em armazenamento privado fora do Git e fora do document root. Usar permissoes restritas, checksum SHA-256 e politica de retencao. Testar restore em banco descartavel autorizado antes de qualquer `updatedb`/`cim`; nao reutilizar `aculta_simpletest`. O usuario do Runtime pode nao ter `CREATE DATABASE`: obter banco preprovisionado pelo operador, sem elevar privilegios improvisadamente.
-4. **Aprovacao.** Exibir plano, diffs, backup/restore comprovados, impacto e rollback. A autorizacao deve nomear operacoes persistentes concretas. `git push` ou uma classificacao RC nao autoriza por si so modificacoes de esquema/configuracao.
-5. **Aplicacao.** Na janela aprovada, verificar novamente o checkout, instalar dependencias travadas com `composer install` (nunca `composer update` no Runtime), aplicar `updatedb` e importacao completa de `config/sync` na ordem aprovada. Em releases compativeis, `drush deploy` pode encadear updates, config, cache e hooks de deploy; revisar exatamente quais hooks ira executar antes de usar. `pm:uninstall` e exclusoes ficam fora da rotina e exigem ordem independente.
-6. **Validacao.** Executar `drush cr`, `status`, `updatedb:status`, `config:status` e smokes dos purposes afetados; validar cron/filas, rotas, navegador e logs. Usar gates por escopo de `docs/operations/GATES.md`. Nao marcar PASS sem rodar as verificacoes.
-7. **Falha/rollback.** Nao executar SQL de reversao improvisado. Se o esquema/estado tiver mudado, fazer rollback coordenado de codigo/lockfile/config, banco e arquivos usando o snapshot completo e procedimento previamente testado. Preservar evidencias e manter manutencao quando nao houver recuperacao comprovada.
+```bash
+bash scripts/runtime-sync.sh structural-plan --refresh --format=json
+bash scripts/runtime-sync.sh doctor --format=json
+```
 
-## Lacunas e proximas iteracoes
-
-- Criar testes automatizados de isolamento (repo Git ficticio + Drush falso) para casos sem mudanca, codigo simples, worktree sujo, nao fast-forward, falha de Drush e arquivos estruturais.
-- Registrar resultado sem segredos em JSON com SHA, instante, modo, gates e resultados; apenas depois conectar o relatorio ao painel via contrato neutro do Deployer.
-- Integrar politica de classificacao de risco por manifests e tags dos modulos (nao apenas padroes de caminho), preservando a necessidade de aprovacao humana de DB/config.
-- Confrontar e atualizar a documentacao antiga que ainda confunde `aculta` e `aculta-site`, exige PR ou propõe importacao parcial da configuracao para sincronizacao geral.
-
-**Nao executado nesta entrega:** contato com servidor, `drush`, backup, banco, CI remoto, Composer ou sincronizacao do Runtime. A validade de uma aplicacao real depende de teste no servidor de desenvolvimento, com operadores e bloqueios externos de concorrencia.
+2. **Congelar a janela e preservar trabalho alheio:** pausar agentes escritores, cron e filas afetadas. Nunca limpar alterações de outros agentes com `reset`/`clean`/`stash`.
+3. **Backup e ensaio de restauração:** gerar dump consistente de `aculta_runtime` (`--single-transaction --routines --triggers --hex-blob`) e snapshot dos arquivos persistentes fora do Git e do DocumentRoot (modo `0600`), registrar SHA-256 e testar a restauração e o boot em banco descartável autorizado (`aculta_runtime_copia`, nunca `aculta_simpletest`).
+4. **Ordem de execução aprovada:** seguir a sequência de `structural-plan`. Em casos como a remoção de `commerce_shipping`, executar `updatedb` e `pm:uninstall commerce_shipping` aprovado **com o vendor antigo** antes de rodar `composer install`.
+5. **Homologação pós-janela:** executar `drush cr`, `bash scripts/runtime-sync.sh verify` e smokes HTTP dos `site_keys` afetados.

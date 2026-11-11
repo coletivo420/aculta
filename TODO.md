@@ -24,8 +24,8 @@ Atualizado em 2026-11-05. Estado atual em uma página. Não leia o histórico pa
 ## Bloqueios
 
 - **Gates PHP:** parte nunca rodou aqui (sem `vendor/` e sem extensão `yaml`). Ver `docs/operations/GATES.md`.
-- **Runtime:** nenhuma escrita sem ordem do responsável.
-- **Remoto Git:** `origin` aponta para `coletivo420/aculta-site`, movido para `coletivo420/aculta.git`. Atualizar.
+- **Runtime:** nenhuma escrita estrutural (`updatedb`, `config:import`, `pm:uninstall`, cutover F4) sem ordem explícita do responsável.
+- **Remoto Git:** `origin` confirmado em `coletivo420/aculta.git` no servidor `toca`; manter conferência com `git remote -v` em worktrees antigas.
 
 ## Próximo passo
 
