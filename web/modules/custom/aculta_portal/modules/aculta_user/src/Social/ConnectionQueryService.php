@@ -7,6 +7,7 @@ namespace Drupal\aculta_user\Social;
 use Drupal\aculta_user\Identity\PublicMemberIdentityInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\user\EntityOwnerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
@@ -190,6 +191,9 @@ class ConnectionQueryService {
     $profiles = $profileStorage->loadMultiple($profileIds);
     $candidateUids = [];
     foreach ($profiles as $profile) {
+      if (!$profile instanceof EntityOwnerInterface) {
+        continue;
+      }
       $ownerId = (int) $profile->getOwnerId();
       if ($ownerId > 0 && $ownerId !== $currentUid) {
         $candidateUids[$ownerId] = $ownerId;

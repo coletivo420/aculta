@@ -203,3 +203,17 @@ Resíduos na produção: rechecagens defensivas deduplicadas pelo PHPStan (`hasC
 Escopo (somente `src/` e `aculta_events.install`): `aculta_events.install` 11 -> 0 com helper `_aculta_events_install_storage_definition()` validando `FieldStorageDefinitionInterface`; `EventLocationAccessControlHandler` (14 -> 0) e `EventOrganizationAccessControlHandler` (8 -> 0) e `EventAccessControlHandler` (5 -> 0) passaram a implementar `EntityHandlerInterface` com DI real (`OrganizationAccessService`, `EventPermissionPolicy`), retorno `AccessResultInterface` e propriedades protegidas; `EventCalendarItemProvider` 12 -> 0; `EventPageController` 10 -> 0 (AuthorIdentityResolver com `UserInterface`, endereços via `AddressInterface`, VirtualLocation simplificado); `EventOrganizerDashboardController` 9 -> 0 e `EventOrganizationSuggestionAdminController` 7 -> 0 com narrowing de `ContentEntityInterface`/`EntityOwnerInterface`; `EventDateOccurrenceForm`, `EventLocationModalWidget`, `EventContributionAdapter`, `LocationContributionAdapter`, `LocationPageController`, `EventDateListBuilder`, `EventDateOccurrences`, `EventContributionAdminController` e `EventEditorialPresenter` zerados; entidades `Event`/`EventOrganization` com `getOwner()`/`getOwnerId()` tipados e `getCoOrganizerIds()` via `referencedEntities()`; nova rota de membros usa o serviço `aculta_events.organization_members_access`.
 
 Resíduos: plugins de Views com `QueryPluginBase` genérico, formulários com `$this->entity` tipado como `EntityInterface`, acessos a propriedades mágicas de FieldItem restantes e chamadas `\Drupal::` em hooks. Evidência: Unit 30/62 PASS; YAML de serviços e rotas validado.
+
+## Rodada 14 — 2026-11-11 (aculta_user, produção)
+
+| Medida | Valor |
+| --- | ---: |
+| Erros brutos em aculta_user antes | 251 |
+| Erros brutos em aculta_user/src e .install ao final | 0 (94 restantes apenas em testes) |
+| Erros brutos globais antes | 3124 |
+| Erros brutos globais ao final | 2963 |
+| Baseline atual | 2963 |
+
+Escopo: `OwnershipClaimService` 42 -> 0 com helper `requireContentEntity()` e narrowing em `canClaim`/`decideClaim`; `OrganizationAccessService` 15 -> 0; `ReportQueue` 10 -> 0 (`FlaggingInterface`); `ForumModerationHooks` 7 -> 0; `aculta_user.install` 6 -> 0 (`_aculta_user_install_storage_definition()`); `ParticipationEditWindow` 6 -> 0; `PhotoEditorHooks` 5 -> 0 (DI morta removida, `EntityFormInterface`); `UserPictureForm`, `AccountCreationHooks`, `DiscussionCommentAuthorHooks`, `AvatarAssetCleanup`, `AvatarResolver`, `BadgeService`, `ActivityController`, `LegacyMemorialController`, `PeopleListController`, `PublicProfileController`, handlers de acesso, `AvatarCropForm`, `RoleInheritanceHooks`, `UsernameLinkHooks`, `AuthorCard` (render agora retorna markup), `AuthorCardBuilder`, `LegacyAuthorManager`, `PublicProfilePolicy`, `ConnectionQueryService`, `FriendshipManager`, `SocialNetworks`, `AccountNames` e `NicknameRegistry` (docblock do `rebuild()`).
+
+Mudança transversal: `PerfilDoPapel::principal()/obter()` passaram a aceitar `EntityStorageInterface` e validar `ProfileStorageInterface`, eliminando ~15 erros em aculta_user, aculta_portal e aculta_events. Evidência: Unit 160/618 PASS; `aculta_user/src` e `.install` em zero.

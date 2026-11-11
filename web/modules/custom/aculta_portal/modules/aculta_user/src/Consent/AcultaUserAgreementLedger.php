@@ -45,7 +45,7 @@ final class AcultaUserAgreementLedger {
     if ($agreementType !== self::AGREEMENT_TYPE) {
       throw new \InvalidArgumentException('Apenas o aceite único (aculta_user_agreement_terms) pode ser gravado.');
     }
-    if (!$legacy && $action === 'accepted' && $agreementType === 'aculta_user_agreement_terms' && $documents === []) {
+    if (!$legacy && $action === 'accepted' && $documents === []) {
       $documents = $this->currentTermsEvidence();
     }
     $request = $this->requestStack->getCurrentRequest();

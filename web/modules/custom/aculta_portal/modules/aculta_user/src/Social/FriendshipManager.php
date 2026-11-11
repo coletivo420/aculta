@@ -82,6 +82,9 @@ final class FriendshipManager implements FriendshipManagerInterface {
       if (!$this->flood->isAllowed('aculta_user.friendship_request', 10, 3600, (string) $requesterId)) {
         throw new \DomainException('The friendship request rate limit has been reached.');
       }
+      if (!$relationship instanceof AcultaFriendshipInterface) {
+        throw new \LogicException('The friendship storage returned an unexpected entity.');
+      }
       $relationship->save();
       $this->flood->register('aculta_user.friendship_request', 3600, (string) $requesterId);
       $this->dispatchChange(FriendshipChangedEvent::REQUESTED, $relationship);

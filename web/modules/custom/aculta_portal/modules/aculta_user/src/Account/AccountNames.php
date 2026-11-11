@@ -49,8 +49,7 @@ final class AccountNames {
       return self::isHashSuffixNickname($apelido);
     }
     $slug = self::routeSlugFromDisplay($apelido);
-    return $slug !== NULL
-      && (bool) preg_match('/^[a-z0-9][a-z0-9-]{' . (self::MIN - 1) . ',' . (self::MAX - 1) . '}$/', $slug)
+    return (bool) preg_match('/^[a-z0-9][a-z0-9-]{' . (self::MIN - 1) . ',' . (self::MAX - 1) . '}$/', $slug)
       && !str_ends_with($slug, '-gr')
       && !in_array($slug, self::RESERVED, TRUE);
   }
@@ -102,7 +101,7 @@ final class AccountNames {
   /**
    * Converts a display value to its canonical lowercase route slug.
    */
-  private static function routeSlugFromDisplay(string $value): ?string {
+  private static function routeSlugFromDisplay(string $value): string {
     if (preg_match('/^(.+)#([1-9][0-9]*)$/', $value, $matches)) {
       return PublicRouteSlug::normalize($matches[1] . '-' . $matches[2]);
     }

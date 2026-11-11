@@ -164,7 +164,7 @@ final class BadgeService {
    */
   public function activeFor(int $uid): array {
     $ids = $this->storage()->getQuery()->accessCheck(FALSE)->condition('uid', $uid)->condition('revogado_em', NULL, 'IS NULL')->sort('concedido_em')->execute();
-    return array_values($this->storage()->loadMultiple($ids));
+    return array_values(array_filter($this->storage()->loadMultiple($ids), static fn ($award): bool => $award instanceof BadgeAward));
   }
 
   /**
@@ -181,7 +181,7 @@ final class BadgeService {
   private function activeAwards(int $uid, string $badge): array {
     $ids = $this->storage()->getQuery()->accessCheck(FALSE)
       ->condition('uid', $uid)->condition('badge', $badge)->condition('revogado_em', NULL, 'IS NULL')->execute();
-    return array_values($this->storage()->loadMultiple($ids));
+    return array_values(array_filter($this->storage()->loadMultiple($ids), static fn ($award): bool => $award instanceof BadgeAward));
   }
 
   /**

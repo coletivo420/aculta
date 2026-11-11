@@ -5,17 +5,15 @@ declare(strict_types=1);
 namespace Drupal\aculta_user\Hook;
 
 use Drupal\Component\Serialization\Json;
-use Drupal\Core\Access\CsrfTokenGenerator;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_user\Form\PhotoEditorGuard;
-use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -31,13 +29,7 @@ final class PhotoEditorHooks {
 
   use \Drupal\Core\StringTranslation\StringTranslationTrait;
 
-  /**
-   * Caminho da rota de sorteio (o token CSRF é gerado para este caminho). */
-  private const PATH = '/avatar/sortear';
-
   public function __construct(
-    #[Autowire(service: 'csrf_token')]
-    private readonly CsrfTokenGenerator $csrfToken,
     #[Autowire(service: 'aculta_user.photo_editor_guard')]
     private readonly PhotoEditorGuard $guard,
     #[Autowire(service: 'current_route_match')]
@@ -46,10 +38,6 @@ final class PhotoEditorHooks {
     private readonly AccountInterface $currentUser,
     #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    #[Autowire(service: 'user.data')]
-    private readonly UserDataInterface $userData,
-    #[Autowire(service: 'form_builder')]
-    private readonly FormBuilderInterface $formBuilder,
   ) {}
 
   /**
@@ -91,7 +79,8 @@ final class PhotoEditorHooks {
     if ($this->routeMatch->getRouteName() !== 'aculta_portal.dashboard' || !isset($form['user_picture'])) {
       return;
     }
-    $account = $form_state->getFormObject()->getEntity();
+    $formObject = $form_state->getFormObject();
+    $account = $formObject instanceof EntityFormInterface ? $formObject->getEntity() : NULL;
     if (!$account instanceof UserInterface || (int) $account->id() !== (int) $this->currentUser->id()) {
       return;
     }

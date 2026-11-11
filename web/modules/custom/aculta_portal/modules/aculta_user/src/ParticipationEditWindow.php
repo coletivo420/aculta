@@ -8,6 +8,8 @@ use Drupal\comment\CommentInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\EntityOwnerInterface;
@@ -146,6 +148,9 @@ final class ParticipationEditWindow {
    * Reads the immutable first-publication timestamp for the entity.
    */
   private function publishedAt(EntityInterface $entity): ?int {
+    if (!$entity instanceof FieldableEntityInterface) {
+      return NULL;
+    }
     $field = match ($entity->getEntityTypeId()) {
       'comment' => 'field_aculta_published_at',
       'aculta_forum_post' => 'first_published',

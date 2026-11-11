@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Profile;
 
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\ProfileStorageInterface;
@@ -40,7 +41,10 @@ final class PerfilDoPapel {
    *
    * Preserva o perfil do papel anterior enquanto a conta não tem o novo tipo.
    */
-  public static function principal(ProfileStorageInterface $storage, AccountInterface $conta): ?ProfileInterface {
+  public static function principal(EntityStorageInterface $storage, AccountInterface $conta): ?ProfileInterface {
+    if (!$storage instanceof ProfileStorageInterface) {
+      return NULL;
+    }
     foreach (self::TIPOS as $tipo) {
       $perfil = $storage->loadByUser($conta, $tipo);
       if ($perfil instanceof ProfileInterface) {
@@ -53,7 +57,10 @@ final class PerfilDoPapel {
   /**
    * Perfil principal da conta, ou um perfil novo (ainda não salvo) do tipo do papel atual.
    */
-  public static function obter(ProfileStorageInterface $storage, AccountInterface $conta): ProfileInterface {
+  public static function obter(EntityStorageInterface $storage, AccountInterface $conta): ProfileInterface {
+    if (!$storage instanceof ProfileStorageInterface) {
+      throw new \InvalidArgumentException('The profile storage is unavailable.');
+    }
     return self::principal($storage, $conta) ?? $storage->create([
       'type' => self::tipoDaConta($conta),
       'uid' => (int) $conta->id(),

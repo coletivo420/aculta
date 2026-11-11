@@ -7,6 +7,7 @@ namespace Drupal\aculta_user\Avatar;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\file\FileInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -55,7 +56,7 @@ class AvatarResolver {
 
     if ($account !== NULL && $account->hasField('user_picture') && !$account->get('user_picture')->isEmpty()) {
       $file = $account->get('user_picture')->entity;
-      if ($file !== NULL) {
+      if ($file instanceof FileInterface) {
         $uri = $file->getFileUri();
         // Avatars from the institutional pool are not personal photos. The
         // member explicitly selected them in the photo editor, so keep that

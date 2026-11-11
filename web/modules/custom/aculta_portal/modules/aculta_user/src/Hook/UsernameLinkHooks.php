@@ -69,9 +69,10 @@ final class UsernameLinkHooks {
       return;
     }
 
+    $referencedUsers = $items->referencedEntities();
     foreach ($variables['items'] ?? [] as $delta => $item) {
       $content = $item['content'] ?? NULL;
-      $user = $items->get($delta)?->entity;
+      $user = $referencedUsers[$delta] ?? NULL;
       // Só o link do rótulo é trocado; itens sem link ou sem usuário carregado ficam como estão.
       if (!is_array($content) || !isset($content['#url']) || !$user instanceof UserInterface) {
         continue;

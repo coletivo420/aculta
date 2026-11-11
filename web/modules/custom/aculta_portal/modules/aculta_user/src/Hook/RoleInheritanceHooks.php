@@ -6,6 +6,7 @@ namespace Drupal\aculta_user\Hook;
 
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_user\Role\HerancaDePapeis;
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\user\RoleInterface;
@@ -71,7 +72,8 @@ final class RoleInheritanceHooks {
    */
   #[Hook('form_user_form_alter')]
   public function formUserAlter(array &$form, FormStateInterface $form_state): void {
-    $conta = $form_state->getFormObject()->getEntity();
+    $formObject = $form_state->getFormObject();
+    $conta = $formObject instanceof EntityFormInterface ? $formObject->getEntity() : NULL;
     if (!isset($form['account']['roles']['#default_value']) || !$conta instanceof UserInterface) {
       return;
     }

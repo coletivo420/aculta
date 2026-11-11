@@ -35,7 +35,7 @@ class UserPictureForm extends FormBase {
    * Pasta dos envios. Prefixo pictures/: a limpeza do cron trata esses temporários. */
   public const UPLOAD_LOCATION = 'public://pictures/uploads';
 
-  public function __construct(
+  final public function __construct(
     protected EntityTypeManagerInterface $entityTypeManagerService,
     protected AccountInterface $currentUserService,
     protected UserDataInterface $userData,
@@ -122,7 +122,7 @@ class UserPictureForm extends FormBase {
           '#alt' => (string) $account->label(),
           '#attributes' => ['data-portal-ui' => 'account-avatar'],
         ]
-        : $this->imageRenderer->build('avatar', $currentFile?->getFileUri() ?? '', (string) $this->t('Foto de perfil de @name', ['@name' => $account->getDisplayName()]), ['data-portal-ui' => 'account-avatar']);
+        : $this->imageRenderer->build('avatar', $currentFile->getFileUri(), (string) $this->t('Foto de perfil de @name', ['@name' => $account->getDisplayName()]), ['data-portal-ui' => 'account-avatar']);
       $form['preview'] = [
         '#type' => 'html_tag',
         '#tag' => 'div',
@@ -259,13 +259,11 @@ class UserPictureForm extends FormBase {
     if ($account === NULL) {
       return;
     }
-    $uid = (int) $account->id();
     $current = (int) ($account->get('user_picture')->target_id ?? 0);
     $fids = array_values(array_filter((array) $form_state->getValue('imagem')));
     $new = (int) ($fids[0] ?? 0);
 
     $file = $new > 0 ? $this->entityTypeManagerService->getStorage('file')->load($new) : NULL;
-    $isAcervo = $current > 0 && str_starts_with((string) $this->entityTypeManagerService->getStorage('file')->load($current)?->getFileUri(), AvatarPool::DIRECTORY . '/');
 
     // Envio tem prioridade; sem envio, aplica o avatar sorteado no modal (só agora ele vira a foto da conta).
     // Campo vazio e sem sorteio não altera a foto (a remoção é o botão "Remover foto").

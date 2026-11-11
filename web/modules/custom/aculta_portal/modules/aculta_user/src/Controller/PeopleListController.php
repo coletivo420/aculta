@@ -39,9 +39,6 @@ final class PeopleListController extends ControllerBase {
 
     $rows = [];
     foreach ($userStorage->loadMultiple($userIds) as $account) {
-      if (!$account instanceof UserInterface) {
-        continue;
-      }
       $profile = PerfilDoPapel::principal($profileStorage, $account);
       $displayName = $profile !== NULL && $profile->hasField('field_first_name')
         ? trim((string) $profile->get('field_first_name')->value)

@@ -7,6 +7,7 @@ namespace Drupal\aculta_user\Form;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\aculta_user\Avatar\AvatarPool;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\crop\Entity\CropType;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
@@ -207,7 +208,7 @@ final class AvatarCropForm extends FormBase {
     $file = $this->targetFile();
     $wrapper = $form_state->getValue('image_crop')['crop_wrapper'] ?? [];
     $cropType = $this->entityTypeManagerService->getStorage('crop_type')->load(self::CROP_TYPE);
-    if ($file === NULL || $cropType === NULL || !isset($wrapper[self::CROP_TYPE]['crop_container']['values'])) {
+    if ($file === NULL || !$cropType instanceof CropType || !isset($wrapper[self::CROP_TYPE]['crop_container']['values'])) {
       $this->messenger()->addError($this->t('Não foi possível aplicar o recorte.'));
       return;
     }

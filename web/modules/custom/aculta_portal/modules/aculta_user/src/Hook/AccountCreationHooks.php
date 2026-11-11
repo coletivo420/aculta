@@ -9,6 +9,8 @@ use Drupal\aculta_user\Account\NicknamePolicy;
 use Drupal\aculta_user\Avatar\AvatarPool;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\file\FileInterface;
+use Drupal\profile\ProfileStorageInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Transliteration\PhpTransliteration;
 use Drupal\user\UserInterface;
@@ -52,7 +54,7 @@ final class AccountCreationHooks {
       return;
     }
     $file = $account->hasField('user_picture') ? $account->get('user_picture')->entity : NULL;
-    if ($file !== NULL && !$file->isPermanent() && !str_starts_with($file->getFileUri(), AvatarPool::DIRECTORY . '/')) {
+    if ($file instanceof FileInterface && !$file->isPermanent() && !str_starts_with($file->getFileUri(), AvatarPool::DIRECTORY . '/')) {
       $file->setPermanent();
       $file->save();
       return;
@@ -65,6 +67,9 @@ final class AccountCreationHooks {
    */
   private function createProfile(UserInterface $account): void {
     $storage = $this->entityTypeManager->getStorage('profile');
+    if (!$storage instanceof ProfileStorageInterface) {
+      throw new \LogicException('The profile storage is unavailable.');
+    }
     if (PerfilDoPapel::principal($storage, $account) !== NULL) {
       return;
     }

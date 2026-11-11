@@ -9,6 +9,7 @@ use Drupal\aculta_user\Identity\AuthorCardBuilder;
 use Drupal\aculta_user\Identity\AuthorCardVariantResolver;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\user\EntityOwnerInterface;
@@ -32,6 +33,9 @@ final class DiscussionCommentAuthorHooks {
    */
   #[Hook('entity_view')]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
+    if (!$entity instanceof ContentEntityInterface) {
+      return;
+    }
     if ($entity->getEntityTypeId() === 'aculta_forum_post') {
       if ($entity->hasField('legacy_author') && !$entity->get('legacy_author')->isEmpty()) {
         $legacyAuthor = $entity->get('legacy_author')->entity;
@@ -73,10 +77,6 @@ final class DiscussionCommentAuthorHooks {
     }
 
     $author = $entity->getOwner();
-    if (!$author instanceof UserInterface) {
-      return;
-    }
-
     $card = $this->authorCardBuilder->build($author, $variant);
     if ($card === NULL) {
       return;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Legacy;
 
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
@@ -49,7 +50,7 @@ final class LegacyAuthorManager {
     $ids = $storage->getQuery()->accessCheck(FALSE)->condition('origem_id', $sourceId)->range(0, 1)->execute();
     if ($ids) {
       $autoria = $storage->load(reset($ids));
-      if ((string) $autoria->get('nome')->value !== $nome) {
+      if ($autoria instanceof ContentEntityInterface && (string) $autoria->get('nome')->value !== $nome) {
         $autoria->set('nome', $nome);
         $autoria->save();
       }

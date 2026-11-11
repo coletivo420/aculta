@@ -7,6 +7,7 @@ namespace Drupal\aculta_user\Avatar;
 use Drupal\aculta_file_uploader\Cleanup\FileCleanupStatus;
 use Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
@@ -84,6 +85,9 @@ class AvatarAssetCleanup {
     // Recortes de arquivos que já não existem mais.
     $cropStorage = $this->entityTypeManager->getStorage('crop');
     foreach ($cropStorage->loadMultiple() as $crop) {
+      if (!$crop instanceof ContentEntityInterface) {
+        continue;
+      }
       $uri = $crop->hasField('uri') ? (string) $crop->get('uri')->value : '';
       if ($uri !== '' && str_starts_with($uri, 'public://pictures/')
         && !$this->entityTypeManager->getStorage('file')->loadByProperties(['uri' => $uri])) {

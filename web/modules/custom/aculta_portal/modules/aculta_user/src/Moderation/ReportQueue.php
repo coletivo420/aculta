@@ -6,6 +6,7 @@ namespace Drupal\aculta_user\Moderation;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\flag\FlaggingInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\node\NodeInterface;
@@ -59,6 +60,9 @@ final class ReportQueue {
     $flaggings = $storage->loadMultiple($ids);
     $target_ids = [];
     foreach ($flaggings as $flagging) {
+      if (!$flagging instanceof FlaggingInterface) {
+        continue;
+      }
       $entity_type = $flagging->getFlaggableType();
       if (in_array($entity_type, self::TARGET_TYPES, TRUE)) {
         $target_ids[$entity_type][] = $flagging->getFlaggableId();
@@ -72,6 +76,9 @@ final class ReportQueue {
 
     $grupos = [];
     foreach ($flaggings as $flagging) {
+      if (!$flagging instanceof FlaggingInterface) {
+        continue;
+      }
       $entity = $targets[$flagging->getFlaggableType()][$flagging->getFlaggableId()] ?? NULL;
       if ($entity === NULL || !$this->isPublicForumContent($entity)) {
         continue;

@@ -189,9 +189,6 @@ final class ActivityController implements ContainerInjectionInterface {
     $entries = [];
     $comments = $this->entityTypeManager->getStorage('comment')->loadMultiple($ids);
     foreach ($comments as $comment) {
-      if (!($comment instanceof CommentInterface)) {
-        continue;
-      }
       $topic = $comment->getCommentedEntity();
       if (!($topic instanceof NodeInterface)
         || $topic->bundle() !== 'aculta_forum_topic'
@@ -323,7 +320,7 @@ final class ActivityController implements ContainerInjectionInterface {
     }
     $items = [];
     foreach ($this->entityTypeManager->getStorage('node')->loadMultiple($nids) as $node) {
-      if (!$node instanceof NodeInterface || !$node->isPublished()) {
+      if (!$node->isPublished()) {
         continue;
       }
       $title = $node->label();

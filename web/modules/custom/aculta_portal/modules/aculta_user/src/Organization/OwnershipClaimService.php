@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_user\Organization;
 
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -23,10 +24,20 @@ final class OwnershipClaimService {
   ) {}
 
   /**
+   * Requires an entity that can carry ownership fields.
+   */
+  private function requireContentEntity(EntityInterface $entity): ContentEntityInterface {
+    if (!$entity instanceof ContentEntityInterface) {
+      throw new \InvalidArgumentException('A entidade de destino não oferece campos de titularidade.');
+    }
+    return $entity;
+  }
+
+  /**
    * Confere se a conta possui direito de reivindicar a entidade.
    */
   public function canClaim(EntityInterface $entity, AccountInterface $account): bool {
-    if ($account->isAnonymous()) {
+    if ($account->isAnonymous() || !$entity instanceof ContentEntityInterface) {
       return FALSE;
     }
 
@@ -71,6 +82,7 @@ final class OwnershipClaimService {
    * Submete um pedido de reivindicação de posse para a moderação.
    */
   public function submitClaim(EntityInterface $entity, AccountInterface $account, string $justification, ?string $contact = NULL): OwnershipClaim {
+    $entity = $this->requireContentEntity($entity);
     if (!$this->canClaim($entity, $account)) {
       throw new ClaimNotAllowedException(sprintf(
         'A entidade %s de ID %s não pode ser reivindicada pelo usuário %s.',
@@ -124,7 +136,7 @@ final class OwnershipClaimService {
       $applicantUid = (int) $claim->get('uid')->target_id;
 
       $targetEntity = $this->entityTypeManager->getStorage($targetType)->load($targetId);
-      if ($targetEntity !== NULL) {
+      if ($targetEntity instanceof ContentEntityInterface) {
         if ($targetEntity->hasField('field_organizador')) {
           $targetEntity->set('field_organizador', $applicantUid);
           $targetEntity->save();
@@ -182,7 +194,7 @@ final class OwnershipClaimService {
 
       if ($remainingPending === 0) {
         $targetEntity = $this->entityTypeManager->getStorage($targetType)->load($targetId);
-        if ($targetEntity !== NULL && $targetEntity->hasField('reivindicacao_status')) {
+        if ($targetEntity instanceof ContentEntityInterface && $targetEntity->hasField('reivindicacao_status')) {
           if ((string) $targetEntity->get('reivindicacao_status')->value === 'pendente') {
             $targetEntity->set('reivindicacao_status', 'nao_reivindicada');
             $targetEntity->save();
@@ -196,6 +208,7 @@ final class OwnershipClaimService {
    * Inicia o processo de transferência de titularidade para um coproprietário.
    */
   public function initiateOwnershipTransfer(EntityInterface $entity, AccountInterface $titular, AccountInterface $coOwner): void {
+    $entity = $this->requireContentEntity($entity);
     if (!$entity->hasField('titular') || !$entity->hasField('pending_owner_uid')) {
       throw new \InvalidArgumentException('A entidade não suporta transferência de titularidade.');
     }
@@ -218,6 +231,7 @@ final class OwnershipClaimService {
    * Aceita a transferência de titularidade pelo coproprietário convidado.
    */
   public function acceptOwnershipTransfer(EntityInterface $entity, AccountInterface $coOwner): void {
+    $entity = $this->requireContentEntity($entity);
     if (!$entity->hasField('titular') || !$entity->hasField('pending_owner_uid')) {
       throw new \InvalidArgumentException('A entidade não suporta transferência de titularidade.');
     }
@@ -245,6 +259,7 @@ final class OwnershipClaimService {
    * Recusa a transferência de titularidade pelo coproprietário convidado.
    */
   public function rejectOwnershipTransfer(EntityInterface $entity, AccountInterface $coOwner): void {
+    $entity = $this->requireContentEntity($entity);
     if (!$entity->hasField('pending_owner_uid')) {
       return;
     }
@@ -262,6 +277,7 @@ final class OwnershipClaimService {
    * Executa recuperação administrativa de titularidade por administrador.
    */
   public function administrativeRecovery(EntityInterface $entity, AccountInterface $admin, AccountInterface $newOwner, string $notes): void {
+    $entity = $this->requireContentEntity($entity);
     if (!$admin->hasPermission('administer aculta claims') && !$admin->hasPermission('administer aculta events')) {
       throw new AccessDeniedHttpException('Apenas administradores podem executar recuperação administrativa.');
     }

@@ -133,10 +133,10 @@ final class PublicProfileController extends ControllerBase {
         $links[] = $this->socialLink($key, $uri);
       }
     }
-    if (isset($items['email']) && $account !== NULL && $account->getEmail() !== '') {
+    if (isset($items['email']) && $account->getEmail() !== '') {
       $links[] = $this->emailLink((string) $account->getEmail());
     }
-    if ($account !== NULL && $this->account->isAuthenticated() && (int) $this->account->id() !== (int) $account->id()) {
+    if ($this->account->isAuthenticated() && (int) $this->account->id() !== (int) $account->id()) {
       $relationship = $this->friendshipManager->getRelationshipWith((int) $account->id());
       $build['header']['actions'] = [
         '#type' => 'container',

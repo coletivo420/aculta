@@ -9,7 +9,9 @@ declare(strict_types=1);
 
 use Drupal\aculta_user\Entity\OrganizationMember;
 use Drupal\aculta_user\Entity\AssociadoMarcador;
+use Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 
 /**
  * Implements hook_schema(). */
@@ -207,7 +209,7 @@ function aculta_user_update_10003(): void {
       continue;
     }
     $field = BaseFieldDefinition::create('string_long')->setLabel($label);
-    $manager->installFieldStorageDefinition($name, 'aculta_badge_award', 'aculta_user', $field);
+    _aculta_user_install_storage_definition($manager, $name, 'aculta_badge_award', $field);
   }
 }
 
@@ -234,7 +236,7 @@ function aculta_user_update_10005(): void {
   $fields = AssociadoMarcador::baseFieldDefinitions($entity_type);
   foreach (['situacao', 'data_adesao', 'motivo', 'changed'] as $name) {
     if ($manager->getFieldStorageDefinition($name, 'aculta_associado') === NULL) {
-      $manager->installFieldStorageDefinition($name, 'aculta_associado', 'aculta_user', $fields[$name]);
+      _aculta_user_install_storage_definition($manager, $name, 'aculta_associado', $fields[$name]);
     }
   }
   \Drupal::database()->update('aculta_associado')
@@ -332,9 +334,19 @@ function aculta_user_update_10015(): string {
 
   foreach (['can_manage_members', 'can_publish'] as $fieldName) {
     if ($manager->getFieldStorageDefinition($fieldName, 'aculta_org_member') === NULL && isset($fields[$fieldName])) {
-      $manager->installFieldStorageDefinition($fieldName, 'aculta_org_member', 'aculta_user', $fields[$fieldName]);
+      _aculta_user_install_storage_definition($manager, $fieldName, 'aculta_org_member', $fields[$fieldName]);
     }
   }
 
   return (string) t('Installed can_manage_members and can_publish on aculta_org_member.');
+}
+
+/**
+ * Installs a field storage definition after validating its declared type.
+ */
+function _aculta_user_install_storage_definition(EntityDefinitionUpdateManagerInterface $manager, string $fieldName, string $entityTypeId, mixed $definition): void {
+  if (!$definition instanceof FieldStorageDefinitionInterface) {
+    throw new \RuntimeException(sprintf('Campo %s não possui definição de armazenamento instalável.', $fieldName));
+  }
+  _aculta_user_install_storage_definition($manager, $fieldName, $entityTypeId, $definition);
 }

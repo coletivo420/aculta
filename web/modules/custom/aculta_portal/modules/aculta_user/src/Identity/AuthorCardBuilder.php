@@ -110,8 +110,8 @@ final class AuthorCardBuilder {
       '#social_links' => $data['social_links'],
       '#designation' => $designation,
       '#actions' => $actions,
-      '#reactions_received' => $data['reactions_received'] ?? 0,
-      '#reactions_given' => $data['reactions_given'] ?? 0,
+      '#reactions_received' => $data['reactions_received'],
+      '#reactions_given' => $data['reactions_given'],
       '#size' => in_array($size, ['sm', 'md', 'lg'], TRUE) ? $size : 'md',
     ];
     CacheableMetadata::createFromObject($identity)->applyTo($build);

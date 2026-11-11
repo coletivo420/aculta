@@ -8,6 +8,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\aculta_user\Avatar\AvatarResolver;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Template\Attribute;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -70,6 +71,9 @@ final class LegacyMemorialController extends ControllerBase {
 
     $nomes = [];
     foreach ($autorias as $autoria) {
+      if (!$autoria instanceof ContentEntityInterface) {
+        continue;
+      }
       $nomes[] = Html::escape((string) $autoria->get('nome')->value);
     }
 

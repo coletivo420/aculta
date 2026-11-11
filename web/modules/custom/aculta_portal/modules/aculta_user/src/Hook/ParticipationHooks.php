@@ -37,9 +37,6 @@ final class ParticipationHooks {
     if (!$isDiscussionComment) {
       return;
     }
-    if ($comment->getOwner() === NULL) {
-      return;
-    }
     $owner = $comment->getOwner();
     if (!$this->rules->requiresFirstDiscussionModeration($owner)) {
       return;
