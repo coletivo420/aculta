@@ -1,4 +1,6 @@
 # Sincronizacao do Runtime de desenvolvimento - ACULTA
+> **Evolucao planejada (2026-11-11):** ver [Runtime Sync v2 - plano de arquitetura e implementacao](RUNTIME-SYNC-PLANO-V2.md). Este documento descreve a primeira implementacao efetiva; o v2 ainda nao foi executado. **Falha conhecida:** quando o HEAD ja coincide com origin/dev, o script atual pode sair sem reconstruir caches. No checkout compartilhado, um bloqueio do script tambem nao impede que codigo de agentes ja esteja no DocumentRoot. Nao automatizar triggers antes de corrigir esses pontos e implementar os gates de concorrencia.
+
 
 **Estado:** primeira implementacao conservadora, em `scripts/runtime-sync.sh`. Nao e deploy de producao nem substitui o `aculta_deployer`.
 
