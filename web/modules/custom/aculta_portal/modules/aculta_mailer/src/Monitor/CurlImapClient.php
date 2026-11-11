@@ -46,7 +46,7 @@ final class CurlImapClient implements ImapClientInterface {
     preg_match_all('/^\* SEARCH([\d ]*)\r?$/m', $response, $matches);
     $uids = [];
     foreach ($matches[1] as $line) {
-      foreach (array_filter(explode(' ', trim($line)), 'strlen') as $candidate) {
+      foreach (array_filter(explode(' ', trim($line)), static fn(string $candidate): bool => $candidate !== '') as $candidate) {
         if ((int) $candidate > $uid) {
           $uids[] = (int) $candidate;
         }

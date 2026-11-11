@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_mailer\Kernel;
 
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Entity\MailLog;
 use Drupal\aculta_mailer\Delivery\DeliveryError;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_mailer\Queue\MailQueue;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -122,11 +122,12 @@ final class MailDeliveryKernelTest extends KernelTestBase {
     $this->container->get('aculta_mailer.queue')->enqueue($this->message());
     $queue = $this->container->get('queue')->get(MailQueue::QUEUE_NAME);
     $item = $queue->claimItem();
+    $this->assertIsObject($item);
     $this->container->get('plugin.manager.queue_worker')->createInstance(MailQueue::QUEUE_NAME)->processItem($item->data);
     $queue->deleteItem($item);
 
     $next = $queue->claimItem();
-    $this->assertNotFalse($next, 'A falha temporária deve reagendar.');
+    $this->assertIsObject($next, 'A falha temporária deve reagendar.');
     $this->assertSame('smtp2go', $next->data['transport']);
     $this->assertSame(2, $next->data['attempt']);
     $this->assertGreaterThan(time(), $next->data['not_before']);
@@ -167,10 +168,12 @@ final class MailDeliveryKernelTest extends KernelTestBase {
   /**
    * Registro do envio pelo correlation ID.
    */
-  private function logFor(string $correlation): ContentEntityInterface {
+  private function logFor(string $correlation): MailLog {
     $logs = $this->container->get('entity_type.manager')->getStorage('aculta_mail_log')->loadByProperties(['correlation_id' => $correlation]);
     $this->assertCount(1, $logs);
-    return reset($logs);
+    $log = reset($logs);
+    $this->assertInstanceOf(MailLog::class, $log);
+    return $log;
   }
 
 }

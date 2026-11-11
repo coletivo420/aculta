@@ -6,6 +6,7 @@ namespace Drupal\aculta_mailer\Form;
 
 use Drupal\aculta_mailer\Delivery\MailResend;
 use Drupal\aculta_mailer\Log\MailLogRecorder;
+use Drupal\aculta_mailer\Entity\MailLog;
 use Drupal\aculta_mailer\Log\SingleUseLinkMail;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -50,15 +51,15 @@ final class MailResendForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getQuestion(): string {
-    return (string) $this->t('Reenviar esta mensagem?');
+  public function getQuestion(): \Drupal\Core\StringTranslation\TranslatableMarkup {
+    return $this->t('Reenviar esta mensagem?');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getDescription(): string {
-    return (string) $this->t('O conteúdo é decifrado para o envio. A nova tentativa aparece no mesmo registro. Chave geral de envio e lista de supressão continuam valendo.');
+  public function getDescription(): \Drupal\Core\StringTranslation\TranslatableMarkup {
+    return $this->t('O conteúdo é decifrado para o envio. A nova tentativa aparece no mesmo registro. Chave geral de envio e lista de supressão continuam valendo.');
   }
 
   /**
@@ -71,8 +72,8 @@ final class MailResendForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getConfirmText(): string {
-    return (string) $this->t('Reenviar');
+  public function getConfirmText(): \Drupal\Core\StringTranslation\TranslatableMarkup {
+    return $this->t('Reenviar');
   }
 
   /**
@@ -80,12 +81,11 @@ final class MailResendForm extends ConfirmFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?string $log_id = NULL): array {
     $log = $log_id !== NULL ? $this->entityTypes->getStorage(MailLogRecorder::ENTITY_TYPE)->load($log_id) : NULL;
-    if ($log === NULL || !$this->resend->canResend($log_id)) {
+    if (!$log instanceof MailLog || !$this->resend->canResend($log_id)) {
       $this->messenger()->addError($this->t('Esta mensagem não pode ser reenviada: não tem conteúdo guardado ou não está com falha.'));
       $form_state->setRedirect('aculta_mailer.failures');
       return [];
     }
-    assert($log instanceof ContentEntityInterface);
     $form['log_id'] = ['#type' => 'value', '#value' => $log_id];
     $form['summary'] = [
       '#markup' => '<p>' . $this->t('Tipo: @type. Data: @date. Tentativas até agora: @n.', [

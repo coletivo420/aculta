@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mailer\Log;
 
+use Drupal\aculta_mailer\Entity\MailLog;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_mailer\Message\MailStatus;
 use Drupal\Component\Datetime\TimeInterface;
@@ -60,6 +61,9 @@ final class MailLogRecorder {
       'recipient_hash' => $this->hashRecipient($message->to),
       'langcode' => $message->langcode,
     ]) : reset($found);
+    if (!$log instanceof MailLog) {
+      throw new \UnexpectedValueException('O armazenamento de logs retornou uma entidade inesperada.');
+    }
 
     $log->set('status', $status->value);
     $log->set('attempts', $attempt);
@@ -157,6 +161,9 @@ final class MailLogRecorder {
       ->execute();
     $count = 0;
     foreach ($storage->loadMultiple($ids) as $log) {
+      if (!$log instanceof MailLog) {
+        throw new \UnexpectedValueException('O armazenamento de logs retornou uma entidade inesperada.');
+      }
       $log->set('payload_cipher', NULL);
       $log->set('payload_expires', NULL);
       $log->save();

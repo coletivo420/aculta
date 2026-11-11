@@ -38,6 +38,10 @@ final class MailTemplateRenderer {
    * @return array
    *   Chaves `subject` e `body`.
    */
+  /**
+   * @return array{subject: string, body: string, html: bool, layout: bool}
+   *   Rendered subject and body with format metadata.
+   */
   public function render(MailTypeInterface $type, array $context): array {
     $template = $this->activeTemplate($type->id());
     $subject = $template?->getSubject() ?? $type->defaultSubject();

@@ -245,3 +245,15 @@ Evidência: Unit 390/1361 PASS; `phpstan analyse` em `[OK] No errors`.
 Escopo: `WikiContributionMigration` 29 -> 0 (`RevisionableStorageInterface`, `Contribution`), `WikiEditorialNoticePublisher` 6 -> 0, `WikiEntryImageHooks` 6 -> 0 (DI de `file_url_generator`, `CacheableMetadata`), providers de Content Index, `WikiLeadImageCleanup`, `WikiController`, `WikiProposalStatusController`, `WikiReviewHooks`, `WikiProposalDecision` e `WikiLeadImageUploader` (selects com lock divididos em etapas). Evidência: Unit 94/455 PASS; YAML de serviços validado.
 
 Restante no módulo: `WikiEditorialQueue` (13), `WikiContributorWorkspace` (8), `WikiProposalSubmissionForm` (7) e avulsos — exigem narrowing de uniões `Contribution|WikiProposal` e reescrita de laços de paginação.
+## Rodada 18 — 2026-11-11 (aculta_mailer, módulo completo)
+
+| Medida | Valor |
+| --- | ---: |
+| Erros brutos em aculta_mailer antes | 69 (45 em src; 5 em .install; 19 em testes) |
+| Erros brutos em aculta_mailer ao final | 0 |
+| Entradas de aculta_mailer no baseline ao final | 0 |
+| Baseline global regenerado | 3564 erros |
+
+Escopo: narrowing de entidades MailLog/MailTransport, assinatura correta dos ConfirmForm, validação das FieldStorageDefinition no .install, remoção de guards redundantes, filtros/callbacks alinhados aos tipos inferidos e retorno tipado do MailTemplateRenderer. MailTransportFactory agora cria SMTP via EsmtpTransportFactory/Dsn pública do Symfony, mantendo smtps na porta 465, credenciais resolvidas por segredo e configuração verify_peer. Testes existentes tiveram narrowing dos itens de fila/entidades; removido o teste tautológico que comparava o TTL à própria constante.
+
+Resíduos no módulo: nenhum. O baseline global passou de 2797 (registro da rodada 16) para 3564 após regeneração na base atual; esse delta global inclui dívida fora do escopo e não é atribuído ao aculta_mailer. O baseline recém-gerado registra erros reais `class.notFound` dos consumidores de `DomainPurposeManager`, cuja migração para `DomainSiteManager` ainda não chegou a `origin/dev`; ficam explicitamente pendentes, sem editar esses arquivos paralelos. Evidências: PHPStan no módulo e global `[OK] No errors`; Unit 166 testes/348 assertions PASS; PHP lint dos 29 arquivos PHP alterados, YAML de serviços e índice de status PASS. A suíte Unit global 3287/17594 encontrou 4 falhas fora do escopo (ForumTopicDisplayConfigTest, BadgeEvaluationHooksTest e dois testes de aculta_index), além de 3 deprecações; o gate token budget falhou por sete violações globais preexistentes em AGENTS/skills fora do escopo.
