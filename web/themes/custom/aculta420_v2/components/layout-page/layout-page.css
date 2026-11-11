@@ -12,8 +12,11 @@
   overflow-wrap: anywhere;
 }
 
+/* Container externo do stack: acompanha o slider de largura estreita do tema,
+   como o fallback .page__main--stack. A medida de leitura (68–70ch) fica no
+   conteúdo textual, para não estrangular formulários e tabelas. */
 .layout-page--stack {
-  inline-size: min(100%, 68ch);
+  inline-size: min(100%, var(--aculta-narrow-container-width, 750px));
 }
 
 .layout-page--aside {
@@ -38,10 +41,10 @@
 @media (min-width: 60rem) {
   /* A barra fica à esquerda no desktop, mantendo conteúdo antes de aside no DOM. */
   .layout-page--aside:has(.layout-page__aside) {
-    grid-template-columns: minmax(14rem, 1fr) minmax(0, 2fr);
     grid-template-areas:
       "title title"
       "aside content";
+    grid-template-columns: minmax(14rem, 1fr) minmax(0, 2fr);
   }
 
   .layout-page--aside:has(.layout-page__aside):not(:has(.layout-page__title)) {

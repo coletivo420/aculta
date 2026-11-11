@@ -15,7 +15,6 @@
   --color-alpha-text-muted-5: color-mix(in sRGB, var(--color-text-muted) 5%, transparent);
   --color-alpha-text-primary-16: color-mix(in sRGB, var(--color-text-primary) 16%, transparent);
   --studio-stripe: var(--color-accent-sub-2);
-  --button-primary-bg-hover: #092b1d;
   --motion-instant: .01ms;
   --motion-fast: 150ms;
   --motion-base: 180ms;

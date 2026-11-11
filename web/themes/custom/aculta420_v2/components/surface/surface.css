@@ -103,9 +103,6 @@
   box-shadow: var(--surface-shadow-floating);
 }
 
-
-
-
 /* Contorno de borda */
 .aculta-surface--border-none {
   border: 0;

@@ -73,9 +73,6 @@
   box-shadow: var(--surface-shadow-floating);
 }
 
-
-
-
 /* ========================================================
    CABEÇALHO INSTITUCIONAL (REFERÊNCIAS 05, 06, 07, 08)
    ======================================================== */
@@ -94,7 +91,6 @@
   border-block-end: 1px solid var(--color-border);
   background-color: var(--surface-panel-institutional-bg);
 }
-
 
 .aculta-surface-panel--header-subtle .aculta-surface-panel__header {
   color: var(--color-text-primary);

@@ -72,7 +72,7 @@ $assert(!in_array('src/styles/portal-account.css', $global, TRUE), 'portal-accou
 $assert(in_array('src/styles/portal-account.css', $portalAccount, TRUE), 'A biblioteca portal-account não declara portal-account.css.');
 $surfaceHook = (string) file_get_contents($theme . '/src/Hook/SurfaceSettingsHooks.php');
 $assert(str_contains($surfaceHook, 'aculta420_v2/portal-account'), 'O preprocess_html não anexa a biblioteca portal-account.');
-$assert(str_contains($surfaceHook, "\$purpose === 'account'"), 'O preprocess_html não restringe o CSS ao purpose account.');
+$assert(str_contains($surfaceHook, "\$siteKey === 'account'"), 'O preprocess_html não restringe o CSS ao site_key account.');
 
 $eventOrganization = array_keys($libraries['event-organization']['css']['theme'] ?? []);
 $assert(!in_array('src/styles/event-organization.css', $global, TRUE), 'event-organization.css voltou ao global-styling.');
@@ -84,7 +84,7 @@ $wiki = array_keys($libraries['wiki']['css']['theme'] ?? []);
 $assert(!in_array('src/styles/wiki.css', $global, TRUE), 'wiki.css voltou ao global-styling.');
 $assert(in_array('src/styles/wiki.css', $wiki, TRUE), 'A biblioteca wiki não declara wiki.css.');
 $assert(str_contains($surfaceHook, 'aculta420_v2/wiki'), 'O preprocess_html não anexa a biblioteca wiki.');
-$assert(str_contains($surfaceHook, "\$purpose === 'wiki'"), 'O preprocess_html não restringe o CSS ao purpose wiki.');
+$assert(str_contains($surfaceHook, "\$siteKey === 'wiki'"), 'O preprocess_html não restringe o CSS ao site_key wiki.');
 
 $forum = array_keys($libraries['forum']['css']['theme'] ?? []);
 $assert(!in_array('src/styles/forum.css', $global, TRUE), 'forum.css voltou ao global-styling.');

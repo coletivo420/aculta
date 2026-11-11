@@ -72,9 +72,6 @@
   box-shadow: var(--surface-shadow-floating);
 }
 
-
-
-
 /* Área de conteúdo e padding */
 .aculta-surface-accent__content {
   box-sizing: border-box;
@@ -159,7 +156,6 @@
     );
 }
 
-
 /* Moldura tricolor na lateral direita (03_bloco_tricolor_direita.png) */
 .aculta-surface-accent--tricolor.aculta-surface-accent--pos-end .aculta-surface-accent__stripe {
   position: static;
@@ -178,7 +174,6 @@
     );
 }
 
-
 /* Cores das molduras unitárias */
 .aculta-surface-accent--green .aculta-surface-accent__stripe {
   background-color: var(--surface-accent-green);
@@ -194,8 +189,6 @@
 
 /* Modo escuro para molduras unitárias */
 
-
-
 /* 2. Moldura tricolor contínua no topo (03_bloco_tricolor.png) */
 /* Topo com faixa verde predominante, seguida de amarelo e vermelho,
    e contorno lateral esquerdo com continuidade verde */
@@ -204,7 +197,6 @@
   border-inline-start-width: .75rem; /* Continuidade da borda esquerda verde */
   border-inline-start-color: var(--surface-accent-green);
 }
-
 
 .aculta-surface-accent--tricolor.aculta-surface-accent--pos-top .aculta-surface-accent__stripe,
 .aculta-surface-accent--tricolor.aculta-surface-accent--pos-full .aculta-surface-accent__stripe {
@@ -224,7 +216,6 @@
     );
 }
 
-
 /* 3. Superfície neutra institucional (01 a 04 neutra claro/escuro) */
 /* Fina faixa superior de 4px verde, amarela e vermelha */
 .aculta-surface-accent--neutral .aculta-surface-accent__stripe {
@@ -243,7 +234,6 @@
       var(--surface-accent-red) 100%
     );
 }
-
 
 /* Se position for top em neutra ou tricolor, garantir que o conteúdo não cole na faixa */
 .aculta-surface-accent--pos-top .aculta-surface-accent__content {
