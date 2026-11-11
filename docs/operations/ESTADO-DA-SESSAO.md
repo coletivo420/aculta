@@ -4,7 +4,7 @@
 - **Estado:** 42 arquivos de produção sem erros; Unit 94/455 PASS; baseline global 3451 e gate estrito verde.
 - **Decisões e alternativas descartadas:** usar `DomainSiteManager`/`SiteKey::Wiki` já publicado; manter `getAccessPurpose()` do contrato `origin/dev`; filtro removido era redundante após `array_filter()`. Sem ignores e sem mudança de permissões.
 - **Cuidados:** o autoload padrão do worktree pode resolver classes no checkout principal; medições foram feitas com autoload temporário priorizando as fontes do worktree. 112 erros em testes/.install permanecem baselineados.
-- **Commits e arquivos:** rodada 17; Wiki, baseline, relatório, TODO/status, README e handoff. Hash final será registrado após push.
+- **Commits e arquivos:** rodada 17; Wiki, baseline, relatório, TODO/status, README e handoff. Commit `31686d586` publicado em `origin/dev`.
 - **Verificações:** PHPStan Wiki src/global `[OK] No errors`; Unit 94/455, descoberta de suítes, lint PHP, YAML e índice status PASS. Gate Portal FAIL por P5.4 preexistente em `PortalController`; token budget FAIL por 7 violações globais preexistentes.
 - **Pendências e bloqueios:** 112 erros PHPStan em testes/.install; sem alteração nesta rodada. Validação Runtime da Wiki continua pendente.
 - **Próximo passo:** retomar saneamento pelo próximo módulo após autorização para continuar.
