@@ -1,12 +1,12 @@
 # ADR-054/055 — UI Styles Entity Status — 2026-11-11
 
 - **Objetivo:** integrar UI Styles Entity Status e retomar a falha reportada no catálogo de SDCs.
-- **Estado:** Entity Status Sync/Runtime habilitados; classe `aculta-content-status--unpublished`. UI Patterns Library abriu em Firefox autenticado: 82 componentes, 16 grupos, 82 prévias, uma story carregada; sem 500, `maxScrollX=0` em 320/1280. Erros exatos de console/CSP ainda não correlacionados.
+- **Estado:** Entity Status Sync/Runtime habilitados; classe `aculta-content-status--unpublished`. UI Patterns Library abriu em Firefox autenticado: 82 componentes, 16 grupos, 82 prévias, uma story carregada; sem 500, `maxScrollX=0` em 320/1280. Console: o HTML atual emite 11 agregados e não inclui o hash antigo `js_oPF...`; URL antiga retorna 400 `text/plain: Invalid filename` porque `locale/translations` resolve a zero grupos. Um agregado atual responde 200 `text/javascript`. CSP permanece report-only.
 - **Decisões/cuidados:** import parcial do settings após snapshot; o plugin apenas marca visualmente conteúdo não publicado e seções LB.
 - **Commits/arquivos:** `109f0b903` (Entity Status), `a24250c1a` (Library); tema, Sync, inventário e ADR-055.
 - **Verificações:** UI Styles 40, foundations 83 pares, Skins 134, boundary 7872, Stylelint, índice e browser Library PASS. PHPUnit 1/7 com 54 depreciações. Token-budget DEFERRED: script tem SyntaxError na linha 40.
-- **Pendências:** Entity Status visual/perfis/cache; capturar resposta do agregado JS e eventos CSP. O browser confirmou sem 500 e 0 scroll horizontal real, mas navegação administrativa excede 320 px; Playwright teve `NS_ERROR_NET_EMPTY_RESPONSE`, e duas sessões geckodriver não iniciaram.
-- **Próximo passo:** investigar a falha transitória de browser/console e confirmar o estado HTTP/MIME do agregado JS.
+- **Pendências:** Entity Status visual/perfis/cache; CSP report-only de estilos/scripts inline não causa bloqueio e não deve ser afrouxada sem nova evidência. 320 tem elementos de navegação administrativa excedentes, embora sem scroll efetivo.
+- **Próximo passo:** hard reload da rota para descartar HTML agregado obsoleto e seguir homologação visual da saída Entity Status e demais Views.
 
 # ADR-054/055 — Cutover focal UI Icons — 2026-11-11
 
