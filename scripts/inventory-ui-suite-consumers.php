@@ -586,6 +586,7 @@ foreach ($templateRoots as $owner => $templateRoot) {
     $isMailEnvelope = $file->getFilename() === 'aculta-mailer-wrap.html.twig';
     $isFormFragment = in_array($file->getFilename(), ['aculta-portal-photo-editor.html.twig', 'portal-cart-panel.html.twig'], TRUE);
     $isShellFallback = $file->getFilename() === 'aculta-portal-shell.html.twig' && str_starts_with($relativePath, 'web/modules/');
+    $isShippingCalculator = $file->getFilename() === 'aculta-shipping-calculator.html.twig';
     $moduleThemeAdapters = str_starts_with($relativePath, 'web/modules/')
       ? ($themeSdcAdapters[$file->getFilename()] ?? [])
       : [];
@@ -638,6 +639,9 @@ foreach ($templateRoots as $owner => $templateRoot) {
     elseif ($isShellFallback) {
       $templateUiPatterns = 'neutral_fallback:theme_override';
     }
+    elseif ($isShippingCalculator) {
+      $templateUiPatterns = 'behavior_contract:checkout_js';
+    }
     elseif ($isPortalComponentAdapter) {
       $templateUiPatterns = 'theme_adapter:empty-state,tabs,author-card,profile-details';
     }
@@ -667,7 +671,7 @@ foreach ($templateRoots as $owner => $templateRoot) {
         ? 'UI_SUITE_NATIVE'
         : (($isPortalComponentThemeAdapter || $isUiPatternsLibraryTemplate)
           ? 'UI_SUITE_NATIVE'
-          : (($isPortalComponentAdapter || $isNeutralPortalElement || $isNeutralDonationWrapper || $isTermsModalAdapter || $isThemeDocument || $isRegionWrapper || $isMapsPopupWrapper || $isMailEnvelope || $isFormFragment || $isShellFallback || $isNeutralPortalButtonFallback)
+          : (($isPortalComponentAdapter || $isNeutralPortalElement || $isNeutralDonationWrapper || $isTermsModalAdapter || $isThemeDocument || $isRegionWrapper || $isMapsPopupWrapper || $isMailEnvelope || $isFormFragment || $isShellFallback || $isShippingCalculator || $isNeutralPortalButtonFallback)
           ? 'FUNCTIONAL_NATIVE_EXCEPTION'
           : ($isThemeAdaptedModuleFallback
             ? 'FUNCTIONAL_NATIVE_EXCEPTION'
