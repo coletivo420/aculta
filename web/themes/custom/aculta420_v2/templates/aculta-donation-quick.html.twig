@@ -1,0 +1,17 @@
+{#
+  Valores rápidos de doação (aculta_donation), apresentação ACULTA420.
+
+  O módulo mantém o fallback neutro; este override compõe o SDC `button`
+  para cada valor sugerido, preservando links, rótulos e ordem.
+#}
+<ul class="aculta-donation-quick" data-portal-ui="donation-quick">
+  {% for link in links %}
+    <li>
+      {{ include('aculta420_v2:button', {
+        text: link.title,
+        url: link.url,
+        variant: 'secondary'
+      }, with_context = false) }}
+    </li>
+  {% endfor %}
+</ul>
