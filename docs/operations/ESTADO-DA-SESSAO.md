@@ -1,3 +1,14 @@
+# Runtime — ativação de aculta_activity — 2026-11-11
+
+- **Objetivo:** habilitar ACULTA Activity no Runtime de desenvolvimento.
+- **Estado:** `aculta_activity` Enabled no `aculta_runtime`; cache reconstruído. Dump prévio protegido fora do Git. Atualização pendente `media_duplicates_update_11001` permanece sem execução.
+- **Decisões e alternativas descartadas:** habilitação direta solicitada; sem `updatedb` ou `config:import`, pois exigem ordem explícita e há drift de configuração preexistente.
+- **Cuidados:** Drush confirmou `toca`, Drupal 11.5.0-beta1 e banco `aculta_runtime`. Snapshot fora do Git, modo 600.
+- **Commits e arquivos:** commit de registro pendente; status `aculta_activity.yml` e este handoff.
+- **Verificações:** `pm:list`/`cget core.extension` confirmaram Enabled/0; `drush cr` PASS; `updatedb:status` mostra pendência preexistente de media_duplicates.
+- **Pendências e bloqueios:** revisão visual no Firefox/Runtime; update de banco e drift de config não tratados.
+- **Próximo passo:** validar formulário e Schema.org no navegador e encaminhar a pendência de banco em janela autorizada.
+
 # ADR-054/055 — RN-04 publicado e RN-05 parcial — 2026-11-11
 
 - **Objetivo:** concluir a renomeação funcional `purpose` → `site_key` e revalidar o Runtime.
@@ -20,13 +31,3 @@
 - **Pendências e bloqueios:** migração de consumidores `DomainPurposeManager` para `DomainSiteManager` ausente de `origin/dev`; browser/SMTP externo seguem como próximos passos do componente.
 - **Próximo passo:** retomar rodada PHPStan 17 da aculta_wiki após a migração chegar a origin/dev.
 
-# Dependências contrib — atualização com compatibilidade — 2026-11-11
-
-- **Objetivo:** atualizar os oito projetos Composer solicitados dentro das compatibilidades do Drupal Core atual.
-- **Estado:** field_group 4.1.0-beta1, freelinking 5.0.0-alpha3, media_duplicates 3.0.0-alpha1, photoswipe 5.0.14, private_message 4.0.0-alpha5, social_api 4.1.0-beta1 e social_auth 4.2.0-beta2 resolvidos no lockfile. CKEditor Plugin Pack permanece 1.5.6: 2.0.0-beta1 exige Core 12, incompatível com o Core 11.5.0-beta1 exigido pelo projeto.
-- **Decisões e alternativas descartadas:** constraints permitem evolução sem travar patch/minor; pré-releases explicitamente habilitados quando necessários. Não atualizar Core para satisfazer CKEditor.
-- **Cuidados:** composer update também atualizou dependências transitivas Symfony/Doctrine e reaplicou patch de social_api. Nenhuma atualização de banco ou Runtime.
-- **Commits e arquivos:** sem commit; `composer.json` e `composer.lock`.
-- **Verificações:** `composer validate --no-check-publish` válido com avisos de constraints exatas preexistentes. Composer update dos sete pacotes bem-sucedido. Gate Runtime e testes funcionais não executados; sem ordem para escrita no Runtime. Composer apontou advisories de segurança em um pacote, sem detalhamento nesta rodada.
-- **Pendências e bloqueios:** CKEditor Plugin Pack 2.x aguarda atualização do Core para 12. Workspace possui alterações preexistentes extensas e branch divergente do origin; publicação não realizada para evitar misturar ou reescrever trabalho alheio.
-- **Próximo passo:** revisar e integrar este diff em branch sincronizada; repetir CKEditor quando Core 12 passar a ser requisito do projeto.

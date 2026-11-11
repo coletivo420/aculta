@@ -21,3 +21,14 @@ ADR-054/055 — Views editoriais da Revista — 2026-11-11
 - **Verificações:** UI Skins 134, Layouts 42, Layout Builder 276, UI Library 25, foundations 83 pares, UI Styles 40, status index, py_compile, busca zero consumidores e git diff check PASS. Browser index FAIL em worktrees existentes/scripts ausentes; token budget FAIL por 7 violações globais. Zoom/teclado admin DEFERRED.
 - **Pendências e bloqueios:** cache-hit, zoom 200%, teclado, perfis editor/admin, tecnologia assistiva e aceite visual humano.
 - **Próximo passo:** migrar o próximo consumidor elegível do inventário, começando por Views públicas que preservem acesso e query.
+
+# Dependências contrib — atualização com compatibilidade — 2026-11-11
+
+- **Objetivo:** atualizar os oito projetos Composer solicitados dentro das compatibilidades do Drupal Core atual.
+- **Estado:** field_group 4.1.0-beta1, freelinking 5.0.0-alpha3, media_duplicates 3.0.0-alpha1, photoswipe 5.0.14, private_message 4.0.0-alpha5, social_api 4.1.0-beta1 e social_auth 4.2.0-beta2 resolvidos no lockfile. CKEditor Plugin Pack permanece 1.5.6: 2.0.0-beta1 exige Core 12, incompatível com o Core 11.5.0-beta1 exigido pelo projeto.
+- **Decisões e alternativas descartadas:** constraints permitem evolução sem travar patch/minor; pré-releases explicitamente habilitados quando necessários. Não atualizar Core para satisfazer CKEditor.
+- **Cuidados:** composer update também atualizou dependências transitivas Symfony/Doctrine e reaplicou patch de social_api. Nenhuma atualização de banco ou Runtime.
+- **Commits e arquivos:** sem commit; `composer.json` e `composer.lock`.
+- **Verificações:** `composer validate --no-check-publish` válido com avisos de constraints exatas preexistentes. Composer update dos sete pacotes bem-sucedido. Gate Runtime e testes funcionais não executados; sem ordem para escrita no Runtime. Composer apontou advisories de segurança em um pacote, sem detalhamento nesta rodada.
+- **Pendências e bloqueios:** CKEditor Plugin Pack 2.x aguarda atualização do Core para 12. Workspace possui alterações preexistentes extensas e branch divergente do origin; publicação não realizada para evitar misturar ou reescrever trabalho alheio.
+- **Próximo passo:** revisar e integrar este diff em branch sincronizada; repetir CKEditor quando Core 12 passar a ser requisito do projeto.
