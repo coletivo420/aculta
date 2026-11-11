@@ -27,4 +27,6 @@ Escolha pelo arquivo alterado e pelas integrações realmente presentes no Compo
 | stories/previews, modos e reflow | browser script existente em `tests/browser/`; não invente uma frente nem relaxe assertions |
 | UI Icons ou `.icons.yml` | teste focal de pack existente, análise dos assets/paths e gate do tema pertinente; não há gate específico de UI Icons no inventário auditado |
 
+**Runtime Sync e skills:** ao modificar `.agents/skills`, aliases, `AGENTS.md`, `scripts/runtime-sync.sh` ou seus runbooks, execute `python3 scripts/validate-agent-skills.py` e `php scripts/validate-agent-token-budget.php`. Se mudar o Bash, execute `bash -n scripts/runtime-sync.sh` e a suíte de Git/Drush fake quando implementada. Runtime real sem acesso é DEFERRED, não PASS.
+
 Não existe gate de acessibilidade automatizada universal nem gate dedicado para cada integração Views/Layout Builder. Use teste existente da frente ou registre N/A/DEFERRED com motivo. Não habilite Olivero nem outro tema para validar.

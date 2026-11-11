@@ -12,8 +12,8 @@ Estas regras foram realocadas do arquivo histórico de instruções; aplique som
 - Não inventar ambientes, hosts ou nomes de servidor. Use somente os definidos em `docs/architecture/environments.md` e `docs/architecture/multidomain.md`.
 - Testes em `127.0.0.1` com resolução de host própria simulam o servidor de desenvolvimento, mas não são o servidor de desenvolvimento; registre-os como tal.
 - Para testes autenticados no runtime `test`, confirme `captcha.settings:enable_globally=0` antes da rodada. Esse estado é o bypass operacional de `skip CAPTCHA` exclusivo do ambiente de testes; não desative CAPTCHA em produção.
-- Repositório: `coletivo420/aculta-site` (confira com `git remote -v`). Branch e fluxo de Git: `AGENTS.md`.
-- Sincronização do Runtime e operações persistentes (updatedb, config:import): `AGENTS.md`, seção Runtime.
+- Para Runtime Sync v2, a fonte versionada é `coletivo420/aculta`, branch `dev`. Confirme sempre o remote real com `git remote -v` antes de agir; não o reconfigure automaticamente. Regras: `AGENTS.md` e skills `aculta-runtime-sync`/`aculta-runtime-migracoes`.
+- Sincronização do Runtime: `AGENTS.md`, `docs/operations/RUNTIME-SYNC.md`, plano v2 e skills `aculta-runtime-sync`/`aculta-runtime-migracoes`. Não executar updatedb/config:import por haver pendências; requerem autorização explícita.
 
 ## Servidor web
 

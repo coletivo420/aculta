@@ -37,8 +37,10 @@ const LIMIT_ENTRY_TOTAL = 10000;
 const MAX_HANDOFF_ENTRIES = 3;
 const MAX_SKILL_DESCRIPTION = 200;
 const MAX_SKILL_BYTES = 4000;
-// 10: adicionada aculta-grill-me (decisão de 2026-11-05)
-const MAX_SKILLS = 10;
+// O catálogo já tinha 18 skills; duas especializadas de Runtime elevam a 20.
+// Teto 24 preserva margem limitada e mantém carregamento por demanda.
+// Justificativa em aculta_portal/CHANGELOG.md (2026-11-11).
+const MAX_SKILLS = 24;
 
 /**
  * Trechos que outros gates exigem no AGENTS.md. Não remover sem atualizar o gate dono. */

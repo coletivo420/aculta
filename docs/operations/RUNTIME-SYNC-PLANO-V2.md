@@ -157,3 +157,10 @@ Gates minimos: `bash -n`, ShellCheck (se disponivel; `DEFERRED` se nao), suite i
 ## 10. Nao executado / nao autorizado aqui
 
 Nenhum `composer`, Drush, update DB, `config:import`, alteracao em Apache, symlink, permissao, host, Runtime, backup, restauracao ou teste no servidor de desenvolvimento. Este documento estabelece plano e gates, nao comprovacao de execucao.
+
+## 11. Integração às skills de agentes (2026-11-11)
+
+- `.agents/skills/aculta-runtime-sync/SKILL.md` e `references/CLASSIFICACAO-E-TESTES.md`: fluxo pós-push, risco R0-R4/RX, bug de cache com HEAD coincidente, concorrência e provas de validação.
+- `.agents/skills/aculta-runtime-migracoes/SKILL.md` e `references/ORDEM-E-RECUPERACAO.md`: migrações supervisionadas, restore, Composer, Drush, rollback e fronteira com Deployer.
+- Aliases sob `.claude/skills/` e `.codex/skills/`. As skills de commit e gates direcionam para as novas. `docs/operations/TESTES-SKILLS-RUNTIME-SYNC.md` cobre RS-01 a RS-12.
+- **Escopo:** publicação dessas skills não implementa F1-F6 do sincronizador, não corrige seu bug de cache nem atesta execução do Runtime. As fases de código, integração e homologação continuam pendentes.

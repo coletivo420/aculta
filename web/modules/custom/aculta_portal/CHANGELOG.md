@@ -1,3 +1,9 @@
+## Não versionado - catálogo de skills Runtime Sync (2026-11-11)
+
+- Duas skills canônicas para Codex/Claude: sincronização pós-push e migrações estruturais supervisionadas; matriz documental de avaliações RS-01 a RS-12.
+- Limite do gate de leitura de 10 para 24 skills: o catálogo já tinha 18, e passa a 20. Skills com descrição curta e corpo menor que 4 KB, referências sob demanda; limites de entrada e de bytes por skill não mudam.
+- Não houve execução de Composer, Drush, alteração de banco/configuração ou deploy nesta mudança.
+
 ## Não versionado — status do carrinho via SDC do tema (2026-11-10)
 
 - O tema ativo apresenta o status do carrinho pelo SDC `status-messages`, sem

@@ -14,7 +14,7 @@ Regras de todos os agentes. Em conflito, vale a instrução explícita mais rece
 
 - Branch `dev`. Cada entrega: um commit só com os seus arquivos (staged verificado), enviado a `origin/dev` logo após o commit. Mensagem em português, trailer `Claude-Session`, sem `Co-Authored-By`. Sem branch, PR ou merge em `main` sem ordem explícita.
 - Nunca force push, reset destrutivo nem reescrita de histórico compartilhado. Preserve o trabalho alheio e paralelo.
-- Após cada push, sincronize o Runtime de desenvolvimento só no código e limpe os caches (tabelas `cache_*` de `aculta_runtime`, ou `drush cr`) automaticamente, sem pedir autorização. `updatedb`, `config:import`, `pm:uninstall`, `DROP` ou apagamento de dados exigem ordem explícita.
+- Após push: `aculta-runtime-sync` para código/cache; bloqueio ou baseline incerto impede sync. `updatedb`, `config:import`, `pm:uninstall`, `DROP` e exclusões exigem ordem explícita; ver `aculta-runtime-migracoes`.
 - Ao concluir, informe commits com hash e validações. Não diga que publicou sem confirmar o push, nem alegue teste que não executou.
 
 ## Escopo e segurança

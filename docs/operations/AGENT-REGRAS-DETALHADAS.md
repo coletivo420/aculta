@@ -1,6 +1,6 @@
 # Regras detalhadas dos agentes (texto integral)
 
-Cópia integral de `AGENTS.md` antes do corte de 2026-11-05, sem alteração de texto. O `AGENTS.md` da raiz guarda só as regras de leitura obrigatória e os trechos exigidos por gates. Consulte este arquivo quando a tarefa tocar Git, Runtime, segurança ou arquitetura em detalhe.
+Regras derivadas do `AGENTS.md` anterior ao corte de 2026-11-05, com atualização específica do contrato de Runtime em 2026-11-11. O `AGENTS.md` da raiz prevalece em caso de conflito; use as skills `aculta-runtime-sync` e `aculta-runtime-migracoes` para operação vigente.
 
 ---
 
@@ -35,7 +35,7 @@ Regras gerais do repositório, válidas para todos os agentes. Em caso de confli
 
 - **Sincronização:** após cada push em `origin/dev`, atualize o Runtime de desenvolvimento para o mesmo commit. Atualize somente o código. Não toque em `secrets/`, `settings.local.php`, `private/`, `var/` nem nos dados do site.
 - **Antes da troca de head**, rode `updatedb:status` e `config:status` (somente leitura).
-- **Havendo pendência**, faça snapshot do `aculta_runtime` com hash e, depois, `updatedb` e `config:import` do `config/sync`. Pare e informe o responsável se qualquer passo falhar.
+- **Havendo pendência**, **não** execute `updatedb` ou `config:import` automaticamente. Bloqueie a rotina simples e carregue `aculta-runtime-migracoes`: plano, snapshot e restauração comprovados e autorização explícita por operação são obrigatórios. O push não concede essa autorização.
 - **Nunca** `pm:uninstall`, `DROP`, nem apagamento de conteúdo ou de dados, sem ordem explícita.
 - **Testes de Kernel** usam só `aculta_simpletest`. Nunca crie bancos.
 - **Não se aplica a produção.** Produção não recebe sincronização automática nem estados `estados/*.sqlite`.
