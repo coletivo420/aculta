@@ -473,12 +473,12 @@ foreach (glob($sync . '/block.block.*.yml') ?: [] as $path) {
     array_keys($block['visibility'] ?? []),
     array_values($block['visibility'] ?? []),
   ));
-  $isDonationSdcPlacement = in_array($pluginId, ['aculta_donation_quick', 'aculta_donation_donate', 'aculta_events_upcoming'], TRUE);
+  $isDonationSdcPlacement = in_array($pluginId, ['aculta_donation_quick', 'aculta_donation_donate', 'aculta_events_upcoming', 'aculta_institution_bar'], TRUE);
   $isNativeBlockPlacement = str_starts_with($pluginId, 'system_')
     || str_starts_with($pluginId, 'local_')
     || str_starts_with($pluginId, 'block_content:')
     || str_starts_with($pluginId, 'views_block:')
-    || in_array($pluginId, ['help_block', 'page_title_block', 'system_branding_block'], TRUE);
+    || in_array($pluginId, ['help_block', 'page_title_block', 'system_branding_block', 'aculta_lms_agenda_proximos'], TRUE);
   $rows[] = [
     'id' => $id,
     'owner_module' => $owner,
