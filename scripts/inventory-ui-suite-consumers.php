@@ -1008,7 +1008,7 @@ foreach ($moduleInventory as $packageName => $metadata) {
     'row_plugin' => '',
     'style_plugin' => '',
     'ui_patterns_configured' => $enabledInSync ? 'enabled_in_sync' : 'absent_from_sync',
-    'status' => $metadata['status'],
+    'status' => ($enabledInSync && $metadata['status'] === 'MIGRATION_IN_PROGRESS') ? 'UI_SUITE_NATIVE' : $metadata['status'],
     'replacement_or_action' => $metadata['replacement'],
     'risk_or_evidence_gap' => 'Direct Composer requirement: ' . ($required ? 'yes' : 'no') . '. ' . $risk,
     'rollback' => 'Revert scoped code/config changes; no entity data migration',
