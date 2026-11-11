@@ -1,24 +1,13 @@
-# ADR-054/055 — Grade editorial da Home MAIN — 2026-11-11
+# ADR-054/055 — Views de galeria em UI Patterns — 2026-11-11
 
-- **Objetivo:** substituir o carrossel visual de `home_editorial_highlights:block_1` pelo SDC `layout-grid` via UI Patterns.
-- **Estado:** Runtime importado após snapshot; IDs 14/15/16, ordem, 3 rows, acesso anônimo, pager/query/cache do View preservados. Firefox ESR A/B 10/10 em 320/390/768/1024/1440, claro/escuro; foco, H1/main, contraste ≥8,80:1 e reflow passaram. Cache-hit e zoom 200% DEFERRED.
-- **Decisões e alternativas descartadas:** usuário confirmou não haver comportamento legado; removido o carrossel e testes/utilitários sem consumidores. Sem desinstalar VVJB, pois exige autorização específica.
-- **Cuidados:** respostas privadas/no-cache e dynamic cache UNCACHEABLE; não alegar cache-hit. Snapshot e rollback YAML comparados antes do import.
-- **Commits e arquivos:** pendente; View Sync, gerador/inventário, testes de navegador, verificadores e docs ADR/roadmap/tema.
-- **Verificações:** Views 60, Styles 40, SDC schema 1774, render SDC 41, status-index 44, PHPCS Drupal, PHPStan focal, transacional Views, navegador A/B, Stylelint, lint e diff-check PASS. Browser-index e token-budget globais FAIL por worktrees/limites preexistentes.
-- **Pendências e bloqueios:** cache-hit, zoom 200%, revisão visual humana e eventual desinstalação VVJB aguardando autorização; demais Views/domínios em aberto.
-- **Próximo passo:** migrar próxima View com saída real usando snapshot, paridade funcional e validação A/B.
-
-# ADR-054/055 — UI Patterns Views Notícias — 2026-11-11
-
-- **Objetivo:** migrar `aculta_news:block_1` para UI Patterns Views usando o SDC existente `revista-listing`.
-- **Estado:** quatro teasers e HTTP 200 preservados; Firefox ESR antes/depois passou 10/10 em cinco larguras e dois modos, foco visível, contraste mínimo 7,16:1, um H1/main e sem overflow. Cache-hit, zoom 200% e revisão visual humana DEFERRED.
-- **Decisões e alternativas descartadas:** manter row nativa `entity:node`/`teaser`, access/filter/sort/pager/query e cache; slot `view_rows` do SDC. Removida classe visual genérica só desta View.
-- **Cuidados:** a página é `private/no-cache` e dynamic cache `UNCACHEABLE`; dois requests foram MISS. Não inferir variação por cache-hit.
-- **Commits e arquivos:** `e69380f39`; View Sync, inventário, runner, browser/evidências, SDC e documentação ADR/roadmap.
-- **Verificações:** Views 60, UI Styles 40, SDC schema 1774, render SDC 41, foundations 83 pares, Stylelint, PHP lint e cache rebuild PASS. Browser-index global e token-budget FAIL por pendências preexistentes/worktrees aninhadas.
-- **Pendências e bloqueios:** executar zoom e revisão visual; resolver as falhas globais fora do escopo; migrar demais Views e domínios.
-- **Próximo passo:** selecionar a próxima View com saída real e repetir snapshot, paridade funcional e A/B visual no Runtime.
+- **Objetivo:** remover VVJS das galerias Forum/Commerce e concluir a correção da rota de catálogo UI Components.
+- **Estado:** Fórum e produto usam `layout-grid`; Runtime/Synchronização parseada coincide; Forum 0 rows, produto 7 rows. Catálogo abre com 82 componentes/16 grupos e JS 200. Navegador da galeria: 11/15; 4 falhas da toolbar Gin no MAIN; Fórum passa todas as larguras.
+- **Decisões e alternativas descartadas:** sem retenção dos visuais VVJS nas features; manter PhotoSwipe, View/Commerce APIs e exemplo upstream `vvjs_example` como `BLOCKED_UPSTREAM`.
+- **Cuidados:** imports parciais isolados após snapshots; nenhum uninstall. Fórum sem fixture; produto sem revisão visual/cache no browser.
+- **Commits e arquivos:** `2d49a9fdc`; Views Forum/Commerce, Gallery hooks, inventário, ADRs, tema, status e gates.
+- **Verificações:** Views 60, Gallery contract, Portal Drupal 12 1243, PHPCS/PHPStan, status index, diff-check e cache rebuild PASS. Token-budget global FAIL preexistente (7 itens).
+- **Pendências e bloqueios:** fixture Forum e aceites; browser product; toolbar Gin mobile `BLOCKED_UPSTREAM`; migração site-wide/US-14 continuam.
+- **Próximo passo:** avançar para a próxima View/interface com dados reais e homologar as pendências de UI Skins.
 
 # ADR-054/055 — galeria editorial em UI Patterns e correção do catálogo — 2026-11-11
 
