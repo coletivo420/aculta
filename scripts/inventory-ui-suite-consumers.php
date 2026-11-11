@@ -552,6 +552,9 @@ foreach ($templateRoots as $owner => $templateRoot) {
     $isSdcAdapter = $components !== [];
     $isNeutralPortalButtonFallback = $relativePath === 'web/modules/custom/aculta_portal/templates/aculta-portal-button.html.twig'
       && !$isSdcAdapter;
+    $isPortalComponentAdapter = $file->getFilename() === 'portal-component.html.twig';
+    $isPortalComponentThemeAdapter = $isPortalComponentAdapter && str_starts_with($relativePath, 'web/themes/');
+    $isNeutralPortalElement = $file->getFilename() === 'portal-element.html.twig';
     $moduleThemeAdapters = str_starts_with($relativePath, 'web/modules/')
       ? ($themeSdcAdapters[$file->getFilename()] ?? [])
       : [];
@@ -591,25 +594,33 @@ foreach ($templateRoots as $owner => $templateRoot) {
       'style_plugin' => '',
       'ui_patterns_configured' => $components !== []
         ? implode(',', $components)
-        : ($isThemeAdaptedModuleFallback
-          ? 'theme_adapter:' . implode(',', array_unique(array_merge(...array_column($moduleThemeAdapters, 'components'))))
-          : 'not_detected_in_template'),
+        : ($isPortalComponentAdapter
+          ? 'theme_adapter:empty-state,tabs,author-card,profile-details'
+          : ($isNeutralPortalElement
+            ? 'neutral_element:data-portal-ui'
+            : ($isThemeAdaptedModuleFallback
+              ? 'theme_adapter:' . implode(',', array_unique(array_merge(...array_column($moduleThemeAdapters, 'components'))))
+              : 'not_detected_in_template'))),
       'status' => $isSdcAdapter
         ? 'UI_SUITE_NATIVE'
-        : ($isNeutralPortalButtonFallback
+        : ($isPortalComponentThemeAdapter
+          ? 'UI_SUITE_NATIVE'
+          : (($isPortalComponentAdapter || $isNeutralPortalElement || $isNeutralPortalButtonFallback)
           ? 'FUNCTIONAL_NATIVE_EXCEPTION'
           : ($isThemeAdaptedModuleFallback
             ? 'FUNCTIONAL_NATIVE_EXCEPTION'
-            : ($isBypassedViewTemplate ? 'LEGACY_OBSOLETE' : 'MIGRATION_IN_PROGRESS'))),
+            : ($isBypassedViewTemplate ? 'LEGACY_OBSOLETE' : 'MIGRATION_IN_PROGRESS')))),
       'replacement_or_action' => $isSdcAdapter
         ? 'Keep as thin adapter; directly composes ' . implode(', ', $components) . ' and preserves Drupal render contract'
-        : ($isNeutralPortalButtonFallback
-          ? 'Keep only as the theme-independent functional fallback for aculta_portal_button; visual rendering is owned by the ACULTA420 SDC adapter'
+        : ($isPortalComponentThemeAdapter
+          ? 'Keep as the theme adapter; preprocess_aculta_portal_component maps the neutral name to empty-state, tabs, author-card or profile-details SDCs'
+          : (($isPortalComponentAdapter || $isNeutralPortalElement || $isNeutralPortalButtonFallback)
+          ? 'Keep only as the theme-independent functional fallback; presentation is owned by the ACULTA420 theme adapter'
           : ($isThemeAdaptedModuleFallback
             ? 'Keep as the theme-independent Drupal render fallback; matching ACULTA420 theme adapter owns presentation through ' . implode(', ', array_unique(array_merge(...array_column($moduleThemeAdapters, 'components')))) . ' SDC'
             : ($isBypassedViewTemplate
               ? 'Obsolete: the configured UI Patterns row renders this display through its SDC and bypasses this Views field/unformatted template; remove after authorized Runtime cutover confirms the matching Sync display'
-              : 'Map this template suggestion and its data/access/cache contract to an existing SDC plus the appropriate UI Suite integration; do not remove before replacement proof'))),
+              : 'Map this template suggestion and its data/access/cache contract to an existing SDC plus the appropriate UI Suite integration; do not remove before replacement proof')))),
       'risk_or_evidence_gap' => $isSdcAdapter
         ? 'SDC inclusion is source-verified; Runtime output, access and cache equivalence remain unverified'
         : ($isNeutralPortalButtonFallback
