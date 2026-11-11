@@ -11,16 +11,11 @@ use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Projeta organizações culturais no aculta_index (ARQ-05).
  */
 final class OrganizationContentIndexProvider implements ContentIndexProviderInterface, ContentIndexIndexabilityProviderInterface, ContentIndexAccessContextProviderInterface {
-
-  public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-  ) {}
 
   /**
    * {@inheritdoc}
@@ -101,7 +96,7 @@ final class OrganizationContentIndexProvider implements ContentIndexProviderInte
       TRUE,
       0,
       0,
-      relations: array_values($relations),
+      relations: $relations,
       ownerUid: $ownerUid,
     );
   }

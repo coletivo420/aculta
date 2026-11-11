@@ -102,9 +102,6 @@ final class LocationCatalogue {
       /** @var \Drupal\aculta_events\Entity\EventLocation[] $locais */
       $locais = $storage->loadMultiple($ids);
       foreach ($locais as $local) {
-        if (!$local instanceof EventLocation) {
-          continue;
-        }
         $viewAccess = $local->access('view', $conta, TRUE);
         // Both allowed and denied results affect this list. Bubble their cache
         // contexts so private drafts cannot leak through a shared page cache.

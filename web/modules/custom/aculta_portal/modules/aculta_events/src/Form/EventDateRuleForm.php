@@ -7,6 +7,7 @@ namespace Drupal\aculta_events\Form;
 use Drupal\aculta_calendar\Recurrence\RecurrenceException;
 use Drupal\aculta_calendar\Recurrence\RecurrenceExpander;
 use Drupal\aculta_calendar\Recurrence\RecurrenceRuleParser;
+use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
@@ -137,7 +138,7 @@ final class EventDateRuleForm extends FormBase {
     $this->messenger()->addStatus($this->t('Recorrência de @titulo salva.', ['@titulo' => $data->label()]));
 
     $evento = $data->get('field_evento')->entity;
-    $slug = $evento?->get('field_slug')->value;
+    $slug = $evento instanceof Event ? $evento->get('field_slug')->value : NULL;
     if ($slug) {
       $form_state->setRedirect('aculta_events.page', ['slug' => (string) $slug]);
       return;

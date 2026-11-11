@@ -79,8 +79,8 @@ final class EventDateOrderForm extends FormBase {
       $form['weights'][$date->id()] = [
         '#type' => 'number',
         '#title' => $date->label(),
-        '#description' => $quando?->value
-          ? $this->t('Início: @inicio', ['@inicio' => $quando->value])
+        '#description' => $quando?->getValue()['value']
+          ? $this->t('Início: @inicio', ['@inicio' => $quando->getValue()['value']])
           : '',
         '#default_value' => (int) ($date->get('field_peso')->value ?? 0),
         '#min' => 0,

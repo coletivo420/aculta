@@ -56,15 +56,19 @@ final class EventLocation extends ContentEntityBase implements EntityOwnerInterf
    * {@inheritdoc}
    */
   public function getOwner(): ?UserInterface {
-    return $this->get('field_organizador')->entity;
+    $owner = $this->get('field_organizador')->entity;
+    return $owner instanceof UserInterface ? $owner : NULL;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getOwnerId(): ?int {
+    if ($this->get('field_organizador')->isEmpty()) {
+      return NULL;
+    }
     $targetId = $this->get('field_organizador')->target_id;
-    return $targetId !== NULL && $targetId !== '' ? (int) $targetId : NULL;
+    return (int) $targetId;
   }
 
   /**
@@ -91,8 +95,9 @@ final class EventLocation extends ContentEntityBase implements EntityOwnerInterf
     // Força normalização do país para Brasil em qualquer persistência.
     if ($this->hasField('field_endereco') && !$this->get('field_endereco')->isEmpty()) {
       foreach ($this->get('field_endereco') as $item) {
-        if ($item->country_code !== 'BR') {
-          $item->country_code = 'BR';
+        $address = $item->getValue();
+        if (($address['country_code'] ?? NULL) !== 'BR') {
+          $item->setValue(['country_code' => 'BR'] + $address);
         }
       }
     }

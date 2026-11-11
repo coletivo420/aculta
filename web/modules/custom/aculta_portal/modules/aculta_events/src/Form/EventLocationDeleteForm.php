@@ -17,8 +17,8 @@ final class EventLocationDeleteForm extends ContentEntityConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getQuestion(): string {
-    return (string) $this->t('Você tem certeza que deseja excluir o local %title?', [
+  public function getQuestion(): \Drupal\Core\StringTranslation\TranslatableMarkup {
+    return $this->t('Você tem certeza que deseja excluir o local %title?', [
       '%title' => $this->entity->label(),
     ]);
   }
@@ -40,8 +40,8 @@ final class EventLocationDeleteForm extends ContentEntityConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getConfirmText(): string {
-    return (string) $this->t('Excluir');
+  public function getConfirmText(): \Drupal\Core\StringTranslation\TranslatableMarkup {
+    return $this->t('Excluir');
   }
 
   /**

@@ -142,9 +142,6 @@ final class EventCatalogue {
   ): ?array {
     $primeira = NULL;
     foreach ($datas as $data) {
-      if (!$data instanceof EventDate) {
-        continue;
-      }
       foreach ($this->ocorrencias->expandir($data, $inicio, $fim, $agora) as $ocorrencia) {
         if ($primeira === NULL || $ocorrencia['inicio'] < $primeira['ocorrencia']['inicio']) {
           $primeira = ['data' => $data, 'ocorrencia' => $ocorrencia];

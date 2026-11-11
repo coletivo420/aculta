@@ -96,12 +96,10 @@ services:
       - { name: aculta_index.provider }
   aculta_events.index_provider.location:
     class: Drupal\aculta_events\ContentIndex\LocationContentIndexProvider
-    arguments: ['@entity_type.manager']
     tags:
       - { name: aculta_index.provider }
   aculta_events.index_provider.organization:
     class: Drupal\aculta_events\ContentIndex\OrganizationContentIndexProvider
-    arguments: ['@entity_type.manager']
     tags:
       - { name: aculta_index.provider }
   aculta_events.editorial_presenter:

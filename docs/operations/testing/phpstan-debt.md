@@ -318,3 +318,15 @@ Evidências: Unit do Messenger 403 testes/4387 assertions PASS; descoberta de su
 Pós-push: no topo `ca4246fb6`, `--fix --fix-ignored` global novamente não encontrou erros corrigíveis. A análise estrita detectou uma negação redundante em `scripts/inventory-ui-suite-consumers.php`; a condição foi simplificada preservando a precedência dos estados, e a análise direcionada e global voltaram a `[OK] No errors`. A baseline permaneceu em 2576 ocorrências.
 
 Runtime de desenvolvimento: gate DEFERRED. O `plan` read-only encontrou `HEAD` igual a `origin/dev` (`ca4246fb6`), mas o checkout principal continua sujo; `sync-code` foi bloqueado pelo guard. O delta desta rodada inclui `.install`/post-update (R3) e faltam as variáveis operacionais explícitas; não rodei Drush nem limpei caches. SHA/cache validado permanece UNKNOWN.
+
+## Microfase 22a — 2026-11-11 (`aculta_events`, produção)
+
+| Medida | Antes | Depois |
+| --- | ---: | ---: |
+| Erros brutos em `aculta_events` | 182 | 157 |
+| Erros em produção do módulo | 70 | 45 |
+| Baseline global (ocorrências) | 2576 | 2551 |
+
+Escopo parcial: removidos guards `instanceof` redundantes conforme os tipos PHPDoc de storage/calendário, ajustado o encadeamento de `SELECT ... FOR UPDATE` para executar no objeto de consulta, corrigidos retornos e acesso a campos de endereço/data, removido o construtor não utilizado de dois providers e atualizadas suas definições de serviço, além das assinaturas `TranslatableMarkup` do formulário de confirmação. A passada global `analyse --fix --fix-ignored` foi repetida no estado inicial desta microfase e terminou com `No fixable errors found`, sem alterações automáticas.
+
+Resíduos: a microfase não finaliza `aculta_events`; permanecem 45 erros de produção e 112 em testes. Entre os resíduos de produção estão unions de entidades de contribuição, revisão com storage genérico, assinaturas Form API, injeção nos formulários modais e APIs dos plugins Views. Evidências: Unit 30 testes/62 assertions PASS; lint nos 14 arquivos PHP alterados PASS; gate Portal Drupal 12 PASS (1234 verificações); análise PHPStan global estrita `[OK] No errors`; baseline regenerado localmente e `git diff --check` PASS.

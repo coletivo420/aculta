@@ -70,13 +70,13 @@ final class EventDateEditForm extends EventDateCreateForm {
       '#type' => 'datetime',
       '#title' => $this->t('Início'),
       '#required' => TRUE,
-      '#default_value' => $quando?->value ? (new DrupalDateTime($quando->value, 'UTC'))->setTimezone(new \DateTimeZone(date_default_timezone_get())) : NULL,
+      '#default_value' => $quando?->getValue()['value'] ? (new DrupalDateTime($quando->getValue()['value'], 'UTC'))->setTimezone(new \DateTimeZone(date_default_timezone_get())) : NULL,
     ];
     $form['ends_at'] = [
       '#type' => 'datetime',
       '#title' => $this->t('Fim'),
       '#required' => TRUE,
-      '#default_value' => $quando?->end_value ? (new DrupalDateTime($quando->end_value, 'UTC'))->setTimezone(new \DateTimeZone(date_default_timezone_get())) : NULL,
+      '#default_value' => $quando?->getValue()['end_value'] ? (new DrupalDateTime($quando->getValue()['end_value'], 'UTC'))->setTimezone(new \DateTimeZone(date_default_timezone_get())) : NULL,
     ];
 
     $form['local_section'] = [
@@ -85,7 +85,6 @@ final class EventDateEditForm extends EventDateCreateForm {
       '#open' => TRUE,
     ];
 
-    $localId = 0;
     $rawLocal = $form_state->getValue('local_id');
     if (is_array($rawLocal)) {
       $localId = (int) ($rawLocal['target_id'] ?? 0);

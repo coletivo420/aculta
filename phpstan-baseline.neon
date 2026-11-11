@@ -2227,54 +2227,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_editor/tests/src/Unit/TextFormatPolicyTest.php
 
 		-
-			rawMessage: Instanceof between Drupal\user\Entity\Role and Drupal\user\RoleInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Access/EventPermissionPolicy.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Database\Query\ConditionInterface::execute().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Adapter/OrganizationContributionAdapter.php
-
-		-
-			rawMessage: Instanceof between Drupal\aculta_events\Entity\EventDate and Drupal\aculta_events\Entity\EventDate will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Catalogue/EventCatalogue.php
-
-		-
-			rawMessage: Instanceof between Drupal\aculta_events\Entity\EventLocation and Drupal\aculta_events\Entity\EventLocation will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Catalogue/LocationCatalogue.php
-
-		-
-			rawMessage: 'Property Drupal\aculta_events\ContentIndex\LocationContentIndexProvider::$entityTypeManager is never read, only written.'
-			identifier: property.onlyWritten
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/ContentIndex/LocationContentIndexProvider.php
-
-		-
-			rawMessage: 'Parameter #1 $array (array{}|array{Drupal\aculta_portal\ContentIndex\ContentIndexRelation}) of array_values is already a list, call has no effect.'
-			identifier: arrayValues.list
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/ContentIndex/OrganizationContentIndexProvider.php
-
-		-
-			rawMessage: 'Property Drupal\aculta_events\ContentIndex\OrganizationContentIndexProvider::$entityTypeManager is never read, only written.'
-			identifier: property.onlyWritten
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/ContentIndex/OrganizationContentIndexProvider.php
-
-		-
-			rawMessage: Instanceof between Drupal\aculta_calendar\Item\CalendarItem and Drupal\aculta_calendar\Item\CalendarItem will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/AdministrativeEventExportController.php
-
-		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
 			identifier: method.notFound
 			count: 2
@@ -2305,24 +2257,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php
 
 		-
-			rawMessage: Access to an undefined property Drupal\Core\Field\FieldItemInterface::$country_code.
-			identifier: property.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Entity/EventLocation.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_events\Entity\EventLocation::getOwner() should return Drupal\user\UserInterface|null but returns Drupal\Core\Entity\EntityInterface|null.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Entity/EventLocation.php
-
-		-
-			rawMessage: 'Strict comparison using !== between string and null will always evaluate to true.'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Entity/EventLocation.php
-
-		-
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityStorageInterface::loadRevision().'
 			identifier: method.notFound
 			count: 1
@@ -2347,70 +2281,16 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventDateCreateForm.php
 
 		-
-			rawMessage: 'Comparison operation ">" between int<1, max> and 0 is always true.'
-			identifier: greater.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventDateCreateForm.php
-
-		-
 			rawMessage: 'Unsafe usage of new static().'
 			identifier: new.static
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventDateCreateForm.php
 
 		-
-			rawMessage: Access to an undefined property Drupal\Core\Field\FieldItemInterface::$end_value.
-			identifier: property.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventDateEditForm.php
-
-		-
-			rawMessage: Access to an undefined property Drupal\Core\Field\FieldItemInterface::$value.
-			identifier: property.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventDateEditForm.php
-
-		-
-			rawMessage: Value assigned to variable $localId is never read before being overwritten.
-			identifier: assign.overwritten
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventDateEditForm.php
-
-		-
-			rawMessage: Access to an undefined property Drupal\Core\Field\FieldItemInterface::$value.
-			identifier: property.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventDateOrderForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventDateRuleForm.php
-
-		-
 			rawMessage: 'Return type (void) of method Drupal\aculta_events\Form\EventForm::validateForm() should be compatible with return type (Drupal\Core\Entity\ContentEntityInterface) of method Drupal\Core\Entity\ContentEntityFormInterface::validateForm()'
 			identifier: method.childReturnType
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_events\Form\EventLocationDeleteForm::getConfirmText() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Entity\ContentEntityConfirmFormBase::getConfirmText()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationDeleteForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_events\Form\EventLocationDeleteForm::getConfirmText() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormInterface::getConfirmText()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationDeleteForm.php
-
-		-
-			rawMessage: 'Return type (string) of method Drupal\aculta_events\Form\EventLocationDeleteForm::getQuestion() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormInterface::getQuestion()'
-			identifier: method.childReturnType
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationDeleteForm.php
 
 		-
 			rawMessage: 'Return type (void) of method Drupal\aculta_events\Form\EventLocationForm::validateForm() should be compatible with return type (Drupal\Core\Entity\ContentEntityInterface) of method Drupal\Core\Entity\ContentEntityFormInterface::validateForm()'
@@ -2495,30 +2375,6 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationSuggestionReviewForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Hook/EventDateHooks.php
-
-		-
-			rawMessage: 'Call to function method_exists() with Drupal\aculta_events\Entity\EventDate and ''getOriginal'' will always evaluate to true.'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Hook/EventDateHooks.php
-
-		-
-			rawMessage: Coalesce operator ?? is unnecessary because the left side is always set and the right side is null.
-			identifier: nullCoalesce.unnecessary
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Hook/EventDateHooks.php
-
-		-
-			rawMessage: 'Property Drupal\views\ResultRow::$_entity (Drupal\Core\Entity\EntityInterface) on left side of ?? is not nullable.'
-			identifier: nullCoalesce.property
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Hook/EventDateHooks.php
 
 		-
 			rawMessage: Access to an undefined property Drupal\Core\Field\FieldItemInterface::$postal_code.

@@ -189,8 +189,11 @@ class EventDateCreateForm extends FormBase {
     if (is_array($selectedLocal)) {
       $selectedLocal = $selectedLocal['target_id'] ?? 0;
     }
-    if (!empty($selectedLocal) && is_numeric($selectedLocal) && (int) $selectedLocal > 0) {
-      $locationId = (int) $selectedLocal;
+    if (!empty($selectedLocal) && is_numeric($selectedLocal)) {
+      $selectedLocationId = (int) $selectedLocal;
+      if (($selectedLocationId <=> 0) === 1) {
+        $locationId = $selectedLocationId;
+      }
     }
 
     $dateData = [

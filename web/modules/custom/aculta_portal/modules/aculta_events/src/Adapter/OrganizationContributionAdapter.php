@@ -265,12 +265,12 @@ final class OrganizationContributionAdapter implements ContributionAdapterInterf
     $transaction = NULL;
     try {
       $transaction = $this->database->startTransaction();
-      $this->database->select('aculta_event_organization', 'organization')
+      $select = $this->database->select('aculta_event_organization', 'organization');
+      $select
         ->fields('organization', ['id'])
         ->condition('id', $organizationId)
-        ->forUpdate()
-        ->execute()
-        ->fetchField();
+        ->forUpdate();
+      $select->execute()->fetchField();
       $fresh = $this->entityTypeManager->getStorage('aculta_event_organization')->loadUnchanged($organizationId);
       if (!$fresh instanceof EventOrganization || !$fresh->isUnclaimed()
         || !hash_equals($expectedVersion, $this->currentVersion($intent, $fresh))) {
