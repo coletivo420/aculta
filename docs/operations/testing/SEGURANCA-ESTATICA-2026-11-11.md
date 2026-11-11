@@ -12,7 +12,7 @@ Relatórios brutos (JSON do Semgrep, saída do `composer audit`, gitleaks) ficam
 | Regra | Achados | Classe |
 |---|---:|---|
 | `aculta-php-static-drupal-service` (`\Drupal::` estático) | 432 | dívida de arquitetura, não de segurança |
-| `aculta-php-markup-raw-output` | 31 | triados: 26 FALSO POSITIVO, 1 REAL (corrigido), 4 PENDENTE |
+| `aculta-php-markup-raw-output` | 31 | triados: 27 FALSO POSITIVO, 1 REAL (corrigido), 1 ACEITO, 2 PENDENTE |
 | `aculta-php-eval-or-dynamic-exec` | 10 | 9 ACEITO COM JUSTIFICATIVA, 1 PENDENTE |
 | `aculta-php-unserialize-untrusted` | 1 | FALSO POSITIVO (com mitigação) |
 | `aculta-php-raw-sql-concat` | 0 | sem achado; coberta por fixture |
@@ -55,7 +55,7 @@ Não há comparação direta com a baseline de 127 achados de 2026-11-05: o conj
 | `aculta_lms/.../FreeTextAnswerPluginBase.php:98` | `Html::escape()` aplicado a cada mensagem antes do `#markup` |
 | `aculta_mailer/.../MailImapSettingsForm.php:131` | `errorText()` passa `error_class` pelo placeholder `@error` de `$this->t()`, que escapa |
 
-**PENDENTE (4) após a rodada final:** a origem da variável ou o tipo do campo não foram provados nesta triagem. Risco de XSS só se o dado tiver origem não confiável ou HTML permitido.
+**PENDENTE (2) após a rodada final:** a origem da variável ou o tipo do campo não foram provados nesta triagem. Risco de XSS só se o dado tiver origem não confiável ou HTML permitido.
 
 | Arquivo:linha | O que falta provar | Prioridade |
 |---|---|---|
@@ -67,6 +67,12 @@ Não há comparação direta com a baseline de 127 achados de 2026-11-05: o conj
 Reclassificados na rodada final (2026-11-11, após leitura das origens):
 - FALSO POSITIVO: `EventPageController.php:137` (base escapada com `Html::escape`); `LocationListController.php:78` (rótulo por `Link`, endereço escapado); `LocationPageController.php:352` (`Link` e `Html::escape`); `EventEditorialPresenter.php:68` (`htmlspecialchars` em nome e cota); `OpenStreetMapStatusController.php:37` (ramo é `$this->t()`); `ImageSettingsForm.php:85` (rótulos vêm de mapa de código); `SurfaceEditForm.php:131` (hostname de entidade Domain); `PaymentInformationWithoutAddress.php:25` (rótulo de plugin de código); `TopicDeletionQueueController.php:80` (ramo com nó usa `Link`; sem nó usa `t()`).
 - REAL, corrigido: `aculta_lms/.../ProximosEventosBlock.php:83`. O título do evento era concatenado sem escape no `#markup`. Corrigido com `htmlspecialchars(..., ENT_QUOTES, 'UTF-8')`.
+
+Triagem final dos 4 pendentes (2026-11-11, rodada de origem verificada):
+- FALSO POSITIVO: `aculta_wiki/.../WikiEntryImageHooks.php:147`. Nome e alt entram por placeholders `@` de `$this->t()`, que escapam.
+- ACEITO COM JUSTIFICATIVA: `aculta_mailer/.../MailTemplateForm.php:136`. `$preview['body']` é o corpo HTML do template de e-mail, editado por administrador em rota `/painel-administrativo/...`. A saída é HTML por desenho. Risco: XSS por administrador, aceito; quem edita é o papel administrativo.
+- PENDENTE: `aculta_events_openstreetmap/.../OpenStreetMapImportWizard.php:189`. O cliente da API converte lat/lon com `(float)` em duas rotas (`OpenStreetMapApiClient.php:184,195`), mas a rota de `$coordinates[0]` (linha 169) não foi confirmada.
+- PENDENTE: `aculta_messenger/.../MessagesController.php:1528`. Depende do contrib `site_alert`, ausente da worktree.
 
 ### 1.3 Correção de regra quebrada
 
