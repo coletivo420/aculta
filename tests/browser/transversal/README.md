@@ -15,6 +15,7 @@ Cada frente tem o próprio `README.md` com URLs, pré-requisitos e critérios.
 - [`aculta-uploader/`](./aculta-uploader/README.md) — Smoke do aculta_file_uploader (navegador)
 - [`aculta-visual/`](./aculta-visual/README.md) — Revisão visual da Frente B
 - [`aculta420-v2-account-menu/`](./aculta420-v2-account-menu/README.md) — ACULTA420 V2 — account menu
+- [`aculta420-v2-audit-2026-11/`](./aculta420-v2-audit-2026-11/README.md) — Homologação visual do aculta420_v2 — auditoria 2026-11-11
 - [`aculta420-v2-card-accent/`](./aculta420-v2-card-accent/README.md) — ACULTA420 V2 — faixa de acento do cartão (DRAFT)
 - [`aculta420-v2-component-library/`](./aculta420-v2-component-library/README.md) — ACULTA420 V2 — biblioteca de componentes
 - [`aculta420-v2-data-table/`](./aculta420-v2-data-table/README.md) — ACULTA420 V2 — Data table

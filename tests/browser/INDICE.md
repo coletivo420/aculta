@@ -56,6 +56,7 @@ Scripts com `routes.json` têm cobertura de rotas públicas no runner comum.
 | [`tests/browser/transversal/aculta-uploader/`](./transversal/aculta-uploader/README.md) | Smoke do aculta_file_uploader (navegador) | 1 | sim |
 | [`tests/browser/transversal/aculta-visual/`](./transversal/aculta-visual/README.md) | Revisão visual da Frente B | 1 | sim |
 | [`tests/browser/transversal/aculta420-v2-account-menu/`](./transversal/aculta420-v2-account-menu/README.md) | ACULTA420 V2 — account menu | 1 | não |
+| [`tests/browser/transversal/aculta420-v2-audit-2026-11/`](./transversal/aculta420-v2-audit-2026-11/README.md) | Homologação visual do aculta420_v2 — auditoria 2026-11-11 | 1 | sim |
 | [`tests/browser/transversal/aculta420-v2-card-accent/`](./transversal/aculta420-v2-card-accent/README.md) | ACULTA420 V2 — faixa de acento do cartão (DRAFT) | 1 | sim |
 | [`tests/browser/transversal/aculta420-v2-component-library/`](./transversal/aculta420-v2-component-library/README.md) | ACULTA420 V2 — biblioteca de componentes | 1 | não |
 | [`tests/browser/transversal/aculta420-v2-data-table/`](./transversal/aculta420-v2-data-table/README.md) | ACULTA420 V2 — Data table | 1 | sim |

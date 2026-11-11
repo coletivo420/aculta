@@ -1,0 +1,58 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Shell da Conta
+status: experimental
+description: Estrutura da área da Conta com menu, acordeão de seções e conteúdo, preservando os atributos de comportamento do Portal.
+group: ACULTA
+props:
+  type: object
+  additionalProperties: false
+  required: [title]
+  properties:
+    title:
+      type: string
+      minLength: 1
+    section_title:
+      type: string
+      default: ''
+    menu_items:
+      type: array
+      default: []
+      items:
+        type: object
+        additionalProperties: false
+        required: [label, href]
+        properties:
+          label:
+            type: string
+          href:
+            type: string
+          active:
+            type: boolean
+            default: false
+    accordion_items:
+      type: array
+      default: []
+      items:
+        type: object
+        additionalProperties: false
+        required: [label, href]
+        properties:
+          label:
+            type: string
+          href:
+            type: string
+          open:
+            type: boolean
+            default: false
+    logout:
+      type: object
+      additionalProperties: false
+      required: [label, href]
+      properties:
+        label:
+          type: string
+        href:
+          type: string
+slots:
+  content:
+    title: Conteúdo da seção

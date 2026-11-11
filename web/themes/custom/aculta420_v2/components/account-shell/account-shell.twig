@@ -1,0 +1,47 @@
+{#
+  Shell da Conta (aculta_portal), apresentação ACULTA420.
+
+  O markup e os atributos data-portal-account-* são o contrato de
+  comportamento do módulo; o SDC preserva ambos e compõe o conteúdo.
+#}
+<section class="portal-account" data-portal-account-layout aria-busy="false">
+  <header class="portal-account__header">
+    <h1>{{ title }}</h1>
+    <p>{{ 'Área pessoal'|t }}</p>
+  </header>
+  <div class="portal-account__layout">
+    <nav class="portal-account__nav" aria-label="{{ title }}">
+      <h2 class="visually-hidden">{{ 'Navegação da conta'|t }}</h2>
+      <div class="portal-account__menu-desktop">
+        <ul class="portal-account__menu" data-portal-account-menu>
+          {% for item in menu_items %}
+            <li>
+              <a class="portal-account__link" href="{{ item.href }}" data-aculta-portal-link="true"{% if item.active %} aria-current="page"{% endif %}>{{ item.label }}</a>
+            </li>
+          {% endfor %}
+          {% if logout %}
+            <li>
+              <a class="portal-account__link" href="{{ logout.href }}" data-aculta-portal-link="true">{{ logout.label }}</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+      <div class="portal-account__accordion" data-portal-account-accordion>
+        {% for item in accordion_items %}
+          <details class="portal-account__item" data-portal-account-item{% if item.open %} open{% endif %}>
+            <summary class="portal-account__summary" data-portal-account-summary>{{ item.label }}</summary>
+            <div class="portal-account__panel" data-portal-account-accordion-panel data-src="{{ item.href }}"></div>
+          </details>
+        {% endfor %}
+        {% if logout %}
+          <a class="portal-account__logout-row" href="{{ logout.href }}" data-portal-account-summary>{{ logout.label }}</a>
+        {% endif %}
+      </div>
+    </nav>
+    <section class="portal-account__content" data-portal-account-content aria-labelledby="portal-account-section-title" aria-busy="false" role="region">
+      <h2 id="portal-account-section-title" tabindex="-1">{{ section_title }}</h2>
+      <div id="portal-account-body" class="portal-account__body">{{ content }}</div>
+    </section>
+  </div>
+  <p data-portal-account-status aria-live="polite" aria-atomic="true"></p>
+</section>
