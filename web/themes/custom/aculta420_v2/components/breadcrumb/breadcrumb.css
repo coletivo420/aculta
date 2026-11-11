@@ -72,6 +72,18 @@
   overflow-wrap: anywhere;
 }
 
+/* Mobile: mostra só o último nível anterior e a página atual, como "< Revista / Cultura". */
+@media (max-width: 40rem) {
+  .aculta-breadcrumb__item--home,
+  .aculta-breadcrumb__item:not(:nth-last-child(-n + 2)) {
+    display: none;
+  }
+
+  .aculta-breadcrumb__item:nth-last-child(2)::before {
+    display: none;
+  }
+}
+
 /* Superfície: faixa atrás da trilha, para páginas com fundo neutro. */
 .aculta-breadcrumb--superficie {
   padding: var(--spacing-xs) var(--spacing-sm);

@@ -1,6 +1,8 @@
 {#
   Breadcrumb do sistema: monta os dados do SDC breadcrumb.
   O início já é renderizado pelo componente, então o link para "/" sai da trilha.
+  A sessão vem da variável aculta_breadcrumb_sessao, definida por cada módulo
+  no preprocess da sua rota. Sem valor, cai em "portal".
 #}
 {% if breadcrumb or aculta_current_breadcrumb %}
   {% set trail = breadcrumb|filter(item => item.url != '/' and item.url != '<front>')|map(item => {
@@ -9,7 +11,7 @@
   }) %}
   {{ include('aculta420_v2:breadcrumb', {
     label: 'Breadcrumb'|t,
-    sessao: 'portal',
+    sessao: aculta_breadcrumb_sessao|default('portal'),
     trail: trail,
     current: aculta_current_breadcrumb,
   }, with_context = false) }}
