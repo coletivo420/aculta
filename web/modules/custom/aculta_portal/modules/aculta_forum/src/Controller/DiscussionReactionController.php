@@ -11,6 +11,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,6 +32,7 @@ class DiscussionReactionController extends ControllerBase {
     protected readonly DiscussionReactionEndpointAccess $reactionEndpointAccess,
     protected readonly AccountProxyInterface $forumCurrentUser,
     protected readonly CsrfTokenGenerator $csrfTokenGenerator,
+    protected readonly RendererInterface $renderer,
   ) {}
 
   /**
@@ -106,6 +108,12 @@ class DiscussionReactionController extends ControllerBase {
     }
 
     $renderArray = $this->reactionBuilder->buildPicker($entity, $this->forumCurrentUser);
+    // HTMX: o gatilho troca só o conteúdo do picker (hx-target + innerHTML). Sem HX-Request,
+    // mantém a página completa para acesso direto.
+    if ($request->headers->has('HX-Request')) {
+      $body = (string) $this->renderer->renderInIsolation($renderArray);
+      return new Response($body, Response::HTTP_OK, ['Content-Type' => 'text/html; charset=UTF-8']);
+    }
     return $renderArray;
   }
 

@@ -137,3 +137,9 @@ Escopo funcional restante (login/logout, sessões multidomínio, modais HTMX, fo
   - autenticado (conta comum, `HX-Request: true`): 200 com documento completo (63.941 bytes), contendo `<head>` e `<body>`, e **sem** o id do alvo.
   - **Defeito candidato (não corrigido):** o alvo do `innerHTML` não recebe o fragmento esperado. Confirmar se o endpoint deveria devolver só o fragmento do picker e por que não o faz para `HX-Request`.
 - Teste funcional de HTMX: não implementado nesta rodada, porque o contrato dos endpoints ainda não é fragmento. Um teste de fragmento hoje falharia.
+
+## 10. Correção do seletor de reação (HTMX)
+
+- Contrato decidido pelo responsável: fragmento. `DiscussionReactionController::picker` agora devolve só o HTML do componente `discussion_reaction_picker` quando a requisição traz `HX-Request`. Sem o cabeçalho, mantém a página completa.
+- Injeção: `@renderer` adicionado ao serviço `aculta_forum.discussion_reaction_controller` (sem uso de `\Drupal::`).
+- Verificação: `php -l` PASS. **Não verificado em execução**: a correção só será comprovada depois de publicada e sincronizada no Runtime, o que depende da adoção supervisionada. Teste funcional de fragmento: a escrever após a sincronização.

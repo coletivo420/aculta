@@ -374,6 +374,7 @@ services:
       - '@aculta_forum.discussion_reaction_endpoint_access'
       - '@current_user'
       - '@csrf_token'
+      - '@renderer'
 
   aculta_forum.comment_route_subscriber:
     class: Drupal\aculta_forum\EventSubscriber\CommentRouteSubscriber
