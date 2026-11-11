@@ -1,0 +1,27 @@
+name: Composição de View completa
+description: Exemplo com título, filtros, resultados, paginação e rodapé preservados.
+component: aculta420_v2:views-display
+props:
+  title: Discussões
+slots:
+  attachment_before:
+    type: inline_template
+    template: '<p>Conteúdo anexado anterior.</p>'
+  header:
+    type: inline_template
+    template: '<p>Últimas discussões da comunidade.</p>'
+  exposed:
+    type: inline_template
+    template: '<form aria-label="Filtros"><label>Categoria <select><option>Todas</option></select></label></form>'
+  rows:
+    type: inline_template
+    template: '<article><h3>Exemplo de resultado</h3></article>'
+  pager:
+    type: inline_template
+    template: '<nav aria-label="Paginação"><a href="#">Próxima</a></nav>'
+  footer:
+    type: inline_template
+    template: '<p>Fim da listagem.</p>'
+  attachment_after:
+    type: inline_template
+    template: '<p>Conteúdo anexado posterior.</p>'

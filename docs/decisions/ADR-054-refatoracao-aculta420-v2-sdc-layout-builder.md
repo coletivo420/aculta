@@ -99,6 +99,10 @@ A sequência normativa RN-00 a RN-05 consta de `docs/architecture/ACULTA-PORTAL-
 - As exclusões `node.document.full` e `block_content.basic.default` continuam sem Layout Builder. Snapshot do Runtime precedeu o import parcial; rollback reproduzível restaurando os YAMLs do commit pai e reimportando apenas esses objetos. Nenhuma entidade ou dado foi alterado.
 - Gates: UI Patterns Layouts 42 checks; Layout Builder 276 checks para 22 displays (render arrays, saída ComponentLayout ou adapter SDC Wiki, paridade Runtime/Sync e acesso); SDC 41 componentes. Capturas amplas, cache-hit, perfis autenticados e revisão visual pendentes.
 - Drift global de Config Sync continua em outros objetos, incluindo Views/Forum e `system.theme`; não foi importado nesta entrega.
+
+## Integração de Views na migração visual — 2026-11-10
+
+A View `aculta_albuns:page_1` migrou seus níveis visuais para UI Patterns row (`revista-album-card`), style (`layout-grid`) e display (`views-display`). Os handlers de fields permanecem como sources Drupal; filtros, ordenação, pager mini, acesso `access content` e três resultados foram preservados. Runtime antes/depois respondeu HTTP 200 e permitiu anônimo. Capturas Firefox 1280/320 em claro/escuro estão no manifesto `tests/browser/capturas/ui-patterns-views/2026-11-10/manifest.json`. Isso é um piloto focal, não a homologação das dez áreas: cache-hit, pager multi-página, teclado, zoom e aceitação visual ampla seguem pendentes.
 ### Progresso UI Skins — cutover em preparação (2026-11-10)
 
 - `ui_skins` agora é exigido pelo Config Sync; o gate valida a ativação exportada, cinco variáveis, dez skins em claro/escuro, contraste e os dez Domain IDs.

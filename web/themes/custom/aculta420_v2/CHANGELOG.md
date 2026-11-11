@@ -1,3 +1,13 @@
+## Não versionado — Views row/style/display com UI Patterns (2026-11-10)
+
+- A View `aculta_albuns:page_1` agora usa o SDC `revista-album-card` por row,
+  `layout-grid` no style e `views-display` no display, reutilizando seus field
+  handlers e sources nativos.
+- Import parcial no Runtime aplicou somente a View; HTTP 200 e três resultados
+  antes/depois, acesso anônimo preservado. Firefox ESR 1280/320 em claro/escuro
+  confirmou três cartões, sem overflow nem alvo abaixo de 44 px.
+- Pager multi-página, cache-hit, teclado e zoom 200% permanecem DEFERRED.
+
 ## Não versionado — ComponentLayout SDC nos 22 displays elegíveis (2026-11-10)
 
 - Substitui `layout_onecol` pelo SDC `layout-section` via UI Patterns Layouts

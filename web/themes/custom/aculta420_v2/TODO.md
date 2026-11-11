@@ -6,7 +6,7 @@ Estado: Dev · versão 1.5.0 (`aculta420_v2.info.yml`) · status: `docs/operatio
 
 - **ADR-054/055 US-00–14/RN-00–05:** 22 configs usam ComponentLayout no Sync/Runtime; 21 saídas renderizam `layout-section`, Wiki full compõe direto `wiki-entry`. Gate 276 checks PASS; duas exclusões preservadas. Cache `UNCACHEABLE`; cache-hit e aceite amplo pendentes.
 - Composer: Skins ^1.2, Icons ^2.1. Field Group dev SHA `4403e7b0e27679f47113e96fcdc5349c95e164d1` é `BLOCKED_UPSTREAM` (segurança/Core 12). UI Styles CKEditor 5 ativo; UI Patterns CKEditor 5 preexistente, sem consumidores e `LEGACY_OBSOLETE`.
-- Inventário: 381 itens/83 Twig; 16 fallbacks mapeados a SDCs. UI Icons Runtime pendente; View categorias usa `forum-category`; Entity Status e outros domínios pendentes. Ver planos UI Suite, Skins e SiteKey em `docs/architecture/`.
+- Inventário: 383 itens/83 Twig; 16 fallbacks mapeados a SDCs. `aculta_albuns` usa UI Patterns row/style/display e SDCs `revista-album-card`, `layout-grid`, `views-display`; 3 resultados, acesso anônimo e browser 1280/320 claro/escuro verificados. UI Icons Runtime, View categorias, Entity Status e outras Views/domínios pendentes. Ver planos UI Suite, Skins e SiteKey em `docs/architecture/`.
 
 ## Marcos e pendências
 

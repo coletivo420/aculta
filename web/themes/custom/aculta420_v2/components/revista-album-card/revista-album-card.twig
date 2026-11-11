@@ -1,0 +1,12 @@
+<article{{ attributes.addClass('revista-album-card') }}>
+  {% if cover %}<div class="revista-album-card__cover">{{ cover }}</div>{% endif %}
+  <div class="revista-album-card__body">
+    {% if title %}<div class="revista-album-card__title">{{ title }}</div>{% endif %}
+    {% if published_at or credits %}
+      <div class="revista-album-card__metadata">
+        {% if published_at %}<div class="revista-album-card__date">{{ published_at }}</div>{% endif %}
+        {% if credits %}<div class="revista-album-card__credits">{{ credits }}</div>{% endif %}
+      </div>
+    {% endif %}
+  </div>
+</article>

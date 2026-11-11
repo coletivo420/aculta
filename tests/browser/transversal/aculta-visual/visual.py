@@ -90,10 +90,10 @@ class Viewport:
 
 def album_metrics(driver):
     return driver.js("""return (() => {
-      const cards = [...document.querySelectorAll('.aculta-card--compact')];
+      const cards = [...document.querySelectorAll('.revista-album-card')];
       const visible = element => element.getClientRects().length > 0;
       const actions = [...document.querySelectorAll(
-        '.aculta-card--compact a, .aculta-card--compact button')].filter(visible);
+        '.revista-album-card a, .revista-album-card button')].filter(visible);
       const smallActions = actions.map(element => {
         const r = element.getBoundingClientRect();
         return {tag: element.tagName, text: (element.innerText || '').trim().slice(0, 60),
@@ -125,7 +125,7 @@ def album_metrics(driver):
       window.scrollTo(originalScrollX, 0);
       return {title: document.title, heading: document.querySelector('main h1, h1')?.innerText || '',
         viewport: innerWidth, documentWidth: document.documentElement.scrollWidth, maxScrollX,
-        compactCards: cards.length, smallActions,
+        albumCards: cards.length, smallActions,
         unnamedLinks: unnamedLinks.length, placeholderLinks,
         firstCardText: cards[0]?.innerText?.trim().slice(0, 180) || ''};
     })();""")
@@ -177,6 +177,8 @@ def inspect_album(prefs=None, dark=False):
             time.sleep(0.25)
             metrics = album_metrics(driver)
             metrics["requestedViewport"] = width
+            if metrics["albumCards"] < 1:
+                raise RuntimeError(f"A View não renderizou cards SDC de álbum em {label}.")
             if dark:
                 metrics["prefersDark"] = driver.js(
                     "return matchMedia('(prefers-color-scheme: dark)').matches"
@@ -192,6 +194,8 @@ def inspect_album(prefs=None, dark=False):
                 print(f"BLOCK horizontal scroll album {label}: maxScrollX={metrics['maxScrollX']}")
             if metrics["unnamedLinks"] > 0:
                 print(f"BLOCK unnamed links album {label}: {metrics['unnamedLinks']}")
+            if metrics["smallActions"]:
+                raise RuntimeError(f"A View tem alvos interativos menores que 44px em {label}: {metrics['smallActions']}")
             if metrics["placeholderLinks"]:
                 print(f"BLOCK placeholder links album {label}: {metrics['placeholderLinks']}")
             suffix = "-dark" if dark else ""
@@ -420,7 +424,7 @@ def main():
         print(f"Album: {ALBUM_URL}")
         for variant in ("light", "dark"):
             for size, data in summary["album"][variant].items():
-                print(f"album {variant}/{size}: {data['compactCards']} cards compact; "
+                print(f"album {variant}/{size}: {data['albumCards']} cards SDC; "
                       f"viewport={data['viewport']}; documento={data['documentWidth']}; "
                       f"alvos pequenos={len(data['smallActions'])}; "
                       f"links sem nome={data['unnamedLinks']}; "

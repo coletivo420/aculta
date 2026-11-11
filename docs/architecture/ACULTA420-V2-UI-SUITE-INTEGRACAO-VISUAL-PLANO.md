@@ -176,6 +176,8 @@ Em todos os casos: layout claro e escuro, breakpoint 320/390/768/1024/1440 px, z
 - Fazer mapeamento `views_field`, entidades e slots por fontes de dados suportadas; nao ligar um componente a todo display sem verificar pagers, exposed forms, empty e access.
 - **Gate:** mesma quantidade/ordem/visibilidade de resultados, pager/filtros/HTMX preservados, sem nova engine de carrossel.
 
+**Piloto executado em 2026-11-10:** a View `aculta_albuns:page_1` usa os três plugins UI Patterns: row `revista-album-card`, style `layout-grid` com `view_rows` e display `views-display`. O SDC de display expõe anexos, título, header, exposed form, rows, empty, pager, more e footer. Os field handlers existentes permanecem como sources da row, preservando link, renderização de mídia, acesso e cache. Importação parcial incluiu somente `views.view.aculta_albuns`, após export do objeto ativo. Runtime: 200, três resultados antes/depois e acesso anônimo permitido. Firefox ESR em claro/escuro a 1280/320: três cartões, sem overflow, link sem nome, placeholder ou alvo abaixo de 44 px. Capturas em `tests/browser/capturas/ui-patterns-views/2026-11-10/manifest.json`. Pager multi-página, zoom 200%, teclado e cache-hit continuam DEFERRED; outros consumidores Views seguem no inventário como pendentes.
+
 ### US-06 - UI Patterns Layouts + Fields
 - Validar contratos de slots e thumbnail dos layouts, composicao com Surface/Accent/Panel e 22 displays.
 - Mapear Field Formatters a componentes antes de criar Twig exclusivo; respeitar os dois displays excluidos.

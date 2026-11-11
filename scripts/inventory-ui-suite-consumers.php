@@ -42,49 +42,87 @@ $runtimeSnapshot = is_file($runtimeSnapshotPath)
 $runtimeStatuses = is_array($runtimeSnapshot['ui_suite_modules'] ?? NULL)
   ? $runtimeSnapshot['ui_suite_modules']
   : [];
+$runtimeViewDisplays = is_array($runtimeSnapshot['view_displays'] ?? NULL)
+  ? $runtimeSnapshot['view_displays']
+  : [];
 
 foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
   $view = Yaml::parseFile($path);
   $viewId = (string) ($view['id'] ?? basename($path));
   foreach (($view['display'] ?? []) as $displayId => $display) {
     $options = $display['display_options'] ?? [];
-    $rowPlugin = (string) ($options['row']['type'] ?? '');
-    $stylePlugin = (string) ($options['style']['type'] ?? '');
-    $patternsConfig = $options['row']['options']['ui_patterns'] ?? NULL;
-    $patternsConfigured = $rowPlugin === 'ui_patterns'
-      && is_array($patternsConfig)
-      && !empty($patternsConfig['component_id']);
+    $defaults = $options['defaults'] ?? [];
+    $baseOptions = $view['display']['default']['display_options'] ?? [];
+    $rowOptions = $options['row'] ?? (($defaults['row'] ?? TRUE) ? ($baseOptions['row'] ?? []) : []);
+    $styleOptions = $options['style'] ?? (($defaults['style'] ?? TRUE) ? ($baseOptions['style'] ?? []) : []);
+    $rowPlugin = (string) ($rowOptions['type'] ?? '');
+    $stylePlugin = (string) ($styleOptions['type'] ?? '');
+    $rowPatterns = $rowOptions['options']['ui_patterns'] ?? NULL;
+    $stylePatterns = $styleOptions['options']['ui_patterns']['ui_patterns'] ?? NULL;
+    $displayPatterns = $options['ui_patterns'] ?? NULL;
+    $patternsConfig = is_array($rowPatterns) && !empty($rowPatterns['component_id'])
+      ? $rowPatterns
+      : NULL;
+    $patternsConfigured = ($rowPlugin === 'ui_patterns' && is_array($rowPatterns) && !empty($rowPatterns['component_id']))
+      || (is_array($stylePatterns) && !empty($stylePatterns['component_id']))
+      || (is_array($displayPatterns) && !empty($displayPatterns['component_id']));
+    $components = [];
+    foreach ([
+      'row' => $rowPatterns['component_id'] ?? NULL,
+      'style' => $stylePatterns['component_id'] ?? NULL,
+      'display' => $displayPatterns['component_id'] ?? NULL,
+    ] as $level => $componentId) {
+      if (is_string($componentId) && $componentId !== '') {
+        $components[] = $level . ':' . $componentId;
+      }
+    }
     $isForumCategoryPilot = $viewId === 'aculta_forum_categories'
       && in_array((string) $displayId, ['page_categories', 'block_landing'], TRUE)
       && $patternsConfigured;
+    $isAlbumsViewsPilot = $viewId === 'aculta_albuns'
+      && in_array((string) $displayId, ['default', 'page_1'], TRUE)
+      && ((is_array($stylePatterns) && !empty($stylePatterns['component_id']))
+        || (is_array($displayPatterns) && !empty($displayPatterns['component_id'])));
+    $runtimeView = $runtimeViewDisplays[$viewId] ?? NULL;
+    $albumsRuntimeVerified = $isAlbumsViewsPilot
+      && is_array($runtimeView)
+      && ($runtimeView['status'] ?? '') === 'runtime_verified';
     $forumCategoryLegacyTemplatesRemoved = $isForumCategoryPilot
       && !is_file($theme . '/templates/views/views-view-fields--aculta-forum-categories--' . $displayId . '.html.twig')
       && !is_file($theme . '/templates/views/views-view-unformatted--aculta-forum-categories--' . $displayId . '.html.twig')
       && !is_file($theme . '/templates/views/views-view--aculta-forum-categories--' . $displayId . '.html.twig');
     $rows[] = [
       'id' => $viewId,
-      'owner_module' => 'unresolved_from_config',
+      'owner_module' => $viewId === 'aculta_albuns' ? 'aculta_gallery' : 'unresolved_from_config',
       'config_path' => relative_path($root, $path),
       'consumer_type' => 'view_display',
       'consumer_id' => (string) $displayId,
       'display_plugin' => (string) ($display['display_plugin'] ?? ''),
       'row_plugin' => $rowPlugin,
       'style_plugin' => $stylePlugin,
-      'ui_patterns_configured' => $patternsConfigured ? (string) $patternsConfig['component_id'] : 'not_detected_by_plugin_id_scan',
-      'status' => 'MIGRATION_IN_PROGRESS',
-      'replacement_or_action' => $isForumCategoryPilot
+      'ui_patterns_configured' => $components !== [] ? implode(',', $components) : 'not_detected_by_plugin_id_scan',
+      'status' => $albumsRuntimeVerified ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS',
+      'replacement_or_action' => $isAlbumsViewsPilot
+        ? 'Compose this inherited View level with UI Patterns SDCs; preserve native row fields, filters, sort, pager and access'
+        : ($isForumCategoryPilot
         ? ($forumCategoryLegacyTemplatesRemoved
           ? 'UI Patterns row SDC cutover is defined in Sync/install; source field/wrapper templates removed; retain Views query, grouping, pager and access contracts'
           : 'Pilot: replace duplicated row field templates with the forum-category SDC; retain Views query, grouping, pager and access contracts')
-        : 'Inventory candidate only; inspect row, style and display independently before migration',
-      'risk_or_evidence_gap' => $isForumCategoryPilot
+        : 'Inventory candidate only; inspect row, style and display independently before migration'),
+      'risk_or_evidence_gap' => $isAlbumsViewsPilot
+        ? ($albumsRuntimeVerified
+          ? 'Runtime/render/browser verified at 1280/320 light/dark; pager navigation, keyboard, zoom 200% and cache-hit variation remain open'
+          : 'Sync defines row/style/display composition; targeted Runtime import and output, permission, pager/cache and browser comparison remain pending')
+        : ($isForumCategoryPilot
         ? ($forumCategoryLegacyTemplatesRemoved
           ? 'Sync/install declare the UI Patterns row, but Runtime still has row: fields; authorized import and before/after rendered output, access/cache and browser evidence are pending'
           : 'Config Sync and install defaults use UI Patterns row; Runtime cutover, rendered output, access/cache comparison and browser evidence are pending')
-        : 'No UI Patterns row/style/display plugin ID detected in Sync; Runtime output, access and cache still unverified',
+        : 'No UI Patterns row/style/display plugin ID detected in Sync; Runtime output, access and cache still unverified'),
       'rollback' => 'Revert only display config after before/after result comparison',
       'detected_consumers' => '',
-      'runtime_status' => 'not_observed',
+      'runtime_status' => $albumsRuntimeVerified
+        ? sprintf('active; HTTP %d; %d results before/after; anonymous access allowed; browser 1280/320 light/dark', $runtimeView['after_http_status'], $runtimeView['result_count_after'])
+        : 'not_observed',
     ];
   }
 }

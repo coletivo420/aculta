@@ -27,6 +27,15 @@
 - Importação no Runtime, verificação de permissões/foco e prévia real dos SDCs
   ainda estão pendentes; Fluent Emoji permanece no catálogo editorial do tema.
 
+## ADR-054/055 — Views row/style/display (2026-11-10)
+
+- A View Álbuns usa `revista-album-card`, `layout-grid` e `views-display` nos
+  níveis row, style e display. O piloto Runtime manteve acesso anônimo, três
+  resultados e a rota HTTP 200; browser focado confirmou layout claro/escuro
+  em 1280/320 px e alvos de toque ≥44 px.
+- Paginação multi-página, cache-hit, teclado, zoom, demais Views e homologação
+  dos dez domínios seguem pendentes; ADR-054/055 permanecem abertas.
+
 > **Marcos P8/P9 implementados (2026-11-09); ADR-054/055 ainda abertas:** o tema tem as cinco regiões finais, o shell v2 é o padrão e o motor de container foi removido. Layout Builder cobre 22 dos 24 displays compatíveis, a landing Links está publicada no LB e a UI Library oferece prévias reais. Pendências: homologação visual, conteúdo editorial das demais landings, migração integral dos visuais para UI Suite e dívida de boundary dos módulos do Portal. Rollback documentado em `docs/architecture/ACULTA420-V2-P9-CUTOVER.md`.
 
 

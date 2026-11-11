@@ -10,38 +10,46 @@
     "title": "aculta420_v2 | Associação Cultural Antiproibicionista",
     "main_landmark": true,
     "horizontal_overflow": false,
-    "catalog": {"groups": 15, "components": 80, "preview_links": 80, "loaded_sdc_stories": 1},
+    "catalog": {
+      "groups": 16,
+      "components": 82,
+      "preview_links": 82,
+      "loaded_sdc_stories": 1
+    },
     "320px_offscreen_elements": "DEFERRED: administração lista itens além da viewport, embora documentWidth e maxScrollX permaneçam em 320/0",
-    "viewport_css_px": [1280, 320],
+    "viewport_css_px": [
+      1280,
+      320
+    ],
     "dark_mode": "data-theme and data-bs-theme set to dark in browser DOM",
     "blocked_error_page": false,
     "blank_page_guard": "title, main and non-empty body required"
   },
   "artifacts": {
-    "storage": "$SUITE_OUT/ui-library-real-preview-2026-11-10",
+    "storage": "$SUITE_OUT/ui-patterns-views-albums-accepted-2026-11-10",
     "screenshots": [
       {
         "file": "ui-patterns-desktop.png",
         "viewport_css_px": 1280,
         "mode": "light",
-        "sha256": "ba37e81dd4889e6367bdd0a99fccb8846fda075df7f862045f78023986bad0e9"
+        "sha256": "2343011aaedb364f599a36772105f6b3a3f88fb0ad1f272c0b4a73b2be3711a0"
       },
       {
         "file": "ui-patterns-320.png",
         "viewport_css_px": 320,
         "mode": "light",
-        "sha256": "1174e8fc1befc08e6a057e0f5b22d60ee1baeebda71d5be113ade344a7a2106f"
+        "sha256": "cbeacc40a968e3122dde33fc7b7284372c41d8ef572ba225834392215a2ee404"
       },
       {
         "file": "ui-patterns-dark.png",
         "viewport_css_px": 1280,
         "mode": "dark_dom_override",
-        "sha256": "47bccd332435042ad8c3bf54c44588820fafef662059fb09d8f0d840e9feb1b4"
+        "sha256": "837eded6e1eacb343c587150bfa45df6ddd1bde46c281e8501c4ec8532de4079"
       }
     ]
   },
   "notes": [
-    "Authenticated Firefox ESR capture confirmed the aculta420_v2 catalog renders 15 groups and 80 SDC components; an on-demand story loaded.",
+    "Authenticated Firefox ESR capture confirmed the aculta420_v2 catalog renders 16 groups and 82 SDC components; an on-demand story loaded.",
     "At 320px, administrative list items extend beyond the viewport although the document has no horizontal scroll; responsive acceptance remains DEFERRED.",
     "This is route and one-story evidence only; it is not broad ADR visual acceptance."
   ]

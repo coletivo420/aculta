@@ -1,7 +1,8 @@
 # Revisão visual da Frente B
 
-`visual.py` verifica a View pública de álbuns, consumidora real da variante
-`patterns/card` compact, nos viewports CSS de 1280 px e 320 px; captura também
+`visual.py` verifica a View pública de álbuns, consumidora dos plugins de row,
+style e display do UI Patterns e do SDC `revista-album-card`, nos viewports CSS
+de 1280 px e 320 px; captura também
 modo escuro com `prefers-color-scheme: dark`, `data-theme="dark"` e o atributo
 de tema Bootstrap usado pelo site. Registra rolagem horizontal real, largura
 documental, cartões compactos, alvos de interação menores que 44 px e links

@@ -632,15 +632,60 @@
         },
         "ui_patterns_library": {
             "path": "/painel-administrativo/aparencia/ui/components/aculta420_v2",
-            "provider_groups": 15,
-            "components": 80,
-            "preview_links": 80,
+            "provider_groups": 16,
+            "components": 82,
+            "preview_links": 82,
             "loaded_sdc_stories": 1,
             "http_status": 200,
-            "viewports_css_px": [1280, 320],
+            "viewports_css_px": [
+                1280,
+                320
+            ],
             "horizontal_scroll": false,
             "responsive_acceptance": "DEFERRED: admin list elements extend past 320px viewport despite documentWidth=320 and maxScrollX=0",
-            "evidence_manifest": "tests/browser/capturas/ui-suite-library/2026-11-10/manifest.json"
+            "evidence_manifest": "tests/browser/capturas/ui-suite-library/2026-11-10/manifest.json",
+            "capture_manifest": "tests/browser/capturas/ui-suite-library/2026-11-10/manifest.json"
+        }
+    },
+    "view_displays": {
+        "aculta_albuns": {
+            "owner_module": "aculta_gallery",
+            "config_path": "config/sync/views.view.aculta_albuns.yml",
+            "consumer_id": "page_1",
+            "status": "runtime_verified",
+            "configuration_import": "targeted partial import of only views.view.aculta_albuns after exporting its Runtime configuration",
+            "before_runtime_snapshot": "$SUITE_OUT/before/views.view.aculta_albuns.yml",
+            "before_http_status": 200,
+            "after_http_status": 200,
+            "result_count_before": 3,
+            "result_count_after": 3,
+            "row_plugin": "ui_patterns",
+            "row_component": "aculta420_v2:revista-album-card",
+            "style_plugin": "ui_patterns",
+            "style_component": "aculta420_v2:layout-grid",
+            "display_component": "aculta420_v2:views-display",
+            "native_pager": "mini, 12 items per page",
+            "anonymous_access": "allowed by native access content permission",
+            "cache_metadata": "Drupal render arrays preserved; cache-hit variation not measured",
+            "browser_viewports_css_px": [
+                1280,
+                320
+            ],
+            "browser_modes": [
+                "light",
+                "dark"
+            ],
+            "browser_album_cards_per_capture": 3,
+            "horizontal_scroll": false,
+            "small_targets_under_44px": 0,
+            "unnamed_links": 0,
+            "placeholder_links": 0,
+            "evidence_manifest": "tests/browser/capturas/ui-patterns-views/2026-11-10/manifest.json",
+            "limitations": [
+                "Pager navigation across multiple pages not exercised because the View currently has three results.",
+                "Exposed filters are absent from this display.",
+                "Zoom 200% and keyboard focus remain in the broad ADR acceptance matrix."
+            ]
         }
     }
 }

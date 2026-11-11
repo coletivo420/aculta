@@ -1,13 +1,13 @@
-# ADR-054/055 — ComponentLayout nos displays elegíveis — 2026-11-10
+# ADR-054/055 — Piloto Views row/style/display — 2026-11-10
 
-- **Objetivo:** migrar displays Layout Builder elegíveis para ComponentLayout SDC.
-- **Estado:** 22 configs usam `layout-section`; 21 saídas exibem o wrapper e Wiki full renderiza via adapter SDC `wiki-entry`. Import parcial após snapshot; sem alteração de conteúdo. Duas exclusões inalteradas.
-- **Decisões e alternativas descartadas:** manter o template Wiki especializado, que compõe SDC diretamente; o gate verifica essa saída, não exige wrapper Layout Builder fictício.
-- **Cuidados:** o caminho Wiki full devolve 403 anônimo; browser autenticado ficou em branco e não conta como aceite. Cache de página continua `UNCACHEABLE`.
-- **Commits e arquivos:** base publicada `ed81948f7`; correção inclui gate batch, proteção do runner Firefox, inventário CSV/JSON, manifesto UI Components, ADRs, P8/plano, TODO/status/changelog/roadmap.
-- **Verificações:** Layouts 42; batch 276; SDC 41; UI Skins 134; UI Styles 38. UI Library `aculta420_v2`: 15 grupos/80 componentes, uma story carregada; itens fora da viewport em 320 px, responsividade DEFERRED. Token-budget FAIL por sete itens globais; TODO V2 abaixo de 2.000 bytes.
-- **Pendências:** cache-hit, visual amplo, teclado/zoom, perfis e contraste; avançar Views, UI Styles Page/CKEditor 5, Icons, migração visual e RN-00–05.
-- **Próximo passo:** retomar um piloto UI Patterns Views com gate de render/controle de acesso, sem importar drift global.
+- **Objetivo:** integrar row/style/display na View Álbuns sem perder funções nativas.
+- **Estado:** `aculta_albuns:page_1` usa `revista-album-card`, `layout-grid`, `views-display`; 3 resultados, 200 e acesso anônimo antes/depois. Firefox 1280/320 claro/escuro: 3 cartões, sem overflow ou alvo <44 px.
+- **Decisão:** sources preservam field handlers; display SDC declara header, filtros, rows, empty, pager, more, footer e anexos.
+- **Cuidados:** pager multi-página (só 3 resultados), cache-hit, teclado e zoom DEFERRED. Suíte transversal parou no probe independente da Flag; checks focados de View passaram.
+- **Commits/arquivos:** base `9ef4ad36e`; config View, dois SDCs, gate, runner, inventário, ADRs, P8/plano, TODO/status e capturas.
+- **Verificações:** contrato 40; SDC 82/1774; UI Library 25; Foundations 83 pares; browser/Runtime PASS no escopo focal.
+- **Pendências:** demais Views/domínios, P8/P9, Page/Entity Status, Icons e RN-00–05.
+- **Próximo passo:** migrar a próxima View com comparação de render, acesso e cache.
 
 # UI Skins — extensão Sync e limpeza da chave antiga — 2026-11-10
 

@@ -2,7 +2,7 @@
 
 Tema Drupal da ACULTA em **Single Directory Components (SDC)**, nativo, sem Bootstrap, sem Vite e sem Node. É o tema padrão e exclusivo do portal, desenvolvido com base no design system autônomo e mobile-first. A versão legada V1 foi purgada.
 
-Planejamento normativo: `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md` (ADR-054), acrescido de `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md` (ADR-055 integral, US-00 a US-14 planejado; migração visual em `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md`; nomenclatura funcional no Portal RN-00 a RN-05 em `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`). A opção administrativa de container foi removida; a leitura dos valores legados permanece durante a migração paralela.
+Planejamento normativo: `docs/architecture/ACULTA420-V2-REFATORACAO-SDC-LAYOUT-BUILDER.md` (ADR-054), acrescido de `docs/architecture/ACULTA420-V2-UI-SUITE-INTEGRACAO-VISUAL-PLANO.md` (ADR-055, US-00 a US-14; migração visual em `docs/architecture/ACULTA-UI-SUITE-MIGRACAO-LEGADO-SKINS.md`; nomenclatura funcional no Portal RN-00 a RN-05 em `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`). O motor visual por purpose foi removido em favor de UI Skins; `DomainPurposeManager` mantém apenas as funções funcionais até a trilha RN.
 
 Para quem vai mexer no tema, leia nesta ordem:
 
@@ -26,7 +26,7 @@ Decisões que governam o tema estão em `docs/decisions/` na raiz do repositóri
 
 ## Estado em uma frase
 
-Fundações (tokens, tipografia, foco, movimento e reflow), shell SDC, componentes do Fórum, Revista, Wiki, Eventos e UI Patterns estão implementados no código (`1.5.0` em `info.yml`). O tema opera atualmente com CSS nativo e paletas Skunk Family por purpose. **Planejado, ainda não executado:** UI Skins assume as paletas e o Portal substitui os identificadores funcionais por `site_key`, preservando `domain_id` e rotas.
+Fundações, shell SDC, UI Skins e integrações UI Patterns estão ativos. A View `aculta_albuns` usa SDCs oficiais nos níveis row/style/display, com acesso, pager e três resultados verificados. As ADRs 054/055 continuam abertas enquanto faltam migração site-wide, aceites de acessibilidade/cache e a trilha funcional RN-00 a RN-05.
 
 ## Estrutura
 

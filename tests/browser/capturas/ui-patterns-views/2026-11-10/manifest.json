@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "front": "ui-patterns-views",
+  "date": "2026-11-10",
+  "environment": "development",
+  "path": "/albuns",
+  "view": "aculta_albuns:page_1",
+  "runner": "tests/browser/transversal/aculta-visual/visual.py",
+  "browser": "Firefox ESR visible (DISPLAY=:0)",
+  "configuration_import": {
+    "method": "drush config:import --partial --source=<single-view-config-directory>",
+    "config": "views.view.aculta_albuns",
+    "only_object_in_source": true,
+    "runtime_snapshot": "$SUITE_OUT/before/views.view.aculta_albuns.yml",
+    "rollback": "Restore the saved Runtime view config as the only object in a partial import; restore Config Sync from the parent commit."
+  },
+  "checks": {
+    "http_status": 200,
+    "result_count_before_after": [3, 3],
+    "row_plugin": "ui_patterns",
+    "row_component": "aculta420_v2:revista-album-card",
+    "style_plugin": "ui_patterns",
+    "style_component": "aculta420_v2:layout-grid",
+    "display_component": "aculta420_v2:views-display",
+    "view_fields_preserved_as_sources": ["field_gallery_cover", "title", "field_published_at", "field_credits"],
+    "pager": "native mini pager, 12 items per page retained",
+    "access": "native access content permission; anonymous Runtime access allowed",
+    "cache": "View and access render arrays retain Drupal cache metadata; cache-hit variation not measured",
+    "viewports_css_px": [1280, 320],
+    "themes": ["light", "dark"],
+    "horizontal_scroll": false,
+    "album_cards_per_capture": 3,
+    "small_interactive_targets": 0,
+    "unnamed_links": 0,
+    "placeholder_links": 0
+  },
+  "artifacts": {
+    "storage": "$SUITE_OUT/ui-patterns-views-albums-accepted-2026-11-10",
+    "screenshots": [
+      {"file": "albums-desktop.png", "viewport_css_px": 1280, "mode": "light", "sha256": "3b0365a6b6b13e23e2bea8c8c638c06bba61def57e4625b073af1bb375acbcdc"},
+      {"file": "albums-320.png", "viewport_css_px": 320, "mode": "light", "sha256": "576debf5138b62c0cd4a4b9e0258339b45256a1f218153124a97eb90946f59e3"},
+      {"file": "albums-desktop-dark.png", "viewport_css_px": 1280, "mode": "dark", "sha256": "af2ff5af96049cf639197271e4db31f7e11eb3985156e33fa216f7467a86ecd7"},
+      {"file": "albums-320-dark.png", "viewport_css_px": 320, "mode": "dark", "sha256": "bc83a6a815b107407754af4e1324e9739f3e4e23ddfea2442263b18060b5641a"}
+    ]
+  },
+  "notes": [
+    "The existing full transversal runner also attempted its unrelated Forum Flag probe and failed because the configured test topic has no native save action. The focused invocation reused the runner's story and album checks; it did not run or claim the Flag check.",
+    "All row, style, display, reflow and interactive-target checks for this View passed after the focused rerun. Zoom 200%, keyboard focus, exposed filters and multi-page navigation were not applicable or not exercised by the current View fixture."
+  ]
+}
