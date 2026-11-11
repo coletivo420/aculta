@@ -1939,6 +1939,22 @@
       "limitations": [
         "Zoom 200%, editor/admin profiles, assistive technology, cache-hit behavior and owner visual acceptance remain unverified."
       ]
+    },
+    "media_galleries": {
+      "owner_module": "media_gallery (contrib)",
+      "config_path": "config/sync/views.view.media_galleries.yml",
+      "displays": {
+        "page_1": {
+          "consumer_id": "page_1",
+          "status": "runtime_verified",
+          "style_component": "aculta420_v2:layout-grid",
+          "row_component": "aculta420_v2:revista-album-card",
+          "configuration_import": "targeted partial import after snapshot SHA-256 d179d8c76fbd033852390e73609b252a182dd16ac7af2f5b3256becea64c602b; new Sync SHA-256 6313cbdd1a81bc44a1a635a726ba7190b9ed10fc011831b43b3242db785f86b0",
+          "result_count_before_after": 3,
+          "evidence": "anonymous HTTP 200; 3 cards, 3 titles, 2 images, one H1/main; Firefox ESR 320/390/768/1024/1440 light/dark with no overflow",
+          "deferred": "pager navigation (3 results only), cache-hit, zoom 200%, keyboard, authenticated profiles and human review"
+        }
+      }
     }
   },
   "ui_icons_config": {
