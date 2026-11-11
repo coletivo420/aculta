@@ -26,7 +26,8 @@ Use junto com `aculta-navegador-testes`, `css`, `sdc`, `ui-styles`, `ui-patterns
 ## Onde guardar
 
 - Código da suíte: `tests/browser/playwright.visual.spec.mjs`, com config próprio `tests/browser/playwright.visual.config.mjs`. Fica fora do `testMatch` do config base, então a execução padrão não gera nem compara screenshot.
-- Referências aprovadas: diretório próprio de snapshots versionado, revisado.
+- Referências aprovadas: `tests/browser/__snapshots__/playwright.visual.spec.mjs/` (escolha do responsável). Versionadas somente após revisão: capturas de rotas públicas, sem sessão. Hoje há 10 referências da frente `aculta420-v2-navigation` (claro e escuro, 5 viewports), que passam em execução contra o dev.
+- Gerar candidatas: `ACULTA_VISUAL_BASELINE=1 SUITE_OUT=<fora-do-repo>`. Copiar para `__snapshots__` só após revisão. Nunca `--update-snapshots`.
 - Saídas temporárias (diff, trace, resultado bruto): sempre em `SUITE_OUT`, fora do repositório.
 
 ## Cobertura alvo (a implementar por frente, reaproveitando `routes.json`)
