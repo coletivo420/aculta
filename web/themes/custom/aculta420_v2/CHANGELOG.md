@@ -1,3 +1,8 @@
+## Não versionado — Inventário Views da Revista (2026-11-11)
+
+- Classifica os seis displays de página de `revista_sessoes` como `UI_SUITE_NATIVE`: a row nativa `entity:node`/`teaser` é composta pelo SDC `revista-teaser` através do adapter Twig existente, sem alterar dados ou configuração Views.
+- Runtime, acesso, pager/cache e navegador para estas rotas seguem pendentes.
+
 ## Não versionado — View de categorias do Fórum na UI Suite (2026-11-11)
 
 - `/categorias` agora compõe o display pelo SDC `views-display`, mantendo o row

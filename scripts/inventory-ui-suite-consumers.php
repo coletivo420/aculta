@@ -86,6 +86,12 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       && in_array((string) $displayId, ['default', 'page_1'], TRUE)
       && ((is_array($stylePatterns) && !empty($stylePatterns['component_id']))
         || (is_array($displayPatterns) && !empty($displayPatterns['component_id'])));
+    $revistaTeaserTemplate = $theme . '/templates/content/node--revista--teaser.html.twig';
+    $isRevistaTeaserSdc = $viewId === 'revista_sessoes'
+      && str_starts_with($rowPlugin, 'entity:node')
+      && ($rowOptions['options']['view_mode'] ?? '') === 'teaser'
+      && is_file($revistaTeaserTemplate)
+      && str_contains((string) file_get_contents($revistaTeaserTemplate), "aculta420_v2:revista-teaser");
     $isViewsDefaultBase = (string) $displayId === 'default';
     $isViewsFunctionalBase = $isViewsDefaultBase && !$patternsConfigured;
     $runtimeView = $runtimeViewDisplays[$viewId] ?? NULL;
@@ -106,6 +112,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'owner_module' => match ($viewId) {
         'aculta_albuns' => 'aculta_gallery',
         'aculta_forum_categories' => 'aculta_forum',
+        'revista_sessoes' => 'aculta_magazine',
         default => 'unresolved_from_config',
       },
       'config_path' => relative_path($root, $path),
@@ -117,7 +124,7 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
       'ui_patterns_configured' => $components !== [] ? implode(',', $components) : 'not_detected_by_plugin_id_scan',
       'status' => $isViewsFunctionalBase
         ? 'FUNCTIONAL_NATIVE_EXCEPTION'
-        : (($albumsRuntimeVerified || $forumRuntimeVerified) ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS'),
+        : (($albumsRuntimeVerified || $forumRuntimeVerified || $isRevistaTeaserSdc) ? 'UI_SUITE_NATIVE' : 'MIGRATION_IN_PROGRESS'),
       'replacement_or_action' => $isViewsFunctionalBase
         ? 'Native Views base display supplies inherited query, access, filters and sorting; it is not an independently rendered visual consumer'
         : ($isAlbumsViewsPilot
@@ -126,7 +133,9 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
         ? ($forumCategoryLegacyTemplatesRemoved
           ? 'UI Patterns row SDC cutover is defined in Sync/install; source field/wrapper templates removed; retain Views query, grouping, pager and access contracts'
           : 'Pilot: replace duplicated row field templates with the forum-category SDC; retain Views query, grouping, pager and access contracts')
-        : 'Inventory candidate only; inspect row, style and display independently before migration')),
+        : ($isRevistaTeaserSdc
+          ? 'Keep the native entity teaser row; the ACULTA theme adapter renders fields as render-array slots through the existing revista-teaser SDC'
+          : 'Inventory candidate only; inspect row, style and display independently before migration'))),
       'risk_or_evidence_gap' => $isViewsFunctionalBase
         ? 'Inherited functional query, access, filters and sorting are consumed by explicit displays; no independent visual output'
         : ($isAlbumsViewsPilot
@@ -141,7 +150,9 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
             : ($forumCategoryLegacyTemplatesRemoved
               ? 'Sync/install declare the UI Patterns row, but Runtime/render/browser evidence remains pending'
               : 'Config Sync and install defaults use UI Patterns row; Runtime cutover and output/access/cache comparison remain pending')))
-        : 'No UI Patterns row/style/display plugin ID detected in Sync; Runtime output, access and cache still unverified')),
+        : ($isRevistaTeaserSdc
+          ? 'Sync source confirms node teaser row and SDC adapter; Runtime output, access, pager/cache and browser acceptance remain pending'
+          : 'No UI Patterns row/style/display plugin ID detected in Sync; Runtime output, access and cache still unverified'))),
       'rollback' => 'Revert only display config after before/after result comparison',
       'detected_consumers' => '',
       'runtime_status' => $isViewsFunctionalBase
@@ -152,7 +163,9 @@ foreach (glob($sync . '/views.view.*.yml') ?: [] as $path) {
           ? sprintf('active; HTTP %d; %d taxonomy cards; anonymous access allowed; browser 320/390/768/1024/1440 light and 320/1440 dark', $forumRuntimeDisplay['after_http_status'], $forumRuntimeDisplay['result_count_after'])
           : ($isForumCategoryPilot && $displayId === 'block_landing'
             ? 'active row plugin; block placement hidden on public home; no visible output claimed'
-            : 'not_observed'))),
+            : ($isRevistaTeaserSdc
+              ? 'Sync node teaser row uses revista-teaser SDC adapter; Runtime not observed'
+              : 'not_observed')))),
     ];
   }
 }
