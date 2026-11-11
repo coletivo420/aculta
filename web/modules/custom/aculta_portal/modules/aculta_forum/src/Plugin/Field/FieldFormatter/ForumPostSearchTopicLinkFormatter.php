@@ -6,7 +6,7 @@ namespace Drupal\aculta_forum\Plugin\Field\FieldFormatter;
 
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Service\ForumPostThreadBuilder;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -37,7 +37,7 @@ final class ForumPostSearchTopicLinkFormatter extends FormatterBase implements C
     $view_mode,
     array $third_party_settings,
     protected readonly AccountProxyInterface $currentUser,
-    protected readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly DomainSiteManager $siteManager,
     protected readonly ForumPostThreadBuilder $threadBuilder,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
@@ -56,7 +56,7 @@ final class ForumPostSearchTopicLinkFormatter extends FormatterBase implements C
       $configuration['view_mode'],
       $configuration['third_party_settings'],
       $container->get('current_user'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('aculta_forum.post_thread_builder'),
     );
   }
@@ -66,7 +66,7 @@ final class ForumPostSearchTopicLinkFormatter extends FormatterBase implements C
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
     $post = $items->getEntity();
-    if (!$post instanceof ForumPost || $this->domainPurposeManager->getCurrentPurpose() !== 'forum') {
+    if (!$post instanceof ForumPost || $this->siteManager->getCurrentSiteKey()?->value !== 'forum') {
       return [];
     }
 

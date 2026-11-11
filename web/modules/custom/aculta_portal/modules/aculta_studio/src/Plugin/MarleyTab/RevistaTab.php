@@ -15,7 +15,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\aculta_magazine\Access\EditorialCapability;
 
@@ -45,18 +45,18 @@ final class RevistaTab extends MarleyTabBase {
     mixed $plugin_definition,
     ModuleHandlerInterface $moduleHandler,
     TranslationInterface $stringTranslation,
-    DomainPurposeManager $domainPurposes,
+    DomainSiteManager $siteManagers,
     EntityTypeManagerInterface $entityTypeManager,
     private readonly ConfigFactoryInterface $configFactory,
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $moduleHandler, $stringTranslation, $domainPurposes, $entityTypeManager);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $moduleHandler, $stringTranslation, $siteManagers, $entityTypeManager);
   }
 
   /**
    * Creates the tab with its role configuration dependency.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'), $container->get('string_translation'), $container->get('aculta_portal.domain_purpose'), $container->get('entity_type.manager'), $container->get('config.factory'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'), $container->get('string_translation'), $container->get('aculta_portal.domain_site'), $container->get('entity_type.manager'), $container->get('config.factory'));
   }
 
   /**

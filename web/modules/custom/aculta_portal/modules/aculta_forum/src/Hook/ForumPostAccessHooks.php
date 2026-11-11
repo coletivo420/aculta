@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Hook;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -22,7 +22,7 @@ use Drupal\user\EntityOwnerInterface;
 final class ForumPostAccessHooks {
 
   public function __construct(
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -43,7 +43,7 @@ final class ForumPostAccessHooks {
     // Without an active purpose (CLI, cron) or in MAIN the grant applies as
     // before. On any other purpose the grant must not apply, so the public
     // rules decide and every outcome they do not allow becomes forbidden.
-    $purpose = $this->domainPurposeManager->getCurrentPurpose();
+    $purpose = $this->siteManager->getCurrentSiteKey()?->value;
     if ($purpose === NULL || $purpose === 'main') {
       return AccessResult::neutral()
         ->addCacheableDependency($entity)
@@ -80,9 +80,9 @@ final class ForumPostAccessHooks {
     }
 
     $topicDomainPurpose = $topic->hasField('field_domain_source') && !$topic->get('field_domain_source')->isEmpty()
-      ? $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id)
+      ? $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id)
       : NULL;
-    $inForumContext = $this->domainPurposeManager->getCurrentPurpose() === 'forum'
+    $inForumContext = $this->siteManager->getCurrentSiteKey()?->value === 'forum'
       && $topicDomainPurpose === 'forum'
       && $topic->isPublished();
     $contextAccess = ($inForumContext ? AccessResult::allowed() : AccessResult::forbidden())
@@ -132,7 +132,7 @@ final class ForumPostAccessHooks {
       return NULL;
     }
 
-    $purposeAccess = $this->domainPurposeManager->getCurrentPurpose() === 'forum'
+    $purposeAccess = $this->siteManager->getCurrentSiteKey()?->value === 'forum'
       ? AccessResult::allowed()
       : AccessResult::forbidden();
     $permissionAccess = $account->hasPermission('create aculta forum posts')

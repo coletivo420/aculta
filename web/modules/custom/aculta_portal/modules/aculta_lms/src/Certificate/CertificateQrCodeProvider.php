@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Certificate;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_qrcode\Service\QrCodeGenerator;
 use Drupal\aculta_qrcode\Service\QrCodePayloadValidator;
 use Drupal\aculta_qrcode\Service\QrCodePresetRegistry;
@@ -18,18 +19,17 @@ final class CertificateQrCodeProvider implements CertificateQrCodeProviderInterf
     private readonly ?QrCodeGenerator $generator,
     private readonly ?QrCodePayloadValidator $payloadValidator,
     private readonly ?QrCodePresetRegistry $presets,
-    private readonly ?DomainPurposeManager $domainPurposeManager,
+    private readonly ?DomainSiteManager $siteManager,
   ) {}
 
   /**
    * {@inheritdoc} */
   public function generate(string $verificationCode, QrCodeFormat $format): string {
-    if ($this->generator === NULL || $this->payloadValidator === NULL || $this->presets === NULL || $this->domainPurposeManager === NULL) {
+    if ($this->generator === NULL || $this->payloadValidator === NULL || $this->presets === NULL || $this->siteManager === NULL) {
       throw new \InvalidArgumentException('Certificate QR services are unavailable.');
     }
 
-    $url = $this->domainPurposeManager->routeUrl(
-      'main',
+    $url = $this->siteManager->routeUrl(SiteKey::Main,
       'aculta_lms.certificate_verify',
       ['codigo' => $verificationCode],
     );

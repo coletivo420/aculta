@@ -12,7 +12,8 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\views\EntityViewsData;
 use Drupal\user\EntityOwnerInterface;
 use Drupal\user\UserInterface;
@@ -154,10 +155,10 @@ final class Event extends ContentEntityBase implements EntityOwnerInterface {
   /**
    * Retorna a URL canônica absoluta no purpose/domínio de eventos.
    */
-  public function toCanonicalUrl(?DomainPurposeManager $purposes = NULL): Url {
+  public function toCanonicalUrl(?DomainSiteManager $purposes = NULL): Url {
     $slug = (string) $this->get('field_slug')->value;
     if ($purposes !== NULL && $slug !== '') {
-      $canonical = $purposes->canonicalRouteUrl('eventos', 'aculta_events.page', ['slug' => $slug]);
+      $canonical = $purposes->canonicalRouteUrl(SiteKey::Eventos, 'aculta_events.page', ['slug' => $slug]);
       if ($canonical !== NULL) {
         return $canonical;
       }

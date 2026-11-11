@@ -55,7 +55,7 @@ final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase 
 
     $providers = $this->container->get('aculta_index.provider_registry');
     self::assertSame('forum_attachment', $providers->findProviderIdForBundle('media', 'forum_attachment'));
-    self::assertSame('forum', $providers->get('forum_attachment')->getAccessPurpose($attachment));
+    self::assertSame('forum', $providers->access('forum_attachment')->getAccessSiteKey($attachment));
     $mainDomain = Domain::load('aculta_org');
     self::assertInstanceOf(Domain::class, $mainDomain);
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
@@ -71,13 +71,13 @@ final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase 
     $filter = new ContentIndexAccessFilter(
       $this->container->get('entity_type.manager'),
       $providers,
-      $this->container->get('aculta_portal.domain_purpose'),
+      $this->container->get('aculta_portal.domain_site'),
     );
     self::assertFalse($attachment->access('view', $member, TRUE)->isAllowed(), 'The production Forum Media hook denies this bundle outside the Forum purpose.');
     self::assertCount(1, $filter->filter($candidate, $member)->entities, 'The Index applies the canonical Forum purpose, then preserves unpublished Media owner access.');
-    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
     self::assertCount(0, $filter->filter($candidate, $outsider)->entities, 'The Index does not expose an unpublished attachment to another account.');
-    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
   }
 
   /**
@@ -140,7 +140,7 @@ final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase 
     $filter = new ContentIndexAccessFilter(
       $this->container->get('entity_type.manager'),
       $providers,
-      $this->container->get('aculta_portal.domain_purpose'),
+      $this->container->get('aculta_portal.domain_site'),
     );
     $candidate = [[
       'entity_type' => 'media',
@@ -158,13 +158,13 @@ final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase 
     self::assertTrue($comment->access('view', new AnonymousUserSession(), TRUE)->isAllowed());
     self::assertTrue($media->isPublished(), 'The fixture deliberately starts with a published Media projection.');
     self::assertCount(1, $filter->filter($candidate, $viewer)->entities, 'The Index exposes the published Media through its currently public Comment reference.');
-    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
 
     $topic->setUnpublished();
     $topic->save();
     self::assertTrue($media->isPublished(), 'Host changes do not synchronously rewrite this Media fixture.');
     self::assertCount(0, $filter->filter($candidate, $viewer)->entities, 'The Index must not trust a stale published flag after the host becomes private.');
-    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
   }
 
   /**
@@ -190,7 +190,7 @@ final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase 
     $filter = new ContentIndexAccessFilter(
       $this->container->get('entity_type.manager'),
       $this->container->get('aculta_index.provider_registry'),
-      $this->container->get('aculta_portal.domain_purpose'),
+      $this->container->get('aculta_portal.domain_site'),
     );
     $candidate = [
       [
@@ -201,14 +201,14 @@ final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase 
     ];
 
     self::assertCount(1, $filter->filter($candidate, $viewer)->entities);
-    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
 
     $forumDomain = Domain::load('forum_aculta_org');
     self::assertInstanceOf(Domain::class, $forumDomain);
     $forumDomain->delete();
 
     self::assertCount(0, $filter->filter($candidate, $viewer)->entities);
-    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
   }
 
   /**
@@ -297,7 +297,7 @@ final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase 
     $filter = new ContentIndexAccessFilter(
       $this->container->get('entity_type.manager'),
       $this->container->get('aculta_index.provider_registry'),
-      $this->container->get('aculta_portal.domain_purpose'),
+      $this->container->get('aculta_portal.domain_site'),
     );
     $candidates = [
       [[
@@ -322,9 +322,9 @@ final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase 
 
     foreach ($candidates as $candidate) {
       self::assertCount(1, $filter->filter($candidate, $member)->entities);
-      self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+      self::assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
       self::assertCount(0, $filter->filter($candidate, $outsider)->entities);
-      self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+      self::assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
     }
 
     // Grants can change outside entity saves, so the next Index query must
@@ -342,7 +342,7 @@ final class ContentIndexForumAccessKernelTest extends ForumAccessKernelTestBase 
         $filter->filter($candidate, $member)->entities,
         sprintf('Revoked membership must deny candidate %d.', $index),
       );
-      self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+      self::assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
     }
   }
 

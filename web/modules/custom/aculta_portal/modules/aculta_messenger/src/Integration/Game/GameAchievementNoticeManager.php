@@ -7,7 +7,8 @@ namespace Drupal\aculta_messenger\Integration\Game;
 use Drupal\aculta_messenger\Aviso\EligibleNoticePage;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_user\Badge\BadgeService;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -34,7 +35,7 @@ final class GameAchievementNoticeManager implements GameAchievementNoticeManager
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly BadgeService $badges,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly LockBackendInterface $lock,
   ) {}
 
@@ -132,7 +133,7 @@ final class GameAchievementNoticeManager implements GameAchievementNoticeManager
       $message = $entry['entity'];
       $notice = $entry['resolved'];
       $read = (bool) $message->get(self::READ_FIELD)->value;
-      $url = $this->domainPurposeManager->routeUrl('account', 'aculta_user.atividade', ['aba' => 'conquistas']);
+      $url = $this->siteManager->routeUrl(SiteKey::Account, 'aculta_user.atividade', ['aba' => 'conquistas']);
       if ($url === NULL) {
         continue;
       }

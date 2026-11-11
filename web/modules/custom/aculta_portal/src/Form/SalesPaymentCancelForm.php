@@ -10,6 +10,7 @@ use Drupal\aculta_portal\Sales\SalesPaymentAccess;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\Core\Form\ConfirmFormBase;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -51,15 +52,15 @@ final class SalesPaymentCancelForm extends ConfirmFormBase {
   /**
    * Performs the get question operation.
    */
-  public function getQuestion(): string {
-    return (string) $this->t('Cancelar este pagamento pendente no Mercado Pago?');
+  public function getQuestion(): TranslatableMarkup {
+    return $this->t('Cancelar este pagamento pendente no Mercado Pago?');
   }
 
   /**
    * Performs the get description operation.
    */
-  public function getDescription(): string {
-    return (string) $this->t('Só funciona enquanto o pagamento está pendente, em processo ou autorizado. Pagamento aprovado precisa de estorno.');
+  public function getDescription(): TranslatableMarkup {
+    return $this->t('Só funciona enquanto o pagamento está pendente, em processo ou autorizado. Pagamento aprovado precisa de estorno.');
   }
 
   /**

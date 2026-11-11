@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Profile\PerfilDoPapel;
 use Drupal\aculta_user\Account\AccountNames;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -23,7 +24,7 @@ final class PublicProfileLink implements PublicProfileLinkInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $purposeManager,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -44,7 +45,7 @@ final class PublicProfileLink implements PublicProfileLinkInterface {
       return NULL;
     }
 
-    return $this->purposeManager->routeUrl('main', 'aculta_user.perfil_publico', ['apelido' => $slug]);
+    return $this->siteManager->routeUrl(SiteKey::Main, 'aculta_user.perfil_publico', ['apelido' => $slug]);
   }
 
 }

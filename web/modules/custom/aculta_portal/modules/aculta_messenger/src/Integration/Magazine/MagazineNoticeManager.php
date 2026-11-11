@@ -11,7 +11,8 @@ use Drupal\aculta_messenger\Aviso\EligibleNoticePage;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_messenger\Service\NoticeRelatedGrouper;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
@@ -53,7 +54,7 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly AvisoPreferenciasInterface $preferences,
     private readonly QueueFactory $queueFactory,
     private readonly LockBackendInterface $lock,
@@ -216,14 +217,14 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
       $node = $nodesByUuid[$uuid] ?? NULL;
       if (!$node instanceof NodeInterface || (int) $node->getRevisionId() !== $revision
         || !$this->revisionIsEligible($node, $type)
-        || !$this->domainPurposes->runInPurpose('magazine', static fn(): bool => $node->access('view', $account, TRUE)->isAllowed())
+        || !$this->siteManagers->runInSite('magazine', static fn(): bool => $node->access('view', $account, TRUE)->isAllowed())
         || !$this->isRecipient($node, (int) $account->id(), $type)) {
         continue;
       }
       $url = in_array($type, ['review_submitted', 'review_returned'], TRUE) && !$node->isDefaultRevision()
-        ? $this->domainPurposes->routeUrl('magazine', 'entity.node.latest_version', ['node' => $node->id()])
-        : $this->domainPurposes->routeUrl('magazine', 'entity.node.canonical', ['node' => $node->id()]);
-      if ($url === NULL || !$this->domainPurposes->runInPurpose('magazine', static fn(): bool => $url->access($account, TRUE)->isAllowed())) {
+        ? $this->siteManagers->routeUrl(SiteKey::Magazine, 'entity.node.latest_version', ['node' => $node->id()])
+        : $this->siteManagers->routeUrl(SiteKey::Magazine, 'entity.node.canonical', ['node' => $node->id()]);
+      if ($url === NULL || !$this->siteManagers->runInSite('magazine', static fn(): bool => $url->access($account, TRUE)->isAllowed())) {
         continue;
       }
       $title = match ($type) {
@@ -432,7 +433,7 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
       || !$this->revisionIsEligible($node, $noticeType)) {
       return NULL;
     }
-    $allowed = $this->domainPurposes->runInPurpose('magazine', static fn(): bool =>
+    $allowed = $this->siteManagers->runInSite('magazine', static fn(): bool =>
       $node->access('view', $account, TRUE)->isAllowed()
     );
     return $allowed === TRUE ? $node : NULL;

@@ -6,6 +6,7 @@ namespace Drupal\aculta_portal\Form;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfirmFormBase;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -51,15 +52,15 @@ final class AdminEmailConfirmForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getQuestion(): string {
-    return (string) $this->t('Confirmar o e-mail desta conta?');
+  public function getQuestion(): TranslatableMarkup {
+    return $this->t('Confirmar o e-mail desta conta?');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getDescription(): string {
-    return (string) $this->t('Use somente quando a pessoa comprovou o endereço por outro meio. A conta passa a ter o papel "E-mail confirmado", como no fluxo normal. Nenhum e-mail é enviado.');
+  public function getDescription(): TranslatableMarkup {
+    return $this->t('Use somente quando a pessoa comprovou o endereço por outro meio. A conta passa a ter o papel "E-mail confirmado", como no fluxo normal. Nenhum e-mail é enviado.');
   }
 
   /**

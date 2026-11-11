@@ -100,7 +100,7 @@ final class MailResend {
       $attempt,
       $transportName,
       $errorCode,
-      DeliveryFailureSummary::create($result['error_class'] ?? NULL, $code),
+      DeliveryFailureSummary::create($result['error_class'], $code),
     );
     return SendResult::failed(DeliveryError::Temporary, $code);
   }

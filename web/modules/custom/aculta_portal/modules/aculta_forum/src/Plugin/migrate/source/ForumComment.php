@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Plugin\migrate\source;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
@@ -46,7 +46,7 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
     array $plugin_definition,
     MigrationInterface $migration,
     protected readonly EntityTypeManagerInterface $entityTypeManager,
-    protected readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly DomainSiteManager $siteManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $migration);
     $this->batchSize = (int) ($configuration['comment_batch_size'] ?? self::DEFAULT_BATCH_SIZE);
@@ -65,7 +65,7 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
       $plugin_definition,
       $migration,
       $container->get('entity_type.manager'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
     );
   }
 
@@ -169,7 +169,7 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
       || !$topic->hasField('field_domain_source') || $topic->get('field_domain_source')->isEmpty()) {
       return FALSE;
     }
-    return $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum';
+    return $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum';
   }
 
   /**

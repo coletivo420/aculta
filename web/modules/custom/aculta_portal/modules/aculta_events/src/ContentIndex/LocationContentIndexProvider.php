@@ -47,7 +47,7 @@ final class LocationContentIndexProvider implements ContentIndexProviderInterfac
   /**
    * {@inheritdoc}
    */
-  public function getAccessPurpose(ContentEntityInterface $entity): ?string {
+  public function getAccessSiteKey(ContentEntityInterface $entity): ?string {
     return $entity instanceof EventLocation ? 'eventos' : NULL;
   }
 

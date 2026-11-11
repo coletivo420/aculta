@@ -10,7 +10,7 @@ use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Form\EventDateCreateForm;
 use Drupal\aculta_events\Hook\EventDateHooks;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Session\AnonymousUserSession;
@@ -46,7 +46,7 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->setDefinition('aculta_portal.domain_purpose', (new Definition(DomainPurposeManager::class, [
+    $container->setDefinition('aculta_portal.domain_site', (new Definition(DomainSiteManager::class, [
       new Reference('entity_type.manager'),
       new Reference('domain.negotiator'),
       new Reference('config.factory'),
@@ -150,12 +150,12 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
     $locDeleteUrl = $location->toUrl('delete-form');
     $this->assertSame('aculta_events.location_delete', $locDeleteUrl->getRouteName());
 
-    // toCanonicalUrl com e sem DomainPurposeManager.
+    // toCanonicalUrl com e sem DomainSiteManager.
     $this->assertSame('aculta_events.page', $event->toCanonicalUrl(NULL)->getRouteName());
     $this->assertSame('aculta_events.location_canonical', $location->toCanonicalUrl(NULL)->getRouteName());
 
-    /** @var \Drupal\aculta_portal\Domain\DomainPurposeManager $purposes */
-    $purposes = $this->container->get('aculta_portal.domain_purpose');
+    /** @var \Drupal\aculta_portal\Domain\DomainSiteManager $purposes */
+    $purposes = $this->container->get('aculta_portal.domain_site');
     $canonicalEventAbs = $event->toCanonicalUrl($purposes);
     $this->assertStringContainsString('/eventos/' . $event->get('field_slug')->value, $canonicalEventAbs->toString());
 

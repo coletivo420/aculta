@@ -9,7 +9,7 @@ use Drupal\aculta_forum\Context\Provider\PublicForumContextProvider;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Plugin\Field\FieldFormatter\ForumPostSearchTopicLinkFormatter;
 use Drupal\aculta_forum\Service\ForumPostThreadBuilder;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\Entity\Domain;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -49,7 +49,7 @@ final class ForumPostSearchTopicLinkFormatterKernelTest extends KernelTestBase {
   /**
    * Purpose resolver.
    */
-  private DomainPurposeManager $purpose;
+  private DomainSiteManager $purpose;
 
   /**
    * Current user used by the formatter.
@@ -112,7 +112,7 @@ final class ForumPostSearchTopicLinkFormatterKernelTest extends KernelTestBase {
       'field_domain_source' => ['target_id' => 'forum_aculta_org'],
     ]);
     $this->topic->save();
-    $this->purpose = new DomainPurposeManager(
+    $this->purpose = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get('domain.negotiator'),
       $this->container->get('config.factory'),
@@ -125,7 +125,7 @@ final class ForumPostSearchTopicLinkFormatterKernelTest extends KernelTestBase {
    */
   public function testPublishedPostLinksToAnchoredTopicPage(): void {
     $post = $this->post();
-    $build = $this->purpose->runInPurpose('forum', fn () => $this->renderLink($post));
+    $build = $this->purpose->runInSite('forum', fn () => $this->renderLink($post));
 
     self::assertNotEmpty($build);
     self::assertSame('entity.node.canonical', $build[0]['#url']->getRouteName());
@@ -139,11 +139,11 @@ final class ForumPostSearchTopicLinkFormatterKernelTest extends KernelTestBase {
   public function testUnpublishedAndOutsidePurposeRenderNothing(): void {
     $post = $this->post();
     $post->setUnpublished()->save();
-    $unpublished = $this->purpose->runInPurpose('forum', fn () => $this->renderLink($post));
+    $unpublished = $this->purpose->runInSite('forum', fn () => $this->renderLink($post));
     self::assertTrue($unpublished[0]['#access'] === FALSE);
 
     $post->setPublished()->save();
-    $outside = $this->purpose->runInPurpose('main', fn () => $this->renderLink($post));
+    $outside = $this->purpose->runInSite('main', fn () => $this->renderLink($post));
     self::assertSame([], $outside);
   }
 

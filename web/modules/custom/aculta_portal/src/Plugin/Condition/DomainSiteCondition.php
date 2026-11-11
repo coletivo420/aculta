@@ -9,7 +9,7 @@ use Drupal\Core\Condition\Attribute\Condition;
 use Drupal\Core\Condition\ConditionPluginBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -19,13 +19,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
   id: 'aculta_domain_purpose',
   label: new TranslatableMarkup('ACULTA domain purpose'),
 )]
-final class DomainPurposeCondition extends ConditionPluginBase implements ContainerFactoryPluginInterface {
+final class DomainSiteCondition extends ConditionPluginBase implements ContainerFactoryPluginInterface {
 
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    protected readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly DomainSiteManager $siteManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -38,7 +38,7 @@ final class DomainPurposeCondition extends ConditionPluginBase implements Contai
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
     );
   }
 
@@ -89,7 +89,7 @@ final class DomainPurposeCondition extends ConditionPluginBase implements Contai
    * {@inheritdoc}
    */
   public function evaluate(): bool {
-    return $this->domainPurposeManager->getCurrentPurpose() === $this->configuration['purpose'];
+    return $this->siteManager->getCurrentSiteKey()?->value === $this->configuration['purpose'];
   }
 
   /**

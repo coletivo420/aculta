@@ -6,7 +6,7 @@ namespace Drupal\aculta_magazine\Hook;
 
 use Drupal\aculta_magazine\Presentation\PostPresentation;
 use Drupal\aculta_magazine\Revista\RevistaPublications;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_user\Identity\AuthorCardBuilder;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
@@ -31,8 +31,8 @@ final class ArticleAuthorsHooks {
   use StringTranslationTrait;
 
   public function __construct(
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $purposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
     #[Autowire(service: 'aculta_magazine.post_presentation')]
     private readonly PostPresentation $presentation,
     #[Autowire(service: 'aculta_user.author_card_builder')]
@@ -50,7 +50,7 @@ final class ArticleAuthorsHooks {
       || !$entity->isPublished()) {
       return;
     }
-    if ($view_mode !== 'full' || $this->purposeManager->getCurrentPurpose() !== 'magazine') {
+    if ($view_mode !== 'full' || $this->siteManager->getCurrentSiteKey()?->value !== 'magazine') {
       return;
     }
 

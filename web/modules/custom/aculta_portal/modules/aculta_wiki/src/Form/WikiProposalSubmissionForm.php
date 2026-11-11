@@ -91,7 +91,7 @@ final class WikiProposalSubmissionForm extends FormBase {
       '#options' => WikiProposal::INTENTS,
       '#required' => TRUE,
     ];
-    $requestedIntent = $this->getRequest()?->query->all()['intent'] ?? NULL;
+    $requestedIntent = $this->getRequest()->query->all()['intent'] ?? NULL;
     if (is_string($requestedIntent) && isset(WikiProposal::INTENTS[$requestedIntent])) {
       $form['intent']['#default_value'] = $requestedIntent;
     }
@@ -338,9 +338,6 @@ final class WikiProposalSubmissionForm extends FormBase {
     $values = (array) ($submittedValues['field_values'] ?? []);
     $fields = [];
     foreach ($selected as $fieldName => $selectedValue) {
-      if ($selectedValue === 0 || $selectedValue === '0' || $selectedValue === '') {
-        continue;
-      }
       switch ($fieldName) {
         case 'title':
           $fields[$fieldName] = (string) ($values['title'] ?? '');
@@ -505,7 +502,7 @@ final class WikiProposalSubmissionForm extends FormBase {
   /**
    * Extracts one ID from the media autocomplete element.
    */
-  private function extractTargetId(mixed $value): int|string|null {
+  private function extractTargetId(mixed $value): ?int {
     if (is_array($value)) {
       $value = $value['target_id'] ?? NULL;
     }

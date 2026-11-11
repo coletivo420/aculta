@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Service;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_forum\Event\ForumCommentSubtreeMovedEvent;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\CommentStatisticsInterface;
@@ -39,8 +40,8 @@ final class ForumCommentMover {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly ForumDiscussionWriteGuard $discussionWriteGuard,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
     private readonly LockBackendInterface $lock,
     private readonly Connection $database,
     private readonly CommentStatisticsInterface $commentStatistics,
@@ -65,7 +66,7 @@ final class ForumCommentMover {
       return $result;
     }
 
-    $forum_domain = $this->domainPurposeManager->getDomain('forum');
+    $forum_domain = $this->siteManager->getDomain(SiteKey::Forum);
     $allowed = $this->configFactory->get('aculta_forum.settings')->get('comment_move_enabled') === TRUE
       && $forum_domain !== NULL
       && $account->hasPermission('move aculta forum comments')
@@ -79,11 +80,11 @@ final class ForumCommentMover {
     }
 
     if ($allowed) {
-      $node_access = $this->domainPurposeManager->runInPurpose(
+      $node_access = $this->siteManager->runInSite(
         'forum',
         fn () => $source->access('view', $account, TRUE),
       );
-      $comment_access = $this->domainPurposeManager->runInPurpose(
+      $comment_access = $this->siteManager->runInSite(
         'forum',
         fn () => $comment->access('view', $account, TRUE),
       );
@@ -112,12 +113,12 @@ final class ForumCommentMover {
       return [];
     }
     $source = $comment->getCommentedEntity();
-    $domain = $this->domainPurposeManager->getDomain('forum');
+    $domain = $this->siteManager->getDomain(SiteKey::Forum);
     if (!$source instanceof NodeInterface || $domain === NULL) {
       return [];
     }
 
-    $ids = $this->domainPurposeManager->runInPurpose('forum', function () use ($domain, $source): array {
+    $ids = $this->siteManager->runInSite('forum', function () use ($domain, $source): array {
       return array_values($this->entityTypeManager->getStorage('node')->getQuery()
         ->accessCheck(TRUE)
         ->condition('type', 'aculta_forum_topic')
@@ -132,7 +133,7 @@ final class ForumCommentMover {
     $destinations = [];
     foreach ($this->entityTypeManager->getStorage('node')->loadMultiple($ids) as $node) {
       if ($node instanceof NodeInterface && $this->isOpenTopic($node)) {
-        $access = $this->domainPurposeManager->runInPurpose(
+        $access = $this->siteManager->runInSite(
           'forum',
           fn () => $node->access('view', $account, TRUE),
         );
@@ -186,7 +187,7 @@ final class ForumCommentMover {
         $source = $this->assertMoveEndpoints($comment, $destination, $account);
         $subtree = $this->loadSubtree($comment);
         foreach ($subtree as $member) {
-          if (!$this->domainPurposeManager->runInPurpose(
+          if (!$this->siteManager->runInSite(
             'forum',
             fn () => $member->access('view', $account, TRUE)->isAllowed(),
           )) {
@@ -279,12 +280,12 @@ final class ForumCommentMover {
       throw new \InvalidArgumentException('The Forum comment move is not authorized for these endpoints.');
     }
 
-    $forum_domain = $this->domainPurposeManager->getDomain('forum');
+    $forum_domain = $this->siteManager->getDomain(SiteKey::Forum);
     if ($forum_domain === NULL
       || (string) ($destination->get('field_domain_source')->target_id ?? '') !== (string) $forum_domain->id()) {
       throw new \InvalidArgumentException('The destination is outside the public Forum purpose.');
     }
-    $destination_access = $this->domainPurposeManager->runInPurpose(
+    $destination_access = $this->siteManager->runInSite(
       'forum',
       fn () => $destination->access('view', $account, TRUE),
     );

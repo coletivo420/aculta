@@ -12,7 +12,7 @@ use Drupal\aculta_image\FileRemover;
 use Drupal\aculta_lms\Resources\Cleanup\CourseDocumentCleanup;
 use Drupal\aculta_lms\Hook\CourseDocumentCleanupHooks;
 use Drupal\aculta_portal\Cleanup\UnusedMediaCleaner;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
@@ -64,7 +64,7 @@ final class CourseDocumentCleanupKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+    $container->set('aculta_portal.domain_site', new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),

@@ -74,12 +74,12 @@ services:
 
   aculta_statistics.commerce_order_domain_hooks:
     class: Drupal\aculta_statistics\Hook\CommerceOrderDomainHooks
-    arguments: ['@aculta_statistics.purpose_resolver']
+    arguments: ['@aculta_statistics.site_key_resolver']
 
   # Opcional: sem o portal instalado, pedidos seguem sem purpose (sem_dominio).
-  aculta_statistics.purpose_resolver:
-    class: Drupal\aculta_statistics\Domain\PortalPurposeResolver
-    arguments: ['@?Drupal\aculta_portal\Domain\DomainPurposeManager']
+  aculta_statistics.site_key_resolver:
+    class: Drupal\aculta_statistics\Domain\PortalSiteKeyResolver
+    arguments: ['@?Drupal\aculta_portal\Domain\DomainSiteManager']
 
   aculta_statistics.lms_class_resolver:
     class: Drupal\aculta_statistics\Lms\LmsClassResolver
@@ -171,6 +171,6 @@ services:
   aculta_statistics.gsc_client:
     class: Drupal\aculta_statistics\Connector\SearchConsole\GoogleSearchConsoleClient
     arguments: ['@aculta_statistics.gsc_settings', '@aculta_statistics.ga4_logger']
-  Drupal\aculta_statistics\Domain\PurposeResolverInterface: '@aculta_statistics.purpose_resolver'
+  Drupal\aculta_statistics\Domain\SiteKeyResolverInterface: '@aculta_statistics.site_key_resolver'
   Drupal\aculta_statistics\Lms\LmsClassResolverInterface: '@aculta_statistics.lms_class_resolver'
   Drupal\aculta_mailer\Report\StatisticsLinesProviderInterface: '@aculta_statistics.summary_lines'

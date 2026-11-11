@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_statistics\Hook;
 
-use Drupal\aculta_statistics\Domain\PurposeResolverInterface;
+use Drupal\aculta_statistics\Domain\SiteKeyResolverInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 
@@ -24,7 +24,7 @@ final class CommerceOrderDomainHooks {
   public const DATA_KEY = 'aculta_statistics_purpose';
 
   public function __construct(
-    private readonly PurposeResolverInterface $purposes,
+    private readonly SiteKeyResolverInterface $purposes,
   ) {}
 
   /**

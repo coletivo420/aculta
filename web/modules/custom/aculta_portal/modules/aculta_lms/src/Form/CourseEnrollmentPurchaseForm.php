@@ -6,7 +6,8 @@ namespace Drupal\aculta_lms\Form;
 
 use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\commerce_cart\CartManagerInterface;
 use Drupal\commerce_cart\CartProviderInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
@@ -50,8 +51,8 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
     protected readonly MessengerInterface $messengerService,
     #[Autowire(service: 'string_translation')]
     TranslationInterface $translation,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    protected readonly DomainPurposeManager $purposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    protected readonly DomainSiteManager $siteManager,
     #[Autowire(service: 'aculta_portal.checkout_settings')]
     protected readonly ?CheckoutSettings $checkoutSettings = NULL,
   ) {
@@ -167,7 +168,7 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
     $item->set('field_course_class', ['target_id' => $class->id()]);
     $this->cartManager->addOrderItem($cart, $item, FALSE);
 
-    $checkoutUrl = $this->purposeManager->routeUrl('main', 'aculta_portal.cart_checkout');
+    $checkoutUrl = $this->siteManager->routeUrl(SiteKey::Main, 'aculta_portal.cart_checkout');
     if ($checkoutUrl === NULL) {
       $this->messengerService->addError($this->t('Não foi possível abrir o checkout agora. O curso foi adicionado ao carrinho.'));
       return;

@@ -10,7 +10,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Support\SupportAmountsProviderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -46,7 +47,7 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
   /**
    * Gerenciador de domínio: os links de doação apontam direto ao domínio principal (rota transacional).
    */
-  protected DomainPurposeManager $purposes;
+  protected DomainSiteManager $sites;
 
 
   // phpcs:disable Generic.CodeAnalysis.UselessOverridingMethod.Found
@@ -78,7 +79,7 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
     $instance->formBuilder = $container->get('form_builder');
     $instance->configFactory = $container->get('config.factory');
     $instance->campanhas = $container->has('aculta_donation.campaigns') ? $container->get('aculta_donation.campaigns') : NULL;
-    $instance->purposes = $container->get('aculta_portal.domain_purpose');
+    $instance->sites = $container->get('aculta_portal.domain_site');
     return $instance;
 
   }
@@ -134,14 +135,14 @@ class QuickDonationBlock extends BlockBase implements ContainerFactoryPluginInte
     foreach ($valores as $delta => $amount) {
       $links[$delta] = [
         'title' => 'R$ ' . number_format((float) $amount, 0, ',', '.'),
-        'url' => $this->purposes->routeUrl('support', 'aculta_donation.donation.quick', ['amount' => $amount])?->toString() ?? Url::fromRoute('aculta_donation.donation.quick', ['amount' => $amount])->toString(),
+        'url' => $this->sites->routeUrl(SiteKey::Support, 'aculta_donation.donation.quick', ['amount' => $amount])?->toString() ?? Url::fromRoute('aculta_donation.donation.quick', ['amount' => $amount])->toString(),
       ];
     }
     // "Outro": o visitante digita o valor no fluxo de doação (campo "Outro valor" do widget).
     if ($permiteOutro) {
       $links['outro'] = [
         'title' => (string) $this->t('Outro'),
-        'url' => $this->purposes->routeUrl('support', 'aculta_donation.donation.default')?->toString() ?? Url::fromRoute('aculta_donation.donation.default')->toString(),
+        'url' => $this->sites->routeUrl(SiteKey::Support, 'aculta_donation.donation.default')?->toString() ?? Url::fromRoute('aculta_donation.donation.default')->toString(),
       ];
     }
     // Dados neutros: o tema apresenta os valores (componente SDC donation-quick do tema).

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Hook;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Core\Access\AccessResult;
@@ -23,8 +23,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class EntityHooks {
 
   public function __construct(
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
     #[Autowire(service: 'current_route_match')]
     private readonly CurrentRouteMatch $routeMatch,
     #[Autowire(service: 'request_stack')]
@@ -67,7 +67,7 @@ final class EntityHooks {
 
     $wikiEntity = ($entity->getEntityTypeId() === 'node' && $entity->bundle() === 'wiki_entry')
       || ($entity->getEntityTypeId() === 'taxonomy_term' && $entity->bundle() === 'wiki_category');
-    if ($wikiEntity && $this->domainPurposeManager->getCurrentPurpose() !== 'wiki') {
+    if ($wikiEntity && $this->siteManager->getCurrentSiteKey()?->value !== 'wiki') {
       return AccessResult::forbidden()
         ->addCacheContexts(['domain'])
         ->addCacheableDependency($entity);

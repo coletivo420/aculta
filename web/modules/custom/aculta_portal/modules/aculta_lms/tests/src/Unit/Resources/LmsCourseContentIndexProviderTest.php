@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Unit\Resources;
 
 use Drupal\aculta_lms\Resources\ContentIndex\LmsCourseContentIndexProvider;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
@@ -115,7 +115,7 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
     $course = $this->createCourse();
     $account = $this->createMock(AccountInterface::class);
 
-    self::assertSame('courses', $provider->getAccessPurpose($course));
+    self::assertSame('courses', $provider->getAccessSiteKey($course));
     self::assertSame(['group' => ['lms_course']], $provider->getSupportedEntityTypes());
 
     $course->method('hasPermission')->willReturnMap([
@@ -196,7 +196,7 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
     $storage->method('load')->with('cursos_aculta_org')->willReturn($domain);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->with('domain')->willReturn($storage);
-    $domainPurposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $entityTypeManager,
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
@@ -204,7 +204,7 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
     );
     $relationTypeManager ??= $this->createMock(GroupRelationTypeManagerInterface::class);
     $relationTypeManager->method('hasDefinition')->willReturn(FALSE);
-    return new LmsCourseContentIndexProvider($domainPurposeManager, $relationTypeManager);
+    return new LmsCourseContentIndexProvider($siteManager, $relationTypeManager);
   }
 
 }

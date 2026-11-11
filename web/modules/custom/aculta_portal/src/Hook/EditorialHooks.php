@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Hook;
 
-use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\PathProcessor\SiteFrontPathProcessor;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Plugin\metatag\Tag\PostalAddressTag;
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -22,8 +23,8 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class EditorialHooks {
 
   public function __construct(
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
     #[Autowire(service: 'path.current')]
     private readonly CurrentPathStack $currentPath,
   ) {}
@@ -70,8 +71,7 @@ final class EditorialHooks {
     $node = $entity instanceof NodeInterface ? $entity : NULL;
 
     if ($entity instanceof GroupInterface && $entity->bundle() === 'lms_course') {
-      $canonical = $this->domainPurposeManager->canonicalRouteUrl(
-        'courses',
+      $canonical = $this->siteManager->canonicalRouteUrl(SiteKey::Courses,
         'entity.group.canonical',
         ['group' => $entity->id()],
       );
@@ -84,15 +84,15 @@ final class EditorialHooks {
 
     // A página raiz do host usa um caminho interno em FRONT_PATHS. O canonical
     // ainda aponta para a raiz pública, não para esse caminho interno.
-    $purpose = $this->domainPurposeManager->getCurrentPurpose();
+    $purpose = $this->siteManager->getCurrentSiteKey()?->value;
     $frontPath = $purpose === NULL
       ? NULL
-      : (PurposeFrontPathProcessor::FRONT_PATHS[$purpose] ?? NULL);
+      : (SiteFrontPathProcessor::FRONT_PATHS[$purpose] ?? NULL);
     $paginaRaiz = $frontPath !== NULL && ($node === NULL
       ? $this->currentPath->getPath() === $frontPath
       : $node->toUrl()->setAbsolute(FALSE)->toString() === $frontPath);
     if ($paginaRaiz) {
-      $root = $this->domainPurposeManager->pathUrl($purpose, '/');
+      $root = $this->siteManager->pathUrl($purpose, '/');
       if ($root !== NULL) {
         $tags['canonical_url'] = $root->toString();
         $tags['og_url'] = $root->toString();
@@ -100,8 +100,7 @@ final class EditorialHooks {
     }
 
     if ($node !== NULL && $node->bundle() === 'wiki_entry') {
-      $canonical = $this->domainPurposeManager->canonicalRouteUrl(
-        'wiki',
+      $canonical = $this->siteManager->canonicalRouteUrl(SiteKey::Wiki,
         'entity.node.canonical',
         ['node' => $node->id()],
       );

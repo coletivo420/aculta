@@ -190,7 +190,7 @@ final class PortalHelperRegistry {
       'summary' => 'Lê o relatório neutro publicado pelo ACULTA Deployer sem executar sua CLI.',
       'docs' => 'docs/architecture/environments.md',
     ],
-    'aculta_portal.domain_purpose' => [
+    'aculta_portal.domain_site' => [
       'label' => 'Domain Purpose Manager',
       'summary' => 'Resolve propósito atual e URLs canônicas entre Domains.',
       'docs' => 'docs/portal/DOMAIN-PRESENTATION-CONTRACT.md',

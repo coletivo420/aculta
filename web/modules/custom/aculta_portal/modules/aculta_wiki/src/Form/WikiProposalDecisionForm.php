@@ -6,7 +6,8 @@ namespace Drupal\aculta_wiki\Form;
 
 use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_cgu\Service\ContributionLifecycle;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\aculta_wiki\Service\WikiProposalDecision;
 use Drupal\Core\Form\FormBase;
@@ -30,7 +31,7 @@ final class WikiProposalDecisionForm extends FormBase {
     protected readonly WikiProposalDecision $decision,
     protected readonly ContributionLifecycle $contributions,
     protected readonly ModuleHandlerInterface $moduleHandler,
-    protected readonly DomainPurposeManager $domainPurposes,
+    protected readonly DomainSiteManager $siteManagers,
   ) {}
 
   /**
@@ -42,7 +43,7 @@ final class WikiProposalDecisionForm extends FormBase {
       $container->get('aculta_wiki.proposal_decision'),
       $container->get('aculta_contributions.lifecycle'),
       $container->get('module_handler'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
     );
   }
 
@@ -91,21 +92,21 @@ final class WikiProposalDecisionForm extends FormBase {
       ? $proposal->get('target')->entity
       : $this->loadWikiTarget($proposal);
     if ($target !== NULL) {
-      $targetUrl = $this->domainPurposes->routeUrl('wiki', 'entity.node.canonical', ['node' => $target->id()]);
-      if ($targetUrl !== NULL && $this->domainPurposes->runInPurpose('wiki', static fn (): bool => $targetUrl->access())) {
+      $targetUrl = $this->siteManagers->routeUrl(SiteKey::Wiki, 'entity.node.canonical', ['node' => $target->id()]);
+      if ($targetUrl !== NULL && $this->siteManagers->runInSite('wiki', static fn (): bool => $targetUrl->access())) {
         $form['proposal_header']['#slots']['actions']['target'] = [
           '#type' => 'link',
           '#title' => $this->t('Abrir verbete publicado'),
           '#url' => $targetUrl,
         ];
       }
-      $revisionUrl = $this->domainPurposes->routeUrl('wiki', 'entity.node.revision', [
+      $revisionUrl = $this->siteManagers->routeUrl(SiteKey::Wiki, 'entity.node.revision', [
         'node' => $target->id(),
         'node_revision' => $proposal instanceof WikiProposal
           ? $proposal->get('target_revision_id')->value
           : $proposal->get('base_revision')->value,
       ]);
-      if ($revisionUrl !== NULL && $this->domainPurposes->runInPurpose('wiki', static fn (): bool => $revisionUrl->access())) {
+      if ($revisionUrl !== NULL && $this->siteManagers->runInSite('wiki', static fn (): bool => $revisionUrl->access())) {
         $form['proposal_header']['#slots']['actions']['base_revision'] = [
           '#type' => 'link',
           '#title' => $this->t('Abrir revisão-base da proposta'),
@@ -183,7 +184,7 @@ final class WikiProposalDecisionForm extends FormBase {
     $sourceLinks = [];
     $sourceUris = $proposal instanceof Contribution
       ? (array) ($sourceData['source_uris'] ?? [])
-      : array_map(static fn ($item): string => (string) $item->value, iterator_to_array($proposal->get('source_uri')));
+      : array_map(static fn ($item): string => (string) ($item->getValue()['value'] ?? ''), iterator_to_array($proposal->get('source_uri')));
     foreach ($sourceUris as $sourceUri) {
       $uri = is_string($sourceUri) ? $sourceUri : '';
       if (!filter_var($uri, FILTER_VALIDATE_URL)

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Migration;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -28,7 +28,7 @@ final class ForumCommentMigrationAudit {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly ModuleHandlerInterface $moduleHandler,
   ) {}
 
@@ -126,7 +126,7 @@ final class ForumCommentMigrationAudit {
           continue;
         }
         if (!$topic->hasField('field_domain_source') || $topic->get('field_domain_source')->isEmpty()
-          || $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
+          || $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
           $report['wrong_purpose']++;
           continue;
         }
@@ -356,7 +356,7 @@ final class ForumCommentMigrationAudit {
       || !$topic->hasField('field_domain_source') || $topic->get('field_domain_source')->isEmpty()) {
       return NULL;
     }
-    if ($this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
+    if ($this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
       return NULL;
     }
     return (string) $topic->id();
@@ -500,7 +500,7 @@ final class ForumCommentMigrationAudit {
             $topic = $post->get('topic')->entity;
             if ($topic instanceof NodeInterface && $topic->bundle() === self::TOPIC_BUNDLE
               && $topic->hasField('field_domain_source') && !$topic->get('field_domain_source')->isEmpty()
-              && $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum') {
+              && $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum') {
               $post_topic_by_id[$post_id] = (string) $topic->id();
             }
           }

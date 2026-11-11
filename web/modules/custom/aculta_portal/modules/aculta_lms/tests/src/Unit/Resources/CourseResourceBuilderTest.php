@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Unit\Resources;
 
 use Drupal\aculta_lms\Resources\CourseResourceBuilder;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -101,14 +101,14 @@ final class CourseResourceBuilderTest extends UnitTestCase {
   /**
    * Creates the builder with isolated Domain dependencies. */
   private function builder(AccountProxyInterface $account): CourseResourceBuilder {
-    $purposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     );
     return new CourseResourceBuilder(
-      $purposeManager,
+      $siteManager,
       $account,
       $this->createMock(TranslationInterface::class),
       $this->createMock(GroupRelationTypeManagerInterface::class),

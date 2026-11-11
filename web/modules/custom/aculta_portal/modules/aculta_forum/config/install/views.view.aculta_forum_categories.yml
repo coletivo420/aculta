@@ -215,6 +215,7 @@ display:
         header: false
         style: false
         row: false
+        ui_patterns: false
       fields:
         tid:
           id: tid
@@ -425,6 +426,37 @@ display:
           empty: false
           content: '<p><a href="/">Discussões recentes</a></p>'
           tokenize: false
+      ui_patterns:
+        component_id: 'aculta420_v2:views-display'
+        variant_id: null
+        slots:
+          attachment_before:
+            sources:
+              - source_id: view_attachment_before
+          header:
+            sources:
+              - source_id: view_header
+          exposed:
+            sources:
+              - source_id: view_exposed
+          rows:
+            sources:
+              - source_id: view_rows
+          empty:
+            sources:
+              - source_id: view_empty
+          pager:
+            sources:
+              - source_id: view_pager
+          more:
+            sources:
+              - source_id: view_more
+          footer:
+            sources:
+              - source_id: view_footer
+          attachment_after:
+            sources:
+              - source_id: view_attachment_after
       display_extenders: {  }
       path: categorias
       menu:

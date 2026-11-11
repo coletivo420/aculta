@@ -24,7 +24,7 @@ use Drupal\aculta_events\Form\EventLocationModalForm;
 use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_image\FileRemover;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_cgu\Entity\UgcReport;
 use Drupal\aculta_user\Entity\OwnershipClaim;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -120,7 +120,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $loader->addPsr4('Drupal\\aculta_index\\', $customRoot . '/modules/aculta_index/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_events\\', $customRoot . '/modules/aculta_events/src', TRUE);
 
-    $container->register('aculta_portal.domain_purpose', DomainPurposeManager::class)
+    $container->register('aculta_portal.domain_site', DomainSiteManager::class)
       ->addArgument($this->createMock(EntityTypeManagerInterface::class))
       ->addArgument($this->createMock(DomainNegotiatorInterface::class))
       ->addArgument($this->createMock(ConfigFactoryInterface::class))
@@ -1237,7 +1237,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     );
 
     $this->usePurposeByCurrentAccount();
-    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
     self::assertTrue($adapter->reviewAccess($this->container->get('current_user'), 'event_update', $event));
     $accepted = $lifecycle->decide(
       $proposal,
@@ -2094,7 +2094,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
         ? $eventsDomain
         : $mainDomain;
     });
-    $this->container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+    $this->container->set('aculta_portal.domain_site', new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),

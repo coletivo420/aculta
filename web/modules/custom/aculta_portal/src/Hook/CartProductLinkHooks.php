@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Hook;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\commerce_product\Entity\ProductVariationInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
@@ -16,7 +17,7 @@ use Drupal\Core\Hook\Attribute\Hook;
 final class CartProductLinkHooks {
 
   public function __construct(
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -33,8 +34,7 @@ final class CartProductLinkHooks {
     if ($product === NULL) {
       return;
     }
-    $url = $this->domainPurposeManager->routeUrl(
-      'shop',
+    $url = $this->siteManager->routeUrl(SiteKey::Shop,
       'entity.commerce_product.canonical',
       ['commerce_product' => $product->id()],
     );

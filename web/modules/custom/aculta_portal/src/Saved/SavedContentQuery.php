@@ -46,7 +46,7 @@ class SavedContentQuery implements SavedContentQueryInterface {
   public function __construct(
     protected readonly Connection $database,
     protected readonly EntityTypeManagerInterface $entityTypeManager,
-    protected readonly ?object $domainPurposeManager = NULL,
+    protected readonly ?object $siteManager = NULL,
   ) {}
 
   /**

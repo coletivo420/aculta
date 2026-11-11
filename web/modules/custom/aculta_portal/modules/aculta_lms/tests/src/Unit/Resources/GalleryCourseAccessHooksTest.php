@@ -12,7 +12,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\aculta_lms\Hook\GalleryCourseAccessHooks;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\group\Entity\Storage\GroupStorage;
@@ -113,7 +113,7 @@ final class GalleryCourseAccessHooksTest extends UnitTestCase {
     $domain->method('id')->willReturn('revista420_aculta_org');
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn($domain);
-    $purpose_manager = new DomainPurposeManager(
+    $purpose_manager = new DomainSiteManager(
       $entity_type_manager,
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),

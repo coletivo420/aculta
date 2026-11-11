@@ -93,7 +93,7 @@ final class MimeMessage {
   private static function contentType(array $headers): array {
     $value = $headers['content-type'] ?? 'text/plain';
     $segments = array_map('trim', explode(';', $value));
-    $type = strtolower(array_shift($segments) ?? 'text/plain');
+    $type = strtolower(array_shift($segments));
     $params = [];
     foreach ($segments as $segment) {
       if (preg_match('/^([a-zA-Z0-9_-]+)\s*=\s*"?([^"]*)"?$/', $segment, $m) === 1) {

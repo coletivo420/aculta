@@ -11,7 +11,8 @@ use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexOwnerResolver;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -30,7 +31,7 @@ use Drupal\node\NodeInterface;
 final class LmsCourseContentIndexProvider implements ContentIndexProviderInterface, ContentIndexIndexabilityProviderInterface, ContentIndexAccessContextProviderInterface, ContentIndexAccessPolicyProviderInterface {
 
   public function __construct(
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly GroupRelationTypeManagerInterface $relationTypeManager,
   ) {}
 
@@ -61,7 +62,7 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
   /**
    * {@inheritdoc}
    */
-  public function getAccessPurpose(ContentEntityInterface $entity): ?string {
+  public function getAccessSiteKey(ContentEntityInterface $entity): ?string {
     return $entity instanceof GroupInterface && $entity->bundle() === 'lms_course'
       ? 'courses'
       : NULL;
@@ -74,7 +75,7 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
     return $entity instanceof GroupInterface
       && $entity->getEntityTypeId() === 'group'
       && $entity->bundle() === 'lms_course'
-      && $this->domainPurposeManager->getDomain('courses') !== NULL;
+      && $this->siteManager->getDomain(SiteKey::Courses) !== NULL;
   }
 
   /**
@@ -105,7 +106,7 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
       || $entity->bundle() !== 'lms_course') {
       return NULL;
     }
-    $domain = $this->domainPurposeManager->getDomain('courses');
+    $domain = $this->siteManager->getDomain(SiteKey::Courses);
     if ($domain === NULL) {
       return NULL;
     }

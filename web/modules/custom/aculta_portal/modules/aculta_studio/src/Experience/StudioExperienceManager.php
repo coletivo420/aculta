@@ -8,7 +8,7 @@ use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 
 /**
  * Registry of independent Studio experiences, including Ganjalab and WE SATIVA.
@@ -25,7 +25,7 @@ final class StudioExperienceManager {
   /**
    * Builds authorized cross-purpose entry links for available providers.
    */
-  public function buildEntries(AccountInterface $account, DomainPurposeManager $domains, array $exclude = []): array {
+  public function buildEntries(AccountInterface $account, DomainSiteManager $domains, array $exclude = []): array {
     $items = [];
     foreach ($this->providers as $provider) {
       if (in_array($provider->id(), $exclude, TRUE) || !$provider->available()) {
@@ -39,7 +39,7 @@ final class StudioExperienceManager {
       if ($url === NULL) {
         continue;
       }
-      $routeAccess = $domains->runInPurpose(
+      $routeAccess = $domains->runInSite(
         $provider->purpose(),
         static fn () => $url->access($account, TRUE),
       );

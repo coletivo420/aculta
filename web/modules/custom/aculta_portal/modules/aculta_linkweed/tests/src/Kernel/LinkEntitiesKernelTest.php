@@ -12,7 +12,7 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormState;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_linkweed\Entity\Link;
 use Drupal\aculta_linkweed\Entity\LinkItem;
 use Drupal\aculta_linkweed\Entity\LinkPage;
@@ -59,7 +59,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
   public function register(ContainerBuilder $container): void {
     parent::register($container);
     // Portal integration is an external contract in this isolated Kernel test.
-    $container->register('aculta_portal.domain_purpose')
+    $container->register('aculta_portal.domain_site')
       ->setSynthetic(TRUE)
       ->setPublic(TRUE);
     $container->register('aculta_user.author_identity_resolver')
@@ -72,9 +72,9 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $domain_purpose = (new \ReflectionClass(DomainPurposeManager::class))
+    $domain_purpose = (new \ReflectionClass(DomainSiteManager::class))
       ->newInstanceWithoutConstructor();
-    $this->container->set('aculta_portal.domain_purpose', $domain_purpose);
+    $this->container->set('aculta_portal.domain_site', $domain_purpose);
     $identity_resolver = (new \ReflectionClass(AuthorIdentityResolver::class))
       ->newInstanceWithoutConstructor();
     $this->container->set('aculta_user.author_identity_resolver', $identity_resolver);
@@ -422,7 +422,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $editor = new LinkPageEditorForm(
       $this->container->get('entity_type.manager'),
       $this->container->get('current_user'),
-      $this->container->get('aculta_portal.domain_purpose'),
+      $this->container->get('aculta_portal.domain_site'),
     );
     $display_page = clone $page;
     $display_page->set('slug', 'slug inválido');

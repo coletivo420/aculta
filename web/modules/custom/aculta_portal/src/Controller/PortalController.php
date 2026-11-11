@@ -13,14 +13,16 @@ use Drupal\aculta_portal\Account\AccountDocumentInterface;
 use Drupal\aculta_portal\Form\AccountOtherDataForm;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Form\AccountPasswordCreateForm;
-use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\commerce_order\Entity\OrderInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -29,6 +31,8 @@ use Drupal\Core\Render\Markup;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\profile\ProfileStorageInterface;
+use Drupal\social_auth\Entity\SocialAuth;
 use Drupal\Core\Url;
 use Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface;
 use Drupal\user\UserDataInterface;
@@ -50,10 +54,9 @@ final class PortalController extends ControllerBase {
     private readonly EntityTypeManagerInterface $entities,
     private readonly EntityFormBuilderInterface $forms,
     private readonly FormBuilderInterface $accountFormBuilder,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly UserDataInterface $userData,
     private readonly AuthIntegrationManager $authIntegrationManager,
-    private readonly BlockManagerInterface $blockManager,
     private readonly AcultaMailConfirmerManagerInterface $emailConfirmer,
     private readonly RouteMatchInterface $routeMatch,
     private readonly AccountInterface $account,
@@ -74,10 +77,9 @@ final class PortalController extends ControllerBase {
       $container->get('entity_type.manager'),
       $container->get('entity.form_builder'),
       $container->get('form_builder'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('user.data'),
       $container->get('aculta_portal.auth_integration'),
-      $container->get('plugin.manager.block'),
       $container->get('aculta_mail_confirmer'),
       $container->get('current_route_match'),
       $container->get('current_user'),
@@ -113,7 +115,7 @@ final class PortalController extends ControllerBase {
    * Keeps Core's legacy user.page route compatible without exposing its UI.
    */
   public function legacyUserPageRedirect(): TrustedRedirectResponse {
-    $accountRoot = $this->domainPurposeManager->pathUrl('account', '/');
+    $accountRoot = $this->siteManager->pathUrl(SiteKey::Account, '/');
     return new TrustedRedirectResponse(
       $accountRoot?->toString() ?? Url::fromRoute('<front>')->toString(),
     );
@@ -261,6 +263,9 @@ final class PortalController extends ControllerBase {
       ->execute();
     $rows = [];
     foreach ($storage->loadMultiple($ids) as $order) {
+      if (!$order instanceof OrderInterface) {
+        continue;
+      }
       $total = $order->getTotalPrice();
       // data-label: rótulo de cada coluna, usado pelo tema no celular (linhas empilhadas).
       $rows[] = [
@@ -342,7 +347,9 @@ final class PortalController extends ControllerBase {
     ];
     if ($links) {
       $social_auth = reset($links);
-      $provider_email = $social_auth->getAdditionalData()['provider_email'] ?? NULL;
+      $provider_email = $social_auth instanceof SocialAuth
+        ? ($social_auth->getAdditionalData()['provider_email'] ?? NULL)
+        : NULL;
       // Caixa "Conectado": logo e texto; a marca e o check vêm do tema (data-portal-ui="auth-google-status").
       $items['google_status'] = $this->googleBox(NULL, (string) $this->t('Conectado'));
       if (is_string($provider_email) && filter_var($provider_email, FILTER_VALIDATE_EMAIL)) {
@@ -520,10 +527,10 @@ final class PortalController extends ControllerBase {
     }
     $transport = $this->entities->getStorage('aculta_mailer_transport')->load('smtp_hostinger');
     return $interface === 'aculta_mailer'
-      && $transport !== NULL
-      && $transport->get('user') !== ''
-      && $transport->get('password_secret') !== ''
-      && $this->secrets->value((string) $transport->get('password_secret')) !== NULL
+      && $transport instanceof ContentEntityInterface
+      && (string) $transport->get('user')->value !== ''
+      && (string) $transport->get('password_secret')->value !== ''
+      && $this->secrets->value((string) $transport->get('password_secret')->value) !== NULL
       && $site_mail !== '';
   }
 
@@ -556,11 +563,6 @@ final class PortalController extends ControllerBase {
       'address' => $this->loadCommerceAddressProfile($account),
       'other' => NULL,
       default => $this->loadRoleProfile($account),
-    };
-    $route = match ($section) {
-      'address' => 'aculta_portal.my_data_address',
-      'other' => 'aculta_portal.my_data_other',
-      default => 'aculta_portal.my_data',
     };
     $title = match ($section) {
       'address' => $this->t('Endereço'),
@@ -677,6 +679,9 @@ final class PortalController extends ControllerBase {
    */
   private function loadCommerceAddressProfile(UserInterface $account) {
     $storage = $this->entities->getStorage('profile');
+    if (!$storage instanceof ProfileStorageInterface) {
+      throw new \LogicException('The profile storage is unavailable.');
+    }
     $existing = $storage->loadByUser($account, 'authenticated');
     if (!$existing) {
       $profiles = $storage->loadByProperties(['uid' => $account->id(), 'type' => 'authenticated']);

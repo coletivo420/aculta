@@ -8,7 +8,7 @@ use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessPolicyProviderInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -28,7 +28,7 @@ final class ContentIndexAccessFilter {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ?ContentIndexProviderRegistry $providers = NULL,
-    private readonly ?DomainPurposeManager $domainPurposeManager = NULL,
+    private readonly ?DomainSiteManager $siteManager = NULL,
   ) {}
 
   /**
@@ -104,9 +104,9 @@ final class ContentIndexAccessFilter {
             continue;
           }
           $purpose = $provider instanceof ContentIndexAccessContextProviderInterface
-            ? $provider->getAccessPurpose($translation)
+            ? $provider->getAccessSiteKey($translation)
             : NULL;
-          if ($purpose !== NULL && $this->domainPurposeManager !== NULL) {
+          if ($purpose !== NULL && $this->siteManager !== NULL) {
             $cacheability->addCacheContexts(['domain']);
             $purposeChecks[$purpose][] = [
               'candidate' => $candidate,
@@ -138,7 +138,7 @@ final class ContentIndexAccessFilter {
         // nested checks on related entities (for example a ForumPost's topic).
         $this->resetContentEntityAccessCaches();
         try {
-          $accessResults = $this->domainPurposeManager->runInPurpose(
+          $accessResults = $this->siteManager->runInSite(
             $purpose,
             function () use ($checks, $account): array {
               $results = [];

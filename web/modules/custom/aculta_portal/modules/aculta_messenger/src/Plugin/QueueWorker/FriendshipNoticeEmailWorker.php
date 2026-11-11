@@ -9,7 +9,8 @@ use Drupal\aculta_messenger\Service\MessengerEmailLock;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -52,7 +53,7 @@ final class FriendshipNoticeEmailWorker extends QueueWorkerBase implements Conta
     protected readonly EntityTypeManagerInterface $entityTypeManager,
     protected readonly MessageNotifyInterface $messageNotify,
     protected readonly AcultaMailerInterface $mailer,
-    protected readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly DomainSiteManager $siteManager,
     protected readonly LockBackendInterface $lock,
     protected readonly AvisoPreferenciasInterface $preferences,
     protected readonly EmailConfirmationPolicy $emailPolicy,
@@ -71,7 +72,7 @@ final class FriendshipNoticeEmailWorker extends QueueWorkerBase implements Conta
       $container->get('entity_type.manager'),
       $container->get('message_notify.sender'),
       $container->get('aculta_mailer.mailer'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('lock'),
       $container->get('aculta_messenger.aviso_preferencias'),
       $container->get('aculta_portal.email_confirmation_policy'),
@@ -115,7 +116,7 @@ final class FriendshipNoticeEmailWorker extends QueueWorkerBase implements Conta
         $message->set(self::STATUS_FIELD, 'cancelled')->save();
         return;
       }
-      $url = $this->domainPurposeManager->routeUrl('account', 'aculta_portal.dashboard');
+      $url = $this->siteManager->routeUrl(SiteKey::Account, 'aculta_portal.dashboard');
       if ($url === NULL) {
         $message->set(self::STATUS_FIELD, 'failed_permanent')->save();
         return;

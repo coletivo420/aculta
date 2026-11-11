@@ -9,7 +9,7 @@ use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -50,7 +50,7 @@ final class ContentIndexWikiProviderKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+    $container->set('aculta_portal.domain_site', new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
@@ -120,7 +120,7 @@ final class ContentIndexWikiProviderKernelTest extends KernelTestBase {
 
     $registry = $this->container->get('aculta_index.provider_registry');
     self::assertSame('wiki', $registry->findProviderIdForBundle('node', 'wiki_entry'));
-    self::assertSame('wiki', $registry->get('wiki')->getAccessPurpose($source));
+    self::assertSame('wiki', $registry->access('wiki')->getAccessSiteKey($source));
 
     $generationId = $this->buildAndActivateGeneration();
     self::assertSame('Wiki source', $this->entryLabel($generationId, (string) $source->id()));

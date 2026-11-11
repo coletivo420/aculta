@@ -176,11 +176,11 @@ $media_accounts = [
   'suspenso_membro' => $accounts['suspenso_membro'],
 ];
 foreach ($media_accounts as $label => $account) {
-  $result['attachment']['media_view'][$label] = (bool) \Drupal::service('aculta_portal.domain_purpose')->runInPurpose(
+  $result['attachment']['media_view'][$label] = (bool) \Drupal::service('aculta_portal.domain_site')->runInSite(
     'forum',
     static fn (): bool => $loaded_media->access('view', $account, TRUE)->isAllowed(),
   );
-  $result['attachment']['file_download'][$label] = (bool) \Drupal::service('aculta_portal.domain_purpose')->runInPurpose(
+  $result['attachment']['file_download'][$label] = (bool) \Drupal::service('aculta_portal.domain_site')->runInSite(
     'forum',
     static fn (): bool => $file->access('download', $account, TRUE)->isAllowed(),
   );
@@ -222,7 +222,7 @@ $result['gallery'] = [
   'view' => [],
 ];
 foreach ($media_accounts as $label => $account) {
-  $result['gallery']['view'][$label] = (bool) \Drupal::service('aculta_portal.domain_purpose')->runInPurpose(
+  $result['gallery']['view'][$label] = (bool) \Drupal::service('aculta_portal.domain_site')->runInSite(
     'forum',
     static fn (): bool => $loaded_gallery->access('view', $account, TRUE)->isAllowed(),
   );

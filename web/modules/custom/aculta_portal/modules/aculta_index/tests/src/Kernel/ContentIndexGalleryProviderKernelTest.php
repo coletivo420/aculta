@@ -7,7 +7,7 @@ namespace Drupal\Tests\aculta_index\Kernel;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\Entity\Domain;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
@@ -59,7 +59,7 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->setDefinition('aculta_portal.domain_purpose', (new Definition(DomainPurposeManager::class, [
+    $container->setDefinition('aculta_portal.domain_site', (new Definition(DomainSiteManager::class, [
       new Reference('entity_type.manager'),
       new Reference('domain.negotiator'),
       new Reference('config.factory'),
@@ -139,8 +139,7 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
 
     $registry = $this->container->get('aculta_index.provider_registry');
     $this->assertSame('gallery', $registry->findProviderIdForBundle('media_gallery', 'media_gallery'));
-    $this->assertInstanceOf(ContentIndexProviderInterface::class, $registry->get('gallery'));
-    $this->assertSame('magazine', $registry->get('gallery')->getAccessPurpose($gallery));
+    $this->assertSame('magazine', $registry->access('gallery')->getAccessSiteKey($gallery));
 
     $generationId = $this->buildAndActivateGeneration();
     $this->assertSame('Kernel gallery', $this->entryLabel($generationId, (string) $gallery->id(), 'gallery'));
@@ -226,7 +225,7 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
     $negotiator = $this->container->get('domain.negotiator');
     $negotiator->getActiveDomain();
     $negotiator->getContext()->setDomain($mainDomain);
-    $this->assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    $this->assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
 
     $filter = $this->container->get('aculta_index.access_filter');
     $candidates = [
@@ -244,14 +243,14 @@ final class ContentIndexGalleryProviderKernelTest extends KernelTestBase {
     $result = $filter->filter($candidates, $reader);
     $this->assertCount(1, $result->entities);
     $this->assertSame((string) $published->id(), (string) $result->entities[0]->id());
-    $this->assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    $this->assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
     $this->assertSame('aculta_org', $negotiator->getActiveDomain()?->id());
 
     $magazineDomain = Domain::load('revista420_aculta_org');
     self::assertInstanceOf(Domain::class, $magazineDomain);
     $magazineDomain->delete();
     $this->assertCount(0, $filter->filter([$candidates[0]], $reader)->entities);
-    $this->assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    $this->assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
     $this->assertSame('aculta_org', $negotiator->getActiveDomain()?->id());
   }
 

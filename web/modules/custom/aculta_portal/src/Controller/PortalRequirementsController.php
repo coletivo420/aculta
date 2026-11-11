@@ -404,8 +404,8 @@ final class PortalRequirementsController extends ControllerBase {
       ];
     }
     usort($rows, static fn (array $a, array $b): int => strcmp(
-      (string) ($a['name']['data']['#plain_text'] ?? ''),
-      (string) ($b['name']['data']['#plain_text'] ?? ''),
+      (string) $a['name']['data']['#plain_text'],
+      (string) $b['name']['data']['#plain_text'],
     ));
 
     return [

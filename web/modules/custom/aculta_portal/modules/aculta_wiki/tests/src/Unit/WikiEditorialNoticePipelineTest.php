@@ -9,7 +9,7 @@ use Drupal\aculta_messenger\Integration\Wiki\EditorialReviewNoticeInterface;
 use Drupal\aculta_messenger\Integration\Wiki\EventSubscriber\WikiNoticeEventSubscriber;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManagerInterface;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisher;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_wiki\Event\WikiEntryReviewRequestedEvent;
 use Drupal\aculta_wiki\EventSubscriber\WikiEditorialNoticePublisher as WikiNoticeProducer;
 use Drupal\aculta_wiki\Plugin\QueueWorker\WikiEditorialEventWorker;
@@ -86,7 +86,7 @@ final class WikiEditorialNoticePipelineTest extends TestCase {
     $dispatcher = new EventDispatcher();
     $dispatcher->addSubscriber(new WikiNoticeProducer(
       $entityTypeManager,
-      $this->domainPurposeManager(),
+      $this->siteManager(),
       new MessengerNoticePublisher($dispatcher),
       $this->createMock(EditorialReviewNoticeInterface::class),
       $time,
@@ -106,14 +106,14 @@ final class WikiEditorialNoticePipelineTest extends TestCase {
   /**
    * Builds a Wiki purpose manager for the producer's access revalidation.
    */
-  private function domainPurposeManager(): DomainPurposeManager {
+  private function siteManager(): DomainSiteManager {
     $domain = $this->createMock(DomainInterface::class);
     $domainStorage = $this->createMock(EntityStorageInterface::class);
     $domainStorage->method('load')->with('wiki420_aculta_org')->willReturn($domain);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->with('domain')->willReturn($domainStorage);
 
-    return new DomainPurposeManager(
+    return new DomainSiteManager(
       $entityTypeManager,
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),

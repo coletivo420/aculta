@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Search;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
@@ -19,7 +20,7 @@ final class SearchResults {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -72,8 +73,8 @@ final class SearchResults {
   public function url(NodeInterface $node): Url {
     $relative = $node->toUrl();
     $domainId = $node->hasField('field_domain_source') ? $node->get('field_domain_source')->target_id : NULL;
-    $purpose = is_string($domainId) ? $this->domainPurposeManager->getPurposeForDomainId($domainId) : NULL;
-    $absolute = $purpose !== NULL ? $this->domainPurposeManager->canonicalPathUrl($purpose, $relative->toString()) : NULL;
+    $purpose = is_string($domainId) ? $this->siteManager->getSiteKeyValueForDomainId($domainId) : NULL;
+    $absolute = $purpose !== NULL ? $this->siteManager->canonicalPathUrl($purpose, $relative->toString()) : NULL;
     return $absolute ?? $relative;
   }
 

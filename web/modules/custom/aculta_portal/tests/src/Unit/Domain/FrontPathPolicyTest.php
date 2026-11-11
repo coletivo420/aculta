@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_portal\Unit\Domain;
 
 use Drupal\aculta_portal\Domain\FrontPathPolicy;
-use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
+use Drupal\aculta_portal\PathProcessor\SiteFrontPathProcessor;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
@@ -21,7 +21,7 @@ final class FrontPathPolicyTest extends UnitTestCase {
    */
   public static function caminhosInternos(): array {
     $casos = [];
-    foreach (PurposeFrontPathProcessor::FRONT_PATHS as $purpose => $path) {
+    foreach (SiteFrontPathProcessor::FRONT_PATHS as $purpose => $path) {
       $casos[$purpose] = [$purpose, $path];
     }
     return $casos;

@@ -7,7 +7,7 @@ namespace Drupal\Tests\aculta_messenger\Integration\Lms\Unit;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\aculta_lms\Notice\LearningEligibilityInterface;
 use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -78,7 +78,7 @@ final class LearningNoticeDigestProviderTest extends UnitTestCase {
     });
     $manager = new LearningNoticeManager(
       $entity_type_manager,
-      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor(),
       (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor(),
       $this->createMock(DateFormatterInterface::class),
       $this->createMock(QueueFactory::class),
@@ -105,7 +105,7 @@ final class LearningNoticeDigestProviderTest extends UnitTestCase {
     $entities->expects(self::never())->method('getStorage');
     $manager = new LearningNoticeManager(
       $entities,
-      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor(),
       (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor(),
       $this->createMock(DateFormatterInterface::class),
       $this->createMock(QueueFactory::class),
@@ -163,7 +163,7 @@ final class LearningNoticeDigestProviderTest extends UnitTestCase {
     });
     $manager = new LearningNoticeManager(
       $entities,
-      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor(),
       (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor(),
       $this->createMock(DateFormatterInterface::class),
       $this->createMock(QueueFactory::class),
@@ -235,7 +235,7 @@ final class LearningNoticeDigestProviderTest extends UnitTestCase {
     });
     $manager = new LearningNoticeManager(
       $entity_type_manager,
-      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor(),
       (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor(),
       $this->createMock(DateFormatterInterface::class),
       $this->createMock(QueueFactory::class),

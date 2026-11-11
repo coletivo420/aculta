@@ -9,7 +9,9 @@ use Drupal\aculta_portal\Exception\PaymentOperationException;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfirmFormBase;
+use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -56,26 +58,26 @@ final class SubscriptionActionForm extends ConfirmFormBase {
   /**
    * Performs the get question operation.
    */
-  public function getQuestion(): string {
+  public function getQuestion(): TranslatableMarkup {
     return match ($this->acaoAtual) {
-      'pausar' => (string) $this->t('Pausar a doação mensal?'),
-      'reativar' => (string) $this->t('Reativar a doação mensal?'),
-      default => (string) $this->t('Cancelar a doação mensal?'),
+      'pausar' => $this->t('Pausar a doação mensal?'),
+      'reativar' => $this->t('Reativar a doação mensal?'),
+      default => $this->t('Cancelar a doação mensal?'),
     };
   }
 
   /**
    * Performs the get description operation.
    */
-  public function getDescription(): string {
-    return (string) $this->t('Doações já feitas não são estornadas. Você pode reativar uma assinatura pausada enquanto ela existir.');
+  public function getDescription(): TranslatableMarkup {
+    return $this->t('Doações já feitas não são estornadas. Você pode reativar uma assinatura pausada enquanto ela existir.');
   }
 
   /**
    * Performs the get confirm text operation.
    */
-  public function getConfirmText(): string {
-    return (string) match ($this->acaoAtual) {
+  public function getConfirmText(): TranslatableMarkup {
+    return match ($this->acaoAtual) {
       'pausar' => $this->t('Pausar'),
       'reativar' => $this->t('Reativar'),
       default => $this->t('Cancelar assinatura'),
@@ -116,12 +118,12 @@ final class SubscriptionActionForm extends ConfirmFormBase {
     $gateway = $this->operacoesAssinatura === NULL
       ? NULL
       : $this->entidades->getStorage('commerce_payment_gateway')->load('mercado_pago');
-    if (!$pedido instanceof OrderInterface || $gateway === NULL) {
+    if (!$pedido instanceof OrderInterface || !$gateway instanceof PaymentGatewayInterface) {
       $this->messenger()->addError($this->t('Não foi possível atualizar a assinatura. Tente novamente em instantes.'));
     }
     else {
       try {
-        $this->operacoesAssinatura?->change($gateway, $pedido, (string) $form_state->get('acao'));
+        $this->operacoesAssinatura->change($gateway, $pedido, (string) $form_state->get('acao'));
         $this->messenger()->addStatus($this->t('A assinatura foi atualizada.'));
       }
       catch (PaymentOperationException | \InvalidArgumentException) {

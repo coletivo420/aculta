@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_lms\Kernel;
 
 use Drupal\Core\Url;
 use Drupal\aculta_lms\Resources\CourseResourceBuilder;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -36,7 +36,7 @@ final class CourseResourceBuilderKernelTest extends KernelTestBase {
 
   /**
    * The Domain purpose resolver used by the integration. */
-  private DomainPurposeManager $purposeManager;
+  private DomainSiteManager $siteManager;
 
   /**
    * {@inheritdoc} */
@@ -48,7 +48,7 @@ final class CourseResourceBuilderKernelTest extends KernelTestBase {
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
     $negotiator->getContext()->setDomain(Domain::load('cursos_aculta_org'));
-    $this->purposeManager = new DomainPurposeManager(
+    $this->siteManager = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $negotiator,
       $this->container->get('config.factory'),
@@ -74,7 +74,7 @@ final class CourseResourceBuilderKernelTest extends KernelTestBase {
     $course->method('hasField')->willReturn(TRUE);
 
     $builder = new CourseResourceBuilder(
-      $this->purposeManager,
+      $this->siteManager,
       $account,
       $this->container->get('string_translation'),
       $this->createMock(GroupRelationTypeManagerInterface::class),
@@ -124,7 +124,7 @@ final class CourseResourceBuilderKernelTest extends KernelTestBase {
     $course->method('hasField')->willReturn(TRUE);
 
     $builder = new CourseResourceBuilder(
-      $this->purposeManager,
+      $this->siteManager,
       $account,
       $this->container->get('string_translation'),
       $this->createMock(GroupRelationTypeManagerInterface::class),
@@ -165,7 +165,7 @@ final class CourseResourceBuilderKernelTest extends KernelTestBase {
     $course->method('hasField')->willReturn(TRUE);
 
     $builder = new CourseResourceBuilder(
-      $this->purposeManager,
+      $this->siteManager,
       $account,
       $this->container->get('string_translation'),
       $this->createMock(GroupRelationTypeManagerInterface::class),
@@ -205,7 +205,7 @@ final class CourseResourceBuilderKernelTest extends KernelTestBase {
     $course->method('hasField')->willReturn(TRUE);
 
     $builder = new CourseResourceBuilder(
-      $this->purposeManager,
+      $this->siteManager,
       $account,
       $this->container->get('string_translation'),
       $this->createMock(GroupRelationTypeManagerInterface::class),
@@ -250,7 +250,7 @@ final class CourseResourceBuilderKernelTest extends KernelTestBase {
     );
 
     $builder = new CourseResourceBuilder(
-      $this->purposeManager,
+      $this->siteManager,
       $account,
       $this->container->get('string_translation'),
       $relations,

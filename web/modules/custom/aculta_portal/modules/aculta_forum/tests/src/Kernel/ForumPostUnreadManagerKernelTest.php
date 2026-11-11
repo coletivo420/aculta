@@ -9,7 +9,7 @@ use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum\Plugin\views\field\ForumUnreadPosts;
 use Drupal\aculta_forum\Service\ForumPostThreadBuilder;
 use Drupal\aculta_forum\Service\ForumPostUnreadManager;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
@@ -210,7 +210,7 @@ final class ForumPostUnreadManagerKernelTest extends KernelTestBase {
     $builder = new ForumPostThreadBuilder(
       $this->container->get('entity_type.manager'),
       $this->member,
-      new DomainPurposeManager(
+      new DomainSiteManager(
         $this->container->get('entity_type.manager'),
         $this->container->get('domain.negotiator'),
         $this->container->get('config.factory'),

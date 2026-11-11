@@ -37,6 +37,14 @@ use Psr\Log\LoggerInterface;
 #[Group('aculta_mailer')]
 final class MailMonitorTest extends UnitTestCase {
 
+  /**
+   * @return array<string, mixed>
+   *   Empty state store with dynamic string keys.
+   */
+  private function newStateStore(): array {
+    return [];
+  }
+
   private const NOW = 1800000000;
 
   /**
@@ -78,8 +86,8 @@ MAIL;
   /**
    * Monitor com configuração e estado em memória, e tempo fixo.
    */
-  private function monitor(?ImapClientInterface $unused = NULL): MailMonitor {
-    $store = [];
+  private function monitor(): MailMonitor {
+    $store = $this->newStateStore();
     $state = $this->createMock(StateInterface::class);
     $state->method('get')->willReturnCallback(static function (string $key, mixed $default = NULL) use (&$store): mixed {
       return $store[$key] ?? $default;
@@ -208,7 +216,7 @@ MAIL;
    * IMAP exception text is excluded from persistent state and operational logs.
    */
   public function testCronStoresOnlyImapFailureClass(): void {
-    $stateValues = [];
+    $stateValues = $this->newStateStore();
     $state = $this->createMock(StateInterface::class);
     $state->method('get')->willReturnCallback(static fn(string $key, mixed $default = NULL): mixed => $stateValues[$key] ?? $default);
     $state->method('set')->willReturnCallback(static function (string $key, mixed $value) use (&$stateValues): void {

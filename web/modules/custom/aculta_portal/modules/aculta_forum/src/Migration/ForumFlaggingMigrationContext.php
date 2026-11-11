@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Migration;
 
 use Drupal\aculta_forum\Entity\ForumPost;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\flag\FlagInterface;
@@ -26,7 +26,7 @@ final class ForumFlaggingMigrationContext {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly MigrateLookupInterface $migrateLookup,
   ) {}
 
@@ -80,7 +80,7 @@ final class ForumFlaggingMigrationContext {
       || $source_topic->bundle() !== 'aculta_forum_topic'
       || !$source_topic->hasField('field_domain_source')
       || $source_topic->get('field_domain_source')->isEmpty()
-      || $this->domainPurposeManager->getPurposeForDomainId((string) $source_topic->get('field_domain_source')->target_id) !== 'forum') {
+      || $this->siteManager->getSiteKeyValueForDomainId((string) $source_topic->get('field_domain_source')->target_id) !== 'forum') {
       throw new MigrateException(sprintf('Flagging de origem %d não pertence a um Comment migrável do Fórum.', $source_flagging_id));
     }
 

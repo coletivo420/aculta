@@ -155,7 +155,7 @@ foreach (array_merge(
   $assert(!str_contains($text, 'aculta_portal/') && !str_contains($text, "drupalSettings.acultaPortal") && !str_contains($text, 'aculta_portal.'), "Tema referencia o módulo aculta_portal em $rel.");
   // Invariantes herdados do antigo shell-contract V1: o tema apresenta um
   // contrato neutro e nunca consulta Domain nem decide por hostname.
-  $assert(!preg_match('/\b(DomainInterface|DomainPurposeManager)\b|domain\.negotiator|DomainNegotiator/', $text), "Tema depende da API de Domain em $rel.");
+  $assert(!preg_match('/\b(DomainInterface|DomainSiteManager)\b|domain\.negotiator|DomainNegotiator/', $text), "Tema depende da API de Domain em $rel.");
   $assert(!preg_match('/get(?:SchemeAndHttpHost|HttpHost|Host)\s*\(|HTTP_HOST|SERVER_NAME|\baculta\.org\b|\btoca\.net\.br\b/i', $text), "Tema decide por hostname em $rel.");
 }
 

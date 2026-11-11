@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Routing;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\PathProcessor\OutboundPathProcessorInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +27,7 @@ final class PaymentDomainPathProcessor implements OutboundPathProcessorInterface
     '#^/integracoes/mercadopago/checkout-retorno$#',
   ];
 
-  public function __construct(private readonly DomainPurposeManager $purposes) {}
+  public function __construct(private readonly DomainSiteManager $purposes) {}
 
   /**
    * {@inheritdoc}
@@ -35,7 +36,7 @@ final class PaymentDomainPathProcessor implements OutboundPathProcessorInterface
     if (!self::ehCaminhoDePagamento($path)) {
       return $path;
     }
-    $principal = $this->purposes->getDomain('main')?->getPath();
+    $principal = $this->purposes->getDomain(SiteKey::Main)?->getPath();
     if ($principal === NULL) {
       return $path;
     }

@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\aculta_forum\Analytics\ForumAnalyticsScopeResolver;
 use Drupal\aculta_forum\Controller\ForumAdminOverviewController;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -107,7 +107,7 @@ final class ForumAdminOverviewControllerTest extends UnitTestCase {
 
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn(NULL);
-    $purposes = new DomainPurposeManager(
+    $purposes = new DomainSiteManager(
       $entities,
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),

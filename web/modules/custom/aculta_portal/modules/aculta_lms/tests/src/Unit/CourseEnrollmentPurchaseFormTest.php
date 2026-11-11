@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_lms\Unit;
 
 use Drupal\aculta_lms\Form\CourseEnrollmentPurchaseForm;
 use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\commerce_cart\CartManagerInterface;
 use Drupal\commerce_cart\CartProviderInterface;
 use Drupal\commerce_store\CurrentStoreInterface;
@@ -117,7 +117,7 @@ final class CourseEnrollmentPurchaseFormTest extends UnitTestCase {
       $this->createMock(AccountProxyInterface::class),
       $this->createMock(MessengerInterface::class),
       $translation,
-      new DomainPurposeManager(
+      new DomainSiteManager(
         $this->createMock(EntityTypeManagerInterface::class),
         $this->createMock(DomainNegotiatorInterface::class),
         $this->createMock(ConfigFactoryInterface::class),

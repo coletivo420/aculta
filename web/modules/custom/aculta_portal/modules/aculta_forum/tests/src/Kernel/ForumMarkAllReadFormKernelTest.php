@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Form\ForumMarkAllReadForm;
 use Drupal\aculta_forum\Service\ForumReadMarker;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Url;
 use Drupal\domain\Entity\Domain;
@@ -45,7 +45,7 @@ final class ForumMarkAllReadFormKernelTest extends KernelTestBase {
   /**
    * Purpose resolver.
    */
-  private DomainPurposeManager $purpose;
+  private DomainSiteManager $purpose;
 
   /**
    * Form under test.
@@ -93,7 +93,7 @@ final class ForumMarkAllReadFormKernelTest extends KernelTestBase {
     $member->save();
     $this->container->get('current_user')->setAccount($member);
 
-    $this->purpose = new DomainPurposeManager(
+    $this->purpose = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get('domain.negotiator'),
       $this->container->get('config.factory'),
@@ -119,7 +119,7 @@ final class ForumMarkAllReadFormKernelTest extends KernelTestBase {
   public function testNoTopicsReportsAndRedirects(): void {
     $form_state = new FormState();
     $form = [];
-    $this->purpose->runInPurpose('forum', function () use (&$form, $form_state): void {
+    $this->purpose->runInSite('forum', function () use (&$form, $form_state): void {
       $this->form->submitForm($form, $form_state);
     });
 
@@ -143,7 +143,7 @@ final class ForumMarkAllReadFormKernelTest extends KernelTestBase {
       $this->container->get('messenger'),
     );
     self::assertSame(0, $marker->countEligibleTopics());
-    self::assertSame(0, $this->purpose->runInPurpose('main', fn () => $marker->countEligibleTopics()));
+    self::assertSame(0, $this->purpose->runInSite('main', fn () => $marker->countEligibleTopics()));
   }
 
 }

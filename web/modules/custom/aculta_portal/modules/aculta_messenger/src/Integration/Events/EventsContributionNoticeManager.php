@@ -10,7 +10,8 @@ use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
@@ -56,7 +57,7 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly LockBackendInterface $lock,
     private readonly AvisoPreferenciasInterface $preferences,
     private readonly QueueFactory $queueFactory,
@@ -165,10 +166,10 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
     if ($proposal === NULL) {
       return NULL;
     }
-    $url = $this->domainPurposes->routeUrl('eventos', 'aculta_events.organizer_contribution_status', [
+    $url = $this->siteManagers->routeUrl(SiteKey::Eventos, 'aculta_events.organizer_contribution_status', [
       'proposal_uuid' => $proposal->uuid(),
     ]);
-    if ($url === NULL || !$this->domainPurposes->runInPurpose('eventos', static fn(): bool => $url->access($account, TRUE)->isAllowed())) {
+    if ($url === NULL || !$this->siteManagers->runInSite('eventos', static fn(): bool => $url->access($account, TRUE)->isAllowed())) {
       return NULL;
     }
     return [
@@ -361,7 +362,7 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
       || !in_array($proposal->get('source')->value, ['events_organization', 'events_location', 'events_event'], TRUE)) {
       return NULL;
     }
-    $allowed = $this->domainPurposes->runInPurpose('eventos', static fn(): bool => $proposal->access('view', $recipient, TRUE)->isAllowed());
+    $allowed = $this->siteManagers->runInSite('eventos', static fn(): bool => $proposal->access('view', $recipient, TRUE)->isAllowed());
     return $allowed ? $proposal : NULL;
   }
 

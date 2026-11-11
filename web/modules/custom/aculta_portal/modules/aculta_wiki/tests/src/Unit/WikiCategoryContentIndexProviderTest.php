@@ -28,8 +28,8 @@ final class WikiCategoryContentIndexProviderTest extends UnitTestCase {
 
     self::assertSame('wiki_category', $provider->getProviderId());
     self::assertSame(['taxonomy_term' => ['wiki_category']], $provider->getSupportedEntityTypes());
-    self::assertSame('wiki', $provider->getAccessPurpose($wikiTerm));
-    self::assertNull($provider->getAccessPurpose($otherTerm));
+    self::assertSame('wiki', $provider->getAccessSiteKey($wikiTerm));
+    self::assertNull($provider->getAccessSiteKey($otherTerm));
   }
 
   /**

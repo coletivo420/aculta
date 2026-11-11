@@ -242,7 +242,7 @@ final class CourseEnrollmentPurchaseKernelTest extends CartKernelTestBase {
       $this->container->get('current_user'),
       $this->container->get('messenger'),
       $this->container->get('string_translation'),
-      $this->container->get('aculta_portal.domain_purpose'),
+      $this->container->get('aculta_portal.domain_site'),
     );
   }
 

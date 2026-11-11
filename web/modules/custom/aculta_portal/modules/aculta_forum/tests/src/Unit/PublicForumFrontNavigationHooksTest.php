@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\aculta_forum\Hook\PublicForumFrontNavigationHooks;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\PathProcessor\SiteFrontPathProcessor;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -30,7 +30,7 @@ final class PublicForumFrontNavigationHooksTest extends UnitTestCase {
   public function testNavigationUsesExistingLocalTasksAtThePurposeRoot(): void {
     $requestStack = new RequestStack();
     $request = Request::create('/');
-    $request->attributes->set(PurposeFrontPathProcessor::FRONT_ATTRIBUTE, TRUE);
+    $request->attributes->set(SiteFrontPathProcessor::FRONT_ATTRIBUTE, TRUE);
     $requestStack->push($request);
 
     $taskBuild = [
@@ -55,7 +55,7 @@ final class PublicForumFrontNavigationHooksTest extends UnitTestCase {
     $hooks = new PublicForumFrontNavigationHooks(
       $localTaskManager,
       $requestStack,
-      $this->domainPurposeManager('forum'),
+      $this->siteManager('forum'),
     );
     $hooks->viewsPreRender($view);
 
@@ -87,7 +87,7 @@ final class PublicForumFrontNavigationHooksTest extends UnitTestCase {
       $requestStack = new RequestStack();
       $request = Request::create($path);
       if ($path === '/' && $view->id() === 'aculta_forum_public_topics') {
-        $request->attributes->set(PurposeFrontPathProcessor::FRONT_ATTRIBUTE, FALSE);
+        $request->attributes->set(SiteFrontPathProcessor::FRONT_ATTRIBUTE, FALSE);
       }
       $requestStack->push($request);
       $localTaskManager = $this->createMock(LocalTaskManagerInterface::class);
@@ -96,7 +96,7 @@ final class PublicForumFrontNavigationHooksTest extends UnitTestCase {
       (new PublicForumFrontNavigationHooks(
         $localTaskManager,
         $requestStack,
-        $this->domainPurposeManager('forum'),
+        $this->siteManager('forum'),
       ))->viewsPreRender($view);
 
       self::assertArrayNotHasKey('aculta_forum_front_navigation', $view->attachment_before);
@@ -128,13 +128,13 @@ final class PublicForumFrontNavigationHooksTest extends UnitTestCase {
   /**
    * Creates a purpose manager for the requested purpose.
    */
-  private function domainPurposeManager(string $purpose): DomainPurposeManager {
+  private function siteManager(string $purpose): DomainSiteManager {
     $domain = $this->createMock(DomainInterface::class);
     $domain->method('id')->willReturn($purpose === 'forum' ? 'forum_aculta_org' : 'aculta_org');
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn($domain);
 
-    return new DomainPurposeManager(
+    return new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),

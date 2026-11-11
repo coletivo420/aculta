@@ -11,7 +11,7 @@ use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisher;
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\Checkout\OrderTypeCheckoutFlows;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoPaymentService;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoRecurrenceService;
@@ -188,7 +188,7 @@ trait AcultaLmsDependencyHarnessTrait {
       ->addArgument(new Reference('config.factory'));
     $container->register('aculta_portal.order_type_checkout_flows', OrderTypeCheckoutFlows::class)
       ->addArgument(new Reference('entity_type.manager'));
-    $container->register('aculta_portal.domain_purpose', DomainPurposeManager::class)
+    $container->register('aculta_portal.domain_site', DomainSiteManager::class)
       ->addArgument(new Reference('entity_type.manager'))
       ->addArgument(new Reference('domain.negotiator'))
       ->addArgument(new Reference('config.factory'))
@@ -207,7 +207,7 @@ trait AcultaLmsDependencyHarnessTrait {
       ->addArgument('aculta_messenger');
     $container->register('aculta_messenger.lms_notice_manager', LearningNoticeManager::class)
       ->addArgument(new Reference('entity_type.manager'))
-      ->addArgument(new Reference('aculta_portal.domain_purpose'))
+      ->addArgument(new Reference('aculta_portal.domain_site'))
       ->addArgument(new Reference('aculta_lms.class_activity_deadline_manager'))
       ->addArgument(new Reference('date.formatter'))
       ->addArgument(new Reference('queue'))

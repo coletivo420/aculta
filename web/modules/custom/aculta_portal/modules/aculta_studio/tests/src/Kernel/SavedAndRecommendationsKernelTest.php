@@ -76,7 +76,7 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $loader->addPsr4('Drupal\\aculta_portal\\', $root . '/web/modules/custom/aculta_portal/src');
 
     // Supply dummy domain_purpose service required by MarleyListingBuilder.
-    $container->register('aculta_portal.domain_purpose', \stdClass::class);
+    $container->register('aculta_portal.domain_site', \stdClass::class);
 
     // Register transversal saved content query.
     $container->register('aculta_portal.saved_content_query', SavedContentQuery::class)

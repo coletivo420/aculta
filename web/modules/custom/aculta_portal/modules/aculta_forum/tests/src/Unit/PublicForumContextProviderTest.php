@@ -7,7 +7,7 @@ namespace Drupal\Tests\aculta_forum\Unit;
 use Drupal\aculta_forum\Analytics\ForumAnalyticsScope;
 use Drupal\aculta_forum\Analytics\ForumAnalyticsScopeResolver;
 use Drupal\aculta_forum\Context\Provider\PublicForumContextProvider;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -31,7 +31,7 @@ final class PublicForumContextProviderTest extends TestCase {
    * The provider supports only public Forum topic nodes.
    */
   public function testSupportsOnlyPublicForumTopicNodes(): void {
-    $provider = new PublicForumContextProvider($this->domainPurposeManager('forum_aculta_org'), $this->scopeResolver());
+    $provider = new PublicForumContextProvider($this->siteManager('forum_aculta_org'), $this->scopeResolver());
     $topic = $this->createMock(NodeInterface::class);
     $topic->method('bundle')->willReturn('aculta_forum_topic');
     $topic->method('isNew')->willReturn(FALSE);
@@ -47,7 +47,7 @@ final class PublicForumContextProviderTest extends TestCase {
    * The provider returns stable identifiers and neutral write policies.
    */
   public function testBuildsStableContextAndKeepsWriteAccessNeutral(): void {
-    $provider = new PublicForumContextProvider($this->domainPurposeManager('forum_aculta_org'), $this->scopeResolver());
+    $provider = new PublicForumContextProvider($this->siteManager('forum_aculta_org'), $this->scopeResolver());
     $topic = $this->createMock(NodeInterface::class);
     $topic->method('bundle')->willReturn('aculta_forum_topic');
     $topic->method('uuid')->willReturn('topic-uuid');
@@ -80,7 +80,7 @@ final class PublicForumContextProviderTest extends TestCase {
     $topic->method('isNew')->willReturn(TRUE);
     $this->expectException(\LogicException::class);
 
-    (new PublicForumContextProvider($this->domainPurposeManager('forum_aculta_org'), $this->scopeResolver()))
+    (new PublicForumContextProvider($this->siteManager('forum_aculta_org'), $this->scopeResolver()))
       ->getContext($topic, $this->createMock(AccountInterface::class));
   }
 
@@ -98,7 +98,7 @@ final class PublicForumContextProviderTest extends TestCase {
     $topic->method('access')->willReturn(AccessResult::allowed());
     $topic->method('toUrl')->willReturn($this->createMock(Url::class));
 
-    $context = (new PublicForumContextProvider($this->domainPurposeManager('magazine_aculta_org'), $this->scopeResolver()))
+    $context = (new PublicForumContextProvider($this->siteManager('magazine_aculta_org'), $this->scopeResolver()))
       ->getContext($topic, $this->createMock(AccountInterface::class));
 
     $this->assertFalse($context->getReadAccess()->isAllowed());
@@ -111,7 +111,7 @@ final class PublicForumContextProviderTest extends TestCase {
    * @param string $domainId
    *   The active domain ID.
    *
-   * @return \Drupal\aculta_portal\Domain\DomainPurposeManager
+   * @return \Drupal\aculta_portal\Domain\DomainSiteManager
    *   The mocked-purpose manager.
    */
   /**
@@ -129,15 +129,15 @@ final class PublicForumContextProviderTest extends TestCase {
    * @param string $domainId
    *   The active domain ID.
    *
-   * @return \Drupal\aculta_portal\Domain\DomainPurposeManager
+   * @return \Drupal\aculta_portal\Domain\DomainSiteManager
    *   The mocked-purpose manager.
    */
-  private function domainPurposeManager(string $domainId): DomainPurposeManager {
+  private function siteManager(string $domainId): DomainSiteManager {
     $domain = $this->createMock(DomainInterface::class);
     $domain->method('id')->willReturn($domainId);
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn($domain);
-    return new DomainPurposeManager(
+    return new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),

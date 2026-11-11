@@ -28,14 +28,19 @@ interface DomainSiteManagerInterface {
   public function getSiteKeyForDomainId(string $domainId): ?SiteKey;
 
   /**
+   * Resolves a Drupal Domain ID to its functional site-key value.
+   */
+  public function getSiteKeyValueForDomainId(string $domainId): ?string;
+
+  /**
    * Runs a callback with the selected site's Domain active.
    */
-  public function runInSite(SiteKey $siteKey, callable $callback): mixed;
+  public function runInSite(SiteKey|string $siteKey, callable $callback): mixed;
 
   /**
    * Loads the Domain associated with a site key.
    */
-  public function getDomain(SiteKey $siteKey): ?DomainInterface;
+  public function getDomain(SiteKey|string $siteKey): ?DomainInterface;
 
   /**
    * Builds an absolute route URL for a site key.
@@ -47,7 +52,7 @@ interface DomainSiteManagerInterface {
    * @param array<string, mixed> $parameters
    *   Route parameters.
    */
-  public function routeUrl(SiteKey $siteKey, string $routeName, array $parameters = []): ?Url;
+  public function routeUrl(SiteKey|string $siteKey, string $routeName, array $parameters = []): ?Url;
 
   /**
    * Builds an absolute canonical route URL.
@@ -59,12 +64,12 @@ interface DomainSiteManagerInterface {
    * @param array<string, mixed> $parameters
    *   Route parameters.
    */
-  public function canonicalRouteUrl(SiteKey $siteKey, string $routeName, array $parameters = []): ?Url;
+  public function canonicalRouteUrl(SiteKey|string $siteKey, string $routeName, array $parameters = []): ?Url;
 
   /**
    * Builds an absolute path URL on the configured canonical domain.
    */
-  public function canonicalPathUrl(SiteKey $siteKey, string $path): ?Url;
+  public function canonicalPathUrl(SiteKey|string $siteKey, string $path): ?Url;
 
   /**
    * Builds an absolute route URL for the active deployment environment.
@@ -76,16 +81,16 @@ interface DomainSiteManagerInterface {
    * @param array<string, mixed> $parameters
    *   Route parameters.
    */
-  public function environmentRouteUrl(SiteKey $siteKey, string $routeName, array $parameters = []): ?Url;
+  public function environmentRouteUrl(SiteKey|string $siteKey, string $routeName, array $parameters = []): ?Url;
 
   /**
    * Builds an absolute path URL for the active deployment environment.
    */
-  public function environmentPathUrl(SiteKey $siteKey, string $path): ?Url;
+  public function environmentPathUrl(SiteKey|string $siteKey, string $path): ?Url;
 
   /**
    * Builds an absolute path URL using the active Domain alias.
    */
-  public function pathUrl(SiteKey $siteKey, string $path): ?Url;
+  public function pathUrl(SiteKey|string $siteKey, string $path): ?Url;
 
 }

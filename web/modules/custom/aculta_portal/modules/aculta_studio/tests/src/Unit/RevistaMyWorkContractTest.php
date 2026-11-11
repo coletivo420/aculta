@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_studio\Unit;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_studio\Plugin\MarleyTab\RevistaTab;
 use Drupal\Core\Access\AccessManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -138,7 +138,7 @@ final class RevistaMyWorkContractTest extends UnitTestCase {
       [],
       $handler,
       $translation,
-      new DomainPurposeManager(
+      new DomainSiteManager(
         $this->createMock(EntityTypeManagerInterface::class),
         $this->createMock(DomainNegotiatorInterface::class),
         $config,

@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Search\Form;
 
 use Drupal\Core\Template\Attribute;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Search\SearchPageController;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormBase;
@@ -25,14 +26,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class SearchPopupForm extends FormBase implements ContainerInjectionInterface {
 
   public function __construct(
-    protected readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('aculta_portal.domain_purpose'));
+    return new static($container->get('aculta_portal.domain_site'));
   }
 
   /**
@@ -46,12 +47,12 @@ final class SearchPopupForm extends FormBase implements ContainerInjectionInterf
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
-    $onMain = $this->domainPurposeManager->getCurrentPurpose() === 'main';
+    $onMain = $this->siteManager->getCurrentSiteKey()?->value === 'main';
     $form['#method'] = 'get';
     $form['#token'] = FALSE;
     $form['#action'] = $onMain
       ? Url::fromRoute('aculta_portal.search')->toString()
-      : ($this->domainPurposeManager->routeUrl('main', 'aculta_portal.search')?->toString() ?? Url::fromRoute('aculta_portal.search')->toString());
+      : ($this->siteManager->routeUrl(SiteKey::Main, 'aculta_portal.search')?->toString() ?? Url::fromRoute('aculta_portal.search')->toString());
     $form['#attributes'] = ['role' => 'search', 'data-portal-ui' => 'search-popup'];
     $form['#cache'] = ['contexts' => ['domain', 'url.path']];
     $previewUrl = Url::fromRoute('aculta_portal.search_preview');

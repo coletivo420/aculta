@@ -21,7 +21,7 @@ final class DocumentCardComponentTest extends UnitTestCase {
     $themeDir = dirname(__DIR__, 3);
     $componentDir = $themeDir . '/components/document-card';
     $component = Yaml::parseFile($componentDir . '/document-card.component.yml');
-    self::assertSame(FALSE, $component['props']['additionalProperties']);
+    self::assertFalse($component['props']['additionalProperties']);
     self::assertSame(['title', 'url'], $component['props']['required']);
     self::assertArrayHasKey('category', $component['slots']);
     self::assertArrayHasKey('summary', $component['slots']);

@@ -13,7 +13,7 @@ use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Event\OrganizationContributionOutcomeRecordedEvent;
 use Drupal\aculta_events\Service\OrganizationContributionEventQueue;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_user\Organization\OrganizationAccessService;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
@@ -47,7 +47,7 @@ final class EventContributionAdapter implements ContributionAdapterInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly ?DomainPurposeManager $domainPurposes,
+    private readonly ?DomainSiteManager $siteManagers,
     private readonly EventPermissionPolicy $permissionPolicy,
     private readonly ?OrganizationAccessService $organizationAccess,
     private readonly LockBackendInterface $lock,
@@ -96,7 +96,7 @@ final class EventContributionAdapter implements ContributionAdapterInterface {
    * {@inheritdoc} */
   public function submitAccess(AccountInterface $account, string $intent, ?EntityInterface $target): bool {
     if (!$account->isAuthenticated() || (int) $account->id() < 1
-      || $this->domainPurposes?->getCurrentPurpose() !== 'eventos') {
+      || $this->siteManagers?->getCurrentSiteKey()?->value !== 'eventos') {
       return FALSE;
     }
     if ($intent === 'event_create') {
@@ -111,7 +111,7 @@ final class EventContributionAdapter implements ContributionAdapterInterface {
    * {@inheritdoc} */
   public function reviewAccess(AccountInterface $reviewer, string $intent, ?EntityInterface $target): bool {
     return in_array($intent, ['event_create', 'event_update'], TRUE)
-      && $this->domainPurposes?->getCurrentPurpose() === 'main'
+      && $this->siteManagers?->getCurrentSiteKey()?->value === 'main'
       && $reviewer->hasPermission('administer aculta events');
   }
 

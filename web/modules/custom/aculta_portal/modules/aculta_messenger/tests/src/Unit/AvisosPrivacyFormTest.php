@@ -11,7 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_messenger\Form\AvisosPrivacyForm;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -188,7 +188,7 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
       $account,
       $entityTypeManager ?? $this->createMock(EntityTypeManagerInterface::class),
       $flagService ?? $this->createMock(FlagServiceInterface::class),
-      $this->domainPurposeManager(),
+      $this->siteManager(),
       $messenger ?? $this->createMock(MessengerInterface::class),
     );
   }
@@ -224,7 +224,7 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
   /**
    * Builds the Domain-purpose URL helper used for Forum links.
    */
-  private function domainPurposeManager(): DomainPurposeManager {
+  private function siteManager(): DomainSiteManager {
     $domain = $this->createMock(DomainInterface::class);
     $domain->method('isHttps')->willReturn(TRUE);
     $domainStorage = $this->createMock(EntityStorageInterface::class);
@@ -239,7 +239,7 @@ final class AvisosPrivacyFormTest extends UnitTestCase {
     $entityTypes->method('getStorage')->with('domain')->willReturn($domainStorage);
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn(NULL);
-    return new DomainPurposeManager(
+    return new DomainSiteManager(
       $entityTypes,
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),

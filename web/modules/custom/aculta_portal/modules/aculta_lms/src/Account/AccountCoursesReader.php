@@ -6,7 +6,8 @@ namespace Drupal\aculta_lms\Account;
 
 use Drupal\aculta_lms\Learning\AccountCourseSummary;
 use Drupal\aculta_lms\Learning\AccountCoursesReaderInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Session\AccountInterface;
@@ -23,7 +24,7 @@ final class AccountCoursesReader implements AccountCoursesReaderInterface {
   public function __construct(
     private readonly CourseProgressReaderInterface $progress,
     private readonly GroupMembershipReaderInterface $membershipLoader,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -68,7 +69,7 @@ final class AccountCoursesReader implements AccountCoursesReaderInterface {
       $finished = $progress !== NULL && $progress->finished;
       $url = NULL;
       if ($statusCode !== CourseProgress::STATUS_NEEDS_EVALUATION) {
-        $url = $this->domainPurposeManager->routeUrl('courses', 'entity.group.canonical', ['group' => $course->id()]);
+        $url = $this->siteManager->routeUrl(SiteKey::Courses, 'entity.group.canonical', ['group' => $course->id()]);
       }
 
       $items[] = new AccountCourseSummary(

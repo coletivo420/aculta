@@ -11,7 +11,7 @@ use Drupal\aculta_forum\Context\Provider\LmsDiscussionContextProvider;
 use Drupal\aculta_forum\Context\Provider\PublicationContextProvider;
 use Drupal\aculta_forum\Context\Provider\PublicForumContextProvider;
 use Drupal\aculta_forum\Context\Provider\WikiDiscussionContextProvider;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -39,12 +39,12 @@ final class DiscussionContextDiscoveryIsolatedTest extends TestCase {
    * Tests resolution of each of the 4 context types and closing on unsupported.
    */
   public function testDiscoversAllFourContextsAndFailsClosed(): void {
-    $domainPurpose = $this->domainPurposeManager('forum_aculta_org');
+    $siteManager = $this->siteManager('forum_aculta_org');
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
 
     $wikiProvider = new WikiDiscussionContextProvider();
     $publicationProvider = new PublicationContextProvider();
-    $publicForumProvider = new PublicForumContextProvider($domainPurpose, $this->scopeResolver());
+    $publicForumProvider = new PublicForumContextProvider($siteManager, $this->scopeResolver());
     $lmsProvider = new LmsDiscussionContextProvider($entityTypeManager);
 
     $allProviders = [
@@ -129,12 +129,12 @@ final class DiscussionContextDiscoveryIsolatedTest extends TestCase {
    * Tests container without Wiki provider: Wiki entries fail closed cleanly.
    */
   public function testContainerWithoutWikiFailsClosedOnWikiEntry(): void {
-    $domainPurpose = $this->domainPurposeManager('forum_aculta_org');
+    $siteManager = $this->siteManager('forum_aculta_org');
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
 
     $providersWithoutWiki = [
       new PublicationContextProvider(),
-      new PublicForumContextProvider($domainPurpose, $this->scopeResolver()),
+      new PublicForumContextProvider($siteManager, $this->scopeResolver()),
       new LmsDiscussionContextProvider($entityTypeManager),
     ];
 
@@ -152,13 +152,13 @@ final class DiscussionContextDiscoveryIsolatedTest extends TestCase {
    * Tests that exactly one provider matches each host (no overlap/ambiguity).
    */
   public function testEachHostMatchesExactlyOneProvider(): void {
-    $domainPurpose = $this->domainPurposeManager('forum_aculta_org');
+    $siteManager = $this->siteManager('forum_aculta_org');
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
 
     $providers = [
       'wiki' => new WikiDiscussionContextProvider(),
       'publication' => new PublicationContextProvider(),
-      'public_forum' => new PublicForumContextProvider($domainPurpose, $this->scopeResolver()),
+      'public_forum' => new PublicForumContextProvider($siteManager, $this->scopeResolver()),
       'lms' => new LmsDiscussionContextProvider($entityTypeManager),
     ];
 
@@ -204,12 +204,12 @@ final class DiscussionContextDiscoveryIsolatedTest extends TestCase {
   /**
    * Creates a Domain purpose manager for the requested domain ID.
    */
-  private function domainPurposeManager(string $domainId): DomainPurposeManager {
+  private function siteManager(string $domainId): DomainSiteManager {
     $domain = $this->createMock(DomainInterface::class);
     $domain->method('id')->willReturn($domainId);
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn($domain);
-    return new DomainPurposeManager(
+    return new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),

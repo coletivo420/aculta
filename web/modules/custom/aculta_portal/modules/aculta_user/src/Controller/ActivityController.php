@@ -17,7 +17,8 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -43,7 +44,7 @@ final class ActivityController implements ContainerInjectionInterface {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountInterface $currentUser,
-    private readonly DomainPurposeManager $purposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly ModuleHandlerInterface $modules,
     private readonly TranslationInterface $stringTranslation,
   ) {}
@@ -55,7 +56,7 @@ final class ActivityController implements ContainerInjectionInterface {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('current_user'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('module_handler'),
       $container->get('string_translation'),
     );
@@ -64,7 +65,7 @@ final class ActivityController implements ContainerInjectionInterface {
   /**
    * Renderiza a aba pedida. */
   public function view(string $aba): array {
-    if ($this->purposeManager->getCurrentPurpose() !== 'account' || !isset(self::TABS[$aba])) {
+    if ($this->siteManager->getCurrentSiteKey()?->value !== 'account' || !isset(self::TABS[$aba])) {
       throw new NotFoundHttpException();
     }
     $uid = (int) $this->currentUser->id();
@@ -195,7 +196,7 @@ final class ActivityController implements ContainerInjectionInterface {
         || !$topic->isPublished()) {
         continue;
       }
-      $access = $this->purposeManager->runInPurpose('forum', function () use (
+      $access = $this->siteManager->runInSite('forum', function () use (
         $comment,
         $topic,
       ): bool {
@@ -206,8 +207,7 @@ final class ActivityController implements ContainerInjectionInterface {
       if ($access !== TRUE) {
         continue;
       }
-      $url = $this->purposeManager->routeUrl(
-        'forum',
+      $url = $this->siteManager->routeUrl(SiteKey::Forum,
         'entity.node.canonical',
         ['node' => $topic->id()],
       );
@@ -250,15 +250,14 @@ final class ActivityController implements ContainerInjectionInterface {
           || !$topic->isPublished()) {
           continue;
         }
-        $access = $this->purposeManager->runInPurpose('forum', fn (): bool =>
+        $access = $this->siteManager->runInSite('forum', fn (): bool =>
           $topic->access('view', $this->currentUser, TRUE)->isAllowed()
           && $post->access('view', $this->currentUser, TRUE)->isAllowed()
         );
         if ($access !== TRUE) {
           continue;
         }
-        $url = $this->purposeManager->routeUrl(
-          'forum',
+        $url = $this->siteManager->routeUrl(SiteKey::Forum,
           'entity.node.canonical',
           ['node' => $topic->id()],
         );
@@ -337,13 +336,12 @@ final class ActivityController implements ContainerInjectionInterface {
       }
       $url = $history ? Url::fromRoute('entity.node.version_history', ['node' => $node->id()]) : $node->toUrl();
       if ($bundle === 'aculta_forum_topic') {
-        $access = $this->purposeManager->runInPurpose(
+        $access = $this->siteManager->runInSite(
           'forum',
           fn () => $node->access('view', $this->currentUser, TRUE)->isAllowed(),
         );
         $url = $access
-          ? $this->purposeManager->routeUrl(
-            'forum',
+          ? $this->siteManager->routeUrl(SiteKey::Forum,
             'entity.node.canonical',
             ['node' => $node->id()],
           )

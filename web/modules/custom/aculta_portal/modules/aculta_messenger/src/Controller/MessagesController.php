@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Controller;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -66,7 +67,7 @@ final class MessagesController extends ControllerBase {
   private const PERSONAL_NOTICE_PREVIEW_LIMIT = 5;
 
   public function __construct(
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly EntityTypeManagerInterface $entityTypes,
     private readonly AccountInterface $account,
     private readonly PrivateMessageServiceInterface $privateMessageService,
@@ -96,7 +97,7 @@ final class MessagesController extends ControllerBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('private_message.service'),
@@ -1190,8 +1191,7 @@ final class MessagesController extends ControllerBase {
    * same-origin fragment URL for navigation inside the drawer.
    */
   private function alertsFilterControlsBuild(array $filters): array {
-    $fallbackUrl = $this->domainPurposeManager->routeUrl(
-      'account',
+    $fallbackUrl = $this->siteManager->routeUrl(SiteKey::Account,
       'aculta_messenger.avisos',
       ['aba' => 'avisos'],
     );

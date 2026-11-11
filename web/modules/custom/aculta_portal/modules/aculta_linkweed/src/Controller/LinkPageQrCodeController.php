@@ -9,7 +9,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\aculta_linkweed\Entity\LinkPage;
 use Drupal\aculta_linkweed\Service\QrCodeSvgGenerator;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -20,7 +21,7 @@ final class LinkPageQrCodeController {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountProxyInterface $currentUser,
-    private readonly DomainPurposeManager $domainPurpose,
+    private readonly DomainSiteManager $siteManager,
     private readonly QrCodeSvgGenerator $generator,
   ) {}
 
@@ -47,7 +48,7 @@ final class LinkPageQrCodeController {
       throw new NotFoundHttpException();
     }
 
-    $canonical = $this->domainPurpose->canonicalPathUrl('links', '/pagina/' . $slug);
+    $canonical = $this->siteManager->canonicalPathUrl(SiteKey::Links, '/pagina/' . $slug);
     $canonical_uri = $canonical?->getUri();
     $canonical_parts = is_string($canonical_uri) ? parse_url($canonical_uri) : FALSE;
     if (!$canonical?->isExternal()
@@ -63,7 +64,7 @@ final class LinkPageQrCodeController {
     $response->headers->set('X-Content-Type-Options', 'nosniff');
     $response->addCacheableDependency($page);
     $response->addCacheableDependency($access);
-    $domain = $this->domainPurpose->getDomain('links');
+    $domain = $this->siteManager->getDomain(SiteKey::Links);
     if ($domain !== NULL) {
       $response->addCacheableDependency($domain);
     }

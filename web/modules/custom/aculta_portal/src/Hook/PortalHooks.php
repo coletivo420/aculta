@@ -31,6 +31,7 @@ use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\Core\Path\CurrentPathStack;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\RendererInterface;
@@ -637,11 +638,12 @@ final class PortalHooks {
       }
       // Número e S/N são subcampos logo depois da rua. Os valores vêm do
       // perfil salvo.
-      $parts = ['street' => '', 'number' => '', 'sn' => FALSE];
+      $parts = ['number' => '', 'sn' => FALSE];
       if ($entity->id()) {
         $saved = $this->entityTypeManager->getStorage('profile')->load($entity->id());
-        if ($saved && $saved->hasField('field_address') && !$saved->get('field_address')->isEmpty()) {
-          $parts = StreetNumberField::split((string) $saved->get('field_address')->first()->getAddressLine1());
+        if ($saved instanceof ProfileInterface && $saved->hasField('field_address') && !$saved->get('field_address')->isEmpty()) {
+          $addressValue = $saved->get('field_address')->first()?->getValue() ?? [];
+          $parts = StreetNumberField::split((string) ($addressValue['address_line1'] ?? ''));
         }
       }
       if (isset($form['field_address']['widget'][0]['address'])) {

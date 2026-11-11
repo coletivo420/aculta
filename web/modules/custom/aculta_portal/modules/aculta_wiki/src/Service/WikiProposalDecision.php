@@ -7,7 +7,8 @@ namespace Drupal\aculta_wiki\Service;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\content_moderation\ModerationInformationInterface;
 use Drupal\content_moderation\StateTransitionValidationInterface;
 use Drupal\domain\DomainInterface;
@@ -36,7 +37,7 @@ final class WikiProposalDecision {
     private readonly AccountInterface $currentUser,
     private readonly Connection $database,
     private readonly WikiEditorialEventQueue $editorialEvents,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly StateTransitionValidationInterface $transitionValidation,
     private readonly ModerationInformationInterface $moderationInformation,
   ) {}
@@ -88,12 +89,9 @@ final class WikiProposalDecision {
 
     $transaction = $this->database->startTransaction();
     try {
-      $lockedId = $this->database->select('aculta_wiki_proposal', 'proposal')
-        ->fields('proposal', ['id'])
-        ->condition('id', $proposal->id())
-        ->forUpdate()
-        ->execute()
-        ->fetchField();
+      $select = $this->database->select('aculta_wiki_proposal', 'proposal');
+      $select->fields('proposal', ['id'])->condition('id', $proposal->id())->forUpdate();
+      $lockedId = $select->execute()->fetchField();
       if (!$lockedId) {
         throw new ConflictHttpException('A proposta não está mais disponível para decisão.');
       }
@@ -200,15 +198,12 @@ final class WikiProposalDecision {
     $decisionData = $this->validateListModes($approvedFields, $decisionData);
 
     $targetId = (int) $target->id();
-    $result = $this->domainPurposes->runInPurpose('wiki', function () use ($expectedVersion, $targetId, $approvedFields, $decisionData, $proposedFields): NodeInterface {
-      $wikiDomain = $this->domainPurposes->getDomain('wiki');
+    $result = $this->siteManagers->runInSite('wiki', function () use ($expectedVersion, $targetId, $approvedFields, $decisionData, $proposedFields): NodeInterface {
+      $wikiDomain = $this->siteManagers->getDomain(SiteKey::Wiki);
       $storage = $this->entityTypeManager->getStorage('node');
-      $lockedId = $this->database->select('node', 'node')
-        ->fields('node', ['nid'])
-        ->condition('nid', $targetId)
-        ->forUpdate()
-        ->execute()
-        ->fetchField();
+      $select = $this->database->select('node', 'node');
+      $select->fields('node', ['nid'])->condition('nid', $targetId)->forUpdate();
+      $lockedId = $select->execute()->fetchField();
       $target = $lockedId ? $storage->loadUnchanged($targetId) : NULL;
       if (!$wikiDomain || !$target instanceof NodeInterface || $target->bundle() !== 'wiki_entry'
         || !$target->isDefaultRevision() || !$target->isPublished()

@@ -9,7 +9,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\user\UserInterface;
 
 /**
@@ -20,7 +21,7 @@ final class ForumReadMarker {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly AccountProxyInterface $currentUser,
     private readonly TranslationInterface $stringTranslation,
     private readonly MessengerInterface $messenger,
@@ -29,10 +30,10 @@ final class ForumReadMarker {
   /**
    * Returns the number of currently accessible public topics. */
   public function countEligibleTopics(): int {
-    if ($this->domainPurposeManager->getCurrentPurpose() !== 'forum') {
+    if ($this->siteManager->getCurrentSiteKey()?->value !== 'forum') {
       return 0;
     }
-    $domain = $this->domainPurposeManager->getDomain('forum');
+    $domain = $this->siteManager->getDomain(SiteKey::Forum);
     if ($domain === NULL) {
       return 0;
     }
@@ -61,14 +62,14 @@ final class ForumReadMarker {
     }
 
     $account = $this->entityTypeManager->getStorage('user')->load($accountId);
-    $domain = $this->domainPurposeManager->getDomain('forum');
+    $domain = $this->siteManager->getDomain(SiteKey::Forum);
     if (!$account instanceof UserInterface || $domain === NULL) {
       $context['finished'] = 1;
       return;
     }
 
-    $processed = $this->domainPurposeManager->runInPurpose('forum', function () use ($domain, $account, $total, &$context): bool {
-      if ($this->domainPurposeManager->getCurrentPurpose() !== 'forum') {
+    $processed = $this->siteManager->runInSite('forum', function () use ($domain, $account, $total, &$context): bool {
+      if ($this->siteManager->getCurrentSiteKey()?->value !== 'forum') {
         $context['finished'] = 1;
         $context['message'] = $this->stringTranslation->translate('O contexto do Fórum não está disponível; nenhuma discussão adicional foi marcada.');
         return FALSE;

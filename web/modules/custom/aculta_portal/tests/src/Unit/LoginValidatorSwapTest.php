@@ -7,7 +7,7 @@ namespace Drupal\Tests\aculta_portal\Unit;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Cart\AddToCartAjax;
 use Drupal\aculta_portal\Cart\CartUtility;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Hook\FormHooks;
 use Drupal\commerce_cart\CartProviderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -46,10 +46,10 @@ final class LoginValidatorSwapTest extends UnitTestCase {
    *   Lista de validadores após o alter.
    */
   private function validators(array $start): array {
-    // Serviços finais (DomainPurposeManager, CartUtility, AddToCartAjax) são construídos de verdade, não duplicados.
+    // Serviços finais (DomainSiteManager, CartUtility, AddToCartAjax) são construídos de verdade, não duplicados.
     // AddToCartAjax::alter() ignora formulários que não são "Adicionar ao carrinho", então os mocks
     // não são usados aqui.
-    $purpose = new DomainPurposeManager(
+    $purpose = new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),

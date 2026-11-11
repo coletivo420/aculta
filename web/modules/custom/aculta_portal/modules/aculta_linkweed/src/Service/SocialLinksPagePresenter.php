@@ -8,8 +8,9 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 
+use Drupal\aculta_portal\Domain\SiteKey;
 /**
  * Builds the social channels and project carousel for the LINKS purpose.
  */
@@ -36,7 +37,7 @@ final class SocialLinksPagePresenter {
   public function __construct(
     private readonly ConfigFactoryInterface $configFactory,
     private readonly TranslationInterface $translation,
-    private readonly DomainPurposeManager $domainPurpose,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -49,7 +50,7 @@ final class SocialLinksPagePresenter {
       '#cache' => ['tags' => ['config:aculta_linkweed.social_links']],
     ];
     $has_buttons = FALSE;
-    $url = $this->domainPurpose->pathUrl('main', '/');
+    $url = $this->siteManager->pathUrl(SiteKey::Main, '/');
     if ($url !== NULL) {
       $main_link = [
         '#type' => 'link',
@@ -59,7 +60,7 @@ final class SocialLinksPagePresenter {
       ];
       $metadata = (new CacheableMetadata())
         ->addCacheContexts(['url.site', 'languages:language_interface']);
-      $mainDomain = $this->domainPurpose->getDomain('main');
+      $mainDomain = $this->siteManager->getDomain(SiteKey::Main);
       if ($mainDomain !== NULL) {
         $metadata->addCacheableDependency($mainDomain);
       }

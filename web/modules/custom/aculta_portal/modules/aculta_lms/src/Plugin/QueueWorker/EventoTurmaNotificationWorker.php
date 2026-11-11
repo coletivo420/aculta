@@ -7,7 +7,8 @@ namespace Drupal\aculta_lms\Plugin\QueueWorker;
 use Drupal\user\UserInterface;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Message\MailMessage;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -43,7 +44,7 @@ final class EventoTurmaNotificationWorker extends QueueWorkerBase implements Con
     protected readonly UserDataInterface $dadosUsuario,
     protected readonly AcultaMailerInterface $mailer,
     protected readonly UuidInterface $uuid,
-    protected readonly DomainPurposeManager $purpose,
+    protected readonly DomainSiteManager $purpose,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -60,7 +61,7 @@ final class EventoTurmaNotificationWorker extends QueueWorkerBase implements Con
       $container->get('user.data'),
       $container->get('aculta_mailer.mailer'),
       $container->get('uuid'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
     );
   }
 
@@ -76,7 +77,7 @@ final class EventoTurmaNotificationWorker extends QueueWorkerBase implements Con
     if ($turma === NULL || (string) $evento->get('field_status')->value !== 'publicado') {
       return;
     }
-    $url = $this->purpose->pathUrl('eventos', '/eventos/' . (string) $evento->get('field_slug')->value);
+    $url = $this->purpose->pathUrl(SiteKey::Eventos, '/eventos/' . (string) $evento->get('field_slug')->value);
     if ($url === NULL) {
       throw new \RuntimeException('O endereço do ambiente para os eventos não está disponível.');
     }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_linkweed\Unit;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_linkweed\Service\LinkDestinationResolver;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -75,7 +75,7 @@ final class LinkDestinationResolverTest extends UnitTestCase {
     );
     $domain_negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $domain_negotiator->method('getActiveDomain')->willReturn(NULL);
-    $domain_purpose = new DomainPurposeManager(
+    $domain_purpose = new DomainSiteManager(
       $entity_type_manager,
       $domain_negotiator,
       $this->createMock(ConfigFactoryInterface::class),

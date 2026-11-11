@@ -14,7 +14,8 @@ use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_messenger\Service\NoticeRelatedGrouper;
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
@@ -60,7 +61,7 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly CheckoutSettings $checkoutSettings,
     private readonly AvisoPreferenciasInterface $preferences,
     private readonly QueueFactory $queueFactory,
@@ -456,7 +457,7 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
       || !$order->access('view', $account, TRUE)->isAllowed()) {
       return NULL;
     }
-    $url = $this->domainPurposes->routeUrl('shop', 'entity.commerce_order.user_view', [
+    $url = $this->siteManagers->routeUrl(SiteKey::Shop, 'entity.commerce_order.user_view', [
       'commerce_order' => $order->id(),
       'user' => $account->id(),
     ]);

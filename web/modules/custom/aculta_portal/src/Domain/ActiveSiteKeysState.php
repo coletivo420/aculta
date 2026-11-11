@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Domain;
 
+
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\State\StateInterface;
 
 /**
  * Manages the neutral state list of active site keys.
  *
  * Contrato neutro exposto para o tema e outros consumidores sem exigir
- * consultas a Domain, DomainNegotiator ou DomainPurposeManager.
+ * consultas a Domain, DomainNegotiator ou DomainSiteManager.
  */
 final class ActiveSiteKeysState {
 

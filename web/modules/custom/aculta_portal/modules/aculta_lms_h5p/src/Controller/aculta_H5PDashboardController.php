@@ -8,7 +8,8 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -25,7 +26,7 @@ final class aculta_H5PDashboardController implements ContainerInjectionInterface
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountProxyInterface $currentUser,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly TranslationInterface $translation,
   ) {}
 
@@ -36,7 +37,7 @@ final class aculta_H5PDashboardController implements ContainerInjectionInterface
     return new static(
       $container->get('entity_type.manager'),
       $container->get('current_user'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('string_translation'),
     );
   }
@@ -95,7 +96,7 @@ final class aculta_H5PDashboardController implements ContainerInjectionInterface
         continue;
       }
 
-      $courseUrl = $this->domainPurposeManager->routeUrl('courses', 'entity.group.canonical', ['group' => $entity->id()]);
+      $courseUrl = $this->siteManager->routeUrl(SiteKey::Courses, 'entity.group.canonical', ['group' => $entity->id()]);
       if ($courseUrl === NULL) {
         continue;
       }

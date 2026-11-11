@@ -8,7 +8,7 @@ use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_events\Event\OrganizationContributionOutcomeRecordedEvent;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\user\UserInterface;
@@ -25,7 +25,7 @@ final class OrganizationContributionNoticePublisher implements EventSubscriberIn
    */
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly ?DomainPurposeManager $domainPurposes,
+    private readonly ?DomainSiteManager $siteManagers,
     private readonly ?MessengerNoticePublisherInterface $publisher,
     private readonly TimeInterface $time,
     private readonly LoggerInterface $logger,
@@ -42,7 +42,7 @@ final class OrganizationContributionNoticePublisher implements EventSubscriberIn
    * Revalidates the persisted proposal and recipient before publishing.
    */
   public function proposalOutcome(OrganizationContributionOutcomeRecordedEvent $event): void {
-    if ($this->publisher === NULL || $this->domainPurposes === NULL) {
+    if ($this->publisher === NULL || $this->siteManagers === NULL) {
       return;
     }
     $recipient = $this->entityTypeManager->getStorage('user')->loadUnchanged($event->recipientUid);
@@ -63,7 +63,7 @@ final class OrganizationContributionNoticePublisher implements EventSubscriberIn
       || $proposal->get('state')->value !== $event->outcome) {
       return;
     }
-    $allowed = $this->domainPurposes->runInPurpose('eventos', static fn(): bool =>
+    $allowed = $this->siteManagers->runInSite('eventos', static fn(): bool =>
       $proposal->access('view', $recipient, TRUE)->isAllowed()
     );
     if (!$allowed) {

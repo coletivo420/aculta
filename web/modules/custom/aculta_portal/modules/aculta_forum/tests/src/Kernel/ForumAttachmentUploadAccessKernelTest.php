@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Access\ForumAttachmentUploadAccess;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\domain\Entity\Domain;
 use Drupal\filter\Entity\FilterFormat;
@@ -44,7 +44,7 @@ final class ForumAttachmentUploadAccessKernelTest extends KernelTestBase {
   /**
    * Purpose resolver.
    */
-  private DomainPurposeManager $purpose;
+  private DomainSiteManager $purpose;
 
   /**
    * Member account.
@@ -97,7 +97,7 @@ final class ForumAttachmentUploadAccessKernelTest extends KernelTestBase {
     $this->member = User::create(['name' => 'membro', 'status' => 1]);
     $this->member->save();
 
-    $this->purpose = new DomainPurposeManager(
+    $this->purpose = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get('domain.negotiator'),
       $this->container->get('config.factory'),
@@ -110,7 +110,7 @@ final class ForumAttachmentUploadAccessKernelTest extends KernelTestBase {
    * Member with the Forum format inside the Forum purpose is allowed.
    */
   public function testMemberWithForumFormatIsAllowed(): void {
-    $result = $this->purpose->runInPurpose('forum', fn () => $this->access->access(
+    $result = $this->purpose->runInSite('forum', fn () => $this->access->access(
       $this->forumFormat,
       $this->member,
     ));
@@ -125,20 +125,20 @@ final class ForumAttachmentUploadAccessKernelTest extends KernelTestBase {
    * Anonymous, other formats and other purposes are refused.
    */
   public function testOtherContextsAreRefused(): void {
-    $anonymous = $this->purpose->runInPurpose('forum', fn () => $this->access->access(
+    $anonymous = $this->purpose->runInSite('forum', fn () => $this->access->access(
       $this->forumFormat,
       new AnonymousUserSession(),
     ));
     self::assertFalse($anonymous->isAllowed());
     self::assertTrue($anonymous->isNeutral());
 
-    $otherFormat = $this->purpose->runInPurpose('forum', fn () => $this->access->access(
+    $otherFormat = $this->purpose->runInSite('forum', fn () => $this->access->access(
       $this->otherFormat,
       $this->member,
     ));
     self::assertFalse($otherFormat->isAllowed());
 
-    $main = $this->purpose->runInPurpose('main', fn () => $this->access->access(
+    $main = $this->purpose->runInSite('main', fn () => $this->access->access(
       $this->forumFormat,
       $this->member,
     ));

@@ -7,8 +7,8 @@ namespace Drupal\aculta_portal\Domain;
 /**
  * Mapa único de superfícies do aculta_portal (Fase 3.1, sem mudança de valor).
  *
- * Antes desta classe, os mapas viviam em DomainPurposeManager, em
- * PurposeFrontPathProcessor e em FrontPathPolicy. Os valores são os mesmos.
+ * Antes desta classe, os mapas viviam em DomainSiteManager, em
+ * SiteFrontPathProcessor e em FrontPathPolicy. Os valores são os mesmos.
  * Quem consome deve ler daqui. A configuração por ambiente virá nas fases
  * seguintes (docs do submódulo aculta_paths).
  */

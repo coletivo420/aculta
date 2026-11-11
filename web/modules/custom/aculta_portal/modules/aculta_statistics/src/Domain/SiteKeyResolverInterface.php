@@ -7,7 +7,7 @@ namespace Drupal\aculta_statistics\Domain;
 /**
  * Purpose (identificador estável de domínio) da requisição atual.
  */
-interface PurposeResolverInterface {
+interface SiteKeyResolverInterface {
 
   /**
    * Purpose atual, por exemplo `main`, ou NULL quando não há purpose conhecido.

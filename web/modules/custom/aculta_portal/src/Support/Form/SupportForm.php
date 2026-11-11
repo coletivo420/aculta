@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Support\Form;
 
 use Drupal\Core\Url;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Support\SupportAmountsProviderInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -23,7 +23,7 @@ final class SupportForm extends FormBase {
     protected readonly ConfigFactoryInterface $configs,
     protected readonly EntityTypeManagerInterface $entities,
     protected readonly BlockManagerInterface $blockManager,
-    protected readonly DomainPurposeManager $purposes,
+    protected readonly DomainSiteManager $purposes,
     protected readonly ?SupportAmountsProviderInterface $campanhas = NULL,
   ) {}
 
@@ -35,7 +35,7 @@ final class SupportForm extends FormBase {
       $container->get('config.factory'),
       $container->get('entity_type.manager'),
       $container->get('plugin.manager.block'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->has('aculta_donation.campaigns') ? $container->get('aculta_donation.campaigns') : NULL,
     );
   }

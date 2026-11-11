@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_game\ForumParticipationPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -100,7 +100,7 @@ final class ForumPostParticipationPolicyKernelTest extends KernelTestBase {
     ]);
     $this->topic->save();
 
-    $this->policy = new ForumParticipationPolicy(new DomainPurposeManager(
+    $this->policy = new ForumParticipationPolicy(new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get('domain.negotiator'),
       $this->container->get('config.factory'),

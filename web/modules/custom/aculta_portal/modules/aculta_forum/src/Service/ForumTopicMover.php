@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Service;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -24,8 +25,8 @@ final class ForumTopicMover {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
     #[Autowire(service: 'logger.channel.aculta_forum')]
     private readonly LoggerInterface $logger,
   ) {}
@@ -41,7 +42,7 @@ final class ForumTopicMover {
       return AccessResult::forbidden()->addCacheableDependency($node);
     }
 
-    $forum_domain = $this->domainPurposeManager->getDomain('forum');
+    $forum_domain = $this->siteManager->getDomain(SiteKey::Forum);
     $source_category_id = (int) ($node->get('field_aculta_categories')->getValue()[0]['target_id'] ?? 0);
     $source_category = $source_category_id > 0
       ? $this->entityTypeManager->getStorage('taxonomy_term')->load($source_category_id)
@@ -65,7 +66,7 @@ final class ForumTopicMover {
     }
 
     if ($allowed) {
-      $node_access = $this->domainPurposeManager->runInPurpose('forum', fn () => $node->access('view', $account, TRUE));
+      $node_access = $this->siteManager->runInSite('forum', fn () => $node->access('view', $account, TRUE));
       if ($node_access instanceof AccessResultInterface) {
         $result = $result->andIf($node_access);
       }

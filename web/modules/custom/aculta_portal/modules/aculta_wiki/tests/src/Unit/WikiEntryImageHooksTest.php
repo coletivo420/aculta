@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_wiki\Unit;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
 use Drupal\aculta_file_uploader\MimeTypeVerifier;
 use Drupal\aculta_file_uploader\UploadPolicy as FileUploadPolicy;
@@ -158,7 +158,7 @@ final class WikiEntryImageHooksTest extends UnitTestCase {
     $policy = $this->policy($extensions, $megabytes);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $requestStack = new RequestStack();
-    $domainPurposes = new DomainPurposeManager(
+    $siteManagers = new DomainSiteManager(
       $entityTypeManager,
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
@@ -174,11 +174,11 @@ final class WikiEntryImageHooksTest extends UnitTestCase {
       $this->uploader($policy),
       new WikiContributorWorkspace(
         $entityTypeManager,
-        $domainPurposes,
+        $siteManagers,
         $this->getStringTranslationStub(),
         $requestStack,
       ),
-      $domainPurposes,
+      $siteManagers,
       $this->createMock(AccountProxyInterface::class),
       $routeProvider,
     );

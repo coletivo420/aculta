@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_studio;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\aculta_wiki\Service\WikiEditorialQueue;
@@ -33,7 +34,7 @@ final class MarleyListingBuilder {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DateFormatterInterface $dateFormatter,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly AccountInterface $account,
     TranslationInterface $stringTranslation,
     private readonly RequestStack $requestStack,
@@ -309,14 +310,14 @@ final class MarleyListingBuilder {
       ->addCacheContexts(['url.query_args:wiki_revision_cursor']);
     $rows = [];
     foreach ($page->getItems() as $revision) {
-      $url = $this->domainPurposes->routeUrl('wiki', 'entity.node.revision', [
+      $url = $this->siteManagers->routeUrl(SiteKey::Wiki, 'entity.node.revision', [
         'node' => $revision->id(),
         'node_revision' => $revision->getRevisionId(),
       ]);
       if ($url === NULL) {
         continue;
       }
-      $revisionAccess = $this->domainPurposes->runInPurpose('wiki', static fn (): bool => $url->access($account));
+      $revisionAccess = $this->siteManagers->runInSite('wiki', static fn (): bool => $url->access($account));
       if (!$revisionAccess) {
         continue;
       }
@@ -381,8 +382,8 @@ final class MarleyListingBuilder {
    *   A route link or an empty table cell when access is denied.
    */
   private function wikiRevisionEditLink(NodeInterface $revision, AccountInterface $account): array {
-    $url = $this->domainPurposes->routeUrl('wiki', 'entity.node.edit_form', ['node' => $revision->id()]);
-    if ($url === NULL || !$this->domainPurposes->runInPurpose('wiki', static fn (): bool => $url->access($account))) {
+    $url = $this->siteManagers->routeUrl(SiteKey::Wiki, 'entity.node.edit_form', ['node' => $revision->id()]);
+    if ($url === NULL || !$this->siteManagers->runInSite('wiki', static fn (): bool => $url->access($account))) {
       return ['data' => ''];
     }
     return [
@@ -634,13 +635,13 @@ final class MarleyListingBuilder {
       }
       return ['data' => ['#type' => 'link', '#title' => $this->t('Editar'), '#url' => $url]];
     }
-    $url = $this->domainPurposes->routeUrl($purpose, 'entity.node.edit_form', ['node' => $node->id()]);
+    $url = $this->siteManagers->routeUrl($purpose, 'entity.node.edit_form', ['node' => $node->id()]);
     if ($url === NULL) {
       return ['data' => ''];
     }
     // The route's own access (admin route, domain and entity checks), not a copy of the rule.
     $account = $this->account;
-    $access = $this->domainPurposes->runInPurpose($purpose, static fn (): bool => $url->access($account));
+    $access = $this->siteManagers->runInSite($purpose, static fn (): bool => $url->access($account));
     if (!$access) {
       return ['data' => ''];
     }

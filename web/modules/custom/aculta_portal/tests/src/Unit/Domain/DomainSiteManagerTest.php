@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Exercises the primary site resolver against real mapping and mocks.
  *
- * The previous version asserted delegation to DomainPurposeManager, but the
+ * The previous version asserted delegation to DomainSiteManager, but the
  * manager is now the primary resolver: DomainNegotiator → Domain ID →
  * SiteKeyRegistry, with fail-closed URL helpers when no Domain is configured.
  */

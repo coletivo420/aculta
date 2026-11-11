@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Access\ForumPostModerationAccess;
 use Drupal\aculta_forum\Entity\ForumPost;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\Entity\Domain;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -51,7 +51,7 @@ final class ForumPostRevisionAccessKernelTest extends KernelTestBase {
   /**
    * Purpose resolver.
    */
-  private DomainPurposeManager $purpose;
+  private DomainSiteManager $purpose;
 
   /**
    * Member account.
@@ -136,7 +136,7 @@ final class ForumPostRevisionAccessKernelTest extends KernelTestBase {
     $this->post->save();
     $this->secondRevision = (int) $this->post->getRevisionId();
 
-    $this->purpose = new DomainPurposeManager(
+    $this->purpose = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get('domain.negotiator'),
       $this->container->get('config.factory'),
@@ -152,13 +152,13 @@ final class ForumPostRevisionAccessKernelTest extends KernelTestBase {
    * History is allowed only on the main purpose with topic access.
    */
   public function testRevisionHistoryRequiresMainPurpose(): void {
-    $main = $this->purpose->runInPurpose(
+    $main = $this->purpose->runInSite(
       'main',
       fn () => $this->access->revisionHistory($this->member, $this->post),
     );
     self::assertTrue($main->isAllowed());
 
-    $forum = $this->purpose->runInPurpose(
+    $forum = $this->purpose->runInSite(
       'forum',
       fn () => $this->access->revisionHistory($this->member, $this->post),
     );
@@ -169,7 +169,7 @@ final class ForumPostRevisionAccessKernelTest extends KernelTestBase {
    * Comparison accepts two distinct revisions of the same post.
    */
   public function testValidComparisonIsAllowed(): void {
-    $access = $this->purpose->runInPurpose('main', fn () => $this->access->compareRevisions(
+    $access = $this->purpose->runInSite('main', fn () => $this->access->compareRevisions(
       $this->member,
       $this->post,
       (string) $this->firstRevision,
@@ -182,7 +182,7 @@ final class ForumPostRevisionAccessKernelTest extends KernelTestBase {
    * Duplicate, unknown, or foreign revisions are refused.
    */
   public function testInvalidComparisonsAreRefused(): void {
-    $same = $this->purpose->runInPurpose('main', fn () => $this->access->compareRevisions(
+    $same = $this->purpose->runInSite('main', fn () => $this->access->compareRevisions(
       $this->member,
       $this->post,
       (string) $this->firstRevision,
@@ -190,7 +190,7 @@ final class ForumPostRevisionAccessKernelTest extends KernelTestBase {
     ));
     self::assertFalse($same->isAllowed());
 
-    $unknown = $this->purpose->runInPurpose('main', fn () => $this->access->compareRevisions(
+    $unknown = $this->purpose->runInSite('main', fn () => $this->access->compareRevisions(
       $this->member,
       $this->post,
       (string) $this->firstRevision,
@@ -205,7 +205,7 @@ final class ForumPostRevisionAccessKernelTest extends KernelTestBase {
       'status' => 1,
     ]);
     $other->save();
-    $foreign = $this->purpose->runInPurpose('main', fn () => $this->access->compareRevisions(
+    $foreign = $this->purpose->runInSite('main', fn () => $this->access->compareRevisions(
       $this->member,
       $this->post,
       (string) $this->firstRevision,

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\EventSubscriber;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Domain\DomainSurfaceMap;
 use Drupal\aculta_portal\Domain\SurfaceConfigReader;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -23,7 +23,7 @@ final class SurfaceRequestSubscriber implements EventSubscriberInterface {
 
   public function __construct(
     private readonly SurfaceConfigReader $surfaces,
-    private readonly DomainPurposeManager $purposes,
+    private readonly DomainSiteManager $purposes,
   ) {}
 
   /**
@@ -43,7 +43,7 @@ final class SurfaceRequestSubscriber implements EventSubscriberInterface {
     if (!$event->isMainRequest() || !$this->surfaces->leituraAtiva()) {
       return;
     }
-    $purpose = $this->purposes->getCurrentPurpose();
+    $purpose = $this->purposes->getCurrentSiteKey()?->value;
     if ($purpose === NULL || $purpose === DomainSurfaceMap::MAIN) {
       return;
     }

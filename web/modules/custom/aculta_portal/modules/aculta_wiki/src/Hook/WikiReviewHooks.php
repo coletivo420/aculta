@@ -34,7 +34,7 @@ final class WikiReviewHooks {
   #[Hook('entity_insert')]
   public function entityInsert(EntityInterface $entity): void {
     if (!$entity instanceof NodeInterface || $entity->bundle() !== 'wiki_entry'
-      || ($entity instanceof SynchronizableInterface && $entity->isSyncing())
+      || $entity->isSyncing()
       || !$entity->isDefaultRevision()
       || $this->moderationState($entity) !== self::STATE_REVIEW) {
       return;
@@ -50,7 +50,7 @@ final class WikiReviewHooks {
     if (!$entity instanceof NodeInterface || $entity->bundle() !== 'wiki_entry') {
       return;
     }
-    if ($entity instanceof SynchronizableInterface && $entity->isSyncing()) {
+    if ($entity->isSyncing()) {
       return;
     }
     if (!$entity->isDefaultRevision()) {

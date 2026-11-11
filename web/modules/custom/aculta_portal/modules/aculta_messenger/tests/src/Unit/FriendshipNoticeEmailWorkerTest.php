@@ -10,7 +10,7 @@ use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_messenger\Plugin\QueueWorker\FriendshipNoticeEmailWorker;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
@@ -394,7 +394,7 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
   /**
    * Builds the queue worker with the configured domain resolver. */
   private function worker(EntityTypeManagerInterface $entityTypeManager, MessageNotifyInterface $notifier, ?LockBackendInterface $lock = NULL, ?AcultaMailerInterface $mailer = NULL, ?AvisoPreferenciasInterface $preferences = NULL, ?EmailConfirmationPolicy $emailPolicy = NULL): FriendshipNoticeEmailWorker {
-    $domainPurpose = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $entityTypeManager,
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
@@ -407,7 +407,7 @@ final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
       $entityTypeManager,
       $notifier,
       $mailer ?? $this->createMock(AcultaMailerInterface::class),
-      $domainPurpose,
+      $siteManager,
       $lock ?? $this->createConfiguredMock(LockBackendInterface::class, ['acquire' => TRUE]),
       $preferences ?? $this->createConfiguredMock(AvisoPreferenciasInterface::class, ['emailMode' => AvisoPreferencias::EMAIL_IMMEDIATE]),
       $emailPolicy ?? new EmailConfirmationPolicy(

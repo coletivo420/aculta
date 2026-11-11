@@ -63,7 +63,7 @@ if (!preg_match('#aculta_portal\.email_resend:\s*\n\s+path:\s*/confirmar-email/r
 
 // 3. Guards for the retired path and ACCOUNT root must stay in place.
 $checks++;
-$subscriber = $read('web/modules/custom/aculta_portal/src/EventSubscriber/DomainPurposeRequestSubscriber.php');
+$subscriber = $read('web/modules/custom/aculta_portal/src/EventSubscriber/DomainSiteRequestSubscriber.php');
 // /minha-conta is not a route; its explicit 404 prevents redirects.
 if (!str_contains($subscriber, "\$accountPath === '/minha-conta'") || !str_contains($subscriber, 'Response::HTTP_NOT_FOUND')) {
   $failures[] = 'subscriber: /minha-conta must answer 404 without redirect';
@@ -118,7 +118,7 @@ foreach ($scanDirs as $dir) {
         continue;
       }
       // The 404 guard reads the incoming path but does not generate a link.
-      if ($relative === 'web/modules/custom/aculta_portal/src/EventSubscriber/DomainPurposeRequestSubscriber.php' && str_contains($line, '$accountPath')) {
+      if ($relative === 'web/modules/custom/aculta_portal/src/EventSubscriber/DomainSiteRequestSubscriber.php' && str_contains($line, '$accountPath')) {
         continue;
       }
       if (isset($allowedConfig[$relative]) && preg_match($allowedConfig[$relative], $line)) {

@@ -69,7 +69,7 @@ final class EditorialResourcesKernelTest extends KernelTestBase {
     $loader->addPsr4('Drupal\\aculta_events\\', $root . '/web/modules/custom/aculta_portal/modules/aculta_events/src');
     $loader->addPsr4('Drupal\\aculta_document_viewer\\', $root . '/web/modules/custom/aculta_portal/modules/aculta_document_viewer/src');
 
-    $container->register('aculta_portal.domain_purpose', \stdClass::class);
+    $container->register('aculta_portal.domain_site', \stdClass::class);
     $container->register('aculta_calendar.embed_hosts', \stdClass::class);
   }
 

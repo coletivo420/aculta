@@ -6,7 +6,8 @@ namespace Drupal\aculta_portal\Donation;
 
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
@@ -29,7 +30,7 @@ final class DonationSummaryController implements ContainerInjectionInterface {
     private readonly ClassResolverInterface $classResolver,
     private readonly CartSessionInterface $cartSession,
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $purposes,
+    private readonly DomainSiteManager $purposes,
   ) {}
 
   /**
@@ -46,7 +47,7 @@ final class DonationSummaryController implements ContainerInjectionInterface {
       $container->get('class_resolver'),
       $container->get('commerce_cart.cart_session'),
       $container->get('entity_type.manager'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
     );
   }
 
@@ -77,7 +78,7 @@ final class DonationSummaryController implements ContainerInjectionInterface {
 
     // Etapa de resumo no domínio principal (rotas do Commerce).
     $parametros = ['commerce_order' => $pedido->id(), 'step' => 'review'];
-    $url = $this->purposes->routeUrl('main', 'aculta_donation.donation_controller_formPage', $parametros)
+    $url = $this->purposes->routeUrl(SiteKey::Main, 'aculta_donation.donation_controller_formPage', $parametros)
       ?? Url::fromRoute('aculta_donation.donation_controller_formPage', $parametros);
     return new TrustedRedirectResponse($url->toString());
   }

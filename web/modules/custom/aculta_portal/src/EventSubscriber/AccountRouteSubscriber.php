@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\EventSubscriber;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -20,7 +21,7 @@ final class AccountRouteSubscriber implements EventSubscriberInterface {
 
   public function __construct(
     private readonly AccountProxyInterface $currentUser,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -91,8 +92,8 @@ final class AccountRouteSubscriber implements EventSubscriberInterface {
 
     if ($destination !== NULL) {
       $target = $destination === '<front>'
-        ? $this->domainPurposeManager->pathUrl('account', '/')
-        : $this->domainPurposeManager->routeUrl('account', $destination);
+        ? $this->siteManager->pathUrl(SiteKey::Account, '/')
+        : $this->siteManager->routeUrl(SiteKey::Account, $destination);
       if ($target === NULL) {
         $event->setResponse(new Response('', Response::HTTP_NOT_FOUND));
         return;
@@ -100,7 +101,7 @@ final class AccountRouteSubscriber implements EventSubscriberInterface {
 
       // The generic user edit route is canonical on MAIN. Never turn a
       // state-changing request there into a cross-domain replay on ACCOUNT.
-      if ($this->domainPurposeManager->getCurrentPurpose() !== 'account'
+      if ($this->siteManager->getCurrentSiteKey()?->value !== 'account'
         && !in_array($request->getMethod(), ['GET', 'HEAD'], TRUE)) {
         $event->setResponse(new Response('', Response::HTTP_NOT_FOUND, [
           'Cache-Control' => 'private, no-store',

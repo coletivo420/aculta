@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Kernel;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Presentation\DomainPresentationBuilder;
 use Drupal\domain\Entity\Domain;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -21,7 +21,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 final class DomainPresentationBuilderKernelTest extends KernelTestBase {
 
   /**
-   * Canonical domains resolved by DomainPurposeManager.
+   * Canonical domains resolved by DomainSiteManager.
    *
    * @var array<string, string>
    */
@@ -67,7 +67,7 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
       ])->save();
     }
 
-    $purposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get(DomainNegotiatorInterface::class),
       $this->container->get('config.factory'),
@@ -76,7 +76,7 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
     $pathMatcher = $this->createMock(PathMatcherInterface::class);
     $pathMatcher->method('isFrontPage')->willReturn(FALSE);
     $builder = new DomainPresentationBuilder(
-      $purposeManager,
+      $siteManager,
       $this->container->get('string_translation'),
       NULL,
       $pathMatcher,
@@ -151,7 +151,7 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
       ])->save();
     }
 
-    $purposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get(DomainNegotiatorInterface::class),
       $this->container->get('config.factory'),
@@ -160,7 +160,7 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
     $pathMatcher = $this->createMock(PathMatcherInterface::class);
     $pathMatcher->method('isFrontPage')->willReturn(TRUE);
     $builder = new DomainPresentationBuilder(
-      $purposeManager,
+      $siteManager,
       $this->container->get('string_translation'),
       NULL,
       $pathMatcher,
@@ -195,14 +195,14 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
    * Unknown purposes do not receive a presentation contract.
    */
   public function testUnknownPurposeHasNoPresentation(): void {
-    $purposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get(DomainNegotiatorInterface::class),
       $this->container->get('config.factory'),
       $this->container->get('request_stack'),
     );
     $builder = new DomainPresentationBuilder(
-      $purposeManager,
+      $siteManager,
       $this->container->get('string_translation'),
       NULL,
       $this->createMock(PathMatcherInterface::class),

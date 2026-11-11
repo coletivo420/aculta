@@ -16,7 +16,8 @@ use Drupal\aculta_messenger\Aviso\ForumNoticeCounterInterface;
 use Drupal\aculta_messenger\Mail\ForumNoticeMailType;
 use Drupal\aculta_messenger\Service\MessengerEmailLock;
 use Drupal\aculta_messenger\Service\MessengerMailDelivery;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -54,7 +55,7 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
     protected readonly ForumNoticeAccessPolicyInterface $accessPolicy,
     protected readonly FlagServiceInterface $flagService,
     protected readonly EmailConfirmationPolicy $emailPolicy,
-    protected readonly DomainPurposeManager $domainPurposes,
+    protected readonly DomainSiteManager $siteManagers,
     protected readonly AcultaMailerInterface $mailer,
     protected readonly LockBackendInterface $lock,
   ) {
@@ -75,7 +76,7 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
       $container->get('aculta_messenger.forum_notice_access_policy'),
       $container->get('flag'),
       $container->get('aculta_portal.email_confirmation_policy'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('aculta_mailer.mailer'),
       $container->get('lock'),
     );
@@ -133,7 +134,7 @@ final class ForumNoticeEmailWorker extends QueueWorkerBase implements ContainerF
       $this->outbox->setStatus((int) $event['id'], ForumNoticeEmailOutbox::STATUS_CANCELLED);
       return;
     }
-    $url = $this->domainPurposes->routeUrl('forum', 'entity.node.canonical', ['node' => $topic->id()]);
+    $url = $this->siteManagers->routeUrl(SiteKey::Forum, 'entity.node.canonical', ['node' => $topic->id()]);
     if ($url === NULL) {
       $this->retryOrFail((int) $event['id'], (int) $event['email_attempts']);
       return;

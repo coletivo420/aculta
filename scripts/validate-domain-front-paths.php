@@ -14,7 +14,7 @@ $check = static function (bool $cond, string $msg) use (&$falhas, &$ok): void {
 };
 
 $politica = $raiz . '/web/modules/custom/aculta_portal/src/Domain/FrontPathPolicy.php';
-$assinante = $raiz . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainPurposeRequestSubscriber.php';
+$assinante = $raiz . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainSiteRequestSubscriber.php';
 $mapaSuperficies = $raiz . '/web/modules/custom/aculta_portal/src/Domain/DomainSurfaceMap.php';
 $doc = $raiz . '/docs/portal/DOMAIN-FRONT-PATHS.md';
 

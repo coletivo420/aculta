@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Search;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -23,7 +22,6 @@ final class SearchUtility {
   use StringTranslationTrait;
 
   public function __construct(
-    private readonly DomainPurposeManager $domainPurposeManager,
     TranslationInterface $translation,
   ) {
     $this->setStringTranslation($translation);

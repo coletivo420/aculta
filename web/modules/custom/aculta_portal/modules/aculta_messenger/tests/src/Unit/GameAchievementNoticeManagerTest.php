@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\aculta_messenger\Hook\BadgeAwardNoticeEventProducer;
 use Drupal\aculta_messenger\Integration\Game\GameAchievementNoticeManager;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_user\Badge\AchievementDefinitions;
 use Drupal\aculta_user\Badge\BadgeService;
 use Drupal\Core\Database\Connection;
@@ -236,7 +236,7 @@ final class GameAchievementNoticeManagerTest extends UnitTestCase {
     $manager = new GameAchievementNoticeManager(
       $entities,
       $this->badgeService($entities),
-      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor(),
       $lock ?? $this->createMock(LockBackendInterface::class),
     );
     $manager->setStringTranslation($this->getStringTranslationStub());

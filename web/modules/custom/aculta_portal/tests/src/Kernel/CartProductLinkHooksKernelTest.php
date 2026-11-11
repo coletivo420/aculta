@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Kernel;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Hook\CartProductLinkHooks;
 use Drupal\commerce_product\Entity\ProductInterface;
 use Drupal\commerce_product\Entity\ProductVariationInterface;
@@ -49,7 +49,7 @@ final class CartProductLinkHooksKernelTest extends KernelTestBase {
       'weight' => 0,
       'status' => TRUE,
     ])->save();
-    $manager = new DomainPurposeManager(
+    $manager = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get(DomainNegotiatorInterface::class),
       $this->container->get('config.factory'),

@@ -9,7 +9,7 @@ use Drupal\aculta_lms\Account\AccountCoursesReader;
 use Drupal\aculta_lms\Group\GroupMembershipReaderInterface;
 use Drupal\aculta_lms\Learning\CourseProgress;
 use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -59,7 +59,7 @@ final class AccountCoursesReaderTest extends UnitTestCase {
     $entity_type_manager->method('getStorage')->with('domain')->willReturn($domain_storage);
     $domain_negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $domain_negotiator->method('getActiveDomain')->willReturn(NULL);
-    $domain_purposes = new DomainPurposeManager(
+    $domain_purposes = new DomainSiteManager(
       $entity_type_manager,
       $domain_negotiator,
       $this->createMock(ConfigFactoryInterface::class),
@@ -96,7 +96,7 @@ final class AccountCoursesReaderTest extends UnitTestCase {
     $progress->method('current')->with($course, $account)->willReturn(
       new CourseProgress(CourseProgress::STATUS_NEEDS_EVALUATION, FALSE, NULL, []),
     );
-    $domain_purposes = (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor();
+    $domain_purposes = (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor();
 
     $summaries = (new AccountCoursesReader($progress, $membership_loader, $domain_purposes))
       ->getAccountCourses($account);
@@ -121,7 +121,7 @@ final class AccountCoursesReaderTest extends UnitTestCase {
     $membership_loader->method('loadByUser')->with($account)->willReturn([$membership]);
     $progress = $this->createMock(CourseProgressReaderInterface::class);
     $progress->expects(self::never())->method('current');
-    $domain_purposes = (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor();
+    $domain_purposes = (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor();
 
     self::assertSame([], (new AccountCoursesReader($progress, $membership_loader, $domain_purposes))
       ->getAccountCourses($account));

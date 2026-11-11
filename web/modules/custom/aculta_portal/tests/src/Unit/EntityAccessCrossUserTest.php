@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_portal\Unit;
 
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Hook\EntityHooks;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -51,9 +51,9 @@ final class EntityAccessCrossUserTest extends UnitTestCase {
       }
 
     };
-    // DomainPurposeManager is final and is not reached for user entities; it is
+    // DomainSiteManager is final and is not reached for user entities; it is
     // built without its constructor so the Domain branch stays untouched.
-    $domain = (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor();
+    $domain = (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor();
     $emailConfirmation = new EmailConfirmationPolicy(
       $this->createMock(UserDataInterface::class),
       $this->createMock(EntityTypeManagerInterface::class),

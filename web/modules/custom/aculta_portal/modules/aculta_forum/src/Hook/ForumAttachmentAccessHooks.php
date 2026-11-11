@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Hook;
 
 use Drupal\aculta_forum\Attachment\ForumAttachmentPublication;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -22,7 +22,7 @@ use Drupal\media_gallery\MediaGalleryInterface;
 final class ForumAttachmentAccessHooks {
 
   public function __construct(
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly ForumAttachmentPublication $attachmentPublication,
   ) {}
 
@@ -41,7 +41,7 @@ final class ForumAttachmentAccessHooks {
       return NULL;
     }
 
-    if ($this->domainPurposeManager->getCurrentPurpose() !== 'forum') {
+    if ($this->siteManager->getCurrentSiteKey()?->value !== 'forum') {
       return AccessResult::forbidden('Galerias do Fórum só podem ser acessadas no purpose Fórum.')
         ->addCacheableDependency($entity)
         ->addCacheContexts(['domain', 'user.permissions']);
@@ -82,7 +82,7 @@ final class ForumAttachmentAccessHooks {
     $access = AccessResult::neutral()
       ->addCacheableDependency($entity)
       ->addCacheContexts(['domain']);
-    if ($this->domainPurposeManager->getCurrentPurpose() !== 'forum') {
+    if ($this->siteManager->getCurrentSiteKey()?->value !== 'forum') {
       return AccessResult::forbidden('Anexos do Fórum só podem ser acessados no purpose Fórum.')
         ->addCacheableDependency($entity)
         ->addCacheContexts(['domain', 'user.permissions']);

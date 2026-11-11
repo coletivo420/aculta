@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Controller;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -24,7 +24,7 @@ final class ForumPostModerationQueueController extends ControllerBase {
     private readonly EntityTypeManagerInterface $forumEntityTypeManager,
     private readonly AccountProxyInterface $forumCurrentUser,
     private readonly DateFormatterInterface $dateFormatter,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -69,7 +69,7 @@ final class ForumPostModerationQueueController extends ControllerBase {
         || !$topic->isPublished()
         || !$topic->hasField('field_domain_source')
         || $topic->get('field_domain_source')->isEmpty()
-        || $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
+        || $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
         continue;
       }
       $topicAccess = $topic->access('view', $this->forumCurrentUser, TRUE);

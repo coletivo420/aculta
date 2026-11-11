@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_index\Unit;
 
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -67,8 +67,8 @@ final class ContentIndexProviderServiceMapTest extends UnitTestCase {
     $this->assertNotEmpty($serviceFiles, 'Nenhum arquivo de serviço declara aculta_index.provider.');
 
     $container = new ContainerBuilder();
-    $purposeServiceId = 'aculta_portal.domain_purpose';
-    $container->setDefinition($purposeServiceId, (new Definition(DomainPurposeManager::class))
+    $purposeServiceId = 'aculta_portal.domain_site';
+    $container->setDefinition($purposeServiceId, (new Definition(DomainSiteManager::class))
       ->setSynthetic(TRUE)
       ->setPublic(TRUE));
     $container->setDefinition('entity_type.manager', (new Definition(EntityTypeManagerInterface::class))
@@ -118,7 +118,7 @@ final class ContentIndexProviderServiceMapTest extends UnitTestCase {
         ->setPublic(TRUE),
     );
     $container->compile();
-    $container->set($purposeServiceId, new DomainPurposeManager(
+    $container->set($purposeServiceId, new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),

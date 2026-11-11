@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_lms\Unit\Resources;
 
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_lms\Resources\ContentIndex\LmsCourseContentIndexProvider;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -37,8 +37,8 @@ final class LmsCourseContentIndexProviderServiceTest extends UnitTestCase {
     $providerDefinition = $services['services'][$providerId];
 
     $container = new ContainerBuilder();
-    $purposeServiceId = 'aculta_portal.domain_purpose';
-    $purposeDefinition = (new Definition(DomainPurposeManager::class))
+    $purposeServiceId = 'aculta_portal.domain_site';
+    $purposeDefinition = (new Definition(DomainSiteManager::class))
       ->setSynthetic(TRUE)
       ->setPublic(TRUE);
     $container->setDefinition($purposeServiceId, $purposeDefinition);
@@ -58,7 +58,7 @@ final class LmsCourseContentIndexProviderServiceTest extends UnitTestCase {
       ->setPublic(TRUE);
     $container->setDefinition('aculta_index.provider_registry', $registryDefinition);
     $container->compile();
-    $container->set($purposeServiceId, new DomainPurposeManager(
+    $container->set($purposeServiceId, new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),

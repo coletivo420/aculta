@@ -46,7 +46,7 @@ final class OrganizationContentIndexProvider implements ContentIndexProviderInte
   /**
    * {@inheritdoc}
    */
-  public function getAccessPurpose(ContentEntityInterface $entity): ?string {
+  public function getAccessSiteKey(ContentEntityInterface $entity): ?string {
     return $entity instanceof EventOrganization ? 'eventos' : NULL;
   }
 

@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Plugin\QueueWorker;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -60,7 +61,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
     protected readonly ConversationWriteLock $conversationWriteLock,
     protected readonly MessageNotifyInterface $messageNotify,
     protected readonly AcultaMailerInterface $mailer,
-    protected readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly DomainSiteManager $siteManager,
     protected readonly LockBackendInterface $lock,
     protected readonly AvisoPreferenciasInterface $preferences,
     protected readonly EmailConfirmationPolicy $emailPolicy,
@@ -80,7 +81,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
       $container->get('aculta_messenger.conversation_write_lock'),
       $container->get('message_notify.sender'),
       $container->get('aculta_mailer.mailer'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('lock'),
       $container->get('aculta_messenger.aviso_preferencias'),
       $container->get('aculta_portal.email_confirmation_policy'),
@@ -253,7 +254,7 @@ final class PrivateMessageNotificationWorker extends QueueWorkerBase implements 
 
     // Messages are read in the multidomain bar; the notice links to the
     // member's account home.
-    $url = $this->domainPurposeManager->routeUrl('account', 'aculta_portal.dashboard');
+    $url = $this->siteManager->routeUrl(SiteKey::Account, 'aculta_portal.dashboard');
     if ($url === NULL) {
       if ($notification === NULL) {
         $notification = $this->newNotification($recipientId, $messageId, [

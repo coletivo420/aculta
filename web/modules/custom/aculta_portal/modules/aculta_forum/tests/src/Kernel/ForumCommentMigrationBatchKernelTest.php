@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Plugin\migrate\destination\ForumCommentPost;
 use Drupal\aculta_forum\Plugin\migrate\source\ForumComment;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
@@ -464,7 +464,7 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
       ['requirements_met' => TRUE],
       $migration,
       $this->container->get('entity_type.manager'),
-      new DomainPurposeManager(
+      new DomainSiteManager(
         $this->container->get('entity_type.manager'),
         $this->container->get('domain.negotiator'),
         $this->container->get('config.factory'),

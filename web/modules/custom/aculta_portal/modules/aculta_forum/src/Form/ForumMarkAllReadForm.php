@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Form;
 
 use Drupal\aculta_forum\Service\ForumReadMarker;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -21,7 +22,7 @@ final class ForumMarkAllReadForm extends ConfirmFormBase {
   public function __construct(
     protected readonly ForumReadMarker $readMarker,
     protected readonly AccountProxyInterface $currentUser,
-    protected readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -30,7 +31,7 @@ final class ForumMarkAllReadForm extends ConfirmFormBase {
     return new static(
       $container->get('aculta_forum.read_marker'),
       $container->get('current_user'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
     );
   }
 
@@ -91,7 +92,7 @@ final class ForumMarkAllReadForm extends ConfirmFormBase {
   /**
    * Returns the public topic list on the Forum purpose domain. */
   private function forumTopicsUrl(): Url {
-    return $this->domainPurposeManager->pathUrl('forum', '/')
+    return $this->siteManager->pathUrl(SiteKey::Forum, '/')
       ?? throw new \UnexpectedValueException('O domínio do Fórum não está configurado.');
   }
 

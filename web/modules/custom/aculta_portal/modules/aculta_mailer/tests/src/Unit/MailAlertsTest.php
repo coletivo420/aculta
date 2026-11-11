@@ -27,6 +27,14 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_mailer')]
 final class MailAlertsTest extends UnitTestCase {
 
+  /**
+   * @return array<string, mixed>
+   *   Empty state store with dynamic string keys.
+   */
+  private function newStateStore(): array {
+    return [];
+  }
+
   private const T0 = 1800000000;
 
   /**
@@ -42,8 +50,12 @@ final class MailAlertsTest extends UnitTestCase {
   /**
    * Alertas com a configuração informada.
    */
+  /**
+   * @param array<string, mixed> $settings
+   *   Configuration values for the alert service.
+   */
   private function alerts(array $settings): MailAlerts {
-    $store = [];
+    $store = $this->newStateStore();
     $state = $this->createMock(StateInterface::class);
     $state->method('get')->willReturnCallback(static function (string $key, mixed $default = NULL) use (&$store): mixed {
       return $store[$key] ?? $default;

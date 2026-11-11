@@ -10,7 +10,7 @@ use Drupal\flag\FlaggingInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\node\NodeInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 
 /**
  * Fila de denúncias do Fórum (ACULTA Fórum, F5.1).
@@ -36,7 +36,7 @@ final class ReportQueue {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly ?DomainPurposeManager $domainPurposeManager = NULL,
+    private readonly ?DomainSiteManager $siteManager = NULL,
   ) {}
 
   /**
@@ -127,7 +127,7 @@ final class ReportQueue {
       || !$entity->hasField('topic')
       || $entity->get('topic')->isEmpty()
       || $this->hasHistoricalAuthor($entity)
-      || $this->domainPurposeManager === NULL) {
+      || $this->siteManager === NULL) {
       return FALSE;
     }
     $topic = $entity->get('topic')->entity;
@@ -135,7 +135,7 @@ final class ReportQueue {
       && $topic->bundle() === 'aculta_forum_topic'
       && $topic->hasField('field_domain_source')
       && !$topic->get('field_domain_source')->isEmpty()
-      && $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum'
+      && $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum'
       && !$this->hasHistoricalAuthor($topic);
   }
 

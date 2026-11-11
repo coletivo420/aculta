@@ -10,7 +10,7 @@ use Drupal\aculta_messenger\Service\ConversationWriteLock;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -167,7 +167,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       $this->conversationWriteLock($entityTypes),
       $notifier,
       $mailer,
-      $this->domainPurposeManager($entityTypes),
+      $this->siteManager($entityTypes),
       $lock,
       $preferences,
       $this->emailPolicy($entityTypes),
@@ -317,7 +317,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       $worker = new PrivateMessageNotificationWorker(
         [], 'aculta_msg_private_notification', [], $entityTypes, $messageService,
         new ConversationWriteLock($lock, $entityTypes), $legacy, $mailer,
-        $this->domainPurposeManager($entityTypes), $lock,
+        $this->siteManager($entityTypes), $lock,
         $preferences, $this->emailPolicy($entityTypes, $emailConfirmed),
       );
       $worker->processItem(['private_message_id' => 15, 'mailer_managed' => TRUE]);
@@ -458,7 +458,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $mailer->expects(self::never())->method('deliver');
     $messageNotify = $this->createMock(MessageNotifyInterface::class);
     $messageNotify->expects(self::never())->method('send');
-    $domainPurposes = $this->domainPurposeManager($entities);
+    $siteManagers = $this->siteManager($entities);
     $worker = new PrivateMessageNotificationWorker(
       [],
       'aculta_msg_private_notification',
@@ -468,7 +468,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       $this->conversationWriteLock($entities),
       $messageNotify,
       $mailer,
-      $domainPurposes,
+      $siteManagers,
       $lock,
       $this->createMock(AvisoPreferenciasInterface::class),
       $this->emailPolicy($entities),
@@ -557,8 +557,8 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
   /**
    * Creates the canonical account URL builder used by this worker.
    */
-  private function domainPurposeManager(EntityTypeManagerInterface $entityTypes): DomainPurposeManager {
-    return new DomainPurposeManager(
+  private function siteManager(EntityTypeManagerInterface $entityTypes): DomainSiteManager {
+    return new DomainSiteManager(
       $entityTypes,
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),

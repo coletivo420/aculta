@@ -7,7 +7,7 @@ namespace Drupal\Tests\aculta_forum\Unit;
 use Drupal\aculta_forum\Analytics\ForumAnalyticsScope;
 use Drupal\aculta_forum\Analytics\ForumAnalyticsScopeResolver;
 use Drupal\aculta_forum\RestrictedForum\RestrictedForumGroupResolverInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
@@ -57,7 +57,7 @@ final class ForumAnalyticsScopeResolverTest extends UnitTestCase {
     $groupResolver->method('groupIdsForTopic')->willThrowException(new \RuntimeException('Group unavailable'));
     $resolver = new ForumAnalyticsScopeResolver(
       $groupResolver,
-      $this->domainPurposeManager(),
+      $this->siteManager(),
       $this->createMock(Connection::class),
       $this->createMock(LoggerInterface::class),
     );
@@ -152,7 +152,7 @@ final class ForumAnalyticsScopeResolverTest extends UnitTestCase {
 
     return new ForumAnalyticsScopeResolver(
       $groupResolver,
-      $this->domainPurposeManager(),
+      $this->siteManager(),
       $this->createMock(Connection::class),
       $this->createMock(LoggerInterface::class),
     );
@@ -179,10 +179,10 @@ final class ForumAnalyticsScopeResolverTest extends UnitTestCase {
   /**
    * Creates a real Domain purpose manager over isolated dependencies.
    */
-  private function domainPurposeManager(): DomainPurposeManager {
+  private function siteManager(): DomainSiteManager {
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn(NULL);
-    return new DomainPurposeManager(
+    return new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),

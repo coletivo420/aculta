@@ -8,7 +8,7 @@ use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Integration\Game\GameAchievementNoticeMigration;
 use Drupal\aculta_messenger\Integration\Game\GameAchievementNoticeManager;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_user\Badge\AchievementDefinitions;
 use Drupal\aculta_user\Badge\BadgeService;
 use Drupal\aculta_messenger_game_test\Entity\TestBadgeAward;
@@ -98,7 +98,7 @@ final class GameAchievementNoticePersistenceKernelTest extends KernelTestBase {
     $manager = new GameAchievementNoticeManager(
       $entities,
       $this->badgeService(),
-      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor(),
       $lock,
     );
     $manager->setStringTranslation($this->container->get('string_translation'));

@@ -11,7 +11,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -23,8 +23,8 @@ final class GalleryCourseAccessHooks {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -38,7 +38,7 @@ final class GalleryCourseAccessHooks {
   public function entityAccess(EntityInterface $entity, string $operation, AccountInterface $account): AccessResultInterface {
     if ($entity->getEntityTypeId() !== 'media_gallery' || $operation !== 'view'
       || !$entity instanceof MediaGalleryInterface || !$entity->isEnabled()
-      || $this->domainPurposeManager->getCurrentPurpose() !== 'magazine') {
+      || $this->siteManager->getCurrentSiteKey()?->value !== 'magazine') {
       return AccessResult::neutral();
     }
 

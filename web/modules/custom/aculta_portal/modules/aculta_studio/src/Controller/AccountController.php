@@ -6,7 +6,7 @@ namespace Drupal\aculta_studio\Controller;
 
 use Drupal\aculta_studio\Experience\StudioExperienceManager;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Cache\CacheableMetadata;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -19,7 +19,7 @@ final class AccountController {
   public function __construct(
     private readonly StudioExperienceManager $experiences,
     private readonly AccountInterface $account,
-    private readonly DomainPurposeManager $domains,
+    private readonly DomainSiteManager $domains,
   ) {}
 
   /**

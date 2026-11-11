@@ -36,12 +36,12 @@ final class SurfaceEditController extends ControllerBase {
   /**
    * Rota aculta_paths.editar.
    */
-  public function abrir(string $purpose, Request $request): Response|array {
-    if (!array_key_exists($purpose, DomainSurfaceMap::DOMAIN_IDS)) {
+  public function abrir(string $site_key, Request $request): Response|array {
+    if (!array_key_exists($site_key, DomainSurfaceMap::DOMAIN_IDS)) {
       throw new NotFoundHttpException();
     }
-    $titulo = SurfaceConfigReader::TITULOS[$purpose] ?? $purpose;
-    $form = $this->formBuilder()->getForm(SurfaceEditForm::class, $purpose);
+    $titulo = SurfaceConfigReader::TITULOS[$site_key] ?? $site_key;
+    $form = $this->formBuilder()->getForm(SurfaceEditForm::class, $site_key);
     if (!$request->isXmlHttpRequest()) {
       return $form;
     }

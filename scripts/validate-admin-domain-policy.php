@@ -60,9 +60,9 @@ $assert(
   'entity.user.edit_form uses the centralized admin path.',
 );
 
-$domainPurpose = \Drupal::service('aculta_portal.domain_purpose');
-$adminUrl = $domainPurpose->pathUrl('main', '/painel-administrativo');
-$assert($adminUrl !== NULL, 'DomainPurposeManager can build the MAIN admin URL.');
+$domainSite = \Drupal::service('aculta_portal.domain_site');
+$adminUrl = $domainSite->pathUrl('main', '/painel-administrativo');
+$assert($adminUrl !== NULL, 'DomainSiteManager can build the MAIN admin URL.');
 $assert(
   preg_match('#^https?://[^/]+/painel-administrativo$#', $adminUrl->toString()) === 1,
   'MAIN admin URL is absolute and Domain-managed.',
@@ -70,7 +70,7 @@ $assert(
 
 $portalRoot = DRUPAL_ROOT . '/modules/custom/aculta_portal';
 $subscriberSource = file_get_contents(
-  $portalRoot . '/src/EventSubscriber/DomainPurposeRequestSubscriber.php'
+  $portalRoot . '/src/EventSubscriber/DomainSiteRequestSubscriber.php'
 );
 $routeSource = file_get_contents(
   $portalRoot . '/src/EventSubscriber/DomainRouteSubscriber.php'
@@ -83,7 +83,7 @@ $themeRoot = DRUPAL_ROOT . '/themes/custom/aculta420_v2';
 $assert(
   str_contains($subscriberSource, 'canonicalMainNavigationResponse')
     && str_contains($subscriberSource, 'pathUrl(DomainSurfaceMap::MAIN, $request->getPathInfo())'),
-  'Admin canonicalization uses DomainPurposeManager instead of a hardcoded host.',
+  'Admin canonicalization uses DomainSiteManager instead of a hardcoded host.',
 );
 $assert(
   str_contains($subscriberSource, "['GET', 'HEAD']")
@@ -92,7 +92,7 @@ $assert(
 );
 $assert(
   str_contains($subscriberSource, 'catch (MethodNotAllowedException)')
-    && str_contains($subscriberSource, '$this->domainPurposeManager->getCurrentPurpose() !== DomainSurfaceMap::MAIN')
+    && str_contains($subscriberSource, '$this->domainPurposeManager->getCurrentSiteKey() !== DomainSurfaceMap::MAIN')
     && str_contains($subscriberSource, "\$event->setResponse(\$this->notFoundResponse())"),
   'Wrong-method requests to existing admin routes also fail closed on secondary purposes.',
 );

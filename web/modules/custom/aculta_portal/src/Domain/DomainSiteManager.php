@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Domain;
 
+
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
@@ -26,7 +28,7 @@ final class DomainSiteManager implements DomainSiteManagerInterface {
     private readonly DomainNegotiatorInterface $domainNegotiator,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly RequestStack $requestStack,
-    private readonly SiteKeyRegistry $siteKeys,
+    private readonly SiteKeyRegistry $siteKeys = new SiteKeyRegistry(),
     private readonly ?string $appRoot = NULL,
   ) {}
 
@@ -61,13 +63,24 @@ final class DomainSiteManager implements DomainSiteManagerInterface {
   }
 
   /**
+   * Resolves a Drupal Domain ID to its functional site-key value.
+   */
+  public function getSiteKeyValueForDomainId(string $domainId): ?string {
+    return $this->getSiteKeyForDomainId($domainId)?->value;
+  }
+
+  /**
    * Executes a callback with the site's domain active, then restores it.
    *
    * Avalia acesso no site de origem, como verbetes da WIKI no sitemap.
    *
    * Não altera a regra de acesso; muda apenas o contexto da avaliação.
    */
-  public function runInSite(SiteKey $siteKey, callable $callback): mixed {
+  public function runInSite(SiteKey|string $siteKey, callable $callback): mixed {
+    $siteKey = $this->resolveSiteKey($siteKey);
+    if ($siteKey === NULL) {
+      return NULL;
+    }
     $domain = $this->getDomain($siteKey);
     if ($domain === NULL) {
       return NULL;
@@ -94,7 +107,11 @@ final class DomainSiteManager implements DomainSiteManagerInterface {
   /**
    * Returns a domain entity for a site key.
    */
-  public function getDomain(SiteKey $siteKey): ?DomainInterface {
+  public function getDomain(SiteKey|string $siteKey): ?DomainInterface {
+    $siteKey = $this->resolveSiteKey($siteKey);
+    if ($siteKey === NULL) {
+      return NULL;
+    }
     $id = $this->siteKeys->domainId($siteKey);
     $domain = $this->entityTypeManager->getStorage('domain')->load($id);
     return $domain instanceof DomainInterface ? $domain : NULL;
@@ -103,7 +120,11 @@ final class DomainSiteManager implements DomainSiteManagerInterface {
   /**
    * Generates an absolute route URL using the active Domain Alias context.
    */
-  public function routeUrl(SiteKey $siteKey, string $routeName, array $parameters = []): ?Url {
+  public function routeUrl(SiteKey|string $siteKey, string $routeName, array $parameters = []): ?Url {
+    $siteKey = $this->resolveSiteKey($siteKey);
+    if ($siteKey === NULL) {
+      return NULL;
+    }
     $domain = $this->getDomain($siteKey);
     if (!$domain) {
       return NULL;
@@ -129,7 +150,11 @@ final class DomainSiteManager implements DomainSiteManagerInterface {
   /**
    * Generates an absolute route URL on the configured canonical domain.
    */
-  public function canonicalRouteUrl(SiteKey $siteKey, string $routeName, array $parameters = []): ?Url {
+  public function canonicalRouteUrl(SiteKey|string $siteKey, string $routeName, array $parameters = []): ?Url {
+    $siteKey = $this->resolveSiteKey($siteKey);
+    if ($siteKey === NULL) {
+      return NULL;
+    }
     $domainId = $this->siteKeys->domainId($siteKey);
     $domain = $this->getDomain($siteKey);
     if (!$domain) {
@@ -158,8 +183,12 @@ final class DomainSiteManager implements DomainSiteManagerInterface {
    *
    * Uses the production hostname from the domain record, never an alias.
    */
-  public function canonicalPathUrl(SiteKey $siteKey, string $path): ?Url {
+  public function canonicalPathUrl(SiteKey|string $siteKey, string $path): ?Url {
     if (!str_starts_with($path, '/') || str_starts_with($path, '//')) {
+      return NULL;
+    }
+    $siteKey = $this->resolveSiteKey($siteKey);
+    if ($siteKey === NULL) {
       return NULL;
     }
     $domainId = $this->siteKeys->domainId($siteKey);
@@ -185,7 +214,11 @@ final class DomainSiteManager implements DomainSiteManagerInterface {
    * Use this for environment-specific artifacts such as test sitemaps. Public
    * production URLs continue to use canonicalRouteUrl().
    */
-  public function environmentRouteUrl(SiteKey $siteKey, string $routeName, array $parameters = []): ?Url {
+  public function environmentRouteUrl(SiteKey|string $siteKey, string $routeName, array $parameters = []): ?Url {
+    $siteKey = $this->resolveSiteKey($siteKey);
+    if ($siteKey === NULL) {
+      return NULL;
+    }
     $domainId = $this->siteKeys->domainId($siteKey);
     $domain = $this->getDomain($siteKey);
     $host = $this->deployerHost($domainId);
@@ -206,13 +239,24 @@ final class DomainSiteManager implements DomainSiteManagerInterface {
   /**
    * Generates an absolute path URL on the active Deployer environment's host.
    */
-  public function environmentPathUrl(SiteKey $siteKey, string $path): ?Url {
+  public function environmentPathUrl(SiteKey|string $siteKey, string $path): ?Url {
     if (!str_starts_with($path, '/') || str_starts_with($path, '//')) {
+      return NULL;
+    }
+    $siteKey = $this->resolveSiteKey($siteKey);
+    if ($siteKey === NULL) {
       return NULL;
     }
     $domainId = $this->siteKeys->domainId($siteKey);
     $host = $this->deployerHost($domainId);
     return $host === NULL ? NULL : Url::fromUri('https://' . $host . $path);
+  }
+
+  /**
+   * Normalizes a typed or string site key.
+   */
+  private function resolveSiteKey(SiteKey|string $siteKey): ?SiteKey {
+    return $siteKey instanceof SiteKey ? $siteKey : SiteKey::tryFrom($siteKey);
   }
 
   /**
@@ -228,8 +272,12 @@ final class DomainSiteManager implements DomainSiteManagerInterface {
   /**
    * Generates an absolute path URL using the current site alias.
    */
-  public function pathUrl(SiteKey $siteKey, string $path): ?Url {
+  public function pathUrl(SiteKey|string $siteKey, string $path): ?Url {
     if (!str_starts_with($path, '/') || str_starts_with($path, '//')) {
+      return NULL;
+    }
+    $siteKey = $this->resolveSiteKey($siteKey);
+    if ($siteKey === NULL) {
       return NULL;
     }
     $domain = $this->getDomain($siteKey);

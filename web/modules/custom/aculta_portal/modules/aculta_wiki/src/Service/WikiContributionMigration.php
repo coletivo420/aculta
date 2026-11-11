@@ -6,6 +6,7 @@ namespace Drupal\aculta_wiki\Service;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\KeyValueStore\KeyValueExpirableFactoryInterface;
 use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_wiki\Entity\WikiProposal;
@@ -96,6 +97,9 @@ final class WikiContributionMigration {
       ->condition('id', $legacyId)
       ->sort('revision_id', 'ASC')
       ->execute());
+    if (!$legacyStorage instanceof RevisionableStorageInterface) {
+      throw new \RuntimeException(sprintf('Wiki proposal %d does not support revisions.', $legacyId));
+    }
     $revisions = $legacyStorage->loadMultipleRevisions(array_map('strval', $revisionIds));
     if ($revisionIds === [] || count($revisions) !== count($revisionIds)) {
       throw new \RuntimeException(sprintf('Wiki proposal %d has an incomplete revision history.', $legacyId));
@@ -142,6 +146,9 @@ final class WikiContributionMigration {
             throw new \RuntimeException(sprintf('Migrated Wiki proposal %d was not persisted.', $legacyId));
           }
           $contribution->setNewRevision(TRUE);
+        }
+        if (!$contribution instanceof Contribution) {
+          throw new \RuntimeException(sprintf('Migrated Wiki proposal %d was not persisted.', $legacyId));
         }
 
         $target = $legacyRevision->get('target')->entity;

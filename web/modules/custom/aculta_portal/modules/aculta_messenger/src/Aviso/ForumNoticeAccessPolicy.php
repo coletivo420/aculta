@@ -6,7 +6,8 @@ namespace Drupal\aculta_messenger\Aviso;
 
 use Drupal\comment\CommentInterface;
 use Drupal\aculta_forum\Entity\ForumPost;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\node\NodeInterface;
@@ -19,7 +20,7 @@ final class ForumNoticeAccessPolicy implements ForumNoticeAccessPolicyInterface 
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -46,13 +47,13 @@ final class ForumNoticeAccessPolicy implements ForumNoticeAccessPolicyInterface 
     if (!$account instanceof UserInterface || !$account->isActive() || !$entity->hasField('field_domain_source')) {
       return FALSE;
     }
-    $forumDomain = $this->domainPurposeManager->getDomain('forum');
+    $forumDomain = $this->siteManager->getDomain(SiteKey::Forum);
     if ($forumDomain === NULL || $entity->get('field_domain_source')->isEmpty()
       || (string) $entity->get('field_domain_source')->target_id !== (string) $forumDomain->id()) {
       return FALSE;
     }
 
-    return (bool) $this->domainPurposeManager->runInPurpose('forum', static function () use ($entity, $account): bool {
+    return (bool) $this->siteManager->runInSite('forum', static function () use ($entity, $account): bool {
       return $entity->access('view', $account, TRUE)->isAllowed();
     });
   }
@@ -72,7 +73,7 @@ final class ForumNoticeAccessPolicy implements ForumNoticeAccessPolicyInterface 
     if (!$account instanceof UserInterface || !$topic instanceof NodeInterface || !$this->canViewTopic($topic, $account)) {
       return FALSE;
     }
-    return (bool) $this->domainPurposeManager->runInPurpose('forum', static function () use ($comment, $account): bool {
+    return (bool) $this->siteManager->runInSite('forum', static function () use ($comment, $account): bool {
       return $comment->access('view', $account, TRUE)->isAllowed();
     });
   }
@@ -94,7 +95,7 @@ final class ForumNoticeAccessPolicy implements ForumNoticeAccessPolicyInterface 
       || !$topic instanceof NodeInterface || !$this->canViewTopic($topic, $account)) {
       return FALSE;
     }
-    return (bool) $this->domainPurposeManager->runInPurpose('forum', static function () use ($post, $account): bool {
+    return (bool) $this->siteManager->runInSite('forum', static function () use ($post, $account): bool {
       return $post->access('view', $account, TRUE)->isAllowed();
     });
   }

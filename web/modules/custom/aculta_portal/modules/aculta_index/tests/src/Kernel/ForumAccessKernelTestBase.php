@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_index\Kernel;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -86,7 +86,7 @@ abstract class ForumAccessKernelTestBase extends KernelTestBase {
     $negotiator->method('getContext')->willReturnCallback(
       static fn () => \Drupal::service('domain.negotiator')->getContext(),
     );
-    $container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+    $container->set('aculta_portal.domain_site', new DomainSiteManager(
       $entityTypeManager,
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),

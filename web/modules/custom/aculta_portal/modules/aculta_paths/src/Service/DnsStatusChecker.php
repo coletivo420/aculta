@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_paths\Service;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Domain\DomainSurfaceMap;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -22,7 +23,7 @@ final class DnsStatusChecker {
   private const TTL = 300;
 
   public function __construct(
-    private readonly DomainPurposeManager $purposes,
+    private readonly DomainSiteManager $sites,
     private readonly CacheBackendInterface $cache,
   ) {}
 
@@ -56,7 +57,7 @@ final class DnsStatusChecker {
    *   Classe (ok, erro ou aviso) e texto descritivo da situação.
    */
   private function verificar(string $host): array {
-    $principal = $this->purposes->getDomain(DomainSurfaceMap::MAIN)?->getHostname();
+    $principal = $this->sites->getDomain(SiteKey::Main)?->getHostname();
     if ($principal === NULL || $principal === '') {
       return ['classe' => 'aviso', 'texto' => (string) $this->t('Não verificado: o principal não tem Domain.')];
     }

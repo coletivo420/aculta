@@ -31,7 +31,8 @@ use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
 use Drupal\aculta_messenger\Aviso\AvisoDigestSelectiveDiscardInterface;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_messenger\Service\NoticeRelatedGrouper;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Psr\Log\LoggerInterface;
 
@@ -89,7 +90,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly ClassActivityDeadlineManager $deadlines,
     private readonly DateFormatterInterface $dateFormatter,
     private readonly QueueFactory $queueFactory,
@@ -556,7 +557,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
         || !$course->access('view', $account, TRUE)->isAllowed()) {
         continue;
       }
-      $url = $this->domainPurposeManager->routeUrl('courses', 'entity.group.canonical', ['group' => $course->id()]);
+      $url = $this->siteManager->routeUrl(SiteKey::Courses, 'entity.group.canonical', ['group' => $course->id()]);
       if ($url === NULL) {
         return NULL;
       }
@@ -583,7 +584,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     if ((int) $certificate->get('uid')->value !== (int) $account->id()) {
       return NULL;
     }
-    $url = $this->domainPurposeManager->routeUrl('main', 'aculta_lms.certificate_verify', [
+    $url = $this->siteManager->routeUrl(SiteKey::Main, 'aculta_lms.certificate_verify', [
       'codigo' => $certificate->get('verification_code')->value,
     ]);
     if ($url === NULL) {
@@ -615,7 +616,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     if (!$this->eligibility->hasCurrentEnrollment($course, $account)) {
       return NULL;
     }
-    $url = $this->domainPurposeManager->routeUrl('courses', 'aculta_lms.student_dashboard');
+    $url = $this->siteManager->routeUrl(SiteKey::Courses, 'aculta_lms.student_dashboard');
     if ($url === NULL) {
       return NULL;
     }
@@ -642,7 +643,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       || !$this->eligibility->hasCurrentEnrollment($course, $account)) {
       return NULL;
     }
-    $url = $this->domainPurposeManager->routeUrl('courses', 'aculta_lms.student_dashboard');
+    $url = $this->siteManager->routeUrl(SiteKey::Courses, 'aculta_lms.student_dashboard');
     if ($url === NULL) {
       return NULL;
     }
@@ -679,7 +680,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     if (!$student instanceof UserInterface || !$student->isActive() || !$this->eligibility->hasCurrentEnrollment($course, $student)) {
       return NULL;
     }
-    $url = $this->domainPurposeManager->routeUrl('courses', 'aculta_lms.educator_dashboard');
+    $url = $this->siteManager->routeUrl(SiteKey::Courses, 'aculta_lms.educator_dashboard');
     if ($url === NULL) {
       return NULL;
     }
@@ -710,7 +711,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
         || !$course->access('view', $account, TRUE)->isAllowed() || !$this->eligibility->hasCurrentEnrollment($course, $account)) {
         continue;
       }
-      $url = $this->domainPurposeManager->routeUrl('courses', 'entity.group.canonical', ['group' => $course->id()]);
+      $url = $this->siteManager->routeUrl(SiteKey::Courses, 'entity.group.canonical', ['group' => $course->id()]);
       if ($url === NULL) {
         return NULL;
       }
@@ -744,7 +745,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       || !$this->eligibility->hasCurrentEnrollment($course, $account)) {
       return NULL;
     }
-    $url = $this->domainPurposeManager->routeUrl('courses', 'aculta_lms.student_dashboard');
+    $url = $this->siteManager->routeUrl(SiteKey::Courses, 'aculta_lms.student_dashboard');
     if ($url === NULL) {
       return NULL;
     }
@@ -795,7 +796,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     $user = $account instanceof UserInterface ? $account : NULL;
     $timestamp = $date->getTimestamp();
     $formattedDate = $this->dateFormatter->format($timestamp, 'long', '', $user?->getTimeZone());
-    $url = $this->domainPurposeManager->routeUrl('courses', 'entity.group.canonical', ['group' => $course->id()]);
+    $url = $this->siteManager->routeUrl(SiteKey::Courses, 'entity.group.canonical', ['group' => $course->id()]);
     if ($url === NULL) {
       return NULL;
     }

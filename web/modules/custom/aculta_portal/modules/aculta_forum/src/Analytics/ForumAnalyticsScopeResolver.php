@@ -7,7 +7,8 @@ namespace Drupal\aculta_forum\Analytics;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\RestrictedForum\RestrictedForumGroupResolver;
 use Drupal\aculta_forum\RestrictedForum\RestrictedForumGroupResolverInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\SelectInterface;
@@ -51,7 +52,7 @@ class ForumAnalyticsScopeResolver {
 
   public function __construct(
     private readonly RestrictedForumGroupResolverInterface $groupResolver,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly Connection $database,
     private readonly LoggerInterface $logger,
   ) {}
@@ -262,7 +263,7 @@ class ForumAnalyticsScopeResolver {
       return NULL;
     }
     try {
-      return $this->domainPurposeManager->getPurposeForDomainId($domainId);
+      return $this->siteManager->getSiteKeyValueForDomainId($domainId);
     }
     catch (\Throwable) {
       return NULL;
@@ -274,7 +275,7 @@ class ForumAnalyticsScopeResolver {
    */
   public function forumDomainId(): ?string {
     try {
-      $domain = $this->domainPurposeManager->getDomain('forum');
+      $domain = $this->siteManager->getDomain(SiteKey::Forum);
       return $domain === NULL ? NULL : (string) $domain->id();
     }
     catch (\Throwable) {

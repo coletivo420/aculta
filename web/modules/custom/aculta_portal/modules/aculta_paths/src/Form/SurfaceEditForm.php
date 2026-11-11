@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_paths\Form;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Domain\DomainSurfaceMap;
 use Drupal\aculta_portal\Domain\SurfaceConfigReader;
 use Drupal\aculta_paths\Validation\EnderecoValidator;
@@ -29,7 +30,7 @@ final class SurfaceEditForm extends FormBase {
   public function __construct(
     protected ConfigFactoryInterface $configFactoryService,
     protected SurfaceConfigReader $reader,
-    protected DomainPurposeManager $purposes,
+    protected DomainSiteManager $sites,
     protected EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
@@ -40,7 +41,7 @@ final class SurfaceEditForm extends FormBase {
     return new static(
       $container->get('config.factory'),
       $container->get('aculta_portal.surface_config_reader'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('entity_type.manager'),
     );
   }
@@ -59,16 +60,16 @@ final class SurfaceEditForm extends FormBase {
    *   Estrutura do formulário a construir.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
-   * @param string $purpose
-   *   Purpose da superfície (validado pelo controlador).
+   * @param string $site_key
+   *   Chave funcional da superfície (validada pelo controlador).
    */
-  public function buildForm(array $form, FormStateInterface $form_state, string $purpose = ''): array {
-    $linha = $this->reader->superficies()[$purpose];
-    $ehMain = $purpose === DomainSurfaceMap::MAIN;
+  public function buildForm(array $form, FormStateInterface $form_state, string $site_key = ''): array {
+    $linha = $this->reader->superficies()[$site_key];
+    $ehMain = $site_key === DomainSurfaceMap::MAIN;
     // Durante o rebuild do AJAX, o valor vem do estado; na primeira abertura, da configuração.
     $modo = (string) ($form_state->getValue('modo') ?? $linha['modo']);
 
-    $form['#purpose'] = $purpose;
+    $form['#site_key'] = $site_key;
     // Wrapper do fragmento devolvido ao envio HTMX; é o mesmo bloco que o
     // callback AJAX de salvar reabria em caso de erro.
     $form['#prefix'] = '<div id="aculta-paths-surface-edit">';
@@ -119,7 +120,7 @@ final class SurfaceEditForm extends FormBase {
       ];
     }
     elseif ($modo === 'subdominio') {
-      $dominio = $this->purposes->getDomain($purpose);
+      $dominio = $this->sites->getDomain($site_key);
       $hostAtual = $dominio !== NULL ? (string) $dominio->getHostname() : '';
       if ($ehMain) {
         // O principal define o host de administração e a origem de todos os
@@ -160,9 +161,9 @@ final class SurfaceEditForm extends FormBase {
       '#button_type' => 'primary',
     ];
     // O envio devolve o formulário (erro de validação) ou redireciona para a
-    // lista (sucesso). A URL é a própria rota do formulário, com o purpose.
+    // lista (sucesso). A URL é a própria rota do formulário, com a site_key.
     (new Htmx())
-      ->post(Url::fromRoute('aculta_paths.editar', ['purpose' => $purpose]))
+      ->post(Url::fromRoute('aculta_paths.editar', ['site_key' => $site_key]))
       ->select('#aculta-paths-surface-edit')
       ->target('#aculta-paths-surface-edit')
       ->swap('innerHTML')
@@ -189,18 +190,18 @@ final class SurfaceEditForm extends FormBase {
     if (($gatilho['#type'] ?? '') !== 'submit') {
       return;
     }
-    $purpose = (string) $form['#purpose'];
+    $site_key = (string) $form['#site_key'];
     $modo = (string) $form_state->getValue('modo');
 
     // Caracteres e formato: a mensagem diz o que foi recusado e por quê.
-    if ($purpose !== DomainSurfaceMap::MAIN && $modo === 'diretorio') {
+    if ($site_key !== DomainSurfaceMap::MAIN && $modo === 'diretorio') {
       $motivo = $this->motivoEndereco($this->slugSubmetido($form_state), FALSE);
       if ($motivo !== NULL) {
         $form_state->setErrorByName('caminho][slug', $motivo);
         return;
       }
     }
-    if ($purpose !== DomainSurfaceMap::MAIN && $modo === 'subdominio') {
+    if ($site_key !== DomainSurfaceMap::MAIN && $modo === 'subdominio') {
       $motivo = $this->motivoEndereco($this->hostSubmetido($form_state), TRUE);
       if ($motivo !== NULL) {
         $form_state->setErrorByName('caminho][hostname', $motivo);
@@ -209,18 +210,18 @@ final class SurfaceEditForm extends FormBase {
     }
 
     $superficies = $this->reader->superficies();
-    $superficies[$purpose] = $this->valoresDoFormulario($purpose, $form_state);
+    $superficies[$site_key] = $this->valoresDoFormulario($site_key, $form_state);
     $erros = SurfaceConfigReader::validar($superficies);
-    if (isset($erros[$purpose])) {
+    if (isset($erros[$site_key])) {
       $campo = $modo === 'diretorio' ? 'caminho][slug' : 'modo';
-      $form_state->setErrorByName($campo, $erros[$purpose]);
+      $form_state->setErrorByName($campo, $erros[$site_key]);
     }
 
-    if ($purpose === DomainSurfaceMap::MAIN || $modo !== 'subdominio') {
+    if ($site_key === DomainSurfaceMap::MAIN || $modo !== 'subdominio') {
       return;
     }
     $host = $this->hostSubmetido($form_state);
-    $dominio = $this->purposes->getDomain($purpose);
+    $dominio = $this->sites->getDomain($site_key);
     if ($dominio === NULL || $host === $dominio->getHostname()) {
       return;
     }
@@ -240,18 +241,18 @@ final class SurfaceEditForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $purpose = (string) $form['#purpose'];
-    $antes = $this->reader->superficies()[$purpose];
-    $depois = $this->valoresDoFormulario($purpose, $form_state);
+    $site_key = (string) $form['#site_key'];
+    $antes = $this->reader->superficies()[$site_key];
+    $depois = $this->valoresDoFormulario($site_key, $form_state);
 
     $superficies = $this->reader->superficies();
-    $superficies[$purpose] = $depois;
+    $superficies[$site_key] = $depois;
     $this->configFactoryService->getEditable(SurfaceConfigReader::CONFIG_NAME)
       ->set('superficies', $superficies)
       ->save();
 
-    $dominio = $this->purposes->getDomain($purpose);
-    if ($purpose !== DomainSurfaceMap::MAIN && $depois['modo'] === 'subdominio' && $dominio !== NULL) {
+    $dominio = $this->sites->getDomain($site_key);
+    if ($site_key !== DomainSurfaceMap::MAIN && $depois['modo'] === 'subdominio' && $dominio !== NULL) {
       $host = $this->hostSubmetido($form_state);
       if ($host !== $dominio->getHostname()) {
         $dominio->set('hostname', $host)->save();
@@ -323,19 +324,19 @@ final class SurfaceEditForm extends FormBase {
   }
 
   /**
-   * Valores do formulário no formato da configuração, para um purpose.
+   * Valores do formulário no formato da configuração, para um site_key.
    *
-   * @param string $purpose
-   *   Purpose da superfície editada.
+   * @param string $site_key
+   *   Chave funcional da superfície editada.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
    *
    * @return array{modo: string, ativa: bool, slug: string, titulo: string}
    *   Valores normalizados da superfície.
    */
-  private function valoresDoFormulario(string $purpose, FormStateInterface $form_state): array {
+  private function valoresDoFormulario(string $site_key, FormStateInterface $form_state): array {
     $modo = (string) $form_state->getValue('modo');
-    $ehMain = $purpose === DomainSurfaceMap::MAIN;
+    $ehMain = $site_key === DomainSurfaceMap::MAIN;
     return [
       'modo' => $ehMain ? 'subdominio' : $modo,
       'ativa' => $ehMain ? TRUE : (bool) $form_state->getValue('ativa'),

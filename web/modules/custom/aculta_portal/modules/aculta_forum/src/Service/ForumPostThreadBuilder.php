@@ -14,7 +14,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 
 /**
  * Builds the revisionable posts attached to a public Forum topic.
@@ -36,7 +36,7 @@ final class ForumPostThreadBuilder {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountInterface $currentUser,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly DiscussionContextResolver $discussionContextResolver,
     private readonly PagerManagerInterface $pagerManager,
   ) {}
@@ -102,8 +102,8 @@ final class ForumPostThreadBuilder {
       && $topic->isPublished()
       && $topic->hasField('field_domain_source')
       && !$topic->get('field_domain_source')->isEmpty()
-      && $this->domainPurposeManager->getCurrentPurpose() === 'forum'
-      && $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum';
+      && $this->siteManager->getCurrentSiteKey()?->value === 'forum'
+      && $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum';
   }
 
 }

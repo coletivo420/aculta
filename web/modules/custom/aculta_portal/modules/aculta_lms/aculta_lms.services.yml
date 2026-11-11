@@ -72,7 +72,7 @@ services:
   Drupal\aculta_lms\Learning\CourseAnswerReaderInterface: '@aculta_lms.course_answer_reader'
   aculta_lms.account_courses_reader:
     class: Drupal\aculta_lms\Account\AccountCoursesReader
-    arguments: ['@Drupal\aculta_lms\Learning\CourseProgressReaderInterface', '@aculta_lms.group_membership_reader', '@aculta_portal.domain_purpose']
+    arguments: ['@Drupal\aculta_lms\Learning\CourseProgressReaderInterface', '@aculta_lms.group_membership_reader', '@aculta_portal.domain_site']
   aculta_lms.group_membership_reader:
     class: Drupal\aculta_lms\Group\GroupMembershipReader
     arguments: ['@entity_type.manager']
@@ -169,7 +169,7 @@ services:
     arguments: ['@aculta_lms.course_certificate_manager', '@?plugin.manager.entity_print.print_engine', '@date.formatter', '@string_translation', '@?aculta_lms.certificate_qr_code_provider']
   aculta_lms.certificate_qr_code_provider:
     class: Drupal\aculta_lms\Certificate\CertificateQrCodeProvider
-    arguments: ['@?aculta_qrcode.generator', '@?aculta_qrcode.payload_validator', '@?aculta_qrcode.preset_registry', '@?aculta_portal.domain_purpose']
+    arguments: ['@?aculta_qrcode.generator', '@?aculta_qrcode.payload_validator', '@?aculta_qrcode.preset_registry', '@?aculta_portal.domain_site']
   aculta_lms.submission_image_validator:
     class: Drupal\aculta_lms\Plugin\Validation\Constraint\LmsSubmissionImageValidator
     arguments: ['@aculta_file_uploader.consumer_policy']
@@ -322,7 +322,7 @@ services:
     arguments: ['@aculta_lms.course_resource_builder', '@current_route_match']
 
   Drupal\aculta_lms\Hook\GalleryCourseAccessHooks:
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site']
 
   aculta_lms.course_document_access:
     class: Drupal\aculta_lms\Resources\Access\CourseDocumentAccessCheck
@@ -338,7 +338,7 @@ services:
 
   aculta_lms.course_content_index_provider:
     class: Drupal\aculta_lms\Resources\ContentIndex\LmsCourseContentIndexProvider
-    arguments: ['@aculta_portal.domain_purpose', '@group_relation_type.manager']
+    arguments: ['@aculta_portal.domain_site', '@group_relation_type.manager']
     tags:
       - { name: aculta_index.provider }
   aculta_lms_resources.course_content_index_provider:
@@ -346,7 +346,7 @@ services:
 
   aculta_lms.course_resource_builder:
     class: Drupal\aculta_lms\Resources\CourseResourceBuilder
-    arguments: ['@aculta_portal.domain_purpose', '@current_user', '@string_translation', '@group_relation_type.manager']
+    arguments: ['@aculta_portal.domain_site', '@current_user', '@string_translation', '@group_relation_type.manager']
   aculta_lms_resources.course_resource_builder:
     alias: aculta_lms.course_resource_builder
 

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Hook;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\PathProcessor\SiteFrontPathProcessor;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Menu\LocalTaskManagerInterface;
@@ -25,8 +25,8 @@ final class PublicForumFrontNavigationHooks {
     #[Autowire(service: 'plugin.manager.menu.local_task')]
     private readonly LocalTaskManagerInterface $localTaskManager,
     private readonly RequestStack $requestStack,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -38,8 +38,8 @@ final class PublicForumFrontNavigationHooks {
       || $view->current_display !== 'page_discussions'
       || $request === NULL
       || $request->getPathInfo() !== '/'
-      || $request->attributes->get(PurposeFrontPathProcessor::FRONT_ATTRIBUTE) !== TRUE
-      || $this->domainPurposeManager->getCurrentPurpose() !== 'forum') {
+      || $request->attributes->get(SiteFrontPathProcessor::FRONT_ATTRIBUTE) !== TRUE
+      || $this->siteManager->getCurrentSiteKey()?->value !== 'forum') {
       return;
     }
 

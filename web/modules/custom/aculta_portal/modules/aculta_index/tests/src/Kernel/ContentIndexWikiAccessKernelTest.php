@@ -369,7 +369,7 @@ final class ContentIndexWikiAccessKernelTest extends KernelTestBase {
     $domainNegotiator = $this->container->get(DomainNegotiatorInterface::class);
     $domainNegotiator->getActiveDomain();
     $domainNegotiator->getContext()->setDomain($mainDomain);
-    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
     self::assertTrue(
       $this->container->get(EntityHooks::class)
         ->entityAccess($entry, 'view', $reader)?->isForbidden(),

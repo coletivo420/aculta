@@ -137,7 +137,12 @@ final class MailTemplateHtmlKernelTest extends KernelTestBase {
    */
   private function renderTemplate(array $context): array {
     $type = $this->container->get(MailTypeRegistry::class)->get('aculta_mailer_test_message');
-    return $this->container->get(MailTemplateRenderer::class)->render($type, $context);
+    $rendered = $this->container->get(MailTemplateRenderer::class)->render($type, $context);
+    return [
+      'subject' => $rendered['subject'],
+      'body' => $rendered['body'],
+      'html' => $rendered['html'],
+    ];
   }
 
 }

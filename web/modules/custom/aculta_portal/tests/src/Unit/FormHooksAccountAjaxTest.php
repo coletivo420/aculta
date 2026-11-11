@@ -7,7 +7,7 @@ namespace Drupal\Tests\aculta_portal\Unit;
 use Drupal\aculta_portal\Cart\AddToCartAjax;
 use Drupal\aculta_portal\Hook\FormHooks;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -69,7 +69,7 @@ class FormHooksAccountAjaxTest extends UnitTestCase {
       $translation,
       // Classes final não podem ser duplicadas; os casos testados não as usam.
       (new \ReflectionClass(EmailConfirmationPolicy::class))->newInstanceWithoutConstructor(),
-      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor(),
       $cart,
       $stack,
     );

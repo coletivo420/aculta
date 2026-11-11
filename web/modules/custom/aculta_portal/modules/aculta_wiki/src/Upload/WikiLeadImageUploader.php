@@ -208,9 +208,6 @@ final class WikiLeadImageUploader {
           'uid' => $this->currentUser->id(),
           'status' => FALSE,
         ]);
-        if (!$media instanceof MediaInterface) {
-          throw new \UnexpectedValueException('A mídia da imagem de destaque da Wiki não pôde ser criada.');
-        }
         $media->set('field_media_image', [
           'target_id' => $fid,
           'alt' => $this->altValue($form_state),
@@ -313,12 +310,9 @@ final class WikiLeadImageUploader {
         // rollback. Proposal decisions use this row lock too, so a direct edit
         // cannot race an approved proposal between comparison and save.
         $this->submissionTransaction ??= $this->database->startTransaction();
-        $lockedId = $this->database->select('node', 'node')
-          ->fields('node', ['nid'])
-          ->condition('nid', $node->id())
-          ->forUpdate()
-          ->execute()
-          ->fetchField();
+        $select = $this->database->select('node', 'node');
+        $select->fields('node', ['nid'])->condition('nid', $node->id())->forUpdate();
+        $lockedId = $select->execute()->fetchField();
         $current = $lockedId
           ? $this->entityTypeManager->getStorage('node')->loadUnchanged($node->id())
           : NULL;

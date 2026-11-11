@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_statistics\Unit;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use Drupal\aculta_statistics\Domain\PurposeResolverInterface;
+use Drupal\aculta_statistics\Domain\SiteKeyResolverInterface;
 use Drupal\aculta_statistics\Hook\CommerceOrderDomainHooks;
 use Drupal\commerce_order\Entity\OrderInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -63,7 +63,7 @@ final class CommerceOrderDomainHooksTest extends TestCase {
    * Cria o hook com um gerenciador de purpose que devolve o valor informado.
    */
   private function hooks(?string $purpose): CommerceOrderDomainHooks {
-    $manager = $this->createMock(PurposeResolverInterface::class);
+    $manager = $this->createMock(SiteKeyResolverInterface::class);
     $manager->method('currentPurpose')->willReturn($purpose);
     return new CommerceOrderDomainHooks($manager);
   }

@@ -87,7 +87,7 @@ final class MailQueueKernelTest extends KernelTestBase {
   private function runWorkerOnce(): void {
     $queue = $this->container->get('queue')->get(MailQueue::QUEUE_NAME);
     $item = $queue->claimItem();
-    $this->assertNotFalse($item, 'Esperava um item na fila.');
+    $this->assertIsObject($item, 'Esperava um item na fila.');
     $worker = $this->container->get('plugin.manager.queue_worker')->createInstance(MailQueue::QUEUE_NAME);
     $worker->processItem($item->data);
     $queue->deleteItem($item);

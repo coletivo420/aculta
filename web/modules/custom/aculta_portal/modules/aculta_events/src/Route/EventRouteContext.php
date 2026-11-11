@@ -13,8 +13,8 @@ final class EventRouteContext {
    * Returns the organizer route for Events, otherwise the MAIN route.
    */
   public static function route(string $mainRoute, string $organizerRoute): string {
-    if (\Drupal::hasService('aculta_portal.domain_purpose')
-      && \Drupal::service('aculta_portal.domain_purpose')->getCurrentPurpose() === 'eventos') {
+    if (\Drupal::hasService('aculta_portal.domain_site')
+      && \Drupal::service('aculta_portal.domain_site')->getCurrentSiteKey()?->value === 'eventos') {
       return $organizerRoute;
     }
     return $mainRoute;

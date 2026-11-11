@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Service\ForumReadMarker;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\DomainNegotiationContext;
@@ -115,7 +115,7 @@ final class ForumReadMarkerKernelTest extends KernelTestBase {
       $activeDomain = $domain;
     });
     $negotiator->method('getContext')->willReturn($context);
-    $purposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),
@@ -123,20 +123,20 @@ final class ForumReadMarkerKernelTest extends KernelTestBase {
     );
     $marker = new ForumReadMarker(
       $this->container->get('entity_type.manager'),
-      $purposeManager,
+      $siteManager,
       $currentUser,
       $this->container->get('string_translation'),
       $this->container->get('messenger'),
     );
 
     self::assertSame(0, $marker->countEligibleTopics(), 'The central Batch purpose cannot discover Forum topics directly.');
-    self::assertSame(1, $purposeManager->runInPurpose('forum', static fn(): int => $marker->countEligibleTopics()));
-    self::assertSame('main', $purposeManager->getCurrentPurpose(), 'Purpose context is restored after eligibility checks.');
+    self::assertSame(1, $siteManager->runInSite('forum', static fn(): int => $marker->countEligibleTopics()));
+    self::assertSame('main', $siteManager->getCurrentSiteKey()->value, 'Purpose context is restored after eligibility checks.');
     $context = [];
     while (($context['finished'] ?? 0) < 1) {
       $marker->markBatch((int) $account->id(), 1, $context);
     }
-    self::assertSame('main', $purposeManager->getCurrentPurpose(), 'Purpose context is restored after the Batch callback.');
+    self::assertSame('main', $siteManager->getCurrentSiteKey()->value, 'Purpose context is restored after the Batch callback.');
     $rows = $this->container->get('database')->select('history', 'h')
       ->fields('h', ['uid', 'nid'])
       ->execute()

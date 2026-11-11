@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\PathProcessor;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Domain\DomainSurfaceMap;
 use Drupal\Core\PathProcessor\InboundPathProcessorInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,12 +19,12 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * Mapa único de páginas iniciais: acrescentar um purpose aqui é a única forma de definir a raiz dele.
  */
-final class PurposeFrontPathProcessor implements InboundPathProcessorInterface {
+final class SiteFrontPathProcessor implements InboundPathProcessorInterface {
 
   /**
    * Request attribute marking a rewritten root (routes that only answer at `/`).
    */
-  public const FRONT_ATTRIBUTE = '_aculta_purpose_front';
+  public const FRONT_ATTRIBUTE = '_aculta_site_front';
 
   /**
    * Purpose => caminho interno que serve a raiz do host (mapa único).
@@ -41,7 +41,7 @@ final class PurposeFrontPathProcessor implements InboundPathProcessorInterface {
   public const FRONT_PATHS = DomainSurfaceMap::FRONT_PATHS;
 
   public function __construct(
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -51,7 +51,7 @@ final class PurposeFrontPathProcessor implements InboundPathProcessorInterface {
     if ($path !== '/') {
       return $path;
     }
-    $purpose = $this->domainPurposeManager->getCurrentPurpose();
+    $purpose = $this->siteManager->getCurrentSiteKey()?->value;
     if (!is_string($purpose) || !isset(self::FRONT_PATHS[$purpose])) {
       return $path;
     }

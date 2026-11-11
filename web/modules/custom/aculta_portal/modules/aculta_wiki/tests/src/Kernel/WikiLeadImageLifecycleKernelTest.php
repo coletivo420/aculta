@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_wiki\Kernel;
+use Drupal\aculta_portal\Domain\SiteKey;
 
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
@@ -25,7 +26,7 @@ use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\editor\Entity\Editor;
 use Drupal\aculta_file_uploader\Cleanup\FileReferenceStatus;
 use Drupal\aculta_portal\Domain\FrontPathPolicy;
-use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
+use Drupal\aculta_portal\PathProcessor\SiteFrontPathProcessor;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\profile\Entity\ProfileType;
@@ -832,23 +833,23 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     // The public Wiki host serves its root through the internal /wiki route;
     // direct requests to that internal path remain hidden by the shared policy.
     $this->container->get(DomainNegotiatorInterface::class)->getContext()->setDomain(Domain::load('wiki420_aculta_org'));
-    $frontProcessor = $this->container->get('aculta_portal.purpose_front_path_processor');
+    $frontProcessor = $this->container->get('aculta_portal.site_front_path_processor');
     $rootRequest = Request::create('/');
     self::assertSame('/wiki', $frontProcessor->processInbound('/', $rootRequest));
-    $servedAsRoot = $rootRequest->attributes->get(PurposeFrontPathProcessor::FRONT_ATTRIBUTE, FALSE);
+    $servedAsRoot = $rootRequest->attributes->get(SiteFrontPathProcessor::FRONT_ATTRIBUTE, FALSE);
     self::assertTrue($servedAsRoot);
     self::assertFalse(FrontPathPolicy::bloqueiaCaminhoInterno('wiki', '/wiki', $servedAsRoot));
 
     $directRequest = Request::create('/wiki');
     self::assertSame('/wiki', $frontProcessor->processInbound('/wiki', $directRequest));
-    self::assertFalse($directRequest->attributes->get(PurposeFrontPathProcessor::FRONT_ATTRIBUTE, FALSE));
+    self::assertFalse($directRequest->attributes->get(SiteFrontPathProcessor::FRONT_ATTRIBUTE, FALSE));
     self::assertTrue(FrontPathPolicy::bloqueiaCaminhoInterno('wiki', '/wiki', FALSE));
 
     // The internal Wiki home is served from the Wiki root, but not from the
     // main Portal host. Exercise the real site-key subscriber for both cases.
     $siteSubscriber = $this->container->get('aculta_portal.domain_site_subscriber');
     $wikiHomeRequest = Request::create('/wiki');
-    $wikiHomeRequest->attributes->set(PurposeFrontPathProcessor::FRONT_ATTRIBUTE, TRUE);
+    $wikiHomeRequest->attributes->set(SiteFrontPathProcessor::FRONT_ATTRIBUTE, TRUE);
     $wikiHomeRequest->attributes->set('_route', 'aculta_portal.wiki_home');
     $wikiHomeRequest->attributes->set('_route_object', $routeProvider->getRouteByName('aculta_portal.wiki_home'));
     $wikiHomeEvent = new RequestEvent(
@@ -978,7 +979,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $actualFormState->setRebuild(FALSE);
     $actualFormState->setTriggeringElement($processedReviewForm['actions']['submit']);
     $actualProposalFormObject->validateForm($processedReviewForm, $actualFormState);
-    $this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', function () use ($actualFormState, $actualProposalFormObject, &$processedReviewForm): void {
+    $this->container->get('aculta_portal.domain_site')->runInSite('wiki', function () use ($actualFormState, $actualProposalFormObject, &$processedReviewForm): void {
       $actualProposalFormObject->submitForm($processedReviewForm, $actualFormState);
     });
     self::assertSame('aculta_wiki.proposal_status', $actualFormState->getRedirect()->getRouteName());
@@ -993,7 +994,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       $viewFile = dirname(DRUPAL_ROOT) . '/config/sync/views.view.' . $viewId . '.yml';
       View::create(Yaml::parseFile($viewFile))->save();
     }
-    $homeBuild = $this->container->get('aculta_portal.domain_purpose')->runInPurpose(
+    $homeBuild = $this->container->get('aculta_portal.domain_site')->runInSite(
       'wiki',
       fn (): array => WikiController::create($this->container)->home(),
     );
@@ -1092,7 +1093,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('aculta_studio.we_sativa_start', $studioBuild['collaboration']['#url']->getRouteName());
     self::assertSame('wiki420_aculta_org', $studioBuild['collaboration']['#url']->getOption('domain')->id());
     self::assertContains('user.permissions', $studioBuild['collaboration']['#access']->getCacheContexts());
-    self::assertSame('wiki', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertSame('wiki', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
   }
 
   /**
@@ -1130,7 +1131,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $domainNegotiator = $this->container->get(DomainNegotiatorInterface::class);
     $domainNegotiator->getContext()->setDomain(Domain::load('aculta_org'));
     $lookup = $this->container->get('aculta_user.published_participation_lookup');
-    self::assertNotNull($this->container->get('aculta_portal.domain_purpose')->getDomain('wiki'));
+    self::assertNotNull($this->container->get('aculta_portal.domain_site')->getDomain(SiteKey::Wiki));
 
     ProfileType::create(['id' => 'authenticated', 'label' => 'Authenticated profile'])->save();
     FieldStorageConfig::create([
@@ -1159,7 +1160,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertTrue($firstEvidence->requiresReview());
     self::assertContains('user', $firstEvidence->getCacheContexts());
     self::assertContains('node_list:wiki_entry', $firstEvidence->getCacheTags());
-    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
     $this->container->get('current_user')->setAccount($otherAuthor);
     $otherAccountEvidence = $lookup->lookup($newAuthorId, 'wiki_entry');
     self::assertSame(0, $otherAccountEvidence->getCacheMaxAge(), 'Evidence queried for another account is not reusable in the current-user cache context.');
@@ -1223,7 +1224,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertTrue($publishedEvidence->isReliable());
     self::assertTrue($publishedEvidence->hasPublishedContribution(), 'The existing published default revision remains evidence while a pending revision is non-default.');
     self::assertFalse($publishedEvidence->requiresReview());
-    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
   }
 
   /**
@@ -1291,7 +1292,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $other->save();
     $this->container->get(NodeAccessRebuild::class)->rebuild();
     $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
-    $ownAccess = $this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', fn () => $own->access('view', $author, TRUE));
+    $ownAccess = $this->container->get('aculta_portal.domain_site')->runInSite('wiki', fn () => $own->access('view', $author, TRUE));
     self::assertTrue($ownAccess->isAllowed());
     self::assertSame((string) $author->id(), (string) $own->getOwnerId());
 
@@ -1335,7 +1336,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $mainDomain = Domain::load('aculta_org');
     $this->container->get(DomainNegotiatorInterface::class)->getContext()->setDomain($mainDomain);
     $build = $workspace->build($author);
-    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
     self::assertContains('user', $build['#cache']['contexts']);
     self::assertSame('ACULTA STUDIO WE SATIVA', $build['header']['#props']['title']);
     self::assertSame('context-header', $build['header']['#name']);
@@ -1347,7 +1348,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertStringContainsString('Meu verbete WE SATIVA', (string) $renderedItems[0]['#slots']['header']['#title']);
     self::assertSame('entity.node.edit_form', $renderedItems[0]['#slots']['footer']['#url']->getRouteName());
     self::assertSame('wiki420_aculta_org', $renderedItems[0]['#slots']['footer']['#url']->getOption('domain')->id());
-    self::assertTrue($this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', fn () => $this->container
+    self::assertTrue($this->container->get('aculta_portal.domain_site')->runInSite('wiki', fn () => $this->container
       ->get('access_manager')->checkNamedRoute('entity.node.edit_form', ['node' => $own->id()], $author)));
     $createLink = $build['header']['#slots']['actions'];
     self::assertSame('aculta_wiki.studio_entry_create', $createLink['#url']->getRouteName());
@@ -1380,7 +1381,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
         'max-age' => 3600,
       ],
     ];
-    $this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', function () use (&$contributionLinkBuild, $own): void {
+    $this->container->get('aculta_portal.domain_site')->runInSite('wiki', function () use (&$contributionLinkBuild, $own): void {
       $this->container->get(WikiProposalLinkHooks::class)->entityView(
         $contributionLinkBuild,
         $own,
@@ -1716,8 +1717,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
 
     $workspace = $this->container->get('aculta_wiki.contributor_workspace');
     $latestDraft = Node::load((int) end($expectedDraftIds));
-    $latestDraftUpdateAccess = $this->container->get('aculta_portal.domain_purpose')
-      ->runInPurpose('wiki', fn () => $latestDraft->access('update', $author, TRUE));
+    $latestDraftUpdateAccess = $this->container->get('aculta_portal.domain_site')
+      ->runInSite('wiki', fn () => $latestDraft->access('update', $author, TRUE));
     self::assertTrue($latestDraftUpdateAccess->isAllowed());
     $startBuild = $workspace->buildStart($author);
     self::assertSame('Continuar de onde parou', $startBuild['continue']['#props']['title']);
@@ -2430,7 +2431,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertEquals(0, $this->container->get('entity_type.manager')->getAccessControlHandler('node')->checkAllGrants($firstReader));
     $grants = $this->container->get(NodeGrantsHelper::class)->nodeAccessGrants('view', $firstReader);
     self::assertSame([(string) $firstReader->id()], $grants['wiki_test_author']);
-    self::assertSame('wiki', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertSame('wiki', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
     $firstEntity = Node::load($firstNode);
     $firstAccess = $firstEntity->access('view', $firstReader, TRUE);
     self::assertTrue($firstAccess->isAllowed(), 'The real Wiki entity must allow its author in the Wiki Domain.');
@@ -2778,7 +2779,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->container->get(NodeAccessRebuild::class)->rebuild();
     $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
     $this->container->get('current_user')->setAccount($author);
-    $this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', function () use ($target): void {
+    $this->container->get('aculta_portal.domain_site')->runInSite('wiki', function () use ($target): void {
       self::assertTrue($target->access('view'));
     });
 
@@ -2821,7 +2822,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $reviewBuild = $form->buildForm([], $formState, $target);
     $formState->setRebuild(FALSE);
     $form->validateForm($reviewBuild, $formState);
-    $this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', function () use ($form, $reviewBuild, $formState): void {
+    $this->container->get('aculta_portal.domain_site')->runInSite('wiki', function () use ($form, $reviewBuild, $formState): void {
       $form->submitForm($reviewBuild, $formState);
     });
     self::assertSame('aculta_wiki.proposal_status', $formState->getRedirect()->getRouteName());
@@ -2866,7 +2867,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $decisionBuild = [];
     $decision->validateForm($decisionBuild, $decisionState);
     self::assertFalse($decisionState->hasAnyErrors());
-    $this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', function () use ($decision, $decisionBuild, $decisionState): void {
+    $this->container->get('aculta_portal.domain_site')->runInSite('wiki', function () use ($decision, $decisionBuild, $decisionState): void {
       $decision->submitForm($decisionBuild, $decisionState);
     });
     self::assertSame($eventsBefore + 1, $eventQueue->numberOfItems());
@@ -3164,7 +3165,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $contendedSubmission = new WikiProposalSubmission(
       $this->container->get('entity_type.manager'),
       $this->container->get('current_user'),
-      $this->container->get('aculta_portal.domain_purpose'),
+      $this->container->get('aculta_portal.domain_site'),
       $this->container->get('aculta_portal.email_confirmation_policy'),
       $this->container->get('flood'),
       new DatabaseLockBackend($database),
@@ -3219,7 +3220,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'uid' => 4,
       'roles' => ['authenticated', 'wiki_proposal_reviewer_test'],
     ])));
-    self::assertSame('wiki', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertSame('wiki', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
     $proposalStatusRoute = $this->container->get('router.route_provider')->getRouteByName('aculta_wiki.proposal_status');
     self::assertSame('/propostas/{proposal}', $proposalStatusRoute->getPath());
     $accessManager = $this->container->get('access_manager');
@@ -3457,7 +3458,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $decisionState->setValue($decisionBuild['editorial_decision']['list_modes']['field_wiki_related']['#parents'], 'replace');
     $decisionFormObject->validateForm($decisionBuild, $decisionState);
     self::assertSame([], $decisionState->getErrors());
-    $this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', function () use (&$decisionBuild, $decisionFormObject, $decisionState): void {
+    $this->container->get('aculta_portal.domain_site')->runInSite('wiki', function () use (&$decisionBuild, $decisionFormObject, $decisionState): void {
       $decisionFormObject->submitForm($decisionBuild, $decisionState);
     });
     $acceptedProposal = $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')
@@ -3879,7 +3880,7 @@ PHP;
       $submission = new WikiProposalSubmission(
         $this->container->get('entity_type.manager'),
         $this->container->get('current_user'),
-        $this->container->get('aculta_portal.domain_purpose'),
+        $this->container->get('aculta_portal.domain_site'),
         $this->container->get('aculta_portal.email_confirmation_policy'),
         $this->container->get('flood'),
         $productionLock,
@@ -4071,7 +4072,7 @@ PHP;
     self::assertNotEmpty($this->container->get('content_moderation.state_transition_validation')
       ->getValidTransitions($reviewEntity, $reviewer));
     self::assertTrue($reviewer->hasPermission('edit any wiki_entry content'));
-    $reviewAccess = $this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', function () use ($reviewRevisionId, $reviewer): array {
+    $reviewAccess = $this->container->get('aculta_portal.domain_site')->runInSite('wiki', function () use ($reviewRevisionId, $reviewer): array {
       $revision = $this->container->get('entity_type.manager')->getStorage('node')->loadRevision($reviewRevisionId);
       $updateAccess = $revision->access('update', $reviewer, TRUE);
       return [
@@ -4089,7 +4090,7 @@ PHP;
     self::assertSame($reviewRevisionId, (string) $page->getItems()[0]->getRevisionId());
     self::assertSame('review', $page->getItems()[0]->get('moderation_state')->value);
     self::assertContains('user.node_grants:view', $page->getCacheContexts());
-    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
     self::assertNull($page->getNextCursor());
 
     // Sem a aba Wiki do Marley (da7c0a348), a revisão usa o listing do Studio.

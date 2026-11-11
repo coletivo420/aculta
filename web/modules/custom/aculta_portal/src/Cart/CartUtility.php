@@ -6,7 +6,8 @@ namespace Drupal\aculta_portal\Cart;
 
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\Checkout\CheckoutStepResolver;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\commerce_cart\CartProviderInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -24,7 +25,7 @@ class CartUtility {
 
   public function __construct(
     private readonly CartProviderInterface $cartProvider,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     TranslationInterface $translation,
     private readonly ?CheckoutSettings $settings = NULL,
     private readonly ?CheckoutStepResolver $checkoutStepResolver = NULL,
@@ -93,10 +94,9 @@ class CartUtility {
       ];
     }
 
-    $url = $this->domainPurposeManager->routeUrl('main', 'commerce_cart.page');
+    $url = $this->siteManager->routeUrl(SiteKey::Main, 'commerce_cart.page');
     // Um botão geral junta os itens e abre o checkout do pedido único.
-    $finalizar = $this->domainPurposeManager->routeUrl(
-      'main',
+    $finalizar = $this->siteManager->routeUrl(SiteKey::Main,
       'aculta_portal.cart_checkout',
     );
 
@@ -119,7 +119,7 @@ class CartUtility {
     // de ser válida para a sessão atual (por exemplo, login após autenticação).
     $passo = $this->checkoutStepResolver?->resolve($pedido)
       ?? ($pedido->get('checkout_step')->value ?: 'login');
-    $url = $this->domainPurposeManager->routeUrl('main', 'commerce_checkout.form', [
+    $url = $this->siteManager->routeUrl(SiteKey::Main, 'commerce_checkout.form', [
       'commerce_order' => $pedido->id(),
       'step' => $passo,
     ]);

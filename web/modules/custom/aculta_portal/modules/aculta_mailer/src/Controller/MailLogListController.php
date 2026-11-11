@@ -10,7 +10,7 @@ use Drupal\aculta_mailer\Message\MailStatus;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\aculta_mailer\Entity\MailLog;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -73,7 +73,9 @@ final class MailLogListController extends ControllerBase {
 
     $rows = [];
     foreach ($storage->loadMultiple($ids) as $log) {
-      assert($log instanceof ContentEntityInterface);
+      if (!$log instanceof MailLog) {
+        throw new \UnexpectedValueException('O armazenamento de logs retornou uma entidade inesperada.');
+      }
       $rows[] = [
         date('Y-m-d H:i', (int) $log->get('created')->value),
         (string) $log->get('type')->value,
@@ -132,7 +134,7 @@ final class MailLogListController extends ControllerBase {
   private function pager(int $total, int $page, string $type, string $status, string $transport, int $days): array {
     $query = array_filter(
       ['type' => $type, 'status' => $status, 'transport' => $transport, 'days' => $days],
-      static fn($v) => $v !== '' && $v !== NULL,
+      static fn($v) => $v !== '',
     );
     $links = [];
     if ($page > 0) {

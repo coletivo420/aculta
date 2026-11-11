@@ -3,8 +3,9 @@
 declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Kernel;
+use Drupal\aculta_portal\Domain\SiteKey;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Environment\DeployerEnvironment;
 use Drupal\domain\Entity\Domain;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -20,7 +21,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
  */
 #[Group('aculta_portal')]
 #[RunTestsInSeparateProcesses]
-final class DomainPurposeManagerKernelTest extends KernelTestBase {
+final class DomainSiteManagerMappingKernelTest extends KernelTestBase {
 
   /**
    * {@inheritdoc} */
@@ -49,7 +50,7 @@ final class DomainPurposeManagerKernelTest extends KernelTestBase {
 
   /**
    * Domain-purpose service under test. */
-  private DomainPurposeManager $manager;
+  private DomainSiteManager $manager;
 
   /**
    * {@inheritdoc} */
@@ -57,7 +58,7 @@ final class DomainPurposeManagerKernelTest extends KernelTestBase {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('domain');
-    $this->manager = new DomainPurposeManager(
+    $this->manager = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get(DomainNegotiatorInterface::class),
       $this->container->get('config.factory'),
@@ -86,7 +87,7 @@ final class DomainPurposeManagerKernelTest extends KernelTestBase {
     foreach (self::DOMAINS as $purpose => $id) {
       $this->assertSame(
         $purpose,
-        $this->manager->getPurposeForDomainId($id),
+        $this->manager->getSiteKeyValueForDomainId($id),
         "Domain $id deve mapear para $purpose.",
       );
     }
@@ -95,15 +96,15 @@ final class DomainPurposeManagerKernelTest extends KernelTestBase {
   /**
    * Tests that unknown Domain IDs do not resolve to a purpose. */
   public function testUnknownDomainIdHasNoPurpose(): void {
-    $this->assertNull($this->manager->getPurposeForDomainId('desconhecido_aculta_org'));
-    $this->assertNull($this->manager->getPurposeForDomainId(''));
+    $this->assertNull($this->manager->getSiteKeyValueForDomainId('desconhecido_aculta_org'));
+    $this->assertNull($this->manager->getSiteKeyValueForDomainId(''));
   }
 
   /**
    * Tests that a configured purpose returns its Domain entity. */
   public function testGetDomainReturnsEntityForPurpose(): void {
     $this->createDomains();
-    $domain = $this->manager->getDomain('shop');
+    $domain = $this->manager->getDomain(SiteKey::Shop);
     $this->assertNotNull($domain);
     $this->assertSame('loja_aculta_org', $domain->id());
   }
@@ -114,7 +115,7 @@ final class DomainPurposeManagerKernelTest extends KernelTestBase {
     $this->createDomains();
     $expectedHost = DeployerEnvironment::domainHost(dirname(DRUPAL_ROOT), 'eventos_aculta_org');
     $this->assertNotNull($expectedHost);
-    $url = $this->manager->environmentPathUrl('eventos', '/calendario');
+    $url = $this->manager->environmentPathUrl(SiteKey::Eventos, '/calendario');
     $this->assertNotNull($url);
     $this->assertSame('https://' . $expectedHost . '/calendario', $url->toString());
   }
@@ -124,7 +125,7 @@ final class DomainPurposeManagerKernelTest extends KernelTestBase {
   public function testGetDomainReturnsNullForUnknownPurposeOrMissingEntity(): void {
     $this->assertNull($this->manager->getDomain('inexistente'));
     // Purpose válido, mas o Domain ainda não existe no banco.
-    $this->assertNull($this->manager->getDomain('forum'));
+    $this->assertNull($this->manager->getDomain(SiteKey::Forum));
   }
 
   /**
@@ -138,7 +139,7 @@ final class DomainPurposeManagerKernelTest extends KernelTestBase {
     $context->setDomain(Domain::load('aculta_org'));
     $context->setNegotiated(TRUE);
 
-    $inside = $this->manager->runInPurpose(
+    $inside = $this->manager->runInSite(
       'shop',
       static fn() => $negotiator->getActiveDomain()?->id(),
     );
@@ -168,7 +169,7 @@ final class DomainPurposeManagerKernelTest extends KernelTestBase {
     $context->setNegotiated(TRUE);
 
     try {
-      $this->manager->runInPurpose('main', static function (): void {
+      $this->manager->runInSite('main', static function (): void {
         throw new \RuntimeException('falha no callback');
       });
       $this->fail('A exceção do callback deve ser propagada.');
@@ -187,7 +188,7 @@ final class DomainPurposeManagerKernelTest extends KernelTestBase {
    * Tests that missing domains prevent the callback from running. */
   public function testRunInPurposeReturnsNullWithoutDomainForPurpose(): void {
     $called = FALSE;
-    $result = $this->manager->runInPurpose('forum', static function () use (&$called) {
+    $result = $this->manager->runInSite('forum', static function () use (&$called) {
       $called = TRUE;
       return 'nao deveria rodar';
     });

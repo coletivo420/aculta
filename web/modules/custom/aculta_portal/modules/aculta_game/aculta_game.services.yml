@@ -6,7 +6,7 @@ services:
       - { name: event_subscriber }
   aculta_game.forum_participation_policy:
     class: Drupal\aculta_game\ForumParticipationPolicy
-    arguments: ['@aculta_portal.domain_purpose']
+    arguments: ['@aculta_portal.domain_site']
 
   aculta_game.mission_progress:
     class: Drupal\aculta_game\MissionProgress

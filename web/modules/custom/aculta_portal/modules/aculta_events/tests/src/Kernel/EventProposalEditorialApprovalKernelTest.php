@@ -8,7 +8,7 @@ use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Form\EventContributionSubmissionForm;
 use Drupal\aculta_image\FileRemover;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormState;
@@ -82,7 +82,7 @@ final class EventProposalEditorialApprovalKernelTest extends KernelTestBase {
     $loader->addPsr4('Drupal\\aculta_index\\', $customRoot . '/modules/aculta_index/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_events\\', $customRoot . '/modules/aculta_events/src', TRUE);
 
-    $container->register('aculta_portal.domain_purpose', DomainPurposeManager::class)
+    $container->register('aculta_portal.domain_site', DomainSiteManager::class)
       ->addArgument($this->createMock(EntityTypeManagerInterface::class))
       ->addArgument($this->createMock(DomainNegotiatorInterface::class))
       ->addArgument($this->createMock(ConfigFactoryInterface::class))
@@ -150,7 +150,7 @@ final class EventProposalEditorialApprovalKernelTest extends KernelTestBase {
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn($eventsDomain);
 
-    $this->container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+    $this->container->set('aculta_portal.domain_site', new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),

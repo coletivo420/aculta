@@ -7,7 +7,7 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 use Drupal\aculta_forum\Form\ForumTopicMoveForm;
 use Drupal\aculta_forum\Plugin\Action\MoveForumTopicsAction;
 use Drupal\aculta_forum\Service\ForumTopicMover;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Tests\CommentTestTrait;
@@ -112,7 +112,7 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     $this->account->method('isAnonymous')->willReturn(FALSE);
     $this->account->method('isAuthenticated')->willReturn(TRUE);
     $manager = $this->container->get('entity_type.manager');
-    $purposes = new DomainPurposeManager(
+    $purposes = new DomainSiteManager(
       $manager,
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),

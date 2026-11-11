@@ -79,7 +79,7 @@ final class ConnectionQueryServiceKernelTest extends KernelTestBase {
       ->addArgument(new Reference('entity_type.manager'))
       ->addArgument(new Reference('module_handler'));
 
-    $container->register('aculta_portal.domain_purpose', \stdClass::class);
+    $container->register('aculta_portal.domain_site', \stdClass::class);
     $container->register('aculta_file_uploader.unused_file_cleaner', \stdClass::class);
   }
 

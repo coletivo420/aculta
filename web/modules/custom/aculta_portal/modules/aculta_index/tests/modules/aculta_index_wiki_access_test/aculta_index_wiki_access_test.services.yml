@@ -4,4 +4,4 @@ services:
     arguments: ['@user.data', '@entity_type.manager', '@module_handler']
   Drupal\aculta_portal\Hook\EntityHooks:
     class: Drupal\aculta_portal\Hook\EntityHooks
-    arguments: ['@aculta_portal.domain_purpose', '@current_route_match', '@request_stack', '@aculta_portal.email_confirmation_policy']
+    arguments: ['@aculta_portal.domain_site', '@current_route_match', '@request_stack', '@aculta_portal.email_confirmation_policy']

@@ -14,6 +14,8 @@ use Drupal\commerce_checkout\Plugin\Commerce\CheckoutPane\CheckoutPaneInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\profile\ProfileStorageInterface;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -78,12 +80,19 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
   /**
    * {@inheritdoc} */
   public function buildPaneForm(array $pane_form, FormStateInterface $form_state, array &$complete_form) {
-    $profile = $this->customerProfile() ?? $this->entityTypeManager->getStorage('profile')->create([
-      'type' => 'authenticated',
-      'uid' => (int) $this->order->getCustomerId(),
-      'status' => TRUE,
-      'is_default' => TRUE,
-    ]);
+    $profile = $this->customerProfile();
+    if ($profile === NULL) {
+      $created = $this->entityTypeManager->getStorage('profile')->create([
+        'type' => 'authenticated',
+        'uid' => (int) $this->order->getCustomerId(),
+        'status' => TRUE,
+        'is_default' => TRUE,
+      ]);
+      if (!$created instanceof ProfileInterface) {
+        throw new \LogicException('The profile storage returned an unexpected entity.');
+      }
+      $profile = $created;
+    }
     // Liga a cópia de cobrança ao pedido antes do pane de pagamento. Sem isso,
     // o PaymentInformation do Commerce, em pedido de saldo zero, cria um perfil
     // do tipo `customer`, que o site não tem. A cópia é do tipo authenticated.
@@ -160,11 +169,14 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     /** @var \Drupal\commerce\Plugin\Commerce\InlineForm\EntityInlineFormInterface $inline_form */
     $inline_form = $pane_form['profile']['#inline_form'];
     $profile = $inline_form->getEntity();
+    if (!$profile instanceof ProfileInterface) {
+      throw new \LogicException('The billing inline form returned an unexpected entity.');
+    }
     [$number, $sn] = StreetNumberField::values($pane_form, $form_state);
     if ($profile->hasField('field_address') && !$profile->get('field_address')->isEmpty()) {
       $address = $profile->get('field_address')->first();
       $value = $address->getValue();
-      $value['address_line1'] = StreetNumberField::join((string) $address->getAddressLine1(), $number, $sn);
+      $value['address_line1'] = StreetNumberField::join((string) ($value['address_line1'] ?? ''), $number, $sn);
       $value['country_code'] = 'BR';
       $address->setValue($value);
     }
@@ -182,7 +194,12 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
       return NULL;
     }
     $account = $this->entityTypeManager->getStorage('user')->load($this->order->getCustomerId());
-    return $account ? $this->entityTypeManager->getStorage('profile')->loadByUser($account, 'authenticated') : NULL;
+    $storage = $this->entityTypeManager->getStorage('profile');
+    if (!$account instanceof UserInterface || !$storage instanceof ProfileStorageInterface) {
+      return NULL;
+    }
+    $profile = $storage->loadByUser($account, 'authenticated');
+    return $profile instanceof ProfileInterface ? $profile : NULL;
   }
 
   /**
@@ -205,7 +222,17 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
    * Copia o endereço do perfil do cliente para o perfil de cobrança (salvo se trocou); o pedido só é ligado em memória. */
   private function syncBillingCopy(ProfileInterface $customer): ProfileInterface {
     $storage = $this->entityTypeManager->getStorage('profile');
-    $billing = $this->order->getBillingProfile() ?? $storage->create(['type' => 'authenticated', 'uid' => 0]);
+    if (!$storage instanceof ProfileStorageInterface) {
+      throw new \LogicException('The profile storage is unavailable.');
+    }
+    $billing = $this->order->getBillingProfile();
+    if ($billing === NULL) {
+      $created = $storage->create(['type' => 'authenticated', 'uid' => 0]);
+      if (!$created instanceof ProfileInterface) {
+        throw new \LogicException('The profile storage returned an unexpected entity.');
+      }
+      $billing = $created;
+    }
     $address = $customer->get('field_address')->getValue();
     // O CustomerProfile do Commerce lê o campo base `address`; o pane do Portal
     // usa `field_address`. Mantém os dois iguais na cópia de cobrança para o

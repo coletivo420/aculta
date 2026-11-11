@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_paths\Controller;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Domain\DomainSurfaceMap;
 use Drupal\aculta_portal\Domain\SurfaceConfigReader;
 use Drupal\aculta_paths\Service\DnsStatusChecker;
@@ -38,7 +39,7 @@ final class SurfaceListController extends ControllerBase {
 
   public function __construct(
     private readonly SurfaceConfigReader $reader,
-    private readonly DomainPurposeManager $purposes,
+    private readonly DomainSiteManager $sites,
     private readonly DnsStatusChecker $dns,
   ) {}
 
@@ -48,7 +49,7 @@ final class SurfaceListController extends ControllerBase {
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.surface_config_reader'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('aculta_paths.dns_status'),
     );
   }
@@ -95,15 +96,15 @@ final class SurfaceListController extends ControllerBase {
    */
   private function linhas(): array {
     $linhas = [];
-    foreach ($this->reader->superficies() as $purpose => $linha) {
-      if ($purpose === DomainSurfaceMap::MAIN) {
+    foreach ($this->reader->superficies() as $site_key => $linha) {
+      if ($site_key === DomainSurfaceMap::MAIN) {
         continue;
       }
       $editar = [
         '#type' => 'aculta_portal_button',
         '#props' => [
           'text' => (string) $this->t('Editar'),
-          'url' => Url::fromRoute('aculta_paths.editar', ['purpose' => $purpose])->toString(),
+          'url' => Url::fromRoute('aculta_paths.editar', ['site_key' => $site_key])->toString(),
           'variant' => 'primary',
           'size' => 'small',
         ],
@@ -116,12 +117,12 @@ final class SurfaceListController extends ControllerBase {
         ],
       ];
       $linhas[] = [
-        self::MODULOS[$purpose] ?? (string) $this->t('(sem módulo)'),
+        self::MODULOS[$site_key] ?? (string) $this->t('(sem módulo)'),
         $linha['titulo'],
         $this->rotuloModo($linha['modo']),
-        $this->caminhoPublico($purpose, $linha),
+        $this->caminhoPublico($site_key, $linha),
         (string) ($linha['ativa'] ? $this->t('Sim') : $this->t('Não')),
-        $this->statusDns($purpose, $linha),
+        $this->statusDns($site_key, $linha),
         ['data' => $editar],
       ];
     }
@@ -131,31 +132,31 @@ final class SurfaceListController extends ControllerBase {
   /**
    * Hosts vêm do Domain, nunca de texto fixo.
    */
-  private function caminhoPublico(string $purpose, array $linha): string {
+  private function caminhoPublico(string $site_key, array $linha): string {
     if ($linha['modo'] === 'desativado') {
       return '—';
     }
     if ($linha['modo'] === 'diretorio') {
-      $principal = $this->purposes->getDomain(DomainSurfaceMap::MAIN);
+      $principal = $this->sites->getDomain(SiteKey::Main);
       $host = $principal !== NULL ? $principal->getHostname() : '(sem Domain principal)';
-      $caminho = $this->reader->caminhoDiretorioConfigurado($purpose);
+      $caminho = $this->reader->caminhoDiretorioConfigurado($site_key);
       return $caminho !== NULL ? $host . $caminho : $host . ' (revisar slug ou ativação)';
     }
-    $dominio = $this->purposes->getDomain($purpose);
+    $dominio = $this->sites->getDomain($site_key);
     return $dominio !== NULL ? $dominio->getHostname() . '/' : '(sem Domain)';
   }
 
   /**
    * Status do DNS: só verifica o subdomínio; diretório não se aplica.
    */
-  private function statusDns(string $purpose, array $linha): string {
+  private function statusDns(string $site_key, array $linha): string {
     if ($linha['modo'] === 'diretorio') {
       return (string) $this->t('Modo Diretório, Não Aplicável');
     }
     if ($linha['modo'] === 'desativado') {
       return (string) $this->t('Modo Desativado, Não Aplicável');
     }
-    $dominio = $this->purposes->getDomain($purpose);
+    $dominio = $this->sites->getDomain($site_key);
     if ($dominio === NULL) {
       return (string) $this->t('Sem Domain');
     }
@@ -166,7 +167,7 @@ final class SurfaceListController extends ControllerBase {
    * Explicação de como configurar o DNS, com o host principal do Domain.
    */
   private function orientacaoDns(): array {
-    $principal = $this->purposes->getDomain(DomainSurfaceMap::MAIN);
+    $principal = $this->sites->getDomain(SiteKey::Main);
     $host = $principal !== NULL ? (string) $principal->getHostname() : (string) $this->t('(sem Domain principal)');
     return [
       '#type' => 'container',

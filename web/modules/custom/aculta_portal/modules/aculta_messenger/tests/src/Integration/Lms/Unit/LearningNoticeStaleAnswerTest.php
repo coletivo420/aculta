@@ -7,7 +7,7 @@ namespace Drupal\Tests\aculta_messenger\Integration\Lms\Unit;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\aculta_lms\Notice\LearningEligibility;
 use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -63,7 +63,7 @@ final class LearningNoticeStaleAnswerTest extends UnitTestCase {
     );
     $manager = new LearningNoticeManager(
       $entityTypeManager,
-      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor(),
       (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor(),
       $this->createMock(DateFormatterInterface::class),
       $this->createMock(QueueFactory::class),

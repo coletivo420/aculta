@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Hook;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -29,7 +30,7 @@ final class WikiEntryTitleSuggestions {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly Connection $database,
     private readonly AccountInterface $currentUser,
     TranslationInterface $stringTranslation,
@@ -122,8 +123,8 @@ final class WikiEntryTitleSuggestions {
       return;
     }
 
-    $ids = $this->domainPurposes->runInPurpose('wiki', function () use ($title): array {
-      $domain = $this->domainPurposes->getDomain('wiki');
+    $ids = $this->siteManagers->runInSite('wiki', function () use ($title): array {
+      $domain = $this->siteManagers->getDomain(SiteKey::Wiki);
       if ($domain === NULL) {
         return [];
       }
@@ -157,11 +158,11 @@ final class WikiEntryTitleSuggestions {
    *   Renderable, access-checked title links.
    */
   private function loadVisibleSuggestions(array $ids): array {
-    return $this->domainPurposes->runInPurpose('wiki', function () use ($ids): array {
+    return $this->siteManagers->runInSite('wiki', function () use ($ids): array {
       $storage = $this->entityTypeManager->getStorage('node');
       $items = [];
       foreach ($storage->loadMultiple($ids) as $node) {
-        if (!$node instanceof NodeInterface || !$node->isPublished() || !$node->access('view')) {
+        if (!$node->isPublished() || !$node->access('view')) {
           continue;
         }
         $items[] = [

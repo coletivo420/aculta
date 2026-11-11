@@ -126,7 +126,7 @@ final class SurfaceConfigReader {
         'modo' => in_array($modo, self::MODOS, TRUE) ? $modo : 'subdominio',
         'ativa' => (bool) ($linha['ativa'] ?? TRUE),
         'slug' => (string) ($linha['slug'] ?? ''),
-        'titulo' => (string) ($linha['titulo'] ?? self::TITULOS[$purpose] ?? $purpose),
+        'titulo' => (string) $linha['titulo'],
       ];
     }
     return $saida;

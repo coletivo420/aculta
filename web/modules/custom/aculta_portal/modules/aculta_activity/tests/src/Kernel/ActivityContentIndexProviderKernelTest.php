@@ -8,7 +8,8 @@ use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\aculta_index\Query\ContentIndexAccessFilter;
 use Drupal\aculta_activity\Form\ActivityFormCallbacks;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
+use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
 use Drupal\aculta_portal\Profile\PerfilDoPapel;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
@@ -198,6 +199,7 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     self::assertTrue($registry->has('activity'));
     $provider = $registry->get('activity');
     self::assertInstanceOf(ContentIndexProviderInterface::class, $provider);
+    self::assertInstanceOf(ContentIndexAccessContextProviderInterface::class, $provider);
 
     $node = Node::create([
       'type' => 'activity',
@@ -223,7 +225,7 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     self::assertSame('editorial_image', $projection->relations[0]->type);
     self::assertSame('media', $projection->relations[0]->targetEntityTypeId);
     self::assertSame('501', $projection->relations[0]->targetEntityId);
-    self::assertSame('main', $provider->getAccessPurpose($node));
+    self::assertSame('main', $provider->getAccessSiteKey($node));
   }
 
   /**
@@ -295,14 +297,13 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     ];
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     self::assertTrue($this->container->get('module_handler')->moduleExists('aculta_portal'));
-    self::assertInstanceOf(DomainPurposeManager::class, $this->container->get('aculta_portal.domain_purpose'));
     $filter = $this->container->get('aculta_index.access_filter');
     self::assertInstanceOf(ContentIndexAccessFilter::class, $filter);
 
     $allowed = $filter->filter($candidate, $reader);
     self::assertCount(1, $allowed->entities, 'Published Activity remains visible under its owner purpose.');
     self::assertSame('cursos_aculta_org', $negotiator->getActiveDomain()?->id());
-    self::assertSame('courses', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    self::assertSame('courses', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
 
     $activity->setUnpublished()->save();
     self::assertCount(0, $filter->filter($candidate, $reader)->entities, 'The current unpublished state is revalidated.');

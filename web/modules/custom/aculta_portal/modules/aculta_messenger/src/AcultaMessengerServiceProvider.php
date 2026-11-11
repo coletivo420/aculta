@@ -107,7 +107,7 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
         [
           new Reference('entity_type.manager'),
           new Reference('aculta_user.badge_service'),
-          new Reference('aculta_portal.domain_purpose'),
+          new Reference('aculta_portal.domain_site'),
           new Reference('lock'),
         ],
       ));
@@ -165,7 +165,7 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
       EventsContributionNoticeManager::class,
       [
         new Reference('entity_type.manager'),
-        new Reference('aculta_portal.domain_purpose'),
+        new Reference('aculta_portal.domain_site'),
         new Reference('lock'),
         new Reference('aculta_messenger.aviso_preferencias'),
         new Reference('queue'),
@@ -202,7 +202,7 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
       LearningNoticeManager::class,
       [
         new Reference('entity_type.manager'),
-        new Reference('aculta_portal.domain_purpose'),
+        new Reference('aculta_portal.domain_site'),
         new Reference('aculta_lms.class_activity_deadline_manager'),
         new Reference('date.formatter'),
         new Reference('queue'),
@@ -246,7 +246,7 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
       WikiNoticeManager::class,
       [
         new Reference('entity_type.manager'),
-        new Reference('aculta_portal.domain_purpose'),
+        new Reference('aculta_portal.domain_site'),
         new Reference('aculta_messenger.aviso_preferencias'),
         new Reference('queue'),
         new Reference('lock'),
@@ -304,7 +304,7 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
       MagazineNoticeManager::class,
       [
         new Reference('entity_type.manager'),
-        new Reference('aculta_portal.domain_purpose'),
+        new Reference('aculta_portal.domain_site'),
         new Reference('aculta_messenger.aviso_preferencias'),
         new Reference('queue'),
         new Reference('lock'),
@@ -342,7 +342,7 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
       CommerceOrderNoticeManager::class,
       [
         new Reference('entity_type.manager'),
-        new Reference('aculta_portal.domain_purpose'),
+        new Reference('aculta_portal.domain_site'),
         new Reference('aculta_portal.checkout_settings'),
         new Reference('aculta_messenger.aviso_preferencias'),
         new Reference('queue'),
@@ -380,7 +380,7 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
       DonationNoticeManager::class,
       [
         new Reference('entity_type.manager'),
-        new Reference('aculta_portal.domain_purpose'),
+        new Reference('aculta_portal.domain_site'),
         new Reference('aculta_messenger.aviso_preferencias'),
         new Reference('queue'),
         new Reference('lock'),

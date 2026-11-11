@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Controller\ForumPostModerationQueueController;
 use Drupal\aculta_forum\Entity\ForumPost;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\Entity\Domain;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -48,7 +48,7 @@ final class ForumPostModerationQueueControllerKernelTest extends KernelTestBase 
   /**
    * Purpose resolver.
    */
-  private DomainPurposeManager $purpose;
+  private DomainSiteManager $purpose;
 
   /**
    * Moderator account.
@@ -149,7 +149,7 @@ final class ForumPostModerationQueueControllerKernelTest extends KernelTestBase 
     $this->forumTopic = $this->topic('Tópico do Fórum', 'forum_aculta_org');
     $this->mainTopic = $this->topic('Tópico principal', 'aculta_org');
 
-    $this->purpose = new DomainPurposeManager(
+    $this->purpose = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get('domain.negotiator'),
       $this->container->get('config.factory'),
@@ -165,7 +165,7 @@ final class ForumPostModerationQueueControllerKernelTest extends KernelTestBase 
     $this->post($this->mainTopic, 'Fora do Fórum', 'review');
     $this->post($this->forumTopic, 'Já publicada', 'published');
 
-    $build = $this->purpose->runInPurpose('forum', fn () => $this->controller()->queue());
+    $build = $this->purpose->runInSite('forum', fn () => $this->controller()->queue());
 
     self::assertSame('table', $build['#type']);
     self::assertCount(1, $build['#rows']);
@@ -184,7 +184,7 @@ final class ForumPostModerationQueueControllerKernelTest extends KernelTestBase 
    */
   public function testQueueEmptyWithoutReviewPosts(): void {
     $this->post($this->forumTopic, 'Rascunho', 'draft');
-    $build = $this->purpose->runInPurpose('forum', fn () => $this->controller()->queue());
+    $build = $this->purpose->runInSite('forum', fn () => $this->controller()->queue());
     self::assertSame([], $build['#rows']);
   }
 

@@ -1,4 +1,4 @@
 services:
   aculta_paths.dns_status:
     class: Drupal\aculta_paths\Service\DnsStatusChecker
-    arguments: ['@aculta_portal.domain_purpose', '@cache.default']
+    arguments: ['@aculta_portal.domain_site', '@cache.default']

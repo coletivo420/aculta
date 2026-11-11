@@ -10,7 +10,7 @@ use Drupal\aculta_user\Associado\ActiveAssociateInterface;
 use Drupal\aculta_user\Identity\AuthorCardBuilder;
 use Drupal\aculta_user\ParticipationRules;
 use Drupal\aculta_image\FileRemover;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Symfony\Component\DependencyInjection\Reference;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
@@ -117,8 +117,8 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
       ->addArgument(new Reference('entity_type.manager'))
       ->addArgument(new Reference('module_handler'));
 
-    $container->register('aculta_portal.domain_purpose', DomainPurposeManager::class)
-      ->setFactory([self::class, 'createDummyDomainPurposeManager']);
+    $container->register('aculta_portal.domain_site', DomainSiteManager::class)
+      ->setFactory([self::class, 'createDummyDomainSiteManager']);
 
     $container->register('aculta_image.file_remover', FileRemover::class)
       ->setFactory([self::class, 'createDummyFileRemover']);
@@ -162,10 +162,10 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
   }
 
   /**
-   * Cria instância dummy de DomainPurposeManager para testes.
+   * Cria instância dummy de DomainSiteManager para testes.
    */
-  public static function createDummyDomainPurposeManager(): DomainPurposeManager {
-    $ref = new \ReflectionClass(DomainPurposeManager::class);
+  public static function createDummyDomainSiteManager(): DomainSiteManager {
+    $ref = new \ReflectionClass(DomainSiteManager::class);
     return $ref->newInstanceWithoutConstructor();
   }
 

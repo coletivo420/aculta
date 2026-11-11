@@ -18,7 +18,7 @@ use Drupal\aculta_events\Form\EventOrganizationModalForm;
 use Drupal\aculta_events\Form\EventOrganizationRecoveryForm;
 use Drupal\aculta_image\FileRemover;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_cgu\Entity\UgcReport;
 use Drupal\aculta_user\Controller\OwnershipClaimAdminController;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -105,7 +105,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $loader->addPsr4('Drupal\\aculta_index\\', $customRoot . '/modules/aculta_index/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_events\\', $customRoot . '/modules/aculta_events/src', TRUE);
 
-    $container->register('aculta_portal.domain_purpose', DomainPurposeManager::class)
+    $container->register('aculta_portal.domain_site', DomainSiteManager::class)
       ->addArgument($this->createMock(EntityTypeManagerInterface::class))
       ->addArgument($this->createMock(DomainNegotiatorInterface::class))
       ->addArgument($this->createMock(ConfigFactoryInterface::class))
@@ -209,7 +209,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $eventsDomain->method('id')->willReturn('eventos_aculta_org');
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturnCallback(fn() => (int) $this->container->get('current_user')->id() === (int) $this->editorUser->id() ? $eventsDomain : $mainDomain);
-    $this->container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+    $this->container->set('aculta_portal.domain_site', new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),
@@ -714,7 +714,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
   private function createContributionModalForm(): EventOrganizationModalForm {
     $adapter = new OrganizationContributionAdapter(
       $this->container->get('entity_type.manager'),
-      $this->container->get('aculta_portal.domain_purpose'),
+      $this->container->get('aculta_portal.domain_site'),
       $this->container->get('aculta_events.permission_policy'),
       $this->container->get('lock'),
       $this->container->get('database'),

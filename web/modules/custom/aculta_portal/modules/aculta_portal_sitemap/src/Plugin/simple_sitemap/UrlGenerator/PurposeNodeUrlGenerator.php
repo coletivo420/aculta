@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Domain\SurfaceConfigReader;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountSwitcherInterface;
@@ -82,7 +83,7 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
     $plugin_definition,
     Logger $logger,
     Settings $settings,
-    protected readonly DomainPurposeManager $purposes,
+    protected readonly DomainSiteManager $purposes,
     protected readonly EntityTypeManagerInterface $entityTypeManager,
     protected readonly AccountSwitcherInterface $accountSwitcher,
     protected readonly StorageInterface $configStorage,
@@ -102,7 +103,7 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
       $plugin_definition,
       $container->get('simple_sitemap.logger'),
       $container->get('simple_sitemap.settings'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('entity_type.manager'),
       $container->get('account_switcher'),
       $container->get('config.storage'),
@@ -226,8 +227,7 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
         if (!$node instanceof NodeInterface || !$this->isEligible($node, $purpose)) {
           continue;
         }
-        $url = $this->purposes->environmentRouteUrl(
-          $purpose,
+        $url = $this->purposes->environmentRouteUrl($purpose,
           'entity.node.canonical',
           ['node' => $node->id()],
         );
@@ -254,12 +254,12 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
     }
     // Avalia no purpose de origem: o Portal só libera verbetes da WIKI quando o
     // domínio ativo também é o da WIKI.
-    $viewable = $this->purposes->runInPurpose($purpose, static fn(): bool => $node->access('view'));
+    $viewable = $this->purposes->runInSite($purpose, static fn(): bool => $node->access('view'));
     if ($viewable !== TRUE) {
       return FALSE;
     }
     $source = $node->hasField('field_domain_source') && !$node->get('field_domain_source')->isEmpty()
-      ? $this->purposes->getPurposeForDomainId((string) $node->get('field_domain_source')->target_id)
+      ? $this->purposes->getSiteKeyValueForDomainId((string) $node->get('field_domain_source')->target_id)
       : NULL;
     if ($source !== $purpose) {
       return FALSE;
@@ -297,7 +297,7 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
     }
     // O alias pode depender do Domain ativo. O índice central pode iniciar a
     // geração em outro host, então a busca precisa usar o purpose do sitemap.
-    $alias = $this->purposes->runInPurpose(
+    $alias = $this->purposes->runInSite(
       $purpose,
       fn (): string => $this->aliasManager->getAliasByPath('/node/' . $node->id()),
     );

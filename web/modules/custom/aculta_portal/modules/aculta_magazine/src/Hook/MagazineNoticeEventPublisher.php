@@ -6,7 +6,8 @@ namespace Drupal\aculta_magazine\Hook;
 
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -25,7 +26,7 @@ final class MagazineNoticeEventPublisher {
 
   public function __construct(
     private readonly FlagServiceInterface $flagService,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly MessengerNoticePublisherInterface $publisher,
     private readonly ConfigFactoryInterface $configFactory,
@@ -191,7 +192,7 @@ final class MagazineNoticeEventPublisher {
     if (!$account instanceof UserInterface || !$account->isActive()) {
       return FALSE;
     }
-    $allowed = $this->domainPurposes->runInPurpose('magazine', function () use ($node, $account, $latestVersion): bool {
+    $allowed = $this->siteManagers->runInSite('magazine', function () use ($node, $account, $latestVersion): bool {
       if (!$node->access('view', $account, TRUE)->isAllowed()) {
         return FALSE;
       }
@@ -201,7 +202,7 @@ final class MagazineNoticeEventPublisher {
       $route = $latestVersion && !$node->isDefaultRevision()
         ? 'entity.node.latest_version'
         : 'entity.node.canonical';
-      $url = $this->domainPurposes->routeUrl('magazine', $route, ['node' => $node->id()]);
+      $url = $this->siteManagers->routeUrl(SiteKey::Magazine, $route, ['node' => $node->id()]);
       return $url !== NULL && $url->access($account, TRUE)->isAllowed();
     });
     return $allowed === TRUE;

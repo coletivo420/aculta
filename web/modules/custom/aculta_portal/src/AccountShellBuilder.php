@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
@@ -33,7 +34,7 @@ final class AccountShellBuilder {
     private readonly CurrentRouteMatch $routeMatch,
     private readonly MenuLinkManagerInterface $menuLinkManager,
     private readonly TranslationInterface $translation,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly ?RouteProviderInterface $routeProvider = NULL,
     private readonly ?ModuleHandlerInterface $moduleHandler = NULL,
     private readonly ?AccountInterface $currentUser = NULL,
@@ -44,7 +45,7 @@ final class AccountShellBuilder {
    */
   private function sectionUrl(string $route, string $sectionRoute): string {
     if ($sectionRoute === 'aculta_portal.dashboard') {
-      return ($this->domainPurposeManager->routeUrl('account', 'aculta_portal.dashboard') ?? Url::fromRoute('aculta_portal.dashboard'))->toString();
+      return ($this->siteManager->routeUrl(SiteKey::Account, 'aculta_portal.dashboard') ?? Url::fromRoute('aculta_portal.dashboard'))->toString();
     }
     return Url::fromRoute($route)->toString();
   }

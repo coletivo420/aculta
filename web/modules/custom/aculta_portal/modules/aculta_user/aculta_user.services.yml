@@ -36,7 +36,7 @@ services:
     class: Drupal\aculta_user\PublicProfilePolicy
   aculta_user.public_profile_link:
     class: Drupal\aculta_user\PublicProfileLink
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site']
   aculta_user.author_identity_resolver:
     class: Drupal\aculta_user\Identity\AuthorIdentityResolver
     arguments: ['@entity_type.manager', '@aculta_user.public_profile_link', '@aculta_image.render', '@aculta_user.public_profile_policy', '@aculta_user.social_networks', '@date.formatter', '@aculta_user.avatar_resolver']
@@ -96,7 +96,7 @@ services:
     arguments: ['@entity_type.manager']
   aculta_user.report_queue:
     class: Drupal\aculta_user\Moderation\ReportQueue
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site']
   aculta_user.associado_marker:
     class: Drupal\aculta_user\Associado\AssociadoMarker
     arguments: ['@entity_type.manager', '@datetime.time']

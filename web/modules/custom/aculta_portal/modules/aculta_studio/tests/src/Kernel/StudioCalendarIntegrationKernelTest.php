@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_studio\Kernel;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Saved\SavedContentQuery;
 use Drupal\aculta_studio\Calendar\StudioDashboardCalendarComposer;
 use Drupal\aculta_studio\Controller\StudioCalendarController;
@@ -53,7 +53,7 @@ final class StudioCalendarIntegrationKernelTest extends KernelTestBase {
       ->addArgument(new Reference('database'))
       ->addArgument(new Reference('entity_type.manager'));
 
-    $container->register('aculta_portal.domain_purpose', DomainPurposeManager::class)
+    $container->register('aculta_portal.domain_site', DomainSiteManager::class)
       ->addArgument(new Reference('entity_type.manager'))
       ->addArgument(new Reference('domain.negotiator', ContainerBuilder::NULL_ON_INVALID_REFERENCE))
       ->addArgument(new Reference('config.factory'))

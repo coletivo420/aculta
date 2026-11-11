@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Drupal\aculta_events\Plugin\Block\UpcomingEventsBlock;
 use Drupal\aculta_portal\Domain\ContentSiteKeyResolver;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
 use Drupal\aculta_portal\Domain\DomainRoutePolicy;
 use Drupal\Core\Session\AnonymousUserSession;
@@ -449,8 +449,8 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
   /**
    * Builds the domain purpose manager without enabling all of aculta_portal.
    */
-  private function purposes(): DomainPurposeManager {
-    return new DomainPurposeManager(
+  private function purposes(): DomainSiteManager {
+    return new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get(DomainNegotiatorInterface::class),
       $this->container->get('config.factory'),

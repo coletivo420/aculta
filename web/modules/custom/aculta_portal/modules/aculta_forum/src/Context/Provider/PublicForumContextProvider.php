@@ -9,7 +9,7 @@ use Drupal\aculta_forum\Analytics\ForumAnalyticsScopeResolver;
 use Drupal\aculta_forum\Context\DiscussionContext;
 use Drupal\aculta_forum\Context\DiscussionContextInterface;
 use Drupal\aculta_forum\Context\DiscussionContextProviderInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -21,7 +21,7 @@ use Drupal\node\NodeInterface;
 final class PublicForumContextProvider implements DiscussionContextProviderInterface {
 
   public function __construct(
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly ForumAnalyticsScopeResolver $scopeResolver,
   ) {}
 
@@ -47,7 +47,7 @@ final class PublicForumContextProvider implements DiscussionContextProviderInter
       throw new \LogicException('A discussion host must have a stable UUID.');
     }
 
-    $forumPurposeAccess = AccessResult::allowedIf($this->domainPurposeManager->getCurrentPurpose() === 'forum')
+    $forumPurposeAccess = AccessResult::allowedIf($this->siteManager->getCurrentSiteKey()?->value === 'forum')
       ->addCacheContexts(['domain']);
     $readAccess = $entity->access('view', $account, TRUE)->andIf($forumPurposeAccess);
     $writeAccess = $readAccess

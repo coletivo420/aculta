@@ -12,7 +12,7 @@ use Drupal\aculta_image\FileRemover;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_user\Entity\OwnershipClaim;
 use Drupal\aculta_user\Organization\ClaimNotAllowedException;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -94,7 +94,7 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $loader->addPsr4('Drupal\\aculta_user\\', dirname(__DIR__, 3) . '/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_events\\', dirname(__DIR__, 5) . '/modules/aculta_events/src', TRUE);
 
-    $container->register('aculta_portal.domain_purpose', DomainPurposeManager::class)
+    $container->register('aculta_portal.domain_site', DomainSiteManager::class)
       ->addArgument($this->createMock(EntityTypeManagerInterface::class))
       ->addArgument($this->createMock(DomainNegotiatorInterface::class))
       ->addArgument($this->createMock(ConfigFactoryInterface::class))

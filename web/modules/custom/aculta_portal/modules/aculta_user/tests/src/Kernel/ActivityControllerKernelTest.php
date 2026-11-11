@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_user\Kernel;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_user\Controller\ActivityController;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
@@ -153,7 +153,7 @@ final class ActivityControllerKernelTest extends KernelTestBase {
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getContext()->setDomain($accountDomain);
     $entityTypeManager = $this->container->get('entity_type.manager');
-    $purposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $entityTypeManager,
       $negotiator,
       $this->container->get('config.factory'),
@@ -162,7 +162,7 @@ final class ActivityControllerKernelTest extends KernelTestBase {
     $controller = new ActivityController(
       $entityTypeManager,
       $currentUser,
-      $purposeManager,
+      $siteManager,
       $this->container->get('module_handler'),
       $this->container->get('string_translation'),
     );

@@ -7,7 +7,7 @@ namespace Drupal\aculta_mailer\Api;
 /**
  * URL absoluta de um caminho do site público, no host do ambiente (ver ENDERECOS-AMBIENTE.md).
  *
- * Implementada pelo aculta_portal (DomainPurposeManager), para que o e-mail nunca leve o host de linha de comando
+ * Implementada pelo aculta_portal (DomainSiteManager), para que o e-mail nunca leve o host de linha de comando
  * (ex.: http://default) nem um host fixo no código.
  */
 interface PublicUrlInterface {

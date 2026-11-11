@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Search;
 
 use Drupal\Core\Template\Attribute;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormBuilderInterface;
@@ -40,7 +41,7 @@ final class SearchPageController implements ContainerInjectionInterface {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly MessengerInterface $messenger,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly FormBuilderInterface $formBuilder,
   ) {}
 
@@ -51,7 +52,7 @@ final class SearchPageController implements ContainerInjectionInterface {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('messenger'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('form_builder'),
     );
   }
@@ -163,8 +164,8 @@ final class SearchPageController implements ContainerInjectionInterface {
   private function resultUrl(NodeInterface $node): Url {
     $relative = $node->toUrl();
     $domainId = $node->hasField('field_domain_source') ? $node->get('field_domain_source')->target_id : NULL;
-    $purpose = is_string($domainId) ? $this->domainPurposeManager->getPurposeForDomainId($domainId) : NULL;
-    $absolute = $purpose !== NULL ? $this->domainPurposeManager->canonicalPathUrl($purpose, $relative->toString()) : NULL;
+    $purpose = is_string($domainId) ? $this->siteManager->getSiteKeyValueForDomainId($domainId) : NULL;
+    $absolute = $purpose !== NULL ? $this->siteManager->canonicalPathUrl($purpose, $relative->toString()) : NULL;
     return $absolute ?? $relative;
   }
 

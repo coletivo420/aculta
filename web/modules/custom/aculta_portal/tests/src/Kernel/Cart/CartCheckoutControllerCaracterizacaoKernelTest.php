@@ -8,7 +8,7 @@ use Drupal\aculta_portal\Cart\CartConsolidator;
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\Checkout\CheckoutStepResolver;
 use Drupal\aculta_portal\Controller\CartCheckoutController;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\commerce_cart\CartSessionInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_order\Entity\OrderItem;
@@ -84,7 +84,7 @@ final class CartCheckoutControllerCaracterizacaoKernelTest extends OrderKernelTe
       }
     }
 
-    $purposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get(DomainNegotiatorInterface::class),
       $this->container->get('config.factory'),
@@ -101,7 +101,7 @@ final class CartCheckoutControllerCaracterizacaoKernelTest extends OrderKernelTe
 
     $this->controller = new CartCheckoutController(
       $consolidador,
-      $purposeManager,
+      $siteManager,
       new CheckoutStepResolver($this->container->get('commerce_checkout.chain_checkout_flow_resolver')),
     );
   }

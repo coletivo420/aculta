@@ -302,7 +302,7 @@ $check(
 foreach ([
   'config.factory',
   'entity_type.manager',
-  'aculta_portal.domain_purpose',
+  'aculta_portal.domain_site',
   'domain.negotiator',
   'request_stack',
   'file_url_generator',
@@ -321,8 +321,8 @@ $check(
 $check(
   str_contains($read($srcRoot . '/Account/AccountAddressForm.php'), "'aculta_portal_cep/cep-address'")
     && str_contains($activityHooksSource, 'SchemaMetatagManager::serialize')
-    && str_contains($editorialHooksSource, "'courses'")
-    && str_contains($editorialHooksSource, "'wiki'"),
+    && str_contains($editorialHooksSource, 'SiteKey::Courses')
+    && str_contains($editorialHooksSource, 'SiteKey::Wiki'),
   'P2-R editorial/CEP/Domain behavior invariants must remain present.',
 );
 $entitySaveHooks = $mpSrcRoot . '/Hook/EntitySaveHooks.php';
@@ -398,7 +398,7 @@ $check(
   !str_contains($entityHooksSource, '\\Drupal::'),
   'P4.2 EntityHooks must use explicit DI instead of Drupal static service locators.',
 );
-foreach (['aculta_portal.domain_purpose', 'current_route_match', 'request_stack'] as $serviceId) {
+foreach (['aculta_portal.domain_site', 'current_route_match', 'request_stack'] as $serviceId) {
   $check(
     str_contains($entityHooksSource, "service: '" . $serviceId . "'"),
     'P4.2 EntityHooks must inject service ' . $serviceId . '.',
@@ -715,7 +715,7 @@ foreach (["get('config.factory')", "get('entity_type.manager')", "get('plugin.ma
 $quickBlockSource = $read($srcRoot . '/../modules/aculta_donation/src/Plugin/Block/QuickDonationBlock.php');
 $check(
   str_contains($supportFormSource, "getStorage('commerce_payment_gateway')->load('mercado_pago')")
-    && str_contains($quickBlockSource, "\$this->purposes->routeUrl('support', 'aculta_donation.donation.quick'"),
+    && str_contains($quickBlockSource, "\$this->sites->routeUrl(SiteKey::Support, 'aculta_donation.donation.quick'"),
   'P5.1 SupportForm must use injected storage; the suggested amounts (quick donation block) must route to the support domain (decisão de 2026-10-17).',
 );
 $check(
@@ -775,7 +775,6 @@ $check(
 // P5.4-A/B/C/E: account controllers receive every collaborator explicitly.
 $portalControllerSource = $read($srcRoot . '/Controller/PortalController.php');
 foreach ([
-  "'plugin.manager.block'",
   "'aculta_mail_confirmer'",
   "'current_route_match'",
   "'current_user'",
@@ -848,9 +847,9 @@ $check(
   'P6.2 canonical and image tokens must declare url.site and domain cache contexts.',
 );
 $check(
-  str_contains($tokenSource, "getDomain(\$domainPurpose)")
-    && str_contains($tokenSource, 'addCacheableDependency($purposeDomain)'),
-  'P6.2 image token must depend on the purpose Domain entity it is built from.',
+  str_contains($tokenSource, "getDomain(\$siteManager)")
+    && str_contains($tokenSource, 'addCacheableDependency($imageDomain)'),
+  'P6.2 image token must depend on the source Domain entity it is built from.',
 );
 
 // P7.3: every Portal request-phase listener ignores subrequests.

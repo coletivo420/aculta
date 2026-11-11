@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Plugin\search_api\processor;
 
 use Drupal\aculta_forum\Entity\ForumPost;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Component\Utility\DeprecationHelper;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -55,7 +55,7 @@ final class ForumPostSearchAccess extends ProcessorPluginBase implements Contain
     protected readonly EntityTypeManagerInterface $entityTypeManager,
     protected readonly ?object $nodeGrantsHelper,
     protected readonly Connection $database,
-    protected readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly DomainSiteManager $siteManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -72,7 +72,7 @@ final class ForumPostSearchAccess extends ProcessorPluginBase implements Contain
       $container->get('entity_type.manager'),
       $container->has(NodeGrantsHelper::class) ? $container->get(NodeGrantsHelper::class) : NULL,
       $container->get('database'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
     );
   }
 
@@ -275,7 +275,7 @@ final class ForumPostSearchAccess extends ProcessorPluginBase implements Contain
       && $topic->bundle() === self::TOPIC_BUNDLE
       && $topic->hasField('field_domain_source')
       && !$topic->get('field_domain_source')->isEmpty()
-      && $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum';
+      && $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum';
   }
 
   /**

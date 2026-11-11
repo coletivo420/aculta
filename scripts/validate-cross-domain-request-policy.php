@@ -20,7 +20,7 @@ $assert = static function (bool $condition, string $message) use (&$checks): voi
 };
 
 $root = DRUPAL_ROOT . '/modules/custom/aculta_portal';
-$domainSubscriber = file_get_contents($root . '/src/EventSubscriber/DomainPurposeRequestSubscriber.php');
+$domainSubscriber = file_get_contents($root . '/src/EventSubscriber/DomainSiteRequestSubscriber.php');
 $accountSubscriber = file_get_contents($root . '/src/EventSubscriber/AccountRouteSubscriber.php');
 $portalController = file_get_contents($root . '/src/Controller/PortalController.php');
 
@@ -41,11 +41,11 @@ $assert(
   str_contains($accountSubscriber, 'TrustedRedirectResponse')
     && str_contains($accountSubscriber, "routeUrl('account'")
     && str_contains($accountSubscriber, "pathUrl('account', '/')"),
-  'Account redirects use DomainPurposeManager and secured cross-host responses.',
+  'Account redirects use DomainSiteManager and secured cross-host responses.',
 );
 $assert(
   str_contains($accountSubscriber, "['GET', 'HEAD']")
-    && str_contains($accountSubscriber, "getCurrentPurpose() !== 'account'"),
+    && str_contains($accountSubscriber, "getCurrentSiteKey() !== 'account'"),
   'Account guard blocks mutating cross-domain replay.',
 );
 $paymentNotification = \Drupal::service('router.route_provider')->getRouteByName('commerce_payment.notify');

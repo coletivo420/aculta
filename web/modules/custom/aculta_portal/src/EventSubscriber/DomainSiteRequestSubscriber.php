@@ -14,7 +14,7 @@ use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
 use Drupal\aculta_portal\Domain\DomainSurfaceMap;
 use Drupal\aculta_portal\Domain\FrontPathPolicy;
 use Drupal\aculta_portal\Domain\SiteKey;
-use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
+use Drupal\aculta_portal\PathProcessor\SiteFrontPathProcessor;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -73,7 +73,7 @@ final class DomainSiteRequestSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    PurposeFrontPathProcessor::markRootRequest(
+    SiteFrontPathProcessor::markRootRequest(
       $event->getRequest(),
       $this->domainSiteManager->getCurrentSiteKey()?->value,
     );
@@ -277,7 +277,7 @@ final class DomainSiteRequestSubscriber implements EventSubscriberInterface {
     if (FrontPathPolicy::bloqueiaCaminhoInterno(
       $this->domainSiteManager->getCurrentSiteKey()?->value,
       $request->getPathInfo(),
-      (bool) $request->attributes->get(PurposeFrontPathProcessor::FRONT_ATTRIBUTE),
+      (bool) $request->attributes->get(SiteFrontPathProcessor::FRONT_ATTRIBUTE),
     )) {
       throw new NotFoundHttpException();
     }

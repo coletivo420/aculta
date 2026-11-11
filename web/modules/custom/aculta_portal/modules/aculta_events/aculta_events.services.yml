@@ -19,17 +19,17 @@ services:
     arguments: ['@entity_type.manager', '@aculta_events.permission_policy', '@lock', '@datetime.time', '@database']
   aculta_events.organization_contribution_adapter:
     class: Drupal\aculta_events\Adapter\OrganizationContributionAdapter
-    arguments: ['@entity_type.manager', '@?aculta_portal.domain_purpose', '@aculta_events.permission_policy', '@lock', '@database', '@aculta_events.organization_contribution_event_queue']
+    arguments: ['@entity_type.manager', '@?aculta_portal.domain_site', '@aculta_events.permission_policy', '@lock', '@database', '@aculta_events.organization_contribution_event_queue']
     tags:
       - { name: aculta_cgu.contribution_adapter }
   aculta_events.location_contribution_adapter:
     class: Drupal\aculta_events\Adapter\LocationContributionAdapter
-    arguments: ['@entity_type.manager', '@?aculta_portal.domain_purpose', '@aculta_events.permission_policy', '@lock', '@database', '@aculta_events.organization_contribution_event_queue']
+    arguments: ['@entity_type.manager', '@?aculta_portal.domain_site', '@aculta_events.permission_policy', '@lock', '@database', '@aculta_events.organization_contribution_event_queue']
     tags:
       - { name: aculta_cgu.contribution_adapter }
   aculta_events.event_contribution_adapter:
     class: Drupal\aculta_events\Adapter\EventContributionAdapter
-    arguments: ['@entity_type.manager', '@?aculta_portal.domain_purpose', '@aculta_events.permission_policy', '@?aculta_user.organization_access_service', '@lock', '@database', '@aculta_events.organization_contribution_event_queue']
+    arguments: ['@entity_type.manager', '@?aculta_portal.domain_site', '@aculta_events.permission_policy', '@?aculta_user.organization_access_service', '@lock', '@database', '@aculta_events.organization_contribution_event_queue']
     tags:
       - { name: aculta_cgu.contribution_adapter }
   aculta_events.organization_contribution_event_queue:
@@ -37,7 +37,7 @@ services:
     arguments: ['@queue', '@keyvalue']
   aculta_events.organization_contribution_notice_publisher:
     class: Drupal\aculta_events\EventSubscriber\OrganizationContributionNoticePublisher
-    arguments: ['@entity_type.manager', '@?aculta_portal.domain_purpose', '@?aculta_messenger.notice_event_publisher', '@datetime.time', '@logger.channel.aculta_events']
+    arguments: ['@entity_type.manager', '@?aculta_portal.domain_site', '@?aculta_messenger.notice_event_publisher', '@datetime.time', '@logger.channel.aculta_events']
     tags:
       - { name: event_subscriber }
   aculta_events.slug:

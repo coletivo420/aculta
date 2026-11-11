@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Support\Controller;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Contract\SubscriptionOperationsInterface;
 use Drupal\aculta_portal\Contract\SubscriptionStatusInterface;
+use Drupal\commerce_order\Entity\OrderInterface;
+use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -20,7 +23,7 @@ final class SupportController extends ControllerBase {
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
     private readonly AccountInterface $account,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly ?SubscriptionStatusInterface $assinaturas,
     private readonly ?SubscriptionOperationsInterface $operacoesAssinatura,
   ) {}
@@ -32,7 +35,7 @@ final class SupportController extends ControllerBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('current_user'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->has('aculta_portal.payment_provider.subscription_status')
         ? $container->get('aculta_portal.payment_provider.subscription_status')
         : NULL,
@@ -56,6 +59,9 @@ final class SupportController extends ControllerBase {
     $rows = [];
     $payment_storage = $this->entities->getStorage('commerce_payment');
     foreach ($orders as $order) {
+      if (!$order instanceof OrderInterface) {
+        continue;
+      }
       $has_donation_item = FALSE;
       foreach ($order->getItems() as $item) {
         if ($item->bundle() === 'donation') {
@@ -98,7 +104,7 @@ final class SupportController extends ControllerBase {
       }
       else {
         $payments = $payment_storage->loadByProperties(['order_id' => $order->id()]);
-        $payment_states = array_map(static fn ($payment): string => $payment->getState()->getId(), $payments);
+        $payment_states = array_map(static fn ($payment): string => $payment instanceof PaymentInterface ? $payment->getState()->getId() : '', $payments);
         $status = match (TRUE) {
           in_array('completed', $payment_states, TRUE) => $this->t('Aprovado'),
           in_array('authorization', $payment_states, TRUE) => $this->t('Em processamento'),
@@ -129,7 +135,7 @@ final class SupportController extends ControllerBase {
         '#type' => 'link',
         '#title' => $this->t('Conheça as formas de apoio'),
         // A página de apoio fica no host de apoio (SUPPORT), não no host da conta nem no principal.
-        '#url' => $this->domainPurposeManager->pathUrl('support', '/') ?? Url::fromRoute('aculta_portal.support_form'),
+        '#url' => $this->siteManager->pathUrl(SiteKey::Support, '/') ?? Url::fromRoute('aculta_portal.support_form'),
       ],
       '#cache' => ['contexts' => ['user', 'user.permissions'], 'max-age' => 0],
     ];

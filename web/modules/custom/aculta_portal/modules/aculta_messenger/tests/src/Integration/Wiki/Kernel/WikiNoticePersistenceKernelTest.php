@@ -11,7 +11,7 @@ use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Integration\Wiki\Plugin\QueueWorker\WikiNoticeEmailWorker;
 use Drupal\aculta_messenger\Service\NoticeReadStateManager;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_messenger\Integration\Wiki\EventSubscriber\WikiNoticeEventSubscriber;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -194,7 +194,7 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
 
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_OFF);
-    $manager = $this->manager($preferences, NULL, $this->domainPurposeManager());
+    $manager = $this->manager($preferences, NULL, $this->siteManager());
     $event = new MessengerNoticeEvent(
       'wiki.review_requested',
       'aculta_wiki',
@@ -236,7 +236,7 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
     $entryB = $this->createReviewEntry($reviewer);
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_OFF);
-    $manager = $this->manager($preferences, NULL, $this->domainPurposeManager());
+    $manager = $this->manager($preferences, NULL, $this->siteManager());
     self::assertNotNull($manager->record($this->reviewEvent($uid, $entryA)));
     self::assertNotNull($manager->record($this->reviewEvent($uid, $entryB)));
 
@@ -257,7 +257,7 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
     $uid = (int) $reviewer->id();
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_DIGEST);
-    $manager = $this->manager($preferences, NULL, $this->domainPurposeManager());
+    $manager = $this->manager($preferences, NULL, $this->siteManager());
     $message = $manager->record($this->reviewEvent($uid, $entry));
     self::assertNotNull($message);
     $replayedMessage = $manager->record($this->reviewEvent($uid, $entry));
@@ -288,7 +288,7 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
     $uid = (int) $reviewer->id();
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_DIGEST);
-    $manager = $this->manager($preferences, NULL, $this->domainPurposeManager());
+    $manager = $this->manager($preferences, NULL, $this->siteManager());
     $message = $manager->record($this->reviewEvent($uid, $entry));
     self::assertNotNull($message);
     self::assertCount(1, $manager->digestRowsFor($uid));
@@ -315,7 +315,7 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
     $queue->expects(self::once())->method('createItem')->willReturn(1);
     $queueFactory = $this->createMock(QueueFactory::class);
     $queueFactory->expects(self::once())->method('get')->with('aculta_wiki_messenger_email')->willReturn($queue);
-    $manager = $this->manager($preferences, $queueFactory, $this->domainPurposeManager());
+    $manager = $this->manager($preferences, $queueFactory, $this->siteManager());
     $message = $manager->record($this->reviewEvent($uid, $entry));
     self::assertNotNull($message);
 
@@ -447,14 +447,14 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
   private function manager(
     AvisoPreferenciasInterface $preferences,
     ?QueueFactory $queueFactory = NULL,
-    ?DomainPurposeManager $domainPurposes = NULL,
+    ?DomainSiteManager $siteManagers = NULL,
   ): WikiNoticeManager {
     $queueFactory ??= $this->createMock(QueueFactory::class);
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->method('acquire')->willReturn(TRUE);
     return new WikiNoticeManager(
       $this->container->get('entity_type.manager'),
-      $domainPurposes ?? (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      $siteManagers ?? (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor(),
       $preferences,
       $queueFactory,
       $lock,
@@ -465,7 +465,7 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
   /**
    * Builds canonical Wiki URLs without enabling the Domain module.
    */
-  private function domainPurposeManager(): DomainPurposeManager {
+  private function siteManager(): DomainSiteManager {
     $domain = $this->createMock(DomainInterface::class);
     $domain->method('isHttps')->willReturn(FALSE);
     $domainStorage = $this->createMock(EntityStorageInterface::class);
@@ -474,7 +474,7 @@ final class WikiNoticePersistenceKernelTest extends KernelTestBase {
     $entities->method('getStorage')->with('domain')->willReturn($domainStorage);
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn(NULL);
-    return new DomainPurposeManager(
+    return new DomainSiteManager(
       $entities,
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),

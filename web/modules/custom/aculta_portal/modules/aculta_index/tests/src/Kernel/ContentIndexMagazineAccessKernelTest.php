@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_index\Kernel;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\domain\Entity\Domain;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
@@ -52,7 +52,7 @@ final class ContentIndexMagazineAccessKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->setDefinition('aculta_portal.domain_purpose', (new Definition(DomainPurposeManager::class, [
+    $container->setDefinition('aculta_portal.domain_site', (new Definition(DomainSiteManager::class, [
       new Reference('entity_type.manager'),
       new Reference('domain.negotiator'),
       new Reference('config.factory'),
@@ -148,7 +148,7 @@ final class ContentIndexMagazineAccessKernelTest extends KernelTestBase {
 
     $providers = $this->container->get('aculta_index.provider_registry');
     self::assertSame('magazine', $providers->findProviderIdForBundle('node', 'revista'));
-    self::assertSame('magazine', $providers->get('magazine')->getAccessPurpose($published));
+    self::assertSame('magazine', $providers->access('magazine')->getAccessSiteKey($published));
     $mainDomain = Domain::load('aculta_org');
     self::assertInstanceOf(Domain::class, $mainDomain);
     $negotiator = $this->container->get('domain.negotiator');

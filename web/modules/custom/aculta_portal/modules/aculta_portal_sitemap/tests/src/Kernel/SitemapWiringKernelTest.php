@@ -3,9 +3,11 @@
 declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal_sitemap\Kernel;
+use Drupal\aculta_portal\Domain\SiteKey;
+use Drupal\aculta_portal\Domain\SiteKeyRegistry;
 
 use Drupal\aculta_portal_sitemap\Plugin\simple_sitemap\UrlGenerator\PurposeNodeUrlGenerator;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\Entity\Domain;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain_config\Config\DomainConfigCollectionUtils;
@@ -172,7 +174,7 @@ final class SitemapWiringKernelTest extends KernelTestBase {
       [],
       $this->container->get('simple_sitemap.logger'),
       $this->container->get('simple_sitemap.settings'),
-      $this->container->get('aculta_portal.domain_purpose'),
+      $this->container->get('aculta_portal.domain_site'),
       $this->container->get('entity_type.manager'),
       $this->container->get('account_switcher'),
       $storage,
@@ -227,11 +229,12 @@ final class SitemapWiringKernelTest extends KernelTestBase {
       'environment' => 'test',
       'site' => 'https://site.example.invalid',
     ], JSON_THROW_ON_ERROR));
-    $purposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get(DomainNegotiatorInterface::class),
       $this->container->get('config.factory'),
       $this->container->get('request_stack'),
+      new SiteKeyRegistry(),
       $projectRoot . '/web',
     );
     $generator = new PurposeNodeUrlGenerator(
@@ -240,7 +243,7 @@ final class SitemapWiringKernelTest extends KernelTestBase {
       [],
       $this->container->get('simple_sitemap.logger'),
       $this->container->get('simple_sitemap.settings'),
-      $purposeManager,
+      $siteManager,
       $entityTypeManager,
       $this->container->get('account_switcher'),
       $this->container->get('config.storage'),
@@ -252,7 +255,7 @@ final class SitemapWiringKernelTest extends KernelTestBase {
     try {
       self::assertContains(['purpose' => 'wiki', 'path' => '/verbetes'], $generator->getDataSets());
       $generated = $generator->generate(['purpose' => 'wiki', 'path' => '/verbetes']);
-      $expectedUrl = $purposeManager->environmentPathUrl('wiki', '/verbetes');
+      $expectedUrl = $siteManager->environmentPathUrl(SiteKey::Wiki, '/verbetes');
       self::assertNotNull($expectedUrl);
       self::assertSame($expectedUrl->toString(), $generated[0]['url']);
     }

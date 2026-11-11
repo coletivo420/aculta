@@ -30,7 +30,7 @@ final class PortalImplementationRegistry {
       'summary' => 'Integra mudanças de estado do usuário ao fluxo de confirmação.',
       'docs' => 'docs/portal/SOURCE-OF-TRUTH.md',
     ],
-    'aculta_portal.purpose_front_path_processor' => [
+    'aculta_portal.site_front_path_processor' => [
       'label' => 'Página inicial por purpose',
       'summary' => 'Resolve o caminho inicial conforme o Domain purpose ativo.',
       'docs' => 'docs/portal/DOMAIN-PRESENTATION-CONTRACT.md',

@@ -49,7 +49,7 @@ final class ForumContentIndexProvider implements ContentIndexProviderInterface, 
 
   /**
    * {@inheritdoc} */
-  public function getAccessPurpose(ContentEntityInterface $entity): ?string {
+  public function getAccessSiteKey(ContentEntityInterface $entity): ?string {
     return match (TRUE) {
       $entity instanceof NodeInterface && $entity->bundle() === 'aculta_forum_topic' => 'forum',
       $entity instanceof ForumPost => 'forum',

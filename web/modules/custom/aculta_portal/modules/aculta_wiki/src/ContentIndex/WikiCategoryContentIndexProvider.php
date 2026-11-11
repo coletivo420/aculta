@@ -40,7 +40,7 @@ final class WikiCategoryContentIndexProvider implements ContentIndexProviderInte
   /**
    * {@inheritdoc}
    */
-  public function getAccessPurpose(ContentEntityInterface $entity): ?string {
+  public function getAccessSiteKey(ContentEntityInterface $entity): ?string {
     return $entity instanceof TermInterface && $entity->bundle() === 'wiki_category'
       ? 'wiki'
       : NULL;
@@ -59,7 +59,7 @@ final class WikiCategoryContentIndexProvider implements ContentIndexProviderInte
    * {@inheritdoc}
    */
   public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
-    if (!$this->isIndexable($entity)) {
+    if (!$entity instanceof TermInterface || !$this->isIndexable($entity)) {
       return NULL;
     }
 

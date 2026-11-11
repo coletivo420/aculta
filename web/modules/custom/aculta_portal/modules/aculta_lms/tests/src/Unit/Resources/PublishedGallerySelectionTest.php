@@ -16,7 +16,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\aculta_lms\Plugin\EntityReferenceSelection\PublishedGallerySelection;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\group\Entity\GroupInterface;
@@ -79,7 +79,7 @@ final class PublishedGallerySelectionTest extends UnitTestCase {
     );
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn(NULL);
-    $purpose_manager = new DomainPurposeManager(
+    $purpose_manager = new DomainSiteManager(
       $entity_type_manager,
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),
@@ -129,7 +129,7 @@ final class PublishedGallerySelectionTest extends UnitTestCase {
     $domain_storage = $this->createMock(EntityStorageInterface::class);
     $entity_type_manager->method('getStorage')->willReturn($domain_storage);
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
-    $purpose_manager = new DomainPurposeManager(
+    $purpose_manager = new DomainSiteManager(
       $entity_type_manager,
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),

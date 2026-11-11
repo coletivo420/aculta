@@ -8,7 +8,8 @@ use Drupal\Core\Render\Markup;
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\aculta_portal\Cart\AddToCartAjax;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber;
 use Drupal\Core\Form\FormStateInterface;
@@ -37,8 +38,8 @@ class FormHooks {
     private readonly TranslationInterface $translation,
     #[Autowire(service: 'aculta_portal.email_confirmation_policy')]
     private readonly EmailConfirmationPolicy $emailPolicy,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurpose,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
     #[Autowire(service: 'aculta_portal.cart_ajax')]
     private readonly AddToCartAjax $cartAjax,
     #[Autowire(service: 'request_stack')]
@@ -317,8 +318,8 @@ class FormHooks {
     $link = static function (string $href, string $text): string {
       return '<a href="' . htmlspecialchars($href, ENT_QUOTES) . '" target="_blank" rel="noopener noreferrer">' . htmlspecialchars($text, ENT_QUOTES) . '</a>';
     };
-    $terms = $this->domainPurpose->pathUrl('main', '/sobre/termos-de-uso')?->toString() ?? '/sobre/termos-de-uso';
-    $privacy = $this->domainPurpose->pathUrl('main', '/sobre/politica-de-privacidade')?->toString() ?? '/sobre/politica-de-privacidade';
+    $terms = $this->siteManager->pathUrl(SiteKey::Main, '/sobre/termos-de-uso')?->toString() ?? '/sobre/termos-de-uso';
+    $privacy = $this->siteManager->pathUrl(SiteKey::Main, '/sobre/politica-de-privacidade')?->toString() ?? '/sobre/politica-de-privacidade';
     $pattern = (string) $this->translation->translate('Li e aceito os @terms e a @privacy.');
     $html = strtr($pattern, [
       '@terms' => $link($terms, (string) $this->translation->translate('Termos de Uso')),

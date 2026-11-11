@@ -14,7 +14,7 @@ use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -40,7 +40,7 @@ final class PublishedGallerySelection extends DefaultSelection {
     EntityFieldManagerInterface $entity_field_manager,
     EntityTypeBundleInfoInterface $entity_type_bundle_info,
     EntityRepositoryInterface $entity_repository,
-    protected readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly DomainSiteManager $siteManager,
   ) {
     parent::__construct(
       $configuration,
@@ -69,7 +69,7 @@ final class PublishedGallerySelection extends DefaultSelection {
       $container->get('entity_field.manager'),
       $container->get('entity_type.bundle.info'),
       $container->get('entity.repository'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
     );
   }
 
@@ -80,7 +80,7 @@ final class PublishedGallerySelection extends DefaultSelection {
     if (!$this->canSelectForCourse()) {
       return [];
     }
-    return $this->domainPurposeManager->runInPurpose(
+    return $this->siteManager->runInSite(
       'magazine',
       fn (): array => parent::getReferenceableEntities($match, $match_operator, $limit),
     ) ?? [];
@@ -93,7 +93,7 @@ final class PublishedGallerySelection extends DefaultSelection {
     if (!$this->canSelectForCourse()) {
       return 0;
     }
-    return $this->domainPurposeManager->runInPurpose(
+    return $this->siteManager->runInSite(
       'magazine',
       fn (): int => parent::countReferenceableEntities($match, $match_operator),
     ) ?? 0;
@@ -106,7 +106,7 @@ final class PublishedGallerySelection extends DefaultSelection {
     if (!$this->canSelectForCourse()) {
       return [];
     }
-    return $this->domainPurposeManager->runInPurpose(
+    return $this->siteManager->runInSite(
       'magazine',
       fn (): array => parent::validateReferenceableEntities($ids),
     ) ?? [];

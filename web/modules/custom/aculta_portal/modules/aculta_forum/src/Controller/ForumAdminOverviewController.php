@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Controller;
 
 use Drupal\aculta_forum\Analytics\ForumAnalyticsScopeResolver;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_statistics\Storage\AggregateStorageInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
@@ -22,7 +23,7 @@ final class ForumAdminOverviewController extends ControllerBase implements Conta
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly ForumAnalyticsScopeResolver $scopeResolver,
     private readonly ?AggregateStorageInterface $statisticsStorage = NULL,
   ) {}
@@ -33,7 +34,7 @@ final class ForumAdminOverviewController extends ControllerBase implements Conta
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('aculta_forum.analytics_scope_resolver'),
       $container->has('aculta_statistics.storage') ? $container->get('aculta_statistics.storage') : NULL,
     );
@@ -48,7 +49,7 @@ final class ForumAdminOverviewController extends ControllerBase implements Conta
    * including Magazine, LMS, and Wiki, are not queried.
    */
   public function overview(): array {
-    $forumDomain = $this->domainPurposeManager->getDomain('forum');
+    $forumDomain = $this->siteManager->getDomain(SiteKey::Forum);
     $topicCount = NULL;
     $categoryCount = NULL;
 
@@ -114,12 +115,12 @@ final class ForumAdminOverviewController extends ControllerBase implements Conta
       $build['public_links']['#items'][] = [
         '#type' => 'link',
         '#title' => $this->t('Abrir Growroom420'),
-        '#url' => $this->domainPurposeManager->pathUrl('forum', '/'),
+        '#url' => $this->siteManager->pathUrl(SiteKey::Forum, '/'),
       ];
       $build['public_links']['#items'][] = [
         '#type' => 'link',
         '#title' => $this->t('Ver categorias públicas'),
-        '#url' => $this->domainPurposeManager->pathUrl('forum', '/categorias'),
+        '#url' => $this->siteManager->pathUrl(SiteKey::Forum, '/categorias'),
       ];
       $account = $this->currentUser();
       if ($account->hasPermission('administer aculta_statistics')) {

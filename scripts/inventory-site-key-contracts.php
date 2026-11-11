@@ -21,10 +21,10 @@ $columns = ['path', 'line', 'owner', 'category', 'matched_contract', 'status', '
 $patterns = [
   'visual_legacy' => '/PurposePaletteSchemes|purposePaletteStyle|aculta_purpose_palette|data-purpose-scheme|--aculta-purpose-/i',
   'route_metadata' => '/_aculta_(?:site_keys?|cross_domain_canonical_site_key)\b/i',
-  'state_persistence' => '/active_purposes|active_purposes/i',
+  'state_persistence' => '/active_site_keys|active_purposes/i',
   'session_persistence' => '/login_destination.{0,120}purpose|purpose.{0,120}login_destination/i',
   'presentation_contract' => '/domain_presentation.{0,160}purpose|identity.{0,80}purpose|aculta_purpose\b/i',
-  'functional_api' => '/DomainPurposeManager|DomainSurfaceMap|ContentPurposeResolver|DomainPurposeRequestSubscriber|ActivePurposesState|PurposeFrontPathProcessor|siteKeyForDonationRoute|allowsSharedSite|getCurrentPurpose|getPurposeForDomainId|runInPurpose/',
+  'functional_api' => '/DomainSiteManager|DomainSurfaceMap|ContentSiteKeyResolver|DomainSiteRequestSubscriber|ActiveSiteKeysState|SiteFrontPathProcessor|siteKeyForDonationRoute|allowsSharedSite|getCurrentSiteKey|getSiteKeyForDomainId|runInSite/',
   'generic_purpose_symbol' => '/\bpurpose(?:s)?\b/i',
 ];
 $rows = [];

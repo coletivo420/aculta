@@ -85,8 +85,8 @@ if ($modules->moduleExists('aculta_donation')) {
   }
 }
 
-$domainPurpose = \Drupal::service('aculta_portal.domain_purpose');
-$checkoutUrl = $domainPurpose->routeUrl('main', 'commerce_checkout.checkout');
+$domainSite = \Drupal::service('aculta_portal.domain_site');
+$checkoutUrl = $domainSite->routeUrl('main', 'commerce_checkout.checkout');
 $assert($checkoutUrl !== NULL, 'Portal can generate absolute MAIN checkout URL.');
 $assert(
   preg_match('#^https?://[^/]+/checkout(?:/)?$#', $checkoutUrl->toString()) === 1,
@@ -96,7 +96,7 @@ $assert(
 $portalRoot = DRUPAL_ROOT . '/modules/custom/aculta_portal';
 $routePolicySource = file_get_contents($portalRoot . '/src/Domain/DomainRoutePolicy.php');
 $routeSubscriberSource = file_get_contents($portalRoot . '/src/EventSubscriber/DomainRouteSubscriber.php');
-$requestSubscriberSource = file_get_contents($portalRoot . '/src/EventSubscriber/DomainPurposeRequestSubscriber.php');
+$requestSubscriberSource = file_get_contents($portalRoot . '/src/EventSubscriber/DomainSiteRequestSubscriber.php');
 $hooksSource = file_get_contents($portalRoot . '/src/Hook/PortalHooks.php');
 
 foreach ([

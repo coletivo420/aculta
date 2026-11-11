@@ -12,7 +12,8 @@ use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Occurrence\UpcomingDates;
 use Drupal\aculta_maps\MapRenderer;
 use Drupal\aculta_maps\RouteLinkBuilder;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 use Drupal\address\AddressInterface;
 use Drupal\Component\Datetime\TimeInterface;
@@ -51,7 +52,7 @@ final class EventPageController extends ControllerBase {
     private readonly EntityTypeManagerInterface $entities,
     private readonly UpcomingDates $proximas,
     private readonly TimeInterface $tempo,
-    private readonly ?DomainPurposeManager $purposes = NULL,
+    private readonly ?DomainSiteManager $purposes = NULL,
     private readonly ?AuthorIdentityResolver $identities = NULL,
     private readonly ?MapRenderer $mapRenderer = NULL,
     private readonly ?RouteLinkBuilder $routeLinks = NULL,
@@ -67,7 +68,7 @@ final class EventPageController extends ControllerBase {
       $container->get('entity_type.manager'),
       $container->get('aculta_events.upcoming'),
       $container->get('datetime.time'),
-      $container->has('aculta_portal.domain_purpose') ? $container->get('aculta_portal.domain_purpose') : NULL,
+      $container->has('aculta_portal.domain_site') ? $container->get('aculta_portal.domain_site') : NULL,
       $container->has('aculta_user.author_identity_resolver') ? $container->get('aculta_user.author_identity_resolver') : NULL,
       $container->has('aculta_maps.renderer') ? $container->get('aculta_maps.renderer') : NULL,
       $container->has('aculta_maps.route_link_builder') ? $container->get('aculta_maps.route_link_builder') : NULL,
@@ -91,7 +92,7 @@ final class EventPageController extends ControllerBase {
 
     $linhas = [];
     $podeEditarRecorrencia = $this->currentUser()->hasPermission('administer aculta events')
-      && ($this->purposes === NULL || $this->purposes->getCurrentPurpose() === 'main');
+      && ($this->purposes === NULL || $this->purposes->getCurrentSiteKey()?->value === 'main');
     // A tag de lista cobre data criada, editada ou excluída. Access results
     // below also contribute their contexts, including owner-only locations.
     $cacheability = (new CacheableMetadata())
@@ -307,10 +308,10 @@ final class EventPageController extends ControllerBase {
     }
 
     $prefix = '';
-    if ($this->purposes?->getCurrentPurpose() === 'main' && $evento->access('update')) {
+    if ($this->purposes?->getCurrentSiteKey()?->value === 'main' && $evento->access('update')) {
       // A administração vive no MAIN; a página pública no purpose eventos.
       $adminPath = '/painel-administrativo/eventos/' . $evento->id() . '/editar';
-      $adminUrl = $this->purposes->environmentPathUrl('main', $adminPath);
+      $adminUrl = $this->purposes->environmentPathUrl(SiteKey::Main, $adminPath);
       $editUrl = $adminUrl?->toString()
         ?? Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $evento->id()])->toString();
       $adminButton = [

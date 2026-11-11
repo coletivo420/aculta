@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mailer\Log;
 
+use Drupal\aculta_mailer\Entity\MailLog;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
@@ -38,6 +39,9 @@ final class MailLogRetention {
       ->execute();
     $count = 0;
     foreach ($storage->loadMultiple($ids) as $log) {
+      if (!$log instanceof MailLog) {
+        throw new \UnexpectedValueException('O armazenamento de logs retornou uma entidade inesperada.');
+      }
       $log->set('payload_cipher', NULL);
       $log->set('payload_expires', NULL);
       $log->save();

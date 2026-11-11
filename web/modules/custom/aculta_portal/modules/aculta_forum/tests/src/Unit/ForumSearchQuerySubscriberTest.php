@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\aculta_forum\EventSubscriber\ForumSearchQuerySubscriber;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -34,7 +34,7 @@ final class ForumSearchQuerySubscriberTest extends UnitTestCase {
     $query->method('getIndex')->willReturn($index);
     $query->method('addCondition')->willReturn($query);
     $query->expects(self::never())->method('addCondition');
-    $purpose = $this->domainPurposeManager(NULL, NULL);
+    $purpose = $this->siteManager(NULL, NULL);
 
     (new ForumSearchQuerySubscriber($purpose))->onQueryPreExecute(new QueryPreExecuteEvent($query));
   }
@@ -45,7 +45,7 @@ final class ForumSearchQuerySubscriberTest extends UnitTestCase {
   public function testForumPurposeIsFilteredByItsDomainEntity(): void {
     $domain = $this->createMock(DomainInterface::class);
     $domain->method('id')->willReturn('forum_aculta_org');
-    $purpose = $this->domainPurposeManager($domain, $domain);
+    $purpose = $this->siteManager($domain, $domain);
     $query = $this->forumQuery();
     $query->expects(self::once())->method('addCondition')->with('forum_search_domain', 'forum_aculta_org')->willReturn($query);
 
@@ -60,7 +60,7 @@ final class ForumSearchQuerySubscriberTest extends UnitTestCase {
     $forumDomain->method('id')->willReturn('forum_aculta_org');
     $mainDomain = $this->createMock(DomainInterface::class);
     $mainDomain->method('id')->willReturn('aculta_org');
-    $purpose = $this->domainPurposeManager($forumDomain, $mainDomain);
+    $purpose = $this->siteManager($forumDomain, $mainDomain);
     $query = $this->forumQuery();
     $query->expects(self::once())->method('addCondition')->with('forum_search_domain', '__forum_scope_denied__')->willReturn($query);
 
@@ -71,7 +71,7 @@ final class ForumSearchQuerySubscriberTest extends UnitTestCase {
    * A missing canonical Forum Domain fails closed.
    */
   public function testMissingForumDomainCannotSearch(): void {
-    $purpose = $this->domainPurposeManager(NULL, NULL);
+    $purpose = $this->siteManager(NULL, NULL);
     $query = $this->forumQuery();
     $query->expects(self::once())->method('addCondition')->with('forum_search_domain', '__forum_scope_denied__')->willReturn($query);
 
@@ -93,17 +93,17 @@ final class ForumSearchQuerySubscriberTest extends UnitTestCase {
   /**
    * Constructs the final purpose manager with mocked Drupal collaborators.
    */
-  private function domainPurposeManager(
+  private function siteManager(
     ?DomainInterface $forum,
     ?DomainInterface $active,
-  ): DomainPurposeManager {
+  ): DomainSiteManager {
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('load')->with('forum_aculta_org')->willReturn($forum);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->with('domain')->willReturn($storage);
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn($active);
-    return new DomainPurposeManager(
+    return new DomainSiteManager(
       $entityTypeManager,
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),

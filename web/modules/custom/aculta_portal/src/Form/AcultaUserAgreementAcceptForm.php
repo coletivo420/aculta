@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Form;
 
 use Drupal\aculta_portal\Account\AcultaUserAgreementPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -21,7 +22,7 @@ final class AcultaUserAgreementAcceptForm extends FormBase {
 
   public function __construct(
     protected readonly AcultaUserAgreementPolicy $policy,
-    protected readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -30,7 +31,7 @@ final class AcultaUserAgreementAcceptForm extends FormBase {
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.aculta_user_agreement_policy'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
     );
   }
 
@@ -105,7 +106,7 @@ final class AcultaUserAgreementAcceptForm extends FormBase {
   /**
    * Link para o documento no host principal, em nova aba (o popup continua aberto). */
   private function documentLink(string $path, $label): array {
-    $url = $this->domainPurposeManager->pathUrl('main', $path) ?? Url::fromUserInput($path);
+    $url = $this->siteManager->pathUrl(SiteKey::Main, $path) ?? Url::fromUserInput($path);
     return [
       '#type' => 'link',
       '#title' => $label,

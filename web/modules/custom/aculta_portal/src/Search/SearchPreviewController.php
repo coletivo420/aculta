@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Search;
 
 use Drupal\Core\Template\Attribute;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -30,7 +31,7 @@ final class SearchPreviewController implements ContainerInjectionInterface {
 
   public function __construct(
     private readonly SearchResults $searchResults,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly RendererInterface $renderer,
     TranslationInterface $translation,
   ) {
@@ -43,7 +44,7 @@ final class SearchPreviewController implements ContainerInjectionInterface {
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.search_results'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('renderer'),
       $container->get('string_translation'),
     );
@@ -106,7 +107,7 @@ final class SearchPreviewController implements ContainerInjectionInterface {
       ];
     }
     // Como na Wikipedia: a última linha leva à pesquisa completa pelo mesmo termo, com o total.
-    $full = $this->domainPurposeManager->routeUrl('main', 'aculta_portal.search') ?? Url::fromRoute('aculta_portal.search');
+    $full = $this->siteManager->routeUrl(SiteKey::Main, 'aculta_portal.search') ?? Url::fromRoute('aculta_portal.search');
     $full->setOption('query', ['q' => $term]);
     return [
       '#cache' => ['max-age' => 0, 'contexts' => ['domain', 'user.permissions']],

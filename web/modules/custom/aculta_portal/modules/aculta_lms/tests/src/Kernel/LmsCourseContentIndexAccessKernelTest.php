@@ -12,7 +12,7 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_index\Query\ContentIndexAccessFilter;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\DomainNegotiationContext;
 use Drupal\domain\Entity\Domain;
@@ -113,7 +113,7 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     $domainContext->method('setNegotiated')->willReturnCallback(static fn (bool $negotiated): mixed => $realDomainContext->setNegotiated($negotiated));
     $domainNegotiator->method('getContext')->willReturn($domainContext);
     $this->domainContext = $domainContext;
-    $container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+    $container->set('aculta_portal.domain_site', new DomainSiteManager(
       $entityTypeManager,
       $domainNegotiator,
       $this->createMock(ConfigFactoryInterface::class),
@@ -128,7 +128,7 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     )['services'];
     $service = $ownerServices['aculta_lms.course_content_index_provider'];
     $definition = (new Definition($service['class'], [
-      new Reference('aculta_portal.domain_purpose'),
+      new Reference('aculta_portal.domain_site'),
       new Reference('group_relation_type.manager'),
     ]))
       ->setPublic(TRUE);
@@ -344,7 +344,7 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     $filter = new ContentIndexAccessFilter(
       $this->container->get('entity_type.manager'),
       $providers,
-      $this->container->get('aculta_portal.domain_purpose'),
+      $this->container->get('aculta_portal.domain_site'),
     );
     $candidate = [
       [
@@ -357,14 +357,14 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     self::assertTrue($course->access('view', $student, TRUE)->isAllowed(), 'The student fixture has Group Entity Access.');
     self::assertCount(1, $filter->filter($candidate, $student)->entities, 'The Index accepts a student with take course.');
     self::assertSame(['cursos_aculta_org', 'aculta_org'], $this->domainSwitches, 'The student access check uses and restores its canonical Domain.');
-    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose(), 'The active Domain is restored after each access check.');
+    self::assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value, 'The active Domain is restored after each access check.');
     $this->domainSwitches = [];
     self::assertFalse($course->hasPermission('take course', $educator), 'The educator fixture does not have student access.');
     self::assertTrue($course->hasPermission('grade students', $educator));
     self::assertTrue($course->access('view', $educator, TRUE)->isAllowed(), 'The educator fixture has Group Entity Access.');
     self::assertCount(1, $filter->filter($candidate, $educator)->entities, 'The Index accepts an educator with contextual permission.');
     self::assertSame(['cursos_aculta_org', 'aculta_org'], $this->domainSwitches, 'The educator access check uses and restores its canonical Domain.');
-    self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose(), 'The Domain context is restored after educator access.');
+    self::assertSame('main', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value, 'The Domain context is restored after educator access.');
     self::assertCount(0, $filter->filter($candidate, $outsider)->entities, 'An unrelated account is denied.');
   }
 

@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_studio\Controller\AccountController;
 use Drupal\aculta_studio\Experience\StudioExperienceManager;
 use Drupal\aculta_studio\Experience\StudioExperienceProviderInterface;
@@ -121,8 +121,8 @@ final class AccountControllerTest extends UnitTestCase {
   /**
    * Creates a Domain resolver for controller tests.
    */
-  private function domains(): DomainPurposeManager {
-    return new DomainPurposeManager(
+  private function domains(): DomainSiteManager {
+    return new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),

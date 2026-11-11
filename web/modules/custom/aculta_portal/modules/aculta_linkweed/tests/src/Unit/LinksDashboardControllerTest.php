@@ -8,7 +8,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\aculta_linkweed\Controller\LinksDashboardController;
 use Drupal\aculta_linkweed\Service\LinkAnalytics;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -36,7 +36,7 @@ final class LinksDashboardControllerTest extends UnitTestCase {
     ]);
     $request_stack = new RequestStack();
     $request_stack->push($request);
-    $domain_purpose = (new \ReflectionClass(DomainPurposeManager::class))
+    $domain_purpose = (new \ReflectionClass(DomainSiteManager::class))
       ->newInstanceWithoutConstructor();
     $analytics = (new \ReflectionClass(LinkAnalytics::class))
       ->newInstanceWithoutConstructor();
@@ -79,7 +79,7 @@ final class LinksDashboardControllerTest extends UnitTestCase {
     $controller = new LinksDashboardController(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(AccountProxyInterface::class),
-      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor(),
       (new \ReflectionClass(LinkAnalytics::class))->newInstanceWithoutConstructor(),
       $request_stack,
     );

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Attachment;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityPublishedInterface;
@@ -34,7 +34,7 @@ final class ForumAttachmentPublication {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -402,7 +402,7 @@ final class ForumAttachmentPublication {
       || $topic->get('field_domain_source')->isEmpty()) {
       return FALSE;
     }
-    $purpose = $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id);
+    $purpose = $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id);
     if ($purpose !== 'forum') {
       return FALSE;
     }
@@ -410,7 +410,7 @@ final class ForumAttachmentPublication {
       return TRUE;
     }
     $account ??= new AnonymousUserSession();
-    return (bool) $this->domainPurposeManager->runInPurpose(
+    return (bool) $this->siteManager->runInSite(
       'forum',
       static fn (): bool => $comment->access('view', $account, TRUE)->isAllowed(),
     );
@@ -438,7 +438,7 @@ final class ForumAttachmentPublication {
       || !$topic->isPublished()
       || !$topic->hasField('field_domain_source')
       || $topic->get('field_domain_source')->isEmpty()
-      || $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
+      || $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
       return FALSE;
     }
     if (!$check_access) {
@@ -446,7 +446,7 @@ final class ForumAttachmentPublication {
     }
 
     $account ??= new AnonymousUserSession();
-    return (bool) $this->domainPurposeManager->runInPurpose(
+    return (bool) $this->siteManager->runInSite(
       'forum',
       static fn (): bool => $post->access('view', $account, TRUE)->isAllowed(),
     );

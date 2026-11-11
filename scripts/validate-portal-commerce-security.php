@@ -130,8 +130,8 @@ $account_switcher->switchTo($route_current);
 try {
   $own_edit_event = $make_account_event('entity.user.edit_form', $route_current);
   $account_route_subscriber->onKernelRequest($own_edit_event);
-  $domain_purpose = \Drupal::service('aculta_portal.domain_purpose');
-  $security_url = $domain_purpose->routeUrl('account', 'aculta_portal.security')?->toString();
+  $domain_site = \Drupal::service('aculta_portal.domain_site');
+  $security_url = $domain_site->routeUrl('account', 'aculta_portal.security')?->toString();
   $assert($own_edit_event->hasResponse() && $own_edit_event->getResponse()->getStatusCode() === 302 && $own_edit_event->getResponse()->headers->get('Location') === $security_url, 'A regular user is redirected from own generic user edit to Portal Security.');
   $raw_edit_event = $make_account_event('entity.user.edit_form');
   $raw_edit_event->getRequest()->attributes->set('_raw_variables', new ParameterBag(['user' => '999991']));
@@ -139,7 +139,7 @@ try {
   $assert($raw_edit_event->hasResponse() && $raw_edit_event->getResponse()->getStatusCode() === 302, 'The route guard redirects the own edit page when the ID is still in Drupal raw route parameters.');
   $own_profile_event = $make_account_event('entity.user.canonical', $route_current);
   $account_route_subscriber->onKernelRequest($own_profile_event);
-  $account_home_url = $domain_purpose->pathUrl('account', '/')?->toString();
+  $account_home_url = $domain_site->pathUrl('account', '/')?->toString();
   $assert($own_profile_event->hasResponse() && $own_profile_event->getResponse()->headers->get('Location') === $account_home_url, 'A regular user is redirected from a public own-account profile to the Account Domain root.');
   $other_profile_event = $make_account_event('entity.user.canonical', $route_other);
   $account_route_subscriber->onKernelRequest($other_profile_event);

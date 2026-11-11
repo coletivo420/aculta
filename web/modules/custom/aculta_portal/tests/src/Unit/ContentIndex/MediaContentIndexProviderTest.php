@@ -39,7 +39,7 @@ final class MediaContentIndexProviderTest extends UnitTestCase {
 
     self::assertSame('course_document', $provider->getProviderId());
     self::assertSame(['media' => ['course_document']], $provider->getSupportedEntityTypes());
-    self::assertSame('courses', $provider->getAccessPurpose($media));
+    self::assertSame('courses', $provider->getAccessSiteKey($media));
     self::assertSame('52', $projection?->entityId);
     self::assertSame('Apostila', $projection?->label);
     self::assertFalse($projection?->published);

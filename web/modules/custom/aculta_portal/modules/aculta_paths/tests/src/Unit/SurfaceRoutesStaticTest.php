@@ -39,7 +39,7 @@ final class SurfaceRoutesStaticTest extends UnitTestCase {
   }
 
   /**
-   * WE SATIVA em /we-sativa, no purpose wiki.
+   * WE SATIVA em /we-sativa, na site_key wiki.
    */
   public function testWeSativaEmCaminhoProprio(): void {
     $rotas = self::rotas();
@@ -49,7 +49,7 @@ final class SurfaceRoutesStaticTest extends UnitTestCase {
   }
 
   /**
-   * GREEN STASH em /green-stash, no purpose shop.
+   * GREEN STASH em /green-stash, na site_key shop.
    */
   public function testGreenStashEmCaminhoProprio(): void {
     $rotas = self::rotas();
@@ -79,12 +79,12 @@ final class SurfaceRoutesStaticTest extends UnitTestCase {
   }
 
   /**
-   * A edição abre em modal dentro do MAIN, com o purpose na rota.
+   * A edição abre em modal dentro do MAIN, com a site_key na rota.
    */
   public function testEdicaoEhSomenteMainComModal(): void {
     $dados = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_paths.routing.yml');
     $rota = $dados['aculta_paths.editar'];
-    $this->assertSame('/painel-administrativo/aculta/caminhos/{purpose}/editar', $rota['path']);
+    $this->assertSame('/painel-administrativo/aculta/caminhos/{site_key}/editar', $rota['path']);
     $this->assertSame('main', $rota['options']['_aculta_site_key']);
     $this->assertSame('administrar superficies', $rota['requirements']['_permission']);
   }

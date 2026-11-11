@@ -461,8 +461,8 @@ final class PagePresentationHooks {
     $normalized = [];
     foreach ($sites as $site) {
       if (!is_array($site)
-        || !is_string($site['purpose'] ?? NULL)
-        || trim($site['purpose']) === ''
+        || !is_string($site['site_key'] ?? NULL)
+        || trim($site['site_key']) === ''
         || !is_string($site['title'] ?? NULL)
         || trim($site['title']) === ''
         || !is_string($site['url'] ?? NULL)
@@ -472,7 +472,7 @@ final class PagePresentationHooks {
         continue;
       }
       $normalized[] = [
-        'purpose' => trim($site['purpose']),
+        'purpose' => trim($site['site_key']),
         'title' => trim($site['title']),
         'url' => $site['url'],
         'current' => $site['current'],

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Unit\Hook;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Hook\EditorialHooks;
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -111,14 +111,14 @@ final class EditorialHooksTest extends UnitTestCase {
    * Builds the hook with unused request dependencies satisfied. */
   private function hooks(): EditorialHooks {
     $requestStack = new RequestStack();
-    $purposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
       $requestStack,
     );
 
-    return new EditorialHooks($purposeManager, new CurrentPathStack($requestStack));
+    return new EditorialHooks($siteManager, new CurrentPathStack($requestStack));
   }
 
 }

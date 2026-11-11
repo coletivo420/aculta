@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Hook;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_user\Account\AccountNames;
 use Drupal\aculta_user\Bio\AccountBioCard;
@@ -30,8 +31,8 @@ final class AccountDashboardHooks {
     private readonly SocialLinksCard $socialCard,
     #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $purposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -56,7 +57,7 @@ final class AccountDashboardHooks {
     if ($publicSlug === NULL) {
       return [];
     }
-    $url = $this->purposeManager->routeUrl('main', 'aculta_user.perfil_publico', ['apelido' => $publicSlug]);
+    $url = $this->siteManager->routeUrl(SiteKey::Main, 'aculta_user.perfil_publico', ['apelido' => $publicSlug]);
     if ($url === NULL) {
       return [];
     }

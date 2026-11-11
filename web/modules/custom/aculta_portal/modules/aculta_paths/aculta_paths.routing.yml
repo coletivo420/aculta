@@ -10,13 +10,13 @@ aculta_paths.form:
     _aculta_site_key: main
 
 aculta_paths.editar:
-  path: '/painel-administrativo/aculta/caminhos/{purpose}/editar'
+  path: '/painel-administrativo/aculta/caminhos/{site_key}/editar'
   defaults:
     _controller: '\Drupal\aculta_paths\Controller\SurfaceEditController::abrir'
     _title: 'Editar superfície'
   requirements:
     _permission: 'administrar superficies'
-    purpose: 'main|account|support|magazine|wiki|shop|courses|forum|links|eventos'
+    site_key: 'main|account|support|magazine|wiki|shop|courses|forum|links|eventos'
   options:
     _admin_route: TRUE
     _aculta_site_key: main

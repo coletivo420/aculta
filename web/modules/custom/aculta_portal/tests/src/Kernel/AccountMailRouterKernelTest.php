@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_portal\Kernel;
 
 use Drupal\aculta_mailer\Template\MailTemplateRenderer;
 use Drupal\aculta_mailer\Type\MailTypeRegistry;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Email\AccountMailRouter;
 use Drupal\aculta_portal\Email\AccountPasswordResetMailType;
 use Drupal\aculta_portal\Email\AccountRegisterAdminMailType;
@@ -64,7 +64,7 @@ final class AccountMailRouterKernelTest extends KernelTestBase {
    *   Router configurado com os serviços do container.
    */
   private function router(): AccountMailRouter {
-    $purposes = new DomainPurposeManager(
+    $purposes = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get(DomainNegotiatorInterface::class),
       $this->container->get('config.factory'),

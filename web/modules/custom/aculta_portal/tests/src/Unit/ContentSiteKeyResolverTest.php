@@ -225,7 +225,7 @@ final class ContentSiteKeyResolverTest extends TestCase {
   }
 
   /**
-   * DomainPurposeManager com negociação simulada.
+   * DomainSiteManager com negociação simulada.
    */
   private function domainSiteManager(): DomainSiteManagerInterface {
     $sites = $this->createMock(DomainSiteManagerInterface::class);

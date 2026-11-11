@@ -10,7 +10,7 @@ use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -225,7 +225,7 @@ final class CommerceOrderNoticePersistenceKernelTest extends KernelTestBase {
     if ($orderCustomer === NULL) {
       return new CommerceOrderNoticeManager(
         $this->container->get('entity_type.manager'),
-        (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+        (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor(),
         (new \ReflectionClass(CheckoutSettings::class))->newInstanceWithoutConstructor(),
         $preferences,
         $queueFactory,
@@ -264,7 +264,7 @@ final class CommerceOrderNoticePersistenceKernelTest extends KernelTestBase {
     });
     return new CommerceOrderNoticeManager(
       $entityTypeManager,
-      new DomainPurposeManager(
+      new DomainSiteManager(
         $entityTypeManager,
         $this->createMock(DomainNegotiatorInterface::class),
         $configFactory,

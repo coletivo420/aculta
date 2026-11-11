@@ -90,7 +90,13 @@ final class ShopController extends ControllerBase {
       ->condition('type', self::TIPO_PRODUTO)
       ->sort('created', 'DESC')
       ->execute();
-    return $ids === [] ? [] : array_values($this->entities->getStorage('commerce_product')->loadMultiple($ids));
+    if ($ids === []) {
+      return [];
+    }
+    return array_values(array_filter(
+      $this->entities->getStorage('commerce_product')->loadMultiple($ids),
+      static fn ($product): bool => $product instanceof ProductInterface,
+    ));
   }
 
   /**

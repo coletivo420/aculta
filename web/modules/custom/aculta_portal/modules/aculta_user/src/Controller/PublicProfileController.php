@@ -9,7 +9,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Url;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_user\Account\AccountNames;
 use Drupal\aculta_user\Account\NicknameRegistry;
 use Drupal\aculta_user\Avatar\AvatarResolver;
@@ -40,7 +40,7 @@ final class PublicProfileController extends ControllerBase {
   private const PURPOSE = 'main';
 
   public function __construct(
-    private readonly DomainPurposeManager $purposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly EntityTypeManagerInterface $entityTypeManagerService,
     private readonly PublicProfilePolicy $policy,
     private readonly SocialNetworks $networks,
@@ -57,7 +57,7 @@ final class PublicProfileController extends ControllerBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('entity_type.manager'),
       $container->get('aculta_user.public_profile_policy'),
       $container->get('aculta_user.social_networks'),
@@ -74,7 +74,7 @@ final class PublicProfileController extends ControllerBase {
    * Renderiza o perfil público do apelido informado.
    */
   public function view(string $apelido): array {
-    if ($this->purposeManager->getCurrentPurpose() !== self::PURPOSE) {
+    if ($this->siteManager->getCurrentSiteKey()?->value !== self::PURPOSE) {
       throw new NotFoundHttpException();
     }
 

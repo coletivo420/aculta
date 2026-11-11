@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Hook;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -18,8 +19,8 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class PublicForumTopicHooks {
 
   public function __construct(
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -31,9 +32,9 @@ final class PublicForumTopicHooks {
       return NULL;
     }
 
-    $domain = $this->domainPurposeManager->getDomain('forum');
+    $domain = $this->siteManager->getDomain(SiteKey::Forum);
     $isForumPurpose = $domain !== NULL
-      && $this->domainPurposeManager->getCurrentPurpose() === 'forum';
+      && $this->siteManager->getCurrentSiteKey()?->value === 'forum';
     $result = AccessResult::forbiddenIf(!$isForumPurpose)
       ->addCacheContexts(['domain'])
       ->addCacheTags(['config:domain.record.forum_aculta_org']);
@@ -54,7 +55,7 @@ final class PublicForumTopicHooks {
       return;
     }
 
-    $domain = $this->domainPurposeManager->getDomain('forum');
+    $domain = $this->siteManager->getDomain(SiteKey::Forum);
     if ($domain !== NULL) {
       $entity->set('field_domain_source', ['target_id' => $domain->id()]);
     }

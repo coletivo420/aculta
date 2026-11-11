@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Unit\Hook;
 
 use Drupal\aculta_forum\Hook\ForumPostAccessHooks;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
@@ -33,11 +33,11 @@ final class ForumPostAccessHooksTest extends TestCase {
   public function testCreateAccessRequiresForumPurposeAndPermission(): void {
     $account = $this->createMock(AccountInterface::class);
     $account->method('hasPermission')->with('create aculta forum posts')->willReturn(TRUE);
-    $hooks = new ForumPostAccessHooks($this->domainPurposeManager('forum_aculta_org'));
+    $hooks = new ForumPostAccessHooks($this->siteManager('forum_aculta_org'));
     $context = ['entity_type_id' => 'aculta_forum_post'];
 
     self::assertTrue($hooks->entityCreateAccess($account, $context, 'aculta_forum_post')?->isAllowed());
-    self::assertTrue((new ForumPostAccessHooks($this->domainPurposeManager('aculta_org')))
+    self::assertTrue((new ForumPostAccessHooks($this->siteManager('aculta_org')))
       ->entityCreateAccess($account, $context, 'aculta_forum_post')?->isForbidden());
 
     $accountWithoutPermission = $this->createMock(AccountInterface::class);
@@ -52,12 +52,12 @@ final class ForumPostAccessHooksTest extends TestCase {
     $account = $this->createMock(AccountInterface::class);
     $account->method('id')->willReturn(17);
     $account->method('hasPermission')->willReturn(FALSE);
-    $hooks = new ForumPostAccessHooks($this->domainPurposeManager('forum_aculta_org'));
+    $hooks = new ForumPostAccessHooks($this->siteManager('forum_aculta_org'));
     $post = $this->post($this->topic(TRUE), 17);
 
     self::assertTrue($hooks->entityAccess($post, 'update', $account)?->isAllowed());
     self::assertTrue($hooks->entityAccess($post, 'update', $this->account(18))?->isNeutral());
-    $wrongPurpose = new ForumPostAccessHooks($this->domainPurposeManager('aculta_org'));
+    $wrongPurpose = new ForumPostAccessHooks($this->siteManager('aculta_org'));
     self::assertTrue($wrongPurpose->entityAccess($post, 'update', $account)?->isForbidden());
     self::assertTrue($hooks->entityAccess($this->post($this->topic(FALSE), 17), 'update', $account)?->isForbidden());
   }
@@ -71,7 +71,7 @@ final class ForumPostAccessHooksTest extends TestCase {
    * bypass the topic decision.
    */
   public function testRestrictedTopicAccessPropagatesToPost(): void {
-    $hooks = new ForumPostAccessHooks($this->domainPurposeManager('forum_aculta_org'));
+    $hooks = new ForumPostAccessHooks($this->siteManager('forum_aculta_org'));
     $post = $this->post($this->topic(TRUE, AccessResult::forbidden('Conteúdo restrito.')), 17);
     $owner = $this->account(17);
 
@@ -93,17 +93,17 @@ final class ForumPostAccessHooksTest extends TestCase {
     $post = $this->post($this->topic(TRUE), 17);
 
     foreach (['view', 'update', 'delete', 'view label'] as $operation) {
-      $mainAccess = (new ForumPostAccessHooks($this->domainPurposeManager('aculta_org')))
+      $mainAccess = (new ForumPostAccessHooks($this->siteManager('aculta_org')))
         ->entityAccess($post, $operation, $administrator);
       self::assertTrue($mainAccess?->isNeutral(), $operation . ' remains governed by the entity admin permission in MAIN.');
       self::assertContains('domain', $mainAccess?->getCacheContexts());
 
-      $withoutPurpose = (new ForumPostAccessHooks($this->domainPurposeManager(NULL)))
+      $withoutPurpose = (new ForumPostAccessHooks($this->siteManager(NULL)))
         ->entityAccess($post, $operation, $administrator);
       self::assertTrue($withoutPurpose?->isNeutral(), $operation . ' keeps the admin grant without a purpose (CLI, cron).');
     }
 
-    $forum = new ForumPostAccessHooks($this->domainPurposeManager('forum_aculta_org'));
+    $forum = new ForumPostAccessHooks($this->siteManager('forum_aculta_org'));
     self::assertTrue($forum->entityAccess($post, 'view', $administrator)?->isAllowed(), 'Public view remains allowed on the Forum.');
     self::assertTrue($forum->entityAccess($post, 'view label', $administrator)?->isAllowed(), 'Public label view remains allowed on the Forum.');
     self::assertTrue($forum->entityAccess($post, 'update', $administrator)?->isForbidden(), 'Update is denied outside MAIN.');
@@ -113,7 +113,7 @@ final class ForumPostAccessHooksTest extends TestCase {
   /**
    * Builds the purpose manager around an active Domain ID.
    */
-  private function domainPurposeManager(?string $domainId): DomainPurposeManager {
+  private function siteManager(?string $domainId): DomainSiteManager {
     $domain = NULL;
     if ($domainId !== NULL) {
       $domain = $this->createMock(DomainInterface::class);
@@ -122,7 +122,7 @@ final class ForumPostAccessHooksTest extends TestCase {
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn($domain);
 
-    return new DomainPurposeManager(
+    return new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),

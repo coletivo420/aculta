@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Resources;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -37,7 +38,7 @@ final class CourseResourceBuilder {
   ];
 
   public function __construct(
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly AccountProxyInterface $currentUser,
     private readonly TranslationInterface $translation,
     private readonly GroupRelationTypeManagerInterface $relationTypeManager,
@@ -150,12 +151,12 @@ final class CourseResourceBuilder {
         $cache->addCacheableDependency($entity);
         continue;
       }
-      $domain = $this->domainPurposeManager->getDomain($purpose);
+      $domain = $this->siteManager->getDomain($purpose);
       if ($domain === NULL) {
         $cache->addCacheableDependency($entity);
         continue;
       }
-      $access = $this->domainPurposeManager->runInPurpose(
+      $access = $this->siteManager->runInSite(
         $purpose,
         fn (): AccessResultInterface => $entity->access('view', $this->currentUser, TRUE),
       );
@@ -177,8 +178,7 @@ final class CourseResourceBuilder {
       }
       else {
         $canonical = $entity->toUrl('canonical');
-        $url = $this->domainPurposeManager->routeUrl(
-          $purpose,
+        $url = $this->siteManager->routeUrl($purpose,
           $canonical->getRouteName(),
           $canonical->getRouteParameters(),
         );
@@ -255,12 +255,12 @@ final class CourseResourceBuilder {
       if (!$entity instanceof MediaInterface || $entity->bundle() !== 'course_document') {
         continue;
       }
-      $domain = $this->domainPurposeManager->getDomain('courses');
+      $domain = $this->siteManager->getDomain(SiteKey::Courses);
       if ($domain === NULL) {
         $cache->addCacheableDependency($entity);
         continue;
       }
-      $access = $this->domainPurposeManager->runInPurpose(
+      $access = $this->siteManager->runInSite(
         'courses',
         fn (): AccessResultInterface => $entity->access('view', $this->currentUser, TRUE),
       );
@@ -273,8 +273,7 @@ final class CourseResourceBuilder {
         continue;
       }
       $canonical = $entity->toUrl('canonical');
-      $url = $this->domainPurposeManager->routeUrl(
-        'courses',
+      $url = $this->siteManager->routeUrl(SiteKey::Courses,
         $canonical->getRouteName(),
         $canonical->getRouteParameters(),
       );

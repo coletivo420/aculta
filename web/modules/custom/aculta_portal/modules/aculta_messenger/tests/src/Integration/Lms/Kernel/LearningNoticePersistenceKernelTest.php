@@ -15,7 +15,7 @@ use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager;
 use Drupal\aculta_messenger\Integration\Lms\Plugin\QueueWorker\LmsNotificationEmailWorker;
 use Drupal\aculta_messenger\Service\NoticeReadStateManager;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -98,7 +98,7 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
 
     $manager = new LearningNoticeManager(
       $this->container->get('entity_type.manager'),
-      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor(),
       (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor(),
       $this->createMock(DateFormatterInterface::class),
       $this->createMock(QueueFactory::class),
@@ -133,7 +133,7 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
     $learner->save();
     $manager = new LearningNoticeManager(
       $this->container->get('entity_type.manager'),
-      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor(),
       (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor(),
       $this->createMock(DateFormatterInterface::class),
       $this->createMock(QueueFactory::class),
@@ -170,7 +170,7 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
       ->willReturn($queue);
     $manager = new LearningNoticeManager(
       $this->container->get('entity_type.manager'),
-      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor(),
       (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor(),
       $this->createMock(DateFormatterInterface::class),
       $queueFactory,
@@ -214,7 +214,7 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
     $other->save();
     $manager = new LearningNoticeManager(
       $this->container->get('entity_type.manager'),
-      (new \ReflectionClass(DomainPurposeManager::class))->newInstanceWithoutConstructor(),
+      (new \ReflectionClass(DomainSiteManager::class))->newInstanceWithoutConstructor(),
       (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor(),
       $this->createMock(DateFormatterInterface::class),
       $this->createMock(QueueFactory::class),
@@ -288,7 +288,7 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
     $domainEntities->method('getStorage')->with('domain')->willReturn($domainStorage);
     $domainNegotiator = $this->createMock(DomainNegotiatorInterface::class);
     $domainNegotiator->method('getActiveDomain')->willReturn(NULL);
-    $domainPurposes = new DomainPurposeManager(
+    $siteManagers = new DomainSiteManager(
       $domainEntities,
       $domainNegotiator,
       $this->createMock(ConfigFactoryInterface::class),
@@ -307,7 +307,7 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
     $lock->method('acquire')->willReturn(TRUE);
     $manager = new LearningNoticeManager(
       $entityTypeManager,
-      $domainPurposes,
+      $siteManagers,
       (new \ReflectionClass(ClassActivityDeadlineManager::class))->newInstanceWithoutConstructor(),
       $this->createMock(DateFormatterInterface::class),
       $queueFactory,

@@ -12,7 +12,8 @@ use Drupal\aculta_messenger\Aviso\EligibleNoticePage;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_messenger\Service\NoticeRelatedGrouper;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\user\EntityOwnerInterface;
@@ -61,7 +62,7 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly AvisoPreferenciasInterface $preferences,
     private readonly QueueFactory $queueFactory,
     private readonly LockBackendInterface $lock,
@@ -350,7 +351,7 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
         && !$account->hasPermission('use wiki_editorial transition review_to_published'))) {
       return [];
     }
-    $resolved = $this->domainPurposes->runInPurpose('wiki', function () use ($targets, $account): array {
+    $resolved = $this->siteManagers->runInSite('wiki', function () use ($targets, $account): array {
       $storage = $this->entityTypeManager->getStorage('node');
       $query = $storage->getQuery()->accessCheck(FALSE)
         ->condition('uuid', array_values(array_unique(array_column($targets, 'uuid'))), 'IN')
@@ -377,7 +378,7 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
           || !$node->access('view revision', $account, TRUE)->isAllowed()) {
           continue;
         }
-        $url = $this->domainPurposes->routeUrl('wiki', 'entity.node.canonical', ['node' => $node->id()]);
+        $url = $this->siteManagers->routeUrl(SiteKey::Wiki, 'entity.node.canonical', ['node' => $node->id()]);
         if ($url !== NULL) {
           $resolved[$key] = [
             'title' => $this->t('Verbete aguardando revisão'),
@@ -448,7 +449,7 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
           || !$proposal->access('view', $account, TRUE)->isAllowed()) {
           continue;
         }
-        $url = $this->domainPurposes->canonicalRouteUrl('wiki', 'aculta_wiki.proposal_status', ['proposal' => $proposal->id()]);
+        $url = $this->siteManagers->canonicalRouteUrl(SiteKey::Wiki, 'aculta_wiki.proposal_status', ['proposal' => $proposal->id()]);
         if ($url !== NULL) {
           $resolved[$key] = [
             'title' => $this->t('Atualização de proposta editorial'),
