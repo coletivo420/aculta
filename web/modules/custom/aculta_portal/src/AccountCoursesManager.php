@@ -33,9 +33,6 @@ final class AccountCoursesManager {
   public function getCourses(AccountInterface $account): array {
     $items = [];
     foreach ($this->reader?->getAccountCourses($account) ?? [] as $course) {
-      if (!$course instanceof AccountCourseSummary) {
-        continue;
-      }
       $description = [];
       if ($course->description !== '' && $course->descriptionFormat !== '') {
         $description = [

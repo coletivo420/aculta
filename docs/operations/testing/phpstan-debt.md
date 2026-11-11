@@ -217,3 +217,17 @@ Resíduos: plugins de Views com `QueryPluginBase` genérico, formulários com `$
 Escopo: `OwnershipClaimService` 42 -> 0 com helper `requireContentEntity()` e narrowing em `canClaim`/`decideClaim`; `OrganizationAccessService` 15 -> 0; `ReportQueue` 10 -> 0 (`FlaggingInterface`); `ForumModerationHooks` 7 -> 0; `aculta_user.install` 6 -> 0 (`_aculta_user_install_storage_definition()`); `ParticipationEditWindow` 6 -> 0; `PhotoEditorHooks` 5 -> 0 (DI morta removida, `EntityFormInterface`); `UserPictureForm`, `AccountCreationHooks`, `DiscussionCommentAuthorHooks`, `AvatarAssetCleanup`, `AvatarResolver`, `BadgeService`, `ActivityController`, `LegacyMemorialController`, `PeopleListController`, `PublicProfileController`, handlers de acesso, `AvatarCropForm`, `RoleInheritanceHooks`, `UsernameLinkHooks`, `AuthorCard` (render agora retorna markup), `AuthorCardBuilder`, `LegacyAuthorManager`, `PublicProfilePolicy`, `ConnectionQueryService`, `FriendshipManager`, `SocialNetworks`, `AccountNames` e `NicknameRegistry` (docblock do `rebuild()`).
 
 Mudança transversal: `PerfilDoPapel::principal()/obter()` passaram a aceitar `EntityStorageInterface` e validar `ProfileStorageInterface`, eliminando ~15 erros em aculta_user, aculta_portal e aculta_events. Evidência: Unit 160/618 PASS; `aculta_user/src` e `.install` em zero.
+
+## Rodada 15 — 2026-11-11 (aculta_portal, produção)
+
+| Medida | Valor |
+| --- | ---: |
+| Erros brutos em aculta_portal/src antes | 149 |
+| Erros brutos em aculta_portal/src ao final | 44 |
+| Erros brutos globais antes | 2963 |
+| Erros brutos globais ao final | 2857 |
+| Baseline atual | 2857 |
+
+Escopo: `BillingAddressPane` 16 -> 0 (ProfileStorageInterface/ProfileInterface), `AccountAddressForm` 13 -> 0, `PortalController` 11 -> 0 (OrderInterface, SocialAuth, transporte, DI morta), `SupportController` 9 -> 0, `SubscriptionActionForm` 8 -> 0 (`TranslatableMarkup`, `PaymentGatewayInterface`), `PortalFormCallbacks` 7 -> 0 (`EntityFormInterface`), além de `TurnstileToggle`, `MediaContentIndexProvider`, `AdminEmailConfirmForm`, `SalesPaymentCancelForm`, `PortalHooks`, `TokenHooks`, `ContentCleanupPreview`, `EmailConfirmationRequester`, `SocialAuthProfileSubscriber`, `ContentIndexOwnerResolver`, `ContentIndexProjection`, `CheckoutStepResolver`, `FiscalIdentityPolicy`, `AccountCoursesManager`, `ShopController`, `SurfaceConfigReader` e `PortalRequirementsController`.
+
+Evidência: Unit 390/1361 PASS; `phpstan analyse` em `[OK] No errors`.

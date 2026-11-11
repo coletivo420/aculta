@@ -7,6 +7,8 @@ namespace Drupal\aculta_portal\Support\Controller;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Contract\SubscriptionOperationsInterface;
 use Drupal\aculta_portal\Contract\SubscriptionStatusInterface;
+use Drupal\commerce_order\Entity\OrderInterface;
+use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -56,6 +58,9 @@ final class SupportController extends ControllerBase {
     $rows = [];
     $payment_storage = $this->entities->getStorage('commerce_payment');
     foreach ($orders as $order) {
+      if (!$order instanceof OrderInterface) {
+        continue;
+      }
       $has_donation_item = FALSE;
       foreach ($order->getItems() as $item) {
         if ($item->bundle() === 'donation') {
@@ -98,7 +103,7 @@ final class SupportController extends ControllerBase {
       }
       else {
         $payments = $payment_storage->loadByProperties(['order_id' => $order->id()]);
-        $payment_states = array_map(static fn ($payment): string => $payment->getState()->getId(), $payments);
+        $payment_states = array_map(static fn ($payment): string => $payment instanceof PaymentInterface ? $payment->getState()->getId() : '', $payments);
         $status = match (TRUE) {
           in_array('completed', $payment_states, TRUE) => $this->t('Aprovado'),
           in_array('authorization', $payment_states, TRUE) => $this->t('Em processamento'),

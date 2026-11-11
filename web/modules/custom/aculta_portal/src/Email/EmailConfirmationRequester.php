@@ -82,7 +82,6 @@ class EmailConfirmationRequester {
       // repeatedly submitting the same account's request.
       $this->flood->register(self::FLOOD_EVENT, $janela, $identifier);
 
-      $storage = $this->entityTypeManager->getStorage('aculta_mail_confirmer');
       $confirmation = $this->manager->createConfirmation($email);
       $confirmation->setRealm(self::REALM)
         ->setProperty('user', $uid)
@@ -215,7 +214,8 @@ class EmailConfirmationRequester {
 
     return array_values(array_filter(
       $storage->loadMultiple($ids),
-      fn(AcultaMailConfirmationInterface $confirmation): bool => $this->manager->isPending($confirmation)
+      fn ($confirmation): bool => $confirmation instanceof AcultaMailConfirmationInterface
+        && $this->manager->isPending($confirmation)
         && (int) $confirmation->getProperty('user') === $uid,
     ));
   }

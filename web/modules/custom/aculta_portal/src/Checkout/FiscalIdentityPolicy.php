@@ -71,9 +71,6 @@ final class FiscalIdentityPolicy {
       return TRUE;
     }
     foreach ($items as $item) {
-      if (!$item instanceof OrderItemInterface) {
-        return TRUE;
-      }
       $variation = $item->getPurchasedEntity();
       if (!$variation instanceof ProductVariationInterface || $variation->bundle() !== 'curso') {
         return TRUE;

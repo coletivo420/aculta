@@ -70,7 +70,7 @@ final class MediaContentIndexProvider implements ContentIndexProviderInterface, 
   /**
    * {@inheritdoc} */
   public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
-    if (!$this->isIndexable($entity)) {
+    if (!$entity instanceof MediaInterface || !$this->isIndexable($entity)) {
       return NULL;
     }
 

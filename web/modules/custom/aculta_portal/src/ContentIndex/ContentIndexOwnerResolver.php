@@ -20,10 +20,7 @@ final class ContentIndexOwnerResolver {
       return NULL;
     }
     $ownerId = $entity->getOwnerId();
-    if (is_string($ownerId) && preg_match('/^(0|[1-9][0-9]{0,9})$/', $ownerId) !== 1) {
-      return NULL;
-    }
-    if (!is_int($ownerId) && !is_string($ownerId)) {
+    if ($ownerId === NULL) {
       return NULL;
     }
     $uid = (int) $ownerId;

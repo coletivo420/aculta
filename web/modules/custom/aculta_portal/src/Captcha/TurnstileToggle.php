@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Captcha;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\key\KeyRepositoryInterface;
@@ -83,6 +84,9 @@ final class TurnstileToggle {
   public function setEnabled(bool $enabled, string $account): void {
     $this->configFactory->getEditable('captcha.settings')->set('enable_globally', $enabled)->save();
     foreach ($this->entityTypeManager->getStorage('captcha_point')->loadByProperties(['captchaType' => self::CHALLENGE]) as $point) {
+      if (!$point instanceof ConfigEntityInterface) {
+        continue;
+      }
       if (in_array($point->id(), self::EXCEPTION_FORM_IDS, TRUE) || self::isCommercePurchaseForm($point->id())) {
         if ($point->status()) {
           $point->setStatus(FALSE)->save();

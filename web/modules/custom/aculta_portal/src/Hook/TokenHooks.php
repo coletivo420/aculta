@@ -8,7 +8,10 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\file\FileInterface;
+use Drupal\media\MediaInterface;
 use Drupal\aculta_portal\Environment\DeployerEnvironment;
 use Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface;
 use Drupal\Core\Render\BubbleableMetadata;
@@ -308,7 +311,7 @@ final class TokenHooks {
           $author = $node->hasField('field_editorial_author')
             ? $node->get('field_editorial_author')->entity
             : NULL;
-          if ($author !== NULL) {
+          if ($author instanceof ContentEntityInterface) {
             $metadata->addCacheableDependency($author);
             $value = $name === 'author-name'
               ? $author->label()
@@ -323,11 +326,11 @@ final class TokenHooks {
           $media = $node->hasField('field_media_image')
             ? $node->get('field_media_image')->entity
             : NULL;
-          $file = $media && $media->hasField('field_media_image')
+          $file = $media instanceof MediaInterface && $media->hasField('field_media_image')
             ? $media->get('field_media_image')->entity
             : NULL;
           $value = '';
-          if ($file !== NULL && $media->isPublished()) {
+          if ($file instanceof FileInterface && $media->isPublished()) {
             $metadata
               ->addCacheableDependency($media)
               ->addCacheableDependency($file);

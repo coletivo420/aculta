@@ -6,6 +6,7 @@ namespace Drupal\aculta_portal\EventSubscriber;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\social_auth\Event\LoginEvent;
+use Drupal\social_auth\Entity\SocialAuth;
 use Drupal\social_auth\Event\SocialAuthEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -40,7 +41,7 @@ final class SocialAuthProfileSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    $providerId = (string) $event->getSocialAuthUser()->getId();
+    $providerId = (string) $event->getSocialAuthUser()->getProviderId();
     if ($providerId === '') {
       return;
     }
@@ -53,6 +54,9 @@ final class SocialAuthProfileSubscriber implements EventSubscriberInterface {
     ]);
 
     foreach ($records as $record) {
+      if (!$record instanceof SocialAuth) {
+        continue;
+      }
       $additionalData = $record->getAdditionalData();
       if (($additionalData['provider_email'] ?? NULL) === $email) {
         continue;
