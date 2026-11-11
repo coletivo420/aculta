@@ -93,5 +93,5 @@
     "human visual review"
   ],
   "rollback": "Restore the pre-change views.view.aculta_news configuration from its recorded snapshot or the parent commit, then import only that YAML and rebuild caches.",
-  "tested_commit": "pending commit"
+  "tested_commit": "e69380f39c15176ca2e399cf95551badb1e59759"
 }

@@ -1750,3 +1750,14 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Verificações:** import parcial e cache rebuild PASS; element Picker disponível; `UiIconsPackTest` 2/47, SDC 82/1774, UI Skins 134 PASS. Token-budget global FAIL (7 itens preexistentes).
 - **Pendências:** validar formulário/menu com browser e reconciliar submódulos por delta revisado.
 - **Próximo passo:** homologar Picker em interface administrativa real sem criar atribuições de ícone.
+
+
+# ADR-054/055 — Views style do catálogo de Eventos — 2026-11-11
+
+- **Objetivo:** compor a View pública de Eventos com UI Patterns preservando a fonte funcional de rows.
+- **Estado:** `eventos_publicos:block_1` usa `layout-grid`; Runtime anônimo manteve HTTP 200 e dois resultados. Firefox ESR verificou dois `card-cultural`, grid, foco visível e zero overflow em 320/1440 claro/escuro. Detalhe testado separadamente.
+- **Decisões e cuidados:** custom row `aculta_events_catalogue_card` continua dono dos IDs ACL-filtrados, labels e ordem. Import parcial foi isolado a um YAML após snapshot SHA-256 `37a007b412a411f33d6b39c130ee98083aa3dbe8f836a3f9dd284dcc1c139d23`. Um import parcial amplo desabilitou três módulos opcionais; eles foram reabilitados imediatamente, sem mudança de dados. Não repetir import parcial com a pasta sync inteira.
+- **Commits e arquivos:** `2d7d4dd62`; View Sync, script/inventário UI Suite, teste browser, tema e ADR-055.
+- **Verificações:** Views cutover 60 checks, Theme Settings 16, SDC 41; navegador antes/depois PASS. Browser-index FAIL preexistente em worktrees aninhadas/referências obsoletas. Token-budget FAIL por oito pendências preexistentes, incluindo handoff que foi corrigido nesta entrega.
+- **Pendências e bloqueios:** zoom 200%, cache-hit, revisão visual humana e demais displays/domínios ainda não homologados.
+- **Próximo passo:** migrar a próxima View com comparação isolada de Runtime e expandir viewport/zoom/cache na homologação focal.

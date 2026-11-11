@@ -1,3 +1,14 @@
+# ADR-054/055 — UI Patterns Views Notícias — 2026-11-11
+
+- **Objetivo:** migrar `aculta_news:block_1` para UI Patterns Views usando o SDC existente `revista-listing`.
+- **Estado:** quatro teasers e HTTP 200 preservados; Firefox ESR antes/depois passou 10/10 em cinco larguras e dois modos, foco visível, contraste mínimo 7,16:1, um H1/main e sem overflow. Cache-hit, zoom 200% e revisão visual humana DEFERRED.
+- **Decisões e alternativas descartadas:** manter row nativa `entity:node`/`teaser`, access/filter/sort/pager/query e cache; slot `view_rows` do SDC. Removida classe visual genérica só desta View.
+- **Cuidados:** a página é `private/no-cache` e dynamic cache `UNCACHEABLE`; dois requests foram MISS. Não inferir variação por cache-hit.
+- **Commits e arquivos:** `e69380f39`; View Sync, inventário, runner, browser/evidências, SDC e documentação ADR/roadmap.
+- **Verificações:** Views 60, UI Styles 40, SDC schema 1774, render SDC 41, foundations 83 pares, Stylelint, PHP lint e cache rebuild PASS. Browser-index global e token-budget FAIL por pendências preexistentes/worktrees aninhadas.
+- **Pendências e bloqueios:** executar zoom e revisão visual; resolver as falhas globais fora do escopo; migrar demais Views e domínios.
+- **Próximo passo:** selecionar a próxima View com saída real e repetir snapshot, paridade funcional e A/B visual no Runtime.
+
 # ADR-054/055 — Piloto UI Styles Block — 2026-11-11
 
 - **Objetivo:** aplicar UI Styles Block a uma instância pública sem alterar a saída funcional da View.
@@ -19,13 +30,3 @@ ADR-054/055 — Views editoriais da Revista — 2026-11-11
 - **Verificações:** inventário 383 linhas e php -l PASS; SDC 82/1774 PASS; runtime/browser N/A, não houve mudança de configuração.
 - **Pendências e bloqueios:** inspecionar saídas, acesso, pager/cache e rotas públicas da Revista; orçamento global falha em sete itens preexistentes.
 - **Próximo passo:** validar visualmente uma rota pública com teste de navegador não destrutivo.
-
-# ADR-054/055 — Views style do catálogo de Eventos — 2026-11-11
-
-- **Objetivo:** compor a View pública de Eventos com UI Patterns preservando a fonte funcional de rows.
-- **Estado:** `eventos_publicos:block_1` usa `layout-grid`; Runtime anônimo manteve HTTP 200 e dois resultados. Firefox ESR verificou dois `card-cultural`, grid, foco visível e zero overflow em 320/1440 claro/escuro. Detalhe testado separadamente.
-- **Decisões e cuidados:** custom row `aculta_events_catalogue_card` continua dono dos IDs ACL-filtrados, labels e ordem. Import parcial foi isolado a um YAML após snapshot SHA-256 `37a007b412a411f33d6b39c130ee98083aa3dbe8f836a3f9dd284dcc1c139d23`. Um import parcial amplo desabilitou três módulos opcionais; eles foram reabilitados imediatamente, sem mudança de dados. Não repetir import parcial com a pasta sync inteira.
-- **Commits e arquivos:** `2d7d4dd62`; View Sync, script/inventário UI Suite, teste browser, tema e ADR-055.
-- **Verificações:** Views cutover 60 checks, Theme Settings 16, SDC 41; navegador antes/depois PASS. Browser-index FAIL preexistente em worktrees aninhadas/referências obsoletas. Token-budget FAIL por oito pendências preexistentes, incluindo handoff que foi corrigido nesta entrega.
-- **Pendências e bloqueios:** zoom 200%, cache-hit, revisão visual humana e demais displays/domínios ainda não homologados.
-- **Próximo passo:** migrar a próxima View com comparação isolada de Runtime e expandir viewport/zoom/cache na homologação focal.
