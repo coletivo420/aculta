@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta420_v2\Hook;
 
+use Drupal\csp\Csp;
+use Drupal\csp\NonceBuilder;
+use Drupal\ui_skins\Hook\PageTop;
 use Drupal\aculta420_v2\Support\ComponentLibraryRoutes;
 use Drupal\Core\Extension\ThemeSettingsProvider;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -25,6 +28,8 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
     private readonly ConfigFactoryInterface $configFactory,
     #[Autowire(service: 'current_route_match')]
     private readonly CurrentRouteMatch $currentRouteMatch,
+    #[Autowire(service: 'csp.nonce_builder')]
+    private readonly NonceBuilder $nonceBuilder,
   ) {}
 
   /**
@@ -38,20 +43,20 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
       $container->get(ThemeSettingsProvider::class),
       $container->get('config.factory'),
       $container->get('current_route_match'),
+      $container->get('csp.nonce_builder'),
     );
   }
 
   /**
-   * Aplica o modo de cor e as classes de superfície no html.
-   *
-   * Implementação única de preprocess_html para o tema, para não haver
-   * duas implementações concorrendo pelas mesmas variáveis.
+   * Applies UI Skins nonce, color mode, and surface classes to the HTML page.
    *
    * @param array $variables
-   *   Variáveis do template html, alteradas por referência.
+   *   HTML template variables, altered by reference.
    */
   #[Hook('preprocess_html')]
   public function preprocessHtml(array &$variables): void {
+    $this->addUiSkinsNonce($variables);
+
     // A theme may provide only one preprocess_html implementation. Keep the
     // Portal's explicit color mode and surface settings in this hook.
     $mode = ($variables['aculta_color_mode'] ?? NULL) === 'dark' ? 'dark' : 'light';
@@ -113,6 +118,24 @@ final class SurfaceSettingsHooks implements ContainerInjectionInterface {
     if ($siteKey === 'wiki') {
       $variables['#attached']['library'][] = 'aculta420_v2/wiki';
     }
+  }
+
+  /**
+   * Adds a response nonce to UI Skins' generated inline stylesheet.
+   */
+  private function addUiSkinsNonce(array &$variables): void {
+    $key = PageTop::PAGE_TOP_CSS_VARIABLES_KEY;
+    if (!isset($variables['page_top'][$key]) || !is_array($variables['page_top'][$key])) {
+      return;
+    }
+
+    $placeholder = $this->nonceBuilder->getPlaceholderKey();
+    $element = &$variables['page_top'][$key];
+    $element['#attributes']['nonce'] = $placeholder;
+    $element['#attached']['csp_nonce']['style'] = [Csp::POLICY_UNSAFE_INLINE];
+    $element['#attached']['placeholders'][$placeholder] = [
+      '#lazy_builder' => ['csp.nonce_builder:renderNonce', []],
+    ];
   }
 
   /**

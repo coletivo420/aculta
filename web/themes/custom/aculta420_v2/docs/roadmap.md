@@ -1,5 +1,11 @@
 # Roadmap do fórum Growroom420 (ACULTA420 V2)
 
+## CSP — remoção das violações de estilo inline (2026-11-11)
+
+- HTMX passou a usar a folha de estilos externa do tema para indicadores; UI Skins recebe nonce por resposta; o placeholder Drupal dialog é estático e não precisa do atributo inline. Nenhuma fonte global `unsafe-inline` foi adicionada.
+- Playwright encontrou zero eventos `style-src` em `/`, `/galleries`, `/transparencia`, `/categorias` e nas homes válidas de Eventos, Loja e Conta. O componente admin anônimo respondeu 403; login do UID de teste não existe no Runtime e a verificação autenticada fica DEFERRED.
+- Stylelint focal, foundations 83 pares, PHPUnit focal 27/27, PHP lint, cache rebuild e diff check passaram.
+
 ## UI Patterns Library: abas e erro de script (2026-11-11)
 
 - Overview agora registra a biblioteca `ui-library-admin` que já era anexada
@@ -163,3 +169,9 @@ Status espelhado de `TODO.md`. Plano visual: `docs/architecture/GROWROOM420-VISU
 ### Atualização US-12 — categorias Wiki (2026-11-11)
 
 O bloco `wiki_categories` da home usa UI Patterns + `layout-grid`; termos, links, filtro, acesso, ordenação e pager permanecem nativos. Runtime/Sync coincidem; 15 termos preservados e Firefox passou 247/247. Zoom 200%, cache-hit, perfis e aceite humano seguem DEFERRED.
+## CSP — remoção das violações de estilo inline (2026-11-11)
+
+- Corrigida a folha inline do HTMX, o `<style>` dinâmico UI Skins com nonce por resposta, e o atributo inline no placeholder Drupal dialog. Nenhuma fonte global `unsafe-inline` foi adicionada.
+- Playwright encontrou zero eventos `style-src` nas rotas válidas `/`, `/galleries`, `/transparencia`, `/categorias` do Portal e nas homes válidas de Eventos, Loja e Conta. O componente admin anônimo retornou 403; login do UID de teste não existe no Runtime e a verificação autenticada fica DEFERRED.
+- Stylelint focal, foundations 83 pares, PHPUnit focal 27/27, PHP lint, cache rebuild e diff check passaram.
+
