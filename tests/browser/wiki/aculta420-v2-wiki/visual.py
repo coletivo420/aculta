@@ -130,6 +130,9 @@ def inspect_page(name, path, width, width_name, mode):
         listingHeaderBeforeGrid: (() => { const h = document.querySelector('.aculta-wiki-list > header'); const g = document.querySelector('.aculta-wiki-list > .layout-grid'); return h && g ? !!(h.compareDocumentPosition(g) & Node.DOCUMENT_POSITION_FOLLOWING) : null; })(),
         listingRows: document.querySelectorAll('.aculta-wiki-list .aculta-wiki-card').length,
         listingCount: document.querySelector('.aculta-wiki-list > header')?.innerText.trim() || '',
+        categoryGrid: (() => { const e = [...document.querySelectorAll('.aculta-wiki-home .views-element-container')].find((container) => !!container.querySelector('.layout-grid > div > h2 a[href*=\"/taxonomy/term/\"]')); return !!e?.querySelector('.layout-grid'); })(),
+        categoryColumns: (() => { const e = [...document.querySelectorAll('.aculta-wiki-home .views-element-container')].find((container) => !!container.querySelector('.layout-grid > div > h2 a[href*=\"/taxonomy/term/\"]')); const grid = e?.querySelector('.layout-grid'); return grid ? getComputedStyle(grid).gridTemplateColumns.trim().split(/\\s+/).length : null; })(),
+        categoryRows: (() => { const e = [...document.querySelectorAll('.aculta-wiki-home .views-element-container')].find((container) => !!container.querySelector('.layout-grid > div > h2 a[href*=\"/taxonomy/term/\"]')); return e?.querySelector('.layout-grid')?.children.length || 0; })(),
         errors
       };
     })();""")
@@ -153,6 +156,10 @@ def inspect_page(name, path, width, width_name, mode):
             check(f"{prefix}: linhas usam layout-grid", bool(metrics["listingGrid"]), metrics["listingGrid"])
             check(f"{prefix}: contagem precede a grade", metrics["listingHeaderBeforeGrid"], metrics["listingHeaderBeforeGrid"])
             check(f"{prefix}: seis verbetes SDC", metrics["listingRows"] == 6 and "6 verbetes publicados" in metrics["listingCount"], metrics)
+    if name == "home":
+        check(f"{prefix}: categorias usam layout-grid", metrics["categoryGrid"], metrics["categoryGrid"])
+        check(f"{prefix}: grade de categorias reflow", metrics["categoryColumns"] == (1 if width < 768 else 2), metrics["categoryColumns"])
+        check(f"{prefix}: 15 categorias preservadas", metrics["categoryRows"] == 15, metrics["categoryRows"])
     if name == "article" and mode == "light" and width in (320, 1440):
         press_key("\ue004")
         focus = driver.js("""const el = document.activeElement; const rect = el.getBoundingClientRect();
@@ -165,6 +172,13 @@ def inspect_page(name, path, width, width_name, mode):
           return {articleLink: !!el.closest('.aculta-wiki-article'), focusVisible: el.matches(':focus-visible'),
             visible: rect.width > 0 && rect.height > 0, withinViewport: rect.left >= 0 && rect.right <= innerWidth};""")
         check(f"{prefix}: Shift+Tab retorna ao controle anterior", not reverse_focus["articleLink"] and reverse_focus["focusVisible"] and reverse_focus["visible"] and reverse_focus["withinViewport"], reverse_focus)
+    if name == "home" and mode == "light" and width in (320, 1440):
+        driver.js("document.querySelector('.aculta-wiki-home .layout-grid > div > h2 a[href*=\\\"/taxonomy/term/\\\"]')?.focus()")
+        press_key("\ue004")
+        category_focus = driver.js("""const el = document.activeElement; const rect = el.getBoundingClientRect();
+          return {withinCategoryGrid: !!el.closest('.aculta-wiki-home .layout-grid'), focusVisible: el.matches(':focus-visible'),
+            visible: rect.width > 0 && rect.height > 0, withinViewport: rect.left >= 0 && rect.right <= innerWidth};""")
+        check(f"{prefix}: teclado percorre links de categoria com foco visível", category_focus["withinCategoryGrid"] and category_focus["focusVisible"] and category_focus["visible"] and category_focus["withinViewport"], category_focus)
     screenshot = driver.req("GET", session + "/screenshot")
     (OUT / f"{name}-{width_name}-{mode}.png").write_bytes(base64.b64decode(screenshot))
     metrics["url"] = driver.url()

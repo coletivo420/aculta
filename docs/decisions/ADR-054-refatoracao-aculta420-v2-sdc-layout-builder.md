@@ -149,3 +149,8 @@ A View `aculta_forum_public_topics` já compõe suas rows com o SDC existente `f
 ## Atualização US-12 — Wiki pública em UI Patterns (2026-11-11)
 
 `wiki_entries` usa `layout-grid` no style UI Patterns para page e blocos da Wiki. O teaser `entity:node` existente continua compondo `wiki-entry`; consulta, filtros published/type/Domain, acesso, ordenação, pager 12 e os seis resultados permaneceram. Importação parcial isolada após snapshot; Runtime e Sync parseados coincidem. Firefox ESR passou 215/215 para home, listagem e artigo em 320/390/767/768/1440 e claro/escuro, sem overflow e com grade 1 coluna abaixo de 768px, 2 colunas acima. Main continua sem acesso à listagem Wiki (404). Zoom 200%, cache-hit, perfis editor/admin, tecnologia assistiva e aceite visual do responsável ficam DEFERRED; a ADR permanece aberta.
+
+
+## Atualização US-12 — categorias da Wiki na home (2026-11-11)
+
+`wiki_categories:block_1` agora usa UI Patterns com o SDC `layout-grid`; as 15 rows taxonômicas continuam nativas. Filtro do vocabulário, links, acesso, ordem weight ASC e pager 30 foram preservados. Import parcial após snapshot e Runtime/Sync parseados iguais. Firefox ESR passou 247/247 nos três fluxos Wiki, cinco larguras e claro/escuro, confirmando a grade das categorias com uma coluna abaixo de 768px e duas a partir de 768px. Comparação visual antes/depois não identificou mudança perceptível nas amostras 320 claro e 1440 escuro. Zoom, cache-hit, perfis e aceite do responsável ficam DEFERRED; ADR aberta.

@@ -139,3 +139,7 @@ Status espelhado de `TODO.md`. Plano visual: `docs/architecture/GROWROOM420-VISU
 ### Atualização US-12 — Wiki pública (2026-11-11)
 
 `wiki_entries` usa UI Patterns Views + `layout-grid`; `wiki-entry` continua no teaser SDC e os dados/acesso/order/pager da View permanecem. Runtime/Sync coincidem, seis IDs preservados e Firefox passou 215/215 em cinco larguras e dois modos. Zoom 200%, cache-hit, editor/admin, tecnologia assistiva e aceite visual permanecem DEFERRED.
+
+### Atualização US-12 — categorias Wiki (2026-11-11)
+
+O bloco `wiki_categories` da home usa UI Patterns + `layout-grid`; termos, links, filtro, acesso, ordenação e pager permanecem nativos. Runtime/Sync coincidem; 15 termos preservados e Firefox passou 247/247. Zoom 200%, cache-hit, perfis e aceite humano seguem DEFERRED.

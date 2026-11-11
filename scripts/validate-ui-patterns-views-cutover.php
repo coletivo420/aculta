@@ -82,6 +82,19 @@ foreach (['block_changes', 'block_recent', 'page_1'] as $wikiDisplay) {
   $assert(($options['defaults']['style'] ?? TRUE) === TRUE, "$wikiDisplay deve herdar a composição SDC única da View.");
 }
 
+$wikiCategories = Yaml::parseFile($root . '/config/sync/views.view.wiki_categories.yml');
+$wikiCategoriesDefault = $wikiCategories['display']['default']['display_options'];
+$assert(in_array('ui_patterns_views', $wikiCategories['dependencies']['module'] ?? [], TRUE), 'As categorias da Wiki devem declarar UI Patterns Views.');
+$assert(($wikiCategoriesDefault['style']['type'] ?? NULL) === 'ui_patterns', 'As categorias da Wiki devem usar o plugin UI Patterns Style.');
+$assert(($wikiCategoriesDefault['style']['options']['ui_patterns']['ui_patterns']['component_id'] ?? NULL) === 'aculta420_v2:layout-grid', 'As categorias da Wiki devem reutilizar layout-grid.');
+$assert(($wikiCategoriesDefault['style']['options']['ui_patterns']['ui_patterns']['props']['max_columns']['source']['value'] ?? NULL) === '2', 'As categorias da Wiki devem manter duas colunas via source number.');
+$assert(($wikiCategoriesDefault['style']['options']['ui_patterns']['ui_patterns']['slots']['content']['sources'][0]['source_id'] ?? NULL) === 'view_rows', 'A grade deve compor rows renderizadas pela View.');
+$assert(($wikiCategoriesDefault['row']['type'] ?? NULL) === 'entity:taxonomy_term' && ($wikiCategoriesDefault['row']['options']['view_mode'] ?? NULL) === 'default', 'As categorias devem manter o row nativo de taxonomia.');
+$assert(($wikiCategoriesDefault['access']['options']['perm'] ?? NULL) === 'access content', 'As categorias devem preservar a permissão nativa de leitura.');
+$assert(($wikiCategoriesDefault['pager']['options']['items_per_page'] ?? NULL) === 30, 'As categorias devem preservar o pager de 30 itens.');
+$assert(isset($wikiCategoriesDefault['filters']['vid']) && ($wikiCategoriesDefault['sorts']['weight']['order'] ?? NULL) === 'ASC', 'Vocabulário e ordem editorial devem continuar sob Views.');
+$assert(($wikiCategories['display']['block_1']['display_options']['defaults']['style'] ?? TRUE) === TRUE, 'O bloco de categorias deve herdar a grade SDC única.');
+
 $displaySlots = $page['ui_patterns']['slots'] ?? [];
 $requiredSources = [
   'attachment_before' => 'view_attachment_before',

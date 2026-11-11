@@ -184,3 +184,8 @@ A View `aculta_forum_public_topics` já compõe suas rows com o SDC existente `f
 ## Atualização — UI Patterns Views na Wiki (2026-11-11)
 
 O style da View `wiki_entries` consome `aculta420_v2:layout-grid` via UI Patterns Views, com `max_columns=2` como source numérico e `view_rows` no slot. O componente SDC existente ganhou prop `max_columns` estrita para limites 2/3/4 sem criar outro grid. O wrapper herdado preserva o template teaser/SCD `wiki-entry`; a regra responsiva Wiki mantém uma coluna até 767px. Runtime/Sync coincidem e browser passou 215/215; cache-hit, zoom e aceite amplo seguem DEFERRED.
+
+
+## Atualização — UI Patterns Views em categorias de taxonomia (2026-11-11)
+
+`wiki_categories:block_1` compõe as rows de termo pelo `layout-grid` SDC existente com UI Patterns Views. A configuração não converte taxonomia em markup duplicado nem altera links; Views continua dona da consulta, filtro, acesso, ordenação e pager. Browser validou 15 categorias e reflow responsivo com 245/245 verificações.

@@ -1793,3 +1793,11 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Catálogo:** URL de agregado `locale/translations` antiga ainda responde 400 quando chamada diretamente; HTML recém-gerado no acesso administrativo carrega somente URLs válidas. Avisos CSP inline são `report-only` e vêm de script de navegação/estilos administrativos e markup; nenhuma diretiva foi enfraquecida.
 - **Pendências:** zoom 200%, cache-hit, perfis editor/admin no álbum e revisão por tecnologia assistiva/aceite humano. VVJS permanece por consumidores fora do álbum; sem desinstalação. ADRs 054/055 continuam abertas.
 - **Próximo passo:** conferir manifesto/SHA, publicar o registro da evidência e migrar a próxima View/superfície com uso real.
+
+# ADR-054/055 — Wiki em UI Patterns Views — 2026-11-11
+
+- **Objetivo:** migrar listagem pública e blocos recentes Wiki para UI Patterns + SDC existente.
+- **Estado:** `wiki_entries` page e dois blocos usam `layout-grid`; teaser reaproveita `wiki-entry`. Runtime/Sync parseados iguais; seis node IDs e filtros/acesso/order/pager preservados; MAIN não recebe a rota Wiki.
+- **Verificações:** Firefox ESR 215/215 em home/listagem/artigo, 320/390/767/768/1440, claro/escuro; Views 85, schemas SDC 84/1801 e render SDC 42 esperados nesta rodada. Capturas e SHA em `tests/browser/capturas/ui-patterns-wiki-entries/2026-11-11/manifest.json`.
+- **Pendências:** cache-hit, zoom 200%, perfis editor/admin, tecnologia assistiva e aceite visual do responsável DEFERRED; Stylelint focal PASS; CSS-scope mantém duas falhas em preprocess_html account/wiki, em código fora deste diff. ADRs abertas.
+- **Próximo passo:** conferir gates finais, regenerar inventário/status e publicar microfase; seguir para outro consumidor Views.

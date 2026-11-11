@@ -61,7 +61,6 @@
   text-underline-offset: .18em;
 }
 
-.aculta-wiki-home .view-wiki-categories .view-content,
 .aculta-wiki-home .view-wiki-entries .view-content,
 .aculta-wiki-search-results .view-content {
   display: grid;
@@ -70,38 +69,10 @@
   min-inline-size: 0;
 }
 
-.aculta-wiki-home .view-wiki-categories .views-row,
 .aculta-wiki-home .view-wiki-entries .views-row,
 .aculta-wiki-search-results .views-row { min-inline-size: 0; }
 
 .aculta-wiki-list > header { margin-block-end: var(--spacing-base); }
-
-.aculta-wiki-home .view-wiki-categories .taxonomy-term { block-size: 100%; }
-.aculta-wiki-home .view-wiki-categories .taxonomy-term h2 { margin: 0; font: 600 1rem/1.35 var(--font-family-base); block-size: 100%; }
-
-.aculta-wiki-home .view-wiki-categories .taxonomy-term h2 a {
-  display: flex;
-  align-items: center;
-  padding: .7rem .9rem;
-  text-decoration: none;
-  color: var(--color-link-editorial);
-  border: 1px solid var(--color-border);
-  background: var(--color-surface-raised);
-  min-block-size: 3.25rem;
-  overflow-wrap: anywhere;
-}
-
-.aculta-wiki-home .view-wiki-categories .taxonomy-term h2 a:is(:hover, :focus-visible) {
-  text-decoration: underline;
-  color: var(--color-text-primary);
-  border-color: var(--color-brand-secondary);
-  text-underline-offset: .18em;
-}
-
-.aculta-wiki-home .view-wiki-categories .taxonomy-term h2 a:focus-visible {
-  outline: var(--focus-ring-width) solid var(--color-focus-ring);
-  outline-offset: var(--focus-ring-offset);
-}
 
 .aculta-wiki-collaboration {
   padding: var(--spacing-base) var(--spacing-lg-compact);
@@ -129,27 +100,23 @@
 
 .aculta-wiki-recent-change time { color: var(--color-text-secondary); font-size: var(--font-size-sm); }
 
-/* Categorias da home: o view renderiza sem view-wiki-categories nem taxonomy-term. O alvo é o
-   contêiner cujas linhas trazem link para um termo de taxonomia, com as caixas e espaçamentos da V1. */
-.aculta-wiki-home .views-element-container:has(h2 a[href*="/taxonomy/term/"]) > div {
-  display: grid;
+/* O style UI Patterns entrega a grade; esta regra preserva apenas o espaçamento e a aparência editorial dos termos. */
+.aculta-wiki-home .views-element-container:has(> div > .layout-grid > div > h2 a[href*="/taxonomy/term/"]) > div > .layout-grid {
   gap: var(--spacing-base);
-  grid-template-columns: minmax(0, 1fr);
-  min-inline-size: 0;
 }
 
-.aculta-wiki-home .views-element-container:has(h2 a[href*="/taxonomy/term/"]) > div > .views-row {
+.aculta-wiki-home .views-element-container:has(> div > .layout-grid > div > h2 a[href*="/taxonomy/term/"]) > div > .layout-grid > div {
   block-size: 100%;
   min-inline-size: 0;
 }
 
-.aculta-wiki-home .views-element-container:has(h2 a[href*="/taxonomy/term/"]) > div > .views-row h2 {
+.aculta-wiki-home .views-element-container:has(> div > .layout-grid > div > h2 a[href*="/taxonomy/term/"]) > div > .layout-grid > div h2 {
   margin: 0;
   font: 600 1rem/1.35 var(--font-family-base);
   block-size: 100%;
 }
 
-.aculta-wiki-home .views-element-container:has(h2 a[href*="/taxonomy/term/"]) > div > .views-row h2 a {
+.aculta-wiki-home .views-element-container:has(> div > .layout-grid > div > h2 a[href*="/taxonomy/term/"]) > div > .layout-grid > div h2 a {
   display: flex;
   align-items: center;
   padding: .7rem .9rem;
@@ -161,32 +128,26 @@
   overflow-wrap: anywhere;
 }
 
-.aculta-wiki-home .views-element-container:has(h2 a[href*="/taxonomy/term/"]) > div > .views-row h2 a:is(:hover, :focus-visible) {
+.aculta-wiki-home .views-element-container:has(> div > .layout-grid > div > h2 a[href*="/taxonomy/term/"]) > div > .layout-grid > div h2 a:is(:hover, :focus-visible) {
   text-decoration: underline;
   color: var(--color-text-primary);
   border-color: var(--color-brand-secondary);
   text-underline-offset: .18em;
 }
 
-.aculta-wiki-home .views-element-container:has(h2 a[href*="/taxonomy/term/"]) > div > .views-row h2 a:focus-visible {
+.aculta-wiki-home .views-element-container:has(> div > .layout-grid > div > h2 a[href*="/taxonomy/term/"]) > div > .layout-grid > div h2 a:focus-visible {
   outline: var(--focus-ring-width) solid var(--color-focus-ring);
   outline-offset: var(--focus-ring-offset);
 }
 
 @media (min-width: 48rem) {
-  .aculta-wiki-home .views-element-container:has(h2 a[href*="/taxonomy/term/"]) > div {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 48rem) {
   .aculta-wiki-search,
   .aculta-wiki-search-results form { grid-template-columns: minmax(0, 1fr) auto; }
-  .aculta-wiki-home .view-wiki-categories .view-content,
   .aculta-wiki-home .view-wiki-entries .view-content,
   .aculta-wiki-search-results .view-content { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 47.9375rem) {
-  .aculta-wiki-list > .layout-grid--max-2 { grid-template-columns: minmax(0, 1fr); }
+  .aculta-wiki-list > .layout-grid--max-2,
+  .aculta-wiki-home .views-element-container:has(> div > .layout-grid > div > h2 a[href*="/taxonomy/term/"]) > div > .layout-grid--max-2 { grid-template-columns: minmax(0, 1fr); }
 }
