@@ -52,10 +52,12 @@ Scripts com `routes.json` têm cobertura de rotas públicas no runner comum.
 | [`tests/browser/transversal/aculta-home-editorial-ui-patterns/`](./transversal/aculta-home-editorial-ui-patterns/README.md) | Home editorial — UI Patterns Views | 1 | não |
 | [`tests/browser/transversal/aculta-htmx-f1/`](./transversal/aculta-htmx-f1/README.md) | ACULTA420 V2 — HTMX F1 (busca e login) | 1 | sim |
 | [`tests/browser/transversal/aculta-image-admin/`](./transversal/aculta-image-admin/README.md) | Revisão visual das opções administrativas do ACULTA Image | 1 | sim |
-| [`tests/browser/transversal/aculta-theme-mobile-first/`](./transversal/aculta-theme-mobile-first/README.md) | ACULTA420 — SDC responsivos do tema | 34 | sim |
+| [`tests/browser/transversal/aculta-theme-mobile-first/`](./transversal/aculta-theme-mobile-first/README.md) | ACULTA420 — SDC responsivos do tema | 35 | sim |
 | [`tests/browser/transversal/aculta-uploader/`](./transversal/aculta-uploader/README.md) | Smoke do aculta_file_uploader (navegador) | 1 | sim |
 | [`tests/browser/transversal/aculta-visual/`](./transversal/aculta-visual/README.md) | Revisão visual da Frente B | 1 | sim |
+| [`tests/browser/transversal/aculta420-v2-account-menu/`](./transversal/aculta420-v2-account-menu/README.md) | ACULTA420 V2 — account menu | 1 | não |
 | [`tests/browser/transversal/aculta420-v2-card-accent/`](./transversal/aculta420-v2-card-accent/README.md) | ACULTA420 V2 — faixa de acento do cartão (DRAFT) | 1 | sim |
+| [`tests/browser/transversal/aculta420-v2-component-library/`](./transversal/aculta420-v2-component-library/README.md) | ACULTA420 V2 — biblioteca de componentes | 1 | não |
 | [`tests/browser/transversal/aculta420-v2-data-table/`](./transversal/aculta420-v2-data-table/README.md) | ACULTA420 V2 — Data table | 1 | sim |
 | [`tests/browser/transversal/aculta420-v2-empty-state/`](./transversal/aculta420-v2-empty-state/README.md) | ACULTA420 V2 — Empty state | 1 | sim |
 | [`tests/browser/transversal/aculta420-v2-footer/`](./transversal/aculta420-v2-footer/README.md) | ACULTA420 V2 — rodapé e regions do shell | 1 | sim |
