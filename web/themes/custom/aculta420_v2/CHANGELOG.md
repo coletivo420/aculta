@@ -13,6 +13,10 @@
   containers sem título e sem barra lateral.
 - Stylelint passou a zero erros nos CSS do tema; o gate de escopo foi
   atualizado ao contrato `site_key` (RN-00..RN-05).
+- Homologação Playwright/Firefox: 774/774 checks PASS em 10 domínios públicos
+  (incluindo Fórum em `growroom420`), 7 larguras e claro/escuro, mais Conta
+  autenticada e UI Library. Manifest em
+  `tests/browser/capturas/aculta420-v2-audit/2026-11-11/manifest.json`.
 
 ## Não versionado - auditoria de consistência CSS e layouts (2026-11-11)
 

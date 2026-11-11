@@ -46,55 +46,78 @@ Sem acesso ao Drupal/Runtime nesta execução: nenhum gate foi declarado PASS.
    `--color-surface-raised` por `var()` nos dois modos; não confundir
    `--color-surface` com `--color-surface-raised`.
 
+## Execução no Runtime de desenvolvimento (2026-11-11)
+
+Método: Playwright com Firefox headless (método 1 de
+`docs/operations/NAVEGADOR-TESTES.md`), frente
+`tests/browser/transversal/aculta420-v2-audit-2026-11/`. Manifest versionado em
+`tests/browser/capturas/aculta420-v2-audit/2026-11-11/manifest.json`.
+
+- **774/774 checks PASS, 0 FAIL** no commit `ca4246fb6`.
+- Domínios públicos: home, Fórum (`growroom420.aculta.toca.net.br`), Links,
+  Wiki, Revista, Eventos, Loja, Apoio, Cursos e login da Conta — 10 hosts.
+- Larguras: 320, 390, 768, 959, 960, 1024 e 1440 CSS px, em claro e escuro.
+- 140 combinações públicas × 5 checks: canvas esperado (`#f2f7f0`/`#171513`),
+  ausência de overflow horizontal, um `main`, no máximo um `h1` e contraste do
+  cabeçalho institucional ≥ 4,5:1 (140/140 PASS).
+- Conta autenticada (`teste_comum`, `/conta`, 14 combinações): sem overflow,
+  canvas correto, um `main` e no máximo um `h1`.
+- UI Patterns Library autenticada (`teste_administrativo`, story do
+  `layout-page` em 960/1024/1440): 6/6 `aside` à esquerda do conteúdo
+  confirmados por coordenadas; stories renderizadas.
+- O `aside` de conteúdo real não aparece nas páginas públicas atuais: a home do
+  Fórum usa `full` com `sidebar_first` e a Conta ainda não expõe
+  `sidebar_first` ao layout (o menu é interno ao shell). A geometria
+  conteúdo → aside foi homologada na UI Library, com as stories
+  `aside` e `aside-no-title`.
+
+### Cascata e tokens
+
+- `layout.css` ficou restrito à base do shell (198 linhas). As regras da UI
+  Patterns Library migraram para `component-library-mode.css` e o container do
+  `site_key` account para `portal-account.css`.
+- `ui-library-admin.css` não repete mais a moldura de `.ui_patterns_component`;
+  mantém só o layout administrativo (colunas, painéis, barra de ferramentas).
+- Removida a declaração duplicada de `--button-primary-bg-hover` no modo claro.
+  Os tokens `--aculta-*` do contrato de fundamentos seguem sem consumidores
+  fora de `tokens.css`, como documentado no próprio arquivo.
+- Stylelint: 0 erros em todo o tema (eram 23 antes; 17 `max-empty-lines` e 6 de
+  ordem de propriedades).
+- O gate `validate-aculta420-css-scope.php` foi atualizado de `$purpose` para
+  `$siteKey`, acompanhando a migração RN-00..RN-05 já aplicada no tema.
+
 ## Pendências para agente no Runtime (não executadas aqui)
 
-P0. Executar antes de novas mudanças: `git status --short`,
-`git fetch origin`, `git rev-parse HEAD`; reconciliar HEAD remoto
-sem sobrescrever alterações de terceiros. Rodar `php -l` nos PHPs
-alterados, `git diff --check`, `php scripts/validate-aculta420-v2-foundations.php`,
-`php scripts/validate-aculta420-design-foundations.php`,
-`php scripts/validate-aculta420-shell-regions.php --strict`,
-`php scripts/validate-aculta420-theme-settings.php`,
-`php scripts/validate-aculta420-css-scope.php`,
-`php scripts/validate-aculta420-sdc-schemas.php`,
-`php scripts/validate-aculta420-ui-skins.php` e
-`npm run lint:css` no diretório correspondente. Corrigir falhas
-que pertençam ao escopo e classificar outras como preexistentes com prova.
+P0 — **CONCLUÍDO.** Git conferido e reconciliado sem sobrescrever trabalho de
+outras sessões; `git diff --check` limpo; todos os gates do tema PASS;
+Stylelint 0 erros; PHPUnit do tema 27/27.
 
-P1. Firefox/Playwright no Runtime: varrer home, Fórum,
-Wiki, Revista, Conta/Studio, Events, Loja, Links e UI Library.
-Capturar 320/390/768/959/960/1024/1440 CSS px em claro/escuro,
-zoom 200%, teclado, foco, landmarks, RTL se aplicável,
-contraste e reflow. Verificar `aside` com/sem título, com/sem bloco
-de sidebar, inclusive fallback simulado; cobrir headers e
-cards institucionais. Não afirmar PASS por evidência histórica.
+P1 — **PARCIAL.** Varredura de 10 domínios e UI Library concluída (774/774).
+Faltam zoom real de 200%, navegação por teclado, `prefers-reduced-motion` e
+aceite visual humano; nenhum deles foi declarado PASS.
 
-P2. Inventariar CSS efetivamente entregue por rota; extrair
-regras exclusivas da UI Patterns Library de `src/styles/layout.css`
-para o estilo já contextualizado da biblioteca, sem perder o
-CSS admin do catálogo. Examinar `global-styling` vs assets SDC
-para carregamento duplicado real, preservando apenas dependências
-justificadas. Comparar computed styles e bytes antes/depois.
+P2 — **CONCLUÍDO.** Regras exclusivas da UI Patterns Library saíram de
+`layout.css` para `component-library-mode.css`; container da conta foi para
+`portal-account.css`; sobreposição de `.ui_patterns_component` removida.
+`global-styling` ficou com 16 entradas; bytes medidos pelo gate de escopo
+(116.177 bytes de CSS local).
 
-P3. Analisar todos os aliases `--color-*` / `--aculta-*`:
-normalizar semântica e dependências com `var()`, mantendo nomes
-existentes como ponte; registrar consumidores e exceções. Não fazer
-substituição global ingênua. Concluir classificação
-obsoleto/depreciado de regras e seletores fora de UI Suite
-conforme ADR-054/055, sem remoções até confirmar consumidores.
+P3 — **PARCIAL.** Aliases revisados; uma duplicata real removida e os
+`--aculta-*` sem consumidor mantidos como contrato. Classificação
+obsoleto/depreciado de toda a base fora de UI Suite depende de revisão de
+consumidores em Views/Layout Builder e segue pendente.
 
-P4. Auditar `layout-page`, `layout-full`, `layout-narrow`,
-`layout-two-columns`, `layout-grid`, Layout Builder e a
-geometria de `68ch` vs `750px` vs `1200px`. Tratar largura
-de container vs medida de leitura como conceitos diferentes.
-Evitar `!important` responsivo genérico quando substituição
-focada funcionar. Atualizar documentação anterior à ADR-054/055.
+P4 — **CONCLUÍDO.** `layout-page` (stack/aside/full), `layout-narrow`,
+`layout-full`, `layout-two-columns`, `layout-grid` e `layout-section`
+auditados. Container externo (750 px configurável) separado da medida de
+leitura (68–70 ch); `!important` responsivo mantido com justificativa
+documentada.
 
-P5. Testar backend/Runtime/Config Sync em claro/escuro e todas
-as skins, com evidências de cache-hit, zoom, autorização e
-comportamento cross-domain. Atualizar roadmap, docs do tema,
-gates e changelog, documentar `PASS/FAIL/DEFERRED`, commit
-e push diretos para `dev` somente com escopo e provas.
+P5 — **PARCIAL.** Runtime testado em claro/escuro nos 10 domínios públicos e
+na UI Library autenticada; cache reconstruído (`drush cr`) antes da rodada
+final. Config Sync permanece divergente por trabalho de outras frentes, sem
+importação nesta tarefa. Zoom, cache-hit por hash e teste cross-domain de
+cache seguem pendentes.
 
 ## Riscos e critérios de aceite
 

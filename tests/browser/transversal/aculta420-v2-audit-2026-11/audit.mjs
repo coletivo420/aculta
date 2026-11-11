@@ -95,14 +95,26 @@ const measure = () => {
   const bodyStyle = getComputedStyle(document.body);
   const canvas = parseColor(rootStyle.getPropertyValue('--color-canvas')) || parseColor(bodyStyle.backgroundColor) || parseColor(rootStyle.backgroundColor);
 
-  const asideVariant = Boolean(document.querySelector('.layout-page--aside, .page__main--with-sidebar'));
-  const content = document.querySelector('.layout-page__content, .page__content');
-  const aside = document.querySelector('.layout-page__aside, .page__sidebar');
+  const asideLayouts = [...document.querySelectorAll('.layout-page--aside, .page__main--with-sidebar')];
+  const asideVariant = asideLayouts.length > 0;
+  let asidePresent = false;
   let asideLeft = null;
-  if (asideVariant && content && aside && window.innerWidth >= 960) {
-    const c = content.getBoundingClientRect();
-    const a = aside.getBoundingClientRect();
-    if (a.width > 0 && c.width > 0) asideLeft = a.right <= c.left + 1;
+  const asideRects = [];
+  if (asideVariant && window.innerWidth >= 960) {
+    const pairs = [];
+    for (const layout of asideLayouts) {
+      const content = layout.querySelector('.layout-page__content, .page__content');
+      const aside = layout.querySelector('.layout-page__aside, .page__sidebar');
+      if (!content || !aside) continue;
+      const c = content.getBoundingClientRect();
+      const a = aside.getBoundingClientRect();
+      if (a.width > 0 && c.width > 0) {
+        asidePresent = true;
+        pairs.push(a.right <= c.left + 1);
+        asideRects.push([Math.round(a.left), Math.round(a.right), Math.round(c.left), Math.round(c.right)]);
+      }
+    }
+    if (pairs.length > 0) asideLeft = pairs.every(Boolean);
   }
 
   const header = document.querySelector('.aculta-surface-panel__header, .aculta-institution-bar');
@@ -119,7 +131,8 @@ const measure = () => {
     h1Count: document.querySelectorAll('h1').length,
     asideLeft,
     asideVariant,
-    asidePresent: Boolean(aside),
+    asidePresent,
+    asideRects,
     headerContrast,
     hasLayoutPage: Boolean(document.querySelector('.layout-page')),
   };
@@ -129,7 +142,7 @@ const browser = await firefox.launch({ headless: true });
 const capturesDir = join(suiteOut, 'capturas');
 mkdirSync(capturesDir, { recursive: true });
 
-for (const host of HOSTS) {
+for (const host of (process.env.ACULTA_AUDIT_SKIP_PUBLIC === '1' ? [] : HOSTS)) {
   for (const width of WIDTHS) {
     for (const mode of MODES) {
       const context = await browser.newContext({
@@ -182,7 +195,7 @@ for (const host of HOSTS) {
 }
 
 // Página autenticada que usa a variante aside (Minha Conta).
-if (process.env.ACULTA_AUDIT_AUTH !== 'off') {
+if (process.env.ACULTA_AUDIT_AUTH !== 'off' && process.env.ACULTA_AUDIT_SKIP_PUBLIC !== '1') {
   const authHost = 'https://conta.aculta.toca.net.br';
   try {
     const context = await browser.newContext({
@@ -242,10 +255,14 @@ if (process.env.ACULTA_AUDIT_ADMIN !== 'off') {
           await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
           await page.waitForTimeout(120);
         }
-        const m = await page.evaluate(measure);
+        let m = await page.evaluate(measure);
+        for (let attempt = 0; attempt < 3 && m.asideLeft !== true; attempt++) {
+          await page.waitForTimeout(250);
+          m = await page.evaluate(measure);
+        }
         const label = `ui-library ${width}px ${mode}`;
         record({ name: label, check: 'overflow', passed: m.scrollWidth <= m.innerWidth + 1, detail: `${m.scrollWidth}/${m.innerWidth}` });
-        record({ name: label, check: 'aside-left', passed: m.asideLeft === true, detail: String(m.asideLeft) });
+        record({ name: label, check: 'aside-left', passed: m.asideLeft === true, detail: `${m.asideLeft} rects=${JSON.stringify(m.asideRects)} inner=${m.innerWidth}` });
         const previews = await page.locator('.ui_patterns_story__preview, .ui_patterns_story__story').count();
         record({ name: label, check: 'stories-render', passed: previews > 0, detail: String(previews) });
         if (width === 1440) {

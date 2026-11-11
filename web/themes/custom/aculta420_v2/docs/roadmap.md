@@ -18,11 +18,13 @@
   cartões. `layout-page--stack` usa `--aculta-narrow-container-width` e a
   leitura de 68–70 ch fica no conteúdo. Stories sem título e sem sidebar
   foram adicionadas.
-- Estado: gates estáticos, Stylelint e PHPUnit aprovados. A homologação de
-  navegador (10 domínios públicos — incluindo o Fórum em `growroom420` —,
-  7 larguras, claro/escuro, conta autenticada e UI Library) está registrada em
+- Estado: gates estáticos, Stylelint e PHPUnit aprovados. Homologação de
+  navegador em 774/774 checks PASS (10 domínios públicos — incluindo o Fórum em
+  `growroom420` —, 7 larguras, claro/escuro, Conta autenticada e UI Library),
+  registrada em
   `tests/browser/capturas/aculta420-v2-audit/2026-11-11/manifest.json`.
-  Ver `docs/architecture/ACULTA420-V2-AUDITORIA-CSS-LAYOUT-2026-11-11.md`.
+  Pendentes: zoom 200%, teclado, `prefers-reduced-motion` e aceite visual
+  humano. Ver `docs/architecture/ACULTA420-V2-AUDITORIA-CSS-LAYOUT-2026-11-11.md`.
 
 ## CSP — remoção das violações de estilo inline (2026-11-11)
 
