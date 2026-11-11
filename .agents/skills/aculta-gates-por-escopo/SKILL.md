@@ -13,6 +13,12 @@ description: Escolhe e roda só os gates do escopo do diff do ACULTA. Use antes 
 6. Comandos verbosos (PHPUnit, PHPStan, lint de projeto): `python3 scripts/agent-output.py --lines 60 -- COMANDO`.
 7. Cole no relatório a saída resumida e o status de cada gate.
 
+## Matriz por tipo de arquivo
+
+A matriz completa (PHP, Twig, CSS, JavaScript, SDC, UI Patterns, UI Styles, UI Skins, UI Icons, HTMX, rotas, controllers, serviços, formulários, pagamentos, uploads, autenticação, Runtime Sync, shell, GitHub Actions e skills) está em `docs/operations/GATES.md`, seção "Matriz por tipo de arquivo". Use-a para escolher os gates do diff; não rode a suíte inteira para mudança documental.
+
+Skills de apoio por escopo: segurança (`aculta-seguranca-estatica`), acessibilidade (`aculta-acessibilidade`), regressão visual (`aculta-regressao-visual`), shell e workflows (`aculta-shell-qualidade`).
+
 ## Matriz para UI, SDC e UI Suite
 
 Escolha pelo arquivo alterado e pelas integrações realmente presentes no Composer/configuração. Os comandos abaixo são candidatos por escopo, não uma suíte para rodar inteira:

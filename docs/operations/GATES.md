@@ -47,6 +47,36 @@ Regra: rode **somente** os gates do escopo do diff e dos módulos que dependem d
 | Documentos de leitura de partida (`AGENTS.md`, `CLAUDE.md`, `TODO.md`, TODO de componente, handoff) | `php scripts/validate-agent-token-budget.php` | Limites de bytes, versão do TODO igual ao `info.yml`, roadmap citado existe, handoff com até 3 entradas, cada skill com link em `.claude/skills/`, trechos exigidos por gates no AGENTS |
 | Tabela "Não ler por padrão" (`AGENT-TOKEN-ECONOMY.md`) | `php scripts/validate-agent-economy-paths.php` | Caminhos existem e tamanhos declarados batem com o real (±2x); `vendor/` ausente é aceito |
 
+## Matriz por tipo de arquivo (2026-11-11)
+
+Critérios: PASS (executado e verde), FAIL, DEFERRED (não roda aqui; motivo), N/A (fora do escopo). Nunca declare PASS sem execução. Evidência e estado das ferramentas: `docs/operations/testing/UI-SUITE-AUDITORIA.md`.
+
+| Escopo | Gates | Estado neste ambiente |
+| --- | --- | --- |
+| PHP alterado | `php -l` nos arquivos; `php scripts/phpunit-suites.php --check`; `phpstan analyse` (com `vendor/`) | `php -l` e suites: PASS. PHPStan: DEFERRED (sem `vendor/`) |
+| Twig | validadores SDC do tema; `php -l` em módulos com PHP | DEFERRED onde o validador depende de Drush |
+| CSS (tema) | `npm run lint:css` (Stylelint 13 do projeto) | PASS (0 erros) |
+| JavaScript novo ou alterado | ESLint com configuração própria do projeto | DEFERRED: ESLint não declarado no projeto; criar configuração é pendência |
+| SDC | `validate-aculta420-sdc-schemas.php`, `validate-aculta420-v2-sdc.php` | DEFERRED (depende do ambiente Drupal) |
+| UI Patterns | `validate-ui-patterns-views-cutover.php` | DEFERRED (Runtime/browser) |
+| UI Styles | `validate-aculta420-ui-styles.php` | DEFERRED (ambiente Drupal) |
+| UI Skins | sem validador dedicado; regressão visual (`aculta-regressao-visual`) | DEFERRED: sem suíte visual |
+| UI Icons | teste Unit `UiIconsPackTest` do tema (`phpunit --testsuite unit`) | DEFERRED (sem `vendor/`) |
+| HTMX | `aculta-navegador-testes` + suíte `playwright.a11y.spec.mjs` | DEFERRED (sem origem de ambiente) |
+| Rotas | `validate-admin-routes-main-domain.php` | DEFERRED (Drush) |
+| Controllers e serviços | `php -l`; teste Unit/Kernel focal; PHPStan | `php -l`: PASS quando aplicável; demais DEFERRED |
+| Formulários | `php -l`; `playwright.a11y.spec.mjs` quando houver rota | DEFERRED para acessibilidade |
+| Pagamentos | `validate-payment-domain-policy.php`, `validate-portal-commerce-security.php` | DEFERRED (Drush) |
+| Uploads | `validate-aculta-image.php`; regras Semgrep de `aculta-seguranca-estatica` | Semgrep: executado; validador: DEFERRED |
+| Autenticação e sessão | `validate-session-cookie-policy.php`, `validate-turnstile-exceptions.php` | DEFERRED (Drush/Runtime) |
+| Runtime Sync | `bash -n scripts/runtime-sync.sh`; `bash scripts/test-runtime-sync.sh` | PASS (24/24, simulado) |
+| Scripts shell | `shellcheck -S warning` e `shfmt -d` nos arquivos alterados; `bash -n` | ShellCheck e shfmt: executados; legado com dívida |
+| GitHub Actions | `actionlint` (gate no CI pretendido) | DEFERRED: binário não instalado neste ambiente |
+| Skills | `python3 scripts/validate-agent-skills.py`; `php scripts/validate-agent-token-budget.php` | Skills: PASS; orçamento: FAIL pré-existente (`TODO.md`, `css`, `htmx`, `sdc`, `ui-patterns`) |
+| Teste de navegador | `php scripts/validate-browser-index.php` e `npm run test:list` | `test:list`: PASS (130); índice: FAIL pré-existente |
+
+Mudança em contrato compartilhado (SDC, UI Styles, UI Library, serviço de pagamento) exige também os consumidores dependentes listados na skill `aculta-gates-por-escopo`.
+
 ## Manutenção
 
 - Gate novo ou removido: atualize esta tabela no mesmo commit. Gate sem referência em documento de política nem em CI é candidato a remoção (auditoria de 2026-11-05: `docs/history/operations/AUDITORIA-TOKENS-TESTES-2026-11-05.md`).

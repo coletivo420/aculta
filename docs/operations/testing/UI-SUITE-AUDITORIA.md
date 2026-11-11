@@ -39,14 +39,15 @@ Estados: INSTALLED, CONFIGURED, EXECUTABLE, CI, DEFERRED, MISSING.
 | ShellCheck | INSTALLED, EXECUTABLE | `/usr/bin/shellcheck` | `aculta-shell-qualidade` | `-S warning` em arquivos alterados | `quality-static.yml` | legado: 27 avisos (dívida) |
 | shfmt | INSTALLED, EXECUTABLE | `/usr/bin/shfmt` | idem | `-d` em arquivos alterados | idem | legado sem formatação: dívida |
 | Bats-core | INSTALLED | `/usr/bin/bats` | idem | suíte futura em `tests/shell/` | DEFERRED (sem suíte ainda) | não há teste Bats novo nesta entrega |
-| actionlint | MISSING | — | `aculta-shell-qualidade` | gate no CI pretendido | não | DEFERRED |
+| actionlint | MISSING | — | `aculta-shell-qualidade` | gate no CI pretendido | não | DEFERRED: instalação de binário via pip foi negada pelo classificador de ações; nenhum PASS registrado |
 | `bash -n` + `runtime-sync` | EXECUTABLE | `scripts/` | `aculta-runtime-sync` | obrigatório | não | PASS |
 | `scripts/test-runtime-sync.sh` | EXECUTABLE | `scripts/` | `aculta-runtime-sync` | obrigatório | não | 24 PASS, 0 FAIL |
 | `@axe-core/playwright` 4.14.0 | INSTALLED (devDependency fixa) | `tests/browser` | `aculta-acessibilidade` | `test:a11y` | `browser-discovery` só lista | ver seção 3 |
 | Playwright `@playwright/test` 1.56.1 | INSTALLED | `tests/browser` | `aculta-navegador-testes` | runner existente | discovery | 130 testes descobertos |
 | Regressão visual | DEFERRED | — | `aculta-regressao-visual` | — | não | suíte não criada |
 | ESLint | MISSING | — | — | — | não | DEFERRED |
-| Stylelint | MISSING no PATH; configuração do projeto não verificada nesta entrega | — | `css` | — | não | DEFERRED |
+| Stylelint 13 (`npm run lint:css`) | EXECUTABLE, declarado em `package.json` | `node_modules` da raiz (`npm ci --ignore-scripts`) | `css` | `lint:css` | não integrado ainda | PASS (exit 0) |
+| `validate-aculta420-v2-foundations.php` | EXECUTABLE (estático) | `scripts/` | `css` | contraste de tokens | não | PASS: 85 pares de texto, 6 pares de faixa |
 | PHPUnit / PHPStan / PHPCS / Rector | não executados nesta entrega | `vendor/` ausente | `aculta-gates-por-escopo` | — | `php-quality.yml` (PHPUnit, PHPStan) | não reexecutado |
 | k6 | INSTALLED | `/usr/bin/k6` | — | fora de escopo | não | não executado |
 
@@ -62,7 +63,11 @@ Comando: `ACULTA_SITE_ORIGIN=https://aculta.toca.net.br/ SUITE_OUT=<fora-do-repo
 
 Os 14 FAIL estão em `main/aculta-patcher`, `main/aculta-portal-cep`, `main/aculta-qrcode`, `gallery/aculta-gallery`, `shop/aculta-frete`, `support/aculta-faq`, `transversal/aculta-document-viewer`, `transversal/aculta-editor`, `transversal/aculta-visual`, `transversal/aculta420-v2-audit-2026-11`, `transversal/aculta420-v2-card-accent`, `transversal/aculta420-v2-data-table`, `transversal/aculta420-v2-empty-state` e `transversal/aculta420-v2-navigation`.
 
-Classificação: **REAL PENDENTE de auditoria visual.** O axe reporta contraste medido sobre texto e fundo; `incomplete` não foi contado. Antes de corrigir, é preciso confirmar a cor computada e a razão medida por rota, e identificar o token responsável em `css`. **O tema não foi alterado.**
+**Causa-raiz confirmada (par único, 84 nós):** texto `#0c3c29` (`--color-dark` → `--color-text-primary`) sobre fundo `#689427` (`--palette-green`), razão medida pelo axe 3.45:1; recalculada pela fórmula WCAG: 3.46:1. Origem: a classe `.aculta-category--green` em `web/themes/custom/aculta420_v2/src/styles/content.css`. A variante vermelha do mesmo bloco já usa `--color-black`.
+
+**Correção aplicada nesta entrega:** `.aculta-category--green` passa a usar `color: var(--color-black)`. Razão calculada: 5.85:1 (≥ 4.5:1). `lint:css` PASS; `validate-aculta420-v2-foundations.php` PASS.
+
+**Verificação pendente:** o axe contra `aculta.toca.net.br` não prova a correção, porque esse host serve o checkout do Runtime, ainda sem esta alteração. Confirmar que os 14 FAIL somem exige deploy/sincronização controlada e nova execução. Também não confirmei, rota a rota, que todas as 14 páginas contêm a categoria verde; a causa-raiz está provada pelo par de cores, não pela presença do elemento em cada página.
 
 Relatórios brutos (JSON, trace, screenshot) ficaram em `SUITE_OUT`, fora do repositório.
 
@@ -86,7 +91,7 @@ Relatórios brutos (JSON, trace, screenshot) ficaram em `SUITE_OUT`, fora do rep
 
 ## 5. Dívida e próximas ações
 
-1. Confirmar os 14 `color-contrast` por rota e corrigir no token ou no componente, com teste de regressão. Não alterar o tema para o teste passar.
+1. Após sincronização controlada do Runtime, reexecutar o axe e confirmar que os 14 `color-contrast` desaparecem; se restar qualquer um, investigar a rota pelo seletor.
 2. Confirmar estado efetivo dos módulos UI Suite no Runtime (`drush pm:list`) em modo somente leitura.
 3. Triar os 24 `#markup` restantes e os itens PENDENTE de segurança.
 4. Decidir sobre a atualização de `entity_print` (2.19.0 → 2.20.0) e `symfony/http-client` (7.4.22 → 7.4.23), que alteram o lock.
