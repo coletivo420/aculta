@@ -20,9 +20,9 @@ settings:
   label_display: visible
   provider: aculta_events
 visibility:
-  aculta_domain_purpose:
-    id: aculta_domain_purpose
-    purpose: main
+  aculta_domain_site:
+    id: aculta_domain_site
+    site_key: main
     negate: false
     context_mapping: {  }
   request_path:

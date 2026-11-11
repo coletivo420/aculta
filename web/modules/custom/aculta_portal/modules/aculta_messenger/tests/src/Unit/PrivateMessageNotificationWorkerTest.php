@@ -413,7 +413,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       ->method('access')->with('view', $recipient, TRUE)->willReturn(
       $threadAccessible ? AccessResult::allowed() : AccessResult::forbidden(),
     );
-    $thread->method('getLastDeleteTimestamp')->with($recipient)->willReturn($lastDeleteTimestamp);
+    $thread->method('getLastDeleteTimestamp')->with($recipient)->willReturn($lastDeleteTimestamp ?? 0);
     $privateMessageService = $this->createMock(PrivateMessageServiceInterface::class);
     $privateMessageService->method('getThreadFromMessage')->with($privateMessage)->willReturn($thread);
 

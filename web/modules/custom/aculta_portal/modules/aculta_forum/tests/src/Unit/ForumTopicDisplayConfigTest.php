@@ -441,7 +441,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame('views_block:aculta_forum_categories-block_landing', $category_block['plugin']);
     self::assertSame('sidebar_first', $category_block['region']);
     self::assertSame("/\n/discussoes", $category_block['visibility']['request_path']['pages']);
-    self::assertSame('forum', $category_block['visibility']['aculta_domain_purpose']['purpose']);
+    self::assertSame('forum', $category_block['visibility']['aculta_domain_site']['site_key']);
     self::assertSame(
       '<p><a href="/">Discussões recentes</a></p>',
       $install['display']['page_categories']['display_options']['header']['area_text_custom']['content'],

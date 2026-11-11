@@ -13,11 +13,11 @@ use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Controls block visibility by the configured ACULTA domain purpose.
+ * Controls block visibility by the configured ACULTA site key.
  */
 #[Condition(
-  id: 'aculta_domain_purpose',
-  label: new TranslatableMarkup('ACULTA domain purpose'),
+  id: 'aculta_domain_site',
+  label: new TranslatableMarkup('ACULTA domain site'),
 )]
 final class DomainSiteCondition extends ConditionPluginBase implements ContainerFactoryPluginInterface {
 
@@ -48,17 +48,17 @@ final class DomainSiteCondition extends ConditionPluginBase implements Container
   public function defaultConfiguration(): array {
     // An unconfigured condition must never silently mean MAIN. Keeping the
     // empty default also lets explicit MAIN visibility survive config saves.
-    return ['purpose' => ''] + parent::defaultConfiguration();
+    return ['site_key' => ''] + parent::defaultConfiguration();
   }
 
   /**
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
-    $form['purpose'] = [
+    $form['site_key'] = [
       '#type' => 'select',
-      '#title' => $this->t('Domain purpose'),
-      '#empty_option' => $this->t('- Select purpose -'),
+      '#title' => $this->t('Domain site'),
+      '#empty_option' => $this->t('- Select site -'),
       '#empty_value' => '',
       '#options' => [
         'main' => $this->t('Institutional site'),
@@ -72,7 +72,7 @@ final class DomainSiteCondition extends ConditionPluginBase implements Container
         'links' => $this->t('Social links'),
         'eventos' => $this->t('Events'),
       ],
-      '#default_value' => $this->configuration['purpose'],
+      '#default_value' => $this->configuration['site_key'],
     ];
     return parent::buildConfigurationForm($form, $form_state);
   }
@@ -82,21 +82,21 @@ final class DomainSiteCondition extends ConditionPluginBase implements Container
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
     parent::submitConfigurationForm($form, $form_state);
-    $this->configuration['purpose'] = $form_state->getValue('purpose');
+    $this->configuration['site_key'] = $form_state->getValue('site_key');
   }
 
   /**
    * {@inheritdoc}
    */
   public function evaluate(): bool {
-    return $this->siteManager->getCurrentSiteKey()?->value === $this->configuration['purpose'];
+    return $this->siteManager->getCurrentSiteKey()?->value === $this->configuration['site_key'];
   }
 
   /**
    * {@inheritdoc}
    */
   public function summary(): string {
-    return (string) $this->t('Visible for the @purpose domain purpose.', ['@purpose' => $this->configuration['purpose']]);
+    return (string) $this->t('Visible for the @site domain site.', ['@site' => $this->configuration['site_key']]);
   }
 
   /**

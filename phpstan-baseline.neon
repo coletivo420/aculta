@@ -6999,29 +6999,9 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
 
-		-
-			rawMessage: Instanceof between *NEVER* and Drupal\private_message\Entity\PrivateMessageInterface will always evaluate to false.
-			identifier: instanceof.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/UnreadThreadCounter.php
 
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Service\UnreadThreadCounter::isUnread() never returns true so the return type can be changed to false.'
-			identifier: return.tooWideBool
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/UnreadThreadCounter.php
 
-		-
-			rawMessage: 'Parameter #1 $array of function array_reverse expects array, Drupal\Core\Field\EntityReferenceFieldItemListInterface given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/UnreadThreadCounter.php
 
-		-
-			rawMessage: Unreachable statement - code above always terminates.
-			identifier: deadCode.unreachable
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/UnreadThreadCounter.php
 
 		-
 			rawMessage: 'Call to an undefined method Behat\Mink\Driver\DriverInterface::getClient().'
@@ -7347,11 +7327,6 @@ parameters:
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/FriendshipNoticePipelineKernelTest.php
 
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem<Drupal\Core\Entity\EntityInterface>::id().'
-			identifier: method.notFound
-			count: 7
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Kernel/PrivateMessageRetentionKernelTest.php
 
 		-
 			rawMessage: 'Parameter #2 $module_list of class Drupal\Core\Extension\ModuleHandler constructor expects array<string, array{type: string, pathname: string, filename: string}>, array{aculta_messenger: array{type: ''module'', pathname: non-falsy-string, filename: null}} given.'
@@ -10060,3 +10035,207 @@ parameters:
 			identifier: function.unusedParameter
 			count: 1
 			path: web/themes/custom/aculta420_v2/theme-settings.php
+		-
+			rawMessage: '''
+				Call to deprecated method getMembersId() of class Drupal\private_message\Entity\PrivateMessageThread:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. Use self::getMemberIds() instead.
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Aviso/PrivateMessageDigestProvider.php
+
+		-
+			rawMessage: 'Cannot call method referencedEntities() on array<Drupal\private_message\Entity\PrivateMessageInterface>.'
+			identifier: method.nonObject
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
+
+		-
+			rawMessage: Instanceof between Drupal\private_message\Entity\PrivateMessageThreadInterface and Drupal\private_message\Entity\PrivateMessageThreadInterface will always evaluate to true.
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php
+
+		-
+			rawMessage: '''
+				Call to deprecated method isCurrentUserBannedByUser() of interface Drupal\private_message\Service\PrivateMessageBanManagerInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
+
+		-
+			rawMessage: '''
+				Call to method getThreadIdForMembers() of deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: method.deprecatedInterface
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
+
+		-
+			rawMessage: '''
+				Parameter $privateMessageMapper of method Drupal\aculta_messenger\Controller\NewConversationController::__construct() has typehint with deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: parameter.deprecatedInterface
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
+
+		-
+			rawMessage: '''
+				Property $privateMessageMapper references deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface in its type:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: property.deprecatedInterface
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
+
+		-
+			rawMessage: The "private_message.mapper" service is deprecated in private_message:4.0.0 and is removed from private_message:5.0.0. No replacement is provided. See https://www.drupal.org/node/3490530
+			identifier: getDeprecatedService.deprecated
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php
+
+		-
+			rawMessage: '''
+				Call to method getThreadIdForMembers() of deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: method.deprecatedInterface
+			count: 2
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
+
+		-
+			rawMessage: '''
+				Parameter $privateMessageMapper of method Drupal\aculta_messenger\Form\NewConversationForm::__construct() has typehint with deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: parameter.deprecatedInterface
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
+
+		-
+			rawMessage: '''
+				Property $privateMessageMapper references deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface in its type:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: property.deprecatedInterface
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
+
+		-
+			rawMessage: The "private_message.mapper" service is deprecated in private_message:4.0.0 and is removed from private_message:5.0.0. No replacement is provided. See https://www.drupal.org/node/3490530
+			identifier: getDeprecatedService.deprecated
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php
+
+		-
+			rawMessage: '''
+				Call to deprecated method getMembersId() of interface Drupal\private_message\Entity\PrivateMessageThreadInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. Use self::getMemberIds() instead.
+			'''
+			identifier: method.deprecated
+			count: 2
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
+
+		-
+			rawMessage: '''
+				Call to deprecated method isCurrentUserBannedByUser() of interface Drupal\private_message\Service\PrivateMessageBanManagerInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/PrivateMessageFormValidator.php
+
+		-
+			rawMessage: '''
+				Access to property $database of deprecated class Drupal\private_message\Mapper\PrivateMessageMapper:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: property.deprecatedClass
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Mapper/MessengerPrivateMessageMapper.php
+
+		-
+			rawMessage: '''
+				Class Drupal\aculta_messenger\Mapper\MessengerPrivateMessageMapper extends deprecated class Drupal\private_message\Mapper\PrivateMessageMapper:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: class.extendsDeprecatedClass
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Mapper/MessengerPrivateMessageMapper.php
+
+		-
+			rawMessage: '''
+				Call to deprecated method getMembersId() of interface Drupal\private_message\Entity\PrivateMessageThreadInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. Use self::getMemberIds() instead.
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Plugin/QueueWorker/PrivateMessageNotificationWorker.php
+
+		-
+			rawMessage: '''
+				Call to deprecated method getMembersId() of interface Drupal\private_message\Entity\PrivateMessageThreadInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. Use self::getMemberIds() instead.
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/ConversationMessagingState.php
+
+		-
+			rawMessage: '''
+				Call to deprecated method isCurrentUserBannedByUser() of interface Drupal\private_message\Service\PrivateMessageBanManagerInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/ConversationMessagingState.php
+
+
+		-
+			rawMessage: '''
+				Access to constant on deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: classConstant.deprecatedInterface
+			count: 5
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/NewConversationControllerTest.php
+
+		-
+			rawMessage: '''
+				Access to constant on deprecated interface Drupal\private_message\Mapper\PrivateMessageMapperInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: classConstant.deprecatedInterface
+			count: 6
+			path: web/modules/custom/aculta_portal/modules/aculta_messenger/tests/src/Unit/NewConversationRecipientIdsTest.php
+
+		-
+			rawMessage: '''
+				Call to deprecated method isCurrentUserBannedByUser() of interface Drupal\private_message\Service\PrivateMessageBanManagerInterface:
+				in private_message:4.0.0 and is removed from
+				  private_message:5.0.0. No replacement is provided.
+			'''
+			identifier: method.deprecated
+			count: 2
+			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Social/ConnectionQueryService.php

@@ -25,9 +25,9 @@ settings:
   items_per_page: null
   exposed: {  }
 visibility:
-  aculta_domain_purpose:
-    id: aculta_domain_purpose
-    purpose: magazine
+  aculta_domain_site:
+    id: aculta_domain_site
+    site_key: magazine
     negate: false
   request_path:
     id: request_path

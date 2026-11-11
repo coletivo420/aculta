@@ -49,7 +49,7 @@ final class MagazineAdminViewsConfigTest extends UnitTestCase {
     $block = Yaml::parseFile($repository_path . '/config/sync/block.block.aculta_magazine_admin_comments.yml');
     self::assertSame('views_block:aculta_magazine_admin_comments-block_comments', $block['plugin']);
     self::assertStringContainsString('/painel-administrativo/revista/comentarios', $block['visibility']['request_path']['pages']);
-    self::assertSame('main', $block['visibility']['aculta_domain_purpose']['purpose']);
+    self::assertSame('main', $block['visibility']['aculta_domain_site']['site_key']);
   }
 
   /**

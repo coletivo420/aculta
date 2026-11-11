@@ -32,7 +32,7 @@ visibility:
     pages: |-
       /
       /discussoes
-  aculta_domain_purpose:
-    id: aculta_domain_purpose
-    purpose: forum
+  aculta_domain_site:
+    id: aculta_domain_site
+    site_key: forum
     negate: false
