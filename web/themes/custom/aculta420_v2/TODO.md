@@ -10,7 +10,7 @@ Estado: Dev · versão 1.5.0 (`aculta420_v2.info.yml`) · status: `docs/operatio
 
 ## Marcos e pendências
 
-- SDC/Library: gate atual no inventário versionado; Links A/B/A e capturas em `tests/browser/capturas/ui-suite-links/2026-11-10/manifest.json`.
+- SDC/Library: gate atual no inventário versionado; Links A/B/A e piloto UI Skins 30/30 em cinco larguras/dois modos (`ruderalis`, contraste ≥7,16:1); catálogo admin 84 SDCs e story sob demanda rechecados. Capturas em `tests/browser/capturas/ui-skins-links/2026-11-11/manifest.json` e `tests/browser/capturas/ui-suite-library/2026-11-11/manifest.json`. Drawer Claro fora da viewport a 320, zoom/teclado admin pendentes.
 - Pendentes: completar inventário das dez áreas e interfaces administrativas; P8/P9, cache isolation/hit, contraste, zoom, teclado/perfis, rollback e aceite amplo.
 
 ## Leitura e entrega

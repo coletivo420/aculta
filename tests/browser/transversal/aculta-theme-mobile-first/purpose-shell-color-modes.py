@@ -41,6 +41,10 @@ missing = set(DOMAIN_IDS.values()) - set(hosts)
 if missing:
     raise SystemExit(f"Domínios ausentes em deploy.json: {', '.join(sorted(missing))}")
 PURPOSES = [(purpose, f"https://{hosts[domain_id]}/") for purpose, domain_id in DOMAIN_IDS.items()]
+# LinkWeed renders a standalone social-links-page SDC. Its presentation contract
+# intentionally hides the shared domain header so the author's title remains
+# primary; validate its own main content instead of requiring that header.
+STANDALONE_PRESENTATIONS = {"links"}
 SELECTED_PURPOSES = {
     value.strip() for value in os.environ.get("PURPOSE_MODE_PURPOSES", "").split(",")
     if value.strip()
@@ -184,9 +188,21 @@ try:
                       contrast:fg===null||bg===null?null:
                         Math.round((Math.max(fg,bg)+0.05)/(Math.min(fg,bg)+0.05)*100)/100};
                   });
+                  const contentTextLinks=[...document.querySelectorAll('main a')].filter(link=>
+                    link.innerText.trim()&&link.getClientRects().length>0
+                  ).map(link=>{
+                    const foreground=getComputedStyle(link).color;
+                    const background=effectiveBackground(link);
+                    const fg=luminance(colorChannels(foreground)),bg=luminance(colorChannels(background));
+                    return {label:link.innerText.trim().replace(/\\s+/g,' '),foreground,background,
+                      contrast:fg===null||bg===null?null:
+                        Math.round((Math.max(fg,bg)+0.05)/(Math.min(fg,bg)+0.05)*100)/100};
+                  });
                   return {
                     title:document.title,
                     mode:document.documentElement.getAttribute('data-theme'),
+                    skin:document.documentElement.getAttribute('data-skin'),
+                    siteKey:document.documentElement.getAttribute('data-site-key'),
                     width:innerWidth,
                     documentWidth:document.documentElement.scrollWidth,
                     surface:root.getPropertyValue('--color-canvas').trim(),
@@ -194,10 +210,13 @@ try:
                     authCssInjected:arguments[0],authMarkerCount:arguments[1],
                     institutionBar:document.querySelectorAll('.aculta-institution-bar').length,
                     domainHeader:document.querySelectorAll('.page__header').length,
+                    mainCount:document.querySelectorAll('main').length,
+                    h1Count:document.querySelectorAll('main h1').length,
                     reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,
                     barBackground:bar ? getComputedStyle(bar).backgroundColor : null,
                     headerBackground:header ? getComputedStyle(header).backgroundColor : null,
                     shellTextLinks,
+                    contentTextLinks,
                     overflowElements:innerWidth === 320 && location.host.startsWith('conta.')
                       ? [...document.querySelectorAll('body *')].map(el=>{
                           const rect=el.getBoundingClientRect(), css=getComputedStyle(el);
@@ -218,7 +237,9 @@ try:
                 })());""", [auth_css_injected, auth_marker_count]))
                 context = f"{purpose} {mode} {width}px"
                 check(f"{context}: tokens e reduced motion",
-                      metrics["mode"] == mode
+                      (purpose != "links" or (metrics["skin"] == "ruderalis"
+                                                and metrics["siteKey"] == "links"))
+                      and metrics["mode"] == mode
                       and metrics["surface"] == expected_surface
                       and metrics["primaryText"] == expected_text
                       and metrics["reducedMotion"], metrics)
@@ -226,11 +247,16 @@ try:
                       metrics["width"] == width
                       and metrics["documentWidth"] <= width
                       and metrics["institutionBar"] == 1
-                      and metrics["domainHeader"] == 1, metrics)
-                check(f"{context}: links textuais do shell com contraste AA",
-                      bool(metrics["shellTextLinks"])
+                      and metrics["mainCount"] == 1
+                      and metrics["h1Count"] == 1
+                      and (metrics["domainHeader"] == 0 if purpose in STANDALONE_PRESENTATIONS
+                           else metrics["domainHeader"] == 1), metrics)
+                text_links = (metrics["contentTextLinks"] if purpose in STANDALONE_PRESENTATIONS
+                              else metrics["shellTextLinks"])
+                check(f"{context}: links textuais com contraste AA",
+                      bool(text_links)
                       and all(link["contrast"] is not None and link["contrast"] >= 4.5
-                              for link in metrics["shellTextLinks"]), metrics["shellTextLinks"])
+                              for link in text_links), text_links)
                 if purpose == "account" and driver.js("return document.body.classList.contains('path-entrar')"):
                     google = auth_google_metrics(driver)
                     check(f"{context}: botão Google com contraste AA",

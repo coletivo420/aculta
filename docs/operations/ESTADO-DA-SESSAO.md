@@ -1,3 +1,14 @@
+# ADR-054/055 — revalidação UI Skins e catálogo de componentes — 2026-11-11
+
+- **Objetivo:** corrigir o gate de apresentação standalone Links e revalidar o catálogo administrativo reportado.
+- **Estado:** Links passou Firefox ESR 30/30, `ruderalis`, cinco larguras, claro/escuro, contraste ≥7,16:1 e sem overflow. Catálogo autenticado: 16 grupos, 84 componentes e story carregada; visitante anônimo recebe 403 esperado. Drawer Claro reportado separadamente do conteúdo.
+- **Decisões e alternativas descartadas:** não alterar CSP por mensagens `report-only`; preservar shell Links sem `.page__header`, conforme contrato do módulo.
+- **Cuidados:** 320 px pode mostrar itens do drawer Claro fora da viewport sem rolagem documental; sem evidência de falha do conteúdo SDC. Console JS 400 não reapareceu nesta captura.
+- **Commits e arquivos:** pendente nesta entrada; runners, ADRs, inventário, TODO/status e manifests de captura.
+- **Verificações:** UI Skins 134, Layouts 42, Layout Builder 276, UI Library 25, foundations 83 pares, UI Styles 40, status index, py_compile e git diff check PASS. Browser index FAIL em worktrees existentes/scripts ausentes; token budget FAIL por 7 violações globais. Zoom/teclado admin DEFERRED.
+- **Pendências e bloqueios:** aceite dos nove domínios restantes, cache-hit, zoom, teclado administrativo e causa do 400 se voltar.
+- **Próximo passo:** publicar esta microfase e seguir a próxima View/formulário do inventário.
+
 # ADR-054/055 — categorias Wiki em UI Patterns Views — 2026-11-11
 
 - **Objetivo:** migrar o wrapper visual de `wiki_categories:block_1` para o SDC reutilizável `layout-grid`.
@@ -16,14 +27,3 @@
 - **Verificações:** schema SDC PASS (83/1786); render SDC Drupal PASS; Views PASS (60); PHPUnit 3/19 PASS com depreciação PHPUnit; PHPStan/PHPCS PASS; índice status PASS; `git diff --check` PASS. Stylelint DEFERRED (binário ausente). Token budget FAIL por 7 violações globais preexistentes.
 - **Pendências e bloqueios:** browser, link com dados reais, perfis, zoom/cache e homologação ampla; ADRs permanecem abertas.
 - **Próximo passo:** executar captura focal de `/transparencia` com browser disponível, revisar e publicar esta entrega isolada.
-
-# ADR-054/055 — catálogo da Loja em UI Patterns — 2026-11-11
-
-- **Objetivo:** migrar o grid nativo do catálogo Commerce para UI Patterns Views sem alterar a apresentação funcional de produto/compra.
-- **Estado:** `aculta_shop_catalog` block/page usa `layout-grid`; adapter do view mode `catalog` compõe `product-card` com render arrays nativos. Sync/Runtime coincidem. `/produtos` HTTP 200, produto 1 e add-to-cart iguais antes/depois. Firefox headless 10/10 em 320/390/768/1024/1440 claro/escuro, sem overflow, foco PASS, contraste ≥12,4:1. Capturas PNG locais e hashes no manifest.
-- **Decisões e alternativas descartadas:** manter row `entity:commerce_product`/`catalog`, formulário e plugin Commerce; UI Patterns substitui só o style grid.
-- **Cuidados:** cache dinâmico continua `UNCACHEABLE`; só há um produto publicado, sem prova de colunas com várias rows. Browser-index global falha em pastas/worktrees preexistentes.
-- **Commit publicado:** `5471ba21f`; View Sync, gate Views, gerador/inventário, ADRs, changelog/roadmap/status e suíte browser reutilizável.
-- **Verificações:** Runtime 200 antes/depois, 1 row, cache private; paridade Sync/Runtime; Views 72; Firefox 10/10; schema SDC 84/1798, render Drupal SDC 42, PHPUnit 3/17 (1 depreciação), PHPCS, PHPStan, foundations 83 pares, UI Styles 40 e status index PASS. Stylelint DEFERRED (binário ausente); browser-index global FAIL preexistente; token-budget FAIL por 7 violações globais. Zoom 200%, cache-hit, perfis e aceite visual humano DEFERRED.
-- **Pendências e bloqueios:** migrações site-wide, outros papéis/tecnologia assistiva, zoom/cache e homologação ampla; ADRs continuam abertas.
-- **Próximo passo:** migrar outra superfície pública/admin do inventário e manter testes por domínio/owner.

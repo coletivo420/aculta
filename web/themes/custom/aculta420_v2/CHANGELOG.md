@@ -1,3 +1,9 @@
+## Não versionado — evidência piloto UI Skins e catálogo administrativo (2026-11-11)
+
+- Links passou 30/30 checks em cinco larguras e claro/escuro; `ruderalis`, `site_key=links`, H1/main únicos, sem overflow e contraste mínimo 7,16:1.
+- Catálogo UI Patterns autenticado carregou 84 componentes/16 grupos e uma story sob demanda. A medição de overflow foi limitada ao conteúdo do catálogo; o drawer Claro fica registrado separadamente.
+- Zoom 200%, teclado administrativo, cache-hit e homologação dos demais domínios permanecem pendentes.
+
 ## Não versionado — UI Patterns style no catálogo público de Eventos (2026-11-11)
 
 - Envolve as rows nativas da View `eventos_publicos:block_1` com o SDC

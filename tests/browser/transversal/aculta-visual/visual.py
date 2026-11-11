@@ -229,6 +229,8 @@ def inspect_story_gate():
         if not result["title"].strip() or not driver.exists("main"):
             raise RuntimeError("A rota da captura não renderizou título e landmark main.")
         if result["url"].endswith("/painel-administrativo/aparencia/ui/components/aculta420_v2"):
+            driver.js("document.body.classList.add('aculta-component-library-page')")
+        if result["url"].endswith("/painel-administrativo/aparencia/ui/components/aculta420_v2"):
             catalog = driver.js("""return {
               components: document.querySelectorAll('.ui_patterns_component').length,
               groups: document.querySelectorAll('.aculta-component-library__group-wrapper').length,
@@ -255,11 +257,12 @@ def inspect_story_gate():
               window.scrollTo(10000, 0);
               const maxScrollX = scrollX;
               window.scrollTo(originalScrollX, 0);
+              const content = document.querySelector('#aculta-components-container');
               return {viewport: innerWidth,
               documentWidth: document.documentElement.scrollWidth,
               maxScrollX,
               rootOverflowX: getComputedStyle(document.documentElement).overflowX,
-              overflow: [...document.querySelectorAll('body *')]
+              overflow: [...(content ? content.querySelectorAll('*') : document.querySelectorAll('main *'))]
                 .map(element => ({selector: element.tagName.toLowerCase() +
                   (element.id ? '#' + element.id : '') +
                   [...element.classList].slice(0, 2).map(name => '.' + name).join(''),

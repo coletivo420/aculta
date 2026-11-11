@@ -189,3 +189,10 @@ O style da View `wiki_entries` consome `aculta420_v2:layout-grid` via UI Pattern
 ## Atualização — UI Patterns Views em categorias de taxonomia (2026-11-11)
 
 `wiki_categories:block_1` compõe as rows de termo pelo `layout-grid` SDC existente com UI Patterns Views. A configuração não converte taxonomia em markup duplicado nem altera links; Views continua dona da consulta, filtro, acesso, ordenação e pager. Browser validou 15 categorias e reflow responsivo com 245/245 verificações.
+
+
+## Atualização de homologação — UI Skins Links e catálogo (2026-11-11)
+
+Firefox ESR autenticado confirmou o catálogo protegido de UI Patterns com 16 grupos, 84 SDCs e uma story carregada sob demanda em 320/1280; o acesso anônimo retorna 403. O diagnóstico de largura do catálogo agora mede somente `#aculta-components-container`, deixando separado o menu lateral do tema administrativo Claro. O viewport 320 ainda registra elementos da navegação Claro fora da viewport sem rolagem de documento; zoom 200% e teclado administrativo seguem DEFERRED. Captura: `tests/browser/capturas/ui-suite-library/2026-11-11/manifest.json`.
+
+O piloto UI Skins Links passou 30/30 em cinco larguras e claro/escuro, com `data-skin=ruderalis`, `data-site-key=links`, H1/main únicos, contraste mínimo 7,16:1 e sem overflow. A apresentação LinkWeed é standalone por contrato e não possui `.page__header`; detalhes em `tests/browser/capturas/ui-skins-links/2026-11-11/manifest.json`. Homologação dos demais domínios/cache/zoom/aceite amplo permanece pendente; as ADRs não estão concluídas.

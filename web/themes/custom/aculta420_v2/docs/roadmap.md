@@ -26,9 +26,17 @@
 - `ui_skins` está habilitado no Config Sync; o gate exige o módulo, mapa de dez
   domínios, cinco variáveis, vinte scopes por variável e contraste ≥4,5:1.
 - UI Skins 1.2.1, mapa Domain ID → skin e scopes das cinco variáveis estão
-  ativos no Runtime. Links resolve Ruderalis e os outros domínios testados
-  resolvem o padrão Skunk; A/B/A anônimo não mostrou reaproveitamento entre
-  hosts. Contraste e aceite visual dos dez domínios permanecem pendentes.
+  ativos no Runtime. Links resolve Ruderalis; Firefox ESR 30/30 em cinco larguras e modos, sem
+  overflow, H1/main únicos e contraste mínimo 7,16:1. Os demais domínios,
+  cache-hit, zoom e aceite visual amplo permanecem pendentes.
+
+## UI Library administrativa (2026-11-11)
+
+- Catálogo autenticado: 16 grupos, 84 SDCs e story sob demanda, sem overflow
+  no conteúdo em 320/1280; anônimo bloqueado por 403 como esperado.
+- Drawer do Claro pode manter itens fora da viewport a 320 sem rolagem do
+  documento; este diagnóstico é separado do conteúdo do catálogo. Zoom e teclado
+  administrativo seguem DEFERRED.
 
 ## UI Icons — integração oficial em andamento (2026-11-10)
 

@@ -1,0 +1,49 @@
+{
+  "purpose": "UI Skins pilot for Links / LinkWeed; browser gate corrected for its documented standalone presentation.",
+  "date": "2026-11-11",
+  "environment": "ACULTA development runtime; Firefox ESR with visible X11 session.",
+  "route": "/",
+  "skin": "ruderalis",
+  "site_key": "links",
+  "domain_id": "links_aculta_org",
+  "viewports_css_px": [
+    320,
+    390,
+    768,
+    1024,
+    1440
+  ],
+  "color_modes": [
+    "light",
+    "dark"
+  ],
+  "checks": {
+    "passed": 30,
+    "failed": 0
+  },
+  "minimum_text_contrast_ratio": 7.16,
+  "assertions": [
+    "UI Skins mode tokens and reduced-motion preference",
+    "skin and site_key attributes",
+    "one institution bar, one main and one H1",
+    "document width does not exceed viewport",
+    "visible main content links meet WCAG AA contrast"
+  ],
+  "presentation_exception": "LinkWeed social-links-page intentionally hides .page__header; its own H1 and main are checked. This follows aculta_linkweed/docs/DESIGN-SYSTEM.md.",
+  "limitations": [
+    "No zoom 200% run",
+    "No keyboard-only interaction run",
+    "No cache-hit or preference persistence test",
+    "No human visual sign-off"
+  ],
+  "screenshots": {
+    "links-light-320.png": "6639da17a529c0321a0a1dc0367fee999337e2f3a76faf58dfa44147bc1c5212",
+    "links-light-1440.png": "88b87914412aee98c7bbcc8f38890319817158d77c10fac03348ad26aa58af17",
+    "links-dark-320.png": "46c559499455bcf3b92d8dd91dc5a0c1b253272b3b5ad09900dfdec53480a973",
+    "links-dark-1440.png": "1060e76dab9f0ea9fa3b03e0b05d31daa684bd4380b5a2606887d3f144d08158"
+  },
+  "runner": "tests/browser/transversal/aculta-theme-mobile-first/purpose-shell-color-modes.py",
+  "commit_tested": "working tree before evidence commit",
+  "method": "Firefox ESR visible X11, anonymous HTTP GET; browser-controlled data-theme and viewport.",
+  "runtime_status": "RUNTIME_PASS; UI Skins skin/site_key and computed tokens verified."
+}

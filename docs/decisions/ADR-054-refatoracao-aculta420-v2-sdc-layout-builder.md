@@ -113,6 +113,8 @@ Também foi classificada `revista_sessoes` sem cutover redundante: os seis displ
 - O conflito anterior do ConfigImporter foi resolvido pela migração das dependências/configurações proprietárias; o import parcial autorizado foi concluído após snapshot. A/B/A anônimo confirmou Links=Ruderalis e os outros domínios testados=Skunk, sem reaproveitamento cruzado entre hosts. Preferência de modo do usuário permanece preservada.
 - Ainda pendem contraste medido e aceitação visual dos dez domínios em claro/escuro, cinco larguras e zoom 200%, mais cache-hit em ordem inversa. Isso não fecha P8/P9 nem RN-00–05; `DomainPurposeManager` continua somente pelas responsabilidades funcionais enquanto a renomeação para `site_key` permanece aberta.
 
+Em nova evidência de 2026-11-11, Firefox ESR anônimo passou 30/30 para Links nos breakpoints 320/390/768/1024/1440 e modos claro/escuro; confirmou `site_key=links`, skin `ruderalis`, barra institucional, H1/main únicos, links com contraste mínimo de 7,16:1 e ausência de overflow. A apresentação standalone `social-links-page` não tem `.page__header`, conforme contrato documentado pelo módulo LinkWeed. Manifesto: `tests/browser/capturas/ui-skins-links/2026-11-11/manifest.json`. Esta evidência cobre só o piloto.
+
 
 
 ### Atualização US-12 — SDC editorial em Views da Revista (2026-11-11)
