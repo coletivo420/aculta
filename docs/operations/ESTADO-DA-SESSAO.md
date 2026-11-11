@@ -1,3 +1,14 @@
+# PHPStan — microfase 22b aculta_events — 2026-11-11
+
+- **Objetivo:** zerar erros PHPStan de produção em `aculta_events`.
+- **Estado:** produção em zero; 112 erros permanecem somente nos testes. PHPStan global estrito `[OK] No errors`; Unit focal PASS. Unit global interrompido por fatal de função duplicada entre checkouts.
+- **Decisões e alternativas descartadas:** narrowing de entidades/storage e correções de contrato; sem ignorar diagnósticos. `FOR UPDATE` preservado no objeto da consulta.
+- **Cuidados:** suíte global falhou aos 1708/3286 por duplicidade de `aculta_messenger_schema()`; nenhum Kernel executado para evitar o banco operacional.
+- **Commits e arquivos:** commit desta microfase inclui Eventos, baseline, relatório e este handoff; hash informado na entrega.
+- **Verificações:** Unit do módulo 30/62 PASS; lint, YAML, gate Portal 1234, descoberta de suítes e PHPStan global PASS. Unit global FAIL pela duplicidade citada. Runtime DEFERRED pelo checkout principal sujo.
+- **Pendências e bloqueios:** 112 erros em testes de `aculta_events`; Runtime/cache não sincronizados.
+- **Próximo passo:** retomar a limpeza PHPStan dos testes de `aculta_events`.
+
 # Runtime — ativação de aculta_activity — 2026-11-11
 
 - **Objetivo:** habilitar ACULTA Activity no Runtime de desenvolvimento.
@@ -19,15 +30,3 @@
 - **Verificações:** PHPStan 0, unit 3287, Portal 1234, boundary 7888, browser index 151, admin routes, aliases, root policy e status index PASS; smoke Firefox 70/70 pós-import.
 - **Pendências e bloqueios:** Kernel focal do domínio PASS com SQLite isolado; suíte Kernel completa DEFERRED por dependências de ambiente (`aculta_file_uploader`, `aculta_lms_resources`, schema do Commerce), sessão autenticada (DT-S01), cache-hit e aceite humano.
 - **Próximo passo:** importar a configuração autorizada, rodar Kernel/Functional e concluir RN-05.
-
-# PHPStan — rodada 18 aculta_mailer — 2026-11-11
-
-- **Objetivo:** zerar a dívida PHPStan de todo o módulo aculta_mailer.
-- **Estado:** src, .install e testes medidos em zero erros; baseline sem entradas do módulo. SMTP usa a fábrica pública Symfony mantendo TLS configurado.
-- **Decisões e alternativas descartadas:** narrowing de entidades concretas; helper valida FieldStorageDefinition; nenhum ignore PHPStan. Removido teste tautológico do TTL.
-- **Cuidados:** credenciais SMTP continuam resolvidas pelo SecretProvider; porta 465 usa smtps e verify_peer é encaminhado pela Dsn. Nenhum envio externo.
-- **Commits e arquivos:** base `0210e5c86`; código, testes e serviço de aculta_mailer, `phpstan-baseline.neon`, relatório de dívida, TODO/status e este handoff. Hash final consta no commit da rodada.
-- **Verificações:** PHPStan módulo/global `[OK] No errors`; Unit 166/348 PASS; PHP lint 29 arquivos, YAML serviços e status index PASS; baseline global 3564. Unit global 3287/17594 com 4 falhas fora do escopo (Forum, Game, Index) e 3 deprecações. Token budget FAIL por 7 violações globais preexistentes.
-- **Pendências e bloqueios:** migração de consumidores `DomainPurposeManager` para `DomainSiteManager` ausente de `origin/dev`; browser/SMTP externo seguem como próximos passos do componente.
-- **Próximo passo:** retomar rodada PHPStan 17 da aculta_wiki após a migração chegar a origin/dev.
-

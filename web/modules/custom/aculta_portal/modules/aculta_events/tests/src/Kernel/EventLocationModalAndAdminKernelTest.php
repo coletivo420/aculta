@@ -220,6 +220,7 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
     $modalForm = new EventLocationModalForm(
       $this->container->get('entity_type.manager'),
       $this->container->get('aculta_events.permission_policy'),
+      $this->container->get('renderer'),
     );
 
     // 1. Etapa de busca

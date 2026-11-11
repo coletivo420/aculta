@@ -11,6 +11,7 @@ use Drupal\aculta_cgu\Service\ContributionLifecycle;
 use Drupal\aculta_user\Organization\OrganizationMembershipManager;
 use Drupal\aculta_user\Organization\OwnershipClaimService;
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -195,8 +196,8 @@ final class EventOrganizationForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state): void {
-    parent::validateForm($form, $form_state);
+  public function validateForm(array &$form, FormStateInterface $form_state): ContentEntityInterface {
+    $entity = parent::validateForm($form, $form_state);
 
     if ($this->entity->isNew()) {
       $choice = (string) $form_state->getValue('is_claimed_choice', 'unclaimed');
@@ -220,6 +221,7 @@ final class EventOrganizationForm extends ContentEntityForm {
         $form_state->setErrorByName('contribution_rationale', (string) $this->t('Informe por que esta organização deve ser cadastrada.'));
       }
     }
+    return $entity;
   }
 
   /**
@@ -309,7 +311,7 @@ final class EventOrganizationForm extends ContentEntityForm {
 
     if ($isNew) {
       $choice = (string) $form_state->getValue('is_claimed_choice', 'unclaimed');
-      if ($choice === 'claimed' && $isAdmin) {
+      if ($choice === 'claimed') {
         $entity->set('reivindicada', TRUE);
         $entity->set('reivindicacao_status', 'confirmada');
         $entity->set('titular', $currentUid);

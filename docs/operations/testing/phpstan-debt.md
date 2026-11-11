@@ -330,3 +330,15 @@ Runtime de desenvolvimento: gate DEFERRED. O `plan` read-only encontrou `HEAD` i
 Escopo parcial: removidos guards `instanceof` redundantes conforme os tipos PHPDoc de storage/calendário, ajustado o encadeamento de `SELECT ... FOR UPDATE` para executar no objeto de consulta, corrigidos retornos e acesso a campos de endereço/data, removido o construtor não utilizado de dois providers e atualizadas suas definições de serviço, além das assinaturas `TranslatableMarkup` do formulário de confirmação. A passada global `analyse --fix --fix-ignored` foi repetida no estado inicial desta microfase e terminou com `No fixable errors found`, sem alterações automáticas.
 
 Resíduos: a microfase não finaliza `aculta_events`; permanecem 45 erros de produção e 112 em testes. Entre os resíduos de produção estão unions de entidades de contribuição, revisão com storage genérico, assinaturas Form API, injeção nos formulários modais e APIs dos plugins Views. Evidências: Unit 30 testes/62 assertions PASS; lint nos 14 arquivos PHP alterados PASS; gate Portal Drupal 12 PASS (1234 verificações); análise PHPStan global estrita `[OK] No errors`; baseline regenerado localmente e `git diff --check` PASS.
+
+## Microfase 22b — 2026-11-11 (`aculta_events`, produção)
+
+| Medida | Antes | Depois |
+| --- | ---: | ---: |
+| Erros brutos em `aculta_events` | 157 | 112 |
+| Erros em produção do módulo | 45 | 0 |
+| Baseline global (ocorrências) | 2551 | 2500 |
+
+Escopo: estreitamento de entidades de Evento/Local/Organização/Contribution/UgcReport, storage revisionável e tipo da consulta Views SQL; retorno de validação dos formulários de entidade conforme `ContentEntityFormInterface`; renderização do card Views pela API do renderer; campos de endereço lidos via `getValue()`; dependências não usadas removidas do migrador; `SELECT ... FOR UPDATE` mantido e executado no objeto da consulta. Os formulários modais recebem `RendererInterface` por DI, e fixtures Kernel foram ajustadas aos construtores.
+
+Resíduos: zero erro bruto em `src`; permanecem 112 erros, todos em testes. A regeneração global retirou 45 ocorrências de Eventos e seis entradas antigas de scripts que já não aparecem na análise atual; nenhum script foi alterado. Evidências: análise bruta do módulo (157 -> 112, produção 45 -> 0), análise global estrita `[OK] No errors`, Unit do módulo 30 testes/62 assertions PASS, descoberta de suítes PASS (unit=674), lint de 19 arquivos PHP PASS, YAML de serviços PASS, gate Portal Drupal 12 PASS (1234 verificações). A suíte Unit global foi executada, mas terminou com fatal aos 1708/3286 testes porque `aculta_messenger_schema()` foi declarada pelos dois checkouts (`round19` e principal); nenhum Kernel foi executado para evitar banco.

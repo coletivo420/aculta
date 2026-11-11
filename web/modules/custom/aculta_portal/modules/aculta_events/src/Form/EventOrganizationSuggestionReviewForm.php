@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_events\Form;
 
 use Drupal\aculta_events\Entity\EventOrganizationSuggestion;
+use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Organization\OrganizationSuggestionService;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
@@ -52,7 +53,7 @@ final class EventOrganizationSuggestionReviewForm extends FormBase {
       if (!in_array($field, ['title', 'body', 'imagem', 'links', 'localidade', 'uf', 'ocultar_localidade'], TRUE)) {
         continue;
       }
-      $current = $organization !== NULL
+      $current = $organization instanceof EventOrganization
         ? ($field === 'title' ? $organization->label() : $organization->get($field)->value)
         : $this->t('Organização removida');
       $rows[] = [

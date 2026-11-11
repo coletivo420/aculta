@@ -13,6 +13,7 @@ use Drupal\aculta_events\Route\EventRouteContext;
 use Drupal\aculta_user\Organization\OrganizationAccessService;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Url;
@@ -174,8 +175,8 @@ final class EventForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state): void {
-    parent::validateForm($form, $form_state);
+  public function validateForm(array &$form, FormStateInterface $form_state): ContentEntityInterface {
+    $entity = parent::validateForm($form, $form_state);
 
     // Validação de segurança no servidor para Organizações.
     $orgValues = $form_state->getValue('field_organizacao');
@@ -208,10 +209,8 @@ final class EventForm extends ContentEntityForm {
       }
     }
 
-    /** @var \Drupal\aculta_events\Entity\Event $entity */
-    $entity = $this->entity;
     if (!$entity->isNew()) {
-      return;
+      return $entity;
     }
 
     $dates = (array) $form_state->getValue(['date_location', 'dates'], []);
@@ -240,6 +239,7 @@ final class EventForm extends ContentEntityForm {
         }
       }
     }
+    return $entity;
   }
 
   /**

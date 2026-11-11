@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Controller;
 
+use Drupal\aculta_cgu\Entity\UgcReport;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -68,6 +69,9 @@ final class EventOrganizationAdminController extends ControllerBase {
         $reports = $this->entities->getStorage('aculta_ugc_report')->loadMultiple($reportedIds);
         $targetOrgIds = [];
         foreach ($reports as $rep) {
+          if (!$rep instanceof UgcReport) {
+            continue;
+          }
           $targetOrgIds[] = (int) $rep->get('target_id')->value;
         }
         $targetOrgIds = array_unique(array_filter($targetOrgIds));

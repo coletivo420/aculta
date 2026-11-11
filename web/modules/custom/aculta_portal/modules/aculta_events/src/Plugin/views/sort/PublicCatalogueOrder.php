@@ -6,6 +6,7 @@ namespace Drupal\aculta_events\Plugin\views\sort;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\views\Attribute\ViewsSort;
+use Drupal\views\Plugin\views\query\Sql;
 use Drupal\views\Plugin\views\sort\SortPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -19,7 +20,7 @@ final class PublicCatalogueOrder extends SortPluginBase implements ContainerFact
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly RequestStack $requestStack,
+    protected readonly RequestStack $requestStack,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -38,6 +39,9 @@ final class PublicCatalogueOrder extends SortPluginBase implements ContainerFact
   /**
    * {@inheritdoc} */
   public function query(): void {
+    if (!$this->query instanceof Sql) {
+      return;
+    }
     $this->ensureMyTable();
     $request = $this->requestStack->getCurrentRequest();
     $items = $request?->attributes->get('_aculta_events_catalogue_cards', []);

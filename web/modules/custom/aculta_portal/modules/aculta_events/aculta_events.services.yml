@@ -112,6 +112,5 @@ services:
     class: Drupal\aculta_events\Migration\ActivityLocationMigrator
     arguments:
       - '@entity_type.manager'
-      - '@database'
       - '@state'
       - '@logger.channel.aculta_events'

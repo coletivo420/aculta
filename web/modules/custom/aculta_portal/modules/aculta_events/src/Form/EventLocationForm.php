@@ -10,6 +10,7 @@ use Drupal\aculta_events\Adapter\LocationContributionAdapter;
 use Drupal\aculta_cgu\Service\ContributionLifecycle;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -120,8 +121,8 @@ final class EventLocationForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state): void {
-    parent::validateForm($form, $form_state);
+  public function validateForm(array &$form, FormStateInterface $form_state): ContentEntityInterface {
+    $entity = parent::validateForm($form, $form_state);
     $site = trim((string) ($form_state->getValue(['field_site', 0, 'uri']) ?? ''));
     if ($site !== '') {
       $scheme = parse_url($site, PHP_URL_SCHEME);
@@ -140,6 +141,7 @@ final class EventLocationForm extends ContentEntityForm {
         }
       }
     }
+    return $entity;
   }
 
   /**

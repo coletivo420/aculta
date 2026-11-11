@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_events\Form;
 
 use Drupal\aculta_events\Entity\Event;
+use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Event\EventDateListBuilder;
 use Drupal\aculta_events\Plugin\Field\FieldWidget\EventLocationModalWidget;
@@ -33,7 +34,7 @@ class EventDateCreateForm extends FormBase {
    */
   protected const WRAPPER_ID = 'aculta-event-date-form';
 
-  public function __construct(
+  final public function __construct(
     protected readonly EntityTypeManagerInterface $entities,
     protected readonly AccountProxyInterface $currentUserAccount,
     protected readonly EventDateListBuilder $dateListBuilder,
@@ -227,7 +228,9 @@ class EventDateCreateForm extends FormBase {
       ->execute();
     $max = 0;
     foreach ($storage->loadMultiple($ids) as $date) {
-      $max = max($max, (int) $date->get('field_peso')->value);
+      if ($date instanceof EventDate) {
+        $max = max($max, (int) $date->get('field_peso')->value);
+      }
     }
     return $max + 1;
   }

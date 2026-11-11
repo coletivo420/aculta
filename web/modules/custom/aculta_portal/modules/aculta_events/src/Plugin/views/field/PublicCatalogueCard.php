@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Plugin\views\field;
 
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\aculta_events\Cache\EventCacheTags;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\views\Attribute\ViewsField;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
+use Drupal\views\Plugin\views\query\Sql;
 use Drupal\views\ResultRow;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -22,7 +24,7 @@ final class PublicCatalogueCard extends FieldPluginBase implements ContainerFact
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly RequestStack $requestStack,
+    protected readonly RequestStack $requestStack,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -41,30 +43,34 @@ final class PublicCatalogueCard extends FieldPluginBase implements ContainerFact
   /**
    * {@inheritdoc} */
   public function query(): void {
+    if (!$this->query instanceof Sql) {
+      return;
+    }
     $this->ensureMyTable();
     $this->field_alias = $this->query->addField($this->tableAlias, 'id', 'aculta_event_id');
   }
 
   /**
    * {@inheritdoc} */
-  public function render(ResultRow $values): array {
+  public function render(ResultRow $values): MarkupInterface|string {
     $eventId = (string) ($values->aculta_event_id ?? '');
     $request = $this->requestStack->getCurrentRequest();
-    $items = $request?->attributes->get('_aculta_events_catalogue_cards', []);
+    $items = $request->attributes->get('_aculta_events_catalogue_cards', []);
     $item = is_array($items) ? ($items[$eventId] ?? NULL) : NULL;
     if (!is_array($item)) {
-      return [];
+      return '';
     }
 
-    return [
+    $build = [
       '#theme' => 'aculta_event_catalogue_card',
       '#item' => $item,
       '#cache' => [
         'contexts' => ['url.query_args', 'user', 'languages:language_interface'],
         'tags' => [EventCacheTags::LISTA],
-        'max-age' => (int) ($request?->attributes->get('_aculta_events_catalogue_max_age') ?? Cache::PERMANENT),
+        'max-age' => (int) ($request->attributes->get('_aculta_events_catalogue_max_age') ?? Cache::PERMANENT),
       ],
     ];
+    return $this->getRenderer()->render($build);
   }
 
 }

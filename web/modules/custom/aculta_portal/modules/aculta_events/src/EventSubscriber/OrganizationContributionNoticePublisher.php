@@ -11,6 +11,7 @@ use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\user\UserInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -49,7 +50,11 @@ final class OrganizationContributionNoticePublisher implements EventSubscriberIn
     if (!$recipient instanceof UserInterface || !$recipient->isActive()) {
       return;
     }
-    $proposal = $this->entityTypeManager->getStorage('aculta_contribution')->loadRevision($event->proposalRevisionId);
+    $storage = $this->entityTypeManager->getStorage('aculta_contribution');
+    if (!$storage instanceof RevisionableStorageInterface) {
+      return;
+    }
+    $proposal = $storage->loadRevision($event->proposalRevisionId);
     $allowedIntents = [
       'events_organization' => ['organization_update', 'organization_create'],
       'events_location' => ['location_update', 'location_create'],

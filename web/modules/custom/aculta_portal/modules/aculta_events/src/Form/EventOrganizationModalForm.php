@@ -19,6 +19,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Htmx\Htmx;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -41,7 +42,7 @@ final class EventOrganizationModalForm extends FormBase {
   /**
    * URL do próprio modal (com o contexto do widget) para o `hx-post`.
    */
-  private Url $htmxUrl;
+  protected Url $htmxUrl;
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
@@ -52,6 +53,8 @@ final class EventOrganizationModalForm extends FormBase {
     protected readonly OrganizationAccessService $orgAccessService,
     #[Autowire(service: 'aculta_user.organization_membership_manager')]
     protected readonly OrganizationMembershipManager $membershipManager,
+    #[Autowire(service: 'renderer')]
+    protected readonly RendererInterface $renderer,
     #[Autowire(service: 'aculta_user.ownership_claim_service')]
     protected readonly ?OwnershipClaimService $claimService = NULL,
     #[Autowire(service: 'aculta_contributions.lifecycle')]
@@ -69,6 +72,7 @@ final class EventOrganizationModalForm extends FormBase {
       $container->get('aculta_events.permission_policy'),
       $container->get('aculta_user.organization_access_service'),
       $container->get('aculta_user.organization_membership_manager'),
+      $container->get('renderer'),
       $container->has('aculta_user.ownership_claim_service') ? $container->get('aculta_user.ownership_claim_service') : NULL,
       $container->has('aculta_contributions.lifecycle') ? $container->get('aculta_contributions.lifecycle') : NULL,
       $container->has('aculta_events.organization_contribution_adapter') ? $container->get('aculta_events.organization_contribution_adapter') : NULL,
@@ -323,6 +327,9 @@ final class EventOrganizationModalForm extends FormBase {
       ];
 
       foreach ($dups as $dup) {
+        if (!$dup instanceof EventOrganization) {
+          continue;
+        }
         $did = (int) $dup->id();
         $bText = $dup->isClaimed() ? $this->t('Reivindicada') : $this->t('Não reivindicada');
         $form['duplicate_table'][$did] = [
@@ -632,7 +639,7 @@ final class EventOrganizationModalForm extends FormBase {
     }
 
     $slug = EventSlugGenerator::fromTitle($nome);
-    $isClaimedImmediate = ($choice === 'claimed' && $isAdmin);
+    $isClaimedImmediate = $choice === 'claimed';
     $isPendingClaim = ($choice === 'request_claim');
 
     /** @var \Drupal\aculta_events\Entity\EventOrganization $org */
@@ -713,7 +720,7 @@ final class EventOrganizationModalForm extends FormBase {
       : EventOrganizationModalWidget::buildSingleCardOrEmpty($orgId, $fieldName, $wrapperId);
 
     return new Response(
-      (string) \Drupal::service('renderer')->renderInIsolation($card),
+      (string) $this->renderer->renderInIsolation($card),
       Response::HTTP_OK,
       [
         'Content-Type' => 'text/html; charset=UTF-8',

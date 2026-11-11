@@ -83,7 +83,7 @@ final class EventOrganizationContributionReviewForm extends FormBase {
         ? $this->t('Será criada após aprovação')
         : ($isEvent && $field === 'dates'
           ? $this->t('Datas oficiais existentes serão preservadas; as propostas são aditivas')
-        : ($target !== FALSE && $target !== NULL
+        : ($target instanceof \Drupal\Core\Entity\ContentEntityInterface
         ? ($field === 'title' ? $target->label() : $target->get($field)->value)
         : $this->t('Registro removido')));
       $rows[] = [
@@ -107,7 +107,7 @@ final class EventOrganizationContributionReviewForm extends FormBase {
       if (!$form_state->getValue('reveal_private_address')
         || !$this->currentUser()->hasPermission('administer aculta events')) {
         foreach ($form['changes']['#rows'] as &$row) {
-          if (($row['field']['#plain_text'] ?? '') === $this->fieldLabel('field_endereco')) {
+          if ($row['field']['#plain_text'] === $this->fieldLabel('field_endereco')) {
             $row['proposed']['#plain_text'] = (string) $this->t('Endereço privado — revele somente se necessário');
           }
         }

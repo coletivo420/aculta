@@ -486,6 +486,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
       $this->container->get('aculta_events.permission_policy'),
       $this->container->get('aculta_user.organization_access_service'),
       $this->container->get('aculta_user.organization_membership_manager'),
+      $this->container->get('renderer'),
     );
 
     // Passo 1: Busca por 'Esperança'.
@@ -738,6 +739,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
       $this->container->get('aculta_events.permission_policy'),
       $this->container->get('aculta_user.organization_access_service'),
       $this->container->get('aculta_user.organization_membership_manager'),
+      $this->container->get('renderer'),
       $this->container->get('aculta_user.ownership_claim_service'),
       $lifecycle,
       $adapter,

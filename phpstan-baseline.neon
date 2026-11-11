@@ -1,12 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			rawMessage: Variable $argv might not be defined.
-			identifier: variable.undefined
-			count: 1
-			path: scripts/audit-aculta420-layout-builder.php
-
-		-
 			rawMessage: 'Offset 2 on array{non-empty-list<string>, non-empty-list<string>, non-empty-list<string>} on left side of ?? always exists and is not nullable.'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -37,12 +31,6 @@ parameters:
 			path: scripts/audit-aculta420-library-responsive.php
 
 		-
-			rawMessage: Variable $argv might not be defined.
-			identifier: variable.undefined
-			count: 1
-			path: scripts/audit-aculta420-v2-inventory.php
-
-		-
 			rawMessage: Offset 0 on non-empty-list<string> on left side of ?? always exists and is not nullable.
 			identifier: nullCoalesce.offset
 			count: 1
@@ -58,12 +46,6 @@ parameters:
 			rawMessage: 'Offset 1 on array{list<string>, list<non-empty-string>} on left side of ?? always exists and is not nullable.'
 			identifier: nullCoalesce.offset
 			count: 2
-			path: scripts/audit-custom-tests.php
-
-		-
-			rawMessage: Variable $argv might not be defined.
-			identifier: variable.undefined
-			count: 1
 			path: scripts/audit-custom-tests.php
 
 		-
@@ -358,12 +340,6 @@ parameters:
 			path: scripts/validate-aculta420-layout-builder-batch.php
 
 		-
-			rawMessage: Variable $argv might not be defined.
-			identifier: variable.undefined
-			count: 1
-			path: scripts/validate-aculta420-shell-regions.php
-
-		-
 			rawMessage: 'Offset 1 on array{list<string>, list<non-falsy-string>} on left side of ?? always exists and is not nullable.'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -410,12 +386,6 @@ parameters:
 			identifier: staticMethod.internalClass
 			count: 30
 			path: scripts/validate-aculta420-v2-sdc.php
-
-		-
-			rawMessage: Variable $argv might not be defined.
-			identifier: variable.undefined
-			count: 1
-			path: scripts/validate-domain-front-paths.php
 
 		-
 			rawMessage: Instanceof between Drupal\aculta_portal\Presentation\DomainPresentationBuilder and Drupal\aculta_portal\Presentation\DomainPresentationBuilder will always evaluate to true.
@@ -504,12 +474,6 @@ parameters:
 		-
 			rawMessage: 'Offset 1 on array{list<string>, list<non-empty-string>} on left side of ?? always exists and is not nullable.'
 			identifier: nullCoalesce.offset
-			count: 1
-			path: scripts/validate-project-status-index.php
-
-		-
-			rawMessage: Variable $argv might not be defined.
-			identifier: variable.undefined
 			count: 1
 			path: scripts/validate-project-status-index.php
 
@@ -2225,240 +2189,6 @@ parameters:
 			identifier: method.internal
 			count: 2
 			path: web/modules/custom/aculta_portal/modules/aculta_editor/tests/src/Unit/TextFormatPolicyTest.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventIcsController.php
-
-		-
-			rawMessage: 'Parameter #2 $evento of method Drupal\aculta_events\Calendar\EventCalendarItemProvider::itemDaData() expects Drupal\aculta_events\Entity\Event|null, Drupal\Core\Entity\EntityInterface given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventIcsController.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 4
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventLocationContributionAdminController.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::getOwnerId().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventLocationContributionAdminController.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityStorageInterface::loadRevision().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/EventSubscriber/OrganizationContributionNoticePublisher.php
-
-		-
-			rawMessage: 'Offset ''body''|''dates''|''field…''|''field_descricao''|''field_endereco''|''field_horario''|''field_organizacao''|''field_precisao''|''field_site''|''field_subtitulo''|''field_telefone''|''field_tipo''|''field_url''|''imagem''|''links''|''localidade''|''ocultar_localidade''|''title''|''uf'' on array{title: Drupal\Core\StringTranslation\TranslatableMarkup, body: Drupal\Core\StringTranslation\TranslatableMarkup, imagem: Drupal\Core\StringTranslation\TranslatableMarkup, links: Drupal\Core\StringTranslation\TranslatableMarkup, localidade: Drupal\Core\StringTranslation\TranslatableMarkup, uf: Drupal\Core\StringTranslation\TranslatableMarkup, ocultar_localidade: Drupal\Core\StringTranslation\TranslatableMarkup, field_tipo: Drupal\Core\StringTranslation\TranslatableMarkup, ...} in isset() always exists and is not nullable.'
-			identifier: isset.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventContributionRevisionForm.php
-
-		-
-			rawMessage: 'Parameter &$form by-ref type of method Drupal\aculta_events\Form\EventContributionRevisionForm::buildPayloadField() expects array<string, mixed>, array given.'
-			identifier: parameterByRef.type
-			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventContributionRevisionForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventDateCreateForm.php
-
-		-
-			rawMessage: 'Unsafe usage of new static().'
-			identifier: new.static
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventDateCreateForm.php
-
-		-
-			rawMessage: 'Return type (void) of method Drupal\aculta_events\Form\EventForm::validateForm() should be compatible with return type (Drupal\Core\Entity\ContentEntityInterface) of method Drupal\Core\Entity\ContentEntityFormInterface::validateForm()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventForm.php
-
-		-
-			rawMessage: 'Return type (void) of method Drupal\aculta_events\Form\EventLocationForm::validateForm() should be compatible with return type (Drupal\Core\Entity\ContentEntityInterface) of method Drupal\Core\Entity\ContentEntityFormInterface::validateForm()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationForm.php
-
-		-
-			rawMessage: Access to an undefined property Drupal\Core\Field\FieldItemInterface::$administrative_area.
-			identifier: property.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php
-
-		-
-			rawMessage: Access to an undefined property Drupal\Core\Field\FieldItemInterface::$locality.
-			identifier: property.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php
-
-		-
-			rawMessage: Drupal\Core\DependencyInjection\DependencySerializationTrait does not support private properties.
-			identifier: dependencySerializationTraitProperty.unsupportedPrivateProperty
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php
-
-		-
-			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
-			identifier: globalDrupalDependencyInjection.useDependencyInjection
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationContributionReviewForm.php
-
-		-
-			rawMessage: 'Offset ''#plain_text'' on array{''#plain_text'': string} on left side of ?? always exists and is not nullable.'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationContributionReviewForm.php
-
-		-
-			rawMessage: 'Return type (void) of method Drupal\aculta_events\Form\EventOrganizationForm::validateForm() should be compatible with return type (Drupal\Core\Entity\ContentEntityInterface) of method Drupal\Core\Entity\ContentEntityFormInterface::validateForm()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationForm.php
-
-		-
-			rawMessage: Right side of && is always true.
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::isClaimed().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php
-
-		-
-			rawMessage: Drupal\Core\DependencyInjection\DependencySerializationTrait does not support private properties.
-			identifier: dependencySerializationTraitProperty.unsupportedPrivateProperty
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php
-
-		-
-			rawMessage: Right side of && is always true.
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php
-
-		-
-			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
-			identifier: globalDrupalDependencyInjection.useDependencyInjection
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationSuggestionReviewForm.php
-
-		-
-			rawMessage: Access to an undefined property Drupal\Core\Field\FieldItemInterface::$postal_code.
-			identifier: property.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Migration/ActivityLocationMigrator.php
-
-		-
-			rawMessage: Instanceof between Drupal\node\Entity\Node and Drupal\node\NodeInterface will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Migration/ActivityLocationMigrator.php
-
-		-
-			rawMessage: 'Property Drupal\aculta_events\Migration\ActivityLocationMigrator::$database is never read, only written.'
-			identifier: property.onlyWritten
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Migration/ActivityLocationMigrator.php
-
-		-
-			rawMessage: 'Strict comparison using !== between int and null will always evaluate to true.'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Migration/ActivityLocationMigrator.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Database\Query\ConditionInterface::execute().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Organization/OrganizationSuggestionService.php
-
-		-
-			rawMessage: Result of && is always false.
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Organization/OrganizationSuggestionService.php
-
-		-
-			rawMessage: 'Strict comparison using !== between null and null will always evaluate to false.'
-			identifier: notIdentical.alwaysFalse
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Organization/OrganizationSuggestionService.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\views\Plugin\views\query\QueryPluginBase::addField().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/views/field/PublicCatalogueCard.php
-
-		-
-			rawMessage: Drupal\Core\DependencyInjection\DependencySerializationTrait does not support private properties.
-			identifier: dependencySerializationTraitProperty.unsupportedPrivateProperty
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/views/field/PublicCatalogueCard.php
-
-		-
-			rawMessage: 'Return type (array) of method Drupal\aculta_events\Plugin\views\field\PublicCatalogueCard::render() should be compatible with return type (Drupal\Component\Render\MarkupInterface|string) of method Drupal\views\Plugin\views\field\FieldHandlerInterface::render()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/views/field/PublicCatalogueCard.php
-
-		-
-			rawMessage: 'Return type (array) of method Drupal\aculta_events\Plugin\views\field\PublicCatalogueCard::render() should be compatible with return type (Drupal\Component\Render\MarkupInterface|string) of method Drupal\views\Plugin\views\field\FieldPluginBase::render()'
-			identifier: method.childReturnType
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/views/field/PublicCatalogueCard.php
-
-		-
-			rawMessage: Using nullsafe property access on non-nullable type Symfony\Component\HttpFoundation\Request. Use -> instead.
-			identifier: nullsafe.neverNull
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/views/field/PublicCatalogueCard.php
-
-		-
-			rawMessage: 'Call to an undefined method Drupal\views\Plugin\views\query\QueryPluginBase::addOrderBy().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/views/sort/PublicCatalogueOrder.php
-
-		-
-			rawMessage: Drupal\Core\DependencyInjection\DependencySerializationTrait does not support private properties.
-			identifier: dependencySerializationTraitProperty.unsupportedPrivateProperty
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/views/sort/PublicCatalogueOrder.php
 
 		-
 			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_calendar\\Item\\CalendarItem'' and Drupal\aculta_calendar\Item\CalendarItem will always evaluate to true.'

@@ -17,6 +17,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Htmx\Htmx;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -36,13 +37,15 @@ final class EventLocationModalForm extends FormBase {
   /**
    * URL do próprio modal (com o contexto do widget) para o `hx-post`.
    */
-  private Url $htmxUrl;
+  protected Url $htmxUrl;
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
     protected readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'aculta_events.permission_policy')]
     protected readonly EventPermissionPolicy $permissionPolicy,
+    #[Autowire(service: 'renderer')]
+    protected readonly RendererInterface $renderer,
     #[Autowire(service: 'aculta_contributions.lifecycle')]
     protected readonly ?ContributionLifecycle $contributions = NULL,
     #[Autowire(service: 'aculta_events.location_contribution_adapter')]
@@ -56,6 +59,7 @@ final class EventLocationModalForm extends FormBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('aculta_events.permission_policy'),
+      $container->get('renderer'),
       $container->has('aculta_contributions.lifecycle') ? $container->get('aculta_contributions.lifecycle') : NULL,
       $container->has('aculta_events.location_contribution_adapter') ? $container->get('aculta_events.location_contribution_adapter') : NULL,
     );
@@ -205,7 +209,8 @@ final class EventLocationModalForm extends FormBase {
       if ($loc->hasField('field_endereco') && !$loc->get('field_endereco')->isEmpty()) {
         $addr = $loc->get('field_endereco')->first();
         if ($addr) {
-          $parts = array_filter([$addr->locality, $addr->administrative_area]);
+          $addressValue = $addr->getValue();
+          $parts = array_filter([$addressValue['locality'] ?? NULL, $addressValue['administrative_area'] ?? NULL]);
           $addressText = implode(' - ', $parts);
         }
       }
@@ -573,7 +578,7 @@ final class EventLocationModalForm extends FormBase {
     ] + EventLocationModalWidget::buildCardOrEmpty($locationId, $fieldName, $wrapperId);
 
     return new Response(
-      (string) \Drupal::service('renderer')->renderInIsolation($card),
+      (string) $this->renderer->renderInIsolation($card),
       Response::HTTP_OK,
       [
         'Content-Type' => 'text/html; charset=UTF-8',

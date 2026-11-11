@@ -152,8 +152,6 @@ final class EventContributionRevisionForm extends FormBase {
   /**
    * Adds a typed widget for each field in the allowlisted proposal payload.
    *
-   * @param array<string, mixed> $form
-   *   Payload fieldset.
    * @param string $field
    *   Allowlisted payload field name.
    * @param mixed $value
@@ -196,7 +194,7 @@ final class EventContributionRevisionForm extends FormBase {
       ],
       default => [],
     };
-    if (!in_array($field, $allowedFields, TRUE) || !isset($labels[$field])) {
+    if (!in_array($field, $allowedFields, TRUE)) {
       throw new UnprocessableEntityHttpException('A proposta contém um campo não suportado para revisão.');
     }
     if ($field === 'ocultar_localidade') {
