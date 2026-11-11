@@ -203,6 +203,10 @@ A matriz UI Skins passou 300/300 nos dez domínios em cinco larguras e claro/esc
 A busca focal em tema, Portal e Config Sync não encontra `aculta_purpose_palette`, `data-purpose-scheme`, `--aculta-purpose-*`, `PurposePaletteSchemes`, `purposePaletteStyle()`, `aculta_cores_purpose` nem `purpose_palette`. Formulário/schema, código, seletores e valores sincronizados antigos foram removidos; não há alias, dual-read, fallback ou cópia preservada. Estes itens passam a `LEGACY_OBSOLETE`. A preferência de modo do usuário e `DomainPurposeManager` permanecem funcionais.
 
 
+## Atualização US-14 — homologação residual de UI Skins (2026-11-11)
+
+Firefox ESR visível nos dez domínios, em 320/768/1440, fechou 70/70 verificações: teclado com foco visível (30), zoom 200% sem overflow com um único institution/main/H1 (30) e headers de cache observados em três requisições anônimas por domínio (10). Zoom foi emulado por `layout.css.devPixelsPerPx=2`; as homes são `private/no-cache` com `UNCACHEABLE`, então MISS/UNCACHEABLE é o esperado. Evidência versionada: `tests/browser/capturas/ui-skins-final-acceptance/2026-11-11/manifest.json`. Aceite visual humano e perfis editor/admin continuam DEFERRED; RN-05 permanece em execução e a ADR não está encerrada.
+
 ## Atualização — UI Patterns na listagem de galerias públicas (2026-11-11)
 
 A View `media_galleries:page_1` (`/galleries`, MAIN) foi migrada com o SDC existente `revista-album-card` para a row, mapeando o formatter nativo da miniatura e o título; UI Patterns Views `layout-grid` compõe `view_rows`. A importação parcial foi isolada somente em `views.view.media_galleries`, após snapshot do Runtime. Antes/depois a View entregou três resultados; depois são três cards, três títulos e duas imagens. Firefox ESR confirmou HTTP 200, um H1/main e grade sem overflow em 320/390/768/1024/1440, claro/escuro. Config de pager full preservada, porém não há volume suficiente para exercitar navegação. Cache-hit, zoom 200%, teclado, perfis e revisão visual humana seguem DEFERRED. Evidência: `tests/browser/capturas/ui-patterns-media-galleries/2026-11-11/manifest.json`.

@@ -199,7 +199,8 @@
     "views.view.aculta_forum_categories.page_categories.display": "ui_patterns:aculta420_v2:views-display; row SDC forum-category; native grouped style, access and pager preserved",
     "views.view.aculta_forum_categories.block_landing": "row UI Patterns; default style and display; placement hidden on public home, no visible-output acceptance claimed",
     "views.view.media_galleries.page_1": "UI Patterns row revista-album-card maps native media thumbnail and title fields; style layout-grid composes view_rows; Runtime/Sync match after isolated config import; public /galleries returns 3 cards with 2 images, one H1/main and responsive no-overflow browser checks",
-    "ui_patterns_views": "enabled; four row/style/display plugin assignments across Albums and Forum Categories"
+    "ui_patterns_views": "enabled; four row/style/display plugin assignments across Albums and Forum Categories",
+    "ui_skins_final_acceptance": "Firefox ESR visible X11 passed 70/70 on the ten development domains at 320/768/1440: keyboard Tab focus visible (30), page zoom 200% via layout.css.devPixelsPerPx=2 with one institution/main/H1 and zero overflow (30), and cache headers observed across three anonymous requests per domain (10). Homes are private/no-cache and UNCACHEABLE, so MISS/UNCACHEABLE is expected; human visual sign-off and authenticated editor/admin profiles remain DEFERRED. Manifest: tests/browser/capturas/ui-skins-final-acceptance/2026-11-11/manifest.json"
   },
   "notes": [
     "UI Skins map and CSS variables are active; anonymous A/B/A requests returned distinct Ruderalis/Skunk values without cross-host carryover.",
