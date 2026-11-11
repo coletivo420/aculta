@@ -1,12 +1,12 @@
 # ADR-054/055 — UI Styles Entity Status — 2026-11-11
 
-- **Objetivo:** ativar o estilo oficial de pré-visualização não publicada sem alterar acesso/moderação.
-- **Estado:** Sync/Runtime habilitados; classe `aculta-content-status--unpublished`. Teste upstream 1/7; saída visual, perfis e cache DEFERRED.
+- **Objetivo:** integrar UI Styles Entity Status e retomar a falha reportada no catálogo de SDCs.
+- **Estado:** Entity Status Sync/Runtime habilitados; classe `aculta-content-status--unpublished`. UI Patterns Library abriu em Firefox autenticado: 82 componentes, 16 grupos, 82 prévias, uma story carregada; sem 500, `maxScrollX=0` em 320/1280. Erros exatos de console/CSP ainda não correlacionados.
 - **Decisões/cuidados:** import parcial do settings após snapshot; o plugin apenas marca visualmente conteúdo não publicado e seções LB.
 - **Commits/arquivos:** pendente; configuração, tema, inventário e ADR-055.
-- **Verificações:** UI Styles 40, foundations 83 pares, Skins 134, boundary 7872, Stylelint e índice de status PASS. PHPUnit 1/7 com 54 deprecações. Token-budget DEFERRED: script tem SyntaxError na linha 40.
-- **Pendências:** teste visual real, revisão por perfis, cache. 54 deprecações são avisos do ambiente upstream.
-- **Próximo passo:** homologar entidade não publicada renderizada no Runtime com sessão editorial e confirmar que não muda controle de acesso.
+- **Verificações:** UI Styles 40, foundations 83 pares, Skins 134, boundary 7872, Stylelint, índice e browser Library PASS. PHPUnit 1/7 com 54 deprecações. Token-budget DEFERRED: script tem SyntaxError na linha 40.
+- **Pendências:** Entity Status visual/perfis/cache; capturar console e conferir JS agregado 400 observado pelo responsável. 320 tem elementos administrativos excedentes sem scroll efetivo.
+- **Próximo passo:** inspecionar resposta e console do agregado JS da Library e reproduzir mensagens CSP na rota autenticada.
 
 # ADR-054/055 — Cutover focal UI Icons — 2026-11-11
 
