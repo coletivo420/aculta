@@ -116,3 +116,14 @@ Escopo funcional restante (login/logout, sessões multidomínio, modais HTMX, fo
 6. Pinar ações do GitHub por SHA verificado.
 7. **PHP Quality Assurance (`php-quality.yml`) está VERMELHO desde antes desta sessão** em `origin/dev`: o lock exige PHP ≥ 8.4 (`doctrine/collections 3.1.0`, `symfony/uid v8.1.9`), e o job fixa PHP 8.3. O `composer.json` declara `>=8.3`. Decisão necessária: subir CI para 8.4 ou declarar `php >=8.4` no `composer.json`.
 8. Reduzir `css`, `htmx`, `sdc`, `ui-patterns` para o orçamento de token.
+
+## 8. Dívida do phpunit-kernel (run 43088894547, commit 5e027d41a)
+
+- Resultado real: 1154 testes, 16935 asserções, **276 erros, 15 falhas**, 2 avisos. O job falhava na instalação antes desta rodada, então esta dívida nunca tinha sido vista.
+- Causas principais (contagem por mensagem):
+  - 137: `aculta_events.organization_members_access` depende de serviço `aculta_user…` não habilitado no teste.
+  - 44 + 44: schema inválido em `field.field.commerce_product.default.body` na instalação de `commerce_product`.
+  - 14: `aculta_lms.agenda_entries` depende de `aculta_events.occurrences…` não habilitado.
+  - 13 + 13: tabela `aculta_simpletest.…group_relationship_field_data` ausente.
+- Tratamento decidido pelo responsável: **dívida com baseline**. O job `phpunit-kernel` tem `continue-on-error: true` com comentário no workflow. A falha continua no log. Não reduzir asserções.
+- Correção: habilitar os módulos e o schema necessários no teste, por módulo, com teste verde antes de remover `continue-on-error`.

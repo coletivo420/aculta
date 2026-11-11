@@ -110,6 +110,11 @@ jobs:
     runs-on: ubuntu-latest
     # Limite explícito: sem ele, uma suíte travada fica in_progress por horas e não gera log.
     timeout-minutes: 45
+    # Dívida conhecida (docs/operations/testing/UI-SUITE-AUDITORIA.md, seção 8): 276 erros e 15 falhas
+    # por serviços de módulos não habilitados no teste, schema de commerce_product e tabelas de grupo.
+    # Job informativo até a correção: a falha continua visível no log e no resumo do job,
+    # mas não bloqueia os demais gates. Não reduzir asserções para ficar verde.
+    continue-on-error: true
     services:
       mariadb:
         image: mariadb:10.11
