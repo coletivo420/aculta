@@ -135,6 +135,8 @@ final class ContentIndexOwnerIntegrationKernelTest extends KernelTestBase {
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
+    $this->installEntitySchema('group');
+    $this->installEntitySchema('group_relationship');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('aculta_user', ['aculta_user_nickname']);
     $this->installSchema('node', ['node_access']);
