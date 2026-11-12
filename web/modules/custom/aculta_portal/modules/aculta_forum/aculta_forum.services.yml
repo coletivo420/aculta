@@ -56,7 +56,10 @@ services:
     arguments: ['@current_user', '@aculta_forum.discussion_reply_access', '@aculta_forum.discussion_reply_url_builder', '@string_translation']
   Drupal\aculta_forum\Hook\TopicComposerFormHooks:
     class: Drupal\aculta_forum\Hook\TopicComposerFormHooks
-    arguments: ['@current_route_match']
+    arguments:
+      - '@current_route_match'
+      - '@request_stack'
+      - '@string_translation'
   Drupal\aculta_forum\Hook\DiscussionReplyFormHooks:
     class: Drupal\aculta_forum\Hook\DiscussionReplyFormHooks
     arguments:

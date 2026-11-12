@@ -12,8 +12,10 @@ use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\aculta_forum\Form\TopicPopupLayout;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -28,6 +30,10 @@ final class TopicComposerFormHooks {
   public function __construct(
     #[Autowire(service: 'current_route_match')]
     private readonly RouteMatchInterface $routeMatch,
+    #[Autowire(service: 'request_stack')]
+    private readonly RequestStack $requestStack,
+    #[Autowire(service: 'string_translation')]
+    private readonly TranslationInterface $translation,
   ) {}
 
   /**
@@ -47,11 +53,11 @@ final class TopicComposerFormHooks {
   public function nodeFormAlter(array &$form, FormStateInterface $formState, string $formId): void {
     if (isset($form['title'])) {
       $form['title']['#weight'] = -10;
-      $form['title']['widget'][0]['value']['#title'] = t('Assunto');
+      $form['title']['widget'][0]['value']['#title'] = $this->translation->translate('Assunto');
     }
     if (isset($form['body'])) {
       $form['body']['#weight'] = 0;
-      $form['body']['widget'][0]['#title'] = t('Comentário');
+      $form['body']['widget'][0]['#title'] = $this->translation->translate('Comentário');
     }
 
     // Popup: o formulário envia por HTMX para o próprio endpoint e troca o corpo do diálogo.
@@ -75,7 +81,7 @@ final class TopicComposerFormHooks {
       ->onlyMainContent()
       ->applyTo($form);
     if (isset($form['actions']['submit'])) {
-      $form['actions']['submit']['#submit'][] = [self::class, 'redirectPopupToTopic'];
+      $form['actions']['submit']['#submit'][] = self::class . ':redirectPopupToTopic';
     }
   }
 
@@ -84,7 +90,7 @@ final class TopicComposerFormHooks {
    *
    * Envio HTMX: HX-Redirect para o tópico. Envio comum: redirecionamento normal.
    */
-  public static function redirectPopupToTopic(array &$form, FormStateInterface $formState): void {
+  public function redirectPopupToTopic(array &$form, FormStateInterface $formState): void {
     $formObject = $formState->getFormObject();
     if (!$formObject instanceof EntityFormInterface) {
       return;
@@ -94,7 +100,7 @@ final class TopicComposerFormHooks {
       return;
     }
     $url = $entity->toUrl('canonical', ['absolute' => TRUE])->toString();
-    if (\Drupal::request()->headers->has('HX-Request')) {
+    if ($this->requestStack->getCurrentRequest()?->headers->has('HX-Request')) {
       $formState->setResponse(new Response('', 200, ['HX-Redirect' => $url]));
       return;
     }
