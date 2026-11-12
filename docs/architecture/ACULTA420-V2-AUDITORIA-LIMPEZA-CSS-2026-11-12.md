@@ -83,8 +83,8 @@ consumidor textual, classe emitida por metadado ou seletor alcançável.
 | `src/styles/utilities.css` | 2.474 → 2.328 | `.aculta-card*`, `.aculta-main-canvas`, `.aculta-panel__heading`, `aculta-u-mb-0` e `aculta-u-mb-4` |
 | `components/multidomain-bar/multidomain-bar.css` | 21.360 → 20.162 | `.aculta-purpose-showcase*` (o SDC emite `purpose-showcase`) e `.aculta-login-dialog__surface` (o template usa `aculta-search-dialog__surface`) |
 | `src/styles/wiki.css` | 5.276 → 5.040 | `.aculta-wiki-collaboration` |
-| `src/styles/portal-ui-map.css` | 11.794 → 11.622 | `aculta-location-actions/admin-actions`; `.nav` passou a ter estilo próprio e `.messages--info` foi criado |
-| `src/styles/portal-ui-extras.css` | 11.171 → 11.169 | `.aculta-social-link-dialog` saiu do seletor `:has()` |
+| `src/styles/portal-ui-map.css` | 11.794 → 11.926 | `aculta-location-actions/admin-actions` removidos; `.nav` passou a ter estilo próprio e `.messages--info` foi criado (+132 bytes) |
+| `src/styles/portal-ui-extras.css` | 11.171 → 11.143 | `.aculta-social-link-dialog` saiu do seletor `:has()` |
 
 ### Tokens migrados
 
@@ -102,7 +102,8 @@ consumidor textual, classe emitida por metadado ou seletor alcançável.
 - as demais bibliotecas contextuais (`statistics`, `portal-account`,
   `public-profile`, `event-organization`, `events`, `wiki`, `forum`,
   `shell-v2`) permanecem como estavam;
-- `global-styling` mantém as 16 folhas locais + fonte externa. A auditoria
+- `global-styling` mantém as 16 folhas locais + fonte externa (109.513 bytes
+  locais). A auditoria
   confirmou que elas são transversais: fundações, utilitários emitidos por
   `PortalUiHooks`, conteúdo, busca (popup em toda página), botões de
   formulário, autoria de artigo, gaveta de mensagens e mapas `portal-ui-*`.

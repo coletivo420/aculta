@@ -281,6 +281,6 @@ alterações indevidas nos 22 displays, não aplicar o novo tom em massa.
 - `npm run css:verify`: PASS. Bibliotecas → arquivos existentes (35 folhas), sem referência a CSS inexistente, sem CSS gerado anexado, sem dependência V1/Bootstrap, CSS de SDC descobrível (84 componentes), safelist sem `^aculta-` e nenhuma classe dinâmica removida pelo PurgeCSS.
 - `npm run lint:css`: PASS (0 erros).
 - `php scripts/validate-aculta420-mapped-classes.php`: PASS (480 classes, 0 exceções, 0 nomes Bootstrap). `alert`/`alert-info` do token `donation-account-invite` foram substituídos por `messages`/`messages--info`; `we-sativa__workspace` sem CSS foi retirado dos três tokens `we-sativa-*`.
-- `php scripts/validate-aculta420-css-scope.php`: PASS (50 checks). `global-styling` com 17 entradas e 109.343 bytes locais.
+- `php scripts/validate-aculta420-css-scope.php`: PASS (50 checks). `global-styling` com 17 entradas e 109.513 bytes locais.
 - Removidos: `src/styles/studio-identity.css` (nenhum consumidor aplica `html.studio-identity` no V2), 642 linhas de `studio.css` presas a `.aculta-main` (o shell V2 usa `.page__main`), regras mortas em `content.css`, `utilities.css`, `forum.css`, `wiki.css`, `portal-account.css`, `messenger-drawer.css`, `component-library-mode.css`, `multidomain-bar.css`, `portal-ui-map.css` e `portal-ui-extras.css`.
 - Captura visual e testes de navegador: **DEFERRED** (não executados nesta sessão). O CSS removido não tinha consumidor textual nem regra alcançável; ainda assim, a homologação visual de claro/escuro e 320–1440 px permanece pendente.
