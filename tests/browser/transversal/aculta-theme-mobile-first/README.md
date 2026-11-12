@@ -1351,8 +1351,14 @@ Variáveis: `PURPOSES_JSON` (lista JSON com `purpose` e `url`) ou
 
 ### `page-matrix.py`
 
-Recebe uma ou mais URLs como argumentos e mede status HTTP, carregamento e
-rolagem horizontal em claro/escuro e nas larguras selecionadas.
+Recebe uma ou mais URLs como argumentos e mede status HTTP, carregamento,
+largura efetiva e rolagem horizontal em claro/escuro e nas larguras
+selecionadas. A largura é aplicada por emulação de viewport WebDriver BiDi
+(`browsingContext.setViewport`), porque redimensionar a janela do Firefox no
+X11 não desce de ~500 px; cada resultado registra `width` e a matriz falha se
+ela não bater com a pedida. Transições e animações são congeladas antes da
+captura, o que torna os PNGs determinísticos (duas execuções seguidas
+produziram 40/40 imagens idênticas em 2026-11-12).
 
 Variáveis: `MATRIX_WIDTHS`, `MATRIX_MODES`, `MATRIX_HEIGHT`,
 `DISPLAY=:0` e `SUITE_OUT` externo ao repositório. Não há host fixo nos

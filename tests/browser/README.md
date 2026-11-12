@@ -130,6 +130,7 @@ Estão listadas abaixo as pastas reais, com o caminho completo. A convenção é
 | `tests/browser/transversal/aculta-home-editorial-ui-patterns/` | Home editorial — UI Patterns Views |
 | `tests/browser/transversal/aculta-htmx-f1/` | ACULTA420 V2 — HTMX F1 (busca e login) |
 | `tests/browser/transversal/aculta-image-admin/` | Revisão visual das opções administrativas do ACULTA Image |
+| `tests/browser/transversal/aculta-teclado-foco/` | ACULTA — teclado e foco visível |
 | `tests/browser/transversal/aculta-theme-mobile-first/` | ACULTA420 — SDC responsivos do tema |
 | `tests/browser/transversal/aculta-uploader/` | Smoke do aculta_file_uploader (navegador) |
 | `tests/browser/transversal/aculta-visual/` | Revisão visual da Frente B |

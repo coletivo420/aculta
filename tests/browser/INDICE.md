@@ -53,6 +53,7 @@ Scripts com `routes.json` têm cobertura de rotas públicas no runner comum.
 | [`tests/browser/transversal/aculta-home-editorial-ui-patterns/`](./transversal/aculta-home-editorial-ui-patterns/README.md) | Home editorial — UI Patterns Views | 1 | não |
 | [`tests/browser/transversal/aculta-htmx-f1/`](./transversal/aculta-htmx-f1/README.md) | ACULTA420 V2 — HTMX F1 (busca e login) | 1 | sim |
 | [`tests/browser/transversal/aculta-image-admin/`](./transversal/aculta-image-admin/README.md) | Revisão visual das opções administrativas do ACULTA Image | 1 | sim |
+| [`tests/browser/transversal/aculta-teclado-foco/`](./transversal/aculta-teclado-foco/README.md) | ACULTA — teclado e foco visível | 1 | não |
 | [`tests/browser/transversal/aculta-theme-mobile-first/`](./transversal/aculta-theme-mobile-first/README.md) | ACULTA420 — SDC responsivos do tema | 35 | sim |
 | [`tests/browser/transversal/aculta-uploader/`](./transversal/aculta-uploader/README.md) | Smoke do aculta_file_uploader (navegador) | 1 | sim |
 | [`tests/browser/transversal/aculta-visual/`](./transversal/aculta-visual/README.md) | Revisão visual da Frente B | 1 | sim |

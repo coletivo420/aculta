@@ -12,6 +12,7 @@ Cada frente tem o próprio `README.md` com URLs, pré-requisitos e critérios.
 - [`aculta-home-editorial-ui-patterns/`](./aculta-home-editorial-ui-patterns/README.md) — Home editorial — UI Patterns Views
 - [`aculta-htmx-f1/`](./aculta-htmx-f1/README.md) — ACULTA420 V2 — HTMX F1 (busca e login)
 - [`aculta-image-admin/`](./aculta-image-admin/README.md) — Revisão visual das opções administrativas do ACULTA Image
+- [`aculta-teclado-foco/`](./aculta-teclado-foco/README.md) — ACULTA — teclado e foco visível
 - [`aculta-theme-mobile-first/`](./aculta-theme-mobile-first/README.md) — ACULTA420 — SDC responsivos do tema
 - [`aculta-uploader/`](./aculta-uploader/README.md) — Smoke do aculta_file_uploader (navegador)
 - [`aculta-visual/`](./aculta-visual/README.md) — Revisão visual da Frente B
