@@ -4,6 +4,8 @@ Estado: RC · versão 0.1.0-rc.4 (`aculta_patcher.info.yml`) · status: `docs/op
 
 ## Próximo passo
 
+- Refatorar os usos restantes de `\\Drupal::` em classes do módulo; list builder e formulário de estado agora recebem importer e entity type manager por DI.
+- Refatorar os usos restantes de `\\Drupal::` em classes do módulo; list builder e formulário de estado agora recebem importer e entity type manager por DI.
 Deploy do candidato no servidor de desenvolvimento e validação no ambiente *.aculta.org (Alpha), com posterior migração para Hostinger (Beta) conforme RELEASE-LIFECYCLE.md ([README](web/modules/custom/aculta_portal/modules/aculta_patcher/README.md))
 
 ## Leitura

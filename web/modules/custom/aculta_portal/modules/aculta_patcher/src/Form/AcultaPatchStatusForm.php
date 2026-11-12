@@ -8,11 +8,24 @@ use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_patcher\Entity\AcultaPatch;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Confirms enabling or disabling a Composer patch for the next build.
  */
 final class AcultaPatchStatusForm extends ConfirmFormBase {
+
+  public function __construct(
+    protected EntityTypeManagerInterface $entityTypeManager,
+  ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): static {
+    return new static($container->get('entity_type.manager'));
+  }
 
   /**
    * The patch label used by the confirmation question.
@@ -88,7 +101,7 @@ final class AcultaPatchStatusForm extends ConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $id = (string) $form_state->getValue('patch_id');
     $operation = (string) $form_state->getValue('patch_operation');
-    $patch = \Drupal::entityTypeManager()->getStorage('aculta_patch')->load($id);
+    $patch = $this->entityTypeManager->getStorage('aculta_patch')->load($id);
     if (!$patch instanceof AcultaPatch || !in_array($operation, ['enable', 'disable'], TRUE)) {
       $this->messenger()->addError($this->t('O patch não foi encontrado ou a operação é inválida.'));
       $form_state->setRedirect('entity.aculta_patch.collection');

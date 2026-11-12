@@ -7,10 +7,33 @@ namespace Drupal\aculta_patcher\Entity;
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\aculta_patcher\PatchManifestImporter;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Administration table for Composer patch records. */
 final class AcultaPatchListBuilder extends ConfigEntityListBuilder {
+
+  public function __construct(
+    EntityTypeInterface $entity_type,
+    EntityStorageInterface $storage,
+    protected PatchManifestImporter $importer,
+  ) {
+    parent::__construct($entity_type, $storage);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+    return new static(
+      $entity_type,
+      $container->get('entity_type.manager')->getStorage($entity_type->id()),
+      $container->get('aculta_patcher.importer'),
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -33,7 +56,7 @@ final class AcultaPatchListBuilder extends ConfigEntityListBuilder {
   public function load() {
     // Discover new Composer manifest entries before building the collection.
     // Existing records are never overwritten when they have been edited here.
-    \Drupal::service('aculta_patcher.importer')->importMissing();
+    $this->importer->importMissing();
     return parent::load();
   }
 
