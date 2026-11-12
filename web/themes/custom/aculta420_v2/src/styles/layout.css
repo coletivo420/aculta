@@ -27,11 +27,13 @@
 .page__help { grid-area: help; min-inline-size: 0; }
 .page__breadcrumb { grid-area: breadcrumb; min-inline-size: 0; }
 
-/* Trilha na mesma coluna de leitura do conteúdo, centralizada como o título. */
+/* Trilha no mesmo contêiner do conteúdo (--page-content-max, igual ao .page__help),
+   centralizada e com o mesmo padding, para o início do texto coincidir com o título. */
 .page .page__breadcrumb {
-  inline-size: min(100%, var(--aculta-narrow-container-width, 750px));
+  inline-size: min(100%, var(--page-content-max));
   max-inline-size: none;
   margin-inline: auto;
+  padding-inline: var(--page-gutter);
 }
 
 .page__navigation,
