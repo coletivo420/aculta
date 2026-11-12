@@ -41,7 +41,7 @@ rules:
     severity: WARNING
     message: "\\Drupal:: estático em código de classe. Injete o serviço pelo construtor (padrão Drupal 12, seção 7)."
     patterns:
-      - pattern-regex: '\\?Drupal::\w+\('
+      - pattern-regex: '(^|[^A-Za-z0-9_])\\?Drupal::\w+\('
       - pattern-inside: |
           class $CLASS {
             ...

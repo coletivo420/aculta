@@ -40,6 +40,9 @@ class StaticServiceFixture {
 // Acesso procedural de scripts/hooks não oferece injeção por construtor.
 // ok: aculta-php-static-drupal-service
 $db = \Drupal::database();
+// O singleton próprio do fork H5P não é a fachada global do Drupal.
+// ok: aculta-php-static-drupal-service
+$manager = aculta_H5PDrupal::getInstance();
 // ok: aculta-php-static-drupal-service
 $db = $this->database;
 
