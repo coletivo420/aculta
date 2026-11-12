@@ -52,6 +52,8 @@ bash scripts/runtime-sync.sh sync-code
 
 ## Procedimento supervisionado para mudanças estruturais (`R2`, `R3`, `R4`, `RX`)
 
+> Plano da janela vigente (drift de configuração e delta R3): [RUNTIME-WINDOW-PLAN-2026-11-12.md](RUNTIME-WINDOW-PLAN-2026-11-12.md).
+
 1. **Gerar o plano estrutural e o diagnóstico:**
 
 ```bash

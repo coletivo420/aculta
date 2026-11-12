@@ -1,5 +1,10 @@
 # Janela de updates do Runtime — ensaio de snapshot e restauração
 
+> **Plano vigente (2026-11-12):** a janela para zerar o drift de configuração
+> e fechar o delta R3 está em
+> [RUNTIME-WINDOW-PLAN-2026-11-12.md](RUNTIME-WINDOW-PLAN-2026-11-12.md).
+> Este documento permanece como histórico do ensaio de 2026-10-26.
+
 Data: 2026-10-26. Autorização do responsável para copiar o `aculta_runtime` a um banco
 descartável: **18:32**. Janela operacional: até 20h. Este documento cobre o ensaio de
 snapshot/restauração; **não é a janela** e nada foi executado no Runtime.
