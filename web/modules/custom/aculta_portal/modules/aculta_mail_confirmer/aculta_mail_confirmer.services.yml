@@ -14,7 +14,7 @@ services:
 
   Drupal\aculta_mail_confirmer\Hook\UserEmailChangeHooks:
     class: Drupal\aculta_mail_confirmer\Hook\UserEmailChangeHooks
-    arguments: ['@config.factory', '@current_user', '@user.data', '@aculta_mail_confirmer', '@entity_type.manager', '@messenger', '@logger.factory', '@plugin.manager.mail', '@language_manager']
+    arguments: ['@config.factory', '@current_user', '@user.data', '@aculta_mail_confirmer', '@entity_type.manager', '@messenger', '@logger.factory', '@plugin.manager.mail', '@language_manager', '@cache.memory']
 
   Drupal\aculta_mail_confirmer\Hook\UserEmailChangeFormHooks:
     class: Drupal\aculta_mail_confirmer\Hook\UserEmailChangeFormHooks

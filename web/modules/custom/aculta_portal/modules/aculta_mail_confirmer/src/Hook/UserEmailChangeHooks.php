@@ -6,6 +6,7 @@ namespace Drupal\aculta_mail_confirmer\Hook;
 
 use Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface;
 use Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface;
+use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -45,6 +46,8 @@ final class UserEmailChangeHooks {
    *   The mail manager.
    * @param \Drupal\Core\Language\LanguageManagerInterface $languageManager
    *   The language manager.
+   * @param \Drupal\Core\Cache\CacheBackendInterface $memoryCache
+   *   The request-local memory cache bin.
    */
   public function __construct(
     private readonly ConfigFactoryInterface $configFactory,
@@ -56,6 +59,7 @@ final class UserEmailChangeHooks {
     private readonly LoggerChannelFactoryInterface $loggerFactory,
     private readonly MailManagerInterface $mailManager,
     private readonly LanguageManagerInterface $languageManager,
+    private readonly CacheBackendInterface $memoryCache,
   ) {
   }
 
@@ -149,7 +153,7 @@ final class UserEmailChangeHooks {
           $user->setEmail($new_email);
           // Prevents the user presave hook from starting another confirmation
           // while this request persists the confirmed address.
-          \Drupal::cache('memory')->set('aculta_mail_confirmer_user_' . $user_id, TRUE);
+          $this->memoryCache->set('aculta_mail_confirmer_user_' . $user_id, TRUE);
           $user->save();
           $this->messenger->addStatus($this->currentUser->id() == $user_id
             ? $this->t('Your email address has been updated to %mail', ['%mail' => $new_email])
@@ -175,7 +179,7 @@ final class UserEmailChangeHooks {
   /**
    * Checks the request-local guard set while saving a confirmed address. */
   private function isConfirmationGuardActive(int $userId): bool {
-    $entry = \Drupal::cache('memory')->get('aculta_mail_confirmer_user_' . $userId);
+    $entry = $this->memoryCache->get('aculta_mail_confirmer_user_' . $userId);
     return $entry !== FALSE && $entry->data === TRUE;
   }
 

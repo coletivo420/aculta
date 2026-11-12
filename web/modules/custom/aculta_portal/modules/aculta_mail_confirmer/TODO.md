@@ -4,6 +4,7 @@ Estado: Dev · versão 0.1.0-dev.5 (`aculta_mail_confirmer.info.yml`) · status:
 
 ## Próximo passo
 
+Continuar a refatoração das chamadas estáticas de serviço restantes em classes dos módulos, com testes focais e gates do Portal.
 Aplicar e homologar o post-update de ownership de configuração; depois validar no navegador os fluxos de confirmação e troca de e-mail
 
 ## Leitura
