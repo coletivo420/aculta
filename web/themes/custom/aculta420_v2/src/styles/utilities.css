@@ -101,6 +101,21 @@
   text-align: start;
 }
 
+/* Classe de estilo de bloco (UI Styles): o bloco fica alinhado à borda inicial do conteúdo.
+   A área pai que o contém deixa de se centralizar quando o bloco tem esta classe. */
+.aculta-u-block-start {
+  inline-size: 100%;
+  justify-self: start;
+  text-align: start;
+}
+
+.page__breadcrumb:has(> .aculta-u-block-start) {
+  inline-size: 100%;
+  max-inline-size: none;
+  margin-inline: 0;
+  justify-self: start;
+}
+
 .aculta-u-no-decoration {
   text-decoration: none;
 }
