@@ -109,6 +109,13 @@ drush config:status
 Esperado: `updatedb` 0, `deploy:hook-status` vazio, `config:status` com os 20
 itens da seção 2. Abortar se houver update de banco ou deploy hook pendente.
 
+Com o worktree limpo, atualizar o checkout servido ao alvo (o `sync-code` não
+faz fast-forward em delta R3):
+
+```bash
+git merge --ff-only origin/dev
+```
+
 ### Passo 2 — Snapshot e prova de restauração (autorização obrigatória)
 
 ```bash
@@ -164,24 +171,38 @@ Conferir também: um tópico do fórum com autoria legada, uma exibição de
 `aculta_forum_post` e a página de conteúdo `page` com o campo de Layout
 Builder visível no formulário.
 
-## 5. Pós-janela e baseline
+## 5. Pós-janela e fechamento do baseline
 
-O CLI do Runtime Sync **não tem** `structural-apply` nem comando de avanço de
-baseline (decisão da skill `aculta-runtime-migracoes`). Depois do import, o
-`plan` continuará classificando o intervalo `bf37cabf..alvo` como R3 por
-caminho, e `verify` continuará `BLOCKED` enquanto
-`last_cache_success_sha != HEAD`.
+O CLI agora tem o comando de fechamento `structural-complete`, que **não executa
+import, updatedb ou instalação de módulo**. Ele valida a janela já realizada e
+avança o baseline apenas quando todas as condições abaixo são verdadeiras:
 
-Decisão necessária do responsável, em uma destas frentes:
+- `ACULTA_SYNC_STRUCTURAL_CONFIRM=1` definido pelo responsável;
+- `HEAD == origin/dev`, branch `dev` e worktree limpo;
+- plano JSON gerado por `structural-plan` com `base_sha == last_validated_sha`,
+  `target_sha == HEAD`, risco R2/R3/R4 e `autonomous_execution: false`;
+- `updatedb:status`, `deploy:hook-status` e `config:status` sem pendências;
+- `drush cr` concluído e a mesma verificação repetida sem pendências.
 
-1. Autorizar uma evolução do CLI (ex.: comando `structural-complete` que exige
-   janela aprovada, snapshot, import reconciliado e registra o novo baseline).
-2. Manter o R3 explícito no estado até uma janela futura que já nasça com
-   baseline novo (ex.: após o cutover F4).
-3. Autorizar, com registro auditável, o avanço manual do baseline apenas após
-   `config:status` zerado e smoke aprovado.
+Fluxo:
 
-Nenhuma dessas opções foi executada nesta sessão.
+```bash
+bash scripts/runtime-sync.sh plan --refresh
+bash scripts/runtime-sync.sh structural-plan --format=json > <backup_privado_0600>/plano.json
+ACULTA_SYNC_STRUCTURAL_CONFIRM=1 \
+  bash scripts/runtime-sync.sh structural-complete --plan=<backup_privado_0600>/plano.json
+```
+
+O comando grava `last_code_sync_sha`, `last_cache_success_sha` e
+`last_validated_sha` com o HEAD, limpa `pending_structural_sha` e
+`pending_structural_risk` e registra o relatório em `var/runtime-sync/`. Se
+qualquer gate falhar, ele registra `BLOCKED`/`PARTIAL` e preserva o baseline
+anterior. O smoke HTTP dos dez `site_keys` continua sendo etapa humana e deve
+ser concluído antes do fechamento.
+
+> **Atualização do código na janela:** o `sync-code` não faz fast-forward em
+> delta R3. O responsável deve atualizar o checkout servido com
+> `git merge --ff-only origin/dev` (worktree limpo) antes do fechamento.
 
 ## 6. Rollback
 

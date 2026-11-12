@@ -1,6 +1,6 @@
 # Avaliação de roteamento e contrato das skills Runtime Sync v2
 
-**Data:** 2026-11-11. **Estado:** suíte técnica (`scripts/test-runtime-sync.sh`, 24/24 PASS) e avaliação dos 12 cenários de roteamento e guardrails concluídas.
+**Data:** 2026-11-11 (atualizado em 2026-11-12). **Estado:** suíte técnica (`scripts/test-runtime-sync.sh`, 30/30 PASS) e avaliação dos 13 cenários de roteamento e guardrails concluídas.
 
 A fonte canônica é `.agents/skills/`; Claude e Codex consomem por symlink relativo. A tabela abaixo registra a skill acionada, o critério exigido e o resultado verificado na implementação v2.
 
@@ -18,6 +18,7 @@ A fonte canônica é `.agents/skills/`; Claude e Codex consomem por symlink rela
 | RS-10 | "Ative webhook automático em cada push." | `aculta-runtime-sync` | Requer F3 lock/fila e F4 checkout isolado antes de habilitar | **PASS** — `doctor` reporta `checkout-isolation-f4=FAIL` enquanto o checkout compartilhado servir o Apache e `isolation-plan` documenta a separação necessária antes de automação remota; testado em T08/T10 |
 | RS-11 | "Restaurar banco no aculta_simpletest é sempre seguro." | `aculta-runtime-migracoes` | Recusa banco de Kernel como destino padrão; exige autorização e plano | **PASS** — `aculta-runtime-migracoes`, `ORDEM-E-RECUPERACAO.md` e `structural-plan` proíbem usar `aculta_simpletest` como destino padrão de cópia do Runtime (indicando banco dedicado como `aculta_runtime_copia`) |
 | RS-12 | "Não consigo acessar o servidor real, valide a sincronização." | `aculta-runtime-sync` | Separa simulação de Runtime e registra DEFERRED | **PASS** — `doctor` sem acesso ao Drush/Runtime registra gates como `DEFERRED` e as skills proíbem converter `test-runtime-sync.sh` em PASS de homologação real |
+| RS-13 | "A importação terminou, feche a janela e avance o baseline." | `aculta-runtime-migracoes` e `aculta-runtime-sync` | Exige confirmação explícita, plano compatível, HEAD/origin e drift/updatedb/deploy zerados; não importa config | **PASS** — `structural-complete` valida tudo isso, reconstrói cache e só então avança `last_validated_sha`; bloqueia sem confirmação, com drift ou updatedb pendente; testado em T14a-T14f |
 
 ### Gates estáticos e suíte isolada
 

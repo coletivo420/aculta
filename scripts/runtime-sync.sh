@@ -39,6 +39,14 @@ Comandos disponiveis:
       updatedb, config:import, deploy hooks e casos especiais como commerce_shipping),
       sem executar nenhuma alteracao no Runtime.
 
+  structural-complete --plan=<arquivo.json> [--format=json]
+      Fecha uma janela estrutural JA executada pelo responsavel. Nao importa
+      config, nao roda updatedb e nao instala modulos. Exige
+      ACULTA_SYNC_STRUCTURAL_CONFIRM=1, HEAD == origin/dev, worktree limpo e o
+      plano JSON do structural-plan compativel. So avanca o baseline quando
+      updatedb, deploy hooks e drift de config estao zerados; reconstroi o cache
+      e registra a validacao do SHA.
+
   isolation-plan [--target-dir=<dir>] [--format=json]
       Inspeciona e planeja a separacao entre checkout de agentes e worktree servida
       pelo Apache (F4), preservando mounts persistentes e sem executar cutover.
@@ -76,7 +84,7 @@ command -v python3 >/dev/null || fail 'python3 indisponivel'
 
 mode="${1:-plan}"
 case "$mode" in
-  plan|doctor|status|sync-code|verify|structural-plan|isolation-plan)
+  plan|doctor|status|sync-code|verify|structural-plan|structural-complete|isolation-plan)
     shift || true
     ;;
   help|-h|--help)
@@ -93,6 +101,7 @@ OPT_REFRESH=0
 FORMAT_JSON=0
 OPT_ADOPT_BASELINE=0
 OPT_TARGET_DIR=""
+OPT_PLAN_FILE=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -107,6 +116,9 @@ while [[ $# -gt 0 ]]; do
       ;;
     --target-dir=*)
       OPT_TARGET_DIR="${1#--target-dir=}"
+      ;;
+    --plan=*)
+      OPT_PLAN_FILE="${1#--plan=}"
       ;;
     -h|--help)
       usage
@@ -124,6 +136,9 @@ if [[ "$OPT_REFRESH" -eq 1 && "$mode" != "plan" && "$mode" != "structural-plan" 
 fi
 if [[ "$OPT_ADOPT_BASELINE" -eq 1 && "$mode" != "sync-code" ]]; then
   fail "--adopt-baseline so e permitido com sync-code"
+fi
+if [[ -n "$OPT_PLAN_FILE" && "$mode" != "structural-complete" ]]; then
+  fail "--plan so e permitido com structural-complete"
 fi
 
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
@@ -169,7 +184,7 @@ trap cleanup EXIT
 on_signal() {
   interrupted=1
   notice "SINAL recebido: interrompendo operacao com seguranca (estado preservado)."
-  if [[ -n "$tmp_dir" && -d "$tmp_dir" && ( "$mode" == "sync-code" || "$mode" == "verify" ) ]]; then
+  if [[ -n "$tmp_dir" && -d "$tmp_dir" && ( "$mode" == "sync-code" || "$mode" == "verify" || "$mode" == "structural-complete" ) ]]; then
     cat >"$tmp_dir/interrupt-run.json" <<EOF
 {
   "run_id": "$run_id",
@@ -618,6 +633,151 @@ if [[ "$mode" == "structural-plan" ]]; then
     notice "=== Plano Operacional Estrutural Supervisionado (F5) ==="
     show_diff_summary
     printf '%s\n' "$splan_out"
+  fi
+  exit 0
+fi
+
+# Comando: structural-complete (F5) - fecha a janela ja executada pelo responsavel.
+if [[ "$mode" == "structural-complete" ]]; then
+  [[ "${ACULTA_SYNC_STRUCTURAL_CONFIRM:-0}" == "1" ]] \
+    || fail 'defina ACULTA_SYNC_STRUCTURAL_CONFIRM=1 depois de concluir a janela autorizada'
+  [[ -n "$OPT_PLAN_FILE" ]] || fail 'informe --plan=<arquivo.json gerado por structural-plan>'
+  [[ -f "$OPT_PLAN_FILE" ]] || fail 'arquivo do plano nao encontrado'
+  [[ "$worktree_is_clean" -eq 1 ]] || fail 'checkout nao esta limpo'
+  [[ "$current" == "$remote" ]] || fail 'HEAD difere de origin/dev; atualize o checkout na janela'
+  [[ "$last_validated_sha" =~ ^[0-9a-f]{40}$ ]] || fail 'baseline validado ausente'
+  git merge-base --is-ancestor "$last_validated_sha" "$current" \
+    || fail 'baseline validado nao e ancestral de HEAD'
+
+  plan_check="$(python3 -I - "$OPT_PLAN_FILE" "$last_validated_sha" "$current" <<'PY'
+import json, sys
+path, base, target = sys.argv[1], sys.argv[2], sys.argv[3]
+try:
+    plan = json.load(open(path, encoding="utf-8"))
+except Exception as exc:
+    print("err|plano ilegivel: " + str(exc)); raise SystemExit(0)
+errors = []
+if plan.get("schema_version") != 2:
+    errors.append("schema_version diferente de 2")
+if plan.get("base_sha") != base:
+    errors.append("base_sha diverge do last_validated_sha")
+if plan.get("target_sha") != target:
+    errors.append("target_sha diverge do HEAD")
+if plan.get("risk") not in ("R2", "R3", "R4"):
+    errors.append("plano nao e R2/R3/R4 (use sync-code para R0/R1)")
+if plan.get("autonomous_execution") is not False:
+    errors.append("plano nao declara autonomous_execution=false")
+if errors:
+    print("err|" + "; ".join(errors)); raise SystemExit(0)
+print("ok|" + str(plan.get("risk")))
+PY
+)"
+  [[ "$plan_check" == ok\|* ]] || fail "${plan_check#err|}"
+  plan_risk="${plan_check#ok|}"
+
+  command -v flock >/dev/null || fail 'flock indisponivel'
+  mkdir -p -- var/deployer
+  exec 9>var/deployer/runtime-sync.lock
+  flock -n 9 || fail 'sincronizacao ja em andamento'
+
+  run_drush_inspection 1
+  updb_pending_count="$(printf '%s' "$DRUSH_SUMMARY_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["updatedb_pending_count"])')"
+  deploy_pending_count="$(printf '%s' "$DRUSH_SUMMARY_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["deploy_hook_pending_count"])')"
+  config_drift_count="$(printf '%s' "$DRUSH_SUMMARY_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["config_drift_count"])')"
+
+  if [[ "$updb_pending_count" -ne 0 || "$deploy_pending_count" -ne 0 || "$config_drift_count" -ne 0 ]]; then
+    cat >"$tmp_dir/structural-incomplete.json" <<EOF
+{
+  "run_id": "$run_id",
+  "timestamp": "$run_timestamp",
+  "mode": "structural-complete",
+  "outcome": "BLOCKED",
+  "phase": "post-window-verification",
+  "remote_sha": "$current",
+  "checkout_sha": "$current",
+  "last_validated_sha": "$last_validated_sha",
+  "pending_structural_sha": "$current",
+  "pending_structural_risk": "$plan_risk",
+  "risk": "$plan_risk",
+  "summary": "Janela ainda nao concluida: updatedb=$updb_pending_count, deploy_hooks=$deploy_pending_count, config_drift=$config_drift_count.",
+  "drift_summary": $DRUSH_SUMMARY_JSON,
+  "gates": [
+    {"id": "updatedb-clean", "result": "$( [[ "$updb_pending_count" -eq 0 ]] && printf PASS || printf FAIL )", "reason": "$updb_pending_count update(s)"},
+    {"id": "deploy-hooks-clean", "result": "$( [[ "$deploy_pending_count" -eq 0 ]] && printf PASS || printf FAIL )", "reason": "$deploy_pending_count hook(s)"},
+    {"id": "config-drift-clean", "result": "$( [[ "$config_drift_count" -eq 0 ]] && printf PASS || printf FAIL )", "reason": "$config_drift_count item(ns)"}
+  ],
+  "writes": ["var/runtime-sync/state.json", "var/runtime-sync/latest.json"]
+}
+EOF
+    python3 "$helper_py" record-run --repo-root "$root" --state-dir "$state_dir" --run-json "$tmp_dir/structural-incomplete.json" --update-state >/dev/null 2>&1 || true
+    fail "janela incompleta: updatedb=$updb_pending_count deploy=$deploy_pending_count config_drift=$config_drift_count"
+  fi
+
+  notice 'Janela reconhecida sem pendencias; reconstruindo cache para o SHA alvo.'
+  if ! "${drush_cmd[@]}" cr; then
+    cat >"$tmp_dir/structural-cr-fail.json" <<EOF
+{
+  "run_id": "$run_id",
+  "timestamp": "$run_timestamp",
+  "mode": "structural-complete",
+  "outcome": "PARTIAL",
+  "phase": "cache-rebuild",
+  "remote_sha": "$current",
+  "checkout_sha": "$current",
+  "last_validated_sha": "$last_validated_sha",
+  "pending_structural_sha": "$current",
+  "pending_structural_risk": "$plan_risk",
+  "risk": "$plan_risk",
+  "summary": "drush cr falhou ao fechar a janela; baseline preservado.",
+  "gates": [{"id": "drush-cache-rebuild", "result": "FAIL", "reason": "drush cr falhou"}],
+  "writes": ["var/runtime-sync/state.json", "var/runtime-sync/latest.json"]
+}
+EOF
+    python3 "$helper_py" record-run --repo-root "$root" --state-dir "$state_dir" --run-json "$tmp_dir/structural-cr-fail.json" --update-state >/dev/null 2>&1 || true
+    fail 'drush cr falhou; estado PARTIAL, baseline preservado'
+  fi
+
+  run_drush_inspection 1
+  updb_after="$(printf '%s' "$DRUSH_SUMMARY_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["updatedb_pending_count"])')"
+  deploy_after="$(printf '%s' "$DRUSH_SUMMARY_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["deploy_hook_pending_count"])')"
+  drift_after="$(printf '%s' "$DRUSH_SUMMARY_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["config_drift_count"])')"
+  [[ "$updb_after" -eq 0 && "$deploy_after" -eq 0 && "$drift_after" -eq 0 ]] \
+    || fail "pendencias surgiram apos drush cr: updatedb=$updb_after deploy=$deploy_after drift=$drift_after"
+
+  cat >"$tmp_dir/structural-complete-run.json" <<EOF
+{
+  "run_id": "$run_id",
+  "timestamp": "$run_timestamp",
+  "mode": "structural-complete",
+  "outcome": "VALIDATED",
+  "phase": "complete",
+  "remote_sha": "$current",
+  "checkout_sha": "$current",
+  "last_validated_sha": "$last_validated_sha",
+  "new_last_code_sync_sha": "$current",
+  "new_last_cache_success_sha": "$current",
+  "new_last_validated_sha": "$current",
+  "pending_structural_sha": null,
+  "pending_structural_risk": null,
+  "risk": "$plan_risk",
+  "summary": "PASS: janela estrutural fechada; drift, updatedb e deploy hooks zerados em $current.",
+  "drift_summary": $DRUSH_SUMMARY_JSON,
+  "gates": [
+    {"id": "plan-match", "result": "PASS", "reason": "plano $plan_risk compativel com baseline e HEAD"},
+    {"id": "worktree-clean", "result": "PASS", "reason": "Checkout limpo e HEAD == origin/dev"},
+    {"id": "updatedb-clean", "result": "PASS", "reason": "0 update(s) pendente(s)"},
+    {"id": "deploy-hooks-clean", "result": "PASS", "reason": "0 deploy hook(s) pendente(s)"},
+    {"id": "config-drift-clean", "result": "PASS", "reason": "0 item(ns) de drift"},
+    {"id": "drush-cache-rebuild", "result": "PASS", "reason": "drush cr executado com sucesso"}
+  ],
+  "writes": ["drush:cr", "var/runtime-sync/state.json", "var/runtime-sync/latest.json"]
+}
+EOF
+  python3 "$helper_py" record-run --repo-root "$root" --state-dir "$state_dir" --run-json "$tmp_dir/structural-complete-run.json" --update-state >/dev/null
+  if [[ "$FORMAT_JSON" -eq 1 ]]; then
+    cat "$state_dir/latest.json"
+  else
+    notice "STRUCTURAL-COMPLETE: VALIDATED (SHA: $current; risco da janela: $plan_risk)"
   fi
   exit 0
 fi

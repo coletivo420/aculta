@@ -392,5 +392,55 @@ splan13="$(run_sync "$fix13" structural-plan --refresh --format=json)"
 assert_ok '[[ "$(printf "%s" "$splan13" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[\"special_runbooks\"][0][\"id\"], d[\"ordered_steps\"][2][\"phase\"])")" == "commerce_shipping_cutover special_cutover_commerce_shipping" ]]' \
   "T13: structural-plan detecta cutover de commerce_shipping e prescreve updatedb/uninstall ANTES de composer install"
 
+# ==============================================================================
+# Caso 14: structural-complete fecha a janela apenas com drift/updb/deploy zerados
+# ==============================================================================
+setup_fixture "c14_structural_complete"
+fix14="$WORK_BASE/c14_structural_complete"
+ACULTA_SYNC_ADOPT_BASELINE=1 run_sync "$fix14" sync-code --adopt-baseline >/dev/null 2>&1
+base14="$(git -C "$fix14/runtime" rev-parse HEAD)"
+
+echo "foo: bar" >"$fix14/Author/config/sync/system.site.yml"
+git -C "$fix14/Author" add config/sync/system.site.yml
+git -C "$fix14/Author" commit -q -m "Config R3 da janela"
+git -C "$fix14/Author" push -q origin dev
+target14="$(git -C "$fix14/Author" rev-parse HEAD)"
+
+# O operador atualiza o checkout servido durante a janela (o sync-code bloqueia R3).
+git -C "$fix14/runtime" pull -q --ff-only origin dev
+run_sync "$fix14" structural-plan --format=json >"$fix14/plan.json"
+
+rc=0
+run_sync "$fix14" structural-complete --plan="$fix14/plan.json" >/dev/null 2>&1 || rc=$?
+assert_ok '[[ "$rc" -ne 0 ]]' \
+  "T14a: structural-complete exige ACULTA_SYNC_STRUCTURAL_CONFIRM=1"
+
+rc=0
+ACULTA_SYNC_STRUCTURAL_CONFIRM=1 FAKE_DRUSH_CFG_JSON='{"system.site":{"state":"Different"}}' \
+  run_sync "$fix14" structural-complete --plan="$fix14/plan.json" >/dev/null 2>&1 || rc=$?
+st14_drift="$(run_sync "$fix14" status --format=json)"
+assert_ok '[[ "$rc" -ne 0 && "$(printf "%s" "$st14_drift" | python3 -c "import json,sys; print(json.load(sys.stdin)[\"pending_structural_risk\"])")" == "R3" ]]' \
+  "T14b: drift de config impede fechar a janela e preserva pending_structural_risk=R3"
+unset FAKE_DRUSH_CFG_JSON
+
+rc=0
+ACULTA_SYNC_STRUCTURAL_CONFIRM=1 FAKE_DRUSH_UPDB_JSON='[{"module":"aculta_portal","update_id":"10001"}]' \
+  run_sync "$fix14" structural-complete --plan="$fix14/plan.json" >/dev/null 2>&1 || rc=$?
+assert_ok '[[ "$rc" -ne 0 ]]' \
+  "T14c: updatedb pendente impede fechar a janela"
+unset FAKE_DRUSH_UPDB_JSON
+
+cr_before14="$(cat "$fix14/cr.count")"
+ACULTA_SYNC_STRUCTURAL_CONFIRM=1 run_sync "$fix14" structural-complete --plan="$fix14/plan.json" >/dev/null 2>&1
+st14="$(run_sync "$fix14" status --format=json)"
+assert_ok '[[ "$(printf "%s" "$st14" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[\"last_validated_sha\"], d[\"last_cache_success_sha\"], d[\"pending_structural_sha\"], d[\"pending_structural_risk\"])")" == "$target14 $target14 None None" ]]' \
+  "T14d: janela fechada avanca baseline, cache e limpa a pendencia estrutural"
+assert_ok '[[ "$(cat "$fix14/cr.count")" -eq $((cr_before14 + 1)) ]]' \
+  "T14e: structural-complete reconstroi o cache uma vez"
+
+plan14_after="$(run_sync "$fix14" plan --format=json)"
+assert_ok '[[ "$(printf "%s" "$plan14_after" | python3 -c "import json,sys; print(json.load(sys.stdin)[\"risk\"])")" != "R3" ]]' \
+  "T14f: apos fechar a janela, o delta cumulativo deixa de ser R3"
+
 printf '\nResumo da suite Runtime Sync v2: %d PASS, %d FAIL\n' "$PASS_COUNT" "$FAIL_COUNT"
 [[ "$FAIL_COUNT" -eq 0 ]]

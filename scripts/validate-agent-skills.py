@@ -83,7 +83,7 @@ def main() -> int:
         fail("matriz de avaliação Runtime Sync ausente")
     else:
         runtime_ids = set(re.findall(r"^\| (RS-\d{2}) \|", runtime_evals.read_text(encoding="utf-8"), re.M))
-        expected_runtime = {f"RS-{number:02d}" for number in range(1, 13)}
+        expected_runtime = {f"RS-{number:02d}" for number in range(1, 14)}
         if runtime_ids != expected_runtime:
             fail(f"casos Runtime Sync incompletos: faltam {sorted(expected_runtime - runtime_ids)}")
     if ERRORS:

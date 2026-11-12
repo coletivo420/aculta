@@ -33,6 +33,7 @@
 | `sync-code [--adopt-baseline] [--format=json]` | Git FF quando aplicavel, `drush cr`, relatorio v2 | Executa codigo e cache com lock cooperativo e gates; reconstrói cache mesmo quando `HEAD == origin/dev` se pendente; retorna `NOOP` se ja validado |
 | `verify [--format=json]` | Relatorio em `var/runtime-sync/` | Confere SHA, cache validado e Drush pos-operacao |
 | `structural-plan [--refresh] [--format=json]` | Nenhuma no Runtime | Gera plano verificavel por etapas para mudancas R2-R4, incluindo caso especial do `commerce_shipping` |
+| `structural-complete --plan=<plano.json> [--format=json]` | `drush cr` e estado em `var/runtime-sync/` | Fecha a janela ja executada: valida confirmacao explicita, plano, HEAD/origin, worktree limpo e zeragem de updatedb/deploy/config drift; avanca o baseline e limpa `pending_structural_*` |
 | `isolation-plan [--target-dir=<dir>] [--format=json]` | Nenhuma no Runtime | Inventaria mounts persistentes e estrategia de worktree detached para separar checkout de agentes do Apache (F4) |
 
 ## 3. Classificador cumulativo de risco (F2)

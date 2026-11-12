@@ -22,6 +22,7 @@
 | Código e cache | `bash scripts/runtime-sync.sh sync-code [--adopt-baseline] [--format=json]` | `git fetch`, `merge --ff-only`, `drush cr` e estado em `var/runtime-sync/` | Sincronização cotidiana pós-push quando o checkout estiver limpo e o delta for `R0`/`R1` |
 | Verificação | `bash scripts/runtime-sync.sh verify [--format=json]` | Relatório em `var/runtime-sync/` | Confirmar SHA, cache validado e saúde Drush após sincronização ou janela estrutural |
 | Plano estrutural | `bash scripts/runtime-sync.sh structural-plan [--refresh] [--format=json]` | Nenhuma no Runtime | Gerar checklist ordenado de backup/restore, Composer, `updatedb`, `config:import` e exceções (`commerce_shipping`) para deltas `R2..R4` |
+| Fechamento da janela | `bash scripts/runtime-sync.sh structural-complete --plan=<plano.json> [--format=json]` | `drush cr` e `var/runtime-sync/` | Fechar uma janela já executada: exige `ACULTA_SYNC_STRUCTURAL_CONFIRM=1`, HEAD == `origin/dev`, worktree limpo, plano compatível e `updatedb`/deploy/config drift zerados. Não importa config nem roda updatedb. |
 | Plano de isolamento | `bash scripts/runtime-sync.sh isolation-plan [--format=json]` | Nenhuma no Runtime | Inspecionar mounts persistentes e comando `git worktree add --detach` para separar checkout de agentes do Apache (F4) |
 
 O script **nunca** executa `composer install`, `composer update`, `updatedb`, `config:import`, `config:export`, `pm:uninstall`, `DROP`, `git reset`, `git stash` ou `git clean`.
@@ -65,3 +66,10 @@ bash scripts/runtime-sync.sh doctor --format=json
 3. **Backup e ensaio de restauração:** gerar dump consistente de `aculta_runtime` (`--single-transaction --routines --triggers --hex-blob`) e snapshot dos arquivos persistentes fora do Git e do DocumentRoot (modo `0600`), registrar SHA-256 e testar a restauração e o boot em banco descartável autorizado (`aculta_runtime_copia`, nunca `aculta_simpletest`).
 4. **Ordem de execução aprovada:** seguir a sequência de `structural-plan`. Em casos como a remoção de `commerce_shipping`, executar `updatedb` e `pm:uninstall commerce_shipping` aprovado **com o vendor antigo** antes de rodar `composer install`.
 5. **Homologação pós-janela:** executar `drush cr`, `bash scripts/runtime-sync.sh verify` e smokes HTTP dos `site_keys` afetados.
+6. **Fechamento auditável:** com o checkout em `origin/dev`, worktree limpo e as pendencias zeradas, gerar o plano JSON (`structural-plan --format=json > plano.json`) e executar:
+
+```bash
+ACULTA_SYNC_STRUCTURAL_CONFIRM=1 bash scripts/runtime-sync.sh structural-complete --plan=plano.json
+```
+
+O comando não executa `config:import` nem `updatedb`: ele confere o plano, exige `updatedb`, deploy hooks e drift de config zerados, reconstrói o cache e avança `last_validated_sha`, limpando `pending_structural_*`. Sem essas condições ele falha fechado e preserva o baseline anterior.

@@ -69,7 +69,7 @@ Critérios: PASS (executado e verde), FAIL, DEFERRED (não roda aqui; motivo), N
 | Pagamentos | `validate-payment-domain-policy.php`, `validate-portal-commerce-security.php` | DEFERRED (Drush) |
 | Uploads | `validate-aculta-image.php`; regras Semgrep de `aculta-seguranca-estatica` | Semgrep: executado; validador: DEFERRED |
 | Autenticação e sessão | `validate-session-cookie-policy.php`, `validate-turnstile-exceptions.php` | DEFERRED (Drush/Runtime) |
-| Runtime Sync | `bash -n scripts/runtime-sync.sh`; `bash scripts/test-runtime-sync.sh` | PASS (24/24, simulado) |
+| Runtime Sync | `bash -n scripts/runtime-sync.sh`; `bash scripts/test-runtime-sync.sh` | PASS (30/30, simulado; inclui `structural-complete`) |
 | Scripts shell | `shellcheck -S warning` e `shfmt -d` nos arquivos alterados; `bash -n` | ShellCheck e shfmt: executados; legado com dívida |
 | GitHub Actions | `actionlint` (gate no CI pretendido) | DEFERRED: binário não instalado neste ambiente |
 | Skills | `python3 scripts/validate-agent-skills.py`; `php scripts/validate-agent-token-budget.php` | Skills: PASS; orçamento: FAIL pré-existente (`TODO.md`, `css`, `htmx`, `sdc`, `ui-patterns`) |
