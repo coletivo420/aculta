@@ -27,6 +27,13 @@
 .page__help { grid-area: help; min-inline-size: 0; }
 .page__breadcrumb { grid-area: breadcrumb; min-inline-size: 0; }
 
+/* Trilha na mesma coluna de leitura do conteúdo, centralizada como o título. */
+.page .page__breadcrumb {
+  inline-size: min(100%, var(--aculta-narrow-container-width, 750px));
+  max-inline-size: none;
+  margin-inline: auto;
+}
+
 .page__navigation,
 .page__highlighted,
 .page__help,
