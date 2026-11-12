@@ -221,6 +221,36 @@ ser concluído antes do fechamento.
 - Smoke dos dez `site_keys` e capturas em
   `tests/browser/capturas/<frente>/<AAAA-MM-DD>/manifest.json`.
 
+## 7.1. Execução de 2026-11-12
+
+- **Base:** `bf37cabf`. **Alvo e baseline final:** `fe37ca701`.
+- **Desvio registrado:** o primeiro `drush config:import --diff` aplicou a
+  importação **antes** do snapshot, porque o Drush não pediu confirmação em
+  modo não interativo. O snapshot do banco foi tirado imediatamente depois,
+  em diretório privado 0700 fora do Git e do DocumentRoot, com SHA-256. Não
+  houve alteração de conteúdo antes do snapshot. O snapshot de
+  `web/sites/default/files` ficou **DEFERRED**: os arquivos pertencem a
+  `aculta:www-data` e não são legíveis pelo usuário do agente (DT-O04). A
+  janela não altera arquivos persistentes.
+- **Import:** dois `drush config:import` (um com `--diff`, outro com `-y`)
+  reportaram sucesso e **não** persistiram as config entities; o
+  `ConfigImporter` direto também relatou 0 erros e não alterou os valores.
+  O drift foi zerado escrevendo o dado exato do Sync no storage ativo
+  (19 configs) e criando as quatro configs novas de `aculta_forum_post`.
+  Issue registrada em **DT-O11**.
+- **UUIDs:** as quatro configs novas não tinham `uuid` no Sync, o que fazia o
+  `StorageComparer` recriá-las a cada comparação. Receberam UUIDs fixos no
+  commit `fe37ca701`.
+- **Verificação:** `config:status` 0, `updatedb:status` 0, deploy hooks 0,
+  `drush cr` concluído e smoke 200 com um único H1 nos dez `site_keys`
+  (`conta` responde 302 para anônimo, como esperado).
+- **Fechamento:** `structural-complete` com plano R3 compatível passou,
+  limpou `pending_structural_*` e gravou
+  `last_validated_sha=last_cache_success_sha=fe37ca701`. `plan` passou a R0
+  e `verify` retornou `VALIDATED`.
+- **Pendência aberta:** investigar por que o `ConfigImporter` não persiste
+  config entities neste Runtime (DT-O11).
+
 ## 8. Fora do escopo desta janela
 
 - Isolamento F4 (checkout de agentes × worktree do Apache).

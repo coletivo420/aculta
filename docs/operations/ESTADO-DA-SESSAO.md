@@ -1,3 +1,14 @@
+# Janela estrutural do Runtime — drift de config e R3 — 2026-11-12
+
+- **Objetivo:** executar a janela de configuração e fechar o delta R3 do Runtime de desenvolvimento.
+- **Estado:** drift `config:status` zerado (20 itens → 0), `updatedb` e deploy hooks sem pendências, baseline avançado para `fe37ca701`. `plan` em R0, `verify` e `status` em `VALIDATED`. As três configs do R3 e as demais 17 foram alinhadas; as quatro configs de `aculta_forum_post` receberam UUIDs fixos no commit `fe37ca701`.
+- **Decisões e alternativas descartadas:** como o `ConfigImporter` não persistia config entities (DT-O11), o Sync foi aplicado escrevendo o dado exato no storage ativo, em vez de reexecutar importações; nenhuma config foi apagada.
+- **Cuidados:** o primeiro `config:import --diff` aplicou antes do snapshot (Drush não confirmou em não interativo); o snapshot do banco foi tirado imediatamente depois, em diretório privado 0700 com SHA-256. O snapshot de `files` ficou DEFERRED por permissão (DT-O04). O checkout foi rebaseado sobre dois commits paralelos de design antes do fechamento.
+- **Commits e arquivos:** `fe37ca701` (UUIDs das configs do fórum) e a documentação da janela; o commit de execução não altera código de aplicação.
+- **Verificações:** `config:status` 0; `updatedb:status` 0; deploy hooks 0; smoke HTTP 200 e um `h1` nos dez `site_keys` (conta 302 anônimo); `structural-complete` com plano R3 compatível; `plan` R0; `verify` VALIDATED.
+- **Pendências e bloqueios:** investigar por que o `ConfigImporter` não persiste config entities neste Runtime (DT-O11); aceite autenticado e visual da configuração importada ainda pendente.
+- **Próximo passo:** diagnosticar DT-O11 e validar as telas de moderação do fórum e o formulário de página com Layout Builder.
+
 # PHPStan — rodada atual, microfase 24b — 2026-11-11
 
 - **Objetivo:** reduzir diagnósticos PHPStan no fluxo de listagens do Studio e consolidar as microfases acumuladas.
@@ -19,17 +30,3 @@
 - **Verificações:** PHPStan 0, unit 3287, Portal 1234, boundary 7888, browser index 151, admin routes, aliases, root policy e status index PASS; smoke Firefox 70/70 pós-import.
 - **Pendências e bloqueios:** Kernel focal do domínio PASS com SQLite isolado; suíte Kernel completa DEFERRED por dependências de ambiente (`aculta_file_uploader`, `aculta_lms_resources`, schema do Commerce), sessão autenticada (DT-S01), cache-hit e aceite humano.
 - **Próximo passo:** importar a configuração autorizada, rodar Kernel/Functional e concluir RN-05.
-
-
-# PHPStan — rodada 18 aculta_mailer — 2026-11-11
-
-- **Objetivo:** zerar a dívida PHPStan de todo o módulo aculta_mailer.
-- **Estado:** src, .install e testes medidos em zero erros; baseline sem entradas do módulo. SMTP usa a fábrica pública Symfony mantendo TLS configurado.
-- **Decisões e alternativas descartadas:** narrowing de entidades concretas; helper valida FieldStorageDefinition; nenhum ignore PHPStan. Removido teste tautológico do TTL.
-- **Cuidados:** credenciais SMTP continuam resolvidas pelo SecretProvider; porta 465 usa smtps e verify_peer é encaminhado pela Dsn. Nenhum envio externo.
-- **Commits e arquivos:** base `0210e5c86`; código, testes e serviço de aculta_mailer, `phpstan-baseline.neon`, relatório de dívida, TODO/status e este handoff. Hash final consta no commit da rodada.
-- **Verificações:** PHPStan módulo/global `[OK] No errors`; Unit 166/348 PASS; PHP lint 29 arquivos, YAML serviços e status index PASS; baseline global 3564. Unit global 3287/17594 com 4 falhas fora do escopo (Forum, Game, Index) e 3 deprecações. Token budget FAIL por 7 violações globais preexistentes.
-- **Pendências e bloqueios:** migração de consumidores `DomainPurposeManager` para `DomainSiteManager` ausente de `origin/dev`; browser/SMTP externo seguem como próximos passos do componente.
-- **Próximo passo:** retomar rodada PHPStan 17 da aculta_wiki após a migração chegar a origin/dev.
-
-
