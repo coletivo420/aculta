@@ -25,3 +25,8 @@ description: Use quando alterações do ACULTA exigirem Composer, configuração
 A CLI standalone de `aculta_deployer` não depende de Drush/Drupal/vendor e o seu `var/deployer/status.json` mantém o schema 1 intacto. O painel administrativo (`/painel-administrativo/aculta/deployer`, restrito a MAIN e `administer aculta deployer`) consome `var/runtime-sync/state.json` e `latest.json` (schema 2) de forma **somente leitura** via `DeployerStatusReader::readRuntimeSync()`.
 
 **Não existe executor autônomo (`structural-apply`).** Mudanças estruturais e o cutover real da worktree F4 (`isolation-plan`) exigem aprovação explícita do responsável.
+
+## Banco de ensaio da cópia do Runtime
+
+- Use `aculta_runtime_copia` para restaurar o snapshot antes de qualquer `updatedb` ou `config:import` estrutural. O usuário da aplicação `aculta_runtime`@`localhost` já tem `GRANT` nesse banco, então não é preciso pedir permissão de novo.
+- `aculta_simpletest` nunca guarda cópia do Runtime. Detalhes em `docs/operations/BANCO-DE-TESTE.md`.

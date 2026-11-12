@@ -284,3 +284,12 @@ scripts/test-functional.sh \
 O wrapper carrega `secrets/simpletest-db.env`, define `SIMPLETEST_BASE_URL` e `BROWSERTEST_OUTPUT_DIRECTORY` e recusa host de produção. Saída esperada: `OK` ou `OK, but there were issues!` com depreciações de Core/contrib. Não deixe HTMLs de diagnóstico em `web/sites/simpletest/browser_output/`; use `BROWSERTEST_OUTPUT_DIRECTORY` fora do docroot e limpe os arquivos gerados.
 
 Limpeza: os diretórios `web/sites/simpletest/<prefixo>` são descartáveis. Não remova `aculta_runtime` nem `aculta_simpletest` inteiro durante a execução de outros testes.
+
+## Cópia de ensaio do Runtime: `aculta_runtime_copia`
+
+- **Finalidade**: prova de restauração do snapshot antes de `updatedb` ou `config:import` no Runtime (`RUNTIME-UPDATE-WINDOW.md`).
+- **Criado** em 2026-11-12 pelo responsável, com `CREATE DATABASE` e `GRANT ALL` concedidos somente ao usuário da aplicação `aculta_runtime`@`localhost`. Não há outro usuário com acesso a este banco.
+- **Permissões**: já configuradas no MariaDB; não é preciso repetir o `GRANT` para novos ensaios com o mesmo usuário.
+- **Restauração usada**: snapshot `runtime.sql.gz` de `aculta_runtime`, validado por SHA-256, restaurado no banco. Conferência: 627 tabelas em `aculta_runtime_copia` e 627 em `aculta_runtime`.
+- **Regra**: este banco guarda cópia do Runtime. `aculta_simpletest` continua proibido para isso.
+- **Credencial administrativa**: obtida de `secrets/system` pelo responsável; não armazenar valor em documentos, logs ou comandos de linha.
