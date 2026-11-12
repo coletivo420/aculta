@@ -8,6 +8,7 @@ use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\node\NodeInterface;
 use Drupal\schema_metatag\SchemaMetatagManager;
@@ -21,6 +22,8 @@ final class ActivityHooks {
   public function __construct(
     #[Autowire(service: 'string_translation')]
     private readonly TranslationInterface $translation,
+    #[Autowire(service: 'current_user')]
+    private readonly AccountProxyInterface $currentUser,
   ) {}
 
   /**
@@ -161,8 +164,7 @@ final class ActivityHooks {
     if ($display->getComponent('field_event_location') && $node->hasField('field_event_location') && !$node->get('field_event_location')->isEmpty()) {
       $location = $node->get('field_event_location')->entity;
       if ($location instanceof EventLocation) {
-        $currentUser = \Drupal::currentUser();
-        if ($location->access('view', $currentUser)) {
+        if ($location->access('view', $this->currentUser)) {
           $build['field_event_location'] = [
             '#theme' => 'item_list',
             '#title' => $this->translation->translate('Local do evento'),
