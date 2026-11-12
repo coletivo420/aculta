@@ -37,7 +37,8 @@ if [[ "$studio_home" != "/marley" ]]; then
   echo "Runtime incompatível: aculta_studio=$studio_version; rota aculta_studio.home=$studio_home. Esperado: /marley. Atualize o Runtime de teste para a branch antes da revisão visual." >&2
   exit 3
 fi
-export STUDIO_COLOR_MODE_STATE="$(php "$drush_root/vendor/drush/drush/drush.php" php:eval 'echo json_encode(\Drupal::service("aculta_portal.color_mode_preference")->forUser((int) getenv("STUDIO_USER_ID")));' "--uri=$STUDIO_LOGIN_URI")"
+STUDIO_COLOR_MODE_STATE="$(php "$drush_root/vendor/drush/drush/drush.php" php:eval 'echo json_encode(\Drupal::service("aculta_portal.color_mode_preference")->forUser((int) getenv("STUDIO_USER_ID")));' "--uri=$STUDIO_LOGIN_URI")"
+export STUDIO_COLOR_MODE_STATE
 restore_color_mode() {
   local exit_code=$?
   php "$drush_root/vendor/drush/drush/drush.php" php:eval '$uid = (int) getenv("STUDIO_USER_ID"); $mode = json_decode(getenv("STUDIO_COLOR_MODE_STATE"), TRUE); if ($mode === NULL) { \Drupal::service("user.data")->delete("aculta_portal", $uid, "color_mode"); } else { \Drupal::service("aculta_portal.color_mode_preference")->save($uid, $mode); }' "--uri=$STUDIO_LOGIN_URI" >/dev/null || exit_code=1

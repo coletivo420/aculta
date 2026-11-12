@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Referências às variáveis de caso são avaliadas em strings por assert_ok().
+# shellcheck disable=SC2034
 # Suite automatizada deterministica para ACULTA Runtime Sync v2.
 # Utiliza repositorios Git temporarios (bare remote + checkout) e Drush falso instrumentado.
 # NUNCA toca no Runtime real nem depende de rede externa.
@@ -129,15 +131,15 @@ run_sync() {
   local fix_dir="$1"
   shift
   ACULTA_SYNC_ROOT="$fix_dir/runtime" \
-  ACULTA_SYNC_STATE_DIR="$fix_dir/runtime/var/runtime-sync" \
-  ACULTA_SYNC_ENV="${TEST_SYNC_ENV:-test}" \
-  ACULTA_SYNC_EXPECTED_HOST="${TEST_SYNC_HOST:-$(hostname -s)}" \
-  ACULTA_SYNC_EXPECTED_DB="${TEST_SYNC_DB:-aculta_runtime}" \
-  ACULTA_SYNC_URI="${TEST_SYNC_URI:-https://aculta.toca.net.br}" \
-  ACULTA_SYNC_DRUSH_BIN="$fix_dir/bin/fake-drush" \
-  FAKE_DRUSH_LOG="$fix_dir/drush.log" \
-  FAKE_DRUSH_CR_COUNT="$fix_dir/cr.count" \
-  bash "$SYNC_SCRIPT" "$@"
+    ACULTA_SYNC_STATE_DIR="$fix_dir/runtime/var/runtime-sync" \
+    ACULTA_SYNC_ENV="${TEST_SYNC_ENV:-test}" \
+    ACULTA_SYNC_EXPECTED_HOST="${TEST_SYNC_HOST:-$(hostname -s)}" \
+    ACULTA_SYNC_EXPECTED_DB="${TEST_SYNC_DB:-aculta_runtime}" \
+    ACULTA_SYNC_URI="${TEST_SYNC_URI:-https://aculta.toca.net.br}" \
+    ACULTA_SYNC_DRUSH_BIN="$fix_dir/bin/fake-drush" \
+    FAKE_DRUSH_LOG="$fix_dir/drush.log" \
+    FAKE_DRUSH_CR_COUNT="$fix_dir/cr.count" \
+    bash "$SYNC_SCRIPT" "$@"
 }
 
 # ==============================================================================

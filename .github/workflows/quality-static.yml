@@ -140,8 +140,13 @@ jobs:
       env:
         SEMGREP_RULES: .agents/skills/aculta-seguranca-estatica/rules/aculta-php.yml
       run: |
-        # Achados históricos não bloqueiam. Só achado novo em relação ao commit base falha.
-        base="${{ github.event.pull_request.base.sha || github.event.before }}"
+        # A triagem integral de Semgrep mais recente está registrada em 9d06d2167.
+        # Comparar a PR de dev com main reabre centenas de achados históricos já triados.
+        if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+          base="9d06d21673d44e09944c14ef31c218aba6db4b0f"
+        else
+          base="${{ github.event.before }}"
+        fi
         if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
           echo "Sem commit base confiável para baseline: execução completa sem baseline."
           semgrep scan --metrics=off --config "$SEMGREP_RULES" --error \
