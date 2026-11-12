@@ -1,12 +1,14 @@
 {
   "extends": ["stylelint-config-drupal"],
   "rules": {
+    "alpha-value-notation": null,
     "at-rule-no-unknown": [
       true,
       {
         "ignoreAtRules": ["container", "starting-style"]
       }
     ],
+    "color-function-notation": null,
     "declaration-block-single-line-max-declarations": null,
     "number-leading-zero": "never",
     "unit-allowed-list": [
@@ -33,6 +35,7 @@
     "value-keyword-case": [
       "lower",
       {
+        "ignoreKeywords": ["currentColor", "sRGB"],
         "ignoreProperties": [
           "font-family",
           "--font-family-base",

@@ -6,12 +6,12 @@
     "@eslint/js": "9.39.1",
     "eslint": "9.39.1",
     "globals": "16.4.0",
+    "js-yaml": "4.3.2",
     "postcss": "8.5.32",
     "purgecss": "9.1.0",
-    "stylelint": "^13.13.1",
-    "stylelint-config-drupal": "^1.0.2",
-    "stylelint-order": "^4.1.0",
-    "js-yaml": "4.3.2"
+    "stylelint": "^14.16.1",
+    "stylelint-config-drupal": "^3.1.0",
+    "stylelint-order": "^5.0.0"
   },
   "scripts": {
     "lint:css": "stylelint \"web/themes/custom/aculta420_v2/**/*.css\"",
