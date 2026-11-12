@@ -22,6 +22,23 @@ SUITE_OUT=/caminho/externo/fora-do-repo \
 - Códigos: 0 todos os pares passam; 1 há violação ou erro de carga;
   2 falta `SUITE_OUT`.
 
+## Telas autenticadas
+
+`visual-autenticado.mjs` entra com a conta de teste de `secrets/` (nunca imprime
+credenciais) e percorre `/conta`, `/conta/dados`, `/meu-perfil`,
+`/mensagens/resumo`, `/avisos-mensagens` e `/salvos` em `conta.aculta.*`, em
+320/1440 px, claro e escuro. Mede status, overflow, classes `aculta-u-*`
+remanescentes, equivalências Bootstrap e `color-contrast` com axe.
+
+```sh
+SUITE_OUT=/caminho/externo node tests/browser/transversal/aculta-contraste/visual-autenticado.mjs
+```
+
+`/marley` na conta administrativa foi medido na homologação de 2026-11-12
+(4/4 PASS); o script versionado cobre a conta comum. Telas restritas a papéis
+de contribuidor Wiki e educador (`/we-sativa`, `/ganjalab`) ficam DEFERRED: as
+contas disponíveis recebem 403.
+
 ## Histórico
 
 - 2026-11-12: dois achados pré-existentes corrigidos (link do rodapé 3,45:1 e

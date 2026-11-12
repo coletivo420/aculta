@@ -316,4 +316,9 @@ alterações indevidas nos 22 displays, não aplicar o novo tom em massa.
   `EventOrganizationAdminController`); `php -l` OK.
 - Navegador: `page-matrix.py` 100/100 (dez hosts × 320–1440 px × claro/escuro,
   sem overflow); `aculta-contraste/axe-nodes.mjs` 22/22 PASS.
-- Sessão autenticada, modais, gavetas, teclado e leitor de tela: DEFERRED.
+- Sessão autenticada: 28/28 PASS com as contas de teste (conta comum em seis
+  rotas de `conta.aculta.*`; administrativa em `/marley`), 320/1440 px, claro e
+  escuro, sem overflow, sem utilitários e axe zerado.
+- `wiki420/we-sativa` e `cursos/ganjalab`: 403 para as contas disponíveis
+  (papéis de contribuidor Wiki e educador), DEFERRED. Modais, gavetas, teclado
+  e leitor de tela: DEFERRED.

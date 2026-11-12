@@ -6,7 +6,7 @@
 - Novo token `events-organization-admin-table` cobre o `<small>` de slug do painel de organizações; o `class="text-muted"` direto no `#markup` saiu. `portal-payment-notice.html.twig` troca `link-primary` por `aculta-payment-notice__link`.
 - Contraste: link do rodapé 3,45:1 → 5,08:1 e nível atual da trilha 3,58:1 → 12,4:1, com tokens semânticos; categoria do teaser da Revista idem. Frente `tests/browser/transversal/aculta-contraste/` mede 22/22 PASS nos dez hosts.
 - `scripts/validate-portal-ui-docs.php` não aborta mais quando o tema V1 `aculta420` não existe; documentação de tokens sincronizada com o mapa (470 classes).
-- Gates: Stylelint PASS, `css:verify` PASS (8 checagens), mapped classes PASS (470), UI Styles PASS (54), token docs PASS (532 tokens/451 usados/160 atributos), boundary PASS. Matriz `page-matrix.py` 100/100 nos dez hosts, 320–1440 px, claro/escuro; axe 22/22.
+- Gates: Stylelint PASS, `css:verify` PASS (8 checagens), mapped classes PASS (470), UI Styles PASS (54), token docs PASS (532 tokens/451 usados/160 atributos), boundary PASS. Matriz `page-matrix.py` 100/100 nos dez hosts, 320–1440 px, claro/escuro; axe 22/22. Sessão autenticada: 28/28 PASS (seis rotas da conta comum e `/marley` administrativo, 320/1440, claro/escuro).
 
 ## Não versionado — auditoria, PurgeCSS e limpeza de CSS legado (2026-11-12)
 

@@ -47,7 +47,7 @@ Scripts com `routes.json` têm cobertura de rotas públicas no runner comum.
 | [`tests/browser/support/aculta-faq/`](./support/aculta-faq/README.md) | Revisão visual do ACULTA FAQ | 1 | sim |
 | [`tests/browser/transversal/aculta-botoes-a11y/`](./transversal/aculta-botoes-a11y/README.md) | Leitor de tela (Orca) — botões em estados autenticados | 1 | não |
 | [`tests/browser/transversal/aculta-content-admin/`](./transversal/aculta-content-admin/README.md) | Revisão visual do Painel de conteúdo | 1 | sim |
-| [`tests/browser/transversal/aculta-contraste/`](./transversal/aculta-contraste/README.md) | ACULTA — contraste de UI Skins | 1 | não |
+| [`tests/browser/transversal/aculta-contraste/`](./transversal/aculta-contraste/README.md) | ACULTA — contraste de UI Skins | 2 | não |
 | [`tests/browser/transversal/aculta-document-viewer/`](./transversal/aculta-document-viewer/README.md) | Revisão visual do ACULTA Document Viewer | 2 | sim |
 | [`tests/browser/transversal/aculta-editor/`](./transversal/aculta-editor/README.md) | ACULTA Editor — acesso anônimo, editor e administrador | 1 | sim |
 | [`tests/browser/transversal/aculta-home-editorial-ui-patterns/`](./transversal/aculta-home-editorial-ui-patterns/README.md) | Home editorial — UI Patterns Views | 1 | não |

@@ -78,8 +78,39 @@
     "axe": "/home/piradopirata/aculta-suite-out/contraste-20261112/contraste-axe.json (fora do Git)"
   },
   "limitacoes": [
-    "Sessão autenticada, modais, gavetas, teclado e leitor de tela não cobertos.",
-    "Comparação pixel a pixel antes/depois DEFERRED: não há baseline PNG anterior.",
-    "Composição SDC do markup de módulo que usa data-portal-ui permanece incremental."
-  ]
+    "Telas restritas a papeis de contribuidor Wiki e educador nao foram cobertas pelas contas de teste.",
+    "Modais, gavetas, teclado e leitor de tela nao cobertos.",
+    "Comparacao pixel a pixel antes/depois DEFERRED: nao ha baseline PNG anterior.",
+    "Composicao SDC do markup de modulo que usa data-portal-ui permanece incremental."
+  ],
+  "autenticado": {
+    "metodo": "Playwright Firefox headless com sessao real via tests/browser/auth-login.mjs; contas de teste em secrets/ (nao versionadas). Nenhum conteudo gravado.",
+    "conta_comum": {
+      "rotas": [
+        "/conta",
+        "/conta/dados",
+        "/meu-perfil",
+        "/mensagens/resumo",
+        "/avisos-mensagens",
+        "/salvos"
+      ],
+      "host": "conta.aculta.toca.net.br",
+      "checagens": 24,
+      "resultado": "24/24 PASS (320 e 1440 px, claro/escuro; HTTP 200, sem overflow, sem classes aculta-u-* ou equivalencias Bootstrap, axe color-contrast zerado)"
+    },
+    "conta_administrativa": {
+      "rotas": [
+        "/marley"
+      ],
+      "host": "conta.aculta.toca.net.br",
+      "checagens": 4,
+      "resultado": "4/4 PASS (320 e 1440 px, claro/escuro; sem overflow, sem utilitarios, axe zerado)"
+    },
+    "nao_coberto": [
+      "wiki420/we-sativa: 403 para as contas disponiveis (exige papel de contribuidor Wiki)",
+      "cursos/ganjalab: 403 para as contas disponiveis (exige papel de educador)",
+      "modais, gavetas, teclado e leitor de tela"
+    ],
+    "evidencia": "/home/piradopirata/aculta-suite-out/autenticado-20261112 (results.json, admin-results.json e PNGs 1440, fora do Git)"
+  }
 }

@@ -329,8 +329,16 @@ o contraste em frente de UI Skins. Resultado:
 - **Homologação**: `page-matrix.py` 100/100 nos dez hosts, 320–1440 px, claro e
   escuro, sem overflow; `css:verify` PASS; mapped classes PASS (470); UI Styles
   PASS (54); Stylelint e PHPCS sem erros novos.
+- **Sessão autenticada**: com as contas de teste de `secrets/`, 28/28
+  verificações PASS — conta comum em `/conta`, `/conta/dados`, `/meu-perfil`,
+  `/mensagens/resumo`, `/avisos-mensagens` e `/salvos`; conta administrativa em
+  `/marley`. Em 320 e 1440 px, claro e escuro: HTTP 200, sem overflow, sem
+  `aculta-u-*` (fora de `.aculta-u-block-start`), sem equivalências Bootstrap e
+  axe `color-contrast` zerado. Evidência em
+  `/home/piradopirata/aculta-suite-out/autenticado-20261112`.
 - **Métricas**: 105 arquivos, 452.559 bytes, 2.488 regras, 3.087 seletores;
   `global-styling` 108.777 bytes.
-- **Continua pendente**: sessão autenticada, modais, gavetas, teclado e leitor
-  de tela; composição SDC do markup de módulo (incremental); comparação pixel a
-  pixel sem baseline anterior.
+- **Continua pendente**: `wiki420/we-sativa` e `cursos/ganjalab` (403 para as
+  contas de teste: exigem papéis de contribuidor Wiki e educador), modais,
+  gavetas, teclado e leitor de tela; composição SDC do markup de módulo
+  (incremental); comparação pixel a pixel sem baseline anterior.
