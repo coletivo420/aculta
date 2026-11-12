@@ -5,12 +5,14 @@ Documento para humanos e agentes. **Não contém a senha.** O valor fica em `sec
 ## Dados
 | Campo | Valor |
 | --- | --- |
-| Usuário | `teste.comum` (uid 5) |
+| Usuário do registro | `teste_comum` (uid 268) — valor de `TESTE_COMUM_USER` |
+| Usuário legado em uso | `teste.comum` (uid 5) — usado por scripts que fazem login por `drush uli` |
 | Host de login | `https://conta.aculta.toca.net.br/entrar` |
-| Senha | ler `TESTE_COMUM_PASSWORD` em `secrets/teste_comum.env` |
-| Papéis | `authenticated`, `email_confirmed`, `wiki_contributor` (sem administrador) |
+| Senha | ler `TESTE_COMUM_PASSWORD` em `secrets/teste_comum.env`; desde 2026-11-12 vale para as duas contas |
+| Papéis (uid 268) | `authenticated`, `email_confirmed` (sem administrador) |
+| Papéis (uid 5) | `authenticated`, `gerente_loja`, `email_confirmed`, `content_editor`, `lms_teacher` |
 
-> **Estado Runtime conferido em 2026-11-03:** a tabela acima é histórica e está desatualizada. `teste.comum` atualmente tem os papéis `authenticated`, `gerente_loja`, `email_confirmed`, `content_editor` e `lms_teacher`. `content_editor` concede `moderar denuncias do forum`, portanto a aba Marley de moderação está autorizada para esta conta. A senha continua protegida pela regra abaixo; não alterá-la sem decisão do responsável.
+> **Estado Runtime conferido em 2026-11-12:** o registro `secrets/teste_comum.env` aponta para `teste_comum` (uid 268), não para `teste.comum` (uid 5). O `scripts/guard-teste-comum.sh` confere as duas contas; a senha do registro foi regravada no uid 5 em 2026-11-12 para que o login por formulário usado em `tests/browser/transversal/aculta-htmx-f1/visual.py` voltasse a funcionar. `content_editor` do uid 5 concede `moderar denuncias do forum`, portanto a aba Marley de moderação está autorizada para essa conta. A senha continua protegida pela regra abaixo.
 
 ## Regras para agentes
 1. Use a senha de `secrets/teste_comum.env`. Não peça outra nem tente outras.
