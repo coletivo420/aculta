@@ -26,7 +26,8 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
 
   /**
    * Purposes with a real public experience in this phase. */
-  private const PUBLIC_PURPOSES = ['main', 'account', 'support', 'magazine'];
+  // Todos os subdomínios públicos; "links" (LinkWeed) fica de fora por decisão do responsável.
+  private const PUBLIC_PURPOSES = ['main', 'account', 'support', 'magazine', 'wiki', 'shop', 'courses', 'forum', 'eventos'];
 
   /**
    * Routes whose paths or titles may contain tokens or technical identifiers. */
