@@ -19,6 +19,7 @@
     "css:audit": "node scripts/css-audit/report.mjs && node scripts/css-audit/purge.mjs --mode=audit",
     "css:purge": "node scripts/css-audit/purge.mjs --mode=apply",
     "css:verify": "node scripts/css-audit/verify.mjs",
-    "css:test": "node --test scripts/css-audit/tests/*.test.mjs"
+    "css:test": "node --test scripts/css-audit/tests/*.test.mjs",
+    "css:classify": "node scripts/css-audit/classify.mjs"
   }
 }

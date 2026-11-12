@@ -56,15 +56,15 @@ mensagens), UI Suite, HTMX e Leaflet. Não existe padrão geral `^aculta-`.
 | Métrica | Antes | Depois | Δ |
 | --- | ---: | ---: | ---: |
 | Arquivos CSS-fonte | 107 | 106 | −1 |
-| Bytes-fonte | 496.431 | 451.485 | −44.946 (−9,1%) |
-| Regras | 2.691 | 2.504 | −187 |
-| Seletores | 3.396 | 3.103 | −293 |
+| Bytes-fonte | 496.431 | 451.112 | −45.319 (−9,1%) |
+| Regras | 2.691 | 2.499 | −192 |
+| Seletores | 3.396 | 3.098 | −298 |
 | Declarações `!important` | 17 | 14 | −3 |
 | Seletores com `:has()` | 178 | 73 | −105 |
-| Seletores com `:is()` | 355 | 278 | −77 |
+| Seletores com `:is()` | 355 | 277 | −78 |
 | Media queries | 119 | 105 | −14 |
-| Classes sem referência textual | 322 | 231 | −91 |
-| Seletores rejeitados pelo PurgeCSS | 540 | 243 | −297 |
+| Classes sem referência textual | 322 | 227 | −95 |
+| Seletores rejeitados pelo PurgeCSS | 540 | 238 | −302 |
 
 A redução não teve meta percentual: cada regra foi removida porque não tinha
 consumidor textual, classe emitida por metadado ou seletor alcançável.
@@ -81,6 +81,8 @@ consumidor textual, classe emitida por metadado ou seletor alcançável.
 | `src/styles/content.css` | 6.184 → 3.952 | `.aculta-page-heading`, `.aculta-highlighted*`, `.aculta-content-surface`, `.aculta-metadata`, `.aculta-card*`, `.view-aculta-albuns` e a regra legada de `.aculta-surface`, que conflitava com o SDC `surface` |
 | `src/styles/forum.css` | 37.928 → 35.072 | discussão de Revista/Fórum sem template (`aculta-revista-publication__discussion`, `aculta-forum-topic__discussion`), list-row e botão de novo tópico legados |
 | `src/styles/utilities.css` | 2.474 → 2.328 | `.aculta-card*`, `.aculta-main-canvas`, `.aculta-panel__heading`, `aculta-u-mb-0` e `aculta-u-mb-4` |
+| `src/styles/base.css` | 2.902 → 2.741 | `.flex`, `.justify-center` e `.align-center` sem emissão; `.flex-column` permanece (visualizador de PDF) |
+| `src/styles/portal-account.css` | 17.680 → 14.807 | `portal-account__logout` (o template emite `__logout-row`) além das classes de conta sem emissão |
 | `components/multidomain-bar/multidomain-bar.css` | 21.360 → 20.162 | `.aculta-purpose-showcase*` (o SDC emite `purpose-showcase`) e `.aculta-login-dialog__surface` (o template usa `aculta-search-dialog__surface`) |
 | `src/styles/wiki.css` | 5.276 → 4.924 | `.aculta-wiki-collaboration` e `.aculta-wiki-search` (o form usa `aculta-wiki-search-results`) |
 | `src/styles/layout.css` | 5.554 → 4.810 | `.page__footer` e `.page__footer-inner` (o rodapé é o SDC `site-footer`, que define `grid-area`) |
@@ -103,7 +105,7 @@ consumidor textual, classe emitida por metadado ou seletor alcançável.
 - as demais bibliotecas contextuais (`statistics`, `portal-account`,
   `public-profile`, `event-organization`, `events`, `wiki`, `forum`,
   `shell-v2`) permanecem como estavam;
-- `global-styling` mantém as 16 folhas locais + fonte externa (108.769 bytes
+- `global-styling` mantém as 16 folhas locais + fonte externa (108.703 bytes
   locais). A auditoria
   confirmou que elas são transversais: fundações, utilitários emitidos por
   `PortalUiHooks`, conteúdo, busca (popup em toda página), botões de
@@ -244,3 +246,29 @@ branco). Os arquivos desses componentes e os tokens não foram alterados desde
 
 Não cobertos: sessão autenticada (Studio, conta, moderação), modais,
 gavetas, teclado manual e leitor de tela. Permanecem DEFERRED.
+
+## 11. Purge final com evidência do Runtime (2026-11-12)
+
+`npm run css:classify` usa o HTML renderizado de dez hosts (capturado em
+`reports/css-audit/runtime/html/`) como fonte complementar. Dos 252 seletores
+que o PurgeCSS removeria:
+
+| Classificação | Seletores | Decisão |
+| --- | ---: | --- |
+| Dinâmicos (enum SDC/UI Styles) | 7 | preservar |
+| Presentes no HTML do Runtime | 69 | preservar |
+| Padrão de runtime (Drupal/UI Suite/Commons) | 125 | preservar até prova em contrário |
+| Referência textual no repositório | 31 | preservar |
+| Sem evidência | 20 | manter: todos pertencem ao SDC `studio-connections-page`, que permanece no catálogo universal e só carrega CSS quando renderizado |
+
+Nenhum corte adicional foi aplicado a partir dessa classificação. O
+`--write` continua bloqueado por confirmação explícita e não foi usado.
+As exclusões aplicadas nesta rodada foram as comprovadas por referência
+textual e seletor alcançável: `.flex`, `.justify-center`, `.align-center`
+(sem emissão; `.flex-column` fica para o visualizador de PDF),
+`portal-account__logout` (o template emite `__logout-row`),
+`page__footer`/`page__footer-inner` (o rodapé é o SDC `site-footer`),
+`aculta-forum-category-list` e `aculta-wiki-search`.
+
+O HTML do Runtime é uma amostra das homes; estados autenticados e telas
+internas não estão nela. Por isso "sem evidência" não autoriza remoção.

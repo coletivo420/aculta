@@ -137,21 +137,9 @@ fieldset {
   gap: var(--spacing-base);
 }
 
-/* Flexbox utilities */
-.flex {
-  display: flex;
-}
-
+/* Flexbox utilities. `flex-column` é emitida pelo visualizador de PDF. */
 .flex-column {
   flex-direction: column;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.align-center {
-  align-items: center;
 }
 
 @media (prefers-reduced-motion: reduce) {

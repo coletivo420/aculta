@@ -167,6 +167,10 @@ export const SAFELIST_PATTERNS = [
   { pattern: /\.view-/, justification: 'Classes de View geradas pelo Views.' },
   { pattern: /\.views-/, justification: 'Classes de render do Views.' },
   { pattern: /\.field--/, justification: 'Classes de campo geradas pela Field API.' },
+  { pattern: /\.form-item-/, justification: 'Sufixo do item de formulário do Form API (ex.: form-item-categoria).' },
+  { pattern: /\.studio-profile-form/, justification: 'ID/classe do formulário de perfil do Studio gerado pelo Form API.' },
+  { pattern: /\.media--/, justification: 'Classes de view mode do módulo Media (ex.: media--type-image).' },
+  { pattern: /\.comment/, justification: 'Classes do módulo Comment (comment, comment__content, indented).' },
   { pattern: /\.toolbar-/, justification: 'Classes da barra administrativa do Core.' },
   { pattern: /\.js-/, justification: 'Classes de comportamento JavaScript do Core.' },
   // Ícones: packs UI Icons expõem classes/nomes de ícone.

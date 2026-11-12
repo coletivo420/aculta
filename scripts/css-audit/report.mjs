@@ -35,7 +35,7 @@ const CONTENT_DIRS = [
   join(ROOT, 'web/modules/custom'),
   join(ROOT, 'config/sync'),
 ];
-const CONTENT_EXTS = new Set(['.twig', '.php', '.module', '.theme', '.install', '.js', '.yml']);
+const CONTENT_EXTS = new Set(['.twig', '.php', '.module', '.theme', '.install', '.js', '.mjs', '.yml']);
 const SKIP_DIRS = new Set(['node_modules', '.git', 'vendor']);
 
 function walk(dir, acc = []) {

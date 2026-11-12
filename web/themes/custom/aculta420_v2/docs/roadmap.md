@@ -8,8 +8,8 @@
   642 linhas de `studio.css` presas a `.aculta-main`; regras mortas saíram
   de content, utilities, forum, wiki, account, messenger, biblioteca de
   componentes, barra multidomínio e mapas `portal-ui-*`.
-- Tema: 106 arquivos, 451.485 bytes-fonte (−44.946), 2.504 regras
-  (−187), 3.103 seletores (−293). `:has()` 178 → 73; `!important` 17 → 14.
+- Tema: 106 arquivos, 451.112 bytes-fonte (−45.319), 2.499 regras
+  (−192), 3.098 seletores (−298). `:has()` 178 → 73; `!important` 17 → 14.
 - Homologação: matriz 100/100 em dez hosts, cinco larguras e dois modos,
   sem overflow; axe com 7 falhas de contraste pré-existentes no rodapé e
   breadcrumb do Fórum. Runtime Sync BLOCKED por worktree concorrente/RX,

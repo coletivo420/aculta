@@ -159,18 +159,6 @@
   background: var(--color-primary);
 }
 
-.portal-account__logout {
-  margin-block-start: .75rem;
-  color: var(--color-link-editorial);
-  border-block-start: 1px solid var(--color-brand-primary);
-  font-size: 1.1667rem;
-}
-
-.portal-account__logout:is(:hover, :focus-visible) {
-  color: var(--color-on-primary);
-  background: var(--color-primary);
-}
-
 .portal-account__content {
   min-height: 18rem;
   padding: clamp(.875rem, 4vw, 1.5rem);
