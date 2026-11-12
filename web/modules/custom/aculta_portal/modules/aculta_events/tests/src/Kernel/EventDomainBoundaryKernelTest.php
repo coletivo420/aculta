@@ -9,12 +9,13 @@ use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Controller\EventOrganizerDashboardController;
-use Drupal\Core\Entity\FieldableEntityInterface;
-use Drupal\Core\Session\AccountInterface;
+use Drupal\aculta_user\Organization\OrganizationAccessService;
+use Drupal\aculta_user\Organization\OrganizationMembershipManager;
 use Drupal\user\Entity\User;
 use Drupal\user\Entity\Role;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 use Drupal\aculta_events\Plugin\Block\UpcomingEventsBlock;
 use Drupal\aculta_portal\Domain\ContentSiteKeyResolver;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
@@ -108,8 +109,17 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     // graph while preserving entity-specific editor scoping for its fixture.
     $container->register(DomainSiteManagerInterface::class)->setSynthetic(TRUE)->setPublic(TRUE);
     $container->setDefinition(
+      'aculta_user.organization_membership_manager',
+      (new Definition(OrganizationMembershipManager::class, [
+        new Reference('entity_type.manager'),
+        new Reference('datetime.time'),
+      ]))->setPublic(TRUE),
+    );
+    $container->setDefinition(
       'aculta_user.organization_access_service',
-      (new Definition(EventDomainBoundaryTestOrganizationAccessService::class))->setPublic(TRUE),
+      (new Definition(OrganizationAccessService::class, [
+        new Reference('aculta_user.organization_membership_manager'),
+      ]))->setPublic(TRUE),
     );
   }
 
@@ -332,10 +342,6 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
       'field_quando' => ['value' => '2026-11-20T20:00:00', 'end_value' => '2026-11-20T22:00:00'],
     ])->save();
 
-    $this->container->set(
-      'aculta_user.organization_access_service',
-      new EventDomainBoundaryTestOrganizationAccessService(),
-    );
     $this->container->get('current_user')->setAccount($organizer);
     self::assertTrue($event->access('update', $organizer));
     self::assertFalse($privateLocation->access('view', $organizer));
@@ -508,22 +514,6 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
       }
     }
     return $links;
-  }
-
-}
-
-/**
- * Minimal scoped access collaborator for the dashboard privacy fixture.
- */
-final class EventDomainBoundaryTestOrganizationAccessService {
-
-  /**
-   * Limits fixture edit access to an Event owned by the test editor.
-   */
-  public function isContentEditorScoped(FieldableEntityInterface $entity, AccountInterface $account): bool {
-    return $entity->getEntityTypeId() === 'aculta_event'
-      && $entity->hasField('field_organizador')
-      && (int) $entity->get('field_organizador')->target_id === (int) $account->id();
   }
 
 }
