@@ -1,6 +1,6 @@
 # TODO — aculta_events
 
-Estado: Dev · versão 0.2.0-dev.10 (`aculta_events.info.yml`) · Kernel declara dependências Core de aculta_user; construtores injetados; PHPStan completo PASS, Kernel CI pendente · status: `docs/operations/status/aculta_events.yml`.
+Estado: Dev · versão 0.2.0-dev.10 (`aculta_events.info.yml`) · Kernel isola organization_access_service sintético; construtores injetados; PHPStan completo PASS, Kernel CI pendente · status: `docs/operations/status/aculta_events.yml`.
 
 ## Próximo passo
 

@@ -10,12 +10,15 @@ use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\EventSubscriber\ActivityRetiredRouteSubscriber;
 use Drupal\aculta_events\Form\EventLocationModalForm;
 use Drupal\aculta_events\Hook\ActivityRetirementHooks;
+use Drupal\aculta_user\Organization\OrganizationAccessService;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Form\FormState;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -35,10 +38,7 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
   protected static $modules = [
     'system',
     'user',
-    'entity',
     'field',
-    'file',
-    'image',
     'key',
     'options',
     'link',
@@ -50,12 +50,8 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
     'address',
     'geofield',
     'node',
-    'path_alias',
-    'profile',
-    'domain',
     'aculta_calendar',
     'aculta_maps',
-    'aculta_user',
     'aculta_events',
   ];
 
@@ -72,8 +68,23 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    // Isola o teste do grafo completo de serviços do módulo aculta_user.
+    $container->setDefinition(
+      'aculta_user.organization_access_service',
+      (new Definition(OrganizationAccessService::class))->setSynthetic(TRUE)->setPublic(TRUE),
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp(): void {
     parent::setUp();
+    $organizationAccess = (new \ReflectionClass(OrganizationAccessService::class))
+      ->newInstanceWithoutConstructor();
+    $this->container->set('aculta_user.organization_access_service', $organizationAccess);
 
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
