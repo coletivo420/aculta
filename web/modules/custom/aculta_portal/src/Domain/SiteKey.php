@@ -23,7 +23,7 @@ enum SiteKey: string {
   case Eventos = 'eventos';
 
   /**
-   * Sessão do breadcrumb, usada pelo SDC aculta420_v2:breadcrumb.
+   * Sessão do breadcrumb, consumida pelo componente de breadcrumb do tema.
    *
    * Cada subdomínio público tem o seu ícone de primeiro nível. Main, Account,
    * Support e Links usam a sessão "portal".
