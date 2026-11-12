@@ -322,3 +322,15 @@ alterações indevidas nos 22 displays, não aplicar o novo tom em massa.
 - `wiki420/we-sativa` e `cursos/ganjalab`: 403 para as contas disponíveis
   (papéis de contribuidor Wiki e educador), DEFERRED. Modais, gavetas, teclado
   e leitor de tela: DEFERRED.
+
+## Execução Recente — teclado, diálogos e matriz determinística (2026-11-12)
+
+- `page-matrix.py` corrigido para viewport BiDi real; largura medida conferida
+  em cada linha. Duas execuções: 100/100 PASS e 40/40 PNGs idênticos.
+- `aculta-teclado-foco/teclado.mjs`: 20/20 PASS (5 URLs × claro/escuro ×
+  320/1440; 30 paradas de Tab com foco visível).
+- `aculta-dialogos/dialogos.mjs`: 12/12 PASS (carrinho, menu da conta e gaveta
+  de Mensagens; foco preso, Escape devolve ao gatilho, axe e nome acessível).
+- `aculta-contraste/visual-autenticado.mjs` (frente paralela): 28/28 PASS em
+  seis rotas da conta e `/marley`.
+- Leitor de tela (Orca): manual; `speech-dispatcher` inativo no ambiente.

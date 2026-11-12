@@ -20,11 +20,16 @@
   `global-styling`. As equivalências Bootstrap do mapa (`.text-muted`,
   `.small`, `.table`, `.nav`, `.list-unstyled`, `.pager-*`) também saíram.
   Contraste do rodapé e da trilha corrigido e medido (22/22 axe PASS).
-- Pendente: homologação visual de telas autenticadas/modais/gavetas,
-  composição SDC para marcação de módulos que hoje usa `data-portal-ui`
-  (incremental, sem camada de compatibilidade) e captura pixel a pixel
-  antes/depois. A auditoria do mapa (529 tokens) não encontrou entrada
-  comprovadamente morta. Captura e navegador autenticado: DEFERRED.
+- Homologado em 2026-11-12: telas autenticadas da conta e `/marley` (28/28),
+  teclado (20/20, 30 paradas de Tab), diálogos e gaveta de Mensagens (12/12),
+  matriz com viewport real e capturas determinísticas (100/100; 40/40 PNGs
+  idênticos em duas execuções).
+- Pendente: papéis de contribuidor Wiki (`/we-sativa`) e educador
+  (`/ganjalab`), que recebem 403 com as contas de teste; verificação manual
+  com Orca (instalado, `speech-dispatcher` inativo); composição SDC para
+  marcação de módulos que hoje usa `data-portal-ui` (incremental, sem camada
+  de compatibilidade). A auditoria do mapa (529 tokens) não encontrou entrada
+  comprovadamente morta.
 
 ## Títulos de cards e dívida de gates (2026-11-12)
 

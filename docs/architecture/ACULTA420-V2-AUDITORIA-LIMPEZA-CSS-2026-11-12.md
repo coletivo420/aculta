@@ -342,3 +342,29 @@ o contraste em frente de UI Skins. Resultado:
   contas de teste: exigem papéis de contribuidor Wiki e educador), modais,
   gavetas, teclado e leitor de tela; composição SDC do markup de módulo
   (incremental); comparação pixel a pixel sem baseline anterior.
+
+## 14. Teclado, diálogos e determinismo da matriz (2026-11-12)
+
+- **Harness corrigido.** `page-matrix.py` não redimensionava a janela: todas as
+  capturas saíam com ~1024 px e a matriz passava sem testar 320–1440. Passa a
+  aplicar viewport real por WebDriver BiDi (`browsingContext.setViewport`),
+  registra a largura medida e falha quando ela diverge. Transições e animações
+  são congeladas antes do screenshot: duas execuções seguidas produziram
+  **40/40 PNGs idênticos**. Nova execução com larguras reais: **100/100 PASS**
+  (dez hosts × 320/375/768/1024/1440 × claro/escuro).
+- **Teclado.** Frente `tests/browser/transversal/aculta-teclado-foco/`: 30
+  paradas de Tab em cinco URLs, claro/escuro, 320/1440, com outline ou
+  box-shadow em cada parada. **20/20 PASS**.
+- **Diálogos.** Frente `tests/browser/transversal/aculta-dialogos/`: carrinho,
+  menu da conta e gaveta de Mensagens abertos por teclado; foco entra, 20 Tabs
+  não escapam, Escape fecha e devolve o foco, sem overflow, axe
+  `color-contrast` zerado, `<dialog>` com nome acessível e `aria-expanded`
+  correto. **12/12 PASS**.
+- **Modal de aceite dos termos** não é automatizado porque exige gravar o
+  aceite; a conta comum o mantém aberto e prendendo o foco por desenho.
+- **Leitor de tela** segue manual: Orca está instalado, mas o
+  `speech-dispatcher` está inativo no ambiente.
+- **Pendências restantes**: papéis de contribuidor Wiki (`/we-sativa`) e
+  educador (`/ganjalab`), que recebem 403 com as contas disponíveis;
+  verificação manual com Orca; composição SDC incremental; comparação pixel a
+  pixel histórica (a partir de agora há baseline determinístico).
