@@ -125,6 +125,7 @@ Estão listadas abaixo as pastas reais, com o caminho completo. A convenção é
 | `tests/browser/transversal/aculta-botoes-a11y/` | Leitor de tela (Orca) — botões em estados autenticados |
 | `tests/browser/transversal/aculta-content-admin/` | Revisão visual do Painel de conteúdo |
 | `tests/browser/transversal/aculta-contraste/` | ACULTA — contraste de UI Skins |
+| `tests/browser/transversal/aculta-dialogos/` | ACULTA — diálogos e gaveta de Mensagens |
 | `tests/browser/transversal/aculta-document-viewer/` | Revisão visual do ACULTA Document Viewer |
 | `tests/browser/transversal/aculta-editor/` | ACULTA Editor — acesso anônimo, editor e administrador |
 | `tests/browser/transversal/aculta-home-editorial-ui-patterns/` | Home editorial — UI Patterns Views |
