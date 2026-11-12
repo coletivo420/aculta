@@ -15,7 +15,7 @@ final class PrivatePageMetatagHooks {
 
   public function __construct(
     #[Autowire(service: 'current_route_match')]
-    private readonly ?RouteMatchInterface $routeMatch = NULL,
+    private readonly RouteMatchInterface $routeMatch,
   ) {}
 
   /**
@@ -28,7 +28,7 @@ final class PrivatePageMetatagHooks {
    */
   #[Hook('metatags_alter')]
   public function metatagsAlter(array &$tags, array &$context): void {
-    $route_name = $this->routeMatch?->getRouteName() ?? \Drupal::routeMatch()->getRouteName();
+    $route_name = $this->routeMatch->getRouteName();
     if (!str_starts_with((string) $route_name, 'aculta_studio.')) {
       return;
     }
