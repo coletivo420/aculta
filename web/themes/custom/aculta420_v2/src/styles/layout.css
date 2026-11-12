@@ -38,8 +38,9 @@
   padding-inline: var(--page-gutter);
 }
 
-/* Trilha alinhada à borda esquerda do conteúdo, não centralizada. */
-.page__breadcrumb {
+/* Trilha alinhada à borda esquerda do conteúdo, não centralizada.
+   Seletor composto para vencer a regra de portal-account.css (margin-inline: auto). */
+.page .page__breadcrumb {
   inline-size: 100%;
   max-inline-size: var(--page-content-max);
   margin-inline: 0;
