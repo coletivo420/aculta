@@ -6,7 +6,7 @@
   Sem valor, cai em "portal".
 #}
 {% if breadcrumb or aculta_current_breadcrumb %}
-  {% set trail = breadcrumb|filter(item => item.url != '/' and item.url != '<front>')|map(item => {
+  {% set trail = breadcrumb|filter(item => item.url != '/' and item.url != '<front>' and item.text|render|striptags|trim != 'Início')|map(item => {
     label: item.text,
     url: item.url,
   }) %}
