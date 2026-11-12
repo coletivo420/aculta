@@ -23,6 +23,14 @@
   min-inline-size: 0;
 }
 
+/* Ajuda e breadcrumb ocupam a mesma coluna do shell. Sem isso, as áreas nomeadas
+   de layout.css (help, breadcrumb) viram colunas implícitas e empurram a trilha. */
+.page-shell-v2__contextual > * {
+  grid-area: auto;
+  grid-column: 1;
+  min-inline-size: 0;
+}
+
 .page-shell-v2__footer {
   grid-area: footer;
   min-inline-size: 0;
