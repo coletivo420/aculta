@@ -1,0 +1,14 @@
+{#
+  Fallback de linha por campos da View de categorias do Fórum.
+
+  A View usa a linha UI Patterns com o SDC forum-category; este template cobre
+  o caso de a linha voltar a ser `fields`, mantendo o mesmo componente e os
+  mesmos campos mapeados (nome, hierarquia, descrição e contagem).
+#}
+{{ include('aculta420_v2:forum-category', {
+  title_level: 'h3',
+  parent: fields.parent_card.content|default(null),
+  title: fields.name.content|default(''),
+  description: fields.description__value.content|default(null),
+  count: fields.aculta_forum_category_topic_count.content|default(null)
+}, with_context = false) }}

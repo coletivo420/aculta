@@ -10,9 +10,9 @@
   flex-direction: column;
   box-sizing: border-box;
   transition:
-    background-color var(--motion-base, 180ms) ease,
-    border-color var(--motion-base, 180ms) ease,
-    box-shadow var(--motion-base, 180ms) ease;
+    background-color var(--motion-base) ease,
+    border-color var(--motion-base) ease,
+    box-shadow var(--motion-base) ease;
   border: 1px solid var(--color-alpha-border-75, var(--color-border));
   inline-size: 100%;
   max-inline-size: 100%;

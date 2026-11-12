@@ -10,7 +10,11 @@
   </div>
   <header class="revista-teaser__header">
     {% if has_category %}<div class="revista-teaser__category">{% block category %}{% endblock %}</div>{% endif %}
-    <h2 class="revista-teaser__title"><a href="{{ url }}" rel="bookmark">{{ title }}</a></h2>
+    {% set title_markup %}<a href="{{ url }}" rel="bookmark">{{ title }}</a>{% endset %}
+    {{ include('aculta420_v2:heading', {
+      level: 5,
+      content: title_markup
+    }, with_context = false) }}
   </header>
   <div class="revista-teaser__body">
     {% if has_subtitle %}<div class="revista-teaser__subtitle">{% block subtitle %}{% endblock %}</div>{% endif %}

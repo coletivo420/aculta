@@ -311,9 +311,10 @@ autorizada.
 
 ### forum-category — Categoria do Fórum
 - **Papel:** cartão de categoria para a View pública e o bloco de categorias da landing.
-- **Props:** nenhuma.
+- **Props:** `title_level` (`h2` ou `h3`, padrão `h2`).
 - **Slots:** `parent`, `title`, `description`, `count`.
-- **Estado:** adapters de Views para a página de categorias e a landing usam o mesmo SDC; Firefox ESR cobriu ambos os consumers em nove larguras e dois modos.
+- **Regra:** desde 2026-11-12 o título é renderizado pelo SDC `heading` no nível de `title_level`; o CSS tipográfico próprio foi removido.
+- **Estado:** adapters de Views para a página de categorias e a landing usam o mesmo SDC; Firefox ESR cobriu ambos os consumers em nove larguras e dois modos; título pelo SDC `heading` em 2026-11-12.
 
 ### discussion-comment — Comentário de discussão
 - **Papel:** apresentação de autoria pública, data, conteúdo e links de comentário.
@@ -386,8 +387,8 @@ autorizada.
 - **Props:** `title`, `url`, `has_category`, `has_subtitle`, `has_summary`, `has_cover`, `read_label`.
 - **Slots:** `image`, `category`, `subtitle`, `summary`.
 - **Story:** `revista-teaser.default.story.yml`.
-- **Regra:** recebe render arrays do node view, não resolve conteúdo nem cache; a capa ausente usa apenas uma superfície decorativa.
-- **Estado:** implementação pronta; aguardando gates SDC e verificação de Runtime.
+- **Regra:** recebe render arrays do node view, não resolve conteúdo nem cache; a capa ausente usa apenas uma superfície decorativa. Desde 2026-11-12 o título do cartão é um H5 do SDC `heading`, com link herdando a cor e o sublinhado do título; o teaser em destaque usa a escala H4 por token.
+- **Estado:** implementação pronta; título pelo SDC `heading` e browser Firefox (1280/1920/390 px, claro/escuro) em 2026-11-12.
 
 ### revista-listing — Listagem editorial
 - **Papel:** apresenta o H1 editorial e a grade da View `revista_sessoes:page_revista`.
@@ -411,8 +412,8 @@ autorizada.
 - **Props:** `variant`, `url`, `has_summary`, `has_image`, `has_categories`, `has_related`, `has_references`, `has_discussion`.
 - **Slots:** `title`, `summary`, `image`, `categories`, `body`, `related`, `references`, `discussion`, `actions`.
 - **Stories:** `wiki-entry.default.story.yml` e `wiki-entry.teaser.story.yml`.
-- **Regra:** conserva os render arrays e controles de acesso do Drupal; não consulta conteúdo nem decide acesso. O título da página completa é dono do H1; o título genérico fica oculto apenas quando o adapter está presente. Desde 2026-11-12 o título do artigo é renderizado pelo SDC `heading` (nível conforme `title_level`, faixa tricolor).
-- **Estado:** renderização e comparação Firefox do Runtime passaram para home, listagem e artigo (320–1440 px, claro/escuro); título pelo SDC em 2026-11-12; zoom físico, autenticação e leitor de tela ainda pendentes. A antiga rota de busca devolve 404 e não foi recriada pelo tema.
+- **Regra:** conserva os render arrays e controles de acesso do Drupal; não consulta conteúdo nem decide acesso. O título da página completa é dono do H1; o título genérico fica oculto apenas quando o adapter está presente. Desde 2026-11-12 o título do artigo e o título do cartão (teaser) são renderizados pelo SDC `heading` (artigo no nível de `title_level`, faixa tricolor; cartão em H5).
+- **Estado:** renderização e comparação Firefox do Runtime passaram para home, listagem e artigo (320–1440 px, claro/escuro); títulos pelo SDC em 2026-11-12; zoom físico, autenticação e leitor de tela ainda pendentes. A antiga rota de busca devolve 404 e não foi recriada pelo tema.
 
 
 ## Lacunas do catálogo
@@ -469,8 +470,8 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 - **Props:** `pinned` (bool, obrigatório), `thumbnail_src` (opcional), `thumbnail_alt` (opcional), `category_icon` (opcional), `badges` (opcional), `replies` (opcional), `views` (opcional), `last_activity` (opcional).
 - **Slots:** `title`, `meta`, `preview`.
 - **Story:** `forum-topic-card.default.story.yml`.
-- **Regra:** nunca utiliza letra ou inicial como avatar/miniatura (apenas imagem ou ícone neutro Phosphor).
-- **Estado:** entregue na Entrega 1 do redesenho visual Growroom420; schema estrito validado.
+- **Regra:** nunca utiliza letra ou inicial como avatar/miniatura (apenas imagem ou ícone neutro Phosphor). Desde 2026-11-12 o título é um H6 do SDC `heading` (conteúdo no slot `content`).
+- **Estado:** entregue na Entrega 1 do redesenho visual Growroom420; título pelo SDC `heading` em 2026-11-12; schema estrito validado.
 
 ### forum-post-card — Cartão de Post do Fórum
 - **Papel:** postagem no tópico com faixa colorida no topo (stripe), identificação de autor, papel, contagem de posts, timestamp, corpo e reações.

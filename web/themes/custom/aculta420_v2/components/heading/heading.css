@@ -56,6 +56,19 @@
   line-height: var(--heading-h6-line-height);
 }
 
+/* Títulos que são também links (cards e listas): herdam a cor do título. */
+.aculta-heading a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.aculta-heading a:is(:hover, :focus-visible) {
+  text-decoration: underline;
+  color: var(--color-link-editorial);
+  text-decoration-color: currentColor;
+  text-underline-offset: .17em;
+}
+
 /* Espaçamento entre seções: só quando o título não abre o contêiner. */
 * + .aculta-heading--level-1 {
   margin-block-start: var(--heading-space-before-h1);

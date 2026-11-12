@@ -45,10 +45,10 @@
   'aculta-heading--align-' ~ align,
 ] %}
 
-{% set heading_content = content|default('')|trim %}
-
+{#- O slot pode chegar como string, Markup ou render array; `is not empty`
+    evita o filtro trim, que só aceita string. -#}
 <h{{ level }}{{ attributes.addClass(classes) }}>
-  {%- if heading_content is not empty -%}
+  {%- if content is defined and content is not empty -%}
     {{ content }}
   {%- elseif text -%}
     {{ text }}

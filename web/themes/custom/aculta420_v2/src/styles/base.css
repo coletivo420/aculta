@@ -38,7 +38,7 @@ body {
 .htmx-request .htmx-indicator,
 .htmx-request.htmx-indicator {
   visibility: visible;
-  transition: opacity 200ms ease-in;
+  transition: opacity var(--motion-slow) ease-in;
   opacity: 1;
 }
 

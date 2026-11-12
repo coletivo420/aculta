@@ -1,5 +1,17 @@
 # Roadmap do fórum Growroom420 (ACULTA420 V2)
 
+## Títulos de cards e dívida de gates (2026-11-12)
+
+- `forum-topic-card`, `revista-teaser`, `wiki-entry` teaser, `forum-category`
+  e o cabeçalho do Fórum usam o SDC `heading` nos títulos (H5/H6 conforme o
+  papel do cartão); CSS de tipografia próprio removido.
+- Criados os dois templates de View de categorias exigidos pelo gate de
+  fundação (fallback por campos e grupos com H2).
+- Stylelint do tema zerado (breadcrumb e utilitários); literal de cor e
+  durações de movimento fora de `tokens.css` corrigidos.
+- Estado: design foundations 1381 PASS, foundation 495 PASS, Stylelint 0
+  erros, SDC/UI Styles/escopo PASS; browser 56/56 em claro/escuro.
+
 ## Sistema de títulos ACULTA420 V2 (2026-11-12)
 
 - SDC `heading` implementa a escala H1–H6 da referência de tipografia, com

@@ -224,7 +224,8 @@
   background-color: var(--palette-red);
 }
 
-/* Texto preto: --color-dark (#0c3c29) sobre --palette-green (#689427) dá 3.46:1, abaixo de 4.5:1; #000 dá 5.85:1. Medido em 2026-11-11 pelo axe color-contrast. */
+/* Texto preto sobre --palette-green: --color-dark fica em 3,46:1, abaixo de
+   4,5:1; --color-black dá 5,85:1. Medido em 2026-11-11 pelo axe color-contrast. */
 .field--name-field-editorial-category .aculta-category--green {
   color: var(--color-black);
   background-color: var(--palette-green);

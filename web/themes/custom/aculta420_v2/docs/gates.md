@@ -58,14 +58,14 @@ Não é um script de gate, mas faz parte da entrega de mudança visual (ver [AGE
 - `php scripts/validate-aculta420-css-scope.php`: PASS (49 checks; `heading.css` no `global-styling`).
 - `php scripts/validate-aculta420-theme-settings.php`: PASS (16 checks).
 - `php scripts/validate-aculta420-mapped-classes.php`: PASS (482 classes).
-- Stylelint nos arquivos alterados: PASS. A varredura do tema ainda acusa
-  `components/breadcrumb/breadcrumb.css` e `src/styles/utilities.css`, de
-  entregas anteriores e sem relação com esta mudança (dívida registrada).
-- `php scripts/validate-aculta420-design-foundations.php`: FAIL (1/1375) em
-  literal de cor no `breadcrumb.css`, pré-existente.
-- `php scripts/validate-aculta420-foundation.php`: DEFERRED — exige
-  `views-view-fields--aculta-forum-categorias--page-categories.html.twig`,
-  ausente antes desta mudança.
+- Stylelint (`npm run lint:css`): PASS, 0 erros no tema (dívida de
+  `breadcrumb.css` e `utilities.css` corrigida em 2026-11-12).
+- `php scripts/validate-aculta420-design-foundations.php`: PASS (1381 checks).
+- `php scripts/validate-aculta420-foundation.php`: PASS (495 checks), com os
+  dois templates de View de categorias criados em 2026-11-12.
+- Segunda rodada (títulos de cards): SDC schemas PASS (1930 checks),
+  V2 SDC PASS, UI Styles PASS, CSS scope PASS, theme settings PASS e
+  mapped classes PASS; browser 56/56 (42 de títulos + 14 de axe).
 - Browser Firefox: 42/42 (Revista, Wiki, Eventos, Fórum, Loja, Cursos e Portal;
   1280/1920/390 px; claro/escuro), axe 14/14 sem bloqueio em
   `tests/browser/capturas/titulos/2026-11-12/manifest.json`.

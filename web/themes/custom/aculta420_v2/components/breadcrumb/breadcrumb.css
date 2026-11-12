@@ -11,29 +11,30 @@
 
 /* Faixa tricolor da marca acima da trilha (vermelho, amarelo, verde), como nas referências. */
 .aculta-breadcrumb::before {
-  content: "";
   display: block;
+  margin-block-end: var(--spacing-xs);
+  content: "";
+  border-radius: 2px;
+  background:
+    linear-gradient(
+      90deg,
+      var(--surface-accent-red) 0 33.33%,
+      var(--surface-accent-yellow) 33.33% 66.66%,
+      var(--surface-accent-green) 66.66% 100%
+    );
   inline-size: 3.5rem;
   block-size: 4px;
-  margin-block-end: var(--spacing-xs);
-  border-radius: 2px;
-  background: linear-gradient(
-    90deg,
-    var(--surface-accent-red) 0 33.33%,
-    var(--surface-accent-yellow) 33.33% 66.66%,
-    var(--surface-accent-green) 66.66% 100%
-  );
 }
 
 .aculta-breadcrumb__list {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
   align-items: center;
-  gap: var(--spacing-xs) var(--spacing-sm);
+  justify-content: flex-start;
   margin: 0;
   padding: 0;
   list-style: none;
+  gap: var(--spacing-xs) var(--spacing-sm);
   min-inline-size: 0;
 }
 
@@ -46,13 +47,13 @@
 }
 
 .aculta-breadcrumb__item + .aculta-breadcrumb__item::before {
-  content: "";
   display: inline-block;
-  inline-size: .45em;
-  block-size: .45em;
+  content: "";
+  transform: rotate(45deg);
   border-block-start: 2px solid var(--color-text-secondary);
   border-inline-end: 2px solid var(--color-text-secondary);
-  transform: rotate(45deg);
+  inline-size: .45em;
+  block-size: .45em;
   margin-inline: var(--spacing-xs);
 }
 
@@ -107,15 +108,15 @@
 .aculta-breadcrumb--superficie {
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-md);
-  background: var(--color-surface-raised, #fff);
+  background: var(--color-surface-raised);
 }
 
 /* Contextual: trilha sobre superfície escura do Studio, com links de contraste próprio. */
 .aculta-breadcrumb--contextual {
   padding: var(--spacing-xs) var(--spacing-sm);
+  color: var(--color-text-inverse, inherit);
   border-radius: var(--radius-md);
   background: var(--color-surface-inverse, transparent);
-  color: var(--color-text-inverse, inherit);
 }
 
 .aculta-breadcrumb--contextual .aculta-breadcrumb__link {

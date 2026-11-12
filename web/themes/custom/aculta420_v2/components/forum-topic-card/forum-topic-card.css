@@ -92,25 +92,6 @@
   background: var(--color-brand-primary);
 }
 
-.forum-topic-card__title {
-  color: var(--color-text-primary);
-  font-family: var(--font-family-base);
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  line-height: 1.35;
-  overflow-wrap: anywhere;
-}
-
-.forum-topic-card__title a {
-  text-decoration: none;
-  color: inherit;
-}
-
-.forum-topic-card__title a:hover {
-  text-decoration: underline;
-  color: var(--color-link-editorial);
-}
-
 .forum-topic-card__preview {
   display: -webkit-box;
   overflow: hidden;

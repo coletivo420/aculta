@@ -9,9 +9,9 @@
   max-inline-size: 100%;
   overflow-wrap: break-word;
   transition:
-    background-color var(--motion-base, 180ms) ease,
-    border-color var(--motion-base, 180ms) ease,
-    box-shadow var(--motion-base, 180ms) ease;
+    background-color var(--motion-base) ease,
+    border-color var(--motion-base) ease,
+    box-shadow var(--motion-base) ease;
 }
 
 /* Fundo semântico */

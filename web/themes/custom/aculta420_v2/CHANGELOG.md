@@ -1,3 +1,27 @@
+## Não versionado — títulos de cards e dívida de gates (2026-11-12)
+
+- `forum-topic-card`, `revista-teaser` (teaser da Revista), `wiki-entry`
+  (teaser), `forum-category` e o cabeçalho da listagem do Fórum renderizam
+  seus títulos pelo SDC `heading` (H5 para cards, H6 no cartão de tópico,
+  nível conforme `title_level` no Fórum). O CSS de tipografia próprio desses
+  títulos foi removido; links herdam a cor do título e o sublinhado no
+  hover/foco.
+- Templates de View exigidos pelo gate de fundação: criados
+  `views-view-fields--aculta-forum-categories--page-categories.html.twig`
+  (fallback por campos) e
+  `views-view-unformatted--aculta-forum-categories--page-categories.html.twig`
+  (grupo com H2 pelo SDC).
+- Dívida de Stylelint zerada no tema: ordem de propriedades, quebras e linha
+  vazia em `breadcrumb.css` e `utilities.css`.
+- Dívida de fundações zerada: literal de cor em comentário de `content.css`
+  trocado por tokens; `#fff` de fallback removido do breadcrumb; durações
+  `200ms` e fallbacks `180ms` trocados por `--motion-slow` e
+  `--motion-base`.
+- Gates: Stylelint do tema PASS (0 erros), design foundations PASS (1381
+  checks), foundation PASS (495 checks), SDC schemas PASS (86 componentes),
+  V2 SDC PASS, UI Styles PASS, CSS scope PASS. Browser 56/56 (42 de títulos
+  + 14 de axe).
+
 ## Não versionado — sistema de títulos ACULTA420 V2 (2026-11-12)
 
 - Novo SDC `heading` (H1–H6) com escala Oswald da referência "Tipografia do

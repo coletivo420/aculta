@@ -4,7 +4,7 @@
   "metodo": "Playwright com Firefox (headless)",
   "motor": "firefox",
   "ambiente": "desenvolvimento",
-  "commit": "1001c3c5af73cbafd35c32298b0bcf841d785534",
+  "commit": "2ef7d2ac53dbccd52f1fe2864fd81999fcd18ecc",
   "viewports": [
     390,
     1280,

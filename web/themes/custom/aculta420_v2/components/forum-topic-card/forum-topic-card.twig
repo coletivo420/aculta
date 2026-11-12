@@ -17,9 +17,10 @@
           {% endfor %}
         </div>
       {% endif %}
-      <div class="forum-topic-card__title">
-        {{ title }}
-      </div>
+      {{ include('aculta420_v2:heading', {
+        level: 6,
+        content: title
+      }, with_context = false) }}
     </div>
     {% if preview %}
       <div class="forum-topic-card__preview">
