@@ -1,6 +1,7 @@
 /* Trilha por sessão. Cores vêm de tokens semânticos; a sessão só altera o ícone. */
 .aculta-breadcrumb {
   position: relative;
+  text-align: start;
   color: var(--color-text-primary);
   font-family: var(--font-family-base);
   font-size: var(--font-size-sm);
@@ -27,6 +28,7 @@
 .aculta-breadcrumb__list {
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-start;
   align-items: center;
   gap: var(--spacing-xs) var(--spacing-sm);
   margin: 0;
