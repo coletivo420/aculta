@@ -47,6 +47,14 @@ final class SalesReportQueryKernelTest extends OrderKernelTestBase {
    * {@inheritdoc}
    */
   protected function setUp(): void {
+    // commerce_product installs body configuration whose field schema is
+    // provided by Core's text module.
+    if (!in_array('text', static::$modules, TRUE)) {
+      static::$modules[] = 'text';
+    }
+    if (!in_array('text_with_summary', static::$modules, TRUE)) {
+      static::$modules[] = 'text_with_summary';
+    }
     parent::setUp();
     // A base importa só USD; o site opera em BRL.
     $this->container->get('commerce_price.currency_importer')->import('BRL');

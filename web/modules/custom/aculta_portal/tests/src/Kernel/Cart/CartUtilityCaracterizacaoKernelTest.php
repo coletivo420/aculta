@@ -36,7 +36,7 @@ final class CartUtilityCaracterizacaoKernelTest extends OrderKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['commerce_cart', 'commerce_checkout', 'domain', 'aculta_portal_cart_test'];
+  protected static $modules = ['commerce_cart', 'commerce_checkout', 'domain', 'aculta_portal_cart_test', 'text', 'text_with_summary'];
 
   /**
    * Conta compradora dos carrinhos.

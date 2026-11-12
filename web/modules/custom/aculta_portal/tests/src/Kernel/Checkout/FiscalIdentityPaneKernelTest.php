@@ -38,7 +38,7 @@ final class FiscalIdentityPaneKernelTest extends OrderKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['commerce_checkout'];
+  protected static $modules = ['commerce_checkout', 'text', 'text_with_summary'];
 
   /**
    * Máscara simulada de um documento válido.
