@@ -32,12 +32,15 @@
     "20 Tabs mantêm o foco dentro",
     "Escape fecha e devolve foco ao gatilho",
     "sem overflow horizontal",
-    "axe color-contrast sem violação"
+    "axe color-contrast sem violação",
+    "elemento <dialog> com nome acessível (aria-label/aria-labelledby)",
+    "gatilho anuncia aria-expanded=true ao abrir e não fica true ao fechar"
   ],
   "limitacoes": [
     "O modal de aceite dos termos não é testado porque exige gravar aceite na conta; a conta comum o mantém aberto e prende o foco por desenho.",
     "Leitor de tela (Orca) não coberto.",
-    "Diálogos internos que dependem de dados (galeria, local de evento) ficam para a frente do componente."
+    "Diálogos internos que dependem de dados (galeria, local de evento) ficam para a frente do componente.",
+    "Orca está instalado, mas o speech-dispatcher está inativo; a verificação de leitor de tela fica manual/DEFERRED. A estrutura foi coberta por nome acessível e aria-expanded."
   ],
   "evidencia_bruta": "/home/piradopirata/aculta-suite-out/dialogos-20261112/dialogos.json (fora do Git)"
 }

@@ -102,6 +102,18 @@ for (const caso of casos) {
           if (estado && !estado.focoDentro) falhas.push('foco não entrou no diálogo');
           if (estado?.overflow) falhas.push('overflow horizontal com o diálogo aberto');
 
+          // Nome acessível e estado do gatilho: o que o leitor de tela anuncia.
+          const aria = await page.evaluate((id) => {
+            const d = document.getElementById(id);
+            const rotulo = d?.getAttribute('aria-label')
+              || (d?.getAttribute('aria-labelledby') ? document.getElementById(d.getAttribute('aria-labelledby'))?.textContent.trim() : '');
+            const gatilho = document.querySelector(`[data-aculta-dialog-trigger][aria-controls="${id}"]`);
+            return { tag: d?.tagName, rotulo: (rotulo || '').trim(), expandido: gatilho?.getAttribute('aria-expanded') };
+          }, caso.id);
+          if (aria.tag !== 'DIALOG') falhas.push('diálogo sem elemento <dialog> (role implícito ausente)');
+          if (!aria.rotulo) falhas.push('diálogo sem nome acessível');
+          if (aria.expandido !== 'true') falhas.push('gatilho não anuncia aria-expanded=true');
+
           for (let i = 0; i < 20; i += 1) {
             await page.keyboard.press('Tab');
           }
@@ -125,6 +137,8 @@ for (const caso of casos) {
             return !d || (d.open !== true && getComputedStyle(d).display === 'none');
           }, caso.id);
           if (!fechou) falhas.push('Escape não fechou o diálogo');
+          const colapsou = await page.evaluate((id) => document.querySelector(`[data-aculta-dialog-trigger][aria-controls="${id}"]`)?.getAttribute('aria-expanded'), caso.id);
+          if (colapsou === 'true') falhas.push('gatilho permanece aria-expanded=true após fechar');
           const focoDeVolta = await page.evaluate((id) => {
             const d = document.getElementById(id);
             const gatilho = document.querySelector(`[data-aculta-dialog-trigger][aria-controls="${id}"]`);

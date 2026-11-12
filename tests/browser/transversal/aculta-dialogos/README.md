@@ -7,7 +7,9 @@ verifica, em claro/escuro e 320/1024 CSS px:
 - 20 Tabs mantêm o foco dentro do diálogo;
 - `Escape` fecha e devolve o foco ao gatilho;
 - não há overflow horizontal;
-- axe `color-contrast` não acusa violação dentro do diálogo.
+- axe `color-contrast` não acusa violação dentro do diálogo;
+- o elemento é `<dialog>` com nome acessível e o gatilho anuncia
+  `aria-expanded` corretamente ao abrir e ao fechar.
 
 Casos: carrinho e menu da conta (anônimos), gaveta de Mensagens (conta de teste
 administrativa). A conta comum recebe o modal de aceite dos termos, que prende
@@ -33,4 +35,5 @@ SUITE_OUT=/caminho/externo/fora-do-repo \
 
 ## Histórico
 
-- 2026-11-12: 12/12 PASS (3 diálogos × claro/escuro × 320/1024).
+- 2026-11-12: 12/12 PASS (3 diálogos × claro/escuro × 320/1024), com
+  nome acessível e `aria-expanded` conferidos.
