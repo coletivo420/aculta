@@ -1,0 +1,49 @@
+{
+  "schema": "aculta420-surface-inversion-manifest/1",
+  "data": "2026-11-12",
+  "escopo": "tema aculta420_v2 - canvas branco e superfícies verdes (9f8fe1df2, correção c4fd01305)",
+  "sha_testado": {
+    "origin_dev_no_momento_do_teste": "66be234ca8d268e7e2dbbe472258a0610ff6adb5",
+    "commit_implementacao": "9f8fe1df2a97b99009fe4d5d6fcc29ccbaff27a2",
+    "commit_correcao": "c4fd01305cd39b8a2f7ebc3c62008c508e7e857f"
+  },
+  "gates_estaticos": [
+    {"gate": "validate-aculta420-white-canvas-green-surfaces", "resultado": "PASS", "observacao": "Corrigido nesta sessão: o gate tratava var(--color-brand-primary) como cor literal e abortava. Agora resolve aliases var() dentro do mesmo modo, sem reduzir limites de contraste. 33 checagens."},
+    {"gate": "validate-aculta420-design-foundations", "resultado": "PASS", "observacao": "Contrastes de texto, foco e bordas do modo escuro"},
+    {"gate": "validate-aculta420-v2-foundations", "resultado": "PASS", "observacao": "85 pares de texto; 6 pares de faixa de acento"},
+    {"gate": "validate-aculta420-sdc-schemas", "resultado": "PASS", "observacao": "86 componentes, 1930 checagens. Executado no checkout principal por depender de vendor/"},
+    {"gate": "validate-aculta420-ui-styles", "resultado": "PASS", "observacao": "51 verificações. Executado no checkout principal por depender de vendor/"},
+    {"gate": "validate-aculta420-theme-settings", "resultado": "PASS", "observacao": "16 checagens"},
+    {"gate": "validate-aculta420-ui-skins", "resultado": "PASS", "observacao": "134 verificações; 10 skins, 2 modos. Executado no checkout principal por depender de vendor/"},
+    {"gate": "npm run lint:css (stylelint)", "resultado": "PASS"}
+  ],
+  "runtime": {
+    "runtime_sync_status": "DEFERRED",
+    "motivo": "scripts/runtime-sync.sh status falha com SyntaxError em f-string Python embutida (escape de aspas). Não corrigido nesta sessão.",
+    "plan": {"resultado": "R0", "last_validated_sha": "66be234ca8d268e7e2dbbe472258a0610ff6adb5", "cache_sha": "66be234ca8d268e7e2dbbe472258a0610ff6adb5", "observacao": "Sem delta; sync-code seria NOOP. Rodado no checkout principal (branch dev)."},
+    "doctor": {
+      "outcome": "VALIDATED",
+      "updatedb_pendentes": 0,
+      "deploy_hooks_pendentes": 0,
+      "config_drift": 3,
+      "config_drift_itens": ["core.entity_form_display.node.page.default", "core.entity_view_display.node.aculta_forum_topic.full", "editor.editor.wiki"],
+      "gates_falhos": ["config-drift", "checkout-isolation-f4"],
+      "modulos_sem_schema": 10
+    },
+    "sync_code": "NAO_EXECUTADO",
+    "structural_complete": "NAO_EXECUTADO"
+  },
+  "ui_library_sdc": {"resultado": "DEFERRED", "motivo": "Prévias administrativas e CSS computado no Runtime não foram abertas: sem URI confirmada e com gates de Runtime em FAIL."},
+  "ui_suite": {"resultado": "DEFERRED", "motivo": "Seletor de UI Styles, persistência, Layout Builder, CKEditor 5 e perfis não testados no Runtime."},
+  "dez_dominios": {"resultado": "DEFERRED", "motivo": "Domain IDs não confirmados nesta sessão; nenhuma página foi renderizada."},
+  "responsividade_acessibilidade": {"resultado": "DEFERRED", "viewports_planejados": [320, 390, 768, 1440, 1920], "motivo": "Playwright/axe não executados contra o Runtime."},
+  "capturas": [],
+  "contrastes_verificados": "Apenas os calculados pelos gates estáticos (tokens claro e escuro); nenhum contraste computado no DOM.",
+  "problemas_e_correcoes": [
+    {"id": "P1", "tipo": "gate", "descricao": "validate-aculta420-white-canvas-green-surfaces abortava com RuntimeException ao resolver --color-focus-ring (alias var).", "correcao": "Resolução de aliases var() para o cálculo de contraste; limites inalterados.", "status": "CORRIGIDO"},
+    {"id": "P2", "tipo": "tooling", "descricao": "runtime-sync.sh status: SyntaxError em f-string Python embutida.", "status": "ABERTO"},
+    {"id": "P3", "tipo": "runtime", "descricao": "3 itens de drift de configuração no Runtime (hash 8a5ecaa1cd55f064).", "status": "ABERTO - requer revisão humana; config:import proibido nesta rotina"},
+    {"id": "P4", "tipo": "runtime", "descricao": "Checkout compartilhado servido pelo Apache (gate F4 em FAIL).", "status": "ABERTO"}
+  ],
+  "aceite_visual_humano": "NAO_CONCEDIDO"
+}

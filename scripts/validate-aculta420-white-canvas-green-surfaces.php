@@ -71,7 +71,15 @@ $contrast = static function (string $fg, string $bg) use ($lum): float {
   $b = $lum($bg);
   return (max($a, $b) + .05) / (min($a, $b) + .05);
 };
-foreach (['light' => $light, 'dark' => $dark] as $mode => $tokens) {
+$resolve = static function (array $tokens): array {
+  foreach ($tokens as $name => $value) {
+    if (preg_match('/^var\((--[a-z0-9-]+)\)$/i', $value, $ref) && isset($tokens[$ref[1]])) {
+      $tokens[$name] = $tokens[$ref[1]];
+    }
+  }
+  return $tokens;
+};
+foreach (['light' => $resolve($light), 'dark' => $resolve($dark)] as $mode => $tokens) {
   foreach ([['--color-text-primary', 4.5], ['--color-text-secondary', 4.5], ['--color-surface-green-border', 3.0], ['--color-focus-ring', 3.0]] as [$name, $min]) {
     $r = $contrast($tokens[$name], $tokens['--color-surface-green-soft']);
     $check($r >= $min, $mode . ' ' . $name . ' on green-soft = ' . round($r, 2) . ':1');
