@@ -7,7 +7,6 @@ namespace Drupal\aculta_events\Entity;
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -124,18 +123,6 @@ final class Event extends ContentEntityBase implements EntityOwnerInterface {
       }
     }
     return $ids;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function preSave(EntityStorageInterface $storage): void {
-    parent::preSave($storage);
-    // Slug nasce com o evento e não muda depois (estável após publicado).
-    if ($this->get('field_slug')->isEmpty()) {
-      $gerador = \Drupal::service('aculta_events.slug');
-      $this->set('field_slug', $gerador->uniqueFor((string) $this->label(), $this->id() ? (int) $this->id() : NULL));
-    }
   }
 
   /**

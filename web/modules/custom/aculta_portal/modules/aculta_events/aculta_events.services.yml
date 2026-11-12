@@ -43,6 +43,9 @@ services:
   aculta_events.slug:
     class: Drupal\aculta_events\Slug\EventSlugGenerator
     arguments: ['@entity_type.manager']
+  Drupal\aculta_events\Hook\EventEntityHooks:
+    class: Drupal\aculta_events\Hook\EventEntityHooks
+    arguments: ['@aculta_events.slug', '@?aculta_maps.geocoding']
   aculta_events.catalogue:
     class: Drupal\aculta_events\Catalogue\EventCatalogue
     arguments: ['@entity_type.manager', '@aculta_events.occurrences']

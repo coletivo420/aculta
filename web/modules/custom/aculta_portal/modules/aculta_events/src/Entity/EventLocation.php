@@ -6,7 +6,6 @@ namespace Drupal\aculta_events\Entity;
 
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -90,45 +89,6 @@ final class EventLocation extends ContentEntityBase implements EntityOwnerInterf
   /**
    * {@inheritdoc}
    */
-  public function preSave(EntityStorageInterface $storage): void {
-    parent::preSave($storage);
-    // Força normalização do país para Brasil em qualquer persistência.
-    if ($this->hasField('field_endereco') && !$this->get('field_endereco')->isEmpty()) {
-      foreach ($this->get('field_endereco') as $item) {
-        $address = $item->getValue();
-        if (($address['country_code'] ?? NULL) !== 'BR') {
-          $item->setValue(['country_code' => 'BR'] + $address);
-        }
-      }
-    }
-    // Geocodifica quando o endereço muda ou ainda não há coordenadas.
-    // Cada endereço é geocodificado uma vez.
-    $original = $this->getOriginal();
-    $mudouEndereco = !$this->isNew() && $original !== NULL
-      && $original->get('field_endereco')->getValue() !== $this->get('field_endereco')->getValue();
-    // Geocode once when a location is created or its address changes.
-    // A Local saved while geocoding was unavailable is retried on later saves.
-    $precisaGeocodificar = $mudouEndereco || $this->get('field_coordenadas')->isEmpty();
-    if (\Drupal::hasService('aculta_maps.geocoding') && $precisaGeocodificar) {
-      $texto = $this->enderecoTexto();
-      $coordenadas = $texto !== '' ? \Drupal::service('aculta_maps.geocoding')->geocode($texto) : NULL;
-      if ($coordenadas !== NULL) {
-        $this->set('field_coordenadas', [
-          'lat' => $coordenadas['lat'],
-          'lon' => $coordenadas['lng'],
-          'value' => sprintf('POINT (%F %F)', $coordenadas['lng'], $coordenadas['lat']),
-          'geo_type' => 'Point',
-        ]);
-      }
-      elseif ($mudouEndereco) {
-        $this->set('field_coordenadas', NULL);
-      }
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function toUrl($rel = 'canonical', array $options = []): Url {
     if ($rel === 'canonical') {
       return Url::fromRoute('aculta_events.location_canonical', [
@@ -161,24 +121,6 @@ final class EventLocation extends ContentEntityBase implements EntityOwnerInterf
       }
     }
     return $this->toUrl('canonical');
-  }
-
-  /**
-   * Endereço em texto para a geocodificação (sem CEP genérico quando há rua).
-   */
-  private function enderecoTexto(): string {
-    $item = $this->get('field_endereco')->first();
-    if ($item === NULL) {
-      return '';
-    }
-    $e = $item->getValue();
-    return trim(implode(', ', array_filter([
-      (string) ($e['address_line1'] ?? ''),
-      (string) ($e['locality'] ?? ''),
-      (string) ($e['administrative_area'] ?? ''),
-      (string) ($e['postal_code'] ?? ''),
-      'Brasil',
-    ])));
   }
 
   /**
