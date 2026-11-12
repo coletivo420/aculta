@@ -38,9 +38,12 @@
   padding-inline: var(--page-gutter);
 }
 
-/* Trilha na mesma coluna de leitura do título (alinhada à esquerda do conteúdo). */
+/* Trilha alinhada à borda esquerda do conteúdo, não centralizada. */
 .page__breadcrumb {
-  inline-size: min(100%, var(--aculta-narrow-container-width, 750px));
+  inline-size: 100%;
+  max-inline-size: var(--page-content-max);
+  margin-inline: 0;
+  justify-self: start;
 }
 
 /* Compatibility while Drupal's persistent SDC discovery cache is warm. */
