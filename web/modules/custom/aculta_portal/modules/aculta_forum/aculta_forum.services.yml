@@ -59,7 +59,16 @@ services:
     arguments: ['@current_route_match']
   Drupal\aculta_forum\Hook\DiscussionReplyFormHooks:
     class: Drupal\aculta_forum\Hook\DiscussionReplyFormHooks
-    arguments: ['@aculta_forum.discussion_context_resolver', '@current_user', '@aculta_forum.discussion_reply_url_builder', '@request_stack', '@aculta_forum.discussion_thread_depth_resolver', '@entity_type.manager']
+    arguments:
+      - '@aculta_forum.discussion_context_resolver'
+      - '@current_user'
+      - '@aculta_forum.discussion_reply_url_builder'
+      - '@request_stack'
+      - '@aculta_forum.discussion_thread_depth_resolver'
+      - '@entity_type.manager'
+      - '@aculta_forum.discussion_reply_idempotency_manager'
+      - '@aculta_forum.discussion_comment_permalink_builder'
+      - '@string_translation'
   Drupal\aculta_forum\Hook\ForumCommentMoveHooks:
     class: Drupal\aculta_forum\Hook\ForumCommentMoveHooks
     arguments: ['@aculta_forum.comment_mover', '@current_user']

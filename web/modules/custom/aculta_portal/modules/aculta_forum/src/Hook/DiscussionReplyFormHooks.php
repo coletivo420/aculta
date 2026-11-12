@@ -7,6 +7,8 @@ namespace Drupal\aculta_forum\Hook;
 use Drupal\Core\Hook\Order\Order;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum\Form\DiscussionReplyPopupLayout;
+use Drupal\aculta_forum\Service\DiscussionCommentPermalinkBuilderInterface;
+use Drupal\aculta_forum\Service\DiscussionReplyIdempotencyManager;
 use Drupal\aculta_forum\Service\DiscussionReplyUrlBuilder;
 use Drupal\aculta_forum\Service\DiscussionThreadDepthResolver;
 use Drupal\comment\CommentInterface;
@@ -17,6 +19,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -37,6 +40,12 @@ final class DiscussionReplyFormHooks {
     private readonly DiscussionThreadDepthResolver $depthResolver,
     #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    #[Autowire(service: 'aculta_forum.discussion_reply_idempotency_manager')]
+    private readonly DiscussionReplyIdempotencyManager $idempotencyManager,
+    #[Autowire(service: 'aculta_forum.discussion_comment_permalink_builder')]
+    private readonly DiscussionCommentPermalinkBuilderInterface $permalinkBuilder,
+    #[Autowire(service: 'string_translation')]
+    private readonly TranslationInterface $translation,
   ) {}
 
   /**
@@ -88,7 +97,7 @@ final class DiscussionReplyFormHooks {
         '#type' => 'hidden',
         '#default_value' => $parentId !== NULL ? (string) $parentId : '',
       ];
-      $form['#entity_builders'][] = [self::class, 'buildCommentEntityWithPid'];
+      $form['#entity_builders'][] = self::class . ':buildCommentEntityWithPid';
     }
 
     // Resposta nova vai ao tópico. Edição volta ao endpoint do popup (?editar=CID): a página
@@ -118,28 +127,26 @@ final class DiscussionReplyFormHooks {
       ->applyTo($form);
 
     // Add validation and submission handlers for idempotency and safe redirection.
-    array_unshift($form['#validate'], [self::class, 'validateIdempotency']);
-    $form['actions']['submit']['#submit'][] = [self::class, 'postSubmitRedirect'];
+    array_unshift($form['#validate'], self::class . ':validateIdempotency');
+    $form['actions']['submit']['#submit'][] = self::class . ':postSubmitRedirect';
   }
 
   /**
    * Entity builder that assigns normalized parent ID to new comment entities.
    */
-  public static function buildCommentEntityWithPid(string $entityType, EntityInterface $entity, array &$form, FormStateInterface $formState): void {
+  public function buildCommentEntityWithPid(string $entityType, EntityInterface $entity, array &$form, FormStateInterface $formState): void {
     if (!$entity instanceof CommentInterface || !$entity->isNew()) {
       return;
     }
     $pidVal = $formState->getValue('pid');
-    if (($pidVal === NULL || $pidVal === '') && \Drupal::hasService('request_stack')) {
-      $req = \Drupal::requestStack()->getCurrentRequest();
+    if ($pidVal === NULL || $pidVal === '') {
+      $req = $this->requestStack->getCurrentRequest();
       $pidVal = $req ? ($req->request->get('pid') ?? $req->query->get('resposta') ?? $req->query->get('pid')) : NULL;
     }
     if ($pidVal !== NULL && $pidVal !== '' && is_numeric($pidVal)) {
-      /** @var \Drupal\aculta_forum\Service\DiscussionThreadDepthResolver $depthResolver */
-      $depthResolver = \Drupal::service('aculta_forum.discussion_thread_depth_resolver');
-      $parent = \Drupal::entityTypeManager()->getStorage('comment')->load((int) $pidVal);
+      $parent = $this->entityTypeManager->getStorage('comment')->load((int) $pidVal);
       if ($parent instanceof CommentInterface) {
-        $effectivePid = $depthResolver->resolveEffectiveParentId($parent);
+        $effectivePid = $this->depthResolver->resolveEffectiveParentId($parent);
         $entity->set('pid', $effectivePid);
       }
     }
@@ -148,7 +155,7 @@ final class DiscussionReplyFormHooks {
   /**
    * Validates duplicate submission within idempotency window.
    */
-  public static function validateIdempotency(array &$form, FormStateInterface $formState): void {
+  public function validateIdempotency(array &$form, FormStateInterface $formState): void {
     $formObject = $formState->getFormObject();
     if (!$formObject instanceof EntityFormInterface) {
       return;
@@ -163,13 +170,10 @@ final class DiscussionReplyFormHooks {
       return;
     }
 
-    $currentUser = \Drupal::currentUser();
-    /** @var \Drupal\aculta_forum\Service\DiscussionReplyIdempotencyManager $manager */
-    $manager = \Drupal::service('aculta_forum.discussion_reply_idempotency_manager');
     $parentId = $comment->hasParentComment() ? (int) $comment->getParentComment()->id() : NULL;
 
-    $duplicateCid = $manager->findRecentDuplicate(
-      $currentUser,
+    $duplicateCid = $this->idempotencyManager->findRecentDuplicate(
+      $this->currentUser,
       $comment->getCommentedEntityTypeId(),
       $comment->getCommentedEntityId(),
       $parentId,
@@ -178,14 +182,14 @@ final class DiscussionReplyFormHooks {
 
     if ($duplicateCid !== NULL) {
       // Re-use authorized previous submission without duplicating entity or notifications.
-      $formState->setErrorByName('comment_body', (string) t('Uma resposta idêntica foi enviada recentemente. Aguarde antes de reenviar.'));
+      $formState->setErrorByName('comment_body', (string) $this->translation->translate('Uma resposta idêntica foi enviada recentemente. Aguarde antes de reenviar.'));
     }
   }
 
   /**
    * Ensures submission redirects back to host on non-HTMX requests and avoids standalone comment URLs.
    */
-  public static function postSubmitRedirect(array &$form, FormStateInterface $formState): void {
+  public function postSubmitRedirect(array &$form, FormStateInterface $formState): void {
     $formObject = $formState->getFormObject();
     if (!$formObject instanceof EntityFormInterface) {
       return;
@@ -197,14 +201,14 @@ final class DiscussionReplyFormHooks {
     // Permalink do comentário no próprio tópico: o construtor do módulo calcula a página da
     // paginação e a âncora do comentário (o link público é /resposta/ID).
     if (!$comment->isNew()) {
-      $permalinkUrl = \Drupal::service('aculta_forum.discussion_comment_permalink_builder')->build($comment);
+      $permalinkUrl = $this->permalinkBuilder->build($comment);
       if ($permalinkUrl === NULL) {
         return;
       }
       $permalinkUrl->setAbsolute(TRUE);
       $permalink = $permalinkUrl->toString();
       // Envio pelo HTMX (popup): o HX-Redirect leva o navegador ao permalink do comentário novo.
-      if (\Drupal::request()->headers->has('HX-Request')) {
+      if ($this->requestStack->getCurrentRequest()?->headers->has('HX-Request')) {
         $formState->setResponse(new \Symfony\Component\HttpFoundation\Response('', 200, ['HX-Redirect' => $permalink]));
         return;
       }

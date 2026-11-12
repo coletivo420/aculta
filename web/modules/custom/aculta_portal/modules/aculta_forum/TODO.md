@@ -4,6 +4,7 @@ Estado: Dev · versão 0.2.0-dev.4 (`aculta_forum.info.yml`) · status: docs/ope
 
 ## Próximo passo
 
+- Refatorar a chamada estática remanescente em `TopicComposerFormHooks` e avançar a triagem dos demais módulos.
 - **ADR-054/055 Views:** SDC `forum-category` substitui os dois field overrides e os wrappers específicos de página/bloco; Views padrão conserva suas regiões. Sync/install preservam filtros, agrupamento e acesso. Importação parcial foi autorizada; o Runtime segue em `fields` e aguarda post-update Portal autorizado antes do cutover.
 - **FST (implementado e homologado em parte):** escopo, ledger, reconciliação e métricas entregues; update 9008 aplicado e browser 44/44. Faltam Functional isolado, dark mode/zoom e leitor de tela. [Plano canônico](../aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md).
 

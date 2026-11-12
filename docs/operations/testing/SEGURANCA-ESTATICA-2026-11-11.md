@@ -8,12 +8,12 @@ Relatórios brutos (JSON do Semgrep, saída do `composer audit`, gitleaks) ficam
 
 - Comando: `semgrep --metrics=off --config .agents/skills/aculta-seguranca-estatica/rules/aculta-php.yml` com exclusões de `vendor`, `web/core`, `web/modules/contrib`, `web/libraries` e `node_modules`, sobre `web/modules/custom`, `web/themes/custom` e `scripts`.
 - Primeira rodada (2026-11-11): **474 achados** em 118 arquivos; esta contagem é histórica.
-- Revalidação (2026-11-12), após corrigir duas saídas XSS e limitar a regra de serviço estático a chamadas dentro de classes: **117 achados** (77 chamadas estáticas em classes, 29 sinks `#markup`, 10 chamadas dinâmicas e 1 `unserialize`).
+- Revalidação (2026-11-12), após corrigir duas saídas XSS e limitar a regra de serviço estático a chamadas dentro de classes: **109 achados** (69 chamadas estáticas em classes, 29 sinks `#markup`, 10 chamadas dinâmicas e 1 `unserialize`).
 - A diferença da regra estática veio de escopo incorreto: scripts CLI e hooks procedurais não permitem injeção por construtor; a fixture agora exige classe e rejeita o contexto procedural. Os 77 achados em classes seguem pendentes de refatoração.
 
 | Regra | Achados | Classe |
 |---|---:|---|
-| `aculta-php-static-drupal-service` (`\Drupal::` dentro de classes) | 77 | dívida de arquitetura pendente de refatoração |
+| `aculta-php-static-drupal-service` (`\Drupal::` dentro de classes) | 69 | dívida de arquitetura pendente de refatoração (8 removidos no hook de respostas do Fórum) |
 | `aculta-php-markup-raw-output` | 29 | 27 FALSO POSITIVO, 1 REAL corrigido, 1 ACEITO |
 | `aculta-php-eval-or-dynamic-exec` | 10 | 9 ACEITO COM JUSTIFICATIVA, 1 FALSO POSITIVO reavaliado |
 | `aculta-php-unserialize-untrusted` | 1 | FALSO POSITIVO (com mitigação) |

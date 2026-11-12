@@ -1,5 +1,5 @@
 # Fonte do índice de status do README raiz.
 version: 0.2.0-dev.4
 state: Dev
-next_phase: "FST implementado e update 9008 aplicado no Runtime. Browser Firefox ESR PASS; restam Functional em origem isolada, dark mode/zoom/leitor de tela. ADR-054: cutover parcial Views autorizado, aguarda autorização específica do post-update Portal. Validar /categorias e bloco da home em claro/escuro, filtros/paginação/acesso/cache."
-progress_note: "0.2.0-dev.4: FST-00 a FST-10; update 9008, ledger e reconciliação 2/0. SDC forum-category substitui dois field overrides e wrappers específicos; Config Sync/import install usam UI Patterns row. Config do Fórum 20/20 (312 assertions) PASS. Runtime ainda em row: fields; importação parcial autorizada, mas pendente do post-update Portal."
+next_phase: "Refatorar a chamada estática remanescente em TopicComposerFormHooks e avançar a triagem dos demais módulos; depois retomar homologação FST e validação visual, zoom e leitor de tela. ADR-054: cutover parcial Views autorizado, aguarda autorização específica do post-update Portal."
+progress_note: "Semgrep 2026-11-12: DiscussionReplyFormHooks refatorado com callbacks de serviço; Unit Fórum 251/1.895 PASS, PHPStan focal PASS, gate Portal 1.234 PASS. Uma chamada estática permanece em TopicComposerFormHooks. 0.2.0-dev.4: FST-00 a FST-10; update 9008, ledger e reconciliação 2/0. SDC forum-category substitui dois field overrides e wrappers específicos; Runtime ainda aguarda post-update Portal autorizado."
