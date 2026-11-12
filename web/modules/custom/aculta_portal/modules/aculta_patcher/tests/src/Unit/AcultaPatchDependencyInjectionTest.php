@@ -18,6 +18,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 final class AcultaPatchDependencyInjectionTest extends UnitTestCase {
 
+  /**
+   * Checks the list builder receives its importer and storage.
+   */
   public function testListBuilderReceivesImporterAndStorage(): void {
     $entityType = $this->createMock(EntityTypeInterface::class);
     $entityType->method('id')->willReturn('aculta_patch');
@@ -32,10 +35,12 @@ final class AcultaPatchDependencyInjectionTest extends UnitTestCase {
     $builder = AcultaPatchListBuilder::createInstance($container, $entityType);
     $property = new \ReflectionProperty(AcultaPatchListBuilder::class, 'importer');
 
-    self::assertInstanceOf(AcultaPatchListBuilder::class, $builder);
     self::assertSame($importer, $property->getValue($builder));
   }
 
+  /**
+   * Checks the confirmation form receives its entity type manager.
+   */
   public function testStatusFormReceivesEntityTypeManager(): void {
     $manager = $this->createMock(EntityTypeManagerInterface::class);
     $container = new ContainerBuilder();

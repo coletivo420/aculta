@@ -1,6 +1,6 @@
 # TODO — aculta_patcher
 
-Estado: RC · versão 0.1.0-rc.4 (`aculta_patcher.info.yml`) · status: `docs/operations/status/aculta_patcher.yml`.
+Estado: RC · versão 0.1.0-rc.4 (`aculta_patcher.info.yml`) · teste de DI verifica dependências; PHPStan completo PASS · status: `docs/operations/status/aculta_patcher.yml`.
 
 ## Próximo passo
 

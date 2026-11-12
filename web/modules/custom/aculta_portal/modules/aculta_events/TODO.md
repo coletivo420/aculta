@@ -1,6 +1,6 @@
 # TODO — aculta_events
 
-Estado: Dev · versão 0.2.0-dev.10 (`aculta_events.info.yml`) · status: `docs/operations/status/aculta_events.yml`.
+Estado: Dev · versão 0.2.0-dev.10 (`aculta_events.info.yml`) · testes de DI atualizados para os construtores injetados; PHPStan completo PASS · status: `docs/operations/status/aculta_events.yml`.
 
 ## Próximo passo
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_magazine\Unit;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
 use Drupal\aculta_file_uploader\RecentUploads;
 use Drupal\aculta_magazine\Hook\RevistaCoverStudioHooks;
@@ -34,7 +35,7 @@ final class RevistaCoverSelectionTest extends UnitTestCase {
     // FormState::$anyErrors is static; reset it so another test's validation
     // error does not make this test see an error that does not exist.
     (new FormState())->clearErrors();
-    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container = new ContainerBuilder();
     $container->set('string_translation', $this->getStringTranslationStub());
     \Drupal::setContainer($container);
   }
@@ -46,7 +47,7 @@ final class RevistaCoverSelectionTest extends UnitTestCase {
     return new RevistaCoverStudioHooks(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(AccountProxyInterface::class),
-      // Classes finais: sem construtor, pois validateCover não as usa sem escolha do Studio.
+      // Final classes are unused when validateCover has no Studio selection.
       (new \ReflectionClass(RecentUploads::class))->newInstanceWithoutConstructor(),
       (new \ReflectionClass(ConsumerUploadPolicy::class))->newInstanceWithoutConstructor(),
     );
@@ -91,14 +92,14 @@ final class RevistaCoverSelectionTest extends UnitTestCase {
    */
   public function testAfterBuildCallbackResolvesThroughCallableResolver(): void {
     $hook = $this->hook();
-    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container = new ContainerBuilder();
     $container->set(RevistaCoverStudioHooks::class, $hook);
     $resolver = new CallableResolver(new ClassResolver($container));
 
     $callback = $resolver->getCallableFromDefinition(RevistaCoverStudioHooks::class . ':afterBuild');
 
-    self::assertIsCallable($callback);
     self::assertSame($hook, $callback[0]);
+    self::assertSame('afterBuild', $callback[1]);
   }
 
 }

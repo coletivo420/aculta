@@ -1,6 +1,6 @@
 # TODO — aculta_magazine
 
-Estado: Dev · versão 0.5.0-dev.20 (`aculta_magazine.info.yml`) · status: `docs/operations/status/aculta_magazine.yml`.
+Estado: Dev · versão 0.5.0-dev.20 (`aculta_magazine.info.yml`) · teste de callback sem assertion redundante; PHPStan completo PASS · status: `docs/operations/status/aculta_magazine.yml`.
 
 ## Próximo passo
 

@@ -55,8 +55,8 @@ final class EventModalWidgetsDependencyInjectionTest extends UnitTestCase {
 
     $callback = $resolver->getCallableFromDefinition(EventLocationWidgetController::class . ':clearLocationFormWidget');
 
-    self::assertIsCallable($callback);
     self::assertInstanceOf(EventLocationWidgetController::class, $callback[0]);
+    self::assertSame('clearLocationFormWidget', $callback[1]);
   }
 
   /**

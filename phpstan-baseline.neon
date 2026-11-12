@@ -700,12 +700,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_activity/src/Hook/ActivityHooks.php
 
 		-
-			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
-			identifier: globalDrupalDependencyInjection.useDependencyInjection
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_activity/src/Hook/ActivityHooks.php
-
-		-
 			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_activity\\Form\\ActivityFormCallbacks'' and Drupal\aculta_activity\Form\ActivityFormCallbacks will always evaluate to true.'
 			identifier: staticMethod.alreadyNarrowedType
 			count: 1
@@ -1100,12 +1094,6 @@ parameters:
 			identifier: nullCoalesce.variable
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Hook/ShippingCalculatorHooks.php
-
-		-
-			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
-			identifier: globalDrupalDependencyInjection.useDependencyInjection
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Hook/ShippingCalculatorThemeHooks.php
 
 		-
 			rawMessage: '''
@@ -2139,12 +2127,6 @@ parameters:
 		-
 			rawMessage: 'Unsafe usage of new static().'
 			identifier: new.static
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_editor/src/Plugin/CKEditor5Plugin/FluentEmoji.php
-
-		-
-			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
-			identifier: globalDrupalDependencyInjection.useDependencyInjection
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_editor/src/Plugin/CKEditor5Plugin/FluentEmoji.php
 
@@ -5782,12 +5764,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_mail_confirmer/src/Hook/UserEmailChangeFormHooks.php
 
 		-
-			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
-			identifier: globalDrupalDependencyInjection.useDependencyInjection
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_mail_confirmer/src/Hook/UserEmailChangeHooks.php
-
-		-
 			rawMessage: Negated boolean expression is always false.
 			identifier: booleanNot.alwaysFalse
 			count: 1
@@ -6746,12 +6722,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/tests/src/Unit/PluginForm/RedirectCheckoutFormSecurityTest.php
 
 		-
-			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
-			identifier: globalDrupalDependencyInjection.useDependencyInjection
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_patcher/src/Entity/AcultaPatchListBuilder.php
-
-		-
 			rawMessage: 'Return type (string) of method Drupal\aculta_patcher\Form\AcultaPatchStatusForm::getConfirmText() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormBase::getConfirmText()'
 			identifier: method.childReturnType
 			count: 1
@@ -6779,12 +6749,6 @@ parameters:
 			rawMessage: 'Return type (string) of method Drupal\aculta_patcher\Form\AcultaPatchStatusForm::getQuestion() should be compatible with return type (Drupal\Core\StringTranslation\TranslatableMarkup) of method Drupal\Core\Form\ConfirmFormInterface::getQuestion()'
 			identifier: method.childReturnType
 			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_patcher/src/Form/AcultaPatchStatusForm.php
-
-		-
-			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
-			identifier: globalDrupalDependencyInjection.useDependencyInjection
-			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_patcher/src/Form/AcultaPatchStatusForm.php
 
 		-
@@ -7314,12 +7278,6 @@ parameters:
 			identifier: property.onlyWritten
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/SavedExperienceProvider.php
-
-		-
-			rawMessage: '\Drupal calls should be avoided in classes, use dependency injection instead'
-			identifier: globalDrupalDependencyInjection.useDependencyInjection
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/src/Hook/PrivatePageMetatagHooks.php
 
 		-
 			rawMessage: PHPDoc tag @param for parameter $journey with type Drupal\aculta_studio\Learning\CourseJourney is not subtype of native type Drupal\aculta_lms\Learning\CourseJourney.

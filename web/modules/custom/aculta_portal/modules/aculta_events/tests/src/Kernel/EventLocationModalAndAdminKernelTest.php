@@ -10,9 +10,6 @@ use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\EventSubscriber\ActivityRetiredRouteSubscriber;
 use Drupal\aculta_events\Form\EventLocationModalForm;
 use Drupal\aculta_events\Hook\ActivityRetirementHooks;
-use Drupal\Core\Ajax\CloseModalDialogCommand;
-use Drupal\Core\Ajax\InvokeCommand;
-use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Form\FormState;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\User;
@@ -221,6 +218,7 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
       $this->container->get('entity_type.manager'),
       $this->container->get('aculta_events.permission_policy'),
       $this->container->get('renderer'),
+      $this->container->get('aculta_events.route_context'),
     );
 
     // 1. Etapa de busca
@@ -260,7 +258,7 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
     // Selecionar existente.
     $formStateSearch->set('selected_location_id', (int) $existing->id());
     $formStateSearch->set('field_name', 'field_event_location');
-    // A resposta HTMX fecha o modal e devolve o widget do formulário pai em OOB.
+    // HTMX closes the modal and returns the parent widget through OOB.
     $htmxResponse = $modalForm->htmxUpdateParentResponse(
       (int) $existing->id(),
       'field_event_location',
