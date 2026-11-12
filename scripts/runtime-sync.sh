@@ -278,19 +278,35 @@ PY
     printf '%s\n' "$status_json" | python3 -c '
 import json, sys
 d = json.load(sys.stdin)
-print(f"Estado persistente: {d[\"state_status\"]} (status geral: {d[\"overall_status\"]})")
-if d.get("state_error"):
-    print(f"ERRO DE ESTADO:     {d[\"state_error\"]}")
-print(f"Branch / Limpo:     {d[\"branch\"]} / {d[\"worktree_clean\"]}")
-print(f"Checkout SHA:       {d[\"checkout_sha\"]}")
-print(f"Remoto registrado:  {d[\"recorded_remote_sha\"]}")
-print(f"Ultimo code sync:   {d[\"last_code_sync_sha\"]}")
-print(f"Ultimo cache OK:    {d[\"last_cache_success_sha\"]} ({d[\"cache_status\"]})")
-print(f"Ultimo validado:    {d[\"last_validated_sha\"]}")
+state_status = d["state_status"]
+overall_status = d["overall_status"]
+print(f"Estado persistente: {state_status} (status geral: {overall_status})")
+state_error = d.get("state_error")
+if state_error:
+    print(f"ERRO DE ESTADO:     {state_error}")
+branch = d["branch"]
+worktree_clean = d["worktree_clean"]
+print(f"Branch / Limpo:     {branch} / {worktree_clean}")
+checkout_sha = d["checkout_sha"]
+print(f"Checkout SHA:       {checkout_sha}")
+recorded_remote_sha = d["recorded_remote_sha"]
+print(f"Remoto registrado:  {recorded_remote_sha}")
+last_code_sync_sha = d["last_code_sync_sha"]
+print(f"Ultimo code sync:   {last_code_sync_sha}")
+last_cache_success_sha = d["last_cache_success_sha"]
+cache_status = d["cache_status"]
+print(f"Ultimo cache OK:    {last_cache_success_sha} ({cache_status})")
+last_validated_sha = d["last_validated_sha"]
+print(f"Ultimo validado:    {last_validated_sha}")
 lo = d.get("last_operation") or {}
-print(f"Ultima operacao:    mode={lo.get(\"mode\")} outcome={lo.get(\"outcome\")} risk={lo.get(\"risk\")} em {lo.get(\"timestamp\")}")
-if lo.get("summary"):
-    print(f"Resumo:             {lo.get(\"summary\")}")
+mode = lo.get("mode")
+outcome = lo.get("outcome")
+risk = lo.get("risk")
+timestamp = lo.get("timestamp")
+print(f"Ultima operacao:    mode={mode} outcome={outcome} risk={risk} em {timestamp}")
+summary = lo.get("summary")
+if summary:
+    print(f"Resumo:             {summary}")
 '
   fi
   [[ "$state_status" != "CORRUPT" ]] || exit 1
@@ -913,9 +929,14 @@ PY
     printf '%s\n' "$doctor_json" | python3 -c '
 import json, sys
 d = json.load(sys.stdin)
-print(f"Resultado: {d[\"outcome\"]} | Risco: {d[\"risk\"]}")
+outcome = d["outcome"]
+risk = d["risk"]
+print(f"Resultado: {outcome} | Risco: {risk}")
 for g in d["gates"]:
-    print(f"  [{g[\"result\"]}] {g[\"id\"]}: {g[\"reason\"]}")
+    result = g["result"]
+    gate_id = g["id"]
+    reason = g["reason"]
+    print(f"  [{result}] {gate_id}: {reason}")
 '
   fi
   exit 0
