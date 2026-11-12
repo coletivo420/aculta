@@ -668,6 +668,29 @@ def extract_json_payload(raw_text: str) -> Any:
     raise ValueError("Saida nao contem JSON valido")
 
 
+def _only_drush_notices(raw_text: str) -> bool:
+    """True quando a saida do Drush tem só avisos/notices (sem JSON nem tabela).
+
+    O updatedb:status sem pendencias imprime apenas diagnosticos do Drupal, como
+    o aviso de system.schema de modulos ausentes. Isso significa zero pendencias.
+    """
+    has_notice = False
+    for line in raw_text.splitlines():
+        s = line.strip()
+        if not s:
+            continue
+        if s.startswith(("[notice]", "[warning]", "[error]", "[success]", "[1]", "Message:")):
+            has_notice = True
+            continue
+        if s.startswith("{") or s.startswith("["):
+            return False
+        # Linhas de continuacao de um aviso (texto e links dele) sao aceitas.
+        if has_notice:
+            continue
+        return False
+    return has_notice
+
+
 def parse_drush_checks(
     updb_rc: int,
     updb_out: str,
@@ -701,7 +724,11 @@ def parse_drush_checks(
         info["errors"].append(f"updatedb:status retornou codigo {updb_rc}")
     else:
         try:
-            parsed_updb = extract_json_payload(updb_out) if updb_out.strip() else []
+            if updb_out.strip() and _only_drush_notices(updb_out):
+                # Sem updates pendentes o Drush imprime só avisos (sem JSON): lista vazia, não erro.
+                parsed_updb = []
+            else:
+                parsed_updb = extract_json_payload(updb_out) if updb_out.strip() else []
             if isinstance(parsed_updb, dict):
                 for k, v in parsed_updb.items():
                     if isinstance(v, dict):
