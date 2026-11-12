@@ -107,7 +107,7 @@
 .aculta-breadcrumb--superficie {
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-md);
-  background: var(--color-surface-institution, #fbf4e8);
+  background: var(--color-surface-raised, #fff);
 }
 
 /* Contextual: trilha sobre superfície escura do Studio, com links de contraste próprio. */
