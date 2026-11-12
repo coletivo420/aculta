@@ -59,7 +59,10 @@
   max-inline-size: 36ch;
 }
 
-.site-footer a {
+/* `:link`/`:visited` elevam a especificidade sobre a regra global `.page a`
+   (base.css), que de outra forma pinta o link com `--color-primary` sobre a
+   superfície verde do rodapé e derruba o contraste para 3,45:1. */
+.site-footer a:is(:link, :visited) {
   color: var(--color-footer-text);
   text-underline-offset: .25em;
 }

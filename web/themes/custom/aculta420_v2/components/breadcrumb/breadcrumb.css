@@ -61,7 +61,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-xs);
-  color: var(--surface-accent-red);
+  color: var(--color-link-editorial);
   text-decoration-color: currentColor;
   text-decoration-line: underline;
   text-decoration-thickness: .075em;
@@ -85,8 +85,11 @@
   outline-offset: var(--focus-ring-offset);
 }
 
+/* O verde da marca é superfície decorativa (faixa tricolor acima), não cor de
+   texto: `--color-brand-secondary` (#689427) sobre o canvas claro rendia
+   3,58:1. O nível atual usa o token de texto e mantém o destaque pelo peso. */
 .aculta-breadcrumb__current {
-  color: var(--color-brand-secondary);
+  color: var(--color-text-primary);
   font-weight: 700;
   min-inline-size: 0;
   overflow-wrap: anywhere;
