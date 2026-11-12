@@ -104,13 +104,6 @@
   }
 }
 
-/* Superfície: faixa atrás da trilha, para páginas com fundo neutro. */
-.aculta-breadcrumb--superficie {
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--radius-md);
-  background: var(--color-surface-raised);
-}
-
 /* Contextual: trilha sobre superfície escura do Studio, com links de contraste próprio. */
 .aculta-breadcrumb--contextual {
   padding: var(--spacing-xs) var(--spacing-sm);

@@ -24,7 +24,6 @@ O template do sistema (`templates/navigation/breadcrumb.html.twig`) lê `aculta_
 ## Superfícies
 
 - `padrao`: editorial, sem fundo.
-- `superficie`: faixa com `--color-surface-muted`.
 - `contextual`: sobre `--color-surface-inverse`, para o Studio.
 
 No mobile (até 40rem), mostra só o nível anterior e a página atual.
