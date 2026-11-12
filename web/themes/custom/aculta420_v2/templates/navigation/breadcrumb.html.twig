@@ -12,6 +12,7 @@
   }) %}
   {{ include('aculta420_v2:breadcrumb', {
     label: 'Breadcrumb'|t,
+    inicio_url: aculta_breadcrumb_inicio|default('/'),
     sessao: aculta_breadcrumb_sessao|default('portal'),
     trail: trail,
     current: aculta_current_breadcrumb,

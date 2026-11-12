@@ -12,6 +12,11 @@ props:
       title: Nome acessível da navegação
       minLength: 1
       default: Navegação estrutural
+    inicio_url:
+      type: string
+      title: Endereço do início
+      description: Página inicial do domínio principal, usada no primeiro nível da trilha.
+      default: /
     sessao:
       type: string
       title: Sessão do portal

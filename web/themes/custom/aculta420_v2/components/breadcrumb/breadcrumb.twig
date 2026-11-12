@@ -17,7 +17,7 @@
   <nav class="aculta-breadcrumb aculta-breadcrumb--{{ sessao|replace({'_': '-'}) }} aculta-breadcrumb--{{ variant }}" aria-label="{{ label|default('Navegação estrutural'|t) }}">
     <ol class="aculta-breadcrumb__list">
       <li class="aculta-breadcrumb__item aculta-breadcrumb__item--home">
-        <a class="aculta-breadcrumb__link" href="/">
+        <a class="aculta-breadcrumb__link" href="{{ inicio_url|default('/') }}">
           {{ include('aculta420_v2:icon', { name: 'house', variant: 'regular', size: 'sm' }, with_context = false) }}
           <span>{{ 'Início'|t }}</span>
         </a>

@@ -177,7 +177,12 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     return match ($purpose) {
       'account' => (string) $this->t('Minha conta'),
       'support' => (string) $this->t('Apoio'),
-      'magazine' => (string) $this->t('Revista 420'),
+      'magazine' => (string) $this->t('Revista'),
+      'wiki' => (string) $this->t('Wiki'),
+      'shop' => (string) $this->t('Loja'),
+      'courses' => (string) $this->t('Cursos'),
+      'forum' => (string) $this->t('Fórum'),
+      'eventos' => (string) $this->t('Eventos'),
       default => (string) $this->t('Início'),
     };
   }

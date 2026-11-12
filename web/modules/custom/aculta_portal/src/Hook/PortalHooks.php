@@ -271,6 +271,9 @@ final class PortalHooks {
     $variables['aculta_current_breadcrumb'] = $this->breadcrumbBuilder
       ->currentTitle($this->routeMatch);
     $variables['aculta_breadcrumb_sessao'] = $this->breadcrumbBuilder->sessao();
+    // O início da trilha é sempre a página inicial do domínio principal.
+    $mainHome = $this->domainSiteManager->pathUrl(SiteKey::Main, '/');
+    $variables['aculta_breadcrumb_inicio'] = $mainHome !== NULL ? $mainHome->toString() : '/';
   }
 
   /**
