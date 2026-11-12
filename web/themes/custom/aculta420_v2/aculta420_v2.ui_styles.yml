@@ -80,6 +80,15 @@ surface_style:
     aculta-surface aculta-surface--tone-green-soft: "Superfície verde suave (estrutura)"
   previewed_as: hidden
 
+layout_section_surface:
+  category: "Superfícies"
+  label: "Superfície da seção Layout Builder"
+  description: "Aplica a uma seção do Layout Builder uma superfície neutra ou verde, sem alterar as outras seções."
+  options:
+    layout-section--raised: "Seção neutra elevada"
+    layout-section--green-soft: "Seção verde suave estrutural"
+  previewed_as: hidden
+
 surface_accent_style:
   category: "Superfícies"
   label: "Moldura de destaque da superfície"

@@ -96,7 +96,14 @@ foreach (['surface', 'surface-panel', 'surface-accent'] as $name) {
   $check(str_contains($cssFile, '--tone-green-soft') && str_contains($cssFile, 'var(--color-surface-green-border)'), $name . ' CSS');
   $check(str_contains($story, 'tone: green-soft'), $name . ' default story');
 }
-$check(str_contains($read($theme . '/aculta420_v2.ui_styles.yml'), 'aculta-surface aculta-surface--tone-green-soft:'), 'UI Styles');
+$styles = $read($theme . '/aculta420_v2.ui_styles.yml');
+$check(str_contains($styles, 'aculta-surface aculta-surface--tone-green-soft:'), 'UI Styles');
+$layout = $theme . '/components/layout-section/layout-section';
+$check(str_contains($read($layout . '.component.yml'), 'enum: [default, raised, green-soft]') && str_contains($read($layout . '.component.yml'), 'default: default'), 'Layout Section preserves default and adds opt-in green-soft');
+$check(str_contains($read($layout . '.twig'), "['default', 'raised', 'green-soft']"), 'Layout Section Twig allow-list');
+$check(str_contains($read($layout . '.css'), '.layout-section--green-soft') && str_contains($read($layout . '.css'), 'var(--color-surface-green-soft)'), 'Layout Section CSS');
+$check(str_contains($styles, 'layout-section--green-soft:'), 'Layout Section UI Styles option');
+$check(str_contains($read($theme . '/components/layout-section/layout-section.green-soft.story.yml'), 'tone: green-soft'), 'Layout Section story');
 if ($errors !== []) {
   foreach ($errors as $error) {
     fwrite(STDERR, "FAIL: " . $error . "\n");

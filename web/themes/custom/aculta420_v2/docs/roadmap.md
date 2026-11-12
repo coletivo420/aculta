@@ -228,3 +228,13 @@ O bloco `wiki_categories` da home usa UI Patterns + `layout-grid`; termos, links
 - Playwright encontrou zero eventos `style-src` nas rotas válidas `/`, `/galleries`, `/transparencia`, `/categorias` do Portal e nas homes válidas de Eventos, Loja e Conta. O componente admin anônimo retornou 403; login do UID de teste não existe no Runtime e a verificação autenticada fica DEFERRED.
 - Stylelint focal, foundations 83 pares, PHPUnit focal 27/27, PHP lint, cache rebuild e diff check passaram.
 
+
+## Homologação da inversão branco/verde - lacuna identificada (2026-11-12)
+
+O canvas branco e os três SDCs `surface*` foram publicados; uma auditoria
+posterior confirmou que os 22 displays do Layout Builder usam
+`layout-section`, ainda sem o tom verde. Incluída variante `green-soft`
+opcional nesse SDC, story e UI Styles, preservando seções transparentes
+existentes. A homologação de navegador, a seleção editorial por seção e
+o aceite visual humano seguem pendentes. O relatório fica em
+`docs/architecture/ACULTA420-V2-HOMOLOGACAO-SUPERFICIES-2026-11-12.md`.

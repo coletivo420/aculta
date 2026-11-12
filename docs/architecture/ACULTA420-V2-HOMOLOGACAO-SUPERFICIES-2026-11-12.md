@@ -46,3 +46,40 @@ Card raised e fundo branco não podem perder contorno/foco; comparar computed st
 Não substituir --color-surface-raised globalmente nem reaplicar purpose palette.
 Rollback por commit novo e isolado, sem reset ou reescrita de histórico.
 Esta sessão via GitHub não executou testes Drupal/Runtime e não declara aceite visual.
+
+## Auditoria de integração - 2026-11-12
+
+**Achado confirmado:** a mudança inicial alcançou os três SDCs de superfície,
+mas os 22 displays do lote Layout Builder usam
+`ui_patterns:aculta420_v2:layout_section` e
+`aculta420_v2:layout-section` com props/slots vazios. Nesse componente,
+`tone: default` era transparente e `raised` neutro. Portanto, **o canvas
+branco foi aplicado, mas a superfície verde não é automaticamente exibida
+nas 22 seções**. Ver
+`scripts/validate-aculta420-layout-builder-batch.php`.
+
+**Correção adotada:** adicionar `tone: green-soft` como variante opt-in em
+`layout-section`, usando a mesma cor e borda semânticas dos três SDCs de
+superfície. O default segue `default`: não pintar indiscriminadamente
+artigos, formulários e conteúdo editorial. A variante `layout-section--green-soft`
+também foi declarada em UI Styles para seleção por seção onde a integração
+suportar o contexto. Story de composição verde externo/raised interno criada.
+
+**Limite da correção:** não foram alteradas as configurações de Layout Builder,
+`config/sync`, dados nem os 22 displays existentes. É necessária
+seleção criteriosa das seções verdes, testes de persistência do UI Styles,
+visualização real, checagem de permissões e captura no Runtime.
+
+**Evidência técnica adicional:** os oito pares de contraste dos tokens
+`green-soft` (texto principal, secundário, borda e foco em claro/escuro)
+foram recalculados independentemente a partir das cores da branch. Todos
+ultrapassaram 4,5:1 para texto e 3:1 para indicadores essenciais.
+Isso não substitui WCAG automatizado no navegador.
+
+**CI observado:** a execução Frontend quality/Stylelint do HEAD inspecionado
+passou, mas o workflow Quality Static apresentou falhas de ShellCheck e Semgrep
+no trabalho paralelo de Runtime Sync; não há evidência de homologação
+visual do design nem de aprovação do gate dedicado em Runtime.
+
+**Aceite:** revisão estática da lacuna e implementação de variante concluídas;
+homologação real da nova integração continua DEFERRED.

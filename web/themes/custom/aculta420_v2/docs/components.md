@@ -531,3 +531,12 @@ como padrão omitido (schema e Twig). Canvas, raised, subtle e institution
 continuam válidos e com o mesmo significado; nenhuma prop anterior foi
 removida. No claro, o uso principal é verde externo com cartão raised branco
 interno. A UI Library precisa de validação real nos dois modos.
+
+## Layout-section: tom verde opcional - 2026-11-12
+
+`layout-section` oferece os tons `default`, `raised` e
+`green-soft`. A opção `default` permanece estável para não alterar
+os 22 displays Layout Builder com props/slots vazios. A nova story
+`layout-section.green-soft.story.yml` exemplifica a seção verde com
+`surface` raised neutra no interior. Requer aceite real da UI Library
+e do plugin de UI Styles da seção.

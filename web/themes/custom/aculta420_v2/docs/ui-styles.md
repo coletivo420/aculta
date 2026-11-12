@@ -106,3 +106,13 @@ nível semântico do título. Versão de referência do `ui_styles` continua a
 surface_style passa a oferecer aculta-surface--tone-green-soft para blocos
 de estrutura. O raised explícito continua neutro para cartões de leitura.
 Previews e persistência em UI Styles CKEditor 5 ainda aguardam Runtime.
+
+## 8. Superfície de seção - integração Layout Builder
+
+O plugin `layout_section_surface` disponibiliza as variantes
+`layout-section--raised` e `layout-section--green-soft`. O gate
+`validate-aculta420-ui-styles.php` confere que as classes estão no CSS.
+A aplicação efetiva da classe no SDC renderizado pelo UI Patterns Layouts
+e a persistência após salvar dependem de teste autenticado no Runtime.
+Não importar configurações para forçar variantes nem mudar todas as
+seções com o novo tom.

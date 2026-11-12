@@ -278,3 +278,12 @@ UI Skins, cores por domínio, geometrias e slots não foram alterados.
 Não mudar globalmente --color-surface-raised. Este contrato exige validação
 visual no Runtime antes do aceite final.
 Ver docs/architecture/ACULTA420-V2-HOMOLOGACAO-SUPERFICIES-2026-11-12.md.
+
+## 10. Variante verde nas seções do Layout Builder
+
+O SDC `layout-section` agora permite `tone: green-soft` (opt-in) nos dois
+modos, com padding, borda e radius semânticos. Não substituir o `default`
+do Layout Builder em massa: a seção padrão continua transparente e
+`raised` continua neutra para preservar conteúdo denso. As seções verdes
+devem ser escolhidas por composição editorial com validação do Runtime.
+Consultar o relatório de homologação de 2026-11-12.

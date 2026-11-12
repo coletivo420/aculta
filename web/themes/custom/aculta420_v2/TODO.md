@@ -19,3 +19,8 @@ Estado: Dev · versão 1.5.0 (`aculta420_v2.info.yml`) · status: `docs/operatio
 ## Leitura e entrega
 
 Consulte `CHANGELOG.md` e roadmap; atualize este TODO/status no mesmo commit, sem histórico.
+
+- **Correção de cobertura da inversão (2026-11-12):** `layout-section` recebe
+  `green-soft` opt-in + UI Styles + story e gates. Pendente escolher as seções
+  reais apropriadas no Layout Builder e confirmar se UI Styles aplica a classe
+  na instância correta. Não alterar por padrão os 22 displays.

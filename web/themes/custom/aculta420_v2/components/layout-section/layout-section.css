@@ -10,6 +10,15 @@
   background-color: var(--color-surface-raised);
 }
 
+/* Opt-in for structural sections in UI Patterns Layouts / Layout Builder. */
+.layout-section--green-soft {
+  padding: var(--spacing-lg);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-surface-green-border);
+  border-radius: var(--radius-control-card);
+  background-color: var(--color-surface-green-soft);
+}
+
 .layout-section__header,
 .layout-section__content {
   min-inline-size: 0;

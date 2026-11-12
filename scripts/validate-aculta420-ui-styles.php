@@ -23,6 +23,7 @@ $buttonCssFile = $theme . '/components/button/button.css';
 $cardCssFile = $theme . '/components/card-cultural/card-cultural.css';
 $revistaCssFile = $theme . '/components/revista-teaser/revista-teaser.css';
 $surfaceCssFile = $theme . '/components/surface/surface.css';
+$layoutSectionCssFile = $theme . '/components/layout-section/layout-section.css';
 
 $fail = static function (string $message): never {
   fwrite(STDERR, "FAIL: $message\n");
@@ -83,6 +84,7 @@ $buttonCss = (string) file_get_contents($buttonCssFile);
 $cardCss = (string) file_get_contents($cardCssFile);
 $revistaCss = (string) file_get_contents($revistaCssFile);
 $surfaceCss = (string) file_get_contents($surfaceCssFile);
+$layoutSectionCss = (string) file_get_contents($layoutSectionCssFile);
 
 $checks = 0;
 
@@ -136,6 +138,14 @@ foreach ($definitions as $id => $definition) {
       $token = 'revista-teaser-accent-' . substr($classOrKey, strlen('revista-teaser--accent-'));
       if (!isset($mappedClasses[$classOrKey]) || !isset($portalTokens[$token])) {
         $fail("Classe da Revista '$classOrKey' não está mapeada no PortalUiHooks::TOKENS.");
+      }
+    }
+    elseif ($id === 'layout_section_surface') {
+      if (!in_array($classOrKey, ['layout-section--raised', 'layout-section--green-soft'], TRUE)) {
+        $fail("Opção de Layout Builder não permitida: '$classOrKey'.");
+      }
+      if (!str_contains($layoutSectionCss, '.' . $classOrKey)) {
+        $fail("Opção '$classOrKey' não possui variante CSS em $layoutSectionCssFile.");
       }
     }
     elseif (in_array($id, ['spacing_section', 'surface_style', 'surface_elevation_style', 'surface_radius_style'], TRUE)) {

@@ -263,3 +263,13 @@ Gate novo: php scripts/validate-aculta420-white-canvas-green-surfaces.php
 UI Styles, Stylelint, UI Skins e testes reais de navegador previstos para
 o diff. O gate não substitui o aceite visual do Runtime.
 Plano: docs/architecture/ACULTA420-V2-HOMOLOGACAO-SUPERFICIES-2026-11-12.md.
+
+### Cobertura adicional - Layout Builder
+
+O gate `validate-aculta420-white-canvas-green-surfaces.php` passa
+a verificar também o contrato `layout-section.green-soft`, default
+inalterado e a story. O gate `validate-aculta420-ui-styles.php` valida
+as variantes de superfície das seções. Executar também
+`validate-aculta420-layout-builder-batch.php` e
+`validate-aculta420-layouts.php` no Runtime; seu objetivo é detectar
+alterações indevidas nos 22 displays, não aplicar o novo tom em massa.
