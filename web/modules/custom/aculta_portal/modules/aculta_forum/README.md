@@ -185,7 +185,7 @@ da paginação: anônimo e suspenso veem só o tópico público; o ativo com
 membership vê os dois. O download privado do anexo também foi validado por
 HTTP. Ao mudar a relação de Group, o tópico e seus posts saem do índice
 imediatamente e voltam após a reindexação (fail closed), e o Page Cache da
-busca é invalidado; a matriz também passou com o tema Olivero. O Runtime de
+busca é invalidado. O Runtime de
 testes foi validado em janela controlada, com backup, e revertido ao estado
 inicial. Inventário, decisões, matriz de testes, riscos e a próxima fase estão
 em [`docs/RESTRICTED-FORUMS.md`](docs/RESTRICTED-FORUMS.md).

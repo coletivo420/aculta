@@ -450,8 +450,7 @@ PDF.
 Estado em 2026-10-23: fases técnicas 0.1–0.7 concluídas. Incluem inventário,
 fundação, grants reais em Kernel, herança em posts/Comments/anexos, galeria,
 cache de acesso, regressão pública, busca/contagem sob grants, download HTTP
-real, índice atrasado fechado (fail closed), cache da View de busca e matriz
-com Olivero. O Runtime de testes foi alterado somente em janela controlada,
+real, índice atrasado fechado (fail closed), cache da View de busca. O Runtime de testes foi alterado somente em janela controlada,
 com backup validado, e **revertido ao estado inicial** (frente desligada,
 `realm=all:21`). A ativação em produção é uma decisão operacional do
 responsável, não uma alteração desta frente. O contrato completo, a matriz de
@@ -538,10 +537,7 @@ o contrato ACULTA e seus quatro contextos prevalecem. Ver
 
 `tests/browser/aculta-forum/forum-index-visual.mjs` passou 15/15 no servidor de
 testes com Firefox ESR/X11: 390/768/1024 CSS px, claro/escuro, link de salto e
-cartões no enquadramento, sem tópicos na listagem pública. Com Olivero no
-ambiente local, `tests/browser/aculta-forum/categorias-visual.py` passou 8/8:
-12 categorias e links `?categoria=` renderizados sem assets do ACULTA420, sem
-erros e sem overflow; o tema voltou a `aculta420` por trap. Zoom, aparelho real
+cartões no enquadramento, sem tópicos na listagem pública. Zoom, aparelho real
 e contadores access-aware continuam pendentes.
 
 ### Contadores access-aware — prova de 2026-10-23

@@ -391,8 +391,8 @@ ao fim da sessão.
   incluiu `aculta_forum.post_created` sem atualizar o teste) foi corrigida
   nesta sessão, junto com um teste do evento de post.
 - **O que ficou faltando.** A Fase 5 do plano está completa em código e
-  documentação (itens 1 a 5). Falta a validação em navegador com ACULTA420 e
-  Olivero depois da ativação — a imagem do card, a aba de upload, a discussão do
+  documentação (itens 1 a 5). Falta a validação em navegador com ACULTA420
+  depois da ativação — a imagem do card, a aba de upload, a discussão do
   verbete, a tabela de revisões e a tela de aviso de revisão foram verificadas
   por configuração e testes, não renderizadas em navegador. Falta também a
   reindexação do `aculta_conteudo` no ambiente para que verbetes já publicados

@@ -303,8 +303,7 @@ Medição refeita comparando o conteúdo bruto de cada objeto ativo (tabela `con
 
 ## 9.6 Verificação de navegador da frente CPF + checkout (2026-10-23)
 
-Ambiente: servidor de desenvolvimento `*.aculta.toca.net.br`; Firefox ESR visível em `DISPLAY=:0` via geckodriver, perfil temporário em `/tmp`; conta `teste.comum` (uid 5), conforme `docs/operations/TESTE-COMUM.md`. Nenhuma configuração do ambiente foi alterada. A verificação do tema Olivero foi feita à parte, no ambiente local (Apache em 127.0.0.1 com os hostnames de teste resolvidos no perfil do Firefox), porque trocar o tema no servidor de desenvolvimento é global para todos os agentes.
-
+Ambiente: servidor de desenvolvimento `*.aculta.toca.net.br`; Firefox ESR visível em `DISPLAY=:0` via geckodriver, perfil temporário em `/tmp`; conta `teste.comum` (uid 5), conforme `docs/operations/TESTE-COMUM.md`. Nenhuma configuração do ambiente foi alterada.
 ### Correções feitas antes dos testes
 
 - **Autowiring do `CartCheckoutController`:** o serviço falhava com `AutowiringFailedException` ("Cannot autowire service ... argument `$consolidator`"), registrado às 09:35 de 2026-10-23. O `#[Autowire(service: 'aculta_portal.cart_consolidator')]` no construtor resolve. Sem ele, `/carrinho/finalizar` não carrega.
@@ -332,21 +331,6 @@ Ambiente: servidor de desenvolvimento `*.aculta.toca.net.br`; Firefox ESR visív
 - **`profile.type.customer` ausente:** o pedido 113 falhou com 500 (`PluginNotFoundException: The "entity:profile:customer" plugin does not exist.`, log de 23-Oct-2026 10:13:26) ao tentar criar o perfil de cobrança. Os tipos existentes são `administrator, associado, authenticated, email_confirmed, estudante, gerente_loja, lms_teacher`. O tipo foi removido do repositório por outras frentes (`e85c3dbe`, `b66646ef`), como registra 9.5. É configuração de outra frente; não foi alterada.
 - **403 em deep link depois do logout:** `/finalizar-compra/{id}/{step}` devolve 403 sem CTA de login, enquanto a entrada `/carrinho/finalizar` mostra o pane. Avaliar se convém redirecionar o deep link para a entrada.
 - **LMS no navegador:** `cursos.aculta.toca.net.br/group/1` foi aberto na aba C do `multi-tab-checkout.py`. É uma página informativa do grupo, sem preço, botão de matrícula nem entrada de checkout — coerente com a ADR-013 (sem multi-cart público e sem compra própria do LMS). O pane fiscal no LMS, portanto, não tem fluxo de compra para percorrer nesta rodada; a cobertura desse caso vem do `FiscalIdentityPaneKernelTest` (12 testes, 343 asserções), que inclui o order type `curso`.
-- **Olivero:** testado no **ambiente local**, não no servidor de desenvolvimento. Ver a subseção seguinte.
-
-### Tema Olivero no ambiente local
-
-O tema foi exercitado em 2026-10-23 contra o Apache local (127.0.0.1), com os hostnames de teste resolvidos para 127.0.0.1 no perfil do Firefox (`network.dns.localDomains`). O servidor de desenvolvimento não foi tocado.
-
-Ativação e restauração no mesmo comando, com `trap` para não deixar `system.theme` trocado para outros agentes: `drush theme:enable olivero -y`, `drush config:set system.theme default olivero -y`, `cache:rebuild`, execução do `olivero-smoke.py` e restauração de `aculta420` na saída. Estado final conferido: `system.theme:default = aculta420`, admin `claro`.
-
-| Página | Resultado | Medição |
-|---|---|---|
-| Portal (`aculta.toca.net.br/`) | PASS | 200; título "Associação Cultural Antiproibicionista \| Goiânia - GO"; 6 assets de `/core/themes/olivero/` e 0 de `aculta420`; `body_class` `path-frontpage page-node-type-page`; nenhuma mensagem de erro |
-| Fórum (`growroom420.aculta.toca.net.br/`) | PASS | 200; título "Discussões do Growroom420 \| Associação Cultural Antiproibicionista"; 6 assets 0 de `aculta420`; `body_class` `path-discussoes`; a view renderiza título, abas (Discussões, Categorias, Novas, Sem resposta, Mais comentadas, Pesquisar), filtro "Categoria" e o estado vazio "Ainda não há tópicos publicados nesta lista."; nenhuma mensagem de erro |
-| Revista (`revista420.aculta.toca.net.br/`) | PASS | 200; título "Observatório da Maconha Coletivo 420"; 6 assets 0 de `aculta420`; `body_class` `path-frontpage`; nenhuma mensagem de erro |
-
-O que o teste prova é que o tema carrega e renderiza as páginas sem erro. Há duas limitações de conteúdo, do banco local e não do tema: o banco local não tem tópicos de fórum nem matérias de revista publicados; e Portal e Revista exibem apenas o título do nó porque o conteúdo editorial está em blocos posicionados em regiões do tema `aculta420`, que o Olivero não renderiza. O Fórum, cujo conteúdo vem da view do módulo, renderiza a listagem completa. O `watchdog` (severity 3) não registrou erro de tema ou renderização no período — apenas falhas de e-mail do cron.
 
 ### Gates finais
 
@@ -382,7 +366,6 @@ O que o teste prova é que o tema carrega e renderiza as páginas sem erro. Há 
     - **PASS — cenários de sessão:** login durante o checkout, carrinho anônimo, troca de Domain, logout, múltiplas abas e o TTL medido, com a conta de teste (itens 9 e 9.6).
     - **PASS — pane de identidade fiscal na Loja:** pedido 113 em `revisao` recusa vazio e inválido, permanecendo no passo, e conclui com documento válido; o pedido 114 mostra o documento mascarado e sem campo de edição. Evidências em 9.6.
     - **LMS:** `cursos.aculta.toca.net.br/group/1` é página informativa do grupo, sem preço, matrícula ou entrada de checkout; não há fluxo de compra no LMS para percorrer o pane fiscal. Coerente com a ADR-013 e coberto no nível Kernel.
-    - **PASS — tema Olivero (ambiente local):** Portal, Fórum e Revista renderizam, 6 assets do tema e nenhum de `aculta420`, sem mensagens de erro; a view do Fórum renderiza completa. Feito no ambiente local, não no servidor de desenvolvimento, com restauração de `aculta420` ao final. Limitação de conteúdo registrada em 9.6.
 
 ## 11. Login local por CPF — D-51 (2026-10-29)
 

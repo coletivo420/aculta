@@ -37,7 +37,7 @@ Escopo: pontos do código custom da ACULTA que descompactam ou leem ZIP/GZIP/XLS
 - **DEFERRED por escopo:** o fluxo PPT do `ExternalPackageController` do Opigno não foi portado. O plano de independência registra explicitamente PPT/importação/exportação como não objetivos; nenhuma execução desse fluxo foi feita.
 - **MANTIDO:** não há validador compartilhado entre módulos; decisão registrada continua sendo implementação própria por superfície.
 - **PASS:** `ForumRoutesFunctionalTest` no tema ACULTA420: 6 testes, 33 assertions. O teste funcional precisou habilitar o módulo de suporte `aculta_portal_upload_test` para fornecer o schema de upload.
-- **DEFERRED:** suíte funcional temática de Portal e Revista. Não há classes `BrowserTestBase`/`FunctionalJavascriptTestBase` nesses componentes. Uma smoke funcional temporária da Revista falhou durante instalação do módulo porque suas Views exigem `node.type.revista` e `field.field.node.revista.field_aculta_discussion`, fornecidos por `config/sync` e ausentes numa instalação limpa de teste. Portanto não há resultado de Portal/Revista sob ACULTA420 ou Olivero; a cobertura Kernel da Revista não exercita tema.
+- **DEFERRED:** suíte funcional temática de Portal e Revista. Não há classes `BrowserTestBase`/`FunctionalJavascriptTestBase` nesses componentes. Uma smoke funcional temporária da Revista falhou durante instalação do módulo porque suas Views exigem `node.type.revista` e `field.field.node.revista.field_aculta_discussion`, fornecidos por `config/sync` e ausentes numa instalação limpa de teste. Portanto não há resultado de Portal/Revista sob ACULTA420; a cobertura Kernel da Revista não exercita tema.
 
 ## Versões
 

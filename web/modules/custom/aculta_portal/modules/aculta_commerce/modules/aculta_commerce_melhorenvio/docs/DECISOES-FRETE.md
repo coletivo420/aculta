@@ -157,7 +157,7 @@ a vir do carrinho:
 
 ### Aceite e limpeza (2026-10-27)
 
-- Simulador de frete aceito como concluído para loja e doação. Gaveta do carrinho no Olivero: fora do escopo, por decisão
+- Simulador de frete aceito como concluído para loja e doação. Gaveta do carrinho: fora do escopo, por decisão
   do responsável.
 - Removidos do servidor de testes: pedidos 179 e 180 da conta de teste, curso 73 e turma 74. Mantidos os produtos de teste
   10 (LMS) e 11 (doação), por decisão do responsável.

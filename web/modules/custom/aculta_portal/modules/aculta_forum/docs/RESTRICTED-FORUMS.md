@@ -199,8 +199,7 @@ Nenhum teste Runtime, Functional ou de navegador foi executado nesta frente.
 | Regressão do Group LMS | `lms_course`/`lms_class` recusados com log de erro | PASS (Unit) |
 
 **Motivo dos DEFERRED restantes:** o download HTTP do arquivo privado, o cache
-da View de busca, o caso de índice atrasado e a repetição com o tema Olivero
-ficam para a F-GROUP 0.7. Anexos, galeria, posts, Comments, busca, contagem,
+da View de busca, o caso de índice atrasado e a repetição ficam para a F-GROUP 0.7. Anexos, galeria, posts, Comments, busca, contagem,
 cache de página e regressão pública foram validados em Kernel/Unit e no Runtime
 controlado de 2026-10-23 (ver F-GROUP-E e F-GROUP 0.6).
 
@@ -451,10 +450,6 @@ teardown no final:
   e depois HIT com o título. Após restringir e reindexar, a primeira resposta
   é **MISS** (a invalidação do índice alcançou o Page Cache) e o título some;
   a seguinte é HIT sem o título. Não há vazamento de cache entre contas.
-- **Tema Olivero.** Com `system.theme default=olivero`: anônimo 403 no
-  restrito, 200 no público e busca só com o público; ativo com membership 200
-  no restrito e busca com os dois; suspenso 403 e busca só com o público. O
-  tema foi restaurado para `aculta420` no mesmo comando, com `trap`.
 - **Testes:** Unit 174/1.008, Kernel 52/1.170 e rebuilder 6/21 PASS; PHPCS
   limpo.
 - **Teardown:** tema `aculta420`, `restricted_group_type` vazio,
