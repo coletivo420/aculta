@@ -30,15 +30,6 @@
   gap: var(--spacing-xs);
 }
 
-.forum-category-header__title {
-  margin: 0 0 var(--spacing-sm);
-  color: var(--color-text-primary);
-  font-family: var(--font-family-heading);
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
-  font-weight: 700;
-  line-height: 1.2;
-}
-
 .forum-category-header__description {
   max-inline-size: 65ch;
   margin-block-end: var(--spacing-md);

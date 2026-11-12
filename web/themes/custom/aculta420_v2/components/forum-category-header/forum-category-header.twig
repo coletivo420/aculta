@@ -7,11 +7,15 @@
       {% endif %}
       <span>{{ 'GROWROOM420 / COMUNIDADE'|t }}</span>
     </div>
-    {% set title_level = title_level|default('h2') %}
+    {% set title_level = title_level|default('h1') %}
     {% if title_level not in ['h1', 'h2'] %}
-      {% set title_level = 'h2' %}
+      {% set title_level = 'h1' %}
     {% endif %}
-    <{{ title_level }} class="forum-category-header__title">{{ title }}</{{ title_level }}>
+    {{ include('aculta420_v2:heading', {
+      text: title,
+      level: title_level == 'h1' ? 1 : 2,
+      style: 'stripe'
+    }, with_context = false) }}
     {% if description %}
       <div class="forum-category-header__description">{{ description }}</div>
     {% endif %}

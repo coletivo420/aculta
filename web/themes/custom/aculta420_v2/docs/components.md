@@ -4,6 +4,25 @@ Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes d
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
+### heading — Título semântico
+
+- **Papel:** renderiza H1–H6 com a escala Oswald da referência "Tipografia do Portal ACULTA420 V2", superfície semântica e destaque tricolor (H1/H2) ou barra lateral colorida (H3–H6).
+- **Props:** `text`, `level` (1–6, padrão 2), `style` (`auto`, `plain`, `bar`, `stripe`; `auto` escolhe tricolor em H1/H2 e barra em H3–H6), `accent` (`green`, `yellow`, `red`, `dark-green`), `surface` (`none`, `canvas`, `raised`, `institution`, `highlight`) e `align` (`start`, `center`), além de `attributes`.
+- **Slots:** `content` (markup já renderizado; tem precedência sobre `text`).
+- **Stories:** `heading.default.story.yml`, `heading.h1.story.yml`, `heading.h3-bar.story.yml`, `heading.h4-yellow.story.yml`, `heading.h5-red.story.yml`, `heading.h6-dark-green.story.yml`, `heading.plain.story.yml`, `heading.surface-institution.story.yml` e `heading.surface-highlight.story.yml`.
+- **Tokens:** escala, pesos, alturas de linha e espaçamentos em `--heading-*`; cores e superfícies pelos tokens semânticos (`--color-text-primary`, `--color-surface-*`, `--surface-accent-*`).
+- **Regra:** não decide o nível semântico do documento nem duplica H1; o chamador informa `level`. O H1 da rota é renderizado pelo override `templates/page-title.html.twig`. A escala mínima atende 320/390 px e `overflow-wrap: break-word` evita quebrar palavras no meio.
+- **Estado:** schema estrito e render isolado no gate V2; browser Firefox em 1280/1920/390 px, claro e escuro, com contraste medido e axe sem bloqueio (2026-11-12). Estilos de acento e superfície expostos em `docs/ui-styles.md`.
+
+### account-shell — Shell da Conta
+
+- **Papel:** estrutura da Minha Conta com menu, acordeão e conteúdo, preservando os atributos de comportamento do Portal.
+- **Props:** `title`, `section_title`, `menu_items`, `accordion_items` e `logout`.
+- **Slots:** `content`.
+- **Story:** `account-shell.default.story.yml`.
+- **Regra:** o H1 "Minha conta" é entregue pelo SDC `heading` (nível 1, faixa tricolor); o tema não lê usuário nem decide acesso.
+- **Estado:** SM do H1 atualizado em 2026-11-12; validação autenticada continua pendente.
+
 ### document-card
 
 Cartão editorial de documento institucional com props estritas `title` e
@@ -337,8 +356,8 @@ autorizada.
 - **Props:** `title`, `description`, `has_links`, `theme_preset` (`classic`, `soft` ou `outline`).
 - **Slots:** `owner_identity`, `links` (render arrays do Portal).
 - **Story:** `social-links-page.default.story.yml`.
-- **Regra:** o tema só apresenta os dados do módulo; não consulta dono, entidades ou destinos.
-- **Estado:** adapter e componente implementados em C4; validação visual pendente.
+- **Regra:** o tema só apresenta os dados do módulo; não consulta dono, entidades ou destinos. Desde 2026-11-12 o H1 é renderizado pelo SDC `heading` (nível 1, faixa tricolor), mantendo o `id` usado por `aria-labelledby`.
+- **Estado:** adapter e componente implementados em C4; H1 pelo SDC em 2026-11-12; validação visual pendente.
 
 ### icon — Ícone
 - **Papel:** ícone Phosphor vetorial, injetado inline e oculto para leitores de tela (`aria-hidden`).
@@ -375,8 +394,8 @@ autorizada.
 - **Props:** `eyebrow`, `title`, `title_level` (`h1` ou `h2`, padrão `h2`), `has_items`.
 - **Slots:** `items` (saída renderizada da View).
 - **Story:** `revista-listing.default.story.yml`.
-- **Regra:** não reordena o DOM nem consulta conteúdo; substitui o título genérico só na presença da listagem e mantém uma, duas e três colunas conforme o espaço. O H1 da página pertence ao título da rota; a listagem usa `h2` por padrão para não duplicar o título principal.
-- **Estado:** implementação pronta; aguardando gates SDC e verificação de Runtime.
+- **Regra:** não reordena o DOM nem consulta conteúdo; substitui o título genérico só na presença da listagem e mantém uma, duas e três colunas conforme o espaço. O H1 da página pertence ao título da rota; a listagem usa `h2` por padrão para não duplicar o título principal. Desde 2026-11-12 o título é renderizado pelo SDC `heading` (nível conforme `title_level`, faixa tricolor).
+- **Estado:** implementação pronta; gates SDC e browser Firefox (1280/1920/390 px, claro/escuro) passaram em 2026-11-12.
 
 ### revista-publication — Publicação completa
 - **Papel:** compõe metadados, capa, chamada, resumo, corpo, conteúdo editorial adicional, autoria e discussão.
@@ -392,8 +411,8 @@ autorizada.
 - **Props:** `variant`, `url`, `has_summary`, `has_image`, `has_categories`, `has_related`, `has_references`, `has_discussion`.
 - **Slots:** `title`, `summary`, `image`, `categories`, `body`, `related`, `references`, `discussion`, `actions`.
 - **Stories:** `wiki-entry.default.story.yml` e `wiki-entry.teaser.story.yml`.
-- **Regra:** conserva os render arrays e controles de acesso do Drupal; não consulta conteúdo nem decide acesso. O título da página completa é dono do H1; o título genérico fica oculto apenas quando o adapter está presente.
-- **Estado:** renderização e comparação Firefox do Runtime passaram para home, listagem e artigo (320–1440 px, claro/escuro); zoom físico, autenticação e leitor de tela ainda pendentes. A antiga rota de busca devolve 404 e não foi recriada pelo tema.
+- **Regra:** conserva os render arrays e controles de acesso do Drupal; não consulta conteúdo nem decide acesso. O título da página completa é dono do H1; o título genérico fica oculto apenas quando o adapter está presente. Desde 2026-11-12 o título do artigo é renderizado pelo SDC `heading` (nível conforme `title_level`, faixa tricolor).
+- **Estado:** renderização e comparação Firefox do Runtime passaram para home, listagem e artigo (320–1440 px, claro/escuro); título pelo SDC em 2026-11-12; zoom físico, autenticação e leitor de tela ainda pendentes. A antiga rota de busca devolve 404 e não foi recriada pelo tema.
 
 
 ## Lacunas do catálogo
@@ -406,11 +425,11 @@ Cada entrada tem: papel, props, slots, JavaScript (se houver), estado e a regra 
 
 ### forum-category-header — Cabeçalho de Categoria do Fórum
 - **Papel:** apresenta o cabeçalho de categoria com eyebrow institucional "GROWROOM420 / COMUNIDADE", título da categoria, descrição explicativa e contadores de estatísticas com faixa superior vermelha editorial.
-- **Props:** `title` (string, obrigatória), `title_level` (`h1` ou `h2`, padrão `h2`), `description` (string, opcional), `icon` (string, opcional), `stats` (array de `{label, value}`, opcional).
+- **Props:** `title` (string, obrigatória), `title_level` (`h1` ou `h2`, padrão `h1`), `description` (string, opcional), `icon` (string, opcional), `stats` (array de `{label, value}`, opcional).
 - **Slots:** nenhum.
 - **Story:** `forum-category-header.default.story.yml`.
-- **Regra:** não lê entidade ou regra de domínio; valores nulos/ausentes de estatísticas são renderizados como placeholder acessível `—<span class="visually-hidden">Dado indisponível</span>`.
-- **Estado:** entregue na Entrega 1 do redesenho visual Growroom420; schema estrito validado.
+- **Regra:** não lê entidade ou regra de domínio; valores nulos/ausentes de estatísticas são renderizados como placeholder acessível `—<span class="visually-hidden">Dado indisponível</span>`. O título usa o SDC `heading` (nível 1 no padrão). Nas rotas `view.aculta_forum_public_topics.*`, `PagePresentationHooks` não renderiza o título da rota para manter um único H1.
+- **Estado:** entregue na Entrega 1 do redesenho visual Growroom420; H1 pelo SDC `heading` e H2/H3 da listagem ajustados em 2026-11-12; schema estrito validado.
 
 ### forum-tabs — Abas do Fórum
 - **Papel:** barra de navegação horizontal com indicador ativo verde, contadores de itens não lidos e slot de filtros.

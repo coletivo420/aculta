@@ -77,13 +77,6 @@
   font-weight: 600;
 }
 
-.aculta-wiki-article__title {
-  margin: 0;
-  color: var(--color-text-primary);
-  font: 500 clamp(2rem, 4vw, 2.75rem)/1.15 var(--font-family-heading);
-  overflow-wrap: anywhere;
-}
-
 .aculta-wiki-article__lead {
   margin-block-start: var(--spacing-base);
   color: var(--color-text-secondary);

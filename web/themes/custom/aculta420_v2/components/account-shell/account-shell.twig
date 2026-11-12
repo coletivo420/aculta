@@ -6,7 +6,11 @@
 #}
 <section class="portal-account" data-portal-account-layout aria-busy="false">
   <header class="portal-account__header">
-    <h1>{{ title }}</h1>
+    {{ include('aculta420_v2:heading', {
+      text: title,
+      level: 1,
+      style: 'stripe'
+    }, with_context = false) }}
     <p>{{ 'Área pessoal'|t }}</p>
   </header>
   <div class="portal-account__layout">

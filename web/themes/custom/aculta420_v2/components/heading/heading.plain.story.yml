@@ -1,0 +1,7 @@
+name: Título sem destaque
+description: Título apenas tipográfico, sem faixa nem barra, para uso dentro de componentes já emoldurados.
+component: aculta420_v2:heading
+props:
+  text: Sobre este tópico
+  level: 2
+  style: plain

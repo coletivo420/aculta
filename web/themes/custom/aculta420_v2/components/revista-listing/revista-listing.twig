@@ -5,7 +5,11 @@
 <section class="revista-listing">
   <header class="revista-listing__header">
     {% if eyebrow %}<p class="revista-listing__eyebrow">{{ eyebrow }}</p>{% endif %}
-    <{{ title_level }} class="revista-listing__title">{{ title }}</{{ title_level }}>
+    {{ include('aculta420_v2:heading', {
+      text: title,
+      level: title_level == 'h1' ? 1 : 2,
+      style: 'stripe'
+    }, with_context = false) }}
   </header>
   {% if has_items %}
     <div class="revista-listing__items">

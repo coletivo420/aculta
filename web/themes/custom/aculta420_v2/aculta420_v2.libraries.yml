@@ -102,6 +102,7 @@ global-styling:
       components/surface/surface.css: {}
       components/surface-accent/surface-accent.css: {}
       components/surface-panel/surface-panel.css: {}
+      components/heading/heading.css: {}
       src/styles/portal-ui-extras.css: {}
       src/styles/portal-ui-map.css: {}
   dependencies:

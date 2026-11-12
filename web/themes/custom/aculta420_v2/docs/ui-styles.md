@@ -67,6 +67,24 @@ Opção A: a escolha global do administrador `revista_accent` tem precedência s
   Homologação no Runtime aguarda o cutover autorizado. UI Patterns CKEditor 5
   permanece sem configuração.
 
+## 4.1 Títulos (2026-11-12)
+
+Dois plugins de UI Styles, aplicáveis a blocos e a instâncias do SDC
+`heading` (o módulo `ui_styles_block` aplica a classe ao wrapper; o CSS
+também aceita a classe no próprio título):
+
+| id | opções | classes |
+| --- | --- | --- |
+| `heading_accent` | Verde, Amarelo, Vermelho, Verde-escuro | `aculta-heading--accent-{green,yellow,red,dark-green}` |
+| `heading_surface` | Fundo base, Superfície elevada, Superfície institucional, Superfície de destaque | `aculta-heading--surface-{canvas,raised,institution,highlight}` |
+
+As classes vivem em `components/heading/heading.css` e usam
+`--surface-accent-*`, `--color-brand-primary` e `--color-surface-*`, que trocam
+sozinhos no modo escuro. `previewed_as: hidden` porque a aparência depende do
+nível semântico do título. Versão de referência do `ui_styles` continua a
+1.22.0 travada em `composer.lock`; o plugin é declarado em
+`aculta420_v2.ui_styles.yml`.
+
 ## 5. Validação e Capturas Visuais
 
 - **Suíte de navegador:** Revista validada no Firefox ESR com submit pelo formulário UI Styles, classe no wrapper e no SDC de todos os quatro teasers, claro/escuro, 320/1440 px e sem overflow. A escolha global voltou a vazia e o banco não tem accent por nó. Manifest/capturas em `tests/browser/capturas/revista-accent/2026-11-06/`. Evidência do shell em `tests/browser/capturas/shell/2026-11-06/` (40 PNGs ignorados pelo Git): F2 segue pendente por contraste/overflow.

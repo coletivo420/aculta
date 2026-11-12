@@ -103,6 +103,11 @@ final class PagePresentationHooks {
       // The LMS render array owns the lesson H1; avoid a second route-title H1.
       $variables['aculta_page_title'] = [];
     }
+    if (str_starts_with($routeName, 'view.aculta_forum_public_topics.')) {
+      // O cabeçalho Growroom420 (SDC heading) possui o H1 da listagem do fórum;
+      // sem isso a rota renderiza um segundo H1 oculto por CSS.
+      $variables['aculta_page_title'] = [];
+    }
     $variables['aculta_account_menu'] = $this->buildAccountMenuComponent(
       $variables['aculta_account_menu'],
       $variables['aculta_account_authenticated'],

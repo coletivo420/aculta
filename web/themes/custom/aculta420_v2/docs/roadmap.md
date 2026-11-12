@@ -1,5 +1,20 @@
 # Roadmap do fórum Growroom420 (ACULTA420 V2)
 
+## Sistema de títulos ACULTA420 V2 (2026-11-12)
+
+- SDC `heading` implementa a escala H1–H6 da referência de tipografia, com
+  faixa tricolor, barra lateral colorida, superfícies semânticas e stories.
+  Tokens `--heading-*` concentram tamanho, peso, altura de linha e espaçamento.
+- Títulos de rota de Revista, Wiki, Eventos, Fórum, Loja e Cursos passam pelo
+  SDC; a listagem do Fórum tem o H1 no `forum-category-header` e não duplica
+  o título da rota. `revista-listing`, `wiki-entry`, `account-shell` e
+  `social-links-page` também foram migrados; CSS legado removido.
+- UI Styles `heading_accent` e `heading_surface` disponíveis para blocos de
+  título.
+- Estado: gates SDC, foundations e UI Styles PASS; browser Firefox 42/42 e
+  axe 14/14 sem bloqueio em claro/escuro, 1280/1920/390 px. Conta
+  autenticada, zoom de 200% e leitor de tela seguem pendentes.
+
 ## Auditoria de consistência CSS e layouts (2026-11-11)
 
 - Corrigido o par institucional do SDC `surface-panel`: texto escuro sobre

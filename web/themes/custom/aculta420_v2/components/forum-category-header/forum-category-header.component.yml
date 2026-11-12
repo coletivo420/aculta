@@ -15,9 +15,9 @@ props:
     title_level:
       type: string
       enum: [h1, h2]
-      default: h2
+      default: h1
       title: Nível do título
-      description: O H1 pertence ao título da rota; o cabeçalho da categoria usa h2 por padrão.
+      description: A listagem do fórum usa h1 porque a rota não renderiza outro título; use h2 quando um H1 já existir na página.
     description:
       type: [string, 'null']
       title: Descrição explicativa

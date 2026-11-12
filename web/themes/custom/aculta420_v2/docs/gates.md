@@ -49,6 +49,27 @@ Não é um script de gate, mas faz parte da entrega de mudança visual (ver [AGE
 
 ## Estado atual
 
+## Execução Recente — Sistema de títulos ACULTA420 V2 (2026-11-12)
+
+- `php scripts/validate-aculta420-sdc-schemas.php`: PASS (86 componentes, 133 includes, 1908 checks).
+- `php vendor/drush/drush/drush.php php:script scripts/validate-aculta420-v2-sdc.php`: PASS (43 componentes; o SDC `heading` entrou na lista).
+- `php scripts/validate-aculta420-v2-foundations.php`: PASS (85 pares de texto; 6 de faixa; foco e bordas do modo escuro).
+- `php scripts/validate-aculta420-ui-styles.php`: PASS (50 verificações; `heading_accent` e `heading_surface`).
+- `php scripts/validate-aculta420-css-scope.php`: PASS (49 checks; `heading.css` no `global-styling`).
+- `php scripts/validate-aculta420-theme-settings.php`: PASS (16 checks).
+- `php scripts/validate-aculta420-mapped-classes.php`: PASS (482 classes).
+- Stylelint nos arquivos alterados: PASS. A varredura do tema ainda acusa
+  `components/breadcrumb/breadcrumb.css` e `src/styles/utilities.css`, de
+  entregas anteriores e sem relação com esta mudança (dívida registrada).
+- `php scripts/validate-aculta420-design-foundations.php`: FAIL (1/1375) em
+  literal de cor no `breadcrumb.css`, pré-existente.
+- `php scripts/validate-aculta420-foundation.php`: DEFERRED — exige
+  `views-view-fields--aculta-forum-categorias--page-categories.html.twig`,
+  ausente antes desta mudança.
+- Browser Firefox: 42/42 (Revista, Wiki, Eventos, Fórum, Loja, Cursos e Portal;
+  1280/1920/390 px; claro/escuro), axe 14/14 sem bloqueio em
+  `tests/browser/capturas/titulos/2026-11-12/manifest.json`.
+
 ## Execução Recente — Redesenho Visual Growroom420 (Entrega 2)
 
 Validação dos componentes SDC complementares (`forum-sidebar-panels`, `forum-composer-guidelines`), do template `/criar-topico`, da nova rota `/categorias/{termo}` e da View em `config/sync`:

@@ -1,0 +1,7 @@
+name: Título H4 com destaque amarelo
+description: Destaque temático com barra lateral amarela.
+component: aculta420_v2:heading
+props:
+  text: Baque Sativa em Goiânia
+  level: 4
+  accent: yellow

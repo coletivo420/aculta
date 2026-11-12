@@ -1,0 +1,8 @@
+name: Título sobre superfície de destaque
+description: Título com fundo de destaque semântico e faixa tricolor, para chamadas editoriais.
+component: aculta420_v2:heading
+props:
+  text: Chamada editorial
+  level: 3
+  accent: yellow
+  surface: highlight

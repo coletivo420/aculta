@@ -1,0 +1,151 @@
+/**
+ * SDC: Título (aculta420_v2:heading)
+ *
+ * Escala, pesos e alturas de linha pelos tokens --heading-*; superfícies e
+ * destaques pelos tokens semânticos. O modo escuro troca sozinho.
+ */
+
+.aculta-heading {
+  --heading-accent-color: var(--surface-accent-green);
+
+  box-sizing: border-box;
+  text-wrap: balance;
+  word-break: normal;
+  hyphens: auto;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-heading);
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  margin-block: 0 var(--heading-space-after);
+  overflow-wrap: break-word;
+}
+
+.aculta-heading--level-1 {
+  font-size: var(--heading-h1-size);
+  font-weight: var(--heading-h1-weight);
+  line-height: var(--heading-h1-line-height);
+}
+
+.aculta-heading--level-2 {
+  font-size: var(--heading-h2-size);
+  font-weight: var(--heading-h2-weight);
+  line-height: var(--heading-h2-line-height);
+}
+
+.aculta-heading--level-3 {
+  font-size: var(--heading-h3-size);
+  font-weight: var(--heading-h3-weight);
+  line-height: var(--heading-h3-line-height);
+}
+
+.aculta-heading--level-4 {
+  font-size: var(--heading-h4-size);
+  font-weight: var(--heading-h4-weight);
+  line-height: var(--heading-h4-line-height);
+}
+
+.aculta-heading--level-5 {
+  font-size: var(--heading-h5-size);
+  font-weight: var(--heading-h5-weight);
+  line-height: var(--heading-h5-line-height);
+}
+
+.aculta-heading--level-6 {
+  font-size: var(--heading-h6-size);
+  font-weight: var(--heading-h6-weight);
+  line-height: var(--heading-h6-line-height);
+}
+
+/* Espaçamento entre seções: só quando o título não abre o contêiner. */
+* + .aculta-heading--level-1 {
+  margin-block-start: var(--heading-space-before-h1);
+}
+
+* + .aculta-heading--level-2 {
+  margin-block-start: var(--heading-space-before-h2);
+}
+
+* + :is(.aculta-heading--level-3, .aculta-heading--level-4) {
+  margin-block-start: var(--heading-space-before-h3);
+}
+
+/* Dentro de um cabeçalho, o antetítulo e o título formam um grupo: o
+   espaçamento entre seções vale para o cabeçalho, não para o título. */
+header .aculta-heading {
+  margin-block-start: 0;
+}
+
+/* Cor do destaque: no próprio componente ou no wrapper do bloco (UI Styles). */
+:is(.aculta-heading--accent-green, .aculta-heading--accent-green .aculta-heading) {
+  --heading-accent-color: var(--surface-accent-green);
+}
+
+:is(.aculta-heading--accent-yellow, .aculta-heading--accent-yellow .aculta-heading) {
+  --heading-accent-color: var(--surface-accent-yellow);
+}
+
+:is(.aculta-heading--accent-red, .aculta-heading--accent-red .aculta-heading) {
+  --heading-accent-color: var(--surface-accent-red);
+}
+
+:is(.aculta-heading--accent-dark-green, .aculta-heading--accent-dark-green .aculta-heading) {
+  --heading-accent-color: var(--color-brand-primary);
+}
+
+/* Superfícies semânticas: o wrapper do bloco e o próprio título. */
+:is(.aculta-heading--surface-canvas, .aculta-heading--surface-canvas .aculta-heading) {
+  background-color: var(--color-canvas);
+}
+
+:is(.aculta-heading--surface-raised, .aculta-heading--surface-raised .aculta-heading) {
+  background-color: var(--color-surface-raised);
+}
+
+:is(.aculta-heading--surface-institution, .aculta-heading--surface-institution .aculta-heading) {
+  background-color: var(--color-surface-institution);
+}
+
+:is(.aculta-heading--surface-highlight, .aculta-heading--surface-highlight .aculta-heading) {
+  background-color: var(--color-surface-highlight);
+}
+
+.aculta-heading[class*="aculta-heading--surface-"]:not(.aculta-heading--surface-none),
+[class*="aculta-heading--surface-"]:not(.aculta-heading--surface-none) .aculta-heading {
+  padding-block: var(--spacing-base);
+  padding-inline: var(--spacing-lg);
+  border-radius: var(--radius-base);
+}
+
+/* H1/H2: faixa tricolor acima do título (vermelho, amarelo, verde). */
+.aculta-heading--stripe::before {
+  display: block;
+  margin-block-end: var(--spacing-sm);
+  content: "";
+  border-radius: var(--radius-sm);
+  background-image:
+    linear-gradient(
+      to right,
+      var(--surface-accent-red) 0%,
+      var(--surface-accent-red) 33.333%,
+      var(--surface-accent-yellow) 33.333%,
+      var(--surface-accent-yellow) 66.666%,
+      var(--surface-accent-green) 66.666%,
+      var(--surface-accent-green) 100%
+    );
+  inline-size: 5rem;
+  block-size: .375rem;
+}
+
+/* H3–H6: barra lateral colorida à esquerda. */
+.aculta-heading--bar {
+  padding-inline-start: var(--spacing-md);
+  border-inline-start: .5rem solid var(--heading-accent-color);
+}
+
+.aculta-heading--align-center {
+  text-align: center;
+}
+
+.aculta-heading--align-center::before {
+  margin-inline: auto;
+}

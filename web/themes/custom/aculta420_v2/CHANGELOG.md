@@ -1,3 +1,26 @@
+## Não versionado — sistema de títulos ACULTA420 V2 (2026-11-12)
+
+- Novo SDC `heading` (H1–H6) com escala Oswald da referência "Tipografia do
+  Portal ACULTA420 V2", faixa tricolor em H1/H2, barra lateral colorida em
+  H3–H6, superfícies semânticas (`canvas`, `raised`, `institution`,
+  `highlight`) e nove stories. Schema estrito, sem JavaScript.
+- Tokens `--heading-h1-*` a `--heading-h6-*` e `--heading-space-*` com
+  `clamp()`: mínimo mobile em 320/390 px e máximo desktop em 1280/1920 px.
+- O título de rota (`templates/page-title.html.twig`) passa a ser o H1 do
+  SDC; Revista, Wiki, Eventos, Fórum, Loja e Cursos mantêm um único H1.
+  Na listagem do Fórum, o `forum-category-header` renderiza o H1 e o título
+  da rota deixa de ser duplicado; `revista-listing`, `wiki-entry`,
+  `account-shell` e `social-links-page` também usam o SDC.
+- Novos UI Styles `heading_accent` e `heading_surface`, aplicáveis a blocos
+  de título. CSS legado desses títulos foi removido.
+- Gates: SDC schemas PASS, V2 SDC PASS (43 componentes), foundations PASS,
+  UI Styles PASS, Stylelint PASS nos arquivos alterados. Browser Firefox
+  42/42 (7 áreas × 3 viewports × claro/escuro) e axe 14/14 sem bloqueio;
+  manifesto em `tests/browser/capturas/titulos/2026-11-12/manifest.json`.
+- O gate `validate-aculta420-v2-sdc.php` teve a amostra do `breadcrumb`
+  atualizada para o contrato `trail`/`current` (estava desatualizada e
+  interrompia a suíte antes dos demais componentes).
+
 ## Não versionado — cascata, tokens e layouts da auditoria (2026-11-11)
 
 - `layout.css` volta a ser base do shell: as regras exclusivas da UI Patterns

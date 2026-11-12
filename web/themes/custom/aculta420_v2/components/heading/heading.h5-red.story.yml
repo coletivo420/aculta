@@ -1,0 +1,7 @@
+name: Título H5 com destaque vermelho
+description: Título de card ou componente com barra lateral vermelha.
+component: aculta420_v2:heading
+props:
+  text: GanjaLab — Educação e Formação
+  level: 5
+  accent: red

@@ -83,6 +83,7 @@ $component_ids = [
   'form-field',
   'forum-category',
   'forum-topic',
+  'heading',
   'hero-banner',
   'icon',
   'layout-page',
@@ -159,8 +160,11 @@ $samples = [
   'alerts-trigger' => ['#props' => ['href' => '/avisos/resumo', 'count' => 0]],
   'badge' => ['#props' => ['label' => 'Cultura', 'variant' => 'primary', 'icon_name' => 'tag']],
   'breadcrumb' => [
-    '#props' => ['label' => 'Breadcrumb'],
-    '#slots' => ['items' => Markup::create('<li class="aculta-breadcrumb__item"><a class="aculta-breadcrumb__link" href="/">Início</a></li><li class="aculta-breadcrumb__item aculta-breadcrumb__current" aria-current="page">Eventos</li>')],
+    '#props' => [
+      'label' => 'Breadcrumb',
+      'trail' => [['label' => 'Eventos', 'url' => '/eventos']],
+      'current' => 'Agenda',
+    ],
   ],
   'button' => [
     '#props' => [
@@ -258,6 +262,9 @@ $samples = [
       'bookmark' => '',
       'content' => '<div class="aculta-author-card">Autoria pública</div><div class="field--name-body">Descrição do tópico.</div>',
     ],
+  ],
+  'heading' => [
+    '#props' => ['text' => 'Revista ACULTA', 'level' => 2, 'style' => 'stripe'],
   ],
   'hero-banner' => [
     '#props' => ['title' => 'Agenda cultural', 'cta_text' => 'Ver eventos', 'cta_url' => '/eventos'],

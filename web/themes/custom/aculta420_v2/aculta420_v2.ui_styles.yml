@@ -37,6 +37,28 @@ unpublished_preview:
     aculta-content-status--unpublished: "Conteúdo não publicado"
   previewed_as: hidden
 
+heading_accent:
+  category: "Títulos"
+  label: "Cor do destaque do título"
+  description: "Aplica a cor da barra lateral dos títulos H3–H6, inclusive em blocos de título."
+  options:
+    aculta-heading--accent-green: "Verde"
+    aculta-heading--accent-yellow: "Amarelo"
+    aculta-heading--accent-red: "Vermelho"
+    aculta-heading--accent-dark-green: "Verde-escuro"
+  previewed_as: hidden
+
+heading_surface:
+  category: "Títulos"
+  label: "Superfície do título"
+  description: "Aplica uma superfície semântica ao bloco de título; claro e escuro trocam pelos tokens."
+  options:
+    aculta-heading--surface-canvas: "Fundo base (canvas)"
+    aculta-heading--surface-raised: "Superfície elevada (raised)"
+    aculta-heading--surface-institution: "Superfície institucional"
+    aculta-heading--surface-highlight: "Superfície de destaque"
+  previewed_as: hidden
+
 spacing_section:
   category: "Espaçamento"
   label: "Espaçamento interno de superfície"
