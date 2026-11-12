@@ -8,8 +8,8 @@ Relatórios brutos (JSON do Semgrep, saída do `composer audit`, gitleaks) ficam
 
 - Comando: `semgrep --metrics=off --config .agents/skills/aculta-seguranca-estatica/rules/aculta-php.yml` com exclusões de `vendor`, `web/core`, `web/modules/contrib`, `web/libraries` e `node_modules`, sobre `web/modules/custom`, `web/themes/custom` e `scripts`.
 - Primeira rodada (2026-11-11): **474 achados** em 118 arquivos; esta contagem é histórica.
-- Revalidação (2026-11-12), após corrigir duas saídas XSS e limitar a regra de serviço estático a chamadas dentro de classes: **55 achados** (15 chamadas estáticas em classes, 29 sinks `#markup`, 10 chamadas dinâmicas e 1 `unserialize`).
-- A diferença da regra estática veio de escopo incorreto: scripts CLI e hooks procedurais não permitem injeção por construtor; a fixture agora exige classe e rejeita o contexto procedural. Os 77 achados em classes foram reduzidos a 15 chamadas globais reais por refatoração e correção da fronteira lexical da regra. A regra antiga também casava com 45 chamadas `aculta_H5PDrupal::` do fork H5P, que não são a fachada global; a fixture agora cobre esse negativo. As 15 chamadas reais restantes seguem em trabalho por fases.
+- Revalidação (2026-11-12), após corrigir duas saídas XSS e limitar a regra de serviço estático a chamadas dentro de classes: **53 achados** (13 chamadas estáticas em classes, 29 sinks `#markup`, 10 chamadas dinâmicas e 1 `unserialize`).
+- A diferença da regra estática veio de escopo incorreto: scripts CLI e hooks procedurais não permitem injeção por construtor; a fixture agora exige classe e rejeita o contexto procedural. Dos 77 matches da regra anterior, 45 eram chamadas `aculta_H5PDrupal::` do fork H5P, não a fachada global; a fixture negativa foi acrescentada. Os 32 matches reais foram reduzidos a 13 por 19 refatorações em fases. As 13 chamadas restantes seguem em trabalho por módulo.
 
 | Regra | Achados | Classe |
 |---|---:|---|
@@ -147,7 +147,7 @@ Atualização feita com `composer update drupal/entity_print symfony/http-client
 
 ## 6. Próximas ações
 
-1. Refatorar os 15 usos restantes de `\Drupal::` dentro de classes, em fases por módulo, com testes focais e gates do Portal.
+1. Refatorar os 13 usos restantes de `\Drupal::` dentro de classes, em fases por módulo, com testes focais e gates do Portal.
 2. Reavaliar os valores de `XapiAttemptTokenTest.php:17` (fixture ou segredo real).
 3. Aplicar `entity_print` 2.20.0 e `symfony/http-client` 7.4.23 no Runtime por fluxo controlado, e registrar o resultado.
 4. Executar `drupal/security_review` com Drush em modo somente leitura quando houver acesso ao Runtime.

@@ -13,6 +13,8 @@ use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_magazine\Form\StudioContentPopupLayout;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -36,6 +38,8 @@ final class StudioCreatePopupFormHooks {
 
   public function __construct(
     private readonly RouteMatchInterface $routeMatch,
+    #[Autowire(service: 'request_stack')]
+    private readonly RequestStack $requestStack,
   ) {}
 
   /**
@@ -62,14 +66,14 @@ final class StudioCreatePopupFormHooks {
     // Layout do popup (ver StudioContentPopupLayout), também usado pela story do SDC.
     StudioContentPopupLayout::apply($form);
     if (isset($form['actions']['submit'])) {
-      $form['actions']['submit']['#submit'][] = [self::class, 'redirectPopupToNode'];
+      $form['actions']['submit']['#submit'][] = self::class . ':redirectPopupToNode';
     }
   }
 
   /**
    * Após salvar no popup, leva o navegador à publicação criada.
    */
-  public static function redirectPopupToNode(array &$form, FormStateInterface $formState): void {
+  public function redirectPopupToNode(array &$form, FormStateInterface $formState): void {
     $formObject = $formState->getFormObject();
     if (!$formObject instanceof EntityFormInterface) {
       return;
@@ -79,7 +83,7 @@ final class StudioCreatePopupFormHooks {
       return;
     }
     $url = $entity->toUrl('canonical', ['absolute' => TRUE])->toString();
-    if (\Drupal::request()->headers->has('HX-Request')) {
+    if ($this->requestStack->getCurrentRequest()?->headers->has('HX-Request')) {
       $formState->setResponse(new Response('', 200, ['HX-Redirect' => $url]));
       return;
     }

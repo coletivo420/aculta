@@ -9,6 +9,8 @@ use Drupal\aculta_file_uploader\RecentUploads;
 use Drupal\aculta_magazine\Hook\RevistaCoverStudioHooks;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\DependencyInjection\ClassResolver;
+use Drupal\Core\Utility\CallableResolver;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
@@ -82,6 +84,21 @@ final class RevistaCoverSelectionTest extends UnitTestCase {
     $this->hook()->validateCover($form, $form_state);
 
     self::assertTrue($form_state->hasAnyErrors());
+  }
+
+  /**
+   * The after-build callback resolves the hook service notation.
+   */
+  public function testAfterBuildCallbackResolvesThroughCallableResolver(): void {
+    $hook = $this->hook();
+    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container->set(RevistaCoverStudioHooks::class, $hook);
+    $resolver = new CallableResolver(new ClassResolver($container));
+
+    $callback = $resolver->getCallableFromDefinition(RevistaCoverStudioHooks::class . ':afterBuild');
+
+    self::assertIsCallable($callback);
+    self::assertSame($hook, $callback[0]);
   }
 
 }

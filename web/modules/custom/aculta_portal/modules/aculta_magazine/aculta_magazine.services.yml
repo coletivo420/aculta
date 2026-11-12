@@ -39,4 +39,4 @@ services:
 
   Drupal\aculta_magazine\Hook\StudioCreatePopupFormHooks:
     class: Drupal\aculta_magazine\Hook\StudioCreatePopupFormHooks
-    arguments: ['@current_route_match']
+    arguments: ['@current_route_match', '@request_stack']

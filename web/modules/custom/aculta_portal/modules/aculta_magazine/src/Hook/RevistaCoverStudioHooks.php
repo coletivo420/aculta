@@ -70,7 +70,7 @@ final class RevistaCoverStudioHooks {
     // antes dos handlers de #validate. A conversão precisa ocorrer no
     // after_build e gravar também o user input.
     $this->relax($form[self::FIELD]);
-    $form['#after_build'][] = [self::class, 'afterBuild'];
+    $form['#after_build'][] = self::class . ':afterBuild';
     $form['#validate'] = array_merge(
       ['Drupal\aculta_magazine\Hook\RevistaCoverStudioHooks:validateCover'],
       $form['#validate'] ?? [],
@@ -80,16 +80,16 @@ final class RevistaCoverStudioHooks {
   /**
    * Converte a escolha do Studio antes da validação do widget.
    */
-  public static function afterBuild(array $form, FormStateInterface $form_state): array {
+  public function afterBuild(array $form, FormStateInterface $form_state): array {
     if (!isset($form[self::FIELD])) {
       return $form;
     }
-    static::relax($form[self::FIELD]);
+    $this->relax($form[self::FIELD]);
     $pick = (int) $form_state->getValue(self::PICK);
     if ($pick < 1 || (int) $form_state->getValue([self::FIELD, 0, 'target_id']) > 0) {
       return $form;
     }
-    $media_id = \Drupal::service(self::class)->createMediaFromPick($pick, $form_state);
+    $media_id = $this->createMediaFromPick($pick, $form_state);
     if ($media_id === NULL) {
       return $form;
     }
@@ -206,12 +206,12 @@ final class RevistaCoverStudioHooks {
   /**
    * Removes the required flag from the widget tree. Our validator covers it.
    */
-  private static function relax(array &$element): void {
+  private function relax(array &$element): void {
     if (isset($element['#required'])) {
       $element['#required'] = FALSE;
     }
     foreach (Element::children($element) as $child) {
-      static::relax($element[$child]);
+      $this->relax($element[$child]);
     }
   }
 
