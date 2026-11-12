@@ -51,6 +51,8 @@ class FluentEmoji extends CKEditor5PluginDefault implements ContainerFactoryPlug
    *   Catálogo curado de emojis.
    * @param \Drupal\Core\Extension\ThemeExtensionList $themeExtensionList
    *   Lista de extensões de tema, usada para localizar os SVGs.
+   * @param string $appRoot
+   *   Diretório raiz da aplicação Drupal.
    */
   public function __construct(
     array $configuration,
@@ -58,6 +60,7 @@ class FluentEmoji extends CKEditor5PluginDefault implements ContainerFactoryPlug
     $plugin_definition,
     protected readonly FluentEmojiCatalog $catalog,
     protected readonly ThemeExtensionList $themeExtensionList,
+    protected readonly string $appRoot,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -72,6 +75,7 @@ class FluentEmoji extends CKEditor5PluginDefault implements ContainerFactoryPlug
       $plugin_definition,
       $container->get('aculta_editor.fluent_emoji_catalog'),
       $container->get('extension.list.theme'),
+      $container->getParameter('app.root'),
     );
   }
 
@@ -126,7 +130,7 @@ class FluentEmoji extends CKEditor5PluginDefault implements ContainerFactoryPlug
    * vez de um ícone monocromático genérico.
    */
   private function buttonIcon(string $themePath): string {
-    $path = \Drupal::root() . '/' . $themePath . '/assets/icons/fluent-emoji/color/' . self::BUTTON_ICON_FILE;
+    $path = $this->appRoot . '/' . $themePath . '/assets/icons/fluent-emoji/color/' . self::BUTTON_ICON_FILE;
     $icon = is_file($path) ? file_get_contents($path) : FALSE;
     return is_string($icon) && $icon !== '' ? $icon : self::FALLBACK_ICON;
   }
