@@ -24,7 +24,7 @@ final class EventAccessControlHandler extends EntityAccessControlHandler impleme
 
   public function __construct(
     EntityTypeInterface $entity_type,
-    protected readonly OrganizationAccessService $organizationAccess,
+    protected readonly ?OrganizationAccessService $organizationAccess,
     protected readonly EventPermissionPolicy $permissionPolicy,
   ) {
     parent::__construct($entity_type);
@@ -36,7 +36,9 @@ final class EventAccessControlHandler extends EntityAccessControlHandler impleme
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type): static {
     return new static(
       $entity_type,
-      $container->get('aculta_user.organization_access_service'),
+      $container->has('aculta_user.organization_access_service')
+        ? $container->get('aculta_user.organization_access_service')
+        : NULL,
       $container->get('aculta_events.permission_policy'),
     );
   }
@@ -65,7 +67,7 @@ final class EventAccessControlHandler extends EntityAccessControlHandler impleme
       }
 
       if (in_array('content_editor', $account->getRoles(), TRUE)) {
-        if ($this->organizationAccess->isContentEditorScoped($entity, $account)) {
+        if ($this->organizationAccess?->isContentEditorScoped($entity, $account)) {
           return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
         }
         return AccessResult::forbidden('Editor sem vínculo comprovado com a organização do evento.')->cachePerUser()->addCacheableDependency($entity);

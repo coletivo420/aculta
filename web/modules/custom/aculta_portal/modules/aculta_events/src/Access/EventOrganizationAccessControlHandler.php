@@ -22,7 +22,7 @@ final class EventOrganizationAccessControlHandler extends EntityAccessControlHan
 
   public function __construct(
     EntityTypeInterface $entity_type,
-    protected readonly OrganizationAccessService $organizationAccess,
+    protected readonly ?OrganizationAccessService $organizationAccess,
     protected readonly EventPermissionPolicy $permissionPolicy,
   ) {
     parent::__construct($entity_type);
@@ -34,7 +34,9 @@ final class EventOrganizationAccessControlHandler extends EntityAccessControlHan
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type): static {
     return new static(
       $entity_type,
-      $container->get('aculta_user.organization_access_service'),
+      $container->has('aculta_user.organization_access_service')
+        ? $container->get('aculta_user.organization_access_service')
+        : NULL,
       $container->get('aculta_events.permission_policy'),
     );
   }
@@ -69,7 +71,7 @@ final class EventOrganizationAccessControlHandler extends EntityAccessControlHan
           return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
         }
 
-        if ($this->organizationAccess->canActOnBehalf($account, (string) $entity->id())) {
+        if ($this->organizationAccess?->canActOnBehalf($account, (string) $entity->id())) {
           return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
         }
       }

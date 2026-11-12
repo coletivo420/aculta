@@ -27,7 +27,7 @@ final class EventLocationAccessControlHandler extends EntityAccessControlHandler
   public function __construct(
     EntityTypeInterface $entity_type,
     protected readonly EntityTypeManagerInterface $entityTypeManager,
-    protected readonly OrganizationAccessService $organizationAccess,
+    protected readonly ?OrganizationAccessService $organizationAccess,
     protected readonly EventPermissionPolicy $permissionPolicy,
   ) {
     parent::__construct($entity_type);
@@ -40,7 +40,9 @@ final class EventLocationAccessControlHandler extends EntityAccessControlHandler
     return new static(
       $entity_type,
       $container->get('entity_type.manager'),
-      $container->get('aculta_user.organization_access_service'),
+      $container->has('aculta_user.organization_access_service')
+        ? $container->get('aculta_user.organization_access_service')
+        : NULL,
       $container->get('aculta_events.permission_policy'),
     );
   }
@@ -72,7 +74,7 @@ final class EventLocationAccessControlHandler extends EntityAccessControlHandler
       }
 
       if (in_array('content_editor', $account->getRoles(), TRUE)
-        && $this->organizationAccess->isContentEditorScoped($entity, $account)) {
+        && $this->organizationAccess?->isContentEditorScoped($entity, $account)) {
         return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
       }
 
@@ -107,7 +109,7 @@ final class EventLocationAccessControlHandler extends EntityAccessControlHandler
       }
 
       if (in_array('content_editor', $account->getRoles(), TRUE)) {
-        if ($this->organizationAccess->isContentEditorScoped($entity, $account)) {
+        if ($this->organizationAccess?->isContentEditorScoped($entity, $account)) {
           return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
         }
         return AccessResult::forbidden('Editor sem vínculo comprovado com a organização do local.')

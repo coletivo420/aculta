@@ -16,7 +16,7 @@ use Drupal\Core\Session\AccountInterface;
 final class OrganizationMembersAccess {
 
   public function __construct(
-    private readonly OrganizationAccessService $organizationAccess,
+    private readonly ?OrganizationAccessService $organizationAccess,
   ) {}
 
   /**
@@ -43,7 +43,7 @@ final class OrganizationMembersAccess {
     }
 
     // Coproprietário com poder delegado de gerenciar membros.
-    if ($this->organizationAccess->canManageOrganization($account, (string) $aculta_event_organization->id())) {
+    if ($this->organizationAccess?->canManageOrganization($account, (string) $aculta_event_organization->id())) {
       return AccessResult::allowed()->cachePerUser()->addCacheableDependency($aculta_event_organization);
     }
 

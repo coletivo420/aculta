@@ -13,7 +13,7 @@ services:
     arguments: ['@aculta_events.permission_policy']
   aculta_events.organization_members_access:
     class: Drupal\aculta_events\Access\OrganizationMembersAccess
-    arguments: ['@aculta_user.organization_access_service']
+    arguments: ['@?aculta_user.organization_access_service']
   aculta_events.organization_suggestion:
     class: Drupal\aculta_events\Organization\OrganizationSuggestionService
     arguments: ['@entity_type.manager', '@aculta_events.permission_policy', '@lock', '@datetime.time', '@database']
