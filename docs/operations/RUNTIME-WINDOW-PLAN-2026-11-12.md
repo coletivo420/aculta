@@ -248,8 +248,16 @@ ser concluído antes do fechamento.
   limpou `pending_structural_*` e gravou
   `last_validated_sha=last_cache_success_sha=fe37ca701`. `plan` passou a R0
   e `verify` retornou `VALIDATED`.
-- **Pendência aberta:** investigar por que o `ConfigImporter` não persiste
-  config entities neste Runtime (DT-O11).
+- **DT-O11 resolvida na sequência:** o `ConfigImporter` não era o defeito.
+  Os YAMLs não estavam na forma que o Drupal materializa:
+  `EntityDisplayBase::init()` repõe defaults de `hidden`/extra fields ao
+  carregar, e o `editor_presave` do CKEditor 5 reordena `allowed_tags`.
+  YAMLs que omitiam esses defaults ou usavam outra ordem nunca convergiam.
+  Quatro configs de `aculta_forum_post` também não tinham `uuid`. Com os
+  YAMLs canônicos (commit `f52598397`), um `config:import` aplicou e reverteu
+  uma chave de teste e o drift permaneceu em 0. A janela foi fechada de novo
+  pelo `structural-complete`, com baseline `f52598397`, `plan` R0 e
+  `verify VALIDATED`.
 
 ## 8. Fora do escopo desta janela
 

@@ -6,8 +6,8 @@
 - **Cuidados:** o primeiro `config:import --diff` aplicou antes do snapshot (Drush não confirmou em não interativo); o snapshot do banco foi tirado imediatamente depois, em diretório privado 0700 com SHA-256. O snapshot de `files` ficou DEFERRED por permissão (DT-O04). O checkout foi rebaseado sobre dois commits paralelos de design antes do fechamento.
 - **Commits e arquivos:** `fe37ca701` (UUIDs das configs do fórum) e a documentação da janela; o commit de execução não altera código de aplicação.
 - **Verificações:** `config:status` 0; `updatedb:status` 0; deploy hooks 0; smoke HTTP 200 e um `h1` nos dez `site_keys` (conta 302 anônimo); `structural-complete` com plano R3 compatível; `plan` R0; `verify` VALIDATED.
-- **Pendências e bloqueios:** investigar por que o `ConfigImporter` não persiste config entities neste Runtime (DT-O11); aceite autenticado e visual da configuração importada ainda pendente.
-- **Próximo passo:** diagnosticar DT-O11 e validar as telas de moderação do fórum e o formulário de página com Layout Builder.
+- **Pendências e bloqueios:** DT-O11 resolvida — não era o `ConfigImporter`; os YAMLs omitiam defaults de entity displays e a ordem canônica do CKEditor 5. YAMLs canônicos no commit `f52598397`, com import comprovado nos dois sentidos e drift 0. Aceite autenticado e visual da configuração importada ainda pendente.
+- **Próximo passo:** validar as telas de moderação do fórum e o formulário de página com Layout Builder.
 
 # PHPStan — rodada atual, microfase 24b — 2026-11-11
 
