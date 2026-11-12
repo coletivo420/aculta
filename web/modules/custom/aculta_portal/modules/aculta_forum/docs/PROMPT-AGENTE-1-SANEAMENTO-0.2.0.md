@@ -141,7 +141,7 @@ Reproduza cada caso antes de atribuir causa definitiva e registre resultados.
   atributos/âncoras, render real de ações, autoria, acesso negado/cache e citação.
 - Faça Kernel/Functional no banco isolado previsto pelo projeto; fixture de
   teste pode criar dados próprios e limpar somente o que criou.
-- Use apenas tema ACULTA ativo em validação visual; não habilite Olivero.
+- Use apenas tema ACULTA ativo em validação visual.
 - Faça navegador autenticado com contas distintas, não apenas UID 1.
 - Valide Revista, Wiki, LMS e Fórum; Comment e ForumPost onde tocados.
 - Revalide lint, DI/YAML, PHPCS e gates pertinentes ao diff. Execute o gerador

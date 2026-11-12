@@ -223,7 +223,7 @@ continua parcial.
 pré-deploy de **F-M7** está fechado — Unit 184/1.333, Kernel 150/2.862 em MariaDB, PHPCS sem erros,
 gates de rotas/Portal/slugs/Domain/status, revisão de código com cinco
 correções e dois itens registrados como dívida (DT-F01/DT-F02), e revisão de
-acessibilidade 49/49 em ACULTA420 e 49/49 em Olivero. As parcelas “Runtime
+acessibilidade 49/49 em ACULTA420. As parcelas “Runtime
 pendente” de F-M1/F-M2/F-M5 são validação de **Alpha**, por definição do fluxo
 vigente, e não pendência de código deste candidato. Permanecem fora do RC, por
 autorização operacional: migração sobre dados reais, ativação do F-GROUP,
@@ -257,7 +257,7 @@ gates e o rollback descritos em RC.md.
 **Evidência recente de F-M6 (parcial, dev.297–dev.306):** controlador de
 publicação, fila de moderação, edição pública, formulário de moderação por
 revisão, histórico, comparação de revisões e opções do Fórum estão provados em
-Kernel MariaDB; `/categorias` passou 9/9 em ACULTA420 e 9/9 em Olivero no
+Kernel MariaDB; `/categorias` passou 9/9 em ACULTA420 no
 ambiente local simulado, e o índice de Discussões não apresentou erro visível
 nos dois temas. Faltam upload/preview de anexos autenticados, fluxos
 administrativos autenticados (mover tópico na UI) e reflow em aparelho real.
@@ -286,7 +286,7 @@ todas as classes de `src/` e todos os imports de produção.
   sobre dados reais **não estão autorizados**.
 - **F-M6 — provado localmente:** controladores e formulários em Kernel,
   anexo do editor cria Media despublicada, mover tópico tem rota canônica e
-  formulário, `/categorias` passou 9/9 em ACULTA420 e 9/9 em Olivero, índice
+  formulário, `/categorias` passou 9/9 em ACULTA420, índice
   sem erro nos dois temas, painel autenticado 12/12 em Firefox ESR/X11
   (GET-only), pré-visualização autenticada de anexo com Media sintética e
   formulário de mover comentário com Comment sintético (4/4, conteúdo apagado
@@ -505,7 +505,7 @@ testes e os riscos residuais ficam em
 - Gate medido (0.7): download HTTP do anexo (anônimo 403, membro 200,
   suspenso 403); índice atrasado fechado com `trackItemsInserted` +
   `deleteItems` (item ausente até reindexar); cache da busca MISS/HIT sem
-  vazamento; matriz confirmada com Olivero e tema restaurado.
+  vazamento; matriz confirmada e tema restaurado.
 - **Fases técnicas 0.1–0.7 concluídas.** A ativação em produção é uma decisão
   operacional do responsável, com janela, backup verificado e o roteiro de
   Runtime; não é uma alteração desta frente.
@@ -557,7 +557,7 @@ contagem na página segue essa decisão.
 Implementação (dev.260): o campo `aculta_forum_category_topic_count` conta em
 uma consulta própria com `node_access` e a View da página declara
 `user.node_grants:view`. O cartão SDC recebe o slot `count`, o tema mapeia o
-token e o Olivero renderiza a contagem sem o tema. Runtime local: 12 cartões
+token renderiza a contagem sem o tema. Runtime local: 12 cartões
 com "Nenhum tópico" (sem tópicos no banco) e suíte `categorias-visual.py` 9/9
 nos dois temas. A validação com tópicos restritos reais fica para o Runtime de
 testes.

@@ -298,7 +298,7 @@ ao fim da sessão.
   `hidden` do formulário e a exibição `full` do `wiki_entry` existem apenas em
   `config/sync`, porque o `aculta_wiki` não tem `config/install`; a decisão
   sobre o dono dessa configuração continua aberta. O tema ACULTA420 recebe o
-  campo pelo slot `discussion` do SDC `aculta420:wiki-entry`, e o Olivero o
+  campo pelo slot `discussion` do SDC `aculta420:wiki-entry`, o
   renderiza pela exibição `full` sem alteração de tema. `aculta_forum_wiki`
   entrou em `config/sync/core.extension.yml` e continua desabilitado no Runtime.
 - **Histórico de edição por verbete (Fase 5, item 5).** O `aculta_statistics`

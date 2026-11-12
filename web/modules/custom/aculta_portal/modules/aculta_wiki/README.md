@@ -107,7 +107,7 @@ homologação dos grants ativos no Runtime.
   `node.label`. A busca ganhou formulário próprio e prévia independentes do
   tema; componentes neutros têm fallback semântico e o ACULTA420 mantém um único
   `h1` nas páginas contextuais. Runtime: Index ativado, geração validada e
-  auditada; Olivero e ACULTA420 homologados em oito larguras; modo escuro
+  auditada; ACULTA420 homologados em oito larguras; modo escuro
   confirmado. Suítes próprias: Unit 84/455 e Kernel 31/1.692. Pendências:
   leitor de tela/WCAG completa, zoom real, divergência RBAC das permissões de
   proposta no Runtime e exportação da configuração do Index. Ver `CHANGELOG.md`.

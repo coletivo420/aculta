@@ -54,7 +54,6 @@ A visão é opcional e isolada; a saída não perde dados:
 | Alto contraste | Passou: botão "Alto contraste" com `aria-pressed`; `contrast-black` com 11.94:1 (texto/fundo, AAA) e 7.28:1 (evento, AA). Os temas vêm dos blocos `contrast_white`/`contrast_black` do pacote, copiados como CSS. |
 | Tamanho servido | JS 539.946 B (151.259 B gzip); CSS 113.465 B (13.040 B gzip) + 3.736 B dos temas de contraste; HTML da rota 5.106 B. Primeiro carregamento da rota ~164 KB; depois, cache do navegador. |
 | ACULTA420 | Testado (Kernel/Unit e Firefox ESR), 16/16. |
-| Olivero | Passou: 13/13 no Firefox ESR com o tema Olivero; tema restaurado para aculta420. |
 
 Com isso, os critérios 2 (acessibilidade), 3 (tamanho), 5 (piloto) e 6 (saída) estão atendidos. O critério 1
 (parecer de licença) é a decisão do responsável, que assumiu o risco; o critério 4 fica com o motor do

@@ -343,8 +343,8 @@ Ativação e restauração no mesmo comando, com `trap` para não deixar `system
 | Página | Resultado | Medição |
 |---|---|---|
 | Portal (`aculta.toca.net.br/`) | PASS | 200; título "Associação Cultural Antiproibicionista \| Goiânia - GO"; 6 assets de `/core/themes/olivero/` e 0 de `aculta420`; `body_class` `path-frontpage page-node-type-page`; nenhuma mensagem de erro |
-| Fórum (`growroom420.aculta.toca.net.br/`) | PASS | 200; título "Discussões do Growroom420 \| Associação Cultural Antiproibicionista"; 6 assets Olivero, 0 de `aculta420`; `body_class` `path-discussoes`; a view renderiza título, abas (Discussões, Categorias, Novas, Sem resposta, Mais comentadas, Pesquisar), filtro "Categoria" e o estado vazio "Ainda não há tópicos publicados nesta lista."; nenhuma mensagem de erro |
-| Revista (`revista420.aculta.toca.net.br/`) | PASS | 200; título "Observatório da Maconha Coletivo 420"; 6 assets Olivero, 0 de `aculta420`; `body_class` `path-frontpage`; nenhuma mensagem de erro |
+| Fórum (`growroom420.aculta.toca.net.br/`) | PASS | 200; título "Discussões do Growroom420 \| Associação Cultural Antiproibicionista"; 6 assets 0 de `aculta420`; `body_class` `path-discussoes`; a view renderiza título, abas (Discussões, Categorias, Novas, Sem resposta, Mais comentadas, Pesquisar), filtro "Categoria" e o estado vazio "Ainda não há tópicos publicados nesta lista."; nenhuma mensagem de erro |
+| Revista (`revista420.aculta.toca.net.br/`) | PASS | 200; título "Observatório da Maconha Coletivo 420"; 6 assets 0 de `aculta420`; `body_class` `path-frontpage`; nenhuma mensagem de erro |
 
 O que o teste prova é que o tema carrega e renderiza as páginas sem erro. Há duas limitações de conteúdo, do banco local e não do tema: o banco local não tem tópicos de fórum nem matérias de revista publicados; e Portal e Revista exibem apenas o título do nó porque o conteúdo editorial está em blocos posicionados em regiões do tema `aculta420`, que o Olivero não renderiza. O Fórum, cujo conteúdo vem da view do módulo, renderiza a listagem completa. O `watchdog` (severity 3) não registrou erro de tema ou renderização no período — apenas falhas de e-mail do cron.
 
@@ -382,7 +382,7 @@ O que o teste prova é que o tema carrega e renderiza as páginas sem erro. Há 
     - **PASS — cenários de sessão:** login durante o checkout, carrinho anônimo, troca de Domain, logout, múltiplas abas e o TTL medido, com a conta de teste (itens 9 e 9.6).
     - **PASS — pane de identidade fiscal na Loja:** pedido 113 em `revisao` recusa vazio e inválido, permanecendo no passo, e conclui com documento válido; o pedido 114 mostra o documento mascarado e sem campo de edição. Evidências em 9.6.
     - **LMS:** `cursos.aculta.toca.net.br/group/1` é página informativa do grupo, sem preço, matrícula ou entrada de checkout; não há fluxo de compra no LMS para percorrer o pane fiscal. Coerente com a ADR-013 e coberto no nível Kernel.
-    - **PASS — tema Olivero (ambiente local):** Portal, Fórum e Revista renderizam com Olivero, 6 assets do tema e nenhum de `aculta420`, sem mensagens de erro; a view do Fórum renderiza completa. Feito no ambiente local, não no servidor de desenvolvimento, com restauração de `aculta420` ao final. Limitação de conteúdo registrada em 9.6.
+    - **PASS — tema Olivero (ambiente local):** Portal, Fórum e Revista renderizam, 6 assets do tema e nenhum de `aculta420`, sem mensagens de erro; a view do Fórum renderiza completa. Feito no ambiente local, não no servidor de desenvolvimento, com restauração de `aculta420` ao final. Limitação de conteúdo registrada em 9.6.
 
 ## 11. Login local por CPF — D-51 (2026-10-29)
 

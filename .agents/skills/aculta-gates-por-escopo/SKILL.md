@@ -35,4 +35,4 @@ Escolha pelo arquivo alterado e pelas integrações realmente presentes no Compo
 
 **Runtime Sync e skills:** ao modificar `.agents/skills`, aliases, `AGENTS.md`, `scripts/runtime-sync.sh`, `scripts/runtime-sync/**` ou seus runbooks, execute `python3 scripts/validate-agent-skills.py`, `php scripts/validate-agent-token-budget.php`, `bash -n scripts/runtime-sync.sh` e `bash scripts/test-runtime-sync.sh`. Se alterar a integração de leitura com o Deployer, rode `php web/modules/custom/aculta_portal/modules/aculta_deployer/tests/run.php` e `DeployerStatusReaderTest`. Runtime real bloqueado ou sem acesso é DEFERRED/BLOCKED, não PASS.
 
-Não existe gate de acessibilidade automatizada universal nem gate dedicado para cada integração Views/Layout Builder. Use teste existente da frente ou registre N/A/DEFERRED com motivo. Não habilite Olivero nem outro tema para validar.
+Não existe gate de acessibilidade automatizada universal nem gate dedicado para cada integração Views/Layout Builder. Use teste existente da frente ou registre N/A/DEFERRED com motivo.

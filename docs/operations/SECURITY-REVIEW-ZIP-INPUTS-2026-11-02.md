@@ -36,7 +36,7 @@ Escopo: pontos do código custom da ACULTA que descompactam ou leem ZIP/GZIP/XLS
 - **REVISADO, sem mudança:** `QrCodeBatchController` cria arquivo ZIP de saída com `ZipArchive::addFromString`; não abre nem descompacta arquivo de entrada externa.
 - **DEFERRED por escopo:** o fluxo PPT do `ExternalPackageController` do Opigno não foi portado. O plano de independência registra explicitamente PPT/importação/exportação como não objetivos; nenhuma execução desse fluxo foi feita.
 - **MANTIDO:** não há validador compartilhado entre módulos; decisão registrada continua sendo implementação própria por superfície.
-- **PASS:** `ForumRoutesFunctionalTest` no tema ACULTA420: 6 testes, 33 assertions; no tema Olivero: 6 testes, 33 assertions. O teste funcional precisou habilitar o módulo de suporte `aculta_portal_upload_test` para fornecer o schema de upload.
+- **PASS:** `ForumRoutesFunctionalTest` no tema ACULTA420: 6 testes, 33 assertions. O teste funcional precisou habilitar o módulo de suporte `aculta_portal_upload_test` para fornecer o schema de upload.
 - **DEFERRED:** suíte funcional temática de Portal e Revista. Não há classes `BrowserTestBase`/`FunctionalJavascriptTestBase` nesses componentes. Uma smoke funcional temporária da Revista falhou durante instalação do módulo porque suas Views exigem `node.type.revista` e `field.field.node.revista.field_aculta_discussion`, fornecidos por `config/sync` e ausentes numa instalação limpa de teste. Portanto não há resultado de Portal/Revista sob ACULTA420 ou Olivero; a cobertura Kernel da Revista não exercita tema.
 
 ## Versões
@@ -50,4 +50,4 @@ Atualização de 2026-11-02 (mesma data, depois da revisão): os tetos de DMARC,
 constantes fixas e passaram a vir do painel de uploads, com os mesmos padrões e tetos máximos fixos no código.
 As correções descritas acima continuam valendo; só a origem do valor mudou.
 
-Status geral: Unit, Kernel Mailer/H5P, gates e teste real de bomba ZIP concluídos no Homelab. Fórum passou em ACULTA420 e Olivero. Portal/Revista sob esses temas permanecem deferred pela ausência de suítes funcionais executáveis; a tentativa isolada da Revista encontrou dependências de configuração do site.
+Status geral: Unit, Kernel Mailer/H5P, gates e teste real de bomba ZIP concluídos no Homelab. Fórum passou em ACULTA420. Portal/Revista sob esses temas permanecem deferred pela ausência de suítes funcionais executáveis; a tentativa isolada da Revista encontrou dependências de configuração do site.

@@ -38,7 +38,7 @@ são H2 e links de categoria, H3. Firefox/X11 confirma o reflow sem overflow em
 Firefox/X11 capturou `/categorias` em claro e escuro a 390, 768 e 1024 CSS px;
 as capturas inspecionadas confirmam cartões sem sobreposição em 390 px e em
 1024 px escuro. Em 2026-10-23 a suíte X11 reconfirmou 15/15 no servidor de testes
-(390/768/1024, claro/escuro e link de salto) e 8/8 com Olivero no ambiente local,
+(390/768/1024, claro/escuro e link de salto) e 8/8 no ambiente local,
 sem overflow nem assets do ACULTA420; o script fica em
 `tests/browser/aculta-forum/`. Cada cartão mostra a contagem de tópicos
 publicados e acessíveis à conta; a consulta adiciona `node_access`

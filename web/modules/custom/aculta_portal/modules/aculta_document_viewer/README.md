@@ -196,7 +196,7 @@ Drupal/DrupalPractice passou com 0 erros e 0 avisos nos 39 arquivos PHP e `node
 --check` nos 8 arquivos JS/MJS. Firefox ESR visível (`DISPLAY=:0`) validou o
 viewer PDF público (`visual.py`: 7/7 checks em 1280/390/320 px) e as opções
 administrativas D-48 de DOCX e planilhas (`office-options.py`: 17/17 checks em
-ACULTA420 e Olivero, 1280/390/320 px, cabeçalho/rodapé/notas/quebra de página em
+ACULTA420, 1280/390/320 px, cabeçalho/rodapé/notas/quebra de página em
 iframe sandboxed, modo inicial Tabela, paginação de 25 linhas e foco visível por
 `Tab`). Scripts reutilizáveis:
 [`tests/browser/aculta-document-viewer/`](../../../../../../tests/browser/aculta-document-viewer/).

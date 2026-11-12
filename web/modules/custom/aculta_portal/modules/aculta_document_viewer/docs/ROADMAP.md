@@ -30,19 +30,19 @@
   `node --check` 10/10.
 - D-48 validada em Firefox ESR visível (`DISPLAY=:0`) por
   `tests/browser/aculta-document-viewer/office-options.py`: 17/17 verificações PASS
-  em ACULTA420 e Olivero (1280/390/320 px), cobrindo rotulagem e foco `:focus-visible`
+  em ACULTA420 (1280/390/320 px), cobrindo rotulagem e foco `:focus-visible`
   dos controles administrativos, ativação/desativação de cabeçalhos/rodapés/notas e
   quebra de página no DOCX isolado, modo inicial Tabela e paginação de 25 linhas nas
   planilhas. Evidências em `/home/piradopirata/aculta-suite-out/aculta-document-viewer-office`.
 - **Promoção a RC (`0.1.0-rc.1`, 2026-10-29):** com PV0–PV7 e D-48 concluídas,
   gates globais e do módulo verdes (56 testes/645 assertions, PHPCS 0/0, Firefox
-  ESR 7/7 PDF e 17/17 DOCX/planilhas em ACULTA420 e Olivero) e CSP em Report-Only
+  ESR 7/7 PDF e 17/17 DOCX/planilhas em ACULTA420) e CSP em Report-Only
   sem enforcement, o módulo é classificado como `RC`. Importação de Config Sync e
   análise dos relatórios CSP ocorrem em Alpha (`*.aculta.org`); validação em FPM
   Hostinger/LiteSpeed/Cloudflare ocorre em Beta pós-Alpha conforme
   `docs/operations/RELEASE-LIFECYCLE.md`.
 
-**Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). `aculta_document_viewer` atingiu **RC (`0.1.0-rc.1`)** em 2026-10-29 com escopo PV0–PV7 e D-48 concluído, CSP em Report-Only configurada sem enforcement, PHPCS 0/0, 56 testes/645 assertions PASS e validação visual/acessível pré-deploy em Firefox ESR visível (PDF, DOCX e planilhas em ACULTA420 e Olivero, 1280/390/320 px). Alpha (`*.aculta.org`) valida a importação autorizada de Config Sync e a coleta/análise dos relatórios CSP no servidor; enforcement será decidido após Alpha. FPM Hostinger, LiteSpeed e Cloudflare são validados depois do deploy em Beta (produção).
+**Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). `aculta_document_viewer` atingiu **RC (`0.1.0-rc.1`)** em 2026-10-29 com escopo PV0–PV7 e D-48 concluído, CSP em Report-Only configurada sem enforcement, PHPCS 0/0, 56 testes/645 assertions PASS e validação visual/acessível pré-deploy em Firefox ESR visível (PDF, DOCX e planilhas em ACULTA420, 1280/390/320 px). Alpha (`*.aculta.org`) valida a importação autorizada de Config Sync e a coleta/análise dos relatórios CSP no servidor; enforcement será decidido após Alpha. FPM Hostinger, LiteSpeed e Cloudflare são validados depois do deploy em Beta (produção).
 
 Este roadmap cobre somente o módulo compartilhado `aculta_document_viewer`. O
 roadmap LMS permanece em [ACULTA-LMS-ROADMAP.md](../../../../../../../docs/modules/ACULTA-LMS-ROADMAP.md).

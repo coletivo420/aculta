@@ -57,7 +57,7 @@ update autorizado 10001 foram aplicados; as rotas WE SATIVA existem e as quatro
 tabelas da entidade de proposta foram instaladas. Em dev.117 o Index foi
 construído, validado, ativado e auditado; Firefox ESR/X11 passou público
 130/130, WE SATIVA 34/34, moderação 22/22, teclado 49/49 e sem-JS 16/16 no
-ACULTA420, e o equivalente em Olivero (130/130, 31/31, 20/20, 50/50, 16/16).
+ACULTA420,.
 Modo escuro confirmado e restaurado. Leitor de tela, WCAG 2.2 AA completa e zoom
 real do navegador seguem pendentes, assim como a divergência RBAC das permissões
 de proposta no Runtime. `/wiki` é caminho interno da raiz Wiki e responde 404
@@ -111,7 +111,7 @@ verbete deixou de retornar 500 ao mesclar os contextos de cache do hook de
 contribuição e passou a titular o `h1` a partir de `node.label`; as 6 URLs
 publicadas retornam 200 e o smoke público fechou **130/130** em oito larguras.
 O Index foi habilitado no Runtime, com geração validada, auditada sem órfãos e
-consulta pública sem expor rascunho ou autoria. Olivero, modo escuro e o
+consulta pública sem expor rascunho ou autoria. modo escuro e o
 formulário de decisão foram homologados; restam leitor de tela, WCAG completa,
 zoom real e a divergência RBAC das permissões de proposta.
 

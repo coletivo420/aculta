@@ -198,7 +198,7 @@ Use Unit/Kernel/Functional existentes e adicione cobertura significativa onde fa
 Execute os gates pertinentes: DI/YAML/PHP, PHPCS, slugs, fronteira módulo-tema,
 SDC schema/render, JS/CSS, status index e regressões dos consumidores afetados.
 Não execute gates globais irrelevantes; documente falhas preexistentes com evidência.
-Não alterne para Olivero. Capture no tema ativo e registre manifest no Git,
+Capture no tema ativo e registre manifest no Git,
 com imagens fora do Git conforme procedimento do projeto.
 
 ## Entrega, documentação e Git

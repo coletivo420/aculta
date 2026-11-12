@@ -22,7 +22,7 @@ Documento complementar ao [handoff](HANDOFF-S-R4-S-R5-2026-10-25.md), que perman
 | `node --check` em cópia local da nova suíte `profile-s-r4.mjs` | **PASS (sintaxe local)** | Exit 0; não substitui execução pelo Firefox ESR, tampouco testa Drupal |
 | PHP `-l`, PHPCS e PHPUnit Unit/Kernel/Functional | **SKIP (bloqueio ambiente)** | Checkout/dependências/comandos do repositório indisponíveis; não declarar PASS |
 | Foundation, módulo-tema, Drupal 11, status, aliases e `aculta_image` | **SKIP (bloqueio ambiente)** | Scripts exigem checkout completo; **nenhum gate executado** |
-| SDC discovery, slots renderizados, tema Olivero, cache tags/contextos | **SKIP (bloqueio Runtime)** | Leitura estática não equivale a `plugin.manager.sdc` nem a render Core |
+| SDC discovery, slots renderizados, tema cache tags/contextos | **SKIP (bloqueio Runtime)** | Leitura estática não equivale a `plugin.manager.sdc` nem a render Core |
 | Duas contas, perfil público/privado, fotos, AJAX e formulários/no-JS | **SKIP (bloqueio Runtime/fixtures)** | Dados sintéticos e sessões HTTP/Drush do servidor de teste ausentes |
 | Firefox ESR visível/X11, claro/escuro, responsivo, zoom, teclado, WCAG | **SKIP (Firefox ESR indisponível)** | Suíte preparada, sem capturas de Runtime nem execução visual |
 | S-R5 comparação Conta Studio/legado e Perfil MAIN | **SKIP (gate S-R4 bloqueante)** | Planejamento abaixo; não iniciar homologação antes de S-R4 |

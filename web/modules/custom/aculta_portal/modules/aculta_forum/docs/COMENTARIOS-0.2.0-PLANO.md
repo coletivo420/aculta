@@ -258,7 +258,7 @@ devem ser conciliadas no aceite; não iniciar migração de dados por causa dest
 - Testes Unit/Kernel de contexto, acesso, cache e idempotência; testes funcionais
   dos forms e navegador para DOM/HTMX/editor. Somente gates pertinentes.
 - Capturas seguem docs/operations/NAVEGADOR-TESTES.md; manifest no Git,
-  PNGs fora do Git. Não alternar para Olivero.
+  PNGs fora do Git.
 - Código/runtime funcional nesta entrega documental: DEFERRED.
 
 ## 9. Pesquisa adicional e fontes primárias

@@ -14,7 +14,7 @@ Atualizado em 2026-11-05. Estado atual em uma página. Não leia o histórico pa
 - **Claro:** migrar as 9 colocações de bloco para o Gin (DT-D12-01). Exige captura visual no Runtime.
 - **Gin:** fixar release estável; hoje `5.0.x-dev@dev` (DT-D12-02).
 - **Remoção do Claro:** só com ordem explícita (DT-D12-03). Sem `pm:uninstall` antes disso.
-- **Core 12:** confirmar data do release e a remoção do Olivero (issue 3595089 é ambígua). Toolbar sem release estável: bloqueador.
+- **Core 12:** confirmar data do release. Toolbar sem release estável: bloqueador.
 - **htmx no Core 12:** inventariar usos de `Htmx` e `#ajax` no Portal. Seção htmx em `DRUPAL-12-STANDARDS.md`.
 - **Dívidas:** `docs/operations/DEBT-REGISTER.md`; busque por ID com `rg -n "DT-"`.
 - **Caminhos de máquina:** cerca de 30 documentos ativos; correção em fase própria.

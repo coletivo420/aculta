@@ -81,7 +81,7 @@ A tabela detalhada e as portas operacionais estão em
 | Suíte | Resultado |
 | --- | --- |
 | `follow-and-notices.py` | 13/13 |
-| `accessibility-readonly.py` (ACULTA420 e Olivero, pré-deploy de 24/10) | 49/49 e 49/49 |
+| `accessibility-readonly.py` (ACULTA420, pré-deploy de 24/10) | 49/49 e 49/49 |
 | `categorias-visual.py` (dois temas) | 9/9 e 9/9 |
 | `authenticated-readonly.py` | 12/12 |
 | `synthetic-preview-and-move.py` | 4/4 |
