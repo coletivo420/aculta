@@ -9,7 +9,7 @@
   {{ include('aculta420_v2:studio-menu', { title: menu_title, items: menu_items }, with_context = false) }}
   <div class="aculta-xp-hero">
     {% if identity is not empty %}
-      <div class="studio__panel aculta-panel aculta-panel--default aculta-panel__body studio-account-identity"
+      <div class="studio__panel aculta-panel aculta-panel__body studio-account-identity"
         data-portal-ui="studio-account-home studio-account-identity">
         <p>{{ identity.name }}</p>
         {% if identity.email %}
@@ -35,13 +35,13 @@
   {{ connections }}
   <h2 id="suas-experiencias">{{ experiences_title }}</h2>
   <p class="aculta-xp-section__text">{{ experiences_description }}</p>
-  <ul class="aculta-xp-grid studio__actions list-unstyled aculta-u-grid aculta-u-gap-2" data-portal-ui="account-experiences">
+  <ul class="aculta-xp-grid" data-portal-ui="account-experiences">
     {% for experience in experiences %}
       {{ experience }}
     {% endfor %}
   </ul>
   {% if account_url %}
-    <a class="aculta-xp-row studio__actions list-unstyled aculta-u-grid aculta-u-gap-2" data-portal-ui="account-entry-links" href="{{ account_url }}" aria-label="{{ account_link_label }}">
+    <a class="aculta-xp-row" data-portal-ui="account-entry-links" href="{{ account_url }}" aria-label="{{ account_link_label }}">
       <span class="aculta-xp-row__body">
         {{ include('aculta420_v2:icon', { name: 'gear-six', variant: 'duotone', size: 'xl' }, with_context = false) }}
         <span class="aculta-xp-row__text">

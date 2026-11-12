@@ -61,7 +61,17 @@
       "seletores": 3087,
       "global_styling_bytes": 108941
     },
-    "runtime": "drush cr concluído; HTML servido não contém classes aculta-u-* além de .aculta-u-block-start nem as equivalências Bootstrap removidas"
+    "runtime": "drush cr concluído; HTML servido não contém classes aculta-u-* além de .aculta-u-block-start nem as equivalências Bootstrap removidas",
+    "runtime_autenticado": {
+      "metodo": "login com conta de teste (testes/browser/auth-login.mjs) em conta.aculta.toca.net.br; Firefox headless",
+      "rota": "/",
+      "status": 200,
+      "overflow": false,
+      "classes_utilitarias": [
+        "aculta-u-block-start"
+      ],
+      "observacao": "O template aculta-studio-account.html.twig ainda emitia aculta-u-grid/aculta-u-gap-2/list-unstyled/aculta-panel--default diretamente; removidos nesta rodada. Demais rotas do Studio (/we-sativa, /green-stash) e o Mensagens não responderam na sessão de teste e seguem DEFERRED."
+    }
   },
   "evidencias": {
     "matriz": "/home/piradopirata/aculta-suite-out/css-audit-visual-20261112-final (fora do Git)",
