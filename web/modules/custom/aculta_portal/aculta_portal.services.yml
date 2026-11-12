@@ -265,7 +265,8 @@ services:
     class: Drupal\aculta_portal\Domain\AcultaBreadcrumbBuilder
     arguments: ['@aculta_portal.domain_site', '@request_stack', '@title_resolver', '@path.matcher']
     tags:
-      - { name: breadcrumb_builder, priority: 100 }
+      # Acima do builder de termos do core (1002), que devolvia só "Início" nas páginas de termo.
+      - { name: breadcrumb_builder, priority: 1004 }
       - { name: aculta_portal.implementation }
   aculta_portal.administrative_route_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\AdministrativeRouteSubscriber

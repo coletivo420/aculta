@@ -60,6 +60,10 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     if (!$route || $route->getOption('_admin_route')) {
       return FALSE;
     }
+    // Prioridade alta: as rotas de webform têm builders próprios (1002/1003) e não são sobrescritas.
+    if (str_starts_with((string) $route_match->getRouteName(), 'webform.') || str_starts_with((string) $route_match->getRouteName(), 'entity.webform')) {
+      return FALSE;
+    }
     $purpose = $this->siteManager->getCurrentSiteKey()?->value;
     $cacheable_metadata?->addCacheContexts(['route', 'domain']);
     return $purpose !== NULL;
