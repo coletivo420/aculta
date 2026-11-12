@@ -540,7 +540,7 @@
             "flags": []
         },
         {
-            "path": "web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/UgcModerationKernelTest.php",
+            "path": "web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguModerationKernelTest.php",
             "extension": "src",
             "type": "kernel",
             "base_class": "KernelTestBase",

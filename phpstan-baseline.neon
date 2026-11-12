@@ -997,37 +997,37 @@ parameters:
 			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertArrayHasKey() with ''flags_lidas'' and array{dry_run: bool, flags_lidas: int, novas_denuncias: int, ignoradas_duplicadas: int, alvos_invalidos: int} will always evaluate to true.'
 			identifier: method.alreadyNarrowedType
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/UgcModerationKernelTest.php
+			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguModerationKernelTest.php
 
 		-
 			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertArrayHasKey() with ''ignoradas_duplicadas'' and array{dry_run: bool, flags_lidas: int, novas_denuncias: int, ignoradas_duplicadas: int, alvos_invalidos: int} will always evaluate to true.'
 			identifier: method.alreadyNarrowedType
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/UgcModerationKernelTest.php
+			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguModerationKernelTest.php
 
 		-
 			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertArrayHasKey() with ''novas_denuncias'' and array{dry_run: bool, flags_lidas: int, novas_denuncias: int, ignoradas_duplicadas: int, alvos_invalidos: int} will always evaluate to true.'
 			identifier: method.alreadyNarrowedType
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/UgcModerationKernelTest.php
+			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguModerationKernelTest.php
 
 		-
 			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_cgu\\Entity\\UgcReport'' and Drupal\aculta_cgu\Entity\UgcReport will always evaluate to true.'
 			identifier: method.alreadyNarrowedType
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/UgcModerationKernelTest.php
+			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguModerationKernelTest.php
 
 		-
 			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertIsArray() with array{dry_run: bool, flags_lidas: int, novas_denuncias: int, ignoradas_duplicadas: int, alvos_invalidos: int} will always evaluate to true.'
 			identifier: method.alreadyNarrowedType
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/UgcModerationKernelTest.php
+			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguModerationKernelTest.php
 
 		-
 			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertTrue() with true will always evaluate to true.'
 			identifier: method.alreadyNarrowedType
 			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/UgcModerationKernelTest.php
+			path: web/modules/custom/aculta_portal/modules/aculta_cgu/tests/src/Kernel/CguModerationKernelTest.php
 
 		-
 			rawMessage: 'Call to method PHPUnit\Framework\Assert::assertInstanceOf() with ''Drupal\\aculta_cgu\\Entity\\UgcReport'' and Drupal\aculta_cgu\Entity\UgcReport will always evaluate to true.'
