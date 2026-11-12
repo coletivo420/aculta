@@ -55,6 +55,8 @@ final class EventOrganizationModalForm extends FormBase {
     protected readonly OrganizationMembershipManager $membershipManager,
     #[Autowire(service: 'renderer')]
     protected readonly RendererInterface $renderer,
+    #[Autowire(service: 'aculta_events.route_context')]
+    protected readonly EventRouteContext $eventRouteContext,
     #[Autowire(service: 'aculta_user.ownership_claim_service')]
     protected readonly ?OwnershipClaimService $claimService = NULL,
     #[Autowire(service: 'aculta_contributions.lifecycle')]
@@ -73,6 +75,7 @@ final class EventOrganizationModalForm extends FormBase {
       $container->get('aculta_user.organization_access_service'),
       $container->get('aculta_user.organization_membership_manager'),
       $container->get('renderer'),
+      $container->get('aculta_events.route_context'),
       $container->has('aculta_user.ownership_claim_service') ? $container->get('aculta_user.ownership_claim_service') : NULL,
       $container->has('aculta_contributions.lifecycle') ? $container->get('aculta_contributions.lifecycle') : NULL,
       $container->has('aculta_events.organization_contribution_adapter') ? $container->get('aculta_events.organization_contribution_adapter') : NULL,
@@ -123,7 +126,7 @@ final class EventOrganizationModalForm extends FormBase {
       $query['target_id'] = (int) $targetId;
     }
     $this->htmxUrl = Url::fromRoute(
-      EventRouteContext::route('aculta_events.organization_modal', 'aculta_events.organizer_organization_modal'),
+      $this->eventRouteContext->route('aculta_events.organization_modal', 'aculta_events.organizer_organization_modal'),
       [],
       ['query' => $query],
     );
@@ -716,8 +719,8 @@ final class EventOrganizationModalForm extends FormBase {
       ],
     ];
     $card += $isMultiple
-      ? EventOrganizationModalWidget::buildMultipleCards([$orgId], $fieldName, $wrapperId)
-      : EventOrganizationModalWidget::buildSingleCardOrEmpty($orgId, $fieldName, $wrapperId);
+      ? EventOrganizationModalWidget::buildMultipleCards([$orgId], $fieldName, $wrapperId, $this->entityTypeManager, $this->eventRouteContext, $this->getStringTranslation())
+      : EventOrganizationModalWidget::buildSingleCardOrEmpty($orgId, $fieldName, $wrapperId, $this->entityTypeManager, $this->eventRouteContext, $this->getStringTranslation());
 
     return new Response(
       (string) $this->renderer->renderInIsolation($card),

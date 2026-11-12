@@ -6,6 +6,10 @@ namespace Drupal\Tests\aculta_events\Unit\Plugin\Field\FieldWidget;
 
 use Drupal\aculta_events\Plugin\Field\FieldWidget\EventLocationModalWidget;
 use Drupal\aculta_events\Plugin\Field\FieldWidget\EventOrganizationModalWidget;
+use Drupal\aculta_events\Controller\EventLocationWidgetController;
+use Drupal\Core\DependencyInjection\ClassResolver;
+use Drupal\Core\Utility\CallableResolver;
+use Drupal\aculta_events\Route\EventRouteContext;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -25,7 +29,6 @@ final class EventModalWidgetsDependencyInjectionTest extends UnitTestCase {
     $currentUser = $this->createMock(AccountProxyInterface::class);
     $widget = EventLocationModalWidget::create($this->container($entityTypeManager, $currentUser), $this->configuration(), 'location', []);
 
-    self::assertInstanceOf(EventLocationModalWidget::class, $widget);
     self::assertSame($entityTypeManager, (new \ReflectionProperty($widget, 'entityTypeManager'))->getValue($widget));
     self::assertSame($currentUser, (new \ReflectionProperty($widget, 'currentUser'))->getValue($widget));
   }
@@ -37,8 +40,23 @@ final class EventModalWidgetsDependencyInjectionTest extends UnitTestCase {
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $widget = EventOrganizationModalWidget::create($this->container($entityTypeManager), $this->configuration(), 'organization', []);
 
-    self::assertInstanceOf(EventOrganizationModalWidget::class, $widget);
     self::assertSame($entityTypeManager, (new \ReflectionProperty($widget, 'entityTypeManager'))->getValue($widget));
+  }
+
+  /**
+   * The Form API callback resolves the controller service notation.
+   */
+  public function testWidgetAjaxCallbackResolvesThroughCallableResolver(): void {
+    $container = $this->container(
+      $this->createMock(EntityTypeManagerInterface::class),
+      $this->createMock(AccountProxyInterface::class),
+    );
+    $resolver = new CallableResolver(new ClassResolver($container));
+
+    $callback = $resolver->getCallableFromDefinition(EventLocationWidgetController::class . ':clearLocationFormWidget');
+
+    self::assertIsCallable($callback);
+    self::assertInstanceOf(EventLocationWidgetController::class, $callback[0]);
   }
 
   /**
@@ -58,6 +76,7 @@ final class EventModalWidgetsDependencyInjectionTest extends UnitTestCase {
   private function container(EntityTypeManagerInterface $entityTypeManager, ?AccountProxyInterface $currentUser = NULL): ContainerBuilder {
     $container = new ContainerBuilder();
     $container->set(EntityTypeManagerInterface::class, $entityTypeManager);
+    $container->set('aculta_events.route_context', new EventRouteContext());
     if ($currentUser !== NULL) {
       $container->set(AccountProxyInterface::class, $currentUser);
     }

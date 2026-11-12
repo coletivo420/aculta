@@ -46,6 +46,8 @@ final class EventLocationModalForm extends FormBase {
     protected readonly EventPermissionPolicy $permissionPolicy,
     #[Autowire(service: 'renderer')]
     protected readonly RendererInterface $renderer,
+    #[Autowire(service: 'aculta_events.route_context')]
+    protected readonly EventRouteContext $eventRouteContext,
     #[Autowire(service: 'aculta_contributions.lifecycle')]
     protected readonly ?ContributionLifecycle $contributions = NULL,
     #[Autowire(service: 'aculta_events.location_contribution_adapter')]
@@ -60,6 +62,7 @@ final class EventLocationModalForm extends FormBase {
       $container->get('entity_type.manager'),
       $container->get('aculta_events.permission_policy'),
       $container->get('renderer'),
+      $container->get('aculta_events.route_context'),
       $container->has('aculta_contributions.lifecycle') ? $container->get('aculta_contributions.lifecycle') : NULL,
       $container->has('aculta_events.location_contribution_adapter') ? $container->get('aculta_events.location_contribution_adapter') : NULL,
     );
@@ -106,7 +109,7 @@ final class EventLocationModalForm extends FormBase {
       $query['target_id'] = (int) $targetId;
     }
     $this->htmxUrl = Url::fromRoute(
-      EventRouteContext::route('aculta_events.location_modal', 'aculta_events.organizer_location_modal'),
+      $this->eventRouteContext->route('aculta_events.location_modal', 'aculta_events.organizer_location_modal'),
       [],
       ['query' => $query],
     );
@@ -575,7 +578,7 @@ final class EventLocationModalForm extends FormBase {
         'data-portal-ui' => 'event-location-widget',
         'hx-swap-oob' => 'outerHTML',
       ],
-    ] + EventLocationModalWidget::buildCardOrEmpty($locationId, $fieldName, $wrapperId);
+    ] + EventLocationModalWidget::buildCardOrEmpty($locationId, $fieldName, $wrapperId, $this->entityTypeManager, $this->currentUser(), $this->eventRouteContext, $this->getStringTranslation());
 
     return new Response(
       (string) $this->renderer->renderInIsolation($card),

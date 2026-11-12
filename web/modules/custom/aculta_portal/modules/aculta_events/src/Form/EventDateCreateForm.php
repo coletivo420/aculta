@@ -13,6 +13,7 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\aculta_events\Route\EventRouteContext;
@@ -38,6 +39,8 @@ class EventDateCreateForm extends FormBase {
     protected readonly EntityTypeManagerInterface $entities,
     protected readonly AccountProxyInterface $currentUserAccount,
     protected readonly EventDateListBuilder $dateListBuilder,
+    protected readonly EventRouteContext $eventRouteContext,
+    protected readonly RendererInterface $renderer,
   ) {}
 
   /**
@@ -48,6 +51,8 @@ class EventDateCreateForm extends FormBase {
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('aculta_events.date_list_builder'),
+      $container->get('aculta_events.route_context'),
+      $container->get('renderer'),
     );
   }
 
@@ -120,7 +125,7 @@ class EventDateCreateForm extends FormBase {
       '#type' => 'container',
       '#attributes' => ['id' => $wrapperId, 'data-portal-ui' => 'event-location-widget'],
       '#attached' => ['library' => ['core/drupal.dialog.ajax']],
-    ] + EventLocationModalWidget::buildCardOrEmpty($localId, 'local_id', $wrapperId);
+    ] + EventLocationModalWidget::buildCardOrEmpty($localId, 'local_id', $wrapperId, $this->entities, $this->currentUserAccount, $this->eventRouteContext, $this->getStringTranslation());
 
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = [
@@ -214,7 +219,7 @@ class EventDateCreateForm extends FormBase {
       $form_state->setResponse($this->htmxDateListResponse($event));
       return;
     }
-    $form_state->setRedirect(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $event->id()]);
+    $form_state->setRedirect($this->eventRouteContext->route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $event->id()]);
   }
 
   /**

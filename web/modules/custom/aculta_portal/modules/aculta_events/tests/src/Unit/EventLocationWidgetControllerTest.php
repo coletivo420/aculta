@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_events\Unit;
 
 use Drupal\aculta_events\Controller\EventLocationWidgetController;
+use Drupal\aculta_events\Route\EventRouteContext;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -20,10 +23,21 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 final class EventLocationWidgetControllerTest extends UnitTestCase {
 
   /**
+   * Creates the controller with its injected dependencies.
+   */
+  private function controller(): EventLocationWidgetController {
+    return new EventLocationWidgetController(
+      $this->createMock(EntityTypeManagerInterface::class),
+      $this->createMock(AccountProxyInterface::class),
+      new EventRouteContext(),
+    );
+  }
+
+  /**
    * Valid widget identifiers are accepted unchanged.
    */
   public function testValidWidgetParameters(): void {
-    $controller = new EventLocationWidgetController();
+    $controller = $this->controller();
     $method = new \ReflectionMethod($controller, 'validatedWidgetParameters');
 
     self::assertSame(
@@ -43,7 +57,7 @@ final class EventLocationWidgetControllerTest extends UnitTestCase {
    */
   #[DataProvider('invalidParameterProvider')]
   public function testInvalidWidgetParametersAreRejected(array $query): void {
-    $controller = new EventLocationWidgetController();
+    $controller = $this->controller();
     $method = new \ReflectionMethod($controller, 'validatedWidgetParameters');
 
     $this->expectException(BadRequestHttpException::class);

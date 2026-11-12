@@ -40,6 +40,9 @@ services:
     arguments: ['@entity_type.manager', '@?aculta_portal.domain_site', '@?aculta_messenger.notice_event_publisher', '@datetime.time', '@logger.channel.aculta_events']
     tags:
       - { name: event_subscriber }
+  aculta_events.route_context:
+    class: Drupal\aculta_events\Route\EventRouteContext
+    arguments: ['@?aculta_portal.domain_site']
   aculta_events.slug:
     class: Drupal\aculta_events\Slug\EventSlugGenerator
     arguments: ['@entity_type.manager']
@@ -56,7 +59,7 @@ services:
     arguments: ['@entity_type.manager', '@current_user']
   aculta_events.date_list_builder:
     class: Drupal\aculta_events\Event\EventDateListBuilder
-    arguments: ['@entity_type.manager', '@string_translation']
+    arguments: ['@entity_type.manager', '@string_translation', '@aculta_events.route_context']
   aculta_events.upcoming:
     class: Drupal\aculta_events\Occurrence\UpcomingDates
     arguments: ['@entity_type.manager', '@aculta_events.occurrences']

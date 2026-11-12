@@ -10,6 +10,7 @@ use Drupal\aculta_events\Event\EventDateListBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Url;
 use Drupal\aculta_events\Route\EventRouteContext;
@@ -34,6 +35,8 @@ final class EventDateOrderForm extends FormBase {
   public function __construct(
     protected readonly EntityTypeManagerInterface $entities,
     protected readonly EventDateListBuilder $dateListBuilder,
+    protected readonly EventRouteContext $eventRouteContext,
+    protected readonly RendererInterface $renderer,
   ) {}
 
   /**
@@ -43,6 +46,8 @@ final class EventDateOrderForm extends FormBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('aculta_events.date_list_builder'),
+      $container->get('aculta_events.route_context'),
+      $container->get('renderer'),
     );
   }
 
@@ -111,7 +116,7 @@ final class EventDateOrderForm extends FormBase {
       '#type' => 'aculta_portal_button',
       '#props' => [
         'text' => $this->t('Cancelar'),
-        'url' => Url::fromRoute(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $aculta_event->id()])->toString(),
+        'url' => Url::fromRoute($this->eventRouteContext->route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $aculta_event->id()])->toString(),
         'variant' => 'secondary',
       ],
     ];
@@ -156,7 +161,7 @@ final class EventDateOrderForm extends FormBase {
       $form_state->setResponse($this->htmxDateListResponse($event));
       return;
     }
-    $form_state->setRedirect(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $event->id()]);
+    $form_state->setRedirect($this->eventRouteContext->route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $event->id()]);
   }
 
   /**

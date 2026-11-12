@@ -10,7 +10,6 @@ use Drupal\aculta_events\Plugin\Field\FieldWidget\EventLocationModalWidget;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Htmx\Htmx;
-use Drupal\aculta_events\Route\EventRouteContext;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -101,7 +100,7 @@ final class EventDateEditForm extends EventDateCreateForm {
       '#type' => 'container',
       '#attributes' => ['id' => $wrapperId, 'data-portal-ui' => 'event-location-widget'],
       '#attached' => ['library' => ['core/drupal.dialog.ajax']],
-    ] + EventLocationModalWidget::buildCardOrEmpty($localId, 'local_id', $wrapperId);
+    ] + EventLocationModalWidget::buildCardOrEmpty($localId, 'local_id', $wrapperId, $this->entities, $this->currentUserAccount, $this->eventRouteContext, $this->getStringTranslation());
 
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = [
@@ -168,7 +167,7 @@ final class EventDateEditForm extends EventDateCreateForm {
       $form_state->setResponse($this->htmxDateListResponse($event));
       return;
     }
-    $form_state->setRedirect(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $event->id()]);
+    $form_state->setRedirect($this->eventRouteContext->route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $event->id()]);
   }
 
   /**

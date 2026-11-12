@@ -6,13 +6,14 @@ namespace Drupal\aculta_events\Plugin\Field\FieldWidget;
 
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Route\EventRouteContext;
-use Drupal\Component\Utility\NestedArray;
+use Drupal\aculta_events\Controller\EventLocationWidgetController;
 use Drupal\Core\Field\Attribute\FieldWidget;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 
@@ -39,6 +40,8 @@ final class EventOrganizationModalWidget extends WidgetBase {
     array $settings,
     array $third_party_settings,
     protected EntityTypeManagerInterface $entityTypeManager,
+    #[\Symfony\Component\DependencyInjection\Attribute\Autowire(service: 'aculta_events.route_context')]
+    protected EventRouteContext $eventRouteContext,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
   }
@@ -85,7 +88,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
         $targetId = (int) $formValues[0]['target_id'];
       }
 
-      $element += $this->buildSingleCardOrEmpty((int) $targetId, $fieldName, $wrapperId);
+      $element += self::buildSingleCardOrEmpty((int) $targetId, $fieldName, $wrapperId, $this->entityTypeManager, $this->eventRouteContext, $this->getStringTranslation());
     }
     else {
       // Caso 2: Cardinalidade múltipla (ex: field_coorganizadores).
@@ -110,7 +113,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
       }
 
       $targetIds = array_values(array_unique(array_filter($targetIds)));
-      $element += $this->buildMultipleCards($targetIds, $fieldName, $wrapperId);
+      $element += self::buildMultipleCards($targetIds, $fieldName, $wrapperId, $this->entityTypeManager, $this->eventRouteContext, $this->getStringTranslation());
     }
 
     return $element;
@@ -119,7 +122,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
   /**
    * Constrói o card para referência única ou estado vazio.
    */
-  public function buildSingleCardOrEmpty(int $targetId, string $fieldName, string $wrapperId): array {
+  public static function buildSingleCardOrEmpty(int $targetId, string $fieldName, string $wrapperId, EntityTypeManagerInterface $entityTypeManager, EventRouteContext $eventRouteContext, TranslationInterface $translation): array {
     $element = [];
     $targetInputId = $wrapperId . '-target-id';
 
@@ -135,14 +138,14 @@ final class EventOrganizationModalWidget extends WidgetBase {
 
     $org = NULL;
     if ($targetId > 0) {
-      $entity = $this->entityTypeManager->getStorage('aculta_event_organization')->load($targetId);
+      $entity = $entityTypeManager->getStorage('aculta_event_organization')->load($targetId);
       if ($entity instanceof EventOrganization) {
         $org = $entity;
       }
     }
 
     if ($org !== NULL) {
-      $badgeText = $org->isClaimed() ? $this->t('Reivindicada') : $this->t('Não reivindicada');
+      $badgeText = $org->isClaimed() ? $translation->translate('Reivindicada') : $translation->translate('Não reivindicada');
       $localidadeStr = '';
       if (!$org->shouldHideLocation()) {
         $locParts = array_filter([(string) $org->get('localidade')->value, (string) $org->get('uf')->value]);
@@ -172,12 +175,12 @@ final class EventOrganizationModalWidget extends WidgetBase {
         $element['summary']['locality'] = [
           '#type' => 'html_tag',
           '#tag' => 'p',
-          '#value' => (string) $this->t('Localidade: @loc', ['@loc' => $localidadeStr]),
+          '#value' => (string) $translation->translate('Localidade: @loc', ['@loc' => $localidadeStr]),
           '#attributes' => ['data-portal-ui' => 'event-org-locality'],
         ];
       }
 
-      $modalUrl = Url::fromRoute(EventRouteContext::route('aculta_events.organization_modal', 'aculta_events.organizer_organization_modal'), [
+      $modalUrl = Url::fromRoute($eventRouteContext->route('aculta_events.organization_modal', 'aculta_events.organizer_organization_modal'), [
         'field_name' => $fieldName,
         'wrapper_id' => $wrapperId,
         'is_multiple' => 0,
@@ -188,7 +191,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
         '#type' => 'actions',
         'change' => [
           '#type' => 'link',
-          '#title' => $this->t('Trocar organização'),
+          '#title' => $translation->translate('Trocar organização'),
           '#url' => $modalUrl,
           '#attributes' => [
             'class' => ['use-ajax'],
@@ -200,11 +203,11 @@ final class EventOrganizationModalWidget extends WidgetBase {
         ],
         'remove' => [
           '#type' => 'button',
-          '#value' => $this->t('Remover organização'),
+          '#value' => $translation->translate('Remover organização'),
           '#name' => 'remove_org_' . preg_replace('/[^a-zA-Z0-9_]/', '_', $wrapperId),
           '#limit_validation_errors' => [],
           '#ajax' => [
-            'callback' => [$this, 'ajaxClearSingleWidget'],
+            'callback' => EventLocationWidgetController::class . ':clearOrganizationFormWidget',
             'wrapper' => $wrapperId,
           ],
           '#attributes' => [
@@ -214,7 +217,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
       ];
     }
     else {
-      $modalUrl = Url::fromRoute(EventRouteContext::route('aculta_events.organization_modal', 'aculta_events.organizer_organization_modal'), [
+      $modalUrl = Url::fromRoute($eventRouteContext->route('aculta_events.organization_modal', 'aculta_events.organizer_organization_modal'), [
         'field_name' => $fieldName,
         'wrapper_id' => $wrapperId,
         'is_multiple' => 0,
@@ -226,11 +229,11 @@ final class EventOrganizationModalWidget extends WidgetBase {
         'message' => [
           '#type' => 'html_tag',
           '#tag' => 'p',
-          '#value' => (string) $this->t('Nenhuma organização principal selecionada.'),
+          '#value' => (string) $translation->translate('Nenhuma organização principal selecionada.'),
         ],
         'select_button' => [
           '#type' => 'link',
-          '#title' => $this->t('Selecionar ou cadastrar organização'),
+          '#title' => $translation->translate('Selecionar ou cadastrar organização'),
           '#url' => $modalUrl,
           '#attributes' => [
             'class' => ['use-ajax'],
@@ -244,7 +247,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
           '#type' => 'html_tag',
           '#tag' => 'p',
           '#attributes' => ['data-portal-ui' => 'event-organization-fallback'],
-          '#value' => '<a href="' . Url::fromRoute(EventRouteContext::route('aculta_events.admin_organization_add', 'aculta_events.organizer_organization_add'))->toString() . '" target="_blank" rel="noopener">' . $this->t('Cadastrar organização em nova aba (sem JS)') . '</a>',
+          '#value' => '<a href="' . Url::fromRoute($eventRouteContext->route('aculta_events.admin_organization_add', 'aculta_events.organizer_organization_add'))->toString() . '" target="_blank" rel="noopener">' . $translation->translate('Cadastrar organização em nova aba (sem JS)') . '</a>',
         ],
       ];
     }
@@ -255,7 +258,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
   /**
    * Constrói a lista de cards para referência múltipla (coorganizadoras).
    */
-  public function buildMultipleCards(array $targetIds, string $fieldName, string $wrapperId): array {
+  public static function buildMultipleCards(array $targetIds, string $fieldName, string $wrapperId, EntityTypeManagerInterface $entityTypeManager, EventRouteContext $eventRouteContext, TranslationInterface $translation): array {
     $element = [];
     $element['items'] = [
       '#type' => 'container',
@@ -263,7 +266,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
     ];
 
     if (!empty($targetIds)) {
-      $storage = $this->entityTypeManager->getStorage('aculta_event_organization');
+      $storage = $entityTypeManager->getStorage('aculta_event_organization');
       $orgs = $storage->loadMultiple($targetIds);
 
       foreach ($targetIds as $delta => $id) {
@@ -272,7 +275,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
           continue;
         }
 
-        $badgeText = $org->isClaimed() ? $this->t('Reivindicada') : $this->t('Não reivindicada');
+        $badgeText = $org->isClaimed() ? $translation->translate('Reivindicada') : $translation->translate('Não reivindicada');
         $localidadeStr = '';
         if (!$org->shouldHideLocation()) {
           $locParts = array_filter([(string) $org->get('localidade')->value, (string) $org->get('uf')->value]);
@@ -304,12 +307,12 @@ final class EventOrganizationModalWidget extends WidgetBase {
           ],
           'remove' => [
             '#type' => 'button',
-            '#value' => $this->t('Remover'),
+            '#value' => $translation->translate('Remover'),
             '#name' => 'remove_coorg_' . $id . '_' . preg_replace('/[^a-zA-Z0-9_]/', '_', $wrapperId),
             '#limit_validation_errors' => [],
             '#org_id' => $id,
             '#ajax' => [
-              'callback' => [$this, 'ajaxRemoveMultipleItem'],
+              'callback' => EventLocationWidgetController::class . ':removeOrganizationFormWidget',
               'wrapper' => $wrapperId,
             ],
             '#attributes' => [
@@ -332,12 +335,12 @@ final class EventOrganizationModalWidget extends WidgetBase {
       $element['items']['empty'] = [
         '#type' => 'html_tag',
         '#tag' => 'p',
-        '#value' => (string) $this->t('Nenhuma organização coorganizadora vinculada.'),
+        '#value' => (string) $translation->translate('Nenhuma organização coorganizadora vinculada.'),
         '#attributes' => ['data-portal-ui' => 'event-org-empty'],
       ];
     }
 
-    $modalUrl = Url::fromRoute(EventRouteContext::route('aculta_events.organization_modal', 'aculta_events.organizer_organization_modal'), [
+    $modalUrl = Url::fromRoute($eventRouteContext->route('aculta_events.organization_modal', 'aculta_events.organizer_organization_modal'), [
       'field_name' => $fieldName,
       'wrapper_id' => $wrapperId,
       'is_multiple' => 1,
@@ -347,7 +350,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
       '#type' => 'actions',
       'add_coorg' => [
         '#type' => 'link',
-        '#title' => $this->t('+ Adicionar coorganizadora'),
+        '#title' => $translation->translate('+ Adicionar coorganizadora'),
         '#url' => $modalUrl,
         '#attributes' => [
           'class' => ['use-ajax'],
@@ -360,53 +363,6 @@ final class EventOrganizationModalWidget extends WidgetBase {
     ];
 
     return $element;
-  }
-
-  /**
-   * AJAX callback para limpar a organização principal selecionada.
-   */
-  public function ajaxClearSingleWidget(array &$form, FormStateInterface $form_state): array {
-    $triggering = $form_state->getTriggeringElement();
-    $parents = array_slice($triggering['#array_parents'], 0, -2);
-    $widget = NestedArray::getValue($form, $parents);
-
-    $fieldName = $parents[count($parents) - 1] ?? 'field_organizacao';
-    $wrapperId = $widget['#attributes']['id'] ?? ('field-' . str_replace('_', '-', $fieldName) . '-wrapper');
-
-    $widget['target_id']['#value'] = '';
-    unset($widget['summary'], $widget['actions']);
-
-    $widget += $this->buildSingleCardOrEmpty(0, (string) $fieldName, (string) $wrapperId);
-    return $widget;
-  }
-
-  /**
-   * AJAX callback para remover uma coorganizadora da lista múltipla.
-   */
-  public function ajaxRemoveMultipleItem(array &$form, FormStateInterface $form_state): array {
-    $triggering = $form_state->getTriggeringElement();
-    $removedOrgId = (int) ($triggering['#org_id'] ?? 0);
-    $parents = array_slice($triggering['#array_parents'], 0, -3);
-    $widget = NestedArray::getValue($form, $parents);
-
-    $fieldName = $parents[count($parents) - 1] ?? 'field_coorganizadores';
-    $wrapperId = $widget['#attributes']['id'] ?? ('field-' . str_replace('_', '-', $fieldName) . '-wrapper');
-
-    $currentValues = $form_state->getValue($fieldName) ?? [];
-    $remainingIds = [];
-    if (is_array($currentValues)) {
-      foreach ($currentValues as $val) {
-        $tid = is_array($val) ? (int) ($val['target_id'] ?? 0) : (int) $val;
-        if ($tid > 0 && $tid !== $removedOrgId) {
-          $remainingIds[] = $tid;
-        }
-      }
-    }
-
-    $remainingIds = array_values(array_unique($remainingIds));
-    unset($widget['items'], $widget['actions']);
-    $widget += $this->buildMultipleCards($remainingIds, (string) $fieldName, (string) $wrapperId);
-    return $widget;
   }
 
   /**

@@ -37,6 +37,13 @@ class StaticServiceFixture {
   }
 }
 
+trait StaticServiceTraitFixture {
+  public function unsafeTrait(): void {
+    // ruleid: aculta-php-static-drupal-service
+    $renderer = \Drupal::service('renderer');
+  }
+}
+
 // Acesso procedural de scripts/hooks não oferece injeção por construtor.
 // ok: aculta-php-static-drupal-service
 $db = \Drupal::database();

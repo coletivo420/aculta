@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta_events\Form;
 
 use Drupal\aculta_events\Entity\Event;
-use Drupal\aculta_events\Route\EventRouteContext;
 use Drupal\Core\Url;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -28,7 +27,7 @@ trait HtmxDateListResponseTrait {
    *   Parâmetros da rota.
    */
   protected function htmxRouteUrl(string $mainRoute, string $organizerRoute, array $parameters): Url {
-    return Url::fromRoute(EventRouteContext::route($mainRoute, $organizerRoute), $parameters);
+    return Url::fromRoute($this->eventRouteContext->route($mainRoute, $organizerRoute), $parameters);
   }
 
   /**
@@ -43,7 +42,7 @@ trait HtmxDateListResponseTrait {
     ] + $list;
     $list['#attributes']['hx-swap-oob'] = 'outerHTML';
     return new Response(
-      (string) \Drupal::service('renderer')->renderInIsolation($list),
+      (string) $this->renderer->renderInIsolation($list),
       Response::HTTP_OK,
       [
         'Content-Type' => 'text/html; charset=UTF-8',

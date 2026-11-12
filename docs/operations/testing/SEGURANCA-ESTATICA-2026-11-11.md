@@ -8,8 +8,8 @@ Relatórios brutos (JSON do Semgrep, saída do `composer audit`, gitleaks) ficam
 
 - Comando: `semgrep --metrics=off --config .agents/skills/aculta-seguranca-estatica/rules/aculta-php.yml` com exclusões de `vendor`, `web/core`, `web/modules/contrib`, `web/libraries` e `node_modules`, sobre `web/modules/custom`, `web/themes/custom` e `scripts`.
 - Primeira rodada (2026-11-11): **474 achados** em 118 arquivos; esta contagem é histórica.
-- Revalidação (2026-11-12), após corrigir duas saídas XSS e limitar a regra de serviço estático a chamadas dentro de classes: **44 achados** (4 chamadas estáticas em classes, 29 sinks `#markup`, 10 chamadas dinâmicas e 1 `unserialize`).
-- A diferença da regra estática veio de escopo incorreto: scripts CLI e hooks procedurais não permitem injeção por construtor; a fixture agora exige classe e rejeita o contexto procedural. Dos 77 matches da regra anterior, 45 eram chamadas `aculta_H5PDrupal::` do fork H5P, não a fachada global; a fixture negativa foi acrescentada. Os 32 matches reais foram reduzidos a 4 por 28 refatorações em fases. As 4 chamadas restantes seguem em trabalho por módulo.
+- Revalidação (2026-11-12), após corrigir duas saídas XSS e limitar a regra de serviço estático a chamadas dentro de classes: **42 achados** (2 chamadas estáticas em classes, 29 sinks `#markup`, 10 chamadas dinâmicas e 1 `unserialize`).
+- A diferença da regra estática veio de escopo incorreto: scripts CLI e hooks procedurais não permitem injeção por construtor; a fixture agora exige classe e rejeita o contexto procedural. Dos 77 matches da regra anterior, 45 eram chamadas `aculta_H5PDrupal::` do fork H5P, não a fachada global; a fixture negativa foi acrescentada. Os 32 matches reais foram reduzidos a 2 por 30 refatorações em fases. As duas chamadas restantes estão em `aculta_commerce/src/Entity/Shipment.php`. A análise da regra foi ampliada a traits, com fixture positiva; a rota e a renderização do trait HTMX de Eventos também foram refatoradas.
 
 | Regra | Achados | Classe |
 |---|---:|---|
@@ -86,7 +86,7 @@ Triagem final dos pendentes (2026-11-11, rodada de origem verificada):
 ### 1.4 Fixtures das regras
 
 - Arquivo: `.agents/skills/aculta-seguranca-estatica/tests/rules/aculta-php.php`. Verificador: `tests/check-rule-fixtures.py`.
-- Resultado: **19 expectativas, 0 falhas**.
+- Resultado: **20 expectativas, 0 falhas**.
 - `semgrep --test` nativo falhou com `IndexError` interno do harness; o verificador próprio é o gate.
 - O mesmo verificador roda no CI (`quality-static.yml`, job `security-static`).
 
@@ -147,7 +147,7 @@ Atualização feita com `composer update drupal/entity_print symfony/http-client
 
 ## 6. Próximas ações
 
-1. Refatorar os 4 usos restantes de `\Drupal::` dentro de classes, em fases por módulo, com testes focais e gates do Portal.
+1. Refatorar os 2 usos restantes de `\Drupal::` em `aculta_commerce/src/Entity/Shipment.php`, em fases por módulo, com testes focais e gates do Portal.
 2. Reavaliar os valores de `XapiAttemptTokenTest.php:17` (fixture ou segredo real).
 3. Aplicar `entity_print` 2.20.0 e `symfony/http-client` 7.4.23 no Runtime por fluxo controlado, e registrar o resultado.
 4. Executar `drupal/security_review` com Drush em modo somente leitura quando houver acesso ao Runtime.

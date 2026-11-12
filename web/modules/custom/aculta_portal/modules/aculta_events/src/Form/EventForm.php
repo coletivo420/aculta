@@ -34,6 +34,11 @@ final class EventForm extends ContentEntityForm {
   protected EventDateListBuilder $dateListBuilder;
 
   /**
+   * Service for selecting the Events-purpose route.
+   */
+  protected EventRouteContext $eventRouteContext;
+
+  /**
    * Serviço de acesso a organizações.
    */
   protected ?OrganizationAccessService $organizationAccessService = NULL;
@@ -44,6 +49,7 @@ final class EventForm extends ContentEntityForm {
   public static function create(ContainerInterface $container): static {
     $instance = parent::create($container);
     $instance->dateListBuilder = $container->get('aculta_events.date_list_builder');
+    $instance->eventRouteContext = $container->get('aculta_events.route_context');
     if ($container->has('aculta_user.organization_access_service')) {
       $instance->organizationAccessService = $container->get('aculta_user.organization_access_service');
     }
@@ -117,7 +123,7 @@ final class EventForm extends ContentEntityForm {
     // Datas, que o HTMX troca no lugar. O envio continua sendo um submit do
     // Form API (name, submitHandler e limite de validação preservados).
     (new Htmx())
-      ->post(Url::fromRoute(EventRouteContext::route('aculta_events.event_add', 'aculta_events.organizer_event_add')))
+      ->post(Url::fromRoute($this->eventRouteContext->route('aculta_events.event_add', 'aculta_events.organizer_event_add')))
       ->select('#event-dates-wrapper')
       ->target('#event-dates-wrapper')
       ->swap('outerHTML')
@@ -159,7 +165,7 @@ final class EventForm extends ContentEntityForm {
       '#type' => 'container',
       '#attributes' => ['id' => $wrapperId, 'data-portal-ui' => 'event-location-widget'],
       '#attached' => ['library' => ['core/drupal.dialog.ajax']],
-    ] + EventLocationModalWidget::buildCardOrEmpty($localId, 'local_id', $wrapperId);
+    ] + EventLocationModalWidget::buildCardOrEmpty($localId, 'local_id', $wrapperId, $this->entityTypeManager, $this->currentUser(), $this->eventRouteContext, $this->getStringTranslation());
 
     return $element;
   }
@@ -296,7 +302,7 @@ final class EventForm extends ContentEntityForm {
       ]));
     }
 
-    if (EventRouteContext::route('aculta_events.catalogue', 'aculta_events.organizer_event_edit') === 'aculta_events.organizer_event_edit') {
+    if ($this->eventRouteContext->route('aculta_events.catalogue', 'aculta_events.organizer_event_edit') === 'aculta_events.organizer_event_edit') {
       $form_state->setRedirect('aculta_events.organizer_event_edit', ['aculta_event' => $entity->id()]);
     }
     else {

@@ -42,10 +42,15 @@ rules:
     message: "\\Drupal:: estático em código de classe. Injete o serviço pelo construtor (padrão Drupal 12, seção 7)."
     patterns:
       - pattern-regex: '(^|[^A-Za-z0-9_])\\?Drupal::\w+\('
-      - pattern-inside: |
-          class $CLASS {
-            ...
-          }
+      - pattern-either:
+          - pattern-inside: |
+              class $CLASS {
+                ...
+              }
+          - pattern-inside: |
+              trait $TRAIT {
+                ...
+              }
 
 
   - id: aculta-php-raw-redirect-cross-host
