@@ -36,6 +36,14 @@
   padding-inline: var(--page-gutter);
 }
 
+/* Trilha dentro do título: ocupa a coluna do título, sem recuo próprio. */
+.page .page__title .page__breadcrumb,
+.page .layout-page__title .page__breadcrumb {
+  inline-size: 100%;
+  margin-inline: 0;
+  padding-inline: 0;
+}
+
 .page__navigation,
 .page__highlighted,
 .page__help,

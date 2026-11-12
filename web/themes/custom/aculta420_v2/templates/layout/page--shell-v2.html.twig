@@ -29,16 +29,17 @@
   {% endif %}
 
   {# Ajuda e breadcrumb vêm do Portal e de blocos da região header. #}
-  {% if aculta_help or aculta_breadcrumb %}
+  {% if aculta_help %}
     <div class="page-shell-v2__contextual">
-      {% if aculta_help %}
-        <div class="page__help">{{ aculta_help }}</div>
-      {% endif %}
-      {% if aculta_breadcrumb %}
-        <div class="page__breadcrumb">{{ aculta_breadcrumb }}</div>
-      {% endif %}
+      <div class="page__help">{{ aculta_help }}</div>
     </div>
   {% endif %}
+
+  {# A trilha fica no mesmo slot do título: alinha com a coluna do título em cada página. #}
+  {% set title_slot %}
+    {% if aculta_breadcrumb %}<div class="page__breadcrumb">{{ aculta_breadcrumb }}</div>{% endif %}
+    {% if aculta_page_title %}{{ aculta_page_title }}{% endif %}
+  {% endset %}
 
   {% set main_content = page.content %}
   {% if aculta_lms_lesson_route|default(false) and aculta_lms_lesson_sdc_available|default(false) %}
@@ -50,7 +51,7 @@
   {% if aculta_layout_page_sdc_available|default(false) %}
     {{ include(layout_page_template, {
       variant: aculta_layout_variant|default('stack'),
-      title: aculta_page_title,
+      title: title_slot,
       content: main_content,
       aside: page.sidebar_first
     }, with_context = false) }}
@@ -58,7 +59,7 @@
     {# Fallback para cache de descoberta SDC aquecido, como no shell clássico. #}
     {% set fallback_variant = aculta_layout_variant|default('stack') %}
     <main id="main-content" class="page__main{% if fallback_variant == 'stack' %} page__main--stack{% elseif fallback_variant == 'aside' and page.sidebar_first %} page__main--with-sidebar{% endif %}" tabindex="-1">
-      {% if aculta_page_title %}<div class="page__title">{{ aculta_page_title }}</div>{% endif %}
+      {% if title_slot|trim %}<div class="page__title">{{ title_slot }}</div>{% endif %}
       <div class="page__content">{{ main_content }}</div>
       {% if page.sidebar_first %}
         <aside class="page__sidebar" aria-label="{{ 'Related content'|t }}">{{ page.sidebar_first }}</aside>
