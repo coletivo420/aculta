@@ -25,6 +25,14 @@ export const STATIC_SAFELIST = [
   'is-expanded',
   'is-selected',
   'is-empty',
+  'is-hidden',
+  'is-loading',
+  'is-invalid',
+  'is-valid',
+  'is-dragging',
+  'is-required',
+  'is-error',
+  'is-success',
   'placeholder',
   'js-form-item',
   'js-form-type-textfield',
@@ -161,8 +169,6 @@ export const SAFELIST_PATTERNS = [
   { pattern: /\.field--/, justification: 'Classes de campo geradas pela Field API.' },
   { pattern: /\.toolbar-/, justification: 'Classes da barra administrativa do Core.' },
   { pattern: /\.js-/, justification: 'Classes de comportamento JavaScript do Core.' },
-  // Estados de interação aplicados por JS/HTMX/UI Suite.
-  { pattern: /\.is-/, justification: 'Estados de interface aplicados por JS, HTMX ou UI Suite.' },
   // Ícones: packs UI Icons expõem classes/nomes de ícone.
   { pattern: /\.icon-/, justification: 'Classes de ícone geradas pelo UI Icons/Icon API.' },
 ];

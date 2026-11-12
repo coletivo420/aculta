@@ -16,8 +16,10 @@
 
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join, relative, dirname } from 'node:path';
+import yaml from 'js-yaml';
 import { collectDynamicClasses } from './collect-dynamic-classes.mjs';
 import { SAFELIST_PATTERNS } from './safelist.mjs';
+import { readThemeCss, sourceHash } from './lib/theme-css.mjs';
 
 const ROOT = process.cwd();
 const THEME_PREFIX = 'web/themes/custom/aculta420_v2/';
@@ -52,9 +54,53 @@ function walk(dir, acc = []) {
   return acc;
 }
 
+// 0. Relatório do PurgeCSS presente, completo e atualizado.
+const currentCss = readThemeCss(ROOT);
+const currentHash = sourceHash(currentCss);
+const auditDir = join(ROOT, 'reports/css-audit/audit');
+const manifestPath = join(auditDir, 'manifest.json');
+const reportPath = join(auditDir, 'report.json');
+if (!existsSync(manifestPath) || !existsSync(reportPath)) {
+  fail('Relatório do PurgeCSS presente', 'Rode `npm run css:audit` antes de `css:verify`.');
+} else {
+  const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+  const report = JSON.parse(readFileSync(reportPath, 'utf8'));
+  const problems = [];
+  if (manifest.sourceHash !== currentHash || report.sourceHash !== currentHash) {
+    problems.push('sourceHash diverge do CSS atual (relatório desatualizado).');
+  }
+  if (!Array.isArray(manifest.files) || manifest.files.length !== currentCss.length) {
+    problems.push(`manifesto lista ${manifest.files?.length ?? 0} arquivos; tema tem ${currentCss.length}.`);
+  }
+  if (report.totals?.removedBytes !== report.totals?.originalBytes - report.totals?.retainedBytes) {
+    problems.push('totais de bytes inconsistentes (removido ≠ original − retido).');
+  }
+  if (problems.length > 0) {
+    fail('Relatório do PurgeCSS atualizado', problems.join(' '));
+  } else {
+    pass('Relatório do PurgeCSS atualizado', `${manifest.files.length} arquivos, hash ${currentHash.slice(0, 12)}…`);
+  }
+}
+
 // 1. Bibliotecas → arquivos existentes.
 const librarySource = readFileSync(LIBRARIES, 'utf8');
-const declared = [...librarySource.matchAll(/^\s{6}(['"]?)([^'":]+\.css)\1:/gm)].map((m) => m[2]);
+let libraries;
+try {
+  libraries = yaml.load(librarySource) ?? {};
+} catch (error) {
+  fail('aculta420_v2.libraries.yml válido', error.message);
+  libraries = {};
+}
+const declared = [];
+for (const definition of Object.values(libraries)) {
+  for (const group of Object.values(definition?.css ?? {})) {
+    for (const asset of Object.keys(group ?? {})) {
+      if (asset.endsWith('.css')) {
+        declared.push(asset);
+      }
+    }
+  }
+}
 if (declared.length === 0) {
   fail('Bibliotecas declaram CSS', 'Nenhuma folha CSS encontrada em aculta420_v2.libraries.yml.');
 } else {
@@ -139,11 +185,24 @@ for (const componentYml of walk(join(THEME_ROOT, 'components')).filter((file) =>
   }
   sdcWithCss += 1;
   const source = readFileSync(componentYml, 'utf8');
+  let metadata;
+  try {
+    metadata = yaml.load(source);
+  } catch (error) {
+    sdcProblems.push(`${relative(ROOT, componentYml)} inválido: ${error.message}`);
+    continue;
+  }
+  const declaredAssets = new Set();
+  for (const group of Object.values(metadata?.assets?.css ?? {})) {
+    for (const asset of Object.keys(group ?? {})) {
+      declaredAssets.add(asset);
+    }
+  }
   for (const css of cssFiles) {
     if (css === `${machineName}.css`) {
       continue;
     }
-    if (!source.includes(css)) {
+    if (!declaredAssets.has(css) && !source.includes(css)) {
       sdcProblems.push(`${relative(ROOT, componentYml)} não declara ${css}`);
     }
   }

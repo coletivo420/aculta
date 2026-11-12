@@ -277,7 +277,8 @@ alterações indevidas nos 22 displays, não aplicar o novo tom em massa.
 
 ## Execução Recente — auditoria, PurgeCSS e limpeza de CSS (2026-11-12)
 
-- `npm run css:audit`: inventário reproduzível em `reports/css-audit/inventory/` e relatório do PurgeCSS em `reports/css-audit/audit/` (gerados, fora do Git). 106 arquivos-fonte, 452.414 bytes, 2.509 regras, 3.115 seletores e 220 classes dinâmicas preservadas (86 componentes). PurgeCSS candidato: 406.336 bytes (82.550 bytes rejeitados). O modo `apply` sem `--write` grava em staging; `--write` exige revisão humana.
+- `npm run css:audit`: inventário reproduzível em `reports/css-audit/inventory/` e relatório do PurgeCSS em `reports/css-audit/audit/` (gerados, fora do Git). 106 arquivos-fonte, 452.414 bytes, 2.735 seletores de topo e 220 classes dinâmicas preservadas (86 componentes). PurgeCSS: 406.336 bytes e 2.481 seletores retidos; 46.078 bytes e 277 seletores removíveis. Os 254 rejeitados informativos podem incluir seletores mantidos por safelist.
+- Infraestrutura endurecida: `js-yaml@4.3.2` no lugar de regex; `manifest.json` com `sourceHash` e `toolVersions`; `css:verify` falha com relatório ausente, incompleto ou desatualizado; `--write` exige `--confirm-write`, cria backup e recusa CSS inválido; `npm run css:test` cobre as classes dinâmicas e a safelist.
 - `npm run css:verify`: PASS. Bibliotecas → arquivos existentes (35 folhas), sem referência a CSS inexistente, sem CSS gerado anexado, sem dependência V1/Bootstrap, CSS de SDC descobrível (84 componentes), safelist sem `^aculta-` e nenhuma classe dinâmica removida pelo PurgeCSS.
 - `npm run lint:css`: PASS (0 erros).
 - `php scripts/validate-aculta420-mapped-classes.php`: PASS (480 classes, 0 exceções, 0 nomes Bootstrap). `alert`/`alert-info` do token `donation-account-invite` foram substituídos por `messages`/`messages--info`; `we-sativa__workspace` sem CSS foi retirado dos três tokens `we-sativa-*`.

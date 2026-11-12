@@ -114,13 +114,39 @@ consumidor textual, classe emitida por metadado ou seletor alcançável.
 `validate-aculta420-css-scope.php` passou a exigir que `studio-identity.css`
 não volte nem ao global nem à biblioteca `studio`.
 
-## 5. Gates executados
+## 5. Endurecimento da infraestrutura (2026-11-12)
+
+- **Parser YAML estruturado:** `js-yaml@4.3.2` substituiu o parsing por
+  regex nos metadados SDC, em `aculta420_v2.libraries.yml` e no gate. Enum
+  inteiro vira string de sufixo; `$ref` e props sem `enum` são ignorados.
+- **Relatório obrigatório e fresco:** `purge.mjs` grava `manifest.json` com
+  `sourceHash` (SHA-256 de nome + conteúdo de todas as folhas) e
+  `toolVersions`. `css:verify` recalcula o hash e falha se o relatório
+  estiver ausente, incompleto (contagem de arquivos divergente) ou
+  desatualizado. Testado inserindo uma folha temporária: o gate falhou como
+  esperado.
+- **Métricas corrigidas:** retido e removido são calculados por diferença
+  real entre o CSS de origem e o podado, com conjuntos de seletores de topo
+  (respeitando `:is()`/`:has()`/`:where()`). `rejected` do PurgeCSS passou a
+  ser apenas informativo.
+- **Testes:** `npm run css:test` cobre parsing YAML, enum inline/em bloco,
+  concatenação Twig, interpolação, alias `set`, UI Styles, safelist e hash.
+- **`--write` seguro:** exige `--mode=apply --confirm-write`; faz backup com
+  timestamp em `reports/css-audit/backup/`; recusa o corte se qualquer CSS
+  podado não fizer parse. Sem confirmação, nada é escrito.
+- **Safelist revisada:** removido o padrão amplo `\.is-`; os estados
+  conhecidos (`is-open`, `is-collapsed`, `is-loading`, `is-invalid` etc.)
+  ficaram explícitos. Os demais padrões continuam restritos a famílias
+  geradas pelo Drupal/UI Suite, cada um com justificativa.
+
+## 6. Gates executados
 
 | Gate | Resultado |
 | --- | --- |
 | `npm run lint:css` | PASS (0 erros) |
 | `npm run css:audit` | PASS (inventário + relatório PurgeCSS) |
-| `npm run css:verify` | PASS (7 verificações) |
+| `npm run css:test` | PASS (5 testes: YAML estruturado, classes dinâmicas, safelist, hash) |
+| `npm run css:verify` | PASS (8 verificações, incluindo frescor do relatório) |
 | `php scripts/validate-aculta420-mapped-classes.php` | PASS (480 classes, 0 exceções, 0 nomes Bootstrap) |
 | `php scripts/validate-aculta420-css-scope.php` | PASS (50 checks) |
 | `git diff --check` | PASS |
@@ -136,7 +162,7 @@ Não executados nesta sessão:
   estrutural conhecido (lê `css/tokens.css`, enquanto o V2 publica
   `src/styles/tokens.css`).
 
-## 6. Pendências reais (com consumidores identificados)
+## 7. Pendências reais (com consumidores identificados)
 
 1. **Utilitários `aculta-u-*`**: continuam emitidos por `PortalUiHooks::TOKENS`
    (ex.: `account-entry-links`, `studio-actions`, `new-conversation-links`).
@@ -154,7 +180,7 @@ Não executados nesta sessão:
    (IDs de Views, classes de comentários/aninhamento). Aplicar `--write`
    exige comparação no Runtime.
 
-## 7. Rollback
+## 8. Rollback
 
 - CSS: `git revert` do commit desta entrega restaura os arquivos-fonte,
   incluindo `studio-identity.css` e a declaração na biblioteca `studio`.
@@ -163,7 +189,7 @@ Não executados nesta sessão:
   servido pelo Drupal.
 - Não há alteração de configuração Drupal, conteúdo, banco ou Runtime.
 
-## 8. Reprodução
+## 9. Reprodução
 
 ```bash
 npm ci

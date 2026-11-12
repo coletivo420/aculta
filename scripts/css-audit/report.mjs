@@ -17,6 +17,7 @@
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync } from 'node:fs';
 import { join, relative, extname } from 'node:path';
 import postcss from 'postcss';
+import yaml from 'js-yaml';
 import { defaultExtractor, yamlExtractor } from './extractors/index.mjs';
 import { parseComponentEnums } from './collect-dynamic-classes.mjs';
 
@@ -56,17 +57,22 @@ function walk(dir, acc = []) {
 /** Mapa caminho CSS → biblioteca declarada em aculta420_v2.libraries.yml. */
 function parseLibraries() {
   const source = readFileSync(join(THEME_ROOT, 'aculta420_v2.libraries.yml'), 'utf8');
+  let libraries;
+  try {
+    libraries = yaml.load(source);
+  } catch (error) {
+    console.error(`aculta420_v2.libraries.yml inválido: ${error.message}`);
+    process.exit(1);
+  }
   const map = new Map();
-  let library = null;
-  for (const line of source.split(/\r?\n/)) {
-    const top = line.match(/^([a-z0-9-]+):\s*$/);
-    if (top) {
-      library = top[1];
-      continue;
-    }
-    const css = line.match(/^\s{6}(['"]?)([^'":]+\.css)\1:\s*\{/);
-    if (css && library) {
-      map.set(css[2], library);
+  for (const [library, definition] of Object.entries(libraries ?? {})) {
+    const css = definition?.css ?? {};
+    for (const group of Object.values(css)) {
+      for (const asset of Object.keys(group ?? {})) {
+        if (asset.endsWith('.css')) {
+          map.set(asset, library);
+        }
+      }
     }
   }
   return map;

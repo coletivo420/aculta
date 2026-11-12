@@ -14,6 +14,7 @@
 
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import yaml from 'js-yaml';
 
 const THEME_ROOT = 'web/themes/custom/aculta420_v2';
 const COMPONENTS_DIR = join(THEME_ROOT, 'components');
@@ -36,43 +37,23 @@ function walk(dir, acc = []) {
   return acc;
 }
 
-/** Lê pares prop → valores de `enum` de um metadata SDC. */
+/**
+ * Lê pares prop → valores de `enum` de um metadata SDC usando YAML
+ * estruturado. Valores inteiros são convertidos para string porque viram
+ * sufixo de classe.
+ */
 export function parseComponentEnums(ymlSource) {
+  let metadata;
+  try {
+    metadata = yaml.load(ymlSource);
+  } catch (error) {
+    throw new Error(`Metadata SDC inválido: ${error.message}`);
+  }
+  const properties = metadata?.props?.properties ?? {};
   const enums = {};
-  const lines = ymlSource.split(/\r?\n/);
-  let currentProp = null;
-  let collecting = false;
-  for (const line of lines) {
-    const propMatch = line.match(/^\s{4}([a-z0-9_]+):\s*$/);
-    if (propMatch) {
-      currentProp = propMatch[1];
-      collecting = false;
-      continue;
-    }
-    if (!currentProp) {
-      continue;
-    }
-    const inline = line.match(/^\s{6}enum:\s*\[([^\]]*)\]/);
-    if (inline) {
-      enums[currentProp] = inline[1]
-        .split(',')
-        .map((value) => value.trim().replace(/^['"]|['"]$/g, ''))
-        .filter(Boolean);
-      collecting = false;
-      continue;
-    }
-    if (/^\s{6}enum:\s*$/.test(line)) {
-      enums[currentProp] = [];
-      collecting = true;
-      continue;
-    }
-    if (collecting) {
-      const item = line.match(/^\s{8}-\s*(.+?)\s*$/);
-      if (item) {
-        enums[currentProp].push(item[1].replace(/^['"]|['"]$/g, ''));
-      } else if (line.trim() !== '') {
-        collecting = false;
-      }
+  for (const [prop, definition] of Object.entries(properties)) {
+    if (Array.isArray(definition?.enum)) {
+      enums[prop] = definition.enum.map((value) => String(value));
     }
   }
   return enums;

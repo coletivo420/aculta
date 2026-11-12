@@ -10,13 +10,15 @@
     "purgecss": "9.1.0",
     "stylelint": "^13.13.1",
     "stylelint-config-drupal": "^1.0.2",
-    "stylelint-order": "^4.1.0"
+    "stylelint-order": "^4.1.0",
+    "js-yaml": "4.3.2"
   },
   "scripts": {
     "lint:css": "stylelint \"web/themes/custom/aculta420_v2/**/*.css\"",
     "lint:js": "eslint web/themes/custom/aculta420_v2/js web/themes/custom/aculta420_v2/components",
     "css:audit": "node scripts/css-audit/report.mjs && node scripts/css-audit/purge.mjs --mode=audit",
     "css:purge": "node scripts/css-audit/purge.mjs --mode=apply",
-    "css:verify": "node scripts/css-audit/verify.mjs"
+    "css:verify": "node scripts/css-audit/verify.mjs",
+    "css:test": "node --test scripts/css-audit/tests/*.test.mjs"
   }
 }
