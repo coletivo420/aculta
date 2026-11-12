@@ -15,6 +15,8 @@ use Drupal\domain\DomainInterface;
 use Drupal\domain_config_switcher\DomainConfigSwitcherInterface;
 use Drupal\domain_config_ui\DomainConfigEditContextInterface;
 use Drupal\domain_config_ui\DomainConfigUIManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Adiciona o seletor de domínio às telas de bloco do MAIN.
@@ -33,6 +35,8 @@ final class BlockDomainConfigFormHooks {
     private readonly DomainConfigEditContextInterface $editContext,
     private readonly DomainConfigUIManagerInterface $manager,
     private readonly StorageInterface $configStorage,
+    #[Autowire(service: 'request_stack')]
+    private readonly RequestStack $requestStack,
   ) {}
 
   /**
@@ -83,7 +87,7 @@ final class BlockDomainConfigFormHooks {
       'switch' => [
         '#type' => 'submit',
         '#value' => $this->t('Alternar domínio'),
-        '#submit' => [[self::class, 'switchSubmit']],
+        '#submit' => [self::class . ':switchSubmit'],
         '#limit_validation_errors' => [['aculta_domain_config', 'domain']],
         '#attributes' => ['class' => ['button--small']],
       ],
@@ -124,9 +128,9 @@ final class BlockDomainConfigFormHooks {
   /**
    * Redirects to the current block form with the selected domain in the URL.
    */
-  public static function switchSubmit(array &$form, FormStateInterface $form_state): void {
+  public function switchSubmit(array &$form, FormStateInterface $form_state): void {
     $domainId = $form_state->getValue(['aculta_domain_config', 'domain'], '');
-    $query = \Drupal::request()->query->all();
+    $query = $this->requestStack->getCurrentRequest()?->query->all() ?? [];
     if (is_string($domainId) && $domainId !== '') {
       $query[DomainConfigSwitcherInterface::QUERY_ARG] = $domainId;
     }

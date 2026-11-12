@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.0-dev.1
 state: Dev
-next_phase: 'Homologar desativação de bloco por domínio, testar importação de configuração em staging e avaliar domain_menu_extras para overrides de blocos de menu. Manter a cobertura experimental restrita a block.'
-progress_note: 'Ponte aculta_domain_config habilitada no Runtime de desenvolvimento: seletor config_domain no MAIN para BlockListBuilder e EntityForm de bloco, contexto de edição antes do ParamConverter e decorator de leitura com loadOverrideFree(). Override de região/peso/label gravado na coleção do domínio, isolado por domínio e removido sem apagar o bloco global. Testes Unit 4/12 e Kernel 1/6 PASS; exportação de coleções validada; importação DEFERRED até staging.'
+next_phase: 'Refatorar usos restantes de \\Drupal:: em classes do módulo; depois homologar desativação de bloco por domínio, testar importação de configuração em staging e avaliar domain_menu_extras para overrides de blocos de menu.'
+progress_note: 'Ponte aculta_domain_config habilitada no Runtime de desenvolvimento. Callback de troca de domínio injeta request_stack e preserva parâmetros de consulta. Testes focais Unit 2/5 PASS, php -l, fixtures Semgrep 18/18, phpunit-suites e gate Portal 1234 checks PASS. Varredura global: 101 achados, 61 chamadas estáticas em classes. Exportação de coleções validada; importação DEFERRED até staging.'
