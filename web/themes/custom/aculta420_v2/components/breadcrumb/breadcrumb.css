@@ -1,10 +1,27 @@
 /* Trilha por sessão. Cores vêm de tokens semânticos; a sessão só altera o ícone. */
 .aculta-breadcrumb {
+  position: relative;
   color: var(--color-text-primary);
   font-family: var(--font-family-base);
   font-size: var(--font-size-sm);
   line-height: 1.6;
   margin-block: var(--spacing-md) var(--spacing-base);
+}
+
+/* Faixa tricolor da marca acima da trilha (vermelho, amarelo, verde), como nas referências. */
+.aculta-breadcrumb::before {
+  content: "";
+  display: block;
+  inline-size: 3.5rem;
+  block-size: 4px;
+  margin-block-end: var(--spacing-xs);
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--surface-accent-red) 0 33.33%,
+    var(--surface-accent-yellow) 33.33% 66.66%,
+    var(--surface-accent-green) 66.66% 100%
+  );
 }
 
 .aculta-breadcrumb__list {
@@ -88,7 +105,7 @@
 .aculta-breadcrumb--superficie {
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-md);
-  background: var(--color-surface-muted, transparent);
+  background: var(--color-surface-muted, #fbf6ea);
 }
 
 /* Contextual: trilha sobre superfície escura do Studio, com links de contraste próprio. */
