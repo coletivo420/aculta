@@ -14,10 +14,12 @@ use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_cgu\Entity\UgcRecipientConfig;
 use Drupal\aculta_cgu\Entity\UgcReport;
 use Drupal\aculta_cgu\Exception\ReportNotAllowedException;
+use Drupal\aculta_user\Organization\OrganizationAccessService;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
@@ -64,6 +66,13 @@ final class UgcModerationKernelTest extends KernelTestBase {
   public function register(ContainerBuilder $container): void {
     parent::register($container);
 
+    // This Kernel does not install the complete aculta_user dependency graph.
+    // The service is only needed to compile the Events access checker here.
+    $container->setDefinition(
+      'aculta_user.organization_access_service',
+      (new Definition(OrganizationAccessService::class))->setSynthetic(TRUE)->setPublic(TRUE),
+    );
+
     $loader = require dirname(DRUPAL_ROOT) . '/vendor/autoload.php';
     $loader->addPsr4('Drupal\\aculta_cgu\\', dirname(__DIR__, 3) . '/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_events\\', dirname(__DIR__, 5) . '/modules/aculta_events/src', TRUE);
@@ -74,6 +83,10 @@ final class UgcModerationKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->container->set(
+      'aculta_user.organization_access_service',
+      (new \ReflectionClass(OrganizationAccessService::class))->newInstanceWithoutConstructor(),
+    );
 
     $this->installEntitySchema('user');
     $this->installEntitySchema('taxonomy_term');

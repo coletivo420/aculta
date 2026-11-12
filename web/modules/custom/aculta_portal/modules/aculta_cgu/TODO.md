@@ -4,7 +4,7 @@ Estado: Dev · versão 0.1.0-dev.1 (`aculta_cgu.info.yml`) · status: `docs/oper
 
 ## Próximo passo
 
-Aplicar e homologar o post-update de propriedade de configuração; depois continuar a homologação dos fluxos unificados de CGU.
+Aplicar e homologar o post-update de propriedade de configuração; depois continuar a homologação dos fluxos unificados de CGU. A suíte Kernel geral ainda tem falhas independentes de Eventos, Commerce, LMS e Groups.
 
 ## Ao concluir uma fase
 
