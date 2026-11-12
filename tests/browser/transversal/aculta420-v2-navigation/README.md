@@ -47,3 +47,30 @@ o script for executado de outro worktree. Capturas e JSON ficam em `$SUITE_OUT`.
 ```sh
 DISPLAY=:0 SUITE_OUT="$SUITE_OUT" python3 tests/browser/transversal/aculta420-v2-navigation/admin-sidebar-runtime.py
 ```
+
+## Regressão visual (Playwright)
+
+`routes.json` declara as rotas públicas desta frente. A suíte
+`tests/browser/playwright.visual.spec.mjs` (config `playwright.visual.config.mjs`)
+compara cada rota com referências em `tests/browser/__snapshots__/playwright.visual.spec.mjs/`:
+claro e escuro, em 320, 390, 768, 1024 e 1440 CSS px, Firefox headless.
+
+Execução (origem de desenvolvimento, `SUITE_OUT` fora do repositório):
+
+```sh
+cd tests/browser
+SUITE_OUT="$SUITE_OUT" ACULTA_SITE_ORIGIN="https://aculta.toca.net.br/" \
+ACULTA_BROWSER_FRONTS=aculta420-v2-navigation \
+npx playwright test --config playwright.visual.config.mjs
+```
+
+Estado em 2026-11-12: referências atualizadas para o estado do servidor de
+desenvolvimento naquela data, após revisão humana das candidatas. As referências
+anteriores falhavam com 11 a 12% de pixels diferentes. Execução repetida contra o
+mesmo servidor passou nas 10 comparações (estabilidade confirmada). Falha de
+diferença de pixel só é registrada como regressão depois de revisão da imagem de
+diferença em `$SUITE_OUT`.
+
+Regra: não usar `--update-snapshots`. Para gerar novas candidatas, use
+`ACULTA_VISUAL_BASELINE=1` com um `SUITE_OUT` novo e vazio; só copie para
+`__snapshots__` depois de revisão humana.
