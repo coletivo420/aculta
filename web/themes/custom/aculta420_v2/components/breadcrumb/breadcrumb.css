@@ -60,7 +60,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-xs);
-  color: var(--color-link-editorial);
+  color: var(--surface-accent-red);
   text-decoration-color: currentColor;
   text-decoration-line: underline;
   text-decoration-thickness: .075em;
@@ -70,7 +70,7 @@
 
 .aculta-breadcrumb__link .aculta-icon {
   flex: 0 0 auto;
-  color: currentColor;
+  color: var(--color-text-primary);
 }
 
 .aculta-breadcrumb__link:hover,
@@ -85,7 +85,7 @@
 }
 
 .aculta-breadcrumb__current {
-  color: var(--color-text-primary);
+  color: var(--color-brand-secondary);
   font-weight: 700;
   min-inline-size: 0;
   overflow-wrap: anywhere;
