@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Hook;
 
-use Drupal\aculta_lms\Resources\Controller\CourseDocumentController;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -30,7 +29,7 @@ final class CourseDocumentFormHooks {
       throw new \LogicException('The course document Media form has no save handlers.');
     }
 
-    $form['actions']['submit']['#submit'][] = [CourseDocumentController::class, 'submitDocumentToCourse'];
+    $form['actions']['submit']['#submit'][] = 'aculta_lms.course_document_controller:submitDocumentToCourse';
   }
 
 }

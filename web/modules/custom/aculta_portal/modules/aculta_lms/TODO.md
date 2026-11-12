@@ -4,6 +4,7 @@ Estado: Dev · versão 0.1.0-dev.215 (`aculta_lms.info.yml`) · status: `docs/op
 
 ## Próximo passo
 
+Continuar a refatoração das chamadas estáticas de serviço restantes em classes dos módulos, com testes focais e gates do Portal.
 Continuar a fechar os gates LMS; checkout HTTP e revisão visual F7 dependem de produto/turma de negócio disponível. Só depois avançar pagamentos e examinar cada update de banco pendente, ou registrar evidência de que não há updates.
 
 ## Leitura

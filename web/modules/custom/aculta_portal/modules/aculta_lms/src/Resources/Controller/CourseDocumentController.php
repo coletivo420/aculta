@@ -67,11 +67,10 @@ final class CourseDocumentController {
   }
 
   /**
-   * Static Form API callback, kept serializable across managed-file rebuilds.
+   * Form API callback, resolved through the registered service ID.
    */
-  public static function submitDocumentToCourse(array &$form, FormStateInterface $form_state): void {
-    \Drupal::service('aculta_lms_resources.course_document_controller')
-      ->attachDocumentToCourse($form, $form_state);
+  public function submitDocumentToCourse(array &$form, FormStateInterface $form_state): void {
+    $this->attachDocumentToCourse($form, $form_state);
   }
 
   /**

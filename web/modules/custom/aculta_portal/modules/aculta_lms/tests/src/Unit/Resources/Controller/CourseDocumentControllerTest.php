@@ -90,7 +90,7 @@ final class CourseDocumentControllerTest extends UnitTestCase {
     $hooks->addCourseRelation($form, new FormState());
 
     self::assertSame(
-      ['::submitForm', '::save', [CourseDocumentController::class, 'submitDocumentToCourse']],
+      ['::submitForm', '::save', 'aculta_lms.course_document_controller:submitDocumentToCourse'],
       $form['actions']['submit']['#submit'],
     );
   }
