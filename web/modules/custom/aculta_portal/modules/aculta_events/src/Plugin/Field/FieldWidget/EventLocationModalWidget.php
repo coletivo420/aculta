@@ -11,7 +11,9 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\address\AddressInterface;
 use Drupal\Core\Field\WidgetBase;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\aculta_events\Route\EventRouteContext;
@@ -25,6 +27,20 @@ use Drupal\aculta_events\Route\EventRouteContext;
   field_types: ['entity_reference'],
 )]
 final class EventLocationModalWidget extends WidgetBase {
+
+  use \Drupal\Core\StringTranslation\StringTranslationTrait;
+
+  public function __construct(
+    $plugin_id,
+    $plugin_definition,
+    FieldDefinitionInterface $field_definition,
+    array $settings,
+    array $third_party_settings,
+    protected EntityTypeManagerInterface $entityTypeManager,
+    protected AccountProxyInterface $currentUser,
+  ) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
+  }
 
   /**
    * {@inheritdoc}
@@ -47,7 +63,7 @@ final class EventLocationModalWidget extends WidgetBase {
     $element['#attached']['library'][] = 'core/drupal.dialog.ajax';
     $element['#attached']['library'][] = 'aculta_events/events-portal-ui';
 
-    $element += self::buildCardOrEmpty((int) $targetId, $fieldName, $wrapperId);
+    $element += $this->buildCardOrEmpty((int) $targetId, $fieldName, $wrapperId);
 
     return $element;
   }
@@ -55,7 +71,7 @@ final class EventLocationModalWidget extends WidgetBase {
   /**
    * Constrói a estrutura do card de resumo ou o estado vazio.
    */
-  public static function buildCardOrEmpty(int $targetId, string $fieldName, string $wrapperId): array {
+  public function buildCardOrEmpty(int $targetId, string $fieldName, string $wrapperId): array {
     $element = [];
 
     $targetInputId = $wrapperId === 'field-event-location-wrapper'
@@ -74,15 +90,14 @@ final class EventLocationModalWidget extends WidgetBase {
 
     $location = NULL;
     if ($targetId > 0) {
-      $entity = \Drupal::entityTypeManager()->getStorage('aculta_event_location')->load($targetId);
+      $entity = $this->entityTypeManager->getStorage('aculta_event_location')->load($targetId);
       if ($entity instanceof EventLocation) {
         $location = $entity;
       }
     }
 
     if ($location !== NULL) {
-      $currentUser = \Drupal::currentUser();
-      $hasAccess = $location->access('view', $currentUser);
+      $hasAccess = $location->access('view', $this->currentUser);
 
       if ($hasAccess) {
         $enderecoStr = '';
@@ -103,7 +118,7 @@ final class EventLocationModalWidget extends WidgetBase {
         }
 
         $isPublic = ($location->get('field_status')->value ?? 'rascunho') === 'publicado';
-        $statusLabel = $isPublic ? t('Publicado') : t('Rascunho');
+        $statusLabel = $isPublic ? $this->t('Publicado') : $this->t('Rascunho');
 
         $element['summary'] = [
           '#type' => 'container',
@@ -117,7 +132,7 @@ final class EventLocationModalWidget extends WidgetBase {
           'address' => [
             '#type' => 'html_tag',
             '#tag' => 'p',
-            '#value' => $enderecoStr !== '' ? $enderecoStr : (string) t('Endereço não informado.'),
+            '#value' => $enderecoStr !== '' ? $enderecoStr : (string) $this->t('Endereço não informado.'),
             '#attributes' => ['data-portal-ui' => 'event-location-address'],
           ],
           'badge' => [
@@ -138,7 +153,7 @@ final class EventLocationModalWidget extends WidgetBase {
           '#type' => 'actions',
           'change' => [
             '#type' => 'link',
-            '#title' => t('Trocar local'),
+            '#title' => $this->t('Trocar local'),
             '#url' => $modalUrl,
             '#attributes' => [
               'class' => ['use-ajax'],
@@ -149,11 +164,11 @@ final class EventLocationModalWidget extends WidgetBase {
           ],
           'remove' => [
             '#type' => 'button',
-            '#value' => t('Remover local'),
+            '#value' => $this->t('Remover local'),
             '#name' => 'remove_location_' . preg_replace('/[^a-zA-Z0-9_]/', '_', $wrapperId),
             '#limit_validation_errors' => [],
             '#ajax' => [
-              'callback' => [self::class, 'ajaxClearWidget'],
+              'callback' => [$this, 'ajaxClearWidget'],
               'wrapper' => $wrapperId,
             ],
             '#attributes' => [
@@ -164,7 +179,7 @@ final class EventLocationModalWidget extends WidgetBase {
       }
       else {
         $element['summary'] = [
-          '#markup' => '<div class="messages messages--warning">' . t('O local selecionado anteriormente não é acessível pela sua conta.') . '</div>',
+          '#markup' => '<div class="messages messages--warning">' . $this->t('O local selecionado anteriormente não é acessível pela sua conta.') . '</div>',
         ];
         $modalUrl = Url::fromRoute(EventRouteContext::route('aculta_events.location_modal', 'aculta_events.organizer_location_modal'), [
           'field_name' => $fieldName,
@@ -172,7 +187,7 @@ final class EventLocationModalWidget extends WidgetBase {
         ]);
         $element['select'] = [
           '#type' => 'link',
-          '#title' => t('Selecionar outro local'),
+          '#title' => $this->t('Selecionar outro local'),
           '#url' => $modalUrl,
           '#attributes' => [
             'class' => ['use-ajax'],
@@ -195,11 +210,11 @@ final class EventLocationModalWidget extends WidgetBase {
         'message' => [
           '#type' => 'html_tag',
           '#tag' => 'p',
-          '#value' => (string) t('Nenhum local selecionado para este evento.'),
+          '#value' => (string) $this->t('Nenhum local selecionado para este evento.'),
         ],
         'select_button' => [
           '#type' => 'link',
-          '#title' => t('Selecionar ou cadastrar local'),
+          '#title' => $this->t('Selecionar ou cadastrar local'),
           '#url' => $modalUrl,
           '#attributes' => [
             'class' => ['use-ajax'],
@@ -212,7 +227,7 @@ final class EventLocationModalWidget extends WidgetBase {
           '#type' => 'html_tag',
           '#tag' => 'p',
           '#attributes' => ['data-portal-ui' => 'event-location-fallback'],
-          '#value' => '<a href="' . Url::fromRoute(EventRouteContext::route('aculta_events.location_add', 'aculta_events.organizer_location_add'))->toString() . '" target="_blank" rel="noopener">' . t('Adicionar local em uma nova aba (sem JS)') . '</a>',
+          '#value' => '<a href="' . Url::fromRoute(EventRouteContext::route('aculta_events.location_add', 'aculta_events.organizer_location_add'))->toString() . '" target="_blank" rel="noopener">' . $this->t('Adicionar local em uma nova aba (sem JS)') . '</a>',
         ],
       ];
     }
@@ -223,7 +238,7 @@ final class EventLocationModalWidget extends WidgetBase {
   /**
    * AJAX callback para limpar a seleção do local no widget pai.
    */
-  public static function ajaxClearWidget(array &$form, FormStateInterface $form_state): array {
+  public function ajaxClearWidget(array &$form, FormStateInterface $form_state): array {
     $triggering = $form_state->getTriggeringElement();
     $parents = array_slice($triggering['#array_parents'], 0, -2);
     $widget = NestedArray::getValue($form, $parents);
@@ -234,7 +249,7 @@ final class EventLocationModalWidget extends WidgetBase {
     $widget['target_id']['#value'] = '';
     unset($widget['summary'], $widget['actions']);
 
-    $widget += self::buildCardOrEmpty(0, (string) $fieldName, (string) $wrapperId);
+    $widget += $this->buildCardOrEmpty(0, (string) $fieldName, (string) $wrapperId);
     return $widget;
   }
 

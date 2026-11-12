@@ -4,6 +4,7 @@ Estado: Dev · versão 0.2.0-dev.10 (`aculta_events.info.yml`) · status: `docs/
 
 ## Próximo passo
 
+- Refatorar os usos restantes de `\\Drupal::` no módulo; widgets de seleção de Local/Organização agora injetam serviços e usam callbacks de instância.
 Completar P2 com contrato do item pago Commerce e gestão autorizada das ofertas; depois implementar serviço transacional de capacidade/RSVP com fixtures fictícias. Não coletar dados reais antes da revisão LGPD nem vender antes do parecer fiscal/jurídico. A View pública agora envolve rows `card-cultural` no style UI Patterns `layout-grid`; Runtime manteve 2 resultados e acesso anônimo, browser 320/1440 claro/escuro, foco e zero overflow PASS. Cache-hit/zoom e homologação de Local/Culturas/A/B permanecem pendentes.
 
 PHPStan do módulo completo: zero erros brutos e nenhuma entrada no baseline. Análise PHPStan global estrita e Unit global PASS.

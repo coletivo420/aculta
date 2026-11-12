@@ -2,6 +2,7 @@
 version: 0.2.0-dev.10
 state: Dev
 progress_note: >-
+  Semgrep 2026-11-12: widgets modal de Local e Organização injetam EntityTypeManager; Local também injeta current_user. Unit 32/68, PHPStan focal, PHPCS Drupal/DrupalPractice, gate Portal 1.234 e Semgrep focal 0 PASS.
   2026-11-10 ADR-054/055: o cartão da lista pública passou a usar o SDC `card-cultural` pelo template override do tema; Kernel focal 7/7 (130 assertions) valida dados ACL-filtrados e estado cancelado. Render no tema ativo/browser aguardam cutover autorizado.
   A View `eventos_publicos` renderiza `card-cultural` na raiz do purpose Eventos usando IDs e props preparados por `EventCatalogue`, preservando ACL, ocorrências futuras, recorrência, filtros e ordenação. Kernel Events: 155 testes/3.616 assertions PASS (33 depreciações Core/contrib); Firefox ESR: listagem e detalhe em claro/escuro, 320/1440 px, foco visível e zero overflow. Sem baseline visual anterior da listagem. Config da View exportada e sincronizada; as diferenças restantes são preexistentes.
   Runtime `b70e56dbec`: provider `CulturasExperienceProvider` compila no módulo owner Eventos junto ao Studio; sem alterações de grants, dados ou workflow. Browser autenticado/ACL visual permanece pendente.
