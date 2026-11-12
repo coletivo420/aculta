@@ -3,7 +3,7 @@ version: 0.1.0-dev.182
 state: Dev
 next_phase: >-
   Concluir grants/Domain dos providers owners, avaliar catálogo representativo e homologação operacional; manter Dev e não fazer rebuild no Runtime nesta integração.
-  Incluir o incremento LOC/IDX-LOC conforme [plano](docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), sem substituir os gates anteriores.
+  Incluir o incremento LOC/IDX-LOC conforme [plano](docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), sem substituir os gates anteriores. Continuar a correção da dívida Kernel geral por componente.
 progress_note: >-
   Dev.182: submódulo aculta_index_file integrado diretamente a aculta_index como provider nativo FileContentIndexProvider (serviço aculta_index.file_provider). Unit 53/286 e Kernel ContentIndexStatisticsBridgeKernelTest 3/55 PASS.
   Dev.181: boot da closure owner LMS/Resources/Document Viewer/Portal/Index e
@@ -17,6 +17,7 @@ progress_note: >-
   PASS; Runtime sem alteração.
   IDX-BLK integrado: plugin de bloco RelatedContentBlock (aculta_index_related_content) consumindo ContentIndexRelationQuery com resolução por contexto/rota, falha fechada para array vazio e biblioteca mobile-first aculta_index/related_content; RelatedContentBlockKernelTest PASS (7 testes / 146 asserções no banco aculta_simpletest).
   IDX-LOC integrado: providers Events/Local (v2), URLs canônicas via purpose 'eventos', allowlist mínima, relação event_location derivada das datas com revalidação de acesso, e junção de ContentIndexRelationQuery ajustada para alvos de relação sem idioma específico (und). Suíte EventContentIndexProviderKernelTest PASS (6 testes / 141 asserções). Sem rebuild ou alteração de estado no Runtime.
+  CI Kernel: `RelatedContentBlockKernelTest` registra a dependência de Events no harness parcial; 7 testes/151 assertions PASS com SQLite em memória.
   Revalidação em 2026-10-29 no MariaDB aculta_simpletest: Unit 51/265, Kernel 120/2.020 (270 depreciações upstream) e Unit aculta_index_file 2/21 passaram. PHP lint dos 85 arquivos PHP e PHPCS Drupal/DrupalPractice passaram após corrigir docblocks do painel. O Kernel cobre Entity Access/Domain via harnesses owners de Wiki, Fórum, Revista, Gallery e LMS; ainda faltam grants operacionais e carga real representativa. Provider file:file permanece opt-in, fora do Config Sync; nenhum rebuild ou escrita no Runtime. A homologação funcional/visual e a revisão global ainda não permitem RC.
   Runtime somente leitura em 2026-10-29, código ativo dev.177: fila pronta, sem jobs; auditoria id 1 continua running, com 1 projeção stale e valid=false. Não avancei o lote nem iniciei rebuild; grants e catálogo representativo continuam pendentes.
   Revalidação 2026-10-31: Unit e Kernel completos do aculta_index passaram com 178 testes e 2.436 assertions no MariaDB aculta_simpletest; 274 depreciações Core/contrib. Bateria focal dos owners Activity, Magazine, Wiki, Forum e LMS: 42 testes e 617 assertions PASS; 261 depreciações Core/contrib. Corrigidos fixtures de referências Symfony e schema de nickname, sem mudança funcional em produção. Runtime sem escrita.

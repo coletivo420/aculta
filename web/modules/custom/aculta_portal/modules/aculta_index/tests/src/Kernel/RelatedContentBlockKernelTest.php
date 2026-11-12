@@ -9,6 +9,7 @@ use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_index\Plugin\Block\RelatedContentBlock;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_user\Organization\OrganizationAccessService;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Render\Element;
@@ -60,6 +61,11 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
+    // This partial Kernel does not install aculta_user's full dependency graph.
+    $container->setDefinition(
+      'aculta_user.organization_access_service',
+      (new Definition(OrganizationAccessService::class))->setSynthetic(TRUE)->setPublic(TRUE),
+    );
     $container->setDefinition('aculta_portal.domain_site', (new Definition(DomainSiteManager::class, [
       new Reference('entity_type.manager'),
       new Reference('domain.negotiator'),
@@ -73,6 +79,10 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->container->set(
+      'aculta_user.organization_access_service',
+      (new \ReflectionClass(OrganizationAccessService::class))->newInstanceWithoutConstructor(),
+    );
     $this->installEntitySchema('user');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('domain');

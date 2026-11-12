@@ -4,7 +4,7 @@ Estado: Dev · versão 0.1.0-dev.182 (`aculta_index.info.yml`) · status: `docs/
 
 ## Próximo passo
 
-Concluir grants/Domain dos providers owners, avaliar catálogo representativo e homologação operacional; manter Dev e não fazer rebuild no Runtime nesta integração. Incluir o incremento LOC/IDX-LOC conforme [plano](docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), sem substituir os gates anteriores.
+Concluir grants/Domain dos providers owners, avaliar catálogo representativo e homologação operacional; manter Dev e não fazer rebuild no Runtime nesta integração. Incluir o incremento LOC/IDX-LOC conforme [plano](docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), sem substituir os gates anteriores. A suíte Kernel global ainda requer correções independentes de Commerce, LMS e Groups.
 
 ## Leitura
 
