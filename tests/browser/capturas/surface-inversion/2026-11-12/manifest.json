@@ -42,7 +42,7 @@
   "problemas_e_correcoes": [
     {"id": "P1", "tipo": "gate", "descricao": "validate-aculta420-white-canvas-green-surfaces abortava com RuntimeException ao resolver --color-focus-ring (alias var).", "correcao": "Resolução de aliases var() para o cálculo de contraste; limites inalterados.", "status": "CORRIGIDO"},
     {"id": "P2", "tipo": "tooling", "descricao": "runtime-sync.sh status: SyntaxError em f-string Python embutida.", "status": "ABERTO"},
-    {"id": "P3", "tipo": "runtime", "descricao": "3 itens de drift de configuração no Runtime (hash 8a5ecaa1cd55f064).", "status": "ABERTO - requer revisão humana; config:import proibido nesta rotina"},
+    {"id": "P3", "tipo": "runtime", "descricao": "Drift de configuração no Runtime: 3 itens às 14:27 UTC (hash 8a5ecaa1cd55f064). Reconferido depois com config:status e doctor: 0 itens (hash 4f53cda18c2baa0c). A causa da mudança entre as duas leituras não foi verificada.", "status": "RESOLVIDO NA LEITURA - reconferir antes de declarar fechado; nenhuma config foi importada nesta sessão"},
     {"id": "P4", "tipo": "runtime", "descricao": "Checkout compartilhado servido pelo Apache (gate F4 em FAIL).", "status": "ABERTO"}
   ],
   "aceite_visual_humano": "NAO_CONCEDIDO"
