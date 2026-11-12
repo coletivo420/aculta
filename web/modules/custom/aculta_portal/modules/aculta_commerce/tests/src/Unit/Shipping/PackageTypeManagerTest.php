@@ -42,4 +42,14 @@ final class PackageTypeManagerTest extends UnitTestCase {
     $this->assertSame('custom_box', $manager->getPackageType('unknown')->getId());
   }
 
+  /**
+   * Entities can resolve the canonical built-in definitions without a service.
+   */
+  public function testBuiltInPackageTypeCanBeResolvedStatically(): void {
+    $this->assertSame(
+      (new PackageTypeManager())->getPackageType('letter')->getLength()->getNumber(),
+      PackageTypeManager::getBuiltInPackageType('letter')->getLength()->getNumber(),
+    );
+  }
+
 }

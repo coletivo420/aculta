@@ -2,7 +2,12 @@
 version: 0.1.0-dev.16
 state: Dev
 progress_note: >-
-  Firefox ESR comprovou sem CAPTCHA o produto, carrinho, identificação por e-mail,
+  Segurança estática: zero chamadas globais \\Drupal:: em classes/traits após
+  migração de Shipment para resolução pura de pacotes e hook OOP injetado; 6
+  testes focais / 18 assertions, PHPStan, PHPCS e gate Drupal 12 PASS. Semgrep
+  revalidado: 40 achados restantes, todos já triados como falsos positivos ou
+  aceitos; nenhum uso estático real pendente. Firefox ESR comprovou sem CAPTCHA
+  o produto, carrinho, identificação por e-mail,
   cadastro AJAX de visitante e o formulário de endereço/frete. Google fica antes
   do e-mail; conta existente mostra senha e e-mail novo mostra cadastro sem senha.
   Não foi enviado endereço, calculada cotação, enviado pedido nem comprovada a conta.

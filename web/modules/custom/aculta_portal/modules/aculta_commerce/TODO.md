@@ -1,6 +1,6 @@
 # TODO — aculta_commerce
 
-Estado: Dev · versão 0.1.0-dev.16 (`aculta_commerce.info.yml`) · status: `docs/operations/status/aculta_commerce.yml`.
+Estado: Dev · versão 0.1.0-dev.16 (`aculta_commerce.info.yml`) · segurança estática: zero chamadas globais `\\Drupal::` em classes/traits; validação focal de Shipment aprovada · status: `docs/operations/status/aculta_commerce.yml`.
 
 ## Próximo passo
 

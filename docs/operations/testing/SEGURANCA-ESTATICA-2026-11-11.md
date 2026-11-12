@@ -8,12 +8,12 @@ Relatórios brutos (JSON do Semgrep, saída do `composer audit`, gitleaks) ficam
 
 - Comando: `semgrep --metrics=off --config .agents/skills/aculta-seguranca-estatica/rules/aculta-php.yml` com exclusões de `vendor`, `web/core`, `web/modules/contrib`, `web/libraries` e `node_modules`, sobre `web/modules/custom`, `web/themes/custom` e `scripts`.
 - Primeira rodada (2026-11-11): **474 achados** em 118 arquivos; esta contagem é histórica.
-- Revalidação (2026-11-12), após corrigir duas saídas XSS e limitar a regra de serviço estático a chamadas dentro de classes: **42 achados** (2 chamadas estáticas em classes, 29 sinks `#markup`, 10 chamadas dinâmicas e 1 `unserialize`).
-- A diferença da regra estática veio de escopo incorreto: scripts CLI e hooks procedurais não permitem injeção por construtor; a fixture agora exige classe e rejeita o contexto procedural. Dos 77 matches da regra anterior, 45 eram chamadas `aculta_H5PDrupal::` do fork H5P, não a fachada global; a fixture negativa foi acrescentada. Os 32 matches reais foram reduzidos a 2 por 30 refatorações em fases. As duas chamadas restantes estão em `aculta_commerce/src/Entity/Shipment.php`. A análise da regra foi ampliada a traits, com fixture positiva; a rota e a renderização do trait HTMX de Eventos também foram refatoradas.
+- Revalidação final (2026-11-12): **40 achados** (29 sinks `#markup`, 10 chamadas dinâmicas e 1 `unserialize`); nenhuma chamada estática global restante em classe ou trait.
+- A diferença da regra estática veio de escopo incorreto: scripts CLI e hooks procedurais não permitem injeção por construtor; a fixture agora exige classe e rejeita o contexto procedural. Dos 77 matches da regra anterior, 45 eram chamadas `aculta_H5PDrupal::` do fork H5P, não a fachada global; a fixture negativa foi acrescentada. Os 32 matches reais foram refatorados em fases, incluindo Shipment: tipos de pacote agora são resolvidos por definições puras e a limpeza de perfis anônimos usa hook OOP com serviço injetado. A análise da regra cobre classes e traits.
 
 | Regra | Achados | Classe |
 |---|---:|---|
-| `aculta-php-static-drupal-service` (`\Drupal::` dentro de classes) | 61 | dívida de arquitetura pendente de refatoração (9 removidos no Fórum e 1 em cada um de Fluent Emoji, Mail Confirmer, LMS, Activity, Studio, Domain Config e Melhor Envio) |
+| `aculta-php-static-drupal-service` (`\Drupal::` dentro de classes e traits) | 0 | sem chamadas estáticas globais restantes |
 | `aculta-php-markup-raw-output` | 29 | 27 FALSO POSITIVO, 1 REAL corrigido, 1 ACEITO |
 | `aculta-php-eval-or-dynamic-exec` | 10 | 9 ACEITO COM JUSTIFICATIVA, 1 FALSO POSITIVO reavaliado |
 | `aculta-php-unserialize-untrusted` | 1 | FALSO POSITIVO (com mitigação) |
@@ -138,8 +138,8 @@ Atualização feita com `composer update drupal/entity_print symfony/http-client
 
 | Item | Resultado |
 |---|---|
-| Semgrep local (474 achados) | triagem: `#markup` 31/31 (26 FP, 1 REAL corrigido, 4 PENDENTE); dinâmicos 10/10 (9 ACEITO, 1 PENDENTE); unserialize 1/1 FP |
-| Fixtures das regras | PASS: 17/17 |
+| Semgrep local (474 achados na rodada histórica) | revalidação final: 40 achados; todos triados (27 FP e 1 ACEITO em `#markup`, 9 ACEITO e 1 FP em dinâmicos, 1 FP em `unserialize`); zero uso estático global pendente |
+| Fixtures das regras | PASS: 20 expectativas, 0 falhas |
 | `composer audit --locked` | antes: 3 advisories; depois: 0 (após atualização autorizada) |
 | `npm audit` | 0 vulnerabilidades |
 | gitleaks (arquivos da entrega) | executado: 4 achados classificados, todos falsos positivos (XapiAttemptTokenTest confirmado pelo responsável); histórico não executado |
@@ -147,7 +147,6 @@ Atualização feita com `composer update drupal/entity_print symfony/http-client
 
 ## 6. Próximas ações
 
-1. Refatorar os 2 usos restantes de `\Drupal::` em `aculta_commerce/src/Entity/Shipment.php`, em fases por módulo, com testes focais e gates do Portal.
-2. Reavaliar os valores de `XapiAttemptTokenTest.php:17` (fixture ou segredo real).
-3. Aplicar `entity_print` 2.20.0 e `symfony/http-client` 7.4.23 no Runtime por fluxo controlado, e registrar o resultado.
-4. Executar `drupal/security_review` com Drush em modo somente leitura quando houver acesso ao Runtime.
+1. Reavaliar os valores de `XapiAttemptTokenTest.php:17` (fixture ou segredo real), conforme confirmação pendente do responsável.
+2. Aplicar `entity_print` 2.20.0 e `symfony/http-client` 7.4.23 no Runtime por fluxo controlado, e registrar o resultado.
+3. Executar `drupal/security_review` com Drush em modo somente leitura quando houver acesso ao Runtime.
