@@ -100,3 +100,9 @@ nível semântico do título. Versão de referência do `ui_styles` continua a
 
 - Captura autenticada no servidor de teste / Homelab real após sincronização do
   deployment, incluindo a escolha global da Revista.
+
+## 7. Tom verde estrutural - 2026-11-12
+
+surface_style passa a oferecer aculta-surface--tone-green-soft para blocos
+de estrutura. O raised explícito continua neutro para cartões de leitura.
+Previews e persistência em UI Styles CKEditor 5 ainda aguardam Runtime.

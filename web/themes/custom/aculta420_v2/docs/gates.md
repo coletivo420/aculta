@@ -255,3 +255,11 @@ Este registro não autoriza `drush cim`, `updatedb` ou alterações destrutivas;
 - `validate-ui-patterns-views-cutover.php`: PASS (85 checks) incluindo Wiki page e blocos. `validate-aculta420-sdc-schemas.php`: PASS (84 componentes, 1801 checks); Drupal SDC render: PASS (42). Firefox Wiki: PASS 215/215 em home/listagem/artigo, cinco larguras e dois modos. Runtime/Sync YAML parseado coincide. Zoom 200%, cache-hit, perfis e revisão assistiva DEFERRED. Stylelint focal PASS em `layout-grid.css` e `wiki.css`.
 
 - Wiki `wiki_categories:block_1`: Views cutover gate PASS (95 checks); Firefox PASS (247/247) com 15 termos, 320/390/767/768/1440 px, claro/escuro e sem overflow. Stylelint em `wiki.css` PASS; Runtime/Sync YAML parseado coincide; PHPCS/PHPStan do inventário/validador PASS. CSS-scope geral ainda relata duas asserções preprocess account/wiki em arquivos fora do diff. Zoom, cache-hit e perfis continuam DEFERRED.
+
+## Homologação canvas branco / superfície verde - 2026-11-12
+
+Gate novo: php scripts/validate-aculta420-white-canvas-green-surfaces.php
+(estático, sem Drupal); executar também foundations, schema/render SDC,
+UI Styles, Stylelint, UI Skins e testes reais de navegador previstos para
+o diff. O gate não substitui o aceite visual do Runtime.
+Plano: docs/architecture/ACULTA420-V2-HOMOLOGACAO-SUPERFICIES-2026-11-12.md.

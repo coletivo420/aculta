@@ -3,7 +3,7 @@
    para que um contêiner claro continue claro com o sistema em modo escuro. */
 :root,
 [data-theme="light"] {
-  --color-canvas: #f2f7f0;
+  --color-canvas: #fff;
   /* Referência do painel do autor no cartão de post (claro). */
   --color-reference-author-panel: #f2f7f0;
   /* Transparências semânticas (antes em color-mix inline nos componentes). */
@@ -25,6 +25,9 @@
   --color-surface: #fff;
   --color-surface-raised: #fff;
   --color-surface-institution: #fbf4e8;
+  /* Green wrappers are separate from raised cards/forms. */
+  --color-surface-green-soft: #e7eedc;
+  --color-surface-green-border: #6b7d70;
   --color-text-primary: #0c3c29;
   --color-text-secondary: #4d6357;
   --color-text-muted: #5a6b60;
@@ -198,12 +201,13 @@
   /* Tokens semânticos --aculta-* exigidos pelo contrato de fundamentos de
      design. Os valores são literais e espelham os --color-* equivalentes;
      ainda não há consumidor, portanto não alteram a aparência do site. */
-  --aculta-surface-page: #f2f7f0; /* --color-canvas */
+  --aculta-surface-page: #fff; /* --color-canvas */
+  --aculta-surface-green-soft: var(--color-surface-green-soft);
   --aculta-surface-raised: var(--color-surface-raised); /* alias semântico */
   --aculta-surface-muted: #f3f4f6; /* --color-surface-subtle */
   --aculta-surface-header: #fff; /* --color-surface */
   --aculta-surface-interactive: #f2f7f0; /* --button-secondary-bg-hover (equivalente mais próximo) */
-  --aculta-surface-page-rgb: 242, 247, 240; /* canais de --color-canvas */
+  --aculta-surface-page-rgb: 255, 255, 255; /* canais de --color-canvas */
   --aculta-text-primary: #0c3c29; /* --color-text-primary */
   --aculta-text-secondary: #4d6357; /* --color-text-secondary */
   --aculta-text-muted: #5a6b60; /* --color-text-muted */
@@ -268,6 +272,8 @@
   --color-surface: #211e1b;
   --color-surface-raised: #2b2723;
   --color-surface-institution: #2b2723;
+  --color-surface-green-soft: #2a3a2f;
+  --color-surface-green-border: #8fa397;
   --color-text-primary: #f4efe8;
   --color-text-secondary: #d8d0c8;
   --color-text-muted: #b7aea5;
@@ -331,6 +337,7 @@
   /* Tokens semânticos --aculta-* no modo escuro. Valores literais; não há
      consumidor ainda, portanto não alteram a aparência do site. */
   --aculta-surface-page: #171513; /* --color-canvas */
+  --aculta-surface-green-soft: var(--color-surface-green-soft);
   --aculta-surface-raised: var(--color-surface-raised); /* alias semântico */
   --aculta-surface-muted: #2b2723; /* --color-surface-raised */
   --aculta-surface-header: #211e1b; /* --color-surface */

@@ -2,7 +2,7 @@ name: Superfícies aninhadas
 description: Demonstração de uma superfície secundária aninhada dentro de uma superfície principal.
 component: aculta420_v2:surface
 props:
-  tone: raised
+  tone: green-soft
   radius: lg
   spacing: normal
   elevation: subtle
@@ -10,4 +10,4 @@ props:
 slots:
   content:
     type: inline_template
-    template: '<div><h4 style="margin-block-start:0;">Superfície Contêiner Externa</h4><p>Texto do contêiner externo.</p>{{ include("aculta420_v2:surface", { tone: "subtle", radius: "md", spacing: "compact", elevation: "none", border: "subtle" }, with_context = false) }}</div>'
+    template: '<div><h4 style="margin-block-start:0;">Superfície Contêiner Externa</h4><p>Texto do contêiner externo.</p>{% embed "aculta420_v2:surface" with { tone: "raised", radius: "md", spacing: "compact", elevation: "none", border: "subtle" } only %}{% block content %}<p>Cartão branco interno.</p>{% endblock %}{% endembed %}</div>'

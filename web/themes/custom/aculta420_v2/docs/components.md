@@ -523,3 +523,11 @@ Componentes neutros de apresentação consumidos por `aculta_statistics`; não c
 - `statistics-empty-state`: props `message`, `hint`. Story: `statistics-empty-state.default.story.yml`.
 
 Estado: implementados para a FST-08; schema validado. Renderização no Runtime e captura visual: pendente.
+
+## Atualização de superfícies - 2026-11-12
+
+Os três SDCs surface, surface-panel e surface-accent incluem tone green-soft
+como padrão omitido (schema e Twig). Canvas, raised, subtle e institution
+continuam válidos e com o mesmo significado; nenhuma prop anterior foi
+removida. No claro, o uso principal é verde externo com cartão raised branco
+interno. A UI Library precisa de validação real nos dois modos.

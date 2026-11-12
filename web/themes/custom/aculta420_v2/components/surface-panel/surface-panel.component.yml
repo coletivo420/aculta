@@ -15,8 +15,8 @@ props:
       description: '`institutional` aplica o bloco verde institucional superior das referências; `subtle` e `transparent` para variações semânticas.'
     tone:
       type: string
-      enum: [canvas, raised, subtle, institution]
-      default: raised
+      enum: [canvas, raised, subtle, institution, green-soft]
+      default: green-soft
       title: Fundo do corpo
       description: Tom semântico do corpo do painel.
     radius:

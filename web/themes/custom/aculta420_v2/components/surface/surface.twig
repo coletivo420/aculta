@@ -4,9 +4,9 @@
  * Template para o SDC Superfície (aculta420_v2:surface).
  */
 #}
-{% set tone = tone|default('raised') %}
-{% if tone not in ['canvas', 'raised', 'subtle', 'institution'] %}
-  {% set tone = 'raised' %}
+{% set tone = tone|default('green-soft') %}
+{% if tone not in ['canvas', 'raised', 'subtle', 'institution', 'green-soft'] %}
+  {% set tone = 'green-soft' %}
 {% endif %}
 
 {% set radius = radius|default('lg') %}

@@ -3,7 +3,7 @@ description: Painel institucional com cabeçalho verde ocupando toda a largura s
 component: aculta420_v2:surface-panel
 props:
   header_variant: institutional
-  tone: raised
+  tone: green-soft
   radius: lg
   spacing: normal
   elevation: subtle

@@ -38,6 +38,13 @@
   background-color: var(--color-surface-institution);
 }
 
+/* Structural green tone with accessible border in both color modes. */
+.aculta-surface-accent--tone-green-soft {
+  color: var(--color-text-primary);
+  border-color: var(--color-surface-green-border);
+  background-color: var(--color-surface-green-soft);
+}
+
 /* Raio dos cantos */
 .aculta-surface-accent--radius-sm {
   border-radius: var(--radius-sm, .25rem);

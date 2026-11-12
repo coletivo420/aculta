@@ -21,8 +21,8 @@ props:
       description: Posição geométrica do destaque (lateral início/esquerda, lateral fim/direita ou faixa superior).
     tone:
       type: string
-      enum: [canvas, raised, subtle, institution]
-      default: raised
+      enum: [canvas, raised, subtle, institution, green-soft]
+      default: green-soft
       title: Tom da superfície
       description: Fundo da área de conteúdo.
     radius:

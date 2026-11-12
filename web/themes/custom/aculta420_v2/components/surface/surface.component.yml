@@ -9,8 +9,8 @@ props:
   properties:
     tone:
       type: string
-      enum: [canvas, raised, subtle, institution]
-      default: raised
+      enum: [canvas, raised, subtle, institution, green-soft]
+      default: green-soft
       title: Fundo semântico
       description: Tom semântico da superfície compatível com light/dark.
     radius:

@@ -4,7 +4,7 @@ component: aculta420_v2:surface-accent
 props:
   accent: tricolor
   position: top
-  tone: raised
+  tone: green-soft
   radius: lg
   spacing: normal
   elevation: subtle

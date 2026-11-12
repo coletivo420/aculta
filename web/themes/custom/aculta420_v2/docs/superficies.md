@@ -265,3 +265,16 @@ no texto do cartão, não só na cor.
   no contrato do Portal.
 - Captura de contraste por modo: pendente.
 
+
+## 9. Inversão do canvas e das superfícies - 2026-11-12
+
+No modo claro, canvas da página = branco (#fff), enquanto surface,
+surface-panel e surface-accent adotam green-soft (#e7eedc) quando tone
+não é informado. Raised explícito permanece branco (cartões internos,
+formulários e leitura). No modo escuro, canvas #171513 e green-soft #2a3a2f.
+Tokens de borda das superfícies: #6b7d70 claro e #8fa397 escuro.
+O cabeçalho institutional do surface-panel e as faixas tricolores são preservados.
+UI Skins, cores por domínio, geometrias e slots não foram alterados.
+Não mudar globalmente --color-surface-raised. Este contrato exige validação
+visual no Runtime antes do aceite final.
+Ver docs/architecture/ACULTA420-V2-HOMOLOGACAO-SUPERFICIES-2026-11-12.md.

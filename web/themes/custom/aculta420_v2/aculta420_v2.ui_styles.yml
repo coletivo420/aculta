@@ -77,6 +77,7 @@ surface_style:
     aculta-surface aculta-surface--tone-canvas: "Fundo base (canvas)"
     aculta-surface aculta-surface--tone-raised: "Superfície elevada (raised)"
     aculta-surface aculta-surface--tone-institution: "Superfície institucional"
+    aculta-surface aculta-surface--tone-green-soft: "Superfície verde suave (estrutura)"
   previewed_as: hidden
 
 surface_accent_style:

@@ -2,7 +2,7 @@ name: Superfície padrão
 description: Superfície base com elevação sutil e cantos arredondados padrão.
 component: aculta420_v2:surface
 props:
-  tone: raised
+  tone: green-soft
   radius: lg
   spacing: normal
   elevation: subtle
