@@ -296,6 +296,16 @@ body.path-entrar .aculta-login__registration a {
   border-color: var(--color-border);
 }
 
+/* Substitui os utilitários `table`, `table-hover` e `aculta-u-align-middle`
+   que o mapa aplicava ao token `sales-table`. */
+.aculta-sales-panel__table :is(td, th) {
+  vertical-align: middle;
+}
+
+.aculta-sales-panel__table tbody tr:hover {
+  background: var(--color-surface-highlight);
+}
+
 /* Origem V1: portal-support.css */
 :is(.aculta-support, [data-portal-ui="support-form"]) {
   max-width: 72ch;

@@ -180,3 +180,12 @@
     max-inline-size: 100% !important;
   }
 }
+
+/* UI Styles de bloco: alinhado à borda inicial do conteúdo. Antes vivia em
+   utilities.css; a classe é configurada em block.block.*, não pelo mapa de
+   tokens, e por isso permanece com o nome `aculta-u-*`. */
+.aculta-u-block-start {
+  inline-size: 100%;
+  justify-self: start;
+  text-align: start;
+}

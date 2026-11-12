@@ -355,6 +355,12 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
   border-block-end: 1px solid var(--aculta-studio-fidelity-divider);
 }
 
+/* Substitui `table`, `table-hover` e `aculta-u-align-middle` do token
+   `studio-listing`; o alinhamento vertical continua no topo. */
+.studio__listing tbody tr:hover {
+  background: var(--color-surface-highlight);
+}
+
 .studio__listing :is(td, th):first-child {
   padding-inline-start: 0;
 }
@@ -608,6 +614,22 @@ body.path-marley form.node-revista-form .form-actions :is(.form-submit):not([dat
   color: var(--aculta-studio-fidelity-button-primary-text);
   border-color: var(--aculta-studio-fidelity-button-primary-border);
   background: var(--aculta-studio-fidelity-button-primary-background);
+}
+
+/* Ações do Studio: substituem os utilitários aculta-u-flex/wrap/gap-2 e o
+   reset de lista que o mapa de tokens aplicava antes de 2026-11-12. */
+.studio__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.studio__actions--grid {
+  display: grid;
+  gap: var(--spacing-sm);
 }
 
 .studio__actions > li {

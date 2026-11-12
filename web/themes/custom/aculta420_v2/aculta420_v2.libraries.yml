@@ -92,7 +92,6 @@ global-styling:
       src/styles/base.css: {}
       src/styles/layout.css: {}
       src/styles/messenger-drawer.css: {}
-      src/styles/utilities.css: {}
       src/styles/content.css: {}
       src/styles/search.css: {}
       src/styles/buttons.css: {}

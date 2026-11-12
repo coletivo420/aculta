@@ -293,3 +293,27 @@ alterações indevidas nos 22 displays, não aplicar o novo tom em massa.
 - axe WCAG 2.2 A/AA: 16 verificações, 4 reflow a 320 px PASS e 7 falhas de contraste **pré-existentes** no rodapé e no breadcrumb do Fórum. Nenhum arquivo desses componentes foi alterado desde `e37f3d8`. Achado em `docs/operations/testing/CONTRASTE-FOOTER-2026-11-12.md`.
 - Runtime Sync: `doctor` **BLOCKED** (worktree concorrente + delta RX), com `updatedb`, drift de config e deploy hooks zerados. Sem `sync-code`/`drush cr` nesta janela. O Runtime já serve o CSS novo (`messages--info` presente, `aculta-wiki-collaboration` ausente).
 - Sessão autenticada, modais, gavetas, teclado manual e leitor de tela: **DEFERRED**.
+
+## Execução Recente — utilitários e contraste (2026-11-12)
+
+- Stylelint: PASS (105 folhas; `utilities.css` removida, `layout.css` e
+  `portal-ui-map.css` sem erros).
+- `node scripts/css-audit/verify.mjs` (`npm run css:verify`): PASS, 8
+  verificações; relatório novo com `sourceHash`.
+- `npm run css:test`: PASS (5 testes).
+- `php scripts/validate-aculta420-mapped-classes.php`: PASS (470 classes,
+  0 exceções, 0 nomes Bootstrap).
+- `php scripts/validate-aculta420-ui-styles.php`: PASS (54 verificações).
+- `php scripts/validate-module-theme-boundary.php`: PASS (7928 verificações).
+- `php scripts/validate-portal-ui-docs.php`: PASS (532 tokens no mapa, 451
+  usados, 160 atributos) após corrigir o iterador do tema V1 inexistente.
+- `php scripts/validate-aculta420-css-scope.php`: PASS (50 checks;
+  `global-styling` 108.777 bytes).
+- `validate-aculta420-v2-foundations.php` (85 pares) e
+  `validate-aculta420-theme-settings.php` (16 checks): PASS.
+- `validate-aculta420-sdc-schemas.php`: PASS (86 componentes, 1930 checks).
+- PHPCS `Drupal`: sem erro novo (`PortalUiHooks` e
+  `EventOrganizationAdminController`); `php -l` OK.
+- Navegador: `page-matrix.py` 100/100 (dez hosts × 320–1440 px × claro/escuro,
+  sem overflow); `aculta-contraste/axe-nodes.mjs` 22/22 PASS.
+- Sessão autenticada, modais, gavetas, teclado e leitor de tela: DEFERRED.

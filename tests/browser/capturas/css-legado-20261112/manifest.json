@@ -1,0 +1,75 @@
+{
+  "frente": "css-legado",
+  "data": "2026-11-12",
+  "objetivo": "Eliminar a camada de utilitários aculta-u-* e as equivalências Bootstrap do mapa de tokens, corrigir o contraste do rodapé/trilha e homologar no Runtime.",
+  "ambiente": "servidor de desenvolvimento (*.aculta.toca.net.br)",
+  "metodo": "Firefox ESR visível via X11 (DISPLAY=:0) para a matriz de páginas; Firefox headless do Playwright com axe-core para contraste. Cache do Runtime reconstruído com drush cr antes das medições.",
+  "mudancas": {
+    "arquivos_removidos": [
+      "web/themes/custom/aculta420_v2/src/styles/utilities.css"
+    ],
+    "biblioteca": "utilities.css removida de global-styling",
+    "tokens_sem_utilitario": 39,
+    "equivalencias_bootstrap_removidas": [
+      ".text-muted",
+      ".text-center",
+      ".small",
+      ".lead",
+      ".clearfix",
+      ".list-unstyled",
+      ".list-group",
+      ".table",
+      ".table-hover",
+      ".label-default",
+      ".link-primary",
+      ".section-title",
+      ".nav",
+      ".nav-tabs",
+      ".pager-next",
+      ".pager-prev"
+    ],
+    "mantidas": [
+      ".inline",
+      ".container-inline"
+    ],
+    "ui_styles": ".aculta-u-block-start mantém o nome (configuração em block.block.*), agora em layout.css",
+    "painel": ".aculta-panel e .aculta-panel__body movidos para portal-ui-map.css; .aculta-panel--default removida por duplicar a base",
+    "emissores_diretos": [
+      "EventOrganizationAdminController: <small class=\"text-muted\"> -> token events-organization-admin-table",
+      "portal-payment-notice.html.twig: link-primary -> aculta-payment-notice__link"
+    ]
+  },
+  "resultados": {
+    "matriz_paginas": "100/100 PASS (10 hosts x 5 larguras x claro/escuro; HTTP 200, sem overflow)",
+    "axe_wcag22": "22/22 PASS (11 URLs x claro/escuro, zero violações color-contrast)",
+    "css_verify": "PASS (8 verificações)",
+    "gates": {
+      "stylelint": "PASS",
+      "mapped_classes": "PASS (470 classes, 0 nomes Bootstrap)",
+      "ui_styles": "PASS (54)",
+      "module_theme_boundary": "PASS (7928)",
+      "portal_ui_docs": "PASS (532 tokens, 451 usados, 160 atributos)",
+      "css_scope": "PASS (50)",
+      "foundations": "PASS (85 pares de texto)",
+      "foundation": "PASS (493)",
+      "phpcs": "sem erro novo"
+    },
+    "metricas": {
+      "arquivos_css": 105,
+      "bytes_fonte": 452559,
+      "regras": 2488,
+      "seletores": 3087,
+      "global_styling_bytes": 108941
+    },
+    "runtime": "drush cr concluído; HTML servido não contém classes aculta-u-* além de .aculta-u-block-start nem as equivalências Bootstrap removidas"
+  },
+  "evidencias": {
+    "matriz": "/home/piradopirata/aculta-suite-out/css-audit-visual-20261112-final (fora do Git)",
+    "axe": "/home/piradopirata/aculta-suite-out/contraste-20261112/contraste-axe.json (fora do Git)"
+  },
+  "limitacoes": [
+    "Sessão autenticada, modais, gavetas, teclado e leitor de tela não cobertos.",
+    "Comparação pixel a pixel antes/depois DEFERRED: não há baseline PNG anterior.",
+    "Composição SDC do markup de módulo que usa data-portal-ui permanece incremental."
+  ]
+}

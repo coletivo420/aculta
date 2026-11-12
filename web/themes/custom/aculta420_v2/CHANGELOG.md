@@ -1,3 +1,13 @@
+## Não versionado — utilitários eliminados e contraste corrigido (2026-11-12)
+
+- `src/styles/utilities.css` removido. Nenhum token de `PortalUiHooks::TOKENS` usa mais `aculta-u-*`: os 39 tokens ganharam classes semânticas por domínio (`aculta-donation__*`, `aculta-shop-*`, `aculta-location-*`, `aculta-lms-*`, `aculta-messenger-*`, `aculta-we-sativa__*`, `studio__actions`) definidas em `portal-ui-map.css` e nos CSS dos módulos. `.aculta-panel` foi para `portal-ui-map.css`; `.aculta-u-block-start` (UI Styles de bloco, configurado em `block.block.*`, não vem do mapa) foi para `layout.css`.
+- Equivalências Bootstrap do mapa removidas (`.text-muted`, `.text-center`, `.small`, `.lead`, `.clearfix`, `.list-unstyled`, `.list-group`, `.table`, `.table-hover`, `.label-default`, `.link-primary`, `.section-title`, `.nav`, `.nav-tabs`, `.pager-next`, `.pager-prev`). Permanecem só `.inline` e `.container-inline`, emitidas pelo Drupal Core.
+- `.aculta-panel--default` removida: repetia exatamente `.aculta-panel`. Tokens que a usavam agora aplicam só a base.
+- Novo token `events-organization-admin-table` cobre o `<small>` de slug do painel de organizações; o `class="text-muted"` direto no `#markup` saiu. `portal-payment-notice.html.twig` troca `link-primary` por `aculta-payment-notice__link`.
+- Contraste: link do rodapé 3,45:1 → 5,08:1 e nível atual da trilha 3,58:1 → 12,4:1, com tokens semânticos; categoria do teaser da Revista idem. Frente `tests/browser/transversal/aculta-contraste/` mede 22/22 PASS nos dez hosts.
+- `scripts/validate-portal-ui-docs.php` não aborta mais quando o tema V1 `aculta420` não existe; documentação de tokens sincronizada com o mapa (470 classes).
+- Gates: Stylelint PASS, `css:verify` PASS (8 checagens), mapped classes PASS (470), UI Styles PASS (54), token docs PASS (532 tokens/451 usados/160 atributos), boundary PASS. Matriz `page-matrix.py` 100/100 nos dez hosts, 320–1440 px, claro/escuro; axe 22/22.
+
 ## Não versionado — auditoria, PurgeCSS e limpeza de CSS legado (2026-11-12)
 
 - Infraestrutura de auditoria em `scripts/css-audit/`: inventário reproduzível, coletor de classes dinâmicas (220 classes em 86 componentes, incluindo `aculta-surface--tone-*`, `aculta-surface-panel--elevation-*`, `aculta-icon--*`, `data-table--*` e variantes do `auth-dialog`), extratores por tipo de fonte e relatório de classes sem referência textual.

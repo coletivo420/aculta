@@ -17,10 +17,37 @@
 .aculta-location-header,
 .aculta-location-summary-card { display: grid; gap: .5rem; }
 
-.aculta-location-title { margin: 0; font-family: var(--font-family-heading); font-size: 1.375rem; }
+.aculta-location-summary-card {
+  padding: 1rem;
+  margin-block: .5rem;
+}
+
+.aculta-location-title { margin-block: 0 .25rem; font-family: var(--font-family-heading); font-size: 1.375rem; }
 
 .aculta-location-address,
 .aculta-location-empty,
 .aculta-location-target-id { color: var(--color-text-muted); }
 
+.aculta-location-address { margin-block: 0 .5rem; }
+
+.aculta-location-empty { margin-block: .5rem; }
+
+.aculta-location-fallback { margin-block-start: .25rem; }
+
+/* Espaçamentos que o mapa de tokens aplicava com utilitários aculta-u-*. */
+.aculta-location-actions { margin-block: .5rem 1rem; }
+
+.aculta-location-actions-bar { margin-block-end: 1rem; }
+
+.aculta-location-search {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  margin-block-end: 1rem;
+}
+
 .aculta-location-badge { display: inline-flex; }
+
+/* Slug secundário na tabela de organizações (substitui .text-muted). */
+.aculta-events-organization-admin small { color: var(--color-text-muted); }

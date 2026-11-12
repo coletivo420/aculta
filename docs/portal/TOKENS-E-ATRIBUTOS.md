@@ -216,13 +216,13 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `alerts-filters` | `aculta-alerts-filters` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `alerts-filters-group` | `aculta-alerts-filters__group` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `messenger-preview-inbox-link` | `btn`, `btn-primary`, `aculta-messenger-preview__inbox-link` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
-| `new-conversation-link` | `btn`, `btn-primary`, `aculta-messenger-new-conversation` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
-| `new-conversation-submit` | `btn`, `btn-primary` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
-| `new-conversation-back` | `btn`, `btn-outline-primary` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
+| `new-conversation-link` | `aculta-messenger-new-conversation` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
+| `new-conversation-submit` | (sem classe; estilizado por `[data-portal-ui]`) | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
+| `new-conversation-back` | `aculta-new-conversation-back` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
 | `conversation-action` | `aculta-messenger-options__action` |
 | `conversation-notice-action` | `aculta-messenger-notice__action` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/ConversationRelationshipForm.php` |
-| `new-conversation-links` | `d-flex`, `flex-wrap`, `gap-2`, `mt-2` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
-| `new-conversation-message` | `form-control` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
+| `new-conversation-links` | `aculta-messenger-links` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
+| `new-conversation-message` | (sem classe; estilizado por `[data-portal-ui]`) | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
 | `new-conversation-results` | `list-group` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php` |
 | `new-conversation-result` | `list-group-item`, `list-group-item-action` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php` |
 | `challenge-frame` | sem classe; âncora de container query para reflow de formulários estreitos | `web/modules/custom/aculta_portal/src/Hook/CaptchaPresentationHooks.php` |
@@ -243,15 +243,15 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `secret-popup-hint` | `aculta-secret-popup__hint` | `web/modules/custom/aculta_portal/src/Secrets/SecretsController.php` |
 | `search` | `aculta-search` | `web/modules/custom/aculta_portal/src/Search/SearchPageController.php` |
 | `search-results` | `aculta-search__results` | `web/modules/custom/aculta_portal/src/Search/SearchPageController.php` |
-| `search-utility` | `aculta-search-utility`, `btn`, `btn-link`, `p-0` | `web/modules/custom/aculta_portal/src/Search/SearchUtility.php` |
+| `search-utility` | `aculta-search-utility`, `aculta-utility-trigger` | `web/modules/custom/aculta_portal/src/Search/SearchUtility.php` |
 | `search-popup` | `aculta-search-popup` | `web/modules/custom/aculta_portal/src/Search/Form/SearchPopupForm.php` |
 | `search-preview` | `aculta-search-preview` | `web/modules/custom/aculta_portal/src/Presentation/WikiSearchFormBuilder.php`<br>`web/modules/custom/aculta_portal/src/Search/Form/SearchPopupForm.php` |
 | `search-preview-input` | `aculta-search-preview-input` | `web/modules/custom/aculta_portal/src/Presentation/WikiSearchFormBuilder.php`<br>`web/modules/custom/aculta_portal/src/Search/Form/SearchPopupForm.php` |
-| `search-preview-list` | `aculta-search-preview__list`, `list-unstyled` | `web/modules/custom/aculta_portal/src/Controller/WikiController.php`<br>`web/modules/custom/aculta_portal/src/Search/SearchPreviewController.php` |
-| `search-preview-footer` | `aculta-search-preview__footer`, `d-flex`, `justify-content-center`, `mt-2` | `web/modules/custom/aculta_portal/src/Controller/WikiController.php`<br>`web/modules/custom/aculta_portal/src/Search/SearchPreviewController.php` |
-| `search-preview-full` | `aculta-search-preview__full`, `btn`, `btn-outline-primary`, `btn-sm` | `web/modules/custom/aculta_portal/src/Controller/WikiController.php`<br>`web/modules/custom/aculta_portal/src/Search/SearchPreviewController.php` |
-| `hint` | `small`, `text-body-secondary` | `web/modules/custom/aculta_portal/src/Controller/WikiController.php`<br>`web/modules/custom/aculta_portal/src/Presentation/WikiSearchFormBuilder.php` |
-| `hint-muted` | `text-body-secondary` | `web/modules/custom/aculta_portal/src/Search/SearchPageController.php` |
+| `search-preview-list` | `aculta-search-preview__list` | `web/modules/custom/aculta_portal/src/Controller/WikiController.php`<br>`web/modules/custom/aculta_portal/src/Search/SearchPreviewController.php` |
+| `search-preview-footer` | `aculta-search-preview__footer` | `web/modules/custom/aculta_portal/src/Controller/WikiController.php`<br>`web/modules/custom/aculta_portal/src/Search/SearchPreviewController.php` |
+| `search-preview-full` | `aculta-search-preview__full` | `web/modules/custom/aculta_portal/src/Controller/WikiController.php`<br>`web/modules/custom/aculta_portal/src/Search/SearchPreviewController.php` |
+| `hint` | `aculta-hint` | `web/modules/custom/aculta_portal/src/Controller/WikiController.php`<br>`web/modules/custom/aculta_portal/src/Presentation/WikiSearchFormBuilder.php` |
+| `hint-muted` | `aculta-hint`, `aculta-hint--muted` | `web/modules/custom/aculta_portal/src/Search/SearchPageController.php` |
 | `icon-search` | `bi`, `bi-search` | (montado dinamicamente ou só no tema) |
 | `visually-hidden` | `visually-hidden` | (montado dinamicamente ou só no tema) |
 | `wiki-home` | `aculta-wiki-home` | `web/modules/custom/aculta_portal/src/Controller/WikiController.php` |
@@ -259,9 +259,9 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `wiki-search` | `aculta-wiki-search` | (montado dinamicamente ou só no tema) |
 | `wiki-search-results` | `aculta-wiki-search-results` | `web/modules/custom/aculta_portal/src/Controller/WikiController.php` |
 | `wiki-recent-change` | `aculta-wiki-recent-change` | `web/modules/custom/aculta_portal/src/Controller/WikiController.php` |
-| `we-sativa-workspace` | `d-grid gap-4 we-sativa__workspace` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiContributorWorkspace.php` |
-| `we-sativa-create` | `btn btn-primary` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiContributorWorkspace.php` |
-| `wiki-workspace-return` | `btn btn-outline-primary mb-3` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiEntryImageHooks.php` |
+| `we-sativa-workspace` | `aculta-we-sativa__workspace` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiContributorWorkspace.php` |
+| `we-sativa-create` | (sem classe; estilizado por `[data-portal-ui]`) | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiContributorWorkspace.php` |
+| `wiki-workspace-return` | `aculta-wiki-workspace__return` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiEntryImageHooks.php` |
 | `courses-home` | `courses-home` | `web/modules/custom/aculta_portal/src/Controller/CoursesController.php` |
 | `courses-home-intro` | `courses-home__intro` | `web/modules/custom/aculta_portal/src/Controller/CoursesController.php` |
 | `courses-home-collaboration` | `courses-home__collaboration` | `web/modules/custom/aculta_portal/src/Controller/CoursesController.php` |
@@ -271,19 +271,19 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `account-course-meta` | `portal-account-course__meta` | `web/modules/custom/aculta_portal/src/Controller/AccountCoursesController.php` |
 | `account-avatar` | `portal-account__avatar` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/AvatarRerollController.php`<br>`web/modules/custom/aculta_portal/modules/aculta_user/src/Form/UserPictureForm.php` |
 | `account-photo-preview` | `portal-account-photo__preview` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/UserPictureForm.php`<br>`web/modules/custom/aculta_portal/src/Controller/PortalController.php` |
-| `account-bio-card` | `card`, `card-body`, `portal-account-bio` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Bio/AccountBioCard.php` |
+| `account-bio-card` | `aculta-panel`, `aculta-panel__body`, `portal-account-bio` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Bio/AccountBioCard.php` |
 | `account-bio-dialog-body` | `aculta-utility-dialog__body` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Bio/AccountBioCard.php` |
 | `account-bio-dialog-close` | `aculta-utility-dialog__close` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Bio/AccountBioCard.php` |
 | `account-bio-dialog-header` | `aculta-utility-dialog__header` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Bio/AccountBioCard.php` |
 | `account-bio-dialog-title` | `aculta-utility-dialog__title` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Bio/AccountBioCard.php` |
 | `account-bio-text` | `portal-account-bio__text` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Bio/AccountBioCard.php` |
-| `account-bio-edit` | `btn`, `btn-link`, `portal-account-bio__edit`, `bi`, `bi-pencil` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Bio/AccountBioCard.php` |
+| `account-bio-edit` | `portal-account-bio__edit` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Bio/AccountBioCard.php` |
 | `account-bio-actions` | `portal-account-bio__actions` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AccountBioForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_user/src/Form/SocialLinkForm.php` |
 | `account-photo-actions` | `portal-account-photo__actions` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/UserPictureForm.php` | Linha de ações do popup de foto (sortear, remover e salvar). Estilo em `portal-account.css`. |
 | `account-overview-actions` | `portal-account-overview__actions` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/AccountDashboardHooks.php` |
-| `account-view-profile` | `btn`, `btn-outline-secondary`, `portal-account-overview__profile` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/AccountDashboardHooks.php` |
+| `account-view-profile` | `portal-account-overview__profile` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/AccountDashboardHooks.php` |
 | `post-meta` | `portal-post__meta` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/PostPresentation.php` |
-| `post-meta-author` | `portal-post__meta-item`, `bi`, `bi-person-circle` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/PostPresentation.php` |
+| `post-meta-author` | `portal-post__meta-item` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/PostPresentation.php` |
 | `post-meta-date` | `portal-post__meta-item`, `bi`, `bi-calendar3` | (montado dinamicamente ou só no tema) |
 | `post-meta-time` | `portal-post__meta-item`, `bi`, `bi-clock` | (montado dinamicamente ou só no tema) |
 | `post-share` | `portal-post__share` | `web/modules/custom/aculta_portal/modules/aculta_magazine/src/Presentation/PostPresentation.php` |
@@ -312,7 +312,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `public-profile-link-instagram` | `portal-profile__link`, `bi`, `bi-instagram` | (montado dinamicamente ou só no tema) |
 | `public-profile-link-facebook` | `portal-profile__link`, `bi`, `bi-facebook` | (montado dinamicamente ou só no tema) |
 | `public-profile-link-reddit` | `portal-profile__link`, `bi`, `bi-reddit` | (montado dinamicamente ou só no tema) |
-| `public-profile-link-email` | `portal-profile__link`, `bi`, `bi-envelope` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
+| `public-profile-link-email` | `portal-profile__link` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
 | `account-social-card` | `portal-account-social` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Social/SocialLinksCard.php` |
 | `account-social-list` | `portal-account-social__list` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Social/SocialLinksCard.php` |
 | `account-social-item` | `portal-account-social__item` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Social/SocialLinksCard.php` |
@@ -323,7 +323,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `account-social-name` | `portal-account-social__name` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Social/SocialLinksCard.php` |
 | `account-social-status` | `portal-account-social__status` | (montado dinamicamente ou só no tema) |
 | `account-social-value` | `portal-account-social__value` | (montado dinamicamente ou só no tema) |
-| `account-social-edit` | `btn`, `btn-link`, `btn-sm`, `portal-account-social__edit`, `bi`, `bi-pencil` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Social/SocialLinksCard.php` |
+| `account-social-edit` | `portal-account-social__edit` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Social/SocialLinksCard.php` |
 | `account-identity` | `portal-account__identity` | `web/modules/custom/aculta_portal/src/Controller/PortalController.php` |
 | `account-commerce-orders` | `portal-account__commerce`, `portal-account__commerce--orders` | `web/modules/custom/aculta_portal/src/Controller/PortalController.php` |
 | `account-commerce-payments` | `portal-account__commerce`, `portal-account__commerce--payments` | (montado dinamicamente ou só no tema) |
@@ -338,7 +338,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `social-links-channel-instagram` | `aculta-social-links__channel--instagram` | (montado dinamicamente ou só no tema) |
 | `social-links-channel-youtube` | `aculta-social-links__channel--youtube` | (montado dinamicamente ou só no tema) |
 | `social-links-channel-facebook` | `aculta-social-links__channel--facebook` | (montado dinamicamente ou só no tema) |
-| `social-links-list` | `aculta-social-links__list`, `list-unstyled` | `web/modules/custom/aculta_portal/src/Presentation/SocialLinksPagePresenter.php` |
+| `social-links-list` | `aculta-social-links__list` | `web/modules/custom/aculta_portal/src/Presentation/SocialLinksPagePresenter.php` |
 | `social-links-footer-inner` | `aculta-social-links-footer__inner` | `web/modules/custom/aculta_portal/src/Presentation/SocialLinksPagePresenter.php` |
 | `social-links-settings-button` | `aculta-social-links-settings-button` | `web/modules/custom/aculta_portal/modules/aculta_linkweed/src/Form/SocialLinksSettingsForm.php` |
 | `security-card` | `aculta-security-card` | (montado dinamicamente ou só no tema) |
@@ -361,7 +361,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `account-terms` | `aculta-account-terms` | `web/modules/custom/aculta_portal/js/account-terms-modal.js`<br>`web/modules/custom/aculta_portal/templates/aculta-portal-account-terms-modal.html.twig` |
 | `photo-dialog` | `aculta-photo-dialog` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/UserPictureForm.php` |
 | `avatar-crop-dialog` | `aculta-avatar-crop-dialog` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AvatarCropForm.php` |
-| `account-bio-dialog` | `aculta-account-bio-dialog studio-profile-form` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AccountBioForm.php` |
+| `account-bio-dialog` | `aculta-utility-dialog` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AccountBioForm.php` |
 | `social-link-dialog` | `aculta-social-link-dialog` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/SocialLinkForm.php` |
 | `secret-dialog` | `aculta-secret-dialog` | `web/modules/custom/aculta_portal/src/Secrets/Form/SecretClearForm.php`<br>`web/modules/custom/aculta_portal/src/Secrets/Form/SecretEditForm.php` |
 | `messenger-preview` | `aculta-messenger-preview` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
@@ -385,17 +385,17 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `domain-brand-image` | `aculta-domain-brand-image` | `web/themes/custom/aculta420/src/Hook/ThemeHooks.php` |
 | `button` | `button` | (montado dinamicamente ou só no tema) |
 | `button-secondary` | `button`, `button--secondary` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AccountBioForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_user/src/Form/SocialLinkForm.php`<br>`web/modules/custom/aculta_portal/src/Form/LoginPopupForm.php` |
-| `button-primary` | `btn`, `btn-primary` | `web/modules/custom/aculta_portal/src/Controller/AccountCoursesController.php`<br>`web/modules/custom/aculta_portal/src/Form/LoginPopupForm.php` |
+| `button-primary` | `button`, `button--primary` | `web/modules/custom/aculta_portal/src/Controller/AccountCoursesController.php`<br>`web/modules/custom/aculta_portal/src/Form/LoginPopupForm.php` |
 | `aculta-button-secondary` | `aculta-button`, `aculta-button--secondary` | `web/modules/custom/aculta_portal/src/Hook/PortalHooks.php` |
 | `aculta-button-primary` | `aculta-button`, `aculta-button--primary` | `web/modules/custom/aculta_portal/src/Controller/RegistrationController.php` |
 | `aculta-button-outline` | `aculta-button`, `aculta-button--outline` | `web/modules/custom/aculta_portal/src/Support/Form/SupportForm.php` |
 | `status-attention` | `aculta-portal-requirements__status--attention` | (montado dinamicamente ou só no tema) |
 | `breadcrumb-list` | `breadcrumb` | `web/modules/custom/aculta_portal/src/Render/AccountAjaxMainContentRenderer.php` |
 
-| `new-conversation-cancel` | `btn`, `aculta-new-conversation-cancel` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
+| `new-conversation-cancel` | `aculta-new-conversation-cancel` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
 | `public-profile-actions` | `portal-profile__actions` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
 | `friendship-action-form` | `portal-profile__friendship-form` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/FriendshipActionForm.php` |
-| `friendship-action-button` | `btn`, `btn-outline-secondary`, `portal-account-overview__profile` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/FriendshipActionForm.php` |
+| `friendship-action-button` | `portal-account-overview__profile` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/FriendshipActionForm.php` |
 | `forum-topic-unread` | `aculta-unread-count` | Reserva de apresentação para futura integração da View ACULTA; sem produtor ativo desde a remoção de `preprocess_forums` em dev.56. |
 | `profile-achievements` | `portal-profile__achievements` | `web/modules/custom/aculta_portal/modules/aculta_game/src/AchievementPresentation.php` |
 | `profile-achievements-title` | `portal-profile__achievements-title` | `web/modules/custom/aculta_portal/modules/aculta_game/src/AchievementPresentation.php` |
@@ -412,7 +412,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `messenger-conversation-actions` | `aculta-messenger-conversation__actions` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
 | `messenger-options` | `aculta-messenger-options` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Support/OptionsDisclosure.php` |
 | `messenger-options-summary` | `aculta-messenger-options__summary` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Support/OptionsDisclosure.php` |
-| `messenger-options-icon` | `bi`, `bi-list` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Support/OptionsDisclosure.php` |
+| `messenger-options-icon` | (sem classe; estilizado por `[data-portal-ui]`) | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Support/OptionsDisclosure.php` |
 | `messenger-options-label` | `aculta-messenger-options__label` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Support/OptionsDisclosure.php` |
 | `messenger-options-panel` | `aculta-messenger-options__panel` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Support/OptionsDisclosure.php` |
 | `messenger-options-item` | `aculta-messenger-options__item` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/ProfileOptionsHooks.php` |
@@ -450,36 +450,36 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `public-profile-avatar-image` | `portal-profile__avatar-image` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/LegacyMemorialController.php`<br>`web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
 | `achievement-notices` | `aculta-achievement-notices` | `web/modules/custom/aculta_portal/modules/aculta_game/src/Hook/MessengerNotificationHooks.php` |
 | `aculta-image-audit` | `aculta-image-audit` | `web/modules/custom/aculta_portal/modules/aculta_image/src/Controller/ImageAuditController.php` |
-| `donation-summaries` | `d-grid`, `gap-3` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutFlow/DonationCheckoutFlow.php` |
-| `donation-summary` | `card`, `card-body` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutFlow/DonationCheckoutFlow.php`<br>`web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationItemPaneBase.php` |
-| `donation-summary-edit` | `btn`, `btn-sm`, `btn-outline-primary` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutFlow/DonationCheckoutFlow.php` |
-| `donation-document-link` | `link-primary` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutFlow/DonationCheckoutFlow.php` |
-| `donation-thanks` | `card`, `card-body`, `text-center` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
-| `donation-donor-name` | `fw-semibold` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
-| `donation-clause` | `text-muted` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
-| `donation-amount-block` | `my-3` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
-| `donation-amount` | `display-6`, `fw-bold` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
-| `donation-monthly` | `badge`, `text-bg-secondary` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
-| `donation-in-honor` | `fst-italic` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
-| `donation-account-invite` | `alert`, `alert-info`, `mt-3` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationCheckoutPane.php` |
-| `donation-account-invite-link` | `btn` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationCheckoutPane.php` |
+| `donation-summaries` | `aculta-donation__summaries` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutFlow/DonationCheckoutFlow.php` |
+| `donation-summary` | `aculta-panel`, `aculta-panel__body` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutFlow/DonationCheckoutFlow.php`<br>`web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationItemPaneBase.php` |
+| `donation-summary-edit` | (sem classe; estilizado por `[data-portal-ui]`) | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutFlow/DonationCheckoutFlow.php` |
+| `donation-document-link` | `aculta-donation__document-link` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutFlow/DonationCheckoutFlow.php` |
+| `donation-thanks` | `aculta-panel`, `aculta-panel__body`, `aculta-donation__thanks` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
+| `donation-donor-name` | `aculta-donation__donor` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
+| `donation-clause` | `aculta-donation__clause` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
+| `donation-amount-block` | `aculta-donation__amount-block` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
+| `donation-amount` | `aculta-donation__amount` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
+| `donation-monthly` | `aculta-donation__monthly` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
+| `donation-in-honor` | `aculta-donation__honor` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/ThankYouPane.php` |
+| `donation-account-invite` | `messages`, `messages--info`, `aculta-donation__invite` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationCheckoutPane.php` |
+| `donation-account-invite-link` | (sem classe; estilizado por `[data-portal-ui]`) | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationCheckoutPane.php` |
 | `donation-register-dialog` | `aculta-utility-dialog` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationCheckoutPane.php` |
 | `donation-register-dialog-body` | `aculta-utility-dialog__body` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationCheckoutPane.php` |
 | `donation-register-dialog-close` | `aculta-utility-dialog__close` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationCheckoutPane.php` |
 | `donation-register-dialog-header` | `aculta-utility-dialog__header` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationCheckoutPane.php` |
 | `donation-register-dialog-title` | `aculta-utility-dialog__title` | `web/modules/custom/aculta_portal/modules/aculta_donation/src/Plugin/Commerce/CheckoutPane/DonationCheckoutPane.php` |
-| `register-popup` | `d-grid`, `gap-3` | `web/modules/custom/aculta_portal/src/Form/RegisterPopupForm.php` |
-| `shop-products` | `d-grid`, `gap-3`, `mt-4` | `web/modules/custom/aculta_portal/src/Controller/ShopController.php` |
-| `shop-product-card` | `d-block`, `border`, `border-2`, `rounded-3`, `text-start`, `p-3`, `text-decoration-none` | `web/modules/custom/aculta_portal/src/Controller/ShopController.php` |
+| `register-popup` | `aculta-register-popup` | `web/modules/custom/aculta_portal/src/Form/RegisterPopupForm.php` |
+| `shop-products` | `aculta-shop-grid` | `web/modules/custom/aculta_portal/src/Controller/ShopController.php` |
+| `shop-product-card` | `aculta-shop-card` | `web/modules/custom/aculta_portal/src/Controller/ShopController.php` |
 | `requirements-cep` | `aculta-portal-requirements__cep` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` |
 | `requirements-cep-table` | `aculta-portal-requirements__cep-table` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` |
 | `requirements-php-extensions` | `aculta-portal-requirements__php-extensions` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` (tabela de extensões PHP) |
 | `lms-forum-moderation-overview` | `aculta-lms-forum-moderation__overview` | `web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Controller/LmsForumModerationController.php` (resumo da moderação do Fórum no LMS) |
 | `lms-forum-moderation-queue` | `aculta-lms-forum-moderation__queue` | `web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Controller/LmsForumModerationController.php` (fila de moderação por grupo) |
-| `lms-activity-discussions` | `card`, `card-body`, `mt-3` | `web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Context/LmsActivityDiscussionResolver.php` |
-| `lms-h5p-activity` | `d-grid`, `gap-3` | `web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Hook/LmsH5PDiscussionHooks.php` (player e conversas) |
-| `lms-h5p-discussions` | `card`, `card-body`, `mt-3` | `web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Context/LmsH5PDiscussionResolver.php` |
-| `lms-h5p-course-documents` | `mt-3` | `web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/Field/FieldFormatter/aculta_H5PDefaultFormatter.php` |
+| `lms-activity-discussions` | `aculta-panel`, `aculta-panel__body`, `aculta-lms-panel` | `web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Context/LmsActivityDiscussionResolver.php` |
+| `lms-h5p-activity` | `aculta-lms-h5p__activity` | `web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Hook/LmsH5PDiscussionHooks.php` (player e conversas) |
+| `lms-h5p-discussions` | `aculta-panel`, `aculta-panel__body`, `aculta-lms-panel` | `web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Context/LmsH5PDiscussionResolver.php` |
+| `lms-h5p-course-documents` | `aculta-lms-h5p__documents` | `web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/Field/FieldFormatter/aculta_H5PDefaultFormatter.php` |
 | `status-attention` | `aculta-portal-requirements__status--attention` | `web/modules/custom/aculta_portal/src/Controller/PortalRequirementsController.php` (`status-` + `ok`, `attention` ou `error`) |
 | `cep-sources` | `aculta-cep-sources` | `web/modules/custom/aculta_portal/modules/aculta_portal_cep/src/Form/CepSettingsForm.php` |
 | `feedback-matched` | `feedback-section`, `matched-phrases` | `web/modules/custom/aculta_portal/modules/aculta_lms/src/Plugin/ActivityAnswer/FreeTextReviewFeedback.php` |
@@ -496,8 +496,8 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `h5p-content-unavailable` | `h5p-content-unavailable` | `web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Plugin/Field/FieldFormatter/H5PDefaultFormatter.php` |
 | `h5p-dashboard-course` | `aculta-lms-h5p-course` | `web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Controller/H5PDashboardController.php` |
 | `checkout-help` | `checkout-help` | `web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/PluginForm/Checkout/RedirectCheckoutForm.php` |
-| `checkout-guest-registration` | `card`, `card-body`, `mb-3` | `web/modules/custom/aculta_portal/src/Plugin/Commerce/CheckoutPane/AcultaCheckoutLogin.php` |
-| `checkout-google` | `d-flex`, `justify-content-center`, `mb-3` | `web/modules/custom/aculta_portal/src/Plugin/Commerce/CheckoutPane/AcultaCheckoutLogin.php` |
+| `checkout-guest-registration` | `aculta-panel`, `aculta-panel__body`, `aculta-checkout__guest` | `web/modules/custom/aculta_portal/src/Plugin/Commerce/CheckoutPane/AcultaCheckoutLogin.php` |
+| `checkout-google` | `aculta-checkout__google` | `web/modules/custom/aculta_portal/src/Plugin/Commerce/CheckoutPane/AcultaCheckoutLogin.php` |
 | `forum-category-count` | `aculta-forum-category__count` | `web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/field/ForumCategoryTopicCount.php` |
 
 
@@ -528,7 +528,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `statistics-note` | `aculta-statistics__note` | `web/modules/custom/aculta_portal/modules/aculta_statistics/src/Controller/StatisticsDashboardController.php` |
 | `statistics-wiki-revisions` | `aculta-statistics__wiki-revisions` | `web/modules/custom/aculta_portal/modules/aculta_statistics/src/Controller/StatisticsDashboardController.php` |
 | `statistics-wiki-ranking` | `aculta-statistics__wiki-ranking` | `web/modules/custom/aculta_portal/modules/aculta_statistics/src/Controller/StatisticsDashboardController.php` |
-| `lms-class-roster` | `aculta-lms-class-roster d-grid gap-3` | `web/modules/custom/aculta_portal/modules/aculta_lms/src/ClassRosterManager.php` |
+| `lms-class-roster` | `aculta-lms-class-roster` | `web/modules/custom/aculta_portal/modules/aculta_lms/src/ClassRosterManager.php` |
 | `consent-banner` | `aculta-consent` | `web/modules/custom/aculta_portal/modules/aculta_statistics/js/consent.js` |
 | `secrets-environment` | `aculta-portal-secrets__environment` | `web/modules/custom/aculta_portal/modules/aculta_secrets_manager/src/Controller/SecretsController.php` |
 | `links-page-link` | `aculta-links-page__link` | `web/modules/custom/aculta_portal/modules/aculta_linkweed/src/Controller/LinkPagePublicController.php` |
@@ -543,30 +543,30 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `notice-origin-separator` | `aculta-messenger-notice-origin__separator` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/NoticeOriginGrouper.php` |
 | `notice-origin-heading` | `aculta-messenger-notice-origin__heading` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/NoticeOriginGrouper.php` |
 | `notice-origin-items` | `aculta-messenger-notice-origin__items` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Service/NoticeOriginGrouper.php` |
-| `new-conversation-fallback-search` | `aculta-messenger-fallback-search d-grid gap-2` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php` |
+| `new-conversation-fallback-search` | `aculta-messenger-fallback-search`, `aculta-messenger-fallback-search--grid` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php` |
 | `user-upload-dialog` | `aculta-user-upload-dialog` | `web/modules/custom/aculta_portal/src/Upload/UserUploadDialogBuilder.php` |
-| `we-sativa-start` | `d-grid gap-4 we-sativa__workspace` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiContributorWorkspace.php` |
-| `we-sativa-intent` | `d-grid gap-4 we-sativa__workspace` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Controller/WikiContributionIntentController.php` |
-| `wiki-title-suggestions` | `aculta-wiki-title-suggestions list-group` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiEntryTitleSuggestions.php` |
-| `wiki-proposal-link` | `aculta-wiki-proposal-link btn btn-outline-primary` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiProposalLinkHooks.php` |
+| `we-sativa-start` | `aculta-we-sativa__start` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiContributorWorkspace.php` |
+| `we-sativa-intent` | `aculta-we-sativa__intent` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Controller/WikiContributionIntentController.php` |
+| `wiki-title-suggestions` | `aculta-wiki-title-suggestions` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiEntryTitleSuggestions.php` |
+| `wiki-proposal-link` | `aculta-wiki-proposal-link` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiProposalLinkHooks.php` |
 | `wiki-proposal-decision` | `aculta-wiki-proposal-decision` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Form/WikiProposalDecisionForm.php` |
 | `wiki-proposal-status` | `aculta-wiki-proposal-status` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Controller/WikiProposalStatusController.php` |
-| `green-stash-entry` | `aculta-green-stash` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Experience/GreenStashExperienceProvider.php` |
+| `green-stash-entry` | `studio`, `aculta-green-stash` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Experience/GreenStashExperienceProvider.php` |
 | `green-stash-product-create` | `aculta-green-stash__product-create` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Form/GreenStashProductCreateForm.php` |
-| `green-stash-navigation-link` | `nav-link aculta-green-stash__navigation-link` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Navigation/GreenStashNavigation.php` |
-| `green-stash-navigation` | `nav aculta-green-stash__navigation` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Navigation/GreenStashNavigation.php` |
+| `green-stash-navigation-link` | `nav-link`, `aculta-green-stash__navigation-link` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Navigation/GreenStashNavigation.php` |
+| `green-stash-navigation` | `aculta-green-stash__navigation` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Navigation/GreenStashNavigation.php` |
 | `green-stash-products` | `aculta-green-stash__products` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Controller/GreenStashController.php` |
 | `green-stash-shipments` | `aculta-green-stash__shipments` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Controller/GreenStashController.php` |
 | `green-stash-product-detail` | `aculta-green-stash__product-detail` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Controller/GreenStashProductController.php` |
 | `event-card` | `event-card` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventCatalogueController.php` |
-| `event-supporters` | `event-supporters sponsor-logos` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
+| `event-supporters` | `event-supporters`, `sponsor-logos` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
 | `event-supporters-list` | `sponsor-logos-list` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
 | `event-supporter-item` | `sponsor-item` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
 | `event-supporter-tier` | `sponsor-cota` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
 | `event-supporter-name` | `sponsor-name` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
 | `event-supporter-link` | `sponsor-link` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
-| `event-section-title` | `section-title` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
-| `event-press-quotes` | `event-press-quotes media-mentions` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
+| `event-section-title` | `aculta-section-title` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
+| `event-press-quotes` | `event-press-quotes`, `media-mentions` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
 | `event-press-quotes-list` | `press-quotes-list` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
 | `event-press-quote` | `press-quote` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
 | `document-download-item` | `aculta-download-meta-item` | `web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Plugin/Field/FieldFormatter/DownloadWithMetaFormatter.php` |
@@ -597,21 +597,21 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `studio-account-identity` | `studio-account-identity` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php` |
 | `studio-course-authoring` | `studio-course-authoring` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/CourseAuthoringController.php` |
 | `studio-course-authoring-back` | `studio-course-authoring__back` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/CourseAuthoringController.php` |
-| `studio-marley-entry` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/MarleyExperienceProvider.php` |
-| `studio-account-home` | `studio__panel card card-body` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php` |
+| `studio-marley-entry` | `studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/MarleyExperienceProvider.php` |
+| `studio-account-home` | `studio__panel`, `aculta-panel`, `aculta-panel__body` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php` |
 | `studio-account-avatar` | `studio-account-identity__avatar` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `studio-profile-entry` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/ProfileExperienceProvider.php` |
-| `studio-profile-nickname-edit` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
-| `studio-profile-photo-edit` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
-| `studio-profile-actions` | `studio__actions list-unstyled d-flex flex-wrap gap-2` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
-| `studio-profile-public-link` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
+| `studio-profile-entry` | `studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/ProfileExperienceProvider.php` |
+| `studio-profile-nickname-edit` | `studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
+| `studio-profile-photo-edit` | `studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
+| `studio-profile-actions` | `studio__actions` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
+| `studio-profile-public-link` | `studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
 | `studio-profile-editor` | `aculta-profile-editor` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
 | `studio-fidelity-scope` | `studio` | `web/modules/custom/aculta_portal/modules/aculta_lms/src/Learning/LearnerDashboardComposer.php` |
 | `studio-bio-form`, `studio-social-form` | `studio-profile-form` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AccountBioForm.php`; `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/SocialLinkForm.php` |
-| `studio-saved-content` | `studio studio-saved-page` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-saved-content` | `studio`, `studio-saved-page` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
 | `studio-saved-summary` | `studio-saved-summary` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/SavedExperienceProvider.php` |
 | `studio-page-title` | `page-title` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
-| `studio-saved-tabs` | `nav nav-tabs studio-saved-tabs` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-saved-tabs` | `studio-saved-tabs` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
 | `studio-saved-list-wrapper` | `studio-saved-list-wrapper` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
 | `studio-saved-empty` | `studio-saved-empty` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
 | `studio-card-compact-list` | `studio-card-compact-list` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
@@ -619,29 +619,29 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `saved-item` | `saved-item` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
 | `studio-saved-card-title` | `compact-card-title` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
 | `studio-saved-meta` | `compact-card-meta` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
-| `studio-saved-purpose` | `badge badge-purpose` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
-| `studio-saved-pager-prev` | `pager-prev` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-saved-purpose` | `badge`, `badge-purpose` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-saved-pager-prev` | (sem classe; estilizado por `[data-portal-ui]`) | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
 | `studio-saved-pager-info` | `pager-info` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
-| `studio-saved-pager-next` | `pager-next` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-saved-pager-next` | (sem classe; estilizado por `[data-portal-ui]`) | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
 | `studio-saved-pagination` | `studio-saved-pagination` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
 | `recommendation-item` | `recommendation-item` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
 | `studio-recommendation-reason` | `recommendation-reason` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
 | `studio-recommendation-badge` | `badge-reason` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
-| `studio-saved-content` | `studio studio-saved-page` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-saved-content` | `studio`, `studio-saved-page` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
 | `studio-page-title` | `page-title` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
-| `studio-saved-tabs` | `nav nav-tabs studio-saved-tabs` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
-| `studio-account-section` | `studio studio-account-section` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php` |
-| `studio-account-nav-link` | `nav-link studio__link` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php` |
+| `studio-saved-tabs` | `studio-saved-tabs` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-account-section` | `studio`, `studio-account-section` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php` |
+| `studio-account-nav-link` | `nav-link`, `studio__link` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php` |
 | `studio-account-contextual-nav` | `studio-account-nav-list` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php`; lista vertical em painel próprio, sem herdar o estilo de abas do Marley |
 | `studio-hub` | `studio` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioHubController.php` |
 | `studio-experiences` | `studio__actions list-unstyled d-grid gap-2` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioHubController.php` |
 | `studio-tabs` | `nav nav-tabs studio__tabs` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
 | `studio-tab` | `nav-link studio__tab` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
-| `studio-panel` | `studio__panel card card-body` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
-| `studio-heading` | `studio__heading h4` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
-| `studio-actions` | `studio__actions list-unstyled d-flex flex-wrap gap-2` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
-| `studio-action` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
-| `studio-heading` | estilo por atributo | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-panel` | `studio__panel`, `aculta-panel`, `aculta-panel__body` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-heading` | (sem classe; estilizado por `[data-portal-ui]`) | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-actions` | `studio__actions` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-action` | `studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-heading` | (sem classe; estilizado por `[data-portal-ui]`) | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
 | `studio-empty` | `text-muted` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
 | `studio-layout` | `studio__layout` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
 | `studio-sidebar` | `studio__sidebar` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
@@ -649,89 +649,89 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `studio-sections` | `studio__sections list-unstyled` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
 | `studio-subtabs` | `nav nav-tabs studio__subtabs` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
 | `studio-link` | `nav-link studio__link` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
-| `studio-live` | `studio__live small text-muted` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
-| `studio-listing` | `table table-hover align-middle studio__listing` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php` |
-| `studio-listing-wrap` | `table-responsive studio__listing-wrap` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php` |
+| `studio-live` | `studio__live`, `aculta-studio-live` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-listing` | `studio__listing` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php` |
+| `studio-listing-wrap` | `table-responsive`, `studio__listing-wrap` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php` |
 
-| `account-entry` | `studio aculta-account-entry` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `account-experiences` | `studio__actions list-unstyled d-grid gap-2` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `account-entry-links` | `studio__actions list-unstyled d-grid gap-2`; transforma a entrada privada em cartão SDC `aculta420:card` (`studio_fidelity`) | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `button-ghost` | `button button--ghost` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizerDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-catalogue-actions-bar` | `actions-bar my-3` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventCatalogueController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `account-entry` | `studio`, `aculta-account-entry` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `account-experiences` | `studio__actions`, `studio__actions--grid` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `account-entry-links` | `studio__actions`, `studio__actions--grid` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `button-ghost` | `button`, `button--ghost` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizerDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-catalogue-actions-bar` | `actions-bar`, `aculta-event-catalogue__actions` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventCatalogueController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-date-actions` | `aculta-event-date-actions` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Event/EventDateListBuilder.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-date-add` | `button button--primary` | `web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-date-cancel` | `button` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventDateDeleteForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-date-delete` | `button button--danger` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventDateDeleteForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-date-delete` | `button`, `button--danger` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventDateDeleteForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-date-order` | `aculta-event-date-order` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventDateOrderForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-date-row` | `aculta-event-date-row` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-location-actions-bar` | `actions-bar mb-3` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationListController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-location-actions` | `location-actions mt-2 mb-3` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationListController.php`<br>`web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationPageController.php` |
-| `event-location-address` | `aculta-location-address text-muted mb-2` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-actions-bar` | `actions-bar`, `aculta-location-actions-bar` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationListController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-actions` | `location-actions`, `aculta-location-actions` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationListController.php`<br>`web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationPageController.php` |
+| `event-location-address` | `aculta-location-address` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-location-admin-actions` | `location-admin-actions` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-location-agenda-empty` | `location-agenda-empty` | `web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-location-agenda` | `location-agenda` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-location-badge-draft` | `badge--warning` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-location-badge-free` | `badge badge-free` | `web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-location-badge-public` | `badge--success` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-location-badge` | `aculta-location-badge badge` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-location-button-action` | `button button--action` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationPageController.php` |
-| `event-location-button-danger` | `button button--danger` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-badge` | `aculta-location-badge`, `badge` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-button-action` | `button`, `button--primary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationPageController.php` |
+| `event-location-button-danger` | `button`, `button--danger` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-location-button-primary-action` | `button button--primary button--action` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationListController.php`<br>`web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventCatalogueController.php` |
-| `event-location-button-primary-small` | `button button--small button--primary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-location-button-primary` | `button button--primary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php` |
+| `event-location-button-primary-small` | `button`, `button--small`, `button--primary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-button-primary` | `button`, `button--primary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php` |
 | `event-location-button-secondary-small` | `button button--secondary button--small` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-location-button-secondary` | `button button--secondary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php` |
+| `event-location-button-secondary` | `button`, `button--secondary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php` |
 | `event-location-date-time` | `event-date-time` | `web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-location-empty` | `aculta-location-empty my-2` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-location-fallback` | `description mt-1` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-empty` | `aculta-location-empty` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-fallback` | `description`, `aculta-location-fallback` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-location-header` | `aculta-location-header` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-location-page` | `aculta-location-page` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-location-search-bar` | `container-inline mb-3` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-location-summary-card` | `aculta-location-summary-card card p-3 my-2` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-search-bar` | `aculta-location-search` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-summary-card` | `aculta-location-summary-card`, `aculta-panel` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-location-target-id` | `aculta-location-target-id` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php` |
-| `event-location-title` | `aculta-location-title h5 mb-1` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-location-type-badge` | `badge badge-location-type` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-title` | `aculta-location-title` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-type-badge` | `badge`, `badge-location-type` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-location-widget` | `aculta-event-location-widget` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php` |
 | `event-locations-list-page` | `aculta-locations-list-page` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationListController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-organizer-dashboard` | `aculta-events-organizer-dashboard` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizerDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-organizer-filter-form` | `form--inline clearfix` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizerDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organizer-filter-form` | `aculta-form--inline` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizerDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-organizer-filters` | `organizer-dashboard-filters` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizerDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-organizer-guide` | `culturas-guide` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizerDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `notice-status` | `messages messages--status` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `notice-status` | `messages`, `messages--status` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-organization-widget` | `aculta-event-org-widget` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-organization-target-id` | `aculta-event-organization-target-id` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-organization-intro` | `lead` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-intro` | `aculta-event-organization__intro` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-organization-search` | `search-box` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-organization-location-fields` | `aculta-event-organization-location-fields` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-organization-results-table` | `org-modal-results-table` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-organization-small-button` | `button button--small` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-organization-search-action` | `button button--secondary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-organization-add-action` | `button button--primary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-organization-back-action` | `button` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-small-button` | `button`, `button--small` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-search-action` | `button`, `button--secondary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-add-action` | `button`, `button--primary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-back-action` | `button`, `button--secondary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-org-summary-card` | `event-org-card` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-org-title` | `event-org-card__title` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-org-badge` | `event-org-card__badge` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-org-badge` | `badge`, `event-org-card__badge` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-org-locality` | `event-org-card__locality` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-org-button-secondary` | `button button--secondary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-org-button-danger` | `button button--danger` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-org-button-secondary` | `button`, `button--secondary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-org-button-danger` | `button`, `button--danger` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-org-empty` | `event-org-empty` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-org-button-primary` | `button button--primary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `coorganizer-card` | `coorganizer-item clearfix` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-org-button-primary` | `button`, `button--primary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `coorganizer-card` | `coorganizer-item` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `coorganizer-title` | `coorganizer-item__title` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-coorg-button-add` | `button button--primary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-coorg-button-add` | `button`, `button--primary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `events-organization-admin-overview` | `aculta-events-organization-admin-overview` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `admin-org-filters` | `form--inline clearfix` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `admin-org-filters` | `aculta-form--inline` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `related-content-block` | `aculta-related-content` | `web/modules/custom/aculta_portal/modules/aculta_index/src/Plugin/Block/RelatedContentBlock.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `coorganizers-list` | `coorganizers-list` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `coorganizer-badge` | `badge coorganizer-item__badge` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-organization-fallback` | `text-muted small` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-organization-status-success` | `badge badge--success` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-organization-status-warning` | `badge badge--warning` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-organization-status-info` | `badge badge--info` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-organization-status-danger` | `badge badge--danger` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `coorganizer-badge` | `badge`, `coorganizer-item__badge` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-fallback` | `aculta-event-organization__fallback` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-status-success` | `badge`, `badge--success` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-status-warning` | `badge`, `badge--warning` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-status-info` | `badge`, `badge--info` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-status-danger` | `badge`, `badge--danger` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-organization-admin-filter-fields` | `aculta-event-organization-admin-filter-fields` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-organization-profile` | `aculta-organization-profile` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-organization-unclaimed` | `organization-badge organization-badge--unclaimed` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-unclaimed` | `organization-badge`, `organization-badge--unclaimed` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-organization-header` | `organization-header` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-organization-body` | `organization-body` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-organization-links` | `organization-links` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
@@ -741,7 +741,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `event-organization-location` | `organization-location` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-organization-description` | `organization-description` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-organization-event-link` | `organization-event-item` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `event-organization-admin-link` | `organization-admin-link text-muted small` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-admin-link` | `organization-admin-link`, `aculta-event-organization__admin-link` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-organization-admin-action` | `button button--secondary button--small` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `related-content-item` | `aculta-related-content__item` | `web/modules/custom/aculta_portal/modules/aculta_index/src/Plugin/Block/RelatedContentBlock.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `related-content-link` | `aculta-related-content__link` | `web/modules/custom/aculta_portal/modules/aculta_index/src/Plugin/Block/RelatedContentBlock.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
@@ -751,9 +751,9 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `events-admin-overview` | `aculta-events-admin-overview` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventAdminOverviewController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `events-upcoming-block` | `aculta-events-upcoming` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Block/UpcomingEventsBlock.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `events-upcoming-link` | `aculta-events-upcoming__link` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Block/UpcomingEventsBlock.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `ugc-admin-purpose-filters` | `aculta-admin-purpose-filters action-links` | `web/modules/custom/aculta_portal/modules/aculta_ugc/src/Controller/UgcModerationDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `ugc-admin-status-filters` | `aculta-admin-status-filters action-links` | `web/modules/custom/aculta_portal/modules/aculta_ugc/src/Controller/UgcModerationDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
-| `user-admin-filters` | `aculta-admin-filters action-links` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/OwnershipClaimAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `ugc-admin-purpose-filters` | `aculta-admin-purpose-filters`, `action-links` | `web/modules/custom/aculta_portal/modules/aculta_ugc/src/Controller/UgcModerationDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `ugc-admin-status-filters` | `aculta-admin-status-filters`, `action-links` | `web/modules/custom/aculta_portal/modules/aculta_ugc/src/Controller/UgcModerationDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `user-admin-filters` | `aculta-admin-filters`, `action-links` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/OwnershipClaimAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 ## Painéis de vendas e doações (dev.69 e 0.6.0-dev.67)
 
 | Token | Classes no ACULTA420 | Origem no módulo |
@@ -761,7 +761,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `sales-panel` | `aculta-sales-panel` | `web/modules/custom/aculta_portal/src/Controller/SalesReportController.php` |
 | `sales-section` | `aculta-sales-panel__section` | `web/modules/custom/aculta_portal/src/Controller/SalesReportController.php` |
 | `sales-heading` | `aculta-sales-panel__heading` | `web/modules/custom/aculta_portal/src/Controller/SalesReportController.php` |
-| `sales-table` | `table table-hover align-middle aculta-sales-panel__table` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
+| `sales-table` | `aculta-sales-panel__table` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
 | `sales-pagination` | `aculta-sales-panel__pagination` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
 | `sales-payment` | `aculta-sales-panel__payment` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
 | `sales-action` | `btn btn-sm btn-outline-primary aculta-sales-panel__action` | `web/modules/custom/aculta_portal/src/Sales/SalesOrdersTableBuilder.php` |
@@ -803,43 +803,43 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`, incluindo a migração de `acult
 | `aculta-lms-course-materials--document` | `aculta-lms-course-materials__document` | mapeado no V2; estilo pendente de captura (DEFERRED) |
 | `aculta-btn-outline` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-btn-outline"]` ou sem estilo próprio |
 | `aculta-btn-primary` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-btn-primary"]` ou sem estilo próprio |
-| `aculta-course-lesson-preview` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-course-lesson-preview"]` ou sem estilo próprio |
-| `aculta-learning-home__actions` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__actions"]` ou sem estilo próprio |
-| `aculta-learning-home__course-title` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__course-title"]` ou sem estilo próprio |
-| `aculta-learning-home__lesson` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__lesson"]` ou sem estilo próprio |
-| `aculta-learning-home__meta` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__meta"]` ou sem estilo próprio |
-| `aculta-learning-home__pending` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__pending"]` ou sem estilo próprio |
-| `aculta-learning-home__progress` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__progress"]` ou sem estilo próprio |
-| `aculta-learning-home__section` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__section"]` ou sem estilo próprio |
-| `aculta-learning-home__section-title` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__section-title"]` ou sem estilo próprio |
-| `aculta-learning-journey` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey"]` ou sem estilo próprio |
-| `aculta-learning-journey__back` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__back"]` ou sem estilo próprio |
-| `aculta-learning-journey__current` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__current"]` ou sem estilo próprio |
-| `aculta-learning-journey__eyebrow` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__eyebrow"]` ou sem estilo próprio |
-| `aculta-learning-journey__intro` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__intro"]` ou sem estilo próprio |
-| `aculta-learning-journey__lesson` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__lesson"]` ou sem estilo próprio |
-| `aculta-learning-journey__lesson-label` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__lesson-label"]` ou sem estilo próprio |
-| `aculta-learning-journey__lessons` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__lessons"]` ou sem estilo próprio |
-| `aculta-learning-journey__meta` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__meta"]` ou sem estilo próprio |
-| `aculta-learning-journey__outline` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__outline"]` ou sem estilo próprio |
-| `aculta-learning-journey__progress` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__progress"]` ou sem estilo próprio |
-| `aculta-learning-journey__state` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__state"]` ou sem estilo próprio |
-| `aculta-learning-journey__summary` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__summary"]` ou sem estilo próprio |
-| `aculta-learning-journey__title` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__title"]` ou sem estilo próprio |
-| `aculta-learning-room` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-room"]` ou sem estilo próprio |
-| `aculta-learning-room__back-link` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-room__back-link"]` ou sem estilo próprio |
-| `aculta-learning-room__layout` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-room__layout"]` ou sem estilo próprio |
-| `aculta-learning-room__lesson` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-room__lesson"]` ou sem estilo próprio |
-| `aculta-learning-room__outline` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-room__outline"]` ou sem estilo próprio |
-| `aculta-learning-room__outline-title` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-room__outline-title"]` ou sem estilo próprio |
-| `event-contribution-queue` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="event-contribution-queue"]` ou sem estilo próprio |
-| `event-contribution-status` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="event-contribution-status"]` ou sem estilo próprio |
-| `event-contribution-workspace` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="event-contribution-workspace"]` ou sem estilo próprio |
-| `event-location-contribution-queue` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="event-location-contribution-queue"]` ou sem estilo próprio |
-| `event-organization-suggestion-queue` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="event-organization-suggestion-queue"]` ou sem estilo próprio |
-| `patcher-table-wrapper` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="patcher-table-wrapper"]` ou sem estilo próprio |
-| `studio-course-educator` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="studio-course-educator"]` ou sem estilo próprio |
-| `studio-mercadopago-plans` | (nenhuma) | sem classe no V2; estilizado por seletor `[data-portal-ui~="studio-mercadopago-plans"]` ou sem estilo próprio |
+| `aculta-course-lesson-preview` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-course-lesson-preview"]` ou sem estilo próprio |
+| `aculta-learning-home__actions` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__actions"]` ou sem estilo próprio |
+| `aculta-learning-home__course-title` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__course-title"]` ou sem estilo próprio |
+| `aculta-learning-home__lesson` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__lesson"]` ou sem estilo próprio |
+| `aculta-learning-home__meta` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__meta"]` ou sem estilo próprio |
+| `aculta-learning-home__pending` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__pending"]` ou sem estilo próprio |
+| `aculta-learning-home__progress` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__progress"]` ou sem estilo próprio |
+| `aculta-learning-home__section` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__section"]` ou sem estilo próprio |
+| `aculta-learning-home__section-title` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-home__section-title"]` ou sem estilo próprio |
+| `aculta-learning-journey` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey"]` ou sem estilo próprio |
+| `aculta-learning-journey__back` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__back"]` ou sem estilo próprio |
+| `aculta-learning-journey__current` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__current"]` ou sem estilo próprio |
+| `aculta-learning-journey__eyebrow` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__eyebrow"]` ou sem estilo próprio |
+| `aculta-learning-journey__intro` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__intro"]` ou sem estilo próprio |
+| `aculta-learning-journey__lesson` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__lesson"]` ou sem estilo próprio |
+| `aculta-learning-journey__lesson-label` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__lesson-label"]` ou sem estilo próprio |
+| `aculta-learning-journey__lessons` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__lessons"]` ou sem estilo próprio |
+| `aculta-learning-journey__meta` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__meta"]` ou sem estilo próprio |
+| `aculta-learning-journey__outline` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__outline"]` ou sem estilo próprio |
+| `aculta-learning-journey__progress` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__progress"]` ou sem estilo próprio |
+| `aculta-learning-journey__state` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__state"]` ou sem estilo próprio |
+| `aculta-learning-journey__summary` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__summary"]` ou sem estilo próprio |
+| `aculta-learning-journey__title` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-journey__title"]` ou sem estilo próprio |
+| `aculta-learning-room` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-room"]` ou sem estilo próprio |
+| `aculta-learning-room__back-link` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-room__back-link"]` ou sem estilo próprio |
+| `aculta-learning-room__layout` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-room__layout"]` ou sem estilo próprio |
+| `aculta-learning-room__lesson` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-room__lesson"]` ou sem estilo próprio |
+| `aculta-learning-room__outline` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-room__outline"]` ou sem estilo próprio |
+| `aculta-learning-room__outline-title` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="aculta-learning-room__outline-title"]` ou sem estilo próprio |
+| `event-contribution-queue` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="event-contribution-queue"]` ou sem estilo próprio |
+| `event-contribution-status` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="event-contribution-status"]` ou sem estilo próprio |
+| `event-contribution-workspace` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="event-contribution-workspace"]` ou sem estilo próprio |
+| `event-location-contribution-queue` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="event-location-contribution-queue"]` ou sem estilo próprio |
+| `event-organization-suggestion-queue` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="event-organization-suggestion-queue"]` ou sem estilo próprio |
+| `patcher-table-wrapper` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="patcher-table-wrapper"]` ou sem estilo próprio |
+| `studio-course-educator` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="studio-course-educator"]` ou sem estilo próprio |
+| `studio-mercadopago-plans` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; estilizado por seletor `[data-portal-ui~="studio-mercadopago-plans"]` ou sem estilo próprio |
 
 | Atributo | Usado em | Função |
 |---|---|---|
@@ -858,8 +858,8 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`, incluindo a migração de `acult
 | `data-aculta-map-popup-template` | `modules/aculta_maps/templates/aculta-maps-popup-template.html.twig` | marcação de comportamento do módulo; sem contrato de tema |
 | `data-aculta-map-marker-icon-template` | `modules/aculta_maps/templates/aculta-maps-marker-icon-template.html.twig` | marcação de comportamento do módulo; sem contrato de tema |
 
-| `studio-section-header` | (V1) | mapeado só no V1 (referência); sem classe equivalente no V2 |
-| `map-popup` | (nenhuma) | sem classe no V2; marcação do popup de mapa (`aculta_maps`) |
+| `studio-section-header` | `studio__section-header` | mapeado só no V1 (referência); sem classe equivalente no V2 |
+| `map-popup` | (sem classe; estilizado por `[data-portal-ui]`) | sem classe no V2; marcação do popup de mapa (`aculta_maps`) |
 
 ## Tokens copiados do V1 para o V2 em 2026-11-05
 
@@ -869,8 +869,8 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 |---|---|---|
 | `account-avatar` | `portal-account__avatar` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `account-bio-actions` | `portal-account-bio__actions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `account-bio-card` | `aculta-panel`, `aculta-panel--default`, `aculta-panel__body`, `portal-account-bio` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `account-bio-edit` | `btn`, `btn-link`, `portal-account-bio__edit`, `bi`, `bi-pencil` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-bio-card` | `aculta-panel`, `aculta-panel__body`, `portal-account-bio` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-bio-edit` | `portal-account-bio__edit` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `account-bio-text` | `portal-account-bio__text` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `account-commerce-orders` | `portal-account__commerce`, `portal-account__commerce--orders` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `account-course` | `portal-account-course` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
@@ -881,8 +881,8 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `account-data-nav` | `portal-account-data__nav` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `account-document-input` | `portal-account-document-input` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `account-entry` | `studio`, `aculta-account-entry` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `account-entry-links` | `studio__actions`, `list-unstyled`, `aculta-u-grid`, `aculta-u-gap-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `account-experiences` | `studio__actions`, `list-unstyled`, `aculta-u-grid`, `aculta-u-gap-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-entry-links` | `studio__actions`, `studio__actions--grid` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-experiences` | `studio__actions`, `studio__actions--grid` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `account-home` | `aculta-account-home` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `account-identity` | `portal-account__identity` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `account-overview-actions` | `portal-account-overview__actions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
@@ -890,18 +890,18 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `account-photo-preview` | `portal-account-photo__preview` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `account-photo-trigger` | `portal-account-photo__trigger` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `account-social-card` | `portal-account-social` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `account-social-edit` | `btn`, `btn-link`, `btn-sm`, `portal-account-social__edit`, `bi`, `bi-pencil` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-social-edit` | `portal-account-social__edit` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `account-social-item` | `portal-account-social__item` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `account-social-list` | `portal-account-social__list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `account-social-name` | `portal-account-social__name` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `account-social-text` | `portal-account-social__text` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `account-terms` | `aculta-account-terms` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `account-view-profile` | `btn`, `btn-outline-secondary`, `portal-account-overview__profile` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `account-view-profile` | `portal-account-overview__profile` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `aculta-button-outline` | `aculta-button`, `aculta-button--outline` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `aculta-button-primary` | `aculta-button`, `aculta-button--primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `aculta-button-secondary` | `aculta-button`, `aculta-button--secondary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `aculta-image-audit` | `aculta-image-audit` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `admin-org-filters` | `form--inline`, `clearfix` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `admin-org-filters` | `aculta-form--inline` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `alerts-filters` | `aculta-alerts-filters` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `alerts-filters-group` | `aculta-alerts-filters__group` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `article-author` | `portal-article-author` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
@@ -917,7 +917,7 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `breadcrumb-list` | `breadcrumb` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `button` | `button` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `button-ghost` | `button`, `button--ghost` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `button-primary` | `btn`, `btn-primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `button-primary` | `button`, `button--primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `button-secondary` | `button`, `button--secondary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `calendar-embed-hosts` | `aculta-calendar-embed-hosts` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `calendar-interactive` | `aculta-calendar-interactive` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
@@ -926,13 +926,13 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `calendar-interactive-controls` | `aculta-calendar-interactive__controle` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `calendar-interactive-notice` | `aculta-calendar-interactive__aviso` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `cep-sources` | `aculta-cep-sources` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `checkout-google` | `aculta-u-flex`, `aculta-u-justify-center`, `aculta-u-mb-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `checkout-guest-registration` | `aculta-panel`, `aculta-panel--default`, `aculta-panel__body`, `aculta-u-mb-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `checkout-google` | `aculta-checkout__google` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `checkout-guest-registration` | `aculta-panel`, `aculta-panel__body`, `aculta-checkout__guest` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `checkout-help` | `checkout-help` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `consent-banner` | `aculta-consent` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `conversation-action` | `aculta-messenger-options__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `coorganizer-badge` | `badge`, `coorganizer-item__badge` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `coorganizer-card` | `coorganizer-item`, `clearfix` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `coorganizer-card` | `coorganizer-item` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `coorganizer-title` | `coorganizer-item__title` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `coorganizers-list` | `coorganizers-list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `courses-home` | `courses-home` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
@@ -943,52 +943,52 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `document-download-link` | `download-link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `document-download-size` | `download-badge-size` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `domain-brand-image` | `aculta-domain-brand-image` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `donation-account-invite` | `alert`, `alert-info`, `aculta-u-mt-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `donation-account-invite-link` | `btn`, `btn-outline-primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `donation-amount` | `aculta-u-display-6`, `aculta-u-bold` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `donation-amount-block` | `aculta-u-my-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `donation-clause` | `text-muted` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `donation-document-link` | `link-primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `donation-donor-name` | `aculta-u-semibold` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `donation-in-honor` | `aculta-u-italic` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `donation-monthly` | `badge`, `label-default` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `donation-summaries` | `aculta-u-grid`, `aculta-u-gap-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `donation-summary` | `aculta-panel`, `aculta-panel--default`, `aculta-panel__body` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `donation-summary-edit` | `btn`, `btn-sm`, `btn-outline-primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `donation-thanks` | `aculta-panel`, `aculta-panel--default`, `aculta-panel__body`, `text-center` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-account-invite` | `messages`, `messages--info`, `aculta-donation__invite` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-account-invite-link` | (sem classe; estilizado por `[data-portal-ui]`) | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-amount` | `aculta-donation__amount` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-amount-block` | `aculta-donation__amount-block` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-clause` | `aculta-donation__clause` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-document-link` | `aculta-donation__document-link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-donor-name` | `aculta-donation__donor` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-in-honor` | `aculta-donation__honor` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-monthly` | `aculta-donation__monthly` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-summaries` | `aculta-donation__summaries` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-summary` | `aculta-panel`, `aculta-panel__body` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-summary-edit` | (sem classe; estilizado por `[data-portal-ui]`) | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `donation-thanks` | `aculta-panel`, `aculta-panel__body`, `aculta-donation__thanks` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-card-cancel-status` | `event-card__aviso` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-card-meta` | `event-card__meta` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-card-subtitle` | `event-card__subtitulo` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-card-title` | `event-card__titulo` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-card-type` | `event-card__tipo` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `event-catalogue-actions-bar` | `actions-bar`, `aculta-u-my-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-catalogue-actions-bar` | `actions-bar`, `aculta-event-catalogue__actions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-coorg-button-add` | `button`, `button--primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-date-actions` | `aculta-event-date-actions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-date-cancel` | `button` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-date-delete` | `button`, `button--danger` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-date-order` | `aculta-event-date-order` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-date-row` | `aculta-event-date-row` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `event-location-actions` | `location-actions`, `aculta-u-mt-2`, `aculta-u-mb-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `event-location-actions-bar` | `actions-bar`, `aculta-u-mb-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `event-location-address` | `aculta-location-address`, `text-muted`, `aculta-u-mb-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-actions` | `location-actions`, `aculta-location-actions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-actions-bar` | `actions-bar`, `aculta-location-actions-bar` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-address` | `aculta-location-address` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-location-admin-actions` | `location-admin-actions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-location-agenda` | `location-agenda` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-location-badge` | `aculta-location-badge`, `badge` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `event-location-button-action` | `button`, `button--action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-button-action` | `button`, `button--primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-location-button-danger` | `button`, `button--danger` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-location-button-primary` | `button`, `button--primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-location-button-primary-action` | `button`, `button--primary`, `button--action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-location-button-primary-small` | `button`, `button--small`, `button--primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-location-button-secondary` | `button`, `button--secondary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-location-button-secondary-small` | `button`, `button--secondary`, `button--small` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `event-location-empty` | `aculta-location-empty`, `aculta-u-my-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `event-location-fallback` | `description`, `aculta-u-mt-1` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-empty` | `aculta-location-empty` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-fallback` | `description`, `aculta-location-fallback` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-location-header` | `aculta-location-header` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-location-page` | `aculta-location-page` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `event-location-search-bar` | `container-inline`, `aculta-u-mb-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `event-location-summary-card` | `aculta-location-summary-card`, `aculta-panel`, `aculta-panel--default`, `aculta-u-p-3`, `aculta-u-my-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-search-bar` | `aculta-location-search` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-summary-card` | `aculta-location-summary-card`, `aculta-panel` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-location-target-id` | `aculta-location-target-id` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `event-location-title` | `aculta-location-title`, `h5`, `aculta-u-mb-1` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-location-title` | `aculta-location-title` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-location-type-badge` | `badge`, `badge-location-type` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-location-widget` | `aculta-event-location-widget` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-locations-list-page` | `aculta-locations-list-page` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
@@ -1004,15 +1004,15 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `event-organization-add-action` | `button`, `button--primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-organization-admin-action` | `button`, `button--secondary`, `button--small` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-organization-admin-filter-fields` | `aculta-event-organization-admin-filter-fields` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `event-organization-admin-link` | `organization-admin-link`, `text-muted`, `small` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `event-organization-back-action` | `button` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-admin-link` | `organization-admin-link`, `aculta-event-organization__admin-link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-back-action` | `button`, `button--secondary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-organization-body` | `organization-body` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-organization-description` | `organization-description` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-organization-event-link` | `organization-event-item` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-organization-events` | `organization-events` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `event-organization-fallback` | `text-muted`, `small` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-fallback` | `aculta-event-organization__fallback` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-organization-header` | `organization-header` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `event-organization-intro` | `lead` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organization-intro` | `aculta-event-organization__intro` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-organization-links` | `organization-links` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-organization-location` | `organization-location` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-organization-location-fields` | `aculta-event-organization-location-fields` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
@@ -1030,13 +1030,13 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `event-organization-unclaimed` | `organization-badge`, `organization-badge--unclaimed` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-organization-widget` | `aculta-event-org-widget` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-organizer-dashboard` | `aculta-events-organizer-dashboard` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `event-organizer-filter-form` | `form--inline`, `clearfix` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-organizer-filter-form` | `aculta-form--inline` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-organizer-filters` | `organizer-dashboard-filters` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-organizer-guide` | `culturas-guide` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-press-quote` | `press-quote` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-press-quotes` | `event-press-quotes`, `media-mentions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-press-quotes-list` | `press-quotes-list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `event-section-title` | `section-title` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `event-section-title` | `aculta-section-title` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-supporter-item` | `sponsor-item` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-supporter-link` | `sponsor-link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `event-supporter-name` | `sponsor-name` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
@@ -1051,12 +1051,12 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `forum-category-count` | `aculta-forum-category__count` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `forum-report-pager` | `aculta-pager` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `forum-report-queue` | `aculta-forum-report-queue` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `friendship-action-button` | `btn`, `btn-outline-secondary`, `portal-account-overview__profile` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `friendship-action-button` | `portal-account-overview__profile` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `friendship-action-form` | `portal-profile__friendship-form` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `gallery-dialog` | `aculta-gallery-dialog` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `google-account` | `aculta-google-account` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `green-stash-entry` | `studio`, `aculta-green-stash` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `green-stash-navigation` | `nav`, `aculta-green-stash__navigation` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `green-stash-navigation` | `aculta-green-stash__navigation` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `green-stash-navigation-link` | `nav-link`, `aculta-green-stash__navigation-link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `green-stash-product-create` | `aculta-green-stash__product-create` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `green-stash-product-detail` | `aculta-green-stash__product-detail` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
@@ -1065,16 +1065,16 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `h5p-admin-header` | `h5p-admin-header` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `h5p-content-unavailable` | `h5p-content-unavailable` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `h5p-dashboard-course` | `aculta-lms-h5p-course` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `hint` | `small`, `aculta-u-text-secondary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `hint-muted` | `aculta-u-text-secondary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `hint` | `aculta-hint` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `hint-muted` | `aculta-hint`, `aculta-hint--muted` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `links-page-link` | `aculta-links-page__link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `lms-activity-discussions` | `aculta-panel`, `aculta-panel--default`, `aculta-panel__body`, `aculta-u-mt-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `lms-class-roster` | `aculta-lms-class-roster`, `aculta-u-grid`, `aculta-u-gap-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `lms-activity-discussions` | `aculta-panel`, `aculta-panel__body`, `aculta-lms-panel` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `lms-class-roster` | `aculta-lms-class-roster` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `lms-forum-moderation-overview` | `aculta-lms-forum-moderation__overview` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `lms-forum-moderation-queue` | `aculta-lms-forum-moderation__queue` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `lms-h5p-activity` | `aculta-u-grid`, `aculta-u-gap-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `lms-h5p-course-documents` | `aculta-u-mt-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `lms-h5p-discussions` | `aculta-panel`, `aculta-panel--default`, `aculta-panel__body`, `aculta-u-mt-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `lms-h5p-activity` | `aculta-lms-h5p__activity` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `lms-h5p-course-documents` | `aculta-lms-h5p__documents` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `lms-h5p-discussions` | `aculta-panel`, `aculta-panel__body`, `aculta-lms-panel` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `login-divider` | `aculta-login__divider` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `login-popup` | `aculta-login-popup` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `login-popup-divider` | `aculta-login-popup__divider` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
@@ -1092,7 +1092,7 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `messenger-drawer-conversation` | `aculta-messenger-drawer-conversation` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `messenger-notice` | `aculta-messenger-notice` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `messenger-options` | `aculta-messenger-options` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `messenger-options-icon` | `bi`, `bi-list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `messenger-options-icon` | (sem classe; estilizado por `[data-portal-ui]`) | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `messenger-options-item` | `aculta-messenger-options__item` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `messenger-options-label` | `aculta-messenger-options__label` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `messenger-options-panel` | `aculta-messenger-options__panel` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
@@ -1106,17 +1106,17 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `messenger-sender-link` | `aculta-messenger-sender__link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `messenger-sender-name` | `aculta-messenger-sender__name` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `new-conversation-add` | `aculta-new-conversation-add` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `new-conversation-back` | `btn`, `aculta-new-conversation-back` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `new-conversation-cancel` | `btn`, `aculta-new-conversation-cancel` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `new-conversation-back` | `aculta-new-conversation-back` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `new-conversation-cancel` | `aculta-new-conversation-cancel` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `new-conversation-chip` | `aculta-chip` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `new-conversation-chip-name` | `aculta-chip__name` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `new-conversation-chip-remove` | `aculta-chip__remove` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `new-conversation-chips` | `aculta-chips` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `new-conversation-fallback-search` | `aculta-messenger-fallback-search`, `aculta-u-grid`, `aculta-u-gap-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `new-conversation-link` | `btn`, `btn-primary`, `aculta-messenger-new-conversation` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `new-conversation-links` | `aculta-u-flex`, `aculta-u-wrap`, `aculta-u-gap-2`, `aculta-u-mt-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `new-conversation-message` | `form-control` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `new-conversation-submit` | `btn`, `btn-primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `new-conversation-fallback-search` | `aculta-messenger-fallback-search`, `aculta-messenger-fallback-search--grid` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `new-conversation-link` | `aculta-messenger-new-conversation` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `new-conversation-links` | `aculta-messenger-links` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `new-conversation-message` | (sem classe; estilizado por `[data-portal-ui]`) | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `new-conversation-submit` | (sem classe; estilizado por `[data-portal-ui]`) | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `notice-admin-intro` | `aculta-notice-admin-intro` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `notice-admin-item` | `admin-item` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `notice-admin-list` | `admin-list`, `aculta-notice-admin-list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
@@ -1138,7 +1138,7 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `notice-warning` | `messages`, `messages--warning` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `photo-dialog` | `aculta-photo-dialog` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `post-meta` | `portal-post__meta` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `post-meta-author` | `portal-post__meta-item`, `bi`, `bi-person-circle` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `post-meta-author` | `portal-post__meta-item` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `post-share` | `portal-post__share` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `post-share-label` | `portal-post__share-label` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `profile-achievement` | `portal-profile__achievement` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
@@ -1157,10 +1157,10 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `public-profile-bio` | `portal-profile__bio` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `public-profile-header` | `portal-profile__header` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `public-profile-identity` | `portal-profile__identity` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `public-profile-link-email` | `portal-profile__link`, `bi`, `bi-envelope` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `public-profile-link-email` | `portal-profile__link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `public-profile-links` | `portal-profile__links` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `public-profile-name` | `portal-profile__name` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `register-popup` | `aculta-u-grid`, `aculta-u-gap-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `register-popup` | `aculta-register-popup` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `registration-status` | `aculta-registration-status` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `related-content-badge` | `aculta-related-content__badge` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `related-content-block` | `aculta-related-content` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
@@ -1178,14 +1178,14 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `sales-heading` | `aculta-sales-panel__heading` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `sales-panel` | `aculta-sales-panel` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `sales-section` | `aculta-sales-panel__section` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `sales-table` | `table`, `table-hover`, `aculta-u-align-middle`, `aculta-sales-panel__table` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `sales-table` | `aculta-sales-panel__table` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `search` | `aculta-search` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `search-popup` | `aculta-search-popup` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `search-preview` | `aculta-search-preview` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `search-preview-footer` | `aculta-search-preview__footer`, `aculta-u-flex`, `aculta-u-justify-center`, `aculta-u-mt-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `search-preview-full` | `aculta-search-preview__full`, `btn`, `btn-outline-primary`, `btn-sm` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `search-preview-footer` | `aculta-search-preview__footer` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `search-preview-full` | `aculta-search-preview__full` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `search-preview-input` | `aculta-search-preview-input` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `search-preview-list` | `aculta-search-preview__list`, `list-unstyled` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `search-preview-list` | `aculta-search-preview__list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `search-results` | `aculta-search__results` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `search-utility` | `aculta-search-utility`, `aculta-utility-trigger` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `secret-dialog` | `aculta-secret-dialog` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
@@ -1203,11 +1203,11 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `secrets-tabs-list` | `secrets-tabs__list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `security-password-form` | `aculta-security-password-form` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `security-pending` | `aculta-security-pending` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `shop-product-card` | `aculta-u-block`, `aculta-u-border`, `aculta-u-border-2`, `aculta-u-rounded-3`, `aculta-u-text-start`, `aculta-u-p-3`, `aculta-u-no-decoration` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `shop-products` | `aculta-u-grid`, `aculta-u-gap-3`, `aculta-u-mt-4` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `shop-product-card` | `aculta-shop-card` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `shop-products` | `aculta-shop-grid` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `social-links-button-list` | `aculta-social-links__button-list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `social-links-footer-inner` | `aculta-social-links-footer__inner` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `social-links-list` | `aculta-social-links__list`, `list-unstyled` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `social-links-list` | `aculta-social-links__list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `social-links-settings-button` | `aculta-social-links-settings-button` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `statistics-areas` | `aculta-statistics__areas` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `statistics-chart` | `aculta-statistics__chart` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
@@ -1227,24 +1227,24 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `studio-account-nav-link` | `nav-link`, `studio__link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-account-navigation` | `studio-account-section__navigation` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-account-section` | `studio`, `studio-account-section` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `studio-action` | `btn`, `btn-outline-primary`, `studio__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `studio-actions` | `studio__actions`, `list-unstyled`, `aculta-u-flex`, `aculta-u-wrap`, `aculta-u-gap-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-action` | `studio__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-actions` | `studio__actions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-card-compact-list` | `studio-card-compact-list` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-fidelity-scope` | `studio` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-layout` | `studio__layout` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `studio-listing` | `table`, `table-hover`, `aculta-u-align-middle`, `studio__listing` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-listing` | `studio__listing` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-listing-wrap` | `table-responsive`, `studio__listing-wrap` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `studio-live` | `studio__live`, `small`, `text-muted` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-live` | `studio__live`, `aculta-studio-live` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-main` | `studio__main` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `studio-marley-entry` | `btn`, `btn-outline-primary`, `studio__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-marley-entry` | `studio__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-page-title` | `page-title` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `studio-panel` | `studio__panel`, `aculta-panel`, `aculta-panel--default`, `aculta-panel__body` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `studio-profile-actions` | `studio__actions`, `list-unstyled`, `aculta-u-flex`, `aculta-u-wrap`, `aculta-u-gap-2` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-panel` | `studio__panel`, `aculta-panel`, `aculta-panel__body` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-profile-actions` | `studio__actions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-profile-editor` | `aculta-profile-editor` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `studio-profile-entry` | `btn`, `btn-outline-primary`, `studio__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `studio-profile-nickname-edit` | `btn`, `btn-outline-primary`, `studio__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `studio-profile-photo-edit` | `btn`, `btn-outline-primary`, `studio__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `studio-profile-public-link` | `btn`, `btn-outline-primary`, `studio__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-profile-entry` | `studio__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-profile-nickname-edit` | `studio__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-profile-photo-edit` | `studio__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-profile-public-link` | `studio__action` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-recommendation-badge` | `badge-reason` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-recommendation-reason` | `recommendation-reason` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-saved-card-title` | `compact-card-title` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
@@ -1253,12 +1253,12 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `studio-saved-list-wrapper` | `studio-saved-list-wrapper` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-saved-meta` | `compact-card-meta` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-saved-pager-info` | `pager-info` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `studio-saved-pager-next` | `pager-next` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `studio-saved-pager-prev` | `pager-prev` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-saved-pager-next` | (sem classe; estilizado por `[data-portal-ui]`) | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-saved-pager-prev` | (sem classe; estilizado por `[data-portal-ui]`) | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-saved-pagination` | `studio-saved-pagination` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-saved-purpose` | `badge`, `badge-purpose` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-saved-summary` | `studio-saved-summary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `studio-saved-tabs` | `nav`, `nav-tabs`, `studio-saved-tabs` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `studio-saved-tabs` | `studio-saved-tabs` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-section-header` | `studio__section-header` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-shell` | `studio` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `studio-sidebar` | `studio__sidebar` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
@@ -1269,20 +1269,20 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `ugc-admin-purpose-filters` | `aculta-admin-purpose-filters`, `action-links` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `ugc-admin-status-filters` | `aculta-admin-status-filters`, `action-links` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `user-admin-filters` | `aculta-admin-filters`, `action-links` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `we-sativa-create` | `btn`, `btn-primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `we-sativa-intent` | `aculta-u-grid`, `aculta-u-gap-4`, `we-sativa__workspace` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `we-sativa-start` | `aculta-u-grid`, `aculta-u-gap-4`, `we-sativa__workspace` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `we-sativa-workspace` | `aculta-u-grid`, `aculta-u-gap-4`, `we-sativa__workspace` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `we-sativa-create` | (sem classe; estilizado por `[data-portal-ui]`) | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `we-sativa-intent` | `aculta-we-sativa__intent` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `we-sativa-start` | `aculta-we-sativa__start` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `we-sativa-workspace` | `aculta-we-sativa__workspace` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `wiki-home` | `aculta-wiki-home` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `wiki-intro` | `aculta-wiki-intro` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `wiki-proposal-contribute` | `button`, `button--secondary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `wiki-proposal-decision` | `aculta-wiki-proposal-decision` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `wiki-proposal-link` | `aculta-wiki-proposal-link`, `btn`, `btn-outline-primary` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `wiki-proposal-link` | `aculta-wiki-proposal-link` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `wiki-proposal-status` | `aculta-wiki-proposal-status` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `wiki-recent-change` | `aculta-wiki-recent-change` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 | `wiki-search-results` | `aculta-wiki-search-results` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `wiki-title-suggestions` | `aculta-wiki-title-suggestions`, `list-group` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
-| `wiki-workspace-return` | `btn`, `btn-outline-primary`, `aculta-u-mb-3` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `wiki-title-suggestions` | `aculta-wiki-title-suggestions` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
+| `wiki-workspace-return` | `aculta-wiki-workspace__return` | copiado do V1; estilo no V2 pendente quando a classe não tem CSS (DEFERRED) |
 
 ## Prefixos e tokens concatenados (2026-11-05)
 
@@ -1301,8 +1301,62 @@ Mapa `PortalUiHooks::TOKENS` do `aculta420_v2`. Classes copiadas do mapa do V1 (
 | `social-links-channel` | `aculta-social-links__channel` | copiado do V1; estilo no V2 pendente (DEFERRED) |
 | `social-links-channel-custom` | `aculta-social-links__channel--custom` | copiado do V1; estilo no V2 pendente (DEFERRED) |
 | `social-links-channel-website` | `aculta-social-links__channel--website` | copiado do V1; estilo no V2 pendente (DEFERRED) |
-| `studio-account-home` | `studio__panel`, `aculta-panel`, `aculta-panel--default`, `aculta-panel__body` | copiado do V1; estilo no V2 pendente (DEFERRED) |
+| `studio-account-home` | `studio__panel`, `aculta-panel`, `aculta-panel__body` | copiado do V1; estilo no V2 pendente (DEFERRED) |
 | `studio-account-identity` | `studio-account-identity` | copiado do V1; estilo no V2 pendente (DEFERRED) |
 | `studio-card-compact` | `studio-card-compact` | copiado do V1; estilo no V2 pendente (DEFERRED) |
 | `studio-course-authoring` | `studio-course-authoring` | copiado do V1; estilo no V2 pendente (DEFERRED) |
 | `studio-course-authoring-back` | `studio-course-authoring__back` | copiado do V1; estilo no V2 pendente (DEFERRED) |
+
+## Tokens conferidos em 2026-11-12
+
+| Token | Classes no V2 | Estado |
+|---|---|---|
+| `button-danger` | `button`, `button--danger` | conferido no mapa do V2 em 2026-11-12 |
+| `button-outline` | `button`, `button--outline` | conferido no mapa do V2 em 2026-11-12 |
+| `card-cultural-accent-green` | `card-cultural--accent-green` | conferido no mapa do V2 em 2026-11-12 |
+| `card-cultural-accent-yellow` | `card-cultural--accent-yellow` | conferido no mapa do V2 em 2026-11-12 |
+| `card-cultural-accent-red` | `card-cultural--accent-red` | conferido no mapa do V2 em 2026-11-12 |
+| `revista-teaser-accent-green` | `revista-teaser--accent-green` | conferido no mapa do V2 em 2026-11-12 |
+| `revista-teaser-accent-yellow` | `revista-teaser--accent-yellow` | conferido no mapa do V2 em 2026-11-12 |
+| `revista-teaser-accent-red` | `revista-teaser--accent-red` | conferido no mapa do V2 em 2026-11-12 |
+| `ui-library-nav` | `aculta-ui-library-nav` | conferido no mapa do V2 em 2026-11-12 |
+| `events-organization-admin-table` | `aculta-events-organization-admin` | conferido no mapa do V2 em 2026-11-12 |
+| `friendship-cancel-action` | `portal-account-overview__profile`, `button`, `button--secondary` | conferido no mapa do V2 em 2026-11-12 |
+| `friendship-remove-action` | `portal-account-overview__profile`, `button`, `button--danger` | conferido no mapa do V2 em 2026-11-12 |
+| `public-profile-reactions` | `portal-profile__reactions` | conferido no mapa do V2 em 2026-11-12 |
+| `public-profile-reactions-title` | `portal-profile__reactions-title` | conferido no mapa do V2 em 2026-11-12 |
+| `public-profile-reactions-stats` | `portal-profile__reactions-stats` | conferido no mapa do V2 em 2026-11-12 |
+| `public-profile-reactions-received` | `portal-profile__reactions-received` | conferido no mapa do V2 em 2026-11-12 |
+| `public-profile-reactions-given` | `portal-profile__reactions-given` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-forum` | `aculta-statistics__forum` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-forum-kpis` | `aculta-statistics__forum-kpis` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-metric-card` | `statistics-metric-card` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-metric-card__label` | `statistics-metric-card__label` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-metric-card__value` | `statistics-metric-card__value` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-metric-card__number` | `statistics-metric-card__number` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-metric-card__unit` | `statistics-metric-card__unit` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-metric-card__hint` | `statistics-metric-card__hint` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-trend-chart__title` | `statistics-trend-chart__title` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-trend-chart__summary` | `statistics-trend-chart__summary` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-trend-chart__caption` | `statistics-trend-chart__caption` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-summary-card__title` | `statistics-summary-card__title` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-summary-card__note` | `statistics-summary-card__note` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-category-ranking__empty` | `statistics-category-ranking__empty` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-empty-state__message` | `statistics-empty-state__message` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-empty-state__hint` | `statistics-empty-state__hint` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-summary-card` | `statistics-summary-card` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-trend-chart` | `statistics-trend-chart` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-category-ranking` | `statistics-category-ranking` | conferido no mapa do V2 em 2026-11-12 |
+| `statistics-empty-state` | `statistics-empty-state` | conferido no mapa do V2 em 2026-11-12 |
+
+| `studio-calendar` | (sem classe; estilizado por `[data-portal-ui]`) | componente do Studio em `aculta-studio-calendar.html.twig` |
+| `studio-connections` | (sem classe; estilizado por `[data-portal-ui]`) | componente do Studio em `aculta-studio-connections.html.twig` |
+
+## Atributos de comportamento conferidos em 2026-11-12
+
+| Atributo | Uso |
+|---|---|
+| `data-aculta-reply-clear` | limpa o formulário de resposta quando o popup fecha |
+| `data-aculta-topic-composer` | identifica o compositor de novo tópico público do Fórum |
+| `data-aculta-comment-new` | marca o comentário recém-publicado para foco e destaque |
+| `data-aculta-content-composer` | identifica o compositor de conteúdo do Studio |

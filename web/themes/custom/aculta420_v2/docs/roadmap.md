@@ -15,12 +15,16 @@
   breadcrumb do Fórum. Runtime Sync BLOCKED por worktree concorrente/RX,
   sem drift de updatedb/config/deploy. Sessão autenticada, modais, gavetas,
   teclado e leitor de tela: DEFERRED.
-- Pendente: homologação visual de telas autenticadas/modais/gavetas e a
-  migração dos utilitários `aculta-u-*` emitidos por `PortalUiHooks` para
-  composição SDC. A auditoria do mapa (529 tokens) não encontrou entrada
-  comprovadamente morta: as 10 sem referência textual são exigidas por UI
-  Styles, envios de formulário ou configuração editorial. Captura e
-  navegador autenticado: DEFERRED.
+- Concluído em 2026-11-12: migração dos utilitários `aculta-u-*` do mapa de
+  tokens para classes semânticas por domínio; `utilities.css` removido de
+  `global-styling`. As equivalências Bootstrap do mapa (`.text-muted`,
+  `.small`, `.table`, `.nav`, `.list-unstyled`, `.pager-*`) também saíram.
+  Contraste do rodapé e da trilha corrigido e medido (22/22 axe PASS).
+- Pendente: homologação visual de telas autenticadas/modais/gavetas,
+  composição SDC para marcação de módulos que hoje usa `data-portal-ui`
+  (incremental, sem camada de compatibilidade) e captura pixel a pixel
+  antes/depois. A auditoria do mapa (529 tokens) não encontrou entrada
+  comprovadamente morta. Captura e navegador autenticado: DEFERRED.
 
 ## Títulos de cards e dívida de gates (2026-11-12)
 

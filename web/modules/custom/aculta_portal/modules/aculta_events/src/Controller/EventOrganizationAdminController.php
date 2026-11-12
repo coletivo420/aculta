@@ -222,7 +222,7 @@ final class EventOrganizationAdminController extends ControllerBase {
         $rows[] = [
           'title' => [
             'data' => [
-              '#markup' => '<strong>' . htmlspecialchars((string) $org->label(), ENT_QUOTES, 'UTF-8') . '</strong><br><small class="text-muted">Slug: ' . htmlspecialchars($org->getSlug(), ENT_QUOTES, 'UTF-8') . '</small>',
+              '#markup' => '<strong>' . htmlspecialchars((string) $org->label(), ENT_QUOTES, 'UTF-8') . '</strong><br><small>Slug: ' . htmlspecialchars($org->getSlug(), ENT_QUOTES, 'UTF-8') . '</small>',
             ],
           ],
           'titular' => $titularName,
@@ -319,6 +319,7 @@ final class EventOrganizationAdminController extends ControllerBase {
       ],
       'table' => [
         '#type' => 'table',
+        '#attributes' => ['data-portal-ui' => 'events-organization-admin-table'],
         '#header' => [
           $this->t('Organização'),
           $this->t('Titular'),

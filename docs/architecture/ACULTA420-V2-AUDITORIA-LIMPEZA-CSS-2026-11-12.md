@@ -167,14 +167,18 @@ Não executados nesta sessão:
 
 ## 7. Pendências reais (com consumidores identificados)
 
-1. **Utilitários `aculta-u-*`**: continuam emitidos por `PortalUiHooks::TOKENS`
-   (ex.: `account-entry-links`, `studio-actions`, `new-conversation-links`).
-   Removê-los exige migrar os consumidores para composição SDC. Não há
-   `legacy.css`/`compat.css`: a regra viva permanece em `utilities.css`.
-2. **`portal-ui-map.css` e `portal-ui-extras.css`**: são o mapa ativo das
-   classes emitidas pelos tokens do Portal (cerca de 480 classes). A
-   substituição integral por SDC depende de migrar os render arrays dos
-   módulos do Portal, fora do escopo do tema.
+1. **Utilitários `aculta-u-*` — RESOLVIDO em 2026-11-12.** Nenhum token de
+   `PortalUiHooks::TOKENS` usa mais utilitário. Os 39 tokens receberam classes
+   semânticas por domínio, definidas em `portal-ui-map.css` e nos CSS dos
+   módulos; `utilities.css` saiu de `global-styling` e do repositório.
+   Permanece apenas `.aculta-u-block-start`, que é configuração de UI Styles
+   em `block.block.*` (não vem do mapa) e agora vive em `layout.css`.
+2. **`portal-ui-map.css` e `portal-ui-extras.css`**: continuam sendo a ponte
+   sancionada token → classe (`data-portal-ui`), não uma camada de
+   compatibilidade: as equivalências Bootstrap foram removidas e os tokens
+   passaram a apontar para classes semânticas. A substituição integral por
+   composição SDC do markup de módulo é incremental e não bloqueia a
+   eliminação do legado de utilitários.
 3. **`studio.css`**: restam regras de `.studio`, `.aculta-profile-editor`,
    formulários de perfil e seletores de estado. A migração para SDC/UI Suite
    exige revisão visual autenticada; preservadas.
@@ -294,3 +298,39 @@ morta. A migração de `aculta-u-*` e dos mapas `portal-ui-*` para composição
 SDC continua dependente dos render arrays dos módulos do Portal, fora do
 escopo do tema e sem autorização para alterar módulos com trabalho
 concorrente.
+
+## 13. Segunda rodada com autorização do responsável (2026-11-12)
+
+O responsável autorizou alterar render arrays dos módulos do Portal e corrigir
+o contraste em frente de UI Skins. Resultado:
+
+- **Utilitários eliminados.** `src/styles/utilities.css` saiu do repositório e
+  de `global-styling`. Os 39 tokens que usavam `aculta-u-*` passaram a classes
+  semânticas (`aculta-donation__*`, `aculta-checkout__*`, `aculta-shop-*`,
+  `aculta-location-*`, `aculta-lms-*`, `aculta-messenger-*`,
+  `aculta-we-sativa__*`, `studio__actions`, `aculta-hint*`,
+  `aculta-form--inline`, `aculta-section-title`).
+- **Equivalências Bootstrap removidas** do mapa: `.text-muted`, `.text-center`,
+  `.small`, `.lead`, `.clearfix`, `.list-unstyled`, `.list-group`, `.table`,
+  `.table-hover`, `.label-default`, `.link-primary`, `.section-title`, `.nav`,
+  `.nav-tabs`, `.pager-next` e `.pager-prev`. Restam `.inline` e
+  `.container-inline`, emitidas pelo Core.
+- **`.aculta-panel--default` removida** por repetir `.aculta-panel`.
+- **Dois emissores diretos migrados**: o `<small class="text-muted">` do painel
+  administrativo de organizações virou o token
+  `events-organization-admin-table`; o `link-primary` do aviso de pagamento
+  virou `aculta-payment-notice__link` no template do tema.
+- **Gate de documentação de tokens corrigido**: não aborta mais quando o tema
+  V1 `aculta420` não existe. `docs/portal/TOKENS-E-ATRIBUTOS.md` sincronizado
+  (532 tokens, 451 usados, 160 atributos).
+- **Contraste**: link do rodapé (3,45:1 → 5,08:1) e nível atual da trilha
+  (3,58:1 → 12,4:1); categoria do teaser da Revista idem. Frente nova
+  `tests/browser/transversal/aculta-contraste/` (axe): 22/22 PASS.
+- **Homologação**: `page-matrix.py` 100/100 nos dez hosts, 320–1440 px, claro e
+  escuro, sem overflow; `css:verify` PASS; mapped classes PASS (470); UI Styles
+  PASS (54); Stylelint e PHPCS sem erros novos.
+- **Métricas**: 105 arquivos, 452.559 bytes, 2.488 regras, 3.087 seletores;
+  `global-styling` 108.777 bytes.
+- **Continua pendente**: sessão autenticada, modais, gavetas, teclado e leitor
+  de tela; composição SDC do markup de módulo (incremental); comparação pixel a
+  pixel sem baseline anterior.

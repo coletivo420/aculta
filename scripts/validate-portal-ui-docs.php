@@ -48,7 +48,12 @@ $placeholders = ['token', 'token2'];
 
 $tokensUsed = [];
 $attrsUsed = [];
-$base = [$root . '/web/modules/custom/aculta_portal', $root . '/web/themes/custom/aculta420'];
+// O tema V1 `aculta420` é referência e pode não existir no checkout;
+// varre apenas diretórios presentes para não derrubar o gate.
+$base = array_values(array_filter(
+  [$root . '/web/modules/custom/aculta_portal', $root . '/web/themes/custom/aculta420'],
+  static fn(string $dir): bool => is_dir($dir),
+));
 foreach ($base as $dir) {
   $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS));
   foreach ($it as $file) {
