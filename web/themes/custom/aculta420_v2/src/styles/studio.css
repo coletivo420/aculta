@@ -2,19 +2,10 @@
 
 .studio,
 .aculta-profile-editor,
-body.path-marley .aculta-main:has(form.node-revista-form),
 body.path-marley form.node-revista-form,
-.aculta-main:has(form.studio-profile-form),
 form.studio-profile-form,
-body.path-perfil .aculta-main:has(form#aculta-user-studio-nickname-form),
 body.path-perfil form#aculta-user-studio-nickname-form,
-body.path-perfil .aculta-main:has(form#aculta-user-profile-visibility-form),
-body.path-perfil form#aculta-user-profile-visibility-form,
-body.path-ganjalab .aculta-main,
-body.path-culturas .aculta-main,
-.aculta-main:has([data-portal-ui="aculta-learning-journey"]),
-.aculta-main:has([data-portal-ui="aculta-learning-room"]),
-.aculta-main .we-sativa__workspace {
+body.path-perfil form#aculta-user-profile-visibility-form {
   --aculta-studio-fidelity-primary: var(--color-brand-primary);
   --aculta-studio-fidelity-link: var(--color-link-editorial);
   --aculta-studio-fidelity-interaction: var(--color-primary);
@@ -83,60 +74,6 @@ form.studio-profile-form {
   line-height: var(--aculta-studio-fidelity-line-height-default);
 }
 
-.aculta-main > .aculta-container:has(.studio),
-.aculta-main > .aculta-container:has(.aculta-profile-editor),
-.aculta-main > .aculta-container:has(form.studio-profile-form),
-body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
-.aculta-main > .aculta-container:has(.we-sativa__workspace) {
-  width: calc(100% - .5rem);
-  max-width: 102rem;
-  margin-inline: auto;
-  padding-inline: 1rem;
-}
-
-@media (min-width: 48rem) {
-  .aculta-main > .aculta-container:has(.studio),
-  .aculta-main > .aculta-container:has(.aculta-profile-editor),
-  .aculta-main > .aculta-container:has(form.studio-profile-form),
-  body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
-  .aculta-main > .aculta-container:has(.we-sativa__workspace) {
-    width: calc(100% - 2.5rem);
-    padding-inline: 1.5rem;
-  }
-}
-
-@media (min-width: 70rem) {
-  .aculta-main > .aculta-container:has(.studio),
-  .aculta-main > .aculta-container:has(.aculta-profile-editor),
-  .aculta-main > .aculta-container:has(form.studio-profile-form),
-  body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
-  .aculta-main > .aculta-container:has(.we-sativa__workspace) {
-    max-width: 107rem;
-    padding-inline: 3.5rem;
-  }
-}
-
-@media (min-width: 85rem) {
-  .aculta-main > .aculta-container:has(.studio),
-  .aculta-main > .aculta-container:has(.aculta-profile-editor),
-  .aculta-main > .aculta-container:has(form.studio-profile-form),
-  body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
-  .aculta-main > .aculta-container:has(.we-sativa__workspace) {
-    width: calc(100% - 6rem);
-  }
-}
-
-@media (min-width: 120rem) {
-  .aculta-main > .aculta-container:has(.studio),
-  .aculta-main > .aculta-container:has(.aculta-profile-editor),
-  .aculta-main > .aculta-container:has(form.studio-profile-form),
-  body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
-  .aculta-main > .aculta-container:has(.we-sativa__workspace) {
-    max-width: 110rem;
-    padding-inline: 5rem;
-  }
-}
-
 .studio :is(h1, h2, h3, h4, h5, h6),
 .aculta-profile-editor :is(h1, h2, h3, h4, h5, h6) {
   font-family: var(--aculta-studio-fidelity-font-family);
@@ -189,60 +126,6 @@ body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
   font-weight: var(--aculta-studio-fidelity-font-weight-light);
 }
 
-body.path-marley .aculta-main:has(form.node-revista-form) {
-  color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
-  line-height: var(--aculta-studio-fidelity-line-height-default);
-}
-
-body.path-marley .aculta-main:has(form.node-revista-form) :is(h1, h2, h3, h4, h5, h6) {
-  color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
-  line-height: var(--aculta-studio-fidelity-line-height-headings);
-}
-
-body.path-marley .aculta-main:has(form.node-revista-form) h1 {
-  font-size: clamp(2rem, 7vw, var(--aculta-studio-fidelity-font-size-xxl));
-  font-weight: var(--aculta-studio-fidelity-font-weight-bold);
-}
-
-.aculta-main:has(form.studio-profile-form) {
-  color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
-  line-height: var(--aculta-studio-fidelity-line-height-default);
-}
-
-body.path-perfil .aculta-main:has(form#aculta-user-studio-nickname-form),
-body.path-perfil .aculta-main:has(form#aculta-user-profile-visibility-form) {
-  color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
-  line-height: var(--aculta-studio-fidelity-line-height-default);
-}
-
-.aculta-main:has(form.studio-profile-form) :is(h1, h2, h3, h4, h5, h6) {
-  color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
-  line-height: var(--aculta-studio-fidelity-line-height-headings);
-}
-
-body.path-perfil .aculta-main:has(form#aculta-user-studio-nickname-form) :is(h1, h2, h3, h4, h5, h6),
-body.path-perfil .aculta-main:has(form#aculta-user-profile-visibility-form) :is(h1, h2, h3, h4, h5, h6) {
-  color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
-  line-height: var(--aculta-studio-fidelity-line-height-headings);
-}
-
-.aculta-main:has(form.studio-profile-form) h1 {
-  font-size: clamp(2rem, 7vw, var(--aculta-studio-fidelity-font-size-xxl));
-  font-weight: var(--aculta-studio-fidelity-font-weight-bold);
-}
-
-body.path-perfil .aculta-main:has(form#aculta-user-studio-nickname-form) h1,
-body.path-perfil .aculta-main:has(form#aculta-user-profile-visibility-form) h1 {
-  font-size: clamp(2rem, 7vw, var(--aculta-studio-fidelity-font-size-xxl));
-  font-weight: var(--aculta-studio-fidelity-font-weight-bold);
-}
-
 body.path-perfil form#aculta-user-profile-visibility-form .form-type-checkbox {
   display: flex;
   min-block-size: 2.75rem;
@@ -262,123 +145,6 @@ body.path-perfil form#aculta-user-profile-visibility-form .form-type-checkbox la
   align-items: center;
   margin: 0;
   cursor: pointer;
-}
-
-body.path-ganjalab .aculta-main {
-  color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
-  line-height: var(--aculta-studio-fidelity-line-height-default);
-}
-
-body.path-ganjalab .aculta-main :is(h1, h2, h3, h4, h5, h6) {
-  color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
-  line-height: var(--aculta-studio-fidelity-line-height-headings);
-}
-
-body.path-ganjalab .aculta-main .aculta-context-header__title {
-  font-size: clamp(1.8rem, 3.8vw, 2.75rem);
-  font-weight: var(--aculta-studio-fidelity-font-weight-bold);
-}
-
-body.path-ganjalab .aculta-main .aculta-card {
-  margin-block: calc(.5 * var(--aculta-studio-fidelity-row-gap));
-  border: 1px solid transparent;
-  border-radius: 1.5rem;
-  background-color: var(--aculta-studio-fidelity-surface);
-  box-shadow: var(--aculta-studio-fidelity-box-shadow);
-}
-
-body.path-ganjalab .aculta-main .aculta-card .aculta-card__body {
-  padding-block: 1rem;
-  padding-inline: clamp(1rem, 2.25vw, 1.5rem);
-}
-
-body.path-ganjalab .aculta-main .aculta-empty-state {
-  color: var(--aculta-studio-fidelity-text);
-  border-color: var(--aculta-studio-fidelity-divider);
-  border-radius: var(--aculta-studio-fidelity-border-radius-tiny);
-  background-color: var(--aculta-studio-fidelity-form-surface);
-  font-family: var(--aculta-studio-fidelity-font-family);
-  line-height: var(--aculta-studio-fidelity-line-height-default);
-}
-
-body.path-culturas .aculta-main {
-  color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
-  line-height: var(--aculta-studio-fidelity-line-height-default);
-}
-
-body.path-culturas .aculta-main :is(h1, h2, h3, h4, h5, h6) {
-  color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
-  line-height: var(--aculta-studio-fidelity-line-height-headings);
-}
-
-body.path-culturas .aculta-main h1 {
-  font-size: clamp(2rem, 7vw, var(--aculta-studio-fidelity-font-size-xxl));
-  font-weight: var(--aculta-studio-fidelity-font-weight-bold);
-}
-
-body.path-culturas .aculta-main a {
-  display: inline-flex;
-  min-block-size: 2.75rem;
-  align-items: center;
-  margin-inline-end: .5rem;
-  color: var(--aculta-studio-fidelity-link);
-  text-underline-offset: .2em;
-}
-
-body.path-culturas .aculta-main a:focus-visible,
-body.path-culturas .aculta-main button:focus-visible,
-body.path-culturas .aculta-main input:focus-visible,
-body.path-culturas .aculta-main select:focus-visible {
-  outline: 3px solid var(--color-focus-ring);
-  outline-offset: 3px;
-}
-
-body.path-culturas .aculta-main form {
-  padding: var(--aculta-studio-fidelity-row-gap) var(--aculta-studio-fidelity-gutter);
-  color: var(--aculta-studio-fidelity-text);
-  background: var(--aculta-studio-fidelity-form-surface);
-}
-
-body.path-culturas .aculta-main form :is(.form-item, .form-actions) {
-  padding-block: .75rem;
-}
-
-body.path-culturas .aculta-main form label {
-  display: block;
-  font-weight: var(--aculta-studio-fidelity-font-weight-semibold);
-}
-
-body.path-culturas .aculta-main form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]), select, textarea) {
-  min-block-size: 2.75rem;
-  max-inline-size: 100%;
-  padding: .5rem 1rem;
-  color: var(--aculta-studio-fidelity-text);
-  border: 1px solid var(--aculta-studio-fidelity-input-border-bottom);
-  border-color: var(--aculta-studio-fidelity-input-border-top) var(--aculta-studio-fidelity-input-border-inline) var(--aculta-studio-fidelity-input-border-bottom);
-  border-radius: 0;
-  background: var(--aculta-studio-fidelity-input-background);
-  font: inherit;
-}
-
-body.path-culturas .aculta-main form :is(button, input[type="submit"], .form-submit) {
-  min-block-size: 2.75rem;
-  padding: .5rem 1.5rem;
-  color: var(--aculta-studio-fidelity-button-primary-text);
-  border: 2px solid var(--aculta-studio-fidelity-button-primary-border);
-  background: var(--aculta-studio-fidelity-button-primary-background);
-  font: inherit;
-  font-weight: var(--aculta-studio-fidelity-font-weight-bold);
-}
-
-body.path-culturas .aculta-main > .aculta-container:has(.aculta-events-organizer-dashboard) {
-  width: calc(100% - .5rem);
-  max-width: 102rem;
-  margin-inline: auto;
-  padding-inline: 1rem;
 }
 
 body.path-culturas .aculta-events-organizer-dashboard {
@@ -514,109 +280,11 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
 }
 
 @media (min-width: 48rem) {
-  body.path-culturas .aculta-main > .aculta-container:has(.aculta-events-organizer-dashboard) {
-    width: calc(100% - 2.5rem);
-    padding-inline: 1.5rem;
-  }
 
   body.path-culturas .organizer-dashboard-filters form {
     grid-template-columns: minmax(0, 2fr) minmax(12rem, 1fr) auto;
     align-items: end;
   }
-}
-
-@media (min-width: 70rem) {
-  body.path-culturas .aculta-main > .aculta-container:has(.aculta-events-organizer-dashboard) {
-    max-width: 107rem;
-    padding-inline: 3.5rem;
-  }
-}
-
-@media (min-width: 85rem) {
-  body.path-culturas .aculta-main > .aculta-container:has(.aculta-events-organizer-dashboard) {
-    width: calc(100% - 6rem);
-  }
-}
-
-@media (min-width: 120rem) {
-  body.path-culturas .aculta-main > .aculta-container:has(.aculta-events-organizer-dashboard) {
-    max-width: 110rem;
-    padding-inline: 5rem;
-  }
-}
-
-.aculta-main .we-sativa__workspace {
-  color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
-  line-height: var(--aculta-studio-fidelity-line-height-default);
-}
-
-.aculta-main .we-sativa__workspace :is(h1, h2, h3, h4, h5, h6) {
-  color: var(--aculta-studio-fidelity-text);
-  font-family: var(--aculta-studio-fidelity-font-family);
-  line-height: var(--aculta-studio-fidelity-line-height-headings);
-}
-
-.aculta-main .we-sativa__workspace .aculta-context-header__title {
-  font-size: clamp(2rem, 7vw, var(--aculta-studio-fidelity-font-size-xxl));
-  font-weight: var(--aculta-studio-fidelity-font-weight-bold);
-}
-
-.aculta-main .we-sativa__workspace .aculta-editorial-section {
-  margin-block: 0;
-}
-
-.aculta-main .we-sativa__workspace {
-  row-gap: var(--aculta-studio-fidelity-section-spacing) !important;
-}
-
-.aculta-main .we-sativa__workspace .aculta-section-title {
-  justify-content: flex-start;
-  padding: 0 0 .75rem;
-  text-align: start;
-  color: var(--aculta-studio-fidelity-text);
-  border-block-end: 1px solid var(--aculta-studio-fidelity-divider);
-  background: transparent;
-  font-family: var(--aculta-studio-fidelity-font-family);
-  font-size: var(--aculta-studio-fidelity-font-size-xl);
-  line-height: var(--aculta-studio-fidelity-line-height-headings);
-  margin-block: 0 1rem;
-}
-
-.aculta-main .we-sativa__workspace .aculta-section-title::before,
-.aculta-main .we-sativa__workspace .aculta-section-title::after {
-  display: none;
-}
-
-.aculta-main .we-sativa__workspace .aculta-card {
-  margin-block: calc(.5 * var(--aculta-studio-fidelity-row-gap));
-  border: 1px solid transparent;
-  border-radius: 1.5rem;
-  background-color: var(--aculta-studio-fidelity-surface);
-  box-shadow: var(--aculta-studio-fidelity-box-shadow);
-}
-
-.aculta-main .we-sativa__workspace .aculta-card .aculta-card__body {
-  padding-block: 1rem;
-  padding-inline: 2rem;
-}
-
-.aculta-main .we-sativa__workspace .aculta-empty-state {
-  color: var(--aculta-studio-fidelity-text);
-  border-color: var(--aculta-studio-fidelity-divider);
-  border-radius: var(--aculta-studio-fidelity-border-radius-tiny);
-  background-color: var(--aculta-studio-fidelity-form-surface);
-  font-family: var(--aculta-studio-fidelity-font-family);
-  line-height: var(--aculta-studio-fidelity-line-height-default);
-}
-
-.studio__tabs {
-  margin-bottom: 1.5rem;
-  border: 0;
-}
-
-.studio__tab[aria-current="page"] {
-  font-weight: 700;
 }
 
 .studio__panel {
@@ -638,10 +306,6 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
   outline-offset: 3px;
 }
 
-.studio__heading {
-  margin-bottom: 1rem;
-}
-
 .studio__section-header {
   display: flex;
   flex-wrap: wrap;
@@ -649,10 +313,6 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
   justify-content: space-between;
   gap: var(--aculta-studio-fidelity-row-gap);
   margin-block-end: 1rem;
-}
-
-.studio__section-header > .studio__heading {
-  margin: 0;
 }
 
 .studio__section-header > .item-list {
@@ -718,8 +378,6 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
 
 .studio__main form,
 .aculta-profile-editor form,
-body.path-culturas main#main-content form.aculta-event-form,
-body.path-culturas main#main-content form.aculta-event-location-form,
 :is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) {
   margin-block: var(--aculta-studio-fidelity-row-gap);
   padding: var(--aculta-studio-fidelity-row-gap) var(--aculta-studio-fidelity-gutter);
@@ -732,21 +390,18 @@ body.path-culturas main#main-content form.aculta-event-location-form,
 
 .studio__main form :is(.form-item, .form-actions),
 .aculta-profile-editor form :is(.form-item, .form-actions),
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(.form-item, .form-actions),
 :is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(.form-item, .form-actions) {
   padding-block: 1rem;
 }
 
 .studio__main form .form-item .form-item,
 .aculta-profile-editor form .form-item .form-item,
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) .form-item .form-item,
 :is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) .form-item .form-item {
   padding-block: 0;
 }
 
 .studio__main form fieldset,
 .aculta-profile-editor form fieldset,
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) fieldset,
 :is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) fieldset {
   margin-block: var(--aculta-studio-fidelity-row-gap);
   padding: var(--aculta-studio-fidelity-row-gap) var(--aculta-studio-fidelity-gutter);
@@ -756,7 +411,6 @@ body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-eve
 
 .studio__main form fieldset fieldset,
 .aculta-profile-editor form fieldset fieldset,
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) fieldset fieldset,
 :is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) fieldset fieldset {
   padding: 0;
   border: 0;
@@ -765,7 +419,6 @@ body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-eve
 
 .studio__main form label,
 .aculta-profile-editor form label,
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) label,
 :is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) label {
   display: block;
   max-inline-size: 80ch;
@@ -775,14 +428,12 @@ body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-eve
 
 .studio__main form label.option,
 .aculta-profile-editor form label.option,
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) label.option,
 :is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) label.option {
   display: inline-block;
 }
 
 .studio__main form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea),
 .aculta-profile-editor form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea),
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea),
 :is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea) {
   min-block-size: 2.75rem;
   padding: .5rem 1rem;
@@ -796,7 +447,6 @@ body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-eve
 
 .studio__main form :is(input, select, textarea)::placeholder,
 .aculta-profile-editor form :is(input, select, textarea)::placeholder,
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(input, select, textarea)::placeholder,
 :is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(input, select, textarea)::placeholder {
   color: var(--aculta-studio-fidelity-input-placeholder);
   font-family: var(--aculta-studio-fidelity-font-family);
@@ -804,7 +454,6 @@ body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-eve
 
 .studio__main form :is(input, select, textarea):is(:focus, :focus-visible),
 .aculta-profile-editor form :is(input, select, textarea):is(:focus, :focus-visible),
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(input, select, textarea):is(:focus, :focus-visible),
 :is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(input, select, textarea):is(:focus, :focus-visible) {
   border-color: var(--aculta-studio-fidelity-input-focus);
   background-color: var(--aculta-studio-fidelity-input-background);
@@ -812,14 +461,12 @@ body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-eve
 
 .studio__main form .error,
 .aculta-profile-editor form .error,
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) .error,
 :is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) .error {
   border-color: var(--aculta-studio-fidelity-input-error);
 }
 
 .studio__main form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close),
 .aculta-profile-editor form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close),
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close),
 :is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close) {
   display: inline-block;
   margin-block-end: 1em;
@@ -841,7 +488,6 @@ body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-eve
 
 .studio__main form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close):not([disabled]):is(:hover, :focus-visible),
 .aculta-profile-editor form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close):not([disabled]):is(:hover, :focus-visible),
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close):not([disabled]):is(:hover, :focus-visible),
 :is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close):not([disabled]):is(:hover, :focus-visible) {
   color: var(--aculta-studio-fidelity-button-hover-text);
   border-color: var(--aculta-studio-fidelity-button-hover-border);
@@ -850,7 +496,6 @@ body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-eve
 
 .studio__main form :is(.form-submit, .button--primary):not([data-drupal-selector="edit-reset"]):not(.close),
 .aculta-profile-editor form :is(.form-submit, .button--primary):not([data-drupal-selector="edit-reset"]):not(.close),
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(.form-submit, .button--primary):not([data-drupal-selector="edit-reset"]):not(.close),
 :is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(.form-submit, .button--primary):not([data-drupal-selector="edit-reset"]):not(.close) {
   color: var(--aculta-studio-fidelity-button-primary-text);
   border-color: var(--aculta-studio-fidelity-button-primary-border);
@@ -859,7 +504,6 @@ body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-eve
 
 .studio__main form :is(.button--danger, .danger):not([disabled]):not(.close),
 .aculta-profile-editor form :is(.button--danger, .danger):not([disabled]):not(.close),
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(.button--danger, .danger):not([disabled]):not(.close),
 :is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(.button--danger, .danger):not([disabled]):not(.close) {
   color: var(--aculta-studio-fidelity-button-danger-text);
   border-color: var(--aculta-studio-fidelity-button-danger-border);
@@ -868,7 +512,6 @@ body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-eve
 
 .studio__main form :is(.button--danger, .danger):not([disabled]):not(.close):is(:hover, :focus-visible),
 .aculta-profile-editor form :is(.button--danger, .danger):not([disabled]):not(.close):is(:hover, :focus-visible),
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(.button--danger, .danger):not([disabled]):not(.close):is(:hover, :focus-visible),
 :is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(.button--danger, .danger):not([disabled]):not(.close):is(:hover, :focus-visible) {
   color: var(--aculta-studio-fidelity-button-hover-text);
   border-color: var(--aculta-studio-fidelity-button-danger-border);
@@ -1097,31 +740,6 @@ body.path-marley form.node-revista-form .form-actions :is(.form-submit):not([dat
   background-color: transparent;
 }
 
-.aculta-account-entry .studio__actions .aculta-card--studio-fidelity .aculta-card__body > a {
-  display: flex;
-  min-block-size: 2.75rem;
-  align-items: center;
-}
-
-.studio-hub .studio__actions {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.studio-hub .studio__actions > li,
-.studio-hub .studio__actions .aculta-card {
-  min-width: 0;
-  height: 100%;
-}
-
-.studio-hub .studio__actions .aculta-card__body {
-  overflow-wrap: anywhere;
-}
-
-.studio-hub .studio__actions a:focus-visible {
-  outline: 3px solid var(--color-focus-ring);
-  outline-offset: 3px;
-}
-
 .studio-saved-page {
   display: grid;
   min-inline-size: 0;
@@ -1134,14 +752,6 @@ body.path-marley form.node-revista-form .form-actions :is(.form-submit):not([dat
   font-family: var(--aculta-studio-fidelity-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-headings);
   overflow-wrap: anywhere;
-}
-
-body.path-salvos .aculta-main > .aculta-container:has(.studio-saved-page) > .aculta-page-heading {
-  display: none;
-}
-
-body.path-marley .aculta-main > .aculta-container:has([data-aculta-studio="root"] .aculta-context-header__title) > .aculta-page-heading {
-  display: none;
 }
 
 .studio-saved-tabs.nav {
@@ -1318,44 +928,8 @@ body.path-marley .aculta-main > .aculta-container:has([data-aculta-studio="root"
   max-width: 100%;
 }
 
-.studio__sections > li {
-  margin: 0;
-}
-
 .studio__link[aria-current="page"] {
   font-weight: 700;
-}
-
-.studio__subtabs {
-  margin-bottom: 1rem;
-}
-
-.studio__tabs .studio__tab,
-.studio__subtabs a {
-  display: inline-flex;
-  align-items: center;
-  padding: .25em 1em;
-  text-decoration: none;
-  color: var(--aculta-studio-fidelity-interaction);
-  border: 0;
-  border-block-end: 1px solid var(--aculta-studio-fidelity-divider);
-  border-radius: 0;
-  background-color: transparent;
-  box-shadow: none;
-  min-inline-size: 2.75rem;
-  min-block-size: 2.75rem;
-}
-
-.studio__tabs .studio__tab[aria-current="page"],
-.studio__subtabs a[aria-current="page"] {
-  border-block-end: 2px solid var(--aculta-studio-fidelity-interaction);
-}
-
-.studio__tabs .studio__tab:is(:hover, :focus-visible),
-.studio__subtabs a:is(:hover, :focus-visible) {
-  color: var(--aculta-studio-fidelity-link);
-  border-block-end: 2px solid var(--aculta-studio-fidelity-interaction);
-  background-color: transparent;
 }
 
 @media (min-width: 48rem) {
@@ -1384,10 +958,6 @@ body.path-marley .aculta-main > .aculta-container:has([data-aculta-studio="root"
     grid-column: 2;
   }
 
-  .studio-hub .studio__actions {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .studio__layout {
     flex-direction: row;
   }
@@ -1407,61 +977,6 @@ body.path-marley .aculta-main > .aculta-container:has([data-aculta-studio="root"
   }
 }
 
-.studio__tabs.nav,
-.studio__subtabs.nav {
-  display: inline-flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: .5rem 1rem;
-  border: 0;
-  padding-inline: 0;
-}
-
-.studio__tabs.nav {
-  list-style: none;
-}
-
-.studio__tabs > li {
-  list-style: none;
-  margin-block: .5rem;
-}
-
-.studio__subtabs > li {
-  list-style: none;
-  margin-block: .5rem;
-}
-
-.studio__tabs.nav > .list-group-item,
-.studio__subtabs.nav > .list-group-item {
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-}
-
-.studio__subtabs a {
-  color: var(--aculta-studio-fidelity-link);
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-  font-weight: 600;
-}
-
-.studio__subtabs a[aria-current="page"] {
-  border: 0;
-  border-block-end: 3px solid var(--aculta-studio-fidelity-link);
-  border-radius: 0;
-}
-
-.studio__subtabs a:is(:hover, :focus-visible) {
-  color: var(--aculta-studio-fidelity-surface);
-  background-color: var(--aculta-studio-fidelity-interaction);
-}
-
-.studio__tabs .studio__tab[aria-current="page"],
-.studio__tabs .studio__tab[aria-current="page"]:is(:hover, :focus-visible),
-.studio__subtabs a[aria-current="page"],
-.studio__subtabs a[aria-current="page"]:is(:hover, :focus-visible),
 html body a[data-portal-ui="studio-tab"][data-aculta-studio="tab"][aria-current="page"],
 html body a[data-portal-ui="studio-tab"][data-aculta-studio="tab"][aria-current="page"]:is(:hover, :focus-visible),
 html body a[data-portal-ui="studio-link"][data-aculta-studio="subtab"][aria-current="page"],
@@ -1469,12 +984,7 @@ html body a[data-portal-ui="studio-link"][data-aculta-studio="subtab"][aria-curr
   color: var(--color-on-highlight);
 }
 
-.studio__sections > li {
-  list-style: none;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .studio__tab,
   .studio__link,
   .studio__action {
     transition: none !important;
@@ -1680,132 +1190,6 @@ html body a[data-portal-ui="studio-link"][data-aculta-studio="subtab"][aria-curr
   }
 }
 
-:is(
-.aculta-main > .aculta-container:has(.studio),
-.aculta-main > .aculta-container:has(.aculta-profile-editor),
-.aculta-main > .aculta-container:has(.we-sativa__workspace),
-body.path-ganjalab .aculta-main > .aculta-container,
-body.path-culturas .aculta-main > .aculta-container
-) > .aculta-highlighted > .alert-wrapper > .alert {
-  display: flex;
-  flex-flow: row wrap;
-  align-items: center;
-  gap: .5rem;
-  padding-block: 1rem;
-  padding-inline: 1rem 2rem;
-  border-width: 2px;
-  border-style: solid;
-  border-inline-start-width: 2px;
-  background-image: none;
-  box-shadow: var(--shadow-raised);
-  line-height: 1.5;
-  overflow-wrap: anywhere;
-}
-
-:is(
-.aculta-main > .aculta-container:has(.studio),
-.aculta-main > .aculta-container:has(.aculta-profile-editor),
-.aculta-main > .aculta-container:has(.we-sativa__workspace),
-body.path-ganjalab .aculta-main > .aculta-container,
-body.path-culturas .aculta-main > .aculta-container
-) > .aculta-highlighted > .alert-wrapper > .alert > div {
-  flex: 1 1 16rem;
-  min-width: 0;
-}
-
-:is(
-.aculta-main > .aculta-container:has(.studio),
-.aculta-main > .aculta-container:has(.aculta-profile-editor),
-.aculta-main > .aculta-container:has(.we-sativa__workspace),
-body.path-ganjalab .aculta-main > .aculta-container,
-body.path-culturas .aculta-main > .aculta-container
-) > .aculta-highlighted > .alert-wrapper > .alert .alert-heading {
-  margin-block: 0 .5rem;
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-:is(
-.aculta-main > .aculta-container:has(.studio),
-.aculta-main > .aculta-container:has(.aculta-profile-editor),
-.aculta-main > .aculta-container:has(.we-sativa__workspace),
-body.path-ganjalab .aculta-main > .aculta-container,
-body.path-culturas .aculta-main > .aculta-container
-) > .aculta-highlighted > .alert-wrapper > .alert a:not(.button) {
-  text-decoration: underline;
-  color: inherit;
-  font-weight: 700;
-  text-underline-offset: .2em;
-}
-
-:is(
-.aculta-main > .aculta-container:has(.studio),
-.aculta-main > .aculta-container:has(.aculta-profile-editor),
-.aculta-main > .aculta-container:has(.we-sativa__workspace),
-body.path-ganjalab .aculta-main > .aculta-container,
-body.path-culturas .aculta-main > .aculta-container
-) > .aculta-highlighted > .alert-wrapper > .alert .close {
-  flex: none;
-}
-
-:is(
-.aculta-main > .aculta-container:has(.studio),
-.aculta-main > .aculta-container:has(.aculta-profile-editor),
-.aculta-main > .aculta-container:has(.we-sativa__workspace),
-body.path-ganjalab .aculta-main > .aculta-container,
-body.path-culturas .aculta-main > .aculta-container
-) > .aculta-highlighted > .alert-wrapper > .alert-success {
-  border-color: var(--color-success);
-}
-
-:is(
-.aculta-main > .aculta-container:has(.studio),
-.aculta-main > .aculta-container:has(.aculta-profile-editor),
-.aculta-main > .aculta-container:has(.we-sativa__workspace),
-body.path-ganjalab .aculta-main > .aculta-container,
-body.path-culturas .aculta-main > .aculta-container
-) > .aculta-highlighted > .alert-wrapper > .alert-info {
-  border-color: var(--color-secondary);
-}
-
-:is(
-.aculta-main > .aculta-container:has(.studio),
-.aculta-main > .aculta-container:has(.aculta-profile-editor),
-.aculta-main > .aculta-container:has(.we-sativa__workspace),
-body.path-ganjalab .aculta-main > .aculta-container,
-body.path-culturas .aculta-main > .aculta-container
-) > .aculta-highlighted > .alert-wrapper > .alert-warning {
-  border-color: var(--color-warning);
-}
-
-:is(
-.aculta-main > .aculta-container:has(.studio),
-.aculta-main > .aculta-container:has(.aculta-profile-editor),
-.aculta-main > .aculta-container:has(.we-sativa__workspace),
-body.path-ganjalab .aculta-main > .aculta-container,
-body.path-culturas .aculta-main > .aculta-container
-) > .aculta-highlighted > .alert-wrapper > .alert-danger {
-  border-color: var(--color-danger);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  :is(
-  .aculta-main > .aculta-container:has(.studio),
-  .aculta-main > .aculta-container:has(.aculta-profile-editor),
-  .aculta-main > .aculta-container:has(.we-sativa__workspace),
-  body.path-ganjalab .aculta-main > .aculta-container,
-  body.path-culturas .aculta-main > .aculta-container) > .aculta-highlighted > .alert-wrapper > .alert,
-  :is(
-    .aculta-main > .aculta-container:has(.studio),
-    .aculta-main > .aculta-container:has(.aculta-profile-editor),
-    .aculta-main > .aculta-container:has(.we-sativa__workspace),
-    body.path-ganjalab .aculta-main > .aculta-container,
-    body.path-culturas .aculta-main > .aculta-container) > .aculta-highlighted > .alert-wrapper > .alert .close {
-    transition: none;
-  }
-}
-
 [data-aculta-learning-home] {
   color: var(--aculta-studio-fidelity-text);
   font-family: var(--aculta-studio-fidelity-font-family);
@@ -1824,10 +1208,6 @@ body.path-culturas .aculta-main > .aculta-container
   line-height: var(--aculta-studio-fidelity-line-height-headings);
   margin-block: 0 .75rem;
   overflow-wrap: anywhere;
-}
-
-[data-portal-ui="aculta-learning-home__continue"] .aculta-card {
-  border-color: var(--aculta-studio-fidelity-primary);
 }
 
 [data-portal-ui="aculta-learning-home__course-title"] {
@@ -1906,19 +1286,6 @@ body.path-culturas .aculta-main > .aculta-container
 
 [data-portal-ui="aculta-learning-journey__back"] {
   margin-block-end: .75rem;
-}
-
-.aculta-content .lms-start-link a {
-  color: var(--color-on-highlight);
-  border: 1px solid var(--color-brand-highlight);
-  background-color: var(--color-brand-highlight);
-  font-size: var(--aculta-studio-fidelity-font-size-default);
-}
-
-.aculta-content .lms-start-link a:is(:hover, :focus) {
-  color: var(--color-on-primary);
-  border-color: var(--color-primary);
-  background-color: var(--color-primary);
 }
 
 [data-portal-ui="aculta-learning-journey__back"] a {
@@ -2112,12 +1479,7 @@ body.path-culturas .aculta-main > .aculta-container
 
 .studio :is(h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6),
 .aculta-profile-editor :is(h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6),
-form.studio-profile-form :is(h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6),
-body.path-marley .aculta-main:has(form.node-revista-form) :is(h1, h2, h3, h4, h5, h6),
-.aculta-main:has(form.studio-profile-form) :is(h1, h2, h3, h4, h5, h6),
-body.path-perfil .aculta-main:has(form#aculta-user-studio-nickname-form) :is(h1, h2, h3, h4, h5, h6),
-body.path-perfil .aculta-main:has(form#aculta-user-profile-visibility-form) :is(h1, h2, h3, h4, h5, h6),
-body.path-ganjalab .aculta-main :is(h1, h2, h3, h4, h5, h6) {
+form.studio-profile-form :is(h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6) {
   font-family: var(--font-family-heading);
 }
 

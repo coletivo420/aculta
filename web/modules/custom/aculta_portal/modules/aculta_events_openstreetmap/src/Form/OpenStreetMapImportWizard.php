@@ -11,6 +11,7 @@ use Drupal\aculta_events_openstreetmap\Osm\OpenStreetMapApiClient;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Component\Utility\Html;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -186,7 +187,7 @@ final class OpenStreetMapImportWizard extends FormBase {
     $form['coordinates'] = [
       '#type' => 'item',
       '#title' => $this->t('Coordenadas importadas'),
-      '#markup' => $element['lat'] . ', ' . $element['lon'],
+      '#markup' => Html::escape((string) $element['lat']) . ', ' . Html::escape((string) $element['lon']),
     ];
     $saved_values = $form_state->get('osm_review_values') ?? [];
     $selectedAddressTags = array_intersect(array_merge(array_keys(self::ADDRESS_TAGS), ['addr:housenumber']), $selected);

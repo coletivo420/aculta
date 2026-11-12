@@ -63,9 +63,7 @@
 .view-aculta-forum-search .view-empty > :last-child { margin-block-end: 0; }
 
 /* Discussion threads shared with editorial content and forum topics. */
-.aculta-revista-publication__discussion,
-.aculta-wiki-article__discussion,
-.aculta-forum-topic__discussion {
+.aculta-wiki-article__discussion {
   display: grid;
   padding: 1.25rem 1.5rem;
   border: 1px solid var(--color-border);
@@ -224,12 +222,6 @@
 .action-links .button-action:is(:hover, :focus-visible) { color: var(--color-on-highlight); border-color: var(--color-brand-highlight); background: var(--color-brand-highlight); }
 .action-links .button-action:focus-visible { outline: var(--focus-ring-width) solid var(--color-focus-ring); outline-offset: var(--focus-ring-offset); }
 
-.aculta-forum-topic__visitor { flex: 1 1 100%; color: var(--color-text-secondary); font-size: var(--font-size-base); min-inline-size: 0; overflow-wrap: anywhere; }
-.aculta-forum-topic__visitor a { display: inline-flex; align-items: center; margin-inline-start: var(--spacing-sm); padding: var(--spacing-xs) var(--spacing-md); text-decoration: none; color: var(--color-on-brand); border: 1px solid var(--color-brand-primary); border-radius: var(--radius-sm); background: var(--color-brand-primary); font-weight: 600; min-block-size: var(--tap-target-min); }
-.aculta-forum-topic__visitor a:is(:hover, :focus-visible) { color: var(--color-on-highlight); background: var(--color-brand-highlight); }
-.aculta-forum-topic__visitor a:focus-visible { outline: var(--focus-ring-width) solid var(--color-focus-ring); outline-offset: var(--focus-ring-offset); }
-.aculta-forum-topic__replies-count { display: inline-block; margin-inline-start: var(--spacing-xs); text-align: center; color: var(--color-text-primary); border-radius: var(--radius-full); background: var(--color-surface-raised); font-size: var(--font-size-sm); font-weight: 600; min-inline-size: 1.75rem; padding-inline: var(--spacing-sm); }
-
 #views-exposed-form-aculta-forum-search-page-search {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr);
@@ -245,9 +237,6 @@
 #views-exposed-form-aculta-forum-search-page-search #edit-actions .form-submit { inline-size: auto; min-block-size: var(--tap-target-min); min-inline-size: 7rem; }
 
 @media (min-width: 36rem) {
-  .aculta-forum-topic-list-row { grid-template-columns: minmax(0, 1fr) minmax(11rem, 13rem); }
-  .aculta-forum-topic-list-row__meta { grid-template-columns: none; padding-inline-start: var(--spacing-base); border-block-start: 0; border-inline-start: 1px solid var(--color-border); padding-block: 0; }
-  .aculta-forum-topic-list-row__last-author { grid-column: 2; justify-content: flex-end; }
   #views-exposed-form-aculta-forum-search-page-search { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   [data-aculta-discussion-progress] { grid-template-areas: none; grid-template-columns: auto auto minmax(4rem, 1fr) auto auto auto auto; }
   [data-aculta-discussion-first],
@@ -302,17 +291,11 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
   padding-inline: var(--spacing-base);
 }
 
-/* Avatares do fórum com as dimensões da V1: autor do tópico ~3rem; lista de tópicos ~2rem. */
+/* Avatares do fórum com as dimensões da V1. */
 .aculta-forum-topic .author-card:not(.author-card--stacked) .author-card__avatar {
   flex-basis: 3rem;
   inline-size: 3rem;
   block-size: 3rem;
-}
-
-.aculta-forum-topic-list-row .aculta-forum-topic .author-card:not(.author-card--stacked) .author-card__avatar {
-  flex-basis: 2rem;
-  inline-size: 2rem;
-  block-size: 2rem;
 }
 
 /* Categorias do tópico como pílulas, como na V1. */
@@ -440,35 +423,6 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
   font-weight: 700;
 }
 
-/* "+ Novo tópico" button: full width on mobile viewports */
-.aculta-forum-new-topic-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-sm) var(--spacing-lg);
-  text-decoration: none;
-  color: var(--color-on-brand);
-  border: 1px solid transparent;
-  border-radius: var(--radius-full);
-  background: var(--color-brand-primary);
-  font-size: var(--font-size-base);
-  font-weight: 700;
-  min-block-size: 44px;
-  gap: var(--spacing-xs);
-  inline-size: 100%;
-}
-
-.aculta-forum-new-topic-btn:hover {
-  color: var(--color-on-brand);
-  background: var(--button-primary-bg-hover);
-}
-
-@media (min-width: 48rem) {
-  .aculta-forum-new-topic-btn {
-    inline-size: auto;
-  }
-}
-
 /* Formulário de criação de tópico (/criar-topico) */
 .node-aculta-forum-topic-form {
   position: relative;
@@ -573,16 +527,6 @@ form[id^="views-exposed-form-aculta-forum-public-topics"] :is(input[type="submit
   .aculta-forum-category-page__layout {
     grid-template-columns: minmax(0, 1fr) 20rem;
   }
-}
-
-.aculta-forum-topic__category-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: .15rem .6rem;
-  color: var(--color-text-primary);
-  border-radius: var(--radius-full);
-  background: var(--color-surface-highlight);
-  font-weight: 600;
 }
 
 /* Lista com painel lateral: uma coluna no mobile, duas a partir de 60rem. */

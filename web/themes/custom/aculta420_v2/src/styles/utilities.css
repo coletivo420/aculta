@@ -53,10 +53,6 @@
   margin-top: 1.5rem;
 }
 
-.aculta-u-mb-0 {
-  margin-bottom: 0;
-}
-
 .aculta-u-mb-1 {
   margin-bottom: .25rem;
 }
@@ -67,10 +63,6 @@
 
 .aculta-u-mb-3 {
   margin-bottom: 1rem;
-}
-
-.aculta-u-mb-4 {
-  margin-bottom: 1.5rem;
 }
 
 .aculta-u-my-2 {
@@ -134,23 +126,17 @@
   color: var(--color-text-secondary);
 }
 
-.aculta-main-canvas {
-  display: flex;
-  flex: 0 0 auto;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.aculta-panel,
-.aculta-card {
+/* Superfície de painel emitida por PortalUiHooks::TOKENS (ex.: account-bio-card).
+   A migração desses tokens para o SDC surface está registrada como pendente;
+   enquanto houver consumidores, esta é a única regra de painel do V2. */
+.aculta-panel {
   color: var(--color-text-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-base);
   background: var(--color-surface-raised);
 }
 
-.aculta-panel__body,
-.aculta-card__body {
+.aculta-panel__body {
   padding: 1rem;
 }
 
@@ -158,10 +144,4 @@
   color: var(--color-text-primary);
   border-color: var(--color-border);
   background: var(--color-surface-raised);
-}
-
-.aculta-panel--default > .aculta-panel__heading {
-  color: var(--color-text-primary);
-  border-color: var(--color-border);
-  background: var(--color-canvas);
 }

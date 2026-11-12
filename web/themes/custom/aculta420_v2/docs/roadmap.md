@@ -1,5 +1,19 @@
 # Roadmap do fórum Growroom420 (ACULTA420 V2)
 
+## Auditoria, PurgeCSS e limpeza de CSS legado (2026-11-12)
+
+- Infraestrutura `scripts/css-audit/` (inventário, coletores dinâmicos,
+  relatório) e PurgeCSS 9.1.0 fixado como ferramenta de desenvolvimento.
+- Removidos `studio-identity.css` (sem `html.studio-identity` no V2) e
+  642 linhas de `studio.css` presas a `.aculta-main`; regras mortas saíram
+  de content, utilities, forum, wiki, account, messenger, biblioteca de
+  componentes, barra multidomínio e mapas `portal-ui-*`.
+- Tema: 106 arquivos, 452.414 bytes-fonte (−44.017), 2.509 regras
+  (−182), 3.115 seletores (−281). `:has()` 178 → 73; `!important` 17 → 14.
+- Pendente: homologação visual do CSS restante, aceite de claro/escuro e
+  a migração dos utilitários `aculta-u-*` emitidos por `PortalUiHooks` para
+  composição SDC. Captura e navegador: DEFERRED.
+
 ## Títulos de cards e dívida de gates (2026-11-12)
 
 - `forum-topic-card`, `revista-teaser`, `wiki-entry` teaser, `forum-category`

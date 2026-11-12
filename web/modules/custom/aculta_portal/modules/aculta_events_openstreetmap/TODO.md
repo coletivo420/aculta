@@ -4,7 +4,7 @@ Estado: Dev · versão 0.1.0-dev.2 (`aculta_events_openstreetmap.info.yml`) · s
 
 ## Próximo passo
 
-Revisar termos ODbL e atribuição antes de qualquer envio fora do teste; depois avaliar o fechamento do E10 e a promoção junto do Events.
+Continuar a triagem Semgrep/refatoração de serviços do módulo; depois revisar termos ODbL e atribuição antes de qualquer envio fora do teste e avaliar o fechamento do E10 junto do Events.
 
 ## Leitura
 

@@ -20,7 +20,9 @@
 .label-default { display: inline-block; padding: .125rem .5rem; color: var(--color-text-primary); border-radius: var(--radius-sm); background: var(--color-surface-highlight); }
 .link-primary { color: var(--color-brand-primary); }
 .section-title { margin-block: 1rem .5rem; font-family: var(--font-family-heading); font-size: 1.25rem; }
-.nav-tabs { display: flex; flex-wrap: wrap; gap: .25rem; margin: 0; padding: 0; list-style: none; border-block-end: 1px solid var(--color-border); }
+.nav,
+.nav-tabs { display: flex; flex-wrap: wrap; gap: .25rem; margin: 0; padding: 0; list-style: none; }
+.nav-tabs { border-block-end: 1px solid var(--color-border); }
 .nav-tabs a { display: inline-flex; padding: .5rem .75rem; }
 .pager-next,
 .pager-prev { display: inline-flex; }
@@ -38,9 +40,11 @@
 
 .messages,
 .messages--status,
+.messages--info,
 .messages--error,
 .messages--warning { padding: .75rem 1rem; border-inline-start: .25rem solid var(--color-border); border-radius: var(--radius-sm); }
 .messages--status { color: var(--color-status-ok-text); border-inline-start-color: var(--color-status-ok-text); background: var(--color-status-ok-surface); }
+.messages--info { color: var(--color-text-primary); border-inline-start-color: var(--color-brand-primary); background: var(--color-surface-highlight); }
 .messages--error { color: var(--color-status-error-text); border-inline-start-color: var(--color-status-error-text); background: var(--color-status-error-surface); }
 .messages--warning { color: var(--color-status-warning-text); border-inline-start-color: var(--color-status-warning-text); background: var(--color-status-warning-surface); }
 
@@ -79,8 +83,6 @@
 .aculta-event-date-row,
 .aculta-event-location-widget,
 .aculta-event-organization-target-id,
-.aculta-location-actions,
-.aculta-location-admin-actions,
 .location-actions,
 .location-admin-actions,
 .location-agenda { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }

@@ -4,7 +4,7 @@ Estado: Dev · versão 0.1.1-dev.411 (`aculta_messenger.info.yml`) · status: `d
 
 ## Próximo passo
 
-Smoke visual/autenticado da central e validação do envio de e-mail em ambiente controlado; SMTP e jornadas autenticadas de Events permanecem gates separados.
+Continuar a triagem Semgrep/refatoração de serviços do módulo; depois fazer smoke visual/autenticado da central e validar o envio de e-mail em ambiente controlado. SMTP e jornadas autenticadas de Events permanecem gates separados.
 
 ## Leitura
 

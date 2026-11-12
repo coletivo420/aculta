@@ -57,7 +57,6 @@ studio:
   css:
     theme:
       src/styles/studio.css: {}
-      src/styles/studio-identity.css: {}
   dependencies:
     - aculta420_v2/global-styling
 

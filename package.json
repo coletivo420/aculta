@@ -6,12 +6,17 @@
     "@eslint/js": "9.39.1",
     "eslint": "9.39.1",
     "globals": "16.4.0",
+    "postcss": "8.5.32",
+    "purgecss": "9.1.0",
     "stylelint": "^13.13.1",
     "stylelint-config-drupal": "^1.0.2",
     "stylelint-order": "^4.1.0"
   },
   "scripts": {
     "lint:css": "stylelint \"web/themes/custom/aculta420_v2/**/*.css\"",
-    "lint:js": "eslint web/themes/custom/aculta420_v2/js web/themes/custom/aculta420_v2/components"
+    "lint:js": "eslint web/themes/custom/aculta420_v2/js web/themes/custom/aculta420_v2/components",
+    "css:audit": "node scripts/css-audit/report.mjs && node scripts/css-audit/purge.mjs --mode=audit",
+    "css:purge": "node scripts/css-audit/purge.mjs --mode=apply",
+    "css:verify": "node scripts/css-audit/verify.mjs"
   }
 }

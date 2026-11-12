@@ -79,23 +79,6 @@
   line-height: 1.2;
 }
 
-.aculta-messenger-sender__details {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  align-self: stretch;
-  justify-content: center;
-  min-width: 0;
-  padding-inline-end: 2rem;
-}
-
-.aculta-messenger-sender__details .aculta-messenger-sender__link {
-  flex: 0 1 auto;
-  align-self: flex-start;
-  max-width: 100%;
-  padding-inline-end: 0;
-}
-
 .aculta-messenger-sender__link::after {
   position: absolute;
   z-index: 2;
@@ -124,26 +107,6 @@
 .aculta-messenger-sender__link:focus-visible {
   text-decoration: none;
   color: var(--color-on-primary);
-}
-
-.aculta-read-label {
-  flex: 0 0 auto;
-  align-self: flex-start;
-  margin-block-start: .5rem;
-  padding: .1rem .45rem;
-  white-space: nowrap;
-  color: var(--color-text-secondary);
-  border-radius: var(--radius-base);
-  background: var(--color-canvas);
-  font-size: .7rem;
-  font-weight: 500;
-  line-height: 1.3;
-}
-
-.aculta-read-label--unread {
-  color: var(--color-on-highlight);
-  background: var(--color-brand-highlight);
-  font-weight: 700;
 }
 
 .aculta-messenger-sender:focus-visible {
@@ -219,19 +182,6 @@
   width: min(18rem, 80vw);
   min-width: 0;
   margin-block-start: .35rem;
-}
-
-.aculta-messenger-offcanvas .aculta-utility-offcanvas__body {
-  overflow-y: auto;
-  min-height: 0;
-  overscroll-behavior: contain;
-}
-
-.aculta-messenger-offcanvas .aculta-utility-offcanvas__body.aculta-messenger-drawer-content--conversation {
-  overflow-y: auto;
-  min-height: 0;
-  padding: .35rem;
-  gap: 0;
 }
 
 .aculta-messenger-drawer-conversation {
@@ -337,9 +287,6 @@
 }
 
 @media (min-width: 36rem) {
-  .aculta-messenger-offcanvas .aculta-utility-offcanvas__body.aculta-messenger-drawer-content--conversation {
-    padding: .5rem;
-  }
 
   .aculta-messenger-drawer-conversation [data-aculta-reply-form] .field--name-message {
     margin-block-end: 0;
@@ -547,29 +494,6 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status {
   margin: 0;
 }
 
-.aculta-messenger-notice__action {
-  display: inline;
-  margin: 0;
-  padding: 0;
-  cursor: pointer;
-  text-decoration: underline;
-  color: var(--color-primary);
-  border: 0;
-  background: transparent;
-  font: inherit;
-  font-weight: 600;
-}
-
-.aculta-messenger-notice__action:hover,
-.aculta-messenger-notice__action:focus-visible {
-  text-decoration: none;
-}
-
-.aculta-messenger-notice__action:focus-visible {
-  outline: 3px solid var(--color-focus-ring);
-  outline-offset: 2px;
-}
-
 [data-aculta-dialog] {
   color: var(--color-text-primary);
 }
@@ -752,21 +676,6 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status {
   font-size: .8125rem;
 }
 
-.aculta-messenger-sender.aculta-notice-type--info:not(.aculta-notice-summary--persistent) {
-  border-color: var(--color-status-ok-text);
-  background: var(--color-status-ok-surface);
-}
-
-.aculta-messenger-sender.aculta-notice-type--warning:not(.aculta-notice-summary--persistent) {
-  border-color: var(--color-text-primary);
-  background: var(--color-canvas);
-}
-
-.aculta-messenger-sender.aculta-notice-type--danger:not(.aculta-notice-summary--persistent) {
-  border-color: var(--color-error);
-  background: var(--color-status-error-surface);
-}
-
 .aculta-new-conversation-cancel {
   --aculta-btn-color: var(--color-text-primary);
   --aculta-btn-bg: transparent;
@@ -818,8 +727,4 @@ form[data-aculta-drawer-action] .aculta-messenger-options__status {
 
 [data-aculta-account-list] .aculta-messenger-sender__link {
   font-size: .95rem;
-}
-
-.aculta-achievement-notices {
-  margin-block: .75rem;
 }

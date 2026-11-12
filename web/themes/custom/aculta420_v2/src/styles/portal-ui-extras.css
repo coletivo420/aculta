@@ -84,7 +84,7 @@
   overflow-y: auto;
 }
 
-.ui-dialog:has(:is([data-portal-ui="social-link-dialog"], .aculta-social-link-dialog, [data-portal-ui="secret-dialog"], .aculta-secret-dialog)) {
+.ui-dialog:has(:is([data-portal-ui="social-link-dialog"], [data-portal-ui="secret-dialog"], .aculta-secret-dialog)) {
   inline-size: min(480px, calc(100vw - 2rem)) !important;
   max-block-size: 75vh !important;
   overflow-y: auto;

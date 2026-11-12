@@ -19,6 +19,7 @@ use Drupal\aculta_messenger\Support\NoticeType;
 use Drupal\aculta_messenger\Support\OptionsDisclosure;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Component\Utility\Unicode;
+use Drupal\Component\Utility\Xss;
 use Drupal\site_alert\Entity\SiteAlert;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormState;
@@ -1525,7 +1526,7 @@ final class MessagesController extends ControllerBase {
         '#alert' => [
           'severity' => $site_alert->getSeverity(),
           'label' => $site_alert->getLabel(),
-          'message' => ['#type' => 'markup', '#markup' => $site_alert->getMessage()],
+          'message' => ['#type' => 'markup', '#markup' => Xss::filter($site_alert->getMessage())],
         ],
       ],
     ];

@@ -156,17 +156,6 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
 .aculta-login-dialog::backdrop,
 .aculta-search-dialog::backdrop { background: var(--color-scrim); }
 
-.aculta-login-dialog__surface {
-  overflow: auto;
-  padding: 0 var(--spacing-lg-compact) var(--spacing-lg-compact);
-  color: var(--color-auth-dialog-text);
-  border: 0;
-  border-radius: 0;
-  background: var(--color-auth-dialog-surface);
-  box-shadow: var(--shadow-lg);
-  max-block-size: min(90dvh, 52rem);
-}
-
 .aculta-search-dialog__surface {
   overflow: auto;
   padding: var(--spacing-base);
@@ -412,43 +401,6 @@ html body:has(.aculta-institution-bar) .toolbar .toolbar-tray-vertical {
   flex: 0 0 auto;
   pointer-events: none;
   block-size: 2.75rem;
-}
-
-.aculta-purpose-showcase {
-  margin: 0 auto var(--spacing-base);
-  padding-inline: var(--spacing-base);
-}
-
-.aculta-purpose-showcase__list {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  gap: var(--spacing-sm);
-}
-
-.aculta-purpose-showcase__link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: .625rem 1.25rem;
-  text-decoration: none;
-  color: var(--color-on-highlight);
-  border: 1px solid var(--color-brand-highlight);
-  border-radius: var(--radius-sm);
-  background: var(--color-brand-highlight);
-  font-family: var(--font-family-heading);
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  line-height: 1.4;
-  min-block-size: var(--tap-target-min);
-}
-
-.aculta-purpose-showcase__link:focus-visible {
-  outline: 3px solid var(--color-brand-primary);
-  outline-offset: 2px;
 }
 
 .aculta-utility-dialog {

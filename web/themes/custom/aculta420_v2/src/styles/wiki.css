@@ -74,13 +74,6 @@
 
 .aculta-wiki-list > header { margin-block-end: var(--spacing-base); }
 
-.aculta-wiki-collaboration {
-  padding: var(--spacing-base) var(--spacing-lg-compact);
-  border-inline-start: .25rem solid var(--color-brand-secondary);
-  background: var(--color-surface-raised);
-  margin-block: var(--spacing-base);
-}
-
 .aculta-wiki-recent-change {
   display: flex;
   flex-wrap: wrap;

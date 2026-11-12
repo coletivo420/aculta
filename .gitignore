@@ -101,3 +101,6 @@ __pycache__/
 # PHPUnit 11 cache directories
 .phpunit.cache/
 .phpunit.performance.cache/
+
+# Relatórios gerados da auditoria CSS (reproduzíveis; não versionar)
+/reports/css-audit/

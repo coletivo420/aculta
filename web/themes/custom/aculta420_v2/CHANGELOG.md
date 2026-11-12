@@ -1,3 +1,15 @@
+## Não versionado — auditoria, PurgeCSS e limpeza de CSS legado (2026-11-12)
+
+- Infraestrutura de auditoria em `scripts/css-audit/`: inventário reproduzível, coletor de classes dinâmicas (220 classes em 86 componentes, incluindo `aculta-surface--tone-*`, `aculta-surface-panel--elevation-*`, `aculta-icon--*`, `data-table--*` e variantes do `auth-dialog`), extratores por tipo de fonte e relatório de classes sem referência textual.
+- PurgeCSS 9.1.0 fixado no `package-lock.json` com `postcss` 8.5.32. Scripts: `css:audit` (somente relatório), `css:purge` (staging, sem tocar na fonte) e `css:verify` (gate de integridade). Nenhum CSS gerado entra no runtime.
+- Removido `src/styles/studio-identity.css`: o V2 nunca aplica `html.studio-identity`, portanto a camada inteira era inalcançável. `studio` passa a carregar somente `studio.css`.
+- `studio.css`: removidas 642 linhas presas a `.aculta-main` (o shell V2 renderiza `.page__main`) e regras de classes sem consumidor (`.aculta-card*`, `.aculta-context-header*`, `.studio__tab*`, `.aculta-empty-state`, `.aculta-container`, `alert-*`). 80.133 → 56.741 bytes (−23.392).
+- Regras mortas removidas de `content.css`, `utilities.css`, `forum.css`, `wiki.css`, `portal-account.css`, `messenger-drawer.css`, `component-library-mode.css`, `multidomain-bar.css`, `portal-ui-map.css` e `portal-ui-extras.css`. Inclui os diálogos de Fórum/Revista que não têm mais renderização própria (`.aculta-forum-topic__visitor`, `__replies-count`, `__category-pill`, list-row e `aculta-forum-new-topic-btn`).
+- Tokens: `donation-account-invite` trocou `alert alert-info` (Bootstrap) por `messages messages--info`; `we-sativa__workspace` saiu dos três tokens `we-sativa-*` por não ter CSS nem consumidor. `messages--info` ganhou estilo semântico no mapa.
+- Totais do tema: 107 → 106 arquivos CSS e 496.431 → 452.414 bytes-fonte (−44.017, −8,9%); regras 2.691 → 2.509; seletores 3.396 → 3.115; `:has()` 178 → 73; `!important` 17 → 14.
+- Gates: `css:verify` PASS, Stylelint PASS, `validate-aculta420-mapped-classes.php` PASS (480 classes), `validate-aculta420-css-scope.php` PASS (50 checks). Captura visual e navegador: **DEFERRED**.
+- Documento da auditoria: `docs/architecture/ACULTA420-V2-AUDITORIA-LIMPEZA-CSS-2026-11-12.md`.
+
 ## Não versionado — piloto de realocação de CSS: aculta_events (2026-11-12)
 
 - 9 regras de `portal-ui-map.css` (14 classes exclusivas de `aculta_events`: Locais, widgets de Local e Organização, painel administrativo) saíram do global e foram para a biblioteca `aculta_events/events-portal-ui`, anexada por `#attached` nos pontos que as renderizam.

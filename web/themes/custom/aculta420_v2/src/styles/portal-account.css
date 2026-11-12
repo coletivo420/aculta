@@ -67,24 +67,8 @@
   font: 600 1rem/1.3 Oswald, sans-serif;
 }
 
-.portal-account__icon {
-  display: inline-block;
-  flex: 0 0 1.5rem;
-  text-align: center;
-  color: var(--color-text-secondary);
-  font-size: 1.1rem;
-}
-
 .portal-account__menu-desktop {
   display: none;
-}
-
-.portal-account__chevron {
-  display: inline-block;
-  flex: 0 0 auto;
-  transition: none;
-  color: var(--color-text-muted);
-  font-size: 1.1rem;
 }
 
 .portal-account__accordion {
@@ -126,15 +110,6 @@
   font-size: 1rem;
 }
 
-.portal-account__summary .portal-account__icon {
-  flex-basis: 1.125rem;
-  font-size: 1rem;
-}
-
-.portal-account__summary .portal-account__chevron {
-  font-size: .9375rem;
-}
-
 .portal-account__summary::-webkit-details-marker {
   display: none;
 }
@@ -148,15 +123,6 @@
 .portal-account__item[open] > .portal-account__summary {
   color: var(--color-text-primary);
   font-weight: 700;
-}
-
-.portal-account__icon {
-  font-size: 1.35rem;
-}
-
-.portal-account__label {
-  flex: 1 1 auto;
-  min-width: 0;
 }
 
 .portal-account__panel {
@@ -297,32 +263,6 @@
   outline-offset: 3px;
 }
 
-.portal-account-photo__edit-icon {
-  position: absolute;
-  display: grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  transition: opacity var(--motion-fast) ease;
-  transform: translate(-.1rem, -.1rem);
-  pointer-events: none;
-  opacity: 1;
-  color: var(--color-on-primary);
-  border: 2px solid var(--color-surface-raised);
-  border-radius: 50%;
-  background: var(--color-primary);
-  inset: auto 0 0 auto;
-}
-
-.portal-account-photo__edit-icon svg {
-  width: 1rem;
-  height: 1rem;
-}
-
-:is(.portal-account-photo__trigger, [data-portal-ui="account-photo-trigger"]):is(:hover, :focus-visible) ~ .portal-account-photo__edit-icon {
-  opacity: 1;
-}
-
 .portal-account__body .user-picture {
   max-width: 24rem;
 }
@@ -390,9 +330,7 @@
   cursor: progress;
 }
 
-.portal-account__courses-summary,
-.portal-account-course,
-.portal-account-courses__empty {
+.portal-account-course {
   padding: 1rem;
   border-inline-start: 3px solid var(--color-brand-primary);
   border-radius: .1875rem;
@@ -400,41 +338,14 @@
   margin-block: 1rem;
 }
 
-.portal-account__courses-summary h3,
 .portal-account-course h2 {
   margin-block: 0 .5rem;
   color: var(--color-text-primary);
   font: 600 1.375rem/1.2 Oswald, sans-serif;
 }
 
-.portal-account-course__status {
-  font-weight: 700;
-}
-
 .portal-account-course .button {
   margin-block-start: .5rem;
-}
-
-.portal-account__status {
-  position: absolute !important;
-  overflow: hidden;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  white-space: nowrap;
-  border: 0;
-  clip-path: inset(50%);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .portal-account__chevron {
-    transition: transform var(--motion-base) ease;
-  }
-}
-
-.portal-account__item[open] .portal-account__chevron {
-  transform: rotate(90deg);
 }
 
 @media (min-width: 48rem) {
@@ -458,14 +369,6 @@
     display: none;
   }
 
-  .portal-account__icon {
-    font-size: 1.1rem;
-  }
-
-  .portal-account__chevron {
-    display: none;
-  }
-
   .portal-account__content {
     padding: clamp(1.25rem, 3vw, 2rem);
   }
@@ -475,39 +378,11 @@
   }
 }
 
-@media (hover: hover) and (min-width: 48rem) {
-  .portal-account-photo__edit-icon {
-    opacity: 0;
-  }
-}
-
-@media (hover: none) {
-  .portal-account-photo__edit-icon {
-    opacity: 1;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .portal-account__link,
   .portal-account-data__link {
     transition: none;
   }
-
-  .portal-account-photo__edit-icon {
-    transition: none;
-  }
-}
-
-.portal-account-courses-summary {
-  margin-block-start: 1.5rem;
-  padding: 1rem;
-  border: 1px solid var(--color-brand-primary);
-  border-inline-start: 3px solid var(--color-brand-highlight);
-  border-radius: .25rem;
-}
-
-.portal-account-courses-summary h3 {
-  margin-top: 0;
 }
 
 .portal-account-courses {
@@ -692,11 +567,6 @@
   background: transparent;
 }
 
-.portal-account-social__icon {
-  font-size: 1rem;
-  line-height: 1;
-}
-
 .portal-account-social__text {
   display: flex;
   flex: 1 1 auto;
@@ -707,18 +577,6 @@
 .portal-account-social__name {
   font-weight: 600;
   line-height: 1.2;
-}
-
-.portal-account-social__status {
-  font-size: .75rem;
-  font-weight: 400;
-  line-height: 1.2;
-}
-
-.portal-account-social__value {
-  flex: 1 1 auto;
-  min-inline-size: 0;
-  overflow-wrap: anywhere;
 }
 
 .portal-account-social__edit {

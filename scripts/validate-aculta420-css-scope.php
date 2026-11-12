@@ -42,7 +42,8 @@ $studio = array_keys($libraries['studio']['css']['theme'] ?? []);
 $assert(!in_array('src/styles/studio.css', $global, TRUE), 'studio.css voltou ao global-styling.');
 $assert(!in_array('src/styles/studio-identity.css', $global, TRUE), 'studio-identity.css voltou ao global-styling.');
 $assert(in_array('src/styles/studio.css', $studio, TRUE), 'A biblioteca studio não declara src/styles/studio.css.');
-$assert(in_array('src/styles/studio-identity.css', $studio, TRUE), 'A biblioteca studio não declara src/styles/studio-identity.css.');
+$assert(!in_array('src/styles/studio-identity.css', $studio, TRUE), 'studio-identity.css foi removido: a biblioteca studio não deve declará-lo.');
+$assert(!is_file($theme . '/src/styles/studio-identity.css'), 'studio-identity.css reapareceu sem consumidor que aplique html.studio-identity.');
 $assert(($libraries['studio']['dependencies'] ?? []) === ['aculta420_v2/global-styling'], 'A biblioteca studio deve depender de global-styling.');
 
 $statisticsCss = (string) file_get_contents($theme . '/src/styles/statistics.css');
