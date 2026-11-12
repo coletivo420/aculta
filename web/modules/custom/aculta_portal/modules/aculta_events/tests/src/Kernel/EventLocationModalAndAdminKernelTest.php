@@ -49,6 +49,7 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
     'node',
     'aculta_calendar',
     'aculta_maps',
+    'aculta_user',
     'aculta_events',
   ];
 

@@ -138,7 +138,7 @@ Atualização feita com `composer update drupal/entity_print symfony/http-client
 
 | Item | Resultado |
 |---|---|
-| Semgrep local (474 achados na rodada histórica) | revalidação final: 40 achados; todos triados (27 FP e 1 ACEITO em `#markup`, 9 ACEITO e 1 FP em dinâmicos, 1 FP em `unserialize`); zero uso estático global pendente |
+| Semgrep local (474 achados na rodada histórica) | revalidação final: 40 achados; todos triados (27 FP, 1 corrigido e 1 ACEITO em `#markup`, 9 ACEITO e 1 FP em dinâmicos, 1 FP em `unserialize`); zero uso estático global pendente |
 | Fixtures das regras | PASS: 20 expectativas, 0 falhas |
 | `composer audit --locked` | antes: 3 advisories; depois: 0 (após atualização autorizada) |
 | `npm audit` | 0 vulnerabilidades |
