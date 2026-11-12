@@ -180,6 +180,31 @@ Frentes que precisam de sessão declaram `"auth": { "account": "teste_comum" }` 
 
 Frentes sem decisão de login (rota pública ou privada ainda não confirmada) são classificadas pelo agente que roda o teste: ele verifica por categoria quais páginas são públicas e quais exigem sessão, e cria testes mistos (visualização pública e privada) quando a frente mistura as duas.
 
+## Referências da regressão visual (Playwright)
+
+Em 2026-11-12, as referências de `playwright.visual.spec.mjs` foram geradas do
+servidor de desenvolvimento (`ACULTA_VISUAL_BASELINE=1`, `SUITE_OUT` novo) e
+aprovadas por revisão humana antes de entrar em `__snapshots__/`. São 14 frentes
+com 10 PNGs cada (claro e escuro, 320 a 1440 px):
+
+- `aculta420-v2-navigation`, `aculta420-v2-empty-state`, `aculta420-v2-audit-2026-11`,
+  `aculta420-v2-card-accent`, `aculta420-v2-data-table`, `aculta-document-viewer`,
+  `aculta-editor`, `aculta-faq`, `aculta-frete`, `aculta-gallery`,
+  `aculta-portal-cep`, `aculta-qrcode`, `aculta-visual`, `aculta-patcher`.
+
+Estado: a verificação de estabilidade (segunda execução contra o mesmo servidor)
+foi feita só para `aculta420-v2-navigation`. Para as demais frentes ela está
+pendente. `aculta-faq` e `aculta-gallery` precisam de conferência: se a rota exigir
+sessão, a referência mostra tela de login e deve ser substituída.
+
+Frentes com `routes.json` que não têm referência: `aculta-theme-mobile-first`
+(exige `REVISTA_HOST`), e as frentes com origem própria (`CONTA_HOST`,
+`EVENTOS_BASE`, `FORUM_BASE`, `LINKS_HOST`, `REVISTA_HOST`, `BASE`, `LMS_PAGE`,
+`GANJA_HOME`, `CALENDAR_HOST`).
+
+Regra: não usar `--update-snapshots`. Nova candidata exige `ACULTA_VISUAL_BASELINE=1`
+com `SUITE_OUT` novo e revisão humana antes de copiar.
+
 ## Autenticação de teste
 
 No runtime `test`, os testes autenticados usam as credenciais locais documentadas em `secrets/` (ignoradas pelo Git). Antes da rodada, confirme que o ambiente é `test` e que `captcha.settings:enable_globally=0`; esse estado representa o bypass operacional de `skip CAPTCHA` exclusivo do servidor de testes. Não registre credenciais, tokens ou senhas nos artefatos e não use esse bypass em produção.
