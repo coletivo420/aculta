@@ -12,4 +12,19 @@
 
 O domínio e as dez skins estão mapeados. Testes estáticos cobrem definições e scopes; `ui_skins` está habilitado no Config Sync e Runtime como 1.2.1. A matriz Firefox ESR passou 300/300 nos dez domínios em cinco larguras e claro/escuro, sem overflow, com H1/main únicos e contraste mínimo 7,16:1. Links resolve Ruderalis; os outros nove Skunk. Cache-hit, zoom 200%, teclado, perfis e aceite visual humano aguardam homologação. Evidências: `tests/browser/capturas/ui-skins-ten-domains/2026-11-11/manifest.json`.
 
+## Contraste de texto
+
+Tokens de marca são **superfície ou decoração**, não cor de texto sobre o
+canvas claro: `--color-brand-secondary` e `--surface-accent-*` não garantem
+4,5:1. Cor de texto vem dos tokens semânticos (`--color-text-primary`,
+`--color-text-secondary`, `--color-link-editorial`, `--color-footer-text`).
+Exceção legítima: texto sobre superfície de marca já resolvido pelo par
+`--color-footer-link-text`/`--color-footer-link-surface` ou por skins.
+
+Em 2026-11-12 a regra corrigiu o link do domínio no rodapé (3,45:1 → 5,08:1) e
+o nível atual da trilha (3,58:1 → 12,4:1). A frente
+`tests/browser/transversal/aculta-contraste/axe-nodes.mjs` mede axe
+`color-contrast` nos dez domínios em claro e escuro; evidência em
+`tests/browser/capturas/contraste-20261112/manifest.json`.
+
 A configuração `aculta_purpose_palette`, os controles/schema, `PurposePaletteSchemes`, `purposePaletteStyle()`, os seletores `data-purpose-scheme` e tokens `--aculta-purpose-*` foram removidos. Busca em tema, Portal e Config Sync não encontra consumidores nem aliases/dual-read/fallback. A preferência de modo do usuário e `DomainPurposeManager` funcional permanecem preservados.

@@ -6,6 +6,7 @@ Cada frente tem o próprio `README.md` com URLs, pré-requisitos e critérios.
 
 - [`aculta-botoes-a11y/`](./aculta-botoes-a11y/README.md) — Leitor de tela (Orca) — botões em estados autenticados
 - [`aculta-content-admin/`](./aculta-content-admin/README.md) — Revisão visual do Painel de conteúdo
+- [`aculta-contraste/`](./aculta-contraste/README.md) — ACULTA — contraste de UI Skins
 - [`aculta-document-viewer/`](./aculta-document-viewer/README.md) — Revisão visual do ACULTA Document Viewer
 - [`aculta-editor/`](./aculta-editor/README.md) — ACULTA Editor — acesso anônimo, editor e administrador
 - [`aculta-home-editorial-ui-patterns/`](./aculta-home-editorial-ui-patterns/README.md) — Home editorial — UI Patterns Views

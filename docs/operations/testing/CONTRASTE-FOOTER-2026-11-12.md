@@ -24,8 +24,22 @@ refatoração não incluía os seletores desses componentes.
 - Manifesto versionado: `tests/browser/capturas/css-audit-20261112/manifest.json`.
 - 16 verificações axe; 7 falhas de contraste; 4 reflow a 320 px PASS.
 
-## Encaminhamento
+## Resolução (autorizada pelo responsável em 2026-11-12)
 
-Corrigir em frente própria de contraste/UI Skins, com medição antes/depois
-nos cinco domínios afetados. Não alterar tokens de marca sem decisão do
-responsável. Não é regressão desta refatoração.
+Correção em frente própria de contraste/UI Skins, sem alterar tokens de marca:
+
+| Arquivo | Mudança |
+| --- | --- |
+| `components/site-footer/site-footer.css` | links do rodapé passam a declarar `:is(:link, :visited)`, elevando a especificidade sobre `.page a` e aplicando `--color-footer-text` (#171513 → 5,08:1) |
+| `components/breadcrumb/breadcrumb.css` | nível atual usa `--color-text-primary` e o link usa `--color-link-editorial`; o verde da marca fica na faixa tricolor decorativa |
+| `components/revista-teaser/revista-teaser.css` | categoria deixa de usar `--color-brand-secondary` como texto e adota `--color-text-secondary` |
+
+Commit `e3a7f7140`. Depois de `drush cr` no Runtime de desenvolvimento, a
+frente `tests/browser/transversal/aculta-contraste/axe-nodes.mjs` mediu
+**22/22 PASS** (onze URLs × claro/escuro), zero violações. Manifesto:
+`tests/browser/capturas/contraste-20261112/manifest.json`.
+
+## Classificação original
+
+Não é regressão da refatoração de CSS: os arquivos envolvidos não foram
+alterados entre `e37f3d8` e a entrega.
