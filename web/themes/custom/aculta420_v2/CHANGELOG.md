@@ -7,7 +7,7 @@
 - Regras mortas removidas de `content.css`, `utilities.css`, `forum.css`, `wiki.css`, `portal-account.css`, `messenger-drawer.css`, `component-library-mode.css`, `multidomain-bar.css`, `portal-ui-map.css` e `portal-ui-extras.css`. Inclui os diálogos de Fórum/Revista que não têm mais renderização própria (`.aculta-forum-topic__visitor`, `__replies-count`, `__category-pill`, list-row e `aculta-forum-new-topic-btn`).
 - Tokens: `donation-account-invite` trocou `alert alert-info` (Bootstrap) por `messages messages--info`; `we-sativa__workspace` saiu dos três tokens `we-sativa-*` por não ter CSS nem consumidor. `messages--info` ganhou estilo semântico no mapa.
 - Infraestrutura endurecida em 2026-11-12: `js-yaml@4.3.2` substituiu regex na leitura de metadados SDC e bibliotecas; `css:verify` exige relatório com `sourceHash` atual e falha se estiver ausente, incompleto ou desatualizado; `--write` exige `--confirm-write`, cria backup e recusa CSS inválido; `css:test` cobre classes dinâmicas, safelist e hash.
-- Totais do tema: 107 → 106 arquivos CSS e 496.431 → 452.414 bytes-fonte (−44.017, −8,9%); regras 2.691 → 2.509; seletores 3.396 → 3.115; `:has()` 178 → 73; `!important` 17 → 14.
+- Totais do tema: 107 → 106 arquivos CSS e 496.431 → 451.485 bytes-fonte (−44.946, −9,1%); regras 2.691 → 2.504; seletores 3.396 → 3.103; `:has()` 178 → 73; `!important` 17 → 14.
 - Gates: `css:verify` PASS, Stylelint PASS, `validate-aculta420-mapped-classes.php` PASS (480 classes), `validate-aculta420-css-scope.php` PASS (50 checks). Captura visual e navegador: **DEFERRED**.
 - Documento da auditoria: `docs/architecture/ACULTA420-V2-AUDITORIA-LIMPEZA-CSS-2026-11-12.md`.
 

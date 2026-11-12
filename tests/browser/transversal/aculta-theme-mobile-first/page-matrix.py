@@ -3,7 +3,7 @@
 import base64,json,os,sys,time
 from pathlib import Path
 from urllib.parse import urlparse,urlunparse
-ROOT=Path(__file__).resolve().parents[3];sys.path.insert(0,str(ROOT/"tests/browser/shop/aculta-cpf-checkout"))
+ROOT=Path(__file__).resolve().parents[4];sys.path.insert(0,str(ROOT/"tests/browser/shop/aculta-cpf-checkout"))
 from wdlib import Driver
 O=Path(os.environ["SUITE_OUT"]).resolve();U=sys.argv[1:]
 if not U or O.is_relative_to(ROOT) or os.environ.get("DISPLAY")!=":0": raise SystemExit("Uso: page-matrix.py URL...; SUITE_OUT externo; DISPLAY=:0.")

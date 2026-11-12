@@ -3,7 +3,7 @@
 import json,os,subprocess,sys,time
 from pathlib import Path
 from urllib.parse import urlparse
-ROOT=Path(__file__).resolve().parents[3];sys.path.insert(0,str(ROOT/"tests/browser/shop/aculta-cpf-checkout"))
+ROOT=Path(__file__).resolve().parents[4];sys.path.insert(0,str(ROOT/"tests/browser/shop/aculta-cpf-checkout"))
 from wdlib import Driver
 OUT=Path(os.environ["SUITE_OUT"]).resolve()
 if OUT.is_relative_to(ROOT) or os.environ.get("DISPLAY")!=":0": raise SystemExit("SUITE_OUT externo e DISPLAY=:0 são obrigatórios.")

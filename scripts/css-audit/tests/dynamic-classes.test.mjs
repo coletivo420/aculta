@@ -57,6 +57,10 @@ test('collectDynamicClasses resolve concatenação, interpolação, alias e UI S
   assert.ok(set.has('aculta-auth-dialog--neutral'));
   assert.ok(set.has('aculta-auth-dialog--institutional'));
 
+  // Ternário literal em `set`.
+  assert.ok(set.has('author-card--stacked'));
+  assert.ok(set.has('author-card--inline'));
+
   // Opções literais de UI Styles.
   assert.ok(set.has('aculta-heading--accent-green'));
 
@@ -67,7 +71,9 @@ test('collectDynamicClasses resolve concatenação, interpolação, alias e UI S
 
 test('safelist não usa padrão geral aculta- e cada padrão tem justificativa', () => {
   assert.ok(!SAFELIST_PATTERNS.some((entry) => entry.pattern.source === '^aculta-'));
-  assert.ok(!SAFELIST_PATTERNS.some((entry) => entry.pattern.source.includes('aculta')));
+  // Nenhum padrão pode capturar qualquer classe aculta arbitrária.
+  const sample = '.aculta-classe-inexistente';
+  assert.ok(!SAFELIST_PATTERNS.some((entry) => entry.pattern.test(sample)));
   for (const entry of SAFELIST_PATTERNS) {
     assert.ok(entry.justification && entry.justification.length > 10, `sem justificativa: ${entry.pattern}`);
   }

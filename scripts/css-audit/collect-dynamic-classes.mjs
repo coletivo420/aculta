@@ -59,39 +59,50 @@ export function parseComponentEnums(ymlSource) {
   return enums;
 }
 
-/** Lê aliases `{% set local = prop|default(...) %}` de um template Twig. */
+/** Lê aliases `{% set local = prop|default(...) %}` e ternários literais. */
 function parseAliases(twigSource) {
   const aliases = {};
+  const literals = {};
   const setRegex = /\{%\s*set\s+([a-zA-Z_][\w]*)\s*=\s*([a-zA-Z_][\w]*)(?:\s*\|[^%]*)?\s*%\}/g;
   let match;
   while ((match = setRegex.exec(twigSource)) !== null) {
     aliases[match[1]] = match[2];
   }
-  return aliases;
+  // {% set layout = variant == 'x' ? 'stacked' : 'inline' %}
+  const ternaryRegex = /\{%\s*set\s+([a-zA-Z_][\w]*)\s*=\s*[^%]*\?\s*'([^']+)'\s*:\s*'([^']+)'[^%]*%\}/g;
+  while ((match = ternaryRegex.exec(twigSource)) !== null) {
+    literals[match[1]] = [...new Set([match[2], match[3]])];
+  }
+  return { aliases, literals };
 }
 
-/** Resolve os valores de uma variável, seguindo aliases de `set`. */
-function valuesFor(variable, enums, aliases, seen = new Set()) {
+/** Resolve os valores de uma variável, seguindo aliases e literais de `set`. */
+function valuesFor(variable, enums, aliases, literals, seen = new Set()) {
   if (seen.has(variable)) {
     return [];
   }
   seen.add(variable);
-  if (enums[variable]) {
-    return enums[variable];
+  const values = new Set(enums[variable] || []);
+  for (const literal of literals[variable] || []) {
+    values.add(literal);
   }
-  const alias = aliases[variable];
-  return alias ? valuesFor(alias, enums, aliases, seen) : [];
+  if (aliases[variable]) {
+    for (const value of valuesFor(aliases[variable], enums, aliases, literals, seen)) {
+      values.add(value);
+    }
+  }
+  return [...values];
 }
 
 /** Expande concatenações e interpolações de classe em templates Twig. */
 function expandTwigClasses(twigSource, enums, add) {
-  const aliases = parseAliases(twigSource);
+  const { aliases, literals } = parseAliases(twigSource);
   // 'prefixo-' ~ variavel  (com ou sem espaços; aceita filtro/default)
   const twigConcat = /(['"])([a-zA-Z][\w-]*[-_]{1,2})\1\s*~\s*\(?\s*([a-zA-Z_][\w]*)/g;
   let match;
   while ((match = twigConcat.exec(twigSource)) !== null) {
     const [, , prefix, variable] = match;
-    for (const value of valuesFor(variable, enums, aliases)) {
+    for (const value of valuesFor(variable, enums, aliases, literals)) {
       add(`${prefix}${value}`);
     }
   }
@@ -99,7 +110,7 @@ function expandTwigClasses(twigSource, enums, add) {
   const twigInterpolation = /([a-zA-Z][\w-]*[-_]{1,2})\{\{\s*([a-zA-Z_][\w]*)/g;
   while ((match = twigInterpolation.exec(twigSource)) !== null) {
     const [, prefix, variable] = match;
-    for (const value of valuesFor(variable, enums, aliases)) {
+    for (const value of valuesFor(variable, enums, aliases, literals)) {
       add(`${prefix}${value}`);
     }
   }

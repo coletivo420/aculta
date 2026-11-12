@@ -47,8 +47,7 @@
 .page__navigation,
 .page__highlighted,
 .page__help,
-.page__breadcrumb,
-.page__footer-inner {
+.page__breadcrumb {
   inline-size: min(100%, var(--page-content-max));
   margin-inline: auto;
   min-inline-size: 0;
@@ -77,22 +76,6 @@
 .page__content,
 .page__sidebar { min-inline-size: 0; }
 
-.page__footer {
-  grid-area: footer;
-  color: var(--color-on-footer);
-  background: var(--color-brand-secondary);
-  min-inline-size: 0;
-  padding-block: clamp(1.5rem, 4vw, 3rem);
-}
-
-.page__footer-inner {
-  color: var(--color-on-footer);
-  border-radius: var(--radius-sm);
-  background: var(--color-brand-secondary);
-  margin-inline: auto;
-  padding-block: clamp(1.25rem, 3vw, 2rem);
-}
-
 .page__footer-region {
   display: grid;
   gap: var(--spacing-xl);
@@ -101,23 +84,6 @@
 
 .page__footer-region > .block {
   min-inline-size: 0;
-}
-
-.page__footer :is(h1, h2, h3, h4, h5, h6),
-.page__footer a {
-  color: var(--color-on-footer);
-}
-
-.page__footer :is(h1, h2, h3, h4, h5, h6) {
-  font-family: var(--font-family-heading);
-}
-
-.page__footer a {
-  text-underline-offset: .25em;
-}
-
-.page__footer a:focus-visible {
-  outline-color: var(--color-on-footer);
 }
 
 .page__footer-region h2::after {
@@ -209,7 +175,7 @@
    (component) e de módulos; o !important garante ausência de overflow
    horizontal em telas estreitas, conforme docs/layouts-plan.md 5.3. */
 @media (max-width: 59.9375rem) {
-  :is(.layout-page, .page__main, .page__navigation, .page__highlighted, .page__help, .page__breadcrumb, .page__footer-inner) {
+  :is(.layout-page, .page__main, .page__navigation, .page__highlighted, .page__help, .page__breadcrumb) {
     inline-size: 100% !important;
     max-inline-size: 100% !important;
   }

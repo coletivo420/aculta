@@ -171,6 +171,10 @@ export const SAFELIST_PATTERNS = [
   { pattern: /\.js-/, justification: 'Classes de comportamento JavaScript do Core.' },
   // Ícones: packs UI Icons expõem classes/nomes de ícone.
   { pattern: /\.icon-/, justification: 'Classes de ícone geradas pelo UI Icons/Icon API.' },
+  // Variantes cujo valor vem de dados renderizados (não de `enum` SDC).
+  { pattern: /\.forum-topic-(card|row)__badge--/, justification: 'Tom do badge vem do dado do tópico (highlight, neutral, official, success).' },
+  { pattern: /\.layout-grid--min-[\d.]+/, justification: 'Largura mínima do item é numérica e vem da prop `min_item_width`.' },
+  { pattern: /\.aculta-forum-topic--(full|teaser)/, justification: 'Sufixo é o view mode do nó de tópico renderizado pelo Drupal.' },
 ];
 
 /** Safelist efetiva no formato aceito pelo PurgeCSS 9. */

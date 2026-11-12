@@ -56,15 +56,15 @@ mensagens), UI Suite, HTMX e Leaflet. Não existe padrão geral `^aculta-`.
 | Métrica | Antes | Depois | Δ |
 | --- | ---: | ---: | ---: |
 | Arquivos CSS-fonte | 107 | 106 | −1 |
-| Bytes-fonte | 496.431 | 452.414 | −44.017 (−8,9%) |
-| Regras | 2.691 | 2.509 | −182 |
-| Seletores | 3.396 | 3.115 | −281 |
+| Bytes-fonte | 496.431 | 451.485 | −44.946 (−9,1%) |
+| Regras | 2.691 | 2.504 | −187 |
+| Seletores | 3.396 | 3.103 | −293 |
 | Declarações `!important` | 17 | 14 | −3 |
 | Seletores com `:has()` | 178 | 73 | −105 |
-| Seletores com `:is()` | 355 | 280 | −75 |
+| Seletores com `:is()` | 355 | 278 | −77 |
 | Media queries | 119 | 105 | −14 |
-| Classes sem referência textual | 322 | 234 | −88 |
-| Seletores rejeitados pelo PurgeCSS | 540 | 254 | −286 |
+| Classes sem referência textual | 322 | 231 | −91 |
+| Seletores rejeitados pelo PurgeCSS | 540 | 243 | −297 |
 
 A redução não teve meta percentual: cada regra foi removida porque não tinha
 consumidor textual, classe emitida por metadado ou seletor alcançável.
@@ -82,7 +82,8 @@ consumidor textual, classe emitida por metadado ou seletor alcançável.
 | `src/styles/forum.css` | 37.928 → 35.072 | discussão de Revista/Fórum sem template (`aculta-revista-publication__discussion`, `aculta-forum-topic__discussion`), list-row e botão de novo tópico legados |
 | `src/styles/utilities.css` | 2.474 → 2.328 | `.aculta-card*`, `.aculta-main-canvas`, `.aculta-panel__heading`, `aculta-u-mb-0` e `aculta-u-mb-4` |
 | `components/multidomain-bar/multidomain-bar.css` | 21.360 → 20.162 | `.aculta-purpose-showcase*` (o SDC emite `purpose-showcase`) e `.aculta-login-dialog__surface` (o template usa `aculta-search-dialog__surface`) |
-| `src/styles/wiki.css` | 5.276 → 5.040 | `.aculta-wiki-collaboration` |
+| `src/styles/wiki.css` | 5.276 → 4.924 | `.aculta-wiki-collaboration` e `.aculta-wiki-search` (o form usa `aculta-wiki-search-results`) |
+| `src/styles/layout.css` | 5.554 → 4.810 | `.page__footer` e `.page__footer-inner` (o rodapé é o SDC `site-footer`, que define `grid-area`) |
 | `src/styles/portal-ui-map.css` | 11.794 → 11.926 | `aculta-location-actions/admin-actions` removidos; `.nav` passou a ter estilo próprio e `.messages--info` foi criado (+132 bytes) |
 | `src/styles/portal-ui-extras.css` | 11.171 → 11.143 | `.aculta-social-link-dialog` saiu do seletor `:has()` |
 
@@ -102,7 +103,7 @@ consumidor textual, classe emitida por metadado ou seletor alcançável.
 - as demais bibliotecas contextuais (`statistics`, `portal-account`,
   `public-profile`, `event-organization`, `events`, `wiki`, `forum`,
   `shell-v2`) permanecem como estavam;
-- `global-styling` mantém as 16 folhas locais + fonte externa (109.513 bytes
+- `global-styling` mantém as 16 folhas locais + fonte externa (108.769 bytes
   locais). A auditoria
   confirmou que elas são transversais: fundações, utilitários emitidos por
   `PortalUiHooks`, conteúdo, busca (popup em toda página), botões de
@@ -201,3 +202,45 @@ php scripts/validate-aculta420-css-scope.php
 ```
 
 Saídas geradas em `reports/css-audit/` (fora do Git).
+
+## 10. Runtime e homologação (2026-11-12)
+
+### Sincronização
+
+`bash scripts/runtime-sync.sh doctor` retornou **BLOCKED**: worktree com
+alterações concorrentes e delta cumulativo **RX**. O próprio diagnóstico
+mostrou `updatedb_pending_count: 0`, `config_drift_count: 0` e
+`deploy_hook_pending_count: 0`, com Drush e banco operacionais. Nenhum
+`sync-code`, `drush cr`, `updatedb` ou import de configuração foi executado
+por esta frente.
+
+Ainda assim, o Runtime já servia o CSS novo: o agregado
+`css_zbZdWZT4qiGV0GSo8xtAoIdjOlECdvIYrVBNjTNQJ-c.css` contém
+`messages--info` (regra criada nesta entrega) e não contém
+`aculta-wiki-collaboration` (seletor removido). A conclusão é que a
+regeneração de agregados acompanhou a mudança de mtime das folhas; isso não
+substitui a validação de cache do sincronizador, que segue DEFERRED.
+
+### Matriz visual
+
+Método: Firefox ESR visível via X11 (`DISPLAY=:0`, geckodriver/wdlib),
+ambiente de desenvolvimento. Dez hosts (main, conta, revista, wiki420,
+growroom420, loja, cursos, links, apoio, eventos), larguras 320, 375, 768,
+1024 e 1440 CSS px, modos claro e escuro.
+
+Resultado: **100/100 PASS** — HTTP 200, `readyState=complete` e ausência de
+overflow horizontal em todas as combinações. 40 PNGs (320 e 1440 px nos dois
+modos) em `$SUITE_OUT`, manifesto versionado em
+`tests/browser/capturas/css-audit-20261112/manifest.json`.
+
+### Acessibilidade
+
+`playwright.a11y.spec.mjs` (axe-core, WCAG 2.0/2.1/2.2 A/AA): 16
+verificações, 7 falhas de `color-contrast` **pré-existentes** — `.site-footer`
+(`#0c3c29` sobre `#689427`, 3,45:1) e breadcrumb do Fórum (`#689427` sobre
+branco). Os arquivos desses componentes e os tokens não foram alterados desde
+`e37f3d8`. Reflow a 320 px passou. Achado registrado em
+`docs/operations/testing/CONTRASTE-FOOTER-2026-11-12.md`.
+
+Não cobertos: sessão autenticada (Studio, conta, moderação), modais,
+gavetas, teclado manual e leitor de tela. Permanecem DEFERRED.

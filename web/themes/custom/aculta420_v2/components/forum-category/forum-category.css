@@ -1,13 +1,11 @@
-.view-aculta-forum-categories .view-content,
-.aculta-forum-category-list {
+.view-aculta-forum-categories .view-content {
   display: grid;
   gap: var(--spacing-base);
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
   min-inline-size: 0;
 }
 
-.view-aculta-forum-categories .view-content > *,
-.aculta-forum-category-list .views-row { min-inline-size: 0; }
+.view-aculta-forum-categories .view-content > * { min-inline-size: 0; }
 
 .aculta-forum-category {
   position: relative;

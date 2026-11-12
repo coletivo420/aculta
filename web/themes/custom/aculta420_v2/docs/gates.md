@@ -277,11 +277,18 @@ alterações indevidas nos 22 displays, não aplicar o novo tom em massa.
 
 ## Execução Recente — auditoria, PurgeCSS e limpeza de CSS (2026-11-12)
 
-- `npm run css:audit`: inventário reproduzível em `reports/css-audit/inventory/` e relatório do PurgeCSS em `reports/css-audit/audit/` (gerados, fora do Git). 106 arquivos-fonte, 452.414 bytes, 2.735 seletores de topo e 220 classes dinâmicas preservadas (86 componentes). PurgeCSS: 406.336 bytes e 2.481 seletores retidos; 46.078 bytes e 277 seletores removíveis. Os 254 rejeitados informativos podem incluir seletores mantidos por safelist.
+- `npm run css:audit`: inventário reproduzível em `reports/css-audit/inventory/` e relatório do PurgeCSS em `reports/css-audit/audit/` (gerados, fora do Git). 106 arquivos-fonte, 451.485 bytes, 2.725 seletores de topo e 222 classes dinâmicas preservadas (86 componentes). PurgeCSS: 406.380 bytes e 2.482 seletores retidos; 45.105 bytes e 265 seletores removíveis. Os 243 rejeitados informativos podem incluir seletores mantidos por safelist.
 - Infraestrutura endurecida: `js-yaml@4.3.2` no lugar de regex; `manifest.json` com `sourceHash` e `toolVersions`; `css:verify` falha com relatório ausente, incompleto ou desatualizado; `--write` exige `--confirm-write`, cria backup e recusa CSS inválido; `npm run css:test` cobre as classes dinâmicas e a safelist.
 - `npm run css:verify`: PASS. Bibliotecas → arquivos existentes (35 folhas), sem referência a CSS inexistente, sem CSS gerado anexado, sem dependência V1/Bootstrap, CSS de SDC descobrível (84 componentes), safelist sem `^aculta-` e nenhuma classe dinâmica removida pelo PurgeCSS.
 - `npm run lint:css`: PASS (0 erros).
 - `php scripts/validate-aculta420-mapped-classes.php`: PASS (480 classes, 0 exceções, 0 nomes Bootstrap). `alert`/`alert-info` do token `donation-account-invite` foram substituídos por `messages`/`messages--info`; `we-sativa__workspace` sem CSS foi retirado dos três tokens `we-sativa-*`.
-- `php scripts/validate-aculta420-css-scope.php`: PASS (50 checks). `global-styling` com 17 entradas e 109.513 bytes locais.
+- `php scripts/validate-aculta420-css-scope.php`: PASS (50 checks). `global-styling` com 17 entradas e 108.769 bytes locais.
 - Removidos: `src/styles/studio-identity.css` (nenhum consumidor aplica `html.studio-identity` no V2), 642 linhas de `studio.css` presas a `.aculta-main` (o shell V2 usa `.page__main`), regras mortas em `content.css`, `utilities.css`, `forum.css`, `wiki.css`, `portal-account.css`, `messenger-drawer.css`, `component-library-mode.css`, `multidomain-bar.css`, `portal-ui-map.css` e `portal-ui-extras.css`.
 - Captura visual e testes de navegador: **DEFERRED** (não executados nesta sessão). O CSS removido não tinha consumidor textual nem regra alcançável; ainda assim, a homologação visual de claro/escuro e 320–1440 px permanece pendente.
+
+## Homologação da auditoria de CSS — 2026-11-12
+
+- Matriz de páginas (Firefox ESR visível, `DISPLAY=:0`): **100/100 PASS** em dez hosts, 320/375/768/1024/1440 px e claro/escuro — HTTP 200, `readyState=complete` e sem overflow. Manifesto: `tests/browser/capturas/css-audit-20261112/manifest.json`; PNGs em `$SUITE_OUT` (40 arquivos).
+- axe WCAG 2.2 A/AA: 16 verificações, 4 reflow a 320 px PASS e 7 falhas de contraste **pré-existentes** no rodapé e no breadcrumb do Fórum. Nenhum arquivo desses componentes foi alterado desde `e37f3d8`. Achado em `docs/operations/testing/CONTRASTE-FOOTER-2026-11-12.md`.
+- Runtime Sync: `doctor` **BLOCKED** (worktree concorrente + delta RX), com `updatedb`, drift de config e deploy hooks zerados. Sem `sync-code`/`drush cr` nesta janela. O Runtime já serve o CSS novo (`messages--info` presente, `aculta-wiki-collaboration` ausente).
+- Sessão autenticada, modais, gavetas, teclado manual e leitor de tela: **DEFERRED**.
