@@ -5,11 +5,18 @@ declare(strict_types=1);
 namespace Drupal\aculta_commerce_melhorenvio\Hook;
 
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Extension\ModuleExtensionList;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Registro do template da calculadora de frete, de propriedade do módulo (não do tema).
  */
 class ShippingCalculatorThemeHooks {
+
+  public function __construct(
+    #[Autowire(service: 'extension.list.module')]
+    private readonly ModuleExtensionList $moduleList,
+  ) {}
 
   /**
    * Tema de referência, que o template usa de forma neutra (sem componente de tema).
@@ -46,7 +53,7 @@ class ShippingCalculatorThemeHooks {
    * Pasta de templates do módulo, pelo caminho real do módulo instalado.
    */
   private function templatesPath(): string {
-    return \Drupal::service('extension.list.module')->getPath('aculta_commerce_melhorenvio') . '/templates';
+    return $this->moduleList->getPath('aculta_commerce_melhorenvio') . '/templates';
   }
 
 }

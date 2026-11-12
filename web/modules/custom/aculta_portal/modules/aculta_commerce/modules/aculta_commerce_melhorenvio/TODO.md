@@ -4,6 +4,7 @@ Estado: Dev · versão 0.1.0-dev.10 (`aculta_commerce_melhorenvio.info.yml`) · 
 
 ## Próximo passo
 
+- Refatorar usos restantes de `\\Drupal::` em classes do módulo.
 Concluir Firefox no fluxo de pedido sem enviar pagamento; depois homologar cotação/seleção do checkout, integração de webhook e limites operacionais das etiquetas e rastreamento ([roadmap](web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/docs/ROADMAP.md))
 
 ## Leitura
